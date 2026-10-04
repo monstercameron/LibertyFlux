@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b90">The compiler folds bitwise float negation into subtraction</a></li>
       <li><a href="#production-b79">Production batch: six radio functions, one checker gap, two original quirks</a></li>
       <li><a href="#production-b73">Production batch: five audio functions verified, and a compiler trap for float rewrites</a></li>
       <li><a href="#production-b63">Production batch: a checker pop-cap flaw, NaN payload codegen, and three verified audio functions</a></li>
@@ -285,6 +286,28 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b90">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>The compiler folds bitwise float negation into subtraction</h2>
+      <p>A rewrite that negated a float with an explicit sign-bit xor still failed on NaN inputs, because the Rust compiler recognises the xor as negation and folds it back into a subtraction, which handles NaN signs differently from the original code. Loading the xor mask from the same global the original uses keeps the xor intact and passes bit-exactly.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a gameplay gating function that mixes scalar float arithmetic with scripted helper calls, and prove the rewrite bit-identical to the original over one thousand generated trials, including NaN and infinity inputs.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The original negates one intermediate value by xoring it with a sign mask read from a global table. Xor maps positive NaN to negative NaN. The first rewrite used plain unary minus, which the compiler lowers to a subtraction from zero; that keeps positive NaN. The trials caught it: exactly the trials with a NaN cosine answer failed, with the two sides showing opposite NaN signs in the same call argument.</p>
+      <p><span class="evidence verified">Verified</span> The obvious fix, an explicit xor of the value bits with the constant sign mask, failed the same trials. Disassembling the built rewrite showed why: the compiler recognises the xor as a negation and folds the surrounding add into a subtraction, so the emitted code never contains an xor at all. The optimisation is invisible except on NaN inputs.</p>
+      <p><span class="evidence verified">Verified</span> Loading the mask from the global table at run time, exactly as the original does, gives the compiler a value it cannot reason about, so the xor survives into the binary. With that one-line change the rewrite passed all one thousand trials with zero failures, and a deliberately flipped comparison was caught within nine trials.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Any rewrite that negates a float the original xors must load the mask from the global rather than writing the constant or using unary minus.</li>
+      <li>Contracts for float-heavy functions must include NaN script answers and NaN argument edges; without them this class of mismatch is untestable.</li>
+      <li>When a mismatch shows two call logs that look identical, the difference is in the trimmed tail of the detail string. Dumping the full call logs of the first failing trial pinpointed the differing words in minutes.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Take any scalar float negation the original implements with xor, rewrite it in Rust with unary minus or an explicit constant xor, and run a differential check with a NaN flowing into the negation. The rewrite side will show positive NaN where the original shows negative NaN. Disassembling the rewrite binary shows a subtraction where the xor was written. Replacing the constant with a mask loaded from the global makes the xor appear in the binary and the trials pass.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first diagnosis was wrong in an instructive way: the failing trials also included one trial whose scripted dot product was exactly positive zero, which looked like a strict-versus-nonstrict comparison bug in the compiler's branchless gate lowering. Listing every failing trial number showed the pattern was NaN trials plus one NaN-arguments trial, and the zero-dot trials all passed, so the strictness theory was dropped. Counting failures by trial number beat reading disassembly.</p>
+      </article>
 
       <article class="entry" id="production-b79">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

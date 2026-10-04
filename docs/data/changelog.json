@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: The compiler folds bitwise float negation into subtraction",
+    "commit": null,
+    "summary": "Findings from the r-b90 lane.",
+    "changes": [
+      "New devlog entry: The compiler folds bitwise float negation into subtraction.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 72 more functions pass the checker (4859 in total)",
     "commit": "9bdb5e4b42bcdf20d72cce930598f2209079ae83",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
