@@ -12,11 +12,11 @@
 /// the spare slot. The stale path releases the current slot when non-null,
 /// installs the event's slot-0x10 clone into the current slot, releases the
 /// auxiliary slot when non-null and clears it, then releases the spare slot
-/// when non-null and clears it. The third stack argument is not read. No
+/// when non-null and clears it. The first stack argument is not read. No
 /// return value.
 ///
-/// Original: 0x00CAAC30 (thiscall, three stack words, the first two read).
-lf_checker_rt::export!(thiscall, rw_00caac30(this: u32, event: u32, fresh: u32, _a2: u32) -> u32 {
+/// Original: 0x00CAAC30 (thiscall, three stack words, the last two read).
+lf_checker_rt::export!(thiscall, rw_00caac30(this: u32, _a0: u32, event: u32, fresh: u32) -> u32 {
     unsafe {
         const SHIFTER: u32 = 5;
         const CURRENT: u32 = 0x04;

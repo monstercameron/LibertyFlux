@@ -104,12 +104,16 @@ lf_checker_rt::export!(thiscall, rw_00560890(this: u32, acc: u32, copy_dst: u32,
                     }
                     wr8(flag_dst, ok);
                 } else {
+                    // The commit call takes the pre-add total: the original
+                    // pushes it from its spill slot, which is refreshed only
+                    // after the call, while the limit check uses the new sum.
+                    let prev = run;
                     run = run.wrapping_add(step);
                     if run > limit {
                         ok = 0;
                     } else {
                         let done: u8 = lf_checker_rt::callee_thiscall!(
-                            CALLEE_COMMIT, u8, aux, tok, run, step);
+                            CALLEE_COMMIT, u8, aux, tok, prev, step);
                         if done == 0 {
                             ok = 0;
                         } else {

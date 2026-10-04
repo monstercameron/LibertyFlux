@@ -2,15 +2,15 @@
 
 /// Decide whether a ped pair is ready from a flag and two lookups.
 ///
-/// Returns 1 when the flag byte at `arg+0xA60` equals 2. Otherwise resolves
-/// two records from `arg+0x2B0`: a null second record also means ready (1),
-/// while a null first record means not ready (0). With both records present,
-/// looks each one's `+0x18` word up and returns 1 unless the first lookup's
-/// `+0x0C` word equals 1 while the second's differs from 1. Returns the
-/// decision in al.
+/// Returns 1 when the flag byte at `arg0+0xA60` equals 2. Otherwise resolves
+/// the first record from `arg0+0x2B0` and the second from `arg1+0x2B0`: a
+/// null second record also means ready (1), while a null first record means
+/// not ready (0). With both records present, looks each one's `+0x18` word
+/// up and returns 1 unless the first lookup's `+0x0C` word equals 1 while
+/// the second's differs from 1. Returns the decision in al.
 ///
-/// Original: 0x00CAAB30 (cdecl, one stack word).
-lf_checker_rt::export!(cdecl, rw_00caab30(arg: u32) -> u32 {
+/// Original: 0x00CAAB30 (cdecl, two stack words).
+lf_checker_rt::export!(cdecl, rw_00caab30(arg: u32, arg1: u32) -> u32 {
     unsafe {
         const RESOLVER_A: u32 = 1;
         const RESOLVER_B: u32 = 2;
@@ -27,7 +27,7 @@ lf_checker_rt::export!(cdecl, rw_00caab30(arg: u32) -> u32 {
             return 1;
         }
         let first = lf_checker_rt::callee_thiscall!(RESOLVER_A, u32, arg.wrapping_add(INNER));
-        let second = lf_checker_rt::callee_thiscall!(RESOLVER_B, u32, arg.wrapping_add(INNER));
+        let second = lf_checker_rt::callee_thiscall!(RESOLVER_B, u32, arg1.wrapping_add(INNER));
         if second == 0 {
             return 1;
         }
