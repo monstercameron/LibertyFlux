@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#renderer-survey">Renderer survey: what the executable and shader files reveal</a></li>
       <li><a href="#pointer-tables">Pointer tables: the functions calls alone cannot reach</a></li>
       <li><a href="#p0-libraries">Library inventory: what the executable borrows, and what it owns</a></li>
       <li><a href="#ghidra-export-scripts">Ghidra export scripts are written and tested</a></li>
@@ -70,6 +71,44 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="renderer-survey">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Renderer survey: what the executable and shader files reveal</h2>
+      <p>The game uses a deferred renderer on Direct3D 9 with shader model 3 throughout: a four-target geometry buffer, stencil-masked deferred lighting, cascaded shadow maps, and a full high dynamic range post chain. All shaders ship precompiled in per-graphics-vendor variants, and the executable talks to Direct3D only through one creation call plus interface calls.</p>
+      <h3>What was asked</h3>
+      <p>Gather everything the executable and game folder reveal about the renderer, to prepare a later renderer rewrite. Static reading only: Direct3D-related strings and rendering class names from the executable, how the graphics device is called, the shader files in the game folder with their format and versions, the render phases and their likely order, public write-ups of the pipeline, and what a new renderer would need that the original does not produce.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The executable imports a single graphics function and loads no shader compiler library, so every shader is precompiled and all drawing goes through graphics interface calls.</p>
+      <p><span class="evidence verified">Verified</span> The geometry buffer has four targets, lit by a dedicated deferred lighting shader with about thirty light parameters, with stencil masking for light volumes.</p>
+      <p><span class="evidence verified">Verified</span> Shadows combine a cascade atlas in two depth formats with cube shadow maps for point lights and a separate shadow conversion pass.</p>
+      <p><span class="evidence verified">Verified</span> The post chain includes exposure adaptation, bloom, depth of field, motion blur, light shafts and tone mapping, fed by quarter-size and blur scratch targets.</p>
+      <p><span class="evidence verified">Verified</span> The game folder holds just over one hundred unique shaders in six graphics-vendor variants, plus small text preset files, text vertex declarations, and an ordered preload list. Every shader is vertex and pixel shader model 3, nothing older.</p>
+      <p><span class="evidence verified">Verified</span> Class names show resource wrappers for textures, render targets and buffers, a dozen model and shader classes, twenty five render phases, thirty five small draw-command classes, and bucket-sorted draw lists built on worker threads.</p>
+      <p><span class="evidence">Inferred</span> The likely frame order is shadow depth and reflections, then geometry buffer, then lighting, then transparent and forward effects, then post processing, then interface drawing.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Unique shaders</td><td role="cell" data-label="Value">102 in 6 vendor variants</td><td role="cell" data-label="What it means">One modern backend must cover all six variant sets</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Shader presets</td><td role="cell" data-label="Value">133 text files</td><td role="cell" data-label="What it means">Material tuning is data, reusable as is</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Shader model</td><td role="cell" data-label="Value">3.0 only</td><td role="cell" data-label="What it means">No legacy shader paths to preserve</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Geometry buffer</td><td role="cell" data-label="Value">4 targets plus depth and stencil</td><td role="cell" data-label="What it means">Deferred core is small and standard</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Render phases</td><td role="cell" data-label="Value">25 phase classes, 31 list tags</td><td role="cell" data-label="What it means">Frame structure is explicit and enumerable</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Draw commands</td><td role="cell" data-label="Value">35 recorded command types</td><td role="cell" data-label="What it means">Drawing is recorded, sorted and replayed</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>A new renderer needs per-pixel motion vectors and a jittered projection, since the original produces neither; its motion blur is camera-parameter based.</li>
+      <li>The six vendor shader variants should be diffed and collapsed to one set, and the geometry buffer channel packing read from the decompiled shaders, before any rewrite.</li>
+      <li>Exact graphics call counts need a running capture, not the file, because the executable code section is packed and all device calls are indirect.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>List printable strings in the executable and filter for graphics, shading and phase names; list the class names embedded for run-time type information and group them by prefix; confirm the import list shows one graphics creation call and no shader compiler; walk the shader folders in the game install, count files per variant directory, and scan the compiled shaders for shader-model version markers. Public cross-checks are the well-known <a href="https://www.adriancourreges.com/blog/2015/11/02/gta-v-graphics-study/">graphics study of the newer engine entry</a>, the <a href="https://github.com/robi29/GTA-IV-Shaders">decompiled shader collection</a> with its fix notes, and the <a href="https://github.com/ThirteenAG/GTAIV.EFLC.FusionFix">community fix project</a> documenting shadow, depth precision and water issues.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first disassembly attempt produced nonsense, and a byte-entropy check showed the start of the code section is encrypted by the executable packer, so the planned call-site counting had to fall back to a raw byte-pattern estimate with wide error bars. The first class-grouping script silently dropped whole groups because of a name-prefix parsing bug, caught by comparing group counts against a direct search. One shipped reference file dumped far more listing text than expected and truncated a tool result, so later passes wrote to files and printed summaries only.</p>
+      </article>
 
       <article class="entry" id="pointer-tables">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

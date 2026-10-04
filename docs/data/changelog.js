@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Pointer tables: the functions calls alone cannot reach",
+    "title": "Devlog: Renderer survey: what the executable and shader files reveal",
     "commit": null,
+    "summary": "Findings from the p0-shaders-renderer lane.",
+    "changes": [
+      "New devlog entry: Renderer survey: what the executable and shader files reveal.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Pointer tables: the functions calls alone cannot reach",
+    "commit": "0852a07c93fd32c57766fcb1cb4f5d91ddd3635e",
     "summary": "Findings from the p0-pointer-tables lane.",
     "changes": [
       "New devlog entry: Pointer tables: the functions calls alone cannot reach.",
