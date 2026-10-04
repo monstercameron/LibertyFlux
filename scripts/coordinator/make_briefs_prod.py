@@ -2,7 +2,7 @@
 
 Usage: python make_briefs_prod.py <native lanes> <small lanes> [<big lanes>]
   native  r-n##  25 script native handlers
-  small   r-s##  20 neighbouring functions under 250 bytes
+  small   r-s##  40 neighbouring functions under 250 bytes (AGENTS.md: batches of 40 were measured and kept)
   big     r-b##  neighbouring functions of 250 bytes and more, about 3,000 bytes of code per lane
 Numbering continues after the lanes that already have a list; nothing already assigned is assigned again.
 Functions come from the q-order lane's classification, restricted to entries the f-boundaries lane confirmed.
@@ -33,7 +33,9 @@ SCRATCH = common.scratch_dir(ROOT)
 COORD = common.coord_dir(ROOT)
 
 NATIVES_PER_LANE = 25
-SMALL_PER_LANE = 20
+# 40, not 20: two 40-function lanes verified half as much again per lane-minute (brief note 12, AGENTS.md).
+# The code default was still 20, so a restart without LF_SMALL_N quietly went back to 20.
+SMALL_PER_LANE = 40
 BIG_BYTES = 3000
 BIG_MAX = 8
 # The C runtime block, held out whole until the runtime lane classified it
@@ -137,16 +139,20 @@ def main():
                 replaced=replaced, crt_block=crt_block, enc_end=enc_end)
             print(f"queue: {len(small)} functions under 250 bytes, {len(big)} of 250 bytes and more; {held} library or C runtime functions held out")
 
+            # Remnants of a subsystem (runs cut short by its end or the 32 KB span) are offered once the
+            # subsystem has no full batch left; until 2026-10-04 they were dropped on every call.
+            small_full = lambda run: len(run) >= small_per_lane  # noqa: E731
             for k, (subsystem, chunk) in enumerate(queue_rules.pick(
-                    queue_rules.chunks_of(small, lambda run: len(run) >= small_per_lane), n_small, rng)):
+                    queue_rules.with_tails(*queue_rules.chunks_and_tails(small, small_full), small_full), n_small, rng)):
                 number = last["s"] + k + 1
                 lane = f"r-s{number:02d}"
                 path = LISTS / f"{lane}.json"
                 path.write_text(json.dumps(chunk, indent=1), encoding="utf-8")
                 what = brief_template("small_what.txt").format(count=len(chunk), list_path=str(path), subsystem=subsystem)
                 emit(lane, f"lf_rs{number:02d}_rw", what, f"s{number:02d}")
+            big_full = lambda run: len(run) >= big_max or sum(f["size"] for f in run) >= big_bytes  # noqa: E731
             for k, (subsystem, chunk) in enumerate(queue_rules.pick(
-                    queue_rules.chunks_of(big, lambda run: len(run) >= big_max or sum(f["size"] for f in run) >= big_bytes), n_big, rng)):
+                    queue_rules.with_tails(*queue_rules.chunks_and_tails(big, big_full), big_full), n_big, rng)):
                 number = last["b"] + k + 1
                 lane = f"r-b{number:02d}"
                 path = LISTS / f"{lane}.json"

@@ -35,18 +35,61 @@ def chunks_of(functions, full):
 
     `functions` is in address order with `start` (hex) and `sub` keys; `full`
     says when a run is a complete batch. An unfinished run at the end of a
-    subsystem is dropped, exactly as the queue always did.
+    subsystem is dropped, exactly as the queue always did; `chunks_and_tails`
+    returns those runs as well.
     """
-    found = defaultdict(list)
+    return chunks_and_tails(functions, full)[0]
+
+
+def chunks_and_tails(functions, full):
+    """(complete runs, unfinished runs), each keyed by subsystem.
+
+    The same walk as `chunks_of`. An unfinished run is one cut short by a
+    change of subsystem, by the 32 KB span, or by the end of the list; the
+    queue used to drop these on every call, so they were never handed out.
+    """
+    found, tails = defaultdict(list), defaultdict(list)
     run = []
     for f in functions:
         if run and (f["sub"] != run[0]["sub"] or va(f["start"]) - va(run[0]["start"]) > RUN_SPAN):
+            tails[run[0]["sub"]].append(run)
             run = []
         run.append(f)
         if full(run):
             found[run[0]["sub"]].append(run)
             run = []
-    return found
+    if run:
+        tails[run[0]["sub"]].append(run)
+    return found, tails
+
+
+def merge_tails(tails, full):
+    """Each subsystem's unfinished runs joined in address order into batches
+    of the usual size (by `full`); the last batch of a subsystem may be short.
+    Members stay within one subsystem but are no longer all neighbours."""
+    merged = {}
+    for subsystem, runs in tails.items():
+        batches, batch = [], []
+        for f in sorted((f for run in runs for f in run), key=lambda f: va(f["start"])):
+            batch.append(f)
+            if full(batch):
+                batches.append(batch)
+                batch = []
+        if batch:
+            batches.append(batch)
+        merged[subsystem] = batches
+    return merged
+
+
+def with_tails(found, tails, full):
+    """The batches `pick` chooses from: a subsystem's complete runs while it has
+    any, and its merged unfinished runs once it has none left, so the remnants
+    of a subsystem are served after its full batches instead of never."""
+    merged = merge_tails(tails, full)
+    offered = defaultdict(list)
+    for subsystem in set(found) | set(merged):
+        offered[subsystem] = list(found.get(subsystem) or merged.get(subsystem) or [])
+    return offered
 
 
 def pick(found, count, rng):
