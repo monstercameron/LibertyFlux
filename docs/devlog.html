@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#tools-xplat-build">Tools: building for the three target platforms</a></li>
       <li><a href="#tools-reverse-tools">Tools: reverse engineering helpers</a></li>
       <li><a href="#p0-injection">How our code can get into the game</a></li>
       <li><a href="#function-count-estimate">Counting the game functions without Ghidra</a></li>
@@ -99,6 +100,42 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="tools-xplat-build">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Tools: building for the three target platforms</h2>
+      <p>One Rust code base can already build and run for both Windows targets on the project machine, and macOS builds belong on macOS runners, not on this machine. A hello-world crate compiled for all three Windows targets and each binary ran. A macOS binary also linked locally through a cross-linker, but only a Mac can run, sign, or ship it.</p>
+      <h3>What was asked</h3>
+      <p>Work out how the project builds one Rust code base for Windows on x64, Windows on ARM64, and macOS on Apple silicon, from the project machine and from continuous integration. Test the local toolchain, try cross-compiling to macOS, and research runners and their cost, the Vulkan SDK and MoltenVK in CI, macOS signing, and how similar projects set up their builds.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The local machine builds and runs all three Windows targets with no extra setup. The compiler ships native linkers for each one.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Target</th><th role="columnheader">Build</th><th role="columnheader">Run</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Windows ARM64</td><td role="cell" data-label="Build">yes</td><td role="cell" data-label="Run">yes, native</td></tr>
+      <tr role="row"><td role="cell">Windows x64</td><td role="cell" data-label="Build">yes</td><td role="cell" data-label="Run">yes, emulated</td></tr>
+      <tr role="row"><td role="cell">Windows 32-bit x86</td><td role="cell" data-label="Build">yes</td><td role="cell" data-label="Run">yes, emulated</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Static linking of the C runtime removes the need for a redistributable install. The test binary then depends only on core system libraries.</p>
+      <p><span class="evidence verified">Verified</span> Cross-linking a macOS Apple silicon binary on Windows works for a trivial program using the Zig linker driven by cargo-zigbuild, with no Apple SDK installed. The output has the right Mach-O header for an ARM64 executable.</p>
+      <p><span class="evidence">Inferred</span> That cross-linked binary is a compile check, not a shippable build. Anything using macOS frameworks needs the real Apple SDK, whose licence restricts it to Apple hardware, and nothing here can run the result. Real macOS builds must happen on a Mac or a macOS CI runner.</p>
+      <p><span class="evidence verified">Verified</span> Standard CI runners are free with no minute cap for public repositories, so the three-platform build matrix costs nothing once the project is public. Suitable runners exist for each target, including an ARM64 Windows runner and current Apple silicon macOS runners.</p>
+      <p><span class="evidence verified">Verified</span> The Vulkan SDK is a free download and MoltenVK is permissively licensed, so neither needs buying. Both install in CI through maintained setup actions or direct downloads, and macOS runners can also install them from Homebrew.</p>
+      <p><span class="evidence verified">Verified</span> Ad-hoc signing is enough for development builds on macOS, but a clean first launch of a downloaded release needs paid developer membership, a distribution certificate, and submission to Apple's notarisation service, which is itself free.</p>
+      <p><span class="evidence verified">Verified</span> Three similar projects were read: a Sonic recompilation, an open game engine, and a GTA IV recompilation. All build each platform natively on its own runner, cache dependencies and compiler output, pin tool versions, sign macOS builds ad-hoc in CI with real signing reserved for releases, and ship Apple bundles as compressed tarballs rather than zip files.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Build Windows targets locally and in CI with plain cargo; keep the C runtime statically linked so there is nothing to install.</li>
+      <li>Use the Zig-based cross-linker locally only as a macOS compile check, and do every real macOS build on a macOS runner.</li>
+      <li>Standardise CI on one runner per target, a pinned Rust toolchain with a shared build cache, a pinned Vulkan SDK installed by a setup action, and ad-hoc macOS signing, adding paid signing and notarisation only for tagged releases.</li>
+      <li>Organise the Rust code as one workspace with a crate per boundary: shared types, platform layer, renderer, engine subsystems, the 32-bit replacement library, the checker, and packaging tasks.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Install the missing Windows target with rustup, then build a hello-world crate for each of the three Windows targets and run each binary. Rebuild with the static C runtime flag and confirm the system library list shrinks. Install cargo-zigbuild, add the Apple silicon Rust target, and cross-link the same crate for macOS, then inspect the output header to confirm it is an ARM64 executable. The full commands, versions, hashes, and CI sketches are in the lane report.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The cross-linker first failed to find its own Zig binary because a system launcher stub shadowed the real interpreter; pointing it at the project interpreter fixed it. The first Zig download arrived truncated and had to be retried with hash verification. A system tool that locates compiler installs reported nothing even though the compilers work fine, which cost a short detour before plain builds proved the linkers were there all along.</p>
+      </article>
 
       <article class="entry" id="tools-reverse-tools">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
