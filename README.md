@@ -19,11 +19,24 @@ with the [changelog](https://monstercameron.github.io/LibertyFlux/changelog.html
 > method is planned. The badges above are generated from real counts and will stay at zero until
 > there is something to count.
 
-You need your own copy of Grand Theft Auto IV. This repository contains no game code and no game
-assets.
+## Buy the game
+
+LibertyFlux is not a way to get Grand Theft Auto IV for free, and it never will be. It contains none
+of the game: no executable, no data, no assets. To use it you need a copy of the game that you paid
+for.
+
+- Buy it on [Steam](https://store.steampowered.com/app/12210/), from an authorised key seller, or
+  from a retailer.
+- Do not use a pirated or cracked copy. This project does not support them, and issues about them
+  will be closed without an answer.
+- This project will never distribute game files, keys, cracks or ways around the game's copy
+  protection. Contributions that do will be rejected.
+
+The people who made the game should be paid for it.
 
 ## Contents
 
+- [Buy the game](#buy-the-game)
 - [Why](#why)
 - [Goals](#goals)
 - [How it works](#how-it-works)
@@ -174,7 +187,7 @@ served by GitHub Pages as it is.
 
 Requirements, all installed locally and none committed:
 
-- A legitimately owned copy of Grand Theft Auto IV for PC
+- A copy of Grand Theft Auto IV for PC that you bought (see [Buy the game](#buy-the-game))
 - Ghidra 12 with a 64-bit JDK 21
 - Python 3.11 or later, with `pefile`, `capstone` and `pyghidra`
 - Rust with the `i686-pc-windows-msvc` target, plus the target for your own machine
@@ -215,4 +228,4 @@ gives no rights to the game, its code or its assets, none of which are in this r
 LibertyFlux is an independent project. It is not affiliated with, endorsed by or connected to
 Rockstar Games or Take-Two Interactive. Grand Theft Auto is a trademark of Take-Two Interactive
 Software. This repository contains no game code and no game assets, and it cannot be used without
-a copy of the game that you own.
+a copy of the game that you bought. It does not condone piracy and will not help with it.

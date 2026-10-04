@@ -1,8 +1,19 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Add the MIT licence",
+    "title": "Add the anti-piracy statement",
     "commit": null,
+    "summary": "The project requires a copy of the game that you bought, and says so plainly.",
+    "changes": [
+      "The README has a Buy the game section: LibertyFlux is not a way to get the game for free, buy it on Steam, from an authorised key seller or from a retailer, and pirated or cracked copies are not supported.",
+      "The project site carries the same statement next to the repository rule.",
+      "AGENTS.md gains rule 6: never add, link to or describe how to obtain game files, keys, cracks or ways around copy protection, and never design for a pirated copy."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Add the MIT licence",
+    "commit": "44e6177018eb74474f22309f1a51bb9941c35ee2",
     "summary": "The project's own work is now MIT licensed.",
     "changes": [
       "Added LICENSE with the MIT licence, copyright Earl Cameron.",

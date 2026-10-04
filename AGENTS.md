@@ -116,6 +116,19 @@ Never commit `notes.md`, never `git add -f` it, and never copy its contents into
 you move something from it into a tracked file, rewrite it without the private details first.
 Secrets such as API keys and passwords do not go in `notes.md` either; they do not go in any file.
 
+## Rule 6: no piracy, and no help with it
+
+This project requires a copy of the game that its user bought. It does not condone piracy.
+
+- Never add, link to or describe how to obtain game files, product keys, cracks, cracked launchers
+  or ways around the game's copy protection. This applies to code, documentation, the site, issues
+  and commit messages.
+- Do not design anything that depends on a pirated, cracked or downgraded-by-crack copy. Work
+  against the build the owner bought.
+- When documentation tells a reader they need the game, tell them to buy it: on Steam, from an
+  authorised key seller, or from a retailer.
+- Requests for help with pirated or cracked copies get no answer beyond a pointer to this rule.
+
 ## Commit history: one feature at a time
 
 Keep the history readable as a sequence of single changes. Someone reading the log should be able to
