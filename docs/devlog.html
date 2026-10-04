@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b184">Four input-UI functions: three verified, and a checker blind spot found with mutants</a></li>
       <li><a href="#naming-06">Naming a record-and-effects batch: three evidence traps</a></li>
       <li><a href="#lift-pilot">First pilot of the 64-bit lift: what it costs and what gets in the way</a></li>
       <li><a href="#production-b180">Four rewrites, two original-code quirks, one measured constant</a></li>
@@ -340,6 +341,45 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b184">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Four input-UI functions: three verified, and a checker blind spot found with mutants</h2>
+      <p>Three of four functions in this batch were rewritten in Rust and accepted by the checker. The fourth passed its contract but was deferred, because a passing result there does not cover half of the data it builds. Two things about the original code and the checker are worth knowing before the next lane picks up similar functions.</p>
+
+      <h3>What was asked</h3>
+      <p>Rewrite four neighbouring functions of the input and interface subsystem (between 612 and 1,443 bytes each) in Rust and prove each rewrite behaves like the original, using the stock checker worker only. At least 1,000 trials per function.</p>
+
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The four functions belong to one module that uploads effect constants: one initialises two record tables and a block of settings, two build constant vectors from a selected record, and one submits a textured rectangle through the getters of two objects. Three were checked with 1,200 of 1,200 trials, the call logs compared word by word, and 14 of 14 hand-made wrong versions (mutants) were caught.</p>
+      <p><span class="evidence verified">Verified</span> The initialiser stores two floating point values into every record of the first table that it never sets itself. They are leftover stack contents. With a defined zero fill of the stack the rewrite (which writes zero) matches; with a patterned fill every trial fails on the written globals, which confirms that the original reads uninitialised memory. The same is true of one unused word per matrix row in a fourth function. In the shipped game these values depend on whatever the stack held.</p>
+      <p><span class="evidence verified">Verified</span> The checker can see only the first 8 words behind a pointer argument that points into the function's own frame. The deferred function builds a 16-word matrix in its frame and hands its address to a callee, so only the first two rows are compared. Wrong versions that change the first rows fail (193 of 300 trials); wrong versions that change the third row or the translation row, which holds the most involved arithmetic, pass all 300 trials. A passing contract there is not evidence about those words.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Function</th><th role="columnheader">Outcome</th><th role="columnheader">Trials</th><th role="columnheader">Mutants caught</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Table initialiser (913 bytes)</td><td role="cell" data-label="Outcome">verified</td><td role="cell" data-label="Trials">1,200 of 1,200</td><td role="cell" data-label="Mutants caught">5 of 5</td></tr>
+      <tr role="row"><td role="cell">Slot constants upload (612 bytes)</td><td role="cell" data-label="Outcome">verified</td><td role="cell" data-label="Trials">1,200 of 1,200</td><td role="cell" data-label="Mutants caught">6 of 6</td></tr>
+      <tr role="row"><td role="cell">Textured rectangle submit (650 bytes)</td><td role="cell" data-label="Outcome">verified</td><td role="cell" data-label="Trials">1,200 of 1,200 and 1,200 of 1,200 with wide inputs</td><td role="cell" data-label="Mutants caught">3 of 3</td></tr>
+      <tr role="row"><td role="cell">Axis view constants upload (1,443 bytes)</td><td role="cell" data-label="Outcome">deferred, frame pointer arguments</td><td role="cell" data-label="Trials">1,200 of 1,200 (stage 1)</td><td role="cell" data-label="Mutants caught">1 of 3, the other two sit in unobserved words</td></tr>
+      </tbody>
+      </table>
+
+      <h3>What was decided or recommended</h3>
+      <p><span class="evidence">Inferred</span> The deferred function should be finished by lifting the snapshot limit in the stock worker (more than 8 words, or a word offset from the pointer), not by a private worker. The stage-1 rewrite and contract are kept so the next lane only adds the missing snapshots. Until then no result for a function that passes frame buffers of more than 8 words to a callee should be counted as complete unless a mutant in the later words has been shown to fail.</p>
+      <p><span class="evidence">Inferred</span> Contracts for float code should use inputs in a range where small terms survive rounding. A first contract with wide random integers caught one wrong version in only 2 of 300 trials, because a half-texel offset vanishes next to a quotient in the millions; with moderate pixel values the same wrong version fails 221 of 300.</p>
+
+      <h3>How to reproduce it</h3>
+      <ol>
+      <li>Write the rewrites against the checker runtime and build them into the lane's own build folder.</li>
+      <li>Describe each callee in the contract: calls through an object's table are answered by planted stubs, pointers into the function's own frame are skipped and replaced by a snapshot of the words behind them.</li>
+      <li>Run the contract on the stock worker; then run hand-made wrong versions against the same contract and check that each fails, including versions that change the words you believe are compared.</li>
+      <li>Repeat the initialiser's contract once with the patterned stack fill to see the uninitialised reads.</li>
+      </ol>
+
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> Thiscall callees are compared on their object register by default, so a pointer into the function's own frame fails every trial until the contract lists no compared registers for that callee. This cost two attempts on the initialiser. Several callees live in the encrypted part of the code and cannot be read, so their stack clean-up was inferred from the callers; the passing stack checks support the inferences.</p>
+      <p><span class="evidence">Unknown</span> Whether the game ever reaches the out-of-range orientation values in the deferred function is not known; the original reads uninitialised stack for them.</p>
+      </article>
 
       <article class="entry" id="naming-06">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
