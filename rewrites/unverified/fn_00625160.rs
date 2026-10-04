@@ -76,12 +76,6 @@ lf_checker_rt::export!(thiscall, rw_00625160(this: u32, a0: u32, a1: u32, a2: u3
         const PRED_A: u32 = 10;
         const PRED_B: u32 = 11;
         const ENCODE: u32 = 12;
-        const V_WITHDRAW: u32 = 13;
-        const V_QUERY: u32 = 14;
-        const V_COLD0: u32 = 15;
-        const V_COLD1: u32 = 16;
-        const V_WARM0: u32 = 17;
-        const V_WARM1: u32 = 18;
         const SLOT_WITHDRAW: u32 = 0x04;
         const SLOT_QUERY: u32 = 0x10;
         const SLOT_COLD0: u32 = 0x30;

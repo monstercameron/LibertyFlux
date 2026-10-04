@@ -16,9 +16,11 @@
 /// zero low byte returns its full answer, otherwise callee 4 is asked with
 /// (token a, handle, scratch, slot word) and its answer is returned. A
 /// non-negative answer runs the forward path: callee 5 is asked with
-/// (answer, packet, two zero scratch words) and its answer is returned; the
-/// callee pops all four words, which balances the eight bytes of scratch the
-/// caller reserved below its pushes.
+/// (answer, packet, leftover 0, leftover 1) and its answer is returned; the
+/// callee pops all four words, which balances the eight bytes below the
+/// pushes, and those two words still hold the previous call's pushed
+/// arguments ((c, d) when the native call ran, else (token a, handle)),
+/// passed on identically by the rewrite.
 ///
 /// The rewrite tail-calls the intercepted security-cookie check before
 /// returning, matching the original's epilogue. Untouched scratch pointers

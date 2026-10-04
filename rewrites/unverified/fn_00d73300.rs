@@ -300,7 +300,7 @@ lf_checker_rt::export!(thiscall, rw_00d73300(this: u32, delta_u: u32) -> u32 {
                         wr8(esi.wrapping_add(5), 3);
                     }
                 }
-                retv = rd8(esi) as u32;
+                retv = (rd8(esi) as u32).wrapping_sub(1);
             }
             // Resolve through the pool pair and touch on field change.
             11 => {
@@ -379,25 +379,23 @@ lf_checker_rt::export!(thiscall, rw_00d73300(this: u32, delta_u: u32) -> u32 {
                         }
                     }
                 }
-                let flag = if edi != 0 {
-                    let e = (rd8(edi) as u32).wrapping_sub(1);
-                    e == 8 || e == 9
+                let dec = if edi != 0 {
+                    (rd8(edi) as u32).wrapping_sub(1)
                 } else {
-                    false
+                    0
                 };
+                let flag = edi != 0 && (dec == 8 || dec == 9);
+                let mid = if edi != 0 { dec } else { delta_u };
+                let take_clear = v == 0 && (!flag || rd8(edi.wrapping_add(5)) == 0);
                 let c = v as u8;
-                if v == 0 && (!flag || rd8(edi.wrapping_add(5)) == 0) {
+                if take_clear {
                     wr8(this.wrapping_add(FLAG_E_OFF), 0);
                 } else {
                     wr8(this.wrapping_add(FLAG_E_OFF), 1);
                 }
                 or32(esi.wrapping_add(0x0c), 0x800);
                 wr8(esi.wrapping_add(5), c);
-                retv = if edi != 0 {
-                    u32::from(flag)
-                } else {
-                    delta_u & 0xffff_ff00
-                };
+                retv = (mid & 0xffff_ff00) | u32::from(!take_clear);
             }
             // Step field 6 modulo 4, or toggle it against the reference.
             15 => {

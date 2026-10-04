@@ -64,12 +64,17 @@ unsafe fn a0ac0_core(this: u32, arg: u32, flip_tail_check: bool) -> u32 {
         if node == 0 {
             return 0;
         }
+        // Same predecessor class gate as the sibling (see there).
+        let mut prev = (rd32(node + 8) >> 1) & 7;
         loop {
-            // Same always-taken self-comparison as the sibling.
-            let _class = (rd32(node + 8) >> 1) & 7;
+            let cur = (rd32(node + 8) >> 1) & 7;
+            if prev < cur && prev >= 2 {
+                return 0;
+            }
             if rd32(node + 4) == NODE_ID {
                 break;
             }
+            prev = cur;
             node = rd32(node + 0xc);
             if node == 0 {
                 return 0;

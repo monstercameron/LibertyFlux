@@ -5,9 +5,10 @@
 /// `arg` points to a client (or is null) and `this` receives three fields:
 /// the client at `+0x1c`, a resolved object at `+0x14` and a handle at
 /// `+0x18`. The node list hanging off the client at `+0x224`/`+0x2e0` is
-/// walked for the node whose id word at `+4` is `0x2de` (the id-class
-/// pre-check compares two identical values, so it always passes); misses
-/// return 0. A probe callee must answer in `0x15..=0x1a`, a resolver callee
+/// walked for the node whose id word at `+4` is `0x2de`, gated by a
+/// predecessor class check (a node's 3-bit class must not rise from a
+/// predecessor at 2 or above); misses return 0. A probe callee must answer
+/// in `0x15..=0x1a`, a resolver callee
 /// then supplies the object, whose signed 16-bit id at `+0x2e` must avoid
 /// two excluded ids, whose table float at `+0x38` must not exceed 1.75 and
 /// whose state at `+0x1300` must be neither 1 nor 2. A fetch callee answers
@@ -55,13 +56,21 @@ unsafe fn a0990_core(this: u32, arg: u32, zul_eq_ok: bool) -> u32 {
         if node == 0 {
             return 0;
         }
+        // Class gate: the previous node's 3-bit class (bits 1..3 of the
+        // word at +8) must not be below the current node's unless below 2.
+        // The loop re-enters past the first computation, so on the first
+        // node both sides are the same value (always taken) while later
+        // nodes compare against their predecessor.
+        let mut prev = (rd32(node + 8) >> 1) & 7;
         loop {
-            // The class pre-check recomputes the same 3-bit value twice
-            // and compares it with itself: always equal, always taken.
-            let _class = (rd32(node + 8) >> 1) & 7;
+            let cur = (rd32(node + 8) >> 1) & 7;
+            if prev < cur && prev >= 2 {
+                return 0;
+            }
             if rd32(node + 4) == NODE_ID {
                 break;
             }
+            prev = cur;
             node = rd32(node + 0xc);
             if node == 0 {
                 return 0;

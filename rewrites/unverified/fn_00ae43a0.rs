@@ -63,9 +63,6 @@ lf_checker_rt::export!(cdecl, rw_00ae43a0(mask: u32, obj: u32, fbits: u32, flag:
         }
         let f = f32::from_bits(fbits);
         let mult = rd_glob_f(MULT);
-        // Object slot: thiscall through the fabricated vtable, float answer.
-        let slot: extern "thiscall" fn(u32) -> f32 =
-            unsafe { core::mem::transmute(rd32(rd32(obj) + VT_SLOT) as usize) };
         let mut m = mask;
         while m != 0 {
             let i = 31 - m.leading_zeros();
@@ -74,6 +71,10 @@ lf_checker_rt::export!(cdecl, rw_00ae43a0(mask: u32, obj: u32, fbits: u32, flag:
             if flag == 1 || flag == 0 {
                 let th = rd_glob_f(entry.wrapping_add(THRESH_OFF));
                 if th >= 0.0 {
+                    // Object slot: thiscall through the fabricated vtable,
+                    // loaded fresh each iteration like the original.
+                    let slot: extern "thiscall" fn(u32) -> f32 =
+                        unsafe { core::mem::transmute(rd32(rd32(obj) + VT_SLOT) as usize) };
                     let v = slot(obj);
                     let t = add(mul(v, mult), f);
                     if t > th {

@@ -45,14 +45,6 @@ unsafe fn fc90_core(plain_cmp: bool) -> u32 {
         const C_MATH: u32 = 3;
 
         #[inline(always)]
-        unsafe fn rd32(a: u32) -> u32 {
-            unsafe { (a as *const u32).read_unaligned() }
-        }
-        #[inline(always)]
-        unsafe fn rdf(a: u32) -> f32 {
-            unsafe { f32::from_bits(rd32(a)) }
-        }
-        #[inline(always)]
         fn mul(a: f32, b: f32) -> f32 {
             core::hint::black_box(a) * core::hint::black_box(b)
         }
@@ -123,7 +115,7 @@ unsafe fn fc90_core(plain_cmp: bool) -> u32 {
                 reset = true;
             }
         }
-        let mut mode: u32;
+        let mode: u32;
         if reset {
             mode = 4;
             g_peak.write(0.0);
@@ -142,7 +134,8 @@ unsafe fn fc90_core(plain_cmp: bool) -> u32 {
             } else {
                 let q = div(l1, peak);
                 let c0 = sub(1.0, q);
-                l0 = c0;
+                // (The original stores c0 to its frame here and overwrites
+                // it below without reading it: dead store, omitted.)
                 if below_eq(0.0, c0) {
                     if below_eq(c0, 1.0) {
                         clamped = c0;
