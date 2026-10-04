@@ -12,13 +12,15 @@
       title: "Scripts",
       text: "Missions and world events are scripts run by a small interpreter. A script cannot reach into the engine: it calls a named command and waits for the answer.",
       facts: [["941", "script files"], ["78", "instructions in the interpreter"], ["3,034", "commands scripts can call"]],
-      measured: "counted from the script files and the interpreter's code."
+      measured: "counted from the script files and the interpreter's code.",
+      more: ["#scripts", "Step through the stack machine"]
     },
     people: {
       title: "People",
       text: "Every pedestrian carries layers of tasks, from a goal down to a single action. Events such as a gunshot or taking damage can replace any layer.",
       facts: [["334", "task classes"], ["82", "kinds of event"], ["13,286", "functions, the largest group"]],
-      measured: "class and function counts."
+      measured: "class and function counts.",
+      more: ["#people", "See how the layers fit together"]
     },
     vehicles: {
       title: "Vehicles",
@@ -31,7 +33,8 @@
       text: "Rockstar's own rigid-body code sits on top of the open-source Bullet library for collision detection. The step it takes follows the length of the frame: we found no fixed step.",
       facts: [["92", "physics classes"], ["9,102", "collision shapes on disk"]],
       measured: "the classes, the Bullet code, and the absence of a fixed-step constant.",
-      inferred: "how much the variable step changes behaviour at high frame rates. That is not measured yet."
+      inferred: "how much the variable step changes behaviour at high frame rates. That is not measured yet.",
+      more: ["#clock", "See what a millisecond clock does at high frame rates"]
     },
     animation: {
       title: "Animation",
@@ -41,9 +44,10 @@
     },
     drawlists: {
       title: "Draw lists",
-      text: "The game thread never draws. It writes down what should be drawn as a list of small commands, sorts them into groups and hands the list to the render thread. Every command can report its own size, so the list can be walked without knowing what is in it.",
+      text: "What should be drawn is written down as a list of small commands, sorted into groups, and carried out by the render thread. Every command can report its own size, so the list can be walked without knowing what is in it.",
       facts: [["8 bytes", "header at the start of every command"], ["31", "kinds of draw list"]],
-      measured: "the command interface, the header and the list kinds."
+      measured: "the command interface, the header, the list kinds and the separate render thread.",
+      inferred: "that the game thread does no drawing itself and moves straight on to the next frame. The main loop is not readable yet."
     },
     shadows: {
       title: "Shadows and reflections",
@@ -119,7 +123,8 @@
       text: "The city is stored in 303 archive files. The streaming system keeps track of what is near the player and asks for those files.",
       facts: [["303", "archives"], ["20.3 GB", "inside them"]],
       measured: "archive counts and sizes on disk.",
-      inferred: "how requests are scheduled. Most of that code is not readable yet."
+      inferred: "how requests are scheduled. Most of that code is not readable yet.",
+      more: ["#disk", "See what is on disk"]
     },
     unpack: {
       title: "Unpack",
@@ -139,7 +144,7 @@
 
   var panel = document.getElementById("stop-detail");
   var aside = document.getElementById("map-aside");
-  var narrow = window.matchMedia("(max-width: 1040px)");
+  var narrow = window.matchMedia("(max-width: 1200px)");
   var buttons = Array.prototype.slice.call(document.querySelectorAll(".stop"));
   var lines = Array.prototype.slice.call(document.querySelectorAll(".line"));
   var seen = {};
@@ -169,8 +174,10 @@
     line.open = true;
     buttons.forEach(function (b) { b.setAttribute("aria-pressed", "false"); });
     button.setAttribute("aria-pressed", "true");
-    button.classList.add("seen");
-    seen[button.dataset.stop] = true;
+    if (fromUser) {
+      button.classList.add("seen");
+      seen[button.dataset.stop] = true;
+    }
     current = button;
     document.getElementById("stop-line").textContent = LINE_NAMES[line.dataset.line];
     document.getElementById("stop-title").textContent = stop.title;
@@ -187,6 +194,12 @@
     });
     evidence("stop-measured", "Measured", stop.measured);
     evidence("stop-inferred", "Inferred", stop.inferred);
+    var more = document.getElementById("stop-more");
+    document.getElementById("stop-more-row").hidden = !stop.more;
+    if (stop.more) {
+      more.href = stop.more[0];
+      more.textContent = stop.more[1];
+    }
     document.getElementById("stop-count").textContent = Object.keys(seen).length + " of " + buttons.length + " stops seen";
     place(button);
     panel.hidden = false;
@@ -290,13 +303,16 @@
     document.getElementById("fps-out").textContent = rate;
     presets.forEach(function (b) { b.setAttribute("aria-pressed", String(Number(b.dataset.fps) === rate)); });
     ruler.textContent = "";
-    var every = frame > 24 ? 5 : frame > 12 ? 2 : 1;
+    // Label only as many ticks as fit: about 56 pixels per label.
+    var width = ruler.clientWidth || 600;
+    var need = 56 / (width / frame);
+    var every = need <= 1 ? 1 : need <= 2 ? 2 : need <= 5 ? 5 : 10;
     for (var ms = 1; ms <= whole; ms++) {
       if (ms / frame > 0.999) break;
       var tick = document.createElement("span");
       tick.className = "tick";
       tick.style.left = (ms / frame * 100) + "%";
-      if (ms % every === 0) {
+      if (ms % every === 0 && (1 - ms / frame) * width > 50) {
         var label = document.createElement("b");
         label.textContent = ms + " ms";
         tick.appendChild(label);
@@ -317,10 +333,13 @@
     var lead = document.createElement("strong");
     lead.textContent = "One frame lasts " + frame.toFixed(2) + " ms. ";
     readout.appendChild(lead);
-    readout.appendChild(document.createTextNode("A clock that counts whole milliseconds can misread a length of time by up to 1 ms. That is " +
-      (share < 10 ? share.toFixed(1) : share.toFixed(0)) + "% of this frame."));
+    var percent = (share < 10 ? share.toFixed(1) : share.toFixed(0)) + "% of this frame.";
+    readout.appendChild(document.createTextNode(hasRest
+      ? "A clock that counts whole milliseconds sees " + whole + " or " + (whole + 1) + ", never " + frame.toFixed(2) + ". Any reading can be off by up to 1 ms, which is " + percent
+      : "A clock that counts whole milliseconds sees " + whole + " only when frames are perfectly steady. Real frames vary, and any reading can be off by up to 1 ms, which is " + percent));
   }
   fps.addEventListener("input", drawClock);
+  window.addEventListener("resize", drawClock);
   presets.forEach(function (button) {
     button.addEventListener("click", function () { fps.value = button.dataset.fps; drawClock(); });
   });

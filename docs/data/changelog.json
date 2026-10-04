@@ -1,6 +1,20 @@
 [
   {
     "date": "2026-10-03",
+    "title": "Engine page: second review round applied",
+    "commit": null,
+    "summary": "A second independent review scored the page 7 out of 10; this change applies its ranked findings.",
+    "changes": [
+      "The hand-off between the game thread and the render thread now ends in an arrow on the first render stop, and its caption says which part is inferred.",
+      "Stop labels are drawn as buttons, the seen counter starts at zero, the rail markers all move at one speed, and four stops link to the section that explains them further.",
+      "The Draw lists stop no longer states as fact what the unreadable main loop would have to confirm; the audio line says its four threads are drawn as one line.",
+      "The task diagram gained labelled arrows between layers and a bracket from the events to each layer; the disk diagram is now boxes inside boxes.",
+      "The frame-rate ruler chooses its tick labels from the available width, no longer clips the last one, and its sentence now ties the shaded fraction to the reading.",
+      "Every visual below the map now shares one width, the map switches to its narrow layout below 1200 pixels, and headings balance their lines."
+    ]
+  },
+  {
+    "date": "2026-10-03",
     "title": "Devlog: Second pilot, lane 11: medium functions (250 to 600 bytes)",
     "commit": "cacda76533de8443679b76dab66213060e8dab00",
     "summary": "Findings from the q-11 lane.",

@@ -30,8 +30,7 @@
     <figure class="lines-figure" aria-labelledby="lines-title">
       <figcaption>
         <h2 id="lines-title">Four lines of work run at the same time</h2>
-        <p>A <strong>frame</strong> is one finished picture, and the game makes a new one many times a second. A <strong>thread</strong> is one worker inside the program. Several workers run side by side, each on its own line below. Every stop is a job done on that line.</p>
-        <p class="press-hint">Press any stop to see what we found there.</p>
+        <p>A <strong>frame</strong> is one finished picture; the game makes a new one many times a second. A <strong>thread</strong> is one worker inside the program. Each line below is one worker, or a small group of them, and each stop is a job done on that line. <strong>Press any stop to see what we found there.</strong></p>
       </figcaption>
 
       <div class="map-layout">
@@ -55,8 +54,8 @@
           </details>
 
           <div class="handoff">
-            <p>The game thread hands over the finished draw list and starts on the next frame straight away.</p>
-            <div class="handoff-path" aria-hidden="true"><span>draw list handed over</span></div>
+            <p>The draw list goes to the render thread. We infer that the game thread then starts on the next frame; the loop that would prove it is not readable yet.</p>
+            <div class="handoff-path" aria-hidden="true"><span>draw list handed over</span><i></i></div>
           </div>
 
           <details class="line" data-line="render" open>
@@ -80,7 +79,7 @@
           <details class="line" data-line="audio" open>
             <summary class="line-head">
               <h3><span class="roundel" aria-hidden="true"></span>Audio</h3>
-              <span class="line-tag">4 threads</span>
+              <span class="line-tag">4 threads, drawn as one line</span>
               <p>Keeps its own schedule, apart from the picture.</p>
             </summary>
             <ol class="stops" style="--n:4">
@@ -115,6 +114,7 @@
             <ul class="stop-facts" id="stop-facts"></ul>
             <p class="stop-evidence" id="stop-measured"></p>
             <p class="stop-evidence" id="stop-inferred"></p>
+            <p class="stop-more" id="stop-more-row"><a id="stop-more" href="#code"></a></p>
             <div class="stop-foot">
               <span id="stop-count"></span>
               <button type="button" id="stop-next">Next stop</button>
@@ -123,7 +123,7 @@
         </div>
       </div>
 
-      <p class="lines-note">The thread counts are measured. The order of stops along a line is our reading of the evidence: the main loop itself sits in the part of the program that cannot be read yet, described at the end of this page. The moving markers only show that the lines run at once; they imply no timings.</p>
+      <p class="lines-note">Thread counts are measured where a number is shown. The order of stops along a line is our reading of the evidence: the main loop itself sits in the part of the program that cannot be read yet, described at the end of this page. The moving markers only show that the lines run at once; they imply no timings.</p>
     </figure>
   </div>
 </header>
@@ -147,7 +147,7 @@
         <li style="--v:1620"><span class="bar-label">World and object pools</span><span class="bar-track"><span class="bar-fill"></span></span><span class="bar-value">1,620</span></li>
         <li style="--v:1276"><span class="bar-label">Animation and Euphoria</span><span class="bar-track"><span class="bar-fill"></span></span><span class="bar-value">1,276</span></li>
       </ol>
-      <p class="note">This counts functions, not bytes of code. Each function is assigned to the nearest subsystem whose code could be identified, so the split is approximate; 25 could not be placed. The counts include the libraries built into the program and leave out the megabyte that cannot be read yet.</p>
+      <p class="note">This counts functions, not bytes of code. Each function is assigned to the nearest subsystem whose code could be identified, so the split is approximate; 25 could not be placed. The counts include the libraries built into the program and leave out the megabyte that cannot be read yet. There is no rendering group because the survey behind these labels did not have one: rendering functions are spread across the groups above, and much of the low-level graphics code is in the unreadable megabyte.</p>
 
       <div class="split">
         <div>
@@ -179,16 +179,19 @@
             <span>A complex task. It chooses a step and watches it. 197 kinds of complex task.</span>
             <em>In plain words: get to the other side of the street.</em>
           </li>
+          <li class="link to-step">picks</li>
           <li class="layer step">
             <strong>Step</strong>
             <span>Another complex task. Steps can nest several deep.</span>
             <em>Walk to the kerb.</em>
           </li>
+          <li class="link to-action">picks</li>
           <li class="layer action">
             <strong>Action</strong>
             <span>A simple task. It does one thing for a few frames, then reports back. About 130 kinds.</span>
             <em>Take one stride.</em>
           </li>
+          <li class="link to-action">drives</li>
           <li class="layer body">
             <strong>The body moves</strong>
             <span>Movement and animation, or Euphoria if the body goes limp.</span>
@@ -251,11 +254,13 @@
         <span class="seg img" style="--w:10.1"><b>10.1 GB</b> 254 encrypted map archives</span>
         <span class="seg loose" style="--w:3.6"><b>3.6 GB</b> video and loose files</span>
       </div>
-      <ol class="nesting">
-        <li><strong>Archive</strong><span>A table of contents and thousands of files. The map archives are encrypted with a key held in the program file.</span></li>
-        <li><strong>Resource</strong><span>One compressed file, split into a part for main memory and a part for the graphics card.</span></li>
-        <li><strong>Object</strong><span>A model, texture set, collision mesh or navigation mesh, ready to use once the addresses inside it are corrected.</span></li>
-      </ol>
+      <div class="nesting">
+        <div class="nest-box archive"><strong>Archive</strong><span>A table of contents and thousands of files. The map archives are encrypted with a key held in the program file.</span>
+          <div class="nest-box resource"><strong>Resource</strong><span>One compressed file, split into a part for main memory and a part for the graphics card.</span>
+            <div class="nest-box object"><strong>Object</strong><span>A model, texture set, collision mesh or navigation mesh, ready to use once the addresses inside it are corrected.</span></div>
+          </div>
+        </div>
+      </div>
       <ul class="facts big">
         <li><strong>26,713</strong> model files.</li>
         <li><strong>15.5 million</strong> collision polygons in 9,102 shapes.</li>
@@ -286,7 +291,7 @@
         <p class="ruler-caption">One frame, start to end. Each tick is one millisecond.</p>
         <div class="ruler" id="ruler" aria-hidden="true"></div>
         <p class="clock-readout" id="clock-readout" aria-live="polite"></p>
-        <p class="ruler-key" id="ruler-key"><span class="key-swatch leftover"></span>The part of the frame after the last whole millisecond.</p>
+        <p class="ruler-key" id="ruler-key"><span class="key-swatch leftover"></span>The fraction of a millisecond at the end of the frame, which a whole-millisecond clock cannot see.</p>
       </div>
       <p class="note">Which of the two clocks paces the frame is in the code we cannot read yet, so this ruler illustrates a risk. It is not a measured cause. What is public record: players report that handling, ragdolls, helicopter rotors and ladders misbehave above 60 frames per second.</p>
     </div>
