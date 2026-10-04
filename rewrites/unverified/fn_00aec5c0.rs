@@ -4,8 +4,9 @@
 ///
 /// Thiscall with five stack words (`obj`, `f`, `a`, `b`, `sel`); `this` is a
 /// controller with a mode word at `+4`, a peer at `+8` and flags at `+0xc`.
-/// The refresh callee rewrites `sel` and one scratch word from the float `f`.
-/// If the row at `obj+0x40[sel]` is clear the step returns 0, otherwise it
+/// The refresh callee takes the incoming `sel` with three out-pointers and
+/// rewrites `sel` in place. If the row at `obj+0x40[sel]` is clear the step
+/// returns 0, otherwise it
 /// picks the mode object (`[this+4]` when its word at `+0x28` has `0x80` in
 /// the `0x3c0` field), asks the ready callee, and derives two condition
 /// bytes: `c1` (ready and flags not aligned) and `c2` (`c1` and flag bit 1).
@@ -61,11 +62,12 @@ lf_checker_rt::export!(thiscall, rw_00aec5c0(this: u32, obj: u32, f: u32, a: u32
         let mut sel_w = sel;
         let mut scratch = 0u32;
         let mut scratch2 = 0u32;
-        // Five stack words: the float rides in the pushed slot above the four
-        // explicit pushes (the callee pops 0x14).
+        // Five stack words: the slot above the four explicit pushes carries
+        // the incoming selector itself (loaded from the fifth argument slot,
+        // not the float); the callee pops 0x14.
         lf_checker_rt::callee_thiscall!(
             1, u32, this, obj, &mut sel_w as *mut u32 as u32,
-            &mut scratch2 as *mut u32 as u32, &mut scratch as *mut u32 as u32, f,
+            &mut scratch2 as *mut u32 as u32, &mut scratch as *mut u32 as u32, sel,
         );
         let _ = scratch2;
         let _ = scratch;

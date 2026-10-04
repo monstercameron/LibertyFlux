@@ -7,7 +7,8 @@
 /// semantics (out of range or NaN yields `i32::MIN`), and forms
 /// `-1500 - t`, clamped to 0 from below (the original's conditional move on
 /// the subtraction's sign flag is exactly "0 when `t > -1500`"). When the
-/// raw `f` is below 0.1 (or NaN), a second intercepted query runs, and a
+/// raw `f` is strictly below 0.1 (NaN skips: the original's jump-if-below-
+/// or-equal is taken on unordered), a second intercepted query runs, and a
 /// result whose low two bits are clear upgrades the timer to 3000.
 ///
 /// Original: 0x00D26900 (cdecl, one stack argument).
@@ -32,7 +33,7 @@ lf_checker_rt::export!(cdecl, rw_00d26900(arg: u32) -> u32 {
         let scaled = core::hint::black_box(shifted) * core::hint::black_box(f32::from_bits(GAIN_BITS));
         let t = cvttss2si(scaled);
         let mut timer = if t > BASE { 0u32 } else { BASE.wrapping_sub(t) as u32 };
-        if !(f32::from_bits(FLOOR_BITS) <= f) {
+        if f32::from_bits(FLOOR_BITS) > f {
             let q: u32 = lf_checker_rt::callee_cdecl!(2, u32,);
             if q & 3 == 0 {
                 timer = UPGRADE;

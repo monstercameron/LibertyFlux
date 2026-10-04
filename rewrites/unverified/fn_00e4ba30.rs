@@ -489,7 +489,7 @@ lf_checker_rt::export!(thiscall, rw_00e4ba30(this: u32) -> u32 {
         slot1(tt_vt, VT_FLAG, tt_obj, 1);
         let use_ptr = rd16(head_ptr.wrapping_add(4)) != 0;
         let arg = if use_ptr { rd32(head_ptr) } else { DEFAULT_ID };
-        slot2(tt_vt, VT_TITLE, tt_obj, arg, 0);
+        slot2(tt_vt, VT_TITLE, tt_obj, 0, arg);
         slot1(tt_vt, VT_RES, tt_obj, 1);
         slot1(tt_vt, VT_FIN, tt_obj, 1);
         slot1(tt_vt, VT_SEAL, tt_obj, 1);
@@ -561,7 +561,7 @@ lf_checker_rt::export!(thiscall, rw_00e4ba30(this: u32) -> u32 {
         slot1(rs_vt, VT_FLAG, rs_obj, 1);
         let use_ptr = rd16(face_ptr.wrapping_add(8)) != 0;
         let arg = if use_ptr { rd32(face_ptr.wrapping_add(4)) } else { DEFAULT_ID };
-        slot2(rs_vt, VT_TITLE, rs_obj, arg, 0);
+        slot2(rs_vt, VT_TITLE, rs_obj, 0, arg);
         slot1(rs_vt, VT_RES, rs_obj, 1);
         slot1(rs_vt, VT_FIN, rs_obj, 1);
         slot1(rs_vt, VT_SEAL, rs_obj, 1);

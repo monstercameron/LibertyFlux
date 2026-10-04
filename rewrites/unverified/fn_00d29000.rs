@@ -14,13 +14,16 @@ lf_checker_rt::export!(cdecl, rw_00d29000() -> u32 {
         const BLOCK_SIZE: u32 = 0x1c;
         const GLOBAL_SLOT: u32 = 0x0171_f9c0;
         const SETUP_A0: u32 = 0x50;
-        const SETUP_TABLE: u32 = 0x00ee_1b4c;
+        const SETUP_TABLE_VA: u32 = 0x00ee_1b4c;
         const SETUP_FLAGS: u32 = 0x270;
         let block: u32 = lf_checker_rt::callee_cdecl!(1, u32, BLOCK_SIZE);
         if block == 0 {
             return 0;
         }
-        let alloc: u32 = lf_checker_rt::callee_thiscall!(2, u32, block, SETUP_A0, SETUP_TABLE, SETUP_FLAGS);
+        // The table address is an image address: relocate it like the loader
+        // does for the original's immediate operand.
+        let table = lf_checker_rt::relocated(SETUP_TABLE_VA);
+        let alloc: u32 = lf_checker_rt::callee_thiscall!(2, u32, block, SETUP_A0, table, SETUP_FLAGS);
         unsafe { (lf_checker_rt::relocated(GLOBAL_SLOT) as *mut u32).write_unaligned(alloc) };
         alloc
     }

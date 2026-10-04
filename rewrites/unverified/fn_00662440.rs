@@ -21,11 +21,10 @@
 ///   state 2; 1 exits the pass quietly; anything else makes the (0, 0) call.
 /// * 2: a non-zero `+9c` moves to state 4. Otherwise a global flag byte is
 ///   tested: bit 1 clear moves to state 4, bit 1 set loads sixteen global
-///   bytes and calls callee 6 (thiscall, four words: a frame pointer, `this+A`,
-///   1, `this+P`). The two eight-byte halves overlap in the frame: the later
-///   (upper) half covers the first half of the earlier (lower) one, so the
-///   pointed-to words are the upper half's first word and the lower half's
-///   second word. A zero low byte moves to state 4, else to 3.
+///   bytes into two adjacent frame slots and calls callee 6 (thiscall, four
+///   words: a frame pointer, `this+A`, 1, `this+P`). The pointer aims at the
+///   lower half; all four words of both halves are snapshotted. A zero low
+///   byte moves to state 4, else to 3.
 /// * 3: `+PROBE` of 3 makes the virtual call with (1, 0); 1 exits quietly;
 ///   anything else moves to state 4.
 /// * 4: callee 7 (thiscall, one word `this+P`) runs; a zero low byte makes
@@ -125,11 +124,12 @@ lf_checker_rt::export!(thiscall, rw_00662440(this: u32, delta: u32) -> u32 {
                         if flag & 2 == 0 {
                             wr32(this.wrapping_add(STATE), 4);
                         } else {
-                            // The upper half lands over the lower half's first
-                            // word; the callee sees upper[0] then lower[1].
-                            let w0 = lf_checker_rt::global::<u32>(GLOB_HI).read_unaligned();
+                            // Both halves, lower first, as the frame holds them.
+                            let w0 = lf_checker_rt::global::<u32>(GLOB_LO).read_unaligned();
                             let w1 = lf_checker_rt::global::<u32>(GLOB_LO + 4).read_unaligned();
-                            let frame = [w0, w1];
+                            let w2 = lf_checker_rt::global::<u32>(GLOB_HI).read_unaligned();
+                            let w3 = lf_checker_rt::global::<u32>(GLOB_HI + 4).read_unaligned();
+                            let frame = [w0, w1, w2, w3];
                             let r: u32 = lf_checker_rt::callee_thiscall!(
                                 6, u32, inner.wrapping_add(INNER_SUB),
                                 frame.as_ptr() as u32,
