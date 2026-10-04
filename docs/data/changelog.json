@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Reader crate: lf-nav",
+    "title": "Reader crate: lf-text",
     "commit": null,
+    "summary": "Text: GXT tables, fonts, menus, HUD colours, frontend layout, radio HUD.",
+    "changes": [
+      "New crate crates/formats/lf-text: Text: GXT tables, fonts, menus, HUD colours, frontend layout, radio HUD.",
+      "About 2,307 lines of Rust with 22 unit tests and 13 integration tests; tests that need the game's files skip unless the game folder is given in an environment variable.",
+      "Third-party dependencies: none.",
+      "Written by the fmt-text-gxt lane from the file format alone, then audited by the integration lane for game data, key material and machine paths before publication."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Reader crate: lf-nav",
+    "commit": "194dc6c390d077831914eb484c840ea986b83c0b",
     "summary": "Navigation: vehicle nodes (.nod), nav meshes (.wnv), path links (.ipl).",
     "changes": [
       "New crate crates/formats/lf-nav: Navigation: vehicle nodes (.nod), nav meshes (.wnv), path links (.ipl).",
