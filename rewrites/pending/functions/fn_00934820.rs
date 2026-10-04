@@ -1,0 +1,35 @@
+// original: 0x00934820 find_live_slot_ptr
+/// 0x00934820: find the first gated record (+0x226 set) whose id byte
+/// (+0x229) equals the target and return a pointer just past its head;
+/// return the shared fallback word when no record matches.
+// shared layout constant
+const SCAN_STRIDE: u32 = 0x22c;
+// shared layout constant
+const SET_COUNT: usize = 0x148;
+// shared layout constant
+const SET_RECORDS: usize = 0x144;
+export!(thiscall, rw_00934820(this: *const u8, target: u32) -> u32 {
+    callee_thiscall!(1, u32, this as u32);
+    callee_thiscall!(2, u32, this as u32);
+    let count =
+        unsafe { core::ptr::read_unaligned(this.add(SET_COUNT) as *const u16) } as i32;
+    if count > 0 {
+        let base =
+            unsafe { core::ptr::read_unaligned(this.add(SET_RECORDS) as *const u32) };
+        for i in 0..count {
+            let rec = base.wrapping_add((i as u32).wrapping_mul(SCAN_STRIDE));
+            unsafe {
+                if core::ptr::read(rec.wrapping_add(0x226) as *const u8) == 0 {
+                    continue;
+                }
+                let v = core::ptr::read(rec.wrapping_add(0x229) as *const u8) as u32;
+                if v == target {
+                    return base
+                        .wrapping_add(4)
+                        .wrapping_add((i as u32).wrapping_mul(SCAN_STRIDE));
+                }
+            }
+        }
+    }
+    unsafe { core::ptr::read(global::<u32>(0x1036ea4)) }
+});
