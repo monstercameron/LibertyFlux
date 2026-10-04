@@ -14211,6 +14211,33 @@
   "lane": "r-s323"
  },
  {
+  "address": "0x005812B0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_187, player_schema::LeaderboardInfo, 10>::vf7",
+  "kind": "function",
+  "file": "functions/fn_005812b0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s356"
+ },
+ {
+  "address": "0x005812F0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_187, player_schema::LeaderboardInfo, 10>::vf8",
+  "kind": "function",
+  "file": "functions/fn_005812f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s356"
+ },
+ {
+  "address": "0x00581420",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_188, player_schema::LeaderboardInfo, 10>::vf2",
+  "kind": "function",
+  "file": "functions/fn_00581420.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s356"
+ },
+ {
   "address": "0x00582F00",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_194, player_schema::LeaderboardInfo, 10>::vf13",
   "kind": "function",
@@ -18351,6 +18378,15 @@
   "lane": "r-s195"
  },
  {
+  "address": "0x006604B0",
+  "name": "snAddRemoteGamer_probe",
+  "kind": "function",
+  "file": "functions/fn_006604b0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b294"
+ },
+ {
   "address": "0x006605B0",
   "name": "task_state_copy",
   "kind": "function",
@@ -18367,6 +18403,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s195"
+ },
+ {
+  "address": "0x00660650",
+  "name": "rage::snAddRemoteGamerTask::vf7",
+  "kind": "function",
+  "file": "functions/fn_00660650.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b294"
  },
  {
   "address": "0x006609C0",
@@ -29628,6 +29673,24 @@
   "lane": "r-b279"
  },
  {
+  "address": "0x0096C6A0",
+  "name": "pose_goal_refresh",
+  "kind": "function",
+  "file": "functions/fn_0096c6a0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b296"
+ },
+ {
+  "address": "0x0096D230",
+  "name": "basis_from_target_pos",
+  "kind": "function",
+  "file": "functions/fn_0096d230.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b296"
+ },
+ {
   "address": "0x009748C0",
   "name": "aud_occlusion_attenuation",
   "kind": "function",
@@ -34047,6 +34110,15 @@
   "lane": "a-09"
  },
  {
+  "address": "0x009F64E0",
+  "name": "Stat_AddFloat",
+  "kind": "function",
+  "file": "functions/fn_009f64e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b308"
+ },
+ {
   "address": "0x009F84F0",
   "name": "counters_reset4",
   "kind": "function",
@@ -36324,6 +36396,15 @@
   "lane": "r-s331"
  },
  {
+  "address": "0x00A1D560",
+  "name": "cam_dirty_recalc_pose",
+  "kind": "function",
+  "file": "functions/fn_00a1d560.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
   "address": "0x00A1D8C0",
   "name": "cam_target_set_pair",
   "kind": "function",
@@ -36369,10 +36450,28 @@
   "lane": "r-s331"
  },
  {
+  "address": "0x00A1DE50",
+  "name": "cam_dual_channel_sample",
+  "kind": "function",
+  "file": "functions/fn_00a1de50.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
   "address": "0x00A1DF30",
   "name": "cam_blend_add_both",
   "kind": "function",
   "file": "functions/fn_00a1df30.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
+  "address": "0x00A1E830",
+  "name": "cam_state_dispatch_copy",
+  "kind": "function",
+  "file": "functions/fn_00a1e830.rs",
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s331"
@@ -36423,6 +36522,15 @@
   "lane": "r-s331"
  },
  {
+  "address": "0x00A1EBC0",
+  "name": "cam_follow_approach_gate",
+  "kind": "function",
+  "file": "functions/fn_00a1ebc0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
   "address": "0x00A1EC50",
   "name": "cam_bound_track_min",
   "kind": "function",
@@ -36445,6 +36553,15 @@
   "name": "cam_pair_snap",
   "kind": "function",
   "file": "functions/fn_00a1f950.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
+  "address": "0x00A20C40",
+  "name": "cam_blend_clamp_unit",
+  "kind": "function",
+  "file": "functions/fn_00a20c40.rs",
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s331"
@@ -41269,6 +41386,15 @@
   "name": "net_sync_pick_handler",
   "kind": "function",
   "file": "functions/fn_00b0e410.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b309"
+ },
+ {
+  "address": "0x00B0E930",
+  "name": "net_session_join_setup",
+  "kind": "function",
+  "file": "functions/fn_00b0e930.rs",
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b309"
@@ -63882,6 +64008,186 @@
   "lane": "r-s100"
  },
  {
+  "address": "0x00BE0BE0",
+  "name": "CTaskSimpleWaitForBus::vf1",
+  "kind": "function",
+  "file": "functions/fn_00be0be0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE0C00",
+  "name": "CTaskSimpleWaitUntilAreaCodesMatch::vf1",
+  "kind": "function",
+  "file": "functions/fn_00be0c00.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE0E70",
+  "name": "task_maybe_reindex_then_classify",
+  "kind": "function",
+  "file": "functions/fn_00be0e70.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE2150",
+  "name": "CTaskComplexUseAttractor::vf20",
+  "kind": "function",
+  "file": "functions/fn_00be2150.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE2BF0",
+  "name": "task_dispatch_indexed_child_hi",
+  "kind": "function",
+  "file": "functions/fn_00be2bf0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE2C10",
+  "name": "CTaskComplexMoveSequence::vf19",
+  "kind": "function",
+  "file": "functions/fn_00be2c10.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE2FF0",
+  "name": "task_dispatch_indexed_child_lo",
+  "kind": "function",
+  "file": "functions/fn_00be2ff0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE3010",
+  "name": "CTaskComplexSequence::vf19",
+  "kind": "function",
+  "file": "functions/fn_00be3010.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE3A30",
+  "name": "CTaskComplexUseSequence::vf19",
+  "kind": "function",
+  "file": "functions/fn_00be3a30.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE3A90",
+  "name": "CTaskComplexWaitAtAttractor::vf19",
+  "kind": "function",
+  "file": "functions/fn_00be3a90.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE3AC0",
+  "name": "CTaskComplexWaitForBus::vf19",
+  "kind": "function",
+  "file": "functions/fn_00be3ac0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE3AE0",
+  "name": "CTaskComplexWaitForDryWeather::vf19",
+  "kind": "function",
+  "file": "functions/fn_00be3ae0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE3DD0",
+  "name": "task_advance_indexed_child_hi",
+  "kind": "function",
+  "file": "functions/fn_00be3dd0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE3E40",
+  "name": "CTaskComplexMoveSequence::vf18",
+  "kind": "function",
+  "file": "functions/fn_00be3e40.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE3E60",
+  "name": "CTaskComplexReact::vf18",
+  "kind": "function",
+  "file": "functions/fn_00be3e60.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE3E90",
+  "name": "task_advance_indexed_child_lo",
+  "kind": "function",
+  "file": "functions/fn_00be3e90.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE3F00",
+  "name": "CTaskComplexSequence::vf18",
+  "kind": "function",
+  "file": "functions/fn_00be3f00.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE4170",
+  "name": "CTaskComplexSitIdle::vf18",
+  "kind": "function",
+  "file": "functions/fn_00be4170.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE43C0",
+  "name": "CTaskComplexUseSequence::vf18",
+  "kind": "function",
+  "file": "functions/fn_00be43c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE44C0",
+  "name": "task_build_sit_idle_for_kind",
+  "kind": "function",
+  "file": "functions/fn_00be44c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
   "address": "0x00BE4A90",
   "name": "task_slot_clear_if_equal",
   "kind": "function",
@@ -63900,11 +64206,74 @@
   "lane": "r-s341"
  },
  {
+  "address": "0x00BE4BA0",
+  "name": "task_note_nearest_candidate",
+  "kind": "function",
+  "file": "functions/fn_00be4ba0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
   "address": "0x00BE4D40",
   "name": "task_effect_reset_slot_a",
   "kind": "function",
   "file": "functions/fn_00be4d40.rs",
   "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE4D50",
+  "name": "task_effect_reset_slot_b",
+  "kind": "function",
+  "file": "functions/fn_00be4d50.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE4D60",
+  "name": "task_effect_clear_handle_c",
+  "kind": "function",
+  "file": "functions/fn_00be4d60.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE4D70",
+  "name": "task_effect_reset_slot_d",
+  "kind": "function",
+  "file": "functions/fn_00be4d70.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE4D80",
+  "name": "task_effect_tune_and_reset_slot_b",
+  "kind": "function",
+  "file": "functions/fn_00be4d80.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE4DB0",
+  "name": "task_reset_aux_block_hi",
+  "kind": "function",
+  "file": "functions/fn_00be4db0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE4DE0",
+  "name": "task_reset_aux_block_lo",
+  "kind": "function",
+  "file": "functions/fn_00be4de0.rs",
+  "trials": 1000,
   "checker": "version 4",
   "lane": "r-s341"
  },
@@ -83070,6 +83439,24 @@
   "lane": "r-s358"
  },
  {
+  "address": "0x00E66C60",
+  "name": "global_ratio_store_01",
+  "kind": "function",
+  "file": "functions/fn_00e66c60.rs",
+  "trials": 0,
+  "checker": "version 4",
+  "lane": "r-s358"
+ },
+ {
+  "address": "0x00E66D10",
+  "name": "global_ratio_store_02",
+  "kind": "function",
+  "file": "functions/fn_00e66d10.rs",
+  "trials": 0,
+  "checker": "version 4",
+  "lane": "r-s358"
+ },
+ {
   "address": "0x00E66D60",
   "name": "register_stub_04",
   "kind": "function",
@@ -83079,11 +83466,47 @@
   "lane": "r-s358"
  },
  {
+  "address": "0x00E66D70",
+  "name": "register_stub_05",
+  "kind": "function",
+  "file": "functions/fn_00e66d70.rs",
+  "trials": 0,
+  "checker": "version 4",
+  "lane": "r-s358"
+ },
+ {
+  "address": "0x00E66D80",
+  "name": "register_stub_06",
+  "kind": "function",
+  "file": "functions/fn_00e66d80.rs",
+  "trials": 0,
+  "checker": "version 4",
+  "lane": "r-s358"
+ },
+ {
   "address": "0x00E67280",
   "name": "global_ratio_store_10",
   "kind": "function",
   "file": "functions/fn_00e67280.rs",
   "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s358"
+ },
+ {
+  "address": "0x00E673A0",
+  "name": "global_ratio_store_11",
+  "kind": "function",
+  "file": "functions/fn_00e673a0.rs",
+  "trials": 0,
+  "checker": "version 4",
+  "lane": "r-s358"
+ },
+ {
+  "address": "0x00E673C0",
+  "name": "global_ratio_store_12",
+  "kind": "function",
+  "file": "functions/fn_00e673c0.rs",
+  "trials": 0,
   "checker": "version 4",
   "lane": "r-s358"
  },
