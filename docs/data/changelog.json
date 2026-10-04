@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-04",
+    "title": "CI: a passing build is packaged and published as a release",
+    "commit": null,
+    "summary": "When the pipeline passes on a push to main, it builds the project's runnable programs for Windows, Linux and macOS and publishes them.",
+    "changes": [
+      "After the build, test and publication jobs pass, a packaging job builds the runnable programs on each system and a release job publishes them. The advisory lint job is not required for this.",
+      "What is packaged today: the inspection tools for the game's file formats, for all three systems, and in the Windows archive the 32-bit developer tools (the checker's worker, the loader's proxy library and its test program). Each archive carries the licence, a manifest and a note saying what it is.",
+      "A push to main replaces one rolling pre-release, latest-build, so it always holds the newest passing build and its tag points at the commit the programs were built from. A version tag (v1.2.3) makes a numbered release from the same jobs.",
+      "The release notes and the note inside each archive say plainly that this is not the game and not a playable build, that no game code or data is included, and that the tools need a copy of the game that the user has bought.",
+      "The first pipeline run passed on all three systems; the lint job reported findings, as expected for an advisory job."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 4 more functions pass the checker (7156 in total)",
     "commit": "46d22d7a3c554e39d3dcc7404475134cf7a5eb3a",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
