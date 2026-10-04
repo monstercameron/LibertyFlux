@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-textures">Rust reader: texture dictionaries (WTD)</a></li>
       <li><a href="#format-paths-nav">Rust reader: navigation meshes and vehicle paths</a></li>
       <li><a href="#script-interpreter">The script interpreter, mapped end to end</a></li>
       <li><a href="#structures-ui">Class layouts: user interface, front end, HUD, replay editor and web browser classes</a></li>
@@ -149,6 +150,35 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-textures">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: texture dictionaries (WTD)</h2>
+      <p>Every loose texture dictionary in the game now parses with a new pure Rust reader, and every texture in them decodes to plain pixels: 205 files, 2,286 textures, zero parse failures.</p>
+      <h3>What was asked</h3>
+      <p>Write a clean Rust reader for the texture dictionary format: the dictionary structure, the texture records, decoding of every pixel format found in the game to RGBA8, and an in-memory DDS export for inspection in tests. Report the format and size distribution across every reachable dictionary.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All 205 loose dictionaries share one container design: a small header naming the resource type, then a single compressed payload that expands into a structures segment and a pixel-data segment. Each dictionary holds a hash table and a pointer list over texture records carrying name, dimensions, mip count, format code, stride and a data pointer.</p>
+      <p><span class="evidence verified">Verified</span> Exactly five pixel formats appear, with this distribution:</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Format</th><th role="columnheader">Textures</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">DXT5</td><td role="cell" data-label="Textures">1389</td></tr>
+      <tr role="row"><td role="cell">DXT1</td><td role="cell" data-label="Textures">862</td></tr>
+      <tr role="row"><td role="cell">DXT3</td><td role="cell" data-label="Textures">18</td></tr>
+      <tr role="row"><td role="cell">A8R8G8B8 uncompressed</td><td role="cell" data-label="Textures">16</td></tr>
+      <tr role="row"><td role="cell">L8 uncompressed</td><td role="cell" data-label="Textures">1</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Three layout rules were pinned down that public documentation did not state: stride times height always equals the top mip level size including compressed formats, the name hash is computed over the short title rather than the stored name, and every dimension is a multiple of four though many are not powers of two. Most textures carry a single mip level; the deepest has eight. One dictionary is empty.</p>
+      <p><span class="evidence verified">Verified</span> The new decoders were cross-checked against an independent image decoder on real textures: four of five formats match byte for byte, and the fifth differs only by one brightness step in one colour channel on some texels, a known rounding-convention difference.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The crate keeps unknown fields as raw values rather than guessing meanings, and sizes mip data with block rounding, which is the principled rule even though shipped files never expose the difference. Dictionaries inside encrypted archives stay out of reach until the archive work lands; the next texture step is to run this reader over those once extraction exists, since map and vehicle textures will extend the distribution. Cube and volume textures were not observed and stay unsupported until one is found.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the crate and run its unit tests, which use only hand-built byte vectors. With the game directory in an environment variable, the integration test parses every loose dictionary, checks the stride and hash rules, decodes the top mip level of each texture and builds a DDS in memory; it reports exact counts and fails on any error. A worked example program prints a one-file summary to standard output.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The public wiki page for this format is a stub with no layout, so the field order came from reading an open-source parser, then confirming every field against real files. A first guess at the hash input matched nothing until the short-title form was tried. Two words first read as padding turned out to be capacity counts. One calibration script reused a single output file without an overwrite flag and silently re-read stale bytes, briefly suggesting large decoder differences that vanished on re-run. Every format lane named its example program the same thing, so a test run silently executed another lane's binary until the example was renamed.</p>
+      </article>
 
       <article class="entry" id="format-paths-nav">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
