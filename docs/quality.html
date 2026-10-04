@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Quality: LibertyFlux</title>
+<meta name="description" content="How much does verified mean? How each Rust rewrite is checked against the original game function, what a proof does not cover, and every known problem with the rewrites that passed.">
+<link rel="canonical" href="https://monstercameron.github.io/LibertyFlux/quality.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="LibertyFlux">
+<meta property="og:title" content="Quality: LibertyFlux">
+<meta property="og:description" content="How much does verified mean? How each Rust rewrite is checked against the original game function, what a proof does not cover, and every known problem with the rewrites that passed.">
+<meta property="og:url" content="https://monstercameron.github.io/LibertyFlux/quality.html">
+<meta property="og:image" content="https://monstercameron.github.io/LibertyFlux/img/social.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="LibertyFlux: Grand Theft Auto IV's engine, being rewritten in Rust. A grid of squares, one per slice of the game's code, shaded by how far each slice has got.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Quality: LibertyFlux">
+<meta name="twitter:description" content="How much does verified mean? How each Rust rewrite is checked against the original game function, what a proof does not cover, and every known problem with the rewrites that passed.">
+<meta name="twitter:image" content="https://monstercameron.github.io/LibertyFlux/img/social.png">
+<meta name="twitter:image:alt" content="LibertyFlux: Grand Theft Auto IV's engine, being rewritten in Rust. A grid of squares, one per slice of the game's code, shaded by how far each slice has got.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/overpass-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="quality.css">
+</head>
+<body>
+<!--
+Note for future agents: the numbers on this page are not in this file. quality.js reads data/quality.json
+(written by scripts/site/quality.py from the rewrite indexes, the issue log and, when present, the build
+check's result) and data/progress.json (the published counts). Refresh the data with
+  python scripts/site/quality.py
+The explanations below are plain words written for this page. Never put a file name, an address, code from
+the game or text a lane wrote into this page or into quality.json (AGENTS.md rules 1 and 5).
+-->
+
+<header class="masthead compact">
+  <div class="wrap">
+    <nav aria-label="Site"><ul class="nav">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="engine.html">Engine</a></li>
+      <li><a href="quality.html" aria-current="page">Quality</a></li>
+      <li><a href="tools.html">Tools</a></li>
+      <li><a href="changelog.html">Changelog</a></li>
+      <li><a href="devlog.html">Devlog</a></li>
+      <li><a href="https://github.com/monstercameron/LibertyFlux">GitHub</a></li>
+    </ul></nav>
+    <h1>How much does verified mean?</h1>
+    <p class="lede">What the checker proves when it accepts a Rust rewrite, what it cannot see, and every problem known so far with the rewrites that passed it. Nothing here is an estimate: the numbers come from the repository's own records.</p>
+    <p class="status-line" id="q-status">Loading the numbers.</p>
+    <nav class="page-toc" aria-label="On this page"><ul>
+      <li><a href="#answer">The short answer</a></li>
+      <li><a href="#method">How verification works</a></li>
+      <li><a href="#passed">What has passed</a></li>
+      <li><a href="#problems">Known problems</a></li>
+      <li><a href="#kinds">Seven kinds of problem</a></li>
+      <li><a href="#doing">What is being done</a></li>
+    </ul></nav>
+  </div>
+</header>
+
+<main>
+  <section id="answer" class="band">
+    <div class="wrap">
+      <h2>The short answer</h2>
+      <p class="prose">A rewrite is verified when the original function and its Rust version, started from exactly the same state, did the same observable things on at least a thousand generated inputs. Under the current rules a deliberately broken copy of the rewrite must also fail the same test, to show the test can see a change; most rewrites were accepted before that rule existed. A pass is strong evidence about one function in isolation. It is not yet evidence that the rewrites work together inside the running game: that is a second gate, described below, and the problems listed further down are what stands between the two.</p>
+      <ul class="tiles" id="tiles">
+        <li class="tile"><span class="tile-value" data-q="verified">&nbsp;</span><span class="tile-label">rewrites have passed the checker</span><span class="tile-note" data-q="verified-note"></span></li>
+        <li class="tile"><span class="tile-value" data-q="modern">&nbsp;</span><span class="tile-label">of them under checker version 2 or later, the only ones that count</span><span class="tile-note" data-q="modern-note"></span></li>
+        <li class="tile"><span class="tile-value" data-q="compile">&nbsp;</span><span class="tile-label">compile from the repository alone</span><span class="tile-note" data-q="compile-note"></span></li>
+        <li class="tile"><span class="tile-value" data-q="high">&nbsp;</span><span class="tile-label">files carry a known high-severity issue</span><span class="tile-note" data-q="high-note"></span></li>
+      </ul>
+      <p class="q-sources" id="q-sources"></p>
+    </div>
+  </section>
+
+  <section id="method">
+    <div class="wrap">
+      <h2>How verification works</h2>
+      <p class="prose">The checker is a program that decides whether a Rust rewrite of one original function behaves the same as the original. It never reads the rewrite's source and never trusts an agent's opinion: it runs both and compares what they do.</p>
+      <ol class="steps method-steps">
+        <li><div><h3>Two runs from the same starting state</h3><p>The original function is mapped from the game's executable into a small 32-bit test process and run natively. The rewrite is a function exported from a 32-bit library. For each trial the checker fills memory, the stack and the function's global variables with the same generated contents, runs the original, resets everything to that same state and runs the rewrite. While the rewrite runs, the original's code is made unreadable, so a rewrite that quietly calls the original is caught and reported.</p></div></li>
+        <li><div><h3>What is compared</h3><p>Everything the caller could observe: the return value, every byte written to the heap, the stack and the declared globals, how far the stack pointer moved, every outgoing call with its arguments in order, and whether either side faulted. Floating-point results must match bit for bit, including the sign and payload of a not-a-number. One trial is one set of inputs; a pass needs at least a thousand trials with no difference.</p></div></li>
+        <li><div><h3>The contract</h3><p>Each function has a contract: a small file that tells the checker how to call it (its calling convention and arguments), what inputs to generate (including edge values such as zero, negative numbers and null pointers), which other functions it calls and what those should answer, and which observations to compare. A validator (<code>validate_contracts.py</code>) rejects a malformed contract before it runs, because the checker would otherwise skip a misspelt setting without a word.</p></div></li>
+        <li><div><h3>The wrong version</h3><p>A passing test proves little if the test cannot see a change. So every function also gets a deliberately wrong version: the same rewrite with one change, such as a flipped comparison, a constant off by one or a dropped memory write, run through the same contract. It must fail. If it passes, the contract is blind to what was changed: it is widened, or the function is deferred. When this became a rule, 6,515 of the 6,776 rewrites accepted until then had never had one; a generator (<code>mutate_rewrite.py</code>) now writes many wrong versions per rewrite to map what each contract can see.</p></div></li>
+        <li><div><h3>The pass is checked for emptiness</h3><p>Since checker version 3, a verdict with no differences still fails as vacuous unless at least a tenth of the trials ran to completion on the original without a fault, every enabled comparison actually happened on some trial, and every callee the contract declares was called on some completed trial. A contract may lower these thresholds or exempt a callee, but only in writing, where a reviewer can see it.</p></div></li>
+      </ol>
+
+      <h3 class="after-grid" id="not-covered">What a proof does not cover</h3>
+      <p class="prose">Rule 3 of the project asks that anything narrowing a proof is listed in that function's result. A narrowed proof that says so is acceptable; one that looks complete and is not is a defect. These are the usual narrowings, and what each leaves out:</p>
+      <dl class="limits">
+        <div><dt>Callees are stubbed</dt><dd>Every call the function makes lands on a recording stub that logs the arguments and returns a scripted answer. The proof says the function behaves the same given those answers; it says nothing about the callee itself, which is proven separately or not yet. Operating-system calls are never run, only recorded.</dd></div>
+        <div><dt>Full-data checking switched off</dt><dd>Normally a write anywhere in the program's data is seen. A contract can switch that off and compare only the globals it declares; a stray write elsewhere would then go unseen.</dd></div>
+        <div><dt>Skipped or masked arguments</dt><dd>A call argument can be left out of the comparison or compared through a mask. This is common for a pointer into the caller's own frame, whose address legitimately differs between the two runs; the words it points to are compared instead, through a snapshot taken at the call.</dd></div>
+        <div><dt>Branches the inputs never take</dt><dd>The inputs are generated. A branch they never reach is not tested, and the emptiness rule can only catch it when the branch would have made a declared call.</dd></div>
+        <div><dt>The floating-point register stack</dt><dd>Older 32-bit code keeps floating-point values on the x87 register stack. Comparing its final state is a newer check that a contract switches on; the x87 control word, the SSE status register and the floating-point condition codes after return are never compared.</dd></div>
+        <div><dt>Return value or checks switched off</dt><dd>A contract can compare only the low 8 or 16 bits of the return value, none of it, allow a floating-point tolerance, or switch off a comparison such as the stack or the outgoing calls. Each of these is listed by name by the validator.</dd></div>
+        <div><dt>Code the checker cannot reach</dt><dd>Functions in the first megabyte of code, which is encrypted in the file on disk, cannot be checked yet. Neither can behaviour that needs a running game (live object graphs, open files), timing, or anything after the first fault in a trial.</dd></div>
+      </dl>
+
+      <h3 class="after-grid" id="second-gate">The second gate: the game itself</h3>
+      <p class="prose">Passing the checker is the first gate. The second is the running game. The verified rewrites are assembled into one library (<code>assemble.py</code>), in shards of a few hundred so no single build is large. A loader that sits beside the game as a stand-in for a system library (<code>lf-proxy</code>) waits until the game is ready, then hooks each replacement with its own switch, all off at the start. A control file turns them on one at a time, a subsystem at a time, or all at once. If the game misbehaves, a <em>bisect</em> command switches on half of the suspects, then half of the half, until the faulty replacement is found. The loader and its switches are tested on a small test program; the phase in progress ends when the game plays with every replacement switched on.</p>
+    </div>
+  </section>
+
+  <section id="passed" class="band">
+    <div class="wrap">
+      <h2>What has passed, and under which checker</h2>
+      <p class="prose" id="passed-lede">Loading.</p>
+      <div class="q-grid">
+        <figure class="q-figure">
+          <figcaption><h3>Passed, by checker version</h3><p>Version 1 results no longer count as verified; re-run lanes replace them as they pass under a later version.</p></figcaption>
+          <ol class="qbars" id="bars-checker" aria-label="Verified rewrites by checker version"></ol>
+        </figure>
+        <figure class="q-figure">
+          <figcaption><h3>Passed, by kind</h3><p>Script natives are the engine functions that the game's mission scripts call by name; the rest are ordinary engine functions.</p></figcaption>
+          <ol class="qbars" id="bars-kind" aria-label="Verified rewrites by kind"></ol>
+        </figure>
+        <figure class="q-figure">
+          <figcaption><h3>Written but not passed</h3><p>Rewrites that exist in the repository but are not verified. They are never counted as rewritten or verified.</p></figcaption>
+          <ol class="qbars" id="bars-outcome" aria-label="Unverified rewrites by outcome"></ol>
+        </figure>
+        <figure class="q-figure">
+          <figcaption><h3>Why the deferred ones were deferred</h3><p>A lane that cannot verify a function gives one reason from a fixed list.</p></figcaption>
+          <ol class="qbars" id="bars-reason" aria-label="Unverified rewrites by deferral reason"></ol>
+        </figure>
+      </div>
+      <ul class="facts q-facts" id="passed-facts"></ul>
+    </div>
+  </section>
+
+  <section id="problems">
+    <div class="wrap">
+      <h2>Known problems with the rewrites that passed</h2>
+      <p class="prose">Every problem anyone has found with a verified rewrite goes into one issue log in the repository, from three sources: pattern checks run over every file, a build check that compiles every file from the repository alone, and reviews in which an agent reads each rewrite against its contract. Every issue stays open until it is fixed or judged not to be one.</p>
+      <p class="prose" id="problems-lede">Loading.</p>
+      <div class="q-grid">
+        <figure class="q-figure">
+          <figcaption><h3>By severity</h3><p>High: wrong or unsafe once assembled into the game. Medium: likely to matter. Low: worth tidying.</p></figcaption>
+          <ol class="qbars" id="bars-severity" aria-label="Issues by severity"></ol>
+        </figure>
+        <figure class="q-figure">
+          <figcaption><h3>By when it matters</h3><p>Some issues must be fixed now; most matter once the rewrites run in the game, or when they are turned into portable 64-bit code.</p></figcaption>
+          <ol class="qbars" id="bars-when" aria-label="Issues by when they matter"></ol>
+        </figure>
+        <figure class="q-figure">
+          <figcaption><h3>By kind</h3><p>What sort of problem it is.</p></figcaption>
+          <ol class="qbars" id="bars-category" aria-label="Issues by kind"></ol>
+        </figure>
+        <figure class="q-figure">
+          <figcaption><h3>By who found it</h3><p>A file can be flagged by more than one source.</p></figcaption>
+          <ol class="qbars" id="bars-source" aria-label="Issues by source"></ol>
+        </figure>
+      </div>
+      <details class="q-more">
+        <summary>Which pattern checks fired, and how often</summary>
+        <ol class="qbars" id="bars-check" aria-label="Pattern-check findings by check"></ol>
+      </details>
+    </div>
+  </section>
+
+  <section id="kinds" class="band">
+    <div class="wrap">
+      <h2>Seven kinds of problem, in plain words</h2>
+      <p class="prose">These are the classes of problem that matter most for running the rewrites in the game. Each count is of issues whose wording matches the class, so the counts are approximate, and one file can appear in more than one class.</p>
+      <ul class="qcards">
+        <li class="qcard" data-class="lane-runtime">
+          <h3>Helper code that only existed in a lane</h3>
+          <p>Each agent lane proved its rewrites inside a small crate of its own, sometimes with helper functions written for that crate. Only the rewrite file was kept, so a file that leaned on such a helper no longer compiles from the repository. What was proven can then no longer be rebuilt, and the file cannot go into the library that will run in the game.</p>
+          <p class="qcard-count" data-q="count"></p>
+          <p class="qcard-doing"><strong>Being done:</strong> the build check lists every file that does not compile against the shared runtime alone; the assembler leaves those files out of the library and records why. One old runtime name that is the shared runtime under another name is mapped to it. Moving the missing helpers into the shared runtime, or re-running the function, brings a file back.</p>
+        </li>
+        <li class="qcard" data-class="stack-cookie">
+          <h3>Stack-cookie checks without a cookie</h3>
+          <p>Many original functions end with a check the compiler inserted: a secret value, the stack cookie, is placed in the function's frame on entry and compared with the program's copy before returning, so a buffer overrun is caught. In the checker that call is a stub that only records it, so a rewrite that calls it with no cookie, or with zero, still passes. In the game the real check would see a wrong value and end the process.</p>
+          <p class="qcard-count" data-q="count"></p>
+          <p class="qcard-doing"><strong>Being done:</strong> each is logged to be fixed before the library is switched on in the game, by passing the real cookie or by dropping the call, which a Rust function does not need. Checker version 4 also added a stub that leaves registers untouched, as the real check does, after a stub that overwrote the return value had made correct rewrites fail.</p>
+        </li>
+        <li class="qcard" data-class="out-buffer">
+          <h3>Buffers smaller than the real callee writes</h3>
+          <p>Some functions hand a buffer on their own stack to a helper that fills it. In the checker that helper is a stub that writes only the words the contract scripts, so a buffer that is too small still passes. The real helper writes its whole structure and would overwrite whatever lies past the end of the rewrite's buffer.</p>
+          <p class="qcard-count" data-q="count"></p>
+          <p class="qcard-doing"><strong>Being done:</strong> reviewers compare each buffer with the sizes that sibling rewrites read back from the same helper; the fix is to size the buffer to the structure the original's frame holds.</p>
+        </li>
+        <li class="qcard" data-class="float-register">
+          <h3>Float results read from the wrong register</h3>
+          <p>On 32-bit Windows a function that returns a floating-point number leaves it on the x87 register stack, while whole numbers come back in a general register. A few rewrites read a callee's floating-point answer from the general register. A checker stub answers wherever the contract tells it to, so the mistake passes; the real callee leaves that register holding something unrelated.</p>
+          <p class="qcard-count" data-q="count"></p>
+          <p class="qcard-doing"><strong>Being done:</strong> logged per file; the fix is to declare the callee as returning a float, as sibling rewrites do, and to re-run the proof with the callee's answer scripted on the x87 stack, which a contract can express.</p>
+        </li>
+        <li class="qcard" data-class="partial-proof">
+          <h3>Partial proofs</h3>
+          <p>A proof is partial when part of the function is not compared: an argument skipped, a callee's answer replaced by a constant, a branch the inputs never reach, part of the code left as a placeholder. Narrowing is allowed when it is stated. It is a problem when a proof looks complete and is not.</p>
+          <p class="qcard-count" data-q="count"></p>
+          <p class="qcard-doing"><strong>Being done:</strong> pattern checks look for the signs in every file, reviewers read for them, and the contract validator lists every narrowing a contract declares. Proof records, a format added on 4 October 2026, can carry that list with each result.</p>
+        </li>
+        <li class="qcard" data-class="misaligned-deref">
+          <h3>Misaligned plain reads and writes</h3>
+          <p>A plain read through a pointer in Rust promises that the address is aligned, a multiple of the value's size. Game data often is not. The x86 processor tolerates it and the release build the checker uses works, but it is undefined behaviour: a debug build checks alignment and stops, and the optimiser is allowed to assume alignment. Most rewrites use plain reads of game memory; a few use them at offsets that are provably odd.</p>
+          <p class="qcard-count" data-q="count"></p>
+          <p class="qcard-doing"><strong>Being done:</strong> the odd-offset cases are listed per file; the rest are converted to unaligned reads and writes, which many files already use. Until then the assembled library is built in release, where debug assertions are off.</p>
+        </li>
+        <li class="qcard" data-class="debug-overflow">
+          <h3>Overflow that only a debug build notices</h3>
+          <p>The original's arithmetic wraps around silently when a number overflows. Rust does the same in a release build, which is how the checker builds every rewrite, but a debug build stops with a panic instead. The same code is then correct or crashes depending on one build setting.</p>
+          <p class="qcard-count" data-q="count"></p>
+          <p class="qcard-doing"><strong>Being done:</strong> the assembled library is built in release, where overflow checks are off; converting the arithmetic to explicit wrapping removes the dependence on the setting, and reviewers flag the additions most likely to overflow.</p>
+        </li>
+      </ul>
+
+      <h3 class="after-grid">Found in nearly every file</h3>
+      <p class="prose">Two patterns are so common that the pattern checks count them once across the whole tree rather than file by file.</p>
+      <ul class="systemic" id="systemic"></ul>
+    </div>
+  </section>
+
+  <section id="doing">
+    <div class="wrap">
+      <h2>What is being done, and where to look</h2>
+      <ul class="doing">
+        <li><a href="https://github.com/monstercameron/LibertyFlux/blob/main/rewrites/review/issues.json">The issue log</a> holds every issue above, one entry per file, with its severity, when it matters, who found it and its status. It is regenerated by <a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/coordinator/issue_log.py"><code>issue_log.py</code></a>, which keeps a reviewer's verdict on each issue.</li>
+        <li><a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/coordinator/lint_rewrites.py"><code>lint_rewrites.py</code></a> runs the pattern checks over every verified rewrite: what the checker cannot see, and what will matter once the rewrites are assembled.</li>
+        <li><a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/ci/check_rewrites_build.py"><code>check_rewrites_build.py</code></a> compiles every verified rewrite against the shared runtime alone and lists the ones that do not build.</li>
+        <li><a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/coordinator/ledger.py"><code>ledger.py</code></a> checks the rewrite tree against itself and against the published counts, and validates proof records.</li>
+        <li><a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/checker/mutate_rewrite.py"><code>mutate_rewrite.py</code></a> writes wrong versions of a rewrite to find contracts that cannot see a change, and <a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/checker/validate_contracts.py"><code>validate_contracts.py</code></a> lists every narrowing a contract declares.</li>
+        <li><a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/assemble/assemble.py"><code>assemble.py</code></a> builds the library for the second gate and records which rewrites it left out, and why.</li>
+      </ul>
+      <p class="prose">Each of these is described, with the command that runs it, on the <a href="tools.html">tools page</a>. The words used on this page are defined in its <a href="tools.html#glossary">glossary</a>.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>LibertyFlux is an independent project. It is not affiliated with, endorsed by or connected to Rockstar Games or Take-Two Interactive. Grand Theft Auto is a trademark of Take-Two Interactive Software.</p>
+  </div>
+</footer>
+
+<script src="quality.js"></script>
+</body>
+</html>
