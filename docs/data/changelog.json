@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Naming 150 functions: water, chat, fragments and particles",
+    "title": "Rewrites: 83 more functions pass the checker (10363 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "83 rewrites added under rewrites/verified: 0 script native handlers and 83 other functions.",
+      "The tree now holds 10363 rewrites, 10344 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "458 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Naming 150 functions: water, chat, fragments and particles",
+    "commit": "a61ac764d2a9ff3a2d263b031d3619627a204c56",
     "summary": "Findings from the nm-46 lane.",
     "changes": [
       "New devlog entry: Naming 150 functions: water, chat, fragments and particles.",
