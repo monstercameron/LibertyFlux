@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot2-02">Second pilot, lane 02: small leaf functions (40 to 150 bytes, no calls)</a></li>
       <li><a href="#pilot-07">Pilot lane 07: five functions rewritten and timed</a></li>
       <li><a href="#pilot-06">Pilot lane 06: five functions rewritten and timed</a></li>
       <li><a href="#pilot-05">Pilot lane 05: five functions rewritten and timed</a></li>
@@ -181,6 +182,45 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot2-02">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Second pilot, lane 02: small leaf functions (40 to 150 bytes, no calls)</h2>
+      <p>All six sampled functions were rewritten in Rust and verified identical to the originals: 1000 passing trials each, 8 attempts in total, about 13 minutes of rewrite work. A deliberately introduced off-by-one error was caught by the checker, and three small driver extensions needed for global-seeding are proposed for fold-back.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite six randomly sampled small leaf functions in idiomatic Rust, prove each one behaves identically to the original with the project checker over at least 1000 trials including edge values, record honest per-function timings including failures, and run one honesty test where a subtle mistake must be caught.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Four functions passed on the first attempt and two on the second, after a single shared diagnosis. The six functions and their outcomes:</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Subsystem</th><th role="columnheader">Size</th><th role="columnheader">What it does</th><th role="columnheader">Attempts</th><th role="columnheader">Trials</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Vehicles</td><td role="cell" data-label="Size">125 bytes</td><td role="cell" data-label="What it does">Counts active pool entries within a 3d radius of a point</td><td role="cell" data-label="Attempts">2</td><td role="cell" data-label="Trials">1000 passing</td></tr>
+      <tr role="row"><td role="cell">World pools</td><td role="cell" data-label="Size">40 bytes</td><td role="cell" data-label="What it does">Accepts ids 1 to 6, rejects the rest</td><td role="cell" data-label="Attempts">1</td><td role="cell" data-label="Trials">1000 passing</td></tr>
+      <tr role="row"><td role="cell">Files and memory</td><td role="cell" data-label="Size">77 bytes</td><td role="cell" data-label="What it does">Looks up one flag bit from a two-level table keyed by two object bytes</td><td role="cell" data-label="Attempts">1</td><td role="cell" data-label="Trials">1000 passing</td></tr>
+      <tr role="row"><td role="cell">Peds and tasks</td><td role="cell" data-label="Size">108 bytes</td><td role="cell" data-label="What it does">Maps a selector to a constant through a jump table, with a state read on selector 0</td><td role="cell" data-label="Attempts">1</td><td role="cell" data-label="Trials">1000 passing</td></tr>
+      <tr role="row"><td role="cell">Network</td><td role="cell" data-label="Size">48 bytes</td><td role="cell" data-label="What it does">Initialises a record with zeros then repeating marker bytes, returns the pointer</td><td role="cell" data-label="Attempts">1</td><td role="cell" data-label="Trials">1000 passing</td></tr>
+      <tr role="row"><td role="cell">Input and ui</td><td role="cell" data-label="Size">121 bytes</td><td role="cell" data-label="What it does">Reports whether any active pool entry of one kind lies within a 2d radius</td><td role="cell" data-label="Attempts">2</td><td role="cell" data-label="Trials">1000 passing</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Three functions read globals that are zero in a fresh image, so without seeding every trial faults identically and the real logic goes untested. The worker already accepted explicit global values but the driver could not send them, so the lane added three driver-only extensions: seeding globals with heap pointers or cycled values, scripted heap words, and cycled stack arguments.</p>
+      <p><span class="evidence verified">Verified</span> The two floating-point searches match bit for bit with zero tolerance, including trials with not-a-number, infinities, subnormals and signed zeros. The worker's exact-float counter does not apply to these because they return integers, so exactness is proven by a thousand agreeing integer decisions over float edge inputs instead.</p>
+      <p><span class="evidence verified">Verified</span> The honesty test passed: a mutant accepting ids 1 to 5 instead of 1 to 6 failed 17 of 200 trials with a return-value mismatch.</p>
+      <p><span class="evidence">Inferred</span> A couple of input classes stayed uncovered in ways unlikely to matter: null-entry checks that heap pointers can never trigger, unvisited table rows of a class already proven through the fault path, and one provably dead branch whose condition contradicts an earlier check.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Fold the three driver extensions back into the checker: global seeding, scripted heap words and cycled stack arguments. All are driver-only and need no worker rebuild.</li>
+      <li>Document that integer-returning functions with internal floating-point work are proven by decision agreement, not by the exact-float counter.</li>
+      <li>Budget most pilot time for understanding, not checking: analysis took about half the session while all 6400 trials ran in under two minutes.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Copy the checker driver and runtime into the lane folder with a uniquely named rewrite crate, write one contract per function describing its calling convention, inputs, heap layout and checks, implement each rewrite as a fresh Rust export, build the 32-bit rewrite library only, and run the driver over the contracts. Seed any zero-initialised globals the function reads so trials exercise live logic rather than identical faults.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>A first script added the relocation block base twice, producing a quarter-million wrong addresses and a brief false conclusion that a jump table lacked relocations. Dumping the raw blocks showed the tool already returns full addresses and everything was relocated.</p>
+      <p>The two pool searches failed their first runs because the rewrites read positions at the wrong offsets of the pointed-to block — documented correctly in the code comment, coded wrong. The return-only failure pattern pointed at a value bug, and the fix passed a thousand trials on both.</p>
+      <p>One rebuild waited briefly on the shared build folder lock while another lane built, then succeeded with no action needed.</p>
+      </article>
 
       <article class="entry" id="pilot-07">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
