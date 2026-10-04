@@ -491,8 +491,8 @@
   "kind": "native",
   "file": "natives/fn_005e6da0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-14"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x005E6DC0",
@@ -500,8 +500,8 @@
   "kind": "native",
   "file": "natives/fn_005e6dc0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-05"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x005E6E00",
@@ -563,8 +563,8 @@
   "kind": "native",
   "file": "natives/fn_005e7140.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-n107"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x005E7200",
@@ -3137,8 +3137,8 @@
   "kind": "function",
   "file": "functions/fn_008949d0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x008949E0",
@@ -3623,8 +3623,8 @@
   "kind": "function",
   "file": "functions/fn_0089d1e0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-b14"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x0089D490",
@@ -6012,6 +6012,24 @@
   "lane": "a-17"
  },
  {
+  "address": "0x008D5A10",
+  "name": "build_blend_block_and_dispatch",
+  "kind": "function",
+  "file": "functions/fn_008d5a10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s129"
+ },
+ {
+  "address": "0x008D5EF0",
+  "name": "check_record_ready",
+  "kind": "function",
+  "file": "functions/fn_008d5ef0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s129"
+ },
+ {
   "address": "0x008D61E0",
   "name": "handle_matches_selected",
   "kind": "function",
@@ -6028,6 +6046,51 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-17"
+ },
+ {
+  "address": "0x008D64C0",
+  "name": "sample_pair_to_outs",
+  "kind": "function",
+  "file": "functions/fn_008d64c0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s129"
+ },
+ {
+  "address": "0x008D65D0",
+  "name": "update_facing_blend",
+  "kind": "function",
+  "file": "functions/fn_008d65d0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s129"
+ },
+ {
+  "address": "0x008D6680",
+  "name": "flag_probe_or_table_fallback",
+  "kind": "function",
+  "file": "functions/fn_008d6680.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s129"
+ },
+ {
+  "address": "0x008D69E0",
+  "name": "resolve_active_or_default",
+  "kind": "function",
+  "file": "functions/fn_008d69e0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s129"
+ },
+ {
+  "address": "0x008D6A20",
+  "name": "resolve_index_or_fallback",
+  "kind": "function",
+  "file": "functions/fn_008d6a20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s129"
  },
  {
   "address": "0x008D6AE0",
@@ -6057,6 +6120,42 @@
   "lane": "a-17"
  },
  {
+  "address": "0x008D7720",
+  "name": "wrap_blend_pair",
+  "kind": "function",
+  "file": "functions/fn_008d7720.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s129"
+ },
+ {
+  "address": "0x008D77D0",
+  "name": "integrate_scaled_rates",
+  "kind": "function",
+  "file": "functions/fn_008d77d0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s129"
+ },
+ {
+  "address": "0x008D78A0",
+  "name": "clamp_unit_and_shape",
+  "kind": "function",
+  "file": "functions/fn_008d78a0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s129"
+ },
+ {
+  "address": "0x008D7900",
+  "name": "scale_translate_pair",
+  "kind": "function",
+  "file": "functions/fn_008d7900.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s129"
+ },
+ {
   "address": "0x008D7980",
   "name": "record_fill",
   "kind": "function",
@@ -6082,6 +6181,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-17"
+ },
+ {
+  "address": "0x008D8140",
+  "name": "remap_float_triple",
+  "kind": "function",
+  "file": "functions/fn_008d8140.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s129"
  },
  {
   "address": "0x008D8190",
@@ -6172,6 +6280,24 @@
   "trials": 1000,
   "checker": "version 1",
   "lane": "r-s56"
+ },
+ {
+  "address": "0x008D8510",
+  "name": "dispatch_indexed_row",
+  "kind": "function",
+  "file": "functions/fn_008d8510.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s129"
+ },
+ {
+  "address": "0x008D8530",
+  "name": "indexed_flag_is_two",
+  "kind": "function",
+  "file": "functions/fn_008d8530.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s129"
  },
  {
   "address": "0x008D8570",
@@ -7290,6 +7416,96 @@
   "lane": "r-s113"
  },
  {
+  "address": "0x00945A10",
+  "name": "advance_slot_pair_and_mix_key",
+  "kind": "function",
+  "file": "functions/fn_00945a10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
+ },
+ {
+  "address": "0x00945AE0",
+  "name": "NativeImpl_RETUNE_RADIO_UP_3",
+  "kind": "function",
+  "file": "functions/fn_00945ae0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
+ },
+ {
+  "address": "0x00945B00",
+  "name": "probe_slot_pair_first_kind",
+  "kind": "function",
+  "file": "functions/fn_00945b00.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
+ },
+ {
+  "address": "0x00945B60",
+  "name": "probe_slot_pair_second_kind",
+  "kind": "function",
+  "file": "functions/fn_00945b60.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
+ },
+ {
+  "address": "0x00945BC0",
+  "name": "kind_table_search",
+  "kind": "function",
+  "file": "functions/fn_00945bc0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
+ },
+ {
+  "address": "0x00945C60",
+  "name": "fixed_kind_table_search",
+  "kind": "function",
+  "file": "functions/fn_00945c60.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
+ },
+ {
+  "address": "0x00945FB0",
+  "name": "init_slot_pair",
+  "kind": "function",
+  "file": "functions/fn_00945fb0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
+ },
+ {
+  "address": "0x00945FE0",
+  "name": "guarded_slot_tail_flush",
+  "kind": "function",
+  "file": "functions/fn_00945fe0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
+ },
+ {
+  "address": "0x00946680",
+  "name": "teardown_file_slots",
+  "kind": "function",
+  "file": "functions/fn_00946680.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
+ },
+ {
+  "address": "0x009467E0",
+  "name": "guarded_object_register",
+  "kind": "function",
+  "file": "functions/fn_009467e0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
+ },
+ {
   "address": "0x00946C00",
   "name": "pool_pair_init",
   "kind": "function",
@@ -7299,13 +7515,67 @@
   "lane": "a-16"
  },
  {
+  "address": "0x00946C30",
+  "name": "teardown_slot_list",
+  "kind": "function",
+  "file": "functions/fn_00946c30.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
+ },
+ {
+  "address": "0x00946CC0",
+  "name": "ensure_slot_capacity",
+  "kind": "function",
+  "file": "functions/fn_00946cc0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
+ },
+ {
+  "address": "0x00946D80",
+  "name": "notify_ready_slots",
+  "kind": "function",
+  "file": "functions/fn_00946d80.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
+ },
+ {
+  "address": "0x00946DD0",
+  "name": "init_default_slot",
+  "kind": "function",
+  "file": "functions/fn_00946dd0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
+ },
+ {
+  "address": "0x00946E30",
+  "name": "release_two_stored_handles",
+  "kind": "function",
+  "file": "functions/fn_00946e30.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
+ },
+ {
   "address": "0x00947D00",
   "name": "obj_init_xor_id",
   "kind": "function",
   "file": "functions/fn_00947d00.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-16"
+  "checker": "version 3",
+  "lane": "a-F01"
+ },
+ {
+  "address": "0x00947D50",
+  "name": "reset_subobject_table",
+  "kind": "function",
+  "file": "functions/fn_00947d50.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
  },
  {
   "address": "0x00947F60",
@@ -7315,6 +7585,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-16"
+ },
+ {
+  "address": "0x00948170",
+  "name": "stamp_entry_fields",
+  "kind": "function",
+  "file": "functions/fn_00948170.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
+ },
+ {
+  "address": "0x00948360",
+  "name": "forward_sample_packet",
+  "kind": "function",
+  "file": "functions/fn_00948360.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
  },
  {
   "address": "0x00948740",
@@ -7331,8 +7619,8 @@
   "kind": "function",
   "file": "functions/fn_00948be0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-16"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00949100",
@@ -7403,8 +7691,17 @@
   "kind": "function",
   "file": "functions/fn_00949cf0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-16"
+  "checker": "version 3",
+  "lane": "a-F01"
+ },
+ {
+  "address": "0x0094B580",
+  "name": "T_CB_Generic_2Args<void(*)(int, bool), int, bool>::vf1",
+  "kind": "function",
+  "file": "functions/fn_0094b580.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s132"
  },
  {
   "address": "0x0094B5A0",
@@ -7704,6 +8001,15 @@
   "lane": "a-17"
  },
  {
+  "address": "0x00952AA0",
+  "name": "vtable_metric_x20",
+  "kind": "function",
+  "file": "functions/fn_00952aa0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
   "address": "0x00952B30",
   "name": "find_block_by_tail_key",
   "kind": "function",
@@ -7747,6 +8053,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-17"
+ },
+ {
+  "address": "0x00952C20",
+  "name": "record_seed_from_clock",
+  "kind": "function",
+  "file": "functions/fn_00952c20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
  },
  {
   "address": "0x00952C70",
@@ -7794,6 +8109,15 @@
   "lane": "a-17"
  },
  {
+  "address": "0x00952F10",
+  "name": "resolve_scaled_metric",
+  "kind": "function",
+  "file": "functions/fn_00952f10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
   "address": "0x00953110",
   "name": "get_entry_value",
   "kind": "function",
@@ -7819,6 +8143,150 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-17"
+ },
+ {
+  "address": "0x00953210",
+  "name": "row_slot_or_null",
+  "kind": "function",
+  "file": "functions/fn_00953210.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
+  "address": "0x00953230",
+  "name": "chain_search_u32",
+  "kind": "function",
+  "file": "functions/fn_00953230.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
+  "address": "0x009532A0",
+  "name": "char_size_class",
+  "kind": "function",
+  "file": "functions/fn_009532a0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
+  "address": "0x009535D0",
+  "name": "band_index_or_zero",
+  "kind": "function",
+  "file": "functions/fn_009535d0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
+  "address": "0x00953640",
+  "name": "bucket_limit_or_zero",
+  "kind": "function",
+  "file": "functions/fn_00953640.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
+  "address": "0x00953710",
+  "name": "refresh_slot_or_sentinel",
+  "kind": "function",
+  "file": "functions/fn_00953710.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
+  "address": "0x00953750",
+  "name": "lookup_field_30",
+  "kind": "function",
+  "file": "functions/fn_00953750.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
+  "address": "0x009538F0",
+  "name": "shared_handle_dispatch",
+  "kind": "function",
+  "file": "functions/fn_009538f0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
+  "address": "0x00953900",
+  "name": "clock_span",
+  "kind": "function",
+  "file": "functions/fn_00953900.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
+  "address": "0x00953910",
+  "name": "clock_span_seconds",
+  "kind": "function",
+  "file": "functions/fn_00953910.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
+  "address": "0x00953950",
+  "name": "advance_slot_cursor",
+  "kind": "function",
+  "file": "functions/fn_00953950.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
+  "address": "0x009539C0",
+  "name": "ensure_cursor_room",
+  "kind": "function",
+  "file": "functions/fn_009539c0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
+  "address": "0x009539E0",
+  "name": "advance_aux_ring",
+  "kind": "function",
+  "file": "functions/fn_009539e0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
+  "address": "0x00953A90",
+  "name": "sync_live_flag",
+  "kind": "function",
+  "file": "functions/fn_00953a90.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
+  "address": "0x00953B20",
+  "name": "init_hub_and_clear",
+  "kind": "function",
+  "file": "functions/fn_00953b20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
+ },
+ {
+  "address": "0x00953B60",
+  "name": "bind_aux_view",
+  "kind": "function",
+  "file": "functions/fn_00953b60.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s135"
  },
  {
   "address": "0x009748C0",
@@ -9257,8 +9725,8 @@
   "kind": "function",
   "file": "functions/fn_009b6a10.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x009B6A40",
@@ -9653,8 +10121,8 @@
   "kind": "function",
   "file": "functions/fn_009b8930.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x009B8940",
@@ -11030,8 +11498,8 @@
   "kind": "function",
   "file": "functions/fn_009de1f0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x009DE2C0",
@@ -11057,8 +11525,8 @@
   "kind": "function",
   "file": "functions/fn_009df690.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x009DF700",
@@ -11336,8 +11804,8 @@
   "kind": "function",
   "file": "functions/fn_009f8630.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x009F8CA0",
@@ -13118,8 +13586,8 @@
   "kind": "function",
   "file": "functions/fn_00a7cea0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00A7CF20",
@@ -13559,8 +14027,8 @@
   "kind": "function",
   "file": "functions/fn_00aba020.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00ABA040",
@@ -13856,8 +14324,8 @@
   "kind": "function",
   "file": "functions/fn_00ad2b00.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-11"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00AD2B20",
@@ -13865,8 +14333,8 @@
   "kind": "function",
   "file": "functions/fn_00ad2b20.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-11"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00AD2B40",
@@ -13874,8 +14342,8 @@
   "kind": "function",
   "file": "functions/fn_00ad2b40.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-11"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00AD2EE0",
@@ -13883,8 +14351,8 @@
   "kind": "function",
   "file": "functions/fn_00ad2ee0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-11"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00AD2F00",
@@ -13892,8 +14360,8 @@
   "kind": "function",
   "file": "functions/fn_00ad2f00.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-11"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00AD3510",
@@ -13901,8 +14369,8 @@
   "kind": "function",
   "file": "functions/fn_00ad3510.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-11"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00AD4410",
@@ -14405,8 +14873,8 @@
   "kind": "function",
   "file": "functions/fn_00b2ced0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00B2CF10",
@@ -36815,8 +37283,8 @@
   "kind": "function",
   "file": "functions/fn_00cca540.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CCA570",
@@ -36824,8 +37292,8 @@
   "kind": "function",
   "file": "functions/fn_00cca570.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CCA5A0",
@@ -36833,8 +37301,8 @@
   "kind": "function",
   "file": "functions/fn_00cca5a0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CCA5D0",
@@ -36842,8 +37310,8 @@
   "kind": "function",
   "file": "functions/fn_00cca5d0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CCA600",
@@ -36851,8 +37319,8 @@
   "kind": "function",
   "file": "functions/fn_00cca600.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CCA630",
@@ -36860,8 +37328,8 @@
   "kind": "function",
   "file": "functions/fn_00cca630.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CCA660",
@@ -36869,8 +37337,8 @@
   "kind": "function",
   "file": "functions/fn_00cca660.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CCA690",
@@ -36878,8 +37346,8 @@
   "kind": "function",
   "file": "functions/fn_00cca690.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CCA6C0",
@@ -36887,8 +37355,8 @@
   "kind": "function",
   "file": "functions/fn_00cca6c0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CCA6F0",
@@ -36896,8 +37364,8 @@
   "kind": "function",
   "file": "functions/fn_00cca6f0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CCA720",
@@ -36914,8 +37382,8 @@
   "kind": "function",
   "file": "functions/fn_00cca8b0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CCA8E0",
@@ -36923,8 +37391,8 @@
   "kind": "function",
   "file": "functions/fn_00cca8e0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CCA910",
@@ -36932,8 +37400,8 @@
   "kind": "function",
   "file": "functions/fn_00cca910.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CCA940",
@@ -36941,8 +37409,8 @@
   "kind": "function",
   "file": "functions/fn_00cca940.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CCA970",
@@ -36950,8 +37418,8 @@
   "kind": "function",
   "file": "functions/fn_00cca970.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CCA9A0",
@@ -36959,8 +37427,8 @@
   "kind": "function",
   "file": "functions/fn_00cca9a0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CCA9F0",
@@ -36968,8 +37436,8 @@
   "kind": "function",
   "file": "functions/fn_00cca9f0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-07"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00CD56E0",
@@ -38374,6 +38842,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b57"
+ },
+ {
+  "address": "0x00DF01E0",
+  "name": "clip_viewer_refresh_gate",
+  "kind": "function",
+  "file": "functions/fn_00df01e0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b95"
  },
  {
   "address": "0x00DFB900",
@@ -40064,8 +40541,8 @@
   "kind": "function",
   "file": "functions/fn_00e60fc0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-19"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E60FF0",
@@ -40100,8 +40577,8 @@
   "kind": "function",
   "file": "functions/fn_00e610a0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-19"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E610D0",
@@ -40109,8 +40586,8 @@
   "kind": "function",
   "file": "functions/fn_00e610d0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-19"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E610F0",
@@ -40208,8 +40685,8 @@
   "kind": "function",
   "file": "functions/fn_00e61210.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-19"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E62880",
@@ -41594,8 +42071,8 @@
   "kind": "function",
   "file": "functions/fn_00e649e0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E64A00",
@@ -41603,8 +42080,8 @@
   "kind": "function",
   "file": "functions/fn_00e64a00.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E64A20",
@@ -41639,8 +42116,8 @@
   "kind": "function",
   "file": "functions/fn_00e64a80.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E64AA0",
@@ -41648,8 +42125,8 @@
   "kind": "function",
   "file": "functions/fn_00e64aa0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E64AC0",
@@ -41666,8 +42143,8 @@
   "kind": "function",
   "file": "functions/fn_00e64cf0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E64D60",
@@ -42233,8 +42710,8 @@
   "kind": "function",
   "file": "functions/fn_00e65530.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E655E0",
@@ -42251,8 +42728,8 @@
   "kind": "function",
   "file": "functions/fn_00e65600.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65620",
@@ -42305,8 +42782,8 @@
   "kind": "function",
   "file": "functions/fn_00e656c0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E656E0",
@@ -42314,8 +42791,8 @@
   "kind": "function",
   "file": "functions/fn_00e656e0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65700",
@@ -42413,8 +42890,8 @@
   "kind": "function",
   "file": "functions/fn_00e65840.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65860",
@@ -42422,8 +42899,8 @@
   "kind": "function",
   "file": "functions/fn_00e65860.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65880",
@@ -42431,8 +42908,8 @@
   "kind": "function",
   "file": "functions/fn_00e65880.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E658A0",
@@ -42440,8 +42917,8 @@
   "kind": "function",
   "file": "functions/fn_00e658a0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E658C0",
@@ -42458,8 +42935,8 @@
   "kind": "function",
   "file": "functions/fn_00e658e0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65900",
@@ -42512,8 +42989,8 @@
   "kind": "function",
   "file": "functions/fn_00e659a0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E659C0",
@@ -42521,8 +42998,8 @@
   "kind": "function",
   "file": "functions/fn_00e659c0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E659E0",
@@ -42530,8 +43007,8 @@
   "kind": "function",
   "file": "functions/fn_00e659e0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65A00",
@@ -42539,8 +43016,8 @@
   "kind": "function",
   "file": "functions/fn_00e65a00.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65A20",
@@ -42548,8 +43025,8 @@
   "kind": "function",
   "file": "functions/fn_00e65a20.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65A40",
@@ -42557,8 +43034,8 @@
   "kind": "function",
   "file": "functions/fn_00e65a40.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65A60",
@@ -42710,8 +43187,8 @@
   "kind": "function",
   "file": "functions/fn_00e65d80.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65DA0",
@@ -42719,8 +43196,8 @@
   "kind": "function",
   "file": "functions/fn_00e65da0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65DC0",
@@ -42728,8 +43205,8 @@
   "kind": "function",
   "file": "functions/fn_00e65dc0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65DE0",
@@ -42737,8 +43214,8 @@
   "kind": "function",
   "file": "functions/fn_00e65de0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65E00",
@@ -42746,8 +43223,8 @@
   "kind": "function",
   "file": "functions/fn_00e65e00.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65E20",
@@ -42755,8 +43232,8 @@
   "kind": "function",
   "file": "functions/fn_00e65e20.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65E40",
@@ -42764,8 +43241,8 @@
   "kind": "function",
   "file": "functions/fn_00e65e40.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65E60",
@@ -42773,8 +43250,8 @@
   "kind": "function",
   "file": "functions/fn_00e65e60.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65E80",
@@ -42782,8 +43259,8 @@
   "kind": "function",
   "file": "functions/fn_00e65e80.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65EA0",
@@ -42791,8 +43268,8 @@
   "kind": "function",
   "file": "functions/fn_00e65ea0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65EC0",
@@ -42800,8 +43277,8 @@
   "kind": "function",
   "file": "functions/fn_00e65ec0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65EE0",
@@ -42809,8 +43286,8 @@
   "kind": "function",
   "file": "functions/fn_00e65ee0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65F00",
@@ -42818,8 +43295,8 @@
   "kind": "function",
   "file": "functions/fn_00e65f00.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65F20",
@@ -42827,8 +43304,8 @@
   "kind": "function",
   "file": "functions/fn_00e65f20.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65F40",
@@ -42836,8 +43313,8 @@
   "kind": "function",
   "file": "functions/fn_00e65f40.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65F60",
@@ -42845,8 +43322,8 @@
   "kind": "function",
   "file": "functions/fn_00e65f60.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65F80",
@@ -42854,8 +43331,8 @@
   "kind": "function",
   "file": "functions/fn_00e65f80.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65FA0",
@@ -42863,8 +43340,8 @@
   "kind": "function",
   "file": "functions/fn_00e65fa0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65FC0",
@@ -42872,8 +43349,8 @@
   "kind": "function",
   "file": "functions/fn_00e65fc0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E65FE0",
@@ -42881,8 +43358,8 @@
   "kind": "function",
   "file": "functions/fn_00e65fe0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-18"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E6D710",
@@ -43628,8 +44105,8 @@
   "kind": "function",
   "file": "functions/fn_00e72930.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E729B0",
@@ -43655,8 +44132,8 @@
   "kind": "function",
   "file": "functions/fn_00e72a30.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-09"
+  "checker": "version 3",
+  "lane": "a-F01"
  },
  {
   "address": "0x00E72A70",

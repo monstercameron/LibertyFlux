@@ -3,7 +3,7 @@
 ///
 /// Reads one global flags word and passes it with two constant option words
 /// to the initializer, returning the initializer's result.
-lf_k2_rt::export!(thiscall, rs17_008949d0(this: u32) -> u32 {
-    let flags = unsafe { *lf_k2_rt::global::<u32>(0x0115DE9C) };
-    lf_k2_rt::callee_thiscall!(4, u32, this, flags, 1, 0x0F)
+lf_checker_rt::export!(thiscall, rs17_008949d0(this: u32) -> u32 {
+    let flags = unsafe { *lf_checker_rt::global::<u32>(0x0115DE9C) };
+    lf_checker_rt::callee_thiscall!(4, u32, this, flags, 1, 0x0F)
 });
