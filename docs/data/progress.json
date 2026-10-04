@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-04",
-  "updated_at": "2026-10-04 10:44",
+  "updated_at": "2026-10-04 10:49",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,12 +12,12 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 14027,
-    "rewritten": 7525,
-    "verified": 7306
+    "named": 14177,
+    "rewritten": 7545,
+    "verified": 7312
   },
   "structures": 340,
-  "symbols": 7421,
+  "symbols": 7427,
   "measured": [
     {
       "label": "Code section",
@@ -99,28 +99,28 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 14027,
+      "value": 14177,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (5023); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (5173); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 7525,
+      "value": 7545,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 7306,
+      "value": 7312,
       "unit": "functions",
       "source": "rewrites/pending/index.json in the repository"
     }
   ],
   "activity": {
-    "lanes_running": 45,
-    "lanes_finished": 721,
-    "lanes_incomplete": 67,
-    "devlog_entries": 306
+    "lanes_running": 41,
+    "lanes_finished": 723,
+    "lanes_incomplete": 69,
+    "devlog_entries": 308
   },
   "map": [
     {
@@ -614,16 +614,16 @@
       "from": "0x0052DD15",
       "to": "0x00533636",
       "count": 202,
-      "named": 197,
-      "rewritten": 0,
+      "named": 202,
+      "rewritten": 20,
       "verified": 0
     },
     {
-      "stage": "identified",
+      "stage": "named",
       "from": "0x00533637",
       "to": "0x00538F58",
       "count": 200,
-      "named": 41,
+      "named": 169,
       "rewritten": 20,
       "verified": 20
     },
@@ -2254,7 +2254,7 @@
       "count": 85,
       "named": 32,
       "rewritten": 29,
-      "verified": 22
+      "verified": 28
     },
     {
       "stage": "identified",
