@@ -1,44 +1,44 @@
 {
- "checked": 8559,
+ "checked": 9319,
  "summary": {
-  "files": 2486,
-  "issues": 4236,
+  "files": 2544,
+  "issues": 4295,
   "by_severity": {
-   "medium": 1061,
-   "low": 2029,
-   "high": 1146
+   "medium": 1111,
+   "low": 2035,
+   "high": 1149
   },
   "by_category": {
    "doc-mismatch": 56,
-   "float": 590,
-   "integration": 2970,
-   "narrow-proof": 174,
+   "float": 596,
+   "integration": 2973,
+   "narrow-proof": 212,
    "panic": 155,
    "quality": 30,
-   "rule": 58,
-   "suspicious-logic": 105,
+   "rule": 61,
+   "suspicious-logic": 114,
    "ub": 98
   },
   "by_source": {
    "build": 891,
-   "lint": 1589,
+   "lint": 1648,
    "review": 1756
   },
-  "files_with_high": 1047
+  "files_with_high": 1050
  },
  "systemic": [
   {
    "code": "plain-deref",
-   "files": 4985,
+   "files": 5232,
    "severity": "high",
    "category": "ub",
    "when": "post-bring-up",
    "title": "Plain dereferences of game memory",
-   "detail": "Aligned loads and stores through integers cast to pointers. Undefined behaviour for any address that is not aligned at run time, and debug builds check alignment and panic. Build the injected library in release with debug assertions off until these are converted, or convert them to read_unaligned/write_unaligned (1046 files already do)."
+   "detail": "Aligned loads and stores through integers cast to pointers. Undefined behaviour for any address that is not aligned at run time, and debug builds check alignment and panic. Build the injected library in release with debug assertions off until these are converted, or convert them to read_unaligned/write_unaligned (1626 files already do)."
   },
   {
    "code": "debug-overflow",
-   "files": 8559,
+   "files": 9319,
    "severity": "medium",
    "category": "panic",
    "when": "post-bring-up",
@@ -140,6 +140,534 @@
      "title": "Image-range number used without relocated()/global()",
      "detail": "Values such as 0xfdb6c4 look like original addresses; if any is used as one, it breaks once the image moves.",
      "source": "lint:image-literal",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053b500.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053b570.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053b760.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053b7c0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053b800.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053b960.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053b9d0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053bbc0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053bc20.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053bc60.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053bdc0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053be30.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053c020.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053c080.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053c0c0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053c220.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053c290.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053c470.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053c4d0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053c510.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053c590.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053c680.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053c6f0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053c8e0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053c940.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053c980.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053cae0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053cb50.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053cd40.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053cda0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053cde0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053cf40.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0053cfb0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
      "confidence": "likely",
      "status": "open"
     }
@@ -2330,6 +2858,38 @@
    ]
   },
   {
+   "file": "functions/fn_00618310.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "suspicious-logic",
+     "when": "post-bring-up",
+     "title": "Float converted to an integer with `as`",
+     "detail": "`as` saturates and maps NaN to 0, where x86 truncation yields 0x80000000; equal only if the inputs never overflow (variables: x).",
+     "source": "lint:float-to-int",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_00618820.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "suspicious-logic",
+     "when": "post-bring-up",
+     "title": "Float converted to an integer with `as`",
+     "detail": "`as` saturates and maps NaN to 0, where x86 truncation yields 0x80000000; equal only if the inputs never overflow (variables: b).",
+     "source": "lint:float-to-int",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
    "file": "functions/fn_0061e8a0.rs",
    "worst": "medium",
    "issues": [
@@ -2637,6 +3197,54 @@
      "title": "Export not named rw_<address>",
      "detail": "Export `rb112_fn1`; a canonical name per address keeps the assembled library free of collisions and makes the switch table mechanical.",
      "source": "lint:export-name",
+     "confidence": "certain",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_00655250.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "integration",
+     "when": "post-bring-up",
+     "title": "Uses a checker-only mechanism",
+     "detail": "xmm_word exist only in the checker's runtime; the assembled library needs a production equivalent.",
+     "source": "lint:checker-only",
+     "confidence": "certain",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_00655490.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "integration",
+     "when": "post-bring-up",
+     "title": "Uses a checker-only mechanism",
+     "detail": "xmm_word exist only in the checker's runtime; the assembled library needs a production equivalent.",
+     "source": "lint:checker-only",
+     "confidence": "certain",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_006556f0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "integration",
+     "when": "post-bring-up",
+     "title": "Uses a checker-only mechanism",
+     "detail": "xmm_word exist only in the checker's runtime; the assembled library needs a production equivalent.",
+     "source": "lint:checker-only",
      "confidence": "certain",
      "status": "open"
     }
@@ -5882,6 +6490,22 @@
      "detail": "Address arithmetic on node uses the plain + operator, which panics on overflow when overflow checks are on (debug or overflow-checks builds) where the original wraps; use wrapping_add to keep the original semantics in every profile.",
      "source": "review",
      "confidence": "Verified",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_006f60b0.rs",
+   "worst": "high",
+   "issues": [
+    {
+     "severity": "high",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "The file marks part of the function as not covered",
+     "detail": "Found `unreachable!`: a verified rewrite that leaves branches unimplemented or proven only in part is counted as fully verified.",
+     "source": "lint:partial",
+     "confidence": "likely",
      "status": "open"
     }
    ]
@@ -10944,7 +11568,7 @@
      "source": "build",
      "confidence": "certain",
      "title": "Does not compile from the repository",
-     "detail": "Against the shared runtime alone: error[E0425]: cannot find function `fsub` in this scope: not found in this scope",
+     "detail": "Against the shared runtime alone: error[E0425]: cannot find function `fdiv` in this scope: not found in this scope",
      "status": "open"
     },
     {
@@ -12844,6 +13468,22 @@
      "detail": "Every Row carries a trailing comment with the call-site address in the original, and the header says each call and store was extracted mechanically; this is a line-by-line transcription of the instruction stream with addresses, which is borderline under Rule 1 and should be reviewed (the addresses at least should go).",
      "source": "review",
      "confidence": "Verified",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_00905650.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "suspicious-logic",
+     "when": "post-bring-up",
+     "title": "Float converted to an integer with `as`",
+     "detail": "`as` saturates and maps NaN to 0, where x86 truncation yields 0x80000000; equal only if the inputs never overflow (variables: a).",
+     "source": "lint:float-to-int",
+     "confidence": "likely",
      "status": "open"
     }
    ]
@@ -14869,6 +15509,48 @@
      "title": "Float arithmetic without pinned order",
      "detail": "Passed bit for bit in the checker's build; rule 3 asks for core::hint::black_box so another profile or a refactor cannot reassociate it.",
      "source": "lint:float-order",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_00967e20.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "suspicious-logic",
+     "when": "post-bring-up",
+     "title": "Float converted to an integer with `as`",
+     "detail": "`as` saturates and maps NaN to 0, where x86 truncation yields 0x80000000; equal only if the inputs never overflow (variables: x).",
+     "source": "lint:float-to-int",
+     "confidence": "likely",
+     "status": "open"
+    },
+    {
+     "severity": "low",
+     "category": "float",
+     "when": "lift",
+     "title": "Float arithmetic without pinned order",
+     "detail": "Passed bit for bit in the checker's build; rule 3 asks for core::hint::black_box so another profile or a refactor cannot reassociate it.",
+     "source": "lint:float-order",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_00968660.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "suspicious-logic",
+     "when": "post-bring-up",
+     "title": "Float converted to an integer with `as`",
+     "detail": "`as` saturates and maps NaN to 0, where x86 truncation yields 0x80000000; equal only if the inputs never overflow (variables: a).",
+     "source": "lint:float-to-int",
      "confidence": "likely",
      "status": "open"
     }
@@ -18567,6 +19249,86 @@
    ]
   },
   {
+   "file": "functions/fn_00a1a870.rs",
+   "worst": "low",
+   "issues": [
+    {
+     "severity": "low",
+     "category": "float",
+     "when": "lift",
+     "title": "Float arithmetic without pinned order",
+     "detail": "Passed bit for bit in the checker's build; rule 3 asks for core::hint::black_box so another profile or a refactor cannot reassociate it.",
+     "source": "lint:float-order",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_00a1d530.rs",
+   "worst": "low",
+   "issues": [
+    {
+     "severity": "low",
+     "category": "float",
+     "when": "lift",
+     "title": "Float arithmetic without pinned order",
+     "detail": "Passed bit for bit in the checker's build; rule 3 asks for core::hint::black_box so another profile or a refactor cannot reassociate it.",
+     "source": "lint:float-order",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_00a1ec50.rs",
+   "worst": "low",
+   "issues": [
+    {
+     "severity": "low",
+     "category": "float",
+     "when": "lift",
+     "title": "Float arithmetic without pinned order",
+     "detail": "Passed bit for bit in the checker's build; rule 3 asks for core::hint::black_box so another profile or a refactor cannot reassociate it.",
+     "source": "lint:float-order",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_00a1f5c0.rs",
+   "worst": "low",
+   "issues": [
+    {
+     "severity": "low",
+     "category": "float",
+     "when": "lift",
+     "title": "Float arithmetic without pinned order",
+     "detail": "Passed bit for bit in the checker's build; rule 3 asks for core::hint::black_box so another profile or a refactor cannot reassociate it.",
+     "source": "lint:float-order",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_00a21b10.rs",
+   "worst": "low",
+   "issues": [
+    {
+     "severity": "low",
+     "category": "float",
+     "when": "lift",
+     "title": "Float arithmetic without pinned order",
+     "detail": "Passed bit for bit in the checker's build; rule 3 asks for core::hint::black_box so another profile or a refactor cannot reassociate it.",
+     "source": "lint:float-order",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
    "file": "functions/fn_00a2cbd0.rs",
    "worst": "high",
    "issues": [
@@ -21027,6 +21789,22 @@
    ]
   },
   {
+   "file": "functions/fn_00abab00.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "suspicious-logic",
+     "when": "post-bring-up",
+     "title": "Float converted to an integer with `as`",
+     "detail": "`as` saturates and maps NaN to 0, where x86 truncation yields 0x80000000; equal only if the inputs never overflow (variables: x).",
+     "source": "lint:float-to-int",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
    "file": "functions/fn_00abbb00.rs",
    "worst": "low",
    "issues": [
@@ -22063,6 +22841,22 @@
    ]
   },
   {
+   "file": "functions/fn_00adba40.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "suspicious-logic",
+     "when": "post-bring-up",
+     "title": "Float converted to an integer with `as`",
+     "detail": "`as` saturates and maps NaN to 0, where x86 truncation yields 0x80000000; equal only if the inputs never overflow (variables: s1, x).",
+     "source": "lint:float-to-int",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
    "file": "functions/fn_00adcca0.rs",
    "worst": "medium",
    "issues": [
@@ -22981,6 +23775,22 @@
      "detail": "The rewrite calls numbered callee slots but no comment names the original function (address or symbol) behind them, and index.json carries no callee map; assembly cannot wire these calls without the lane's contract. Detected by script over comments; spot-check before acting.",
      "source": "review",
      "confidence": "Inferred",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_00b020a0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "suspicious-logic",
+     "when": "post-bring-up",
+     "title": "Float converted to an integer with `as`",
+     "detail": "`as` saturates and maps NaN to 0, where x86 truncation yields 0x80000000; equal only if the inputs never overflow (variables: x).",
+     "source": "lint:float-to-int",
+     "confidence": "likely",
      "status": "open"
     }
    ]
@@ -28178,6 +28988,22 @@
    ]
   },
   {
+   "file": "functions/fn_00c5cf40.rs",
+   "worst": "high",
+   "issues": [
+    {
+     "severity": "high",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "Forwarder passes fewer arguments than its doc says",
+     "detail": "The doc says `Forward twelve argument` but the call passes 3 non-literal argument(s).",
+     "source": "lint:forwarder-drops-args",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
    "file": "functions/fn_00c62260.rs",
    "worst": "low",
    "issues": [
@@ -28643,6 +29469,22 @@
      "detail": "Export `rw_c66180`; a canonical name per address keeps the assembled library free of collisions and makes the switch table mechanical.",
      "source": "lint:export-name",
      "confidence": "certain",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_00c661c0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "rule",
+     "when": "now",
+     "title": "Decompiler-style or register-named locals",
+     "detail": "Names such as uVar/local_/param_ or eax/ecx as variables suggest a line-by-line transliteration; rule 1 wants a Rust rewrite. Review it.",
+     "source": "lint:transliteration",
+     "confidence": "likely",
      "status": "open"
     }
    ]
@@ -30994,6 +31836,22 @@
    ]
   },
   {
+   "file": "functions/fn_00ce0bb0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "rule",
+     "when": "now",
+     "title": "Decompiler-style or register-named locals",
+     "detail": "Names such as uVar/local_/param_ or eax/ecx as variables suggest a line-by-line transliteration; rule 1 wants a Rust rewrite. Review it.",
+     "source": "lint:transliteration",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
    "file": "functions/fn_00cf1b50.rs",
    "worst": "low",
    "issues": [
@@ -31883,6 +32741,38 @@
      "title": "Float arithmetic without pinned order",
      "detail": "Passed bit for bit in the checker's build; rule 3 asks for core::hint::black_box so another profile or a refactor cannot reassociate it.",
      "source": "lint:float-order",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_00d4dec0.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_00d4df10.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) this never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
      "confidence": "likely",
      "status": "open"
     }
@@ -34746,6 +35636,22 @@
    ]
   },
   {
+   "file": "functions/fn_00d95b80.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "suspicious-logic",
+     "when": "post-bring-up",
+     "title": "Float converted to an integer with `as`",
+     "detail": "`as` saturates and maps NaN to 0, where x86 truncation yields 0x80000000; equal only if the inputs never overflow (variables: v).",
+     "source": "lint:float-to-int",
+     "confidence": "likely",
+     "status": "open"
+    }
+   ]
+  },
+  {
    "file": "functions/fn_00da3fa0.rs",
    "worst": "low",
    "issues": [
@@ -35061,6 +35967,22 @@
      "detail": "Export `rw_s10f20`; a canonical name per address keeps the assembled library free of collisions and makes the switch table mechanical.",
      "source": "lint:export-name",
      "confidence": "certain",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_00da4d70.rs",
+   "worst": "high",
+   "issues": [
+    {
+     "severity": "high",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A callee's result is replaced by a constant",
+     "detail": "The doc says `return value is whatever`, but the rewrite discards the answer of callee GROW and always returns 0; the original's return value is not reproduced, so a caller that reads it would differ (and the contract must not compare it).",
+     "source": "lint:constant-for-callee-result",
+     "confidence": "likely",
      "status": "open"
     }
    ]
@@ -37595,6 +38517,22 @@
      "source": "review",
      "confidence": "Inferred",
      "family_size": 2,
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_00e46a00.rs",
+   "worst": "medium",
+   "issues": [
+    {
+     "severity": "medium",
+     "category": "rule",
+     "when": "now",
+     "title": "Decompiler-style or register-named locals",
+     "detail": "Names such as uVar/local_/param_ or eax/ecx as variables suggest a line-by-line transliteration; rule 1 wants a Rust rewrite. Review it.",
+     "source": "lint:transliteration",
+     "confidence": "likely",
      "status": "open"
     }
    ]
