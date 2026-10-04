@@ -54954,6 +54954,24 @@
   "lane": "r-b210"
  },
  {
+  "address": "0x00D839D0",
+  "name": "aim_steer_solver",
+  "kind": "function",
+  "file": "functions/fn_00d839d0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b207"
+ },
+ {
+  "address": "0x00D83D60",
+  "name": "input_device_tick",
+  "kind": "function",
+  "file": "functions/fn_00d83d60.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b207"
+ },
+ {
   "address": "0x00D85250",
   "name": "input_ui_track_advance",
   "kind": "function",
