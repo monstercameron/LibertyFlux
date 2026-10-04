@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Reader crate: lf-sco",
+    "title": "Reader crate: lf-shaderpack",
     "commit": null,
+    "summary": "Shader packs: programs, parameters, techniques and passes.",
+    "changes": [
+      "New crate crates/formats/lf-shaderpack: Shader packs: programs, parameters, techniques and passes.",
+      "About 1,000 lines of Rust with 0 unit tests and 14 integration tests; tests that need the game's files skip unless the game folder is given in an environment variable.",
+      "Third-party dependencies: none.",
+      "Written by the fmt-shaders lane from the file format alone, then audited by the integration lane for game data, key material and machine paths before publication."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Reader crate: lf-sco",
+    "commit": "8d024e99a285ccc5292e5e44a088068ed3c9d1fe",
     "summary": "Compiled scripts: container, ISA decoder, disassembler, native names.",
     "changes": [
       "New crate crates/formats/lf-sco: Compiled scripts: container, ISA decoder, disassembler, native names.",
