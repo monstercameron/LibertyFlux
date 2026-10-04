@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-rsc5">Rust reader: the RSC5 resource container</a></li>
       <li><a href="#format-rpf-img">Rust reader: RPF and IMG archives</a></li>
       <li><a href="#format-models">Rust reader: drawables and fragments (WDR, WDD, WFT)</a></li>
       <li><a href="#format-map-data">Rust reader: map definition and placement files (IDE, WPL, IPL-style text)</a></li>
@@ -110,6 +111,42 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-rsc5">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: the RSC5 resource container</h2>
+      <p><span class="evidence verified">Verified</span> The container that wraps nearly every binary game asset now has a clean Rust reader: header, size flags, decompression, the two memory segments, tagged pointers and the block-map slot. All 938 loose resource files in the game folder parse with zero failures.</p>
+      <h3>What was asked</h3>
+      <p>Write the foundation crate that asset-specific readers will build on: parse the resource header, decode the flags word into the virtual and physical segment sizes, decompress the payload, split it into segments, resolve the tagged pointers used for internal references, and read the block-map slot. Test against every loose resource file, and correct the public documentation where the files disagree with it.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> Every loose resource is one header plus a single compressed stream running exactly to end of file. The inflated size matches the size the flags word promises, to the byte, in all 938 files.</li>
+      <li><span class="evidence verified">Verified</span> Five asset types occur as loose files: web pages (most numerous), texture dictionaries, two effects package variants, and two drawable dictionaries. The ids match the values public tool sources list for those assets.</li>
+      <li><span class="evidence verified">Verified</span> Internal pointers use two tag values selecting the processor-side or data-side segment, with zero meaning null. Every pointer at a documented position in all 207 dictionaries resolves inside its segment, including every entry of every member list.</li>
+      <li><span class="evidence verified">Verified</span> The block-map slot is never populated in shipped files: dictionaries carry a reserved-but-empty slot, effects packages leave debug fill, and web-page resources are not rooted in the paged-object type at all. The engine evidently builds the map when loading.</li>
+      <li><span class="evidence verified">Verified</span> An earlier report of a truncated compressed stream in one effects package did not reproduce: the file inflates normally. The earlier failure was a short read in that probe script.</li>
+      <li><span class="evidence verified">Verified</span> No decryption is involved at this layer: loose resources are only compressed. The archive key belongs to the archive layer, which a parallel lane is handling.</li>
+      </ul>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Check</th><th role="columnheader">Result</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Loose resources found</td><td role="cell" data-label="Result">938</td></tr>
+      <tr role="row"><td role="cell">Parsed without error</td><td role="cell" data-label="Result">938</td></tr>
+      <tr role="row"><td role="cell">Unit tests (hand-built inputs)</td><td role="cell" data-label="Result">11 passed</td></tr>
+      <tr role="row"><td role="cell">Linter warnings left</td><td role="cell" data-label="Result">none</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>The crate rejects anything that does not inflate to exactly the promised size, caps inflated output well above the largest real file, and returns errors instead of panicking, so hostile input cannot crash or exhaust memory.</li>
+      <li>The block-map reader reports three honest states (absent, reserved-but-empty, populated) and exposes the raw words of any populated map it ever meets, since no shipped file has one to learn the entry layout from.</li>
+      <li>Next: run archived model, fragment, collision and navigation resources through the same reader once the archive lane delivers their bytes, and look there for a populated block map.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build the crate and run its test suite; the integration test walks the game folder when the game directory environment variable is set and is skipped otherwise. A worked example prints a one-file summary (kind, sizes, block-map state, pointer counts) for manual inspection. The per-file census of all 938 resources is stored alongside the lane report as tool-readable data.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two things cost time. First, the test compressor initially wrote a different stream header variant than the game uses, so every new unit test failed until the tests were pinned to the same variant. Second, a naive scan of every four-byte value for pointer-like tags drowns in false hits from floating-point numbers, hashes and texture bytes; only pointers at documented field positions mean anything, and the dictionary walk that checks those positions is the real validation.</p>
+      </article>
 
       <article class="entry" id="format-rpf-img">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
