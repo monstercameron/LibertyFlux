@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#tools-reverse-tools">Tools: reverse engineering helpers</a></li>
       <li><a href="#p0-injection">How our code can get into the game</a></li>
       <li><a href="#function-count-estimate">Counting the game functions without Ghidra</a></li>
       <li><a href="#subsystem-physics">Subsystem survey: physics and collision</a></li>
@@ -98,6 +99,93 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="tools-reverse-tools">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Tools: reverse engineering helpers</h2>
+      <p>Most of the helper tooling works on this machine, but two things failed plainly: neither demangler handles bare type names without a wrapping trick, and the bundled emulator crashes on every run. The project now has tested commands for diffing, listing, disassembling, parsing and demangling, and a clear note on what to avoid.</p>
+      <h3>What was asked</h3>
+      <p>Find, install and test the tools that complement the main disassembler for this project: an object differ, a relocatable-object exporter, shipped library-identification and similarity data, LLVM-style listing tools, two portable analysis suites, seven Rust crates for disassembly, parsing, hooking, emulation and demangling, plus the demangler in the installed build tools. Every tool had to be run on this machine, not assumed to work, and the demangling command had to be proven on twenty class names from the executable.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The object differ runs natively and diffs 32-bit objects correctly, flagging a single changed constant with a near-total match score, but it refuses 64-bit ARM objects. The relocatable-object exporter ships an exact build for the installed disassembler version, confirmed from its manifest but not yet activated.</p>
+      <p><span class="evidence verified">Verified</span> The disassembler ships ready-made library fingerprints for five compiler generations in both 32- and 64-bit flavours, including the one matching the executable's linker generation, plus similarity-search scripts and weights. No queryable database exists yet; one must be built after analysis finishes.</p>
+      <p><span class="evidence verified">Verified</span> The installed build tools contain native listing and demangling programs but no LLVM listing tools. An official portable LLVM build for this processor exists (a large download) and was deliberately skipped.</p>
+      <p><span class="evidence verified">Verified</span> One portable analysis suite runs natively and reads the executable fully (machine type, section count, debug path, build date); the other runs emulated and agrees, additionally naming the linker generation. All Rust parsing and disassembly crates built and agreed with each other on headers, sections, imports and entry code.</p>
+      <p><span class="evidence verified">Verified</span> Both hooking crates refuse to build for the native processor and both build and run their tests for the 32-bit target the game uses, including an enable-and-disable hook round trip. The emulator package imports and maps memory but crashes hard on every emulation start in both 32- and 64-bit modes, so it is unusable here; its Rust twin shares the same engine core and licence and was not built.</p>
+      <p><span class="evidence verified">Verified</span> A scan found 1688 type names in the executable (1579 classes, 109 structs). Neither demangler reads a bare type name directly: one echoes it back or emits garbage, the other errors or keeps a prefix. Wrapping each name in the type-descriptor form before demangling fixed both engines, scoring twenty out of twenty on each, with matching results.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Use the object differ for object-level comparisons, the build tools lister for headers and imports, and the native portable suite for second opinions.</li>
+      <li>Use the tested Rust crates for disassembly and executable parsing, and the tested demangling wrapper recipe in both Rust code and one-off commands.</li>
+      <li>Use the safe Rust hooking library for 32-bit targets with the C-based one as fallback, both fenced off from native builds.</li>
+      <li>Tag library code with the shipped fingerprints matching the executable's linker generation, and run similarity search against a local database once analysis lands.</li>
+      <li>Do not install the portable LLVM bundle, do not use the emulator on this host, and do not link copyleft-licensed emulation code into the project.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <ol>
+      <li>Run the differ with two 32-bit objects, one symbol and dash for stdout; expect a structured diff naming the changed instruction.</li>
+      <li>List the executable with the build tools lister and either portable suite; all three should report the same machine type, section count and import count.</li>
+      <li>Build the small Rust test programs from pinned crate versions and run them against the executable; parsing results should match the listers exactly.</li>
+      <li>Demangle twenty type names by stripping the leading dot, wrapping each name in the type-descriptor form, and running either demangler; expect a plain class line from each after removing the descriptor suffix.</li>
+      <li>Build the hook tests for the 32-bit target and run them; expect the detour to reroute and then restore the call. Confirm the native build of the same tests fails.</li>
+      <li>Start any emulation call in the bundled emulator package; expect the process to die without an error message.</li>
+      </ol>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> Downloads silently landed outside the repository because a child shell did not inherit the working directory; the files were moved back and re-verified by hash. Future work should use absolute paths everywhere.</p>
+      <p><span class="evidence verified">Verified</span> The first disassembly test decoded from the wrong offset and produced nonsense; decoding from the real entry point produced a clean result. The first demangling tests also failed until the wrapping trick was found by trying the descriptor form directly.</p>
+      <p><span class="evidence verified">Verified</span> The emulator failure was silent: no exception and no output, only a dead process. Unbuffered step-by-step runs isolated the crash to the emulation start call itself.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Job</th>
+      <th role="columnheader">Choice</th>
+      <th role="columnheader">State</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">Object diffing</td>
+      <td role="cell" data-label="Choice">Object differ, current release</td>
+      <td role="cell" data-label="State">Installed and tested</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Listing and headers</td>
+      <td role="cell" data-label="Choice">Build tools lister</td>
+      <td role="cell" data-label="State">Tested, pre-installed</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Second opinion</td>
+      <td role="cell" data-label="Choice">Native portable suite</td>
+      <td role="cell" data-label="State">Installed and tested</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Disassembly engine</td>
+      <td role="cell" data-label="Choice">Rust disassembler crate</td>
+      <td role="cell" data-label="State">Built and tested</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Executable parsing</td>
+      <td role="cell" data-label="Choice">Two Rust parser crates</td>
+      <td role="cell" data-label="State">Built and tested</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Demangling</td>
+      <td role="cell" data-label="Choice">Rust crate plus build tools program</td>
+      <td role="cell" data-label="State">Twenty of twenty each</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Hooking</td>
+      <td role="cell" data-label="Choice">Safe Rust library, C fallback</td>
+      <td role="cell" data-label="State">32-bit only, tested</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Emulation</td>
+      <td role="cell" data-label="Choice">None</td>
+      <td role="cell" data-label="State">Bundled engine proven broken</td>
+      </tr>
+      </tbody>
+      </table>
+      </article>
 
       <article class="entry" id="p0-injection">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
