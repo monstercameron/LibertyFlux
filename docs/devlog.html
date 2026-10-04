@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b05">Two large animation functions verified, one checker fix, one game quirk</a></li>
       <li><a href="#production-s64">A partition routine that swaps stale stack contents into its output</a></li>
       <li><a href="#production-s49">One node reader copies an uninitialized stack slot on its fail path</a></li>
       <li><a href="#production-b03">Production batch b03: two verified, an eight-argument ceiling, and the first xmm1-argument callee</a></li>
@@ -233,6 +234,28 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b05">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Two large animation functions verified, one checker fix, one game quirk</h2>
+      <p>Two neighbouring animation functions of about fourteen hundred and sixteen hundred bytes were each rewritten in Rust and verified bit-exact over one thousand trials, with every outgoing call intercepted and every branch covered. The work surfaced one checker gap that blocks wide calls, one contract-authoring trap, and one repeated game quirk.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite the two functions in Rust and prove each rewrite behaves identically to the original using checker version two, which was built for exactly this size of function.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Both functions share one shape: a bound-volume pass over thirty-two body slots, a walk over a global entry table, and processing of exactly the first in-range slot per entry, confirmed by the passing trials and call logs.</p>
+      <p><span class="evidence verified">Verified</span> Both originals read two words of their own uninitialized stack and store them into heap effect records. Nothing on any path writes those slots, which was established by mapping every stack slot against every call argument. The rewrites produce zero under the checker's defined fill; in the real game the words are indeterminate.</p>
+      <p><span class="evidence verified">Verified</span> The checker's call stub cleans up at most eight argument words, so a callee taking eleven arguments leaves the original's stack pointer short and fails verification unconditionally. A one-line fix in a lane-local worker copy (pop the full declared list) unblocked the second function and re-ran the first cleanly.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Fold the one-line cleanup fix back into the shared worker; the three argument words beyond the logging cap on the wide call are compile-time constants.</li>
+      <li>Never combine explicit segment words with per-trial pins in one contract: the pins are silently dropped. Use a zero fill plus pins instead, until the driver warns.</li>
+      <li>Sibling functions in this subsystem are expected to share the bound-volume shape, the single-shot scan, and the uninitialized effect words, so the same contract template should transfer.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run the two staged contracts for one thousand trials each against the lane's rewrite library and worker build, then confirm every callee identifier fired in the verdict coverage and that the radius-gate mutants fail on heap writes. Rebuilding the staged rewrite sources into a second library and re-running a shorter pass should also succeed unchanged.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first run passed half its trials as identical faults on both sides, which looked healthy but was vacuous: the planted intercept address had been silently dropped by the words-plus-pins trap above. A velocity constant was first misread from the sibling function, and one constructor call turned out to fire in more cases than its setup suggested; the checker's heap and call diffs pointed at both within one glance each.</p>
+      </article>
 
       <article class="entry" id="production-s64">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
