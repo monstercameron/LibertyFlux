@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-particles">Rust reader: particle and visual effect definitions</a></li>
       <li><a href="#pilot-04">Pilot lane 04: five functions rewritten and timed</a></li>
       <li><a href="#pilot-02">Pilot lane 02: five functions rewritten and timed</a></li>
       <li><a href="#natives-02">Native handlers ATTACH_PED_TO_CAR to CLEAR_ROOM_FOR_OBJECT: what they reveal</a></li>
@@ -166,6 +167,37 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-particles">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: particle and visual effect definitions</h2>
+      <p>The game keeps all of its particle and visual effect definitions in five binary packages plus text rule tables and small emitter files, and a new Rust crate now reads all of them: every package parses, most entries resolve to plain names, and no open-source reader existed to compare against, so the binary layout was worked out first-hand from the files.</p>
+      <h3>What was asked</h3>
+      <p>Write a clean Rust reader for the particle effect resources and effect rule files: emitters, effect rules, particle rules, keyframed properties, and referenced textures and models, reporting the structure as far as it can be established with counts of effects and emitters.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The effect data is five binary packages (three for the base game, one per episode), ten text rule files, and eight small emitter and renderer files. Nothing particle-related lives inside any of the 303 game archives.</p>
+      <p><span class="evidence verified">Verified</span> Each binary package holds five banks, and each bank is a dictionary of name hashes pointing at records. Across the five packages there are 3,572 bank entries, and 2,765 of them resolve to plain readable names stored in the same file.</p>
+      <p><span class="evidence verified">Verified</span> One bank in every package is the emitter bank: its two record classes split in exactly the count of the two particle type tags found in the same file, giving 998 sprite emitters and 151 model emitters in total.</p>
+      <p><span class="evidence verified">Verified</span> The text rule files share one simple shape (a version line, comment headers, and named tables of fixed-width rows): 23 tables and 929 rows across the ten files, all parsed by one generic reader. The emitter files name their engine types and properties as readable strings.</p>
+      <p><span class="evidence">Inferred</span> Bank keys are the Jenkins one-at-a-time hash of the entry name, the same function the archive format uses for entry names.</p>
+      <p><span class="evidence">Unknown</span> The inside of each record (emitter parameters, keyframed properties, texture and model references) is not decoded yet, and four of the five bank roles are still guesses. About eight hundred entry hashes match no name in their own file.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Package</th><th role="columnheader">Bank entries</th><th role="columnheader">Entries with names</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">core effects</td><td role="cell" data-label="Bank entries">1809</td><td role="cell" data-label="Entries with names">1549</td></tr>
+      <tr role="row"><td role="cell">entity effects</td><td role="cell" data-label="Bank entries">582</td><td role="cell" data-label="Entries with names">554</td></tr>
+      <tr role="row"><td role="cell">script effects</td><td role="cell" data-label="Bank entries">121</td><td role="cell" data-label="Entries with names">117</td></tr>
+      <tr role="row"><td role="cell">first episode</td><td role="cell" data-label="Bank entries">270</td><td role="cell" data-label="Entries with names">96</td></tr>
+      <tr role="row"><td role="cell">second episode</td><td role="cell" data-label="Bank entries">790</td><td role="cell" data-label="Entries with names">449</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>The crate exposes banks, entries, resolved names, and raw record bytes with strict validation of everything decoded so far, leaving record interiors to a later lane rather than guessing at field boundaries. The next lane should decode the record layouts starting from the emitter bank and the bank whose records carry texture tags, and chase the unmatched hashes against script and gameplay names.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the crate and run its tests with the game folder pointed at by the usual environment variable: unit tests use hand-built fixtures, and the integration tests parse all five packages, all ten rule files, all eight emitter files, and scan every archive for particle entries. Two example programs print a one-file summary and a JSON census of counts and shapes.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The particle type tags at first looked like they sat inside the emitter records, because their counts matched the emitter classes exactly; a wider search showed the tags live elsewhere in the file, so the match means a one-to-one reference, not inline storage. The public wiki page for the package format and a forum thread about particle modding both failed to load, and the open-source archive tools name only the package type ids with no reader, so there was no prior layout to check against. A first census script printed absolute install paths into its output and was fixed to emit paths relative to the game folder.</p>
+      </article>
 
       <article class="entry" id="pilot-04">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
