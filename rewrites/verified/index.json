@@ -25074,6 +25074,15 @@
   "lane": "r-s291"
  },
  {
+  "address": "0x0096A8E0",
+  "name": "audio_source_dir_quantize",
+  "kind": "function",
+  "file": "functions/fn_0096a8e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b279"
+ },
+ {
   "address": "0x009748C0",
   "name": "aud_occlusion_attenuation",
   "kind": "function",
@@ -34119,6 +34128,15 @@
   "lane": "r-s127"
  },
  {
+  "address": "0x00AB95E0",
+  "name": "input_ui_slot_table_build",
+  "kind": "function",
+  "file": "functions/fn_00ab95e0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b257"
+ },
+ {
   "address": "0x00AB9730",
   "name": "validated_byte_lookup",
   "kind": "function",
@@ -34281,6 +34299,24 @@
   "lane": "r-s153"
  },
  {
+  "address": "0x00ABA1D0",
+  "name": "GB_CAP_USE",
+  "kind": "function",
+  "file": "functions/fn_00aba1d0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b257"
+ },
+ {
+  "address": "0x00ABA800",
+  "name": "input_ui_slot_assign",
+  "kind": "function",
+  "file": "functions/fn_00aba800.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b257"
+ },
+ {
   "address": "0x00ABA9B0",
   "name": "resolve_and_emit",
   "kind": "function",
@@ -34288,6 +34324,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s153"
+ },
+ {
+  "address": "0x00ABAB00",
+  "name": "input_ui_weighted_pick",
+  "kind": "function",
+  "file": "functions/fn_00abab00.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b257"
+ },
+ {
+  "address": "0x00ABAF50",
+  "name": "input_ui_bounds_accumulate",
+  "kind": "function",
+  "file": "functions/fn_00abaf50.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b257"
  },
  {
   "address": "0x00ABB9D0",
@@ -35469,6 +35523,15 @@
   "lane": "r-b166"
  },
  {
+  "address": "0x00AE7FD0",
+  "name": "filter_timing_range",
+  "kind": "function",
+  "file": "functions/fn_00ae7fd0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b273"
+ },
+ {
   "address": "0x00AE8510",
   "name": "sweep_timing_entries",
   "kind": "function",
@@ -35865,6 +35928,24 @@
   "lane": "r-s139"
  },
  {
+  "address": "0x00B020A0",
+  "name": "append_scaled_sample",
+  "kind": "function",
+  "file": "functions/fn_00b020a0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b260"
+ },
+ {
+  "address": "0x00B022E0",
+  "name": "allocate_indexed_handles",
+  "kind": "function",
+  "file": "functions/fn_00b022e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b260"
+ },
+ {
   "address": "0x00B02CD0",
   "name": "reset_state_words",
   "kind": "function",
@@ -35881,6 +35962,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s139"
+ },
+ {
+  "address": "0x00B02D30",
+  "name": "box_planes_visibility_test",
+  "kind": "function",
+  "file": "functions/fn_00b02d30.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b260"
  },
  {
   "address": "0x00B05100",
@@ -60228,6 +60318,15 @@
   "lane": "r-s185"
  },
  {
+  "address": "0x00C659D0",
+  "name": "CCutsceneObject::vf26",
+  "kind": "function",
+  "file": "functions/fn_00c659d0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b274"
+ },
+ {
   "address": "0x00C65EA0",
   "name": "cutscene_copy_row_and_accumulate_chain",
   "kind": "function",
@@ -61864,6 +61963,186 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b89"
+ },
+ {
+  "address": "0x00CF41B0",
+  "name": "CTaskSimpleClimb::dtor",
+  "kind": "function",
+  "file": "functions/fn_00cf41b0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF41E0",
+  "name": "CTaskSimpleClimb::vf0",
+  "kind": "function",
+  "file": "functions/fn_00cf41e0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF4340",
+  "name": "CTaskSimpleClimb::vf1",
+  "kind": "function",
+  "file": "functions/fn_00cf4340.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF43C0",
+  "name": "climb_param_pair_lookup",
+  "kind": "function",
+  "file": "functions/fn_00cf43c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF4B10",
+  "name": "climb_task_range_check",
+  "kind": "function",
+  "file": "functions/fn_00cf4b10.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF4B20",
+  "name": "climb_task_parity_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00cf4b20.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF4B50",
+  "name": "climb_task_aim_setup",
+  "kind": "function",
+  "file": "functions/fn_00cf4b50.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF6ED0",
+  "name": "climb_subtask_init_1000",
+  "kind": "function",
+  "file": "functions/fn_00cf6ed0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF6EF0",
+  "name": "climb_task_slot_reassign",
+  "kind": "function",
+  "file": "functions/fn_00cf6ef0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF75D0",
+  "name": "climb_task_simple_ctor",
+  "kind": "function",
+  "file": "functions/fn_00cf75d0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF77A0",
+  "name": "CTaskSimpleClimbLadder::ctor_body",
+  "kind": "function",
+  "file": "functions/fn_00cf77a0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF77C0",
+  "name": "CTaskComplexClimbLadder::vf0",
+  "kind": "function",
+  "file": "functions/fn_00cf77c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF77F0",
+  "name": "CTaskComplexClimbLadderFully::vf0",
+  "kind": "function",
+  "file": "functions/fn_00cf77f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF7820",
+  "name": "CTaskSimpleClimbLadder::vf0",
+  "kind": "function",
+  "file": "functions/fn_00cf7820.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF7F30",
+  "name": "climb_task_ready_check",
+  "kind": "function",
+  "file": "functions/fn_00cf7f30.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF7FA0",
+  "name": "CTaskComplexClimbLadder::vf1",
+  "kind": "function",
+  "file": "functions/fn_00cf7fa0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF7FD0",
+  "name": "CTaskComplexClimbLadderFully::vf1",
+  "kind": "function",
+  "file": "functions/fn_00cf7fd0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF8000",
+  "name": "CTaskSimpleClimbLadder::vf1",
+  "kind": "function",
+  "file": "functions/fn_00cf8000.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF96B0",
+  "name": "climb_blend_factor_clamp",
+  "kind": "function",
+  "file": "functions/fn_00cf96b0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF9A10",
+  "name": "climb_list_grow_append_slot",
+  "kind": "function",
+  "file": "functions/fn_00cf9a10.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s335"
  },
  {
   "address": "0x00CFCB20",
