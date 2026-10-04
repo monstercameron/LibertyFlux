@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#structures-core">Class layouts: core engine classes: files, resources, parsing, containers, system, script</a></li>
       <li><a href="#structures-animation">Class layouts: animation, motion tree and Euphoria</a></li>
       <li><a href="#natives-20">Native handlers SET_VIEWPORT_PRIORITY to SYNCH_RECORDING_WITH_WATER: what they reveal</a></li>
       <li><a href="#natives-18">Native handlers SET_MULTIPLAYER_HUD_TIME to SET_RADAR_AS_INTERIOR_THIS_FRAME: what they reveal</a></li>
@@ -132,6 +133,38 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="structures-core">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Class layouts: core engine classes: files, resources, parsing, containers, system, script</h2>
+      <p>Most of the core engine's virtual functions live in the encrypted first megabyte of the code section and cannot be recovered statically: only about one slot in six was readable, and half the classes yielded no layout evidence at all. The script threads, paged-resource dictionaries, tokenizers, time manager and container templates did yield real layouts, including a uniform dictionary shape shared by eight classes and an empty tokenizer subclass.</p>
+      <h3>What was asked</h3>
+      <p>Recover the object layouts and virtual interfaces of 114 core engine classes covering files, resources, parsing, containers, system and script code: per-slot override analysis, constructors and destructors, object sizes, field lists with confidence, and relationships, working only on the unencrypted code with capstone.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Of 1,308 vtable slots across 103 tables, 224 were readable and 1,084 point into the encrypted region. Relocation-backed cross references found 294 vtable uses in plain code, which validated down to 20 constructors, 32 destructors and 14 scalar deleting destructors across 35 classes, plus 231 fields (67 high, 34 medium, 130 low confidence).</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Family</th><th role="columnheader">Classes</th><th role="columnheader">Readable slots</th><th role="columnheader">Outcome</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Paged resources</td><td role="cell" data-label="Classes">13</td><td role="cell" data-label="Readable slots">about three in five</td><td role="cell" data-label="Outcome">dictionary layout recovered, uniform across eight classes</td></tr>
+      <tr role="row"><td role="cell">Script</td><td role="cell" data-label="Classes">10</td><td role="cell" data-label="Readable slots">about one in four</td><td role="cell" data-label="Outcome">script thread and game thread fully readable</td></tr>
+      <tr role="row"><td role="cell">Containers</td><td role="cell" data-label="Classes">22</td><td role="cell" data-label="Readable slots">nearly all</td><td role="cell" data-label="Outcome">holder templates sized by payload type</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Classes">Files</td><td role="cell" data-label="Classes">12</td><td role="cell" data-label="Readable slots">about one in four</td><td role="cell" data-label="Outcome">tokenizers readable, all file devices opaque</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Classes">Parsing</td><td role="cell" data-label="Classes">20</td><td role="cell" data-label="Readable slots">one slot total</td><td role="cell" data-label="Outcome">effectively fully opaque</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Classes">Shader material params</td><td role="cell" data-label="Classes">16</td><td role="cell" data-label="Readable slots">none</td><td role="cell" data-label="Outcome">fully opaque</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Classes">System allocators</td><td role="cell" data-label="Classes">11</td><td role="cell" data-label="Readable slots">few</td><td role="cell" data-label="Outcome">time manager readable, allocators opaque</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Slot zero is the destructor on every readable interface, and destructors appear in three shapes: a plain body that resets the virtual table and tail-calls the base destructor, a scalar deleting destructor guarded by a flag argument that frees the object, and base destructors inlined into derived ones by link-time code generation.</p>
+      <p><span class="evidence verified">Verified</span> The concrete tokenizer subclass overrides nothing: all 41 of its virtual slots are inherited unchanged, so it shares its parent's layout exactly. The eight paged-dictionary classes share one 32-byte layout shape with a count and an entries pointer. The script thread's destructor initializes a long field list, and the game thread extends it with flags and two more words.</p>
+      <p><span class="evidence">Inferred</span> The root base class holds a small handful of fields plus an embedded subobject about ninety-six bytes in, which is surprising for a root class and needs review. The paged-resource base has a single word after its table pointer, matching the one public stub member recorded for it.</p>
+      <p><span class="evidence">Unknown</span> Object sizes could only be bounded from below by the highest observed field; allocation sites were unusable because the allocator helpers sit in the encrypted region and objects appear pool-allocated. Member construction edges and creator relationships were not recovered.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Rewrite in this order: the standard exception types and holder templates first (fully readable), then the root base, the paged base and dictionaries, then the script threads and the time manager, then the tokenizers and loader, and the opaque families (file devices, parsing, memory allocators, shader params) last as one blocked group needing a decrypted binary or dynamic analysis. Layouts recovered here ship with per-field confidence and must be rechecked once the encrypted region is readable.</p>
+      <h3>How to reproduce it</h3>
+      <p>Find every virtual table address stored into an object by scanning the relocation table for code locations whose value equals a known table address, map each site to its function with the function inventory, and disassemble with capstone while tracking which registers hold the object pointer. Attribute a function to a class only if its first table store (destructor) or last table store (constructor) is that class's table and every other store at offset zero names a strict base class; anything else is inlining or a factory. Classify readable slot bodies by shape: table store means destructor, single load means getter, calls only means forwarder.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two silent bugs wasted the first runs: wrong capstone operand-type constants dropped every memory access, and adding the relocation block base twice (the library already returns full addresses) hid all but two of the table references. The disassembler also ran past function ends into neighbours until it learned to stop at padding and known entries. The stranger findings are that the root base class seems to embed a subobject of its own kind, that dozens of functions mention one template's table without ever storing it, and that the whole file-device and parsing trees are dark while their close cousins are readable.</p>
+      </article>
 
       <article class="entry" id="structures-animation">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
