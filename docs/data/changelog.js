@@ -1,8 +1,22 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Add the repository layout",
+    "title": "Add the agent rules",
     "commit": null,
+    "summary": "AGENTS.md: what every agent and contributor must follow.",
+    "changes": [
+      "Rule 1: no decompiled code in any tracked file. Only structures, symbols and Rust rewrites derived from the game may be committed.",
+      "Rule 2: publishing is the owner's decision; agents never push or post.",
+      "Rule 3: a machine check decides when a function is done, and fake passes are banned.",
+      "Rule 4: the coordinator keeps the progress file true, from machine sources only.",
+      "Rule 5: anything private goes in the untracked notes file and nowhere else.",
+      "Commit history is one change per commit, each with a changelog entry; lessons go in the devlog."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Add the repository layout",
+    "commit": "ebf5d33ed400908a24b350d760d4928169e2b960",
     "summary": "Where things live, and what git never sees.",
     "changes": [
       "Everything generated (build output, caches, logs, agent scratch work, decompiler output) goes under .artifacts, which git ignores.",
