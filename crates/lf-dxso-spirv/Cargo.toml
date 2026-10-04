@@ -4,6 +4,8 @@ version = "0.1.0"
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
+# Never published to crates.io; path dependencies between the project's crates rely on it.
+publish = false
 description = "Dependency-free translator from Direct3D 9 shader model 3.0 bytecode to SPIR-V for Vulkan"
 
 [lib]
