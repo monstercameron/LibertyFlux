@@ -119,6 +119,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 
 [[package]]
+name = "lf-anim"
+version = "0.1.0"
+dependencies = [
+ "flate2",
+ "lf-archive",
+ "lf-resource",
+]
+
+[[package]]
 name = "lf-animation"
 version = "0.1.0"
 dependencies = [
@@ -139,6 +148,13 @@ name = "lf-audio"
 version = "0.1.0"
 dependencies = [
  "lf-core",
+]
+
+[[package]]
+name = "lf-audio-bank"
+version = "0.1.0"
+dependencies = [
+ "lf-archive",
 ]
 
 [[package]]
@@ -172,6 +188,33 @@ dependencies = [
 [[package]]
 name = "lf-core"
 version = "0.1.0"
+
+[[package]]
+name = "lf-cutscene"
+version = "0.1.0"
+dependencies = [
+ "lf-archive",
+ "lf-resource",
+]
+
+[[package]]
+name = "lf-effects"
+version = "0.1.0"
+dependencies = [
+ "flate2",
+ "lf-archive",
+ "lf-resource",
+]
+
+[[package]]
+name = "lf-entity-meta"
+version = "0.1.0"
+dependencies = [
+ "lf-archive",
+ "lf-gamedata",
+ "lf-model",
+ "lf-resource",
+]
 
 [[package]]
 name = "lf-files-memory"

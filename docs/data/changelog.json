@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Reader crate: lf-effects",
+    "title": "Reader crate: lf-entity-meta",
     "commit": null,
+    "summary": "Vehicle, ped and weapon data inside model resources: layouts, rigs, mounts.",
+    "changes": [
+      "New crate crates/formats/lf-entity-meta: Vehicle, ped and weapon data inside model resources: layouts, rigs, mounts.",
+      "About 1,279 lines of Rust with 14 unit tests and 5 integration tests; tests that need the game's files skip unless the game folder is given in an environment variable.",
+      "Written by the fmt-vehicle-ped-meta lane, then brought to the workspace's standard by a second lane. That lane was stopped by a time limit during its final test pass: build and lint were clean on the host, and the coordinator re-ran build, lint and tests before committing."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Reader crate: lf-effects",
+    "commit": "5f36cb9bb5e8d6d67407dec08bb3a7c1af51423c",
     "summary": "Particle and effect definitions: wpfl packages, Fx tables, emitter XML.",
     "changes": [
       "New crate crates/formats/lf-effects: Particle and effect definitions: wpfl packages, Fx tables, emitter XML.",

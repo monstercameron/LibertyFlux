@@ -1,0 +1,18 @@
+[package]
+name = "lf-entity-meta"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Vehicle, ped and weapon extra data inside GTA IV model resources"
+
+[lints]
+workspace = true
+
+[dependencies]
+lf-model = { path = "../lf-model" }
+
+[dev-dependencies]
+lf-archive = { path = "../lf-archive" }
+lf-resource = { path = "../lf-resource" }
+lf-gamedata = { path = "../lf-gamedata" }
