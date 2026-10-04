@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#game-folder-inventory">What the game folder contains</a></li>
       <li><a href="#public-names">Public engine class names collected and checked against our build</a></li>
       <li><a href="#encrypted-prefix">Correction: the first megabyte of the code is encrypted</a></li>
       <li><a href="#ghidra-dot-path">Ghidra refuses project folders that start with a dot</a></li>
@@ -65,6 +66,41 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="game-folder-inventory">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>What the game folder contains</h2>
+      <p>The full install holds about five thousand seven hundred files and just under twenty four gigabytes, and almost all of the bulk sits in two archive formats: RAGE package files for audio and encrypted disc-image archives for everything else. The loose tree around them is mostly plain-text tuning data, compiled shaders in six graphics-vendor variants, and a surprisingly talkative set of developer leftovers.</p>
+      <h3>What was asked</h3>
+      <p>Inventory the installed game folder so the project knows every kind of file the engine loads: the directory layout, what each file type is, the header and version of each binary format from public documentation, what each shipped program does, and what the installer runs on first launch. Headers, counts and sizes only; no archive contents were to be extracted.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The install is a base game plus two episodes that each mirror the base layout. Two archive formats hold about eighty five percent of all bytes. Loose-file highlights are summarised below; counts come from a full read-only walk.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Group</th><th role="columnheader">Count</th><th role="columnheader">Size</th><th role="columnheader">Notes</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Audio and model archives</td><td role="cell" data-label="Count">49</td><td role="cell" data-label="Size">about 10 GB</td><td role="cell" data-label="Notes">package format version 3, radio banks and player models</td></tr>
+      <tr role="row"><td role="cell">Disc-image archives</td><td role="cell" data-label="Count">254</td><td role="cell" data-label="Size">about 10 GB</td><td role="cell" data-label="Notes">version 3, encrypted; scripts, maps, animation</td></tr>
+      <tr role="row"><td role="cell">Video clips</td><td role="cell" data-label="Count">9</td><td role="cell" data-label="Size">about 2.8 GB</td><td role="cell" data-label="Notes">in-game TV channels and menu loops</td></tr>
+      <tr role="row"><td role="cell">Texture and web resources</td><td role="cell" data-label="Count">about 930</td><td role="cell" data-label="Size">about 190 MB</td><td role="cell" data-label="Notes">compressed resource container, incl. in-game web pages</td></tr>
+      <tr role="row"><td role="cell">Shaders</td><td role="cell" data-label="Count">848</td><td role="cell" data-label="Size">about 24 MB</td><td role="cell" data-label="Notes">compiled sets for six graphics-vendor variants</td></tr>
+      <tr role="row"><td role="cell">Text tuning data</td><td role="cell" data-label="Count">about 1900</td><td role="cell" data-label="Size">about 40 MB</td><td role="cell" data-label="Notes">map, vehicle, ped, AI, interface and language data</td></tr>
+      <tr role="row"><td role="cell">Programs and libraries</td><td role="cell" data-label="Count">9</td><td role="cell" data-label="Size">about 265 MB</td><td role="cell" data-label="Notes">32-bit game, 64-bit launcher, tools, two big installers</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Loose resources share one compressed container with a short magic word and a per-kind type id; web pages, textures, effect libraries and drawable dictionaries differ only in that id. Audio settings files carry their version number both in the file extension and in the first word of the file. The game program itself is 32-bit, links the graphics, sound, input, network and video libraries directly, and statically links its C runtime.</p>
+      <p><span class="evidence verified">Verified</span> Steam first-run installs two things: the Social Club setup and the Rockstar Games Launcher, the latter on 64-bit Windows only. A third bundled installer, a Visual C++ redistributable, is present but referenced by neither install script, so it no longer runs.</p>
+      <p><span class="evidence">Inferred</span> The shipped tree still contains developer material: spreadsheet sources of tuning tables, a test script, test-rig names, 3D-editor source paths in map files, and a console development-kit path in an audio settings file. None of it is needed by the game.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Format lanes can start on the loose text formats and the resource container now; the format table in the lane data file lists magics, versions and public references for every extension.</li>
+      <li>Script and model inventories need a lane that can read the encrypted disc-image archives without extracting game content into the repo; the loose tree gives no script coverage at all.</li>
+      <li>Two binaries need a follow-up lane: one support library exports only two single-letter names with no stated purpose, and the game program carries no visible reference to the multiplayer-platform library shipped beside it.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Walk the install folder read-only, group by extension, and sample the first bytes of a few files per type; compare magics against the public format pages on the community modding wiki and the video codec vendor page. Analyse the nine shipped programs with a portable-executable reader for architecture, imports and exports, and read the two Steam install scripts as text. The lane data file records every count, magic word and import list.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> One archive breaks the encryption pattern: all disc images but one look random, while the navigation-script image starts with a readable structured header. Also surprising: none of the nine shipped programs contains version information, so link dates are the only build dating, and the game program neither imports nor names two of the libraries shipped next to it. A first attempt at dumping version strings failed on the reader library's nested list layout and was fixed by probing for the string table defensively. Nothing was left half done except the five open questions listed in the lane report.</p>
+      </article>
 
       <article class="entry" id="public-names">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

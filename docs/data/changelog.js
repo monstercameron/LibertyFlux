@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Public engine class names collected and checked against our build",
+    "title": "Devlog: What the game folder contains",
     "commit": null,
+    "summary": "Findings from the p0-game-folder lane.",
+    "changes": [
+      "New devlog entry: What the game folder contains.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Public engine class names collected and checked against our build",
+    "commit": "7bc60323180779d178ecfbc8e7ca383c82232658",
     "summary": "Findings from the p0-360-names lane.",
     "changes": [
       "New devlog entry: Public engine class names collected and checked against our build.",
