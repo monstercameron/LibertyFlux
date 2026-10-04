@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b18">An audio gain routine that checks the wrong input, proven by mutant</a></li>
       <li><a href="#production-b09">Rewriting audio code: security cookies and a silent coverage trap</a></li>
       <li><a href="#tools-into-repo">Preparing the checker, loader and queue for the repository</a></li>
       <li><a href="#workspace-readers-2">Five more readers brought up to the workspace standard</a></li>
@@ -240,6 +241,23 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b18">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>An audio gain routine that checks the wrong input, proven by mutant</h2>
+      <p>A small audio routine that folds three filtered values into one of three gains was verified against its Rust rewrite over one thousand trials, and the verification caught a deliberately corrected copy within sixty-six trials, which shows the original really does compare its third check against the second input rather than the third.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite two audio functions in Rust and prove each rewrite behaves identically to the original with the version two checker, which runs both sides from identical starting state and compares return values, written memory, calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The smaller routine takes two selector bytes and three floating point inputs, compares each input against a pair of game-filled tables, and returns silence, half gain or full gain. Its third comparison reuses the second input where the pattern of the code says the third input belongs, in both selector branches. A mutant rewrite using the third input there fails the comparison quickly, so the quirk is real behaviour of the original and not a misreading. Whether the original authors intended the coupling or copied one line too many is unknown.</p>
+      <p><span class="evidence verified">Verified</span> The larger routine is a six-hundred-instruction object method with three nested loops and four calls that fill result buffers through pointers into its own stack frame. Nothing in it needs a checker ability that does not exist, but writing its contract and rewrite exceeds this lane's per-function time cap, so it was deferred with a full handoff: a complete listing, every stack-frame access resolved to frame offsets, per-site argument shapes, and the values of every global it reads.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The rewrite keeps the quirk exactly as the original behaves. The next lane to touch the larger routine should give each of its four call sites its own callee entry with skipped pointer arguments plus snapshots and scripted output words, and should pin the routine's gate flag on, because the gate-off path returns whatever happened to be in a register the rewrite cannot observe.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the lane's rewrite crate for the 32-bit target, then run the lane's copy of the version two driver on the smaller function's contract. The verdict passes one thousand trials with bit-exact floating point results, and the mutant entry fails on the return value within its first hundred trials.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Feeding the two game-filled tables fresh random values on every trial makes each trial take about a third of a second, so the thousand-trial run took over eight minutes while analysis of the larger function continued alongside. A finished worker process kept the rewrite library locked after the smoke run; renaming the old library aside and rebuilding, leaving all shared processes alone, fixed it.</p>
+      </article>
 
       <article class="entry" id="production-b09">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

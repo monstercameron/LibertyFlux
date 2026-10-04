@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Rewriting audio code: security cookies and a silent coverage trap",
+    "title": "Devlog: An audio gain routine that checks the wrong input, proven by mutant",
     "commit": null,
+    "summary": "Findings from the r-b18 lane.",
+    "changes": [
+      "New devlog entry: An audio gain routine that checks the wrong input, proven by mutant.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Rewriting audio code: security cookies and a silent coverage trap",
+    "commit": "0c5371b75e135e2d84225d5605869749e612d160",
     "summary": "Findings from the r-b09 lane.",
     "changes": [
       "New devlog entry: Rewriting audio code: security cookies and a silent coverage trap.",
