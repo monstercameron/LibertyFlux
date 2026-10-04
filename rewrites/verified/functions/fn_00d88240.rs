@@ -184,7 +184,7 @@ lf_checker_rt::export!(cdecl, rw_00d88240(angle: u32, a1: u32, a2: u32, a3: u32,
             return 1;
         }
         // Blocks 13-16: side vectors against blocks 9-12 values.
-        if sep(e0, e1, f0, f1v, v0.to_bits(), v1.to_bits(), w0sub.to_bits(), w1v1.to_bits()) & 0xFF != 0 {
+        if sep(e0, e1, f0, f1v, v0.to_bits(), v1.to_bits(), w0sub.to_bits(), w1sub.to_bits()) & 0xFF != 0 {
             return 1;
         }
         if sep(e0, e1, f0, f1v, n4a.to_bits(), w1v1.to_bits(), d1b10.to_bits(), d0b10.to_bits()) & 0xFF != 0 {

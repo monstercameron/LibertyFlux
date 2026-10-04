@@ -1,4 +1,4 @@
-// original: 0x00533ab0 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race47Standard, player_schema::LeaderboardInfo, 10>::vf2
+// original: 0x00533650 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race46Standard, player_schema::LeaderboardInfo, 10>::vf2
 
 /// Tag an output slot when this board's key matches the wanted key.
 ///
@@ -10,11 +10,11 @@
 ///
 /// Original: thiscall with two stack words, callee pops 8.
 
-lf_checker_rt::export!(thiscall, rw_00533ab0(this: u32, out: u32, want: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00533650(this: u32, out: u32, want: u32) -> u32 {
     unsafe {
-        /// Linked address of the installed interface pointer (has a HIGHLOW
+        /// Linked address of the installed vtable (has a HIGHLOW
         /// reloc entry, so it moves with the image base).
-        const TAG_VA: u32 = 0x00fdb644;
+        const TAG_VA: u32 = 0x00fd89b4;
 
         let vtable = (this as *const u32).read_unaligned();
         let slot = (vtable.wrapping_add(4) as *const u32).read_unaligned();
