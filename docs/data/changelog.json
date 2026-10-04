@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Add the project site overview",
+    "title": "Add the changelog page",
     "commit": null,
+    "summary": "This page.",
+    "changes": [
+      "Lists every commit, newest first, from docs/data/changelog.json.",
+      "An entry's commit hash is filled in by the update script on the following commit, so the newest entry shows no hash yet."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Add the project site overview",
+    "commit": "e39ab37f9238427c75d5fc8535ed7982ed15f8da",
     "summary": "The front page of the GitHub Pages site in docs.",
     "changes": [
       "A map of the executable's code from start to end, where each square changes shade as its functions are identified, named, rewritten and verified. With no data it shows a plain statement that nothing is measured yet.",

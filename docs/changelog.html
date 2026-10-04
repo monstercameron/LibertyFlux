@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Changelog: LibertyFlux</title>
+<meta name="description" content="Every change to the LibertyFlux repository, newest first.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;700;800&family=Overpass+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+<header class="masthead compact">
+  <div class="wrap">
+    <nav aria-label="Site"><ul class="nav">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="changelog.html" aria-current="page">Changelog</a></li>
+      <li><a href="devlog.html">Devlog</a></li>
+    </ul></nav>
+    <h1>Changelog</h1>
+    <p class="lede">Every change to the repository, newest first. Each entry matches one git commit.</p>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap">
+    <div class="entries" id="entries">
+      <p id="entries-empty" hidden>No changes recorded yet.</p>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>LibertyFlux is an independent project. It is not affiliated with, endorsed by or connected to Rockstar Games or Take-Two Interactive. Grand Theft Auto is a trademark of Take-Two Interactive Software.</p>
+  </div>
+</footer>
+
+<script src="data/changelog.js"></script>
+<script>
+(function () {
+  var entries = window.LF_CHANGELOG || [];
+  var host = document.getElementById("entries");
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+  if (!entries.length) { document.getElementById("entries-empty").hidden = false; return; }
+  entries.forEach(function (entry) {
+    var article = el("article", "entry");
+    var meta = el("div", "entry-meta");
+    var time = el("time", null, entry.date);
+    time.dateTime = entry.date;
+    meta.appendChild(time);
+    meta.appendChild(el("span", "commit", entry.commit ? "commit " + entry.commit.slice(0, 9) : "hash recorded with the next commit"));
+    article.appendChild(meta);
+    article.appendChild(el("h2", null, entry.title));
+    if (entry.summary) article.appendChild(el("p", null, entry.summary));
+    var list = el("ul");
+    (entry.changes || []).forEach(function (change) { list.appendChild(el("li", null, change)); });
+    article.appendChild(list);
+    host.appendChild(article);
+  });
+})();
+</script>
+</body>
+</html>
