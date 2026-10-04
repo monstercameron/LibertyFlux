@@ -58,7 +58,7 @@ lf_checker_rt::export!(thiscall, rw_00cf8b00(this: u32, task: u32, ped: u32) -> 
         const PED_TARGET: u32 = 0x20;
         const PI_BITS: u32 = 0x4049_0fdb;
         const DOT_LIMIT_BITS: u32 = 0xbecc_cccd;
-        const BLEND_K_BITS: u32 = 0x3c23_d70a;
+        const BLEND_K_BITS: u32 = 0x3ca3_d70a;
         const WIDE_K_BITS: u32 = 0x3e4c_cccd;
         const FULL_K_BITS: u32 = 0x4040_0000;
         const STEP_K_BITS: u32 = 0x3dcc_cccd;
