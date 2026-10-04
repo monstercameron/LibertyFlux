@@ -1,0 +1,10 @@
+[package]
+name = "lf-audio-config"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Read-only parser for the GTA IV audio configuration and metadata tables"
+
+[lints]
+workspace = true

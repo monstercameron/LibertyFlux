@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Reader crate: lf-shaderpack",
+    "title": "Reader crate: lf-audio-config",
     "commit": null,
+    "summary": "Audio configuration: versioned data tables and speech banks.",
+    "changes": [
+      "New crate crates/formats/lf-audio-config: Audio configuration: versioned data tables and speech banks.",
+      "About 2,338 lines of Rust with 15 unit tests and 6 integration tests; tests that need the game's files skip unless the game folder is given in an environment variable.",
+      "Third-party dependencies: none.",
+      "Written by the fmt-audio-config lane from the file format alone, then audited by the integration lane for game data, key material and machine paths before publication."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Reader crate: lf-shaderpack",
+    "commit": "c6d6f2a7814baff023cc97bd1f8ebd3c874173ed",
     "summary": "Shader packs: programs, parameters, techniques and passes.",
     "changes": [
       "New crate crates/formats/lf-shaderpack: Shader packs: programs, parameters, techniques and passes.",
