@@ -19,8 +19,8 @@
 /// slot: map to a row (slot `0x30`); skip the slot when the row-status
 /// call (callee 5) says so; classify the row key (callee 4) into a width
 /// of 8 for kinds 1, 2, 3, 5 and 0 otherwise. The selected slot copies
-/// the entry key (callees 6 and 7 give the entry and its size; the copy
-/// happens only for a non-null entry of size <= 8) and records the flag.
+/// the entry key (callees 6 and 7 give the entry and its size; the size
+/// check is signed, so a negative size still copies) and records the flag.
 /// Any other slot advances a copy of the cursor by the width; when the
 /// advanced copy is inside the bound it stores through callee 8 (which
 /// sees the un-advanced cursor) and writes the one-bit mask, then keeps
@@ -96,7 +96,7 @@ lf_checker_rt::export!(thiscall, rw_0053b5e0(this: u32, cursor: u32, key_out: u3
                 let entry: u32 = lf_checker_rt::callee_thiscall!(6, u32, rows, idx);
                 if entry != 0 {
                     let size: u32 = lf_checker_rt::callee_thiscall!(7, u32, entry);
-                    if size <= MAX_COPY {
+                    if (size as i32) <= (MAX_COPY as i32) {
                         let src = (entry + ENTRY_KEY_OFF) as *const u64;
                         (key_out as *mut u64).write_unaligned(src.read_unaligned());
                         done = 1;

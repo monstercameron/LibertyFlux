@@ -17,7 +17,8 @@
 /// skip the row; otherwise classify the column through callee 4 (answers
 /// 1, 2, 3 or 5 step the cursor by 8, anything else by 0). When the session
 /// handle equals the row number, fetch the row object through callee 5 and,
-/// if its callee-6 size is at most 8, copy its 8 bytes at `+4` to
+/// if its callee-6 size is at most 8 (signed compare), copy its 8 bytes at
+/// `+4` to
 /// `value_out` and set the flag; if the handle differs, advance the cursor
 /// by the step and, when still inside the window, ask callee 7 to confirm
 /// the step and set bit `row` of the mask dwords.
@@ -92,7 +93,7 @@ lf_checker_rt::export!(thiscall, rw_00521710(this: u32, cursor: u32, value_out: 
                     let obj = eax;
                     if obj != 0 {
                         eax = lf_checker_rt::callee_thiscall!(6, u32, obj);
-                        if eax <= WIDE_STEP {
+                        if (eax as i32) <= WIDE_STEP as i32 {
                             let q = (obj.wrapping_add(4) as *const u64).read_unaligned();
                             (value_out as *mut u64).write_unaligned(q);
                             picked = 1;

@@ -20,7 +20,8 @@
 /// unsigned tick ratio plus two tuning globals), its answer lands in the
 /// ratio global `RATIO_GLOBAL`, the status byte is flagged on, the ratio of
 /// the second id 1 answer over a tuning span is stored after it, and the
-/// first id 1 answer is kept in the stamp slot.
+/// query answer is kept in the stamp slot (both exits store it: the first
+/// id 1 answer's scratch slot is reused by the query answer first).
 ///
 /// All float comparisons repeat the original's ordered-compare shape
 /// (`ja`/`jbe` over `comiss`), including which side wins on NaN; the two
@@ -157,7 +158,10 @@ lf_checker_rt::export!(thiscall, rw_00a28cd0(this: u32) -> u32 {
         let span2 = tunef(TUNE_H) - tunef(TUNE_G);
         unsafe { (lf_checker_rt::relocated(FLAG_GLOBAL) as *mut u8).write(1) };
         wrf(lf_checker_rt::relocated(RATIO_GLOBAL), ans2 / span2);
-        wrf(this.wrapping_add(STAMP_OFF), ans1);
+        // The stamp re-reads the same scratch slot the first id 1 answer
+        // used, but the id 2 answer overwrote it in between, so both exits
+        // store the query answer.
+        wrf(this.wrapping_add(STAMP_OFF), q);
         0
     }
 });

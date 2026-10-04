@@ -1,6 +1,6 @@
-// original: 0x00cc0620 CPedMoveBlendOnFoot::vf1 (staged; currently stage 3)
+// original: 0x00cc0620 CPedMoveBlendOnFoot::vf1 (staged; currently stage 4)
 
-/// First virtual-slot update of the on-foot move blend object (STAGE 3).
+/// First virtual-slot update of the on-foot move blend object (STAGE 4).
 ///
 /// `this` (ECX) points to the blend object; its word at `+0x24` points to a
 /// state object. Stage 1 covers the entry block through the early-out path
@@ -40,6 +40,14 @@
 /// call, and the limit check. Reaching either frontier (the walk's
 /// `0x41e` exit or the probe's fallthrough) aborts loudly; the stage-3
 /// contract never feeds such inputs.
+///
+/// Stage 4 adds the fallthrough to the mid return: the nine-word helper
+/// scan, the shared-object reset, the auxiliary-object dispatch (helper
+/// pair plus float helper, or clamp plus probe pair plus float helper),
+/// the gated global-object call and the finishing pair whose last answer
+/// is the return value. Frontiers (panic, never fed): the detour-flag
+/// parameter block, the zero-flag continuation, the second probe, and the
+/// never-taken skip side of the global call.
 ///
 /// Original: 0x00cc0620 (thiscall, no stack arguments).
 lf_checker_rt::export!(thiscall, rw_00cc0620(this: u32) -> u32 {
@@ -326,7 +334,109 @@ lf_checker_rt::export!(thiscall, rw_00cc0620(this: u32) -> u32 {
             if (fin as u8) != 0 {
                 return fin;
             }
-            panic!("stage 3: cc0a1c fallthrough not implemented");
+            // Stage 4: cc0a1c fallthrough to the mid ret at cc0cef.
+            wr32(this.wrapping_add(0x4c), 0);
+            wr32(lf_checker_rt::relocated(0x10514a4), 0x3f80_0000);
+            if rd8(this.wrapping_add(FLAGS_OFF)) & 1 != 0 {
+                let a48 = rd32(this.wrapping_add(0x48));
+                if a48 != 0xffff_ffff {
+                    let q1: u32 =
+                        lf_checker_rt::callee_thiscall!(27, u32, saved_ecx, a48);
+                    if q1 != 0 {
+                        let _: u32 =
+                            lf_checker_rt::callee_thiscall!(28, u32, saved_ecx, q1);
+                    }
+                }
+                let mut lp = this.wrapping_add(0xac);
+                for _ in 0..9u32 {
+                    let w = rd32(lp);
+                    if w != 0xffff_ffff && w != 0x0f {
+                        let r: u32 =
+                            lf_checker_rt::callee_thiscall!(29, u32, saved_ecx, w);
+                        if r != 0 {
+                            let _: u32 =
+                                lf_checker_rt::callee_thiscall!(30, u32, saved_ecx, r);
+                        }
+                    }
+                    lp = lp.wrapping_add(4);
+                }
+                let _: u32 = lf_checker_rt::callee_thiscall!(31, u32, saved_ecx);
+                wr32(this.wrapping_add(4), 0);
+                wr32(this.wrapping_add(0x10), 0);
+                wr32(this.wrapping_add(0x54), 0x4040_0000);
+            }
+            wr32(
+                this.wrapping_add(FLAGS_OFF),
+                rd32(this.wrapping_add(FLAGS_OFF)) & !1,
+            );
+            let _: u32 =
+                lf_checker_rt::callee_thiscall!(32, u32, lf_checker_rt::relocated(0x171bfb0));
+            wr32(lf_checker_rt::relocated(0x171c0d8), 0);
+            wr32(lf_checker_rt::relocated(0x171c0dc), 0);
+            // Scratch flag for a later region; recomputed below on one path.
+            let mut flag_11: u8 = 0;
+            let st5 = rd32(this.wrapping_add(STATE_OFF));
+            let aux50 = rd32(rd32(st5.wrapping_add(0xa80)).wrapping_add(0x50));
+            let bl: u8;
+            if (aux50 >> 1) & 1 != 0 {
+                ebp = edi;
+                if (rd32(ebp.wrapping_add(0x378)) >> 5) & 1 == 0 {
+                    if slot_18 != 0xffff_ffff {
+                        let g: u32 = lf_checker_rt::callee_cdecl!(33, u32, slot_18);
+                        if (rd32(g.wrapping_add(0x378)) >> 5) & 1 == 0 {
+                            ebp = lf_checker_rt::callee_cdecl!(34, u32, 0x31);
+                        }
+                    } else {
+                        ebp = lf_checker_rt::callee_cdecl!(34, u32, 0x31);
+                    }
+                }
+                let i: u32 = lf_checker_rt::callee_thiscall!(35, u32, this, ebp);
+                bl = i as u8;
+                let st = rd32(this.wrapping_add(STATE_OFF));
+                let hi = rdf(st.wrapping_add(0xaa4));
+                let lo = rdf(st.wrapping_add(0xaa0));
+                let _: f32 = lf_checker_rt::callee_cdecl!(36, f32, sub(hi, lo).to_bits());
+            } else {
+                let v8 = rdf(this.wrapping_add(8));
+                if v8 < 0.0 {
+                    wrf(this.wrapping_add(8), 0.0);
+                }
+                let s2 = ebp;
+                ebp = edi;
+                wr32(this.wrapping_add(4), 0);
+                let k: u32 = lf_checker_rt::callee_thiscall!(37, u32, this, edi, s2);
+                if (k as u8) == 0 {
+                    panic!("stage 4: 0xcc24c0 path not implemented");
+                }
+                bl = k as u8;
+                wr16(this.wrapping_add(0xaa), 0);
+                let st = rd32(this.wrapping_add(STATE_OFF));
+                let hi = rdf(st.wrapping_add(0xaa4));
+                let lo = rdf(st.wrapping_add(0xaa0));
+                let _: f32 = lf_checker_rt::callee_cdecl!(38, f32, sub(hi, lo).to_bits());
+                flag_11 = (rdf(lf_checker_rt::relocated(0x171c0dc)) == 1.0) as u8;
+            }
+            if flag_0e != 0 {
+                panic!("stage 4: parameter block needs the detour flag");
+            }
+            if bl == 0 {
+                panic!("stage 4: cc0cf0 path (bl==0) not implemented");
+            }
+            let st6 = rd32(this.wrapping_add(STATE_OFF));
+            let a219 = rd8(st6.wrapping_add(0x219));
+            let fire_q = if a219 != 0 {
+                rd8(lf_checker_rt::relocated(0x1051452)) != 0
+            } else {
+                rd8(lf_checker_rt::relocated(0x1051453)) != 0
+            };
+            if fire_q {
+                let _: u32 = lf_checker_rt::callee_thiscall!(39, u32, this);
+            } else {
+                panic!("stage 4: 0xcbe990-skip side not fed by the contract");
+            }
+            let _: u32 = lf_checker_rt::callee_thiscall!(40, u32, this);
+            let cbf: u32 = lf_checker_rt::callee_cdecl!(41, u32, st6, ebp);
+            return cbf;
         }
         let _: u32 = lf_checker_rt::callee_thiscall!(EARLY_CALLEE, u32, state2, 1);
         wr32(this.wrapping_add(0x48), 0xffff_ffff);
