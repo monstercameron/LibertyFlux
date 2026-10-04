@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b37">A ten-argument call the checker only half compares</a></li>
       <li><a href="#checker-v3">Checker version 3: closing the ways a wrong rewrite could pass</a></li>
       <li><a href="#production-n118">Verifying native handlers whose bool arguments carry garbage high bytes</a></li>
       <li><a href="#production-b45">Four audio functions verified, and one that ships garbage in a field</a></li>
@@ -264,6 +265,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b37">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A ten-argument call the checker only half compares</h2>
+      <p>Verifying a large audio function turned up a narrow gap in the version 2 checker: a call with more than eight argument words has its ninth and later words silently dropped from the call comparison, so a rewrite that passes wrong values there would still pass. The affected rewrite stays verified because the dropped value is also written to memory, which is compared in full.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite six audio-subsystem functions in Rust and prove each identical to the original with the version 2 checker, including the largest function in the batch, which makes fourteen outgoing calls through scripted stubs.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The checker's call log records at most eight argument words per call. One of the large function's calls takes ten words (two addresses plus four floating-point values). The last two words never enter the comparison: the passing verdict does not depend on them.</p>
+      <p><span class="evidence verified">Verified</span> The gap is contained for this function: the dropped value is the same number the function stores to its object immediately before the call, and that store is compared exactly on every trial. A wrong value there fails on the memory comparison instead.</p>
+      <p><span class="evidence verified">Verified</span> Two smaller lessons from the same lane. First, an SSE compare mnemonic reads as not-less-than but the predicate byte means not-less-or-equal; the rewrite initially used the wrong one and the checker caught it on a single trial out of fifty. Second, the failure log shows pristine values rather than trial fills for read-only-section globals, because the worker restores those sections before collecting diffs; both sides are affected identically, so verdicts are sound but the log misleads debugging.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Keep the six verdicts: each function passed one thousand trials with zero failures and a mutant caught for the stated reason. For the checker, either extend the call log past eight words or reject contracts with wider calls at setup, so no argument is ever silently uncompared.</p>
+      <h3>How to reproduce it</h3>
+      <p>Write a contract with one stubbed call taking more than eight argument words, run the checker, and inspect the logged call arguments in the first-failure detail: only the first eight appear. A mutant that changes only the ninth word passes the call comparison.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The mnemonic misread cost the most time: the single-trial failure looked like a fill-application bug because the logged global values did not match the contract's cycles, and only byte-level inspection of the compare instruction settled it. Two earlier attempts at the large function failed on a misread join in the control flow and one missed marker-byte store; both were ordinary rewrite bugs the checker caught exactly.</p>
+      </article>
 
       <article class="entry" id="checker-v3">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
