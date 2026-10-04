@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#checker">The checker: proving rewrites match the original</a></li>
       <li><a href="#format-savegame">Rust reader: save game files</a></li>
       <li><a href="#format-data-files">Rust reader: plain-text gameplay data files</a></li>
       <li><a href="#format-audio-config">Rust reader: audio configuration and metadata tables</a></li>
@@ -162,6 +163,26 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="checker">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>The checker: proving rewrites match the original</h2>
+      <p>The project now has a working equivalence checker: a tool that runs an original game function and its Rust rewrite side by side from identical starting state and compares everything observable. It was proven on twenty small functions of mixed kinds, where every correct rewrite passed and every deliberately broken one failed.</p>
+      <h3>What was asked</h3>
+      <p>Build the tool that decides whether a Rust rewrite behaves the same as the original function: run both from identical state, compare return values, written memory, stack-pointer movement, outgoing calls and crashes, with generated inputs, scripted callee answers, crash and hang handling, and protection against rewrites that cheat by calling the original. Then prove it on twenty functions and show it catches subtly wrong versions of each.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The checker works end to end. Twenty functions were proven: six plain arithmetic routines, four pointer-writing constructors and setters, three methods reading object fields, two global-variable readers, three functions calling other functions through intercepted call sites, and two returning floating-point values. Each ran two hundred generated inputs against its rewrite with zero failures, and each of twenty mutants (off-by-one constants, swapped arguments, wrong operators, missed writes, wrong signs, a value returned in the wrong register part) failed as required.</p>
+      <p><span class="evidence verified">Verified</span> Cheating rewrites are caught: a rewrite that reads the original code or calls the original function is reported as cheating, because the original code pages are made inaccessible while the rewrite runs.</p>
+      <p><span class="evidence verified">Verified</span> Calls into system and library routines are intercepted: a wrapper that calls through the import table was checked over fifty trials with the call recorded and a scripted answer returned to both sides.</p>
+      <p><span class="evidence verified">Verified</span> The checker caught four genuine mistakes during its own construction, including a wrong return value in one of the proof rewrites and three comparison rules that were too strict (a callee's own stack frame, scratch registers at call sites, and a misaligned global range in a contract).</p>
+      <p><span class="evidence verified">Verified</span> Throughput is a few milliseconds per trial for simple functions, rising to around a tenth of a second when every writable data section is scanned for undeclared writes. The full twenty-function proof runs in a few minutes. The host slows noticeably under sustained load, so every verdict records its own timing.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The verdict file format matches what the work-queue acceptance tool expects, and all twenty verdicts pass its validator. Recommended next steps: per-callee scripted answers for functions calling several routines, interception of register-indirect calls, a faster undeclared-write scan, and one worker process per processor core.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the 32-bit worker and the rewrite library with the project's Rust toolchain, then run the Python driver over the twenty example contracts in the lane scratch folder. It produces one verdict file per function plus a summary with throughput. A second script demonstrates the cheat detection and the import-table interception.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two candidate functions taken from the earlier function survey turned out to be mid-function fragments rather than real entries and had to be replaced after disassembly showed they started with register restores. A shared build cache made one rebuild fail with an access error until a stray worker process exited. The queue tooling renamed one of its address helpers mid-task, which broke the validation snippet until it was pointed at the new name; the verdict format itself was unchanged.</p>
+      </article>
 
       <article class="entry" id="format-savegame">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
