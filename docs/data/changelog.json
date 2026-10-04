@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Library code mapped to exact function lists",
+    "title": "Devlog: The relocation table is fine; three lanes read it wrong",
     "commit": null,
+    "summary": "Findings from the f-reloc-reconcile lane.",
+    "changes": [
+      "New devlog entry: The relocation table is fine; three lanes read it wrong.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Library code mapped to exact function lists",
+    "commit": "de8c79faebd650042ae67eb68a75591aae0bab28",
     "summary": "Findings from the f-library-ranges lane.",
     "changes": [
       "New devlog entry: Library code mapped to exact function lists.",

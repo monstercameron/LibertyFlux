@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#reloc-reconcile">The relocation table is fine; three lanes read it wrong</a></li>
       <li><a href="#library-ranges">Library code mapped to exact function lists</a></li>
       <li><a href="#function-inventory">First unified function inventory: 45,229 functions, 30 percent named</a></li>
       <li><a href="#tools-shaders">Tools: shaders</a></li>
@@ -106,6 +107,30 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="reloc-reconcile">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>The relocation table is fine; three lanes read it wrong</h2>
+      <p>Earlier lanes disagreed about the executable's relocation table: one called it garbage, one found twenty thousand anomalous entries scattered through the code, one counted exact import matches, and one saw no entries at all in the encrypted region. A verified from-scratch parser shows the table itself is healthy, with just under two hundred ninety-two thousand entries that all check out, and each earlier disagreement traces to a concrete reading error, all now corrected.</p>
+      <h3>What was asked</h3>
+      <p>Settle the contradiction between four earlier lanes about the relocation table, produce the definitive relocation list and statistics, and map the whole code section page by page to find every encrypted or non-code pocket.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> The relocation table parses cleanly: only the two expected entry types appear, the bytes consumed match the directory size exactly, and every fixup site is backed by file content.</li>
+      <li><span class="evidence verified">Verified</span> The "garbage table" verdict was a scripting bug: the lane added the page address twice, scattering all sites to wrong locations. Re-running the bug reproduces its numbers digit for digit.</li>
+      <li><span class="evidence verified">Verified</span> All twenty thousand odd-looking entries sit inside the encrypted first megabyte, and their on-disk values are ciphertext, confirmed by uniformity tests. There are no scattered high-entropy pockets; an earlier lane misread its own location histogram.</li>
+      <li><span class="evidence verified">Verified</span> The encrypted region holds over twenty thousand fixup sites, not zero as reported; only their values are opaque, while their positions are exact and probably form the start-up stub's own fixup list.</li>
+      <li><span class="evidence verified">Verified</span> The import-table cross-check of about two thousand entries reproduces exactly, and a handful of references from code to the file headers are genuine.</li>
+      <li><span class="evidence verified">Verified</span> Page-by-page mapping finds no second encrypted region: two hundred fifty encrypted pages, sixteen pages of jump and pointer tables, and everything else code, including some zero-heavy initialisation code and tiny stub functions first mistaken for padding.</li>
+      <li><span class="evidence verified">Verified</span> Both function inventories contain entries inside ciphertext that must be excluded: several hundred in the new Ghidra export (which at least labels the region) and a few thousand in the lane estimate.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <p>The new relocation list replaces all earlier counts as the source of truth, with on-disk values inside the encrypted region marked as ciphertext. Downstream tools must drop ciphertext function entries from both inventories. The stub-fixup theory and the exact table seams inside mixed pages are left for a runtime lane and the function-inventory lane.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane scripts in order with the project Python: a boundary scan by page entropy, a manual relocation-directory walk cross-checked against the parsing library, a bug-reproduction script, uniformity tests on the odd values, and a per-page classifier combining entropy, pointer density and aligned fixup runs. Outputs are a compact relocation list and one record per code page.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two page-classification metrics failed before the third worked: plain linear disassembly misfires whenever a page starts mid-instruction, and resync disassembly then proved too permissive since nearly any bytes decode as something. Pointer density plus runs of consecutive aligned fixups turned out to be the reliable table signal. Separately, several dense initialisation pages first classified as tables or padding and were only corrected by reading their bytes.</p>
+      </article>
 
       <article class="entry" id="library-ranges">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
