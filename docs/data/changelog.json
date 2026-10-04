@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Production batch: two verifications and a checker gap",
+    "title": "Devlog: Handle pool pair verified, and a float divergence that points at the emulator",
     "commit": null,
+    "summary": "Findings from the r-b96 lane.",
+    "changes": [
+      "New devlog entry: Handle pool pair verified, and a float divergence that points at the emulator.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Production batch: two verifications and a checker gap",
+    "commit": "5b82c92760e497d6ed3b94e796ac386aeaf517fc",
     "summary": "Findings from the r-b106 lane.",
     "changes": [
       "New devlog entry: Production batch: two verifications and a checker gap.",
