@@ -12,7 +12,7 @@
 /// The rounding is the original's exact operation sequence, not a library
 /// call: add and subtract a sign-matched round magic (2^23 when the
 /// magnitude is below it, else signed zero), then subtract one when the
-/// rounded value did not move down. The comparisons are ordered (false for
+/// rounded value moved strictly up. The comparisons are ordered (false for
 /// NaN), matching the original's conditional jumps, and every arithmetic
 /// operation keeps the original's operand order.
 ///
@@ -20,7 +20,7 @@
 /// float result in ST0; no outgoing calls; reads only read-only constants).
 lf_checker_rt::export!(stdcall, rw_00969040(pair: u32) -> f32 {
     unsafe {
-        const SCALE: f32 = f32::from_bits(0x3CF5_2407); // 0.02
+        const SCALE: f32 = 0.02; // bits 0x3CA3D70A, measured from the image
         const BIAS: f32 = 60.0;
         const LIMIT: f32 = 120.0;
         const ROUND_MAGIC: f32 = 8_388_608.0; // 2^23
@@ -49,7 +49,9 @@ lf_checker_rt::export!(stdcall, rw_00969040(pair: u32) -> f32 {
             let magic = f32::from_bits(m.to_bits() | sign);
             let q = sub(add(t, magic), magic);
             let frac = sub(q, t);
-            let down = if frac < 0.0 { 0.0f32 } else { 1.0f32 };
+            // Original uses "not less-or-equal" against signed zero: subtract
+            // one only when the rounded value moved strictly up.
+            let down = if frac > 0.0 { 1.0f32 } else { 0.0f32 };
             sub(q, down)
         }
 

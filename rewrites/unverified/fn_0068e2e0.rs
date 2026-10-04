@@ -1,36 +1,37 @@
 // original: 0x0068e2e0 anim_apply_pose_direct (proposed)
 
 /// Apply a pose to an animation's tracks: a fast path over packed
-/// (track, bone) pairs from a shared lookup, then a slow path over every
+/// (track, bone) pairs from a shared lookup, or a slow path over every
 /// track with a per-track bone lookup, then a mutex-guarded reference drop.
 ///
 /// `this` points to the animation (`+0x00` track set, `+0x04` pose holder).
-/// `owner` (`[ebp+8]`) points to the owner (`+0x00` record table of 0xe0-byte
-/// records, `+0x2c` ready flag). The second and third stack words are never
-/// read. The track set holds a key at `+0x04`, an enable flag at `+0x08`, a
-/// track-pointer array at `+0x0c` and a 16-bit track count at `+0x10`. Each
-/// track has a flag byte at `+0x04`, a kind byte at `+0x05`, a key at `+0x06`
-/// and four value words at `+0x10`. The pose holder's `+0x0c` points at the
-/// pose array of 0x50-byte bone entries whose words at `+0x30..+0x3c` are the
-/// source values.
+/// `owner` (first stack word) points to the owner (`+0x00` record table of
+/// 0xe0-byte records, `+0x2c` ready flag). The second and third stack words
+/// are never read. The track set holds a key at `+0x04`, an enable flag at
+/// `+0x08`, a track-pointer array at `+0x0c` and a 16-bit track count at
+/// `+0x10`. Each track has a flag byte at `+0x04`, a kind byte at `+0x05`, a
+/// key at `+0x06` and four value words at `+0x10`. The pose holder's `+0x0c`
+/// points at the pose array of 0x50-byte bone entries whose words at
+/// `+0x30..+0x3c` are the source values.
 ///
 /// When the set is enabled, the owner ready and the set key non-null, a
 /// shared lookup (callee 1, stdcall, four stack words, two-word out struct:
-/// lock, entry) yields an entry whose `+0x0c` block starts with a count
-/// followed by packed words (track index in the high half, bone index in
-/// the low half). Each pair resolves its track through the array and its
-/// bone through the pose array; kind 0 copies the bone's four source words
-/// into the track verbatim, kind 1 runs them through the quaternion callee
-/// (callee 2, out buffer in ecx, one stack word) and copies the 16-byte
-/// result, any other kind stores nothing. Every handled track has flag bit
-/// 0x10 cleared.
+/// lock, entry) runs. When it yields an entry with a non-null `+0x0c` block,
+/// the fast path walks the block (a count followed by packed words: track
+/// index in the high half, bone index in the low half). Each pair resolves
+/// its track through the array and its bone through the pose array; kind 0
+/// copies the bone's four source words into the track verbatim, kind 1 runs
+/// them through the quaternion callee (callee 2, out buffer in ecx, one
+/// stack word) and copies the 16-byte result, any other kind stores
+/// nothing and is left untouched. Every handled track has flag bit 0x10
+/// cleared.
 ///
-/// The slow path walks all tracks of the set instead: kind 1 does a bone-id
-/// lookup (callee 3, thiscall, key plus a 16-bit out word) and continues
-/// only when the record's flag byte has bits 0x0e, running the quaternion
-/// callee; kind 0 does the same lookup and continues only when the record's
-/// flag dword has bits 0x380, copying the four source words; other kinds
-/// are skipped. Handled tracks have flag bit 0x10 cleared.
+/// Otherwise the slow path walks all tracks of the set: kind 1 does a
+/// bone-id lookup (callee 3, thiscall, key plus a 16-bit out word) and
+/// continues only when the record's flag byte has bits 0x0e, running the
+/// quaternion callee; kind 0 does the same lookup and continues only when
+/// the record's flag dword has bits 0x380, copying the four source words;
+/// other kinds are skipped. Handled tracks have flag bit 0x10 cleared.
 ///
 /// When the lookup returned an entry, the tail decrements the entry's
 /// reference count at `+0x08` under the lock's mutex at `+0x10`
@@ -136,63 +137,67 @@ lf_checker_rt::export!(thiscall, rw_0068e2e0(this: u32, owner: u32, _a2: u32, _a
                 entry = out[1];
             }
         }
-        // Fast path over the packed pairs.
-        if entry != 0 {
-            let block = rd32(entry + ENTRY_BLOCK);
-            if block != 0 {
-                let tracks = rd32(set + SET_TRACKS);
-                let count = rd32(block) as i32;
-                if count > 0 {
-                    for i in 0..count as u32 {
-                        let packed = rd32(block + 4 + i * 4);
-                        let track = rd32(tracks + (packed >> 16) * 4);
-                        let bone = pose.wrapping_add((packed & 0xffff) * POSE_STRIDE);
-                        match rd8(track + TRACK_KIND) {
-                            0 => copy_bone(track, bone),
-                            1 => apply_quat(track, bone),
-                            _ => {}
+        // Fast path over the packed pairs, or the slow path over every track
+        // of the set when the lookup gave no usable block. Never both.
+        let block = if entry != 0 { rd32(entry + ENTRY_BLOCK) } else { 0 };
+        if block != 0 {
+            let tracks = rd32(set + SET_TRACKS);
+            let count = rd32(block) as i32;
+            if count > 0 {
+                for i in 0..count as u32 {
+                    let packed = rd32(block + 4 + i * 4);
+                    let track = rd32(tracks + (packed >> 16) * 4);
+                    let bone = pose.wrapping_add((packed & 0xffff) * POSE_STRIDE);
+                    match rd8(track + TRACK_KIND) {
+                        0 => {
+                            copy_bone(track, bone);
+                            clear_handled(track);
                         }
-                        clear_handled(track);
+                        1 => {
+                            apply_quat(track, bone);
+                            clear_handled(track);
+                        }
+                        _ => {}
                     }
                 }
             }
-        }
-        // Slow path over every track of the set.
-        let total = rd16(set + SET_COUNT) as i32;
-        if total > 0 {
-            let array = rd32(set + SET_TRACKS);
-            for i in 0..total as u32 {
-                let track = rd32(array + i * 4);
-                let kind = rd8(track + TRACK_KIND);
-                if kind != 0 && kind != 1 {
-                    continue;
-                }
-                // Out slot is a full word; only the low 16 bits are read back.
-                let mut id: u32 = 0;
-                let ok: u32 = lf_checker_rt::callee_thiscall!(
-                    BONE_LOOKUP,
-                    u32,
-                    owner,
-                    rd16(track + TRACK_KEY),
-                    &mut id as *mut u32 as u32
-                );
-                if (ok & 0xff) == 0 {
-                    continue;
-                }
-                let id = id & 0xffff;
-                let rec = rd32(owner + OWNER_RECORDS).wrapping_add(id * RECORD_STRIDE);
-                if kind == 1 {
-                    if rd8(rec + RECORD_FLAGS) & KIND1_FLAG_BITS == 0 {
+        } else {
+            let total = rd16(set + SET_COUNT) as i32;
+            if total > 0 {
+                let array = rd32(set + SET_TRACKS);
+                for i in 0..total as u32 {
+                    let track = rd32(array + i * 4);
+                    let kind = rd8(track + TRACK_KIND);
+                    if kind != 0 && kind != 1 {
                         continue;
                     }
-                    apply_quat(track, pose.wrapping_add(id * POSE_STRIDE));
-                } else {
-                    if rd32(rec + RECORD_FLAGS) & KIND0_FLAG_BITS == 0 {
+                    // Out slot is a full word; only the low 16 bits are read back.
+                    let mut id: u32 = 0;
+                    let ok: u32 = lf_checker_rt::callee_thiscall!(
+                        BONE_LOOKUP,
+                        u32,
+                        owner,
+                        rd16(track + TRACK_KEY),
+                        &mut id as *mut u32 as u32
+                    );
+                    if (ok & 0xff) == 0 {
                         continue;
                     }
-                    copy_bone(track, pose.wrapping_add(id * POSE_STRIDE));
+                    let id = id & 0xffff;
+                    let rec = rd32(owner + OWNER_RECORDS).wrapping_add(id * RECORD_STRIDE);
+                    if kind == 1 {
+                        if rd8(rec + RECORD_FLAGS) & KIND1_FLAG_BITS == 0 {
+                            continue;
+                        }
+                        apply_quat(track, pose.wrapping_add(id * POSE_STRIDE));
+                    } else {
+                        if rd32(rec + RECORD_FLAGS) & KIND0_FLAG_BITS == 0 {
+                            continue;
+                        }
+                        copy_bone(track, pose.wrapping_add(id * POSE_STRIDE));
+                    }
+                    clear_handled(track);
                 }
-                clear_handled(track);
             }
         }
         // Mutex-guarded reference drop.

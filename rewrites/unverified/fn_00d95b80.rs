@@ -158,7 +158,6 @@ lf_checker_rt::export!(thiscall, rw_00d95b80(this: u32, a0: u32, a1: u32, a2: u3
                             let fv: f32 = lf_checker_rt::callee_stdcall!(
                                 3,
                                 f32,
-                                obj,
                                 magic_quot(elem.wrapping_sub(table))
                             );
                             wrf(esi + count.wrapping_mul(4) + ACC_SCORE, fv);
@@ -183,7 +182,6 @@ lf_checker_rt::export!(thiscall, rw_00d95b80(this: u32, a0: u32, a1: u32, a2: u3
                                 let fv: f32 = lf_checker_rt::callee_stdcall!(
                                     3,
                                     f32,
-                                    obj,
                                     magic_quot(elem.wrapping_sub(table))
                                 );
                                 if below(fv, f32::from_bits(lf_checker_rt::global::<u32>(SCORE_LIMIT_VA).read())) {
@@ -204,7 +202,7 @@ lf_checker_rt::export!(thiscall, rw_00d95b80(this: u32, a0: u32, a1: u32, a2: u3
                                         + count
                                             .wrapping_add(ACC_VEC_BASE)
                                             .wrapping_mul(ACC_VEC_STRIDE);
-                                    lf_checker_rt::callee_thiscall!(4, u32, elem, elem, dst);
+                                    lf_checker_rt::callee_thiscall!(4, u32, obj, elem, dst);
                                     let grown = rd32(esi + ACC_COUNT).wrapping_add(1);
                                     wr32(esi + ACC_COUNT, grown);
                                     if grown as i32 >= MAX_ROWS {
@@ -252,7 +250,6 @@ lf_checker_rt::export!(thiscall, rw_00d95b80(this: u32, a0: u32, a1: u32, a2: u3
                                 let fv: f32 = lf_checker_rt::callee_stdcall!(
                                     3,
                                     f32,
-                                    obj,
                                     magic_quot(elem.wrapping_sub(table))
                                 );
                                 wrf(esi + count.wrapping_mul(4) + ACC_SCORE, fv);

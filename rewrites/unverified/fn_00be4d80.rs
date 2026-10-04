@@ -2,15 +2,15 @@
 
 /// Retune one effect object, then reset a slot's handle exactly like its twin.
 ///
-/// `obj` (second stack word; the first is unread) is retuned by the tuning
-/// callee with the fixed float -4.0f passed by bits, and its flag word at
-/// `obj + FLAG_OFF` (0x4) gains `FLAG_BIT` (0x400000). `slot` (third stack
-/// word) is reset the same way as the neighbouring slot reset: its handle at
-/// `+ HANDLE_OFF` (0x14) cleared and its flag at `+ FLAG2_OFF` (0x20) set to
-/// one. Returns `slot` unchanged.
+/// `obj` (first stack word) is retuned by the tuning callee with the fixed
+/// float -4.0f passed by bits, and its flag word at `obj + FLAG_OFF` (0x4)
+/// gains `FLAG_BIT` (0x400000). `slot` (second stack word) is reset the same
+/// way as the neighbouring slot reset: its handle at `+ HANDLE_OFF` (0x14)
+/// cleared and its flag at `+ FLAG2_OFF` (0x20) set to one. Returns `slot`
+/// unchanged.
 ///
-/// Original: 0x00be4d80 (cdecl, three stack words: unused, object, slot).
-lf_checker_rt::export!(cdecl, rw_00be4d80(_unused: u32, obj: u32, slot: u32) -> u32 {
+/// Original: 0x00be4d80 (cdecl, two stack words: object, slot).
+lf_checker_rt::export!(cdecl, rw_00be4d80(obj: u32, slot: u32) -> u32 {
     unsafe {
         const TUNE_BITS: u32 = 0xc0800000; // -4.0f
         const FLAG_OFF: u32 = 0x04;

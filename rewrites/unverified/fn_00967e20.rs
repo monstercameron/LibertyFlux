@@ -20,6 +20,14 @@
 /// `min > max` early exit cannot happen for a minimum and maximum and is
 /// kept only for shape.
 ///
+/// Proof note: the original addresses its locals relative to ESP and the
+/// four highest slots overlap its dead incoming-argument words, so it visibly
+/// overwrites the first three of them (`max(v)`, clamped `max(r)`,
+/// `min(v3, v4)`); the rewrite cannot address its own incoming words, so the
+/// contract switches the stack check off. All three values also feed the
+/// compared table marks and return value, so their computation is verified.
+/// The fourth slot is never observed (worker blind spot below).
+///
 /// Original: thiscall, four stack words, callee cleans them.
 lf_checker_rt::export!(thiscall, rw_00967e20(this: u32, a1: u32, a2: u32, a3: u32, a4: u32) -> u32 {
     unsafe {

@@ -21,9 +21,9 @@ lf_checker_rt::export!(thiscall, rw_00be2c10(this: u32, arg: u32) -> u32 {
             STEP,
             u32,
             this,
-            this.wrapping_add(CURSOR_A),
+            arg,
             this.wrapping_add(CURSOR_B),
-            arg
+            this.wrapping_add(CURSOR_A)
         )
     }
 });

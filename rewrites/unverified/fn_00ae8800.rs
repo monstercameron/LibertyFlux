@@ -27,8 +27,8 @@
 /// virtual slot `+0x40` runs first. Then `uncovered` (`~+0xC & +0x8`) is
 /// formed, `+0x5C` bit 14 cleared, and while the global level mask touches
 /// it callee 10 runs (a zero answer zeroes the level byte `+0x63`); the
-/// surviving entries always continue (the flag selecting the other branch
-/// is provably 0: one store, no other writer, stub writes nothing).
+/// surviving entries continue unless they have no uncovered bits (then
+/// only loop-one-counted entries with bit 7 set continue).
 /// With a nonzero parent and a zero `+0x61` byte, the low 24 bits join the
 /// parent's `+0x58`. The distance from the context origin (`+0x910`,
 /// `+0x914`, `+0x918`) to the entry point (`+0x20` plus `0x30`, else
@@ -325,11 +325,15 @@ lf_checker_rt::export!(cdecl, rw_00AE8800(_a0: u32, start: u32, end: u32, ctx: u
                                     wr8(obj + LEVEL, 0);
                                 }
                             }
-                            // [E+0x12] is always 0 here: the only store
-                            // writes 0 and no stub writes the slot, so the
-                            // flag-1 and flag-nonzero exits below are dead
-                            // and scoring always continues.
-                            let parent = rd32(obj + PARENT);
+                            // An entry with no uncovered bits is done
+                            // (it still runs the mask-clear below) unless
+                            // loop one counted something and its bit 7 is
+                            // set. ([E+0x12] is always 0: the only store
+                            // writes 0 and no stub writes the slot.)
+                            let scored = uncovered != 0
+                                || (any_counted && rd8(obj + OPTS) & 0x80 != 0);
+                            if scored {
+                                let parent = rd32(obj + PARENT);
                             if parent != 0 && rd8(obj + PATH61) == 0 {
                                 wr32(
                                     parent + MASK_B,
@@ -421,6 +425,7 @@ lf_checker_rt::export!(cdecl, rw_00AE8800(_a0: u32, start: u32, end: u32, ctx: u
                                     slots[n as usize] = obj;
                                     nslots += 1;
                                 }
+                            }
                             }
                         }
                         if rd32(obj + BITS) & 0x4000_0000 != 0 {
