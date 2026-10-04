@@ -17,12 +17,25 @@
 #   nowhere else.
 # - crates/lf-rewrite-32 is the 32-bit replacement DLL injected into the
 #   running game during the rewrite. Only its i686 build ever ships.
-# - crates/lf-checker is the host-only comparison harness and queue tooling.
+# - crates/tools/ holds the project's own tools, integrated by lane i-tools
+#   from the k-checker2 (checker v2), h-loader, h-queue, h-capture and
+#   p0-ghidra-scripts lanes:
+#   - lf-checker-worker: the 32-bit comparison worker (driven by
+#     scripts/checker/checker2.py). Only its i686 build ever runs.
+#   - lf-checker-rt: the tiny runtime rewrite DLLs link against.
+#   - lf-checker-proofs: the checker's proof rewrites + mutants (the
+#     regression test; builds with RUSTFLAGS="-C panic=abort").
+#   - lf-hook, lf-registry: the replacement loader's hook engine and
+#     replacement table.
+#   - lf-proxy: the system-library proxy DLL hosting the loader (cdylib,
+#     only its i686 build ever ships).
+#   - lf-test-target: the loader's 32-bit live test binary.
 #
 # Rules (see AGENTS.md): no `unsafe` outside modules that re-allow it with a
 # justification comment; shared structure data changes need coordinator
-# review; lf-rewrite-32 and lf-checker are never dependencies of engine
-# crates; nothing here may contain original game code, only new Rust.
+# review; lf-rewrite-32 and every crate under crates/tools/ are never
+# dependencies of engine crates; nothing here may contain original game
+# code, only new Rust.
 
 [workspace]
 resolver = "2"
@@ -45,7 +58,13 @@ members = [
     "crates/lf-formats",
     "crates/lf-platform",
     "crates/lf-rewrite-32",
-    "crates/lf-checker",
+    "crates/tools/lf-checker-worker",
+    "crates/tools/lf-checker-rt",
+    "crates/tools/lf-checker-proofs",
+    "crates/tools/lf-hook",
+    "crates/tools/lf-registry",
+    "crates/tools/lf-proxy",
+    "crates/tools/lf-test-target",
     "crates/formats/lf-archive",
     "crates/formats/lf-resource",
     "crates/formats/lf-model",

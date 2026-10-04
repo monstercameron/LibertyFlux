@@ -146,11 +146,19 @@ name = "lf-audio-config"
 version = "0.1.0"
 
 [[package]]
-name = "lf-checker"
-version = "0.1.0"
+name = "lf-checker-proofs"
+version = "2.0.0"
 dependencies = [
- "lf-core",
+ "lf-checker-rt",
 ]
+
+[[package]]
+name = "lf-checker-rt"
+version = "2.0.0"
+
+[[package]]
+name = "lf-checker-worker"
+version = "2.0.0"
 
 [[package]]
 name = "lf-collision"
@@ -181,6 +189,10 @@ dependencies = [
 
 [[package]]
 name = "lf-gamedata"
+version = "0.1.0"
+
+[[package]]
+name = "lf-hook"
 version = "0.1.0"
 
 [[package]]
@@ -245,6 +257,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-proxy"
+version = "0.1.0"
+dependencies = [
+ "lf-hook",
+ "lf-registry",
+]
+
+[[package]]
+name = "lf-registry"
+version = "0.1.0"
+dependencies = [
+ "lf-hook",
+]
+
+[[package]]
 name = "lf-renderer"
 version = "0.1.0"
 dependencies = [
@@ -299,6 +326,14 @@ name = "lf-streaming"
 version = "0.1.0"
 dependencies = [
  "lf-core",
+]
+
+[[package]]
+name = "lf-test-target"
+version = "0.1.0"
+dependencies = [
+ "lf-hook",
+ "lf-registry",
 ]
 
 [[package]]

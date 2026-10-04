@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Checker: worker, runtime and proof crates",
+    "commit": null,
+    "summary": "The Rust side of checker version 2, the tool that decides whether a rewrite matches the original.",
+    "changes": [
+      "crates/tools/lf-checker-worker: the 32-bit worker that runs an original function and its rewrite from identical state and compares return value, written memory, stack movement, outgoing calls and faults.",
+      "crates/tools/lf-checker-rt: the small runtime rewrites are written against.",
+      "crates/tools/lf-checker-proofs: the proof rewrites that serve as the checker's own regression test (32-bit only).",
+      "The placeholder crate crates/lf-checker is removed.",
+      "Assembled from the lanes' scratch folders by the tools lane and scanned for machine paths, byte dumps and disassembly before publication."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 69 more functions pass the checker (3433 in total)",
     "commit": "10b23ea22f32f4833eefbcc2a448189ed585ee37",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
