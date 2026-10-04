@@ -1,0 +1,13 @@
+[package]
+name = "lf-resource"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Reader for the RAGE RSC5 resource container (GTA IV asset wrapper)"
+
+[lints]
+workspace = true
+
+[dependencies]
+flate2.workspace = true

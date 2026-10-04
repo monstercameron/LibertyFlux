@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Reader crate: lf-archive",
+    "title": "Reader crate: lf-resource",
     "commit": null,
+    "summary": "RSC5 resource containers: header, zlib segments, pointer decoding.",
+    "changes": [
+      "New crate crates/formats/lf-resource: RSC5 resource containers: header, zlib segments, pointer decoding.",
+      "About 1,166 lines of Rust with 11 unit tests and 4 integration tests; tests that need the game's files skip unless the game folder is given in an environment variable.",
+      "Third-party dependencies: flate2.",
+      "Written by the fmt-rsc5 lane from the file format alone, then audited by the integration lane for game data, key material and machine paths before publication."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Reader crate: lf-archive",
+    "commit": "1a6aec13758fb1041e4bbafe1b890de808297ee3",
     "summary": "RPF2/RPF3 and IMGv3 archives: table of contents, entry reads, run-time key location.",
     "changes": [
       "New crate crates/formats/lf-archive: RPF2/RPF3 and IMGv3 archives: table of contents, entry reads, run-time key location.",
