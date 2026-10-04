@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s44">An audio initialiser that reads a word it never wrote</a></li>
       <li><a href="#production-s35">Production lane traps: a misleading mnemonic, a short size, and an unsolved float divergence</a></li>
       <li><a href="#production-s34">A wrong stub arity passes vacuously through identical faults</a></li>
       <li><a href="#production-n30">A wrong fifteen-argument rewrite passes the checker</a></li>
@@ -220,6 +221,25 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s44">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>An audio initialiser that reads a word it never wrote</h2>
+      <p>One small audio initialiser in this batch copies the same uninitialised word from its own fresh stack frame into four fields of the record it builds, so no faithful rewrite can be verified against it and it was deferred.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small audio-subsystem functions in Rust and prove each rewrite behaves identically to the original with the differential checker, which runs both sides from identical starting state and compares everything observable.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Seventeen of the twenty functions verified cleanly at one thousand trials each with zero mismatches. They are ordinary small routines: two entity constructors, three flag predicates, three float conversion routines, a list drain, three guarded releases and four block resets.</p>
+      <p><span class="evidence verified">Verified</span> One initialiser reads the same stack word four times and stores it into four record fields, but nothing in the function ever writes that word. The slot sits inside the function's own freshly reserved frame, below the saved frame pointer on every possible stack alignment, so the value is leftover stack garbage from previous calls, not an argument and not a constant.</p>
+      <p><span class="evidence">Inferred</span> This looks like a genuine bug in the original: four record fields are seeded with whatever happened to be on the stack. The game presumably tolerates or overwrites the values later.</p>
+      <p><span class="evidence verified">Verified</span> Two further functions are large floating point routines over game data tables that exceed the twelve minute single-function budget and were deferred for a lane with more time.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The initialiser was deferred with reason other and no rewrite was attempted: reproducing caller stack garbage would need inline assembly, which project rules forbid, and pinning the value would be a fake pass. This needs a checker-level decision, not a better rewrite: either such functions stay permanently deferred, or the harness gains an explicit rule for uninitialised stack words. Until then, lanes that find a function reading a word it never wrote should defer it with the same reason rather than guess.</p>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble the function with capstone from the project copy of the executable and list every stack read and write: the four reads of the same frame slot have no matching write anywhere in the body. The frame arithmetic shows the slot always lands below the frame base, which rules out a hidden argument.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first reading looked like a possible hidden float argument, since the value is moved with vector instructions into four evenly spaced fields. Checking the frame arithmetic slot by slot ruled that out: no alignment makes the read land on an argument, the return address or the saved frame pointer. A second trap in the same batch was a conversion loop that skips one source offset; the first rewrite assumed contiguous inputs and the checker caught it on the first run.</p>
+      </article>
 
       <article class="entry" id="production-s35">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
