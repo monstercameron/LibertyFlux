@@ -1,6 +1,15 @@
 [
   {
     "date": "2026-10-03",
+    "title": "Commit the changelog with each progress update",
+    "commit": null,
+    "summary": "Each tick was leaving one file uncommitted.",
+    "changes": [
+      "Regenerating the site data fills in the commit hash of the newest changelog entry. The status script now commits that file together with the progress files."
+    ]
+  },
+  {
+    "date": "2026-10-03",
     "title": "Devlog: Tools: shaders",
     "commit": "88581369bc8edbf035c9d43ecb69dce321487228",
     "summary": "Findings from the t-shaders lane.",

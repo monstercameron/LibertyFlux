@@ -151,7 +151,8 @@ def write_progress(progress, counts):
     path.write_text(json.dumps(progress, indent=2) + "\n", encoding="utf-8", newline="\n")
     subprocess.run([sys.executable, str(ROOT / "scripts" / "update_progress.py")], cwd=ROOT, capture_output=True)
     if "--commit" in sys.argv:
-        paths = ["docs/data/progress.json", "docs/badges"]
+        # changelog.json is included because regenerating fills in the hash of the newest entry.
+        paths = ["docs/data/progress.json", "docs/data/changelog.json", "docs/badges"]
         subprocess.run(["git", "-C", str(ROOT), "add", "--"] + paths)
         staged = subprocess.run(["git", "-C", str(ROOT), "diff", "--cached", "--quiet", "--"] + paths).returncode
         if staged:
