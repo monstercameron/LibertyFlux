@@ -3,6 +3,7 @@
 Grand Theft Auto IV's engine, rewritten in Rust one function at a time, so the game can run as a
 native 64-bit program on Windows, Windows on ARM and macOS.
 
+[![CI](https://github.com/monstercameron/LibertyFlux/actions/workflows/ci.yml/badge.svg)](https://github.com/monstercameron/LibertyFlux/actions/workflows/ci.yml)
 ![Current phase](docs/badges/phase.svg)
 ![Game functions](docs/badges/functions.svg)
 ![Functions named](docs/badges/named.svg)

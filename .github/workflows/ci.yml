@@ -1,0 +1,137 @@
+# Continuous integration for LibertyFlux.
+#
+# Informational, not a gate: nothing in the project waits on it and no branch protection depends on it.
+# It answers three questions on every push that touches code:
+#   1. Does the portable Rust (engine crates, format readers, shared types) build and pass its tests on
+#      Windows, Linux and macOS? The goal is a portable game, so this is checked from the start.
+#   2. Do the 32-bit Windows tools (checker, loader) still build, and do their unit tests pass?
+#   3. Does every tracked file obey the publication rules (no game files, no machine paths, no inline
+#      assembly in rewrites)?
+#
+# What it cannot do: run the checker against the original game. That needs the game's executable, which
+# is never uploaded anywhere. Function-level proof stays on the owner's machine.
+#
+# Not yet compiled here: rewrites/pending/. Those files are in the checker's test form and are not part
+# of a crate until the assembly step lands; add a job for crates/lf-rewrite-32 when it does.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+    # Progress, devlog and rewrite-import commits arrive every few minutes; only code changes need a run.
+    paths:
+      - "crates/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rust-toolchain.toml"
+      - "rustfmt.toml"
+      - "deny.toml"
+      - "scripts/**"
+      - ".github/workflows/**"
+  pull_request:
+  workflow_dispatch:
+
+# A newer push makes an older run pointless.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: "0"
+  # Pin the toolchain here instead of letting rust-toolchain.toml install its Windows targets on every runner.
+  RUSTUP_TOOLCHAIN: "1.96.1"
+  # The local build folder is set in .cargo/config.toml; keep the same one so caching has a stable path.
+  CARGO_TARGET_DIR: .artifacts/build/cargo
+  # Crates that only make sense as 32-bit Windows builds; they have their own job.
+  WINDOWS_ONLY: >-
+    --exclude lf-rewrite-32 --exclude lf-checker-worker --exclude lf-checker-rt --exclude lf-checker-proofs
+    --exclude lf-hook --exclude lf-registry --exclude lf-proxy --exclude lf-test-target
+
+jobs:
+  portable:
+    name: Portable crates (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the pinned toolchain
+        run: rustup toolchain install 1.96.1 --profile minimal --no-self-update
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ". -> .artifacts/build/cargo"
+      - name: Build
+        shell: bash
+        run: cargo check --workspace $WINDOWS_ONLY --all-targets
+      - name: Test
+        shell: bash
+        run: cargo test --workspace $WINDOWS_ONLY
+
+  tools-32bit:
+    name: 32-bit Windows tools
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the pinned toolchain with the 32-bit target
+        run: rustup toolchain install 1.96.1 --profile minimal --no-self-update --target i686-pc-windows-msvc
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ". -> .artifacts/build/cargo"
+          key: i686
+      - name: Build the checker and the loader
+        run: >-
+          cargo build --target i686-pc-windows-msvc
+          -p lf-checker-worker -p lf-checker-rt -p lf-hook -p lf-registry -p lf-proxy -p lf-test-target
+      - name: Build the checker's proof library
+        # The proofs are built the way the checker loads them.
+        run: cargo build --target i686-pc-windows-msvc -p lf-checker-proofs
+        env:
+          RUSTFLAGS: "-C panic=abort"
+          CARGO_TARGET_DIR: .artifacts/build/cargo-proofs
+      - name: Unit tests
+        run: cargo test --target i686-pc-windows-msvc -p lf-hook -p lf-registry -p lf-checker-worker
+
+  lint:
+    name: Format and lints (advisory)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Advisory until the codebase is clean under both: a finding here never turns the run red.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the pinned toolchain
+        run: rustup toolchain install 1.96.1 --profile minimal --no-self-update --component clippy,rustfmt
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ". -> .artifacts/build/cargo"
+          key: lint
+      - name: Formatting
+        run: cargo fmt --all --check
+      - name: Clippy
+        if: always()
+        run: cargo clippy --workspace $WINDOWS_ONLY --all-targets
+
+  repository:
+    name: Scripts and publication rules
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Scripts compile
+        run: python -m compileall -q scripts
+      - name: Site data is valid JSON
+        run: python -c "import json,glob; [json.load(open(f, encoding='utf-8')) for f in glob.glob('docs/data/*.json')]; print('ok')"
+      - name: Publication rules
+        run: python scripts/ci/check_publication.py

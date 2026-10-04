@@ -1,6 +1,20 @@
 [
   {
     "date": "2026-10-04",
+    "title": "CI: a first pipeline on GitHub Actions",
+    "commit": null,
+    "summary": "Every push that touches code is now built and tested on GitHub's machines. It informs; nothing waits on it.",
+    "changes": [
+      "Portable crates (engine crates, format readers, shared types) are built and their tests run on Windows, Linux and macOS. The goal is a portable game, so portability is checked from the first day instead of at the end.",
+      "The 32-bit Windows tools (the checker's worker and runtime, the proof library, the loader's hook engine, replacement table and proxy) are built, and their unit tests run.",
+      "A publication check runs on every push: nothing from the game or the scratch folders is tracked, no binary or game file types, no machine paths or account names in text files, no inline assembly in rewrites or engine crates, no file over 5 MB. The repository passes it today (7,318 tracked files).",
+      "Formatting and lints run as advisory: findings are reported and never turn a run red until the code is clean under both.",
+      "Runs are triggered only by changes to code, scripts or the workflow, so the progress, devlog and rewrite-import commits that arrive every few minutes do not start one. A newer push cancels an older run.",
+      "What it cannot do: run the checker against the original game. That needs the game's executable, which is never uploaded anywhere. The rewrites under rewrites/pending are not compiled here yet either; they join when the assembly step lands."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 125 more functions pass the checker (7060 in total)",
     "commit": "f8bd9aea5add7b2ecdb0ee617d4d3333a70de5dc",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
