@@ -963,6 +963,15 @@
   "lane": "a-10"
  },
  {
+  "address": "0x0064F3C0",
+  "name": "rage::ptxSprite::vf13",
+  "kind": "function",
+  "file": "functions/fn_0064f3c0.rs",
+  "trials": 1200,
+  "checker": "version 3",
+  "lane": "r-b87"
+ },
+ {
   "address": "0x00684480",
   "name": "rage::crFrameDofFloat::vf6",
   "kind": "function",
@@ -5148,6 +5157,15 @@
   "lane": "a-12"
  },
  {
+  "address": "0x008AAE20",
+  "name": "audio_effect_bind_params",
+  "kind": "function",
+  "file": "functions/fn_008aae20.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b81"
+ },
+ {
   "address": "0x008AAFA0",
   "name": "audio_voice_defaults",
   "kind": "function",
@@ -5290,6 +5308,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "a-F06"
+ },
+ {
+  "address": "0x008ABD30",
+  "name": "audio_effect_create",
+  "kind": "function",
+  "file": "functions/fn_008abd30.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b81"
  },
  {
   "address": "0x008ABEF0",
@@ -14497,6 +14524,51 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-08"
+ },
+ {
+  "address": "0x00B5C9B0",
+  "name": "NativeImpl_FIRE_PED_WEAPON_2",
+  "kind": "function",
+  "file": "functions/fn_00b5c9b0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b73"
+ },
+ {
+  "address": "0x00B5CB10",
+  "name": "audio_range_gate",
+  "kind": "function",
+  "file": "functions/fn_00b5cb10.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b73"
+ },
+ {
+  "address": "0x00B5CCC0",
+  "name": "audio_position_update",
+  "kind": "function",
+  "file": "functions/fn_00b5ccc0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b73"
+ },
+ {
+  "address": "0x00B5D180",
+  "name": "weapon_slot_step",
+  "kind": "function",
+  "file": "functions/fn_00b5d180.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b73"
+ },
+ {
+  "address": "0x00B5D3B0",
+  "name": "fire_gunshot_events",
+  "kind": "function",
+  "file": "functions/fn_00b5d3b0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b73"
  },
  {
   "address": "0x00B5DC70",
@@ -34992,6 +35064,195 @@
   "lane": "r-s126"
  },
  {
+  "address": "0x00BF38B0",
+  "name": "fetch_block_a",
+  "kind": "function",
+  "file": "functions/fn_00bf38b0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF3900",
+  "name": "bind_slot_indexed",
+  "kind": "function",
+  "file": "functions/fn_00bf3900.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF3970",
+  "name": "fetch_block_b",
+  "kind": "function",
+  "file": "functions/fn_00bf3970.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF3C10",
+  "name": "copy_triple",
+  "kind": "function",
+  "file": "functions/fn_00bf3c10.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF3C40",
+  "name": "route_slot",
+  "kind": "function",
+  "file": "functions/fn_00bf3c40.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF3F20",
+  "name": "bind_slot",
+  "kind": "function",
+  "file": "functions/fn_00bf3f20.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF40F0",
+  "name": "tag_init",
+  "kind": "function",
+  "file": "functions/fn_00bf40f0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF4110",
+  "name": "pack_rgb_hi",
+  "kind": "function",
+  "file": "functions/fn_00bf4110.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF4130",
+  "name": "pack_rgb_lo",
+  "kind": "function",
+  "file": "functions/fn_00bf4130.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF4150",
+  "name": "set_flags_hi",
+  "kind": "function",
+  "file": "functions/fn_00bf4150.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF4180",
+  "name": "set_flags_lo",
+  "kind": "function",
+  "file": "functions/fn_00bf4180.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF41E0",
+  "name": "build_emitter_full",
+  "kind": "function",
+  "file": "functions/fn_00bf41e0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF43F0",
+  "name": "build_emitter_plain",
+  "kind": "function",
+  "file": "functions/fn_00bf43f0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF4490",
+  "name": "emit_vec3_a",
+  "kind": "function",
+  "file": "functions/fn_00bf4490.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF44D0",
+  "name": "emit_vec3_b",
+  "kind": "function",
+  "file": "functions/fn_00bf44d0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF4510",
+  "name": "emit_header",
+  "kind": "function",
+  "file": "functions/fn_00bf4510.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF4A50",
+  "name": "build_emitter_tabled",
+  "kind": "function",
+  "file": "functions/fn_00bf4a50.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF5550",
+  "name": "build_emitter_cached",
+  "kind": "function",
+  "file": "functions/fn_00bf5550.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF5600",
+  "name": "build_emitter_tinted",
+  "kind": "function",
+  "file": "functions/fn_00bf5600.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
+  "address": "0x00BF5700",
+  "name": "bind_train_spark_audio",
+  "kind": "function",
+  "file": "functions/fn_00bf5700.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b83"
+ },
+ {
+  "address": "0x00BF6850",
+  "name": "blend_keys",
+  "kind": "function",
+  "file": "functions/fn_00bf6850.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s125"
+ },
+ {
   "address": "0x00BFA7A0",
   "name": "header_init_kind49_tag0d",
   "kind": "function",
@@ -37303,6 +37564,33 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b12"
+ },
+ {
+  "address": "0x00D8F6F0",
+  "name": "audio_vector_rescale_publish",
+  "kind": "function",
+  "file": "functions/fn_00d8f6f0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b78"
+ },
+ {
+  "address": "0x00D8F840",
+  "name": "audio_entry_scan_best_fit",
+  "kind": "function",
+  "file": "functions/fn_00d8f840.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b78"
+ },
+ {
+  "address": "0x00D8FD40",
+  "name": "audio_entry_walk_score_store",
+  "kind": "function",
+  "file": "functions/fn_00d8fd40.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b78"
  },
  {
   "address": "0x00D90280",
