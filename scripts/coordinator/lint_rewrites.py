@@ -9,6 +9,13 @@ Every check is a pattern over the text, so each finding says how sure it is: `ce
 proves it, `likely` means a heuristic that can misfire and wants a look. Per-file findings are listed;
 patterns found in most files (integers as pointers, plain dereferences) are counted once as systemic.
 
+Structural checks look for proofs narrower than they seem: a truncated or unbalanced file (`unbalanced`, it
+cannot be what the checker ran), words saying part of the code is a placeholder (`placeholder`; todo!,
+unimplemented! and unreachable! stay under `partial`), a callee's answer discarded while the function returns
+a constant although its doc says the original returns that answer (`constant-for-callee-result`), and
+arguments that never reach the callee (`unused-parameter`, `forwarder-drops-args`, `args-gap` for script
+natives). On the verified tree of 4 October 2026 they fired on 4, 3, 6, 4, 0 and 0 files.
+
 Usage: python lint_rewrites.py                 summary
        python lint_rewrites.py --json          every finding as JSON on stdout
        python lint_rewrites.py --write PATH    write the issue log (findings plus systemic counts) to PATH
@@ -52,6 +59,234 @@ REGISTER_LOCAL = re.compile(r"\blet\s+(?:mut\s+)?(e[abcd]x|e[sd]i|ebp)\b")
 
 def offset_value(text):
     return int(text.replace("_", ""), 0)
+
+
+# --- Structure: balance, the export body, its final expression -------------------------------------------
+
+CLOSERS = {")": "(", "]": "[", "}": "{"}
+OPENERS = {v: k for k, v in CLOSERS.items()}
+CHAR_LITERAL = re.compile(r"'(?:\\(?:x[0-9a-fA-F]{2}|u\{[0-9a-fA-F]{1,6}\}|.)|[^\\'\n])'")
+RAW_STRING = re.compile(r"b?r(#*)\"")
+
+
+def balance_problems(text):
+    """Why the file is not a complete Rust token stream: an unterminated string or block comment, a closing
+    delimiter that does not match, or delimiters still open at the end (a truncated file ends mid-item or
+    mid-macro). Comments, strings, raw strings, byte strings, char literals and lifetimes are skipped. Pure;
+    returns a list of sentences, empty when the file is balanced."""
+    stack, i, n, line = [], 0, len(text), 1
+    while i < n:
+        c = text[i]
+        if c == "\n":
+            line += 1
+            i += 1
+        elif text.startswith("//", i):
+            j = text.find("\n", i)
+            i = n if j < 0 else j
+        elif text.startswith("/*", i):
+            depth, start, i = 1, line, i + 2
+            while i < n and depth:
+                if text.startswith("/*", i):
+                    depth, i = depth + 1, i + 2
+                elif text.startswith("*/", i):
+                    depth, i = depth - 1, i + 2
+                else:
+                    line += text[i] == "\n"
+                    i += 1
+            if depth:
+                return [f"block comment from line {start} never ends"]
+        elif c in "br" and (i == 0 or not (text[i - 1].isalnum() or text[i - 1] == "_")) and RAW_STRING.match(text, i):
+            match = RAW_STRING.match(text, i)
+            end = text.find('"' + match.group(1), match.end())
+            if end < 0:
+                return [f"raw string from line {line} never ends"]
+            line += text.count("\n", i, end)
+            i = end + 1 + len(match.group(1))
+        elif c == '"' or (c == "b" and text.startswith('b"', i) and (i == 0 or not (text[i - 1].isalnum() or text[i - 1] == "_"))):
+            start, i = line, i + (2 if c == "b" else 1)
+            while i < n and text[i] != '"':
+                if text[i] == "\\":
+                    i += 1
+                if i < n and text[i] == "\n":
+                    line += 1
+                i += 1
+            if i >= n:
+                return [f"string from line {start} never ends"]
+            i += 1
+        elif c == "'":
+            match = CHAR_LITERAL.match(text, i)
+            i = match.end() if match else i + 1  # otherwise a lifetime or a loop label
+        else:
+            if c in OPENERS:
+                stack.append((c, line))
+            elif c in CLOSERS:
+                if not stack:
+                    return [f"unmatched '{c}' at line {line}"]
+                opener, opened = stack.pop()
+                if opener != CLOSERS[c]:
+                    return [f"'{opener}' opened at line {opened} is closed by '{c}' at line {line}"]
+            i += 1
+    if stack:
+        opener, opened = stack[0]
+        return [f"{len(stack)} delimiter(s) still open at the end of the file, the outermost '{opener}' from line {opened}"]
+    return []
+
+
+def matching(code, i):
+    """Index of the delimiter closing the one at `i` (scanning forward), or None. Comments must already be
+    stripped; brackets inside string literals are rare enough in rewrites to ignore."""
+    opener = code[i]
+    closer, depth = OPENERS[opener], 0
+    for j in range(i, len(code)):
+        if code[j] == opener:
+            depth += 1
+        elif code[j] == closer:
+            depth -= 1
+            if depth == 0:
+                return j
+    return None
+
+
+def matching_back(code, j):
+    """Index of the delimiter opening the one at `j` (scanning backward), or None."""
+    closer = code[j]
+    opener, depth = CLOSERS[closer], 0
+    for i in range(j, -1, -1):
+        if code[i] == closer:
+            depth += 1
+        elif code[i] == opener:
+            depth -= 1
+            if depth == 0:
+                return i
+    return None
+
+
+def split_top(text):
+    """Comma-separated items at nesting depth zero."""
+    items, depth, current = [], 0, ""
+    for ch in text:
+        depth += ch in "([{"
+        depth -= ch in ")]}"
+        if ch == "," and depth == 0:
+            items.append(current.strip())
+            current = ""
+        else:
+            current += ch
+    if current.strip():
+        items.append(current.strip())
+    return items
+
+
+def export_parts(code):
+    """(parameter names, body text) of the first export, from comment-stripped code; None when the export
+    cannot be delimited (the balance check reports why)."""
+    match = EXPORT.search(code)
+    if not match:
+        return None
+    params_end = matching(code, match.end() - 1)
+    if params_end is None:
+        return None
+    body_start = code.find("{", params_end)
+    body_end = matching(code, body_start) if body_start >= 0 else None
+    if body_end is None:
+        return None
+    names = []
+    for item in split_top(code[match.end():params_end]):
+        name = item.split(":")[0].strip()
+        names.append(re.sub(r"^mut\s+", "", name))
+    return names, code[body_start + 1:body_end]
+
+
+def final_expression(body):
+    """The expression a body evaluates to, looking through `unsafe { }` wrappers and a trailing
+    `return X;`. None when the value comes from a branching expression (if/match/loop) or a nested block."""
+    body = body.strip()
+    for _ in range(16):
+        if body.endswith("}"):
+            start = matching_back(body, len(body) - 1)
+            if start is None:
+                return None
+            before = body[:start].rstrip()
+            outer = before[:-len("unsafe")].rstrip() if before.endswith("unsafe") else None
+            if before == "" or (outer is not None and (outer == "" or outer[-1] in ";{}")):
+                body = body[start + 1:-1].strip()
+                continue
+            return None
+        depth, cut = 0, 0
+        for i, ch in enumerate(body):
+            if ch in "([{":
+                depth += 1
+            elif ch in ")]}":
+                depth -= 1
+                if depth == 0 and ch == "}":
+                    cut = i + 1
+            elif ch == ";" and depth == 0:
+                cut = i + 1
+        tail = body[cut:].strip()
+        if tail:
+            return tail
+        statements = [s for s in re.split(r";\s*", body) if s.strip()]
+        match = re.match(r"\s*return\s+(.*)$", statements[-1], re.S) if statements else None
+        return match.group(1).strip() if match else ""
+    return None
+
+
+# --- Narrow-proof patterns the checker cannot see -------------------------------------------------------
+
+CALLEE_CALL = re.compile(r"(?:[\w:]+::)?callee_\w+!\(")
+INT_LITERAL = re.compile(r"(?:0x[0-9a-fA-F_]+|\d[\d_]*)(?:u8|u16|u32|i32|usize)?")
+CONTROL_FLOW = re.compile(r"\b(?:if|match|loop|while|for)\b")
+# The doc says the original's return value is a callee's answer, or what a call left in EAX/ST0.
+RETURNS_CALLEE = re.compile(
+    r"returns?\s+(?:value\s+is\s+)?whatever"
+    r"|(?:return\s+value|exit\s+eax|eax\s+on\s+exit|eax\s+at\s+exit)\s+is\s+(?:the\s+)?(?:last\s+)?(?:[\w-]+\s+)?"
+    r"(?:callee|helper|call|stub|worker)(?:'s)?\s+(?:answer|result)"
+    r"|returns?\s+(?:the\s+)?(?:last\s+)?(?:[\w-]+(?:'s)?\s+)?(?:callee|helper|worker|stub|call)(?:'s)?\s+(?:answer|result|return\s+value)"
+    r"|\bleaves?\s+(?:whatever|the\s+(?:last\s+)?[\w-]+\s+(?:answer|result))[^.;]{0,40}?\bin\s+(?:eax|st0)"
+    r"|\bleft\s+in\s+(?:eax|st0|the\s+floating-point\s+result\s+register)"
+    r"|\bas\s+a\s+placeholder\b", re.I)
+NUMBER_WORDS = {"one": 1, "single": 1, "two": 2, "both": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7,
+                "eight": 8, "nine": 9, "ten": 10, "eleven": 11, "twelve": 12}
+FORWARDS_N = re.compile(r"\bforwards?\s+(?:the\s+|its\s+|all\s+|both\s+(?=\w+\s))?(\d+|" + "|".join(NUMBER_WORDS) + r")\s+"
+                        r"(?:\w+\s+){0,3}?(?:arguments?|args?|words?|values?|handles?|parameters?|integers?|floats?|ints?|ids?|pointers?)\b", re.I)
+# Script-native argument reads: args.add(N), (args + bytes), *args, args.read(), (args as *const T), args[N].
+NATIVE_ARG_INDEX = re.compile(r"\bargs\.(?:add|offset)\(\s*(0x[0-9a-fA-F]+|\d+)\s*(?:as\s+\w+\s*)?\)|\bargs\[(\d+)\]")
+NATIVE_ARG_BYTES = re.compile(r"\(\s*args\s*\+\s*(0x[0-9a-fA-F]+|\d+)\s*\)|\bargs\.wrapping_add\(\s*(0x[0-9a-fA-F]+|\d+)\s*\)")
+NATIVE_ARG_ZERO = re.compile(r"\*\s*args\b(?!\s*[.+])|\bargs\.read(?:_unaligned)?\(\)|\(\s*args\s+as\s+\*(?:const|mut)\s+\w+\s*\)")
+# Words that say the code itself is unfinished. "stub" alone is not one: rewrites call the checker's recorder
+# stubs constantly. "placeholder" in a naming note (an inventory placeholder name or token) is not one either.
+PLACEHOLDER = re.compile(
+    r"\bTODO\b|\bFIXME\b|\bXXX\b"
+    r"|\bplaceholder\b(?!\s+(?:name|token|merged|symbol|coordinate))(?<!merged\ssymbol;\splaceholder)"
+    r"|\b(?:this|the)\s+(?:rewrite|function|export|body|implementation)\s+is\s+(?:a\s+|only\s+a\s+)?stub\b"
+    r"|\bstub\s+(?:implementation|rewrite|body|version)\b|\bstubbed[- ]out\b|\bnot\s+(?:yet\s+)?implemented\b")
+PLACEHOLDER_NAMING = re.compile(r"placeholder\s+merged\s+name|merged\s+symbol;\s*placeholder", re.I)
+
+
+def discarded_calls(body):
+    """Callee calls whose (non-unit) result is thrown away: `let _ = callee!(...);` or a bare statement."""
+    found = []
+    for match in CALLEE_CALL.finditer(body):
+        close = matching(body, match.end() - 1)
+        if close is None:
+            continue
+        args = split_top(body[match.end():close])
+        if len(args) < 2 or args[1].replace(" ", "") == "()":
+            continue
+        lead = body[body.rfind("\n", 0, match.start()) + 1:match.start()]
+        if not body[close + 1:].lstrip().startswith(";"):
+            continue
+        if re.fullmatch(r"\s*let\s+_\w*\s*(?::\s*[\w()]+\s*)?=\s*", lead) or re.fullmatch(r"\s*(?:unsafe\s*\{\s*)?", lead):
+            found.append(args[0])
+    return found
+
+
+def is_literal(expr):
+    return bool(INT_LITERAL.fullmatch(expr.strip()))
+
+
+def doc_text(text):
+    return " ".join(line.strip().lstrip("/!").strip() for line in text.splitlines() if line.strip().startswith("//"))
 
 
 def lint_text(text, path, address=None):
@@ -122,11 +357,75 @@ def lint_text(text, path, address=None):
     if literals and not re.search(r"\b(?:relocated|global|xbase)\b", code_only):
         add("image-literal", "medium", "rule", "likely", "now", "Image-range number used without relocated()/global()",
             f"Values such as {', '.join(sorted(set(literals))[:3])} look like original addresses; if any is used as one, it breaks once the image moves.")
+    lint_structure(text, code_only, path, add)
     temps = set(TEMPS.findall(code_only))
     if len(temps) >= 3 or len(set(REGISTER_LOCAL.findall(code_only))) >= 3:
         add("transliteration", "medium", "rule", "likely", "now", "Decompiler-style or register-named locals",
             "Names such as uVar/local_/param_ or eax/ecx as variables suggest a line-by-line transliteration; rule 1 wants a Rust rewrite. Review it.")
     return found
+
+
+def lint_structure(text, code_only, path, add):
+    """The checks that need the file's structure: truncation, placeholders, a callee's result replaced by a
+    constant, and arguments that never reach the callee. Calibrated on the verified tree (see the tests)."""
+    problems = balance_problems(text)
+    if problems:
+        add("unbalanced", "high", "integration", "certain", "now", "Truncated or unbalanced file",
+            f"{problems[0]}. The tracked file cannot compile, so it is not the code the checker ran.")
+    for match in re.finditer(r"export!\(", code_only):
+        close = matching(code_only, match.end() - 1)
+        if close is not None and not code_only[close + 1:].lstrip().startswith(";"):
+            add("unbalanced", "high", "integration", "certain", "now", "Export macro without its closing semicolon",
+                "An item-position `export!( ... )` needs a trailing `;`; the file does not compile as tracked.")
+    placeholder = next((m for m in PLACEHOLDER.finditer(text)
+                        if not PLACEHOLDER_NAMING.search(text[max(0, m.start() - 30):m.end() + 20])), None)
+    if placeholder:
+        add("placeholder", "high", "narrow-proof", "likely", "now", "The file says part of it is a placeholder",
+            f"Found `{placeholder.group(0)}`: a value or path the rewrite does not really implement; say what the proof does not cover, or finish it.")
+    parts = export_parts(code_only)
+    if parts is None:
+        return
+    params, body = parts
+    final = final_expression(body)
+    if final and is_literal(final):
+        returns = [r.strip() for r in re.findall(r"\breturn\s+([^;]+);", body)]
+        dropped = discarded_calls(body)
+        claim = RETURNS_CALLEE.search(doc_text(text))
+        if dropped and claim and all(is_literal(r) for r in returns):
+            add("constant-for-callee-result", "high", "narrow-proof", "likely", "now", "A callee's result is replaced by a constant",
+                f"The doc says `{claim.group(0)}`, but the rewrite discards the answer of callee {', '.join(list(dict.fromkeys(dropped))[:4])}{' and others' if len(set(dropped)) > 4 else ''} and always returns {final}; "
+                "the original's return value is not reproduced, so a caller that reads it would differ (and the contract must not compare it).")
+    native = "natives/" in path.replace("\\", "/") or params == ["ctx"]
+    unused = [p for p in params if p and not p.startswith("_") and not (native and p == "ctx")
+              and not re.search(r"\b" + re.escape(p) + r"\b", body)]
+    calls = list(CALLEE_CALL.finditer(body))
+    forwarder = len(calls) == 1 and not CONTROL_FLOW.search(body)
+    if unused:
+        detail = f"Parameter(s) {', '.join(unused)} never used: an argument the original passes on may have been dropped"
+        if forwarder:
+            close = matching(body, calls[0].end() - 1)
+            if close is not None and any(is_literal(a) for a in split_top(body[calls[0].end():close])[2:]):
+                detail += " (the one callee call passes a literal where it might go)"
+        add("unused-parameter", "medium", "narrow-proof", "likely", "now", "A parameter is never used", detail + ".")
+    if forwarder:
+        claim = FORWARDS_N.search(doc_text(text))
+        close = matching(body, calls[0].end() - 1)
+        if claim and close is not None:
+            word = claim.group(1).lower()
+            wanted = int(word) if word.isdigit() else NUMBER_WORDS[word]
+            passed = [a for a in split_top(body[calls[0].end():close])[2:] if not is_literal(a)]
+            if len(passed) < wanted:
+                add("forwarder-drops-args", "high", "narrow-proof", "likely", "now", "Forwarder passes fewer arguments than its doc says",
+                    f"The doc says `{claim.group(0)}` but the call passes {len(passed)} non-literal argument(s).")
+    if native:
+        indexes = {int(a or b, 0) for a, b in NATIVE_ARG_INDEX.findall(body)}
+        indexes |= {int(a or b, 0) // 4 for a, b in NATIVE_ARG_BYTES.findall(body)}
+        if NATIVE_ARG_ZERO.search(body):
+            indexes.add(0)
+        gaps = sorted(set(range(max(indexes) + 1)) - indexes) if indexes else []
+        if gaps:
+            add("args-gap", "medium", "narrow-proof", "likely", "now", "A script argument between used ones is never read",
+                f"Reads script arguments {sorted(indexes)} but not {gaps}: a skipped argument, unless the native ignores it.")
 
 
 def systemic(texts):

@@ -86,6 +86,88 @@ class TestLintText(unittest.TestCase):
         self.assertIn("transliteration", codes(text))
 
 
+FORWARDER = """\
+// original: 0x00401000 thing_forward
+/// Forwards both words of the pair to the shared helper.
+export!(cdecl, rw_00401000(a: u32, b: u32) -> u32 {
+    unsafe { callee_cdecl!(1, u32, a, b) }
+});
+"""
+
+RESIDUE = """\
+// original: 0x00401000 thing_notify
+/// Notifies the sink. The original leaves the last helper answer in EAX.
+export!(thiscall, rw_00401000(this: u32) -> u32 {
+    unsafe {
+        let _ = callee_thiscall!(1, u32, this);
+        callee_cdecl!(2, u32, this);
+    }
+    0
+});
+"""
+
+
+class TestStructure(unittest.TestCase):
+    def test_balance(self):
+        self.assertEqual(lint_rewrites.balance_problems(CLEAN), [])
+        self.assertIn("still open", lint_rewrites.balance_problems(CLEAN[:CLEAN.index("this\n});")])[0])
+        self.assertIn("closed by", lint_rewrites.balance_problems("fn f() { (] }")[0])
+        self.assertIn("never ends", lint_rewrites.balance_problems('let s = "abc;\n')[0])
+        # Delimiters inside strings, chars, comments, raw strings and lifetimes do not count.
+        tricky = "fn f<'a>(x: &'a u8) -> char { let _ = \"({[\"; let _ = r#\"}\"#; /* ) */ // (\n '}' }"
+        self.assertEqual(lint_rewrites.balance_problems(tricky), [])
+
+    def test_unbalanced_finding(self):
+        self.assertIn("unbalanced", codes(CLEAN[:CLEAN.index("    this\n")]))
+        self.assertIn("unbalanced", codes(CLEAN.replace("});", "})")))
+
+    def test_final_expression(self):
+        fe = lint_rewrites.final_expression
+        self.assertEqual(fe(" unsafe { let x = 1; x } "), "x")
+        self.assertEqual(fe("let x = 1;\n return 0;"), "0")
+        self.assertIsNone(fe("if a { 1 } else { 0 }"))
+        self.assertEqual(fe("unsafe { f(); }\n 0"), "0")
+
+    def test_constant_for_callee_result(self):
+        self.assertIn("constant-for-callee-result", codes(RESIDUE))
+        # Without the doc's claim, or when the answer is returned on some path, nothing is reported.
+        self.assertNotIn("constant-for-callee-result", codes(RESIDUE.replace(" The original leaves the last helper answer in EAX.", "")))
+        returned = RESIDUE.replace("        callee_cdecl!(2, u32, this);\n", "        if this == 0 { return callee_cdecl!(2, u32, this); }\n")
+        self.assertNotIn("constant-for-callee-result", codes(returned))
+        # A unit-typed callee has no answer to discard.
+        unit = RESIDUE.replace("let _ = callee_thiscall!(1, u32, this);", "callee_thiscall!(1, (), this);").replace(
+            "callee_cdecl!(2, u32, this);", "callee_cdecl!(2, (), this);")
+        self.assertNotIn("constant-for-callee-result", codes(unit))
+
+    def test_skipped_arguments(self):
+        self.assertEqual(codes(FORWARDER), [])
+        dropped = FORWARDER.replace("callee_cdecl!(1, u32, a, b)", "callee_cdecl!(1, u32, a, 0)")
+        found = codes(dropped)
+        self.assertIn("unused-parameter", found)
+        self.assertIn("forwarder-drops-args", found)
+        detail = [f["detail"] for f in lint_rewrites.lint_text(dropped, "f.rs", ADDRESS) if f["code"] == "unused-parameter"][0]
+        self.assertIn("literal", detail)
+        self.assertNotIn("unused-parameter", codes(FORWARDER.replace("(a: u32, b: u32)", "(a: u32, _b: u32)").replace(", a, b)", ", a, 0)")))
+
+    def test_native_argument_gap(self):
+        native = ("// original: 0x00401000 NATIVE\n/// Forwards script arguments.\n"
+                  "export!(cdecl, rw_00401000(ctx: *const u8) -> u32 {\n    unsafe {\n"
+                  "        let args = *(ctx.add(8) as *const u32) as *const u32;\n"
+                  "        callee_cdecl!(1, u32, *args, *args.add(1), *args.add(3))\n    }\n});\n")
+        found = lint_rewrites.lint_text(native, "natives/fn_00401000.rs", ADDRESS)
+        self.assertEqual([f["code"] for f in found], ["args-gap"])
+        self.assertIn("[2]", found[0]["detail"])
+        self.assertEqual(lint_rewrites.lint_text(native.replace("*args.add(3)", "*args.add(2)"), "natives/fn_00401000.rs", ADDRESS), [])
+
+    def test_placeholders(self):
+        self.assertIn("placeholder", codes(CLEAN.replace("/// Clears", "/// TODO: the flag path. Clears")))
+        self.assertIn("placeholder", codes(CLEAN.replace("    this\n});", "    0 // placeholder for the real result\n});")))
+        # Checker stubs and inventory placeholder names are not placeholders in the code.
+        self.assertEqual(codes(CLEAN.replace("/// Clears", "/// The base constructor (a stubbed outgoing call) runs. Clears")), [])
+        self.assertEqual(codes(CLEAN.replace("/// Clears", "/// Placeholder merged name: SOME_NATIVE. Clears")), [])
+        self.assertEqual(codes(CLEAN.replace("/// Clears", "/// (merged symbol; placeholder name). Clears")), [])
+
+
 class TestSystemic(unittest.TestCase):
     def test_counts(self):
         plain = "unsafe { *(p as *mut u32) = 1; }"
