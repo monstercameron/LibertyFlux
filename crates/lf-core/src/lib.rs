@@ -11,9 +11,8 @@
 //!   [`AddressMap`](boundary::AddressMap) and the conversion traits between
 //!   32-bit layouts and native structs). The method they serve is specified
 //!   in the `lf-lift` crate documentation.
-//! - The game's maths types will live here once the `glam` dependency is
-//!   approved (see the t-engine-crates report); nothing invents its own
-//!   vector/matrix types elsewhere.
+//! - The game's maths types live in the dependency-free `lf-math` crate;
+//!   nothing invents its own vector/matrix types elsewhere.
 //! - This crate must stay dependency-free and portable: it builds for every
 //!   target including `i686-pc-windows-msvc`, and it must never contain
 //!   original game code, only new Rust.

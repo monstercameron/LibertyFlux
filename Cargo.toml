@@ -2,7 +2,8 @@
 #
 # Layout:
 # - crates/lf-core holds shared types (fixed-layout helpers, typed pointers,
-#   future maths types) and the layout-assertion macros.
+#   the lift's boundary types) and the layout-assertion macros; the maths
+#   types (vectors, matrices, quaternions) are in crates/lf-math.
 # - crates/lf-<subsystem> hold the engine subsystems. Portable rewrite code
 #   lives in each crate root; fixed 32-bit memory layouts live in its
 #   `layout` module (see layout-convention.md in the lane notes; tracked
@@ -57,6 +58,7 @@ members = [
     "crates/lf-renderer",
     "crates/lf-formats",
     "crates/lf-platform",
+    "crates/lf-math",
     "crates/lf-rewrite-32",
     "crates/lf-lift-pilot",
     "crates/lf-lift",
