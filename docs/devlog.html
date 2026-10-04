@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#subsystem-script-vm">Subsystem survey: the script virtual machine</a></li>
       <li><a href="#subsystem-peds-tasks">Subsystem survey: pedestrians, AI and the task system</a></li>
       <li><a href="#subsystem-files-memory">Subsystem survey: file system, configuration, memory and save games</a></li>
       <li><a href="#subsystem-audio">Subsystem survey: audio</a></li>
@@ -83,6 +84,56 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="subsystem-script-vm">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Subsystem survey: the script virtual machine</h2>
+      <p>The script virtual machine was surveyed directly from the executable without disassembling the encrypted region. <span class="evidence verified">Verified</span> Its interpreter core was located through a tight block of error strings and matching virtual tables, 11 core classes and 127 adjacent script-driven classes were catalogued with their inheritance and virtual table sizes, and 231 code references were grouped into 44 clusters. The network half of the virtual machine lives entirely in the encrypted region, the classic container names from later engine generations are absent, and the interpreter core makes no direct operating system calls.</p>
+      <h3>What was asked</h3>
+      <p>Survey the bytecode interpreter that runs mission scripts: thread and program classes, script globals, native function dispatch, the script file format, and script resource handling. Deliver class hierarchies with virtual table sizes, the strings that belong to the subsystem, the code ranges where it lives with a function and byte estimate, its operating system dependencies, public documentation, frame-rate dependencies, rewrite notes, and a ranked list of what to understand first.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The class hierarchy starts at rage::scrThread, a root class with five virtual functions, with GtaThread inheriting two slots and overriding three. Native commands are served by a CScriptCommands pair, mission entity lifetime by a CMissionCleanup pair, each with an episodes variant that overrides one slot. Script host and client variable replication plus a host-variables verification event account for 80 virtual functions whose code sits entirely in the encrypted region. A further 113 virtual tables belong to a queued camera-instruction family, one subclass per camera command, with smaller bridges to audio, script 2d drawing, tasks, and in-game html objects.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Group</th>
+      <th role="columnheader">Count</th>
+      <th role="columnheader">Where the code lives</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">Core thread and interpreter classes</td>
+      <td role="cell" data-label="Count">2 classes, 5 virtual functions each</td>
+      <td role="cell" data-label="Where the code lives">One unencrypted cluster of about eleven kilobytes holding every virtual function of the base thread</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Command registry, cleanup, events, html objects</td>
+      <td role="cell" data-label="Count">6 classes</td>
+      <td role="cell" data-label="Where the code lives">Scattered small unencrypted sites, some single constructor references</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Network variable replication</td>
+      <td role="cell" data-label="Count">3 classes, 80 virtual functions</td>
+      <td role="cell" data-label="Where the code lives">Entirely in the encrypted region, addresses known but no readable bytes</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Camera instruction queue</td>
+      <td role="cell" data-label="Count">113 virtual tables</td>
+      <td role="cell" data-label="Where the code lives">One large unencrypted cluster with over a hundred constructor references</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The interpreter announces itself through ten adjacent messages: unknown opcode, missing native command, unknown script name, three thread-reset diagnostics covering argument size, static variables versus stack size, and program identity, plus thread kill, array overrun, and clean exit notes. These confirm fixed-size thread stacks, id-indexed programs, name-based lookup, and abort-on-bad-opcode behaviour, matching the <a href="https://gtamods.com/wiki/SCO">public script container layout</a> of code plus statics plus globals. Mission and ambient script slots, a dozen script entity and event-argument type names, network reservation states, and pool flags marking objects usable from scripts round out the vocabulary.</p>
+      <p><span class="evidence verified">Verified</span> Several expected things are absent: the classic container names from later engine generations have neither type records nor raw bytes anywhere credible, and the executable never names the script file extension, the wait intrinsic, a hash function, or any frame-timing term in a script context. The interpreter address range contains no direct operating system calls at all, which makes it a good candidate for isolated emulator testing. No third-party library code was found in any script cluster.</p>
+      <p><span class="evidence">Inferred</span> Scripts load by plain name or hash through the streaming layer, waits are opcode numbers rather than named calls, and whatever the virtual machine needs from the operating system arrives through engine memory, threading, and streaming layers. Public bug reports say several missions are frame-rate dependent and fail above capped frame rates, which fits a model where each script advances once per frame.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The rewrite should start with the thread context and reset and kill paths, then the interpreter step and opcode table against the public container documentation, then native dispatch, the loader and slots, mission cleanup, the event bridge, and finally the encrypted network replication and the audio, camera, render, and task bridges once the pending analysis finishes. The next lane should trace the users of the ten interpreter messages to name the step, reset, kill, and load functions, and hunt the native hash table, the scheduler, and the globals table, whose locations remain <span class="evidence">Unknown</span>. The 112 camera instructions should be generated from their enumeration, not hand-written.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane scripts in order with the project Python environment: layout and candidate scan, hierarchy and full virtual-table scan, string filtering with independent raw-byte term checks, relocation-based clustering with spot disassembly checks restricted to the unencrypted range, message-neighbourhood and import-reference scan, then curation into class, cluster, and string data files. Every script asserts the unencrypted-only rule before disassembling anything. The relocation table, the runtime type records, and the credible-section string pool are the only inputs.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The substring scr matches screen, describe, and discrete, and mission matches transmission, so the first candidate list was mostly noise and needed two curation passes. The prior lane string inventory mixes garbage decoded from encrypted bytes with real strings, so only three sections were trusted. About three of forty spot disassemblies decoded to implausible instructions where the sample landed mid-instruction, which was treated as sampling noise rather than evidence. The short tokens sitting inside the interpreter message block and the single throw message next to them could not be identified and are recorded as unknown rather than guessed at. Open format references and one engine-documentation set were left unchecked for lack of time.</p>
+      </article>
 
       <article class="entry" id="subsystem-peds-tasks">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Subsystem survey: pedestrians, AI and the task system",
+    "title": "Devlog: Subsystem survey: the script virtual machine",
     "commit": null,
+    "summary": "Findings from the s-script-vm lane.",
+    "changes": [
+      "New devlog entry: Subsystem survey: the script virtual machine.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Subsystem survey: pedestrians, AI and the task system",
+    "commit": "0a468dc24602e7e42d2e4e45c97907bdb8efe0ff",
     "summary": "Findings from the s-peds-tasks lane.",
     "changes": [
       "New devlog entry: Subsystem survey: pedestrians, AI and the task system.",
