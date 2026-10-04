@@ -1,4 +1,7 @@
 // original: 0x009a3660 station_index_picker
+
+use lf_checker_rt::{callee_cdecl, callee_thiscall, export, global};
+
 /// Read a global dword at a file VA.
 #[inline(always)]
 unsafe fn g_dword(file_va: u32) -> u32 {

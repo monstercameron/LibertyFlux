@@ -9,7 +9,7 @@
 /// answers 1 is the caller's argument forwarded to callee 3 and `+0xc8`
 /// cleared. Returns callee 3's answer on the taken path, else callee 2's
 /// answer.
-use lf_k2_rt::{callee_cdecl, callee_thiscall, export, global};
+use lf_checker_rt::{callee_cdecl, callee_thiscall, export, global};
 
 /// File VA of the global record-table stride (a plain value).
 const G_STRIDE: u32 = 0x115d964;
