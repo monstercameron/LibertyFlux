@@ -314,3 +314,151 @@ pub mod live {
         }
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Build a minimal PE32 image (as a file) with the given exports, so the
+    /// export-table reader can be tested without any real DLL. Each export is
+    /// `(name or None, ordinal)`; function RVAs are assigned in order. One
+    /// export is made a forwarder (its function RVA points inside the export
+    /// directory) to exercise `is_forwarder`.
+    fn build_pe(exports: &[(Option<&str>, u16)], base_ordinal: u16, forwarder: Option<u16>) -> Vec<u8> {
+        // Layout: headers in section ".idata" at RVA 0x1000, raw 0x200.
+        let pe = 0x80usize;
+        let opt_size = 0xE0usize; // PE32 optional header: 0x60 standard fields + 16 * 8 data directories = 0xE0
+        let sec_table = pe + 24 + opt_size;
+        let raw_base = 0x200usize;
+        let rva_base = 0x1000u32;
+        let mut img = vec![0u8; raw_base];
+        img[0..2].copy_from_slice(b"MZ");
+        img[0x3C..0x40].copy_from_slice(&(pe as u32).to_le_bytes());
+        img[pe..pe + 4].copy_from_slice(b"PE\0\0");
+        img[pe + 6..pe + 8].copy_from_slice(&1u16.to_le_bytes()); // one section
+        img[pe + 20..pe + 22].copy_from_slice(&(opt_size as u16).to_le_bytes());
+        img[pe + 24..pe + 26].copy_from_slice(&0x10Bu16.to_le_bytes()); // PE32 magic
+
+        // Section ".idata": vsize, vaddr, rawsize, rawptr.
+        let mut sec = [0u8; 40];
+        sec[..6].copy_from_slice(b".idata");
+        sec[8..12].copy_from_slice(&0x1000u32.to_le_bytes());
+        sec[12..16].copy_from_slice(&rva_base.to_le_bytes());
+        sec[16..20].copy_from_slice(&0x1000u32.to_le_bytes());
+        sec[20..24].copy_from_slice(&(raw_base as u32).to_le_bytes());
+        img[sec_table..sec_table + 40].copy_from_slice(&sec);
+
+        // Build the export section body at raw_base / rva_base.
+        let count = exports.len();
+        let dir = raw_base; // export directory at the section start
+        let funcs = dir + 40;
+        let names = funcs + count * 4;
+        let ords = names + count * 4;
+        let mut strings = ords + count * 2;
+        img.resize(strings + 256, 0);
+        let off_to_rva = |off: usize| rva_base + (off - raw_base) as u32;
+
+        let named: Vec<&(Option<&str>, u16)> = exports.iter().filter(|e| e.0.is_some()).collect();
+        // Export directory fields the reader uses.
+        img[dir + 16..dir + 20].copy_from_slice(&(base_ordinal as u32).to_le_bytes());
+        img[dir + 20..dir + 24].copy_from_slice(&(count as u32).to_le_bytes());
+        img[dir + 24..dir + 28].copy_from_slice(&(named.len() as u32).to_le_bytes());
+        img[dir + 28..dir + 32].copy_from_slice(&off_to_rva(funcs).to_le_bytes());
+        img[dir + 32..dir + 36].copy_from_slice(&off_to_rva(names).to_le_bytes());
+        img[dir + 36..dir + 40].copy_from_slice(&off_to_rva(ords).to_le_bytes());
+
+        let exp_rva = off_to_rva(dir);
+        let exp_size = (strings + 256 - dir) as u32;
+        // Optional-header export data directory (entry 0, at opt + 96 in PE32): points at the table above.
+        let opt = pe + 24;
+        img[opt + 96..opt + 100].copy_from_slice(&exp_rva.to_le_bytes());
+        img[opt + 100..opt + 104].copy_from_slice(&exp_size.to_le_bytes());
+        for (i, (_, ordinal)) in exports.iter().enumerate() {
+            let func_index = ordinal - base_ordinal;
+            let func_rva = if Some(*ordinal) == forwarder {
+                exp_rva + 4 // inside the export directory: a forwarder
+            } else {
+                0x2000 + i as u32 * 0x10
+            };
+            img[funcs + func_index as usize * 4..funcs + func_index as usize * 4 + 4]
+                .copy_from_slice(&func_rva.to_le_bytes());
+        }
+        // Names and name-ordinal table (sorted by name as a real linker emits; order does not matter to the reader).
+        for (i, (name, ordinal)) in named.iter().enumerate() {
+            let name = name.unwrap();
+            let name_rva = off_to_rva(strings);
+            img[names + i * 4..names + i * 4 + 4].copy_from_slice(&name_rva.to_le_bytes());
+            let ord_index = ordinal - base_ordinal;
+            img[ords + i * 2..ords + i * 2 + 2].copy_from_slice(&ord_index.to_le_bytes());
+            img[strings..strings + name.len()].copy_from_slice(name.as_bytes());
+            strings += name.len() + 1;
+        }
+        img
+    }
+
+    #[test]
+    fn reads_named_and_ordinal_exports() {
+        let img = build_pe(
+            &[(Some("timeGetTime"), 10), (Some("mmioOpenW"), 11), (None, 12), (Some("waveOutOpen"), 13)],
+            10,
+            None,
+        );
+        let mut exports = file_exports(&img).expect("parse");
+        exports.sort_by_key(|e| e.ordinal);
+        assert_eq!(exports.len(), 4);
+        assert_eq!(exports[0].name.as_deref(), Some("timeGetTime"));
+        assert_eq!(exports[0].ordinal, 10);
+        assert!(!exports[0].is_forwarder);
+        assert_eq!(exports[2].name, None); // ordinal-only export at 12
+        assert_eq!(exports[2].ordinal, 12);
+        assert_eq!(exports[3].name.as_deref(), Some("waveOutOpen"));
+        assert_eq!(exports[3].ordinal, 13);
+    }
+
+    #[test]
+    fn forwarders_are_flagged() {
+        let img = build_pe(&[(Some("a"), 1), (Some("b"), 2)], 1, Some(2));
+        let exports = file_exports(&img).expect("parse");
+        let b = exports.iter().find(|e| e.name.as_deref() == Some("b")).unwrap();
+        assert!(b.is_forwarder);
+        let a = exports.iter().find(|e| e.name.as_deref() == Some("a")).unwrap();
+        assert!(!a.is_forwarder);
+    }
+
+    #[test]
+    fn ordinal_base_offsets_the_ordinal() {
+        // winmm's real export base is not 1; the reader must add it.
+        let img = build_pe(&[(Some("only"), 7)], 7, None);
+        let exports = file_exports(&img).expect("parse");
+        assert_eq!(exports[0].ordinal, 7);
+    }
+
+    #[test]
+    fn non_pe_input_is_rejected() {
+        assert!(file_exports(b"not a pe at all").is_none());
+        assert!(file_exports(&[]).is_none());
+        let mut img = build_pe(&[(Some("a"), 1)], 1, None);
+        img[0] = b'Z'; // break the MZ signature
+        assert!(file_exports(&img).is_none());
+    }
+
+    #[test]
+    fn cstr_is_bounded_and_rva_mapping_matches_sections() {
+        let img = build_pe(&[(Some("name"), 1)], 1, None);
+        // The one section maps RVA 0x1000 to raw 0x200.
+        let (secs, opt) = file_section_table(&img).unwrap();
+        assert_eq!(secs.rva_to_off(0x1000), Some(0x200));
+        assert_eq!(secs.rva_to_off(0x1004), Some(0x204));
+        assert_eq!(secs.rva_to_off(0), None);
+        // Header RVAs below the first section map 1:1.
+        assert_eq!(secs.rva_to_off(0x80), Some(0x80));
+        assert!(opt > 0);
+        // A string with no terminator inside the buffer returns None (ran off the end)...
+        assert_eq!(cstr_at(&[b'x'; 40], 0), None);
+        // ...and a very long run stops at the 512-byte cap rather than reading forever.
+        let mut capped = vec![b'a'; 600];
+        capped.push(0);
+        assert_eq!(cstr_at(&capped, 0).map(|s| s.len()), Some(512));
+    }
+}

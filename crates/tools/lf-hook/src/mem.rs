@@ -106,7 +106,10 @@ pub struct ExceptionPointers {
 
 pub type ExceptionFilter = extern "system" fn(*mut ExceptionPointers) -> Long;
 
-#[link(name = "kernel32")]
+// Linked only on Windows. Off Windows, nothing reachable from the host unit
+// tests (pure decoder, overwrite planner, PE file reader) calls these, so
+// the linker discards the callers and never needs the symbols.
+#[cfg_attr(windows, link(name = "kernel32"))]
 unsafe extern "system" {
     pub fn VirtualProtect(addr: *mut c_void, size: usize, new: Dword, old: *mut Dword) -> Bool;
     pub fn VirtualAlloc(

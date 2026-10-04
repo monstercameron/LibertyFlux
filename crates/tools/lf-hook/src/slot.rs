@@ -118,3 +118,62 @@ impl Drop for SlotHook {
         }
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    #[cfg(windows)]
+    use super::*;
+
+    // SlotHook reads and writes through Win32 memory helpers, so these run
+    // on Windows only. The slot is a plain heap word, never game memory.
+    #[cfg(windows)]
+    #[test]
+    fn enable_writes_the_detour_disable_restores() {
+        let mut slot: usize = 0xDEAD_BEEF;
+        let original = slot;
+        let detour = 0x1234_5678usize;
+        let mut hook = SlotHook::create(&raw mut slot, detour).unwrap();
+        assert_eq!((hook.slot(), hook.original(), hook.is_enabled()), (&raw mut slot as usize, original, false));
+        assert!(hook.verify());
+        hook.enable().unwrap();
+        assert_eq!(slot, detour);
+        assert!(hook.is_enabled() && hook.verify());
+        // enable is idempotent.
+        hook.enable().unwrap();
+        assert_eq!(slot, detour);
+        hook.disable().unwrap();
+        assert_eq!(slot, original);
+        assert!(!hook.is_enabled() && hook.verify());
+        hook.disable().unwrap();
+        assert_eq!(slot, original);
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn verify_sees_drift_and_restore_repairs_it() {
+        let mut slot: usize = 0x1000;
+        let detour = 0x2000usize;
+        let mut hook = SlotHook::create(&raw mut slot, detour).unwrap();
+        hook.enable().unwrap();
+        // Something else overwrites the slot: verify must notice.
+        slot = 0x9999;
+        assert!(!hook.verify());
+        hook.restore().unwrap();
+        assert_eq!(slot, detour);
+        assert!(hook.verify());
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn drop_restores_an_enabled_slot() {
+        let mut slot: usize = 0x5555;
+        let original = slot;
+        {
+            let mut hook = SlotHook::create(&raw mut slot, 0x6666).unwrap();
+            hook.enable().unwrap();
+            assert_eq!(slot, 0x6666);
+        }
+        assert_eq!(slot, original);
+    }
+}
