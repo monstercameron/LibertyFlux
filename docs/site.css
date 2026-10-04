@@ -252,6 +252,30 @@ main section.band {
 .meter-fill { height: 100%; background: var(--meter-fill); border-radius: 0 6px 6px 0; }
 .meter-note { color: var(--ink-soft); margin-top: 20px; max-width: var(--measure); }
 
+/* Progress over time: three small line charts sharing a time axis, one per stage. */
+.history { margin-top: 2.2em; max-width: var(--wide); }
+.history[hidden] { display: none; }
+.history-note { color: var(--ink-soft); max-width: var(--measure); font-size: 0.9375rem; }
+.history-charts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 28px; }
+.history-panel { margin: 0; min-width: 0; }
+.history-panel figcaption { display: flex; flex-direction: column; margin-bottom: 4px; }
+.history-label { font-weight: 700; }
+.history-value { color: var(--ink-soft); font-size: 0.9375rem; font-variant-numeric: tabular-nums; min-height: 1.6em; }
+.history-plot { border-radius: 4px; touch-action: pan-y; }
+.history-plot:focus-visible { outline: 3px solid var(--sodium); outline-offset: 3px; }
+.history-plot svg { display: block; overflow: visible; }
+.history-plot .grid { stroke: var(--rule); stroke-width: 1; }
+.history-plot .tick { fill: var(--ink-faint); font: 0.75rem var(--sans); font-variant-numeric: tabular-nums; }
+.history-plot .line { fill: none; stroke: var(--meter-fill); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.history-plot .dot { fill: var(--meter-fill); stroke: var(--paper-raised); stroke-width: 2; }
+.history-plot .cross { stroke: var(--ink-faint); stroke-width: 1; }
+.history-table { margin-top: 14px; }
+.history-table summary { cursor: pointer; color: var(--link); width: fit-content; }
+.history-table summary:focus-visible { outline: 3px solid var(--sodium); outline-offset: 3px; }
+.history-table-scroll { max-height: 22rem; overflow-y: auto; margin-top: 8px; }
+.history-table td { font-variant-numeric: tabular-nums; }
+@media (max-width: 760px) { .history-charts { grid-template-columns: 1fr; } }
+
 .measured { margin-top: 1.4em; max-width: var(--wide); }
 .facts { list-style: none; margin: 0.4em 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0 32px; }
 .facts li { padding: 9px 0; border-top: 1px solid var(--rule); color: var(--ink-soft); }

@@ -223,8 +223,178 @@ function render(data) {
   });
 }
 
+// Progress over time: one small chart per stage, drawn as inline SVG from data/history.json
+// (written by scripts/site/history.py from the git history of progress.json). The three counts differ in size
+// and two of them sit close together, so they get a panel each, with a shared time axis, rather than one
+// chart where rewritten and verified would draw on top of each other.
+function renderHistory(file) {
+  var points = file && Array.isArray(file.points) ? file.points.filter(function (p) {
+    return p && typeof p.t === "string" && !isNaN(Date.parse(p.t)) && typeof p.game === "number";
+  }) : [];
+  var host = document.getElementById("history");
+  if (!points.length || !host) return;
+  host.hidden = false;
+
+  var SVG = "http://www.w3.org/2000/svg";
+  var HEIGHT = 150, LEFT = 52, RIGHT = 12, TOP = 10, BOTTOM = 24, DOT = 4;
+  var SERIES = [["named", "Named"], ["rewritten", "Rewritten in Rust"], ["verified", "Verified"]];
+  var fmt = new Intl.NumberFormat("en-US");
+  var last = points[points.length - 1];
+  var times = points.map(function (p) { return Date.parse(p.t); });
+  var t0 = times[0], t1 = times[times.length - 1];
+
+  function when(ms, withDay) {
+    var options = { hour: "2-digit", minute: "2-digit" };
+    if (withDay) { options.day = "numeric"; options.month = "short"; }
+    return new Date(ms).toLocaleString("en-GB", options);
+  }
+  function node(tag, attrs, text) {
+    var n = document.createElementNS(SVG, tag);
+    Object.keys(attrs || {}).forEach(function (k) { n.setAttribute(k, attrs[k]); });
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function el(tag, className, text) {
+    var n = document.createElement(tag);
+    if (className) n.className = className;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  // Three round tick values spanning [lo, hi], with the domain widened to the outer ticks.
+  function ticks(lo, hi) {
+    if (hi - lo < 2) { lo -= 1; hi += 1; }
+    var raw = (hi - lo) / 2, power = Math.pow(10, Math.floor(Math.log10(raw)));
+    var step = [1, 2, 2.5, 5, 10].map(function (m) { return m * power; }).filter(function (s) { return s >= raw; })[0];
+    var start = Math.floor(lo / step) * step;
+    while (start + 2 * step < hi) step = step * 2;
+    return [start, start + step, start + 2 * step];
+  }
+
+  var spanDays = (t1 - t0) / 86400000;
+  document.getElementById("history-note").textContent =
+    points.length < 2
+      ? "One recorded point so far, at " + when(t1, true) + ". A line appears once the next update is recorded."
+      : "From " + when(t0, true) + " to " + when(t1, true) + " (your time zone), one point per recorded update. " +
+        "Each chart's scale starts near its own lowest value, so the slopes show change over time, not each count's share of the " +
+        fmt.format(last.game) + " game functions." + (spanDays < 2 ? " The record starts recently, so the window is short." : "");
+
+  var charts = document.getElementById("history-charts");
+  var panels = SERIES.map(function (series) {
+    var key = series[0];
+    var figure = el("figure", "history-panel");
+    var caption = el("figcaption");
+    caption.appendChild(el("span", "history-label", series[1]));
+    var value = el("span", "history-value");
+    value.setAttribute("aria-live", "polite");
+    caption.appendChild(value);
+    figure.appendChild(caption);
+    var plot = el("div", "history-plot");
+    plot.tabIndex = 0;
+    plot.setAttribute("role", "group");
+    var first = points[0][key], now = last[key];
+    plot.setAttribute("aria-label", series[1] + ": " + fmt.format(first) + " at " + when(t0, true) + ", " +
+      fmt.format(now) + " at " + when(t1, true) + ". Use the left and right arrow keys to read each point.");
+    figure.appendChild(plot);
+    charts.appendChild(figure);
+    return { key: key, value: value, plot: plot, active: -1 };
+  });
+
+  function showValue(panel, index) {
+    var p = points[index < 0 ? points.length - 1 : index];
+    var v = p[panel.key];
+    var text = fmt.format(v) + " (" + (100 * v / p.game).toFixed(1) + "%)";
+    if (index < 0 && points.length > 1) {
+      var change = v - points[0][panel.key];
+      text += ", " + (change >= 0 ? "+" : "−") + fmt.format(Math.abs(change)) + " in this window";
+    } else if (index >= 0) {
+      text += " at " + when(Date.parse(p.t), true);
+    }
+    panel.value.textContent = text;
+  }
+
+  function draw() {
+    panels.forEach(function (panel) {
+      var width = Math.max(220, panel.plot.clientWidth || 300);
+      var values = points.map(function (p) { return p[panel.key]; });
+      var axis = ticks(Math.min.apply(null, values), Math.max.apply(null, values));
+      var lo = axis[0], hi = axis[2];
+      var x = function (ms) { return t1 === t0 ? (LEFT + width - RIGHT) / 2 : LEFT + (ms - t0) / (t1 - t0) * (width - LEFT - RIGHT); };
+      var y = function (v) { return TOP + (1 - (v - lo) / (hi - lo)) * (HEIGHT - TOP - BOTTOM); };
+      var svg = node("svg", { width: width, height: HEIGHT, viewBox: "0 0 " + width + " " + HEIGHT, "aria-hidden": "true", focusable: "false" });
+      axis.forEach(function (v) {
+        svg.appendChild(node("line", { class: "grid", x1: LEFT, x2: width - RIGHT, y1: y(v), y2: y(v) }));
+        svg.appendChild(node("text", { class: "tick", x: LEFT - 8, y: y(v) + 4, "text-anchor": "end" }, fmt.format(v)));
+      });
+      svg.appendChild(node("text", { class: "tick", x: LEFT, y: HEIGHT - 6, "text-anchor": "start" }, when(t0, spanDays >= 1)));
+      if (t1 !== t0) svg.appendChild(node("text", { class: "tick", x: width - RIGHT, y: HEIGHT - 6, "text-anchor": "end" }, when(t1, spanDays >= 1)));
+      var path = points.map(function (p, i) { return (i ? "L" : "M") + x(times[i]).toFixed(1) + " " + y(p[panel.key]).toFixed(1); }).join(" ");
+      if (points.length > 1) svg.appendChild(node("path", { class: "line", d: path }));
+      svg.appendChild(node("circle", { class: "dot", cx: x(t1), cy: y(last[panel.key]), r: DOT }));
+      var cross = node("line", { class: "cross", y1: TOP, y2: HEIGHT - BOTTOM, visibility: "hidden" });
+      var mark = node("circle", { class: "dot hover", r: DOT, visibility: "hidden" });
+      svg.appendChild(cross);
+      svg.appendChild(mark);
+      panel.plot.replaceChildren(svg);
+      panel.pick = function (index) {
+        panel.active = index;
+        var on = index >= 0;
+        cross.setAttribute("visibility", on ? "visible" : "hidden");
+        mark.setAttribute("visibility", on ? "visible" : "hidden");
+        if (on) {
+          var cx = x(times[index]);
+          cross.setAttribute("x1", cx); cross.setAttribute("x2", cx);
+          mark.setAttribute("cx", cx); mark.setAttribute("cy", y(points[index][panel.key]));
+        }
+        showValue(panel, index);
+      };
+      panel.indexAt = function (clientX) {
+        var box = panel.plot.getBoundingClientRect(), px = clientX - box.left, best = 0;
+        times.forEach(function (ms, i) { if (Math.abs(x(ms) - px) < Math.abs(x(times[best]) - px)) best = i; });
+        return best;
+      };
+      panel.pick(panel.active);
+    });
+  }
+
+  // Hovering or stepping through one panel moves the crosshair in all three, so the counts read together.
+  function pickAll(index) { panels.forEach(function (panel) { panel.pick(index); }); }
+  panels.forEach(function (panel) {
+    panel.plot.addEventListener("pointermove", function (e) { pickAll(panel.indexAt(e.clientX)); });
+    panel.plot.addEventListener("pointerleave", function () { pickAll(-1); });
+    panel.plot.addEventListener("blur", function () { pickAll(-1); });
+    panel.plot.addEventListener("keydown", function (e) {
+      var step = { ArrowRight: 1, ArrowLeft: -1, Home: -Infinity, End: Infinity }[e.key];
+      if (!step) return;
+      e.preventDefault();
+      var next = panel.active < 0 ? points.length - 1 : panel.active + step;
+      pickAll(Math.max(0, Math.min(points.length - 1, isFinite(next) ? next : (step > 0 ? points.length - 1 : 0))));
+    });
+  });
+  draw();
+  var pending = null;
+  window.addEventListener("resize", function () { clearTimeout(pending); pending = setTimeout(draw, 120); });
+
+  // The table: newest first, every recorded point.
+  var rows = document.getElementById("history-rows");
+  points.slice().reverse().forEach(function (p) {
+    var tr = document.createElement("tr");
+    var cells = [when(Date.parse(p.t), true), fmt.format(p.named), fmt.format(p.rewritten), fmt.format(p.verified)];
+    ["Time", "Named", "Rewritten", "Verified"].forEach(function (label, i) {
+      var td = el("td", null, cells[i]);
+      if (i) td.dataset.label = label;
+      tr.appendChild(td);
+    });
+    rows.appendChild(tr);
+  });
+}
+
 // The page's numbers come straight from data/progress.json.
 fetch("data/progress.json", { cache: "no-store" })
   .then(function (response) { return response.ok ? response.json() : {}; })
   .catch(function () { return {}; })
   .then(render);
+
+fetch("data/history.json", { cache: "no-store" })
+  .then(function (response) { return response.ok ? response.json() : null; })
+  .catch(function () { return null; })
+  .then(renderHistory);

@@ -71,6 +71,21 @@
       <p class="prose" id="progress-empty" hidden></p>
       <ul class="meters" id="meters"></ul>
       <p class="meter-note" id="meter-note"></p>
+
+      <div class="history" id="history" hidden>
+        <h3>Progress over time</h3>
+        <p class="history-note" id="history-note"></p>
+        <div class="history-charts" id="history-charts"></div>
+        <details class="history-table">
+          <summary>The same numbers as a table</summary>
+          <div class="history-table-scroll">
+            <table>
+              <thead><tr><th scope="col">Time</th><th scope="col">Named</th><th scope="col">Rewritten</th><th scope="col">Verified</th></tr></thead>
+              <tbody id="history-rows"></tbody>
+            </table>
+          </div>
+        </details>
+      </div>
     </div>
   </section>
 
