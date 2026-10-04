@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#structures-misc-b">Class layouts: remaining game classes, second half by name</a></li>
       <li><a href="#structures-cameras">Class layouts: camera classes (CCam*)</a></li>
       <li><a href="#natives-17">Native handlers SET_DECISION_MAKER_ATTRIBUTE_TARGET_INJURED_REACTION to SET_MULTIPLAYER_HUD_CASH: what they reveal</a></li>
       <li><a href="#natives-04">Native handlers DISPLAY_GRIME_THIS_FRAME to FINISH_STREAMING_REQUEST_LIST: what they reveal</a></li>
@@ -121,6 +122,40 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="structures-misc-b">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Class layouts: remaining game classes, second half by name</h2>
+      <p><span class="evidence verified">Verified</span> Layouts were recovered for 119 of 137 miscellaneous game classes, including a fully decoded six-slot render-callback interface whose last slot returns a type tag that counts up exactly with argument count. Most virtual-table slots that point into the still-encrypted first megabyte of code turned out to be shared default stubs rather than real family code, so the encryption blocks far less of this batch than the raw percentage suggests.</p>
+      <h3>What was asked</h3>
+      <p>Recover the object layouts and virtual interfaces of 137 remaining game classes: per-slot override analysis, constructors and destructors, object sizes, field lists with proposed names, relationships, and a recommended rewrite order, working only on the unencrypted code with capstone.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Of 137 classes, 128 have a recovered virtual table and 9 do not (four system interfaces, two plain math types, two parser templates and one abstract marker). The 1,138 table slots split into 351 inherited and 787 introduced or overridden. 707 slots point into the encrypted range, but 447 of those are shared default targets used by five or more classes, leaving only about 260 slots with genuinely unknown encrypted code.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Group</th><th role="columnheader">Classes</th><th role="columnheader">Interface</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Render callbacks</td><td role="cell" data-label="Classes">47</td><td role="cell" data-label="Interface">Six slots: deleting destructor, invoke, argument-size constant, two shared stubs, arity tag constant</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Classes">Viewports</td><td role="cell" data-label="Classes">9</td><td role="cell" data-label="Interface">Thirteen to fifteen slots; only the first three hold real code, the rest are shared stubs</td></tr>
+      <tr role="row"><td role="cell">Lighting and shader</td><td role="cell" data-label="Classes">13</td><td role="cell" data-label="Interface">Seven-slot shader classes each paired with a two-slot variable-cache companion</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Classes">Collision</td><td role="cell" data-label="Classes">9</td><td role="cell" data-label="Interface">Two-slot detector interface with a shared embedded solver object</td></tr>
+      <tr role="row"><td role="cell">Events, tasks, attributes</td><td role="cell" data-label="Classes">11</td><td role="cell" data-label="Interface">Mostly encrypted; the four event classes are fully opaque for now</td></tr>
+      <tr role="row"><td role="cell">Strays</td><td role="cell" data-label="Classes">48</td><td role="cell" data-label="Interface">System interfaces, math types, streaming, drawables, loggers and singletons</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The callback tag slot returns one constant per arity: no-argument, then one through six arguments each step the value by exactly one, and the global-variable setters share their own tag. The size slot likewise returns the argument block size. This is the family's dispatch key.</p>
+      <p><span class="evidence">Inferred</span> Field recovery found about 1,360 field accesses, of which roughly 190 are high confidence (seen in three or more methods) and 260 medium. Sizes are lower bounds from the highest field seen; several agree with allocation sites, including one stream reader of about 128 kilobytes with a large embedded buffer and one fog controller matching its allocation size exactly.</p>
+      <p><span class="evidence">Unknown</span> Eighteen classes yielded no fields at all: the four event classes, the Direct3D wrapper, system interfaces, plain math types and small stubs whose code is encrypted or trivial.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Rewrite order: system interfaces and plain types first, then base classes before their derivatives (variable caches, shader classes, the viewport tree, the stream reader), then the callback family once its external base is done. Event classes and the Direct3D wrapper wait for decryption.</li>
+      <li>Sizes derived from a single far-offset access should not be trusted; two such sizes in this batch are flagged unreliable in the data.</li>
+      <li>Constructor candidacy should require relocation-table confirmation, after one template matched thirty false candidates through byte collisions.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Load the batch list, the RTTI vtable recovery and the unified function inventory; search unencrypted code for each table address as an immediate and map hits to enclosing functions; disassemble constructors, destructors and overriding virtuals with capstone while following register copies of the object pointer; compare each slot target with the same slot of each direct base. Per-class records live in the lane data file with slot verdicts, constructors, fields, sizes and relationships.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first field pass missed most constructor stores because compiled constructors copy the object pointer into another register before use; adding that tracking more than doubled the field count. The same tracking first produced nonsense sizes by following stale registers, fixed by dropping the tracking on address arithmetic and ignoring negative offsets. An allocation-size heuristic based on nearby pushes proved noisy and only corroborates sizes rather than establishing them.</p>
+      </article>
 
       <article class="entry" id="structures-cameras">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
