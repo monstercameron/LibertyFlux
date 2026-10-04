@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Engine page: second review round applied",
+    "title": "Devlog: Repairing the function inventory: what was not a function",
     "commit": null,
+    "summary": "Findings from the f-boundaries lane.",
+    "changes": [
+      "New devlog entry: Repairing the function inventory: what was not a function.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Engine page: second review round applied",
+    "commit": "975ee7c6e701d2296a6e7cd4aeb58e040fc19586",
     "summary": "A second independent review scored the page 7 out of 10; this change applies its ranked findings.",
     "changes": [
       "The hand-off between the game thread and the render thread now ends in an arrow on the first render stop, and its caption says which part is inferred.",
