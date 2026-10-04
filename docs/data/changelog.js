@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Subsystem survey: networking",
+    "title": "Devlog: Subsystem survey: vehicles",
     "commit": null,
+    "summary": "Findings from the s-vehicles lane.",
+    "changes": [
+      "New devlog entry: Subsystem survey: vehicles.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Subsystem survey: networking",
+    "commit": "9485b116e9ee306f35b7e39d783faf16087ca71b",
     "summary": "Findings from the s-network lane.",
     "changes": [
       "New devlog entry: Subsystem survey: networking.",
