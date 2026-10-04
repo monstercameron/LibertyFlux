@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#rewrite-order">The rewrite order: levels, clusters and what the checker can take today</a></li>
       <li><a href="#pilot2-13">Second pilot, lane 13: large functions (600 to 1,500 bytes)</a></li>
       <li><a href="#pilot2-12">Second pilot, lane 12: medium functions (250 to 600 bytes)</a></li>
       <li><a href="#pilot2-07">Second pilot, lane 07: small functions that make calls (60 to 250 bytes, one to three callees)</a></li>
@@ -198,6 +199,57 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="rewrite-order">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>The rewrite order: levels, clusters and what the checker can take today</h2>
+      <p>Bottom-up rewrite order is computed: every function sits on one of 45 levels, level zero alone holds over fifteen thousand game functions, and just over half of all game functions are checkable with the checker as it stands today. <span class="evidence verified">Verified</span></p>
+      <h3>What was asked</h3>
+      <p>Work out the order in which the executable's functions should be rewritten, and how many the checker can verify today. That meant building the complete direct call graph from the Ghidra pairs plus a fresh instruction scan, condensing it into strongly connected components, assigning every function a bottom-up level, classifying every game function as checkable now, checkable after a named checker extension, or needing the running game, folding byte-identical duplicates, histogramming sizes, and packing the queue into batches of twenty to forty functions.</p>
+      <h3>What was found</h3>
+      <p>The union graph has about seventy-three thousand edges over some forty-five thousand functions. <span class="evidence verified">Verified</span> The fresh scan independently re-found nearly ninety-eight percent of the usable Ghidra edges and added about fifteen thousand more, mostly from callers the Ghidra pass had not covered yet.</p>
+      <p>Condensation gives about forty-five thousand components, of which only thirty-five hold more than one function, and the longest dependency chain is forty-five levels deep. <span class="evidence verified">Verified</span> The two large mutual recursion clusters hold about a hundred and about sixty functions each, mix several subsystems, and are confirmed by both edge sources, so they are real cycles that must be rewritten as units. Level zero holds over nineteen thousand functions in total, of which fifteen thousand are game code, so rewriting can start wide; the top eleven levels together hold only about a hundred functions.</p>
+      <p>Checkability splits as follows. <span class="evidence verified">Verified</span></p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Category</th><th role="columnheader">Functions</th><th role="columnheader">Share of game bytes</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Checkable by the current checker as it is</td><td role="cell" data-label="Functions">18,905</td><td role="cell" data-label="Share of game bytes">17%</td></tr>
+      <tr role="row"><td role="cell">Checkable after a checker extension</td><td role="cell" data-label="Functions">15,119</td><td role="cell" data-label="Share of game bytes">76%</td></tr>
+      <tr role="row"><td role="cell">Needs the running game</td><td role="cell" data-label="Functions">1,353</td><td role="cell" data-label="Share of game bytes">7%</td></tr>
+      <tr role="row"><td role="cell">Unknown (zero-size entries, no code)</td><td role="cell" data-label="Functions">54</td><td role="cell" data-label="Share of game bytes">0%</td></tr>
+      </tbody>
+      </table>
+      <p>The byte shares matter more than the counts: the as-is half is mostly small leaf functions, while the extension bucket holds three quarters of all game bytes. <span class="evidence verified">Verified</span> The three named extensions unlock the middle bucket in this order, each count marginal to the ones before it:</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Extension</th><th role="columnheader">What it adds</th><th role="columnheader">Functions unlocked</th><th role="columnheader">Cumulative checkable</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Per-callee scripted answers</td><td role="cell" data-label="What it adds">a separate scripted answer per callee instead of one shared value</td><td role="cell" data-label="Functions unlocked">9,063</td><td role="cell" data-label="Cumulative checkable">79%</td></tr>
+      <tr role="row"><td role="cell">Register-indirect call interception</td><td role="cell" data-label="What it adds">recording and scripting of calls through registers</td><td role="cell" data-label="Functions unlocked">4,943</td><td role="cell" data-label="Cumulative checkable">93%</td></tr>
+      <tr role="row"><td role="cell">Custom register convention helpers</td><td role="cell" data-label="What it adds">rewrite-side support for non-standard calling conventions</td><td role="cell" data-label="Functions unlocked">1,113</td><td role="cell" data-label="Cumulative checkable">96%</td></tr>
+      </tbody>
+      </table>
+      <p>The running-game bucket is almost entirely functions using processor-local storage or structured exception handling, plus a few dozen using operating system traps or timing instructions. <span class="evidence verified">Verified</span> No game function reads its own code bytes or modifies itself, and none uses locked atomic instructions; atomicity goes through imported operating system functions instead. <span class="evidence verified">Verified</span></p>
+      <p>Two findings shape the schedule. First, about ten thousand game functions call into the still-encrypted first megabyte of the code section, so their callees can be stubbed but their calling conventions cannot be read yet. <span class="evidence verified">Verified</span> Second, duplicate folding finds four hundred forty-five groups of byte-identical functions covering over five thousand functions, nearly all tiny template-like bodies, saving about four thousand seven hundred rewrites. <span class="evidence verified">Verified</span></p>
+      <p>Sizes are heavily skewed: three quarters of game functions are under one hundred fifty bytes but hold under a fifth of the bytes, while one hundred giants over four thousand bytes hold nearly a tenth. <span class="evidence verified">Verified</span> The queue packs into one thousand one hundred eighty batches of twenty-nine to thirty-one functions each, grouped by subsystem and class and level-adjacent in the call graph. <span class="evidence verified">Verified</span></p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li><p>Dispatch the rewrite queue in level order using the per-function level map, so callees exist before their callers; start with the wide, small level zero.</p></li>
+      <li><p>Treat each mutual recursion cluster as one rewrite unit rather than splitting it across lanes.</p></li>
+      <li><p>Build the three checker extensions in per-callee, indirect-call, custom-convention order, which reaches ninety-six percent checkable.</p></li>
+      <li><p>Fold duplicates before dispatching: each group needs one rewrite, not one per copy.</p></li>
+      <li><p>Plan contract authoring for the ten thousand functions calling encrypted callees around inference or a decrypted image, since conventions there cannot be read from bytes.</p></li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Take the function inventory, the Ghidra caller-callee pairs, the virtual table list, and the checker capability notes as inputs. Disassemble every function outside the encrypted range with capstone using the inventory boundaries, collect direct call targets and the instruction feature flags, and union the found edges with the Ghidra pairs. Run an iterative Tarjan pass for components, assign levels by longest path over the condensation, classify each game function against the checker rules, hash masked bytes for duplicates, and pack batches by subsystem, class, and level. The lane reran this pipeline end to end several times; the scripts and their JSON outputs sit together in the lane scratch folder.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The disassembler reports resolved absolute call targets rather than raw relative offsets, and the first scan double-added them, producing a hundred thousand bogus edges that agreed with Ghidra in only two cases. <span class="evidence verified">Verified</span> Comparing five known edges by hand exposed it in minutes.</p>
+      <p>Jump tables live inline in the code section here, so the first code-read rule flagged over sixteen hundred innocent functions as self-inspecting. Restricting the rule to pure absolute reads cleared all of them. <span class="evidence verified">Verified</span></p>
+      <p>Two smaller traps: some mnemonic names are shared between string instructions and vector instructions and can only be told apart by operand shape, and the tool folds repeat and lock prefixes into the mnemonic text, which hid both string instructions and any locked atomics until the matcher was fixed. A renamed loop variable then shadowed the image base and broke a whole rescan; the per-function error field caught it immediately. The final surprise was genuine: there really are no locked atomic instructions anywhere in the scanned code. <span class="evidence verified">Verified</span></p>
+      </article>
 
       <article class="entry" id="pilot2-13">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
