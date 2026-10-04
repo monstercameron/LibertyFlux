@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#subsystem-input-ui">Subsystem survey: input, front end and HUD</a></li>
       <li><a href="#subsystem-animation-euphoria">Subsystem survey: animation and the Euphoria ragdoll system</a></li>
       <li><a href="#strings-names">Mining the executable strings for naming evidence</a></li>
       <li><a href="#renderer-survey">Renderer survey: what the executable and shader files reveal</a></li>
@@ -73,6 +74,39 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="subsystem-input-ui">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Subsystem survey: input, front end and HUD</h2>
+      <p>The front end, HUD and input of the game are driven by a large in-house UI widget framework of about fifty classes, a small set of 2D draw commands, and a device layer that reads the keyboard and mouse through the operating system, gamepads through DirectInput and XInput, and all display text through per-language dictionary files. Classic names from older titles in the series do not appear as polymorphic classes, so the menu and HUD code was substantially rebuilt for this engine.</p>
+      <h3>What was asked</h3>
+      <p>Survey one engine subsystem directly from the executable: keyboard, mouse and gamepad input, control mapping, the pause menu and front end, the HUD and radar, text and fonts, the phone, subtitles and help text, loading screens, and the localisation text format. The deliverables were the subsystem classes with their base classes and virtual table sizes, its strings, the code regions where it lives, its operating system dependencies, public knowledge about it, frame-rate dependencies, rewrite notes, and a ranked list of what to understand first.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> A full scan of the run-time type information found a few thousand classes in the executable, of which about one hundred and ten belong to this subsystem. They fall into a UI widget framework of about fifty classes with very wide virtual tables, fifteen viewport and render-phase classes for the radar, phone, in-game web browser and menu backdrops, seventeen 2D and HUD draw commands, ten HTML browser classes, eight video-editor overlay classes, and a small group for fonts and text.</p>
+      <p><span class="evidence verified">Verified</span> The text renderer itself has no virtual table, but helper classes leak the names of its two key operations, one that lays a string out for display and one that counts its lines. The in-game web browser parses pages with the engine XML parser, and its text flows through the same text pass as everything else.</p>
+      <p><span class="evidence verified">Verified</span> About seven hundred subsystem strings were collected. Gamepads are handled two ways: a built-in list of roughly twenty named DirectInput devices, and an XInput interface loaded at run time rather than linked. The keyboard path reads raw key state plus layout information so several keyboard languages work. A family of named input actions maps devices to game controls, and preference keys cover inverting the mouse and look, controller and mouse sensitivity, vibration, subtitles and keyboard language.</p>
+      <p><span class="evidence verified">Verified</span> Display text comes from one dictionary file per language, with seven languages present. Fonts are engine texture pages plus metrics files, with separate sets for two of the languages. Menu layout is partly data driven, with an XML menu file, several data files for the HUD and front end, and named texture sets for fonts, blips and radar tiles. Button icons inside text use tilde-delimited tokens.</p>
+      <p><span class="evidence verified">Verified</span> Cross-referencing the subsystem strings, virtual tables and imported functions against the relocation table produced just over five hundred strong references in the readable code, grouped into nine regions: viewport and HUD setup, HUD text with blips and the HTML browser, input devices, the largest region holding menus, dictionaries, HUD, radar, fonts and input actions, the window hook with 2D effects, two video-editor regions, the UI framework classes, and the title menus. A spot check by disassembly confirmed nearly all sampled references sit inside real instructions.</p>
+      <p><span class="evidence verified">Verified</span> The subsystem imports only a small operating-system surface: keyboard state, layout and translation, mouse capture, the window message loop, a windows hook, cursor control, one DirectInput entry point, and a millisecond timer. There is no raw-input, no polling key-state, and no operating-system text drawing, so all text is rendered through the 3D interface.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Area</th><th role="columnheader">Finding</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><th role="row">UI framework</th><td role="cell" data-label="Finding">About fifty widget classes sharing one panel base; also implements the video editor</td></tr>
+      <tr role="row"><th role="row">HUD and radar</th><td role="cell" data-label="Finding">Dedicated draw commands, viewports and render phases; blips, scope, cash, clock and wanted-level keys</td></tr>
+      <tr role="row"><th role="row">Text</th><td role="cell" data-label="Finding">Seven dictionary languages; texture-page fonts with separate sets for two languages</td></tr>
+      <tr role="row"><th role="row">Input devices</th><td role="cell" data-label="Finding">DirectInput allowlist of about twenty pads; XInput loaded at run time; named input actions</td></tr>
+      <tr role="row"><th role="row">Browser and phone</th><td role="cell" data-label="Finding">HTML parser plus page viewport; phone screen and phone camera draw commands</td></tr>
+      <tr role="row"><th role="row">Code size</th><td role="cell" data-label="Finding">At least two hundred kilobytes over about two hundred pages; low hundreds of functions minimum</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p><span class="evidence">Inferred</span> A rewrite should start with the dictionary format and the font metrics, then the text layout pass, then the 2D draw commands, then the UI framework, then input devices, and last the browser, phone and video editor, because each layer only depends on the ones before it. The dictionary loader, token substitution and input-action mapping are isolated enough to test in a CPU emulator, while anything touching the UI framework, the renderer or the window needs the running game.</p>
+      <p><span class="evidence">Inferred</span> The missing classic class names mean the next lane should search the encrypted half of the code after the analysis tooling finishes, rather than assuming the names are gone entirely.</p>
+      <h3>How to reproduce it</h3>
+      <p>Parse the executable headers to find the readable code range, walk the run-time type information from type descriptors through object locators to virtual tables to get class names with base classes and slot counts, extract readable strings outside the encrypted range and filter them by subsystem keywords, dump the import tables for the relevant system libraries, then match every relocation in the readable code against the collected string, table and import addresses, verify a sample by disassembly, and cluster nearby references into regions.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The expected class names from older games in the series were absent from the type information, which first looked like a parser bug until exact-name probes over all descriptors confirmed the absence. Early clustering was polluted three ways: a camera-instruction family slipped in through an over-broad name filter, a millisecond timer used by the whole program created false clusters across unrelated code, and physics and audio strings sharing words like axis and rumble matched the keyword list. All three were removed by weighting targets and re-running the attribution, which cut the hit count roughly in half and left clean regions. One sampled reference in twelve failed to decode under the disassembler, most likely a fragment alignment artefact rather than a bad reference.</p>
+      </article>
 
       <article class="entry" id="subsystem-animation-euphoria">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
