@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#structures-physics">Class layouts: physics, collision, fragments and cloth</a></li>
       <li><a href="#structures-online">Class layouts: online service, session and leaderboard classes (rage::rl*, rage::sn*)</a></li>
       <li><a href="#structures-entities">Class layouts: entities, vehicles, peds, objects and model information</a></li>
       <li><a href="#natives-22">Native handlers TASK_TIRED to WRITE_LOBBY_PREFERENCE: what they reveal</a></li>
@@ -143,6 +144,88 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="structures-physics">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Class layouts: physics, collision, fragments and cloth</h2>
+      <p>All 92 physics classes now have recovered object layouts and virtual interfaces: 89 virtual tables with 2,039 slots were classified slot by slot, constructors were found for 74 classes, 1,864 field evidences were harvested, and sizes were estimated for 88 classes. The headline patterns are a near-universal deleting destructor in slot zero, pure-virtual placeholders kept in the encrypted prefix, a strange slot aliasing trick in the bound family, and ten factory functions that build sibling classes together.</p>
+      <h3>What was asked</h3>
+      <p>Recover the object layouts and virtual interfaces of the physics, collision, fragment and cloth class family: for each class say which virtual slots it overrides, inherits or introduces and what each function does in a phrase; find constructors and destructors by searching readable code for vtable stores; estimate object sizes from allocation sites or field extents; list fields with widths, kinds and confidence; record relationships; then describe the family tree, the shared base interfaces, the encrypted fraction and a rewrite order.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Slot zero is the scalar deleting destructor in practically every table: 76 of 89 were confirmed by reading the function shape (flag test, vtable downgrade to the base table, free through the engine allocator, callee-cleaned return), 9 more match the shape closely, 2 are encrypted and 4 stay unknown. Slot one is usually not the vector deleting destructor here; only 8 classes show one, while 21 keep a pure placeholder and the rest hold ordinary virtuals.</p>
+      <p><span class="evidence verified">Verified</span> About a quarter of all slot entries point into the encrypted prefix, but they collapse to only 31 unique targets, most of them shared stubs. The most-used stub fills exactly the slots that derived classes override with real code, so it reads as the pure-virtual placeholder. Base interfaces that look heavily encrypted are really heavily pure; the meanings come from the readable overrides.</p>
+      <p><span class="evidence verified">Verified</span> The bound family aliases one virtual slot onto another through a tiny tail-call thunk: slot one re-dispatches to slot forty-eight through the object's own table, and thirteen of fifteen derived bound types inherit the thunk unchanged. The material manager does the same for two of its slots. The reason for the duplication is not known.</p>
+      <p><span class="evidence verified">Verified</span> Ten factory functions construct unrelated sibling classes: one builds the collision dispatcher together with all five narrow-phase algorithms, one builds capsule, sphere and surface bounds, one builds three broadphase strategies, three build the rope triple, two pair narrow-phase helpers with the manifold result, one initialises two fragment singletons, and one builds the three water classes.</p>
+      <p><span class="evidence verified">Verified</span> The fragment instance class shows textbook multiple inheritance: its constructors store the breakable-instance table, then their own table, then a second table at offset eighty for the streamable reference, and secondary-interface methods adjust the object pointer back by eighty.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Group</th>
+      <th role="columnheader">Slots</th>
+      <th role="columnheader">Readable share</th>
+      <th role="columnheader">State of knowledge</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">Collision bounds</td>
+      <td role="cell" data-label="Slots">903</td>
+      <td role="cell" data-label="Readable share">about three quarters</td>
+      <td role="cell" data-label="State of knowledge">strong; most overrides readable, sizes 200 to 550 bytes</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Instances and fragments</td>
+      <td role="cell" data-label="Slots">402</td>
+      <td role="cell" data-label="Readable share">about two thirds</td>
+      <td role="cell" data-label="State of knowledge">good; multiple inheritance mapped, instance state partly thin</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Colliders</td>
+      <td role="cell" data-label="Slots">about 150</td>
+      <td role="cell" data-label="Readable share">almost all</td>
+      <td role="cell" data-label="State of knowledge">strong; the most self-contained interface in the family</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Joints</td>
+      <td role="cell" data-label="Slots">128</td>
+      <td role="cell" data-label="Readable share">about three quarters</td>
+      <td role="cell" data-label="State of knowledge">good; base almost all pure, behaviour in the three derived types</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Broadphase</td>
+      <td role="cell" data-label="Slots">127</td>
+      <td role="cell" data-label="Readable share">about seven in ten</td>
+      <td role="cell" data-label="State of knowledge">fair; thin specialisations, small objects</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Narrow phase (Bullet)</td>
+      <td role="cell" data-label="Slots">34</td>
+      <td role="cell" data-label="Readable share">about two thirds</td>
+      <td role="cell" data-label="State of knowledge">fair; tiny sixteen-byte objects, built only through a factory</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Archetypes and materials</td>
+      <td role="cell" data-label="Slots">127</td>
+      <td role="cell" data-label="Readable share">about three quarters</td>
+      <td role="cell" data-label="State of knowledge">good; thin layering confirmed</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Remaining (simulator, sleep, rope, curves, water)</td>
+      <td role="cell" data-label="Slots">about 170</td>
+      <td role="cell" data-label="Readable share">mostly readable</td>
+      <td role="cell" data-label="State of knowledge">mixed; some sizes still weak or suspect</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><span class="evidence">Inferred</span> Roughly 85 to 90 percent of the family's unique virtual implementations are readable; the opaque remainder is the fragment heap allocator, one material destructor, a few narrow-phase slots, and constructor code for nine classes that was never found in readable code.</p>
+      <p><span class="evidence">Unknown</span> Several sizes are still weak lower bounds or suspect single readings, notably the surface bound, the rope pair with implausibly large offsets, the base instance class, and the collision dispatcher arrays.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The recommended rewrite order is: the bound root contract first, then capsule, sphere, composite, polyhedron, box and the mesh chain; the instance chain with the fragment multiple inheritance; the self-contained collider; the joint contract with its three derived types; the broadphase strategies; the narrow phase validated against upstream Bullet headers; and finally archetypes, materials, rope, simulator, fragment managers and water, with the opaque allocator last. Field records carry high, medium or low confidence so later tools can weight them, and anything seen only once is marked a guess.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane analyzer script from the repository root with the project Python environment; it reads the game executable together with the RTTI tables, the function inventory and the call graph export, and rewrites the structures and statistics files in the lane scratch folder in about two minutes. It only disassembles the readable code range and keeps only vtable references backed by a relocation entry. Full per-class records, including every slot description, constructor, field and relationship, are in the lane data file.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>A script variable reused the name of the disassembly engine object and silently zeroed every result, because all detail accessors were wrapped in exception handlers; it took a full empty run to notice, and the fix was a rename. An early factory rule wrongly flagged constructors with inlined base-class initialisation as factories; the fix was to treat base-plus-derived stores as one constructor and only call unrelated sibling stores a factory. The slot-one findings were genuinely surprising: the expected vector deleting destructor is mostly absent, and the slot aliasing thunk has no confirmed explanation yet. Size estimation from allocation sites needed a field-extent cross-check before it could be trusted, and a few sizes remain suspect even now.</p>
+      </article>
 
       <article class="entry" id="structures-online">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
