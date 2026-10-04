@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Same-order Rust is not bit-exact for floats: LLVM swaps operands and changes NaN propagation",
+    "title": "Rewrites: 361 more functions pass the checker (3031 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "361 rewrites added under rewrites/pending: 230 script native handlers and 131 other functions.",
+      "The tree now holds 3031 rewrites, 42 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "91 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Same-order Rust is not bit-exact for floats: LLVM swaps operands and changes NaN propagation",
+    "commit": "31a05cac98b818d592b2754a481b2e4d79c1a4d9",
     "summary": "Findings from the r-s56 lane.",
     "changes": [
       "New devlog entry: Same-order Rust is not bit-exact for floats: LLVM swaps operands and changes NaN propagation.",
