@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-cutscenes">Rust reader: cutscene description files</a></li>
       <li><a href="#format-animation">Rust reader: animation dictionaries and clips (WAD)</a></li>
       <li><a href="#pilot-10">Pilot lane 10: five functions rewritten and timed</a></li>
       <li><a href="#pilot-08">Pilot lane 08: five functions rewritten and timed</a></li>
@@ -171,6 +172,37 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-cutscenes">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: cutscene description files</h2>
+      <p><span class="evidence verified">Verified</span> Every cutscene description file in the game now parses with a new Rust reader: 344 files holding 419 cutscenes in 810 animation sections, with per-cutscene durations, object counts and asset references extracted into a machine-readable catalog.</p>
+      <h3>What was asked</h3>
+      <p>Write a clean Rust reader for the cutscene description format: parse the description files, list every section and event type, and report per-cutscene durations, object counts and referenced assets. The reader had to depend on the archive and resource container crates from earlier lanes instead of reimplementing them.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The description files are plain tag text, not binary. Each file holds one or more cutscenes, and each cutscene pairs file-level tags (subtitles, flags, draw distance, placement) with animation sections that name the animation file, the models, the camera, the audio bank and the timing.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Description files</td><td role="cell" data-label="Value">344</td><td role="cell" data-label="What it means">Every file parsed without error</td></tr>
+      <tr role="row"><td role="cell">Cutscenes and sections</td><td role="cell" data-label="Value">419 cutscenes, 810 sections</td><td role="cell" data-label="What it means">Most files hold one cutscene; one holds eleven</td></tr>
+      <tr role="row"><td role="cell">Subtitle rows</td><td role="cell" data-label="Value">8,767</td><td role="cell" data-label="What it means">Timed text keys across all cutscenes</td></tr>
+      <tr role="row"><td role="cell">Model rows</td><td role="cell" data-label="Value">7,242</td><td role="cell" data-label="What it means">Objects placed per section, up to 36 in one section</td></tr>
+      <tr role="row"><td role="cell">Total running time</td><td role="cell" data-label="Value">About eight and a half hours</td><td role="cell" data-label="What it means">Sum of all section durations</td></tr>
+      <tr role="row"><td role="cell">Animation references resolved</td><td role="cell" data-label="Value">809 of 810</td><td role="cell" data-label="What it means">One reference names an animation file that does not ship</td></tr>
+      <tr role="row"><td role="cell">Audio references resolved</td><td role="cell" data-label="Value">262 of 317</td><td role="cell" data-label="What it means">Base and episode audio banks located by name hash</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The public wiki page on cutscenes was right about the overall tag layout but wrong on several details: tags it calls unused appear in every file, two tags it says are script-only appear in hundreds of files, and one vehicle tag carries six values per row rather than the documented seven. Row shapes for nine undocumented tags were measured from the files.</p>
+      <p><span class="evidence verified">Verified</span> The shipped files contain quirks the reader tolerates with warnings: tag typos, repeated and unclosed sections, an exporter debug line baked into four files, a float with a trailing comma, and mixed integer and float spellings of one value. One cutscene has subtitles but no animation sections.</p>
+      <p><span class="evidence">Inferred</span> Episode cutscene audio lives in the episode sound banks rather than a dedicated cutscene bank, based on name-hash matches. A few dozen mostly expansion-era audio names match no shipped archive entry and remain unresolved.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The reader keeps every unknown tag, mistyped row and stray line instead of dropping them, and records each with its line number, so later lanes can mine the quirks rather than rediscover them. Strict number parsing was kept for the single trailing-comma value rather than guessing how the game reads it. The animation lane owns the referenced animation files next, and the audio lane owns the unresolved audio names.</p>
+      <h3>How to reproduce it</h3>
+      <p>Open the three animation archives for cutscenes with the archive crate, read each description entry, and parse the text with the new reader. The integration test does this end to end when pointed at a game install and pins every count above, and the catalog example prints the per-cutscene data as JSON. Unit tests use small hand-built fixtures only.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The payload padding was confusing at first: files are padded to a block boundary with zeros and uninitialised-memory fill, which looked like a binary trailer until the last-text-line rule made it fall into place. The shell also misreported successful commands as failed because the build tool writes progress to its error stream, so results were taken from the tool output lines instead. Most usefully, the integration test caught four data quirks the survey scripts had missed, because the survey never type-checked rows; the reader now pins all of them.</p>
+      </article>
 
       <article class="entry" id="format-animation">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
