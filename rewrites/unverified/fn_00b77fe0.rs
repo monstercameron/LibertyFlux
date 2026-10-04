@@ -35,6 +35,11 @@
 /// byte, the original would take the callee's zero path there while this
 /// rewrite would not.
 ///
+/// The (flag == 7) bit travels in the low byte of a stack dword whose upper
+/// bytes the original never writes; the contract fixes the stack fill to
+/// zero so the whole word compares, and the callee ignores those bytes
+/// anyway (low-byte test only).
+///
 /// Original: 0x00b77fe0 (cdecl, three stack words).
 lf_checker_rt::export!(cdecl, rw_00b77fe0(key: u32, ptr: u32, flag: u32) -> u32 {
     unsafe {

@@ -21,8 +21,10 @@
 /// of 8 for kinds 1, 2, 3, 5 and 0 otherwise. The selected slot copies
 /// the entry key (callees 6 and 7 give the entry and its size; the copy
 /// happens only for a non-null entry of size <= 8) and records the flag.
-/// Any other slot advances the cursor by the width, stores through callee
-/// 8 while inside the bound, and writes the one-bit mask. A zero outcome
+/// Any other slot advances a copy of the cursor by the width; when the
+/// advanced copy is inside the bound it stores through callee 8 (which
+/// sees the un-advanced cursor) and writes the one-bit mask, then keeps
+/// the advanced copy either way. A zero outcome
 /// ends the walk after that slot. Returns the final outcome byte.
 ///
 /// Original: 0x0053A8C0 (thiscall, ECX = this, six stack words, callee
@@ -102,8 +104,8 @@ lf_checker_rt::export!(thiscall, rw_0053a8c0(this: u32, cursor: u32, key_out: u3
                 }
                 wr8(flag_out, done);
             } else {
-                pos = pos.wrapping_add(width);
-                if pos > bound {
+                let advanced = pos.wrapping_add(width);
+                if advanced > bound {
                     done = 0;
                 } else {
                     let stored: u32 =
@@ -124,6 +126,7 @@ lf_checker_rt::export!(thiscall, rw_0053a8c0(this: u32, cursor: u32, key_out: u3
                         done = 1;
                     }
                 }
+                pos = advanced;
             }
             slot += 1;
         }
