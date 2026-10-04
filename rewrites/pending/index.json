@@ -16929,6 +16929,24 @@
   "lane": "r-s154"
  },
  {
+  "address": "0x00924E50",
+  "name": "view_row_rebuild_scaled",
+  "kind": "function",
+  "file": "functions/fn_00924e50.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b208"
+ },
+ {
+  "address": "0x00925070",
+  "name": "view_row_rebuild_zero",
+  "kind": "function",
+  "file": "functions/fn_00925070.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b208"
+ },
+ {
   "address": "0x00925290",
   "name": "input_ready_check",
   "kind": "function",
@@ -16938,6 +16956,15 @@
   "lane": "r-s154"
  },
  {
+  "address": "0x009252E0",
+  "name": "view_frustum_update",
+  "kind": "function",
+  "file": "functions/fn_009252e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b208"
+ },
+ {
   "address": "0x009253F0",
   "name": "input_flag_classify",
   "kind": "function",
@@ -16945,6 +16972,33 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s154"
+ },
+ {
+  "address": "0x00925430",
+  "name": "render_targets_recreate",
+  "kind": "function",
+  "file": "functions/fn_00925430.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b208"
+ },
+ {
+  "address": "0x009255C0",
+  "name": "render_target_release_all",
+  "kind": "function",
+  "file": "functions/fn_009255c0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b208"
+ },
+ {
+  "address": "0x009256F0",
+  "name": "view_system_init",
+  "kind": "function",
+  "file": "functions/fn_009256f0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b208"
  },
  {
   "address": "0x00925B10",
