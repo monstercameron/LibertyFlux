@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n113">Two native rewrites deferred: the checker only watches eight call arguments</a></li>
       <li><a href="#rerun-15">Rerun batch 15: version 2 catches a vacuous version 1 pass</a></li>
       <li><a href="#production-n110">Verifying a tail-jump native handler whose target takes stack arguments</a></li>
       <li><a href="#production-b28">Two audio helpers verified, and four contract gotchas for other lanes</a></li>
@@ -256,6 +257,28 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n113">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Two native rewrites deferred: the checker only watches eight call arguments</h2>
+      <p>Twenty-three of twenty-five script native handlers in this batch were rewritten and verified. The other two were deliberately deferred after a mutant control proved the checker cannot see all of their behaviour: each forwards more than eight words to its engine function, but the checker's call log records only the first eight, so corrupted words further down the argument list still pass.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty-five script native handler functions in Rust and prove each rewrite behaves identically to the original with the differential checker, which runs both sides from identical state and compares return values, written memory, stack use, outgoing calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Twenty-three handlers passed one thousand trials each with zero failures on the first attempt. They follow the familiar shapes: forward the script arguments to one engine call, optionally store the answer in the return slot, coerce boolean flags through a reused stack slot.</p>
+      <p><span class="evidence verified">Verified</span> Two handlers push thirteen and fifteen words respectively to their engine call. The checker's per-call log entry holds eight argument slots, and both the recording stub and the comparison use only those slots, so words past index seven are pushed on both sides and observed on neither. This was confirmed two ways: by reading the checker's source, and by running mutants that corrupt a word past index seven and still pass one hundred out of one hundred trials with the call genuinely executed on both sides.</p>
+      <p><span class="evidence verified">Verified</span> This is a known version-one checker limitation still present in version two. No contract option works around it, and changing the checker to make a check pass is forbidden, so both functions were deferred with a precise diagnosis instead of being accepted on a partial comparison.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Both wide rewrites are written and kept aside; they should be re-run, not rewritten, once the checker's call log covers the full declared argument list.</li>
+      <li>The recommended checker fix is to widen the log entry's argument array together with the recording loop, the reader and the comparison key, then require both shipped mutants to fail before any wide rewrite is accepted.</li>
+      <li>Sibling lanes should check outgoing call widths early: any function whose call frame exceeds eight words needs the same mutant control before its verdict means anything.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Take any verified native-handler contract, extend its callee to more than eight stack arguments, and run a mutant that flips a bit in an argument past index seven. The mutant passes every trial. The lane's scratch folder keeps both contracts, both verdicts and both mutant verdicts.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The fifteen-word frame first looked like a tracing mistake: eleven script arguments going in and fifteen call words coming out, with duplications and scratch words interleaved. Tracing backwards from the total stack cleanup instead of forwards from the pushes made the frame unambiguous. A side finding: the shared recon scripts misread the executable's relocation table by double-adding an offset, briefly suggesting a constant was unrelocated when it was; the flags were informational only, so no result was affected.</p>
+      </article>
 
       <article class="entry" id="rerun-15">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
