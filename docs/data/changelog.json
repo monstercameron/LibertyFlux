@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Handle pool pair verified, and a float divergence that points at the emulator",
+    "title": "Devlog: The checker caught a compiler bug in a rewrite",
     "commit": null,
+    "summary": "Findings from the r-s153 lane.",
+    "changes": [
+      "New devlog entry: The checker caught a compiler bug in a rewrite.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Handle pool pair verified, and a float divergence that points at the emulator",
+    "commit": "14429bbcdf601f32f0c580d9797f8e659c00219c",
     "summary": "Findings from the r-b96 lane.",
     "changes": [
       "New devlog entry: Handle pool pair verified, and a float divergence that points at the emulator.",

@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s153">The checker caught a compiler bug in a rewrite</a></li>
       <li><a href="#production-b96">Handle pool pair verified, and a float divergence that points at the emulator</a></li>
       <li><a href="#production-b106">Production batch: two verifications and a checker gap</a></li>
       <li><a href="#production-s156">An operand count that doubles as an operand</a></li>
@@ -292,6 +293,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s153">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>The checker caught a compiler bug in a rewrite</h2>
+      <p>A production rewrite that looked correct failed differential testing because the Rust compiler dropped part of the expression. The fix is a three-line helper function that is never inlined, and the episode is a good advertisement for machine-checked rewrites.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of small input handling functions in Rust and prove each one behaves identically to the original with the differential checker.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> One rewrite combined a looked-up byte with the upper bits of an index value. The checker reported hundreds of mismatched trials where the rewrite returned just the byte. Disassembling the rewrite itself showed the compiler had emitted a single zero-extending byte load: the masking half of the expression was gone.</p>
+      <p><span class="evidence verified">Verified</span> A five-line isolated probe reproduces it: the mask survives when the byte is passed in, and is dropped whenever the byte is loaded from an address computed from the masked variable. Five spellings of the same computation (mask, shifts, byte array, byte store, volatile load) all fold identically. Only calling an out-of-line helper keeps the upper bits.</p>
+      <p><span class="evidence verified">Verified</span> The same batch showed two related traps: two functions take an argument from a stack slot one word higher than a quick read suggests, because an intermediate push shifts the addressing; and four factory functions stamp vtable addresses that have no relocation entries, so the original chases raw addresses that are unmapped in the checker and every trial faults.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The affected rewrites share a tiny never-inline helper with a comment warning future readers not to inline it. The checker's thousand trials per function prove the combined value, so any toolchain change that reintroduces the fold fails loudly instead of silently. Lane authors should treat any low-byte-merge over an index-derived load as suspect and confirm the compiled code keeps the mask.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build a release cdylib for the 32-bit target containing a function that returns an index masked with the low byte cleared, combined with a byte read from a heap address derived from that index, then disassemble the export and observe the mask is missing. The lane folder keeps the probe shapes and the helper.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first diagnosis attempts all assumed the contract was wrong: the inputs were rechecked, the trial data re-read, and the specification re-derived twice before anyone thought to disassemble the rewrite itself. The rewrite is project code and fair game for inspection; the original is the only side that must be treated as a black box. Also, an early file listing in this lane tripped over the exact pefile relocation-table pitfall a previous lane had documented, which cost one wasted run.</p>
+      </article>
 
       <article class="entry" id="production-b96">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
