@@ -1440,6 +1440,15 @@
   "lane": "a-10"
  },
  {
+  "address": "0x0064C550",
+  "name": "rage::ptxSprite::vf25",
+  "kind": "function",
+  "file": "functions/fn_0064c550.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b91"
+ },
+ {
   "address": "0x0064F3C0",
   "name": "rage::ptxSprite::vf13",
   "kind": "function",
@@ -3238,6 +3247,159 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s112"
+ },
+ {
+  "address": "0x00873A30",
+  "name": "crmt_node_zero_and_set_vtable",
+  "kind": "function",
+  "file": "functions/fn_00873a30.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
+ },
+ {
+  "address": "0x00873B40",
+  "name": "crmt_ctor_set_vtable",
+  "kind": "function",
+  "file": "functions/fn_00873b40.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
+ },
+ {
+  "address": "0x00873B50",
+  "name": "crmt_release_child_slot",
+  "kind": "function",
+  "file": "functions/fn_00873b50.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
+ },
+ {
+  "address": "0x00873B70",
+  "name": "crmtManagerPriority::vf1",
+  "kind": "function",
+  "file": "functions/fn_00873b70.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
+ },
+ {
+  "address": "0x00873B90",
+  "name": "crmtManagerPriority::vf2",
+  "kind": "function",
+  "file": "functions/fn_00873b90.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
+ },
+ {
+  "address": "0x00873BD0",
+  "name": "crmt_forward_query_or_null",
+  "kind": "function",
+  "file": "functions/fn_00873bd0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
+ },
+ {
+  "address": "0x00873D40",
+  "name": "crmt_push_value_and_notify",
+  "kind": "function",
+  "file": "functions/fn_00873d40.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
+ },
+ {
+  "address": "0x00873D70",
+  "name": "crmt_indexed_float_store",
+  "kind": "function",
+  "file": "functions/fn_00873d70.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
+ },
+ {
+  "address": "0x00873ED0",
+  "name": "crmt_inner_record_or_null",
+  "kind": "function",
+  "file": "functions/fn_00873ed0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
+ },
+ {
+  "address": "0x00873F20",
+  "name": "rage::crmtManagerMixer::vf7",
+  "kind": "function",
+  "file": "functions/fn_00873f20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
+ },
+ {
+  "address": "0x00873F70",
+  "name": "crmt_zeroing_ctor",
+  "kind": "function",
+  "file": "functions/fn_00873f70.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
+ },
+ {
+  "address": "0x00874000",
+  "name": "crmt_chained_ctor",
+  "kind": "function",
+  "file": "functions/fn_00874000.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
+ },
+ {
+  "address": "0x00874020",
+  "name": "crmt_forward_init3_zero_tag",
+  "kind": "function",
+  "file": "functions/fn_00874020.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
+ },
+ {
+  "address": "0x00874040",
+  "name": "crmt_forward_record_init3",
+  "kind": "function",
+  "file": "functions/fn_00874040.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
+ },
+ {
+  "address": "0x00874060",
+  "name": "crmt_full_teardown",
+  "kind": "function",
+  "file": "functions/fn_00874060.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
+ },
+ {
+  "address": "0x008740E0",
+  "name": "crmt_adopt_child",
+  "kind": "function",
+  "file": "functions/fn_008740e0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
+ },
+ {
+  "address": "0x00874130",
+  "name": "crmt_conditional_slot_replace",
+  "kind": "function",
+  "file": "functions/fn_00874130.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s177"
  },
  {
   "address": "0x00874170",
