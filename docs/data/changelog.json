@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Naming a run of animation frame and creature functions",
+    "title": "Rewrites: 53 more functions pass the checker (10771 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "53 rewrites added under rewrites/verified: 0 script native handlers and 53 other functions.",
+      "The tree now holds 10771 rewrites, 10752 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "472 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Naming a run of animation frame and creature functions",
+    "commit": "701257eeb05c56bec6e13219d06f351e60c9641c",
     "summary": "Findings from the nm-53 lane.",
     "changes": [
       "New devlog entry: Naming a run of animation frame and creature functions.",
