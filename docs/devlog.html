@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#swarm-memory-limit">The swarm ran the machine out of memory: what the real limit is</a></li>
       <li><a href="#production-s48">Production batch: eighteen small functions verified, one checker anomaly</a></li>
       <li><a href="#production-s44">An audio initialiser that reads a word it never wrote</a></li>
       <li><a href="#production-s35">Production lane traps: a misleading mnemonic, a short size, and an unsolved float divergence</a></li>
@@ -222,6 +223,34 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="swarm-memory-limit">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>The swarm ran the machine out of memory: what the real limit is</h2>
+      <p>At 74 lanes the laptop came within about 1 GB of its commit limit, lanes began to fail, and the coordinator had to stop six lanes by hand. The limit that mattered was not free memory, which is what every guard had been watching.</p>
+      <h3>What was asked</h3>
+      <p>The project owner asked for as many agents as the laptop's memory can handle. Through the evening the swarm ran at 55 to 65 lanes with 4 to 8 GB of memory free, and self-refilling slots paused whenever free memory fell below 3 GB.</p>
+      <h3>What was found</h3>
+      <table>
+      <thead><tr><th>Fact</th><th>Value</th><th>What it means</th></tr></thead>
+      <tbody>
+      <tr><td>Lanes running at the time</td><td data-label="Value">74</td><td data-label="What it means">Thirteen of them were the new re-run lanes</td></tr>
+      <tr><td>Commit in use</td><td data-label="Value">85.6 of 86.8 GB</td><td data-label="What it means">The operating system had already grown the page file twice; the next large allocation anywhere would fail</td></tr>
+      <tr><td>Free physical memory</td><td data-label="Value">0.7 GB at the worst point</td><td data-label="What it means">It had read 8 GB twenty minutes earlier</td></tr>
+      <tr><td>Checker worker processes</td><td data-label="Value">107</td><td data-label="What it means">Each re-run lane had started about a dozen at once to run its batch in parallel</td></tr>
+      <tr><td>Shell processes</td><td data-label="Value">215, about 13 GB of private memory</td><td data-label="What it means">Every lane and every slot keeps several shells alive; together they were the largest single consumer</td></tr>
+      <tr><td>Agent processes</td><td data-label="Value">62, about 9 GB</td><td data-label="What it means">The number the earlier estimates were based on</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The per-lane cost is not the agent process. Earlier estimates took about 230 MB per lane from the agent's own memory. Counting the shells, Python processes and checker workers a lane starts, a production lane costs closer to 600 MB of commit, and a re-run lane running twelve workers costs well over 1 GB.</p>
+      <p><span class="evidence verified">Verified</span> Free memory is the wrong gauge. The slots' guard read free physical memory, saw more than 3 GB, and kept starting lanes while commit climbed to the limit. Free memory only collapsed in the last few minutes.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Slots now wait for both at least 5 GB of free memory and at least 14 GB of commit headroom before starting a lane, with a random delay so they do not all start in the same second. Lanes that run a batch through the checker are told to use at most three worker processes at a time. The working ceiling on this machine is about 45 lanes, not 60 to 70.</p>
+      <h3>How to reproduce it</h3>
+      <p>The numbers come from the operating system's memory counters and per-process private memory, grouped by process name, read while the machine was under pressure.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Six re-run lanes were stopped mid-work to recover; their ported rewrites were on disk and they were restarted one at a time with instructions to continue. Several production lanes and slots failed with errors during the squeeze and their batches will need to be handed out again. Stopping the lanes took over ten minutes because the machine was thrashing. The coordinator had described 60 lanes as the ceiling on the strength of free memory alone and then added a wave of heavier lanes on top; it should have measured what a lane of the new kind costs before launching thirteen of them.</p>
+      </article>
 
       <article class="entry" id="production-s48">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
