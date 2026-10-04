@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Derive missing table labels in devlog fragments",
+    "title": "Devlog: Ghidra export scripts are written and tested",
     "commit": null,
+    "summary": "Findings from the p0-ghidra-scripts lane.",
+    "changes": [
+      "New devlog entry: Ghidra export scripts are written and tested.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Derive missing table labels in devlog fragments",
+    "commit": "2d95e2b720485f1826c60ff32888f51f55ab156b",
     "summary": "A lane's entry was refused for a formatting detail the script can fix itself.",
     "changes": [
       "The devlog integration script now fills in the phone-layout label of each table cell from its column header instead of refusing the fragment."

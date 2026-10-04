@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#ghidra-export-scripts">Ghidra export scripts are written and tested</a></li>
       <li><a href="#startup-stub">The start-up stub: a tiny loader, an encrypted first megabyte, and an external unlocker</a></li>
       <li><a href="#game-folder-inventory">What the game folder contains</a></li>
       <li><a href="#public-names">Public engine class names collected and checked against our build</a></li>
@@ -67,6 +68,110 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="ghidra-export-scripts">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Ghidra export scripts are written and tested</h2>
+      <p><span class="evidence verified">Verified</span> The five Ghidra scripts the project will use to inventory the game binary are written, compile-checked against a small test program, and ready to run once the main analysis finishes. All five ran without errors on the test binary and produced valid output files.</p>
+      <h3>What was asked</h3>
+      <p><span class="evidence verified">Verified</span> The task was to prepare the scripts the coordinator will run after the separate game analysis completes: survey the bundled scripts for class recovery, Function ID, version tracking and function export, learn how headless runs work in this Ghidra version, write five export and symbol scripts in Java, and prove each one compiles by running it headless against a small test program rather than the game.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The bundled scripts that matter are listed below. Paths are relative to the Ghidra installation directory.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Script</th>
+      <th role="columnheader">Purpose</th>
+      <th role="columnheader">Arguments</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">RecoverClassesFromRTTIScript.java</td>
+      <td role="cell" data-label="Purpose">Recover class hierarchies from RTTI data</td>
+      <td role="cell" data-label="Arguments">None; options are constants in the file</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">RunRttiAnalyzerScript.java</td>
+      <td role="cell" data-label="Purpose">Re-run the RTTI analyser on demand</td>
+      <td role="cell" data-label="Arguments">None</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">FunctionIDHeadlessPrescript.java</td>
+      <td role="cell" data-label="Purpose">Prepare object ingest when building a Function ID library</td>
+      <td role="cell" data-label="Arguments">None</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">FidStatistics.java</td>
+      <td role="cell" data-label="Purpose">Report what Function ID matching found</td>
+      <td role="cell" data-label="Arguments">None</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">AutoVersionTrackingScript.java</td>
+      <td role="cell" data-label="Purpose">Run automatic version tracking between two programs</td>
+      <td role="cell" data-label="Arguments">Session folder, session name, source program</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">ExportFunctionInfoScript.java</td>
+      <td role="cell" data-label="Purpose">Export function names and entries to JSON</td>
+      <td role="cell" data-label="Arguments">Output file chosen at run time</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> One correction came out of reading the sources: applying Function ID to a program is done by an auto-analysis plugin at analysis time, not by a script. The headless pre and post scripts with Function ID in their names exist for building Function ID libraries from object files, which is a different job.</p>
+      <p><span class="evidence verified">Verified</span> The five new scripts and what each writes:</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Script</th>
+      <th role="columnheader">Output</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">LfExportFunctions.java</td>
+      <td role="cell" data-label="Output">One JSON record per function: entry, name, size, instruction count, calling convention, thunk, external, library-namespace and library flags, section, caller and callee counts</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">LfExportCallGraph.java</td>
+      <td role="cell" data-label="Output">JSON caller and callee pairs</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">LfExportXrefs.java</td>
+      <td role="cell" data-label="Output">JSON data references from functions to memory targets, with target symbol and value where known</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">LfExportDecompile.java</td>
+      <td role="cell" data-label="Output">One decompiled text file per requested function plus a JSON manifest of outcomes, with a per-function timeout</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">LfApplySymbols.java</td>
+      <td role="cell" data-label="Output">Applies a JSON address and name list as function names and reports applied, skipped and failed counts</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The test used a small stock 32-bit Windows utility, the same architecture as the game, imported into a throwaway project with full analysis in about half a minute. The exports recorded 213 functions (116 program functions plus 97 imported library functions), 538 call edges and 545 data references, every file parsing as valid JSON. The decompile script handled 8 requests with 6 successes and 2 cleanly reported failures (a malformed address and an address with no function). The symbol script applied 2 renames and skipped 2 bad entries, and a re-export confirmed both renames persisted.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> Java scripts were used instead of Python to avoid interpreter environment problems; every API call in them was checked against the bundled API reference before the first run.</li>
+      <li><span class="evidence verified">Verified</span> Imported library functions are included in the function export so that every call-graph target has a matching record; without them about a third of the test edges dangled.</li>
+      <li><span class="evidence verified">Verified</span> Cross-references are limited to memory targets, which cut the test output from about fifteen hundred records to about five hundred by dropping stack references.</li>
+      <li><span class="evidence">Inferred</span> Library code is best detected as imported functions plus functions in library namespaces, with each signal exported separately so the rule can be tightened later.</li>
+      <li><span class="evidence">Unknown</span> Run time on the full game binary is unmeasured; the test runs took seconds, so minutes are expected, but the caller and callee computation was not profiled at scale.</li>
+      </ul>
+      <p><span class="evidence">Inferred</span> Suggested run order for the coordinator: wait for analysis to finish, optionally run the RTTI recovery scripts first so class names exist, then the three exports, then build decompile and symbol lists from the function export.</p>
+      <h3>How to reproduce it</h3>
+      <ol>
+      <li>Point the Java home variable at the bundled Java runtime and import any small 32-bit executable into a new throwaway project with analysis enabled.</li>
+      <li>Run each new script headless as a post-script against the imported program with analysis disabled, passing the script folder and the output path as arguments.</li>
+      <li>Confirm every output file parses as JSON and that the one-line summary each script prints matches the record counts in the files.</li>
+      <li>Feed the decompile script a list containing one bad address and one address with no function, and the symbol script a list containing one bad entry, and confirm both report the problem entries instead of failing.</li>
+      </ol>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> Ghidra compiles scripts at run time, so mistakes only surface when a script executes. The first real run caught a naming clash: two scripts defined a helper with the same name as a built-in script method, and neither compiled until the helper was renamed.</p>
+      <p><span class="evidence verified">Verified</span> The JSON library silently drops fields whose value is null, which made the first schema ragged. Enabling explicit null output fixed it.</p>
+      <p><span class="evidence verified">Verified</span> The first cross-reference dump was mostly noise from stack references and the first call graph pointed at import entries with no function records. Both were fixed by filtering to memory targets and exporting imported functions, as described above. No game data was touched at any point; the game project stayed locked by its own analysis throughout.</p>
+      </article>
 
       <article class="entry" id="startup-stub">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
