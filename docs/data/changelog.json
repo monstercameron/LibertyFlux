@@ -2,7 +2,7 @@
   {
     "date": "2026-10-04",
     "title": "Tooling: the operating scripts are in the repository",
-    "commit": null,
+    "commit": "d4ee65c6d9f4196bc085846fab19b4e26fa36a4b",
     "summary": "The scripts that run the lane swarm lived in an untracked scratch folder. Cleaned copies are now tracked and tested.",
     "changes": [
       "scripts/coordinator/ holds the 16 live scripts of the operating layer (the five-minute tick, the lane launcher and supervisor, the brief makers, the importer of passed rewrites, the count, review and report scripts), four shared modules, and tests. Machine paths are gone: the repository root is found from the script's own location and the game folder only through an environment variable.",
