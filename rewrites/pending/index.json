@@ -324,6 +324,24 @@
   "lane": "r-s161"
  },
  {
+  "address": "0x005B0430",
+  "name": "select_market_menu_overlay",
+  "kind": "function",
+  "file": "functions/fn_005b0430.rs",
+  "trials": 1200,
+  "checker": "version 3",
+  "lane": "r-b126"
+ },
+ {
+  "address": "0x005B23A0",
+  "name": "menu_fade_blend_tick",
+  "kind": "function",
+  "file": "functions/fn_005b23a0.rs",
+  "trials": 1200,
+  "checker": "version 3",
+  "lane": "r-b126"
+ },
+ {
   "address": "0x005B2620",
   "name": "dual_state_update",
   "kind": "function",
@@ -333,6 +351,15 @@
   "lane": "r-s116"
  },
  {
+  "address": "0x005B2680",
+  "name": "refresh_red_menu_overlay",
+  "kind": "function",
+  "file": "functions/fn_005b2680.rs",
+  "trials": 1200,
+  "checker": "version 3",
+  "lane": "r-b126"
+ },
+ {
   "address": "0x005B2A80",
   "name": "loader_status_poll",
   "kind": "function",
@@ -340,6 +367,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s116"
+ },
+ {
+  "address": "0x005B2AD0",
+  "name": "service_net_stats_indicator",
+  "kind": "function",
+  "file": "functions/fn_005b2ad0.rs",
+  "trials": 1200,
+  "checker": "version 3",
+  "lane": "r-b126"
  },
  {
   "address": "0x005B2F80",
@@ -1267,6 +1303,141 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s157"
+ },
+ {
+  "address": "0x006256A0",
+  "name": "task_unlink_from_manager",
+  "kind": "function",
+  "file": "functions/fn_006256a0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s186"
+ },
+ {
+  "address": "0x00625730",
+  "name": "pending_dispatch_drain",
+  "kind": "function",
+  "file": "functions/fn_00625730.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s186"
+ },
+ {
+  "address": "0x00625790",
+  "name": "dllist_remove_64",
+  "kind": "function",
+  "file": "functions/fn_00625790.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s186"
+ },
+ {
+  "address": "0x00625820",
+  "name": "timing_singleton_get",
+  "kind": "function",
+  "file": "functions/fn_00625820.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s186"
+ },
+ {
+  "address": "0x00625890",
+  "name": "dllist_remove_78",
+  "kind": "function",
+  "file": "functions/fn_00625890.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s186"
+ },
+ {
+  "address": "0x00625920",
+  "name": "dllist_remove_70",
+  "kind": "function",
+  "file": "functions/fn_00625920.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s186"
+ },
+ {
+  "address": "0x006259B0",
+  "name": "dllist_insert_64",
+  "kind": "function",
+  "file": "functions/fn_006259b0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s186"
+ },
+ {
+  "address": "0x00625A40",
+  "name": "chain_advance_scan",
+  "kind": "function",
+  "file": "functions/fn_00625a40.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s186"
+ },
+ {
+  "address": "0x00625A90",
+  "name": "dllist_insert_78",
+  "kind": "function",
+  "file": "functions/fn_00625a90.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s186"
+ },
+ {
+  "address": "0x00625B20",
+  "name": "dllist_insert_70",
+  "kind": "function",
+  "file": "functions/fn_00625b20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s186"
+ },
+ {
+  "address": "0x00625BB0",
+  "name": "gated_capability_check",
+  "kind": "function",
+  "file": "functions/fn_00625bb0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s186"
+ },
+ {
+  "address": "0x00625E60",
+  "name": "rage::snDestroyTask::snDestroyTask",
+  "kind": "function",
+  "file": "functions/fn_00625e60.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s186"
+ },
+ {
+  "address": "0x006262D0",
+  "name": "rage::snHandleJoinRequestTask::snHandleJoinRequestTask",
+  "kind": "function",
+  "file": "functions/fn_006262d0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s186"
+ },
+ {
+  "address": "0x00626440",
+  "name": "guarded_frame_probe",
+  "kind": "function",
+  "file": "functions/fn_00626440.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s186"
+ },
+ {
+  "address": "0x006264D0",
+  "name": "vtable_release_publish_pair",
+  "kind": "function",
+  "file": "functions/fn_006264d0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s186"
  },
  {
   "address": "0x00648A80",
@@ -8487,6 +8658,15 @@
   "lane": "a-17"
  },
  {
+  "address": "0x008D7E90",
+  "name": "probe_batch_builder",
+  "kind": "function",
+  "file": "functions/fn_008d7e90.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b131"
+ },
+ {
   "address": "0x008D80A0",
   "name": "lerp_vec2",
   "kind": "function",
@@ -8530,6 +8710,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-17"
+ },
+ {
+  "address": "0x008D8210",
+  "name": "table_accumulator",
+  "kind": "function",
+  "file": "functions/fn_008d8210.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b131"
  },
  {
   "address": "0x008D8320",
@@ -8766,6 +8955,15 @@
   "lane": "r-s134"
  },
  {
+  "address": "0x008D8A50",
+  "name": "streaming_slot_initializer",
+  "kind": "function",
+  "file": "functions/fn_008d8a50.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b131"
+ },
+ {
   "address": "0x008D8BF0",
   "name": "file_sync_drain_8bf0",
   "kind": "function",
@@ -8784,6 +8982,15 @@
   "lane": "r-s134"
  },
  {
+  "address": "0x008D8CF0",
+  "name": "load_cycle_runner",
+  "kind": "function",
+  "file": "functions/fn_008d8cf0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b131"
+ },
+ {
   "address": "0x008D8E20",
   "name": "NativeImpl_FORCE_LOADING_SCREEN",
   "kind": "function",
@@ -8791,6 +8998,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s134"
+ },
+ {
+  "address": "0x008D8E40",
+  "name": "streaming_drain_and_release",
+  "kind": "function",
+  "file": "functions/fn_008d8e40.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b131"
  },
  {
   "address": "0x008D8EF0",
@@ -43119,6 +43335,15 @@
   "lane": "r-s131"
  },
  {
+  "address": "0x00D6F340",
+  "name": "replay_time_split",
+  "kind": "function",
+  "file": "functions/fn_00d6f340.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b129"
+ },
+ {
   "address": "0x00D6F490",
   "name": "replay_bar_slot_ratio",
   "kind": "function",
@@ -43162,6 +43387,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s131"
+ },
+ {
+  "address": "0x00D6F750",
+  "name": "CReplayProgressBar::vf2",
+  "kind": "function",
+  "file": "functions/fn_00d6f750.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b129"
  },
  {
   "address": "0x00D708F0",
@@ -44170,6 +44404,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s146"
+ },
+ {
+  "address": "0x00DEB780",
+  "name": "UIMontageEditor::vf110",
+  "kind": "function",
+  "file": "functions/fn_00deb780.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b140"
  },
  {
   "address": "0x00DF01E0",
@@ -46377,6 +46620,15 @@
   "lane": "a-F02"
  },
  {
+  "address": "0x00E5E780",
+  "name": "network_global_swap",
+  "kind": "function",
+  "file": "functions/fn_00e5e780.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
   "address": "0x00E5E7A0",
   "name": "net_list_prepend_110e988",
   "kind": "function",
@@ -46492,6 +46744,177 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "a-F04"
+ },
+ {
+  "address": "0x00E5E940",
+  "name": "rage::snEvent::AutoIdDesc__::AutoIdDesc__",
+  "kind": "function",
+  "file": "functions/fn_00e5e940.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5E960",
+  "name": "network_static_init_00",
+  "kind": "function",
+  "file": "functions/fn_00e5e960.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5E980",
+  "name": "network_static_init_01",
+  "kind": "function",
+  "file": "functions/fn_00e5e980.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5E9A0",
+  "name": "network_static_init_02",
+  "kind": "function",
+  "file": "functions/fn_00e5e9a0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5E9C0",
+  "name": "network_static_init_03",
+  "kind": "function",
+  "file": "functions/fn_00e5e9c0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5E9E0",
+  "name": "network_static_init_04",
+  "kind": "function",
+  "file": "functions/fn_00e5e9e0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5EA00",
+  "name": "network_static_init_05",
+  "kind": "function",
+  "file": "functions/fn_00e5ea00.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5EA20",
+  "name": "network_static_init_06",
+  "kind": "function",
+  "file": "functions/fn_00e5ea20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5EA40",
+  "name": "network_static_init_07",
+  "kind": "function",
+  "file": "functions/fn_00e5ea40.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5EA60",
+  "name": "network_static_init_08",
+  "kind": "function",
+  "file": "functions/fn_00e5ea60.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5EA80",
+  "name": "network_static_init_09",
+  "kind": "function",
+  "file": "functions/fn_00e5ea80.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5EAA0",
+  "name": "network_static_init_10",
+  "kind": "function",
+  "file": "functions/fn_00e5eaa0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5EAC0",
+  "name": "network_static_init_11",
+  "kind": "function",
+  "file": "functions/fn_00e5eac0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5EAE0",
+  "name": "network_static_init_12",
+  "kind": "function",
+  "file": "functions/fn_00e5eae0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5EB00",
+  "name": "network_static_init_13",
+  "kind": "function",
+  "file": "functions/fn_00e5eb00.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5EB20",
+  "name": "network_static_init_14",
+  "kind": "function",
+  "file": "functions/fn_00e5eb20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5EB40",
+  "name": "network_static_init_15",
+  "kind": "function",
+  "file": "functions/fn_00e5eb40.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5EB60",
+  "name": "network_static_init_16",
+  "kind": "function",
+  "file": "functions/fn_00e5eb60.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
+ },
+ {
+  "address": "0x00E5EB80",
+  "name": "network_static_init_17",
+  "kind": "function",
+  "file": "functions/fn_00e5eb80.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s196"
  },
  {
   "address": "0x00E5EBE0",
@@ -46917,6 +47340,177 @@
   "lane": "r-s184"
  },
  {
+  "address": "0x00E5FD70",
+  "name": "push_cleanup_node_0110ffe0",
+  "kind": "function",
+  "file": "functions/fn_00e5fd70.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FD90",
+  "name": "push_cleanup_node_0110ffd8",
+  "kind": "function",
+  "file": "functions/fn_00e5fd90.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FDB0",
+  "name": "push_cleanup_node_0110ffe8",
+  "kind": "function",
+  "file": "functions/fn_00e5fdb0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FDD0",
+  "name": "push_cleanup_node_01110000",
+  "kind": "function",
+  "file": "functions/fn_00e5fdd0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FDF0",
+  "name": "init_and_register_teardown_00e6f510",
+  "kind": "function",
+  "file": "functions/fn_00e5fdf0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FE10",
+  "name": "init_and_register_teardown_00e6f520",
+  "kind": "function",
+  "file": "functions/fn_00e5fe10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FE30",
+  "name": "push_cleanup_node_01110034",
+  "kind": "function",
+  "file": "functions/fn_00e5fe30.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FE50",
+  "name": "register_teardown_00e6f550",
+  "kind": "function",
+  "file": "functions/fn_00e5fe50.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FE60",
+  "name": "register_teardown_00e6f560",
+  "kind": "function",
+  "file": "functions/fn_00e5fe60.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FE70",
+  "name": "register_teardown_00e6f570",
+  "kind": "function",
+  "file": "functions/fn_00e5fe70.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FE80",
+  "name": "register_teardown_00e6f580",
+  "kind": "function",
+  "file": "functions/fn_00e5fe80.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FE90",
+  "name": "broadcast_timing_factor_3",
+  "kind": "function",
+  "file": "functions/fn_00e5fe90.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FEC0",
+  "name": "copy_timing_factor_1",
+  "kind": "function",
+  "file": "functions/fn_00e5fec0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FEE0",
+  "name": "init_forward_ecx_and_register_teardown",
+  "kind": "function",
+  "file": "functions/fn_00e5fee0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FF00",
+  "name": "zero_region_019f2178_200",
+  "kind": "function",
+  "file": "functions/fn_00e5ff00.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FF20",
+  "name": "zero_region_019f2078_100",
+  "kind": "function",
+  "file": "functions/fn_00e5ff20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FF40",
+  "name": "register_teardown_00e6f5b0",
+  "kind": "function",
+  "file": "functions/fn_00e5ff40.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FF50",
+  "name": "register_teardown_00e6f5c0",
+  "kind": "function",
+  "file": "functions/fn_00e5ff50.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
+  "address": "0x00E5FF60",
+  "name": "register_teardown_00e6f5f0",
+  "kind": "function",
+  "file": "functions/fn_00e5ff60.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
+ },
+ {
   "address": "0x00E5FF70",
   "name": "callback_forwarder_e6f600",
   "kind": "function",
@@ -47023,6 +47617,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "a-F06"
+ },
+ {
+  "address": "0x00E600E0",
+  "name": "init_and_register_teardown_00e6f700",
+  "kind": "function",
+  "file": "functions/fn_00e600e0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s194"
  },
  {
   "address": "0x00E60100",
@@ -48175,6 +48778,366 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61AD0",
+  "name": "register_teardown_00",
+  "kind": "function",
+  "file": "functions/fn_00e61ad0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61AE0",
+  "name": "init_pool512_and_register_00",
+  "kind": "function",
+  "file": "functions/fn_00e61ae0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61B60",
+  "name": "register_teardown_01",
+  "kind": "function",
+  "file": "functions/fn_00e61b60.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61B70",
+  "name": "register_teardown_02",
+  "kind": "function",
+  "file": "functions/fn_00e61b70.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61B80",
+  "name": "init_singleton_and_register_00",
+  "kind": "function",
+  "file": "functions/fn_00e61b80.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61BA0",
+  "name": "init_singleton_and_register_01",
+  "kind": "function",
+  "file": "functions/fn_00e61ba0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61BC0",
+  "name": "init_singleton_and_register_02",
+  "kind": "function",
+  "file": "functions/fn_00e61bc0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61BE0",
+  "name": "init_singleton_and_register_03",
+  "kind": "function",
+  "file": "functions/fn_00e61be0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61C00",
+  "name": "init_singleton_and_register_04",
+  "kind": "function",
+  "file": "functions/fn_00e61c00.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61C20",
+  "name": "init_singleton_and_register_05",
+  "kind": "function",
+  "file": "functions/fn_00e61c20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61C40",
+  "name": "init_pool512_and_register_01",
+  "kind": "function",
+  "file": "functions/fn_00e61c40.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61CC0",
+  "name": "register_teardown_03",
+  "kind": "function",
+  "file": "functions/fn_00e61cc0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61CD0",
+  "name": "register_teardown_04",
+  "kind": "function",
+  "file": "functions/fn_00e61cd0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61CE0",
+  "name": "init_array100_and_register",
+  "kind": "function",
+  "file": "functions/fn_00e61ce0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61D10",
+  "name": "register_teardown_05",
+  "kind": "function",
+  "file": "functions/fn_00e61d10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61D20",
+  "name": "register_teardown_06",
+  "kind": "function",
+  "file": "functions/fn_00e61d20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61D30",
+  "name": "init_critsec_and_register_00",
+  "kind": "function",
+  "file": "functions/fn_00e61d30.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61D50",
+  "name": "init_critsec_and_register_01",
+  "kind": "function",
+  "file": "functions/fn_00e61d50.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61D70",
+  "name": "register_teardown_07",
+  "kind": "function",
+  "file": "functions/fn_00e61d70.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61D80",
+  "name": "init_zero_fields_and_register",
+  "kind": "function",
+  "file": "functions/fn_00e61d80.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s190"
+ },
+ {
+  "address": "0x00E61DA0",
+  "name": "timer_table_init_64",
+  "kind": "function",
+  "file": "functions/fn_00e61da0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E61DF0",
+  "name": "timer_block_init",
+  "kind": "function",
+  "file": "functions/fn_00e61df0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E61E90",
+  "name": "timer_reg_slot_00",
+  "kind": "function",
+  "file": "functions/fn_00e61e90.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E61EF0",
+  "name": "timer_entry_register",
+  "kind": "function",
+  "file": "functions/fn_00e61ef0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E61F10",
+  "name": "timer_bare_register",
+  "kind": "function",
+  "file": "functions/fn_00e61f10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E61F20",
+  "name": "timer_param_store",
+  "kind": "function",
+  "file": "functions/fn_00e61f20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E61F40",
+  "name": "timer_reg_domain",
+  "kind": "function",
+  "file": "functions/fn_00e61f40.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E61F60",
+  "name": "timer_reg_slot_01",
+  "kind": "function",
+  "file": "functions/fn_00e61f60.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E61F80",
+  "name": "timer_reg_slot_02",
+  "kind": "function",
+  "file": "functions/fn_00e61f80.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E61FA0",
+  "name": "timer_reg_slot_03",
+  "kind": "function",
+  "file": "functions/fn_00e61fa0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E61FC0",
+  "name": "timer_reg_slot_04",
+  "kind": "function",
+  "file": "functions/fn_00e61fc0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E61FE0",
+  "name": "timer_reg_slot_05",
+  "kind": "function",
+  "file": "functions/fn_00e61fe0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E62000",
+  "name": "timer_reg_slot_06",
+  "kind": "function",
+  "file": "functions/fn_00e62000.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E62020",
+  "name": "timer_reg_slot_07",
+  "kind": "function",
+  "file": "functions/fn_00e62020.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E62040",
+  "name": "timer_reg_slot_08",
+  "kind": "function",
+  "file": "functions/fn_00e62040.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E62060",
+  "name": "timer_reg_slot_09",
+  "kind": "function",
+  "file": "functions/fn_00e62060.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E62080",
+  "name": "timer_reg_slot_10",
+  "kind": "function",
+  "file": "functions/fn_00e62080.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E620A0",
+  "name": "timer_reg_slot_11",
+  "kind": "function",
+  "file": "functions/fn_00e620a0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E620C0",
+  "name": "timer_reg_slot_12",
+  "kind": "function",
+  "file": "functions/fn_00e620c0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
+ },
+ {
+  "address": "0x00E620E0",
+  "name": "timer_obj_init_thunk",
+  "kind": "function",
+  "file": "functions/fn_00e620e0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s187"
  },
  {
   "address": "0x00E62880",
