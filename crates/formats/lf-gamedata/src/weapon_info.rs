@@ -210,6 +210,7 @@ pub fn parse_thrown_weapon_info(file: &str, bytes: &[u8]) -> Result<Vec<ThrownOb
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)] // parsed values are compared bit for bit on purpose
 mod tests {
     use super::*;
 

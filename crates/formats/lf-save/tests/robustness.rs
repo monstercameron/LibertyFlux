@@ -13,7 +13,9 @@ fn patterns(extra: &[&[u8]]) -> Vec<Vec<u8>> {
         vec![0xFFu8; 512],
         vec![0x41u8; 512],
         (0..512u32).map(|i| (i & 0xFF) as u8).collect(),
-        (0..512u32).map(|i| (i.wrapping_mul(31).wrapping_add(7) & 0xFF) as u8).collect(),
+        (0..512u32)
+            .map(|i| (i.wrapping_mul(31).wrapping_add(7) & 0xFF) as u8)
+            .collect(),
     ];
     for e in extra {
         let mut v = e.to_vec();
@@ -50,18 +52,18 @@ use std::io::Cursor;
 
 #[test]
 fn truncated_inputs_never_panic() {
-    for base in patterns(&extra()).iter() {
+    for base in &patterns(&extra()) {
         for len in lengths(base.len()) {
             let b = &base[..len];
-                        check_no_panic(&format!("header prefix {len}"), || {
-                            let _ = lf_save::Header::parse(b);
-                        });
-                        check_no_panic(&format!("save prefix {len}"), || {
-                            let _ = lf_save::SaveFile::parse(b);
-                        });
-                        check_no_panic(&format!("reader prefix {len}"), || {
-                            let _ = lf_save::SaveFile::read_from(Cursor::new(b));
-                        });
+            check_no_panic(&format!("header prefix {len}"), || {
+                let _ = lf_save::Header::parse(b);
+            });
+            check_no_panic(&format!("save prefix {len}"), || {
+                let _ = lf_save::SaveFile::parse(b);
+            });
+            check_no_panic(&format!("reader prefix {len}"), || {
+                let _ = lf_save::SaveFile::read_from(Cursor::new(b));
+            });
         }
     }
 }
@@ -78,16 +80,16 @@ fn corrupted_inputs_never_panic() {
                 bad[pos] ^= mask;
                 let what = format!("pattern {pi} byte {pos} xor {mask:#04X}");
                 check_no_panic(&what, || {
-                let b = &bad;
-                check_no_panic(&format!("corrupt header prefix "), || {
-                let _ = lf_save::Header::parse(b);
-                });
-                check_no_panic(&format!("corrupt save prefix "), || {
-                let _ = lf_save::SaveFile::parse(b);
-                });
-                check_no_panic(&format!("corrupt reader prefix "), || {
-                let _ = lf_save::SaveFile::read_from(Cursor::new(b));
-                });
+                    let b = &bad;
+                    check_no_panic("corrupt header prefix ", || {
+                        let _ = lf_save::Header::parse(b);
+                    });
+                    check_no_panic("corrupt save prefix ", || {
+                        let _ = lf_save::SaveFile::parse(b);
+                    });
+                    check_no_panic("corrupt reader prefix ", || {
+                        let _ = lf_save::SaveFile::read_from(Cursor::new(b));
+                    });
                 });
             }
         }

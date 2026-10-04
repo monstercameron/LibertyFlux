@@ -11,8 +11,12 @@
 # What it cannot do: run the checker against the original game. That needs the game's executable, which
 # is never uploaded anywhere. Function-level proof stays on the owner's machine.
 #
-# Not yet compiled here: rewrites/verified/. Those files are in the checker's test form and are not part
-# of a crate until the assembly step lands; add a job for crates/lf-rewrite-32 when it does.
+# Not compiled here: rewrites/verified/. Those files are in the checker's test form and are not part of a
+# crate until the assembly step lands. rewrites.yml checks them on the commits that change them: the ledger,
+# the static checks, and a type-check of every file against the shared runtime.
+#
+# Also here: the dependency licence check (deny.toml), an advisory coverage report, and the Rust API
+# documentation, which the release carries as a zip.
 
 name: CI
 
@@ -100,7 +104,7 @@ jobs:
           RUSTFLAGS: "-C panic=abort"
           CARGO_TARGET_DIR: .artifacts/build/cargo-proofs
       - name: Unit tests
-        run: cargo test --target i686-pc-windows-msvc -p lf-hook -p lf-registry -p lf-checker-worker
+        run: cargo test --target i686-pc-windows-msvc -p lf-hook -p lf-registry -p lf-proxy -p lf-rewrite-32 -p lf-checker-worker -p lf-checker-rt
 
   lint:
     name: Format and lints (advisory)
@@ -136,10 +140,149 @@ jobs:
       - name: Coordinator script tests
         working-directory: scripts/coordinator
         run: python -m unittest discover -s tests
+      - name: Checker script tests
+        working-directory: scripts/checker
+        run: python -m unittest discover -s tests
+      - name: CI script tests
+        working-directory: scripts/ci
+        run: python -m unittest discover -s tests
+      - name: Site script tests
+        working-directory: scripts/site
+        run: python -m unittest discover -s tests
+      - name: Queue tests
+        run: python -m unittest scripts/queue/test_queue.py scripts/queue/test_tools.py
       - name: Site data is valid JSON
         run: python -c "import json,glob; [json.load(open(f, encoding='utf-8')) for f in glob.glob('docs/data/*.json')]; print('ok')"
       - name: Publication rules
         run: python scripts/ci/check_publication.py
+      - name: Rewrite tree is consistent
+        # Every index entry has its file, every file is indexed, no address is listed twice or in both halves.
+        run: python scripts/coordinator/ledger.py --check
+
+  lift-diff-32bit:
+    name: Lift differential tests (32-bit)
+    # The host half of lf-lift-diff runs in the portable job against a stand-in runtime. This job runs the verified
+    # rewrites compiled with the real checker runtime, its statics pointed at a test buffer and recording stubs,
+    # plus the one case that only exists on the 32-bit target.
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the pinned toolchain with the 32-bit target
+        run: rustup toolchain install 1.96.1 --profile minimal --no-self-update --target i686-pc-windows-msvc
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ". -> .artifacts/build/cargo"
+          key: i686-lift
+      - name: Differential tests against the real checker runtime
+        run: cargo test --target i686-pc-windows-msvc -p lf-lift-diff
+
+  assembled-library:
+    name: Assembled rewrite library (32-bit)
+    # Assembles the verified rewrites into lf_rewrites.dll, the library the loader swaps into the running game,
+    # and uploads it with its manifest as a build artifact (not a release). Windows only: it needs the MSVC linker.
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the pinned toolchain with the 32-bit target
+        run: rustup toolchain install 1.96.1 --profile minimal --no-self-update --target i686-pc-windows-msvc
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ". -> .artifacts/build/cargo"
+          key: assembled
+      - name: Generator tests
+        run: python -m unittest discover -s scripts/assemble/tests
+      - name: Assemble and build
+        # Every rewrite is type-checked inside its shard; what does not compile is left out with its reason in
+        # manifest.json. Without a callee map, rewrites that call callees are built but not switchable.
+        run: python scripts/assemble/assemble.py --build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lf-rewrites-win32
+          path: |
+            .artifacts/assembled/target/i686-pc-windows-msvc/release/lf_rewrites.dll
+            .artifacts/assembled/manifest.json
+          if-no-files-found: error
+          retention-days: 14
+
+  licences:
+    name: Dependency licences and advisories
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      # Policy in deny.toml: permissive licences only, no unknown registries, no wildcard versions.
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check licenses bans sources
+      - name: Advisories (informational)
+        # A new advisory against a dependency should be seen, but it is not a reason to block an unrelated push.
+        continue-on-error: true
+        uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          command: check advisories
+
+  coverage:
+    name: Test coverage (advisory)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the pinned toolchain
+        run: rustup toolchain install 1.96.1 --profile minimal --no-self-update --component llvm-tools-preview
+      - uses: taiki-e/install-action@cargo-llvm-cov
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ". -> .artifacts/build/cargo"
+          key: coverage
+      - name: Measure
+        run: |
+          cargo llvm-cov --workspace $WINDOWS_ONLY --lcov --output-path lcov.info
+          cargo llvm-cov report --summary-only | tee coverage-summary.txt
+          { echo '## Line coverage of the portable crates'; echo; echo '```'; cat coverage-summary.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: |
+            lcov.info
+            coverage-summary.txt
+          retention-days: 14
+
+  api-docs:
+    name: Rust API documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the pinned toolchain
+        run: rustup toolchain install 1.96.1 --profile minimal --no-self-update
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ". -> .artifacts/build/cargo"
+          key: docs
+      - name: Build
+        run: cargo doc --workspace $WINDOWS_ONLY --no-deps
+        env:
+          RUSTDOCFLAGS: "--default-theme=ayu"
+      # Packed as a zip so the release job publishes it beside the programs. Serving it on the project site
+      # needs the Pages source switched to GitHub Actions (a repository setting, the owner's decision).
+      - name: Archive
+        shell: bash
+        run: |
+          short=${GITHUB_SHA::7}
+          printf '<meta http-equiv="refresh" content="0; url=lf_core/index.html">\n' > "$CARGO_TARGET_DIR/doc/index.html"
+          python3 -c "import shutil,sys; shutil.make_archive(sys.argv[1], 'zip', sys.argv[2])" "libertyflux-api-docs-$short" "$CARGO_TARGET_DIR/doc"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: libertyflux-api-docs
+          path: libertyflux-api-docs-*.zip
+          if-no-files-found: error
+          retention-days: 14
 
   # When everything above that matters has passed on a push to main (or a version tag), build the runnable
   # programs for each system and publish them. The advisory lint job is not required.
@@ -189,7 +332,7 @@ jobs:
 
   release:
     name: Publish release
-    needs: package
+    needs: [package, api-docs]
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -212,6 +355,7 @@ jobs:
           **What is in it.** Tools from the project, one archive per system:
           - \`format-tools/\`: programs that read and describe the game's file formats (archives, models, textures, collision, scripts, text, audio configuration, saves and more).
           - \`tools-win32/\` (Windows archive only): the project's 32-bit developer tools: the checker's worker, the loader's proxy library and its test program.
+          - \`libertyflux-api-docs\`: the Rust API documentation of the portable crates; open \`index.html\`.
 
           **What it is not.** It is not the game and not a playable build. No game code and no game data is included. The rewritten engine functions are not in a runnable form yet; progress is on the [project site](https://monstercameron.github.io/LibertyFlux/).
 

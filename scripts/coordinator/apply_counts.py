@@ -14,12 +14,57 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import common
 import counts
+import ledger
 from scan import MODERN
 
 ROOT = common.find_root()
 SCRATCH = common.scratch_dir(ROOT)
 COORD = common.coord_dir(ROOT)
 PROGRESS = ROOT / "docs" / "data" / "progress.json"
+
+# Published facts whose labels said something the number does not measure. The value has always been the
+# rewritten count (every lane pass in the game set plus every tracked index entry), and the verified count has
+# always meant checker version 2 or later; the labels now say so, and the old rows are renamed in place.
+REWRITTEN_FACT = "Rewrites of game functions that passed the checker in a lane"
+REWRITTEN_FACT_WAS = "Rewrites that pass checker version 1"
+VERIFIED_FACT = "Rewrites verified under checker version 2 or later"
+VERIFIED_FACT_WAS = "Rewrites verified under checker version 2"
+
+
+def apply_tree(progress, entries, game, named, rewritten):
+    """Put what the tracked verified index says into `progress` (symbols, rewritten, named, verified).
+
+    The verified count is the function ledger's (`ledger.summarise` with the game set: checker version 2 or
+    later and game code), capped at the rewritten count. `rewritten` (a set of addresses) is widened in place
+    by every indexed game address, since a function a production lane deferred and a re-run lane later verified
+    is in the tracked tree. Returns the verified address set, which the code map is drawn from; it is checked
+    against the ledger's count so the map and the published number cannot disagree.
+    """
+    va = common.va
+    stages = progress["stages"]
+    summary = ledger.summarise(entries, [], game)
+    progress["symbols"] = sum(1 for e in entries if e.get("name"))
+    verified_set = {va(e["address"]) for e in entries if e.get("checker") in MODERN} & game
+    if len(verified_set) != summary["verified_game"]:
+        raise AssertionError(f"map set {len(verified_set)} disagrees with the ledger {summary['verified_game']}")
+    rewritten |= {va(e["address"]) for e in entries} & game
+    stages["rewritten"] = len(rewritten)
+    stages["named"] = max(len(named), len(rewritten))
+    stages["verified"] = min(stages["rewritten"], summary["verified_game"])
+    return verified_set
+
+
+def set_fact(measured, label, value, unit, source, replaces=None):
+    """Update the `measured` row called `label`, or the row called `replaces` (renaming it), or append one."""
+    for item in measured:
+        if item["label"] == label:
+            item.update(value=value, unit=unit, source=source)
+            return
+    for item in measured:
+        if replaces and item["label"] == replaces:
+            item.update(label=label, value=value, unit=unit, source=source)
+            return
+    measured.append({"label": label, "value": value, "unit": unit, "source": source})
 
 
 def main():
@@ -101,21 +146,17 @@ def main():
     stages["verified"] = min(stages.get("verified", 0), len(rewritten))
 
     # Structures and symbols are counted from tracked files only (rule 4).
-    types = ROOT / "crates" / "lf-types-draft" / "src" / "lib.rs"
-    if types.exists():
-        progress["structures"] = max(0, types.read_text(encoding="utf-8").count("\npub struct ") - 1)  # minus the Ptr32 helper
-    index = ROOT / "rewrites" / "verified" / "index.json"
-    if index.exists():
-        entries = json.loads(index.read_text(encoding="utf-8"))
-        progress["symbols"] = sum(1 for e in entries if e.get("name"))
-        # Verified means passed under checker version 2 or later and present in the tracked tree.
-        verified_set = {va(e["address"]) for e in entries if e.get("checker") in MODERN} & game
-        # A function a production lane deferred and a re-run lane later verified is in the tracked tree: count it.
-        rewritten |= {va(e["address"]) for e in entries} & game
-        stages["rewritten"] = len(rewritten)
-        stages["named"] = max(len(named), len(rewritten))
-        stages["verified"] = min(stages["rewritten"], len(verified_set))
+    # The layouts are split into one module per subsystem; count across every file of the crate.
+    types = ROOT / "crates" / "lf-types-draft" / "src"
+    if types.is_dir():
+        text = "".join("\n" + p.read_text(encoding="utf-8") for p in sorted(types.glob("*.rs")))
+        progress["structures"] = max(0, text.count("\npub struct ") - 1)  # minus the Ptr32 helper
+    index_dir = ROOT / "rewrites" / "verified"
+    if (index_dir / "index.json").exists():
+        # Verified means passed under checker version 2 or later and present in the tracked tree: the ledger's count.
+        verified_set = apply_tree(progress, ledger.load_index(index_dir), game, named, rewritten)
     else:
+        # No tracked tree: the verified count stays where it was, capped at the rewritten count set above.
         verified_set = set()
     print(f"structures {progress['structures']} symbols {progress['symbols']}")
 
@@ -128,18 +169,17 @@ def main():
         from collections import Counter
         print("map:", dict(Counter(p["stage"] for p in slices)), "functions placed", sum(p["count"] for p in slices), "of", len(game))
 
-    def fact(label, value, unit, source):
-        for item in progress["measured"]:
-            if item["label"] == label:
-                item.update(value=value, unit=unit, source=source)
-                return
-        progress["measured"].append({"label": label, "value": value, "unit": unit, "source": source})
+    def fact(label, value, unit, source, replaces=None):
+        set_fact(progress["measured"], label, value, unit, source, replaces)
 
     fact("Functions after the inventory repair", numbers["all"], "functions", "f-boundaries lane: recursive-descent check of every inventory entry")
     fact("Functions with a meaningful name", len(named), "functions",
          f"m-names lane's merge ({merged_names}) plus descriptive names given by production and naming lanes ({from_lanes}); slot labels and placeholders are not counted")
-    fact("Rewrites that pass checker version 1", len(rewritten), "functions", "production lanes' results files; to be re-run under checker version 2 before they count as verified")
-    fact("Rewrites verified under checker version 2", stages["verified"], "functions", "rewrites/verified/index.json in the repository")
+    fact(REWRITTEN_FACT, len(rewritten), "functions",
+         "production lanes' results files plus rewrites/verified/index.json, game code only; counted as verified only "
+         "once passed under checker version 2 or later", replaces=REWRITTEN_FACT_WAS)
+    fact(VERIFIED_FACT, stages["verified"], "functions", "rewrites/verified/index.json in the repository, game code only",
+         replaces=VERIFIED_FACT_WAS)
     PROGRESS.write_text(json.dumps(progress, indent=2) + "\n", encoding="utf-8", newline="\n")
     print("progress.json updated")
 

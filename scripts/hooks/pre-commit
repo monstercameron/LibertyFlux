@@ -1,0 +1,62 @@
+#!/bin/sh
+# LibertyFlux pre-commit hook: the publication rules (AGENTS.md rules 1, 2 and 5), checked before the commit
+# exists, because every commit is pushed straight away.
+#
+#   - refuses notes.md and anything under orig/ or .artifacts/ outright (no Python needed for that);
+#   - runs scripts/ci/check_publication.py --staged: the staged files, as they are staged;
+#   - when anything under rewrites/ is staged, runs scripts/coordinator/ledger.py --check. The ledger reads the
+#     working tree, not the index, so stage an import as a whole.
+#
+# Quiet when everything passes. POSIX sh, so Git for Windows' bash runs it too. Installed (copied into the
+# folder git takes hooks from) by scripts/hooks/install.py.
+# Python: $LIBERTYFLUX_PYTHON, else the repository's .venv, else python3, else python.
+
+top=$(git rev-parse --show-toplevel) || exit 1
+cd "$top" || exit 1
+
+# Added, copied, modified and renamed files; a deletion is always allowed. Unquoted names, one per line.
+staged=$(git -c core.quotePath=false diff --cached --name-only --diff-filter=ACMR)
+[ -n "$staged" ] || exit 0
+
+refused=$(printf '%s\n' "$staged" | grep -E '^(notes\.md$|orig/|\.artifacts/)')
+if [ -n "$refused" ]; then
+    echo "pre-commit: these must never be committed (AGENTS.md rules 1 and 5):" >&2
+    printf '%s\n' "$refused" | sed 's/^/  /' >&2
+    echo "pre-commit: unstage them with: git restore --staged <path>" >&2
+    exit 1
+fi
+
+find_python() {
+    for candidate in "$LIBERTYFLUX_PYTHON" .venv/Scripts/python.exe .venv/bin/python python3 python; do
+        [ -n "$candidate" ] || continue
+        if "$candidate" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 8) else 1)' >/dev/null 2>&1; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
+if ! python=$(find_python); then
+    echo "pre-commit: no Python 3.8 or later found, so the publication check cannot run (set LIBERTYFLUX_PYTHON)" >&2
+    exit 1
+fi
+if [ ! -f scripts/ci/check_publication.py ]; then
+    echo "pre-commit: scripts/ci/check_publication.py is missing from this checkout" >&2
+    exit 1
+fi
+
+if ! out=$("$python" scripts/ci/check_publication.py --staged 2>&1); then
+    printf '%s\n' "$out" >&2
+    echo "pre-commit: the publication check failed; fix the findings above and stage the files again" >&2
+    exit 1
+fi
+
+if printf '%s\n' "$staged" | grep -q '^rewrites/'; then
+    if ! out=$("$python" scripts/coordinator/ledger.py --check 2>&1); then
+        printf '%s\n' "$out" >&2
+        echo "pre-commit: the rewrite ledger has errors (ledger.py --check reads the working tree)" >&2
+        exit 1
+    fi
+fi
+exit 0

@@ -37,8 +37,8 @@ mod tests {
         assert_eq!(name_hash(""), 0);
         assert_eq!(name_hash("TEST_SOUND"), 0x047a4a179);
         assert_eq!(name_hash("test_sound"), 0x047a4a179);
-        assert_eq!(name_hash("Hello"), 0xc8fd181b);
-        assert_eq!(name_hash("a"), 0xca2e9442);
+        assert_eq!(name_hash("Hello"), 0xc8fd_181b);
+        assert_eq!(name_hash("a"), 0xca2e_9442);
     }
 
     #[test]

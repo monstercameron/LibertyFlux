@@ -1,0 +1,46 @@
+/* Tools page. Colours and type come from site.css. */
+
+main section h2 { max-width: 34ch; text-wrap: balance; }
+
+/* Who can run a tool: a labelled tag, never colour alone. */
+.who {
+  display: inline-block; font-size: 0.8125rem; font-weight: 700; line-height: 1.35; padding: 2px 8px;
+  border-radius: 3px; border: 1px solid var(--rule); color: var(--ink); background: var(--paper-raised);
+  white-space: nowrap; margin: 0 4px 2px 0;
+}
+.who.repo { border-color: var(--meter-fill); background: color-mix(in srgb, var(--meter-fill) 14%, var(--paper-raised)); }
+.who.game { border-color: var(--sodium); background: color-mix(in srgb, var(--sodium) 22%, var(--paper-raised)); }
+.who.windows { border-color: var(--ink-faint); }
+.who.workstation { border-style: dashed; border-color: var(--ink-faint); }
+.who-key { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; max-width: var(--wide); }
+.who-key li { color: var(--ink-soft); }
+.who-key .who { margin-right: 8px; }
+
+.tools { list-style: none; margin: 1.4em 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 460px), 1fr)); gap: 22px; max-width: 1180px; }
+.tool { display: flex; flex-direction: column; min-width: 0; padding: 18px 20px 16px; background: var(--paper-raised); border: 1px solid var(--rule); border-radius: 6px; scroll-margin-top: 16px; }
+section.band .tool { background: var(--paper); }
+.tool h3 { font-size: 1.1875rem; margin-bottom: 0.45em; }
+.tool p { color: var(--ink-soft); font-size: 0.9875rem; margin: 0 0 0.8em; }
+.tool .tool-who { color: var(--ink-soft); font-size: 0.9375rem; }
+/* One command per line; a command too long for the card wraps with a hanging indent, so a wrapped line never
+   looks like a second command. */
+.tool-cmd {
+  list-style: none; margin: 0 0 0.9em; padding: 10px 12px; border-radius: 4px; background: var(--asphalt); color: var(--on-asphalt);
+  font: 0.8125rem/1.55 var(--mono);
+}
+.tool-cmd li { padding-left: 2ch; text-indent: -2ch; overflow-wrap: break-word; }
+.tool-cmd li + li { margin-top: 3px; }
+.tool-cmd code { background: none; padding: 0; font-size: inherit; color: inherit; overflow-wrap: break-word; }
+.tool .tool-src { margin: auto 0 0; font-size: 0.9375rem; }
+@media (max-width: 520px) {
+  .tool { padding: 16px 14px 14px; }
+  .tool-cmd { font-size: 0.75rem; padding: 10px; }
+}
+
+.glossary { margin: 0; max-width: var(--wide); }
+.glossary > div { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 4px 20px; padding: 12px 0; border-top: 1px solid var(--rule); scroll-margin-top: 16px; }
+.glossary > div:last-child { border-bottom: 1px solid var(--rule); }
+.glossary > div:target { background: color-mix(in srgb, var(--sodium) 16%, transparent); }
+.glossary dt { font-weight: 700; }
+.glossary dd { margin: 0; color: var(--ink-soft); max-width: 70ch; }
+@media (max-width: 640px) { .glossary > div { grid-template-columns: 1fr; } }

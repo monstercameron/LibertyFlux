@@ -1,0 +1,16 @@
+[package]
+name = "lf-math"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+# Never published to crates.io; path dependencies between the project's crates rely on it.
+publish = false
+description = "Shared maths types for the renderer and simulation: vectors, matrices, quaternions, projections"
+
+[lints]
+workspace = true
+
+# No dependencies, by design: the types build for every target, including
+# the 32-bit tools, and nothing here may pull in a download.
+[dependencies]

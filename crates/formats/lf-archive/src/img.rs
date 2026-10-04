@@ -239,7 +239,15 @@ fn build_entries(entry_count: u32, table: &[u8]) -> Result<Vec<Entry>> {
             * IMG_BLOCK_SIZE;
         let (size, resource) = if w0 & 0xC000_0000 != 0 {
             let padding = u64::from(flags & 0x07FF);
-            let size = u64::from(used_blocks) * IMG_BLOCK_SIZE - padding;
+            // Padding larger than the blocks it pads is a corrupt record
+            // (found by the mutation fuzzer; it used to underflow).
+            let size = (u64::from(used_blocks) * IMG_BLOCK_SIZE)
+                .checked_sub(padding)
+                .ok_or_else(|| {
+                    Error::BadEntry(format!(
+                        "entry {i} ({name}) padding {padding} exceeds {used_blocks} blocks"
+                    ))
+                })?;
             (size, Some(ResourceInfo { type_id, flags: w0 }))
         } else {
             (u64::from(w0), None)

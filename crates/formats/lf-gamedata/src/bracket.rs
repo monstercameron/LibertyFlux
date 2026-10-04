@@ -261,6 +261,7 @@ pub fn parse_visual_settings(file: &str, bytes: &[u8]) -> Result<Vec<VisualSetti
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)] // parsed values are compared bit for bit on purpose
 mod tests {
     use super::*;
 

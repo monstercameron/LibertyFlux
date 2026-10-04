@@ -216,6 +216,7 @@ fn read_u32_collection(res: &Resource, at: usize) -> Result<Vec<u32>, Error> {
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)] // parsed values are compared bit for bit on purpose
 mod tests {
     use super::*;
 

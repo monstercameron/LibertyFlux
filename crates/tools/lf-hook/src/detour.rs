@@ -382,4 +382,213 @@ mod tests {
         assert!(rel32_bytes(0x1000, 0x2000).is_some());
         assert!(rel32_bytes(0x1000, 0xFFFF_FFFF).is_none());
     }
+    fn moved(code: &[u8]) -> usize {
+        plan_overwrite(code).unwrap().iter().map(|p| p.len).sum()
+    }
+
+    /// Trampoline size `Detour::create` allocates for these bytes: every
+    /// rel8 branch is assumed to grow by 4.
+    fn allocated_len(code: &[u8]) -> usize {
+        let plans = plan_overwrite(code).unwrap();
+        let rel8 = plans
+            .iter()
+            .filter(|p| p.branch == BranchKind::Rel8)
+            .count();
+        moved(code) + rel8 * 4 + 6
+    }
+
+    /// Exact size `build_trampoline` emits: a rel8 Jcc grows by 4
+    /// (`0F 8x rel32`), a short `EB` jump by 3 (`E9 rel32`).
+    fn built_len(code: &[u8]) -> usize {
+        let plans = plan_overwrite(code).unwrap();
+        let growth: usize = plans
+            .iter()
+            .filter(|p| p.branch == BranchKind::Rel8)
+            .map(|p| if code[p.off] == 0xEB { 3 } else { 4 })
+            .sum();
+        moved(code) + growth + 6
+    }
+
+    fn rel_at(bytes: &[u8], at: usize) -> i64 {
+        i64::from(i32::from_le_bytes([
+            bytes[at],
+            bytes[at + 1],
+            bytes[at + 2],
+            bytes[at + 3],
+        ]))
+    }
+
+    #[test]
+    fn plan_stops_at_the_first_boundary_past_five() {
+        // push ebp; mov ebp,esp; sub esp,0x10 -> 1 + 2 + 3 = 6 bytes
+        assert_eq!(moved(&[0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x10, 0xCC]), 6);
+        // mov edi,edi; push ebp; mov ebp,esp -> exactly 5
+        assert_eq!(moved(&[0x8B, 0xFF, 0x55, 0x8B, 0xEC, 0xCC]), 5);
+        // A long first instruction moves alone.
+        assert_eq!(moved(&[0xC7, 0x05, 1, 2, 3, 4, 5, 6, 7, 8, 0xC3]), 10);
+    }
+
+    #[test]
+    fn plan_refusals() {
+        // loop rel8 inside the range
+        assert_eq!(
+            plan_overwrite(&[0x90, 0xE2, 0xFE, 0x90, 0x90, 0x90]).err(),
+            Some(HookError::Unmovable)
+        );
+        // call rel16 (operand-size prefix): refused rather than widened
+        assert_eq!(
+            plan_overwrite(&[0x66, 0xE8, 0x10, 0x00, 0x90, 0x90]).err(),
+            Some(HookError::Unmovable)
+        );
+        // undecodable bytes
+        assert_eq!(
+            plan_overwrite(&[0x0F, 0x04, 0x90, 0x90, 0x90, 0x90]).err(),
+            Some(HookError::DecodeFailed)
+        );
+        // ret imm16 before five bytes
+        assert_eq!(
+            plan_overwrite(&[0x58, 0xC2, 0x04, 0x00, 0x90, 0x90]).err(),
+            Some(HookError::TooShort)
+        );
+        // four nops, then a 13-byte instruction: 17 moved bytes > 16
+        let mut code = vec![0x90, 0x90, 0x90, 0x90, 0x64, 0x65, 0x81, 0x84, 0x24];
+        code.extend_from_slice(&[1, 2, 3, 4, 5, 6, 7, 8, 0xC3]);
+        assert_eq!(plan_overwrite(&code).err(), Some(HookError::TooLong));
+    }
+
+    #[test]
+    fn trampoline_copies_plain_code_and_jumps_back() {
+        let code = [0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x10, 0xCC];
+        let plans = plan_overwrite(&code).unwrap();
+        let t = build_trampoline(0x0040_1000, &code, &plans, 0x2000_0000);
+        assert_eq!(t.len(), built_len(&code));
+        assert_eq!(&t[..6], &code[..6]);
+        // push 0x00401006; ret
+        assert_eq!(&t[6..], &[0x68, 0x06, 0x10, 0x40, 0x00, 0xC3]);
+    }
+
+    #[test]
+    fn trampoline_relocates_relative_branches() {
+        let target = 0x0040_1000usize;
+        let tramp = 0x2000_0000usize;
+        // jz +5 (rel8) at 0; call rel32 at 2; jmp short -2 at 7 (moved range ends at 9)
+        let code = [0x74, 0x05, 0xE8, 0x10, 0x00, 0x00, 0x00, 0xEB, 0xFE, 0xCC];
+        // Only the first boundary at or past 5 counts: jz(2) + call(5) = 7.
+        let plans = plan_overwrite(&code).unwrap();
+        assert_eq!(plans.len(), 2);
+        let t = build_trampoline(target, &code, &plans, tramp);
+        assert_eq!(t.len(), built_len(&code));
+        // jz widened to 0F 84 rel32, still reaching target + 2 + 5.
+        assert_eq!(&t[..2], &[0x0F, 0x84]);
+        assert_eq!(tramp as i64 + 6 + rel_at(&t, 2), (target + 2 + 5) as i64);
+        // call rel32 re-aimed at target + 7 + 0x10.
+        assert_eq!(t[6], 0xE8);
+        assert_eq!(
+            tramp as i64 + 11 + rel_at(&t, 7),
+            (target + 7 + 0x10) as i64
+        );
+        // back to target + 7
+        assert_eq!(&t[11..], &[0x68, 0x07, 0x10, 0x40, 0x00, 0xC3]);
+    }
+
+    #[test]
+    fn trampoline_widens_short_jumps_and_keeps_near_jcc() {
+        let target = 0x0040_2000usize;
+        let tramp = 0x1000_0000usize;
+        // jmp short +3 at 0, then jne rel32 at 2
+        let code = [0xEB, 0x03, 0x0F, 0x85, 0x20, 0x00, 0x00, 0x00, 0xCC];
+        let plans = plan_overwrite(&code).unwrap();
+        let t = build_trampoline(target, &code, &plans, tramp);
+        assert_eq!(t.len(), built_len(&code));
+        assert_eq!(t[0], 0xE9);
+        assert_eq!(tramp as i64 + 5 + rel_at(&t, 1), (target + 2 + 3) as i64);
+        assert_eq!(&t[5..7], &[0x0F, 0x85]);
+        assert_eq!(
+            tramp as i64 + 11 + rel_at(&t, 7),
+            (target + 8 + 0x20) as i64
+        );
+    }
+
+    #[test]
+    fn allocation_always_covers_the_trampoline() {
+        // `Detour::create` allocates `allocated_len` and writes the built
+        // bytes into it, so the built trampoline must never be longer.
+        // Note: for a short `EB` jump the two differ by one byte, so the
+        // `debug_assert!` of equality in `create` would fire in a debug
+        // build; release builds only leave the byte unused.
+        let samples: [&[u8]; 4] = [
+            &[0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x10, 0xCC],
+            &[0x74, 0x05, 0xE8, 0x10, 0x00, 0x00, 0x00, 0xCC],
+            &[0xEB, 0x03, 0x0F, 0x85, 0x20, 0x00, 0x00, 0x00, 0xCC],
+            &[0x7C, 0x01, 0x75, 0x02, 0x90, 0x90, 0xCC],
+        ];
+        for code in samples {
+            let plans = plan_overwrite(code).unwrap();
+            let built = build_trampoline(0x0040_0000, code, &plans, 0x3000_0000).len();
+            assert_eq!(built, built_len(code));
+            assert!(built <= allocated_len(code));
+        }
+        let short_jump: &[u8] = &[0xEB, 0x03, 0x0F, 0x85, 0x20, 0x00, 0x00, 0x00, 0xCC];
+        assert_eq!(allocated_len(short_jump) - built_len(short_jump), 1);
+    }
+
+    #[test]
+    fn error_messages_name_the_cause() {
+        assert_eq!(
+            HookError::TooLong.to_string(),
+            "needs more than 16 moved bytes"
+        );
+        assert_eq!(
+            HookError::PatchFailed(5).to_string(),
+            "memory patch failed (5)"
+        );
+    }
+
+    // Live memory (Win32): runs on Windows only. Bytes are patched in a
+    // private executable buffer and compared; nothing is executed.
+    #[cfg(windows)]
+    #[test]
+    fn enable_and_disable_patch_and_restore_bytes() {
+        let body = [0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x10, 0x8B, 0xE5, 0x5D, 0xC3];
+        let buf = mem::alloc_exec(64).unwrap();
+        // SAFETY: `buf` is a fresh 64-byte allocation.
+        unsafe { mem::write_exec(buf, &body) };
+        let target = buf as usize;
+        let detour = target + 32;
+        let mut hook = Detour::create(target, detour, FollowJumps::Off).unwrap();
+        assert_eq!(
+            (hook.target(), hook.detour(), hook.moved_len()),
+            (target, detour, 6)
+        );
+        assert!(!hook.is_enabled() && hook.verify());
+        // The trampoline starts with the moved bytes.
+        assert_eq!(mem::read_bytes(hook.trampoline(), 6).unwrap(), &body[..6]);
+        hook.enable().unwrap();
+        let patched = mem::read_bytes(target, 5).unwrap();
+        assert_eq!(patched[0], 0xE9);
+        assert_eq!(target as i64 + 5 + rel_at(&patched, 1), detour as i64);
+        assert!(hook.is_enabled() && hook.verify());
+        hook.disable().unwrap();
+        assert_eq!(mem::read_bytes(target, 10).unwrap(), &body);
+        // Enabled hooks restore the original bytes when dropped.
+        hook.enable().unwrap();
+        drop(hook);
+        assert_eq!(mem::read_bytes(target, 10).unwrap(), &body);
+        mem::free_exec(buf);
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn create_follows_a_leading_jump() {
+        // jmp +3 to the real body three bytes further on.
+        let mut bytes = vec![0xE9, 0x03, 0x00, 0x00, 0x00, 0xCC, 0xCC, 0xCC];
+        bytes.extend_from_slice(&[0x55, 0x8B, 0xEC, 0x83, 0xEC, 0x10, 0xC3]);
+        let buf = mem::alloc_exec(64).unwrap();
+        // SAFETY: `buf` is a fresh 64-byte allocation.
+        unsafe { mem::write_exec(buf, &bytes) };
+        let hook = Detour::create(buf as usize, buf as usize + 40, FollowJumps::On).unwrap();
+        assert_eq!(hook.target(), buf as usize + 8);
+        drop(hook);
+        mem::free_exec(buf);
+    }
 }

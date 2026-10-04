@@ -312,9 +312,12 @@ fn expect_tag(data: &[u8], offset: usize, expected: [u8; 4]) -> Result<(), GxtEr
             found,
         }),
         None => {
+            // The tag may start past the end of a truncated file (found by
+            // the mutation fuzzer; slicing from `offset` used to panic).
             let mut found = [0u8; 4];
-            let have = data.len().saturating_sub(offset).min(4);
-            found[..have].copy_from_slice(&data[offset..offset + have]);
+            let tail = data.get(offset..).unwrap_or(&[]);
+            let have = tail.len().min(4);
+            found[..have].copy_from_slice(&tail[..have]);
             Err(GxtError::BadTag {
                 offset,
                 expected,
@@ -499,7 +502,7 @@ mod tests {
         let file = GxtFile::parse(&buf).unwrap();
         assert_eq!(
             file.lookup("MAIN", "a").unwrap(),
-            &[b'H' as u16, b'i' as u16]
+            &[u16::from(b'H'), u16::from(b'i')]
         );
     }
 

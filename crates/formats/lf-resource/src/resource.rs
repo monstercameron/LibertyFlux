@@ -360,7 +360,7 @@ mod tests {
         file.truncate(file.len() - 4);
         assert!(matches!(
             Resource::parse(&file),
-            Err(Error::LengthMismatch { .. }) | Err(Error::Decompress { .. })
+            Err(Error::LengthMismatch { .. } | Error::Decompress { .. })
         ));
     }
 

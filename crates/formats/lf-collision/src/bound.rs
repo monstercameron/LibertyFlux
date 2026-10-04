@@ -17,6 +17,11 @@ const MAX_CHILDREN: usize = 4096;
 /// Maximum composite nesting depth.
 const MAX_DEPTH: u8 = 8;
 
+/// Most bounds one root may expand to, counting every composite child it
+/// reaches. Shipped composites hold only leaf children (at most
+/// [`MAX_CHILDREN`] of them), so real files stay far below this.
+const MAX_BOUNDS_PER_ROOT: usize = 65_536;
+
 /// Size of the bound base header in bytes.
 const BASE_SIZE: usize = 128;
 
@@ -659,6 +664,7 @@ fn parse_composite(
     offset: usize,
     header: BoundHeader,
     depth: u8,
+    budget: &mut usize,
 ) -> Result<Bound, Error> {
     if depth >= MAX_DEPTH {
         return Err(Error::TooDeeplyNested);
@@ -734,7 +740,7 @@ fn parse_composite(
                     target,
                 });
             }
-            children.push(parse_bound(system, target, depth + 1)?);
+            children.push(parse_bound_within(system, target, depth + 1, budget)?);
         }
         current_matrices.push(parse_matrix(system, current + i * 64).map_err(|e| match e {
             Error::Truncated {
@@ -774,6 +780,25 @@ fn parse_composite(
 
 /// Parse one bound at `offset` in the system segment.
 pub(crate) fn parse_bound(system: &[u8], offset: usize, depth: u8) -> Result<Bound, Error> {
+    let mut budget = MAX_BOUNDS_PER_ROOT;
+    parse_bound_within(system, offset, depth, &mut budget)
+}
+
+/// [`parse_bound`] with a shared budget of bounds still allowed under the
+/// current root. Composite children are pointers, so a few kilobytes of
+/// layered composites that all point at the next layer can describe
+/// billions of bounds even within the depth cap; the budget turns that into
+/// an error (found while writing the fuzz tests; it used to run for hours).
+fn parse_bound_within(
+    system: &[u8],
+    offset: usize,
+    depth: u8,
+    budget: &mut usize,
+) -> Result<Bound, Error> {
+    *budget = budget.checked_sub(1).ok_or(Error::BadCount {
+        offset,
+        value: i64::try_from(MAX_BOUNDS_PER_ROOT).unwrap_or(i64::MAX),
+    })?;
     if depth > MAX_DEPTH {
         return Err(Error::TooDeeplyNested);
     }
@@ -811,7 +836,7 @@ pub(crate) fn parse_bound(system: &[u8], offset: usize, depth: u8) -> Result<Bou
         BoundType::Box => parse_mesh(system, offset, header, MeshKind::Box),
         BoundType::Geometry => parse_mesh(system, offset, header, MeshKind::Geometry),
         BoundType::Bvh => parse_mesh(system, offset, header, MeshKind::Bvh),
-        BoundType::Composite => parse_composite(system, offset, header, depth),
+        BoundType::Composite => parse_composite(system, offset, header, depth, budget),
         other => Ok(Bound::Unparsed(UnparsedBound {
             header,
             kind_byte: other.byte(),
@@ -820,6 +845,7 @@ pub(crate) fn parse_bound(system: &[u8], offset: usize, depth: u8) -> Result<Bou
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)] // parsed values are compared bit for bit on purpose
 mod tests {
     use super::*;
 

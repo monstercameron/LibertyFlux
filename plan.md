@@ -1,6 +1,6 @@
 # LibertyFlux plan
 
-Status: phase 0 can start; the game is installed. Last updated 2026-10-03.
+Status: phase 3 (rewrite) is under way; see "Status on 2026-10-04" under Phases. Last updated 2026-10-04.
 
 ## Goal
 
@@ -50,7 +50,7 @@ and a verified or inferred label on every claim. What it changes here:
 | Third-party libraries | Identified by signature and excluded from the queue until phase 5, then replaced | See "Dependencies" |
 | Parallelism | Lanes write only to their own scratch folder; the coordinator integrates | No git worktrees, no stash |
 | Where the investigation data lives | One SQLite database under `.artifacts/db/` for functions, names, evidence, claims, attempts and verdicts, with a deterministic JSON export committed to the repository | Dozens of lanes read and write at once and claims must be atomic, which loose files do badly. Git cannot diff a database, and the database holds addresses, so the tracked form is a sorted text export |
-| Publishing | Cam's decision. README and a GitHub Pages site exist locally; nothing is pushed until Cam asks | The Modern Warfare 2 project lost its hosting and its agents' work after takedowns in September 2026 |
+| Publishing | The repository is public and every commit is pushed (Cam, 2026-10-03; AGENTS.md rule 2). Anything else that publishes stays Cam's decision | The Modern Warfare 2 project lost its hosting and its agents' work after takedowns in September 2026 |
 
 ## Model routing
 
@@ -95,7 +95,7 @@ The checker runs code natively in a 32-bit helper process instead.
 
 ## Repository layout
 
-Local git repository on `main`. Nothing committed yet.
+Public repository on GitHub, worked on `main`; every commit is pushed (AGENTS.md rule 2).
 
 | Path | Tracked | Holds |
 |---|---|---|
@@ -187,7 +187,7 @@ Imports settle most of the dependency questions:
 Shipped beside the executable: a launcher (`PlayGTAIV.exe`), `gtaEncoder.exe`, `steam_api.dll` and
 `MTLX.dll`. The last two are not in the import table, so they are loaded at run time.
 
-Still to do in phase 0: everything from task 3 onward.
+Phase 0 is done except task 3, running the game on this machine, which needs the owner to start it.
 
 ## Phase 0 tasks
 
@@ -251,9 +251,11 @@ Taken from the projects reviewed. Numbers are Thief 3's unless stated.
 - Evidence labels on every written finding: Verified, Inferred or Unknown.
 - All iteration is local. decomp.me blocks scripted clients and forbids agent-driven requests.
 
-Known weakness of the emulator comparison: floating-point results can differ in the last bits
-between the original's code and Rust's, so those comparisons need a tolerance, and a tolerance can
-hide a real difference. The in-game switch is the backstop.
+Floating point, as first planned: results were expected to differ in the last bits between the
+original's code and Rust's, so the comparison was to use a tolerance. Superseded: the checker compares
+floating-point results bit for bit, including the sign and payload of a not-a-number, and a
+difference is fixed in the rewrite by pinning its operand order (AGENTS.md rule 3). The in-game
+switch remains the backstop for what a one-function comparison cannot see.
 
 ## Dependencies
 

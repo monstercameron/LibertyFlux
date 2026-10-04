@@ -6,10 +6,26 @@
 <meta name="color-scheme" content="light dark">
 <title>Devlog: LibertyFlux</title>
 <meta name="description" content="The LibertyFlux research and process notebook: what was found, what was decided and what went wrong, so nobody has to rediscover it. Searchable.">
+<link rel="canonical" href="https://monstercameron.github.io/LibertyFlux/devlog.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="LibertyFlux">
+<meta property="og:title" content="Devlog: LibertyFlux">
+<meta property="og:description" content="The LibertyFlux research and process notebook: what was found, what was decided and what went wrong, so nobody has to rediscover it. Searchable.">
+<meta property="og:url" content="https://monstercameron.github.io/LibertyFlux/devlog.html">
+<meta property="og:image" content="https://monstercameron.github.io/LibertyFlux/img/social.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="LibertyFlux: Grand Theft Auto IV's engine, being rewritten in Rust. A grid of squares, one per slice of the game's code, shaded by how far each slice has got.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Devlog: LibertyFlux">
+<meta name="twitter:description" content="The LibertyFlux research and process notebook: what was found, what was decided and what went wrong, so nobody has to rediscover it. Searchable.">
+<meta name="twitter:image" content="https://monstercameron.github.io/LibertyFlux/img/social.png">
+<meta name="twitter:image:alt" content="LibertyFlux: Grand Theft Auto IV's engine, being rewritten in Rust. A grid of squares, one per slice of the game's code, shaded by how far each slice has got.">
+<link rel="alternate" type="application/atom+xml" title="LibertyFlux devlog" href="devlog.xml">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;700;800&family=Overpass+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/overpass-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="fonts/fonts.css">
 <link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="devlog.css">
 </head>
@@ -24,6 +40,7 @@ To add an entry, write one article element with class "entry" and an id, holding
 time element, an h2 title and the body, then run:  python scripts/devlog_db.py put <file>
 Lane fragments go through scripts/integrate_devlog.py, which runs the publication checks first.
 To change an entry:  python scripts/devlog_db.py get <id> > file, edit, then put it back.
+After adding or changing entries, rebuild the Atom feed (devlog.xml):  python scripts/site/devlog_feed.py
 
 Rules for an entry's content are unchanged: open with the conclusion; label findings Verified, Inferred or
 Unknown; use only h3, p, ul, ol and table; never paste decompiled code, disassembly, raw addresses of game
@@ -35,12 +52,14 @@ functions or game data (AGENTS.md rule 1).
     <nav aria-label="Site"><ul class="nav">
       <li><a href="index.html">Overview</a></li>
       <li><a href="engine.html">Engine</a></li>
+      <li><a href="quality.html">Quality</a></li>
+      <li><a href="tools.html">Tools</a></li>
       <li><a href="changelog.html">Changelog</a></li>
       <li><a href="devlog.html" aria-current="page">Devlog</a></li>
       <li><a href="https://github.com/monstercameron/LibertyFlux">GitHub</a></li>
     </ul></nav>
     <h1>Devlog</h1>
-    <p class="lede">The research and process notebook for LibertyFlux, kept so that no one has to rediscover what is already known, including the mistakes.</p>
+    <p class="lede">The research and process notebook for LibertyFlux, kept so that no one has to rediscover what is already known, including the mistakes. New entries are also in an <a class="feed-link" href="devlog.xml">Atom feed</a> for feed readers.</p>
   </div>
 </header>
 
@@ -76,7 +95,9 @@ functions or game data (AGENTS.md rule 1).
   </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js" integrity="sha384-8D3Rsfo535FqoC1pHCCQMrNf75UgzyoG/HQm9zOzITRrz3QKzecc2E7JXKGCXoWu" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- sql.js 1.10.3 (MIT, see vendor/sql.js/1.10.3/LICENSE), served from this site. The integrity hash is the one this
+     page pinned when it loaded the same file from cdnjs; devlog.js checks the .wasm file's SHA-256 before using it. -->
+<script src="vendor/sql.js/1.10.3/sql-wasm.js" integrity="sha384-8D3Rsfo535FqoC1pHCCQMrNf75UgzyoG/HQm9zOzITRrz3QKzecc2E7JXKGCXoWu" crossorigin="anonymous"></script>
 <script src="devlog.js"></script>
 </body>
 </html>

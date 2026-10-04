@@ -187,9 +187,14 @@ impl<'a> Bank<'a> {
     }
 
     /// The zero padding between the info records and the ADPCM data.
+    ///
+    /// Empty when a corrupt header puts the records end past the data base
+    /// (found by the mutation fuzzer; slicing used to panic).
     #[must_use]
     pub fn gap(&self) -> &'a [u8] {
-        &self.buf[self.records_end as usize..self.base as usize]
+        self.buf
+            .get(self.records_end as usize..self.base as usize)
+            .unwrap_or(&[])
     }
 
     /// Read the whole stream table.

@@ -70,19 +70,19 @@ pub struct Pool {
 /// saturating at `u32::MAX`. Kept verbatim so the clamp stays proven.
 #[must_use]
 pub fn checked_total(count: u32, stride: u32) -> u32 {
-    let total = (count as u64) * (stride as u64) + 0x10;
-    if total > u32::MAX as u64 { u32::MAX } else { total as u32 }
+    let total = u64::from(count) * u64::from(stride) + 0x10;
+    if total > u64::from(u32::MAX) {
+        u32::MAX
+    } else {
+        total as u32
+    }
 }
 
 /// Initialise a simply-stamped pool. The allocator hook receives the exact
 /// byte count the original requests and answers success or failure; on
 /// failure the lift returns `None`, matching the original's null stores.
 /// (Originals: the stride 0x60/0x70/0x80/0x160 sites and the wide site.)
-pub fn init_simple(
-    count: u32,
-    kind: PoolKind,
-    alloc: &mut dyn FnMut(u32) -> bool,
-) -> Option<Pool> {
+pub fn init_simple(count: u32, kind: PoolKind, alloc: &mut dyn FnMut(u32) -> bool) -> Option<Pool> {
     if !alloc(checked_total(count, kind.stride())) {
         return None;
     }
@@ -95,7 +95,11 @@ pub fn init_simple(
     // guard keeps hostile counts from hanging the host.
     let mut i = 0u32;
     while i < count {
-        elements.push(PoolElement { kind, status: 0, wide_extra });
+        elements.push(PoolElement {
+            kind,
+            status: 0,
+            wide_extra,
+        });
         i = i.wrapping_add(1);
         debug_assert!(elements.len() < (1 << 30));
     }
@@ -120,7 +124,11 @@ pub fn init_constructed(
     let mut i = 0u32;
     while i < count {
         last = Some(construct(elements.len()));
-        elements.push(PoolElement { kind: PoolKind::S3d0, status: 0, wide_extra: None });
+        elements.push(PoolElement {
+            kind: PoolKind::S3d0,
+            status: 0,
+            wide_extra: None,
+        });
         i = i.wrapping_add(1);
     }
     (Some(Pool { count, elements }), last)
@@ -144,9 +152,15 @@ mod tests {
         let pool = init_simple(3, PoolKind::S60, &mut ok).expect("alloc ok");
         assert_eq!(pool.count, 3);
         assert_eq!(pool.elements.len(), 3);
-        assert!(pool.elements.iter().all(|e| e.status == 0 && e.wide_extra.is_none()));
+        assert!(pool
+            .elements
+            .iter()
+            .all(|e| e.status == 0 && e.wide_extra.is_none()));
         let wide = init_simple(2, PoolKind::S70wide, &mut ok).expect("alloc ok");
-        assert!(wide.elements.iter().all(|e| e.wide_extra == Some((0, 0xFFFF_FFFF))));
+        assert!(wide
+            .elements
+            .iter()
+            .all(|e| e.wide_extra == Some((0, 0xFFFF_FFFF))));
         let mut fail = |_: u32| false;
         assert!(init_simple(3, PoolKind::S60, &mut fail).is_none());
     }

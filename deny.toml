@@ -1,22 +1,25 @@
-# cargo-deny configuration. Check locally with `cargo deny check`
-# (install: `cargo install cargo-deny`; CI does not run it yet).
+# cargo-deny configuration, in the format cargo-deny 0.16 and later reads (`version = 2` sections).
+# CI runs `cargo deny check` in the licences job; locally: `cargo install cargo-deny`, then `cargo deny check`.
 #
 # Policy: permissive licences only (MIT, Apache-2.0, BSD, Zlib, plus the
 # equivalent ISC and Unicode licences). Anything else fails the check and
 # needs owner review with an explicit [[licenses.exceptions]] entry.
+# Version 2 denies every licence not listed in `allow`, copyleft included, so
+# the old `unlicensed`, `copyleft` and `allow-osi-fsf-free` keys are gone.
+# Deliberately NOT allowed: MPL-2.0 (symphonia), LGPL-2.0-only,
+# LGPL-2.1-only, LGPL-2.1-or-later, LGPL-3.0-only, LGPL-3.0-or-later,
+# GPL-*, AGPL-*. Each needs owner sign-off first (see t-engine-crates).
+
+[graph]
+# The project's own crates carry the workspace licence (MIT); check every target they build for.
+all-features = true
 
 [advisories]
-db-path = "~/.cargo/advisory-db"
-db-urls = ["https://github.com/RustSec/advisory-db"]
+version = 2
 yanked = "warn"
-unmaintained = "warn"
 
 [licenses]
-unlicensed = "deny"
-# Fail closed: without this, OSI/FSF-approved copyleft licences would pass
-# even though they are absent from `allow` below.
-allow-osi-fsf-free = "neither"
-copyleft = "warn"
+version = 2
 allow = [
   "MIT",
   "Apache-2.0",
@@ -27,13 +30,13 @@ allow = [
   "Unicode-DFS-2016",
   "Unicode-3.0",
 ]
-# Deliberately NOT allowed: MPL-2.0 (symphonia), LGPL-2.0-only,
-# LGPL-2.1-only, LGPL-2.1-or-later, LGPL-3.0-only, LGPL-3.0-or-later,
-# GPL-*, AGPL-*. Each needs owner sign-off first (see t-engine-crates).
+confidence-threshold = 0.9
 
 [bans]
 multiple-versions = "warn"
 wildcards = "deny"
+# The workspace's own crates depend on each other by path; that is not a wildcard dependency.
+allow-wildcard-paths = true
 highlight = "all"
 
 [sources]

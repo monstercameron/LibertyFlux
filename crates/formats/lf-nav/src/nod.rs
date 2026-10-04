@@ -403,6 +403,7 @@ pub fn area_origin(area: u16) -> (f64, f64) {
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)] // parsed values are compared bit for bit on purpose
 mod tests {
     use super::*;
 

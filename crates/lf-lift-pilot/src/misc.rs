@@ -22,6 +22,7 @@ pub struct ListArena {
 }
 
 /// Report whether any node holds `val`. (Original: `list_contains`.)
+#[must_use]
 pub fn list_contains(arena: &ListArena, head: Option<ListId>, val: u32) -> bool {
     let mut node = head;
     while let Some(id) = node {
@@ -65,7 +66,7 @@ pub fn oneshot_table_init(
         return;
     }
     if st.count != 0 {
-        setup(st.table, st.count as u32, 8, SetupProgram::Default);
+        setup(st.table, u32::from(st.count), 8, SetupProgram::Default);
     }
     st.done = true;
 }
@@ -78,9 +79,18 @@ mod tests {
     fn list_contains_model() {
         let arena = ListArena {
             nodes: vec![
-                ListNode { value: 5, next: Some(ListId(1)) },
-                ListNode { value: 7, next: Some(ListId(2)) },
-                ListNode { value: 9, next: None },
+                ListNode {
+                    value: 5,
+                    next: Some(ListId(1)),
+                },
+                ListNode {
+                    value: 7,
+                    next: Some(ListId(2)),
+                },
+                ListNode {
+                    value: 9,
+                    next: None,
+                },
             ],
         };
         assert!(list_contains(&arena, Some(ListId(0)), 7));
@@ -91,21 +101,27 @@ mod tests {
 
     #[test]
     fn oneshot_latches() {
-        let mut st = OneShotState { done: false, table: 0x1234, count: 3 };
+        let mut st = OneShotState {
+            done: false,
+            table: 0x1234,
+            count: 3,
+        };
         let mut calls = Vec::new();
         {
-            let mut setup =
-                |t: u32, c: u32, w: u32, p: SetupProgram| calls.push((t, c, w, p));
+            let mut setup = |t: u32, c: u32, w: u32, p: SetupProgram| calls.push((t, c, w, p));
             oneshot_table_init(&mut st, &mut setup);
             oneshot_table_init(&mut st, &mut setup);
         }
         assert!(st.done);
         assert_eq!(calls, vec![(0x1234, 3, 8, SetupProgram::Default)]);
         // Zero count still latches without calling setup.
-        let mut st0 = OneShotState { done: false, table: 1, count: 0 };
+        let mut st0 = OneShotState {
+            done: false,
+            table: 1,
+            count: 0,
+        };
         {
-            let mut setup =
-                |t: u32, c: u32, w: u32, p: SetupProgram| calls.push((t, c, w, p));
+            let mut setup = |t: u32, c: u32, w: u32, p: SetupProgram| calls.push((t, c, w, p));
             oneshot_table_init(&mut st0, &mut setup);
         }
         assert!(st0.done);

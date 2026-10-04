@@ -534,4 +534,110 @@ mod tests {
         assert_eq!(len_of(&[0x0F]), None);
         assert_eq!(len_of(&[0x0F, 0x04]), None); // invalid second byte
     }
+    #[test]
+    fn frame_and_seh_prologues() {
+        // push -1; push imm32 (structured exception handling frame)
+        assert_eq!(len_of(&[0x6A, 0xFF]), Some(2));
+        assert_eq!(len_of(&[0x68, 0x10, 0x20, 0x30, 0x40]), Some(5));
+        // and esp,-16 (stack alignment)
+        assert_eq!(len_of(&[0x83, 0xE4, 0xF0]), Some(3));
+        // lea ecx,[esp+4]
+        assert_eq!(len_of(&[0x8D, 0x4C, 0x24, 0x04]), Some(4));
+        // push dword ptr [ecx-4]
+        assert_eq!(len_of(&[0xFF, 0x71, 0xFC]), Some(3));
+        // mov dword ptr [esp+4],1
+        assert_eq!(len_of(&[0xC7, 0x44, 0x24, 0x04, 1, 0, 0, 0]), Some(8));
+        // mov dword ptr [abs32],imm32
+        assert_eq!(len_of(&[0xC7, 0x05, 1, 2, 3, 4, 5, 6, 7, 8]), Some(10));
+        // mov word ptr [abs32],imm16 (operand-size prefix shrinks the immediate)
+        assert_eq!(len_of(&[0x66, 0xC7, 0x05, 1, 2, 3, 4, 5, 6]), Some(9));
+    }
+
+    #[test]
+    fn memory_operand_immediates() {
+        // cmp byte ptr [abs32],0
+        assert_eq!(len_of(&[0x80, 0x3D, 1, 2, 3, 4, 0]), Some(7));
+        // test byte ptr [abs32],1 (F6 /0 carries an imm8)
+        assert_eq!(len_of(&[0xF6, 0x05, 1, 2, 3, 4, 1]), Some(7));
+        // test dword ptr [abs32],imm32 (F7 /0 carries an imm32)
+        assert_eq!(len_of(&[0xF7, 0x05, 1, 2, 3, 4, 5, 6, 7, 8]), Some(10));
+        // neg eax (F7 /3, no immediate)
+        assert_eq!(len_of(&[0xF7, 0xD8]), Some(2));
+        // imul eax,eax,imm32 / imul eax,eax,imm8
+        assert_eq!(len_of(&[0x69, 0xC0, 1, 2, 3, 4]), Some(6));
+        assert_eq!(len_of(&[0x6B, 0xC0, 0x0C]), Some(3));
+        // mov [abs32],eax / mov ax,[abs32] (moffs size follows the address size)
+        assert_eq!(len_of(&[0xA3, 1, 2, 3, 4]), Some(5));
+        assert_eq!(len_of(&[0x66, 0xA1, 1, 2, 3, 4]), Some(6));
+        // mov eax,[abs16] with the address-size prefix
+        assert_eq!(len_of(&[0x67, 0xA1, 1, 2]), Some(4));
+        // mov eax,[bp+8] with 16-bit addressing
+        assert_eq!(len_of(&[0x67, 0x8B, 0x46, 0x08]), Some(4));
+        // mov eax,ds (segment move has a ModRM)
+        assert_eq!(len_of(&[0x8C, 0xD8]), Some(2));
+    }
+
+    #[test]
+    fn two_byte_and_x87_forms() {
+        // movzx eax,byte ptr [esp+4] / movsx ecx,ax / imul eax,ecx
+        assert_eq!(len_of(&[0x0F, 0xB6, 0x44, 0x24, 0x04]), Some(5));
+        assert_eq!(len_of(&[0x0F, 0xBF, 0xC8]), Some(3));
+        assert_eq!(len_of(&[0x0F, 0xAF, 0xC1]), Some(3));
+        // movss xmm0,[esp+8] / movss [abs32],xmm0 / mulsd xmm0,[abs32]
+        assert_eq!(len_of(&[0xF3, 0x0F, 0x10, 0x44, 0x24, 0x08]), Some(6));
+        assert_eq!(len_of(&[0xF3, 0x0F, 0x11, 0x05, 1, 2, 3, 4]), Some(8));
+        assert_eq!(len_of(&[0xF2, 0x0F, 0x59, 0x05, 1, 2, 3, 4]), Some(8));
+        // movdqa xmm0,[abs32]
+        assert_eq!(len_of(&[0x66, 0x0F, 0x6F, 0x05, 1, 2, 3, 4]), Some(8));
+        // pshufd xmm0,xmm1,0x1b (0F 70 carries an imm8)
+        assert_eq!(len_of(&[0x66, 0x0F, 0x70, 0xC1, 0x1B]), Some(5));
+        // shufps xmm0,xmm1,0x44
+        assert_eq!(len_of(&[0x0F, 0xC6, 0xC1, 0x44]), Some(4));
+        // pshufb mm0,mm1 (0F 38 map) / palignr xmm0,xmm1,8 (0F 3A map, imm8)
+        assert_eq!(len_of(&[0x0F, 0x38, 0x00, 0xC1]), Some(4));
+        assert_eq!(len_of(&[0x66, 0x0F, 0x3A, 0x0F, 0xC1, 0x08]), Some(6));
+        // multi-byte nops
+        assert_eq!(len_of(&[0x0F, 0x1F, 0x44, 0x00, 0x00]), Some(5));
+        assert_eq!(len_of(&[0x66, 0x0F, 0x1F, 0x84, 0x00, 0, 0, 0, 0]), Some(9));
+        // lock cmpxchg [esi],ecx / cmpxchg8b [esi] / mfence
+        assert_eq!(len_of(&[0xF0, 0x0F, 0xB1, 0x0E]), Some(4));
+        assert_eq!(len_of(&[0x0F, 0xC7, 0x0E]), Some(3));
+        assert_eq!(len_of(&[0x0F, 0xAE, 0xF0]), Some(3));
+        // fldz / fld qword ptr [abs32] / fmul dword ptr [abs32] / fwait / fnclex
+        assert_eq!(len_of(&[0xD9, 0xEE]), Some(2));
+        assert_eq!(len_of(&[0xDD, 0x05, 1, 2, 3, 4]), Some(6));
+        assert_eq!(len_of(&[0xD8, 0x0D, 1, 2, 3, 4]), Some(6));
+        assert_eq!(len_of(&[0x9B]), Some(1));
+        assert_eq!(len_of(&[0xDB, 0xE2]), Some(2));
+    }
+
+    #[test]
+    fn relative_branches_report_their_displacement_size() {
+        // jecxz is a short loop-class branch: never relocated.
+        let d = decode(&[0xE3, 0x10]).unwrap();
+        assert_eq!((d.len, d.branch, d.rel_size), (2, BranchKind::Loop, 1));
+        // call with an operand-size prefix has a 16-bit displacement.
+        let d = decode(&[0x66, 0xE8, 0x10, 0x00]).unwrap();
+        assert_eq!((d.len, d.branch, d.rel_size), (4, BranchKind::RelFull, 2));
+        // jne rel32
+        let d = decode(&[0x0F, 0x85, 1, 2, 3, 4]).unwrap();
+        assert_eq!((d.len, d.branch, d.rel_size), (6, BranchKind::RelFull, 4));
+        // ret imm16 and leave are not branches but end a patch range (ret).
+        assert!(decode(&[0xC2, 0x04, 0x00]).unwrap().is_ret);
+        assert!(decode(&[0xC9]).unwrap().is_ret);
+        assert_eq!(decode(&[0x90]).unwrap().branch, BranchKind::None);
+    }
+
+    #[test]
+    fn unsupported_encodings_are_refused() {
+        // Fail-safe: bt eax,5 (0F BA /4 ib) is not decoded, so a hook over it
+        // is refused rather than guessed. The `0F BA` branch inside the
+        // ModRM arm is unreachable because that arm's range skips 0xBA.
+        assert_eq!(len_of(&[0x0F, 0xBA, 0xE0, 0x05]), None);
+        // Fifteen prefixes leave no room for an opcode.
+        assert_eq!(len_of(&[0x66; 16]), None);
+        // A buffer that ends inside a displacement.
+        assert_eq!(len_of(&[0x8B, 0x05, 1, 2]), None);
+        assert_eq!(len_of(&[0xC7, 0x05, 1, 2, 3, 4, 5]), None);
+    }
 }

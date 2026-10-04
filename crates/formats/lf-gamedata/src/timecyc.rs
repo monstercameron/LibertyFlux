@@ -377,6 +377,7 @@ pub fn parse_modifiers(file: &str, bytes: &[u8]) -> Result<Vec<Modifier>> {
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)] // parsed values are compared bit for bit on purpose
 mod tests {
     use super::*;
 

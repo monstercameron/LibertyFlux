@@ -71,5 +71,35 @@ class TestRendering(unittest.TestCase):
         self.assertIn("{date}", briefs.template("preamble.txt"))
 
 
+class TestCrossChecks(unittest.TestCase):
+    """The brief, the result schema and the scripts that read the brief must agree."""
+
+    def test_brief_asks_for_every_field_a_pass_needs(self):
+        sys.path.insert(0, str(Path(briefs.__file__).parent))
+        import lane_results
+        task = briefs.render_production(LANE, "lf_rs99_rw", "W", "s99", ROOT)
+        results_line = next(line for line in task.splitlines() if line.startswith("- `results.json`"))
+        schema = lane_results.load_schema()
+        required = set(schema["required"])
+        for rule in schema["allOf"]:
+            required |= set(rule["then"].get("required", []))
+        for field in sorted(required):
+            self.assertIn(f"`{field}`", results_line, field)
+
+    def test_dashboard_reads_the_brief_tag(self):
+        import re
+        server = (Path(briefs.__file__).parents[1] / "dashboard" / "server.py").read_text(encoding="utf-8")
+        pattern = re.search(r're\.search\(r"(`brief` [^"]+)", text\)', server).group(1)
+        task = briefs.render_production(LANE, "lf_rs99_rw", "W", "s99", ROOT)
+        self.assertEqual(re.search(pattern, task).group(1), briefs.brief_version())
+
+    def test_batch_templates_take_what_the_maker_passes(self):
+        small = briefs.template("small_what.txt").format(count=40, list_path="L", subsystem="audio")
+        big = briefs.template("big_what.txt").format(count=3, list_path="L", subsystem="audio", smallest=1, largest=2, total=3)
+        native = briefs.template("native_what.txt").format(count=25, list_path="L")
+        for text in (small, big, native):
+            self.assertNotRegex(text, r"\{[a-z_]+\}")
+
+
 if __name__ == "__main__":
     unittest.main()

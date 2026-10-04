@@ -1,0 +1,23 @@
+/* The site's two typefaces, served from this folder instead of Google Fonts so no page contacts a third party.
+   Both are variable fonts: one file per family covers every weight the pages use (Overpass 400, 700, 800;
+   Overpass Mono 400, 700). Only the Latin subset is kept, with Google's unicode-range for it; any other
+   character falls through to the fallback stacks in site.css. Licence: SIL Open Font License 1.1, see the
+   OFL-*.txt files beside this one. Source: Google Fonts, Overpass v19 and Overpass Mono v21. */
+
+@font-face {
+  font-family: "Overpass";
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url("overpass-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Overpass Mono";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("overpass-mono-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}

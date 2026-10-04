@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2021"
 rust-version.workspace = true
 license.workspace = true
+# Never published to crates.io; path dependencies between the project's crates rely on it.
+publish = false
 description = "First pilot of the 64-bit lift: 37 container functions as safe, pointer-width-independent Rust"
 
 # The pilot was written for the 2021 edition and is kept as the lane proved it. It forbids unsafe code itself.

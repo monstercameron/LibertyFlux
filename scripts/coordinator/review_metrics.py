@@ -15,6 +15,7 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import common
+import ledger
 
 
 def main():
@@ -32,7 +33,9 @@ def main():
     functions = json.loads((scratch / "f-boundaries" / "functions_v2.json").read_text(encoding="utf-8"))
     functions = functions if isinstance(functions, list) else functions.get("functions") or list(functions.values())
     size = {va(f["start"]): int(f.get("size") or 0) for f in functions if f.get("kind") not in ("library", "runtime")}
-    index = json.loads((root / "rewrites" / "pending" / "index.json").read_text(encoding="utf-8"))
+    # The tracked verified tree, through the function ledger (it read the untracked rewrites/pending junction
+    # before 2026-10-04, which exists only on the coordinator's machine).
+    index = ledger.load_index(root / "rewrites" / "verified")
     from scan import MODERN
 
     done = {va(e["address"]) for e in index if e.get("checker") in MODERN} & set(size)

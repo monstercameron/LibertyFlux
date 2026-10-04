@@ -17,15 +17,29 @@ import common
 from briefs import render_head
 
 
+def parse_args(argv):
+    """(lane, task_file, date) from the command line; `--date VALUE` and `--date=VALUE` both work, anywhere.
+
+    The value after a bare `--date` is consumed (it used to be left among the positional arguments, so
+    `make_brief.py --date 2026-10-04 lane task.txt` took the date for the lane name)."""
+    positional, date = [], None
+    items = iter(argv)
+    for item in items:
+        if item == "--date":
+            date = next(items, None)
+            if date is None:
+                raise SystemExit("--date needs a value (YYYY-MM-DD)")
+        elif item.startswith("--date="):
+            date = item.split("=", 1)[1]
+        else:
+            positional.append(item)
+    if len(positional) != 2:
+        raise SystemExit(__doc__.strip().splitlines()[2])
+    return positional[0], positional[1], date
+
+
 def main():
-    args = [a for a in sys.argv[1:] if not a.startswith("--date")]
-    date = None
-    for i, a in enumerate(sys.argv[1:]):
-        if a == "--date":
-            date = sys.argv[1:][i + 1]
-        elif a.startswith("--date="):
-            date = a.split("=", 1)[1]
-    lane, task_file = args[0], args[1]
+    lane, task_file, date = parse_args(sys.argv[1:])
     root = common.find_root()
     task = Path(task_file).read_text(encoding="utf-8")
     task = task.replace("{root}", str(root)).replace("{lane}", lane).replace("{date}", date or common.today())

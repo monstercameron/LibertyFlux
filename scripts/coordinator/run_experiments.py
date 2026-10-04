@@ -13,6 +13,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import common
+import ledger
 from start_lane import start_lane
 
 import pefile
@@ -53,7 +54,7 @@ def families(count, cap=120):
     enc_end = pe.OPTIONAL_HEADER.ImageBase + text.VirtualAddress + 0xFB000
     functions = json.loads((SCRATCH / "f-boundaries" / "functions_v2.json").read_text(encoding="utf-8"))
     functions = functions if isinstance(functions, list) else functions.get("functions") or list(functions.values())
-    done = {va(e["address"]) for e in json.loads((ROOT / "rewrites" / "pending" / "index.json").read_text(encoding="utf-8"))}
+    done = {va(e["address"]) for e in ledger.load_index(ROOT / "rewrites" / "verified")}  # was the untracked rewrites/pending
     assigned = set()
     for path in LISTS.glob("r-*.json"):
         for entry in json.loads(path.read_text(encoding="utf-8")):

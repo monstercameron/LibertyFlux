@@ -14,18 +14,38 @@ ROOT = common.find_root()
 PY = sys.executable
 
 
+def integrated_lanes(out):
+    """Lanes integrate_and_commit.py reports as integrated, in its order."""
+    return re.findall(r"^([\w-]+): integrated as", out, re.M)
+
+
+def failed_lanes(out):
+    """Lanes integrate_and_commit.py could not integrate."""
+    return re.findall(r"^([\w-]+): NOT integrated", out, re.M)
+
+
+def summary_head(text, limit):
+    """The first `limit` non-blank lines of a lane's summary, each cut to 200 characters and indented."""
+    return ["  " + line[:200] for line in text.splitlines() if line.strip()][:limit]
+
+
+def sync_report(text):
+    """The lines of sync_rewrites.py's output worth showing on a tick."""
+    return [line for line in text.splitlines()
+            if line.startswith(("added", "left out", "FAILED", "demoted", "schema warning")) or "Rewrites:" in line]
+
+
 def main():
     out = subprocess.run([PY, str(HERE / "integrate_and_commit.py")], cwd=ROOT, capture_output=True, text=True, encoding="utf-8").stdout
     print(out.strip() or "no new lane entries")
-    for lane in re.findall(r"^([\w-]+): integrated as", out, re.M):
+    for lane in integrated_lanes(out):
         summary = common.scratch_dir(ROOT) / lane / "summary.txt"
         if summary.exists():
-            lines = [l for l in summary.read_text(encoding="utf-8", errors="replace").splitlines() if l.strip()]
             print(f"=== {lane}")
             limit = int(sys.argv[1]) if len(sys.argv) > 1 else 4
-            for line in lines[:limit]:
-                print("  " + line[:200])
-    for lane in re.findall(r"^([\w-]+): NOT integrated", out, re.M):
+            for line in summary_head(summary.read_text(encoding="utf-8", errors="replace"), limit):
+                print(line)
+    for lane in failed_lanes(out):
         print(f"!!! {lane} needs attention")
     # Watchdog: the checker driver's memory grows without bound on long runs (one reached 8.9 GB on 2026-10-04).
     # Stop any checker driver process above 4 GB before it takes the machine down, and say so.
@@ -39,7 +59,7 @@ def main():
     # New rewrites that passed the checker go into the repository on every tick; the push happens with the progress commit.
     sync = subprocess.run([PY, str(HERE / "sync_rewrites.py"), "--commit"], cwd=ROOT, capture_output=True, text=True,
                           encoding="utf-8", env=dict(os.environ, LF_BATCH="1"))
-    print("\n".join(l for l in (sync.stdout + sync.stderr).splitlines() if l.startswith(("added", "left out", "FAILED")) or "Rewrites:" in l))
+    print("\n".join(sync_report(sync.stdout + sync.stderr)))
     # Lanes that died without results give their batches back to the queue (2026-10-04: until this ran on every tick,
     # dead lanes' functions stayed reserved until the coordinator noticed).
     released = subprocess.run([PY, str(HERE / "release_failed.py")], cwd=ROOT, capture_output=True, text=True, encoding="utf-8").stdout.strip()

@@ -1,7 +1,9 @@
-"""Generate the checker's k2 proof contracts (writes contracts/k2_*.json).
+"""Generate the checker's k2 and k5 proof contracts (writes
+contracts/k2_*.json and contracts/k5_*.json).
 
 Usage: python gen_contracts.py (from anywhere; paths derive from this file).
-Regenerates all 18 k2 contracts byte-identically (verified). The pilot-lane
+Regenerates all 18 k2 contracts byte-identically (verified) and the 7 k5
+contracts of the version 5 abilities (see the k5 section at the end). The pilot-lane
 contracts (k2_percal1/2, k2_ptr1) reference the pilot rewrite DLLs by
 repo-relative path; those DLLs are lane build outputs, so the generator
 only records their conventional location (LF_CHECKER_PILOT_DIR to move it).
@@ -453,3 +455,125 @@ w("k2_e2", {
     "callees": [{"id": 1, "conv": "thiscall", "nargs": 1, "ret": "u32", "script": [0]}],
     "patches": [], "iat": [], "checks": base_checks("none"),
 })
+
+
+# ---------------------------------------------------------------------------
+# k5: proofs of the version 5 abilities. Each correct export must pass and
+# each mutant must fail; every mutant is one the v4 checker could not see.
+# Three run on the worker's built-in self-test originals ("selftest:<name>",
+# marked as self-tests in the verdict), because no tracked original is known
+# to take x87 arguments, pass XMM2-XMM7 to a callee or read through an
+# unrelocated absolute address. k5_absguard is a documented negative.
+# ---------------------------------------------------------------------------
+
+# k5 1. x87 entry values: three entries popped into f32/f64/80-bit slots.
+w("k5_x87", {
+    "name": "k5_x87", "function": "selftest:x87_store", "conv": "cdecl",
+    "export": "rw_k5_x87", "mut_export": "mut_k5_x87",
+    "trials": 1000, "seed": 50501, "timeout_ms": 10000, "ret": "eax",
+    "regs": ANY7, "stack": [{"kind": "ptr", "seg": 0}],
+    "heapsegs": [{"off": 4096, "size": 24, "fill": "random"}],
+    "x87": [{"kind": "f64"}, {"kind": "f80"}, {"kind": "f80"}],
+    "globals": [], "globals_fill": "pristine", "callees": [], "patches": [],
+    "iat": [], "checks": base_checks(),
+})
+
+# k5 2. x87 stack balance: same original, no return channel compared; the
+# mutant leaves a value in ST0 (only the x87 state check sees it).
+w("k5_x87bal", {
+    "name": "k5_x87bal", "function": "selftest:x87_store", "conv": "cdecl",
+    "export": "rw_k5_x87", "mut_export": "mut_k5_x87bal",
+    "trials": 1000, "seed": 50502, "timeout_ms": 10000, "ret": "none",
+    "regs": ANY7, "stack": [{"kind": "ptr", "seg": 0}],
+    "heapsegs": [{"off": 4096, "size": 24, "fill": "random"}],
+    "x87": [{"kind": "f32"}, {"kind": "f64"}, {"kind": "f80"}],
+    "globals": [], "globals_fill": "pristine", "callees": [], "patches": [],
+    "iat": [], "checks": base_checks("none"),
+})
+
+# k5 3. XMM2/XMM5 call arguments with rewrite-side transports, plus the
+# XMM6 entry value (entry values for all eight registers predate v5).
+w("k5_xmm", {
+    "name": "k5_xmm", "function": "selftest:xmm_call", "conv": "cdecl",
+    "export": "rw_k5_xmm", "mut_export": "mut_k5_xmm",
+    "trials": 1000, "seed": 50503, "timeout_ms": 10000, "ret": "eax",
+    "regs": ANY7, "stack": [{"kind": "float"}, {"kind": "float"}],
+    "heapsegs": [],
+    "xmm": {"2": [0x11111111, 0x22222222, 0x33333333, 0x44444444],
+            "5": [0x55555555, 0x66666666, 0x77777777, 0x88888888],
+            "6": ["float", 0, 0, 0]},
+    "globals": [], "globals_fill": "pristine",
+    "callees": [{"id": 1, "conv": "cdecl", "nargs": 2, "ret": "u32",
+                 "script": [0], "logxmm_regs": [2, 5],
+                 "xmm_from_stack": {"2": 0, "5": 1}}],
+    "patches": [], "iat": [], "checks": base_checks(),
+})
+
+# k5 4. unrelocated absolute reads served by the read-only shadow. The
+# addresses are file VAs inside the first header page (identical bytes in
+# the relocated image, so the relocated read is the correct rewrite).
+ABS_VAS = [0x400000, 0x400002, 0x40003C, 0x400080, 0x400084, 0x400100]
+w("k5_abs", {
+    "name": "k5_abs", "function": "selftest:abs_read", "conv": "cdecl",
+    "export": "rw_k5_abs", "mut_export": "mut_k5_abs",
+    "trials": 200, "seed": 50504, "timeout_ms": 10000, "ret": "eax",
+    "abs_shadow": True,
+    "regs": ANY7, "stack": [{"kind": "rot", "values": ABS_VAS}],
+    "heapsegs": [], "globals": [], "globals_fill": "pristine",
+    "callees": [], "patches": [], "iat": [], "checks": base_checks(),
+})
+
+# k5 5. documented negative (fails by design): without abs_shadow the same
+# reads fault on the original in the reserved window (the v5 guard) instead
+# of silently reading worker memory as in v4; the correct rewrite then
+# fails on termination, with an "abs-window" note in the fault detail.
+w("k5_absguard", {
+    "name": "k5_absguard", "function": "selftest:abs_read", "conv": "cdecl",
+    "export": "rw_k5_abs",
+    "trials": 20, "seed": 50505, "timeout_ms": 10000, "ret": "eax",
+    "regs": ANY7, "stack": [{"kind": "rot", "values": ABS_VAS}],
+    "heapsegs": [], "globals": [], "globals_fill": "pristine",
+    "callees": [], "patches": [], "iat": [], "checks": base_checks(),
+})
+
+
+def k5_snap_contract(name, seed, mut, snap):
+    """k2_ind1's original and rewrite (q-07 FN4), with a wider snapshot of
+    the object at the virtual sample's caller-side call."""
+    return {
+        "name": name, "function": "0x9e09f0", "conv": "thiscall",
+        "export": "rw_k2_f4", "mut_export": mut,
+        "trials": 1000, "seed": seed, "timeout_ms": 10000, "ret": "none",
+        "regs": [{"any": True}, {"heap": 0}, {"any": True}, {"any": True},
+                 {"any": True}, {"any": True}, {"any": True}],
+        "stack": [{"kind": "float"}],
+        "heapsegs": [
+            {"off": 4096, "size": 536, "fill": "floats", "floats_at": [132],
+             "links": [{"at": 0, "to_seg": 1}]},
+            {"off": 8192, "size": 160, "fill": "random",
+             "pin": [{"at": 152, "vals": [{"stub": 2}]}]},
+        ],
+        "pokes": [{"seg": 0, "at": 492, "size": 4, "vals": [0, 1]}],
+        "globals": [], "globals_fill": "pristine",
+        "callees": [
+            {"id": 1, "conv": "thiscall", "nargs": 1, "ret": "u32",
+             "script": "edges", "snap": snap},
+            {"id": 2, "conv": "thiscall", "nargs": 0, "ret": "f32st0",
+             "script": FLOAT_EDGES},
+        ],
+        "patches": [{"site": "0x9e0a34", "id": 1}],
+        "iat": [], "checks": base_checks("none"),
+    }
+
+
+# k5 6. 16 snapshot words 0x1D8 bytes into the object (v4: 8 words at 0);
+# the mutant disturbs word 8 of the window during the call.
+w("k5_snap", k5_snap_contract("k5_snap", 50506, "mut_k5_snap",
+                              [{"kind": "ecx", "at": 0x1D8, "n": 16}]))
+
+# k5 7. a negative offset, as a second ECX entry (which also exercises the
+# v5 fix: v4 read a later register entry's pointer from a clobbered ECX);
+# the mutant disturbs the word 8 bytes below the object during the call.
+w("k5_snapneg", k5_snap_contract("k5_snapneg", 50507, "mut_k5_snapneg",
+                                 [{"kind": "ecx", "at": 0, "n": 2},
+                                  {"kind": "ecx", "at": -16, "n": 4}]))

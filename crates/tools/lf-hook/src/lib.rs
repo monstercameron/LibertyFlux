@@ -5,6 +5,8 @@
 //! * [`slot`]: vtable / import-slot pointer hooks.
 //! * [`adapters`]: generated `thiscall` stubs for stable Rust.
 //! * [`pe`]: minimal PE reader (import slots, sections, export tables).
+//! * [`forward`]: the winmm proxy's export-forwarding table generator
+//!   (pure; `lf-proxy`'s build script `#[path]`-includes it).
 //! * [`mem`]: raw Win32 memory/thread helpers.
 //! * [`log`]: timestamped file logger.
 //!
@@ -26,6 +28,7 @@
 pub mod adapters;
 pub mod decode;
 pub mod detour;
+pub mod forward;
 pub mod log;
 pub mod mem;
 pub mod pe;

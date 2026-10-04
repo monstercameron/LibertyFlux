@@ -6,10 +6,26 @@
 <meta name="color-scheme" content="light dark">
 <title>LibertyFlux: GTA IV's engine, being rewritten in Rust</title>
 <meta name="description" content="An agent-driven rewrite of the Grand Theft Auto IV engine in Rust, aimed at 64-bit Windows, Windows on ARM and macOS. Progress is tracked function by function.">
+<link rel="canonical" href="https://monstercameron.github.io/LibertyFlux/index.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="LibertyFlux">
+<meta property="og:title" content="LibertyFlux: GTA IV&#x27;s engine, being rewritten in Rust">
+<meta property="og:description" content="An agent-driven rewrite of the Grand Theft Auto IV engine in Rust, aimed at 64-bit Windows, Windows on ARM and macOS. Progress is tracked function by function.">
+<meta property="og:url" content="https://monstercameron.github.io/LibertyFlux/index.html">
+<meta property="og:image" content="https://monstercameron.github.io/LibertyFlux/img/social.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="LibertyFlux: Grand Theft Auto IV's engine, being rewritten in Rust. A grid of squares, one per slice of the game's code, shaded by how far each slice has got.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LibertyFlux: GTA IV&#x27;s engine, being rewritten in Rust">
+<meta name="twitter:description" content="An agent-driven rewrite of the Grand Theft Auto IV engine in Rust, aimed at 64-bit Windows, Windows on ARM and macOS. Progress is tracked function by function.">
+<meta name="twitter:image" content="https://monstercameron.github.io/LibertyFlux/img/social.png">
+<meta name="twitter:image:alt" content="LibertyFlux: Grand Theft Auto IV's engine, being rewritten in Rust. A grid of squares, one per slice of the game's code, shaded by how far each slice has got.">
+<link rel="alternate" type="application/atom+xml" title="LibertyFlux devlog" href="devlog.xml">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;700;800&family=Overpass+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/overpass-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="fonts/fonts.css">
 <link rel="stylesheet" href="site.css">
 </head>
 <body>
@@ -19,6 +35,8 @@
     <nav aria-label="Site"><ul class="nav">
       <li><a href="index.html" aria-current="page">Overview</a></li>
       <li><a href="engine.html">Engine</a></li>
+      <li><a href="quality.html">Quality</a></li>
+      <li><a href="tools.html">Tools</a></li>
       <li><a href="changelog.html">Changelog</a></li>
       <li><a href="devlog.html">Devlog</a></li>
       <li><a href="https://github.com/monstercameron/LibertyFlux">GitHub</a></li>
@@ -55,13 +73,28 @@
       <p class="prose" id="progress-empty" hidden></p>
       <ul class="meters" id="meters"></ul>
       <p class="meter-note" id="meter-note"></p>
+
+      <div class="history" id="history" hidden>
+        <h3>Progress over time</h3>
+        <p class="history-note" id="history-note"></p>
+        <div class="history-charts" id="history-charts"></div>
+        <details class="history-table">
+          <summary>The same numbers as a table</summary>
+          <div class="history-table-scroll">
+            <table>
+              <thead><tr><th scope="col">Time</th><th scope="col">Named</th><th scope="col">Rewritten</th><th scope="col">Verified</th></tr></thead>
+              <tbody id="history-rows"></tbody>
+            </table>
+          </div>
+        </details>
+      </div>
     </div>
   </section>
 
   <section id="how">
     <div class="wrap">
       <h2>How it works, step by step</h2>
-      <p class="prose">AI agents do the rewriting. A machine check, not an agent's opinion, decides when a function is finished.</p>
+      <p class="prose">AI agents do the rewriting. A machine check, not an agent's opinion, decides when a function is finished. The <a href="quality.html">quality page</a> explains what that check covers, what it cannot see, and every problem known so far.</p>
       <ol class="steps">
         <li><div><h3>Measure the executable</h3><p>Ghidra, a reverse-engineering tool, analyses the original program. Functions are counted, the compiler's own runtime and third-party library code is set aside, and class names are recovered from the type information the compiler left behind.</p></div></li>
         <li><div><h3>Queue the work</h3><p>A script orders the functions from easiest to hardest and hands them out one at a time. Agents never choose their own.</p></div></li>

@@ -2,9 +2,14 @@
 
 Serves one page and a small read-only JSON API on 127.0.0.1. It reads what is already on disk under
 .artifacts/ (lane logs, briefs, results, the supervisor's log and settings), the site's progress data, and
-the process list. It writes nothing and starts nothing.
+the process list. It starts nothing. The one file it writes is its own rolling history,
+.artifacts/cache/dashboard/history.jsonl (one sample a minute while it runs, a week kept; never tracked),
+which the page's history charts draw from together with the hourly review snapshots.
 
     python scripts/dashboard/server.py [port]        (default 8772)
+
+API: /api/state, /api/lane/<lane>, /api/history?hours=N (lanes running, verified, memory over time),
+/api/experiments (pass rate and time per function for each brief version and experiment tag).
 
 It binds to 127.0.0.1 only: briefs and logs contain machine paths and addresses and are not for publication.
 """
@@ -20,6 +25,7 @@ import time
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import parse_qs, urlsplit
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
@@ -31,6 +37,12 @@ BRIEFS = COORD / "briefs"
 LISTS = COORD / "lists"
 LANE_NAME = re.compile(r"^[A-Za-z0-9][\w-]{0,40}$")
 RECENT_SECONDS = 3 * 3600
+HISTORY_FILE = ART / "cache" / "dashboard" / "history.jsonl"
+HISTORY_EVERY_SECONDS = 60
+HISTORY_KEEP = 7 * 24 * 60          # a week of one-minute samples
+HISTORY_MAX_POINTS = 360            # per chart; longer ranges keep the last sample of each time bucket
+BRIEF_NOTES = HERE.parent / "coordinator" / "briefs" / "brief_notes.json"
+NOT_ATTEMPTED = ("not_reached", "not yet run")
 
 _processes = {"at": 0.0, "lanes": {}, "error": None}
 _lock = threading.Lock()
@@ -305,6 +317,215 @@ def lane_detail(lane):
             "summary": summary_text, "results": slim, "batch": read_json(LISTS / f"{lane}.json")}
 
 
+# ---------------------------------------------------------------------------------------------------------
+# History: one sample a minute (lanes running, verified, memory), kept in memory and in a rolling file.
+# ---------------------------------------------------------------------------------------------------------
+
+_history = []  # rows as written to HISTORY_FILE, oldest first
+
+
+def history_sample(now, lanes, progress, mem):
+    """One history row. `lanes` is the live-lane map, `progress` the site's progress data, `mem` memory() or None."""
+    stages = (progress or {}).get("stages") or {}
+    row = {"t": int(now), "lanes": len(lanes), "verified": stages.get("verified"), "rewritten": stages.get("rewritten"),
+           "agent_gb": round(sum((p.get("mem_mb") or 0) for p in lanes.values()) / 1024, 2),
+           "mem_pct": None, "commit_pct": None}
+    if mem and mem.get("total_gb") and mem.get("commit_limit_gb"):
+        row["mem_pct"] = round(100 * (1 - mem["free_gb"] / mem["total_gb"]), 1)
+        row["commit_pct"] = round(100 * (1 - mem["commit_headroom_gb"] / mem["commit_limit_gb"]), 1)
+    return row
+
+
+def load_history(path, keep=HISTORY_KEEP):
+    """The last `keep` rows of the history file; unreadable lines are skipped, a missing file is empty."""
+    rows = []
+    try:
+        with open(path, encoding="utf-8") as handle:
+            for line in handle:
+                try:
+                    row = json.loads(line)
+                except ValueError:
+                    continue
+                if isinstance(row, dict) and isinstance(row.get("t"), (int, float)):
+                    rows.append(row)
+    except OSError:
+        return []
+    return rows[-keep:]
+
+
+def append_history(path, row, rows, keep=HISTORY_KEEP):
+    """Add a row in memory and on disk. The file is rewritten with the last `keep` rows once it holds a quarter
+    more than that, so it stays about a week long without being rewritten every minute."""
+    rows.append(row)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if len(rows) > keep * 5 // 4:
+        del rows[:-keep]
+        tmp = path.with_suffix(".tmp")
+        tmp.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+        os.replace(tmp, path)
+    else:
+        with open(path, "a", encoding="utf-8") as handle:
+            handle.write(json.dumps(row) + "\n")
+
+
+def review_points(history):
+    """(epoch seconds, verified) from the hourly review snapshots (local times written as YYYY-MM-DD HH:MM)."""
+    points = []
+    for snapshot in history or []:
+        try:
+            when = datetime.strptime(snapshot["at"], "%Y-%m-%d %H:%M").timestamp()
+        except (KeyError, TypeError, ValueError):
+            continue
+        if isinstance(snapshot.get("verified"), int):
+            points.append([int(when), snapshot["verified"]])
+    return sorted(points)
+
+
+def thin(points, since, until, max_points=HISTORY_MAX_POINTS):
+    """Points inside [since, until], at most `max_points`: the range is cut into equal buckets and the last point
+    of each bucket kept, so a count (verified) keeps its true latest value and nothing is averaged into a
+    value that never occurred."""
+    inside = [p for p in points if since <= p[0] <= until]
+    if len(inside) <= max_points:
+        return inside
+    width = (until - since) / max_points
+    kept = {}
+    for point in inside:
+        kept[min(int((point[0] - since) / width), max_points - 1)] = point
+    return [kept[k] for k in sorted(kept)]
+
+
+def compose_history(rows, reviews, since, until, max_points=HISTORY_MAX_POINTS):
+    """The page's series over [since, until]: each a list of [epoch seconds, value]. Verified adds the review
+    snapshots from before the first sample, so its line reaches back past the dashboard's own start."""
+    def series(key):
+        return thin([[r["t"], r[key]] for r in rows if r.get(key) is not None], since, until, max_points)
+    first = rows[0]["t"] if rows else until + 1
+    verified = [p for p in reviews if p[0] < first] + [[r["t"], r["verified"]] for r in rows if r.get("verified") is not None]
+    return {"since": since, "until": until, "first_sample": rows[0]["t"] if rows else None,
+            "lanes": series("lanes"), "verified": thin(sorted(verified), since, until, max_points),
+            "memory": series("mem_pct"), "commit": series("commit_pct"), "agent_gb": series("agent_gb")}
+
+
+def history_loop():
+    """Sample once a minute for as long as the server runs."""
+    with _lock:
+        _history[:] = load_history(HISTORY_FILE)
+    while True:
+        deadline = time.time() + 45
+        while not _processes["at"] and time.time() < deadline:
+            time.sleep(1)  # the first sample waits for the first process list
+        with _lock:
+            lanes = dict(_processes["lanes"])
+        row = history_sample(time.time(), lanes, read_json(ROOT / "docs" / "data" / "progress.json", {}), memory())
+        try:
+            with _lock:
+                append_history(HISTORY_FILE, row, _history)
+        except OSError:
+            pass  # a full or locked disk must not stop the page
+        time.sleep(HISTORY_EVERY_SECONDS)
+
+
+def history(hours):
+    hours = max(1, min(int(hours), HISTORY_KEEP // 60))
+    until = int(time.time())
+    with _lock:
+        rows = list(_history)
+    reviews = review_points(read_json(COORD / "review_history.json", []))
+    return dict(compose_history(rows, reviews, until - hours * 3600, until), hours=hours)
+
+
+# ---------------------------------------------------------------------------------------------------------
+# Experiments: pass rate and time per function for each brief version, from lanes' results.json.
+# ---------------------------------------------------------------------------------------------------------
+
+def natural_key(text):
+    return [int(part) if part.isdigit() else part for part in re.split(r"(\d+)", str(text))]
+
+
+def experiment_table(lanes, experiments, brief_of_lane=lambda lane: None, current=None):
+    """Rows grouped by (brief version, lane kind) from (lane, rows) pairs.
+
+    A row's brief version is its `brief` field (or `brief_version`), else the experiment tag recorded for its
+    lane in experiments.json, else the tag written into the lane's brief file (`brief_of_lane`), else "not
+    recorded". Attempted excludes not_reached and not yet run. Pass rate is verified over attempted. Minutes:
+    the median of verified rows' `minutes`, and all recorded minutes divided by the verified count (what one
+    verified function cost, failures included).
+    """
+    groups = {}
+    for lane, rows in lanes:
+        experiment = experiments.get(lane) or {}
+        fallback = experiment.get("tag") or brief_of_lane(lane)
+        for row in rows:
+            if not isinstance(row, dict) or "outcome" not in row:
+                continue
+            brief = str(row.get("brief") or row.get("brief_version") or fallback or "not recorded")
+            group = groups.setdefault((brief, kind_of(lane)), {"lanes": set(), "functions": 0, "attempted": 0, "verified": 0,
+                                                                "deferred": 0, "verified_minutes": [], "minutes": 0.0})
+            outcome = str(row.get("outcome"))
+            minutes = row.get("minutes") if isinstance(row.get("minutes"), (int, float)) and not isinstance(row.get("minutes"), bool) else None
+            group["lanes"].add(lane)
+            group["functions"] += 1
+            group["attempted"] += outcome not in NOT_ATTEMPTED
+            group["deferred"] += outcome == "deferred"
+            if minutes is not None:
+                group["minutes"] += minutes
+            if outcome.startswith("verified"):
+                group["verified"] += 1
+                if minutes is not None:
+                    group["verified_minutes"].append(minutes)
+    factors = {}
+    for row in experiments.values():
+        if row.get("tag"):
+            factors.setdefault(row["tag"], row.get("factor"))
+    table = []
+    for (brief, kind), g in sorted(groups.items(), key=lambda item: (natural_key(item[0][0]), item[0][1])):
+        mins = sorted(g["verified_minutes"])
+        median = (mins[len(mins) // 2] if len(mins) % 2 else (mins[len(mins) // 2 - 1] + mins[len(mins) // 2]) / 2) if mins else None
+        table.append({"brief": brief, "kind": kind, "factor": factors.get(brief), "current": brief == current,
+                      "lanes": len(g["lanes"]), "functions": g["functions"], "attempted": g["attempted"],
+                      "verified": g["verified"], "deferred": g["deferred"],
+                      "pass_rate": round(g["verified"] / g["attempted"], 3) if g["attempted"] else None,
+                      "median_minutes": round(median, 1) if median is not None else None,
+                      "minutes_per_verified": round(g["minutes"] / g["verified"], 1) if g["verified"] and g["minutes"] else None})
+    return table
+
+
+_parsed = {}  # results path -> (mtime, rows)
+_experiments = {"key": None, "value": None}
+
+
+def experiments_state():
+    """The experiment table, recomputed only when a results file or experiments.json changed."""
+    paths = sorted(SCRATCH.glob("r-*/results.json")) + sorted(SCRATCH.glob("a-*/results.json"))
+    stamps = []
+    for path in paths:
+        try:
+            stamps.append((str(path), path.stat().st_mtime))
+        except OSError:
+            continue
+    exp_path = COORD / "experiments.json"
+    key = (tuple(stamps), exp_path.stat().st_mtime if exp_path.exists() else 0)
+    if _experiments["key"] == key:
+        return _experiments["value"]
+    lanes = []
+    for name, mtime in stamps:
+        hit = _parsed.get(name)
+        if not hit or hit[0] != mtime:
+            rows = read_json(Path(name))
+            if isinstance(rows, dict):
+                rows = rows.get("functions") or rows.get("results")
+            hit = (mtime, rows if isinstance(rows, list) else [])
+            _parsed[name] = hit
+        lanes.append((Path(name).parent.name, hit[1]))
+    experiments = {row["lane"]: row for row in (read_json(exp_path, []) or []) if isinstance(row, dict) and row.get("lane")}
+    current = (read_json(BRIEF_NOTES, {}) or {}).get("version")
+    value = {"current_brief": current, "lanes": len(lanes),
+             "rows": experiment_table(lanes, experiments, brief_tag, current)}
+    _experiments.update(key=key, value=value)
+    return value
+
+
 class Handler(BaseHTTPRequestHandler):
     def log_message(self, *args):
         pass
@@ -319,12 +540,18 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     def do_GET(self):
-        path = self.path.split("?", 1)[0]
+        parts = urlsplit(self.path)
+        path = parts.path
         try:
             if path in ("/", "/index.html"):
                 self.send((HERE / "index.html").read_bytes(), "text/html; charset=utf-8")
             elif path == "/api/state":
                 self.send(json.dumps(state()))
+            elif path == "/api/history":
+                hours = (parse_qs(parts.query).get("hours") or ["24"])[0]
+                self.send(json.dumps(history(int(hours) if hours.isdigit() else 24)))
+            elif path == "/api/experiments":
+                self.send(json.dumps(experiments_state()))
             elif path.startswith("/api/lane/"):
                 detail = lane_detail(path[len("/api/lane/"):])
                 self.send(json.dumps(detail) if detail else '{"error":"no such lane"}', status=200 if detail else 404)
@@ -338,5 +565,6 @@ if __name__ == "__main__":
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8772
     threading.Thread(target=process_loop, daemon=True).start()
     threading.Thread(target=usage_loop, daemon=True).start()
+    threading.Thread(target=history_loop, daemon=True).start()
     print(f"LibertyFlux dashboard on http://127.0.0.1:{port}/ (local only)", flush=True)
     ThreadingHTTPServer(("127.0.0.1", port), Handler).serve_forever()

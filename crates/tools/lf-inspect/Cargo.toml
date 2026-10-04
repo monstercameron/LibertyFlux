@@ -1,0 +1,36 @@
+[package]
+name = "lf-inspect"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+# Never published to crates.io; path dependencies between the project's crates rely on it.
+publish = false
+description = "One command-line inspector for the game's file formats: summaries, listings, dumps and parse benchmarks"
+
+[lints]
+workspace = true
+
+[[bin]]
+name = "lf-inspect"
+path = "src/main.rs"
+
+[dependencies]
+lf-anim = { path = "../../formats/lf-anim" }
+lf-archive = { path = "../../formats/lf-archive" }
+lf-audio-bank = { path = "../../formats/lf-audio-bank" }
+lf-audio-config = { path = "../../formats/lf-audio-config" }
+lf-collision = { path = "../../formats/lf-collision" }
+lf-cutscene = { path = "../../formats/lf-cutscene" }
+lf-effects = { path = "../../formats/lf-effects" }
+lf-entity-meta = { path = "../../formats/lf-entity-meta" }
+lf-gamedata = { path = "../../formats/lf-gamedata" }
+lf-mapdata = { path = "../../formats/lf-mapdata" }
+lf-model = { path = "../../formats/lf-model" }
+lf-nav = { path = "../../formats/lf-nav" }
+lf-resource = { path = "../../formats/lf-resource" }
+lf-save = { path = "../../formats/lf-save" }
+lf-sco = { path = "../../formats/lf-sco" }
+lf-shaderpack = { path = "../../formats/lf-shaderpack" }
+lf-text = { path = "../../formats/lf-text" }
+lf-texture = { path = "../../formats/lf-texture" }

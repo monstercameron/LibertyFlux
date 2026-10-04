@@ -356,6 +356,7 @@ fn parse_wbd(system: &[u8]) -> Result<CollisionFile, Error> {
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)] // parsed values are compared bit for bit on purpose
 mod tests {
     use super::*;
     use flate2::Compression;

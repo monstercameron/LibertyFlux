@@ -1,0 +1,21 @@
+[package]
+name = "lf-lift-diff"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Differential tests: verified 32-bit rewrites against their lifted forms"
+publish = false
+
+[dependencies]
+lf-core = { path = "../../lf-core" }
+lf-lift = { path = "../../lf-lift" }
+
+# The real checker runtime only on the 32-bit target, where the verified
+# rewrites compile as the checker builds them. Elsewhere the harness's own
+# host runtime stands in (see src/rt.rs).
+[target.'cfg(target_arch = "x86")'.dependencies]
+lf-checker-rt = { path = "../lf-checker-rt" }
+
+[lints]
+workspace = true

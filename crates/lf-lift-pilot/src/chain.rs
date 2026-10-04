@@ -71,6 +71,7 @@ impl ChainArena {
 /// Is `target` reachable from `start` via forward links?
 /// Every visited node must carry flag bits 2 and 3; the first node that
 /// fails ends the walk. (Original: `chain_contains_target`.)
+#[must_use]
 pub fn contains(arena: &ChainArena, start: NodeId, target: NodeId) -> bool {
     let mut node = start;
     loop {
@@ -91,6 +92,7 @@ pub fn contains(arena: &ChainArena, start: NodeId, target: NodeId) -> bool {
 
 /// Do `start` and every forward successor carry flag bits 2 and 3?
 /// (Original: `chain_all_flagged`.)
+#[must_use]
 pub fn all_flagged(arena: &ChainArena, start: NodeId) -> bool {
     let mut node = start;
     loop {
@@ -178,6 +180,7 @@ pub fn find_flagged_node(
 /// Follow +0x124 once, then walk +0x11C links to the end; return the last
 /// node reached, or null when the anchor is null.
 /// (Original: `last_link_in_chain`.)
+#[must_use]
 pub fn last_link(arena: &ChainArena, this: NodeId) -> Option<NodeId> {
     let mut node = arena.get(this).anchor?;
     loop {
@@ -281,7 +284,7 @@ mod tests {
             x
         }
         fn below(&mut self, n: u32) -> u32 {
-            (self.next() % n as u64) as u32
+            (self.next() % u64::from(n)) as u32
         }
     }
 
@@ -290,8 +293,16 @@ mod tests {
         for i in 0..n {
             let mut nd = ChainNode::blank();
             nd.flags = rng.below(256) as u8;
-            nd.fwd = if i + 1 < n { Some(NodeId(i as u32 + 1)) } else { None };
-            nd.back = if i > 0 { Some(NodeId(i as u32 - 1)) } else { None };
+            nd.fwd = if i + 1 < n {
+                Some(NodeId(i as u32 + 1))
+            } else {
+                None
+            };
+            nd.back = if i > 0 {
+                Some(NodeId(i as u32 - 1))
+            } else {
+                None
+            };
             nd.link = nd.fwd;
             nodes.push(nd);
         }
@@ -363,7 +374,9 @@ mod tests {
     #[test]
     fn sweep_touches_and_anchors() {
         // Nodes: 0 (head) ->link 1 ->link 2; node 1 claimed, node 2 anchorable.
-        let mut arena = ChainArena { nodes: vec![ChainNode::blank(); 3] };
+        let mut arena = ChainArena {
+            nodes: vec![ChainNode::blank(); 3],
+        };
         arena.nodes[0].flags = 0x04;
         arena.nodes[0].link = Some(NodeId(1));
         arena.nodes[1].flags = 0x04;

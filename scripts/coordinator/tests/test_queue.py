@@ -145,5 +145,63 @@ class TestNativesAndNaming(unittest.TestCase):
         self.assertEqual(queue_rules.next_lane_numbers(stems), {"n": 12, "s": 3, "b": 7})
 
 
+class TestTails(unittest.TestCase):
+    """Remnant runs (cut short by a subsystem's end or the span) used to be dropped on every call."""
+
+    def funcs(self, n, sub="a", start=BASE, step=0x100):
+        return [{"start": f"0x{start + i * step:08X}", "sub": sub, "size": 50} for i in range(n)]
+
+    def test_chunks_of_unchanged(self):
+        funcs = self.funcs(12)
+        full = lambda run: len(run) >= 5  # noqa: E731
+        found, tails = queue_rules.chunks_and_tails(funcs, full)
+        self.assertEqual(dict(found), dict(queue_rules.chunks_of(funcs, full)))
+        self.assertEqual([len(r) for r in tails["a"]], [2])
+
+    def test_tails_from_subsystem_change_span_and_end(self):
+        funcs = self.funcs(3, "a") + self.funcs(2, "b", BASE + 0x1000) + self.funcs(1, "b", BASE + 0x20000)
+        found, tails = queue_rules.chunks_and_tails(funcs, lambda run: len(run) >= 5)
+        self.assertEqual(dict(found), {})
+        self.assertEqual({k: [len(r) for r in v] for k, v in tails.items()}, {"a": [3], "b": [2, 1]})
+
+    def test_every_function_in_exactly_one_batch(self):
+        funcs = self.funcs(13, "a") + self.funcs(7, "b", BASE + 0x40000) + self.funcs(4, "b", BASE + 0x80000)
+        full = lambda run: len(run) >= 5  # noqa: E731
+        found, tails = queue_rules.chunks_and_tails(funcs, full)
+        seen = [f["start"] for runs in list(found.values()) + list(tails.values()) for run in runs for f in run]
+        self.assertEqual(sorted(seen), sorted(f["start"] for f in funcs))
+
+    def test_merge_tails_packs_to_batch_size(self):
+        tails = {"b": [self.funcs(3, "b"), self.funcs(4, "b", BASE + 0x10000)]}
+        merged = queue_rules.merge_tails(tails, lambda run: len(run) >= 5)
+        self.assertEqual([len(b) for b in merged["b"]], [5, 2])
+        starts = [va(f["start"]) for f in merged["b"][0] + merged["b"][1]]
+        self.assertEqual(starts, sorted(starts))
+
+    def test_tails_offered_only_once_full_batches_are_gone(self):
+        full = lambda run: len(run) >= 5  # noqa: E731
+        found, tails = queue_rules.chunks_and_tails(self.funcs(12, "a") + self.funcs(3, "b", BASE + 0x40000), full)
+        offered = queue_rules.with_tails(found, tails, full)
+        self.assertEqual([len(b) for b in offered["a"]], [5, 5])  # a still has full batches: its tail waits
+        self.assertEqual([len(b) for b in offered["b"]], [3])     # b has none: its remnant is served
+        # Once a's full batches are handed out, the next call sees only the remnant and serves it.
+        found, tails = queue_rules.chunks_and_tails(self.funcs(2, "a", BASE + 0xA00), full)
+        self.assertEqual([len(b) for b in queue_rules.with_tails(found, tails, full)["a"]], [2])
+
+    def test_whole_pool_drains_over_successive_calls(self):
+        features, conf = synthetic(3, 47)  # 47 per subsystem: 2 full batches of 20 and a remnant of 7 each
+        handed = set()
+        full = lambda run: len(run) >= 20  # noqa: E731
+        for _ in range(10):
+            small, _, _ = queue_rules.filter_pool(
+                features, conf, assigned=handed, handlers=set(), replaced=set(), crt_block=(0, 0), enc_end=0)
+            for _, chunk in queue_rules.pick(queue_rules.with_tails(*queue_rules.chunks_and_tails(small, full), full),
+                                             2, random.Random(3)):
+                for f in chunk:
+                    self.assertNotIn(va(f["start"]), handed)
+                    handed.add(va(f["start"]))
+        self.assertEqual(len(handed), 3 * 47)
+
+
 if __name__ == "__main__":
     unittest.main()

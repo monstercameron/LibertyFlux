@@ -153,7 +153,14 @@ impl RpfArchive {
             let Some(name) = names.get(&h) else { continue };
             resolved += 1;
             entry.name = Some(name.clone());
-            if let Some(pos) = entry.path.rfind('/') {
+            // A directory path ends in '/'; its own segment is the one
+            // before that slash, not the empty string after it.
+            let own_end = if entry.kind == EntryKind::Directory && entry.path.len() > 1 {
+                entry.path.trim_end_matches('/').len()
+            } else {
+                entry.path.len()
+            };
+            if let Some(pos) = entry.path[..own_end].rfind('/') {
                 entry.path.truncate(pos + 1);
                 entry.path.push_str(name);
                 if entry.kind == EntryKind::Directory {
@@ -280,8 +287,15 @@ enum Record {
     },
 }
 
+/// Deepest directory nesting accepted. Shipped paths are a handful of
+/// levels deep; the cap keeps a hostile table from exhausting the stack.
+const MAX_DEPTH: usize = 256;
+
 // Assign paths depth-first. Records are pre-order on disk, so
-// children always follow their directory.
+// children always follow their directory. Each record is visited at most
+// once: a hostile table whose directory ranges overlap or contain their own
+// directory would otherwise recurse forever (found by the mutation fuzzer).
+#[allow(clippy::too_many_arguments)]
 fn walk(
     records: &[Record],
     record: usize,
@@ -290,7 +304,16 @@ fn walk(
     lookup_name: &dyn Fn(u32, usize) -> Result<String>,
     entries: &mut Vec<Entry>,
     index_of: &mut [Option<usize>],
+    depth: usize,
 ) -> Result<()> {
+    if index_of[record].is_some() {
+        return Ok(());
+    }
+    if depth > MAX_DEPTH {
+        return Err(Error::BadTree(format!(
+            "directory nesting deeper than {MAX_DEPTH} at record {record}"
+        )));
+    }
     match &records[record] {
         Record::Dir {
             name_ref,
@@ -341,6 +364,7 @@ fn walk(
                     lookup_name,
                     entries,
                     index_of,
+                    depth + 1,
                 )?;
             }
             Ok(())
@@ -522,6 +546,7 @@ fn build_entries(version: u8, entry_count: u32, toc: &[u8]) -> Result<Vec<Entry>
                 &lookup_name,
                 &mut entries,
                 &mut index_of,
+                0,
             )?;
         }
     }
@@ -538,6 +563,7 @@ fn build_entries(version: u8, entry_count: u32, toc: &[u8]) -> Result<Vec<Entry>
                 &lookup_name,
                 &mut entries,
                 &mut index_of,
+                0,
             )?;
         }
     }

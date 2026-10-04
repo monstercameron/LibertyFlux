@@ -99,6 +99,17 @@ p { margin: 0 0 1em; }
 .nav a[aria-current="page"] { color: var(--on-asphalt); font-weight: 700; border-bottom-color: var(--sodium); }
 .masthead.compact { padding-bottom: clamp(22px, 4vw, 36px); }
 .masthead.compact .lede { margin-bottom: 0; }
+/* Links inside the dark masthead: the paper link colour is too dark on asphalt in the light theme. */
+.masthead .lede a { color: var(--on-asphalt); }
+
+/* In-page contents on a compact masthead (quality and tools pages). */
+.page-toc { margin-top: 18px; }
+.page-toc ul { display: flex; flex-wrap: wrap; gap: 8px 10px; list-style: none; margin: 0; padding: 0; font-size: 0.9375rem; }
+.page-toc a {
+  display: inline-block; padding: 4px 12px; border-radius: 999px; text-decoration: none;
+  color: var(--on-asphalt); border: 1px solid rgba(255, 255, 255, 0.32);
+}
+.page-toc a:hover { border-color: var(--on-asphalt); }
 
 /* Changelog and devlog entries */
 .entries { max-width: var(--wide); }
@@ -112,6 +123,8 @@ p { margin: 0 0 1em; }
 .entry ul, .entry ol { padding-left: 1.2em; margin: 0 0 1em; max-width: var(--measure); }
 .entry li { margin-bottom: 0.4em; }
 .entry p { max-width: var(--measure); }
+/* Titles and lines can hold long native names with no break opportunity; let them wrap instead of widening the page. */
+.entry h2, .entry p, .entry li { overflow-wrap: break-word; }
 .entry table { margin: 0.4em 0 1.2em; font-size: 0.9875rem; max-width: 100%; }
 /* Devlog tables carry sentences in the first column, so it must wrap. */
 .entry td:first-child { white-space: normal; min-width: 9em; }
@@ -149,6 +162,16 @@ main.page > .wrap > h2 { margin-bottom: 0.5em; }
 .map-head #map-title { max-width: 74ch; }
 .map-head strong { color: var(--on-asphalt); font-weight: 700; }
 .map-head .addr { font-family: var(--mono); font-size: 0.875rem; color: var(--on-asphalt); min-height: 1.4em; }
+
+/* Functions or bytes: shown only when the progress data carries byte totals per slice. */
+.map-mode { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 12px; font-size: 0.875rem; color: var(--on-asphalt-soft); }
+.map-mode-label { margin-right: 4px; }
+.map-mode button {
+  font: inherit; color: var(--on-asphalt); background: none; cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.38); border-radius: 4px; padding: 4px 12px; min-height: 32px;
+}
+.map-mode button[aria-pressed="true"] { background: var(--on-asphalt); border-color: var(--on-asphalt); color: var(--asphalt); font-weight: 700; }
+.map-mode button:focus-visible { outline: 3px solid var(--sodium); outline-offset: 2px; }
 
 .map-empty {
   border: 1px dashed rgba(255, 255, 255, 0.38);
@@ -251,6 +274,30 @@ main section.band {
 }
 .meter-fill { height: 100%; background: var(--meter-fill); border-radius: 0 6px 6px 0; }
 .meter-note { color: var(--ink-soft); margin-top: 20px; max-width: var(--measure); }
+
+/* Progress over time: three small line charts sharing a time axis, one per stage. */
+.history { margin-top: 2.2em; max-width: var(--wide); }
+.history[hidden] { display: none; }
+.history-note { color: var(--ink-soft); max-width: var(--measure); font-size: 0.9375rem; }
+.history-charts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px 28px; }
+.history-panel { margin: 0; min-width: 0; }
+.history-panel figcaption { display: flex; flex-direction: column; margin-bottom: 4px; }
+.history-label { font-weight: 700; }
+.history-value { color: var(--ink-soft); font-size: 0.9375rem; font-variant-numeric: tabular-nums; min-height: 1.6em; }
+.history-plot { border-radius: 4px; touch-action: pan-y; }
+.history-plot:focus-visible { outline: 3px solid var(--sodium); outline-offset: 3px; }
+.history-plot svg { display: block; overflow: visible; }
+.history-plot .grid { stroke: var(--rule); stroke-width: 1; }
+.history-plot .tick { fill: var(--ink-faint); font: 0.75rem var(--sans); font-variant-numeric: tabular-nums; }
+.history-plot .line { fill: none; stroke: var(--meter-fill); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.history-plot .dot { fill: var(--meter-fill); stroke: var(--paper-raised); stroke-width: 2; }
+.history-plot .cross { stroke: var(--ink-faint); stroke-width: 1; }
+.history-table { margin-top: 14px; }
+.history-table summary { cursor: pointer; color: var(--link); width: fit-content; }
+.history-table summary:focus-visible { outline: 3px solid var(--sodium); outline-offset: 3px; }
+.history-table-scroll { max-height: 22rem; overflow-y: auto; margin-top: 8px; }
+.history-table td { font-variant-numeric: tabular-nums; }
+@media (max-width: 760px) { .history-charts { grid-template-columns: 1fr; } }
 
 .measured { margin-top: 1.4em; max-width: var(--wide); }
 .facts { list-style: none; margin: 0.4em 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0 32px; }

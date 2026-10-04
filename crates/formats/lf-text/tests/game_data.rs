@@ -27,7 +27,11 @@ const EPISODE_LANGS: [&str; 6] = [
 fn gxt_paths(root: &std::path::Path) -> Vec<PathBuf> {
     let mut out = Vec::new();
     for lang in BASE_LANGS {
-        out.push(root.join("GTAIV").join("common/text").join(format!("{lang}.gxt")));
+        out.push(
+            root.join("GTAIV")
+                .join("common/text")
+                .join(format!("{lang}.gxt")),
+        );
     }
     for pack in ["TBoGT", "TLAD"] {
         for lang in EPISODE_LANGS {
@@ -156,9 +160,12 @@ fn font_files_parse() {
     }
     // Script families carry different font sets.
     let western =
-        FontFile::parse(&std::fs::read(root.join("GTAIV").join("common/data/fonts.dat")).unwrap()).unwrap();
-    let japanese =
-        FontFile::parse(&std::fs::read(root.join("GTAIV").join("common/data/fonts_j.dat")).unwrap()).unwrap();
+        FontFile::parse(&std::fs::read(root.join("GTAIV").join("common/data/fonts.dat")).unwrap())
+            .unwrap();
+    let japanese = FontFile::parse(
+        &std::fs::read(root.join("GTAIV").join("common/data/fonts_j.dat")).unwrap(),
+    )
+    .unwrap();
     let western_ids: Vec<u32> = western.fonts.iter().map(|f| f.id).collect();
     let japanese_ids: Vec<u32> = japanese.fonts.iter().map(|f| f.id).collect();
     assert_eq!(western_ids, vec![0, 1, 3]);

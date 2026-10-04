@@ -421,6 +421,7 @@ impl WplFile {
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)] // parsed values are compared bit for bit on purpose
 mod tests {
     use super::*;
 
@@ -468,7 +469,7 @@ mod tests {
         let f = WplFile::parse(&data).unwrap();
         assert_eq!(f.inst.len(), 1);
         assert_eq!(f.inst[0].pos, [1.0, 2.0, 3.0]);
-        assert_eq!(f.inst[0].model_hash, 0xAABBCCDD);
+        assert_eq!(f.inst[0].model_hash, 0xAABB_CCDD);
         assert_eq!(f.grge.len(), 1);
         assert_eq!(f.grge[0].name, "G1");
         assert_eq!(f.grge[0].garage_type, 4);

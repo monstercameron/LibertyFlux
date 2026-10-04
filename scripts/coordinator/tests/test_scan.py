@@ -90,5 +90,45 @@ class TestCheckerVersions(unittest.TestCase):
         self.assertEqual(scan.short_version("version 1"), "v1")
 
 
+class TestEdgeCases(unittest.TestCase):
+    def test_ordinary_rust_calls_pass(self):
+        for line in ("let ret = st.call(SLOT_DRAW, &[a, b]);", "mem.write_u8(addr, 0x12);",
+                     "fn push_voice(&mut self, voice: u32) {}", "// returns the larger of the two counts",
+                     "let test = flags & MASK != 0;"):
+            self.assertIsNone(scan.scan_text(line), line)
+
+    def test_byte_dump_threshold(self):
+        self.assertIsNone(scan.scan_text("// " + " ".join(["ab"] * 7)))
+        self.assertEqual(scan.scan_text("// " + " ".join(["ab"] * 9)), "byte dump")
+        self.assertIsNone(scan.scan_text("const T: [u8; 4] = [0x01, 0x02, 0x03, 0x04];"))
+
+    def test_disassembly_case_insensitive(self):
+        self.assertEqual(scan.scan_text("// MOV EAX, 1"), "disassembly")
+
+    def test_first_reason_wins(self):
+        self.assertEqual(scan.scan_text("// mov eax, 1 then asm!"), "disassembly")
+
+    def test_lane_imports_of_every_lane_kind(self):
+        text = ("use lf_rn12_rw::rt::Mem;\nuse lf_rb7_x::{a, b};\nuse lf_a3_rt::*;\n"
+                "use lf_checker_rt::State;\nuse lf_k2_rt::Mem;\n")
+        self.assertEqual(scan.strip_lane_imports(text), "use lf_checker_rt::State;\nuse lf_k2_rt::Mem;\n")
+
+    def test_marker_precedence_and_rerun_lanes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            lists = Path(tmp)
+            (lists / "r-b01.v2").write_text("x", encoding="utf-8")
+            (lists / "r-b01.v4").write_text("x", encoding="utf-8")
+            self.assertEqual(scan.checker_of_lane(lists, "r-b01"), "version 4")  # the latest marker wins
+            (lists / "a-V11.v4").write_text("x", encoding="utf-8")
+            self.assertEqual(scan.checker_of_lane(lists, "a-V11"), "version 4")
+            self.assertEqual(scan.checker_of_lane(lists / "missing", "r-s01"), "version 1")
+
+    def test_constants_agree(self):
+        self.assertEqual(set(scan.MODERN), {v for v, r in scan.RANK.items() if r >= 2})
+        self.assertEqual({p for p in scan.PASSED if p != "verified"}, {f"verified_v{r}" for r in (2, 3, 4)})
+        for version in scan.RANK:
+            self.assertEqual(scan.short_version(version), "v" + version[-1])
+
+
 if __name__ == "__main__":
     unittest.main()

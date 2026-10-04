@@ -432,12 +432,11 @@ impl CutsceneFile {
                 // count as slack).
                 continue;
             }
-            let mut content_len = trimmed_end.len();
-            if trimmed_end.ends_with(b"\r") {
-                content_len -= 1;
-            }
+            // The CR of a CRLF ending belongs to the line, not to the slack
+            // (found by the generated round-trip test: CRLF files used to
+            // report one byte too much slack).
             let newline = usize::from(offset + raw.len() < bytes.len());
-            last_text_end = offset + content_len + newline;
+            last_text_end = offset + trimmed_end.len() + newline;
             if let Some(tag) = tag {
                 match tag {
                     TagLine::Open(name) => {

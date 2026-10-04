@@ -1,19 +1,36 @@
 //! `lf-platform`: the operating-system interface.
 //!
 //! README for future lanes:
-//! - This crate defines traits only: [`Window`], [`Input`], [`AudioOutput`],
-//!   [`Files`], [`Threads`] and [`Time`]. There is no implementation yet;
-//!   per-OS implementations arrive in phase 5 behind these traits.
-//! - Every other crate talks to the OS through these traits. Nothing else
-//!   in the workspace touches OS APIs directly.
-//! - Method signatures below are placeholders to pin the shape (object-safe
-//!   traits, plain-data arguments). Expect them to change when the first
-//!   implementation lands.
-//! - Async file reads must be real async (see plan.md pitfalls); the
-//!   [`Files`] trait will grow completion-based reads before phase 5 ends.
+//! - Every other crate talks to the OS through the traits defined here.
+//!   Nothing else in the workspace touches OS APIs directly, and
+//!   `cfg(target_os)` (or `cfg(unix)` / `cfg(windows)`) appears nowhere
+//!   outside this crate.
+//! - The traits are platform-agnostic and object-safe: engine code holds a
+//!   `&dyn Files` or `Box<dyn AudioOutput>` and never names a backend.
+//! - [`files`] is the streaming file interface: asynchronous reads with
+//!   request handles, priorities, cancellation, completion polling or
+//!   callbacks, block-aligned reads and a whole-file convenience. It ships
+//!   two implementations: [`files::ThreadedFiles`] (portable, std threads,
+//!   real asynchronous reads on every OS) and [`files::MemoryFiles`]
+//!   (deterministic, in memory, for tests).
+//! - [`audio`] is the audio output interface: device enumeration, a
+//!   pull-model stream whose callback fills interleaved `f32` frames, and
+//!   sample-rate and channel negotiation. It ships a null device and an
+//!   in-memory capture device for tests. There is no OS audio backend yet:
+//!   it needs a library such as SDL3, which is a download and waits for
+//!   approval. [`audio`] documents where it plugs in.
+//! - [`Window`], [`Input`], [`Threads`] and [`Time`] are still placeholder
+//!   shapes; they change when the windowing backend (SDL3, phase 5) lands.
+//! - Async file reads must be real async (see the pitfalls table in
+//!   `plan.md`): the std implementation reads on worker threads and every
+//!   result travels through the completion path, never a synchronous
+//!   shortcut.
 
-use std::io;
-use std::path::Path;
+pub mod audio;
+pub mod files;
+
+pub use audio::{AudioOutput, AudioStream};
+pub use files::Files;
 
 /// A game window: title and size only for now.
 pub trait Window {
@@ -38,22 +55,6 @@ pub enum InputEvent {
 pub trait Input {
     /// Returns the next pending event, or `None` when the queue is empty.
     fn poll_event(&self) -> Option<InputEvent>;
-}
-
-/// Audio output: accepts plain PCM frames for now.
-pub trait AudioOutput {
-    /// Submits interleaved stereo frames at the given sample rate.
-    fn submit_stereo_f32(&self, frames: &[f32], sample_rate_hz: u32);
-}
-
-/// File access. Paths are game-relative unless documented otherwise.
-pub trait Files {
-    /// Reads a whole file into memory.
-    ///
-    /// # Errors
-    ///
-    /// Returns the underlying I/O error when the file cannot be read.
-    fn read_file(&self, path: &Path) -> io::Result<Vec<u8>>;
 }
 
 /// Thread management.

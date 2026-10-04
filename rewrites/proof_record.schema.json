@@ -1,0 +1,54 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "$id": "rewrites/proof_record.schema.json",
+ "title": "Proof record",
+ "description": "The optional `proof` object of one entry in rewrites/verified/index.json: what the checker ran, on which exact inputs, and what the proof does not cover. With it, anyone holding the original executable can rerun the same proof and get the same verdict, and a reader can see a narrowed proof for what it is (rule 3). Hashes are lowercase hex SHA-1 (40 digits, the form checker2.py's contract_hash uses) or SHA-256 (64 digits). scripts/coordinator/ledger.py validates every proof object it finds against this file (with the schema subset in scripts/checker/validate_contracts.py) and adds the consistency rules below: a wrong version that was not caught, or a caught one with no failing trial, is an error; a partial proof or one whose trial count disagrees with the entry's is a warning.",
+ "type": "object",
+ "required": ["checker_version", "worker_hash", "driver_hash", "rewrite_hash", "contract_hash", "seed", "trials", "mutant", "narrowing", "partial"],
+ "additionalProperties": false,
+ "properties": {
+  "checker_version": {"type": "string", "minLength": 1, "description": "The verdict's checker_version (for example \"checker4\")."},
+  "worker_hash": {"$ref": "#/definitions/hash", "description": "Hash of the worker executable the trials ran in, built from the tracked source (the stock checker)."},
+  "driver_hash": {"$ref": "#/definitions/hash", "description": "Hash of scripts/checker/checker2.py as run."},
+  "rewrite_hash": {"$ref": "#/definitions/hash", "description": "Hash of the tracked rewrite file (the .rs the entry names), so a later edit to it is visible."},
+  "dll_hash": {"$ref": "#/definitions/hash", "description": "Hash of the rewrite DLL the export was loaded from, when recorded."},
+  "contract_hash": {"$ref": "#/definitions/hash", "description": "The verdict's contract_hash: SHA-1 of the contract JSON with sorted keys."},
+  "seed": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+  "trials": {"type": "integer", "minimum": 1, "description": "Trials the correct version passed."},
+  "mutant": {
+   "type": "object",
+   "required": ["caught", "fails"],
+   "additionalProperties": false,
+   "properties": {
+    "caught": {"type": "boolean", "description": "True when the deliberately wrong version failed the same contract."},
+    "fails": {"type": "integer", "minimum": 0, "description": "Trials on which the wrong version failed."},
+    "trials": {"type": "integer", "minimum": 1, "description": "Trials the wrong version ran."},
+    "export": {"type": "string", "minLength": 1, "description": "The wrong version's export name."},
+    "operators": {"type": "array", "items": {"type": "string", "minLength": 1}, "description": "What was changed in it (mutate_rewrite.py operator names, or a sentence when written by hand)."}
+   }
+  },
+  "narrowing": {
+   "type": "array",
+   "items": {"type": "string", "minLength": 1},
+   "description": "What the proof does not cover, by name: the warning names validate_contracts.py reports for the contract (check-off:<check>, ret-none, fulldata-off, fp-tolerance, call-skip:<id>, call-regs:<id>, call-mask:<id>, transport-skips-args:<id>, no-mut-export, min-orig-ok-share-zero, coverage-exempt:<id>, ...) plus anything the contract cannot express (for example callee-native:<name>, branch-untaken:<what>). An empty list claims a full proof."
+  },
+  "coverage": {
+   "type": "object",
+   "additionalProperties": false,
+   "description": "Coverage measured by the verdict, when there is any.",
+   "properties": {
+    "orig_ok_share": {"type": "number", "minimum": 0, "maximum": 1},
+    "branch_shapes": {"type": "integer", "minimum": 0, "description": "Distinct call-sequence shapes the original produced."},
+    "callees_unfired": {"type": "array", "items": {"type": "string"}},
+    "measure": {"type": "string", "minLength": 1, "description": "Name of any other coverage measure (for example \"basic-blocks\")."},
+    "value": {"type": "number", "minimum": 0, "description": "Its value, as a share in [0, 1] or a count, as `measure` says."}
+   }
+  },
+  "partial": {"type": "boolean", "description": "True when the proof covers only part of the function (a stage, a subset of paths)."},
+  "brief_version": {"type": "string", "description": "Production brief version the lane worked under."},
+  "date": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"}
+ },
+ "definitions": {
+  "hash": {"type": "string", "pattern": "^([0-9a-f]{40}|[0-9a-f]{64})$"}
+ }
+}

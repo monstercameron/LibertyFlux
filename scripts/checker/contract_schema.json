@@ -1,0 +1,1402 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "$id": "scripts/checker/contract_schema.json",
+ "title": "Checker contract",
+ "description": "One checker contract (scripts/checker/contracts/*.json and lane contracts), as read by scripts/checker/checker2.py and the worker it drives (crates/tools/lf-checker-worker). Derived from the driver's docstring and from the code that reads each key. Every object rejects keys it does not declare, because the driver and the worker ignore unknown keys: a misspelt key (\"global\" for \"globals\") silently drops an observation. Validated by scripts/checker/validate_contracts.py, which implements the subset of JSON Schema used here and adds the cross-reference and limit checks a schema cannot express (callee ids referenced but not declared, snapshot and out-param caps read from the worker source, narrowing settings reported by name). Keys marked x-pending belong to checker extensions being written at the same time; they are accepted loosely so the schema does not reject them, and should be tightened when the extension lands.",
+ "type": "object",
+ "required": [
+  "name",
+  "function",
+  "export",
+  "trials",
+  "seed",
+  "regs",
+  "stack",
+  "heapsegs",
+  "checks"
+ ],
+ "additionalProperties": false,
+ "patternProperties": {
+  "^_": {
+   "description": "Free-form annotation, ignored by the checker (underscore keys can never be a misspelt checker key)."
+  }
+ },
+ "properties": {
+  "name": {
+   "type": "string",
+   "minLength": 1,
+   "description": "Contract name; verdicts/<name>.json."
+  },
+  "function": {
+   "type": "string",
+   "pattern": "^(?:0[xX][0-9a-fA-F]+|selftest:[A-Za-z0-9_]+)$",
+   "description": "Original function as a hex RVA string (the driver calls int(function, 16)), or selftest:NAME for one of the checker's built-in self-test originals (regression contracts only; the driver refuses unknown names)."
+  },
+  "conv": {
+   "enum": [
+    "cdecl",
+    "stdcall",
+    "thiscall",
+    "fastcall"
+   ],
+   "description": "Calling convention; sets outer_pop for tail patches (cdecl 0, others 4 per stack entry)."
+  },
+  "export": {
+   "type": "string",
+   "minLength": 1,
+   "description": "Rewrite export run as the correct version."
+  },
+  "mut_export": {
+   "type": "string",
+   "minLength": 1,
+   "description": "Deliberately wrong version; must fail. Missing is reported as narrowing (rule 3)."
+  },
+  "trials": {
+   "type": "integer",
+   "minimum": 1
+  },
+  "seed": {
+   "type": "integer",
+   "minimum": 0
+  },
+  "timeout_ms": {
+   "type": "integer",
+   "minimum": 1,
+   "description": "Per-trial watchdog (default 10000)."
+  },
+  "dll": {
+   "type": "string",
+   "minLength": 1,
+   "description": "Rewrite DLL override; relative paths resolve against the repository root."
+  },
+  "ret": {
+   "$ref": "#/definitions/retChannel",
+   "description": "Documentation only: the driver and worker read checks.ret, not this key."
+  },
+  "regs": {
+   "type": "array",
+   "minItems": 7,
+   "maxItems": 7,
+   "items": {
+    "$ref": "#/definitions/regSpec"
+   },
+   "description": "Entry values for eax, ecx, edx, ebx, esi, edi, ebp."
+  },
+  "stack": {
+   "type": "array",
+   "items": {
+    "$ref": "#/definitions/stackEntry"
+   },
+   "description": "Stack arguments, first argument first."
+  },
+  "heapsegs": {
+   "type": "array",
+   "items": {
+    "$ref": "#/definitions/heapseg"
+   }
+  },
+  "globals": {
+   "type": "array",
+   "items": {
+    "$ref": "#/definitions/globalRange"
+   },
+   "description": "Declared global ranges, diffed and compared by the globals check."
+  },
+  "globals_fill": {
+   "anyOf": [
+    {
+     "enum": [
+      "random",
+      "pristine"
+     ]
+    },
+    {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/globalsWords"
+     }
+    }
+   ]
+  },
+  "globals_values": {
+   "type": "array",
+   "items": {
+    "$ref": "#/definitions/globalsValue"
+   },
+   "description": "Explicit per-range word specs; takes precedence over globals_fill_spec and globals_fill."
+  },
+  "globals_fill_spec": {
+   "type": "array",
+   "items": {
+    "$ref": "#/definitions/globalsFillSpec"
+   }
+  },
+  "callees": {
+   "type": "array",
+   "items": {
+    "$ref": "#/definitions/callee"
+   }
+  },
+  "patches": {
+   "type": "array",
+   "items": {
+    "$ref": "#/definitions/patch"
+   },
+   "description": "E8 call sites rewritten to recorder stubs."
+  },
+  "tailpatches": {
+   "type": "array",
+   "items": {
+    "$ref": "#/definitions/patch"
+   },
+   "description": "E9 tail-jump sites rewritten to tail stubs."
+  },
+  "iat": {
+   "type": "array",
+   "items": {
+    "$ref": "#/definitions/iatSlot"
+   }
+  },
+  "tls": {
+   "type": "array",
+   "items": {
+    "$ref": "#/definitions/tlsSlot"
+   }
+  },
+  "xmm": {
+   "type": "object",
+   "propertyNames": {
+    "pattern": "^[0-7]$"
+   },
+   "additionalProperties": {
+    "type": "array",
+    "maxItems": 4,
+    "items": {
+     "anyOf": [
+      {
+       "$ref": "#/definitions/u32Literal"
+      },
+      {
+       "const": "float"
+      }
+     ]
+    }
+   },
+   "description": "Scripted XMM entry values, {reg: [up to 4 words]}; registers 0-7 (the worker loads all eight)."
+  },
+  "x87": {
+   "x-pending": "x87 entry values (checker extension in progress: the worker takes up to eight [lo, hi, sexp] triples, st0 first); the driver's contract form is not settled, so only the type and the eight-entry limit are checked.",
+   "type": [
+    "array",
+    "object"
+   ]
+  },
+  "abs_shadow": {
+   "type": "boolean",
+   "x-pending": "Read-only shadow of the image at its preferred base for unrelocated absolute reads (checker extension in progress)."
+  },
+  "fn_selftest": {
+   "type": "string",
+   "minLength": 1,
+   "x-pending": "Run a worker self-test original by name instead of `function` (checker extension in progress)."
+  },
+  "stack_fill": {
+   "anyOf": [
+    {
+     "$ref": "#/definitions/u32Literal"
+    },
+    {
+     "const": "pattern"
+    },
+    {
+     "$ref": "#/definitions/hexString"
+    }
+   ],
+   "description": "Defined fill for uninitialized stack; 0 when either side reads stack it did not write."
+  },
+  "outer_pop": {
+   "type": "integer",
+   "minimum": 0,
+   "maximum": 4096
+  },
+  "allow_code_pointers": {
+   "type": "boolean",
+   "description": "Audit only: restores the v2 random stream, which may draw code-page addresses."
+  },
+  "log_max": {
+   "type": "integer",
+   "minimum": 1,
+   "maximum": 1024,
+   "description": "Per-side call-log cap (default 256)."
+  },
+  "min_orig_ok_share": {
+   "type": "number",
+   "minimum": 0,
+   "maximum": 1,
+   "description": "Coverage rule: share of trials the original must complete (default 0.10)."
+  },
+  "coverage_exempt_callees": {
+   "type": "array",
+   "items": {
+    "$ref": "#/definitions/calleeIdRef"
+   }
+  },
+  "pokes": {
+   "type": "array",
+   "items": {
+    "$ref": "#/definitions/poke"
+   },
+   "description": "Legacy alias for seg-level pin, with a seg index."
+  },
+  "heap_scripts": {
+   "type": "array",
+   "items": {
+    "$ref": "#/definitions/heapScript"
+   },
+   "description": "Legacy alias: [{seg, word, cycle}]."
+  },
+  "checks": {
+   "$ref": "#/definitions/checks"
+  },
+  "notes": {
+   "anyOf": [
+    {
+     "type": "string"
+    },
+    {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   ]
+  },
+  "comment": {
+   "anyOf": [
+    {
+     "type": "string"
+    },
+    {
+     "type": "array",
+     "items": {
+      "type": "string"
+     }
+    }
+   ]
+  }
+ },
+ "definitions": {
+  "hexString": {
+   "type": "string",
+   "pattern": "^0[xX][0-9a-fA-F]+$"
+  },
+  "hexOrInt": {
+   "anyOf": [
+    {
+     "$ref": "#/definitions/hexString"
+    },
+    {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 4294967295
+    }
+   ]
+  },
+  "u32Literal": {
+   "type": "integer",
+   "minimum": -2147483648,
+   "maximum": 4294967295
+  },
+  "calleeId": {
+   "type": "integer",
+   "minimum": 0,
+   "maximum": 255,
+   "description": "Index into the worker's callee table (256 entries)."
+  },
+  "calleeIdRef": {
+   "anyOf": [
+    {
+     "$ref": "#/definitions/calleeId"
+    },
+    {
+     "type": "string",
+     "pattern": "^[0-9]+$"
+    }
+   ]
+  },
+  "retChannel": {
+   "enum": [
+    "eax",
+    "ax",
+    "al",
+    "edx_eax",
+    "st0",
+    "xmm0",
+    "none"
+   ]
+  },
+  "plus": {
+   "anyOf": [
+    {
+     "type": "integer"
+    },
+    {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "integer"
+     }
+    },
+    {
+     "type": "object",
+     "additionalProperties": false,
+     "properties": {
+      "rot": {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "type": "integer"
+       }
+      },
+      "cycle": {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "type": "integer"
+       }
+      }
+     }
+    }
+   ],
+   "description": "Byte offset: a scalar, a list cycled per trial, or {rot|cycle: [...]}."
+  },
+  "wordSpec": {
+   "description": "One 32-bit word: a literal or a single-key spec object resolved per trial.",
+   "anyOf": [
+    {
+     "$ref": "#/definitions/u32Literal"
+    },
+    {
+     "type": "object",
+     "required": [
+      "int"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "int": {
+       "$ref": "#/definitions/u32Literal"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "heap"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "heap": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "plus": {
+       "type": "integer"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "heap_off"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "heap_off": {
+       "type": "integer",
+       "minimum": 0
+      }
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "any"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "any": {
+       "const": true
+      }
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "small"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "small": {
+       "type": "integer",
+       "minimum": 0
+      }
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "cycle"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "cycle": {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "$ref": "#/definitions/wordSpec"
+       }
+      }
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "rot"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "rot": {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "$ref": "#/definitions/wordSpec"
+       }
+      }
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "float"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "float": {
+       "const": true
+      }
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "stub"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "stub": {
+       "$ref": "#/definitions/calleeIdRef"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "null"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "null": {}
+     }
+    }
+   ]
+  },
+  "scriptEntry": {
+   "anyOf": [
+    {
+     "$ref": "#/definitions/wordSpec"
+    },
+    {
+     "type": "object",
+     "required": [
+      "lo"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "lo": {
+       "$ref": "#/definitions/wordSpec"
+      },
+      "hi": {
+       "$ref": "#/definitions/wordSpec"
+      }
+     }
+    }
+   ],
+   "description": "A scripted callee answer: a word spec, or {lo, hi} for 64-bit answers."
+  },
+  "regSpec": {
+   "anyOf": [
+    {
+     "type": "object",
+     "required": [
+      "any"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "any": {
+       "const": true
+      }
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "heap"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "heap": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "plus": {
+       "$ref": "#/definitions/plus"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "int"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "int": {
+       "$ref": "#/definitions/u32Literal"
+      }
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "small"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "small": {
+       "type": "integer",
+       "minimum": 0
+      }
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "cycle"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "cycle": {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "$ref": "#/definitions/u32Literal"
+       }
+      }
+     }
+    },
+    {
+     "type": "object",
+     "required": [
+      "null"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "null": {}
+     }
+    }
+   ]
+  },
+  "stackEntry": {
+   "type": "object",
+   "required": [
+    "kind"
+   ],
+   "x-discriminator": "kind",
+   "oneOf": [
+    {
+     "additionalProperties": false,
+     "properties": {
+      "kind": {
+       "enum": [
+        "int",
+        "byte",
+        "float",
+        "zero",
+        "null",
+        "smallint"
+       ]
+      }
+     }
+    },
+    {
+     "additionalProperties": false,
+     "required": [
+      "seg"
+     ],
+     "properties": {
+      "kind": {
+       "const": "ptr"
+      },
+      "seg": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "plus": {
+       "$ref": "#/definitions/plus"
+      }
+     }
+    },
+    {
+     "additionalProperties": false,
+     "required": [
+      "seg"
+     ],
+     "properties": {
+      "kind": {
+       "const": "ptr_or_null"
+      },
+      "seg": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "plus": {
+       "$ref": "#/definitions/plus"
+      },
+      "phase": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "period": {
+       "type": "integer",
+       "minimum": 1
+      }
+     }
+    },
+    {
+     "additionalProperties": false,
+     "properties": {
+      "kind": {
+       "const": "small"
+      },
+      "max": {
+       "type": "integer",
+       "minimum": 0
+      }
+     }
+    },
+    {
+     "additionalProperties": false,
+     "required": [
+      "values"
+     ],
+     "properties": {
+      "kind": {
+       "enum": [
+        "cycle",
+        "rot"
+       ]
+      },
+      "values": {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "$ref": "#/definitions/u32Literal"
+       }
+      }
+     }
+    },
+    {
+     "additionalProperties": false,
+     "required": [
+      "seg"
+     ],
+     "properties": {
+      "kind": {
+       "const": "heapidx"
+      },
+      "seg": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "count": {
+       "type": "integer",
+       "minimum": 1
+      }
+     }
+    },
+    {
+     "additionalProperties": false,
+     "required": [
+      "lo",
+      "hi"
+     ],
+     "properties": {
+      "kind": {
+       "const": "srange"
+      },
+      "lo": {
+       "type": "integer"
+      },
+      "hi": {
+       "type": "integer"
+      }
+     }
+    }
+   ]
+  },
+  "heapseg": {
+   "type": "object",
+   "required": [
+    "off",
+    "size"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "off": {
+     "type": "integer",
+     "minimum": 0,
+     "multipleOf": 4
+    },
+    "size": {
+     "type": "integer",
+     "minimum": 4,
+     "multipleOf": 4
+    },
+    "fill": {
+     "enum": [
+      "random",
+      "zeros",
+      "pattern",
+      "floats"
+     ]
+    },
+    "links": {
+     "type": "array",
+     "items": {
+      "type": "object",
+      "required": [
+       "at",
+       "to_seg"
+      ],
+      "additionalProperties": false,
+      "properties": {
+       "at": {
+        "type": "integer",
+        "minimum": 0,
+        "multipleOf": 4
+       },
+       "to_seg": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "plus": {
+        "type": "integer"
+       }
+      }
+     }
+    },
+    "floats_at": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "description": "Word indexes given float-edge values (fill \"floats\")."
+    },
+    "words": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/wordSpec"
+     },
+     "description": "Explicit word specs; exactly size/4 of them."
+    },
+    "pin": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/pin"
+     }
+    },
+    "pinned": {
+     "type": "array",
+     "items": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2
+     },
+     "description": "Legacy alias [[word index, [values]]]."
+    }
+   }
+  },
+  "pin": {
+   "type": "object",
+   "required": [
+    "at",
+    "vals"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "at": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "vals": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "$ref": "#/definitions/wordSpec"
+     }
+    },
+    "size": {
+     "enum": [
+      1,
+      2,
+      4
+     ]
+    }
+   }
+  },
+  "poke": {
+   "type": "object",
+   "required": [
+    "seg",
+    "at",
+    "vals"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "seg": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "at": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "vals": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "$ref": "#/definitions/wordSpec"
+     }
+    },
+    "size": {
+     "enum": [
+      1,
+      2,
+      4
+     ]
+    }
+   }
+  },
+  "heapScript": {
+   "type": "object",
+   "required": [
+    "seg",
+    "word",
+    "cycle"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "seg": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "word": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "cycle": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "$ref": "#/definitions/wordSpec"
+     }
+    }
+   }
+  },
+  "globalRange": {
+   "type": "object",
+   "required": [
+    "rva",
+    "size"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "rva": {
+     "$ref": "#/definitions/hexOrInt"
+    },
+    "size": {
+     "type": "integer",
+     "minimum": 4,
+     "multipleOf": 4
+    }
+   }
+  },
+  "globalsWords": {
+   "type": "object",
+   "required": [
+    "rva",
+    "words"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "rva": {
+     "$ref": "#/definitions/hexOrInt"
+    },
+    "words": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/u32Literal"
+     }
+    }
+   }
+  },
+  "globalsValue": {
+   "type": "object",
+   "required": [
+    "rva",
+    "words"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "rva": {
+     "$ref": "#/definitions/hexOrInt"
+    },
+    "words": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "$ref": "#/definitions/wordSpec"
+     }
+    }
+   }
+  },
+  "globalsFillSpec": {
+   "type": "object",
+   "required": [
+    "rva"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "rva": {
+     "$ref": "#/definitions/hexOrInt"
+    },
+    "heap_ptr": {
+     "type": "object",
+     "required": [
+      "seg"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "seg": {
+       "type": "integer",
+       "minimum": 0
+      },
+      "plus": {
+       "type": "integer"
+      }
+     }
+    },
+    "cycle": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "array",
+      "items": {
+       "$ref": "#/definitions/u32Literal"
+      }
+     }
+    },
+    "words": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/u32Literal"
+     }
+    }
+   }
+  },
+  "callee": {
+   "type": "object",
+   "required": [
+    "id",
+    "script"
+   ],
+   "additionalProperties": false,
+   "patternProperties": {
+    "^_": {}
+   },
+   "properties": {
+    "id": {
+     "$ref": "#/definitions/calleeId"
+    },
+    "conv": {
+     "enum": [
+      "cdecl",
+      "stdcall",
+      "thiscall",
+      "fastcall",
+      "custom"
+     ],
+     "description": "cdecl: caller cleans up; every other value pops nargs*4."
+    },
+    "nargs": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 40,
+     "description": "Stack arguments logged and compared (worker LOG_MAXW)."
+    },
+    "ret": {
+     "enum": [
+      "u32",
+      "u64",
+      "al",
+      "f32xmm0",
+      "f64xmm0",
+      "f32st0",
+      "f64st0",
+      "preserve"
+     ]
+    },
+    "script": {
+     "anyOf": [
+      {
+       "const": "edges"
+      },
+      {
+       "type": "array",
+       "minItems": 1,
+       "items": {
+        "$ref": "#/definitions/scriptEntry"
+       }
+      }
+     ]
+    },
+    "writes": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/calleeWrite"
+     }
+    },
+    "wscript": {
+     "type": "array",
+     "minItems": 1,
+     "items": {
+      "type": "array",
+      "items": {
+       "$ref": "#/definitions/wordSpec"
+      }
+     }
+    },
+    "snap": {
+     "type": "array",
+     "items": {
+      "$ref": "#/definitions/calleeSnap"
+     }
+    },
+    "logxmm": {
+     "type": "boolean"
+    },
+    "xmm0_from_stack": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "logxmm1": {
+     "type": "boolean"
+    },
+    "xmm1_from_stack": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "eax_from_stack": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "logxmm_regs": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 7
+     },
+     "description": "v5: log these XMM registers (0-7) at the call."
+    },
+    "xmm_from_stack": {
+     "type": "object",
+     "propertyNames": {
+      "pattern": "^[0-7]$"
+     },
+     "additionalProperties": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "description": "v5: {register: stack argument} transports for XMM0-XMM7 on the rewrite side."
+    },
+    "seq": {
+     "type": "array",
+     "minItems": 1,
+     "maxItems": 16,
+     "items": {
+      "$ref": "#/definitions/scriptEntry"
+     }
+    },
+    "preserve": {
+     "type": "boolean"
+    },
+    "noclean": {
+     "type": "boolean"
+    },
+    "notes": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "array",
+       "items": {
+        "type": "string"
+       }
+      }
+     ]
+    }
+   }
+  },
+  "calleeWrite": {
+   "type": "object",
+   "required": [
+    "at",
+    "n"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "arg": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "reg": {
+     "enum": [
+      "ecx",
+      "edx"
+     ]
+    },
+    "at": {
+     "type": "integer",
+     "minimum": 0,
+     "description": "First word in the callee's 16-word out-param buffer."
+    },
+    "n": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "dst": {
+     "type": "integer",
+     "minimum": 0,
+     "description": "Byte offset added to the pointer (v4)."
+    }
+   }
+  },
+  "calleeSnap": {
+   "type": "object",
+   "required": [
+    "n"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "kind": {
+     "enum": [
+      "arg",
+      "ecx",
+      "edx"
+     ]
+    },
+    "idx": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "n": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "at": {
+     "type": "integer",
+     "description": "v5: byte offset from the pointer to the first word (default 0, may be negative, bounded by the worker's SNAP_AT_LIMIT)."
+    }
+   }
+  },
+  "patch": {
+   "type": "object",
+   "required": [
+    "site",
+    "id"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "site": {
+     "$ref": "#/definitions/hexOrInt"
+    },
+    "id": {
+     "$ref": "#/definitions/calleeId"
+    }
+   }
+  },
+  "iatSlot": {
+   "type": "object",
+   "required": [
+    "dll",
+    "name",
+    "id"
+   ],
+   "additionalProperties": false,
+   "properties": {
+    "dll": {
+     "type": "string",
+     "minLength": 1
+    },
+    "name": {
+     "type": "string",
+     "minLength": 1
+    },
+    "id": {
+     "$ref": "#/definitions/calleeId"
+    }
+   }
+  },
+  "tlsSlot": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "slot": {
+     "type": "integer",
+     "minimum": 0,
+     "maximum": 63
+    },
+    "slot_rva": {
+     "$ref": "#/definitions/hexOrInt"
+    },
+    "seg": {
+     "type": "integer",
+     "minimum": 0
+    },
+    "plus": {
+     "type": "integer"
+    },
+    "int": {
+     "$ref": "#/definitions/u32Literal"
+    }
+   }
+  },
+  "callIndexList": {
+   "type": "array",
+   "items": {
+    "type": "integer",
+    "minimum": 0,
+    "maximum": 39
+   }
+  },
+  "checks": {
+   "type": "object",
+   "additionalProperties": false,
+   "properties": {
+    "ret": {
+     "$ref": "#/definitions/retChannel"
+    },
+    "esp": {
+     "type": "boolean"
+    },
+    "heap": {
+     "type": "boolean"
+    },
+    "stack": {
+     "type": "boolean"
+    },
+    "globals": {
+     "type": "boolean"
+    },
+    "calls": {
+     "type": "boolean"
+    },
+    "undeclared": {
+     "type": "boolean"
+    },
+    "fault": {
+     "type": "boolean",
+     "description": "Termination check (default true)."
+    },
+    "fulldata": {
+     "type": "boolean",
+     "description": "Whole-data-section diff for undeclared global writes (worker default true)."
+    },
+    "fp_tol": {
+     "type": "string",
+     "pattern": "^\\s*[-+0-9.eE]*\\s*(,\\s*[-+0-9.eE]*\\s*)?$",
+     "description": "\"abs,rel\"; anything but zero tolerance narrows the comparison. A number here is ignored by the worker, hence string only."
+    },
+    "fp64": {
+     "type": "boolean"
+    },
+    "x87_state": {
+     "type": "boolean",
+     "description": "v5: compare the x87 stack left behind (forced on when x87 entry values are declared; false beside them is refused)."
+    },
+    "call_regs": {
+     "type": "object",
+     "propertyNames": {
+      "pattern": "^[0-9]+$"
+     },
+     "additionalProperties": {
+      "type": "array",
+      "items": {
+       "enum": [
+        "ecx",
+        "edx",
+        "eax"
+       ]
+      }
+     }
+    },
+    "call_skip": {
+     "type": "object",
+     "propertyNames": {
+      "pattern": "^[0-9]+$"
+     },
+     "additionalProperties": {
+      "$ref": "#/definitions/callIndexList"
+     }
+    },
+    "call_mask": {
+     "type": "object",
+     "propertyNames": {
+      "pattern": "^[0-9]+$"
+     },
+     "additionalProperties": {
+      "type": "object",
+      "propertyNames": {
+       "pattern": "^[0-9]+$"
+      },
+      "additionalProperties": {
+       "$ref": "#/definitions/hexOrInt"
+      }
+     }
+    },
+    "call_low8": {
+     "type": "object",
+     "propertyNames": {
+      "pattern": "^[0-9]+$"
+     },
+     "additionalProperties": {
+      "$ref": "#/definitions/callIndexList"
+     }
+    }
+   }
+  }
+ }
+}

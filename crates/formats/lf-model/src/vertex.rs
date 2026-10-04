@@ -246,8 +246,8 @@ pub fn decode_vertex(decl: &VertexDecl, bytes: &[u8]) -> Result<DecodedVertex, E
                 let c = decode_components(e.kind, src)?;
                 v.normal = [get(&c, 0), get(&c, 1), get(&c, 2)];
             }
-            ElementUsage::Color(0) => v.diffuse = u32::from_le_bytes(src.try_into().unwrap()),
-            ElementUsage::Color(1) => v.specular = u32::from_le_bytes(src.try_into().unwrap()),
+            ElementUsage::Color(0) => v.diffuse = packed_colour(e.kind, src)?,
+            ElementUsage::Color(1) => v.specular = packed_colour(e.kind, src)?,
             ElementUsage::TexCoord(0) => {
                 let c = decode_components(e.kind, src)?;
                 v.uv = [get(&c, 0), get(&c, 1)];
@@ -256,6 +256,17 @@ pub fn decode_vertex(decl: &VertexDecl, bytes: &[u8]) -> Result<DecodedVertex, E
         }
     }
     Ok(v)
+}
+
+/// A colour element as its raw packed word. Colours are 4-byte elements in
+/// every real file; a declaration giving a colour slot another size is
+/// malformed (found by the mutation fuzzer; it used to panic).
+fn packed_colour(kind: ElementType, src: &[u8]) -> Result<u32, Error> {
+    let word: [u8; 4] = src.try_into().map_err(|_| Error::BadEnum {
+        what: "colour element type",
+        value: u32::try_from(kind.size()).unwrap_or(u32::MAX),
+    })?;
+    Ok(u32::from_le_bytes(word))
 }
 
 fn get(c: &[f32], i: usize) -> f32 {
@@ -328,6 +339,7 @@ fn dec3n_axis(v: u32, shift: u32) -> f32 {
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)] // parsed values are compared bit for bit on purpose
 mod tests {
     use super::*;
 
@@ -393,7 +405,7 @@ mod tests {
         v.extend_from_slice(&0xFF8040C0u32.to_le_bytes());
         let dv = decode_vertex(&d, &v).unwrap();
         assert!((dv.normal[2] - 1.0).abs() < 0.01);
-        assert_eq!(dv.diffuse, 0xFF8040C0);
+        assert_eq!(dv.diffuse, 0xFF80_40C0);
     }
 
     #[test]

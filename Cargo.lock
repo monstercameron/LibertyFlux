@@ -198,6 +198,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-dxso-spirv"
+version = "0.1.0"
+dependencies = [
+ "lf-shaderpack",
+]
+
+[[package]]
 name = "lf-effects"
 version = "0.1.0"
 dependencies = [
@@ -246,6 +253,46 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-inspect"
+version = "0.1.0"
+dependencies = [
+ "lf-anim",
+ "lf-archive",
+ "lf-audio-bank",
+ "lf-audio-config",
+ "lf-collision",
+ "lf-cutscene",
+ "lf-effects",
+ "lf-entity-meta",
+ "lf-gamedata",
+ "lf-mapdata",
+ "lf-model",
+ "lf-nav",
+ "lf-resource",
+ "lf-save",
+ "lf-sco",
+ "lf-shaderpack",
+ "lf-text",
+ "lf-texture",
+]
+
+[[package]]
+name = "lf-lift"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+]
+
+[[package]]
+name = "lf-lift-diff"
+version = "0.1.0"
+dependencies = [
+ "lf-checker-rt",
+ "lf-core",
+ "lf-lift",
+]
+
+[[package]]
 name = "lf-lift-pilot"
 version = "0.1.0"
 
@@ -258,6 +305,10 @@ dependencies = [
 
 [[package]]
 name = "lf-mapdata"
+version = "0.1.0"
+
+[[package]]
+name = "lf-math"
 version = "0.1.0"
 
 [[package]]
@@ -336,7 +387,9 @@ dependencies = [
 name = "lf-rewrite-32"
 version = "0.1.0"
 dependencies = [
+ "lf-checker-rt",
  "lf-core",
+ "lf-registry",
 ]
 
 [[package]]
@@ -397,12 +450,26 @@ dependencies = [
 [[package]]
 name = "lf-types-draft"
 version = "0.0.0"
+dependencies = [
+ "lf-core",
+]
 
 [[package]]
 name = "lf-vehicles"
 version = "0.1.0"
 dependencies = [
  "lf-core",
+]
+
+[[package]]
+name = "lf-viewer"
+version = "0.1.0"
+dependencies = [
+ "flate2",
+ "lf-math",
+ "lf-model",
+ "lf-texture",
+ "serde_json",
 ]
 
 [[package]]

@@ -1,0 +1,242 @@
+{
+ "format": "lf-site-quality/1",
+ "sources": {
+  "verified": {
+   "path": "rewrites/verified/index.json",
+   "as_of": "2026-10-04 18:15 UTC"
+  },
+  "unverified": {
+   "path": "rewrites/unverified/index.json",
+   "as_of": "2026-10-04 18:15 UTC"
+  },
+  "issues": {
+   "path": "rewrites/review/issues.json",
+   "as_of": "2026-10-04 18:55 UTC"
+  },
+  "build": {
+   "path": "scripts/ci/check_rewrites_build.py result (not tracked)",
+   "as_of": "2026-10-04 18:54 UTC"
+  }
+ },
+ "tree": {
+  "verified": 9319,
+  "by_kind": {
+   "function": 6798,
+   "native": 2521
+  },
+  "by_checker": {
+   "version 1": 19,
+   "version 2": 4507,
+   "version 3": 2006,
+   "version 4": 2787
+  },
+  "modern_checker": 9300,
+  "lanes": 511,
+  "trials": {
+   "with_count": 9318,
+   "at_least_1000": 9318,
+   "least": 1000
+  },
+  "proofs": {
+   "with_proof": 0,
+   "partial": 0,
+   "narrowed": 0,
+   "mutant_caught": 0
+  },
+  "unverified": 672,
+  "unverified_by_outcome": {
+   "not_reached": 368,
+   "not yet run": 269,
+   "deferred": 34,
+   "failed_v3": 1
+  },
+  "unverified_by_reason": {
+   "none recorded": 638,
+   "other": 20,
+   "needs_encrypted_code": 11,
+   "checker_gap": 2,
+   "frame_pointer_args": 1
+  },
+  "demoted": 0
+ },
+ "issues": {
+  "checked": 9319,
+  "files": 2544,
+  "issues": 4295,
+  "files_with_high": 1050,
+  "by_severity": {
+   "high": 1149,
+   "medium": 1111,
+   "low": 2035
+  },
+  "by_category": {
+   "integration": 2973,
+   "float": 596,
+   "narrow-proof": 212,
+   "panic": 155,
+   "suspicious-logic": 114,
+   "ub": 98,
+   "rule": 61,
+   "doc-mismatch": 56,
+   "quality": 30
+  },
+  "by_source": {
+   "review": 1756,
+   "lint": 1648,
+   "build": 891
+  },
+  "by_when": {
+   "now": 1729,
+   "post-bring-up": 1545,
+   "lift": 1021
+  },
+  "by_status": {
+   "open": 4295
+  },
+  "by_check": {
+   "export-name": 889,
+   "float-order": 561,
+   "float-to-int": 66,
+   "unused-parameter": 39,
+   "header": 20,
+   "transliteration": 20,
+   "constant-for-callee-result": 7,
+   "image-literal": 7,
+   "checker-only": 6,
+   "no-export": 6,
+   "partial": 6,
+   "wrong-version-tracked": 6,
+   "misaligned-deref": 5,
+   "unbalanced": 4,
+   "placeholder": 3,
+   "several-exports": 2,
+   "forwarder-drops-args": 1
+  },
+  "classes": [
+   {
+    "key": "lane-runtime",
+    "issues": 1264,
+    "files": 875,
+    "by_severity": {
+     "high": 908,
+     "medium": 320,
+     "low": 36
+    },
+    "by_source": {
+     "build": 874,
+     "review": 390
+    }
+   },
+   {
+    "key": "stack-cookie",
+    "issues": 45,
+    "files": 45,
+    "by_severity": {
+     "high": 39,
+     "medium": 3,
+     "low": 3
+    },
+    "by_source": {
+     "review": 45
+    }
+   },
+   {
+    "key": "out-buffer",
+    "issues": 11,
+    "files": 11,
+    "by_severity": {
+     "high": 10,
+     "medium": 1
+    },
+    "by_source": {
+     "review": 11
+    }
+   },
+   {
+    "key": "float-register",
+    "issues": 26,
+    "files": 26,
+    "by_severity": {
+     "high": 14,
+     "medium": 11,
+     "low": 1
+    },
+    "by_source": {
+     "review": 26
+    }
+   },
+   {
+    "key": "partial-proof",
+    "issues": 212,
+    "files": 208,
+    "by_severity": {
+     "high": 29,
+     "medium": 85,
+     "low": 98
+    },
+    "by_source": {
+     "lint": 56,
+     "review": 156
+    }
+   },
+   {
+    "key": "misaligned-deref",
+    "issues": 12,
+    "files": 10,
+    "by_severity": {
+     "high": 9,
+     "medium": 3
+    },
+    "by_source": {
+     "lint": 5,
+     "review": 7
+    },
+    "systemic_files": 5232
+   },
+   {
+    "key": "debug-overflow",
+    "issues": 122,
+    "files": 120,
+    "by_severity": {
+     "medium": 2,
+     "low": 120
+    },
+    "by_source": {
+     "review": 122
+    },
+    "systemic_files": 9319
+   }
+  ],
+  "systemic": [
+   {
+    "code": "plain-deref",
+    "title": "Plain dereferences of game memory",
+    "detail": "Aligned loads and stores through integers cast to pointers. Undefined behaviour for any address that is not aligned at run time, and debug builds check alignment and panic. Build the injected library in release with debug assertions off until these are converted, or convert them to read_unaligned/write_unaligned (1626 files already do).",
+    "severity": "high",
+    "category": "ub",
+    "when": "post-bring-up",
+    "files": 5232
+   },
+   {
+    "code": "debug-overflow",
+    "title": "Integer overflow behaviour depends on the build profile",
+    "detail": "The checker builds release, where + - * and shifts wrap as the original's do. A debug or overflow-checked build of the same code panics instead. Set overflow-checks = false for the library profile, or convert to wrapping operations.",
+    "severity": "medium",
+    "category": "panic",
+    "when": "post-bring-up",
+    "files": 9319
+   }
+  ]
+ },
+ "build": {
+  "checked": 9319,
+  "fail": 891,
+  "compile": 8428,
+  "edition": "2024",
+  "families": {
+   "missing-helper": 874,
+   "syntax-or-edition": 13,
+   "duplicate-name": 4
+  }
+ }
+}

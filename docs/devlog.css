@@ -29,10 +29,10 @@
 .posts li:last-child { border-bottom: 1px solid var(--rule); }
 .posts .when { font: 0.875rem var(--mono); color: var(--ink-faint); }
 .posts .day { font-weight: 700; color: var(--ink-soft); padding: 22px 0 8px; border-top: 0; }
-.posts h2 { font-size: 1.1875rem; margin: 2px 0 6px; }
+.posts h2 { font-size: 1.1875rem; margin: 2px 0 6px; overflow-wrap: break-word; }
 .posts h2 a { color: var(--ink); text-decoration-color: var(--rule); text-underline-offset: 3px; }
 .posts h2 a:hover { text-decoration-color: currentColor; }
-.posts p { margin: 0; max-width: var(--measure); color: var(--ink-soft); }
+.posts p { margin: 0; max-width: var(--measure); color: var(--ink-soft); overflow-wrap: break-word; }
 .posts .why { margin-top: 6px; font-size: 0.875rem; color: var(--ink-faint); }
 .posts .topics { margin-top: 6px; font-size: 0.8125rem; color: var(--ink-faint); }
 mark { background: color-mix(in srgb, var(--sodium) 38%, transparent); color: inherit; border-radius: 2px; padding: 0 1px; }

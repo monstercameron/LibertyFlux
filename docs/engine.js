@@ -283,11 +283,14 @@
     step.run(stack);
     pc += 1;
     drawVm(step.say + (pc >= PROGRAM.length ? " The program is finished." : ""));
+    // A disabled button drops keyboard focus to the page: hand it to the button that can act next.
+    if (stepButton.disabled) resetButton.focus();
   });
   resetButton.addEventListener("click", function () {
     stack = [];
     pc = 0;
     drawVm("Press Step to run the first instruction.");
+    stepButton.focus();
   });
   drawVm("Press Step to run the first instruction.");
 

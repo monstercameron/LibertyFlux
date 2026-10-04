@@ -1,0 +1,74 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "$id": "lane_results.schema.json",
+ "title": "One row of a lane's results.json",
+ "description": "A production lane (r-n, r-s, r-b) or re-run lane (a-) writes results.json as a list of these rows, one per function in its batch, or as an object holding that list under `functions` or `results`. Fields are the ones the production brief (briefs/production.txt and brief_notes.json) asks for and the coordinator's scripts read (sync_rewrites.py, apply_counts.py through counts.py, release_failed.py, prod_report.py, review_metrics.py, the dashboard). Other fields are allowed. lane_results.py checks rows against this schema and only ever warns.",
+ "type": "object",
+ "required": ["address", "outcome"],
+ "properties": {
+  "address": {
+   "description": "The function's original address: a hex string such as 0x00509FF0 (either case), or a number.",
+   "type": ["string", "integer"],
+   "pattern": "^0x[0-9A-Fa-f]{1,8}$"
+  },
+  "name": {
+   "description": "The merged symbol name if one exists, otherwise the lane's proposed descriptive name.",
+   "type": ["string", "null"]
+  },
+  "name_source": {
+   "description": "Where the name came from.",
+   "enum": ["symbols", "native", "proposed", null]
+  },
+  "size": {"description": "Size in bytes, from the repaired inventory.", "type": ["integer", "null"], "minimum": 0},
+  "outcome": {
+   "description": "What happened. The verified forms are scan.PASSED (sync_rewrites.py imports only those); deferred needs a reason; not_reached and not yet run (brief note 15: every row starts as not yet run) leave the function to be released; failed forms have been seen from re-run lanes.",
+   "enum": ["verified", "verified_v2", "verified_v3", "verified_v4", "deferred", "not_reached", "not yet run",
+            "failed", "failed_v2", "failed_v3", "failed_v4"]
+  },
+  "reason": {
+   "description": "For a deferral, one code from the brief: indirect_call, thread_local, frame_pointer_args, runtime_table, float_register_args, jump_thunk, not_a_function, needs_encrypted_code, checker_gap (a defect shown on a private worker, brief note 7), other (explain in detail).",
+   "type": ["string", "null"]
+  },
+  "detail": {"description": "Free text: what blocked it, or what the next lane should know.", "type": ["string", "null"]},
+  "trials": {"description": "Trials run on the stock checker; at least 1,000 for a pass.", "type": ["integer", "null"], "minimum": 0},
+  "attempts": {"description": "Attempts made (the brief caps them at 6).", "type": ["integer", "null"], "minimum": 0},
+  "minutes": {"description": "Time spent on this function, in minutes, read from the clock.", "type": ["number", "null"], "minimum": 0},
+  "rust_lines": {"type": ["integer", "null"], "minimum": 0},
+  "checker": {
+   "description": "The checker version the result was produced under (the brief asks for v4).",
+   "enum": ["v1", "v2", "v3", "v4", "version 1", "version 2", "version 3", "version 4", null]
+  },
+  "brief": {"description": "The production brief version (brief_notes.json `version`, or an experiment tag).", "type": ["string", "null"]},
+  "mutant_caught": {"description": "Whether the deliberately wrong version failed under the same contract (AGENTS.md rule 3).", "type": ["boolean", "null"]},
+  "mutant": {"description": "One phrase: what the wrong version changed.", "type": ["string", "null"]},
+  "narrowed": {
+   "description": "Everything that made this function's comparison narrower than the default (masked or skipped arguments, checks switched off, callees left native, raised call-log caps); empty when nothing.",
+   "type": ["array", "null"],
+   "items": {"type": "string"}
+  },
+  "private_worker": {"description": "One line describing a private worker change, for a checker_gap deferral (brief note 7).", "type": ["string", "null"]},
+  "source_lane": {"description": "For a re-run lane: the lane whose rewrite was re-run.", "type": ["string", "null"]},
+  "calls": {"description": "How many outgoing calls.", "type": ["integer", "null"], "minimum": 0},
+  "touches_globals": {"type": ["boolean", "null"]},
+  "uses_float": {"type": ["boolean", "null"]}
+ },
+ "allOf": [
+  {
+   "$comment": "A deferral names its reason (release_failed.py keeps only deferrals with a reason assigned).",
+   "if": {"required": ["outcome"], "properties": {"outcome": {"const": "deferred"}}},
+   "then": {"required": ["reason"], "properties": {"reason": {"type": "string", "minLength": 1}}}
+  },
+  {
+   "$comment": "A pass carries what AGENTS.md rule 3 asks of it: trials, the wrong version's result (which must have been caught), what narrowed the proof, and the checker and brief versions.",
+   "if": {"required": ["outcome"], "properties": {"outcome": {"enum": ["verified", "verified_v2", "verified_v3", "verified_v4"]}}},
+   "then": {
+    "required": ["trials", "mutant_caught", "narrowed", "checker", "brief"],
+    "properties": {
+     "trials": {"type": "integer", "minimum": 1000},
+     "mutant_caught": {"const": true},
+     "narrowed": {"type": "array"}
+    }
+   }
+  }
+ ]
+}

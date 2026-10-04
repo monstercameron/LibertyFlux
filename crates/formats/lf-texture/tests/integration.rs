@@ -119,7 +119,7 @@ fn real_dictionaries() {
                     assert_eq!((w, h), (u32::from(r.width), u32::from(r.height)));
                 }
                 Err(e) => {
-                    failures.push(format!("{}: {} DDS error {e}", path.display(), entry.name))
+                    failures.push(format!("{}: {} DDS error {e}", path.display(), entry.name));
                 }
             }
             // Every mip level must slice inside the graphics segment.
