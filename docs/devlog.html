@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#library-ranges">Library code mapped to exact function lists</a></li>
       <li><a href="#function-inventory">First unified function inventory: 45,229 functions, 30 percent named</a></li>
       <li><a href="#tools-shaders">Tools: shaders</a></li>
       <li><a href="#tools-runtime-debug">Tools: running, debugging and tracing the game</a></li>
@@ -105,6 +106,27 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="library-ranges">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Library code mapped to exact function lists</h2>
+      <p>The third-party libraries in the executable are now mapped to exact lists of functions instead of rough address ranges: just over a thousand functions, about half a megabyte, are identified as library code that the rewrite queue can skip or replace, and the two middleware packages that must be rewritten from scratch are sized with entry points.</p>
+      <h3>What was asked</h3>
+      <p>Turn the earlier library inventory into exact, function-level exclusion ranges by expanding from evidence anchors through the call graph, identify open-source library versions against public sources, name zlib and jpeg functions where the correspondence is clear, estimate the C runtime extent, and report for each library its size and whether an existing Rust crate can replace it.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> A verified direct-call graph of the readable code holds about seventy-two thousand edges; a naive byte scan for call instructions overcounts by roughly thirty percent, so every edge used here was confirmed by disassembly.</p>
+      <p><span class="evidence verified">Verified</span> The linked zlib is the compress side only, twenty-four functions: the checksum, the window filler and the three compression levels were confirmed by reading the code, but the decompressor, the checksum-table code and the gzip helpers are absent from the readable code. Pinning down where decompression happens is left open.</p>
+      <p><span class="evidence verified">Verified</span> The jpeg codec core is forty-nine functions reached from two entry points, with the standard error table and its six handlers confirmed; the table size and message set point to a 6b-era release. Most codec internals are reached through method tables rather than direct calls, so the full extent needs indirect-call analysis.</p>
+      <p><span class="evidence verified">Verified</span> The TLS stack covers about three hundred functions with dozens of callers from game code; hash code is present but the symmetric cipher is not found in readable code. The collision subset of the physics library and the animation middleware were mapped from their class tables to under a hundred and about five hundred functions respectively.</p>
+      <p><span class="evidence verified">Verified</span> Earlier estimates needed correction: the alleged jpeg code range pointed at unrelated data due to an address conversion mistake, the supposed checksum-table constants turned out to be coincidental byte patterns, and most copies of the compression version string sit in game data pools rather than in the library.</p>
+      <p><span class="evidence">Inferred</span> The compression library, the jpeg codec and the TLS stack can each be replaced by an existing Rust crate; the physics collision subset needs a careful port against a modern engine crate; the animation middleware has no replacement and must be rewritten from observed behaviour.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The per-function lists ship as data files for the queue builder, with confidence levels and far-flung members marked for review. The independent Ghidra analysis agrees with over ninety-three percent of the listed functions, so either source can be used where they agree. The C runtime beyond the mapped core, the jpeg indirect-call extent, and the missing decompressor are queued for the next lanes.</p>
+      <h3>How to reproduce it</h3>
+      <p>All scripts live in the lane scratch folder and run against the game file with the project Python environment. The main pipeline builds the verified call graph with a disassembler library, anchors each library in exact relocation targets and class-table slots, expands through verified caller edges only, and emits the function lists and statistics as JSON. Message tables were dumped to JSON for the version comparisons.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The raw call scan produced confident-looking but false edges, including jpeg helpers apparently calling the compression checksum; only disassembling the actual functions exposed the errors, and the whole analysis was rebuilt on verified edges. The target neighbourhood turned out to mix library code with game code that parses text formats, so every range-based assumption had to be replaced with call-graph evidence. The decompressor hunt ended empty despite its strings being present, which was the biggest surprise of the lane.</p>
+      </article>
 
       <article class="entry" id="function-inventory">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
