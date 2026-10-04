@@ -9144,6 +9144,33 @@
   "lane": "r-b128"
  },
  {
+  "address": "0x006A7490",
+  "name": "input_event_parse_a",
+  "kind": "function",
+  "file": "functions/fn_006a7490.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b200"
+ },
+ {
+  "address": "0x006A7790",
+  "name": "input_event_parse_b",
+  "kind": "function",
+  "file": "functions/fn_006a7790.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b200"
+ },
+ {
+  "address": "0x006A7A70",
+  "name": "input_event_parse_c",
+  "kind": "function",
+  "file": "functions/fn_006a7a70.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b200"
+ },
+ {
   "address": "0x006F4870",
   "name": "timer_restart_stamp",
   "kind": "function",
@@ -53278,6 +53305,33 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b07"
+ },
+ {
+  "address": "0x00D670B0",
+  "name": "emit_blend_blocks",
+  "kind": "function",
+  "file": "functions/fn_00d670b0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b205"
+ },
+ {
+  "address": "0x00D67450",
+  "name": "resolve_and_publish_handles",
+  "kind": "function",
+  "file": "functions/fn_00d67450.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b205"
+ },
+ {
+  "address": "0x00D675C0",
+  "name": "emit_indexed_record",
+  "kind": "function",
+  "file": "functions/fn_00d675c0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b205"
  },
  {
   "address": "0x00D69590",
