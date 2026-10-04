@@ -294,8 +294,8 @@ lf_checker_rt::export!(cdecl, rw_00aba1d0(arg0: u32, arg1: u32, arg2: u32, arg3:
                         u32,
                         obj,
                         1u32,
-                        gate.as_mut_ptr() as u32,
-                        gate2.as_mut_ptr() as u32
+                        gate2.as_mut_ptr() as u32,
+                        gate.as_mut_ptr() as u32
                     );
                     lf_checker_rt::callee_thiscall!(
                         C_BYTES,

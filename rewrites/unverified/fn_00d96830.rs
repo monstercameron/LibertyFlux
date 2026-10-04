@@ -7,14 +7,14 @@
 /// (32, 16 and 16 slots) and two groups of eight individually addressed
 /// guard/value pairs. A destination is written only when its guard is
 /// non-zero; the value words themselves are never read. The whole update is
-/// bracketed by three intercepted lock calls (thiscall, addressed below):
-/// an acquire with a constant lock id that pops nothing (the pushed word is
-/// cleaned with the frame, and the frame-pop leaves the constant in ESI on
-/// the original side), then two releases addressed at the overlapping local.
+/// bracketed by three intercepted lock calls (thiscall): an acquire with a
+/// constant lock id that pops its word, then two releases, all addressed at
+/// the same eight-byte local.
 ///
 /// Arguments: none. Incoming registers are ignored except ESI, whose saved
-/// copy is visible only to the stub snapshots (the contract pins it).
-/// Returns the third lock call's answer. Convention: cdecl, no stack words.
+/// copy is untouched by the stubs and restored on exit. All three calls take
+/// the same local buffer. Returns the third lock call's answer. Convention:
+/// cdecl, no stack words.
 lf_checker_rt::export!(cdecl, rw_00d96830() -> u32 {
     unsafe {
         const TICK: u32 = 0x0117_35b4;
@@ -55,7 +55,6 @@ lf_checker_rt::export!(cdecl, rw_00d96830() -> u32 {
         }
 
         let mut guard = [0u32; 2];
-        let mut guard2 = [0u32; 2];
         let stamp = lf_checker_rt::global::<u32>(TICK).read();
         lf_checker_rt::callee_thiscall!(
             ACQUIRE,
@@ -84,11 +83,7 @@ lf_checker_rt::export!(cdecl, rw_00d96830() -> u32 {
         for g in PAIR_B_GUARDS {
             guarded(g, g + PAIR_VALUE_OFF, stamp);
         }
-        // The original addresses the releases four bytes below the acquire's
-        // buffer, so the second word overlaps the acquire's first; replicate
-        // the overlap so the stub snapshots match.
-        guard2[1] = guard[0];
-        lf_checker_rt::callee_thiscall!(RELEASE_A, u32, guard2.as_mut_ptr() as u32);
-        lf_checker_rt::callee_thiscall!(RELEASE_B, u32, guard2.as_mut_ptr() as u32)
+        lf_checker_rt::callee_thiscall!(RELEASE_A, u32, guard.as_mut_ptr() as u32);
+        lf_checker_rt::callee_thiscall!(RELEASE_B, u32, guard.as_mut_ptr() as u32)
     }
 });
