@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Lift pilot: 37 container functions as portable Rust",
+    "title": "Devlog: Naming the ranked episodic leaderboard methods",
     "commit": null,
+    "summary": "Findings from the nm-17 lane.",
+    "changes": [
+      "New devlog entry: Naming the ranked episodic leaderboard methods.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Lift pilot: 37 container functions as portable Rust",
+    "commit": "905397aabbcab84cb169a9a561792ea5d14eec00",
     "summary": "The first code in the workspace that is the goal itself: verified game functions lifted to safe Rust that does not depend on pointer width.",
     "changes": [
       "crates/lf-lift-pilot holds 37 container functions (intrusive chains, slot records, fixed-stride pools, a value list, a one-shot table initialiser) lifted from their verified 32-bit test form: about 570 lines, with unsafe code forbidden for the whole crate. Links between nodes are indices into explicit arenas, callbacks are closures that receive state, and what were globals are fields of a state value.",
