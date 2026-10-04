@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Twenty dispatch stubs verified, and a gap in what the checker observes",
+    "title": "Rewrites: 256 more functions pass the checker (4500 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "256 rewrites added under rewrites/pending: 24 script native handlers and 232 other functions.",
+      "7 rewrites that had passed checker version 1 were re-run under version 2 and replaced by the version that passed it.",
+      "The tree now holds 4500 rewrites, 4481 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "203 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Twenty dispatch stubs verified, and a gap in what the checker observes",
+    "commit": "731c9221c0e08a16cb984d4869caf2b2c06d6337",
     "summary": "Findings from the r-s111 lane.",
     "changes": [
       "New devlog entry: Twenty dispatch stubs verified, and a gap in what the checker observes.",
