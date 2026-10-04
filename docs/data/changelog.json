@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Checker worker: call log no longer overruns at 256 calls",
+    "title": "Devlog: Production batch: a checker pop-cap flaw, NaN payload codegen, and three verified audio functions",
     "commit": null,
+    "summary": "Findings from the r-b63 lane.",
+    "changes": [
+      "New devlog entry: Production batch: a checker pop-cap flaw, NaN payload codegen, and three verified audio functions.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Checker worker: call log no longer overruns at 256 calls",
+    "commit": "9a91ff87c529e3056403710c03a0f6a767470713",
     "summary": "A one-opcode fix that three production lanes independently traced to the same line.",
     "changes": [
       "The stub that records each outgoing call tested the log index with the wrong comparison, so the 257th call in a trial was written one entry past the log, onto the table of callee stubs that follows it.",

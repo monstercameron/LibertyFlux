@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b63">Production batch: a checker pop-cap flaw, NaN payload codegen, and three verified audio functions</a></li>
       <li><a href="#production-s128">A worker bug that fails correct rewrites above 256 calls</a></li>
       <li><a href="#production-s123">A full call log silently corrupts the next verdict</a></li>
       <li><a href="#production-b65">Production batch: three audio functions verified, and a compiler lesson about NaN bits</a></li>
@@ -282,6 +283,27 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b63">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production batch: a checker pop-cap flaw, NaN payload codegen, and three verified audio functions</h2>
+      <p>Three adjacent audio functions were rewritten in Rust and verified at 1000 trials each with zero failures, but the batch also exposed a checker flaw that could pass a wrong rewrite: callee-cleanup stubs pop at most eight arguments, so a ten-argument callee desynchronizes the stack on both sides and both sides can agree on distorted execution.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of three medium and large audio functions in Rust and prove each rewrite behaves identically to the original with checker version 2, spending most of the effort on the proof contract rather than the code.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> All three rewrites passed 1000 trials each with zero failures and bit-exact floats, covering every branch found in analysis.</li>
+      <li><span class="evidence verified">Verified</span> The checker's callee stubs pop at most eight stack arguments for callee-cleanup calls. One function calls a ten-argument callee inside a loop; with the stock worker both sides run with a shifted stack and the loop counter lands on the wrong slot, so agreement there would be agreement on distorted execution. A one-line change to the pop cap in a lane-local worker copy fixed it; the call log still records eight arguments, so the remaining two are covered by result writes or documented as a gap.</li>
+      <li><span class="evidence verified">Verified</span> The optimizing Rust compiler reorders some SSE arithmetic operands relative to the original. The order is unobservable except when both operands are NaN with different payloads, which only random-bit harness fills produce; on those trials the release build diverges in payload bits only. The identical source compiled without optimizations passes all trials, proving the source logic exact and isolating the difference to codegen.</li>
+      <li><span class="evidence verified">Verified</span> The stub out-parameter offset indexes the scripted word row, not bytes past the pointer; the destination is always the pointer itself. An early contract used it as a pointer offset and silently covered the wrong words (harmless there, caught by reading the worker source).</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <p>The pop-cap fix should be folded back into the shared checker with a warning whenever a callee declares more than eight arguments, and the call log should eventually be widened past eight. The project should decide how to treat NaN payload ordering: either pin float codegen for affected functions or record payloads as out of domain, since the release compiler gives no stable way to pin SSE operand order in safe code.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the lane's rewrite crate for the 32-bit target with aborts on panic, build the lane's worker copy, and run the lane's driver copy once per contract file. Each verdict records one thousand passing trials. The function whose loop needs the pop fix fails its stack accounting under the stock worker and passes under the fixed copy.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two thiscall sites with two stack arguments were first transcribed in push order rather than argument order; the checker's fault address named the small integer that had been treated as a pointer, which diagnosed it exactly. A contract typo in the patch addresses (one hex digit) failed setup loudly rather than silently. The NaN payload failures looked like a logic error for several attempts until disassembling the rewrite's own DLL showed the compiler, not the source, had swapped the operands.</p>
+      </article>
 
       <article class="entry" id="production-s128">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
