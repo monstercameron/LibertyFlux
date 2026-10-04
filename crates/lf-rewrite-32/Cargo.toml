@@ -1,0 +1,17 @@
+[package]
+name = "lf-rewrite-32"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[lib]
+# The shippable artefact is the 32-bit DLL; the rlib exists so unit tests
+# and the checker can link the same code.
+crate-type = ["cdylib", "rlib"]
+
+[lints]
+workspace = true
+
+[dependencies]
+lf-core = { path = "../lf-core" }

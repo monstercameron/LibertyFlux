@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-03",
+    "title": "Rust workspace: scaffold of 18 crates",
+    "commit": null,
+    "summary": "The first Rust code in the repository: the cargo workspace the rewrite lands in.",
+    "changes": [
+      "A cargo workspace at the repository root with one crate per engine subsystem, a core crate for shared types and layout checks, a platform crate that holds the only operating-system interface, the 32-bit replacement library crate and the checker crate.",
+      "Unsafe code is denied workspace-wide and has to be re-allowed per module with a justification.",
+      "The toolchain is pinned to the installed Rust 1.96.1 with the three Windows targets.",
+      "Written by the workspace lane, then assembled and audited by the integration lane; no original game code is included."
+    ]
+  },
+  {
+    "date": "2026-10-03",
     "title": "Devlog: Production batch n20: twenty-five native handlers, one compiler surprise",
     "commit": "6a32da6481653e0d230c74ec467a3b12d794777a",
     "summary": "Findings from the r-n20 lane.",

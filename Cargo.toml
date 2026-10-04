@@ -1,0 +1,70 @@
+# LibertyFlux workspace.
+#
+# Layout:
+# - crates/lf-core holds shared types (fixed-layout helpers, typed pointers,
+#   future maths types) and the layout-assertion macros.
+# - crates/lf-<subsystem> hold the engine subsystems. Portable rewrite code
+#   lives in each crate root; fixed 32-bit memory layouts live in its
+#   `layout` module (see layout-convention.md in the lane notes; tracked
+#   copy to be decided by the coordinator).
+# - crates/lf-formats holds format-reader support. Per-format reader crates
+#   from the fmt-* lanes live beside lf-formats in crates/formats/ and are
+#   members below. (lf-sco is the compiled-script reader; lf-script is the
+#   engine script subsystem. Unfinished lanes will add lf-anim, lf-audio-
+#   banks, lf-cutscene, lf-particle and lf-vehicle-meta beside them.)
+# - crates/lf-platform is the OS interface (traits only, no implementation
+#   yet). All platform-specific code hangs off it; `cfg(target_os)` appears
+#   nowhere else.
+# - crates/lf-rewrite-32 is the 32-bit replacement DLL injected into the
+#   running game during the rewrite. Only its i686 build ever ships.
+# - crates/lf-checker is the host-only comparison harness and queue tooling.
+#
+# Rules (see AGENTS.md): no `unsafe` outside modules that re-allow it with a
+# justification comment; shared structure data changes need coordinator
+# review; lf-rewrite-32 and lf-checker are never dependencies of engine
+# crates; nothing here may contain original game code, only new Rust.
+
+[workspace]
+resolver = "2"
+members = [
+    "crates/lf-core",
+    "crates/lf-script",
+    "crates/lf-streaming",
+    "crates/lf-physics",
+    "crates/lf-animation",
+    "crates/lf-vehicles",
+    "crates/lf-peds-tasks",
+    "crates/lf-audio",
+    "crates/lf-input-frontend",
+    "crates/lf-network",
+    "crates/lf-world",
+    "crates/lf-main-loop",
+    "crates/lf-files-memory",
+    "crates/lf-renderer",
+    "crates/lf-formats",
+    "crates/lf-platform",
+    "crates/lf-rewrite-32",
+    "crates/lf-checker",
+]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.96"
+license = "MIT"
+
+[workspace.dependencies]
+aes = "0.8"
+cipher = "0.4"
+flate2 = "1"
+serde_json = "1"
+sha1 = "0.10"
+
+# The unsafe rule: denied everywhere; a module that genuinely needs unsafe
+# re-allows it with `#[allow(unsafe_code)]` plus a justification comment.
+[workspace.lints.rust]
+unsafe_code = "deny"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+all = "warn"
+pedantic = "warn"
