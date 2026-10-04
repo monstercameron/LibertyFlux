@@ -5,8 +5,9 @@
 /// `dev` selects a row of the per-device table (`T_DEVS`, rows of 24 bytes:
 /// record-array pointer at `+0`, record count as a 16-bit word at `+4`).
 /// Each record is `REC_LEN` bytes with a signed 16-bit key at `+0x12` and a
-/// binding id byte at `+0x15`. `in_ecx` is a slot index into the global slot
-/// array `G_SLOTS` (dwords).
+/// binding id byte at `+0x15`. Incoming ECX is ignored: the original pushes
+/// it and then reuses its stack slot for the first callee answer before any
+/// read, so the slot always holds that answer afterwards.
 ///
 /// The two answers of the key callee for `(dev, 0x1e)` and `(dev, 0x1d)`
 /// (`NO_LINK` answers are replaced by `ALT_A`/`ALT_B`) are searched for in
@@ -14,15 +15,16 @@
 /// returned), the second picks a record (record 0 when it matches nothing)
 /// whose id byte seeds a scan of the 60-row binding table `T_DEFS` (rows of
 /// 12 bytes: id at `+0`, value-list pointer at `+4`, limit as a 16-bit word
-/// at `+8`). On a hit whose limit does not exceed the slot value, the slot
-/// is cleared and the output id is read from the value list; a second scan
-/// resolves the output id back to a limit. Finally the current device's row
-/// (selected by `G_CUR_INDEX`) has the found record's id byte replaced and
-/// its neighbour byte set to the resolved limit, and stale slots are
-/// cleared. An empty record list returns `dev * 3`.
+/// at `+8`). On a hit whose limit does not exceed the slot value, the second
+/// answer's slot is cleared and the output id is read from the value list; a
+/// second scan resolves the output id back to a limit. Finally the current
+/// device's row (selected by `G_CUR_INDEX`) has the found record's id byte
+/// replaced and its neighbour byte set to the resolved limit, and the first
+/// answer's slot is cleared when the old id differs. An empty record list
+/// returns `dev * 3`.
 ///
-/// Original: 0x008bf180 (thiscall, incoming ECX plus one stack word).
-lf_checker_rt::export!(thiscall, rw_008bf180(in_ecx: u32, dev: u32) -> u32 {
+/// Original: 0x008bf180 (cdecl, one stack word; the caller cleans up).
+lf_checker_rt::export!(cdecl, rw_008bf180(dev: u32) -> u32 {
     unsafe {
         const G_CUR_INDEX: u32 = 0x01160C40;
         const G_SLOTS: u32 = 0x01160C48;
@@ -141,8 +143,11 @@ lf_checker_rt::export!(thiscall, rw_008bf180(in_ecx: u32, dev: u32) -> u32 {
         let cur = rd32(lf_checker_rt::relocated(T_DEVS).wrapping_add(gidx.wrapping_mul(24)));
         let id2 = rd8(cur.wrapping_add((j as u32).wrapping_mul(REC_LEN).wrapping_add(REC_ID)));
         if (id2 as u32) != out_id {
-            if in_ecx != NO_LINK {
-                wr32(lf_checker_rt::relocated(G_SLOTS).wrapping_add(in_ecx.wrapping_mul(4)), 0);
+            // The original compares its reused ECX-slot value (the first
+            // answer, already remapped, so this skip never fires) and clears
+            // that answer's slot.
+            if pair_a != NO_LINK {
+                wr32(lf_checker_rt::relocated(G_SLOTS).wrapping_add(pair_a.wrapping_mul(4)), 0);
             }
         }
         wr8(cur.wrapping_add((j as u32).wrapping_mul(REC_LEN).wrapping_add(REC_ID)), out_id as u8);

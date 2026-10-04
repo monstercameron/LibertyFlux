@@ -1,56 +1,60 @@
-// original: 0x00D82A30 pointer_angle_strength (proposed)
+// original: 0x00d82a30 steer_heading_and_gain (proposed)
 
-/// Aim angle and strength from two world objects, written to four out-pointers.
+/// Steer a heading toward a target point and derive a gain from a
+/// provider-supplied 2D vector, writing a clamped heading delta, a gain, and
+/// two zeroed-out slots.
 ///
-/// `obj` is the aiming object: `+0x00` points to its vtable (the probe hook
-/// lives in slot `+0xec`), `+0x20` points to a base block, `+0x2c` bit 0
-/// selects the offset scale, `+0xe6f` is a level byte. `other` is the target:
-/// `+0x20` points to an anchor block holding a position at `+0x30`/`+0x34`,
-/// or is null, in which case the position is read from `other+0x10`/`+0x14`.
+/// `state` is the steering state: a vtable at `+0x00` whose slot `+0xec`
+/// provides a 2D vector, a frame object at `+0x20`, a flag byte at `+0x2c`
+/// (bit 0 selects the offset gain) and a limit byte at `+0xe6f`. The frame
+/// holds a direction vector at `+0x10`/`+0x14` and a center point at
+/// `+0x30`/`+0x34`. `target` is the target: when its word at `+0x20` is
+/// non-null the aimed point is read at `+0x30`/`+0x34` of that object,
+/// otherwise at `+0x10`/`+0x14` of the target itself. `out_angle`,
+/// `out_gain`, `out_zero_dword` and `out_zero_byte` receive the results; the
+/// return value is `out_zero_byte` unchanged.
 ///
-/// Algorithm: offset the target position sideways from the base-to-target
-/// direction (perpendicular unit vector times -12.0 when the mode bit is set,
-/// 26.0 otherwise), take the heading of that point minus the heading of the
-/// normalized base direction (both through the heading callee), wrap the
-/// difference into [-pi, pi] and clamp it into [-0.99, 0.99] for `out_angle`.
-/// `out_strength` is 1.0 when the level exceeds the probe distance by more
-/// than a quarter of the level, a ramp down from there, -0.1 when the probe
-/// reaches past the level but not far, else -0.2. `out_zero` gets 0 and
-/// `out_flag` gets a 0 byte. Returns `out_flag`.
+/// Algorithm: the offset from the center to the aimed point is normalized
+/// (a zero or NaN length yields a zero offset) and scaled by -12.0 when the
+/// flag bit is set, else by 26.0, with the x component negated. The first
+/// heading is taken between the re-aimed point and the center, the second
+/// between the normalized frame direction (a zero or NaN length yields the
+/// raw y component paired with 1.0); their difference is wrapped into
+/// [-pi, pi] and clamped into [-0.99, 0.99]. The gain compares the limit
+/// against the length of the provided vector: a non-positive margin maps to
+/// -0.1 above -5.0 else -0.2, a positive margin maps to 1.0 past a quarter
+/// of the limit else ramps linearly. The float operation order is the
+/// original's.
 ///
-/// Original: 0x00D82A30 (cdecl, six stack words). The two heading calls take
-/// (x, y) float bits and answer an f32 in st0; the probe hook is thiscall
-/// with one stack word (a pointer to scratch the hook fills) and answers a
-/// pointer to two floats. Float operation order is the original's, including
-/// the reversed addends of both length squares and the negated-then-scaled
-/// perpendicular.
-lf_checker_rt::export!(cdecl, rw_00d82a30(obj: u32, other: u32, out_angle: u32, out_strength: u32, out_zero: u32, out_flag: u32) -> u32 {
+/// Original: 0x00d82a30 (cdecl, six stack words; plain `ret`).
+lf_checker_rt::export!(cdecl, rw_00d82a30(state: u32, target: u32, out_angle: u32, out_gain: u32, out_zero_dword: u32, out_zero_byte: u32) -> u32 {
     unsafe {
-        const OBJ_BASE: u32 = 0x20;
-        const OBJ_MODE: u32 = 0x2c;
-        const OBJ_LEVEL: u32 = 0xe6f;
-        const OTHER_ANCHOR: u32 = 0x20;
-        const ANCHOR_X: u32 = 0x30;
-        const OTHER_X: u32 = 0x10;
-        const BASE_DIR_X: u32 = 0x10;
-        const BASE_X: u32 = 0x30;
-        const VT_PROBE: u32 = 0xec;
-        const HEADING_FIRST: u32 = 1;
-        const HEADING_SECOND: u32 = 2;
+        const FRAME_OFF: u32 = 0x20;
+        const FLAGS_OFF: u32 = 0x2c;
+        const LIMIT_OFF: u32 = 0xe6f;
+        const DIR_X: u32 = 0x10;
+        const DIR_Y: u32 = 0x14;
+        const CENTER_X: u32 = 0x30;
+        const CENTER_Y: u32 = 0x34;
+        const TARGET_EXT: u32 = 0x20;
+        const GAIN_FLAG: u8 = 0x01;
+        const VEC_SLOT: u32 = 0xec;
+        const GAIN_SET: f32 = -12.0;
+        const GAIN_CLEAR: f32 = 26.0;
         const ONE: f32 = 1.0;
-        const SCALE_NEAR: f32 = -12.0;
-        const SCALE_FAR: f32 = 26.0;
-        const NEG_PI: f32 = f32::from_bits(0xC049_0FDB);
-        const TWO_PI: f32 = f32::from_bits(0x40C9_0FDB);
-        const PI: f32 = f32::from_bits(0x4049_0FDB);
-        const NEG5: f32 = -5.0;
+        const PI: f32 = f32::from_bits(0x4049_0fdb);
+        const TWO_PI: f32 = f32::from_bits(0x40c9_0fdb);
+        const NEG_PI: f32 = f32::from_bits(0xc049_0fdb);
+        const NEG_FIVE: f32 = -5.0;
         const QUARTER: f32 = 0.25;
         const FOUR: f32 = 4.0;
-        const NEG01: f32 = f32::from_bits(0xBDCC_CCCD);
-        const NEG02: f32 = f32::from_bits(0xBE4C_CCCD);
-        const LO: f32 = f32::from_bits(0xBF7D_70A4);
-        const HI: f32 = f32::from_bits(0x3F7D_70A4);
+        const NEG_TENTH: f32 = f32::from_bits(0xbdcc_cccd);
+        const NEG_FIFTH: f32 = f32::from_bits(0xbe4c_cccd);
+        const LO_CLAMP: f32 = f32::from_bits(0xbf7d_70a4); // -0.99
+        const HI_CLAMP: f32 = f32::from_bits(0x3f7d_70a4); // 0.99
         const SIGN: u32 = 0x8000_0000;
+        const HEADING_CALL1: u32 = 0;
+        const HEADING_CALL2: u32 = 1;
 
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
@@ -61,12 +65,12 @@ lf_checker_rt::export!(cdecl, rw_00d82a30(obj: u32, other: u32, out_angle: u32, 
             unsafe { (a as *const u8).read() }
         }
         #[inline(always)]
-        unsafe fn wr32(a: u32, v: u32) {
-            unsafe { (a as *mut u32).write_unaligned(v) }
-        }
-        #[inline(always)]
         unsafe fn rdf(a: u32) -> f32 {
             unsafe { f32::from_bits(rd32(a)) }
+        }
+        #[inline(always)]
+        unsafe fn wr32(a: u32, v: u32) {
+            unsafe { (a as *mut u32).write_unaligned(v) }
         }
         #[inline(always)]
         unsafe fn wrf(a: u32, v: f32) {
@@ -85,105 +89,83 @@ lf_checker_rt::export!(cdecl, rw_00d82a30(obj: u32, other: u32, out_angle: u32, 
             core::hint::black_box(a) - core::hint::black_box(b)
         }
         #[inline(always)]
-        fn div(a: f32, b: f32) -> f32 {
-            core::hint::black_box(a) / core::hint::black_box(b)
-        }
-        #[inline(always)]
         fn neg(a: f32) -> f32 {
-            // The xor must stay after the producing operation: without the
-            // black_box LLVM sinks it into a multiply operand (and may swap
-            // the operands), which changes NaN payloads on this worker.
-            f32::from_bits(core::hint::black_box(a.to_bits()) ^ SIGN)
+            f32::from_bits(a.to_bits() ^ SIGN)
         }
 
-        // Target position: anchor block when present, else inside `other`.
-        let anchor = rd32(other + OTHER_ANCHOR);
-        let p = if anchor != 0 { anchor + ANCHOR_X } else { other + OTHER_X };
-        let px = rdf(p);
-        let base = rd32(obj + OBJ_BASE);
-        let py = rdf(p + 4);
-        let dx = sub(px, rdf(base + BASE_X));
-        let dy = sub(py, rdf(base + BASE_X + 4));
-
-        // Perpendicular unit offset, scaled by mode.
+        // Aimed point: through the extension object when present.
+        let ext = rd32(target + TARGET_EXT);
+        let aim = if ext != 0 { ext + CENTER_X } else { target + DIR_X };
+        let frame = rd32(state + FRAME_OFF);
+        // Offset from the center, normalized unless zero or NaN.
+        let dx = sub(rdf(aim), rdf(frame + CENTER_X));
+        let dy = sub(rdf(aim + 4), rdf(frame + CENTER_Y));
         let len2 = add(mul(dy, dy), mul(dx, dx));
-        let inv = if len2 != 0.0 { div(ONE, len2.sqrt()) } else { 0.0 };
-        let mut ox = mul(inv, dy);
-        let mut oy = neg(mul(inv, dx));
-        let k = if rd8(obj + OBJ_MODE) & 1 != 0 { SCALE_NEAR } else { SCALE_FAR };
-        ox = mul(ox, k);
-        oy = mul(oy, k);
-
-        // Offset point and normalized base direction.
-        let ax = add(px, ox);
-        let ay = add(py, oy);
-        let dirx = rdf(base + BASE_DIR_X);
-        let diry = rdf(base + BASE_DIR_X + 4);
-        let blen = add(mul(diry, diry), mul(dirx, dirx)).sqrt();
-        let (h2x, h2y) = if blen != 0.0 {
-            let r = div(ONE, blen);
-            (mul(r, dirx), mul(r, diry))
+        let inv = if len2 > 0.0 {
+            let root = core::hint::black_box(len2).sqrt();
+            core::hint::black_box(ONE) / core::hint::black_box(root)
         } else {
-            (ONE, diry)
+            0.0
         };
-
-        let h1: f32 = lf_checker_rt::callee_cdecl!(
-            HEADING_FIRST, f32,
-            sub(ax, rdf(base + BASE_X)).to_bits(),
-            sub(ay, rdf(base + BASE_X + 4)).to_bits()
-        );
-        let h2: f32 =
-            lf_checker_rt::callee_cdecl!(HEADING_SECOND, f32, h2x.to_bits(), h2y.to_bits());
-
-        // Wrapped angle difference.
-        let mut d = sub(h1, h2);
-        while NEG_PI > d {
+        let gain = if rd8(state + FLAGS_OFF) & GAIN_FLAG != 0 { GAIN_SET } else { GAIN_CLEAR };
+        let oy = mul(mul(inv, dy), gain);
+        let ox = mul(neg(mul(inv, dx)), gain);
+        // Re-aimed point and its heading against the center.
+        let qx = add(rdf(aim), oy);
+        let qy = add(rdf(aim + 4), ox);
+        let vx = rdf(frame + DIR_X);
+        let vy = rdf(frame + DIR_Y);
+        let vlen = add(mul(vy, vy), mul(vx, vx)).sqrt();
+        // Normalized frame direction; a zero or NaN length keeps the raw y
+        // paired with 1.0.
+        let (n0, n1) = if vlen == 0.0 || vlen.is_nan() {
+            (vy, ONE)
+        } else {
+            let s = core::hint::black_box(ONE) / core::hint::black_box(vlen);
+            (mul(s, vy), mul(s, vx))
+        };
+        let hx = sub(qx, rdf(frame + CENTER_X));
+        let hy = sub(qy, rdf(frame + CENTER_Y));
+        let a1: f32 = lf_checker_rt::callee_cdecl!(HEADING_CALL1, f32, hx.to_bits(), hy.to_bits());
+        let a2: f32 = lf_checker_rt::callee_cdecl!(HEADING_CALL2, f32, n1.to_bits(), n0.to_bits());
+        // Wrapped heading difference.
+        let mut d = sub(a1, a2);
+        while d < NEG_PI {
             d = add(d, TWO_PI);
         }
         while d > PI {
             d = sub(d, TWO_PI);
         }
-
-        // Probe hook through the vtable; answers two floats.
-        let slot = rd32(rd32(obj) + VT_PROBE);
-        let probe: extern "thiscall" fn(u32, u32) -> u32 =
-            core::mem::transmute(slot as usize);
-        let mut buf = [0u32; 2];
-        let rp = probe(obj, buf.as_mut_ptr() as u32);
-        let rx = rdf(rp);
-        let ry = rdf(rp + 4);
-
-        // Strength from probe distance against the level byte.
-        let dist = add(mul(ry, ry), mul(rx, rx)).sqrt();
-        let level = rd8(obj + OBJ_LEVEL) as f32;
-        let gap = sub(level, dist);
-        // `comiss 0, gap; jb` takes the positive branch for NaN too (CF=1
-        // when unordered), hence the negated `>=` rather than `<`.
-        let strength = if !(0.0 >= gap) {
-            let ratio = div(gap, level);
-            if ratio > QUARTER {
-                ONE
-            } else {
-                sub(ONE, mul(sub(QUARTER, ratio), FOUR))
-            }
-        } else if NEG5 > gap {
-            NEG02
+        // Provided vector against the limit.
+        let mut pair = [a2.to_bits(), 0u32];
+        let provider: extern "thiscall" fn(u32, u32) -> u32 =
+            core::mem::transmute(rd32(rd32(state) + VEC_SLOT) as usize);
+        let r = provider(state, pair.as_mut_ptr() as u32);
+        let r0 = rdf(r);
+        let r1 = rdf(r + 4);
+        let m = add(mul(r1, r1), mul(r0, r0)).sqrt();
+        let limit = rd8(state + LIMIT_OFF) as f32;
+        let t = sub(limit, m);
+        if t <= 0.0 {
+            // Ordered comparison: NaN takes the other branch, as the
+            // original's below-or-equal test does.
+            wrf(out_gain, if NEG_FIVE <= t { NEG_TENTH } else { NEG_FIFTH });
         } else {
-            NEG01
-        };
-        wrf(out_strength, strength);
-
-        wr32(out_zero, 0);
+            let q = core::hint::black_box(t) / core::hint::black_box(limit);
+            wrf(out_gain, if q > QUARTER { ONE } else { sub(ONE, mul(sub(QUARTER, q), FOUR)) });
+        }
+        wr32(out_zero_dword, 0);
         wrf(out_angle, d);
-        (out_flag as *mut u8).write(0);
-        let mut a = rdf(out_angle);
-        if !(a > LO) {
-            a = LO;
+        (out_zero_byte as *mut u8).write(0);
+        // Clamp into [-0.99, 0.99]; NaN falls to the lower bound.
+        let mut c = rdf(out_angle);
+        if !(c > LO_CLAMP) {
+            c = LO_CLAMP;
         }
-        if !(HI > a) {
-            a = HI;
+        if !(c < HI_CLAMP) {
+            c = HI_CLAMP;
         }
-        wrf(out_angle, a);
-        out_flag
+        wrf(out_angle, c);
+        out_zero_byte
     }
 });
