@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Rewrites: the folder is renamed from pending to verified",
+    "title": "Devlog: Naming the episodic leaderboard methods confirms the slot vocabulary",
     "commit": null,
+    "summary": "Findings from the nm-18 lane.",
+    "changes": [
+      "New devlog entry: Naming the episodic leaderboard methods confirms the slot vocabulary.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Rewrites: the folder is renamed from pending to verified",
+    "commit": "0b2849b6e0e50b68593359163ab121e12b8a08ef",
     "summary": "rewrites/pending read as a list of functions still waiting to be rewritten. It holds the finished Rust rewrites that passed the checker, so it is now rewrites/verified.",
     "changes": [
       "The folder rewrites/pending is now rewrites/verified. Nothing inside changed: one Rust file per function that passed the checker, in natives and functions, with index.json recording the address, name, trial count and checker version of each.",
