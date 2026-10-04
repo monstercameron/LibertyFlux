@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Rerun batch 11: checker version 2 compares only the first eight call arguments",
+    "title": "Devlog: A two-register vector call the checker cannot see",
     "commit": null,
+    "summary": "Findings from the r-b29 lane.",
+    "changes": [
+      "New devlog entry: A two-register vector call the checker cannot see.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Rerun batch 11: checker version 2 compares only the first eight call arguments",
+    "commit": "4560fb5b69d5f32dfafe84808acd22b2c9ff8b22",
     "summary": "Findings from the a-11 lane.",
     "changes": [
       "New devlog entry: Rerun batch 11: checker version 2 compares only the first eight call arguments.",
