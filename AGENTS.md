@@ -39,8 +39,10 @@ say so in your report.
 The repository is public and the project site is served from it. Cam's standing instruction
 (2026-10-03) is that every commit is pushed.
 
-- The coordinator pushes to `origin main` straight after every commit. Do not let commits pile up
-  locally.
+- The coordinator pushes to `origin main` straight after committing. Do not let commits pile up
+  locally. When several commits are made in a row, push once after the last one, not once per
+  commit: GitHub Pages fails a build that is triggered a few seconds after another, and the site
+  is then stale until the next successful build.
 - Because every commit is published at once, check before committing, not after: no decompiled
   code, no game files, nothing from `notes.md`, no addresses or code in the site pages.
 - Never force-push and never rewrite pushed history.

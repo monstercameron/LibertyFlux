@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Tools: models, textures and collision",
+    "title": "Push once per batch of commits",
     "commit": null,
+    "summary": "Pushing once per commit made most site builds fail.",
+    "changes": [
+      "AGENTS.md rule 2: when several commits are made in a row, push once after the last one. GitHub Pages fails a build triggered a few seconds after another."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Tools: models, textures and collision",
+    "commit": "8f0b3d4c451d151b2567896697958b7c7e0088df",
     "summary": "Findings from the t-models-textures lane.",
     "changes": [
       "New devlog entry: Tools: models, textures and collision.",
