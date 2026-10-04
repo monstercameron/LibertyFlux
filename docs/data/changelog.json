@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Capture tool for the owner's running copy",
+    "title": "Ghidra export scripts",
     "commit": null,
+    "summary": "The scripts that export function lists, the call graph and cross-references from the Ghidra analysis.",
+    "changes": [
+      "scripts/ghidra: five scripts with usage headers. Their output goes under .artifacts and is never committed."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Capture tool for the owner's running copy",
+    "commit": "785bfe4775cb1e837d2d4ac8ec9d1d9dbccfb47f",
     "summary": "Reads the code that is encrypted on disk, and the data the game fills in at start-up, from the owner's own running copy.",
     "changes": [
       "scripts/capture/capture.py: read-only against the running process; writes only under orig/, which is never committed.",
