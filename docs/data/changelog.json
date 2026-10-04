@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Production batch b03: two verified, an eight-argument ceiling, and the first xmm1-argument callee",
+    "title": "Devlog: One node reader copies an uninitialized stack slot on its fail path",
     "commit": null,
+    "summary": "Findings from the r-s49 lane.",
+    "changes": [
+      "New devlog entry: One node reader copies an uninitialized stack slot on its fail path.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Production batch b03: two verified, an eight-argument ceiling, and the first xmm1-argument callee",
+    "commit": "694d83be162332fd604f1289dd64ef47f966ae78",
     "summary": "Findings from the r-b03 lane.",
     "changes": [
       "New devlog entry: Production batch b03: two verified, an eight-argument ceiling, and the first xmm1-argument callee.",
