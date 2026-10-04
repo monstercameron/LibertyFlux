@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Checker version 4: lane fixes folded back, and what version 3 still missed",
+    "title": "Devlog: Production batch: a flag leak in a return value and relocated immediates",
     "commit": null,
+    "summary": "Findings from the r-b139 lane.",
+    "changes": [
+      "New devlog entry: Production batch: a flag leak in a return value and relocated immediates.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Checker version 4: lane fixes folded back, and what version 3 still missed",
+    "commit": "247e15f6db4a8ac7d710cef8bf37597ed11004b5",
     "summary": "Findings from the k-checker4 lane.",
     "changes": [
       "New devlog entry: Checker version 4: lane fixes folded back, and what version 3 still missed.",

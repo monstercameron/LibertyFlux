@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b139">Production batch: a flag leak in a return value and relocated immediates</a></li>
       <li><a href="#checker-v4">Checker version 4: lane fixes folded back, and what version 3 still missed</a></li>
       <li><a href="#production-s202">Checker stubs must preserve the caller's registers</a></li>
       <li><a href="#production-s199">Checker stubs must preserve ECX for thiscall callees</a></li>
@@ -309,6 +310,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b139">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production batch: a flag leak in a return value and relocated immediates</h2>
+      <p>Four entity-transform functions were rewritten in Rust and proven identical over one thousand trials each. Two findings surprised us: one function leaks processor flag bits into its return value on a path with no calls, and absolute code addresses with no relocation records still arrive relocated in the checker.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of eight medium-sized entity-rotation functions and prove each rewrite behaves identically to the original with the version three checker. Four were verified; the other four were not reached in the time available.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> One placement-update function compares a weight, loads the flags into a register, and on the path where no further call runs it returns with those flag bits still in the result register. The rewrite reproduces the exact bits from the weight's float class (positive, negative, or not-a-number) rather than masking them.</p>
+      <p><span class="evidence verified">Verified</span> A session-attach function passes two absolute code addresses that have no entries in the relocation table, yet the checker's call log shows the original passing relocated addresses. The worker source applies only table relocations, so the mechanism is unexplained; the rewrite matches the observed relocated values.</p>
+      <p><span class="evidence verified">Verified</span> Three contract-authoring facts were confirmed against the worker source: the out-param offset field indexes the script buffer rather than the target, a register snapshot must precede any argument snapshot, and the call-comparison options belong inside the checks block.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Mirror leaked residue exactly instead of masking it. For any absolute address passed to a call, check the first call log before assuming it arrives raw or relocated. Later lanes in this module can reuse the finished contracts nearly unchanged.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the batch contracts with the stock checker worker and inspect the per-trial call records and return values. The flag leak shows as a small constant in the high byte of one early-exit result; the relocation shows as image-relative rather than raw values in the call arguments.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The flag leak first looked like a wrong accumulator, and took a focused trace of a single trial to identify. The relocation observation survived three independent checks of the relocation table and a read of the worker's mapping code, and remains unexplained.</p>
+      </article>
 
       <article class="entry" id="checker-v4">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
