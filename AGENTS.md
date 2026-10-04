@@ -103,7 +103,7 @@ code map on the project site. The coordinator owns it. Lanes never edit it.
     120 so the grid fills whole rows at every screen width. `mapRange` is the full range as text.
 - After editing, run `python scripts/update_progress.py`, open the site and confirm the numbers,
   meters and map agree with each other, then commit `progress.json` together with the regenerated
-  `progress.js` and badges, with a changelog entry.
+  badges. The site pages fetch `progress.json` and `changelog.json` directly.
 - If a count ever goes down (a false accept is found, functions are re-split), say why in the
   changelog entry. Never quietly lower or raise a number.
 - Record the commands or queries that produced each number in the devlog the first time, so the
@@ -184,7 +184,7 @@ say what each commit did in one sentence, and revert any one of them without los
 - Stage by file, or by hunk when one file holds two changes. Never `git add -A` or `git add .`
   without reading `git status` first.
 - A commit should leave the repository working: the site renders, scripts run, the Rust code builds.
-  Generated files (`docs/data/*.js`, badges) go in the same commit as the data that produced them.
+  Generated files (the badges) go in the same commit as the data that produced them.
 - Aim for commits a person could review in a few minutes. A wave of rewritten functions is split by
   subsystem if it is large.
 - Keep refactors and formatting separate from behaviour changes.

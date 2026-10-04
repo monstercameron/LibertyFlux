@@ -1,5 +1,4 @@
-(function () {
-  var data = window.LF_PROGRESS || {};
+function render(data) {
   var stages = data.stages || {};
   var functions = data.functions || {};
   var total = functions.game;
@@ -210,4 +209,10 @@
     [name, work, gate, status].forEach(function (td) { td.setAttribute("role", "cell"); tr.appendChild(td); });
     body.appendChild(tr);
   });
-})();
+}
+
+// The page's numbers come straight from data/progress.json.
+fetch("data/progress.json", { cache: "no-store" })
+  .then(function (response) { return response.ok ? response.json() : {}; })
+  .catch(function () { return {}; })
+  .then(render);

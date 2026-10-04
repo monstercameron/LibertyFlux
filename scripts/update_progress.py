@@ -4,9 +4,10 @@ Usage: python scripts/update_progress.py
 
 Reads   docs/data/progress.json    (counts only; it never holds code)
         docs/data/changelog.json   (one entry per commit, newest first)
-Writes  docs/data/progress.js      (same data, loadable from file:// and from GitHub Pages)
-        docs/data/changelog.js
-        docs/badges/*.svg          (badges referenced by README.md)
+Writes  docs/badges/*.svg          (badges referenced by README.md)
+        docs/data/changelog.json   (only to fill in commit hashes)
+
+The site pages fetch the two JSON files directly. There are no generated copies.
 
 A changelog entry whose title equals a commit's subject line gets that commit's hash filled in.
 """
@@ -96,9 +97,7 @@ def main():
     for name, (label, message, color) in badges.items():
         (BADGES / f"{name}.svg").write_text(badge(label, message, color), encoding="utf-8", newline="\n")
 
-    js = "window.LF_PROGRESS = " + json.dumps(data, indent=2) + ";\n"
-    (DATA / "progress.js").write_text(js, encoding="utf-8", newline="\n")
-    print(f"wrote {len(badges)} badges and progress.js (updated {data['updated']})")
+    print(f"wrote {len(badges)} badges (updated {data['updated']})")
 
     update_changelog()
 
@@ -129,10 +128,8 @@ def update_changelog():
             filled += 1
     if filled:
         path.write_text(json.dumps(entries, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
-    js = "window.LF_CHANGELOG = " + json.dumps(entries, indent=2, ensure_ascii=False) + ";\n"
-    (DATA / "changelog.js").write_text(js, encoding="utf-8", newline="\n")
     pending = sum(1 for entry in entries if not entry.get("commit"))
-    print(f"wrote changelog.js ({len(entries)} entries, {filled} hashes filled, {pending} not committed yet)")
+    print(f"changelog: {len(entries)} entries ( {filled} hashes filled, {pending} not committed yet)")
 
 
 if __name__ == "__main__":

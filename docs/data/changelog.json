@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Tools: mission scripts and the script format",
+    "title": "Load progress and changelog data directly from JSON",
     "commit": null,
+    "summary": "The site pages now fetch the JSON files themselves.",
+    "changes": [
+      "The overview page fetches data/progress.json and the changelog page fetches data/changelog.json, with caching disabled so a new push shows up on reload.",
+      "Removed the generated JavaScript copies of both files and the code that wrote them. They existed only so the pages could be opened straight from disk without a web server.",
+      "To preview locally, serve the docs folder with any static web server."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Tools: mission scripts and the script format",
+    "commit": "ed889df3aa15e43d83c969b6650d4e20ba724a76",
     "summary": "Findings from the t-scripts lane.",
     "changes": [
       "New devlog entry: Tools: mission scripts and the script format.",

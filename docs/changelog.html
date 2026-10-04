@@ -41,10 +41,8 @@
   </div>
 </footer>
 
-<script src="data/changelog.js"></script>
 <script>
-(function () {
-  var entries = window.LF_CHANGELOG || [];
+function render(entries) {
   var host = document.getElementById("entries");
   function el(tag, className, text) {
     var node = document.createElement(tag);
@@ -68,7 +66,11 @@
     article.appendChild(list);
     host.appendChild(article);
   });
-})();
+}
+fetch("data/changelog.json", { cache: "no-store" })
+  .then(function (response) { return response.ok ? response.json() : []; })
+  .catch(function () { return []; })
+  .then(render);
 </script>
 </body>
 </html>
