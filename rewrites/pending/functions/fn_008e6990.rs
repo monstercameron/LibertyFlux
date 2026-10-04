@@ -31,4 +31,3 @@ export!(cdecl, rw_008e6990(
         val1
     }
 });
-

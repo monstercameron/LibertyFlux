@@ -36,4 +36,3 @@ export!(cdecl, rw_008e6640(begin: *mut u8, end: *const u8) -> u32 {
         last
     }
 });
-

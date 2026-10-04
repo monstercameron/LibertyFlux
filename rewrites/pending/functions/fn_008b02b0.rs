@@ -189,7 +189,7 @@ export!(thiscall, rw_008b02b0(this: u32, vec: u32, voice: u32) -> () {
         let b = |off: u32| ((this.wrapping_add(off)) as *const u8).read_unaligned();
         // Packed blend over the four slots (replicated lane by lane).
         let g4 = |va: u32| {
-            let p = lf_rs35_rt::xbase().wrapping_add(va.wrapping_sub(0x400000));
+            let p = xbase().wrapping_add(va.wrapping_sub(0x400000));
             [rdf(p), rdf(p.wrapping_add(4)), rdf(p.wrapping_add(8)), rdf(p.wrapping_add(12))]
         };
         let mut p3: [f32; 4];

@@ -19,4 +19,3 @@ export!(cdecl, rw_008e6a40(hole: *mut u8, val0: u32, val1: u32) -> u32 {
         val1
     }
 });
-

@@ -19,4 +19,3 @@ export!(thiscall, rw_008e6d70(this: *mut u8, node: *mut u8, tag: u32) -> u32 {
         head
     }
 });
-

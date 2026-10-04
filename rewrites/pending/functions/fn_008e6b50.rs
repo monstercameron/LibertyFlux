@@ -4,4 +4,3 @@
 export!(cdecl, rw_008e6b50(a: u32, b: u32, c: u32) -> u32 {
     callee_cdecl!(1, u32, a, b, c, 0, 0)
 });
-

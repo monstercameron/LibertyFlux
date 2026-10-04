@@ -14,4 +14,3 @@ export!(cdecl, rw_008e6b90(begin: *mut u8, end: *mut u8, extra: u32) -> u32 {
         callee_cdecl!(1, u32, begin as u32, 0, count, last.0, last.1, extra)
     }
 });
-

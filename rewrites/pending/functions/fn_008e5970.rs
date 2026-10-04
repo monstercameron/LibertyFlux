@@ -15,4 +15,3 @@ export!(thiscall, rw_008e5970(this: *mut u8) -> u32 {
         answer
     }
 });
-

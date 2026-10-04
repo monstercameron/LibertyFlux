@@ -13,4 +13,3 @@ export!(cdecl, rw_008e6a10(begin: *mut u8, end: *const u8, _extra: u32) -> u32 {
         answer
     }
 });
-

@@ -39,4 +39,3 @@ export!(cdecl, rw_008e6550(
         callee_cdecl!(1, u32, base as u32, hole, first, _ignored, val0, val1)
     }
 });
-
