@@ -1,0 +1,17 @@
+[package]
+name = "lf-proxy"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[lib]
+name = "lf_proxy"
+crate-type = ["cdylib"]
+
+[dependencies]
+lf-hook = { path = "../lf-hook" }
+lf-registry = { path = "../lf-registry" }
+
+[lints]
+workspace = true

@@ -1,0 +1,17 @@
+[package]
+name = "lf-test-target"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "lf-test-target"
+path = "src/main.rs"
+
+[dependencies]
+lf-hook = { path = "../lf-hook" }
+lf-registry = { path = "../lf-registry" }
+
+[lints]
+workspace = true

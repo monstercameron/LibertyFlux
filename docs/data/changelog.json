@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Checker: driver, contracts and helpers",
+    "title": "Loader: hook engine, registry, proxy library and test program",
     "commit": null,
+    "summary": "The replacement loader that will switch individual functions over to their rewrites inside the running game.",
+    "changes": [
+      "crates/tools/lf-hook, lf-registry, lf-proxy and lf-test-target.",
+      "The proxy forwards every export of the system library it stands in for and adds the per-function switch.",
+      "Tested without the game: 16 host tests and 58 live 32-bit checks pass. It has not been run with the game.",
+      "Assembled from the lanes' scratch folders by the tools lane and scanned for machine paths, byte dumps and disassembly before publication."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Checker: driver, contracts and helpers",
+    "commit": "952455cc7e5d33a5abb7004a80eb817dd7672e2f",
     "summary": "The Python side of checker version 2.",
     "changes": [
       "scripts/checker/checker2.py drives the worker from one contract file per function and writes a verdict; its usage is in the module documentation.",

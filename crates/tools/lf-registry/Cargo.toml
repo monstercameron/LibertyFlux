@@ -1,0 +1,16 @@
+[package]
+name = "lf-registry"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[lib]
+name = "lf_registry"
+path = "src/lib.rs"
+
+[dependencies]
+lf-hook = { path = "../lf-hook" }
+
+[lints]
+workspace = true
