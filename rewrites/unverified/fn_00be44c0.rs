@@ -14,7 +14,7 @@ lf_checker_rt::export!(stdcall, rw_00be44c0(kind: u32, _unused: u32) -> u32 {
     unsafe {
         const WANT_KIND: u32 = 0x119;
         const POOL_GLOBAL: u32 = 0x0167e2a0;
-        const VTABLE: u32 = 0x00eb391c;
+        const VTABLE_FILE_VA: u32 = 0x00eb391c;
         const FIELD_A: u32 = 0x14;
         const FLAG_B: u32 = 0x18;
         const FIELD_C: u32 = 0x1c;
@@ -29,7 +29,9 @@ lf_checker_rt::export!(stdcall, rw_00be44c0(kind: u32, _unused: u32) -> u32 {
             return 0;
         }
         lf_checker_rt::callee_thiscall!(BASE_CTOR, u32, slot);
-        (slot as *mut u32).write_unaligned(VTABLE);
+        // File VA relocated: the worker maps the image away from 0x400000
+        // and the original's immediate is fixed up with it.
+        (slot as *mut u32).write_unaligned(lf_checker_rt::relocated(VTABLE_FILE_VA));
         (slot.wrapping_add(FIELD_A) as *mut u32).write_unaligned(0);
         (slot.wrapping_add(FLAG_B) as *mut u8).write(0);
         (slot.wrapping_add(FIELD_C) as *mut u32).write_unaligned(0);

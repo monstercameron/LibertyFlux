@@ -167,7 +167,7 @@ lf_checker_rt::export!(thiscall, rw_00661D10(this: u32, delta: u32) -> u32 {
                 }
             }
             6 => {
-                let flag = if field(this, MODE) == 1 { 0 } else { 1 };
+                let flag = if field(this, 0x75c) == 1 { 1 } else { 0 };
                 // The stack slot the original points at reads 1 (a single
                 // byte store over untouched, zero-filled stack).
                 let frame_slot = 1u32;

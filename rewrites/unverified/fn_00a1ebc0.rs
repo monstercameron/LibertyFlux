@@ -10,8 +10,8 @@
 /// counter is reloaded from its global, and when the speed's magnitude
 /// exceeds `SPEED_EPS` (0.01) the closing bit is set. A set closing bit
 /// returns at once; otherwise the worker callee runs on
-/// (`a2`, `a0`, `this+W0_OFF`, `this+W1_OFF`, `a2`, `a3`) and its answer
-/// feeds the sink callee. Returns nothing.
+/// (`a1`, `a0`, `this+W0_OFF`, `this+W1_OFF`, `a2`, `a3`) — note `a1`, not
+/// `a2`, in `ecx` — and its answer feeds the sink callee. Returns nothing.
 ///
 /// Original: 0x00a1ebc0 (thiscall, four stack words).
 lf_checker_rt::export!(thiscall, rw_00a1ebc0(this: u32, a0: u32, a1: u32, a2: u32, a3: u32) -> u32 {
@@ -51,7 +51,7 @@ lf_checker_rt::export!(thiscall, rw_00a1ebc0(this: u32, a0: u32, a1: u32, a2: u3
             return 0;
         }
         let u = lf_checker_rt::callee_thiscall!(
-            C_WORKER, u32, a2, a0, this + W0_OFF, this + W1_OFF, a2, a3
+            C_WORKER, u32, a1, a0, this + W0_OFF, this + W1_OFF, a2, a3
         );
         lf_checker_rt::callee_thiscall!(C_SINK, u32, u);
         0

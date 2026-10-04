@@ -23,8 +23,8 @@ lf_checker_rt::export!(thiscall, rw_00cf73c0(this: u32) -> u32 {
             core::hint::black_box(a) + core::hint::black_box(b)
         }
         #[inline(always)]
-        fn lan(a: u32) -> f32 {
-            f32::from_bits((a as *const u32).read_unaligned())
+        unsafe fn lan(a: u32) -> f32 {
+            unsafe { f32::from_bits((a as *const u32).read_unaligned()) }
         }
         let sel = ((this + 0x64) as *const u32).read_unaligned();
         let mode = (((sel + 0x28) as *const u32).read_unaligned() >> 6) & 0xf;

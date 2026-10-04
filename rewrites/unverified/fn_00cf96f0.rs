@@ -14,28 +14,31 @@ lf_checker_rt::export!(thiscall, rw_00cf96f0(this: u32) -> f32 {
     unsafe {
         const SCALE_ADDR: u32 = 0x01051528; // 1.0039153f
         const ZERO_ADDR: u32 = 0x00fe8628; // 0.0f
-        const SAMPLE_CALLEE: u32 = 1;
+        const SAMPLE_A: u32 = 1;
+        const SAMPLE_B: u32 = 2;
         let state = ((this + 0x60) as *const u32).read_unaligned();
         if state == 0 {
             return 0.0;
         }
-        let pick = |p: u32| -> u32 {
-            let tag = ((p + 0x44) as *const u16).read_unaligned();
-            if tag == 1 {
-                ((p + 0x40) as *const u32).read_unaligned()
-            } else {
-                0
+        unsafe fn pick(p: u32) -> u32 {
+            unsafe {
+                let tag = ((p + 0x44) as *const u16).read_unaligned();
+                if tag == 1 {
+                    ((p + 0x40) as *const u32).read_unaligned()
+                } else {
+                    0
+                }
             }
-        };
+        }
         let f0 = f32::from_bits(((state + 0x4c) as *const u32).read_unaligned());
         let mut slot1 = [0u32; 3];
         lf_checker_rt::callee_cdecl!(
-            SAMPLE_CALLEE, u32, &mut slot1 as *mut u32 as u32, f0.to_bits(), pick(state));
+            SAMPLE_A, u32, &mut slot1 as *mut u32 as u32, f0.to_bits(), pick(state));
         let cached = f32::from_bits(((this + 0x58) as *const u32).read_unaligned());
         let state2 = ((this + 0x60) as *const u32).read_unaligned();
         let mut slot2 = [0u32; 3];
         lf_checker_rt::callee_cdecl!(
-            SAMPLE_CALLEE, u32, &mut slot2 as *mut u32 as u32, cached.to_bits(), pick(state2));
+            SAMPLE_B, u32, &mut slot2 as *mut u32 as u32, cached.to_bits(), pick(state2));
         let r1 = f32::from_bits(slot1[2]);
         let r2 = f32::from_bits(slot2[2]);
         ((this + 0x58) as *mut u32).write_unaligned(f0.to_bits());

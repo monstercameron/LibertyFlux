@@ -9,8 +9,8 @@
 /// bits at `+0x18`. Slot `+0x3C` receives a float the original reads from
 /// its own realigned stack frame, which no caller writes; under the
 /// checker's defined stack fill of 0 that value is `0.0` on both sides.
-/// Then calls the filter callee with (`this`, `a0`) and returns the tick.
-/// The callee is intercepted by the checker.
+/// Then calls the filter callee with (`this`, `a0`) and returns its
+/// answer. The callee is intercepted by the checker.
 lf_checker_rt::export!(thiscall, rw_00cb7b80(this: u32, a0: u32) -> u32 {
     unsafe {
         use lf_checker_rt::global;
@@ -43,7 +43,6 @@ lf_checker_rt::export!(thiscall, rw_00cb7b80(this: u32, a0: u32) -> u32 {
         wr(this + 0x34, 0);
         wr(this + 0x38, 0);
         wr(this + 0x18, 0xC479C000);
-        let _: u32 = lf_checker_rt::callee_thiscall!(FILTER, u32, this, a0);
-        t2
+        lf_checker_rt::callee_thiscall!(FILTER, u32, this, a0)
     }
 });

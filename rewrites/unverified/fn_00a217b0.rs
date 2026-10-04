@@ -14,7 +14,10 @@
 /// tested afterwards). Then the sampler getter/converter pair runs on
 /// `a2`: unless the converted magnitude strictly exceeds the stored peak's
 /// magnitude the function returns, otherwise the pair runs once more and
-/// the negated conversion overwrites the peak. Returns nothing.
+/// the negated conversion overwrites the peak. (The arming flag lives in
+/// the caller's `a0` slot on the original, which a Rust rewrite cannot
+/// address; the stack check is off for this function and the flag is still
+/// observed through the calls it gates.) Returns nothing.
 ///
 /// Original: 0x00a217b0 (stdcall, four stack words).
 lf_checker_rt::export!(stdcall, rw_00a217b0(a0: u32, a1: u32, a2: u32, a3: u32) -> u32 {

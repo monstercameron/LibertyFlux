@@ -5,8 +5,8 @@
 /// `0x0179D114` (thiscall, five stack arguments; `a0` and `a1` are unread
 /// except through a skipped slot). A non-null answer is zeroed at its
 /// first word and stored at `[this + 0x34]` (else zero is stored). Then
-/// runs the four-argument initialiser with (`this`, 1, `a2`, T, T), where
-/// the last two slots are read half-overlapping the return address and
+/// runs the four-argument initialiser with (`this`, T, T, `a2`, 1), where
+/// the first two slots are read half-overlapping the return address and
 /// below-stack scratch and are skipped by the contract. Stores `a4` at
 /// `[this + 0x38]`, stores `a3` at `[this + 0x28]` when it is not below
 /// `0.0` (negative and NaN become `0.5`), and returns `a4`. Both callees
@@ -32,7 +32,7 @@ lf_checker_rt::export!(thiscall, rw_00cb7a70(this: u32, _a0: u32, _a1: u32, a2: 
         } else {
             ((this + FOUND_OFF) as *mut u32).write_unaligned(0);
         }
-        let _: u32 = lf_checker_rt::callee_thiscall!(INIT, u32, this, 1, a2, 0, 0);
+        let _: u32 = lf_checker_rt::callee_thiscall!(INIT, u32, this, 0, 0, a2, 1);
         ((this + LIMIT_OFF) as *mut u32).write_unaligned(a4);
         let x = f32::from_bits(a3);
         if x >= 0.0 {
