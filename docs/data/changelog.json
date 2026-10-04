@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: Two silent proof-weakeners in production float work, and one deferred function",
+    "commit": null,
+    "summary": "Findings from the r-b211 lane.",
+    "changes": [
+      "New devlog entry: Two silent proof-weakeners in production float work, and one deferred function.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Devlog: entries move into a SQLite database, searched in the browser",
     "commit": "c1e1ca3a3f48c7642a9fa76bc0f7b3f9c12ca8ba",
     "summary": "The devlog page had grown to 1.5 MB of HTML with 315 entries. The entries are now rows in a database that the page downloads once and queries locally, as a blog with search.",
