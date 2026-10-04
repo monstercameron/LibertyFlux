@@ -1,0 +1,17 @@
+[package]
+name = "lf-anim"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Read-only parser for GTA IV animation dictionaries and clips (WAD)"
+
+[lints]
+workspace = true
+
+[dependencies]
+lf-resource = { path = "../lf-resource" }
+
+[dev-dependencies]
+lf-archive = { path = "../lf-archive" }
+flate2 = { workspace = true }

@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Ghidra export scripts",
+    "title": "Reader crate: lf-anim",
     "commit": null,
+    "summary": "Animation dictionaries and clips: WAD containers, codecs, tracks, validation rules.",
+    "changes": [
+      "New crate crates/formats/lf-anim: Animation dictionaries and clips: WAD containers, codecs, tracks, validation rules.",
+      "About 1,169 lines of Rust with 6 unit tests and 10 integration tests; tests that need the game's files skip unless the game folder is given in an environment variable.",
+      "Written by the fmt-animation lane, then brought to the workspace's standard by a second lane. That lane was stopped by a time limit during its final test pass: build and lint were clean on the host, and the coordinator re-ran build, lint and tests before committing."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Ghidra export scripts",
+    "commit": "d82c4862d8e15a7274ed3a13cc116f6de6fa69af",
     "summary": "The scripts that export function lists, the call graph and cross-references from the Ghidra analysis.",
     "changes": [
       "scripts/ghidra: five scripts with usage headers. Their output goes under .artifacts and is never committed."
