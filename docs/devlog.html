@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#lift-pilot">First pilot of the 64-bit lift: what it costs and what gets in the way</a></li>
       <li><a href="#production-b180">Four rewrites, two original-code quirks, one measured constant</a></li>
       <li><a href="#naming-05">Naming the audio voices and sound nodes</a></li>
       <li><a href="#production-b183">A callee register the manual calls optional is compared by default</a></li>
@@ -338,6 +339,29 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="lift-pilot">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>First pilot of the 64-bit lift: what it costs and what gets in the way</h2>
+      <p>Thirty-seven rewritten game functions now exist as ordinary portable Rust with no raw addresses and no unsafe code, and all thirty-seven still behave exactly like the verified 32-bit versions they came from. The pilot took about ninety-five minutes end to end, most of it one-time tooling, and it surfaced exactly one behaviour that cannot move to 64-bit unchanged.</p>
+      <h3>What was asked</h3>
+      <p>Take one closed cluster of thirty to fifty verified functions and turn them into normal Rust that could compile for a 64-bit target: no raw addresses, no numbered callee slots, no dependence on pointer width. Prove each lift against its 32-bit form without the game, measure minutes per function, and say what would get in the way at scale.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The chosen cluster is thirty-seven container primitives in three families: intrusive chain operations, indexed slot records, and fixed-stride pool allocators, plus a value-list search and a one-shot table initialiser. Links became indices into explicit arenas, callee slots became callback parameters, globals became struct fields, and vtable stamps became an element-type tag. The whole lift is safe Rust.</p>
+      <p><span class="evidence verified">Verified</span> Proof runs on both targets: forty differential tests compare returns, full state, and callback call logs between the 32-bit forms and the lifts over thousands of generated inputs on the 32-bit target, and fourteen property tests run the lifted crate on the 64-bit host. All pass. The differential tests caught two of the three authoring mistakes made during the pilot.</p>
+      <p><span class="evidence verified">Verified</span> One function reads a status byte in a way that also leaks part of a 32-bit address into its result. That part has no meaning on 64-bit, so the lift returns just the byte; the test checks the byte on both sides and pins the quirk's shape on the 32-bit side. Four more functions crash on inputs the original never validates; the lifts panic loudly there instead of crashing or silently guessing.</p>
+      <p><span class="evidence verified">Verified</span> Cost: about five minutes per plain function and about eleven per function with callbacks, after one-time tooling. Roughly half of the proving work is boilerplate a script could generate from the existing check contracts.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Lift leaves first grouped by data structure, then callback-bearing functions, then globals with their owners; cross-cluster references stay opaque cookies until both sides lift.</li>
+      <li>Three rules are proposed for the whole engine: no lifted global state, ever; an unchecked original dereference panics rather than guessing; address-embedding values are narrowed to their meaningful part with the quirk pinned by test.</li>
+      <li>Central estimate for all sixty-six hundred functions is about nine hundred agent-hours with a twofold uncertainty band, plus one-time harness and design costs. The next pilot should sample a callback-dense subsystem, which this one deliberately avoided.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>From the repository, run the lifted crate's tests on the host and the differential suite on the 32-bit target; both are zero-dependency. Per-function evidence (lifted, proven, minutes, line counts, blockers) is recorded in the lane's results file next to the report.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first lift of the table-fetch functions returned "missing" on inputs where the original crashes; a differential trial crashed the same way and exposed the mismatch, and the rule above came out of the fix. A missing test-stub variant aborted the whole test binary with no per-test failure line, because cross-language calls cannot unwind; the panic message still named the culprit. Shell output redirection wrote an unreadable encoding twice, so all file writes moved into scripts.</p>
+      </article>
 
       <article class="entry" id="production-b180">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
