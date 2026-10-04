@@ -6,8 +6,9 @@
 /// (intercepted); a miss returns 0. On a hit, when the low three bits of
 /// the slot word at `this + 0x48 + index * 64` are all clear, activates the
 /// slot through vtable slot 3 (planted by the contract) with `(index, 1)`.
-/// Returns -1 when bit 2 of that word is set, else 0 (the original's
-/// shift-left-29 then arithmetic-shift-right-29 isolates the sign of bit 2).
+/// Returns the cell word's low three bits, sign-extended (the original's
+/// shift-left-29 then arithmetic-shift-right-29 extracts bits 0-2 and
+/// replicates bit 2).
 ///
 /// Original: 0x00D28DA0 (thiscall, one stack argument).
 lf_checker_rt::export!(thiscall, rw_00d28da0(this: u32, wanted: u32) -> u32 {
@@ -18,7 +19,7 @@ lf_checker_rt::export!(thiscall, rw_00d28da0(this: u32, wanted: u32) -> u32 {
         const QUIET_MASK: u8 = 7;
         const HOOK_SLOT: u32 = 0x0c;
         const HOOK_ARG: u32 = 1;
-        const SIGN_BIT: u32 = 4;
+        const FIELD_SHIFT: u32 = 29;
         let idx: u32 = lf_checker_rt::callee_thiscall!(1, u32, this, wanted);
         if idx == MISS {
             return 0;
@@ -32,6 +33,6 @@ lf_checker_rt::export!(thiscall, rw_00d28da0(this: u32, wanted: u32) -> u32 {
             hook(this, idx, HOOK_ARG);
         }
         let m = unsafe { (cell as *const u32).read_unaligned() };
-        if m & SIGN_BIT != 0 { MISS } else { 0 }
+        ((m.wrapping_shl(FIELD_SHIFT) as i32) >> FIELD_SHIFT) as u32
     }
 });

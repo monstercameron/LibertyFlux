@@ -66,7 +66,7 @@ lf_checker_rt::export!(thiscall, rw_00e4ba30(this: u32) -> u32 {
         const GAL_BG: u32 = 0x00f1_7b08;
         const GAL_PREVIEWER: u32 = 0x00f1_7b5c;
         const GAL_VIEWER: u32 = 0x00f1_7be0;
-        const VIDEOS_RENDERED: u32 = 0x00f1_84a4;
+        const VIDEOS_RENDERED: u32 = 0x00f1_7bf4;
         const TAG_SUFFIX: u32 = 0x00f1_7c0c;
         const GAL_TITLE: u32 = 0x00f1_7c9c;
         const GAL_RES: u32 = 0x00f1_7f30;
@@ -233,7 +233,7 @@ lf_checker_rt::export!(thiscall, rw_00e4ba30(this: u32) -> u32 {
         let zeros_ptr = zeros.as_ptr() as u32;
         // Mirror of frame+0x30..: [0] selected float, [1] first ratio,
         // [2..] base directory copy.
-        let mut surf = [0u8; 32];
+        let mut surf = [0u8; 40];
         let surf_ptr = surf.as_mut_ptr() as u32;
         // Mirror of frame+0x04..: [0] second ratio, [1]/[2] title struct.
         let mut face = [0u8; 32];
@@ -267,7 +267,7 @@ lf_checker_rt::export!(thiscall, rw_00e4ba30(this: u32) -> u32 {
         let pick = |a: u32, b: u32| -> i32 {
             rd32(lf_checker_rt::relocated(if q() { b } else { a })) as i32
         };
-        let ratio1 = fdiv(pick(SIZE_B, SIZE_B_ALT) as f32, pick(SIZE_A, SIZE_A_ALT) as f32);
+        let mut ratio1 = fdiv(pick(SIZE_B, SIZE_B_ALT) as f32, pick(SIZE_A, SIZE_A_ALT) as f32);
         let ratio2 = fdiv(
             rdf(lf_checker_rt::relocated(ZERO_GAP)),
             fdiv(pick(SIZE_B, SIZE_B_ALT) as f32, pick(SIZE_A, SIZE_A_ALT) as f32),
@@ -279,12 +279,12 @@ lf_checker_rt::export!(thiscall, rw_00e4ba30(this: u32) -> u32 {
             ),
             fdiv(pick(SIZE_A, SIZE_A_ALT) as f32, pick(SIZE_B, SIZE_B_ALT) as f32),
         );
+        if rd8(lf_checker_rt::relocated(WIDE_FLAG)) != 0 {
+            ratio1 = rdf(lf_checker_rt::relocated(RATIO_16_9));
+        }
         wr32(face_ptr, ratio2.to_bits());
         wr32(surf_ptr.wrapping_add(4), ratio1.to_bits());
-        let mut pick_ratio = ratio1;
-        if rd8(lf_checker_rt::relocated(WIDE_FLAG)) != 0 {
-            pick_ratio = rdf(lf_checker_rt::relocated(RATIO_16_9));
-        }
+        let pick_ratio = ratio1;
         let bg_obj = rd32(this.wrapping_add(PANEL_BG));
         wr32(surf_ptr, 0xff1a_1a1a);
         lf_checker_rt::callee_thiscall!(
@@ -432,7 +432,7 @@ lf_checker_rt::export!(thiscall, rw_00e4ba30(this: u32) -> u32 {
                 let (wo, dout) = WORD_PAIRS[round];
                 let w = rd16(this.wrapping_add(wo));
                 let arg = if w == 0 {
-                    DEFAULT_ID
+                    lf_checker_rt::relocated(DEFAULT_ID)
                 } else {
                     rd32(this.wrapping_add(dout))
                 };
@@ -488,10 +488,10 @@ lf_checker_rt::export!(thiscall, rw_00e4ba30(this: u32) -> u32 {
         slot4(tt_vt, VT_BIND4, tt_obj, 0x4190_0000, tt_ret, 0, 2);
         slot1(tt_vt, VT_FLAG, tt_obj, 1);
         let use_ptr = rd16(head_ptr.wrapping_add(4)) != 0;
-        let arg = if use_ptr { rd32(head_ptr) } else { DEFAULT_ID };
+        let arg = if use_ptr { rd32(head_ptr) } else { lf_checker_rt::relocated(DEFAULT_ID) };
         slot2(tt_vt, VT_TITLE, tt_obj, arg, 0);
-        slot1(tt_vt, VT_RES, tt_obj, 1);
-        slot1(tt_vt, VT_FIN, tt_obj, 1);
+        slot1(tt_vt, VT_RES, tt_obj, 0x12);
+        slot1(tt_vt, VT_FIN, tt_obj, 0);
         emit(tt_obj, tt_vt, 0, 0x4000_0000, 4, 0x00f1_7cd4, 4, zeros_ptr);
         emit(tt_obj, tt_vt, 0, 0xc000_0000, 4, 0x00f1_7d1c, 0x10, zeros_ptr);
         emit(tt_obj, tt_vt, 0x40a0_0000, 0, 2, 0x00f1_7d4c, 2, zeros_ptr);
@@ -561,10 +561,10 @@ lf_checker_rt::export!(thiscall, rw_00e4ba30(this: u32) -> u32 {
         // NOTE: unlike the title block, the resolution block has no +0x1fc
         // call here: its +0x1e0 call follows the bind directly.
         let use_ptr = rd16(face_ptr.wrapping_add(8)) != 0;
-        let arg = if use_ptr { rd32(face_ptr.wrapping_add(4)) } else { DEFAULT_ID };
+        let arg = if use_ptr { rd32(face_ptr.wrapping_add(4)) } else { lf_checker_rt::relocated(DEFAULT_ID) };
         slot2(rs_vt, VT_TITLE, rs_obj, arg, 0);
-        slot1(rs_vt, VT_RES, rs_obj, 1);
-        slot1(rs_vt, VT_FIN, rs_obj, 1);
+        slot1(rs_vt, VT_RES, rs_obj, 0x12);
+        slot1(rs_vt, VT_FIN, rs_obj, 0);
         emit(rs_obj, rs_vt, 0, 0x4000_0000, 4, 0x00f1_7f7c, 4, zeros_ptr);
         emit(rs_obj, rs_vt, 0, 0xc000_0000, 4, 0x00f1_7fd8, 0x10, zeros_ptr);
         emit(rs_obj, rs_vt, 0xc0a0_0000, 0, 8, 0x00f1_8018, 8, zeros_ptr);

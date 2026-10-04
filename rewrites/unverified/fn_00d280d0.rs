@@ -4,9 +4,10 @@
 ///
 /// When `key` is null, the default key comes from the key helper
 /// (intercepted) instead. Looks the key up with the slot-record finder
-/// (intercepted); a miss returns 0. On a hit, copies the record's words at
-/// `+0x00` through `+0x0c` to `*out` when `out` is nonzero, then returns 1 if
-/// the record's float at `+0x24` is strictly above 0.0, else 0 (NaN yields 0).
+/// (intercepted); a miss returns 1 and writes nothing. On a hit, copies the
+/// record's words at `+0x00` through `+0x0c` to `*out` when `out` is nonzero,
+/// then returns 1 if the record's float at `+0x24` is strictly above 0.0,
+/// else 0 (NaN yields 0).
 ///
 /// Original: 0x00D280D0 (thiscall, two stack arguments).
 lf_checker_rt::export!(thiscall, rw_00d280d0(this: u32, out: u32, key: u32) -> u32 {
@@ -19,7 +20,7 @@ lf_checker_rt::export!(thiscall, rw_00d280d0(this: u32, out: u32, key: u32) -> u
         };
         let rec: u32 = lf_checker_rt::callee_thiscall!(2, u32, this, k);
         if rec == 0 {
-            return 0;
+            return 1;
         }
         if out != 0 {
             for off in [0u32, 4, 8, 12] {
