@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Naming a particle and shader batch: slots, registrars and false friends",
+    "title": "Devlog: Two verified, an uninitialised stack read, and a vector-argument gap",
     "commit": null,
+    "summary": "Findings from the r-b329 lane.",
+    "changes": [
+      "New devlog entry: Two verified, an uninitialised stack read, and a vector-argument gap.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Naming a particle and shader batch: slots, registrars and false friends",
+    "commit": "4d1145595f296d039c63ac08dd4e2a888128402d",
     "summary": "Findings from the nm-49 lane.",
     "changes": [
       "New devlog entry: Naming a particle and shader batch: slots, registrars and false friends.",
