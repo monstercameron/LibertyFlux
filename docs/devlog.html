@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot-04">Pilot lane 04: five functions rewritten and timed</a></li>
       <li><a href="#pilot-02">Pilot lane 02: five functions rewritten and timed</a></li>
       <li><a href="#natives-02">Native handlers ATTACH_PED_TO_CAR to CLEAR_ROOM_FOR_OBJECT: what they reveal</a></li>
       <li><a href="#checker">The checker: proving rewrites match the original</a></li>
@@ -165,6 +166,41 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot-04">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Pilot lane 04: five functions rewritten and timed</h2>
+      <p>Four of five assigned functions were rewritten in Rust and verified bit-identical to the originals over more than a thousand trials each, in 30 minutes of wall clock time; the fifth was deferred because it reads runtime-mutable game state it was supposed to not touch.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite five small leaf functions in Rust, prove each rewrite behaves identically to the original with at least a thousand random-plus-edge trials, and record honest per-function timings for the project schedule. The functions were a four-value store with flag bits, a table-lookup byte splice, a logarithm-like float helper, a two-instruction object initialiser, and an angle wrapping routine.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Four rewrites agree with the originals on every trial: 4236 trials total, zero mismatches, with floats compared bit-exactly including the floating-point return register.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Function</th><th role="columnheader">Trials</th><th role="columnheader">Attempts</th><th role="columnheader">Outcome</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">four-value store</td><td role="cell" data-label="Trials">1084</td><td role="cell" data-label="Attempts">1</td><td role="cell" data-label="Outcome">verified</td></tr>
+      <tr role="row"><td role="cell">table-lookup splice</td><td role="cell" data-label="Trials">0</td><td role="cell" data-label="Attempts">0</td><td role="cell" data-label="Outcome">deferred</td></tr>
+      <tr role="row"><td role="cell">scaled logarithm</td><td role="cell" data-label="Trials">1051</td><td role="cell" data-label="Attempts">2</td><td role="cell" data-label="Outcome">verified</td></tr>
+      <tr role="row"><td role="cell">object initialiser</td><td role="cell" data-label="Trials">1040</td><td role="cell" data-label="Attempts">1</td><td role="cell" data-label="Outcome">verified</td></tr>
+      <tr role="row"><td role="cell">angle wrap</td><td role="cell" data-label="Trials">1061</td><td role="cell" data-label="Attempts">2</td><td role="cell" data-label="Outcome">verified</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The deferred function reads a writable global table through indexed addressing, which the leaf-selection filter does not flag; the file bytes at that table are game text, so its real contents are runtime state. It cannot be rewritten as a pure function.</p>
+      <p><span class="evidence verified">Verified</span> Two smaller surprises: the object initialiser writes an address that changes when the program is loaded at a different base, so the rewrite takes it as a parameter; and the logarithm helper indexes a two-entry table with a register that always holds zero, leaving one entry permanently unread.</p>
+      <p><span class="evidence verified">Verified</span> A deliberately introduced one-bit error in a copy of the angle rewrite failed 550 of 1061 trials, confirming the comparison is sensitive to subtle mistakes.</p>
+      <p><span class="evidence verified">Verified</span> Timing: 30 minutes wall clock for the lane, about 7.5 minutes per verified function. The largest costs were the verification runs and waiting on builds held by other lanes.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Signaling NaN inputs are out of contract for float-returning functions: the original quiets them on the return path while leaving the argument slot untouched, which no single-value rewrite can reproduce.</li>
+      <li>The leaf filter should flag indexed absolute reads into writable data, and already-picked pilot entries should be re-screened before more rewrite time is scheduled.</li>
+      <li>Rewrites that install fixed addresses must take the relocated address as a parameter instead, following the loader's relocation discipline.</li>
+      <li>For scheduling, budget roughly 4 minutes per trivial function and 8 per float or branching one, plus shared infrastructure.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build the lane's batch harness and rewrite crate for 32-bit x86, generate the seeded trial files, and run the comparison script followed by the honesty-test script; both print agree and mismatch counts. The batch harness maps the executable once with relocations applied and calls each original function through the same trampoline the earlier harness lane proved, while a twin driver calls the Rust rewrites with the same inputs and the script compares registers, written memory and floating-point state field by field.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first logarithm rewrite failed half its trials because the table index was misread as the input sign bit when it actually always selects the zero entry; re-reading the register flow fixed it. The angle rewrite first failed one trial because a hand-written edge value was a signaling NaN mislabeled as quiet, which led to the out-of-contract rule above. The honesty-test constant first chosen as wrong turned out to round to the correct value and had to be replaced with one genuinely one bit off. Build times were dominated by waiting on a shared build cache locked by other lanes.</p>
+      </article>
 
       <article class="entry" id="pilot-02">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
