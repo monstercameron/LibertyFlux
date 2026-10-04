@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot2-16">Second pilot, lane 16: large functions (600 to 1,500 bytes)</a></li>
       <li><a href="#pilot2-15">Second pilot, lane 15: large functions (600 to 1,500 bytes)</a></li>
       <li><a href="#pilot2-14">Second pilot, lane 14: large functions (600 to 1,500 bytes)</a></li>
       <li><a href="#pilot2-08">Second pilot, lane 08: small functions that make calls (60 to 250 bytes, one to three callees)</a></li>
@@ -186,6 +187,43 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot2-16">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Second pilot, lane 16: large functions (600 to 1,500 bytes)</h2>
+      <p>One of three large functions was rewritten in Rust and verified: a table-refresh routine passed 1,300 differential trials with zero failures, and a deliberately introduced bug was caught on the first trial. The other two were deferred with precise blockers, both gaps in the checker rather than failures of understanding.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite three sampled game functions of 600 to 1,500 bytes in idiomatic Rust, prove each one behaves identically to the original with the project's differential checker over at least 1,000 trials including edge values, run one honesty test with a subtle planted bug, and record honest per-function timings including failures.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The middle-sized function, a record-table refresh routine making eleven direct calls to two callees, was verified with two contracts totalling 1,300 trials and no failures. Its behaviour in words: for each of four slots it asks whether a record exists and either copies the sixteen-byte record into a global table row or zeroes the slot, runs three more conditional queries into a second table, then always copies one record out to the caller with the third word forced to zero. All float traffic is bitwise copies with no arithmetic.</p>
+      <p><span class="evidence verified">Verified</span> The honesty mutant, which stores the third word instead of clearing it, fails quickly through the heap comparison, exactly as designed.</p>
+      <p><span class="evidence verified">Verified</span> The largest function, a blend-weight and quaternion-blending routine of about 390 instructions with heavy vector float arithmetic, was deferred. Its stack-allocated scratch buffers are filled by callees whose scripted stand-ins have no memory effects, so both sides would read different garbage; its loop bounds come from unconstrained inputs that would hang trials; and one scripted answer per trial cannot serve its four callees.</p>
+      <p><span class="evidence verified">Verified</span> The smallest function, a probable animation-channel constructor, was deferred. It makes eight register-indirect calls, which the checker cannot intercept, and reads thread-local storage twice, which the checker cannot virtualise. Both are documented checker gaps with no quick fix.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Function</th><th role="columnheader">Size</th><th role="columnheader">Calls</th><th role="columnheader">Outcome</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Blend-weight routine</td><td role="cell" data-label="Size">1365 bytes</td><td role="cell" data-label="Calls">7, one indirect</td><td role="cell" data-label="Outcome">deferred</td></tr>
+      <tr role="row"><td role="cell">Table refresh</td><td role="cell" data-label="Size">1059 bytes</td><td role="cell" data-label="Calls">11, all direct</td><td role="cell" data-label="Outcome">verified, 1300 trials</td></tr>
+      <tr role="row"><td role="cell">Channel constructor</td><td role="cell" data-label="Size">671 bytes</td><td role="cell" data-label="Calls">11, eight indirect</td><td role="cell" data-label="Outcome">deferred</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence">Inferred</span> Two small checker extensions written for this lane are recommended for fold-back: skipping volatile call arguments such as pointers into the callee's own stack frame, and ranged small-integer inputs with heap-relative scripted answers.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>The table refresh rewrite is accepted as verified and its crate is ready to integrate.</li>
+      <li>The two deferrals stand until the checker grows stub memory effects, below-stack reset, constrained heap inputs, per-callee answers, indirect-call interception and thread-local storage support. The next lane should not retry them on the current checker.</li>
+      <li>Trial budgets for table-driven functions should use two contracts: one with pristine globals to force the refresh body, one with random globals to cover the skip path, since a random flag byte almost never takes the interesting branch.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>From the repository root, build the lane's worker copy and rewrite crate for the 32-bit target with the shared cargo output folder, then run the lane's checker driver over its two table-refresh contracts. Expect 1,000 of 1,000 and 300 of 300 passing trials with all comparisons green, verdict files in the lane's verdicts folder, and failing mutant verdicts that name the heap comparison as the first mismatch.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The functions were worked out of order: after recon showed only the table refresh was fully expressible in the checker, it went first so the lane would bank one verification instead of spending the hour on a likely deferral. Timings are recorded honestly regardless of order.</p>
+      <p>The first attempt failed only on the lane's own contract: one declared global range was twenty bytes short, and the checker's undeclared-write scan caught it on both sides before any rewrite bug could hide behind it. Widening the range fixed it with no rewrite change.</p>
+      <p>The shared scripted-answer limitation meant all four existence queries in one trial had to agree, so mixed present and absent patterns within a single trial went untested. Each slot's both paths are covered across trials and the slots are independent copies of the same code, which made this acceptable, but it is a real coverage hole worth closing with per-callee answers.</p>
+      <p>The honesty mutant passed the trials where the mutated word happened to be zero, which is correct behaviour rather than a checker miss: identical behaviour passes, and it failed everywhere the bug was observable.</p>
+      </article>
 
       <article class="entry" id="pilot2-15">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
