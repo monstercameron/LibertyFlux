@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot-10">Pilot lane 10: five functions rewritten and timed</a></li>
       <li><a href="#pilot-08">Pilot lane 08: five functions rewritten and timed</a></li>
       <li><a href="#format-particles">Rust reader: particle and visual effect definitions</a></li>
       <li><a href="#pilot-04">Pilot lane 04: five functions rewritten and timed</a></li>
@@ -168,6 +169,38 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot-10">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Pilot lane 10: five functions rewritten and timed</h2>
+      <p>Three of five pilot functions were rewritten in Rust and proved bit-identical to the originals over about a thousand native trials each; the other two were deferred with a concrete blocker, and the pilot surfaced a gap in the leaf-selection filter. <span class="evidence verified">Verified</span></p>
+      <h3>What was asked</h3>
+      <p>Rewrite the last five functions of the pilot fifty in Rust, prove each rewrite behaves identically to the original by native execution, time every step honestly, and run one honesty test with a deliberate mistake to confirm the comparison can catch errors.</p>
+      <h3>What was found</h3>
+      <p>The five functions and their outcomes:</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Function</th><th role="columnheader">What it does</th><th role="columnheader">Outcome</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Bucket mapper</td><td data-label="What it does" role="cell">maps a float sample to one of eight buckets</td><td data-label="Outcome" role="cell">verified, 1020 of 1020 trials agree</td></tr>
+      <tr role="row"><td role="cell">Float tracker</td><td data-label="What it does" role="cell">updates a timestamped smoothing state with init, predict and clamp paths</td><td data-label="Outcome" role="cell">verified, 1020 of 1020 trials agree on the second attempt</td></tr>
+      <tr role="row"><td role="cell">Slot store and slot copy</td><td data-label="What it does" role="cell">write through a table-selected offset into an object</td><td data-label="Outcome" role="cell">deferred: the table is runtime-initialised global data</td></tr>
+      <tr role="row"><td role="cell">Small clearer</td><td data-label="What it does" role="cell">zeroes twelve bytes and returns the object</td><td data-label="Outcome" role="cell">verified, 1020 of 1020 trials agree</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The deferred pair reads its offset table from writable global data whose file image is unrelated text, so the game must fill the table in at run time. A rewrite can only take that table as a parameter until runtime bytes exist, and running the original against file bytes would only exercise wild offsets. The leaf-selection filter missed these because it only screens plain absolute reads, not indexed ones; the candidate pool should be re-screened.</p>
+      <p><span class="evidence verified">Verified</span> Two subtleties needed exact handling: the bucket mapper's float-to-integer step returns a special indefinite value for out-of-range inputs where Rust saturates, and the tracker's comparisons use ordered float semantics that differ from min and max on NaN. Both are covered by targeted edge trials plus uniform random bit patterns.</p>
+      <p><span class="evidence verified">Verified</span> The honesty test confirmed the comparison catches a plausible mistake: a mutant that trusted Rust's saturating float-to-integer cast failed 174 of 1020 identical trials.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Ship the three verified rewrites; keep the two table-dependent rewrites parameterised over the table and marked unverified until runtime bytes or a table-patching runner exist.</li>
+      <li>Re-screen the leaf pool for indexed absolute reads of writable data before assigning more pilot functions.</li>
+      <li>Budget pilot comparisons at a few trials per second per machine with single-shot runners; batching would change this substantially.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build the lane's twin crate for 32-bit x86, then run its parallel driver: it feeds identical edge and random inputs to the original through the native runner and to the Rust twin, and compares return values bit-exactly, floating-point results bit-exactly, written memory byte-exactly, and the stack pointer after return. Machine records of every trial batch are kept with the lane's data files.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Three unaligned-pointer trials for the small clearer first appeared to fail, but the original was correct: a twelve-byte zero at an unaligned address spans four partial double-words, and the driver's comparison had assumed aligned writes. The driver was fixed to compare byte-exact images and the trials re-run. The tracker's first attempt missed ten trials because the original's floating-point return quiets signalling NaNs while the rewrite passed them through; the rewrite now quiets at return and keeps raw bits in the store. The candidate record for the bucket mapper also lists a register input that its own code zeroes before reading; the rewrite treats it as clobbered, not input.</p>
+      </article>
 
       <article class="entry" id="pilot-08">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
