@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot-candidates">Pilot candidates: 300 emulator-ready leaf functions, and a broken emulator</a></li>
       <li><a href="#work-queue">The work queue that hands out functions easiest first</a></li>
       <li><a href="#capture-tool">Tool that reads the encrypted code from the owner's running copy</a></li>
       <li><a href="#format-rsc5">Rust reader: the RSC5 resource container</a></li>
@@ -113,6 +114,35 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot-candidates">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Pilot candidates: 300 emulator-ready leaf functions, and a broken emulator</h2>
+      <p>The pilot set is chosen: 300 small leaf functions verified by static analysis, with the first 50 ranked for rewriting. But no dynamic test could be run, because the CPU emulator fails on this machine even for two instructions.</p>
+      <h3>What was asked</h3>
+      <p>Pick the first functions to rewrite in Rust for the pilot: call-free leaf functions that are easy to check in a CPU emulator, ranked by caller count and recognisable purpose, grouped into families, with known algorithms identified and the top 50 recommended in order.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> From the 45 thousand functions in the independent lane list, after removing library ranges, functions with calls, switch tables and oversized entries, about ten thousand call-free pre-candidates remained. Capstone verification kept 5,510 leaves: 4,033 straight-line and 1,477 with branches but no indirect jumps, no calls, no global writes, and reads of constant data only.</p>
+      <p><span class="evidence verified">Verified</span> A new stack-balance check dropped a further 1,208 supposed functions. Samples show they are shared epilogue fragments and switch-case tails the function list over-split, not real entries. The final verified pool is 4,302 functions.</p>
+      <p><span class="evidence verified">Verified</span> The emulator does not work on this host. Running even two trivial instructions fails with a Windows error, and the emulator lane's own minimal test fails the same way, so its earlier passing results could not have been produced on this machine. Mapping memory and reading registers work; only execution fails.</p>
+      <p><span class="evidence verified">Verified</span> The finished Ghidra export lists about 31 thousand functions against the lane list's 45 thousand, with 28 thousand shared entries. Over nine hundred Ghidra-only entries sit inside the encrypted first megabyte and are ciphertext decoded as code. Caller counts agree exactly on about three quarters of a two thousand function sample.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Verified leaf pool</td><td role="cell" data-label="Value">4,302 functions</td><td role="cell" data-label="What it means">Call-free, globally side-effect free, standard arguments</td></tr>
+      <tr role="row"><td role="cell">Published shortlist</td><td role="cell" data-label="Value">300 in 281 families</td><td role="cell" data-label="What it means">Median 9 instructions and 12 direct callers each</td></tr>
+      <tr role="row"><td role="cell">Pilot recommendation</td><td role="cell" data-label="Value">50 ranked functions</td><td role="cell" data-label="What it means">Calibration accessors first, then hash, float and vector helpers</td></tr>
+      <tr role="row"><td role="cell">Dynamic test vectors</td><td role="cell" data-label="Value">None</td><td role="cell" data-label="What it means">Emulator broken here; runner script ready for another host</td></tr>
+      <tr role="row"><td role="cell">Known algorithms found</td><td role="cell" data-label="Value">None above low confidence</td><td role="cell" data-label="What it means">Small helpers, not famous named routines</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>Ship the statically verified 300 with signatures, caller counts, families and purpose guesses, and mark test vectors as missing rather than faking them. On an x64 host, run the prepared six-regime emulator script over the top 450 and merge the vectors before rewriting starts. Begin rewrites with the two trivial calibration accessors, then the high-caller hash and float helpers.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the selection script with the project Python environment to rebuild the 5,510 verified candidates and the Ghidra comparison, then the finalise script for the stack-balance proof and the pilot ranking. Run the emulator lane's own minimal test to confirm emulation fails on this host. All scripts and data files live in this lane's scratch folder.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> The emulator's memory-protect call cannot split the middle of a mapped region and fails with a misleading out-of-memory error; executable stubs needed their own memory mapping. A crash-reporting helper printed a fake fatal exception during mapping and then execution continued normally, which cost one debugging round trip. One constant in my own algorithm table evaluated to zero and briefly tagged hundreds of functions as a floating point match; it was filtered and is documented in the report.</p>
+      </article>
 
       <article class="entry" id="work-queue">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
