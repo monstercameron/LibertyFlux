@@ -17910,6 +17910,15 @@
   "lane": "r-s206"
  },
  {
+  "address": "0x006218E0",
+  "name": "net_route_session_request",
+  "kind": "function",
+  "file": "functions/fn_006218e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b306"
+ },
+ {
   "address": "0x006221A0",
   "name": "net_entry_copy_tail",
   "kind": "function",
@@ -29826,6 +29835,33 @@
   "lane": "r-b292"
  },
  {
+  "address": "0x00969440",
+  "name": "bilinear_sample_2d",
+  "kind": "function",
+  "file": "functions/fn_00969440.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b292"
+ },
+ {
+  "address": "0x009696A0",
+  "name": "select_peak_slot",
+  "kind": "function",
+  "file": "functions/fn_009696a0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b292"
+ },
+ {
+  "address": "0x00969810",
+  "name": "radial_weight_2d",
+  "kind": "function",
+  "file": "functions/fn_00969810.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b292"
+ },
+ {
   "address": "0x0096A8E0",
   "name": "audio_source_dir_quantize",
   "kind": "function",
@@ -34693,6 +34729,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s227"
+ },
+ {
+  "address": "0x009FAD20",
+  "name": "CPlayStatIntInt::~CPlayStatIntInt_2",
+  "kind": "function",
+  "file": "functions/fn_009fad20.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b312"
  },
  {
   "address": "0x009FAEF0",
@@ -41409,6 +41454,15 @@
   "lane": "r-s215"
  },
  {
+  "address": "0x00B07E50",
+  "name": "net_session_state_update",
+  "kind": "function",
+  "file": "functions/fn_00b07e50.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b302"
+ },
+ {
   "address": "0x00B08310",
   "name": "reset_flag_with_lookup",
   "kind": "function",
@@ -41569,6 +41623,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b303"
+ },
+ {
+  "address": "0x00B0CD60",
+  "name": "net_pool_init",
+  "kind": "function",
+  "file": "functions/fn_00b0cd60.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b304"
  },
  {
   "address": "0x00B0E410",
@@ -64278,6 +64341,15 @@
   "lane": "r-s341"
  },
  {
+  "address": "0x00BE3680",
+  "name": "CTaskComplexUseEffect::vf19",
+  "kind": "function",
+  "file": "functions/fn_00be3680.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
   "address": "0x00BE3970",
   "name": "CTaskComplexUseMobilePhoneAndMovement::vf19",
   "kind": "function",
@@ -64390,6 +64462,24 @@
   "name": "CTaskComplexUseSequence::vf18",
   "kind": "function",
   "file": "functions/fn_00be43c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE43F0",
+  "name": "CTaskComplexWaitForBus::vf18",
+  "kind": "function",
+  "file": "functions/fn_00be43f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE44A0",
+  "name": "CTaskComplexWaitForDryWeather::vf18",
+  "kind": "function",
+  "file": "functions/fn_00be44a0.rs",
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s341"
@@ -73321,6 +73411,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b235"
+ },
+ {
+  "address": "0x00DE7050",
+  "name": "UITimeOverview::build_rows",
+  "kind": "function",
+  "file": "functions/fn_00de7050.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b297"
  },
  {
   "address": "0x00DEB780",
