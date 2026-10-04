@@ -86,3 +86,9 @@ desktop.ini
 .muse/
 .env
 .env.*
+
+# Output of the checker driver when run from the repository
+/scripts/checker/verdicts/
+/scripts/checker/mutants/
+/scripts/checker/results.json
+/scripts/**/__pycache__/

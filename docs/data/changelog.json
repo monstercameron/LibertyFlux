@@ -1,6 +1,22 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Checker version 3: closing the ways a wrong rewrite could pass",
+    "commit": null,
+    "summary": "Fixes for the defects and gaps that lanes using checker version 2 reported, each proven on the functions that exposed it.",
+    "changes": [
+      "Random fills for global data now vary per word and per trial; the old generator was nearly constant, which weakened every test of a function that reads globals.",
+      "A verdict is now marked vacuous, not passed, unless at least 10% of trials ran to completion on the original and the function's calls fired; every verdict reports its coverage. Two rewrites had passed earlier checkers only because every trial faulted the same way on both sides.",
+      "Call arguments are logged and compared up to 40 words instead of 8, and the stack is cleaned correctly after calls with many arguments. A rewrite with two later arguments swapped used to pass and now fails.",
+      "Random inputs no longer point into the original's code, which had made faithful rewrites look like cheats; the detection of rewrites that read or call the original is unchanged.",
+      "Callees can be scripted with a sequence of answers (for loops that poll until done), tail jumps that forward stack arguments are handled, and the input forms that stopped some earlier contracts being ported are supported.",
+      "Checked by the coordinator from the repository before committing: 35 correct proof rewrites pass, the 3 that are meant to fail do, and all 34 deliberately wrong rewrites are caught.",
+      "Not done: arguments in a second vector register work but are not yet proven on a real function. 543 earlier verdicts used the old fills and need running again.",
+      "The driver's output folders are now ignored by git."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 256 more functions pass the checker (4500 in total)",
     "commit": "2ced7333af484c6cf3753b8aa8502f7f35e0693a",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

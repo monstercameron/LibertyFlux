@@ -335,11 +335,16 @@ const STACK_SNAP_LEN: usize = 0x1100;
 const SCRATCH_FILL_OFF: usize = 0xF4000; // below-ESP scratch reset region
 const SCRATCH_FILL_LEN: usize = 0x8000; // 32KB, ends at STACK_SNAP_OFF
 const LOG_MAX: usize = 256;
-const LOG_ENTRY: usize = 128;
-// Log entry v2 layout: 0:id 4:ecx 8:edx 12:ebx 16:esi 20:edi 24:nargs
-// 28:args[8] 60:snap_n 64:snap[8] 96:xmm0[4]
+const LOG_ENTRY: usize = 256;
+// Log entry v3 layout: 0:id 4:ecx 8:edx 12:ebx 16:esi 20:edi 24:nargs
+// 28:args[40] 188:snap_n 192:snap[8] 224:xmm0[4] 240:xmm1[4]
+// (v2 logged args[8] only, so trailing call arguments passed uncompared;
+// v3 logs and compares every argument up to LOG_MAXW. Contracts declaring
+// more are rejected at setup rather than silently truncated.)
+const LOG_MAXW: usize = 40;
 const SNAP_MAXW: usize = 8;
 const WRITEW_PER_ID: usize = 16;
+const SEQ_MAX: usize = 16; // max per-call answer steps per callee (v3 item 6)
 
 #[derive(Clone, Default)]
 struct Callee {
@@ -354,6 +359,8 @@ struct Callee {
     snap: Vec<(u8, usize, usize)>,          // (kind 0=stack arg,1=ecx,2=edx; idx; nwords)
     logxmm: bool,                           // log xmm0 words into the call entry
     xmm0_from_stack: Option<usize>,         // rw-side transport: load xmm0 from stack arg
+    logxmm1: bool,                          // v3: log xmm1 words into the call entry
+    xmm1_from_stack: Option<usize>, // v3: rw-side transport for xmm1-arg callees
 }
 
 struct State {
@@ -385,6 +392,10 @@ struct State {
     m_tls_mirror: u32, // 256 words: fabricated TLS slot values, readable by rewrites
     m_script_tab: u32, // 256 x (lo,hi) per-callee script slots
     m_writebuf: u32,   // 256 x 16 per-callee out-param write words
+    m_seq_tab: u32,    // v3: 256 x 16 per-call answer steps (lo,hi)
+    m_seq_len: u32,    // v3: 256 sequence lengths (trial_body fills)
+    m_seq_idx: u32,    // v3: 256 per-side consumption indexes (run_side zeroes)
+    m_step: u32,       // v3: stub scratch for the clamped step index
     tls_helper: u32,   // emitted mov eax,fs:[0x2c]; ret
     log_base: u32,
     stub_base: u32,
@@ -442,6 +453,10 @@ impl State {
             m_tls_mirror: 0,
             m_script_tab: 0,
             m_writebuf: 0,
+            m_seq_tab: 0,
+            m_seq_len: 0,
+            m_seq_idx: 0,
+            m_step: 0,
             tls_helper: 0,
             log_base: 0,
             stub_base: 0,
@@ -739,17 +754,23 @@ fn map_image(exe: &[u8]) -> Result<(), String> {
     s.m_side = (meta + 108) as u32;
     s.m_save_ecx = (meta + 112) as u32;
     s.m_save_edx = (meta + 116) as u32;
+    s.m_step = (meta + 120) as u32;
     s.m_xmm_mirror = (meta + 128) as u32;
     s.m_tls_mirror = (meta + 384) as u32;
-    // v2 layout inside the scratch stack region (all below the snapshot window):
-    // stubs 0x1000-0x11000, call log 0x12000-0x1A000 (256 x 128B), ctable
-    // 0x1A000, per-callee script table 0x1B000 (256 x 8B), out-param write
-    // buffer 0x1C000-0x20000 (256 x 16 words).
+    // v3 layout inside the scratch stack region (all below the snapshot window):
+    // stubs 0x1000-0x11000, call log 0x12000-0x22000 (256 x 256B), ctable
+    // 0x22000, per-callee script table 0x23000 (256 x 8B), out-param write
+    // buffer 0x24000-0x28000 (256 x 16 words), per-call answer sequences
+    // 0x28000-0x30000 (256 x 16 steps x 8B), sequence lengths 0x30000
+    // (256 dwords), per-side sequence indexes 0x31000 (256 dwords).
     s.log_base = (sb + 0x12000) as u32;
     s.stub_base = (sb + 0x1000) as u32;
-    s.ctable = (sb + 0x1A000) as u32;
-    s.m_script_tab = (sb + 0x1B000) as u32;
-    s.m_writebuf = (sb + 0x1C000) as u32;
+    s.ctable = (sb + 0x22000) as u32;
+    s.m_script_tab = (sb + 0x23000) as u32;
+    s.m_writebuf = (sb + 0x24000) as u32;
+    s.m_seq_tab = (sb + 0x28000) as u32;
+    s.m_seq_len = (sb + 0x30000) as u32;
+    s.m_seq_idx = (sb + 0x31000) as u32;
     s.fxbuf = (sb + 0xFD800) as u32;
     s.tramp = sb + 0xFE000;
     s.esp0 = (sb + 0xFD000) as u32;
@@ -764,6 +785,9 @@ fn map_image(exe: &[u8]) -> Result<(), String> {
         std::ptr::write_bytes(s.ctable as *mut u8, 0, 1024);
         std::ptr::write_bytes(s.m_script_tab as *mut u8, 0, 2048);
         std::ptr::write_bytes(s.m_writebuf as *mut u8, 0, 16384);
+        std::ptr::write_bytes(s.m_seq_tab as *mut u8, 0, 32768);
+        std::ptr::write_bytes(s.m_seq_len as *mut u8, 0, 1024);
+        std::ptr::write_bytes(s.m_seq_idx as *mut u8, 0, 1024);
     }
     build_trampoline();
     // emitted TLS helper: mov eax,fs:[0x2c]; ret (this thread's TEB
@@ -886,9 +910,10 @@ fn build_trampoline() {
 }
 
 // Per-callsite recorder stub (machine code). Entry: esp->[ret][a0..].
-// Logs (id,ecx,edx,ebx,esi,edi,nargs,args[8],snap[8],xmm0) to the call log,
-// performs scripted out-param writes, then returns the per-callee scripted
-// value with the callee's cleanup discipline (or pop_override for tail stubs).
+// Logs (id,ecx,edx,ebx,esi,edi,nargs,args[40],snap[8],xmm0,xmm1) to the
+// call log, performs scripted out-param writes, then returns the callee's
+// current per-call sequence step with the callee's cleanup discipline
+// (or pop_override for tail stubs).
 fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
     // tail_pop = Some(outer_pop): E9 tail-patch variant. The patched E8
     // pushed a return address (site+5) that must be discarded: the stub
@@ -897,6 +922,14 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
     let s = st();
     let mut t: Vec<u8> = Vec::new();
     let u = |t: &mut Vec<u8>, v: u32| t.extend_from_slice(&v.to_le_bytes());
+    // v3: tail stubs read stack arguments one word lower. A patched E9 site
+    // calls the stub with two return addresses on the stack (site+5, then
+    // the trampoline return), so the caller's arg0 is at [esp+8], not
+    // [esp+4] (lanes r-n100/r-n104/r-s79: v2 logged the trampoline return
+    // address as arg0 for every tail call with stack arguments). This
+    // assumes the tail site executes with entry ESP, which holds for
+    // register-adjust + jump thunks; the contract author must confirm it.
+    let arg_base: u32 = if tail_pop.is_some() { 8 } else { 4 };
     // Spill entry ecx/edx: the arg loop below clobbers ecx, and register
     // out-param writes (emitted later) need the original values.
     t.extend_from_slice(&[0x89, 0x0D]);
@@ -905,13 +938,24 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
     u(&mut t, s.m_save_edx); // mov [m_save_edx],edx
     // v2 rewrite-side transport for xmm0-arg callees: on the rewrite side
     // only, load xmm0 from the declared stack arg before logging it.
+    // NOTE: disp32 SIB forms (modrm 0x84/0x8C): a transport index past 30
+    // would overflow disp8 (v2's latent form is fixed here too).
     if let Some(idx) = c.xmm0_from_stack {
         t.extend_from_slice(&[0x83, 0x3D]); // cmp dword [m_side],0
         u(&mut t, s.m_side);
         t.push(0x00);
-        t.extend_from_slice(&[0x74, 0x06]); // je +6 (skip the 6-byte movss)
-        t.extend_from_slice(&[0xF3, 0x0F, 0x10, 0x44, 0x24]);
-        t.push((4 + idx as u32 * 4) as u8); // movss xmm0,[esp+4+idx*4]
+        t.extend_from_slice(&[0x74, 0x09]); // je +9 (skip the 9-byte movss)
+        t.extend_from_slice(&[0xF3, 0x0F, 0x10, 0x84, 0x24]);
+        u(&mut t, 4 + idx as u32 * 4); // movss xmm0,[esp+4+idx*4]
+    }
+    // v3: same transport for xmm1-arg callees (lanes r-b03, r-b24).
+    if let Some(idx) = c.xmm1_from_stack {
+        t.extend_from_slice(&[0x83, 0x3D]); // cmp dword [m_side],0
+        u(&mut t, s.m_side);
+        t.push(0x00);
+        t.extend_from_slice(&[0x74, 0x09]); // je +9 (skip the 9-byte movss)
+        t.extend_from_slice(&[0xF3, 0x0F, 0x10, 0x8C, 0x24]);
+        u(&mut t, 4 + idx as u32 * 4); // movss xmm1,[esp+4+idx*4]
     }
     // eax = logidx; if >= 256 skip logging (writes + scripted return still run)
     t.push(0xA1);
@@ -941,7 +985,7 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
         match *kind {
             0 => {
                 t.extend_from_slice(&[0x8B, 0x94, 0x24]);
-                u(&mut t, 4 + *idx as u32 * 4); // mov edx,[esp+4+idx*4]
+                u(&mut t, arg_base + *idx as u32 * 4); // mov edx,[esp+base+idx*4]
             }
             1 => {
                 t.extend_from_slice(&[0x8B, 0xD1]); // mov edx,ecx
@@ -952,23 +996,37 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
             t.extend_from_slice(&[0x8B, 0x8A]);
             u(&mut t, (j * 4) as u32); // mov ecx,[edx+j*4]
             t.extend_from_slice(&[0x89, 0x88]);
-            u(&mut t, (64 + (snap_off + j) * 4) as u32); // mov [eax+..],ecx
+            u(&mut t, (192 + (snap_off + j) * 4) as u32); // mov [eax+..],ecx
         }
         snap_off += *n;
     }
-    t.extend_from_slice(&[0xC7, 0x40, 0x3C]);
-    u(&mut t, snap_off as u32); // mov [eax+60],snap_n
-    // stack args: ecx scratch (saved above); [esp+4+k*4] -> [eax+28+k*4]
-    let nargs = c.nargs.min(8);
+    // NOTE: disp32 form (modrm 0x80): snap_n at byte 188 exceeds the +127
+    // reach of disp8, which would sign-extend into the previous entry.
+    t.extend_from_slice(&[0xC7, 0x80]);
+    u(&mut t, 188);
+    u(&mut t, snap_off as u32); // mov [eax+188],snap_n
+    // stack args: ecx scratch (saved above); [esp+base+k*4] -> [eax+28+k*4]
+    let nargs = c.nargs.min(LOG_MAXW);
     for k in 0..nargs {
         t.extend_from_slice(&[0x8B, 0x8C, 0x24]);
-        u(&mut t, 4 + k as u32 * 4); // mov ecx,[esp+4+4k]
+        u(&mut t, arg_base + k as u32 * 4); // mov ecx,[esp+base+4k]
         t.extend_from_slice(&[0x89, 0x88]);
         u(&mut t, 28 + k as u32 * 4); // mov [eax+28+4k],ecx
     }
+    // NOTE: disp32 forms throughout (modrm 0x80/0x88): all four vector
+    // slots sit past byte 127, out of disp8 reach.
     if c.logxmm {
-        t.extend_from_slice(&[0x0F, 0x13, 0x40, 0x60]); // movlps [eax+96],xmm0
-        t.extend_from_slice(&[0x0F, 0x17, 0x40, 0x68]); // movhps [eax+104],xmm0
+        t.extend_from_slice(&[0x0F, 0x13, 0x80]);
+        u(&mut t, 224); // movlps [eax+224],xmm0
+        t.extend_from_slice(&[0x0F, 0x17, 0x80]);
+        u(&mut t, 232); // movhps [eax+232],xmm0
+    }
+    // v3: xmm1 call-argument logging (lanes r-b03, r-b24).
+    if c.logxmm1 {
+        t.extend_from_slice(&[0x0F, 0x13, 0x88]);
+        u(&mut t, 240); // movlps [eax+240],xmm1
+        t.extend_from_slice(&[0x0F, 0x17, 0x88]);
+        u(&mut t, 248); // movhps [eax+248],xmm1
     }
     // logidx++
     t.push(0xFF);
@@ -978,6 +1036,27 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
     let full_pos = t.len();
     let rel = (full_pos - (jae_pos + 4)) as u32;
     t[jae_pos..jae_pos + 4].copy_from_slice(&rel.to_le_bytes());
+    // v3 per-call answer sequences (lane r-b04): this call consumes step
+    // idx = min([seqidx], len-1) of the callee's sequence and advances the
+    // per-side index, so a callee polled in a loop can answer token, token,
+    // ..., NULL. Contracts without "seq" get [(script lo,hi)] with length
+    // 1 (filled by trial_body), which is exactly the v2 behavior. eax is
+    // preserved across this: the `al` channel below keeps v2's residue
+    // semantics bit-identically.
+    t.extend_from_slice(&[0x8B, 0x0D]);
+    u(&mut t, s.m_seq_idx + c.id * 4); // mov ecx,[seqidx]
+    t.extend_from_slice(&[0x3B, 0x0D]);
+    u(&mut t, s.m_seq_len + c.id * 4); // cmp ecx,[seqlen]
+    t.extend_from_slice(&[0x72, 0x07]); // jb have (skip 7: mov+dec)
+    t.extend_from_slice(&[0x8B, 0x0D]);
+    u(&mut t, s.m_seq_len + c.id * 4); // mov ecx,[seqlen]
+    t.push(0x49); // dec ecx (len >= 1 always, so len-1 >= 0)
+    // have: ecx = clamped step
+    t.push(0xFF);
+    t.push(0x05);
+    u(&mut t, s.m_seq_idx + c.id * 4); // inc [seqidx]
+    t.extend_from_slice(&[0x89, 0x0D]);
+    u(&mut t, s.m_step); // mov [m_step],ecx (writes below clobber ecx)
     // v2 out-param writes: words from the per-callee write buffer stored
     // through the pointer found at the declared stack arg or register.
     for (kind, idx, wstart, n) in &c.writes {
@@ -992,7 +1071,7 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
             }
             _ => {
                 t.extend_from_slice(&[0x8B, 0x94, 0x24]);
-                u(&mut t, 4 + *idx as u32 * 4); // mov edx,[esp+4+arg*4]
+                u(&mut t, arg_base + *idx as u32 * 4); // mov edx,[esp+base+arg*4]
             }
         }
         for j in 0..*n {
@@ -1002,53 +1081,47 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
             u(&mut t, (j * 4) as u32);
         }
     }
-    let slo = s.m_script_tab + c.id * 8;
-    let shi = slo + 4;
+    // edx = this call's (lo,hi) step address: seq_tab + id*128 + step*8.
+    t.extend_from_slice(&[0x8B, 0x0D]);
+    u(&mut t, s.m_step); // mov ecx,[m_step]
+    t.extend_from_slice(&[0x8B, 0xD1]); // mov edx,ecx
+    t.extend_from_slice(&[0xC1, 0xE2, 0x03]); // shl edx,3
+    t.extend_from_slice(&[0x81, 0xC2]);
+    u(&mut t, s.m_seq_tab + c.id * 128); // add edx,seqbase
     match c.ret.as_str() {
         "u64" => {
-            t.push(0xA1);
-            u(&mut t, slo);
-            t.extend_from_slice(&[0x8B, 0x15]);
-            u(&mut t, shi); // mov edx,[hi]
+            t.extend_from_slice(&[0x8B, 0x02]); // mov eax,[edx]
+            t.extend_from_slice(&[0x83, 0xC2, 0x04]); // add edx,4
+            t.extend_from_slice(&[0x8B, 0x12]); // mov edx,[edx]
         }
         "al" => {
             t.extend_from_slice(&[0x25]);
             u(&mut t, 0xFFFFFF00); // and eax,0xffffff00
             // or in the script lo byte via edx scratch (clobberable)
-            t.extend_from_slice(&[0x8B, 0x15]);
-            u(&mut t, slo); // mov edx,[lo]
+            t.extend_from_slice(&[0x8B, 0x12]); // mov edx,[edx]
             t.extend_from_slice(&[0x81, 0xE2]);
             u(&mut t, 0xFF); // and edx,0xff
             t.extend_from_slice(&[0x09, 0xD0]); // or eax,edx
         }
         "f32xmm0" => {
-            t.extend_from_slice(&[0xF3, 0x0F, 0x10, 0x05]);
-            u(&mut t, slo); // movss xmm0,[lo]
-            t.push(0xA1);
-            u(&mut t, slo); // eax = bits too
+            t.extend_from_slice(&[0xF3, 0x0F, 0x10, 0x02]); // movss xmm0,[edx]
+            t.extend_from_slice(&[0x8B, 0x02]); // mov eax,[edx] too
         }
         "f64xmm0" => {
-            t.extend_from_slice(&[0x0F, 0x12, 0x05]);
-            u(&mut t, slo); // movlps xmm0,[lo] (8 bytes: lo+hi)
-            t.push(0xA1);
-            u(&mut t, slo); // eax = lo too
+            t.extend_from_slice(&[0x0F, 0x12, 0x02]); // movlps xmm0,[edx]
+            t.extend_from_slice(&[0x8B, 0x02]); // mov eax,[edx] too
         }
         "f32st0" => {
-            t.extend_from_slice(&[0xD9, 0x05]);
-            u(&mut t, slo); // fld dword [lo]
-            t.push(0xA1);
-            u(&mut t, slo);
+            t.extend_from_slice(&[0xD9, 0x02]); // fld dword [edx]
+            t.extend_from_slice(&[0x8B, 0x02]); // mov eax,[edx]
         }
         "f64st0" => {
-            t.extend_from_slice(&[0xDD, 0x05]);
-            u(&mut t, slo); // fld qword [lo] (lo+hi script words)
-            t.push(0xA1);
-            u(&mut t, slo);
+            t.extend_from_slice(&[0xDD, 0x02]); // fld qword [edx]
+            t.extend_from_slice(&[0x8B, 0x02]); // mov eax,[edx]
         }
         _ => {
-            // u32 default: eax = script lo
-            t.push(0xA1);
-            u(&mut t, slo);
+            // u32 default: eax = step lo
+            t.extend_from_slice(&[0x8B, 0x02]); // mov eax,[edx]
         }
     }
     match tail_pop {
@@ -1222,16 +1295,24 @@ fn find_iat(dll_want: &str, name_want: &str) -> Option<usize> {
 // Trial execution.
 // ---------------------------------------------------------------------------
 
-fn xorshift(mut x: u32) -> impl FnMut() -> u32 {
-    move || {
-        x ^= x << 13;
-        x ^= x >> 17;
-        x ^= x << 5;
-        if x == 0 {
-            x = 0x9E3779B1;
-        }
-        x
-    }
+// v3: deterministic per-word fill with full avalanche (murmur3 fmix32 over
+// the mixed key). Every bit of (seed, trial, range, word) affects every
+// output bit, so fills genuinely vary between trials, between ranges and
+// between words. This replaces the v1/v2 per-trial xorshift stream seeded
+// `(trial ^ seed*G ^ C)|1`, whose `|1` erased the bit consecutive trials
+// differed in, making trial pairs share bit-identical first words.
+fn fill_word(seed: u32, trial: u32, range: u32, word: u32) -> u32 {
+    let mut h = seed
+        ^ trial.wrapping_mul(0x85EBCA6B)
+        ^ range.wrapping_mul(0xC2B28077)
+        ^ word.wrapping_mul(0x27D4EB2F);
+    h ^= 16;
+    h ^= h >> 16;
+    h = h.wrapping_mul(0x85EBCA6B);
+    h ^= h >> 13;
+    h = h.wrapping_mul(0xC2B28077);
+    h ^= h >> 16;
+    h
 }
 
 fn heap_pattern(i: u32, trial: u32, seed: u32) -> u32 {
@@ -1256,7 +1337,15 @@ fn fnv1a(mut h: u64, off: usize, val: u32) -> u64 {
     h
 }
 
-type CallRec = (u32, u32, u32, Vec<u32>, Vec<u32>, [u32; 4]);
+type CallRec = (
+    u32,
+    u32,
+    u32,
+    Vec<u32>,
+    Vec<u32>,
+    [u32; 4],
+    [u32; 4],
+);
 
 #[derive(Clone, Default)]
 struct Obs {
@@ -1276,7 +1365,7 @@ struct Obs {
     globals_writes: Vec<(u32, u32)>, // (rva, val)
     undeclared: Vec<(u32, u32)>,
     undeclared_n: u32,
-    calls: Vec<CallRec>, // (id, ecx, edx, args, snap, xmm0)
+    calls: Vec<CallRec>, // (id, ecx, edx, args, snap, xmm0, xmm1)
     fault: String,       // "" or "code=.. eip=.. ..."
     fault_code: u32,
     fault_eip: u32,
@@ -1299,15 +1388,16 @@ fn obs_json(o: &Obs) -> String {
     let jc = o
         .calls
         .iter()
-        .map(|(id, cx, dx, a, snap, x0)| {
+        .map(|(id, cx, dx, a, snap, x0, x1)| {
             format!(
-                "{{\"id\":{},\"ecx\":{},\"edx\":{},\"args\":[{}],\"snap\":[{}],\"xmm0\":[{}]}}",
+                "{{\"id\":{},\"ecx\":{},\"edx\":{},\"args\":[{}],\"snap\":[{}],\"xmm0\":[{}],\"xmm1\":[{}]}}",
                 id,
                 hx(*cx),
                 hx(*dx),
                 a.iter().map(|x| hx(*x)).collect::<Vec<_>>().join(","),
                 snap.iter().map(|x| hx(*x)).collect::<Vec<_>>().join(","),
-                x0.iter().map(|x| hx(*x)).collect::<Vec<_>>().join(",")
+                x0.iter().map(|x| hx(*x)).collect::<Vec<_>>().join(","),
+                x1.iter().map(|x| hx(*x)).collect::<Vec<_>>().join(",")
             )
         })
         .collect::<Vec<_>>()
@@ -1435,6 +1525,8 @@ fn run_side(
         // per trial in trial_body, shared by both sides)
         std::ptr::write_bytes(s.m_fault as *mut u8, 0, 56);
         *((s.m_logidx) as *mut u32) = 0;
+        // v3: each side consumes per-call sequences from step 0.
+        std::ptr::write_bytes(s.m_seq_idx as *mut u8, 0, 1024);
         *((s.m_side) as *mut u32) = if is_rw { 1 } else { 0 };
         *((s.m_fn) as *mut u32) = fn_addr;
         // ctx inputs: ecx edx ebx esi edi ebp eax esp0
@@ -1691,21 +1783,25 @@ fn run_side(
                 let id = *e;
                 let cx = *e.add(1);
                 let dx = *e.add(2);
-                let nargs = (*e.add(6)).min(8);
+                let nargs = (*e.add(6)).min(LOG_MAXW as u32);
                 let mut args = Vec::new();
                 for k in 0..nargs {
                     args.push(*e.add(7 + k as usize));
                 }
-                let snapn = (*e.add(15)).min(SNAP_MAXW as u32);
+                let snapn = (*e.add(47)).min(SNAP_MAXW as u32);
                 let mut snap = Vec::new();
                 for k in 0..snapn {
-                    snap.push(*e.add(16 + k as usize));
+                    snap.push(*e.add(48 + k as usize));
                 }
                 let mut x0 = [0u32; 4];
                 for (k, slot) in x0.iter_mut().enumerate() {
-                    *slot = *e.add(24 + k);
+                    *slot = *e.add(56 + k);
                 }
-                o.calls.push((id, cx, dx, args, snap, x0));
+                let mut x1 = [0u32; 4];
+                for (k, slot) in x1.iter_mut().enumerate() {
+                    *slot = *e.add(60 + k);
+                }
+                o.calls.push((id, cx, dx, args, snap, x0, x1));
             }
         }
     }
@@ -1934,7 +2030,7 @@ fn callkey(c: &CallRec, checks: &J) -> String {
         Some(v) => v.as_arr().iter().map(|x| x.as_usize()).collect(),
         None => Vec::new(),
     };
-    if cal.xmm0_from_stack.is_none() {
+    if cal.xmm0_from_stack.is_none() && cal.xmm1_from_stack.is_none() {
         let args: Vec<String> =
             c.3.iter()
                 .enumerate()
@@ -1951,6 +2047,9 @@ fn callkey(c: &CallRec, checks: &J) -> String {
     }
     if cal.logxmm {
         k.push_str(&format!(" xmm0={:?}", c.5));
+    }
+    if cal.logxmm1 {
+        k.push_str(&format!(" xmm1={:?}", c.6));
     }
     k
 }
@@ -2092,6 +2191,12 @@ fn cmd_setup(q: &J) -> String {
                 .unwrap_or("cdecl")
                 .to_string();
             let nargs = c.get("nargs").map(|v| v.as_usize()).unwrap_or(0);
+            if nargs > LOG_MAXW {
+                return format!(
+                    "{{\"ok\":false,\"error\":\"callee {} nargs {} exceeds log window {}\"}}",
+                    id, nargs, LOG_MAXW
+                );
+            }
             let ret = c
                 .get("ret")
                 .map(|v| v.as_str())
@@ -2099,9 +2204,12 @@ fn cmd_setup(q: &J) -> String {
                 .to_string();
             // (Setup-time scripts are vestigial: per-trial answers arrive
             // with each trial request, so the setup list is not stored.)
+            // v3: callee-cleaned stubs pop the full argument count. (v2 capped
+            // the cleanup at 8 words like the log window, under-popping for
+            // nargs > 8 and corrupting the caller's frame: lane r-b01's fix.)
             let pop = match conv.as_str() {
                 "cdecl" => 0,
-                _ => (nargs.min(8) as u32) * 4, // stdcall/thiscall/fastcall/custom pop
+                _ => (nargs as u32) * 4, // stdcall/thiscall/fastcall/custom pop
             };
             // v2: out-param writes [{arg|reg, at, n}], snapshots, xmm logging.
             let mut writes = Vec::new();
@@ -2147,6 +2255,8 @@ fn cmd_setup(q: &J) -> String {
             }
             let logxmm = c.get("logxmm").map(|v| v.as_bool(false)).unwrap_or(false);
             let xmm0_from_stack = c.get("xmm0_from_stack").map(|v| v.as_usize());
+            let logxmm1 = c.get("logxmm1").map(|v| v.as_bool(false)).unwrap_or(false);
+            let xmm1_from_stack = c.get("xmm1_from_stack").map(|v| v.as_usize());
             let cal = Callee {
                 id,
                 conv,
@@ -2159,6 +2269,8 @@ fn cmd_setup(q: &J) -> String {
                 snap,
                 logxmm,
                 xmm0_from_stack,
+                logxmm1,
+                xmm1_from_stack,
             };
             let bytes = emit_stub(&cal, None);
             let addr = s.stub_base + s.stub_off as u32;
@@ -2334,13 +2446,15 @@ fn cmd_setup(q: &J) -> String {
         .collect::<Vec<_>>()
         .join(",");
     format!(
-        "{{\"ok\":true,\"img_base\":{},\"delta\":{},\"relocs\":{},\"heap\":{},\"stack\":{},\"dll_base\":{},\"exports\":{{{}}},\"stub_addrs\":{{{}}},\"iat_patched\":[{}],\"errors\":[{}]}}",
+        "{{\"ok\":true,\"img_base\":{},\"delta\":{},\"relocs\":{},\"heap\":{},\"stack\":{},\"dll_base\":{},\"text_lo\":{},\"text_hi\":{},\"exports\":{{{}}},\"stub_addrs\":{{{}}},\"iat_patched\":[{}],\"errors\":[{}]}}",
         hx(s.img as u32),
         hx(s.delta),
         s.relocs,
         hx(s.h as u32),
         hx(s.s as u32),
         dll_base,
+        hx(s.text_lo as u32),
+        hx(s.text_hi as u32),
         expmap,
         stubmap,
         iat_done
@@ -2444,11 +2558,10 @@ fn parse_trial(q: &J) -> Result<(TrialReq, J), String> {
             // deterministic per-trial fill of declared ranges
             let trial = q.get("trial").map(|v| v.as_u32()).unwrap_or(0);
             let seed = q.get("seed").map(|v| v.as_u32()).unwrap_or(0);
-            let mut rng = xorshift((trial ^ seed.wrapping_mul(0x9E3779B1) ^ 0x51ab3c11) | 1);
-            for &(lo, len) in &s.globals {
+            for (ri, &(lo, len)) in s.globals.iter().enumerate() {
                 let mut words = Vec::new();
-                for _ in 0..(len / 4) {
-                    words.push(rng());
+                for wi in 0..(len / 4) {
+                    words.push(fill_word(seed, trial, ri as u32, wi as u32));
                 }
                 globals_fill.push((lo, words));
             }
@@ -2541,19 +2654,36 @@ fn parse_trial(q: &J) -> Result<(TrialReq, J), String> {
 }
 
 // The trial body runs on a dedicated thread so a hang can be cut off.
-fn trial_body(req: TrialReq, checks: J, script_vals: Vec<(u32, u32, u32, Vec<u32>)>) -> String {
+fn trial_body(
+    req: TrialReq,
+    checks: J,
+    script_vals: Vec<(u32, u32, u32, Vec<u32>, Vec<(u32, u32)>)>,
+) -> String {
     // v2: per-callee script slots + out-param write words, filled once per
-    // trial and shared by both sides.
+    // trial and shared by both sides. v3: per-call answer sequences; a
+    // callee without "seq" gets [(script lo,hi)] with length 1, exactly v2.
     unsafe {
         std::ptr::write_bytes(st().m_script_tab as *mut u8, 0, 2048);
         std::ptr::write_bytes(st().m_writebuf as *mut u8, 0, 16384);
-        for (id, lo, hi, w) in &script_vals {
+        std::ptr::write_bytes(st().m_seq_tab as *mut u8, 0, 32768);
+        std::ptr::write_bytes(st().m_seq_len as *mut u8, 0, 1024);
+        for (id, lo, hi, w, seq) in &script_vals {
             if *id < 256 {
                 *((st().m_script_tab + id * 8) as *mut u32) = *lo;
                 *((st().m_script_tab + id * 8 + 4) as *mut u32) = *hi;
                 for (j, word) in w.iter().take(WRITEW_PER_ID).enumerate() {
                     *((st().m_writebuf + id * 64 + j as u32 * 4) as *mut u32) = *word;
                 }
+                let owned: Vec<(u32, u32)> = if seq.is_empty() {
+                    vec![(*lo, *hi)]
+                } else {
+                    seq[..seq.len().min(SEQ_MAX)].to_vec()
+                };
+                for (k, (slo, shi)) in owned.iter().enumerate() {
+                    *((st().m_seq_tab + id * 128 + k as u32 * 8) as *mut u32) = *slo;
+                    *((st().m_seq_tab + id * 128 + k as u32 * 8 + 4) as *mut u32) = *shi;
+                }
+                *((st().m_seq_len + id * 4) as *mut u32) = owned.len() as u32;
             }
         }
     }
@@ -2630,7 +2760,7 @@ fn main() {
     let lines = stdin.lock().lines();
     let mut out = std::io::stdout();
     // ready banner (driver waits for this)
-    writeln!(out, "{{\"ready\":true,\"checker_version\":\"checker2\"}}").unwrap();
+    writeln!(out, "{{\"ready\":true,\"checker_version\":\"checker3\"}}").unwrap();
     out.flush().unwrap();
     for line in lines {
         let line = match line {
@@ -2672,7 +2802,7 @@ fn main() {
             "trial" => {
                 let timeout = q.get("timeout_ms").map(|v| v.as_u32()).unwrap_or(10000);
                 // explicit scripted values (driver-resolved per callee scripts)
-                let sv: Vec<(u32, u32, u32, Vec<u32>)> = q
+                let sv: Vec<(u32, u32, u32, Vec<u32>, Vec<(u32, u32)>)> = q
                     .get("script_vals")
                     .map(|v| {
                         v.as_arr()
@@ -2684,6 +2814,21 @@ fn main() {
                                     e.get("hi").map(|x| x.as_u32()).unwrap_or(0),
                                     e.get("w")
                                         .map(|w| w.as_arr().iter().map(|x| x.as_u32()).collect())
+                                        .unwrap_or_default(),
+                                    // v3: per-call answer steps [[lo,hi],...]
+                                    e.get("seq")
+                                        .map(|s| {
+                                            s.as_arr()
+                                                .iter()
+                                                .map(|st| match st {
+                                                    J::Arr(a) => (
+                                                        a.first().map(|x| x.as_u32()).unwrap_or(0),
+                                                        a.get(1).map(|x| x.as_u32()).unwrap_or(0),
+                                                    ),
+                                                    x => (x.as_u32(), 0),
+                                                })
+                                                .collect()
+                                        })
                                         .unwrap_or_default(),
                                 )
                             })

@@ -90,6 +90,14 @@ One JSON file per function:
 - `stack`: list of {kind}: `int`, `byte`, `float`, `ptr` (+seg),
   `zero`/`null`, `ptr_or_null` (+seg, NULL on even trials),
   `small` (+max), `smallint` (switch-index-like), `cycle` (+values).
+  v3 adds: `heapidx` (+seg, +count default 16: 2/3 of trials index heap
+  words as (heap+off)>>2 + trial%count for functions that scale the arg
+  by 4, 1/3 wild ints redrawn while arg*4 lands in code pages);
+  `ptr_or_null` accepts `phase`/`period` (NULL iff
+  (trial+phase)%period == 0) and list/dict `plus` cycled on live
+  trials; `ptr`/`regs` `plus` accepts {"rot"|"cycle": [...]} dicts;
+  stack `rot` cycles values trial-indexed (unlike `cycle`, which adds
+  the arg position).
 - `heapsegs`: [{off,size,fill,links,floats_at,words,pin}]. `fill` rotates
   per trial between zeros, pattern and random when `random`. `links`
   pre-link nested pointers. `floats_at` marks float-edge words. `words`
@@ -102,25 +110,34 @@ One JSON file per function:
   {"heap_off":bytes} (heap-relative pointer), {"any":true} (random),
   {"small":max}, {"cycle":[...]}, {"rot":[...]} (alias),
   {"float":true} (float-edge bits), {"stub":id} (recorder-stub address
-  for vtable/data-slot planting). A bare {"heap":N} with no `plus` means
+  for vtable/data-slot planting), {"null":...} (literal 0; v3 -- v2 fell
+  through to random bits). A bare {"heap":N} with no `plus` means
   segment N when N names one, else a byte offset.
 - `globals`: [{rva,size}] declared ranges (dword-aligned). `globals_fill`:
   `random`, `pristine`, an explicit [{rva,words}] list, `globals_values`
   ([{rva,words}] with word specs, supports heap/stub pointers), or
   `globals_fill_spec` (`heap_ptr`/`cycle`/`words` per range).
 - `callees`: [{id,conv,nargs,ret,script,writes,wscript,snap,logxmm,
-  xmm0_from_stack}]. `conv` sets cleanup (`cdecl` callers clean up, all
-  others pop nargs*4); `ret` is the scripted answer channel (`u32`,
-  `u64`, `al`, `f32xmm0`, `f64xmm0`, `f32st0`, `f64st0`); `script` is a
-  value list cycled per trial (each callee gets its own slot),
-  `"edges"`, or entries resolving to heap pointers. `writes` declares
-  out-param stores: [{arg:N|reg:"ecx"/"edx", at, n}]; `wscript` is the
-  per-trial word matrix cycled alongside. `snap` declares pointed-to
-  snapshots: [{kind:"arg"/"ecx"/"edx", idx, n}], at most 8 words total
-  per callee. `logxmm` logs the 16 bytes of XMM0 at the call.
+  xmm0_from_stack,logxmm1,xmm1_from_stack,seq}]. `conv` sets cleanup
+  (`cdecl` callers clean up, all others pop nargs*4); `ret` is the
+  scripted answer channel (`u32`, `u64`, `al`, `f32xmm0`, `f64xmm0`,
+  `f32st0`, `f64st0`); `script` is a value list cycled per trial (each
+  callee gets its own slot), `"edges"`, or entries resolving to heap
+  pointers. `writes` declares out-param stores:
+  [{arg:N|reg:"ecx"/"edx", at, n}]; `wscript` is the per-trial word
+  matrix cycled alongside. `snap` declares pointed-to snapshots:
+  [{kind:"arg"/"ecx"/"edx", idx, n}], at most 8 words total per callee.
+  `logxmm` logs the 16 bytes of XMM0 at the call.
   `xmm0_from_stack` names the stack arg the stub loads XMM0 from on
   the rewrite side (transport for xmm0-arg callees; call args are then
-  skipped on both sides and only XMM0 is compared).
+  skipped on both sides and only XMM0 is compared). v3 adds `logxmm1`
+  and `xmm1_from_stack`, the same pair for XMM1 (either transport
+  skips the stack args on both sides and compares the vector regs),
+  and `seq`: a per-call answer sequence (at most 16 [lo,hi] steps,
+  same entry shapes as `script`) consumed in call order per callee per
+  side -- for callees polled in a loop until a sentinel. Calls past
+  the last step repeat it. Without `seq` every call in the trial gets
+  the script value, as before.
 - `patches`: [{site (RVA hex of an E8), id}]. `tailpatches`:
   [{site (RVA hex of an E9), id}]; the tail stub logs like a normal stub
   then returns straight to the trampoline with `outer_pop + 4`
@@ -133,6 +150,13 @@ One JSON file per function:
 - `stack_fill`: a defined fill for uninitialized stack (integer, or
   `"pattern"` for the default trial pattern). Use `0` when either side
   reads stack it did not write.
+- v3 code-pointer rule: unconstrained random draws (`any`, `int` tails,
+  `float`/`byte` words, random heap fills, wide `small`) never produce
+  addresses inside the original's code pages; a draw that lands there is
+  remapped deterministically (+0x80000000, unmapped) without consuming
+  more RNG, so every other draw keeps its v2 value. Contract-authored
+  values are never remapped. `"allow_code_pointers": true` restores the
+  exact v2 stream for audit.
 - `checks`: `ret`, `esp`, `heap`, `stack`, `globals`, `calls`,
   `undeclared` (all bool), `fulldata` (bool), `fp_tol`, `fp64`,
   `call_regs` (optional {id:[regs]}), `call_skip`
@@ -203,7 +227,21 @@ Verdict format (accept.py-compatible)
 `fp_exact`, `worker_us_total`, `wall_s`, `first_mismatch`, plus
 `status_hist` ({"ok/ok": N, ...}) and `orig_ok_trials` (trials where the
 original side returned OK; the accept gate should require this to be
-non-zero before any fault-driven pass counts).
+non-zero before any fault-driven pass counts). v3 adds `coverage` (trials
+completed, checks seen, callees fired on completed trials, distinct
+call-sequence shapes, trials where the original wrote), `vacuous` (true
+when the verdict has no failures but the coverage rule below refused it)
+and `vacuous_reasons`.
+
+v3 coverage rule: a verdict with zero failures still fails as `vacuous`
+unless (a) at least `min_orig_ok_share` of trials (default 0.10,
+overridable per contract) completed on the original without a fault,
+(b) every enabled behavioural check ran on at least one trial, and
+(c) every declared callee fired on at least one completed trial (a
+callee that cannot fire must be listed in the contract's
+`coverage_exempt_callees`, never silently uncovered). The thresholds are
+part of the contract so a fault-heavy-but-honest contract stays runnable
+and the exemption is reviewable.
 
 Writing a rewrite
 -----------------
@@ -256,8 +294,9 @@ after the first fault in a trial.
 
 Current limits: one worker is single-trial-at-a-time (run one driver per
 core); snapshots cap at 8 words per callee and out-param words at 16 per
-callee; computed `jmp reg` with non-vtable targets still needs per-case
-analysis.
+callee; call arguments log and compare up to 40 words per callee and setup
+rejects more (v2 silently compared only the first 8); computed `jmp reg`
+with non-vtable targets still needs per-case analysis.
 """
 import json, os, sys, time, random, struct, hashlib, subprocess, threading, queue
 
@@ -313,10 +352,37 @@ def fbits(rng):
         return rng.getrandbits(23)
     if r < 0.25:  # small normal
         return 0x00800000 | rng.getrandbits(23)
-    v = rng.getrandbits(32)
+    v = rand32(rng)
     if (v & 0x7F800000) == 0x7F800000 and (v & 0x007FFFFF) != 0:
         v |= 0x00400000  # quiet any signaling NaN (x87/SSE quieting differs)
     return v
+
+
+# v3 code-pointer rule (lane a-08): while the rewrite runs, the worker
+# revokes the original's code pages, so a trial input that points into them
+# is unjudgeable by design -- the original reads the byte, the faithful
+# rewrite faults and is misreported as cheating. Unconstrained random draws
+# therefore never produce code-range values: a draw that lands there is
+# remapped deterministically (+0x80000000, into unmapped space, so the
+# trial stays an honest wild-pointer parity trial) without consuming more
+# RNG, so every other draw keeps its v2 value. Contract-authored values
+# (literals, cycles, heap/stub pointers) are never remapped: the contract
+# asked for them. "allow_code_pointers": true restores the v2 stream
+# exactly (for audit; such trials cannot pass when dereferenced).
+CODE_LO = 0
+CODE_HI = 0
+CODE_ALLOW = False
+
+
+def demap(v):
+    v &= 0xFFFFFFFF
+    if not CODE_ALLOW and CODE_LO <= v < CODE_HI:
+        v = (v + 0x80000000) & 0xFFFFFFFF
+    return v
+
+
+def rand32(rng):
+    return demap(rng.getrandbits(32))
 
 
 class Worker:
@@ -366,19 +432,19 @@ class Worker:
 def gen_int(rng, trial, reg_i=0):
     if trial < len(INT_EDGES):
         return INT_EDGES[(trial + reg_i) % len(INT_EDGES)]
-    return rng.getrandbits(32)
+    return rand32(rng)
 
 
 def gen_small(rng, trial, mx):
     cands = [v for v in (0, 1, 2, 3, 4, 7, 8, 15, 16, mx, mx - 1) if 0 <= v <= mx]
     if trial < 24 and cands:
         return cands[trial % len(cands)]
-    return rng.randint(0, mx)
+    return demap(rng.randint(0, mx))
 
 
 def gen_byteword(rng, trial):
     lo = BYTE_EDGES[trial % len(BYTE_EDGES)] if trial < 24 else rng.getrandbits(8)
-    return lo | (rng.getrandbits(24) << 8)
+    return demap(lo | (rng.getrandbits(24) << 8))
 
 
 def resolve_word(spec, rng, trial, heap, contract, stubs):
@@ -420,7 +486,9 @@ def resolve_word(spec, rng, trial, heap, contract, stubs):
         return resolve_word(seq[trial % len(seq)], rng, trial, heap, contract, stubs)
     if "float" in spec:
         return fbits(rng)
-    return rng.getrandbits(32)  # {"any": true}
+    if "null" in spec:  # v3: explicit null (v2 fell through to random bits)
+        return 0
+    return rand32(rng)  # {"any": true}
 
 
 def resolve_regs(contract, rng, trial, heap):
@@ -428,9 +496,7 @@ def resolve_regs(contract, rng, trial, heap):
     for i, spec in enumerate(contract["regs"]):
         if "heap" in spec:
             seg = contract["heapsegs"][spec["heap"]]
-            p = spec.get("plus", 0)
-            if isinstance(p, list):  # q-05: cycled offsets
-                p = p[trial % len(p)]
+            p = resolve_plus(spec.get("plus", 0), trial)
             out.append((heap + seg["off"] + p) & 0xFFFFFFFF)
         elif "int" in spec:
             out.append(spec["int"] & 0xFFFFFFFF)
@@ -443,6 +509,19 @@ def resolve_regs(contract, rng, trial, heap):
         else:
             out.append(gen_int(rng, trial, i))
     return out
+
+
+def resolve_plus(plus, trial):
+    # v3: "plus" may be a scalar, a list cycled per trial (v2 form), or a
+    # {"rot"|"cycle": [...]} dict cycled per trial (v1 r-s03/r-s09 form).
+    if isinstance(plus, dict):
+        seq = plus.get("rot", plus.get("cycle"))
+        if seq is not None:
+            return seq[trial % len(seq)]
+        return 0
+    if isinstance(plus, list):
+        return plus[trial % len(plus)]
+    return plus
 
 
 def resolve_stack(contract, rng, trial, heap):
@@ -460,16 +539,37 @@ def resolve_stack(contract, rng, trial, heap):
             out.append(0)
         elif k == "ptr":
             seg = contract["heapsegs"][s["seg"]]
-            p = s.get("plus", 0)
-            if isinstance(p, list):
-                p = p[trial % len(p)]
+            p = resolve_plus(s.get("plus", 0), trial)
             out.append((heap + seg["off"] + p) & 0xFFFFFFFF)
         elif k == "ptr_or_null":  # q-06: NULL on even trials, pointer on odd
-            if trial % 2 == 0:
+            # v3: optional "phase"/"period" (v1 r-s03 rule: null when
+            # (trial+phase) % period == 0; defaults 0 and 2 reproduce v2)
+            # and list/dict "plus" cycled on live trials (v1 tokenize form).
+            if (trial + s.get("phase", 0)) % s.get("period", 2) == 0:
                 out.append(0)
             else:
                 seg = contract["heapsegs"][s["seg"]]
-                out.append((heap + seg["off"] + s.get("plus", 0)) & 0xFFFFFFFF)
+                p = resolve_plus(s.get("plus", 0), trial)
+                out.append((heap + seg["off"] + p) & 0xFFFFFFFF)
+        elif k == "heapidx":  # v3: v1 r-s07 kind, exact port
+            # The function scales this arg by 4 and dereferences it. 2/3 of
+            # trials index heap words ((heap+off)>>2 + trial%count) so
+            # post-load logic runs on real data; 1/3 stay wild ints (fault
+            # parity), redrawn while arg*4 would land in the original's
+            # code pages (unjudgeable there: item 4).
+            if trial % 3 != 0:
+                seg = contract["heapsegs"][s["seg"]]
+                base = (heap + seg["off"]) & 0xFFFFFFFF
+                span = s.get("count", 16)
+                assert base % 4 == 0
+                out.append(((base >> 2) + (trial % span)) & 0xFFFFFFFF)
+            else:
+                v = gen_int(rng, trial, len(out))
+                for _ in range(100):
+                    if not (CODE_LO <= ((v * 4) & 0xFFFFFFFF) < CODE_HI):
+                        break
+                    v = rng.getrandbits(32)
+                out.append(v)
         elif k == "small":  # q-01/q-16 unified ranged int
             out.append(gen_small(rng, trial + len(out) * 3, s.get("max", 3)))
         elif k == "smallint":  # q-13 switch-index-like values
@@ -482,6 +582,9 @@ def resolve_stack(contract, rng, trial, heap):
         elif k == "cycle":  # q-02/q-04 deterministic per-trial values
             vals = s["values"]
             out.append(vals[(trial + len(out)) % len(vals)] & 0xFFFFFFFF)
+        elif k == "rot":  # v3: v1 r-s03 kind; trial-indexed, unlike "cycle"
+            vals = s["values"]
+            out.append(vals[trial % len(vals)] & 0xFFFFFFFF)
         else:
             raise ValueError("stack kind " + k)
     return out
@@ -514,9 +617,9 @@ def resolve_segs(contract, rng, trial, heap, stubs):
             elif fill == "pattern" or pol == 1:
                 words.append(((si * 0x1000 + w) * 0x9E3779B1) & 0xFFFFFFFF)
             elif fill == "floats":
-                words.append(rng.getrandbits(32))
+                words.append(rand32(rng))
             else:
-                words.append(rng.getrandbits(32))
+                words.append(rand32(rng))
         if fill == "floats":
             for wi in sg.get("floats_at", []):
                 if trial < len(FLOAT_EDGES):
@@ -602,6 +705,23 @@ def resolve_scripts(contract, rng, trial, heap, stubs):
         if ws is not None:  # v2 out-param write words, cycled per trial
             e["w"] = [resolve_script_val(x, rng, trial, heap, contract, stubs)
                       for x in ws[trial % len(ws)]]
+        sq = c.get("seq")  # v3 per-call answer sequence (lane r-b04)
+        if sq is not None:
+            if len(sq) > 16:
+                raise ValueError("callee %s seq exceeds 16 steps" % c["id"])
+            steps = []
+            for raw in sq:
+                if isinstance(raw, dict) and "lo" in raw:  # 64-bit step word
+                    slo = resolve_script_val(raw["lo"], rng, trial, heap,
+                                             contract, stubs)
+                    shi = resolve_script_val(raw.get("hi", 0), rng, trial,
+                                             heap, contract, stubs)
+                else:
+                    slo = resolve_script_val(raw, rng, trial, heap,
+                                             contract, stubs)
+                    shi = 0
+                steps.append([slo & 0xFFFFFFFF, shi & 0xFFFFFFFF])
+            e["seq"] = steps
         out.append(e)
     return out
 
@@ -643,6 +763,8 @@ def resolve_xmm(contract, rng, trial):
 
 
 def run_contract(w, contract, export, trials, seed, stop_after_fails=None):
+    global CODE_ALLOW
+    CODE_ALLOW = bool(contract.get("allow_code_pointers", False))
     rng = random.Random(seed)
     results = []
     fails = 0
@@ -707,6 +829,70 @@ def run_contract(w, contract, export, trials, seed, stop_after_fails=None):
             "status_hist": hist, "call_coverage": cov}
 
 
+def coverage_of(contract, results):
+    """v3 coverage: what the trials actually exercised.
+
+    Returns a dict with the trials that completed on the original, the
+    checks that ran at least once, the callees that fired on a completed
+    trial, the distinct call-sequence shapes observed (a branch proxy:
+    different paths make different call sequences), and the trials where
+    the original wrote heap/stack/globals.
+    """
+    n = len(results)
+    checks_seen = set()
+    for r in results:
+        for c in r.get("checks", []):
+            checks_seen.add(c["name"])
+    declared = [str(c["id"]) for c in contract.get("callees", [])]
+    fired_on_ok = {}
+    branch_sigs = set()
+    heap_wrote = stack_wrote = globals_wrote = 0
+    orig_ok = 0
+    for r in results:
+        o = r.get("orig", {}) or {}
+        if o.get("status") != "ok":
+            continue
+        orig_ok += 1
+        seq = []
+        for c in o.get("calls", []) or []:
+            sid = str(c.get("id"))
+            fired_on_ok[sid] = fired_on_ok.get(sid, 0) + 1
+            seq.append(sid)
+        branch_sigs.add(tuple(seq))
+        if (o.get("heap_n") or 0) > 0:
+            heap_wrote += 1
+        if (o.get("stack_n") or 0) > 0:
+            stack_wrote += 1
+        if o.get("globals_writes"):
+            globals_wrote += 1
+    checks_cfg = contract.get("checks", {})
+    enabled = []
+    if checks_cfg.get("ret", "eax") != "none":
+        enabled.append("ret")
+    for k in ("esp", "heap", "stack", "globals", "calls", "undeclared"):
+        if checks_cfg.get(k, True):
+            enabled.append(k)
+    missing = [k for k in enabled if k not in checks_seen]
+    exempt = set(str(x) for x in contract.get("coverage_exempt_callees", []))
+    unfired = sorted(i for i in declared if i not in fired_on_ok and i not in exempt)
+    examples = sorted(">".join(s) if s else "(no calls)" for s in branch_sigs)[:5]
+    return {
+        "trials": n,
+        "orig_ok_trials": orig_ok,
+        "orig_ok_share": round(orig_ok / max(1, n), 4),
+        "checks_seen": sorted(checks_seen),
+        "checks_missing": sorted(missing),
+        "callees_declared": sorted(declared),
+        "callees_fired_on_ok": {k: fired_on_ok[k] for k in sorted(fired_on_ok)},
+        "callees_unfired": unfired,
+        "branch_shapes": len(branch_sigs),
+        "branch_examples": examples,
+        "heap_wrote_trials": heap_wrote,
+        "stack_wrote_trials": stack_wrote,
+        "globals_wrote_trials": globals_wrote,
+    }
+
+
 def verdict(contract, run, export):
     chash = hashlib.sha1(json.dumps(contract, sort_keys=True).encode()).hexdigest()
     results = run["results"]
@@ -720,16 +906,36 @@ def verdict(contract, run, export):
                 a["pass"] += 1
     comps = [{"name": k, "passed": v["pass"] == v["total"] and n > 0,
               "pass": v["pass"], "total": v["total"]} for k, v in sorted(agg.items())]
-    passed = run.get("fails", 1) == 0 and n > 0 and "error" not in run
     fp_exact = sum(1 for r in results if r.get("fp_exact"))
     us = sum(r.get("trial_us", 0) for r in results)
     orig_ok = sum(1 for r in results if r.get("orig", {}).get("status") == "ok")
+    cov = coverage_of(contract, results)
+    # v3 vacuous rule: a verdict with no failures is still a failure unless
+    # a stated minimum share of trials completed on the original, every
+    # enabled behavioural check ran somewhere, and every declared callee
+    # fired on a completed trial. Contracts with legitimately fault-heavy
+    # inputs override the share with "min_orig_ok_share" (documented in the
+    # contract); callees that cannot fire are exempted explicitly with
+    # "coverage_exempt_callees", never silently.
+    min_share = float(contract.get("min_orig_ok_share", 0.10))
+    reasons = []
+    if cov["orig_ok_share"] < min_share:
+        reasons.append("orig_ok_share %.4f < %.2f"
+                       % (cov["orig_ok_share"], min_share))
+    if cov["callees_unfired"]:
+        reasons.append("callees never fired on a completed trial: %s"
+                       % ",".join(cov["callees_unfired"]))
+    if cov["checks_missing"] and orig_ok > 0:
+        reasons.append("checks never ran: %s" % ",".join(cov["checks_missing"]))
+    clean = run.get("fails", 1) == 0 and n > 0 and "error" not in run
+    vacuous = bool(clean and reasons)
+    passed = bool(clean and not vacuous)
     v = {
         "function": contract["function"],
         "passed": passed,
         "inputs_tested": n,
         "comparisons": [{"name": c["name"], "passed": c["passed"]} for c in comps],
-        "checker_version": "checker2",
+        "checker_version": "checker3",
         "name": contract["name"],
         "export": export,
         "contract_hash": chash,
@@ -742,6 +948,10 @@ def verdict(contract, run, export):
         "status_hist": run.get("status_hist", {}),
         "orig_ok_trials": orig_ok,
         "call_coverage": run.get("call_coverage", {}),
+        "coverage": cov,
+        "min_orig_ok_share": min_share,
+        "vacuous": vacuous,
+        "vacuous_reasons": reasons,
     }
     if run.get("first_fail"):
         ff = run["first_fail"]
@@ -785,6 +995,10 @@ def setup_worker(w, contract, all_exports):
     assert r.get("ok"), r
     w.heap = int(r["heap"], 16)
     w.stubs = {k: int(v, 16) for k, v in r.get("stub_addrs", {}).items()}
+    global CODE_LO, CODE_HI
+    if "text_lo" in r and "text_hi" in r:  # v3 worker reports the code range
+        CODE_LO = int(r["text_lo"], 16)
+        CODE_HI = int(r["text_hi"], 16)
     return r
 
 
@@ -844,9 +1058,12 @@ def main(argv):
         v = verdict(c, run, c["export"])
         json.dump(v, open(os.path.join(OUT, "verdicts", c["name"] + ".json"), "w"), indent=1)
         tus = (v["worker_us_total"] / max(1, v["trials"]))
-        print("correct: pass=%s fails=%d/%d fp_exact=%d orig_ok=%d worker=%.0fus/trial wall=%.1fs hist=%s" % (
-            v["passed"], v["fails"], v["trials"], v["fp_exact"], v["orig_ok_trials"], tus,
-            v["wall_s"], v.get("status_hist")), flush=True)
+        print("correct: pass=%s fails=%d/%d fp_exact=%d orig_ok=%d (share %.3f) vacuous=%s branches=%s worker=%.0fus/trial wall=%.1fs hist=%s" % (
+            v["passed"], v["fails"], v["trials"], v["fp_exact"], v["orig_ok_trials"],
+            v["coverage"]["orig_ok_share"], v["vacuous"], v["coverage"]["branch_shapes"],
+            tus, v["wall_s"], v.get("status_hist")), flush=True)
+        if v.get("vacuous"):
+            print("VACUOUS: %s" % ("; ".join(v["vacuous_reasons"])), flush=True)
         if not v["passed"]:
             print("FIRST MISMATCH:", json.dumps(v.get("first_mismatch"), indent=1)[:2000], flush=True)
             try:
@@ -877,6 +1094,8 @@ def main(argv):
         summary.append({"name": c["name"], "correct_pass": v["passed"],
                         "correct_fails": v["fails"], "correct_trials": v["trials"],
                         "orig_ok_trials": v["orig_ok_trials"],
+                        "vacuous": v.get("vacuous"),
+                        "vacuous_reasons": v.get("vacuous_reasons"),
                         "status_hist": v.get("status_hist"),
                         "mut_fails": mfail, "mut_trials": mtri,
                         "mut_first": mfirst,
