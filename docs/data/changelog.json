@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Naming a leaderboard template family by its constants",
+    "title": "Rewrites: 1 more functions pass the checker (8049 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "1 rewrites added under rewrites/verified: 0 script native handlers and 1 other functions.",
+      "The tree now holds 8049 rewrites, 8030 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "321 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Naming a leaderboard template family by its constants",
+    "commit": "72e98eac8135bc95ef1dbbc39c1fe74a08351050",
     "summary": "Findings from the nm-25 lane.",
     "changes": [
       "New devlog entry: Naming a leaderboard template family by its constants.",
