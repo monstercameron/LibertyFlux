@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#naming-10">Naming the ranked-race leaderboard methods, races 37 to 53</a></li>
       <li><a href="#naming-09">Naming leaderboard methods, and a broken numbering rule</a></li>
       <li><a href="#naming-08">Naming a run of leaderboard schema methods</a></li>
       <li><a href="#naming-07">Naming the leaderboard factory run: stub shape, dispatch table, and boundary traps</a></li>
@@ -344,6 +345,28 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="naming-10">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Naming the ranked-race leaderboard methods, races 37 to 53</h2>
+      <p>All 150 functions in the batch were named as per-board leaderboard virtual methods, continuing two earlier lanes with identical vocabulary, and every slot attribution was re-verified against the virtual tables rather than trusted from the inventory.</p>
+      <h3>What was asked</h3>
+      <p>Propose a descriptive name for each of 150 consecutive unnamed functions, which turned out to be virtual methods of seventeen per-race leaderboard info classes, nine methods per class.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Each class exposes nine methods sharing one code skeleton per table slot: a name getter returning the board's leaderboard name string, an id getter returning a per-board constant, four column accessors (find index, get id, get byte size, get kind), two id-list mapping helpers, and a row builder that loops over seven column positions and writes values plus a presence bitmask.</p>
+      <p><span class="evidence verified">Verified</span> All seventeen tables were located and every batch member matches its table slot exactly, including two entries the inventory attributes to unrelated task classes: those are folded stubs shared across classes and serve as their boards' id getters.</p>
+      <p><span class="evidence verified">Verified</span> Six boards continue the gapless board-id run with values 122 to 127; the other eleven use small scattered ids, meaning they share column schemas with boards from other families whose identities are still unknown.</p>
+      <p><span class="evidence verified">Verified</span> Two boards have no readable id getter (their table slot points into the encrypted range), and one board's kind accessor sits in an address gap outside this batch; both situations match earlier lanes' findings exactly.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Method wording was kept identical to the two preceding lanes so merged names stay consistent; 32 names carry high confidence and 118 medium, none low.</li>
+      <li>A later lane covering other leaderboard families should record which board owns each scattered schema id, turning the anomaly flags into cross-references.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble each function from the mapped executable image, group by board using the inventory's class hints, locate each board's table by its three largest methods, and compare the remaining slots; per-board id uniformity and instruction counts cross-check the grouping.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>A helper script named after a standard library module broke the disassembler import until renamed, and a substring match for one table-slot label also matched three longer labels until anchored; both were caught by cross-checks before any name was written.</p>
+      </article>
 
       <article class="entry" id="naming-09">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
