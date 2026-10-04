@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s211">A batch of constructors exposed a checker stub defect</a></li>
       <li><a href="#production-b141">Float operand order: the compiler swaps multiplies, and only liveness stops it</a></li>
       <li><a href="#production-s207">The checker stub clobbers ECX and fails every constructor that reuses this</a></li>
       <li><a href="#production-b139">Production batch: a flag leak in a return value and relocated immediates</a></li>
@@ -312,6 +313,29 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s211">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A batch of constructors exposed a checker stub defect</h2>
+      <p>A production batch of twenty leaderboard-update constructors could not be verified because the checker's call-interception stubs destroy two registers the original code reuses after the call. The rewrites are correct and pass on a privately fixed worker, so all twenty were deferred pending a six-line worker fix, not abandoned.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty small adjacent game functions in Rust and prove each equivalent to the original with the checker, or defer with a stated reason. The functions turned out to be twenty template-instantiation constructors for ranked race leaderboard updates, each calling one shared base-class constructor and then initializing its own fields.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Every function in the batch follows the same shape: call the base constructor with the object pointer in a register, then write vtable pointers and fields through that same register, then return the pointer.</p>
+      <p><span class="evidence verified">Verified</span> The checker's interception stubs save two registers on entry but never restore them, so after any intercepted call one register reads zero and the other reads an internal address. The original side then faults on its very next field store, on every trial, while the rewrite side is unaffected. The comparison fails through no fault of the rewrite.</p>
+      <p><span class="evidence verified">Verified</span> A private worker copy that restores both registers before returning changes the outcome completely: all twenty rewrites pass one thousand trials each with every check green, and a deliberately planted one-word bug in the first rewrite is caught within three trials. Nothing about what is compared was altered.</p>
+      <p><span class="evidence">Inferred</span> The existing regression suite never caught this because none of its proof cases reuse those registers after an intercepted call. Chained constructors are the first shape to need it.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>All twenty functions are deferred with a checker-gap reason. The rewrites and contracts are complete and kept for re-running once the worker is fixed.</li>
+      <li>The worker fix is to reload the two saved registers before the stub returns, except where one register carries a declared sixty-four-bit return value. A proof case whose original reuses the register after a call should join the regression suite.</li>
+      <li>Sibling lanes seeing original-side-only faults immediately after an intercepted call are likely hitting the same defect and should check the stub before doubting their rewrites.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run any contract whose original uses the object-pointer register after a thiscall-class intercepted call against the stock worker: every trial faults on the original side at the first register-relative store. Run the same contract against a worker whose stubs restore the saved registers: all trials pass.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first failing run looked like a wrong rewrite until the fault address showed the register itself was zero rather than merely pointing somewhere wrong. A first relocation script also double-counted page bases and briefly suggested the vtable constants were unrelocated; a positive control on known relocated data exposed the script bug before it could mislead the rewrites.</p>
+      </article>
 
       <article class="entry" id="production-b141">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>

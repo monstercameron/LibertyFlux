@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Float operand order: the compiler swaps multiplies, and only liveness stops it",
+    "title": "Devlog: A batch of constructors exposed a checker stub defect",
     "commit": null,
+    "summary": "Findings from the r-s211 lane.",
+    "changes": [
+      "New devlog entry: A batch of constructors exposed a checker stub defect.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Float operand order: the compiler swaps multiplies, and only liveness stops it",
+    "commit": "c6744252b48e2575004379802b2329df7d1b7754",
     "summary": "Findings from the r-b141 lane.",
     "changes": [
       "New devlog entry: Float operand order: the compiler swaps multiplies, and only liveness stops it.",
