@@ -13,10 +13,16 @@
 //! On other hosts the rewrites call the stand-in in [`crate::rewrites`],
 //! whose callee macros call [`record`] directly and whose `global()` is
 //! [`global`] here: a pointer into the installed [`VaImage`]. The
-//! stand-in's [`relocated`] returns the file address unchanged, which is
-//! consistent for every rewrite that only passes or returns relocated
-//! addresses as numbers; a rewrite that dereferences one itself needs the
-//! 32-bit target.
+//! stand-in's [`relocated`] reports where an address lies in the installed
+//! buffer, as a 32-bit number derived from the buffer's host address, so it
+//! depends on the buffer exactly as the real runtime's answer does. That
+//! number is never dereferenced: it serves every rewrite that only passes
+//! or returns relocated addresses, and a rewrite that dereferences one
+//! itself needs the 32-bit target.
+//!
+//! Addresses are only comparable between runs against the same image: two
+//! buffers give two address spaces, on the stand-in as on the 32-bit
+//! target.
 //!
 //! Every case that uses the log, the answers or an image holds a
 //! [`session`] guard, so cases never interleave.
@@ -41,10 +47,20 @@ static LOG: Mutex<Vec<Call>> = Mutex::new(Vec::new());
 static ANSWERS: Mutex<Option<Answers>> = Mutex::new(None);
 static SESSION: Mutex<()> = Mutex::new(());
 
-/// Image the stand-in runtime resolves globals into: base address,
-/// exposed address of the first byte, length.
+/// The image the stand-in runtime resolves addresses into.
 #[cfg(not(target_arch = "x86"))]
-static IMAGE: Mutex<Option<(u32, usize, usize)>> = Mutex::new(None);
+#[derive(Clone, Copy)]
+struct Installed {
+    /// File address of the image's first byte.
+    base: u32,
+    /// Exposed host address of the image's first byte.
+    start: usize,
+    /// Number of bytes backed.
+    len: usize,
+}
+
+#[cfg(not(target_arch = "x86"))]
+static IMAGE: Mutex<Option<Installed>> = Mutex::new(None);
 
 /// Locks a mutex, tolerating poison: a failed case must not take the
 /// recorder down for the cases after it, and a stub must never panic.
@@ -110,8 +126,21 @@ pub fn capture<R>(f: impl FnOnce() -> R) -> (R, Vec<Call>) {
     (result, calls)
 }
 
-/// The address a rewrite sees for file address `file_va`: unchanged on the
-/// stand-in, relocated by the installed image on the 32-bit target.
+/// The address a rewrite sees for file address `file_va`: where `file_va`
+/// lies in the installed image's buffer.
+///
+/// On the 32-bit target this is the real runtime's answer, the buffer's
+/// own address plus the offset. The stand-in reports the low 32 bits of
+/// the buffer's host address plus the offset: a number, never dereferenced,
+/// that depends on the buffer exactly as the real answer does. Addresses
+/// computed against two different images therefore differ on every
+/// target, by the distance between the buffers; a case compares addresses
+/// only from runs against the same image.
+///
+/// # Panics
+///
+/// On the stand-in, when no image is installed (a harness bug; the real
+/// runtime would answer from a zero base).
 #[must_use]
 pub fn relocated(file_va: u32) -> u32 {
     #[cfg(target_arch = "x86")]
@@ -120,7 +149,13 @@ pub fn relocated(file_va: u32) -> u32 {
     }
     #[cfg(not(target_arch = "x86"))]
     {
-        file_va
+        let image = lock(&IMAGE).expect("relocated() called with no test image installed");
+        // The low 32 bits of the host address stand in for the 32-bit
+        // address the real runtime would report; the truncation is the
+        // point.
+        #[allow(clippy::cast_possible_truncation)]
+        let mapped = image.start as u32;
+        mapped.wrapping_add(file_va.wrapping_sub(image.base))
     }
 }
 
@@ -134,16 +169,21 @@ pub fn relocated(file_va: u32) -> u32 {
 #[cfg(not(target_arch = "x86"))]
 #[must_use]
 pub fn global<T>(file_va: u32) -> *mut T {
-    let (base, start, len) = lock(&IMAGE).expect("no test image installed");
-    let offset = file_va.wrapping_sub(base) as usize;
+    let image = lock(&IMAGE).expect("no test image installed");
+    let offset = file_va.wrapping_sub(image.base) as usize;
     assert!(
-        offset.saturating_add(core::mem::size_of::<T>()) <= len,
+        offset.saturating_add(core::mem::size_of::<T>()) <= image.len,
         "global {file_va:#010x} is outside the test image"
     );
-    core::ptr::with_exposed_provenance_mut::<T>(start + offset)
+    core::ptr::with_exposed_provenance_mut::<T>(image.start + offset)
 }
 
 /// Runs `f` with `image` installed as the original's address space.
+///
+/// While it runs, [`relocated`] answers with addresses in `image`'s
+/// buffer. Values computed against different images are in different
+/// address spaces and never compared: a case runs every side that produces
+/// addresses against the same image.
 ///
 /// # Panics
 ///
@@ -165,7 +205,11 @@ pub fn with_image<R>(image: &mut VaImage, f: impl FnOnce() -> R) -> R {
     }
     #[cfg(not(target_arch = "x86"))]
     {
-        *lock(&IMAGE) = Some((image.base(), start, image.len()));
+        *lock(&IMAGE) = Some(Installed {
+            base: image.base(),
+            start,
+            len: image.len(),
+        });
         let result = f();
         *lock(&IMAGE) = None;
         result
@@ -354,6 +398,32 @@ mod tests {
         assert!(none.is_empty());
     }
 
+    #[test]
+    fn addresses_depend_on_the_installed_buffer() {
+        let _s = session();
+        let (base, va) = (0x0100_0000, 0x0100_0010);
+        let mut a = VaImage::new(base, 64);
+        let mut b = VaImage::new(base, 64);
+        let in_a = with_image(&mut a, || relocated(va));
+        let again = with_image(&mut a, || relocated(va));
+        let in_b = with_image(&mut b, || relocated(va));
+        assert_eq!(in_a, again, "one buffer, one address space");
+        assert_ne!(in_a, in_b, "two buffers, two address spaces");
+        // The real runtime's formula on the 32-bit target, and the
+        // stand-in's on any other: the buffer's address plus the offset.
+        #[allow(clippy::cast_possible_truncation)]
+        let start = a.as_mut_ptr().expose_provenance() as u32;
+        assert_eq!(in_a, start.wrapping_add(va - base));
+    }
+
+    #[cfg(not(target_arch = "x86"))]
+    #[test]
+    #[should_panic(expected = "no test image installed")]
+    fn stand_in_relocation_needs_an_image() {
+        let _s = session();
+        let _ = relocated(0x0100_0000);
+    }
+
     #[cfg(not(target_arch = "x86"))]
     #[test]
     #[allow(unsafe_code)]
@@ -366,6 +436,5 @@ mod tests {
             unsafe { global::<u32>(0x0100_0010).write(0x1234_5678) };
         });
         assert_eq!(&image.bytes()[0x10..0x14], &[0x78, 0x56, 0x34, 0x12]);
-        assert_eq!(relocated(0x0100_0010), 0x0100_0010);
     }
 }

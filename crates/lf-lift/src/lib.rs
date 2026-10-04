@@ -120,10 +120,12 @@
 //! - **Calls**: every callee call the rewrite makes (slot, arguments in
 //!   order) equals the translation of every trait call the lift makes;
 //!   both sides get the same scripted answers.
-//! - **State**: the lifted state is stored over a copy of the starting
-//!   image and compared with the image the rewrite left, byte for byte,
-//!   over every modelled region; a final whole-image compare catches
-//!   writes outside them.
+//! - **State**: both forms run against the same image buffer, reset to
+//!   the same starting bytes before each run (one buffer, so an address
+//!   either side computes is in the same address space). The lifted state
+//!   is stored over the buffer after the lift's run and compared with the
+//!   image the rewrite left, byte for byte, over every modelled region; a
+//!   final whole-image compare catches writes outside them.
 //! - **Wrong versions**: every case also runs a deliberately wrong lift,
 //!   which must be caught. A case whose wrong version passes does not
 //!   count.
@@ -132,8 +134,16 @@
 //! (`lf-checker-rt`), its statics pointed at a test buffer and at
 //! recording stubs. On other hosts a small stand-in runtime runs the same
 //! files for the cases that do not need 32-bit pointers (Verified: 57 of
-//! the 58 cases run on a 64-bit Linux host). The 32-bit run needs a
-//! Windows runner (Unknown until it has run there).
+//! the 58 cases run on a 64-bit Linux host). The stand-in's `relocated()`
+//! depends on the buffer as the real runtime's does, so a case that mixes
+//! two address spaces fails on the host too.
+//!
+//! The first 32-bit run (Windows runner, 4 October 2026) passed 44 of 47
+//! cases. The other three compared addresses computed against two
+//! different test buffers, a defect of the harness, not of the lifts
+//! (Verified: the host stand-in, made buffer-dependent, reproduced it on
+//! the same input). The harness now runs both forms against one buffer;
+//! whether all 47 pass on the 32-bit target is Unknown until the next run.
 //!
 //! # Order of work
 //!

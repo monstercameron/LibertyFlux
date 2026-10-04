@@ -10,10 +10,15 @@
 //!   real `lf-checker-rt`: the test points its relocated base at a test
 //!   buffer ([`VaImage`]) and its callee table at recording stubs. On any
 //!   other host a stand-in with the same surface runs the same files: its
-//!   `global()` points into the test buffer and its callee macros record
-//!   directly. Rewrites that turn a relocated address into a pointer
-//!   themselves need real 32-bit addresses and run only on the 32-bit
-//!   target.
+//!   `global()` points into the test buffer, its `relocated()` answers with
+//!   a 32-bit number that depends on the buffer as the real answer does,
+//!   and its callee macros record directly. Rewrites that turn a relocated
+//!   address into a pointer themselves need real 32-bit addresses and run
+//!   only on the 32-bit target.
+//! - Addresses from runs against different buffers are in different
+//!   address spaces. A case that compares address-valued results or callee
+//!   arguments runs both sides against the same [`VaImage`], reset to the
+//!   same starting bytes before each run.
 //! - [`check`] runs a reference, a lift and a deliberately wrong lift over
 //!   generated inputs ([`Rng`]) and asserts that the first two agree on
 //!   every input and the wrong one is caught on at least one.

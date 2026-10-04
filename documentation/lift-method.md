@@ -69,10 +69,10 @@ The differential harness ([`lf-lift-diff`](../crates/tools/lf-lift-diff/src/lib.
 1. Inputs mix edge values (zero, sign boundaries, all ones, NaN, infinities, subnormals, table bounds) with seeded random values; small domains such as bytes are enumerated in full.
 2. Results must agree after the documented narrowing.
 3. Every callee call the rewrite makes must equal the translation of every trait call the lift makes, slot and arguments in order, with both sides given the same scripted answers.
-4. For state, the lifted state is stored over a copy of the starting image and compared with the image the rewrite left, over every modelled region and then in whole, which catches writes outside the model.
+4. For state, both sides run against the same test buffer, reset to the same starting bytes before each run, so addresses either side computes are comparable. The lifted state is stored over it and compared with the image the rewrite left, over every modelled region and then in whole, which catches writes outside the model.
 5. Every case also runs a deliberately wrong lift (a plausible mistake: an off-by-one threshold, the wrong flag bit, a different operation order), which must be caught. A case whose wrong version passes does not count.
 
-On the 32-bit target the rewrites call the real checker runtime, with its relocated base pointed at a test buffer and its callee table at recording stubs. On other hosts a small stand-in runtime with the same names runs the same files: 57 of the 58 cases run and pass on a 64-bit Linux host (verified). The one remaining case turns a relocated address into a pointer itself and needs the 32-bit target. The 32-bit run needs a Windows runner and has not run yet; a job for it is proposed for the pipeline.
+On the 32-bit target the rewrites call the real checker runtime, with its relocated base pointed at a test buffer and its callee table at recording stubs. On other hosts a small stand-in runtime with the same names runs the same files: 57 of the 58 cases run and pass on a 64-bit Linux host (verified). The one remaining case turns a relocated address into a pointer itself and needs the 32-bit target. The first 32-bit run on the Windows runner passed 44 of 47 cases; the other three compared addresses computed against two different test buffers, a harness defect now fixed (the host stand-in now catches that kind of mistake too). A rerun is pending.
 
 ## What it costs
 

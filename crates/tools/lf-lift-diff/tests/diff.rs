@@ -1138,14 +1138,23 @@ type SlotLift<O> = fn(&mut SlotTableState, &mut SlotFake, u32) -> O;
 
 /// Runs one slot-table case through [`check`].
 ///
-/// The reference and the lift each have an image, filled with the same
-/// pattern (memory nothing models). Each run stores the input state over
-/// its image, scripts the stamp callee from the input's seed (equal to the
-/// mark clock half the time), and runs. The lift's resulting state is
-/// stored back over its image, and the two images are compared over the
-/// modelled regions and in whole. `check` always runs the reference for an
-/// input immediately before the lift (or the wrong lift) for it, which the
-/// whole-image comparison relies on.
+/// Both sides run against one image buffer. `relocated()` answers relative
+/// to the installed buffer (the real runtime with the buffer's own
+/// address), so an address the rewrite returns or passes to a callee is
+/// comparable with the lift's translation of its result only when both ran
+/// against the same buffer. With a buffer per side, every address-valued
+/// word differed by the distance between the buffers (the first 32-bit
+/// run, 4 October 2026).
+///
+/// Before every run the buffer is reset to the same starting bytes: a
+/// fixed pattern (memory nothing models) with the input state stored over
+/// it. The stamp callee is scripted from the input's seed (equal to the
+/// mark clock half the time). The reference's image is saved after its
+/// run; the lift's resulting state is stored over the buffer after the
+/// lift's run, and the two are compared over the modelled regions and in
+/// whole, so a write outside the regions still shows. `check` always runs
+/// the reference for an input immediately before the lift (or the wrong
+/// lift) for it, which the whole-image comparison relies on.
 fn run_slot<O: PartialEq + fmt::Debug>(
     name: &str,
     ins: &[SlotInput],
@@ -1160,22 +1169,29 @@ fn run_slot<O: PartialEq + fmt::Debug>(
     let len = (layout::span_end() - base) as usize;
     let mut pattern = VaImage::new(base, len);
     pattern.fill_pattern(0x5EED);
-    let ref_image = RefCell::new(pattern.clone());
-    let lift_image = RefCell::new(pattern);
-    let answers = |input: &SlotInput| {
+    // The one buffer both sides run against, and the reference's image as
+    // its run left it.
+    let image = RefCell::new(VaImage::new(base, len));
+    let reference_after = RefCell::new(Vec::with_capacity(len));
+    // Resets the buffer to the input's starting bytes and scripts the
+    // callees; hands back the buffer.
+    let prepare = |input: &SlotInput| {
+        let mut image = image.borrow_mut();
+        image.bytes_mut().copy_from_slice(pattern.bytes());
+        layout::store(&input.state, &mut *image).expect("state fits the image");
         let (seed, mark) = (input.seed, input.state.clock_mark);
         rt::set_answers(move |_, _| {
             let mut r = Rng::new(seed);
             if r.one_in(2) { mark } else { r.u32() }
         });
+        image
     };
     let run_lift = |input: &SlotInput, f: SlotLift<O>| {
-        let mut image = lift_image.borrow_mut();
-        layout::store(&input.state, &mut *image).expect("state fits the image");
-        answers(input);
+        let mut image = prepare(input);
         let mut st = input.state.clone();
-        // The lift runs with the image installed too, so the fake's
-        // relocated addresses match the rewrite's.
+        // The lift runs with the same buffer installed, so the addresses
+        // its fake and its result translation compute are in the same
+        // space as the rewrite's.
         let (ret, calls) = rt::with_image(&mut image, || {
             rt::capture(|| f(&mut st, &mut SlotFake, input.arg))
         });
@@ -1184,17 +1200,18 @@ fn run_slot<O: PartialEq + fmt::Debug>(
             ret,
             calls,
             regions: image.regions(&layout::REGIONS),
-            whole_image_agrees: image.bytes() == ref_image.borrow().bytes(),
+            whole_image_agrees: image.bytes() == reference_after.borrow().as_slice(),
         }
     };
     check(
         name,
         ins,
         |input| {
-            let mut image = ref_image.borrow_mut();
-            layout::store(&input.state, &mut *image).expect("state fits the image");
-            answers(input);
+            let mut image = prepare(input);
             let (ret, calls) = rt::with_image(&mut image, || rt::capture(|| reference(input.arg)));
+            let mut after = reference_after.borrow_mut();
+            after.clear();
+            after.extend_from_slice(image.bytes());
             Outcome {
                 ret,
                 calls,
