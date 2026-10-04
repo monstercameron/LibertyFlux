@@ -22,6 +22,7 @@
 <meta name="twitter:description" content="The LibertyFlux research and process notebook: what was found, what was decided and what went wrong, so nobody has to rediscover it. Searchable.">
 <meta name="twitter:image" content="https://monstercameron.github.io/LibertyFlux/img/social.png">
 <meta name="twitter:image:alt" content="LibertyFlux: Grand Theft Auto IV's engine, being rewritten in Rust. A grid of squares, one per slice of the game's code, shaded by how far each slice has got.">
+<link rel="alternate" type="application/atom+xml" title="LibertyFlux devlog" href="devlog.xml">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="fonts/overpass-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="fonts/fonts.css">
@@ -39,6 +40,7 @@ To add an entry, write one article element with class "entry" and an id, holding
 time element, an h2 title and the body, then run:  python scripts/devlog_db.py put <file>
 Lane fragments go through scripts/integrate_devlog.py, which runs the publication checks first.
 To change an entry:  python scripts/devlog_db.py get <id> > file, edit, then put it back.
+After adding or changing entries, rebuild the Atom feed (devlog.xml):  python scripts/site/devlog_feed.py
 
 Rules for an entry's content are unchanged: open with the conclusion; label findings Verified, Inferred or
 Unknown; use only h3, p, ul, ol and table; never paste decompiled code, disassembly, raw addresses of game
@@ -55,7 +57,7 @@ functions or game data (AGENTS.md rule 1).
       <li><a href="https://github.com/monstercameron/LibertyFlux">GitHub</a></li>
     </ul></nav>
     <h1>Devlog</h1>
-    <p class="lede">The research and process notebook for LibertyFlux, kept so that no one has to rediscover what is already known, including the mistakes.</p>
+    <p class="lede">The research and process notebook for LibertyFlux, kept so that no one has to rediscover what is already known, including the mistakes. New entries are also in an <a class="feed-link" href="devlog.xml">Atom feed</a> for feed readers.</p>
   </div>
 </header>
 
