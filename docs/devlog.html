@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot-08">Pilot lane 08: five functions rewritten and timed</a></li>
       <li><a href="#format-particles">Rust reader: particle and visual effect definitions</a></li>
       <li><a href="#pilot-04">Pilot lane 04: five functions rewritten and timed</a></li>
       <li><a href="#pilot-02">Pilot lane 02: five functions rewritten and timed</a></li>
@@ -167,6 +168,36 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot-08">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Pilot lane 08: five functions rewritten and timed</h2>
+      <p>Five small original functions were rewritten in Rust and each rewrite agreed with the original on all 1000 comparison trials, in about 34 minutes of wall time. The comparison harness caught three genuine mistakes in the first drafts, and a deliberate off-by-one mutant failed all 200 of its trials, so the passing results can be trusted.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite five assigned leaf functions in Rust, prove each rewrite behaves identically to the original over at least 1000 trials with random and edge-case inputs, and record honest per-function timings for the project schedule estimate, including failures. One extra check was required: introduce a subtle mistake into a copy of a passing rewrite and confirm the comparison catches it.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All five rewrites pass 1000 out of 1000 trials with zero stack-cleanup mismatches. The five functions, in plain words, are:</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Function</th><th role="columnheader">What it computes</th><th role="columnheader">Attempts</th><th role="columnheader">Trials</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Array index</td><td role="cell" data-label="What it computes">returns one element of an array by index</td><td role="cell" data-label="Attempts">1</td><td role="cell" data-label="Trials">1000/1000</td></tr>
+      <tr role="row"><td role="cell">Range gate</td><td role="cell" data-label="What it computes">rejects out-of-range indices, else returns a table address plus the index</td><td role="cell" data-label="Attempts">2</td><td role="cell" data-label="Trials">1000/1000</td></tr>
+      <tr role="row"><td role="cell">Scaled floor</td><td role="cell" data-label="What it computes">divides two integers with a fractional scale factor and rounds the result down</td><td role="cell" data-label="Attempts">2</td><td role="cell" data-label="Trials">1000/1000</td></tr>
+      <tr role="row"><td role="cell">Strided copy</td><td role="cell" data-label="What it computes">copies twelve values in four groups of three, skipping every fourth slot on both sides</td><td role="cell" data-label="Attempts">2</td><td role="cell" data-label="Trials">1000/1000</td></tr>
+      <tr role="row"><td role="cell">Sample decode</td><td role="cell" data-label="What it computes">decodes three packed integers into scaled floating-point values</td><td role="cell" data-label="Attempts">1</td><td role="cell" data-label="Trials">1000/1000</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Total wall time was about 34 minutes, or about 7 minutes per verified function. The largest share was running the comparisons: each single-shot trial takes about 0.4 seconds, so the 5000 graded trials took about 15 minutes even with 14 parallel workers. The honesty test failed all 200 trials as intended, with the exact signature of the planted slip.</p>
+      <p><span class="evidence verified">Verified</span> Three first drafts were wrong in instructive ways: one destination layout was read as contiguous when it is strided, one floating-point comparison was taken in the wrong sense, and one function returns an address that shifts when the program image is relocated, so that comparison has to account for the loader offset. The harness caught all three before any result was claimed.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The native-execution comparison method works for this class of function and should be kept: run the original in a relocated mapping, call the rewrite through its real calling convention with the same inputs, and compare return values, stack cleanup and written memory exactly. Three recommendations follow from the problems hit: give every lane binary a unique name because the shared build cache is one namespace; declare functions that return addresses in their queue contracts so the relocation offset is handled systematically rather than per-driver; and build the persistent batched checker worker from the harness design, which would cut a 1000-trial check from minutes to seconds.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the lane rewrite crate for the 32-bit Windows target with no network access, freeze a copy of the comparison binary in the lane folder, and run the lane differential driver with the project Python environment. The driver needs the runfn helper from the emulator-harness lane and the original executable, both used read-only. It generates edge values plus seeded random inputs, runs both sides, and reports agreement counts, stack-cleanup mismatches and timing per function.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> Mid-run, the comparison binary started failing every trial with an unfamiliar error message. Another lane had built a different program under the same file name into the shared build cache, silently replacing the binary. Renaming to a lane-unique name and running from a frozen copy in the lane folder fixed it, at a cost of a few minutes.</p>
+      <p><span class="evidence verified">Verified</span> A relocation-table query wrongly reported that the table-base constant in the range-gate function is not relocated, because the parsing library already returns full addresses and the query added the page base a second time. The live runs contradicted the query within the hour: every result differed by exactly the loader offset, and a corrected query confirmed the relocation entry. Dynamic evidence overruled the bad query.</p>
+      <p><span class="evidence">Inferred</span> The strided copy looks like it moves the populated lanes of a four-wide structure while skipping padding slots, but which structure is unknown from the function alone.</p>
+      </article>
 
       <article class="entry" id="format-particles">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
