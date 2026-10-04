@@ -1,0 +1,33 @@
+[package]
+name = "lf-viewer"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Converts models and textures from your own game files to glTF 2.0 and PNG for inspection in a standard viewer"
+
+[lib]
+name = "lf_viewer"
+path = "src/lib.rs"
+
+[[bin]]
+name = "lf-viewer"
+path = "src/main.rs"
+
+[lints]
+workspace = true
+
+# The format readers and the shared maths types. The PNG encoder, the
+# glTF writer and the argument parser are written here, with no further
+# dependencies.
+[dependencies]
+lf-math = { path = "../../lf-math" }
+lf-model = { path = "../../formats/lf-model" }
+lf-texture = { path = "../../formats/lf-texture" }
+
+# Test-only: compress hand-built fixtures the way real files are, inflate
+# the PNG encoder's output with an independent decoder, and parse the glTF
+# JSON with an independent parser. Both are already workspace dependencies.
+[dev-dependencies]
+flate2.workspace = true
+serde_json.workspace = true

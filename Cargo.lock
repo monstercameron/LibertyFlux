@@ -429,6 +429,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-viewer"
+version = "0.1.0"
+dependencies = [
+ "flate2",
+ "lf-math",
+ "lf-model",
+ "lf-texture",
+ "serde_json",
+]
+
+[[package]]
 name = "lf-world"
 version = "0.1.0"
 dependencies = [
