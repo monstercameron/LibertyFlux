@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Rust workspace: scaffold of 18 crates",
+    "title": "Reader crate: lf-archive",
     "commit": null,
+    "summary": "RPF2/RPF3 and IMGv3 archives: table of contents, entry reads, run-time key location.",
+    "changes": [
+      "New crate crates/formats/lf-archive: RPF2/RPF3 and IMGv3 archives: table of contents, entry reads, run-time key location.",
+      "About 1,918 lines of Rust with 21 unit tests and 7 integration tests; tests that need the game's files skip unless the game folder is given in an environment variable.",
+      "Third-party dependencies: none.",
+      "Written by the fmt-rpf-img lane from the file format alone, then audited by the integration lane for game data, key material and machine paths before publication."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Rust workspace: scaffold of 18 crates",
+    "commit": "0940489e218b6f5a94d0f2010b033670399482ee",
     "summary": "The first Rust code in the repository: the cargo workspace the rewrite lands in.",
     "changes": [
       "A cargo workspace at the repository root with one crate per engine subsystem, a core crate for shared types and layout checks, a platform crate that holds the only operating-system interface, the 32-bit replacement library crate and the checker crate.",
