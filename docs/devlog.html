@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s241">Three task natives read a fourth word they never wrote</a></li>
       <li><a href="#naming-02">Naming batch two: the batch was all audio, and the voice block has eight channels</a></li>
       <li><a href="#production-s240">The stray-write check only runs when full-image comparison is on</a></li>
       <li><a href="#naming-03">Naming a mixed batch: task abort and process slots, onscreen timers, audio voices</a></li>
@@ -331,6 +332,33 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s241">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Three task natives read a fourth word they never wrote</h2>
+      <p>Three related task natives each consume four words where only three are defined: the fourth word is read from a frame slot that no store reaches, so it is whatever garbage the stack scratch holds. <span class="evidence verified">Verified</span> All three were still verified by pinning the checker's stack fill to zero and storing zero in the rewrite.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small ped-task natives in Rust and prove each one identical to the original with the differential checker, which runs both sides from identical starting state and compares return values, memory, calls and faults.</p>
+      <h3>What was found</h3>
+      <p>All twenty passed one thousand trials each with no failures. While contracting them, three natives turned out to share one suspicious shape: code that moves three argument words onto the frame and then reads a fourth word from a neighbouring slot that is never stored to. <span class="evidence verified">Verified</span></p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Native</th><th role="columnheader">What the fourth word feeds</th><th role="columnheader">Status</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Route table append</td><td role="cell" data-label="What the fourth word feeds">Stored as the fourth element of the new table row</td><td role="cell" data-label="Status">Verified, rewrite stores zero</td></tr>
+      <tr role="row"><td role="cell">Sound level probe</td><td role="cell" data-label="What the fourth word feeds">Fourth word of the coordinate record handed to the sound stages</td><td role="cell" data-label="Status">Verified, rewrite stores zero</td></tr>
+      <tr role="row"><td role="cell">Sitting object probe</td><td role="cell" data-label="What the fourth word feeds">Fourth published coordinate and record word for the scan call</td><td role="cell" data-label="Status">Verified, rewrite stores zero</td></tr>
+      </tbody>
+      </table>
+      <p>Frame arithmetic shows the slot always sits below the incoming stack pointer, in freshly reserved scratch that the caller cannot control, so the value is genuinely undefined rather than a hidden argument. <span class="evidence verified">Verified</span> That it is a bug rather than intent is an inference: the surrounding code reads like three coordinates plus a pad word someone forgot to zero, or a read that aimed at the next argument slot and missed. <span class="evidence">Inferred</span> Whether the garbage word can affect gameplay is unknown: the consumers are scripted stand-ins under the checker, and the real ones were not run. <span class="evidence">Unknown</span></p>
+      <h3>What was decided or recommended</h3>
+      <p>The rewrites store an explicit zero for the fourth word, with contracts that fix the checker's stack fill to zero so both sides agree. This is the documented pattern for functions that read stack they did not write, and the verdicts confirm it: all three pass with the garbage eliminated on both sides. A later lane with a running game could check whether the live fourth word ever matters; until then the zero is the honest reading of unknowable input.</p>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble the three natives from the mapped executable image and list every frame store against every frame read: in each case three argument words are stored and a fourth neighbouring slot is read with no matching store. Then run the lane's checker contracts for those functions: they pass only because the stack fill is fixed, and changing the fill without changing the rewrite breaks them, which confirms the read is really uninitialised.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two lane-side mistakes cost the most time. First, a Rust precedence trap: a dereference followed by a method call adds to the pointer, not the value, so three rewrites read a far-off heap word instead of adding a small constant; the call logs showed the exact wrong words and one parenthesis fixed all three. Second, the checker's mismatch detail shows only the first three calls of a trial, and these functions make up to nine, so a local-only verdict field carrying the full call logs was added to find the real divergence; it changes nothing compared. Rebuilding the rewrite library twice failed because the previous checker run still held it; waiting a few seconds and rebuilding worked, and no worker was ever stopped.</p>
+      </article>
 
       <article class="entry" id="naming-02">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
