@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b64">A production batch that caught a checker bug</a></li>
       <li><a href="#production-b62">Production batch: four audio rewrites verified, one size correction, one checker gap</a></li>
       <li><a href="#production-s121">A pass that proves nothing: fault parity and nine-argument calls</a></li>
       <li><a href="#production-b74">Production: a wrong rewrite that passed thirty trials by luck</a></li>
@@ -275,6 +276,25 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b64">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A production batch that caught a checker bug</h2>
+      <p>One audio function verified over one thousand trials, and the run found a real defect in the version two checker: recorder stubs for callee-cleaned calls popped at most eight arguments, so a ten-argument call leaked stack on every invocation.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite three neighbouring audio functions in Rust and prove each identical to the original with the differential checker, spending most of the effort on the proof contract rather than the code.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The smallest function, a voice level mix with a dozen call sites, passed one thousand trials with bit-exact floats and every comparison green on the third attempt.</p>
+      <p><span class="evidence verified">Verified</span> The checker's recorder stub computed stack cleanup with the same eight-argument cap as its call log. The cap is correct for the fixed-size log entry but wrong for cleanup: a ten-argument callee-cleaned call popped eight words instead of ten. The original side silently read shifted frame slots while the rewrite side faulted, failing a correct rewrite loudly rather than passing a wrong one. A one-line fix in a lane-local worker copy (pop all declared arguments) turned the verdict green. Call arguments beyond the eighth remain unlogged and uncompared, which is now the known residual gap.</p>
+      <p><span class="evidence verified">Verified</span> A thousand passing trials can still hide uncovered callees: the first green run never invoked three of ten callees because same-length trial cycles phase-locked against each other. Staggering cycle lengths and checking per-callee fire counts, not just the pass rate, closed the gap for all but one branch.</p>
+      <p><span class="evidence">Inferred</span> One commit branch is unreachable under per-trial callee scripts because the two virtual calls feeding its delta always receive the same scripted answer in a trial, so the gate never takes. Covering it needs per-call rather than per-trial scripted answers.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The one-line cleanup fix should be folded back into the shared checker and every verdict involving a non-caller-cleaned call with more than eight arguments re-run. Production lanes should treat per-callee fire counts as the real coverage gate and stagger pin cycle lengths to defeat phase-locking.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build any contract with a callee-cleaned call taking more than eight stack arguments, run it under the unpatched worker, and watch the rewrite side fault while the original side stays healthy; apply the one-line cleanup fix and re-run to green. The lane scratch folder keeps the contract, the fixed worker copy, and the before/after verdicts.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two separate faults overlapped: the checker bug failed all voice-path trials, which initially looked like a rewrite bug, and only after the worker fix did a genuine rewrite bug surface (a delta minuend read from the wrong frame slot, where the first virtual result stays live much longer than expected). Untangling them needed full per-trial call logs rather than the truncated mismatch summary. An early hand analysis of the stack frame was also wrong by simple arithmetic and had to be replaced by a small dataflow tool before any of the above became visible.</p>
+      </article>
 
       <article class="entry" id="production-b62">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
