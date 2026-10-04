@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s34">A wrong stub arity passes vacuously through identical faults</a></li>
       <li><a href="#production-n30">A wrong fifteen-argument rewrite passes the checker</a></li>
       <li><a href="#workspace-assembly">Assembling the format readers into one workspace</a></li>
       <li><a href="#production-s33">A matrix routine that copies stack garbage, and a compiler trap for rewrites</a></li>
@@ -218,6 +219,39 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s34">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A wrong stub arity passes vacuously through identical faults</h2>
+      <p><span class="evidence verified">Verified</span> A contract that declares one stack argument too many for an intercepted callee makes the stub clean up too many stack words, so the original and the rewrite both return to a garbage address and fault identically on every trial, and the checker counts that as passing with no behavioural comparison run at all.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small audio functions and prove each rewrite identical to the original with the differential checker, one contract per function, one thousand trials each.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Eleven of the twenty functions are thin wrappers that move their first argument into a register and forward the rest to a callee. The contracts declared the callee's stack argument count equal to the wrapper's, which is one too many, because the first argument travels in a register, not on the stack.</p>
+      <p><span class="evidence verified">Verified</span> With the arity overstated by one word, the recorder stub popped one word too many on return. Both sides then returned into their own first argument instead of to the caller. Since that argument is a random test value, both sides faulted on essentially every trial, at the same address with the same fault code.</p>
+      <p><span class="evidence verified">Verified</span> The checker treats a fault on both sides with equal codes as a pass and skips every other comparison for that trial. One wrapper's verdict read 995 of 1000 passing with only the termination checks present; the return value, stack, heap, call and undeclared-write checks ran on zero trials. The verdict file gives no signal that nothing behavioural was compared.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Signal</th><th role="columnheader">Vacuous verdict</th><th role="columnheader">Genuine verdict</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Comparisons present</td><td role="cell" data-label="Vacuous verdict">termination only</td><td role="cell" data-label="Genuine verdict">return, stack, calls and the rest</td></tr>
+      <tr role="row"><td role="cell">Failing trials</td><td role="cell" data-label="Vacuous verdict">a handful, where the random argument lands in the mapped image</td><td role="cell" data-label="Genuine verdict">none, or a behavioural mismatch with detail</td></tr>
+      <tr role="row"><td role="cell">What it proves</td><td role="cell" data-label="Vacuous verdict">nothing</td><td role="cell" data-label="Genuine verdict">equivalence on the tested inputs</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence">Inferred</span> Any contract bug that makes both sides fault identically, not only an arity slip, passes the same silent way.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Fixed the eleven contracts to declare one fewer stack argument for the callees and re-ran them; every re-run shows the full set of behavioural checks passing.</li>
+      <li>Recommended for the checker: record per-trial end states and require a floor of cleanly-returned trials before a verdict can pass, so a contract bug can never again pass through universal faulting.</li>
+      <li>Recommended for lanes until then: after every run, confirm the verdict lists the behavioural checks, not just termination. A verdict with only termination checks proves nothing.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Declare one callee stack argument too many in any wrapper contract and run the checker. Nearly every trial passes on termination alone; a few fail where the random first argument happens to point into the mapped image, which is the only visible symptom. The worker source shows the comparison returning early once both sides fault with equal codes.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first symptom looked like a rewrite defect: a handful of trials reported the rewrite touching original code. Tracing the fault address showed it always equalled the wrapper's first argument on both sides, which pointed away from the rewrite and toward the stack discipline, and from there to the overstated arity. The same mistaken count had been copied into all eleven wrapper contracts from one generator function, so all of them needed re-running.</p>
+      </article>
 
       <article class="entry" id="production-n30">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
