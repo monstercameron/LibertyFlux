@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Re-running early rewrites under checker version two",
+    "title": "Devlog: A nine-argument call broke the checker's stack cleanup",
     "commit": null,
+    "summary": "Findings from the r-b01 lane.",
+    "changes": [
+      "New devlog entry: A nine-argument call broke the checker's stack cleanup.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Re-running early rewrites under checker version two",
+    "commit": "7dec06a73d986330b67e10612c81b1a584afe9dd",
     "summary": "Findings from the a-03 lane.",
     "changes": [
       "New devlog entry: Re-running early rewrites under checker version two.",

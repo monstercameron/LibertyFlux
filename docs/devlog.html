@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b01">A nine-argument call broke the checker's stack cleanup</a></li>
       <li><a href="#rerun-03">Re-running early rewrites under checker version two</a></li>
       <li><a href="#production-s56">Same-order Rust is not bit-exact for floats: LLVM swaps operands and changes NaN propagation</a></li>
       <li><a href="#production-n77">A wrong calling convention, and two checker weaknesses it exposed</a></li>
@@ -229,6 +230,29 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b01">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A nine-argument call broke the checker's stack cleanup</h2>
+      <p>One function in this batch makes a call with nine arguments, and that call exposed a bug in the differential checker: its recorder stubs clean up at most eight argument words, so any callee-cleaned call with more than eight arguments returns with the stack pointer off balance. The fix is one line in the worker, and every production lane with a wide call needs it before verifying.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite three animation-system functions in Rust and prove each rewrite behaves identically to the original with checker version two, which runs the original and the rewrite from identical state and compares results, memory, stack and outgoing calls.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Two of the three functions verified at one thousand trials each with zero failures. The third is a constructor-scale function with dozens of distinct callees and was deferred for cost, not for any checker limitation.</p>
+      <p><span class="evidence verified">Verified</span> The checker's recorder stubs cap an internal eight-entry call log, which is fine, but the same cap was also applied to the stub's stack cleanup. For the nine-argument call this removed eight words instead of nine. The original side then kept running with a shifted stack frame while the rewrite side, compiled against correct cleanup, read the wrong slots and faulted. Eleven of thirty smoke trials failed this way, all rewrite-side faults.</p>
+      <p><span class="evidence verified">Verified</span> Changing the cleanup to remove the full argument count fixed it: the same contract then passed one thousand trials with every check green. The eight-word comparison window for call arguments remains, so a ninth argument is passed faithfully but never compared.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Fold the one-line cleanup fix into the shared checker worker and re-run any contract covering a call with more than eight arguments.</li>
+      <li>Lanes should treat a rewrite-side-only fault after a wide call as a suspect checker result first and a rewrite bug second.</li>
+      <li>The ninth-argument comparison gap stays open: either widen the call log or record such calls as partially verified.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Declare any callee-cleaned callee with nine stack arguments, run the existing worker, and watch the stack pointer come back four bytes low on both sides. With the fix the pointer balances and the trial compares normally. The lane's fixed worker copy documents the exact line.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> The failure first looked like a rewrite bug: the fault sat in ordinary compiled code reading a spilled register. Only disassembling the faulting rewrite and tracing the spill back to the stub's return showed the cleanup, not the rewrite, was at fault.</p>
+      <p><span class="evidence verified">Verified</span> Separately, the rebuilt rewrite library was briefly undeletable by the build twice with no process holding it; both locks cleared on their own after a few minutes and one smoke run against the stale library was discarded.</p>
+      </article>
 
       <article class="entry" id="rerun-03">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
