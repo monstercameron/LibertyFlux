@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Checker stubs must preserve the caller's registers",
+    "title": "Rewrites: 37 more functions pass the checker (5966 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "37 rewrites added under rewrites/pending: 0 script native handlers and 37 other functions.",
+      "The tree now holds 5966 rewrites, 5947 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "253 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Checker stubs must preserve the caller's registers",
+    "commit": "6ec730e5ea87340939c8d3de596f72b8da07dc8c",
     "summary": "Findings from the r-s202 lane.",
     "changes": [
       "New devlog entry: Checker stubs must preserve the caller's registers.",
