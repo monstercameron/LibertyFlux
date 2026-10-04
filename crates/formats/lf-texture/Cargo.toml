@@ -1,0 +1,13 @@
+[package]
+name = "lf-texture"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Read-only parser for GTA IV texture dictionaries (WTD/RSC5) with pixel decoders"
+
+[lints]
+workspace = true
+
+[dependencies]
+flate2.workspace = true
