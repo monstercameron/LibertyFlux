@@ -7,10 +7,12 @@
 /// (0x100, bias-adjusted 0) draws a random count: the low 16 bits of the draw
 /// are scaled by `RAND_SCALE` (2^-15) and `RAND_SPAN` (-50.0f), truncated,
 /// and mapped to `20 * (1 - value)` as the tune argument. A kind of
-/// `SET_KIND` (0x101, adjusted 1) tunes with 0 or -10 depending on whether
-/// the argument's word at `+ LIMIT_OFF` (0xb88) exceeds `LIMIT_AT` (10). Any
-/// other kind skips tuning. The tune callee always takes the incoming
-/// argument as object; its answer is discarded.
+/// `SET_KIND` (0x101, adjusted 1) tunes with 0 when the argument's word at
+/// `+ LIMIT_OFF` (0xb88) is at most `LIMIT_AT` (10, signed), and with -10
+/// otherwise. Any other kind skips tuning. The tune callee always takes the
+/// incoming argument as object; its answer is discarded. (The -10 case
+/// shares the random path's call site in the original: one jump, not a
+/// second call.)
 ///
 /// Then the lookup callee (cdecl: it pops nothing itself) runs over
 /// (argument, attractor) with the resolve callee consuming the two leftover
@@ -34,9 +36,9 @@ lf_checker_rt::export!(thiscall, rw_00be41a0(this: u32, arg: u32) -> u32 {
         const SET_HI: u32 = 0xfffffff6; // -10
         const RAND_SCALE_BITS: u32 = 0x37800000; // 2^-15
         const RAND_SPAN_BITS: u32 = 0xc2480000; // -50.0f
-        const TUNE_SET: u32 = 2;
+        const TUNE_ZERO: u32 = 2;
         const DRAW: u32 = 3;
-        const TUNE_DRAWN: u32 = 4;
+        const TUNE: u32 = 4;
         const LOOKUP: u32 = 5;
         const RESOLVE: u32 = 6;
         #[inline(always)]
@@ -58,12 +60,16 @@ lf_checker_rt::export!(thiscall, rw_00be41a0(this: u32, arg: u32) -> u32 {
                 f32::from_bits(RAND_SPAN_BITS),
             );
             let count = (1i32.wrapping_sub(scaled as i32) as u32).wrapping_mul(20);
-            lf_checker_rt::callee_thiscall!(TUNE_DRAWN, u32, arg, count);
+            lf_checker_rt::callee_thiscall!(TUNE, u32, arg, count);
         } else if adjusted == SET_KIND {
-            // Signed compare (the original branches on less-or-equal).
+            // Signed compare (the original branches on less-or-equal). The
+            // high case shares the tune call site above, like the original.
             let limit = (arg.wrapping_add(LIMIT_OFF) as *const i32).read_unaligned();
-            let tune = if limit > LIMIT_AT as i32 { SET_HI } else { SET_LO };
-            lf_checker_rt::callee_thiscall!(TUNE_SET, u32, arg, tune);
+            if limit > LIMIT_AT as i32 {
+                lf_checker_rt::callee_thiscall!(TUNE, u32, arg, SET_HI);
+            } else {
+                lf_checker_rt::callee_thiscall!(TUNE_ZERO, u32, arg, SET_LO);
+            }
         }
         let found = lf_checker_rt::callee_cdecl!(LOOKUP, u32, arg, attractor);
         lf_checker_rt::callee_thiscall!(RESOLVE, u32, found, arg, attractor);

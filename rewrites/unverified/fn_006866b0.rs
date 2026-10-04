@@ -2,10 +2,9 @@
 
 /// Dispatch a frame pair to one of several handlers by header comparison.
 ///
-/// `inner = [this]`; `e8 = [inner+8]`. When `a1` is null the function
-/// either calls the null-handler callee (`e8 == 0`) or reads `[a1+8]`,
-/// faulting exactly like the original (the equal-subpath callee below it
-/// is unreachable and only declared so the site is intercepted).
+/// `inner = [this]`; `e8 = [inner+8]`. When `a1` is null the peer `a0`
+/// is reloaded: a zero tag calls the null-handler callee, otherwise the
+/// tag is compared against `[a0+8]` and the equal/unequal callee runs.
 /// Otherwise the equal path is taken when `e8` is non-zero and matches
 /// `[a0+8]`; any other case takes the alternate path. Both paths resolve a
 /// context word (`[inner+4]`, else `[a0+4]`): when both are zero the
