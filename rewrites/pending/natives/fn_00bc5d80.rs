@@ -8,4 +8,3 @@ export!(cdecl, rw_00bc5d80(ctx: *const u8) -> u32 {
         callee_cdecl!(1, u32, *args)
     }
 });
-

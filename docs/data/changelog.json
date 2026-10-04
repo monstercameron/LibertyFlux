@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Rewrites: 58 more functions pass the checker (3976 in total)",
+    "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "58 rewrites added under rewrites/pending: 25 script native handlers and 33 other functions.",
+      "53 rewrites that had passed checker version 1 were re-run under version 2 and replaced by the version that passed it.",
+      "The tree now holds 3976 rewrites, 3246 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "177 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 40 more functions pass the checker (3918 in total)",
     "commit": "1462bded3f763ae2740375cefc2a11ab1d84e9be",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

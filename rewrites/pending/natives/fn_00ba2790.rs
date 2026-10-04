@@ -17,4 +17,3 @@ export!(cdecl, rw_00ba2790(ctx: *const u8) -> u32 {
         )
     }
 });
-

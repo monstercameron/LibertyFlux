@@ -11,11 +11,13 @@
 /// outgoing-call matching.
 /// Floats are copied as raw bits, so the forward is bit-exact.
 /// No return slot is written.
+/// v2 port: the rewrite pushes the bare 0/1 flag; the high-byte slot residue is masked in the contract (call_skip).
 export!(cdecl, rw_00bc5370(ctx: *const u8) -> u32 {
     unsafe {
         let args = (*(ctx.add(8) as *const u32)) as *const u32;
         let flag = u32::from(*args.add(5) != 0);
-        let quirked = (ctx as u32 & 0xFFFF_FF00) | flag;
+        // v2 port: push the bare flag; the slot-residue high bytes are masked in the contract (call_skip).
+        let quirked = flag;
         callee_cdecl!(
             1,
             u32,

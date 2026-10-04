@@ -293,8 +293,8 @@
   "kind": "native",
   "file": "natives/fn_005e6d50.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x005E6D80",
@@ -311,8 +311,8 @@
   "kind": "native",
   "file": "natives/fn_005e6da0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x005E6DC0",
@@ -455,8 +455,8 @@
   "kind": "native",
   "file": "natives/fn_005e7490.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x005E74E0",
@@ -1859,8 +1859,8 @@
   "kind": "native",
   "file": "natives/fn_0086f2a0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x0086F2E0",
@@ -1877,8 +1877,8 @@
   "kind": "native",
   "file": "natives/fn_0086f310.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x0086F360",
@@ -1931,8 +1931,8 @@
   "kind": "native",
   "file": "natives/fn_0086f530.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x0086F540",
@@ -2034,6 +2034,15 @@
   "lane": "a-12"
  },
  {
+  "address": "0x0088E280",
+  "name": "rage::audVoiceSoft::vf1",
+  "kind": "function",
+  "file": "functions/fn_0088e280.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b31"
+ },
+ {
   "address": "0x0088E430",
   "name": "rage::audVoiceSoft::vf6",
   "kind": "function",
@@ -2052,6 +2061,33 @@
   "lane": "a-12"
  },
  {
+  "address": "0x0088E8A0",
+  "name": "audio_voice_update",
+  "kind": "function",
+  "file": "functions/fn_0088e8a0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b31"
+ },
+ {
+  "address": "0x0088EE70",
+  "name": "audio_ring_mix_pass",
+  "kind": "function",
+  "file": "functions/fn_0088ee70.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b31"
+ },
+ {
+  "address": "0x0088F0D0",
+  "name": "rage::audVoicePcAdpcm::vf1",
+  "kind": "function",
+  "file": "functions/fn_0088f0d0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b31"
+ },
+ {
   "address": "0x0088F2F0",
   "name": "rage::audVoicePcAdpcm::vf6",
   "kind": "function",
@@ -2068,6 +2104,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-12"
+ },
+ {
+  "address": "0x0088F7F0",
+  "name": "audio_voice_accumulate",
+  "kind": "function",
+  "file": "functions/fn_0088f7f0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b31"
  },
  {
   "address": "0x0088F950",
@@ -2104,6 +2149,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-12"
+ },
+ {
+  "address": "0x0088FFF0",
+  "name": "rage::audSound::vf8",
+  "kind": "function",
+  "file": "functions/fn_0088fff0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b19"
  },
  {
   "address": "0x008901E0",
@@ -2232,6 +2286,15 @@
   "lane": "a-12"
  },
  {
+  "address": "0x008909C0",
+  "name": "rage::audSound::vf7",
+  "kind": "function",
+  "file": "functions/fn_008909c0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b19"
+ },
+ {
   "address": "0x00890B50",
   "name": "audio_copy_params",
   "kind": "function",
@@ -2293,6 +2356,60 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-12"
+ },
+ {
+  "address": "0x00891AE0",
+  "name": "audSound_timing_update",
+  "kind": "function",
+  "file": "functions/fn_00891ae0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b19"
+ },
+ {
+  "address": "0x00891D20",
+  "name": "audSound_path_lookup",
+  "kind": "function",
+  "file": "functions/fn_00891d20.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b19"
+ },
+ {
+  "address": "0x008921A0",
+  "name": "audSound_start_stop",
+  "kind": "function",
+  "file": "functions/fn_008921a0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b19"
+ },
+ {
+  "address": "0x00892770",
+  "name": "audSound_peak_level",
+  "kind": "function",
+  "file": "functions/fn_00892770.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b19"
+ },
+ {
+  "address": "0x008928A0",
+  "name": "audSound_set_text",
+  "kind": "function",
+  "file": "functions/fn_008928a0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b19"
+ },
+ {
+  "address": "0x00892DF0",
+  "name": "audSound_update",
+  "kind": "function",
+  "file": "functions/fn_00892df0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b19"
  },
  {
   "address": "0x00894010",
@@ -7304,8 +7421,8 @@
   "kind": "native",
   "file": "natives/fn_009cbc60.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x009CBC80",
@@ -7425,6 +7542,15 @@
   "lane": "a-06"
  },
  {
+  "address": "0x009CBE40",
+  "name": "IS_MOBILE_PHONE_RADIO_ACTIVE",
+  "kind": "native",
+  "file": "natives/fn_009cbe40.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
+ },
+ {
   "address": "0x009CBE60",
   "name": "IS_PAIN_PLAYING",
   "kind": "native",
@@ -7466,8 +7592,8 @@
   "kind": "native",
   "file": "natives/fn_009cbee0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x009CBF10",
@@ -7502,8 +7628,8 @@
   "kind": "native",
   "file": "natives/fn_009cbf60.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x009CBF80",
@@ -7565,8 +7691,8 @@
   "kind": "native",
   "file": "natives/fn_009cc020.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x009CC040",
@@ -7655,8 +7781,8 @@
   "kind": "native",
   "file": "natives/fn_009cc1f0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x009CC240",
@@ -7781,8 +7907,8 @@
   "kind": "native",
   "file": "natives/fn_009cc4c0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x009CC4E0",
@@ -7916,8 +8042,8 @@
   "kind": "native",
   "file": "natives/fn_009cc730.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x009CC750",
@@ -7988,8 +8114,8 @@
   "kind": "native",
   "file": "natives/fn_009cc8a0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x009CC8E0",
@@ -8015,8 +8141,8 @@
   "kind": "native",
   "file": "natives/fn_009cc910.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x009CC920",
@@ -8438,8 +8564,8 @@
   "kind": "native",
   "file": "natives/fn_00a00470.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00A00510",
@@ -8564,8 +8690,8 @@
   "kind": "native",
   "file": "natives/fn_00a00870.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00A008B0",
@@ -8744,8 +8870,8 @@
   "kind": "native",
   "file": "natives/fn_00a00d30.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00A00D50",
@@ -8879,8 +9005,8 @@
   "kind": "native",
   "file": "natives/fn_00a00f90.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00A01030",
@@ -8888,8 +9014,8 @@
   "kind": "native",
   "file": "natives/fn_00a01030.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00A01070",
@@ -8915,8 +9041,8 @@
   "kind": "native",
   "file": "natives/fn_00a01110.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00A01160",
@@ -9257,8 +9383,8 @@
   "kind": "native",
   "file": "natives/fn_00a01b20.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00A01B40",
@@ -9338,8 +9464,8 @@
   "kind": "native",
   "file": "natives/fn_00a01c80.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00A01CC0",
@@ -9383,8 +9509,8 @@
   "kind": "native",
   "file": "natives/fn_00a01d80.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00A01DC0",
@@ -9554,8 +9680,8 @@
   "kind": "native",
   "file": "natives/fn_00a021b0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00A02280",
@@ -11516,8 +11642,8 @@
   "kind": "native",
   "file": "natives/fn_00b866a0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B866C0",
@@ -11633,8 +11759,8 @@
   "kind": "native",
   "file": "natives/fn_00b868b0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B868E0",
@@ -11660,8 +11786,8 @@
   "kind": "native",
   "file": "natives/fn_00b86910.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B86930",
@@ -12020,8 +12146,8 @@
   "kind": "native",
   "file": "natives/fn_00b86e10.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B86E30",
@@ -12272,8 +12398,8 @@
   "kind": "native",
   "file": "natives/fn_00b872b0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B872C0",
@@ -12335,8 +12461,8 @@
   "kind": "native",
   "file": "natives/fn_00b87400.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B87430",
@@ -12389,8 +12515,8 @@
   "kind": "native",
   "file": "natives/fn_00b874b0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B874D0",
@@ -12407,8 +12533,8 @@
   "kind": "native",
   "file": "natives/fn_00b874f0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B87510",
@@ -12461,8 +12587,8 @@
   "kind": "native",
   "file": "natives/fn_00b87630.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B87670",
@@ -12623,8 +12749,8 @@
   "kind": "native",
   "file": "natives/fn_00b879c0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B879D0",
@@ -12740,8 +12866,8 @@
   "kind": "native",
   "file": "natives/fn_00b87bc0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B87C00",
@@ -12803,8 +12929,8 @@
   "kind": "native",
   "file": "natives/fn_00b87d60.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B87DA0",
@@ -12942,6 +13068,15 @@
   "lane": "r-n91"
  },
  {
+  "address": "0x00B8ABE0",
+  "name": "SET_CUTSCENE_EXTRA_ROOM_POS",
+  "kind": "native",
+  "file": "natives/fn_00b8abe0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
+ },
+ {
   "address": "0x00B8AC50",
   "name": "WAS_CUTSCENE_SKIPPED",
   "kind": "native",
@@ -13028,8 +13163,8 @@
   "kind": "native",
   "file": "natives/fn_00b8b980.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B8B9B0",
@@ -13082,8 +13217,8 @@
   "kind": "native",
   "file": "natives/fn_00b8bac0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B8BB00",
@@ -13190,8 +13325,8 @@
   "kind": "native",
   "file": "natives/fn_00b8bce0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B8BD00",
@@ -13388,8 +13523,8 @@
   "kind": "native",
   "file": "natives/fn_00b8bff0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B8C010",
@@ -13442,8 +13577,8 @@
   "kind": "native",
   "file": "natives/fn_00b8c0a0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B8C0D0",
@@ -13460,8 +13595,8 @@
   "kind": "native",
   "file": "natives/fn_00b8c0f0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B8C110",
@@ -13757,8 +13892,8 @@
   "kind": "native",
   "file": "natives/fn_00b8c830.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B8C850",
@@ -13838,8 +13973,8 @@
   "kind": "native",
   "file": "natives/fn_00b8c970.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B8C9A0",
@@ -13856,8 +13991,8 @@
   "kind": "native",
   "file": "natives/fn_00b8c9c0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B8C9E0",
@@ -13865,8 +14000,8 @@
   "kind": "native",
   "file": "natives/fn_00b8c9e0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B8CA00",
@@ -13919,8 +14054,8 @@
   "kind": "native",
   "file": "natives/fn_00b8cb10.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B8CB30",
@@ -13975,6 +14110,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-n100"
+ },
+ {
+  "address": "0x00B8CC40",
+  "name": "HIGHLIGHT_MENU_ITEM",
+  "kind": "native",
+  "file": "natives/fn_00b8cc40.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
  },
  {
   "address": "0x00B8CC70",
@@ -14126,8 +14270,8 @@
   "kind": "native",
   "file": "natives/fn_00b8cf00.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B8CF20",
@@ -14288,8 +14432,8 @@
   "kind": "native",
   "file": "natives/fn_00b8d170.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B8D190",
@@ -14342,8 +14486,8 @@
   "kind": "native",
   "file": "natives/fn_00b8d270.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B8D2A0",
@@ -14423,8 +14567,8 @@
   "kind": "native",
   "file": "natives/fn_00b8d3b0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B8D450",
@@ -14567,8 +14711,8 @@
   "kind": "native",
   "file": "natives/fn_00b8d6e0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B8D700",
@@ -14837,8 +14981,8 @@
   "kind": "native",
   "file": "natives/fn_00b93cd0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B93CF0",
@@ -14927,8 +15071,8 @@
   "kind": "native",
   "file": "natives/fn_00b93e40.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B93E60",
@@ -15192,6 +15336,15 @@
   "lane": "r-n81"
  },
  {
+  "address": "0x00B944A0",
+  "name": "GET_EPISODE_NAME",
+  "kind": "native",
+  "file": "natives/fn_00b944a0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
+ },
+ {
   "address": "0x00B944D0",
   "name": "GET_GAME_TIMER",
   "kind": "native",
@@ -15289,6 +15442,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-02"
+ },
+ {
+  "address": "0x00B94710",
+  "name": "GET_STRING_WIDTH",
+  "kind": "native",
+  "file": "natives/fn_00b94710.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
  },
  {
   "address": "0x00B94740",
@@ -15800,8 +15962,8 @@
   "kind": "native",
   "file": "natives/fn_00b982e0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B98300",
@@ -15858,6 +16020,15 @@
   "lane": "r-n100"
  },
  {
+  "address": "0x00B983F0",
+  "name": "GET_TEXT_INPUT_ACTIVE",
+  "kind": "native",
+  "file": "natives/fn_00b983f0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
+ },
+ {
   "address": "0x00B98410",
   "name": "HAS_RELOADED_WITH_MOTION_CONTROL",
   "kind": "native",
@@ -15899,8 +16070,8 @@
   "kind": "native",
   "file": "natives/fn_00b984b0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B984D0",
@@ -15964,6 +16135,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-01"
+ },
+ {
+  "address": "0x00B985F0",
+  "name": "IS_KEYBOARD_KEY_JUST_PRESSED",
+  "kind": "native",
+  "file": "natives/fn_00b985f0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
  },
  {
   "address": "0x00B98610",
@@ -16043,8 +16223,8 @@
   "kind": "native",
   "file": "natives/fn_00b9a240.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9A250",
@@ -16124,8 +16304,8 @@
   "kind": "native",
   "file": "natives/fn_00b9a560.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9A580",
@@ -16153,6 +16333,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-06"
+ },
+ {
+  "address": "0x00B9A640",
+  "name": "GET_CLOSEST_ROAD",
+  "kind": "native",
+  "file": "natives/fn_00b9a640.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
  },
  {
   "address": "0x00B9A660",
@@ -16200,6 +16389,15 @@
   "lane": "r-n74"
  },
  {
+  "address": "0x00B9A800",
+  "name": "GET_NEXT_CLOSEST_CAR_NODE_WITH_HEADING",
+  "kind": "native",
+  "file": "natives/fn_00b9a800.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
+ },
+ {
   "address": "0x00B9A850",
   "name": "GET_NEXT_CLOSEST_CAR_NODE_WITH_HEADING_ON_ISLAND",
   "kind": "native",
@@ -16214,8 +16412,8 @@
   "kind": "native",
   "file": "natives/fn_00b9a8a0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9A8F0",
@@ -16223,8 +16421,8 @@
   "kind": "native",
   "file": "natives/fn_00b9a8f0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9A910",
@@ -16457,8 +16655,8 @@
   "kind": "native",
   "file": "natives/fn_00b9dd90.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9DDA0",
@@ -16493,8 +16691,8 @@
   "kind": "native",
   "file": "natives/fn_00b9df00.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9DF20",
@@ -16682,8 +16880,8 @@
   "kind": "native",
   "file": "natives/fn_00b9e4c0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9E4F0",
@@ -16781,8 +16979,8 @@
   "kind": "native",
   "file": "natives/fn_00b9e650.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9E670",
@@ -16898,8 +17096,8 @@
   "kind": "native",
   "file": "natives/fn_00b9e920.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9E940",
@@ -16934,8 +17132,8 @@
   "kind": "native",
   "file": "natives/fn_00b9e980.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9E9A0",
@@ -17015,8 +17213,8 @@
   "kind": "native",
   "file": "natives/fn_00b9ea90.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9EAE0",
@@ -17087,8 +17285,8 @@
   "kind": "native",
   "file": "natives/fn_00b9ec10.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9EC30",
@@ -17141,8 +17339,8 @@
   "kind": "native",
   "file": "natives/fn_00b9ece0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9ED10",
@@ -17168,8 +17366,8 @@
   "kind": "native",
   "file": "natives/fn_00b9ed50.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9ED70",
@@ -17366,8 +17564,8 @@
   "kind": "native",
   "file": "natives/fn_00b9f0b0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9F0D0",
@@ -17384,8 +17582,8 @@
   "kind": "native",
   "file": "natives/fn_00b9f0f0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9F110",
@@ -17402,8 +17600,8 @@
   "kind": "native",
   "file": "natives/fn_00b9f1a0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9F1C0",
@@ -17420,8 +17618,8 @@
   "kind": "native",
   "file": "natives/fn_00b9f1e0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9F200",
@@ -17447,8 +17645,8 @@
   "kind": "native",
   "file": "natives/fn_00b9f260.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9F280",
@@ -17726,8 +17924,8 @@
   "kind": "native",
   "file": "natives/fn_00b9f730.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9F750",
@@ -17744,8 +17942,8 @@
   "kind": "native",
   "file": "natives/fn_00b9f770.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9F7A0",
@@ -17771,8 +17969,8 @@
   "kind": "native",
   "file": "natives/fn_00b9f800.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9F820",
@@ -17856,13 +18054,22 @@
   "lane": "r-n80"
  },
  {
+  "address": "0x00B9FA10",
+  "name": "IS_CHAR_IN_AREA_2D",
+  "kind": "native",
+  "file": "natives/fn_00b9fa10.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
+ },
+ {
   "address": "0x00B9FA70",
   "name": "IS_CHAR_IN_AREA_3D",
   "kind": "native",
   "file": "natives/fn_00b9fa70.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00B9FAE0",
@@ -18203,8 +18410,8 @@
   "kind": "native",
   "file": "natives/fn_00ba00b0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA00D0",
@@ -18347,8 +18554,8 @@
   "kind": "native",
   "file": "natives/fn_00ba0390.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA0400",
@@ -18419,8 +18626,8 @@
   "kind": "native",
   "file": "natives/fn_00ba0640.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA0700",
@@ -18518,8 +18725,8 @@
   "kind": "native",
   "file": "natives/fn_00ba0b70.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA0BB0",
@@ -18536,8 +18743,8 @@
   "kind": "native",
   "file": "natives/fn_00ba0c10.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA0C30",
@@ -18635,8 +18842,8 @@
   "kind": "native",
   "file": "natives/fn_00ba0d80.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA0D90",
@@ -18671,8 +18878,8 @@
   "kind": "native",
   "file": "natives/fn_00ba0dd0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA0DE0",
@@ -18824,8 +19031,8 @@
   "kind": "native",
   "file": "natives/fn_00ba10e0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA1120",
@@ -19112,8 +19319,8 @@
   "kind": "native",
   "file": "natives/fn_00ba1740.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA17A0",
@@ -19166,8 +19373,8 @@
   "kind": "native",
   "file": "natives/fn_00ba1890.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA1920",
@@ -19265,8 +19472,8 @@
   "kind": "native",
   "file": "natives/fn_00ba1af0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA1B10",
@@ -19283,8 +19490,8 @@
   "kind": "native",
   "file": "natives/fn_00ba1b50.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA1B70",
@@ -19571,8 +19778,8 @@
   "kind": "native",
   "file": "natives/fn_00ba1fd0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA1FF0",
@@ -19580,8 +19787,8 @@
   "kind": "native",
   "file": "natives/fn_00ba1ff0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA2030",
@@ -19688,8 +19895,8 @@
   "kind": "native",
   "file": "natives/fn_00ba21c0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA21D0",
@@ -19706,8 +19913,8 @@
   "kind": "native",
   "file": "natives/fn_00ba21f0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA2220",
@@ -19841,8 +20048,8 @@
   "kind": "native",
   "file": "natives/fn_00ba2440.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA2460",
@@ -19877,8 +20084,8 @@
   "kind": "native",
   "file": "natives/fn_00ba24c0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA24E0",
@@ -19931,8 +20138,8 @@
   "kind": "native",
   "file": "natives/fn_00ba2680.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA26C0",
@@ -19949,8 +20156,8 @@
   "kind": "native",
   "file": "natives/fn_00ba26f0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA2710",
@@ -19994,8 +20201,8 @@
   "kind": "native",
   "file": "natives/fn_00ba2790.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA27E0",
@@ -20003,8 +20210,8 @@
   "kind": "native",
   "file": "natives/fn_00ba27e0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA2810",
@@ -20066,8 +20273,8 @@
   "kind": "native",
   "file": "natives/fn_00ba2900.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA2920",
@@ -20138,8 +20345,8 @@
   "kind": "native",
   "file": "natives/fn_00ba2b30.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BA2B50",
@@ -20183,8 +20390,8 @@
   "kind": "native",
   "file": "natives/fn_00bb1ab0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB1AD0",
@@ -20219,8 +20426,8 @@
   "kind": "native",
   "file": "natives/fn_00bb1b30.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB1B40",
@@ -20246,8 +20453,8 @@
   "kind": "native",
   "file": "natives/fn_00bb1b70.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB1B90",
@@ -20291,8 +20498,8 @@
   "kind": "native",
   "file": "natives/fn_00bb1c60.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB1C80",
@@ -20696,8 +20903,8 @@
   "kind": "native",
   "file": "natives/fn_00bb2250.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB2290",
@@ -20750,8 +20957,8 @@
   "kind": "native",
   "file": "natives/fn_00bb2330.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB2350",
@@ -20808,6 +21015,15 @@
   "lane": "a-06"
  },
  {
+  "address": "0x00BB24B0",
+  "name": "IS_PLAYER_IN_SHORTCUT_TAXI",
+  "kind": "native",
+  "file": "natives/fn_00bb24b0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
+ },
+ {
   "address": "0x00BB24D0",
   "name": "IS_PLAYER_ONLINE",
   "kind": "native",
@@ -20831,8 +21047,8 @@
   "kind": "native",
   "file": "natives/fn_00bb2510.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB2530",
@@ -20912,8 +21128,8 @@
   "kind": "native",
   "file": "natives/fn_00bb2690.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB26B0",
@@ -20984,8 +21200,8 @@
   "kind": "native",
   "file": "natives/fn_00bb27b0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB27D0",
@@ -21317,8 +21533,8 @@
   "kind": "native",
   "file": "natives/fn_00bb2de0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB2E00",
@@ -21389,8 +21605,8 @@
   "kind": "native",
   "file": "natives/fn_00bb6040.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB6260",
@@ -21407,8 +21623,8 @@
   "kind": "native",
   "file": "natives/fn_00bb6280.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB62A0",
@@ -21443,8 +21659,8 @@
   "kind": "native",
   "file": "natives/fn_00bb6300.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB6320",
@@ -21452,8 +21668,8 @@
   "kind": "native",
   "file": "natives/fn_00bb6320.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB6330",
@@ -21470,8 +21686,8 @@
   "kind": "native",
   "file": "natives/fn_00bb6360.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB6380",
@@ -21497,8 +21713,8 @@
   "kind": "native",
   "file": "natives/fn_00bb63e0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB6410",
@@ -21524,8 +21740,8 @@
   "kind": "native",
   "file": "natives/fn_00bb6450.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB6470",
@@ -21596,8 +21812,8 @@
   "kind": "native",
   "file": "natives/fn_00bb6550.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB6560",
@@ -21641,8 +21857,8 @@
   "kind": "native",
   "file": "natives/fn_00bb65e0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB6600",
@@ -21740,8 +21956,8 @@
   "kind": "native",
   "file": "natives/fn_00bb6740.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB6780",
@@ -21776,8 +21992,8 @@
   "kind": "native",
   "file": "natives/fn_00bb7270.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB72B0",
@@ -21839,8 +22055,8 @@
   "kind": "native",
   "file": "natives/fn_00bb73b0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB73D0",
@@ -21902,8 +22118,8 @@
   "kind": "native",
   "file": "natives/fn_00bb74e0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB7520",
@@ -21913,6 +22129,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-n97"
+ },
+ {
+  "address": "0x00BB7540",
+  "name": "REQUEST_ANIMS",
+  "kind": "native",
+  "file": "natives/fn_00bb7540.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
  },
  {
   "address": "0x00BB7550",
@@ -21965,8 +22190,8 @@
   "kind": "native",
   "file": "natives/fn_00bb75e0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB7620",
@@ -22019,8 +22244,8 @@
   "kind": "native",
   "file": "natives/fn_00bb76d0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB8850",
@@ -22226,8 +22451,8 @@
   "kind": "native",
   "file": "natives/fn_00bb8c60.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB8C80",
@@ -22433,8 +22658,8 @@
   "kind": "native",
   "file": "natives/fn_00bb8fe0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB9000",
@@ -22487,8 +22712,8 @@
   "kind": "native",
   "file": "natives/fn_00bb9100.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB9160",
@@ -22739,8 +22964,8 @@
   "kind": "native",
   "file": "natives/fn_00bb96d0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BB9720",
@@ -23135,8 +23360,8 @@
   "kind": "native",
   "file": "natives/fn_00bba100.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BBA170",
@@ -23189,8 +23414,8 @@
   "kind": "native",
   "file": "natives/fn_00bba390.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BBA3D0",
@@ -23198,8 +23423,8 @@
   "kind": "native",
   "file": "natives/fn_00bba3d0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BBA410",
@@ -23207,8 +23432,8 @@
   "kind": "native",
   "file": "natives/fn_00bba410.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BBA480",
@@ -23252,8 +23477,8 @@
   "kind": "native",
   "file": "natives/fn_00bba550.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BBA5B0",
@@ -23711,8 +23936,8 @@
   "kind": "native",
   "file": "natives/fn_00bc5300.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC5310",
@@ -23722,6 +23947,15 @@
   "trials": 1000,
   "checker": "version 1",
   "lane": "r-n78"
+ },
+ {
+  "address": "0x00BC5320",
+  "name": "CLOSE_ALL_CAR_DOORS",
+  "kind": "native",
+  "file": "natives/fn_00bc5320.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
  },
  {
   "address": "0x00BC5330",
@@ -23747,8 +23981,8 @@
   "kind": "native",
   "file": "natives/fn_00bc5370.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC53C0",
@@ -23765,8 +23999,8 @@
   "kind": "native",
   "file": "natives/fn_00bc5420.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC54A0",
@@ -23810,8 +24044,8 @@
   "kind": "native",
   "file": "natives/fn_00bc55b0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC55C0",
@@ -23846,8 +24080,8 @@
   "kind": "native",
   "file": "natives/fn_00bc5680.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC56A0",
@@ -23990,8 +24224,8 @@
   "kind": "native",
   "file": "natives/fn_00bc5960.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC5980",
@@ -24170,8 +24404,8 @@
   "kind": "native",
   "file": "natives/fn_00bc5d80.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC5D90",
@@ -24179,8 +24413,8 @@
   "kind": "native",
   "file": "natives/fn_00bc5d90.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC5DB0",
@@ -24273,13 +24507,22 @@
   "lane": "a-03"
  },
  {
+  "address": "0x00BC5F80",
+  "name": "GET_MAXIMUM_NUMBER_OF_PASSENGERS",
+  "kind": "native",
+  "file": "natives/fn_00bc5f80.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
+ },
+ {
   "address": "0x00BC5FA0",
   "name": "GET_NEAREST_CABLE_CAR",
   "kind": "native",
   "file": "natives/fn_00bc5fa0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC5FE0",
@@ -24494,8 +24737,8 @@
   "kind": "native",
   "file": "natives/fn_00bc64f0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC6510",
@@ -24512,8 +24755,8 @@
   "kind": "native",
   "file": "natives/fn_00bc6540.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC6560",
@@ -24656,8 +24899,8 @@
   "kind": "native",
   "file": "natives/fn_00bc68e0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC6920",
@@ -24755,8 +24998,8 @@
   "kind": "native",
   "file": "natives/fn_00bc6ad0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC6AF0",
@@ -24836,8 +25079,8 @@
   "kind": "native",
   "file": "natives/fn_00bc6cc0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC6CE0",
@@ -24962,8 +25205,8 @@
   "kind": "native",
   "file": "natives/fn_00bc6ed0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC6FA0",
@@ -25223,8 +25466,8 @@
   "kind": "native",
   "file": "natives/fn_00bc74a0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC74E0",
@@ -25349,8 +25592,8 @@
   "kind": "native",
   "file": "natives/fn_00bc7740.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC77C0",
@@ -25376,8 +25619,8 @@
   "kind": "native",
   "file": "natives/fn_00bc7800.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC7820",
@@ -25423,6 +25666,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-n97"
+ },
+ {
+  "address": "0x00BC78E0",
+  "name": "SET_ENABLE_RC_DETONATE_ON_CONTACT",
+  "kind": "native",
+  "file": "natives/fn_00bc78e0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
  },
  {
   "address": "0x00BC7900",
@@ -25475,8 +25727,8 @@
   "kind": "native",
   "file": "natives/fn_00bc79c0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC79E0",
@@ -25493,8 +25745,8 @@
   "kind": "native",
   "file": "natives/fn_00bc7a30.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC7A50",
@@ -25556,8 +25808,8 @@
   "kind": "native",
   "file": "natives/fn_00bc7b30.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC7B50",
@@ -25637,8 +25889,8 @@
   "kind": "native",
   "file": "natives/fn_00bc7ca0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC7CC0",
@@ -25943,8 +26195,8 @@
   "kind": "native",
   "file": "natives/fn_00bc8210.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC8230",
@@ -25952,8 +26204,8 @@
   "kind": "native",
   "file": "natives/fn_00bc8230.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BC8250",
@@ -26037,6 +26289,15 @@
   "lane": "a-02"
  },
  {
+  "address": "0x00BD0D60",
+  "name": "CLEAR_CHAR_LAST_WEAPON_DAMAGE",
+  "kind": "native",
+  "file": "natives/fn_00bd0d60.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
+ },
+ {
   "address": "0x00BD0D80",
   "name": "DISABLE_STICKY_BOMB_ACTIVE_SOUND",
   "kind": "native",
@@ -26114,8 +26375,8 @@
   "kind": "native",
   "file": "natives/fn_00bd0ee0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD0F00",
@@ -26168,8 +26429,8 @@
   "kind": "native",
   "file": "natives/fn_00bd0fb0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD0FD0",
@@ -26195,8 +26456,8 @@
   "kind": "native",
   "file": "natives/fn_00bd1050.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD1070",
@@ -26321,8 +26582,8 @@
   "kind": "native",
   "file": "natives/fn_00bd2190.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD21D0",
@@ -26339,8 +26600,8 @@
   "kind": "native",
   "file": "natives/fn_00bd21e0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD2240",
@@ -26395,6 +26656,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-05"
+ },
+ {
+  "address": "0x00BD23D0",
+  "name": "SET_MAX_FIRE_GENERATIONS",
+  "kind": "native",
+  "file": "natives/fn_00bd23d0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
  },
  {
   "address": "0x00BD23E0",
@@ -26474,8 +26744,8 @@
   "kind": "native",
   "file": "natives/fn_00bd2da0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD2E00",
@@ -26640,13 +26910,22 @@
   "lane": "r-n99"
  },
  {
+  "address": "0x00BD3D20",
+  "name": "DRAW_SPRITE_WITH_UV",
+  "kind": "native",
+  "file": "natives/fn_00bd3d20.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
+ },
+ {
   "address": "0x00BD3D80",
   "name": "DRAW_SPRITE_WITH_UV_COORDS",
   "kind": "native",
   "file": "natives/fn_00bd3d80.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD3E10",
@@ -26726,8 +27005,8 @@
   "kind": "native",
   "file": "natives/fn_00bd3fa0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n63"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD3FE0",
@@ -26773,6 +27052,15 @@
   "trials": 1000,
   "checker": "version 1",
   "lane": "r-n85"
+ },
+ {
+  "address": "0x00BD4080",
+  "name": "GET_TEXTURE_RESOLUTION",
+  "kind": "native",
+  "file": "natives/fn_00bd4080.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
  },
  {
   "address": "0x00BD40A0",
@@ -26847,13 +27135,22 @@
   "lane": "a-03"
  },
  {
+  "address": "0x00BD41D0",
+  "name": "REMOVE_TXD",
+  "kind": "native",
+  "file": "natives/fn_00bd41d0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
+ },
+ {
   "address": "0x00BD41E0",
   "name": "REQUEST_STREAMED_TXD",
   "kind": "native",
   "file": "natives/fn_00bd41e0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD4260",
@@ -26879,8 +27176,8 @@
   "kind": "native",
   "file": "natives/fn_00bd42e0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD4300",
@@ -26910,13 +27207,22 @@
   "lane": "a-01"
  },
  {
+  "address": "0x00BD4350",
+  "name": "START_PTFX",
+  "kind": "native",
+  "file": "natives/fn_00bd4350.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
+ },
+ {
   "address": "0x00BD43F0",
   "name": "START_PTFX_ON_OBJ",
   "kind": "native",
   "file": "natives/fn_00bd43f0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD4430",
@@ -27117,6 +27423,15 @@
   "lane": "a-01"
  },
  {
+  "address": "0x00BD76D0",
+  "name": "CALCULATE_CHECKSUM",
+  "kind": "native",
+  "file": "natives/fn_00bd76d0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
+ },
+ {
   "address": "0x00BD76F0",
   "name": "CAN_REGISTER_MISSION_ENTITIES",
   "kind": "native",
@@ -27140,8 +27455,8 @@
   "kind": "native",
   "file": "natives/fn_00bd7740.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD7760",
@@ -27158,8 +27473,8 @@
   "kind": "native",
   "file": "natives/fn_00bd7780.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD77A0",
@@ -27293,8 +27608,8 @@
   "kind": "native",
   "file": "natives/fn_00bd79b0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD79D0",
@@ -27338,8 +27653,8 @@
   "kind": "native",
   "file": "natives/fn_00bd7a40.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n70"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD7A70",
@@ -27500,8 +27815,8 @@
   "kind": "native",
   "file": "natives/fn_00bd7cd0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD7CF0",
@@ -27518,8 +27833,8 @@
   "kind": "native",
   "file": "natives/fn_00bd7d30.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD7D50",
@@ -27565,6 +27880,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-n102"
+ },
+ {
+  "address": "0x00BD7DF0",
+  "name": "IS_IN_MP_TUTORIAL",
+  "kind": "native",
+  "file": "natives/fn_00bd7df0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
  },
  {
   "address": "0x00BD7E10",
@@ -27698,8 +28022,8 @@
   "kind": "native",
   "file": "natives/fn_00bd80c0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD80E0",
@@ -27752,8 +28076,8 @@
   "kind": "native",
   "file": "natives/fn_00bd81c0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD81E0",
@@ -27842,8 +28166,8 @@
   "kind": "native",
   "file": "natives/fn_00bd8340.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD8360",
@@ -27896,8 +28220,8 @@
   "kind": "native",
   "file": "natives/fn_00bd83f0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD8410",
@@ -27968,8 +28292,8 @@
   "kind": "native",
   "file": "natives/fn_00bd84b0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD84C0",
@@ -27977,8 +28301,8 @@
   "kind": "native",
   "file": "natives/fn_00bd84c0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD84D0",
@@ -28022,8 +28346,8 @@
   "kind": "native",
   "file": "natives/fn_00bd8520.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD8530",
@@ -28076,8 +28400,8 @@
   "kind": "native",
   "file": "natives/fn_00bd85d0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD8610",
@@ -28184,8 +28508,8 @@
   "kind": "native",
   "file": "natives/fn_00bd87c0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n66"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD87E0",
@@ -28220,8 +28544,8 @@
   "kind": "native",
   "file": "natives/fn_00bd8840.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD8880",
@@ -28256,8 +28580,8 @@
   "kind": "native",
   "file": "natives/fn_00bd8900.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD8940",
@@ -28292,8 +28616,8 @@
   "kind": "native",
   "file": "natives/fn_00bd89a0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD89F0",
@@ -28436,8 +28760,8 @@
   "kind": "native",
   "file": "natives/fn_00bd8bf0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n69"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD8C10",
@@ -28598,8 +28922,8 @@
   "kind": "native",
   "file": "natives/fn_00bd8e60.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD8E80",
@@ -28643,8 +28967,8 @@
   "kind": "native",
   "file": "natives/fn_00bd8f10.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD8F30",
@@ -28679,8 +29003,8 @@
   "kind": "native",
   "file": "natives/fn_00bd8f90.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n65"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD8FB0",
@@ -28940,8 +29264,8 @@
   "kind": "native",
   "file": "natives/fn_00bd93d0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n71"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD93F0",
@@ -29133,6 +29457,15 @@
   "lane": "r-n90"
  },
  {
+  "address": "0x00BD9690",
+  "name": "SET_TEAM_COLOUR",
+  "kind": "native",
+  "file": "natives/fn_00bd9690.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
+ },
+ {
   "address": "0x00BD96B0",
   "name": "SET_THIS_MACHINE_RUNNING_SERVER_SCRIPT",
   "kind": "native",
@@ -29156,8 +29489,8 @@
   "kind": "native",
   "file": "natives/fn_00bd9730.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n61"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BD9750",
@@ -29214,6 +29547,15 @@
   "lane": "r-n99"
  },
  {
+  "address": "0x00BD9850",
+  "name": "USE_PLAYER_COLOUR_INSTEAD_OF_TEAM_COLOUR",
+  "kind": "native",
+  "file": "natives/fn_00bd9850.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n108"
+ },
+ {
   "address": "0x00BD9870",
   "name": "WRITE_LOBBY_PREFERENCE",
   "kind": "native",
@@ -29228,8 +29570,8 @@
   "kind": "native",
   "file": "natives/fn_00bdabc0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n68"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BDB5A0",
@@ -29237,8 +29579,8 @@
   "kind": "native",
   "file": "natives/fn_00bdb5a0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-n64"
+  "checker": "version 2",
+  "lane": "a-14"
  },
  {
   "address": "0x00BDBDD0",
@@ -33183,6 +33525,60 @@
   "lane": "a-12"
  },
  {
+  "address": "0x00E64810",
+  "name": "static_init_audAmbientAudioEntity_01231800",
+  "kind": "function",
+  "file": "functions/fn_00e64810.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
+  "address": "0x00E64830",
+  "name": "static_init_audio_entity_01238810",
+  "kind": "function",
+  "file": "functions/fn_00e64830.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
+  "address": "0x00E64850",
+  "name": "static_init_audio_entity_012317d8",
+  "kind": "function",
+  "file": "functions/fn_00e64850.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
+  "address": "0x00E64870",
+  "name": "static_init_audio_entity_pair_012387b0",
+  "kind": "function",
+  "file": "functions/fn_00e64870.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
+  "address": "0x00E648A0",
+  "name": "static_init_audio_entity_pair_01231788",
+  "kind": "function",
+  "file": "functions/fn_00e648a0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
+  "address": "0x00E648D0",
+  "name": "static_init_audio_entity_pair_01238760",
+  "kind": "function",
+  "file": "functions/fn_00e648d0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
   "address": "0x00E64900",
   "name": "ratio_store_00e64900",
   "kind": "function",
@@ -33192,6 +33588,42 @@
   "lane": "a-12"
  },
  {
+  "address": "0x00E64920",
+  "name": "static_init_audio_entity_012388a0",
+  "kind": "function",
+  "file": "functions/fn_00e64920.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
+  "address": "0x00E64940",
+  "name": "static_init_rage__audEntity_01238898",
+  "kind": "function",
+  "file": "functions/fn_00e64940.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
+  "address": "0x00E64960",
+  "name": "static_init_audio_entity_012388c8",
+  "kind": "function",
+  "file": "functions/fn_00e64960.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
+  "address": "0x00E64980",
+  "name": "static_init_audio_entity_012388f4",
+  "kind": "function",
+  "file": "functions/fn_00e64980.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
   "address": "0x00E649A0",
   "name": "ratio_store_00e649a0",
   "kind": "function",
@@ -33199,6 +33631,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-12"
+ },
+ {
+  "address": "0x00E649C0",
+  "name": "static_init_audEmitterAudioEntity_012389e0",
+  "kind": "function",
+  "file": "functions/fn_00e649c0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
  },
  {
   "address": "0x00E649E0",
@@ -33228,6 +33669,15 @@
   "lane": "a-12"
  },
  {
+  "address": "0x00E64A40",
+  "name": "static_init_audCutsceneAudioEntity_01282fa8",
+  "kind": "function",
+  "file": "functions/fn_00e64a40.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
   "address": "0x00E64A60",
   "name": "ratio_store_00e64a60",
   "kind": "function",
@@ -33255,6 +33705,15 @@
   "lane": "a-09"
  },
  {
+  "address": "0x00E64AC0",
+  "name": "static_init_audWeaponAudioEntity_012831e4",
+  "kind": "function",
+  "file": "functions/fn_00e64ac0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
   "address": "0x00E64CF0",
   "name": "SLO_MO_BULLET_BY_IN_1_MT",
   "kind": "function",
@@ -33262,6 +33721,69 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-09"
+ },
+ {
+  "address": "0x00E64D60",
+  "name": "static_init_audio_entity_01283870",
+  "kind": "function",
+  "file": "functions/fn_00e64d60.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
+  "address": "0x00E64D80",
+  "name": "static_init_audio_entity_01283dc8",
+  "kind": "function",
+  "file": "functions/fn_00e64d80.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
+  "address": "0x00E64DA0",
+  "name": "static_init_audio_entity_01283cd4",
+  "kind": "function",
+  "file": "functions/fn_00e64da0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
+  "address": "0x00E64DC0",
+  "name": "static_init_audio_entity_0128409c",
+  "kind": "function",
+  "file": "functions/fn_00e64dc0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
+  "address": "0x00E64DE0",
+  "name": "static_init_audio_entity_01283e40",
+  "kind": "function",
+  "file": "functions/fn_00e64de0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
+  "address": "0x00E64E00",
+  "name": "static_init_audio_entity_01284114",
+  "kind": "function",
+  "file": "functions/fn_00e64e00.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
+ },
+ {
+  "address": "0x00E64E20",
+  "name": "static_init_audio_entity_01283750",
+  "kind": "function",
+  "file": "functions/fn_00e64e20.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s102"
  },
  {
   "address": "0x00E64E40",

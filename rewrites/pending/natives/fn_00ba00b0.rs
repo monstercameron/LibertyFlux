@@ -12,4 +12,3 @@ export!(cdecl, rw_00ba00b0(ctx: *const u8) -> u32 {
         slot as u32
     }
 });
-
