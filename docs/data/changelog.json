@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Subsystem survey: physics and collision",
+    "title": "Record where the investigation data lives",
     "commit": null,
+    "summary": "A decision made with the owner.",
+    "changes": [
+      "Plan: the working store is one SQLite database under the artifacts folder, because many lanes read and write at once and claims must be atomic.",
+      "The repository tracks a deterministic, sorted JSON export of it, because git cannot diff a database and the database holds addresses."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Subsystem survey: physics and collision",
+    "commit": "e58f94993db3874d3b0731e088aefac394170fa7",
     "summary": "Findings from the s-physics lane.",
     "changes": [
       "New devlog entry: Subsystem survey: physics and collision.",

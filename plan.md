@@ -49,6 +49,7 @@ and a verified or inferred label on every claim. What it changes here:
 | Xbox 360 recompilation | Not our base. Used as a reference for class names, virtual table order and engine documentation | Its output keeps the PowerPC machine model permanently and cannot become clean Rust |
 | Third-party libraries | Identified by signature and excluded from the queue until phase 5, then replaced | See "Dependencies" |
 | Parallelism | Lanes write only to their own scratch folder; the coordinator integrates | No git worktrees, no stash |
+| Where the investigation data lives | One SQLite database under `.artifacts/db/` for functions, names, evidence, claims, attempts and verdicts, with a deterministic JSON export committed to the repository | Dozens of lanes read and write at once and claims must be atomic, which loose files do badly. Git cannot diff a database, and the database holds addresses, so the tracked form is a sorted text export |
 | Publishing | Cam's decision. README and a GitHub Pages site exist locally; nothing is pushed until Cam asks | The Modern Warfare 2 project lost its hosting and its agents' work after takedowns in September 2026 |
 
 ## Model routing
