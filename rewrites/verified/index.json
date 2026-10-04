@@ -57402,6 +57402,15 @@
   "lane": "r-b145"
  },
  {
+  "address": "0x00D71C20",
+  "name": "replay_block_state_gate",
+  "kind": "function",
+  "file": "functions/fn_00d71c20.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b224"
+ },
+ {
   "address": "0x00D740A0",
   "name": "render_mode_is_active",
   "kind": "function",
@@ -64879,6 +64888,186 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s160"
+ },
+ {
+  "address": "0x00E608C0",
+  "name": "timer_init_pair_a",
+  "kind": "function",
+  "file": "functions/fn_00e608c0.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E608E0",
+  "name": "timer_init_pair_scratch",
+  "kind": "function",
+  "file": "functions/fn_00e608e0.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60900",
+  "name": "timer_init_pair_b",
+  "kind": "function",
+  "file": "functions/fn_00e60900.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60920",
+  "name": "timer_init_pair_c",
+  "kind": "function",
+  "file": "functions/fn_00e60920.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60940",
+  "name": "timer_init_pair_d",
+  "kind": "function",
+  "file": "functions/fn_00e60940.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60960",
+  "name": "critsec_init_pair_a",
+  "kind": "function",
+  "file": "functions/fn_00e60960.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60980",
+  "name": "qpc_micros_init",
+  "kind": "function",
+  "file": "functions/fn_00e60980.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E609C0",
+  "name": "qpc_seed_hash_init",
+  "kind": "function",
+  "file": "functions/fn_00e609c0.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60A00",
+  "name": "timer_slots_init_256",
+  "kind": "function",
+  "file": "functions/fn_00e60a00.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60A70",
+  "name": "timer_callback_register_a",
+  "kind": "function",
+  "file": "functions/fn_00e60a70.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60A80",
+  "name": "timer_callback_register_b",
+  "kind": "function",
+  "file": "functions/fn_00e60a80.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60A90",
+  "name": "critsec_init_pair_b",
+  "kind": "function",
+  "file": "functions/fn_00e60a90.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60AB0",
+  "name": "critsec_init_pair_c",
+  "kind": "function",
+  "file": "functions/fn_00e60ab0.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60AD0",
+  "name": "timer_obj_init_a",
+  "kind": "function",
+  "file": "functions/fn_00e60ad0.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60AF0",
+  "name": "timer_table_clear_128",
+  "kind": "function",
+  "file": "functions/fn_00e60af0.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60B20",
+  "name": "timer_obj_init_thunk",
+  "kind": "function",
+  "file": "functions/fn_00e60b20.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60B30",
+  "name": "timer_obj_init_b",
+  "kind": "function",
+  "file": "functions/fn_00e60b30.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60B50",
+  "name": "timer_obj_init_c",
+  "kind": "function",
+  "file": "functions/fn_00e60b50.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60B70",
+  "name": "timer_obj_init_d",
+  "kind": "function",
+  "file": "functions/fn_00e60b70.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
+ },
+ {
+  "address": "0x00E60B90",
+  "name": "timer_state_reset",
+  "kind": "function",
+  "file": "functions/fn_00e60b90.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s289"
  },
  {
   "address": "0x00E60E00",

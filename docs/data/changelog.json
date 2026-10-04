@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: One replay-memory gate verified, and what its proof taught",
+    "title": "Rewrites: 21 more functions pass the checker (8004 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "21 rewrites added under rewrites/verified: 0 script native handlers and 21 other functions.",
+      "The tree now holds 8004 rewrites, 7985 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "319 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: One replay-memory gate verified, and what its proof taught",
+    "commit": "8caa4932077675f7842e19d8971aa053808def5c",
     "summary": "Findings from the r-b224 lane.",
     "changes": [
       "New devlog entry: One replay-memory gate verified, and what its proof taught.",
