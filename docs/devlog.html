@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#function-count-estimate">Counting the game functions without Ghidra</a></li>
       <li><a href="#subsystem-physics">Subsystem survey: physics and collision</a></li>
       <li><a href="#tools-scripts">Tools: mission scripts and the script format</a></li>
       <li><a href="#tools-engine-crates">Tools: the future Rust engine's libraries</a></li>
@@ -96,6 +97,44 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="function-count-estimate">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Counting the game functions without Ghidra</h2>
+      <p><span class="evidence verified">Verified</span> The executable holds about 45,200 functions in its readable code, with at least 1,170 more hidden in an encrypted first region, measured by recursive-descent disassembly with capstone. The readable code is 95.6 percent covered; the rest is padding, switch data kept inside the code section, and code reachable only from the encrypted region.</p>
+      <h3>What was asked</h3>
+      <p>Produce an independent estimate of the function count and sizes without waiting for the Ghidra analysis: recursive descent from the entry point, direct-call targets, relocated code pointers, and exception tables; then size and complexity distributions, duplicate detection, and a comparison with the public Xbox 360 counts.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The code section has two sharply divided regions. The first 1,000 KiB is encrypted and unreadable on disk; the remaining roughly 9.5 MiB is ordinary compiled code. A small loader stub at the entry point resolves imports at run time and jumps to the real entry; it was not reversed further. Switch tables live inside the code section rather than in data, which the scan had to learn (see below).</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Seed source</th><th role="columnheader">Distinct starts</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Direct-call targets</td><td role="cell" data-label="Distinct starts">25,383</td></tr>
+      <tr role="row"><td role="cell">Relocated code pointers</td><td role="cell" data-label="Distinct starts">38,174</td></tr>
+      <tr role="row"><td role="cell">Added by relocations alone</td><td role="cell" data-label="Distinct starts">37,667</td></tr>
+      <tr role="row"><td role="cell">Entry and exception handlers</td><td role="cell" data-label="Distinct starts">4</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The size distribution below covers 2.59 million instructions. Most functions are small; 134 exceed 1,000 instructions and the largest is about 19 KiB. About 2,400 switch tables were resolved, SSE floating point outweighs x87 by over four to one, and some 900 functions (2 percent) read arguments from unexpected registers.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Size</th><th role="columnheader">Functions</th><th role="columnheader">Switches</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Under 16 bytes</td><td role="cell" data-label="Functions">6,074</td><td role="cell" data-label="Switches">0</td></tr>
+      <tr role="row"><td role="cell">16 to 63 bytes</td><td role="cell" data-label="Functions">15,622</td><td role="cell" data-label="Switches">64</td></tr>
+      <tr role="row"><td role="cell">64 to 255 bytes</td><td role="cell" data-label="Functions">15,497</td><td role="cell" data-label="Switches">716</td></tr>
+      <tr role="row"><td role="cell">256 to 1023 bytes</td><td role="cell" data-label="Functions">6,342</td><td role="cell" data-label="Switches">818</td></tr>
+      <tr role="row"><td role="cell">1 to 4 KiB</td><td role="cell" data-label="Functions">1,544</td><td role="cell" data-label="Switches">231</td></tr>
+      <tr role="row"><td role="cell">Over 4 KiB</td><td role="cell" data-label="Functions">145</td><td role="cell" data-label="Switches">118</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Duplicate code is significant: 1,108 byte-identical groups covering 13,423 functions and about 400 KiB, including one constructor-like function copied 481 times. <span class="evidence">Inferred</span> The total sits above the public Xbox 360 range of roughly 31,800 to 36,400 functions, which is expected before library code is tagged and removed, and given PC-only code and different inlining.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The wrapper is treated as out of scope: no decryption was attempted and none should be. The per-function data file is ready for the library-tagging lane, which should shrink the count, and for Ghidra cross-checking once that analysis lands. Unresolvable indirect jumps and the encrypted region stay open problems.</p>
+      <h3>How to reproduce it</h3>
+      <p>Parse the executable headers, split the code section by per-block entropy, and collect seeds from direct-call targets, relocated pointers with trustworthy sources, and the exception handler table. Run capstone recursive descent over the plain region, resolve index-scaled jump tables validated by relocations, merge case blocks back into their owners, and hash functions with address bytes masked. The lane's scan script repeats the full pass in about two minutes.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first entropy sample covered only the start of the code section and briefly suggested the whole thing was encrypted; a full block scan corrected that within minutes. A 256-byte entropy threshold then missed the boundary entirely because small samples cannot reach high entropy values, and the first full run decoded 64 KiB windows through a disassembler call that decodes eagerly, running twenty times too slow. Both bugs were fixed the same hour. The genuine surprise was switch tables stored in executable code, including one region of 481 identical functions that first looked like a data island.</p>
+      </article>
 
       <article class="entry" id="subsystem-physics">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

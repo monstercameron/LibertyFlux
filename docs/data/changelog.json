@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Add a brief mode to the status script",
+    "title": "Devlog: Counting the game functions without Ghidra",
     "commit": null,
+    "summary": "Findings from the p0-function-estimate lane.",
+    "changes": [
+      "New devlog entry: Counting the game functions without Ghidra.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Add a brief mode to the status script",
+    "commit": "c38654618ee3849149c5a2f795caceaca802e1da",
     "summary": "With dozens of lanes the full listing is too long to read every five minutes.",
     "changes": [
       "The status script can list only lanes that are still running or that exited without their deliverables.",
