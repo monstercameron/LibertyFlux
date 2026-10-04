@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#subsystem-peds-tasks">Subsystem survey: pedestrians, AI and the task system</a></li>
       <li><a href="#subsystem-files-memory">Subsystem survey: file system, configuration, memory and save games</a></li>
       <li><a href="#subsystem-audio">Subsystem survey: audio</a></li>
       <li><a href="#rtti-classes">Every C++ class described by run-time type information</a></li>
@@ -82,6 +83,27 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="subsystem-peds-tasks">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Subsystem survey: pedestrians, AI and the task system</h2>
+      <p>The pedestrian and AI subsystem is the largest surveyed so far: 511 core classes built around a task tree of nearly 330 task types, 99 event types, per-ped brains with Liberty City variants, and a distant-ped stand-in system, with combat behaviour driven by versioned data files rather than code.</p>
+      <h3>What was asked</h3>
+      <p>Survey the pedestrian, AI and task subsystem of the game executable by reading the file directly: list its classes with base classes and virtual table sizes, collect its revealing strings, locate its code through cross references, identify its operating system and library dependencies, check public knowledge, note frame-rate dependence, and advise a rewrite.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The class census, from the executable's own runtime type information, counts 511 core classes and 81 shared boundary classes out of 3,243 classes in the binary, holding 10,334 virtual table slots between them.</p>
+      <table role="table"><thead role="rowgroup"><tr role="row"><th role="columnheader">Family</th><th role="columnheader">Count</th><th role="columnheader">What it is</th></tr></thead><tbody role="rowgroup"><tr role="row"><td role="cell">Complex tasks</td><td role="cell" data-label="Count">194</td><td role="cell" data-label="What it is">Sequenced behaviours: combat, movement, scenarios, wandering, driving, player roots</td></tr><tr role="row"><td role="cell">Simple tasks</td><td role="cell" data-label="Count">130</td><td role="cell" data-label="What it is">Leaf behaviours, including ragdoll leaves</td></tr><tr role="row"><td role="cell">Task metadata</td><td role="cell" data-label="Count">About 33</td><td role="cell" data-label="What it is">Serializable task descriptors and factories</td></tr><tr role="row"><td role="cell">Events</td><td role="cell" data-label="Count">99</td><td role="cell" data-label="What it is">Stimulus types plus group, scanner, handler and factory classes</td></tr><tr role="row"><td role="cell">Ped classes</td><td role="cell" data-label="Count">37</td><td role="cell" data-label="What it is">Ped entity, player ped, intelligence, data, model info, factory, formations, attractors</td></tr><tr role="row"><td role="cell">Dummy system</td><td role="cell" data-label="Count">10</td><td role="cell" data-label="What it is">Cheap distant-ped entity with stub tasks</td></tr></tbody></table>
+      <p><span class="evidence verified">Verified</span> Several classes that older games in the series had are gone: there is no task manager, task tree, wanted level, decision maker, population, pathfinder, crime or relationship class. Task ownership appears folded into the per-ped intelligence object, and decision makers are data files on disk with a version migration path, including separate police behaviour per wanted level.</p>
+      <p><span class="evidence verified">Verified</span> Movement tasks use multiple inheritance: 39 classes carry a second virtual table for a movement interface. Distant pedestrians run as cheap dummy objects and convert back to full peds near the player, with explicit handling for peds yanked out of vehicles and ragdolls.</p>
+      <p><span class="evidence verified">Verified</span> About 2,400 code references to the subsystem's tables and strings were grouped into 195 clusters across the readable code, with the densest regions holding task methods and the string-heavy regions holding logging and event text. Direct operating system calls could not be attributed: the import table has no on-disk content, so which system functions ped code calls is unknown from static analysis.</p>
+      <p><span class="evidence">Inferred</span> The ragdoll task leaves drive a statically linked third-party dynamics library, which will be the hardest part to reproduce. No frame-timing strings were found in the subsystem, but a well-known community fix documents broken pedestrian pathfinding above 60 frames per second, so movement timing needs re-validation at every frame rate.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Rewrite in this order: task base classes, then the event scan and dispatch loop, then ped intelligence wiring, task metadata, simple leaf tasks, the wander and movement family, scenarios, combat and cover, ragdoll leaves once the dynamics question is settled, the dummy stand-in system, wanted level and police, and network task mirrors last. Task metadata, event groups, decision tables and formation calculators should be checkable in a CPU emulator in isolation; movement, combat, scanners, ragdoll and wanted behaviour will need the running game or a rich harness.</p>
+      <h3>How to reproduce it</h3>
+      <p>Parse the executable's runtime type information to enumerate classes, read base-class lists and count virtual table slots through the relocation table; extract printable strings and filter by subsystem keywords; then map relocation sites in the readable code that point at the subsystem's tables and strings, cluster them by address gap, and validate a sample of function starts with a disassembler. The class list, string list and cluster list are kept as data files with the survey for later tooling.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>An early pass double-counted movement task classes because each has two virtual tables; recognising the multiple inheritance layout fixed the count. A first string filter caught hundreds of unrelated matches on short keywords and had to be tightened with word rules. The import scan repeatedly found zero calls until it became clear the import table itself is not present on disk, which closed off per-subsystem dependency attribution. Public documentation for this subsystem in this game turned out to be thin: community headers target older builds, and the decision-maker file format appears undocumented.</p>
+      </article>
 
       <article class="entry" id="subsystem-files-memory">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

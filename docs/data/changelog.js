@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Subsystem survey: file system, configuration, memory and save games",
+    "title": "Devlog: Subsystem survey: pedestrians, AI and the task system",
     "commit": null,
+    "summary": "Findings from the s-peds-tasks lane.",
+    "changes": [
+      "New devlog entry: Subsystem survey: pedestrians, AI and the task system.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Subsystem survey: file system, configuration, memory and save games",
+    "commit": "e159fd226cd2fb43a4b43afd4f849a2aa427302c",
     "summary": "Findings from the s-files-memory lane.",
     "changes": [
       "New devlog entry: Subsystem survey: file system, configuration, memory and save games.",
