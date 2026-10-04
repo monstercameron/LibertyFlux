@@ -7065,6 +7065,33 @@
   "lane": "r-s369"
  },
  {
+  "address": "0x0052A640",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race13Standard, player_schema::LeaderboardInfo, 10>::vf2",
+  "kind": "function",
+  "file": "functions/fn_0052a640.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s374"
+ },
+ {
+  "address": "0x0052A670",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race13Standard, player_schema::LeaderboardInfo, 10>::vf12",
+  "kind": "function",
+  "file": "functions/fn_0052a670.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s374"
+ },
+ {
+  "address": "0x0052A6E0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race13Standard, player_schema::LeaderboardInfo, 10>::vf13",
+  "kind": "function",
+  "file": "functions/fn_0052a6e0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s374"
+ },
+ {
   "address": "0x0052A750",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race13Standard, player_schema::LeaderboardInfo, 10>::vf14",
   "kind": "function",
@@ -7072,6 +7099,33 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b332"
+ },
+ {
+  "address": "0x0052A8D0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race13Standard, player_schema::LeaderboardInfo, 10>::vf6",
+  "kind": "function",
+  "file": "functions/fn_0052a8d0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s374"
+ },
+ {
+  "address": "0x0052A930",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race13Standard, player_schema::LeaderboardInfo, 10>::vf7",
+  "kind": "function",
+  "file": "functions/fn_0052a930.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s374"
+ },
+ {
+  "address": "0x0052A970",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race13Standard, player_schema::LeaderboardInfo, 10>::vf8",
+  "kind": "function",
+  "file": "functions/fn_0052a970.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s374"
  },
  {
   "address": "0x0052B400",
@@ -39112,6 +39166,141 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "a-V03"
+ },
+ {
+  "address": "0x009E73D0",
+  "name": "model_kind_to_task_id",
+  "kind": "function",
+  "file": "functions/fn_009e73d0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s376"
+ },
+ {
+  "address": "0x009E8300",
+  "name": "ped_flagged_subobject_or_null",
+  "kind": "function",
+  "file": "functions/fn_009e8300.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s376"
+ },
+ {
+  "address": "0x009E8530",
+  "name": "ped_link_float_field",
+  "kind": "function",
+  "file": "functions/fn_009e8530.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s376"
+ },
+ {
+  "address": "0x009E8610",
+  "name": "model_pair_to_outs",
+  "kind": "function",
+  "file": "functions/fn_009e8610.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s376"
+ },
+ {
+  "address": "0x009E88F0",
+  "name": "ped_max_of_pair",
+  "kind": "function",
+  "file": "functions/fn_009e88f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s376"
+ },
+ {
+  "address": "0x009E8920",
+  "name": "list_tail",
+  "kind": "function",
+  "file": "functions/fn_009e8920.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s376"
+ },
+ {
+  "address": "0x009E8940",
+  "name": "task_chain_has_marker",
+  "kind": "function",
+  "file": "functions/fn_009e8940.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s376"
+ },
+ {
+  "address": "0x009E89A0",
+  "name": "first_live_slot_tail",
+  "kind": "function",
+  "file": "functions/fn_009e89a0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s376"
+ },
+ {
+  "address": "0x009E91F0",
+  "name": "ped_init_core_words",
+  "kind": "function",
+  "file": "functions/fn_009e91f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s376"
+ },
+ {
+  "address": "0x009E9220",
+  "name": "ped_write_signature",
+  "kind": "function",
+  "file": "functions/fn_009e9220.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s376"
+ },
+ {
+  "address": "0x009E9240",
+  "name": "ped_reset_weights",
+  "kind": "function",
+  "file": "functions/fn_009e9240.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s376"
+ },
+ {
+  "address": "0x009E94E0",
+  "name": "ped_zero_block",
+  "kind": "function",
+  "file": "functions/fn_009e94e0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s376"
+ },
+ {
+  "address": "0x009E95C0",
+  "name": "ped_kind_is_simple",
+  "kind": "function",
+  "file": "functions/fn_009e95c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s376"
+ },
+ {
+  "address": "0x009E9600",
+  "name": "ped_state_in_window",
+  "kind": "function",
+  "file": "functions/fn_009e9600.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s376"
+ },
+ {
+  "address": "0x009E98A0",
+  "name": "ped_mode_special",
+  "kind": "function",
+  "file": "functions/fn_009e98a0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s376"
  },
  {
   "address": "0x009E9900",
@@ -73962,6 +74151,15 @@
   "lane": "r-b331"
  },
  {
+  "address": "0x00CB0470",
+  "name": "CTaskComplexMoveAroundCoverPoints::vf20",
+  "kind": "function",
+  "file": "functions/fn_00cb0470.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b331"
+ },
+ {
   "address": "0x00CB26E0",
   "name": "CTaskComplexGoToPointAnyMeans::vf19",
   "kind": "function",
@@ -79612,6 +79810,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b203"
+ },
+ {
+  "address": "0x00DCD1A0",
+  "name": "task_pick_anim_and_maybe_scale",
+  "kind": "function",
+  "file": "functions/fn_00dcd1a0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b333"
  },
  {
   "address": "0x00DCD6C0",
