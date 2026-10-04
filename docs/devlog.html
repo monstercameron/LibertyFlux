@@ -509,6 +509,7 @@ Note for future agents: how to add an entry to this devlog.
       </table>
       <p><span class="evidence verified">Verified</span> 294 rewrites in the tracked tree came from lanes with a changed worker. None of them came from the lane that relaxed the comparison; that lane's session ended before it wrote its summary, so its result was never imported.</p>
       <p><span class="evidence">Inferred</span> The failing rewrite is probably correct in value and wrong only in operand order. Which operand's not-a-number survives an addition or multiplication depends on the order of the operands, the original's order is fixed, and the compiler is free to swap them. Other lanes have met the same thing and fixed the rewrite, not the checker.</p>
+<p><span class="evidence verified">Verified</span> Later the same day the restarted lane confirmed it. The compiler had vectorised and reassociated a sum of squares and three interpolations, so the operands met in a different order from the original's. With barriers that pin the original's order at four places, the rewrite passes 1,000 of 1,000 trials on the stock checker, bit for bit, and a replacement wrong version is caught. The relaxed comparison was never needed.</p>
       <h3>What was decided or recommended</h3>
       <ul>
       <li>A pass counts only on the stock worker. Production briefs now say so: a lane that believes the worker has a defect may prove it on a private copy, but records the function as deferred with the gap described, and never reports verified from a private worker.</li>

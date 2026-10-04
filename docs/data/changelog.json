@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: the relaxed comparison was not needed",
+    "commit": null,
+    "summary": "Follow-up to the entry on private copies of the checker.",
+    "changes": [
+      "The lane that had passed a large particle function only by treating all not-a-number values as equal was restarted on the stock checker. The cause was operand order: the compiler had vectorised and reassociated the float arithmetic. With the original's order pinned at four places the rewrite passes 1,000 of 1,000 trials bit for bit.",
+      "The devlog entry now records this as verified instead of inferred."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 40 more functions pass the checker (5700 in total)",
     "commit": "e303a1c584e175fb23c6fb9032eeef7f3728010f",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
