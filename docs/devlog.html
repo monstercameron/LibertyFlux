@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n30">A wrong fifteen-argument rewrite passes the checker</a></li>
       <li><a href="#workspace-assembly">Assembling the format readers into one workspace</a></li>
       <li><a href="#production-s33">A matrix routine that copies stack garbage, and a compiler trap for rewrites</a></li>
       <li><a href="#production-s07">A faithful rewrite can fail the cheat check</a></li>
@@ -217,6 +218,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n30">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A wrong fifteen-argument rewrite passes the checker</h2>
+      <p>Twenty-five script native handlers were rewritten and verified this shift, but the most important result is a gap: a rewrite with two of its fifteen call arguments swapped still passes, because the checker's call stub records only the first eight stack arguments. The same shift also found that several handlers reuse their own incoming stack slot as scratch space, which safe Rust cannot reproduce and the checker must therefore exclude.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty-five script native handlers in Rust and prove each one identical to the original with the differential checker, running at least one thousand trials per function.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All twenty-five handlers take a single call-context pointer, make exactly one direct call to an engine function, and touch no globals. Fourteen are plain argument forwards; the rest normalise a boolean, return a byte, word or float through the return slot, or pass one float argument.</p>
+      <p><span class="evidence verified">Verified</span> Five handlers write scratch data over their own incoming stack slot: four normalise a boolean into its low byte, one spills a float result across the whole slot. The pushed call bytes were reproduced exactly, but the slot clobber itself is unwritable from safe Rust, so the stack comparison is disabled for those five contracts and the exclusion is documented in each one.</p>
+      <p><span class="evidence verified">Verified</span> A deliberately wrong rewrite of the fifteen-argument handler, with two late arguments swapped, passes all two hundred honesty trials. The worker stub stores at most eight stack arguments per call, so late arguments are never compared. Two other mutants, with a wrong boolean encoding and a missing byte mask, fail as required, which shows the surrounding checks are working.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The twenty-five rewrites are accepted, with the late arguments of the fifteen-argument handler covered by construction and an independent argument-order cross-check rather than by the checker. The recommended follow-up is a worker extension that records more than eight stack arguments per call, after which that handler should be re-verified with no code changes.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build any contract whose callee takes more than eight stack arguments, run the correct rewrite to confirm it passes, then swap two arguments past the eighth position and run again: the checker still passes. The same procedure with an argument inside the first eight fails on the calls comparison.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>A contract regeneration silently reverted an intended configuration flip, so the main runs used the stronger full-discovery mode throughout; four earlier verdicts were rerun so the batch has uniform rigor. A duplicate of the lane's own runner appeared under a different interpreter and was killed after its nature was established. Throughput fell to roughly a tenth of the pilot figure under more than thirty concurrent workers, so the remaining contracts were split across two workers to finish inside the timebox.</p>
+      </article>
 
       <article class="entry" id="workspace-assembly">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
