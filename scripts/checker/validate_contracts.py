@@ -47,7 +47,7 @@ CONTRACTS_DIR = os.path.join(HERE, "contracts")
 
 # Worker limits (crates/tools/lf-checker-worker/src/main.rs), used when the source cannot be read.
 DEFAULT_LIMITS = {
-    "SNAP_MAXW": 8,         # snapshot words per callee
+    "SNAP_MAXW": 64,        # snapshot words per callee (snap::SNAP_CAP_WORDS since v5; 8 before)
     "WRITEW_PER_ID": 16,    # out-param words per callee
     "LOG_MAXW": 40,         # stack arguments logged per call
     "SEQ_MAX": 16,          # per-call answer steps per callee

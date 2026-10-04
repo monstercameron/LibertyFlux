@@ -157,7 +157,9 @@ class TestSemanticErrors(unittest.TestCase):
 
     def test_snapshot_cap_follows_the_worker_limit(self):
         contract = changed(callees__0__snap=[{"kind": "arg", "idx": 0, "n": 6}, {"kind": "ecx", "n": 3}])
-        self.assertEqual(error_codes(contract), [("range", "$.callees[0].snap")])
+        # Nine words: over a version 4 worker's cap of 8, within a larger one.
+        errors = vc.validate(contract, SCHEMA, dict(LIMITS, SNAP_MAXW=8))["errors"]
+        self.assertEqual(sorted((e["code"], e["path"]) for e in errors), [("range", "$.callees[0].snap")])
         self.assertEqual(vc.validate(contract, SCHEMA, dict(LIMITS, SNAP_MAXW=32))["errors"], [])
 
     def test_worker_limits_are_read_from_source(self):
