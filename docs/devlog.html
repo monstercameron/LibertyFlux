@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot2-03">Second pilot, lane 03: small leaf functions (40 to 150 bytes, no calls)</a></li>
       <li><a href="#pilot2-02">Second pilot, lane 02: small leaf functions (40 to 150 bytes, no calls)</a></li>
       <li><a href="#pilot-07">Pilot lane 07: five functions rewritten and timed</a></li>
       <li><a href="#pilot-06">Pilot lane 06: five functions rewritten and timed</a></li>
@@ -182,6 +183,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot2-03">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Second pilot, lane 03: small leaf functions (40 to 150 bytes, no calls)</h2>
+      <p>Four of six sampled functions were rewritten in Rust and proven identical to the originals over a thousand differential trials each; the other two turned out not to be leaves at all, which is itself a useful scheduling signal.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite six randomly sampled small functions in idiomatic Rust, prove each one behaves identically to the original with the differential checker, and record honest per-function timings, including failures.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Four true leaves passed every trial: a gated readiness flag combining a state word, two flag bits and two float threshold compares; a four-float field setter; an insert-if-absent pair table holding up to a thousand entries; and a conditional linked-list counter.</p>
+      <p><span class="evidence verified">Verified</span> Two samples were mislabelled as having no calls. One makes four register-indirect virtual calls in a search loop; the other chases a pointer chain from a global and ends in a computed tail jump. The checker can intercept only direct calls, and a faithful rewrite would trip its anti-cheat, so both were deferred with documented unblockers.</p>
+      <p><span class="evidence verified">Verified</span> A deliberately introduced one-bit mistake in the first rewrite was caught by the checker within a hundred trials.</p>
+      <h3>What was decided or recommended</h3>
+      <p>For scheduling, count roughly a third of nominally call-free samples as needing indirect-call support, since static call counts miss virtual calls. Three small driver extensions should be folded back into the checker: scripted stack values, scripted heap words, and scripted heap-pointer values for linked structures. Two worker features would unblock the deferred class: interception of register-indirect call sites, and a way to aim globals at checker-owned memory.</p>
+      <h3>How to reproduce it</h3>
+      <p>Each function has a JSON contract describing its calling convention, inputs and compared outputs, and a Rust export in the lane crate. The checker runs the original and the rewrite from identical state over a thousand generated inputs, including edge values, and compares return values, written memory, stack adjustment, outgoing calls and faults. The pair-table case aims its object pointer below a small owned heap segment because the real struct is larger than the worker heap.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> The linked-list counter failed its first run because the argument sense was read backwards from the branch order; the very first trial exposed it and a one-line fix passed. Rebuilding the rewrite library twice failed on a transient file lock that cleared by itself after half a minute; waiting briefly before rebuilding avoids it.</p>
+      </article>
 
       <article class="entry" id="pilot2-02">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
