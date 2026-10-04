@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-04",
-  "updated_at": "2026-10-04 10:59",
+  "updated_at": "2026-10-04 11:05",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,8 +12,8 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 14205,
-    "rewritten": 7595,
+    "named": 14356,
+    "rewritten": 7596,
     "verified": 7382
   },
   "structures": 340,
@@ -99,13 +99,13 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 14205,
+      "value": 14356,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (5201); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (5352); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 7595,
+      "value": 7596,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
@@ -117,10 +117,10 @@
     }
   ],
   "activity": {
-    "lanes_running": 40,
-    "lanes_finished": 732,
+    "lanes_running": 41,
+    "lanes_finished": 733,
     "lanes_incomplete": 69,
-    "devlog_entries": 311
+    "devlog_entries": 312
   },
   "map": [
     {
@@ -623,16 +623,16 @@
       "from": "0x00533637",
       "to": "0x00538F58",
       "count": 200,
-      "named": 169,
+      "named": 200,
       "rewritten": 20,
       "verified": 20
     },
     {
-      "stage": "identified",
+      "stage": "named",
       "from": "0x00538F59",
       "to": "0x0053E879",
       "count": 203,
-      "named": 23,
+      "named": 142,
       "rewritten": 0,
       "verified": 0
     },
@@ -3755,8 +3755,8 @@
       "from": "0x00CC5FE0",
       "to": "0x00CCB901",
       "count": 129,
-      "named": 59,
-      "rewritten": 40,
+      "named": 60,
+      "rewritten": 41,
       "verified": 39
     },
     {
