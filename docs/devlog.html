@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#structures-network">Class layouts: game-level network classes (CNet*, CNetwork*, net object and sync classes)</a></li>
       <li><a href="#natives-21">Native handlers TAKE_CAR_OUT_OF_PARKED_CARS_BUDGET to TASK_SWIM_TO_COORD: what they reveal</a></li>
       <li><a href="#natives-01">Native handlers ABORT_ALL_GARAGE_ACTIVITY to ATTACH_PARACHUTE_MODEL_TO_PLAYER: what they reveal</a></li>
       <li><a href="#structures-misc-b">Class layouts: remaining game classes, second half by name</a></li>
@@ -124,6 +125,27 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="structures-network">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Class layouts: game-level network classes (CNet*, CNetwork*, net object and sync classes)</h2>
+      <p>Nearly all of the game-level network code sits in the encrypted first megabyte of the program, so only three of the 103 classes yielded object layouts, but those three include a fully recovered interpolator layout, a verified destructor pattern for five replicated tasks, and the array manager start-up sequence.</p>
+      <h3>What was asked</h3>
+      <p>Recover the object layouts and virtual interfaces of 103 game-level network classes: replicated-entity wrappers, replicated tasks, interpolators, the array and event managers, sync-data classes and wire-message descriptors. For each class: which virtual slots it overrides, its constructor and destructor behaviour, its size, its fields, and what it relates to.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Of 1,787 virtual slots across the family, 98.8 percent point into the encrypted range and cannot be analysed statically. A whole-program scan for references to the family tables found only 16 in readable code, covering 9 classes. The family shares a small set of default slot implementations, which explains why unrelated tables look similar.</p>
+      <p><span class="evidence verified">Verified</span> One interpolator class was recovered almost completely: an entity pointer, three heading floats, three blend handles and a flag byte, with a base-class dirty flag shared by its siblings. Its constructor, update, re-seed and state-push functions were all read.</p>
+      <p><span class="evidence verified">Verified</span> Five replicated animation tasks share a textbook destructor (store table, call base destructor, conditional delete) and a task-id getter that reuses the matching offline task implementation, so clone tasks keep offline numeric ids. Task-info factory functions build these tasks by allocate, base-construct and re-target steps, and a large dispatch factory builds them by type id.</p>
+      <p><span class="evidence verified">Verified</span> The array manager constructs itself on a global instance and sets up 31 message buffers; its city-specific subclass retargets that instance and sweeps a 960-entry global array of replicated data. All 28 message descriptors share a single inherited slot implementation, and one descriptor init revealed its message size.</p>
+      <p><span class="evidence verified">Verified</span> Two hierarchy surprises: the helicopter and plane network classes derive from the automobile class rather than directly from the vehicle class, and the physical-entity network root is a non-polymorphic data class whose children add the virtual table pointer.</p>
+      <p><span class="evidence">Inferred</span> Slot zero is the deleting destructor across the family by compiler convention, and slot four of clone tasks is the task-type id, but most slot meanings in the entity, event and sync-data trees stay unknown until the encrypted range can be read.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Rewrite in this order: the recovered interpolator plus its base, then the animation clone tasks, then the array managers, then the descriptors, and everything else only after the encrypted range is decrypted through dynamic analysis of the start-up decrypt routine. No public-header cross-check was possible because the public sources contain none of these classes.</p>
+      <h3>How to reproduce it</h3>
+      <p>Scan the readable code for each class table address as a four-byte value, keep only hits that carry a relocation entry, map each hit to its containing function from the function inventory, and disassemble those functions plus the readable virtual slots with flow-sensitive tracking of which registers still hold the object pointer. The lane data file records one layout record per class with per-slot status, constructors, fields and confidences.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>An early register-tracking pass wrongly attributed entity accesses to the object, including one implausibly large offset, and an early heuristic mislabelled a boolean predicate as a destructor; both were corrected by re-checking every description against full disassembly. The relocation check initially reproduced the known double-add trap before all 16 hits verified. One inventory function turned out to be two real functions merged together.</p>
+      </article>
 
       <article class="entry" id="natives-21">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
