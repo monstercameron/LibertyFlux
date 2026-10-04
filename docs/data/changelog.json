@@ -2,7 +2,7 @@
   {
     "date": "2026-10-04",
     "title": "Dashboard: laptop gauges, usage colours and a 15-second refresh",
-    "commit": null,
+    "commit": "bd0e9988bad37b06bb8351bfbc6c919723c34300",
     "summary": "The lane page now shows how hard the laptop is working, coloured by load.",
     "changes": [
       "Three gauges: processor, memory in use and commit in use, each with its last three minutes as a small line. Their colour follows the load: green up to about half, amber around three quarters, red near full. Memory and commit are the two limits the supervisor watches, and the gauge says what it needs before it starts another lane.",
