@@ -6,11 +6,10 @@
 /// (`+0x314/+0x318/+0x31c`), addends (`+0x328`, `+0x340`), a mode byte
 /// (`+0x381`) and a flag byte (`+0x395`). `a2` receives one float; `a4`
 /// selects the parameter (`0`, `1`, anything else); `a1`, `a3` and `a5` are
-/// integers combined into a lookup key, and the numeric value of `a2` itself
-/// feeds that key as well.
+/// integers combined into a lookup key.
 ///
 /// Behaviour: a lookup callee is asked about the key
-/// `a3*0x2b0 + 0x1c + a1 + ((a5<<4) - a2)*4` (with the registry object
+/// `a3*0x2b0 + 0x1c + a1 + a5*60` (with the registry object
 /// constant in ECX), and a second callee turns its answer into the float
 /// `f` (x87 ST0). A half-scaled pick `x2 = pick*0.5` (the 0.5 lives in a
 /// global float table) is formed; a main value `x1` starts from the selected
@@ -63,13 +62,13 @@ lf_checker_rt::export!(thiscall, rw_00E3F060(this: u32, a1: u32, a2: u32, a3: u3
             core::hint::black_box(a) * core::hint::black_box(b)
         }
 
-        // Lookup key; a2 contributes its address value as an integer.
+        // Lookup key: (a5<<4) - a5, i.e. a5*15, scaled by 4.
         let key = (a3 as i32)
             .wrapping_mul(KEY_STRIDE)
             .wrapping_add(KEY_BIAS)
             .wrapping_add(a1 as i32)
             .wrapping_add(
-                ((a5 as i32).wrapping_shl(4).wrapping_sub(a2 as i32))
+                ((a5 as i32).wrapping_shl(4).wrapping_sub(a5 as i32))
                     .wrapping_mul(4),
             ) as u32;
         let found: u32 = lf_checker_rt::callee_thiscall!(
