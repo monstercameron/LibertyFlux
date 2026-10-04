@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Reader crate: lf-anim",
+    "title": "Reader crate: lf-audio-bank",
     "commit": null,
+    "summary": "Audio banks and streamed sounds: containers, IMA ADPCM decode, versioned configs.",
+    "changes": [
+      "New crate crates/formats/lf-audio-bank: Audio banks and streamed sounds: containers, IMA ADPCM decode, versioned configs.",
+      "About 2,107 lines of Rust with 16 unit tests and 7 integration tests; tests that need the game's files skip unless the game folder is given in an environment variable.",
+      "Written by the fmt-audio lane, then brought to the workspace's standard by a second lane. That lane was stopped by a time limit during its final test pass: build and lint were clean on the host, and the coordinator re-ran build, lint and tests before committing."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Reader crate: lf-anim",
+    "commit": "b901a93b993750cfcb339b9e11dfdacaa153984a",
     "summary": "Animation dictionaries and clips: WAD containers, codecs, tracks, validation rules.",
     "changes": [
       "New crate crates/formats/lf-anim: Animation dictionaries and clips: WAD containers, codecs, tracks, validation rules.",

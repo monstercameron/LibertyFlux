@@ -1,0 +1,13 @@
+[package]
+name = "lf-audio-bank"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Read-only parser for GTA IV PC audio: AUD bank and streamed containers, IMA ADPCM, versioned audio configs"
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+lf-archive = { path = "../lf-archive" }
