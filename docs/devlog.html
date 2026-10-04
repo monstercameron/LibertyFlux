@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b111">Staged proof of a 3,400-byte UI function, and a tail jump that verifies as a plain call</a></li>
       <li><a href="#production-b110">Three quiet ways a proof can lie to you</a></li>
       <li><a href="#production-s172">Twenty leaderboard constructors needed a fairer call stub</a></li>
       <li><a href="#production-b115">Optimized builds can fail bit-exact float checks, and five sibling functions share one shape</a></li>
@@ -298,6 +299,25 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b111">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Staged proof of a 3,400-byte UI function, and a tail jump that verifies as a plain call</h2>
+      <p>A single large UI tick function with over one hundred call sites was proven equivalent to its Rust rewrite in stages: seven checker verdicts, seven thousand trials, zero failures, one rewrite binary. The surprise was the ending — two computed tail jumps with full stack teardown verified with an ordinary call, no special machinery needed.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite one medium-large game function in Rust and prove the rewrite behaves identically to the original with the version 3 checker, working in stages: the entry path first, then one branch at a time, always leaving something checkable behind.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The function is a music viewer tick in three gated phases. Each phase samples sixteen virtual float hooks, blends them, reduces them with ordered min/max idioms, clamps two runtime counters, and dispatches four ways. The taken arms run counted loops, element-array scans, a shared join, and one of two epilogues or a computed tail jump.</p>
+      <p><span class="evidence verified">Verified</span> The four-way dispatch fires its taken arm vanishingly rarely under random inputs — zero times in a thousand diverse trials once the last hook value was pinned. The taken arm was therefore forced deterministically: crafted hook value sets delivered through per-call answer sequences, plus pinned runtime words, so the inequalities hold by construction while every value still flows through the real arithmetic on both sides.</p>
+      <p><span class="evidence verified">Verified</span> Both computed tail jumps — which tear the frame down, zero the argument slot, and jump through a table — compare equal on every channel, including stack-pointer adjustment, when the rewrite simply calls through the same object and returns the result. A plain call is sufficient; no teardown transport is needed.</p>
+      <p><span class="evidence verified">Verified</span> A forgotten patch makes the original silently execute the real callee instead of the scripted stub — in one case the real callee wrote to the fabricated test object. The checker caught it through the heap comparison. Every direct call site on a covered path must be patched; the miss list is now empty.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Ship the proof as seven staged verdicts with one rewrite binary, and defer the single-verdict packaging: unifying the stages needs one trial-indexed argument input with a worker heap address literal, which is mechanical but fragile, so it stays a documented recipe for the next lane. Sibling lanes with computed tail jumps should try the plain call first, and lanes with rare dispatch arms should force them with answer sequences rather than running ever-larger trial counts.</p>
+      <h3>How to reproduce it</h3>
+      <p>From the lane folder, generate each stage contract with its generator script, build the rewrite crate for 32-bit Windows into the lane build folder, and run the lane's checker driver copy once per contract with the rewrite library selected. Each run should report one thousand trials, zero failures, and a non-vacuous verdict, except the diverse middle stage whose taken-arm callees cannot fire there by design. A deliberate one-line arithmetic mutant in the blend step is caught on roughly two thirds of trials.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The tail jump theory was wrong before it was tested: the stack adjustment was expected to differ and require new checker machinery, but the probe passed on all channels immediately. The dispatch rarity was also misjudged twice — first as bad luck at sixty trials, then as a harness fault at three hundred — before the thousand-trial diverse run proved the taken arm genuinely never fires under those inputs. Two of my own bugs (a missing patch, a wrong return register after one epilogue) were caught by the checker exactly as intended, as was a second missing patch whose real callee wrote to the test heap.</p>
+      </article>
 
       <article class="entry" id="production-b110">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
