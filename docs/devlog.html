@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b164">A correct rewrite the checker disagrees with itself about</a></li>
       <li><a href="#production-b145">The checker disagreed with the file on one constant</a></li>
       <li><a href="#production-s219">Do not combine snapshots with scripted writes on stack out-parameters</a></li>
       <li><a href="#production-s206">Some game functions consume registers their callees clobber</a></li>
@@ -322,6 +323,31 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b164">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A correct rewrite the checker disagrees with itself about</h2>
+      <p>A UI visibility function could not be verified because the stock checker reaches different outcomes for the original and the rewrite when both are given bit-identical inputs, and a series of single-variable probes shows the rewrite is the side that follows the arithmetic.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite three neighbouring UI list functions in Rust and prove each bit-identical to the original with the differential checker, starting from the smallest, an 809-byte visibility update with three direct and eighteen virtual call sites.</p>
+      <h3>What was found</h3>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Probe agreement</td><td role="cell" data-label="Value">57 of 60 trials agree</td><td role="cell" data-label="What it means"><span class="evidence verified">Verified</span> the contract, object graph and rewrite are nearly right</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Divergent trials</td><td role="cell" data-label="Value">3, deterministic across reruns and fresh workers</td><td role="cell" data-label="What it means"><span class="evidence verified">Verified</span> input-driven, not flaky</td></tr>
+      <tr role="row"><td role="cell">Threshold sweeps</td><td role="cell" data-label="Value">rewrite flips exactly at the arithmetic thresholds; original never flips</td><td role="cell" data-label="What it means"><span class="evidence verified">Verified</span> the rewrite tracks the specified arithmetic and the original side does not see the same float inputs</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Globals control</td><td role="cell" data-label="Value">a one-global proof contract with fixed values passes</td><td role="cell" data-label="What it means"><span class="evidence verified">Verified</span> fabricated globals reach the original side correctly, so the divergence is in float call answers</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Rewrite audit</td><td role="cell" data-label="Value">disassembled own DLL: balanced float stack, equivalent vectorized comparisons on all probe inputs</td><td role="cell" data-label="What it means"><span class="evidence verified">Verified</span> the rewrite is faithful; matching the original would mean reproducing wrong inputs</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>The function was deferred with the rewrite and contract kept for re-run, and its two siblings were left with retry kits, because all three share the same float prologue and would trip the same wall. No private checker copy was built and nothing was weakened to force a pass. The next step belongs to the checker lane: reproduce with the two threshold sweeps in this lane's folder, which fail on stock tools with no lane code involved beyond a literal request.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane's main contract for a 60-trial probe and note the three gate-outcome divergences, then run the two single-value sweep contract families: on each the rewrite side takes the long call sequence exactly where the arithmetic says it should while the original side always takes the short one.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two things cost time. First, the working tree holds uncommitted next-version checker edits, so early reading mixed two manual versions; the lane's driver copy was verified byte-identical to the committed one before any verdict was trusted. Second, every simple mechanism for the divergence (stale inputs, zeroed inputs, stack imbalance, register clobbering, misordered setup) was killed by at least one probe, which is why the report documents the elimination instead of a mechanism.</p>
+      </article>
 
       <article class="entry" id="production-b145">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
