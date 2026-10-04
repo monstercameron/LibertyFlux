@@ -25407,6 +25407,177 @@
   "lane": "r-b167"
  },
  {
+  "address": "0x00A712F0",
+  "name": "CTaskComplexPlayerInCover::vf18",
+  "kind": "function",
+  "file": "functions/fn_00a712f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A71CB0",
+  "name": "copy_pose_and_bias",
+  "kind": "function",
+  "file": "functions/fn_00a71cb0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A71CF0",
+  "name": "kind_is_4_5_6",
+  "kind": "function",
+  "file": "functions/fn_00a71cf0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A71D10",
+  "name": "lookup_or_minus1",
+  "kind": "function",
+  "file": "functions/fn_00a71d10.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A71D40",
+  "name": "NativeImpl_IS_PLAYER_FREE_AIMING_AT_CHAR_2",
+  "kind": "function",
+  "file": "functions/fn_00a71d40.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A71D60",
+  "name": "resolve_then_copy_pose",
+  "kind": "function",
+  "file": "functions/fn_00a71d60.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A727F0",
+  "name": "has_both_state_bits",
+  "kind": "function",
+  "file": "functions/fn_00a727f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A72820",
+  "name": "any_gate_true",
+  "kind": "function",
+  "file": "functions/fn_00a72820.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A72850",
+  "name": "compare_xor_pairs",
+  "kind": "function",
+  "file": "functions/fn_00a72850.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A728F0",
+  "name": "gate_by_registry_probe",
+  "kind": "function",
+  "file": "functions/fn_00a728f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A72950",
+  "name": "ranged_gate_with_fallback",
+  "kind": "function",
+  "file": "functions/fn_00a72950.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A72B30",
+  "name": "layered_gate_signed_tail",
+  "kind": "function",
+  "file": "functions/fn_00a72b30.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A72BE0",
+  "name": "layered_gate_float_tail",
+  "kind": "function",
+  "file": "functions/fn_00a72be0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A72DC0",
+  "name": "table_gate_then_probe",
+  "kind": "function",
+  "file": "functions/fn_00a72dc0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A72E40",
+  "name": "CTaskComplexPlayerGun::vf5",
+  "kind": "function",
+  "file": "functions/fn_00a72e40.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A72EA0",
+  "name": "CTaskComplexPlayerIdles::vf5",
+  "kind": "function",
+  "file": "functions/fn_00a72ea0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A72F30",
+  "name": "CTaskComplexPlayerInCover::vf5",
+  "kind": "function",
+  "file": "functions/fn_00a72f30.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A73150",
+  "name": "CTaskComplexPlayerPlaceCarBomb::vf5",
+  "kind": "function",
+  "file": "functions/fn_00a73150.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
+  "address": "0x00A731A0",
+  "name": "CTaskComplexPlayerSettingsTask::vf5",
+  "kind": "function",
+  "file": "functions/fn_00a731a0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s275"
+ },
+ {
   "address": "0x00A7C2F0",
   "name": "bu_task_poll_and_reset",
   "kind": "function",
@@ -54853,6 +55024,33 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "a-F05"
+ },
+ {
+  "address": "0x00D78410",
+  "name": "CRenderPhaseWarpShadow::vf4",
+  "kind": "function",
+  "file": "functions/fn_00d78410.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b213"
+ },
+ {
+  "address": "0x00D78AE0",
+  "name": "angle_blend_two_samples (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00d78ae0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b213"
+ },
+ {
+  "address": "0x00D78E70",
+  "name": "mode_dispatch_with_guards (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00d78e70.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b213"
  },
  {
   "address": "0x00D796A0",
