@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Fix the squeezed column in devlog tables",
+    "title": "Link the published site and repository to each other",
     "commit": null,
+    "summary": "The site is live on GitHub Pages.",
+    "changes": [
+      "The README now links to the live site, changelog and devlog instead of the HTML source files.",
+      "Each site page has a GitHub link in its navigation."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Fix the squeezed column in devlog tables",
+    "commit": "9f9c9b8521402d917b8afb2fecf872a9902b2dad",
     "summary": "A long hash in one cell was starving the column beside it.",
     "changes": [
       "Long hashes and file names in table cells can now break across lines, so the columns share the width evenly.",

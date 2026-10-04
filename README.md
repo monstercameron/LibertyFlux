@@ -11,6 +11,10 @@ native 64-bit program on Windows, Windows on ARM and macOS.
 ![Structures documented](docs/badges/structures.svg)
 ![Decompiled code in repository: none](docs/badges/decompiled-code.svg)
 
+**Project site: [monstercameron.github.io/LibertyFlux](https://monstercameron.github.io/LibertyFlux/)**,
+with the [changelog](https://monstercameron.github.io/LibertyFlux/changelog.html) and the
+[devlog](https://monstercameron.github.io/LibertyFlux/devlog.html).
+
 > **Status: phase 0, measuring.** Nothing has been rewritten yet. The toolchain is installed and the
 > method is planned. The badges above are generated from real counts and will stay at zero until
 > there is something to count.
@@ -143,14 +147,14 @@ python scripts/update_progress.py
 | structures | Type layouts documented |
 | decompiled code in repo | Always none. See the rule above |
 
-The project site in [`docs/`](docs/index.html) has three pages. It is plain HTML with no build
-step, so GitHub Pages can serve the `docs/` folder as it is.
+The project site has three pages. Its source is the `docs/` folder: plain HTML with no build step,
+served by GitHub Pages as it is.
 
 | Page | Shows |
 |---|---|
-| [Overview](docs/index.html) | The same numbers as the badges, plus a map of the executable from start to end where each square changes shade as its functions are named, rewritten and verified |
-| [Changelog](docs/changelog.html) | Every commit, newest first, with what changed and why. Entries live in [`docs/data/changelog.json`](docs/data/changelog.json) |
-| [Devlog](docs/devlog.html) | Research notes and lessons, including what went wrong, so later contributors and agents do not rediscover them |
+| [Overview](https://monstercameron.github.io/LibertyFlux/) | The same numbers as the badges, plus a map of the executable from start to end where each square changes shade as its functions are named, rewritten and verified |
+| [Changelog](https://monstercameron.github.io/LibertyFlux/changelog.html) | Every commit, newest first, with what changed and why. Entries live in [`docs/data/changelog.json`](docs/data/changelog.json) |
+| [Devlog](https://monstercameron.github.io/LibertyFlux/devlog.html) | Research notes and lessons, including what went wrong, so later contributors and agents do not rediscover them |
 
 ## Repository layout
 
