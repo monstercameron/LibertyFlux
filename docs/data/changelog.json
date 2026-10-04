@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Add the anti-piracy statement",
+    "title": "Add five-minute status updates",
     "commit": null,
+    "summary": "The coordinator reports progress every five minutes while work is running.",
+    "changes": [
+      "AGENTS.md rule 7: a status update every five minutes covering the phase, lanes running, finished and failed, numbers from machine sources, problems and what happens next.",
+      "scripts/status.py collects those facts from lane logs, lane deliverables, the process list, memory, the Ghidra log, the progress file and git."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Add the anti-piracy statement",
+    "commit": "be3f9c878129b72818ca4b9d2624fc41a487b95c",
     "summary": "The project requires a copy of the game that you bought, and says so plainly.",
     "changes": [
       "The README has a Buy the game section: LibertyFlux is not a way to get the game for free, buy it on Steam, from an authorised key seller or from a retailer, and pirated or cracked copies are not supported.",

@@ -129,6 +129,25 @@ This project requires a copy of the game that its user bought. It does not condo
   authorised key seller, or from a retailer.
 - Requests for help with pirated or cracked copies get no answer beyond a pointer to this rule.
 
+## Rule 7: the coordinator posts a status update every 5 minutes
+
+While the project is being worked on, the coordinator posts a project status update in the chat
+every 5 minutes, for the rest of the project. Cam should never have to ask what is happening.
+
+Each update is short and covers, in this order:
+
+- Phase and what changed since the last update. If nothing changed, say so in one line.
+- Lanes: how many are running, how many have finished, how many failed, and what each running lane
+  is working on, taken from its log under `.artifacts/logs/`, not from memory.
+- Numbers from machine sources: functions counted, named, rewritten, verified; long-running jobs
+  and how far along they are; memory in use.
+- Problems: anything stuck, rate-limited, failing or surprising, stated plainly.
+- What happens next, and anything that needs Cam.
+
+Run `python scripts/status.py` to collect the facts. Do not pad an update, do not repeat unchanged
+detail, and do not report a lane's result before it has finished. Interesting, confusing or
+surprising findings go in the devlog the same day, not only in the chat.
+
 ## Commit history: one feature at a time
 
 Keep the history readable as a sequence of single changes. Someone reading the log should be able to
