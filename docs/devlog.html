@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#structures-tasks-b">Class layouts: AI task classes, second half (CTaskSimple* and other CTask*)</a></li>
       <li><a href="#structures-tasks-a">Class layouts: AI task classes, first half (CTaskComplex*)</a></li>
       <li><a href="#structures-physics">Class layouts: physics, collision, fragments and cloth</a></li>
       <li><a href="#structures-online">Class layouts: online service, session and leaderboard classes (rage::rl*, rage::sn*)</a></li>
@@ -145,6 +146,32 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="structures-tasks-b">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Class layouts: AI task classes, second half (CTaskSimple* and other CTask*)</h2>
+      <p>All 137 classes in the second task batch now have recovered layouts: the shared virtual interface is mapped slot by slot, over a hundred destructors are identified, 99 task-type IDs are read out, and 1,320 field observations are recorded with confidence grades. The main caveat is that every object size is a lower bound, because tasks come from a pool allocator that takes no size argument.</p>
+      <h3>What was asked</h3>
+      <p>Recover object layouts and virtual interfaces for the AI task family, second half: the CTaskSimple leaf classes plus the CTask root, the move interface, and the small task scaffold classes. For each class: which virtual slots it overrides, its constructors and destructors, its size, its fields, and its relationships to other classes, all from the unencrypted code only.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The family shares one virtual interface: the root has 17 slots, the simple-task base extends it to 20, and most leaves keep 20. Slot zero holds the deleting destructor in nearly every class, one slot is overridden by almost all leaves with a small integer constant that acts as a task-type ID (99 recovered), and one slot keeps a single shared implementation inherited by the whole family. Two slots are never overridden by any class.</p>
+      <p><span class="evidence verified">Verified</span> Fifteen movement classes use multiple inheritance: each carries a second 13-slot table for the move interface, embedded one fifth of the way into the object, with a float and a flags word beside it. The animation-driven NaturalMotion leaves have the widest tables at 29 slots and the largest method bodies.</p>
+      <p><span class="evidence verified">Verified</span> Constructors were found for nearly every class by searching plain code for each class table address. Destructor identification is strong: over a hundred real destructors confirmed through the deleting-destructor call pattern. Field recovery totals 1,320 observations, about a quarter high confidence, a third medium, the rest single sightings kept as guesses.</p>
+      <p><span class="evidence verified">Verified</span> Tasks are pool allocated: every construction site draws memory from a pool with no size argument, then calls the constructor with its parameters. An early attempt to read sizes from nearby constants failed because those constants turned out to be constructor arguments, such as pause durations. All sizes are therefore lower bounds from observed fields, ranging from tiny flag tasks to path and animation tasks of a few hundred bytes.</p>
+      <p><span class="evidence">Inferred</span> The recommended rewrite order is the root and move interface first, then the simple-task base and scaffold, then trivial leaves, then the animation and pathfinding subtrees, with the NaturalMotion family last as the largest piece.</p>
+      <p><span class="evidence">Unknown</span> Three classes stay opaque: two keep all their own code in the encrypted range, and one intermediate base class has no virtual table in the recovered data at all, so its layout needs a recheck of its records.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Accept the 99 task-type IDs and the slot map as the family's interface contract for rewrites.</li>
+      <li>Treat all sizes as lower bounds until task pool element sizes are measured.</li>
+      <li>Recover constructor signatures next, since argument values are visible at the pool call sites.</li>
+      <li>Defer the two encrypted classes and re-examine the base class missing its table before laying out its children.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Parse the executable headers and relocation table, join the batch class list with the RTTI virtual tables, and scan plain code for each table address as a relocated immediate to find constructors and destructors. Disassemble each method, track the object pointer through register copies, and record every field access with width and direction. Classify virtual slot targets by shape: constant stubs, getters, jump thunks, destructor fragments, or general code. Compare each slot against the base class tables to mark overrides, and aggregate field sightings across each class's own methods with confidence by sighting count.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first build double-added the image base to relocation entries and produced tens of thousands of bogus cross-references; the fix was one line. A sizing heuristic then mistook constructor arguments for allocation sizes until caller-window dumps showed several different values reaching the same constructor. About a quarter of the first constructor candidates turned out to be neighbouring functions or type checks rather than stores, and were reclassified. Tiny adjacent destructors share bytes, so their records needed filtering to each class's own table.</p>
+      </article>
 
       <article class="entry" id="structures-tasks-a">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
