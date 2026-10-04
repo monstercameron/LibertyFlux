@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n116">First jump-thunk native verified, via a checker tail-call fix</a></li>
       <li><a href="#production-n112">Production batch: a tail-thunk checker bug and twenty-five verified natives</a></li>
       <li><a href="#rerun-16">Rerun finds a call-log overflow in checker version 2</a></li>
       <li><a href="#production-s101">Tail jumps with arguments could not pass the checker, and now they can</a></li>
@@ -260,6 +261,23 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n116">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>First jump-thunk native verified, via a checker tail-call fix</h2>
+      <p>All twenty-five script native handlers in this batch are now verified, including one whose entire body is a single jump to a shared implementation. That last one needed a small fix to the checker's worker: its tail-call logger read the wrong stack slot.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty-five script native handlers in Rust and prove each rewrite behaves identically to the original using the project's differential checker, which runs the original and the rewrite from identical starting state and compares return values, written memory and outgoing calls.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Twenty-five of twenty-five handlers verified, one thousand trials each with zero failures. Most handlers follow one of a few plain shapes: forward the script arguments to one engine routine, sometimes storing the low byte of its answer into the return slot. Four coerce a boolean argument through a reused stack slot, a quirk already documented by an earlier lane. Two pass their whole call context to a shared unpacker routine. One tunnels two floating point values through as raw bits.</p>
+      <p><span class="evidence verified">Verified</span> The jump-thunk handler failed every trial on the outgoing-calls comparison: the original side logged a meaningless stack address where the rewrite logged the context pointer. Reading the checker's stub emitter showed the cause. A tail call is verified by rewriting the jump into a call to a logging stub, but the stub read the call arguments from the normal position, one slot too low: the rewritten call's own return address sits on top of them. The checker's own proofs never hit this because their tail targets take no stack arguments.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The fix lives in this lane's private copy of the worker only: tail stubs now read stack arguments one slot higher, while normal stubs emit byte-identical code. With that change the thunk passes all comparisons. The shared worker is untouched, so the four-line change should be folded into it before any more thunk batches run; every thunk with stack arguments will fail without it.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run any jump-thunk contract that declares a stack argument through the stock worker and watch the calls comparison: the original side logs a scratch-stack address instead of the forwarded argument. Apply the one-slot adjustment to the tail stub's argument reads and rerun; all channels then agree.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two self-inflicted faults slowed the lane down. A relocation-table query double-counted addresses, so the first rewrite of a context-passing handler pushed a raw constant where the original pushes a relocated one, and with the two arguments swapped; the checker caught both at once. Separately, a leftover worker process held the rewrite library locked during a rebuild, fixed by renaming the file aside rather than touching any running process. The shared worker also died once mid-contract after hundreds of passing trials, a flake other lanes have reported; the affected contract passed on rerun.</p>
+      </article>
 
       <article class="entry" id="production-n112">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
