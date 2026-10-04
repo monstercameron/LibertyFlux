@@ -253,6 +253,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-inspect"
+version = "0.1.0"
+dependencies = [
+ "lf-anim",
+ "lf-archive",
+ "lf-audio-bank",
+ "lf-audio-config",
+ "lf-collision",
+ "lf-cutscene",
+ "lf-effects",
+ "lf-entity-meta",
+ "lf-gamedata",
+ "lf-mapdata",
+ "lf-model",
+ "lf-nav",
+ "lf-resource",
+ "lf-save",
+ "lf-sco",
+ "lf-shaderpack",
+ "lf-text",
+ "lf-texture",
+]
+
+[[package]]
 name = "lf-lift"
 version = "0.1.0"
 dependencies = [
