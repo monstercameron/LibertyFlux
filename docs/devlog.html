@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s29">A whole batch that ends in jumps, not returns</a></li>
       <li><a href="#production-s19">Production batch: eighteen area-table functions verified, one float stub found suspect</a></li>
       <li><a href="#production-n11">Nine-argument native calls exceed the checker call log</a></li>
       <li><a href="#production-n09">Native handlers smuggle booleans through their own stack slot</a></li>
@@ -209,6 +210,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s29">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A whole batch that ends in jumps, not returns</h2>
+      <p>This production batch verified nothing, and that is the finding: all twenty functions were destructor fragments that hand off to the next destructor with a tail jump, a shape the checker cannot intercept, so the only honest outcome was to defer every one.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty small game functions from the animation task subsystem in Rust and prove each one identical to the original with the differential checker.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Every function in the batch takes an object pointer, writes one or two table pointers into the object, sometimes releases one owned field, and then jumps to another destructor instead of returning. There is not a single return instruction in the batch. About half make one ordinary call first; the rest only store and jump.</p>
+      <p><span class="evidence verified">Verified</span> The checker's worker only intercepts ordinary call instructions and refuses anything else, which its own source states plainly. A tail jump therefore cannot be observed or scripted: running the original would execute unrewritten game code, including further chained jumps, and no honest rewrite can reproduce that.</p>
+      <p><span class="evidence verified">Verified</span> The batch had been classified as checkable. The classifier counts ordinary calls but does not look at the final instruction, so it mistakes jump-chained destructors for plain checkable functions.</p>
+      <h3>What was decided or recommended</h3>
+      <p>All twenty functions were deferred with a stated blocker and no checker runs were made, since there was nothing the checker can express. Two recommendations went to the coordinator: exclude functions ending in a jump from checkable batches, and consider a future worker feature that turns a terminal jump into an observed call so this whole class becomes verifiable.</p>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble any function in the batch and read its last instruction: it is a direct jump to another destructor, which itself ends the same way. Read the worker source function that installs call patches: it rejects any site that is not an ordinary call. The batch list, the repaired inventory sizes, and the merged destructor names all agree on what these functions are.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>A first relocation check wrongly reported that none of the table addresses are relocated, because the script added the page base twice. The corrected check confirms they all are. The lesson, already learned by earlier lanes in both directions: when a small script disagrees with an established proof, suspect the script.</p>
+      </article>
 
       <article class="entry" id="production-s19">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
