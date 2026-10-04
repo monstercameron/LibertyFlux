@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n117">Two checker gaps found while verifying native handlers</a></li>
       <li><a href="#production-b46">Float rewrites must guard every add, multiply and subtract against NaN operand order</a></li>
       <li><a href="#production-b37">A ten-argument call the checker only half compares</a></li>
       <li><a href="#checker-v3">Checker version 3: closing the ways a wrong rewrite could pass</a></li>
@@ -266,6 +267,35 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n117">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Two checker gaps found while verifying native handlers</h2>
+      <p>Twenty-four of twenty-five script native handlers in this batch were rewritten and verified at one thousand trials each, but two kinds of handler needed checker abilities that did not exist: tail-jump interception misreads the arguments of any thunk that takes them, and pushed one-byte flag values had no way to compare only the meaningful byte. Both were fixed in this lane's private checker copy and proven with mutants.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty-five native handler functions in Rust and prove each rewrite behaves identically to the original with the version two differential checker, which runs the original and the rewrite from identical starting state and compares return values, written memory, stack adjustment, outgoing calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Eighteen handlers are plain forwards of up to seven words to one engine call and passed first try on the stock checker, including one with heavy register-and-scratch traffic that still forwards its words in order.</p>
+      <p><span class="evidence verified">Verified</span> Four handlers coerce a script word to a flag by writing one byte through their own stack slot and pushing the whole word, so the upper bytes are caller-address leftovers. The checker could only compare the full word or skip the argument entirely; skipping would pass a wrong flag value silently.</p>
+      <p><span class="evidence verified">Verified</span> Two handlers are single-instruction tail jumps to shared implementations. The checker's tail-jump interception records the call arguments one word too low on the stack, because a tail recorder is entered with two return addresses where a normal call has one. The existing proofs only covered thunks with no arguments, where nothing is read, so every contract for an argument-taking thunk failed every trial. It fails closed, never a false pass.</p>
+      <p><span class="evidence verified">Verified</span> One handler writes its results to fixed addresses that exist only in a running game and cannot be mapped by the checker, so it was deferred rather than verified.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Outcome</th><th role="columnheader">Count</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Verified</td><td role="cell" data-label="Count">24</td></tr>
+      <tr role="row"><td role="cell">Deferred, game-only addresses</td><td role="cell" data-label="Count">1</td></tr>
+      <tr role="row"><td role="cell">Mutants caught</td><td role="cell" data-label="Count">3 of 3</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>Flag words are now compared through a per-argument bit mask in the contract, so only the meaningful low byte must match while a wrong byte still fails; a mutant forwarding the uncoerced word is caught within the first trials. Tail recorders now read arguments past both return addresses, and a mutant forwarding the wrong pointer is caught. Both changes live in this lane's checker copy and are specified for folding back into the shared checker, after which argument-taking tail jumps and flag coercions should verify with no special casing. The game-address writer stays deferred.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run any tail-jump contract that declares one or more stack arguments on the stock checker and observe every trial failing on the calls channel with a fixed recorder address where the first argument should be. For the flag case, declare a mutant that forwards the raw script word: with the argument skipped it passes, with the low-byte mask it fails.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The busiest handler was first traced as forwarding its words in shuffled order with two arguments dropped, and the rewrite failed almost every trial. Re-measuring the stack offsets showed the arithmetic was wrong and the handler forwards all six words in order; the corrected rewrite passed immediately. Separately, a rebuild was blocked for several minutes by an unidentified process holding the rewrite library against deletion while still allowing renames; moving the old file aside unblocked the build, and the holder was never identified. The shared checker worker also died twice mid-contract under load with zero failures recorded, and both contracts passed on retry.</p>
+      </article>
 
       <article class="entry" id="production-b46">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

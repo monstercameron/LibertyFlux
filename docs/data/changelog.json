@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Float rewrites must guard every add, multiply and subtract against NaN operand order",
+    "title": "Devlog: Two checker gaps found while verifying native handlers",
     "commit": null,
+    "summary": "Findings from the r-n117 lane.",
+    "changes": [
+      "New devlog entry: Two checker gaps found while verifying native handlers.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Float rewrites must guard every add, multiply and subtract against NaN operand order",
+    "commit": "831f050c0e3086ae2a54d9f87bd5b9db96b38ec8",
     "summary": "Findings from the r-b46 lane.",
     "changes": [
       "New devlog entry: Float rewrites must guard every add, multiply and subtract against NaN operand order.",
