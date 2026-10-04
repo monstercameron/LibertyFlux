@@ -15849,6 +15849,15 @@
   "lane": "r-s195"
  },
  {
+  "address": "0x0065FD90",
+  "name": "rage::snHandleJoinRequestTask::vf7",
+  "kind": "function",
+  "file": "functions/fn_0065fd90.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b294"
+ },
+ {
   "address": "0x0065FED0",
   "name": "fn_0065fed0",
   "kind": "function",
@@ -64215,6 +64224,33 @@
   "lane": "r-s75"
  },
  {
+  "address": "0x00CAD110",
+  "name": "task_strings_equal_2",
+  "kind": "function",
+  "file": "functions/fn_00cad110.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s345"
+ },
+ {
+  "address": "0x00CAD190",
+  "name": "route_records_equal",
+  "kind": "function",
+  "file": "functions/fn_00cad190.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s345"
+ },
+ {
+  "address": "0x00CAD240",
+  "name": "counted_vec3s_equal",
+  "kind": "function",
+  "file": "functions/fn_00cad240.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s345"
+ },
+ {
   "address": "0x00CAD360",
   "name": "CTaskComplexFollowPatrolRoute::vf0",
   "kind": "function",
@@ -64282,6 +64318,15 @@
   "name": "CTaskSimpleSlideToCoord::vf0",
   "kind": "function",
   "file": "functions/fn_00cad8a0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s345"
+ },
+ {
+  "address": "0x00CAECB0",
+  "name": "task_refs_release",
+  "kind": "function",
+  "file": "functions/fn_00caecb0.rs",
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s345"
