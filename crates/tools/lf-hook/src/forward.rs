@@ -35,7 +35,13 @@ pub struct Forward {
 #[must_use]
 pub fn sanitize(name: &str) -> String {
     name.chars()
-        .map(|c| if c.is_ascii_alphanumeric() || c == '_' { c } else { '_' })
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || c == '_' {
+                c
+            } else {
+                '_'
+            }
+        })
         .collect()
 }
 
@@ -82,10 +88,20 @@ pub fn plan(exports: &[Forward]) -> Plan {
     for (i, export) in exports.iter().enumerate() {
         let stub = stub_symbol(export);
         if let Some(name) = &export.name {
-            writeln!(drectve, "    .ascii \" -export:{name}={stub},@{}\"", export.ordinal).unwrap();
+            writeln!(
+                drectve,
+                "    .ascii \" -export:{name}={stub},@{}\"",
+                export.ordinal
+            )
+            .unwrap();
             writeln!(names, "    Some({name:?}),").unwrap();
         } else {
-            writeln!(drectve, "    .ascii \" -export:{stub},@{},NONAME\"", export.ordinal).unwrap();
+            writeln!(
+                drectve,
+                "    .ascii \" -export:{stub},@{},NONAME\"",
+                export.ordinal
+            )
+            .unwrap();
             names.push_str("    None,\n");
         }
         writeln!(ords, "    {},", export.ordinal).unwrap();
@@ -140,15 +156,29 @@ mod tests {
     fn sanitize_keeps_only_symbol_characters() {
         assert_eq!(sanitize("timeGetTime"), "timeGetTime");
         assert_eq!(sanitize("mmio@Open.W"), "mmio_Open_W");
-        assert_eq!(stub_symbol(&named("waveOutOpen", 13)), "_lf_stub_waveOutOpen");
-        assert_eq!(stub_symbol(&Forward { name: None, ordinal: 12 }), "_lf_stub_ord_12");
+        assert_eq!(
+            stub_symbol(&named("waveOutOpen", 13)),
+            "_lf_stub_waveOutOpen"
+        );
+        assert_eq!(
+            stub_symbol(&Forward {
+                name: None,
+                ordinal: 12
+            }),
+            "_lf_stub_ord_12"
+        );
     }
 
     #[test]
     fn exports_are_sorted_by_ordinal() {
         let p = plan(&[named("c", 12), named("a", 2), named("b", 7)]);
         assert_eq!(p.count, 3);
-        let order: Vec<&str> = p.asm.lines().filter(|l| l.starts_with("_lf_stub_")).map(|l| &l[9..l.len() - 1]).collect();
+        let order: Vec<&str> = p
+            .asm
+            .lines()
+            .filter(|l| l.starts_with("_lf_stub_"))
+            .map(|l| &l[9..l.len() - 1])
+            .collect();
         assert_eq!(order, ["a", "b", "c"]);
         // FORWARD_ORDINALS follows the same order.
         let listed: Vec<&str> = p
@@ -165,12 +195,23 @@ mod tests {
     fn each_stub_targets_its_own_table_slot() {
         // The property the loader relies on: stub i jumps to _LF_TARGETS+i*4,
         // and FORWARD_NAMES[i] is the export that slot resolves.
-        let exports = [named("beta", 5), named("alpha", 3), Forward { name: None, ordinal: 9 }];
+        let exports = [
+            named("beta", 5),
+            named("alpha", 3),
+            Forward {
+                name: None,
+                ordinal: 9,
+            },
+        ];
         let p = plan(&exports);
         // Sorted: alpha(3) i=0, beta(5) i=1, ord-9 i=2.
         // Each export emits three lines: `.globl X`, `X:`, `jmp ... [_LF_TARGETS + off]`.
-        let symbols: Vec<String> =
-            p.asm.lines().filter(|l| l.starts_with(".globl ")).map(|l| l[7..].to_string()).collect();
+        let symbols: Vec<String> = p
+            .asm
+            .lines()
+            .filter(|l| l.starts_with(".globl "))
+            .map(|l| l[7..].to_string())
+            .collect();
         let offsets: Vec<usize> = p
             .asm
             .lines()
@@ -190,12 +231,27 @@ mod tests {
 
     #[test]
     fn directives_publish_name_stub_and_ordinal() {
-        let p = plan(&[named("timeGetTime", 10), Forward { name: None, ordinal: 12 }]);
+        let p = plan(&[
+            named("timeGetTime", 10),
+            Forward {
+                name: None,
+                ordinal: 12,
+            },
+        ]);
         assert!(p.asm.contains(".section .drectve"));
-        assert!(p.asm.contains(r#".ascii " -export:timeGetTime=_lf_stub_timeGetTime,@10""#));
+        assert!(
+            p.asm
+                .contains(r#".ascii " -export:timeGetTime=_lf_stub_timeGetTime,@10""#)
+        );
         // Ordinal-only exports are forwarded by ordinal with NONAME.
-        assert!(p.asm.contains(r#".ascii " -export:_lf_stub_ord_12,@12,NONAME""#));
-        assert!(p.forward_table.contains("pub const FORWARD_COUNT: usize = 2;"));
+        assert!(
+            p.asm
+                .contains(r#".ascii " -export:_lf_stub_ord_12,@12,NONAME""#)
+        );
+        assert!(
+            p.forward_table
+                .contains("pub const FORWARD_COUNT: usize = 2;")
+        );
         assert!(p.forward_table.contains(r#"    Some("timeGetTime"),"#));
         assert!(p.forward_table.contains("    None,"));
     }
@@ -204,7 +260,10 @@ mod tests {
     fn a_name_needing_sanitizing_still_exports_under_its_real_name() {
         // The published name is the real export name; only the stub symbol is sanitized.
         let p = plan(&[named("odd.name", 4)]);
-        assert!(p.asm.contains(r#".ascii " -export:odd.name=_lf_stub_odd_name,@4""#));
+        assert!(
+            p.asm
+                .contains(r#".ascii " -export:odd.name=_lf_stub_odd_name,@4""#)
+        );
         assert!(p.forward_table.contains(r#"    Some("odd.name"),"#));
     }
 

@@ -13,7 +13,9 @@ fn patterns(extra: &[&[u8]]) -> Vec<Vec<u8>> {
         vec![0xFFu8; 512],
         vec![0x41u8; 512],
         (0..512u32).map(|i| (i & 0xFF) as u8).collect(),
-        (0..512u32).map(|i| (i.wrapping_mul(31).wrapping_add(7) & 0xFF) as u8).collect(),
+        (0..512u32)
+            .map(|i| (i.wrapping_mul(31).wrapping_add(7) & 0xFF) as u8)
+            .collect(),
     ];
     for e in extra {
         let mut v = e.to_vec();
@@ -53,15 +55,15 @@ fn truncated_inputs_never_panic() {
     for base in patterns(&extra()).iter() {
         for len in lengths(base.len()) {
             let b = &base[..len];
-                        check_no_panic(&format!("header prefix {len}"), || {
-                            let _ = lf_resource::Header::parse(b);
-                        });
-                        check_no_panic(&format!("resource prefix {len}"), || {
-                            let _ = lf_resource::Resource::parse(b);
-                        });
-                        check_no_panic(&format!("reader prefix {len}"), || {
-                            let _ = lf_resource::Resource::parse_reader(Cursor::new(b));
-                        });
+            check_no_panic(&format!("header prefix {len}"), || {
+                let _ = lf_resource::Header::parse(b);
+            });
+            check_no_panic(&format!("resource prefix {len}"), || {
+                let _ = lf_resource::Resource::parse(b);
+            });
+            check_no_panic(&format!("reader prefix {len}"), || {
+                let _ = lf_resource::Resource::parse_reader(Cursor::new(b));
+            });
         }
     }
 }
@@ -78,16 +80,16 @@ fn corrupted_inputs_never_panic() {
                 bad[pos] ^= mask;
                 let what = format!("pattern {pi} byte {pos} xor {mask:#04X}");
                 check_no_panic(&what, || {
-                let b = &bad;
-                check_no_panic(&format!("corrupt header prefix "), || {
-                let _ = lf_resource::Header::parse(b);
-                });
-                check_no_panic(&format!("corrupt resource prefix "), || {
-                let _ = lf_resource::Resource::parse(b);
-                });
-                check_no_panic(&format!("corrupt reader prefix "), || {
-                let _ = lf_resource::Resource::parse_reader(Cursor::new(b));
-                });
+                    let b = &bad;
+                    check_no_panic(&format!("corrupt header prefix "), || {
+                        let _ = lf_resource::Header::parse(b);
+                    });
+                    check_no_panic(&format!("corrupt resource prefix "), || {
+                        let _ = lf_resource::Resource::parse(b);
+                    });
+                    check_no_panic(&format!("corrupt reader prefix "), || {
+                        let _ = lf_resource::Resource::parse_reader(Cursor::new(b));
+                    });
                 });
             }
         }

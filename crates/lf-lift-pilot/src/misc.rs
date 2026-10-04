@@ -78,9 +78,18 @@ mod tests {
     fn list_contains_model() {
         let arena = ListArena {
             nodes: vec![
-                ListNode { value: 5, next: Some(ListId(1)) },
-                ListNode { value: 7, next: Some(ListId(2)) },
-                ListNode { value: 9, next: None },
+                ListNode {
+                    value: 5,
+                    next: Some(ListId(1)),
+                },
+                ListNode {
+                    value: 7,
+                    next: Some(ListId(2)),
+                },
+                ListNode {
+                    value: 9,
+                    next: None,
+                },
             ],
         };
         assert!(list_contains(&arena, Some(ListId(0)), 7));
@@ -91,21 +100,27 @@ mod tests {
 
     #[test]
     fn oneshot_latches() {
-        let mut st = OneShotState { done: false, table: 0x1234, count: 3 };
+        let mut st = OneShotState {
+            done: false,
+            table: 0x1234,
+            count: 3,
+        };
         let mut calls = Vec::new();
         {
-            let mut setup =
-                |t: u32, c: u32, w: u32, p: SetupProgram| calls.push((t, c, w, p));
+            let mut setup = |t: u32, c: u32, w: u32, p: SetupProgram| calls.push((t, c, w, p));
             oneshot_table_init(&mut st, &mut setup);
             oneshot_table_init(&mut st, &mut setup);
         }
         assert!(st.done);
         assert_eq!(calls, vec![(0x1234, 3, 8, SetupProgram::Default)]);
         // Zero count still latches without calling setup.
-        let mut st0 = OneShotState { done: false, table: 1, count: 0 };
+        let mut st0 = OneShotState {
+            done: false,
+            table: 1,
+            count: 0,
+        };
         {
-            let mut setup =
-                |t: u32, c: u32, w: u32, p: SetupProgram| calls.push((t, c, w, p));
+            let mut setup = |t: u32, c: u32, w: u32, p: SetupProgram| calls.push((t, c, w, p));
             oneshot_table_init(&mut st0, &mut setup);
         }
         assert!(st0.done);

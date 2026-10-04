@@ -2,8 +2,8 @@
 //! errors, never panic. Added by the workspace assembly lane; needs no
 //! game files.
 
-use std::panic::{AssertUnwindSafe, catch_unwind};
 use lf_archive::Archive;
+use std::panic::{AssertUnwindSafe, catch_unwind};
 
 /// Synthetic byte patterns: empty, zeros, ones, runs, sweeps and
 /// magic-prefixed shapes. Nothing here comes from the game.
@@ -14,7 +14,9 @@ fn patterns(extra: &[&[u8]]) -> Vec<Vec<u8>> {
         vec![0xFFu8; 512],
         vec![0x41u8; 512],
         (0..512u32).map(|i| (i & 0xFF) as u8).collect(),
-        (0..512u32).map(|i| (i.wrapping_mul(31).wrapping_add(7) & 0xFF) as u8).collect(),
+        (0..512u32)
+            .map(|i| (i.wrapping_mul(31).wrapping_add(7) & 0xFF) as u8)
+            .collect(),
     ];
     for e in extra {
         let mut v = e.to_vec();
@@ -54,12 +56,12 @@ fn truncated_inputs_never_panic() {
     for base in patterns(&extra()).iter() {
         for len in lengths(base.len()) {
             let b = &base[..len];
-                        check_no_panic(&format!("detect prefix {len}"), || {
-                            let _ = lf_archive::detect(b, None);
-                        });
-                        check_no_panic(&format!("open prefix {len}"), || {
-                            let _ = lf_archive::open(&mut Cursor::new(b), None);
-                        });
+            check_no_panic(&format!("detect prefix {len}"), || {
+                let _ = lf_archive::detect(b, None);
+            });
+            check_no_panic(&format!("open prefix {len}"), || {
+                let _ = lf_archive::open(&mut Cursor::new(b), None);
+            });
         }
     }
 }
@@ -76,13 +78,13 @@ fn corrupted_inputs_never_panic() {
                 bad[pos] ^= mask;
                 let what = format!("pattern {pi} byte {pos} xor {mask:#04X}");
                 check_no_panic(&what, || {
-                let b = &bad;
-                check_no_panic(&format!("corrupt detect prefix "), || {
-                let _ = lf_archive::detect(b, None);
-                });
-                check_no_panic(&format!("corrupt open prefix "), || {
-                let _ = lf_archive::open(&mut Cursor::new(b), None);
-                });
+                    let b = &bad;
+                    check_no_panic(&format!("corrupt detect prefix "), || {
+                        let _ = lf_archive::detect(b, None);
+                    });
+                    check_no_panic(&format!("corrupt open prefix "), || {
+                        let _ = lf_archive::open(&mut Cursor::new(b), None);
+                    });
                 });
             }
         }

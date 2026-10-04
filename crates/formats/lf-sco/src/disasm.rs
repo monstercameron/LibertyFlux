@@ -54,7 +54,8 @@ pub fn format_instruction(inst: &Instruction, natives: Option<&NativeDb>) -> Str
                 write!(out, " {argc} {retc} {name}").expect("writing to a String cannot fail");
             }
             None => {
-                write!(out, " {argc} {retc} 0x{hash:08X}").expect("writing to a String cannot fail");
+                write!(out, " {argc} {retc} 0x{hash:08X}")
+                    .expect("writing to a String cannot fail");
             }
         },
         Operand::Switch(cases) => {

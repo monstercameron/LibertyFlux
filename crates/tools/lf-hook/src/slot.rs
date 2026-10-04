@@ -119,7 +119,6 @@ impl Drop for SlotHook {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     #[cfg(windows)]
@@ -134,7 +133,10 @@ mod tests {
         let original = slot;
         let detour = 0x1234_5678usize;
         let mut hook = SlotHook::create(&raw mut slot, detour).unwrap();
-        assert_eq!((hook.slot(), hook.original(), hook.is_enabled()), (&raw mut slot as usize, original, false));
+        assert_eq!(
+            (hook.slot(), hook.original(), hook.is_enabled()),
+            (&raw mut slot as usize, original, false)
+        );
         assert!(hook.verify());
         hook.enable().unwrap();
         assert_eq!(slot, detour);

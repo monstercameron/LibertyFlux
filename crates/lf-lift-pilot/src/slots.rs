@@ -133,7 +133,14 @@ impl Inner {
     /// Blank record matching a zeroed original.
     #[must_use]
     pub fn blank() -> Self {
-        Self { counter18: 0, aux_input: 0, holder: None, index: 0, f8: 0, status: 0 }
+        Self {
+            counter18: 0,
+            aux_input: 0,
+            holder: None,
+            index: 0,
+            f8: 0,
+            status: 0,
+        }
     }
 }
 
@@ -148,7 +155,9 @@ pub fn bind_aux_and_combine(
     combine: &mut dyn FnMut(&mut Slots, SlotId, u32) -> u32,
 ) -> u32 {
     let shared = lookup(st, 0).expect("bind lookup returned null; original faults");
-    let record = st.shareds[shared.0 as usize].record.expect("bind record null");
+    let record = st.shareds[shared.0 as usize]
+        .record
+        .expect("bind record null");
     st.slots[this.0 as usize].words30[0] = record.0;
     let input = st.inners[record.0 as usize].aux_input;
     let answer = aux_step(st, input);
@@ -197,7 +206,9 @@ pub fn indexed_entry_or_null(st: &Slots, this: SlotId) -> Option<u32> {
     if (inner.index as i32) < 0 {
         return None;
     }
-    let holder = inner.holder.expect("null table holder faults in the original");
+    let holder = inner
+        .holder
+        .expect("null table holder faults in the original");
     let table = st.holders[holder.0 as usize];
     Some(st.tables[table.0 as usize][inner.index as usize])
 }
@@ -212,7 +223,9 @@ pub fn prev_indexed_entry_or_null(st: &Slots, this: SlotId) -> Option<u32> {
     if inner.index == 0 || (inner.index.wrapping_sub(1) as i32) < 0 {
         return None;
     }
-    let holder = inner.holder.expect("null table holder faults in the original");
+    let holder = inner
+        .holder
+        .expect("null table holder faults in the original");
     let table = st.holders[holder.0 as usize];
     Some(st.tables[table.0 as usize][(inner.index - 1) as usize])
 }
@@ -224,7 +237,9 @@ pub fn prev_entry_or_null(st: &Slots, this: SlotId) -> Option<u32> {
     if slot.index == 0 || (slot.index.wrapping_sub(1) as i32) < 0 {
         return None;
     }
-    let holder = slot.holder.expect("null table holder faults in the original");
+    let holder = slot
+        .holder
+        .expect("null table holder faults in the original");
     let table = st.holders[holder.0 as usize];
     Some(st.tables[table.0 as usize][(slot.index - 1) as usize])
 }
@@ -284,7 +299,9 @@ pub fn activate_if_present(
 /// Invalidate the child record when present: three reset stores.
 /// (Original: `invalidate_inner`.)
 pub fn invalidate_inner(st: &mut Slots, this: SlotId) {
-    let Some(child) = st.slots[this.0 as usize].child else { return };
+    let Some(child) = st.slots[this.0 as usize].child else {
+        return;
+    };
     let inner = &mut st.inners[child.0 as usize];
     inner.index = 0xFFFF_FFFF;
     inner.f8 = 0;
@@ -310,7 +327,9 @@ pub fn forward_byte_head(st: &mut Slots, this: SlotId, flag: u32) {
 /// Store the flag byte into the linked record's status low byte.
 /// (Original: `forward_byte_linked`.)
 pub fn forward_byte_linked(st: &mut Slots, this: SlotId, flag: u32) {
-    let Some(linked) = st.slots[this.0 as usize].linked else { return };
+    let Some(linked) = st.slots[this.0 as usize].linked else {
+        return;
+    };
     let inner = &mut st.inners[linked.0 as usize];
     inner.status = (inner.status & 0xFFFF_FF00) | (flag & 0xFF);
 }
@@ -318,7 +337,9 @@ pub fn forward_byte_linked(st: &mut Slots, this: SlotId, flag: u32) {
 /// Store the flag byte into the slot record's counter low byte.
 /// (Original: `forward_byte_slot`.)
 pub fn forward_byte_slot(st: &mut Slots, this: SlotId, flag: u32) {
-    let Some(slot_id) = st.slots[this.0 as usize].slot else { return };
+    let Some(slot_id) = st.slots[this.0 as usize].slot else {
+        return;
+    };
     let slot = &mut st.slots[slot_id.0 as usize];
     slot.counter = (slot.counter & 0xFF00) | (flag & 0xFF) as u16;
 }
@@ -326,7 +347,9 @@ pub fn forward_byte_slot(st: &mut Slots, this: SlotId, flag: u32) {
 /// Store the flag byte into the aux record's counter low byte.
 /// (Original: `forward_byte_aux`.)
 pub fn forward_byte_aux(st: &mut Slots, this: SlotId, flag: u32) {
-    let Some(aux) = st.slots[this.0 as usize].aux else { return };
+    let Some(aux) = st.slots[this.0 as usize].aux else {
+        return;
+    };
     let slot = &mut st.slots[aux.0 as usize];
     slot.counter = (slot.counter & 0xFF00) | (flag & 0xFF) as u16;
 }
@@ -334,7 +357,9 @@ pub fn forward_byte_aux(st: &mut Slots, this: SlotId, flag: u32) {
 /// Store the flag byte into the child record's counter low byte.
 /// (Original: `forward_byte_child`.)
 pub fn forward_byte_child(st: &mut Slots, this: SlotId, flag: u32) {
-    let Some(child) = st.slots[this.0 as usize].child else { return };
+    let Some(child) = st.slots[this.0 as usize].child else {
+        return;
+    };
     let inner = &mut st.inners[child.0 as usize];
     inner.counter18 = (inner.counter18 & 0xFF00) | (flag & 0xFF) as u16;
 }
@@ -355,7 +380,9 @@ pub fn maybe_refresh_and_forward(
             refresh(st, this, 0);
         }
     }
-    let Some(slot_id) = st.slots[this.0 as usize].slot else { return 0 };
+    let Some(slot_id) = st.slots[this.0 as usize].slot else {
+        return 0;
+    };
     st.slots[slot_id.0 as usize].flag48 = flag_byte;
     if flag_byte == 0 {
         return 0;
@@ -381,7 +408,9 @@ pub fn step_word_store_flag(
     let aux = st.slots[this.0 as usize].aux.expect("checked above");
     let answer = step(st, aux, word);
     // Reload: the step may have replaced the aux pointer.
-    let aux_now = st.slots[this.0 as usize].aux.expect("step cleared aux; original faults");
+    let aux_now = st.slots[this.0 as usize]
+        .aux
+        .expect("step cleared aux; original faults");
     let flag_byte = (flag & 0xFF) as u8;
     st.slots[aux_now.0 as usize].flag_1c = flag_byte;
     (answer & 0xFFFF_FF00) | flag_byte as u32
@@ -469,7 +498,12 @@ mod tests {
         assert!(probe_value_differs(&mut st, SlotId(0), 42.0, &mut probe));
         assert!(!probe_value_differs(&mut st, SlotId(0), 65.0, &mut probe));
         // NaN limit: unordered counts as different, like the original.
-        assert!(probe_value_differs(&mut st, SlotId(0), f32::NAN, &mut probe));
+        assert!(probe_value_differs(
+            &mut st,
+            SlotId(0),
+            f32::NAN,
+            &mut probe
+        ));
         st.slots[0].probe_child = 0;
         assert!(!probe_value_differs(&mut st, SlotId(0), 0.0, &mut probe));
     }

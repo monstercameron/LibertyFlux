@@ -390,7 +390,10 @@ mod tests {
     /// rel8 branch is assumed to grow by 4.
     fn allocated_len(code: &[u8]) -> usize {
         let plans = plan_overwrite(code).unwrap();
-        let rel8 = plans.iter().filter(|p| p.branch == BranchKind::Rel8).count();
+        let rel8 = plans
+            .iter()
+            .filter(|p| p.branch == BranchKind::Rel8)
+            .count();
         moved(code) + rel8 * 4 + 6
     }
 
@@ -407,7 +410,12 @@ mod tests {
     }
 
     fn rel_at(bytes: &[u8], at: usize) -> i64 {
-        i64::from(i32::from_le_bytes([bytes[at], bytes[at + 1], bytes[at + 2], bytes[at + 3]]))
+        i64::from(i32::from_le_bytes([
+            bytes[at],
+            bytes[at + 1],
+            bytes[at + 2],
+            bytes[at + 3],
+        ]))
     }
 
     #[test]
@@ -464,9 +472,7 @@ mod tests {
         let target = 0x0040_1000usize;
         let tramp = 0x2000_0000usize;
         // jz +5 (rel8) at 0; call rel32 at 2; jmp short -2 at 7 (moved range ends at 9)
-        let code = [
-            0x74, 0x05, 0xE8, 0x10, 0x00, 0x00, 0x00, 0xEB, 0xFE, 0xCC,
-        ];
+        let code = [0x74, 0x05, 0xE8, 0x10, 0x00, 0x00, 0x00, 0xEB, 0xFE, 0xCC];
         // Only the first boundary at or past 5 counts: jz(2) + call(5) = 7.
         let plans = plan_overwrite(&code).unwrap();
         assert_eq!(plans.len(), 2);
@@ -477,7 +483,10 @@ mod tests {
         assert_eq!(tramp as i64 + 6 + rel_at(&t, 2), (target + 2 + 5) as i64);
         // call rel32 re-aimed at target + 7 + 0x10.
         assert_eq!(t[6], 0xE8);
-        assert_eq!(tramp as i64 + 11 + rel_at(&t, 7), (target + 7 + 0x10) as i64);
+        assert_eq!(
+            tramp as i64 + 11 + rel_at(&t, 7),
+            (target + 7 + 0x10) as i64
+        );
         // back to target + 7
         assert_eq!(&t[11..], &[0x68, 0x07, 0x10, 0x40, 0x00, 0xC3]);
     }
@@ -494,7 +503,10 @@ mod tests {
         assert_eq!(t[0], 0xE9);
         assert_eq!(tramp as i64 + 5 + rel_at(&t, 1), (target + 2 + 3) as i64);
         assert_eq!(&t[5..7], &[0x0F, 0x85]);
-        assert_eq!(tramp as i64 + 11 + rel_at(&t, 7), (target + 8 + 0x20) as i64);
+        assert_eq!(
+            tramp as i64 + 11 + rel_at(&t, 7),
+            (target + 8 + 0x20) as i64
+        );
     }
 
     #[test]
@@ -522,8 +534,14 @@ mod tests {
 
     #[test]
     fn error_messages_name_the_cause() {
-        assert_eq!(HookError::TooLong.to_string(), "needs more than 16 moved bytes");
-        assert_eq!(HookError::PatchFailed(5).to_string(), "memory patch failed (5)");
+        assert_eq!(
+            HookError::TooLong.to_string(),
+            "needs more than 16 moved bytes"
+        );
+        assert_eq!(
+            HookError::PatchFailed(5).to_string(),
+            "memory patch failed (5)"
+        );
     }
 
     // Live memory (Win32): runs on Windows only. Bytes are patched in a
@@ -538,7 +556,10 @@ mod tests {
         let target = buf as usize;
         let detour = target + 32;
         let mut hook = Detour::create(target, detour, FollowJumps::Off).unwrap();
-        assert_eq!((hook.target(), hook.detour(), hook.moved_len()), (target, detour, 6));
+        assert_eq!(
+            (hook.target(), hook.detour(), hook.moved_len()),
+            (target, detour, 6)
+        );
         assert!(!hook.is_enabled() && hook.verify());
         // The trampoline starts with the moved bytes.
         assert_eq!(mem::read_bytes(hook.trampoline(), 6).unwrap(), &body[..6]);

@@ -13,7 +13,9 @@ fn patterns(extra: &[&[u8]]) -> Vec<Vec<u8>> {
         vec![0xFFu8; 512],
         vec![0x41u8; 512],
         (0..512u32).map(|i| (i & 0xFF) as u8).collect(),
-        (0..512u32).map(|i| (i.wrapping_mul(31).wrapping_add(7) & 0xFF) as u8).collect(),
+        (0..512u32)
+            .map(|i| (i.wrapping_mul(31).wrapping_add(7) & 0xFF) as u8)
+            .collect(),
     ];
     for e in extra {
         let mut v = e.to_vec();
@@ -51,17 +53,17 @@ fn truncated_inputs_never_panic() {
     for base in patterns(&extra()).iter() {
         for len in lengths(base.len()) {
             let b = &base[..len];
-                        check_no_panic(&format!("load prefix {len}"), || {
-                            let _ = lf_sco::container::load(b, None);
-                        });
-                        check_no_panic(&format!("decode_all prefix {len}"), || {
-                            let _ = lf_sco::isa::decode_all(b);
-                        });
-                        for off in [0, 1, len / 2, len.saturating_sub(1), len, len + 1] {
-                            check_no_panic(&format!("decode_one prefix {len} off {off}"), || {
-                                let _ = lf_sco::isa::decode_one(b, off);
-                            });
-                        }
+            check_no_panic(&format!("load prefix {len}"), || {
+                let _ = lf_sco::container::load(b, None);
+            });
+            check_no_panic(&format!("decode_all prefix {len}"), || {
+                let _ = lf_sco::isa::decode_all(b);
+            });
+            for off in [0, 1, len / 2, len.saturating_sub(1), len, len + 1] {
+                check_no_panic(&format!("decode_one prefix {len} off {off}"), || {
+                    let _ = lf_sco::isa::decode_one(b, off);
+                });
+            }
         }
     }
 }
@@ -78,18 +80,18 @@ fn corrupted_inputs_never_panic() {
                 bad[pos] ^= mask;
                 let what = format!("pattern {pi} byte {pos} xor {mask:#04X}");
                 check_no_panic(&what, || {
-                let b = &bad;
-                check_no_panic(&format!("corrupt load prefix "), || {
-                let _ = lf_sco::container::load(b, None);
-                });
-                check_no_panic(&format!("corrupt decode_all prefix "), || {
-                let _ = lf_sco::isa::decode_all(b);
-                });
-                for off in [0, bad.len() / 2, bad.len()] {
-                check_no_panic(&format!("corrupt decode_one prefix off {off}"), || {
-                let _ = lf_sco::isa::decode_one(b, off);
-                });
-                }
+                    let b = &bad;
+                    check_no_panic(&format!("corrupt load prefix "), || {
+                        let _ = lf_sco::container::load(b, None);
+                    });
+                    check_no_panic(&format!("corrupt decode_all prefix "), || {
+                        let _ = lf_sco::isa::decode_all(b);
+                    });
+                    for off in [0, bad.len() / 2, bad.len()] {
+                        check_no_panic(&format!("corrupt decode_one prefix off {off}"), || {
+                            let _ = lf_sco::isa::decode_one(b, off);
+                        });
+                    }
                 });
             }
         }

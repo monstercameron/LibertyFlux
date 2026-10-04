@@ -207,9 +207,7 @@ pub fn plan(rows: &[Row]) -> TablePlan {
             Some(Skip::BelowBase)
         } else if conv_name(e.conv).is_none() {
             Some(Skip::UnknownConvention(e.conv))
-        } else if row.name.is_empty()
-            || row.name.chars().any(|c| c.is_whitespace() || c == '#')
-        {
+        } else if row.name.is_empty() || row.name.chars().any(|c| c.is_whitespace() || c == '#') {
             Some(Skip::BadName)
         } else if names.contains(&row.name) {
             Some(Skip::DuplicateName)

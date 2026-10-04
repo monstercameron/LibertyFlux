@@ -110,8 +110,7 @@ impl<'a> MetaFile<'a> {
         // count, offsets, then the name heap.
         let block_size = cur.u32("archive block size")? as usize;
         let archive_count = cur.u32("archive count")? as usize;
-        let mut archive_offsets =
-            Vec::with_capacity(archive_count.min(cur.remaining() / 4 + 1));
+        let mut archive_offsets = Vec::with_capacity(archive_count.min(cur.remaining() / 4 + 1));
         for _ in 0..archive_count {
             archive_offsets.push(cur.u32("archive offset")? as usize);
         }
@@ -149,13 +148,15 @@ impl<'a> MetaFile<'a> {
             })?;
             let offset = cur.u32("object offset")?;
             let size = cur.u32("object size")?;
-            let end = (offset as usize).checked_add(size as usize).ok_or_else(|| {
-                Error::new(
-                    entry_pos as u64,
-                    ErrorKind::Invalid,
-                    "object range outside blob or too small for a header",
-                )
-            })?;
+            let end = (offset as usize)
+                .checked_add(size as usize)
+                .ok_or_else(|| {
+                    Error::new(
+                        entry_pos as u64,
+                        ErrorKind::Invalid,
+                        "object range outside blob or too small for a header",
+                    )
+                })?;
             if offset as usize > blob.len() || end > blob.len() || size < 5 {
                 return Err(Error::new(
                     entry_pos as u64,
@@ -180,8 +181,7 @@ impl<'a> MetaFile<'a> {
             hash_offsets.push(off);
         }
         let archive_ref_count = cur.u32("archive relocation count")? as usize;
-        let mut archive_refs =
-            Vec::with_capacity(archive_ref_count.min(cur.remaining() / 4 + 1));
+        let mut archive_refs = Vec::with_capacity(archive_ref_count.min(cur.remaining() / 4 + 1));
         for _ in 0..archive_ref_count {
             let off = cur.u32("archive relocation")?;
             check_relocation(off, blob_start, data_size, cur.pos())?;

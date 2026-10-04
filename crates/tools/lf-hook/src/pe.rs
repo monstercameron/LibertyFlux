@@ -315,7 +315,6 @@ pub mod live {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -325,7 +324,11 @@ mod tests {
     /// `(name or None, ordinal)`; function RVAs are assigned in order. One
     /// export is made a forwarder (its function RVA points inside the export
     /// directory) to exercise `is_forwarder`.
-    fn build_pe(exports: &[(Option<&str>, u16)], base_ordinal: u16, forwarder: Option<u16>) -> Vec<u8> {
+    fn build_pe(
+        exports: &[(Option<&str>, u16)],
+        base_ordinal: u16,
+        forwarder: Option<u16>,
+    ) -> Vec<u8> {
         // Layout: headers in section ".idata" at RVA 0x1000, raw 0x200.
         let pe = 0x80usize;
         let opt_size = 0xE0usize; // PE32 optional header: 0x60 standard fields + 16 * 8 data directories = 0xE0
@@ -400,7 +403,12 @@ mod tests {
     #[test]
     fn reads_named_and_ordinal_exports() {
         let img = build_pe(
-            &[(Some("timeGetTime"), 10), (Some("mmioOpenW"), 11), (None, 12), (Some("waveOutOpen"), 13)],
+            &[
+                (Some("timeGetTime"), 10),
+                (Some("mmioOpenW"), 11),
+                (None, 12),
+                (Some("waveOutOpen"), 13),
+            ],
             10,
             None,
         );
@@ -420,9 +428,15 @@ mod tests {
     fn forwarders_are_flagged() {
         let img = build_pe(&[(Some("a"), 1), (Some("b"), 2)], 1, Some(2));
         let exports = file_exports(&img).expect("parse");
-        let b = exports.iter().find(|e| e.name.as_deref() == Some("b")).unwrap();
+        let b = exports
+            .iter()
+            .find(|e| e.name.as_deref() == Some("b"))
+            .unwrap();
         assert!(b.is_forwarder);
-        let a = exports.iter().find(|e| e.name.as_deref() == Some("a")).unwrap();
+        let a = exports
+            .iter()
+            .find(|e| e.name.as_deref() == Some("a"))
+            .unwrap();
         assert!(!a.is_forwarder);
     }
 

@@ -255,7 +255,10 @@ mod tests {
         assert_eq!(wanted_by_rank(&names, 0, 0), vec![false; 4]);
         assert_eq!(wanted_by_rank(&names, 0, 99), vec![true; 4]);
         // Equal names keep registration order.
-        assert_eq!(wanted_by_rank(&["z", "z", "a"], 1, 2), vec![true, false, false]);
+        assert_eq!(
+            wanted_by_rank(&["z", "z", "a"], 1, 2),
+            vec![true, false, false]
+        );
     }
 
     #[test]

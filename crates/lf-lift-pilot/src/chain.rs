@@ -290,8 +290,16 @@ mod tests {
         for i in 0..n {
             let mut nd = ChainNode::blank();
             nd.flags = rng.below(256) as u8;
-            nd.fwd = if i + 1 < n { Some(NodeId(i as u32 + 1)) } else { None };
-            nd.back = if i > 0 { Some(NodeId(i as u32 - 1)) } else { None };
+            nd.fwd = if i + 1 < n {
+                Some(NodeId(i as u32 + 1))
+            } else {
+                None
+            };
+            nd.back = if i > 0 {
+                Some(NodeId(i as u32 - 1))
+            } else {
+                None
+            };
             nd.link = nd.fwd;
             nodes.push(nd);
         }
@@ -363,7 +371,9 @@ mod tests {
     #[test]
     fn sweep_touches_and_anchors() {
         // Nodes: 0 (head) ->link 1 ->link 2; node 1 claimed, node 2 anchorable.
-        let mut arena = ChainArena { nodes: vec![ChainNode::blank(); 3] };
+        let mut arena = ChainArena {
+            nodes: vec![ChainNode::blank(); 3],
+        };
         arena.nodes[0].flags = 0x04;
         arena.nodes[0].link = Some(NodeId(1));
         arena.nodes[1].flags = 0x04;

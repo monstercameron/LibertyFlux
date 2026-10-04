@@ -400,7 +400,7 @@ struct Callee {
     pop: u32,
     ret: String,
     stub_addr: u32,
-    tail_addr: u32,                         // E9 tail-patch variant (0 when unbuilt)
+    tail_addr: u32, // E9 tail-patch variant (0 when unbuilt)
     writes: Vec<(u8, usize, usize, usize, usize)>, // (kind 0=stack arg,1=ecx,2=edx; idx; wstart; nwords; dst_off)
     snap: Vec<snap::SnapSpec>, // pointed-to snapshots (v5: any byte offset, 64 words)
     // Logged and rewrite-side-transported vector registers. Index 0/1 are
@@ -409,8 +409,8 @@ struct Callee {
     xmm: vecregs::XmmCallCfg,
     preserve: bool, // v4: restore entry ecx/edx from m_save slots at stub exit
     eax_from_stack: Option<usize>, // v4: rw-side transport, load eax from stack arg
-    noclean: bool, // v4: real callee pops nothing; stub pops only on the rw side
-    pop_rw: u32,   // v4: rewrite-side pop for noclean stubs (nargs*4)
+    noclean: bool,  // v4: real callee pops nothing; stub pops only on the rw side
+    pop_rw: u32,    // v4: rewrite-side pop for noclean stubs (nargs*4)
 }
 
 struct State {
@@ -438,23 +438,23 @@ struct State {
     m_side: u32,     // 0 = original side, 1 = rewrite side (for xmm transport)
     m_save_ecx: u32, // stub-entry spill for register out-param writes
     m_save_edx: u32,
-    m_save_eax: u32, // v4: stub-entry spill for ret="preserve" callees
-    m_xmm_mirror: u32, // 32 words: scripted xmm0-7 entry values, readable by rewrites
-    m_x87_mirror: u32, // v5: x87 entry count + 8 x 16-byte ST(i) slots, readable by rewrites
+    m_save_eax: u32,    // v4: stub-entry spill for ret="preserve" callees
+    m_xmm_mirror: u32,  // 32 words: scripted xmm0-7 entry values, readable by rewrites
+    m_x87_mirror: u32,  // v5: x87 entry count + 8 x 16-byte ST(i) slots, readable by rewrites
     ext_snap_base: u32, // v5: extension log for snapshot words 8-63
     ext_xmm_base: u32,  // v5: extension log for XMM2-XMM7
     selftests: HashMap<String, u32>, // v5: built-in self-test originals
     image_base: usize,  // preferred base from the PE header
     abs: AbsWindow,     // v5: preferred-base window (guard / shadow)
-    m_tls_mirror: u32, // 256 words: fabricated TLS slot values, readable by rewrites
-    m_script_tab: u32, // 256 x (lo,hi) per-callee script slots
-    m_writebuf: u32,   // 256 x 16 per-callee out-param write words
-    m_seq_tab: u32,    // v3: 256 x 16 per-call answer steps (lo,hi)
-    m_seq_len: u32,    // v3: 256 sequence lengths (trial_body fills)
-    m_seq_idx: u32,    // v3: 256 per-side consumption indexes (run_side zeroes)
-    log_max: u32,      // v4: setup-time call-log cap (default 256, max 1024)
-    m_step: u32,       // v3: stub scratch for the clamped step index
-    tls_helper: u32,   // emitted mov eax,fs:[0x2c]; ret
+    m_tls_mirror: u32,  // 256 words: fabricated TLS slot values, readable by rewrites
+    m_script_tab: u32,  // 256 x (lo,hi) per-callee script slots
+    m_writebuf: u32,    // 256 x 16 per-callee out-param write words
+    m_seq_tab: u32,     // v3: 256 x 16 per-call answer steps (lo,hi)
+    m_seq_len: u32,     // v3: 256 sequence lengths (trial_body fills)
+    m_seq_idx: u32,     // v3: 256 per-side consumption indexes (run_side zeroes)
+    log_max: u32,       // v4: setup-time call-log cap (default 256, max 1024)
+    m_step: u32,        // v3: stub scratch for the clamped step index
+    tls_helper: u32,    // emitted mov eax,fs:[0x2c]; ret
     log_base: u32,
     stub_base: u32,
     stub_off: usize,
@@ -565,9 +565,9 @@ struct AbsWindow {
     lo: usize,
     hi: usize,
     runs: Vec<(usize, usize)>,
-    built: bool,      // shadow pages committed and filled (once per process)
-    active: bool,     // the current contract declared abs_shadow
-    readable: bool,   // shadow pages currently PAGE_READONLY
+    built: bool,    // shadow pages committed and filled (once per process)
+    active: bool,   // the current contract declared abs_shadow
+    readable: bool, // shadow pages currently PAGE_READONLY
 }
 
 static mut ST: *mut State = std::ptr::null_mut();
@@ -1194,7 +1194,11 @@ fn abs_build_shadow() -> Result<(), String> {
                 continue;
             }
             let n = rawsz.min(s.image_size.saturating_sub(sec.vaddr));
-            std::ptr::copy_nonoverlapping(exe.as_ptr().add(rawptr), (base + sec.vaddr) as *mut u8, n);
+            std::ptr::copy_nonoverlapping(
+                exe.as_ptr().add(rawptr),
+                (base + sec.vaddr) as *mut u8,
+                n,
+            );
         }
     }
     for &(a, b) in &split {
@@ -1213,7 +1217,11 @@ fn abs_set_readable(readable: bool) {
     if !s.abs.built || s.abs.readable == readable {
         return;
     }
-    let prot = if readable { PAGE_READONLY } else { PAGE_NOACCESS };
+    let prot = if readable {
+        PAGE_READONLY
+    } else {
+        PAGE_NOACCESS
+    };
     for &(a, b) in &s.abs.runs.clone() {
         protect(a, b - a, prot);
     }
@@ -1764,7 +1772,7 @@ type CallRec = (
     Vec<u32>,
     [u32; 4],
     [u32; 4],
-    u32,                  // v4: stub-entry eax (post-transport on the rw side)
+    u32,                 // v4: stub-entry eax (post-transport on the rw side)
     Vec<(u8, [u32; 4])>, // v5: logged XMM2-XMM7 as (register, words)
 );
 
@@ -1926,8 +1934,8 @@ fn run_side(
     globals_fill: &[(usize, Vec<u32>)], // mapped addr + words
     trial: u32,
     seed: u32,
-    tls: &[(u32, u32)], // (slot, value) fabricated TLS slots
-    xmm: &[u32; 32],    // xmm0-7 entry values
+    tls: &[(u32, u32)],  // (slot, value) fabricated TLS slots
+    xmm: &[u32; 32],     // xmm0-7 entry values
     x87_in: &[x87::F80], // v5: x87 entry values, ST(0) first
     stack_fill: Option<u32>,
     is_rw: bool,
@@ -2017,11 +2025,7 @@ fn run_side(
                 (s.m_x87_mirror as usize + 16 + 16 * i) as *mut u8,
                 b.len(),
             );
-            let w = [
-                v.man as u32,
-                (v.man >> 32) as u32,
-                u32::from(v.sexp),
-            ];
+            let w = [v.man as u32, (v.man >> 32) as u32, u32::from(v.sexp)];
             s.ctx[CTX_X87_VALS + 3 * i..CTX_X87_VALS + 3 * i + 3].copy_from_slice(&w);
         }
         *((s.m_ctx) as *mut u32) = s.ctx.as_ptr() as u32;
@@ -2142,8 +2146,13 @@ fn run_side(
         // v5: a fault in the preferred-base window is an unrelocated
         // absolute access; say so (diagnostic text only, never compared).
         if s.abs.lo < s.abs.hi
-            && let Some(note) =
-                abswin::fault_note(o.fault_badva as usize, s.abs.lo, s.abs.hi, is_rw, s.abs.active)
+            && let Some(note) = abswin::fault_note(
+                o.fault_badva as usize,
+                s.abs.lo,
+                s.abs.hi,
+                is_rw,
+                s.abs.active,
+            )
         {
             o.fault.push(' ');
             o.fault.push_str(&note);
@@ -2435,9 +2444,7 @@ fn canon_st0_hex(h: &str) -> String {
     if b.len() < 10 {
         return h.to_string();
     }
-    let man = u64::from_le_bytes([
-        b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
-    ]);
+    let man = u64::from_le_bytes([b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]);
     let ex = u16::from_le_bytes([b[8], b[9]]);
     if (ex & 0x7FFF) == 0x7FFF && (man & 0x7FFFFFFFFFFFFFFF) != 0 {
         "00000000000000c0ff7f".to_string() // +qNaN, zero payload
@@ -2456,12 +2463,8 @@ fn canon_xmm0_hex(h: &str) -> String {
     if is_f32_nan(w0) {
         b[0..4].copy_from_slice(&0x7FC00000u32.to_le_bytes());
     }
-    let d0 = u64::from_le_bytes([
-        b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
-    ]);
-    if (d0 & 0x7FF0000000000000) == 0x7FF0000000000000
-        && (d0 & 0x000FFFFFFFFFFFFF) != 0
-    {
+    let d0 = u64::from_le_bytes([b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7]]);
+    if (d0 & 0x7FF0000000000000) == 0x7FF0000000000000 && (d0 & 0x000FFFFFFFFFFFFF) != 0 {
         b[0..8].copy_from_slice(&0x7FF8000000000000u64.to_le_bytes());
     }
     hexbytes(&b)
@@ -2834,16 +2837,15 @@ fn callkey(c: &CallRec, checks: &J) -> String {
                 }
             }
         }
-        let args: Vec<String> = c
-            .3
-            .iter()
-            .enumerate()
-            .filter(|(i, _)| !skip.contains(i))
-            .map(|(i, &a)| match masks.get(&i) {
-                Some(0xFFFF_FFFF) | None => norm_ptr(a),
-                Some(m) => format!("0x{:x}", a & m),
-            })
-            .collect();
+        let args: Vec<String> =
+            c.3.iter()
+                .enumerate()
+                .filter(|(i, _)| !skip.contains(i))
+                .map(|(i, &a)| match masks.get(&i) {
+                    Some(0xFFFF_FFFF) | None => norm_ptr(a),
+                    Some(m) => format!("0x{:x}", a & m),
+                })
+                .collect();
         k.push_str(&format!(" args={:?}", args));
     } else {
         k.push_str(" args=transport");
@@ -2992,7 +2994,10 @@ fn parse_snap(c: &J, id: u32) -> Result<Vec<snap::SnapSpec>, String> {
                 Some(J::Int(i)) => *i,
                 Some(_) => return Err(format!("callee {} snap at must be an integer", id)),
             };
-            out.push(snap::SnapSpec::new(kind, idx, n, at).map_err(|e| format!("callee {}: {}", id, e))?);
+            out.push(
+                snap::SnapSpec::new(kind, idx, n, at)
+                    .map_err(|e| format!("callee {}: {}", id, e))?,
+            );
         }
     }
     snap::total_words(id, &out)?;
@@ -3016,22 +3021,35 @@ fn parse_xmm(c: &J, id: u32, nargs: usize) -> Result<vecregs::XmmCallCfg, String
         };
         for r in a {
             let J::Int(n) = r else {
-                return Err(format!("callee {} logxmm_regs entries must be integers", id));
+                return Err(format!(
+                    "callee {} logxmm_regs entries must be integers",
+                    id
+                ));
             };
-            keys.logxmm_regs.push(usize::try_from(*n).unwrap_or(usize::MAX));
+            keys.logxmm_regs
+                .push(usize::try_from(*n).unwrap_or(usize::MAX));
         }
     }
     if let Some(v) = c.get("xmm_from_stack") {
         let J::Obj(m) = v else {
-            return Err(format!("callee {} xmm_from_stack must be an object {{reg: idx}}", id));
+            return Err(format!(
+                "callee {} xmm_from_stack must be an object {{reg: idx}}",
+                id
+            ));
         };
         let mut pairs = Vec::new();
         for (k, idx) in m {
-            let reg = k
-                .parse::<usize>()
-                .map_err(|_| format!("callee {} xmm_from_stack key {:?} is not a register number", id, k))?;
+            let reg = k.parse::<usize>().map_err(|_| {
+                format!(
+                    "callee {} xmm_from_stack key {:?} is not a register number",
+                    id, k
+                )
+            })?;
             let J::Int(i) = idx else {
-                return Err(format!("callee {} xmm_from_stack index must be an integer", id));
+                return Err(format!(
+                    "callee {} xmm_from_stack index must be an integer",
+                    id
+                ));
             };
             pairs.push((reg, usize::try_from(*i).unwrap_or(usize::MAX)));
         }
@@ -3060,7 +3078,10 @@ fn cmd_setup(q: &J) -> String {
     }
     // v4: per-setup call-log cap (default 256). The region always
     // reserves LOG_HARD_MAX entries, so raising needs no layout change.
-    let log_max = q.get("log_max").map(|v| v.as_u32()).unwrap_or(LOG_MAX as u32);
+    let log_max = q
+        .get("log_max")
+        .map(|v| v.as_u32())
+        .unwrap_or(LOG_MAX as u32);
     if log_max == 0 || log_max as usize > LOG_HARD_MAX {
         return format!(
             "{{\"ok\":false,\"error\":\"log_max {} out of range 1..{}\"}}",
@@ -3071,7 +3092,10 @@ fn cmd_setup(q: &J) -> String {
     // v5: the read-only shadow at the preferred base, for this contract
     // only (built once per process; an incompletely held window is a
     // setup error, never a partial shadow).
-    let want_shadow = q.get("abs_shadow").map(|v| v.as_bool(false)).unwrap_or(false);
+    let want_shadow = q
+        .get("abs_shadow")
+        .map(|v| v.as_bool(false))
+        .unwrap_or(false);
     if want_shadow && let Err(e) = abs_build_shadow() {
         return format!("{{\"ok\":false,\"error\":\"{}\"}}", esc(&e));
     }
@@ -3144,10 +3168,11 @@ fn cmd_setup(q: &J) -> String {
                 }
             }
             // v5: snapshots (64 words, any offset) and XMM0-XMM7 options.
-            let (snap, xmm) = match parse_snap(c, id).and_then(|sn| Ok((sn, parse_xmm(c, id, nargs)?))) {
-                Ok(v) => v,
-                Err(e) => return format!("{{\"ok\":false,\"error\":\"{}\"}}", esc(&e)),
-            };
+            let (snap, xmm) =
+                match parse_snap(c, id).and_then(|sn| Ok((sn, parse_xmm(c, id, nargs)?))) {
+                    Ok(v) => v,
+                    Err(e) => return format!("{{\"ok\":false,\"error\":\"{}\"}}", esc(&e)),
+                };
             let preserve = c.get("preserve").map(|v| v.as_bool(false)).unwrap_or(false);
             let eax_from_stack = c.get("eax_from_stack").map(|v| v.as_usize());
             let cal = Callee {
@@ -3362,7 +3387,11 @@ fn cmd_setup(q: &J) -> String {
         held,
         total,
         s.abs.active,
-        names.iter().map(|n| format!("\"{}\"", n)).collect::<Vec<_>>().join(",")
+        names
+            .iter()
+            .map(|n| format!("\"{}\"", n))
+            .collect::<Vec<_>>()
+            .join(",")
     );
     format!(
         "{{\"ok\":true,\"img_base\":{},\"delta\":{},\"relocs\":{},\"heap\":{},\"stack\":{},\"dll_base\":{},\"text_lo\":{},\"text_hi\":{},\"exports\":{{{}}},\"stub_addrs\":{{{}}},\"iat_patched\":[{}],{},\"errors\":[{}]}}",
@@ -3531,7 +3560,9 @@ fn parse_trial(q: &J) -> Result<(TrialReq, J), String> {
     let x87_in = x87::parse_entries(&x87_words)?;
     if !x87_in.is_empty() {
         if matches!(checks.get("x87_state"), Some(J::Bool(false))) {
-            return Err("x87 entry values need the x87 state check (x87_state false refused)".to_string());
+            return Err(
+                "x87 entry values need the x87 state check (x87_state false refused)".to_string(),
+            );
         }
         if let J::Obj(m) = &mut checks {
             m.insert("x87_state".to_string(), J::Bool(true));
@@ -3609,11 +3640,7 @@ fn parse_trial(q: &J) -> Result<(TrialReq, J), String> {
 }
 
 // The trial body runs on a dedicated thread so a hang can be cut off.
-fn trial_body(
-    req: TrialReq,
-    checks: J,
-    script_vals: Vec<ScriptVal>,
-) -> String {
+fn trial_body(req: TrialReq, checks: J, script_vals: Vec<ScriptVal>) -> String {
     // v2: per-callee script slots + out-param write words, filled once per
     // trial and shared by both sides. v3: per-call answer sequences; a
     // callee without "seq" gets [(script lo,hi)] with length 1, exactly v2.
@@ -3922,7 +3949,9 @@ mod tests {
             .iter()
             .map(|c| {
                 (
-                    c.get("name").map(|x| x.as_str().to_string()).unwrap_or_default(),
+                    c.get("name")
+                        .map(|x| x.as_str().to_string())
+                        .unwrap_or_default(),
                     c.get("passed").map(|x| x.as_bool(false)).unwrap_or(false),
                 )
             })
@@ -4052,7 +4081,9 @@ mod tests {
             assert_eq!(req.heapsegs, vec![(16, vec![1, 2])]);
             let far = j(r#"{"export":"rw","regs":[0,0,0,0,0,0,0],"tls":[{"slot":64,"value":1}]}"#);
             assert!(parse_trial(&far).is_err());
-            let out = j(r#"{"export":"rw","regs":[0,0,0,0,0,0,0],"heapsegs":[{"off":983036,"words":[1,2]}]}"#);
+            let out = j(
+                r#"{"export":"rw","regs":[0,0,0,0,0,0,0],"heapsegs":[{"off":983036,"words":[1,2]}]}"#,
+            );
             assert!(parse_trial(&out).is_err());
         });
     }
@@ -4117,8 +4148,14 @@ mod tests {
         assert!(!is_f32_nan(0x7F80_0000));
         assert_eq!(canon_f32(0xFFC0_1234), 0x7FC0_0000);
         assert_eq!(canon_f32(0x3F80_0000), 0x3F80_0000);
-        assert_eq!(canon_st0_hex("010000000000c0ffff7f"), "00000000000000c0ff7f");
-        assert_eq!(canon_st0_hex("0000000000000080ff3f"), "0000000000000080ff3f");
+        assert_eq!(
+            canon_st0_hex("010000000000c0ffff7f"),
+            "00000000000000c0ff7f"
+        );
+        assert_eq!(
+            canon_st0_hex("0000000000000080ff3f"),
+            "0000000000000080ff3f"
+        );
         let x = canon_xmm0_hex("0100c0ff000000000000000000000000");
         assert_eq!(&x[..8], "0000c07f");
     }
@@ -4178,12 +4215,17 @@ mod tests {
             assert!(contains(&b, &[0xF3, 0x0F, 0x10, 0x84, 0x24, 8, 0, 0, 0]));
             assert!(contains(
                 &b,
-                &[0x0F, 0x13, 0x80, 0xE0, 0, 0, 0, 0x0F, 0x17, 0x80, 0xE8, 0, 0, 0]
+                &[
+                    0x0F, 0x13, 0x80, 0xE0, 0, 0, 0, 0x0F, 0x17, 0x80, 0xE8, 0, 0, 0
+                ]
             ));
             // v4 snapshot copies: [edx+0] -> [eax+192], [edx+4] -> [eax+196].
             assert!(contains(
                 &b,
-                &[0x8B, 0x8A, 0, 0, 0, 0, 0x89, 0x88, 0xC0, 0, 0, 0, 0x8B, 0x8A, 4, 0, 0, 0, 0x89, 0x88, 0xC4, 0, 0, 0]
+                &[
+                    0x8B, 0x8A, 0, 0, 0, 0, 0x89, 0x88, 0xC0, 0, 0, 0, 0x8B, 0x8A, 4, 0, 0, 0,
+                    0x89, 0x88, 0xC4, 0, 0, 0
+                ]
             ));
             assert!(!contains(&b, &[0x0F, 0x13, 0x90])); // no xmm2 logging
         });
@@ -4275,12 +4317,18 @@ mod tests {
         assert_eq!(at("x87_store"), 0);
         assert_eq!(
             &code[..15],
-            &[0x8B, 0x4C, 0x24, 0x04, 0xD9, 0x19, 0xDD, 0x59, 0x04, 0xDB, 0x79, 0x0C, 0x89, 0xC8, 0xC3]
+            &[
+                0x8B, 0x4C, 0x24, 0x04, 0xD9, 0x19, 0xDD, 0x59, 0x04, 0xDB, 0x79, 0x0C, 0x89, 0xC8,
+                0xC3
+            ]
         );
         assert_eq!(at("xmm_call") % 16, 0);
         let x = &code[at("xmm_call")..];
         assert_eq!(&x[16..22], &[0xFF, 0x15, 0x04, 0x60, 0x05, 0x31]);
-        assert_eq!(&code[at("abs_read")..at("abs_read") + 7], &[0x8B, 0x44, 0x24, 0x04, 0x8B, 0x00, 0xC3]);
+        assert_eq!(
+            &code[at("abs_read")..at("abs_read") + 7],
+            &[0x8B, 0x44, 0x24, 0x04, 0x8B, 0x00, 0xC3]
+        );
     }
 
     // --- comparison and verdict text ----------------------------------
@@ -4293,7 +4341,17 @@ mod tests {
             let names: Vec<String> = checks_named(&json).into_iter().map(|c| c.0).collect();
             assert_eq!(
                 names,
-                vec!["termination", "no_cheat", "ret", "esp", "heap", "stack", "globals", "calls", "undeclared"]
+                vec![
+                    "termination",
+                    "no_cheat",
+                    "ret",
+                    "esp",
+                    "heap",
+                    "stack",
+                    "globals",
+                    "calls",
+                    "undeclared"
+                ]
             );
         });
     }
@@ -4373,7 +4431,17 @@ mod tests {
             cal.xmm.log[3] = true;
             s.callees.insert(1, cal);
             let rec = |snap: Vec<u32>, x3: u32| -> CallRec {
-                (1, 0, 0, vec![1, 2], snap, [0; 4], [0; 4], 0, vec![(3, [x3, 0, 0, 0])])
+                (
+                    1,
+                    0,
+                    0,
+                    vec![1, 2],
+                    snap,
+                    [0; 4],
+                    [0; 4],
+                    0,
+                    vec![(3, [x3, 0, 0, 0])],
+                )
             };
             let mut a = ok_obs();
             a.calls = vec![rec(vec![5; 20], 7)];
@@ -4405,14 +4473,27 @@ mod tests {
             cal.xmm.from_stack[2] = Some(0);
             s.callees.insert(1, cal);
             let mut a = ok_obs();
-            a.calls = vec![(1, 0, 0, vec![1, 2], vec![], [0; 4], [0; 4], 0, vec![(2, [9, 0, 0, 0])])];
+            a.calls = vec![(
+                1,
+                0,
+                0,
+                vec![1, 2],
+                vec![],
+                [0; 4],
+                [0; 4],
+                0,
+                vec![(2, [9, 0, 0, 0])],
+            )];
             let mut b = a.clone();
             b.calls[0].3 = vec![7, 7]; // garbage stack words on one side
             assert!(compare(&a, &b, &j("{}")).0);
             b.calls[0].8[0].1[0] = 10;
             assert!(!compare(&a, &b, &j("{}")).0);
             let key = callkey(&a.calls[0], &j("{}"));
-            assert!(key.contains("args=transport") && key.contains("xmm2=[9, 0, 0, 0]"), "{key}");
+            assert!(
+                key.contains("args=transport") && key.contains("xmm2=[9, 0, 0, 0]"),
+                "{key}"
+            );
         });
     }
 
@@ -4453,7 +4534,14 @@ mod tests {
             assert!(!p && first.starts_with("x87"), "{first}");
             assert!(checks_named(&json).contains(&("x87".to_string(), false)));
             assert!(compare(&pushed, &pushed.clone(), &on).0);
-            let two = x87_obs(7, 0x80, x87::F80 { man: 1 << 63, sexp: 0x4000 });
+            let two = x87_obs(
+                7,
+                0x80,
+                x87::F80 {
+                    man: 1 << 63,
+                    sexp: 0x4000,
+                },
+            );
             assert!(!compare(&pushed, &two, &on).0);
             // A side whose state was not captured never passes.
             assert!(!compare(&ok_obs(), &ok_obs(), &on).0);
@@ -4503,7 +4591,10 @@ mod tests {
             o.x87 = Some(x87::X87State {
                 top: 7,
                 tags: 0x80,
-                regs: [x87::F80 { man: 1 << 63, sexp: 0x3FFF }; 8],
+                regs: [x87::F80 {
+                    man: 1 << 63,
+                    sexp: 0x3FFF,
+                }; 8],
             });
             let v = j(&obs_json(&o));
             let x = v.get("x87").unwrap();

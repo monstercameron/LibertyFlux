@@ -714,10 +714,11 @@ mod tests {
             reg.add(unresolved(n, "t"));
         }
         let out = reg.bisect(0, 2);
-        let want: Vec<(String, bool)> = [("c.x", false), ("a.x", true), ("d.x", false), ("b.x", true)]
-            .iter()
-            .map(|(n, w)| (n.to_string(), *w))
-            .collect();
+        let want: Vec<(String, bool)> =
+            [("c.x", false), ("a.x", true), ("d.x", false), ("b.x", true)]
+                .iter()
+                .map(|(n, w)| (n.to_string(), *w))
+                .collect();
         assert_eq!(out, want);
         // Unresolved hooks cannot turn on: nothing is active afterwards.
         assert!(reg.active_names().is_empty());
@@ -759,7 +760,11 @@ mod tests {
             reg.add(d);
         }
         assert_eq!(reg.names(), vec!["function.00500000", "function.00500020"]);
-        assert!(reg.status().iter().all(|(_, sub, st)| sub == "s001" && *st == State::Off));
+        assert!(
+            reg.status()
+                .iter()
+                .all(|(_, sub, st)| sub == "s001" && *st == State::Off)
+        );
         assert_eq!(p.skipped.len(), 1);
     }
 
@@ -767,6 +772,9 @@ mod tests {
     fn unresolved_def_is_plain_data() {
         // Host-side guard that the helper above builds what it says.
         let d = unresolved("a.x", "t");
-        assert_eq!((d.name.as_str(), d.subsystem.as_str(), d.detour), ("a.x", "t", 0));
+        assert_eq!(
+            (d.name.as_str(), d.subsystem.as_str(), d.detour),
+            ("a.x", "t", 0)
+        );
     }
 }
