@@ -9,12 +9,15 @@
   --ground: #0c0f13; --panel: #171c22; --raised: #1f262e; --rule: #2e3742;
   --ink: #e6e9ed; --soft: #b3bcc6; --faint: #8a95a2;
   --sodium: #e0a021; --run: #6a9cc2; --done: #7fb38a; --dead: #d9735a; --track: #2a313a;
+  /* Chart series: slots 1 and 2 of the reference categorical palette, dark steps, validated on --panel. */
+  --series-1: #3987e5; --series-2: #d95926; --grid: #262e37;
   --sans: "Overpass", "Segoe UI", system-ui, sans-serif;
   --mono: "Overpass Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
 @media (prefers-color-scheme: light) {
   :root { --ground: #eef0f2; --panel: #f8f9fa; --raised: #ffffff; --rule: #cfd5db; --ink: #14181d; --soft: #46505c;
-          --faint: #5d6874; --sodium: #9a6a05; --run: #24658f; --done: #2f7a45; --dead: #b3452d; --track: #dfe3e8; }
+          --faint: #5d6874; --sodium: #9a6a05; --run: #24658f; --done: #2f7a45; --dead: #b3452d; --track: #dfe3e8;
+          --series-1: #2a78d6; --series-2: #eb6834; --grid: #e3e7eb; }
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; background: var(--ground); color: var(--ink); font: 15px/1.45 var(--sans); }
@@ -91,11 +94,40 @@ td.mono { font-family: var(--mono); white-space: nowrap; }
 .legend li { display: flex; gap: 6px; align-items: center; }
 @media (prefers-reduced-motion: reduce) { .gauge .fill, .gauge .num, .countdown div { transition: none; } }
 
+.charts { display: grid; gap: 14px; }
+.chart { position: relative; min-width: 0; }
+.chart h3 { font-size: 0.8125rem; font-weight: 400; color: var(--soft); margin: 0 0 4px; display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; }
+.chart h3 .now { font: 700 0.9375rem var(--mono); color: var(--ink); }
+.chart .key { display: inline-flex; gap: 6px; align-items: center; color: var(--soft); }
+.chart .key i { display: inline-block; width: 14px; height: 2px; border-radius: 1px; }
+.chart svg { display: block; width: 100%; height: 170px; overflow: visible; }
+.chart svg:focus-visible { outline: 2px solid var(--sodium); outline-offset: 2px; }
+.chart .axis { fill: var(--faint); font: 11px var(--mono); font-variant-numeric: tabular-nums; }
+.chart .gridline { stroke: var(--grid); stroke-width: 1; }
+.chart .series { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.chart .cross { stroke: var(--faint); stroke-width: 1; }
+.chart .empty-note { fill: var(--faint); font: 0.8125rem var(--sans); }
+.tip { position: absolute; z-index: 3; pointer-events: none; background: var(--raised); border: 1px solid var(--rule); border-radius: 4px;
+       padding: 6px 9px; font-size: 0.8125rem; box-shadow: 0 2px 8px rgba(0,0,0,.25); white-space: nowrap; }
+.tip strong { font: 700 0.9375rem var(--mono); color: var(--ink); }
+.tip .row { display: flex; gap: 6px; align-items: center; }
+.tip .row i { display: inline-block; width: 12px; height: 2px; border-radius: 1px; }
+.tip .when { color: var(--faint); }
+.chart.loading svg { opacity: .55; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td.num { font-family: var(--mono); white-space: nowrap; }
+#experiments th { vertical-align: bottom; }
+#experiments .tag { font-family: var(--mono); white-space: nowrap; }
+#experiments .note { min-width: 12em; }
+#experiments td, #experiments th { padding-right: 10px; }
+tr.current td { background: var(--raised); }
+.badge { font-size: 0.75rem; border: 1px solid var(--faint); border-radius: 999px; padding: 0 6px; color: var(--soft); margin-left: 4px; }
+
 @media (min-width: 1000px) {
   main { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; }
   .overview { grid-column: 1; }
   .list { grid-column: 1; }
-  .detail { grid-column: 2; grid-row: 1 / span 4; position: sticky; top: 56px; max-height: calc(100vh - 72px); overflow: auto; }
+  .detail { grid-column: 2; grid-row: 1 / span 6; position: sticky; top: 56px; max-height: calc(100vh - 72px); overflow: auto; }
 }
 @media (max-width: 999px) { body.viewing .overview, body.viewing .list { display: none; } }
 </style>
@@ -122,6 +154,17 @@ td.mono { font-family: var(--mono); white-space: nowrap; }
     <h2 style="margin-top:14px">Supervisor log</h2>
     <div class="box"><pre id="suplog"></pre></div>
   </section>
+  <section class="overview" aria-labelledby="h-history">
+    <h2 id="h-history">History</h2>
+    <div class="tools" role="group" aria-label="Time range for the history charts">
+      <button class="tab" data-range="6" aria-pressed="false">6 hours</button>
+      <button class="tab" data-range="24" aria-pressed="true">24 hours</button>
+      <button class="tab" data-range="168" aria-pressed="false">7 days</button>
+    </div>
+    <div class="charts" id="charts"></div>
+    <p class="note" id="history-note"></p>
+    <details id="history-details"><summary>Samples as a table</summary><div class="box scroll" id="history-table" style="margin-top:8px"></div></details>
+  </section>
   <section class="list" aria-labelledby="h-lanes">
     <h2 id="h-lanes">Lanes</h2>
     <div class="tools">
@@ -137,6 +180,11 @@ td.mono { font-family: var(--mono); white-space: nowrap; }
       <li><span class="heat" style="background:#5d6874"></span>quiet for 20 minutes or more</li>
     </ul>
     <ul class="lanes" id="lanes"></ul>
+  </section>
+  <section class="overview" aria-labelledby="h-exp">
+    <h2 id="h-exp">Brief versions and experiments</h2>
+    <p class="note" id="exp-note">Every production and re-run lane's results.json, grouped by the brief version each row records.</p>
+    <div class="scroll" id="experiments"><p class="empty">Loading.</p></div>
   </section>
   <section class="detail" id="detail" aria-live="polite" hidden></section>
 </main>
@@ -328,8 +376,240 @@ td.mono { font-family: var(--mono); white-space: nowrap; }
     selected = button.dataset.lane; detailOpen = false; renderLanes(); loadDetail();
     if (window.matchMedia("(max-width: 999px)").matches) window.scrollTo(0, 0);
   });
+  // ---- History charts -------------------------------------------------------------------------------
+  var range = 24, history = null, historyTimer = null;
+  var SVGNS = "http://www.w3.org/2000/svg";
+  function svgEl(name, attrs, parent) {
+    var el = document.createElementNS(SVGNS, name);
+    Object.keys(attrs || {}).forEach(function (k) { el.setAttribute(k, attrs[k]); });
+    if (parent) parent.appendChild(el);
+    return el;
+  }
+  function niceStep(span, ticks) {
+    var raw = span / Math.max(1, ticks), power = Math.pow(10, Math.floor(Math.log10(raw || 1))), unit = raw / power;
+    return (unit <= 1 ? 1 : unit <= 2 ? 2 : unit <= 5 ? 5 : 10) * power;
+  }
+  function timeLabel(t, hours) {
+    var d = new Date(t * 1000), hh = String(d.getHours()).padStart(2, "0"), mm = String(d.getMinutes()).padStart(2, "0");
+    return hours > 48 ? d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric" }) : hh + ":" + mm;
+  }
+  function fullTime(t) { var d = new Date(t * 1000); return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" }) + " " + timeLabel(t, 0); }
+  // A gap in sampling (the dashboard was not running) breaks the line instead of drawing a straight bridge.
+  function segments(points, gap) {
+    var out = [], cur = [];
+    points.forEach(function (p, i) {
+      if (i && p[0] - points[i - 1][0] > gap) { out.push(cur); cur = []; }
+      cur.push(p);
+    });
+    if (cur.length) out.push(cur);
+    return out;
+  }
+  function nearest(points, t) {
+    var lo = 0, hi = points.length - 1;
+    while (hi - lo > 1) { var mid = (lo + hi) >> 1; if (points[mid][0] < t) lo = mid; else hi = mid; }
+    return Math.abs(points[lo][0] - t) <= Math.abs(points[hi][0] - t) ? lo : hi;
+  }
+  function lineChart(spec) {
+    // spec: {title, series: [{name, color, points, format}], max (fixed y top, optional), unit}
+    var box = document.createElement("div");
+    box.className = "chart";
+    var head = document.createElement("h3");
+    var title = document.createElement("span"); title.textContent = spec.title; head.appendChild(title);
+    var first = spec.series[0], last = first.points[first.points.length - 1];
+    if (spec.series.length === 1) {
+      var now = document.createElement("span"); now.className = "now"; now.textContent = last ? first.format(last[1]) : "no samples";
+      head.appendChild(now);
+    } else {
+      spec.series.forEach(function (s) {
+        var key = document.createElement("span"); key.className = "key";
+        var line = document.createElement("i"); line.style.background = s.color; key.appendChild(line);
+        var end = s.points[s.points.length - 1];
+        key.appendChild(document.createTextNode(s.name + (end ? " " + s.format(end[1]) : "")));
+        head.appendChild(key);
+      });
+    }
+    box.appendChild(head);
+    var width = Math.max(260, ($("charts").clientWidth || 600)), height = 170, padL = 46, padR = 10, padT = 8, padB = 22;
+    var svg = svgEl("svg", { viewBox: "0 0 " + width + " " + height, role: "img", tabindex: "0",
+      "aria-label": spec.title + ". Use the arrow keys to read values; the table below lists every sample." }, box);
+    var t0 = history.since, t1 = history.until, all = [];
+    spec.series.forEach(function (s) { s.points.forEach(function (p) { all.push(p[1]); }); });
+    // Lanes and memory read from zero; a running total (verified) zooms to its own range so an hour's growth shows.
+    var lo = spec.fromZero === false && all.length ? Math.min.apply(null, all) : 0;
+    var hi = spec.max != null ? spec.max : Math.max.apply(null, all.concat([lo + 1]));
+    var step = niceStep(hi - lo, 3), bottom = Math.floor(lo / step) * step;
+    var top = spec.max != null ? spec.max : Math.max(bottom + step, Math.ceil(hi / step) * step);
+    var x = function (t) { return padL + (width - padL - padR) * (t - t0) / Math.max(1, t1 - t0); };
+    var y = function (v) { return padT + (height - padT - padB) * (1 - (v - bottom) / Math.max(1e-9, top - bottom)); };
+    for (var v = bottom; v <= top + 1e-9; v += step) {
+      svgEl("line", { class: "gridline", x1: padL, x2: width - padR, y1: y(v), y2: y(v) }, svg);
+      var label = svgEl("text", { class: "axis", x: padL - 6, y: y(v) + 4, "text-anchor": "end" }, svg);
+      label.textContent = first.format(v, true);
+    }
+    var tickEvery = range <= 6 ? 3600 : range <= 24 ? 4 * 3600 : 86400, startTick = Math.ceil(t0 / tickEvery) * tickEvery;
+    if (tickEvery === 86400) { var d0 = new Date(t0 * 1000); d0.setHours(24, 0, 0, 0); startTick = d0.getTime() / 1000; }
+    for (var t = startTick; t <= t1; t += tickEvery) {
+      var tx = svgEl("text", { class: "axis", x: x(t), y: height - 6, "text-anchor": "middle" }, svg);
+      tx.textContent = timeLabel(t, range);
+    }
+    if (!all.length) {
+      var note = svgEl("text", { class: "empty-note", x: padL + 8, y: padT + 24 }, svg);
+      note.textContent = "No samples in this range yet.";
+    }
+    spec.series.forEach(function (s) {
+      var gaps = s.points.slice(1).map(function (p, i) { return p[0] - s.points[i][0]; }).sort(function (a, b) { return a - b; });
+      var typical = gaps.length ? gaps[gaps.length >> 1] : 60, gap = Math.max(600, 3 * typical);
+      segments(s.points, gap).forEach(function (seg) {
+        if (seg.length === 1) { svgEl("circle", { cx: x(seg[0][0]), cy: y(seg[0][1]), r: 2, fill: s.color }, svg); return; }
+        svgEl("polyline", { class: "series", stroke: s.color, points: seg.map(function (p) { return x(p[0]).toFixed(1) + "," + y(p[1]).toFixed(1); }).join(" ") }, svg);
+      });
+    });
+    // Crosshair and tooltip: snap to the nearest sample of the first series; one readout lists every series.
+    var cross = svgEl("line", { class: "cross", y1: padT, y2: height - padB, visibility: "hidden" }, svg);
+    var dots = spec.series.map(function (s) { return svgEl("circle", { r: 4, fill: s.color, stroke: "var(--panel)", "stroke-width": 2, visibility: "hidden" }, svg); });
+    var tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; box.appendChild(tip);
+    var hit = svgEl("rect", { x: padL, y: 0, width: width - padL - padR, height: height, fill: "transparent" }, svg);
+    var index = null;
+    function show(i) {
+      if (!first.points.length) return;
+      index = Math.max(0, Math.min(first.points.length - 1, i));
+      var at = first.points[index][0], px = x(at);
+      cross.setAttribute("x1", px); cross.setAttribute("x2", px); cross.setAttribute("visibility", "visible");
+      tip.textContent = "";
+      spec.series.forEach(function (s, k) {
+        if (!s.points.length) { dots[k].setAttribute("visibility", "hidden"); return; }
+        var p = s.points[nearest(s.points, at)];
+        dots[k].setAttribute("cx", x(p[0])); dots[k].setAttribute("cy", y(p[1])); dots[k].setAttribute("visibility", "visible");
+        var row = document.createElement("div"); row.className = "row";
+        if (spec.series.length > 1) { var key = document.createElement("i"); key.style.background = s.color; row.appendChild(key); }
+        var strong = document.createElement("strong"); strong.textContent = s.format(p[1]); row.appendChild(strong);
+        if (spec.series.length > 1) row.appendChild(document.createTextNode(" " + s.name));
+        tip.appendChild(row);
+      });
+      var when = document.createElement("div"); when.className = "when"; when.textContent = fullTime(at); tip.appendChild(when);
+      tip.hidden = false;
+      var scale = svg.getBoundingClientRect().width / width, left = px * scale + 12;
+      if (left + tip.offsetWidth > box.clientWidth) left = px * scale - tip.offsetWidth - 12;
+      tip.style.left = Math.max(0, left) + "px"; tip.style.top = (head.offsetHeight + 6) + "px";
+    }
+    function hide() { cross.setAttribute("visibility", "hidden"); dots.forEach(function (d) { d.setAttribute("visibility", "hidden"); }); tip.hidden = true; index = null; }
+    hit.addEventListener("pointermove", function (e) {
+      if (!first.points.length) return;
+      var r = svg.getBoundingClientRect(), t = t0 + (t1 - t0) * (((e.clientX - r.left) / r.width * width) - padL) / (width - padL - padR);
+      show(nearest(first.points, t));
+    });
+    hit.addEventListener("pointerleave", hide);
+    svg.addEventListener("focus", function () { show(first.points.length - 1); });
+    svg.addEventListener("blur", hide);
+    svg.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); show((index == null ? first.points.length - 1 : index) + (e.key === "ArrowLeft" ? -1 : 1)); }
+      else if (e.key === "Home") { e.preventDefault(); show(0); }
+      else if (e.key === "End") { e.preventDefault(); show(first.points.length - 1); }
+      else if (e.key === "Escape") hide();
+    });
+    return box;
+  }
+  var intFmt = function (v) { return v == null ? "?" : fmt.format(Math.round(v)); };
+  var pctFmt = function (v) { return v == null ? "?" : Math.round(v) + "%"; };
+  function renderHistory() {
+    if (!history) return;
+    var css = getComputedStyle(document.documentElement), c1 = css.getPropertyValue("--series-1").trim(), c2 = css.getPropertyValue("--series-2").trim();
+    var charts = $("charts");
+    charts.textContent = "";
+    charts.appendChild(lineChart({ title: "Lanes running", series: [{ name: "lanes", color: c1, points: history.lanes, format: intFmt }] }));
+    charts.appendChild(lineChart({ title: "Verified functions", fromZero: false, series: [{ name: "verified", color: c1, points: history.verified, format: intFmt }] }));
+    charts.appendChild(lineChart({ title: "Memory in use", max: 100, series: [
+      { name: "physical memory", color: c1, points: history.memory, format: pctFmt },
+      { name: "commit", color: c2, points: history.commit, format: pctFmt }] }));
+    var started = history.first_sample ? fullTime(history.first_sample) : null;
+    $("history-note").textContent = (started ? "Sampled once a minute by this dashboard while it runs, since " + started + "." : "No samples yet: this dashboard records one a minute while it runs.") +
+      " Verified also includes the hourly review snapshots. Gaps mean nothing was sampled; longer ranges show the last sample of each time bucket.";
+    if ($("history-details").open) renderHistoryTable();
+  }
+  function renderHistoryTable() {
+    var byTime = {};
+    [["lanes", 1], ["verified", 2], ["memory", 3], ["commit", 4]].forEach(function (pair) {
+      (history[pair[0]] || []).forEach(function (p) { (byTime[p[0]] = byTime[p[0]] || [p[0], null, null, null, null])[pair[1]] = p[1]; });
+    });
+    var rows = Object.keys(byTime).map(Number).sort(function (a, b) { return b - a; }).map(function (t) { return byTime[t]; });
+    var table = document.createElement("table");
+    var headRow = table.createTHead().insertRow();
+    ["Time", "Lanes running", "Verified", "Memory in use", "Commit in use"].forEach(function (h, i) {
+      var th = document.createElement("th"); th.textContent = h; if (i) th.className = "num"; headRow.appendChild(th);
+    });
+    var body = table.createTBody();
+    rows.forEach(function (r) {
+      var tr = body.insertRow();
+      [fullTime(r[0]), intFmt(r[1]), intFmt(r[2]), pctFmt(r[3]), pctFmt(r[4])].forEach(function (v, i) {
+        var td = tr.insertCell(); td.textContent = r[i] == null && i ? "" : v; td.className = i ? "num" : "mono";
+      });
+    });
+    var box = $("history-table"); box.textContent = "";
+    if (rows.length) box.appendChild(table); else box.textContent = "No samples in this range.";
+  }
+  function loadHistory() {
+    clearTimeout(historyTimer);
+    document.querySelectorAll(".chart").forEach(function (c) { c.classList.add("loading"); });
+    fetch("/api/history?hours=" + range).then(function (r) { return r.json(); }).then(function (data) {
+      if (!data.error) { history = data; renderHistory(); }
+    }).catch(function () {}).then(function () { historyTimer = setTimeout(loadHistory, 60000); });
+  }
+  document.querySelectorAll(".tab[data-range]").forEach(function (t) {
+    t.addEventListener("click", function () {
+      range = Number(t.dataset.range);
+      document.querySelectorAll(".tab[data-range]").forEach(function (o) { o.setAttribute("aria-pressed", o === t ? "true" : "false"); });
+      loadHistory();
+    });
+  });
+  $("history-details").addEventListener("toggle", function (e) { if (e.target.open && history) renderHistoryTable(); });
+  var resizeTimer = null;
+  window.addEventListener("resize", function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(renderHistory, 200); });
+  window.matchMedia("(prefers-color-scheme: light)").addEventListener("change", renderHistory);
+
+  // ---- Experiments ----------------------------------------------------------------------------------
+  function renderExperiments(data) {
+    var box = $("experiments");
+    box.textContent = "";
+    var rows = data.rows || [];
+    $("exp-note").textContent = "From " + fmt.format(data.lanes || 0) + " production and re-run lanes' results.json, grouped by the brief version each row records (an experiment's tag replaces it). " +
+      "Tried leaves out functions not reached or not yet run; pass is verified over tried. Minutes are what lanes wrote: the median for a verified function, and all minutes spent divided by the functions verified.";
+    if (!rows.length) { var p = document.createElement("p"); p.className = "empty"; p.textContent = "No lane results yet."; box.appendChild(p); return; }
+    var table = document.createElement("table");
+    var headRow = table.createTHead().insertRow();
+    [["Brief", "", "brief version or experiment tag"], ["Kind", "", "lane kind"], ["Lanes", "num", ""], ["Rows", "num", "functions listed in results.json"],
+     ["Tried", "num", "attempted: not reached and not yet run left out"], ["Verified", "num", ""], ["Pass", "num", "verified over tried"],
+     ["Median min", "num", "median minutes per verified function"], ["Min per verified", "num", "all minutes spent divided by functions verified"],
+     ["Deferred", "num", ""]].forEach(function (h) {
+      var th = document.createElement("th"); th.textContent = h[0]; th.className = h[1]; if (h[2]) th.title = h[2]; headRow.appendChild(th);
+    });
+    var body = table.createTBody();
+    rows.forEach(function (r) {
+      var tr = body.insertRow();
+      if (r.current) tr.className = "current";
+      var brief = tr.insertCell(), tag = document.createElement("span");
+      tag.className = "tag"; tag.textContent = r.brief; brief.appendChild(tag);
+      if (r.current) { var b = document.createElement("span"); b.className = "badge"; b.textContent = "current"; brief.appendChild(b); }
+      if (r.factor) { var f = document.createElement("div"); f.className = "note"; f.textContent = r.factor; brief.appendChild(f); }
+      tr.insertCell().textContent = String(r.kind || "").replace(" functions", "");
+      [r.lanes, r.functions, r.attempted, r.verified].forEach(function (v) { var td = tr.insertCell(); td.className = "num"; td.textContent = fmt.format(v); });
+      [[r.pass_rate == null ? "" : Math.round(100 * r.pass_rate) + "%"], [r.median_minutes == null ? "" : r.median_minutes.toFixed(1)],
+       [r.minutes_per_verified == null ? "" : r.minutes_per_verified.toFixed(1)], [fmt.format(r.deferred)]].forEach(function (v) {
+        var td = tr.insertCell(); td.className = "num"; td.textContent = v[0];
+      });
+    });
+    box.appendChild(table);
+  }
+  var expTimer = null;
+  function loadExperiments() {
+    clearTimeout(expTimer);
+    fetch("/api/experiments").then(function (r) { return r.json(); }).then(function (data) { if (!data.error) renderExperiments(data); })
+      .catch(function () {}).then(function () { expTimer = setTimeout(loadExperiments, 120000); });
+  }
+
   setInterval(freshness, 1000);
   load();
+  loadHistory();
+  loadExperiments();
 })();
 </script>
 </body>
