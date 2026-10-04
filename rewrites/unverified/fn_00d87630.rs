@@ -127,7 +127,9 @@ lf_checker_rt::export!(cdecl, rw_00d87630(obj: u32, a1: u32, a2: u32) -> u32 {
             wr16(obj + OBJ_INDEX, v);
         }
         let thresh = rdf(obj + OBJ_THRESH);
-        if !(bb(thresh) < bb(0.0)) {
+        // comiss+jb: the jump is taken for less-than AND unordered, so the
+        // fall-through (downstream) path needs an ordered >=, not !(a < b).
+        if bb(thresh) >= bb(0.0) {
             let mut frame_slot = 0u32;
             lf_checker_rt::callee_cdecl!(
                 CAL_DOWN6,

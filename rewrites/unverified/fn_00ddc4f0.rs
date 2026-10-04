@@ -22,12 +22,17 @@
 ///
 /// Edge cases, all matching the original exactly: an empty or short text
 /// (length 3 or less) gets no initial ellipsis; each loop pass ends the
-/// string one byte earlier and re-adds dots to taste (`...` while the
-/// remainder is longer than three bytes, fewer dots below that, re-terminated
-/// each time); a length that drops below zero ends the loop; a NaN on either
-/// side of the width comparison ends the loop too (unordered compares exit);
-/// the initial ellipsis stamp of a 4+ byte string overwrites the terminator,
-/// so the first installed buffer is unterminated, byte for byte as observed.
+/// string one byte earlier and re-adds dots (`...` kept while the remainder
+/// is longer than three bytes, otherwise two dots stamped at fixed offsets 1
+/// and 2 and the string re-terminated); a NaN on either side of the width
+/// comparison ends the loop (unordered compares exit); the initial ellipsis
+/// stamp of a 4+ byte string overwrites the terminator, so the first
+/// installed buffer is unterminated, byte for byte as observed.
+///
+/// Unlike its twin, this function has no bail-out for a shrinking length: it
+/// loops purely on the width comparison (unsigned length checks), so a width
+/// that never fits would walk the buffer down without end. In practice each
+/// pass narrows the text and the width follows.
 ///
 /// Original: thiscall, no stack arguments, no return value.
 lf_checker_rt::export!(thiscall, rw_00ddc4f0(this: u32) -> u32 {
@@ -53,6 +58,10 @@ lf_checker_rt::export!(thiscall, rw_00ddc4f0(this: u32) -> u32 {
         #[inline(always)]
         unsafe fn wr8(a: u32, v: u8) {
             unsafe { (a as *mut u8).write(v) }
+        }
+        #[inline(always)]
+        unsafe fn wr16(a: u32, v: u16) {
+            unsafe { (a as *mut u16).write_unaligned(v) }
         }
 
         let str_obj = rd32(this.wrapping_add(STR_MEMBER));
@@ -85,7 +94,7 @@ lf_checker_rt::export!(thiscall, rw_00ddc4f0(this: u32) -> u32 {
                 break;
             }
         }
-        if (len as i32) > SHORT_TEXT {
+        if len > SHORT_TEXT as u32 {
             wr8(buf.wrapping_add(len).wrapping_sub(2), DOT);
             wr8(buf.wrapping_add(len).wrapping_sub(1), DOT);
             wr8(buf.wrapping_add(len), DOT);
@@ -96,20 +105,12 @@ lf_checker_rt::export!(thiscall, rw_00ddc4f0(this: u32) -> u32 {
         let mut outer = this_width(this);
         let mut cur = len;
         while inner > outer {
-            if (cur as i32) < 0 {
-                break;
-            }
             wr8(buf.wrapping_add(cur), 0);
             cur = cur.wrapping_sub(1);
-            if (cur as i32) > SHORT_TEXT {
+            if cur > SHORT_TEXT as u32 {
                 wr8(buf.wrapping_add(cur).wrapping_sub(2), DOT);
             } else {
-                if (cur as i32) >= 0 {
-                    wr8(buf.wrapping_add(1), DOT);
-                }
-                if (cur as i32) >= 1 {
-                    wr8(buf.wrapping_add(2), DOT);
-                }
+                wr16(buf.wrapping_add(1), 0x2e2e);
                 wr8(buf.wrapping_add(cur).wrapping_add(1), 0);
             }
             set_text(str_obj, buf, 0);
