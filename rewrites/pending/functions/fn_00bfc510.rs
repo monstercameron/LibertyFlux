@@ -1,8 +1,5 @@
 // original: 0x00bfc510 copy_vec3_to_34
 //! rs20f19 @0xBFC510: copy the source vec3 into +0x34 (thiscall/1).
-
-use lf_k2_rt::{export};
-
 export!(thiscall, rw_rs20f19(this: *mut u8, src: *const u32) -> u32 {
     unsafe {
         let x = *src;

@@ -1,9 +1,6 @@
 // original: 0x00bfbfe0 forward_field40_copy_vec3
 //! rs20f6 @0xBFBFE0: forward field +0x40 with the first arg through the shared
 //! helper, then copy the vec3 at +0x34 to the destination (thiscall/2).
-
-use lf_k2_rt::{callee_cdecl, export};
-
 export!(thiscall, rw_rs20f6(this: *const u8, a1: u32, dst: *mut u32) -> u32 {
     unsafe {
         // Arg order: the original pushes the field first, so the incoming

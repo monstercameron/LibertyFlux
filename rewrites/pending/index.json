@@ -1305,6 +1305,15 @@
   "lane": "r-b87"
  },
  {
+  "address": "0x00650200",
+  "name": "rage::ptxSprite::vf14",
+  "kind": "function",
+  "file": "functions/fn_00650200.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b112"
+ },
+ {
   "address": "0x00684480",
   "name": "rage::crFrameDofFloat::vf6",
   "kind": "function",
@@ -4078,12 +4087,12 @@
  },
  {
   "address": "0x0089C7E0",
-  "name": "worker_call_is_nonzero",
+  "name": "fn_0089c7e0",
   "kind": "function",
   "file": "functions/fn_0089c7e0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-10"
+  "checker": "version 3",
+  "lane": "a-F03"
  },
  {
   "address": "0x0089CAA0",
@@ -8208,6 +8217,177 @@
   "lane": "a-08"
  },
  {
+  "address": "0x00924AA0",
+  "name": "input_item_init",
+  "kind": "function",
+  "file": "functions/fn_00924aa0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x00924C70",
+  "name": "input_item_create",
+  "kind": "function",
+  "file": "functions/fn_00924c70.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x00924D90",
+  "name": "input_active_check",
+  "kind": "function",
+  "file": "functions/fn_00924d90.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x00924DF0",
+  "name": "input_level_check",
+  "kind": "function",
+  "file": "functions/fn_00924df0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x00925290",
+  "name": "input_ready_check",
+  "kind": "function",
+  "file": "functions/fn_00925290.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x009253F0",
+  "name": "input_flag_classify",
+  "kind": "function",
+  "file": "functions/fn_009253f0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x00925B10",
+  "name": "input_slot_copy",
+  "kind": "function",
+  "file": "functions/fn_00925b10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x00925B60",
+  "name": "T_SetGlobalVar_1Arg<rage::grcRenderTarget*>::vf1",
+  "kind": "function",
+  "file": "functions/fn_00925b60.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x00925B70",
+  "name": "T_SetGlobalVar_1Arg<rage::Matrix44>::vf1",
+  "kind": "function",
+  "file": "functions/fn_00925b70.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x00925B90",
+  "name": "T_SetGlobalVar_1Arg<rage::Vector4>::vf1",
+  "kind": "function",
+  "file": "functions/fn_00925b90.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x00925BB0",
+  "name": "T_SetShaderGroupVar_1Arg<rage::Matrix44>::vf1",
+  "kind": "function",
+  "file": "functions/fn_00925bb0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x00925BC0",
+  "name": "T_SetShaderGroupVar_1Arg<rage::Vector4>::vf1",
+  "kind": "function",
+  "file": "functions/fn_00925bc0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x00925DB0",
+  "name": "input_lookup",
+  "kind": "function",
+  "file": "functions/fn_00925db0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x00925E50",
+  "name": "input_size_from_count",
+  "kind": "function",
+  "file": "functions/fn_00925e50.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x00925E70",
+  "name": "input_shifted_limit",
+  "kind": "function",
+  "file": "functions/fn_00925e70.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x009265A0",
+  "name": "input_cell_reset",
+  "kind": "function",
+  "file": "functions/fn_009265a0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x00926B20",
+  "name": "input_point_store",
+  "kind": "function",
+  "file": "functions/fn_00926b20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x00926BB0",
+  "name": "input_slot_touch",
+  "kind": "function",
+  "file": "functions/fn_00926bb0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
+  "address": "0x009271F0",
+  "name": "input_float_publish",
+  "kind": "function",
+  "file": "functions/fn_009271f0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s154"
+ },
+ {
   "address": "0x009341F0",
   "name": "alloc_init_slots_a",
   "kind": "function",
@@ -8712,6 +8892,15 @@
   "lane": "a-16"
  },
  {
+  "address": "0x0094B640",
+  "name": "ScriptHandle_ToIndex",
+  "kind": "function",
+  "file": "functions/fn_0094b640.rs",
+  "trials": 1200,
+  "checker": "version 3",
+  "lane": "r-b96"
+ },
+ {
   "address": "0x0094B8C0",
   "name": "obj_slot_ptr",
   "kind": "function",
@@ -8719,6 +8908,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-16"
+ },
+ {
+  "address": "0x0094B8E0",
+  "name": "Script_RegisterHandle",
+  "kind": "function",
+  "file": "functions/fn_0094b8e0.rs",
+  "trials": 1200,
+  "checker": "version 3",
+  "lane": "r-b96"
  },
  {
   "address": "0x0094BCA0",
@@ -15471,6 +15669,24 @@
   "lane": "r-s127"
  },
  {
+  "address": "0x00AB9730",
+  "name": "validated_byte_lookup",
+  "kind": "function",
+  "file": "functions/fn_00ab9730.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s153"
+ },
+ {
+  "address": "0x00AB9760",
+  "name": "validated_byte_lookup_s9",
+  "kind": "function",
+  "file": "functions/fn_00ab9760.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s153"
+ },
+ {
   "address": "0x00AB9840",
   "name": "slot_field_select",
   "kind": "function",
@@ -15478,6 +15694,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-18"
+ },
+ {
+  "address": "0x00AB9860",
+  "name": "two_slot_search",
+  "kind": "function",
+  "file": "functions/fn_00ab9860.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s153"
  },
  {
   "address": "0x00AB9890",
@@ -15552,6 +15777,24 @@
   "lane": "a-18"
  },
  {
+  "address": "0x00AB9B70",
+  "name": "format_indexed_byte",
+  "kind": "function",
+  "file": "functions/fn_00ab9b70.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s153"
+ },
+ {
+  "address": "0x00AB9FC0",
+  "name": "format_indexed_byte_shifted",
+  "kind": "function",
+  "file": "functions/fn_00ab9fc0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s153"
+ },
+ {
   "address": "0x00ABA020",
   "name": "clamped_table_lookup",
   "kind": "function",
@@ -15568,6 +15811,42 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-18"
+ },
+ {
+  "address": "0x00ABA0D0",
+  "name": "GB_CAP_USE",
+  "kind": "function",
+  "file": "functions/fn_00aba0d0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s153"
+ },
+ {
+  "address": "0x00ABA180",
+  "name": "dual_lookup_compare",
+  "kind": "function",
+  "file": "functions/fn_00aba180.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s153"
+ },
+ {
+  "address": "0x00ABA9B0",
+  "name": "resolve_and_emit",
+  "kind": "function",
+  "file": "functions/fn_00aba9b0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s153"
+ },
+ {
+  "address": "0x00ABB9D0",
+  "name": "construct_and_resolve",
+  "kind": "function",
+  "file": "functions/fn_00abb9d0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s153"
  },
  {
   "address": "0x00ABBB00",
@@ -15595,6 +15874,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-18"
+ },
+ {
+  "address": "0x00ABBDA0",
+  "name": "range_split_call",
+  "kind": "function",
+  "file": "functions/fn_00abbda0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s153"
+ },
+ {
+  "address": "0x00ABBF00",
+  "name": "sift_down_range",
+  "kind": "function",
+  "file": "functions/fn_00abbf00.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s153"
  },
  {
   "address": "0x00ABC170",
@@ -16669,12 +16966,12 @@
  },
  {
   "address": "0x00B24140",
-  "name": "attach_forward",
+  "name": "s08_b24140",
   "kind": "function",
   "file": "functions/fn_00b24140.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-08"
+  "checker": "version 3",
+  "lane": "a-F03"
  },
  {
   "address": "0x00B24580",
@@ -37990,48 +38287,48 @@
  },
  {
   "address": "0x00BFA7A0",
-  "name": "header_init_kind49_tag0d",
+  "name": "rs20f0",
   "kind": "function",
   "file": "functions/fn_00bfa7a0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-10"
+  "checker": "version 3",
+  "lane": "a-F03"
  },
  {
   "address": "0x00BFA7D0",
-  "name": "composite_init_marker47",
+  "name": "rs20f1",
   "kind": "function",
   "file": "functions/fn_00bfa7d0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-10"
+  "checker": "version 3",
+  "lane": "a-F03"
  },
  {
   "address": "0x00BFA830",
-  "name": "header_init_kind48_tag0f",
+  "name": "rs20f2",
   "kind": "function",
   "file": "functions/fn_00bfa830.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-10"
+  "checker": "version 3",
+  "lane": "a-F03"
  },
  {
   "address": "0x00BFA860",
-  "name": "header_init_kind4b_tag0f",
+  "name": "rs20f3",
   "kind": "function",
   "file": "functions/fn_00bfa860.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-10"
+  "checker": "version 3",
+  "lane": "a-F03"
  },
  {
   "address": "0x00BFA890",
-  "name": "header_init_kind4a_sub_tag0e",
+  "name": "rs20f4",
   "kind": "function",
   "file": "functions/fn_00bfa890.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-10"
+  "checker": "version 3",
+  "lane": "a-F03"
  },
  {
   "address": "0x00BFA8C0",
@@ -38044,21 +38341,21 @@
  },
  {
   "address": "0x00BFBFE0",
-  "name": "forward_field40_copy_vec3",
+  "name": "rs20f6",
   "kind": "function",
   "file": "functions/fn_00bfbfe0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-10"
+  "checker": "version 3",
+  "lane": "a-F03"
  },
  {
   "address": "0x00BFC040",
-  "name": "copy_vec3_from_34",
+  "name": "rs20f8",
   "kind": "function",
   "file": "functions/fn_00bfc040.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-10"
+  "checker": "version 3",
+  "lane": "a-F03"
  },
  {
   "address": "0x00BFC060",
@@ -38071,39 +38368,66 @@
  },
  {
   "address": "0x00BFC0B0",
-  "name": "forward_field20",
+  "name": "rs20f10",
   "kind": "function",
   "file": "functions/fn_00bfc0b0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-10"
+  "checker": "version 3",
+  "lane": "a-F03"
  },
  {
   "address": "0x00BFC0D0",
-  "name": "forward_field28",
+  "name": "rs20f11",
   "kind": "function",
   "file": "functions/fn_00bfc0d0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-10"
+  "checker": "version 3",
+  "lane": "a-F03"
  },
  {
   "address": "0x00BFC1C0",
-  "name": "full_init_11arg_tag0b",
+  "name": "rs20f12",
   "kind": "function",
   "file": "functions/fn_00bfc1c0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-10"
+  "checker": "version 3",
+  "lane": "a-F03"
+ },
+ {
+  "address": "0x00BFC360",
+  "name": "rs20f14",
+  "kind": "function",
+  "file": "functions/fn_00bfc360.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "a-F03"
+ },
+ {
+  "address": "0x00BFC3C0",
+  "name": "rs20f15",
+  "kind": "function",
+  "file": "functions/fn_00bfc3c0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "a-F03"
+ },
+ {
+  "address": "0x00BFC410",
+  "name": "rs20f16",
+  "kind": "function",
+  "file": "functions/fn_00bfc410.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "a-F03"
  },
  {
   "address": "0x00BFC510",
-  "name": "copy_vec3_to_34",
+  "name": "rs20f19",
   "kind": "function",
   "file": "functions/fn_00bfc510.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "a-10"
+  "checker": "version 3",
+  "lane": "a-F03"
  },
  {
   "address": "0x00C0F2B0",
@@ -41182,6 +41506,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b95"
+ },
+ {
+  "address": "0x00DF68E0",
+  "name": "saved_clip_name_lookup",
+  "kind": "function",
+  "file": "functions/fn_00df68e0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b106"
+ },
+ {
+  "address": "0x00DF7350",
+  "name": "UIFileViewer::vf100",
+  "kind": "function",
+  "file": "functions/fn_00df7350.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b106"
  },
  {
   "address": "0x00DF76A0",
