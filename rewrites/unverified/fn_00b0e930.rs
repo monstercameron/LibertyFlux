@@ -226,10 +226,13 @@ lf_checker_rt::export!(cdecl, rw_00B0E930(arg: u32) -> u32 {
         let base = rd32(answer + ANS_POS);
         let pos = if base != 0 { base.wrapping_add(0x30) } else { answer + ANS_BASE };
         let idw = rd16sx(answer + ANS_IDW);
+        // The submit target is an absolute address in the original and is
+        // relocated by the loader like any other image address.
+        let submit_this = lf_checker_rt::relocated(0x018e_cfb0);
         lf_checker_rt::callee_thiscall!(
             CALLEE_SUBMIT,
             u32,
-            0x018e_cfb0,
+            submit_this,
             edi,
             pos,
             idw,

@@ -5,14 +5,15 @@
 ///
 /// The object's virtual slot 1 (double indirection through `this`) yields
 /// its tag. If the tag differs from `key`, or `out` is null, the result is
-/// 0 and nothing is written. Otherwise 0xfdef54 is stored to `*out` and
-/// `out` is returned.
+/// 0 and nothing is written. Otherwise the tag descriptor address (file VA
+/// 0xfdef54, relocated at load) is stored to `*out` and `out` is
+/// returned.
 ///
 /// Calling convention: thiscall with two stack words (`this` in ECX).
 
 lf_checker_rt::export!(thiscall, rw_00587000(this: u32, out: u32, key: u32) -> u32 {
     unsafe {
-        const TAG_CONST: u32 = 0xfdef54;
+        const TAG_FILE_VA: u32 = 0xfdef54;
         /// Byte offset of the tag getter in the object's vtable.
         const VTABLE_SLOT: u32 = 4;
         let vtable = (this as *const u32).read_unaligned();
@@ -25,7 +26,7 @@ lf_checker_rt::export!(thiscall, rw_00587000(this: u32, out: u32, key: u32) -> u
         if out == 0 {
             return 0;
         }
-        (out as *mut u32).write_unaligned(TAG_CONST);
+        (out as *mut u32).write_unaligned(lf_checker_rt::relocated(TAG_FILE_VA));
         out
     }
 });

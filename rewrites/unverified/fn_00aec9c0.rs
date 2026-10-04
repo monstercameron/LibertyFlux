@@ -101,8 +101,6 @@ lf_checker_rt::export!(thiscall, rw_00aec9c0(this: u32, arg: u32) -> u32 {
         bind(worker, arg.wrapping_add(ARGBASE), 1, 0);
         ((worker + WOBJ_FLAGS) as *mut u32)
             .write_unaligned(rd32(worker + WOBJ_FLAGS) | 0x0000_0100);
-        // Scratch slot: the row loop's table object, else the fill (0).
-        let mut slot12 = 0u32;
         if ebp == 0 {
             ((worker + WOBJ_TAG) as *mut u8).write(2);
             lf_checker_rt::callee_cdecl!(27, u32, worker, 0u32);
@@ -180,7 +178,6 @@ lf_checker_rt::export!(thiscall, rw_00aec9c0(this: u32, arg: u32) -> u32 {
                     lf_checker_rt::relocated(ROW_TABLE)
                         .wrapping_add((tidx as i32 as u32).wrapping_mul(4)),
                 );
-                slot12 = tobj;
                 let mut k = 0u32;
                 let mut broke = 0u32;
                 let mut did_break = false;
@@ -281,8 +278,10 @@ lf_checker_rt::export!(thiscall, rw_00aec9c0(this: u32, arg: u32) -> u32 {
             };
             let a31: u32 = lf_checker_rt::callee_thiscall!(31, u32, qc, 0x10u32);
             (a31 as *mut u32).write_unaligned(worker);
-            (a31.wrapping_add(4) as *mut u32).write_unaligned(slot12);
+            // The second word is the untouched scratch slot ([S-4]), which
+            // keeps the defined stack fill (0) on every path.
+            (a31.wrapping_add(4) as *mut u32).write_unaligned(0);
         }
-        lf_checker_rt::callee_thiscall!(32, u32, slot12)
+        lf_checker_rt::callee_thiscall!(32, u32, 0u32)
     }
 });
