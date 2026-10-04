@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s207">The checker stub clobbers ECX and fails every constructor that reuses this</a></li>
       <li><a href="#production-b139">Production batch: a flag leak in a return value and relocated immediates</a></li>
       <li><a href="#checker-v4">Checker version 4: lane fixes folded back, and what version 3 still missed</a></li>
       <li><a href="#production-s202">Checker stubs must preserve the caller's registers</a></li>
@@ -310,6 +311,29 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s207">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>The checker stub clobbers ECX and fails every constructor that reuses this</h2>
+      <p><span class="evidence verified">Verified</span> A production batch of twenty leaderboard-table constructors could not be verified because the checker's callee stub uses the ECX and EDX registers as scratch and never restores them, so the original crashes on its next instruction while the rewrite runs fine.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty small network-subsystem functions in Rust and prove each one identical to the original with the checker. The twenty turned out to be one template repeated: each calls a shared base constructor, installs two per-class vtable pointers, sets a flag bit, resets a counter, clears five state words, and returns the object pointer.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Every trial on the stock checker ended with the original crashed and the rewrite fine, on all twenty functions. The probe trail was short:</p>
+      <ul>
+      <li>The trial input and the stub's own call log both show the object pointer arriving correctly in ECX.</li>
+      <li>The very next original instruction then faults writing to address zero.</li>
+      <li>The stub source shows why: it spills the entry ECX and EDX values, reuses both registers as scratch while logging and answering, and returns without restoring them. ECX is left holding zero (the answer-sequence step), which is exactly the fault address observed.</li>
+      </ul>
+      <p><span class="evidence">Inferred</span> The real callee preserves ECX in practice, since the original code stakes its next seven stores on it, so a faithful stub must preserve it too. Earlier proofs never caught this because none of their callers reuse ECX or EDX after a call. The likely blast radius is every constructor that calls a base constructor and then touches the object, plus any function reusing those registers after a call.</p>
+      <p><span class="evidence verified">Verified</span> A private worker copy that restores ECX on return (and EDX except when it carries a 64-bit return value) passes all twenty contracts with zero failures over twenty thousand trials, still fails a planted wrong-vtable mutant on the first trials, and still behaves on the regression probes including the by-design-negative one. Nothing compared was changed. Per project rules these are recorded as deferred, not passes.</p>
+      <h3>What was decided or recommended</h3>
+      <p>All twenty functions are deferred with reason checker gap, with finished contracts and rewrites kept for re-run. The recommended fold-back is the register restore in the stub emitter, one of this lane's contracts promoted to the regression suite as the preservation test, and a re-run of the twenty contracts unchanged.</p>
+      <h3>How to reproduce it</h3>
+      <p>Contract any constructor-shaped function that uses its object pointer after a direct intercepted call, with the object pointer in ECX and the call site patched to a recorder stub. On the stock worker the original side faults writing to address zero on every trial while the rewrite side completes. On a worker whose stub reloads the spilled ECX and EDX before returning, both sides complete and compare normally.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first suspicion was my own contract: a zero object pointer smells like a bad register setup. The stub's own log showing the correct entry value ruled that out and pointed at the stub itself. Two earlier self-inflicted probe errors (a double-counted relocation base and a wrong immediate offset) briefly muddied the relocation check; both were corrected and both vtable addresses are confirmed relocated.</p>
+      </article>
 
       <article class="entry" id="production-b139">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Production batch: a flag leak in a return value and relocated immediates",
+    "title": "Devlog: The checker stub clobbers ECX and fails every constructor that reuses this",
     "commit": null,
+    "summary": "Findings from the r-s207 lane.",
+    "changes": [
+      "New devlog entry: The checker stub clobbers ECX and fails every constructor that reuses this.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Production batch: a flag leak in a return value and relocated immediates",
+    "commit": "39e5b298bf501a2852dd061caf796acd99db1462",
     "summary": "Findings from the r-b139 lane.",
     "changes": [
       "New devlog entry: Production batch: a flag leak in a return value and relocated immediates.",
