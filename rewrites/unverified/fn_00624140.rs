@@ -289,14 +289,14 @@ lf_checker_rt::export!(thiscall, rw_00624140(this: u32, _arg0: u32, obj: u32) ->
                     continue;
                 }
                 lf_checker_rt::callee_thiscall!(
-                    SW_FAST, u32, 0, rd32(rec.wrapping_add(0x3c)));
+                    SW_FAST, u32, 0, rec.wrapping_add(0x3c));
                 let s: u32 = lf_checker_rt::callee_thiscall!(
                     SW_SWEEP, u32, node.wrapping_add(0x48));
                 if s & 0xff == 0 {
                     continue;
                 }
                 lf_checker_rt::callee_thiscall!(
-                    SW_FAST, u32, node.wrapping_add(0x58), rd32(rec.wrapping_add(0x3c)));
+                    SW_FAST, u32, node.wrapping_add(0x58), rec.wrapping_add(0x3c));
                 acc = 0;
             }
             return 0;

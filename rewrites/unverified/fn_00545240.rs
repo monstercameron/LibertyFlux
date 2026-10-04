@@ -12,10 +12,12 @@
 /// Original: 0x00545240 (thiscall, object in ECX plus two stack words).
 lf_checker_rt::export!(thiscall, rw_00545240(this: u32, out: u32, id: u32) -> u32 {
     unsafe {
-        /// Board schema descriptor stored at OUT. This is the raw immediate
-        /// from the original's store instruction; it has no reloc entry, so
-        /// the original stores the value as-is.
-        const SCHEMA_DESC: u32 = 0x00fd0d54;
+        /// File VA of the board's schema descriptor stored at OUT. The
+        /// original's store immediate carries a reloc entry (proven by the
+        /// checker: the worker maps the image away from its preferred base
+        /// and the original stores the base-adjusted value), so derive it
+        /// with relocated().
+        const SCHEMA_DESC_FILE_VA: u32 = 0x00fd0d54;
         /// Vtable slot of the id query: the second entry.
         const ID_QUERY_SLOT: u32 = 4;
 
@@ -30,7 +32,7 @@ lf_checker_rt::export!(thiscall, rw_00545240(this: u32, out: u32, id: u32) -> u3
         if out == 0 {
             return 0;
         }
-        (out as *mut u32).write_unaligned(SCHEMA_DESC);
+        (out as *mut u32).write_unaligned(lf_checker_rt::relocated(SCHEMA_DESC_FILE_VA));
         out
     }
 });
