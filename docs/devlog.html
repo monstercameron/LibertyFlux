@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#naming-08">Naming a run of leaderboard schema methods</a></li>
       <li><a href="#naming-07">Naming the leaderboard factory run: stub shape, dispatch table, and boundary traps</a></li>
       <li><a href="#production-b184">Four input-UI functions: three verified, and a checker blind spot found with mutants</a></li>
       <li><a href="#naming-06">Naming a record-and-effects batch: three evidence traps</a></li>
@@ -342,6 +343,42 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="naming-08">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Naming a run of leaderboard schema methods</h2>
+      <p><span class="evidence verified">Verified</span> A batch of one hundred and fifty consecutive unnamed functions turned out to be nine small virtual methods repeated once per racing leaderboard, and all of them could be named from their code: name and id getters, column index, id, size and kind lookups, two cross-list mappers, and a row packing routine.</p>
+      <h3>What was asked</h3>
+      <p>Propose a descriptive name for each of one hundred and fifty consecutive unnamed game functions, working out what the group is about first and then naming each function, with a confidence per name.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The whole batch belongs to one template family: per-board leaderboard info objects for eighteen ranked racing leaderboards. Each board carries the same nine methods, and every copy of a given method is the same code except for a board number constant.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Method</th><th role="columnheader">Behaviour</th><th role="columnheader">Name given</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><th role="columnheader">Slot 3</th><td role="cell" data-label="Behaviour">Returns this board's leaderboard name string</td><td role="cell" data-label="Name given">get_board_name</td></tr>
+      <tr role="row"><th role="columnheader">Slot 4</th><td role="cell" data-label="Behaviour">Returns the board number its siblings use</td><td role="cell" data-label="Name given">get_board_id</td></tr>
+      <tr role="row"><th role="columnheader">Slot 6</th><td role="cell" data-label="Behaviour">Finds a column id in the board list, returns index or minus one</td><td role="cell" data-label="Name given">find_column_index</td></tr>
+      <tr role="row"><th role="columnheader">Slot 7</th><td role="cell" data-label="Behaviour">Returns the column id at an index, or minus one</td><td role="cell" data-label="Name given">get_column_id</td></tr>
+      <tr role="row"><th role="columnheader">Slot 8</th><td role="cell" data-label="Behaviour">Returns the column byte width, four or eight, from its type</td><td role="cell" data-label="Name given">get_column_size</td></tr>
+      <tr role="row"><th role="columnheader">Slot 9</th><td role="cell" data-label="Behaviour">Maps the column type to a small kind code, or minus one</td><td role="cell" data-label="Name given">get_column_kind</td></tr>
+      <tr role="row"><th role="columnheader">Slot 12</th><td role="cell" data-label="Behaviour">Maps a column position through two lists to a second-list index</td><td role="cell" data-label="Name given">get_mapped_column_index</td></tr>
+      <tr role="row"><th role="columnheader">Slot 13</th><td role="cell" data-label="Behaviour">Finds a column id in one list, returns the paired value</td><td role="cell" data-label="Name given">map_column_id</td></tr>
+      <tr role="row"><th role="columnheader">Slot 14</th><td role="cell" data-label="Behaviour">Builds a row buffer over seven columns with values and presence bits</td><td role="cell" data-label="Name given">pack_row</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Thirty-three names are high confidence (the two getters, pinned by a string and by sibling use of the constant); the rest are medium (behaviour read in full, wording mine). Two methods shared across all boards that supply the column lists and type codes sit in the encrypted code region, so their exact contracts stay unknown.</p>
+      <p><span class="evidence verified">Verified</span> One board out of eighteen passes schema number one instead of its own number in all seven of its schema methods, so it silently shares another leaderboard's column layout. Deliberate or a template bug is unknown.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Subsystem for the batch is online leaderboards, not the unrelated cluster label the inventory carried.</li>
+      <li>The next naming lane covering this family can reuse the nine names above per board; only the board number constant and the name string change.</li>
+      <li>A lane with a memory dump from the running game should resolve the five column type codes and the schema list layout, which would confirm the kind, mapper and row packing names.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Read the executable through the mapped image rather than the raw file, disassemble one copy of each vtable slot, and check each copy against its board's virtual table: the table order confirms which unnamed entries are real methods and which board each belongs to. Comparing code skeletons across boards then shows that all copies match except constants, which makes the odd board stand out immediately.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>A first string scan reported junk from jump table bytes as if they were text references; requiring pointers to land in string data removed them. Two boards have no id getter in the cleartext region, and two boards keep their kind lookup outside this batch's address range, which briefly looked like missing methods until the virtual tables showed where each one really points.</p>
+      </article>
 
       <article class="entry" id="naming-07">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
