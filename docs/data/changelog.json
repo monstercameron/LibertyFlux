@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Rust does not pin floating-point operand order, and NaN payloads notice",
+    "title": "Devlog: A vector-register gap in the checker and a stub pattern that worked",
     "commit": null,
+    "summary": "Findings from the r-b24 lane.",
+    "changes": [
+      "New devlog entry: A vector-register gap in the checker and a stub pattern that worked.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Rust does not pin floating-point operand order, and NaN payloads notice",
+    "commit": "e8e08dd3951339d1436fc5905046c9f4a96a3164",
     "summary": "Findings from the r-b16 lane.",
     "changes": [
       "New devlog entry: Rust does not pin floating-point operand order, and NaN payloads notice.",

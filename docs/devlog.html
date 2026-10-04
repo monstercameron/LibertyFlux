@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b24">A vector-register gap in the checker and a stub pattern that worked</a></li>
       <li><a href="#production-b16">Rust does not pin floating-point operand order, and NaN payloads notice</a></li>
       <li><a href="#rerun-12">Re-run batch a-12: the second checker caught a miscompiled rewrite the first one passed</a></li>
       <li><a href="#production-n100">Tail-jump checks fail for thunks that forward stack arguments</a></li>
@@ -244,6 +245,35 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b24">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A vector-register gap in the checker and a stub pattern that worked</h2>
+      <p>Two audio functions verified first try at one thousand trials each, and the third exposed a checker gap worth knowing: a callee that takes two vector-register inputs cannot be checked, because the checker observes the first vector register only. A separate stubbing pattern, one stub identity per call site, verified nine calls to one helper with almost no loss.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite three neighbouring audio functions in Rust and prove each rewrite behaves identically to the original with the version two checker: one large signal-processing mix, one mid-size environment-sound method with seven outgoing calls, and one mid-size music initialiser with ten outgoing calls, nine of them to a single helper.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The environment-sound method and the music initialiser both passed one thousand trials with zero failures and every outgoing call observed on both sides.</p>
+      <p><span class="evidence verified">Verified</span> The large mix defers on a structural gap. Its double-precision math helper receives two live vector-register inputs, but the checker logs and transports the first vector register only. The rewrite cannot even express the second input, and in this function the observed register holds a loop-invariant constant, so comparing it checks nothing per trial. A rewrite computing the second input wrongly would still pass. This is the second-register analogue of the already documented x87-argument block.</p>
+      <p><span class="evidence verified">Verified</span> The same large function is slightly longer than the inventory says: its epilogues, including a deliberate null-write trap path and a shared return sequence, sit past the listed end, and the gap before the next function holds a tiny table-lookup helper.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Function</th><th role="columnheader">Calls</th><th role="columnheader">Outcome</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Environment-sound method</td><td role="cell" data-label="Calls">7</td><td role="cell" data-label="Outcome">verified, 1000/1000</td></tr>
+      <tr role="row"><td role="cell">Music initialiser</td><td role="cell" data-label="Calls">10</td><td role="cell" data-label="Outcome">verified, 1000/1000</td></tr>
+      <tr role="row"><td role="cell">Signal-processing mix</td><td role="cell" data-label="Calls">3</td><td role="cell" data-label="Outcome">deferred, checker gap</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>The checker needs second-vector-register call-argument logging plus a rewrite-side transport mirroring the existing first-register transport before this class of function can be verified. Until then, lanes should treat any callee with a live second vector input as unverifiable rather than writing a weak contract around it.</p>
+      <p>For repeated calls to one helper, declare one stub identity per call site instead of sharing one. That keeps full parameter snapshots everywhere except the sites a stack address forces narrow, and it passed on the first attempt here.</p>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble the three audio functions with capstone, confirm the large mix passes a computed value in the second vector register to its math helper immediately before each of its two call sites, and confirm in the worker source that only the first vector register is logged at calls. Build the two smaller rewrites with per-site stub identities, snapshot the shared parameter block, skip its address, and run one thousand trials.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Manual address arithmetic on the stack frame slipped twice during analysis and would have corrupted the parameter block layout; both slips were caught by rechecking against the disassembly before building, and the rewrite then passed untouched. A finished checker run left a worker holding the rewrite library so the next build failed; renaming the library aside and rebuilding, without touching any worker, is the established fix. The batch order was deliberately broken, smallest-certain work first, so the two verifiable functions banked before time ran out; the report says so plainly.</p>
+      </article>
 
       <article class="entry" id="production-b16">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
