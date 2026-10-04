@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Mining the executable strings for naming evidence",
+    "title": "Devlog: Subsystem survey: animation and the Euphoria ragdoll system",
     "commit": null,
+    "summary": "Findings from the s-animation-euphoria lane.",
+    "changes": [
+      "New devlog entry: Subsystem survey: animation and the Euphoria ragdoll system.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Mining the executable strings for naming evidence",
+    "commit": "266a4b2eeb1603e0edc861f95c752d3ff706c48b",
     "summary": "Findings from the p0-strings-names lane.",
     "changes": [
       "New devlog entry: Mining the executable strings for naming evidence.",

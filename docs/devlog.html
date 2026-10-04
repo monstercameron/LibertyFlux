@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#subsystem-animation-euphoria">Subsystem survey: animation and the Euphoria ragdoll system</a></li>
       <li><a href="#strings-names">Mining the executable strings for naming evidence</a></li>
       <li><a href="#renderer-survey">Renderer survey: what the executable and shader files reveal</a></li>
       <li><a href="#pointer-tables">Pointer tables: the functions calls alone cannot reach</a></li>
@@ -72,6 +73,33 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="subsystem-animation-euphoria">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Subsystem survey: animation and the Euphoria ragdoll system</h2>
+      <p>The animation subsystem is large, mostly readable, and cleanly layered: a codec layer for compressed clips, a motion-tree composer with worker threads, a game layer that plays named animations through tasks, and a statically linked Euphoria integration with eighteen named behaviours. Nearly all of its code sits outside the encrypted region.</p>
+      <h3>What was asked</h3>
+      <p>Survey one engine subsystem working directly on the executable: skeletons, clip playback and blending, inverse kinematics, the Euphoria middleware and its integration, ragdolls, and the hand-off between animation and physics. Deliver class, string, and code-cluster inventories plus rewrite notes.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The survey found about two hundred animation-related classes out of roughly thirty-seven hundred runtime type records in the executable, with just over two hundred virtual tables and around nine hundred distinct method addresses.</p>
+      <ul>
+      <li><span class="evidence verified">Verified</span> Euphoria arrives as a statically linked framework under an internal ART namespace, with an engine root, a per-character instance, a physics-side instance, end-effector drivers, and eighteen behaviour controllers with descriptive names covering balance, falling, impacts, injury reactions, grabbing, head look, and arm gestures.</li>
+      <li><span class="evidence verified">Verified</span> Animation clips are stored as compressed per-track channels with a family of about fifteen codec variants over floats, integers, booleans, quaternions, and vectors, evaluated through a motion tree of blend, filter, mirror, and frame nodes.</li>
+      <li><span class="evidence verified">Verified</span> The game drives animation through script-visible task types that run named, dictionary, timed, and script animations, plus dedicated fall, get-up, death, injury, and balance tasks, and a ragdoll request event type.</li>
+      <li><span class="evidence verified">Verified</span> Error and debug text shows animations are looked up by dictionary and id pairs, ragdoll state is guarded with explicit failure messages, blending exposes speed and amount parameters, and Euphoria data lives under its own asset path.</li>
+      <li><span class="evidence verified">Verified</span> Code references cluster into about ninety tight groups spanning roughly one hundred eighty kilobytes, plus a looser view of about fifty groups spanning roughly five hundred kilobytes. Two apparent clusters turned out to be data embedded in the code section rather than code.</li>
+      <li><span class="evidence verified">Verified</span> The only operating system functions referenced from animation code regions are thread synchronisation primitives, matching a named scheduler that evaluates motion trees on worker threads. There is no Euphoria dynamic library; the middleware is linked directly into the executable.</li>
+      <li><span class="evidence">Inferred</span> The subsystem holds a few hundred functions and a few hundred kilobytes of code, with about nine in ten method addresses outside the encrypted region.</li>
+      <li><span class="evidence">Inferred</span> No runtime type record exists for the skeleton itself or for the core blender, so both are probably plain data or non-polymorphic types; likewise there are no message classes under the expected middleware messaging name, so the script-side message wrapper must live above the ART interface.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <p><span class="evidence">Inferred</span> A rewrite should proceed bottom-up: channel codecs first, then frame filters and bone masks, then motion-tree nodes and the composer, then the clip player and task glue, with the Euphoria behaviour layer and the physics hand-off last as the hardest part. The codecs, filters, and blend math are pure buffer functions that can be checked in a CPU emulator in isolation, while scheduling, tasks, ragdoll transitions, and anything streamed needs the running game.</p>
+      <p><span class="evidence verified">Verified</span> Public bug reports confirm the physics and ragdoll simulation assume a narrow frame-rate range and break above it, so the rewrite must pin down timestep handling early rather than treating it as a detail.</p>
+      <h3>How to reproduce it</h3>
+      <p>Parse the executable's runtime type records and relocation table with standard binary tooling, filter class names by animation and middleware keywords, expand one round through inheritance, find virtual tables by scanning data sections for hierarchy pointers, and cluster code references found at relocation positions in the unencrypted code only. Capstone spot checks at virtual table targets confirm real function starts. Full class, string, and cluster inventories are kept as data files with the survey.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The system symbol decoder returned garbled output for runtime type names, so a small hand-written pretty printer was used instead. One analysis run died early when its output was piped through a truncating pager and had to be rerun. Broad keywords swept particle-system and video strings into the results and had to be excluded by hand. Import attribution picked up unrelated one-off system calls from shared utility code overlapping the clusters. The expected middleware messaging classes do not exist in the binary, which cost a search round before the real interface namespace was identified.</p>
+      </article>
 
       <article class="entry" id="strings-names">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
