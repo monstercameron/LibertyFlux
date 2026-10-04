@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: Checker stubs must preserve the caller's registers",
+    "commit": null,
+    "summary": "Findings from the r-s202 lane.",
+    "changes": [
+      "New devlog entry: Checker stubs must preserve the caller's registers.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 40 more functions pass the checker (5929 in total)",
     "commit": "bd4dca14f04b0c68ce17a7d9a5b9b1cbb21e4379",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

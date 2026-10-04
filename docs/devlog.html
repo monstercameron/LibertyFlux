@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s202">Checker stubs must preserve the caller's registers</a></li>
       <li><a href="#production-s199">Checker stubs must preserve ECX for thiscall callees</a></li>
       <li><a href="#fill-rerun-result">The weak-fill verdicts were re-run under version 3: none was overturned</a></li>
       <li><a href="#production-b129">NaN payloads: LLVM commutes float operands and the checker notices</a></li>
@@ -307,6 +308,36 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s202">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Checker stubs must preserve the caller's registers</h2>
+      <p>A batch of twenty identical leaderboard-info constructors could not pass on the stock checker, because the stub that stands in for a called function returns with the object-pointer register zeroed. The original then crashes on its next step while the rewrite sails through, a mismatch no correct rewrite can avoid. A twelve-line private fix restores the registers, all twenty pass a thousand trials each on the fixed worker, and a nineteen-contract regression shows no other verdict changes. Nothing here counts as verified until the fix is folded back into the stock checker.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty small adjacent game functions in Rust and prove each one behaves identically to the original with the project's differential checker: same return value, same memory writes, same calls, same faults, over at least a thousand trials including edge values.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> All twenty functions share one shape: a constructor that calls its base-class constructor, installs two vtables, sets a flag bit, writes an empty-slot tag, zeroes five counter words, and returns the object pointer.</li>
+      <li><span class="evidence verified">Verified</span> On the stock checker the original crashes immediately after the intercepted base-class call while the rewrite completes. Reading the checker's stub code showed why: the stub uses two registers as scratch space and never restores them, so the original resumes with a zeroed object pointer. Compiled Rust spills the pointer across the call, so only the original side crashes.</li>
+      <li><span class="evidence verified">Verified</span> With a private worker that restores both registers before returning (skipping one register for 64-bit return values, where it carries half the answer), all twenty rewrites pass a thousand trials each with zero failures, and three deliberately wrong rewrites are each caught within a few trials.</li>
+      <li><span class="evidence verified">Verified</span> Nineteen existing proof contracts run identically on the stock and fixed workers, including the one designed to fail, so the fix changes no existing verdict.</li>
+      <li><span class="evidence">Inferred</span> Any original code that keeps using those registers after a checker-intercepted call is affected, not just constructors. Lanes that deferred functions with one-sided crashes after a call may have hit this same gap.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>All twenty outcomes are recorded as deferred with a checker-gap reason, not verified. A pass counts only on the stock checker.</li>
+      <li>The recommended fold-back is the twelve-line register restore in the checker's stub emitter, after which these twenty contracts should pass unmodified.</li>
+      <li>Other lanes seeing original-crashes-while-rewrite-survives right after an intercepted call should check whether the original reuses the call registers before assuming the contract is wrong.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <ol>
+      <li>Contract any constructor-shaped function that calls a base constructor and then stores through the object pointer, with the call site patched to a recorder stub.</li>
+      <li>Run it on the stock worker: the original faults on its first store after the call while the rewrite completes.</li>
+      <li>Rebuild the worker with entry registers restored at stub exit and re-run: both sides complete and agree.</li>
+      </ol>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first failure looked like a bad contract, since the crash address suggested the object pointer arrived as zero. What ruled that out was the rewrite surviving identical inputs: the divergence had to come from inside the stub, not from the test data. Two small scripting slips (a UTF-16 capture file, an off-by-one instruction count) cost a few minutes each and were caught by assertions before anything ran.</p>
+      </article>
 
       <article class="entry" id="production-s199">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
