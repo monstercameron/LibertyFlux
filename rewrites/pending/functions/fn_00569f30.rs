@@ -1,0 +1,33 @@
+// original: 0x569f30 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_102, player_schema::LeaderboardInfo, 10>::vf8
+/// Column-width query for one ranked leaderboard. (`vf8 Race102`).
+///
+/// Fetches the tables, loads the key at `index`, classifies it, and maps the
+/// class to a width: class 1 takes 4, classes 2-3 take 8, class 5 takes 4,
+/// anything else (including failure) takes 0.
+/// Leaderboard id: 0x131.
+export!(stdcall, rw_00569f30(index: u32) -> u32 {
+    unsafe {
+        const LEADERBOARD_ID: u32 = 0x131;
+        let mut frame = [0u32; 6];
+        let fetch: extern "fastcall" fn(u32, u32) -> u32 =
+            core::mem::transmute(callee_addr(1) as usize);
+        if fetch(LEADERBOARD_ID, frame.as_mut_ptr() as u32) as u8 == 0 {
+            return 0;
+        }
+        let keys = frame[5];
+        let key = (keys.wrapping_add(index.wrapping_mul(4)) as *const u32).read();
+        let classify: extern "thiscall" fn(u32) -> u32 =
+            core::mem::transmute(callee_addr(2) as usize);
+        let class = classify(key);
+        if class == 0xFFFF_FFFF {
+            return 0;
+        }
+        match class.wrapping_sub(1) {
+            0 => 4,
+            1 | 2 => 8,
+            3 => 0,
+            4 => 4,
+            _ => 0,
+        }
+    }
+});
