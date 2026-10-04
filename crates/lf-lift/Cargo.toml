@@ -1,0 +1,13 @@
+[package]
+name = "lf-lift"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Verified 32-bit rewrites lifted to portable, safe, pointer-width-independent Rust"
+
+[dependencies]
+lf-core = { path = "../lf-core" }
+
+[lints]
+workspace = true
