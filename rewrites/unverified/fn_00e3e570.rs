@@ -1,103 +1,187 @@
-// original: 0x00E3E570 compose_ui_element_colors
-//! Compose one UI element's color block.
-//!
-//! Gated on the element's signed count word at +0x30 (nothing happens when it
-//! is zero or negative). Derives two adjusted floats from the inputs, resolves
-//! a base color through two intercepted lookup calls, clamps a looked-up
-//! intensity between 0 and a second lookup, packs the clamped byte over the
-//! base color's low 24 bits, notifies the element slot selected by the flag
-//! byte, and submits the nine-word block through the final intercepted call.
-//! The intensity byte is the notify call's answer when it fires, otherwise the
-//! low byte of the first lookup.
-//!
-//! Semantically void: the original leaves the last callee's answer in `eax`
-//! (or the incoming `eax` on the early path); the rewrite returns the last
-//! answer, or 0 on the early path.
-//!
-//! Verified by checker v3: 1000/1000 trials, 3 branch shapes, honesty mutant
-//! (high selector off by one) fails on the call log. Lane r-b148.
+// original: 0x00E3E570 setup_bounded_emit (proposed)
 
-use lf_checker_rt::{callee_cdecl, callee_stdcall, callee_thiscall, export, global, relocated};
-
-/// Truncate an `f32` to `i32` exactly like x86 `cvttss2si`.
+/// Build float bounds from two inputs and emit them through a call sequence.
 ///
-/// Rust's `as` saturates on overflow and maps NaN to 0; the instruction
-/// returns `i32::MIN` for NaN and for magnitudes at or above 2^31 (negative
-/// overflow already coincides with saturation, so only those need mapping).
-#[inline(always)]
-fn cvttss2si(x: f32) -> i32 {
-    if x.is_nan() || x >= 2147483648.0 {
-        i32::MIN
-    } else {
-        x as i32
-    }
-}
-
-export!(thiscall, rw_00e3e570(this: u32, flag: u32, a: f32, b: f32) -> u32 {
-    unsafe { compose_element(this, flag, a, b, 0x41) }
-});
-
-/// Shared body; `hi_sel` is the lookup selector used when the mode check passes.
-unsafe fn compose_element(this: u32, flag: u32, a: f32, b: f32, hi_sel: u32) -> u32 {
-    const UP_K: u32 = 0x00FE8748;
-    const DN_K: u32 = 0x00FE8734;
-    const MODE: u32 = 0x011D6FD4;
-    const NOTIFY_FLAG: u32 = 0x01161548;
-    const LO_SEL: u32 = 0x3B;
-    const LOOKUP_SEL: u32 = 0x37;
+/// `this` points to an object with a count at `+0x30`: when it is not
+/// positive the function only runs the stack-cookie check and returns a
+/// cookie-derived residue (see below); otherwise it runs the sequence.
+/// `a1` contributes only its low byte, `a2` and `a3` are float bit
+/// patterns.
+///
+/// Behaviour (main path): `x0 = a3 + C0` and `x2 = a2 - C1` are formed
+/// with two global float-table constants (`+0.03`, `-0.02`-ish). A priming
+/// callee's nonzero low byte combined with a global selector dword not
+/// being `2` picks a trailing constant (`0x41`, else `0x3b`) for a lookup
+/// callee that takes the scratch float pair's address; the lookup's answer
+/// points at a dword kept for later. A float-provider callee is then asked
+/// twice (same constant tag, same scratch address): the first answer
+/// truncates toward zero to an integer whose low byte becomes an index
+/// `0..255`, the second answer is a float; the running value is the index
+/// as a float clamped at `0.0` from below (dead: the index is never
+/// negative) and then the minimum of it and the second float, truncated
+/// again to a low byte that becomes the top byte of the kept dword. The
+/// low byte of `a1` being zero picks an object offset 44, else 40, for a
+/// no-stack-arg call; then a nine-pointer call carries the original and
+/// shifted `a2` bits (twice each), two `1.0` words, two zero words and the
+/// combined dword; a final no-arg call's answer is the return value. A
+/// stack-cookie check closes both paths; it preserves all registers.
+///
+/// The early path's return value is the stack cookie XORed with the entry
+/// stack pointer, which no Rust rewrite can observe or recompute, so the
+/// proof contract pins the count positive (main path only) and checks the
+/// return there; a supplementary early-path run covers the early branch
+/// with the return unchecked. The float operation order is the original's.
+///
+/// Original: 0x00E3E570 (thiscall, three stack words).
+lf_checker_rt::export!(thiscall, rw_00E3E570(this: u32, a1: u32, a2: u32, a3: u32) -> u32 {
     unsafe {
-        let base = this as *mut u8;
-        if (base.add(0x30) as *const i32).read() <= 0 {
+        const OFF_COUNT: u32 = 0x30;
+        const PLUS_TAB: u32 = 0xfe8748;
+        const MINUS_TAB: u32 = 0xfe8734;
+        const SELECTOR: u32 = 0x11d6fd4;
+        const ENABLE: u32 = 0x1161548;
+        const COOKIE: u32 = 0x1057fb4;
+        const CAL_PRIME: u32 = 1;
+        const CAL_LOOKUP: u32 = 2;
+        const CAL_FLOAT: u32 = 3;
+        const CAL_REGISTRY: u32 = 4;
+        const CAL_OFFSET: u32 = 5;
+        const CAL_EMIT: u32 = 6;
+        const CAL_FINAL: u32 = 7;
+        const CAL_COOKIE: u32 = 8;
+
+        #[inline(always)]
+        unsafe fn rd32(a: u32) -> u32 {
+            unsafe { (a as *const u32).read_unaligned() }
+        }
+        #[inline(always)]
+        unsafe fn rd8(a: u32) -> u8 {
+            unsafe { (a as *const u8).read() }
+        }
+        #[inline(always)]
+        fn add(a: f32, b: f32) -> f32 {
+            core::hint::black_box(a) + core::hint::black_box(b)
+        }
+        #[inline(always)]
+        fn sub(a: f32, b: f32) -> f32 {
+            core::hint::black_box(a) - core::hint::black_box(b)
+        }
+        /// The original's `cvttss2si` (round toward zero, indefinite
+        /// 0x80000000 on NaN or range error), low byte only, as used.
+        #[inline(always)]
+        fn cvtt_low8(f: f32) -> u8 {
+            if f.is_nan() {
+                return 0;
+            }
+            let t = f.trunc();
+            if t >= 2147483648.0 || t < -2147483648.0 {
+                0
+            } else {
+                (t as i32 & 0xff) as u8
+            }
+        }
+
+        // Both paths end at the cookie check with ECX holding the cookie
+        // value (the original's XOR dance cancels out).
+        if (rd32(this.wrapping_add(OFF_COUNT)) as i32) <= 0 {
+            let _: u32 = lf_checker_rt::callee_thiscall!(
+                CAL_COOKIE,
+                u32,
+                rd32(lf_checker_rt::relocated(COOKIE))
+            );
+            // The original returns cookie^ESP residue here; unrepresentable
+            // (see doc comment). Unchecked by the contract.
             return 0;
         }
-        let dn = a - global::<f32>(DN_K).read();
-        let _up = b + global::<f32>(UP_K).read();
-        let mut buf = [dn.to_bits(), b.to_bits()];
-        let buf_ptr = buf.as_mut_ptr() as u32;
-        let ok = callee_cdecl!(1, u32, 0);
-        let sel = if (ok as u8) != 0 && global::<u32>(MODE).read() != 2 {
-            hi_sel
+
+        let a2f = f32::from_bits(a2);
+        let a3f = f32::from_bits(a3);
+        let _x0 = add(a3f, f32::from_bits(rd32(lf_checker_rt::relocated(PLUS_TAB))));
+        let x2 = sub(a2f, f32::from_bits(rd32(lf_checker_rt::relocated(MINUS_TAB))));
+        // Scratch float pair shared by the lookup and float callees.
+        let mut fbuf: [u32; 2] = [x2.to_bits(), a3];
+        let prime: u32 = lf_checker_rt::callee_cdecl!(CAL_PRIME, u32, 0);
+        let tail = if prime & 0xff != 0
+            && rd32(lf_checker_rt::relocated(SELECTOR)) != 2
+        {
+            0x41
         } else {
-            LO_SEL
+            0x3b
         };
-        let p2 = callee_cdecl!(2, u32, buf_ptr, sel);
-        let argb_base = (p2 as *const u32).read();
-        let p3 = callee_cdecl!(3, u32, buf_ptr, LOOKUP_SEL);
-        let first = cvttss2si(f32::from_bits((p3 as *const u32).read()));
-        // The level byte is whatever `al` holds here: the notify call's
-        // answer when it fires, otherwise the low byte of the first lookup.
-        let level_byte = if global::<u8>(NOTIFY_FLAG).read() != 0 {
-            callee_thiscall!(4, u32, relocated(NOTIFY_FLAG)) as u8
-        } else {
-            first as u8
-        };
-        let p3b = callee_cdecl!(3, u32, buf_ptr, LOOKUP_SEL);
-        let cap = f32::from_bits((p3b as *const u32).read());
-        let level = level_byte as f32;
-        // Clamp: 0 when level is negative, else level capped at `cap`.
-        // `f > cap` is false for unordered inputs, matching the jbe fallthrough.
-        let clamped = if 0.0f32 > level {
-            0.0
-        } else if level > cap {
-            cap
-        } else {
-            level
-        };
-        let alpha = cvttss2si(clamped) as u8;
-        let argb = ((alpha as u32) << 24) | (argb_base & 0x00FF_FFFF);
-        let slot = if (flag as u8) != 0 { 10u32 } else { 11u32 };
-        callee_thiscall!(5, u32, this.wrapping_add(slot * 4));
-        let a_bits = a.to_bits();
-        let dn_bits = dn.to_bits();
-        let one = 1.0f32.to_bits();
-        let mut w = [a_bits, a_bits, dn_bits, dn_bits, one, one, 0, 0, argb];
-        let wp = w.as_mut_ptr();
-        callee_cdecl!(
-            6, u32,
-            wp.add(0) as u32, wp.add(1) as u32, wp.add(2) as u32,
-            wp.add(3) as u32, wp.add(4) as u32, wp.add(5) as u32,
-            wp.add(6) as u32, wp.add(7) as u32, wp.add(8) as u32
+        let cell_ptr: u32 = lf_checker_rt::callee_cdecl!(
+            CAL_LOOKUP,
+            u32,
+            fbuf.as_mut_ptr() as u32,
+            tail
         );
-        callee_stdcall!(7, u32,)
+        let cell = rd32(cell_ptr);
+        let fptr_a: u32 = lf_checker_rt::callee_cdecl!(
+            CAL_FLOAT,
+            u32,
+            fbuf.as_mut_ptr() as u32,
+            0x37
+        );
+        let index = cvtt_low8(f32::from_bits(rd32(fptr_a)));
+        if rd8(lf_checker_rt::relocated(ENABLE)) != 0 {
+            let _: u32 = lf_checker_rt::callee_thiscall!(
+                CAL_REGISTRY,
+                u32,
+                lf_checker_rt::relocated(ENABLE)
+            );
+        }
+        let fptr_b: u32 = lf_checker_rt::callee_cdecl!(
+            CAL_FLOAT,
+            u32,
+            fbuf.as_mut_ptr() as u32,
+            0x37
+        );
+        let other = f32::from_bits(rd32(fptr_b));
+        let ifloat = index as f32;
+        // Clamp below at 0 (never fires: the index is unsigned), then take
+        // the minimum; an unordered compare keeps the index float.
+        let picked = if ifloat < 0.0 {
+            0.0
+        } else if ifloat > other {
+            other
+        } else {
+            ifloat
+        };
+        let combined = (cell & 0xffffff) | ((cvtt_low8(picked) as u32) << 24);
+        let n = if a1 & 0xff == 0 { 11u32 } else { 10u32 };
+        let _: u32 = lf_checker_rt::callee_thiscall!(
+            CAL_OFFSET,
+            u32,
+            this.wrapping_add(n.wrapping_mul(4))
+        );
+        let one = 1.0f32.to_bits();
+        let mut s0 = a2;
+        let mut s1 = a2;
+        let mut s2 = x2.to_bits();
+        let mut s3 = x2.to_bits();
+        let mut s4 = one;
+        let mut s5 = one;
+        let mut s6 = 0u32;
+        let mut s7 = 0u32;
+        let mut s8 = combined;
+        let _: u32 = lf_checker_rt::callee_cdecl!(
+            CAL_EMIT,
+            u32,
+            &mut s0 as *mut u32 as u32,
+            &mut s1 as *mut u32 as u32,
+            &mut s2 as *mut u32 as u32,
+            &mut s3 as *mut u32 as u32,
+            &mut s4 as *mut u32 as u32,
+            &mut s5 as *mut u32 as u32,
+            &mut s6 as *mut u32 as u32,
+            &mut s7 as *mut u32 as u32,
+            &mut s8 as *mut u32 as u32
+        );
+        let answer: u32 = lf_checker_rt::callee_cdecl!(CAL_FINAL, u32,);
+        let _: u32 = lf_checker_rt::callee_thiscall!(
+            CAL_COOKIE,
+            u32,
+            rd32(lf_checker_rt::relocated(COOKIE))
+        );
+        answer
     }
-}
+});
