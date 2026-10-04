@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: hourly review, 12:08",
+    "commit": null,
+    "summary": "The third hourly review: results of twelve controlled lane experiments, and two memory incidents explained.",
+    "changes": [
+      "Experiments, one change each against the current brief: batches of 40 small functions and generated families of same-shaped functions were clearly better and are adopted; lower reasoning effort, six checker workers and one-function lanes were not.",
+      "Every experiment lane ran a deliberately wrong version for every function it verified, so the brief's new requirement is being followed.",
+      "Two memory incidents explained: a leftover lane script holding 8.7 GB, and a single build of one crate with 7,381 rewrites. The watchdog now covers both cases."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rust in progress: 69 files from lanes (363 unverified rewrites, 48 in review)",
     "commit": "a0a2e55ed60df0b7cfdbdd1efeb849ffda032a8f",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
