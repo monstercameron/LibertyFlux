@@ -229,6 +229,12 @@ Neither page may contain decompiled code, disassembly, game function addresses o
 
 - All build output, caches, logs and scratch work go under `.artifacts/`. Do not create build
   folders elsewhere. One shared build cache; no per-lane copies of the tree.
+- Exception for production lanes: each builds its own small rewrite crate with
+  `--target-dir .artifacts/build/lanes/<lane>`. Fifty lanes building into one folder queue on
+  cargo's lock and overwrite each other's output when crate names collide. These folders hold only
+  a zero-dependency crate's output; delete a lane's folder once its results are integrated.
+- Production lanes write `results.json` and `summary.txt`; a devlog entry is optional for them and
+  is written only for a surprising finding. Lanes of every other kind still write one.
 - No git worktrees and no `git stash`.
 - LF line endings, except `.bat`, `.cmd` and `.ps1`.
 - Do not create new `.md` files without Cam's approval.

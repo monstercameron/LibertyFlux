@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-03",
+    "title": "Production lanes: build folder and reporting rules",
+    "commit": null,
+    "summary": "The first production wave needed two changes to how lanes build and report.",
+    "changes": [
+      "AGENTS.md: production lanes build their rewrite crate into a folder each, because fifty lanes sharing one build folder queued on its lock and overwrote each other when crate names collided.",
+      "AGENTS.md: production lanes report through a results file and a summary; a devlog entry is written only for a surprising finding.",
+      "The status script counts a production lane as finished when its results file and summary exist."
+    ]
+  },
+  {
+    "date": "2026-10-03",
     "title": "Devlog: Repairing the function inventory: what was not a function",
     "commit": "b272cb2a313f359269b81974b6d82a70ea0872c5",
     "summary": "Findings from the f-boundaries lane.",

@@ -63,6 +63,12 @@ def age_minutes(path):
     return (datetime.datetime.now().timestamp() - path.stat().st_mtime) / 60
 
 
+def production_done(lane):
+    """Production lanes write results.json and a summary; a devlog entry is optional for them."""
+    folder = SCRATCH / lane
+    return (folder / "results.json").exists() and (folder / "summary.txt").exists()
+
+
 def main():
     now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     progress = json.loads((ROOT / "docs" / "data" / "progress.json").read_text(encoding="utf-8"))
@@ -82,7 +88,7 @@ def main():
         exited = "lane exited with code" in text
         if lane in live:
             state = "running"
-        elif exited and len(done) == len(DELIVERABLES):
+        elif exited and (len(done) == len(DELIVERABLES) or production_done(lane)):
             state = "finished"
         elif exited:
             state = "exited-incomplete"
