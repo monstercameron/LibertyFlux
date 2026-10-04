@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Devlog: What the import table says the engine needs from the platform",
+    "title": "Devlog: How the game was built: reading the Rich header",
     "commit": null,
+    "summary": "Findings from the p0-rich-header lane.",
+    "changes": [
+      "New devlog entry: How the game was built: reading the Rich header.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: What the import table says the engine needs from the platform",
+    "commit": "0387320c1e051e948ec20f168ad7bb53b802aa32",
     "summary": "Findings from the p0-imports-api lane.",
     "changes": [
       "New devlog entry: What the import table says the engine needs from the platform.",

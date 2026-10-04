@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#rich-header">How the game was built: reading the Rich header</a></li>
       <li><a href="#imports-api">What the import table says the engine needs from the platform</a></li>
       <li><a href="#data-sections">Mapping the executable's data sections</a></li>
       <li><a href="#tools-format-docs">Tools: public documentation of the game's file formats</a></li>
@@ -78,6 +79,76 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="rich-header">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>How the game was built: reading the Rich header</h2>
+      <p><span class="evidence verified">Verified</span> The game is C++ built with Visual Studio 2012 Update 1, with whole-program optimisation enabled on about half of its C++ code, stack cookies on, run-time type information on, and the C runtime statically linked. It was linked in January 2023, a decade after its toolchain was current, and a post-link wrapper stub owns the entry point.</p>
+      <h3>What was asked</h3>
+      <p>Decode the executable's Rich header completely: map every entry to its tool and toolchain release using public tables, decide whether link-time code generation was used, corroborate that from sampled disassembly without Ghidra, and infer the compiler options.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The header holds 21 entries covering 2293 objects. Every tool mapping was checked against three independent public tables, which agree on all of them.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Object group</th>
+      <th role="columnheader">Objects</th>
+      <th role="columnheader">Share</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">C++ objects, main toolchain</td>
+      <td role="cell" data-label="Objects">653</td>
+      <td role="cell" data-label="Share">28%</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">C++ objects with whole-program optimisation</td>
+      <td role="cell" data-label="Objects">796</td>
+      <td role="cell" data-label="Share">35%</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">C, C++ and assembler objects at an unlisted pre-release build</td>
+      <td role="cell" data-label="Objects">357</td>
+      <td role="cell" data-label="Share">16%</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Objects with no toolchain stamp</td>
+      <td role="cell" data-label="Objects">419</td>
+      <td role="cell" data-label="Share">18%</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Older third-party libraries, 2003 to 2010 toolchains</td>
+      <td role="cell" data-label="Objects">64</td>
+      <td role="cell" data-label="Share">3%</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Linker and resource records</td>
+      <td role="cell" data-label="Objects">4</td>
+      <td role="cell" data-label="Share">0%</td>
+      </tr>
+      </tbody>
+      </table>
+      <ul>
+      <li><span class="evidence verified">Verified</span> Whole-program optimisation (<code>/GL</code> plus link-time code generation) covers 796 C++ objects, just over half of all C++ in the binary. No profile-guided optimisation records exist.</li>
+      <li><span class="evidence verified">Verified</span> Sampling about 2500 functions with a disassembler shows the expected shape of such a build: frame pointers omitted in roughly 9 of 10 functions, about half of all functions receiving an object pointer in a register, and heavy use of SSE2 vector registers with no newer vector instructions.</li>
+      <li><span class="evidence verified">Verified</span> Stack cookies (<code>/GS</code>) are on, confirmed three ways including over a thousand cookie references in the code. The C runtime is statically linked with no debug leftovers, matching a release build.</li>
+      <li><span class="evidence verified">Verified</span> Run-time type information is on: about 3725 distinct polymorphic types were counted. C++ exceptions are essentially unused, with only a handful of exception records in the whole file.</li>
+      <li><span class="evidence verified">Verified</span> The link date is late January 2023 and the debug record names a Final-configuration build, so this release was rebuilt recently with a frozen 2012 toolchain.</li>
+      <li><span class="evidence verified">Verified</span> The code section is genuine readable machine code, but the entry point sits in a small wrapper section next to a one megabyte encrypted-looking blob, so a post-link protector or launcher stub was applied after linking.</li>
+      </ul>
+      <p><span class="evidence">Inferred</span> The 357 objects at an unlisted build between the 2012 release and its first update have the shape of a static C runtime footprint (mostly C plus assembler helpers), so they are probably the runtime libraries as shipped rather than game code. <span class="evidence">Unknown</span> Three stamp builds appear in no public table, and the 419 unstamped objects cannot be attributed without library signatures.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The rewrite should target Visual Studio 2012 Update 1 semantics for matching purposes, and must account for whole-program optimisation effects such as custom register passing and missing frame pointers rather than expecting standard calling conventions everywhere. The thousands of type names are a ready-made class list for later naming work. A Ghidra-equipped lane should attribute the unstamped objects and the older libraries, confirm where virtual tables live, and identify the wrapper stub without running it.</p>
+      <h3>How to reproduce it</h3>
+      <p>Read the bytes between the DOS stub and the PE header, unscramble them with the four-byte key stored next to the Rich marker, and split the result into eight-byte records of tool id, build number and object count. Map the tool ids with the <a href="https://github.com/dishather/richprint">richprint table</a>, the <a href="https://github.com/horsicq/Detect-It-Easy">Detect-It-Easy database</a> and <a href="https://github.com/kirschju/richheader">kirschju/richheader</a>, and map build numbers to releases with the compiler version table on Wikipedia; the background format is documented in <a href="https://www.ntcore.com/files/richsign.htm">Pistelli's Rich signature notes</a>. For corroboration, collect candidate function starts after padding bytes in the code section, disassemble the first dozen instructions of a few thousand of them, and measure frame setup, register argument passing and vector register use.</p>
+      <h3>What was confusing or went wrong</h3>
+      <ul>
+      <li>An early check seemed to show the parsing library dropping the last Rich record. It was a bug in my own debug print, which truncated the list for display. The library and the hand decode agree on all 21 records.</li>
+      <li>The type names all sit in the writable data section instead of the read-only constants section, which is unusual and unexplained. Disabled string pooling is one hypothesis; a follow-up lane needs to confirm it.</li>
+      <li>The first register-argument measurement counted register saves as argument passing and overstated the result. Excluding save and restore instructions fixed it and the corrected numbers still support the optimisation finding.</li>
+      </ul>
+      </article>
 
       <article class="entry" id="imports-api">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
