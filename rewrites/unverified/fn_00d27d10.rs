@@ -15,16 +15,14 @@ lf_checker_rt::export!(thiscall, rw_00d27d10(this: u32, arg: u32) -> u32 {
         const VTABLE_VA: u32 = 0x00ee_1c00;
         const AUX_TABLE_VA: u32 = 0x00d2_85a0;
         const AUX_OFF: u32 = 0x240;
-        const CLEAR_FIRST: u32 = 0x244;
-        const CLEAR_WORDS: u32 = 10;
+        const CLEAR_OFFS: [u32; 10] =
+            [0x244, 0x248, 0x250, 0x254, 0x258, 0x25c, 0x260, 0x264, 0x268, 0x26c];
         let _: u32 = lf_checker_rt::callee_thiscall!(1, u32, this);
         unsafe { ((this + ARG_OFF) as *mut u32).write_unaligned(arg) };
         unsafe { (this as *mut u32).write_unaligned(lf_checker_rt::relocated(VTABLE_VA)) };
         unsafe { ((this + AUX_OFF) as *mut u32).write_unaligned(lf_checker_rt::relocated(AUX_TABLE_VA)) };
-        let mut i = 0u32;
-        while i < CLEAR_WORDS {
-            unsafe { ((this + CLEAR_FIRST + i * 4) as *mut u32).write_unaligned(0) };
-            i += 1;
+        for off in CLEAR_OFFS {
+            unsafe { ((this + off) as *mut u32).write_unaligned(0) };
         }
         this
     }

@@ -43,7 +43,7 @@ lf_checker_rt::export!(cdecl, rw_00bc0160(handle: u32, arg1: u32) -> u32 {
     }
     let _: u32 = lf_checker_rt::callee_thiscall!(3, u32, obj);
     unsafe {
-        (obj as *mut u32).write_unaligned(VTABLE);
+        (obj as *mut u32).write_unaligned(lf_checker_rt::relocated(VTABLE));
         ((obj + 0x14) as *mut u32).write_unaligned(0);
         ((obj + 0x18) as *mut u32).write_unaligned(0);
         ((obj + 0x1C) as *mut u16).write_unaligned(0);

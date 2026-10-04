@@ -14,8 +14,8 @@
 /// survives, a drop-gamers task object is created through the task container
 /// ( address `TASK_CTN`, or null when the feature flag byte `FEAT_FLAG` is
 /// clear); a null object skips the rest. The task is submitted with the
-/// session ids, the compacted records and the object, and one of two
-/// completion hooks runs depending on the submission answer.
+/// session ids, the compacted records, their count and the object, and one
+/// of two completion hooks runs depending on the submission answer.
 ///
 /// Finally every known record is probed: a per-record check first, and for
 /// records it rejects, a lookup by session id. A lookup hit carries a use
@@ -101,8 +101,8 @@ lf_checker_rt::export!(thiscall, rw_00623a90(this: u32, array: u32, count: u32) 
             lf_checker_rt::callee_thiscall!(TASK_NEW, u32, ctn, (&mut task as *mut u32) as u32);
             if task != 0 {
                 let ok: u32 = lf_checker_rt::callee_fastcall!(
-                    TASK_SUBMIT, u32, 0, this, id0, id1,
-                    (&mut buf[0] as *mut u32) as u32, id0, task,
+                    TASK_SUBMIT, u32, task, this, id0, id1,
+                    (&mut buf[0] as *mut u32) as u32, fresh, task,
                     task.wrapping_add(TASK_INFO));
                 let flag2 = (lf_checker_rt::global::<u8>(FEAT_FLAG) as *const u8).read();
                 let ctn2 =

@@ -10,11 +10,13 @@
 /// original's second compare jumps below-or-equal on unordered). Then forms
 /// `q = 1.0 - clamped / limit`, adds a further 1.0 when the mode float equals
 /// exactly 1.0, and returns `0.2 * q` in ST0 — unless the low three bits of
-/// the byte at `arg3 + 0x28` equal 1, in which case it returns `spare`
-/// unchanged. All floating-point operation order matches the original.
+/// the byte at `arg3 + 0x28` equal 1, in which case it returns `q` itself
+/// (the original reuses its fourth argument slot as scratch and returns it
+/// unscaled). The third argument is never read. All floating-point operation
+/// order matches the original.
 ///
 /// Original: 0x00D284D0 (thiscall, four stack arguments).
-lf_checker_rt::export!(thiscall, rw_00d284d0(this: u32, out: u32, point: u32, spare: u32, origin: u32) -> f32 {
+lf_checker_rt::export!(thiscall, rw_00d284d0(this: u32, out: u32, point: u32, _spare: u32, origin: u32) -> f32 {
     unsafe {
         const LIMIT_OFF: u32 = 0x22c;
         const MODE_OFF: u32 = 0x230;
@@ -70,7 +72,7 @@ lf_checker_rt::export!(thiscall, rw_00d284d0(this: u32, out: u32, point: u32, sp
         }
         let kind = unsafe { ((origin + KIND_OFF) as *const u8).read() } & KIND_MASK;
         if kind == KIND_PASSTHROUGH {
-            f32::from_bits(spare)
+            q
         } else {
             mul(f32::from_bits(GAIN_BITS), q)
         }

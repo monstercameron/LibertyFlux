@@ -102,7 +102,9 @@ lf_checker_rt::export!(cdecl, rw_009F89E0(key: u32) -> u32 {
                 let b2: f32 =
                     lf_checker_rt::callee_cdecl!(SAMPLE_CALLEE_B2, f32, SAMPLE_B2);
                 let second = add(b1, b2);
-                if 0.0 < second && 0.0 < first {
+                // Each gate is comiss+jae: it skips only on an ordered
+                // less-or-equal, so a NaN sum proceeds, not skips.
+                if !(second <= 0.0) && !(first <= 0.0) {
                     let scaled = mul(
                         mul(mul(second, rdf(lf_checker_rt::relocated(SCALE_A))),
                             rdf(lf_checker_rt::relocated(SCALE_B))),

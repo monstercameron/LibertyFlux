@@ -1,17 +1,19 @@
 // original: 0x00551700 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_13, player_schema::LeaderboardInfo, 10>::vf2
 
-/// Publish this board's row id when the probed id matches.
+/// Publish this board's row descriptor address when the probed id matches.
 ///
 /// Calls the second virtual slot of the object in `this` (an indirect call
 /// through the object's table, intercepted by planting) and compares the
-/// answer with `want`. When they match and `out` is non-null, stores this
-/// board's row id there and returns `out`; otherwise returns null (a null
-/// `out` with a matching id also returns null without storing).
+/// answer with `want`. When they match and `out` is non-null, stores the
+/// address of this board's row descriptor there and returns `out`; otherwise
+/// returns null (a null `out` with a matching id also returns null without
+/// storing). The stored address is an image address, so it goes through the
+/// checker's relocation like the original's relocated immediate.
 ///
 /// Original: 0x00551700 (thiscall: object in ecx, two stack words).
 lf_checker_rt::export!(thiscall, rw_00551700(this: u32, out: u32, want: u32) -> u32 {
     unsafe {
-        const ROW_ID: u32 = 0xFDEB4C;
+        const ROW_DESCRIPTOR: u32 = 0xFDEB4C;
         const PROBE_SLOT: usize = 1;
         let vtable = (this as *const u32).read_unaligned();
         let probe: extern "thiscall" fn(u32) -> u32 = core::mem::transmute(
@@ -22,7 +24,7 @@ lf_checker_rt::export!(thiscall, rw_00551700(this: u32, out: u32, want: u32) -> 
         if out == 0 {
             return 0;
         }
-        (out as *mut u32).write_unaligned(ROW_ID);
+        (out as *mut u32).write_unaligned(lf_checker_rt::relocated(ROW_DESCRIPTOR));
         out
     }
 });

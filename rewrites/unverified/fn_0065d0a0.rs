@@ -89,8 +89,9 @@ lf_checker_rt::export!(thiscall, rw_0065d0a0(params: u32, effect: u32, var_cache
             ),
             rdf(lf_checker_rt::relocated(ANGLE_TURN)),
         );
-        let first: f32 = lf_checker_rt::callee_cdecl!(MATH_FIRST, f32, angle.to_bits());
-        let second: f32 = lf_checker_rt::callee_cdecl!(MATH_SECOND, f32, angle.to_bits());
+        // The math callees answer in XMM0; the stub mirrors the bits into EAX for the rewrite.
+        let first = f32::from_bits(lf_checker_rt::callee_cdecl!(MATH_FIRST, u32, angle.to_bits()));
+        let second = f32::from_bits(lf_checker_rt::callee_cdecl!(MATH_SECOND, u32, angle.to_bits()));
         let terms = [first.to_bits(), second.to_bits(), 0, 0];
         lf_checker_rt::callee_thiscall!(
             SET_VEC, u32, view, dest, rd32(var_cache.wrapping_add(0x20)),
@@ -99,7 +100,7 @@ lf_checker_rt::export!(thiscall, rw_0065d0a0(params: u32, effect: u32, var_cache
 
         let one = rdf(lf_checker_rt::relocated(ONE));
         let scale = rdf(lf_checker_rt::relocated(SUN_SCALE));
-        let a: f32 = lf_checker_rt::callee_cdecl!(MATH_SECOND, f32, angle.to_bits());
+        let a = f32::from_bits(lf_checker_rt::callee_cdecl!(MATH_SECOND, u32, angle.to_bits()));
         let mut c0 = add(mul(a, scale), one);
         if 0.0 > c0 {
             c0 = 0.0;
@@ -114,7 +115,7 @@ lf_checker_rt::export!(thiscall, rw_0065d0a0(params: u32, effect: u32, var_cache
             &word2 as *const u32 as u32, 4, 1, 2
         );
 
-        let b: f32 = lf_checker_rt::callee_cdecl!(MATH_SECOND, f32, angle.to_bits());
+        let b = f32::from_bits(lf_checker_rt::callee_cdecl!(MATH_SECOND, u32, angle.to_bits()));
         let mut c1 = add(mul(b, scale), one);
         if 0.0 > c1 {
             c1 = 0.0;
