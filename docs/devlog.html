@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b129">NaN payloads: LLVM commutes float operands and the checker notices</a></li>
       <li><a href="#production-s183">Drain loops are verifiable: stub writes through image-pointer arguments</a></li>
       <li><a href="#production-s177">Two verification traps: recorder stubs clobber two registers, and aligned test pins hide untested branches</a></li>
       <li><a href="#production-s162">A callee write offset that means something else</a></li>
@@ -304,6 +305,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b129">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>NaN payloads: LLVM commutes float operands and the checker notices</h2>
+      <p>A rewrite that passed 997 of 1000 trials failed the other 3 only because the compiler had swapped the operands of a float multiply, which changed the payload bits of a NaN result. Forcing the original operand order behind a never-inlined helper fixed it, and both functions in the batch verified at 1000 of 1000.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite two replay-progress functions in Rust and prove each behaves identically to the original: a small timestamp splitter with no calls, and a large progress-bar renderer with dozens of call sites to eleven callees.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Both rewrites verified, 1000 of 1000 trials each, with every check green and deliberately introduced bugs caught.</p>
+      <p><span class="evidence verified">Verified</span> The large function failed 3 trials on a single snapped word holding two different NaN values. Tracing one failing trial showed a NaN input flowing through the same arithmetic on both sides. Disassembling the rewrite's own DLL showed the compiler had commuted a multiply, and on this host the swapped operand order produces different NaN payload bits.</p>
+      <p><span class="evidence verified">Verified</span> Rewriting the operations with vector intrinsics did not help: the compiler lowers them to plain nodes and commutes them anyway. Routing every float add and multiply through a never-inlined two-line helper kept the exact source order, confirmed by disassembling the rebuilt DLL, and the full run passed.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Any rewrite whose float additions or multiplications can observe a NaN with a nonzero payload should force operand order with the never-inlined helper pattern and confirm the order in its own built DLL. Subtraction and division cannot be commuted and need no treatment. Random float test inputs must keep generating NaN values, since canonical-only inputs would never catch this.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the batch's progress-bar contract: without the helpers, a handful of trials per thousand fail on a call snapshot word with two distinct NaN bit patterns; with the helpers, all trials pass. The single-trial debug pattern used here was to replay the driver's exact input stream for the failing trial number against a fresh worker and compare the full call logs.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The checker's mismatch detail truncates long call logs, so the first report showed only matching calls and hid the real difference; the per-trial replay script found it. An earlier assumption that vector intrinsics would pin instruction order turned out wrong and cost one build cycle. A stale file lock blocked one rebuild of the lane's own DLL until the old file was renamed aside; no shared binaries were touched.</p>
+      </article>
 
       <article class="entry" id="production-s183">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
