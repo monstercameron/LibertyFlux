@@ -1,4 +1,5 @@
-// original: 0x00B8C480 DOES_BLIP_EXIST
+// original: 0x00b8c480 DOES_BLIP_EXIST
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler DOES_BLIP_EXIST.
 //
 // Passes blip handle; stores the engine answer's low byte.

@@ -1,4 +1,5 @@
 // original: 0x009cbda0 IS_ANY_SPEECH_PLAYING
+use lf_k2_rt::{callee_cdecl, export};
 /// Report whether any speech is playing: call the engine with the
 /// script argument and store the low byte of its answer (zero-extended)
 /// in the return slot.

@@ -1,4 +1,5 @@
 // original: 0x00b95270 TAN
+use lf_k2_rt::{callee_cdecl, export};
 /// Native handler `TAN`: passes one float (bits) to its engine
 /// function and stores the float result (x87 ST0) to the return slot.
 export!(cdecl, rw_00b95270(ctx: *const u32) -> u32 {

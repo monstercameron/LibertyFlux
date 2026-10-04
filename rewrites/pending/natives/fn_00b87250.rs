@@ -1,4 +1,5 @@
 // original: 0x00b87250 SET_CAM_ATTACH_OFFSET
+use lf_k2_rt::{callee_cdecl, export};
 /// Native handler `SET_CAM_ATTACH_OFFSET`: forwards script args [arg0 (dword), arg1 (float bits), arg2 (float bits), arg3 (float bits)]
 /// to its engine function and returns nothing (void).
 export!(cdecl, rw_00b87250(ctx: *const u32) -> u32 {

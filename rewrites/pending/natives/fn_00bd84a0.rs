@@ -1,4 +1,5 @@
-// original: 0x00BD84A0 NETWORK_GET_NUMBER_OF_GAMES
+// original: 0x00bd84a0 NETWORK_GET_NUMBER_OF_GAMES
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler NETWORK_GET_NUMBER_OF_GAMES.
 //
 // Passes no arguments; stores the engine's full-word answer.

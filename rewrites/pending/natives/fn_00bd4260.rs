@@ -1,4 +1,5 @@
-// original: 0x00BD4260 SET_MASK
+// original: 0x00bd4260 SET_MASK
+use lf_k2_rt::{callee_cdecl, export};
 // SET_MASK: forward four float-bit arguments (a mask vector) to the engine.
 export!(cdecl, rw_00BD4260(ctx: u32) -> u32 {
     unsafe {

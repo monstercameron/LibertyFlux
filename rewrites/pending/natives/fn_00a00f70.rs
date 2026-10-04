@@ -1,4 +1,5 @@
 // original: 0x00a00f70 GET_ROPE_HEIGHT_FOR_OBJECT
+use lf_k2_rt::{callee_cdecl, export};
 /// Forward both script arguments to the engine rope-height query. The
 /// handler itself stores no return value; whatever the engine reports
 /// travels out of band.

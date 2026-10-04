@@ -1,4 +1,5 @@
-// original: 0x00BB6430 INCREMENT_FLOAT_STAT_NO_MESSAGE
+// original: 0x00bb6430 INCREMENT_FLOAT_STAT_NO_MESSAGE
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler INCREMENT_FLOAT_STAT_NO_MESSAGE.
 //
 // Passes stat id plus increment to the stat engine helper.

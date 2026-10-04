@@ -1,4 +1,5 @@
 // original: 0x00bb2770 PLAYER_HAS_CHAR
+use lf_k2_rt::{callee_cdecl, export};
 /// Native handler `PLAYER_HAS_CHAR`: calls its engine function and writes the
 /// low byte of the result (zero-extended) to the return slot.
 export!(cdecl, rw_00bb2770(ctx: *const u32) -> u32 {

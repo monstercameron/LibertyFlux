@@ -1,4 +1,5 @@
 // original: 0x00bb2cf0 SET_PLAYER_TEAM
+use lf_k2_rt::{callee_cdecl, export};
 /// Native handler `SET_PLAYER_TEAM`: forwards script args [arg0 (dword), arg1 (dword)]
 /// to its engine function and returns nothing (void).
 export!(cdecl, rw_00bb2cf0(ctx: *const u32) -> u32 {

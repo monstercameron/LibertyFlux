@@ -1,4 +1,5 @@
-// original: 0x00B86D70 HINT_CAM
+// original: 0x00b86d70 HINT_CAM
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler HINT_CAM.
 //
 // Passes camera position plus four hint words to the hint-cam engine helper.

@@ -1,10 +1,13 @@
 // original: 0x00a01d40 SET_OBJECT_INITIAL_ROTATION_VELOCITY
+use lf_k2_rt::{callee_cdecl, export};
 //! Rewrite of native handler SET_OBJECT_INITIAL_ROTATION_VELOCITY (original at 0x00a01d40).
 //!
 //! Script call context: the handler receives one pointer. At +0 sits the
 //! result-slot pointer where a return value is stored, at +8 the argument
 //! array. The handler forwards the arguments to one engine routine and, for
 //! natives with a return value, stores the answer in the result slot.
+
+
 /// Call context handed to a native handler by the script VM.
 #[repr(C)]
 pub struct NativeContext {

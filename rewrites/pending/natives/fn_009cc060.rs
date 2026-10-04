@@ -1,4 +1,5 @@
 // original: 0x009cc060 PLAY_FIRE_SOUND_FROM_POSITION
+use lf_k2_rt::{callee_cdecl, export};
 /// Play a fire sound from a position: pass the four script words (a
 /// handle plus three position floats, all bitwise) to the engine. No
 /// return value.

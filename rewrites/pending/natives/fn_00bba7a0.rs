@@ -1,4 +1,5 @@
-// original: 0x00BBA7A0 TASK_SIT_DOWN
+// original: 0x00bba7a0 TASK_SIT_DOWN
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler TASK_SIT_DOWN.
 //
 // Passes ped handle plus three seat words to the sit-down engine helper.

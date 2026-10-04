@@ -1,4 +1,5 @@
-// original: 0x00BD4450 START_PTFX_ON_PED_BONE
+// original: 0x00bd4450 START_PTFX_ON_PED_BONE
+use lf_k2_rt::{callee_addr, export, relocated};
 // Rewrite of native handler START_PTFX_ON_PED_BONE.
 //
 // Passes constant callback address plus the call context to the particle engine helper.

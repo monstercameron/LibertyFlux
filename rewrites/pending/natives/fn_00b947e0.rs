@@ -11,6 +11,6 @@ export!(cdecl, rw_00b947e0(ctx: *const u8) -> u32 {
     unsafe {
         /// Engine area-test predicate passed to the dispatcher (file VA).
         const AREA_PREDICATE: u32 = 0x00b96810;
-        callee_cdecl!(1, u32, lf_rn54_rt::relocated(AREA_PREDICATE), ctx as u32)
+        callee_cdecl!(1, u32, lf_k2_rt::relocated(AREA_PREDICATE), ctx as u32)
     }
 });

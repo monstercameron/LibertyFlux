@@ -1,4 +1,5 @@
 // original: 0x00bd78e0 FIND_NETWORK_RESTART_POINT
+use lf_k2_rt::{callee_cdecl, export};
 /// Copy a three-word restart record (one id word plus two floats) from
 /// the record addressed by the first script argument into a scratch
 /// record inside the call context, file the record pointer in the

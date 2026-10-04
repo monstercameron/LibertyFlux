@@ -1,4 +1,5 @@
 // original: 0x00bc6b70 IS_CAR_UPSIDEDOWN
+use lf_k2_rt::{callee_cdecl, export};
 /// Report whether a car is upside down: call the engine with the script
 /// argument and store the low byte of its answer (zero-extended) in the
 /// return slot.

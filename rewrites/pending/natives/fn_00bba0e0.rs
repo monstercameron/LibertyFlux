@@ -1,4 +1,5 @@
-// original: 0x00BBA0E0 TASK_PERFORM_SEQUENCE_LOCALLY
+// original: 0x00bba0e0 TASK_PERFORM_SEQUENCE_LOCALLY
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler TASK_PERFORM_SEQUENCE_LOCALLY.
 //
 // Passes ped handle plus sequence id to the task-sequence engine helper.

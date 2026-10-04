@@ -1,4 +1,5 @@
-// original: 0x00BD7D50 HAS_NET_ID_BEEN_CLONED
+// original: 0x00bd7d50 HAS_NET_ID_BEEN_CLONED
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler HAS_NET_ID_BEEN_CLONED.
 //
 // Passes network id; stores the engine answer's low byte.

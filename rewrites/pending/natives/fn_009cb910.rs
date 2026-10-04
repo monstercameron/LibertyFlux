@@ -1,4 +1,5 @@
-// original: 0x009CB910 ADD_LINE_TO_CONVERSATION
+// original: 0x009cb910 ADD_LINE_TO_CONVERSATION
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler ADD_LINE_TO_CONVERSATION.
 //
 // Passes five conversation-line words to the conversation engine helper.

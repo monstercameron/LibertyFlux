@@ -1,4 +1,5 @@
 // original: 0x00bb8d80 IS_SITTING_OBJECT_NEAR
+use lf_k2_rt::{callee_cdecl, export};
 /// Report whether a sitting object is near a position: pass the four
 /// script words (three position floats plus a radius, all bitwise) to
 /// the engine and store the low byte of its answer (zero-extended) in

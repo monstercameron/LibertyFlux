@@ -1,4 +1,5 @@
 // original: 0x00bb9ea0 TASK_LEAVE_CAR
+use lf_k2_rt::{callee_cdecl, export};
 /// Native handler `TASK_LEAVE_CAR`: forwards script args [arg0 (dword), arg1 (dword)]
 /// to its engine function and returns nothing (void).
 export!(cdecl, rw_00bb9ea0(ctx: *const u32) -> u32 {

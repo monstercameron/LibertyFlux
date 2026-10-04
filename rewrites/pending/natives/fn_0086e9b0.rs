@@ -10,7 +10,7 @@
 /// executed path left behind, reproduced exactly.
 export!(cdecl, rw_0086e9b0(ctx: *const u8) -> u32 {
     unsafe {
-        let state = *lf_rn54_rt::global::<u32>(0x01bb54dc) as *mut u8;
+        let state = *lf_k2_rt::global::<u32>(0x01bb54dc) as *mut u8;
         let mode = *(state.add(0x0c) as *const u32);
         if mode == 1 {
             let timer = *(state.add(0x28) as *const f32);
@@ -18,7 +18,7 @@ export!(cdecl, rw_0086e9b0(ctx: *const u8) -> u32 {
                 *(state.add(0x0c) as *mut u32) = 0;
                 1
             } else {
-                let step = *lf_rn54_rt::global::<f32>(0x00fe8b2c);
+                let step = *lf_k2_rt::global::<f32>(0x00fe8b2c);
                 let next = timer + step;
                 *(state.add(0x28) as *mut f32) = next;
                 let args = (*(ctx.add(8) as *const u32)) as *const u32;

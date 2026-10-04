@@ -1,4 +1,5 @@
 // original: 0x00bc70e0 PLAYER_IS_INTERACTING_WITH_GARAGE
+use lf_k2_rt::{callee_cdecl, export};
 /// Native handler `PLAYER_IS_INTERACTING_WITH_GARAGE`: calls its engine function and writes the
 /// low byte of the result (zero-extended) to the return slot.
 export!(cdecl, rw_00bc70e0(ctx: *const u32) -> u32 {

@@ -1,4 +1,5 @@
-// original: 0x005E6FC0 CAN_PHONE_BE_SEEN_ON_SCREEN
+// original: 0x005e6fc0 CAN_PHONE_BE_SEEN_ON_SCREEN
+use lf_k2_rt::{callee_addr, export, global, relocated};
 // CAN_PHONE_BE_SEEN_ON_SCREEN: look up the phone object through a global
 // index and pointer table, ask the engine whether it is blocked, and report
 // the negation (1 = visible) through the return slot. Returns the slot.

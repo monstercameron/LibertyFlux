@@ -1,4 +1,5 @@
-// original: 0x00BA0F00 SET_CHAR_ALL_ANIMS_SPEED
+// original: 0x00ba0f00 SET_CHAR_ALL_ANIMS_SPEED
+use lf_k2_rt::{callee_cdecl, export};
 // SET_CHAR_ALL_ANIMS_SPEED: forward (ped, speed-bits) to the engine call.
 // The speed travels as raw float bits.
 export!(cdecl, rw_00BA0F00(ctx: u32) -> u32 {

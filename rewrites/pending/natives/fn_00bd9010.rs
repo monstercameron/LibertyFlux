@@ -1,4 +1,5 @@
-// original: 0x00BD9010 RESERVE_NETWORK_MISSION_OBJECTS
+// original: 0x00bd9010 RESERVE_NETWORK_MISSION_OBJECTS
+use lf_k2_rt::{callee_cdecl, export};
 // RESERVE_NETWORK_MISSION_OBJECTS: forward the count to the engine call.
 export!(cdecl, rw_00BD9010(ctx: u32) -> u32 {
     unsafe {

@@ -1,4 +1,5 @@
 // original: 0x0086f360 VDIST2
+use lf_k2_rt::{export};
 /// Native handler `VDIST2`.
 ///
 /// Returns the squared distance between two 3D points.
@@ -6,7 +7,7 @@
 /// Handler mechanics: takes the native call context,
 /// Pure computation over six float arguments; no engine call. The
 /// accumulation order matches the original exactly (bit-exact).
-lf_rn21_rt::export!(cdecl, rw_0086f360(ctx: u32) -> () {
+export!(cdecl, rw_0086f360(ctx: u32) -> () {
     let args = unsafe { *((ctx.wrapping_add(8)) as *const u32) } as *const u32;
     let ret = unsafe { *(ctx as *const u32) } as *mut u32;
     let x0 = f32::from_bits(unsafe { *args });

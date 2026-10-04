@@ -1,4 +1,5 @@
 // original: 0x00ba0110 IS_PED_HOLDING_AN_OBJECT
+use lf_k2_rt::{callee_cdecl, export};
 /// Report whether a ped holds an object: call the engine with the
 /// script argument and store the low byte of its answer (zero-extended)
 /// in the return slot.

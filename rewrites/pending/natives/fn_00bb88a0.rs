@@ -1,4 +1,5 @@
-// original: 0x00BB88A0 ADD_FOLLOW_NAVMESH_TO_PHONE_TASK
+// original: 0x00bb88a0 ADD_FOLLOW_NAVMESH_TO_PHONE_TASK
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler ADD_FOLLOW_NAVMESH_TO_PHONE_TASK.
 //
 // Passes phone task target (handle + xyz) to the phone-task engine helper.

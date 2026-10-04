@@ -1,4 +1,5 @@
-// original: 0x009CC130 PLAY_SOUND_FROM_POSITION
+// original: 0x009cc130 PLAY_SOUND_FROM_POSITION
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler PLAY_SOUND_FROM_POSITION.
 //
 // Passes sound id, flags plus xyz to the positional-sound engine helper.

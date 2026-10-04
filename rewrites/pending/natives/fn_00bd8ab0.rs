@@ -1,4 +1,5 @@
 // original: 0x00bd8ab0 NETWORK_LIMIT_TO_16_PLAYERS
+use lf_k2_rt::{callee_cdecl, export};
 /// Report the 16-player network limit state: call the engine with no
 /// arguments and store the low byte of its answer (zero-extended) in
 /// the return slot.

@@ -5,6 +5,7 @@
 /// (derived with `relocated`, never hard-coded) to the engine search
 /// routine. No return slot is written. No script argument words are read.
 export!(cdecl, rw_00b9aaf0(ctx: *const u8) -> u32 {
+    const WATER_NODE_CALLBACK: u32 = 0x00B9_CB50;
     unsafe {
         callee_cdecl!(1, u32, relocated(WATER_NODE_CALLBACK), ctx as u32)
     }

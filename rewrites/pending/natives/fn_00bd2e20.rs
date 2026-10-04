@@ -1,4 +1,5 @@
 // original: 0x00bd2e20 SET_ZONE_SCUMMINESS
+use lf_k2_rt::{callee_cdecl, export};
 /// Native handler `SET_ZONE_SCUMMINESS`: forwards script args [arg0 (dword), arg1 (dword)]
 /// to its engine function and returns nothing (void).
 export!(cdecl, rw_00bd2e20(ctx: *const u32) -> u32 {

@@ -1,4 +1,5 @@
-// original: 0x00B9E2A0 ATTACH_PED_TO_WORLD_PHYSICALLY
+// original: 0x00b9e2a0 ATTACH_PED_TO_WORLD_PHYSICALLY
+use lf_k2_rt::{callee_addr, export, relocated};
 // Rewrite of native handler ATTACH_PED_TO_WORLD_PHYSICALLY.
 //
 // Passes constant callback address plus the call context to the attach engine helper.

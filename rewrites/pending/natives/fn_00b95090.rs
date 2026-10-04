@@ -1,4 +1,5 @@
 // original: 0x00b95090 SET_UP_TRIP_SKIP_AFTER_MISSION
+use lf_k2_rt::{callee_cdecl, export};
 /// Set up trip skip after a mission: pass the four script words (all
 /// floats, bitwise) to the engine. No return value.
 export!(cdecl, rw_00b95090(ctx: *const u32) -> u32 {

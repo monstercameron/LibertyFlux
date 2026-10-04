@@ -6,7 +6,7 @@
 /// no engine call.
 export!(cdecl, rw_005e6f80(ctx: *const u8) -> u32 {
     unsafe {
-        let flags = lf_rn54_rt::global::<u8>(0x018b6ed8);
+        let flags = lf_k2_rt::global::<u8>(0x018b6ed8);
         let hit = u32::from(*flags & 0xC0 != 0);
         let slot = *(ctx as *const u32) as *mut u32;
         *slot = hit;

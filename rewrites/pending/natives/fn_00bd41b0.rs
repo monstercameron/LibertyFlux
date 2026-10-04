@@ -1,4 +1,5 @@
-// original: 0x00BD41B0 REMOVE_PTFX_FROM_VEHICLE
+// original: 0x00bd41b0 REMOVE_PTFX_FROM_VEHICLE
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler REMOVE_PTFX_FROM_VEHICLE.
 //
 // Passes vehicle handle to the particle-effect engine helper.

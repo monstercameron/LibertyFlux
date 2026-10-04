@@ -9,7 +9,7 @@ export!(cdecl, rw_00b9a620(ctx: *const u8) -> u32 {
     callee_cdecl!(
         1,
         u32,
-        lf_rn46_rt::relocated(NODE_TABLE_FILE_VA),
+        lf_k2_rt::relocated(NODE_TABLE_FILE_VA),
         ctx as u32
     )
 });

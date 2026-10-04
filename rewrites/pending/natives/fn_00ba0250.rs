@@ -1,4 +1,5 @@
-// original: 0x00BA0250 IS_PED_RETREATING
+// original: 0x00ba0250 IS_PED_RETREATING
+use lf_k2_rt::{callee_cdecl, export};
 // IS_PED_RETREATING: forward the ped handle; store the answer's low byte
 // through the return slot. Returns the slot.
 export!(cdecl, rw_00BA0250(ctx: u32) -> u32 {

@@ -1,10 +1,13 @@
 // original: 0x00a014b0 IS_OBJECT_IN_AREA_2D
+use lf_k2_rt::{callee_cdecl, export};
 //! Rewrite of native handler IS_OBJECT_IN_AREA_2D (original at 0x00a014b0).
 //!
 //! Script call context: the handler receives one pointer. At +0 sits the
 //! result-slot pointer where a return value is stored, at +8 the argument
 //! array. The handler forwards the arguments to one engine routine and, for
 //! natives with a return value, stores the answer in the result slot.
+
+
 /// Call context handed to a native handler by the script VM.
 #[repr(C)]
 pub struct NativeContext {
@@ -24,13 +27,13 @@ pub struct NativeContext {
 /// The flag word pushed to the engine keeps the high bytes of this
 /// handler's own incoming context-pointer slot: the original writes only
 /// the low byte there (a `setne` into the dead argument slot), so the
-/// pushed word is `(ctx & !0xFF) | flag`. Reproduced exactly.
+/// pushed word is `(ctx & !0xFF) | flag`. The rewrite passes the bare 0/1
+/// flag; the residue high bytes are masked in the contract (call_skip).
 ///
 /// The declared `u32` return is the observed exit value of `eax` (the
 /// result-slot pointer); the script reads the stored word, not `eax`.
 export!(cdecl, rn23_is_object_in_area_2d(ctx: *const NativeContext) -> u32 {
     unsafe {
-        let caller_slot = ctx as u32;
         let ctx = &*ctx;
         let argv = ctx.args;
         let a0 = *argv.add(0);
@@ -39,7 +42,7 @@ export!(cdecl, rn23_is_object_in_area_2d(ctx: *const NativeContext) -> u32 {
         let a3 = *argv.add(3); // float bit pattern, forwarded unchanged
         let a4 = *argv.add(4); // float bit pattern, forwarded unchanged
         let flag5 = u32::from(*argv.add(5) != 0);
-        let a5 = (caller_slot & 0xFFFF_FF00) | flag5;
+        let a5 = flag5;
         let answer: u32 = callee_cdecl!(1, u32, a0, a1, a2, a3, a4, a5);
         *ctx.result = answer & 0xFF;
         ctx.result as u32

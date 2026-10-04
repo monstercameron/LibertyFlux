@@ -1,4 +1,5 @@
-// original: 0x00B9F7A0 IS_CHAR_FATALLY_INJURED
+// original: 0x00b9f7a0 IS_CHAR_FATALLY_INJURED
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler IS_CHAR_FATALLY_INJURED.
 //
 // Passes character handle; stores the engine answer's low byte.

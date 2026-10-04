@@ -1,4 +1,5 @@
 // original: 0x00bd2180 EXTINGUISH_CHAR_FIRE
+use lf_k2_rt::{callee_cdecl, export};
 /// Put out a character's fire: forward the script argument (the
 /// character handle) to the engine. No return value.
 export!(cdecl, rw_00bd2180(ctx: *const u32) -> u32 {

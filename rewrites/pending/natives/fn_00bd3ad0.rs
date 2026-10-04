@@ -1,4 +1,5 @@
-// original: 0x00BD3AD0 DRAW_CURVED_WINDOW
+// original: 0x00bd3ad0 DRAW_CURVED_WINDOW
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler DRAW_CURVED_WINDOW.
 //
 // Passes four window bounds plus flags to the curved-window engine helper.

@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: A partition routine that swaps stale stack contents into its output",
+    "title": "Rewrites: 277 more functions pass the checker (3308 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "277 rewrites added under rewrites/pending: 98 script native handlers and 179 other functions.",
+      "331 rewrites that had passed checker version 1 were re-run under version 2 and replaced by the version that passed it.",
+      "The tree now holds 3308 rewrites, 1007 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "130 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: A partition routine that swaps stale stack contents into its output",
+    "commit": "28a7deb5893289839d4da64d6dd5d8ad89385db2",
     "summary": "Findings from the r-s64 lane.",
     "changes": [
       "New devlog entry: A partition routine that swaps stale stack contents into its output.",

@@ -1,4 +1,5 @@
 // original: 0x00bc6700 IS_CAR_IN_AIR_PROPER
+use lf_k2_rt::{callee_cdecl, export};
 /// Report whether a car is properly airborne: call the engine with the
 /// script argument and store the low byte of its answer (zero-extended)
 /// in the return slot.

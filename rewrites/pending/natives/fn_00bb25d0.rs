@@ -1,4 +1,5 @@
-// original: 0x00BB25D0 IS_PLAYER_TARGETTING_ANYTHING
+// original: 0x00bb25d0 IS_PLAYER_TARGETTING_ANYTHING
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler IS_PLAYER_TARGETTING_ANYTHING.
 //
 // Passes player index; stores the engine answer's low byte.

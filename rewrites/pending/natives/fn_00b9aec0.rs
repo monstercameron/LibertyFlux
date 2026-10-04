@@ -1,4 +1,5 @@
-// original: 0x00B9AEC0 SWITCH_ROADS_BACK_TO_ORIGINAL
+// original: 0x00b9aec0 SWITCH_ROADS_BACK_TO_ORIGINAL
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler SWITCH_ROADS_BACK_TO_ORIGINAL.
 //
 // Passes six road-region bounds to the roads engine helper.

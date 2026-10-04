@@ -1,4 +1,5 @@
-// original: 0x005E7F40 GET_WEB_PAGE_HEIGHT
+// original: 0x005e7f40 GET_WEB_PAGE_HEIGHT
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler GET_WEB_PAGE_HEIGHT.
 //
 // Passes page handle; stores the engine's floating-point answer.

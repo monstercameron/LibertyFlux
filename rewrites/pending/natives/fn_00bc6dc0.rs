@@ -1,4 +1,5 @@
-// original: 0x00BC6DC0 IS_THIS_MODEL_A_TRAIN
+// original: 0x00bc6dc0 IS_THIS_MODEL_A_TRAIN
+use lf_k2_rt::{callee_addr, export};
 // Rewrite of native handler IS_THIS_MODEL_A_TRAIN.
 //
 // Passes model id; stores the engine answer's low byte.

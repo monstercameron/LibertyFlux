@@ -1,4 +1,5 @@
 // original: 0x00ba2350 SET_PED_COMPONENTS_TO_NETWORK_PLAYERSETTINGS_MODEL
+use lf_k2_rt::{callee_cdecl, export};
 /// Native handler `SET_PED_COMPONENTS_TO_NETWORK_PLAYERSETTINGS_MODEL`: forwards script args [arg0 (dword)]
 /// to its engine function and returns nothing (void).
 export!(cdecl, rw_00ba2350(ctx: *const u32) -> u32 {

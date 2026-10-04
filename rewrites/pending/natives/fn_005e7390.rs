@@ -1,4 +1,5 @@
 // original: 0x005e7390 WANTED_STARS_ARE_FLASHING
+use lf_k2_rt::{callee_addr, export, global};
 /// Report whether the wanted stars are flashing: ask the engine about
 /// the currently indexed object (the engine takes the object pointer in
 /// ECX and no stack arguments). When the engine's low answer byte is
