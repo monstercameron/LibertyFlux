@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b25">NaN payloads need explicit handling in float rewrites</a></li>
       <li><a href="#production-b13">One audio function returns into the heap on a rare path</a></li>
       <li><a href="#production-n103">Twenty-five native handlers verified, and a widened call log for wide calls</a></li>
       <li><a href="#production-b29">A two-register vector call the checker cannot see</a></li>
@@ -251,6 +252,23 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b25">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>NaN payloads need explicit handling in float rewrites</h2>
+      <p><span class="evidence verified">Verified</span> A rewrite that used plain floating-point arithmetic matched the original everywhere except in the payload of one NaN result, because the compiler may emit either operand order and the hardware keeps the destination payload when both operands are NaNs. Rewrites that translate floating-point arithmetic now select NaN operands explicitly, and the pattern is proven over thousands of trials.</p>
+      <h3>What was asked</h3>
+      <p>A production batch asked for Rust rewrites of four neighbouring audio functions, each proven identical to the original by the differential checker over at least one thousand trials. One of the four is heavy floating-point code: weighted sums, a reciprocal, angle helpers and running min/max bounds, all in single precision.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The float-heavy rewrite passed 49 of its first 50 trials. The single failure was a call argument: both sides computed a NaN, but the original produced the canonical quiet NaN while the rewrite produced a NaN carrying a payload. Tracing the inputs showed an addition whose two operands were both quiet NaNs with different payloads. The hardware rule keeps the destination operand payload in that case; the original kept one payload and the compiled rewrite kept the other, because the compiler is free to choose either operand order for the instruction.</p>
+      <p><span class="evidence verified">Verified</span> The same run confirmed the fix and the boundary of the problem. Non-NaN operands are order-insensitive: rounding is round-to-nearest, and degenerate cases such as zero divided by zero produce the indefinite NaN either way round. Signaling NaNs cannot occur in these trials: generated inputs are quieted and the hardware never produces them. So only the both-quiet-NaN case needs special handling.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Float rewrites now route every arithmetic operation through small helpers with destination-wins NaN propagation: if the destination is NaN return it, else if the source is NaN return it, else execute the real operation. The rewritten function then passed 1000 of 1000 trials with bit-exact comparison, and the helpers are now the recommended pattern for any lane translating floating-point arithmetic. Integer-only rewrites are unaffected.</p>
+      <h3>How to reproduce it</h3>
+      <p>Take any function whose inputs can put different-payload quiet NaNs on both sides of one arithmetic operation, rewrite it with plain arithmetic operators, and run the differential checker with float-edge inputs over a few dozen trials. A mismatch confined to the call-argument channel, with return value, memory and everything else equal, is the signature: the scripted callee answers hide the difference downstream, so only the logged argument differs. Adding the explicit helpers and re-running turns it green.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two earlier mistakes in the same lane are worth recording. First, a different function passed 1000 of 1000 trials with an empty call log: its input cycles were indexed one slot off, so every trial took an early exit. The verdict's call-coverage field exposed it, and the rule going forward is to read that field before believing any pass. Second, a hand analysis of one function's stack frame predicted register garbage that a live trial log refuted within minutes; the arithmetic behind the prediction was wrong (a hex offset misread), not the code. Striking static findings now get a dynamic check before anyone builds on them.</p>
+      </article>
 
       <article class="entry" id="production-b13">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

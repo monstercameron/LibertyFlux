@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: NaN payloads need explicit handling in float rewrites",
+    "commit": null,
+    "summary": "Findings from the r-b25 lane.",
+    "changes": [
+      "New devlog entry: NaN payloads need explicit handling in float rewrites.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 85 more functions pass the checker (3878 in total)",
     "commit": "de29364d9ee17281931e4a396e54cc711ff38530",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
