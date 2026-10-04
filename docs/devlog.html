@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b67">Production batch: three audio functions verified, one tail-jump gap found</a></li>
       <li><a href="#production-b64">A production batch that caught a checker bug</a></li>
       <li><a href="#production-b62">Production batch: four audio rewrites verified, one size correction, one checker gap</a></li>
       <li><a href="#production-s121">A pass that proves nothing: fault parity and nine-argument calls</a></li>
@@ -276,6 +277,27 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b67">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production batch: three audio functions verified, one tail-jump gap found</h2>
+      <p>A production lane verified three medium and large audio functions against the original with one thousand matching trials each, and deferred a fourth on a precise checker gap: version 2 cannot verify stack arguments forwarded through a conditional tail jump.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite four neighbouring audio functions in Rust and prove each rewrite behaves identically to the original using checker version 2, with at least one thousand trials per function.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> Three functions verified, one thousand trials each with zero mismatches: a voice gate with retry grids, a three-way event router with fourteen intercepted callees, and a voice update that fans work out to the other functions.</li>
+      <li><span class="evidence verified">Verified</span> One function deferred: its taken path ends in a tail jump that forwards two stack values. The checker patches the jump into a call, which shifts the recorded stack slots on the original side, and the shared stub cleanup leaves the rewrite no way to present the same values. The gap fails safe: affected trials mismatch instead of passing silently.</li>
+      <li><span class="evidence verified">Verified</span> One batch size was wrong: a listed medium function turned out to be a sixty-four byte gate followed by padding, with the remaining bytes belonging to the next function.</li>
+      <li><span class="evidence verified">Verified</span> Stub snapshots record argument memory before scripted writes land, so snapshots of freshly allocated frame buffers compare meaningless leftover data. Heap buffers are unaffected because their initial contents are deterministic.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <p>Verify the three passing rewrites as production results. For the deferred function, the recommended checker extension is side-aware tail stubs: keep the tail cleanup on the original side and use a normal cleanup returning to the rewrite on the other side, so forwarded stack values compare exactly. That change compares more behaviour than today, not less, and should ship with mutant controls proving a wrong forwarded value fails.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane contracts for the batch with the version 2 worker: the three verified functions pass one thousand trials each, and the deferred function passes every non-tail trial while tail trials mismatch only on the recorded call arguments. The lane report records the exact recording shift, the cleanup conflict, and the proposed stub design.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two own-goals cost attempts: out-param snapshots were declared for a frame buffer whose contents are never read, and two early-exit return values were copied from the wrong running register. A hand-computed float constant was also wrong by a rounding of the exponent math. Separately, the build output file stayed locked for minutes after checker runs with no visible holder, so the lane built into fresh target folders instead of fighting the lock.</p>
+      </article>
 
       <article class="entry" id="production-b64">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
