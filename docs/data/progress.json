@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-03",
-  "updated_at": "2026-10-03 22:35",
+  "updated_at": "2026-10-03 22:55",
   "phase": {
     "index": 0,
     "name": "Measure"
@@ -13,7 +13,7 @@
   "stages": {
     "identified": 38403,
     "named": 9031,
-    "rewritten": 174,
+    "rewritten": 592,
     "verified": 0
   },
   "structures": 0,
@@ -105,16 +105,16 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 174,
+      "value": 592,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     }
   ],
   "activity": {
-    "lanes_running": 58,
-    "lanes_finished": 143,
-    "lanes_incomplete": 0,
-    "devlog_entries": 157
+    "lanes_running": 60,
+    "lanes_finished": 165,
+    "lanes_incomplete": 1,
+    "devlog_entries": 163
   },
   "map": [
     {
