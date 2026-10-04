@@ -4,6 +4,13 @@
 //! - Fixed-layout helpers live here: [`Ptr32`] (a 32-bit typed pointer that
 //!   stays 4 bytes on every platform) and the [`assert_size!`] /
 //!   [`assert_offset!`] compile-time layout assertions.
+//! - The lift's boundary types live here too: [`arena`] ([`Handle`] and
+//!   [`Arena`], how lifted code refers to objects) and [`boundary`]
+//!   ([`Handle32`] cookies, the [`FixedLayout`](boundary::FixedLayout)
+//!   codec, [`Image32`](boundary::Image32) address spaces, the
+//!   [`AddressMap`](boundary::AddressMap) and the conversion traits between
+//!   32-bit layouts and native structs). The method they serve is specified
+//!   in the `lf-lift` crate documentation.
 //! - The game's maths types will live here once the `glam` dependency is
 //!   approved (see the t-engine-crates report); nothing invents its own
 //!   vector/matrix types elsewhere.
@@ -11,9 +18,13 @@
 //!   target including `i686-pc-windows-msvc`, and it must never contain
 //!   original game code, only new Rust.
 
+pub mod arena;
+pub mod boundary;
 pub mod layout_assert;
 pub mod ptr32;
 
+pub use arena::{Arena, Handle};
+pub use boundary::Handle32;
 pub use ptr32::Ptr32;
 
 #[cfg(test)]
