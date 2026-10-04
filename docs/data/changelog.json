@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Production batch: three emitter rewrites verified, one float lesson",
+    "title": "Rewrites: 110 more functions pass the checker (5475 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "110 rewrites added under rewrites/pending: 0 script native handlers and 110 other functions.",
+      "The tree now holds 5475 rewrites, 5456 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "230 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Production batch: three emitter rewrites verified, one float lesson",
+    "commit": "28dbaa166d2244dd45f56bc8f896a658c9f38011",
     "summary": "Findings from the r-b105 lane.",
     "changes": [
       "New devlog entry: Production batch: three emitter rewrites verified, one float lesson.",
