@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Reader crate: lf-resource",
+    "title": "Reader crate: lf-model",
     "commit": null,
+    "summary": "3D models: drawables, dictionaries, fragments, shaders, skeletons, vertex data.",
+    "changes": [
+      "New crate crates/formats/lf-model: 3D models: drawables, dictionaries, fragments, shaders, skeletons, vertex data.",
+      "About 2,096 lines of Rust with 11 unit tests and 5 integration tests; tests that need the game's files skip unless the game folder is given in an environment variable.",
+      "Third-party dependencies: flate2.",
+      "Written by the fmt-models lane from the file format alone, then audited by the integration lane for game data, key material and machine paths before publication."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Reader crate: lf-resource",
+    "commit": "f04e99b5c98d67e8fb0303d2c54c5989796918d1",
     "summary": "RSC5 resource containers: header, zlib segments, pointer decoding.",
     "changes": [
       "New crate crates/formats/lf-resource: RSC5 resource containers: header, zlib segments, pointer decoding.",

@@ -1,0 +1,13 @@
+[package]
+name = "lf-model"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Read-only parser for GTA IV drawable, drawable-dictionary and fragment resources (WDR, WDD, WFT)"
+
+[lints]
+workspace = true
+
+[dependencies]
+flate2.workspace = true
