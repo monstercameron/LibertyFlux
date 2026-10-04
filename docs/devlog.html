@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b65">Production batch: three audio functions verified, and a compiler lesson about NaN bits</a></li>
       <li><a href="#production-b59">Audio batch of seven verified, and a float-compare idiom worth knowing</a></li>
       <li><a href="#production-b68">Two contract traps that silently starve test coverage</a></li>
       <li><a href="#production-b67">Production batch: three audio functions verified, one tail-jump gap found</a></li>
@@ -279,6 +280,26 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b65">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production batch: three audio functions verified, and a compiler lesson about NaN bits</h2>
+      <p>Three medium-sized audio functions were rewritten in Rust and each passed one thousand differential trials with zero failures. The interesting part was not the rewrites but two traps found along the way: the Rust compiler silently swaps the operands of floating-point instructions, which changes NaN payload bits and fails bit-exact comparison, and the checker silently ignores memory fills aimed at one wrong address range, which ran one thousand trials on unvaried inputs while reporting success.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of four neighbouring audio functions in Rust and prove each rewrite behaves identically to the original with the version 2 checker, which runs both sides from identical state and compares return values, memory, stack, calls and faults. The batch held most of its code in medium and large functions that the previous checker version could not verify.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Three functions verified: a per-tick voice update with level, envelope and phase integration; a spatial mix update with a table scan and handle refresh across eight intercepted callees; and a crossfade update resolving handles through a global manager object. All reached one thousand passing trials with every original-side run healthy.</p>
+      <p><span class="evidence verified">Verified</span> The compiler swaps floating-point operands. One rewrite computed a value times a variable in source order, but the emitted instruction had them reversed because the variable was already in a register. For ordinary numbers this is harmless, but when both sides are NaN values with different payloads the destination operand wins, so three trials in a thousand produced different bits. The fix is small helper routines that implement the hardware NaN rule explicitly before falling back to the hardware instruction.</p>
+      <p><span class="evidence verified">Verified</span> Fills to a wrong address fail silently. One contract aimed its global inputs one digit off, into code instead of data. Every trial ran on pristine values, the check compared untouched code bytes on both sides and passed, and nothing reported an error. The mistake was caught only by reading a suspicious constant in the failure detail of an unrelated run. The worker should reject fills outside writable ranges.</p>
+      <p><span class="evidence verified">Verified</span> Two functions read stack words they never wrote, an alignment-gap slot left over from a 16-byte stack realignment. Under the checker's defined fill both sides see zero; in the game the value is whatever the caller left there.</p>
+      <p><span class="evidence">Inferred</span> The fourth function, a large mixer, needs no new checker ability but more time than the lane had: per-call-site scripted answers, output-parameter writes, and a check that one call's pointed-to words fit the per-callee snapshot cap.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Wrap float operations in order-forcing helpers whenever NaN inputs are possible, or disassemble the rewrite and compare operand order against the original. Always confirm inputs vary through call coverage or failure details, never through passing checks alone. The fourth function goes back to the queue with the analysis above.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane's three contracts with the version 2 checker and driver from the lane folder against the lane's rewrite library; each passes one thousand trials. Reproduce the operand swap by compiling any float multiply where one operand is already live in a register and disassembling the result. Reproduce the silent fill by aiming a global fill at a code address and watching trials pass on pristine values.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The wrong-address mistake cost a full re-verify cycle per function and was found by luck, reading one constant in a failure detail. A weak mutant designed as an honesty control passed twenty of twenty trials because a clamp and zero-filled trials masked it; only an unmaskable mutant proved the checker honest. The rewrite library stays locked briefly after each run, so rebuilds must rename it aside first.</p>
+      </article>
 
       <article class="entry" id="production-b59">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
