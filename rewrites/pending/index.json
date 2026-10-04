@@ -1647,6 +1647,15 @@
   "lane": "r-b112"
  },
  {
+  "address": "0x00657EB0",
+  "name": "frag_cache_refresh_derived_rows",
+  "kind": "function",
+  "file": "functions/fn_00657eb0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b151"
+ },
+ {
   "address": "0x0065FC20",
   "name": "session_id_format",
   "kind": "function",
@@ -10692,6 +10701,15 @@
   "lane": "r-s132"
  },
  {
+  "address": "0x00945DD0",
+  "name": "radio_rebuild_station_tables",
+  "kind": "function",
+  "file": "functions/fn_00945dd0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b127"
+ },
+ {
   "address": "0x00945FB0",
   "name": "init_slot_pair",
   "kind": "function",
@@ -10710,6 +10728,15 @@
   "lane": "r-s132"
  },
  {
+  "address": "0x00946490",
+  "name": "radio_advance_station",
+  "kind": "function",
+  "file": "functions/fn_00946490.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b127"
+ },
+ {
   "address": "0x00946680",
   "name": "teardown_file_slots",
   "kind": "function",
@@ -10726,6 +10753,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s132"
+ },
+ {
+  "address": "0x00946810",
+  "name": "radio_emit_station_data",
+  "kind": "function",
+  "file": "functions/fn_00946810.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b127"
+ },
+ {
+  "address": "0x00946AF0",
+  "name": "radio_set_station_mode",
+  "kind": "function",
+  "file": "functions/fn_00946af0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b127"
  },
  {
   "address": "0x00946C00",
@@ -10780,6 +10825,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s132"
+ },
+ {
+  "address": "0x00947020",
+  "name": "radio_sync_station",
+  "kind": "function",
+  "file": "functions/fn_00947020.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b127"
  },
  {
   "address": "0x00947820",
@@ -46069,6 +46123,42 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b116"
+ },
+ {
+  "address": "0x00E43870",
+  "name": "emit_indexed_quad",
+  "kind": "function",
+  "file": "functions/fn_00e43870.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b142"
+ },
+ {
+  "address": "0x00E439F0",
+  "name": "emit_owner_records",
+  "kind": "function",
+  "file": "functions/fn_00e439f0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b142"
+ },
+ {
+  "address": "0x00E43D50",
+  "name": "emit_indexed_quad_guarded",
+  "kind": "function",
+  "file": "functions/fn_00e43d50.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b142"
+ },
+ {
+  "address": "0x00E43F10",
+  "name": "emit_owner_full_pass",
+  "kind": "function",
+  "file": "functions/fn_00e43f10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b142"
  },
  {
   "address": "0x00E45020",
