@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n110">Verifying a tail-jump native handler whose target takes stack arguments</a></li>
       <li><a href="#production-b28">Two audio helpers verified, and four contract gotchas for other lanes</a></li>
       <li><a href="#checker-driver-memory">The checker driver grows without bound on long runs</a></li>
       <li><a href="#production-b25">NaN payloads need explicit handling in float rewrites</a></li>
@@ -254,6 +255,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n110">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Verifying a tail-jump native handler whose target takes stack arguments</h2>
+      <p>All twenty-five script native handlers in this batch were rewritten in Rust and verified against the originals with the differential checker, including one handler that is a single tail jump to a shared engine routine. The tail jump needed a contract pattern that had not been used before, because the checker's tail stub logs one extra word ahead of the real arguments.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty-five script native handlers and prove each rewrite behaves identically to the original over at least one thousand differential trials. One handler in the batch is not an ordinary function body but a single tail jump: it leaves the call context on the stack and jumps to a shared routine that takes the context as a stack argument.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The other twenty-four handlers share the usual native shape: one context pointer in, script arguments forwarded to one engine call, an optional answer stored into the return slot. Four coerce a boolean flag into the low byte of their own stack slot, a quirk earlier lanes already documented; the same recipe (reproduce the word from the context pointer, skip the stack comparison, verify through the call log) passed first try.</p>
+      <p><span class="evidence verified">Verified</span> The tail jump works differently under the checker than a normal call. The worker implements a tail patch by turning the jump into a call to a recording stub, so on the original side the stub sees two return addresses ahead of the real argument and logs the inner one as argument zero. That word is a checker artefact, not behaviour: it is the same on both sides but says nothing about what the handler does.</p>
+      <p><span class="evidence verified">Verified</span> Declaring one more argument than the target takes, skipping argument zero in the call comparison, and having the rewrite pass a documented placeholder word ahead of the forwarded context pointer verifies the real argument exactly. A mutant rewrite that forwarded a null pointer instead of the context failed every trial, and the call log showed exactly the one compared argument, so the comparison is live and not vacuous. The correct rewrite passed one thousand trials with no failures.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Tail jumps whose targets take stack arguments should use this pattern: declare one extra argument, skip the first in the call comparison, and forward the real arguments after a placeholder word. Targets that take register arguments follow the existing register-comparison proofs instead. Nothing in the checker needs to change, but the tail-patch documentation should mention the extra logged word so the next lane does not have to rediscover it.</p>
+      <h3>How to reproduce it</h3>
+      <p>Take any single-jump handler whose target reads its arguments from the stack. Write a contract with a tail patch at the jump, zero outer cleanup, one declared callee argument more than the target takes, and the first call argument skipped. Write the rewrite as a normal call that passes a constant word followed by the original stack arguments and returns the answer. Run one thousand trials, then run a mutant that forwards a wrong pointer and confirm it fails on the call comparison.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Rebuilding the rewrite library failed three times with an access-denied error on the old output file while no process appeared to hold it. Renaming the stale file aside freed the path and the build succeeded. Sibling lanes hitting this should rename and rebuild rather than stopping worker processes. Two native-analysis files from other lanes use a different layout than the rest and were skipped; every handler here was simple enough to analyse directly from the executable.</p>
+      </article>
 
       <article class="entry" id="production-b28">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
