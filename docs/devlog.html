@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#subsystem-world-pools">Subsystem survey: world, entities and object pools</a></li>
       <li><a href="#subsystem-streaming">Subsystem survey: streaming and resources</a></li>
       <li><a href="#subsystem-script-vm">Subsystem survey: the script virtual machine</a></li>
       <li><a href="#subsystem-peds-tasks">Subsystem survey: pedestrians, AI and the task system</a></li>
@@ -85,6 +86,29 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="subsystem-world-pools">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Subsystem survey: world, entities and object pools</h2>
+      <p>The entity hierarchy survived intact in the executable's type data, but the world container, the pools and the population manager left no type traces at all, which means they are almost certainly static code with sizes baked in as plain numbers. Map data on disk uses text definition files plus binary placement files, and the public placement format matched the bytes on disk.</p>
+      <h3>What was asked</h3>
+      <p>Survey the world, entities and object pools subsystem working directly on the executable file: list its classes with base classes and virtual table sizes, collect its strings, locate its code through relocation references, note its operating system dependencies, check public documentation, note frame-rate dependencies, and rank what to understand first.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The run-time type data holds thousands of classes, of which about two dozen belong to this subsystem. The entity tree runs from a common root through dynamic and physical entities down to objects, buildings, dummy placeholders, interior and portal instances, with seven model definition classes and a set of world query helpers.</p>
+      <p><span class="evidence verified">Verified</span> No trace of a world container, pool collection, population manager, file loader or placement class exists anywhere in the type data or the strings, so these are most likely static classes with no virtual tables. Pool sizes appear nowhere as text and must be plain numeric constants in code.</p>
+      <p><span class="evidence verified">Verified</span> Useful strings include pool exhaustion errors, population manager startup and shutdown messages, portal and room tracking text, placement provenance wording, level-of-detail distance settings, and pickup save and load errors. Map files on disk come in per-district triplets of definition, archive and binary placement files, and the placement header matches the public format documentation.</p>
+      <p><span class="evidence verified">Verified</span> Code references to this subsystem are scattered across the whole program by link-time code generation, with the densest spots around model definitions with portal tracking and around generic objects. About sixty direct references group into eighteen small clusters totalling tens of kilobytes, with a lower-bound estimate of roughly two hundred functions. Entity code itself calls no operating system functions directly; timing and threading calls live in neighbouring code.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Start the rewrite with the model definition table and the text definition parser, then binary placement loading, then the pool allocator, then the world grid and scanners, then pickups, portals, population and detail policy.</li>
+      <li>Parsers, pool allocation sequences and handle encoding can be checked in a CPU emulator in isolation; streaming interplay, render equivalence and population timing need the running game.</li>
+      <li>Public format documentation for placement files is confirmed and can be relied on; pool capacities and the world grid layout are undocumented anywhere and are the highest-value unknowns.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Parse the executable's type descriptors, object locators and virtual tables from its data sections, extract printable strings, and join the relocation table against those targets, keeping only reference sites in the unencrypted part of the code section. Cluster nearby sites, validate standard function prologues with a disassembler, and curate out audio, interface, task, camera and network classes before clustering. Scripts and data files are kept with the survey.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first clustering attempt produced hundreds of meaningless clusters because audio, interface and task class names share the same substrings; only curation first made the picture usable. The encrypted first megabyte of the code section contains no relocation entries at all, so this method is blind there and the world and pool code may sit in that hole. One vehicle class slipped through a name filter and was caught on review.</p>
+      </article>
 
       <article class="entry" id="subsystem-streaming">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
