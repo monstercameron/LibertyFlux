@@ -7605,6 +7605,51 @@
   "lane": "r-b11"
  },
  {
+  "address": "0x00988730",
+  "name": "audCutsceneAudioEntity::vf3",
+  "kind": "function",
+  "file": "functions/fn_00988730.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b49"
+ },
+ {
+  "address": "0x00988990",
+  "name": "audCutsceneAudioEntity__refresh_slot",
+  "kind": "function",
+  "file": "functions/fn_00988990.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b49"
+ },
+ {
+  "address": "0x00988CF0",
+  "name": "MOLOTOV_FUSE_FIRE_LOOP_IN_AIR",
+  "kind": "function",
+  "file": "functions/fn_00988cf0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b49"
+ },
+ {
+  "address": "0x00988E20",
+  "name": "E2_APC",
+  "kind": "function",
+  "file": "functions/fn_00988e20.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b49"
+ },
+ {
+  "address": "0x00988F50",
+  "name": "audio__positional_voice_update",
+  "kind": "function",
+  "file": "functions/fn_00988f50.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b49"
+ },
+ {
   "address": "0x0099D610",
   "name": "heap_sift_down_max",
   "kind": "function",
@@ -35640,6 +35685,42 @@
   "lane": "r-s89"
  },
  {
+  "address": "0x00D906C0",
+  "name": "audio_box_query_nearest",
+  "kind": "function",
+  "file": "functions/fn_00d906c0.rs",
+  "trials": 1100,
+  "checker": "version 2",
+  "lane": "r-b43"
+ },
+ {
+  "address": "0x00D90A10",
+  "name": "audio_publish_point_bounds",
+  "kind": "function",
+  "file": "functions/fn_00d90a10.rs",
+  "trials": 1100,
+  "checker": "version 2",
+  "lane": "r-b43"
+ },
+ {
+  "address": "0x00D90B40",
+  "name": "audio_search_cell_planes",
+  "kind": "function",
+  "file": "functions/fn_00d90b40.rs",
+  "trials": 1100,
+  "checker": "version 2",
+  "lane": "r-b43"
+ },
+ {
+  "address": "0x00D90E00",
+  "name": "audio_cell_fan_area",
+  "kind": "function",
+  "file": "functions/fn_00d90e00.rs",
+  "trials": 1100,
+  "checker": "version 2",
+  "lane": "r-b43"
+ },
+ {
   "address": "0x00D91020",
   "name": "audio_position_dispatch",
   "kind": "function",
@@ -35647,6 +35728,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s89"
+ },
+ {
+  "address": "0x00D91090",
+  "name": "audio_cell_centroid",
+  "kind": "function",
+  "file": "functions/fn_00d91090.rs",
+  "trials": 1100,
+  "checker": "version 2",
+  "lane": "r-b43"
  },
  {
   "address": "0x00D911B0",
@@ -35665,6 +35755,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s89"
+ },
+ {
+  "address": "0x00D91250",
+  "name": "audio_segment_crossing",
+  "kind": "function",
+  "file": "functions/fn_00d91250.rs",
+  "trials": 1100,
+  "checker": "version 2",
+  "lane": "r-b43"
  },
  {
   "address": "0x00D92000",
