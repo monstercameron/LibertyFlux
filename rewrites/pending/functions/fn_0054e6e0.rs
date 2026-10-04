@@ -1,0 +1,26 @@
+// original: 0x0054e6e0 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_2,player_schema::LeaderboardInfo,10>::LeaderboardInfo,10>_2
+// Guarded tag store for a leaderboard query.
+//
+// Asks the queried object (through its own second virtual) for its key and,
+// when the key matches `want`, stamps a constant tag word through `out` and
+// returns `out`. Returns null on a key mismatch or a null `out`.
+//
+export!(thiscall, rs252_0054e6e0(this_: u32, out: u32, want: u32) -> u32 {
+    let vtable = unsafe { (this_ as *const u32).read() };
+    let slot = unsafe { ((vtable.wrapping_add(4)) as *const u32).read() };
+    let f: extern "thiscall" fn(u32) -> u32 =
+        unsafe { core::mem::transmute(slot as usize) };
+    let got = f(this_);
+    if got != want {
+        return 0;
+    }
+    if out == 0 {
+        return 0;
+    }
+    // Tag word carried in the instruction stream; it has a base
+    // relocation entry, so it must go through relocated() like any
+    // absolute address (proven by the checker: the original stores the
+    // relocated value under the worker's mapping).
+    unsafe { (out as *mut u32).write(relocated(0xfd840c)) };
+    out
+});
