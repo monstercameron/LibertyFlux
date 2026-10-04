@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#subsystem-network">Subsystem survey: networking</a></li>
       <li><a href="#p0-natives">The script native table: just over three thousand natives, all named</a></li>
       <li><a href="#pages-build-collisions">GitHub Pages fails builds when pushes arrive seconds apart</a></li>
       <li><a href="#tools-models-textures">Tools: models, textures and collision</a></li>
@@ -90,6 +91,33 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="subsystem-network">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Subsystem survey: networking</h2>
+      <p>The executable still contains the complete multiplayer stack even though this edition removed multiplayer: entity replication, session management, presence and clan services, leaderboards, voice message types, and socket, HTTP and TLS transport. Games for Windows Live is gone without a trace, and the backend points at Rockstar Online Services instead. About half of the game replication layer appears to sit in the encrypted part of the code section, so it cannot be studied statically.</p>
+      <h3>What was asked</h3>
+      <p>Survey the networking subsystem from the executable alone: the classes, strings, code locations, operating system dependencies, public knowledge, timing behaviour, and rewrite notes, with a ranked list of what to understand first.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> Class names recovered through run-time type information show two layers: a game replication layer with per-entity-type sync wrappers, sync parsers, several dozen network event types, replicated task types, interpolation helpers, and array replication for pickups, player info and script variables; and an online services layer with session tasks, session events, wire message types, and a live-services manager with a Steam backend.</li>
+      <li><span class="evidence verified">Verified</span> Leaderboards dominate the class count: nearly fifteen hundred template bindings covering several hundred multiplayer mode schemas across ranked and standard boards for races, episodic content, team, competitive and co-operative modes.</li>
+      <li><span class="evidence verified">Verified</span> No reference to the old PC online platform remains anywhere: not in strings, class names, or imports. The replacement backend is named throughout: presence, party, invite, clan and sign-in events, matchmaking and clan web service endpoints, and Rockstar service hosts for auth, online services and cloud.</li>
+      <li><span class="evidence verified">Verified</span> Transport is raw sockets plus the engine's own HTTP client and statically linked TLS. Most socket imports are referenced from readable code in a select-loop client pattern with no listening sockets; all crypto imports are used for certificate checks and protected session-id storage.</li>
+      <li><span class="evidence">Inferred</span> The game replication layer and socket startup live mostly in the encrypted code region: most of its class tables and all of its diagnostic strings have no references from readable code. Session, presence, HTTP, stats upload and leaderboard code is in the readable region, in on the order of two dozen code areas totalling roughly a quarter of a megabyte.</li>
+      <li><span class="evidence">Inferred</span> Voice chat is a leftover surface only: message types, menu tokens and error text exist, but no voice transport was found, and the similarly named audio engine classes are unrelated sound synthesis voices.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <p>A rewrite should start with the pure serialisation pieces (bit buffers, message framing and ids, sync data layouts), then session state machines against a fake transport, and leave sockets, NAT traversal and the defunct server endpoints for last with loopback harnesses. The next step for this subsystem is to prove whether any network code is still reachable from the menus, and to recover sync data layouts from the readable parser code.</p>
+      <h3>How to reproduce it</h3>
+      <p>Parse the executable headers for sections, imports and relocations; scan read-only data for run-time type descriptors and validate complete object locators and class hierarchies against the relocation table; extract printable strings and filter by network keywords; resolve every relocation in the unencrypted code and keep targets matching network class tables, strings or socket and crypto import slots; group nearby hits into clusters; spot-check samples with a disassembler used only as a verifier.</p>
+      <h3>What was confusing or went wrong</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> The first clustering pass matched every class table in the binary instead of only network ones and produced hundreds of meaningless clusters; restricting targets to the curated network class list fixed it.</li>
+      <li><span class="evidence verified">Verified</span> Keyword filters kept catching false friends: police dispatch orders, gamepad names, menu selection tokens and sound synthesis voices all matched naive network keywords and had to be excluded by hand.</li>
+      <li><span class="evidence">Unknown</span> The exact third-party TLS library could not be pinned down: the cipher list suggests one family while an error string suggests another, and the version is unknown.</li>
+      </ul>
+      </article>
 
       <article class="entry" id="p0-natives">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

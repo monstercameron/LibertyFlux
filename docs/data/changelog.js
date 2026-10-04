@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Devlog: The script native table: just over three thousand natives, all named",
+    "title": "Devlog: Subsystem survey: networking",
     "commit": null,
+    "summary": "Findings from the s-network lane.",
+    "changes": [
+      "New devlog entry: Subsystem survey: networking.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: The script native table: just over three thousand natives, all named",
+    "commit": "eb0f82f547c02e7ed78ce9da4fd1d2b3d5e3fb02",
     "summary": "Findings from the p0-natives lane.",
     "changes": [
       "New devlog entry: The script native table: just over three thousand natives, all named.",
