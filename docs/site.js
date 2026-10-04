@@ -14,7 +14,7 @@ function render(data) {
 
   var PHASES = [
     ["Measure", "measuring the executable", "Analyse the executable, count its functions, set library code aside, recover class names.", "The function count and class list exist."],
-    ["Harness", "building the harness", "Build the work queue, the emulator comparison, and the loader that swaps functions into the game.", "50 functions pass the comparison and run in the game."],
+    ["Harness", "building the harness", "Build the work queue, the side-by-side comparison, and the loader that swaps functions into the game.", "50 functions pass the comparison and run in the game."],
     ["Pilot", "running the pilot", "Run a few agents for several days. Measure how many functions pass, and how many passed wrongly.", "A measured rate replaces the estimate."],
     ["Rewrite", "rewriting functions", "Scale up the agents and rewrite every game function in Rust.", "The game plays with every replacement switched on."],
     ["Standalone", "building the standalone game", "Build the Rust code as its own 32-bit program.", "It runs without the original executable."],

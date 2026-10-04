@@ -65,7 +65,7 @@
         <li><div><h3>Measure the executable</h3><p>Ghidra, a reverse-engineering tool, analyses the original program. Functions are counted, the compiler's own runtime and third-party library code is set aside, and class names are recovered from the type information the compiler left behind.</p></div></li>
         <li><div><h3>Queue the work</h3><p>A script orders the functions from easiest to hardest and hands them out one at a time. Agents never choose their own.</p></div></li>
         <li><div><h3>Rewrite in Rust</h3><p>An agent studies what the function does, with the most similar finished functions as reference, and writes a Rust implementation.</p></div></li>
-        <li><div><h3>Compare against the original</h3><p>The original function and the Rust version are run in a CPU emulator from the same starting state. If their results, memory writes and outgoing calls agree, the function is accepted. If not, the agent tries again or hands it on.</p></div></li>
+        <li><div><h3>Compare against the original</h3><p>The original function and the Rust version are run side by side in a small 32-bit test process, from the same inputs and the same starting memory. If their results, memory writes and outgoing calls agree, the function is accepted. If not, the agent tries again or hands it on.</p></div></li>
         <li><div><h3>Swap it into the running game</h3><p>Accepted functions are loaded into the original game, each with its own on/off switch. If the game misbehaves, switches are flipped in halves until the faulty function is found.</p></div></li>
         <li><div><h3>Cut the original loose</h3><p>When every function has a Rust replacement, the Rust code is built on its own, made 64-bit, and given a new renderer.</p></div></li>
       </ol>

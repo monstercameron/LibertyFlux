@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Tools: building for the three target platforms",
+    "title": "Replace the emulator check with native side-by-side runs",
     "commit": null,
+    "summary": "The planned CPU emulator does not work on this machine; running the code natively does.",
+    "changes": [
+      "The plan, README and site now describe the check as a side-by-side run of the original function and the Rust rewrite in a small 32-bit test process.",
+      "The CPU emulator crashes on every run on this ARM64 machine, confirmed by two lanes. Native runs were proven: two Rust rewrites agreed with their originals on 200 of 200 trials each."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Tools: building for the three target platforms",
+    "commit": "1fe1119baf9e1359b37ef63e13a52823df1dd86f",
     "summary": "Findings from the t-xplat-build lane.",
     "changes": [
       "New devlog entry: Tools: building for the three target platforms.",

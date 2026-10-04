@@ -42,7 +42,7 @@ and a verified or inferred label on every claim. What it changes here:
 |---|---|---|
 | What is committed | Structures, symbols, Rust rewrites, tooling, docs. Never decompiled code | Cam's rule, in AGENTS.md |
 | Intermediate C++ stage | None. Lanes read decompiler output from `.artifacts/` and write Rust directly | Decompiled C++ cannot be committed, and an uncommitted months-long intermediate is a loss risk. Removes a phase |
-| How a function is checked | Emulator comparison: the original function and the 32-bit Rust build of the rewrite run in a CPU emulator from the same state; results, memory writes and outgoing calls must agree | Byte-matching is impossible for Rust. Both sides run in the emulator, so the check does not depend on the game running on this ARM64 machine |
+| How a function is checked | Native side-by-side run: a small 32-bit helper process maps the original executable's code, calls the original function and the 32-bit Rust build of the rewrite with the same inputs and starting memory, and compares results, memory writes and outgoing calls | Byte-matching is impossible for Rust. The planned CPU emulator (Unicorn) crashes on every run on this machine, and two lanes confirmed it independently. Native runs were proven on 2026-10-03: two Rust rewrites agreed with their originals on 200 of 200 trials each. Faster than emulation, and it does not need the game itself to run |
 | Second check | Accepted functions are swapped into the running game through an injected 32-bit DLL with a per-function switch | Catches what unit comparison misses; a regression is found by switching replacements off in halves |
 | Target binary | The Steam Complete Edition executable (1.2.0.x) | Cam owns it and it runs without a cracked launcher. FusionFix and scrDbg already support it |
 | Older builds | 1.0.8.0 is used only for static analysis, if an official patch executable is available, to carry names across with Ghidra Version Tracking | IV-SDK and most public class knowledge target 1.0.7.0 and 1.0.8.0. Downgrading the installed game needs a cracked launcher, which we are not doing |
@@ -90,8 +90,8 @@ Installed for this project on 2026-10-03:
 Ghidra needs `JAVA_HOME` set to `tools\jdk`. The JDK is x64 on purpose: Ghidra ships Windows native
 components for x64 only.
 
-Not installed yet: a CPU emulator library for the checker (Unicorn), a hooking library, DXVK (only
-if the game needs it to run here), `objdiff` (only if a byte-level comparison is ever wanted).
+Unicorn was installed and then abandoned: it crashes on start under this machine's x64 emulation.
+The checker runs code natively in a 32-bit helper process instead.
 
 ## Repository layout
 

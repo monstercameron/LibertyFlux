@@ -91,7 +91,7 @@ flowchart LR
     A[Original executable] --> B[Measure<br>Ghidra analysis]
     B --> C[Queue<br>easiest first]
     C --> D[Rewrite in Rust<br>one function per agent]
-    D --> E{Emulator comparison<br>original vs Rust}
+    D --> E{Side-by-side run<br>original vs Rust}
     E -- differs --> D
     E -- agrees --> F[Swap into the<br>running game]
     F --> G[Standalone<br>Rust build]
@@ -104,8 +104,9 @@ flowchart LR
    time. Agents never choose their own.
 3. **Rewrite.** An agent studies the function's behaviour, with the nearest already-finished
    functions as reference, and writes a Rust implementation.
-4. **Compare.** The original function and the Rust version run in a CPU emulator from the same
-   starting state. Their results, memory writes and outgoing calls must agree.
+4. **Compare.** The original function and the Rust version run side by side in a small 32-bit test
+   process, from the same inputs and starting memory. Their results, memory writes and outgoing calls
+   must agree.
 5. **Swap in.** Accepted functions are loaded into the original game with an on/off switch each. If
    the game misbehaves, switches are flipped in halves until the faulty one is found.
 6. **Cut loose.** When every function has a replacement, the Rust code is built on its own, widened
@@ -128,7 +129,7 @@ The full rules are in [AGENTS.md](AGENTS.md).
 | Phase | Work | Finished when | Status |
 |---|---|---|---|
 | 0. Measure | Analyse the executable, count functions, set library code aside, recover class names | Function count and class list exist | In progress |
-| 1. Harness | Build the work queue, the emulator comparison, and the loader that swaps functions into the game | 50 functions accepted end to end | Not started |
+| 1. Harness | Build the work queue, the side-by-side comparison, and the loader that swaps functions into the game | 50 functions accepted end to end | Not started |
 | 2. Pilot | Run a few agents for several days; measure accept rate and false accepts | A measured rate replaces the estimate | Not started |
 | 3. Rewrite | Scale up the agents and rewrite every game function in Rust | The game plays with every replacement switched on | Not started |
 | 4. Standalone | Build the Rust code as its own 32-bit program | It runs without the original executable | Not started |
@@ -157,7 +158,7 @@ python scripts/update_progress.py
 | game functions | Functions in the executable, with library code excluded |
 | named | Functions that have been given a meaningful name |
 | rewritten in Rust | Functions with a Rust implementation |
-| verified | Rust implementations the emulator comparison has accepted |
+| verified | Rust implementations the side-by-side comparison has accepted |
 | structures | Type layouts documented |
 | decompiled code in repo | Always none. See the rule above |
 
