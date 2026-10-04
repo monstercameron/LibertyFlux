@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b183">A callee register the manual calls optional is compared by default</a></li>
       <li><a href="#naming-04">Naming a run of leaderboard factory fragments</a></li>
       <li><a href="#proof-records">How strongly is each rewrite proven</a></li>
       <li><a href="#hourly-reviews-2026-10-04">Hourly reviews, 4 October</a></li>
@@ -335,6 +336,38 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b183">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>A callee register the manual calls optional is compared by default</h2>
+      <p>A production batch of three interface functions passed only after its contract listed three callee identifiers with explicitly empty register selections: for object-call convention callees the checker compares the object register even when the contract says nothing about registers.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite three neighbouring interface functions and prove each rewrite identical to the original over at least one thousand trials with the version 4 checker.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All three rewrites passed one thousand trials with zero failures and non-vacuous verdicts, covering every reachable path combination.</p>
+      <p><span class="evidence verified">Verified</span> The checker's manual describes the per-call register selection as optional. The worker source tells a narrower story, confirmed by a failing run:</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Convention</th><th role="columnheader">Registers compared with no entry</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">cdecl and stdcall</td><td role="cell" data-label="Registers compared with no entry">none</td></tr>
+      <tr role="row"><td role="cell">object call (thiscall)</td><td role="cell" data-label="Registers compared with no entry">the object register</td></tr>
+      <tr role="row"><td role="cell">fastcall</td><td role="cell" data-label="Registers compared with no entry">both argument registers</td></tr>
+      </tbody>
+      </table>
+      <p>This only bites when the object register holds a scratch-frame pointer rather than a real object, which happens for helper calls that take an output buffer in the register. The fix is an explicit empty selection for those callees, which the worker honours as selecting nothing.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Contract authors should give every object-call callee an explicit register entry: the register where it carries the object, an empty list where it carries scratch.</li>
+      <li>The manual should state the default selection table instead of calling the option merely optional.</li>
+      <li>The first-mismatch detail should print the first diverging call rather than the first three calls, which usually match.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Write a contract with an object-call callee whose register holds a frame address, omit that callee from the register selection, and run any number of trials: the calls check fails on the register while every other check passes. Adding the callee with an empty selection turns the verdict green with no other change.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The truncated mismatch detail showed two identical call heads, which sent the investigation toward argument encodings first; dumping the full per-side call logs showed all arguments identical and pointed at the register instead. Two further mismatches on the largest function were genuine analysis errors (a misread argument slot and two caller slots whose overwrite targets had been swapped), both diagnosed exactly by the same call logs.</p>
+      </article>
 
       <article class="entry" id="naming-04">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
