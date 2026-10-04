@@ -6,9 +6,8 @@
 /// shifting each passed element one slot forward, then store the value in
 /// the freed slot. Only the key lanes are compared (ordered `>`, so NaN on
 /// either side ends the walk); every other byte is moved untouched. Returns
-/// the word at offset 16 of the last tested element, matching the original's
-/// exit register. Original: 0x00b351e0 (cdecl, eight stack words: end, seven
-/// value words).
+/// the last value word, matching the original's exit register. Original:
+/// 0x00b351e0 (cdecl, eight stack words: end, seven value words).
 lf_checker_rt::export!(cdecl, rw_00b351e0(
     end: u32,
     v0: u32,
@@ -21,15 +20,12 @@ lf_checker_rt::export!(cdecl, rw_00b351e0(
 ) -> u32 {
     unsafe {
         const ELEM: u32 = 28;
-        const RET_OFF: u32 = 16;
         const N_COPY: usize = 7;
         let value = [v0, v1, v2, v3, v4, v5, v6];
         let value_key = f32::from_bits(v0);
         let mut slot = end;
         let mut elem = end.wrapping_sub(ELEM);
-        let mut last_tested = elem;
         loop {
-            last_tested = elem;
             let elem_key =
                 f32::from_bits((elem as *const u32).read_unaligned());
             if !(elem_key > value_key) {
@@ -48,6 +44,6 @@ lf_checker_rt::export!(cdecl, rw_00b351e0(
             slot as *mut u32,
             N_COPY,
         );
-        ((last_tested + RET_OFF) as *const u32).read_unaligned()
+        v6
     }
 });

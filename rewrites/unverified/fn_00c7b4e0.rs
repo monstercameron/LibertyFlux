@@ -244,8 +244,8 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
                     let cid =
                         lf_checker_rt::callee_thiscall!(C_CONV_ID, u32, this, 1);
                     let said = lf_checker_rt::callee_thiscall!(
-                        C_PED_SAY, u32, speech, cid, 0, 0, 0, 0, 0xffff_ffff,
-                        0, 0, SAY_VOLUME, 0, 0
+                        C_PED_SAY, u32, speech, cid, 0, 0, 0, 0xffff_ffff, 0,
+                        0, SAY_VOLUME, 0, 0
                     );
                     if (said & 0xff) == 0 {
                         return id;
@@ -256,8 +256,8 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
                     let cid =
                         lf_checker_rt::callee_thiscall!(C_CONV_ID, u32, this, 0);
                     lf_checker_rt::callee_thiscall!(
-                        C_PED_SAY, u32, speech, cid, 0, 0, 0, 0, 0xffff_ffff,
-                        0, 0, SAY_VOLUME, 0, 0
+                        C_PED_SAY, u32, speech, cid, 0, 0, 0, 0xffff_ffff, 0,
+                        0, SAY_VOLUME, 0, 0
                     );
                     wr32(this + TASK_STATE, 3);
                     id
