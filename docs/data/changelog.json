@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Checker version 3: closing the ways a wrong rewrite could pass",
+    "title": "Devlog: The compiler swaps float operands and the checker notices",
     "commit": null,
+    "summary": "Findings from the r-b43 lane.",
+    "changes": [
+      "New devlog entry: The compiler swaps float operands and the checker notices.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Checker version 3: closing the ways a wrong rewrite could pass",
+    "commit": "050e70272a024fdeb6fd394fc648e2b128525990",
     "summary": "Fixes for the defects and gaps that lanes using checker version 2 reported, each proven on the functions that exposed it.",
     "changes": [
       "Random fills for global data now vary per word and per trial; the old generator was nearly constant, which weakened every test of a function that reads globals.",

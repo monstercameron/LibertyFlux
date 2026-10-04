@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b43">The compiler swaps float operands and the checker notices</a></li>
       <li><a href="#production-s111">Twenty dispatch stubs verified, and a gap in what the checker observes</a></li>
       <li><a href="#production-s105">A one-byte checker bug that failed correct rewrites past 256 calls</a></li>
       <li><a href="#production-n117">Two checker gaps found while verifying native handlers</a></li>
@@ -269,6 +270,25 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b43">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>The compiler swaps float operands and the checker notices</h2>
+      <p>A Rust rewrite that passed 1099 of 1100 differential trials failed one because the compiler had swapped the two operands of a float addition, which changed the payload bits of a NaN result. Bit-exact float rewrites must pin operand order, not just the operation.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of six original game functions in Rust and prove each rewrite behaves identically to the original with the version 2 differential checker, which runs both sides from identical state and compares return values, memory, calls and faults over at least a thousand trials with edge values.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Float addition and multiplication in Rust do not guarantee which operand becomes the destination of the underlying instruction. The backend commutes them to reuse a live register. For ordinary values this is invisible, but when both operands are NaN with different payloads, the instruction propagates the destination operand's payload, so the swap changes result bits.</p>
+      <p><span class="evidence verified">Verified</span> The explicit low-level add intrinsic does not prevent the swap either. The backend sees through it and commutes the machine operands just the same. This was confirmed by disassembling the built rewrite, which showed the radius register reused as the addition destination.</p>
+      <p><span class="evidence verified">Verified</span> A call boundary does pin the order. A tiny never-inlined helper taking the two operands produced an addition with the first argument as destination on every inspection, and the previously failing trial then passed along with the rest.</p>
+      <p><span class="evidence verified">Verified</span> Two related comparison rules also need care. A branch that continues only when one float is strictly above another must be written as a strict greater-than so NaN takes the skip path. A branch that fails only on strictly-greater must be written as a negated greater-than so NaN takes the pass path. Getting either backwards is a silent one-in-hundreds failure.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Every float addition or multiplication in a rewrite whose two inputs can both be NaN now goes through order-preserving helpers, and the built code is spot-checked to confirm the order survived. Later rewrites in the same batch applied this from the start and passed first try. Any lane writing float rewrites should assume plain operators commute until proven otherwise for its build.</p>
+      <h3>How to reproduce it</h3>
+      <p>Write a rewrite containing a float addition of two independently scripted NaN-capable values, run the checker with float edge values in the corpus, and inspect a failing trial's inputs: the two sides will show different NaN payloads for the same operation. Disassembling the built rewrite shows the swapped destination. Wrapping the operation in a never-inlined helper and rebuilding makes the failure go away.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first failure looked impossible: identical inputs, the same notional operation, different NaN bits. The instinct was to blame the checker's float handling, but the checker was right and the rewrite was wrong. What cost the most time was the assumption that the explicit intrinsic would pin the order; it took a second round of disassembly to accept that only the call boundary worked. The same lane later found a second bug of the opposite kind, where a rewrite passed a thousand trials with the wrong integer signedness because the corpus never generated values that could tell the difference, which is why return-value histograms are now checked on every run.</p>
+      </article>
 
       <article class="entry" id="production-s111">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
