@@ -2,7 +2,7 @@
   {
     "date": "2026-10-04",
     "title": "Dashboard: a local page for watching the lanes",
-    "commit": null,
+    "commit": "cdd4630020dbf052771897e50d7af9f3984d7533",
     "summary": "A small local server and one page show every lane, its effort setting, its initial prompt, its log and results, and the counts, without a model in the loop.",
     "changes": [
       "scripts/dashboard/server.py serves one page and a read-only JSON interface on the local machine only. It reads what is already on disk (lane logs, briefs, results, the supervisor's log and settings, the site's progress data) and the process list. It writes nothing and starts nothing.",
