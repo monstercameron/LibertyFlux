@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#structures-animation">Class layouts: animation, motion tree and Euphoria</a></li>
       <li><a href="#natives-20">Native handlers SET_VIEWPORT_PRIORITY to SYNCH_RECORDING_WITH_WATER: what they reveal</a></li>
       <li><a href="#natives-18">Native handlers SET_MULTIPLAYER_HUD_TIME to SET_RADAR_AS_INTERIOR_THIS_FRAME: what they reveal</a></li>
       <li><a href="#natives-14">Native handlers PRINT_WITH_5_NUMBERS_NOW to RETUNE_RADIO_DOWN: what they reveal</a></li>
@@ -131,6 +132,31 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="structures-animation">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Class layouts: animation, motion tree and Euphoria</h2>
+      <p>All 148 animation, motion tree and Euphoria classes now have recovered object layouts: constructors, destructors, field maps and size estimates derived from the unencrypted code, with the worst gaps flagged rather than guessed.</p>
+      <h3>What was asked</h3>
+      <p>Recover the object layouts and virtual interfaces of the animation family: which virtual slots each class overrides, which functions construct and destroy it, how big it is, what lives at each field offset, and how the classes relate. Work only on the unencrypted code.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Every class in the batch was matched to its runtime type record, yielding 149 virtual tables. Scanning the unencrypted code for references to those tables found 466 use sites in 313 functions, of which 309 were confirmed to store a table address into an object under construction. In total 319 constructors and 78 destructors were classified, 38 storing functions stayed ambiguous, and 2291 field records were extracted.</p>
+      <p><span class="evidence verified">Verified</span> The family splits into clean sub-hierarchies: eighteen behaviour classes share one eight-slot base, thirteen animation channel codecs share a 21-slot base, sixteen motion tree nodes share a 14-slot base with three nodes adding a fifteenth slot, and the effector, creature component, frame filter and request families each share uniform table sizes. Slot zero is the destructor in every family checked, and deleting destructors appear in both scalar and vector forms.</p>
+      <p><span class="evidence verified">Verified</span> Only six percent of distinct virtual function bodies live in the encrypted range, but they cluster in base-class tables: shared core implementations are encrypted far more often than per-type overrides. Two classes are fully opaque (one network event with all 24 slots encrypted, one joint data class), and seven classes show no construction code at all in the visible range.</p>
+      <p><span class="evidence">Inferred</span> Several slots returned small constants or per-class static descriptors when examined: motion tree nodes expose a descriptor whose first field is a per-class numeric id, channel codecs return small type numbers, and effectors expose pointer and float getters consistent with target handles and weights. Meanings for most other slots remain unknown.</p>
+      <p><span class="evidence">Inferred</span> Object sizes range from a few bytes for empty shells and simple requests up to around eight hundred bytes for behaviour objects and several kilobytes for frame buffers. About thirty sizes are confirmed by allocation sites; the rest are lower bounds from the highest field touched. Base-class sizes that exceed their smallest derived class are flagged as overestimates caused by inlined construction.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Layouts are recorded per class with per-field confidence and evidence, in a machine-readable structures file for later rewrite work. The recommended rewrite order is channel codecs first, then frame degrees of freedom and filters, then motion tree nodes and requests, then the game animation layer, then effectors and creature components, then the ART framework and behaviour objects, and finally the composers and physics glue, which hold the most encrypted code. Public header collections were checked and contain no usable layouts for this family, so everything rests on the binary evidence.</p>
+      <h3>How to reproduce it</h3>
+      <p>Join the batch class list to the RTTI class and table inventories by mangled name. Collect every relocated position in the unencrypted code whose stored value equals one of the family table addresses. Map each to its containing function from the unified function inventory, disassemble with capstone, and track the object pointer starting from the thiscall register while also promoting any register that receives a table store. Classify each virtual slot body by its opening instructions, merge field accesses across each class's own methods, and estimate sizes from the highest offset touched, cross-checked against allocation-size constants.</p>
+      <h3>What was confusing or went wrong</h3>
+      <ul>
+      <li>A relocation bug initially found one table reference instead of 466: the page base was added to a value that already included it. Checking the library's actual semantics fixed it.</li>
+      <li>A capstone bug made every constant-returning function appear to return 19: reading the immediate field of a register operand yields the register id. Spot-checking raw bytes caught it, and the corrected values (type ids, sizes, descriptor pointers) proved far more useful.</li>
+      <li>Optimised code often passes the object in registers other than the usual thiscall register, which first hid a third of the constructors. Treating any register that receives a table store as the object pointer recovered them.</li>
+      <li>Derived constructors inline their base construction, so base-class field sets are polluted with derived-class offsets. Suspect sizes are flagged in the data rather than silently reported.</li>
+      </ul>
+      </article>
 
       <article class="entry" id="natives-20">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
