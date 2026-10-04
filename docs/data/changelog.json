@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Engine page: revised after an independent design review",
+    "title": "Devlog: Second pilot, lane 01: small leaf functions (40 to 150 bytes, no calls)",
     "commit": null,
+    "summary": "Findings from the q-01 lane.",
+    "changes": [
+      "New devlog entry: Second pilot, lane 01: small leaf functions (40 to 150 bytes, no calls).",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Engine page: revised after an independent design review",
+    "commit": "3b0861442617e8f9b768d87a1e02b4ac8c5e0eb2",
     "summary": "A critic agent scored the first version 6 out of 10; this change fixes the problems it ranked highest.",
     "changes": [
       "The line map now defines frame and thread in one sentence, shows each line's measured thread count, draws the hand-off of the draw list from the game thread to the render thread, and has a marker riding each rail to show the lines run at once.",

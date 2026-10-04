@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot2-01">Second pilot, lane 01: small leaf functions (40 to 150 bytes, no calls)</a></li>
       <li><a href="#pilot2-20">Second pilot, lane 20: very large functions (1,500 to 4,000 bytes)</a></li>
       <li><a href="#pilot2-19">Second pilot, lane 19: very large functions (1,500 to 4,000 bytes)</a></li>
       <li><a href="#pilot2-18">Second pilot, lane 18: very large functions (1,500 to 4,000 bytes)</a></li>
@@ -191,6 +192,76 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot2-01">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Second pilot, lane 01: small leaf functions (40 to 150 bytes, no calls)</h2>
+      <p>Five of six sampled functions were rewritten in Rust and verified behaviour-identical to the originals over 1200 differential trials each with zero failures; the sixth sample turned out not to be a function at all and was deferred with evidence.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite six randomly sampled small leaf functions in idiomatic Rust, prove each one against the original with the project's differential checker (at least 1000 trials including edge values), record honest per-function timings, and run one honesty test where a deliberately broken rewrite must be caught.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Five rewrites passed 1200 of 1200 trials each: a sparse record copy, a state-block reset, a voice-slot update with table division, a flag-bit update, and a strided array clear. Every rewrite passed on its first checker run. All five deliberately broken mutants were caught, most within a handful of trials.</p>
+      <p><span class="evidence verified">Verified</span> Two of the six sample entries were wrong. One listed size ended mid-instruction; the true function is slightly longer and the rewrite was verified against the full behaviour. The other range starts with a jump to code elsewhere and continues with the head of a neighbouring method that makes three calls, so there was no leaf function in the range to rewrite.</p>
+      <p><span class="evidence verified">Verified</span> The divide-by-zero path of the voice-slot function cannot be verified with the current checker. A zero divisor makes the rewrite panic, and the panic terminates the whole checker worker process, so no comparison is produced. A follow-up probe confirmed the original raises a divide-error trap there while the worker survives, meaning the trap codes could never match even with a graceful fault. The verified verdict covers all 255 nonzero divisors; a zero divisor would crash the original in the game too.</p>
+      <p><span class="evidence">Inferred</span> Two other lanes' data agree with these readings: a proposed name for the state reset matches a tiny reset helper, and the array clear is called from a constructor, matching a construction-time helper. Nothing contradicted any finding.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Function</th>
+      <th role="columnheader">Trials</th>
+      <th role="columnheader">Outcome</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">Record copy</td>
+      <td role="cell" data-label="Trials">1200/1200</td>
+      <td role="cell" data-label="Outcome">verified</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Jump stub plus fragment</td>
+      <td role="cell" data-label="Trials">0</td>
+      <td role="cell" data-label="Outcome">deferred, not a function</td>
+      </tr>
+      <tr role="row">
+      <td role="row">State-block reset</td>
+      <td role="cell" data-label="Trials">1200/1200</td>
+      <td role="cell" data-label="Outcome">verified</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Voice-slot update</td>
+      <td role="cell" data-label="Trials">1200/1200</td>
+      <td role="cell" data-label="Outcome">verified, nonzero divisors</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Flag-bit update</td>
+      <td role="cell" data-label="Trials">1200/1200</td>
+      <td role="cell" data-label="Outcome">verified</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Array clear</td>
+      <td role="cell" data-label="Trials">1200/1200</td>
+      <td role="cell" data-label="Outcome">verified</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Two small driver extensions are proposed for fold-back: bounded small-integer inputs for table indexes, and per-range generated fills (such as nonzero bytes) sent through a request form the worker already accepts. Both are input generation, not weakened comparisons.</li>
+      <li>The sampler entry that is not a function should be fixed and resampled; range-by-size slicing should be validated against instruction boundaries.</li>
+      <li>Fault-path coverage for operations that panic in Rust needs either a worker that survives rewrite aborts or an explicit documented exclusion; such paths currently cannot verify.</li>
+      <li>Bit-guard logic wants input fills biased toward the guard bits: one mutant diverged on only 2 of 100 uniform trials, which slows mutant detection without weakening the passing verdict.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Each function has a contract file (calling convention, argument shapes, memory segments, declared globals, checks) and a rewrite export in the lane's rewrite crate, checked by the project's differential worker from identical starting state over 1200 seeded trials. Re-running the lane's driver over the five contracts reproduces the five passing verdicts and the five caught mutants; two extra experiment contracts reproduce the divide-by-zero worker-termination finding and the trap-code mismatch.</p>
+      <h3>What was confusing or went wrong</h3>
+      <ul>
+      <li>The array clear was first misread as clearing 28 of every 32 bytes; rechecking the store offsets against the loop stride corrected it to the even dwords only, before any checker run.</li>
+      <li>One constant's address was first thought to sit in the code section, which would have clashed with the checker's anti-cheat page revocation; recomputing the section ranges showed it is ordinary writable data.</li>
+      <li>The compiler's null-dereference lint blocked an intentionally faulting probe, so the probe was rewritten as a volatile load from a computed unmapped address. Two wasted build cycles.</li>
+      <li>The checker driver crashed with a traceback when the worker died instead of reporting it; the lane's copy now reports worker death as a verdict error and restarts the worker.</li>
+      </ul>
+      </article>
 
       <article class="entry" id="pilot2-20"><div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div><h2>Second pilot, lane 20: very large functions (1,500 to 4,000 bytes)</h2><p>Neither of the two sampled very large functions could be verified, and the reasons are now measured rather than guessed: both call through tables the checker cannot intercept, and one needs stubbed callees to write through pointer arguments, which stubs do not do.</p><h3>What was asked</h3><p>Rewrite two randomly sampled very large game functions in Rust and prove each rewrite behaves identically to the original with the differential checker, recording honest timings including failures.</p><h3>What was found</h3><p><span class="evidence verified">Verified</span> Both functions are around five hundred instructions of heavy scalar floating point math with complex object graphs passed through pointers.</p><table role="table"><thead role="rowgroup"><tr role="row"><th role="columnheader">Property</th><th role="columnheader">Function one</th><th role="columnheader">Function two</th></tr></thead><tbody role="rowgroup"><tr role="row"><td role="cell">Size</td><td role="cell" data-label="Function one">about two thousand bytes</td><td role="cell" data-label="Function two">about two thousand three hundred bytes</td></tr><tr role="row"><td role="cell">Purpose</td><td role="cell" data-label="Function one">blends animation channels, then releases a guarded counter</td><td role="cell" data-label="Function two">boat per-tick update: timers, buoyancy, force application</td></tr><tr role="row"><td role="cell">Outgoing calls</td><td role="cell" data-label="Function one">seven, of which two go through a table</td><td role="cell" data-label="Function two">twenty eight, of which ten go through tables</td></tr><tr role="row"><td role="cell">Global writes</td><td role="cell" data-label="Function one">none</td><td role="cell" data-label="Function two">none</td></tr></tbody></table><p><span class="evidence verified">Verified</span> The checker cannot intercept table-indirect calls, so those trials would fault identically on both sides and pass while proving nothing; this was deliberately not pursued. <span class="evidence verified">Verified</span> The first function takes a blend weight in a vector register, which trial inputs cannot express. <span class="evidence">Inferred</span> The second function calls a sine/cosine pair that takes its argument in a vector register, which call logging does not observe.</p><h3>What was decided or recommended</h3><p>Both functions were deferred with sized unblockers: planting stub addresses into test heaps so table calls land in stubs, stub writes through pointer arguments, constrained test values for loop counts and indexes, vector register inputs, and logging of floating point call arguments. After those exist, genuine verification is estimated at one to two hours per function at this size. No unverified rewrite was kept, since an unproven rewrite is not a result.</p><h3>How to reproduce it</h3><p>Disassemble the two sampled functions from the project executable with a scriptable disassembler, list every call site with its argument setup and stack cleanup, read the checker worker source for what trial requests can express, and confirm each gap against the worker code rather than its documentation.</p><h3>What was confusing or went wrong</h3><p>A helper script named after a standard library module broke an unrelated import with a misleading circular import error until it was renamed. A float comparison idiom reads backwards on first sight: a flag test after the load inverts the branch, and only decoding the flag logic shows it matches a plain not-equal test. Timestamps written by hand in the progress log drifted from the machine clock; the clock is the authority.</p></article>
 
