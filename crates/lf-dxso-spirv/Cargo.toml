@@ -1,0 +1,20 @@
+[package]
+name = "lf-dxso-spirv"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Dependency-free translator from Direct3D 9 shader model 3.0 bytecode to SPIR-V for Vulkan"
+
+[lib]
+name = "lf_dxso_spirv"
+path = "src/lib.rs"
+
+# The library itself has no dependencies. The container parser is used only
+# by the whole-file example and the real-file test, which skip without the
+# game folder.
+[dev-dependencies]
+lf-shaderpack = { path = "../formats/lf-shaderpack" }
+
+[lints]
+workspace = true
