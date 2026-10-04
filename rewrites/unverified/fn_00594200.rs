@@ -3,10 +3,9 @@
 /// Publish this row's id through OUT when the live id matches EXPECTED.
 ///
 /// `this` is the leaderboard-info object; its virtual slot 1 (the vtable
-/// word at +4) reports the live row id. When it differs from EXPECTED the
-/// live id is returned unchanged and nothing is stored. When it matches and
-/// OUT is non-null, ROW_ID is stored through OUT and OUT is returned; a null
-/// OUT returns 0.
+/// word at +4) reports the live row id. When it differs from EXPECTED, or
+/// when OUT is null, the result is 0 and nothing is stored. When it matches
+/// and OUT is non-null, ROW_ID is stored through OUT and OUT is returned.
 ///
 /// Original: thiscall, object in ecx, (out, expected) on the stack. The
 /// virtual call keeps (this) in ecx and is intercepted by a planted stub.
@@ -20,7 +19,7 @@ lf_checker_rt::export!(thiscall, rw_00594200(this: u32, out: u32, expected: u32)
             core::mem::transmute(target as usize);
         let got = current(this);
         if got != expected {
-            return got;
+            return 0;
         }
         if out == 0 {
             return 0;

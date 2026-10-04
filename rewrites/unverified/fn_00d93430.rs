@@ -256,11 +256,13 @@ lf_checker_rt::export!(thiscall, rw_00D93430(this: u32, pos: u32, radius: u32, o
                     k = k.wrapping_add(1);
                 }
             }
-            let nm1 = count2.wrapping_sub(1);
-            if nm1 != 0 {
-                let n = if count2 == 0 { 1 } else { count2 };
+            // The jbe below the count computation tests the AND that formed
+            // count2 (lea sets no flags), so the inner loop runs only when
+            // count2 != 0, for exactly count2 iterations.
+            if count2 != 0 {
+                let n = count2;
                 let slots = lf_checker_rt::relocated(G_SLOTS);
-                let mut edx_slot = nm1.wrapping_mul(16);
+                let mut edx_slot = (count2 - 1).wrapping_mul(16);
                 let mut ecx_slot: u32 = 0;
                 let mut j: u32 = 0;
                 while j < n {

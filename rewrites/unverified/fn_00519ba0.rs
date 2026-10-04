@@ -6,12 +6,14 @@
 /// `this` is the leaderboard object; the probe is its virtual slot at
 /// `+4`, called with the object. When the probe's answer differs from
 /// `key`, or `slot` is null, nothing is stored and the result is 0.
-/// Otherwise the constant tag `0x00fde234` is stored through `slot` and
-/// `slot` itself is returned.
+/// Otherwise the address of this leaderboard's tag record (file
+/// address `0x00fde234`, relocated at load) is stored through `slot`
+/// and `slot` itself is returned.
 ///
 /// Original: 0x00519BA0 (thiscall: object in `ecx`, two stack words).
 lf_checker_rt::export!(thiscall, rw_00519ba0(this: u32, slot: u32, key: u32) -> u32 {
     unsafe {
+        // File address of this leaderboard's tag record; relocated at load.
         const TAG: u32 = 0x00fde234;
 
         let vtable = (this as *const u32).read_unaligned();
@@ -24,7 +26,7 @@ lf_checker_rt::export!(thiscall, rw_00519ba0(this: u32, slot: u32, key: u32) -> 
         if slot == 0 {
             return 0;
         }
-        (slot as *mut u32).write_unaligned(TAG);
+        (slot as *mut u32).write_unaligned(lf_checker_rt::relocated(TAG));
         slot
     }
 });
