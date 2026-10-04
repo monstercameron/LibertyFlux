@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: A task lookup that passes its own return address to a callee",
+    "title": "Rewrites: 34 more functions pass the checker (10598 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "34 rewrites added under rewrites/verified: 0 script native handlers and 34 other functions.",
+      "The tree now holds 10598 rewrites, 10579 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "463 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: A task lookup that passes its own return address to a callee",
+    "commit": "df255e55602e79a4396582754ab38c784b01971c",
     "summary": "Findings from the r-b320 lane.",
     "changes": [
       "New devlog entry: A task lookup that passes its own return address to a callee.",

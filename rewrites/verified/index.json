@@ -7182,6 +7182,51 @@
   "lane": "r-s374"
  },
  {
+  "address": "0x0052AD90",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race14Standard, player_schema::LeaderboardInfo, 10>::vf7",
+  "kind": "function",
+  "file": "functions/fn_0052ad90.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s374"
+ },
+ {
+  "address": "0x0052ADD0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race14Standard, player_schema::LeaderboardInfo, 10>::vf8",
+  "kind": "function",
+  "file": "functions/fn_0052add0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s374"
+ },
+ {
+  "address": "0x0052AF00",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race15Standard, player_schema::LeaderboardInfo, 10>::vf2",
+  "kind": "function",
+  "file": "functions/fn_0052af00.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s374"
+ },
+ {
+  "address": "0x0052AF30",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race15Standard, player_schema::LeaderboardInfo, 10>::vf12",
+  "kind": "function",
+  "file": "functions/fn_0052af30.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s374"
+ },
+ {
+  "address": "0x0052AFA0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race15Standard, player_schema::LeaderboardInfo, 10>::vf13",
+  "kind": "function",
+  "file": "functions/fn_0052afa0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s374"
+ },
+ {
   "address": "0x0052B400",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race16Standard, player_schema::LeaderboardInfo, 10>::vf13",
   "kind": "function",
@@ -48276,6 +48321,15 @@
   "lane": "r-s247"
  },
  {
+  "address": "0x00B3F640",
+  "name": "task_target_select",
+  "kind": "function",
+  "file": "functions/fn_00b3f640.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b328"
+ },
+ {
   "address": "0x00B3FC50",
   "name": "joint_pose_to_out",
   "kind": "function",
@@ -73980,10 +74034,55 @@
   "lane": "r-s75"
  },
  {
+  "address": "0x00CA76F0",
+  "name": "CEventHandler::vf41",
+  "kind": "function",
+  "file": "functions/fn_00ca76f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CA79C0",
+  "name": "CEventHandler::vf31",
+  "kind": "function",
+  "file": "functions/fn_00ca79c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CA79F0",
+  "name": "CEventHandler::vf36",
+  "kind": "function",
+  "file": "functions/fn_00ca79f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CA7BC0",
+  "name": "CEventHandler::vf35",
+  "kind": "function",
+  "file": "functions/fn_00ca7bc0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
   "address": "0x00CA7C70",
   "name": "CEventHandler::vf34",
   "kind": "function",
   "file": "functions/fn_00ca7c70.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CA8240",
+  "name": "CEventHandler::vf23",
+  "kind": "function",
+  "file": "functions/fn_00ca8240.rs",
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s362"
@@ -74007,6 +74106,51 @@
   "lane": "r-b334"
  },
  {
+  "address": "0x00CA8D60",
+  "name": "CEventHandler::vf73",
+  "kind": "function",
+  "file": "functions/fn_00ca8d60.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CA8DB0",
+  "name": "CEventHandler::vf21",
+  "kind": "function",
+  "file": "functions/fn_00ca8db0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CA8E00",
+  "name": "CEventHandler::vf29",
+  "kind": "function",
+  "file": "functions/fn_00ca8e00.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CA9570",
+  "name": "CEventHandler::vf52",
+  "kind": "function",
+  "file": "functions/fn_00ca9570.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b334"
+ },
+ {
+  "address": "0x00CAA5B0",
+  "name": "CEventHandler::vf28",
+  "kind": "function",
+  "file": "functions/fn_00caa5b0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
   "address": "0x00CAA600",
   "name": "handler_release_all",
   "kind": "function",
@@ -74025,6 +74169,69 @@
   "lane": "r-s362"
  },
  {
+  "address": "0x00CAA6C0",
+  "name": "slot_probe_kind",
+  "kind": "function",
+  "file": "functions/fn_00caa6c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAAB30",
+  "name": "ped_pair_ready",
+  "kind": "function",
+  "file": "functions/fn_00caab30.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAAC10",
+  "name": "task_open_inner",
+  "kind": "function",
+  "file": "functions/fn_00caac10.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAAC30",
+  "name": null,
+  "kind": "function",
+  "file": "functions/fn_00caac30.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAACD0",
+  "name": "task_replace_aux",
+  "kind": "function",
+  "file": "functions/fn_00caacd0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAAF80",
+  "name": "task_release_spare",
+  "kind": "function",
+  "file": "functions/fn_00caaf80.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAB1E0",
+  "name": "task_shift_spare",
+  "kind": "function",
+  "file": "functions/fn_00cab1e0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
   "address": "0x00CAB2D0",
   "name": "task_promote_spare",
   "kind": "function",
@@ -74038,6 +74245,96 @@
   "name": "handler_state_clear",
   "kind": "function",
   "file": "functions/fn_00cab2f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAB3C0",
+  "name": null,
+  "kind": "function",
+  "file": "functions/fn_00cab3c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAB430",
+  "name": "event_cap_construct",
+  "kind": "function",
+  "file": "functions/fn_00cab430.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAB490",
+  "name": "event_vec_construct",
+  "kind": "function",
+  "file": "functions/fn_00cab490.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAB6B0",
+  "name": "event_aim_construct",
+  "kind": "function",
+  "file": "functions/fn_00cab6b0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAB720",
+  "name": "event_aim2_construct",
+  "kind": "function",
+  "file": "functions/fn_00cab720.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAB7A0",
+  "name": "event_forward_construct",
+  "kind": "function",
+  "file": "functions/fn_00cab7a0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAB7F0",
+  "name": "event_zone_construct",
+  "kind": "function",
+  "file": "functions/fn_00cab7f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAB8A0",
+  "name": "event_link_construct",
+  "kind": "function",
+  "file": "functions/fn_00cab8a0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAB930",
+  "name": "event_solo_construct",
+  "kind": "function",
+  "file": "functions/fn_00cab930.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s362"
+ },
+ {
+  "address": "0x00CABB80",
+  "name": "event_triple_construct",
+  "kind": "function",
+  "file": "functions/fn_00cabb80.rs",
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s362"
@@ -76108,6 +76405,15 @@
   "name": "CTaskComplexNewUseCover::vf20",
   "kind": "function",
   "file": "functions/fn_00d08240.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b335"
+ },
+ {
+  "address": "0x00D08470",
+  "name": "CTaskComplexSeperate::vf20",
+  "kind": "function",
+  "file": "functions/fn_00d08470.rs",
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b335"
