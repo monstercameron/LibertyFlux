@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#structures-cameras">Class layouts: camera classes (CCam*)</a></li>
       <li><a href="#natives-17">Native handlers SET_DECISION_MAKER_ATTRIBUTE_TARGET_INJURED_REACTION to SET_MULTIPLAYER_HUD_CASH: what they reveal</a></li>
       <li><a href="#natives-04">Native handlers DISPLAY_GRIME_THIS_FRAME to FINISH_STREAMING_REQUEST_LIST: what they reveal</a></li>
       <li><a href="#rust-workspace">Rust workspace scaffold: eighteen crates, CI, and a layout convention</a></li>
@@ -120,6 +121,27 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="structures-cameras">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Class layouts: camera classes (CCam*)</h2>
+      <p>All 156 camera classes fall into two flat families with no deeper inheritance: 43 gameplay camera classes sharing an eleven-slot virtual interface, and 113 script-instruction classes sharing a three-slot interface where every subclass implements its own execute step. Object sizes were recovered exactly for the instruction family from factory code, while gameplay camera sizes remain estimates.</p>
+      <h3>What was asked</h3>
+      <p>Recover the object layouts and virtual interfaces of the camera class family: per-slot override tables, constructors and destructors, object sizes, field lists with confidence levels, and relationships between classes, working only on unencrypted code.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The family splits into two single-inheritance groups. The gameplay camera group has a common root with 42 direct children and eleven virtual slots each. The script instruction group has its own root with 112 direct children and three virtual slots each. No public headers exist for any of these classes.</p>
+      <p><span class="evidence verified">Verified</span> The shared destructor pattern was read directly: slot zero is a deleting destructor that destroys the object, tests a flag, and frees the memory, using a custom allocator for gameplay cameras and the standard delete for script instructions.</p>
+      <p><span class="evidence verified">Verified</span> Every script instruction class is built by a small factory that allocates an exact size, zeroes a flag byte, copies its parameters, and installs the virtual table. All 112 subclass sizes were recovered exactly, ranging from 8 to 48 bytes, most commonly 12 or 16. One instruction's execute step was read in full: it resolves a camera id through a lookup and stores its value into the camera.</p>
+      <p><span class="evidence verified">Verified</span> The camera root builds two embedded helper objects and initialises a flag block near the end of its own storage, putting its minimum size at 320 bytes. Fourteen thin subclasses add no fields at all.</p>
+      <p><span class="evidence">Inferred</span> Most un-overridden slots point at one shared stub in the encrypted region, best explained as identical tiny return bodies folded together by the linker. One slot per gameplay camera is overridden with code that sits entirely inside the encrypted range, so those overrides cannot be recovered yet.</p>
+      <p><span class="evidence">Inferred</span> About seventy percent of gameplay camera slot targets and one third of instruction slot targets point into the encrypted region, but nearly all of those are shared stubs rather than per-class code.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Rewrite in this order: the instruction base and its execute protocol first, then instruction subclasses grouped by which camera setting they write, then the camera root with its two embedded objects, then the fourteen trivial leaf cameras, with the large gameplay, follow, replay and transition cameras last. The encrypted slot overrides should stay pure-virtual stubs until decrypted code is available.</p>
+      <h3>How to reproduce it</h3>
+      <p>Search clear code for each virtual table address using the relocation table to find constructors, destructors and factories; compare each child table slot by slot against its base; scan the owning functions for object-pointer field accesses with register-alias tracking; read factory allocation constants for exact sizes. All per-class records are stored as structured data for later tooling.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>A first field scan produced absurd thousand-byte offsets because registers were never removed from tracking after reuse; adding invalidation on overwrite and on calls fixed it. A debug script once printed ciphertext decoded as nonsense instructions; it was recognised at once and none of it was kept. The function inventory is missing the camera root destructor and the allocator delete function, and the call graph yielded almost no constructor callers, so gameplay camera sizes stay low-confidence estimates from the highest touched field.</p>
+      </article>
 
       <article class="entry" id="natives-17">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
