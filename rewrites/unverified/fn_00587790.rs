@@ -8,7 +8,7 @@
 /// query) gives 0. The original dispatches through a five-entry jump table;
 /// the mapping above is its content.
 ///
-/// TABLE_SLOT (word 4): value table for the index argument.
+/// TABLE_SLOT (word 5): value table for the index argument.
 /// Board id 0x1aa, passed to the helper in ecx.
 ///
 /// Original: stdcall, one stack word, no register inputs (ecx is set to the
@@ -21,11 +21,11 @@ lf_checker_rt::export!(stdcall, rw_00587790(index: u32) -> u32 {
         /// Helper callee id in the proof contract.
         const HELPER: u32 = 1;
         /// Helper out-slot holding the value table.
-        const TABLE_SLOT: usize = 4;
+        const TABLE_SLOT: usize = 5;
         /// Type-query callee id in the proof contract.
         const TYPE_OF: u32 = 2;
 
-        let mut out = [0u32; 5];
+        let mut out = [0u32; 6];
         let ok: u8 = lf_checker_rt::callee_fastcall!(HELPER, u8, BOARD_ID, out.as_mut_ptr() as u32);
         if ok == 0 {
             return 0;

@@ -29,7 +29,8 @@ lf_checker_rt::export!(thiscall, rw_00be3a30(this: u32, arg: u32) -> u32 {
         const CHILD_ID_OFF: u32 = 0x18;
         const CHILD_NEXT_OFF: u32 = 0x1c;
         const STEP: u32 = 1;
-        const KIND_OF: u32 = 2;
+        // The kind query runs through the child's own vtable (stub id 2 in
+        // the contract), exactly like the original: no ctable use here.
         let index = (this.wrapping_add(INDEX_OFF) as *const u32).read_unaligned();
         if index == NONE {
             return 0;
@@ -52,7 +53,6 @@ lf_checker_rt::export!(thiscall, rw_00be3a30(this: u32, arg: u32) -> u32 {
         let target = (vtable.wrapping_add(KIND_SLOT) as *const u32).read_unaligned();
         let kind_of: extern "thiscall" fn(u32) -> u32 =
             core::mem::transmute(target as usize);
-        let _ = KIND_OF;
         if kind_of(child) != ADOPT_KIND {
             return child;
         }

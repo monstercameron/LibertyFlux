@@ -55,7 +55,7 @@ lf_checker_rt::export!(stdcall, rw_00a217b0(a0: u32, a1: u32, a2: u32, a3: u32) 
             return 0;
         }
         let t = lf_checker_rt::callee_thiscall!(C_GET, u32, a2);
-        let v = lf_checker_rt::callee_cdecl!(CONV, u32, t);
+        let v = lf_checker_rt::callee_cdecl!(C_CONV, u32, t);
         let vmag = f32::from_bits(((v as i32) as f32).to_bits() & ABS_MASK);
         let m = f32::from_bits((a3 as *const u32).read_unaligned());
         let mmag = f32::from_bits(m.to_bits() & ABS_MASK);
@@ -63,7 +63,7 @@ lf_checker_rt::export!(stdcall, rw_00a217b0(a0: u32, a1: u32, a2: u32, a3: u32) 
             return 0;
         }
         let t = lf_checker_rt::callee_thiscall!(C_GET, u32, a2);
-        let v = lf_checker_rt::callee_cdecl!(CONV, u32, t);
+        let v = lf_checker_rt::callee_cdecl!(C_CONV, u32, t);
         let f = (v as i32).wrapping_neg() as f32;
         (a3 as *mut u32).write_unaligned(f.to_bits());
         0

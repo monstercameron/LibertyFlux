@@ -24,7 +24,7 @@ lf_checker_rt::export!(thiscall, rw_00cf53d0(this: u32, target: u32) -> u32 {
         // snapshots the pointed-to words instead.
         let probe_out: u32 = lf_checker_rt::callee_stdcall!(
             PROBE_CALLEE, u32, &slot as *const u32 as u32, target);
-        let matched: u32 = lf_checker_rt::callee_cdecl!(MATCH_CALLEE, u32, probe_out, target);
+        let matched: u32 = lf_checker_rt::callee_cdecl!(MATCH_CALLEE, u32, target, probe_out);
         if (matched & 0xff) == 0 {
             let flags = ((this + 0x89) as *const u8).read();
             ((this + 0x89) as *mut u8).write(flags | 4);

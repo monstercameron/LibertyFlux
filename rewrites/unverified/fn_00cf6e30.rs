@@ -29,7 +29,7 @@ lf_checker_rt::export!(thiscall, rw_00cf6e30(this: u32, target: u32, extra: u32,
                 let probe_out: u32 = lf_checker_rt::callee_stdcall!(
                     PROBE_CALLEE, u32, &slot as *const u32 as u32, target);
                 let matched: u32 =
-                    lf_checker_rt::callee_cdecl!(MATCH_CALLEE, u32, probe_out, target);
+                    lf_checker_rt::callee_cdecl!(MATCH_CALLEE, u32, target, probe_out);
                 if (matched & 0xff) == 0 {
                     return matched;
                 }

@@ -27,10 +27,10 @@
 /// * 5: `+PROBE` of 3 moves to state 6, else the shared check runs.
 /// * 6: callee 5 (thiscall, ten words, `this = inner[+INNER_CB]`) runs. Its
 ///   second word is a pointer into the original's own stack frame (address
-///   skipped in the contract, one pointed-to word snapshotted); the original
-///   overwrites the low byte of its own ninth pushed word with 1, so that
-///   word arrives as `(this + P) with low byte 1`. A zero low byte moves to
-///   state 8, else to 7.
+///   skipped in the contract, one pointed-to word snapshotted): a local slot
+///   the original sets to the single byte 1 over otherwise untouched stack,
+///   so the word reads 1 under the contract's zero stack fill. A zero low
+///   byte in the answer moves to state 8, else to 7.
 /// * 7: `+PROBE` of 3 makes the virtual call `this[0][+0x1c](this, 1, 0),
 ///   else the shared check runs.
 /// * 8: reads `inner + 0x48 + 8` signed; inside 1..=3 callee 6 (thiscall, one
@@ -168,8 +168,9 @@ lf_checker_rt::export!(thiscall, rw_00661D10(this: u32, delta: u32) -> u32 {
             }
             6 => {
                 let flag = if field(this, MODE) == 1 { 0 } else { 1 };
-                let slot9 = this.wrapping_add(0x94) & 0xffff_ff00 | 1;
-                let frame_slot = slot9;
+                // The stack slot the original points at reads 1 (a single
+                // byte store over untouched, zero-filled stack).
+                let frame_slot = 1u32;
                 let r: u32 = lf_checker_rt::callee_thiscall!(
                     5, u32, field(inner, INNER_CB),
                     this.wrapping_add(0xb0),
@@ -181,7 +182,7 @@ lf_checker_rt::export!(thiscall, rw_00661D10(this: u32, delta: u32) -> u32 {
                     field(this, 0xac),
                     1,
                     this.wrapping_add(0x768),
-                    slot9
+                    this.wrapping_add(0x94)
                 );
                 wr32(this.wrapping_add(STATE), if r & 0xff == 0 { 8 } else { 7 });
             }
