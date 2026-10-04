@@ -17973,6 +17973,15 @@
   "lane": "r-s158"
  },
  {
+  "address": "0x00662440",
+  "name": "rage::snHostSessionTask::vf3",
+  "kind": "function",
+  "file": "functions/fn_00662440.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b290"
+ },
+ {
   "address": "0x00662820",
   "name": "session_task_init_from_params",
   "kind": "function",
@@ -40552,6 +40561,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b303"
+ },
+ {
+  "address": "0x00B0E410",
+  "name": "net_sync_pick_handler",
+  "kind": "function",
+  "file": "functions/fn_00b0e410.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b309"
  },
  {
   "address": "0x00B24140",
@@ -66334,6 +66352,33 @@
   "name": "CTaskSimpleSlideToCoord::vf0",
   "kind": "function",
   "file": "functions/fn_00cad8a0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s345"
+ },
+ {
+  "address": "0x00CADB70",
+  "name": "advance_toward_point",
+  "kind": "function",
+  "file": "functions/fn_00cadb70.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s345"
+ },
+ {
+  "address": "0x00CADC50",
+  "name": "move_task_position_update",
+  "kind": "function",
+  "file": "functions/fn_00cadc50.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s345"
+ },
+ {
+  "address": "0x00CADF00",
+  "name": "motion_output_update",
+  "kind": "function",
+  "file": "functions/fn_00cadf00.rs",
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s345"
