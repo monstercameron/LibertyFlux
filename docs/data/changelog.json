@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: Black box does not pin down float multiply order",
+    "commit": null,
+    "summary": "Findings from the r-s263 lane.",
+    "changes": [
+      "New devlog entry: Black box does not pin down float multiply order.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 17 more functions pass the checker (7366 in total)",
     "commit": "d724f205b68c9e3bac26039ec2dcb6127fe8d315",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

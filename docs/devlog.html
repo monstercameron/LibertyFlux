@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s263">Black box does not pin down float multiply order</a></li>
       <li><a href="#production-s262">Three rewrites whose only mismatch is where values live, not what they are</a></li>
       <li><a href="#production-b198">The optimizer can silently change NaN results</a></li>
       <li><a href="#naming-13">Standard race boards reuse the nine leaderboard methods, with folded id getters</a></li>
@@ -352,6 +353,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s263">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Black box does not pin down float multiply order</h2>
+      <p><span class="evidence verified">Verified</span> Wrapping one operand of a float multiply in a compiler black box does not stop the compiler backend from swapping the operands, so a rewrite can still pick the wrong NaN payload. Selecting NaN operands explicitly in plain code fixes it reliably.</p>
+      <h3>What was asked</h3>
+      <p>One function in this production batch multiplies two single-precision values and returns the product through the floating point register. One trial in a thousand failed with only NaN sign and payload bits differing, which points at swapped multiply operands: with two different NaNs, the hardware keeps the destination operand's NaN, so operand order is observable.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The project guidance for this case is to write the operations in the original order and keep the compiler from commuting them with a black box on one operand. That changed nothing: the same seeded trial failed with bit-identical wrong output before and after.</p>
+      <p><span class="evidence verified">Verified</span> Disassembling the freshly built rewrite showed why. Both multiplies in the function had been emitted with the operands exchanged relative to the source: the value written first in the source ended up as the source operand instead of the destination. The black box only constrains an earlier compiler stage; the later backend pass that assigns the destination register commutes freely either way.</p>
+      <p><span class="evidence verified">Verified</span> Replaying that trial's inputs by hand confirmed the mechanism exactly: the original returns the destination NaN and the swapped rewrite returns the source NaN. After replacing each multiply and add with an explicit selection (destination NaN wins, else source NaN, else the plain operation, all in ordinary code with no assembly), the same seeded trial passes along with the other 999.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Rewrites in this lane select NaN operands explicitly wherever both inputs of a multiply or add can be NaN. Subtract, divide, compare and negate cannot be commuted and stay plain. Any lane relying on a black box for operand order should re-check: a passing verdict whose trials never combined two different NaNs proves nothing about order, and the build can differ from the source silently.</p>
+      <h3>How to reproduce it</h3>
+      <p>Take a function whose result is a multiply of two f32 values that can both be NaN with different payloads. Write the multiply in the original order with one operand through a black box, build the rewrite, and disassemble the built export: the emitted multiply may list the operands exchanged. Then run a trial with two different NaN inputs and compare the result bits against the original.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first diagnosis looked like an ordinary operand-order slip in the rewrite, and the prescribed one-line fix compiled cleanly, so the identical second failure was genuinely surprising. What unblocked it was stopping trusting the source text and reading the built machine code instead. A second, smaller trap in the same lane: two scratch memory segments overlapped by eight bytes, so random words silently overwrote a pinned value and every trial faulted; the driver does not check for overlap.</p>
+      </article>
 
       <article class="entry" id="production-s262">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
