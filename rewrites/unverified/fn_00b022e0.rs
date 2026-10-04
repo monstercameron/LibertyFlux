@@ -15,13 +15,15 @@
 /// `obj+0x8e8` is set, counter B (another global) is dealt into `out3`,
 /// else into `out2`, and incremented. The dealt value indexes a global
 /// pointer table; three helpers are invoked with the owning context (a
-/// global) in ECX: the opener with the table entry, the filler with five
-/// words (three pointers derived from `base+0x40`, the `out3` pointer and
-/// the table entry), and the closer with either 0 (first case) or `obj`
-/// (second case) plus the table entry. In the second case a fourth helper
-/// (cdecl, callee keeps the stack) also sees the table entry. Original
-/// convention: cdecl, five stack words, caller cleans, no return value.
-lf_checker_rt::export!(cdecl, rw_00B022E0(out1: u32, out2: u32, out3: u32, obj: u32, flags: u32) -> u32 {
+/// global) in ECX: the opener with three words (a pointer derived from
+/// `base+0x40`, `base` itself and the table entry), the filler with five
+/// words (that pointer, two offsets of it, `base` again and the table
+/// entry), and the closer with either 0 (first case) or the sixth argument
+/// `aux` (second case) plus the table entry. In the second case a fourth
+/// helper (cdecl, caller cleans) also sees the table entry. The helpers pop
+/// their arguments, so the frame balances exactly. Original convention:
+/// cdecl, six stack words, caller cleans, no return value.
+lf_checker_rt::export!(cdecl, rw_00B022E0(out1: u32, out2: u32, out3: u32, obj: u32, flags: u32, aux: u32) -> u32 {
     unsafe {
         const NONE: u32 = 0xFFFFFFFF;
         const CTR_A: u32 = 0x016010A4;
@@ -71,24 +73,26 @@ lf_checker_rt::export!(cdecl, rw_00B022E0(out1: u32, out2: u32, out3: u32, obj: 
             let idx = rd32(out3);
             let t0 = rd32(tbase.wrapping_add(idx.wrapping_mul(4)));
             let cx0 = rd32(lf_checker_rt::relocated(CTX));
-            lf_checker_rt::callee_thiscall!(2, u32, cx0, t0);
+            lf_checker_rt::callee_thiscall!(2, u32, cx0, t0, base, bx);
             let cx1 = rd32(lf_checker_rt::relocated(CTX));
             let idx = rd32(out3);
             let t1 = rd32(tbase.wrapping_add(idx.wrapping_mul(4)));
+            // Argument lists mirror the original's push order (last pushed
+            // is the first parameter).
             lf_checker_rt::callee_thiscall!(
                 3,
                 u32,
                 cx1,
-                bx,
-                bx.wrapping_add(0x20),
+                t1,
+                base,
                 bx.wrapping_add(0x30),
-                out3,
-                t1
+                bx.wrapping_add(0x20),
+                bx
             );
             let idx = rd32(out3);
             let cx2 = rd32(lf_checker_rt::relocated(CTX));
             let t2 = rd32(tbase.wrapping_add(idx.wrapping_mul(4)));
-            lf_checker_rt::callee_thiscall!(4, u32, cx2, 0, t2);
+            lf_checker_rt::callee_thiscall!(4, u32, cx2, t2, 0);
         } else {
             let cb = rd32(lf_checker_rt::relocated(CTR_B));
             wr32(out2, cb);
@@ -96,7 +100,7 @@ lf_checker_rt::export!(cdecl, rw_00B022E0(out1: u32, out2: u32, out3: u32, obj: 
             let idx = rd32(out2);
             let t0 = rd32(tbase.wrapping_add(idx.wrapping_mul(4)));
             let cx0 = rd32(lf_checker_rt::relocated(CTX));
-            lf_checker_rt::callee_thiscall!(2, u32, cx0, t0);
+            lf_checker_rt::callee_thiscall!(2, u32, cx0, t0, base, bx);
             let cx1 = rd32(lf_checker_rt::relocated(CTX));
             let idx = rd32(out2);
             let t1 = rd32(tbase.wrapping_add(idx.wrapping_mul(4)));
@@ -104,16 +108,16 @@ lf_checker_rt::export!(cdecl, rw_00B022E0(out1: u32, out2: u32, out3: u32, obj: 
                 3,
                 u32,
                 cx1,
-                bx,
-                bx.wrapping_add(0x20),
+                t1,
+                base,
                 bx.wrapping_add(0x30),
-                out3,
-                t1
+                bx.wrapping_add(0x20),
+                bx
             );
             let idx = rd32(out2);
             let cx2 = rd32(lf_checker_rt::relocated(CTX));
             let t2 = rd32(tbase.wrapping_add(idx.wrapping_mul(4)));
-            lf_checker_rt::callee_thiscall!(4, u32, cx2, obj, t2);
+            lf_checker_rt::callee_thiscall!(4, u32, cx2, t2, aux);
             let idx = rd32(out2);
             let t3 = rd32(tbase.wrapping_add(idx.wrapping_mul(4)));
             lf_checker_rt::callee_cdecl!(5, u32, t3);

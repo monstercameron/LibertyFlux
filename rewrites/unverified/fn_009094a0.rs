@@ -17,7 +17,7 @@ lf_checker_rt::export!(cdecl, rw_009094A0_stage1() -> u32 {
         if kill != 0 {
             return 0;
         }
-        let _pre = lf_checker_rt::callee_cdecl!(PRE1, u32);
+        let _pre = lf_checker_rt::callee_cdecl!(PRE1, u32,);
         let mut slot = 0u32;
         lf_checker_rt::callee_cdecl!(PRE2, u32, &mut slot as *mut u32 as u32);
         let m = (lf_checker_rt::relocated(MM) as *const i32).read();

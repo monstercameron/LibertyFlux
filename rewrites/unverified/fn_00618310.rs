@@ -194,19 +194,19 @@ lf_checker_rt::export!(thiscall, rw_00618310(this: u32, matrix: u32) -> u32 {
         };
         let cy = clamp0(cvtt(dd2 as f32), lim_cy);
         if cx == 0 || cy == 0 {
-            lf_checker_rt::callee_thiscall!(C_COOKIE, u32, 0u32);
+            lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
             return 0;
         }
         if ox == (if gate_is(poll()) { g32(G_LIM_X_ALT) } else { g32(G_LIM_X) }) {
-            lf_checker_rt::callee_thiscall!(C_COOKIE, u32, 0u32);
+            lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
             return 0;
         }
         if oy == (if gate_is(poll()) { g32(G_LIM_Y_ALT) } else { g32(G_LIM_Y) }) {
-            lf_checker_rt::callee_thiscall!(C_COOKIE, u32, 0u32);
+            lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
             return 0;
         }
         lf_checker_rt::callee_cdecl!(C_COMMIT, u32, ox, oy, cx.wrapping_sub(ox), cy.wrapping_sub(oy));
-        lf_checker_rt::callee_thiscall!(C_COOKIE, u32, 0u32);
+        lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
         1
     }
 });
