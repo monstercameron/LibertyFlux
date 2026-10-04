@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#strings-names">Mining the executable strings for naming evidence</a></li>
       <li><a href="#renderer-survey">Renderer survey: what the executable and shader files reveal</a></li>
       <li><a href="#pointer-tables">Pointer tables: the functions calls alone cannot reach</a></li>
       <li><a href="#p0-libraries">Library inventory: what the executable borrows, and what it owns</a></li>
@@ -71,6 +72,35 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="strings-names">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Mining the executable strings for naming evidence</h2>
+      <p><span class="evidence verified">Verified</span> The executable holds about 163,000 text strings, and they yield around 12,800 naming hints, enough to suggest names for roughly 560 functions plus nearly 3,700 engine class names from runtime type data. The binary is otherwise almost fully stripped: only three source file paths survive.</p>
+      <h3>What was asked</h3>
+      <p>Extract every ASCII and wide-character string of length four or more from all sections of the game executable, classify them into naming categories, trace each name back to the code that uses it through the relocation table, and estimate how many functions could be named this way.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> String counts by category, with distinct texts in brackets: uncategorized 140,820 (61,960), script-facing identifiers 10,417 (6,068), runtime type names 3,727 (3,727), asset names 2,582 (1,022), format strings 2,381 (1,656), config keys 1,236 (622), error messages 1,159 (575), Class::Method names 307 (107), shader names 199 (128), console commands 110 (75), registry and URL strings 33 (23), source paths 10 (8).</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Finding</th><th role="columnheader">Detail</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Engine class names</td><td role="cell" data-label="Detail">3,727 runtime type records, all resolved to their type structures, spanning engine, audio, physics, animation, UI and networking classes</td></tr>
+      <tr role="row"><td role="cell">Multiplayer mode names</td><td role="cell" data-label="Detail">Match lobby mode list with deathmatch, team, race, co-op and episodic variants</td></tr>
+      <tr role="row"><td role="cell">Stat and label identifiers</td><td role="cell" data-label="Detail">Thousands of uppercase keys for police scanner lines, scores, radio weights and frontend menu labels</td></tr>
+      <tr role="row"><td role="cell">Source tree</td><td role="cell" data-label="Detail">Three engine source paths under data and net folders, plus two loose file mentions</td></tr>
+      <tr role="row"><td role="cell">Fatal error dialogs</td><td role="cell" data-label="Detail">Wide-character messages in five languages covering graphics, audio, memory and networking failures</td></tr>
+      <tr role="row"><td role="cell">Console commands</td><td role="cell" data-label="Detail">A dozen working flags such as benchmark and stat toggles, with forty help-text descriptions</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> About 3,700 hints point directly into code through relocated pointers, and spot-check disassembly confirmed the pattern is a plain push of the string address. Grouping nearby code references gives roughly 560 function-sized clusters at a one-kilobyte gap.</p>
+      <p><span class="evidence">Inferred</span> One megabyte-sized section next to the entry point appears encrypted or packed: its apparent strings are short random runs with no references at all. The main code is not encrypted, since thousands of its embedded addresses resolve to real strings.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The hint table is ready for the disassembly lane to join against its function map: each hint carries the referencing code address, so attaching a name is a matter of finding the containing function. Class names from runtime type data should be propagated separately through virtual tables. Strings from code, relocation, resource and packed sections should be distrusted unless they carry a reference.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane script named mine.py from the scratch folder with the project Python environment. It reads only the original executable, scans every section for ASCII and wide-character runs, classifies them with documented patterns, resolves the relocation table to string cross-references, and writes the string list, the hint table, the source tree and the statistics files in under a minute.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> The first classifier pass produced thousands of false hits from machine code bytes that happen to look like text. Filtering by section and by whether anything references the string removed nearly all of them. Runtime type names initially showed zero references because the recorded pointer aims eight bytes before the name, at the type record header; accounting for that offset resolved all of them. A quirk worth knowing: two anti-tamper label strings contain the letters HKCR by coincidence and were briefly mistaken for registry keys.</p>
+      </article>
 
       <article class="entry" id="renderer-survey">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
