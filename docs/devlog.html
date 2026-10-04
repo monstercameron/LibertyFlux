@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n112">Production batch: a tail-thunk checker bug and twenty-five verified natives</a></li>
       <li><a href="#rerun-16">Rerun finds a call-log overflow in checker version 2</a></li>
       <li><a href="#production-s101">Tail jumps with arguments could not pass the checker, and now they can</a></li>
       <li><a href="#production-n113">Two native rewrites deferred: the checker only watches eight call arguments</a></li>
@@ -259,6 +260,55 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n112">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production batch: a tail-thunk checker bug and twenty-five verified natives</h2>
+      <p>A production batch verified all twenty-five of its script native handlers, but the tail thunk in the batch exposed a real bug in the checker's tail-call handling: the recorder stub read the forwarded argument one stack slot too low, so a correct rewrite failed every trial until the worker was fixed.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty-five script native handlers in Rust and prove each rewrite behaves identically to the original with the version two differential checker, which runs the original and the rewrite from identical starting state and compares return values, written memory, stack adjustment, outgoing calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All twenty-five handlers verified with one thousand trials each and zero failures. Most were short unpack-and-call wrappers, but four needed special treatment: one whose engine answer arrives on the floating point stack, one that passes a constant engine address plus the call context, one that copies a global value with no engine call at all, and one single-jump tail thunk.</p>
+      <p><span class="evidence verified">Verified</span> The tail thunk failed comparison on the stock checker because the tail recorder stub logs the wrong stack slot as the first argument. The worker converts the tail jump into a call, which leaves two return addresses above the real arguments, but the shared logging code reads the first slot, capturing the harness return address instead of the forwarded context. The bug never fired in the checker's own proofs because those tail cases took no stack arguments. The failure mode is fail-closed: correct rewrites fail, wrong ones cannot pass.</p>
+      <p><span class="evidence verified">Verified</span> A fixed worker copy passes the correct tail rewrite on all one thousand trials and catches a deliberately corrupted mutant within three trials, proving the fixed comparison discriminates in both directions. The fix changes only tail stubs; normal stubs emit byte-identical code, and all twenty-five verdicts were re-run on the fixed worker so the set is uniform.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Fold the one-line tail argument base fix back into the shared worker before sibling lanes verify tail thunks that forward stack arguments.</li>
+      <li>Keep verifying tail thunks as forwarding calls rather than deferring them; the mechanism works once the logging offset is corrected.</li>
+      <li>Hand-rolled relocation queries must be checked against the exact immediate address: one rewrite initially pushed a raw address that the loader relocates, and only the checker's image-relative call display revealed it.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run any single-jump tail thunk that forwards a stack argument under the stock version two worker with a tail-patch contract: the original side logs a harness stack address where the rewrite side logs the heap argument, failing all trials. Rebuild the worker with the tail argument base raised by one word and re-run: the correct rewrite passes and a mutant forwarding a shifted argument fails on the call comparison.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The relocation mis-check cost a full run: a helper added the relocation block base to values that already were full addresses, silently reporting the wrong answer. Separately, the rewrite library stayed file-locked after the last run finished even though no lane worker was running, so the rebuild went in beside a renamed stale copy that still cannot be deleted.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Fact</th>
+      <th role="columnheader">Value</th>
+      <th role="columnheader">What it means</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">Handlers verified</td>
+      <td role="cell" data-label="Value">25 of 25</td>
+      <td role="cell" data-label="What it means">Whole batch proven, none deferred</td>
+      </tr>
+      <tr role="row">
+      <tr role="row">
+      <td role="cell">Trials run</td>
+      <td role="cell" data-label="Value">25,000 with 0 failures</td>
+      <td role="cell" data-label="What it means">One thousand edge-covering trials per handler</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Tail-thunk verdicts</td>
+      <td role="cell" data-label="Value">Correct passes, mutant caught</td>
+      <td role="cell" data-label="What it means">Fixed comparison is non-vacuous both ways</td>
+      </tr>
+      </tbody>
+      </table>
+      </article>
 
       <article class="entry" id="rerun-16">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
