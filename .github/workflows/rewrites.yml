@@ -47,6 +47,9 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The whole history, so the import wave can be compared with the commit before the push.
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -54,6 +57,10 @@ jobs:
         run: |
           python scripts/coordinator/ledger.py --check | tee ledger.txt
           { echo '## Ledger'; echo; echo '```'; cat ledger.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - name: What this push imported
+        if: github.event_name == 'push'
+        # Counts only (no addresses): entries added, removed and changed since the commit before the push.
+        run: python scripts/coordinator/ledger.py --since ${{ github.event.before }} --markdown >> "$GITHUB_STEP_SUMMARY" || true
 
   static:
     name: Static checks (advisory)
@@ -69,6 +76,11 @@ jobs:
         run: |
           python scripts/coordinator/lint_rewrites.py --write lint.json | tee lint.txt
           { echo '## Static checks'; echo; echo '```'; cat lint.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - name: Annotate high-severity findings
+        # GitHub shows only a few annotations per step, so only the checks whose findings are high severity.
+        run: >-
+          python scripts/coordinator/lint_rewrites.py --format github --code no-export unbalanced partial placeholder
+          misaligned-deref constant-for-callee-result forwarder-drops-args
       - uses: actions/upload-artifact@v4
         with:
           name: rewrite-static-checks

@@ -143,6 +143,9 @@ jobs:
       - name: Checker script tests
         working-directory: scripts/checker
         run: python -m unittest discover -s tests
+      - name: CI script tests
+        working-directory: scripts/ci
+        run: python -m unittest discover -s tests
       - name: Site script tests
         working-directory: scripts/site
         run: python -m unittest discover -s tests
