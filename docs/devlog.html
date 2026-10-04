@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#rerun-15">Rerun batch 15: version 2 catches a vacuous version 1 pass</a></li>
       <li><a href="#production-n110">Verifying a tail-jump native handler whose target takes stack arguments</a></li>
       <li><a href="#production-b28">Two audio helpers verified, and four contract gotchas for other lanes</a></li>
       <li><a href="#checker-driver-memory">The checker driver grows without bound on long runs</a></li>
@@ -255,6 +256,28 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="rerun-15">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rerun batch 15: version 2 catches a vacuous version 1 pass</h2>
+      <p>Re-running nine production lanes of script-native rewrites under checker version 2 verified all 205 functions, and caught one whose version 1 pass was empty: both sides had faulted on every trial because the contract set up the wrong global, which version 1 counted as a pass and version 2 exposes.</p>
+      <h3>What was asked</h3>
+      <p>Port the version 1 verified rewrites from nine production lanes to the version 2 runtime and contract format, and re-run each for at least one thousand trials under the version 2 worker. A rewrite counts as verified only when it passes version 2.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All 205 functions pass version 2 at one thousand trials each, with every trial succeeding on both sides and every declared callee firing.</p>
+      <p><span class="evidence verified">Verified</span> One timer native passed version 1 on one thousand trials in which both sides faulted identically: its contract prepared a neighbouring global instead of the one the handler reads, so both sides read a zero pointer and faulted on the same store. Version 1 compared only termination and called that a pass. Version 2 records per-trial status, which showed zero successful original trials and flagged the verdict. Pointing the contract at the global the code actually reads makes all one thousand trials succeed and match. The rewrite was correct throughout; the old contract was at fault.</p>
+      <p><span class="evidence verified">Verified</span> One phone-rotation native read four global words that version 1 left at constant values; the ported contract varies them every trial over float edge values, and still passes fully.</p>
+      <p><span class="evidence verified">Verified</span> 46 handlers push a boolean flag merged with leftover bytes from their own stack slot; the ported rewrites push the bare flag and the contracts skip that one call argument, since the checker has no byte-level call comparison. Four handlers forward more than eight engine arguments, past the checker's fixed call log; that blind spot is unchanged from version 1 and is documented on each contract.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Every rerun batch should mechanically audit version 2 verdicts for zero successful original trials and unfired callees; that audit is what caught the bad contract here.</li>
+      <li>No defect in version 2 itself was found, and no rewrite needed behaviour changes.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build the batch crate for the 32-bit target with the version 2 runtime, run each ported contract for one thousand trials with the prebuilt version 2 worker and driver, then audit every verdict for a full pass count, a non-zero successful-original count, and firing callees. The timer native reproduces the catch: with the original contract both sides fault on all one thousand trials, and with the corrected setup all one thousand succeed.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Nothing went wrong in the run itself: all three checker shards exited cleanly with no restarts. The surprise was the direction of the catch: the faulty contract produced identical faults rather than a mismatch, so only the version 2 status counts, not the pass flag, reveal it. A pass flag alone is not evidence.</p>
+      </article>
 
       <article class="entry" id="production-n110">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
