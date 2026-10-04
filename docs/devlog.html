@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#replacement-loader">Replacement loader built and tested without the game</a></li>
       <li><a href="#format-vehicle-ped-meta">Rust reader: vehicle, ped and weapon extra data inside resources</a></li>
       <li><a href="#format-cutscenes">Rust reader: cutscene description files</a></li>
       <li><a href="#format-animation">Rust reader: animation dictionaries and clips (WAD)</a></li>
@@ -173,6 +174,48 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="replacement-loader">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Replacement loader built and tested without the game</h2>
+      <p>The loader that will live inside the running game and swap original functions for Rust rewrites is built, and every part of it passes its tests without the game ever launching. The proxy library forwards the full set of system library exports, the hook engine replaces functions behind individual on/off switches, and a watched control file drives toggling, bulk operations and bisecting. What remains is running it against the real game, which only the owner can do.</p>
+      <h3>What was asked</h3>
+      <p>Build the 32-bit replacement loader as Rust crates: a proxy library that stands in for a system library the game already loads, a hook engine written from scratch (function-start hooks with trampolines, virtual table slot replacement, import table slot replacement), a registry of replacements with run-time switches driven by a watched control file, logging with timestamps, a crash handler recording which replacements were active, and a safe mode. Prove it all with unit tests that run without the game, including a small 32-bit test program with several kinds of functions hooked under concurrent calls from several threads.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The proxy library forwards every export of the system library it stands in for, with names and ordinals matching exactly, and the forwarding table is generated from the real library at build time rather than hand-written. The library itself imports only core system libraries, so it cannot load itself in a loop.</p>
+      <p><span class="evidence verified">Verified</span> The hook engine handles the calling conventions the game uses, including class methods, through small generated adapter stubs. Hooks install, call through to the original, toggle on and off, and remove cleanly, including while four threads call the hooked function and the main thread toggles a hundred times. Creating a hook on an unsuitable target (too short, undecodable, unreadable, out of range) returns a clean error and touches nothing.</p>
+      <p><span class="evidence verified">Verified</span> The readiness gate works as designed: in the test program, which has no game code in it, the loader waits, times out, stays fully disabled, and logs the whole sequence. The log from that run shows startup, the readiness checks, the timeout, and a clean shutdown with all hooks off.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Check group</th><th role="columnheader">Checks</th><th role="columnheader">Result</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Decoder and planner unit tests</td><td role="cell" data-label="Checks">12</td><td role="cell" data-label="Result">all pass</td></tr>
+      <tr role="row"><td role="cell">Control file and bisect unit tests</td><td role="cell" data-label="Checks">4</td><td role="cell" data-label="Result">all pass</td></tr>
+      <tr role="row"><td role="cell">Live 32-bit hook tests</td><td role="cell" data-label="Checks">58</td><td role="cell" data-label="Result">all pass</td></tr>
+      <tr role="row"><td role="cell">Proxy export fidelity</td><td role="cell" data-label="Checks">193 exports compared</td><td role="cell" data-label="Result">all match</td></tr>
+      <tr role="row"><td role="cell">Compiler lints</td><td role="cell" data-label="Checks">all crates, both targets</td><td role="cell" data-label="Result">zero warnings</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence">Inferred</span> The design is ready for live testing against the game, starting with the proxy alone and adding one trivial hook at a time.</p>
+      <p><span class="evidence">Unknown</span> Whether the game's start-up protection objects to an extra module in the process or to patched code. Nothing in the static analysis answers this; it is the first thing live testing must establish.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Exports for the proxy are declared through the linker's directive section, the same mechanism the C compiler uses. A separate definition file and command-line export flags were tried and cannot resolve the generated symbols; this is documented in the build script so nobody rediscovers it.</li>
+      <li>No third-party hook library is used. The engine is hand-written, which keeps the dependency list empty and the proxy's own imports limited to core system libraries.</li>
+      <li>The hook table ships empty. No game target is registered until its live address and expected bytes are confirmed with the game running.</li>
+      <li>Live testing follows a fixed eight-step order: proxy alone, coexistence with the community loader, timing calibration, first trivial hook, toggle mechanics, debugger etiquette, protection reaction, and a memory snapshot diff. Each step stops at the first surprise.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build the workspace for the 32-bit Windows target and run the host unit tests, then run the 32-bit test program with the path to the freshly built proxy library as its argument. The program prints one line per check and a final pass and fail count with a matching exit code. Comparing the proxy library's export table against the system library's export table confirms the forwarding is complete. All commands and the eight live-test steps are written up in the loader manual kept with the lane's work.</p>
+      <h3>What was confusing or went wrong</h3>
+      <ul>
+      <li>The proxy refused to link for a long time: the linker reported every generated stub as unresolved even though the symbols were provably present in the object files. A minimal probe showed even plain Rust symbols failed the same way, which pointed at the export mechanism rather than the code. Switching to directive-section exports fixed it on the first try.</li>
+      <li>The first version of the class-method adapter passed the wrong second argument to the replacement function; a live capture showed it receiving a code address instead of the test value. The stub was rewritten to rebuild the argument frame properly, and the test now asserts the values end to end.</li>
+      <li>A caller-side adapter turned out to be callee-pops, so calling it with the wrong prototype corrupted the stack silently and crashed later. The prototypes were fixed and a register-preservation check was added that would catch any repeat.</li>
+      <li>One confusing hour came from a self-inflicted cause: a probe build script left in a non-empty state made cached linker flags look like a build-tool bug. Reading the file on disk settled it immediately.</li>
+      </ul>
+      </article>
 
       <article class="entry" id="format-vehicle-ped-meta">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
