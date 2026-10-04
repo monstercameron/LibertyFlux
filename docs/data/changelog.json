@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Three traps from verifying user interface text routines",
+    "title": "Devlog: Re-running a verified batch caught a real bug, and black box was not enough to fix it",
     "commit": null,
+    "summary": "Findings from the r-b259 lane.",
+    "changes": [
+      "New devlog entry: Re-running a verified batch caught a real bug, and black box was not enough to fix it.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Three traps from verifying user interface text routines",
+    "commit": "ad22ab97a93e0f71344595e319bbd4ff9951c069",
     "summary": "Findings from the r-b243 lane.",
     "changes": [
       "New devlog entry: Three traps from verifying user interface text routines.",
