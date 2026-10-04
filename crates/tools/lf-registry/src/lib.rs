@@ -13,11 +13,19 @@
 //! `set`/`all`/`bisect` or the `switches.lf` control file beside the DLL
 //! (`parse_control` + `watch_control_file`). Tested on the host with
 //! `cargo test -p lf-registry` and live by `lf-test-target`.
+//!
+//! [`table`] reads the replacement table an assembled rewrite library
+//! exports and turns it into `HookDef`s; [`bisect`] plans the `bisect a b`
+//! ranges of a regression hunt. Both are pure and host-tested; tests that
+//! link the live registry run on Windows only.
 
 // Integrated lane code, proven by host unit tests and the 32-bit live
 // suite; pedantic style lints stay off here while correctness lints
 // (clippy::all) apply. Narrow this if the code is reworked.
 #![allow(clippy::pedantic)]
+
+pub mod bisect;
+pub mod table;
 
 use lf_hook::detour::{Detour, FollowJumps, HookError};
 use lf_hook::pe::live as pelive;
@@ -302,14 +310,8 @@ impl Registry {
     /// `[a, b)`, disable everything else. A regression hunt halves the
     /// enabled range until one hook remains.
     pub fn bisect(&mut self, a: usize, b: usize) -> Vec<(String, bool)> {
-        let mut order: Vec<usize> = (0..self.entries.len()).collect();
-        order.sort_by(|&x, &y| self.entries[x].def.name.cmp(&self.entries[y].def.name));
-        let want: Vec<bool> = (0..self.entries.len())
-            .map(|rank| {
-                let idx = order.iter().position(|&o| o == rank).unwrap_or(usize::MAX);
-                idx >= a && idx < b
-            })
-            .collect();
+        let names: Vec<&str> = self.entries.iter().map(|e| e.def.name.as_str()).collect();
+        let want = bisect::wanted_by_rank(&names, a, b);
         let mut out = Vec::new();
         for (i, w) in want.iter().enumerate() {
             let name = self.entries[i].def.name.clone();
@@ -665,6 +667,8 @@ mod tests {
         assert_eq!(bisect_select(0, 0, 1), Vec::<bool>::new());
     }
 
+    // Links the live registry (Win32 calls), so it runs on Windows only.
+    #[cfg(windows)]
     #[test]
     fn watcher_applies_file_changes() {
         // Registry with no hooks: applying must succeed trivially and the
@@ -686,5 +690,83 @@ mod tests {
         h.join().unwrap();
         let _ = std::fs::remove_file(&path);
         assert_eq!(reg.lock().unwrap().len(), 0);
+    }
+    fn unresolved(name: &str, subsystem: &str) -> HookDef {
+        HookDef {
+            name: name.to_string(),
+            subsystem: subsystem.to_string(),
+            target: Target::Absolute {
+                addr: 0,
+                expected: Vec::new(),
+                follow_jumps: false,
+            },
+            detour: 0,
+        }
+    }
+
+    // The live registry links Win32 calls, so these run on Windows only.
+    // Nothing is resolved, so no code bytes are read or patched.
+    #[cfg(windows)]
+    #[test]
+    fn registry_bisect_selects_by_name_rank() {
+        let mut reg = Registry::new(0x40_0000);
+        for n in ["c.x", "a.x", "d.x", "b.x"] {
+            reg.add(unresolved(n, "t"));
+        }
+        let out = reg.bisect(0, 2);
+        let want: Vec<(String, bool)> = [("c.x", false), ("a.x", true), ("d.x", false), ("b.x", true)]
+            .iter()
+            .map(|(n, w)| (n.to_string(), *w))
+            .collect();
+        assert_eq!(out, want);
+        // Unresolved hooks cannot turn on: nothing is active afterwards.
+        assert!(reg.active_names().is_empty());
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn unresolved_hooks_refuse_to_enable() {
+        let mut reg = Registry::new(0x40_0000);
+        reg.add(unresolved("a.x", "t"));
+        assert!(reg.enable("a.x").unwrap_err().contains("unresolved"));
+        assert!(reg.enable("nope").unwrap_err().contains("unknown hook"));
+        assert_eq!(reg.disable("a.x"), Ok(()));
+        let report = apply_commands(&mut reg, &[Command::All(true)]);
+        assert_eq!(report, vec!["all on: 0/1 ok".to_string()]);
+        assert_eq!(reg.status()[0].2, State::Off);
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn table_plan_registers_switchable_rows_off() {
+        use crate::table::{FLAG_SWITCHABLE, RewriteEntry, Row, plan};
+        let rows: Vec<Row> = (0..3u32)
+            .map(|i| Row {
+                entry: RewriteEntry {
+                    address: 0x0050_0000 + i * 0x10,
+                    flags: if i == 1 { 0 } else { FLAG_SWITCHABLE },
+                    shard: 1,
+                    detour: 0x1000,
+                    ..RewriteEntry::default()
+                },
+                name: format!("function.{:08x}", 0x0050_0000 + i * 0x10),
+                expected: Vec::new(),
+            })
+            .collect();
+        let p = plan(&rows);
+        let mut reg = Registry::new(0x40_0000);
+        for d in p.defs {
+            reg.add(d);
+        }
+        assert_eq!(reg.names(), vec!["function.00500000", "function.00500020"]);
+        assert!(reg.status().iter().all(|(_, sub, st)| sub == "s001" && *st == State::Off));
+        assert_eq!(p.skipped.len(), 1);
+    }
+
+    #[test]
+    fn unresolved_def_is_plain_data() {
+        // Host-side guard that the helper above builds what it says.
+        let d = unresolved("a.x", "t");
+        assert_eq!((d.name.as_str(), d.subsystem.as_str(), d.detour), ("a.x", "t", 0));
     }
 }
