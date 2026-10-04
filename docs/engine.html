@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>How the engine works: LibertyFlux</title>
+<meta name="description" content="A visual guide to how Grand Theft Auto IV's engine is put together, drawn from what the LibertyFlux project has measured in the executable and the game's files.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;700;800&family=Overpass+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="engine.css">
+</head>
+<body>
+
+<header class="masthead compact engine-masthead">
+  <div class="wrap">
+    <nav aria-label="Site"><ul class="nav">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="engine.html" aria-current="page">Engine</a></li>
+      <li><a href="changelog.html">Changelog</a></li>
+      <li><a href="devlog.html">Devlog</a></li>
+      <li><a href="https://github.com/monstercameron/LibertyFlux">GitHub</a></li>
+    </ul></nav>
+    <h1>How the engine works</h1>
+    <p class="lede">Grand Theft Auto IV runs on RAGE, Rockstar's own engine. This page shows how it is put together, from what the project has found so far in the executable and the game's files.</p>
+
+    <figure class="lines-figure" aria-labelledby="lines-title">
+      <figcaption>
+        <h2 id="lines-title">Four lines of work run at the same time</h2>
+        <p>Each line is one or more threads. Each stop is a job the engine does on that line. Pick a stop to see what we found there.</p>
+      </figcaption>
+
+      <div class="lines" id="lines">
+        <section class="line" data-line="game" aria-labelledby="line-game">
+          <header class="line-head">
+            <h3 id="line-game"><span class="roundel" aria-hidden="true"></span>Game thread</h3>
+            <p>Moves the world forward one step.</p>
+          </header>
+          <ol class="stops">
+            <li><button type="button" class="stop" data-stop="input"><span class="dot" aria-hidden="true"></span><span class="stop-name">Input</span></button></li>
+            <li><button type="button" class="stop" data-stop="scripts"><span class="dot" aria-hidden="true"></span><span class="stop-name">Scripts</span></button></li>
+            <li><button type="button" class="stop" data-stop="people"><span class="dot" aria-hidden="true"></span><span class="stop-name">People</span></button></li>
+            <li><button type="button" class="stop" data-stop="vehicles"><span class="dot" aria-hidden="true"></span><span class="stop-name">Vehicles</span></button></li>
+            <li><button type="button" class="stop" data-stop="physics"><span class="dot" aria-hidden="true"></span><span class="stop-name">Physics</span></button></li>
+            <li><button type="button" class="stop" data-stop="animation"><span class="dot" aria-hidden="true"></span><span class="stop-name">Animation</span></button></li>
+            <li><button type="button" class="stop" data-stop="drawlists"><span class="dot" aria-hidden="true"></span><span class="stop-name">Draw lists</span></button></li>
+          </ol>
+        </section>
+
+        <section class="line" data-line="render" aria-labelledby="line-render">
+          <header class="line-head">
+            <h3 id="line-render"><span class="roundel" aria-hidden="true"></span>Render thread</h3>
+            <p>Turns the draw lists into a picture.</p>
+          </header>
+          <ol class="stops">
+            <li><button type="button" class="stop" data-stop="shadows"><span class="dot" aria-hidden="true"></span><span class="stop-name">Shadows</span></button></li>
+            <li><button type="button" class="stop" data-stop="gbuffer"><span class="dot" aria-hidden="true"></span><span class="stop-name">Surfaces</span></button></li>
+            <li><button type="button" class="stop" data-stop="lighting"><span class="dot" aria-hidden="true"></span><span class="stop-name">Lighting</span></button></li>
+            <li><button type="button" class="stop" data-stop="transparent"><span class="dot" aria-hidden="true"></span><span class="stop-name">Glass and effects</span></button></li>
+            <li><button type="button" class="stop" data-stop="post"><span class="dot" aria-hidden="true"></span><span class="stop-name">Post effects</span></button></li>
+            <li><button type="button" class="stop" data-stop="hud"><span class="dot" aria-hidden="true"></span><span class="stop-name">HUD and menus</span></button></li>
+            <li><button type="button" class="stop" data-stop="present"><span class="dot" aria-hidden="true"></span><span class="stop-name">Present</span></button></li>
+          </ol>
+        </section>
+
+        <section class="line" data-line="audio" aria-labelledby="line-audio">
+          <header class="line-head">
+            <h3 id="line-audio"><span class="roundel" aria-hidden="true"></span>Audio threads</h3>
+            <p>Four threads that never wait for a frame.</p>
+          </header>
+          <ol class="stops">
+            <li><button type="button" class="stop" data-stop="soundengine"><span class="dot" aria-hidden="true"></span><span class="stop-name">Sound engine</span></button></li>
+            <li><button type="button" class="stop" data-stop="usermusic"><span class="dot" aria-hidden="true"></span><span class="stop-name">Your own music</span></button></li>
+            <li><button type="button" class="stop" data-stop="mixer"><span class="dot" aria-hidden="true"></span><span class="stop-name">Mixer</span></button></li>
+            <li><button type="button" class="stop" data-stop="output"><span class="dot" aria-hidden="true"></span><span class="stop-name">Sound card</span></button></li>
+          </ol>
+        </section>
+
+        <section class="line" data-line="loader" aria-labelledby="line-loader">
+          <header class="line-head">
+            <h3 id="line-loader"><span class="roundel" aria-hidden="true"></span>Streaming</h3>
+            <p>Loads the city around you as you move.</p>
+          </header>
+          <ol class="stops">
+            <li><button type="button" class="stop" data-stop="archives"><span class="dot" aria-hidden="true"></span><span class="stop-name">Archives</span></button></li>
+            <li><button type="button" class="stop" data-stop="unpack"><span class="dot" aria-hidden="true"></span><span class="stop-name">Unpack</span></button></li>
+            <li><button type="button" class="stop" data-stop="world"><span class="dot" aria-hidden="true"></span><span class="stop-name">Into the world</span></button></li>
+          </ol>
+        </section>
+      </div>
+
+      <div class="stop-detail" id="stop-detail" aria-live="polite" hidden>
+        <h4 id="stop-title"></h4>
+        <p id="stop-text"></p>
+        <ul class="stop-facts" id="stop-facts"></ul>
+        <p class="stop-evidence" id="stop-evidence"></p>
+      </div>
+
+      <p class="lines-note">The thread counts are measured. The order of stops along a line is our reading of the evidence: the main loop itself sits in the part of the executable that cannot be read yet, described at the end of this page.</p>
+    </figure>
+  </div>
+</header>
+
+<main>
+  <section id="code">
+    <div class="wrap">
+      <h2>Nearly a third of the code is about people</h2>
+      <p class="prose">The executable holds 45,229 functions. Sorted by what they work on, the largest share by far belongs to pedestrians: how they decide, react, walk and fight.</p>
+      <ol class="bars" aria-label="Functions by subsystem">
+        <li style="--v:13286"><span class="bar-label">People: AI tasks and events</span><span class="bar-track"><span class="bar-fill"></span></span><span class="bar-value">13,286</span></li>
+        <li style="--v:4419"><span class="bar-label">Main loop, timing, locking</span><span class="bar-track"><span class="bar-fill"></span></span><span class="bar-value">4,419</span></li>
+        <li style="--v:4416"><span class="bar-label">Streaming and loading</span><span class="bar-track"><span class="bar-fill"></span></span><span class="bar-value">4,416</span></li>
+        <li style="--v:3261"><span class="bar-label">Files and memory</span><span class="bar-track"><span class="bar-fill"></span></span><span class="bar-value">3,261</span></li>
+        <li style="--v:3240"><span class="bar-label">Physics and collision</span><span class="bar-track"><span class="bar-fill"></span></span><span class="bar-value">3,240</span></li>
+        <li style="--v:2974"><span class="bar-label">Input, menus and HUD</span><span class="bar-track"><span class="bar-fill"></span></span><span class="bar-value">2,974</span></li>
+        <li style="--v:2893"><span class="bar-label">Network and online</span><span class="bar-track"><span class="bar-fill"></span></span><span class="bar-value">2,893</span></li>
+        <li style="--v:2863"><span class="bar-label">Script machine and natives</span><span class="bar-track"><span class="bar-fill"></span></span><span class="bar-value">2,863</span></li>
+        <li style="--v:2586"><span class="bar-label">Vehicles</span><span class="bar-track"><span class="bar-fill"></span></span><span class="bar-value">2,586</span></li>
+        <li style="--v:2370"><span class="bar-label">Audio</span><span class="bar-track"><span class="bar-fill"></span></span><span class="bar-value">2,370</span></li>
+        <li style="--v:1620"><span class="bar-label">World and object pools</span><span class="bar-track"><span class="bar-fill"></span></span><span class="bar-value">1,620</span></li>
+        <li style="--v:1276"><span class="bar-label">Animation and Euphoria</span><span class="bar-track"><span class="bar-fill"></span></span><span class="bar-value">1,276</span></li>
+      </ol>
+      <p class="note">Each function is assigned to the nearest subsystem whose code could be identified, so the split is approximate. The counts include the libraries built into the executable.</p>
+
+      <div class="split">
+        <div>
+          <h3>More than half of the classes are leaderboards</h3>
+          <p>The executable declares 3,727 C++ classes. About 1,927 of them are four leaderboard templates, each stamped out once for every one of 481 multiplayer leaderboards. The largest family that does real work is the AI's 334 task classes.</p>
+          <ul class="waffle-key">
+            <li><span class="key-swatch lb"></span>Leaderboard templates, 1,927</li>
+            <li><span class="key-swatch task"></span>AI tasks, 334</li>
+            <li><span class="key-swatch rest"></span>Everything else, 1,466</li>
+          </ul>
+        </div>
+        <div class="waffle" id="waffle" role="img" aria-label="A grid of 100 squares: 52 are leaderboard templates, 9 are AI tasks and 39 are everything else."></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="people" class="band">
+    <div class="wrap">
+      <h2>A pedestrian's mind is a stack of tasks</h2>
+      <p class="prose">Nobody in Liberty City runs one big behaviour routine. Each person holds a goal, the goal picks a smaller step, and the step picks one action. When something happens nearby, an event arrives and can replace any level of the stack.</p>
+      <div class="brain">
+        <div class="brain-event">
+          <strong>An event arrives</strong>
+          <span>A gunshot, damage, a shout. 82 kinds.</span>
+        </div>
+        <div class="brain-arrow" aria-hidden="true"></div>
+        <div class="brain-nest">
+          <div class="nest complex">
+            <strong>Complex task: a goal</strong>
+            <span>Chooses a subtask and watches it. 197 kinds.</span>
+            <div class="nest complex inner">
+              <strong>Complex task: a step toward it</strong>
+              <span>Complex tasks can nest several deep.</span>
+              <div class="nest simple">
+                <strong>Simple task: one action</strong>
+                <span>Does one thing for a few frames, then reports back. About 130 kinds.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="brain-arrow" aria-hidden="true"></div>
+        <div class="brain-event out">
+          <strong>The body moves</strong>
+          <span>Movement and animation, or Euphoria if the body goes limp.</span>
+        </div>
+      </div>
+      <p class="note">The diagram shows the structure. The counts are measured from the executable's class records.</p>
+      <ul class="facts">
+        <li><strong>About 192 bytes</strong> is the typical size of a complex task. Tasks live in fixed pools, not the general heap.</li>
+        <li><strong>39 movement tasks</strong> carry a second interface so the movement system can drive them directly.</li>
+        <li><strong>18 Euphoria behaviours</strong> take over when a body turns ragdoll.</li>
+        <li><strong>No "wanted level" class exists.</strong> Police response is driven by data files and scripts.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="scripts">
+    <div class="wrap">
+      <h2>The story runs on a small stack machine</h2>
+      <p class="prose">Missions are not compiled into the executable. They ship as 941 script files, run by an interpreter with 78 instructions. Scripts cannot touch the engine directly: they call named commands, called natives, and the engine does the work.</p>
+      <div class="vm" id="vm">
+        <div class="vm-program">
+          <h3>Program</h3>
+          <ol class="vm-code" id="vm-code">
+            <li>PUSH 5</li>
+            <li>PUSH 7</li>
+            <li>ADD</li>
+          </ol>
+        </div>
+        <div class="vm-stack-wrap">
+          <h3>Stack</h3>
+          <div class="vm-stack" id="vm-stack" aria-live="polite"></div>
+        </div>
+        <div class="vm-controls">
+          <p id="vm-status">Press Step to run the first instruction.</p>
+          <button type="button" id="vm-step">Step</button>
+          <button type="button" id="vm-reset" class="quiet">Start again</button>
+        </div>
+      </div>
+      <p class="note">This three-instruction program was the first thing the project ran through the game's original interpreter code. It answered 12.</p>
+      <ul class="facts">
+        <li><strong>14,499,370 instructions</strong> across all the shipped scripts.</li>
+        <li><strong>717,139 calls</strong> from scripts into the engine.</li>
+        <li><strong>3,034 natives</strong> are registered, and every one now has a name.</li>
+        <li><strong>IS_CHAR_INJURED</strong> is the most-called native, followed by PRINTSTRING and IS_CHAR_DEAD.</li>
+        <li><strong>Dividing by zero</strong> does not crash a script: the result is the number you started with.</li>
+        <li><strong>46 debug natives</strong> were stripped from the release build and now all lead to one empty function.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="disk" class="band">
+    <div class="wrap">
+      <h2>The city is 23.9 GB of nested containers</h2>
+      <p class="prose">Almost everything sits inside archives. Inside an archive, each model, texture set or collision mesh is a compressed resource, laid out so it can be copied into memory and used without further parsing.</p>
+      <div class="disk-bar" role="img" aria-label="23.9 gigabytes: 10.2 in 49 RPF archives, 10.1 in 254 IMG archives, 3.6 in loose files and video.">
+        <span class="seg rpf" style="--w:10.2"><b>10.2 GB</b> 49 archives of audio and models</span>
+        <span class="seg img" style="--w:10.1"><b>10.1 GB</b> 254 encrypted map archives</span>
+        <span class="seg loose" style="--w:3.6"><b>3.6 GB</b> video and loose files</span>
+      </div>
+      <ol class="nesting">
+        <li><strong>Archive</strong><span>A table of contents and thousands of files. The map archives are encrypted with a key held in the executable.</span></li>
+        <li><strong>Resource</strong><span>One compressed file, split into a part for main memory and a part for the graphics card.</span></li>
+        <li><strong>Object</strong><span>A model, texture set, collision mesh or navigation mesh, ready to use once its internal pointers are fixed up.</span></li>
+      </ol>
+      <ul class="facts">
+        <li><strong>26,713</strong> model files.</li>
+        <li><strong>10,839</strong> navigation meshes holding 5.65 million polygons.</li>
+        <li><strong>95,137</strong> road nodes joined by 159,902 links.</li>
+        <li><strong>15.5 million</strong> collision polygons in 9,102 shapes.</li>
+        <li><strong>10,134</strong> shader programs, all compiled ahead of time.</li>
+        <li><strong>7 languages</strong> of text.</li>
+      </ul>
+      <p class="note">The project's Rust readers open every one of these file types with no failures. The model reader is checked against a sample of 112 files so far.</p>
+    </div>
+  </section>
+
+  <section id="clock">
+    <div class="wrap">
+      <h2>The clock counts in whole milliseconds</h2>
+      <p class="prose">The engine reads a millisecond clock from more than 80 places and a high-resolution timer from one. The physics step follows the length of the frame, with no fixed step. At 30 frames per second a millisecond is a fine ruler. At several hundred it is not.</p>
+      <div class="clock" id="clock-widget">
+        <label for="fps">Frame rate: <output id="fps-out" for="fps">60</output> frames per second</label>
+        <input type="range" id="fps" min="20" max="500" step="5" value="60">
+        <div class="ruler-wrap">
+          <div class="ruler" id="ruler" aria-hidden="true"></div>
+          <div class="ruler-ends" aria-hidden="true"><span>Start of frame</span><span>End of frame</span></div>
+        </div>
+        <p class="clock-readout" id="clock-readout" aria-live="polite"></p>
+      </div>
+      <p class="note">Each tick mark is one millisecond. Which of the two clocks paces the frame is in the code we cannot read yet, so the ruler is an illustration of the risk, not a measured cause. What is public record: players report that handling, ragdolls, helicopter rotors and ladders misbehave above 60 frames per second.</p>
+    </div>
+  </section>
+
+  <section id="dark" class="band">
+    <div class="wrap">
+      <h2>One megabyte is still dark</h2>
+      <p class="prose">The first megabyte of the game's code is encrypted in the file on disk and is only decrypted when the game starts. That is about 9% of the code, and it holds some of the most central parts.</p>
+      <div class="strip" role="img" aria-label="The code section as a strip of 2,674 pages: the first 250 are encrypted, the remaining 2,424 are readable.">
+        <span class="strip-dark" style="--w:250">250 pages encrypted</span>
+        <span class="strip-clear" style="--w:2424">2,424 pages readable</span>
+      </div>
+      <ul class="facts">
+        <li><strong>The main loop</strong> and the program's real starting point.</li>
+        <li><strong>The memory allocator</strong> that every object is created through.</li>
+        <li><strong>98.8%</strong> of the virtual functions of the multiplayer replication classes.</li>
+        <li><strong>83%</strong> of the virtual functions of the core classes: file devices, memory, parsing.</li>
+        <li><strong>92 to 98%</strong> of those of the low-level graphics classes.</li>
+        <li><strong>63%</strong> of those of the AI's event classes.</li>
+      </ul>
+      <p class="prose after-grid">The plan is to read that megabyte from the owner's running copy of the game, then repeat the analysis on it. Every number on this page comes from an entry in the <a href="devlog.html">devlog</a>, where the method and the open questions are written down.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>LibertyFlux is an independent project. It is not affiliated with, endorsed by or connected to Rockstar Games or Take-Two Interactive. Grand Theft Auto is a trademark of Take-Two Interactive Software.</p>
+  </div>
+</footer>
+
+<script src="engine.js"></script>
+</body>
+</html>

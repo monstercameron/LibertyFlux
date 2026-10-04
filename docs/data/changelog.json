@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-03",
+    "title": "Engine page: a visual guide to how the game's engine works",
+    "commit": null,
+    "summary": "A new page on the site that explains the engine with diagrams, built only from what the project has measured so far.",
+    "changes": [
+      "New page docs/engine.html with its own stylesheet and script, linked from every page's navigation.",
+      "A line map of the four things the engine does at once (game thread, render thread, audio threads, streaming); each stop opens what was found there.",
+      "Charts of where the code is by subsystem and how the classes divide, a diagram of how a pedestrian's tasks nest, a three-step stack machine, what is on disk, a frame-rate ruler for the millisecond clock, and what is still unreadable.",
+      "Claims are worded to match the lane findings; inferred ordering is labelled as inferred.",
+      "Checked at 1280 and 390 pixels wide in light and dark themes; the four line colours pass the colour-blind separation check on both dark surfaces."
+    ]
+  },
+  {
+    "date": "2026-10-03",
     "title": "Devlog: Pilot lane 10: five functions rewritten and timed",
     "commit": "fec5e7924e2be3feab864002e9cca55d4f191473",
     "summary": "Findings from the p-10 lane.",
