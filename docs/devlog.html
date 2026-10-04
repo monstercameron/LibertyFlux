@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot-07">Pilot lane 07: five functions rewritten and timed</a></li>
       <li><a href="#pilot-06">Pilot lane 06: five functions rewritten and timed</a></li>
       <li><a href="#pilot-05">Pilot lane 05: five functions rewritten and timed</a></li>
       <li><a href="#pilot-03">Pilot lane 03: five functions rewritten and timed</a></li>
@@ -180,6 +181,26 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot-07">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Pilot lane 07: five functions rewritten and timed</h2>
+      <p>Five small original functions were rewritten in Rust and each rewrite was compared against the original over one thousand native executions: all five matched exactly. The work also timed each step honestly, including one failed attempt and two tool traps, so the project schedule can be built from real numbers.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite five assigned leaf functions in Rust, prove each rewrite behaves identically to the original with at least one thousand random plus edge-case trials, record the time honestly including failures, and run one honesty test with a deliberately planted bug.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All five rewrites matched their originals on every trial: a byte-string to UTF-16 expander, a small object reset, a float setter, an integer getter, and a random-range float generator with generator state.</p>
+      <p><span class="evidence verified">Verified</span> The native execution method from the harness lane works for differential checks once extended with heap prefills, so each trial starts from controlled random memory instead of a fixed pattern.</p>
+      <p><span class="evidence verified">Verified</span> The compiler's thiscall convention matches the originals exactly: the object pointer arrives in the expected register, extra arguments sit on the stack, and the callee cleans them up. This was confirmed by reading the compiled output of the rewrite crate itself.</p>
+      <p><span class="evidence verified">Verified</span> The honesty test worked: a rewrite copy with one stripped bit flag was caught on 991 of 1028 trials, with only the empty string and short all-ASCII inputs passing.</p>
+      <p><span class="evidence">Inferred</span> The random-range function draws from a multiply-add generator state and interpolates between its two bounds; its constant multiplier table entry equals exactly two to the minus twenty-third.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The five rewrites are proposed for integration as written. Two comparison details are recommended for the checker lane: expect a leftover return-address word on the stack after callee-cleaning returns, and compare floating-point results through the 80-bit return register encoding rather than as text. Rebuilding the rewrite binary while trials execute it must be sequenced, never overlapped, because the operating system locks running programs.</p>
+      <h3>How to reproduce it</h3>
+      <p>From the lane scratch folder: build the harness fork and the rewrite crate for 32-bit Windows, then run one check script per function. Each script runs its trials with parallel workers, compares written memory byte for byte plus return values and stack discipline, and prints an agree count. The honesty test re-runs the first function's script in mutant mode.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first check of the float setter failed on the check side, not the rewrite: the script expected the wrong stack-pointer advance and missed a constant leftover word the harness leaves behind. Reading the harness trampoline explained both, and the corrected check passed without touching the rewrite. A rebuild also failed once with an access-denied error because trial processes were still executing the old binary; sequencing builds after checks fixed it. Trial throughput was far below the harness lane's solo measurement because the shared host was heavily loaded.</p>
+      </article>
 
       <article class="entry" id="pilot-06">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
