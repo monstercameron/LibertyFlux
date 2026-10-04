@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Rewrites: 2 more functions pass the checker (7499 in total)",
+    "title": "Dashboard: a local page for watching the lanes",
     "commit": null,
+    "summary": "A small local server and one page show every lane, its effort setting, its initial prompt, its log and results, and the counts, without a model in the loop.",
+    "changes": [
+      "scripts/dashboard/server.py serves one page and a read-only JSON interface on the local machine only. It reads what is already on disk (lane logs, briefs, results, the supervisor's log and settings, the site's progress data) and the process list. It writes nothing and starts nothing.",
+      "The page shows the four stage counts, memory and commit headroom against the supervisor's guards, and the lanes: running, ended in the last three hours, and died or stopped. Each lane shows its kind, reasoning effort, brief version, how long it has run, its latest log line and its result so far; a lane whose log has been quiet for twenty minutes is marked.",
+      "Selecting a lane opens its details: state, effort, start time, batch size, the last 80 log lines, its summary and results table when they exist, and the full initial prompt.",
+      "It refreshes every five seconds, catches up when the page is brought back into view, has a button to refresh on demand, and says so when its data has stopped updating.",
+      "Why: lanes now run under one supervisor task and no longer appear one by one in the task list, and asking the coordinator what they are doing spends model usage. Start it with: python scripts/dashboard/server.py, then open the address it prints."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Rewrites: 2 more functions pass the checker (7499 in total)",
+    "commit": "2fa82203134a08355867d5d07fc3a8ba2f68c098",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "2 rewrites added under rewrites/pending: 0 script native handlers and 2 other functions.",

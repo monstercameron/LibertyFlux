@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LibertyFlux lanes</title>
+<style>
+:root {
+  --ground: #0c0f13; --panel: #171c22; --raised: #1f262e; --rule: #2e3742;
+  --ink: #e6e9ed; --soft: #b3bcc6; --faint: #8a95a2;
+  --sodium: #e0a021; --run: #6a9cc2; --done: #7fb38a; --dead: #d9735a; --track: #2a313a;
+  --sans: "Overpass", "Segoe UI", system-ui, sans-serif;
+  --mono: "Overpass Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: light) {
+  :root { --ground: #eef0f2; --panel: #f8f9fa; --raised: #ffffff; --rule: #cfd5db; --ink: #14181d; --soft: #46505c;
+          --faint: #5d6874; --sodium: #9a6a05; --run: #24658f; --done: #2f7a45; --dead: #b3452d; --track: #dfe3e8; }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--ground); color: var(--ink); font: 15px/1.45 var(--sans); }
+button { font: inherit; color: inherit; }
+h1, h2, h3 { margin: 0; font-weight: 700; }
+.bar { position: sticky; top: 0; z-index: 5; display: flex; gap: 12px; align-items: baseline; justify-content: space-between;
+       padding: 10px 16px; background: var(--ground); border-bottom: 1px solid var(--rule); }
+.bar h1 { font-size: 1rem; }
+.fresh { font: 0.8125rem var(--mono); color: var(--faint); text-align: right; }
+.fresh.stale { color: var(--sodium); }
+main { display: grid; gap: 16px; padding: 16px; max-width: 1500px; margin: 0 auto; }
+section { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; min-width: 0; }
+section > h2 { font-size: 0.9375rem; margin-bottom: 10px; }
+.note { color: var(--faint); font-size: 0.8125rem; }
+
+.meters { display: grid; gap: 10px; }
+.meter { display: grid; grid-template-columns: 6.5rem 1fr; gap: 4px 12px; align-items: center; }
+.meter .label { color: var(--soft); }
+.meter .value { font: 0.875rem var(--mono); grid-column: 2; }
+.meter .track { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--track); overflow: hidden; }
+.meter .fill { height: 100%; background: var(--run); border-radius: 3px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 20px; margin: 0; }
+.facts div { min-width: 0; }
+.facts dt { color: var(--faint); font-size: 0.8125rem; }
+.facts dd { margin: 0; font: 0.9375rem var(--mono); overflow-wrap: anywhere; }
+.facts dd.warn { color: var(--sodium); }
+pre { margin: 0; font: 0.8125rem/1.5 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; color: var(--soft); }
+.box { background: var(--ground); border: 1px solid var(--rule); border-radius: 4px; padding: 10px 12px; max-height: 320px; overflow: auto; }
+
+.tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.tab { background: none; border: 1px solid var(--rule); border-radius: 999px; padding: 4px 12px; cursor: pointer; color: var(--soft); }
+.tab[aria-pressed="true"] { background: var(--raised); color: var(--ink); border-color: var(--faint); }
+.tools input { flex: 1 1 140px; min-width: 0; background: var(--ground); border: 1px solid var(--rule); border-radius: 4px;
+               color: var(--ink); padding: 5px 9px; font: 0.875rem var(--sans); }
+.lanes { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.lane { width: 100%; text-align: left; background: var(--raised); border: 1px solid var(--rule); border-left: 4px solid var(--faint);
+        border-radius: 4px; padding: 8px 10px; cursor: pointer; display: grid; gap: 2px; }
+.lane[data-state="running"] { border-left-color: var(--run); }
+.lane[data-state="finished"] { border-left-color: var(--done); }
+.lane[data-state="died"] { border-left-color: var(--dead); }
+.lane.selected { outline: 2px solid var(--sodium); outline-offset: 1px; }
+.lane .top { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.lane .id { font: 700 0.9375rem var(--mono); }
+.lane .meta { color: var(--soft); font-size: 0.8125rem; }
+.lane .quiet { color: var(--sodium); font-size: 0.8125rem; }
+.lane .yield { margin-left: auto; font: 0.8125rem var(--mono); color: var(--soft); }
+.lane .line { color: var(--faint); font: 0.8125rem var(--mono); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--sodium); outline-offset: 2px; }
+
+.detail h2 { font: 700 1.0625rem var(--mono); }
+.detail .close { float: right; background: none; border: 1px solid var(--rule); border-radius: 4px; padding: 3px 10px; cursor: pointer; }
+.detail h3 { font-size: 0.875rem; margin: 16px 0 6px; }
+.detail details { margin-top: 16px; }
+.detail summary { cursor: pointer; font-weight: 700; font-size: 0.875rem; }
+table { border-collapse: collapse; width: 100%; font-size: 0.8125rem; }
+th, td { text-align: left; padding: 4px 8px 4px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th { color: var(--faint); font-weight: 400; }
+td.mono { font-family: var(--mono); white-space: nowrap; }
+.scroll { overflow-x: auto; }
+.empty { color: var(--faint); padding: 6px 0; }
+
+@media (min-width: 1000px) {
+  main { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; }
+  .overview { grid-column: 1; }
+  .list { grid-column: 1; }
+  .detail { grid-column: 2; grid-row: 1 / span 4; position: sticky; top: 56px; max-height: calc(100vh - 72px); overflow: auto; }
+}
+@media (max-width: 999px) { body.viewing .overview, body.viewing .list { display: none; } }
+</style>
+</head>
+<body>
+<div class="bar">
+  <h1>LibertyFlux lanes</h1>
+  <div style="display:flex;gap:12px;align-items:baseline">
+    <div class="fresh" id="fresh" aria-live="polite">loading</div>
+    <button class="tab" id="refresh">Refresh now</button>
+  </div>
+</div>
+<main>
+  <section class="overview" aria-labelledby="h-counts">
+    <h2 id="h-counts">Functions</h2>
+    <div class="meters" id="meters"></div>
+    <p class="note" id="counts-note"></p>
+  </section>
+  <section class="overview" aria-labelledby="h-machine">
+    <h2 id="h-machine">Machine and supervisor</h2>
+    <dl class="facts" id="machine"></dl>
+    <h2 style="margin-top:14px">Supervisor log</h2>
+    <div class="box"><pre id="suplog"></pre></div>
+  </section>
+  <section class="list" aria-labelledby="h-lanes">
+    <h2 id="h-lanes">Lanes</h2>
+    <div class="tools">
+      <button class="tab" data-filter="running" aria-pressed="true">Running</button>
+      <button class="tab" data-filter="ended" aria-pressed="false">Ended</button>
+      <button class="tab" data-filter="died" aria-pressed="false">Died</button>
+      <input id="search" type="search" placeholder="Filter by lane, kind or effort" aria-label="Filter lanes">
+    </div>
+    <ul class="lanes" id="lanes"></ul>
+  </section>
+  <section class="detail" id="detail" aria-live="polite" hidden></section>
+</main>
+<script>
+(function () {
+  "use strict";
+  var fmt = new Intl.NumberFormat("en-US");
+  var state = null, filter = "running", query = "", selected = null, lastOk = 0, detailTimer = null;
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(text) { return String(text == null ? "" : text).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function minutesSince(iso) { return iso ? Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000)) : null; }
+  function span(minutes) { if (minutes == null) return ""; return minutes < 60 ? minutes + " min" : Math.floor(minutes / 60) + " h " + (minutes % 60) + " min"; }
+
+  function renderOverview() {
+    var s = state.stages || {}, f = state.functions || {}, game = f.game || 0;
+    var rows = [["Identified", s.identified], ["Named", s.named], ["Rewritten", s.rewritten], ["Verified", s.verified]];
+    $("meters").innerHTML = rows.map(function (r) {
+      var share = game ? 100 * (r[1] || 0) / game : 0;
+      return '<div class="meter"><span class="label">' + r[0] + '</span><span class="value">' + fmt.format(r[1] || 0) + " of " + fmt.format(game) +
+        " (" + share.toFixed(1) + '%)</span><div class="track"><div class="fill" style="width:' + share.toFixed(2) + '%"></div></div></div>';
+    }).join("");
+    var review = state.review, note = "Counts are the site's progress data, last written " + esc(state.progress_updated || "unknown") + ".";
+    if (review && review.verified_bytes) note += " By size, " + fmt.format(review.verified_bytes) + " bytes of code were verified at the last hourly review (" + esc(review.at) + ").";
+    $("counts-note").textContent = note;
+
+    var m = state.memory || {}, sup = (state.supervisor || {}).settings || {}, lanes = state.lanes || [];
+    var running = lanes.filter(function (l) { return l.state === "running"; });
+    var kinds = {};
+    running.forEach(function (l) { kinds[l.kind] = (kinds[l.kind] || 0) + 1; });
+    var breakdown = Object.keys(kinds).sort().map(function (k) { return kinds[k] + " " + k; }).join(", ") || "none";
+    var facts = [
+      ["Lanes running", running.length + (sup.target ? " of a target of " + sup.target : ""), false],
+      ["By kind", breakdown, false],
+      ["Memory free", (m.free_gb != null ? m.free_gb + " GB of " + m.total_gb : "unknown"), sup.min_free_gb != null && m.free_gb < sup.min_free_gb],
+      ["Commit headroom", (m.commit_headroom_gb != null ? m.commit_headroom_gb + " GB of " + m.commit_limit_gb : "unknown"), sup.min_headroom_gb != null && m.commit_headroom_gb < sup.min_headroom_gb],
+      ["Supervisor starts lanes above", (sup.min_free_gb != null ? sup.min_free_gb + " GB free and " + sup.min_headroom_gb + " GB headroom" : "unknown"), false],
+      ["New lanes", state.supervisor && state.supervisor.stop_file ? "stopped by the STOP file" : "allowed", !!(state.supervisor && state.supervisor.stop_file)]
+    ];
+    $("machine").innerHTML = facts.map(function (r) { return "<div><dt>" + r[0] + '</dt><dd class="' + (r[2] ? "warn" : "") + '">' + esc(r[1]) + "</dd></div>"; }).join("");
+    $("suplog").textContent = ((state.supervisor || {}).log || []).join("\n") || "No supervisor log yet.";
+  }
+
+  function matches(l) {
+    if (filter === "running" && l.state !== "running") return false;
+    if (filter === "ended" && l.state !== "finished") return false;
+    if (filter === "died" && l.state !== "died" && l.state !== "stopped") return false;
+    if (!query) return true;
+    return (l.lane + " " + l.kind + " " + (l.effort || "") + " " + (l.brief || "") + " " + (l.experiment || "")).toLowerCase().indexOf(query) >= 0;
+  }
+
+  function renderLanes() {
+    var lanes = (state.lanes || []).filter(matches);
+    var counts = { running: 0, ended: 0, died: 0 };
+    (state.lanes || []).forEach(function (l) { if (l.state === "running") counts.running++; else if (l.state === "finished") counts.ended++; else counts.died++; });
+    document.querySelectorAll(".tab[data-filter]").forEach(function (t) {
+      var key = t.dataset.filter;
+      t.textContent = { running: "Running", ended: "Ended in the last 3 hours", died: "Died or stopped" }[key] + " " + counts[key];
+    });
+    if (!lanes.length) { $("lanes").innerHTML = '<li class="empty">No lanes match.</li>'; return; }
+    $("lanes").innerHTML = lanes.map(function (l) {
+      var quiet = minutesSince(l.last_activity), age = l.state === "running" ? minutesSince(l.started) : null;
+      var meta = [l.kind];
+      if (l.effort) meta.push("effort " + l.effort);
+      if (l.brief) meta.push("brief " + l.brief);
+      if (age != null) meta.push("running " + span(age));
+      else if (quiet != null) meta.push("last activity " + span(quiet) + " ago");
+      var y = l.yield ? l.yield.done + " of " + l.yield.of + " " + l.yield.unit : (l.batch ? "batch of " + l.batch : "");
+      return '<li><button class="lane' + (l.lane === selected ? " selected" : "") + '" data-lane="' + esc(l.lane) + '" data-state="' + esc(l.state) + '">' +
+        '<span class="top"><span class="id">' + esc(l.lane) + '</span><span class="meta">' + esc(meta.join(", ")) + "</span>" +
+        (l.state === "running" && quiet >= 20 ? '<span class="quiet">log quiet for ' + span(quiet) + "</span>" : "") +
+        '<span class="yield">' + esc(y) + "</span></span>" +
+        '<span class="line">' + esc(l.progress || "no log line yet") + "</span></button></li>";
+    }).join("");
+  }
+
+  function renderDetail(d) {
+    var l = (state.lanes || []).filter(function (x) { return x.lane === d.lane; })[0] || { lane: d.lane };
+    var facts = [["State", l.state === "died" ? "died (exit code " + l.exit_code + ")" : (l.state || "unknown")], ["Kind", l.kind], ["Reasoning effort", l.effort || "not recorded"],
+      ["Brief version", l.brief || "not recorded"], ["Started", l.started ? l.started.replace("T", " ") : "not recorded"],
+      ["Last activity", l.last_activity ? l.last_activity.replace("T", " ") : "none"], ["Batch", l.batch ? l.batch + " functions" : "not a batch lane"],
+      ["Result so far", l.yield ? l.yield.done + " of " + l.yield.of + " " + l.yield.unit : "nothing written yet"]];
+    if (l.experiment) facts.push(["Experiment", l.experiment]);
+    var html = '<button class="close" id="close">Back to all lanes</button><h2>' + esc(d.lane) + '</h2><dl class="facts" style="margin-top:12px">' +
+      facts.map(function (r) { return "<div><dt>" + r[0] + "</dt><dd>" + esc(r[1]) + "</dd></div>"; }).join("") + "</dl>";
+    html += '<h3>Latest log lines</h3><div class="box" id="logbox"><pre>' + esc((d.log || []).join("\n") || "No log yet.") + "</pre></div>";
+    if (d.summary) html += '<h3>Lane summary</h3><div class="box"><pre>' + esc(d.summary) + "</pre></div>";
+    if (d.results && d.results.length) {
+      html += "<h3>Results (" + d.results.length + ')</h3><div class="scroll"><table><thead><tr><th>Function</th><th>Size</th><th>Outcome</th><th>Tries</th><th>Wrong version caught</th><th>Note</th></tr></thead><tbody>' +
+        d.results.map(function (r) {
+          return '<tr><td class="mono">' + esc(r.name || r.address) + '</td><td class="mono">' + esc(r.size == null ? "" : r.size) + "</td><td>" + esc(r.outcome || r.confidence || "") + (r.reason ? " (" + esc(r.reason) + ")" : "") +
+            '</td><td class="mono">' + esc(r.attempts == null ? "" : r.attempts) + "</td><td>" + (r.mutant_caught == null ? "not recorded" : (r.mutant_caught ? "yes" : "no")) + "</td><td>" + esc(r.detail) + "</td></tr>";
+        }).join("") + "</tbody></table></div>";
+    }
+    html += "<details" + (detailOpen ? " open" : "") + ' id="prompt"><summary>Initial prompt (' + fmt.format(d.prompt_chars) + ' characters)</summary><div class="box" style="max-height:520px;margin-top:8px"><pre>' +
+      esc(d.prompt || "No brief file for this lane.") + "</pre></div></details>";
+    var box = $("detail"), keep = box.querySelector("#logbox"), atBottom = !keep || keep.scrollTop + keep.clientHeight >= keep.scrollHeight - 8;
+    box.innerHTML = html; box.hidden = false; document.body.classList.add("viewing");
+    var logbox = $("logbox"); if (atBottom) logbox.scrollTop = logbox.scrollHeight;
+    $("close").addEventListener("click", closeDetail);
+    $("prompt").addEventListener("toggle", function (e) { detailOpen = e.target.open; });
+  }
+  var detailOpen = false;
+  function closeDetail() { selected = null; clearTimeout(detailTimer); $("detail").hidden = true; document.body.classList.remove("viewing"); renderLanes(); }
+  function loadDetail() {
+    if (!selected) return;
+    var lane = selected;
+    fetch("/api/lane/" + encodeURIComponent(lane)).then(function (r) { return r.json(); }).then(function (d) {
+      if (selected === lane && !d.error) renderDetail(d);
+    }).catch(function () {}).then(function () { clearTimeout(detailTimer); if (selected === lane) detailTimer = setTimeout(loadDetail, 5000); });
+  }
+
+  function freshness() {
+    var el = $("fresh");
+    if (!lastOk) { el.textContent = "loading"; return; }
+    var age = Math.round((Date.now() - lastOk) / 1000), stale = age > 20 || (state && state.process_list_age_s > 60);
+    el.className = "fresh" + (stale ? " stale" : "");
+    el.textContent = (state ? state.now.replace("T", " ") : "") + (stale ? " (not updating: " + age + " s old)" : "");
+    if (state && state.process_list_error) el.textContent += " process list failed";
+  }
+  var loading = false, timer = null;
+  function load() {
+    if (loading) return;
+    loading = true; clearTimeout(timer);
+    fetch("/api/state").then(function (r) { return r.json(); }).then(function (data) {
+      state = data; lastOk = Date.now(); renderOverview(); renderLanes();
+    }).catch(function () {}).then(function () { loading = false; freshness(); timer = setTimeout(load, 5000); });
+  }
+  // A pane that is hidden or in the background pauses timers; catch up the moment it is looked at again.
+  document.addEventListener("visibilitychange", function () { if (!document.hidden) { load(); loadDetail(); } });
+  window.addEventListener("focus", function () { load(); });
+  $("refresh").addEventListener("click", function () { load(); loadDetail(); });
+  document.querySelectorAll(".tab[data-filter]").forEach(function (t) {
+    t.addEventListener("click", function () {
+      filter = t.dataset.filter;
+      document.querySelectorAll(".tab[data-filter]").forEach(function (o) { o.setAttribute("aria-pressed", o === t ? "true" : "false"); });
+      if (state) renderLanes();
+    });
+  });
+  $("search").addEventListener("input", function (e) { query = e.target.value.trim().toLowerCase(); if (state) renderLanes(); });
+  $("lanes").addEventListener("click", function (e) {
+    var button = e.target.closest(".lane");
+    if (!button) return;
+    selected = button.dataset.lane; detailOpen = false; renderLanes(); loadDetail();
+    if (window.matchMedia("(max-width: 999px)").matches) window.scrollTo(0, 0);
+  });
+  setInterval(freshness, 1000);
+  load();
+})();
+</script>
+</body>
+</html>
