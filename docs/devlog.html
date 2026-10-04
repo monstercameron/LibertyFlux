@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#naming-15">Naming a run of leaderboard schema accessors</a></li>
       <li><a href="#function-ledger">One ledger for 37,000 functions</a></li>
       <li><a href="#production-s268">One batch, two stack surprises: a shared argument slot and reads from unwritten stack</a></li>
       <li><a href="#naming-14">Naming 150 leaderboard info methods from one board-key signal</a></li>
@@ -358,6 +359,33 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="naming-15">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Naming a run of leaderboard schema accessors</h2>
+      <p>All 150 functions in this batch turned out to be per-board leaderboard schema accessors in a single template family, and all 150 are now named, so the batch is done with nothing left unnamed.</p>
+      <h3>What was asked</h3>
+      <p>Propose a descriptive name for each of 150 consecutive unnamed game functions, working out what the group is about first and then naming each function, with a confidence of high, medium or low.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The batch holds 18 leaderboard boards, each contributing the same set of small virtual methods: a name getter, a board id getter, column lookup helpers, column size and kind mappers, two cross-list mappers, and one larger row builder.</p>
+      <p><span class="evidence verified">Verified</span> Thirty-two entries the inventory left unnamed are ordinary members of the same family, not vtables or data: the tiny ones each return their board's leaderboard name string, and the larger ones share the exact shape of the column kind mapper, with board id constants matching their sibling methods.</p>
+      <p><span class="evidence verified">Verified</span> Every multi-instruction method starts by calling one shared schema helper with its board's small integer id, which makes the board id a reliable cross-check for assigning an unnamed function to its class.</p>
+      <p><span class="evidence verified">Verified</span> The switch jump tables for the size and kind mappers sit in the padding bytes between functions, each starting exactly where its function ends.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Method</th><th role="columnheader">Named</th><th role="columnheader">Confidence</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">name getter</td><td role="cell" data-label="Named">17</td><td role="cell" data-label="Confidence">high</td></tr>
+      <tr role="row"><td role="cell">board id getter</td><td role="cell" data-label="Named">12</td><td role="cell" data-label="Confidence">high</td></tr>
+      <tr role="row"><td role="cell">column and row helpers</td><td role="cell" data-label="Named">121</td><td role="cell" data-label="Confidence">medium</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>Method names reuse the convention earlier naming lanes established for this template family, so names stay comparable across boards. The next naming lane covering nearby boards should distrust the vtable boundary label on tiny and mid-size entries there and classify them by code shape first. The shared schema helpers these methods call are still unnamed and would be a useful follow-up.</p>
+      <h3>How to reproduce it</h3>
+      <p>Map the executable in memory, disassemble one board's methods from entry to return, and confirm each calls the shared helper with the same board id constant the id getter returns. Then check every other entry for the same shapes and constants before naming it.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>One column size method is two bytes longer than its seventeen twins because it computes the switch index with a different but equivalent instruction; it disassembles to the same behaviour and kept the same name. A first version of the naming script failed to match any board ids because it compared the full instruction text against the operand text; fixing the comparison resolved all 32 unnamed entries with no conflicts.</p>
+      </article>
 
       <article class="entry" id="function-ledger">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
