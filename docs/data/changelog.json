@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: One audio function returns into the heap on a rare path",
+    "title": "Rewrites: 85 more functions pass the checker (3878 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "85 rewrites added under rewrites/pending: 47 script native handlers and 38 other functions.",
+      "The tree now holds 3878 rewrites, 2949 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "166 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: One audio function returns into the heap on a rare path",
+    "commit": "2d25a3f7091bcec966b8a84ee12249451c61476c",
     "summary": "Findings from the r-b13 lane.",
     "changes": [
       "New devlog entry: One audio function returns into the heap on a rare path.",
