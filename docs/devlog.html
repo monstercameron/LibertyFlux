@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s123">A full call log silently corrupts the next verdict</a></li>
       <li><a href="#production-b65">Production batch: three audio functions verified, and a compiler lesson about NaN bits</a></li>
       <li><a href="#production-b59">Audio batch of seven verified, and a float-compare idiom worth knowing</a></li>
       <li><a href="#production-b68">Two contract traps that silently starve test coverage</a></li>
@@ -280,6 +281,35 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s123">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A full call log silently corrupts the next verdict</h2>
+      <p>One production rewrite kept failing even though its code was correct, and the cause turned out to be an off-by-one in the checker's call logging: the 257th outgoing call in a trial overwrites the table the rewrite reads its callee addresses from, so any trial with more than 256 calls fails a correct rewrite and stops comparing the extra calls at all.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small game functions in Rust and prove each one equal to the original with the differential checker, which runs both sides from identical state and compares return values, memory, stack use, outgoing calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Eighteen of the twenty functions passed one thousand trials each with zero failures, including float-heavy code, a tail call, a jump-table dispatch and a function that passes a pointer to its own stack frame.</p>
+      <p><span class="evidence verified">Verified</span> The nineteenth function poll-loops over a global record array and makes about five hundred outgoing calls per trial. The original side passed while the rewrite side faulted, yet the rewrite's own machine code was a faithful copy of the original's logic, and a reduced single-record variant passed cleanly, which pointed at trial scale rather than the rewrite.</p>
+      <p><span class="evidence verified">Verified</span> Reading the checker's worker source showed the call log holds 256 entries and the callee address table sits directly after it in memory. The emitted guard compares the log index against 256 but jumps away only when strictly above it, so entry index 256 is still written, landing on the first bytes of the callee table. The original side never reads that table, so it stays healthy; the rewrite reads every callee address from it, so it calls garbage and faults. The table is filled once per run, so the corruption also persists into later trials. Calls past the 256th are still answered but no longer recorded or compared.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Log capacity</td><td role="cell" data-label="Value">256 entries</td><td role="cell" data-label="What it means">Trials above this many outgoing calls are affected</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Guard shape</td><td role="cell" data-label="Value">skips only when the index is strictly above 256</td><td role="cell" data-label="What it means">One entry is written past the end of the log</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Overflow target</td><td role="cell" data-label="Value">the callee address table</td><td role="cell" data-label="What it means">Only the rewrite side reads it, so only that side breaks</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Unlogged tail</td><td role="cell" data-label="Value">calls past the 256th are answered, not compared</td><td role="cell" data-label="What it means">A wrong rewrite could pass on its late calls</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>The lane worked around the flaw without touching the checker: the accepted contract alternates which half of the record array is live on each trial, keeping every trial at or under 256 outgoing calls while still covering both sink branches and fault parity across trials. The proper fix belongs to the checker owner and is a single comparison change so the guard matches its own comment. Until then, every production contract must keep its per-trial outgoing calls at or under 256, and any existing verdict from a contract that can exceed that should be treated as suspect in both directions.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build a contract whose function makes more than 256 outgoing calls in one trial with at least one callee the rewrite calls through the address table, run it, and watch the original side pass while the rewrite side faults at an address that moves with the trial data. Reduce the live inputs so the trial stays under 256 calls and the same rewrite passes. The worker source shows the log size, the adjacent table layout and the strict-above comparison in the emitted stub guard.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The diagnosis took most of the lane's debugging time because every static check of the rewrite said it was correct: the disassembly matched the original's logic instruction for instruction in effect, and the same indirect-call pattern had already been proven by the checker's own examples. What finally broke the deadlock was a scale-isolation run with a single live record, which passed and reframed the problem as worker memory layout instead of rewrite logic. An early contract variant that specified all forty thousand global words explicitly also ran too slowly to use, which led to the sparse per-record patch style that the final contract keeps.</p>
+      </article>
 
       <article class="entry" id="production-b65">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
