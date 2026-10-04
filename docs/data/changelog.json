@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Naming batch 55: animation channel slots, input devices, drawable parsing",
+    "title": "Rewrites: 15 more functions pass the checker (10988 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "15 rewrites added under rewrites/verified: 0 script native handlers and 15 other functions.",
+      "The tree now holds 10988 rewrites, 10969 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "514 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Naming batch 55: animation channel slots, input devices, drawable parsing",
+    "commit": "ed59d3aa6fbf84ef31f87a9e43c206f65fe9224d",
     "summary": "Findings from the nm-55 lane.",
     "changes": [
       "New devlog entry: Naming batch 55: animation channel slots, input devices, drawable parsing.",

@@ -79686,6 +79686,33 @@
   "lane": "r-s371"
  },
  {
+  "address": "0x00D2ACF0",
+  "name": "task_ctor_full_a",
+  "kind": "function",
+  "file": "functions/fn_00d2acf0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s371"
+ },
+ {
+  "address": "0x00D2ADB0",
+  "name": "task_ctor_full_b",
+  "kind": "function",
+  "file": "functions/fn_00d2adb0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s371"
+ },
+ {
+  "address": "0x00D2AE70",
+  "name": "task_ctor_mid",
+  "kind": "function",
+  "file": "functions/fn_00d2ae70.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s371"
+ },
+ {
   "address": "0x00D2AEF0",
   "name": "task_ctor_tagged_float",
   "kind": "function",
@@ -79699,6 +79726,24 @@
   "name": "task_ctor_simple",
   "kind": "function",
   "file": "functions/fn_00d2af30.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s371"
+ },
+ {
+  "address": "0x00D2AF60",
+  "name": "task_teardown",
+  "kind": "function",
+  "file": "functions/fn_00d2af60.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s371"
+ },
+ {
+  "address": "0x00D2B000",
+  "name": "task_free_pair",
+  "kind": "function",
+  "file": "functions/fn_00d2b000.rs",
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s371"
@@ -79789,6 +79834,96 @@
   "name": "task_ensure_block",
   "kind": "function",
   "file": "functions/fn_00d2b2c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s371"
+ },
+ {
+  "address": "0x00D2B600",
+  "name": "task_range_clamp",
+  "kind": "function",
+  "file": "functions/fn_00d2b600.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s371"
+ },
+ {
+  "address": "0x00D2BB00",
+  "name": "CTaskComplexMoveGetOntoMainNavMesh::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d2bb00.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s371"
+ },
+ {
+  "address": "0x00D2BB40",
+  "name": "CTaskComplexMoveReturnToRoute::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d2bb40.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s371"
+ },
+ {
+  "address": "0x00D2BB80",
+  "name": "CTaskComplexUseClimbOnRoute::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d2bb80.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s371"
+ },
+ {
+  "address": "0x00D2BBD0",
+  "name": "CTaskComplexUseDropDownOnRoute::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d2bbd0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s371"
+ },
+ {
+  "address": "0x00D2BC20",
+  "name": "CTaskComplexUseLadderOnRoute::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d2bc20.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s371"
+ },
+ {
+  "address": "0x00D2BC60",
+  "name": "CTaskSimpleMoveWaitForNavMeshSpecialActionEvent::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d2bc60.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s371"
+ },
+ {
+  "address": "0x00D2C660",
+  "name": "CTaskComplexMoveGetOntoMainNavMesh::vf20",
+  "kind": "function",
+  "file": "functions/fn_00d2c660.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s371"
+ },
+ {
+  "address": "0x00D2C6D0",
+  "name": "CTaskComplexMoveReturnToRoute::vf20",
+  "kind": "function",
+  "file": "functions/fn_00d2c6d0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s371"
+ },
+ {
+  "address": "0x00D2D940",
+  "name": "CTaskComplexMoveGetOntoMainNavMesh::vf19",
+  "kind": "function",
+  "file": "functions/fn_00d2d940.rs",
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s371"
