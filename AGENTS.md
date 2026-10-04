@@ -34,11 +34,19 @@ No game files or assets are committed, in any form.
 If you are unsure whether something counts as decompiled code, it does. Leave it in `.artifacts/` and
 say so in your report.
 
-## Rule 2: publishing is Cam's decision
+## Rule 2: the coordinator pushes every commit; nothing else is published without Cam
 
-Agents never add a git remote, push, create a hosted repository, upload repository contents or
-game-derived material to any service, or post about the project. Cam does those, or asks for one
-specific action explicitly.
+The repository is public and the project site is served from it. Cam's standing instruction
+(2026-10-03) is that every commit is pushed.
+
+- The coordinator pushes to `origin main` straight after every commit. Do not let commits pile up
+  locally.
+- Because every commit is published at once, check before committing, not after: no decompiled
+  code, no game files, nothing from `notes.md`, no addresses or code in the site pages.
+- Never force-push and never rewrite pushed history.
+- Lanes never commit and never push.
+- Everything else that publishes is still Cam's decision: adding remotes, creating repositories,
+  changing repository settings, uploading anything to another service, or posting about the project.
 
 ## Rule 3: a machine check decides, not you
 
@@ -67,9 +75,15 @@ code map on the project site. The coordinator owns it. Lanes never edit it.
   Ghidra inventory, stage counts from the checker's accept records and the queue ledger, structure
   and symbol counts from the tracked files. If a number cannot be derived yet, it stays `null` or
   `0` and the site says "not measured yet".
-- Update it at the end of every accepted wave, whenever a phase gate is passed, and whenever the
-  inventory changes (for example after library code is re-tagged). Do not let it lag a commit
-  behind the work.
+- Update it with every status update tick (rule 7), so the public site is never more than five
+  minutes behind. `python scripts/status.py --write --commit` records the timestamp and lane
+  activity, regenerates the site data and badges, and commits them. Also update it at the end of
+  every accepted wave, whenever a phase gate is passed, and whenever the inventory changes.
+- `measured` is a list of facts established so far, each with `label`, `value`, `unit` and `source`.
+  Add a fact when a lane or a tool has measured it; correct it, and say so in the changelog or
+  devlog, if a later measurement disagrees. `activity` and `updated_at` are written by the script.
+- Commits that change only the progress files have a subject starting `Progress:` and need no
+  changelog entry. Every other commit still needs one.
 - Fields:
   - `updated`: the date of this update, `YYYY-MM-DD`.
   - `phase`: `index` and `name` of the roadmap phase in progress. Change it only when the previous
@@ -148,7 +162,10 @@ Each update is short and covers, in this order:
 - Problems: anything stuck, rate-limited, failing or surprising, stated plainly.
 - What happens next, and anything that needs Cam.
 
-Run `python scripts/status.py` to collect the facts. Do not pad an update, do not repeat unchanged
+Run `python scripts/status.py --write --commit` on every tick. It collects the facts, updates
+`docs/data/progress.json` and the badges, and commits and pushes them, so the project site shows the
+same picture as the chat. Add newly measured facts to the `measured` list in the progress file
+before running it. Do not pad an update, do not repeat unchanged
 detail, and do not report a lane's result before it has finished. Interesting, confusing or
 surprising findings go in the devlog the same day, not only in the chat.
 
@@ -169,9 +186,8 @@ say what each commit did in one sentence, and revert any one of them without los
 - Aim for commits a person could review in a few minutes. A wave of rewritten functions is split by
   subsystem if it is large.
 - Keep refactors and formatting separate from behaviour changes.
-- Pushes carry the same history. When Cam asks for a push, push the commits as they are, in order.
-  Do not squash a series into one commit before pushing, and never force-push or rewrite history
-  that has been pushed.
+- Push after every commit (rule 2). Pushes carry the same history: do not squash a series into one
+  commit before pushing, and never force-push or rewrite history that has been pushed.
 - If work has already piled up uncommitted, split it into its logical commits before committing,
   and say in the report how it was split.
 

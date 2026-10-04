@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Devlog: The start-up stub: a tiny loader, an encrypted first megabyte, and an external unlocker",
+    "title": "Record the standing instructions to push and to update progress every tick",
     "commit": null,
+    "summary": "Two instructions from the owner, written into the agent rules.",
+    "changes": [
+      "Rule 2: the coordinator pushes straight after every commit. Lanes still never commit or push, and force-pushing stays forbidden.",
+      "Rule 4: the progress file is updated with every status tick, and commits that change only the progress files start with Progress: and need no changelog entry.",
+      "Rule 7: each tick runs the status script with the options that update, commit and push the progress files."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: The start-up stub: a tiny loader, an encrypted first megabyte, and an external unlocker",
+    "commit": "22af157d6c3efde909a34811cb90b9ab84a6bf33",
     "summary": "Findings from the p0-startup-stub lane.",
     "changes": [
       "New devlog entry: The start-up stub: a tiny loader, an encrypted first megabyte, and an external unlocker.",
