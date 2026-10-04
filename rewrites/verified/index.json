@@ -16587,6 +16587,15 @@
   "lane": "r-b88"
  },
  {
+  "address": "0x008C28E0",
+  "name": "audio_engine_update",
+  "kind": "function",
+  "file": "functions/fn_008c28e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b244"
+ },
+ {
   "address": "0x008D20E0",
   "name": "Player_GetPedByInfoOrCurrent",
   "kind": "function",
@@ -58428,6 +58437,15 @@
   "lane": "r-b186"
  },
  {
+  "address": "0x00D74E40",
+  "name": "ui_rotor_blend_4tap",
+  "kind": "function",
+  "file": "functions/fn_00d74e40.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b252"
+ },
+ {
   "address": "0x00D755F0",
   "name": "ui_ring_emit_7tap",
   "kind": "function",
@@ -58500,6 +58518,24 @@
   "lane": "r-b175"
  },
  {
+  "address": "0x00D77430",
+  "name": "CRenderPhaseMirrorReflection::vf3",
+  "kind": "function",
+  "file": "functions/fn_00d77430.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b242"
+ },
+ {
+  "address": "0x00D77600",
+  "name": "CRenderPhaseMirrorReflection::vf4",
+  "kind": "function",
+  "file": "functions/fn_00d77600.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b242"
+ },
+ {
   "address": "0x00D778E0",
   "name": "fn_00d778e0",
   "kind": "function",
@@ -58507,6 +58543,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "a-F05"
+ },
+ {
+  "address": "0x00D781E0",
+  "name": "CRenderPhaseWarpShadow::vf7",
+  "kind": "function",
+  "file": "functions/fn_00d781e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b242"
  },
  {
   "address": "0x00D783C0",
@@ -58689,6 +58734,15 @@
   "lane": "r-b210"
  },
  {
+  "address": "0x00D82A30",
+  "name": "steer_heading_and_gain",
+  "kind": "function",
+  "file": "functions/fn_00d82a30.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b254"
+ },
+ {
   "address": "0x00D839D0",
   "name": "aim_steer_solver",
   "kind": "function",
@@ -58741,6 +58795,51 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b230"
+ },
+ {
+  "address": "0x00D874F0",
+  "name": "ui_tracking_update",
+  "kind": "function",
+  "file": "functions/fn_00d874f0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b240"
+ },
+ {
+  "address": "0x00D87630",
+  "name": "ui_range_update",
+  "kind": "function",
+  "file": "functions/fn_00d87630.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b240"
+ },
+ {
+  "address": "0x00D87A90",
+  "name": "ui_pair_measure",
+  "kind": "function",
+  "file": "functions/fn_00d87a90.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b240"
+ },
+ {
+  "address": "0x00D87EF0",
+  "name": "ui_span_measure",
+  "kind": "function",
+  "file": "functions/fn_00d87ef0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b240"
+ },
+ {
+  "address": "0x00D88240",
+  "name": "ui_hit_chain",
+  "kind": "function",
+  "file": "functions/fn_00d88240.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b240"
  },
  {
   "address": "0x00D899A0",
