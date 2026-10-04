@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: Cookie-check stubs silently destroy the return value they precede",
+    "commit": null,
+    "summary": "Findings from the r-b127 lane.",
+    "changes": [
+      "New devlog entry: Cookie-check stubs silently destroy the return value they precede.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 5 more functions pass the checker (6055 in total)",
     "commit": "8e68bd0fc67bdbdd3ab8a481da941ae6358a3480",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
