@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s199">Checker stubs must preserve ECX for thiscall callees</a></li>
       <li><a href="#fill-rerun-result">The weak-fill verdicts were re-run under version 3: none was overturned</a></li>
       <li><a href="#production-b129">NaN payloads: LLVM commutes float operands and the checker notices</a></li>
       <li><a href="#production-s183">Drain loops are verifiable: stub writes through image-pointer arguments</a></li>
@@ -306,6 +307,34 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s199">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Checker stubs must preserve ECX for thiscall callees</h2>
+      <p><span class="evidence verified">Verified</span> A production batch of twenty constructor rewrites exposed a harness defect: the checker's callee stub clobbers the ECX register, so any original function that reuses its object pointer after a thiscall faults on every trial and can never verify on the stock worker.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty small neighbouring game functions in Rust and prove each identical to the original with the checker. The batch turned out to be twenty template-instantiated leaderboard constructors, identical in shape and differing only in their two virtual table constants.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Each constructor calls a shared base-class constructor with the object pointer in ECX, then keeps using ECX for all of its own field writes. The checker's stub uses ECX as scratch space and never restores it, returning zero instead.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Stock worker trials over all twenty contracts</td><td role="cell" data-label="Value">two thousand, all failing the same way</td><td role="cell" data-label="What it means">the original faults on its first store through the object pointer while the rewrite succeeds</td></tr>
+      <tr role="row"><td role="cell">Trials where the original completed on stock</td><td role="cell" data-label="Value">zero</td><td role="cell" data-label="What it means">no contract change can fix this; the fault is in the harness model of the callee</td></tr>
+      <tr role="row"><td role="cell">Private worker with the register restored, twenty contracts</td><td role="cell" data-label="Value">twenty thousand of twenty thousand passing, none vacuous</td><td role="cell" data-label="What it means">the rewrites are correct and only the harness was wrong</td></tr>
+      <tr role="row"><td role="cell">Honesty mutant with one wrong table constant</td><td role="cell" data-label="Value">fails every trial on the memory comparison</td><td role="cell" data-label="What it means">the comparison still discriminates; the fix masks nothing</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence">Inferred</span> The defect blocks most constructors that chain a base-class constructor through a register holding the object pointer. Constructors that keep the pointer in a callee-saved register across the call are unaffected.</p>
+      <h3>What was decided or recommended</h3>
+      <p>All twenty functions were deferred with reason checker gap, with the rewrites kept for a later re-run. The recommended fold-back is a four-line change to the stub emitter: restore the spilled entry value of ECX immediately before returning, for non-tail thiscall stubs only, leaving all other conventions and all comparison logic untouched.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run any of the twenty leaderboard-constructor contracts from this lane on the stock worker: every trial ends with the original faulting on a null write while the rewrite succeeds. Rebuild the worker with the ECX restore and re-run unchanged: every trial passes on both sides.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first relocation probe reported that nearly all table constants lacked fixups, which would have meant literal constants in the rewrites. The probe was double-counting an offset the parsing library had already applied; the corrected probe found every constant relocated. As an earlier lane noted in reverse, when the tool disagrees with the proof, suspect the tool.</p>
+      </article>
 
       <article class="entry" id="fill-rerun-result">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>

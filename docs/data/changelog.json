@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: The weak-fill verdicts were re-run under version 3: none was overturned",
+    "title": "Devlog: Checker stubs must preserve ECX for thiscall callees",
     "commit": null,
+    "summary": "Findings from the r-s199 lane.",
+    "changes": [
+      "New devlog entry: Checker stubs must preserve ECX for thiscall callees.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: The weak-fill verdicts were re-run under version 3: none was overturned",
+    "commit": "3f520d2798cbd986150cf6f8d66c82dcfe6d3f89",
     "summary": "Findings from the coord-fill-rerun lane.",
     "changes": [
       "New devlog entry: The weak-fill verdicts were re-run under version 3: none was overturned.",
