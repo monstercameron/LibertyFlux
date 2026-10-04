@@ -1,11 +1,12 @@
 """Print the facts for a project status update.
 
-Usage: python scripts/status.py [--write [--commit]]
+Usage: python scripts/status.py [--brief] [--write [--commit]]
 
 Reads lane logs and deliverables under .artifacts/, the running process list, memory, the Ghidra
 analysis log, the progress file and git. Prints plain text. Windows only (uses PowerShell for the
 process list and memory).
 
+--brief   list only lanes that are still running or that exited without their deliverables.
 --write   also record this tick in docs/data/progress.json (timestamps and lane activity) and
           regenerate the site data and badges.
 --commit  with --write, commit the progress files if they changed, with a subject starting
@@ -93,8 +94,16 @@ def main():
     for state, *_ in rows:
         counts[state] = counts.get(state, 0) + 1
     print("lanes: " + ", ".join(f"{n} {s}" for s, n in sorted(counts.items())) if rows else "lanes: none")
+    brief = "--brief" in sys.argv
     for state, lane, age, done, text in rows:
+        if brief and state == "finished":
+            continue
         print(f"  {state:17} {lane:22} log {age:4.0f} min ago, {done}/3 deliverables | {text}")
+    pending = sorted(
+        d.name for d in SCRATCH.iterdir()
+        if (d / "devlog-entry.html").exists() and (d / "summary.txt").exists() and not (d / "integrated.txt").exists()
+    ) if SCRATCH.exists() else []
+    print("finished but not yet in the devlog: " + (", ".join(pending) or "none"))
 
     ghidra_log = LOGS / "ghidra-analysis.log"
     if ghidra_log.exists():

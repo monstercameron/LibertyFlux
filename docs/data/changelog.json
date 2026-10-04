@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Record where the investigation data lives",
+    "title": "Add a brief mode to the status script",
     "commit": null,
+    "summary": "With dozens of lanes the full listing is too long to read every five minutes.",
+    "changes": [
+      "The status script can list only lanes that are still running or that exited without their deliverables.",
+      "It also lists finished lanes whose devlog entry has not been integrated yet."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Record where the investigation data lives",
+    "commit": "069809cecc6ede804e6e9149628092e32f375cec",
     "summary": "A decision made with the owner.",
     "changes": [
       "Plan: the working store is one SQLite database under the artifacts folder, because many lanes read and write at once and claims must be atomic.",
