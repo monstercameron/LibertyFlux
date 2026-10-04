@@ -42,11 +42,14 @@ The people who made the game should be paid for it.
 - [Why](#why)
 - [Goals](#goals)
 - [How it works](#how-it-works)
+- [What "verified" means, and what it does not](#what-verified-means-and-what-it-does-not)
 - [What is in the repository, and what never is](#what-is-in-the-repository-and-what-never-is)
 - [Roadmap](#roadmap)
 - [Tracking progress](#tracking-progress)
+- [Tools](#tools)
 - [Repository layout](#repository-layout)
 - [Working on it](#working-on-it)
+- [Questions](#questions)
 - [Projects this builds on](#projects-this-builds-on)
 - [Licence](#licence)
 - [Legal](#legal)
@@ -114,6 +117,55 @@ flowchart LR
 6. **Cut loose.** When every function has a replacement, the Rust code is built on its own, widened
    to 64-bit, and given a new renderer.
 
+## What "verified" means, and what it does not
+
+A rewrite is verified when the checker has run it beside the original function on at least a
+thousand generated inputs, from bit-identical starting memory, and found the same return value, the
+same memory writes, the same stack adjustment and the same outgoing calls every time. Since
+4 October 2026 the rules also require a deliberately wrong version of each function to fail the same
+comparison, which shows the comparison can see what the function does; rewrites accepted before then
+are being given one. That is strong evidence, but it is evidence about one function at a time:
+
+- **Callees are stubbed.** A verified rewrite calls the functions it depends on through numbered
+  slots that the checker answers. Whether it hands the real callee the right arguments, in the right
+  registers, is only fully tested once it runs inside the game.
+- **Inputs are generated, not exhaustive.** A branch the generated inputs never take is not proven.
+  Each contract also says what it leaves out (skipped arguments, checks switched off), and the
+  contract validator lists those narrowings by name.
+- **It is proven in one build.** The checker builds release code for the 32-bit target. A debug
+  build checks alignment and integer overflow, so code that relies on wrapping or on unaligned access
+  behaves differently there.
+
+So the project keeps a second set of gates around the checker, all run from the repository alone:
+
+```mermaid
+flowchart LR
+    A[Lane writes a rewrite<br>and a wrong version] --> B{Checker<br>original vs Rust}
+    B -- passes, wrong version fails --> C[rewrites/verified]
+    C --> D[Ledger<br>tree consistent]
+    C --> E[Static checks<br>what the checker cannot see]
+    C --> F[Build check<br>compiles from the repository]
+    D --> G[Issue log]
+    E --> G
+    F --> G
+    C --> H[Assembled library<br>switched in, in game]
+    H --> I[Lift to portable Rust<br>tested against the rewrite]
+```
+
+Everyone can look for themselves:
+
+```bash
+python scripts/coordinator/ledger.py            # what the tree holds, checked against the published counts
+python scripts/coordinator/lint_rewrites.py     # patterns the checker cannot see, file by file
+python scripts/ci/check_rewrites_build.py       # which rewrites compile from the repository alone
+python scripts/coordinator/issue_log.py         # merge all of it into rewrites/review/issues.json
+```
+
+`rewrites/review/issues.json` is the issue log for the verified tree: every known problem, file by
+file, with its severity, when it matters (now, when the rewrites are assembled into the game, or at
+the 64-bit lift) and a status a reviewer can set. It is meant to be worked through before and during
+the first runs inside the game.
+
 ## What is in the repository, and what never is
 
 | Committed | Never committed |
@@ -175,6 +227,36 @@ served by GitHub Pages as it is.
 | [Changelog](https://monstercameron.github.io/LibertyFlux/changelog.html) | Every commit, newest first, with what changed and why. Entries live in [`docs/data/changelog.json`](docs/data/changelog.json) |
 | [Devlog](https://monstercameron.github.io/LibertyFlux/devlog.html) | Research notes and lessons, including what went wrong, so later contributors and agents do not rediscover them |
 
+## Tools
+
+Each tool's own docstring or `--help` has the details; this is the map.
+
+**With the repository alone** (no game files needed):
+
+| Tool | What it is for | Run |
+|---|---|---|
+| Ledger | What the verified and unverified trees hold, checked for consistency and against the published counts | `python scripts/coordinator/ledger.py [--check] [--json]` |
+| Static checks | Patterns in verified rewrites that the checker cannot see: misaligned plain dereferences, partial proofs, checker-only mechanisms, unbalanced files and more | `python scripts/coordinator/lint_rewrites.py` |
+| Build check | Which verified rewrites type-check for the 32-bit target against the shared runtime alone | `python scripts/ci/check_rewrites_build.py` |
+| Issue log | Merges the three above and a reading review into `rewrites/review/issues.json` | `python scripts/coordinator/issue_log.py --build FILE --review FILE` |
+| Contract validator | Checks checker contracts against their schema and names every narrowing | `python scripts/checker/validate_contracts.py` |
+| Wrong-version generator | Writes deliberately wrong versions of a rewrite for the checker to reject | `python scripts/checker/mutate_rewrite.py FILE --out DIR` |
+| Assembler | Builds the verified rewrites into the injectable 32-bit library (type-checks anywhere; the DLL itself builds on Windows) | `python scripts/assemble/assemble.py [--build]` |
+| Shader translator | Translates Direct3D 9 shader model 3 programs to SPIR-V for Vulkan; tests run anywhere | `cargo test -p lf-dxso-spirv` |
+| Lift tests | Each lifted function against its verified rewrite | `cargo test -p lf-lift-diff` |
+| Publication check | No game files, machine paths or disassembly in tracked files or the devlog | `python scripts/ci/check_publication.py` |
+| Site generators | Progress-over-time data, the devlog feed and the social preview image | `python scripts/site/history.py`, `devlog_feed.py`, `social.py` |
+
+**With your own copy of the game** (outputs are derived from game files: keep them on your machine,
+never commit them):
+
+| Tool | What it is for | Run |
+|---|---|---|
+| Viewer | Converts a model and its textures to glTF 2.0 and PNG | `cargo run -p lf-viewer -- model FILE --out DIR` |
+| Shader converter | Translates every program in one shader container to SPIR-V files | `cargo run -p lf-dxso-spirv --example lf_dxso_convert -- FILE.fxc DIR` |
+| Checker | Runs a rewrite beside the original function (32-bit Windows; needs the executable) | `python scripts/checker/checker2.py CONTRACT` |
+| Dashboard | Watches the agent lanes on the machine that runs them | `python scripts/dashboard/server.py` |
+
 ## Repository layout
 
 | Path | Tracked | Holds |
@@ -186,7 +268,12 @@ served by GitHub Pages as it is.
 | `rewrites/verified/` | Yes | Rust rewrites of original functions that have passed the checker, with `index.json` listing each one. They are in the checker's harness form and are not yet linked into the crates |
 | `rewrites/unverified/` | Yes | Rewrites that exist but have not passed (deferred, failed or not yet run), with the reason where one is recorded. They never count as rewritten or verified |
 | `rewrites/in-review/` | Yes | Other Rust from agents (tools, checker changes, lifted code) waiting for review |
-| `scripts/` | Yes | Tooling |
+| `rewrites/review/` | Yes | The issue log for the verified tree and the reading review it was built from |
+| `crates/lf-lift/`, `crates/lf-core/` | Yes | Verified rewrites restated as portable 64-bit Rust, and the boundary types they use; the method is in `documentation/lift-method.md` |
+| `crates/lf-math/`, `crates/lf-platform/` | Yes | Maths types with Vulkan conventions, and the operating-system interfaces (streaming files, audio) |
+| `crates/lf-dxso-spirv/` | Yes | The shader translator from Direct3D 9 bytecode to SPIR-V |
+| `crates/tools/` | Yes | The checker, the loader and its hook engine, the replacement table, the lift's differential tests and the viewer |
+| `scripts/` | Yes | Tooling: `coordinator/` (the operating scripts, ledger, static checks, issue log), `checker/` (driver, contracts, validator, wrong versions), `assemble/`, `ci/`, `site/`, `queue/`, `dashboard/`, `ghidra/` |
 | `.artifacts/` | No | Build output, caches, logs, agent scratch work, decompiler output |
 | `tools/` | No | Local JDK and Ghidra |
 | `.venv/` | No | Python environment |
@@ -207,6 +294,44 @@ no decompiled code in tracked files, a machine check decides when a function is 
 generated files go under `.artifacts/`.
 
 The current plan, decisions and open questions are in [plan.md](plan.md).
+
+### Without the game
+
+Much of the work needs only the repository. With Rust (the pinned toolchain in
+`rust-toolchain.toml`) and Python 3.11:
+
+```bash
+cargo test --workspace --exclude lf-rewrite-32 --exclude lf-checker-worker --exclude lf-checker-rt \
+  --exclude lf-checker-proofs --exclude lf-hook --exclude lf-registry --exclude lf-proxy --exclude lf-test-target
+(cd scripts/coordinator && python -m unittest discover -s tests)
+(cd scripts/checker && python -m unittest discover -s tests)
+python scripts/ci/check_publication.py
+```
+
+The 32-bit Windows crates type-check on any system with `rustup target add i686-pc-windows-msvc`
+(`cargo check --target i686-pc-windows-msvc -p <crate>`); linking and running them needs Windows.
+Good places to start: the issue log, the format readers, the lift, the shader translator and the
+site. The pipeline on GitHub runs all of the above on Windows, Linux and macOS for every change,
+and `.github/workflows/rewrites.yml` checks the rewrite tree on every import.
+
+## Questions
+
+**Can I play it?** No. Nothing in this repository runs the game yet, and it never contains the game
+itself: you will always need a copy you bought.
+
+**Is any of the game's code in here?** No. The repository holds new Rust written from observed
+behaviour, structure layouts and names, never decompiled code or game data. The rule and its checks
+are in [AGENTS.md](AGENTS.md) and `scripts/ci/check_publication.py`.
+
+**Why not recompile the console version instead?** Recompiled code keeps the console's machine
+model for good and cannot become clean, portable Rust. The Xbox 360 projects are used as references
+for names and layouts.
+
+**How sure is "verified"?** Sure for what the checker compares, on the inputs it tried, one function
+at a time. See [What "verified" means](#what-verified-means-and-what-it-does-not) and the issue log.
+
+**How do I help?** Read AGENTS.md, then pick from the issue log or the areas listed under
+[Without the game](#without-the-game). Every change needs a machine check, not just an opinion.
 
 ## Projects this builds on
 
