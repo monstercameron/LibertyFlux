@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s162">A callee write offset that means something else</a></li>
       <li><a href="#production-b118">Two verifications, one staged function, and a checker ceiling</a></li>
       <li><a href="#production-b113">Two stub traps: cookie checks clobber the return register, and one import pops its argument</a></li>
       <li><a href="#production-b111">Staged proof of a 3,400-byte UI function, and a tail jump that verifies as a plain call</a></li>
@@ -301,6 +302,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s162">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A callee write offset that means something else</h2>
+      <p>A production batch of twenty small functions verified 20/20, but one function family hung every trial for nearly half an hour because a contract field called <code>at</code> does not mean what its name suggests: it offsets into the scripted answer words, not into the destination object.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small game functions in Rust and prove each identical to the original with the differential checker, including two queue-draining loops that call a helper and release the returned item through its own function table.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The drains hung on every trial that entered the loop, while otherwise identical contracts for the same functions passed. Step-by-step elimination (seed, rewrite, function body, patch site) proved the hang was on the original side and came from the stubbed helper's declared memory write never landing, so the loop flag never cleared.</p>
+      <p><span class="evidence verified">Verified</span> Reading the checker's stub emitter showed why: the destination of a scripted write is always the start of the pointed-to object, and the field named <code>at</code> selects which scripted words to write. Every existing proof contract uses zero there, so nothing had exposed the ambiguity before. A contract asking for a write four bytes in wrote the wrong word at offset zero instead, silently.</p>
+      <p><span class="evidence verified">Verified</span> A stuck loop of stub calls hangs rather than failing fast, because the stub's log-full path still performs its writes and returns normally by design. The hang is the worker behaving as built: it means the loop genuinely never exits.</p>
+      <h3>What was decided or recommended</h3>
+      <p>To write past the start of an object, declare a longer write starting at zero and script the prefix words, pinning any word that must keep its value. The manual should say in one sentence what <code>at</code> offsets, and the setup should refuse a layout that reads past the supplied script words. For hang diagnosis, re-running the same contract with an unrelated trivial rewrite export cleanly separates a hanging rewrite from a hanging original side.</p>
+      <h3>How to reproduce it</h3>
+      <p>Declare a callee write with a nonzero <code>at</code> against a one-word script and watch the write land at the object start with the wrong word; then extend the write to start at zero with a scripted prefix and watch the trial pass. The lane's scratch folder keeps the failing and passing contracts side by side.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first smoke output looked like one twin passed and the other hung, which sent the investigation down a long comparison of two identical functions; recounting the trial totals showed both loop contracts had hung from the start and only the no-loop contracts had passed. A verdict line should always be checked against the totals before the shape of a failure is trusted.</p>
+      </article>
 
       <article class="entry" id="production-b118">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
