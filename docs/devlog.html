@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#natives-06">Native handlers GET_CHAR_MELEE_ACTION_FLAG1 to GET_LEVEL_DESIGN_COORDS_FOR_OBJECT: what they reveal</a></li>
       <li><a href="#natives-05">Native handlers FINISH_WIDGET_COMBO to GET_CHAR_MELEE_ACTION_FLAG0: what they reveal</a></li>
       <li><a href="#natives-03">Native handlers CLEAR_ROOM_FOR_VIEWPORT to DISPLAY_FRONTEND_MAP_BLIPS: what they reveal</a></li>
       <li><a href="#format-textures">Rust reader: texture dictionaries (WTD)</a></li>
@@ -152,6 +153,30 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="natives-06">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Native handlers GET_CHAR_MELEE_ACTION_FLAG1 to GET_LEVEL_DESIGN_COORDS_FOR_OBJECT: what they reveal</h2>
+      <p><span class="evidence verified">Verified</span> All 140 native handlers in this batch were disassembled, and every one follows the same shape: a tiny wrapper that reads script arguments from a call context and forwards them to a single engine function. That engine function is where the meaning lives, and it names ten character flag bits, the money field, the driver seat, extra car colours, and the shared routines that turn script handles into object pointers.</p>
+      <h3>What was asked</h3>
+      <p>Work through a batch of 140 script native handlers, recover the call context layout they share, describe what each handler does at the engine level, propose names for the engine functions they call and meanings for the object fields they read, and cross-check everything against the public native documentation and the public decompiled mission scripts.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The call context holds a return-slot pointer, an argument-array pointer, and a small pool of temporary vector slots with a cursor and a back-pointer table. Handlers that take a position copy it into a temporary slot and hand the engine a pointer to the copy; one unused-looking field between the return and argument pointers was never read by anything in this batch, so its meaning stays unknown.</p>
+      <p><span class="evidence verified">Verified</span> Handler shapes fall into a few buckets: most write the return slot, about half use out-parameters only, three are trampolines that forward the whole context to a shared dispatcher, and two console-related getters are stubs that return a constant without calling anything. One handler is shared by two natives, and eight engine functions are unconditional jumps, five of them into code that is encrypted on disk.</p>
+      <p><span class="evidence verified">Verified</span> Nearly every character, vehicle and object getter funnels through one shared handle-to-pointer routine, with a separate routine converting pointers back to handles; group and network lookups have their own shared helpers. The pools are selected by globals, one each for characters, dummy characters, vehicles, objects and interiors.</p>
+      <p><span class="evidence verified">Verified</span> Ten single-bit character flags were pinned to exact words and bit positions, covering melee action flags, execution and stun readiness, movement animation blocking, leaving boats and water, cowering, ducking when aimed at, and walking alongside the leader. Also recovered: the character money field, model index chain, body-part damage array, weapon manager location, the vehicle driver seat and extra colours, and the engine sub-object used for engine health.</p>
+      <p><span class="evidence verified">Verified</span> All 140 natives are documented in the public native database, and 97 of them are called by the public decompiled mission scripts, with the game timer and integer stats the most used. The console getters, scores, and several restart-node getters are never called, which strengthens the read that the console getters are debug leftovers.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Proposed names were recorded for every per-native engine function plus the shared helpers, with confidence levels and supporting natives, for the coordinator to merge into the function inventory.</li>
+      <li>Proposed field meanings were recorded for the character, vehicle, object and network-object classes found above.</li>
+      <li>The shared handle-lookup routines and pool selector globals should be published to the other native lanes as anchors, since every batch will re-derive the same few addresses.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble each handler address from the batch list with capstone in 32-bit mode, following branches until each path returns, then disassemble the head of each direct callee. Read argument indices from array accesses off the context argument pointer, return behaviour from stores through the context return pointer, and pool usage from the register setup before each lookup call. Compare arities against the public native database and call counts against the public decompiled scripts.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> Two surprises needed untangling. A getter named for groups turned out to read a per-character flag bit, not group state. And disassembly that runs past tiny jump-ending functions silently attributes a neighbouring function's calls to the wrong native; the fix was to stop at padding bytes rather than trusting inventory sizes, which proved unreliable for small functions. One shared sub-call target is not aligned with any known function start and is left as unknown for a follow-up lane.</p>
+      </article>
 
       <article class="entry" id="natives-05">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
