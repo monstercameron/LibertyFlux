@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#naming-02">Naming batch two: the batch was all audio, and the voice block has eight channels</a></li>
       <li><a href="#production-s240">The stray-write check only runs when full-image comparison is on</a></li>
       <li><a href="#naming-03">Naming a mixed batch: task abort and process slots, onscreen timers, audio voices</a></li>
       <li><a href="#production-b168">Shared-memory reports name the range, not the word</a></li>
@@ -330,6 +331,38 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="naming-02">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Naming batch two: the batch was all audio, and the voice block has eight channels</h2>
+      <p>141 of 150 unnamed functions got names, and every one of them turned out to be audio code, including two ranges the inventory had labelled main-loop timing and input UI. The most reusable result is the layout of the voice parameter block: eight channels of 32 bytes with a selector byte, which explains a whole family of tiny setters at once.</p>
+      <h3>What was asked</h3>
+      <p>Propose a descriptive name for each of 150 consecutive unnamed functions, with a confidence of high, medium or low, leaving the name empty where the behaviour could not be told. No rewriting, no checker: names only.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The batch splits into five audio groups: sound-entry methods, a create and resolve cluster with a type-switched factory covering 23 sound node types, a voice channel accessor family, pool and hash table code, and looping, envelope and twin-loop methods including four virtual slot overrides for voice attach.</p>
+      <p><span class="evidence verified">Verified</span> Nine entries are jump table data and padding rather than functions, with no callers. About twelve real functions next to the batch are missing from the inventory, including a small helper cluster the batch jumps into.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Signal</th><th role="columnheader">Usefulness</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Callee names from production lanes</td><td role="cell" data-label="Usefulness">Highest: named neighbours pin down whole call chains</td></tr>
+      <tr role="row"><td role="cell">Verified rewrite doc comments</td><td role="cell" data-label="Usefulness">Defined the vocabulary of slots, tags and chains</td></tr>
+      <tr role="row"><td role="cell">Virtual table slots and class layouts</td><td role="cell" data-label="Usefulness">Gave classes to the attach and update overrides</td></tr>
+      <tr role="row"><td role="cell">Caller names from the callgraph</td><td role="cell" data-label="Usefulness">Confirmed roles such as destructor helpers</td></tr>
+      <tr role="row"><td role="cell">Strings and imports</td><td role="cell" data-label="Usefulness">Near absent: five short strings, zero OS calls</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence">Inferred</span> The encrypted-range helpers can be told apart by usage pattern alone: a lock triple, a sleep used in spin waits, an allocator pair, a three argument copy, file open and read helpers, a string hash and a clock read. Several low confidence native mappings attached to them look wrong.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Mechanical names with decimal field numbers follow the established lane style where semantics stay unknown; behaviour-clear wording stays at medium confidence.</li>
+      <li>Ten already verified rewrite names were adopted unchanged, even where two slots share one target.</li>
+      <li>The next naming lane should inventory the helper cluster first, then reuse the evidence and caller scripts from this lane's scratch folder.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble each batch function with capstone through the mapped image, never raw file offsets, and validate the mapping on a tiny known function first. Resolve direct calls against the merged symbol names, the production lane names and the verified rewrite index, index callers from the cached callgraph export, and read every function under about seventy instructions in full before naming.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> Three genuine oddities and one tooling trap: a release function's tail jump lands in the middle of another function's branch; a pool helper deliberately writes through a null pointer on one path; one getter carries a UI virtual slot label that no class layout supports. On the tooling side, the disassembler reports direct call targets as absolute addresses, so adding the instruction pointer again silently corrupts every call edge; the lane's scripts now handle this.</p>
+      </article>
 
       <article class="entry" id="production-s240">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
