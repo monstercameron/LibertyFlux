@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot-09">Pilot lane 09: five functions rewritten and timed</a></li>
       <li><a href="#natives-19">Native handlers SET_RADAR_SCALE to SET_VIEWPORT_MIRRORED: what they reveal</a></li>
       <li><a href="#natives-08">Native handlers GET_PLAYER_RADIO_STATION_INDEX to HAS_CAR_BEEN_DAMAGED_BY_CHAR: what they reveal</a></li>
       <li><a href="#natives-06">Native handlers GET_CHAR_MELEE_ACTION_FLAG1 to GET_LEVEL_DESIGN_COORDS_FOR_OBJECT: what they reveal</a></li>
@@ -155,6 +156,28 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot-09">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Pilot lane 09: five functions rewritten and timed</h2>
+      <p>All five assigned small functions were rewritten in Rust and verified against the originals: every one of more than sixteen thousand comparison trials agreed, and each rewrite passed on its first attempt.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite five small leaf functions in Rust, prove each rewrite behaves identically to the original over at least a thousand random plus edge-case trials, run one honesty test with a deliberately introduced bug, and record honest timings for the project schedule estimate.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> Five of five functions verified, with full agreement across two independent random seeds: two simple setter routines, a bounded string copy with padding, a status-bit lookup through a pointer chain, and a five-argument initialiser that returns its object.</li>
+      <li><span class="evidence verified">Verified</span> The largest of the five, at over a hundred instructions with several alignment-dependent paths, turned out to be the standard bounded string copy routine, confirmed three independent ways including its debug symbol name.</li>
+      <li><span class="evidence verified">Verified</span> One function reads a game data table that lives in writable memory, contrary to the pilot brief that the chosen functions touch no global data. The rewrite takes the relocated table address as a parameter instead, and the test crafted table entries in a private copy of the image.</li>
+      <li><span class="evidence verified">Verified</span> The honesty test worked: a copy-paste bug (storing one argument twice) was caught in all but the handful of trials where both arguments happened to be identical.</li>
+      <li><span class="evidence verified">Verified</span> Total hands-on time was about eight minutes for five functions, or under two minutes per verified function. About three of those minutes built a reusable batched checker; the marginal cost per function was under a minute.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <p>Batched in-process comparison is the way to check rewrites: mapping the executable once and calling both sides thousands of times in one process checked each function in under a second, against several minutes per function for the earlier one-process-per-trial loop. The under-a-minute marginal figure is a floor for trivial leaves, not a project average: these were simplest-case functions, one was a standard routine, and none needed a second attempt. Harder functions with calls, globals, or ambiguous signatures will take longer.</p>
+      <h3>How to reproduce it</h3>
+      <p>The lane folder holds the Rust crate with the five rewrites and the batched checker, a machine-readable results file with timings and trial counts, and the disassembly scripts. Rebuilding the crate for the 32-bit target and running the checker once per function repeats the full comparison in a few seconds each.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Three small build failures slowed the checker, all in throwaway comparison code and none in a rewrite: two borrow-checker complaints about generating random numbers inside argument lists, and a format string with one argument too few. A prebuilt one-shot helper initially looked like the faster path, but its per-trial process cost would have eaten the whole time budget, so the first half of the session went into the batched checker instead; that bet paid off. One shell oddity: a passing run reported a failure exit code because the shell treats any program warning text as an error, which cost a few minutes to confirm as harmless.</p>
+      </article>
 
       <article class="entry" id="natives-19">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
