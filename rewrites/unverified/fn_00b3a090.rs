@@ -14,9 +14,9 @@ lf_checker_rt::export!(cdecl, rw_00b3a090() -> u32 {
         let mut picked = lf_checker_rt::global::<u32>(SEED_A)
             .read()
             .wrapping_add(lf_checker_rt::global::<u32>(SEED_B).read());
-        let first: u32 = lf_checker_rt::callee_cdecl!(SCALER, u32);
+        let first: u32 = lf_checker_rt::callee_cdecl!(SCALER, u32,);
         if !((picked as i32) < (first as i32)) {
-            picked = lf_checker_rt::callee_cdecl!(SCALER, u32);
+            picked = lf_checker_rt::callee_cdecl!(SCALER, u32,);
         }
         picked.wrapping_sub(lf_checker_rt::global::<u32>(BASE).read())
     }

@@ -4,19 +4,19 @@
 ///
 /// `this` is the requesting object: floats at `+0x18`/`+0x1c`/`+0x20`/`+0x28`,
 /// a dword at `+0x24`, a bitfield at `+0x54` (bits 0, 1 and 8 feed the
-/// `0x763` creation call, bit 8 is cleared afterwards), a handle at `+0x70`,
+/// `0x3b5` creation call, bit 8 is cleared afterwards), a handle at `+0x70`,
 /// and addressable state at `+0x30`/`+0x40`. `arg1` is a context read at
 /// `+0xb30` by two paths; `code` selects the path.
 ///
 /// Paths: `0x2e2` and `0x2cf` create tasks from the context dword;
 /// `0xcb` creates a default task; `0x3ae` builds a ten-argument task and
-/// finishes it through a follow-up call; `0x76d` scales an integer draw and
+/// finishes it through a follow-up call; `0x3bf` scales an integer draw and
 /// creates a task from it, then a second creation whose result feeds a final
-/// follow-up; `0x763` creates a task from the bitfield and floats, stores
+/// follow-up; `0x3b5` creates a task from the bitfield and floats, stores
 /// two dwords into the result, runs the same second-creation and follow-up
-/// pair, and clears bit 8; `0x8c4`, `0x516` and any other code release the
+/// pair, and clears bit 8; `0x516` and any other code release the
 /// handle when set and return 0, as does a null task manager at most gates.
-/// A null manager at the `0x763` gate faults on a null write, exactly like
+/// A null manager at the `0x3b5` gate faults on a null write, exactly like
 /// the original.
 ///
 /// Successive gate calls on one path use independent scripted answers, so
@@ -120,7 +120,7 @@ lf_checker_rt::export!(thiscall, rw_00cb5870(this: u32, arg1: u32, code: u32) ->
                 );
             }
             if c > 0x3ae {
-                if c == 0x763 {
+                if c == 0x3b5 {
                     let mgr = gate(1);
                     let task = if mgr == 0 {
                         0
@@ -152,7 +152,7 @@ lf_checker_rt::export!(thiscall, rw_00cb5870(this: u32, arg1: u32, code: u32) ->
                         .write_unaligned(rd32(this + BITS) & 0xfffffeff);
                     return r;
                 }
-                if c == 0x76d {
+                if c == 0x3bf {
                     let draw: u32 = lf_checker_rt::callee_cdecl!(DRAW_CALLEE, u32,);
                     let x = mul((draw as i32) as f32, SCALE);
                     let mgr = gate(1);
@@ -175,7 +175,7 @@ lf_checker_rt::export!(thiscall, rw_00cb5870(this: u32, arg1: u32, code: u32) ->
                         FIN_CALLEE, u32, mgr2, task, aux, 0, 0
                     );
                 }
-                if c == 0x8c4 || c == 0x516 {
+                if c == 0x516 {
                     break;
                 }
                 c = 0x516;

@@ -18,7 +18,7 @@ lf_checker_rt::export!(cdecl, rw_00b3bbd0(value: u32) -> u32 {
         let count = lf_checker_rt::global::<u32>(COUNT).read() as i32;
         if count <= 0 {
             lf_checker_rt::global::<u32>(COUNT).write(0);
-            let _: u32 = lf_checker_rt::callee_cdecl!(COOKIE_CHECK, u32);
+            let _: u32 = lf_checker_rt::callee_cdecl!(COOKIE_CHECK, u32,);
             return 0;
         }
         let ids = lf_checker_rt::global::<u32>(IDS);
@@ -35,7 +35,7 @@ lf_checker_rt::export!(cdecl, rw_00b3bbd0(value: u32) -> u32 {
             ids.add(i).write(*id);
         }
         lf_checker_rt::global::<u32>(COUNT).write(n as u32);
-        let _: u32 = lf_checker_rt::callee_cdecl!(COOKIE_CHECK, u32);
+        let _: u32 = lf_checker_rt::callee_cdecl!(COOKIE_CHECK, u32,);
         count as u32
     }
 });

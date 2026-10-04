@@ -42,9 +42,9 @@ lf_checker_rt::export!(cdecl, rw_00b3a010(variant: u32) -> u32 {
         };
         let mut picked =
             cvtt(core::hint::black_box(pool as f32) * core::hint::black_box(scaler));
-        let limit: u32 = lf_checker_rt::callee_cdecl!(LIMITER, u32);
+        let limit: u32 = lf_checker_rt::callee_cdecl!(LIMITER, u32,);
         if !(picked < limit as i32) {
-            picked = lf_checker_rt::callee_cdecl!(LIMITER, u32) as i32;
+            picked = lf_checker_rt::callee_cdecl!(LIMITER, u32,) as i32;
         }
         let floor = lf_checker_rt::global::<u32>(FLOOR).read() as i32;
         if floor < picked {

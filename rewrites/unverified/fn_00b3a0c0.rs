@@ -19,12 +19,12 @@ lf_checker_rt::export!(cdecl, rw_00b3a0c0() -> u32 {
         let _: u32 = lf_checker_rt::callee_cdecl!(1, u32, ONE_BITS);
         let _: u32 = lf_checker_rt::callee_cdecl!(2, u32, ONE_BITS);
         let _: u32 = lf_checker_rt::callee_cdecl!(3, u32, 0xffff_ffff);
-        let _: u32 = lf_checker_rt::callee_cdecl!(4, u32);
-        let _: u32 = lf_checker_rt::callee_cdecl!(5, u32);
-        let _: u32 = lf_checker_rt::callee_cdecl!(6, u32);
+        let _: u32 = lf_checker_rt::callee_cdecl!(4, u32,);
+        let _: u32 = lf_checker_rt::callee_cdecl!(5, u32,);
+        let _: u32 = lf_checker_rt::callee_cdecl!(6, u32,);
         let _: u32 = lf_checker_rt::callee_cdecl!(7, u32, 1);
         let _: u32 = lf_checker_rt::callee_cdecl!(8, u32, 1);
-        let answer: u32 = lf_checker_rt::callee_cdecl!(9, u32);
+        let answer: u32 = lf_checker_rt::callee_cdecl!(9, u32,);
         lf_checker_rt::global::<u32>(0x016624ac).write(0);
         answer
     }
