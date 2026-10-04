@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b68">Two contract traps that silently starve test coverage</a></li>
       <li><a href="#production-b67">Production batch: three audio functions verified, one tail-jump gap found</a></li>
       <li><a href="#production-b64">A production batch that caught a checker bug</a></li>
       <li><a href="#production-b62">Production batch: four audio rewrites verified, one size correction, one checker gap</a></li>
@@ -277,6 +278,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b68">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Two contract traps that silently starve test coverage</h2>
+      <p>A large audio function passed all one thousand trials while its main spawn path had run almost zero times. The rewrite was correct; the contract was accidentally testing only the easy paths. Two traps combined to cause it, and both are easy to check for.</p>
+      <h3>What was asked</h3>
+      <p>Verify a two-thousand-byte positional audio update with scripted callee answers and pinned heap inputs, and confirm every behaviour path ran during the thousand trials.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> A four-byte pin at an unaligned heap offset only sets the low bytes. The driver's pin helper writes a single machine word, so the high half keeps its random fill. Threshold and weight inputs silently became garbage, and the gates they feed almost never opened.</p>
+      <p><span class="evidence verified">Verified</span> Trial-cycled value lists whose lengths share divisors can lock into phase: the same positions always pair with the same scripted answers and the same fill pattern, so whole combinations never occur. Lengths five, three and eight mix; lengths four, three and eight do not.</p>
+      <p><span class="evidence verified">Verified</span> The verdict's per-callee call counts are the coverage oracle. For a call behind a branch, a count strictly between zero and the gate count proves both sides ran. A pass with a zero count anywhere is a contract bug, not a verified function.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Pin every unaligned multi-byte input as halves with matching cycles, keep independent cycle lengths mutually misaligned, and read the call counts before accepting any pass. A future driver could warn on unaligned wide pins.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run any contract with an unaligned four-byte pin and a short deterministic fill, then dump the segment words for a trial: the bytes above the pin's home word keep fill. For phasing, count cycle-index combinations over a hundred trials with aligned versus coprime lengths.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first passing run looked complete: zero failures, no faults, all checks green. Only the call counts showed the deep path was dead. The pin helper behaved as coded, not as documented in my head, and the phasing was invisible until the combinations were enumerated by hand.</p>
+      </article>
 
       <article class="entry" id="production-b67">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
