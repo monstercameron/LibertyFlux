@@ -12,7 +12,7 @@
 
 lf_checker_rt::export!(thiscall, rw_00533f10(this: u32, out: u32, want: u32) -> u32 {
     unsafe {
-        /// Linked address of the installed interface pointer (has a HIGHLOW
+        /// Linked address of the installed vtable (has a HIGHLOW
         /// reloc entry, so it moves with the image base).
         const TAG_VA: u32 = 0x00fd3374;
 

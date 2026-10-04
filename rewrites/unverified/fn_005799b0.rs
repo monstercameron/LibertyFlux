@@ -4,13 +4,16 @@
 ///
 /// Calls the second virtual slot of `this`, compares the tag with
 /// `expect`, and when they agree and `out` is non-null writes the marker
-/// 0x00FCF1DC there. Always returns 0; the write is the only effect.
+/// record address there and returns `out` itself (the original keeps
+/// the pointer in EAX on the write path). The record is this leaderboard's
+/// registration record at file VA 0x00FDE71C, derived with `relocated` so it
+/// follows the worker's image mapping. Mismatch or null `out` returns 0.
 ///
 /// Original: 0x005799B0 (thiscall/2; the indirect call runs through the same
 /// fabricated object on both sides of the comparison).
 lf_checker_rt::export!(thiscall, rw_005799B0(this: u32, out: u32, expect: u32) -> u32 {
     unsafe {        const TAG_SLOT: u32 = 4;
-        const MARKER: u32 = 0xFCF1DC;
+        let record: u32 = lf_checker_rt::relocated(0x00FDE71C);
 
         let vtable = (this as *const u32).read_unaligned();
         let slot = (vtable.wrapping_add(TAG_SLOT) as *const u32).read_unaligned();
@@ -22,8 +25,8 @@ lf_checker_rt::export!(thiscall, rw_005799B0(this: u32, out: u32, expect: u32) -
         if out == 0 {
             return 0;
         }
-        (out as *mut u32).write_unaligned(MARKER);
-        0
+        (out as *mut u32).write_unaligned(record);
+        out
 
     }
 });

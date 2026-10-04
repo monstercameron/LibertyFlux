@@ -12,7 +12,7 @@
 
 lf_checker_rt::export!(thiscall, rw_0053cf10(this: u32, out: u32, expected: u32) -> u32 {
     unsafe {
-        const TAG: u32 = 0x00FDD_B5C;
+        let tag: u32 = lf_checker_rt::relocated(0x00FDD_B5C);
         let vtable = (this as *const u32).read_unaligned();
         let slot = (vtable as *const u32).wrapping_add(1).read_unaligned();
         let filler: extern "thiscall" fn(u32) -> u32 =
@@ -24,7 +24,7 @@ lf_checker_rt::export!(thiscall, rw_0053cf10(this: u32, out: u32, expected: u32)
         if out == 0 {
             return 0;
         }
-        (out as *mut u32).write_unaligned(TAG);
+        (out as *mut u32).write_unaligned(tag);
         out
     }
 });

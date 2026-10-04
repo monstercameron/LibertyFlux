@@ -8,12 +8,11 @@
 /// scripted zero). Behaviour in order: construct two engine objects from
 /// literal names, fold the mode byte into the channel dword, compare the
 /// tick float against the beat float into a flag byte, and run the first
-/// object update. When the level float is not bit-equal to the reference
+/// object update. When the level float differs from the reference
 /// (or the muted reference), store the reference and push it through an
 /// equaliser call. Seed a float temp with the beat, read a mixer tap, mix
-/// and keep the mixed value. Unless the mode triple (mode, id pair, stage
-/// `0x12`) selects the live path, scale the mixed value by the tick and
-/// continue; on the live path derive a counter (direct or mapped through
+/// and keep the mixed value. When the mode triple (mode, id pair, stage `0x12`) selects the live
+/// path the mixed value continues unscaled; otherwise derive a counter (direct or mapped through
 /// a callee) and a marker as unsigned int to double to float, divide,
 /// cap at the tick, and scale. Push the result through an apply call,
 /// then push the mixed value through one of two apply sites chosen by
@@ -146,12 +145,12 @@ lf_checker_rt::export!(cdecl, rw_008c28e0() -> u32 {
         const C_USEIDX: u32 = 31;
         const NOT_OVERRIDDEN: u32 = 0xFFFF_FFFF;
         /// Constant table the original builds in its frame: four 0s, two
-        /// 1s, two 2s, eleven 3s, two 4s, three 5s.
+        /// 1s, two 2s, ten 3s, two 4s, three 5s, and a final 0.
         const TABLE_BITS: [u32; 24] = [
             0, 0, 0, 0, 0x3F800000, 0x3F800000, 0x40000000, 0x40000000, 0x40400000,
             0x40400000, 0x40400000, 0x40400000, 0x40400000, 0x40400000, 0x40400000,
-            0x40400000, 0x40400000, 0x40400000, 0x40400000, 0x40800000, 0x40800000,
-            0x40A00000, 0x40A00000, 0x40A00000,
+            0x40400000, 0x40400000, 0x40400000, 0x40800000, 0x40800000, 0x40A00000,
+            0x40A00000, 0x40A00000, 0,
         ];
 
         #[inline(always)]
@@ -247,7 +246,7 @@ lf_checker_rt::export!(cdecl, rw_008c28e0() -> u32 {
         }
         // Level gate.
         let reference = if rd32(G_MUTE) == MUTE_VALUE { tick } else { 0.0 };
-        if rdf(G_LEVEL) == reference {
+        if rdf(G_LEVEL) != reference {
             wrf(G_LEVEL, reference);
             lf_checker_rt::callee_thiscall!(C_SET_EQ, u32, obj_b, reference.to_bits());
         }
@@ -297,13 +296,16 @@ lf_checker_rt::export!(cdecl, rw_008c28e0() -> u32 {
                     }
                 }
             }
+            scaled = mul(scaled, mixed);
         } else {
             scaled = mixed;
         }
-        scaled = mul(scaled, mixed);
         let applied: f32 = lf_checker_rt::callee_thiscall!(
             C_APPLY, f32, lf_checker_rt::relocated(OBJ_APPLY_A), scaled.to_bits()
         );
+        // The apply spills its argument over the mixed temp, so the second
+        // apply below takes the scaled value, not the mixed one.
+        mixed = scaled;
         // Second apply site chosen by the same triple.
         let site = if live_path() {
             OBJ_APPLY_B

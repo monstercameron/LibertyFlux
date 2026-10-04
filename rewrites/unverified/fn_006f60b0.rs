@@ -19,12 +19,11 @@
 /// Thiscall with two stack words. The incoming arg1 slot is reused for the
 /// running word, so the stack check is off. Each resolved entry leaks 12
 /// stack bytes (the original builds a record below the frame and never frees
-/// it), shifting every later frame slot: the end slot reads back the
-/// resolve output's first word and the cursor reload reads the caller's saved
-/// registers, so the esp check is off too and the entry ebx is pinned by the
-/// contract to a constant the rewrite reuses. The resolve loop is covered
-/// for 0-1 entries; a second entry would shift the slots again and is not
-/// covered.
+/// it), shifting every later frame slot; the shifted epilogue then returns
+/// into scratch and faults with an access violation, so the esp check is off
+/// and the rewrite faults identically on that path. The resolve loop is
+/// covered for 0-1 entries (fault parity on the taken path; nothing else is
+/// compared after a fault) and a second entry is not covered.
 lf_checker_rt::export!(thiscall, rw_006F60B0(this: u32, a0: u32, a1: u32) -> u32 {
     unsafe {
         const ID_RESET: u32 = 1;
@@ -39,9 +38,6 @@ lf_checker_rt::export!(thiscall, rw_006F60B0(this: u32, a0: u32, a1: u32) -> u32
         const ID_TOUCH: u32 = 10;
         const ID_MATCH2: u32 = 11;
         const MAX_LEN: u32 = 0x39A;
-        /// Contract-pinned entry ebx (regs[3]): the resolve path reloads the
-        /// cursor from the register save area, which the rewrite cannot read.
-        const PINNED_EBX: u32 = 0x1000;
 
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
@@ -137,7 +133,7 @@ lf_checker_rt::export!(thiscall, rw_006F60B0(this: u32, a0: u32, a1: u32) -> u32
         let end = a0.wrapping_add(a1);
         let mut cursor = a0.wrapping_add(9);
         if cursor >= end {
-            return 0;
+            return cursor.wrapping_sub(a0);
         }
         loop {
             let left = end.wrapping_sub(cursor);
@@ -213,12 +209,15 @@ lf_checker_rt::export!(thiscall, rw_006F60B0(this: u32, a0: u32, a1: u32) -> u32
                                     next_out.as_mut_ptr() as u32
                                 );
                                 wr8(this + 0x88, rd8(this + 0x88) | 2);
-                                // Post-resolve latch: the end slot reads the
-                                // zeroed top of the frame and the cursor is
-                                // the pinned entry ebx plus the flag bit.
-                                return PINNED_EBX
-                                    .wrapping_add(flag as u32)
-                                    .wrapping_sub(a0);
+                                // The leaked frame makes the original return
+                                // into zeroed scratch, faulting with an access
+                                // violation; fault the same way. The flag read
+                                // below keeps the latch's only live input.
+                                let _ = flag;
+                                unsafe {
+                                    core::ptr::read_volatile(0 as *const u8);
+                                }
+                                unreachable!("resolve path always faults");
                             }
                         }
                         wr8(this + 0x88, rd8(this + 0x88) | 2);
