@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Changelog: correct the runtime-library numbers",
+    "title": "Devlog: An operand count that doubles as an operand",
     "commit": null,
+    "summary": "Findings from the r-s156 lane.",
+    "changes": [
+      "New devlog entry: An operand count that doubles as an operand.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Changelog: correct the runtime-library numbers",
+    "commit": "59b2cedd077bafdfba5b361def924c34f86dd1ef",
     "summary": "The previous entry quoted the lane's summary; the published counts came from the script, and they differ by 12.",
     "changes": [
       "The entry about runtime library code said game functions became 37,713 and library 5,443. The published numbers are 37,701 and 5,455: 703 entries moved, the 691 functions the lane listed plus 12 thunks and import stubs it also judged runtime.",

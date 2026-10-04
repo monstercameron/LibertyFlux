@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s156">An operand count that doubles as an operand</a></li>
       <li><a href="#runtime-library">Finding the C runtime: library code that was counted as game code</a></li>
       <li><a href="#production-s148">NaN behaves as positive infinity in emulated SSE comparisons</a></li>
       <li><a href="#production-s140">Production batch: swapped string arguments and a vector-register gap</a></li>
@@ -289,6 +290,33 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s156">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>An operand count that doubles as an operand</h2>
+      <p><span class="evidence verified">Verified</span> One expression-node routine in the timing tree reads its operand count and its second operand from the same word, so a table with a count of two and a clear first operand crashes instead of finishing the scan.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of small timing-tree functions in Rust and prove each rewrite identical to the original with the differential checker, covering every branch of each function.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The operand-scan routine reads the table count from one offset and the operand pointers starting two words earlier, so the second operand slot and the count word are the same address. The consequences by input are:</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Count</th><th role="columnheader">First operand flag</th><th role="columnheader">Behaviour</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">0 or negative</td><td data-label="First operand flag" role="cell">any</td><td data-label="Behaviour" role="cell">returns, notifies nothing</td></tr>
+      <tr role="row"><td role="cell">1</td><td data-label="First operand flag" role="cell">clear</td><td data-label="Behaviour" role="cell">returns, notifies nothing</td></tr>
+      <tr role="row"><td role="cell">1</td><td data-label="First operand flag" role="cell">set</td><td data-label="Behaviour" role="cell">notifies the sink</td></tr>
+      <tr role="row"><td role="cell">2</td><td data-label="First operand flag" role="cell">set</td><td data-label="Behaviour" role="cell">notifies the sink</td></tr>
+      <tr role="row"><td role="cell">2</td><td data-label="First operand flag" role="cell">clear</td><td data-label="Behaviour" role="cell">faults reading near address 2</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The rewrite reproduces this exactly, and the checker confirms fault-for-fault agreement on the crashing input alongside full agreement everywhere else. <span class="evidence">Inferred</span> The game itself must never build a count-two table with a clear first operand, or it crashes the same way; nothing in the routine guards against it.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Keep the overlap in the rewrite rather than "fixing" it: the rewrite must match the original, including its crash. Lanes working on neighbouring timing-tree code should treat the count word and the second operand slot as one word and test the count-two-clear case explicitly.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane contract for the expression-node scan routine: it pins the shared word through each count above with the first-operand flag clear and set, plants a stub for the sink call, and checks that original and rewrite agree on every trial and fault identically on the count-two-clear trials.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first contract pinned the count and the second operand as two independent words, so the second pin silently overwrote the count with a heap pointer and a quarter of the trials faulted in ways the design never intended. The fix was to pin the word once with values that serve both roles. The lesson for contract authors: when two pinned offsets differ only in notation, check whether they are the same address before assuming the fills compose.</p>
+      </article>
 
       <article class="entry" id="runtime-library">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
