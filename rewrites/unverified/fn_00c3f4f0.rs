@@ -72,43 +72,49 @@ unsafe fn f4f0_core(this: u32, out_ratio: u32, out_fract: u32, keep_flag: bool) 
         if (this as *const u8).add(F_FLAG as usize).read() == 0 {
             return 0.0;
         }
+        // The original keeps no frame of its own: it borrows the two
+        // incoming argument slots as scratch. The second evaluator call
+        // takes the address of the first slot (out_ratio's slot), and the
+        // shaper answers land in the second slot (out_fract's slot),
+        // clobbering the argument copies there. The heap pointers themselves
+        // were already loaded into registers, so copies are kept here.
+        let ratio_ptr = out_ratio;
+        let fract_ptr = out_fract;
+        let arg0_slot = core::ptr::addr_of!(out_ratio) as u32;
+        let arg1_slot = core::ptr::addr_of!(out_fract) as u32;
         let clock = lf_checker_rt::global::<i32>(0x11735c4).read();
         let elapsed = clock.wrapping_sub(rd32(this + F_START) as i32);
         let dur = rd32(this + F_DUR) as i32;
         let denom = if dur <= 0 { 1 } else { dur };
-        wrf(out_ratio, div(elapsed as f32, denom as f32));
+        wrf(ratio_ptr, div(elapsed as f32, denom as f32));
         let dur2 = rd32(this + F_DUR) as i32;
         if dur2 < 0 {
-            wrf(out_ratio, 1.0);
+            wrf(ratio_ptr, 1.0);
         } else if elapsed > dur2 {
             if !keep_flag {
                 (this as *mut u8).add(F_FLAG as usize).write(0);
             }
-            wrf(out_ratio, 1.0);
+            wrf(ratio_ptr, 1.0);
         }
         let hund = elapsed / 100;
-        wrf(out_fract, mul(sub(elapsed as f32, hund as f32), K_MILLI));
-        lf_checker_rt::callee_thiscall!(C_EVAL1, u32, this, out_ratio, 0);
-        let mut slot = 0.0f32;
-        lf_checker_rt::callee_thiscall!(
-            C_EVAL2,
-            u32,
-            this,
-            core::ptr::addr_of_mut!(slot) as u32,
-            1
-        );
+        wrf(fract_ptr, mul(sub(elapsed as f32, hund as f32), K_MILLI));
+        lf_checker_rt::callee_thiscall!(C_EVAL1, u32, this, ratio_ptr, 0);
+        lf_checker_rt::callee_thiscall!(C_EVAL2, u32, this, arg0_slot, 1);
+        let slot = f32::from_bits(rd32(arg0_slot));
         let f1: f32 = lf_checker_rt::callee_thiscall!(C_SHAPE1, f32, this);
+        wrf(arg1_slot, f1);
         let x = add(
-            mul(mul(mul(rdf(this + F_G2), rdf(out_fract)), K_TWO), K_PI),
+            mul(mul(mul(rdf(this + F_G2), rdf(fract_ptr)), K_TWO), K_PI),
             rdf(this + F_BIAS),
         );
         let w: u32 = lf_checker_rt::callee_cdecl!(C_MATH, u32, x.to_bits());
         let y = f32::from_bits(w);
         let t1 = mul(y, rdf(this + F_G1));
         let t2 = mul(rdf(this + F_G0), slot);
-        let z = add(mul(t1, rdf(out_ratio)), t2);
-        let mixed = mul(f1, z);
+        let z = add(mul(t1, rdf(ratio_ptr)), t2);
+        let mixed = mul(rdf(arg1_slot), z);
         let f2: f32 = lf_checker_rt::callee_thiscall!(C_SHAPE2, f32, this);
-        mul(mixed, f2)
+        wrf(arg1_slot, f2);
+        mul(mixed, rdf(arg1_slot))
     }
 }

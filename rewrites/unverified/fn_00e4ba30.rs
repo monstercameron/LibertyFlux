@@ -267,7 +267,7 @@ lf_checker_rt::export!(thiscall, rw_00e4ba30(this: u32) -> u32 {
         let pick = |a: u32, b: u32| -> i32 {
             rd32(lf_checker_rt::relocated(if q() { b } else { a })) as i32
         };
-        let ratio1 = fdiv(pick(SIZE_B, SIZE_B_ALT) as f32, pick(SIZE_A, SIZE_A_ALT) as f32);
+        let mut ratio1 = fdiv(pick(SIZE_B, SIZE_B_ALT) as f32, pick(SIZE_A, SIZE_A_ALT) as f32);
         let ratio2 = fdiv(
             rdf(lf_checker_rt::relocated(ZERO_GAP)),
             fdiv(pick(SIZE_B, SIZE_B_ALT) as f32, pick(SIZE_A, SIZE_A_ALT) as f32),
@@ -279,12 +279,12 @@ lf_checker_rt::export!(thiscall, rw_00e4ba30(this: u32) -> u32 {
             ),
             fdiv(pick(SIZE_A, SIZE_A_ALT) as f32, pick(SIZE_B, SIZE_B_ALT) as f32),
         );
+        if rd8(lf_checker_rt::relocated(WIDE_FLAG)) != 0 {
+            ratio1 = rdf(lf_checker_rt::relocated(RATIO_16_9));
+        }
         wr32(face_ptr, ratio2.to_bits());
         wr32(surf_ptr.wrapping_add(4), ratio1.to_bits());
-        let mut pick_ratio = ratio1;
-        if rd8(lf_checker_rt::relocated(WIDE_FLAG)) != 0 {
-            pick_ratio = rdf(lf_checker_rt::relocated(RATIO_16_9));
-        }
+        let pick_ratio = ratio1;
         let bg_obj = rd32(this.wrapping_add(PANEL_BG));
         wr32(surf_ptr, 0xff1a_1a1a);
         lf_checker_rt::callee_thiscall!(
