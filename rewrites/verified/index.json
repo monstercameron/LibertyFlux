@@ -13329,6 +13329,15 @@
   "lane": "a-02"
  },
  {
+  "address": "0x00619D20",
+  "name": "skydome_resource_init (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00619d20.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b268"
+ },
+ {
   "address": "0x0061A570",
   "name": "struct_combine_add (proposed)",
   "kind": "function",
@@ -27369,6 +27378,15 @@
   "lane": "a-10"
  },
  {
+  "address": "0x009CB6C0",
+  "name": "clock_field_store_normalize",
+  "kind": "function",
+  "file": "functions/fn_009cb6c0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b278"
+ },
+ {
   "address": "0x009CB8E0",
   "name": "ABORT_SCRIPTED_CONVERSATION",
   "kind": "native",
@@ -31561,6 +31579,132 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s294"
+ },
+ {
+  "address": "0x00A1A870",
+  "name": "cam_follow_avail_test",
+  "kind": "function",
+  "file": "functions/fn_00a1a870.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
+  "address": "0x00A1CBE0",
+  "name": "cam_param_blend_snap",
+  "kind": "function",
+  "file": "functions/fn_00a1cbe0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
+  "address": "0x00A1CC40",
+  "name": "cam_pending_publish",
+  "kind": "function",
+  "file": "functions/fn_00a1cc40.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
+  "address": "0x00A1CCA0",
+  "name": "cam_dist_clamp_update",
+  "kind": "function",
+  "file": "functions/fn_00a1cca0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
+  "address": "0x00A1D490",
+  "name": "cam_vec_spread_pair",
+  "kind": "function",
+  "file": "functions/fn_00a1d490.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
+  "address": "0x00A1D530",
+  "name": "cam_mode_weight_test",
+  "kind": "function",
+  "file": "functions/fn_00a1d530.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
+  "address": "0x00A1D8C0",
+  "name": "cam_target_set_pair",
+  "kind": "function",
+  "file": "functions/fn_00a1d8c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
+  "address": "0x00A1D910",
+  "name": "cam_mode_constant",
+  "kind": "function",
+  "file": "functions/fn_00a1d910.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
+  "address": "0x00A1EA90",
+  "name": "cam_flag_latch_step",
+  "kind": "function",
+  "file": "functions/fn_00a1ea90.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
+  "address": "0x00A1EB60",
+  "name": "cam_gate_negate_zero",
+  "kind": "function",
+  "file": "functions/fn_00a1eb60.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
+  "address": "0x00A1EC50",
+  "name": "cam_bound_track_min",
+  "kind": "function",
+  "file": "functions/fn_00a1ec50.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
+  "address": "0x00A1F950",
+  "name": "cam_pair_snap",
+  "kind": "function",
+  "file": "functions/fn_00a1f950.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
+  "address": "0x00A20F20",
+  "name": "cam_rate_adapt",
+  "kind": "function",
+  "file": "functions/fn_00a20f20.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
+ },
+ {
+  "address": "0x00A21B10",
+  "name": "cam_peak_track_max",
+  "kind": "function",
+  "file": "functions/fn_00a21b10.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s331"
  },
  {
   "address": "0x00A2B1F0",
@@ -35971,6 +36115,24 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b260"
+ },
+ {
+  "address": "0x00B034E0",
+  "name": "cull_bank_against_rows",
+  "kind": "function",
+  "file": "functions/fn_00b034e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b246"
+ },
+ {
+  "address": "0x00B03B40",
+  "name": "threshold_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00b03b40.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b246"
  },
  {
   "address": "0x00B05100",
@@ -58833,6 +58995,33 @@
   "lane": "r-s100"
  },
  {
+  "address": "0x00BE4A90",
+  "name": "task_slot_clear_if_equal",
+  "kind": "function",
+  "file": "functions/fn_00be4a90.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE4AB0",
+  "name": "task_state_zero_span",
+  "kind": "function",
+  "file": "functions/fn_00be4ab0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE4D40",
+  "name": "task_effect_reset_slot_a",
+  "kind": "function",
+  "file": "functions/fn_00be4d40.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s341"
+ },
+ {
   "address": "0x00BE7CA0",
   "name": "task_activate_gated",
   "kind": "function",
@@ -64663,6 +64852,51 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s89"
+ },
+ {
+  "address": "0x00D940B0",
+  "name": "probe_trace_setup",
+  "kind": "function",
+  "file": "functions/fn_00d940b0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b264"
+ },
+ {
+  "address": "0x00D94A80",
+  "name": "traverse_cells",
+  "kind": "function",
+  "file": "functions/fn_00d94a80.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b264"
+ },
+ {
+  "address": "0x00D95390",
+  "name": "phase_ring_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00d95390.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b264"
+ },
+ {
+  "address": "0x00D95820",
+  "name": "seg_intersect_2d",
+  "kind": "function",
+  "file": "functions/fn_00d95820.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b264"
+ },
+ {
+  "address": "0x00D959C0",
+  "name": "resolve_cell_and_box",
+  "kind": "function",
+  "file": "functions/fn_00d959c0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b264"
  },
  {
   "address": "0x00DA3FA0",

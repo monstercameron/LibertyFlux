@@ -12,7 +12,8 @@
 /// and `0xe4..0xec` are never written and keep their old contents.
 ///
 /// Calling convention: the original takes `dst` in ECX, `src_a` in EDX and
-/// `src_b` as one stack word with caller cleanup (plain `ret`), which no
+/// `src_b` as one stack word with caller cleanup (the caller pops the
+/// words), which no
 /// Rust convention expresses; the rewrite takes the same three words as
 /// plain caller-cleanup arguments, in the order the contract delivers them
 /// (`src_b` first, since the original reads it from its first stack word).
