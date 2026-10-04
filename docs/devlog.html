@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#work-queue">The work queue that hands out functions easiest first</a></li>
       <li><a href="#capture-tool">Tool that reads the encrypted code from the owner's running copy</a></li>
       <li><a href="#format-rsc5">Rust reader: the RSC5 resource container</a></li>
       <li><a href="#format-rpf-img">Rust reader: RPF and IMG archives</a></li>
@@ -112,6 +113,38 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="work-queue">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>The work queue that hands out functions easiest first</h2>
+      <p>The rewrite phase now has its dispatcher: a small set of Python tools backed by one SQLite database that orders every game function by difficulty, claims them atomically so two lanes can never receive the same function, and records accepts, deferrals and batch statistics. It was built against the independent function estimate, cross-checked against the finished Ghidra analysis, and proven with a six-lane simulation.</p>
+      <h3>What was asked</h3>
+      <p>Design and write the first version of the work queue and the per-function context packet as real project tooling: game functions only, easiest first, atomic claims expiring after two hours, capped attempts with a no-improvement stop, deferral with a fixed set of blocker tags, an end-of-batch sweep with a ledger, and context packets carrying disassembly, resolved references, class information and the best earlier attempt. Storage is one SQLite database in write-ahead-log mode; the repository tracks a deterministic text export instead.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> The queue builds from the lane estimate: tens of thousands of game functions queued, a few thousand library functions excluded, nothing claimed yet.</li>
+      <li><span class="evidence verified">Verified</span> The Ghidra function list finished during the lane and was compared entry by entry: the two lists agree on most of Ghidra's entries, the lane list has far more plain-code functions, and Ghidra's entries inside the encrypted region are correctly excluded by the queue's range rule. Importing Ghidra's list over existing queue state reproduced the comparison counts exactly while accepted, deferred and claimed rows survived.</li>
+      <li><span class="evidence verified">Verified</span> Address forms differ per source file and one value can be a valid address in both forms, so the tools declare the form per source instead of guessing. Guessing had merged hundreds of distinct functions; after the fix every row imports exactly once.</li>
+      <li><span class="evidence verified">Verified</span> Context packets resolve callees, data references and virtual-method class and slot correctly on real functions, and class-grouped claiming serves one class's methods together.</li>
+      <li><span class="evidence verified">Verified</span> The verdict contract refuses failing verdicts and unknown blocker tags with the claim left intact; the text export is byte-identical across runs.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Prefer the lane function list for coverage and Ghidra for names, caller counts and library flags; the queue merges both without losing state.</li>
+      <li>Unmeasurable zero-size entries sort last so lanes never trip over them first.</li>
+      <li>Tool-generated placeholder names are never stored as function names.</li>
+      <li>Next steps for later lanes: a subsystem range map, similarity from masked-byte hashes before full search integration, consuming the call graph and cross-reference exports, and a ruling on the functions only the lane list contains.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>From the queue tools folder: run the unit suite, build the queue from the estimate, claim a function for a test lane, write its context packet, accept or defer it, sweep the batch, and run the simulation. Each tool prints usage with the standard help flag, and every script documents its inputs and outputs at the top of the file.</p>
+      <h3>What was confusing or went wrong</h3>
+      <ul>
+      <li>The address-form bug above: automatic detection silently merged functions and mislabelled plain code as encrypted. It surfaced through row counts that did not add up, and the fix was verified by exact cross-checks between the comparison and the import.</li>
+      <li>The Ghidra export was still being written when first read and parsed as truncated JSON; waiting and retrying resolved it.</li>
+      <li>The first simulation decided slightly more functions than requested through a stop-condition race in the harness itself; the queue stayed correct, and reserved slots fixed the count.</li>
+      <li>Two small implementation slips (a miscounted header unpack and a stray test fragment) were caught by the first runs and fixed.</li>
+      </ul>
+      </article>
 
       <article class="entry" id="capture-tool">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
