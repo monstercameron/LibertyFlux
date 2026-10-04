@@ -1,0 +1,24 @@
+// original: 0x00a01f00 SET_OBJECT_RENDER_SCORCHED
+/// Native handler `SET_OBJECT_RENDER_SCORCHED`.
+///
+/// Toggle the scorched rendering flag on an object; the flag is boolean-coerced.
+/// Forwards 2 argument(s) to the engine and returns nothing.
+///
+/// Boolean coercion: the original computes the flag in the low byte
+/// of its own incoming argument slot, so the dword the engine sees
+/// is the context address with its low byte replaced by the flag.
+/// The value is reproduced exactly here; only that caller-slot
+/// clobber (which no caller can observe) is out of checker scope.
+export!(cdecl, rw_00a01f00(ctx: *const u32) -> u32 {
+    unsafe {
+        let args = *ctx.add(2) as *const u32;
+        let arg0 = *args.add(0);
+        let arg1 = *args.add(1);
+        let _ = arg0;
+        // Boolean-coerced flag(s), blended into the context address
+        // exactly as the original's in-place computation does.
+        let flag1 = (ctx as u32 & 0xFFFF_FF00) | u32::from(arg1 != 0);
+        callee_cdecl!(1, u32, arg0, flag1);
+        0
+    }
+});
