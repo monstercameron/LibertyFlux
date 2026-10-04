@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n29">Native handlers that stash a flag in their own doorstep</a></li>
       <li><a href="#production-n16">Twenty native handlers verified, and three traps for the next lanes</a></li>
       <li><a href="#production-n20">Production batch n20: twenty-five native handlers, one compiler surprise</a></li>
       <li><a href="#production-n08">Some native handlers cannot be rewritten without assembly</a></li>
@@ -213,6 +214,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n29">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Native handlers that stash a flag in their own doorstep</h2>
+      <p>Five script-native handlers coerce a true/false argument by writing the 0/1 byte over the low byte of their own incoming argument slot on the stack, then pass that whole slot to the engine, high bytes and all. The high bytes are the caller's own context pointer, so the engine receives a flag fused with a pointer. Rewrites reproduce this exactly, and a deliberately wrong rewrite was caught by the checker on its first trial.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of 25 script-native handlers in Rust and prove each behaves identically to the original with the differential checker, which runs both from identical state and compares results, memory, calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All 25 handlers in the batch take one call-context pointer holding a return slot and an argument array, forward their arguments to one engine function, and optionally store the answer. All are short straight-line wrappers with no branches.</p>
+      <p><span class="evidence verified">Verified</span> Five of them normalize a true/false argument with an unusual trick: instead of pushing a clean 0 or 1, they overwrite the low byte of the stack slot that holds their own incoming context pointer and push that slot. The engine therefore receives the context pointer's high bytes fused with the flag bit. One more handler uses the same slot as scratch space for a float result on its way to the return slot.</p>
+      <p><span class="evidence verified">Verified</span> The checker cannot compare that scratch slot for these six handlers, because a Rust function cannot address its own incoming stack slot. The pushed value is instead verified exactly through the outgoing-call comparison, and the slot is dead after return. The six contracts record this choice explicitly.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Future lanes should watch for this pattern: any handler that writes into its incoming stack slot needs the stack comparison off and an exact-value proof through the call comparison instead. The batch generator built for this lane documents the rule and can be reused for further native batches.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane's contracts with the project checker: every rewrite passes one thousand trials with zero tolerance, and two deliberately introduced bugs (a dropped byte mask, a raw flag instead of the fused value) are both caught within a few trials.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The checker worker process was twice lost mid-run with no failing trial, apparently under machine load, and the driver then crashed talking to the dead worker instead of recovering. Both contracts passed cleanly on rerun. The lane's driver copy now restarts the worker in that case.</p>
+      </article>
 
       <article class="entry" id="production-n16">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
