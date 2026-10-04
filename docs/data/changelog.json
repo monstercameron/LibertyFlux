@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: Two verifications, one staged function, and a checker ceiling",
+    "commit": null,
+    "summary": "Findings from the r-b118 lane.",
+    "changes": [
+      "New devlog entry: Two verifications, one staged function, and a checker ceiling.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 110 more functions pass the checker (5615 in total)",
     "commit": "3586ead54e39896aa537d7303195a1c9ae6cabd5",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

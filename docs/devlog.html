@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b118">Two verifications, one staged function, and a checker ceiling</a></li>
       <li><a href="#production-b113">Two stub traps: cookie checks clobber the return register, and one import pops its argument</a></li>
       <li><a href="#production-b111">Staged proof of a 3,400-byte UI function, and a tail jump that verifies as a plain call</a></li>
       <li><a href="#production-b110">Three quiet ways a proof can lie to you</a></li>
@@ -300,6 +301,38 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b118">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Two verifications, one staged function, and a checker ceiling</h2>
+      <p>Two medium-size game functions were rewritten in Rust and proven equivalent over one thousand trials each, and a third larger one was verified in three passing stages up to the point where the checker's scripted callee answers cannot reach far enough, which is a precise gap for a future checker version rather than a failure of the rewrite.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of three unnamed functions from one module in Rust and prove each rewrite behaves identically to the original with the version 3 checker, working smallest-first and staging the largest function so that every stage passes on its own inputs.</p>
+      <h3>What was found</h3>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Function</th><th role="columnheader">Size</th><th role="columnheader">Outcome</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Best-entry table scan</td><td role="cell" data-label="Size">571 bytes</td><td role="cell" data-label="Outcome">verified, 1000 of 1000 trials</td></tr>
+      <tr role="row"><td role="cell">Player-cluster scan</td><td role="cell" data-label="Size">999 bytes</td><td role="cell" data-label="Outcome">verified, 1000 of 1000 trials</td></tr>
+      <tr role="row"><td role="cell">Graph search</td><td role="cell" data-label="Size">2006 bytes</td><td role="cell" data-label="Outcome">three stages pass, full proof blocked</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The two smaller functions match exactly, including float bit patterns, unordered float comparisons, an uninitialized stack word handled through the checker's defined stack fill, float values returned on the legacy float stack, and a call argument pointing into the caller's own frame. A deliberately wrong rewrite with two swapped words was caught within a few trials, so the comparisons are live.</p>
+      <p><span class="evidence verified">Verified</span> The largest function shares one code ending with several of its own exits, and the listed size cut it off mid-instruction; the measured length is 26 bytes longer than listed. Its entry block, setup, link walk, release calls, tail sweep and ending all pass in stages.</p>
+      <p><span class="evidence verified">Verified</span> The largest function's main collection loop cannot run under this checker: its trip counter sits beyond the first 64 bytes past the object pointer, scripted callee answers can only write inside that window, and the function itself zeroes the counter on entry, so the exit that checks it always fires first. A new checker ability (out-words at large offsets, or computed out-words) would unblock it.</p>
+      <p><span class="evidence">Inferred</span> The three functions share one handle layout of index tables, entry arrays and 32-byte entries with flag bytes and coordinates, and call into player lookup and zone lookup helpers, so they form one gameplay module rather than the file-memory subsystem the inventory guessed.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Ship the two verified rewrites; keep the staged rewrite and its retry kit in the lane notes for the next worker.</li>
+      <li>Anyone scripting per-trial input cycles should give co-dependent cycles different periods, because same-period cycles can lock phases and silently empty a path (the checker correctly refused the result as vacuous).</li>
+      <li>Anyone translating a float comparison followed by an unsigned branch should write the truth table first, including the unordered case: the natural reading is backwards and cost one full debug round here.</li>
+      <li>A heap alias trick is available when a setup step wipes scripted fills: point a table slot at the work area so the later scripted writes land where the loop reads. It is differential and sound, and it is how the live-link stage passes.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane's copied checker driver once per contract file with one thousand trials against the lane's rewrite library built for 32-bit Windows into the lane's own build folder; the verdict files record passes with no failures and no vacuous flags, and the mutant control fails on the call comparison as designed. The staged contracts for the largest function pass the same way on their restricted inputs.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The call-comparison failure detail prints only the first three calls of each side with no lengths, so a mismatch deep in a hundred-call sequence looked identical on both sides until full sequences were dumped; printing both lengths would have saved twenty minutes. Rebuilding the rewrite library often failed because another lane's finished worker still held the file; renaming it aside to a rotating name and rebuilding worked every time. One base-table pin was placed one slot too low, which showed up as symmetric faults on both sides and was found by dumping the exact request the driver sent.</p>
+      </article>
 
       <article class="entry" id="production-b113">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
