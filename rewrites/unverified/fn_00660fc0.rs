@@ -13,10 +13,10 @@
 /// A hit whose flag word at `this+0x420 + slot*8` is 1 first resolves the
 /// slot (callee 1) on an object chosen by a global switch byte (zero: a
 /// null object, otherwise a fixed image object, both plus `0x10`) with
-/// two scratch words and a zero; the call fills six scratch words whose
-/// fourth selects a slow path that always just marks, whose fifth must
-/// be a live object, and whose comparison against the flag address
-/// (unsigned below) also just marks. Otherwise the object's virtual
+/// two scratch words and a zero; the call fills three scratch words
+/// whose first selects a slow path (compared against the flag address,
+/// unsigned below) that always just marks, and whose second must be a
+/// live object. Otherwise the object's virtual
 /// slot `+0x28` runs (callee 2): only the wanted marker reaches virtual
 /// slot `+0x2c` (callee 3) with the slot address and 1.
 ///
@@ -86,8 +86,8 @@ lf_checker_rt::export!(thiscall, rw_00660fc0(this: u32, arr: u32, n: u32) -> u32
                                 (scratch.as_mut_ptr() as u32).wrapping_add(2),
                                 0
                             );
-                            let w3 = scratch[3];
-                            let w4 = scratch[4];
+                            let w3 = scratch[0];
+                            let w4 = scratch[1];
                             if w4 != 0 && flagp >= w3 {
                                 let slot = rd32(rd32(w4).wrapping_add(0x28));
                                 let f: extern "thiscall" fn(u32) -> u32 =

@@ -126,7 +126,7 @@ lf_checker_rt::export!(stdcall, rw_0096A470(source: u32, sample: u32, out: u32) 
         // as the call argument matters.
         let mut scratch = [0u32; 8];
         let scratch_ptr = scratch.as_mut_ptr() as u32;
-        match CASES[(answer - 1) as usize] {
+        let result = match CASES[(answer - 1) as usize] {
             0 => {
                 let target = vcall(source, VT_TARGET);
                 if target == 0 {
@@ -183,7 +183,8 @@ lf_checker_rt::export!(stdcall, rw_0096A470(source: u32, sample: u32, out: u32) 
             }
             4 => lookup_path(source, sample, out, dir, scratch_ptr),
             _ => copy_fallback(sample, out),
-        }
+        };
+        return result;
 
         /// Twelve-word sample copy with three gaps (0x0c, 0x1c, 0x2c are
         /// not copied); returns the last word moved.

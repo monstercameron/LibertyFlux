@@ -8,8 +8,9 @@
 /// single words, a dword (`+0x68`), and one global table entry indexed by
 /// the byte at `+0x6c`. An angle is then formed from `+0x10` (scaled by
 /// the rate, base and turn globals, in that order) and run through two
-/// scalar math callees; the angle and both results plus a zero word go out
-/// as a 16-byte vector. The second math callee is polled twice more on the
+/// scalar math callees; both results plus a zero word and an unwritten
+/// fourth word (zero under the checker's zero stack fill) go out as a
+/// 16-byte vector. The second math callee is polled twice more on the
 /// same angle; each answer is scaled by six, shifted by one, clamped to
 /// [0, 1] (NaN passes through, as the original's ordered-compare jumps
 /// do), and sent as one minus the clamped value, the first also multiplied
@@ -90,7 +91,7 @@ lf_checker_rt::export!(thiscall, rw_0065d0a0(params: u32, effect: u32, var_cache
         );
         let first: f32 = lf_checker_rt::callee_cdecl!(MATH_FIRST, f32, angle.to_bits());
         let second: f32 = lf_checker_rt::callee_cdecl!(MATH_SECOND, f32, angle.to_bits());
-        let terms = [angle.to_bits(), first.to_bits(), second.to_bits(), 0];
+        let terms = [first.to_bits(), second.to_bits(), 0, 0];
         lf_checker_rt::callee_thiscall!(
             SET_VEC, u32, view, dest, rd32(var_cache.wrapping_add(0x20)),
             terms.as_ptr() as u32, 0x10, 1, 4

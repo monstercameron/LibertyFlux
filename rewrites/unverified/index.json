@@ -1744,46 +1744,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00683F30",
-  "name": "quat_dof_apply_scaled_axis_angle",
-  "file": "fn_00683f30.rs",
-  "lane": "r-b295",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00685CE0",
-  "name": "dof_array_deduplicate",
-  "file": "fn_00685ce0.rs",
-  "lane": "r-b295",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00685FE0",
-  "name": "dof_pair_combine",
-  "file": "fn_00685fe0.rs",
-  "lane": "r-b295",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00686180",
-  "name": "dof_pair_copy_quat",
-  "file": "fn_00686180.rs",
-  "lane": "r-b295",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x006863C0",
-  "name": "lookup_quat_to_matrix",
-  "file": "fn_006863c0.rs",
-  "lane": "r-b295",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x006F5C50",
   "name": "input_batch_flush",
   "file": "fn_006f5c50.rs",
@@ -2208,30 +2168,6 @@
   "reason": ""
  },
  {
-  "address": "0x00969440",
-  "name": "bilinear_sample_2d",
-  "file": "fn_00969440.rs",
-  "lane": "r-b292",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x009696A0",
-  "name": "select_peak_slot",
-  "file": "fn_009696a0.rs",
-  "lane": "r-b292",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00969810",
-  "name": "radial_weight_2d",
-  "file": "fn_00969810.rs",
-  "lane": "r-b292",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x009699F0",
   "name": "radial_weight_3d",
   "file": "fn_009699f0.rs",
@@ -2451,6 +2387,14 @@
   "address": "0x009F6930",
   "name": "",
   "file": "fn_009f6930.rs",
+  "lane": "r-b308",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009F89E0",
+  "name": "",
+  "file": "fn_009f89e0.rs",
   "lane": "r-b308",
   "outcome": "not_reached",
   "reason": ""
@@ -3009,7 +2953,7 @@
  },
  {
   "address": "0x00BC1030",
-  "name": "pending",
+  "name": "ped_indexed_setter_d0",
   "file": "fn_00bc1030.rs",
   "lane": "r-s355",
   "outcome": "not_reached",
@@ -3017,7 +2961,7 @@
  },
  {
   "address": "0x00BC10E0",
-  "name": "pending",
+  "name": "ped_indexed_setter_d8",
   "file": "fn_00bc10e0.rs",
   "lane": "r-s355",
   "outcome": "not_reached",
@@ -3025,7 +2969,7 @@
  },
  {
   "address": "0x00BC1190",
-  "name": "pending",
+  "name": "ped_flag_bit24",
   "file": "fn_00bc1190.rs",
   "lane": "r-s355",
   "outcome": "not_reached",
@@ -3168,33 +3112,9 @@
   "reason": null
  },
  {
-  "address": "0x00BE3680",
-  "name": "CTaskComplexUseEffect::vf19",
-  "file": "fn_00be3680.rs",
-  "lane": "r-s341",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00BE41A0",
   "name": "CTaskComplexUseAttractor::vf18",
   "file": "fn_00be41a0.rs",
-  "lane": "r-s341",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00BE43F0",
-  "name": "CTaskComplexWaitForBus::vf18",
-  "file": "fn_00be43f0.rs",
-  "lane": "r-s341",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00BE44A0",
-  "name": "CTaskComplexWaitForDryWeather::vf18",
-  "file": "fn_00be44a0.rs",
   "lane": "r-s341",
   "outcome": "not_reached",
   "reason": null
@@ -4262,14 +4182,6 @@
   "lane": "r-s155",
   "outcome": "not yet run",
   "reason": null
- },
- {
-  "address": "0x00DE7050",
-  "name": "UITimeOverview-method (proposed)",
-  "file": "fn_00de7050.rs",
-  "lane": "r-b297",
-  "outcome": "not_reached",
-  "reason": ""
  },
  {
   "address": "0x00E49C80",
