@@ -31,7 +31,7 @@ unsafe fn f4f0_core(this: u32, out_ratio: u32, out_fract: u32, keep_flag: bool) 
         const F_DUR: u32 = 0x14;
         const F_START: u32 = 0x1c;
         const F_FLAG: u32 = 0x2c;
-        const K_MILLI: f32 = f32::from_bits(0x3a12_836f); // 0.001
+        const K_MILLI: f32 = f32::from_bits(0x3a83_126f); // 0.001
         const K_TWO: f32 = 2.0;
         const K_PI: f32 = f32::from_bits(0x4049_0fdb);
         const C_EVAL1: u32 = 1;

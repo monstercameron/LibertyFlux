@@ -299,8 +299,10 @@ lf_checker_rt::export!(thiscall, rw_00d73300(this: u32, delta_u: u32) -> u32 {
                     if s5 == 2 || s5 == 1 {
                         wr8(esi.wrapping_add(5), 3);
                     }
+                    retv = s5 as u32;
+                } else {
+                    retv = a2;
                 }
-                retv = (rd8(esi) as u32).wrapping_sub(1);
             }
             // Resolve through the pool pair and touch on field change.
             11 => {

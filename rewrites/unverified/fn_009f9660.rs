@@ -3,8 +3,9 @@
 /// Accumulate one trip sample into the running counters, or flush them.
 ///
 /// `obj` points to a tracker whose mode word at `+0x1304` selects the path.
-/// Only mode 0 with a non-positive eligibility answer from the check callee
-/// accumulates; every other mode, and a positive answer, flushes.
+/// Modes 0 and 1 consult the check callee and accumulate on a non-positive
+/// eligibility answer; any other mode flushes without consulting it, as does
+/// a positive answer.
 ///
 /// Accumulate: add the low word of the chop-converted product of two global
 /// rate factors to the sample counter, add the distance between the tracker's
@@ -82,7 +83,7 @@ lf_checker_rt::export!(cdecl, rw_009F9660(obj: u32) -> u32 {
 
         let mode = rd32(obj + OBJ_MODE);
         let mut accumulate = false;
-        if mode == 0 {
+        if mode == 0 || mode == 1 {
             let eligible = lf_checker_rt::callee_thiscall!(CHECK_CALLEE, u32, obj) as i32;
             if eligible <= 0 {
                 accumulate = true;

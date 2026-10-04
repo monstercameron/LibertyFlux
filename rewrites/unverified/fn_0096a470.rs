@@ -52,8 +52,8 @@ lf_checker_rt::export!(stdcall, rw_0096A470(source: u32, sample: u32, out: u32) 
         const CALL_FIND: u32 = 6;
         // Selector table: (answer - 1) -> continuation 0..5.
         const CASES: [u8; 32] = [
-            0, 0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 5, 5, 5,
-            5, 5, 5, 5, 5, 5, 5, 2, 3, 2, 5, 5, 5, 5, 5, 4,
+            0, 0, 5, 5, 5, 5, 5, 5, 5, 5, 5, 1, 5, 5, 5, 5,
+            5, 5, 5, 5, 5, 2, 3, 2, 5, 5, 5, 5, 5, 5, 5, 4,
         ];
 
         #[inline(always)]
@@ -286,12 +286,19 @@ lf_checker_rt::export!(stdcall, rw_0096A470(source: u32, sample: u32, out: u32) 
         }
 
         /// Five-argument registry query; the middle immediate names
-        /// the table, the outer words are always zero.
+        /// the table, the outer words are always zero. Both immediates
+        /// are relocated image addresses, like the original's.
         #[inline(always)]
         unsafe fn find(aux: u32, table: u32) -> u32 {
             unsafe {
                 lf_checker_rt::callee_cdecl!(
-                    CALL_FIND, u32, aux, 0u32, 0x0103_872Cu32, table, 0u32
+                    CALL_FIND,
+                    u32,
+                    aux,
+                    0u32,
+                    lf_checker_rt::relocated(0x0103_872C),
+                    lf_checker_rt::relocated(table),
+                    0u32
                 )
             }
         }

@@ -119,7 +119,7 @@ lf_checker_rt::export!(thiscall, rw_00623a90(this: u32, array: u32, count: u32) 
         for _ in 0..count as usize {
             let seen: u32 = lf_checker_rt::callee_thiscall!(PROBE, u32, this, cursor);
             if seen == 0 {
-                let _g0 = rd32(this.wrapping_add(GSTATE));
+                let g0 = rd32(this.wrapping_add(GSTATE));
                 let _g1 = rd32(this.wrapping_add(GSTATE1));
                 let hit: u32 =
                     lf_checker_rt::callee_thiscall!(FIND, u32, this, id0, id1);
@@ -130,10 +130,9 @@ lf_checker_rt::export!(thiscall, rw_00623a90(this: u32, array: u32, count: u32) 
                         let w1 = rd32(cursor.wrapping_add(4));
                         let _ = (w0, w1);
                         let reporter = rd32(this.wrapping_add(REPORTER));
-                        let saved = this;
                         lf_checker_rt::callee_thiscall!(
                             REPORT, u32, reporter, uses as u32,
-                            (&saved as *const u32) as u32, 0, 0);
+                            (&g0 as *const u32) as u32, 0, 0);
                     }
                 }
             }
