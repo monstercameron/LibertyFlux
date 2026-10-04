@@ -124,6 +124,22 @@ Local git repository on `main`. Nothing committed yet.
 | 6. Renderer | Vulkan renderer with motion vectors, depth and jitter outputs; fixed-timestep simulation; macOS | Frame-rate target measured on all three platforms |
 | 7. Upscalers and new work | DLSS, FSR, XeSS, MetalFX behind one interface; frame generation; new gameplay and graphics; path tracing | Each upscaler verified on hardware that supports it |
 
+Status on 2026-10-04: phase 3 is under way. The gates before it were met as follows.
+
+- Phase 0: every item is measured except whether the game runs on this machine. That check needs the
+  owner to start the game and is carried as an open item; it also gates reading the encrypted megabyte.
+- Phase 1: the queue, the checker (now version 2), the loader and the capture tool exist and are proven
+  outside the game. One re-run lane took 201 functions end to end. The per-function switch inside the
+  running game is built and tested without the game, and is untested with it.
+- Phase 2: two timed pilots of 130 functions, then a production wave. Measured so far: about two minutes
+  per verified function under 250 bytes and about eighteen minutes for larger ones; the first 800
+  rewrites re-run under checker version 2 all passed, so no false accept has been found. Muse lanes at
+  maximum effort carry the work; nothing has needed Sonnet yet.
+
+Phase 3 differs from the plan as first written: about 45 lanes run at once (the machine's measured
+ceiling), rewrites are committed to `rewrites/pending/` on every coordinator tick instead of between
+waves, and the regression between waves is the re-run of every rewrite under the current checker.
+
 Phases 0 to 4 are faithful reconstruction. No 64-bit or renderer work before the phase 4 gate; the
 Modern Warfare 2 project found that mixing those goals stalled the lanes.
 

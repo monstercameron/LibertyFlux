@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Plan: phase 3 is under way, with how the earlier gates were met",
+    "commit": null,
+    "summary": "The plan and the site now say the project is in the rewrite phase, and record what is still open from the earlier ones.",
+    "changes": [
+      "plan.md states how the gates of phases 0, 1 and 2 were met, and names the one open item: whether the game runs on this machine, which needs the owner.",
+      "It records the measured rates (about two minutes per verified function under 250 bytes, about eighteen for larger ones) and that the first 800 rewrites re-run under checker version 2 all passed.",
+      "It notes where phase 3 differs from the plan as first written: about 45 lanes at once, rewrites committed every tick, and the re-run under the current checker as the regression.",
+      "The site's progress data moves to phase 3."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 277 more functions pass the checker (3308 in total)",
     "commit": "36941e59bb1c3402ca0687ea6cf241250e9be0d4",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
