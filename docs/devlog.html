@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#naming-06">Naming a record-and-effects batch: three evidence traps</a></li>
       <li><a href="#lift-pilot">First pilot of the 64-bit lift: what it costs and what gets in the way</a></li>
       <li><a href="#production-b180">Four rewrites, two original-code quirks, one measured constant</a></li>
       <li><a href="#naming-05">Naming the audio voices and sound nodes</a></li>
@@ -339,6 +340,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="naming-06">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Naming a record-and-effects batch: three evidence traps</h2>
+      <p>One hundred fifty consecutive unnamed functions turned out to be three systems sharing one record codec: replay interpolation records, particle effect builders and updates, and physics-driven effect entries. One hundred forty-two were named; the eight left unnamed split into two inventory gapfills that cover jump-table data rather than code, and six generic builders whose effect identity comes only from caller context that could not be attributed.</p>
+      <h3>What was asked</h3>
+      <p>Propose a descriptive name for each of 150 consecutive unnamed functions, working out what the group is about first, with confidence levels and no guessing.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The batch holds a dispatcher with four per-kind appliers, each paired with a recorder sharing its offsets; flag setters that twin known getters; a packed-quaternion codec reused by both replay and effects code; effect updates identified by hashed effect names and parameter strings; and a family of small record initializers following an already-verified naming pattern.</p>
+      <p><span class="evidence verified">Verified</span> A shared helper that sets named float parameters was confirmed by reading it: it resolves a name to a table index and stores the value. That one probe grounded a whole family of parameter-applying functions.</p>
+      <p><span class="evidence verified">Verified</span> Three evidence traps were found and corrected. First, a data-reference filter limited to low addresses silently drops every string, because the data sections live far above that range: filter by section instead. Second, disassembling past a short function attributes the next function's calls to it, so small functions must be re-checked at exact size. Third, nearest-symbol caller attribution is trustworthy only within a few hundred bytes; beyond that only the calling region can be trusted.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Names follow the established family vocabularies of neighboring verified work rather than inventing new ones, with offset suffixes where twins differ only in field offsets. The two gapfill entries should be split by the inventory, not named. Effect-ID tables and their validator predicates were named as shared infrastructure for a later lane to map.</p>
+      <h3>How to reproduce it</h3>
+      <p>Read code through the PE mapped image at RVA, never raw offsets. Build one evidence table of calls, strings, imports and shapes first, then run a full caller scan over the code section, then read the short functions fully and probe shared callees before naming the big ones.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first mapping attempt indexed the memory-mapped image by a file offset and decoded garbage; the two differ by a constant, the same known trap from the other side. A mid-task merge check briefly suggested dozens of name collisions, but they were the lane's own checkpointed names already integrated by the coordinator.</p>
+      </article>
 
       <article class="entry" id="lift-pilot">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
