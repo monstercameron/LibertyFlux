@@ -54072,6 +54072,186 @@
   "lane": "r-s100"
  },
  {
+  "address": "0x00BE7CA0",
+  "name": "task_activate_gated",
+  "kind": "function",
+  "file": "functions/fn_00be7ca0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE7CE0",
+  "name": "task_emit_to_pair",
+  "kind": "function",
+  "file": "functions/fn_00be7ce0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE7D40",
+  "name": "task_emit_float_to_pair",
+  "kind": "function",
+  "file": "functions/fn_00be7d40.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE7DA0",
+  "name": "timer_slot_init",
+  "kind": "function",
+  "file": "functions/fn_00be7da0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE7FC0",
+  "name": "anim_setup_checked_a",
+  "kind": "function",
+  "file": "functions/fn_00be7fc0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE8020",
+  "name": "anim_setup_checked_b",
+  "kind": "function",
+  "file": "functions/fn_00be8020.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE8080",
+  "name": "anim_setup_direct",
+  "kind": "function",
+  "file": "functions/fn_00be8080.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE80C0",
+  "name": "anim_pick_or_sample",
+  "kind": "function",
+  "file": "functions/fn_00be80c0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE8170",
+  "name": "task_mover_init",
+  "kind": "function",
+  "file": "functions/fn_00be8170.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE81C0",
+  "name": "status_latch_init",
+  "kind": "function",
+  "file": "functions/fn_00be81c0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE81D0",
+  "name": "pair_rule_check",
+  "kind": "function",
+  "file": "functions/fn_00be81d0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE82E0",
+  "name": "record_clear_on_match",
+  "kind": "function",
+  "file": "functions/fn_00be82e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE8440",
+  "name": "timer_refresh_all",
+  "kind": "function",
+  "file": "functions/fn_00be8440.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE84A0",
+  "name": "timer_format_min_sec",
+  "kind": "function",
+  "file": "functions/fn_00be84a0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE8510",
+  "name": "timer_format_seconds",
+  "kind": "function",
+  "file": "functions/fn_00be8510.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE88A0",
+  "name": "record_init_masked",
+  "kind": "function",
+  "file": "functions/fn_00be88a0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE89F0",
+  "name": "WIND_FIRE_LOOP",
+  "kind": "function",
+  "file": "functions/fn_00be89f0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE91F0",
+  "name": "handle_release_checked",
+  "kind": "function",
+  "file": "functions/fn_00be91f0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE9360",
+  "name": "table_emit_a",
+  "kind": "function",
+  "file": "functions/fn_00be9360.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE93D0",
+  "name": "table_emit_b",
+  "kind": "function",
+  "file": "functions/fn_00be93d0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s302"
+ },
+ {
   "address": "0x00BF10F0",
   "name": "fetch_forward_copy_triple",
   "kind": "function",
@@ -57501,6 +57681,186 @@
   "lane": "r-b44"
  },
  {
+  "address": "0x00D3EB10",
+  "name": "jump_subtask_is_plain",
+  "kind": "function",
+  "file": "functions/fn_00d3eb10.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D3EB40",
+  "name": "jump_reset_state",
+  "kind": "function",
+  "file": "functions/fn_00d3eb40.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D3EB80",
+  "name": "CTaskComplexJump::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d3eb80.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D3EBD0",
+  "name": "CTaskSimpleJumpInAir::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d3ebd0.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D3EC40",
+  "name": "CTaskSimpleJumpLand::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d3ec40.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D3EC70",
+  "name": "CTaskSimpleJumpLaunch::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d3ec70.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D3EF50",
+  "name": "CTaskComplexJump::vf19",
+  "kind": "function",
+  "file": "functions/fn_00d3ef50.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D3F9E0",
+  "name": "jump_forward_tagged_build",
+  "kind": "function",
+  "file": "functions/fn_00d3f9e0.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D3FA30",
+  "name": "jump_pick_land_anims",
+  "kind": "function",
+  "file": "functions/fn_00d3fa30.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D3FF80",
+  "name": "jump_probe_land_clearance",
+  "kind": "function",
+  "file": "functions/fn_00d3ff80.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D40070",
+  "name": "jump_trace_ground_toggle",
+  "kind": "function",
+  "file": "functions/fn_00d40070.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D40120",
+  "name": "CTaskSimpleJumpLaunch::vf20",
+  "kind": "function",
+  "file": "functions/fn_00d40120.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D401E0",
+  "name": "jump_query_nonnull",
+  "kind": "function",
+  "file": "functions/fn_00d401e0.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D40690",
+  "name": "CTaskComplexJump::vf5",
+  "kind": "function",
+  "file": "functions/fn_00d40690.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D406E0",
+  "name": "CTaskSimpleJumpInAir::vf5",
+  "kind": "function",
+  "file": "functions/fn_00d406e0.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D40760",
+  "name": "CTaskSimpleJumpLand::vf5",
+  "kind": "function",
+  "file": "functions/fn_00d40760.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D407A0",
+  "name": "CTaskSimpleJumpLaunch::vf5",
+  "kind": "function",
+  "file": "functions/fn_00d407a0.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D407D0",
+  "name": "CTaskSimpleSidewaysDive::vf5",
+  "kind": "function",
+  "file": "functions/fn_00d407d0.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D40910",
+  "name": "jump_window_trace_accept",
+  "kind": "function",
+  "file": "functions/fn_00d40910.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
+  "address": "0x00D41680",
+  "name": "CTaskSimpleJumpInAir::vf17",
+  "kind": "function",
+  "file": "functions/fn_00d41680.rs",
+  "trials": 1100,
+  "checker": "version 4",
+  "lane": "r-s307"
+ },
+ {
   "address": "0x00D47FC0",
   "name": "set_fixture_kind_by_name",
   "kind": "function",
@@ -58192,6 +58552,24 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b206"
+ },
+ {
+  "address": "0x00D7CF30",
+  "name": "input_stick_filter",
+  "kind": "function",
+  "file": "functions/fn_00d7cf30.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b238"
+ },
+ {
+  "address": "0x00D7DA20",
+  "name": "node_link_frame_query",
+  "kind": "function",
+  "file": "functions/fn_00d7da20.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b238"
  },
  {
   "address": "0x00D7E0D0",

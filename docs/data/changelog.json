@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Leaderboard naming, third round: the same nine methods, new boards",
+    "title": "Rewrites: 42 more functions pass the checker (8111 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "42 rewrites added under rewrites/verified: 0 script native handlers and 42 other functions.",
+      "The tree now holds 8111 rewrites, 8092 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "322 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Leaderboard naming, third round: the same nine methods, new boards",
+    "commit": "742b14b26545338a4f2bf320434eb18aaa45668b",
     "summary": "Findings from the nm-26 lane.",
     "changes": [
       "New devlog entry: Leaderboard naming, third round: the same nine methods, new boards.",
