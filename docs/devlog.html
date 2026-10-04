@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#data-sections">Mapping the executable's data sections</a></li>
       <li><a href="#tools-format-docs">Tools: public documentation of the game's file formats</a></li>
       <li><a href="#subsystem-mainloop-timing">Subsystem survey: start-up, the main loop, threads and timing</a></li>
       <li><a href="#subsystem-input-ui">Subsystem survey: input, front end and HUD</a></li>
@@ -76,6 +77,41 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="data-sections">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Mapping the executable's data sections</h2>
+      <p>The executable's data is now mapped: read-only data holds imports, over three thousand validated virtual tables, string and float pools; the writable area is mostly an eleven megabyte zero-initialised region with a few very heavily referenced globals; and the binary contains no C++ exception tables at all, which means later lanes never have to model C++ unwinding.</p>
+      <h3>What was asked</h3>
+      <p>Map every data section of the game executable so later lanes know what lives where: describe each section, break read-only data into regions with byte counts, count functions with C++ exception unwinding, find the most-referenced globals, list every resource, analyse relocations, and report anything unusual.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The nine sections do not overlap. The code section is about eleven megabytes and the read-only data section about two megabytes. Writable data is thirteen megabytes in memory but barely over one megabyte on disk, so most of it is zero-initialised. The small entry-point stub section is writable and executable, and the one megabyte blob beside it is uniformly maximum-entropy, so encrypted or compressed.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Region</th><th role="columnheader">Size</th><th role="columnheader">What it holds</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Import tables</td><td role="cell" data-label="Size">about nine kilobytes</td><td role="cell" data-label="What it holds">twenty-one libraries, three hundred twenty-nine functions, no delay imports</td></tr>
+      <tr role="row"><td role="cell">Type and table data</td><td role="cell" data-label="Size">about five hundred forty kilobytes</td><td role="cell" data-label="What it holds">three thousand seven hundred type descriptors, three thousand two hundred virtual tables with forty-two thousand slots</td></tr>
+      <tr role="row"><td role="row">String pools</td><td role="cell" data-label="Size">about three hundred eighty kilobytes</td><td role="cell" data-label="What it holds">twenty-four thousand strings plus wide strings</td></tr>
+      <tr role="row"><td role="row">Float pools</td><td role="cell" data-label="Size">about sixty kilobytes</td><td role="cell" data-label="What it holds">constant runs referenced directly from code</td></tr>
+      <tr role="row"><td role="cell">Zero-initialised data</td><td role="cell" data-label="Size">about twelve megabytes</td><td role="cell" data-label="What it holds">unreferenced gaps of hundreds of kilobytes, probably static arrays or object pools</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Zero functions use C++ exception unwinding: no exception tables exist anywhere in the image, and only plain system exception imports are present. The build was most likely compiled with C++ exceptions disabled.</p>
+      <p><span class="evidence verified">Verified</span> The most-referenced global is used from over two thousand code sites. The top fifty globals are nearly all in the zero-initialised area; the few named ones sit beside engine class names and a view-matrix global next to what look like viewport dimensions.</p>
+      <p><span class="evidence verified">Verified</span> Resources are seven icons, version information reading 1.2.0.59, a manifest, and one large embedded achievement database carried over from the console build, with achievement text in several languages. The manifest still asks for a much older C runtime, which looks vestigial.</p>
+      <p><span class="evidence verified">Verified</span> Of almost three hundred thousand relocations, about one hundred fifty-three thousand are code-to-data pointers and about forty-six thousand are data-to-code pointers, mostly virtual table slots. Seven percent of code relocations point at values that are not valid addresses and sit in maximum-entropy pockets spread across the whole code section.</p>
+      <p><span class="evidence">Inferred</span> The anomalous relocations are either stale linker output or bytes the startup stub restores at runtime. The small extra read-only section looks like a vector-constant pool from a statically linked library. Code also reads its own file headers, which suggests an integrity or version check.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Treat C++ exceptions as absent: no unwinding support is needed in the checker or rewrites.</li>
+      <li>Treat the twenty thousand anomalous code relocations as untrusted input until a runtime lane diffs the code section after the startup stub runs.</li>
+      <li>Use the region map and the top-fifty globals list as the starting point for naming global variables.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>All analysis ran directly on the executable file with small Python scripts using a PE parser and a disassembler library, without starting the game. The scripts parse section headers, directories, resources and relocations, scan for runtime type structures and exception records with pointer validation, and cross-check every structure against relocation references. The lane outputs are a full report, a region map file with start, size, kind and evidence for each region, and per-area detail files.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first type-information scan found nothing, because the type descriptors live in writable data rather than read-only data, which is not the usual compiler layout. The locator scan then failed too, because the hierarchy descriptor here is four words wide rather than the documented three; decoding one known class hierarchy by hand revealed the extra field. The version-information library call also failed and had to be replaced with a manual parse. What remains unknown is why the descriptors sit in writable memory and what restores the high-entropy pockets in the code section, if anything does.</p>
+      </article>
 
       <article class="entry" id="tools-format-docs">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

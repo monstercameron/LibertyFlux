@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Tools: public documentation of the game's file formats",
+    "title": "Devlog: Mapping the executable's data sections",
     "commit": null,
+    "summary": "Findings from the p0-data-sections lane.",
+    "changes": [
+      "New devlog entry: Mapping the executable's data sections.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Tools: public documentation of the game's file formats",
+    "commit": "5630ac43bfb4d5b3c968bbdb3bb91d21a29ddbea",
     "summary": "Findings from the t-format-docs lane.",
     "changes": [
       "New devlog entry: Tools: public documentation of the game's file formats.",
