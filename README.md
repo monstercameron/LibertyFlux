@@ -235,25 +235,29 @@ Each tool's own docstring or `--help` has the details; this is the map.
 
 | Tool | What it is for | Run |
 |---|---|---|
-| Ledger | What the verified and unverified trees hold, checked for consistency and against the published counts | `python scripts/coordinator/ledger.py [--check] [--json]` |
-| Static checks | Patterns in verified rewrites that the checker cannot see: misaligned plain dereferences, partial proofs, checker-only mechanisms, unbalanced files and more | `python scripts/coordinator/lint_rewrites.py` |
+| Ledger | What the verified and unverified trees hold, checked for consistency and against the published counts; `--since REF` shows what an import wave added | `python scripts/coordinator/ledger.py [--check] [--since REF] [--markdown]` |
+| Static checks | Patterns in verified rewrites that the checker cannot see: misaligned plain dereferences, partial proofs, checker-only mechanisms, unbalanced files and more; `--file` checks a lane's output before it is imported | `python scripts/coordinator/lint_rewrites.py [--file PATH]` |
 | Build check | Which verified rewrites type-check for the 32-bit target against the shared runtime alone | `python scripts/ci/check_rewrites_build.py` |
-| Issue log | Merges the three above and a reading review into `rewrites/review/issues.json` | `python scripts/coordinator/issue_log.py --build FILE --review FILE` |
+| Issue log | Merges the three above and a reading review into `rewrites/review/issues.json`; `--summary`, `--csv`, `--filter` and `--mark` work through it | `python scripts/coordinator/issue_log.py --summary` |
 | Contract validator | Checks checker contracts against their schema and names every narrowing | `python scripts/checker/validate_contracts.py` |
 | Wrong-version generator | Writes deliberately wrong versions of a rewrite for the checker to reject | `python scripts/checker/mutate_rewrite.py FILE --out DIR` |
 | Assembler | Builds the verified rewrites into the injectable 32-bit library (type-checks anywhere; the DLL itself builds on Windows) | `python scripts/assemble/assemble.py [--build]` |
 | Shader translator | Translates Direct3D 9 shader model 3 programs to SPIR-V for Vulkan; tests run anywhere | `cargo test -p lf-dxso-spirv` |
 | Lift tests | Each lifted function against its verified rewrite | `cargo test -p lf-lift-diff` |
-| Publication check | No game files, machine paths or disassembly in tracked files or the devlog | `python scripts/ci/check_publication.py` |
-| Site generators | Progress-over-time data, the devlog feed and the social preview image | `python scripts/site/history.py`, `devlog_feed.py`, `social.py` |
+| Publication check | No game files, machine paths or disassembly in tracked files or the devlog; `--staged` checks what is about to be committed | `python scripts/ci/check_publication.py` |
+| Pre-commit hook | Runs the publication check (and the ledger, when rewrites are staged) before every commit | `python scripts/hooks/install.py` |
+| Environment check | Checks Python, the pinned Rust toolchain and targets, optional local tools and the hook, printing no machine paths | `python scripts/doctor.py` |
+| Site generators | Progress-over-time data, the quality page's data, the devlog feed and the social preview image | `python scripts/site/history.py`, `quality.py`, `devlog_feed.py`, `social.py` |
 
 **With your own copy of the game** (outputs are derived from game files: keep them on your machine,
 never commit them):
 
 | Tool | What it is for | Run |
 |---|---|---|
-| Viewer | Converts a model and its textures to glTF 2.0 and PNG | `cargo run -p lf-viewer -- model FILE --out DIR` |
+| Inspector | Summarises, lists or dumps any of the game's 18 file formats, and times parsing | `cargo run -p lf-inspect -- <format> [summarize\|list\|dump] FILE` |
+| Viewer | Converts a model and its textures to glTF 2.0 and PNG; `info` describes a file, `batch` converts a folder | `cargo run -p lf-viewer -- model FILE --out DIR` |
 | Shader converter | Translates every program in one shader container to SPIR-V files | `cargo run -p lf-dxso-spirv --example lf_dxso_convert -- FILE.fxc DIR` |
+| Shader dump | Shows how the translator sees each program (listing, SPIR-V text, reflection), or a census of what translates | `cargo run -p lf-dxso-spirv --example lf_dxso_dump -- FILE.fxc` |
 | Checker | Runs a rewrite beside the original function (32-bit Windows; needs the executable) | `python scripts/checker/checker2.py CONTRACT` |
 | Dashboard | Watches the agent lanes on the machine that runs them | `python scripts/dashboard/server.py` |
 
@@ -307,6 +311,10 @@ cargo test --workspace --exclude lf-rewrite-32 --exclude lf-checker-worker --exc
 (cd scripts/checker && python -m unittest discover -s tests)
 python scripts/ci/check_publication.py
 ```
+
+`python scripts/doctor.py` checks that the toolchain and targets are in place, and
+`python scripts/hooks/install.py` installs a pre-commit hook that runs the publication check before
+every commit.
 
 The 32-bit Windows crates type-check on any system with `rustup target add i686-pc-windows-msvc`
 (`cargo check --target i686-pc-windows-msvc -p <crate>`); linking and running them needs Windows.
