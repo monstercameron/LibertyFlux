@@ -1467,6 +1467,177 @@
   "lane": "r-b112"
  },
  {
+  "address": "0x0065FC20",
+  "name": "session_id_format",
+  "kind": "function",
+  "file": "functions/fn_0065fc20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x0065FC90",
+  "name": "gamer_record_copy",
+  "kind": "function",
+  "file": "functions/fn_0065fc90.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x0065FD20",
+  "name": "fn_0065fd20",
+  "kind": "function",
+  "file": "functions/fn_0065fd20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x0065FED0",
+  "name": "fn_0065fed0",
+  "kind": "function",
+  "file": "functions/fn_0065fed0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x0065FF00",
+  "name": "fn_0065ff00",
+  "kind": "function",
+  "file": "functions/fn_0065ff00.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x00660010",
+  "name": "fn_00660010",
+  "kind": "function",
+  "file": "functions/fn_00660010.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x006601F0",
+  "name": "fn_006601f0",
+  "kind": "function",
+  "file": "functions/fn_006601f0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x00660220",
+  "name": "fn_00660220",
+  "kind": "function",
+  "file": "functions/fn_00660220.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x006603C0",
+  "name": "fn_006603c0",
+  "kind": "function",
+  "file": "functions/fn_006603c0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x006605B0",
+  "name": "task_state_copy",
+  "kind": "function",
+  "file": "functions/fn_006605b0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x00660610",
+  "name": "fn_00660610",
+  "kind": "function",
+  "file": "functions/fn_00660610.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x006609C0",
+  "name": "fn_006609c0",
+  "kind": "function",
+  "file": "functions/fn_006609c0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x00660B00",
+  "name": "gamer_slot_append",
+  "kind": "function",
+  "file": "functions/fn_00660b00.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x00660C10",
+  "name": "fn_00660c10",
+  "kind": "function",
+  "file": "functions/fn_00660c10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x00660DE0",
+  "name": "fn_00660de0",
+  "kind": "function",
+  "file": "functions/fn_00660de0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x00661280",
+  "name": "fn_00661280",
+  "kind": "function",
+  "file": "functions/fn_00661280.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x00661300",
+  "name": "gamer_bulk_load",
+  "kind": "function",
+  "file": "functions/fn_00661300.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x00661390",
+  "name": "fn_00661390",
+  "kind": "function",
+  "file": "functions/fn_00661390.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
+  "address": "0x006613D0",
+  "name": "fn_006613d0",
+  "kind": "function",
+  "file": "functions/fn_006613d0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s195"
+ },
+ {
   "address": "0x00661530",
   "name": "rage::snDropGamersTask::snDropGamersTask",
   "kind": "function",
@@ -19105,6 +19276,42 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-08"
+ },
+ {
+  "address": "0x00B2A310",
+  "name": "PlaybackRecordingSlotSetup",
+  "kind": "function",
+  "file": "functions/fn_00b2a310.rs",
+  "trials": 1200,
+  "checker": "version 3",
+  "lane": "r-b119"
+ },
+ {
+  "address": "0x00B2A790",
+  "name": "follow-mode switch",
+  "kind": "function",
+  "file": "functions/fn_00b2a790.rs",
+  "trials": 3000,
+  "checker": "version 3",
+  "lane": "r-b119"
+ },
+ {
+  "address": "0x00B2B0C0",
+  "name": "task-record probe chain lookup",
+  "kind": "function",
+  "file": "functions/fn_00b2b0c0.rs",
+  "trials": 1200,
+  "checker": "version 3",
+  "lane": "r-b119"
+ },
+ {
+  "address": "0x00B2B430",
+  "name": "range-cursor refresh",
+  "kind": "function",
+  "file": "functions/fn_00b2b430.rs",
+  "trials": 1500,
+  "checker": "version 3",
+  "lane": "r-b119"
  },
  {
   "address": "0x00B2C980",
@@ -45207,6 +45414,195 @@
   "lane": "r-b122"
  },
  {
+  "address": "0x00E56170",
+  "name": "UIRawClipViewer::vf94",
+  "kind": "function",
+  "file": "functions/fn_00e56170.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b122"
+ },
+ {
+  "address": "0x00E5BCC0",
+  "name": "register_callback_e6e190",
+  "kind": "function",
+  "file": "functions/fn_00e5bcc0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BCD0",
+  "name": "register_callback_e6e1a0",
+  "kind": "function",
+  "file": "functions/fn_00e5bcd0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BCE0",
+  "name": "register_callback_e6e1b0",
+  "kind": "function",
+  "file": "functions/fn_00e5bce0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BCF0",
+  "name": "register_callback_e6e1c0",
+  "kind": "function",
+  "file": "functions/fn_00e5bcf0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BD00",
+  "name": "register_callback_e6e1e0",
+  "kind": "function",
+  "file": "functions/fn_00e5bd00.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BD10",
+  "name": "register_callback_e6e1f0",
+  "kind": "function",
+  "file": "functions/fn_00e5bd10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BD20",
+  "name": "copy_float3_to_18d2170",
+  "kind": "function",
+  "file": "functions/fn_00e5bd20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BD60",
+  "name": "broadcast_float_to_1b4b304_x3",
+  "kind": "function",
+  "file": "functions/fn_00e5bd60.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BD90",
+  "name": "broadcast_float_to_1b4b2b0_x3",
+  "kind": "function",
+  "file": "functions/fn_00e5bd90.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BDC0",
+  "name": "broadcast_float_to_1b4b310_x3",
+  "kind": "function",
+  "file": "functions/fn_00e5bdc0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BDF0",
+  "name": "broadcast_float_to_18d2190_x3",
+  "kind": "function",
+  "file": "functions/fn_00e5bdf0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BE20",
+  "name": "store_float_to_1b4b330",
+  "kind": "function",
+  "file": "functions/fn_00e5be20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BE40",
+  "name": "store_float_to_1b4b2f4",
+  "kind": "function",
+  "file": "functions/fn_00e5be40.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BE60",
+  "name": "store_float_to_1b4b2c8",
+  "kind": "function",
+  "file": "functions/fn_00e5be60.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BE80",
+  "name": "store_float_to_1b4b2ec",
+  "kind": "function",
+  "file": "functions/fn_00e5be80.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BEA0",
+  "name": "broadcast_float4_to_18d21b0",
+  "kind": "function",
+  "file": "functions/fn_00e5bea0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BEC0",
+  "name": "broadcast_float_to_18d21a0_x3",
+  "kind": "function",
+  "file": "functions/fn_00e5bec0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BEF0",
+  "name": "broadcast_float_to_18d2180_x3",
+  "kind": "function",
+  "file": "functions/fn_00e5bef0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BF20",
+  "name": "init_timer_float_block",
+  "kind": "function",
+  "file": "functions/fn_00e5bf20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
+  "address": "0x00E5BF50",
+  "name": "register_callback_e6e200",
+  "kind": "function",
+  "file": "functions/fn_00e5bf50.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s188"
+ },
+ {
   "address": "0x00E5C460",
   "name": "link_static_node",
   "kind": "function",
@@ -50992,6 +51388,186 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-12"
+ },
+ {
+  "address": "0x00E6F520",
+  "name": "timer_hook_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00e6f520.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6F590",
+  "name": "timing_link_reset",
+  "kind": "function",
+  "file": "functions/fn_00e6f590.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6F6E0",
+  "name": "timer_table_notify_2490",
+  "kind": "function",
+  "file": "functions/fn_00e6f6e0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6F6F0",
+  "name": "timer_table_notify_2468",
+  "kind": "function",
+  "file": "functions/fn_00e6f6f0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6F950",
+  "name": "timer_queue_drain_std",
+  "kind": "function",
+  "file": "functions/fn_00e6f950.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6F980",
+  "name": "timer_table_notify_3368",
+  "kind": "function",
+  "file": "functions/fn_00e6f980.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6FA00",
+  "name": "timer_array_teardown_16",
+  "kind": "function",
+  "file": "functions/fn_00e6fa00.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6FB70",
+  "name": "timer_queue_drain_a",
+  "kind": "function",
+  "file": "functions/fn_00e6fb70.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6FBA0",
+  "name": "timer_queue_drain_b",
+  "kind": "function",
+  "file": "functions/fn_00e6fba0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6FBD0",
+  "name": "timer_table_notify_923c",
+  "kind": "function",
+  "file": "functions/fn_00e6fbd0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6FBE0",
+  "name": "timer_table_notify_8124",
+  "kind": "function",
+  "file": "functions/fn_00e6fbe0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6FC80",
+  "name": "timer_array_teardown_6a",
+  "kind": "function",
+  "file": "functions/fn_00e6fc80.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6FCC0",
+  "name": "timer_array_teardown_6b",
+  "kind": "function",
+  "file": "functions/fn_00e6fcc0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6FD30",
+  "name": "timer_reset_forward_thunk",
+  "kind": "function",
+  "file": "functions/fn_00e6fd30.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6FDB0",
+  "name": "timing_block_reset_a",
+  "kind": "function",
+  "file": "functions/fn_00e6fdb0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6FE10",
+  "name": "timing_block_reset_b",
+  "kind": "function",
+  "file": "functions/fn_00e6fe10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6FE90",
+  "name": "timer_poll_gate",
+  "kind": "function",
+  "file": "functions/fn_00e6fe90.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6FF00",
+  "name": "timer_pending_deliver",
+  "kind": "function",
+  "file": "functions/fn_00e6ff00.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E6FFA0",
+  "name": "timing_block_reset_c",
+  "kind": "function",
+  "file": "functions/fn_00e6ffa0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
+ },
+ {
+  "address": "0x00E701A0",
+  "name": "timer_gated_notify",
+  "kind": "function",
+  "file": "functions/fn_00e701a0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s183"
  },
  {
   "address": "0x00E70230",
