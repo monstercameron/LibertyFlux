@@ -180,6 +180,186 @@
   "lane": "a-08"
  },
  {
+  "address": "0x005B2620",
+  "name": "dual_state_update",
+  "kind": "function",
+  "file": "functions/fn_005b2620.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B2A80",
+  "name": "loader_status_poll",
+  "kind": "function",
+  "file": "functions/fn_005b2a80.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B2F80",
+  "name": "conditional_restart",
+  "kind": "function",
+  "file": "functions/fn_005b2f80.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B4690",
+  "name": "fixed_object_forward",
+  "kind": "function",
+  "file": "functions/fn_005b4690.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B46A0",
+  "name": "aspect_band_lookup",
+  "kind": "function",
+  "file": "functions/fn_005b46a0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B4ED0",
+  "name": "mode_select_and_apply",
+  "kind": "function",
+  "file": "functions/fn_005b4ed0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B4F80",
+  "name": "target_attach_preset",
+  "kind": "function",
+  "file": "functions/fn_005b4f80.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B5B20",
+  "name": "guarded_handle_release",
+  "kind": "function",
+  "file": "functions/fn_005b5b20.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B5B80",
+  "name": "record_table_init",
+  "kind": "function",
+  "file": "functions/fn_005b5b80.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B5CC0",
+  "name": "record_table_find_tagged",
+  "kind": "function",
+  "file": "functions/fn_005b5cc0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B5D80",
+  "name": "record_table_read_primary",
+  "kind": "function",
+  "file": "functions/fn_005b5d80.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B5DD0",
+  "name": "record_table_read_nontagged",
+  "kind": "function",
+  "file": "functions/fn_005b5dd0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B5E30",
+  "name": "record_table_write_nontagged",
+  "kind": "function",
+  "file": "functions/fn_005b5e30.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B5EA0",
+  "name": "vector_broadcast_fill",
+  "kind": "function",
+  "file": "functions/fn_005b5ea0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B5F50",
+  "name": "span_compact_finalize",
+  "kind": "function",
+  "file": "functions/fn_005b5f50.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B6030",
+  "name": "txd_slot_alloc",
+  "kind": "function",
+  "file": "functions/fn_005b6030.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B6080",
+  "name": "txd_slot_acquire",
+  "kind": "function",
+  "file": "functions/fn_005b6080.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B60F0",
+  "name": "Txd_FindSlot",
+  "kind": "function",
+  "file": "functions/fn_005b60f0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B6110",
+  "name": "txd_slot_retain",
+  "kind": "function",
+  "file": "functions/fn_005b6110.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
+  "address": "0x005B6140",
+  "name": "txd_slot_release",
+  "kind": "function",
+  "file": "functions/fn_005b6140.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s116"
+ },
+ {
   "address": "0x005E4320",
   "name": "NativeImpl_CREATE_HTML_SCRIPT_OBJECT",
   "kind": "function",
@@ -2932,6 +3112,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-09"
+ },
+ {
+  "address": "0x00895590",
+  "name": "audio_voice_param_block_copy",
+  "kind": "function",
+  "file": "functions/fn_00895590.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b69"
  },
  {
   "address": "0x008976E0",
@@ -7812,6 +8001,15 @@
   "lane": "r-s105"
  },
  {
+  "address": "0x00981FF0",
+  "name": "audio_voice_slot_alloc",
+  "kind": "function",
+  "file": "functions/fn_00981ff0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b68"
+ },
+ {
   "address": "0x00982180",
   "name": "audio_visit_voice_array",
   "kind": "function",
@@ -7848,6 +8046,15 @@
   "lane": "a-11"
  },
  {
+  "address": "0x009823D0",
+  "name": "audio_voice_register_by_hash",
+  "kind": "function",
+  "file": "functions/fn_009823d0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b68"
+ },
+ {
   "address": "0x009824E0",
   "name": "audio_keyed_slot_detach",
   "kind": "function",
@@ -7864,6 +8071,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-11"
+ },
+ {
+  "address": "0x00983080",
+  "name": "audio_positional_update",
+  "kind": "function",
+  "file": "functions/fn_00983080.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b68"
  },
  {
   "address": "0x00984140",
@@ -12483,6 +12699,168 @@
   "lane": "r-s79"
  },
  {
+  "address": "0x00A95A80",
+  "name": "fiStreamingDevice::~fiStreamingDevice__deleting",
+  "kind": "function",
+  "file": "functions/fn_00a95a80.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A95BD0",
+  "name": "streaming_device_poll",
+  "kind": "function",
+  "file": "functions/fn_00a95bd0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A95D50",
+  "name": "streaming_slot_array_reset",
+  "kind": "function",
+  "file": "functions/fn_00a95d50.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A96290",
+  "name": "NativeImpl_GET_SCREEN_FADE_ALPHA_2",
+  "kind": "function",
+  "file": "functions/fn_00a96290.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A962C0",
+  "name": "fade_progress_update",
+  "kind": "function",
+  "file": "functions/fn_00a962c0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A96340",
+  "name": "Fade_GetChannelState",
+  "kind": "function",
+  "file": "functions/fn_00a96340.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A96430",
+  "name": "fade_range_classify",
+  "kind": "function",
+  "file": "functions/fn_00a96430.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A96470",
+  "name": "fade_clamp_and_advance",
+  "kind": "function",
+  "file": "functions/fn_00a96470.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A96500",
+  "name": "fade_advance_step",
+  "kind": "function",
+  "file": "functions/fn_00a96500.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A96560",
+  "name": "fade_ready_test",
+  "kind": "function",
+  "file": "functions/fn_00a96560.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A96580",
+  "name": "fade_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00a96580.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A96A30",
+  "name": "fade_ratio_push",
+  "kind": "function",
+  "file": "functions/fn_00a96a30.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A96A70",
+  "name": "fade_reset",
+  "kind": "function",
+  "file": "functions/fn_00a96a70.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A96AB0",
+  "name": "fade_setup",
+  "kind": "function",
+  "file": "functions/fn_00a96ab0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A96C70",
+  "name": "fade_copy",
+  "kind": "function",
+  "file": "functions/fn_00a96c70.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A96DB0",
+  "name": "fade_sample_append",
+  "kind": "function",
+  "file": "functions/fn_00a96db0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A97860",
+  "name": "fade_vec_find_or_append",
+  "kind": "function",
+  "file": "functions/fn_00a97860.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
+  "address": "0x00A97930",
+  "name": "fade_slot_clear",
+  "kind": "function",
+  "file": "functions/fn_00a97930.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s123"
+ },
+ {
   "address": "0x00AB9840",
   "name": "slot_field_select",
   "kind": "function",
@@ -12868,6 +13246,42 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-11"
+ },
+ {
+  "address": "0x00AD4410",
+  "name": "audio_enqueue_sorted_triple",
+  "kind": "function",
+  "file": "functions/fn_00ad4410.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b62"
+ },
+ {
+  "address": "0x00AD5190",
+  "name": "audio_scan_tables_windowed",
+  "kind": "function",
+  "file": "functions/fn_00ad5190.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b62"
+ },
+ {
+  "address": "0x00AD53C0",
+  "name": "audio_blend_table_lookup",
+  "kind": "function",
+  "file": "functions/fn_00ad53c0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b62"
+ },
+ {
+  "address": "0x00AD5560",
+  "name": "audio_faded_lookup_with_report",
+  "kind": "function",
+  "file": "functions/fn_00ad5560.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b62"
  },
  {
   "address": "0x00AD5850",
@@ -13786,6 +14200,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b30"
+ },
+ {
+  "address": "0x00B5F4E0",
+  "name": "STAY_DOWN",
+  "kind": "function",
+  "file": "functions/fn_00b5f4e0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b64"
  },
  {
   "address": "0x00B5FA50",
@@ -34783,6 +35206,33 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b29"
+ },
+ {
+  "address": "0x00C8A3E0",
+  "name": "audio_voice_gate_retry",
+  "kind": "function",
+  "file": "functions/fn_00c8a3e0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b67"
+ },
+ {
+  "address": "0x00C8A850",
+  "name": "audio_event_router",
+  "kind": "function",
+  "file": "functions/fn_00c8a850.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b67"
+ },
+ {
+  "address": "0x00C8AE50",
+  "name": "audio_voice_update",
+  "kind": "function",
+  "file": "functions/fn_00c8ae50.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b67"
  },
  {
   "address": "0x00C8B0C0",
