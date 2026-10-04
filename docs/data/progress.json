@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-03",
-  "updated_at": "2026-10-03 20:33",
+  "updated_at": "2026-10-03 20:43",
   "phase": {
     "index": 0,
     "name": "Measure"
@@ -32,16 +32,52 @@
       "source": "start-up stub lane and entropy scan"
     },
     {
-      "label": "Class names in the type information",
-      "value": 3723,
+      "label": "C++ classes described by type information",
+      "value": 3727,
       "unit": "",
-      "source": "public class names lane"
+      "source": "class recovery lane"
+    },
+    {
+      "label": "Virtual tables",
+      "value": 3247,
+      "unit": "with 42,780 slots",
+      "source": "class recovery lane"
+    },
+    {
+      "label": "Distinct virtual functions",
+      "value": 12522,
+      "unit": "",
+      "source": "class recovery lane"
+    },
+    {
+      "label": "Script functions registered and named",
+      "value": 3034,
+      "unit": "all named",
+      "source": "script natives lane"
+    },
+    {
+      "label": "Strings in the executable",
+      "value": 162981,
+      "unit": "giving 12,773 naming hints",
+      "source": "strings lane"
+    },
+    {
+      "label": "AI task classes",
+      "value": 324,
+      "unit": "plus 99 event classes",
+      "source": "peds and tasks lane"
+    },
+    {
+      "label": "Objects linked into the executable",
+      "value": 2293,
+      "unit": "796 built with link-time code generation",
+      "source": "compiler record lane"
     },
     {
       "label": "Imported operating system functions",
       "value": 329,
       "unit": "in 21 DLLs",
-      "source": "imports lane log"
+      "source": "imports lane"
     },
     {
       "label": "Files in the game folder",
@@ -57,10 +93,10 @@
     }
   ],
   "activity": {
-    "lanes_running": 22,
-    "lanes_finished": 16,
+    "lanes_running": 8,
+    "lanes_finished": 30,
     "lanes_incomplete": 0,
-    "devlog_entries": 30
+    "devlog_entries": 50
   },
   "map": []
 }
