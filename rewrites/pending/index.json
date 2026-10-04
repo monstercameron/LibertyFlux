@@ -7929,6 +7929,33 @@
   "lane": "a-16"
  },
  {
+  "address": "0x008E59A0",
+  "name": "gps_slot_advance",
+  "kind": "function",
+  "file": "functions/fn_008e59a0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b124"
+ },
+ {
+  "address": "0x008E6200",
+  "name": "room_tone_bank_update",
+  "kind": "function",
+  "file": "functions/fn_008e6200.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b124"
+ },
+ {
+  "address": "0x008E63F0",
+  "name": "gated_dual_channel_update",
+  "kind": "function",
+  "file": "functions/fn_008e63f0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b124"
+ },
+ {
   "address": "0x008E6550",
   "name": "siftdown_then_push_heap",
   "kind": "function",
@@ -39618,6 +39645,51 @@
   "lane": "a-18"
  },
  {
+  "address": "0x00C15080",
+  "name": "table_update_cond",
+  "kind": "function",
+  "file": "functions/fn_00c15080.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b115"
+ },
+ {
+  "address": "0x00C15260",
+  "name": "table_update_gated",
+  "kind": "function",
+  "file": "functions/fn_00c15260.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b115"
+ },
+ {
+  "address": "0x00C155F0",
+  "name": "table_update_dual",
+  "kind": "function",
+  "file": "functions/fn_00c155f0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b115"
+ },
+ {
+  "address": "0x00C15790",
+  "name": "table_update_plain",
+  "kind": "function",
+  "file": "functions/fn_00c15790.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b115"
+ },
+ {
+  "address": "0x00C15960",
+  "name": "table_update_select",
+  "kind": "function",
+  "file": "functions/fn_00c15960.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b115"
+ },
+ {
   "address": "0x00C2C3E0",
   "name": "audStaticRadioEmitter::vf10",
   "kind": "function",
@@ -43569,6 +43641,24 @@
   "lane": "r-b85"
  },
  {
+  "address": "0x00E42790",
+  "name": "multi_pass_quad_draw_a",
+  "kind": "function",
+  "file": "functions/fn_00e42790.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b116"
+ },
+ {
+  "address": "0x00E42DA0",
+  "name": "multi_pass_quad_draw_b",
+  "kind": "function",
+  "file": "functions/fn_00e42da0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b116"
+ },
+ {
   "address": "0x00E45020",
   "name": "slot_array_build_register_a",
   "kind": "function",
@@ -45754,6 +45844,186 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s168"
+ },
+ {
+  "address": "0x00E61700",
+  "name": "timing_callback_register_1",
+  "kind": "function",
+  "file": "functions/fn_00e61700.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61710",
+  "name": "timing_state_reset_and_register",
+  "kind": "function",
+  "file": "functions/fn_00e61710.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61730",
+  "name": "timing_callback_register_2",
+  "kind": "function",
+  "file": "functions/fn_00e61730.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61740",
+  "name": "timing_lock_init_and_register_1",
+  "kind": "function",
+  "file": "functions/fn_00e61740.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61760",
+  "name": "timing_callback_register_3",
+  "kind": "function",
+  "file": "functions/fn_00e61760.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61770",
+  "name": "timing_callback_register_4",
+  "kind": "function",
+  "file": "functions/fn_00e61770.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61920",
+  "name": "timing_callback_register_5",
+  "kind": "function",
+  "file": "functions/fn_00e61920.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61930",
+  "name": "timing_group_init_and_register",
+  "kind": "function",
+  "file": "functions/fn_00e61930.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61950",
+  "name": "timing_unit_init_1",
+  "kind": "function",
+  "file": "functions/fn_00e61950.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61970",
+  "name": "timing_unit_init_2",
+  "kind": "function",
+  "file": "functions/fn_00e61970.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61990",
+  "name": "timing_unit_init_3",
+  "kind": "function",
+  "file": "functions/fn_00e61990.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E619B0",
+  "name": "timing_unit_init_4",
+  "kind": "function",
+  "file": "functions/fn_00e619b0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E619D0",
+  "name": "timing_unit_init_5",
+  "kind": "function",
+  "file": "functions/fn_00e619d0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E619F0",
+  "name": "timing_unit_init_6",
+  "kind": "function",
+  "file": "functions/fn_00e619f0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61A10",
+  "name": "timing_unit_init_7",
+  "kind": "function",
+  "file": "functions/fn_00e61a10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61A30",
+  "name": "timing_lock_init_and_register_2",
+  "kind": "function",
+  "file": "functions/fn_00e61a30.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61A50",
+  "name": "timing_unit_init_8",
+  "kind": "function",
+  "file": "functions/fn_00e61a50.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61A70",
+  "name": "timing_unit_init_9",
+  "kind": "function",
+  "file": "functions/fn_00e61a70.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61A90",
+  "name": "timing_lock_init_and_register_3",
+  "kind": "function",
+  "file": "functions/fn_00e61a90.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
+ },
+ {
+  "address": "0x00E61AB0",
+  "name": "timing_lock_init_and_register_4",
+  "kind": "function",
+  "file": "functions/fn_00e61ab0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s178"
  },
  {
   "address": "0x00E62880",
