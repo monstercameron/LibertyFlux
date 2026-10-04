@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#imports-api">What the import table says the engine needs from the platform</a></li>
       <li><a href="#data-sections">Mapping the executable's data sections</a></li>
       <li><a href="#tools-format-docs">Tools: public documentation of the game's file formats</a></li>
       <li><a href="#subsystem-mainloop-timing">Subsystem survey: start-up, the main loop, threads and timing</a></li>
@@ -77,6 +78,61 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="imports-api">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>What the import table says the engine needs from the platform</h2>
+      <p><span class="evidence verified">Verified</span> The executable imports 329 functions from 21 system and middleware libraries, and counting every use site shows the engine leans hardest on synchronisation, threading and its millisecond clock, while graphics, audio and online services arrive mostly through libraries loaded at run time. The scan is provably complete: every reference found in code matches an entry in the relocation table exactly.</p>
+      <h3>What was asked</h3>
+      <p>Turn the import table into a specification for the platform layer: list every imported function, group the imports by purpose, rank them by counting call sites, find libraries loaded at run time instead of imported, and recommend a maintained Rust replacement with a verified licence for each group.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Of the 329 imports, 264 are called directly, 12 are used only through a register, and 53 are fully dead: their slots are referenced nowhere in the file. The 2,274 references found in code equal the 2,274 matching relocation entries, so no use site was missed. Sockets are imported almost entirely by ordinal rather than by name, as is the whole of DirectSound.</p>
+      <p><span class="evidence verified">Verified</span> Use by group, heaviest first, with the recommended replacement:</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Group</th><th role="columnheader">Imports</th><th role="columnheader">Use sites</th><th role="columnheader">Replacement</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Synchronisation</td><td role="cell" data-label="Imports">24</td><td role="cell" data-label="Use sites">about 1,320</td><td role="cell" data-label="Replacement">parking_lot (MIT or Apache-2.0)</td></tr>
+      <tr role="row"><td role="cell">Process and module</td><td role="cell" data-label="Imports">31</td><td role="cell" data-label="Use sites">about 180</td><td role="cell" data-label="Replacement">standard library</td></tr>
+      <tr role="row"><td role="cell">Time and timers</td><td role="cell" data-label="Imports">12</td><td role="cell" data-label="Use sites">about 110</td><td role="cell" data-label="Replacement">standard library</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Imports">Threads</td><td role="cell" data-label="Imports">16</td><td role="cell" data-label="Use sites">about 105</td><td role="cell" data-label="Replacement">standard library plus parking_lot</td></tr>
+      <tr role="row"><td role="cell">Window and message loop</td><td role="cell" data-label="Imports">38</td><td role="cell" data-label="Use sites">about 85</td><td role="cell" data-label="Replacement">sdl3 crate (MIT)</td></tr>
+      <tr role="row"><td role="cell">Memory</td><td role="cell" data-label="Imports">22</td><td role="cell" data-label="Use sites">about 75</td><td role="cell" data-label="Replacement">standard library plus memmap2 (MIT or Apache-2.0)</td></tr>
+      <tr role="row"><td role="cell">Networking</td><td role="cell" data-label="Imports">27</td><td role="cell" data-label="Use sites">about 75</td><td role="cell" data-label="Replacement">tokio (MIT)</td></tr>
+      <tr role="row"><td role="cell">Files and directories</td><td role="cell" data-label="Imports">38</td><td role="cell" data-label="Use sites">about 65</td><td role="cell" data-label="Replacement">standard library plus memmap2</td></tr>
+      <tr role="row"><td role="cell">Text and locale</td><td role="cell" data-label="Imports">18</td><td role="cell" data-label="Use sites">about 55</td><td role="cell" data-label="Replacement">standard library</td></tr>
+      <tr role="row"><td role="cell">Shell and paths</td><td role="cell" data-label="Imports">8</td><td role="cell" data-label="Use sites">about 55</td><td role="cell" data-label="Replacement">dirs (MIT or Apache-2.0)</td></tr>
+      <tr role="row"><td role="cell">COM</td><td role="cell" data-label="Imports">11</td><td role="cell" data-label="Use sites">about 45</td><td role="cell" data-label="Replacement">windows crate while replacing uses (MIT/Apache)</td></tr>
+      <tr role="row"><td role="cell">Input</td><td role="cell" data-label="Imports">14</td><td role="cell" data-label="Use sites">about 35</td><td role="cell" data-label="Replacement">sdl3 (MIT)</td></tr>
+      <tr role="row"><td role="cell">Video (Bink)</td><td role="cell" data-label="Imports">14</td><td role="cell" data-label="Use sites">about 20</td><td role="cell" data-label="Replacement">ffmpeg-next (WTFPL; FFmpeg itself LGPL/GPL)</td></tr>
+      <tr role="row"><td role="cell">Cryptography and trust</td><td role="cell" data-label="Imports">11</td><td role="cell" data-label="Use sites">about 15</td><td role="cell" data-label="Replacement">rustls (Apache-2.0, ISC or MIT)</td></tr>
+      <tr role="row"><td role="cell">Audio</td><td role="cell" data-label="Imports">12</td><td role="cell" data-label="Use sites">about 15</td><td role="cell" data-label="Replacement">cpal (Apache-2.0) plus symphonia (MPL-2.0)</td></tr>
+      <tr role="row"><td role="cell">Debugging and crash</td><td role="cell" data-label="Imports">9</td><td role="cell" data-label="Use sites">about 10</td><td role="cell" data-label="Replacement">tracing (MIT)</td></tr>
+      <tr role="row"><td role="cell">Console, registry, graphics detect, version, media reader, power</td><td role="cell" data-label="Imports">26</td><td role="cell" data-label="Use sites">about 25</td><td role="cell" data-label="Replacement">standard library, config files, wgpu (MIT or Apache-2.0), or dropped</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The single most used calls are the critical-section enter and leave functions at about 350 uses each, followed by atomic compare-and-swap operations, the millisecond clock with 84 uses, and a minimised-window check with 50 uses scattered across the program.</p>
+      <p><span class="evidence verified">Verified</span> Libraries loaded at run time rather than imported:</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Library</th><th role="columnheader">What is resolved</th><th role="columnheader">Status</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Gamepad input library</td><td role="cell" data-label="What is resolved">state, rumble and capability queries</td><td role="cell" data-label="Status">live</td></tr>
+      <tr role="row"><td role="cell">Direct3D 9</td><td role="cell" data-label="What is resolved">device creation plus seven profiling markers</td><td role="cell" data-label="Status">live; static import dead</td></tr>
+      <tr role="row"><td role="cell">Steam client library</td><td role="cell" data-label="What is resolved">init, shutdown, callbacks and seven interface versions</td><td role="cell" data-label="Status">live, behind a setting</td></tr>
+      <tr role="row"><td role="cell">Social Club module</td><td role="cell" data-label="What is resolved">first export by ordinal from a fixed subpath</td><td role="cell" data-label="Status">inert here, file not shipped</td></tr>
+      <tr role="row"><td role="cell">NVIDIA libraries</td><td role="cell" data-label="What is resolved">driver query interfaces</td><td role="cell" data-label="Status">live</td></tr>
+      <tr role="row"><td role="cell">Crash reporting library</td><td role="cell" data-label="What is resolved">report create, submit and attach functions</td><td role="cell" data-label="Status">live</td></tr>
+      <tr role="row"><td role="cell">QuickTime media layer</td><td role="cell" data-label="What is resolved">dispatcher and component calls</td><td role="cell" data-label="Status">legacy probe, inert in practice</td></tr>
+      <tr role="row"><td role="cell">.NET hosting library</td><td role="cell" data-label="What is resolved">one exit-process function</td><td role="cell" data-label="Status">legacy presence check</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence">Inferred</span> About 35 further run-time probes for newer Windows functions belong to the C runtime startup code, not the engine: the engine baseline is XP-era static imports. <span class="evidence verified">Verified</span> Two system components are driven through COM: machine inventory over WMI at two sites and shortcut handling at one site; two further COM classes could not be identified.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The platform layer needs, in order of weight: full synchronisation primitives with exact wait semantics, threads with priorities and affinity, a millisecond engine clock, client sockets with a select-style loop, synchronous file and directory access plus file mappings, a window with minimise semantics, gamepad input, and decoders for Bink video and the existing audio formats. Registry, power queries, version stamps and signature checks can be dropped or replaced with config files. Video and audio replacements carry licence notes: the FFmpeg wrapper is permissive but FFmpeg itself is LGPL or GPL depending on build options, and the audio decoding library is MPL-2.0. The largest unknown is the window creation path (see below), which does not block the specification: the window group itself is certain.</p>
+      <h3>How to reproduce it</h3>
+      <p>Parse the executable import directory, then scan the executable sections for indirect calls, jumps, pushes and pointer loads through each import slot, and cross-check every hit against the relocation table: the counts must agree exactly. Recover run-time loads by listing loader call sites and the string arguments pushed near them, then cross-reference every library-name string in the image. Ordinal imports were resolved against the export tables of the matching system libraries, and crate licences were checked against the crates registry and lib.rs. The lane scripts and the resulting machine-readable tables are kept with the lane scratch work for the coordinator to integrate.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The biggest surprise is that every window-creation and message-pump import is dead, with no dynamic name string either, yet the program has a live window procedure and window-state code, and no shipped module creates the window for it. <span class="evidence">Unknown</span> The call path is hidden from static analysis; the leading hypothesis is that the start-up stub resolves a window-API table that game code calls through, and a later lane should check cross-references to data pointer tables plus dynamic observation. Two smaller traps: the linker folds some string literals together with the import table own name entries, which at first looked like dynamic resolution reusing import names, and naive call counting misses a dozen imports used only through registers, including the two path-building functions that turned out to be among the heaviest shell users. Register-indirect counts stay approximate because some calls sit further from their pointer load than the pairing window.</p>
+      </article>
 
       <article class="entry" id="data-sections">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
