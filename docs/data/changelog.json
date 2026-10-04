@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: A callee that pops more than its call site pushes",
+    "title": "Rewrites: 64 more functions pass the checker (10964 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "64 rewrites added under rewrites/verified: 0 script native handlers and 64 other functions.",
+      "The tree now holds 10964 rewrites, 10945 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "473 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: A callee that pops more than its call site pushes",
+    "commit": "a47af8fd70e49cf4ce5cecd46207e24c642b26cd",
     "summary": "Findings from the r-b341 lane.",
     "changes": [
       "New devlog entry: A callee that pops more than its call site pushes.",
