@@ -16,6 +16,14 @@
 #[path = "../lf-hook/src/pe.rs"]
 mod pe;
 
+// The forwarding-table generation is pure logic, shared with lf-hook's unit
+// tests (synthetic exports) so it can be checked on the host. Included the
+// same way as pe.rs; its own `#[cfg(test)]` tests are inert here (a build
+// script is compiled without `--test`).
+#[allow(dead_code)]
+#[path = "../lf-hook/src/forward.rs"]
+mod forward;
+
 use std::env;
 use std::path::PathBuf;
 
@@ -36,20 +44,7 @@ fn find_system_winmm() -> Option<PathBuf> {
     None
 }
 
-fn sanitize(name: &str) -> String {
-    name.chars()
-        .map(|c| {
-            if c.is_ascii_alphanumeric() || c == '_' {
-                c
-            } else {
-                '_'
-            }
-        })
-        .collect()
-}
-
 fn main() {
-    use std::fmt::Write as _;
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-env-changed=LF_WINMM_PATH");
     let out = PathBuf::from(env::var("OUT_DIR").unwrap());
@@ -59,79 +54,30 @@ fn main() {
     // and `cargo test` keep working (the proxy only ships as i686).
     if target != "i686-pc-windows-msvc" {
         std::fs::write(out.join("stubs.inc"), "").unwrap();
-        std::fs::write(
-            out.join("forward_table.rs"),
-            "/// Forwarded exports on this target (always 0 off x86).\n\
-             pub const FORWARD_COUNT: usize = 0;\n\
-             /// Export names (empty off x86).\n\
-             pub const FORWARD_NAMES: [Option<&str>; 0] = [];\n\
-             /// Export ordinals (empty off x86).\n\
-             pub const FORWARD_ORDINALS: [u32; 0] = [];\n",
-        )
-        .unwrap();
+        std::fs::write(out.join("forward_table.rs"), forward::empty_forward_table()).unwrap();
         return;
     }
 
     let dll = find_system_winmm().expect("no system winmm.dll found (set LF_WINMM_PATH?)");
     let data = std::fs::read(&dll).expect("read winmm.dll");
-    let mut exports = pe::file_exports(&data).expect("parse winmm export table");
+    let exports = pe::file_exports(&data).expect("parse winmm export table");
     assert!(!exports.is_empty(), "winmm has no exports?");
-    exports.sort_by_key(|e| e.ordinal);
+    // Pure, host-tested generation (see lf-hook's `forward` module).
+    let forwards: Vec<forward::Forward> = exports
+        .into_iter()
+        .map(|e| forward::Forward {
+            name: e.name,
+            ordinal: e.ordinal,
+        })
+        .collect();
+    let plan = forward::plan(&forwards);
 
-    let mut asm = String::new();
-    let mut drectve = String::from(".section .drectve\n");
-    let mut names = String::from(
-        "/// Forwarded export names, ordinal order (`None` = ordinal-only).\n\
-         pub const FORWARD_NAMES: [Option<&str>; FORWARD_COUNT] = [\n",
-    );
-    let mut ords = String::from(
-        "/// Forwarded export ordinals, same order as `FORWARD_NAMES`.\n\
-         pub const FORWARD_ORDINALS: [u32; FORWARD_COUNT] = [\n",
-    );
-
-    for (i, e) in exports.iter().enumerate() {
-        let stub = match &e.name {
-            Some(n) => format!("_lf_stub_{}", sanitize(n)),
-            None => format!("_lf_stub_ord_{}", e.ordinal),
-        };
-        if let Some(n) = &e.name {
-            writeln!(drectve, "    .ascii \" -export:{n}={stub},@{}\"", e.ordinal).unwrap();
-            writeln!(names, "    Some({n:?}),").unwrap();
-        } else {
-            writeln!(
-                drectve,
-                "    .ascii \" -export:{stub},@{0},NONAME\"",
-                e.ordinal
-            )
-            .unwrap();
-            names.push_str("    None,\n");
-        }
-        writeln!(ords, "    {},", e.ordinal).unwrap();
-        writeln!(
-            asm,
-            ".globl {stub}\n{stub}:\njmp dword ptr [_LF_TARGETS + {}]",
-            i * 4
-        )
-        .unwrap();
-    }
-    names.push_str("];\n");
-    ords.push_str("];\n");
-    asm.push_str(&drectve);
-
-    std::fs::write(out.join("stubs.inc"), &asm).unwrap();
-    std::fs::write(
-        out.join("forward_table.rs"),
-        format!(
-            "/// Number of forwarded system exports.\n\
-             pub const FORWARD_COUNT: usize = {};\n{names}{ords}",
-            exports.len()
-        ),
-    )
-    .unwrap();
+    std::fs::write(out.join("stubs.inc"), &plan.asm).unwrap();
+    std::fs::write(out.join("forward_table.rs"), &plan.forward_table).unwrap();
 
     println!(
         "cargo:warning=proxying {} winmm exports from {}",
-        exports.len(),
+        plan.count,
         dll.display()
     );
 }

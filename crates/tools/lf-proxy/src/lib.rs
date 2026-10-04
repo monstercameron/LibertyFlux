@@ -286,3 +286,45 @@ fn init_body() {
         });
     });
 }
+
+#[cfg(test)]
+mod tests {
+    //! Tests of the generated forwarding table. They run on the host (where
+    //! the build script emits an empty table, so the checks are trivially
+    //! true) and, on the i686 Windows runner, against the real system
+    //! `winmm.dll` export table the proxy was built from. The generator
+    //! itself is unit-tested in `lf_hook::forward` with synthetic exports.
+    use super::{FORWARD_COUNT, FORWARD_NAMES, FORWARD_ORDINALS};
+    use std::collections::HashSet;
+
+    #[test]
+    fn table_arrays_agree_in_length() {
+        assert_eq!(FORWARD_NAMES.len(), FORWARD_COUNT);
+        assert_eq!(FORWARD_ORDINALS.len(), FORWARD_COUNT);
+    }
+
+    #[test]
+    fn ordinals_are_unique_and_sorted() {
+        // The loader fills LF_TARGETS[i] for FORWARD_NAMES[i]; a repeated or
+        // unsorted ordinal would mean two exports share a slot or the stub
+        // index and the table index disagree.
+        let mut seen = HashSet::new();
+        let mut previous: Option<u32> = None;
+        for &ordinal in &FORWARD_ORDINALS {
+            assert!(seen.insert(ordinal), "ordinal {ordinal} appears twice");
+            if let Some(p) = previous {
+                assert!(ordinal > p, "ordinals are not strictly ascending");
+            }
+            previous = Some(ordinal);
+        }
+    }
+
+    #[test]
+    fn named_exports_are_non_empty_and_distinct() {
+        let mut names = HashSet::new();
+        for name in FORWARD_NAMES.iter().flatten() {
+            assert!(!name.is_empty(), "a forwarded export has an empty name");
+            assert!(names.insert(*name), "export {name} is listed twice");
+        }
+    }
+}
