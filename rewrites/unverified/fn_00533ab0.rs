@@ -4,14 +4,17 @@
 ///
 /// Calls virtual slot 1 of the object in `this` (no arguments, key in EAX)
 /// and compares the key with `want`. When they are equal and `out` is not
-/// null, writes the board tag `TAG` to `*out` and returns `out`. Otherwise
-/// returns 0 and writes nothing.
+/// null, installs this board's vtable pointer `TAG_VA` (a relocated image
+/// address: slot 2 of that table is this very function) at `*out` and
+/// returns `out`. Otherwise returns 0 and writes nothing.
 ///
 /// Original: thiscall with two stack words, callee pops 8.
 
 lf_checker_rt::export!(thiscall, rw_00533ab0(this: u32, out: u32, want: u32) -> u32 {
     unsafe {
-        const TAG: u32 = 0x00fdb644;
+        /// Linked address of the installed interface pointer (has a HIGHLOW
+        /// reloc entry, so it moves with the image base).
+        const TAG_VA: u32 = 0x00fdb644;
 
         let vtable = (this as *const u32).read_unaligned();
         let slot = (vtable.wrapping_add(4) as *const u32).read_unaligned();
@@ -22,7 +25,7 @@ lf_checker_rt::export!(thiscall, rw_00533ab0(this: u32, out: u32, want: u32) -> 
         if out == 0 {
             return 0;
         }
-        (out as *mut u32).write_unaligned(TAG);
+        (out as *mut u32).write_unaligned(lf_checker_rt::relocated(TAG_VA));
         out
     }
 });

@@ -56,9 +56,10 @@ lf_checker_rt::export!(cdecl, rw_0091c9f0(out: u32, fa: f32, fb: f32, sel: u32) 
             unsafe { (a as *mut u32).write_unaligned(v.to_bits()) }
         }
 
-        let row_id: u32 = lf_checker_rt::callee_cdecl!(1, u32);
-        let row = lf_checker_rt::relocated(TABLE)
-            .wrapping_add(row_id.wrapping_mul(9).wrapping_mul(8));
+        let row_id: u32 = lf_checker_rt::callee_cdecl!(1, u32,);
+        // One 72-byte row per id (the original forms this as id * 9, scaled by 8).
+        let row =
+            lf_checker_rt::relocated(TABLE).wrapping_add(row_id.wrapping_mul(ROW_BYTES));
         let mut solved: u32 = 0;
         let n: u32 = lf_checker_rt::callee_cdecl!(
             2, u32, fa.to_bits(), fb.to_bits(), sel,
@@ -88,7 +89,7 @@ lf_checker_rt::export!(cdecl, rw_0091c9f0(out: u32, fa: f32, fb: f32, sel: u32) 
         wrf(out, low);
         wrf(out + 8, high);
         wrf(out + 4, sub(fb, GAIN_LO));
-        let f: f32 = lf_checker_rt::callee_cdecl!(3, f32);
+        let f: f32 = lf_checker_rt::callee_cdecl!(3, f32,);
         let acc = add(add(mul(f, (n as i32) as f32), fa), GAIN_LO);
         wrf(out + 12, acc);
         f.to_bits()

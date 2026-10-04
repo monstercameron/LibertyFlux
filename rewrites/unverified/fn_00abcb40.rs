@@ -12,10 +12,14 @@
 /// at `+0x44`. Slots whose kind is 0 or 2 are accepted: a helper callee fills
 /// an 8-word scratch buffer from the slot, and words of it are copied to the
 /// next 32-byte row (`count * 0x20` past the buffer) as
-/// `[w2, w1, w2, index, w4, w5, w6, w15]`, where `index` is the 0-based slot
-/// number. Word 15 lies past what the callee writes, so it is whatever the
-/// stack held (zero under the checker's defined stack fill); word 11 is
-/// overwritten with the index before being read. Other kinds are skipped.
+/// `[w0, w1, w2, index, w4, w5, w6, w15]`, where `index` is the 0-based slot
+/// number. (The first word is read before the callee's argument words are
+/// popped, so it addresses one word lower than its slot suggests.) Word 15
+/// lies past what the callee writes, so it is whatever the stack held (zero
+/// under the checker's defined stack fill); word 11 is overwritten with the
+/// index before being read. The scratch buffer is one frame slot reused every
+/// iteration, so a later call observes the previous call's words. Other kinds
+/// are skipped.
 ///
 /// Afterwards the flag byte records whether `count` exceeds `limit` (both
 /// compared signed); when it does, a second callee is invoked with
@@ -58,6 +62,8 @@ lf_checker_rt::export!(thiscall, rw_00abcb40(this: u32, arr: u32, iters: u32, li
             wr32(this.wrapping_add(BUF_PTR), 0);
         }
         wr16(this.wrapping_add(COUNT), 0);
+        // One frame slot, reused every iteration like the original's.
+        let mut scratch = [0u32; 16];
         let n = iters as i32;
         if n > 0 {
             let mut i = 0i32;
@@ -65,7 +71,6 @@ lf_checker_rt::export!(thiscall, rw_00abcb40(this: u32, arr: u32, iters: u32, li
                 let slot = arr.wrapping_add((i as u32).wrapping_mul(SLOT_STRIDE));
                 let kind = rd32(slot.wrapping_add(KIND_OFF));
                 if kind == 2 || kind == 0 {
-                    let mut scratch = [0u32; 16];
                     let _ = lf_checker_rt::callee_cdecl!(
                         FILL_CALLEE,
                         u32,
@@ -75,7 +80,7 @@ lf_checker_rt::export!(thiscall, rw_00abcb40(this: u32, arr: u32, iters: u32, li
                     let at = rd16(this.wrapping_add(COUNT));
                     let dst = rd32(this.wrapping_add(BUF_PTR))
                         .wrapping_add((at as u32).wrapping_mul(ROW_STRIDE));
-                    wr32(dst, scratch[2]);
+                    wr32(dst, scratch[0]);
                     wr32(dst.wrapping_add(4), scratch[1]);
                     wr32(dst.wrapping_add(8), scratch[2]);
                     wr32(dst.wrapping_add(0x0c), i as u32);
