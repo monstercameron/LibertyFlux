@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Changelog: correct the runtime-library numbers",
+    "commit": null,
+    "summary": "The previous entry quoted the lane's summary; the published counts came from the script, and they differ by 12.",
+    "changes": [
+      "The entry about runtime library code said game functions became 37,713 and library 5,443. The published numbers are 37,701 and 5,455: 703 entries moved, the 691 functions the lane listed plus 12 thunks and import stubs it also judged runtime.",
+      "The progress data and the badges were already correct; only the entry's wording was wrong."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 45 more functions pass the checker (5138 in total)",
     "commit": "f33d58215b20b6c752774b45c399c7cddbf04d27",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
@@ -28,7 +38,7 @@
     "summary": "The game-function total goes down and the rewritten and verified counts go down with it, because some of what was counted was library code.",
     "changes": [
       "A lane mapped the statically linked C runtime in full: 655 functions the inventory had counted as game code are runtime library routines, and 36 more are QuickTime glue. One function marked runtime is game code and moves the other way.",
-      "Game functions: 38,403 becomes 37,713. Library and runtime: 4,753 becomes 5,443. The total of 43,156 is unchanged.",
+      "Game functions: 38,403 becomes 37,701. Library and runtime: 4,753 becomes 5,455. The total of 43,156 is unchanged. 703 inventory entries moved: the 691 functions the lane listed and 12 thunks and import stubs it judged runtime.",
       "83 rewrites that production lanes had already produced are of runtime routines. They are no longer counted as rewritten or verified, since Rust's standard library replaces that code; the files stay in the repository for now.",
       "The rewrite queue now holds out exactly the functions the lane judged runtime or was unsure about (four), instead of a whole address block.",
       "Still open from the same lane: about 1,185 functions the inventory labels as the JPEG library look like game code and may move back; that needs its own check and is not applied here."
