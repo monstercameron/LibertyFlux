@@ -17235,6 +17235,186 @@
   "lane": "r-s219"
  },
  {
+  "address": "0x009FA210",
+  "name": "playstat_stat_publish_chain",
+  "kind": "function",
+  "file": "functions/fn_009fa210.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FA320",
+  "name": "playstat_float_stat_publish",
+  "kind": "function",
+  "file": "functions/fn_009fa320.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FA390",
+  "name": "playstat_dual_stage_publish",
+  "kind": "function",
+  "file": "functions/fn_009fa390.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FA410",
+  "name": "playstat_stat_publish_slot",
+  "kind": "function",
+  "file": "functions/fn_009fa410.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FA480",
+  "name": "playstat_multi_stat_publish",
+  "kind": "function",
+  "file": "functions/fn_009fa480.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FA550",
+  "name": "playstat_stat_slots_reset",
+  "kind": "function",
+  "file": "functions/fn_009fa550.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FA5B0",
+  "name": "CPlayStatBase::~CPlayStatBase__deleting",
+  "kind": "function",
+  "file": "functions/fn_009fa5b0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FA5D0",
+  "name": "playstat_report_emit",
+  "kind": "function",
+  "file": "functions/fn_009fa5d0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FA640",
+  "name": "playstat_indexed_report_emit",
+  "kind": "function",
+  "file": "functions/fn_009fa640.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FA740",
+  "name": "playstat_notifier_emit_bare_k0d",
+  "kind": "function",
+  "file": "functions/fn_009fa740.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FA780",
+  "name": "playstat_notifier_emit_k1f",
+  "kind": "function",
+  "file": "functions/fn_009fa780.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FA7E0",
+  "name": "playstat_state_memset_init",
+  "kind": "function",
+  "file": "functions/fn_009fa7e0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FA820",
+  "name": "network_socket_connect",
+  "kind": "function",
+  "file": "functions/fn_009fa820.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FA890",
+  "name": "playstat_position_report_emit",
+  "kind": "function",
+  "file": "functions/fn_009fa890.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FA990",
+  "name": "playstat_notifier_emit_k13",
+  "kind": "function",
+  "file": "functions/fn_009fa990.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FA9F0",
+  "name": "playstat_notifier_emit_k12",
+  "kind": "function",
+  "file": "functions/fn_009fa9f0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FAA50",
+  "name": "playstat_notifier_emit_k11",
+  "kind": "function",
+  "file": "functions/fn_009faa50.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FAAB0",
+  "name": "playstat_object_reinit_tail",
+  "kind": "function",
+  "file": "functions/fn_009faab0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FAB30",
+  "name": "playstat_chain_report_emit",
+  "kind": "function",
+  "file": "functions/fn_009fab30.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
+  "address": "0x009FAC40",
+  "name": "CPlayStatFloat::vf3",
+  "kind": "function",
+  "file": "functions/fn_009fac40.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s236"
+ },
+ {
   "address": "0x009FAC80",
   "name": "CPlayStatInt::vf3",
   "kind": "function",
