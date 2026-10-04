@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#weak-inventory-entries">The inventory entries that were never fully confirmed</a></li>
       <li><a href="#naming-10">Naming the ranked-race leaderboard methods, races 37 to 53</a></li>
       <li><a href="#naming-09">Naming leaderboard methods, and a broken numbering rule</a></li>
       <li><a href="#naming-08">Naming a run of leaderboard schema methods</a></li>
@@ -345,6 +346,33 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="weak-inventory-entries">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>The inventory entries that were never fully confirmed</h2>
+      <p>Most of the inventory entries that boundary repair could not fully confirm are real functions after all: 3,260 out of 3,661, about nine in ten. The rest split into 183 fragments of other functions, 138 data entries such as jump tables and padding, and 80 that stay unsure. Both naming lanes that had reported doubtful entries were vindicated, one of them only after a second, pattern-specific analysis proved the general method blind in its region.</p>
+      <h3>What was asked</h3>
+      <p>Give a verdict on every game-code inventory entry whose repair class is weaker than fully confirmed: real function, fragment of another function, data, unreadable, or unsure. Calibrate the method against two thousand fully confirmed entries and every verified entry in the weaker classes, which must all come out as functions. Judge two naming lanes' claims of bogus entries independently, entry by entry. Scan the code the inventory does not cover for missing functions.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The weaker classes are overwhelmingly real: all of the thunk and Ghidra-only classes came out as functions, and the size-corrected and weakly confirmed classes are nearly all functions too. Only the gapfill-invented enclosing starts are mostly bad, at about three quarters fragments or data.</p>
+      <p><span class="evidence verified">Verified</span> The first naming lane was right on all 33 of its claimed bogus entries: none is a routine start. Twenty-five start in the middle of a machine instruction and eight are aligned interior points of neighbouring factory routines. None appears in the pointer table that references every genuine routine in its region, while all 117 genuine ones do.</p>
+      <p><span class="evidence verified">Verified</span> The second naming lane was right on all 9 of its claimed data entries, and partly right about missing functions: one claimed function is genuinely missing, swallowed by an oversized neighbouring range, and a set of plausible stub series was found where it predicted lookups. Three of its claimed missing functions turned out to be correctly attributed bodies of jump relays, and one was already in the inventory.</p>
+      <p><span class="evidence verified">Verified</span> Calibration passed at 2,050 out of 2,052. The two mismatches are genuine exception-handling funclets sitting in the fully confirmed class, the same family an earlier lane had found elsewhere. No verified rewrite sits on a bad entry. Four bad entries reached production batches and about ninety reached naming batches.</p>
+      <p><span class="evidence verified">Verified</span> The uncovered-code scan lists about seventeen hundred code runs, of which 129 plausibly start functions, holding an estimated 383 nested functions once series of tiny stubs are counted individually. The factory region additionally hides about two hundred true routine starts that the inventory lacks, shadowed by the oversized ranges of the bogus entries.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Remove or annotate the 321 fragment and data entries, starting with the few already handed to production and naming lanes.</li>
+      <li>Repair the factory region as one edit: drop the 33 bogus entries and add the missing true starts, instead of only removing.</li>
+      <li>Add the plausible missing runs and the confirmed shadowed function to the inventory.</li>
+      <li>Keep the remaining weaker-class entries in the work queue; the calibration supports them.</li>
+      <li>Re-run the verdict script once the encrypted part of the code is readable; the unsure entries and the funclets hiding in the confirmed class should resolve then.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane's verdict script over the repaired inventory with the section-based address mapping, then the tiling analysis for the factory region, then the missing-code scan with jump-table-aware judging. The mapping was proved on three verified functions first, and the call-target count reproduces the published cross-check number exactly. All verdicts, reasons, and the missing-run list are stored as data files with the lane's outputs.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> The first version of the method judged the first naming lane wrong on all 33 entries, because the factory region has no analysis coverage and the fallback checks accept any clean-looking decode. A backward test that counted decoding from the entry itself as confirmation made it worse. Only the tiling analysis, which decodes forward from true routine starts and watches the claimed entries fall inside, settled it. The lesson is that empty coverage needs pattern-specific tests, and that a method must be doubted as readily as a lane.</p>
+      <p><span class="evidence verified">Verified</span> The missing scan first reported over five hundred plausible runs, most of them jump tables that looked targeted because a relocation entry holding a table's own address was mistaken for a function pointer. Skipping table prefixes before judging fixed it. A mid-instruction decode often re-synchronises into plausible code within a few instructions, so a clean decode alone never confirms an entry.</p>
+      </article>
 
       <article class="entry" id="naming-10">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>

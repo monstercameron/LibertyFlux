@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "CI: a passing build is packaged and published as a release",
+    "title": "Devlog: The inventory entries that were never fully confirmed",
     "commit": null,
+    "summary": "Findings from the f-weak lane.",
+    "changes": [
+      "New devlog entry: The inventory entries that were never fully confirmed.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "CI: a passing build is packaged and published as a release",
+    "commit": "4163643a644d834b505cfc664b1ea41cb27b1a69",
     "summary": "When the pipeline passes on a push to main, it builds the project's runnable programs for Windows, Linux and macOS and publishes them.",
     "changes": [
       "After the build, test and publication jobs pass, a packaging job builds the runnable programs on each system and a release job publishes them. The advisory lint job is not required for this.",
