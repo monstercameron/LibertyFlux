@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#natives-17">Native handlers SET_DECISION_MAKER_ATTRIBUTE_TARGET_INJURED_REACTION to SET_MULTIPLAYER_HUD_CASH: what they reveal</a></li>
       <li><a href="#natives-04">Native handlers DISPLAY_GRIME_THIS_FRAME to FINISH_STREAMING_REQUEST_LIST: what they reveal</a></li>
       <li><a href="#rust-workspace">Rust workspace scaffold: eighteen crates, CI, and a layout convention</a></li>
       <li><a href="#format-shaders">Rust reader: the shader container (FXC)</a></li>
@@ -119,6 +120,52 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="natives-17">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Native handlers SET_DECISION_MAKER_ATTRIBUTE_TARGET_INJURED_REACTION to SET_MULTIPLAYER_HUD_CASH: what they reveal</h2>
+      <p>All 140 script native handlers in this batch are readable, unshared, and almost all are thin wrappers: each converts its script arguments and calls exactly one engine function. The work recovered the exact native call context layout, true argument counts for four natives the public database lists as taking no parameters, and two further documentation errors, and it identified the shared engine helpers behind whole native families.</p>
+      <h3>What was asked</h3>
+      <p>Disassemble the handler of each of 140 named script natives, from SET_DECISION_MAKER_ATTRIBUTE_TARGET_INJURED_REACTION to SET_MULTIPLAYER_HUD_CASH, and for each one describe what it does at engine level: which objects it looks up, which functions it calls, which fields it reads or writes. Work out the call context layout handlers receive, propose names for the engine functions they call with confidence levels, record directly touched fields, and flag stubs, shared handlers, and handlers in the encrypted range. Aggregate shared helpers and surprises across the batch.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The call context layout, from 135 batch handlers plus probes of value-returning handlers outside the batch: the context's first slot holds a pointer to the return-value slot, and its third slot holds a pointer to the argument array of 32-bit words. The middle slot is never read by any of the 146 handlers examined, so its meaning stays unknown. Handlers convert script words to C++ types at the call boundary in directly readable ways: booleans are normalised with a compare instruction, floats travel through SSE registers, and integers, handles and pointers are pushed as words.</p>
+      <p><span class="evidence verified">Verified</span> Handler shapes across the batch:</p>
+      <ul>
+      <li>136 handlers call exactly one engine function each; 4 call nothing and store globals directly (three mobile-phone setters writing position, rotation and scale triples, and a flag setter).</li>
+      <li>No handler lies in the encrypted range, no handler is shared with another native, and none is a stub: even the smallest does real work.</li>
+      <li>No handler resolves script handles itself. Handle-to-object resolution happens one level down, inside the engine functions.</li>
+      <li>Two zero-argument hint natives allocate camera-script-instruction objects whose classes match known camera queue instruction types, and submit them through one shared dispatch routine.</li>
+      <li>One priority native ignores its arguments and runs shared code that writes one of two values to a global priority word depending on a flag.</li>
+      </ul>
+      <p><span class="evidence verified">Verified</span> Six public documentation corrections came out of comparing documented parameter counts against the words each handler actually reads:</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Native</th><th role="columnheader">Documented</th><th role="columnheader">Handler actually reads</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell"><code>SET_EVENT_PRECEDENCE</code></td><td role="cell" data-label="Documented">zero parameters</td><td role="cell" data-label="Handler actually reads">two words</td></tr>
+      <tr role="row"><td role="cell"><code>SET_HEADING_FOR_ATTACHED_PLAYER</code></td><td role="cell" data-label="Documented">zero parameters</td><td role="cell" data-label="Handler actually reads">three words</td></tr>
+      <tr role="row"><td role="cell"><code>SET_IGNORE_SERVER_UPDATE</code></td><td role="cell" data-label="Documented">zero parameters</td><td role="cell" data-label="Handler actually reads">two words</td></tr>
+      <tr role="row"><td role="cell"><code>SET_MULTIPLAYER_BRIEF</code></td><td role="cell" data-label="Documented">zero parameters</td><td role="cell" data-label="Handler actually reads">two words</td></tr>
+      <tr role="row"><td role="cell"><code>SET_HEADING_OF_CLOSEST_OBJECT_OF_TYPE</code></td><td role="cell" data-label="Documented">six parameters</td><td role="cell" data-label="Handler actually reads">seven words, the last a boolean</td></tr>
+      <tr role="row"><td role="cell"><code>SET_HELI_FORCE_ENGINE_ON</code></td><td role="cell" data-label="Documented">two inputs plus an output</td><td role="cell" data-label="Handler actually reads">two words only; the output is never touched</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Shared engine helpers found one level below the handlers: a single encrypted helper called by 29 engine functions across vehicle, ped, object, player and group natives (always as a method on a global object with one handle argument); a decision-maker lookup, initialiser and sub-object accessor shared by all four decision-maker attribute setters; a player table getter indexing a 32-entry table; a stats setter core writing a global float array; a bounded wide-string copy used by menu and text code; and an encrypted allocator with the classic push-size, call, null-check shape.</p>
+      <p><span class="evidence">Inferred</span> The encrypted helper with 29 callers is most plausibly the shared script-handle resolver, but its body is unreadable so no name is proposed for it; its fan-in and call pattern are recorded for the unpack lane instead.</p>
+      <p><span class="evidence verified">Verified</span> Usage in the public decompiled mission scripts: 87 of the 140 natives are called at least once, 53 never. The most used are the float stat setter, the extra car colours setter, and the game camera heading setter. Unused natives cluster in multiplayer, episode-specific extras, and camera debug setters, consistent with the reference scripts coming from an older build.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Each unique engine function behind a native gets a schematic proposal naming the native it implements, at medium confidence; shared functions get behaviour-derived names with confidence from fan-in and body evidence.</li>
+      <li>A documented parameter count of zero in the public database should be treated as unknown, not as zero arguments: four natives in this batch prove it.</li>
+      <li>Later lanes should merge evidence for the three encrypted helpers (the shared resolver, the allocator, and the priority-path helper) across all native batches rather than proposing names alone.</li>
+      <li>The wide-string copy helper is a utility, not game logic, and a candidate for exclusion from game-code counts.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble each listed handler from the executable with capstone using recursive descent that follows internal jumps, stopping at returns; record direct call targets, argument-array index uses by type (compare for boolean, SSE move for float, push for word), and absolute global references. Resolve one level of callees the same way, join documented parameters from the public native database and call counts from the decompiled script reference set, and compare the highest argument index each handler reads against the documented count. The machine-readable per-native records, proposed function names, and proposed fields ship with the lane's data files.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> The task brief expected handle lookups at handler level, but handlers turned out to be pure forwarders and the interesting sharing sits one level down, half of it in the encrypted range. The deliverables follow what is actually there.</p>
+      <p><span class="evidence verified">Verified</span> A first version of the argument-count checker skipped every use of one displacement to avoid the context-pointer load itself, which also skipped a real argument slot and fabricated 22 mismatches. After excluding only the identified load instructions the genuine mismatch count is the six reported above.</p>
+      <p><span class="evidence">Unknown</span> The middle context slot stayed unknown after 146 handlers, and no frame-time dependence was seen in any batch handler. Both may live deeper than the one level of callees examined here.</p>
+      </article>
 
       <article class="entry" id="natives-04">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
