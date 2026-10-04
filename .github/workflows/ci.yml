@@ -104,7 +104,7 @@ jobs:
           RUSTFLAGS: "-C panic=abort"
           CARGO_TARGET_DIR: .artifacts/build/cargo-proofs
       - name: Unit tests
-        run: cargo test --target i686-pc-windows-msvc -p lf-hook -p lf-registry -p lf-checker-worker -p lf-checker-rt
+        run: cargo test --target i686-pc-windows-msvc -p lf-hook -p lf-registry -p lf-proxy -p lf-rewrite-32 -p lf-checker-worker -p lf-checker-rt
 
   lint:
     name: Format and lints (advisory)
@@ -173,6 +173,38 @@ jobs:
           key: i686-lift
       - name: Differential tests against the real checker runtime
         run: cargo test --target i686-pc-windows-msvc -p lf-lift-diff
+
+  assembled-library:
+    name: Assembled rewrite library (32-bit)
+    # Assembles the verified rewrites into lf_rewrites.dll, the library the loader swaps into the running game,
+    # and uploads it with its manifest as a build artifact (not a release). Windows only: it needs the MSVC linker.
+    runs-on: windows-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the pinned toolchain with the 32-bit target
+        run: rustup toolchain install 1.96.1 --profile minimal --no-self-update --target i686-pc-windows-msvc
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ". -> .artifacts/build/cargo"
+          key: assembled
+      - name: Generator tests
+        run: python -m unittest discover -s scripts/assemble/tests
+      - name: Assemble and build
+        # Every rewrite is type-checked inside its shard; what does not compile is left out with its reason in
+        # manifest.json. Without a callee map, rewrites that call callees are built but not switchable.
+        run: python scripts/assemble/assemble.py --build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lf-rewrites-win32
+          path: |
+            .artifacts/assembled/target/i686-pc-windows-msvc/release/lf_rewrites.dll
+            .artifacts/assembled/manifest.json
+          if-no-files-found: error
+          retention-days: 14
 
   licences:
     name: Dependency licences and advisories
