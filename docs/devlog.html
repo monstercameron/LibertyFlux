@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#structures-online">Class layouts: online service, session and leaderboard classes (rage::rl*, rage::sn*)</a></li>
       <li><a href="#structures-entities">Class layouts: entities, vehicles, peds, objects and model information</a></li>
       <li><a href="#natives-22">Native handlers TASK_TIRED to WRITE_LOBBY_PREFERENCE: what they reveal</a></li>
       <li><a href="#natives-16">Native handlers SET_CAR_PROOFS to SET_DECISION_MAKER_ATTRIBUTE_STANDING_STYLE: what they reveal</a></li>
@@ -142,6 +143,70 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="structures-online">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Class layouts: online service, session and leaderboard classes (rage::rl*, rage::sn*)</h2>
+      <p><span class="evidence verified">Verified</span> The online family is 2,009 classes, of which 1,924 are four leaderboard templates stamped out 481 times each; the two workhorse templates share a single byte-identical virtual table across all copies, and every session task inherits an eleven-slot base interface whose table the earlier table recovery had missed.</p>
+      <h3>What was asked</h3>
+      <p>Recover the object layouts and virtual interfaces of the online service, session and leaderboard classes: for each class the virtual table slot meanings, constructor and destructor behaviour, object size, field list with confidence, and relationships, plus a family tree, a shared-interface description, the encrypted-code fraction, and a rewrite order. Template copies were to be grouped, not analysed one by one.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The batch splits into four leaderboard templates of 481 classes each plus 85 other classes. The leaderboard template carries a four-slot table identical in all copies: a deleting destructor, a getter returning the embedded info object, and a bounds-checked row accessor with a stride of 312 bytes. The leaderboard-info template has a seventeen-slot table that is different for every board but follows one pattern: a destructor, a per-board stub returning a schema descriptor pointer, shared getters in a handful of variants, and a stub returning a fixed constant. The leaderboard-update template has a three-slot table of plain field getters with no destructor at all.</p>
+      <p><span class="evidence verified">Verified</span> The session tasks share an eleven-slot base interface: destructor, a shared constant getter, two state methods touching a started flag and a state word, three opaque base slots, a per-task worker, a forwarder that calls the worker with a default argument, one more opaque slot, and a per-task stub returning a static descriptor pointer. Two tasks add a twelfth slot. The base table itself was found by reading raw memory after destructors kept storing an address no table list knew. Six fire-and-forget wrappers override nothing and add no fields.</p>
+      <p><span class="evidence verified">Verified</span> Session events form a two-slot hierarchy whose second slot is always inherited; most derived first slots just return a per-event static descriptor. Thirty-seven tiny descriptor classes have a single destructor slot each. Task objects are large, from roughly 160 bytes to roughly six thousand, while events with genuine constructors range from about a hundred to about six hundred bytes. About one slot target in five points into the encrypted first megabyte and could not be read; the base leaderboard tables and the notifier are fully opaque.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Rewrite first the leaderboard trio, which is fully readable and identical across copies, then the task interface and tasks, then events; leave the encrypted base classes and the interface-only classes for later.</li>
+      <li>Treat all object sizes as lower bounds, not exact sizes; no allocation-site constants were recovered.</li>
+      <li>Parse the per-board schema descriptor blobs and the base task slot functions next; both are readable and were left untouched for lack of time.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Load the batch list and the recovered table list, scan the unencrypted code for each table address as a four-byte value using a sliding window, map each hit to its containing function with the function inventory, and disassemble the slot targets and the referencing functions. Shared slot targets are identified by counting matches across tables, and base tables are compared slot by slot for override status. The per-class records live in the structures data file with one entry per class.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> The first scan stepped through the code four bytes at a time and missed most constructor references, because immediate values are not aligned; only a byte-by-byte scan found them. Early field lists contained absurd offsets in the tens of kilobytes until three fixes landed: registers reused as scratch had to be untracked, functions building many objects had to be excluded from field evidence, and disassembly running past a tiny stub into the next function had to be cut off. One record initially suggested a leaderboard info class inherits from two bases at once; the slot evidence supports the interface half of that claim but the declaration half is still unresolved.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Group</th>
+      <th role="columnheader">Classes</th>
+      <th role="columnheader">Tables</th>
+      <th role="columnheader">State</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">Leaderboard</td>
+      <td role="cell" data-label="Classes">481</td>
+      <td role="cell" data-label="Tables">1 distinct</td>
+      <td role="cell" data-label="State">Fully mapped</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Leaderboard info</td>
+      <td role="cell" data-label="Classes">481</td>
+      <td role="cell" data-label="Tables">481 distinct, one pattern</td>
+      <td role="cell" data-label="State">Slots mapped, fields unknown</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Leaderboard update</td>
+      <td role="cell" data-label="Classes">481</td>
+      <td role="cell" data-label="Tables">1 distinct</td>
+      <td role="cell" data-label="State">Mapped, no destructor</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Session tasks</td>
+      <td role="cell" data-label="Classes">20</td>
+      <td role="cell" data-label="Tables">20 distinct</td>
+      <td role="cell" data-label="State">Interface and fields mapped</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Events and descriptors</td>
+      <td role="cell" data-label="Classes">54</td>
+      <td role="cell" data-label="Tables">54 distinct</td>
+      <td role="cell" data-label="State">Mostly mapped</td>
+      </tr>
+      </tbody>
+      </table>
+      </article>
 
       <article class="entry" id="structures-entities">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
