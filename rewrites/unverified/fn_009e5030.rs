@@ -7,7 +7,8 @@
 /// on the new object with `(2, [a1 + 0xaa0], 1, [obj + 0x1c], 1)`,
 /// the two middle words float bits), plants the vtable literal at +0,
 /// caches the shared global at +0x80 and returns the object.
-/// `stdcall`, one stack word.
+/// `stdcall`, one stack word. The vtable word is a loader-relocated
+/// image address, derived with `relocated`, not a literal.
 lf_checker_rt::export!(stdcall, rw_009e5030(a1: u32) -> u32 {
     unsafe {
         const MGR: u32 = 0x0167e2a0;
@@ -25,7 +26,8 @@ lf_checker_rt::export!(stdcall, rw_009e5030(a1: u32) -> u32 {
         let f1 = ((obj + RATE_OFF) as *const u32).read_unaligned();
         let f2 = ((a1 + REF_OFF) as *const u32).read_unaligned();
         lf_checker_rt::callee_thiscall!(SETUP, u32, obj, 2u32, f2, 1u32, f1, 1u32);
-        (obj as *mut u32).write_unaligned(VTABLE);
+        // The original's immediate is a loader-relocated address.
+        (obj as *mut u32).write_unaligned(lf_checker_rt::relocated(VTABLE));
         let c = lf_checker_rt::global::<u32>(CACHED).read();
         ((obj + 0x80) as *mut u32).write_unaligned(c);
         obj

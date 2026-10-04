@@ -40,7 +40,7 @@ lf_checker_rt::export!(thiscall, rw_005730e0(_this: u32, index: u32) -> u32 {
             return MISSING;
         }
         let ids = desc[DESC_IDS];
-        let mut i = 0;
+        let mut i = 0u32;
         loop {
             if rd32(ids.wrapping_add(i.wrapping_mul(4))) == want {
                 return i;

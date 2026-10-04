@@ -57,6 +57,7 @@ lf_checker_rt::export!(thiscall, rw_00ca9010(handler: u32, event: u32, _a2: u32,
         const INFO_SUB: u32 = 0x08;
         const INFO_MODE: u32 = 0x0c;
         const INFO_RANGE: u32 = 0x14;
+        const INFO_WANT: u32 = 4;
         const PED_SCOPE: u32 = 0x224;
         const PED_DUCK: u32 = 0x26c;
         const DUCK_BIT: u32 = 4;
@@ -205,7 +206,7 @@ lf_checker_rt::export!(thiscall, rw_00ca9010(handler: u32, event: u32, _a2: u32,
                 let dist = add(add(mul(dy, dy), mul(dx, dx)), mul(dz, dz)).sqrt();
                 if !(core::hint::black_box(range) > core::hint::black_box(dist)) {
                     wr32(handler + HANDLER_TASK, 0);
-                    return own;
+                    return posa;
                 }
                 let tag = rd8(own + PED_TAG);
                 let pool = rd32(lf_checker_rt::relocated(POOL_GLOBAL));
@@ -414,8 +415,10 @@ lf_checker_rt::export!(thiscall, rw_00ca9010(handler: u32, event: u32, _a2: u32,
             return 0;
         }
         let part: u32 = lf_checker_rt::callee_stdcall!(BUILD_A, u32, own, target, 0, 0);
+        // This tail pushes (part, 1, 0); the 0x38f join pushes
+        // (part, 1, 1): same shape, different first word.
         let task: u32 =
-            lf_checker_rt::callee_thiscall!(BUILD_B, u32, slot2, 1, 1, part, target, 0, 0);
+            lf_checker_rt::callee_thiscall!(BUILD_B, u32, slot2, 0, 1, part, target, 0, 0);
         wr32(handler + HANDLER_ALT, task);
         task
     }

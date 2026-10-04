@@ -1,0 +1,47 @@
+// original: 0x00b352a0 linear_insert_16b_key0 (proposed)
+
+/// Insert the 16-byte `value` (passed by value on the stack) into the run of
+/// 16-byte elements ending at `end`: walk one element back at a time while
+/// the element's leading key float is ordered-above the value's leading key,
+/// shifting each passed element one slot forward, then store the value in
+/// the freed slot. Only the key lanes are compared (ordered `>`, so NaN on
+/// either side ends the walk); every other byte is moved untouched. Returns
+/// the address of the last tested element, matching the original's exit
+/// register. Original: 0x00b352a0 (cdecl, five stack words: end, four value
+/// words).
+lf_checker_rt::export!(cdecl, rw_00b352a0(
+    end: u32,
+    v0: u32,
+    v1: u32,
+    v2: u32,
+    v3: u32,
+) -> u32 {
+    unsafe {
+        const ELEM: u32 = 16;
+        const N_COPY: usize = 4;
+        let value = [v0, v1, v2, v3];
+        let value_key = f32::from_bits(v0);
+        let mut slot = end;
+        let mut elem = end.wrapping_sub(ELEM);
+        loop {
+            let elem_key =
+                f32::from_bits((elem as *const u32).read_unaligned());
+            if !(elem_key > value_key) {
+                break;
+            }
+            core::ptr::copy_nonoverlapping(
+                elem as *const u32,
+                slot as *mut u32,
+                N_COPY,
+            );
+            slot = elem;
+            elem = elem.wrapping_sub(ELEM);
+        }
+        core::ptr::copy_nonoverlapping(
+            value.as_ptr(),
+            slot as *mut u32,
+            N_COPY,
+        );
+        elem
+    }
+});

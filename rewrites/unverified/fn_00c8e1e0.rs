@@ -128,13 +128,16 @@ lf_checker_rt::export!(cdecl, rw_00C8E1E0(
             lf_checker_rt::callee_cdecl!(
                 2, u32, mid, (&mut b1 as *mut u32) as u32, (&mut b2 as *mut u32) as u32
             );
+            // The first-maximum inputs are read before the callee's stack
+            // slots are released, so they are the blocks' first words.
+            let g0 = f32::from_bits(b1[0]);
             let g1 = f32::from_bits(b1[1]);
-            let g3 = f32::from_bits(b1[3]);
+            let h0 = f32::from_bits(b2[0]);
             let h1 = f32::from_bits(b2[1]);
             let h3 = f32::from_bits(b2[3]);
             let mask = rd32(lf_checker_rt::relocated(ABS_MASK));
-            let t0 = abs_bits(g3, mask);
-            let m1 = if above(h3, t0) { h3 } else { t0 };
+            let t0 = abs_bits(g0, mask);
+            let m1 = if above(h0, t0) { h0 } else { t0 };
             let row = rd32(mid.wrapping_add(MID_ROW));
             // The row is dereferenced before the null test below; keep the
             // order so a null row faults identically on both sides.

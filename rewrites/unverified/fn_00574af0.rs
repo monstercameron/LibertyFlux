@@ -2,15 +2,17 @@
 
 /// Ranked-race leaderboard tag publication: ask this board's owner
 /// object for its id (second vtable slot) and, when it matches
-/// `expected` and `out` is non-null, store this board's tag word there.
+/// `expected` and `out` is non-null, store this board's tag address there.
 ///
+/// The tag is a file VA with a relocation entry, so the stored value is
+/// derived through the checker's relocation helper, never hard-coded.
 /// Returns `out` on success, 0 when the id differs or `out` is null.
 ///
 /// Original: 0x00574af0 (thiscall, two stack words).
 lf_checker_rt::export!(thiscall, rw_00574af0(this: u32, out: u32, expected: u32) -> u32 {
     unsafe {
         const VTABLE_SLOT: usize = 1;
-        const LEADERBOARD_TAG: u32 = 0xfd9a7c;
+        const LEADERBOARD_TAG_FILE_VA: u32 = 0xfd9a7c;
         let vtable = (this as *const u32).read_unaligned();
         let slot = (vtable as *const u32).add(VTABLE_SLOT).read_unaligned();
         let get_id: extern "thiscall" fn(u32) -> u32 = core::mem::transmute(slot as usize);
@@ -21,7 +23,7 @@ lf_checker_rt::export!(thiscall, rw_00574af0(this: u32, out: u32, expected: u32)
         if out == 0 {
             return 0;
         }
-        (out as *mut u32).write_unaligned(LEADERBOARD_TAG);
+        (out as *mut u32).write_unaligned(lf_checker_rt::relocated(0xfd9a7c));
         out
     }
 });

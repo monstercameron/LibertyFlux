@@ -14,16 +14,15 @@
 /// (`p + 16 * [p]`, `p = [this+0x64]`), clears three dwords and reinitializes
 /// the seed fields; `0x3ae` scales two integer draws, negates a float draw,
 /// transforms them against the context row and creates a ten-argument task
-/// whose second argument points at one computed float, then tags the result;
-/// `0x516` and any other code, or a null task manager, return 0 (a null
-/// manager on the `0x3ae` path faults on a null write, like the original).
+/// whose second argument points at the first computed float (two words are
+/// already pushed when the address is taken, so it names the f0 slot), then
+/// tags the result; `0x516` and any other code, or a null task manager,
+/// return 0 (a null manager on the `0x3ae` path faults on a null write, like
+/// the original).
 ///
-/// The `0x3ae` path passes one computed float to its float callee in XMM0
-/// with nonzero upper lanes (a 16-byte sign-flip constant flows through the
-/// register); the checker compares all four lanes while the rewrite cannot
-/// set the upper three, so that path is proven by code inspection only (see
-/// the lane report). Every other path is fully verified. The float operation
-/// order is the original's.
+/// The second and third computed floats never leave the original's frame,
+/// so only the first is observed (through the snapped pointer argument).
+/// The float operation order is the original's.
 ///
 /// Original: 0x00cb5530 (thiscall, arg then code on the stack), returns the
 /// query/creation call's result, or 0.
@@ -170,9 +169,12 @@ lf_checker_rt::export!(thiscall, rw_00cb5530(this: u32, arg1: u32, code: u32) ->
                 (0xd8 as *mut u32).write_unaligned(0x4000000);
                 return 0;
             }
+            // The second argument points at the f0 slot: two words are
+            // already pushed when the address is taken, so the slot the
+            // original addresses holds f0, not f1.
             let r: u32 = lf_checker_rt::callee_thiscall!(
                 FIN_CALLEE, u32, mgr,
-                rdf(this + F18).to_bits(), core::ptr::addr_of!(f1) as u32,
+                rdf(this + F18).to_bits(), core::ptr::addr_of!(f0) as u32,
                 HALF.to_bits(), THREE.to_bits(),
                 0xffffffff, 1, 0, 0, 0, 1
             );
