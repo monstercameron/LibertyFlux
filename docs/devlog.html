@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#rerun-16">Rerun finds a call-log overflow in checker version 2</a></li>
       <li><a href="#production-s101">Tail jumps with arguments could not pass the checker, and now they can</a></li>
       <li><a href="#production-n113">Two native rewrites deferred: the checker only watches eight call arguments</a></li>
       <li><a href="#rerun-15">Rerun batch 15: version 2 catches a vacuous version 1 pass</a></li>
@@ -258,6 +259,32 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="rerun-16">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rerun finds a call-log overflow in checker version 2</h2>
+      <p><span class="evidence verified">Verified</span> Re-running nine production lanes under checker version 2 verified 180 of 181 functions and caught one version 1 pass that fails under version 2. The cause is a defect in the version 2 worker itself, not in the rewrite: when one trial makes more than 256 intercepted calls, the 257th call record is written over the worker's own stub-address table, and the rewrite side then jumps to a heap address and faults.</p>
+      <h3>What was asked</h3>
+      <p>Port every function that nine production lanes had verified under checker version 1 to the version 2 runtime and contract format, and re-run each for at least one thousand trials with the version 2 worker. The batch held 181 verified functions: script native handlers and small game helpers.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> 180 functions pass version 2 at one thousand trials each with no failures and no vacuous passes. One function, a search over many node tables that can make several hundred intercepted calls in a single trial, fails 27 trials out of a thousand: the original side returns normally while the rewrite side faults.</p>
+      <p><span class="evidence verified">Verified</span> The fault is a worker defect. The recorder stub is meant to stop logging once the 256-entry call log is full, but the emitted comparison skips logging only when the index is past 256 rather than at it. Index 256 therefore still logs, and version 2 places the stub-address table immediately after the log, so that one record overwrites the table with the calling context. The rewrite side then calls through the corrupted entry, jumps to heap memory and faults. Version 1 contains the same wrong comparison but is immune by layout: its smaller log records leave a gap between the log and the table, so the single wayward write lands on unused space.</p>
+      <p><span class="evidence verified">Verified</span> The rewrite is exonerated. Both checker drivers generate bit-identical trial inputs for the failing contract, the rewrite matches the original guard for guard, every memory access on the failing trial stays inside mapped test buffers, and a throwaway probe confirmed the table holds the corrupted value exactly on trials with enough calls. No change to the rewrite can defend against the worker corrupting the call table mid-trial.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Outcome</th><th role="columnheader">Count</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Verified under version 2</td><td role="cell" data-label="Count">180</td></tr>
+      <tr role="row"><td role="cell">Failed under version 2 (worker defect)</td><td role="cell" data-label="Count">1</td></tr>
+      <tr role="row"><td role="cell">Not ported</td><td role="cell" data-label="Count">0</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>The failing function is recorded as failed under version 2 with the checker at fault, and its rewrite is kept unchanged. Recommended worker fix, left for the checker owner: emit the above-or-equal comparison instead of above in the recorder stub, so index 256 takes the log-full path, and consider restoring the stub-address table on every trial side so a single overflow can never poison later trials. Recommended regression test: a contract whose trial makes more than 300 intercepted calls, which no earlier version 2 proof exercised.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the failing contract, a table search with a fixed seed, for one thousand trials with the prebuilt version 2 worker and the batch rewrite library. The first failure lands a few hundred trials in, always reported as the original succeeding while the rewrite faults at a heap address with an empty rewrite call log. A minimal probe that reads the first table entry instead of calling shows zero on passing trials and one on failing ones.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The fault signature pointed everywhere except the worker: a privileged-instruction fault at a heap address looks like a bad indirect call in the rewrite, but the rewrite contains exactly one indirect call and every input on the failing trial maps to valid test memory. Most of the diagnosis time went into eliminating rewrite-side causes one by one, including a wrong theory about floating-point call answers and a long detour into how the call target is loaded, before a probe showed the table itself changing between trials. The lesson for future reruns is that an empty rewrite call log next to a full original log means the rewrite died before its first call completed, which points at the call machinery rather than the function logic.</p>
+      </article>
 
       <article class="entry" id="production-s101">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
