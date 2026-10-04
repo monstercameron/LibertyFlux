@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot-03">Pilot lane 03: five functions rewritten and timed</a></li>
       <li><a href="#pilot-01">Pilot lane 01: five functions rewritten and timed</a></li>
       <li><a href="#merge-structures">Merging the class layouts into one set of Rust types</a></li>
       <li><a href="#merge-names">Merging the names: what 22 native lanes agree on</a></li>
@@ -177,6 +178,41 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot-03">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Pilot lane 03: five functions rewritten and timed</h2>
+      <p>Four of five small game functions were rewritten in Rust and proved identical to the originals over about a thousand trials each, in forty minutes of work; the fifth was deferred over a genuine floating point corner with the cause fully characterised and a fix scoped.</p>
+      <h3>What was asked</h3>
+      <p>The lane was given five leaf functions from the pilot list and asked to rewrite each in Rust, prove identical behaviour against the original with at least a thousand random plus edge-case trials, record honest per-function timings for the project schedule estimate, and run one honesty test showing the comparison catches a deliberate mistake.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Four rewrites pass full differential comparison: a clamped table-slot address function, a flag-byte predicate, a byte conversion, and a five-path linked-record select, each agreeing on every trial.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Function</th><th role="columnheader">What it does</th><th role="columnheader">Trials</th><th role="columnheader">Outcome</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">11</td><td role="cell" data-label="What it does">3-element vector transform</td><td role="cell" data-label="Trials">1052</td><td role="cell" data-label="Outcome">deferred: NaN payload order</td></tr>
+      <tr role="row"><td role="cell">12</td><td role="cell" data-label="What it does">clamped slot address</td><td role="cell" data-label="Trials">1019</td><td role="cell" data-label="Outcome">verified</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="What it does">13</td><td role="cell" data-label="What it does">flag byte predicate</td><td role="cell" data-label="Trials">1063</td><td role="cell" data-label="Outcome">verified</td></tr>
+      <tr role="row"><td role="cell">14</td><td role="cell" data-label="What it does">byte conversion (exact identity)</td><td role="cell" data-label="Trials">1024</td><td role="cell" data-label="Outcome">verified, exhaustive</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="What it does">15</td><td role="cell" data-label="What it does">linked-record select</td><td role="cell" data-label="Trials">1050</td><td role="cell" data-label="Outcome">verified</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The vector transform writes a fourth output word from uninitialized stack data: nothing stores to the slot it loads, the value never changes across input-varying trials, and it equals the test harness's own stack fill pattern at that slot. It is not a function of the inputs and was excluded from comparison.</p>
+      <p><span class="evidence verified">Verified</span> The deferred function is bit-exact except when two different NaN payloads meet in one accumulation row. Probing showed single-NaN cases always agree and only payload conflicts diverge; the mechanism is operand-order canonicalization of floating point addition by the toolchain, which changes which NaN payload survives. The fix is pinned instruction order, left for a follow-up.</p>
+      <p><span class="evidence verified">Verified</span> The honesty test mutated a clamp constant by one in a copy of the slot-address rewrite; exactly one trial in 1019 failed, the boundary input, confirming single-trial sensitivity.</p>
+      <p><span class="evidence verified">Verified</span> Two rewrite bugs were caught by the machine check and fixed: a signed-versus-unsigned comparison, and a pair of swapped branches. Both fixes passed on the first retry.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>The uninitialized fourth output word is excluded from that function's contract; no caller can depend on it.</li>
+      <li>NaN payload conflicts need a project policy: they are the only float class where portable Rust codegen observably differs from the original, and the observed quieting behaviour comes from emulation, so matching it needs a deliberate decision.</li>
+      <li>Input domains belong in the queue record next to each verdict, since one function's wildest inputs read wild memory in the original and are untestable by construction.</li>
+      <li>Per-lane test binaries need unique names: the shared build cache silently replaced one lane's binary with another's.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Each rewrite is an exported Rust function with the original calling convention in the lane's scratch crate, with a batch test binary beside it. Drivers run the original through the native execution helper with crafted stack and register inputs, run the same cases through the Rust binary, and compare integers exactly, floats bit-exactly, and pointers by expected relocated address. Random seeds, trial counts, and per-function timings are recorded in the pilot results file in the same folder.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first full test run faulted on every trial because functions with a frame pointer read their stack arguments one word off from frameless ones; the helper's fault record pointed at the exact store and the layout was fixed in minutes. A shared-cache binary collision, a transient link lock, and a publishing-tool timestamp quirk each cost a few minutes and are documented as tool traps. The largest surprise was the NaN finding itself: full-random bit patterns inject signaling NaNs no float literal can express, and without them the operand-order issue would have stayed hidden.</p>
+      </article>
 
       <article class="entry" id="pilot-01">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
