@@ -17,6 +17,6 @@ lf_checker_rt::export!(thiscall, rw_009e8580(this_ptr: u32, flag_arg: u32) -> u3
         let tmp: u32 = lf_checker_rt::callee_cdecl!(1, u32, this_ptr, flag);
         let lo = tmp & 0xFF;
         let slot = (entry.wrapping_add(ENTRY_ARG_OFF) as *const u32).read_unaligned();
-        lf_checker_rt::callee_thiscall!(2, u32, ACTION_THIS, slot, flag, lo)
+        lf_checker_rt::callee_thiscall!(2, u32, lf_checker_rt::relocated(ACTION_THIS), slot, flag, lo)
     }
 });

@@ -18,8 +18,8 @@
 /// selected iteration the row callee locates the row, the size callee guards
 /// the 8-byte copy into `a1`, and `a3` records success; on every other
 /// iteration the cursor advances by the width (past the limit fails), the
-/// emit callee sees (index, cursor, width), and the iteration's bit lands
-/// in `a2`. Any
+/// emit callee sees (index, pre-advance cursor, width), the slot update
+/// lands after it, and the iteration's bit lands in `a2`. Any
 /// failure clears the flag and ends the loop at the next check.
 ///
 /// Edge cases: `V` past 18 takes the write path every iteration; a null row
@@ -121,12 +121,16 @@ lf_checker_rt::export!(thiscall, rw_0054FDD0(this: u32, a0: u32, a1: u32, a2: u3
                 }
                 wr8(a3, ok);
             } else {
-                cursor = cursor.wrapping_add(width);
-                if cursor > limit {
+                // The emit call sees the pre-advance cursor: the original
+                // adds into a register but the slot update lands after it.
+                let advanced = cursor.wrapping_add(width);
+                if advanced > limit {
+                    cursor = advanced;
                     ok = 0;
                 } else {
                     let done: u32 =
                         lf_checker_rt::callee_thiscall!(CAL_EMIT, u32, a4, index, cursor, width);
+                    cursor = advanced;
                     if done & 0xff == 0 {
                         ok = 0;
                     } else {

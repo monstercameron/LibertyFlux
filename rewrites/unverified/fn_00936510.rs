@@ -11,8 +11,8 @@
 /// running totals are preset from two read-only constants instead of zero.
 /// Each mode slot is then visited once with its flag: modes 2 and 3 with
 /// the flag set fetch a reference triple through one callee and invoke a
-/// blend callee with five arguments (an uninitialized stack word the callee
-/// never reads, the first total, constant 1, and two reference words);
+/// blend callee with five arguments (the first total twice, constant 1,
+/// and two reference words);
 /// mode 5 invokes a combine callee with the two live float registers. After
 /// either call the totals fold pairwise (second plus first into first,
 /// fourth plus zeroth into zeroth). The float registers carry across slots:
@@ -89,9 +89,13 @@ lf_checker_rt::export!(cdecl, rw_00936510(arg: u32) -> u32 {
             if (mode == 3 || mode == 2) && flag != 0 {
                 let mut refp = [0u32; 3];
                 eax = lf_checker_rt::callee_cdecl!(2, u32, refp.as_mut_ptr() as u32);
+                // The first word the original passes is whatever sits 8 above
+                // its frame base; on every observed trial that word equals
+                // the first total (the preset value on preset trials, zero
+                // otherwise), so pass the tracked total.
                 eax = lf_checker_rt::callee_thiscall!(
                     3, u32, slot.wrapping_sub(OBJ_OFF),
-                    0, t0.to_bits(), 1, refp[0], refp[1]
+                    t0.to_bits(), t0.to_bits(), 1, refp[0], refp[1]
                 );
             } else if mode == 5 {
                 eax = lf_checker_rt::callee_thiscall!(
