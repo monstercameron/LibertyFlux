@@ -1,4 +1,6 @@
 // original: 0x009f9ec0 dword_vector_slide_3f4
+use lf_k2_rt::{export};
+
 /// Dword-vector slide, count at this+0x3F4 (thiscall/2 -> eax).
 /// Same shape as `rw_s18f16`.
 export!(thiscall, rw_s18f19(this: *mut u8, dst: *mut u8, src: *const u8) -> u32 {

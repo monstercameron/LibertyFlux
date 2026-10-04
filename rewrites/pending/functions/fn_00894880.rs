@@ -6,7 +6,7 @@
 /// variant. The answer becomes the key passed to the five-argument
 /// constructor with a zero marker and the last three arguments.
 /// Returns the constructor's result.
-crate::rt::export!(thiscall, rs17_00894880(
+lf_k2_rt::export!(thiscall, rs17_00894880(
     this: u32,
     a1: u32,
     a2: u32,
@@ -15,9 +15,9 @@ crate::rt::export!(thiscall, rs17_00894880(
     a5: u32,
 ) -> u32 {
     let key = if (a2 & 0xFF) == 0 {
-        crate::callee_thiscall!(3, u32, this, a1)
+        lf_k2_rt::callee_thiscall!(3, u32, this, a1)
     } else {
-        crate::callee_thiscall!(1, u32, this, a1)
+        lf_k2_rt::callee_thiscall!(1, u32, this, a1)
     };
-    crate::callee_thiscall!(2, u32, this, key, 0, a3, a4, a5)
+    lf_k2_rt::callee_thiscall!(2, u32, this, key, 0, a3, a4, a5)
 });

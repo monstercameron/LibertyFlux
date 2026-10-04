@@ -1,4 +1,6 @@
 // original: 0x009f8ca0 selector_notify_dispatch
+use lf_k2_rt::{export, callee_cdecl};
+
 /// Bits of 1.0f, pushed as the float argument to the notify calls.
 const ONE_BITS: u32 = 0x3F800000;
 

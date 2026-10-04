@@ -27,6 +27,6 @@ export!(cdecl, rw_0099daf0(pos: u32, v0: u32, v1: u32, v2: u32, v3: u32, _f: u32
         *d.add(1) = v1;
         *d.add(2) = v2;
         *d.add(3) = v3;
-        callee_stdcall!(1, u32)
+        callee_stdcall!(1, u32,)
     }
 });

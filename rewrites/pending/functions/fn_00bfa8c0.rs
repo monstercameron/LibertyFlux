@@ -2,6 +2,9 @@
 //! rs20f5 @0xBFA8C0: scale a float vec3 by the shared factor, truncate each
 //! component toward zero and store the low bytes at +0x1c (thiscall/1).
 //! Returns the last conversion, like the original's leftover EAX.
+
+use lf_k2_rt::{export, global};
+
 /// Emulates `cvttss2si`: truncation toward zero, with NaN, infinities and
 /// out-of-range values all producing `0x80000000` (Rust's `as` saturates
 /// instead, so the edges need the explicit guard).

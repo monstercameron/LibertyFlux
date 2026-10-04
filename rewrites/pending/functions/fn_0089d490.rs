@@ -9,8 +9,7 @@ export!(cdecl, rw_0089d490() -> u32 {
         if flag == 0 {
             return 0;
         }
-        let target: extern "thiscall" fn(u32, u32) -> u32 =
-            core::mem::transmute(callee_addr(1) as usize);
-        target(relocated(AUDIO_OBJ), flag)
+        
+        callee_thiscall!(1, u32, relocated(AUDIO_OBJ), flag)
     }
 });

@@ -12,9 +12,8 @@ export!(cdecl, rw_0069a080(obj: u32, arg2: u32) -> () {
         if size == 0 {
             return;
         }
-        let f: extern "thiscall" fn(u32, u32) -> u32 =
-            core::mem::transmute(callee_addr(1) as usize);
-        let delta = f(arg2, size);
+        
+        let delta = callee_thiscall!(1, u32, arg2, size);
         *((obj as *mut u32).add(2)) = size.wrapping_add(delta);
     }
 });

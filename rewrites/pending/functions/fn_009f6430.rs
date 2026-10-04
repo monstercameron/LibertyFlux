@@ -1,4 +1,6 @@
 // original: 0x009f6430 NativeImpl_GET_STAT_FRONTEND_VISIBILITY
+use lf_k2_rt::{export, global};
+
 /// First valid tunable code for the pointer table.
 const F1_FIRST: u32 = 0x289;
 

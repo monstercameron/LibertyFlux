@@ -37,6 +37,6 @@ export!(cdecl, rw_0099db60(lo: u32, hi: u32, _v0: u32, _v1: u32, _v2: u32, v3: u
             *b.add(3) = t3;
             i = i.wrapping_add(16);
         }
-        callee_stdcall!(1, u32)
+        callee_stdcall!(1, u32,)
     }
 });

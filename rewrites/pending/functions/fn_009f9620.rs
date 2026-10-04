@@ -1,4 +1,6 @@
 // original: 0x009f9620 counters_reset5
+use lf_k2_rt::{export, global};
+
 /// Counter block reset, five dwords (cdecl/0 -> void). See `rw_s18f4`.
 export!(cdecl, rw_s18f11() -> u32 {
     unsafe {

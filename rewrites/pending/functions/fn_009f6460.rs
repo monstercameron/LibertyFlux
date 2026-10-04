@@ -1,4 +1,6 @@
 // original: 0x009f6460 Stat_GetFloat
+use lf_k2_rt::{export, global};
+
 /// First valid code of the small-code branch.
 const F2_FIRST: u32 = 0x289;
 

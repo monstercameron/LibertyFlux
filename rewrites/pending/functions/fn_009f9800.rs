@@ -1,4 +1,6 @@
 // original: 0x009f9800 wordset_lookup_insert
+use lf_k2_rt::{export, callee_cdecl, global};
+
 /// Bits of 1.0f, pushed as the float argument to the notify calls.
 const ONE_BITS: u32 = 0x3F800000;
 

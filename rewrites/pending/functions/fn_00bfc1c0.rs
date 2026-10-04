@@ -2,6 +2,9 @@
 //! rs20f12 @0xBFC1C0: the 11-argument full init (thiscall/11). Header init with
 //! kind 0x4c, two sub-inits, then the tail fields: a word, two packed flag
 //! bits, a float and three bytes; tag byte 0x0b. Returns the last byte.
+
+use lf_k2_rt::{callee_thiscall, export, global};
+
 /// Tag dword shared by the header-init family, read from the game's data.
 #[inline(always)]
 unsafe fn header_tag_rs20() -> u32 {
@@ -11,9 +14,8 @@ unsafe fn header_tag_rs20() -> u32 {
 /// code, the shared tag, and the two caller values into the object's header.
 #[inline(always)]
 unsafe fn header_init_rs20(this: *mut u8, kind: u32, a1: u32, a2: u32) {
-    let init: extern "thiscall" fn(u32, u32, u32, u32, u32, u32) -> u32 =
-        core::mem::transmute(callee_addr(1) as usize);
-    init(this as u32, kind, header_tag_rs20(), a2, a1, 0);
+    
+    callee_thiscall!(1, u32, this as u32, kind, header_tag_rs20(), a2, a1, 0);
 }
 
 export!(thiscall, rw_rs20f12(
@@ -23,12 +25,10 @@ export!(thiscall, rw_rs20f12(
 ) -> u32 {
     unsafe {
         header_init_rs20(this, 0x4c, a1, a2);
-        let sub2: extern "thiscall" fn(u32, u32) -> u32 =
-            core::mem::transmute(callee_addr(2) as usize);
-        sub2(this as u32, a3);
-        let sub3: extern "thiscall" fn(u32, u32) -> u32 =
-            core::mem::transmute(callee_addr(3) as usize);
-        sub3(this as u32, a4);
+        
+        callee_thiscall!(2, u32, this as u32, a3);
+        
+        callee_thiscall!(3, u32, this as u32, a4);
         *(this.add(0x24) as *mut u16) = a6 as u16;
         // The original merges the old flag bits then masks them away; the
         // final value is exactly the two incoming bits.

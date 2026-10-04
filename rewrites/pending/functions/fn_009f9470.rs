@@ -1,4 +1,10 @@
 // original: 0x009f9470 level_hysteresis_arm
+use lf_k2_rt::{export, callee_addr, global};
+
+/// One-bits float (1.0). Shared lane-crate const, inlined by the
+/// v2 port (the lane's out file referenced it without defining it).
+const ONE_BITS: u32 = 0x3F800000;
+
 /// Arms when the level reaches +0.6, releases below -0.6 (cdecl/1 -> void).
 ///
 /// Compares the nested float at obj+0x20/+0x28 against a threshold that

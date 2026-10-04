@@ -1,4 +1,6 @@
 // original: 0x009f9da0 word_vector_slide
+use lf_k2_rt::{export};
+
 /// Word-vector slide, count at this+0x14 (thiscall/2 -> eax).
 ///
 /// Moves the words from `src` up to `this + count*2` forward to `dst`, then

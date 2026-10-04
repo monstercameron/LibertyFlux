@@ -6,10 +6,10 @@
 /// argument selects the slot; higher bits are ignored.
 const TABLE_00894450: [u32; 24] = [0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0, 0x0089dda0];
 
-crate::rt::export!(cdecl, rs17_00894450(slot: u32) -> u32 {
+lf_k2_rt::export!(cdecl, rs17_00894450(slot: u32) -> u32 {
     let k = (slot & 0xFF) as u8;
     if (1..=24).contains(&k) {
-        crate::rt::relocated(TABLE_00894450[(k - 1) as usize])
+        lf_k2_rt::relocated(TABLE_00894450[(k - 1) as usize])
     } else {
         0
     }

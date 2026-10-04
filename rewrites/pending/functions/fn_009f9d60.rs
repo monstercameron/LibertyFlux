@@ -1,4 +1,6 @@
 // original: 0x009f9d60 byte_block_slide
+use lf_k2_rt::{export};
+
 /// Byte-block slide with length adjust (thiscall/2 -> eax).
 ///
 /// Copies the bytes from `src` up to `base + len` (base and length stored at

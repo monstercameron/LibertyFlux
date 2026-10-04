@@ -1,4 +1,6 @@
 // original: 0x009f9de0 dword_vector_slide
+use lf_k2_rt::{export};
+
 /// Dword-vector slide, count at this+0x5C (thiscall/2 -> eax).
 ///
 /// Same shape as `rw_s18f15` with dword elements: moves [src, this+count*4)

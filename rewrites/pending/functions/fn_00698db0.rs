@@ -5,9 +5,8 @@
 export!(cdecl, rw_00698db0(arg1: u32, arg2: u32) -> () {
     unsafe {
         if arg1 != 0 {
-            let f: extern "thiscall" fn(u32, u32) -> u32 =
-                core::mem::transmute(callee_addr(1) as usize);
-            f(arg1, arg2);
+            
+            callee_thiscall!(1, u32, arg1, arg2);
         }
     }
 });

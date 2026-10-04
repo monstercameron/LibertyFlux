@@ -6,9 +6,8 @@ export!(thiscall, rw_0089c300(this: u32) -> u32 {
         const VTABLE: u32 = 0xE79E9C;
         const FLAG: u32 = 0xB0;
         const MODE: u32 = 0xB4;
-        let base: extern "thiscall" fn(u32) -> u32 =
-            core::mem::transmute(callee_addr(1) as usize);
-        base(this);
+        
+        callee_thiscall!(1, u32, this);
         *(this as *mut u32) = relocated(VTABLE);
         *((this + FLAG) as *mut u32) = 0xFFFF_FFFF;
         *((this + MODE) as *mut u8) = 0xFF;

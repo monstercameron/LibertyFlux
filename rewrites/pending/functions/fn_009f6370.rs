@@ -1,4 +1,6 @@
 // original: 0x009f6370 scaled_quotient_floor
+use lf_k2_rt::{export, callee_addr};
+
 /// Tunable identifiers read by `rw_s18f0`.
 const F0_NUM_ID: u32 = 0x123;
 

@@ -27,8 +27,7 @@ export!(cdecl, rw_0089d530(obj: u32, arg: u32) -> u32 {
         if ptr == 0 {
             return table & 0xFFFF_FF00;
         }
-        let target: extern "thiscall" fn(u32, u32) -> u32 =
-            core::mem::transmute(callee_addr(1) as usize);
-        target(ptr, arg)
+        
+        callee_thiscall!(1, u32, ptr, arg)
     }
 });

@@ -5,9 +5,8 @@ export!(thiscall, rw_0089e140(this: u32) -> u32 {
     unsafe {
         const VTABLE: u32 = 0xE7A2EC;
         const ONE: u32 = 0x3F80_0000; // 1.0f
-        let base: extern "thiscall" fn(u32) -> u32 =
-            core::mem::transmute(callee_addr(1) as usize);
-        base(this);
+        
+        callee_thiscall!(1, u32, this);
         *(this as *mut u32) = relocated(VTABLE);
         *((this + 0xB0) as *mut u32) = 0xFFFF_FFFF;
         *((this + 0xB4) as *mut u32) = 0xFFFF_FFFF;

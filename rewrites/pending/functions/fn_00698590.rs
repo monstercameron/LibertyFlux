@@ -7,8 +7,7 @@
 export!(thiscall, rw_00698590(this: u32, arg1: u32, _arg2: u32) -> u32 {
     unsafe {
         let id = *((this as *const u16).add(0x28)) as u32;
-        let f: extern "thiscall" fn(u32, u32, u32, u32, u32, u32) -> u32 =
-            core::mem::transmute(callee_addr(1) as usize);
-        f(arg1, 5, 6, id, relocated(0x1110090), 1)
+        
+        callee_thiscall!(1, u32, arg1, 5, 6, id, relocated(0x1110090), 1)
     }
 });

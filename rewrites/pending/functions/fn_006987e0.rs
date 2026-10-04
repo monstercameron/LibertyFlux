@@ -10,8 +10,7 @@ export!(thiscall, rw_006987e0(this: u32, arg1: u32, arg2: u32) -> u32 {
         let inner = *((this as *const u32).add(3));
         let handle = *((inner as *const u32).add(1));
         let pair = [arg1, handle];
-        let f: extern "thiscall" fn(u32, u32, u32, u32) -> u32 =
-            core::mem::transmute(callee_addr(1) as usize);
-        f(&pair as *const u32 as u32, handle, arg2, handle)
+        
+        callee_thiscall!(1, u32, &pair as *const u32 as u32, handle, arg2, handle)
     }
 });

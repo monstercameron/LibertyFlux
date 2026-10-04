@@ -1,4 +1,6 @@
 // original: 0x009f84f0 counters_reset4
+use lf_k2_rt::{export, global};
+
 /// Counter block reset, four dwords (cdecl/0 -> void).
 ///
 /// The original leaves an indeterminate value in eax (whatever the caller had

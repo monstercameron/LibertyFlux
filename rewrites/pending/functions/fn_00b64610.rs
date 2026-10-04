@@ -1,7 +1,7 @@
 // original: 0x00b64610 NativeImpl_FORCE_CHAR_TO_DROP_WEAPON_2
 // thiscall/2. Validates the given object chain; resolves through the shared
-// step (passing the caller's mode word and a validated flag folded into the
-// low byte of a `this`-derived word); attaches the inner record when the
+// step (passing the caller's mode word and a validated flag);
+// attaches the inner record when the
 // resolved entry is fresh. Returns the resolved entry, or null.
 export!(thiscall, rw_rs11f2(this: *mut u8, obj: u32, mode: u32) -> u32 {
     unsafe {
@@ -23,7 +23,7 @@ export!(thiscall, rw_rs11f2(this: *mut u8, obj: u32, mode: u32) -> u32 {
         let out = resolve(
             this as u32,
             (this as u32).wrapping_add(0x14),
-            ((this as u32) & !0xff) | validated,
+            validated,  // v2 port: leftover high bytes dropped; contract skips this arg
             mode,
         );
         if out != 0 && *((out + 0x6c) as *const u32) == 0 && obj != 0 {

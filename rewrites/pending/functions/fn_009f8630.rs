@@ -1,4 +1,6 @@
 // original: 0x009f8630 Stats::SetFloatStatCore
+use lf_k2_rt::{export, callee_addr, global};
+
 /// Last code stored to the float table.
 const F6_FLOAT_LAST: u32 = 0xFC;
 

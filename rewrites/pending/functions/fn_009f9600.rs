@@ -1,4 +1,6 @@
 // original: 0x009f9600 counters_reset3
+use lf_k2_rt::{export, global};
+
 /// Counter block reset, three dwords (cdecl/0 -> void). See `rw_s18f4`.
 export!(cdecl, rw_s18f10() -> u32 {
     unsafe {

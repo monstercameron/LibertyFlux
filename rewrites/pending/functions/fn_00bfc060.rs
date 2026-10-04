@@ -2,6 +2,9 @@
 //! rs20f9 @0xBFC060: expand the signed-byte vec3 at +0x20 to floats, scale by
 //! the shared factor and store to the destination (thiscall/1). Returns the
 //! last byte sign-extended, like the original's leftover EAX.
+
+use lf_k2_rt::{export, global};
+
 export!(thiscall, rw_rs20f9(this: *const u8, dst: *mut u32) -> u32 {
     unsafe {
         let scale = *global::<f32>(0xFE8700);

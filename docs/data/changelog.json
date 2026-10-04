@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Twenty-five native handlers verified, and a widened call log for wide calls",
+    "title": "Rewrites: 96 more functions pass the checker (3793 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "96 rewrites added under rewrites/pending: 74 script native handlers and 22 other functions.",
+      "73 rewrites that had passed checker version 1 were re-run under version 2 and replaced by the version that passed it.",
+      "The tree now holds 3793 rewrites, 2864 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "164 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Twenty-five native handlers verified, and a widened call log for wide calls",
+    "commit": "6f41df82b310816614c98932d6410e251767166a",
     "summary": "Findings from the r-n103 lane.",
     "changes": [
       "New devlog entry: Twenty-five native handlers verified, and a widened call log for wide calls.",
