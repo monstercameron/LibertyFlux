@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Two native rewrites deferred: the checker only watches eight call arguments",
+    "title": "Devlog: Tail jumps with arguments could not pass the checker, and now they can",
     "commit": null,
+    "summary": "Findings from the r-s101 lane.",
+    "changes": [
+      "New devlog entry: Tail jumps with arguments could not pass the checker, and now they can.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Two native rewrites deferred: the checker only watches eight call arguments",
+    "commit": "90ffb7ffb3e25eb4631b43edb402e60b8f3663ba",
     "summary": "Findings from the r-n113 lane.",
     "changes": [
       "New devlog entry: Two native rewrites deferred: the checker only watches eight call arguments.",

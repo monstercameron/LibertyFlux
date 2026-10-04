@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s101">Tail jumps with arguments could not pass the checker, and now they can</a></li>
       <li><a href="#production-n113">Two native rewrites deferred: the checker only watches eight call arguments</a></li>
       <li><a href="#rerun-15">Rerun batch 15: version 2 catches a vacuous version 1 pass</a></li>
       <li><a href="#production-n110">Verifying a tail-jump native handler whose target takes stack arguments</a></li>
@@ -257,6 +258,28 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s101">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Tail jumps with arguments could not pass the checker, and now they can</h2>
+      <p>A production batch of twenty small audio functions verified twenty out of twenty, but only after fixing a checker defect: the recorder stub for tail jumps logged the wrong stack slot as the call argument, so any tail jump passing arguments on the stack failed every trial. The fix is five lines in the worker, proven with a mutant that is now caught.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty small neighbouring functions from the audio subsystem in Rust and prove each rewrite behaves identically to the original with checker version two, which supports tail jumps, virtual calls and scripted callee answers.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Eighteen functions passed on the first attempt, including the largest in the batch with nine outgoing calls (six direct, three through fabricated object tables). Two functions failed on the call comparison on every trial.</p>
+      <p><span class="evidence verified">Verified</span> Both failures were tail jumps that pass an argument on the stack. Reading the worker source showed the cause: a tail site is patched into a call to a special stub, which leaves the stack one slot deeper than a normal call, but the stub logged arguments from the normal-call offsets. The original side therefore logged its own return address as the argument, which the rewrite could never match. All earlier tail proofs passed no stack arguments, so the defect was invisible until now.</p>
+      <p><span class="evidence verified">Verified</span> Three contracts passed while leaving a whole path untested (a flag pin anti-aligned with a null-or-pointer argument, a cycled stack list forgetting the driver's per-argument rotation, a search-key cycle matching the list-head period). The verdicts were green; only the per-callee fire counts showed the gap.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Fix the tail stub to read arguments one slot higher, in a lane-local worker copy; the normal stub emission is unchanged. Fold the same change back into the shared checker.</li>
+      <li>Prove the fix both ways: the two tail rewrites pass a thousand trials each, a mutant that forwards the wrong value is caught on the call comparison within a few trials, and the two earlier tail proofs still pass with their mutants still caught.</li>
+      <li>Treat a green verdict with a zero fire count as a failed verification. Check the per-callee coverage before accepting any result, and prefer cycle lengths that share no common factor with the gates they drive.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Give any tail-jump function with at least one stack argument a contract with the argument compared, and run it against the unpatched worker: the original side logs a stack address as the argument on every trial. Apply the one-slot correction to the tail stub's argument loads, rebuild the worker under a lane-local name, and re-run: the comparison passes, and a rewrite that tampers with the forwarded argument fails on the call comparison.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first relocation probe reported no fixups anywhere near the batch, which would have meant the original could not run relocated at all. The probe was double-adding the block base; a direct dump of the relocation block showed the entries, and every absolute reference in the batch does have a fixup. The locked-output-file failure on rebuild recurred and the rename-aside workaround from an earlier lane worked each time.</p>
+      </article>
 
       <article class="entry" id="production-n113">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
