@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-savegame">Rust reader: save game files</a></li>
       <li><a href="#format-data-files">Rust reader: plain-text gameplay data files</a></li>
       <li><a href="#format-audio-config">Rust reader: audio configuration and metadata tables</a></li>
       <li><a href="#structures-render">Class layouts: render phases, draw commands and other rendering classes</a></li>
@@ -161,6 +162,62 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-savegame">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: save game files</h2>
+      <p>The save game container now has a clean Rust reader, and the executable confirms the public documentation where it matters most: all 32 documented data block names sit in the binary as one contiguous table in exactly the documented order. No save files exist on this machine, so the framing itself is verified against documentation and executable strings only, never against a real save.</p>
+      <h3>What was asked</h3>
+      <p>Write a reviewable Rust reader for the save game format covering the container: file header, block table, block names, sizes and checksums. Work from public documentation and the executable's own strings, check whether the owner has any save files, and build on the archive and resource crates finished by earlier lanes instead of reimplementing their magics.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The executable holds all 32 documented block names as one contiguous table in exactly the documented order, from the simple-variables block to the vehicles block. The last thirteen entries carry a not-defined prefix whose meaning is unknown.</p>
+      <p><span class="evidence verified">Verified</span> The binary references sixteen slot file names, one more than the fifteen the public wiki documents.</p>
+      <p><span class="evidence verified">Verified</span> The save version for this build is 57, read from the game's own version data file, and the executable looks up that version stamp by name.</p>
+      <p><span class="evidence verified">Verified</span> Two earlier suspicions were wrong, and the string context proves it: the NTRU and ECC error lines belong to a TLS networking stack, not to save encryption, and the checksum match and mismatch lines sit next to a network damage tracker, not save code. The documented save container is plaintext with an additive checksum the game reportedly ignores.</p>
+      <p><span class="evidence verified">Verified</span> This machine holds no save files: the current documents save folder and the legacy application-data save folder do not exist, and a full recursive walk of the installed game found no slot files.</p>
+      <p><span class="evidence">Inferred</span> No archive key handling is needed for saves. The reader still depends on the archive and resource crates by path so its payload sniffer reuses their header detectors instead of duplicating them.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Claim</th>
+      <th role="columnheader">Source</th>
+      <th role="columnheader">Verdict</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Block count, names and order</th>
+      <td role="cell" data-label="Source">Public wiki, checked against the executable table</td>
+      <td role="cell" data-label="Verdict">Confirmed</td>
+      </tr>
+      <tr role="row">
+      <th role="columnheader">Fifteen slot files</th>
+      <td role="cell" data-label="Source">Public wiki</td>
+      <td role="cell" data-label="Verdict">Short by one; the binary names sixteen</td>
+      </tr>
+      <tr role="row">
+      <th role="columnheader">Checksum and end block layout</th>
+      <td role="cell" data-label="Source">Public wiki</td>
+      <td role="cell" data-label="Verdict">Plausible but unverified; no real save to test against</td>
+      </tr>
+      <tr role="row">
+      <th role="columnheader">Save encryption via NTRU or ECC</th>
+      <td role="cell" data-label="Source">Earlier suspicion from string lists</td>
+      <td role="cell" data-label="Verdict">Wrong family; the strings are TLS errors</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>The new crate parses the header, the block run, and an optional checksum and end block, keeping any trailing bytes; block payloads stay opaque for future per-system readers.</li>
+      <li>The parser is strict about block framing but lenient about the trailer, since the order and presence of the checksum and end block are unconfirmed. The first lane with a real save should run the bundled summary tool over it and correct the specification.</li>
+      <li>Both sibling crates were reviewed as a downstream user: no correctness bugs found, two minor unbounded-allocation notes filed for their owners.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build the crate and run its 22 unit tests on hand-built fixtures plus the integration test, which scans the game folder and the standard user save locations when given the game directory and otherwise skips. String findings come from read-only scans of the executable for the documented block names, slot names, version-stamp references and checksum and crypto vocabulary, checking the surrounding text of every hit. The summary example prints a block table and checksum verdict for any file it is given and never writes.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The wiki page is too long for a single fetch, so its container sections were pulled one at a time through the wiki programming interface. The build tool reports failure through the shell even when its own result lines say success, so every pass above was confirmed from those lines rather than the exit code. A machine-wide filename sweep for saves in odd places is slow; the documented locations plus the game-folder walk already cover every place saves are known to live.</p>
+      </article>
 
       <article class="entry" id="format-data-files">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
