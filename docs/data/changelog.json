@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Checker driver: stop keeping every trial's full response in memory",
+    "title": "Devlog: Production batch: four audio rewrites verified, one size correction, one checker gap",
     "commit": null,
+    "summary": "Findings from the r-b62 lane.",
+    "changes": [
+      "New devlog entry: Production batch: four audio rewrites verified, one size correction, one checker gap.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Checker driver: stop keeping every trial's full response in memory",
+    "commit": "2d33483abcefc15e9bc9f0521bc154d7bc7adbc7",
     "summary": "Fixes the memory growth that twice brought the machine close to running out of memory.",
     "changes": [
       "The driver kept the worker's complete response for every trial of every contract; with full data comparison on, a long run grew past 8 GB.",

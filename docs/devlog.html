@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b62">Production batch: four audio rewrites verified, one size correction, one checker gap</a></li>
       <li><a href="#production-s121">A pass that proves nothing: fault parity and nine-argument calls</a></li>
       <li><a href="#production-b74">Production: a wrong rewrite that passed thirty trials by luck</a></li>
       <li><a href="#production-b66">The compiler re-paired my arithmetic and changed the answer</a></li>
@@ -274,6 +275,32 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b62">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production batch: four audio rewrites verified, one size correction, one checker gap</h2>
+      <p>A production lane verified four neighbouring audio functions against the original with one thousand trials each and no failures, and turned up one wrong function size in the inventory plus a function the checker cannot verify yet.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of six neighbouring functions in Rust and prove each rewrite behaves identically to the original with the differential checker, spending most of the effort on the proof contract rather than the code.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> Four functions verified, one thousand trials each, zero failures, exact float equality throughout. Two take five stack arguments and return a float; one takes ten integer arguments; one takes no arguments and always returns the same number.</li>
+      <li><span class="evidence verified">Verified</span> One listed function size is nineteen bytes short: it cuts the function in the middle of its epilogue, omitting the outer loop latch, register restores and return. The repaired inventory repeats the same short number. The true end was confirmed by disassembling past the listed end until the return plus padding before the next function.</li>
+      <li><span class="evidence verified">Verified</span> A ten-argument function reads its tenth word for two flag bits only after popping a register, which shifts every later stack slot by one word. Slot-by-slot probing with distinctive values per argument confirmed all ten reads.</li>
+      <li><span class="evidence verified">Verified</span> One function cannot be verified yet: on one branch it reads back a helper output slot that actually holds the caller's own saved register, then uses it as a pointer. The checker's scripted helper cannot supply that slot and the rewrite cannot observe that register, so the behaviour is not reproducible in the harness. Three alternative checker abilities would each unblock it.</li>
+      <li><span class="evidence verified">Verified</span> Two functions reuse an incoming argument slot as scratch mid-function. Both were verified with the stack comparison off and the register and memory comparisons on, since the scratch value is fully checked through other channels.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>The short size should be corrected in the inventory to the true length before any tool slices bytes by it.</li>
+      <li>The unverifiable function is deferred with the exact missing ability recorded, not forced through with a weakened contract.</li>
+      <li>Future lanes should run a one-trial probe with a distinctive value per argument before finalising any multi-argument contract; it settles every stack-slot question at once and caught three separate slot mistakes in this batch.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane's four proof contracts with the version two checker driver, one thousand trials each, and confirm zero failures with exact float equality. Run the single-trial query tool on the designed firing trials to see the helper calls land with the predicted arguments. Disassemble past the listed end of the scanning function to see the epilogue the size omits.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Three separate stack-slot arithmetic slips cost the most time: mis-added offsets twice and one missed register pop that shifts the frame. Each produced a confusing mismatch (wrong helper arguments, wrong flag bits, a stray stack write) that looked like a checker problem but was the analysis. The distinctive-values probe now catches this class immediately. Twice the build could not replace the rewrite library because a finished checker worker still held it; renaming the old file aside and rebuilding worked without touching any running process.</p>
+      </article>
 
       <article class="entry" id="production-s121">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
