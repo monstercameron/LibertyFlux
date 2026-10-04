@@ -1,0 +1,71 @@
+{
+ "version": "b6",
+ "notes": [
+  {
+   "id": 1,
+   "title": "native handler calling convention",
+   "since": "b4-or-earlier",
+   "text": "Native handlers in this build are plain cdecl functions taking the context pointer, with the return slot and the argument array reached through it; `r-n01` documents the exact layout."
+  },
+  {
+   "id": 2,
+   "title": "jump thunks are checkable",
+   "since": "b4-or-earlier",
+   "text": "A body that is a single jump to another function is a `jump_thunk`. The checker can check these (tail-jump patching): rewrite it as a call that forwards the arguments and result, and verify it; defer only if that fails."
+  },
+  {
+   "id": 3,
+   "title": "one-byte pushes leave garbage in upper bytes",
+   "since": "b4-or-earlier",
+   "text": "When the original pushes a one-byte value as a full word, the upper bytes are leftovers from an earlier register value, not behaviour. Do not reproduce leftovers in the rewrite to satisfy the comparison: mask that argument in the contract (the call-argument options) so only the meaningful bytes are compared."
+  },
+  {
+   "id": 4,
+   "title": "check size against the repaired inventory",
+   "since": "b4-or-earlier",
+   "text": "Check each function's size against the repaired inventory (`f-boundaries\\functions_v2.json`) before trusting the size in your batch list."
+  },
+  {
+   "id": 5,
+   "title": "checker driver memory: 20 contracts, three workers",
+   "since": "b4-or-earlier",
+   "text": "The checker driver's memory grows without bound when one driver process runs many contracts: a single `checker2.py --all` over 170 contracts reached 8.9 GB and had to be stopped to save the machine. Never run more than 20 contracts in one driver process: run the driver once per contract or per small group, and never run more than three checker worker processes at once."
+  },
+  {
+   "id": 6,
+   "title": "brief version b6: reference example and what changed",
+   "since": "b6",
+   "text": "This is brief version b6. A reference example of the standard expected: lane `r-b185`'s output under `{root}\\.artifacts\\scratch\\r-b185\\` (three animation-blend functions of about 1,500 bytes each, all verified on the first attempt in 38 minutes). Read `out\\rewrites\\fn_00690410.rs`, its contract and the generator `gen_fn23.py` before you write your first function, and match it on these points:\n  a. The doc comment is a specification: what the arguments are, the layout it reads (offsets named), the algorithm, the edge cases, the calling convention.\n  b. Offsets and magic values are named constants (`TRACK_FLAGS`, `NEAR_ONE`), and parameters and locals are named for what they hold. A register name is a last resort.\n  c. Float order is pinned from the start, not after a failure: arithmetic goes through small helpers that pass both operands through `core::hint::black_box`, written in the original's operand order.\n  d. The wrong version is used to find what the contract cannot see. If a wrong version that changes one part of the output passes, that part is not observed (a snapshot too short, an argument skipped, a branch never taken): widen the contract if you can, and if the checker cannot observe it, the function is `deferred` with reason `checker_gap`, not verified. Lane `r-b184` deferred a function this way after showing that changes to half of a matrix passed unnoticed.\n  What else changed from earlier briefs, and why, in order of importance:\n  1. Every function gets its own wrong version, not one per batch. A review of all 6,776 accepted rewrites found that 6,515 had never had a deliberately wrong version run against them, so nothing showed that their contracts could tell right from wrong. For each function, after it passes: add a second export that differs in ONE behaviour the contract should see (a store left out, a constant off by one, a branch inverted, two arguments swapped), name it in the contract's `mut_export`, and run it for 100 trials. It must fail. If it passes, the contract is too weak: widen the inputs or add the missing check until the wrong version fails, then re-run the right one. This costs seconds per function once the crate is built. Do not ship the wrong version in `out\\rewrites`.\n  2. Say what your proof does not cover. If you switched a check off, masked or skipped an argument, let a callee run natively, or know of a branch your inputs never take, write it in that function's `narrowed` field and in the summary. A narrower proof that says so is acceptable; a narrower proof that looks full is not.\n  3. Read the clock. Every time you write a time, take it from `Get-Date`. Lanes have written times an hour off from memory, and reported durations that were three times the real ones. Minutes per function come from two clock readings.\n  4. Do not spend time proving a known gap again; confirm it with a short probe, defer with the reason, keep the rewrite and contract, move on.\n  5. Speed, from the fastest lanes: triage the whole batch before writing anything; for a family of near-identical functions write a generator and check each generated contract's shape in the script; run a 60-trial probe before a 1,000-trial run; start a long checker run in the background and write the next rewrite while it runs (never more than three workers); build all rewrites in one crate and rebuild once per group, not once per function."
+  },
+  {
+   "id": 7,
+   "title": "a pass counts only on the stock worker",
+   "since": "b4-or-earlier",
+   "text": "A pass counts only on the stock worker. An audit found 22 lanes that built a private copy of the worker; most fixed a real harness defect, but one made the comparison treat differing values as equal and reported the result as verified. That is not a pass (rule 3). If the stock worker cannot run a function, defer it and describe the gap. If you believe the worker has a defect, you may prove it on a private copy, but then: the outcome is `deferred` with reason `checker_gap`, `results.json` gets a field `private_worker` describing the change in one line, and the rewrite stays in `out/rewrites` for a later re-run. Never change what is compared, never mask or canonicalise values, and never report `verified` from a private worker."
+  },
+  {
+   "id": 8,
+   "title": "read code through the mapped image",
+   "since": "b4-or-earlier",
+   "text": "Addresses: three lanes have reached wrong conclusions, two of them that their whole batch \"is not functions\", because they indexed the executable's raw file bytes with a mapped address (the two differ by a constant in the code section). Always read code through `pefile`'s `get_memory_mapped_image()` (or `get_data(rva, n)`), never from the raw file at an RVA, and before trusting your mapping decode one function you know from the entry to its return. The inventory's pointer-only entries have been screened: all but 16 are real functions and those 16 are held out of the queue. If you still believe an entry is not a function, say exactly what a decode from it shows and defer it as `not_a_function`; do not defer a whole batch on that ground without the mapping check above."
+  },
+  {
+   "id": 9,
+   "title": "checker version 4",
+   "since": "v4-patch",
+   "text": "The checker in the repository is now version 4, driver and worker both. Wherever this brief says version 3, read version 4: the manual is still the module documentation at the top of the driver, and the worker is at the same path. New in version 4, all off unless the contract asks: a callee stand-in that leaves the scratch registers alone (`\"preserve\": true` on the callee, for an original that keeps using its object pointer after calling a base constructor) or leaves all three including the accumulator alone (`\"ret\": \"preserve\"`, for a check called after the return value is set); an argument passed in the accumulator (`eax_from_stack` on the callee together with `\"eax\"` in `call_regs` for it, both or neither); a callee that takes register arguments but leaves stack clean-up to its caller (`noclean`); an out-parameter written at a byte offset (`dst` on a write); a byte mask on a pushed argument (`call_mask`) for a one-byte value pushed as a full word. A trial that makes more than 256 calls now fails unless the contract raises `log_max` (up to 1,024). A lost worker is retried by the driver and the retry is recorded; you no longer need to re-run by hand. Still not possible: arguments on the x87 stack, and vector-register arguments beyond the second."
+  },
+  {
+   "id": 10,
+   "title": "floats match bit for bit",
+   "since": "b4-or-earlier",
+   "text": "Float results must match bit for bit, including the sign and payload of a NaN. When only a NaN's sign differs, the rewrite's operand order differs from the original's: write the operations in the original's operand order (and keep the compiler from commuting them, for example by passing one operand through `core::hint::black_box`), do not relax the check."
+  },
+  {
+   "id": 11,
+   "title": "defects found in checker version 1",
+   "since": "b4-or-earlier",
+   "text": "Three defects were found in version 1 by lanes using it (nearly constant fills for globals, calls with more than eight arguments, corrupted state after a fault on the rewrite side only). Version 3 fixes the first two and guards against the third with its vacuous rule; if you see anything like them, stop and report it, because a checker that passes a wrong rewrite is worse than a slow one.\n"
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+Your task:
+
+Propose a descriptive name for each of the {count} game functions in `{list_path}` (address, size, and the inventory's hints for each). They are consecutive unnamed functions in address order, so they mostly come from the same source files: work out what the group is about first, then name each function.
+
+No rewriting and no checker in this lane: only names. A good name says what the function does in the project's style (`snake_case` for free functions, `Class::method` when the class is known), for example `audio_voice_tick`, `pool_append_converted_string`, `CTaskSimpleDie::make_abortable`. A slot label such as `Class::vf12`, an address-based name, or a vague name such as `do_thing` or `helper` is not a name: if you cannot tell what a function does, say so with confidence `low` and leave the name empty.
+
+How to work:
+- Addresses: read code through `pefile`'s `get_memory_mapped_image()` or `get_data(rva, n)`, never from the raw file at a mapped address (the two differ by a constant; three lanes have gone wrong this way). Before trusting your mapping, decode one function you know from its entry to its return. `capstone` and `pefile` are in `{root}\.venv`.
+- Evidence to use, strongest first: strings the function references; imported functions it calls; names of functions it calls or is called by (`{root}\.artifacts\scratch\m-names\symbols.json` has the merged names, `{root}\.artifacts\scratch\coordinator\names_from_lanes.json` the names production lanes gave, and `{root}\rewrites\pending\index.json` the verified rewrites, whose Rust sources under `{root}\rewrites\pending\` have doc comments saying what each does); the class whose virtual table points at it and that class's known methods (`{root}\crates\lf-types-draft\src\lib.rs` has 340 structure layouts, and the `c-*` lane folders have the class hierarchy by subsystem); the script native it implements; what it reads and writes.
+- Write a script that gathers that evidence for every function in the batch into one table first, then go through the table. Do not read every function instruction by instruction: read the short ones and the ones the table leaves unclear.
+- Give each name a confidence: `high` (a string, an import or a known caller or class makes it plain), `medium` (the behaviour is clear but the wording is yours), `low` (a guess: leave the name empty).
+
+Deliverables in addition to the standard ones: `names.json`, a list with one record per function: `address`, `name`, `confidence`, `evidence` (one short sentence, no addresses of other functions needed), `subsystem` (one or two words), `class` when known. Keep `names.json` current as you go; write it after every 25 functions. `results.json` with the counts by confidence.
+A devlog fragment is needed only if you learn something another lane should know (a reliable naming signal, a subsystem's layout); use the id `naming-{slug}`. Do not put addresses or disassembly in it.
+
+Time limit: this lane is stopped by the system two hours after it starts, and anything not written by then is lost. Stop after 90 minutes of work and write `summary.txt`: how many named at each confidence, minutes per function, which evidence was most useful, and what would make the next naming lane faster.

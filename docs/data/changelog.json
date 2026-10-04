@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Scripts: the devlog scan no longer contains an account name",
+    "title": "Tooling: the operating scripts are in the repository",
     "commit": null,
+    "summary": "The scripts that run the lane swarm lived in an untracked scratch folder. Cleaned copies are now tracked and tested.",
+    "changes": [
+      "scripts/coordinator/ holds the 16 live scripts of the operating layer (the five-minute tick, the lane launcher and supervisor, the brief makers, the importer of passed rewrites, the count, review and report scripts), four shared modules, and tests. Machine paths are gone: the repository root is found from the script's own location and the game folder only through an environment variable.",
+      "Briefs are now data: a template plus numbered notes with the brief version, so a change to what lanes are told is an edit to a text file with its reason recorded, not a script that rewrites another script.",
+      "65 tests that need no game file and no lanes: the reader of lane results in every shape lanes write them, the batch picker (no function handed out twice, holds respected), the counts on a synthetic set, the brief templates, and the publication scan. The pipeline runs them on every push.",
+      "Lessons from today's incidents are built in: lanes are started so that they outlive their launcher, the supervisor reads its settings on every pass, a dead lane's batch is released but never within fifteen minutes of its launch.",
+      "These copies are not yet the ones in use. The lane could not run anything that commits, pushes or starts lanes, so the tick, the supervisor and the importers were ported line by line and need a supervised first run before the scratch copies are retired."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Scripts: the devlog scan no longer contains an account name",
+    "commit": "aa3b201f0945e87d138379d828716ab7d0555360",
     "summary": "A check meant to keep a machine account name out of the devlog had that name written in it.",
     "changes": [
       "The script that screens devlog fragments before they are published looked for a machine account name by spelling it out, which put the name in a public file. It now takes the name from the machine at run time.",

@@ -133,6 +133,9 @@ jobs:
           python-version: "3.11"
       - name: Scripts compile
         run: python -m compileall -q scripts
+      - name: Coordinator script tests
+        working-directory: scripts/coordinator
+        run: python -m unittest discover -s tests
       - name: Site data is valid JSON
         run: python -c "import json,glob; [json.load(open(f, encoding='utf-8')) for f in glob.glob('docs/data/*.json')]; print('ok')"
       - name: Publication rules
