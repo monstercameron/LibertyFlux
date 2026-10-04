@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-04",
-  "updated_at": "2026-10-04 04:57",
+  "updated_at": "2026-10-04 05:04",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -13,11 +13,11 @@
   "stages": {
     "identified": 38403,
     "named": 9031,
-    "rewritten": 5020,
-    "verified": 4878
+    "rewritten": 5039,
+    "verified": 4906
   },
   "structures": 340,
-  "symbols": 4912,
+  "symbols": 4940,
   "measured": [
     {
       "label": "Code section",
@@ -105,20 +105,20 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 5020,
+      "value": 5039,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 4878,
+      "value": 4906,
       "unit": "functions",
       "source": "rewrites/pending/index.json in the repository"
     }
   ],
   "activity": {
-    "lanes_running": 44,
-    "lanes_finished": 473,
+    "lanes_running": 45,
+    "lanes_finished": 478,
     "lanes_incomplete": 34,
     "devlog_entries": 239
   },
