@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Subsystem survey: world, entities and object pools",
+    "title": "Devlog: Tools: audio and video",
     "commit": null,
+    "summary": "Findings from the t-audio-video lane.",
+    "changes": [
+      "New devlog entry: Tools: audio and video.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Subsystem survey: world, entities and object pools",
+    "commit": "5bc950e9ea01767602fd61cd1a966f1db826c717",
     "summary": "Findings from the s-world-pools lane.",
     "changes": [
       "New devlog entry: Subsystem survey: world, entities and object pools.",
