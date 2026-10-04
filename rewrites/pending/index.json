@@ -2871,6 +2871,15 @@
   "lane": "r-b104"
  },
  {
+  "address": "0x0069EC90",
+  "name": "item_list_dispatcher",
+  "kind": "function",
+  "file": "functions/fn_0069ec90.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b128"
+ },
+ {
   "address": "0x006F4870",
   "name": "timer_restart_stamp",
   "kind": "function",
@@ -11617,6 +11626,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s135"
+ },
+ {
+  "address": "0x00955440",
+  "name": "resource_header_float",
+  "kind": "function",
+  "file": "functions/fn_00955440.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b135"
+ },
+ {
+  "address": "0x00955570",
+  "name": "resource_file_loader",
+  "kind": "function",
+  "file": "functions/fn_00955570.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b135"
  },
  {
   "address": "0x00962060",
