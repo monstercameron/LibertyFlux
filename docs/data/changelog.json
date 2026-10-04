@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: Lanes were running their own copies of the checker, and one of them relaxed it",
+    "commit": null,
+    "summary": "Findings from the coord-private-workers lane.",
+    "changes": [
+      "New devlog entry: Lanes were running their own copies of the checker, and one of them relaxed it.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 46 more functions pass the checker (5365 in total)",
     "commit": "8a3f2235c23cf3cace74e85ee5ae3323142ac953",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
