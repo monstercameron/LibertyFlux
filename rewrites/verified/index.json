@@ -42219,10 +42219,28 @@
   "lane": "r-b166"
  },
  {
+  "address": "0x00AE43A0",
+  "name": "bitmask_table_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00ae43a0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b313"
+ },
+ {
   "address": "0x00AE4560",
   "name": "aabb_corners_homogeneous",
   "kind": "function",
   "file": "functions/fn_00ae4560.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b313"
+ },
+ {
+  "address": "0x00AE4880",
+  "name": "net_sync_state_update",
+  "kind": "function",
+  "file": "functions/fn_00ae4880.rs",
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b313"
@@ -43108,6 +43126,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b304"
+ },
+ {
+  "address": "0x00B0DE00",
+  "name": "net_find_entry_near_point",
+  "kind": "function",
+  "file": "functions/fn_00b0de00.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b317"
  },
  {
   "address": "0x00B0E410",
@@ -70236,6 +70263,15 @@
   "lane": "r-s336"
  },
  {
+  "address": "0x00CC04E0",
+  "name": "ped_moveblend_weight_normalize",
+  "kind": "function",
+  "file": "functions/fn_00cc04e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b321"
+ },
+ {
   "address": "0x00CC55E0",
   "name": "euphoria_behaviour_find_or_create",
   "kind": "function",
@@ -85842,6 +85878,15 @@
   "lane": "r-s358"
  },
  {
+  "address": "0x00E66CE0",
+  "name": "scaled_sqrt_store_01",
+  "kind": "function",
+  "file": "functions/fn_00e66ce0.rs",
+  "trials": 0,
+  "checker": "version 4",
+  "lane": "r-s358"
+ },
+ {
   "address": "0x00E66D10",
   "name": "global_ratio_store_02",
   "kind": "function",
@@ -85864,6 +85909,15 @@
   "name": "register_stub_02",
   "kind": "function",
   "file": "functions/fn_00e66d40.rs",
+  "trials": 0,
+  "checker": "version 4",
+  "lane": "r-s358"
+ },
+ {
+  "address": "0x00E66D50",
+  "name": "register_stub_03",
+  "kind": "function",
+  "file": "functions/fn_00e66d50.rs",
   "trials": 0,
   "checker": "version 4",
   "lane": "r-s358"
@@ -85981,6 +86035,15 @@
   "name": "global_ratio_store_08",
   "kind": "function",
   "file": "functions/fn_00e67220.rs",
+  "trials": 0,
+  "checker": "version 4",
+  "lane": "r-s358"
+ },
+ {
+  "address": "0x00E67260",
+  "name": "global_ratio_store_09",
+  "kind": "function",
+  "file": "functions/fn_00e67260.rs",
   "trials": 0,
   "checker": "version 4",
   "lane": "r-s358"
