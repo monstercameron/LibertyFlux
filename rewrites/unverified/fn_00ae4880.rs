@@ -49,8 +49,9 @@
 /// When `F_TAIL` is set, copy `G_CNT`'s low byte to `[sg+0x18]`; when
 /// `F_MORE` is also set and the count exceeds `[sg+0x17]`, fill that many
 /// words at `FILL_TAB + [sg+0x17] * 4` (callee 10, encrypted on disk: the
-/// contract models it as a fixed 4-word fill of ones, write-only here),
-/// copy `G_SEQ` to `[sg+0x30]`, and run the notifier (callee 11) on `sg`.
+/// contract models it as a fixed 4-word fill of ones, write-only here).
+/// Still within the tail, copy `G_SEQ` to `[sg+0x30]` unconditionally, and
+/// when `F_MORE` is set run the notifier (callee 11) on `sg`.
 /// Finally clear `G_Z0/G_Z1`.
 ///
 /// Callees 7-9 and 11 genuinely write object and global state the stubbed
@@ -353,7 +354,10 @@ lf_checker_rt::export!(cdecl, rw_00ae4880(arg: u32) -> u32 {
                     let dst = FILL_TAB.wrapping_add(dl.wrapping_mul(4));
                     lf_checker_rt::callee_cdecl!(ID_FILL, u32, cc, lf_checker_rt::relocated(dst), 1u32,);
                 }
-                wr32(sg.wrapping_add(0x30), glob32(G_SEQ));
+            }
+            // Unconditional within the tail: only the fill and notify are gated.
+            wr32(sg.wrapping_add(0x30), glob32(G_SEQ));
+            if glob8(F_MORE) != 0 {
                 lf_checker_rt::callee_cdecl!(ID_NOTIFY, u32, sg,);
             }
         }

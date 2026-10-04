@@ -24,12 +24,12 @@
 /// Original: 0x00c3fc90 (cdecl, no stack words). No return value.
 lf_checker_rt::export!(cdecl, rw_00c3fc90() -> u32 {
     unsafe {
-        fc90_core(false);
+        fc90_core(false, false);
         0
     }
 });
 
-unsafe fn fc90_core(plain_cmp: bool) -> u32 {
+unsafe fn fc90_core(plain_cmp: bool, skip_out1: bool) -> u32 {
     unsafe {
         const K_100: f32 = 100.0;
         const K_145: f32 = 145.0;
@@ -167,7 +167,9 @@ unsafe fn fc90_core(plain_cmp: bool) -> u32 {
                 };
             }
             g_out0.write(x1);
-            g_out1.write(0);
+            if !skip_out1 {
+                g_out1.write(0);
+            }
             g_out2.write(scaled);
         }
         let mut t = g_clock.read();
