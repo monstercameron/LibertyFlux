@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Checker: version 5 is the live checker",
+    "title": "Devlog: merging the cloud review, and three traps on the way to checker version 5",
     "commit": null,
+    "summary": "What was checked before the merge, what went wrong while checking, and what was decided.",
+    "changes": [
+      "Records that checker version 5 reproduces every verdict on record on this machine, and that one of its options cannot work here because the system holds the address range it needs in every 32-bit process.",
+      "Records three traps: a build that was not rebuilt because unpacked sources carried old times, a merge plan that would have changed the checker under running lanes, and a supervisor that kept starting lanes after the model quota ran out.",
+      "Records why the step that hands back stopped lanes' work had released almost nothing, and its first real run: 948 functions from 68 lanes."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Checker: version 5 is the live checker",
+    "commit": "ecc570dc1d595daeddc1025d8088d32e4b9e45b9",
     "summary": "The worker built from the merged source replaced version 4 while no lane was running.",
     "changes": [
       "Version 5 was built from main after the merge and run through the whole regression with the live driver: all 38 existing proofs and all 34 wrong versions give the verdicts on record, and the five new proofs that can run on this machine pass with their wrong versions caught. The version 4 worker and proof library are kept beside the new ones.",

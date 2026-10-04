@@ -9,6 +9,40 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Merging the cloud review, and three traps on the way to checker version 5</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#pr1-merge-and-checker-5-2026-10-04"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#pr1-merge-and-checker-5-2026-10-04</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>A cloud session reviewed the repository for most of a day without the game's files and opened a pull request of 85 commits: trust tooling for the rewrites, checker version 5, the assembly of verified rewrites, the first crates of the lift, a shader translator, new site pages and a wider pipeline. The question was how to merge it under a swarm that commits every five minutes and whose lanes call the tracked checker driver directly. This entry records what was checked, what went wrong while checking, and what was decided.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A cloud session reviewed the repository for most of a day without the game's files and opened a pull request of 85 commits: trust tooling for the rewrites, checker version 5, the assembly of verified rewrites, the first crates of the lift, a shader translator, new site pages and a wider pipeline. The question was how to merge it under a swarm that commits every five minutes and whose lanes call the tracked checker driver directly. This entry records what was checked, what went wrong while checking, and what was decided.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Question&lt;/th&gt;&lt;th&gt;Finding&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Does version 5 give the same verdicts as version 4 on this machine?&lt;/td&gt;&lt;td&gt;Yes: all 38 existing proofs and all 34 wrong versions match the verdicts on record. Run twice, once from the branch and once from main after the merge.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Do the new abilities work here?&lt;/td&gt;&lt;td&gt;x87 entry values and state, vector arguments beyond the second, and snapshots of up to 64 words: their five proofs pass and their wrong versions are caught. The guard proof that is meant to fail does fail.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Does the read-only shadow option work here?&lt;/td&gt;&lt;td&gt;No. It needs the worker to hold the address range the original was linked for. In every 32-bit process on this machine (Windows on ARM64, running x86 code under emulation) a system mapping already holds that whole range before the worker's first instruction; the worker holds none of it. A fresh worker never helps, so the driver's retries cannot succeed.&lt;/td&gt;&lt;td&gt;Verified (three fresh processes inspected, and the version 4 worker for comparison)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Is the guard still sound when the worker holds none of the range?&lt;/td&gt;&lt;td&gt;On this machine, yes: the range is reserved and not readable, so an unrelocated read by the original faults, which is what the guard is for. That is a property of this machine, not something the worker ensured.&lt;/td&gt;&lt;td&gt;Inferred from the guard proof failing with a fault on the original's side&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;Trap 1: a build that was not rebuilt&lt;/h3&gt;
+&lt;p&gt;The branch was unpacked into a scratch folder from a git archive and built into its own output folder, so that nothing live was touched. The first regression then reported that the new proofs were missing from the proof library. The library was stale: an earlier, failed attempt had built the live tree's library into the same output folder, and files unpacked from an archive carry the time of the commit, which was older than that output. The build tool compares times, judged the library current and did not rebuild it. Cleaning the two crates and building again fixed it. A regression that had seemed to say "33 of 38 match, then a crash" was really a version 5 worker running a version 4 proof library. Rule: after unpacking sources from an archive into a build folder that has been used before, clean first.&lt;/p&gt;
+&lt;h3&gt;Trap 2: "nothing changes for the lanes" was wrong&lt;/h3&gt;
+&lt;p&gt;The plan was to merge and leave the live worker on version 4 until version 5 was proven. But lanes do not only run the worker: they run the tracked driver script and build their rewrites against the tracked runtime crate. A merge would have changed both under thirty running lanes while the worker stayed old. The first answer was a merge that held those files back; a trial of it broke the new ledger, which imports a new checker script. Before a second, narrower hold-back was needed, the problem went away for another reason (next section): with no lane running, the whole branch could be merged and the worker swapped in the same quiet window.&lt;/p&gt;
+&lt;h3&gt;Trap 3: the quota ran out, and the supervisor did not notice&lt;/h3&gt;
+&lt;p&gt;At 17:42 every lane ended within three minutes with the model service's "quota exhausted" error; the message gives the reset time. The supervisor saw free slots and kept starting two lanes a pass, each of which failed at once and took a batch of functions with it. Setting its target to zero did nothing, because it reads a zero as "not set"; the stop file did. Thirty-six lanes ended this way. Their batches, and those of older stopped lanes, are covered by the next finding.&lt;/p&gt;
+&lt;h3&gt;A release step that never released&lt;/h3&gt;
+&lt;p&gt;The tick gives back the batch of a lane that stopped without results. It decided "without results" by whether the lane's folder held a results file. The checker driver writes a file of that same name into the folder it runs in, so most stopped lanes looked as if they had results, and their batches stayed reserved for good. The step now keeps only what a lane settled (verified, or deferred with a reason) and what is already in the verified tree, and never removes a lane's list, because lane numbers are taken from the lists. Its first run handed back 948 functions from 68 stopped lanes.&lt;/p&gt;
+&lt;h3&gt;Decisions&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The pull request was merged whole at 17:51 with a merge commit, after the trial merge, the script tests, the publication check and the ledger check passed on the merged tree. The worker and proof library were swapped at 17:55; version 4's are kept beside them.&lt;/li&gt;
+&lt;li&gt;The production brief is version b9: it names the new abilities and tells lanes that the shadow option cannot work here, with the deferral reason to record.&lt;/li&gt;
+&lt;li&gt;The tick now regenerates the site's history, quality and feed data.&lt;/li&gt;
+&lt;li&gt;Still open: the supervisor should stop by itself when lanes fail with a quota error; the shadow option needs a different design on this machine (placing the shadow inside the system's reservation, or running those proofs on an x64 machine).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To reproduce the address-range finding: start the 32-bit worker, and from another process list the regions of its address space between the original's preferred base and the end of its image; they are one reserved, mapped region whose allocation begins far below the range.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming batch 55: animation channel slots, input devices, drawable parsing</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-55"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-55</id>
@@ -1047,26 +1081,5 @@
 &lt;p&gt;Generate the crate, contracts and rewrites from the lane generator script, build the rewrite crate into the lane build folder, run the lane copy of the checker driver once per contract, and rebuild the lane results file from the verdicts; every verdict must pass with no vacuous flag and every wrong version must fail.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;Hand-counted call locations were wrong for eight of the twenty functions because data bytes can mimic call opcodes; a byte scan cross-checked with a disassembler fixed all of them, and a wrong location fails loudly at setup. One function's declared memory range came out slightly short and the checker reported it as writes outside the declared range on both sides, which pointed straight at the arithmetic slip. Trial speed varied more than tenfold over the session for no visible reason, so per-function timings in the results come from the verdict records, not from memory.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming ranked episodic race leaderboard methods, boards 37 to 54</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-22"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-22</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>All 150 functions in this batch are per-board virtual methods of the ranked episodic race leaderboard descriptors, and every one is named with the same nine-method vocabulary earlier lanes established for this family.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;All 150 functions in this batch are per-board virtual methods of the ranked episodic race leaderboard descriptors, and every one is named with the same nine-method vocabulary earlier lanes established for this family.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed game functions, which mostly come from the same source files, giving each a confidence of high, medium or low.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds nine virtual methods for each of eighteen leaderboard boards, covering ranked episodic race boards 37 through 54. Two boards at the batch edges are partial, and two boards have no per-board id getter because their tables point into the encrypted region instead. Every method slot has exactly one code shape across all boards, and all boards agree internally on a single numeric board id.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The nine methods per board are: a board-name getter, a board-id getter, a column-index search, a column-id lookup, a column-size lookup, a column-kind lookup, a mapped-column-index lookup, a column-id mapper, and a row builder that fills nineteen column positions plus a presence bitmask. The row-builder loop bound of nineteen matches the value measured for earlier boards of the same sub-family.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Board ids are scattered rather than sequential: neighbouring race numbers can have far-apart ids, so later work must read each id from the code and never compute it from the race number.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;All 150 functions are named in the inherited vocabulary, 31 at high confidence and 119 at medium, with none left empty. The subsystem for the whole batch is online leaderboards. The next lane on this family should continue with the boards above race 54 using the same nine names, and keep checking id unanimity per board to catch anomalies mechanically.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Disassemble the batch through the executable's memory-mapped image, group functions by code shape, and confirm each group matches one of the nine known slots. Attribute unlabelled entries through their virtual tables: a name getter is proven by the board-name string it returns, and a kind lookup by sitting at the expected table offset with its board's id constant. Cross-check that every method of one board carries the same id.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Six id getters are referenced from foreign tables as well as their own, and two column-id lookups have extra raw matches inside bulk data whose neighbours are not code addresses at all. Both are known traps in this family: the first is linker-folded identical stubs, the second coincidental byte matches. Checking each reference's neighbours before counting it avoided both.&lt;/p&gt;</content>
   </entry>
 </feed>
