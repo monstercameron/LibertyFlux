@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n08">Some native handlers cannot be rewritten without assembly</a></li>
       <li><a href="#production-s29">A whole batch that ends in jumps, not returns</a></li>
       <li><a href="#production-s19">Production batch: eighteen area-table functions verified, one float stub found suspect</a></li>
       <li><a href="#production-n11">Nine-argument native calls exceed the checker call log</a></li>
@@ -210,6 +211,29 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n08">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Some native handlers cannot be rewritten without assembly</h2>
+      <p><span class="evidence verified">Verified</span> A production batch of twenty-five script native handlers yielded eighteen verified rewrites, and the seven deferrals share only two causes: six handlers normalize a boolean argument by writing into their own incoming stack slot, which safe Rust cannot reproduce, and one handler is a bare jump to engine code with no body to rewrite.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty-five script native handler functions in Rust and prove each rewrite behaves identically to the original with the differential checker, running at least one thousand trials per function including edge values.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Eighteen handlers verified cleanly: each passed one thousand standard trials plus two hundred full-data undeclared-write discovery trials with zero failures, all on the first attempt. Three deliberate mutants were all caught quickly, confirming the checks are sensitive to swapped call arguments, unmasked return bytes and inverted flag logic.</p>
+      <p><span class="evidence verified">Verified</span> Six handlers share a surprising idiom: to pass a true or false value to the engine, they write the normalized byte directly into the low byte of their own incoming argument slot on the stack, then push that corrupted slot as the call argument. Both effects are visible to the checker, so a rewrite must reproduce the stack write exactly, but naming that slot from safe Rust is impossible: taking the argument's address gives a compiler-made frame copy instead, and inline assembly is forbidden. These six were deferred.</p>
+      <p><span class="evidence verified">Verified</span> One handler is a five-byte jump to engine code with padding after it, so there is no handler body to rewrite. It was deferred as a jump thunk.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Defer slot-scratch handlers rather than weaken any comparison; record the exact reason so a future checker extension can revisit them as a class.</li>
+      <li>Other native batches will contain the same boolean idiom, so lanes should check for it during disassembly before writing contracts.</li>
+      <li>Under heavy machine load, run one contract per driver invocation with retry on failure: two contracts here lost their worker mid-run with zero failures and passed fully on same-seed retry.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble any deferred handler from the original executable and look for a boolean test whose result is stored into the incoming stack argument slot before the engine call. Compare against a Rust rewrite that computes the same call argument but cannot touch the slot: the call comparison passes while the stack comparison reports the missing write. Attempting the C-variadic workaround fails at compile time on this toolchain.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> The relocation check initially reported that absolute addresses had no fixup entries, which would have broken every global read. The bug was in the check script: the parsing library already returns full addresses, and the script added the page base a second time. A pilot lane report described this exact trap, and re-reading it fixed the issue in minutes.</p>
+      <p><span class="evidence verified">Verified</span> The first full-batch run aborted partway when its worker process went silent; the driver then crashed while tearing down instead of continuing. Splitting the run into one invocation per contract with a single retry made the rest of the batch proceed unattended.</p>
+      </article>
 
       <article class="entry" id="production-s29">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
