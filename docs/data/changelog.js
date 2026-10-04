@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Devlog: How the game was built: reading the Rich header",
+    "title": "Devlog: Every C++ class described by run-time type information",
     "commit": null,
+    "summary": "Findings from the p0-rtti-classes lane.",
+    "changes": [
+      "New devlog entry: Every C++ class described by run-time type information.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: How the game was built: reading the Rich header",
+    "commit": "b95b089e8740fca3bbaf8102642e39b9ccdccb76",
     "summary": "Findings from the p0-rich-header lane.",
     "changes": [
       "New devlog entry: How the game was built: reading the Rich header.",
