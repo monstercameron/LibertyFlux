@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-04",
-    "title": "CI: a first pipeline on GitHub Actions",
+    "title": "Agent rules: review lane output and version the briefs",
     "commit": null,
+    "summary": "The hourly review now includes reading what lanes actually produced and refining their instructions, with each change given a version.",
+    "changes": [
+      "Each hourly review reads a sample of real lane output (rewrites, contracts and results, not only summaries) and refines the briefs, for correctness first and speed second.",
+      "Every change to the production brief gets a version that lanes write into their results, so pass rate and time can be compared before and after.",
+      "Brief version b5 is the first under this rule. It asks for a deliberately wrong version of every function, not one per batch (a review of all accepted rewrites found 6,515 that never had one); a list of anything that narrowed a function's comparison; times read from the clock instead of estimated; and the working habits of the fastest lanes."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "CI: a first pipeline on GitHub Actions",
+    "commit": "a452835efe965aa38a06d5ea345ba0debc522cad",
     "summary": "Every push that touches code is now built and tested on GitHub's machines. It informs; nothing waits on it.",
     "changes": [
       "Portable crates (engine crates, format readers, shared types) are built and their tests run on Windows, Linux and macOS. The goal is a portable game, so portability is checked from the first day instead of at the end.",

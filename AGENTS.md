@@ -186,6 +186,10 @@ Each review answers, with numbers from machine sources:
   kind; where time and memory went; what was deferred and why.
 - Trust: anything in the last hour that weakens confidence in "verified", and what was done.
 - Process: what was learned, and which brief, script, guard or allocation changes because of it.
+- The lanes themselves: read a sample of what the Muse lanes actually produced in the hour (rewrites,
+  contracts and results, not only their summaries) and refine the briefs for correctness first and
+  speed second. Every change to the production brief gets a new brief version, written into each
+  lane's results, so pass rate and time can be compared before and after the change.
 - Stop doing: one thing that is no longer worth its cost.
 
 The changes are made in the same hour, not listed for later. The review is posted in chat, and one row
