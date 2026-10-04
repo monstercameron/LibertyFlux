@@ -6,7 +6,8 @@ The repository is public and every commit is pushed, so these are checked by mac
 - no game or binary files (executables, libraries, game archives) are tracked;
 - no tracked text file names a path on someone's machine or a user account;
 - no inline assembly in rewrites or engine crates (a rewrite is Rust, not transcribed machine code);
-- no tracked file is larger than 5 MB.
+- no tracked file is larger than 5 MB;
+- no devlog entry (in the database) holds a machine path, a game function address, disassembly or a byte dump.
 
 Run from anywhere inside the repository: python scripts/ci/check_publication.py
 Exit status 0 when clean, 1 with a list of findings otherwise.
@@ -62,6 +63,38 @@ for name in filter(None, files):
             break
     if name.endswith(".rs") and name.startswith(ASM_SCOPES) and not name.startswith(ASM_EXEMPT) and INLINE_ASM.search(text):
         findings.append(f"{name}: inline assembly in a rewrite or engine crate")
+
+
+def check_devlog(path):
+    """The devlog database is binary, so the line scan above never reads it. Check every entry's text: no machine
+    path or account name, no game function addresses, no disassembly, no byte dumps (AGENTS.md: neither site page
+    may contain decompiled code, disassembly, game function addresses or game data). The disassembly pattern needs
+    an operand form (`mov eax,`, `dword ptr [`) so that prose such as "call checks" does not match."""
+    import sqlite3
+
+    register = r"(?:e[abcd]x|e[sd]i|e[sb]p|[abcd][lhx]|xmm[0-7]|st\([0-7]\))"
+    rules = (
+        ("machine path or account name", MACHINE_PATH),
+        ("game function address", re.compile(r"\b0x00[4-9a-fA-F][0-9a-fA-F]{5}\b|\b(?:sub|FUN)_00[4-9a-fA-F][0-9a-fA-F]{5}\b")),
+        ("disassembly", re.compile(r"\b(?:mov|movzx|movsx|movss|movaps|lea|push|pop|call|cmp|test|xor|and|or|add|sub|imul|jmp|fld|fstp|shl|shr|sar)\s+(?:"
+                                   + register + r"\s*,|(?:byte|word|dword|qword)\s+ptr\s*\[|\[" + register + ")", re.I)),
+        ("byte dump", re.compile(r"(?:\b[0-9a-f]{2}\s+){12,}", re.I)),
+    )
+    found = []
+    connection = sqlite3.connect(f"file:{path.as_posix()}?mode=ro", uri=True)
+    try:
+        for entry, title, body in connection.execute("SELECT id, title, text FROM posts"):
+            for label, pattern in rules + ((("machine path or account name", ACCOUNT),) if ACCOUNT else ()):
+                if pattern.search(title or "") or pattern.search(body or ""):
+                    found.append(f"docs/data/devlog.sqlite: entry {entry}: {label}")
+    finally:
+        connection.close()
+    return found
+
+
+devlog = ROOT / "docs" / "data" / "devlog.sqlite"
+if "docs/data/devlog.sqlite" in files and devlog.is_file():
+    findings.extend(check_devlog(devlog))
 
 print(f"checked {len(files) - 1} tracked files")
 if findings:
