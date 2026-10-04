@@ -962,7 +962,10 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
     u(&mut t, s.m_logidx); // mov eax,[m_logidx]
     t.extend_from_slice(&[0x3D]);
     u(&mut t, LOG_MAX as u32); // cmp eax,256
-    t.extend_from_slice(&[0x0F, 0x87, 0x00, 0x00, 0x00, 0x00]); // ja full (rel32, patched below)
+    // jae, not ja: with ja the entry at index 256 was written one past the
+    // log, onto the callee stub table that follows it, and a correct rewrite
+    // making more than 256 calls in a trial then faulted (three lanes hit this).
+    t.extend_from_slice(&[0x0F, 0x83, 0x00, 0x00, 0x00, 0x00]); // jae full (rel32, patched below)
     let jae_pos = t.len() - 4;
     t.extend_from_slice(&[0x69, 0xC0]); // imul eax,eax,128 (imm32 form)
     u(&mut t, LOG_ENTRY as u32);

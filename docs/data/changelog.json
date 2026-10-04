@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Checker worker: call log no longer overruns at 256 calls",
+    "commit": null,
+    "summary": "A one-opcode fix that three production lanes independently traced to the same line.",
+    "changes": [
+      "The stub that records each outgoing call tested the log index with the wrong comparison, so the 257th call in a trial was written one entry past the log, onto the table of callee stubs that follows it.",
+      "A correct rewrite of any function making more than 256 calls in one trial then faulted and was reported as wrong. No wrong rewrite could pass because of it.",
+      "The comparison now matches the comment beside it. Checked on six proof contracts including one designed to fail: results unchanged.",
+      "Functions deferred for this reason can be run again as they are."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 70 more functions pass the checker (4732 in total)",
     "commit": "1bd6f43b00a6dffa89fc4b18c79072d8d2c405bf",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
