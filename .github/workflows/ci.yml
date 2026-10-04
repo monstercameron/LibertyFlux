@@ -140,6 +140,9 @@ jobs:
         run: python -c "import json,glob; [json.load(open(f, encoding='utf-8')) for f in glob.glob('docs/data/*.json')]; print('ok')"
       - name: Publication rules
         run: python scripts/ci/check_publication.py
+      - name: Rewrite tree is consistent
+        # Every index entry has its file, every file is indexed, no address is listed twice or in both halves.
+        run: python scripts/coordinator/ledger.py --check
 
   # When everything above that matters has passed on a push to main (or a version tag), build the runnable
   # programs for each system and publish them. The advisory lint job is not required.
