@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#checker-driver-speed">Where a checker trial's time goes</a></li>
       <li><a href="#naming-16">Leaderboard team boards named, and a missing id method</a></li>
       <li><a href="#naming-15">Naming a run of leaderboard schema accessors</a></li>
       <li><a href="#function-ledger">One ledger for 37,000 functions</a></li>
@@ -360,6 +361,38 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="checker-driver-speed">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Where a checker trial's time goes</h2>
+      <p>Most of a checker trial's wall time was spent waiting for a newly created worker thread to run for the first time, not in the trial itself or in the driver. Reusing one worker thread across trials roughly doubled checker throughput with identical verdicts.</p>
+      <h3>What was asked</h3>
+      <p>Make checker runs faster without changing any verdict. Checker time was about half of a small-function lane's waiting time, so any saving applies to every lane at once.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> A profile of three contracts of different shapes (one tiny, one with large heap inputs, one with scripted callees and full-data comparison) showed every driver-side stage together costing under half a millisecond per trial: input generation, request encoding, pipe write, response decoding and bookkeeping. A bare pipe round trip measures three hundredths of a millisecond.</p>
+      <p><span class="evidence verified">Verified</span> The same profile showed the worker's round trip taking about fifty milliseconds per trial for the tiny contract while the worker's own account of the trial work was about twelve. Bracketing inside a scratch copy of the worker split the gap: parsing and preparing a trial take tens of microseconds, creating the per-trial thread takes about sixty microseconds, and then roughly forty-seven milliseconds pass before the new thread's first instruction runs. That lag is constant across contracts while the trial body varies from eighteen to over three hundred milliseconds.</p>
+      <p><span class="evidence verified">Verified</span> Replacing the per-trial thread with one persistent thread per worker process removed the lag. The full tracked suite runs in about eight hundred seconds instead of about seventeen hundred (about twenty-four trials per second instead of about eleven). All thirty-eight tracked verdicts and all thirty-four mutant verdicts reproduce field for field except timings; one run's retry record differed by a single load-caused entry and a rerun matched fully. Thirty-four lane contracts of varied shapes with their rewrites were compared the same way with the same outcome.</p>
+      <p><span class="evidence verified">Verified</span> What limits trials now is the trial work itself (both sides executed plus the worker's comparison loops) and scheduler wake latency for the worker thread on a saturated machine, measured at up to about twelve milliseconds per trial. The driver, encoding and pipe remain noise.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Stage of one tiny-function trial</th><th role="columnheader">Median cost before</th><th role="columnheader">Median cost after</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Driver: inputs, encoding, pipe, decoding</td><td role="cell" data-label="Median cost before">under half a millisecond</td><td role="cell" data-label="Median cost after">unchanged</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Median cost before">New thread's first scheduling</td><td role="cell" data-label="Median cost before">about forty-seven milliseconds</td><td role="cell" data-label="Median cost after">paid once per worker, hidden in setup</td></tr>
+      <tr role="row"><td role="cell">Trial work, both sides plus comparison</td><td role="cell" data-label="Median cost before">about twelve milliseconds</td><td role="cell" data-label="Median cost after">unchanged</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Median cost before">Waking the reused thread</td><td role="cell" data-label="Median cost before">not present</td><td role="cell" data-label="Median cost after">zero to twelve milliseconds, load-driven</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Integrate the persistent trial thread: it is worker-internal, changes no protocol bytes, and keeps the hang behaviour (a timed-out trial still abandons the thread and the worker still exits for a fresh one).</li>
+      <li>Do not pursue batched requests, slimmer responses, or reworked encoding for speed: the stages they would improve sum to under half a millisecond.</li>
+      <li>Running one contract's trials across several workers in parallel is sound in principle (trials are seeded and independent, and results merge deterministically), but it needs a check that every worker mapped memory identically, and it only helps while processors are free. The machine already runs about twenty workers at full load, so pair it with a global worker cap. Not built.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build the worker from the scratch copy in the lane folder, run the tracked suite twice with the stock driver (once per worker binary), and compare the two output folders field by field with the lane's comparison script, ignoring only the two timing fields. Then run the lane's contract runner over its selected contract list, which exercises both workers itself, and compare again. Exact commands are in the lane's change notes.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> The starting assumption pointed at the driver and the pipe; the first profile disproved it within minutes. Absolute times swing severalfold with machine load, so only back-to-back pairs are quoted. A first attempt at scanning every lane contract file ran too long and was replaced by checking the cheap filter (a rewrite binary on disk) before parsing. Rebuilding the worker twice into one folder once failed with an access error while no process held the file, so the scratch binary was built under a distinct name.</p>
+      </article>
 
       <article class="entry" id="naming-16">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
