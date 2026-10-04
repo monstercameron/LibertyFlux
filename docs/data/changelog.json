@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Progress data: runtime library code no longer counted as game code",
+    "title": "Devlog: Finding the C runtime: library code that was counted as game code",
     "commit": null,
+    "summary": "Findings from the f-runtime lane.",
+    "changes": [
+      "New devlog entry: Finding the C runtime: library code that was counted as game code.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Progress data: runtime library code no longer counted as game code",
+    "commit": "14a251e6705ef3b0a77c84845d50fb36ff6eb2bc",
     "summary": "The game-function total goes down and the rewritten and verified counts go down with it, because some of what was counted was library code.",
     "changes": [
       "A lane mapped the statically linked C runtime in full: 655 functions the inventory had counted as game code are runtime library routines, and 36 more are QuickTime glue. One function marked runtime is game code and moves the other way.",

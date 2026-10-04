@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#runtime-library">Finding the C runtime: library code that was counted as game code</a></li>
       <li><a href="#production-s148">NaN behaves as positive infinity in emulated SSE comparisons</a></li>
       <li><a href="#production-s140">Production batch: swapped string arguments and a vector-register gap</a></li>
       <li><a href="#production-b90">The compiler folds bitwise float negation into subtraction</a></li>
@@ -288,6 +289,33 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="runtime-library">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Finding the C runtime: library code that was counted as game code</h2>
+      <p>Most of the six hundred functions in the held-out block at the end of the code section are the compiler's own C runtime, not game code, along with a second smaller runtime island elsewhere and a block of media-loader glue beside it. About six hundred and ninety inventory entries move from game to library, and eighty-three functions production lanes already rewrote turn out to be runtime code.</p>
+      <h3>What was asked</h3>
+      <p>A production batch came back as string comparison, formatted printing, locale and heap routines that had been labelled game code, so this lane had to find every C and C++ runtime function in the executable: the main runtime block, any runtime code elsewhere, and a verdict per inventory entry, plus a sanity pass over the other mapped third-party libraries.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The static runtime lives in one large block near the end of the code section with about four hundred named routines, plus a second island of about fifty file, locale and exception routines. Spot checks against the machine code confirmed the names: startup and shutdown, heap wrappers, string and printf/scanf families, locale handling, floating point helpers, 64-bit arithmetic, and C++ exception support.</p>
+      <p><span class="evidence verified">Verified</span> The analysis tool had already named most of these routines, but missed the memory copy routines because they dispatch on processor features, and missed a handful of functions entirely. An earlier lane's guess that one small routine was the allocator was wrong: it is a stack probe called for large stack frames.</p>
+      <p><span class="evidence verified">Verified</span> The stubs beside the main block are not linker delay-loading but hand-rolled media framework binding: small trampolines, an initialiser, a version checker and a not-loaded error stub. They form a new third-party glue bucket, not game code.</p>
+      <p><span class="evidence verified">Verified</span> The game uses its own heap for game code; the runtime heap wrappers serve only the runtime itself. Two runtime destructors call into the packed part of the program, which is inferred to be the game's own memory release routine.</p>
+      <p><span class="evidence verified">Verified</span> About two thousand tiny entries past the second runtime island are the game's own static initialisers calling game constructors, some in the packed region: game behaviour, kept in the queue with notes. The initialiser tables themselves were not found in the readable data and are inferred to sit in the packed region.</p>
+      <p><span class="evidence">Inferred</span> Over a thousand entries labelled as image-codec code outside the verified codec span look like ordinary game code: none of them touch the codec's data, hundreds use C++ calling conventions the C codec cannot use, and the busiest are called from game code. Reverting those labels needs sign-off and is not included in the corrected counts yet.</p>
+      <p><span class="evidence">Unknown</span> Four entries stay unsure: three exit-time cleanup routines of unresolved ownership and one routine that walks thread storage and calls into the packed region.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Move about six hundred and ninety entries from game to library in the counts, and take the eighty-three already-rewritten runtime functions out of the rewrite totals.</li>
+      <li>Keep the two thousand static initialiser stubs queued as game code but consider a bulk policy for them since each is near-trivial.</li>
+      <li>Confirm small pending moves for the media glue, game-service glue and image codec sets, and cut the low-confidence far-flung claims; one high-confidence network-security seed stays game on conflicting evidence.</li>
+      <li>Follow up on the codec label revert, the four unsure entries, and the packed region's memory and initialiser routines once that region is readable.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>All checks ran against the project inventory, the exported function list, call graph and cross-references, and direct reads of the executable with a disassembly library; the lane's scripts and step outputs sit with the report in its scratch folder. Key steps: census of tool-assigned names per block, textbook-pattern verification of about forty routines, caller-spread analysis over the call graph, import-slot mapping, string-reference checks, padding and boundary reads, and a whole-program name and pattern search that found no runtime code outside the reported ranges.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The classic runtime error texts are stored as wide characters, so the first string search found almost nothing and the string evidence channel stayed weak. A first scan script ran away on a multi-megabyte loop and had to be stopped and rewritten with bounded buffers. One output redirect wrote the wrong text encoding and had to be redone. The tool's call graph is missing edges in places, so absence of callers was never used alone as evidence.</p>
+      </article>
 
       <article class="entry" id="production-s148">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
