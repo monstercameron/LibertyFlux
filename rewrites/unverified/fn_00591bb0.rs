@@ -11,7 +11,7 @@
 ///
 /// Algorithm: fetch the round selector through vtable slot `0x2c`, then fetch
 /// the row-pointer table through the table helper (called with the leaderboard
-/// id; its out-pointer lands 14 bytes past the scratch pointer). A zero answer
+/// id; its out-pointer lands 8 bytes past the scratch pointer). A zero answer
 /// there returns 0 at once. Otherwise run up to 19 rounds: fetch the round
 /// index through vtable slot `0x30`; the filter helper may skip the round.
 /// When it does not, classify the table entry through the kind helper: kinds
@@ -40,7 +40,7 @@ lf_checker_rt::export!(thiscall, rw_00591bb0(this: u32, base: u32, row_out: u32,
         const ROW_CALLEE: u32 = 6;
         const SIZE_CALLEE: u32 = 7;
         const COMMIT_CALLEE: u32 = 8;
-        const TABLE_OUT_OFF: u32 = 14;
+        const TABLE_OUT_OFF: u32 = 8;
         const ROW_DATA_OFF: u32 = 4;
 
         #[inline(always)]

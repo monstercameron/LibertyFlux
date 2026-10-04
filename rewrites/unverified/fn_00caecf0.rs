@@ -23,9 +23,9 @@
 ///   the merged mode, the clamped limit (`+LIMIT`, raised to at least
 ///   `MINLIM` while `[ped+CLAMPAT] & CLAMPBIT` holds) above `z0`, and either
 ///   bit `DIVERGE` clear or the alignment `v = (a0.y-mid.y)*dy +
-///   (a0.x-mid.x)*dx` negative: if `settled`, return 1. The midpoint words
-///   are refreshed from the position block (`+MID = P.x`, `+MID2 = P.z+4`)
-///   before the limit is read.
+///   (a0.x-mid.x)*dx` negative: if `settled`, return 1. The four midpoint
+///   words are refreshed from the position block (`+MID..+MID2 = P.x..P.z+4`,
+///   bit copies) before the limit is read.
 /// - Otherwise, when `DIVERGE` is set, return 0. Fetch the steering vector
 ///   (id 3) with an uninitialised slot (defined fill 0; the original's tick
 ///   store addresses the slot below it instead, so the projection scales by
@@ -137,6 +137,8 @@ fn decide_00caecf0<const EARLY_ZERO: bool>(this: u32, a0: u32, ped: u32) -> u32 
         let above = u > s;
         let neg = 0.0f32 > v;
         wr32(this + MID, rd32(vecp));
+        wr32(this + MID + 4, rd32(vecp + 4));
+        wr32(this + MID + 8, rd32(vecp + 8));
         wr32(this + MID2, rd32(vecp + 0x0c));
         let mut lim = ((this + LIMIT) as *const f32).read_unaligned();
         if rd8(ped + CLAMPAT) & CLAMPBIT != 0 {
