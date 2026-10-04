@@ -17,8 +17,8 @@
 /// either call the totals fold pairwise (second plus first into first,
 /// fourth plus zeroth into zeroth). The float registers carry across slots:
 /// the combine arguments on the second slot are the first slot's folded
-/// values, and on the preset path the second register starts as the
-/// incoming vector register's low word (zero when the path zeroes it).
+/// values (the preset path's copy of the incoming vector register is dead:
+/// it always folds the first slot before any use).
 /// Returns the last callee answer. cdecl, one stack word.
 lf_checker_rt::export!(cdecl, rw_00936510(arg: u32) -> u32 {
     unsafe {
@@ -66,14 +66,17 @@ lf_checker_rt::export!(cdecl, rw_00936510(arg: u32) -> u32 {
             t2 = q;
             t3 = q;
             x0 = p;
-            x1 = f32::from_bits(lf_checker_rt::xmm_word(1, 0));
+            // The original copies the incoming vector register here, but the
+            // preset path always runs the first slot's blend and fold, which
+            // overwrites this register before any use; the value is dead.
+            x1 = 0.0f32;
         } else {
-            t0 = 0.0;
-            t1 = 0.0;
-            t2 = 0.0;
-            t3 = 0.0;
-            x0 = 0.0;
-            x1 = 0.0;
+            t0 = 0.0f32;
+            t1 = 0.0f32;
+            t2 = 0.0f32;
+            t3 = 0.0f32;
+            x0 = 0.0f32;
+            x1 = 0.0f32;
         }
         let mut slot = g(G_M0);
         while slot != g(M_END) {

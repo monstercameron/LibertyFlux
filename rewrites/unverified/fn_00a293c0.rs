@@ -19,8 +19,9 @@
 ///
 /// The search path runs when `a1+ALT_OFF` is null. With `cl`, the id 2
 /// search callee runs (thiscall on `this`: two scratch words, `&this+AUX`,
-/// `a1`); the scratch addresses are skipped in the comparison and their
-/// zeroed contents snapshotted, while the callee's three one-word
+/// `a1`); the scratch addresses are skipped in the comparison (their
+/// contents are uninitialised on the original side), while the callee's
+/// three one-word
 /// out-params (verified from its body) are scripted. A zero answer with both
 /// global bytes clear stores `FLOAT+scale` into `+AUX_OFF` when `flag2` is
 /// set (otherwise it skips ahead); a set global byte stores the alternate
@@ -245,7 +246,11 @@ lf_checker_rt::export!(thiscall, rw_00a293c0(this: u32, a1: u32, a2bits: u32, a3
             let m4 = x4 * inv;
             let m0 = inv * x5;
             let m2 = inv * x6;
-            let mut slot = m0;
+            // The original passes the m4 slot to id 6, whose stub overwrites
+            // it, then stores four words starting there: out-param, m0, m2,
+            // and the next scratch word, which nothing ever wrote (zero under
+            // the contract's stack fill on both sides).
+            let mut slot = m4;
             let mut dummy = [0u32; 1];
             let _: u32 = lf_checker_rt::callee_cdecl!(
                 6,
@@ -255,8 +260,8 @@ lf_checker_rt::export!(thiscall, rw_00a293c0(this: u32, a1: u32, a2bits: u32, a3
                 this.wrapping_add(AUX_OFF)
             );
             let g = lf_checker_rt::relocated(VEC_GLOBAL);
-            wrf(g, m4);
-            wrf(g.wrapping_add(4), slot);
+            wrf(g, slot);
+            wrf(g.wrapping_add(4), m0);
             wrf(g.wrapping_add(8), m2);
             wr32(g.wrapping_add(12), 0);
         }
