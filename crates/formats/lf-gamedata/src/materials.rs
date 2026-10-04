@@ -227,6 +227,7 @@ pub fn parse_mtl_convert(file: &str, bytes: &[u8]) -> Result<Vec<MtlConvertRow>>
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)] // parsed values are compared bit for bit on purpose
 mod tests {
     use super::*;
 

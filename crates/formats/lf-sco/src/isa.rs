@@ -705,7 +705,7 @@ mod tests {
             Operand::Native {
                 argc: 1,
                 retc: 0,
-                hash: 0xDEADBEEF
+                hash: 0xDEAD_BEEF
             }
         );
         assert_eq!(b.size, 7);

@@ -339,6 +339,7 @@ fn dec3n_axis(v: u32, shift: u32) -> f32 {
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)] // parsed values are compared bit for bit on purpose
 mod tests {
     use super::*;
 
@@ -404,7 +405,7 @@ mod tests {
         v.extend_from_slice(&0xFF8040C0u32.to_le_bytes());
         let dv = decode_vertex(&d, &v).unwrap();
         assert!((dv.normal[2] - 1.0).abs() < 0.01);
-        assert_eq!(dv.diffuse, 0xFF8040C0);
+        assert_eq!(dv.diffuse, 0xFF80_40C0);
     }
 
     #[test]

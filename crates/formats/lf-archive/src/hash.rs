@@ -43,9 +43,9 @@ mod tests {
         assert_eq!(name_hash("E1S4_MA_03"), 25024);
         assert_eq!(name_hash("MISSION_FAIL_RAGE_01"), 35310);
         assert_eq!(name_hash("E2BR1_ATH_01"), 55576);
-        assert_eq!(name_hash("R12_A_AA_01"), 109148);
-        assert_eq!(name_hash("GYM_BAG_HIT_1"), 176282);
-        assert_eq!(name_hash("GCK_ACT_PKA_NOGLASS_BAD_01"), 285927);
+        assert_eq!(name_hash("R12_A_AA_01"), 109_148);
+        assert_eq!(name_hash("GYM_BAG_HIT_1"), 176_282);
+        assert_eq!(name_hash("GCK_ACT_PKA_NOGLASS_BAD_01"), 285_927);
     }
 
     #[test]

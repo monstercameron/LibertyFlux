@@ -325,6 +325,7 @@ pub fn heal_comma_row(fields: &[String]) -> (Vec<String>, bool) {
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)] // parsed values are compared bit for bit on purpose
 mod tests {
     use super::*;
 
