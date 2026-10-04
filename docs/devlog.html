@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#naming-03">Naming a mixed batch: task abort and process slots, onscreen timers, audio voices</a></li>
       <li><a href="#production-b168">Shared-memory reports name the range, not the word</a></li>
       <li><a href="#production-b160">A bounding-sphere merge that forgets its tag word</a></li>
       <li><a href="#naming-01">Naming a run of leaderboard factory routines by the constructor each one calls</a></li>
@@ -328,6 +329,27 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="naming-03">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Naming a mixed batch: task abort and process slots, onscreen timers, audio voices</h2>
+      <p>A batch of one hundred fifty consecutive functions turned out to be four subsystems, not one: ped task methods, the onscreen timer and counter system, audio voice handling, and replay interpolation. One hundred eight functions were named, with the strongest results coming from named callers rather than from reading code.</p>
+      <h3>What was asked</h3>
+      <p>Propose a descriptive name with a confidence level for each of one hundred fifty consecutive unnamed functions, working out what the group is about first and naming each function from the strongest available evidence.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The shared task base class has an abort method that takes the ped, an abort priority and an event, and returns whether the abort is allowed. Twelve functions in the batch are per-class overrides of it, recognised by the priority switch and cleanup behaviour such as releasing animation references and delegating the abort to the subtask.</p>
+      <p><span class="evidence verified">Verified</span> Simple tasks have a per-frame process method that takes the ped and returns whether the task is finished. Seventeen functions in the batch are overrides of it, each doing one frame of its task's work. A check of one class showed its first virtual slot is the clone method (pool allocate, copy fields, construct), which corrects an earlier guess that the first slot was the per-frame method.</p>
+      <p><span class="evidence verified">Verified</span> A block of timer functions is the onscreen timer and counter system driven by script commands: four timed slots with countdown and count-up modes, minute-second formatting, and display, clear and reset operations. Its subsystem label was corrected from ped tasks to script code.</p>
+      <p><span class="evidence verified">Verified</span> About fifty consecutive functions are audio voice handling: fire and breath and ringtone and collision sounds, per-voice parameter setters over banked registers, and a family of tagged message initialisers. Their subsystem label was corrected from ped tasks to audio.</p>
+      <p><span class="evidence">Inferred</span> The single virtual method of the object and ped interpolation classes binds the object to a recorded frame by parsing the frame header into channel pointers, clearing state when the frame version is invalid. Nearby indexed accessors, flag getters and blend helpers belong to the same replay interpolation code.</p>
+      <p><span class="evidence">Inferred</span> A widely called encrypted helper currently carrying a script-message name is almost certainly a memory free routine: it has over a thousand callers across unrelated systems, which no script-message sender would have. Two functions in the batch that call it were named from their other evidence instead.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Functions were named where the evidence identified the behaviour: twenty two at high confidence, eighty six at medium, and forty two left unnamed with low confidence where a name would have been a guess. The unnamed ones fall into clear groups for later lanes: near-identical tag initialisers that need the audio message type list, indexed channel accessors that need the interpolation channel map, and four subtask-forwarding helpers that need the meaning of two more task virtual slots. Subsystem corrections for the timer, audio and model-release functions were recorded with the names.</p>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble each function with capstone through pefile address mapping, collect direct callees, imported calls and referenced strings, then scan the code section once for direct callers and map each call site to its containing function through the merged name list. The batch scripts and evidence tables are kept in the lane scratch folder.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The address range mixes four subsystems, so the neighbour-inferred subsystem labels were wrong for about half the batch and had to be corrected function by function. Caller attribution through nearest-symbol-below produced false containing-function names in sparsely named regions, some kilobytes off; only tight offsets and the region itself could be trusted. One merged name for an encrypted helper was contradicted by its caller count and had to be discounted everywhere it appeared.</p>
+      </article>
 
       <article class="entry" id="production-b168">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
