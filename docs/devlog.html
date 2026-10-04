@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b09">Rewriting audio code: security cookies and a silent coverage trap</a></li>
       <li><a href="#tools-into-repo">Preparing the checker, loader and queue for the repository</a></li>
       <li><a href="#workspace-readers-2">Five more readers brought up to the workspace standard</a></li>
       <li><a href="#rerun-08">Rerun batch eight: a wild-pointer trial the checker cannot judge</a></li>
@@ -239,6 +240,25 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b09">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rewriting audio code: security cookies and a silent coverage trap</h2>
+      <p>One medium audio function is now rewritten in Rust and verified identical over one thousand differential trials, and the work produced two reusable lessons: compiler security checks are best left unpatched, and contract pins can silently misalign with stack-driven paths so that whole loops never run.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of three adjacent audio functions in Rust and prove each behaves identically to the original with the version 2 checker, spending most of the effort on the proof contract rather than the code.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The first function, a bank refresh routine with two paths, seven outgoing calls and a compiler security check, passed one thousand trials with no failures and the original side healthy on every trial.</p>
+      <p><span class="evidence verified">Verified</span> Leaving the security check call unpatched works better than intercepting it: the real check runs on the original side and passes, and the return comparison then verifies the true return value instead of a scripted stub answer on both sides.</p>
+      <p><span class="evidence verified">Verified</span> Contract pins and stack-driven path selectors can lockstep invisibly: pins cycle per trial while stack values carry a position offset, so a two-valued pin can anti-align with the second stack argument and an entire loop silently never executes. Predicting exact call counts from the pin math before the long run catches this.</p>
+      <p><span class="evidence">Inferred</span> The two larger functions need no new checker ability; they were not reached only because the lane ran out of time, and their signatures, call tables and float comparison rules are recorded for the next lane.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Future lanes should leave security check calls unpatched with a low-byte or no-value return comparison, always predict coverage counts from pin math before a thousand-trial run, and emulate unsigned float comparisons in a way that treats unordered values the same as the original jump. One known checker limit stands: per-trial constant callee answers cap enumeration loops at a single iteration per trial.</p>
+      <h3>How to reproduce it</h3>
+      <p>Copy the version 2 driver and runtime into the lane folder, build a rewrite crate for the 32-bit target into the lane build folder, write one contract per function declaring callees, pins and snapshots, and run the driver with one thousand trials. Confirm the verdict passes and that the reported call counts match hand-predicted values.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>A wrong assumption about a library's relocation field produced phantom fixups in the middle of instructions and a brief corruption scare. A struct layout was misread by one word because stores after pushing an argument use a shifted stack pointer; the checker's snapshot diff showed the exact rotation. The DLL could not be rebuilt while an old worker still mapped it, fixed by renaming it aside.</p>
+      </article>
 
       <article class="entry" id="tools-into-repo">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
