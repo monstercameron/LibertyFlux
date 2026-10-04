@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: An audio gain routine that checks the wrong input, proven by mutant",
+    "title": "Devlog: Tail-jump checks fail for thunks that forward stack arguments",
     "commit": null,
+    "summary": "Findings from the r-n100 lane.",
+    "changes": [
+      "New devlog entry: Tail-jump checks fail for thunks that forward stack arguments.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: An audio gain routine that checks the wrong input, proven by mutant",
+    "commit": "409e3ae56f80ebf64f3e54f1797a774520da5b8b",
     "summary": "Findings from the r-b18 lane.",
     "changes": [
       "New devlog entry: An audio gain routine that checks the wrong input, proven by mutant.",
