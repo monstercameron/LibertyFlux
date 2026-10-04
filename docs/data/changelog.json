@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: A whole leaderboard family verified, and a checker anomaly that only fails on mismatch",
+    "title": "Rewrites: 5 more functions pass the checker (9319 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "5 rewrites added under rewrites/verified: 0 script native handlers and 5 other functions.",
+      "1 rewrites were re-run under a later version of the checker and replaced by the version that passed it.",
+      "The tree now holds 9319 rewrites, 9300 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "435 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: A whole leaderboard family verified, and a checker anomaly that only fails on mismatch",
+    "commit": "1cf8c398929dc429ba621965634dced5a01fd5e9",
     "summary": "Findings from the r-s342 lane.",
     "changes": [
       "New devlog entry: A whole leaderboard family verified, and a checker anomaly that only fails on mismatch.",

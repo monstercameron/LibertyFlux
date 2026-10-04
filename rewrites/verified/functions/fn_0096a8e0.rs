@@ -152,15 +152,15 @@ lf_checker_rt::export!(thiscall, rw_0096A8E0(this: u32, pos_a: u32, pos_b: u32, 
         let blend = g(G_BLEND);
         let q1 = mul(w1, quant);
         let b0 = (trunc_i32(q1) as u8) & 7;
-        unsafe { ((idx_a as *mut u8)).write(b0) };
-        unsafe { ((sub_a as *mut u8)).write(0) };
-        let back0 = unsafe { ((idx_a as *const u8)).read() };
+        (idx_a as *mut u8).write(b0);
+        (sub_a as *mut u8).write(0);
+        let back0 = (idx_a as *const u8).read();
         let frac1 = sub(q1, back0 as f32);
         if step > frac1 {
-            unsafe { ((sub_a as *mut u8)).write((back0.wrapping_add(7)) & 7) };
+            (sub_a as *mut u8).write((back0.wrapping_add(7)) & 7);
             wrf(gain_a, add(frac1, step));
         } else {
-            unsafe { ((sub_a as *mut u8)).write((back0.wrapping_add(1)) & 7) };
+            (sub_a as *mut u8).write((back0.wrapping_add(1)) & 7);
             wrf(gain_a, sub(blend, frac1));
         }
         // Gain clamp into [0, hi], preserving NaN.
@@ -171,23 +171,23 @@ lf_checker_rt::export!(thiscall, rw_0096A8E0(this: u32, pos_a: u32, pos_b: u32, 
         // Pass-2 quantization: modulo 4.
         let q2 = mul(rdf(angle_out), quant);
         let b1 = (trunc_i32(q2) as u8) & 3;
-        unsafe { ((idx_b as *mut u8)).write(b1) };
-        unsafe { ((sub_b as *mut u8)).write(0) };
-        let back1 = unsafe { ((idx_b as *const u8)).read() };
+        (idx_b as *mut u8).write(b1);
+        (sub_b as *mut u8).write(0);
+        let back1 = (idx_b as *const u8).read();
         let frac2 = sub(q2, back1 as f32);
         wrf(gain_b, 1.0);
         if step > frac2 {
             let down = (back1 as u32).wrapping_sub(1);
             let eax = (down & 0xff) as u8;
             let cl = if (down as i32) > 0 { eax } else { 0 };
-            unsafe { ((sub_b as *mut u8)).write(cl) };
+            (sub_b as *mut u8).write(cl);
             wrf(gain_b, add(frac2, step));
             eax as u32
         } else {
             let up = (back1 as u32).wrapping_add(1);
             let eax = (up & 0xff) as u8;
             let cl = if (up as i32) < 3 { eax } else { 3 };
-            unsafe { ((sub_b as *mut u8)).write(cl) };
+            (sub_b as *mut u8).write(cl);
             wrf(gain_b, sub(blend, frac2));
             eax as u32
         }

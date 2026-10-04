@@ -16110,6 +16110,15 @@
   "lane": "r-s158"
  },
  {
+  "address": "0x00661D10",
+  "name": "rage::snEstablishSessionTask::vf3",
+  "kind": "function",
+  "file": "functions/fn_00661d10.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b290"
+ },
+ {
   "address": "0x006620E0",
   "name": "rage::snHostSessionTask::setup_gamer_data",
   "kind": "function",
@@ -30465,6 +30474,15 @@
   "lane": "r-s191"
  },
  {
+  "address": "0x009D00C0",
+  "name": "dxut_error_dialog",
+  "kind": "function",
+  "file": "functions/fn_009d00c0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b286"
+ },
+ {
   "address": "0x009D0720",
   "name": "fetch_locked_field_pair",
   "kind": "function",
@@ -37789,6 +37807,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b273"
+ },
+ {
+  "address": "0x00AEA170",
+  "name": "mainloop_timing_update (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00aea170.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b276"
  },
  {
   "address": "0x00AEBDF0",
@@ -68346,6 +68373,15 @@
   "lane": "a-08"
  },
  {
+  "address": "0x00DA4D70",
+  "name": "dword_vector_push_back",
+  "kind": "function",
+  "file": "functions/fn_00da4d70.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s343"
+ },
+ {
   "address": "0x00DA4DB0",
   "name": "CTaskComplexShockingEvent::ctor_base",
   "kind": "function",
@@ -68440,6 +68476,15 @@
   "name": "CTaskComplexShockingEventWatch::vf0",
   "kind": "function",
   "file": "functions/fn_00da4fe0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s343"
+ },
+ {
+  "address": "0x00DA5010",
+  "name": "task_range_probe",
+  "kind": "function",
+  "file": "functions/fn_00da5010.rs",
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s343"
