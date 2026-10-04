@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#rerun-08">Rerun batch eight: a wild-pointer trial the checker cannot judge</a></li>
       <li><a href="#rerun-04">Second checker, same verdicts: 205 native rewrites re-proven</a></li>
       <li><a href="#production-s79">Production batch: a tail-call logging bug and two contract lessons</a></li>
       <li><a href="#production-b05">Two large animation functions verified, one checker fix, one game quirk</a></li>
@@ -236,6 +237,31 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="rerun-08">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rerun batch eight: a wild-pointer trial the checker cannot judge</h2>
+      <p>Of 124 rewrites ported from checker version 1 to version 2 and re-run with one thousand trials each, 123 passed unchanged and one failed on a single trial. <span class="evidence verified">Verified</span> That failure is not a rewrite bug: both sides read the same random wild pointer, which happened to land inside the original code region, where the checker's own anti-cheat mechanism makes the two sides unjudgeable against each other. The rewrite is faithful and the trial is a lottery the contract cannot avoid in the current version 2 format.</p>
+      <h3>What was asked</h3>
+      <p>Take the functions nine production lanes had verified under checker version 1, port each rewrite to the version 2 runtime and each contract to the version 2 format without weakening its inputs, and re-run every contract for at least one thousand trials with the prebuilt version 2 worker. Record each function as passed, failed with the exact difference, or not portable.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The batch held 138 functions recorded as verified under version 1. Fourteen could not be ported (twelve need a heap-relative stack argument kind version 2 has no spelling for, one needs null scheduling version 2 cannot express, one needs rotating pointer offsets combined with nulls). The remaining 124 were ported, built as one crate, and run.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Outcome</th><th role="columnheader">Count</th><th role="columnheader">Meaning</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Passed version 2</td><td role="cell" data-label="Count">123</td><td role="cell" data-label="Meaning">all one thousand trials match, original and rewrite</td></tr>
+      <tr role="row"><td role="cell">Failed version 2</td><td role="cell" data-label="Count">1</td><td role="cell" data-label="Meaning">one wild-pointer trial the anti-cheat rule cannot judge</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The one failure is a hash-table string lookup. Its contract deliberately feeds full-range random words into table slots to check that wild pointers fault identically on both sides (290 of its 1000 trials do exactly that and pass). On one trial the wild text pointer happened to fall inside the mapped code region. The rewrite side runs with code pages revoked, so it faulted at that read and was reported as cheating. The original side read the code byte successfully, mismatched against the heap string at the first byte, then followed a second wild pointer and faulted one step later. Same inputs, same faithful behavior, different fault points, so the verdict records a termination mismatch plus a cheating flag.</p>
+      <p><span class="evidence verified">Verified</span> Every link was checked independently of the verdict: the trial inputs were regenerated from the contract seed with the driver's own code and the wild pointer equals the reported fault address exactly; the fault address sits inside the executable's code section; the compared bytes differ at the first byte with no relocation overlapping it; and the worker source classifies any rewrite-side fault in the code range as cheating. The version 1 worker carries the identical rule, so the source lane passed the same contract only because its random stream never landed a dereferenced word in that range. Porting shifted the stream (a string fill became a random fill with a pinned terminator) and this run drew the short straw: roughly one trial in a thousand for this contract shape.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The function is recorded as failed under version 2 with the mechanism above, and its rewrite is kept out of the passing set but preserved in the lane folder so it is not lost: no faithful rewrite of this function can pass that trial, because any code that reads the same wild pointer faults the same way. Three follow-ups are recommended for the checker owner, in increasing order of work: capture both sides' fault records in the verdict so the next analyst need not re-derive them; when the rewrite side faults inside the code range, re-run that side once with the page readable and compare the second fault against the original's; and add a word spec for random-but-outside-the-image so wild-pointer contracts can exclude a sliver of inputs that is unjudgeable by design rather than untestable by accident.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run this lane's version 2 contract for the hash-table lookup with the prebuilt version 2 worker at its recorded seed. Trial 644 of 1000 fails deterministically with the original faulting and the rewrite flagged for touching original code, while all other trials pass. Regenerating the trial inputs from the seed with the driver's own input code shows the dereferenced wild pointer matching the reported fault address.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first confusing fact was the pairing itself: the rewrite flagged for reading original code while the original faulted. A rewrite bug would show matching fault points or a behavior difference, not this split. The split made sense only after tracing both paths past the first read: the original does not fault where the rewrite does, it faults one step later. The second surprise was that the faulting instruction address sat below the rewrite library's base address seen in later probes, which briefly suggested a third module was involved; it is consistent with the library loading at a different base in each worker process and does not affect the finding. Separately, the first attempt at this batch ran eight checker workers at once and the machine ran out of memory and stopped the lane; the rerun used three workers and completed without incident.</p>
+      </article>
 
       <article class="entry" id="rerun-04">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
