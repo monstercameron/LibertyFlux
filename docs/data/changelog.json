@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Rewrites: 23 more functions pass the checker (7522 in total)",
+    "title": "Dashboard: laptop gauges, usage colours and a 15-second refresh",
     "commit": null,
+    "summary": "The lane page now shows how hard the laptop is working, coloured by load.",
+    "changes": [
+      "Three gauges: processor, memory in use and commit in use, each with its last three minutes as a small line. Their colour follows the load: green up to about half, amber around three quarters, red near full. Memory and commit are the two limits the supervisor watches, and the gauge says what it needs before it starts another lane.",
+      "Each running lane has a dot coloured by how recently it wrote to its log: within two minutes, within eight, within twenty, or quiet for longer. The agent process's own memory is shown per lane and summed.",
+      "The page refreshes every 15 seconds, with a thin bar counting down to the next refresh."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Rewrites: 23 more functions pass the checker (7522 in total)",
+    "commit": "6b07ff23c4e63adbacc5b87c12248118f8b87cea",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "23 rewrites added under rewrites/pending: 0 script native handlers and 23 other functions.",

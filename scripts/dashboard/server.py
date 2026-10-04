@@ -54,10 +54,46 @@ def memory():
             "commit_limit_gb": round(status.ullTotalPageFile / gb, 1), "commit_headroom_gb": round(status.ullAvailPageFile / gb, 1)}
 
 
+class FileTime(ctypes.Structure):
+    _fields_ = [("low", ctypes.c_ulong), ("high", ctypes.c_ulong)]
+
+    def value(self):
+        return (self.high << 32) | self.low
+
+
+_usage = {"cpu": None, "history": []}  # history rows: [seconds since the epoch, processor %, memory %, commit %]
+
+
+def system_times():
+    idle, kernel, user = FileTime(), FileTime(), FileTime()
+    ctypes.windll.kernel32.GetSystemTimes(ctypes.byref(idle), ctypes.byref(kernel), ctypes.byref(user))
+    return idle.value(), kernel.value() + user.value()  # kernel time includes idle time
+
+
+def usage_loop():
+    """Processor and memory use, sampled every two seconds; three minutes of history for the page's sparklines."""
+    if os.name != "nt":
+        return
+    idle0, busy0 = system_times()
+    while True:
+        time.sleep(2)
+        idle1, busy1 = system_times()
+        total = busy1 - busy0
+        cpu = round(100 * (1 - (idle1 - idle0) / total), 1) if total > 0 else None
+        idle0, busy0 = idle1, busy1
+        m = memory()
+        row = [int(time.time()), cpu,
+               round(100 * (1 - m["free_gb"] / m["total_gb"]), 1), round(100 * (1 - m["commit_headroom_gb"] / m["commit_limit_gb"]), 1)]
+        with _lock:
+            _usage["cpu"] = cpu
+            _usage["history"] = (_usage["history"] + [row])[-90:]
+
+
 def refresh_processes():
     """Which lanes have a live agent process, with its start time and reasoning effort (from its command line)."""
     command = ("Get-CimInstance Win32_Process -Filter \"Name like 'muse%'\" | ForEach-Object { "
-               "[pscustomobject]@{ pid = $_.ProcessId; started = $_.CreationDate.ToString('s'); cmd = $_.CommandLine } } | ConvertTo-Json -Compress")
+               "[pscustomobject]@{ pid = $_.ProcessId; started = $_.CreationDate.ToString('s'); cmd = $_.CommandLine; "
+               "mem = [int]($_.WorkingSetSize / 1MB) } } | ConvertTo-Json -Compress")
     try:
         out = subprocess.run(["powershell", "-NoProfile", "-Command", command], capture_output=True, text=True, timeout=40).stdout.strip()
         rows = json.loads(out) if out else []
@@ -70,7 +106,7 @@ def refresh_processes():
                 continue
             effort = re.search(r"--reasoning-effort\s+(\S+)", cmd)
             model = re.search(r"--model\s+(\S+)", cmd)
-            lanes[brief.group(1)] = {"pid": row.get("pid"), "started": row.get("started"),
+            lanes[brief.group(1)] = {"pid": row.get("pid"), "started": row.get("started"), "mem_mb": row.get("mem"),
                                      "effort": effort.group(1) if effort else None, "model": model.group(1) if model else None}
         with _lock:
             _processes.update(at=time.time(), lanes=lanes, error=None)
@@ -96,8 +132,9 @@ def cached_row(lane, live, experiments):
             return path.stat().st_mtime
         except OSError:
             return 0
+    process = live.get(lane) or {}
     key = (mtime(LOGS / f"{lane}.log"), mtime(SCRATCH / lane / "results.json"), mtime(SCRATCH / lane / "names.json"),
-           mtime(SCRATCH / lane / "summary.txt"), json.dumps(live.get(lane), sort_keys=True))
+           mtime(SCRATCH / lane / "summary.txt"), process.get("pid"), process.get("mem_mb"))
     hit = _rows.get(lane)
     if hit and hit[0] == key:
         return hit[1]
@@ -200,7 +237,7 @@ def lane_row(lane, live, experiments):
     experiment = experiments.get(lane)
     return {"lane": lane, "kind": kind_of(lane), "state": state, "exit_code": exited,
             "effort": (process or {}).get("effort") or (experiment or {}).get("effort"),
-            "started": (process or {}).get("started"),
+            "started": (process or {}).get("started"), "agent_memory_mb": (process or {}).get("mem_mb"),
             "last_activity": datetime.fromtimestamp(stat.st_mtime).isoformat(timespec="seconds") if stat else None,
             "progress": progress[:300], "yield": yield_of(lane), "brief": brief_tag(lane),
             "experiment": (experiment or {}).get("factor"), "batch": len(batch) if isinstance(batch, list) else None}
@@ -231,7 +268,10 @@ def state():
     lanes.sort(key=lambda row: (order[row["state"]], row["last_activity"] or ""), reverse=False)
     progress = read_json(ROOT / "docs" / "data" / "progress.json", {}) or {}
     history = read_json(COORD / "review_history.json", []) or []
+    with _lock:
+        cpu, usage_history = _usage["cpu"], list(_usage["history"])
     return {"now": datetime.now().isoformat(timespec="seconds"), "memory": memory(),
+            "cpu_percent": cpu, "cores": os.cpu_count(), "usage_history": usage_history,
             "process_list_age_s": round(process_age, 1) if process_age is not None else None, "process_list_error": process_error,
             "functions": progress.get("functions"), "stages": progress.get("stages"), "phase": progress.get("phase"),
             "progress_updated": progress.get("updated_at") or progress.get("updated"),
@@ -297,5 +337,6 @@ class Handler(BaseHTTPRequestHandler):
 if __name__ == "__main__":
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8772
     threading.Thread(target=process_loop, daemon=True).start()
+    threading.Thread(target=usage_loop, daemon=True).start()
     print(f"LibertyFlux dashboard on http://127.0.0.1:{port}/ (local only)", flush=True)
     ThreadingHTTPServer(("127.0.0.1", port), Handler).serve_forever()

@@ -76,6 +76,21 @@ td.mono { font-family: var(--mono); white-space: nowrap; }
 .scroll { overflow-x: auto; }
 .empty { color: var(--faint); padding: 6px 0; }
 
+.countdown { position: sticky; top: 0; height: 2px; background: var(--track); z-index: 6; }
+.countdown div { height: 100%; width: 0; background: var(--sodium); transition: width 1s linear; }
+.gauges { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.gauge { background: var(--raised); border: 1px solid var(--rule); border-radius: 6px; padding: 10px 12px; min-width: 0; }
+.gauge .name { color: var(--soft); font-size: 0.8125rem; }
+.gauge .num { font: 700 1.625rem/1.2 var(--mono); transition: color .6s ease; }
+.gauge .track { height: 8px; border-radius: 4px; background: var(--track); overflow: hidden; margin: 6px 0; }
+.gauge .fill { height: 100%; border-radius: 4px; transition: width .6s ease, background-color .6s ease; }
+.gauge svg { display: block; width: 100%; height: 36px; margin-top: 4px; }
+.gauge .sub { color: var(--faint); font-size: 0.8125rem; }
+.heat { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; align-self: center; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 0 0 10px; padding: 0; list-style: none; color: var(--faint); font-size: 0.8125rem; }
+.legend li { display: flex; gap: 6px; align-items: center; }
+@media (prefers-reduced-motion: reduce) { .gauge .fill, .gauge .num, .countdown div { transition: none; } }
+
 @media (min-width: 1000px) {
   main { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; }
   .overview { grid-column: 1; }
@@ -93,6 +108,7 @@ td.mono { font-family: var(--mono); white-space: nowrap; }
     <button class="tab" id="refresh">Refresh now</button>
   </div>
 </div>
+<div class="countdown" aria-hidden="true"><div id="countdown"></div></div>
 <main>
   <section class="overview" aria-labelledby="h-counts">
     <h2 id="h-counts">Functions</h2>
@@ -100,7 +116,8 @@ td.mono { font-family: var(--mono); white-space: nowrap; }
     <p class="note" id="counts-note"></p>
   </section>
   <section class="overview" aria-labelledby="h-machine">
-    <h2 id="h-machine">Machine and supervisor</h2>
+    <h2 id="h-machine">Laptop and supervisor</h2>
+    <div class="gauges" id="gauges"></div>
     <dl class="facts" id="machine"></dl>
     <h2 style="margin-top:14px">Supervisor log</h2>
     <div class="box"><pre id="suplog"></pre></div>
@@ -113,6 +130,12 @@ td.mono { font-family: var(--mono); white-space: nowrap; }
       <button class="tab" data-filter="died" aria-pressed="false">Died</button>
       <input id="search" type="search" placeholder="Filter by lane, kind or effort" aria-label="Filter lanes">
     </div>
+    <ul class="legend" aria-label="What the dot on a running lane means">
+      <li><span class="heat" style="background:#ff8a3d"></span>wrote to its log in the last 2 minutes</li>
+      <li><span class="heat" style="background:#e0a021"></span>2 to 8 minutes ago</li>
+      <li><span class="heat" style="background:#6a9cc2"></span>8 to 20 minutes ago</li>
+      <li><span class="heat" style="background:#5d6874"></span>quiet for 20 minutes or more</li>
+    </ul>
     <ul class="lanes" id="lanes"></ul>
   </section>
   <section class="detail" id="detail" aria-live="polite" hidden></section>
@@ -127,7 +150,45 @@ td.mono { font-family: var(--mono); white-space: nowrap; }
   function minutesSince(iso) { return iso ? Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000)) : null; }
   function span(minutes) { if (minutes == null) return ""; return minutes < 60 ? minutes + " min" : Math.floor(minutes / 60) + " h " + (minutes % 60) + " min"; }
 
+  var REFRESH = 15000;
+  // Usage colours: calm green up to about half, amber around three quarters, red near full.
+  var STOPS = [[0, [95, 179, 122]], [55, [95, 179, 122]], [75, [224, 160, 33]], [90, [217, 96, 58]], [100, [200, 60, 50]]];
+  function usageColor(percent) {
+    var p = Math.max(0, Math.min(100, percent || 0));
+    for (var i = 1; i < STOPS.length; i++) {
+      if (p <= STOPS[i][0]) {
+        var a = STOPS[i - 1], b = STOPS[i], t = (p - a[0]) / ((b[0] - a[0]) || 1);
+        return "rgb(" + [0, 1, 2].map(function (k) { return Math.round(a[1][k] + t * (b[1][k] - a[1][k])); }).join(",") + ")";
+      }
+    }
+    return "rgb(200,60,50)";
+  }
+  function heatColor(quietMinutes) { return quietMinutes < 2 ? "#ff8a3d" : quietMinutes < 8 ? "#e0a021" : quietMinutes < 20 ? "#6a9cc2" : "#5d6874"; }
+  function spark(values, color) {
+    var pts = values.filter(function (v) { return v != null; });
+    if (pts.length < 2) return "";
+    var step = 100 / (pts.length - 1);
+    var line = pts.map(function (v, i) { return (i * step).toFixed(1) + "," + (34 - 32 * Math.min(100, v) / 100).toFixed(1); }).join(" ");
+    return '<svg viewBox="0 0 100 36" preserveAspectRatio="none" role="img" aria-label="last three minutes"><polyline fill="none" stroke="' + color +
+      '" stroke-width="1.6" vector-effect="non-scaling-stroke" points="' + line + '"/></svg>';
+  }
+  function gauge(name, percent, sub, history) {
+    var shown = percent == null ? "?" : Math.round(percent) + "%", color = usageColor(percent);
+    return '<div class="gauge"><div class="name">' + name + '</div><div class="num" style="color:' + color + '">' + shown + "</div>" +
+      '<div class="track"><div class="fill" style="width:' + (percent || 0) + "%;background:" + color + '"></div></div>' +
+      spark(history, color) + '<div class="sub">' + esc(sub) + "</div></div>";
+  }
+  function renderGauges() {
+    var m = state.memory || {}, h = state.usage_history || [], sup = (state.supervisor || {}).settings || {};
+    var memUsed = m.total_gb ? 100 * (1 - m.free_gb / m.total_gb) : null, commitUsed = m.commit_limit_gb ? 100 * (1 - m.commit_headroom_gb / m.commit_limit_gb) : null;
+    $("gauges").innerHTML =
+      gauge("Processor", state.cpu_percent, (state.cores || "?") + " cores, last three minutes", h.map(function (r) { return r[1]; })) +
+      gauge("Memory in use", memUsed, m.free_gb + " GB free of " + m.total_gb + " GB", h.map(function (r) { return r[2]; })) +
+      gauge("Commit in use", commitUsed, m.commit_headroom_gb + " GB headroom; lanes start above " + (sup.min_headroom_gb != null ? sup.min_headroom_gb : "?") + " GB", h.map(function (r) { return r[3]; }));
+  }
+
   function renderOverview() {
+    renderGauges();
     var s = state.stages || {}, f = state.functions || {}, game = f.game || 0;
     var rows = [["Identified", s.identified], ["Named", s.named], ["Rewritten", s.rewritten], ["Verified", s.verified]];
     $("meters").innerHTML = rows.map(function (r) {
@@ -144,12 +205,14 @@ td.mono { font-family: var(--mono); white-space: nowrap; }
     var kinds = {};
     running.forEach(function (l) { kinds[l.kind] = (kinds[l.kind] || 0) + 1; });
     var breakdown = Object.keys(kinds).sort().map(function (k) { return kinds[k] + " " + k; }).join(", ") || "none";
+    var agentMemory = running.reduce(function (sum, l) { return sum + (l.agent_memory_mb || 0); }, 0);
+    var waiting = (sup.min_free_gb != null && m.free_gb < sup.min_free_gb) || (sup.min_headroom_gb != null && m.commit_headroom_gb < sup.min_headroom_gb);
     var facts = [
       ["Lanes running", running.length + (sup.target ? " of a target of " + sup.target : ""), false],
       ["By kind", breakdown, false],
-      ["Memory free", (m.free_gb != null ? m.free_gb + " GB of " + m.total_gb : "unknown"), sup.min_free_gb != null && m.free_gb < sup.min_free_gb],
-      ["Commit headroom", (m.commit_headroom_gb != null ? m.commit_headroom_gb + " GB of " + m.commit_limit_gb : "unknown"), sup.min_headroom_gb != null && m.commit_headroom_gb < sup.min_headroom_gb],
+      ["Memory held by the agents themselves", (agentMemory / 1024).toFixed(1) + " GB", false],
       ["Supervisor starts lanes above", (sup.min_free_gb != null ? sup.min_free_gb + " GB free and " + sup.min_headroom_gb + " GB headroom" : "unknown"), false],
+      ["Room for another lane right now", waiting ? "no, waiting for memory" : "yes", waiting],
       ["New lanes", state.supervisor && state.supervisor.stop_file ? "stopped by the STOP file" : "allowed", !!(state.supervisor && state.supervisor.stop_file)]
     ];
     $("machine").innerHTML = facts.map(function (r) { return "<div><dt>" + r[0] + '</dt><dd class="' + (r[2] ? "warn" : "") + '">' + esc(r[1]) + "</dd></div>"; }).join("");
@@ -181,8 +244,12 @@ td.mono { font-family: var(--mono); white-space: nowrap; }
       if (age != null) meta.push("running " + span(age));
       else if (quiet != null) meta.push("last activity " + span(quiet) + " ago");
       var y = l.yield ? l.yield.done + " of " + l.yield.of + " " + l.yield.unit : (l.batch ? "batch of " + l.batch : "");
-      return '<li><button class="lane' + (l.lane === selected ? " selected" : "") + '" data-lane="' + esc(l.lane) + '" data-state="' + esc(l.state) + '">' +
-        '<span class="top"><span class="id">' + esc(l.lane) + '</span><span class="meta">' + esc(meta.join(", ")) + "</span>" +
+      var heat = l.state === "running" && quiet != null ? heatColor(quiet) : null;
+      if (l.agent_memory_mb) meta.push(l.agent_memory_mb + " MB");
+      return '<li><button class="lane' + (l.lane === selected ? " selected" : "") + '" data-lane="' + esc(l.lane) + '" data-state="' + esc(l.state) + '"' +
+        (heat ? ' style="border-left-color:' + heat + '"' : "") + ">" +
+        '<span class="top">' + (heat ? '<span class="heat" style="background:' + heat + '"></span>' : "") +
+        '<span class="id">' + esc(l.lane) + '</span><span class="meta">' + esc(meta.join(", ")) + "</span>" +
         (l.state === "running" && quiet >= 20 ? '<span class="quiet">log quiet for ' + span(quiet) + "</span>" : "") +
         '<span class="yield">' + esc(y) + "</span></span>" +
         '<span class="line">' + esc(l.progress || "no log line yet") + "</span></button></li>";
@@ -222,15 +289,17 @@ td.mono { font-family: var(--mono); white-space: nowrap; }
     var lane = selected;
     fetch("/api/lane/" + encodeURIComponent(lane)).then(function (r) { return r.json(); }).then(function (d) {
       if (selected === lane && !d.error) renderDetail(d);
-    }).catch(function () {}).then(function () { clearTimeout(detailTimer); if (selected === lane) detailTimer = setTimeout(loadDetail, 5000); });
+    }).catch(function () {}).then(function () { clearTimeout(detailTimer); if (selected === lane) detailTimer = setTimeout(loadDetail, REFRESH); });
   }
 
   function freshness() {
     var el = $("fresh");
     if (!lastOk) { el.textContent = "loading"; return; }
-    var age = Math.round((Date.now() - lastOk) / 1000), stale = age > 20 || (state && state.process_list_age_s > 60);
+    var age = Math.round((Date.now() - lastOk) / 1000), stale = age > 40 || (state && state.process_list_age_s > 90);
     el.className = "fresh" + (stale ? " stale" : "");
-    el.textContent = (state ? state.now.replace("T", " ") : "") + (stale ? " (not updating: " + age + " s old)" : "");
+    var next = Math.max(0, Math.round(REFRESH / 1000 - age));
+    el.textContent = (state ? state.now.replace("T", " ") : "") + (stale ? " (not updating: " + age + " s old)" : ", next refresh in " + next + " s");
+    $("countdown").style.width = Math.min(100, 100 * age / (REFRESH / 1000)) + "%";
     if (state && state.process_list_error) el.textContent += " process list failed";
   }
   var loading = false, timer = null;
@@ -239,7 +308,7 @@ td.mono { font-family: var(--mono); white-space: nowrap; }
     loading = true; clearTimeout(timer);
     fetch("/api/state").then(function (r) { return r.json(); }).then(function (data) {
       state = data; lastOk = Date.now(); renderOverview(); renderLanes();
-    }).catch(function () {}).then(function () { loading = false; freshness(); timer = setTimeout(load, 5000); });
+    }).catch(function () {}).then(function () { loading = false; freshness(); timer = setTimeout(load, REFRESH); });
   }
   // A pane that is hidden or in the background pauses timers; catch up the moment it is looked at again.
   document.addEventListener("visibilitychange", function () { if (!document.hidden) { load(); loadDetail(); } });
