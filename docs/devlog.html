@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s206">Some game functions consume registers their callees clobber</a></li>
       <li><a href="#production-b144">Two checker gaps found while verifying a five-function batch</a></li>
       <li><a href="#production-s209">A one-byte flag the checker cannot stub</a></li>
       <li><a href="#pointer-only-entries">Which pointer-only inventory entries are really functions</a></li>
@@ -319,6 +320,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s206">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Some game functions consume registers their callees clobber</h2>
+      <p>Two functions in this batch cannot be verified under checker version 3 for the same reason: they read a general-purpose register after a call that does not preserve it, so the value they consume depends on the callee's internals rather than on anything the caller set up.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of small network-subsystem functions and prove each rewrite identical with the checker.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> One function pushes the ECX value left behind by a previous call as an argument to its next two calls. The stub that stands in for the callee during checking uses ECX as scratch and leaves harness residue there, so the checked original and any faithful rewrite necessarily disagree, and the real callee is in the encrypted range so the faithful value cannot even be determined by reading.</p>
+      <p><span class="evidence verified">Verified</span> A second function loads a status byte into DL, calls two helpers, then tests DL bits. The helpers clobber EDX (confirmed by reading one of them, which uses EDX as its loop counter), and the checker stubs do the same with worker-table addresses. A smoke run failed exactly on the affected trials with the original returning zero where the rewrite returned one, which is the residue behaviour, not the game behaviour.</p>
+      <p><span class="evidence verified">Verified</span> Both functions were deferred rather than fitted to the harness: a rewrite that hard-codes stub residue would pass the checker and be wrong in the game.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Defer functions that read ECX or EDX after a call without reloading them, and say so explicitly. Before writing a contract for any function with calls, scan its disassembly for bare 8- and 32-bit uses of ECX and EDX after call sites; uses of EAX (the scripted answer) and of callee-preserved registers are fine. A future checker version could close the gap by scripting callee exit values for clobbered registers the way return values are scripted today.</p>
+      <h3>How to reproduce it</h3>
+      <p>Contract either deferred function with per-callee scripts and run a short smoke: the mismatch appears within the first dozen trials on the return-value comparison, with identical call logs on both sides, which rules out an argument or heap problem.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>An earlier session-long fault hunt in this lane turned out to be my own address arithmetic: I had stripped the leading digit of the file address instead of subtracting the image base, so every probe executed encrypted bytes and faulted. The checker was never at fault. When the original faults at entry on every trial with a wild fault address, recheck the contract address first.</p>
+      </article>
 
       <article class="entry" id="production-b144">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

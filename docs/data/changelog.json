@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Two checker gaps found while verifying a five-function batch",
+    "title": "Devlog: Some game functions consume registers their callees clobber",
     "commit": null,
+    "summary": "Findings from the r-s206 lane.",
+    "changes": [
+      "New devlog entry: Some game functions consume registers their callees clobber.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Two checker gaps found while verifying a five-function batch",
+    "commit": "0425261cac51a75567188399f394533279fd24f3",
     "summary": "Findings from the r-b144 lane.",
     "changes": [
       "New devlog entry: Two checker gaps found while verifying a five-function batch.",
