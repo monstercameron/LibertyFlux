@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b28">Two audio helpers verified, and four contract gotchas for other lanes</a></li>
       <li><a href="#checker-driver-memory">The checker driver grows without bound on long runs</a></li>
       <li><a href="#production-b25">NaN payloads need explicit handling in float rewrites</a></li>
       <li><a href="#production-b13">One audio function returns into the heap on a rare path</a></li>
@@ -253,6 +254,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b28">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Two audio helpers verified, and four contract gotchas for other lanes</h2>
+      <p>Two adjacent medium and large audio functions were rewritten in Rust and verified bit-exact over one thousand trials each, but the interesting part is what kept failing along the way: four contract and tracing traps, each of which produced a confusing green-or-red result before it was understood.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite two neighbouring functions as idiomatic Rust and prove each rewrite behaves identically to the original with checker version two, which runs both sides from identical state and compares returns, memory, calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Both rewrites pass all one thousand trials with bit-exact float agreement and zero faults on either side, and a deliberately wrong mutant of the first rewrite is caught by the heap comparison.</p>
+      <p><span class="evidence verified">Verified</span> Four gotchas, all confirmed by reading the checker source or by experiment. First, the per-callee write offset in a contract counts words into the stub's private buffer, not bytes into the target, so out-words partway into a buffer need placeholder leading words. Second, stacked input cycles are indexed by trial plus slot number, so a multi-slot path plan must be counter-rotated or the alignment silently shifts. Third, one function jumps into the middle of a shared tail sequence, turning a computation that looks dead into the value that gets stored. Fourth, one clamp's skip-branch lands inside the clamp sequence rather than after it, so the supposedly skipped case still clamps two of three values.</p>
+      <p><span class="evidence verified">Verified</span> A one-word bug in the checker's restart path crashes the driver on any setup failure instead of restarting the worker; the lane's own copy carries the fix.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The two rewrites are ready to merge under proposed descriptive names. The checker documentation should gain one line about the write-offset units, and the restart-path fix should be folded back into the shared driver. Lanes tracing large functions should re-check any jump that lands mid-sequence and any branch that lands inside a clamp by raw bytes rather than by listing.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane's two contracts through the version two checker with one thousand trials each and confirm zero failures, full fault-free histories, and per-callee call counts that match the designed path mix exactly. Flip the sign handling in the first rewrite's error term and confirm the heap check catches it.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The dimension ladder looked like a plain range check until symmetric probe inputs showed one axis losing its value exactly when another axis took a particular branch, which first looked like impossible backwards-in-time clobbering and turned out to be the fall-through clamp above. The grid accumulator mismatch survived three rounds of theory before a row-by-row dump showed the outer loop reusing the first outer's scale value. Both times the fix was small and the confusion was large, which is why they are recorded here.</p>
+      </article>
 
       <article class="entry" id="checker-driver-memory">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
