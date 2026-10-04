@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s19">Production batch: eighteen area-table functions verified, one float stub found suspect</a></li>
       <li><a href="#production-n11">Nine-argument native calls exceed the checker call log</a></li>
       <li><a href="#production-n09">Native handlers smuggle booleans through their own stack slot</a></li>
       <li><a href="#production-n03">Native handlers hide a one-byte stack trick</a></li>
@@ -208,6 +209,34 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s19">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production batch: eighteen area-table functions verified, one float stub found suspect</h2>
+      <p>A production batch of twenty small functions around one shared record table yielded eighteen verified Rust rewrites at one thousand trials each, and two deferrals, one of which exposed a gap between the checker's built worker and its sources: the stub that scripts a floating-point callee answer zeroes part of the value it claims to merge, so the original looks constant and a do-nothing rewrite would pass without proving anything.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty neighbouring functions that operate on a shared table of forty fixed-size records, and prove each rewrite identical to the original with the differential checker, which runs both sides from identical starting state and compares return values, memory writes, stack behaviour, outgoing calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Eighteen of the twenty functions were verified with one thousand trials each and zero failures, covering record copies, flag sweeps, jump-table state machines, float range tests with edge values, and multi-call watchdog logic.</p>
+      <p><span class="evidence verified">Verified</span> One function was deferred without an attempt because it calls through an object's function table, which the checker cannot intercept by design.</p>
+      <p><span class="evidence verified">Verified</span> One function was deferred after diagnosis: it calls a helper that takes two doubles in vector registers and returns a double the same way. Seven single-trial probes with fixed inputs showed the original always returns positive zero once the float-answer stub is attached, while control probes with stubs that leave the vector register untouched return the correctly scaled input. The only consistent model is that the built stub zeroes the upper half of the value instead of merging the scripted lower half as the worker sources describe. Under that stub a rewrite that always returns zero passes vacuously, and under a transparent stub a rewrite would bake in behaviour that is wrong for real execution, so no faithful rewrite is verifiable until the stub is reconciled.</p>
+      <p><span class="evidence verified">Verified</span> The checker caught two genuine rewrite bugs on first attempts: a copy loop whose last element is copied in place rather than shifted, and a sweep whose flag update is skipped for non-matching records. Both one-line fixes passed on retry.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Outcome</th><th role="columnheader">Count</th><th role="columnheader">Meaning</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Verified</td><td role="cell" data-label="Count">18</td><td role="cell" data-label="Meaning">rewrite passed one thousand trials with no failures</td></tr>
+      <tr role="row"><td role="cell">Deferred, indirect call</td><td role="cell" data-label="Count">1</td><td role="cell" data-label="Meaning">virtual call the checker cannot intercept</td></tr>
+      <tr role="row"><td role="cell">Deferred, other</td><td role="cell" data-label="Count">1</td><td role="cell" data-label="Meaning">float-return stub makes faithful checking impossible</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>Both deferrals were recorded with their blockers instead of guessed rewrites. The float-answer stub in the built worker should be reconciled with the worker sources before any lane verifies against it where the upper half of the value matters, and a scripted full-width floating-point return channel would unblock the deferred function. The shared record layout and the contract patterns for scripted table words are documented in the lane report for the next batch in this area.</p>
+      <h3>How to reproduce it</h3>
+      <p>Take any function whose result flows through the scripted float-answer stub, fix its inputs and the scripted word to known values, and run single trials while varying each independently: with the current built worker the original's answer does not move with either input, while the same setup with a stub that preserves the register tracks the inputs exactly. The lane report lists the exact probe matrix and the decoded values.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> Twice during recon, hand-subtracted address ranges came out wrong by an order of magnitude, briefly suggesting loops of two iterations instead of forty; scripting the subtraction instead of repeating it by hand caught both before any contract was written.</p>
+      <p><span class="evidence verified">Verified</span> Twice a freshly linked rewrite library could not be relinked while no process showed it loaded; moving to a fresh build directory fixed it both times. One worker process also died silently near the end of a passing run; a rerun passed cleanly.</p>
+      </article>
 
       <article class="entry" id="production-n11">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
