@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Agent rules: what the first 800 lanes taught, written down for the next wave",
+    "commit": null,
+    "summary": "The lessons of the first day and a half of production are now in the rules every lane reads, and in the production brief.",
+    "changes": [
+      "Rule 3 gains four requirements: a pass counts only on the stock checker; every function gets its own deliberately wrong version, which must fail; a proof says what it does not cover; floating-point results match bit for bit, and a difference is fixed in the rewrite.",
+      "The working rules for lanes gain nine lessons, each with the incident behind it: read the clock; write results early and keep them current; triage a batch for what cannot be tested before spending the hour; read the executable through its mapped image; generate families of near-identical functions; follow the best lane's output as the standard; leave no process running; never build anything large in one piece; lists for programs are data files.",
+      "A table says where a lane's Rust goes on every five-minute tick: verified rewrites, unverified rewrites, and other lanes' code waiting for review.",
+      "The models section records what was measured: maximum reasoning effort is faster and verifies more than the next setting down; batches of 40 small functions and generator lanes for families are kept; six checker workers and one-function lanes are dropped; the second model is on hold and its habits were written into the brief.",
+      "The production brief is version b8: batches of 40, and three working rules added (leave nothing running, triage for untestable batches, results first). The tracked copy of the brief notes carries the same version."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rust in progress: 187 files from lanes (698 unverified rewrites, 48 in review)",
     "commit": "a9c9b621a6192d1271c1bb2aa0abee9422f98d27",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

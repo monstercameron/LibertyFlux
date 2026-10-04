@@ -1,5 +1,5 @@
 {
- "version": "b6",
+ "version": "b8",
  "notes": [
   {
    "id": 1,
@@ -35,7 +35,7 @@
    "id": 6,
    "title": "brief version b6: reference example and what changed",
    "since": "b6",
-   "text": "This is brief version b6. A reference example of the standard expected: lane `r-b185`'s output under `{root}\\.artifacts\\scratch\\r-b185\\` (three animation-blend functions of about 1,500 bytes each, all verified on the first attempt in 38 minutes). Read `out\\rewrites\\fn_00690410.rs`, its contract and the generator `gen_fn23.py` before you write your first function, and match it on these points:\n  a. The doc comment is a specification: what the arguments are, the layout it reads (offsets named), the algorithm, the edge cases, the calling convention.\n  b. Offsets and magic values are named constants (`TRACK_FLAGS`, `NEAR_ONE`), and parameters and locals are named for what they hold. A register name is a last resort.\n  c. Float order is pinned from the start, not after a failure: arithmetic goes through small helpers that pass both operands through `core::hint::black_box`, written in the original's operand order.\n  d. The wrong version is used to find what the contract cannot see. If a wrong version that changes one part of the output passes, that part is not observed (a snapshot too short, an argument skipped, a branch never taken): widen the contract if you can, and if the checker cannot observe it, the function is `deferred` with reason `checker_gap`, not verified. Lane `r-b184` deferred a function this way after showing that changes to half of a matrix passed unnoticed.\n  What else changed from earlier briefs, and why, in order of importance:\n  1. Every function gets its own wrong version, not one per batch. A review of all 6,776 accepted rewrites found that 6,515 had never had a deliberately wrong version run against them, so nothing showed that their contracts could tell right from wrong. For each function, after it passes: add a second export that differs in ONE behaviour the contract should see (a store left out, a constant off by one, a branch inverted, two arguments swapped), name it in the contract's `mut_export`, and run it for 100 trials. It must fail. If it passes, the contract is too weak: widen the inputs or add the missing check until the wrong version fails, then re-run the right one. This costs seconds per function once the crate is built. Do not ship the wrong version in `out\\rewrites`.\n  2. Say what your proof does not cover. If you switched a check off, masked or skipped an argument, let a callee run natively, or know of a branch your inputs never take, write it in that function's `narrowed` field and in the summary. A narrower proof that says so is acceptable; a narrower proof that looks full is not.\n  3. Read the clock. Every time you write a time, take it from `Get-Date`. Lanes have written times an hour off from memory, and reported durations that were three times the real ones. Minutes per function come from two clock readings.\n  4. Do not spend time proving a known gap again; confirm it with a short probe, defer with the reason, keep the rewrite and contract, move on.\n  5. Speed, from the fastest lanes: triage the whole batch before writing anything; for a family of near-identical functions write a generator and check each generated contract's shape in the script; run a 60-trial probe before a 1,000-trial run; start a long checker run in the background and write the next rewrite while it runs (never more than three workers); build all rewrites in one crate and rebuild once per group, not once per function."
+   "text": "This is brief version b8. A reference example of the standard expected: lane `r-b185`'s output under `{root}\\.artifacts\\scratch\\r-b185\\` (three animation-blend functions of about 1,500 bytes each, all verified on the first attempt in 38 minutes). Read `out\\rewrites\\fn_00690410.rs`, its contract and the generator `gen_fn23.py` before you write your first function, and match it on these points:\n  a. The doc comment is a specification: what the arguments are, the layout it reads (offsets named), the algorithm, the edge cases, the calling convention.\n  b. Offsets and magic values are named constants (`TRACK_FLAGS`, `NEAR_ONE`), and parameters and locals are named for what they hold. A register name is a last resort.\n  c. Float order is pinned from the start, not after a failure: arithmetic goes through small helpers that pass both operands through `core::hint::black_box`, written in the original's operand order.\n  d. The wrong version is used to find what the contract cannot see. If a wrong version that changes one part of the output passes, that part is not observed (a snapshot too short, an argument skipped, a branch never taken): widen the contract if you can, and if the checker cannot observe it, the function is `deferred` with reason `checker_gap`, not verified. Lane `r-b184` deferred a function this way after showing that changes to half of a matrix passed unnoticed.\n  What else changed from earlier briefs, and why, in order of importance:\n  1. Every function gets its own wrong version, not one per batch. A review of all 6,776 accepted rewrites found that 6,515 had never had a deliberately wrong version run against them, so nothing showed that their contracts could tell right from wrong. For each function, after it passes: add a second export that differs in ONE behaviour the contract should see (a store left out, a constant off by one, a branch inverted, two arguments swapped), name it in the contract's `mut_export`, and run it for 100 trials. It must fail. If it passes, the contract is too weak: widen the inputs or add the missing check until the wrong version fails, then re-run the right one. This costs seconds per function once the crate is built. Do not ship the wrong version in `out\\rewrites`.\n  2. Say what your proof does not cover. If you switched a check off, masked or skipped an argument, let a callee run natively, or know of a branch your inputs never take, write it in that function's `narrowed` field and in the summary. A narrower proof that says so is acceptable; a narrower proof that looks full is not.\n  3. Read the clock. Every time you write a time, take it from `Get-Date`. Lanes have written times an hour off from memory, and reported durations that were three times the real ones. Minutes per function come from two clock readings.\n  4. Do not spend time proving a known gap again; confirm it with a short probe, defer with the reason, keep the rewrite and contract, move on.\n  5. Speed, from the fastest lanes: triage the whole batch before writing anything; for a family of near-identical functions write a generator and check each generated contract's shape in the script; run a 60-trial probe before a 1,000-trial run; start a long checker run in the background and write the next rewrite while it runs (never more than three workers); build all rewrites in one crate and rebuild once per group, not once per function."
   },
   {
    "id": 7,
@@ -66,6 +66,30 @@
    "title": "defects found in checker version 1",
    "since": "b4-or-earlier",
    "text": "Three defects were found in version 1 by lanes using it (nearly constant fills for globals, calls with more than eight arguments, corrupted state after a fault on the rewrite side only). Version 3 fixes the first two and guards against the third with its vacuous rule; if you see anything like them, stop and report it, because a checker that passes a wrong rewrite is worse than a slow one.\n"
+  },
+  {
+   "id": 12,
+   "title": "batch size",
+   "since": "b7",
+   "text": "Small-function batches are 40 functions, not 20: two 40-function lanes verified 75 functions in 140 lane-minutes, about half as much again per lane-minute.\n"
+  },
+  {
+   "id": 13,
+   "title": "leave nothing running",
+   "since": "b8",
+   "text": "Leave nothing running. Before you finish, stop every process you started (checker drivers, workers, helper scripts), by process id and never by name, because every lane's workers share one name. A helper script left running by a finished lane held 8.7 GB for four hours and starved the other lanes, and nine others each spun a processor core for up to thirteen hours. A script that loops must have a way to end.\n"
+  },
+  {
+   "id": 14,
+   "title": "triage for what cannot be tested",
+   "since": "b8",
+   "text": "In your first ten minutes, check whether the batch can be tested at all. If every function calls into or reads the first megabyte of the code section (it is encrypted on disk, so the original faults on every trial), or needs an ability the checker lacks, then write the rewrites and contracts, run one short probe to confirm, record each as deferred with the reason, and finish early. A lane spent an hour and verified none of 20 this way.\n"
+  },
+  {
+   "id": 15,
+   "title": "results first",
+   "since": "b8",
+   "text": "Write `results.json` within your first ten minutes, with every function listed as not yet run, and update it after each function. The coordinator imports a rewrite as soon as its row says verified, while you are still working, and a lane stopped at its time limit keeps only what it has written.\n"
   }
  ]
 }

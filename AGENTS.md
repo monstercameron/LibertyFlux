@@ -58,6 +58,21 @@ The repository is public and the project site is served from it. Cam's standing 
 - No fake passes: no stubs presented as implementations, no hard-coded original addresses in place of
   real references, no inline assembly, no weakening of a comparison.
 - Deferring a function with a stated blocker is a normal outcome. Guessing is not.
+- A pass counts only on the stock checker, the one built from the tracked source. A lane may build a
+  private copy to demonstrate a defect, but a result from it is recorded as deferred with reason
+  `checker_gap`, never as verified. Twenty-two lanes ran private copies before this was written
+  down, and one of them relaxed a comparison.
+- Every function gets its own deliberately wrong version, run through the same contract. It must
+  fail. If it passes, the contract cannot see what was changed: widen the contract, and if the
+  checker cannot observe it at all, defer the function. Until this was required, 6,515 of 6,776
+  accepted rewrites had never had one.
+- Say what a proof does not cover. Anything that narrows a function's comparison (a masked or
+  skipped argument, a check switched off, a callee left running natively, a branch the inputs never
+  take) is listed in that function's result. A narrow proof that says so is acceptable; one that
+  looks full is not.
+- Floating-point results match bit for bit, including the sign and payload of a not-a-number. A
+  difference there means the rewrite's operand order differs from the original's; fix the rewrite
+  (pin the order with `core::hint::black_box`), never the comparison.
 
 ## Working rules for lanes
 
@@ -67,6 +82,49 @@ The repository is public and the project site is served from it. Cam's standing 
 - Change one thing per attempt and state what difference it targets. Stop at the attempt cap.
 - Append per-function progress to your log under `.artifacts/logs/` as you go.
 - Label findings as Verified (you read or ran it), Inferred, or Unknown. Do not fill gaps with guesses.
+
+Learned from the first 800 lanes (4 October 2026). Each line is here because its absence cost work.
+
+- Read the clock. Every time you write a time or a duration, take it from the machine. Lanes wrote
+  times an hour off and durations three times too long from memory.
+- Write `results.json` in your first minutes and keep it current after every function. A lane is
+  stopped at its time limit with no warning, and one that had written nothing lost two hours of work.
+  Finish well inside your budget.
+- Triage the whole batch before writing anything. If every function in it depends on something you
+  cannot test (the encrypted first megabyte of code, an ability the checker lacks), write the
+  rewrites, defer them with the reason and finish early: one lane spent an hour to verify none.
+- Read the executable through its mapped image, never the raw file at a mapped address (the two
+  differ by a constant in the code section), and decode one known function end to end before
+  trusting your mapping. Three lanes skipped this; two concluded that real functions were not
+  functions. A claim that an inventory entry is not a function is unverified until it is checked
+  independently.
+- A family of near-identical neighbouring functions is one routine instantiated many times. Work it
+  out from three members, then generate every rewrite, contract and wrong version with a script that
+  asserts each member's shape. Two such lanes verified 145 functions in under an hour each.
+- Follow the best lane's output as the standard: a doc comment that is a specification, offsets and
+  magic values as named constants, parameters and locals named for what they hold, float order
+  pinned from the start. The production brief names the example to read.
+- Leave nothing running. Before you finish, stop every process you started (drivers, workers,
+  helper scripts), by process id and never by name, because every lane's workers share one name. A
+  helper script left running held 8.7 GB for four hours after its lane had ended, and nine others
+  each spun a processor core for up to thirteen hours.
+- Do not build anything large in one piece. One build of a single crate holding 7,381 rewrites took
+  commit headroom from 24 GB to under 1 GB and killed three other lanes. Split it. Never run more
+  than three checker workers at once.
+- A list meant for a program is a data file. Never rebuild a work list from a report written for
+  people: a survey's printout stopped at 40 names per lane and hid 34 contracts from a re-run.
+
+What happens to your Rust. On every five-minute tick the coordinator's scripts commit all Rust that
+lanes have written, so nothing waits in a scratch folder:
+
+| Folder | What goes there |
+|---|---|
+| `rewrites/verified/` | A rewrite as soon as its lane records it as verified on the stock checker, even while the lane is still running |
+| `rewrites/unverified/` | A rewrite that exists but has not passed (deferred, failed, not yet run), with the reason; never counted as rewritten or verified |
+| `rewrites/in-review/<lane>/` | Other lanes' Rust (checker changes, assembly, lifted code, tools) that is new or differs from the tracked file, waiting for the coordinator's review; trust-critical code is never replaced automatically |
+
+Every file passes the publication scan first. Keep disassembly, byte dumps and machine paths out of
+your Rust, comments included, or it is held back.
 
 ## Rule 4: the coordinator keeps the progress file true
 
@@ -273,6 +331,16 @@ Neither page may contain decompiled code, disassembly, game function addresses o
   a zero-dependency crate's output; delete a lane's folder once its results are integrated.
 - Production lanes write `results.json` and `summary.txt`; a devlog entry is optional for them and
   is written only for a surprising finding. Lanes of every other kind still write one.
+- The operating scripts are in `scripts/coordinator/` (the tick, the lane launcher and supervisor,
+  the brief makers, the importers), with tests the pipeline runs. The production brief is a
+  template plus numbered notes with a version (`scripts/coordinator/briefs/`); a lane writes that
+  version into each result so a change to the brief can be measured.
+- `scripts/dashboard/server.py` serves a local page showing every lane, its effort setting, its
+  initial prompt, its log and results, and the laptop's load. Use it to see what lanes are doing;
+  it costs no model usage.
+- The pipeline on GitHub builds and tests the portable crates on Windows, Linux and macOS and the
+  32-bit tools on Windows, runs the publication check, and publishes a rolling pre-release when
+  they pass. It cannot run the checker: that needs the game's executable, which is never uploaded.
 - No git worktrees and no `git stash`.
 - LF line endings, except `.bat`, `.cmd` and `.ps1`.
 - Do not create new `.md` files without Cam's approval.
@@ -281,8 +349,17 @@ Neither page may contain decompiled code, disassembly, game function addresses o
 ## Models
 
 - Opus 5.5 coordinates and reviews only.
-- Muse Spark 1.3 at max reasoning effort does the work.
-- Sonnet takes functions Muse deferred and task classes where Muse's measured results fall short.
+- Muse Spark 1.3 at max reasoning effort does the work. Maximum effort is measured, not assumed:
+  four lanes run at the next setting down took longer and finished one large function in three,
+  against about three in four at maximum.
+- Sonnet is on hold (Cam, 4 October 2026). Two Sonnet lanes were run once as a comparison on large
+  functions: about one and a half times the verified code per lane-hour, and more rigour (a wrong
+  version per function, limits of each proof stated, a function deferred when wrong versions showed
+  the checker could not see half its output). Its habits were written into the Muse brief instead.
+  If it is used again, the functions Muse defers and the largest functions are where it helps most.
+- Lane settings that were tested and kept or dropped: small-function batches of 40 (kept, about
+  half as much again per lane-minute as 20); family generator lanes (kept); six checker workers
+  instead of three (no measurable gain, dropped); one large function per lane (dropped).
 
 ## Environment
 

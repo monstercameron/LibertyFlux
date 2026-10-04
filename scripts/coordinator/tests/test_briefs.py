@@ -14,7 +14,7 @@ LANE = "r-s99"
 class TestNotes(unittest.TestCase):
     def test_version_and_order(self):
         notes = briefs.load_notes()
-        self.assertEqual(notes["version"], "b6")
+        self.assertRegex(notes["version"], r"^b\d+$")  # the version moves with every change to the notes
         self.assertEqual([n["id"] for n in notes["notes"]], list(range(1, len(notes["notes"]) + 1)))
         for note in notes["notes"]:
             for key in ("id", "title", "since", "text"):
