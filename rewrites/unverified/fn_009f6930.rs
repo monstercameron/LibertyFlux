@@ -65,7 +65,7 @@ lf_checker_rt::export!(cdecl, rw_009F6930() -> u32 {
             unsafe { (a as *mut u32).write_unaligned(v) }
         }
 
-        lf_checker_rt::callee_cdecl!(SETUP_CALLEE, u32);
+        lf_checker_rt::callee_cdecl!(SETUP_CALLEE, u32,);
         let freed = rd32(lf_checker_rt::relocated(FREED_PTR));
         wr32(lf_checker_rt::relocated(COUNT_FLOAT), 0xfd);
         wr32(lf_checker_rt::relocated(COUNT_INT), 0x18c);
@@ -137,7 +137,7 @@ lf_checker_rt::export!(cdecl, rw_009F6930() -> u32 {
             i += 1;
         }
 
-        lf_checker_rt::callee_cdecl!(SETUP2_CALLEE, u32);
+        lf_checker_rt::callee_cdecl!(SETUP2_CALLEE, u32,);
         ((lf_checker_rt::relocated(FIELD_627C)) as *mut u16).write_unaligned(0);
         wr32(lf_checker_rt::relocated(FIELD_628C), 0);
         let gen = rd32(lf_checker_rt::relocated(GEN_NEW));
@@ -182,7 +182,7 @@ lf_checker_rt::export!(cdecl, rw_009F6930() -> u32 {
                 }
             }
         }
-        lf_checker_rt::callee_cdecl!(TAIL_CALLEE, u32);
+        lf_checker_rt::callee_cdecl!(TAIL_CALLEE, u32,);
         0
     }
 });

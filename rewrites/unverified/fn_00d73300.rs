@@ -98,7 +98,9 @@ lf_checker_rt::export!(thiscall, rw_00d73300(this: u32, delta_u: u32) -> u32 {
             // Toggle flag A.
             0 => {
                 trace(&mut retv, 0x00eeaf8c);
-                wr8(this.wrapping_add(FLAG_A_OFF), u8::from(rd8(this.wrapping_add(FLAG_A_OFF)) == 0));
+                let v = u8::from(rd8(this.wrapping_add(FLAG_A_OFF)) == 0);
+                wr8(this.wrapping_add(FLAG_A_OFF), v);
+                retv = (retv & 0xffff_ff00) | (v as u32);
             }
             // Step field 8 modulo 21 (nonpositive remainders become 20),
             // touch on change, reset the mode pair when it lands on zero.
@@ -111,6 +113,7 @@ lf_checker_rt::export!(thiscall, rw_00d73300(this: u32, delta_u: u32) -> u32 {
                 }
                 let dl = r as u8;
                 wr8(esi.wrapping_add(8), dl);
+                retv = 0x14;
                 let changed = if edi != 0 {
                     rd8(edi.wrapping_add(8)) != dl
                 } else {
@@ -127,7 +130,9 @@ lf_checker_rt::export!(thiscall, rw_00d73300(this: u32, delta_u: u32) -> u32 {
             // Toggle flag B.
             2 => {
                 trace(&mut retv, 0x00eeafd4);
-                wr8(this.wrapping_add(FLAG_B_OFF), u8::from(rd8(this.wrapping_add(FLAG_B_OFF)) == 0));
+                let v = u8::from(rd8(this.wrapping_add(FLAG_B_OFF)) == 0);
+                wr8(this.wrapping_add(FLAG_B_OFF), v);
+                retv = (retv & 0xffff_ff00) | (v as u32);
             }
             // Percent field: (25*delta + byte) mod 250 with the negative
             // rule, through the nested/wide apply pair, touch on change.
@@ -167,13 +172,16 @@ lf_checker_rt::export!(thiscall, rw_00d73300(this: u32, delta_u: u32) -> u32 {
             // Toggle flag C.
             4 => {
                 trace(&mut retv, 0x00eeafb0);
-                wr8(this.wrapping_add(FLAG_C_OFF), u8::from(rd8(this.wrapping_add(FLAG_C_OFF)) == 0));
+                let v = u8::from(rd8(this.wrapping_add(FLAG_C_OFF)) == 0);
+                wr8(this.wrapping_add(FLAG_C_OFF), v);
+                retv = (retv & 0xffff_ff00) | (v as u32);
             }
             // Clamp wide field A against its global.
             5 => {
                 trace(&mut retv, 0x00eeb14c);
                 let g = rd32(lf_checker_rt::global::<u32>(CLAMP_A_G) as u32) as i32;
                 let mut v = (rd32(esi.wrapping_add(0x20)) as i32).wrapping_add(delta);
+                retv = (g.wrapping_add(v)) as u32;
                 if (g.wrapping_add(v)) > 8 {
                     v = 0;
                 } else if v < 0 {
@@ -187,6 +195,7 @@ lf_checker_rt::export!(thiscall, rw_00d73300(this: u32, delta_u: u32) -> u32 {
                 trace(&mut retv, 0x00eeb170);
                 let g = rd32(lf_checker_rt::global::<u32>(CLAMP_B_G) as u32) as i32;
                 let mut v = (rd32(esi.wrapping_add(0x24)) as i32).wrapping_add(delta);
+                retv = (g.wrapping_add(v)) as u32;
                 if (g.wrapping_add(v)) > 8 {
                     v = 0;
                 } else if v < 0 {
@@ -198,14 +207,17 @@ lf_checker_rt::export!(thiscall, rw_00d73300(this: u32, delta_u: u32) -> u32 {
             // Flip bit 2 of byte 3.
             7 => {
                 trace(&mut retv, 0x00eeb194);
+                let old = rd8(esi.wrapping_add(3));
                 or32(esi.wrapping_add(0x0c), 0x20);
-                wr8(esi.wrapping_add(3), rd8(esi.wrapping_add(3)) ^ 4);
+                wr8(esi.wrapping_add(3), old ^ 4);
+                retv = (retv & 0xffff_ff00) | (old as u32);
             }
             // Toggle flag D; clearing it also clears flag E.
             8 => {
                 trace(&mut retv, 0x00eeaff8);
                 let v = u8::from(rd8(this.wrapping_add(FLAG_D_OFF)) == 0);
                 wr8(this.wrapping_add(FLAG_D_OFF), v);
+                retv = (retv & 0xffff_ff00) | (v as u32);
                 if v == 0 {
                     wr8(this.wrapping_add(FLAG_E_OFF), 0);
                 }
@@ -231,6 +243,10 @@ lf_checker_rt::export!(thiscall, rw_00d73300(this: u32, delta_u: u32) -> u32 {
                 };
                 if !same {
                     retv = lf_checker_rt::callee_thiscall!(TOUCH, u32, inner, 6);
+                } else if edi != 0 {
+                    retv = (retv & 0xffff_ff00) | (rd8(edi.wrapping_add(4)) as u32);
+                } else {
+                    retv = (retv & 0xffff_ff00) | u32::from(latched_9);
                 }
             }
             // Divide-step the head byte, then settle the state byte.
@@ -284,6 +300,7 @@ lf_checker_rt::export!(thiscall, rw_00d73300(this: u32, delta_u: u32) -> u32 {
                         wr8(esi.wrapping_add(5), 3);
                     }
                 }
+                retv = rd8(esi) as u32;
             }
             // Resolve through the pool pair and touch on field change.
             11 => {
@@ -305,6 +322,8 @@ lf_checker_rt::export!(thiscall, rw_00d73300(this: u32, delta_u: u32) -> u32 {
                 };
                 if !same {
                     retv = lf_checker_rt::callee_thiscall!(TOUCH, u32, inner, 8);
+                } else if edi != 0 {
+                    retv = rd32(edi.wrapping_add(0x10));
                 }
             }
             // Step field 9 modulo 3 (negatives become 2).
@@ -314,19 +333,25 @@ lf_checker_rt::export!(thiscall, rw_00d73300(this: u32, delta_u: u32) -> u32 {
                 let r = t % 3;
                 or32(esi.wrapping_add(0x0c), 0x2000);
                 wr8(esi.wrapping_add(9), (if r < 0 { 2 } else { r }) as u8);
+                retv = 2;
             }
             // Step field 2 by five, clamped to the global limit.
             13 => {
                 trace(&mut retv, 0x00eeb098);
                 let limit =
                     rd32(lf_checker_rt::global::<u32>(LIMIT_G) as u32) as i32;
-                let mut v = delta
-                    .wrapping_mul(5)
-                    .wrapping_add(rd8(esi.wrapping_add(2)) as i32);
+                let first = rd8(esi.wrapping_add(2)) as i32;
+                let mut v = delta.wrapping_mul(5).wrapping_add(first);
                 if v < 0x0f && delta < 0 {
                     v = limit;
-                } else if v > limit && delta > 0 {
-                    v = 0x0f;
+                    retv = first as u32;
+                } else if v > limit {
+                    if delta > 0 {
+                        v = 0x0f;
+                    }
+                    retv = 0x0f;
+                } else {
+                    retv = first as u32;
                 }
                 or32(esi.wrapping_add(0x0c), 0x200);
                 wr8(esi.wrapping_add(2), v as u8);
@@ -368,6 +393,11 @@ lf_checker_rt::export!(thiscall, rw_00d73300(this: u32, delta_u: u32) -> u32 {
                 }
                 or32(esi.wrapping_add(0x0c), 0x800);
                 wr8(esi.wrapping_add(5), c);
+                retv = if edi != 0 {
+                    u32::from(flag)
+                } else {
+                    delta_u & 0xffff_ff00
+                };
             }
             // Step field 6 modulo 4, or toggle it against the reference.
             15 => {
@@ -375,13 +405,24 @@ lf_checker_rt::export!(thiscall, rw_00d73300(this: u32, delta_u: u32) -> u32 {
                 let a5 = rd8(esi.wrapping_add(5));
                 if a5 != 0 && edi != 0 && rd8(edi.wrapping_add(5)) != 0 {
                     let r = ((rd8(esi.wrapping_add(6)) as i32).wrapping_add(delta)) % 4;
-                    wr8(esi.wrapping_add(6), (if r < 0 { 3 } else { r }) as u8);
+                    if r < 0 {
+                        wr8(esi.wrapping_add(6), 3);
+                        retv = 3;
+                    } else {
+                        wr8(esi.wrapping_add(6), r as u8);
+                        retv = r as u32;
+                    }
                 } else if a5 != 0 {
-                    wr8(esi.wrapping_add(6), if rd8(esi.wrapping_add(6)) == 0 { 2 } else { 0 });
+                    let v = if rd8(esi.wrapping_add(6)) == 0 { 2u32 } else { 0 };
+                    wr8(esi.wrapping_add(6), v as u8);
+                    retv = v;
                 } else if edi != 0 && rd8(edi.wrapping_add(5)) != 0 {
-                    wr8(esi.wrapping_add(6), if rd8(esi.wrapping_add(6)) == 0 { 1 } else { 0 });
+                    let v = u32::from(rd8(esi.wrapping_add(6)) == 0);
+                    wr8(esi.wrapping_add(6), v as u8);
+                    retv = v;
                 } else {
                     wr8(esi.wrapping_add(6), 0);
+                    retv = 0;
                 }
                 or32(esi.wrapping_add(0x0c), 0x1000);
             }
@@ -390,8 +431,10 @@ lf_checker_rt::export!(thiscall, rw_00d73300(this: u32, delta_u: u32) -> u32 {
                 trace(&mut retv, 0x00eeb0bc);
                 let t = (rd8(esi.wrapping_add(7)) as i32).wrapping_add(delta);
                 let r = t % 4;
+                let kept = if r < 0 { 3 } else { r };
                 or32(esi.wrapping_add(0x0c), 0x400);
-                wr8(esi.wrapping_add(7), (if r < 0 { 3 } else { r }) as u8);
+                wr8(esi.wrapping_add(7), kept as u8);
+                retv = kept as u32;
             }
             _ => {}
         }

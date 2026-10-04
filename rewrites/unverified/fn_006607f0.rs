@@ -9,7 +9,8 @@
 /// reads 1 or the settle check (callee 8) on the task answers zero:
 ///
 /// * State 2 scans the manager's `+0x32d4` list through virtual slot
-///   `+0x28` (callee 1) for the wanted marker: on a match the state
+///   `+0x28` (callees 1 and 9, one stub per list node) for the wanted
+///   marker: on a match the state
 ///   becomes 1, the box is set to 1 with an interlocked exchange
 ///   (callee 4) and its second word cleared. A miss with `this+0x90`
 ///   set completes with (0, 0); with it clear, the filler (callee 2)

@@ -4,7 +4,8 @@
 /// forward the token packet built from it.
 ///
 /// `this` is the session object; `a` and `c` are opaque tokens, `b` a value
-/// carried in the packet, `d` an optional native-call token. The object holds
+/// carried in the packet, `d` an optional native-call token. The packet lays
+/// out as (token 0, token 1, 0, b, 0, d). The object holds
 /// a context word at `+CTX`, a handle at `+HDL` and two token words at
 /// `+TOK0/TOK1`. Callee 1 is asked first with (token a, handle); its answer
 /// selects the path. A five-word packet (token 0, token 1, b, 0, d) is built,
@@ -15,10 +16,9 @@
 /// zero low byte returns its full answer, otherwise callee 4 is asked with
 /// (token a, handle, scratch, slot word) and its answer is returned. A
 /// non-negative answer runs the forward path: callee 5 is asked with
-/// (answer, packet, two scratch words) and its answer is returned; the callee
-/// pops all four words, which balances the eight bytes of scratch the caller
-/// reserved, and the fourth word reads the caller's saved input register,
-/// pinned by the contract.
+/// (answer, packet, two zero scratch words) and its answer is returned; the
+/// callee pops all four words, which balances the eight bytes of scratch the
+/// caller reserved below its pushes.
 ///
 /// The rewrite tail-calls the intercepted security-cookie check before
 /// returning, matching the original's epilogue. Untouched scratch pointers
@@ -33,7 +33,6 @@ lf_checker_rt::export!(thiscall, rw_00622260(this: u32, a: u32, b: u32, c: u32, 
         const HDL: u32 = 0x32f4;
         const TOK0: u32 = 0x540;
         const TOK1: u32 = 0x544;
-        const SAVED_EDI: u32 = 0x01234567;
 
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
@@ -44,14 +43,23 @@ lf_checker_rt::export!(thiscall, rw_00622260(this: u32, a: u32, b: u32, c: u32, 
             unsafe {
                 let r: u32 =
                     lf_checker_rt::callee_thiscall!(1, u32, rd32(this + CTX), a, rd32(this + HDL));
-                let mut pkt = [rd32(this + TOK0), rd32(this + TOK1), b, 0, d];
+                let mut pkt = [rd32(this + TOK0), rd32(this + TOK1), 0, b, 0, d];
                 if d != 0 {
                     let mut nbuf = [0u32; 1];
                     lf_checker_rt::callee_cdecl!(2, u32, nbuf.as_mut_ptr() as u32, c, d);
                 }
                 if (r as i32) >= 0 {
+                    // The last two words are the stack slots below the pushes,
+                    // still holding the previous call's pushed arguments: the
+                    // native call's (c, d) when it ran, else the query's
+                    // (token a, handle). Same inputs, same values, both sides.
+                    let (s0, s1) = if d != 0 {
+                        (c, d)
+                    } else {
+                        (a, rd32(this + HDL))
+                    };
                     return lf_checker_rt::callee_thiscall!(5, u32, rd32(this + CTX), r,
-                        pkt.as_mut_ptr() as u32, 0, SAVED_EDI);
+                        pkt.as_mut_ptr() as u32, s0, s1);
                 }
                 let mut wslot = 0u32;
                 let mut sbuf = [0u32; 1];
