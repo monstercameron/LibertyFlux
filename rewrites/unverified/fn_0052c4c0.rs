@@ -6,8 +6,9 @@
 /// answers with this instance's id. `want` is the requested id and `out`,
 /// when non-null, receives the per-race interface tag on success. Returns
 /// `out` when the probed id equals `want` and `out` is non-null, else null.
-/// The stored tag is an absolute image constant; the original stores the
-/// immediate unchanged, so the rewrite keeps it verbatim.
+/// The stored tag is an absolute image address; the worker maps the image
+/// rebased, so the rewrite derives it with `relocated` like the original's
+/// rebased immediate.
 ///
 /// Original: 0x0052C4C0 (thiscall, two stack words).
 lf_checker_rt::export!(thiscall, rw_0052C4C0(this: u32, out: u32, want: u32) -> u32 {
@@ -24,7 +25,7 @@ lf_checker_rt::export!(thiscall, rw_0052C4C0(this: u32, out: u32, want: u32) -> 
         if out == 0 {
             return 0;
         }
-        (out as *mut u32).write_unaligned(TYPE_TAG);
+        (out as *mut u32).write_unaligned(lf_checker_rt::relocated(TYPE_TAG));
         out
     }
 });

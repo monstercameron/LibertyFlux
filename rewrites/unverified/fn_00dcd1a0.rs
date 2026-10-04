@@ -182,7 +182,7 @@ lf_checker_rt::export!(thiscall, rw_00dcd1a0(task: u32, ped: u32) -> u32 {
         let mut ret: u32 =
             lf_checker_rt::callee_thiscall!(C_ATTACH, u32, anim, 1, lf_checker_rt::relocated(CALLBACK), task);
         if unsafe { lf_checker_rt::global::<u32>(MODE_GLOBAL).read_unaligned() } == 2 {
-            ret = lf_checker_rt::callee_cdecl!(C_GATE, u32);
+            ret = lf_checker_rt::callee_cdecl!(C_GATE, u32,);
             if (ret & 0xff) != 0 {
                 let check: extern "thiscall" fn(u32) -> u32 = core::mem::transmute(
                     rd32(rd32(ped).wrapping_add(PED_VCHECK_SLOT)) as usize,
