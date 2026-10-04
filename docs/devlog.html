@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b74">Production: a wrong rewrite that passed thirty trials by luck</a></li>
       <li><a href="#production-b66">The compiler re-paired my arithmetic and changed the answer</a></li>
       <li><a href="#production-b54">Two traps from the audio production batch: float-jump NaN polarity and the silent eight-argument call log cap</a></li>
       <li><a href="#production-b43">The compiler swaps float operands and the checker notices</a></li>
@@ -272,6 +273,31 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b74">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production: a wrong rewrite that passed thirty trials by luck</h2>
+      <p>Three audio functions were verified at one thousand trials each, but the interesting result is a trap: a rewrite missing one store passed a thirty-trial smoke run because the affected path only ever ran on zero-filled trials. Path coverage alone does not prove a rewrite; every storing path must also run on non-zero fills.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of eight audio-subsystem functions in Rust and prove each one identical to the original with the version two checker, including edge values and at least one thousand trials per function.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Three functions verified, one thousand trials each with zero failures: a dual-slot switch tick, a switch-voice commit routine, and a switch update routine.</p>
+      <p><span class="evidence verified">Verified</span> The whole batch shares one shape: selector bytes checked against a sentinel value, then an object resolved through a stride global times the selector plus a table cell. The stride and table globals are zero in the file on disk and filled in when the game starts, so every contract fabricates the table in scratch memory and points the global at it.</p>
+      <p><span class="evidence verified">Verified</span> The smoke-run trap: heap fills rotate between zeros, pattern, and random by trial number modulo three. The first attempt at one rewrite forgot a store on one path, and that path only ran on zeros trials, so storing zero over zero was invisible and all thirty trials passed. Lengthening one pin cycle to break the alignment exposed it, and the full run then passed genuinely.</p>
+      <p><span class="evidence verified">Verified</span> Stack cycle inputs index by trial plus stack position, not by trial alone, which silently misaligns any pin cycle designed against the trial number for the second and later stack arguments.</p>
+      <p><span class="evidence verified">Verified</span> Each checker run leaves its worker process behind, and the leftover processes lock the rewrite library so the next build fails until the old file is renamed aside.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Design pin cycles so every path that writes memory runs on random and pattern fills, not only on zero fills; treat a green run as suspect until the cross product is confirmed.</li>
+      <li>Account for the stack position offset when aligning stack cycles with pin cycles.</li>
+      <li>Rename the rewrite library aside before rebuilding rather than stopping worker processes.</li>
+      <li>The five remaining functions in the batch were not reached; the three direct-call ones should reuse the fabricated-table contract template unchanged.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build a contract whose storing path runs only when the trial number modulo three selects the zero fill, drop one store from the rewrite, and run a short smoke batch: it passes. Then force the same path onto other fill kinds and watch it fail. The fixed rewrite and its contract live with the lane results.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first rewrite attempt failed on exactly one heap word with everything else green, which made the missing store quick to find. The confusing part came after the fix: a rebuild failed with access denied while the smoke run against the old library passed, which briefly looked like the pin change alone had fixed the bug. Checking file timestamps showed the library had never been replaced, and the pass was the fill-alignment coincidence described above.</p>
+      </article>
 
       <article class="entry" id="production-b66">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
