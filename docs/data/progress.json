@@ -12,8 +12,8 @@
   },
   "stages": {
     "identified": 37699,
-    "named": 9006,
-    "rewritten": 6264,
+    "named": 11881,
+    "rewritten": 6321,
     "verified": 6093
   },
   "structures": 340,
@@ -99,13 +99,13 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 9006,
+      "value": 11881,
       "unit": "functions",
-      "source": "m-names lane: merge of 22 native-handler lanes and the inventory"
+      "source": "m-names lane's merge (9006) plus descriptive names given by production and naming lanes (2875); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 6264,
+      "value": 6321,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },

@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Progress data: the named count now includes names given during rewriting",
+    "commit": null,
+    "summary": "The named count had been frozen at 9,006 since the one symbol merge. It is 11,881 with the names lanes have given since.",
+    "changes": [
+      "The count of named functions came from a single merge of symbol sources done before production started, so it stood still while lanes went on naming every function they rewrote.",
+      "It now adds the descriptive names production lanes gave to functions the merge had not named: 2,875 more, for 11,881. Slot labels such as a class name with a virtual-table index, address-based placeholders and empty names are not counted.",
+      "From here the count moves with every status update, and names from dedicated naming lanes are counted the same way when those lanes report."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 96 more functions pass the checker (6208 in total)",
     "commit": "5d8651d35da1aff371a79fd9e05ee1ffdeaaee27",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
