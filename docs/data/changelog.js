@@ -1,8 +1,19 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Add five-minute status updates",
+    "title": "Record the encrypted code range",
     "commit": null,
+    "summary": "A correction: about 9% of the code section is encrypted on disk.",
+    "changes": [
+      "Devlog: the first 1,028,096 bytes of the code section are encrypted, and the .tbm section is a byte-identical copy. The first look at the executable missed this because it measured entropy over the whole section. The earlier entry now links to the correction.",
+      "Devlog: Ghidra refuses project folders under a path element starting with a dot, so the project is addressed through a junction with a dot-free path.",
+      "Plan: the encrypted range is opaque to every tool and excluded from counts. The project does not decrypt it or dump it from a running process."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Add five-minute status updates",
+    "commit": "bfc813855fb708df6c92bda01857f6f4ef03cda8",
     "summary": "The coordinator reports progress every five minutes while work is running.",
     "changes": [
       "AGENTS.md rule 7: a status update every five minutes covering the phase, lanes running, finished and failed, numbers from machine sources, problems and what happens next.",

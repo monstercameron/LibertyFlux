@@ -43,6 +43,8 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#encrypted-prefix">Correction: the first megabyte of the code is encrypted</a></li>
+      <li><a href="#ghidra-dot-path">Ghidra refuses project folders that start with a dot</a></li>
       <li><a href="#executable-first-look">What the executable shows: a first look at its headers</a></li>
       <li><a href="#estimates">What the estimates got wrong</a></li>
       <li><a href="#route">Why the route is direct to Rust</a></li>
@@ -63,6 +65,56 @@ Note for future agents: how to add an entry to this devlog.
 
     <div class="entries">
 
+      <article class="entry" id="encrypted-prefix">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>Correction: the first megabyte of the code is encrypted</h2>
+        <p>About 9% of the code section is encrypted on disk, and the first look at the executable missed it. The first 1,028,096 bytes of the code section are indistinguishable from random data, and a separate section named <code>.tbm</code> holds a byte-for-byte copy of the same bytes. The remaining 9.9 MB is ordinary compiled code.</p>
+
+        <h3>What was asked</h3>
+        <p>A lane estimating the number of functions reported that the code section looked encrypted, which contradicted the coordinator's earlier reading. Which was right?</p>
+
+        <h3>What was found</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> Measured in 256 KB windows, the first four windows of the code section have an entropy of 8.00, 8.00, 8.00 and 7.97 bits per byte. Every window after that is between 5.6 and 6.6, which is normal for compiled code.</li>
+          <li><span class="evidence verified">Verified</span> The first four windows contain no standard function prologues and no padding between functions. Every later window contains hundreds to thousands of each.</li>
+          <li><span class="evidence verified">Verified</span> The <code>.tbm</code> section is exactly 1,028,096 bytes and is identical to the first 1,028,096 bytes of the code section.</li>
+          <li><span class="evidence">Inferred</span> The start-up stub in <code>.rkstr</code> probably decrypts this range in memory before the game runs, as part of Rockstar's protection for this build. A lane is analysing the stub; this has not been confirmed.</li>
+          <li><span class="evidence">Unknown</span> What code lives in the encrypted range, how many functions it holds, and why the same bytes are stored twice.</li>
+        </ul>
+
+        <h3>What was confusing or went wrong</h3>
+        <ul>
+          <li>The coordinator computed one entropy figure for the whole section, got 6.71, and wrote "not packed or encrypted". An average over 10.95 MB cannot show a 1 MB anomaly. The fix is to measure in windows, always.</li>
+          <li>The mistake was caught within minutes because an independent lane measured the same thing a different way. Two lanes looking at the same file from different angles is worth the duplication.</li>
+          <li>The Ghidra analysis had already started and was disassembling the encrypted bytes as if they were code, producing nonsense functions and call targets. It was stopped and restarted with that range split into its own block and marked non-executable.</li>
+        </ul>
+
+        <h3>What was decided or recommended</h3>
+        <ul>
+          <li>Every tool treats the encrypted range as opaque data. It is excluded from function counts, from the queue and from the code map until further notice.</li>
+          <li>The project does not decrypt it, dump it from a running process, or write anything that does. That would be working around the game's protection, which rule 6 of the agent rules forbids. Whether and how those functions can be understood by other means, for example from their callers, from documentation of other builds, or from behaviour, is an open question for the owner.</li>
+          <li>The progress figures will state the size of the unanalysable range separately, so the percentages are honest.</li>
+        </ul>
+
+        <h3>How to reproduce it</h3>
+        <p>Read the code section with <code>pefile</code>, cut it into 256 KB windows and compute the Shannon entropy of each. Count the byte sequence of the standard function prologue and runs of padding bytes per window. Compare the first megabyte of the code section with the contents of <code>.tbm</code>.</p>
+      </article>
+
+      <article class="entry" id="ghidra-dot-path">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>Ghidra refuses project folders that start with a dot</h2>
+        <p>Ghidra will not create or open a project if any folder in the project's path has a name starting with a dot. This repository keeps all generated files under a folder named <code>.artifacts</code>, so the first headless analysis failed immediately.</p>
+        <h3>What was found</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> Ghidra 12.1.4 headless aborts with "Path element starting with '.' is not permitted" when the project location is under a dot-prefixed folder. The check is on the path text, not on where the data physically lives.</li>
+          <li><span class="evidence verified">Verified</span> Script folders passed with the script path argument may live under a dot-prefixed folder. Only the project location is checked.</li>
+        </ul>
+        <h3>What was decided or recommended</h3>
+        <p>The Ghidra project is addressed through a directory junction whose path has no dot, <code>tools/ghidra-db</code>, which points at <code>.artifacts/cache/ghidra</code>. The data stays with the other caches and Ghidra sees a path it accepts. Any lane that needs a Ghidra project must use the junction path.</p>
+        <h3>How to reproduce it</h3>
+        <p>Run the headless analyser with a project directory under any folder whose name begins with a dot.</p>
+      </article>
+
       <article class="entry" id="executable-first-look">
         <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
         <h2>What the executable shows: a first look at its headers</h2>
@@ -79,7 +131,7 @@ Note for future agents: how to add an entry to this devlog.
             <tr role="row"><td role="cell">When and with what</td><td role="cell" data-label="Value"><span class="evidence verified">Verified</span> Link timestamp of 27 January 2023 and linker version 11.0.</td><td role="cell" data-label="What it means">Linker 11.0 is Visual Studio 2012, not the 2005-era compiler of the 2008 release. Ghidra's stock library signature databases cover that version, so we may not need to build our own.</td></tr>
             <tr role="row"><td role="cell">Link-time code generation</td><td role="cell" data-label="Value"><span class="evidence">Inferred</span> The compiler record in the header (the Rich header) lists 796 objects under the product ID normally used for C++ built with link-time code generation, and 653 under the ordinary C++ ID. The mapping of IDs to tools comes from the commonly used table, not from a Microsoft document.</td><td role="cell" data-label="What it means">A large part of the code was optimised across function boundaries. Expect inlined callees, non-standard calling conventions on internal functions, and less regular function boundaries. This makes analysis and the emulator comparison harder.</td></tr>
             <tr role="row"><td role="cell">Older code linked in</td><td role="cell" data-label="Value"><span class="evidence">Inferred</span> The same record shows small numbers of objects from Visual C++ 2003, 2005, 2008 and 2010 toolchains.</td><td role="cell" data-label="What it means">These are probably third-party libraries built long before. They are candidates for exclusion as library code.</td></tr>
-            <tr role="row"><td role="cell">Packing</td><td role="cell" data-label="Value"><span class="evidence verified">Verified</span> The code section is 10.95 MB with an entropy of 6.71 bits per byte.</td><td role="cell" data-label="What it means">Ordinary compiled code. It is not packed or encrypted on disk, so Ghidra can analyse it directly.</td></tr>
+            <tr role="row"><td role="cell">Packing</td><td role="cell" data-label="Value"><span class="evidence verified">Verified</span> The code section is 10.95 MB with an entropy of 6.71 bits per byte taken as a whole.</td><td role="cell" data-label="What it means">Corrected the same day: this row first said the code was not encrypted. That was wrong. The whole-section average hides an encrypted first megabyte. See <a href="#encrypted-prefix">the correction</a>. The other 90% is ordinary compiled code that Ghidra can analyse directly.</td></tr>
             <tr role="row"><td role="cell">Start-up stub</td><td role="cell" data-label="Value"><span class="evidence verified">Verified</span> The entry point is in a 657-byte section named <code>.rkstr</code> that is both writable and executable. Beside it is a 1 MB section named <code>.tbm</code> with an entropy of 8.00.</td><td role="cell" data-label="What it means"><span class="evidence">Unknown</span> A Rockstar stub runs before the game's own start-up, next to an encrypted or compressed blob. What it checks or unpacks is not known. It matters for injecting replacements into the running game and must be understood before the harness phase.</td></tr>
             <tr role="row"><td role="cell">Class names</td><td role="cell" data-label="Value"><span class="evidence verified">Verified</span> 3,618 type descriptor strings.</td><td role="cell" data-label="What it means">Run-time type information is present, so class names and virtual tables can be recovered. The Xbox 360 build is reported to have 3,332 classes.</td></tr>
             <tr role="row"><td role="cell">Relocations</td><td role="cell" data-label="Value"><span class="evidence verified">Verified</span> Present, 1.27 MB.</td><td role="cell" data-label="What it means">Every absolute address the code refers to is listed, which makes resolving references to functions and data reliable.</td></tr>
