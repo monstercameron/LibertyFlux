@@ -4851,6 +4851,24 @@
   "lane": "r-s271"
  },
  {
+  "address": "0x00531690",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race38Standard, player_schema::LeaderboardInfo, 10>::vf8",
+  "kind": "function",
+  "file": "functions/fn_00531690.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s344"
+ },
+ {
+  "address": "0x005317C0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race39Standard, player_schema::LeaderboardInfo, 10>::vf2",
+  "kind": "function",
+  "file": "functions/fn_005317c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s344"
+ },
+ {
   "address": "0x00533290",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race45Standard, player_schema::LeaderboardInfo, 10>::vf13",
   "kind": "function",
@@ -13329,6 +13347,42 @@
   "lane": "a-02"
  },
  {
+  "address": "0x00618310",
+  "name": "view_bounds_commit_rect",
+  "kind": "function",
+  "file": "functions/fn_00618310.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b263"
+ },
+ {
+  "address": "0x00618820",
+  "name": "timed_sweep_fill_rows",
+  "kind": "function",
+  "file": "functions/fn_00618820.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b263"
+ },
+ {
+  "address": "0x00618B50",
+  "name": "render_state_block_apply_param",
+  "kind": "function",
+  "file": "functions/fn_00618b50.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b263"
+ },
+ {
+  "address": "0x00618DE0",
+  "name": "render_state_block_apply_fixed",
+  "kind": "function",
+  "file": "functions/fn_00618de0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b263"
+ },
+ {
   "address": "0x00619D20",
   "name": "skydome_resource_init (proposed)",
   "kind": "function",
@@ -14283,6 +14337,15 @@
   "lane": "r-s158"
  },
  {
+  "address": "0x00662820",
+  "name": "session_task_init_from_params",
+  "kind": "function",
+  "file": "functions/fn_00662820.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b290"
+ },
+ {
   "address": "0x00662920",
   "name": "rage::snJoinSessionTask::vf2",
   "kind": "function",
@@ -14524,6 +14587,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b185"
+ },
+ {
+  "address": "0x00691000",
+  "name": "anim_blend_gated_direct_index",
+  "kind": "function",
+  "file": "functions/fn_00691000.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b282"
  },
  {
   "address": "0x00692450",
@@ -60579,6 +60651,15 @@
   "lane": "r-s185"
  },
  {
+  "address": "0x00C661C0",
+  "name": "CCutsceneObject::vf51",
+  "kind": "function",
+  "file": "functions/fn_00c661c0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b274"
+ },
+ {
   "address": "0x00C66F80",
   "name": "cutscene_resolve_and_clear_record",
   "kind": "function",
@@ -63315,6 +63396,78 @@
   "lane": "r-s333"
  },
  {
+  "address": "0x00D4E000",
+  "name": "CTaskSimpleShakeFist::vf5",
+  "kind": "function",
+  "file": "functions/fn_00d4e000.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s333"
+ },
+ {
+  "address": "0x00D4E0C0",
+  "name": "task_timer_callback_a",
+  "kind": "function",
+  "file": "functions/fn_00d4e0c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s333"
+ },
+ {
+  "address": "0x00D4E0F0",
+  "name": "task_timer_callback_b",
+  "kind": "function",
+  "file": "functions/fn_00d4e0f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s333"
+ },
+ {
+  "address": "0x00D4E790",
+  "name": "task_restamp_random_period",
+  "kind": "function",
+  "file": "functions/fn_00d4e790.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s333"
+ },
+ {
+  "address": "0x00D4E7F0",
+  "name": "task_stamp_time_and_period",
+  "kind": "function",
+  "file": "functions/fn_00d4e7f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s333"
+ },
+ {
+  "address": "0x00D4E810",
+  "name": "task_acquire_slot_object",
+  "kind": "function",
+  "file": "functions/fn_00d4e810.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s333"
+ },
+ {
+  "address": "0x00D4EA30",
+  "name": "CTaskSimplePickUpObject::ctor",
+  "kind": "function",
+  "file": "functions/fn_00d4ea30.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s333"
+ },
+ {
+  "address": "0x00D4EA70",
+  "name": "CTaskSimplePutDownObject::ctor",
+  "kind": "function",
+  "file": "functions/fn_00d4ea70.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s333"
+ },
+ {
   "address": "0x00D4EAC0",
   "name": "CTaskComplexPickUpAndCarryObject::dtor",
   "kind": "function",
@@ -63418,6 +63571,33 @@
   "name": "CTaskSimplePutDownObject::vf1",
   "kind": "function",
   "file": "functions/fn_00d4ed20.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s333"
+ },
+ {
+  "address": "0x00D4F2F0",
+  "name": "task_fire_when_vector_set",
+  "kind": "function",
+  "file": "functions/fn_00d4f2f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s333"
+ },
+ {
+  "address": "0x00D4F580",
+  "name": "task_build_chained_pair",
+  "kind": "function",
+  "file": "functions/fn_00d4f580.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s333"
+ },
+ {
+  "address": "0x00D4F790",
+  "name": "task_clear_flag_slot",
+  "kind": "function",
+  "file": "functions/fn_00d4f790.rs",
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s333"
@@ -64854,6 +65034,24 @@
   "lane": "r-s89"
  },
  {
+  "address": "0x00D92990",
+  "name": "tri_area_flag",
+  "kind": "function",
+  "file": "functions/fn_00d92990.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b281"
+ },
+ {
+  "address": "0x00D933B0",
+  "name": "mainloop_update_gate",
+  "kind": "function",
+  "file": "functions/fn_00d933b0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b281"
+ },
+ {
   "address": "0x00D940B0",
   "name": "probe_trace_setup",
   "kind": "function",
@@ -66058,6 +66256,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b95"
+ },
+ {
+  "address": "0x00DF1C50",
+  "name": "UIMontageText::vf94",
+  "kind": "function",
+  "file": "functions/fn_00df1c50.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b289"
  },
  {
   "address": "0x00DF68E0",
@@ -75922,6 +76129,366 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "a-F01"
+ },
+ {
+  "address": "0x00E66280",
+  "name": "MOBILE_GET_SIGNAL_SOUND",
+  "kind": "function",
+  "file": "functions/fn_00e66280.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E662A0",
+  "name": "MOBILE_PRERING_SOUND",
+  "kind": "function",
+  "file": "functions/fn_00e662a0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E662C0",
+  "name": "PHONE_TAKE_PICTURE",
+  "kind": "function",
+  "file": "functions/fn_00e662c0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E662E0",
+  "name": "construct_state_01284a60_and_register_routine",
+  "kind": "function",
+  "file": "functions/fn_00e662e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66300",
+  "name": "div_consts_store_01288778",
+  "kind": "function",
+  "file": "functions/fn_00e66300.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66320",
+  "name": "construct_state_01288780_and_register_routine",
+  "kind": "function",
+  "file": "functions/fn_00e66320.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66340",
+  "name": "construct_state_01288728_and_register_routine",
+  "kind": "function",
+  "file": "functions/fn_00e66340.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66360",
+  "name": "construct_state_01288750_and_register_routine",
+  "kind": "function",
+  "file": "functions/fn_00e66360.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66380",
+  "name": "div_consts_store_0128a8d8",
+  "kind": "function",
+  "file": "functions/fn_00e66380.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E663A0",
+  "name": "construct_state_01289208_and_register_routine",
+  "kind": "function",
+  "file": "functions/fn_00e663a0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E663C0",
+  "name": "construct_state_0128a8b0_and_register_routine",
+  "kind": "function",
+  "file": "functions/fn_00e663c0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E663E0",
+  "name": "construct_state_0128918c_and_register_routine",
+  "kind": "function",
+  "file": "functions/fn_00e663e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66400",
+  "name": "construct_state_012891e0_and_register_routine",
+  "kind": "function",
+  "file": "functions/fn_00e66400.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66420",
+  "name": "construct_state_0128a8dc_and_register_routine",
+  "kind": "function",
+  "file": "functions/fn_00e66420.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66440",
+  "name": "construct_state_012891b8_and_register_routine",
+  "kind": "function",
+  "file": "functions/fn_00e66440.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66460",
+  "name": "SPEECH_CHATTER_ENVELOPE",
+  "kind": "function",
+  "file": "functions/fn_00e66460.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66480",
+  "name": "SPEECH_CHATTER_ENVELOPE_SECOND",
+  "kind": "function",
+  "file": "functions/fn_00e66480.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E664A0",
+  "name": "construct_state_01289230_and_register_routine",
+  "kind": "function",
+  "file": "functions/fn_00e664a0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E664C0",
+  "name": "div_consts_store_0128aa88",
+  "kind": "function",
+  "file": "functions/fn_00e664c0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E664E0",
+  "name": "construct_state_0128aa90_and_register_routine",
+  "kind": "function",
+  "file": "functions/fn_00e664e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E666F0",
+  "name": "div_consts_store_0128e3f0",
+  "kind": "function",
+  "file": "functions/fn_00e666f0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66710",
+  "name": "construct_state_0128e310_and_register_routine",
+  "kind": "function",
+  "file": "functions/fn_00e66710.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66730",
+  "name": "fill_table_minus1_stride50",
+  "kind": "function",
+  "file": "functions/fn_00e66730.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66750",
+  "name": "init_array_32_stride30",
+  "kind": "function",
+  "file": "functions/fn_00e66750.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66770",
+  "name": "init_array_50_stride40",
+  "kind": "function",
+  "file": "functions/fn_00e66770.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66790",
+  "name": "div_consts_store_0128e958",
+  "kind": "function",
+  "file": "functions/fn_00e66790.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E667B0",
+  "name": "construct_state_0128e94c_and_register_routine",
+  "kind": "function",
+  "file": "functions/fn_00e667b0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E667D0",
+  "name": "BASE",
+  "kind": "function",
+  "file": "functions/fn_00e667d0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E667F0",
+  "name": "UTIL_ENVELOPE",
+  "kind": "function",
+  "file": "functions/fn_00e667f0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66810",
+  "name": "init_array_32_strideD0_and_register",
+  "kind": "function",
+  "file": "functions/fn_00e66810.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66840",
+  "name": "div_consts_store_01292448",
+  "kind": "function",
+  "file": "functions/fn_00e66840.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66860",
+  "name": "zero_state_5_and_register",
+  "kind": "function",
+  "file": "functions/fn_00e66860.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E668A0",
+  "name": "div_consts_store_01295794",
+  "kind": "function",
+  "file": "functions/fn_00e668a0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E668C0",
+  "name": "div_consts_store_01295860",
+  "kind": "function",
+  "file": "functions/fn_00e668c0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E668E0",
+  "name": "div_consts_store_01295870",
+  "kind": "function",
+  "file": "functions/fn_00e668e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66900",
+  "name": "register_routine_00e72010",
+  "kind": "function",
+  "file": "functions/fn_00e66900.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66910",
+  "name": "div_consts_store_01295acc",
+  "kind": "function",
+  "file": "functions/fn_00e66910.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66930",
+  "name": "register_routine_00e72030",
+  "kind": "function",
+  "file": "functions/fn_00e66930.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66940",
+  "name": "register_routine_00e72060",
+  "kind": "function",
+  "file": "functions/fn_00e66940.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66950",
+  "name": "register_routine_00e72070",
+  "kind": "function",
+  "file": "functions/fn_00e66950.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s334"
  },
  {
   "address": "0x00E67700",
