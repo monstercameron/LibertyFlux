@@ -6003,6 +6003,33 @@
   "lane": "r-b143"
  },
  {
+  "address": "0x0068FAE0",
+  "name": "anim_apply_static_tracks",
+  "kind": "function",
+  "file": "functions/fn_0068fae0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b185"
+ },
+ {
+  "address": "0x00690410",
+  "name": "anim_blend_inputs_shared_index",
+  "kind": "function",
+  "file": "functions/fn_00690410.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b185"
+ },
+ {
+  "address": "0x00690A20",
+  "name": "anim_blend_inputs_merge",
+  "kind": "function",
+  "file": "functions/fn_00690a20.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b185"
+ },
+ {
   "address": "0x00692450",
   "name": "audio_mix_pass",
   "kind": "function",
@@ -50461,6 +50488,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s138"
+ },
+ {
+  "address": "0x00D74CA0",
+  "name": "overlay_compute_layout",
+  "kind": "function",
+  "file": "functions/fn_00d74ca0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b186"
  },
  {
   "address": "0x00D75ED0",
