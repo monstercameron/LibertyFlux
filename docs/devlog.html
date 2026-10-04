@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b144">Two checker gaps found while verifying a five-function batch</a></li>
       <li><a href="#production-s209">A one-byte flag the checker cannot stub</a></li>
       <li><a href="#pointer-only-entries">Which pointer-only inventory entries are really functions</a></li>
       <li><a href="#production-b151">The compiler swaps float operands, and black box does not stop it</a></li>
@@ -318,6 +319,29 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b144">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Two checker gaps found while verifying a five-function batch</h2>
+      <p>A production batch of five medium-size functions verified three of them and turned up two gaps in the checker itself: multi-word global ranges report every write at the range start address, and the fixed call log silently drops every call past the first 256 per trial. Both are narrow, both are now documented, and neither invalidates passing verdicts on their own.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite five neighbouring functions in Rust and prove each rewrite identical to the original with the version 3 checker, which compares return values, memory writes, stack balance, outgoing calls and faults over scripted trials.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Three functions passed cleanly at one thousand trials each with zero failures: a vector-math leaf, and two indexed-transform functions that forward their results to a consumer call.</p>
+      <p><span class="evidence verified">Verified</span> The worker records every write inside a declared global range with the range start address instead of the true write address. Two writes of the same value to different words in one range are therefore indistinguishable, and a rewrite that writes the right value to the wrong word in a range passes. Single-word ranges are unaffected, and the neighbouring undeclared-write path already records the true address, which confirms this is a bug rather than a design choice. Narrow probes with marker values confirmed the rewrite under test wrote to the right addresses, so its verdict stands.</p>
+      <p><span class="evidence verified">Verified</span> The worker keeps only the first 256 outgoing calls per trial. A bulk initializer making over two thousand calls per trial fills the log with its first callee, so its remaining seven callees never appear in any log and the coverage rule correctly refuses the verdict. The same truncation also means the tail of any long call sequence runs uncompared.</p>
+      <p><span class="evidence verified">Verified</span> The Rust compiler commutes floating-point additions even without fast-math flags, which changes which NaN payload x86 propagates. Passing one operand through a compiler barrier did not stop it; only an explicit NaN check reproduced the original's operand order. The one trial in a thousand that caught this had NaN on both sides of the add.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Report the global-range address as the true write address, matching the undeclared path. Until then, lanes verifying multi-word ranges should use one range per word or confirm addresses with marker probes.</li>
+      <li>Decide the fate of calls past the log cap: a ring buffer, per-callee reservation, or an explicit truncation marker that fails closed instead of passing silently.</li>
+      <li>Keep writing float rewrites in the original's operand order, and distrust barriers: disassemble the built rewrite when a NaN-payload mismatch appears.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Declare one global range covering several written words and publish two different values to two of them; the verdict detail lists both writes at the range start. Run any function making more than 256 calls in a trial; the verdict coverage lists the later callees as never fired. For the float issue, feed a quiet NaN with one payload as the add base and a different-payload NaN as the product, then compare the rewrite's result bits against the original.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The global-range display first looked like the rewrite was storing values at the wrong address, and two probe runs with marker values were needed before the worker line, rather than the rewrite, became the suspect. The call-log truncation first presented as a coverage failure with no failing check, which sent the investigation toward the contract before the log cap was found. The float commutation survived the documented barrier workaround and was only confirmed by disassembling the built rewrite.</p>
+      </article>
 
       <article class="entry" id="production-s209">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
