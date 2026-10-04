@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Reader crate: lf-cutscene",
+    "title": "Reader crate: lf-effects",
     "commit": null,
+    "summary": "Particle and effect definitions: wpfl packages, Fx tables, emitter XML.",
+    "changes": [
+      "New crate crates/formats/lf-effects: Particle and effect definitions: wpfl packages, Fx tables, emitter XML.",
+      "About 1,115 lines of Rust with 10 unit tests and 7 integration tests; tests that need the game's files skip unless the game folder is given in an environment variable.",
+      "Written by the fmt-particles lane, then brought to the workspace's standard by a second lane. That lane was stopped by a time limit during its final test pass: build and lint were clean on the host, and the coordinator re-ran build, lint and tests before committing."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Reader crate: lf-cutscene",
+    "commit": "6bd51d2eb0ba5b60fd48eb3da389753173fe8905",
     "summary": "Cutscene descriptions: .cut files, tags, reference checks, archive catalog.",
     "changes": [
       "New crate crates/formats/lf-cutscene: Cutscene descriptions: .cut files, tags, reference checks, archive catalog.",

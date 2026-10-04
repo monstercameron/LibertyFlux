@@ -1,0 +1,17 @@
+[package]
+name = "lf-effects"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Readers for GTA IV particle and visual effect definitions: wpfl packages, effect rule tables, emitter XML"
+
+[lints]
+workspace = true
+
+[dependencies]
+lf-resource = { path = "../lf-resource" }
+
+[dev-dependencies]
+lf-archive = { path = "../lf-archive" }
+flate2 = { workspace = true }
