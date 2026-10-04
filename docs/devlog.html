@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s48">Production batch: eighteen small functions verified, one checker anomaly</a></li>
       <li><a href="#production-s44">An audio initialiser that reads a word it never wrote</a></li>
       <li><a href="#production-s35">Production lane traps: a misleading mnemonic, a short size, and an unsolved float divergence</a></li>
       <li><a href="#production-s34">A wrong stub arity passes vacuously through identical faults</a></li>
@@ -221,6 +222,29 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s48">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production batch: eighteen small functions verified, one checker anomaly</h2>
+      <p><span class="evidence verified">Verified</span> A production batch of twenty small file and memory subsystem functions yielded eighteen verified Rust rewrites, each passing one thousand differential trials with zero failures, and two deferrals caused by a checker anomaly in which the original is reported as finding its argument at index zero on every trial where the argument sits anywhere in a scripted table.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small game functions in Rust and prove each rewrite behaves identically to the original with the differential checker, which runs the original and the rewrite from identical starting state and compares return values, written memory, stack effects, outgoing calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Eighteen functions verified on the first attempt with no fixes needed. The batch split into init loops over heap objects, pure queries, global table resets and queries, a constructor mixing a global sequence number into an id slot, a guarded activation wrapper, flag-gated clears, a global scan driving a ten-argument engine call, a name-to-hash pool search, and a handle dereference. Eleven use a register-plus-stack convention and nine use a stack-only convention. Two functions had merged symbol names that matched their disassembly; the rest were given descriptive names.</p>
+      <p><span class="evidence verified">Verified</span> Two twin functions that scan a ten-entry global table for a query value could not be verified. Twelve dedicated probe contracts narrowed the symptom to a precise rule: the original is reported as returning index zero whenever the query value is present anywhere in the explicitly scripted table, and agrees with the rewrite on misses and on genuine index-zero hits. The rewrite returns the true index on every trial. The probes ruled out fill size, fill entry shape, junk values, stale fills, request encoding, and instruction decoding as causes; the worker source reads correctly on every path inspected, so the root cause is still unknown.</p>
+      <p><span class="evidence">Inferred</span> Under this anomaly a wrong rewrite that returned a bare membership flag would pass a full-coverage contract, while the correct rewrite fails one. Narrowing the contract to index-zero hits plus misses would pass but would leave the other nine indexes untested, which is not verification, so both functions were deferred instead.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Both table scans are deferred with reason other and a pointer to the lane report, which holds a three-trial minimal repro and the full probe table.</li>
+      <li>The checker owner should reproduce the minimal case with per-side logging of the table words, the entry register and the exit register, and compare the built worker binary against the checked-in source on the result observation path.</li>
+      <li>After any worker change, the two table contracts should be re-run unchanged: they plant all ten hit indexes deterministically and should then pass with no rewrite change.</li>
+      <li>One six-line driver extension was added to this lane's driver copy only: a stack argument kind that cycles a fixed value list, for indexes that must be negative on some trials and small on others. No worker change was needed for anything else.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Script the ten table words to fixed values with the query value at index one and anything else at index zero, pass the query value as the sole argument, and run three trials. The rewrite returns the index-one encoding on all three; the original is reported as returning the index-zero encoding on all three. Replacing the fill with a uniform table makes both sides agree, in both the hit and the miss direction.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The anomaly investigation took about forty minutes because every natural theory died to exactly one observation: same-memory theories cannot produce disagreement from a shared request, shifted-read theories die to the passing index-zero trial, and alias theories die to the passing miss trials. The eventual pattern, that the original reports membership as index zero, only emerged after mapping every table position with distinct values. Nothing else went wrong: the rewrite crate built first try, no worker flakes occurred, and the riskiest contract, a pool search over a fully scripted heap pool, passed immediately.</p>
+      </article>
 
       <article class="entry" id="production-s44">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
