@@ -6,12 +6,20 @@ rust-version.workspace = true
 license.workspace = true
 
 [lib]
-# The shippable artefact is the 32-bit DLL; the rlib exists so unit tests
-# and the checker can link the same code.
-crate-type = ["cdylib", "rlib"]
+# The shippable artefact is the 32-bit DLL assembled by
+# scripts/assemble/assemble.py (`lf_rewrites.dll`), which links this crate
+# as an rlib and re-exports its `lf_rewrite_*` symbols. A cdylib here would
+# be a library with no table, and every shard build would link it for
+# nothing.
+crate-type = ["rlib"]
 
 [lints]
 workspace = true
 
 [dependencies]
 lf-core = { path = "../lf-core" }
+# The runtime every rewrite is written against; `lf_rewrite_init` sets its
+# relocation base.
+lf-checker-rt = { path = "../tools/lf-checker-rt" }
+# The replacement-table ABI shared with the loader.
+lf-registry = { path = "../tools/lf-registry" }

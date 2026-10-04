@@ -363,7 +363,9 @@ dependencies = [
 name = "lf-rewrite-32"
 version = "0.1.0"
 dependencies = [
+ "lf-checker-rt",
  "lf-core",
+ "lf-registry",
 ]
 
 [[package]]
