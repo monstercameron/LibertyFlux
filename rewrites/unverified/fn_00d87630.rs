@@ -11,7 +11,8 @@
 ///
 /// Algorithm: dist = length(own - anchor). Take the larger of the two index
 /// words as floats (unordered comparison keeps the second on ties and NaN),
-/// then the larger of that and weight + dist; truncate toward zero with
+/// then clamped above by weight + dist (an ordered minimum with the
+/// operands compared in the opposite order); truncate toward zero with
 /// x86 convert semantics (out of range or NaN gives 0x80000000) and store
 /// the low 16 bits into `+0xE68`. When the owner exists and its byte at
 /// `+0x26A` has bit 0 set, replace the index with the unsigned word when it
@@ -86,8 +87,18 @@ lf_checker_rt::export!(cdecl, rw_00d87630(obj: u32, a1: u32, a2: u32) -> u32 {
         }
         /// Original's ordered-max: keep the first only when ordered-above.
         #[inline(always)]
-        fn pick(keep: f32, other: f32) -> f32 {
+        fn pick_max(keep: f32, other: f32) -> f32 {
             if bb(keep) > bb(other) {
+                keep
+            } else {
+                other
+            }
+        }
+        /// Original's ordered-min: keep the first only when the second is
+        /// ordered-above it (the compare order is swapped vs pick_max).
+        #[inline(always)]
+        fn pick_min(keep: f32, other: f32) -> f32 {
+            if bb(other) > bb(keep) {
                 keep
             } else {
                 other
@@ -104,9 +115,9 @@ lf_checker_rt::export!(cdecl, rw_00d87630(obj: u32, a1: u32, a2: u32) -> u32 {
         let e6a = rd16(obj + OBJ_INDEX_U);
         let f68 = core::hint::black_box(e68) as f32;
         let f6a = core::hint::black_box(e6a as i16 as i32) as f32;
-        let mut best = pick(f68, f6a);
+        let mut best = pick_max(f68, f6a);
         let cand = add(rdf(obj + OBJ_WEIGHT), dist);
-        best = pick(cand, best);
+        best = pick_min(best, cand);
         let trunc = cvtt(best);
         wr16(obj + OBJ_INDEX, trunc as u16);
         let owner = rd32(obj + OBJ_OWNER);

@@ -10,7 +10,7 @@
 /// - Return without doing anything when readiness gate 0 is clear and gate 1
 ///   is set, or when the readiness callee answers with a zero low byte.
 /// - Otherwise record `this` in the in-flight global, then four times call
-///   the packet allocator with a (kind, size) pair and, unless it answers
+///   the packet allocator with a (size, kind) pair and, unless it answers
 ///   null, construct the packet in place (first packet: virtual slot `+0x24`
 ///   result fed to a wrap callee; second: descriptor at `+0xb0` bound by id;
 ///   third: tagged inline with two relocated vtable constants and a masked
@@ -36,11 +36,9 @@ lf_checker_rt::export!(thiscall, rw_00d781e0(this: u32) -> u32 {
         const ALLOC_SECOND: u32 = 9;
         const ALLOC_THIRD: u32 = 10;
         const ALLOC_FOURTH: u32 = 11;
-        const VF_FIRST: u32 = 3;
         const WRAP_FIRST: u32 = 4;
         const CONSUME: u32 = 5;
         const BIND_SECOND: u32 = 6;
-        const VF_FINISH: u32 = 7;
         const BUILD_FOURTH: u32 = 8;
 
         #[inline(always)]
@@ -82,7 +80,7 @@ lf_checker_rt::export!(thiscall, rw_00d781e0(this: u32) -> u32 {
 
         wr32(lf_checker_rt::relocated(IN_FLIGHT), this);
 
-        let first: u32 = lf_checker_rt::callee_cdecl!(ALLOC_FIRST, u32, 1u32, 0x10u32);
+        let first: u32 = lf_checker_rt::callee_cdecl!(ALLOC_FIRST, u32, 0x10u32, 1u32);
         if first == 0 {
             consume(0);
         } else {
@@ -91,7 +89,7 @@ lf_checker_rt::export!(thiscall, rw_00d781e0(this: u32) -> u32 {
             consume(wrapped);
         }
 
-        let second: u32 = lf_checker_rt::callee_cdecl!(ALLOC_SECOND, u32, 0u32, 0x410u32);
+        let second: u32 = lf_checker_rt::callee_cdecl!(ALLOC_SECOND, u32, 0x410u32, 0u32);
         if second == 0 {
             consume(0);
         } else {
@@ -100,9 +98,9 @@ lf_checker_rt::export!(thiscall, rw_00d781e0(this: u32) -> u32 {
             consume(bound);
         }
 
-        vcall(this, VF_FINISH);
+        vcall(this, VT_FINISH);
 
-        let third: u32 = lf_checker_rt::callee_cdecl!(ALLOC_THIRD, u32, 0u32, 8u32);
+        let third: u32 = lf_checker_rt::callee_cdecl!(ALLOC_THIRD, u32, 8u32, 0u32);
         if third == 0 {
             consume(0);
         } else {
@@ -119,7 +117,7 @@ lf_checker_rt::export!(thiscall, rw_00d781e0(this: u32) -> u32 {
             consume(third);
         }
 
-        let fourth: u32 = lf_checker_rt::callee_cdecl!(ALLOC_FOURTH, u32, 0u32, 8u32);
+        let fourth: u32 = lf_checker_rt::callee_cdecl!(ALLOC_FOURTH, u32, 8u32, 0u32);
         if fourth == 0 {
             consume(0);
         } else {
