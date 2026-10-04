@@ -1,0 +1,29 @@
+// original: 0x0057d980 leaderboard_174_vf6_find
+/// Position of `key` in board 174's id column (virtual slot 6).
+///
+/// Same behaviour as the board-172 slot: count/id-column lookup, linear scan
+/// for the first match, index or -1.
+export!(thiscall, rw_0057d980(_this: u32, key: u32) -> u32 {
+    unsafe {
+        let mut frame = [0u32; 8];
+        let ok = callee_fastcall!(1, u32, 0x186, frame.as_mut_ptr() as u32);
+        if (ok & 0xFF) == 0 {
+            return 0xFFFF_FFFF;
+        }
+        let count = frame[3] as i32;
+        if count <= 0 {
+            return 0xFFFF_FFFF;
+        }
+        let col = frame[4];
+        let mut i: i32 = 0;
+        while i < count {
+            let v = (col.wrapping_add((i as u32).wrapping_mul(4)) as *const u32)
+                .read_unaligned();
+            if v == key {
+                return i as u32;
+            }
+            i = i.wrapping_add(1);
+        }
+        0xFFFF_FFFF
+    }
+});
