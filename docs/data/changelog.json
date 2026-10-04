@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: Re-run batch a-12: the second checker caught a miscompiled rewrite the first one passed",
+    "commit": null,
+    "summary": "Findings from the a-12 lane.",
+    "changes": [
+      "New devlog entry: Re-run batch a-12: the second checker caught a miscompiled rewrite the first one passed.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 172 more functions pass the checker (3605 in total)",
     "commit": "edeabb10a9a03b82b0a6fb5931d2ec53600cc146",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
