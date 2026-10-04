@@ -32,7 +32,10 @@
 /// (callee 12) with `(a0, a1)` and clearing `this+0x60`.
 ///
 /// Callees 6a, 6b and 6c share one target, patched per site so the
-/// handshake path's register slot stays visible.
+/// handshake path's register slot stays visible. The handshake, second
+/// session and closer calls take whatever the readiness check left in
+/// its object register (never set by the original), so the contract
+/// compares their stack words but not that register.
 ///
 /// Original: 0x00660650 (thiscall, two stack words).
 lf_checker_rt::export!(thiscall, rw_00660650(this: u32, a0: u32, a1: u32) -> u32 {

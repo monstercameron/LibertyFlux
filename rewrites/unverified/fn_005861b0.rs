@@ -1,47 +1,41 @@
 // original: 0x005861B0 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_205, player_schema::LeaderboardInfo, 10>::vf8
 
-/// Leaderboard column width: fetch this board's table, classify one slot.
+/// Ranked leaderboard column width: return the byte width (4 or 8) of the
+/// column for row `index`, or 0 when unknown (race 205, leaderboard
+/// id 0x1a5).
 ///
-/// The slot value at `index` is classified through the kind helper
-/// (callee 2, tag in ECX), and the kind maps to a byte width: kinds 1 and 5
-/// take 4 bytes, kinds 2 and 3 take 8, anything else takes 0, including the
-/// missing-kind -1 and kind 0. A failed fetch also yields 0. `this` is
-/// unused.
+/// The schema helper (callee 1) is asked for leaderboard 0x1a5 with a scratch
+/// out-struct; it fills the column-array pointer (word 5). The column value
+/// at `index` is passed to the type helper (callee 2); a type of -1 yields
+/// 0. Otherwise the type minus one selects a width: 1 -> 4, 2 -> 8,
+/// 3 -> 8, 4 -> 0, 5 -> 4, anything else -> 0. `this` is unused.
 ///
-/// Fetch protocol, shared by every virtual slot of this board family: call
-/// the fetch helper (callee 1) with `LEADERBOARD_ID` in ECX and a pointer to
-/// a zeroed out block in EDX. Only the low byte of the answer decides
-/// success. On success the block holds the table pointer at `+0x14`; the
-/// other words are never read. The kind map above is the original's jump
-/// table, read entry by entry.
-///
-/// Original: thiscall, one stack word, callee pops 4.
-lf_checker_rt::export!(thiscall, rw_005861B0(_this: u32, index: u32) -> u32 {
+/// Edge cases: helper failure (al == 0) returns 0; `index` is used
+/// unchecked.
+
+/// Calling convention: thiscall with one stack word (`this` in ECX, unused).
+
+lf_checker_rt::export!(thiscall, rw_005861b0(_this: u32, index: u32) -> u32 {
     unsafe {
         const LEADERBOARD_ID: u32 = 0x1a5;
-        const FETCH_CALLEE: u32 = 1;
-        const KIND_CALLEE: u32 = 2;
-        const WIDTH_NARROW: u32 = 4;
-        const WIDTH_WIDE: u32 = 8;
-
-        #[repr(C)]
-        struct FetchOut {
-            _head: [u32; 5],
-            table: u32,
-        }
-        let mut out = FetchOut { _head: [0; 5], table: 0 };
-        let ok: u32 = lf_checker_rt::callee_fastcall!(
-            FETCH_CALLEE, u32, LEADERBOARD_ID, core::ptr::addr_of_mut!(out) as u32);
-        if ok & 0xFF == 0 {
+        const SCHEMA_CALLEE: u32 = 1;
+        const TYPE_CALLEE: u32 = 2;
+        /// Word index of the column-array pointer in the out-struct.
+        const W_COLUMN: usize = 5;
+        let mut out = [0u32; 6];
+        out[W_COLUMN] = 0;
+        let ok: u32 = lf_checker_rt::callee_fastcall!(SCHEMA_CALLEE, u32, LEADERBOARD_ID, out.as_mut_ptr() as u32);
+        if ok as u8 == 0 {
             return 0;
         }
-        let slot =
-            (out.table.wrapping_add(index.wrapping_mul(4)) as *const u32).read_unaligned();
-        let kind: u32 = lf_checker_rt::callee_thiscall!(KIND_CALLEE, u32, slot);
-        match kind {
-            1 | 5 => WIDTH_NARROW,
-            2 | 3 => WIDTH_WIDE,
-            _ => 0,
+        let column = out[W_COLUMN];
+        let value = ((column).wrapping_add((index).wrapping_mul(4)) as *const u32).read_unaligned();
+        let ty: u32 = lf_checker_rt::callee_thiscall!(TYPE_CALLEE, u32, value);
+        if ty == 0xffff_ffff {
+            return 0;
+        }
+        match ty.wrapping_sub(1) {
+            0 => 4, 1 => 8, 2 => 8, 3 => 0, 4 => 4, _ => 0,
         }
     }
 });

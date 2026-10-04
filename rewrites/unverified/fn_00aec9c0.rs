@@ -2,10 +2,10 @@
 
 /// Main timing update: build a worker object and run the update chain.
 ///
-/// STAGE B1: the short path plus the middle chain with the row loop
-/// excluded (the stage contract never sets `0x80` in the probe flags).
-/// The table section is still excluded. See `stage_b_plan.md` in the lane
-/// folder for the remaining stages (B2 = row loop, C = table).
+/// STAGE B2: short path, middle chain and row loop; only the table
+/// section is still excluded (the stage contract clears the table gate
+/// word). See `stage_b_plan.md` in the lane folder for the remaining
+/// stage (C = table).
 ///
 /// Thiscall with one stack word (`arg`); `this` is a controller. Returns the
 /// entry accumulator (contract-fixed to 0) when `arg` is null or when the
@@ -169,7 +169,70 @@ lf_checker_rt::export!(thiscall, rw_00aec9c0(this: u32, arg: u32) -> u32 {
                 ((worker + WOBJ_FLAGS) as *mut u32)
                     .write_unaligned(rd32(worker + WOBJ_FLAGS) & 0xffff_ffdf);
             }
-            // Row loop excluded on this stage (probe flags never 0x80).
+            // Row loop: six entries, skipping non-positive ones, breaking
+            // when the row callee answers zero.
+            if rd32(ebp + 0x28) & 0x3c0 == 0x80 {
+                let tidx = ((ebp + 0x2e) as *const i16).read_unaligned();
+                let tobj = rd32(
+                    lf_checker_rt::relocated(ROW_TABLE)
+                        .wrapping_add((tidx as i32 as u32).wrapping_mul(4)),
+                );
+                let mut k = 0u32;
+                let mut broke = 0u32;
+                let mut did_break = false;
+                while k < 0x30 {
+                    let e = rd32(
+                        rd32(tobj + 0xcc).wrapping_add(k).wrapping_add(0x18c),
+                    );
+                    if (e as i32) > -1 {
+                        let r: u32 =
+                            lf_checker_rt::callee_thiscall!(19, u32, arg, e);
+                        if r & 0xff == 0 {
+                            broke = e;
+                            did_break = true;
+                            break;
+                        }
+                    }
+                    k = k.wrapping_add(8);
+                }
+                if did_break {
+                    let e = broke;
+                    ((worker + 0x214) as *mut u32)
+                        .write_unaligned(rd32(worker + 0x214) | 8);
+                    let frame2: u32 = lf_checker_rt::callee_thiscall!(2, u32, arg);
+                    let yobj = rd32(rd32(arg + 0x64) + 0xe4);
+                    let p = rd32(rd32(frame2 + 0xec) + 0x84)
+                        .wrapping_add(e.wrapping_shl(6));
+                    lf_checker_rt::callee_thiscall!(20, u32, yobj, e, p);
+                    let frame3: u32 = lf_checker_rt::callee_thiscall!(2, u32, arg);
+                    let q = rd32(rd32(frame3 + 0xec) + 0x84)
+                        .wrapping_add(e.wrapping_shl(6));
+                    lf_checker_rt::callee_stdcall!(21, u32, e, q);
+                    lf_checker_rt::callee_thiscall!(22, u32, yobj, 0u32);
+                    lf_checker_rt::callee_thiscall!(23, u32, yobj, 0u32);
+                    let frame4: u32 = lf_checker_rt::callee_thiscall!(2, u32, arg);
+                    let r = rd32(rd32(frame4 + 0xd4) + e.wrapping_mul(4));
+                    let di = ((r + 0x0e) as *const i16).read_unaligned() as i32;
+                    let va = rd32(arg);
+                    let f24: extern "thiscall" fn(u32) -> u32 =
+                        core::mem::transmute(rd32(va + 0xe0) as usize);
+                    let s2 = (di.wrapping_mul(5).wrapping_mul(16) as u32)
+                        .wrapping_add(rd32(f24(arg) + 0x0c));
+                    lf_checker_rt::callee_thiscall!(25, u32, s2);
+                    let f26: extern "thiscall" fn(u32) -> u32 =
+                        core::mem::transmute(rd32(rd32(arg) + 0xe0) as usize);
+                    let di2 = di.wrapping_mul(0xe0) as u32;
+                    let u = rd32(rd32(f26(arg) + 4));
+                    ((s2 + 0x30) as *mut u32)
+                        .write_unaligned(rd32(u + di2 + 0x20));
+                    ((s2 + 0x34) as *mut u32)
+                        .write_unaligned(rd32(u + di2 + 0x24));
+                    ((s2 + 0x38) as *mut u32)
+                        .write_unaligned(rd32(u + di2 + 0x28));
+                    ((s2 + 0x3c) as *mut u32)
+                        .write_unaligned(rd32(u + di2 + 0x2c));
+                }
+            }
             let tail_a = ((ebp + 0x44) as *const i16).read_unaligned();
             if tail_a != -1 && ((ebp + 0x40) as *const u8).read() == 0x3f {
                 ((worker + WOBJ_TAG) as *mut u8).write(2);

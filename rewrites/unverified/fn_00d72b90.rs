@@ -123,8 +123,9 @@ lf_checker_rt::export!(thiscall, rw_00d72b90(this: u32) -> u32 {
         // Notify + overall meters, twice (once per level channel).
         let table = lf_checker_rt::global::<u32>(LEVEL_TABLE_G) as u32;
         let _: u32 = lf_checker_rt::callee_thiscall!(OVERLAY_NOTIFY, u32, this, 0);
+        let nested = lf_checker_rt::relocated(NESTED_THIS);
         let lv0: u32 =
-            lf_checker_rt::callee_thiscall!(METER_DRAW, u32, NESTED_THIS, rd32(table));
+            lf_checker_rt::callee_thiscall!(METER_DRAW, u32, nested, rd32(table));
         let _: u32 = lf_checker_rt::callee_cdecl!(
             LEVEL_DRAW, u32,
             rd32(this.wrapping_add(METER_LO_OFF)),
@@ -159,7 +160,7 @@ lf_checker_rt::export!(thiscall, rw_00d72b90(this: u32) -> u32 {
                 let _: u32 = lf_checker_rt::callee_cdecl!(METER_MODE, u32, 1);
                 let lv: u32 = lf_checker_rt::callee_thiscall!(
                     METER_DRAW, u32,
-                    NESTED_THIS,
+                    nested,
                     rd32(table.wrapping_add(strip.wrapping_mul(4)))
                 );
                 let _: u32 = lf_checker_rt::callee_cdecl!(

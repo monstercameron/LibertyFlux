@@ -8,7 +8,7 @@
 /// Forwards (TAG=0x52, a0, a1, a2, MODE=6, fbits, extra,
 /// flags, 0) as nine words: the tag, the first three incoming words
 /// unchanged, the mode, the float word, the extra word, the flags and
-/// a zero. Returns the flags word.
+/// a zero. Returns the dispatcher's answer.
 ///
 /// Original: 0x00BC04D0 (cdecl, 7 stack words).
 lf_checker_rt::export!(cdecl, rw_00bc04d0(a0: u32, a1: u32, a2: u32, fbits: u32, a4: u32, a5: u32, extra: u32) -> u32 {

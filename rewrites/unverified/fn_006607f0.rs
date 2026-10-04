@@ -11,8 +11,9 @@
 /// * State 2 scans the manager's `+0x32d4` list through virtual slot
 ///   `+0x28` (callee 1) for the wanted marker: on a match the state
 ///   becomes 1, the box is set to 1 with an interlocked exchange
-///   (callee 4) and its second word cleared. Otherwise, with `this+0x90`
-///   clear, the filler (callee 2) runs on the manager with `this+0xa0`,
+///   (callee 4) and its second word cleared. A miss with `this+0x90`
+///   set completes with (0, 0); with it clear, the filler (callee 2)
+///   runs on the manager with `this+0xa0`,
 ///   `this+0x120`, the `this+0x124` value (or zero, with `this+0x128`
 ///   then also zeroed as its object) and the value itself: a nonzero
 ///   answer completes through virtual slot `+0x1c` (callee 3) with
@@ -111,7 +112,9 @@ lf_checker_rt::export!(thiscall, rw_006607f0(this: u32, a0: u32) -> u32 {
                     let _: u32 =
                         lf_checker_rt::callee_stdcall!(C_XCHG, u32, obj, 1);
                     wr32(obj.wrapping_add(4), 0);
-                } else if rd8(this.wrapping_add(FLAG90)) == 0 {
+                } else if rd8(this.wrapping_add(FLAG90)) != 0 {
+                    complete(this, 0, 0);
+                } else {
                     let v = rd32(this.wrapping_add(0x124));
                     let (arg_eax, arg_ecx) = if v != 0 {
                         (v, this.wrapping_add(0x128))
