@@ -1,0 +1,11 @@
+[package]
+name = "lf-types-draft"
+version = "0.0.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Draft 32-bit class layouts recovered from the original program: fields, offsets and sizes, with compile-time checks"
+publish = false
+
+[lib]
+path = "src/lib.rs"
