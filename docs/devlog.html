@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#checker-v4">Checker version 4: lane fixes folded back, and what version 3 still missed</a></li>
       <li><a href="#production-s202">Checker stubs must preserve the caller's registers</a></li>
       <li><a href="#production-s199">Checker stubs must preserve ECX for thiscall callees</a></li>
       <li><a href="#fill-rerun-result">The weak-fill verdicts were re-run under version 3: none was overturned</a></li>
@@ -308,6 +309,47 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="checker-v4">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Checker version 4: lane fixes folded back, and what version 3 still missed</h2>
+      <p>Version 4 folds the private worker fixes of nine production lanes into one tracked checker, closes a soundness hole where trials past the call-log cap passed silently, and adds a diagnostic for the trickiest failure class lanes reported. Every fold-back was proven on the reporting lane's own function with a correct-pass and wrong-fail pair, and the full proof suite behaves as before.</p>
+      <h3>What was asked</h3>
+      <p>An audit found production lanes running private copies of the checker worker with their own fixes, so their verified results could not be reproduced with the tracked checker. The task was to fold those fixes back into one tracked-layout copy, close four gaps still open in version 3, make lost trials retry instead of abandoning the contract, and refuse one lane's unsound change while still helping the next lane that hits its case.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The audit holds 29 production lanes with changed workers, not 22. Of those, nine needed version 4 features (register-preserving stubs, an accumulator-argument transport, a no-cleanup callee shape, offset out-parameter writes, per-argument call masks); eighteen were already covered by version 3; two still need private workers (a wider snapshot window, and a change judged unsound).</p>
+      <p><span class="evidence verified">Verified</span> Two silent-pass holes existed. A trial making more calls than the log cap passed with the tail uncompared (demonstrated: 320 calls attempted, 64 never compared, verdict green). An accumulator argument selected for comparison without its transport compared stale zeros on both sides and passed vacuously. Both now fail loudly with the remedy in the message.</p>
+      <p><span class="evidence verified">Verified</span> The reported lost trials under load conflate three mechanisms: a hung trial taints the worker so the next trial breaks the pipe, a crash exits the worker, and genuine silence. Past verdicts recorded none of the detail needed to separate them, so the historical mix is unknown; new verdicts record the loss class and exit code per retry.</p>
+      <p><span class="evidence verified">Verified</span> One lane's change, treating all NaN values as equal, was correctly withdrawn by the lane itself: its four failing trials were real behavior differences from operand order, fixed in the rewrite. Version 4 keeps bitwise strictness and instead names the case in the verdict when NaN bits are the only difference.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Item</th><th role="columnheader">Proof</th><th role="columnheader">Result</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Register-preserving stubs</td><td role="cell" data-label="Proof">Cookie check and base constructor cases</td><td role="cell" data-label="Result">Correct passes, mutants fail</td></tr>
+      <tr role="row"><td role="cell">Accumulator-argument transport</td><td role="cell" data-label="Proof">Lane case plus its mutant build</td><td role="cell" data-label="Result">One-bit value difference caught</td></tr>
+      <tr role="row"><td role="cell">No-cleanup callee</td><td role="cell" data-label="Proof">Lane case, correct rewrite</td><td role="cell" data-label="Result">Passes; mutant leg not reached</td></tr>
+      <tr role="row"><td role="cell">Offset out-parameter writes</td><td role="cell" data-label="Proof">Lane case, branch coverage</td><td role="cell" data-label="Result">Dead path revived, mutant fails</td></tr>
+      <tr role="row"><td role="cell">Per-argument call masks</td><td role="cell" data-label="Proof">Three lanes, both spellings</td><td role="cell" data-label="Result">Wrong byte caught, alias works</td></tr>
+      <tr role="row"><td role="cell">Log-cap soundness</td><td role="cell" data-label="Proof">257-plus-call case</td><td role="cell" data-label="Result">Loud fail, raised cap passes</td></tr>
+      <tr role="row"><td role="cell">Signed-range inputs</td><td role="cell" data-label="Proof">Hand-translated contract</td><td role="cell" data-label="Result">Identical inputs, passes</td></tr>
+      <tr role="row"><td role="cell">Lost-trial retry</td><td role="cell" data-label="Proof">Worker killed mid-run</td><td role="cell" data-label="Result">Retried, recorded, green</td></tr>
+      <tr role="row"><td role="cell">NaN diagnostic</td><td role="cell" data-label="Proof">Unfixed rewrite shape</td><td role="cell" data-label="Result">Fails with hint, fixed one green</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Narrowed comparisons stay strict: masks are declared per callee and argument, the verdict records every mask and its value, and a zero mask is rejected twice (at contract load and per trial).</li>
+      <li>The no-cleanup and transport stubs differ between the two sides by construction; each difference is documented in the contract manual with the reason the comparison stays differential.</li>
+      <li>Lost trials retry at most twice on a fresh worker with identical inputs and a verdict record; exhausted retries stay lost as before.</li>
+      <li>Two reported gaps were not reached (arguments on the floating-point stack, vector arguments past the second) and need a second log widening with a lane case to prove against.</li>
+      <li>The coordinator should re-run the 58 contracts in the rerun list under version 4, and confirm the 18 already-covered lanes reproduce on the tracked checker.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build the worker and proof library from the lane copy into the lane build folder, then run the proof scripts: one per item, each failing first on the pristine version 3 binary and passing on the new one, with mutants failing. Run the whole contract suite with the new driver and compare pass and fail per contract and mutant against the tracked verdicts; only the version string and the three new verdict keys should differ.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> The first retry design re-ran setup with only the running export, which broke the later mutant run and crashed the driver; the rerun list run caught it before the final regression. Fixed to the full export list.</p>
+      <p><span class="evidence verified">Verified</span> A shared worker binary name meant a cleanup command killed other lanes' workers and a kill-test murdered the running regression; all process handling was then scoped to the lane's own binary path, and the regression was rerun clean.</p>
+      <p><span class="evidence verified">Verified</span> Rebuilding kept failing with access denied while no lane worker was running; the lock was transient and cleared after a short wait, so rebuilds move the old binary aside first (which also preserves it as the test oracle).</p>
+      </article>
 
       <article class="entry" id="production-s202">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
