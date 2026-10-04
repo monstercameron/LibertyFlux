@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#subsystem-mainloop-timing">Subsystem survey: start-up, the main loop, threads and timing</a></li>
       <li><a href="#subsystem-input-ui">Subsystem survey: input, front end and HUD</a></li>
       <li><a href="#subsystem-animation-euphoria">Subsystem survey: animation and the Euphoria ragdoll system</a></li>
       <li><a href="#strings-names">Mining the executable strings for naming evidence</a></li>
@@ -74,6 +75,37 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="subsystem-mainloop-timing">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Subsystem survey: start-up, the main loop, threads and timing</h2>
+      <p>The engine's start-up, thread and timer machinery is now mapped from the file alone, and the headline is a split picture: the synchronisation and timing calls are all visible, but the main loop itself, render-thread startup and command-line parsing live almost entirely in the encrypted first megabyte of the code section, so a rewrite must validate them behaviourally.</p>
+      <h3>What was asked</h3>
+      <p>Survey one engine subsystem working directly on the executable with Python: process start-up after the C runtime, command-line parameters, initialisation order, the main loop, every thread created, synchronisation primitives, timers and frame-time globals, the game clock and pause handling.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The game-layer classes of this subsystem left no run-time type information at all: of several thousand class records in the file, none is a game, app, timer or thread class, and the expected names occur nowhere as byte strings either. The only timer-related classes with type records are the engine time manager and a thread-pool work item, plus script-thread classes owned by the script survey.</p>
+      <p><span class="evidence verified">Verified</span> Strings name one render thread and four audio threads, two timer names, an eight-field game clock (weekday, hours, minutes, seconds, days, months, seconds-per-minute and a bird-cycle field), a crash reporter built on Windows error reporting, frame-pacing settings including a frame limiter and a 15 to 120 frames-per-second automatic quality range, and per-frame logging of frame index, game time and delta. Only two command-line switches survive as strings.</p>
+      <p><span class="evidence verified">Verified</span> There is exactly one thread-creation call in the readable code, and it follows a fixed sequence: create suspended, set normal priority, disable priority boost, resume. There is one high-resolution-timer wrapper that caches the counter frequency, while the coarse millisecond timer is called from dozens of sites and is the dominant tick source. Locking is pervasive, with several hundred critical-section calls, and the synchronisation set is era-typical: critical sections, mutexes, semaphores, events and interlocked operations, with no newer primitives imported.</p>
+      <p><span class="evidence verified">Verified</span> Referencing analysis shows the render-thread name, the frame-timing log strings, the surviving command-line switches and several timer imports are referenced only from the encrypted region. Startup proceeds through numbered checkpoints with fatal exits after reading the command line once.</p>
+      <p><span class="evidence">Inferred</span> Public bug reports and mod fixes agree the simulation step is coupled to frame rate: vehicle handling, ragdolls, rotors, ladders and several interface speeds all change above console frame rates, so the rewrite's time step must reproduce the original arithmetic, not just the wall time.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Class records scanned</td><td role="cell" data-label="Value">a few thousand</td><td role="cell" data-label="What it means">game-layer timer and thread classes have no type records</td></tr>
+      <tr role="row"><td role="cell">Named threads found</td><td role="cell" data-label="Value">one render thread, four audio threads</td><td role="cell" data-label="What it means">thread inventory for the rewrite to reproduce</td></tr>
+      <tr role="row"><td role="cell">Thread-creation call sites</td><td role="cell" data-label="Value">one wrapper with a fixed four-step sequence</td><td role="cell" data-label="What it means">all engine threads are born the same way</td></tr>
+      <tr role="row"><td role="cell">Timer call sites</td><td role="cell" data-label="Value">dozens for the millisecond timer, one wrapper for the high-resolution counter</td><td role="cell" data-label="What it means">coarse timing everywhere, precise timing in one place</td></tr>
+      <tr role="row"><td role="cell">Code clusters attributed</td><td role="cell" data-label="Value">about three hundred, roughly half a megabyte</td><td role="cell" data-label="What it means">mostly shared locking; a handful of small clusters are the true subsystem core</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>Rewrite the timer wrappers and command-line handling first, since both are small and checkable in isolation, then the thread-creation wrapper, crash handling and game clock, and the main-loop skeleton last because it sits in encrypted code. The millisecond-timer semantics, including its wrap behaviour, must be reproduced exactly. Two open questions go to follow-up work: whether the few named synchronisation objects have fixed names, and what a counter-gated self-termination sequence near the sleep calls is for.</p>
+      <h3>How to reproduce it</h3>
+      <p>Parse the relocation table and resolve every fixup inside the readable code to its target; collect targets that are subsystem strings, virtual tables or import slots for thread, time and synchronisation functions; merge nearby referencing code into clusters; confirm the key call sites by their call bytes and short aligned disassembly windows; and search the whole file for the expected class names to establish the negative result. All counts come from these machine steps, not from estimates.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first class filter matched over eight hundred classes because gameplay words like event, task and frame collide with subsystem vocabulary; it took a second pass to show that almost all were other lanes' classes and the true subsystem set is tiny. A verification script re-ran the clustering step through an unguarded import and wiped the function counts, which had to be recomputed. Disassembly windows placed at an offset from each call site usually started mid-instruction and looked like garbage until re-aligned to the exact call address.</p>
+      </article>
 
       <article class="entry" id="subsystem-input-ui">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

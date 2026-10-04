@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Subsystem survey: input, front end and HUD",
+    "title": "Devlog: Subsystem survey: start-up, the main loop, threads and timing",
     "commit": null,
+    "summary": "Findings from the s-mainloop-timing lane.",
+    "changes": [
+      "New devlog entry: Subsystem survey: start-up, the main loop, threads and timing.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Subsystem survey: input, front end and HUD",
+    "commit": "69b1dde31cc2b1ed68eb45a09e70e1d15ee02999",
     "summary": "Findings from the s-input-ui lane.",
     "changes": [
       "New devlog entry: Subsystem survey: input, front end and HUD.",
