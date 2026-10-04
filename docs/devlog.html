@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#operating-the-swarm">Operating notes: running forty-odd agent lanes on one laptop</a></li>
       <li><a href="#production-s230">Two wrong rewrites passed before a sibling loop caught the count</a></li>
       <li><a href="#production-b164">A correct rewrite the checker disagrees with itself about</a></li>
       <li><a href="#production-b145">The checker disagreed with the file on one constant</a></li>
@@ -324,6 +325,44 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="operating-the-swarm">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Operating notes: running forty-odd agent lanes on one laptop</h2>
+      <p>These are the working rules the coordinator arrived at over the first day and a half of production, written down so that a later run starts from them instead of rediscovering them. The short form: the limit is the machine's memory, not the model; every published number must come out of a script that runs on a timer; and nothing a lane says about the checker or the inventory counts until it has been checked by something other than that lane.</p>
+      <h3>What was asked</h3>
+      <p>For operational notes that a later session, or another coordinator, can run the project from.</p>
+      <h3>What was found</h3>
+      <table>
+      <thead><tr><th>Area</th><th>Rule</th><th>Where it came from</th></tr></thead>
+      <tbody>
+      <tr><td>How many lanes</td><td data-label="Rule">About 45 on a machine with 48 GB of memory. Guard on both free memory and commit headroom before starting a lane.</td><td data-label="Where it came from">At 74 lanes the machine ran out of commit while free memory still looked fine.</td></tr>
+      <tr><td>What a lane costs</td><td data-label="Rule">The agent process is the small part. Wrapper shells, compiler runs and checker workers are the rest: a hundred shell processes held more memory than forty agents.</td><td data-label="Where it came from">Measured by grouping processes by name.</td></tr>
+      <tr><td>Inside a lane</td><td data-label="Rule">At most three checker workers, and small groups of contracts per driver process.</td><td data-label="Where it came from">One driver process grew to almost 9 GB over a long run before the leak was fixed.</td></tr>
+      <tr><td>Keeping lanes supplied</td><td data-label="Rule">Self-refilling slots: each asks a brief maker for the next batch under a file lock and runs lanes back to back. Large-function lanes start only early in a slot's life.</td><td data-label="Where it came from">Background tasks are stopped after two hours; a lane outlives its slot, but a slot that starts a long lane late wastes the slot.</td></tr>
+      <tr><td>Stopping</td><td data-label="Rule">A stop file that slots check before starting a lane. Never stop processes by name.</td><td data-label="Where it came from">Checker workers from every lane share one name; a lane's test of worker recovery stopped its own regression that way.</td></tr>
+      <tr><td>The loop</td><td data-label="Rule">One command on a five-minute timer does everything: import passed rewrites, integrate devlog fragments, rebuild counts, names and the code map, regenerate badges, commit, push.</td><td data-label="Where it came from">Three published figures went stale because each had been produced once by hand: the named count, the code map and the badges.</td></tr>
+      <tr><td>Time</td><td data-label="Rule">Read the clock; never write a time from memory. Lanes guess times in their logs, sometimes by an hour.</td><td data-label="Where it came from">Status messages ran ahead of the clock several times.</td></tr>
+      <tr><td>The checker</td><td data-label="Rule">A pass counts only on the stock checker. Changes to it go through a full read of the diff by the coordinator, a full regression on a fresh build, and only then replace the worker lanes use.</td><td data-label="Where it came from">Twenty-two lanes had built private copies; one relaxed a comparison.</td></tr>
+      <tr><td>Reading the executable</td><td data-label="Rule">Through the mapped image only, and prove the mapping on a known function first.</td><td data-label="Where it came from">Three lanes read the raw file at a mapped address and two of them concluded that real functions were not functions.</td></tr>
+      <tr><td>Claims about the inventory</td><td data-label="Rule">Unverified until an independent check agrees. Screen the whole class, not the one batch.</td><td data-label="Where it came from">Of three such claims, two were wrong and one was right about 16 entries out of 11,078.</td></tr>
+      <tr><td>Lists for programs</td><td data-label="Rule">Write them as data files. Never rebuild a work list from a report meant for people.</td><td data-label="Where it came from">A survey's printout stopped at 40 names per lane and hid 34 contracts from a re-run.</td></tr>
+      <tr><td>Replacing a running program</td><td data-label="Rule">Build into a new folder, rename the running file aside, copy the new one in.</td><td data-label="Where it came from">A running worker locks its own file; the build fails with access denied.</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Each row is something that happened during the run and is recorded in an earlier entry or in the changelog.</p>
+      <p><span class="evidence">Inferred</span> Launching the agent directly from the slot, without the intermediate shells, would free roughly a third of the per-lane overhead and allow several more lanes. Not yet tried.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>The coordinator's scripts are still outside the repository. They should move in, with machine paths removed, so that the operating layer is not lost with a scratch folder.</li>
+      <li>Any new published figure is wired into the timed loop when it is added, not afterwards.</li>
+      <li>When a counter stops moving for several updates, check its source before reporting it.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Start one slot and watch memory by process name for ten minutes; then add slots until commit headroom reaches the guard. The ceiling found that way is the number to use, not a number carried over from another machine.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first memory guard watched only free memory, because that is what the first incident seemed to be about; the real limit was commit. The second incident had a different cause again, one process inside a lane. A guard built from one incident's explanation did not cover the next one, so the watchdog now looks at the things that actually grew: commit, and any single driver process.</p>
+      </article>
 
       <article class="entry" id="production-s230">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
