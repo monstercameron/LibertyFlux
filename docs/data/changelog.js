@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Add the README",
+    "title": "Fix the squeezed column in devlog tables",
     "commit": null,
+    "summary": "A long hash in one cell was starving the column beside it.",
+    "changes": [
+      "Long hashes and file names in table cells can now break across lines, so the columns share the width evenly.",
+      "Seen on the executable entry, where the meaning column had collapsed into a tall strip at desktop width."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Add the README",
+    "commit": "f03f21044bbc8988d2a02eefa7e084ff6d374863",
     "summary": "The repository's front page.",
     "changes": [
       "Status, goals, the method with a diagram, the repository rule, the roadmap, how progress is tracked, the layout, requirements, credits and a legal notice.",

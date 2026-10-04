@@ -116,7 +116,9 @@ p { margin: 0 0 1em; }
 /* Devlog tables carry sentences in the first column, so it must wrap. */
 .entry td:first-child { white-space: normal; min-width: 9em; }
 .entry td, .entry th { overflow-wrap: break-word; }
-.entry td a, .entry td code { overflow-wrap: break-word; }
+.entry td a { overflow-wrap: break-word; }
+/* Long hashes and file names must be allowed to break, or they starve the other columns. */
+.entry td code { overflow-wrap: anywhere; }
 .evidence { font-size: 0.8125rem; font-weight: 700; padding: 1px 7px; border-radius: 3px; border: 1px solid var(--rule); color: var(--ink-soft); white-space: nowrap; }
 .evidence.verified { border-color: var(--meter-fill); color: var(--step); }
 code {
