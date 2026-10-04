@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Reader crate: lf-text",
+    "title": "Reader crate: lf-gamedata",
     "commit": null,
+    "summary": "Game data tables: handling, carcols, IDE rows, weapon info, 30+ formats.",
+    "changes": [
+      "New crate crates/formats/lf-gamedata: Game data tables: handling, carcols, IDE rows, weapon info, 30+ formats.",
+      "About 5,632 lines of Rust with 51 unit tests and 3 integration tests; tests that need the game's files skip unless the game folder is given in an environment variable.",
+      "Third-party dependencies: none.",
+      "Written by the fmt-data-files lane from the file format alone, then audited by the integration lane for game data, key material and machine paths before publication."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Reader crate: lf-text",
+    "commit": "a5135c67b2f359fefd40b04618379aa6aa38954d",
     "summary": "Text: GXT tables, fonts, menus, HUD colours, frontend layout, radio HUD.",
     "changes": [
       "New crate crates/formats/lf-text: Text: GXT tables, fonts, menus, HUD colours, frontend layout, radio HUD.",
