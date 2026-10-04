@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: Optimized builds can fail bit-exact float checks, and five sibling functions share one shape",
+    "commit": null,
+    "summary": "Findings from the r-b115 lane.",
+    "changes": [
+      "New devlog entry: Optimized builds can fail bit-exact float checks, and five sibling functions share one shape.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 110 more functions pass the checker (5475 in total)",
     "commit": "6df1ccca8843b6424da52e5fad726c89d382e520",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

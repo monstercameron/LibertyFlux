@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b115">Optimized builds can fail bit-exact float checks, and five sibling functions share one shape</a></li>
       <li><a href="#production-b105">Production batch: three emitter rewrites verified, one float lesson</a></li>
       <li><a href="#private-checker-copies">Lanes were running their own copies of the checker, and one of them relaxed it</a></li>
       <li><a href="#production-s153">The checker caught a compiler bug in a rewrite</a></li>
@@ -295,6 +296,29 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b115">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Optimized builds can fail bit-exact float checks, and five sibling functions share one shape</h2>
+      <p>A production batch of six related routines verified five out of six, and the one failure on the way there matters for every future float rewrite: the optimizing compiler reordered floating-point operands in a way that changes NaN payloads, so float-heavy rewrites must be built without optimization.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite six neighbouring routines in Rust and prove each one behaves identically to the original, checking return values, written memory and outgoing calls over at least one thousand trials each.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Five routines form one family: each normalizes a two-element input vector, mixes table values into two caller structures, normalizes a three-element vector, passes it to a shared helper, and publishes the results plus a table pointer. All five passed one thousand trials with zero failures and exact floating-point agreement.</p>
+      <p><span class="evidence verified">Verified</span> All five copy one uninitialized stack word into the same output slot. The slot always sits one word past the end of the helper argument array, at the top of the aligned stack frame. The checker contracts pin it to zero with a defined stack fill, and the rewrites document this.</p>
+      <p><span class="evidence verified">Verified</span> One routine failed a single trial out of sixty with two different NaN payloads in one output word. Disassembling the rewrite showed the cause: the optimizer had fused scalar additions into packed vector operations, which swapped which operand counts as the destination. That changes NaN payload propagation while leaving ordinary values untouched. Rebuilding the same source without optimization passed one thousand out of one thousand.</p>
+      <p><span class="evidence">Inferred</span> The wrong payload matched neither input operand, which a pure operand swap cannot explain on its own. There may be a second effect in how packed NaN lanes behave under emulation on this machine. The unoptimized build matches the original exactly, so verification does not depend on resolving this.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Build float-heavy rewrite crates without optimization so scalar operations stay in source order; optimized float rewrites are only NaN-exact by luck.</li>
+      <li>When a byte offset into a global is needed, compute it on a byte pointer: address helpers that return typed pointers count in units of that type.</li>
+      <li>With several values pushed for one call, the first value pushed is the last argument. Confirm against what the callee reads.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run the five contracts of this batch with the lane rewrite crate built first with full optimization and then without: the selecting variant fails about one trial per run with optimization (a NaN payload mismatch in one heap word) and passes all one thousand trials without it. Disassembling the optimized export shows packed arithmetic where the source has scalar operations.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The NaN mismatch resisted static analysis for a while: every operation and operand order in the source matched the original, and the failing payload matched neither input, which ruled out every simple swap model. The breakthrough came from disassembling the rewrite itself instead of re-reading the source. A separate run also lost its worker process partway through a passing suite under heavy machine load; a rerun passed cleanly, matching an already-known flake class.</p>
+      </article>
 
       <article class="entry" id="production-b105">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
