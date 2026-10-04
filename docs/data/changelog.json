@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: the relaxed comparison was not needed",
+    "title": "Devlog: Two verification traps: recorder stubs clobber two registers, and aligned test pins hide untested branches",
     "commit": null,
+    "summary": "Findings from the r-s177 lane.",
+    "changes": [
+      "New devlog entry: Two verification traps: recorder stubs clobber two registers, and aligned test pins hide untested branches.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: the relaxed comparison was not needed",
+    "commit": "c403c50fdee47073f340e6b9201fe7ea6a9b194e",
     "summary": "Follow-up to the entry on private copies of the checker.",
     "changes": [
       "The lane that had passed a large particle function only by treating all not-a-number values as equal was restarted on the stock checker. The cause was operand order: the compiler had vectorised and reassociated the float arithmetic. With the original's order pinned at four places the rewrite passes 1,000 of 1,000 trials bit for bit.",

@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s177">Two verification traps: recorder stubs clobber two registers, and aligned test pins hide untested branches</a></li>
       <li><a href="#production-s162">A callee write offset that means something else</a></li>
       <li><a href="#production-b118">Two verifications, one staged function, and a checker ceiling</a></li>
       <li><a href="#production-b113">Two stub traps: cookie checks clobber the return register, and one import pops its argument</a></li>
@@ -302,6 +303,37 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s177">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Two verification traps: recorder stubs clobber two registers, and aligned test pins hide untested branches</h2>
+      <p>A production batch of twenty small motion-tree functions verified seventeen and exposed two traps for future lanes. First, the checker's recorder stubs do not preserve two general-purpose registers across intercepted calls, so any original function that reuses one of them after a call fails verification even when its real callee preserves it. Second, test inputs that alternate live and null pointers on the same two-trial rhythm can align so that whole branches never execute while the verdict still passes.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty neighbouring motion-tree manager and node functions in Rust and prove each rewrite equivalent to the original with the version 3 checker, which intercepts outgoing calls with recorder stubs and compares return values, written memory, stack effects, calls and faults over at least one thousand trials per function.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Seventeen of twenty functions verified with zero failures across one thousand trials each, including six leaf functions, five functions with one direct call each, and six functions calling through object function tables with fabricated objects.</p>
+      <p><span class="evidence verified">Verified</span> Two functions cannot be verified because they reuse a register after an intercepted call without reloading it. Reading the worker source showed the stub saves that register on entry and never restores it, so it always comes back as zero. Reading both real callees showed neither of them writes that register, so the register survives in the game and the originals work there. Under the checker every trial with a live pointer faults on the original side only, which no contract can fix. Both were deferred honestly rather than worked around.</p>
+      <p><span class="evidence verified">Verified</span> Nine first-attempt contracts used two-state pins that all flipped on the same even-odd rhythm. In one contract the intercepted call never fired and the verdict was correctly flagged vacuous. In eight others the verdict passed but hand auditing showed only a fraction of the branch combinations ever ran, because the live-live, live-null and null-live combinations never coincided. Rewriting those contracts with four- and eight-state pins so every combination runs fixed all of them.</p>
+      <p><span class="evidence verified">Verified</span> Stored address constants in the original are relocated when the checker maps the executable, so a rewrite must derive them through the checker's relocation helper; a literal copy of the on-disk value fails every trial. The first smoke run caught this immediately.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Outcome</th><th role="columnheader">Count</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Verified</td><td role="cell" data-label="Count">17</td></tr>
+      <tr role="row"><td role="cell">Deferred, stub register gap</td><td role="cell" data-label="Count">2</td></tr>
+      <tr role="row"><td role="cell">Deferred, too complex for remaining budget</td><td role="cell" data-label="Count">1</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Deferred the two register-reuse functions with a precise blocker instead of matching the checker's artifact, which would have been a fake pass.</li>
+      <li>Recommend a per-callee contract option naming which registers the real callee preserves, established from its disassembly, with the stub restoring exactly those. Restoring unconditionally would be unsound in the other direction.</li>
+      <li>Recommend every lane enumerate pin and input residues explicitly for each branch combination rather than trusting aligned alternating pins.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run any contract whose original reuses the register after an intercepted direct call: every live-pointer trial fails with the original faulting and the rewrite succeeding. Read the stub emitter in the worker source to confirm the missing restore, and the callee's disassembly to confirm it preserves the register. For the pin trap, compare the distinct call-sequence shapes in a verdict against the function's branch count.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The vacuous verdict on one contract was easy to misread as a broken rewrite rather than a never-fired call, and the passing-but-narrow contracts were only caught by hand auditing branch shapes against pin rhythms. A rebuild failure with an access-denied error on the previous output file, with no live process holding it, was worked around by renaming the file aside and rebuilding.</p>
+      </article>
 
       <article class="entry" id="production-s162">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
