@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: A one-byte checker bug that failed correct rewrites past 256 calls",
+    "title": "Devlog: Twenty dispatch stubs verified, and a gap in what the checker observes",
     "commit": null,
+    "summary": "Findings from the r-s111 lane.",
+    "changes": [
+      "New devlog entry: Twenty dispatch stubs verified, and a gap in what the checker observes.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: A one-byte checker bug that failed correct rewrites past 256 calls",
+    "commit": "5859230aa286581d60356873997f13e13ddd1b48",
     "summary": "Findings from the r-s105 lane.",
     "changes": [
       "New devlog entry: A one-byte checker bug that failed correct rewrites past 256 calls.",

@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s111">Twenty dispatch stubs verified, and a gap in what the checker observes</a></li>
       <li><a href="#production-s105">A one-byte checker bug that failed correct rewrites past 256 calls</a></li>
       <li><a href="#production-n117">Two checker gaps found while verifying native handlers</a></li>
       <li><a href="#production-b46">Float rewrites must guard every add, multiply and subtract against NaN operand order</a></li>
@@ -268,6 +269,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s111">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Twenty dispatch stubs verified, and a gap in what the checker observes</h2>
+      <p>All twenty functions in this batch are now verified, but the interesting result is the gap found on the way: the checker never observed values one function passes to another in a general-purpose register, so it would have passed rewrites with the wrong value. A small worker extension closes the gap and is proved by a mutant test.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty small neighbouring functions in Rust and prove each rewrite behaves identically to the original with the differential checker.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Nineteen of the twenty share one shape: call an optional start-up hook, then forward a fixed tag to a shared dispatcher, with the tag carried in a register rather than on the stack. The twentieth adds a query gate that selects between dispatching and returning a default value. The tags fall into three numeric bands, suggesting grouped identifiers.</p>
+      <p><span class="evidence verified">Verified</span> The checker's call recorder logged every register except the one carrying the tag. Each stub's only distinguishing behaviour was therefore invisible to the comparison, and a wrong tag would have passed. This was fixed in a lane-local worker copy with a transport that loads the register from a stack argument on the rewrite side only, mirroring the checker's existing transport for vector-register arguments, plus comparison of the logged register. The stock checker was left untouched.</p>
+      <p><span class="evidence verified">Verified</span> A mutant rewrite with a tag off by one is caught on every trial by the new comparison, and all twenty correct rewrites pass one thousand trials each with zero failures.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Any future batch whose functions pass values to callees in that register needs the new transport option until it is folded into the stock checker; without it the comparison silently does not happen. The lane report gives the exact change for fold-back.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the lane's worker copy and rewrite crate for the 32-bit target into the lane's own build folder, generate one contract per function with the shared game-state slots planted per trial, and run the checker driver once per contract. Rerun one contract against the mutant crate to confirm a wrong tag fails on the call comparison.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The mutant first appeared to pass, which was alarming, but it turned out the run had tested the correct library: a contract-local library path overrides the environment variable, so the override was silently ignored. Once pointed at the mutant library properly, it failed as required. The extension also briefly broke an unrelated snapshot path by clobbering a register the snapshot code reads; restoring it immediately after logging fixed that.</p>
+      </article>
 
       <article class="entry" id="production-s105">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
