@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#function-ledger">One ledger for 37,000 functions</a></li>
       <li><a href="#production-s268">One batch, two stack surprises: a shared argument slot and reads from unwritten stack</a></li>
       <li><a href="#naming-14">Naming 150 leaderboard info methods from one board-key signal</a></li>
       <li><a href="#production-b208">A view-system initializer that reads its own uninitialized stack</a></li>
@@ -357,6 +358,38 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="function-ledger">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>One ledger for 37,000 functions</h2>
+      <p>Every progress number, queue batch, name and proof record now comes from a single SQLite database that reproduces the current scripts exactly and names fifteen places where they disagreed with each other.</p>
+      <h3>What was asked</h3>
+      <p>Build the project's function ledger: one database with one row per function, an importer that ingests today's scattered sources, proof that it reproduces the current counts and queue, the queries the coordinator needs, and a migration plan that keeps the five-minute loop working throughout.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The ledger reproduces the scripts exactly: all six headline counts with identical function sets, all 480 code-map slices, and all three queue pools with identical membership.</p>
+      <p><span class="evidence verified">Verified</span> The earlier review's three drifts reproduce: hundreds of rewrites carry a recorded checker version older than the verdict on disk, tens of verdicts match no contract on file, and the named count feeds through a file only one script writes.</p>
+      <p><span class="evidence verified">Verified</span> Fifteen disagreements between the scripts themselves, the largest being finished lanes whose aggregate-only result files both counting scripts skip silently, batches held forever by finished lanes, pilot batches that block the production queue permanently, and an hourly review that uses a different function universe than the site.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Finding</th><th role="columnheader">Count</th><th role="columnheader">Meaning</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Stale checker labels</td><td role="cell" data-label="Count">284</td><td role="cell" data-label="Meaning">verdicts newer than the recorded version; labels follow marker files, not verdicts</td></tr>
+      <tr role="row"><td role="cell">Verdicts without contracts</td><td role="cell" data-label="Count">20</td><td role="cell" data-label="Meaning">contract edited or missing after the run</td></tr>
+      <tr role="row"><td role="cell">Invisible passes</td><td role="cell" data-label="Count">36</td><td role="cell" data-label="Meaning">passing contracts in files both scripts skip; recoverable</td></tr>
+      <tr role="row"><td role="cell">Stuck assignments</td><td role="cell" data-label="Count">119</td><td role="cell" data-label="Meaning">held by finished lanes; the hand-rebuilt work list</td></tr>
+      <tr role="row"><td role="cell">Native queue left</td><td role="cell" data-label="Count">0</td><td role="cell" data-label="Meaning">all native handlers assigned; no work left of that kind</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Cut over in five steps: land the tool, run it in shadow mode behind a parity guard, switch one script's reads per tick with fallbacks kept, fix the fifteen findings in value order, then delete the scan code.</li>
+      <li>Take the checker label from the verdict row instead of the marker file, release partial-batch leftovers and pilot-held functions, and recover the invisible passes from aggregate result files.</li>
+      <li>Keep the parity checker as the permanent guard: it fingerprints every source so a mid-tick write can never be mistaken for a logic difference.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run the importer, then the parity checker, then the analyser from the lane folder; all three use only the standard library. The parity checker compares the ledger against read-only copies of the scripts' own logic and writes every difference, with the race evidence, to a disagreements file. The query tool answers counts, batches, stale proofs, defer reasons, lane durations and brief rates.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The machine never sits still: five of six parity runs were interrupted by real concurrent writes, each traced to a named file. A batch-size parameter was shadowed by a loop variable and returned short batches until fixed. The unparsed-files table collected duplicates across re-imports until each file's rows were cleared on re-mark. All three are fixed and verified.</p>
+      </article>
 
       <article class="entry" id="production-s268">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
