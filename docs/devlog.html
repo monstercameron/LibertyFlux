@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#merge-names">Merging the names: what 22 native lanes agree on</a></li>
       <li><a href="#replacement-loader">Replacement loader built and tested without the game</a></li>
       <li><a href="#format-vehicle-ped-meta">Rust reader: vehicle, ped and weapon extra data inside resources</a></li>
       <li><a href="#format-cutscenes">Rust reader: cutscene description files</a></li>
@@ -174,6 +175,43 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="merge-names">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Merging the names: what 22 native lanes agree on</h2>
+      <p>All recovered function names are now one table: about ninety-six thousand proposals merged into under twenty-two thousand symbol records, and meaningful names rose from under three thousand to just under ten thousand. <span class="evidence verified">Verified</span> The strongest result is agreement, not volume: every native lane independently found the same few handle-to-object lookup helpers, and the merge confirms them with up to twenty-two supporting lanes and hundreds of supporting script natives each.</p>
+      <h3>What was asked</h3>
+      <p>Merge every function name the project had recovered into one table with one naming convention, resolving conflicts between lanes, keeping rejected alternatives, and counting named functions before and after by confidence, by subsystem, and inside the encrypted range. Placeholders such as class-plus-slot-number were not to count as names, and no name was to be invented beyond what the evidence supports.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The merge consumed proposal files from all twenty-two native lanes plus the native handler table, the vtable inventory, fifteen class-structure lanes, the script interpreter lane, the startup lane, the library lane, and mechanically extracted report mentions.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Measure</th><th role="columnheader">Before</th><th role="columnheader">After</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Meaningful names</td><td role="cell" data-label="Before">2,947</td><td role="cell" data-label="After">9,994</td></tr>
+      <tr role="row"><td role="cell">High confidence</td><td role="cell" data-label="Before">2,947</td><td role="cell" data-label="After">4,823</td></tr>
+      <tr role="row"><td role="cell">Medium confidence</td><td role="cell" data-label="Before">0</td><td role="cell" data-label="After">2,085</td></tr>
+      <tr role="row"><td role="cell">Low confidence</td><td role="cell" data-label="Before">0</td><td role="cell" data-label="After">3,086</td></tr>
+      <tr role="row"><td role="cell">Placeholders</td><td role="cell" data-label="Before">10,840</td><td role="cell" data-label="After">11,876</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Before">Named in encrypted range</td><td role="cell" data-label="Before">0</td><td role="cell" data-label="After">72</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The agreed lookups include the pool handle lookup, the player index lookup, the script handle to index conversion, the model info hash lookup, the current script thread accessor, and the local player ped getter, each with between six and twenty-two supporting lanes.</p>
+      <p><span class="evidence verified">Verified</span> Of the remaining conflicts, ninety-one are genuine disagreements with a winner picked by rule, twenty-three are handler names beating descriptive proposals, seventeen are disputed shared stubs with no winner, and ten are lanes contradicting themselves. Two hundred fifty-one named plaintext addresses look like functions the inventory missed, and an independent function list confirms sixty-four of them.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>One convention: <code>Class::Method</code> for methods, bare public names for native handlers, <code>NativeImpl_X</code> for one-to-one engine callees, subsystem-prefixed CamelCase for shared helpers, exact spelling for library and CRT symbols.</li>
+      <li>Names agree fuzzily on shared word tokens, so differently spelled proposals for the same helper count as agreement; the winner is the spelling with the most supporting natives.</li>
+      <li>Guesses about encrypted bodies stay low confidence or placeholders; destructor claims against unreadable slot targets were demoted to placeholders.</li>
+      <li>Colliding names for different functions take numeric suffixes after a byte comparison proved no pair identical.</li>
+      <li>Recommended next: feed the missed functions to the work queue, and revisit the disputed shared stubs once decrypted bytes are available.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Collect the proposal files from every lane, normalise addresses and confidence spellings, group proposals by address, then group names by shared word tokens. Pick winners by supporting native count, apply the confidence caps, check every address against the function inventory, and compare the bytes of any two functions that end up with the same name. The merge script repeats all of this in one run.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> One class lane labelled the same encrypted stub as the deleting destructor of dozens of classes; taken literally this produced over a thousand bogus conflicts, and the fix was to demote all such opaque claims to placeholders. A camel-case word splitter briefly merged two competing constructor claims because they shared a three-letter prefix; the fix requires the shared word to appear in a supporting native name. A shell quoting glitch once reported thousands of lost names; a clean rerun from a file verified the true number was two, both shared stubs correctly demoted. The billiards mini-game natives kept matching the pool-lookup search and had to be excluded by hand-written filter.</p>
+      </article>
 
       <article class="entry" id="replacement-loader">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
