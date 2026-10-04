@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s105">A one-byte checker bug that failed correct rewrites past 256 calls</a></li>
       <li><a href="#production-n117">Two checker gaps found while verifying native handlers</a></li>
       <li><a href="#production-b46">Float rewrites must guard every add, multiply and subtract against NaN operand order</a></li>
       <li><a href="#production-b37">A ten-argument call the checker only half compares</a></li>
@@ -267,6 +268,29 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s105">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>A one-byte checker bug that failed correct rewrites past 256 calls</h2>
+      <p>A production batch of audio functions exposed an off-by-one error in the checker's call recorder: any function making more than 256 calls in one trial had its correct rewrite failed as cheating. The fix is a single comparison, applied in the lane's worker copy and documented for fold-back.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty small audio functions in Rust and prove each one equivalent to the original with the version 2 differential checker, which runs both sides from identical state and compares return values, memory writes, stack use, outgoing calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Nineteen of the twenty functions verified at one thousand trials each with zero failures, covering constructors, destructors, array releases, table scans, two tail-call functions and one floating-point evaluator checked bit-exactly.</p>
+      <p><span class="evidence verified">Verified</span> The twentieth function in difficulty order, a large constructor making over four hundred calls per trial, failed every trial with the rewrite accused of cheating while the original side passed. The cause is in the checker's recorder stub: the call log holds 256 entries and the stub address table sits directly after it in memory, but the log-full test skips only above 256 instead of at-or-above, so the 257th call in a trial writes its log entry over the start of the address table. The original side survives because its calls are patched jumps that never consult the table; the rewrite side reads the corrupted table and jumps wild. The comment above the test states the at-or-above intent, so the code contradicts its own comment.</p>
+      <p><span class="evidence">Inferred</span> This failure mode cannot pass a wrong rewrite: both a correct and an incorrect rewrite die the same way once the table is corrupted, so affected verdicts fail loudly rather than passing quietly. The damage is availability and a false cheating accusation, not soundness.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>The lane verified the affected constructor with a private worker copy carrying the one-comparison fix; the shared worker binary was left untouched. All nineteen verdicts in this batch come from the fixed worker.</li>
+      <li>Fold-back is a single comparison change in the worker source where the recorder stub emits its log-full test, plus a rebuild of the shared worker. A guard gap between the log and the table would stop this class of fault recurring.</li>
+      <li>Lanes should check the per-callee fire counts in every verdict before accepting it: this lane caught one passing contract whose conditional call had never fired because two script cycles never aligned, and fixed it before accepting.</li>
+      <li>Calls past the 256th per trial remain unlogged by design even with the fix; for the affected functions every memory write is still compared, which covers the work done alongside those calls.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run any function that makes more than 256 outgoing calls in a single trial under the unfixed worker: the rewrite side faults on a wild jump computed from corrupted table contents while the original side passes. With the fixed worker the same contract passes. The per-trial logged-call count stopping at exactly 256 in the verdict is the signature.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The fault address was a constant the rewrite itself passes as call data, which first suggested a rewrite bug, then a calling-convention bug in the stub used for that call. What broke the case open was the coverage count landing on exactly 256 logged calls per trial, combined with the recorder's habit of leaving a scratch register holding the last logged argument, which explained how that constant reached the table slot the rewrite reads first. Total diagnosis time was about twenty-five minutes.</p>
+      </article>
 
       <article class="entry" id="production-n117">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
