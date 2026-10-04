@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Reader crate: lf-audio-bank",
+    "title": "Reader crate: lf-cutscene",
     "commit": null,
+    "summary": "Cutscene descriptions: .cut files, tags, reference checks, archive catalog.",
+    "changes": [
+      "New crate crates/formats/lf-cutscene: Cutscene descriptions: .cut files, tags, reference checks, archive catalog.",
+      "About 2,088 lines of Rust with 17 unit tests and 5 integration tests; tests that need the game's files skip unless the game folder is given in an environment variable.",
+      "Written by the fmt-cutscenes lane, then brought to the workspace's standard by a second lane. That lane was stopped by a time limit during its final test pass: build and lint were clean on the host, and the coordinator re-ran build, lint and tests before committing."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Reader crate: lf-audio-bank",
+    "commit": "4964d2cbddbd03a9037ae02597b6a1a82c43d872",
     "summary": "Audio banks and streamed sounds: containers, IMA ADPCM decode, versioned configs.",
     "changes": [
       "New crate crates/formats/lf-audio-bank: Audio banks and streamed sounds: containers, IMA ADPCM decode, versioned configs.",
