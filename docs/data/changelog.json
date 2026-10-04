@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: A ten-argument call the checker only half compares",
+    "title": "Devlog: Float rewrites must guard every add, multiply and subtract against NaN operand order",
     "commit": null,
+    "summary": "Findings from the r-b46 lane.",
+    "changes": [
+      "New devlog entry: Float rewrites must guard every add, multiply and subtract against NaN operand order.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: A ten-argument call the checker only half compares",
+    "commit": "e3a5209f36e89726ec13ebb215898234f243353d",
     "summary": "Findings from the r-b37 lane.",
     "changes": [
       "New devlog entry: A ten-argument call the checker only half compares.",

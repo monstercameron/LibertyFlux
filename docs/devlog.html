@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b46">Float rewrites must guard every add, multiply and subtract against NaN operand order</a></li>
       <li><a href="#production-b37">A ten-argument call the checker only half compares</a></li>
       <li><a href="#checker-v3">Checker version 3: closing the ways a wrong rewrite could pass</a></li>
       <li><a href="#production-n118">Verifying native handlers whose bool arguments carry garbage high bytes</a></li>
@@ -265,6 +266,41 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b46">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Float rewrites must guard every add, multiply and subtract against NaN operand order</h2>
+      <p>Verifying a bit-exact rewrite of the biquad filter process routine showed that the Rust compiler picks either operand order for floating point add and multiply, including inside SSE intrinsics, while the hardware propagates the destination operand's NaN payload when both operands are NaN. A rewrite using plain operators is therefore one colliding NaN pair away from a wrong result, and the fix is small explicit guards that decide every NaN case before hardware sees it.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite five neighbouring audio routines in Rust and prove each rewrite bit-identical to the original over at least one thousand checker trials: the biquad filter constructor, its coefficient update, its sample process routine, its parameter apply routine, and the reverb allocation routine.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The process routine was verified at one thousand trials with zero mismatches. It makes no calls, so the contract is heap state plus edge-biased inputs, including trials where the sample buffer overlaps the effect object itself.</p>
+      <p><span class="evidence verified">Verified</span> The first green run was vacuous: every trial either took the bypass return or ran with an empty channel mask, because all control pins cycled with the same length and locked phases. Coprime cycle lengths fixed coverage, and a mutant with one dropped term is now caught.</p>
+      <p><span class="evidence verified">Verified</span> One trial in the full run then failed with the original and the rewrite emitting different NaN payloads at the same six output addresses. Disassembling the rewrite showed the compiler had emitted the output multiply with the operands swapped relative to the source: the hardware keeps the destination operand's NaN, so the swap changed the result. Rewriting the loop with scalar SSE intrinsics produced bit-identical wrong outputs, because the compiler commutes intrinsic operands too.</p>
+      <p><span class="evidence verified">Verified</span> Twelve targeted probe trials with forced NaN pairs in every sign and payload combination confirm the hardware rule for add, subtract and multiply: the destination NaN wins. The two alternative rules the evidence first allowed (source wins, negative wins) fail those probes.</p>
+      <p><span class="evidence">Inferred</span> Earlier verified float rewrites that used plain operators passed honestly but partly by luck: both-NaN collisions with differing payloads are rare in random corpora, and nothing in their contracts forced one.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Routine</th><th role="columnheader">Outcome</th><th role="columnheader">Reason</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Biquad process</td><td role="cell" data-label="Outcome">Verified, 1000/1000</td><td role="cell" data-label="Reason">No calls; NaN guards added</td></tr>
+      <tr role="row"><td role="cell">Biquad constructor and parameter apply</td><td role="cell" data-label="Outcome">Deferred</td><td role="cell" data-label="Reason">Power helper takes its second argument in a vector register the checker cannot observe</td></tr>
+      <tr role="row"><td role="cell">Biquad coefficient update</td><td role="cell" data-label="Outcome">Deferred</td><td role="cell" data-label="Reason">One helper takes its argument on the floating point stack, which the checker cannot observe</td></tr>
+      <tr role="row"><td role="cell">Reverb allocation</td><td role="cell" data-label="Outcome">Not reached</td><td role="cell" data-label="Reason">No checker gap; contract sketched for the next lane</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Float rewrites should route every add, multiply and subtract through helpers that return the destination NaN when it is NaN, else the source NaN when it is NaN, else the plain operation. With NaN-free inputs the compiler's operand choice is invisible.</li>
+      <li>Every float contract should include forced both-NaN trials with differing payloads, not just random floats; random corpora rarely collide.</li>
+      <li>The two deferred routines need checker abilities, not more triage: second-vector-register call logging with a rewrite-side transport, and floating-point-stack call logging with a rewrite-side transport.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build the lane rewrite crate for the 32-bit target, generate the process-routine contract with coprime control pins and aliased buffer offsets, and run the checker for the full thousand trials plus the two small NaN probe contracts. The mutant export with the dropped state term must fail while the correct export passes. Separately, disassembling the built rewrite shows swapped multiply operands versus the Rust source.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The intrinsics fix failing with bit-identical outputs was the confusing step: identical wrong bytes across different code generation proved the bug was in logic the two versions shared, namely reliance on operand order, and direct inspection of the emitted loop then showed the swap. Two environment issues cost time: the freshly used rewrite library stays file-locked for minutes with no visible holder (renaming it aside unblocks the rebuild), and one full run lost its worker near the end and the driver reported zero failures while hiding six real ones, because its early return drops the failure records.</p>
+      </article>
 
       <article class="entry" id="production-b37">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
