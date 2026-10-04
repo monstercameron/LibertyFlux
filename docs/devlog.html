@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#tools-scripts">Tools: mission scripts and the script format</a></li>
       <li><a href="#tools-engine-crates">Tools: the future Rust engine's libraries</a></li>
       <li><a href="#tools-archives">Tools: archives and compression</a></li>
       <li><a href="#subsystem-vehicles">Subsystem survey: vehicles</a></li>
@@ -94,6 +95,45 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="tools-scripts">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Tools: mission scripts and the script format</h2>
+      <p><span class="evidence verified">Verified</span> The project now has a working script pipeline: an open-source tool built from source on this machine decrypts and disassembles mission scripts from our own copy of the game, and a small project script extracts all 940 of them from the game archives without needing any key material.</p>
+      <h3>What was asked</h3>
+      <p>Find, evaluate and where allowed install the tools for the game's script files: decompilers, compilers and disassemblers. Establish where the scripts live, and the script file header and encryption used on PC. Clone the public decompiled-scripts repository as reference and report its coverage and most-used native functions. Finish with at least one script from our copy disassembled.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Scripts ship inside two archives per episode (main and network), six archives in total, holding 940 scripts. The archives use a newer format than the classic one: only their directory is encrypted, while the script data itself sits raw, so scripts can be recovered by their headers alone.</p>
+      <p><span class="evidence verified">Verified</span> Every script on this PC build is encrypted but not compressed, with a versioned header carrying code, statics and globals counts. The decryption key is derived locally by the tool from the owner's own executable at run time; no key material was copied, printed or stored anywhere.</p>
+      <p><span class="evidence verified">Verified</span> The decompiled reference set holds 869 scripts and about 3.8 million lines across the three episodes, making 621,220 calls to 2,206 distinct native functions. The most called natives are injury and death checks, debug print helpers, the timer, and the wait call, which appears in 829 of 869 scripts. The reference predates our game build, so its counts differ by two scripts and its native names need re-mapping.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Tool</th><th role="columnheader">Licence</th><th role="columnheader">Result</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">rage-sc-tools</td><td role="cell" data-label="Licence">MIT</td><td role="cell" data-label="Result">built and tested here; disassembles our scripts</td></tr>
+      <tr role="row"><td role="cell">SC-CL</td><td role="cell" data-label="Licence">none stated</td><td role="cell" data-label="Result">not installable: needs a full compiler-source build</td></tr>
+      <tr role="row"><td role="cell">SCO ToolBox</td><td role="cell" data-label="Licence">BSD</td><td role="cell" data-label="Result">for the owner: old visual editor, no command line</td></tr>
+      <tr role="row"><td role="cell">Scocl</td><td role="cell" data-label="Licence">proprietary freeware</td><td role="cell" data-label="Result">for the owner: closed source, targets old patches</td></tr>
+      <tr role="row"><td role="cell">OpenIV script tools</td><td role="cell" data-label="Licence">proprietary</td><td role="cell" data-label="Result">for the owner: closed source with installer</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Standardise on the built tool for disassembly and any future script compilation; it is the only candidate that is open source, builds here, and is verified against our copy.</li>
+      <li>Keep the project carving script as the extraction path until the archive work delivers an extractor that preserves real script names.</li>
+      <li>Leave interactive and high-level viewing tools (archive browser, visual editors) for the owner to install.</li>
+      <li>Do not adopt the unlicensed compiler or the old-build binaries into the pipeline.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Clone the tool source, publish its command-line project with the installed .NET SDK, point its configuration at the owned game executable so it can derive the script key, then run its dump command with the GTA IV target from the folder holding the scripts. Carve scripts from the game archives by scanning for the script magic headers and validating their length fields. Count reference coverage by matching all-caps call names across the decompiled text files.</p>
+      <h3>What was confusing or went wrong</h3>
+      <ul>
+      <li>The archives did not start with the expected classic magic, which first looked like corruption; the directory turned out to be encrypted while the data is raw.</li>
+      <li>The tool rejected absolute file paths with a file-missing error; its inputs are patterns matched against the current folder, so it must run from the scripts folder.</li>
+      <li>The tool targets an older .NET version than the installed runtime, so every run needs a roll-forward setting.</li>
+      <li>Disassembly shows native call hashes, not names; a name table for this game build still has to be made.</li>
+      <li>Two scripts differ in count between our copy and the older reference set; the cause is still unknown.</li>
+      </ul>
+      </article>
 
       <article class="entry" id="tools-engine-crates">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

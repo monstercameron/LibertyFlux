@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Tools: the future Rust engine's libraries",
+    "title": "Devlog: Tools: mission scripts and the script format",
     "commit": null,
+    "summary": "Findings from the t-scripts lane.",
+    "changes": [
+      "New devlog entry: Tools: mission scripts and the script format.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Tools: the future Rust engine's libraries",
+    "commit": "00fc89c3d45b267f34f1202595cfaae853026e80",
     "summary": "Findings from the t-engine-crates lane.",
     "changes": [
       "New devlog entry: Tools: the future Rust engine's libraries.",
