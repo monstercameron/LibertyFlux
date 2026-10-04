@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#swarm-speed">How fast an agent swarm went through phase 0, and what that does and does not say about the rest</a></li>
       <li><a href="#tools-xplat-build">Tools: building for the three target platforms</a></li>
       <li><a href="#tools-reverse-tools">Tools: reverse engineering helpers</a></li>
       <li><a href="#p0-injection">How our code can get into the game</a></li>
@@ -100,6 +101,72 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="swarm-speed">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>How fast an agent swarm went through phase 0, and what that does and does not say about the rest</h2>
+      <p>In the first 33 minutes of phase 0, 37 agent lanes finished 545 lane-minutes of analysis and wrote about 104,000 words of findings: roughly sixteen times faster than one agent working through the same tasks in sequence. That speed is real, but it was measured on the kind of work that parallelises best. The rewrite itself has not been timed yet.</p>
+
+      <h3>What was asked</h3>
+      <p>The owner noticed the project was moving faster than expected and asked for an analysis, an estimate of when it could finish, and a note on what swarm working is like in practice.</p>
+
+      <h3>What was measured</h3>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Measure</th><th role="columnheader" scope="col">Value</th><th role="columnheader" scope="col">Note</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Lanes launched in the first 33 minutes</td><td role="cell" data-label="Value">56</td><td role="cell" data-label="Note">In four waves: executable analysis, subsystem surveys, tools, then Rust format readers and follow-ups.</td></tr>
+      <tr role="row"><td role="cell">Lanes finished in that time</td><td role="cell" data-label="Value">37, none failed</td><td role="cell" data-label="Note">Every lane delivered its report, its data files and a devlog entry.</td></tr>
+      <tr role="row"><td role="cell">Time per lane</td><td role="cell" data-label="Value">Median 13 minutes, shortest 7, longest 33</td><td role="cell" data-label="Note">Subsystem surveys were quickest at a median of 11 minutes. The longest lane overran because the tool it was told to use did not work and it had to build a replacement.</td></tr>
+      <tr role="row"><td role="cell">Parallel speed-up</td><td role="cell" data-label="Value">16 times</td><td role="cell" data-label="Note">545 lane-minutes of work in 33 minutes of wall-clock time, with between 16 and 28 lanes running at once.</td></tr>
+      <tr role="row"><td role="cell">Concurrency limit reached</td><td role="cell" data-label="Value">None yet</td><td role="cell" data-label="Note">Up to 38 lanes ran at once with no rate limiting from the model provider. Each lane used about 180 MB of memory; the laptop had 9 GB free at the peak.</td></tr>
+      <tr role="row"><td role="cell">Mistakes caught by a second lane</td><td role="cell" data-label="Value">3 in the first hour</td><td role="cell" data-label="Note">The encrypted code range the coordinator missed, an emulator that crashes on this machine, and a disagreement about the relocation table that is still being settled.</td></tr>
+      </tbody>
+      </table>
+
+      <h3>Why it was fast</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> The tasks were independent. Each lane read the same file and answered a different question, so no lane waited for another.</li>
+      <li><span class="evidence verified">Verified</span> Every lane got the same written contract: where it may write, what it must deliver, how to label evidence, and a progress log to keep. The coordinator did not have to explain anything twice.</li>
+      <li><span class="evidence verified">Verified</span> Publishing was automated behind a check. A script refuses any devlog fragment containing addresses, local paths, byte dumps or code, so the coordinator could integrate fifteen entries at a time without reading each line first.</li>
+      <li><span class="evidence verified">Verified</span> Overlap between lanes was useful, not wasteful. Lanes that measured the same thing a different way are what caught the three mistakes above.</li>
+      </ul>
+
+      <h3>What slowed it down or went wrong</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> The coordinator is the bottleneck. Lanes finish faster than one coordinator can read their reports properly. In the first hour most lane reports were read only as fifteen-line summaries.</li>
+      <li><span class="evidence verified">Verified</span> Lanes cannot be corrected once they are running. When the encrypted code range was discovered, sixteen lanes had already started without knowing about it, and their numbers have to be checked afterwards.</li>
+      <li><span class="evidence verified">Verified</span> Pushing every commit separately broke the project site for several minutes. See the entry on site build collisions.</li>
+      <li><span class="evidence verified">Verified</span> Lanes disagree. Two independent function counts differ by about fourteen thousand, and two lanes describe the same relocation table as clean and as mostly garbage. A swarm produces contradictions at the same speed as findings, and each one costs a further lane to settle.</li>
+      <li><span class="evidence">Inferred</span> Quality varies with how much of a lane's evidence comes from running code against the real file. Lanes that measured were reliable; the one lane that worked mostly from forum posts was corrected within hours.</li>
+      </ul>
+
+      <h3>The estimate, and how much to trust each part</h3>
+      <p>These are estimates made on the first evening, before any function has been rewritten through the full pipeline. The pilot in phase 2 replaces them with measurements.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Phase</th><th role="columnheader" scope="col">Estimate</th><th role="columnheader" scope="col">Basis and main risk</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">0. Measure</td><td role="cell" data-label="Estimate">Finished within a day</td><td role="cell" data-label="Basis and main risk">Measured: most of it took an hour. One megabyte of code is encrypted on disk and can only be read once the owner has started the game.</td></tr>
+      <tr role="row"><td role="cell">1. Harness</td><td role="cell" data-label="Estimate">2 to 4 days</td><td role="cell" data-label="Basis and main risk">The side-by-side runner is proven on simple functions. It still needs stubs for outgoing calls, since 70% of functions call other functions. This work is mostly serial, and everything after it depends on it being right.</td></tr>
+      <tr role="row"><td role="cell">2. Pilot</td><td role="cell" data-label="Estimate">1 to 2 days</td><td role="cell" data-label="Basis and main risk">Measures functions per lane per hour and the false-accept rate. Every estimate below is a guess until this exists.</td></tr>
+      <tr role="row"><td role="cell">3. Rewrite</td><td role="cell" data-label="Estimate">2 to 5 weeks</td><td role="cell" data-label="Basis and main risk">Assumes 30 lanes, each completing 4 to 10 small functions an hour around the clock. 82% of functions are under 256 bytes and about 13,000 are duplicates of one another, which favours the low end. The hard tail (about 1,700 functions over a kilobyte, about 900 with non-standard calling conventions) and the provider's usage limits favour the high end.</td></tr>
+      <tr role="row"><td role="cell">4. Standalone</td><td role="cell" data-label="Estimate">2 to 4 weeks more</td><td role="cell" data-label="Basis and main risk">Integration debugging is serial and does not speed up with more lanes. The Xbox 360 recompilation projects spent months here.</td></tr>
+      <tr role="row"><td role="cell">5. 64-bit and platform layer</td><td role="cell" data-label="Estimate">3 to 5 weeks more</td><td role="cell" data-label="Basis and main risk">No comparable project to measure against.</td></tr>
+      <tr role="row"><td role="cell">6. Renderer and macOS</td><td role="cell" data-label="Estimate">6 to 12 weeks more</td><td role="cell" data-label="Basis and main risk">The longest phase in every comparable project. Shader translation already works, which helps.</td></tr>
+      </tbody>
+      </table>
+      <p>Added up: a rewritten game that runs on its own with the original renderer in roughly 6 to 11 weeks, and a 64-bit build with a new renderer on three platforms in roughly 4 to 6 months. The first figure rests on one comparable project, the agent-driven Modern Warfare 2 decompilation, which took about ten weeks to become playable with fewer agents, fewer functions and the benefit of symbols.</p>
+
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Keep lanes independent and overlapping. Do not remove overlap to save tokens; it is the swarm's error correction.</li>
+      <li>Measure before estimating. The phase 2 pilot is short on purpose.</li>
+      <li>Move routine coordination, such as integrating finished lanes and posting status, onto cheaper models or scripts, and keep the coordinator for decisions and review.</li>
+      <li>Treat phase 0's speed as the ceiling for analysis work, not as a forecast for the rewrite.</li>
+      </ul>
+
+      <h3>How to reproduce it</h3>
+      <p>Each lane's log records when the coordinator launched it and when it exited. Subtract the two for each lane, add up the durations, and divide by the wall-clock time between the first launch and the last exit.</p>
+      </article>
 
       <article class="entry" id="tools-xplat-build">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Replace the emulator check with native side-by-side runs",
+    "title": "Devlog: How fast an agent swarm went through phase 0, and what that does and does not say about the rest",
     "commit": null,
+    "summary": "Findings from the coord-swarm-speed lane.",
+    "changes": [
+      "New devlog entry: How fast an agent swarm went through phase 0, and what that does and does not say about the rest.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Replace the emulator check with native side-by-side runs",
+    "commit": "8b27d12a07cd0ded04842e6eeefa479717b90396",
     "summary": "The planned CPU emulator does not work on this machine; running the code natively does.",
     "changes": [
       "The plan, README and site now describe the check as a side-by-side run of the original function and the Rust rewrite in a small 32-bit test process.",
