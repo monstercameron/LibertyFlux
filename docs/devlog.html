@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pages-build-collisions">GitHub Pages fails builds when pushes arrive seconds apart</a></li>
       <li><a href="#tools-models-textures">Tools: models, textures and collision</a></li>
       <li><a href="#tools-audio-video">Tools: audio and video</a></li>
       <li><a href="#subsystem-world-pools">Subsystem survey: world, entities and object pools</a></li>
@@ -88,6 +89,29 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pages-build-collisions">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>GitHub Pages fails builds when pushes arrive seconds apart</h2>
+      <p>Pushing once per commit broke the project site for several minutes. Of 28 site builds in the first hour of phase 0, 23 failed, each with a duration of zero seconds. The owner noticed before the coordinator did.</p>
+      <h3>What was asked</h3>
+      <p>The owner reported that the published site did not seem to be working. The pages returned normally when checked a few minutes later, so what had happened?</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> The coordinator had just started integrating lane results one commit at a time, pushing after each. Twelve commits went up within about a minute.</li>
+      <li><span class="evidence verified">Verified</span> The build history shows each push starting its own site build, and every build except the last of a burst ending immediately with "Page build failed". Only the final push of each burst produced a working site.</li>
+      <li><span class="evidence">Inferred</span> A build that is still running is cancelled or rejected when a newer push arrives, and it is reported as a failure, not as superseded. While a burst is in progress the site can serve an old version or fail to load.</li>
+      <li><span class="evidence">Inferred</span> Each failed build probably also sends the repository owner a notification.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Commits stay one change each, but a batch of commits is pushed once, after the last one. The agent rules and the commit tooling now do this.</li>
+      <li>The status tick makes at most two pushes: one for the batch of integrated lane results and one for the progress files.</li>
+      <li>After a batch, check that the newest build reports "built" before telling anyone the site is updated.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>List the repository's Pages builds through the GitHub API and compare their creation times, statuses and durations with the times of the pushes.</p>
+      </article>
 
       <article class="entry" id="tools-models-textures">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Push once per batch of commits",
+    "title": "Devlog: GitHub Pages fails builds when pushes arrive seconds apart",
     "commit": null,
+    "summary": "Findings from the coord-pages-builds lane.",
+    "changes": [
+      "New devlog entry: GitHub Pages fails builds when pushes arrive seconds apart.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Push once per batch of commits",
+    "commit": "455dceb75b4cf8d0904481e0093af67a149c54a2",
     "summary": "Pushing once per commit made most site builds fail.",
     "changes": [
       "AGENTS.md rule 2: when several commits are made in a row, push once after the last one. GitHub Pages fails a build triggered a few seconds after another."
