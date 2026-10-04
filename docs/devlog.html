@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s07">A faithful rewrite can fail the cheat check</a></li>
       <li><a href="#production-n29">Native handlers that stash a flag in their own doorstep</a></li>
       <li><a href="#production-n16">Twenty native handlers verified, and three traps for the next lanes</a></li>
       <li><a href="#production-n20">Production batch n20: twenty-five native handlers, one compiler surprise</a></li>
@@ -214,6 +215,36 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s07">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A faithful rewrite can fail the cheat check</h2>
+      <p>Twenty small leaderboard routines were rewritten and all twenty passed a thousand differential trials each, but the runs also showed that the checker can wrongly accuse a correct rewrite of cheating: when both sides perform the same wild pointer read and the address lands in the original program's own code pages, the original reads them fine while the rewrite faults, because the checker revokes those pages while the rewrite runs, and the fault is reported as cheating.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small game routines that share one helper-call pattern, and prove each rewrite behaves identically to the original with the differential checker.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All twenty rewrites passed one thousand trials each with zero mismatches, covering the helper-call protocol, the failure paths, value-returning paths through controlled memory, and fault parity on wild reads. A deliberately wrong rewrite was caught within three trials.</p>
+      <p><span class="evidence verified">Verified</span> One trial in a thousand failed a correct rewrite as cheating. Recomputing the trial input from the recorded seed showed the rewrite read exactly the address the original read; the address happened to sit inside the original code pages, which are readable when the original runs and revoked when the rewrite runs. The mismatch is a checker artifact, not a rewrite bug. Steering wild inputs away from the code range removed it with the comparison itself unchanged.</p>
+      <p><span class="evidence">Inferred</span> A second, rarer asymmetry (two trials in about four thousand, only in the fulldata phase) saw the original read an address outside the program image successfully while the rewrite faulted on the same address. Input replay again showed the rewrite read exactly the intended address; reading the worker source points at its per-phase snapshot buffers, which are allocated fresh for each side and freed in between, so an address mapped during the original phase can be gone during the rewrite phase.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Finding</th><th role="columnheader">Rate</th><th role="columnheader">Status</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><th role="columnheader">Rewrite behaviour mismatch</th><td role="cell" data-label="Rate">none in twenty thousand trials</td><td role="cell" data-label="Status">all verified</td></tr>
+      <tr role="row"><th role="columnheader">False cheat verdict on code-page reads</th><td role="cell" data-label="Rate">about one in a thousand wild trials</td><td role="cell" data-label="Status">worked around in the lane driver</td></tr>
+      <tr role="row"><th role="columnheader">Read asymmetry outside code pages</th><td role="cell" data-label="Rate">two in about four thousand fulldata trials</td><td role="cell" data-label="Status">mechanism identified, worker fix proposed</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Wild-read inputs should avoid the original code range until the worker changes; the comparison on all other trials stays strict.</li>
+      <li>Recommended worker fixes: only treat faults at the rewrite's own instruction address inside original code as cheating, or treat a fault at the same address on both sides as agreement; and reuse snapshot buffers across both phases instead of allocating them per phase.</li>
+      <li>Recommended driver fix: a lost worker should restart the batch from the next contract instead of abandoning the run, since the watchdog can fire on slow trials under load.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run any wild-reading rewrite whose input address can land in the original code pages: the original side reports success while the rewrite side reports a fault inside the code range, flagged as cheating. Recomputing the trial input from the contract seed confirms both sides addressed the same location.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first false cheat looked like a real bug until the fault address was matched against the recomputed input. A later batch run died partway when a worker was lost under load; the verdict it left behind records zero failures with an error flag, because the error path drops the counters, so the per-check totals are the only reliable record of those trials.</p>
+      </article>
 
       <article class="entry" id="production-n29">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
