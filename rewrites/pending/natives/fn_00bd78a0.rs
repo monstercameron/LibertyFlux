@@ -1,0 +1,13 @@
+// original: 0x00bd78a0 DOES_VEHICLE_EXIST_WITH_NETWORK_ID
+/// Script native `DOES_VEHICLE_EXIST_WITH_NETWORK_ID` (hash 0x69C033D8).
+///
+/// Forwards one script argument (a network id) to the engine and stores the low byte of its answer (zero-extended) into the return slot.
+export!(cdecl, rw_00bd78a0(ctx: *const u8) -> u32 {
+    unsafe {
+        let args = (*(ctx.add(8) as *const u32)) as *const u32;
+        let answer = callee_cdecl!(1, u32, *args);
+        let slot = *(ctx as *const u32) as *mut u32;
+        *slot = answer & 0xFF;
+        slot as u32
+    }
+});

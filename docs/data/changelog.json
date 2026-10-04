@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Devlog: A faithful rewrite can fail the cheat check",
+    "title": "Rewrites: 100 functions that pass the checker (1135 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "100 rewrites added under rewrites/pending: 100 script native handlers and 0 other functions.",
+      "Each one passed at least 1,000 side-by-side trials against the original under checker version 1; index.json records the address, name and trial count.",
+      "They are in the checker's harness form: calls to other engine functions go through numbered slots and globals are reached by their original address. They are not yet linked into the workspace crates, and each will be re-run under checker version 2 before it counts as verified.",
+      "24 rewrites were held back by the publication scan (comments that looked like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: A faithful rewrite can fail the cheat check",
+    "commit": "73a273be5ed40d708183dee4884bc1be51e42952",
     "summary": "Findings from the r-s07 lane.",
     "changes": [
       "New devlog entry: A faithful rewrite can fail the cheat check.",
