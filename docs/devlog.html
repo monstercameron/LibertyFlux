@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#structures-render">Class layouts: render phases, draw commands and other rendering classes</a></li>
       <li><a href="#structures-events">Class layouts: event classes (CEvent*)</a></li>
       <li><a href="#structures-audio">Class layouts: audio classes</a></li>
       <li><a href="#pilot-09">Pilot lane 09: five functions rewritten and timed</a></li>
@@ -158,6 +159,43 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="structures-render">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Class layouts: render phases, draw commands and other rendering classes</h2>
+      <p><span class="evidence verified">Verified</span> Draw commands turned out to be small self-describing records with a shared six-slot interface, while the core graphics resource classes sit almost entirely in the encrypted part of the binary and yielded no layouts. Of 174 classes, 130 got a size and 1,653 fields were recovered in total.</p>
+      <h3>What was asked</h3>
+      <p>Recover the object layouts and virtual interfaces of the render family: draw commands, render phases, particle, drawable, sky and core graphics classes. For each class: which virtual slots it overrides or inherits, what its constructor and destructor initialize, its object size and how that size was found, its fields with confidence levels, and which other classes it relates to. Then describe the family as a whole and recommend a rewrite order.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Every draw command shares one base layout: a virtual table pointer plus a four-byte sequence number, eight bytes in total. Each command constructor stamps the base table, mixes a global counter into the sequence field, stamps its own table, then initializes its parameters. All 49 command tables have exactly six slots.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Slot</th><th role="columnheader">Meaning</th><th role="columnheader">Evidence</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">0</td><td role="cell" data-label="Meaning">deleting destructor</td><td role="cell" data-label="Evidence">pattern matches in 43 of 49 classes</td></tr>
+      <tr role="row"><td role="cell">1</td><td role="cell" data-label="Meaning">per-command execute function</td><td role="cell" data-label="Evidence">real code in every measured subclass</td></tr>
+      <tr role="row"><td role="cell">2</td><td role="cell" data-label="Meaning">returns the object size</td><td role="cell" data-label="Evidence">constant matches measured size in all 31 readable cases</td></tr>
+      <tr role="row"><td role="cell">3 to 4</td><td role="cell" data-label="Meaning">unknown, never usefully overridden</td><td role="cell" data-label="Evidence">47 of 48 subclasses share the base version</td></tr>
+      <tr role="row"><td role="cell">5</td><td role="cell" data-label="Meaning">per-command id number</td><td role="cell" data-label="Evidence">unique small integer per class, one collision</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Command sizes run from 12 bytes for the smallest state commands up to about a thousand bytes for the phone camera and player commands. Fourteen sizes carry high confidence and 27 medium confidence; the rest are lower bounds or unknown.</p>
+      <p><span class="evidence verified">Verified</span> The render phase base class is large, about 2,300 bytes, with 15 virtual slots. One slot is overridden by all 24 phases and looks like the main per-phase render function. Notably, slot zero is not a deleting destructor: it touches no object memory at all, so phases are probably never destroyed through the base interface.</p>
+      <p><span class="evidence verified">Verified</span> The particle and sky classes were mostly readable, with sensible sizes from 12 bytes to about 1,700 bytes. Two particle classes each embed three keyframe objects, confirmed by table stores at three member offsets. The sky and procedural texture classes were the most readable group at ninety-one percent.</p>
+      <p><span class="evidence verified">Verified</span> The core graphics resource layer gave up nothing: ninety-eight percent of its virtual functions and ninety-four percent of the shader and model layer sit in the encrypted range, and no constructor for them appears in readable code. Override tables were still recorded since they need no code. No public headers were found for any class in this family.</p>
+      <p><span class="evidence">Inferred</span> The per-command id numbers look like draw-list type tags, and the per-phase main slot looks like the render entry point, but both names are guesses from position and override patterns, not from symbols.</p>
+      <p><span class="evidence">Unknown</span> Two measurements conflict and need manual review: the keyframe class measures 52 bytes from its own constructors but sits at a 40-byte stride where embedded, and two small shader variable subclasses measure smaller than their base. Also unknown: the roles of the never-overridden command slots, most phase slots, all core resource class internals, and pool element sizes.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Recommended rewrite order: draw commands and sky and procedural classes first (highest confidence), then particles once the keyframe size conflict is resolved, then render phases (interface mapped, some slots encrypted), and the core resource layer last since it is blocked on the encrypted range and must not be guessed. Sizes carry explicit confidence levels so later workers know what is solid and what is a lower bound.</p>
+      <h3>How to reproduce it</h3>
+      <p>Search the readable code for each class table address to find constructors, disassemble the hits while tracking the object pointer through register copies, merge field accesses across each class's own methods, and cross-check sizes against allocation constants and the size slot. The lane data file holds one record per class with slots, constructors, fields, sizes and relationships.</p>
+      <h3>What was confusing or went wrong</h3>
+      <ul>
+      <li>A wrong attribute name in the disassembler bindings silently emptied every result until a standalone test exposed it; errors hidden inside broad exception handlers cost the most time.</li>
+      <li>Two register-tracking bugs misattributed foreign memory accesses to the object and inflated some sizes badly; both were fixed and all numbers re-derived.</li>
+      <li>Constructors that build embedded member objects were first mistaken for constructors of the member class; only table stores at offset zero now count as constructor evidence.</li>
+      <li>A truncated shell pipe killed a script halfway through writing its output file; the file was rebuilt from the intermediate data and re-verified.</li>
+      </ul>
+      </article>
 
       <article class="entry" id="structures-events">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
