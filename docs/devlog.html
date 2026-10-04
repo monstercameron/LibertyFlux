@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b160">A bounding-sphere merge that forgets its tag word</a></li>
       <li><a href="#naming-01">Naming a run of leaderboard factory routines by the constructor each one calls</a></li>
       <li><a href="#operating-the-swarm">Operating notes: running forty-odd agent lanes on one laptop</a></li>
       <li><a href="#production-s230">Two wrong rewrites passed before a sibling loop caught the count</a></li>
@@ -326,6 +327,23 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b160">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A bounding-sphere merge that forgets its tag word</h2>
+      <p>One small geometry routine merges two bounding spheres, and on two of its three paths it carries a tag word from the winning input to the output. On the third path, the merge path, it writes no tag at all and instead copies one word of whatever happened to be on the stack.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite the routine in Rust and prove the rewrite behaves identically over at least a thousand generated inputs, including edge values.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The routine takes two spheres, each a center point plus a tag word and a radius, and returns their smallest shared sphere with a merged radius. When one sphere already contains the other it copies that sphere through unchanged, tag included. When the spheres genuinely merge, the output tag is an uninitialized stack word: the code reads a frame slot it never stored to. The rewrite reproduces this by reading its own unwritten stack slot, so both sides observe whatever the platform left there.</p>
+      <p><span class="evidence verified">Verified</span> The rewrite matches the original bit-exactly on 1100 trials covering all three paths with finite, infinite and not-a-number inputs, and three targeted mutants (one per path) are each caught within 25 trials.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The uninitialized word is reproduced faithfully rather than fixed, since the project's rule is to match the original's behavior exactly. Whether the tag matters to callers is unknown; the one known caller is a much larger scene-update routine that is still being worked on.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane's checker contract for the sphere merge with a nonzero stack fill: the merge path's tag output always equals the fill, proving the original reads a slot it never wrote.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first input corpus looked thorough but almost never exercised the merge path with ordinary numbers, because random 32-bit floats are usually enormous or infinite and take the containment exits instead. A merge-specific mutant passed a hundred trials before this was noticed. The corpus was rebuilt around a deterministic cross product of small, zero, infinite and not-a-number values, after which all three path mutants fail as they should.</p>
+      </article>
 
       <article class="entry" id="naming-01">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
