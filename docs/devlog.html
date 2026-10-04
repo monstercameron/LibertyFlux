@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#rerun-03">Re-running early rewrites under checker version two</a></li>
       <li><a href="#production-s56">Same-order Rust is not bit-exact for floats: LLVM swaps operands and changes NaN propagation</a></li>
       <li><a href="#production-n77">A wrong calling convention, and two checker weaknesses it exposed</a></li>
       <li><a href="#production-n74">A relocation lookup bug the checker caught, and 24 verified native handlers</a></li>
@@ -228,6 +229,36 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="rerun-03">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Re-running early rewrites under checker version two</h2>
+      <p><span class="evidence verified">Verified</span> All 198 small rewrites from nine production lanes pass under checker version two with no failures, each over one thousand trials. The re-run also found two crash bugs in the version two driver, both in reporting paths rather than in the checks themselves.</p>
+      <h3>What was asked</h3>
+      <p>Take every function that nine production lanes had verified with checker version one, port the rewrites to the single version two runtime and contract format, and re-run each for at least one thousand trials with the version two worker. A rewrite counts as verified for the project only when it passes version two.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The batch held 198 verified functions. All 198 pass under version two with zero failing trials and healthy original-side behaviour on every trial, so none of the version one defects had hidden a bad rewrite in this batch.</p>
+      <ul>
+      <li>The port was mostly mechanical: six lanes had used the runtime unchanged, and the other three needed only small normalisations (a trailing comma on zero-argument calls, documentation moved out of a macro invocation, plain functions converted to the shared export form).</li>
+      <li>Twenty-seven rewrites had reproduced leftover high bytes in a pushed true-or-false argument only because version one compared the whole word. Those now pass the bare flag value, and the contract skips that one call argument instead, so the rewrite states the real behaviour. (One further rewrite carries the same residue in a ninth call argument that neither checker version records, so it was left unchanged.) One side effect worth knowing: skipping drops the whole argument, including the flag bit itself, which is then asserted by reading the code rather than by the checker.</li>
+      <li>One function passes nine arguments to its engine call while the checker records eight. Version two keeps that cap, so the ninth argument stays uncompared exactly as under version one. This is disclosed in the lane report rather than hidden.</li>
+      </ul>
+      <p><span class="evidence verified">Verified</span> Two driver bugs were found and worked around without touching the checker:</p>
+      <ul>
+      <li>When a contract names a mutant export that the rewrite library does not contain, the driver writes the correct verdict and then crashes printing the mutant summary. Ported contracts therefore carry no mutant declarations; the honesty mutants stay in the original lane folders.</li>
+      <li>The setup-failure fallback path references a variable that does not exist on that path, which would crash instead of recovering. It never triggered in this batch and was left alone to keep the driver copy to a one-line difference.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>All 198 functions count as verified under version two. No rewrite or contract in this batch needs further work.</li>
+      <li>Ported contracts should keep the uniform file-stem name and no mutant declaration; both deviations caused avoidable re-runs here.</li>
+      <li>The checker should warn or refuse when a call declares more than eight compared arguments, instead of silently comparing the first eight.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build the lane crate for the 32-bit Windows target with panics set to abort, then run the version two driver copy against the ported contracts with one driver process per contract. Every verdict records one thousand trials, zero failures, and a full original-side success count.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first full run ended with 41 inconclusive contracts: 25 crashed on the mutant-print bug and 16 wrote their verdicts under pre-normalisation names. Both causes were contract-side issues, not rewrite failures, and all 41 passed on re-run after the port script was fixed. A newline-doubling bug in the port script was also caught by file review before the final build and fixed with no effect on the results.</p>
+      </article>
 
       <article class="entry" id="production-s56">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
