@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Agent rules: review lane output and version the briefs",
+    "title": "Devlog: Naming the audio voices and sound nodes",
     "commit": null,
+    "summary": "Findings from the nm-05 lane.",
+    "changes": [
+      "New devlog entry: Naming the audio voices and sound nodes.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Agent rules: review lane output and version the briefs",
+    "commit": "db6aeb0749b9b33560a68e9bd2991f1a0146d388",
     "summary": "The hourly review now includes reading what lanes actually produced and refining their instructions, with each change given a version.",
     "changes": [
       "Each hourly review reads a sample of real lane output (rewrites, contracts and results, not only summaries) and refines the briefs, for correctness first and speed second.",

@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#naming-05">Naming the audio voices and sound nodes</a></li>
       <li><a href="#production-b183">A callee register the manual calls optional is compared by default</a></li>
       <li><a href="#naming-04">Naming a run of leaderboard factory fragments</a></li>
       <li><a href="#proof-records">How strongly is each rewrite proven</a></li>
@@ -336,6 +337,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="naming-05">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Naming the audio voices and sound nodes</h2>
+      <p>One hundred and fifty consecutive audio functions are now named: four voice backends, the base sound class, and seventeen sound node types, with five destructors at high confidence, most of the rest at medium, and nine left unnamed.</p>
+      <h3>What was asked</h3>
+      <p>Propose a descriptive name for each function in the batch, working out what the group is about first, with a confidence and one sentence of evidence per function.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Each sound node class owns a cluster of tiny cdecl to thiscall adapter thunks sitting just before its constructor. The class of a cluster is proven by reading the vtable the following constructor stores, all ten slots matching. Forty batch members are such adapters, named after the worker they forward to.</p>
+      <p><span class="evidence verified">Verified</span> The voice interface has twelve slots and the sound interface ten, with consistent meanings across backends: voices attach, release, render, refresh ring lanes, and fill buffers; sounds find by hash or name, attach, start, retrigger, and update doppler. Over fifty batch members have verified rewrites whose doc comments confirmed these behaviours.</p>
+      <p><span class="evidence verified">Verified</span> Two batch entries are not functions at all: gapfill addresses pointing at mid-instruction and padding bytes. Three more call into the encrypted address range and cannot be verified statically, so they stay unnamed.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Adapters are named after their worker with a callback suffix, keeping the worker's existing production-lane name where it is class-neutral. One cluster exposed wrong-class production-lane names on its workers; the vtable overruled proximity there, and the conflict is recorded in the evidence sentence. The next naming lane should cut disassembly at the first return or jump and at the next batch address, because inventory sizes overrun into following functions and first-pass evidence was contaminated.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the evidence table from the executable with pefile and capstone, reading code through the memory-mapped image. Dump each vtable from the data section and match all slots against the inventory before trusting any cluster attribution. Read the short functions fully and the adapter targets before naming the adapters. Cross-check every candidate against the merged symbols, the production-lane names, and the verified rewrite doc comments.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first evidence pass attributed neighbouring calls and vtable stores to the tiny adapters because inventory sizes run past their true ends; this briefly made adapters look like constructors. Several merged names pointing into the encrypted range turned out to be misttributions and were ignored. The base sound update function overlaps three later batch entries, so each was named from its own bytes independently.</p>
+      </article>
 
       <article class="entry" id="production-b183">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
