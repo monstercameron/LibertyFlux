@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#structures-ui">Class layouts: user interface, front end, HUD, replay editor and web browser classes</a></li>
       <li><a href="#structures-tasks-b">Class layouts: AI task classes, second half (CTaskSimple* and other CTask*)</a></li>
       <li><a href="#structures-tasks-a">Class layouts: AI task classes, first half (CTaskComplex*)</a></li>
       <li><a href="#structures-physics">Class layouts: physics, collision, fragments and cloth</a></li>
@@ -146,6 +147,45 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="structures-ui">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Class layouts: user interface, front end, HUD, replay editor and web browser classes</h2>
+      <p>The interface family is now mapped: 78 classes, almost all of their virtual functions identified, and two surprises — every interface object carries a virtual function that returns a hash of its own class name, and the deleting destructor sits in the third slot instead of the first. About two in five virtual functions are trivial field getters and setters, so a large share of the rewrite is mechanical.</p>
+      <h3>What was asked</h3>
+      <p>Recover the object layouts and virtual interfaces of the user interface, front end, HUD, replay editor and web browser classes: for each class, its virtual function table with overridden versus inherited slots, its constructors and destructors, its object size, its fields with confidence ratings, and its relationships to other classes, plus a family-wide inheritance tree, shared interface description, and rewrite order.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All 78 classes were processed, covering 6,399 virtual function slots, of which 93 percent point at readable code and 7 percent into the encrypted range. 76 classes have at least one constructor or destructor in readable code. Two do not: one class has no virtual table at all, and one task-related class whose base lives in another lane's batch.</p>
+      <p><span class="evidence verified">Verified</span> The interface framework is one large single-inheritance tree. A layout root with 115 virtual functions sits at the top, a panel class adds 8 more, and around 45 widgets, menus and video editor screens hang below it, most adding nothing and differing only in which functions they override. The widest tables belong to text, layout and video clip classes with up to 149 slots. Separate small families cover the HTML browser nodes, the replay editor overlay widgets, and the play statistics classes.</p>
+      <p><span class="evidence verified">Verified</span> Slot zero of every interface table is a small stub that hashes the class's own name string; the stored name was read back and matches the owning class in 47 of 51 cases, with 4 classes inheriting another class's stub. Slot one is a shared boolean setter, and slot two is the scalar deleting destructor. No vector deleting destructor appears in any table in the batch.</p>
+      <p><span class="evidence verified">Verified</span> 42 percent of all slots are trivial accessors: 1,734 getters and 929 setters, including paired float getters that look like rectangle coordinates and dense boolean flag accessors. Only about 5 percent of slots are true unknowns. Roughly ten slots in the root table look like pure virtuals: the base entry is an encrypted stub and many subclasses override it with readable implementations, so the behaviour is recoverable from the overrides.</p>
+      <p><span class="evidence verified">Verified</span> Object sizes were recovered from allocation sites for 14 classes, including three cases with three agreeing callers each; the rest are lower bounds from the furthest field observed, with the weakest cases flagged as unknown. The panel base is about 480 bytes, the basic video clip about 768, and its montage subclass about 796. Constructor chains into base classes were confirmed throughout.</p>
+      <p><span class="evidence verified">Verified</span> The HTML node classes have single-entry virtual tables holding only the destructor, confirmed by reading the raw table memory, so their behaviour must live in non-virtual functions. The replay widget root is abstract with two pure virtuals. The statistics classes have five slots each. One upload class has no virtual table and needs string-based discovery instead.</p>
+      <h3>What was decided or recommended</h3>
+      <p><span class="evidence">Inferred</span> The recommended rewrite order starts with the tiny statistics and font classes, then the HTML nodes, then the replay widgets, then the shared interface root with its accessors and hot override slots, then the panel class, then the leaf widgets, and finally the wide text, layout and clip classes. Deferred to other lanes: the upload class, two task and network stragglers that landed in this batch, one suspicious size bound, and the slot-order puzzle below.</p>
+      <ul>
+      <li>Rewrite the roughly ten pure virtuals from their readable overrides, not from the encrypted base stubs.</li>
+      <li>Analyse each shared implementation once: thousands of slots collapse to dozens of unique functions.</li>
+      <li>Mine the captured constructor string references for real field names before writing headers.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>All work was done with a Python script using capstone on the readable code range only, driven by the RTTI class and virtual table inventories from earlier lanes. The script scans readable code for each table's address to find constructors and destructors, tracks the object pointer through each function to collect field accesses with widths and read/write direction, classifies each virtual function by shape, and votes object sizes from allocation call patterns. Per-class records with fields, slots and constructors are stored as structured data alongside the lane report.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Measure</th><th role="columnheader">Value</th><th role="columnheader">Meaning</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Classes processed</td><td role="cell" data-label="Value">78 of 78</td><td role="cell" data-label="Meaning">Whole batch covered</td></tr>
+      <tr role="row"><td role="cell">Virtual slots examined</td><td role="cell" data-label="Value">6,399</td><td role="cell" data-label="Meaning">Per-slot status recorded</td></tr>
+      <tr role="row"><td role="cell">Slots in readable code</td><td role="cell" data-label="Value">93 percent</td><td role="cell" data-label="Meaning">Family is mostly visible</td></tr>
+      <tr role="row"><td role="cell">Accessor slots</td><td role="cell" data-label="Value">42 percent</td><td role="cell" data-label="Meaning">Mechanical rewrite work</td></tr>
+      <tr role="row"><td role="cell">Field observations</td><td role="cell" data-label="Value">1,007</td><td role="cell" data-label="Meaning">About two thirds medium or high confidence</td></tr>
+      <tr role="row"><td role="cell">Allocation-site sizes</td><td role="cell" data-label="Value">14 classes</td><td role="cell" data-label="Meaning">Rest are lower bounds</td></tr>
+      </tbody>
+      </table>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence">Unknown</span> The virtual table head contradicts the usual compiler order: the deleting destructor is in the third slot, preceded by the class-name hash stub and a boolean setter. The table boundaries were verified against the runtime type records on both ends, so the order is real, but the cause is unknown. A later lane should find a virtual delete call site and read which slot index it actually calls.</p>
+      <p><span class="evidence verified">Verified</span> Two tool bugs were caught by hand-checking against raw reads: a capstone API guard that silently disabled all analysis on the first run, and an allocation-size matcher that picked the furthest rather than the nearest candidate, which was fixed after a hand-read caller showed the true size. Three size votes that contradicted base-class sizes or field reach were rejected rather than reported.</p>
+      <p><span class="evidence verified">Verified</span> One benchmark class produced an implausibly large size bound from a single far field access, almost certainly a tracking artefact, and is flagged as unknown. No public headers exist for any class in this batch, so there was nothing to compare layouts against.</p>
+      </article>
 
       <article class="entry" id="structures-tasks-b">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
