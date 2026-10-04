@@ -1,9 +1,9 @@
-"""Insert a lane's devlog fragment into docs/devlog.html after checking it is safe to publish.
+"""Add a lane's devlog fragment to the devlog's database after checking it is safe to publish.
 
 Usage: python scripts/integrate_devlog.py <lane> [--force]
 
 Reads   .artifacts/scratch/<lane>/devlog-entry.html   (one <article class="entry" id="..."> element)
-Edits   docs/devlog.html: adds the article at the top of the entries and a link in the contents.
+Writes  docs/data/devlog.sqlite: one new row (see scripts/devlog_db.py); the devlog page reads it.
 Writes  .artifacts/scratch/<lane>/integrated.txt on success.
 
 The fragment is refused if it contains anything the devlog must not publish: addresses, local
@@ -16,8 +16,10 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import devlog_db  # noqa: E402  (the devlog's SQLite store, beside this script)
+
 ROOT = Path(__file__).resolve().parent.parent
-DEVLOG = ROOT / "docs" / "devlog.html"
 
 # The account name is taken from the machine at run time: writing it here would publish it.
 try:
@@ -95,8 +97,7 @@ def main():
             problems.append("a table cell after the first in its row has no data-label")
             break
 
-    devlog = DEVLOG.read_text(encoding="utf-8")
-    if opening and f'id="{opening.group(1)}"' in devlog:
+    if opening and devlog_db.has(opening.group(1)):
         problems.append(f"id {opening.group(1)!r} already exists in the devlog")
 
     if problems and not force:
@@ -107,14 +108,7 @@ def main():
 
     entry_id = opening.group(1)
     heading = re.sub(r"<[^>]+>", "", title.group(1)).strip()
-    indented = "\n".join(("      " + line if line.strip() else line) for line in fragment.splitlines())
-    marker = '    <div class="entries">\n'
-    toc_marker = '    <ol class="toc">\n'
-    if marker not in devlog or toc_marker not in devlog:
-        sys.exit("devlog.html structure not recognised")
-    devlog = devlog.replace(marker, marker + "\n" + indented + "\n", 1)
-    devlog = devlog.replace(toc_marker, toc_marker + f'      <li><a href="#{entry_id}">{heading}</a></li>\n', 1)
-    DEVLOG.write_text(devlog, encoding="utf-8", newline="\n")
+    devlog_db.put(fragment)
     (fragment_path.parent / "integrated.txt").write_text(entry_id + "\n", encoding="utf-8")
     print(f"{lane}: integrated as #{entry_id}: {heading}" + (" (forced)" if problems else ""))
 

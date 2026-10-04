@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: entries move into a SQLite database, searched in the browser",
+    "commit": null,
+    "summary": "The devlog page had grown to 1.5 MB of HTML with 315 entries. The entries are now rows in a database that the page downloads once and queries locally, as a blog with search.",
+    "changes": [
+      "docs/data/devlog.sqlite holds every devlog entry: id, date, title, opening summary, body, plain text for searching, topics and counts of the evidence labels. All 315 existing entries were migrated; the ids are unchanged, so every existing link to an entry still opens it.",
+      "The devlog page is now a small shell. It opens the database in the browser and lists the posts newest first, 30 at a time, with a topic filter. Selecting a post shows it on its own with links to the newer and older ones. Nothing is queried on a server.",
+      "Two ways to search. Exact: one SQL query in which every word must appear and words in quotes must appear together. Close: ranks posts by how well each word matches the words a post uses, allowing near spellings and word beginnings, and says what each word was matched as. The search and the topic are kept in the address, so a search can be shared as a link.",
+      "Entries are added with scripts/devlog_db.py, and lane fragments still go through the same publication checks before they are written. The status script counts entries from the database. The agent rules describe the new way to add and change an entry.",
+      "The database reader is the sql.js library, loaded from a public content network with an integrity hash so that a changed file is refused. Topics are derived from each entry's id and title; no lane has to tag anything."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 104 more functions pass the checker (7650 in total)",
     "commit": "676ed25c49f576072bfb324b4c8cb56ec3883b72",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

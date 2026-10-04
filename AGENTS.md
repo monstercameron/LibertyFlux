@@ -244,8 +244,12 @@ Devlog (`docs/devlog.html`):
   decided, and how to reproduce it. That covers header facts, function and class counts, library
   identification, the start-up stub, engine subsystems, file formats and anything measured while
   running the game. If a finding corrects an earlier entry, say so in both.
-- Add it as a new `<article class="entry">` at the top of the entries, with a date, and link it
-  from the contents list. Say what was asked, what was found and what was decided, and link the source.
+- The entries are rows in a SQLite database, `docs/data/devlog.sqlite`, which the devlog page
+  downloads and searches in the browser. Write the entry as one `<article class="entry" id="...">`
+  fragment with a date and a title and add it with `python scripts/devlog_db.py put <file>` (lane
+  fragments go through `scripts/integrate_devlog.py`, which runs the publication checks first). To
+  change an entry, `get` it, edit the fragment and `put` it back. Never edit the database by hand.
+  Say what was asked, what was found and what was decided, and link the source.
 - Label findings Verified, Inferred or Unknown. Record failures as plainly as successes.
 - Read the devlog before starting work in an area it covers.
 

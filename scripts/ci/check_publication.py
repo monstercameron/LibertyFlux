@@ -48,8 +48,11 @@ for name in filter(None, files):
         continue
     if not path.is_file():
         continue
-    if path.stat().st_size > MAX_BYTES:
-        findings.append(f"{name}: larger than 5 MB")
+    # The devlog's database holds every entry and grows with the project; its content is checked entry by
+    # entry when it is written (scripts/integrate_devlog.py), so it gets a larger allowance.
+    limit = 40 * 1024 * 1024 if name == "docs/data/devlog.sqlite" else MAX_BYTES
+    if path.stat().st_size > limit:
+        findings.append(f"{name}: larger than {limit // (1024 * 1024)} MB")
     if name == "scripts/ci/check_publication.py" or not name.lower().endswith(TEXT_SUFFIXES):
         continue
     text = path.read_text(encoding="utf-8", errors="replace")

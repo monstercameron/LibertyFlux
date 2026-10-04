@@ -1,0 +1,44 @@
+/* The devlog: a search box, a list of posts, and one post at a time. Colours and type come from site.css. */
+
+.finder { max-width: var(--wide); margin: 0 0 20px; display: grid; gap: 12px; }
+.finder[hidden], .posts[hidden], .entries[hidden], .more button[hidden] { display: none; }
+.finder-label { font-weight: 700; }
+.finder-row { display: flex; gap: 8px; }
+.finder-row input {
+  flex: 1 1 auto; min-width: 0; font: 1.0625rem var(--sans); color: var(--ink); background: var(--paper-raised);
+  border: 1px solid var(--ink-faint); border-radius: 4px; padding: 10px 12px;
+}
+.finder-row input::placeholder { color: var(--ink-faint); }
+.finder button, .more button, .reader-nav a, .reader-nav button {
+  font: inherit; color: var(--ink); background: var(--paper-raised); border: 1px solid var(--rule); border-radius: 4px;
+  padding: 8px 14px; cursor: pointer; text-decoration: none;
+}
+.finder-mode { border: 0; margin: 0; padding: 0; display: grid; gap: 4px; color: var(--ink-soft); font-size: 0.9375rem; }
+.finder-mode legend { padding: 0; margin-bottom: 4px; color: var(--ink-faint); font-size: 0.875rem; }
+.finder-mode label { display: flex; gap: 8px; align-items: baseline; cursor: pointer; }
+.finder-topics { display: flex; flex-wrap: wrap; gap: 6px; }
+.finder-topics button { padding: 4px 11px; border-radius: 999px; font-size: 0.875rem; color: var(--ink-soft); }
+.finder-topics button[aria-pressed="true"] { background: var(--asphalt); color: var(--on-asphalt); border-color: var(--asphalt); }
+.finder-topics .n { font-family: var(--mono); font-size: 0.8125rem; opacity: 0.8; margin-left: 4px; }
+.finder input:focus-visible, .finder button:focus-visible, .more button:focus-visible, .posts a:focus-visible,
+.reader-nav a:focus-visible, .reader-nav button:focus-visible { outline: 3px solid var(--sodium); outline-offset: 2px; }
+
+.devlog-status { max-width: var(--measure); color: var(--ink-soft); margin: 0 0 14px; }
+.posts { list-style: none; margin: 0; padding: 0; max-width: var(--wide); }
+.posts li { padding: 16px 0; border-top: 1px solid var(--rule); }
+.posts li:last-child { border-bottom: 1px solid var(--rule); }
+.posts .when { font: 0.875rem var(--mono); color: var(--ink-faint); }
+.posts .day { font-weight: 700; color: var(--ink-soft); padding: 22px 0 8px; border-top: 0; }
+.posts h2 { font-size: 1.1875rem; margin: 2px 0 6px; }
+.posts h2 a { color: var(--ink); text-decoration-color: var(--rule); text-underline-offset: 3px; }
+.posts h2 a:hover { text-decoration-color: currentColor; }
+.posts p { margin: 0; max-width: var(--measure); color: var(--ink-soft); }
+.posts .why { margin-top: 6px; font-size: 0.875rem; color: var(--ink-faint); }
+.posts .topics { margin-top: 6px; font-size: 0.8125rem; color: var(--ink-faint); }
+mark { background: color-mix(in srgb, var(--sodium) 38%, transparent); color: inherit; border-radius: 2px; padding: 0 1px; }
+.more { margin: 18px 0 0; }
+
+.reader-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 6px; max-width: var(--wide); }
+.reader-nav .spacer { flex: 1 1 auto; }
+.entries .entry:first-of-type { border-top: 0; padding-top: 14px; }
+.entry .topics { color: var(--ink-faint); font-size: 0.875rem; }

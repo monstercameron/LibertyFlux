@@ -50,7 +50,7 @@ def main():
                 f"New devlog entry: {heading}.",
                 "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code.",
             ],
-            "files": ["docs/devlog.html"],
+            "files": ["docs/data/devlog.sqlite"],
         }
         path = COORD / f"entry-lane-{lane}.json"
         path.write_text(json.dumps(entry, indent=2), encoding="utf-8")

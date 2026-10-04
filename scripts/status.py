@@ -143,7 +143,12 @@ def write_progress(progress, counts):
     Only the activity block and the timestamps are written here. Measured numbers are set by the
     coordinator from lane results, never by this function.
     """
-    devlog = (ROOT / "docs" / "devlog.html").read_text(encoding="utf-8")
+    import sqlite3
+    database = ROOT / "docs" / "data" / "devlog.sqlite"
+    devlog_entries = 0
+    if database.exists():
+        with sqlite3.connect(database) as connection:
+            devlog_entries = connection.execute("SELECT COUNT(*) FROM posts").fetchone()[0]
     now = datetime.datetime.now()
     progress["updated"] = now.strftime("%Y-%m-%d")
     progress["updated_at"] = now.strftime("%Y-%m-%d %H:%M")
@@ -151,7 +156,7 @@ def write_progress(progress, counts):
         "lanes_running": counts.get("running", 0),
         "lanes_finished": counts.get("finished", 0),
         "lanes_incomplete": counts.get("exited-incomplete", 0) + counts.get("not-running", 0),
-        "devlog_entries": devlog.count('<article class="entry"'),
+        "devlog_entries": devlog_entries,
     }
     path = ROOT / "docs" / "data" / "progress.json"
     path.write_text(json.dumps(progress, indent=2) + "\n", encoding="utf-8", newline="\n")
