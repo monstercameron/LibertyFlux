@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Production lane: when the import lookup misses and the loop never ends",
+    "title": "Rewrites: 25 more functions pass the checker (10094 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "25 rewrites added under rewrites/verified: 0 script native handlers and 25 other functions.",
+      "The tree now holds 10094 rewrites, 10075 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "456 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Production lane: when the import lookup misses and the loop never ends",
+    "commit": "ce6d3cc82808be1f6d25fd232d2c14256d19d0c3",
     "summary": "Findings from the r-b312 lane.",
     "changes": [
       "New devlog entry: Production lane: when the import lookup misses and the loop never ends.",
