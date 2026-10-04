@@ -13,7 +13,7 @@
 lf_checker_rt::export!(stdcall, rw_00581750(index: u32) -> u32 {
     unsafe {
         const LEADERBOARD_ID: u32 = 0x194;
-        /// Service-buffer word holding the row-table pointer (byte +0x14).
+        // Service-buffer word holding the row-table pointer (byte +0x14).
         const ROWS_WORD: usize = 5;
         let mut lookup: [u32; 6] = [0; 6];
         let ok: u32 = lf_checker_rt::callee_fastcall!(1, u32, LEADERBOARD_ID, lookup.as_mut_ptr() as u32);

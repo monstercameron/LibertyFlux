@@ -13,7 +13,7 @@
 lf_checker_rt::export!(stdcall, rw_00582c90(needle: u32) -> u32 {
     unsafe {
         const LEADERBOARD_ID: u32 = 0x199;
-        /// Service-buffer words: entry count, value-array base.
+        // Service-buffer words: entry count, value-array base.
         const COUNT_WORD: usize = 3;
         const BASE_WORD: usize = 4;
         const NOT_FOUND: u32 = 0xFFFF_FFFF;

@@ -11,7 +11,12 @@
 /// stat, kinds 2 through 5 record another and, when the low byte of the
 /// original key is zero, a third; any other kind records nothing further.
 ///
-/// Original: cdecl, one stack word, no meaningful return value.
+/// The zero-low-byte test reads one word above the argument (caller stack left
+/// behind after the object's register saves are popped), so the rewrite takes
+/// it as an explicit second parameter read from the same slot.
+///
+/// Original: cdecl, one stack word plus the word above it, no meaningful
+/// return value.
 const ONE_BITS: u32 = 0x3f80_0000; // float 1.0
 const MAX_TABLE_KEY: u32 = 0x2c;
 const NO_REDIRECT: u32 = 0xffff_ffff;
@@ -75,7 +80,7 @@ fn stat_for_key(key: u32) -> Option<u32> {
     }
 }
 
-lf_checker_rt::export!(cdecl, rw_009F9930(action: u32) -> u32 {
+lf_checker_rt::export!(cdecl, rw_009F9930(action: u32, caller_word: u32) -> u32 {
     unsafe {
         let obj = lf_checker_rt::callee_cdecl!(LOOKUP_CALLEE, u32, action);
         let mut key = action;
@@ -95,7 +100,7 @@ lf_checker_rt::export!(cdecl, rw_009F9930(action: u32) -> u32 {
             lf_checker_rt::callee_cdecl!(STAT_ADD_CALLEE, u32, FOLLOW_KIND_ONE, ONE_BITS);
         } else if kind.wrapping_sub(2) <= 3 {
             lf_checker_rt::callee_cdecl!(STAT_ADD_CALLEE, u32, FOLLOW_KIND_FEW, ONE_BITS);
-            if action & 0xff == 0 {
+            if caller_word & 0xff == 0 {
                 lf_checker_rt::callee_cdecl!(STAT_ADD_CALLEE, u32, FOLLOW_ZERO_LOW_BYTE, ONE_BITS);
             }
         }

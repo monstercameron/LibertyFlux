@@ -4,9 +4,10 @@
 /// word, then forward it with a float word and an extra word to the shared
 /// dispatcher. Conditions: a4!=0 sets 0x10, a5!=0 sets 0x2, a6!=0 sets 0x1, a7!=0 sets 0x20.
 ///
-/// Forwards (TAG=0x53, flags, 0, retaddr, MODE=3, fbits, extra,
-/// flags, 0) as nine words; the fourth word re-pushes the caller's return
-/// address and is skipped by the proof. Returns the flags word.
+/// Forwards (TAG=0x53, a0, a1, a2, MODE=3, fbits, extra,
+/// flags, 0) as nine words: the tag, the first three incoming words
+/// unchanged, the mode, the float word, the extra word, the flags and
+/// a zero. Returns the flags word.
 ///
 /// Original: 0x00BC0520 (cdecl, 9 stack words).
 lf_checker_rt::export!(cdecl, rw_00bc0520(a0: u32, a1: u32, a2: u32, fbits: u32, a4: u32, a5: u32, a6: u32, a7: u32, extra: u32) -> u32 {
@@ -21,5 +22,5 @@ lf_checker_rt::export!(cdecl, rw_00bc0520(a0: u32, a1: u32, a2: u32, fbits: u32,
     if a5 != 0 { flags |= BIT_A5; }
     if a6 != 0 { flags |= BIT_A6; }
     if a7 != 0 { flags |= BIT_A7; }
-    lf_checker_rt::callee_cdecl!(1, u32, TAG, flags, 0, 0, MODE, fbits, extra, flags, 0)
+    lf_checker_rt::callee_cdecl!(1, u32, TAG, a0, a1, a2, MODE, fbits, extra, flags, 0)
 });

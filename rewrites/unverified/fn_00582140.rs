@@ -11,7 +11,7 @@
 /// through the object's vtable (intercepted via a planted stub).
 lf_checker_rt::export!(thiscall, rw_00582140(this: u32, out: u32, expected: u32) -> u32 {
     unsafe {
-        /// Vtable slot of the peer kind query, in bytes.
+        // Vtable slot of the peer kind query, in bytes.
         const KIND_SLOT: u32 = 4;
         const BOARD_TAG: u32 = 0xfd1034;
         let vtable = (this as *const u32).read_unaligned();

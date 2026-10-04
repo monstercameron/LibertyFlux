@@ -100,7 +100,7 @@ lf_checker_rt::export!(thiscall, rw_00d72b90(this: u32) -> u32 {
             &mut cell_a as *mut u32 as u32, 2, 0xc8
         );
         let _: u32 = lf_checker_rt::callee_cdecl!(NET_SELECT, u32, 0, 1);
-        let fetch_a = rd32(this.wrapping_add(FETCH_A_OFF));
+        let fetch_a = this.wrapping_add(FETCH_A_OFF);
         let _: u32 = lf_checker_rt::callee_cdecl!(
             NET_FETCH, u32,
             fetch_a, &mut cell_a as *mut u32 as u32
@@ -113,7 +113,7 @@ lf_checker_rt::export!(thiscall, rw_00d72b90(this: u32) -> u32 {
         );
         cell_b = rd32(q);
         let _: u32 = lf_checker_rt::callee_cdecl!(NET_SELECT, u32, 0, 1);
-        let fetch_b = rd32(this.wrapping_add(FETCH_B_OFF));
+        let fetch_b = this.wrapping_add(FETCH_B_OFF);
         let _: u32 = lf_checker_rt::callee_cdecl!(
             NET_FETCH, u32,
             fetch_b, &mut cell_b as *mut u32 as u32

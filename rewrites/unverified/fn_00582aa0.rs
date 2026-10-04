@@ -12,7 +12,7 @@
 lf_checker_rt::export!(stdcall, rw_00582aa0(needle: u32) -> u32 {
     unsafe {
         const LEADERBOARD_ID: u32 = 0x199;
-        /// Service-buffer words: entry count, value-array base, map array.
+        // Service-buffer words: entry count, value-array base, map array.
         const COUNT_WORD: usize = 3;
         const BASE_WORD: usize = 4;
         const MAP_WORD: usize = 5;

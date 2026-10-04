@@ -42,16 +42,20 @@ lf_checker_rt::export!(thiscall, rw_006866B0(this: u32, a0: u32, a1: u32) -> u32
         let inner = unsafe { rd32(this + INNER) };
         let e8 = unsafe { rd32(inner + TAG_OFF) };
         if a1 == 0 {
+            // The peer is `a0` here (reloaded from the stack, never null in
+            // any trial). Both null-path callees pop three stack words while
+            // the caller pushes one over an 8-byte scratch reservation: the
+            // second word is zeroed scratch, the third is the saved `this`.
             if e8 == 0 {
-                let _n: u32 = lf_checker_rt::callee_thiscall!(NULL_NE, u32, this, a1);
+                let _n: u32 = lf_checker_rt::callee_thiscall!(NULL_NE, u32, this, a0, 0u32, this);
             } else {
-                // Faults on the null dereference like the original; the
-                // arms below are unreachable but faithful.
-                let v = unsafe { rd32(a1.wrapping_add(TAG_OFF)) };
+                let v = unsafe { rd32(a0.wrapping_add(TAG_OFF)) };
                 if e8 == v {
-                    let _e: u32 = lf_checker_rt::callee_thiscall!(NULL_EQ, u32, this, a1);
+                    let _e: u32 =
+                        lf_checker_rt::callee_thiscall!(NULL_EQ, u32, this, a0, 0u32, this);
                 } else {
-                    let _n: u32 = lf_checker_rt::callee_thiscall!(NULL_NE, u32, this, a1);
+                    let _n: u32 =
+                        lf_checker_rt::callee_thiscall!(NULL_NE, u32, this, a0, 0u32, this);
                 }
             }
             return 0;

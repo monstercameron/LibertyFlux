@@ -28,7 +28,8 @@
 ///   that reads -1) added to the base; above 0x2F re-reads the id and stores
 ///   base plus the second global offset when it matches either middle global
 ///   id, base plus the third global offset when it matches the last global
-///   id, else nothing.
+///   id, else nothing (returning the re-read id, which the tail leaves in
+///   EAX).
 ///
 /// The returned value is whatever sits in EAX on the taken path (the stored
 /// pointer, the probe answer, or a predicate answer), matching the original.
@@ -173,6 +174,8 @@ lf_checker_rt::export!(thiscall, rw_00B0E410(this: u32) -> u32 {
                     wr32(this + OBJ_HANDLER, out);
                     return out;
                 }
+                // The tail re-reads the id into EAX, so its fallthrough
+                // returns the id, not the probe answer.
                 let id3 = rd16sx(this + OBJ_ID);
                 if id3 == glob(G_ID_MID_A) || id3 == glob(G_ID_MID_B) {
                     let out = base.wrapping_add(glob(G_OFF_HIGH));
@@ -183,7 +186,7 @@ lf_checker_rt::export!(thiscall, rw_00B0E410(this: u32) -> u32 {
                     wr32(this + OBJ_HANDLER, out);
                     out
                 } else {
-                    probe
+                    id3
                 }
             }
             _ => probe,

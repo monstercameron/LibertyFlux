@@ -14,7 +14,7 @@
 lf_checker_rt::export!(stdcall, rw_00581450(index: u32) -> u32 {
     unsafe {
         const LEADERBOARD_ID: u32 = 0x194;
-        /// Service-buffer words: entry count, value-array base, row table.
+        // Service-buffer words: entry count, value-array base, row table.
         const COUNT_WORD: usize = 1;
         const BASE_WORD: usize = 2;
         const ROWS_WORD: usize = 5;
