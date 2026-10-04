@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot-05">Pilot lane 05: five functions rewritten and timed</a></li>
       <li><a href="#pilot-03">Pilot lane 03: five functions rewritten and timed</a></li>
       <li><a href="#pilot-01">Pilot lane 01: five functions rewritten and timed</a></li>
       <li><a href="#merge-structures">Merging the class layouts into one set of Rust types</a></li>
@@ -178,6 +179,39 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot-05">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Pilot lane 05: five functions rewritten and timed</h2>
+      <p><span class="evidence verified">Verified</span> Four of five small game functions were rewritten in Rust and proven bit-identical to the originals over one thousand machine-checked trials each, all on the first attempt, in thirty-two minutes of wall time. The fifth was deferred with evidence: its lookup tables are addressed absolutely, so the relocated test harness cannot observe its main path. A planted one-word bug was caught by the comparison, which confirms the method is sensitive.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite pilot functions twenty-one to twenty-five in Rust, prove each rewrite behaves identically to the original with at least one thousand random plus edge-value trials, record honest per-function timings for the project schedule, and run one honesty test with a deliberately planted bug.</p>
+      <h3>What was found</h3>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Function</th><th role="columnheader">Size</th><th role="columnheader">Behaviour in words</th><th role="columnheader">Trials</th><th role="columnheader">Outcome</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Rank 21</td><td role="cell" data-label="Size">30 instructions</td><td role="cell" data-label="Behaviour in words">tags an object, links a template, copies twelve words skipping padding</td><td role="cell" data-label="Trials">1024</td><td role="cell" data-label="Outcome">verified</td></tr>
+      <tr role="row"><td role="cell">Rank 22</td><td role="cell" data-label="Size">3 instructions</td><td role="cell" data-label="Behaviour in words">returns a stored word shifted right by eight</td><td role="cell" data-label="Trials">1024</td><td role="cell" data-label="Outcome">verified</td></tr>
+      <tr role="row"><td role="cell">Rank 23</td><td role="cell" data-label="Size">9 instructions</td><td role="cell" data-label="Behaviour in words">branchless select of one value or zero on a condition word</td><td role="cell" data-label="Trials">1024</td><td role="cell" data-label="Outcome">verified</td></tr>
+      <tr role="row"><td role="cell">Rank 24</td><td role="cell" data-label="Size">8 instructions</td><td role="cell" data-label="Behaviour in words">stores a word and toggles one flag bit from another value</td><td role="cell" data-label="Trials">1024</td><td role="cell" data-label="Outcome">verified</td></tr>
+      <tr role="row"><td role="cell">Rank 25</td><td role="cell" data-label="Size">18 instructions</td><td role="cell" data-label="Behaviour in words">validated lookup in a pair of large tables</td><td role="cell" data-label="Trials">2048</td><td role="cell" data-label="Outcome">deferred with evidence</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The four verified rewrites agree with the originals on return values, the stack pointer, and every word written to memory, on all trials. All passed on the first attempt with no rewrite changes.</p>
+      <p><span class="evidence verified">Verified</span> The honesty test failed exactly the trials where the planted bug changes behaviour (991 of 1024) and passed exactly the rest, so the comparison has no false passes on this mutant.</p>
+      <p><span class="evidence verified">Verified</span> The deferred function reads its tables through absolute addresses that only hold at the game's normal load address. Under the relocated harness those reads land on unrelated harness memory: deterministic, but not the true tables, so the lookup-hit path cannot be proven this way. Its input boundaries and miss behaviour were still machine-verified over 2048 trials, and its logic was cross-checked against a second independent implementation over the real table bytes with zero disagreements.</p>
+      <p><span class="evidence verified">Verified</span> Total wall time was just over thirty-two minutes, about eight minutes per verified function. Roughly three quarters of that was machine comparison runs; writing all five rewrites plus the test tooling took about eight minutes combined.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Defer the table-lookup function with the evidence above rather than claim it; its hit path needs preferred-base execution or an explicit relocation rule in the checker.</li>
+      <li>Fix the pilot selection filter: one pilot function touches absolute memory through a computed address, which the no-global-data check missed. Flag large immediates loaded into address registers as well as direct absolute operands.</li>
+      <li>Keep the batch comparison pattern for the checker: one rewrite-driver process per thousand trials plus parallel single-shot original runs reached five to fourteen trials per second on this host.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build the lane's twin crate for 32-bit Windows with the offline Rust toolchain, then run its comparison script once per function. Each run feeds the same seeded edge-plus-random inputs to the rewrite batch driver and to the emulator-harness lane's native call helper in parallel workers, and compares return values, the stack pointer, and the full written-memory sets. The honesty test reruns the first function's inputs against a one-word mutant.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Mental address arithmetic wrongly predicted a crash, then a mapped alias, for the deferred function's table reads; probing the real behaviour settled it in minutes. The lesson held all lane: probe, do not derive. A typo in my own input generator (a supposedly negative edge value that was actually positive) crashed my output parser on the first attempt at the fifth function; the rewrite was correct in all six cases and the parser now reports guilty inputs instead of crashing. A shell-pipe smoke test failed on console text encoding while the real batch channel worked first try. None of these touched a rewrite; all five rewrite attempts passed unmodified.</p>
+      </article>
 
       <article class="entry" id="pilot-03">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
