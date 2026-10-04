@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#p0-injection">How our code can get into the game</a></li>
       <li><a href="#function-count-estimate">Counting the game functions without Ghidra</a></li>
       <li><a href="#subsystem-physics">Subsystem survey: physics and collision</a></li>
       <li><a href="#tools-scripts">Tools: mission scripts and the script format</a></li>
@@ -97,6 +98,43 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="p0-injection">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>How our code can get into the game</h2>
+      <p>Our replacement functions can ride into the game as a proxy system library placed next to the executable, the same way community plugins already load, and nothing in the game's own checks looks at such a library or at patched code. The one thing that needs care is the start-up wrapper: the entry code loads a helper library from the game folder that prepares hidden start-up data before the real game begins, so our loader must wait until that finishes before touching anything.</p>
+      <h3>What was asked</h3>
+      <p>Work out, by research and static analysis only and without launching the game, how a project-built 32-bit library can be loaded into the running game and replace individual functions: which community mechanism to reuse, which libraries the game loads early enough to proxy, whether any integrity check would notice, and how the loader itself should be designed.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The game statically imports three proxyable system libraries early enough to carry our loader, and none of them ships in the game folder, so a file placed next to the executable is picked up automatically. The community loader defaults to one of those names and recommends it in its readme; our loader should take a different one so both can coexist.</p>
+      <p><span class="evidence verified">Verified</span> Community plugins load inside library initialisation, before any game code runs. The community loader also has a deferred mode that waits for the game's first system call, but only other game titles use it; this game uses the default early path.</p>
+      <p><span class="evidence verified">Verified</span> The game's signature verification checks exactly one thing: the Rockstar Social Club library in the Program Files folder, confirmed as Take-Two signed. Save-game encryption uses the data-protection API and is unrelated. No code path was found that verifies the game executable itself, lists loaded modules for checking, or watches for patched bytes.</p>
+      <p><span class="evidence verified">Verified</span> The entry code resolves system functions by hand, loads a helper library from the game folder, calls into it in a retry loop, then invokes start-up callbacks that are all zeros in the file on disk (so the helper must fill them in at run time) before jumping to the real game code. The helper's imports show process and module inspection, memory reading, debugger checks, and the ability to end the process.</p>
+      <p><span class="evidence verified">Verified</span> The community fix project finds game code purely with named byte patterns (over a thousand collected, with per-version alternatives and no hardcoded addresses or version checks) and waits with watcher threads when code is not visible yet. Searched against our build, about half match exactly once and form named anchors; the rest belong to other game versions, plus a small set matching more than once that needs disambiguation.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Proxyable early imports</td><td role="cell" data-label="Value">Three system libraries</td><td role="cell" data-label="What it means">Our loader can enter before any game code runs</td></tr>
+      <tr role="row"><td role="cell">Files the signature check verifies</td><td role="cell" data-label="Value">One: the Social Club library</td><td role="cell" data-label="What it means">Our library and patched code are not covered by it</td></tr>
+      <tr role="row"><td role="cell">Named patterns collected</td><td role="cell" data-label="Value">Over twelve hundred</td><td role="cell" data-label="What it means">A large pool of candidate anchors</td></tr>
+      <tr role="row"><td role="cell">Patterns matching exactly once</td><td role="cell" data-label="Value">About six hundred</td><td role="cell" data-label="What it means">Usable anchors for the hook table</td></tr>
+      <tr role="row"><td role="cell">Helper library reaction to our code</td><td role="cell" data-label="Value">Not known statically</td><td role="cell" data-label="What it means">Top question for the first live run</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Build the loader as a project-owned proxy under the system library name the community loader does not use, with the small set of used functions forwarded to the real system copy; also support running as a community-loader plugin from the same codebase as a fallback.</li>
+      <li>Do almost nothing at load time; wait with an anchor-watching thread until game code is provably final, then install hooks, each behind an on/off switch driven by a start-up file and a local command channel, failing closed on any mismatch.</li>
+      <li>Use the pure-Rust detour library (permissive licence, native per-hook enable and disable) as the primary hook mechanism, small assembler adapters for class methods on the stable toolchain, direct slot writes for virtual tables, and mid-hooks only for observation.</li>
+      <li>Never touch the helper library's memory or threads, and assume it can see our module until a live run proves otherwise.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>List the executable's import table with a PE parser and confirm which system libraries it resolves at load time and which files exist beside it in the game folder. Disassemble the few hundred bytes at the entry point and note the hand-rolled library loading, the helper-library calls, and the manual start-up callback invocation. Map every cross-reference to the signature and crypto imports and disassemble around each call site to see which file path is built and checked. Collect the community fix project's pattern strings, match each against the code section with wildcard support, and count exact, multiple, and zero matches.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The start-up callbacks being all zeros in the file looked like missing data until the entry code's manual callback loop made clear they are filled in at run time. Two early readings of the entry code were wrong on first pass (how the helper name is encoded, and an address-range slip that briefly suggested odd export locations) and were corrected by re-parsing the bytes precisely rather than by hand. Web page fetches kept truncating, so both community projects were read as local copies in scratch instead, and only the pattern facts were kept. Most pattern variables in the community source share one generic name, so anchors are identified by file, line, and bytes rather than by a meaningful name.</p>
+      </article>
 
       <article class="entry" id="function-count-estimate">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
