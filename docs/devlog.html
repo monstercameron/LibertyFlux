@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#natives-09">Native handlers HAS_CAR_BEEN_DAMAGED_BY_WEAPON to IS_CHAR_IN_ANY_HELI: what they reveal</a></li>
       <li><a href="#format-script-sco">Rust reader: compiled scripts (SCO) and a disassembler</a></li>
       <li><a href="#structures-misc-a">Class layouts: remaining game classes, first half by name</a></li>
       <li><a href="#structures-core">Class layouts: core engine classes: files, resources, parsing, containers, system, script</a></li>
@@ -135,6 +136,44 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="natives-09">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Native handlers HAS_CAR_BEEN_DAMAGED_BY_WEAPON to IS_CHAR_IN_ANY_HELI: what they reveal</h2>
+      <p>All 139 readable handlers in this batch of 140 script natives were traced from handler to engine code, yielding 229 proposed engine function names and 62 proposed object fields. The headline results are the shared handle-to-pointer lookup used by two thirds of the batch, three entity pools told apart by usage, and a death-or-arrest check that always answers false.</p>
+      <h3>What was asked</h3>
+      <p>Analyse the batch of 140 natives from HAS_CAR_BEEN_DAMAGED_BY_WEAPON to IS_CHAR_IN_ANY_HELI: disassemble each handler, check the public native documentation and the decompiled mission scripts, describe what each handler does at engine level, and propose names for the engine functions it calls plus meanings for the object fields it touches.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Every handler receives one call context: the return slot address first, then the argument array. Most handlers just forward script arguments to one engine function; two area checks share a generic unpack-and-call adapter instead.</p>
+      <p><span class="evidence verified">Verified</span> Nearly half the engine functions resolve script handles through one shared pool lookup, called with the pool and the handle, returning an object pointer or nothing. The three pools used here separate cleanly by native kind: one serves only character natives, one only vehicle natives, one only object natives. Two handlers do the same lookup inline, which confirms the pool layout of entries, serial bytes and stride.</p>
+      <p><span class="evidence verified">Verified</span> Damage tracking is shared across all entity kinds: every entity carries a last-damager link and a damaging-weapon value, and one setter links victims to damagers while marking per-player damaged flags. Two player natives read exactly those flags, closing the loop.</p>
+      <p><span class="evidence verified">Verified</span> Several queries are one-shot: the photographed flags for characters and objects, the vehicle resprayed flag and the global resprayed event all clear themselves when read. The dead and injured queries return true for invalid handles, as documented.</p>
+      <p><span class="evidence verified">Verified</span> The death-or-arrest check always returns false: it runs its update work and then answers no unconditionally, so scripts call it for the side effect. It appears in hundreds of mission scripts.</p>
+      <p><span class="evidence verified">Verified</span> One heading check ignores the argument its handler passes and only compares a global value. One frontend text native is a bare two-instruction global reset that ignores the call context entirely.</p>
+      <p><span class="evidence verified">Verified</span> Four natives, including the region check and the motion-control reload check, funnel into one helper in the encrypted part of the executable, so their behaviour stays unknown. Both are publicly documented as always returning false. A few other natives (camera collision, on-screen test, network id checks, some task checks) also bottom out in encrypted code.</p>
+      <p><span class="evidence">Inferred</span> Fixed gameplay constants read out of the code include the pickup search radius, the tyre burst health, the door-open angle, the upright and upsidedown tilt limits, and two special weapon ids that match whole weapon categories instead of one weapon.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Finding</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Handlers analysed</td><td role="cell" data-label="Value">139 of 140</td><td role="cell" data-label="What it means">one handler sits in the encrypted range and was skipped</td></tr>
+      <tr role="row"><td role="cell">Proposed engine function names</td><td role="cell" data-label="Value">229</td><td role="cell" data-label="What it means">direct callees plus shared second-level functions</td></tr>
+      <tr role="row"><td role="cell">Proposed object fields</td><td role="cell" data-label="Value">62</td><td role="cell" data-label="What it means">across entity, ped, vehicle, object, player and weapon info classes</td></tr>
+      <tr role="row"><td role="cell">Pool lookups through the shared getter</td><td role="cell" data-label="Value">66 engine functions</td><td role="cell" data-label="What it means">one calling convention for all handle resolution in the batch</td></tr>
+      <tr role="row"><td role="cell">Public doc arg-count gaps filled</td><td role="cell" data-label="Value">7</td><td role="cell" data-label="What it means">six natives with missing counts plus one wrong count</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>The shared pool lookup and the three pool identities should be cross-checked against the other native batches; disagreement would mean a pool or variant split.</li>
+      <li>The natives that bottom out in encrypted code need a decrypted-memory read before they can be named with confidence.</li>
+      <li>The argument-count corrections should be fed back to the native database data.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble each handler from the batch list with capstone directly from the executable, follow each direct call to its engine function, and note the pool global loaded before each shared-lookup call. Compare observed argument reads against the public sanny database entry for each native, and check call counts in the decompiled mission script collection. All per-native records, proposed names and fields are stored as JSON alongside the lane report.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two handlers pass the raw call context plus a function pointer to a generic adapter, so the first disassembly pass attributed the wrong function to them; reading the adapter showed the real engine function hiding in a pushed argument. Argument counting also first tripped over the context dereference itself, which looks like an argument read; tracking which register holds the argument array fixed it. The death-or-arrest native looked like a stub until its two update calls were noticed, and two handlers turned out to skip the null check every other pool user performs, meaning an invalid handle would crash there.</p>
+      </article>
 
       <article class="entry" id="format-script-sco">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
