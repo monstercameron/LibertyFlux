@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Engine page: a visual guide to how the game's engine works",
+    "title": "Devlog: Rust reader: animation dictionaries and clips (WAD)",
     "commit": null,
+    "summary": "Findings from the fmt-animation lane.",
+    "changes": [
+      "New devlog entry: Rust reader: animation dictionaries and clips (WAD).",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Engine page: a visual guide to how the game's engine works",
+    "commit": "1200343b594544b7249f7341a07339e90c63c5a5",
     "summary": "A new page on the site that explains the engine with diagrams, built only from what the project has measured so far.",
     "changes": [
       "New page docs/engine.html with its own stylesheet and script, linked from every page's navigation.",

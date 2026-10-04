@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-animation">Rust reader: animation dictionaries and clips (WAD)</a></li>
       <li><a href="#pilot-10">Pilot lane 10: five functions rewritten and timed</a></li>
       <li><a href="#pilot-08">Pilot lane 08: five functions rewritten and timed</a></li>
       <li><a href="#format-particles">Rust reader: particle and visual effect definitions</a></li>
@@ -170,6 +171,35 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-animation">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: animation dictionaries and clips (WAD)</h2>
+      <p><span class="evidence verified">Verified</span> Every animation dictionary in the game now parses: a new Rust crate reads all 1,701 animation files, all 22,166 clips inside them, and over a million animation channels with zero failures, and checks the three rules the format follows.</p>
+      <h3>What was asked</h3>
+      <p>Write a clean Rust reader for the animation dictionary format: the dictionary of clips, each clip's header, the channel and codec types used for rotations and other tracks, and decoding clips to per-frame bone transforms, reusing the archive and resource crates from sibling lanes.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Each dictionary is a standard resource of the generic kind holding a hash table of clips. Clip names hash with the Jenkins function, durations always equal one less than the frame count divided by thirty, and static rotations are unit quaternions. All three rules hold for every clip and every channel in the game.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Animation files parsed</td><td role="cell" data-label="Value">1,701 of 1,701</td><td role="cell" data-label="What it means">Every dictionary in the animation archives reads without error</td></tr>
+      <tr role="row"><td role="cell">Clips</td><td role="cell" data-label="Value">22,166</td><td role="cell" data-label="What it means">All pass the duration and name-hash checks</td></tr>
+      <tr role="row"><td role="cell">Channels</td><td role="cell" data-label="Value">About 1,083,000</td><td role="cell" data-label="What it means">Eight codec types, each in two asset builds</td></tr>
+      <tr role="row"><td role="cell">Static rotations checked</td><td role="cell" data-label="Value">273,089 unit quaternions</td><td role="cell" data-label="What it means">Constant-rotation tracks decode and validate exactly</td></tr>
+      <tr role="row"><td role="cell">Animated sample packing</td><td role="cell" data-label="Value">Not decoded</td><td role="cell" data-label="What it means">One sample word per frame; four layouts ruled out, encoding still unknown</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence">Inferred</span> The executable names about thirteen channel codec classes but shipped files use eight, so five classes never appear in game data. <span class="evidence">Unknown</span> The packed animated samples, most codec payloads, and the purpose of a per-file track table that mirrors the first clip remain open.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The crate ships with static rotations fully decoded, animated samples exposed raw in frame order, and unknown codecs kept readable but undecoded, so no guess can pass as a result. The next lane should attack the packed samples and the most common unknown codec using the codec code already located in the executable, then extend the test to the few dozen dictionaries in map archives and specify the separate cutscene container found beside them.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the crate in the lane scratch folder, run its unit tests on hand-built bytes, then set the game folder variable and run the integration test, which walks all six animation archives and re-checks every number above. A summary example prints one dictionary's clips, codec mix, and validation results without writing anything.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The clip tables and the file-level table look alike but hold different object shapes, which silently emptied the first codec census until full pointer chains were dumped by hand. A whole-file scan for codec tags produced tens of thousands of false hits inside packed data and was discarded in favour of traversal. The animated packing resisted four decode attempts and is recorded as unknown with the ruling-out evidence rather than guessed.</p>
+      </article>
 
       <article class="entry" id="pilot-10">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
