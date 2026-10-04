@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Two large animation functions verified, one checker fix, one game quirk",
+    "title": "Rewrites: 56 more functions pass the checker (3364 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "56 rewrites added under rewrites/pending: 50 script native handlers and 6 other functions.",
+      "The tree now holds 3364 rewrites, 1063 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "131 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Two large animation functions verified, one checker fix, one game quirk",
+    "commit": "ae35b7937dbbc70c61cd043a55f7d45eb6cff119",
     "summary": "Findings from the r-b05 lane.",
     "changes": [
       "New devlog entry: Two large animation functions verified, one checker fix, one game quirk.",
