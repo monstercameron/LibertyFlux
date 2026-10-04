@@ -1,8 +1,19 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Record the encrypted code range",
+    "title": "Narrow the anti-piracy rule to piracy",
     "commit": null,
+    "summary": "The rule had been written wider than the owner asked for.",
+    "changes": [
+      "AGENTS.md rule 6 now covers piracy only: never distribute game files, keys or cracks, never help anyone run an unbought copy, tell readers to buy the game.",
+      "Analysing the owner's own purchased copy is stated to be fully in scope, including code that is encrypted on disk. Anything obtained that way is game code and stays in the ignored folders.",
+      "The devlog entry on the encrypted code range and the plan record the corrected decision: the range will be read from the owner's own running copy."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Record the encrypted code range",
+    "commit": "c471aaa9ea774b476d01accb9008a95c2783a23e",
     "summary": "A correction: about 9% of the code section is encrypted on disk.",
     "changes": [
       "Devlog: the first 1,028,096 bytes of the code section are encrypted, and the .tbm section is a byte-identical copy. The first look at the executable missed this because it measured entropy over the whole section. The earlier entry now links to the correction.",

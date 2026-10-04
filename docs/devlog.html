@@ -91,9 +91,10 @@ Note for future agents: how to add an entry to this devlog.
 
         <h3>What was decided or recommended</h3>
         <ul>
-          <li>Every tool treats the encrypted range as opaque data. It is excluded from function counts, from the queue and from the code map until further notice.</li>
-          <li>The project does not decrypt it, dump it from a running process, or write anything that does. That would be working around the game's protection, which rule 6 of the agent rules forbids. Whether and how those functions can be understood by other means, for example from their callers, from documentation of other builds, or from behaviour, is an open question for the owner.</li>
-          <li>The progress figures will state the size of the unanalysable range separately, so the percentages are honest.</li>
+          <li>Until the range has been read from a running copy, every tool treats it as opaque data. It is excluded from function counts, from the queue and from the code map, and the progress figures state its size separately so the percentages are honest.</li>
+          <li>The coordinator first wrote that the project would never read this range from the running game, citing the anti-piracy rule. That was the coordinator's own over-reach, and the owner corrected it the same day: the anti-piracy rule is about piracy, not about analysing a copy the owner bought. The range will be read from the owner's own running, purchased copy and analysed like the rest of the code.</li>
+          <li>What is read that way is game code. It stays in the private, ignored folders and is never committed or published, like all other game code.</li>
+          <li>The project still distributes no game files, keys or cracks, and does nothing to help anyone run the game without buying it.</li>
         </ul>
 
         <h3>How to reproduce it</h3>

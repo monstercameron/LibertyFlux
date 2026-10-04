@@ -116,18 +116,22 @@ Never commit `notes.md`, never `git add -f` it, and never copy its contents into
 you move something from it into a tracked file, rewrite it without the private details first.
 Secrets such as API keys and passwords do not go in `notes.md` either; they do not go in any file.
 
-## Rule 6: no piracy, and no help with it
+## Rule 6: no piracy
 
-This project requires a copy of the game that its user bought. It does not condone piracy.
+This project requires a copy of the game that its user bought. It does not condone piracy. This rule
+is about piracy only. It does not limit how the owner's own purchased copy is analysed.
 
-- Never add, link to or describe how to obtain game files, product keys, cracks, cracked launchers
-  or ways around the game's copy protection. This applies to code, documentation, the site, issues
-  and commit messages.
-- Do not design anything that depends on a pirated, cracked or downgraded-by-crack copy. Work
-  against the build the owner bought.
+- Never distribute game files, product keys, cracks or cracked launchers, and never help anyone run
+  the game without having bought it. This applies to code, documentation, the site, issues and
+  commit messages.
 - When documentation tells a reader they need the game, tell them to buy it: on Steam, from an
   authorised key seller, or from a retailer.
 - Requests for help with pirated or cracked copies get no answer beyond a pointer to this rule.
+
+Analysing the owner's own copy is in scope, in full. That includes code that is encrypted on disk:
+it may be read from the owner's own running, purchased copy and analysed like the rest. Whatever is
+obtained that way is game code, so rule 1 applies to it: it stays under `orig/` or `.artifacts/`,
+is never committed, and is never published.
 
 ## Rule 7: the coordinator posts a status update every 5 minutes
 
