@@ -6,7 +6,10 @@
    spellings (shared three-letter pieces) and word beginnings. */
 (function () {
   "use strict";
-  var SQL_FILES = "https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/";
+  // sql.js is served from this site. The page pins the script's hash; the WebAssembly file is fetched here and
+  // checked against its SHA-256 before it is used, so a changed file is refused rather than run.
+  var SQL_WASM = "vendor/sql.js/1.10.3/sql-wasm.wasm";
+  var SQL_WASM_SHA256 = "d7e61b828523001f26ce0b3f88dabcf6c12e5e6edf80eb4f08b26ac7b946ff88";
   var PAGE = 30;
   var $ = function (id) { return document.getElementById(id); };
   var db = null, posts = [], byId = Object.create(null), vocabulary = null, shown = PAGE;
@@ -222,8 +225,21 @@
   }
 
   if (typeof initSqlJs !== "function") { $("status").textContent = "The database reader could not be loaded, so the devlog cannot be shown. Check the connection and reload."; return; }
+  function loadWasm() {
+    return fetch(SQL_WASM).then(function (r) {
+      if (!r.ok) throw new Error("database reader " + r.status);
+      return r.arrayBuffer();
+    }).then(function (bytes) {
+      if (!window.crypto || !crypto.subtle) throw new Error("this browser cannot check the database reader");
+      return crypto.subtle.digest("SHA-256", bytes).then(function (digest) {
+        var hex = Array.prototype.map.call(new Uint8Array(digest), function (b) { return (b < 16 ? "0" : "") + b.toString(16); }).join("");
+        if (hex !== SQL_WASM_SHA256) throw new Error("the database reader file does not match its recorded hash");
+        return initSqlJs({ wasmBinary: bytes });
+      });
+    });
+  }
   Promise.all([
-    initSqlJs({ locateFile: function (file) { return SQL_FILES + file; } }),
+    loadWasm(),
     fetch("data/devlog.sqlite", { cache: "no-cache" }).then(function (r) { if (!r.ok) throw new Error("database " + r.status); return r.arrayBuffer(); })
   ]).then(function (loaded) { start(loaded[0], loaded[1]); })
     .catch(function (error) { $("status").textContent = "The devlog could not be loaded (" + error.message + "). Reload to try again."; });

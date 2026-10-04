@@ -7,9 +7,8 @@
 <title>Devlog: LibertyFlux</title>
 <meta name="description" content="The LibertyFlux research and process notebook: what was found, what was decided and what went wrong, so nobody has to rediscover it. Searchable.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;700;800&family=Overpass+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/overpass-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="fonts/fonts.css">
 <link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="devlog.css">
 </head>
@@ -76,7 +75,9 @@ functions or game data (AGENTS.md rule 1).
   </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js" integrity="sha384-8D3Rsfo535FqoC1pHCCQMrNf75UgzyoG/HQm9zOzITRrz3QKzecc2E7JXKGCXoWu" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- sql.js 1.10.3 (MIT, see vendor/sql.js/1.10.3/LICENSE), served from this site. The integrity hash is the one this
+     page pinned when it loaded the same file from cdnjs; devlog.js checks the .wasm file's SHA-256 before using it. -->
+<script src="vendor/sql.js/1.10.3/sql-wasm.js" integrity="sha384-8D3Rsfo535FqoC1pHCCQMrNf75UgzyoG/HQm9zOzITRrz3QKzecc2E7JXKGCXoWu" crossorigin="anonymous"></script>
 <script src="devlog.js"></script>
 </body>
 </html>
