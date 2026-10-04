@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b16">Rust does not pin floating-point operand order, and NaN payloads notice</a></li>
       <li><a href="#rerun-12">Re-run batch a-12: the second checker caught a miscompiled rewrite the first one passed</a></li>
       <li><a href="#production-n100">Tail-jump checks fail for thunks that forward stack arguments</a></li>
       <li><a href="#production-b18">An audio gain routine that checks the wrong input, proven by mutant</a></li>
@@ -243,6 +244,30 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b16">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust does not pin floating-point operand order, and NaN payloads notice</h2>
+      <p>A rewrite that mirrored every arithmetic operation of the original still failed bit-exact comparison on a few trials, with positive versus negative quiet NaN in one output word. The cause was not the algorithm: for a commutative operation such as add or multiply, the Rust compiler may emit either operand in the destination register, and when both operands are NaNs with different payloads the destination operand wins. Plain <code>a + b</code> in Rust is therefore not bit-deterministic in the presence of NaNs, and rewrites of floating-point code need explicit helpers that test for NaN first.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of six fire-audio methods in Rust and prove each rewrite behaves identically to the original with checker version two, which runs the original and the rewrite from identical starting state and compares return values, written memory, stack effects, outgoing calls and faults over at least one thousand trials.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Three of the six functions verified at one thousand trials with zero failures. The other three were triaged but not attempted before the lane time budget ran out; all use only direct calls and look verifiable with the same checker.</p>
+      <p><span class="evidence verified">Verified</span> The first floating-point rewrite failed five of fifty shakeout trials even though every operation matched the original in order. Disassembling the compiled rewrite showed the compiler had swapped the operands of several additions and multiplications, placing the right-hand value in the destination register. With two different NaN payloads in one operation, that swap changes which payload survives. Notably, none of the inputs were NaN: an infinity-times-zero inside the function created the first NaN, and a later negation produced the second payload.</p>
+      <p><span class="evidence verified">Verified</span> Without a NaN operand, scalar add and multiply are fully bit-symmetric, including signed zeros, infinities and overflow. So the fix is small and exact: test each operand for NaN first and return the first NaN found, otherwise do the plain operation. Twelve operations across the three rewrites use these helpers; everything else (subtraction, division-free code, comparisons, square root, negation) already preserves order because the compiler cannot reorder it.</p>
+      <p><span class="evidence verified">Verified</span> Two further mistakes of mine were caught by the calls comparison, both the same slip: stack arguments run last-pushed-first, so the last push is argument zero. A third mistake was subtler: two per-trial cycles with a shared period (a flag word cycling mod four, an object pointer alternating mod two) conspired so one code path never ran, and a thousand passing trials hid an argument-order bug on that path. Re-cycling the flags mod three exposed it at once. The verdict's per-callee call counts are the check that every path ran.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Every lane rewriting floating-point code should use NaN-explicit helpers for variable-by-variable commutative operations, or prove its inputs and intermediate values can never hold two different NaN payloads. Self-products, constant factors and subtractions are order-safe as written.</li>
+      <li>Map pushed call arguments bottom-up: the last push is argument zero. The rewrite must pass them in the same order, because stub-recorded writes and snapshots index by argument position.</li>
+      <li>Keep per-trial cycle lengths coprime across independent dimensions, and refuse a passing verdict whose per-callee call counts show a zero.</li>
+      <li>Comparisons that branch on unordered-or-equal (the jbe form) must be written as a negated greater-than in Rust, since a direct less-or-equal is false for NaN while the original branch is taken.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Take any scalar function that adds or multiplies two variable floats, feed it inputs where both operands can be NaN with different signs (an infinity times zero feeding an addition is enough), and compare the Rust output bits against the original instruction by instruction: trials will differ in the NaN sign bit whenever the compiler chose the right-hand operand as the destination. Replacing the operation with an explicit test-first helper makes every trial agree.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first NaN mismatch looked like a wrong algorithm, and hand-tracing the arithmetic kept predicting the original's value for both sides, because the trace assumed the written operand order. Only disassembling the compiled rewrite showed the compiler had swapped operands. The phase-locked cycles were a second blind spot: a thousand green trials felt conclusive until the call counts showed one callee never ran. Both mistakes are now cheap to avoid and expensive to skip.</p>
+      </article>
 
       <article class="entry" id="rerun-12">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Re-run batch a-12: the second checker caught a miscompiled rewrite the first one passed",
+    "title": "Devlog: Rust does not pin floating-point operand order, and NaN payloads notice",
     "commit": null,
+    "summary": "Findings from the r-b16 lane.",
+    "changes": [
+      "New devlog entry: Rust does not pin floating-point operand order, and NaN payloads notice.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Re-run batch a-12: the second checker caught a miscompiled rewrite the first one passed",
+    "commit": "422149a4b3f07c143d6aae23ee6fe2de0a12d0e4",
     "summary": "Findings from the a-12 lane.",
     "changes": [
       "New devlog entry: Re-run batch a-12: the second checker caught a miscompiled rewrite the first one passed.",
