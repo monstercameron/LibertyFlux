@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s56">Same-order Rust is not bit-exact for floats: LLVM swaps operands and changes NaN propagation</a></li>
       <li><a href="#production-n77">A wrong calling convention, and two checker weaknesses it exposed</a></li>
       <li><a href="#production-n74">A relocation lookup bug the checker caught, and 24 verified native handlers</a></li>
       <li><a href="#production-n68">A relocation-table trap and a bit-exact vector rewrite</a></li>
@@ -227,6 +228,54 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s56">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Same-order Rust is not bit-exact for floats: LLVM swaps operands and changes NaN propagation</h2>
+      <p>A rewrite that mirrored the original's floating-point operations one by one still failed one trial in a thousand, because the compiler swapped a multiplication's operands and a different NaN payload survived. Every float rewrite with two or more operations on possibly-NaN inputs now needs explicit NaN routing, not just the same op order.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of small game functions in Rust and prove each bit-identical to the original with the differential checker, including several floating-point helpers (a clamp-and-interpolate routine, two vector interpolation routines, and a threshold subtraction).</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The clamp-and-interpolate rewrite passed 999 of 1000 trials. The single failure had two different NaN inputs: the original propagated one input's payload through its multiply and add, while the rewrite produced the other's. Replaying the checker's random generator recovered the exact trial inputs and showed each side's result bits matching a different input NaN.</p>
+      <p><span class="evidence verified">Verified</span> The cause is an operand swap by the compiler. The original's scalar instructions have fixed destination/source roles and propagate a quiet-NaN destination first, else a quiet-NaN source. A plain Rust multiply lets the compiler exchange the operands, which is unobservable for ordinary numbers but selects the other NaN when both are NaN.</p>
+      <p><span class="evidence verified">Verified</span> The fix is a small explicit router around every float operation: if the destination is NaN return it, else if the source is NaN return it, else perform the operation, using the original's exact roles. After the fix all four float rewrites pass 1000 of 1000 trials, including the previously failing trial.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Case</th>
+      <th role="columnheader">Plain same-order Rust</th>
+      <th role="columnheader">Explicit NaN router</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">Ordinary numbers</td>
+      <td role="cell" data-label="Plain same-order Rust">Matches</td>
+      <td role="cell" data-label="Explicit NaN router">Matches</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">One NaN operand</td>
+      <td role="cell" data-label="Plain same-order Rust">Matches (only one payload to propagate)</td>
+      <td role="cell" data-label="Explicit NaN router">Matches</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Two different NaNs</td>
+      <td role="cell" data-label="Plain same-order Rust">May diverge (compiler picks the roles)</td>
+      <td role="cell" data-label="Explicit NaN router">Matches (roles pinned)</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Float rewrites pin NaN routing explicitly wherever two NaNs can meet at one operation. Same-order source alone is not a bit-exactness argument.</li>
+      <li>Single-NaN trials prove nothing about this class; only trials where two different NaNs reach the same operation discriminate. Input generators should include such pairs deliberately rather than waiting for random chance (here, one trial in a thousand).</li>
+      <li>Inline assembly would also pin operand roles but is forbidden; the router is plain safe code with no performance cost on the game path.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Take any routine that multiplies or adds two values that can both be NaN with different payloads, rewrite it with plain Rust operators in the original's order, and run the differential checker with float edge inputs until a two-NaN trial reaches the operation. Recover the failing trial's inputs by replaying the checker's seeded generator, then compare which input payload each side's result carries.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first fix attempt blamed the wrong layer: the return-type conversion from 32-bit to 64-bit float, which does re-encode NaN payloads. It failed on the identical trial with identical bits, which proved the divergence was in the computed value, not the conversion. Only the input replay showed the swapped-operand mechanism.</p>
+      </article>
 
       <article class="entry" id="production-n77">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

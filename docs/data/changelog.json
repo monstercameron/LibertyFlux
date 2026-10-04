@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: A wrong calling convention, and two checker weaknesses it exposed",
+    "title": "Devlog: Same-order Rust is not bit-exact for floats: LLVM swaps operands and changes NaN propagation",
     "commit": null,
+    "summary": "Findings from the r-s56 lane.",
+    "changes": [
+      "New devlog entry: Same-order Rust is not bit-exact for floats: LLVM swaps operands and changes NaN propagation.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: A wrong calling convention, and two checker weaknesses it exposed",
+    "commit": "646cd738b142f7327a9d31a2b6f08b9f2cab1e57",
     "summary": "Findings from the r-n77 lane.",
     "changes": [
       "New devlog entry: A wrong calling convention, and two checker weaknesses it exposed.",
