@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s268">One batch, two stack surprises: a shared argument slot and reads from unwritten stack</a></li>
       <li><a href="#naming-14">Naming 150 leaderboard info methods from one board-key signal</a></li>
       <li><a href="#production-b208">A view-system initializer that reads its own uninitialized stack</a></li>
       <li><a href="#how-lanes-die">Three ways the coordinator lost lanes in one morning</a></li>
@@ -356,6 +357,28 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s268">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>One batch, two stack surprises: a shared argument slot and reads from unwritten stack</h2>
+      <p>Verifying twenty small task-system functions turned up two stack behaviors worth knowing: one function passes a single pushed word to two calls in a row, and another reads its interpolation factor and one output word from stack slots it never wrote. The first is fully verified; the second made its function unverifiable and it was deferred.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small game functions in Rust and prove each rewrite behaves identically to the original with the checker, one function at a time, with a deliberately wrong version per function to show the contract can tell right from wrong.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> A record-kind check function pushes one word, makes an indirect call through an object table, then makes a direct call documented to pop one word. Stack-balance analysis plus the checker's fault report show the indirect callee pops nothing: both calls share the one pushed slot, and the direct callee consumes it. Declaring the indirect callee as taking register and stack arguments without popping (the checker's no-cleanup option) passes one thousand trials with full argument comparison.</p>
+      <p><span class="evidence verified">Verified</span> Two sibling index state machines return a constant that looks like dead initialization on two of their exit paths. The constant is set once at entry and two paths reach the shared epilogue without overwriting it. Wrong versions returning the plausible constants fail, confirming the behavior and the coverage.</p>
+      <p><span class="evidence">Inferred</span> A route-point interpolation function stores its call result four bytes below where it reloads the factor it multiplies with, and reads one output word sixteen bytes past the value it resembles. Both reads land on uninitialized frame space and caller stack, so the outputs depend on stack garbage and entry alignment rather than on the inputs. This was read from the disassembly three times, including the raw store and reload offsets, but not confirmed by running.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Verifying nineteen of twenty, deferring the interpolation function with reason other and the analysis above, rather than shipping a rewrite fitted to the harness fills.</li>
+      <li>When a push sits before an indirect call with no stack cleanup after it, prove which call consumes the slot before declaring conventions; the no-cleanup stub option works for table-planted calls too.</li>
+      <li>Simulate pin and script periods as trial-index arithmetic in the contract generator and assert every path is hit; this caught four silent coverage locks before any trials ran.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble the batch's functions from the executable with capstone through the mapped image, check each call site's pushes against the callee's stack cleanup, and compare the store and reload offsets of every spilled float. The coverage models live in the lane's contract generator scripts.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The shared-slot function first presented as a checker defect: the original faulted at the pushed heap address on every trial while the rewrite passed. Tracing the stack word by word showed the contract was wrong, not the worker: my declaration made the stub pop a word the real callee leaves. A second function failed on eight trials with the original returning a heap address where zero was expected; the early exit clears the low byte of an address register that still holds the probe pointer, not the flag word that was only compared. Both fixes were one line each.</p>
+      </article>
 
       <article class="entry" id="naming-14">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>

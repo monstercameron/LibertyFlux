@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: One batch, two stack surprises: a shared argument slot and reads from unwritten stack",
+    "commit": null,
+    "summary": "Findings from the r-s268 lane.",
+    "changes": [
+      "New devlog entry: One batch, two stack surprises: a shared argument slot and reads from unwritten stack.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Tooling: the operating scripts are in the repository",
     "commit": "d4ee65c6d9f4196bc085846fab19b4e26fa36a4b",
     "summary": "The scripts that run the lane swarm lived in an untracked scratch folder. Cleaned copies are now tracked and tested.",
