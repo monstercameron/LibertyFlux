@@ -131,5 +131,81 @@ class TestBuildOnDisk(unittest.TestCase):
                     os.environ["LIBERTYFLUX_ROOT"] = old
 
 
+def proof(**edits):
+    """A complete, consistent proof record with `edits` applied (None removes a key)."""
+    record = {"checker_version": "checker4", "worker_hash": "a" * 40, "driver_hash": "b" * 40,
+              "rewrite_hash": "c" * 64, "contract_hash": "d" * 40, "seed": 12648430, "trials": 1000,
+              "mutant": {"caught": True, "fails": 412, "trials": 1000, "export": "mut_x"},
+              "narrowing": [], "partial": False}
+    for key, value in edits.items():
+        if value is None:
+            record.pop(key, None)
+        else:
+            record[key] = value
+    return record
+
+
+class TestProofRecords(unittest.TestCase):
+    SCHEMA = ledger.load_proof_schema()
+
+    def check(self, rows):
+        return ledger.check_proofs(rows, self.SCHEMA)
+
+    def test_schema_is_tracked(self):
+        self.assertIsNotNone(self.SCHEMA)
+
+    def test_absent_proofs_are_fine(self):
+        self.assertEqual(self.check([row(0), row(1)]), ([], [], []))
+
+    def test_valid_proof_is_counted_and_exposed(self):
+        rows = [row(0, proof=proof()), row(1)]
+        errors, warnings, records = self.check(rows)
+        self.assertEqual((errors, warnings), ([], []))
+        self.assertEqual([r["address"] for r in records], [rows[0]["address"]])
+        summary = ledger.summarise_proofs(rows, records)
+        self.assertEqual((summary["with_proof"], summary["without_proof"], summary["mutant_caught"]), (1, 1, 1))
+
+    def test_malformed_proofs(self):
+        for bad in (proof(seed=None), proof(worker_hash="xyz"), proof(trials="1000"),
+                    proof(mutant={"caught": True}), proof(extra=1), "not an object"):
+            errors, _, records = self.check([row(0, proof=bad)])
+            self.assertEqual([k for k, _ in errors], ["bad proof record"], bad)
+            self.assertEqual(len(records), 1)
+
+    def test_consistency_rules(self):
+        errors, _, _ = self.check([row(0, proof=proof(mutant={"caught": False, "fails": 0}))])
+        self.assertEqual([k for k, _ in errors], ["proof: wrong version not caught"])
+        errors, _, _ = self.check([row(0, proof=proof(mutant={"caught": True, "fails": 0}))])
+        self.assertEqual([k for k, _ in errors], ["proof: wrong version caught with no failing trial"])
+        _, warnings, _ = self.check([row(0, proof=proof(partial=True, narrowing=["call-skip:3"], trials=200))])
+        self.assertEqual(sorted(k for k, _ in warnings), ["proof: partial", "proof: trial count differs from the entry's"])
+        rows = [row(0, proof=proof(narrowing=["call-skip:3"]))]
+        self.assertEqual(ledger.summarise_proofs(rows, self.check(rows)[2])["narrowed"], 1)
+
+    def test_without_schema_proofs_are_only_counted(self):
+        errors, warnings, records = ledger.check_proofs([row(0, proof={"anything": 1})], None)
+        self.assertEqual((errors, warnings, len(records)), ([], [], 1))
+
+    def test_build_reports_proofs(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            verified = [row(0, proof=proof()), row(1, proof=proof(mutant={"caught": False, "fails": 0}))]
+            folder = root / "rewrites" / "verified"
+            for r in verified:
+                (folder / r["file"]).parent.mkdir(parents=True, exist_ok=True)
+                (folder / r["file"]).write_text(text_for(r["file"]), encoding="utf-8")
+            (folder / "index.json").write_text(json.dumps(verified), encoding="utf-8")
+            (root / "docs" / "data").mkdir(parents=True)
+            (root / "docs" / "data" / "progress.json").write_text(json.dumps({"stages": {"verified": 2, "rewritten": 2}}), encoding="utf-8")
+            built = ledger.build(root)
+            self.assertEqual(built["summary"]["proofs"]["with_proof"], 2)
+            self.assertEqual(len(built["proofs"]), 2)
+            self.assertEqual([e["kind"] for e in built["errors"]], ["proof: wrong version not caught"])
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                ledger.report(built)
+            self.assertIn("proof records: 2 of 2", out.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()

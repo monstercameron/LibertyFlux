@@ -12,8 +12,15 @@ an address listed twice, an address both verified and unverified, a file name th
 Warnings are defects worth fixing that do not change a count: a header comment naming another address,
 an entry checked only by checker version 1 (which does not count as verified), a missing trial count.
 
+An entry may carry a `proof` object (rewrites/proof_record.schema.json: checker version, worker, driver,
+rewrite and contract hashes, seed, trials, the wrong version's result, what the proof does not cover).
+Proof objects are optional; when present they are validated, and a malformed one, a wrong version that was
+not caught, or a caught one with no failing trial is an error. A partial proof and a trial count that
+disagrees with the entry's are warnings; a narrowed proof that says so is acceptable (rule 3) and is only
+counted. The report says how many entries carry one.
+
 Usage: python ledger.py            report
-       python ledger.py --json     the ledger as JSON on stdout
+       python ledger.py --json     the ledger as JSON on stdout (includes every proof record under "proofs")
        python ledger.py --check    report, exit 1 if there is any error (CI)
 """
 
@@ -23,10 +30,15 @@ import os
 import re
 import sys
 from collections import Counter
+from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import common
 from scan import MODERN
+
+PROOF_SCHEMA = Path(__file__).resolve().parent.parent.parent / "rewrites" / "proof_record.schema.json"
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "checker"))
+from validate_contracts import SchemaValidator  # noqa: E402  (the stdlib JSON Schema subset)
 
 HEADER = re.compile(r"//\s*original:\s*(0x[0-9A-Fa-f]+)\b")
 FILE_NAME = re.compile(r"^fn_([0-9a-f]{8})\.rs$")
@@ -89,6 +101,60 @@ def check_tree(verified, unverified, verified_files, unverified_files, read_text
     return errors, warnings
 
 
+def load_proof_schema(path=PROOF_SCHEMA):
+    """The proof-record schema, or None when the file is absent (then proof objects are only counted)."""
+    try:
+        return json.loads(Path(path).read_text(encoding="utf-8"))
+    except OSError:
+        return None
+
+
+def check_proofs(verified, schema):
+    """Validate the optional `proof` object of each verified entry. Pure. Returns (errors, warnings, records):
+    errors and warnings as (kind, detail) pairs like check_tree's, records as one dict per entry that carries
+    a proof (address, file, proof)."""
+    errors, warnings, records = [], [], []
+    validator = SchemaValidator(schema) if schema else None
+    for row in verified:
+        if "proof" not in row:
+            continue
+        proof, where = row["proof"], f"verified/{row.get('file')}"
+        records.append({"address": row.get("address"), "file": row.get("file"), "proof": proof})
+        problems = validator.validate(proof) if validator else []
+        if problems:
+            code, path, message = problems[0]
+            more = f" (+{len(problems) - 1} more)" if len(problems) > 1 else ""
+            errors.append(("bad proof record", f"{where}: {path}: {message}{more}"))
+            continue
+        if not isinstance(proof, dict):
+            continue
+        mutant = proof.get("mutant") if isinstance(proof.get("mutant"), dict) else {}
+        if mutant.get("caught") is False:
+            errors.append(("proof: wrong version not caught", where))
+        elif mutant.get("caught") is True and mutant.get("fails") == 0:
+            errors.append(("proof: wrong version caught with no failing trial", where))
+        if proof.get("partial") is True:
+            warnings.append(("proof: partial", where))
+        if isinstance(row.get("trials"), int) and isinstance(proof.get("trials"), int) and proof["trials"] != row["trials"]:
+            warnings.append(("proof: trial count differs from the entry's", f"{where}: {proof.get('trials')} vs {row['trials']}"))
+    return errors, warnings, records
+
+
+def summarise_proofs(verified, records):
+    """How many verified entries carry a proof record, and what those records say."""
+    proofs = [r["proof"] for r in records if isinstance(r["proof"], dict)]
+    mutants = [p.get("mutant") for p in proofs if isinstance(p.get("mutant"), dict)]
+    return {
+        "entries": len(verified),
+        "with_proof": len(records),
+        "without_proof": len(verified) - len(records),
+        "partial": sum(1 for p in proofs if p.get("partial") is True),
+        "narrowed": sum(1 for p in proofs if p.get("narrowing")),
+        "mutant_caught": sum(1 for m in mutants if m.get("caught") is True),
+        "by_checker": dict(sorted(Counter(str(p.get("checker_version")) for p in proofs).items())),
+    }
+
+
 def summarise(verified, unverified, game=None):
     """Counts derived from the index rows. `game`, when given, is the set of game-code addresses: verified then
     means checker version 2 or later and game code, the definition apply_counts.py publishes."""
@@ -146,10 +212,15 @@ def build(root, inventory=None):
     errors, warnings = check_tree(verified, unverified, files_under(verified_dir), files_under(unverified_dir),
                                   lambda p: (verified_dir / p).read_text(encoding="utf-8", errors="replace"))
     summary = summarise(verified, unverified, load_game_set(inventory) if inventory else None)
+    proof_errors, proof_warnings, proofs = check_proofs(verified, load_proof_schema(root / "rewrites" / "proof_record.schema.json")
+                                                         or load_proof_schema())
+    errors, warnings = errors + proof_errors, warnings + proof_warnings
+    summary["proofs"] = summarise_proofs(verified, proofs)
     progress = json.loads((root / "docs" / "data" / "progress.json").read_text(encoding="utf-8"))
     return {"summary": summary, "published": progress.get("stages", {}),
             "reconcile": [dict(zip(("fact", "published", "derived", "note"), r)) for r in reconcile(summary, progress.get("stages", {}))],
-            "errors": [dict(kind=k, detail=d) for k, d in errors], "warnings": [dict(kind=k, detail=d) for k, d in warnings]}
+            "errors": [dict(kind=k, detail=d) for k, d in errors], "warnings": [dict(kind=k, detail=d) for k, d in warnings],
+            "proofs": proofs}
 
 
 def report(ledger):
@@ -160,6 +231,10 @@ def report(ledger):
         print(f"  game code {s['verified_game']}, outside the game set {s['verified_outside_game']}")
     print(f"unverified tree: {s['unverified_entries']} entries; by outcome {s['unverified_by_outcome']}")
     print(f"  by reason {s['unverified_by_reason']}")
+    if "proofs" in s:
+        p = s["proofs"]
+        print(f"proof records: {p['with_proof']} of {p['entries']} verified entries carry one; partial {p['partial']}, "
+              f"narrowed {p['narrowed']}, wrong version caught {p['mutant_caught']}")
     for row in ledger["reconcile"]:
         print(f"published {row['fact']}: {row['published']} | from the tree: {row['derived']} | {row['note']}")
     for label in ("errors", "warnings"):
