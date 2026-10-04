@@ -1,8 +1,15 @@
 """Tests for lint_rewrites.py on hand-written rewrite texts."""
 
+import contextlib
+import io
+import json
+import os
+import re
 import sys
+import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import lint_rewrites
@@ -174,6 +181,181 @@ class TestSystemic(unittest.TestCase):
         rows = {r["code"]: r["files"] for r in lint_rewrites.systemic([plain, CLEAN, plain])}
         self.assertEqual(rows["plain-deref"], 2)
         self.assertEqual(rows["debug-overflow"], 3)
+
+
+MISALIGNED = CLEAN.replace("core::ptr::write_unaligned((this as *mut u8).add(COUNTER_OFF) as *mut u32, 0);",
+                           "let obj = this as *mut u8;\n        *(obj.add(0xF1) as *mut u16) = 0;")
+
+
+def first_finding(text, code, path="functions/fn_00401000.rs", address=ADDRESS):
+    return next(f for f in lint_rewrites.lint_text(text, path, address) if f["code"] == code)
+
+
+def line_of(text, fragment):
+    return text[:text.index(fragment)].count("\n") + 1
+
+
+class TestCodes(unittest.TestCase):
+    def test_codes_list_every_code_lint_text_can_report(self):
+        source = Path(lint_rewrites.__file__).read_text(encoding="utf-8")
+        added = set(re.findall(r'\badd\("([a-z-]+)"', source))
+        self.assertEqual(added, set(lint_rewrites.CODES))
+        self.assertEqual({r["code"] for r in lint_rewrites.systemic([CLEAN])}, set(lint_rewrites.SYSTEMIC_CODES))
+
+
+class TestFindingLine(unittest.TestCase):
+    def line(self, text, code, **kwargs):
+        return lint_rewrites.finding_line(text, first_finding(text, code, **kwargs))
+
+    def test_file_level_and_header(self):
+        self.assertIsNone(self.line("// original: 0x00401000 f\npub fn rw_00401000() -> u32 { 0 }\n", "no-export"))
+        self.assertEqual(self.line("\n\n" + CLEAN.replace("0x00401000 thing", "0x0x00401000 thing"), "header"), 3)
+
+    def test_points_at_the_offending_text(self):
+        self.assertEqual(self.line(MISALIGNED, "misaligned-deref"), line_of(MISALIGNED, "*(obj.add(0xF1)"))
+        partial = CLEAN.replace("    this\n});", "    unreachable!()\n});")
+        self.assertEqual(self.line(partial, "partial"), line_of(partial, "unreachable!"))
+        wrong = CLEAN + "export!(thiscall, mut_00401000(this: u32) -> u32 { this });\n"
+        self.assertEqual(self.line(wrong, "wrong-version-tracked"), line_of(wrong, "export!(thiscall, mut_"))
+        renamed = CLEAN.replace("rw_00401000", "rw_rs12_00401000")
+        self.assertEqual(self.line(renamed, "export-name"), line_of(renamed, "export!("))
+        literal = CLEAN.replace("    this\n});", "    // 0x00F12340 in a comment first\n    unsafe { *(0x00F12340 as *const u32) }\n});")
+        self.assertEqual(self.line(literal, "image-literal"), line_of(literal, "unsafe { *(0x00F1"))
+        temps = CLEAN.replace("    this\n});", "    let uVar1 = this; let iVar2 = uVar1; let local_10 = iVar2;\n    local_10\n});")
+        self.assertEqual(self.line(temps, "transliteration"), line_of(temps, "let uVar1"))
+        placeholder = CLEAN.replace("    this\n});", "    0 // placeholder for the real result\n});")
+        self.assertEqual(self.line(placeholder, "placeholder"), line_of(placeholder, "0 // placeholder"))
+
+    def test_floats_prefer_code_over_comments(self):
+        body = "/// a is scaled.\nexport!(cdecl, rw_00401000(a: f32) -> u32 {\n    let b: f32 = a * 2.0;\n    b as i32 as u32\n});\n"
+        text = "// original: 0x00401000 f\n" + body
+        self.assertEqual(self.line(text, "float-order"), line_of(text, "let b: f32 = a * 2.0"))
+        self.assertEqual(self.line(text, "float-to-int"), line_of(text, "b as i32"))
+
+    def test_structure_findings(self):
+        truncated = CLEAN[:CLEAN.index("    this\n")]
+        self.assertEqual(self.line(truncated, "unbalanced"), line_of(truncated, "export!("))
+        mismatch = CLEAN.replace("    this\n});", "    (this\n});")
+        self.assertEqual(self.line(mismatch, "unbalanced"), line_of(mismatch, "});"))
+        no_semicolon = CLEAN.replace("});", "})")
+        found = [f for f in lint_rewrites.lint_text(no_semicolon, "f.rs", ADDRESS) if f["title"].startswith("Export macro")]
+        self.assertEqual(lint_rewrites.finding_line(no_semicolon, found[0]), line_of(no_semicolon, "})"))
+
+    def test_function_level_findings(self):
+        dropped = FORWARDER.replace("callee_cdecl!(1, u32, a, b)", "callee_cdecl!(1, u32, a, 0)")
+        self.assertEqual(self.line(dropped, "forwarder-drops-args"), line_of(dropped, "callee_cdecl!"))
+        self.assertEqual(self.line(dropped, "unused-parameter"), line_of(dropped, "export!("))
+        self.assertEqual(self.line(RESIDUE, "constant-for-callee-result"), line_of(RESIDUE, "let _ = callee_thiscall!"))
+
+
+class TestGithubAnnotations(unittest.TestCase):
+    def test_escaping(self):
+        self.assertEqual(lint_rewrites.escape_data("50% a\nb\r"), "50%25 a%0Ab%0D")
+        self.assertEqual(lint_rewrites.escape_property("a:b,c%"), "a%3Ab%2Cc%25")
+
+    def test_annotation(self):
+        finding = first_finding(MISALIGNED, "misaligned-deref")
+        line = lint_rewrites.finding_line(MISALIGNED, finding)
+        text = lint_rewrites.github_annotation(finding, "rewrites/verified/functions/fn_00401000.rs", line)
+        self.assertTrue(text.startswith(f"::warning file=rewrites/verified/functions/fn_00401000.rs,line={line},"
+                                        "title=misaligned-deref (high%2C certain)::Aligned dereference at an odd offset: "))
+        self.assertNotIn("\n", text)
+        self.assertNotIn("line=", lint_rewrites.github_annotation(finding, "f.rs"))
+
+
+@contextlib.contextmanager
+def repository(index=None, files=None):
+    """A temporary repository root (LIBERTYFLUX_ROOT points at it) with an optional verified tree."""
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        folder = root / "rewrites" / "verified"
+        for name, text in (files or {}).items():
+            (folder / name).parent.mkdir(parents=True, exist_ok=True)
+            (folder / name).write_text(text, encoding="utf-8")
+        if index is not None:
+            folder.mkdir(parents=True, exist_ok=True)
+            (folder / "index.json").write_text(json.dumps(index), encoding="utf-8")
+        with mock.patch.dict(os.environ, {"LIBERTYFLUX_ROOT": str(root)}):
+            yield root
+
+
+def run_main(*argv):
+    out = io.StringIO()
+    with contextlib.redirect_stdout(out):
+        code = lint_rewrites.main(list(argv))
+    return code, out.getvalue()
+
+
+class TestMain(unittest.TestCase):
+    INDEX = [{"address": "0x00401000", "file": "functions/fn_00401000.rs"},
+             {"address": "0x00401010", "file": "functions/fn_00401010.rs"}]
+
+    def files(self):
+        return {"functions/fn_00401000.rs": CLEAN, "functions/fn_00401010.rs": MISALIGNED.replace("00401000", "00401010")}
+
+    def test_default_summary_format_is_unchanged(self):
+        with repository(self.INDEX, self.files()):
+            code, out = run_main()
+        self.assertEqual(code, 0)
+        self.assertEqual(out, "checked 2 rewrites; 1 findings in 1 files\n"
+                              "  misaligned-deref       high   certain 1\n"
+                              "  systemic plain-deref: 1 files\n"
+                              "  systemic debug-overflow: 2 files\n")
+
+    def test_code_filter(self):
+        with repository(self.INDEX, self.files()):
+            _, out = run_main("--json", "--code", "header", "debug-overflow")
+            data = json.loads(out)
+            self.assertEqual((data["checked"], data["findings"]), (2, []))
+            self.assertEqual([r["code"] for r in data["systemic"]], ["debug-overflow"])
+            _, out = run_main("--json", "--code", "misaligned-deref")
+            self.assertEqual([f["code"] for f in json.loads(out)["findings"]], ["misaligned-deref"])
+            with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as stop:
+                run_main("--code", "no-such-code")
+            self.assertEqual(stop.exception.code, 2)
+
+    def test_github_format_over_the_index(self):
+        with repository(self.INDEX, self.files()):
+            code, out = run_main("--format", "github")
+            self.assertEqual(code, 0)
+            lines = out.splitlines()
+            line = line_of(MISALIGNED, "*(obj.add(0xF1)")
+            self.assertTrue(lines[0].startswith(f"::warning file=rewrites/verified/functions/fn_00401010.rs,line={line},"))
+            self.assertEqual([x.split("::")[1].split(" ")[0] for x in lines[1:3]], ["notice", "notice"])
+            self.assertEqual(lines[-1], "checked 2 rewrites; 1 findings in 1 files")
+            with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+                run_main("--format", "github", "--json")
+
+    def test_file_option_lints_outside_the_index(self):
+        with repository() as root:  # no index at all: --file must not need one
+            lane = root / ".artifacts" / "scratch" / "r-s1"
+            (lane / "natives").mkdir(parents=True)
+            (lane / "fn_00401000.rs").write_text(CLEAN.replace("0x00401000 thing", "0x00401010 thing"), encoding="utf-8")
+            native = ("// original: 0x00401020 NATIVE\n/// Forwards script arguments.\n"
+                      "export!(cdecl, rw_00401020(ctx: *const u8) -> u32 {\n    unsafe {\n"
+                      "        let args = *(ctx.add(8) as *const u32) as *const u32;\n"
+                      "        callee_cdecl!(1, u32, *args, *args.add(2))\n    }\n});\n")
+            (lane / "natives" / "attempt.rs").write_text(native, encoding="utf-8")
+            paths = [str(lane / "fn_00401000.rs"), str(lane / "natives" / "attempt.rs")]
+            _, out = run_main("--json", "--file", *paths)
+            data = json.loads(out)
+            self.assertEqual(data["checked"], 2)
+            # The name's address wins over the header's; a name without one falls back to the header.
+            self.assertEqual(sorted(f["code"] for f in data["findings"]), ["args-gap", "header"])
+            self.assertEqual({f["file"] for f in data["findings"]}, {p.replace("\\", "/") for p in paths})
+            _, out = run_main("--format", "github", "--file", *paths)
+            self.assertIn("::warning file=.artifacts/scratch/r-s1/fn_00401000.rs,line=1,title=header", out)
+            _, out = run_main("--json", "--file", str(lane))  # a folder: every .rs file under it
+            self.assertEqual(json.loads(out)["findings"], data["findings"])
+            with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as stop:
+                run_main("--file", str(lane / "missing.rs"))
+            self.assertEqual(stop.exception.code, 2)
+
+    def test_address_for(self):
+        self.assertEqual(lint_rewrites.address_for("x/fn_00401000.rs", "// original: 0x00401010 f\n"), 0x00401000)
+        self.assertEqual(lint_rewrites.address_for("x/attempt.rs", "\n// original: 0x00401010 f\n"), 0x00401010)
+        self.assertIsNone(lint_rewrites.address_for("attempt.rs", "// original: 0x0x00401010 f\n"))
+        self.assertEqual(codes(CLEAN.replace("0x00401000 thing", "no header"), None), [])
 
 
 if __name__ == "__main__":

@@ -19,6 +19,13 @@ natives). On the verified tree of 4 October 2026 they fired on 4, 3, 6, 4, 0 and
 Usage: python lint_rewrites.py                 summary
        python lint_rewrites.py --json          every finding as JSON on stdout
        python lint_rewrites.py --write PATH    write the issue log (findings plus systemic counts) to PATH
+Options that narrow or reshape any of the above:
+       --file PATH...      lint these files instead of the index (a lane's output before it is imported), a folder
+                           meaning every .rs file under it; each is checked against the address in its name
+                           (fn_<8 hex digits>.rs), else in its header
+       --code CODE...      keep only findings (and systemic counts) with these codes; CODES lists them
+       --format github     GitHub Actions annotations (::warning file=...,line=...::message), one per finding,
+                           with the line found again by the pattern that produced it where it has one
 """
 
 import argparse
@@ -27,6 +34,7 @@ import os
 import re
 import sys
 from collections import Counter
+from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import common
@@ -55,10 +63,24 @@ CHECKER_ONLY = re.compile(r"\b(xmm_word|tls_slot|CHECKER_\w+)\b")
 IMAGE_LITERAL = re.compile(r"\b0x0*(?:[4-9a-fA-F][0-9a-fA-F]{5}|1[01][0-9a-fA-F]{5})\b")
 TEMPS = re.compile(r"\b(?:uVar|iVar|fVar|local_|param_|puVar|piVar|pcVar|bVar)\w*")
 REGISTER_LOCAL = re.compile(r"\blet\s+(?:mut\s+)?(e[abcd]x|e[sd]i|ebp)\b")
+WRONG_NAME = re.compile(r"(?:mut_\w+|\w+_mut)$")
+FILE_ADDRESS = re.compile(r"fn_([0-9a-fA-F]{8})\.rs$")
+
+# Every code lint_text can report, and the corpus-wide codes systemic() counts (what --code accepts).
+CODES = ("no-export", "several-exports", "wrong-version-tracked", "export-name", "header", "partial", "misaligned-deref",
+         "float-order", "float-to-int", "checker-only", "image-literal", "unbalanced", "placeholder",
+         "constant-for-callee-result", "unused-parameter", "forwarder-drops-args", "args-gap", "transliteration")
+SYSTEMIC_CODES = ("plain-deref", "debug-overflow")
 
 
 def offset_value(text):
     return int(text.replace("_", ""), 0)
+
+
+def line_at(text, offset):
+    """The 1-based line holding `offset`. Comment-stripped code keeps the text's line breaks, so an offset in
+    either gives the same line."""
+    return text.count("\n", 0, offset) + 1
 
 
 # --- Structure: balance, the export body, its final expression -------------------------------------------
@@ -177,9 +199,9 @@ def split_top(text):
     return items
 
 
-def export_parts(code):
-    """(parameter names, body text) of the first export, from comment-stripped code; None when the export
-    cannot be delimited (the balance check reports why)."""
+def export_span(code):
+    """(export match, end of its parameter list, its body's opening brace, its body's closing brace) for the first
+    export in comment-stripped code, as offsets into `code`; None when the export cannot be delimited."""
     match = EXPORT.search(code)
     if not match:
         return None
@@ -190,6 +212,16 @@ def export_parts(code):
     body_end = matching(code, body_start) if body_start >= 0 else None
     if body_end is None:
         return None
+    return match, params_end, body_start, body_end
+
+
+def export_parts(code):
+    """(parameter names, body text) of the first export, from comment-stripped code; None when the export
+    cannot be delimited (the balance check reports why)."""
+    span = export_span(code)
+    if span is None:
+        return None
+    match, params_end, body_start, body_end = span
     names = []
     for item in split_top(code[match.end():params_end]):
         name = item.split(":")[0].strip()
@@ -263,8 +295,8 @@ PLACEHOLDER = re.compile(
 PLACEHOLDER_NAMING = re.compile(r"placeholder\s+merged\s+name|merged\s+symbol;\s*placeholder", re.I)
 
 
-def discarded_calls(body):
-    """Callee calls whose (non-unit) result is thrown away: `let _ = callee!(...);` or a bare statement."""
+def discarded_call_matches(body):
+    """(call match, callee id) for each callee call whose (non-unit) result is thrown away, in body order."""
     found = []
     for match in CALLEE_CALL.finditer(body):
         close = matching(body, match.end() - 1)
@@ -277,8 +309,13 @@ def discarded_calls(body):
         if not body[close + 1:].lstrip().startswith(";"):
             continue
         if re.fullmatch(r"\s*let\s+_\w*\s*(?::\s*[\w()]+\s*)?=\s*", lead) or re.fullmatch(r"\s*(?:unsafe\s*\{\s*)?", lead):
-            found.append(args[0])
+            found.append((match, args[0]))
     return found
+
+
+def discarded_calls(body):
+    """Callee calls whose (non-unit) result is thrown away: `let _ = callee!(...);` or a bare statement."""
+    return [callee for _, callee in discarded_call_matches(body)]
 
 
 def is_literal(expr):
@@ -287,6 +324,41 @@ def is_literal(expr):
 
 def doc_text(text):
     return " ".join(line.strip().lstrip("/!").strip() for line in text.splitlines() if line.strip().startswith("//"))
+
+
+def misaligned_derefs(text):
+    """(match, description) for each plain dereference at an offset that is not a multiple of the access width
+    (capped at 4), through a byte pointer or an integer address, in the order the two patterns find them."""
+    byte_ptrs = {a or b for a, b in BYTE_PTR.findall(text)}
+    int_vars = set(INT_VAR.findall(text))
+    found = []
+    for pattern, bases in ((DEREF_ADD, byte_ptrs), (DEREF_INT, int_vars)):
+        for match in pattern.finditer(text):
+            if match.group(1) in bases and offset_value(match.group(2)) % min(SIZES[match.group(3)], 4):
+                found.append((match, f"{match.group(3)} at +{match.group(2)} from `{match.group(1)}`"))
+    return found
+
+
+def float_use(name):
+    """A float variable in arithmetic: an operator on either side of it."""
+    return re.compile(rf"\b{re.escape(name)}\s*[-+*/]|[-+*/]\s*{re.escape(name)}\b")
+
+
+def float_cast(name):
+    """A float variable converted to an integer with `as`."""
+    return re.compile(rf"\b{re.escape(name)}\s+as\s+(?:i|u)(?:8|16|32|64)\b")
+
+
+def image_literals(code_only):
+    """Matches of image-range numbers in comment-stripped code, leaving out masks such as 0x7FFFFF or 0x800000
+    (float mantissa and exponent bits), which are not addresses."""
+    return [m for m in IMAGE_LITERAL.finditer(code_only) if (v := int(m.group(0), 16)) & (v - 1) and (v + 1) & v]
+
+
+def first_placeholder(text):
+    """The first word saying the code is unfinished that is not part of a naming note, or None."""
+    return next((m for m in PLACEHOLDER.finditer(text)
+                 if not PLACEHOLDER_NAMING.search(text[max(0, m.start() - 30):m.end() + 20])), None)
 
 
 def lint_text(text, path, address=None):
@@ -300,7 +372,7 @@ def lint_text(text, path, address=None):
                       "when": when, "title": title, "detail": detail})
 
     exports = [(m[0] or m[2], m[1] or m[3]) for m in EXPORT.findall(text)]
-    real = [name for _, name in exports if not re.match(r"(?:mut_\w+|\w+_mut)$", name)]
+    real = [name for _, name in exports if not WRONG_NAME.match(name)]
     if not exports:
         add("no-export", "high", "integration", "certain", "now", "No exported function",
             "The file defines no checker export, so it is not in the form the checker loads; what was run is not what is tracked.")
@@ -325,13 +397,7 @@ def lint_text(text, path, address=None):
             f"Found `{match.group(0)}`: a verified rewrite that leaves branches unimplemented or proven only in part is counted as fully verified.")
         break
 
-    byte_ptrs = {a or b for a, b in BYTE_PTR.findall(text)}
-    int_vars = set(INT_VAR.findall(text))
-    misaligned = []
-    for pattern, bases in ((DEREF_ADD, byte_ptrs), (DEREF_INT, int_vars)):
-        for match in pattern.finditer(text):
-            if match.group(1) in bases and offset_value(match.group(2)) % min(SIZES[match.group(3)], 4):
-                misaligned.append(f"{match.group(3)} at +{match.group(2)} from `{match.group(1)}`")
+    misaligned = [description for _, description in misaligned_derefs(text)]
     if misaligned:
         add("misaligned-deref", "high", "ub", "certain", "post-bring-up", "Aligned dereference at an odd offset",
             "Plain dereference of " + ", ".join(sorted(set(misaligned))) + ": undefined behaviour in Rust whenever the base is aligned, and a "
@@ -339,11 +405,11 @@ def lint_text(text, path, address=None):
 
     floats = {a or b for a, b in FLOAT_DECL.findall(text)}
     if (floats or FLOAT_ARITH.search(text)) and re.search(r"\bf(?:32|64)\b", text):
-        arithmetic = FLOAT_ARITH.search(text) or any(re.search(rf"\b{re.escape(v)}\s*[-+*/]|[-+*/]\s*{re.escape(v)}\b", text) for v in floats)
+        arithmetic = FLOAT_ARITH.search(text) or any(float_use(v).search(text) for v in floats)
         if arithmetic and "black_box" not in text:
             add("float-order", "low", "float", "likely", "lift", "Float arithmetic without pinned order",
                 "Passed bit for bit in the checker's build; rule 3 asks for core::hint::black_box so another profile or a refactor cannot reassociate it.")
-        casts = [v for v in floats if re.search(rf"\b{re.escape(v)}\s+as\s+(?:i|u)(?:8|16|32|64)\b", text)]
+        casts = [v for v in floats if float_cast(v).search(text)]
         if casts:
             add("float-to-int", "medium", "suspicious-logic", "likely", "post-bring-up", "Float converted to an integer with `as`",
                 f"`as` saturates and maps NaN to 0, where x86 truncation yields 0x80000000; equal only if the inputs never overflow (variables: {', '.join(sorted(casts))}).")
@@ -351,9 +417,7 @@ def lint_text(text, path, address=None):
     if names:
         add("checker-only", "medium", "integration", "certain", "post-bring-up", "Uses a checker-only mechanism",
             f"{', '.join(names)} exist only in the checker's runtime; the assembled library needs a production equivalent.")
-    # Masks such as 0x7FFFFF or 0x800000 (float mantissa and exponent bits) are not addresses.
-    literals = [m.group(0) for m in IMAGE_LITERAL.finditer(code_only)
-                if (v := int(m.group(0), 16)) & (v - 1) and (v + 1) & v]
+    literals = [m.group(0) for m in image_literals(code_only)]
     if literals and not re.search(r"\b(?:relocated|global|xbase)\b", code_only):
         add("image-literal", "medium", "rule", "likely", "now", "Image-range number used without relocated()/global()",
             f"Values such as {', '.join(sorted(set(literals))[:3])} look like original addresses; if any is used as one, it breaks once the image moves.")
@@ -377,8 +441,7 @@ def lint_structure(text, code_only, path, add):
         if close is not None and not code_only[close + 1:].lstrip().startswith(";"):
             add("unbalanced", "high", "integration", "certain", "now", "Export macro without its closing semicolon",
                 "An item-position `export!( ... )` needs a trailing `;`; the file does not compile as tracked.")
-    placeholder = next((m for m in PLACEHOLDER.finditer(text)
-                        if not PLACEHOLDER_NAMING.search(text[max(0, m.start() - 30):m.end() + 20])), None)
+    placeholder = first_placeholder(text)
     if placeholder:
         add("placeholder", "high", "narrow-proof", "likely", "now", "The file says part of it is a placeholder",
             f"Found `{placeholder.group(0)}`: a value or path the rewrite does not really implement; say what the proof does not cover, or finish it.")
@@ -428,6 +491,94 @@ def lint_structure(text, code_only, path, add):
                 f"Reads script arguments {sorted(indexes)} but not {gaps}: a skipped argument, unless the native ignores it.")
 
 
+def finding_line(text, finding):
+    """The 1-based line a finding points at, found again with the pattern that produced it, or None when the
+    finding is about the file as a whole (`no-export`) or the pattern no longer places it. Pure. Findings about a
+    function's signature or arguments point at its export; the others at the first offending text."""
+    code, code_only = finding["code"], re.sub(r"//[^\n]*", "", text)
+
+    def first(pattern, source=text):
+        match = pattern.search(source)
+        return line_at(source, match.start()) if match else None
+
+    real = [m for m in EXPORT.finditer(text) if not WRONG_NAME.match(m.group(2) or m.group(4))]
+    if code == "header":
+        return next((n for n, line in enumerate(text.splitlines(), 1) if line.strip()), None)
+    if code == "several-exports":
+        return line_at(text, real[1].start()) if len(real) > 1 else None
+    if code == "export-name":
+        named = re.match(r"Export `(\w+)`", finding.get("detail", ""))
+        hits = [m for m in real if named and (m.group(2) or m.group(4)) == named.group(1)]
+        return line_at(text, hits[0].start()) if hits else None
+    if code == "wrong-version-tracked":
+        return first(WRONG_VERSION)
+    if code == "partial":
+        return first(PARTIAL)
+    if code == "misaligned-deref":
+        starts = [m.start() for m, _ in misaligned_derefs(text)]
+        return line_at(text, min(starts)) if starts else None
+    if code in ("float-order", "float-to-int"):
+        # The check reads comments too (a variable named `a` matches "/// a ..."), so code is searched first.
+        floats = {a or b for a, b in FLOAT_DECL.findall(text)}
+        patterns = [float_cast(v) for v in floats] if code == "float-to-int" else [FLOAT_ARITH] + [float_use(v) for v in floats]
+        for source in (code_only, text):
+            starts = [m.start() for m in (p.search(source) for p in patterns) if m]
+            if starts:
+                return line_at(source, min(starts))
+        return None
+    if code == "checker-only":
+        return first(CHECKER_ONLY)
+    if code == "image-literal":
+        literals = image_literals(code_only)
+        return line_at(code_only, literals[0].start()) if literals else None
+    if code == "placeholder":
+        match = first_placeholder(text)
+        return line_at(text, match.start()) if match else None
+    if code == "transliteration":
+        return first(TEMPS, code_only) or first(REGISTER_LOCAL, code_only)
+    if code == "unbalanced":
+        if finding.get("title") == "Export macro without its closing semicolon":
+            for match in re.finditer(r"export!\(", code_only):
+                close = matching(code_only, match.end() - 1)
+                if close is not None and not code_only[close + 1:].lstrip().startswith(";"):
+                    return line_at(code_only, close)
+            return None
+        # The balance message names its lines: a mismatch is placed where it is closed, the rest where they open.
+        lines = [int(n) for n in re.findall(r"\bline (\d+)", finding.get("detail", ""))]
+        return (lines[-1] if "closed by" in finding.get("detail", "") else lines[0]) if lines else None
+    span = export_span(code_only)
+    if span is None:
+        return None
+    signature, body_offset = line_at(code_only, span[0].start()), span[2] + 1
+    body = code_only[body_offset:span[3]]
+    if code == "constant-for-callee-result":
+        dropped = discarded_call_matches(body)
+        return line_at(code_only, body_offset + dropped[0][0].start()) if dropped else signature
+    if code == "forwarder-drops-args":
+        call = CALLEE_CALL.search(body)
+        return line_at(code_only, body_offset + call.start()) if call else signature
+    if code in ("unused-parameter", "args-gap"):
+        return signature
+    return None
+
+
+def escape_data(value):
+    """A GitHub Actions workflow-command message: %, CR and LF escaped as the runner expects."""
+    return str(value).replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+
+
+def escape_property(value):
+    """A GitHub Actions workflow-command property (file, title): the message escapes plus : and ,."""
+    return escape_data(value).replace(":", "%3A").replace(",", "%2C")
+
+
+def github_annotation(finding, path, line=None):
+    """One `::warning` workflow command for a finding in the file at `path` (from the repository root)."""
+    where = f"file={escape_property(path)}" + (f",line={line}" if line else "")
+    title = escape_property(f"{finding['code']} ({finding['severity']}, {finding['confidence']})")
+    return f"::warning {where},title={title}::{escape_data(finding['title'] + ': ' + finding['detail'])}"
+
+
 def systemic(texts):
     """Patterns that run through most of the corpus, counted once instead of listed per file."""
     plain = sum(1 for t in texts if PLAIN_DEREF.search(t))
@@ -445,33 +596,112 @@ def systemic(texts):
     ]
 
 
-def lint_tree(root):
+def tree_sources(root):
+    """(name, path from the repository root, text, address) for every index entry whose file exists, in index
+    order; the name is the file as the index lists it, relative to rewrites/verified."""
     folder = root / "rewrites" / "verified"
     index = json.loads((folder / "index.json").read_text(encoding="utf-8"))
-    findings, texts = [], []
     for entry in index:
         path = folder / entry["file"]
         if not path.exists():
             continue
-        text = path.read_text(encoding="utf-8", errors="replace")
+        yield (entry["file"], "rewrites/verified/" + entry["file"], path.read_text(encoding="utf-8", errors="replace"),
+               common.va(entry["address"]))
+
+
+def address_for(name, text):
+    """The address a file outside the index is checked against: the one in its name (`fn_<8 hex digits>.rs`, as
+    the tree names files), else the one in its `// original:` header; None when neither names one, and then the
+    header and export-name checks, which compare against it, are skipped."""
+    match = FILE_ADDRESS.search(os.path.basename(name))
+    if match:
+        return int(match.group(1), 16)
+    header = next((line.strip() for line in text.splitlines() if line.strip()), "")
+    match = HEADER.match(header)
+    return int(match.group(1), 16) if match else None
+
+
+def expand_paths(paths):
+    """The files named, a folder standing for every .rs file under it (sorted): PowerShell, which runs the lanes,
+    does not expand wildcards for the programs it starts."""
+    found = []
+    for given in paths:
+        found.extend(sorted(str(p) for p in Path(given).rglob("*.rs")) if os.path.isdir(given) else [given])
+    return found
+
+
+def file_sources(paths, root):
+    """(name, path from the repository root, text, address) for files named on the command line. The name is the
+    path as given (forward slashes), so `natives/` in it still marks a script native; the repository path is used
+    for annotations and falls back to the name for a file outside the repository."""
+    for given in paths:
+        name = given.replace("\\", "/")
+        text = Path(given).read_text(encoding="utf-8", errors="replace")
+        try:
+            inside = Path(os.path.relpath(Path(given).resolve(), Path(root).resolve())).as_posix()
+        except ValueError:  # another drive on Windows
+            inside = ".."
+        yield name, (name if inside.startswith("..") else inside), text, address_for(name, text)
+
+
+def lint_sources(sources):
+    """(findings, systemic counts, files checked) over (name, repository path, text, address) sources."""
+    findings, texts = [], []
+    for name, _, text, address in sources:
         texts.append(text)
-        findings.extend(lint_text(text, entry["file"], common.va(entry["address"])))
+        findings.extend(lint_text(text, name, address))
     return findings, systemic(texts), len(texts)
+
+
+def lint_tree(root):
+    return lint_sources(tree_sources(root))
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--json", action="store_true")
     parser.add_argument("--write", metavar="PATH")
+    parser.add_argument("--file", nargs="+", action="extend", metavar="PATH",
+                        help="lint these rewrite files (a folder: every .rs file under it) instead of the index")
+    parser.add_argument("--code", nargs="+", action="extend", metavar="CODE",
+                        help="keep only findings and systemic counts with these codes")
+    parser.add_argument("--format", choices=("text", "github"), default="text",
+                        help="github: one GitHub Actions annotation per finding instead of the summary")
     args = parser.parse_args(argv)
-    findings, broad, checked = lint_tree(common.find_root())
+    if args.json and args.format == "github":
+        parser.error("--json and --format github each replace the summary; give one of them")
+    unknown = sorted(set(args.code or ()) - set(CODES + SYSTEMIC_CODES))
+    if unknown:
+        parser.error(f"unknown code(s) {', '.join(unknown)}; known codes: {', '.join(CODES + SYSTEMIC_CODES)}")
+    root = common.find_root()
+    if args.file:
+        paths = expand_paths(args.file)
+        missing = [p for p in paths if not os.path.isfile(p)]
+        if missing:
+            parser.error("no such file: " + ", ".join(missing))
+        sources = list(file_sources(paths, root))
+    else:
+        sources = list(tree_sources(root))
+    findings, broad, checked = lint_sources(sources)
+    if args.code:
+        findings = [f for f in findings if f["code"] in args.code]
+        broad = [item for item in broad if item["code"] in args.code]
     if args.json:
         print(json.dumps({"checked": checked, "findings": findings, "systemic": broad}, indent=1))
     if args.write:
         with open(args.write, "w", encoding="utf-8", newline="\n") as fh:
             json.dump({"checked": checked, "findings": findings, "systemic": broad}, fh, indent=1)
             fh.write("\n")
-    if not args.json:
+    if args.format == "github":
+        located = {name: (path, text) for name, path, text, _ in sources}
+        for finding in findings:
+            path, text = located[finding["file"]]
+            print(github_annotation(finding, path, finding_line(text, finding)))
+        for item in broad:
+            print(f"::notice title={escape_property('systemic ' + item['code'])}::"
+                  f"{escape_data(item['title'] + ': ' + str(item['files']) + ' files')}")
+        print(f"checked {checked} rewrites; {len(findings)} findings in {len({f['file'] for f in findings})} files")
+    elif not args.json:
         print(f"checked {checked} rewrites; {len(findings)} findings in {len({f['file'] for f in findings})} files")
         for (code, severity, confidence), n in sorted(Counter((f["code"], f["severity"], f["confidence"]) for f in findings).items()):
             print(f"  {code:22} {severity:6} {confidence:7} {n}")
