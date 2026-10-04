@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: Drain loops are verifiable: stub writes through image-pointer arguments",
+    "commit": null,
+    "summary": "Findings from the r-s183 lane.",
+    "changes": [
+      "New devlog entry: Drain loops are verifiable: stub writes through image-pointer arguments.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 18 more functions pass the checker (5718 in total)",
     "commit": "291a9104b2cafe619fac70d9a29819a223cfdc46",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

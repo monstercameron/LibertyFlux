@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s183">Drain loops are verifiable: stub writes through image-pointer arguments</a></li>
       <li><a href="#production-s177">Two verification traps: recorder stubs clobber two registers, and aligned test pins hide untested branches</a></li>
       <li><a href="#production-s162">A callee write offset that means something else</a></li>
       <li><a href="#production-b118">Two verifications, one staged function, and a checker ceiling</a></li>
@@ -303,6 +304,28 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s183">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Drain loops are verifiable: stub writes through image-pointer arguments</h2>
+      <p>A production lane verified all twenty functions in its batch, including six drain-style loops whose exit depends on the callee consuming entries, a class earlier lanes had to defer. The trick is to fill the loop's by-value argument with the relocated address of the loop-condition word, so the checker's scripted out-param write zeroes the condition and ends the loop on both sides.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small timing-subsystem functions in Rust and prove each rewrite behaves identically to the original with the version 3 checker, deferring with a reason code only what the checker cannot verify.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Six of the functions are loops that only terminate when their callee mutates shared state: three single drain loops and three fixed-count teardowns with inner drain loops. The checker's out-param writes can model the callee side, but two facts had to be established first. One, the write destination is always the start of the pointed-to object: the write offset in the contract indexes the scripted-words buffer, not the destination, as the worker source shows. Two, the loop argument is passed by value, so it can be filled with the relocated address of the condition word itself; the stub then zeroes exactly that word through the argument on both sides. With those fills every loop terminates after exactly one call per entry, all paths run, and no verdict is vacuous.</p>
+      <p><span class="evidence verified">Verified</span> Every absolute dword immediate examined in this batch is relocated at load, including plain value constants stored to memory or compared against, not just addresses. Rewrites must pass such constants through the runtime's relocation helper, and contracts that need to match one require a fill resolved against the worker's mapped base, which the lane added to its driver copy.</p>
+      <p><span class="evidence verified">Verified</span> A pushed register before an indirect call is a stack argument the callee pops, not just register setup: declaring the callee with zero stack arguments left the stack unbalanced and the original returned to garbage. The checker caught it as a fault asymmetry on half the trials.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Treat loops-that-drain as verifiable when the callee takes the entry by value: fill the entry with the condition word's relocated address and declare a one-word stub write through that argument.</li>
+      <li>Fold the relocated-address fill into the checked-in driver so all lanes can use it; the lane's copy documents the exact change and the worker needs no modification.</li>
+      <li>Clarify in the checker manual that the out-param write offset selects scripted words while the destination is always the pointer start.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run any of the lane's drain-loop contracts: each passes one thousand trials with zero failures and shows both the call and no-call branch shapes. Reverting the callee arity or the write declaration reproduces the original failures (hang or fault asymmetry).</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first teardown attempt hung because the stub zeroed the argument instead of the condition word; the contract option reads like a destination offset and only the worker source disambiguated it. One full run stopped partway with the worker lost and zero failures, then passed cleanly on an immediate rerun with no changes, matching flakes other lanes have reported.</p>
+      </article>
 
       <article class="entry" id="production-s177">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
