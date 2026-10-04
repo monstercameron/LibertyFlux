@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Second pilot, lane 03: small leaf functions (40 to 150 bytes, no calls)",
+    "title": "Devlog: Second pilot, lane 08: small functions that make calls (60 to 250 bytes, one to three callees)",
     "commit": null,
+    "summary": "Findings from the q-08 lane.",
+    "changes": [
+      "New devlog entry: Second pilot, lane 08: small functions that make calls (60 to 250 bytes, one to three callees).",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Second pilot, lane 03: small leaf functions (40 to 150 bytes, no calls)",
+    "commit": "5759f2411f535be0ef3c57fc544cc5d0088f5be3",
     "summary": "Findings from the q-03 lane.",
     "changes": [
       "New devlog entry: Second pilot, lane 03: small leaf functions (40 to 150 bytes, no calls).",
