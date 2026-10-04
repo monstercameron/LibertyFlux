@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n20">Production batch n20: twenty-five native handlers, one compiler surprise</a></li>
       <li><a href="#production-n08">Some native handlers cannot be rewritten without assembly</a></li>
       <li><a href="#production-s29">A whole batch that ends in jumps, not returns</a></li>
       <li><a href="#production-s19">Production batch: eighteen area-table functions verified, one float stub found suspect</a></li>
@@ -211,6 +212,41 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n20">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production batch n20: twenty-five native handlers, one compiler surprise</h2>
+      <p>Twenty-three of twenty-five script native handlers were rewritten in Rust and proven identical to the originals with the differential checker, a thousand trials each and every honesty mutant caught. The surprise was in four of them: the original coerces a script boolean by scribbling the 0/1 result into the low byte of its own incoming argument slot and pushing the whole dword to the engine, so the engine call receives the call-context pointer with its low byte replaced instead of a clean boolean.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty-five script native handlers in Rust and prove each rewrite behaves identically to the original using the project checker, which runs both sides from identical state and compares return values, written memory, stack adjustment, outgoing calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Every handler in the batch follows one calling pattern: a single pointer to a call context holding a return slot and an argument array, one direct engine call, and either no stored result or one store through the return slot. They fall into a few shapes:</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Shape</th><th role="columnheader">Count</th><th role="columnheader">Behaviour</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Forward</td><td role="cell" data-label="Count">11</td><td role="cell" data-label="Behaviour">Pass the script arguments to one engine call and keep no result</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Count">Byte result</td><td role="cell" data-label="Count">6</td><td role="cell" data-label="Behaviour">Store the low byte of the engine answer through the return slot</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Count">Full result</td><td role="cell" data-label="Count">2</td><td role="cell" data-label="Behaviour">Store the whole engine answer through the return slot</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Count">Boolean coercion</td><td role="cell" data-label="Count">4</td><td role="cell" data-label="Behaviour">Forward, but one argument carries the slot-surgery value described below</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Count">Global lookup</td><td role="cell" data-label="Count">1</td><td role="cell" data-label="Behaviour">Resolve an object through globals, call, invert and store the answer</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Count">Jump thunk</td><td role="cell" data-label="Count">1</td><td role="cell" data-label="Behaviour">A bare jump to the engine function, nothing to intercept</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The four boolean handlers reuse their own dead argument slot as scratch: the 0/1 result overwrites the low byte of the incoming context pointer, and that modified dword is what the engine receives. Since a real context address is never small, the value the engine sees is always nonzero even when the script passed false. Whether the engine reads the full dword or only the low byte decides whether the false branch works at all.</p>
+      <p><span class="evidence verified">Verified</span> One further handler passes eleven argument words to its engine call, which exceeds the checker's eight-word call record, so its last three arguments could never be compared and it was deferred rather than stamped with a gap.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Rewrites reproduce the slot-surgery value exactly, and the pushed value is compared on every trial with the context placed at an address with a nonzero low byte so the masking is exercised.</li>
+      <li>The stack comparison is disabled for those four contracts only, because the original's write lands on its own incoming slot where no Rust rewrite can follow without inline assembly; the value itself is still checked through the call record.</li>
+      <li>The jump thunk and the eleven-argument handler were deferred with explicit reason codes instead of verified with holes.</li>
+      <li>The checker driver should restart a lost worker mid-run and resume remaining trials; two runs died environmentally with zero failures and passed cleanly on rerun.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble any of the four boolean handlers and watch the incoming argument slot between the comparison and the engine call: the low byte changes to 0 or 1 while the upper bytes keep the old pointer value, and the pushed engine argument is that combined dword. The lane scratch folder holds the contracts, verdicts and rewrites behind these numbers.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> The first full-batch run died twice with the worker process vanishing mid-contract and no failures recorded; both contracts passed a thousand trials on immediate rerun with identical inputs, which pointed at machine load rather than the trials. Running one contract per worker process contained it.</p>
+      <p><span class="evidence">Inferred</span> The slot reuse looks like a compiler saving one stack slot by recycling dead space, not hand-written code: it is identical in all four handlers and serves no purpose a plain push would not.</p>
+      </article>
 
       <article class="entry" id="production-n08">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
