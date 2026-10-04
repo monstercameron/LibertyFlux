@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Rust reader: audio banks and their ADPCM streams",
+    "title": "Devlog: Native handlers hide a one-byte stack trick",
     "commit": null,
+    "summary": "Findings from the r-n03 lane.",
+    "changes": [
+      "New devlog entry: Native handlers hide a one-byte stack trick.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Rust reader: audio banks and their ADPCM streams",
+    "commit": "6aef6871f85aacb9bf79f5a3abcbc58e44a6dec1",
     "summary": "Findings from the fmt-audio lane.",
     "changes": [
       "New devlog entry: Rust reader: audio banks and their ADPCM streams.",
