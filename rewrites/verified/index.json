@@ -30006,6 +30006,33 @@
   "lane": "a-18"
  },
  {
+  "address": "0x00ABC510",
+  "name": "shape_blend_vec3_pair",
+  "kind": "function",
+  "file": "functions/fn_00abc510.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b239"
+ },
+ {
+  "address": "0x00ABCA40",
+  "name": "capped_table_row_append",
+  "kind": "function",
+  "file": "functions/fn_00abca40.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b239"
+ },
+ {
+  "address": "0x00ABCB40",
+  "name": "collect_slot_rows",
+  "kind": "function",
+  "file": "functions/fn_00abcb40.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b239"
+ },
+ {
   "address": "0x00ACC640",
   "name": "audio_spatial_mix_update",
   "kind": "function",
@@ -58381,6 +58408,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b186"
+ },
+ {
+  "address": "0x00D755F0",
+  "name": "ui_ring_emit_7tap",
+  "kind": "function",
+  "file": "functions/fn_00d755f0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b252"
  },
  {
   "address": "0x00D75ED0",
