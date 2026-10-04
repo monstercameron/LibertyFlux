@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: Float operand order: the compiler swaps multiplies, and only liveness stops it",
+    "commit": null,
+    "summary": "Findings from the r-b141 lane.",
+    "changes": [
+      "New devlog entry: Float operand order: the compiler swaps multiplies, and only liveness stops it.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 44 more functions pass the checker (6050 in total)",
     "commit": "e4b86bf9ff7f9a0ec8068a1654e77546a2eb71fe",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

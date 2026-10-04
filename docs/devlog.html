@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b141">Float operand order: the compiler swaps multiplies, and only liveness stops it</a></li>
       <li><a href="#production-s207">The checker stub clobbers ECX and fails every constructor that reuses this</a></li>
       <li><a href="#production-b139">Production batch: a flag leak in a return value and relocated immediates</a></li>
       <li><a href="#checker-v4">Checker version 4: lane fixes folded back, and what version 3 still missed</a></li>
@@ -311,6 +312,37 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b141">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Float operand order: the compiler swaps multiplies, and only liveness stops it</h2>
+      <p>A vector filter rewrite passed every finite trial yet failed whenever two different NaN payloads met in one operation, because the compiler emits some multiplies with the operands exchanged. Wrapping one operand so the compiler cannot see through it did not help; neither did expressing the operation with vector intrinsics. Keeping both operands live past the operation held the order through one thousand trials.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a medium-size vector filter function in Rust and prove it bit-identical to the original, including NaN signs and payloads. The function scales an input vector, runs it through a long chain of scalar float operations, and normalizes the result. Two helper calls take their argument in a vector register and return a float the same way.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Scalar float operations propagate the first operand's NaN: when both inputs are NaN with different payloads, the result carries the first operand's payload. The rewrite therefore has to emit every multiply and add in the original's operand order, even though exchanged operands give identical results for all finite inputs.</p>
+      <p><span class="evidence verified">Verified</span> The compiler exchanged operands in the emitted code. Inspection of the built rewrite showed a final multiply emitted with the accumulator as the destination where the source named the scale factor first. The resulting verdict failed exactly the trials where two different NaN payloads reached one operation.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Attempt</th><th role="columnheader">Result</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Plain operators in source order</td><td role="cell" data-label="Result">Failed: operands exchanged</td></tr>
+      <tr role="row"><td role="cell">Hiding the first operand from the optimizer</td><td role="cell" data-label="Result">Failed: same trials</td></tr>
+      <tr role="row"><td role="cell">Set-and-extract vector-intrinsic idiom</td><td role="cell" data-label="Result">Failed: byte-identical output</td></tr>
+      <tr role="row"><td role="cell">Both operands live past the operation</td><td role="cell" data-label="Result">Passed one thousand trials</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> A diagnostic probe that stored the raw helper answers confirmed the checker delivers the scripted values correctly on both sides, ruling the harness out before the compiler was blamed.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Float-heavy rewrites should assume commutative operations can be exchanged and should verify with trials that combine at least two different NaN payloads.</li>
+      <li>The standing recipe of hiding one operand is not sufficient on this toolchain; keeping both operands live past the operation is the working alternative, and it must be re-verified by disassembly and trials after any toolchain change.</li>
+      <li>The checker manual should document that vector-register helper answers reach the rewrite in the general return register; currently only a proof rewrite shows the pattern.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Contract a function with two vector-register helpers, script the helpers with distinct NaN payloads, and run one thousand trials comparing heap words exactly. To isolate the layer, add a probe export that stores the raw helper answers and confirm the mismatch sits in the rewrite's arithmetic, then inspect the built rewrite's multiply operand order.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first two fixes each looked principled and changed the emitted code, yet the same trials failed identically, which made the compiler look innocent twice. The vector-intrinsic attempt was the most confusing: it produced byte-identical output to the plain version, because the compiler recognizes the idiom and reduces it to the same commutable operation. The probe export was the step that ended the guessing by pinning the divergence to the rewrite side. Separately, every built rewrite library became permanently write-locked minutes after a checker run, with no checker process holding it; rebuilding under a fresh library name each time worked around it, and locked libraries still load and verify.</p>
+      </article>
 
       <article class="entry" id="production-s207">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
