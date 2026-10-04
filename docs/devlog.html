@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#p0-natives">The script native table: just over three thousand natives, all named</a></li>
       <li><a href="#pages-build-collisions">GitHub Pages fails builds when pushes arrive seconds apart</a></li>
       <li><a href="#tools-models-textures">Tools: models, textures and collision</a></li>
       <li><a href="#tools-audio-video">Tools: audio and video</a></li>
@@ -89,6 +90,46 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="p0-natives">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>The script native table: just over three thousand natives, all named</h2>
+      <p><span class="evidence verified">Verified</span> The executable registers 3034 script natives into a single hash table, and every one now has a name from public databases. The older of the two known name-hash generations is the common Jenkins hash and checks out on all 2878 old pairs; the newer generation, which this build uses, is still unidentified, though its hashes have an unusual two-halves structure that constrains the search.</p>
+      <h3>What was asked</h3>
+      <p>Find the script engine's native function table using byte patterns published by the open-source script debugger scrDbg, enumerate every registered native as a hash plus handler pair, confirm the name-hashing function, and name as many natives as possible against public name lists.</p>
+      <h3>What was found</h3>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Script-engine anchors located</td><td role="cell" data-label="Value">10 of 10, each exactly once</td><td role="cell" data-label="What it means">The published patterns fit this build precisely</td></tr>
+      <tr role="row"><td role="cell">Native registrations</td><td role="cell" data-label="Value">3034, each hash registered once</td><td role="cell" data-label="What it means">The complete set this build can run</td></tr>
+      <tr role="row"><td role="cell">Named</td><td role="cell" data-label="Value">3034 of 3034</td><td role="cell" data-label="What it means">No unknown natives remain in this build</td></tr>
+      <tr role="row"><td role="cell">Distinct handlers</td><td role="cell" data-label="Value">2945</td><td role="cell" data-label="What it means">Most natives have their own code; 20 handlers are shared</td></tr>
+      <tr role="row"><td role="cell">Shared debug stub</td><td role="cell" data-label="Value">46 natives, one handler</td><td role="cell" data-label="What it means">Stripped debug natives point at one shared handler</td></tr>
+      <tr role="row"><td role="cell">Public names absent</td><td role="cell" data-label="Value">86 database entries plus 24 mod-added ones</td><td role="cell" data-label="What it means">The 86 look like entries whose new hash was never recorded</td></tr>
+      <tr role="row"><td role="cell">Old name hash</td><td role="cell" data-label="Value">Jenkins hash of the lowercase name</td><td role="cell" data-label="What it means">Confirmed on every old-generation pair</td></tr>
+      <tr role="row"><td role="cell">New name hash</td><td role="cell" data-label="Value">Unknown</td><td role="cell" data-label="What it means">Some sixty standard algorithms and variants all failed</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Registration takes two shapes that both reach the same table insert routine: a small group carries its own failure check per native, while the large group calls through a shared wrapper that holds the check once. The table routines match the published open-table design entry for entry, including the probing rule and the empty-slot markers.</p>
+      <p><span class="evidence verified">Verified</span> Native name strings are absent from the executable, so scripts and the engine meet only through hash values. Seven cases where the two public databases disagreed on a hash were settled against the registered values: three favour one database, one was a misattributed name, and three turned out to be genuine alias pairs where both hashes are registered.</p>
+      <p><span class="evidence">Inferred</span> Roughly the first megabyte of the code section reads as high-entropy bytes rather than code, so it is likely decrypted by the start-up stub at load. Only the shared debug handler points into that region; everything else registered sits in readable code.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>The enumerated hash-to-handler list is the ground truth for this build's natives; later work should consume it rather than re-derive it.</li>
+      <li>The new name-hash algorithm stays open. The recommended next step is to extract the hashes that compiled game scripts actually call and attack the algorithm from those pairs, using the two-halves bit structure as the main constraint.</li>
+      <li>Handler code clusters into a few regions, which should make per-subsystem handler mapping straightforward.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <ol>
+      <li>Search the executable's code for each published scrDbg pattern with wildcard bytes; each should occur once, pointing at the script-engine data.</li>
+      <li>Read the table insert routine next to the table anchor and note its two-argument shape and probing loop.</li>
+      <li>Find every push of a known native hash immediate followed by a call to the insert routine or its wrapper; pair each hash with the handler address pushed just before it.</li>
+      <li>Match the collected hashes against the public SCO-Toolbox and HappinessMP lists to attach names, and hash the old list with the Jenkins function to confirm the old generation.</li>
+      </ol>
+      <h3>What was confusing or went wrong</h3>
+      <p>Each hash in the small registration group appeared twice, which first looked like dual registration into two tables; disassembly showed the second push belongs to a failure-logging path, not a second table. The new hashes first appeared to have two bits structurally clear, which sent the analysis down a blind alley of masked and split-hash theories; the full-bit entries in the same list turned out to be old-hash placeholders, but the true new hashes really do keep those bits clear and the algorithm still resisted some sixty candidates plus seed-inversion, suffix, modulus and shift-family attacks. The shared debug handler points into the encrypted code region, so its runtime behaviour could not be checked statically.</p>
+      </article>
 
       <article class="entry" id="pages-build-collisions">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
