@@ -7,14 +7,14 @@
   },
   "functions": {
     "total": 43156,
-    "library": 4753,
-    "game": 38403
+    "library": 5455,
+    "game": 37701
   },
   "stages": {
-    "identified": 38403,
-    "named": 9031,
-    "rewritten": 5232,
-    "verified": 5059
+    "identified": 37701,
+    "named": 9006,
+    "rewritten": 5156,
+    "verified": 4978
   },
   "structures": 340,
   "symbols": 5093,
@@ -99,19 +99,19 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 9031,
+      "value": 9006,
       "unit": "functions",
       "source": "m-names lane: merge of 22 native-handler lanes and the inventory"
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 5232,
+      "value": 5156,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 5059,
+      "value": 4978,
       "unit": "functions",
       "source": "rewrites/pending/index.json in the repository"
     }

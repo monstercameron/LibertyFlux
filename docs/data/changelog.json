@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Progress data: runtime library code no longer counted as game code",
+    "commit": null,
+    "summary": "The game-function total goes down and the rewritten and verified counts go down with it, because some of what was counted was library code.",
+    "changes": [
+      "A lane mapped the statically linked C runtime in full: 655 functions the inventory had counted as game code are runtime library routines, and 36 more are QuickTime glue. One function marked runtime is game code and moves the other way.",
+      "Game functions: 38,403 becomes 37,713. Library and runtime: 4,753 becomes 5,443. The total of 43,156 is unchanged.",
+      "83 rewrites that production lanes had already produced are of runtime routines. They are no longer counted as rewritten or verified, since Rust's standard library replaces that code; the files stay in the repository for now.",
+      "The rewrite queue now holds out exactly the functions the lane judged runtime or was unsure about (four), instead of a whole address block.",
+      "Still open from the same lane: about 1,185 functions the inventory labels as the JPEG library look like game code and may move back; that needs its own check and is not applied here."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 114 more functions pass the checker (5093 in total)",
     "commit": "a033509025d7cf588fd8c3cfd720835d62d1ec9d",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
