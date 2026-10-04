@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Checker version 4: lane fixes folded back, two silent passes closed",
+    "title": "Code map: rebuilt from live data on every status update",
     "commit": null,
+    "summary": "The map of squares on the front page had not changed since the first inventory. It now follows the work.",
+    "changes": [
+      "The map was written once, from the first function inventory, and nothing regenerated it. It still described 45,224 functions and showed nothing rewritten or verified.",
+      "It is now rebuilt on every status update from the same sets as the stage counts. Each square carries how many of its game functions are named, rewritten and verified.",
+      "A square's shade used to be the stage of its least-advanced function, so one untouched function kept a square dark. The shade is now the stage at least half of its functions have reached, and a pale band rising from the bottom shows the share already verified, so partial progress is visible. Selecting a square reads out the counts.",
+      "Squares with no game functions (library code, data and the encrypted region) are labelled as such instead of as not measured.",
+      "The rule in the agent instructions that defines the map is updated to match."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Checker version 4: lane fixes folded back, two silent passes closed",
+    "commit": "0253597787d0a7c742ffce6f2c459751396f58dc",
     "summary": "The tracked checker gains the harness abilities lanes had built in private copies, and fails loudly in two cases where it used to pass without comparing.",
     "changes": [
       "A stand-in for a called function can now leave registers as it found them, for originals that rely on the real callee doing so (a base constructor that keeps the object pointer; a check called after the return value is set). Without this, a run of 80 constructors could not be verified at all.",

@@ -186,6 +186,8 @@ main.page > .wrap > h2 { margin-bottom: 0.5em; }
 .cell[data-stage="named"] { background: var(--stage-named); }
 .cell[data-stage="rewritten"] { background: var(--stage-rewritten); }
 .cell[data-stage="verified"] { background: var(--stage-verified); box-shadow: inset 0 0 0 2px rgba(18, 74, 115, 0.5); }
+/* A square that is not yet mostly verified shows its verified share as a pale band rising from the bottom. */
+.cell.part { background-image: linear-gradient(to top, var(--stage-verified) var(--done), transparent var(--done)); }
 .cell:hover, .cell.active { outline: 2px solid var(--sodium); outline-offset: 0; }
 
 .legend {

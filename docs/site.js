@@ -67,7 +67,8 @@ function render(data) {
     var title = document.getElementById("map-title");
     title.appendChild(document.createTextNode(
       " Each square is " + (perCell ? "about " + fmt.format(perCell) + " functions" : "a slice of the code") +
-      " in address order, left to right and top to bottom, and shows its least-advanced function."));
+      " in address order, left to right and top to bottom. Its shade is the stage at least half of them have reached;" +
+      " the pale band rising from the bottom is the share already verified."));
 
     var defaultReadout = data.mapRange || "";
     readout.textContent = defaultReadout;
@@ -77,7 +78,18 @@ function render(data) {
       var stage = STAGE_NAMES[entry.stage] ? entry.stage : "unmeasured";
       cell.dataset.stage = stage;
       cell.dataset.range = entry.from + " to " + entry.to;
-      cell.dataset.detail = STAGE_NAMES[stage] + (entry.count ? ", " + fmt.format(entry.count) + " functions" : "");
+      var detail = entry.count ? fmt.format(entry.count) + " functions" : "no game functions";
+      if (entry.count && typeof entry.verified === "number") {
+        detail += ": " + fmt.format(entry.named || 0) + " named, " + fmt.format(entry.rewritten || 0) + " rewritten, " +
+          fmt.format(entry.verified) + " verified";
+        if (entry.verified > 0 && stage !== "verified") {
+          cell.style.setProperty("--done", Math.max(12, Math.round(100 * entry.verified / entry.count)) + "%");
+          cell.classList.add("part");
+        }
+      } else if (entry.count) {
+        detail = STAGE_NAMES[stage] + ", " + detail;
+      }
+      cell.dataset.detail = detail;
       mapEl.appendChild(cell);
       return cell;
     });

@@ -97,9 +97,11 @@ code map on the project site. The coordinator owns it. Lanes never edit it.
     `identified` ≤ `functions.game`. A function counts as `verified` only if the checker accepted
     it; a rewrite that has not passed is `rewritten` at most.
   - `structures`, `symbols`: counts of documented type layouts and named symbols in tracked files.
-  - `map`: the code map, in address order. One object per slice with `stage` (the least-advanced
-    stage among the slice's functions, or `unmeasured`), `from` and `to` (the slice's address
-    range as hex strings) and `count` (functions in the slice). Keep the slice count a multiple of
+  - `map`: the code map, in address order, rebuilt on every tick from the same sets as the stage
+    counts. One object per slice with `from` and `to` (the slice's address range as hex strings),
+    `count` (game functions in the slice), `named`, `rewritten` and `verified` (how many of them
+    have reached each stage) and `stage` (the stage at least half of them have reached, or
+    `unmeasured` when the slice holds no game functions). Keep the slice count a multiple of
     120 so the grid fills whole rows at every screen width. `mapRange` is the full range as text.
 - After editing, run `python scripts/update_progress.py`, open the site and confirm the numbers,
   meters and map agree with each other, then commit `progress.json` together with the regenerated
