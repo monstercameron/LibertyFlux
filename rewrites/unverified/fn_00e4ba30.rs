@@ -48,7 +48,6 @@ lf_checker_rt::export!(thiscall, rw_00e4ba30(this: u32) -> u32 {
         const PANEL_TITLE: u32 = 0x1ec;
         const PANEL_RES: u32 = 0x1f4;
         const STEM_SLOT: u32 = 0x1f8;
-        const BACKEND_SLOT: u32 = 0x224;
         const OBJ_CURRENT: u32 = 0x1d8;
         const OBJ_MODE: u32 = 0x354;
         const BASE_DIR: u32 = 0x0116_8dd8;

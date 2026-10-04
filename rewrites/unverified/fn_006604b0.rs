@@ -10,8 +10,10 @@
 /// at `this+0x94` becomes 2 and the function returns 1.
 ///
 /// On a miss a 14-byte key (words from the descriptor's `+0x78` block:
-/// u32, u16, u32, u16) is built in a scratch struct and identified
-/// (callee 4) together with the descriptor's `+0x8` block; the registrar
+/// u32, u16, u32, u16) is copied into a scratch struct that is then not
+/// passed anywhere: the identify call (callee 4) takes the stack pointer
+/// below it instead, i.e. uninitialised scratch, together with the
+/// descriptor's `+0x8` block; the registrar
 /// (callee 5) then sees the manager's `+0x118` word and `this+0x530` on
 /// the `this+0x538` object. A zero answer returns the scratch byte the
 /// original reads (zero under the contract's zero stack fill); otherwise
@@ -70,16 +72,23 @@ lf_checker_rt::export!(thiscall, rw_006604b0(this: u32, _a0: u32, arg: u32) -> u
             wr32(this.wrapping_add(STATE), 2);
             return 1;
         }
+        // The original copies the key words into a scratch struct and then
+        // passes the stack pointer below it instead of the struct, so the
+        // callee sees uninitialised scratch (zero under the contract's
+        // zero stack fill). The reads must still happen for identical
+        // fault behaviour; only the passed pointer differs.
         let mut key = [0u32; 4];
         key[0] = rd32(arg.wrapping_add(0x78));
         (key.as_mut_ptr() as *mut u16).add(2).write_unaligned(rd16(arg.wrapping_add(0x7c)));
         key[2] = rd32(arg.wrapping_add(0x80));
         (key.as_mut_ptr() as *mut u16).add(6).write_unaligned(rd16(arg.wrapping_add(0x84)));
+        core::hint::black_box(key);
         let mgr2 = rd32(this.wrapping_add(MGR));
+        let zero = [0u32; 4];
         let _: u32 = lf_checker_rt::callee_thiscall!(
             C_IDENT,
             u32,
-            key.as_mut_ptr() as u32,
+            zero.as_ptr() as u32,
             arg.wrapping_add(8)
         );
         let registered: u32 = lf_checker_rt::callee_thiscall!(

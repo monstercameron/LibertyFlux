@@ -33,7 +33,7 @@ lf_checker_rt::export!(cdecl, rw_00d26900(arg: u32) -> u32 {
         let t = cvttss2si(scaled);
         let mut timer = if t > BASE { 0u32 } else { BASE.wrapping_sub(t) as u32 };
         if !(f32::from_bits(FLOOR_BITS) <= f) {
-            let q: u32 = lf_checker_rt::callee_cdecl!(2, u32);
+            let q: u32 = lf_checker_rt::callee_cdecl!(2, u32,);
             if q & 3 == 0 {
                 timer = UPGRADE;
             }
