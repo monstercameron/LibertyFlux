@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s209">A one-byte flag the checker cannot stub</a></li>
       <li><a href="#pointer-only-entries">Which pointer-only inventory entries are really functions</a></li>
       <li><a href="#production-b151">The compiler swaps float operands, and black box does not stop it</a></li>
       <li><a href="#production-b137">The compiler quietly swaps float operands, and NaN payloads notice</a></li>
@@ -317,6 +318,34 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s209">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>A one-byte flag the checker cannot stub</h2>
+      <p>Twenty neighbouring task-info serializers were rewritten and all twenty passed a thousand trials each, but four of them share a shape the checker cannot fully verify: a flag byte kept in scratch memory one byte below the return address, where a scripted callee write would corrupt the return address itself.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small game functions in Rust and prove each rewrite behaves identically to the original with the differential checker, or defer with a stated reason.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All twenty functions are the same kind of method: a serializer that takes a task-info object and a network buffer object and forwards fields to engine helpers. Twelve of them collect the helpers' low bytes with OR; eight thread a single flag byte through the helpers as an out-parameter and return it.</p>
+      <p><span class="evidence verified">Verified</span> Four of the eight flag functions keep their flag in a scratch slot that sits one byte below the stored return address. The checker's scripted callee writes store whole four-byte words, so declaring one would overwrite three bytes of the return address on the original side and crash it. Their contracts therefore declare no writes: both sides return the seeded flag, which passes, but a rewrite that ignored a genuine callee write would pass too.</p>
+      <p><span class="evidence verified">Verified</span> The other four flag functions keep their flag in a word-aligned slot, so scripted writes are safe there, and a deliberately wrong rewrite that ignored the write was caught within three trials.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Shape</th><th role="columnheader">Count</th><th role="columnheader">Stub writes</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Or-accumulator</td><td role="cell" data-label="Count">12</td><td role="cell" data-label="Stub writes">not applicable</td></tr>
+      <tr role="row"><td role="cell">Flag in aligned slot</td><td role="cell" data-label="Count">4</td><td role="cell" data-label="Stub writes">fully verified</td></tr>
+      <tr role="row"><td role="cell">Flag in scratch byte</td><td role="cell" data-label="Count">4</td><td role="cell" data-label="Stub writes">not expressible, see text</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>The four affected rewrites still implement the flag read-back faithfully, and their verdicts are genuine passes on the stock checker, but the write path is uncovered by construction. Sibling lanes meeting the same shape should model it the same way and say so, rather than forcing a write that corrupts the stack. The durable fix is byte-granular scripted callee writes in the checker.</p>
+      <h3>How to reproduce it</h3>
+      <p>Take any of the four affected contracts and add a one-word scripted write to the callee that receives the flag pointer: the original side faults on return while the rewrite side returns normally. The lane report names the functions and gives the address arithmetic.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two runs died partway with the worker process lost after hundreds of fully green trials; both passed cleanly on retry with no changes, matching flakes an earlier lane reported. Separately, a shell append rewrote one source file in the wrong text encoding and broke the build until the file was regenerated.</p>
+      </article>
 
       <article class="entry" id="pointer-only-entries">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
