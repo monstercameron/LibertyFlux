@@ -1,0 +1,7 @@
+# The LibertyFlux site. Everything on it may be crawled.
+# Crawlers read robots.txt only from the root of a host, and this site lives under /LibertyFlux/, so this file
+# takes effect only if the host's root serves it; the sitemap can also be submitted to a search engine directly.
+User-agent: *
+Allow: /
+
+Sitemap: https://monstercameron.github.io/LibertyFlux/sitemap.xml
