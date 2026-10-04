@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-paths-nav">Rust reader: navigation meshes and vehicle paths</a></li>
       <li><a href="#script-interpreter">The script interpreter, mapped end to end</a></li>
       <li><a href="#structures-ui">Class layouts: user interface, front end, HUD, replay editor and web browser classes</a></li>
       <li><a href="#structures-tasks-b">Class layouts: AI task classes, second half (CTaskSimple* and other CTask*)</a></li>
@@ -148,6 +149,34 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-paths-nav">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: navigation meshes and vehicle paths</h2>
+      <p>A new Rust crate now reads every pedestrian navmesh and every compiled vehicle path file in the game, and it corrected two public format notes along the way: the vehicle link table is owned by a partition rule rather than a per-node count, and its length byte comes first rather than second.</p>
+      <h3>What was asked</h3>
+      <p>Write a clean Rust reader for the pedestrian navigation meshes and the vehicle path node files, verify the public prose documentation against the real files, and validate adjacency in both directions.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The navmesh documentation held up for the parts it covers: the resource container, the sixty by sixty tile grid, the vertex and index arrays, and the polygon first-index rule checked out on all ten thousand plus tiles.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Navmesh files parsed</td><td role="cell" data-label="Value">10,839 of 10,839</td><td role="cell" data-label="What it means">Every tile and boat mesh opens with zero failures</td></tr>
+      <tr role="row"><td role="cell">Walkable polygons</td><td role="cell" data-label="Value">About 5.65 million</td><td role="cell" data-label="What it means">Three meshes per map plus a small test set</td></tr>
+      <tr role="row"><td role="cell">Path node files parsed</td><td role="cell" data-label="Value">192 of 192</td><td role="cell" data-label="What it means">Three maps times sixty-four squares, zero failures</td></tr>
+      <tr role="row"><td role="cell">Road nodes and links</td><td role="cell" data-label="Value">About 95 thousand nodes, 160 thousand links</td><td role="cell" data-label="What it means">Every link target exists and the graph is fully symmetric</td></tr>
+      <tr role="row"><td role="cell">Polygon corners</td><td role="cell" data-label="Value">3 to 15</td><td role="cell" data-label="What it means">The notes said at most 10; a small tail reaches 15</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The vehicle path notes needed two corrections. A node's links run from its own start marker to the next node's start marker, which partitions the link table exactly; the documented per-node count field does not match this and must not be used as one. The link length byte sits before the flag byte, not after it, which geometry settles decisively.</p>
+      <p><span class="evidence">Unknown</span> Polygon adjacency in the navmesh is still not decoded. The obvious small fields inside each polygon record were tested as neighbour references and are asymmetric in every tile, so they are something else. A per-corner side table with none-markers is the prime remaining candidate, as is the unexamined trailing region of each tile. The per-tile height base and any cover points are likewise still unknown.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The crate exposes what is verified and keeps the rest as documented raw bytes rather than guessing. The next lane should attack the per-corner side table first, then fit height bases from road node heights and search the trailing region for the matching field.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the crate and run its tests with the game folder exported: the integration suite opens the path and navmesh archives with a key it locates at run time in the owner's executable, parses every member, and re-checks all counts and the adjacency claims. Without that variable the suite skips cleanly.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The link table looked deeply broken at first: ownership windows overlapped heavily and a few nodes appeared to read past the end of the table. Both symptoms vanished once the count field was recognised as wrong and ownership was read as a partition instead. A late refactor of the edge-region accessor was covered by unit tests but did not get a second full integration run, so the suite should be re-run once after integration.</p>
+      </article>
 
       <article class="entry" id="script-interpreter">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
