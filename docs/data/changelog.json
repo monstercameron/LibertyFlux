@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Four audio functions verified, and one that ships garbage in a field",
+    "title": "Devlog: Verifying native handlers whose bool arguments carry garbage high bytes",
     "commit": null,
+    "summary": "Findings from the r-n118 lane.",
+    "changes": [
+      "New devlog entry: Verifying native handlers whose bool arguments carry garbage high bytes.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Four audio functions verified, and one that ships garbage in a field",
+    "commit": "16a0c75777355c9526ba81c83dbd2583aa765316",
     "summary": "Findings from the r-b45 lane.",
     "changes": [
       "New devlog entry: Four audio functions verified, and one that ships garbage in a field.",

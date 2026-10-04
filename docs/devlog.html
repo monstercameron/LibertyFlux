@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n118">Verifying native handlers whose bool arguments carry garbage high bytes</a></li>
       <li><a href="#production-b45">Four audio functions verified, and one that ships garbage in a field</a></li>
       <li><a href="#production-n116">First jump-thunk native verified, via a checker tail-call fix</a></li>
       <li><a href="#production-n112">Production batch: a tail-thunk checker bug and twenty-five verified natives</a></li>
@@ -262,6 +263,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n118">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Verifying native handlers whose bool arguments carry garbage high bytes</h2>
+      <p>Nineteen script native handlers were rewritten in Rust and all nineteen passed differential checking. Two of them needed a small checker extension, because they push boolean arguments whose upper bytes are caller leftovers rather than behaviour.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of nineteen script native handler functions in Rust and prove each rewrite behaves identically to the original, using the version 2 differential checker.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All nineteen handlers share one simple shape: each takes a call context, forwards script arguments to one engine function, and optionally stores the answer. Seventeen verified with the stock checker on the first attempt.</p>
+      <p><span class="evidence verified">Verified</span> Two handlers coerce script booleans into the low byte of a scratch stack slot and push the whole word, so the pushed words carry leftover high bytes from the caller's registers. The meaningful behaviour is only the low byte. The shipped checker can only drop such an argument from comparison entirely, which would leave the boolean itself unverified, so the lane added a twelve-line opt-in comparison that checks only the low byte. Bool-flipped mutants fail within three trials, proving the check is real.</p>
+      <p><span class="evidence verified">Verified</span> Two other handlers store the full engine answer into the return slot; unlike the byte-storing handlers they leave the answer, not the slot address, in the return register. The checker caught the wrong assumption on the first attempt and both passed after a one-line fix.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The low-byte call-argument comparison is proposed for folding back into the shared checker, so later lanes can verify this common bool pattern instead of deferring it. Sibling lanes should also check the exit register separately for each store shape rather than assuming all handlers exit alike.</p>
+      <h3>How to reproduce it</h3>
+      <p>Each function has a contract describing its inputs and checks, a Rust rewrite, and a verdict file recording one thousand passing trials. The two boolean-coercion cases additionally carry bool-flipped mutants that fail on the call comparison, and a regression run showing the extended checker behaves identically on contracts that do not use the new option.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The lane brief described a masking option the shipped checker does not have, which cost one investigation before the extension was written. A lane-owned regression run accidentally overwrote one accepted verdict file under the same name and had to be re-run. The shared worker process died once mid-contract with no failures recorded, matching flakes seen by earlier lanes, and a clean re-run passed.</p>
+      </article>
 
       <article class="entry" id="production-b45">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
