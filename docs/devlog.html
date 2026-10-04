@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-map-data">Rust reader: map definition and placement files (IDE, WPL, IPL-style text)</a></li>
       <li><a href="#reloc-reconcile">The relocation table is fine; three lanes read it wrong</a></li>
       <li><a href="#library-ranges">Library code mapped to exact function lists</a></li>
       <li><a href="#function-inventory">First unified function inventory: 45,229 functions, 30 percent named</a></li>
@@ -107,6 +108,35 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-map-data">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: map definition and placement files (IDE, WPL, IPL-style text)</h2>
+      <p>A dependency-free Rust crate now reads every loose map definition and placement file in the game folder: all item definition files, all binary placement files and all text placement files parse with no failures, yielding typed records for well over three hundred thousand rows.</p>
+      <h3>What was asked</h3>
+      <p>Write a clean Rust reader for the map formats from public documentation and direct inspection: plain-text item definitions with all their sections, binary placement files with all their record arrays, text placement files, and the load-list manifests that name them in load order. Verify it against every such file outside the archives and list every uncertain field.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The binary placement files store their record arrays in an order that is not numeric section order: the ignored stamp section sits between the modifier data and the level-of-detail data. Reading the sections in numeric order misaligns the rest of the file.</p>
+      <p><span class="evidence verified">Verified</span> One documented record size is wrong: the time-cycle modifier record is smaller than stated, matching the documentation's own field table rather than its headline size. Every shipped file agrees with the smaller size.</p>
+      <p><span class="evidence verified">Verified</span> Text placement files declare over twenty sections but only six ever hold records; instance placement moved to the binary files. Two item-definition sections are likewise always empty.</p>
+      <p><span class="evidence verified">Verified</span> The shipped files confirm several engine text quirks: rows with missing commas, rows cut at the documented line-length limit, and two files missing their final terminator. Unused padding in several binary records holds the uninitialised-memory pattern of a debug build, dating the tool that wrote them.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Item definition files parsed</td><td role="cell" data-label="Value">all found</td><td role="cell" data-label="What it means">object, vehicle, pedestrian, weapon and interior rows typed</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Binary placement files parsed</td><td role="cell" data-label="Value">all found</td><td role="cell" data-label="What it means">instances, garages, modifiers, stamps, level-of-detail and slow zones typed</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Text placement files parsed</td><td role="cell" data-label="Value">all found</td><td role="cell" data-label="What it means">path nodes and links, occlusion, effects and stamps typed</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Parse failures</td><td role="cell" data-label="Value">none</td><td role="cell" data-label="What it means">every record in every file matched its typed shape</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">External dependencies</td><td role="cell" data-label="Value">none</td><td role="cell" data-label="What it means">only the Rust standard library; builds anywhere</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>The reader tolerates the shipped quirks (missing commas, truncated lines, missing terminators, trailing padding) and keeps one bad row from hiding the rest of its file, while unknown fields stay explicitly marked rather than guessed. Two binary record kinds never appear in shipped files, so their documented layouts are implemented but flagged unverified. The next step is naming the remaining unknown columns from the per-section wiki pages and confirming the two unobserved record kinds.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the crate with the normal Rust toolchain and run its test suite: unit tests use hand-built inputs, and the integration test walks every map file in a local game install when pointed at it, reporting file counts, record counts and each distinct failure. A bundled example prints a per-file summary for manual inspection.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first survey miscounted text placement records because one section name contains a plus sign the section matcher did not allow; fixing the matcher revealed the empty-section pattern. The binary section order took three rounds of probing to pin down, because file sizes alone fit several orders and only the record contents distinguished them. A first draft of the path-node type assumed integer-only fields until the integration test showed float and large unsigned values in real files.</p>
+      </article>
 
       <article class="entry" id="reloc-reconcile">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
