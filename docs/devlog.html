@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-collision">Rust reader: collision bounds (WBN and bounds inside other resources)</a></li>
       <li><a href="#format-text-gxt">Rust reader: localisation text (GXT) and fonts</a></li>
       <li><a href="#pilot-candidates">Pilot candidates: 300 emulator-ready leaf functions, and a broken emulator</a></li>
       <li><a href="#work-queue">The work queue that hands out functions easiest first</a></li>
@@ -115,6 +116,38 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-collision">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: collision bounds (WBN and bounds inside other resources)</h2>
+      <p>A clean Rust reader now parses every shipped collision file, all 1079 of them, with zero failures, and confirms that all sixteen million collision vertices sit inside their stated bounding boxes.</p>
+      <h3>What was asked</h3>
+      <p>Write a clean Rust reader for the game's collision bounds: the bound types, their headers, vertex quantisation, polygon records, material indices, the tree node layout, and composite children with transforms, plus the minimal resource-container reading needed to reach them. Validate the geometry by checking every vertex against its bounding box.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The game ships 1079 collision files in its map archives: 732 single-bound files and 347 bound dictionaries, holding 9102 bounds between them. Every file uses the same resource container and compression, and none uses the graphics segment.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Bound kind</th><th role="columnheader">Count</th><th role="columnheader">Notes</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Sphere</td><td role="cell" data-label="Count">92</td><td role="cell" data-label="Notes">Radius tail matches the header radius</td></tr>
+      <tr role="row"><td role="cell">Capsule</td><td role="cell" data-label="Count">15</td><td role="cell" data-label="Notes">Header radius always equals cylinder radius plus half the length</td></tr>
+      <tr role="row"><td role="cell">Box</td><td role="cell" data-label="Count">1799</td><td role="cell" data-label="Notes">Always exactly 8 vertices and 6 quad faces</td></tr>
+      <tr role="row"><td role="cell">Geometry</td><td role="cell" data-label="Count">300</td><td role="cell" data-label="Notes">Only kind with a second vertex array</td></tr>
+      <tr role="row"><td role="cell">BVH tree</td><td role="cell" data-label="Count">5931</td><td role="cell" data-label="Notes">No on-disk tree found; differs from geometry by one flag byte</td></tr>
+      <tr role="row"><td role="cell">Composite</td><td role="cell" data-label="Count">965</td><td role="cell" data-label="Notes">Two to thirty one leaf children, never nested</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Mesh totals: 8030 meshes, about sixteen million vertices, about fifteen and a half million polygons, of which roughly two thirds are quads. Every vertex index is in range, every face normal is unit length, every neighbour reference is valid or empty, and every vertex lies inside its bound's stated bounding box. Material indices run from zero to 117.</p>
+      <p><span class="evidence verified">Verified</span> Four engine bound kinds with known class names have zero shipped instances, and three kind values have no confirmed meaning at all. The public wiki's large bounds-data table does not describe these files; the open-source readers' field offsets and formulas all checked out, except one mislabelled flag byte and one doubtful field name.</p>
+      <p><span class="evidence">Inferred</span> The BVH search tree is most likely built when the file loads, since nothing tree-shaped exists on disk. <span class="evidence">Unknown</span> The trailing header bytes, one header float, the capsule's zero vectors, two auxiliary pointers, the dictionary hash algorithm, and the purpose of the second vertex array remain uninterpreted.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The reader is written as an independent implementation in a new crate with hand-built test fixtures, a corpus test gated on an environment variable, and a one-file summary example. The container reading inside it is marked as temporary until the shared container crate lands. Bounds embedded in fragment files were left for a follow-up once that container is mapped.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the crate's unit tests for the fixtures, then run the corpus test with the game directory variable set: it lists the map archives, locates the archive key in the owner's executable at run time, parses each collision entry in memory, and prints the counts, the kind histogram, and the validation report. The example binary prints the same summary for a single extracted file.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>An early read of the survey output seemed to show boxes without mesh data; the raw dumps showed the opposite, and every box turned out to be a full eight-vertex mesh. The field the references call shrunk vertices differs from the main vertices by a large constant shift on sampled bounds rather than a small inset, so the name is probably wrong. The test compressor defaults to a different header level than the game writes, which broke the first fixtures until they were set to match.</p>
+      </article>
 
       <article class="entry" id="format-text-gxt">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
