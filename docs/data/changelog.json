@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Reader crate: lf-mapdata",
+    "title": "Reader crate: lf-sco",
     "commit": null,
+    "summary": "Compiled scripts: container, ISA decoder, disassembler, native names.",
+    "changes": [
+      "New crate crates/formats/lf-sco: Compiled scripts: container, ISA decoder, disassembler, native names.",
+      "About 1,757 lines of Rust with 18 unit tests and 4 integration tests; tests that need the game's files skip unless the game folder is given in an environment variable.",
+      "Third-party dependencies: aes, flate2, serde_json, sha1.",
+      "Written by the fmt-script-sco lane from the file format alone, then audited by the integration lane for game data, key material and machine paths before publication."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Reader crate: lf-mapdata",
+    "commit": "1db08356ff2e6df96cf6b96cf0035209df1802f8",
     "summary": "Map data: IDE, IPL, WPL, load lists and generic section text.",
     "changes": [
       "New crate crates/formats/lf-mapdata: Map data: IDE, IPL, WPL, load lists and generic section text.",
