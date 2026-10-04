@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#merge-structures">Merging the class layouts into one set of Rust types</a></li>
       <li><a href="#merge-names">Merging the names: what 22 native lanes agree on</a></li>
       <li><a href="#replacement-loader">Replacement loader built and tested without the game</a></li>
       <li><a href="#format-vehicle-ped-meta">Rust reader: vehicle, ped and weapon extra data inside resources</a></li>
@@ -175,6 +176,30 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="merge-structures">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Merging the class layouts into one set of Rust types</h2>
+      <p>All class layouts recovered so far are now one consistent set: about thirty eight hundred classes merged from the family lanes, the script native lanes, the RTTI hierarchy and the public headers, with ten thousand resolved conflicts, thirteen hundred open ones, and a draft Rust crate of three hundred forty layout structs that builds for both thirty two and sixty four bit targets.</p>
+      <h3>What was asked</h3>
+      <p>Combine every recovered class layout into a single set of structure definitions, resolving conflicts explicitly, and generate Rust types with compile time size and offset checks.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> every expected source file was present: all fifteen family layouts, all twenty two native field lists, the RTTI hierarchy and the public header names. Nothing is waiting on a missing lane.</p>
+      <p><span class="evidence verified">Verified</span> the merged set holds about thirty eight hundred classes and about eleven thousand fields after deduplication, with roughly three thousand high confidence fields and a similar number at medium confidence. About three thousand classes now carry base class links, mostly from RTTI.</p>
+      <p><span class="evidence verified">Verified</span> the draft crate holds three hundred forty structs covering about fifty six hundred fields, with explicit padding for unknown ranges and pointer fields that stay four bytes wide on sixty four bit hosts. It builds cleanly for both targets, and a deliberately corrupted assertion was shown to fail the build, so the checks are live.</p>
+      <p><span class="evidence verified">Verified</span> the largest gaps: the player object has only a handful of fields, the top level game and world objects have no records at all, physics instances are thin, and vehicle layouts are rich but about half low confidence.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Inherited fields are recorded once, on the owning class. A first rule that moved fields by size comparison was tried and rejected because it pulled derived only members into their bases; the shipped rule moves a field only when two independent child subtrees agree on it, or drops it as a duplicate with its evidence transferred to the owner.</li>
+      <li>Sizes from the lanes are lower bounds, so each Rust struct asserts its size rounded up to four byte alignment and is documented as a prefix of the true layout.</li>
+      <li>About seventy observations turned out to be global variables rather than struct fields and were split into a separate globals file for a later lane.</li>
+      <li>Recommended next analysis: allocator and pool stride work for true sizes, a dedicated pass for the game and world objects, and targeted review of the twenty high confidence kind conflicts listed in the conflicts file.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run the merge script in the lane scratch folder to regenerate the merged structures, conflicts, globals and moves files, then the generator script for the crate, then build the crate for both the thirty two bit and sixty four bit Windows targets. The merge log records each decision class with counts.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Each lane used its own schema for sizes, bases and fields, including one off wrappers and word widths such as dword and vec3, so the first merge attempt miscounted several hundred fields until every spelling was normalised. Absolute memory addresses disguised as field offsets inflated some layouts to tens of megabytes before the globals split caught them. The first base attribution rule looked principled but was circular, because base sizes already contained misattributed bytes; spotting train only and ped only members landing in their bases is what exposed it. The Rust generator initially produced over a thousand assertion failures from implicit padding before alignment aware typing fixed them.</p>
+      </article>
 
       <article class="entry" id="merge-names">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
