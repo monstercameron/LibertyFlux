@@ -18333,6 +18333,15 @@
   "lane": "r-s158"
  },
  {
+  "address": "0x00662200",
+  "name": "rage::snHostSessionTask::vf7",
+  "kind": "function",
+  "file": "functions/fn_00662200.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b290"
+ },
+ {
   "address": "0x00662440",
   "name": "rage::snHostSessionTask::vf3",
   "kind": "function",
@@ -29331,6 +29340,15 @@
   "lane": "r-b283"
  },
  {
+  "address": "0x00969040",
+  "name": "time_pair_to_grid_slot",
+  "kind": "function",
+  "file": "functions/fn_00969040.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b292"
+ },
+ {
   "address": "0x0096A8E0",
   "name": "audio_source_dir_quantize",
   "kind": "function",
@@ -32695,6 +32713,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s191"
+ },
+ {
+  "address": "0x009CEA80",
+  "name": "input_hook_refresh_dispatch",
+  "kind": "function",
+  "file": "functions/fn_009cea80.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b278"
  },
  {
   "address": "0x009CF4A0",
@@ -40921,6 +40948,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s215"
+ },
+ {
+  "address": "0x00B0BA70",
+  "name": "net_fn_B0BA70",
+  "kind": "function",
+  "file": "functions/fn_00b0ba70.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b303"
  },
  {
   "address": "0x00B0BC60",
@@ -71226,10 +71262,28 @@
   "lane": "r-s343"
  },
  {
+  "address": "0x00DA6080",
+  "name": "CTaskComplexShockingEventFlee::vf18",
+  "kind": "function",
+  "file": "functions/fn_00da6080.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s343"
+ },
+ {
   "address": "0x00DA6110",
   "name": "CTaskComplexShockingEventWatch::vf18",
   "kind": "function",
   "file": "functions/fn_00da6110.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s343"
+ },
+ {
+  "address": "0x00DA6120",
+  "name": "CTaskComplexShockingEventHurryAway::vf18",
+  "kind": "function",
+  "file": "functions/fn_00da6120.rs",
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s343"
@@ -71266,6 +71320,15 @@
   "name": "CTaskComplexShockingEventWatch::vf7",
   "kind": "function",
   "file": "functions/fn_00da66d0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s343"
+ },
+ {
+  "address": "0x00DA67B0",
+  "name": "CTaskComplexShockingEventWatch::vf5",
+  "kind": "function",
+  "file": "functions/fn_00da67b0.rs",
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s343"
@@ -73260,6 +73323,15 @@
   "lane": "r-b154"
  },
  {
+  "address": "0x00E3E570",
+  "name": "setup_bounded_emit",
+  "kind": "function",
+  "file": "functions/fn_00e3e570.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b271"
+ },
+ {
   "address": "0x00E3E770",
   "name": "StatsMeter_Restart",
   "kind": "function",
@@ -73267,6 +73339,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s114"
+ },
+ {
+  "address": "0x00E3E7F0",
+  "name": "emit_state_setup_calls",
+  "kind": "function",
+  "file": "functions/fn_00e3e7f0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b271"
  },
  {
   "address": "0x00E3E950",
@@ -73321,6 +73402,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s114"
+ },
+ {
+  "address": "0x00E3EEB0",
+  "name": "blend_param_pair_store",
+  "kind": "function",
+  "file": "functions/fn_00e3eeb0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b271"
+ },
+ {
+  "address": "0x00E3F060",
+  "name": "blend_param_single_store",
+  "kind": "function",
+  "file": "functions/fn_00e3f060.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b271"
  },
  {
   "address": "0x00E3F1C0",
@@ -82672,6 +82771,33 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-s334"
+ },
+ {
+  "address": "0x00E66960",
+  "name": "global_ratio_store_00",
+  "kind": "function",
+  "file": "functions/fn_00e66960.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s358"
+ },
+ {
+  "address": "0x00E66D60",
+  "name": "register_stub_04",
+  "kind": "function",
+  "file": "functions/fn_00e66d60.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s358"
+ },
+ {
+  "address": "0x00E67280",
+  "name": "global_ratio_store_10",
+  "kind": "function",
+  "file": "functions/fn_00e67280.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s358"
  },
  {
   "address": "0x00E67700",
