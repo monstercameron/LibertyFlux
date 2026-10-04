@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-script-sco">Rust reader: compiled scripts (SCO) and a disassembler</a></li>
       <li><a href="#structures-misc-a">Class layouts: remaining game classes, first half by name</a></li>
       <li><a href="#structures-core">Class layouts: core engine classes: files, resources, parsing, containers, system, script</a></li>
       <li><a href="#structures-animation">Class layouts: animation, motion tree and Euphoria</a></li>
@@ -134,6 +135,32 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-script-sco">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: compiled scripts (SCO) and a disassembler</h2>
+      <p>A new Rust crate loads every shipped compiled script and disassembles it: all 941 scripts parse and fully decode with zero failures, and native calls resolve to names through the engine native table.</p>
+      <h3>What was asked</h3>
+      <p>Write a clean Rust reader for the compiled script format with a disassembler: header, code, statics, globals, native calls and encryption, verified against the real game files, with native names loaded from a data file at run time rather than embedded.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All but one shipped script share a single encrypted container version; the exception is an unencrypted leftover from an older container version that decodes with the same instruction set.</p>
+      <p><span class="evidence verified">Verified</span> The corpus holds about fourteen and a half million instructions with roughly seven hundred thousand native calls to about twenty four hundred distinct natives, of which over ninety nine percent resolve to names.</p>
+      <ul>
+      <li>Most called natives are injury and death checks, debug print helpers, the game timer and the wait helper, matching an independent count made from the older decompiled reference set.</li>
+      <li>Five fixed opcodes never appear in any script, including the two exception opcodes, and small-constant pushes above thirty one are never used.</li>
+      <li>Only six scripts declare a globals segment, in per-episode pairs.</li>
+      <li>The header signature word is one constant per episode, not zero-everywhere as the public wiki suggests.</li>
+      <li>Nineteen called native hashes are not registered in this build; eight of them sit in the stale leftover script and the rest look like dead code paths.</li>
+      </ul>
+      <p><span class="evidence verified">Verified</span> Two scripts disassembled with this crate match an independent open-source disassembler instruction for instruction.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The crate is ready for review and integration: it parses from byte slices with explicit little-endian reads, returns typed errors instead of panicking, keeps the decryption key in memory only, and carries unit tests plus a game-data integration test. Next steps are attributing the unregistered native calls to live or dead code paths and mapping carved scripts back to archive file names once the keyed archive reader lands.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build and test the crate in the usual way, then run the integration test with the game folder environment variable set to parse and disassemble all scripts, optionally writing the per-script statistics file. The example binary summarizes a single script file to standard output and never writes game content anywhere.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence">Inferred</span> The most confusing source was an instruction-set document inside an otherwise reliable open-source tool repository: it describes a newer script target, not this game's, while the repository's code for this game's target is correct. The crate follows the code.</p>
+      <p>The first corpus run silently missed the leftover script because the test only scanned for the current container version; reading that archive's entry directly exposed the older magic. A debug-mode key search took minutes where a release build takes seconds, and a shell default wrote reference output in an unexpected encoding that broke the first comparison.</p>
+      </article>
 
       <article class="entry" id="structures-misc-a"><div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div><h2>Class layouts: remaining game classes, first half by name</h2><p>Layouts were recovered for the first half of the remaining game classes: about two thirds of their code sits in the encrypted part of the executable and could not be analysed, but virtual interfaces, constructor patterns and size estimates were recovered for the rest, including an odd case where derived destructors store the base class table address.</p><h3>What was asked</h3><p>Recover object layouts and virtual interfaces for 137 classes: per-slot virtual tables, constructors and destructors, object sizes, field offsets and kinds, and relationships, working only on the unencrypted code with a relocatable-reference search.</p><h3>What was found</h3><ul><li><span class="evidence verified">Verified</span> 137 classes hold 2,072 virtual slots; 64 percent point into the encrypted range and were not analysed.</li><li><span class="evidence verified">Verified</span> 61 constructors, 13 deleting destructors and 49 factory-style creator functions were identified; 470 field observations were recorded, most of them low confidence single sightings.</li><li><span class="evidence verified">Verified</span> the render-command family (14 tiny classes) is allocated 12 or 16 bytes at a time through a shared allocator, which pins their sizes.</li><li><span class="evidence verified">Verified</span> the eight effect classes derived from the 2d-effect base get their sizes (16 to 168 bytes) from array-destructor stride measurements, since their own code is encrypted.</li><li><span class="evidence verified">Verified</span> the network-event and entity-parse families are fully encrypted with no references in readable code, so nothing beyond table shape is known about them.</li><li><span class="evidence">Inferred</span> a large dispatcher routine referencing seven task-descriptor tables is a task factory, not a destructor as first labelled.</li><li><span class="evidence">Unknown</span> why the derived effect destructors store the base class table address rather than their own.</li></ul><h3>What was decided or recommended</h3><p>Rewrite in this order: the tiny render commands first, then shader effects and cutscene events, then task descriptors once their bases land, then headers-only for the effect family, and the encrypted network and parse families last. Sizes from destructor strides outrank sizes from field offsets where they disagree.</p><h3>How to reproduce it</h3><p>Scan the executable relocation table for code sites whose stored value equals a class table address, decode each site instruction, and classify the containing function by whether it stores the table through the object pointer, an alias, a fresh allocation, or a global. Slot override analysis needs no disassembly: compare each slot target with the base class tables.</p><h3>What was confusing or went wrong</h3><p>An early decoder took the first instruction covering a reference site and misclassified several creators; verifying each decode against the relocation value fixed it. A destructor heuristic misfired on the task factory until its body was read. Allocation-size guesses below four bytes turned out to be argument noise and were discarded.</p></article>
 
