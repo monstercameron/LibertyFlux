@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#tools-shaders">Tools: shaders</a></li>
       <li><a href="#tools-runtime-debug">Tools: running, debugging and tracing the game</a></li>
       <li><a href="#emulator-harness">Original functions can be executed for comparison, but not with Unicorn on this machine</a></li>
       <li><a href="#swarm-speed">How fast an agent swarm went through phase 0, and what that does and does not say about the rest</a></li>
@@ -103,6 +104,50 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="tools-shaders">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Tools: shaders</h2>
+      <p>All of the game's shaders can be extracted and translated to validated SPIR-V with free tools that now live in the project's tools folder. The game ships 102 shader programs in 6 graphics-card variants (612 files), all using shader model 3.0 bytecode inside a simple container. After removing duplicates there are 969 distinct shader programs. The recommended path is a small extractor, then the DXVK project's shader compiler to SPIR-V, then SPIRV-Cross to Metal shading language, with the official SPIR-V validator as the gate.</p>
+      <h3>What was asked</h3>
+      <p>Establish the game's shader container format from file headers and public documentation, count the shaders, and find, test and where allowed install the tools the project needs: an extractor for the container, disassemblers and translators for Direct3D 9 shader bytecode, and SPIR-V tools. Recommend a pipeline from the game's shader files to SPIR-V and to Metal shading language.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The shader files sit as loose files in the game's shared shader folder, so no archive tool is needed for them. Each container starts with a four-character magic word, then a list of vertex-shader fragments, then pixel-shader fragments; every fragment carries its parameter names and a size-prefixed bytecode blob, followed by technique metadata. A purpose-written extractor parsed all 612 files with zero failures and every blob checked out as well-formed shader model 3.0 bytecode with full parameter tables.</p>
+      <p><span class="evidence verified">Verified</span> The six card-specific folders are mostly copies of each other: two are byte-identical, two more differ from the base set in only one or two files, and the remaining two carry cheaper variants of a few dozen shaders. Deduplication leaves 969 distinct programs out of 10,134 blobs.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Tool</th><th role="columnheader">Job</th><th role="columnheader">Result on all 969 programs</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">dxbc-spirv (the DXVK shader compiler)</td><td role="cell" data-label="Job">Bytecode to SPIR-V</td><td role="cell" data-label="Result on all 969 programs">All outputs pass the official validator with no fixes needed</td></tr>
+      <tr role="row"><td role="cell">MojoShader</td><td role="cell" data-label="Job">Bytecode to GLSL, SPIR-V and Metal</td><td role="cell" data-label="Result on all 969 programs">Reads everything, but its SPIR-V needs trailing junk trimmed and 4 programs fail validation on a gradient bug</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Job">SPIRV-Cross</td><td role="cell" data-label="Job">SPIR-V to Metal and HLSL</td><td role="cell" data-label="Result on all 969 programs">Emits both languages; some shaders need a newer Metal version flag</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Job">SPIRV-Tools</td><td role="cell" data-label="Job">Validate and inspect SPIR-V</td><td role="cell" data-label="Result on all 969 programs">Used as the pass/fail gate for every translated shader</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Job">fxc from the Windows SDK</td><td role="cell" data-label="Job">Disassemble for inspection</td><td role="cell" data-label="Result on all 969 programs">Clean disassembly with parameter tables; inspection only</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Job">rage_fxc_extractor</td><td role="cell" data-label="Job">Container extraction (reference)</td><td role="cell" data-label="Result on all 969 programs">Despite targeting console files, it reads every PC file and matches the purpose-written extractor byte for byte</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Job">glslang and naga</td><td role="cell" data-label="Job">General shader compilers</td><td role="cell" data-label="Result on all 969 programs">Both work, but neither fits this chain: one cannot read the generated GLSL dialect, the other rejects fragment shaders</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> One named candidate was rejected after testing: a DirectX 11 shader decompiler errors out on these older bytecode files and its disassembler crashes on them. It only understands a newer bytecode format, so it was removed again.</p>
+      <p><span class="evidence">Inferred</span> The PC and console containers share one layout, since the console-oriented extractor reads every PC file including its quirks.</p>
+      <p><span class="evidence">Unknown</span> The technique and pass tables at the end of each container are not fully decoded yet, only their name strings. The Metal output from both translators is unvalidated because no Metal compiler exists on this machine.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Standardise on this offline pipeline: extract and deduplicate to 969 programs, translate with dxbc-spirv, require every module to pass the SPIR-V validator, then convert to Metal shading language with SPIRV-Cross.</li>
+      <li>Keep MojoShader as a second source for cross-checking, with workarounds for its two known defects, and keep glslang and naga only for newly written shaders.</li>
+      <li>Use the SDK disassembler for inspection. Do not adopt the DirectX 11 decompiler.</li>
+      <li>Before translated shaders can run, not just validate, the renderer team must settle how shader resources and inputs are bound, because the translator's output follows DirectX 9 conventions the new renderer has to mirror.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane's extractor over the game's shader folder (read-only), which should report 612 files parsed and 969 distinct programs. Then run each translator over the extracted programs and check every output with the SPIR-V validator. The exact scripts, command lines, tool versions and licences are recorded in the lane's report and tool manifest in the project scratch area.</p>
+      <h3>What was confusing or went wrong</h3>
+      <ul>
+      <li>An earlier survey reported a different container magic word; re-reading all 612 files showed it was misread, and its shader count had double-counted each program. Both are corrected in the lane report.</li>
+      <li>The first batch test reported hundreds of MojoShader failures that turned out to be a bug in the test script's file mapping, not in the tool. After the fix all three language profiles passed everything.</li>
+      <li>MojoShader's own example programs corrupt binary output on Windows by printing it as text. A 40-line helper that writes bytes to a file fixed it, and that helper is what all validation here used.</li>
+      <li>Two plausible pipeline links failed for instructive reasons: generated GLSL uses too old a dialect for the Vulkan compiler, and the Rust shader compiler rejects fragment shaders from both translators. Both findings are recorded so the next lane does not retry them.</li>
+      </ul>
+      </article>
 
       <article class="entry" id="tools-runtime-debug">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
