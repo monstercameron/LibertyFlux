@@ -15516,6 +15516,15 @@
   "lane": "r-s154"
  },
  {
+  "address": "0x00925EB0",
+  "name": "ui_effect_tables_init",
+  "kind": "function",
+  "file": "functions/fn_00925eb0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b184"
+ },
+ {
   "address": "0x009265A0",
   "name": "input_cell_reset",
   "kind": "function",
@@ -15523,6 +15532,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s154"
+ },
+ {
+  "address": "0x009268B0",
+  "name": "ui_slot_constants_upload",
+  "kind": "function",
+  "file": "functions/fn_009268b0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b184"
  },
  {
   "address": "0x00926B20",
@@ -15550,6 +15568,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s154"
+ },
+ {
+  "address": "0x009273B0",
+  "name": "ui_draw_textured_rect",
+  "kind": "function",
+  "file": "functions/fn_009273b0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b184"
  },
  {
   "address": "0x009341F0",
@@ -52495,6 +52522,177 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-08"
+ },
+ {
+  "address": "0x00DA83F0",
+  "name": "flee_event_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00da83f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DA8750",
+  "name": "CTaskComplexFleeAndDive::vf7",
+  "kind": "function",
+  "file": "functions/fn_00da8750.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DA8780",
+  "name": "CTaskComplexFleeShooting::vf7",
+  "kind": "function",
+  "file": "functions/fn_00da8780.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DA87C0",
+  "name": "CTaskComplexSmartFleePoint::vf7",
+  "kind": "function",
+  "file": "functions/fn_00da87c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DA8850",
+  "name": "CTaskComplexFleeAndDive::vf5",
+  "kind": "function",
+  "file": "functions/fn_00da8850.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DA88B0",
+  "name": "CTaskComplexSmartFleePoint::vf5",
+  "kind": "function",
+  "file": "functions/fn_00da88b0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DA89D0",
+  "name": "tracker_position_update",
+  "kind": "function",
+  "file": "functions/fn_00da89d0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DA8AC0",
+  "name": "CTaskComplexStuckInAir::vf0",
+  "kind": "function",
+  "file": "functions/fn_00da8ac0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DA8AF0",
+  "name": "remap_task_state",
+  "kind": "function",
+  "file": "functions/fn_00da8af0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DA8B90",
+  "name": "CTaskComplexStuckInAir::vf1",
+  "kind": "function",
+  "file": "functions/fn_00da8b90.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DA8EB0",
+  "name": "CTaskComplexStuckInAir::vf19",
+  "kind": "function",
+  "file": "functions/fn_00da8eb0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DA99F0",
+  "name": "flee_raycast_forward",
+  "kind": "function",
+  "file": "functions/fn_00da99f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DA9C60",
+  "name": "project_point_onto_segment",
+  "kind": "function",
+  "file": "functions/fn_00da9c60.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DA9D10",
+  "name": "flee_altitude_band",
+  "kind": "function",
+  "file": "functions/fn_00da9d10.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DA9D50",
+  "name": "flee_probe_check",
+  "kind": "function",
+  "file": "functions/fn_00da9d50.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DA9DC0",
+  "name": "flee_window_check",
+  "kind": "function",
+  "file": "functions/fn_00da9dc0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DAC360",
+  "name": "flee_plan_chain",
+  "kind": "function",
+  "file": "functions/fn_00dac360.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DAC850",
+  "name": "flee_link_task_ctor",
+  "kind": "function",
+  "file": "functions/fn_00dac850.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
+ },
+ {
+  "address": "0x00DAC8B0",
+  "name": "flee_full_task_ctor",
+  "kind": "function",
+  "file": "functions/fn_00dac8b0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s244"
  },
  {
   "address": "0x00DB1650",
