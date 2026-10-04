@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b110">Three quiet ways a proof can lie to you</a></li>
       <li><a href="#production-s172">Twenty leaderboard constructors needed a fairer call stub</a></li>
       <li><a href="#production-b115">Optimized builds can fail bit-exact float checks, and five sibling functions share one shape</a></li>
       <li><a href="#production-b105">Production batch: three emitter rewrites verified, one float lesson</a></li>
@@ -297,6 +298,25 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b110">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Three quiet ways a proof can lie to you</h2>
+      <p>Verifying three memory-subsystem functions surfaced three soundness gaps worth knowing: a contract that forgets to intercept a call silently runs the original machine code instead of failing, heap segment sizes are rounded down to whole words without warning, and ordinary arithmetic in a rewrite can reorder floating point operations and change Not-a-Number results.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite three original game functions in Rust and prove each rewrite behaves identically to the original with the version 3 checker, which intercepts outgoing calls and compares return values, memory, stack and call sequences over at least one thousand trials.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Two functions verified fully at 1200 trials each with fault parity. The third, a large floating point update, was verified in stages to stage 3 of 5 with 1200 passing trials.</p>
+      <p><span class="evidence verified">Verified</span> A direct call with no interception record executes the real original code silently: the call comparison sees only intercepted calls and the undeclared-call check stays quiet. A contract that misses a call therefore tests the rewrite against the original plus unknown real side effects, not against the scripted environment.</p>
+      <p><span class="evidence verified">Verified</span> Heap segment sizes are floored to whole four-byte words when applied. A segment two bytes short left its last bytes uninitialised, which sent the original down a different path with real calls executing, while the rewrite stayed put.</p>
+      <p><span class="evidence verified">Verified</span> A chain of single-precision additions compiled from plain operators came out in a different order than written, flipping the sign of a Not-a-Number result on one trial in 1200. Scalar helpers with explicit quiet-Not-a-Number propagation and no inlining fixed the order and passed the full run.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The checker should fail a trial that executes a direct call with no interception record, or at least report unintercepted targets. The driver should warn when a segment size is not a multiple of four. Rewrites with chained floating point arithmetic should use explicit ordered helpers, not plain operators, when bit-exact results are required.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build a contract that omits one direct call of a function whose paths depend on heap flags, run it, and observe that the verdict reports only the intercepted calls with no complaint about the missing one. For the segment rounding, declare a segment whose size is not divisible by four and read its last bytes. For the arithmetic, compare a four-term single-precision sum written with plain operators against the original instruction order over Not-a-Number-heavy inputs.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The segment-rounding bug initially looked like the interception layer writing to impossible heap addresses, because the real code running through the unintercepted calls wrote where no scripted behaviour could. The floating point failure passed 1199 of 1200 trials and needed the exact trial inputs resolved by hand to see the single reordered addition. A rebuilt rewrite library also stays file-locked after a run; renaming it before rebuilding works around it.</p>
+      </article>
 
       <article class="entry" id="production-s172">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
