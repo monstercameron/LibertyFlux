@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Rewrites: 1035 functions that pass the checker (1035 in total)",
+    "title": "README: repository layout lists the Rust workspace and the rewrites",
     "commit": null,
+    "summary": "The layout table now covers the two places Rust code lives.",
+    "changes": [
+      "Added the cargo workspace and its crates to the repository layout table.",
+      "Added rewrites/pending, with a plain statement that those rewrites have passed the checker but are not yet linked into the crates."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Rewrites: 1035 functions that pass the checker (1035 in total)",
+    "commit": "eeff0a8932060367e6f7a6aa87537c8d51f0cdcc",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "1035 rewrites added under rewrites/pending: 668 script native handlers and 367 other functions.",
