@@ -81,6 +81,14 @@ lf_checker_rt::export!(thiscall, rw_006F5C50(this: u32, a0: u32, _a1: u32) -> u3
         if b88 & 2 != 0 {
             wr8(this + 0x88, b88 & 0xFD);
         }
+        // Tail merge: reloads bl from the flag byte, masks to 0x20 and
+        // xors it back, i.e. flag bit 5 := bl0. Stage 1 always has bl0 = 0
+        // (both arg1-slot stores on this path write 0; the 1-store is in
+        // the skipped inner body, guarded above), so bit 5 is cleared.
+        let b88b = rd8(this + 0x88);
+        let bl0 = 0u8;
+        let bl = (bl0 << 5) ^ b88b;
+        wr8(this + 0x88, b88b ^ (bl & 0x20));
         if b88 & 2 != 0 && rd32(this + 0x20) == 3 {
             let s18 = rd32(this + 0x18);
             let edi_w = rd16(this + 0x82) as u32;

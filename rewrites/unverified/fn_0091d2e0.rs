@@ -58,7 +58,79 @@ lf_checker_rt::export!(cdecl, rw_0091d2e0(wstr: u32, _arg1: u32, out: u32) -> u3
             unsafe { lf_checker_rt::callee_thiscall!(3, u32, ck) };
         }
 
-// __TABLE__
+        // (strcmp stub id, name file VA, action) in chain order.
+        // Action: 0 = stage-1 todo (wrong constant), 1 = const C1,
+        // 2 = bl-gated (bl==0 -> C2 else C1).
+        const TABLE: [(u32, u32, u8, u32, u32); 68] = [
+            (100, 0x00E85F1C, 0, 0, 0), // site 0: stage 2+
+            (101, 0x00E84D3C, 2, 0x100, 0x129), // site 1
+            (102, 0x00E84D54, 2, 0x101, 0x12A), // site 2
+            (103, 0x00E84D94, 2, 0x102, 0x12B), // site 3
+            (104, 0x00E84DC4, 2, 0x103, 0x12C), // site 4
+            (105, 0x00E84DF0, 1, 0x11C, 0x0), // site 5
+            (106, 0x00E84E10, 1, 0x11D, 0x0), // site 6
+            (107, 0x00E84E38, 0, 0, 0), // site 7: stage 2+
+            (108, 0x00E84E98, 0, 0, 0), // site 8: stage 2+
+            (109, 0x00E84F00, 0, 0, 0), // site 9: stage 2+
+            (110, 0x00E84F78, 0, 0, 0), // site 10: stage 2+
+            (111, 0x00E84FC8, 0, 0, 0), // site 11: stage 2+
+            (112, 0x00E8501C, 1, 0x121, 0x0), // site 12
+            (113, 0x00E85044, 0, 0, 0), // site 13: stage 2+
+            (114, 0x00E8508C, 1, 0x123, 0x0), // site 14
+            (115, 0x00E85094, 0, 0, 0), // site 15: stage 2+
+            (116, 0x00E850B4, 0, 0, 0), // site 16: stage 2+
+            (117, 0x00E850D8, 0, 0, 0), // site 17: stage 2+
+            (118, 0x00E850FC, 0, 0, 0), // site 18: stage 2+
+            (119, 0x00E85124, 1, 0x108, 0x0), // site 19
+            (120, 0x00E85134, 0, 0, 0), // site 20: stage 2+
+            (121, 0x00E85218, 0, 0, 0), // site 21: stage 2+
+            (122, 0x00E852C4, 0, 0, 0), // site 22: stage 2+
+            (123, 0x00E85364, 0, 0, 0), // site 23: stage 2+
+            (124, 0x00E853BC, 0, 0, 0), // site 24: stage 2+
+            (125, 0x00E85400, 0, 0, 0), // site 25: stage 2+
+            (126, 0x00E85444, 0, 0, 0), // site 26: stage 2+
+            (127, 0x00E854C0, 0, 0, 0), // site 27: stage 2+
+            (128, 0x00E85618, 0, 0, 0), // site 28: stage 2+
+            (129, 0x00E85858, 0, 0, 0), // site 29: stage 2+
+            (130, 0x00E85904, 0, 0, 0), // site 30: stage 2+
+            (131, 0x00E859B4, 0, 0, 0), // site 31: stage 2+
+            (132, 0x00E85A2C, 0, 0, 0), // site 32: stage 2+
+            (133, 0x00E85A94, 1, 0x114, 0x0), // site 33
+            (134, 0x00E85AA4, 1, 0x115, 0x0), // site 34
+            (135, 0x00E85AB8, 1, 0x116, 0x0), // site 35
+            (136, 0x00E85AD0, 1, 0x117, 0x0), // site 36
+            (137, 0x00E85AE4, 0, 0, 0), // site 37: stage 2+
+            (138, 0x00E85B04, 0, 0, 0), // site 38: stage 2+
+            (139, 0x00E85B38, 0, 0, 0), // site 39: stage 2+
+            (140, 0x00E85B50, 0, 0, 0), // site 40: stage 2+
+            (141, 0x00E85B74, 0, 0, 0), // site 41: stage 2+
+            (142, 0x00E85B9C, 0, 0, 0), // site 42: stage 2+
+            (143, 0x00E85BBC, 0, 0, 0), // site 43: stage 2+
+            (144, 0x00E85BDC, 0, 0, 0), // site 44: stage 2+
+            (145, 0x00E85BF0, 0, 0, 0), // site 45: stage 2+
+            (146, 0x00E85C04, 0, 0, 0), // site 46: stage 2+
+            (147, 0x00E85C1C, 0, 0, 0), // site 47: stage 2+
+            (148, 0x00E85C30, 0, 0, 0), // site 48: stage 2+
+            (149, 0x00E85C50, 0, 0, 0), // site 49: stage 2+
+            (150, 0x00E85C70, 0, 0, 0), // site 50: stage 2+
+            (151, 0x00E85C98, 1, 0x128, 0x0), // site 51
+            (152, 0x00E85CAC, 1, 0x12D, 0x0), // site 52
+            (153, 0x00E85CB8, 1, 0x12E, 0x0), // site 53
+            (154, 0x00E85CC4, 1, 0x12F, 0x0), // site 54
+            (155, 0x00E85CD0, 1, 0x130, 0x0), // site 55
+            (156, 0x00E85CDC, 1, 0x131, 0x0), // site 56
+            (157, 0x00E85CE8, 1, 0x132, 0x0), // site 57
+            (158, 0x00E85CF4, 1, 0x133, 0x0), // site 58
+            (159, 0x00E85D00, 1, 0x134, 0x0), // site 59
+            (160, 0x00E85D0C, 1, 0x135, 0x0), // site 60
+            (161, 0x00E85D18, 1, 0x136, 0x0), // site 61
+            (162, 0x00E85D24, 1, 0x137, 0x0), // site 62
+            (163, 0x00E85D30, 1, 0x138, 0x0), // site 63
+            (164, 0x00E85D3C, 1, 0x139, 0x0), // site 64
+            (165, 0x00E85D48, 1, 0x13A, 0x0), // site 65
+            (166, 0x00E85D54, 1, 0x13B, 0x0), // site 66
+            (167, 0x00E85D60, 1, 0x13C, 0x0), // site 67
+        ];
 
         let ck = rd32(lf_checker_rt::relocated(COOKIE));
         if wstr == 0 {
@@ -110,11 +182,14 @@ lf_checker_rt::export!(cdecl, rw_0091d2e0(wstr: u32, _arg1: u32, out: u32) -> u3
             cookie(ck);
             return 0xDEAD0000 | TABLE[0].0;
         }
+        // Short-circuit like the original: the helper runs only when the pad
+        // byte is set and the override byte is clear.
         let pad: u32 = lf_checker_rt::callee_cdecl!(1, u32, 0u32);
-        let present = rd8(pad.wrapping_add(0x328C)) != 0;
-        let g = rd8(lf_checker_rt::relocated(GLOB));
-        let s59: u32 = lf_checker_rt::callee_cdecl!(2, u32,);
-        let bl = present && g == 0 && (s59 & 0xFF) == 0;
+        let mut bl = false;
+        if rd8(pad.wrapping_add(0x328C)) != 0 && rd8(lf_checker_rt::relocated(GLOB)) == 0 {
+            let s59: u32 = lf_checker_rt::callee_cdecl!(2, u32,);
+            bl = (s59 & 0xFF) == 0;
+        }
         let mut ans: Option<u32> = None;
         for &(id, strva, act, c1, c2) in TABLE[1..].iter() {
             let eq: u32 = lf_checker_rt::callee_cdecl!(

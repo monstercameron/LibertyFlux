@@ -104,14 +104,17 @@ lf_checker_rt::export!(cdecl, rw_00b042e0(arg: u32) -> u32 {
     let c_110db74_0: f32 = frd(lf_checker_rt::relocated(0x0110db74) + 0x0);
     let c_110db78_0: f32 = frd(lf_checker_rt::relocated(0x0110db78) + 0x0);
         let banktab = lf_checker_rt::relocated(G_BANKTAB);
-        let bankval = rd32(banktab);
-        let bankbase = arg.wrapping_mul(BANK_STRIDE).wrapping_add(bankval);
+        let bankptr = rd32(banktab);
+        let bankbase = arg
+            .wrapping_mul(BANK_STRIDE)
+            .wrapping_add(rd32(bankptr));
         if bankbase == 0 {
-            return bankval;
+            return bankptr;
         }
         let gobj = rd32(lf_checker_rt::relocated(G_OBJ));
+        let vt = rd32(gobj);
         let probe: extern "thiscall" fn(u32) -> u32 =
-            core::mem::transmute(rd32(gobj.wrapping_add(VT_PROBE)) as usize);
+            core::mem::transmute(rd32(vt.wrapping_add(VT_PROBE)) as usize);
         let skip_dist = probe(gobj) == SKIP_PROBE;
         let g6 = rdf(gobj.wrapping_add(0x120));
         let g7 = rdf(gobj.wrapping_add(0x124));

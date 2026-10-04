@@ -5,8 +5,8 @@
 /// record and the per-field setters.
 ///
 /// Samples the value helper (cdecl, pointer and length) into the frame:
-/// the selector word, the record index, a word, a 16-byte block, a float
-/// and another word; picks one of three sample paths by the mode flags
+/// the selector word, the resolve argument, a word, a 16-byte block, a
+/// float and another word; picks one of three sample paths by the mode flags
 /// (a 30-byte block plus a compare helper call, with or without a second
 /// fill and a flag pulse, or a 60-byte block); then samples eight more
 /// words, the table-2 index and the shared 8-byte global. The record
@@ -16,11 +16,11 @@
 /// or the resolve helper (cdecl, index and selector) answers -1, returns
 /// 0. Else the record takes the low word at `+0x00` and a dword at
 /// `+0x04`; the combine helper (cdecl, selector and block pointer) runs;
-/// a clear flag on the index record returns 1; else the record takes a
-/// word at `+0x20`, three field setters run, a set flag on the sample-28
-/// record stores a float at `+0x40` (otherwise the field call below takes
-/// the sample), three more setters run, a set flag on the selector
-/// record stores a float at `+0x50`, two more setters run, and the finish
+/// a clear flag on the selector record returns 1; else the record takes a
+/// word at `+0x20`, three field setters run, a set flag on the selector
+/// record stores a float at `+0x40`, three more setters run, a set flag
+/// on the selector record stores a float at `+0x50`, two more setters
+/// run, and the finish
 /// helper (cdecl, selector and 0, or the table-2 entry with the index
 /// decremented) runs before returning 1. Returns the last helper answer
 /// with its low byte forced to 1 (0 on the early paths). Ends with the
@@ -133,7 +133,11 @@ lf_checker_rt::export!(cdecl, rw_00905930(arg: u32) -> u32 {
             rd32(base.wrapping_add(4)),
             base.wrapping_add(0x40)
         );
-        let rec = entry(tab, rd32(base.wrapping_add(0x0c)));
+        // Note: the original reads the selector again here (its pushes are
+        // still on the stack), so all three flag tests below see the same
+        // record; under stubbed callees the two later tests always see a
+        // set flag, and the rewrite keeps their tests faithful anyway.
+        let rec = entry(tab, rd32(base.wrapping_add(4)));
         if ((rec.wrapping_add(8) as *const u8).read()) == 0 {
             lf_checker_rt::callee_thiscall!(34, u32, cookie);
             return (last & 0xFFFFFF00) | 1;
@@ -152,7 +156,7 @@ lf_checker_rt::export!(cdecl, rw_00905930(arg: u32) -> u32 {
             base.wrapping_add(0x70)
         );
         last = lf_checker_rt::callee_cdecl!(7, u32, rd32(base.wrapping_add(8)), 0x40u32);
-        let mut farg = rd32(base.wrapping_add(0x1c));
+        let mut farg = rd32(base.wrapping_add(4));
         let rec = entry(tab, farg);
         if ((rec.wrapping_add(8) as *const u8).read()) != 0 {
             wr32(rec.wrapping_add(0x40), rd32(base.wrapping_add(0x50)));

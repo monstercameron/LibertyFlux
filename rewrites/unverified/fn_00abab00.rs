@@ -16,8 +16,7 @@
 /// passes and cells remain, picks the drawn-th remaining kept cell; the
 /// picked row byte scales a second draw into an argument for an assign call
 /// on `arg1`. The second phase skips the first phase's row. A tail call
-/// finally receives the grid, the kept-cell total and `arg2`, and its answer
-/// is returned.
+/// finally receives `arg0`, `arg1` and `arg2`, and its answer is returned.
 ///
 /// Float order follows the original exactly (signed conversions, scale
 /// multiplies before the count multiply, truncation toward zero with the
@@ -229,13 +228,7 @@ lf_checker_rt::export!(cdecl, rw_00abab00(
                 }
             }
         }
-        let ans = lf_checker_rt::callee_cdecl!(
-            CAL_TAIL,
-            u32,
-            grid.as_mut_ptr() as u32,
-            total,
-            arg2
-        );
+        let ans = lf_checker_rt::callee_cdecl!(CAL_TAIL, u32, arg0, arg1, arg2);
         lf_checker_rt::callee_cdecl!(CAL_COOKIE, u32,);
         ans
     }
