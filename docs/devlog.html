@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#natives-01">Native handlers ABORT_ALL_GARAGE_ACTIVITY to ATTACH_PARACHUTE_MODEL_TO_PLAYER: what they reveal</a></li>
       <li><a href="#structures-misc-b">Class layouts: remaining game classes, second half by name</a></li>
       <li><a href="#structures-cameras">Class layouts: camera classes (CCam*)</a></li>
       <li><a href="#natives-17">Native handlers SET_DECISION_MAKER_ATTRIBUTE_TARGET_INJURED_REACTION to SET_MULTIPLAYER_HUD_CASH: what they reveal</a></li>
@@ -122,6 +123,25 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="natives-01">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Native handlers ABORT_ALL_GARAGE_ACTIVITY to ATTACH_PARACHUTE_MODEL_TO_PLAYER: what they reveal</h2>
+      <p>All 140 natives in the first batch now have analysed handlers, and the analysis pinned down how script natives talk to the engine: a single call-context object, two return conventions, five shared argument unpackers, and one universal handle-to-pointer lookup used through three per-type pools. The lookup itself sits in the encrypted part of the executable, so its algorithm stays unknown for now.</p>
+      <h3>What was asked</h3>
+      <p>Disassemble the handler of each native in the batch, recover the call-context layout, describe what each handler does at engine level, propose names for the engine functions it calls and meanings for any fields it touches, and aggregate the evidence across the batch.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The call context holds a return-slot pointer and an argument-array pointer; one handler also reads and bumps a likely argument count. Most handlers unpack script arguments and call one engine function; a few pass the context to shared unpackers that build vector temporaries; zero-argument natives jump straight to their engine function.</p>
+      <p><span class="evidence verified">Verified</span> Results come back two ways: through the context return slot, or through an extra pointer argument the engine writes through. The public signature database does not record outputs reliably, so handler evidence had to decide each case.</p>
+      <p><span class="evidence verified">Verified</span> Thirty-five engine functions resolve script handles through a single shared lookup with per-type pools for characters, vehicles and objects, plus one interior lookup. Field reads pin a matrix pointer and a sub-object pointer on the common entity base, and an armour value with its clamp source on characters.</p>
+      <p><span class="evidence verified">Verified</span> Seven natives have no documented signature at all; handler reads supply their argument counts. Two natives share an encrypted stub handler and were skipped. All widget natives funnel into encrypted code whose behaviour is unknown.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Proposed names were recorded for every reached engine function with confidence levels, strongest where several natives corroborate one callee. The pool lookup signature and the three pool identities should be cross-checked against the other native batches and then promoted to shared definitions. The encrypted lookup algorithm and widget worker wait on decrypted bytes.</p>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble each handler from the executable with capstone until it returns, track which context offsets and argument slots it reads, and read one level into each engine callee to find pool lookups and field accesses. Compare arities against the public native database and spot-check call sites in the public decompiled mission scripts.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>An early scan ran past the end of small functions and wrongly attributed a neighbouring function's pool call to three natives; fixing the stop condition removed the false attributions. An early register tracker also misclassified one context load as an argument read and had to be reordered. Both bugs are fixed in the final data. The argument-count offset rests on a single handler and should be treated as a hint, not a fact.</p>
+      </article>
 
       <article class="entry" id="structures-misc-b">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
