@@ -16,9 +16,10 @@ native 64-bit program on Windows, Windows on ARM and macOS.
 with the [changelog](https://monstercameron.github.io/LibertyFlux/changelog.html) and the
 [devlog](https://monstercameron.github.io/LibertyFlux/devlog.html).
 
-> **Status: phase 0, measuring.** Nothing has been rewritten yet. The toolchain is installed and the
-> method is planned. The badges above are generated from real counts and will stay at zero until
-> there is something to count.
+> **Status: phase 3, rewriting.** The executable has been measured, the work queue and the checker
+> are running, and agents are rewriting game functions in Rust. The badges above are generated from
+> machine counts on every update. Every verified rewrite so far has been proven one function at a
+> time against the original; none has yet run inside the game, which is the next gate.
 
 ## Buy the game
 
@@ -129,10 +130,10 @@ The full rules are in [AGENTS.md](AGENTS.md).
 
 | Phase | Work | Finished when | Status |
 |---|---|---|---|
-| 0. Measure | Analyse the executable, count functions, set library code aside, recover class names | Function count and class list exist | In progress |
-| 1. Harness | Build the work queue, the side-by-side comparison, and the loader that swaps functions into the game | 50 functions accepted end to end | Not started |
-| 2. Pilot | Run a few agents for several days; measure accept rate and false accepts | A measured rate replaces the estimate | Not started |
-| 3. Rewrite | Scale up the agents and rewrite every game function in Rust | The game plays with every replacement switched on | Not started |
+| 0. Measure | Analyse the executable, count functions, set library code aside, recover class names | Function count and class list exist | Done, except confirming that the game runs on the working machine |
+| 1. Harness | Build the work queue, the side-by-side comparison, and the loader that swaps functions into the game | 50 functions accepted end to end | Done; the loader's per-function switch is not yet tested inside the game |
+| 2. Pilot | Run a few agents for several days; measure accept rate and false accepts | A measured rate replaces the estimate | Done |
+| 3. Rewrite | Scale up the agents and rewrite every game function in Rust | The game plays with every replacement switched on | In progress |
 | 4. Standalone | Build the Rust code as its own 32-bit program | It runs without the original executable | Not started |
 | 5. 64-bit | Converting resource loader, script engine pointer handles, platform layer | Windows x64 and Windows on ARM builds play | Not started |
 | 6. Renderer | Vulkan renderer, fixed-rate simulation, macOS | Frame rate measured on all three platforms | Not started |
@@ -141,8 +142,10 @@ The full rules are in [AGENTS.md](AGENTS.md).
 Phases 0 to 4 are faithful reconstruction. Nothing is modernised until the rewritten game runs on
 its own, because mixing the two goals stalls both.
 
-How large is the job? The PC executable has not been measured yet. Other projects count between
-about 31,800 and 36,400 functions in the Xbox 360 version of the same game, which gives the scale.
+How large is the job? The PC executable holds 42,824 functions, of which 37,413 are game code and
+the rest are runtime and third-party library code. About a megabyte of the code is encrypted on disk
+and can only be read from a running copy of the game. The functions are worked easiest first, so the
+share verified so far overstates the share of the work done.
 
 ## Tracking progress
 
@@ -181,6 +184,8 @@ served by GitHub Pages as it is.
 | `documentation/` | Yes | Reference material for contributors and agents, with source links |
 | `Cargo.toml`, `crates/` | Yes | The Rust workspace: one crate per engine subsystem, and the file-format readers under `crates/formats/` |
 | `rewrites/verified/` | Yes | Rust rewrites of original functions that have passed the checker, with `index.json` listing each one. They are in the checker's harness form and are not yet linked into the crates |
+| `rewrites/unverified/` | Yes | Rewrites that exist but have not passed (deferred, failed or not yet run), with the reason where one is recorded. They never count as rewritten or verified |
+| `rewrites/in-review/` | Yes | Other Rust from agents (tools, checker changes, lifted code) waiting for review |
 | `scripts/` | Yes | Tooling |
 | `.artifacts/` | No | Build output, caches, logs, agent scratch work, decompiler output |
 | `tools/` | No | Local JDK and Ghidra |
