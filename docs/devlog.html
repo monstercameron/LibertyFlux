@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot-results">Two pilots, 130 functions: what the rewrite rate really is</a></li>
       <li><a href="#rewrite-order">The rewrite order: levels, clusters and what the checker can take today</a></li>
       <li><a href="#pilot2-13">Second pilot, lane 13: large functions (600 to 1,500 bytes)</a></li>
       <li><a href="#pilot2-12">Second pilot, lane 12: medium functions (250 to 600 bytes)</a></li>
@@ -199,6 +200,40 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot-results">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Two pilots, 130 functions: what the rewrite rate really is</h2>
+      <p>Thirty lanes rewrote 130 original functions in Rust under a stopwatch and tried to prove each one against the original. Small functions go quickly and mostly verify. Large ones do not verify at all yet, and the reason is the checker, not the rewriting. This entry is the coordinator's summary; each lane's own entry has the detail.</p>
+      <h3>What was asked</h3>
+      <p>Measure, before committing the whole swarm to it, how long one verified rewrite takes and how often it succeeds. The first pilot used fifty tiny functions chosen because they make no calls. The second used eighty functions sampled at random in five size tiers, with no filtering for difficulty, and the new checker.</p>
+      <h3>What was found</h3>
+      <table>
+      <thead><tr><th>Tier</th><th>Verified</th><th>Minutes per verified function</th><th>Share of the game's code bytes in this size range</th></tr></thead>
+      <tbody>
+      <tr><td>First pilot: tiny, no calls</td><td data-label="Verified">44 of 50</td><td data-label="Minutes per verified function">2 to 10</td><td data-label="Share of the game's code bytes in this size range">about 4%</td></tr>
+      <tr><td>Small, no calls (40 to 150 bytes)</td><td data-label="Verified">20 of 24</td><td data-label="Minutes per verified function">2 to 4</td><td rowspan="2" data-label="Share of the game's code bytes in this size range">about 25%</td></tr>
+      <tr><td>Small, with calls (60 to 250 bytes)</td><td data-label="Verified">14 of 20</td><td data-label="Minutes per verified function">4 to 8</td></tr>
+      <tr><td>Medium (250 to 600 bytes)</td><td data-label="Verified">8 of 16</td><td data-label="Minutes per verified function">13 to 17</td><td data-label="Share of the game's code bytes in this size range">about 20%</td></tr>
+      <tr><td>Large (600 to 1,500 bytes)</td><td data-label="Verified">3 of 12</td><td data-label="Minutes per verified function">8 to 15</td><td data-label="Share of the game's code bytes in this size range">about 23%</td></tr>
+      <tr><td>Very large (1,500 to 4,000 bytes)</td><td data-label="Verified">0 of 8</td><td data-label="Minutes per verified function">none verified</td><td data-label="Share of the game's code bytes in this size range">about 28%, with the few larger still</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Almost no rewrite was wrong. Across both pilots, failed attempts were nearly all mistakes in the test set-up: a contract naming the wrong global, a driver bug, an input model that was too narrow. Lanes report first-attempt passes for most functions once the contract was right.</p>
+      <p><span class="evidence verified">Verified</span> Understanding is fast even for big functions. Lanes read and described 500-instruction functions in five to ten minutes. What they could not do was check them.</p>
+      <p><span class="evidence verified">Verified</span> Every deferral above the small tiers traced to the same short list of things the checker cannot yet do: follow calls made through a register or an object's function table, give each callee its own scripted answer, let a scripted callee write its result through a pointer, compare pointers that refer to the same place on both sides, and supply thread-local state. A separate lane measured the whole program against that list: 53% of game functions are checkable as the checker stands, but they hold only 17% of the code bytes. Per-callee answers and call interception together would raise that to 96% of functions.</p>
+      <p><span class="evidence verified">Verified</span> The honesty test worked everywhere it was run. Each lane planted one subtle mistake in a passing rewrite and the checker caught it, usually within a handful of trials.</p>
+      <p><span class="evidence">Estimated</span> One rewrite covers several functions more often than expected: 5,159 functions fall into 445 groups that are identical apart from addresses, which removes about 4,700 rewrites from the queue.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Production started on the part that works: fifty lanes are rewriting native handlers and small functions now. The checker upgrade runs beside them as its own lane, since it gates half of the code. The schedule estimate published in the chat was built from this table: days for the small and medium functions, with the large ones waiting on the checker.</p>
+      <h3>How to reproduce it</h3>
+      <p>Each pilot lane's scratch folder holds its results file with per-function timings, its contracts and its rewrite crate. Re-running a lane's driver over its contracts reproduces its verdicts.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Three defects were found in the checker itself by lanes using it: random fills for global data were nearly constant because of how the generator was seeded, so tests of functions reading globals were weaker than they looked; a call with more than eight arguments left the stack pointer wrong; and after a trial in which only the rewrite faulted, later trials in the same worker saw corrupted state. None is known to have passed a wrong rewrite, but every verdict issued before the fixes will be re-run under the upgraded checker before it counts.</p>
+      <p>One lane reported that all three of its large functions were not functions at all and that the inventory was badly wrong. The inventory repair lane traced that to the reporting lane's own address arithmetic: it had read the file at the wrong position. The inventory's real error rate is being measured separately; the alarming number was an artefact. The coordinator repeated the claim to the project owner before it was checked, which was a mistake.</p>
+      <p>Lanes sharing one build output folder overwrote each other's libraries when two crates had the same name, and fifty lanes building at once queued on one lock. Production lanes now build into a folder each. Three times a lane wrote working files into the repository root instead of its scratch folder; they were moved out and nothing was committed.</p>
+      <p>Timings are the lanes' own and are rough: several lanes' stated minutes do not add up to their wall-clock time, in both directions. The table uses ranges for that reason.</p>
+      </article>
 
       <article class="entry" id="rewrite-order">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
