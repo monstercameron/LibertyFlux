@@ -178,6 +178,18 @@ lf_checker_rt::export!(cdecl, rw_008c28e0() -> u32 {
         unsafe fn wrf(a: u32, v: f32) {
             unsafe { wr32(a, v.to_bits()) }
         }
+        /// Read a word at an already-relocated runtime address (heap
+        /// object or table reached through a global pointer): no
+        /// relocation, unlike [`rd32`] which takes file VAs.
+        #[inline(always)]
+        unsafe fn rd32r(a: u32) -> u32 {
+            unsafe { (a as *const u32).read_unaligned() }
+        }
+        /// Write a byte at an already-relocated runtime address.
+        #[inline(always)]
+        unsafe fn wr8r(a: u32, v: u8) {
+            unsafe { (a as *mut u8).write(v) }
+        }
         #[inline(always)]
         fn mul(a: f32, b: f32) -> f32 {
             core::hint::black_box(a) * core::hint::black_box(b)
@@ -306,8 +318,8 @@ lf_checker_rt::export!(cdecl, rw_008c28e0() -> u32 {
         wrf(F_APPLIED_OUT, applied);
         wr8(B_STATE_C_OUT, rd8(B_STATE_C));
         wrf(F_TONE_OUT, rdf(F_TONE));
-        wr8(state_obj + 0x95, rd8(B_STATE_D));
-        wr8(state_obj + 0x94, rd8(B_STATE_A));
+        wr8r(state_obj + 0x95, rd8(B_STATE_D));
+        wr8r(state_obj + 0x94, rd8(B_STATE_A));
         let index_table = rd32(G_INDEX_TABLE);
         if index_table != 0 {
             lf_checker_rt::callee_thiscall!(C_USEIDX, u32, index_table, index);
@@ -366,7 +378,7 @@ lf_checker_rt::export!(cdecl, rw_008c28e0() -> u32 {
         let found = lf_checker_rt::callee_thiscall!(C_LOOKUP, u32, lf_checker_rt::relocated(OBJ_LOOKUP), 3);
         if found != 0 {
             let method: extern "thiscall" fn(u32) -> u32 =
-                core::mem::transmute(rd32(rd32(found) + VT_SLOT) as usize);
+                core::mem::transmute(rd32r(rd32r(found) + VT_SLOT) as usize);
             method(found);
         }
         lf_checker_rt::callee_thiscall!(C_DTOR, u32, 0,);

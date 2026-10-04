@@ -7,25 +7,26 @@
 // offsets the wrapped angle. Returns the output pointer with its low
 // byte replaced by the status (1 = idle, 0 = probe hit, with the hit
 // distance stored at `out2`).
-// Float order note (r-b259): every arithmetic op goes through fadd/fsub/
-// fmul, which pass both operands through core::hint::black_box. Without
-// this LLVM reassociates (it rewrote `f2 * -0.0 + s2` as `s2 - (f2 * +0.0)`
-// and commuted two-NaN adds/muls), changing NaN sign/payload results; the
+// Float order note (r-b259): every arithmetic op goes through the
+// never-inlined fadd/fsub/fmul helpers below (black_box on both operands).
+// Without this LLVM reassociates: it rewrote `f2 * -0.0 + s2` as
+// `s2 - (f2 * +0.0)`, commuted two-NaN adds/muls, and even paired the two
+// q-term adds into one addps with swapped lanes despite black_box. The
 // original's exact SSE order is (f1+f4), (ans1*f2)+s0, (ans2*f2)+s1,
 // (f2*-0.0)+s2, (dx*dx)+(dy*dy).
 
 use core::f32::consts::TAU;
 use lf_checker_rt::{callee_cdecl, callee_thiscall, export, global};
 
-#[inline(always)]
+#[inline(never)]
 fn fmul(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) * core::hint::black_box(b)
 }
-#[inline(always)]
+#[inline(never)]
 fn fadd(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) + core::hint::black_box(b)
 }
-#[inline(always)]
+#[inline(never)]
 fn fsub(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) - core::hint::black_box(b)
 }

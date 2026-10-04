@@ -8,9 +8,9 @@
 /// `+0x98` and `+0xa0` indexed by the inner position. A total counter lives
 /// at `+0x8f`.
 ///
-/// Behaviour: ask the count callee for the entry count from `arg0`; a zero
-/// count returns 0 at once. Otherwise clear the counts, rows, and total,
-/// then for each of the 11 slots and each of 8 inner positions format a name
+/// Behaviour: ask the count callee for the entry count from `arg0`, clear
+/// the counts, rows, and total, and return 0 at once when the count is zero.
+/// Otherwise, for each of the 11 slots and each of 8 inner positions, format a name
 /// from a global table entry and the position, hash it, and look the hash up.
 /// A failed lookup ends the inner positions for that slot. A found entry is
 /// set up through one direct call and two calls through its function table
@@ -44,6 +44,7 @@ lf_checker_rt::export!(thiscall, rw_00ab95e0(this: u32, arg0: u32) -> u32 {
         const CAL_SETUP: u32 = 5;
         const CAL_EMIT: u32 = 7;
         const CAL_NEXT: u32 = 8;
+        const CAL_COOKIE: u32 = 9;
 
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
@@ -62,15 +63,16 @@ lf_checker_rt::export!(thiscall, rw_00ab95e0(this: u32, arg0: u32) -> u32 {
         }
 
         let count = lf_checker_rt::callee_cdecl!(CAL_COUNT, u32, arg0);
-        if count == 0 {
-            return 0;
-        }
         for s in 0..SLOTS {
             wr8(this + COUNT_OFF + s, 0);
             ((this + ROWS_OFF + s * POSITIONS) as *mut u64).write_unaligned(0);
         }
+        if count == 0 {
+            lf_checker_rt::callee_cdecl!(CAL_COOKIE, u32,);
+            return 0;
+        }
         let mut cursor = this + ROWS_OFF;
-        let mut saved = count;
+        let mut saved = 0u32;
         for slot in 0..SLOTS {
             for pos in 0..POSITIONS {
                 let mut name = [0u32; 8];
@@ -122,6 +124,7 @@ lf_checker_rt::export!(thiscall, rw_00ab95e0(this: u32, arg0: u32) -> u32 {
             }
             cursor += POSITIONS;
         }
+        lf_checker_rt::callee_cdecl!(CAL_COOKIE, u32,);
         saved
     }
 });
