@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n103">Twenty-five native handlers verified, and a widened call log for wide calls</a></li>
       <li><a href="#production-b29">A two-register vector call the checker cannot see</a></li>
       <li><a href="#rerun-11">Rerun batch 11: checker version 2 compares only the first eight call arguments</a></li>
       <li><a href="#rerun-09">V2 rerun catches a release-build fold that v1 never saw</a></li>
@@ -249,6 +250,27 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n103">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Twenty-five native handlers verified, and a widened call log for wide calls</h2>
+      <p>All twenty-five script native handlers in this batch are now verified against the original at one thousand trials each with zero failures. Two of them needed a fix to the checker itself first: its call log kept only eight outgoing call arguments, so handlers passing nine or ten words would have passed while leaving words uncompared. A lane-owned worker copy with the log widened to twelve arguments verified both, with tamper mutants proving the extra slots are really compared.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty-five script native handler functions in Rust and prove each rewrite behaves identically to the original with the version two differential checker, which runs the original and the rewrite from identical starting state and compares return values, written memory, stack adjustment, outgoing calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Twenty-three handlers verified on the stock checker with no changes to it. They share one shape: read script arguments through a call context pointer, forward them to one engine function, optionally store the answer. Special cases the checker already covers all passed: a boolean quirk that borrows the incoming stack slot, an engine answer returned as a floating point value, two handlers passing a stack-built coordinate vector, and one handler passing a relocated code address plus the context itself.</p>
+      <p><span class="evidence verified">Verified</span> Two handlers pass nine and ten call arguments, but the worker log keeps eight. Reading the worker source confirmed the cap sits in three places (stub emission, log parsing, callee cleanup). Verifying them on the stock worker would have been a weak check, so they were verified on a lane-owned worker copy with the log entry widened from eight to twelve argument slots and the neighbouring tables shifted to make room. Three already-verified contracts re-ran green on the widened worker, both wide handlers pass one thousand trials each, and both tamper mutants (a changed last word, a missing boolean quirk) fail fast on the outgoing-calls channel.</p>
+      <p><span class="evidence verified">Verified</span> The honesty controls all fired: one first-attempt rewrite with a wrong address constant failed every trial before its fix, and three planted mutants were all caught within a few trials each.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Any lane with a function passing more than eight call arguments should use the widened log layout (twelve slots) rather than accept a stock pass that skips words; the exact edit list is in the lane report for folding back into the shared worker.</li>
+      <li>A hand-rolled relocation lookup is not trusted on its own: one wrong lookup here produced a confident wrong answer, and the checker's own mismatch message named the true value. Treat the call-key diff as the authority.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane's contracts with the version two driver: twenty-three pass on the shared worker binary, and the two wide-call contracts pass on the lane-owned widened worker selected through an environment variable. Each wide-call contract also runs a tamper mutant that must fail on the outgoing-calls channel. The lane report lists every worker edit site so the widening can be folded back and re-proven.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The relocation lookup bug cost one failed attempt: the script added a table base to a value that already included it, so every lookup missed and a relocated constant looked unrelocated. The resulting rewrite failed all one thousand trials, which is the checker working as intended. Re-checking the table with the double-add removed showed the relocation entry, and the corrected rewrite passed. A locked output file also blocked one rebuild; renaming it aside and rebuilding worked, per the recipe an earlier lane left behind.</p>
+      </article>
 
       <article class="entry" id="production-b29">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
