@@ -1,18 +1,18 @@
 {
  "checked": 8559,
  "summary": {
-  "files": 2484,
-  "issues": 4219,
+  "files": 2486,
+  "issues": 4236,
   "by_severity": {
-   "medium": 1057,
+   "medium": 1061,
    "low": 2029,
-   "high": 1133
+   "high": 1146
   },
   "by_category": {
    "doc-mismatch": 56,
    "float": 590,
-   "integration": 2966,
-   "narrow-proof": 161,
+   "integration": 2970,
+   "narrow-proof": 174,
    "panic": 155,
    "quality": 30,
    "rule": 58,
@@ -21,10 +21,10 @@
   },
   "by_source": {
    "build": 891,
-   "lint": 1572,
+   "lint": 1589,
    "review": 1756
   },
-  "files_with_high": 1041
+  "files_with_high": 1047
  },
  "systemic": [
   {
@@ -4294,6 +4294,16 @@
      "confidence": "certain",
      "title": "Does not compile from the repository",
      "detail": "Against the shared runtime alone: error[E0433]: cannot find module or crate `lf_k2_rt` in this scope: use of unresolved module or unlinked crate `lf_k2_rt`",
+     "status": "open"
+    },
+    {
+     "severity": "high",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "The file says part of it is a placeholder",
+     "detail": "Found `placeholder`: a value or path the rewrite does not really implement; say what the proof does not cover, or finish it.",
+     "source": "lint:placeholder",
+     "confidence": "likely",
      "status": "open"
     },
     {
@@ -10419,8 +10429,18 @@
   },
   {
    "file": "functions/fn_008c28e0.rs",
-   "worst": "medium",
+   "worst": "high",
    "issues": [
+    {
+     "severity": "high",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A callee's result is replaced by a constant",
+     "detail": "The doc says `return value is whatever`, but the rewrite discards the answer of callee C_PARAM, C_CTOR_STR, C_CTOR, C_UPD1 and others and always returns 0; the original's return value is not reproduced, so a caller that reads it would differ (and the contract must not compare it).",
+     "source": "lint:constant-for-callee-result",
+     "confidence": "likely",
+     "status": "open"
+    },
     {
      "severity": "medium",
      "category": "suspicious-logic",
@@ -10491,6 +10511,16 @@
      "detail": "After the complete rewrite the file repeats its comment and opens a second export that is never closed, so the tracked file fails to parse (unclosed delimiter).",
      "source": "review",
      "confidence": "Verified",
+     "status": "open"
+    },
+    {
+     "severity": "high",
+     "category": "integration",
+     "when": "now",
+     "title": "Truncated or unbalanced file",
+     "detail": "1 delimiter(s) still open at the end of the file, the outermost '(' from line 114. The tracked file cannot compile, so it is not the code the checker ran.",
+     "source": "lint:unbalanced",
+     "confidence": "certain",
      "status": "open"
     }
    ]
@@ -11323,6 +11353,26 @@
      "detail": "The doc admits the real result travels in ST0 and the rewrite returns a placeholder 0. A native caller will pop an empty x87 stack (garbage/underflow). Callee 1 (the remap) also appears to return its float in ST0 while the rewrite reads it from EAX via from_bits; the checker's stub returns in EAX, hiding both. Needs an f32 return and f32-returning callee declarations.",
      "source": "review",
      "confidence": "Verified",
+     "status": "open"
+    },
+    {
+     "severity": "high",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A callee's result is replaced by a constant",
+     "detail": "The doc says `left in the floating-point result register`, but the rewrite discards the answer of callee 1 and always returns 0; the original's return value is not reproduced, so a caller that reads it would differ (and the contract must not compare it).",
+     "source": "lint:constant-for-callee-result",
+     "confidence": "likely",
+     "status": "open"
+    },
+    {
+     "severity": "high",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "The file says part of it is a placeholder",
+     "detail": "Found `placeholder`: a value or path the rewrite does not really implement; say what the proof does not cover, or finish it.",
+     "source": "lint:placeholder",
+     "confidence": "likely",
      "status": "open"
     },
     {
@@ -13936,8 +13986,18 @@
   },
   {
    "file": "functions/fn_00947820.rs",
-   "worst": "medium",
+   "worst": "high",
    "issues": [
+    {
+     "severity": "high",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A callee's result is replaced by a constant",
+     "detail": "The doc says `leaves the last helper answer in eax`, but the rewrite discards the answer of callee FILTER_ID, APPLY_ID and always returns 0; the original's return value is not reproduced, so a caller that reads it would differ (and the contract must not compare it).",
+     "source": "lint:constant-for-callee-result",
+     "confidence": "likely",
+     "status": "open"
+    },
     {
      "severity": "medium",
      "category": "float",
@@ -13962,8 +14022,18 @@
   },
   {
    "file": "functions/fn_00947bd0.rs",
-   "worst": "low",
+   "worst": "high",
    "issues": [
+    {
+     "severity": "high",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A callee's result is replaced by a constant",
+     "detail": "The doc says `leaves the last helper answer in eax`, but the rewrite discards the answer of callee FILTER_ID, COMBINE_ID, APPLY_ID and always returns 0; the original's return value is not reproduced, so a caller that reads it would differ (and the contract must not compare it).",
+     "source": "lint:constant-for-callee-result",
+     "confidence": "likely",
+     "status": "open"
+    },
     {
      "severity": "low",
      "category": "float",
@@ -15770,6 +15840,22 @@
      "detail": "The doc states the stack comparison is off for this contract; any divergence in stack writes is unproven.",
      "source": "review",
      "confidence": "Verified",
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "functions/fn_0097d290.rs",
+   "worst": "high",
+   "issues": [
+    {
+     "severity": "high",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A callee's result is replaced by a constant",
+     "detail": "The doc says `exit EAX is the last callee answer`, but the rewrite discards the answer of callee 1, 2, 6 and always returns 0; the original's return value is not reproduced, so a caller that reads it would differ (and the contract must not compare it).",
+     "source": "lint:constant-for-callee-result",
+     "confidence": "likely",
      "status": "open"
     }
    ]
@@ -18983,8 +19069,18 @@
   },
   {
    "file": "functions/fn_00a7c650.rs",
-   "worst": "low",
+   "worst": "medium",
    "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) obj never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    },
     {
      "severity": "low",
      "category": "panic",
@@ -19009,6 +19105,16 @@
      "detail": "The rewrite calls numbered callee slots but no comment names the original function (address or symbol) behind them, and index.json carries no callee map; assembly cannot wire these calls without the lane's contract. Detected by script over comments; spot-check before acting.",
      "source": "review",
      "confidence": "Inferred",
+     "status": "open"
+    },
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) obj never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
      "status": "open"
     },
     {
@@ -25002,8 +25108,18 @@
   },
   {
    "file": "functions/fn_00b5dde0.rs",
-   "worst": "low",
+   "worst": "high",
    "issues": [
+    {
+     "severity": "high",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A callee's result is replaced by a constant",
+     "detail": "The doc says `leaves whatever the last call left in EAX`, but the rewrite discards the answer of callee 2, 3, 4 and always returns 0; the original's return value is not reproduced, so a caller that reads it would differ (and the contract must not compare it).",
+     "source": "lint:constant-for-callee-result",
+     "confidence": "likely",
+     "status": "open"
+    },
     {
      "severity": "low",
      "category": "integration",
@@ -28040,6 +28156,16 @@
      "status": "open"
     },
     {
+     "severity": "high",
+     "category": "integration",
+     "when": "now",
+     "title": "Truncated or unbalanced file",
+     "detail": "6 delimiter(s) still open at the end of the file, the outermost '(' from line 11. The tracked file cannot compile, so it is not the code the checker ran.",
+     "source": "lint:unbalanced",
+     "confidence": "certain",
+     "status": "open"
+    },
+    {
      "severity": "medium",
      "category": "suspicious-logic",
      "when": "post-bring-up",
@@ -28887,6 +29013,16 @@
      "detail": "The tracked file stops inside common_tail with unbalanced braces, so it cannot compile and the slot-walk half of the documented behaviour is missing; the verified record is not backed by this text. Recover the full rewrite from the lane output.",
      "source": "review",
      "confidence": "Verified",
+     "status": "open"
+    },
+    {
+     "severity": "high",
+     "category": "integration",
+     "when": "now",
+     "title": "Truncated or unbalanced file",
+     "detail": "2 delimiter(s) still open at the end of the file, the outermost '{' from line 94. The tracked file cannot compile, so it is not the code the checker ran.",
+     "source": "lint:unbalanced",
+     "confidence": "certain",
      "status": "open"
     },
     {
@@ -35778,6 +35914,16 @@
      "status": "open"
     },
     {
+     "severity": "high",
+     "category": "integration",
+     "when": "now",
+     "title": "Truncated or unbalanced file",
+     "detail": "'(' opened at line 13 is closed by '}' at line 398. The tracked file cannot compile, so it is not the code the checker ran.",
+     "source": "lint:unbalanced",
+     "confidence": "certain",
+     "status": "open"
+    },
+    {
      "severity": "medium",
      "category": "integration",
      "when": "post-bring-up",
@@ -35831,6 +35977,16 @@
      "confidence": "certain",
      "title": "Does not compile from the repository",
      "detail": "Against the shared runtime alone: error[E0425]: cannot find value `a5_bits` in this scope",
+     "status": "open"
+    },
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) a5 never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
      "status": "open"
     },
     {
@@ -37224,6 +37380,16 @@
    "file": "functions/fn_00e43870.rs",
    "worst": "medium",
    "issues": [
+    {
+     "severity": "medium",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "A parameter is never used",
+     "detail": "Parameter(s) a2, a4 never used: an argument the original passes on may have been dropped.",
+     "source": "lint:unused-parameter",
+     "confidence": "likely",
+     "status": "open"
+    },
     {
      "severity": "medium",
      "category": "suspicious-logic",
@@ -50405,6 +50571,22 @@
      "source": "review",
      "confidence": "Verified",
      "family_size": 59,
+     "status": "open"
+    }
+   ]
+  },
+  {
+   "file": "natives/fn_00ba24e0.rs",
+   "worst": "high",
+   "issues": [
+    {
+     "severity": "high",
+     "category": "narrow-proof",
+     "when": "now",
+     "title": "The file says part of it is a placeholder",
+     "detail": "Found `placeholder`: a value or path the rewrite does not really implement; say what the proof does not cover, or finish it.",
+     "source": "lint:placeholder",
+     "confidence": "likely",
      "status": "open"
     }
    ]
