@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b79">Production batch: six radio functions, one checker gap, two original quirks</a></li>
       <li><a href="#production-b73">Production batch: five audio functions verified, and a compiler trap for float rewrites</a></li>
       <li><a href="#production-b63">Production batch: a checker pop-cap flaw, NaN payload codegen, and three verified audio functions</a></li>
       <li><a href="#production-s128">A worker bug that fails correct rewrites above 256 calls</a></li>
@@ -284,6 +285,30 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b79">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production batch: six radio functions, one checker gap, two original quirks</h2>
+      <p>A production lane verified all six functions in its radio-audio batch at one thousand trials each, but only after extending the checker with a register-preserving stub channel and documenting two odd behaviours in the original code.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite six neighbouring radio-audio functions in Rust and prove each rewrite equivalent to the original with checker version two, including at least one thousand trials per function.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All six functions verified with zero failures across six thousand final trials, plus two planted-bug checks that the checker caught as expected.</p>
+      <p><span class="evidence verified">Verified</span> One function ends every code path with the standard security-cookie check after its return value is already computed. Every existing stub answer channel overwrites that return value, so the lane added a preserve channel that observes the call and leaves all registers untouched.</p>
+      <p><span class="evidence verified">Verified</span> A dispatch function zeroes the low byte of its own incoming argument slot on some paths, clobbering caller stack. A Rust rewrite cannot address that slot, so its contract compares everything except the incoming stack.</p>
+      <p><span class="evidence verified">Verified</span> A per-tick update stores a volume field from an empty floating-point register stack. Textbook behaviour would store the indefinite quiet NaN, but the observed stored value on this machine is deterministically zero across all trials and inputs.</p>
+      <p><span class="evidence">Inferred</span> The zero is most likely an emulation trait of running 32-bit x87 code on this ARM64 host rather than true hardware behaviour, so that one rewrite needs confirmation on real x86 hardware.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Fold the preserve stub channel back into the shared checker; it is additive and changes no existing contract.</li>
+      <li>Confirm the underflow-store value on real x86 hardware before trusting that rewrite there.</li>
+      <li>Keep excluding divide-by-zero inputs from scripted divisors: a rewrite-side panic aborts the worker process.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane's six contracts with its rewrite library and worker copy: each contract pins down globals, heap objects, scripted callee answers and out-parameter writes per trial, then compares return value, memory, stack adjustment, outgoing calls and faults over one thousand seeded trials. The two planted-bug checks flip one constant each and fail as expected.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Three separate frame-arithmetic slips each cost a checker cycle: pushed-argument order shifts stack indexes, the call instruction's own return-address push shifts stub argument indexes by one slot, and a jump table that permutes its cases rather than following code layout. In each case the checker's mismatch output named the exact wrong value and the fix followed directly.</p>
+      </article>
 
       <article class="entry" id="production-b73">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

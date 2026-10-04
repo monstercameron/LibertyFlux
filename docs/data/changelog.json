@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: Production batch: six radio functions, one checker gap, two original quirks",
+    "commit": null,
+    "summary": "Findings from the r-b79 lane.",
+    "changes": [
+      "New devlog entry: Production batch: six radio functions, one checker gap, two original quirks.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 32 more functions pass the checker (4787 in total)",
     "commit": "8dbb9405c970d4ea1b5b26ba48adab9fc5c05ef2",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
