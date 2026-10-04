@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-shaders">Rust reader: the shader container (FXC)</a></li>
       <li><a href="#format-collision">Rust reader: collision bounds (WBN and bounds inside other resources)</a></li>
       <li><a href="#format-text-gxt">Rust reader: localisation text (GXT) and fonts</a></li>
       <li><a href="#pilot-candidates">Pilot candidates: 300 emulator-ready leaf functions, and a broken emulator</a></li>
@@ -116,6 +117,28 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-shaders">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: the shader container (FXC)</h2>
+      <p>The game ships its compiled shaders in a small container format that is now fully mapped: every one of the 612 files parses end to end with nothing left unexplained, and a new dependency-free Rust crate reads them all.</p>
+      <h3>What was asked</h3>
+      <p>Write a clean Rust reader for the compiled shader container: its header, the vertex and pixel programs with their Direct3D 9 bytecode, the technique and pass tables, the parameter tables with names, types, registers, defaults and annotations, and the vertex declaration sidecars. Parse every shader file, count programs and shader model versions, list parameters and techniques, and check the bytecode by walking each program to its end marker.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All 612 shader files (102 shaders in 6 graphics-card variant folders) parse with zero errors and zero leftover bytes, using two independent implementations.</p>
+      <p><span class="evidence verified">Verified</span> The files hold just over ten thousand shader programs, split roughly evenly between vertex and pixel programs, and every one targets the same shader model generation with no older programs anywhere.</p>
+      <p><span class="evidence verified">Verified</span> Past the programs sit two parameter groups (engine-wide shared values, then per-material values) with typed entries, tool annotations such as interface ranges, and default values; then a technique table naming up to two dozen rendering setups per file, each pass pairing one vertex and one pixel program with render states.</p>
+      <p><span class="evidence verified">Verified</span> Two details needed care: the pixel count is stored as one more than the programs that follow, and techniques number pixel programs starting from one, not zero. Both rules are confirmed by the fact that every pass in every file lands in range only with this reading.</p>
+      <p><span class="evidence verified">Verified</span> Sidecars check out: each shader has a matching vertex declaration file, and all material preset files parse. Surprisingly, none of the preset names match any container parameter name, so presets must resolve through a different engine path.</p>
+      <p><span class="evidence">Inferred</span> Parameter type codes map to integers, scalars, short vectors, textures with sampler settings, switches, and matrices; render-state numbers are engine-specific codes rather than raw Direct3D values. Both are exposed as raw numbers with full censuses so no later tool depends on the guess.</p>
+      <p><span class="evidence">Unknown</span> A few mechanics remain unexplained: the count-plus-one pixel header, a permanently zero index byte, the exact state-code meanings, and the vertex declaration bit assignments. All need a running game to confirm, not more static reading.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The new crate, lf-shaderpack, is recommended as the project reader for this format: it parses from borrowed bytes with explicit little-endian reads, returns errors instead of panicking on malformed input, carries no dependencies and no unsafe code, and documents the format including its unknowns. Its natural next use is feeding the existing shader translation pipeline: each program yields its bytecode plus its stage, techniques give the vertex and pixel pairings, and the parameter tables give every name, register and default the translated shaders must expose.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the crate in the scratch folder with the normal build command, run the test suite with the game folder environment variable set, and run the summary example against any single shader file. The unit tests use only hand-built fixtures; the integration tests read the real game data read-only and pin the expected file and program counts so a data change fails loudly.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The technique table resisted the first three readings: passes turned out to carry a variable-length render-state block that initially looked like extra passes or extra techniques, and only the pixel-index numbering rule made the whole corpus line up. An earlier lane report also had the container magic slightly wrong by one letter, and its program totals double-counted interior matches from a raw scan; both are corrected in the new format specification.</p>
+      </article>
 
       <article class="entry" id="format-collision">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
