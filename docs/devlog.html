@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b03">Production batch b03: two verified, an eight-argument ceiling, and the first xmm1-argument callee</a></li>
       <li><a href="#production-b01">A nine-argument call broke the checker's stack cleanup</a></li>
       <li><a href="#rerun-03">Re-running early rewrites under checker version two</a></li>
       <li><a href="#production-s56">Same-order Rust is not bit-exact for floats: LLVM swaps operands and changes NaN propagation</a></li>
@@ -230,6 +231,29 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b03">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production batch b03: two verified, an eight-argument ceiling, and the first xmm1-argument callee</h2>
+      <p>A production batch of four animation functions yielded two verified rewrites and two precise deferrals, plus one checker gap worth knowing: the checker silently compares only the first eight stack arguments of a call, so a rewrite that passes wrong values in later argument slots still passes.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite four neighbouring animation functions in Rust and prove each rewrite behaves identically to the original with checker version 2, which runs the original and the rewrite from identical starting state and compares return values, memory, stack use, outgoing calls and faults over at least one thousand trials per function.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Two of the four functions verified cleanly: a ten-byte entry thunk that binds a register to a module-global object and tail-jumps, and a mid-size channel update with fourteen call sites to ten callees, verified over two thousand trials across two contracts with every callee observed firing.</p>
+      <p><span class="evidence verified">Verified</span> The checker's call log stores at most eight stack arguments per call. Two functions in this batch make wider calls (one with nineteen arguments, one with ten). The trailing arguments are passed but never compared, so a wrong value there would still pass. The trailing values in both cases were constants, which bounds the practical risk, but the partiality is silent: nothing in the verdict flags it.</p>
+      <p><span class="evidence verified">Verified</span> One deferred function calls a floating-point routine that takes its two inputs in vector registers and returns its result in one. The checker can log and transport the first vector register only, and stable Rust cannot place a value in the second vector register for a call, so no faithful rewrite can make the same call. This is the first case of this class seen; the earlier blocked case used x87 stack arguments instead.</p>
+      <p><span class="evidence verified">Verified</span> The largest function in the batch (nearly fourteen hundred bytes, thirty-one call sites) was triaged but not attempted: the contract and rewrite are estimated at over an hour against the lane's remaining time. All of its calling conventions were recovered from caller-side evidence for the retry lane.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Verify wide calls with an explicit declaration of which argument slots go uncompared, or grow the call log beyond eight slots, so the partiality is visible per contract rather than silent.</li>
+      <li>Add second-vector-register call-argument logging and a stub-side transport mirroring the existing first-register one; that unblocks the deferred function class.</li>
+      <li>Keep the two-contract pattern for functions whose early exit returns caller residue: one contract for the main path with the return checked, one for the early path with the return explicitly unchecked.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run the batch's three contracts with the version 2 driver and worker: the thunk contract passes one thousand trials, and the channel-update main-path and early-exit contracts pass one thousand trials each with zero failures. The single-trial inspector shows per-side call logs; the widest calls in the deferred functions' disassembly show argument counts above eight.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>A mis-subtracted relocation offset sent the lane hunting a worker bug for twenty minutes: the observed register value looked relocated while the table lookup said the address had no relocation entry. Replicating the worker's exact table parse found the entry immediately; the worker was right throughout. The channel update's first attempt also missed that one flag path jumps over an entire sub-query pair; the checker's own call log (one call jumping straight to the tail call) diagnosed it in one glance.</p>
+      </article>
 
       <article class="entry" id="production-b01">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

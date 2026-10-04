@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: A nine-argument call broke the checker's stack cleanup",
+    "title": "Devlog: Production batch b03: two verified, an eight-argument ceiling, and the first xmm1-argument callee",
     "commit": null,
+    "summary": "Findings from the r-b03 lane.",
+    "changes": [
+      "New devlog entry: Production batch b03: two verified, an eight-argument ceiling, and the first xmm1-argument callee.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: A nine-argument call broke the checker's stack cleanup",
+    "commit": "f68220befefdb245d7f5f699fcec19d49a008584",
     "summary": "Findings from the r-b01 lane.",
     "changes": [
       "New devlog entry: A nine-argument call broke the checker's stack cleanup.",
