@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pointer-only-entries">Which pointer-only inventory entries are really functions</a></li>
       <li><a href="#production-b151">The compiler swaps float operands, and black box does not stop it</a></li>
       <li><a href="#production-b137">The compiler quietly swaps float operands, and NaN payloads notice</a></li>
       <li><a href="#production-b127">Cookie-check stubs silently destroy the return value they precede</a></li>
@@ -316,6 +317,43 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pointer-only-entries">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Which pointer-only inventory entries are really functions</h2>
+      <p>Nearly all of them are. Of about eleven thousand inventory entries known only from a pointer, all but sixteen are real function entries, and a production lane's report claiming twenty of them were fragments turned out to be void: its tool read every byte at a constant offset, the same mistake an earlier lane had made.</p>
+      <h3>What was asked</h3>
+      <p>A production lane had reported that all twenty entries in its batch were fragments of larger functions, most starting mid-instruction, and two sibling lanes had reported four more fragments. The coordinator confirmed only that each of the twenty had exactly one relocated pointer and no direct call or jump. This lane was asked to judge those reports independently and then to verdict every pointer-only game entry in the repaired inventory: real function, fragment inside another function, data, or unsure.</p>
+      <h3>What was found</h3>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Pointer-only game entries judged</td><td role="cell" data-label="Value">about eleven thousand</td><td role="cell" data-label="What it means">the full set at risk from the fragment reports</td></tr>
+      <tr role="row"><td role="cell">Verdict: real function</td><td role="cell" data-label="Value">all but sixteen</td><td role="cell" data-label="What it means">the pointer-only tag is a reliable sign of a real entry</td></tr>
+      <tr role="row"><td role="cell">Verdict: fragment</td><td role="cell" data-label="Value">sixteen</td><td role="cell" data-label="What it means">all are exception-handler pieces needing their owner's frame, not standalone functions</td></tr>
+      <tr role="row"><td role="cell">Verdict: data or unsure</td><td role="cell" data-label="Value">none</td><td role="cell" data-label="What it means">no entry had to be left undecided</td></tr>
+      <tr role="row"><td role="cell">Already verified entries in the set</td><td role="cell" data-label="Value">over twelve hundred, all judged real functions</td><td role="cell" data-label="What it means">the method agrees with the checker on every sample</td></tr>
+      <tr role="row"><td role="cell">Fragments already handed to production lanes</td><td role="cell" data-label="Value">six, none verified</td><td role="cell" data-label="What it means">three were already deferred harmlessly; three sit in a work list and should be pulled</td></tr>
+      <tr role="row"><td role="cell">The twenty-entry fragment report</td><td role="cell" data-label="Value">wrong on all twenty</td><td role="cell" data-label="What it means">void; every entry is a small complete function</td></tr>
+      <tr role="row"><td role="cell">The four sibling-lane fragments</td><td role="cell" data-label="Value">confirmed</td><td role="cell" data-label="What it means">genuine handler pieces, plus twelve more of the same kind found by the sweep</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The twenty-entry report's tool read bytes a constant amount too early: its claimed bytes were reproduced exactly at that shifted position, and its claimed function entries decode as garbage at their stated positions. Its claim that no relocation pointed at the batch was also false.</p>
+      <p><span class="evidence verified">Verified</span> The pointers fall into a few shapes: most sit in virtual tables, about two thousand sit in data tables of callbacks (most of them in a single run of just over two thousand consecutive code pointers), a few dozen sit in exception-handling scope records, and three are passed or stored as instruction operands in code.</p>
+      <p><span class="evidence">Unknown</span> How the single largest pointer run is reached is unknown. Its base never appears as an immediate value in code and no data word points into it; a handful of weaker traces need an instruction-level check that did not fit in this lane.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>The twenty-entry fragment report is void and its batch can be re-issued; the inventory slice it attacked needs no repair.</li>
+      <li>The sixteen handler-piece entries should be removed or annotated in the work queue, especially the three waiting in a production work list.</li>
+      <li>Any future batch reporting every entry as not-a-function, with entries that have no references at all, should be checked for an address-mapping shift before anything else.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Map the executable by section and cross-check the mapping against the standard library routine for converting addresses to file offsets; decode three already-verified functions from their entries and confirm each reaches a return with no invalid instruction. Then, for each pointer-only entry, collect every relocated pointer holding its address, classify the pointer's surroundings, decode forward from the entry, and check the instruction maps for whether the entry is an instruction start, lies mid-instruction, or sits inside another decoded function. Entries that use their caller's frame with no prologue and only pointer references are handler pieces; the rest are real functions. The lane's scripts rerun the whole sweep in under ten minutes.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> The void report was confident, detailed and internally consistent, which made it persuasive until the shifted bytes were found. The tell was the same as in the earlier shift incident: supposed code that exists only at the shifted position, and supposed entries with no incoming references anywhere.</p>
+      <p><span class="evidence verified">Verified</span> A first triage flagged about twenty already-verified functions as suspicious because a straight-line decode from their entries ends at a padding byte. All turned out to end in a tail jump or a no-return call followed by padding, which stops that kind of naive decode. The verdicts never depended on that triage.</p>
+      <p><span class="evidence verified">Verified</span> The scope-record classifier first missed records using one of the two common nesting-level markers and mislabelled them as miscellaneous pointers; the mispairing pattern made the gap obvious and it was corrected with no verdict changes.</p>
+      </article>
 
       <article class="entry" id="production-b151">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
