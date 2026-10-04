@@ -1,6 +1,6 @@
-// original: 0x00cc0620 CPedMoveBlendOnFoot::vf1 (stage 1: entry + early tail-out)
+// original: 0x00cc0620 CPedMoveBlendOnFoot::vf1 (staged; currently stage 2)
 
-/// First virtual-slot update of the on-foot move blend object (STAGE 1).
+/// First virtual-slot update of the on-foot move blend object (STAGE 2).
 ///
 /// `this` (ECX) points to the blend object; its word at `+0x24` points to a
 /// state object. Stage 1 covers the entry block through the early-out path
@@ -28,6 +28,10 @@
 /// The continue path (`+0x26c` bit 2 clear) is NOT implemented in stage 1:
 /// reaching it aborts, which the checker reports as a loud rewrite-side
 /// fault rather than a silent pass.
+///
+/// Stage 2 adds the flag shortcut: when the continue path is taken but bit
+/// 0x100 of the state word at `+0x29c` is set, the function returns the
+/// state pointer at once with no further stores or calls.
 ///
 /// Original: 0x00cc0620 (thiscall, no stack arguments).
 lf_checker_rt::export!(thiscall, rw_00cc0620(this: u32) -> u32 {
@@ -101,7 +105,12 @@ lf_checker_rt::export!(thiscall, rw_00cc0620(this: u32) -> u32 {
         wr32(lf_checker_rt::relocated(FRAME_FLAG), 0);
         let state2 = rd32(this.wrapping_add(STATE_OFF));
         if rd32(state2.wrapping_add(DISPATCH_OFF)) & 4 == 0 {
-            panic!("stage 1: continue path (+0x26c bit 2 clear) not implemented");
+            // Stage 2: flag shortcut returns the state pointer; the main
+            // cascade below it is still unimplemented.
+            if rd32(state2.wrapping_add(0x29c)) & 0x100 != 0 {
+                return state2;
+            }
+            panic!("stage 2: main cascade (+0x29c bit 0x100 clear) not implemented");
         }
         let _: u32 = lf_checker_rt::callee_thiscall!(EARLY_CALLEE, u32, state2, 1);
         wr32(this.wrapping_add(0x48), 0xffff_ffff);

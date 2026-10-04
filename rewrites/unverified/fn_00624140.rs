@@ -1,7 +1,4 @@
 // original: 0x00624140 net_handler_large (proposed)
-// STATUS: retry kit - NOT RUN. Lane r-b311 designed the contract and this
-// rewrite but ran out of time with two full verifications in flight.
-// Next lane: add the include + mutant to lib.rs, build, probe 60, run 1200.
 
 /// Dispatch a network object event to one of four handlers by object kind.
 ///

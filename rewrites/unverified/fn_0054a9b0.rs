@@ -5,8 +5,8 @@
 /// embedded info's own query, taking `this` in ECX), and compares the answer
 /// with `want`. When they match and `outptr` is non-null, stores this board's
 /// subclass vtable pointer (0xfdd6a4) through `outptr` and returns `outptr`;
-/// otherwise returns 0 (id mismatch or null `outptr`, or a null answer that
-/// matches only when `want` is also matched the same way).
+/// otherwise returns 0: on an id mismatch, or on a match with a null
+/// `outptr`.
 ///
 /// The stored vtable pointer is a relocated image address: the original
 /// carries it as a relocated immediate, so the rewrite derives it with
