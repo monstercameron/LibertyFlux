@@ -30375,6 +30375,15 @@
   "lane": "r-s152"
  },
  {
+  "address": "0x00AE0ED0",
+  "name": "input_state_create",
+  "kind": "function",
+  "file": "functions/fn_00ae0ed0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b234"
+ },
+ {
   "address": "0x00AE12C0",
   "name": "ui_edge1_or_state_bit0",
   "kind": "function",
@@ -30427,6 +30436,33 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s152"
+ },
+ {
+  "address": "0x00AE16A0",
+  "name": "MO_CLPNOSAVE",
+  "kind": "function",
+  "file": "functions/fn_00ae16a0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b234"
+ },
+ {
+  "address": "0x00AE1930",
+  "name": "mouse_clip_update",
+  "kind": "function",
+  "file": "functions/fn_00ae1930.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b234"
+ },
+ {
+  "address": "0x00AE1A90",
+  "name": "slot_range_resolve",
+  "kind": "function",
+  "file": "functions/fn_00ae1a90.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b234"
  },
  {
   "address": "0x00AE1E10",
@@ -30517,6 +30553,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s152"
+ },
+ {
+  "address": "0x00AE25A0",
+  "name": "input_slot_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00ae25a0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b234"
  },
  {
   "address": "0x00AE28D0",
@@ -58813,6 +58858,51 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB2480",
+  "name": "UITexture::vf85",
+  "kind": "function",
+  "file": "functions/fn_00db2480.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b233"
+ },
+ {
+  "address": "0x00DB28B0",
+  "name": "ui_slot_ensure_bound",
+  "kind": "function",
+  "file": "functions/fn_00db28b0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b233"
+ },
+ {
+  "address": "0x00DB2C00",
+  "name": "UITexture::vf87",
+  "kind": "function",
+  "file": "functions/fn_00db2c00.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b233"
+ },
+ {
+  "address": "0x00DB2FE0",
+  "name": "ui_rect_cache_refresh",
+  "kind": "function",
+  "file": "functions/fn_00db2fe0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b233"
+ },
+ {
+  "address": "0x00DB3340",
+  "name": "UITexture::vf82",
+  "kind": "function",
+  "file": "functions/fn_00db3340.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b233"
  },
  {
   "address": "0x00DB7170",
