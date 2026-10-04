@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Link the published site and repository to each other",
+    "title": "Add the MIT licence",
     "commit": null,
+    "summary": "The project's own work is now MIT licensed.",
+    "changes": [
+      "Added LICENSE with the MIT licence, copyright Earl Cameron.",
+      "The README says what the licence covers: this project's Rust code, tooling, documentation and site. It does not cover Grand Theft Auto IV and gives no rights to the game."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Link the published site and repository to each other",
+    "commit": "3f4461dd0e53df3a978e275a9121a0df3aa45ecb",
     "summary": "The site is live on GitHub Pages.",
     "changes": [
       "The README now links to the live site, changelog and devlog instead of the HTML source files.",

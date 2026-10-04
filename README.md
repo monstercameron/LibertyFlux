@@ -33,6 +33,7 @@ assets.
 - [Repository layout](#repository-layout)
 - [Working on it](#working-on-it)
 - [Projects this builds on](#projects-this-builds-on)
+- [Licence](#licence)
 - [Legal](#legal)
 
 ## Why
@@ -202,6 +203,12 @@ The method is borrowed. These projects were studied for how they work, not for t
 - [IV-SDK](https://github.com/Zolika1351/iv-sdk) and
   [FusionFix](https://github.com/ThirteenAG/GTAIV.EFLC.FusionFix): years of community knowledge
   about the game's classes and its frame-rate bugs.
+
+## Licence
+
+LibertyFlux is released under the [MIT licence](LICENSE). The licence covers this project's own
+work: its Rust code, tooling, documentation and site. It does not cover Grand Theft Auto IV, and it
+gives no rights to the game, its code or its assets, none of which are in this repository.
 
 ## Legal
 
