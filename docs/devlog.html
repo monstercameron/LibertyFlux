@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-data-files">Rust reader: plain-text gameplay data files</a></li>
       <li><a href="#format-audio-config">Rust reader: audio configuration and metadata tables</a></li>
       <li><a href="#structures-render">Class layouts: render phases, draw commands and other rendering classes</a></li>
       <li><a href="#structures-events">Class layouts: event classes (CEvent*)</a></li>
@@ -160,6 +161,33 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-data-files">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: plain-text gameplay data files</h2>
+      <p>A zero-dependency Rust crate now reads every plain-text gameplay data file the game ships: vehicle handling, vehicle and ped definitions, colours, population groups, personalities, weapons, time cycle tables, water, materials, load lists and interface tables. All 175 in-scope files parse with no file-level failures.</p>
+      <h3>What was asked</h3>
+      <p>Write a clean reader for the game's plain-text data tables, with a typed parser per file, record counts for every file, and a report of every line that fails. Handling data, vehicles, peds, weapons and time cycle had priority.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> Seven line-grammar families cover the corpus: semicolon tables, hash sections closed by end markers, slash-commented tables, keyword rule lines, load directives, bracket sections, and small XML files. Text encoding is Windows-1252 rather than plain ASCII.</li>
+      <li><span class="evidence verified">Verified</span> Priority tables parsed in full, base game plus both episodes: hundreds of handling rows across car, boat, bike, flying and animation-group sub-tables; over a hundred vehicle definitions and several hundred ped definitions; dozens of weapons; nine weather blocks with eleven time slots each; hundreds of water quads and population rows.</li>
+      <li><span class="evidence verified">Verified</span> Several files that look like text are binary grids and were set aside as out of scope for a text reader. Two supposed settings files contain only commented-out lines and no active data.</li>
+      <li><span class="evidence verified">Verified</span> The shipped files contain real typos: missing and doubled commas, one dotted number where a comma belongs, truncated rows, paren notes without comment markers, and episode files missing their final end marker. The parser heals the unambiguous cases, collects the rest as reported row errors, and never guesses values.</li>
+      <li><span class="evidence">Inferred</span> Episode data files hold only new or changed rows, so they act as partial overrides of the base files; the exact merge rule is unknown.</li>
+      <li><span class="evidence">Unknown</span> Trailing value blocks in the time cycle tables, parts of the object and material rows, and the meaning of a placeholder marker in the material conversion table remain undocumented.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Keep one router function that maps file names to typed parsers, with a structural fallback scan for files without a typed parser yet, so later tools drive the whole corpus through one call.</li>
+      <li>Type the remaining forty-odd scan-only files next, starting with vehicle extras, animation and melee tables, clothing and furniture rules, and scenario files.</li>
+      <li>Resolve the unknown trailing values against engine behaviour rather than guessing from values alone.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build the crate and run its test suite with the game directory exported: unit tests use hand-built inputs, and the integration test walks the data folders, parses each file, and writes a JSON report of counts and errors when a report path is exported. An example binary prints a summary of a single file for manual inspection.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The handling file's own header comments disagree with its data: the description block names six traction columns while every row carries five, and the column ruler shows a handbrake column the descriptions never name. Both were resolved in favour of the data. The material conversion file uses a double-hash token as data in one column, so comment stripping had to be restricted to line starts for that file. Two object rows stop mid-record with no way to recover the missing values; they are reported as errors rather than padded.</p>
+      </article>
 
       <article class="entry" id="format-audio-config">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
