@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-vehicle-ped-meta">Rust reader: vehicle, ped and weapon extra data inside resources</a></li>
       <li><a href="#format-cutscenes">Rust reader: cutscene description files</a></li>
       <li><a href="#format-animation">Rust reader: animation dictionaries and clips (WAD)</a></li>
       <li><a href="#pilot-10">Pilot lane 10: five functions rewritten and timed</a></li>
@@ -172,6 +173,27 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-vehicle-ped-meta">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: vehicle, ped and weapon extra data inside resources</h2>
+      <p>The gameplay data attached to models lives in skeleton bone names, and a new crate now reads it: every vehicle part, ped joint and weapon mount across all three titles parses with zero failures.</p>
+      <h3>What was asked</h3>
+      <p>Write a clean Rust reader for the extra data inside model resources: vehicle layout (seats, doors, wheels, lights), ped components and variations, and weapon attachment points, reusing the model, archive and resource crates and validating against the plain-text data files.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> vehicles name one skeleton bone per functional part, with the bone position as the part location; 211 vehicles use 140 distinct bone names, all classified. Seat, wheel, door, light, extra and siren counts were measured per vehicle, and seat positions mirror across the car to half a millimetre on all but two genuinely asymmetric vehicles.</p>
+      <p><span class="evidence verified">Verified</span> every ped shares an 80-bone animation rig, while story characters extend it with articulated thumbs and joint-based faces. Ped body parts are dictionary entries counted per model; the playable characters instead ship loose per-part drawables with numbered texture variants.</p>
+      <p><span class="evidence verified">Verified</span> firearms name grip, muzzle, ejector and magazine bones; melee weapons and props carry a single root bone. All 26 firearms and every other weapon file parsed.</p>
+      <p><span class="evidence verified">Verified</span> every vehicle, ped and weapon named in the text definitions resolves to a model file, except cutscene characters which live in the cutscene archives. Seat counts exist nowhere in text: the bones are the sole source.</p>
+      <p><span class="evidence">Inferred</span> vehicle shape (car, bike, boat, helicopter) can be guessed from bone sets alone, with helicopters identified by rotor bones since they also carry landing-gear wheels.</p>
+      <p><span class="evidence">Unknown</span> the dictionary hash algorithm, two small companion formats, and what two ped component slots mean.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The new crate exposes layouts, rigs and mounts over the existing model reader and is ready for review. The model reader should adopt the shared resource container next so the two container copies become one. Texture variants and cutscene models belong to their own lanes.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the lane crate and run its tests with the game folder exported; the integration tests open all fifteen model archives, parse every fragment, drawable and dictionary, and print the full census. A summary example prints one file's layout for inspection without writing anything.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The skeleton pointer sits four bytes earlier than first assumed, which silently yielded empty bone lists until the model source was re-read. Boat propellers were first mistaken for helicopter rotors, and helicopters were then found to have landing-gear wheel bones, so the shape guess needed two fixes. A one-letter typo in a misc bone and an underscore-less extra name were kept as explicit spellings rather than normalised away.</p>
+      </article>
 
       <article class="entry" id="format-cutscenes">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
