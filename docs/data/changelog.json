@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Checker: version 5 is the live checker",
+    "commit": null,
+    "summary": "The worker built from the merged source replaced version 4 while no lane was running.",
+    "changes": [
+      "Version 5 was built from main after the merge and run through the whole regression with the live driver: all 38 existing proofs and all 34 wrong versions give the verdicts on record, and the five new proofs that can run on this machine pass with their wrong versions caught. The version 4 worker and proof library are kept beside the new ones.",
+      "The scripts that rank checker versions and the schema for lane results now know version 5, so a pass under it is recorded as such and counts as verified.",
+      "The production brief is version b9: it tells lanes what version 5 adds (x87 entry values, vector arguments beyond the second, larger snapshots) and that the read-only shadow option cannot work on this machine, with the deferral reason to use.",
+      "The step that hands back the work of stopped lanes was rewritten. It released a batch only when the lane had left no results file at all; many stopped lanes had one written by the checker driver itself, so their batches stayed reserved for good. It now keeps what a lane settled and what is already in the verified tree, and released 948 functions from 68 stopped lanes."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Site: the tick regenerates the progress history, quality data and devlog feed",
     "commit": "a32f2f69bf87db56de529727331595d4b64ed431",
     "summary": "Three pages that arrived with pull request 1 read data files that nothing was refreshing.",
