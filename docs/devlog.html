@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b13">One audio function returns into the heap on a rare path</a></li>
       <li><a href="#production-n103">Twenty-five native handlers verified, and a widened call log for wide calls</a></li>
       <li><a href="#production-b29">A two-register vector call the checker cannot see</a></li>
       <li><a href="#rerun-11">Rerun batch 11: checker version 2 compares only the first eight call arguments</a></li>
@@ -250,6 +251,32 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b13">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>One audio function returns into the heap on a rare path</h2>
+      <p>While proving rewrites for a batch of seven audio functions, the checker showed that one of them returns to a heap address and crashes on one path, and the rewrite reproduces the crash exactly. The cause is an extra word pushed for a call whose callee pops only one, which shifts the epilogue so the return address is read from the wrong slot.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite seven medium and large audio functions in Rust and prove each behaves identically to the original with the version 2 checker, which runs both sides from identical state and compares returns, memory, stack, calls and faults.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> Six of the seven functions pass one thousand trials each with zero failures and every declared callee firing.</li>
+      <li><span class="evidence verified">Verified</span> On one function, about four percent of trials end with both sides faulting at an address inside the fabricated heap. Tracing showed the original reads its return address from the wrong stack slot on that path: the caller pushes two words, the callee pops one, and the leftover word shifts every later pop.</li>
+      <li><span class="evidence verified">Verified</span> The rewrite pushes the same two words, drifts identically, and faults at the same address, so the fault agreement is a correct verdict rather than a rewrite bug.</li>
+      <li><span class="evidence">Inferred</span> In the real game this path would crash unless real data never takes it; whether it is reachable in practice is unknown.</li>
+      <li><span class="evidence verified">Verified</span> A seventh function could not be verified: its math helper takes two doubles in vector registers and the checker observes only one of them at calls.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Accept the six verified rewrites; defer the seventh until the checker can log a second vector register at calls.</li>
+      <li>Keep the fault-agreement verdict for the crashing path, with this note attached, since both sides provably do the same thing.</li>
+      <li>Sibling lanes reusing the bank-table setup should check that wide fabricated tables do not overlap neighbouring globals, and should pick pin periods that share no factor with branch pins, confirming with the coverage counts rather than reasoning.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build the lane rewrite crate for 32-bit x86 with panics set to abort, generate the per-function contract with fabricated bank tables and pinned selector bytes, and run the version 2 driver for one thousand trials. The verdict file records zero failures, the per-callee fire counts, and a small fault-agreement fraction on the affected function. A per-trial probe shows the original side faulting with its instruction pointer inside the heap region on those trials.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two passing verdicts turned out to be vacuous on first runs: a wide fabricated table silently overwrote two neighbouring globals, and two pin periods aligned so that whole switch cases never ran. Both were caught only by the per-callee coverage counts, which are now checked before any verdict is accepted. A scratch-slot arithmetic slip (an offset of twenty from thirty-two is twelve, not twenty) cost one full debug cycle; the heap diff pointed straight at it.</p>
+      </article>
 
       <article class="entry" id="production-n103">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
