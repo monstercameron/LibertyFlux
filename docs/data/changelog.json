@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: The swarm ran the machine out of memory: what the real limit is",
+    "title": "Devlog: One verified, and a checker gap: loops that poll a callee until done",
     "commit": null,
+    "summary": "Findings from the r-b04 lane.",
+    "changes": [
+      "New devlog entry: One verified, and a checker gap: loops that poll a callee until done.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: The swarm ran the machine out of memory: what the real limit is",
+    "commit": "875d47eef0c6644585d0443fb207173c9625032a",
     "summary": "Findings from the coord-memory lane.",
     "changes": [
       "New devlog entry: The swarm ran the machine out of memory: what the real limit is.",

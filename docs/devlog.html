@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b04">One verified, and a checker gap: loops that poll a callee until done</a></li>
       <li><a href="#swarm-memory-limit">The swarm ran the machine out of memory: what the real limit is</a></li>
       <li><a href="#production-s48">Production batch: eighteen small functions verified, one checker anomaly</a></li>
       <li><a href="#production-s44">An audio initialiser that reads a word it never wrote</a></li>
@@ -223,6 +224,52 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b04">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>One verified, and a checker gap: loops that poll a callee until done</h2>
+      <p><span class="evidence verified">Verified</span> A production batch of three animation-system functions yielded one verified rewrite, one deferral on the time cap, and one function the checker cannot verify at all: it calls a tokeniser in a loop until the tokeniser returns null, and the checker scripts only one fixed answer per callee per trial, so the loop either never ends or never starts.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite three neighbouring animation-system functions in Rust and prove each rewrite identical to the original with the version 2 differential checker, which runs both sides from identical state and compares return values, memory, stack, calls and faults over at least one thousand trials each.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> The middle function, a registry that matches two key words and otherwise allocates a record, registers fourteen parameters and appends it, verified clean: one thousand trials, zero failures, every callee fired, and a planted mutant caught through the globals comparison within eight trials.</li>
+      <li><span class="evidence verified">Verified</span> The largest function dispatches each token from a tokeniser against twenty-one flag names and sets bits in an output word. The tokeniser is called in a loop until it returns null. The checker's answer scripts are indexed by trial, and the worker fills each callee slot once per trial, so every call within a trial returns the same value: a non-null script hangs the loop and a null script tests only the empty path. No contract can drive this shape under version 2.</li>
+      <li><span class="evidence verified">Verified</span> The first function, with about twenty direct call sites, three table-driven calls and a float loop, looks verifiable in principle but needs roughly an hour of contract and rewrite work against a thirty-minute single-function cap, so it was deferred with a full call-site map for the next lane.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <p>The registry rewrite was accepted. The tokeniser loop was deferred with the missing ability named exactly: per-call answer sequencing, where a callee's script is a list consumed in call order within a trial rather than one value fixed per trial. Until the worker stub advances its answer slot per call, lanes should defer any function that polls a scripted callee until a sentinel instead of spending attempts on it. A table of the batch outcome is below.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Function</th>
+      <th role="columnheader">Size class</th>
+      <th role="columnheader">Outcome</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">Registry add-or-find</td>
+      <td role="cell" data-label="Size class">Medium</td>
+      <td role="cell" data-label="Outcome">Verified, 1000 of 1000 trials</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Object setup with float loop</td>
+      <td role="cell" data-label="Size class">Medium</td>
+      <td role="cell" data-label="Outcome">Deferred, single-function time cap</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Flag-string parser loop</td>
+      <td role="cell" data-label="Size class">Large</td>
+      <td role="cell" data-label="Outcome">Deferred, checker lacks per-call sequencing</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3>How to reproduce it</h3>
+      <p>Run the batch's verification contract for the registry function through the version 2 driver with one thousand trials and confirm zero failures plus a caught mutant; read the worker's trial body to confirm answer slots are filled once per trial; and confirm the parser's loop shape by disassembling it and observing the call-then-null-test back edge with the tokeniser address held constant.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> A first query for relocated constants reported none present, which would have broken every address the rewrite reads; the bug was in the query, which added the section base twice, and the corrected query shows every constant relocated as expected. Separately, a null word inside heap and pin specs silently becomes random bits rather than zero, so literal zero must be written instead.</p>
+      </article>
 
       <article class="entry" id="swarm-memory-limit">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
