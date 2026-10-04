@@ -1,0 +1,387 @@
+{
+ "name": "k2_ptr1m_skip",
+ "function": "0x7e52c0",
+ "conv": "cdecl",
+ "export": "mut_k2_ptr1c",
+ "trials": 100,
+ "seed": 1602,
+ "timeout_ms": 10000,
+ "ret": "eax",
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [
+  {
+   "kind": "ptr",
+   "seg": 0
+  },
+  {
+   "kind": "byte"
+  },
+  {
+   "kind": "small",
+   "max": 3
+  },
+  {
+   "kind": "small",
+   "max": 3
+  },
+  {
+   "kind": "int"
+  }
+ ],
+ "heapsegs": [
+  {
+   "off": 0,
+   "size": 64,
+   "fill": "zeros"
+  },
+  {
+   "off": 256,
+   "size": 288,
+   "fill": "floats",
+   "floats_at": [
+    1,
+    2,
+    5,
+    6,
+    9,
+    10
+   ]
+  }
+ ],
+ "globals": [
+  {
+   "rva": "0x127f628",
+   "size": 288
+  },
+  {
+   "rva": "0x1282d80",
+   "size": 256
+  }
+ ],
+ "globals_fill": "pristine",
+ "callees": [
+  {
+   "id": 1,
+   "conv": "cdecl",
+   "nargs": 3,
+   "ret": "u32",
+   "script": [
+    {
+     "heap": 256
+    },
+    {
+     "heap": 257
+    },
+    {
+     "heap": 272
+    },
+    {
+     "heap": 511
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "conv": "cdecl",
+   "nargs": 3,
+   "ret": "u32",
+   "script": [
+    {
+     "heap": 256
+    },
+    {
+     "heap": 257
+    },
+    {
+     "heap": 272
+    },
+    {
+     "heap": 511
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "conv": "cdecl",
+   "nargs": 3,
+   "ret": "u32",
+   "script": [
+    {
+     "heap": 256
+    },
+    {
+     "heap": 257
+    },
+    {
+     "heap": 272
+    },
+    {
+     "heap": 511
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "conv": "cdecl",
+   "nargs": 3,
+   "ret": "u32",
+   "script": [
+    {
+     "heap": 256
+    },
+    {
+     "heap": 257
+    },
+    {
+     "heap": 272
+    },
+    {
+     "heap": 511
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "conv": "cdecl",
+   "nargs": 4,
+   "ret": "u32",
+   "script": [
+    {
+     "heap": 256
+    },
+    {
+     "heap": 257
+    },
+    {
+     "heap": 272
+    },
+    {
+     "heap": 511
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "conv": "cdecl",
+   "nargs": 4,
+   "ret": "u32",
+   "script": [
+    {
+     "heap": 256
+    },
+    {
+     "heap": 257
+    },
+    {
+     "heap": 272
+    },
+    {
+     "heap": 511
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "conv": "cdecl",
+   "nargs": 4,
+   "ret": "u32",
+   "script": [
+    {
+     "heap": 256
+    },
+    {
+     "heap": 257
+    },
+    {
+     "heap": 272
+    },
+    {
+     "heap": 511
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "conv": "cdecl",
+   "nargs": 4,
+   "ret": "u32",
+   "script": [
+    {
+     "heap": 256
+    },
+    {
+     "heap": 257
+    },
+    {
+     "heap": 272
+    },
+    {
+     "heap": 511
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "conv": "cdecl",
+   "nargs": 4,
+   "ret": "u32",
+   "script": [
+    {
+     "heap": 256
+    },
+    {
+     "heap": 257
+    },
+    {
+     "heap": 272
+    },
+    {
+     "heap": 511
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "conv": "cdecl",
+   "nargs": 4,
+   "ret": "u32",
+   "script": [
+    {
+     "heap": 256
+    },
+    {
+     "heap": 257
+    },
+    {
+     "heap": 272
+    },
+    {
+     "heap": 511
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "conv": "cdecl",
+   "nargs": 4,
+   "ret": "u32",
+   "script": [
+    {
+     "heap": 256
+    },
+    {
+     "heap": 257
+    },
+    {
+     "heap": 272
+    },
+    {
+     "heap": 511
+    }
+   ]
+  }
+ ],
+ "patches": [
+  {
+   "site": "0x7e52e0",
+   "id": 1
+  },
+  {
+   "site": "0x7e5305",
+   "id": 5
+  },
+  {
+   "site": "0x7e5367",
+   "id": 2
+  },
+  {
+   "site": "0x7e5388",
+   "id": 6
+  },
+  {
+   "site": "0x7e53e0",
+   "id": 3
+  },
+  {
+   "site": "0x7e5405",
+   "id": 7
+  },
+  {
+   "site": "0x7e545d",
+   "id": 4
+  },
+  {
+   "site": "0x7e5482",
+   "id": 8
+  },
+  {
+   "site": "0x7e54f1",
+   "id": 9
+  },
+  {
+   "site": "0x7e5598",
+   "id": 10
+  },
+  {
+   "site": "0x7e5607",
+   "id": 11
+  }
+ ],
+ "iat": [],
+ "checks": {
+  "ret": "eax",
+  "esp": true,
+  "heap": true,
+  "stack": true,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": false,
+  "fp_tol": "0,0",
+  "call_skip": {
+   "5": [
+    0
+   ],
+   "6": [
+    0
+   ],
+   "7": [
+    0
+   ],
+   "8": [
+    0
+   ],
+   "9": [
+    0
+   ],
+   "10": [
+    0
+   ],
+   "11": [
+    0
+   ]
+  }
+ }
+}

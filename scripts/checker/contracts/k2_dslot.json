@@ -1,0 +1,165 @@
+{
+ "name": "k2_dslot",
+ "function": "0x2f6660",
+ "conv": "thiscall",
+ "export": "rw_k2_f3",
+ "mut_export": "mut_k2_f3",
+ "trials": 1000,
+ "seed": 10703,
+ "timeout_ms": 10000,
+ "ret": "eax",
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "heap": 0
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [
+  {
+   "kind": "int"
+  }
+ ],
+ "heapsegs": [
+  {
+   "off": 4096,
+   "size": 128,
+   "fill": "random"
+  }
+ ],
+ "globals": [
+  {
+   "rva": "0x13acd20",
+   "size": 4
+  },
+  {
+   "rva": "0x13acd00",
+   "size": 4
+  },
+  {
+   "rva": "0xa73474",
+   "size": 4
+  }
+ ],
+ "globals_values": [
+  {
+   "rva": "0x13acd20",
+   "words": [
+    {
+     "cycle": [
+      {
+       "stub": 2
+      },
+      0
+     ]
+    }
+   ]
+  },
+  {
+   "rva": "0x13acd00",
+   "words": [
+    {
+     "stub": 3
+    }
+   ]
+  },
+  {
+   "rva": "0xa73474",
+   "words": [
+    {
+     "stub": 4
+    }
+   ]
+  }
+ ],
+ "callees": [
+  {
+   "id": 1,
+   "conv": "thiscall",
+   "nargs": 2,
+   "ret": "u32",
+   "script": "edges"
+  },
+  {
+   "id": 2,
+   "conv": "cdecl",
+   "nargs": 0,
+   "ret": "u32",
+   "script": [
+    0
+   ]
+  },
+  {
+   "id": 3,
+   "conv": "cdecl",
+   "nargs": 2,
+   "ret": "u32",
+   "script": [
+    0
+   ],
+   "snap": [
+    {
+     "kind": "arg",
+     "idx": 0,
+     "n": 1
+    },
+    {
+     "kind": "arg",
+     "idx": 1,
+     "n": 1
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "conv": "cdecl",
+   "nargs": 0,
+   "ret": "u32",
+   "script": "edges"
+  }
+ ],
+ "patches": [
+  {
+   "site": "0x2f66a8",
+   "id": 1
+  },
+  {
+   "site": "0x2f66c2",
+   "id": 1
+  }
+ ],
+ "iat": [],
+ "checks": {
+  "ret": "eax",
+  "esp": true,
+  "heap": true,
+  "stack": true,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": false,
+  "fp_tol": "0,0",
+  "call_skip": {
+   "3": [
+    0,
+    1
+   ]
+  }
+ }
+}

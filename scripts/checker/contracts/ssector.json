@@ -1,0 +1,59 @@
+{
+ "name": "ssector",
+ "function": "0x116f90",
+ "conv": "thiscall",
+ "export": "rw_ssector",
+ "mut_export": "mut_ssector",
+ "trials": 200,
+ "seed": 12648430,
+ "timeout_ms": 10000,
+ "ret": "eax",
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "heap": 0,
+   "plus": 0
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [],
+ "heapsegs": [
+  {
+   "off": 4096,
+   "size": 320,
+   "fill": "random"
+  }
+ ],
+ "globals": [],
+ "globals_fill": "pristine",
+ "callees": [],
+ "patches": [],
+ "iat": [],
+ "checks": {
+  "ret": "eax",
+  "esp": true,
+  "heap": true,
+  "stack": true,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": false,
+  "fp_tol": "0,0"
+ }
+}

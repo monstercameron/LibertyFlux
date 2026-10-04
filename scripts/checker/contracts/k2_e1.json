@@ -1,0 +1,154 @@
+{
+ "name": "k2_e1",
+ "function": "0x35ee00",
+ "conv": "thiscall",
+ "export": "rw_k2_e1",
+ "mut_export": "mut_k2_e1",
+ "trials": 1000,
+ "seed": 20401,
+ "timeout_ms": 10000,
+ "ret": "eax",
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "heap": 0
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [],
+ "heapsegs": [
+  {
+   "off": 4096,
+   "size": 64,
+   "fill": "random",
+   "pin": [
+    {
+     "at": 0,
+     "vals": [
+      {
+       "heap": 1
+      }
+     ]
+    },
+    {
+     "at": 24,
+     "vals": [
+      0,
+      1,
+      2
+     ]
+    },
+    {
+     "at": 16,
+     "vals": [
+      0,
+      1,
+      2,
+      100
+     ]
+    },
+    {
+     "at": 20,
+     "vals": [
+      0,
+      1,
+      2,
+      100
+     ]
+    },
+    {
+     "at": 32,
+     "vals": [
+      0,
+      1
+     ]
+    },
+    {
+     "at": 36,
+     "vals": [
+      0,
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "off": 8192,
+   "size": 16,
+   "fill": "random",
+   "pin": [
+    {
+     "at": 8,
+     "vals": [
+      {
+       "stub": 1
+      }
+     ]
+    },
+    {
+     "at": 4,
+     "vals": [
+      {
+       "stub": 2
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "xmm": {
+  "1": [
+   "float",
+   0,
+   0,
+   0
+  ]
+ },
+ "globals": [],
+ "globals_fill": "pristine",
+ "callees": [
+  {
+   "id": 1,
+   "conv": "thiscall",
+   "nargs": 2,
+   "ret": "u32",
+   "script": "edges"
+  },
+  {
+   "id": 2,
+   "conv": "thiscall",
+   "nargs": 0,
+   "ret": "u32",
+   "script": "edges"
+  }
+ ],
+ "patches": [],
+ "iat": [],
+ "checks": {
+  "ret": "eax",
+  "esp": true,
+  "heap": true,
+  "stack": true,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": false,
+  "fp_tol": "0,0"
+ }
+}

@@ -1,0 +1,87 @@
+{
+ "name": "call0",
+ "function": "0x798210",
+ "conv": "cdecl",
+ "export": "rw_call0",
+ "mut_export": "mut_call0",
+ "trials": 200,
+ "seed": 12648430,
+ "timeout_ms": 10000,
+ "ret": "eax",
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [
+  {
+   "kind": "ptr",
+   "seg": 0
+  }
+ ],
+ "heapsegs": [
+  {
+   "off": 4096,
+   "size": 8,
+   "fill": "random",
+   "links": [
+    {
+     "at": 0,
+     "to_seg": 1
+    }
+   ]
+  },
+  {
+   "off": 8192,
+   "size": 8,
+   "fill": "random"
+  }
+ ],
+ "globals": [],
+ "globals_fill": "pristine",
+ "callees": [
+  {
+   "id": 1,
+   "conv": "cdecl",
+   "nargs": 0,
+   "ret": "u32",
+   "script": "edges"
+  }
+ ],
+ "patches": [
+  {
+   "site": "0x798210",
+   "id": 1
+  }
+ ],
+ "iat": [],
+ "checks": {
+  "ret": "eax",
+  "esp": true,
+  "heap": true,
+  "stack": true,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": false,
+  "fp_tol": "0,0"
+ }
+}

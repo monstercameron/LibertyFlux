@@ -1,0 +1,73 @@
+{
+ "name": "cmpss",
+ "function": "0x1fd170",
+ "conv": "thiscall",
+ "export": "rw_cmpss",
+ "mut_export": "mut_cmpss",
+ "trials": 200,
+ "seed": 12648430,
+ "timeout_ms": 10000,
+ "ret": "al",
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "heap": 0,
+   "plus": 0
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [],
+ "heapsegs": [
+  {
+   "off": 4096,
+   "size": 192,
+   "fill": "random",
+   "links": [
+    {
+     "at": 180,
+     "to_seg": 1
+    }
+   ]
+  },
+  {
+   "off": 8192,
+   "size": 128,
+   "fill": "floats",
+   "floats_at": [
+    28
+   ]
+  }
+ ],
+ "globals": [],
+ "globals_fill": "pristine",
+ "callees": [],
+ "patches": [],
+ "iat": [],
+ "checks": {
+  "ret": "al",
+  "esp": true,
+  "heap": true,
+  "stack": true,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": false,
+  "fp_tol": "0,0"
+ }
+}

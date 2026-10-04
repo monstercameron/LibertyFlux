@@ -1,0 +1,72 @@
+{
+ "name": "k2_tail1",
+ "function": "0x9fbd78",
+ "conv": "cdecl",
+ "export": "rw_k2_tail1",
+ "mut_export": "mut_k2_tail1",
+ "trials": 1000,
+ "seed": 20301,
+ "timeout_ms": 10000,
+ "ret": "eax",
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [],
+ "heapsegs": [],
+ "globals": [],
+ "globals_fill": "pristine",
+ "callees": [
+  {
+   "id": 1,
+   "conv": "custom",
+   "nargs": 0,
+   "ret": "u32",
+   "script": "edges"
+  }
+ ],
+ "patches": [],
+ "tailpatches": [
+  {
+   "site": "0x9fbd7d",
+   "id": 1
+  }
+ ],
+ "outer_pop": 0,
+ "iat": [],
+ "checks": {
+  "ret": "eax",
+  "esp": true,
+  "heap": true,
+  "stack": true,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": false,
+  "fp_tol": "0,0",
+  "call_regs": {
+   "1": [
+    "edx"
+   ]
+  }
+ }
+}

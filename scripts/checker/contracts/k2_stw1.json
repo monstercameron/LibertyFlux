@@ -1,0 +1,234 @@
+{
+ "name": "k2_stw1",
+ "function": "0xa079d2",
+ "conv": "cdecl",
+ "export": "rw_k2_f5",
+ "mut_export": "mut_k2_f5",
+ "trials": 1000,
+ "seed": 10705,
+ "timeout_ms": 5000,
+ "ret": "eax",
+ "stack_fill": 0,
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [
+  {
+   "kind": "cycle",
+   "values": [
+    0,
+    1,
+    2,
+    255,
+    256,
+    257,
+    4660,
+    130816
+   ]
+  },
+  {
+   "kind": "int"
+  },
+  {
+   "kind": "int"
+  }
+ ],
+ "heapsegs": [
+  {
+   "off": 4096,
+   "size": 160,
+   "fill": "random",
+   "pin": [
+    {
+     "at": 144,
+     "vals": [
+      {
+       "heap": 1
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "off": 8192,
+   "size": 512,
+   "fill": "random"
+  },
+  {
+   "off": 12288,
+   "size": 128,
+   "fill": "zeros",
+   "pin": [
+    {
+     "at": 112,
+     "vals": [
+      4294967295,
+      0
+     ]
+    }
+   ]
+  }
+ ],
+ "globals": [],
+ "globals_fill": "pristine",
+ "callees": [
+  {
+   "id": 1,
+   "conv": "thiscall",
+   "nargs": 1,
+   "ret": "u32",
+   "script": [
+    0
+   ],
+   "writes": [
+    {
+     "reg": "ecx",
+     "at": 0,
+     "n": 4
+    }
+   ],
+   "wscript": [
+    [
+     {
+      "heap": 0
+     },
+     2863311530,
+     {
+      "heap": 2
+     },
+     0
+    ],
+    [
+     {
+      "heap": 0
+     },
+     3149642683,
+     {
+      "heap": 2
+     },
+     1
+    ]
+   ],
+   "snap": [
+    {
+     "kind": "ecx",
+     "idx": 0,
+     "n": 4
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "conv": "cdecl",
+   "nargs": 2,
+   "ret": "u32",
+   "script": [
+    0,
+    1
+   ],
+   "snap": [
+    {
+     "kind": "arg",
+     "idx": 1,
+     "n": 4
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "conv": "cdecl",
+   "nargs": 7,
+   "ret": "u32",
+   "script": [
+    0,
+    1
+   ],
+   "writes": [
+    {
+     "arg": 4,
+     "at": 0,
+     "n": 1
+    }
+   ],
+   "wscript": [
+    [
+     48879
+    ],
+    [
+     4661
+    ]
+   ],
+   "snap": [
+    {
+     "kind": "arg",
+     "idx": 2,
+     "n": 1
+    },
+    {
+     "kind": "arg",
+     "idx": 4,
+     "n": 1
+    }
+   ]
+  }
+ ],
+ "patches": [
+  {
+   "site": "0xa079df",
+   "id": 1
+  },
+  {
+   "site": "0xa07a10",
+   "id": 2
+  },
+  {
+   "site": "0xa07a4e",
+   "id": 3
+  }
+ ],
+ "iat": [],
+ "checks": {
+  "ret": "eax",
+  "esp": true,
+  "heap": true,
+  "stack": false,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": false,
+  "fp_tol": "0,0",
+  "call_regs": {
+   "1": []
+  },
+  "call_skip": {
+   "2": [
+    1
+   ],
+   "3": [
+    0,
+    2,
+    4
+   ]
+  }
+ }
+}

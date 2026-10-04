@@ -1,0 +1,52 @@
+{
+ "name": "fldz",
+ "function": "0x1d44c0",
+ "conv": "cdecl",
+ "export": "rw_fldz",
+ "mut_export": "mut_fldz",
+ "trials": 200,
+ "seed": 12648430,
+ "timeout_ms": 10000,
+ "ret": "st0",
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [],
+ "heapsegs": [],
+ "globals": [],
+ "globals_fill": "pristine",
+ "callees": [],
+ "patches": [],
+ "iat": [],
+ "checks": {
+  "ret": "st0",
+  "esp": true,
+  "heap": true,
+  "stack": true,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": false,
+  "fp_tol": "0,0"
+ }
+}

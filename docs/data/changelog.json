@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Checker: worker, runtime and proof crates",
+    "title": "Checker: driver, contracts and helpers",
     "commit": null,
+    "summary": "The Python side of checker version 2.",
+    "changes": [
+      "scripts/checker/checker2.py drives the worker from one contract file per function and writes a verdict; its usage is in the module documentation.",
+      "scripts/checker/contracts holds the contracts for the proof functions: the 20 from version 1 and the version 2 proofs.",
+      "In the lane's run from this location, 20 of 20 version 1 functions passed with all 20 wrong rewrites caught, and the version 2 sweep gave 35 passes, 3 failures by design and 34 of 34 wrong rewrites caught.",
+      "Assembled from the lanes' scratch folders by the tools lane and scanned for machine paths, byte dumps and disassembly before publication."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Checker: worker, runtime and proof crates",
+    "commit": "f53dc7e3fdb9461e4416c5fe3814285d5a5efc23",
     "summary": "The Rust side of checker version 2, the tool that decides whether a rewrite matches the original.",
     "changes": [
       "crates/tools/lf-checker-worker: the 32-bit worker that runs an original function and its rewrite from identical state and compares return value, written memory, stack movement, outgoing calls and faults.",

@@ -1,0 +1,57 @@
+{
+ "name": "gbyte",
+ "function": "0x1cdfd0",
+ "conv": "cdecl",
+ "export": "rw_gbyte",
+ "mut_export": "mut_gbyte",
+ "trials": 200,
+ "seed": 12648430,
+ "timeout_ms": 10000,
+ "ret": "al",
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [],
+ "heapsegs": [],
+ "globals": [
+  {
+   "rva": "0x14b6f2c",
+   "size": 4
+  }
+ ],
+ "globals_fill": "random",
+ "callees": [],
+ "patches": [],
+ "iat": [],
+ "checks": {
+  "ret": "al",
+  "esp": true,
+  "heap": true,
+  "stack": true,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": true,
+  "fp_tol": "0,0"
+ }
+}

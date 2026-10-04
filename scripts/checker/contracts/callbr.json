@@ -1,0 +1,84 @@
+{
+ "name": "callbr",
+ "function": "0x6070c0",
+ "conv": "cdecl",
+ "export": "rw_callbr",
+ "mut_export": "mut_callbr",
+ "trials": 200,
+ "seed": 12648430,
+ "timeout_ms": 10000,
+ "ret": "eax",
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [
+  {
+   "kind": "int"
+  },
+  {
+   "kind": "byte"
+  }
+ ],
+ "heapsegs": [],
+ "globals": [
+  {
+   "rva": "0x12156a4",
+   "size": 580
+  }
+ ],
+ "globals_fill": "random",
+ "callees": [
+  {
+   "id": 3,
+   "conv": "cdecl",
+   "nargs": 1,
+   "ret": "u32",
+   "script": [
+    4294967295,
+    0,
+    1,
+    2,
+    5,
+    7
+   ]
+  }
+ ],
+ "patches": [
+  {
+   "site": "0x6070c4",
+   "id": 3
+  }
+ ],
+ "iat": [],
+ "checks": {
+  "ret": "eax",
+  "esp": true,
+  "heap": true,
+  "stack": true,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": true,
+  "fp_tol": "0,0"
+ }
+}

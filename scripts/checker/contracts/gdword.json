@@ -1,0 +1,57 @@
+{
+ "name": "gdword",
+ "function": "0x1bbaa0",
+ "conv": "cdecl",
+ "export": "rw_gdword",
+ "mut_export": "mut_gdword",
+ "trials": 200,
+ "seed": 12648430,
+ "timeout_ms": 10000,
+ "ret": "eax",
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [],
+ "heapsegs": [],
+ "globals": [
+  {
+   "rva": "0xdd6fd4",
+   "size": 4
+  }
+ ],
+ "globals_fill": "random",
+ "callees": [],
+ "patches": [],
+ "iat": [],
+ "checks": {
+  "ret": "eax",
+  "esp": true,
+  "heap": true,
+  "stack": true,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": true,
+  "fp_tol": "0,0"
+ }
+}

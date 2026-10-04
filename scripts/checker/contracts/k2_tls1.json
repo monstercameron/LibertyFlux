@@ -1,0 +1,130 @@
+{
+ "name": "k2_tls1",
+ "function": "0x19c150",
+ "conv": "thiscall",
+ "export": "rw_k2_t1",
+ "mut_export": "mut_k2_t1",
+ "trials": 1000,
+ "seed": 20101,
+ "timeout_ms": 10000,
+ "ret": "eax",
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "heap": 0
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [
+  {
+   "kind": "int"
+  }
+ ],
+ "heapsegs": [
+  {
+   "off": 4096,
+   "size": 32,
+   "fill": "random",
+   "pin": [
+    {
+     "at": 0,
+     "vals": [
+      0,
+      2864434397
+     ]
+    }
+   ]
+  },
+  {
+   "off": 8192,
+   "size": 16,
+   "fill": "random",
+   "pin": [
+    {
+     "at": 8,
+     "vals": [
+      {
+       "heap": 2
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "off": 8224,
+   "size": 16,
+   "fill": "random",
+   "pin": [
+    {
+     "at": 0,
+     "vals": [
+      {
+       "heap": 3
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "off": 8256,
+   "size": 16,
+   "fill": "random",
+   "pin": [
+    {
+     "at": 12,
+     "vals": [
+      {
+       "stub": 1
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "tls": [
+  {
+   "slot": 0,
+   "seg": 1
+  }
+ ],
+ "globals": [],
+ "globals_fill": "pristine",
+ "callees": [
+  {
+   "id": 1,
+   "conv": "thiscall",
+   "nargs": 1,
+   "ret": "u32",
+   "script": "edges"
+  }
+ ],
+ "patches": [],
+ "iat": [],
+ "checks": {
+  "ret": "eax",
+  "esp": true,
+  "heap": true,
+  "stack": true,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": false,
+  "fp_tol": "0,0"
+ }
+}
