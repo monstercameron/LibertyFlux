@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Agent rules: a workstation health check with every hourly review",
+    "title": "Devlog: The memory shortage was one forgotten script",
     "commit": null,
+    "summary": "Findings from the coord-runaway lane.",
+    "changes": [
+      "New devlog entry: The memory shortage was one forgotten script.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Agent rules: a workstation health check with every hourly review",
+    "commit": "2d6f244de267deaeaea6dd5106c26ce1dcdf2ebf",
     "summary": "The hourly review now includes a check for leftover and runaway processes, memory, disk and the supervisor.",
     "changes": [
       "A leftover script from a lane that had finished four hours earlier was holding 8.7 GB, and nine others were each spinning a processor core, some for thirteen hours. That, not the lane count, was what had been limiting how many lanes fitted. Stopping them took commit headroom from 12 GB to more than 21.",
