@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#rerun-04">Second checker, same verdicts: 205 native rewrites re-proven</a></li>
       <li><a href="#production-s79">Production batch: a tail-call logging bug and two contract lessons</a></li>
       <li><a href="#production-b05">Two large animation functions verified, one checker fix, one game quirk</a></li>
       <li><a href="#production-s64">A partition routine that swaps stale stack contents into its output</a></li>
@@ -235,6 +236,36 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="rerun-04">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Second checker, same verdicts: 205 native rewrites re-proven</h2>
+      <p>Of 212 script-native rewrites from nine production batches ported to the checker's second version, 205 passed one thousand trials each with no failures and 7 slow fulldata contracts ran out of lane time unreached. The port also confirmed that one reported weakness of the first checker, nearly constant random fills for global data, is still present in the second checker's worker, so the affected contracts now use explicit value lists instead.</p>
+      <h3>What was asked</h3>
+      <p>Take every function nine production lanes had verified under the first checker version, port each rewrite and contract to the second version's single runtime and contract format, and re-run each for at least one thousand trials. Rewrites that only passed because of a first-version defect were to be fixed or reported, not carried over.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> 205 rewrites passed under the second checker with zero failing trials and the original side healthy on every trial, including all 41 handlers whose boolean argument treatment changed in the port. The 7 unreached contracts are all fulldata checks from one batch and were stopped by the lane time limit, not by failures.</li>
+      <li><span class="evidence verified">Verified</span> The 41 boolean handlers previously reproduced leftover pointer bytes in a pushed argument because the first checker compared the whole word. Each now passes a clean flag while the contract excludes that one call argument from comparison, so the rewrite states the real behaviour.</li>
+      <li><span class="evidence verified">Verified</span> The worker-side random fill for global data still repeats values across neighbouring trials under the second checker: both worker sources seed their generator identically, and running that exact algorithm shows trials arriving in identical pairs with most bits shared. Three contracts that relied on it now cycle an explicit list of edge values instead.</li>
+      <li><span class="evidence verified">Verified</span> Both checker versions record and compare only the first eight words of an outgoing call's stack arguments. The seven affected contracts in this batch declare between nine and fifteen arguments and are unaffected in outcome, but words past the eighth are pushed and uncompared.</li>
+      </ul>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Port treatment</th><th role="columnheader">Count</th><th role="columnheader">Outcome</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Unchanged apart from line endings</td><td role="cell" data-label="Count">146</td><td role="cell" data-label="Outcome">146 passed</td></tr>
+      <tr role="row"><td role="cell">Runtime import renamed only</td><td role="cell" data-label="Count">23</td><td role="cell" data-label="Outcome">16 passed, 7 unreached</td></tr>
+      <tr role="row"><td role="cell">Boolean quirk removed, call argument masked</td><td role="cell" data-label="Count">41</td><td role="cell" data-label="Outcome">41 passed</td></tr>
+      <tr role="row"><td role="cell">Call style normalised</td><td role="cell" data-label="Count">2</td><td role="cell" data-label="Outcome">2 passed</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>The 205 passing functions count as verified under the second checker; the 7 unreached fulldata contracts go to another lane with their ported files ready to run. The worker's random global fill should be re-seeded per trial with a proper hash and its eight-word call-argument cap should be written into the checker guide, since neither is documented and the first silently weakens any contract that relies on it. Contracts that need varying globals should use explicit value lists until then.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the batch rewrite crate for the 32-bit target against the second checker's runtime, then run the second checker driver over the ported contracts with the batch DLL selected. Re-implementing the worker's documented fill seeding in a few lines shows the neighbouring-trial repetition without running the checker at all.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The batch mixes five spellings of the same boolean quirk and three context-pointer styles across nine lanes, so the port script asserts every rewrite pattern it touches rather than trusting names. One contract was first misread as using pristine globals before its explicit heap-pointer redirect was noticed. Fulldata contracts run about ten times slower than plain ones, so the run was restarted plain-first halfway to avoid stranding six lanes. The runner also lost fifteen completed records to its own too-narrow file lock and healed them by matching verdicts to contracts by hash. Nothing failed under the new checker, which was the surprising part given three known defects in the old one.</p>
+      </article>
 
       <article class="entry" id="production-s79">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
