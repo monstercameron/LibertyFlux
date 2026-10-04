@@ -19,18 +19,16 @@
 //! cleanup fix described in the report), including NaN/-inf float edges,
 //! all three gate exits, both rescale branches, and every sub-iterator count.
 
-use lf_k2_rt::{callee_thiscall, export, global};
-
-const RADIUS: f32 = 2.2;
-const RADIUS2_B: f32 = 5.0;
-const VEL750: f32 = 750.0;
-const RTHRESH: f32 = 625.0;
-const FSCALE: f32 = 25.0;
+const RADIUS: f32 = 2.2; // bits 0x400CCCCD
 const NORM_EPS: f32 = 0.25;
 const NORM_HALF: f32 = 0.5;
 const FAR_SCALE: f32 = 4.0;
 const PMAX: f32 = f32::from_bits(0x7F7FFFFF);
 const NMAX: f32 = f32::from_bits(0xFF7FFFFF);
+const VEL750: f32 = 750.0;
+const RTHRESH: f32 = 625.0;
+const FSCALE: f32 = 25.0;
+const RADIUS2_B: f32 = 5.0;
 
 #[inline(always)]
 unsafe fn rf(p: *const u8, off: usize) -> f32 {
@@ -47,7 +45,15 @@ unsafe fn wf(p: *mut u8, off: usize, v: f32) {
     *(p.add(off) as *mut f32) = v;
 }
 
+// Original: 0x00B52540. Sibling of 0x00B51FA0: single-slot clear, gated
+// entry walk with a sub-iterator broadcast, an 11-argument setup call, three
+// virtual mass samples with a rescale branch, and one stored effect.
 export!(thiscall, rw_b52540(this_ptr: *mut u8) -> u32 {
+    unsafe { body2(this_ptr, RADIUS2_B) };
+    0
+});
+
+unsafe fn body2(this_ptr: *mut u8, radius2: f32) {
     unsafe {
         let this = this_ptr;
         let (mut min_x, mut min_y, mut min_z) = (PMAX, PMAX, PMAX);
@@ -176,8 +182,8 @@ export!(thiscall, rw_b52540(this_ptr: *mut u8) -> u32 {
                         let dy = rf(this, base + 4) - ey;
                         let dz = rf(this, base + 8) - ez;
                         let d2 = dy * dy + dx * dx + dz * dz;
-                        if RADIUS2_B > d2 {
-                            process_slot(this, entry, pool, si, ex, ey, ez, &mut stored);
+                        if radius2 > d2 {
+                            process2(this, entry, pool, si, ex, ey, ez, &mut stored);
                             break;
                         }
                     }
@@ -189,11 +195,10 @@ export!(thiscall, rw_b52540(this_ptr: *mut u8) -> u32 {
             }
         }
     }
-    0
-});
+}
 
 #[inline(never)]
-unsafe fn process_slot(
+unsafe fn process2(
     this: *mut u8, entry: *mut u8, pool: u32, si: usize,
     ex: f32, ey: f32, ez: f32, stored: &mut u32,
 ) {
@@ -279,6 +284,9 @@ unsafe fn process_slot(
             callee_thiscall!(7, u32, entry as u32, arg1.as_ptr() as u32, arg0.as_ptr() as u32, 0u32);
         } else {
             let buf = this.add(0x448 + (*stored as usize) * 0x10);
+            // As in the sibling: two words the original reads from its own
+            // uninitialized stack (verified: no writer on any path). Zero
+            // under the checker's defined fill on both sides.
             wf(buf, 4, 0.0);
             wf(buf.wrapping_sub(8), 0, fx);
             wf(buf.wrapping_sub(4), 0, fy);

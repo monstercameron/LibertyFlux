@@ -3128,8 +3128,8 @@
   "kind": "function",
   "file": "functions/fn_005b60f0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s116"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x005B6110",
@@ -15404,8 +15404,8 @@
   "kind": "function",
   "file": "functions/fn_00981f40.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s105"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00981FF0",
@@ -15440,8 +15440,8 @@
   "kind": "function",
   "file": "functions/fn_009822c0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s105"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x009823B0",
@@ -15467,8 +15467,8 @@
   "kind": "function",
   "file": "functions/fn_009824e0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s105"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00982540",
@@ -15656,8 +15656,8 @@
   "kind": "function",
   "file": "functions/fn_009872c0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-b11"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00988730",
@@ -17366,8 +17366,8 @@
   "kind": "native",
   "file": "natives/fn_009cbfa0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-n102"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x009CBFB0",
@@ -18266,8 +18266,8 @@
   "kind": "function",
   "file": "functions/fn_009e1270.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s101"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x009E12D0",
@@ -18455,8 +18455,8 @@
   "kind": "function",
   "file": "functions/fn_009e2c80.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s101"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x009F4980",
@@ -21245,8 +21245,8 @@
   "kind": "function",
   "file": "functions/fn_00a7cf20.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s79"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00A7CF30",
@@ -24890,8 +24890,8 @@
   "kind": "function",
   "file": "functions/fn_00b52540.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-b05"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00B52CB0",
@@ -24899,8 +24899,8 @@
   "kind": "function",
   "file": "functions/fn_00b52cb0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-b01"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00B53050",
@@ -25456,9 +25456,9 @@
   "name": "audio_voice_update",
   "kind": "function",
   "file": "functions/fn_00b5fa50.rs",
-  "trials": 1200,
-  "checker": "version 2",
-  "lane": "r-b40"
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00B5FE20",
@@ -26690,8 +26690,8 @@
   "kind": "native",
   "file": "natives/fn_00b87190.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-n116"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00B871A0",
@@ -27986,8 +27986,8 @@
   "kind": "native",
   "file": "natives/fn_00b8bfe0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-n104"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00B8BFF0",
@@ -28031,8 +28031,8 @@
   "kind": "native",
   "file": "natives/fn_00b8c070.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-n104"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00B8C080",
@@ -31734,6 +31734,15 @@
   "lane": "r-n109"
  },
  {
+  "address": "0x00B9E570",
+  "name": "CLEAR_PED_NON_REMOVAL_AREA",
+  "kind": "native",
+  "file": "natives/fn_00b9e570.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "a-V03"
+ },
+ {
   "address": "0x00B9E580",
   "name": "CLEAR_RELATIONSHIP",
   "kind": "native",
@@ -31757,8 +31766,8 @@
   "kind": "native",
   "file": "natives/fn_00b9e5c0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-n112"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00B9E5D0",
@@ -38273,8 +38282,8 @@
   "kind": "native",
   "file": "natives/fn_00bb9600.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-n103"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00BB9660",
@@ -39211,6 +39220,186 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-L01"
+ },
+ {
+  "address": "0x00BBB2A0",
+  "name": "NativeImpl_ADD_FOLLOW_NAVMESH_TO_PHONE_TASK",
+  "kind": "function",
+  "file": "functions/fn_00bbb2a0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBB5E0",
+  "name": "NativeImpl_CAN_PED_SHIMMY_IN_DIRECTION",
+  "kind": "function",
+  "file": "functions/fn_00bbb5e0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBB660",
+  "name": "NativeImpl_CHANGE_CHAR_SIT_IDLE_ANIM",
+  "kind": "function",
+  "file": "functions/fn_00bbb660.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBB6C0",
+  "name": "NativeImpl_CLEAR_CHAR_SECONDARY_TASK",
+  "kind": "function",
+  "file": "functions/fn_00bbb6c0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBB6E0",
+  "name": "NativeImpl_CLEAR_CHAR_TASKS",
+  "kind": "function",
+  "file": "functions/fn_00bbb6e0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBB930",
+  "name": "NativeImpl_DOES_SCENARIO_EXIST_IN_AREA",
+  "kind": "function",
+  "file": "functions/fn_00bbb930.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBBA40",
+  "name": "NativeImpl_EXTEND_PATROL_ROUTE",
+  "kind": "function",
+  "file": "functions/fn_00bbba40.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBBB20",
+  "name": "NativeImpl_TASK_EXTEND_ROUTE",
+  "kind": "function",
+  "file": "functions/fn_00bbbb20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBBFB0",
+  "name": "NativeImpl_GET_SOUND_LEVEL_AT_COORDS_3",
+  "kind": "function",
+  "file": "functions/fn_00bbbfb0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBC1B0",
+  "name": "NativeImpl_IS_SITTING_OBJECT_NEAR",
+  "kind": "function",
+  "file": "functions/fn_00bbc1b0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBC8C0",
+  "name": "NativeImpl_TASK_AIM_GUN_AT_COORD",
+  "kind": "function",
+  "file": "functions/fn_00bbc8c0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBC980",
+  "name": "NativeImpl_ATTACH_PED_TO_SHIMMY_EDGE",
+  "kind": "function",
+  "file": "functions/fn_00bbc980.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBD7C0",
+  "name": "NativeImpl_TASK_COMBAT_HATED_TARGETS_AROUND_CHAR",
+  "kind": "function",
+  "file": "functions/fn_00bbd7c0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBD860",
+  "name": "NativeImpl_TASK_COMBAT_HATED_TARGETS_AROUND_CHAR_TIMED",
+  "kind": "function",
+  "file": "functions/fn_00bbd860.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBD900",
+  "name": "NativeImpl_TASK_COMBAT_HATED_TARGETS_IN_AREA",
+  "kind": "function",
+  "file": "functions/fn_00bbd900.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBDA10",
+  "name": "NativeImpl_TASK_COMBAT_TIMED",
+  "kind": "function",
+  "file": "functions/fn_00bbda10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBDA80",
+  "name": "NativeImpl_TASK_COWER",
+  "kind": "function",
+  "file": "functions/fn_00bbda80.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBDB00",
+  "name": "NativeImpl_TASK_DEAD",
+  "kind": "function",
+  "file": "functions/fn_00bbdb00.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBDB80",
+  "name": "NativeImpl_TASK_DESTROY_CAR",
+  "kind": "function",
+  "file": "functions/fn_00bbdb80.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBDC00",
+  "name": "NativeImpl_TASK_DIE",
+  "kind": "function",
+  "file": "functions/fn_00bbdc00.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s241"
  },
  {
   "address": "0x00BC4FA0",
@@ -42377,8 +42566,8 @@
   "kind": "native",
   "file": "natives/fn_00bd2cb0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-n104"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00BD2CC0",
@@ -42548,8 +42737,8 @@
   "kind": "native",
   "file": "natives/fn_00bd3a80.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-n103"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00BD3AD0",
@@ -44906,8 +45095,8 @@
   "kind": "native",
   "file": "natives/fn_00bd8fe0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-n102"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00BD8FF0",
@@ -47579,8 +47768,8 @@
   "kind": "function",
   "file": "functions/fn_00ca61c0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-b02"
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00CA6490",
@@ -47671,6 +47860,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b06"
+ },
+ {
+  "address": "0x00CC5F40",
+  "name": "notify_forward_a",
+  "kind": "function",
+  "file": "functions/fn_00cc5f40.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "a-V03"
+ },
+ {
+  "address": "0x00CC5FB0",
+  "name": "notify_forward_b",
+  "kind": "function",
+  "file": "functions/fn_00cc5fb0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "a-V03"
  },
  {
   "address": "0x00CC70C0",
