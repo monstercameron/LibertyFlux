@@ -34,12 +34,11 @@ lf_checker_rt::export!(thiscall, rw_0057bce0(_this: u32, index: u32) -> u32 {
             keys: u32,
             _pad1: u32,
             _pad2: u32,
-            _pad3: u32,
             values: u32,
         }
 
         let mut tables = Tables {
-            _pad0: 0, count: 0, keys: 0, _pad1: 0, _pad2: 0, _pad3: 0, values: 0,
+            _pad0: 0, count: 0, keys: 0, _pad1: 0, _pad2: 0, values: 0,
         };
         let answer: u32 = lf_checker_rt::callee_fastcall!(
             CALLEE_DATA, u32, LEADERBOARD_ID, &mut tables as *mut Tables as u32);

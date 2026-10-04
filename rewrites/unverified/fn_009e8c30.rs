@@ -16,7 +16,7 @@ lf_checker_rt::export!(thiscall, rw_009e8c30(this_ptr: u32) -> f32 {
             0.0
         } else if mode == 2 {
             1.0
-        } else if (this_ptr.wrapping_add(LIMIT_OFF) as *const u32).read_unaligned() > 2 {
+        } else if (this_ptr.wrapping_add(LIMIT_OFF) as *const u32).read_unaligned() as i32 > 2 {
             rf(this_ptr, HI_OFF)
         } else {
             rf(this_ptr, LO_OFF)

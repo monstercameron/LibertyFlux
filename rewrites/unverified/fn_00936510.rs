@@ -19,7 +19,8 @@
 /// the combine arguments on the second slot are the first slot's folded
 /// values (the preset path's copy of the incoming vector register is dead:
 /// it always folds the first slot before any use).
-/// Returns the last callee answer. cdecl, one stack word.
+/// Returns whatever the last slot's mode read or callee answer left in EAX.
+/// cdecl, one stack word.
 lf_checker_rt::export!(cdecl, rw_00936510(arg: u32) -> u32 {
     unsafe {
         const G_EN: u32 = 0x11A2EA2;
@@ -46,7 +47,6 @@ lf_checker_rt::export!(cdecl, rw_00936510(arg: u32) -> u32 {
 
         let g = lf_checker_rt::relocated;
         let probe = lf_checker_rt::callee_cdecl!(1, u32,);
-        let mut last = probe;
         let (fa, fc) = if (probe as u8) != 0 { (1u8, 1u8) } else { (0u8, 0u8) };
         let fa = if (arg as u8) != 0 { 1u8 } else { fa };
         let fc = if rd8(g(G_EN)) == 0 { 0u8 } else { fc };
@@ -78,25 +78,26 @@ lf_checker_rt::export!(cdecl, rw_00936510(arg: u32) -> u32 {
             x0 = 0.0f32;
             x1 = 0.0f32;
         }
+        // EAX at exit is whatever the last mode read or callee answer left:
+        // each slot visit starts by loading its mode into EAX.
+        let mut eax = 0u32;
         let mut slot = g(G_M0);
         while slot != g(M_END) {
             let mode = rd32(slot);
+            eax = mode;
             let flag = if slot == g(G_M0) { fa } else { fc };
             if (mode == 3 || mode == 2) && flag != 0 {
                 let mut refp = [0u32; 3];
-                let a2 = lf_checker_rt::callee_cdecl!(2, u32, refp.as_mut_ptr() as u32);
-                last = a2;
-                let a3 = lf_checker_rt::callee_thiscall!(
+                eax = lf_checker_rt::callee_cdecl!(2, u32, refp.as_mut_ptr() as u32);
+                eax = lf_checker_rt::callee_thiscall!(
                     3, u32, slot.wrapping_sub(OBJ_OFF),
                     0, t0.to_bits(), 1, refp[0], refp[1]
                 );
-                last = a3;
             } else if mode == 5 {
-                let a4 = lf_checker_rt::callee_thiscall!(
+                eax = lf_checker_rt::callee_thiscall!(
                     4, u32, slot.wrapping_sub(OBJ_OFF),
                     x1.to_bits(), x0.to_bits()
                 );
-                last = a4;
             } else {
                 slot = slot.wrapping_add(M_STEP);
                 continue;
@@ -107,6 +108,6 @@ lf_checker_rt::export!(cdecl, rw_00936510(arg: u32) -> u32 {
             t0 = x0;
             slot = slot.wrapping_add(M_STEP);
         }
-        last
+        eax
     }
 });

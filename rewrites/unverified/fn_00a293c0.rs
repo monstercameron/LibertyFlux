@@ -159,14 +159,16 @@ lf_checker_rt::export!(thiscall, rw_00a293c0(this: u32, a1: u32, a2bits: u32, a3
             if cl {
                 let mut s0 = [0u32; 1];
                 let mut s1 = [0u32; 1];
+                // Argument order is the reverse of the original's pushes:
+                // the last push (a1) is argument 0.
                 let r: u32 = lf_checker_rt::callee_thiscall!(
                     2,
                     u32,
                     this,
-                    s0.as_mut_ptr() as u32,
-                    s1.as_mut_ptr() as u32,
+                    a1,
                     this.wrapping_add(AUX_OFF),
-                    a1
+                    s1.as_mut_ptr() as u32,
+                    s0.as_mut_ptr() as u32
                 );
                 if (r as u8) == 0 {
                     if ga == 0 && gb == 0 {

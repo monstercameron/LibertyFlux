@@ -1,6 +1,9 @@
 // original: 0x009e4780 angle_within_limit (proposed)
 
 /// Decide whether a scaled angle is within a float limit, 1 or 0 in `al`.
+/// (The original also spills the ST0 result over its incoming first stack
+/// word; a compiler frame-reuse artifact with no behavioural effect. The
+/// contract runs with the stack check off for this reason.)
 ///
 /// Builds four floats (`[q]`, `[q + 4]`, `[leaf + 0x30]`, `[leaf + 0x34]`
 /// with `leaf = [this + 0x20]`) in its frame and calls the cdecl dot
