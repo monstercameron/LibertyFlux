@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b59">Audio batch of seven verified, and a float-compare idiom worth knowing</a></li>
       <li><a href="#production-b68">Two contract traps that silently starve test coverage</a></li>
       <li><a href="#production-b67">Production batch: three audio functions verified, one tail-jump gap found</a></li>
       <li><a href="#production-b64">A production batch that caught a checker bug</a></li>
@@ -278,6 +279,30 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b59">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Audio batch of seven verified, and a float-compare idiom worth knowing</h2>
+      <p>All seven audio functions in this batch were rewritten in Rust and verified at one thousand trials each with zero failures, but the most useful result is a compiler idiom that reads as a NaN check and is actually a not-equal check.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite seven neighbouring audio functions in Rust and prove each rewrite behaves identically to the original with checker version two, including their outgoing calls, global table use and float behaviour.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Seven of seven functions verified, one thousand trials each, every callee observed on both sides.</p>
+      <p><span class="evidence verified">Verified</span> The flag-read sequence after a float compare, lahf then test then jump-on-parity, jumps exactly when the zero and parity flags agree, which for float operands means not-equal, including NaN inputs. Reading it as an unordered check inverts two of the four cases.</p>
+      <p><span class="evidence verified">Verified</span> Two functions reuse their incoming stack argument slots as scratch space, so their contracts disable the stack check while still verifying stack pointer adjustment.</p>
+      <p><span class="evidence verified">Verified</span> One function shares pushed words across two consecutive calls, so callee cleanup had to be confirmed from each callee ending before declaring argument counts.</p>
+      <p><span class="evidence verified">Verified</span> The trial thread control word was measured from mismatch output rather than assumed, and one batch size entry is seven bytes short of the true function end.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Treat the lahf flag-read idiom as float not-equal in every future analysis.</li>
+      <li>Confirm shared-push call sequences against callee endings before writing contracts.</li>
+      <li>Keep stack checking disabled only where the original demonstrably reuses argument slots, and say so in the contract notes.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run one checker contract per function with at least one thousand trials, pinning table bases and slot bytes to small values, scripting every callee answer including float bit patterns, and planting stubs for the two functions that call through their own object tables. The verdict files record per-callee call counts as a non-vacuity guard.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The not-equal idiom cost two attempts on the float-heavy function before the flag logic was worked out by hand. A rebuild race that locks the rewrite library cost further time and was worked around by moving the old library aside under a fresh name each build. Failed setup runs appear to leave worker processes behind, which then block the next build.</p>
+      </article>
 
       <article class="entry" id="production-b68">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
