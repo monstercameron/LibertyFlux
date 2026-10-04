@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s275">A green verdict can still miss whole paths</a></li>
       <li><a href="#checker-driver-speed">Where a checker trial's time goes</a></li>
       <li><a href="#naming-16">Leaderboard team boards named, and a missing id method</a></li>
       <li><a href="#naming-15">Naming a run of leaderboard schema accessors</a></li>
@@ -361,6 +362,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s275">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A green verdict can still miss whole paths</h2>
+      <p>A production batch of twenty small task-system functions verified at twenty out of twenty, each over one thousand trials with its deliberately wrong version caught, and a follow-up audit still found seven contracts that never ran some of their paths. The cause was period lock-in between callee scripts, and the fix was re-perioding, not rewriting.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small game functions in Rust and prove each rewrite equivalent to the original with the checker, one contract and one wrong version per function.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> After the first full pass showed twenty greens with every declared callee firing, a branch-shape audit showed missing call sequences on seven contracts: null-detail paths, null-state paths, and second-answer values that never appeared on firing trials. In each case a callee answer script shared its cycle length with the gate that decides whether the callee runs, so the gate outcome and the answer locked together and some combinations never occurred in any trial count.</p>
+      <p><span class="evidence verified">Verified</span> Re-perioding the scripts to lengths three, five and seven, with residues tabulated by hand so every value fires where it matters, restored the missing shapes (one contract went from eight distinct call sequences to ten) and all re-runs passed with their wrong versions still caught. No rewrite changed in this round.</p>
+      <p><span class="evidence verified">Verified</span> One function's early exits clear only the low byte of the result register, leaving input-determined upper bytes; the rewrite reproduces them exactly and the comparison covers the full register. Five step functions call through object function tables; planting the harness stubs in fabricated tables verified all of them with no skipped or masked arguments.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Every contract with a gated callee should have its script periods checked against the gate's period before the full run: equal periods with aligned phases lock. After the run, the distinct call-sequence shapes should be compared against the paths read from the disassembly, not just counted. A wrong version that only touches an observed path cannot catch this; the audit is the control.</p>
+      <h3>How to reproduce it</h3>
+      <p>Take any contract where a callee answer cycles with period two behind a gate that also varies with period two, run it, and list the distinct call sequences in the verdict: one expected short shape will be absent. Change the script to period three and re-run: the shape appears.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first triage decoded garbage because the script indexed the mapped image by file offset instead of address; the brief's mapping warning caught it. A push of a register that looked like a sixth call argument turned out to be stack allocation for a float slot, found when the original faulted on every trial. The rewrite library could not be deleted after checker runs even though no process held it as a loaded module; renaming it aside before each build worked around it. Piping a running checker into a truncating pager once killed the driver silently mid-run, losing a wrong-version run; all full runs redirect to log files.</p>
+      </article>
 
       <article class="entry" id="checker-driver-speed">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
