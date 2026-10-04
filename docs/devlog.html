@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#startup-stub">The start-up stub: a tiny loader, an encrypted first megabyte, and an external unlocker</a></li>
       <li><a href="#game-folder-inventory">What the game folder contains</a></li>
       <li><a href="#public-names">Public engine class names collected and checked against our build</a></li>
       <li><a href="#encrypted-prefix">Correction: the first megabyte of the code is encrypted</a></li>
@@ -66,6 +67,38 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="startup-stub">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>The start-up stub: a tiny loader, an encrypted first megabyte, and an external unlocker</h2>
+      <p>The game does not start in its own code. A loader stub of about six hundred bytes runs first, loads a Rockstar wrapper module shipped beside the game, lets it prepare the process, then hands control to the normal C start-up routine. The first megabyte of the code section is encrypted on disk and a read-only section holds an identical backup copy of it.</p>
+      <h3>What was asked</h3>
+      <p>Explain what happens between process start and the game's real entry point: what the stub in the small executable section does step by step, what the one megabyte high-entropy section is, what runs before the real entry point, how the shipped launcher starts the game, and whether any of this interferes with analysis or with loading extra code into the process.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> The entry point sits at the first byte of a tiny writable and executable section. The stub finds the system library through the process loader list instead of using imports, then loads a wrapper module by name and resolves two single-letter functions from it by walking its export table by hand.</li>
+      <li><span class="evidence verified">Verified</span> The stub calls the first wrapper function once with no arguments, then calls the second one in a loop until it reports success, passing it the locations of the thread-storage and relocation tables. It then unloads the wrapper and jumps to the real entry point.</li>
+      <li><span class="evidence verified">Verified</span> The one megabyte section is byte-for-byte identical to the first megabyte of the code section, and that first megabyte is encrypted: maximum entropy, incompressible, and disassembles as nonsense. The boundary between encrypted and normal code falls exactly on a page boundary one page before the end of the copy.</li>
+      <li><span class="evidence verified">Verified</span> The encrypted region holds heavily used code: tens of thousands of call sites and over sixteen thousand linker-confirmed pointers from the rest of the program reach into it, including the call to the main window function from the C start-up code. It must be decrypted before the game can run.</li>
+      <li><span class="evidence verified">Verified</span> No game code references the backup copy. It is mapped read-only, so the game cannot corrupt it. It is most likely the wrapper's pristine reference for decrypting and integrity checks.</li>
+      <li><span class="evidence verified">Verified</span> Nothing runs before the stub except the operating system loader. The thread-storage callback list is empty, and the stub's own callback-dispatch code can never execute because its guard condition is always false.</li>
+      <li><span class="evidence verified">Verified</span> The real entry point is an ordinary C start-up routine of the expected compiler generation: cookie check, exception-handler setup, a check of the program's own headers, command-line retrieval, then a call into the main window function.</li>
+      <li><span class="evidence verified">Verified</span> The wrapper module exports only the two functions the stub calls. Its own code is obfuscated, and its imports show it can scan processes and modules, change memory protection, read process memory, terminate processes, and detect debuggers.</li>
+      <li><span class="evidence verified">Verified</span> Signature-checking functions are called from one cluster of game code far from the stub. The code verifies an Authenticode signature, treats a missing or bad signature as not verified rather than fatal, and inspects the signer certificate and timestamps. A separate pair of data-protection calls sits elsewhere and looks like save-data encryption.</li>
+      <li><span class="evidence verified">Verified</span> The game is normally started through a 64-bit launcher stub that reads two metadata files, supports store-specific launch paths with documented command-line flags, enforces a single instance, and hands off to the Rockstar Games Launcher, which starts the game itself.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li><span class="evidence">Inferred</span> Static analysis of the first megabyte of code is blocked until it is decrypted; disassemblers will show garbage there, while callers elsewhere in the program stay visible. The import table is intact, so API usage remains readable.</li>
+      <li><span class="evidence">Inferred</span> Loading an extra module into the process is not blocked by the stub itself, but the wrapper scans the process before the game starts, so injected modules may be noticed. This needs live testing to confirm.</li>
+      <li><span class="evidence">Inferred</span> Replacing functions in memory at run time is mechanically normal, but the pristine backup copy and the wrapper's memory-reading ability mean integrity re-checks are plausible. Whether any run after start-up is unknown.</li>
+      <li><span class="evidence">Inferred</span> The wrapper's retry loop and the signature checks deserve dynamic observation in a sandbox before any lane depends on start-up behaviour.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>All results come from static reads of the game executable and the two files shipped beside it, using a PE parser and a disassembler library from throwaway scripts. The checks were: section table and entropy survey; full disassembly of the stub section with manual decoding of its five embedded strings; byte comparison of the backup section against the code section; a page-by-page entropy scan to find the encryption boundary; counting linker relocation records that point into the encrypted range; reading the thread-storage directory and its empty callback list; disassembly of the real entry point; import-table review of the wrapper and launcher; and string and metadata review of the launcher. No game code was executed and no protection was defeated.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Linear disassembly of the stub initially misread its embedded strings as instructions, which hid the real control flow until a raw dump revealed the call-and-capture pattern. A first scan for references to the backup section returned dozens of hits that all turned out to be misaligned decoding artefacts and coincidental numbers in graphics data, which only became clear after checking each one against aligned disassembly and the relocation table. The wrapper takes the thread-storage and relocation locations as arguments for reasons that remain unknown.</p>
+      </article>
 
       <article class="entry" id="game-folder-inventory">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
