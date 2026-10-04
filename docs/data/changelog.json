@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: hourly review, 10:12",
+    "commit": null,
+    "summary": "The second hourly review: what the hour produced, what was learned, and what changed.",
+    "changes": [
+      "570 functions and about 73,900 bytes were verified in the hour; 8.8% of the code by size is verified.",
+      "Changes made: a wrong version is now required for every function, with brief versions recorded in lane results; thirteen controlled experiments on how lanes work were started; 316 inventory entries that are not functions were removed; dead lanes' batches are released automatically.",
+      "A mistake recorded: stopping the supervisor to change a setting killed eight lanes it had started. Settings now change through a file it reads on every pass."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Progress data: 316 more inventory entries are not functions",
     "commit": "9255541c438b5b7458b37c34d5efb7ec7a66f20c",
     "summary": "A screening of the entries the boundary repair never fully confirmed. The function total goes down by 316; the naming lanes' doubts were right.",
