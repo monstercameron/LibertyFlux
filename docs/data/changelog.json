@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Loader: hook engine, registry, proxy library and test program",
+    "title": "Work queue tools",
     "commit": null,
+    "summary": "The SQLite work queue: claim, context, accept, defer, export.",
+    "changes": [
+      "scripts/queue: twelve tools over one database file kept under .artifacts.",
+      "Its 22 tests pass and a simulation of 500 decisions produced no double claim.",
+      "Assembled from the lanes' scratch folders by the tools lane and scanned for machine paths, byte dumps and disassembly before publication."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Loader: hook engine, registry, proxy library and test program",
+    "commit": "ae294a1560e69235b9a24aed92ac5fcb4cb309e7",
     "summary": "The replacement loader that will switch individual functions over to their rewrites inside the running game.",
     "changes": [
       "crates/tools/lf-hook, lf-registry, lf-proxy and lf-test-target.",

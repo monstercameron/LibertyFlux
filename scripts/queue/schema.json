@@ -1,0 +1,173 @@
+{
+ "address_form": "RVA as integer; hex strings accepted on input",
+ "attempt_cap": 12,
+ "blocker_tags": [
+  "needs-structs",
+  "needs-caller",
+  "needs-callee",
+  "float-tolerance",
+  "indirect-call",
+  "switch-table",
+  "encrypted-ref",
+  "bounds-dispute",
+  "thunk-chain",
+  "tool-bug",
+  "needs-manual",
+  "other"
+ ],
+ "busy_timeout_ms": 30000,
+ "claim_ttl_hours": 2,
+ "difficulty": "n_insns + 8*branches + 4*calls + 25*switches + 6*fp_insns; empty functions (0 insns, 0 bytes) sort last at 1e9; queue order is (difficulty ASC, addr ASC)",
+ "image_base": "0x400000",
+ "kinds": [
+  "game",
+  "library",
+  "runtime",
+  "encrypted",
+  "stub",
+  "thunk",
+  "unknown"
+ ],
+ "no_improvement_stop": 4,
+ "progress_mapping": {
+  "game": "total - library",
+  "identified": "game rows in db",
+  "library": "kinds library + runtime + stub",
+  "named": "game rows with non-null name",
+  "rewritten": "accepted rows (refined when checker lane tracks attempts)",
+  "total": "all rows except kind encrypted",
+  "verified": "accepted rows"
+ },
+ "schema_version": 1,
+ "states": [
+  "queued",
+  "claimed",
+  "accepted",
+  "deferred",
+  "excluded"
+ ],
+ "tables": {
+  "attempts": [
+   "id",
+   "addr",
+   "lane",
+   "attempt_no",
+   "created_at",
+   "verdict",
+   "score",
+   "path",
+   "note"
+  ],
+  "batches": [
+   "id",
+   "started_at",
+   "ended_at",
+   "released_stale",
+   "n_queued",
+   "n_claimed",
+   "n_accepted",
+   "n_deferred",
+   "n_excluded",
+   "note",
+   "detail"
+  ],
+  "claims": [
+   "addr",
+   "lane",
+   "claimed_at",
+   "expires_at",
+   "renewed_at"
+  ],
+  "classes": [
+   "id",
+   "mangled",
+   "demangled",
+   "namespace",
+   "polymorphic"
+  ],
+  "deferrals": [
+   "id",
+   "addr",
+   "lane",
+   "blocker",
+   "note",
+   "created_at",
+   "active"
+  ],
+  "evidence": [
+   "id",
+   "addr",
+   "kind",
+   "value",
+   "source",
+   "created_at"
+  ],
+  "functions": [
+   "addr",
+   "size_bytes",
+   "n_insns",
+   "branches",
+   "calls_direct",
+   "calls_indirect",
+   "switches",
+   "fp_insns",
+   "sha1_masked",
+   "kind",
+   "subsystem",
+   "name",
+   "name_confidence",
+   "state",
+   "difficulty",
+   "source",
+   "extra"
+  ],
+  "names": [
+   "id",
+   "addr",
+   "name",
+   "source",
+   "confidence",
+   "created_at",
+   "superseded"
+  ],
+  "schema_version": [
+   "version",
+   "applied_at"
+  ],
+  "verdicts": [
+   "id",
+   "addr",
+   "lane",
+   "passed",
+   "inputs_tested",
+   "comparisons",
+   "detail",
+   "path",
+   "created_at"
+  ],
+  "vtable_slots": [
+   "class_id",
+   "slot",
+   "addr",
+   "vt_rva"
+  ]
+ },
+ "verdict_format": {
+  "checker_version": "str",
+  "comparisons": [
+   {
+    "name": "str",
+    "passed": true
+   }
+  ],
+  "function": "0x<rva hex> (VA also accepted)",
+  "inputs_tested": "int > 0",
+  "passed": true
+ },
+ "verdict_rules": [
+  "verdict.function must name the claimed function",
+  "passed must be exactly true",
+  "inputs_tested must be a positive int",
+  "comparisons must be a non-empty list, every entry passed"
+ ]
+}
