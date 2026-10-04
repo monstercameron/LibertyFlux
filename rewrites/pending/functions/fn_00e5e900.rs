@@ -9,12 +9,13 @@ export!(cdecl, rw_00e5e900() -> u32 {
         const BASE: u32 = 0x19EFC80;
         const COUNT: u32 = 4;
         const STRIDE: u32 = 0x40;
-        
+        let init: extern "thiscall" fn(u32) -> u32 =
+            core::mem::transmute(callee_addr(1) as usize);
         let mut ptr = relocated(BASE);
         let mut last = 0u32;
         let mut remaining = COUNT;
         loop {
-            last = callee_thiscall!(1, u32, ptr);
+            last = init(ptr);
             ptr = ptr.wrapping_add(STRIDE);
             remaining -= 1;
             if remaining == 0 {
