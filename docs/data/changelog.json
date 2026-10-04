@@ -1,6 +1,759 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Changelog: the commits of pull request 1",
+    "commit": null,
+    "summary": "One entry for each commit the cloud review brought, and one for the merge.",
+    "changes": [
+      "Every commit has a changelog entry whose title is its subject. The 85 commits merged as pull request 1 were written in a cloud session that could not edit the changelog without conflicting with the five-minute tick, so their entries are added here, taken from each commit's own message.",
+      "The merge's entry records how the branch was checked before merging and what does not work on the coordinator's machine."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Merge pull request 1: the cloud review",
+    "commit": "1f392a59e7d557f8bc74a1ad2d16373570210b90",
+    "summary": "A cloud session reviewed the repository without the game's files; its 85 commits are merged, each with its own entry below.",
+    "changes": [
+      "Before merging, the branch's checker (version 5) was built and run on the coordinator's machine against the game's executable: all 38 existing proofs and all 34 wrong versions give the verdicts on record, and the new proofs for x87 entry values, vector arguments beyond the second and large snapshots pass with their wrong versions caught.",
+      "One new checker option cannot work on this machine: the read-only shadow of the original's preferred address range. In every 32-bit process here the system already holds that range, so the worker cannot place the shadow there. Functions that need it stay deferred on this machine.",
+      "The first local run of that regression was wrong and is discarded: sources unpacked from an archive carry the commit's time, so the build tool judged an older proof library current and did not rebuild it. The library was rebuilt from clean and the regression run again.",
+      "Merged while no lane was running (the model subscription's quota had run out), so no lane had the checker changed underneath it.",
+      "The live five-minute tick still runs the coordinator's own copies of the operating scripts. Its structure count now reads every source file of the types crate, which this merge splits into one module per subsystem; the count is unchanged at 340.",
+      "Two fact labels are renamed in the tracked copy of the counting script to say what they count; they take effect when the tick switches to the tracked scripts."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "README: the tools map gains the inspector, the shader dump, the hook and the environment check",
+    "commit": "ec41c28cd51e4466590774c4b92e62e859015799",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "New rows for lf-inspect, the shader dump example, the pre-commit hook and doctor.py; the ledger, static checks, issue log, publication check, viewer and site generator rows name their new options; the section on working without the game mentions doctor.py and the hook installer."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "CI: the CI script tests run, high-severity rewrite findings become annotations, and each import is summarised",
+    "commit": "50fe555c850f9390808e2832dba7539d378b047b",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "The repository job runs scripts/ci/tests (publication check, build check, hook and doctor tests; the real-cargo test skips without the 32-bit target). On rewrite-tree commits, the static job annotates the findings of the high-severity checks on the files themselves, and the ledger job writes a counts-only summary of what the push imported, compared with the commit before it."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tools: regenerating the issue log keeps the sources a run does not supply",
+    "commit": "7fa522c52f1776fb323d12f890a49486d7593609",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Regenerating the issue log without --build or --review used to drop every build and review issue and the statuses reviewers had set on them: refreshing only the pattern checks would have thrown away 2,647 of the 4,295 issues. A source not given on a run now keeps its issues from the previous log, for files still in the verified tree, and the script says so and names the flag that refreshes them; regenerating the committed log this way reproduces it exactly. Also fixed: --out with a bare file name crashed, and ledger.load_game_set left its file open."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tools: doctor.py checks a contributor's environment",
+    "commit": "8a568a48e1bfd2d306c40c295afda4b8018b54ef",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Twelve PASS, WARN or FAIL checks: Python, the pinned Rust toolchain and its targets, that the workspace resolves, the optional local tools and the game paths through their environment variables (only whether each is set and exists, never its value), the hook, and that notes.md is untracked. --json for machines; exit 1 on any failure; it installs nothing."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tools: a pre-commit hook for the publication rules, and its installer",
+    "commit": "54713dc70a0d9a83733d1753fc7f7cb33d6879b6",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "scripts/hooks/pre-commit refuses notes.md, orig/ and .artifacts/ before any Python runs, runs the publication check on the staged content and the ledger check when rewrites/ is staged, and is silent when everything passes. scripts/hooks/install.py copies or links it into the repository's hooks folder (following core.hooksPath) and never replaces a different hook without --force, keeping the old one as .bak. Not installed anywhere by this commit."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "CI: the publication check can check given files or the staged content",
+    "commit": "754bd03abeb5b4af956d6c85052c4a9a83267001",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "--files checks only the given files and --staged checks what the index holds, so a partly staged file is checked as it will be committed. The module can be imported without running the check. Running it with no arguments behaves as before."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tools: the ledger reports an import wave since a git ref, in text, JSON or Markdown",
+    "commit": "7834cfb73e69d2c41cce32e6f8858583d873a6ef",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "--since REF lists entries added to, removed from and changed in the verified index since a ref, by kind and checker version; --markdown prints a counts-only table with no addresses, safe for a pull request or the devlog. --check behaves as before."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tools: issue_log summarises, exports, filters and marks the existing log",
+    "commit": "2e6a20802cddc11310cd6bd145d4c7d0ae63b1c5",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "--summary prints totals and the largest issue classes with an example each; --csv exports one row per issue; --filter KEY=VALUE narrows any of them; --mark FILE ISSUE STATUS sets an issue to open, fixed, not-an-issue or wont-fix without regenerating, and the status survives regeneration. None of the read modes regenerate the log."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tools: the rewrite build check counts error kinds, checks a subset, tries runtime aliases",
+    "commit": "6b38f241a3007e196a3d6f8d5b50ff0f02162655",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "The JSON gains error_classes; --only checks given files or a folder fast; --alias OLD=NEW re-checks the strict failures with a lane runtime aliased to the shared one and reports how many more compile, without changing the strict result or the exit status. Measured: aliasing the 15 lane runtime names makes 542 of the 891 failing rewrites compile; 349 still need helpers that exist nowhere. Compiling under an alias does not show the file is the code its lane's checker ran."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tools: lint_rewrites checks files outside the index, filters by code, annotates for GitHub",
+    "commit": "feabd784046125e8dfd13cc84b1a3cff49654dfe",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "--file lints given rewrite files or folders before they are imported (address from the file name, else the header), so a lane can check its own output; --code limits the report to given checks; --format github prints one annotation per finding with its line (1,642 of 1,648 findings carry one). The default output is byte-identical to before on the full tree."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Lints: digit separators, and exact float comparisons allowed in parser tests",
+    "commit": "1bc57c59fb2928b7e01adf8a97b1762e2270dcb6",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Eight long literals gain digit separators (values unchanged; suggestions that would have zero-padded a hex literal or added a type suffix were left alone). Fifteen unit-test modules that compare parsed floats against exact expected values, on purpose, allow clippy::float_cmp with a comment saying so. The portable tests pass as before."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Lints: machine-applicable clippy fixes across the portable crates",
+    "commit": "2ee51b7ed4bc081bda262880ba5d0dfae234c2a6",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "cargo clippy --fix applied only the suggestions clippy marks as machine-applicable (map_or, is_some_and, collapsed if-let chains, loops over references, infallible From conversions, must_use attributes), which do not change behaviour: the workspace's 881 portable tests pass as before. Warnings in a clean lint go from 251 to 150. The checker, loader and rewrite-library crates were left out on purpose. The remaining warnings are mostly casts that can truncate on 64-bit targets and float comparisons, which need a decision per site rather than a mechanical change."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Formatting: cargo fmt across the workspace",
+    "commit": "8c28600bbdf0d88df4d3ca37fc78f21a20c56bb5",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Formatting only, no change in behaviour: 145 hunks in 29 files that rustfmt flagged, mostly in the loader, the replacement table, the lift pilot and the format readers. cargo fmt --all --check now passes, so the advisory lint job's formatting step can go green; the workspace builds and its 881 portable tests pass as before."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Crates: every crate is marked publish = false",
+    "commit": "3e1905a8d2b1819a0b8719250845bc060dd68ce3",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "None of the project's crates is ever published to crates.io, and cargo-deny treats a path dependency in a publishable crate as a wildcard version, which failed the licence job's bans check on every crate that depends on another. With publish = false the rule's allowance for workspace path dependencies applies; licences and sources already passed."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Viewer: an info command and a batch mode",
+    "commit": "b7cbba9ac3a4ca382a9b7522ca296b83865a0c8f",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "lf-viewer info describes a model or texture file without writing anything (meshes with vertex and triangle counts, vertex layouts, materials, texture formats, sizes and mip levels), with --json for machine-readable output. lf-viewer batch converts every model and texture in a folder, each into its own uniquely named folder under --out, and ends with a summary of what was converted, skipped and ignored. The model and texture commands behave as before. Tests go from 17 to 26."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Shader translator: an example that dumps every program of a shader container",
+    "commit": "4d7f1257a46ca7b7d5de14fdcc46824fe5be037c",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "lf_dxso_dump prints the listing, SPIR-V text and reflection summary for each program in the user's own .fxc files, or one census across all distinct programs. It writes only to stdout or to --out, never over an existing file without --force and never over an input file."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Shader translator: a listing, a SPIR-V text dump and a coverage census for debugging translations",
+    "commit": "294ec788423ce480c26edb2066ae3d6870d144a3",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Three debugging aids. A listing of decoded programs, one line per instruction with the dword offset translation errors report, registers, masks, swizzles, modifiers, declarations and exact constants. A readable dump of the emitted SPIR-V that names every opcode the crate emits and flags anything it cannot account for, round-trip tested over every test module. A census that reports, per program, whether it translates, what stops it, and which opcodes, register files and modifiers are used, so a run over a player's own shaders shows what fraction translates. Output from the game's shaders is a disassembly of game code: the docs say it stays on the user's machine and is never committed. Tests go from 113 to 142."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Site: progress history and devlog feed refreshed",
+    "commit": "d55adff82aacadea2c6c4d6d873dea9437a10c35",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "history.json gains the progress points recorded since it was first generated (28 now) and devlog.xml holds the newest 50 entries. Both go stale until the tick runs scripts/site/history.py and devlog_feed.py."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Site: navigation to the new pages, a 404 page, sitemap and robots",
+    "commit": "8cf7064f204049f151cbbe4071161db8b8442d01",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Every page links Quality and Tools, and the overview points to the quality page. A 404 page in the site's style uses links rooted at /LibertyFlux/ so it works at any depth; sitemap.xml lists every page. test_pages.py checks the navigation, link-preview tags, canonical links, the sitemap, that no page loads anything from another site, that repository links resolve, and that no page shows an address or a machine path."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Site: a tools page with commands and a glossary",
+    "commit": "794776961a8cb7239ae5a3a199aeebf931209df5",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "docs/tools.html lists the project's tools, each with what it is for, who can run it (anyone with the repository, or only with a copy of the game), its command as the tool's own help gives it and a link to its source, and ends with a glossary of the project's terms (lane, contract, checker, wrong version, verified, rewritten, named, lift, shard, callee slot, tick)."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Site: a quality page on what verified means",
+    "commit": "c37a9768beccdba306d16094028615f88fe39b16",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "docs/quality.html answers how much verified means: the headline numbers, how verification works (two runs from the same state, what is compared, contracts, wrong versions, the rule against empty passes, what a proof does not cover, the in-game second gate), charts by checker version, kind, outcome, severity and issue kind, and seven plain-language cards for the main problem classes with what is being done about each. It states that no verified rewrite carries a proof record yet and that most were accepted before wrong versions were required."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Site: quality data generator",
+    "commit": "6ceeb4573591151d62da09c477ad5b82f127a252",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "scripts/site/quality.py writes docs/data/quality.json from tracked sources only, as counts and shares: the verified and unverified trees (through the ledger), the issue log, and the build check's result when it exists (otherwise the page says the figure is not measured). It refuses to write anything that looks like an address, a rewrite's file name or a machine path. Run it after the issue log or the trees change. 10 tests."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Rewrites: issue log regenerated for the 9,319-entry tree",
+    "commit": "772e49d32c1a74047347b9fab02b2fc2d890d7ea",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "4,295 issues in 2,544 files (1,050 with a high-severity issue) after the latest imports. The build check now covers all 9,319 rewrites: 8,428 compile from the repository alone and the same 891 do not, so every rewrite imported since the first check compiles. Produced by the committed static checks (the same 1,648 findings) and the reading review."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tools: the assembler falls back to absolute paths when no relative path exists",
+    "commit": "41bce57f5b09b97d9aad871fa4e6140f3d50635b",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "On Windows os.path.relpath raises an error when the output folder and the repository are on different drives, which the first CI run of the assembled-library job hit (temporary folders on C:, the checkout on D:) in five generator tests. Path dependencies in the generated Cargo.toml files now fall back to absolute paths, which Cargo accepts; a test simulates the different-drive case on any system."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Formats: the release ships lf-inspect instead of the 21 example programs",
+    "commit": "f3db3139c343e1b0d585e3ca388cd1f94b67220a",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "The per-crate example programs are folded into lf-inspect and removed; nothing in the repository or the devlog referred to them. scripts/ci/package.py builds and packages lf-inspect for each system in their place."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tools: lf-inspect, one inspector for every format",
+    "commit": "165af0fec57aba49ae3da1be5755ae91fad3a68d",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "One command-line tool with a subcommand per format (summaries, listings, and a bench command that times parsing over repeated runs, plus synthetic fixtures for benchmarks that fit in CI). On generated inputs its output matches the 21 per-crate example programs it replaces, apart from deterministic ordering where the old order was random and errors where the old programs panicked. 6 tests."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Formats: property, round-trip and fuzz tests for every format reader",
+    "commit": "3883005679ac50e5bdd69965d501ea0ee63ed839",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Each of the 18 format crates gains tests/generated.rs: fixtures built programmatically and parsed back field by field, write and read round trips where a crate can write, invariants (no panics, offsets in bounds, counts consistent) and the mutation fuzzer, with the nine defects above kept as regression inputs. The format tests go from 426 to 525, about 3.7 seconds in total."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Formats: parser panics, hangs and stack overflows found by fuzzing, fixed",
+    "commit": "342ceab0604fa3d951b77fee8e5433442eedc3a1",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Nine defects, each now an error instead: an archive directory range containing itself recursed until the stack overflowed (visited once, depth capped at 256); image padding larger than the block count underflowed; resolved archive names doubled the directory; a vertex colour slot that is not four bytes panicked; layered collision composites could describe billions of bounds and ran for hours (65,536 per root; shipped files hold at most 4,096 leaf children); a truncated text table panicked; deeply nested game data XML overflowed the stack (depth 256); an audio bank whose records end past the data base panicked; a cutscene file with CRLF endings counted the carriage return as slack. Each has a regression test in the next commit. Real files are a local check."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Formats: shared fuzz and fixture test support",
+    "commit": "1aea706ba73ed93ce8bae120f049c7b067869f74",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "crates/formats/tests/support.rs holds the seeded generator and mutation fuzzer every format crate's tests use: bit flips, truncations and corrupted length fields over each crate's own fixtures, a few thousand iterations in normal runs and as many as LF_FUZZ_ITERS asks for (LF_FUZZ_SEED repeats a run)."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tools: lf-lift-diff runs both sides of a slot-table case against one test buffer",
+    "commit": "be1442bd7487d114a5c13aaa692cd2ac856a505c",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "The first 32-bit run on the Windows runner failed three of 47 cases: the verified rewrite and the lift ran against two buffers, so every address either side computed differed by the distance between them while results, regions and the whole image agreed. Both sides now share one buffer, reset to the same starting bytes before each run; the comparison is unchanged and every deliberately wrong lift must still fail. The host stand-in's relocation now depends on the installed buffer, as the real runtime's does, so the host reproduces this kind of mistake (it reproduced the CI failure, first failing input included). The lift itself was right and is unchanged; its docs and the method document record the run and its cause."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "README: what verified means, a tools map, working without the game, and questions",
+    "commit": "0ed7e7e9abab6fcd4b706edb12ca1dd75a36ec4d",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Additive sections: what a verified rewrite proves and what it does not (callees stubbed, generated inputs, one build), the gates kept around the checker with a diagram and the commands to check for yourself; a map of every tool, split into what needs only the repository and what needs your own copy of the game; how to build and test without the game; a short questions section; and rows for the new crates, the issue log and the script folders in the repository layout."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "CI: build the assembled rewrite library on Windows, and run the proxy's and rewrite library's tests",
+    "commit": "52a7fe7756b04011c8c10fee666786939bb30471",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "A new Windows job runs the generator's tests, assembles the verified rewrites into lf_rewrites.dll and uploads it with its manifest as a build artifact. The 32-bit tools job also runs lf-proxy's and lf-rewrite-32's tests."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tools: a generator that assembles the verified rewrites into the 32-bit library",
+    "commit": "9b6714866943bd2071526e67385a93a4082e8ad4",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "scripts/assemble/assemble.py writes shard crates of about 300 rewrites each plus a top cdylib, lf_rewrites.dll, under .artifacts/assembled/ (generated code is never committed), type-checking each rewrite inside its shard and leaving out, with the reason in manifest.json, anything that does not compile, names an unaliased lane runtime, has an ambiguous export or collides with another export. Today 8,030 of 8,559 rewrites go in, across 28 shards that each build in under 340 MB. Callee slots resolve through an optional callee map from the contracts (the coordinator supplies it); without one, the 1,485 rewrites that call no callee and read no checker-only input are switchable and the rest are compiled but not. 27 generator tests."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Rewrite library: lf-rewrite-32 carries the table ABI",
+    "commit": "4111a4b630e5e94f308a6f57401a953a1bd9fd37",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "lf-rewrite-32 becomes the rlib the assembled library links: lf_rewrite_version, lf_rewrite_init (sets the checker runtime's relocation base to the game's own) and the export_table! macro that joins every shard's rows into one table. It is no longer a cdylib of its own, which was a library with no table that every shard build linked for nothing."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Registry: the replacement-table ABI and a bisection planner",
+    "commit": "114b510c7d1750d57979d6ad74d55c009fd36469",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "lf-registry gains table.rs, the RewriteEntry rows a rewrite library exports (original address, entry point, calling convention, flags) and their conversion into hook definitions, and bisect.rs, a pure planner that splits the switched-on replacements in halves to find a faulty one, which Registry::bisect now uses. 17 host tests; the live registry tests are Windows-only."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Proxy: forwarding table generated through lf-hook::forward, with tests",
+    "commit": "50a2253180d772fad49f84ab5f4b93492736e8f0",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "lf-proxy's build script uses the shared forwarding code instead of its own copy (no behaviour change) and the proxy gains tests that every forwarded export maps to the right system-library export and ordinal. The build still needs the system's 32-bit winmm.dll, so it builds on Windows only, as before."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Loader: hook engine tests and a pure export-forwarding table",
+    "commit": "2a0d76a3915a4e84381c453cc6fb569ac231df65",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "lf-hook's decoder, detour planning and PE parsing get host tests (29), with the live slot and detour tests compiled for Windows only; its kernel32 link is gated to Windows so the pure parts build and test on any host. The proxy's export-forwarding logic moves into lf-hook::forward as pure, tested code. No behaviour change on Windows."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "CI: checker, site and queue script tests, the runtime's tests, and the 32-bit lift differential job",
+    "commit": "cddc374db98c170e92b5eb919da110f1b5944d65",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "The repository job now also runs the checker scripts' tests (contract validator, wrong-version generator), the site generators' tests and the queue tests. The 32-bit tools job runs lf-checker-rt's tests beside the worker's. A new Windows job runs lf-lift-diff on the 32-bit target, where the verified rewrites run with the real checker runtime."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Checker: the validator's fallback snapshot cap matches the version 5 worker",
+    "commit": "565aee49fae659f88a8011117965023a262d62f6",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "The validator reads the worker's caps from its source and falls back to built-in values when the source is absent. The fallback still said 8 snapshot words per callee, so a checkout without the worker reported the new k5_snap contract as invalid; it now says 64, as snap::SNAP_CAP_WORDS does. The cap test sets its limits explicitly instead of relying on the fallback."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Checker driver: version 5 contract keys, validation and verdict features",
+    "commit": "fba2b59be0aff041e18d9842b0cddd4c3af12ad7",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "checker2.py reads the new keys (x87, logxmm_regs, xmm_from_stack, snap at, abs_shadow, selftest:NAME originals), validates them before a run, and records every feature used in the verdict. Requests for all 40 existing contracts are identical to before over 300 trials, and --selftest passes 27 of 27. The docstring's abilities, limits and contract format are brought up to date."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Checker proofs: k5 contracts and wrong versions for the version 5 abilities",
+    "commit": "2e92669607aad75320361e2c0e734e6182fac059",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Seven regression contracts: x87 entry values and stack balance, XMM call arguments, absolute reads with the shadow (worker self-test originals), snapshots at positive and negative offsets on a real function, and k5_absguard, which fails by design to show the window holds. Each has a wrong version the new ability catches and the old checker would not. Running them is a local check (checker2.py --all)."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Checker worker: x87 entry values, XMM2-7 call arguments, wide snapshots and the preferred-base window",
+    "commit": "2cd12e7776cb933784ec03dcecc22bc87e897aeb",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Opt-in contract features, each recorded in the verdict: up to eight x87 entry values loaded on the original's FPU stack and mirrored for the rewrite, with the stack top, tags and registers compared bit for bit on return; XMM0-7 logged at outgoing calls; pointed-to snapshots at an offset and up to 64 words per callee, failing loudly above that, with a fix for a second ECX/EDX snapshot reading a clobbered register. Changed defaults, stricter than before: the worker is linked at a fixed high base and reserves the original's preferred-base window, so an unrelocated absolute read by the original faults with an abs-window note instead of silently reading worker memory (the cause of the read-only constant misread in devlog production-b145; an opt-in read-only shadow serves such reads where a contract needs them); the FPU is reset after each side; an unknown snapshot kind is an error. Pure logic moved into a library with 20 tests; 31 tests of the binary. Local check: the full regression must show old verdicts unchanged."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Checker runtime: x87 entry mirror and exact x87 store converters",
+    "commit": "cf6292b7e9a504b6cb8b204662251e45d89eef64",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "lf-checker-rt gains CHECKER_X87, the worker's mirror of a trial's x87 entry values (as CHECKER_XMM is for vector registers), with accessors and exact conversions between 80-bit values and f32/f64, cross-checked over 200,000 values. Additive: existing rewrites are unaffected."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Shaders: lf-dxso-spirv translates shader model 3.0 bytecode to SPIR-V for Vulkan",
+    "commit": "aaa8066acb7f6bbaef84ac547c02adf900226d76",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "The game's shaders are precompiled Direct3D 9 shader model 3.0 programs (969 distinct ones). A local lane already proved that external tools can translate them all, but that output is game-derived and can never be committed; this crate does the translation inside the project, on each player's own copy, with no dependencies and no unsafe. It decodes every model 3 instruction and register file, translates arithmetic, flow control, loops with relative addressing, subroutines, predication and texture sampling to SPIR-V 1.0, and returns the reflection a renderer needs. The Vulkan binding convention (uniform buffers per stage, combined image samplers, vertex input and varying locations by usage, the half-pixel and clip-space fixups) lives in one module. Anything unsupported returns an error instead of wrong code; every Direct3D 9 semantic choice that is a guess is labelled Inferred. 113 tests, including a structural SPIR-V validator and a small interpreter that executes translated programs. Requested by the owner ahead of the renderer phase."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tools: lf-viewer converts models and textures to glTF and PNG",
+    "commit": "c9c3225a806b9027ad82e6a7bf79dc428c20439c",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "A command-line converter from the user's own model and texture files to glTF 2.0 and PNG, with its own PNG, JSON and glTF writers and DXT decompression, built on the format readers. It writes only where the user asks and says in its help that the output is derived from the user's copy and must never be committed. Tested on hand-built inputs (17 tests); real files are a local check. Skeletons and skinning are not exported; triangle winding is unknown, so materials are double-sided and --flip-winding is offered."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Maths: the lf-math crate for vectors, matrices, quaternions and Vulkan projections",
+    "commit": "7c9f564cfdbd89f2c363c1c1383bff5c8031f92c",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Vec2/3/4, Mat3/Mat4, Quat and transform helpers (look-at, perspective with Vulkan depth, inverse, decompose), f32, repr(C) where layout matters, no dependencies and no unsafe. The conventions are documented: column-major, right-handed, Vulkan clip space with y down and depth 0 to 1, and how the original's Direct3D 9 row-vector matrices map onto them. 27 unit tests and 11 property tests on a deterministic generator; a deliberately broken inverse and slerp were caught. lf-core's docs now point here instead of a glam dependency that was never approved."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Platform: streaming file and audio output interfaces with portable and test backends",
+    "commit": "54c6f0d07031eb2b936b336c860ea181b17dd635",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "lf-platform's placeholder traits become real interfaces. Files: asynchronous block-aligned reads with request handles, priorities, cancellation and completion polling, with a std-thread backend for every system and a deterministic in-memory backend for tests (the plan's pitfall list asks for real asynchronous reads). Audio: device enumeration and a pull-model stream of interleaved f32 frames, with a null device and a capture device for tests; an operating-system backend needs SDL3 or similar and plugs in where documented. 34 tests."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Documentation: the lift method",
+    "commit": "251e6ca5ddd1ddc0b669713825da1e4b520b01d2",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "documentation/lift-method.md is the readable overview of how verified 32-bit rewrites become portable Rust: the global-state decision with the options weighed, typed callee traits, the boundary types, the differential tests and what they leave out (NaN payloads, which ARM and x86 propagate differently), the effort estimate of about 930 lane-hours and how it was derived, and the order to lift clusters in. The crate docs of lf-lift stay the specification. New document approved by the owner."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tools: lf-lift-diff tests each lifted function against its verified rewrite",
+    "commit": "db579083b525579a6f3e0dc22d75435063b9aa6c",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "The verified rewrites are compiled in unchanged with include! and run beside the lifted functions on the same generated inputs, comparing results and recorded calls; every case also carries a deliberately wrong lift that must be caught. On the 32-bit Windows target it uses the real checker runtime; elsewhere a stand-in runtime. On the Linux host 57 of the 58 functions run (8 + 46 tests pass); the one 32-bit-only case and the real-runtime run need the Windows runner (CI job proposed)."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Lift: lf-lift with 58 lifted functions and the lift specification",
+    "commit": "1afd749c80287687b9a9f46413ce05cb6ce1fef7",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "58 verified rewrites restated as safe, portable Rust in three clusters: 26 pure functions, 19 forwarders whose callee slots become trait methods, and a slot table whose 12 globals live in one state struct. Three more were examined and deferred with reasons in the crate's registry. The crate docs are the specification: per-subsystem state structs, one trait per collaborator group, boundary types from lf-core, and the rules every lifted function follows. unsafe is forbidden; 22 tests."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Core: generational arena and boundary types for the lift",
+    "commit": "2a353ab8eb2896080d7a127fc53e9eeae50d4bef",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "lf-core gains the types lifted code uses to meet 32-bit layouts: Handle and Arena (slot plus generation, so a stale handle never aliases a new object), Handle32 for opaque 32-bit values, FixedLayout with an explicit little-endian codec tied to its size, Image32 for a 32-bit address space seen as bytes, FromLayout/IntoLayout conversions that keep unmodelled bytes, and AddressMap, where an unbound address is an error. Same behaviour on 32-bit and 64-bit targets; 14 tests and 3 doc tests."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Rewrites: issue log regenerated with the structural checks",
+    "commit": "48ad571e2e0bf5e374292530eac4dd4a65878c50",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "4,236 issues in 2,486 files (1,047 with a high-severity issue), up from 4,219: the truncated and spliced files, discarded callee results, placeholders and unused parameters the new checks find."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Checker: a wrong-version generator for rewrites",
+    "commit": "473accb59e777e9eab9b5110ee2d7d1197bb976a",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "mutate_rewrite.py writes deliberately wrong versions of a rewrite with Rust-level operators chosen to expose weak contracts (flipped comparisons, constants off by one, a dropped write or call, swapped callee arguments, a changed width, an inverted branch, float operand order) and a manifest of each. Over the whole tree it produces 63,539; a sample of 1,368 from 184 rewrites type-checks for the 32-bit target. Running them through the checker is a local check: a wrong version that passes shows what the contract cannot see."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Lint: structural checks on verified rewrites",
+    "commit": "449e3f1ee4022de7f751b9e718aa6c84a8cd294e",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "New static checks: unbalanced or truncated files (4: three cut off mid-function and one spliced; none compiles), a callee's result discarded where a constant is returned (6), placeholders (3), unused parameters (4). Every hit in the corpus was read before the check was kept."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Ledger: optional proof records on index entries",
+    "commit": "828a444e4e2dd6304db0f21ba16648e40e42526c",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "rewrites/proof_record.schema.json specifies a per-entry proof object: checker version, worker, driver, rewrite and contract hashes, seed, trials, the wrong version's result and what the proof does not cover. The ledger validates proof objects when present; a wrong version that was not caught is an error, a partial proof a warning, and --json lists every record. No entry carries one yet; the importer is the place to start writing them."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Checker: a schema and validator for contract files",
+    "commit": "62d69ad848887901726f6498e4f91f01a982419a",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "contract_schema.json describes every field the driver and the worker read; validate_contracts.py (standard library only) rejects unknown keys, wrong types and out-of-range values, and lists each narrowing setting by name (checks switched off, fault:false, ret:none, call_skip, call_regs, a non-zero fp_tol, fulldata off, a missing wrong version). All 38 tracked contracts are accepted; 34 run with fulldata off and 6 skip call arguments. It also found that a top-level \"ret\" is never read (only checks.ret is) and that a numeric fp_tol is silently zero."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Site: engine page design review fixes",
+    "commit": "701cdaef26f376c52c75e6b916d1f1006bcf57e5",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Third review of the engine page: the masthead link colour and segment colours pass contrast in both themes, the waffle's grey squares read as squares, ruler labels sit above the ticks, the virtual machine's step button keeps keyboard focus and announces its state, the train animation respects reduced motion, and long native names wrap instead of widening the page on the engine, changelog and devlog pages. Checked at 1280 and 400 pixels in light and dark with headless Chromium: no console errors, no sideways scroll."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Site: the code map can count by bytes when the data has them",
+    "commit": "c34e5c44654f1f82c7e74ec43be823c0ed3d7a21",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Map slices may carry byte totals per stage; when they do, the page offers a functions or bytes switch and shades each square by bytes. Without them it shows functions only, as before. Function sizes are not in the repository yet, so nothing is shown in bytes until the coordinator adds the field; no data is invented."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Site: progress over time on the overview page",
+    "commit": "375b8440b668324c31c40b0cd58e149938dc743c",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "scripts/site/history.py walks the git history of progress.json and writes docs/data/history.json, merging with the existing file so a shallow clone never loses earlier points. The overview page draws one small line chart per stage from it, with the same numbers as a table, and says that each chart's scale starts near its own lowest value. Run it on each tick after status.py."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: an Atom feed of the newest entries",
+    "commit": "e2920d39d5b5b20a6cc33c08864a426ecaf735f3",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "scripts/site/devlog_feed.py reads the devlog database and writes docs/devlog.xml (newest 50 entries, linked to their place on the devlog page), applying the publication patterns to the feed text. The devlog page links it. Rebuild it after adding entries."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Site: a social preview image and Open Graph tags on every page",
+    "commit": "539f54e8c526bd5678bef759d0d45b38b7e9bf1f",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "docs/img/social.svg (1200x630) and a PNG rendered from it by scripts/site/social.py with the standard library only, since most platforms do not show SVG previews. Every page carries canonical, Open Graph and Twitter card tags."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Site: fonts and the devlog's database reader are served from the repository",
+    "commit": "c78ceab552d702ab003678998ce7b4ca43ae485b",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Overpass and Overpass Mono (variable woff2, Latin subset, OFL licence files beside them) replace the Google Fonts links, and sql.js 1.10.3 is served from docs/vendor instead of a content network: the script keeps the integrity hash the page pinned before, and devlog.js now checks the .wasm file's SHA-256 before using it, which it never did. No page contacts a third party any more. Downloads approved by the owner."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Dashboard: history charts and an experiment view",
+    "commit": "ee16a01cc7a14b66a2709ce57a5e0d150ce20dda",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "/api/history samples lanes, verified count and memory every minute into an untracked file and keeps a week; /api/experiments shows pass rate and minutes per function by brief version and lane kind. Checked with headless Chromium on sample data in both themes and at phone width; real data is a local check."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Coordinator: small script fixes, and tests for the scripts that had none",
+    "commit": "adfc8a5a7179d6a2a9c043ed04318832c203373a",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "make_brief.py parses --date VALUE; review_metrics.py and run_experiments.py read the verified tree through the ledger instead of the old rewrites/pending path; prod_report.py counts verified_v* outcomes and tolerates unknown kinds; compare_regression.py takes --tracked. Pure logic in tick, start_lane, swap_worker and the brief makers moved into functions with tests. Coordinator tests go from 93 to 210, queue tests to 33."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Rewrites: optional demotion to the unverified tree, and a schema for lane results",
+    "commit": "d441029ab03439a436e34a8051d8ba900bf8c396",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "sync_rewrites.py --demote moves an entry a later checker version judged failed or deferred to rewrites/unverified with the lane's reason; an older pass cannot bring it back. --validate checks results.json rows against lane_results.schema.json and warns. Both are off by default, so a tick behaves as before."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Coordinator: dead lanes give back the functions they did not settle",
+    "commit": "bc21d04fa746f8251ecee328d8ad4184ccfa40c6",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Since brief b8 lanes write results.json early, so a dead lane usually has one and its whole batch stayed assigned forever. Now only settled functions (verified under any checker, or deferred with a reason) stay; the rest go to lists/released/ and back to the queue."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Queue: short tail runs are handed out, and small batches default to 40",
+    "commit": "319514e1ec658eee54d01ce52c4b8c180b048f9b",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Runs shorter than a batch at the end of a subsystem were never handed out; they are now merged into neighbouring batches or handed out as tails. The small-batch default in code matches the 40 lanes are given."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Coordinator: the commit helper is atomic and commits only the named paths",
+    "commit": "a9ba8b8a4dce96e1ba559c45db010c713c911aa2",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "A failed regeneration, stage or commit restores changelog.json byte for byte, so no orphan entry is left for the next call to stack on; an orphan left by an older failure is replaced. Only the step's files plus the changelog, progress data and badges are committed; anything else staged stays staged. That is a behaviour change for a tick that relied on committing whatever was staged: check before switching the live tick to this copy."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Counts: apply_counts takes the verified count from the ledger, and two fact labels say what they measure",
+    "commit": "25ccfc07074d8254c532a339561d999ad13a16dd",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "The verified-set and index parsing now go through ledger.summarise and ledger.load_index; a test over 200 random trees and the real index shows the published numbers do not change. The facts labelled \"Rewrites that pass checker version 1\" and \"... version 2\" are renamed in place to what they have always counted (lane passes in the game set plus tracked entries; checker version 2 or later); no number changes and no row is duplicated."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Types draft: layouts split into subsystem modules, documented, with 42 evidence-backed field renames",
+    "commit": "1b780f86c5c8ee0e49ebd95fe68ff7c9c7c78da7",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "crates/lf-types-draft/src/lib.rs (24,700 lines) becomes a crate root with a specification and 19 subsystem modules, re-exported so every path still resolves. All 340 types keep their field types, order and sizes, and all 5,629 offset assertions keep their values (checked by comparing old and new); size checks now use lf-core's assert_size!. 42 fields are renamed, each from the Hungarian label in its own doc comment, listed in the crate docs. The structure counter in apply_counts.py counts across all files of the crate, so the published count stays 340; the running copy of the counter on the laptop needs the same change when this merges, or the site shows 0."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Rewrites: an issue log for the verified tree, for review when the rewrites are assembled",
+    "commit": "9504e9e32356425406bfb106593ad471b7596326",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "4,219 issues in 2,484 of the 8,115 verified rewrites, 1,041 files with at least one high-severity issue. Sources: the static checks (1,572), the build check (891 files that do not compile from the repository) and a reading review of one representative of each of the 4,328 code shapes (1,756 findings). The most common high-severity problems are lane runtimes missing from the repository, stack-cookie checks called without a cookie, out-buffers smaller than the real callee writes, float results read from the wrong register, and partial proofs counted as verified. Regenerate with scripts/coordinator/issue_log.py; statuses set by a reviewer survive."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Publication check: devlog entries are scanned too",
+    "commit": "5a0067548a37c94da2abf61fc5f6dc94c31d96a9",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "The devlog database is binary, so the line scan never read it. Each entry is now checked for machine paths, game function addresses, disassembly and byte dumps; all 337 current entries pass."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "CI: dependency licence check, coverage report and API documentation",
+    "commit": "0ad7ac62723927b0bd961dd58e7df7ad89ee5936",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "deny.toml moves to the version 2 format current cargo-deny reads, with the same permissive-only policy. Coverage is advisory. The API documentation is built on every run and published with the release as a zip; serving it on the site needs the Pages source switched to Actions."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "CI: a workflow that checks the rewrite tree on the commits that change it",
+    "commit": "474a8c107853f3386a0733cc4c69392c599414af",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "The main pipeline skips rewrite-import commits. This one runs the ledger as a gate and the static checks and the build check as advisory reports with their JSON attached."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tooling: the rewrite issue log, merged from pattern checks, the build check and reading reviews",
+    "commit": "971f450c3cdfdbc3b9db241b6039cd7f1c1c4862",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Writes rewrites/review/issues.json with one entry per file, issues sorted by severity, and keeps any status a reviewer has set when it is regenerated."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tooling: a build check for the verified rewrites against the shared runtime alone",
+    "commit": "99a72a95fd44d8c81116d31a1e7d31e99093e796",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Type-checks every file in rewrites/verified for the 32-bit Windows target without a linker, dropping failures until the rest compiles. Today 7,224 of 8,115 compile; 891 depend on lane runtimes that were never brought into the repository."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tooling: static checks over the verified rewrites for what the checker cannot see",
+    "commit": "2ef2d7119a79a7e3d15d773f05caaff957e994d9",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Misaligned plain dereferences, partial proofs, exports that are not what the checker ran, wrong versions left in tracked files, checker-only mechanisms, image addresses used without relocation, float order and float-to-integer conversions. Corpus-wide patterns are counted once as systemic."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Plan: stale phase 0 status, publishing and floating-point notes corrected",
+    "commit": "c84b0946979803b33a02b92ec13c032bd67b93dd",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Plan: stale phase 0 status, publishing and floating-point notes corrected."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "README: status and roadmap brought up to phase 3",
+    "commit": "5cd83c415672668cffae79b4fc4c83fd9b870b1c",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "README: status and roadmap brought up to phase 3."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "CI: fail when the rewrite tree is inconsistent",
+    "commit": "167a2f1ddcdd97ca3860a50d14fcc01701e0c2eb",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "CI: fail when the rewrite tree is inconsistent."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Tooling: a function ledger that checks the rewrite tree against itself and the published counts",
+    "commit": "d0e272186131fbfcd385ef5f116e0430e9cb45d0",
+    "summary": "From the cloud review merged as pull request 1.",
+    "changes": [
+      "Reads only tracked files, so it runs in CI and in sessions without the game. It explains the gap between the 8,115 tree entries and the published verified count: 19 entries passed only checker version 1 and 96 are outside the game inventory."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rust in progress: 4 files from lanes (413 unverified rewrites, 151 in review)",
     "commit": "fdbeeb4c3343cd6c3f4236e466447dd20840cbee",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
