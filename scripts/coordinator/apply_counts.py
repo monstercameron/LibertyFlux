@@ -104,7 +104,7 @@ def main():
     types = ROOT / "crates" / "lf-types-draft" / "src" / "lib.rs"
     if types.exists():
         progress["structures"] = max(0, types.read_text(encoding="utf-8").count("\npub struct ") - 1)  # minus the Ptr32 helper
-    index = ROOT / "rewrites" / "pending" / "index.json"
+    index = ROOT / "rewrites" / "verified" / "index.json"
     if index.exists():
         entries = json.loads(index.read_text(encoding="utf-8"))
         progress["symbols"] = sum(1 for e in entries if e.get("name"))
@@ -139,7 +139,7 @@ def main():
     fact("Functions with a meaningful name", len(named), "functions",
          f"m-names lane's merge ({merged_names}) plus descriptive names given by production and naming lanes ({from_lanes}); slot labels and placeholders are not counted")
     fact("Rewrites that pass checker version 1", len(rewritten), "functions", "production lanes' results files; to be re-run under checker version 2 before they count as verified")
-    fact("Rewrites verified under checker version 2", stages["verified"], "functions", "rewrites/pending/index.json in the repository")
+    fact("Rewrites verified under checker version 2", stages["verified"], "functions", "rewrites/verified/index.json in the repository")
     PROGRESS.write_text(json.dumps(progress, indent=2) + "\n", encoding="utf-8", newline="\n")
     print("progress.json updated")
 

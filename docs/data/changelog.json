@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Rewrites: the folder is renamed from pending to verified",
+    "commit": null,
+    "summary": "rewrites/pending read as a list of functions still waiting to be rewritten. It holds the finished Rust rewrites that passed the checker, so it is now rewrites/verified.",
+    "changes": [
+      "The folder rewrites/pending is now rewrites/verified. Nothing inside changed: one Rust file per function that passed the checker, in natives and functions, with index.json recording the address, name, trial count and checker version of each.",
+      "\"Pending\" had meant pending assembly into the engine crates. It was read, reasonably, as pending rewriting.",
+      "Scripts, the pipeline, the README and the plan name the new folder."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 36 more functions pass the checker (7916 in total)",
     "commit": "31c2ce17705bd52e8827d129cd557d7fcc0ff3d4",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

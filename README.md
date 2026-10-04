@@ -180,7 +180,7 @@ served by GitHub Pages as it is.
 | `docs/` | Yes | Project site (overview, changelog, devlog), badges, progress data |
 | `documentation/` | Yes | Reference material for contributors and agents, with source links |
 | `Cargo.toml`, `crates/` | Yes | The Rust workspace: one crate per engine subsystem, and the file-format readers under `crates/formats/` |
-| `rewrites/pending/` | Yes | Rust rewrites of original functions that have passed the checker, with `index.json` listing each one. They are in the checker's harness form and are not yet linked into the crates |
+| `rewrites/verified/` | Yes | Rust rewrites of original functions that have passed the checker, with `index.json` listing each one. They are in the checker's harness form and are not yet linked into the crates |
 | `scripts/` | Yes | Tooling |
 | `.artifacts/` | No | Build output, caches, logs, agent scratch work, decompiler output |
 | `tools/` | No | Local JDK and Ghidra |

@@ -1,6 +1,6 @@
 """Publication scanning for rewrites entering the tracked tree.
 
-A rewrite is copied into `rewrites/pending/` only when it passes this scan:
+A rewrite is copied into `rewrites/verified/` only when it passes this scan:
 no disassembly, no byte dumps, no machine paths, no inline assembly. The same
 patterns gate every copy, so they live here instead of inside the importer.
 """

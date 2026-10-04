@@ -1,4 +1,4 @@
-"""Copy lanes' rewrites that passed the checker into the tracked tree under rewrites/pending/.
+"""Copy lanes' rewrites that passed the checker into the tracked tree under rewrites/verified/.
 
 Sources: production lanes (r-n*, r-s*, r-b*) and re-run lanes (a-*). A production lane counts as checker
 version 2 when lists/<lane>.v2 exists; re-run lanes are always version 2 and replace a version 1 copy.
@@ -24,7 +24,7 @@ ROOT = common.find_root()
 SCRATCH = common.scratch_dir(ROOT)
 COORD = common.coord_dir(ROOT)
 LISTS = common.lists_dir(ROOT)
-DEST = ROOT / "rewrites" / "pending"
+DEST = ROOT / "rewrites" / "verified"
 
 
 def main():
@@ -74,12 +74,12 @@ def main():
     index_path.write_bytes((json.dumps(sorted(index.values(), key=lambda e: e["address"]), indent=1) + "\n").encode("utf-8"))
     v2 = sum(1 for e in index.values() if e["checker"] in scan.MODERN)
     v3 = sum(1 for e in index.values() if e["checker"] == "version 3")
-    print(f"added {len(added)}; re-checked under a later checker {len(upgraded)}; total in rewrites/pending {len(index)} "
+    print(f"added {len(added)}; re-checked under a later checker {len(upgraded)}; total in rewrites/verified {len(index)} "
           f"({v2} under version 2 or 3, {v3} under version 3); left out by the scan {len(skipped)}")
     if "--commit" not in sys.argv:
         return
     # Whatever is in the tree but not yet committed is this wave, whether it was copied now or by an earlier run.
-    status = subprocess.run(["git", "-C", str(ROOT), "status", "--porcelain", "--untracked-files=all", "--", "rewrites/pending"],
+    status = subprocess.run(["git", "-C", str(ROOT), "status", "--porcelain", "--untracked-files=all", "--", "rewrites/verified"],
                             capture_output=True, text=True).stdout.splitlines()
     new = [line for line in status if line.strip().endswith(".rs") and line.startswith("??")]
     changed = [line for line in status if line.strip().endswith(".rs") and not line.startswith("??")]
@@ -88,7 +88,7 @@ def main():
     natives = sum(1 for line in new if "/natives/" in line)
     changes = []
     if new:
-        changes.append(f"{len(new)} rewrites added under rewrites/pending: {natives} script native handlers and {len(new) - natives} other functions.")
+        changes.append(f"{len(new)} rewrites added under rewrites/verified: {natives} script native handlers and {len(new) - natives} other functions.")
     if changed:
         changes.append(f"{len(changed)} rewrites were re-run under a later version of the checker and replaced by the version that passed it.")
     changes.append(f"The tree now holds {len(index)} rewrites, {v2} of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.")
@@ -99,7 +99,7 @@ def main():
              else f"Rewrites: {len(changed)} functions re-checked under checker version 2")
     entry = COORD / "entry-rewrites.json"
     entry.write_text(json.dumps({"title": title, "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
-                                 "changes": changes, "files": ["rewrites/pending"]}), encoding="utf-8")
+                                 "changes": changes, "files": ["rewrites/verified"]}), encoding="utf-8")
     result = subprocess.run([sys.executable, str(Path(__file__).resolve().parent / "commit_one.py"), str(entry)], cwd=ROOT,
                             env=dict(os.environ), capture_output=True, text=True, encoding="utf-8")
     print((result.stdout + result.stderr).strip())

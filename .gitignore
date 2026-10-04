@@ -92,3 +92,6 @@ desktop.ini
 /scripts/checker/mutants/
 /scripts/checker/results.json
 /scripts/**/__pycache__/
+
+# Local junction to rewrites/verified, kept so lanes started before the rename still find the files.
+/rewrites/pending

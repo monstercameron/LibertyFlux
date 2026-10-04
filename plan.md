@@ -137,7 +137,7 @@ Status on 2026-10-04: phase 3 is under way. The gates before it were met as foll
   maximum effort carry the work; nothing has needed Sonnet yet.
 
 Phase 3 differs from the plan as first written: about 45 lanes run at once (the machine's measured
-ceiling), rewrites are committed to `rewrites/pending/` on every coordinator tick instead of between
+ceiling), rewrites are committed to `rewrites/verified/` on every coordinator tick instead of between
 waves, and the regression between waves is the re-run of every rewrite under the current checker.
 
 Phases 0 to 4 are faithful reconstruction. No 64-bit or renderer work before the phase 4 gate; the

@@ -11,7 +11,7 @@
 # What it cannot do: run the checker against the original game. That needs the game's executable, which
 # is never uploaded anywhere. Function-level proof stays on the owner's machine.
 #
-# Not yet compiled here: rewrites/pending/. Those files are in the checker's test form and are not part
+# Not yet compiled here: rewrites/verified/. Those files are in the checker's test form and are not part
 # of a crate until the assembly step lands; add a job for crates/lf-rewrite-32 when it does.
 
 name: CI
