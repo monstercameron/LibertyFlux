@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n09">Native handlers smuggle booleans through their own stack slot</a></li>
       <li><a href="#production-n03">Native handlers hide a one-byte stack trick</a></li>
       <li><a href="#format-audio">Rust reader: audio banks and their ADPCM streams</a></li>
       <li><a href="#inventory-repair">Repairing the function inventory: what was not a function</a></li>
@@ -206,6 +207,23 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n09">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Native handlers smuggle booleans through their own stack slot</h2>
+      <p>Many script native handlers pass a boolean to the engine by overwriting the low byte of their own incoming argument word on the stack and pushing the whole word, so the engine receives the context address with its low byte replaced by the flag. Rewrites must reproduce both the pushed value and the clobbered stack word, and the checker observes both.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of script native handlers in Rust and prove each rewrite identical to the original with the differential checker.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Six handlers in the batch coerce a script argument to boolean with a set-byte-on-stack pattern: compare the argument word against zero, set the low byte of the incoming argument slot to 0 or 1, then push that slot. The pushed boolean therefore carries the call context address in its high bytes. A seventh handler spills a float argument over the same slot. The checker's stack comparison covers incoming argument words, so a rewrite that only computes the pushed value still fails on the stack diff.</p>
+      <p><span class="evidence verified">Verified</span> Safe Rust cannot name its own incoming argument slot without the stack pointer, so the rewrite cannot reproduce the write unassisted. The worker derives the incoming stack address deterministically from the scratch stack base it already reports, and the driver passes that address into a dead word of the call context that the original never reads. Both sides start from identical state, the original ignores the extra word, and the pushed value is independently verified through the outgoing-call comparison.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Other native lanes should expect the same set-byte pattern wherever a handler coerces a boolean, and reuse the incoming-address harness word rather than disabling the stack comparison. Two handlers that pass a pointer to their own stack frame to the engine were deferred instead, because excluding that pointer from the comparison would leave the marshalled data unverified.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run any boolean-coercing native handler under the checker with the stack comparison on: the original shows one stack write the naive rewrite lacks. Resolve the worker's reported stack base plus its fixed offset to the incoming slot address, feed it to the rewrite as input, and confirm the stack and call comparisons both pass over one thousand trials.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first attempt failed most trials on the stack check with no hint of which word differed beyond the count; reading the worker source showed incoming argument words are compared and only the callee frame below them is excluded. A later batch run also died partway when its worker process was lost under machine load, so the driver now restarts the worker and retries instead of crashing.</p>
+      </article>
 
       <article class="entry" id="production-n03">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
