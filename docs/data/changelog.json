@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: The optimizer can silently change NaN results",
+    "commit": null,
+    "summary": "Findings from the r-b198 lane.",
+    "changes": [
+      "New devlog entry: The optimizer can silently change NaN results.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 2 more functions pass the checker (7349 in total)",
     "commit": "df8a8aca5e10b34d3ef14b40f18c0fcba791a250",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

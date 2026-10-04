@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b198">The optimizer can silently change NaN results</a></li>
       <li><a href="#naming-13">Standard race boards reuse the nine leaderboard methods, with folded id getters</a></li>
       <li><a href="#naming-12">Naming the ranked race leaderboard methods</a></li>
       <li><a href="#naming-11">Naming leaderboard methods: board ids are not sequential, and tiny stubs are shared between classes</a></li>
@@ -350,6 +351,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b198">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>The optimizer can silently change NaN results</h2>
+      <p>A rewrite that matched the original on 1099 of 1100 trials failed the last one only because the compiler had packed three independent float computations into vector instructions, swapping the operands of one addition. Where no NaN is involved the swap is harmless, which is why it passed 1099 times. The fix is to fence each computation so the optimizer keeps it scalar and in order.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite two input-handling functions in Rust and prove each behaves identically to the original with the differential checker, which runs both sides from identical state and compares return values, memory, calls and faults bit for bit.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Both functions verified, 1100 of 1100 trials each. The larger one transforms eight corners of a box and accumulates a bounding box, with heavy single-precision arithmetic and min/max merging that must match bit for bit, including NaN payloads.</p>
+      <p><span class="evidence verified">Verified</span> The single failure was a NaN payload mismatch: the original propagated an input NaN unchanged while the rewrite produced a canonical NaN. Disassembling the rewrite showed packed vector arithmetic where scalar operations were written. Restoring scalar order with optimization barriers fixed it, confirmed by checking the generated code contains no packed arithmetic.</p>
+      <p><span class="evidence verified">Verified</span> A separate coverage trap: when every contract input cycled with period two, all main-path trials took the same combination of branches, hiding the multi-call paths entirely. Mixing period-three and period-two cycles exposed them, and the newly covered paths immediately caught a real mistake in the rewrite.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Float rewrites whose results must match bit for bit should fence independent rows or stages against vectorization and have their generated code checked for packed arithmetic, not just their source reviewed. Contracts should mix input cycle lengths and their branch-shape counts should be read, not just the pass or fail.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane's checker contracts for the batch: the verdict files record 1100 passing trials each with full branch coverage. Reverting the barriers reproduces the single-trial NaN mismatch.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The NaN failure was confusing at first because the source code had the operations in exactly the right order; the reordering happened invisibly at compile time. An earlier scare about empty disassembly turned out to be simple arithmetic: a size computed as a negative number, which the parsing library answers with empty bytes instead of an error.</p>
+      </article>
 
       <article class="entry" id="naming-13">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
