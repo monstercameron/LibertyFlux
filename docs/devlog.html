@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b208">A view-system initializer that reads its own uninitialized stack</a></li>
       <li><a href="#how-lanes-die">Three ways the coordinator lost lanes in one morning</a></li>
       <li><a href="#production-s263">Black box does not pin down float multiply order</a></li>
       <li><a href="#production-s262">Three rewrites whose only mismatch is where values live, not what they are</a></li>
@@ -354,6 +355,27 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b208">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>A view-system initializer that reads its own uninitialized stack</h2>
+      <p>One of this week's production functions stores a word it never wrote to sixteen globals, so its behaviour is whatever the stack happened to hold. The rewrite reproduces the read itself under a pinned zero fill, and all seven functions in the batch verified.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite seven neighbouring view-system functions in Rust and prove each one equal to the original with the differential checker: a record copier, two row rebuilders, a frustum updater, a target recreator, a target releaser and a system initializer.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> All seven verified at twelve hundred trials each with no failures, and all seven deliberately wrong versions were caught.</li>
+      <li><span class="evidence verified">Verified</span> The initializer reads one word from a part of its stack frame it never wrote, then stores that word to sixteen global slots. Address arithmetic on its prologue shows the read always lands in the unwritten area, so in the game the value is leftover stack garbage and differs from run to run.</li>
+      <li><span class="evidence verified">Verified</span> The two row rebuilders are twins that differ by a single instruction: one scales by a stored word, the other by zero.</li>
+      <li><span class="evidence verified">Verified</span> Three values one twin computes only ever reach stack slots that are overwritten before any read, so the rewrite omits them with no observable difference.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <p>The rewrite performs the same uninitialized read on its own stack slot, and the proof pins the checker's stack fill to zero so both sides deterministically read zero. The proof is therefore conditional on that fill, and it is recorded as such. Recommendation for other lanes: when a function spills to its incoming argument slot or reads scratch it did not write, check the frame arithmetic before assuming the contract is wrong.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane's contracts for the batch with the stock worker; the initializer's contract sets a zero stack fill, and its rewrite reads an uninitialized local through a volatile load as its first act. Changing the fill or zeroing the slot in the rewrite breaks the match, which shows the read is real.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The main rewrite library stayed locked for eleven minutes after a checker run with no holder found among the worker processes, so the last function was built in a second small crate in the same build folder. An early attempt at the releaser called through one level of indirection too few, which a single-trial debug trace showed as the original jumping to garbage while the rewrite passed. A first attempt at the initializer returned a loop variable instead of the stubbed callee's answer.</p>
+      </article>
 
       <article class="entry" id="how-lanes-die">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>

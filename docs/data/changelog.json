@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Three ways the coordinator lost lanes in one morning",
+    "title": "Devlog: A view-system initializer that reads its own uninitialized stack",
     "commit": null,
+    "summary": "Findings from the r-b208 lane.",
+    "changes": [
+      "New devlog entry: A view-system initializer that reads its own uninitialized stack.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Three ways the coordinator lost lanes in one morning",
+    "commit": "671026c112e160b0ff5aad903d7e3d698316c378",
     "summary": "Findings from the coord-launch-lessons lane.",
     "changes": [
       "New devlog entry: Three ways the coordinator lost lanes in one morning.",
