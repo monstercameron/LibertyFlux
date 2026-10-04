@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Do not combine snapshots with scripted writes on stack out-parameters",
+    "title": "Rewrites: 96 more functions pass the checker (6208 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "96 rewrites added under rewrites/pending: 0 script native handlers and 96 other functions.",
+      "The tree now holds 6208 rewrites, 6189 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "258 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Do not combine snapshots with scripted writes on stack out-parameters",
+    "commit": "a1288e33e05be6ada1b762cb1bdd11e25390ba7a",
     "summary": "Findings from the r-s219 lane.",
     "changes": [
       "New devlog entry: Do not combine snapshots with scripted writes on stack out-parameters.",
