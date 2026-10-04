@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Every C++ class described by run-time type information",
+    "title": "Devlog: Subsystem survey: audio",
     "commit": null,
+    "summary": "Findings from the s-audio lane.",
+    "changes": [
+      "New devlog entry: Subsystem survey: audio.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Every C++ class described by run-time type information",
+    "commit": "9cf5eeeca8f9b18a069aa04ea501638e01111d4b",
     "summary": "Findings from the p0-rtti-classes lane.",
     "changes": [
       "New devlog entry: Every C++ class described by run-time type information.",
