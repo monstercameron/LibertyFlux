@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#structures-tasks-a">Class layouts: AI task classes, first half (CTaskComplex*)</a></li>
       <li><a href="#structures-physics">Class layouts: physics, collision, fragments and cloth</a></li>
       <li><a href="#structures-online">Class layouts: online service, session and leaderboard classes (rage::rl*, rage::sn*)</a></li>
       <li><a href="#structures-entities">Class layouts: entities, vehicles, peds, objects and model information</a></li>
@@ -144,6 +145,42 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="structures-tasks-a">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Class layouts: AI task classes, first half (CTaskComplex*)</h2>
+      <p>All 197 complex task classes now have recovered layouts: every class has at least one identified constructor or destructor, the shared deleting-destructor protocol is confirmed, and all class-specific code was found outside the encrypted range.</p>
+      <h3>What was asked</h3>
+      <p>Recover object layouts and virtual interfaces for the first half of the AI task class family: per-slot override analysis, constructors and destructors, object sizes, field lists with confidence, relationships, plus a family-wide interface summary and rewrite order.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The family is flat: one root with mostly direct children, plus small nests for movement, combat subtasks, scenarios, vehicle subtasks, condition waits and wandering. Tables hold 21 to 26 slots.</p>
+      <p><span class="evidence verified">Verified</span> Slot zero is the scalar deleting destructor in nearly every class: destroy the object, then return it to a pool when a flag is set. About one in seven classes inlines the pool arithmetic; the rest call a shared pool helper.</p>
+      <p><span class="evidence verified">Verified</span> Over 460 constructor and destructor functions were identified by the order of base calls versus vtable stores. Optimizer output complicated this: many constructors pass the object pointer in registers other than the usual one, and some destructors are fully inlined into their deleting wrappers.</p>
+      <p><span class="evidence verified">Verified</span> The movement subgroup carries a second 13-slot interface at a fixed object offset, with a distinct table per class. Six factory-style functions each construct several task types.</p>
+      <p><span class="evidence verified">Verified</span> About a third of all vtable slots point into the encrypted range, but these are only a few dozen shared stubs, not class-specific code. Every overriding function examined is readable. The one family-critical encrypted dependency is the shared pool-free helper used by task destruction.</p>
+      <p><span class="evidence">Inferred</span> The root class adds one pointer-sized field past its base, most likely the subtask pointer. One virtual slot returns a per-class constant in the few classes that reduce it to a stub, which reads like a task-type identifier.</p>
+      <p><span class="evidence">Unknown</span> Most virtual slot meanings beyond the destructor, exact object sizes for the majority of classes (current figures are lower bounds; pool element sizes would settle them), and one odd unaligned secondary-table entry.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Measure</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Classes covered</td><td role="cell" data-label="Value">197 of 197</td><td role="cell" data-label="What it means">every class has ctor or dtor records</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Deleting destructors confirmed</td><td role="cell" data-label="Value">189 of 194 overriders</td><td role="cell" data-label="What it means">slot zero meaning settled</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Constructors found</td><td role="cell" data-label="Value">258</td><td role="cell" data-label="What it means">including custom calling conventions</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Median object size</td><td role="cell" data-label="Value">192 bytes</td><td role="cell" data-label="What it means">lower bound for most classes</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Value">Class-specific code encrypted</td><td role="cell" data-label="Value">none found</td><td role="cell" data-label="What it means">only shared stubs are opaque</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Rewrite order: base task class first, then the complex root and its subtask slots, then the pool helper, then leaf groups by subsystem, movement interface last.</li>
+      <li>True object sizes and destruction semantics wait on the allocator work (pool element sizes) and the base-class lane.</li>
+      <li>Field tracking for the next lane must follow object pointers in registers other than the standard one, or layouts for optimizer-output functions stay partial.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Scan the readable code for each class vtable address as an immediate, keeping only hits backed by a relocation entry; attribute each hit to its function via exported function bounds; disassemble with capstone; classify constructors versus destructors by whether the base call precedes the vtable store; confirm deleting destructors by the destroy, flag-test, pool-free shape; collect field offsets from object-pointer accesses in each class's own methods. Scripts and JSON data sit with the lane's scratch outputs.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first scan found almost nothing because of a relocation bug that added the image base twice; fixing it raised the hit count from 4 to over 500. A first classifier mistook branching constructors for deleting destructors until a real deleting destructor was read. The longest wrong turn was misreading deleting destructors as clone methods for about an hour; the call target is the plain destructor and the order is destroy-then-free, which settled it.</p>
+      </article>
 
       <article class="entry" id="structures-physics">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
