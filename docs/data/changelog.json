@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: The compiler quietly swaps float operands, and NaN payloads notice",
+    "title": "Devlog: The compiler swaps float operands, and black box does not stop it",
     "commit": null,
+    "summary": "Findings from the r-b151 lane.",
+    "changes": [
+      "New devlog entry: The compiler swaps float operands, and black box does not stop it.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: The compiler quietly swaps float operands, and NaN payloads notice",
+    "commit": "6ce59ac9ff6c49efec54e2f88fa2fe25d40b8055",
     "summary": "Findings from the r-b137 lane.",
     "changes": [
       "New devlog entry: The compiler quietly swaps float operands, and NaN payloads notice.",
