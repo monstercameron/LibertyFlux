@@ -138,7 +138,7 @@ lf_checker_rt::export!(cdecl, rw_00aba1d0(arg0: u32, arg1: u32, arg2: u32, arg3:
                     bbuf.as_mut_ptr() as u32
                 );
                 let index = lf_checker_rt::callee_thiscall!(C_INDEX, u32, obj, 0u32);
-                let arr = rd32(rd32(gate2[1]) + REC_ARR_OFF);
+                let arr = rd32(gate2[1].wrapping_add(REC_ARR_OFF));
                 let entry = rd32(arr.wrapping_add(index.wrapping_mul(4)));
                 if entry != 0xffffffff {
                     let lk = lf_checker_rt::callee_thiscall!(C_LOOKUP, u32, arg0);
@@ -305,7 +305,7 @@ lf_checker_rt::export!(cdecl, rw_00aba1d0(arg0: u32, arg1: u32, arg2: u32, arg3:
                         bbuf2.as_mut_ptr() as u32,
                         bbuf2.as_mut_ptr().add(1) as u32
                     );
-                    let arr2 = rd32(rd32(gate2[1]) + REC_ARR_OFF);
+                    let arr2 = rd32(gate2[1].wrapping_add(REC_ARR_OFF));
                     let entry2 = rd32(arr2.wrapping_add(4));
                     if entry2 != 0xffffffff {
                         let lk2 = lf_checker_rt::callee_thiscall!(C_LOOKUP, u32, arg0);

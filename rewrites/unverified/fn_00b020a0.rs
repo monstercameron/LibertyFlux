@@ -2,28 +2,29 @@
 
 /// Records one scaled integer triple into a table, guarded by zero counts.
 ///
-/// The three probe floats `arg2`, `arg3` and `arg5` are absolutized and
-/// truncated toward zero (exact `cvttss2si` semantics: NaN and out-of-range
-/// yield `0x80000000`). When more than one of the three truncates to zero
-/// the function returns at once; when exactly one does, a global sequence
-/// word is incremented. Otherwise the sample `arg0`, `arg1`, `arg2` scaled
-/// by 4.0 is truncated and stored as three 16-bit words into the table
-/// selected by the low byte of `arg10`: the big table (4,000 rows of 20
-/// bytes, guarded by its own fill counter, plus a flag word per row) or the
-/// small table (40 rows of 20 bytes with its own counter). If that table is
-/// already full the function returns without writing. A sink helper
-/// (stdcall, four float words: the three truncated probes as floats and
-/// `arg6` scaled by pi/180) is notified of every stored row. On the big
-/// table the row flag word is then set or cleared from the raw bits of
-/// `arg5` and folded with a global key cell that also remembers the row
-/// index. `arg4` and `arg7`..`arg9` are never read. Original convention:
-/// cdecl, eleven stack words, caller cleans, no return value.
+/// The three probe floats `arg4`, `arg3` and `arg5` are read around the
+/// register saves (the pushes interleave the loads), absolutized and
+/// truncated toward zero (exact `cvttss2si`
+/// semantics: NaN and out-of-range yield `0x80000000`). When more than one
+/// of the three truncates to zero the function returns at once; when exactly
+/// one does, a global sequence word is incremented. Otherwise the sample
+/// `arg0`, `arg1`, `arg2` scaled by 4.0 is truncated and stored as three
+/// 16-bit words into the table selected by the low byte of `arg10`: the big
+/// table (4,000 rows of 20 bytes, guarded by its own fill counter, plus a
+/// flag word per row) or the small table (40 rows of 20 bytes with its own
+/// counter). If that table is already full the function returns without
+/// writing. A sink helper (stdcall, four float words: the three truncated
+/// probes as floats and `arg6` scaled by pi/180) is notified of every stored
+/// row. On the big table the row flag word is then set or cleared from the
+/// raw bits of `arg5` and folded with a global key cell that also remembers
+/// the row index. `arg7`, `arg8` and `arg9` are never read. Original
+/// convention: cdecl, eleven stack words, caller cleans, no return value.
 lf_checker_rt::export!(cdecl, rw_00B020A0(
     arg0: u32,
     arg1: u32,
     arg2: u32,
     arg3: u32,
-    _u1: u32,
+    arg4: u32,
     arg5: u32,
     arg6: u32,
     _u2: u32,
@@ -80,7 +81,7 @@ lf_checker_rt::export!(cdecl, rw_00B020A0(
         }
 
         let abs = rd32(lf_checker_rt::relocated(ABS_MASK));
-        let ti = cvtt(f32::from_bits(arg2 & abs));
+        let ti = cvtt(f32::from_bits(arg4 & abs));
         let tj = cvtt(f32::from_bits(arg3 & abs));
         let tk = cvtt(f32::from_bits(arg5 & abs));
         let zeros = (ti == 0) as u32 + (tj == 0) as u32 + (tk == 0) as u32;
