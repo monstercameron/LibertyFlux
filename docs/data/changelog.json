@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: The memory shortage was one forgotten script",
+    "title": "Devlog: An aim routine that never returns on a zero offset",
     "commit": null,
+    "summary": "Findings from the r-b217 lane.",
+    "changes": [
+      "New devlog entry: An aim routine that never returns on a zero offset.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: The memory shortage was one forgotten script",
+    "commit": "2aa6ec81ef76d072fcb5d554f3c269cbdd7e0b2f",
     "summary": "Findings from the coord-runaway lane.",
     "changes": [
       "New devlog entry: The memory shortage was one forgotten script.",
