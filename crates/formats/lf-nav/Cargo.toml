@@ -1,0 +1,16 @@
+[package]
+name = "lf-nav"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Readers for GTA IV pedestrian navigation meshes (.wnv) and vehicle path nodes (.nod, paths IPL)"
+
+[lints]
+workspace = true
+
+[dependencies]
+flate2.workspace = true
+
+[dev-dependencies]
+aes.workspace = true

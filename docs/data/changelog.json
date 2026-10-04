@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Reader crate: lf-collision",
+    "title": "Reader crate: lf-nav",
     "commit": null,
+    "summary": "Navigation: vehicle nodes (.nod), nav meshes (.wnv), path links (.ipl).",
+    "changes": [
+      "New crate crates/formats/lf-nav: Navigation: vehicle nodes (.nod), nav meshes (.wnv), path links (.ipl).",
+      "About 1,616 lines of Rust with 11 unit tests and 6 integration tests; tests that need the game's files skip unless the game folder is given in an environment variable.",
+      "Third-party dependencies: flate2.",
+      "Written by the fmt-paths-nav lane from the file format alone, then audited by the integration lane for game data, key material and machine paths before publication."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Reader crate: lf-collision",
+    "commit": "7ffe921e460244044db371ec087324870d2d3708",
     "summary": "Collision bounds: boxes, spheres, capsules, meshes, composites, WBN/WBD.",
     "changes": [
       "New crate crates/formats/lf-collision: Collision bounds: boxes, spheres, capsules, meshes, composites, WBN/WBD.",
