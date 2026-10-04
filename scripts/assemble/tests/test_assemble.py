@@ -249,6 +249,24 @@ class TestAttribute(unittest.TestCase):
         self.assertEqual(assemble.attribute(warning, {}), ({}, []))
 
 
+class TestRelativePaths(unittest.TestCase):
+    def test_relative_when_possible(self):
+        self.assertEqual(assemble.rel(Path("a") / "b" / "c", Path("a") / "d"), "../b/c")
+
+    def test_absolute_when_no_relative_path_exists(self):
+        # On Windows os.path.relpath raises ValueError across drives (CI: temp folder on C:, checkout on D:).
+        def across_drives(path, start):
+            raise ValueError("path is on mount 'D:', start on mount 'C:'")
+
+        original = assemble.os.path.relpath
+        assemble.os.path.relpath = across_drives
+        try:
+            target = Path("somewhere") / "crate"
+            self.assertEqual(assemble.rel(target, Path("elsewhere")), Path(os.path.abspath(target)).as_posix())
+        finally:
+            assemble.os.path.relpath = original
+
+
 class TestSharding(unittest.TestCase):
     def test_address_order_chunks(self):
         rows = [{"address": addr(i)} for i in (5, 1, 4, 2, 3)]

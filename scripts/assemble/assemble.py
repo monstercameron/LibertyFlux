@@ -322,7 +322,12 @@ def write_if_changed(path, text):
 
 
 def rel(path, start):
-    return Path(os.path.relpath(path, start)).as_posix()
+    """`path` relative to `start` for a Cargo.toml path dependency, or absolute when no relative path exists
+    (on Windows, an output folder on another drive than the repository)."""
+    try:
+        return Path(os.path.relpath(path, start)).as_posix()
+    except ValueError:
+        return Path(os.path.abspath(path)).as_posix()
 
 
 def shard_name(index):
