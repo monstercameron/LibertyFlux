@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Production lanes: build folder and reporting rules",
+    "title": "Engine page: function total follows the repaired inventory",
     "commit": null,
+    "summary": "The inventory repair changed the function total, so the page's sentence and chart note were corrected.",
+    "changes": [
+      "The page now says about 43,000 readable functions instead of 45,229.",
+      "The chart note says the bars were counted on the first inventory and what the repair removed and added."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Production lanes: build folder and reporting rules",
+    "commit": "dbf59eca49dcc70022374c3dcd0162e35d10cbaa",
     "summary": "The first production wave needed two changes to how lanes build and report.",
     "changes": [
       "AGENTS.md: production lanes build their rewrite crate into a folder each, because fifty lanes sharing one build folder queued on its lock and overwrote each other when crate names collided.",
