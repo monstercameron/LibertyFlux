@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s140">Production batch: swapped string arguments and a vector-register gap</a></li>
       <li><a href="#production-b90">The compiler folds bitwise float negation into subtraction</a></li>
       <li><a href="#production-b79">Production batch: six radio functions, one checker gap, two original quirks</a></li>
       <li><a href="#production-b73">Production batch: five audio functions verified, and a compiler trap for float rewrites</a></li>
@@ -286,6 +287,29 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s140">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production batch: swapped string arguments and a vector-register gap</h2>
+      <p>Nineteen of twenty input-device functions in this batch are now verified Rust rewrites, each passing one thousand differential trials against the original with zero failures. The most useful outcome was not the count but two corrections: one function fills its two string banks from the opposite arguments to the order anyone would assume, and one function cannot be verified yet because the checker cannot feed double-precision values to vector-register callees.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small input-device functions in Rust and prove each rewrite behaves identically to the original with the version 3 differential checker, which runs the original and the rewrite from identical starting state and compares return values, memory writes, stack behaviour, outgoing calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> A helper-text queue function takes two strings and a flag byte, yet the second string argument fills the first text bank and the first argument fills the second. The initial rewrite assumed the natural order and the checker failed it on exactly the swapped words; swapping the mapping passed cleanly. Anything that documents these parameters from reading order alone will state them backwards.</p>
+      <p><span class="evidence verified">Verified</span> Nearly every global table this subsystem reads is zero at load and is built by the game at startup, so default runs only exercised the empty-table paths. Six contracts now fabricate plausible tables (row counts, entry bytes, edge values) through the checker's heap-linked globals, with layout constants taken from the code itself, and verify the full lookup logic including empty-table, out-of-range and sign-extension cases.</p>
+      <p><span class="evidence verified">Verified</span> One float-response function calls a helper that takes two double-precision values in vector registers. The checker's rewrite-side transports set only the low single-precision lane of each register while the comparison covers all logged bytes, so the rewrite side can never reproduce the original's inputs. The function is deferred with the exact worker extension described for a future checker lane.</p>
+      <p><span class="evidence verified">Verified</span> Three rewrites were caught wrong by the checker with precise diagnoses (relocated marker words, the swapped arguments above, a relocated sensor address) and passed after the single indicated fix each time. One run also stopped early from machine contention rather than any contract defect and passed fully on rerun.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Keep fabricating startup-built tables rather than accepting empty-table passes; the method is mechanical and the layout comes from the code's own constants.</li>
+      <li>Add double-precision vector transports to the checker worker before scheduling more float-calibration functions.</li>
+      <li>Treat multi-word global-diff diagnostics with care: the comparison is sound but the printed addresses are ambiguous, which cost one misdiagnosis step here.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Each verified function has one contract file and the verdict file the checker produced from it, all stored with the lane results. Rebuilding the lane's rewrite crate for the 32-bit target and running the stock checker driver over any single contract reproduces its thousand-trial verdict. The deferred function's analysis names the helper's register convention and the missing transport.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The swapped string arguments looked like a checker ordering defect at first: the failing detail listed the same values on both sides in a different order. Reading the worker source showed the comparison itself is a deterministic address-order scan, which redirected attention to the argument mapping, where the disassembly confirmed the swap. The lesson held for the rest of the batch: when the detail looks impossible, check the argument assignment before suspecting the tool.</p>
+      </article>
 
       <article class="entry" id="production-b90">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

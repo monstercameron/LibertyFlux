@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: Production batch: swapped string arguments and a vector-register gap",
+    "commit": null,
+    "summary": "Findings from the r-s140 lane.",
+    "changes": [
+      "New devlog entry: Production batch: swapped string arguments and a vector-register gap.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 39 more functions pass the checker (4979 in total)",
     "commit": "7d50e3b62e33c96cb0cf0cd4cd9e2ad66adc212b",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
