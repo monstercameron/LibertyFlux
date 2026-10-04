@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s121">A pass that proves nothing: fault parity and nine-argument calls</a></li>
       <li><a href="#production-b74">Production: a wrong rewrite that passed thirty trials by luck</a></li>
       <li><a href="#production-b66">The compiler re-paired my arithmetic and changed the answer</a></li>
       <li><a href="#production-b54">Two traps from the audio production batch: float-jump NaN polarity and the silent eight-argument call log cap</a></li>
@@ -273,6 +274,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s121">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A pass that proves nothing: fault parity and nine-argument calls</h2>
+      <p>Two functions in this production batch cannot be verified under checker version 2, and one of them demonstrates a flaw worth fixing: when both sides crash identically, the checker passes without comparing anything else, so a verdict can read 100 percent green while verifying almost nothing.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty small game functions in Rust and prove each identical to the original with the version 2 differential checker, which runs the original and the rewrite from identical starting state and compares return values, memory, stack use, outgoing calls and crashes.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Eighteen of twenty functions passed one thousand trials each with zero failures and full branch coverage.</p>
+      <p><span class="evidence verified">Verified</span> The remaining two both call a helper taking nine stack arguments. The checker's interception stubs clean up at most eight words, so the intercepted original returns to a garbage address on every such call. One function kills the checker worker at the same trial on repeat runs; only its no-call trials ever return normally.</p>
+      <p><span class="evidence verified">Verified</span> The other function shows the worse outcome: its verdict reads passed with zero failures over two hundred trials, but the status histogram shows only two trials where both sides returned normally and the rest where both sides crashed with the same crash code. The worker's own source confirms that on matching crashes it checks only termination and skips every other comparison, so a genuinely wrong rewrite that diverged only in calls or memory on an always-crashing path would pass the same way.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Both functions are deferred with their rewrites and contracts kept ready for rerun after a worker fix (pop the full argument count in stubs). The acceptance gate should require a high ratio of trials where both sides return normally, not just a non-zero count of such trials. Every lane should read the status histogram before believing a green verdict.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run any function whose intercepted callee takes more than eight stack arguments under the version 2 worker and inspect the verdict's status histogram and original-side ok count; compare with the worker's documented early return on matching crashes.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first passing-looking verdict for the second function was initially taken at face value until the histogram showed nearly all trials were matching crashes. A stuck worker from the crashing function also held the rewrite library locked and blocked a rebuild until the file was renamed aside.</p>
+      </article>
 
       <article class="entry" id="production-b74">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
