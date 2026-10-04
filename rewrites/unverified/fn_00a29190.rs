@@ -105,7 +105,7 @@ lf_checker_rt::export!(thiscall, rw_00a29190(this: u32, a1: u32, a2: u32, _a3: u
         if busy {
             let r2: u32 = lf_checker_rt::callee_cdecl!(2, u32, 1);
             if (r2 as u8) == 0 {
-                let r3: u32 = lf_checker_rt::callee_cdecl!(3, u32);
+                let r3: u32 = lf_checker_rt::callee_cdecl!(3, u32,);
                 if (r3 as u8) == 0 {
                     ok = false;
                 }
