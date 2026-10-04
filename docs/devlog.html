@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#capture-tool">Tool that reads the encrypted code from the owner's running copy</a></li>
       <li><a href="#format-rsc5">Rust reader: the RSC5 resource container</a></li>
       <li><a href="#format-rpf-img">Rust reader: RPF and IMG archives</a></li>
       <li><a href="#format-models">Rust reader: drawables and fragments (WDR, WDD, WFT)</a></li>
@@ -111,6 +112,59 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="capture-tool">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Tool that reads the encrypted code from the owner's running copy</h2>
+      <p>The capture tool is built, self-tested, and ready: once the owner has the game sitting at its main menu, one command reads the decrypted code out of the running process, checks it against the file on disk, and writes the results to the private folders in about five seconds. Nothing leaves the machine, and the game itself is only ever read, never modified.</p>
+      <h3>What was asked</h3>
+      <p>The first megabyte of the game's code section is encrypted on disk and decrypted in memory at start-up by a wrapper library that ships with the game. The task was to write a small tool that reads that range back out of the owner's own running copy so it can be analysed like the rest, with strict limits: open the game read-only, never write to it, suspend it, inject into it, or attach a debugger, and write the outputs only under the private originals folder. A dry-run self-test against a small test program of our own had to prove the tool before it ever touches the game.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The tool works end to end. Its self-test builds a tiny 32-bit test program, launches it, captures it through the same code path the game capture will use, checks the capture byte for byte, and terminates it. The code section matched the file exactly, including across a nonzero load-address shift, which proves the relocation-undoing step does its job on a live process.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Check</th>
+      <th role="columnheader">Result</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Synthetic relocation round-trip</th>
+      <td role="cell" data-label="Result">Pass, four load shifts including zero and overflow</td>
+      </tr>
+      <tr role="row">
+      <th role="columnheader">Live code section vs file</th>
+      <td role="cell" data-label="Result">Exact match, zero unreadable pages</td>
+      </tr>
+      <tr role="row">
+      <th role="columnheader">Live read-only data vs file</th>
+      <td role="cell" data-label="Result">Small differences, all in loader-resolved import tables, as expected</td>
+      </tr>
+      <tr role="row">
+      <th role="columnheader">Loaded modules seen in test process</th>
+      <td role="cell" data-label="Result">Twelve, main module confirmed by two independent listings</td>
+      </tr>
+      <tr role="row">
+      <th role="columnheader">Estimated full game capture time</th>
+      <td role="cell" data-label="Result">About five seconds for twenty-six megabytes</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The encrypted range shows zero standard function-entry patterns on disk, so any such patterns in the future capture will confirm readable code. <span class="evidence">Inferred</span> The live capture is expected to take about five seconds, from timings measured on the file's own bytes and on timed memory reads. <span class="evidence">Unknown</span> Whether the running game carries any run-time patches outside the encrypted range, and which helper libraries are loaded while it idles at the menu. Both questions are answered the moment the tool runs against the real game.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>A plain script on the project's existing Python setup was chosen over a compiled tool, because the cross-bitness memory reads it needs are supported by design and the self-test proves them on this machine. No new dependencies and nothing to build.</li>
+      <li>Differences outside the encrypted range are recorded as findings, never as failures: a mismatch there would mean the game or its wrapper patches code at run time, which is itself valuable to know.</li>
+      <li>The reconstructed executable the tool produces is for static analysis only and must never be launched, since the start-up wrapper would try to decrypt already-decrypted code.</li>
+      <li>Any future code that lists a 32-bit process's modules from a 64-bit tool must query both the toolhelp snapshot and the process-modules call with the 32-bit filter, or it will silently miss half the process. The first version of this tool did exactly that.</li>
+      <li>The capture outputs never leave the private folders and are never published; the public record carries only counts and conclusions.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run the tool's self-test subcommand with the project Python from the repository root: it prints each stage and ends with a pass or fail line. A second script in the same folder replays the game-scale timing benchmark without needing the game. The lane folder also holds a run-book with the owner's steps, the coordinator's single command, and how to tell the live run worked.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The module-listing gap was the real surprise: the first listing looked complete at seven modules, and only the absence of the most basic system library gave away that every 32-bit library was missing. It took a second enumeration call to see them. Less dramatically, the test program kept landing at the same shifted load address on repeated launches, so the retry loop built to catch varied shifts never saw variation; the synthetic round-trip covers that gap instead. The live game capture itself remains undone because the game was not running during this work and starting it was out of scope.</p>
+      </article>
 
       <article class="entry" id="format-rsc5">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
