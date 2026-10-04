@@ -1,0 +1,11 @@
+[package]
+name = "lf-lift-pilot"
+version = "0.1.0"
+edition = "2021"
+rust-version.workspace = true
+license.workspace = true
+description = "First pilot of the 64-bit lift: 37 container functions as safe, pointer-width-independent Rust"
+
+# The pilot was written for the 2021 edition and is kept as the lane proved it. It forbids unsafe code itself.
+[lints]
+workspace = true

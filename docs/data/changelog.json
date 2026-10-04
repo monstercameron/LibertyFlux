@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Lift pilot: 37 container functions as portable Rust",
+    "commit": null,
+    "summary": "The first code in the workspace that is the goal itself: verified game functions lifted to safe Rust that does not depend on pointer width.",
+    "changes": [
+      "crates/lf-lift-pilot holds 37 container functions (intrusive chains, slot records, fixed-stride pools, a value list, a one-shot table initialiser) lifted from their verified 32-bit test form: about 570 lines, with unsafe code forbidden for the whole crate. Links between nodes are indices into explicit arenas, callbacks are closures that receive state, and what were globals are fields of a state value.",
+      "Its 14 tests pass on the 64-bit host, and it builds for the 32-bit target too. The pipeline now builds and tests it on Windows, Linux and macOS with the other portable crates.",
+      "The lane that wrote it also proved each lifted function against its verified 32-bit-form rewrite with 40 differential tests on the 32-bit target; that harness stays in the lane's scratch folder until the rewrites are assembled into a crate it can depend on.",
+      "This is a pilot, kept as its own crate so it is easy to find. Its functions move into the engine crates once the method is settled; the lane's estimate for lifting everything is in the devlog entry on the pilot."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 110 more functions pass the checker (7880 in total)",
     "commit": "ec113eb75bf18328fb0cba25c55ee62262ad79ed",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
