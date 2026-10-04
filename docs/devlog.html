@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#workspace-assembly">Assembling the format readers into one workspace</a></li>
       <li><a href="#production-s33">A matrix routine that copies stack garbage, and a compiler trap for rewrites</a></li>
       <li><a href="#production-s07">A faithful rewrite can fail the cheat check</a></li>
       <li><a href="#production-n29">Native handlers that stash a flag in their own doorstep</a></li>
@@ -216,6 +217,32 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="workspace-assembly">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Assembling the format readers into one workspace</h2>
+      <p>The thirteen finished format-reader crates now build and test as one workspace, with no warnings under the project's strictest lint set. Assembly found and fixed six abort-class robustness bugs the lane tests had missed, all of them unbounded allocations or unguarded reads on hostile input.</p>
+      <h3>What was asked</h3>
+      <p>Collect the workspace scaffold and every finished format-reader crate into a single workspace that builds, tests and lints cleanly on two Windows targets, with game-file tests skipping cleanly when no game folder is configured. Audit every crate for material that must never be published, review code quality as a senior reviewer, add hostile-input tests for each reader, and propose a commit sequence for integration.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Thirteen lanes had finished; five were still running and were left out. One reader had to be renamed because it shared a name with an engine-subsystem crate. Seven example programs shared one filename and would have overwritten each other in a shared build folder, so each got a unique name.</p>
+      <p><span class="evidence verified">Verified</span> The strict lint set produced about five hundred diagnostics across the thirteen crates, almost all mechanical: missing documentation sections, unmarked must-use functions, and integer casts. Each cast site was read. Harmless ones became explicit conversions; value-changing ones on hostile input became checked conversions that return the crate's error type.</p>
+      <p><span class="evidence verified">Verified</span> The audit found nothing to remove. No decompiled code, no disassembly listings, no key material, no machine paths, no verbatim game data. Text fixtures were compared against the matching real game files and none appears there. The key-locating hash and offset list are the documented run-time mechanism, not key material, and nothing prints or logs keys.</p>
+      <p><span class="evidence verified">Verified</span> Six abort-class bugs were fixed: three readers inflated compressed data without any size bound, and three pre-allocated collections directly from raw file counts. Each fix got a regression test proving hostile input now returns an error. A further three panics on truncated or mis-indexed input were fixed the same way.</p>
+      <h3>What was decided or recommended</h3>
+      <p><span class="evidence verified">Verified</span> The game-folder tests were unified on one convention: the install folder that holds the game directory. Two lanes had assumed one level deeper and were changed. Four optional lane variables were renamed to the same project prefix.</p>
+      <ul>
+      <li>Integration should land as thirteen commits, one crate per commit in dependency order; only the save-game reader depends on others.</li>
+      <li>Four decisions need the coordinator: the MIT licence choice, the renamed script crate, keeping the key-locating constants, and the game-folder convention.</li>
+      <li>Follow-up work: an iterative rewrite of one recursive table walk, unit tests for the one crate that has none, and checked arithmetic in two 32-bit edge cases.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>From the staging copy, run the workspace build, the workspace tests with and without the game-folder variable set, and clippy with warnings denied, on both the host target and the 64-bit Intel target. Then run the per-crate hostile-input suites, which need no game files. All gates pass with zero diagnostics.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The panic-documentation lint fires on any public function containing an unwrap or expect, including ones proven dead by validation elsewhere. Each of the eighteen sites was verified by hand before documenting the invariant, which took longer than the mechanical fixes.</p>
+      <p>The formatter turned several long match arms into blocks without trailing semicolons, which the lint set then rejected. The failures only appeared on the second target because its build cache was fresh, which briefly looked like a target-specific lint before the real cause was found.</p>
+      <p>The hostile-input sweeps start from synthetic patterns, so they mostly exercise early rejections. The deep-state allocation bugs were found by reading every allocation site, not by the sweeps. A corpus fuzzer over real files would go further and does not exist yet.</p>
+      </article>
 
       <article class="entry" id="production-s33">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
