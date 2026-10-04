@@ -191,6 +191,14 @@ Each review answers, with numbers from machine sources:
   speed second. Every change to the production brief gets a new brief version, written into each
   lane's results, so pass rate and time can be compared before and after the change.
 - Stop doing: one thing that is no longer worth its cost.
+- Workstation health: run the health check and act on it. It looks for processes left behind by
+  finished lanes, anything of the project's that is very large or old and still burning processor
+  time, processes that will not exit, memory and commit headroom, the page file, disk space, whether
+  the supervisor is alive, and the state of the repository. A lane's leftover script once held
+  8.7 GB for four hours and nine others each spun a processor core for up to thirteen hours before
+  anyone looked. The five-minute tick's watchdog stops the clear cases by itself; the hourly check
+  is where the rest gets noticed. Only this project's processes are ever stopped; the owner's own
+  programs are reported, never touched, unless he asks.
 
 The changes are made in the same hour, not listed for later. The review is posted in chat, and one row
 (time, main finding, decision) is added to that day's "Hourly reviews" entry in the devlog, in a commit

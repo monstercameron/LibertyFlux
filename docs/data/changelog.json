@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Agent rules: a workstation health check with every hourly review",
+    "commit": null,
+    "summary": "The hourly review now includes a check for leftover and runaway processes, memory, disk and the supervisor.",
+    "changes": [
+      "A leftover script from a lane that had finished four hours earlier was holding 8.7 GB, and nine others were each spinning a processor core, some for thirteen hours. That, not the lane count, was what had been limiting how many lanes fitted. Stopping them took commit headroom from 12 GB to more than 21.",
+      "Rule 8 now includes workstation health: processes left behind by finished lanes, anything of the project's that is very large or old and still busy, processes that will not exit, memory and commit headroom, the page file, disk space, whether the supervisor is alive, and the repository's state.",
+      "The five-minute tick's watchdog stops the clear cases by itself: any project script process above 4 GB, whatever its name, and anything left by a finished lane after two and a half hours. Only the project's own processes are ever stopped."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 120 more functions pass the checker (7770 in total)",
     "commit": "030c3d8709d20edc995b63b31e31d8d1e2a2dcbb",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
