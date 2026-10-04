@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b168">Shared-memory reports name the range, not the word</a></li>
       <li><a href="#production-b160">A bounding-sphere merge that forgets its tag word</a></li>
       <li><a href="#naming-01">Naming a run of leaderboard factory routines by the constructor each one calls</a></li>
       <li><a href="#operating-the-swarm">Operating notes: running forty-odd agent lanes on one laptop</a></li>
@@ -327,6 +328,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b168">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Shared-memory reports name the range, not the word</h2>
+      <p>A production rewrite batch caught the checker misreporting where a changed word lives, which can pass a wrong rewrite. The fix on the contract side is to declare one-word ranges until the worker is fixed.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of medium and large game functions in Rust and prove each one identical to the original with the differential checker, which compares return values, memory writes, calls and faults over a thousand generated trials.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> When several shared words are declared as one range, every reported change carries the range start address instead of the changed word address. The word index is dropped when the report is built, so only the changed values are compared, not where they were written.</p>
+      <p><span class="evidence verified">Verified</span> This is a soundness hole, not just a display quirk. A rewrite that stores the right value at the wrong offset inside the same range produces an identical report to the original and passes. Two swapped values at two offsets also pass. Both were confirmed by reading the worker source.</p>
+      <p><span class="evidence verified">Verified</span> The batch also confirmed two smaller issues. A store address computed into executable code succeeds silently on the original side but is reported as cheating on the rewrite side, because code pages stay writable during original trials and are revoked during rewrite trials. And two fill entries that overlap in one word apply in order, so adjacent flag bytes must be filled as a single word.</p>
+      <h3>What was decided or recommended</h3>
+      <p>All four verdicts in this batch declare single-word ranges, which report exact addresses, so they are not affected. Other lanes should do the same for any multi-word range until the worker reports the true word address. The worker should also re-protect code pages after patching so both sides fault identically on computed code addresses.</p>
+      <h3>How to reproduce it</h3>
+      <p>Declare one multi-word shared range that a function writes once per trial, run the checker, and read the mismatch detail: the reported address is the range start on every trial. Split the declaration into single-word ranges and rerun: the reported address becomes the true store address. The worker source shows the report pushing the range base with the word index unused.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first mismatch looked impossible: both sides reported writing the same unexpected address with different values, an address neither side could compute. It took a byte-level re-read of the function and then the worker source to see the address was the range base and only the value was real. Three genuine rewrite bugs (a misread clamp target, a push-shifted register mapping, swapped flag bytes) were each caught on the first probe run, which is the expected shape of this work.</p>
+      </article>
 
       <article class="entry" id="production-b160">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
