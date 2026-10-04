@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot2-04">Second pilot, lane 04: small leaf functions (40 to 150 bytes, no calls)</a></li>
       <li><a href="#pilot2-01">Second pilot, lane 01: small leaf functions (40 to 150 bytes, no calls)</a></li>
       <li><a href="#pilot2-20">Second pilot, lane 20: very large functions (1,500 to 4,000 bytes)</a></li>
       <li><a href="#pilot2-19">Second pilot, lane 19: very large functions (1,500 to 4,000 bytes)</a></li>
@@ -192,6 +193,40 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot2-04">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Second pilot, lane 04: small leaf functions (40 to 150 bytes, no calls)</h2>
+      <p><span class="evidence verified">Verified</span> Five of six sampled functions were rewritten in Rust and proven equivalent to the originals over 1200 trials each, at about four minutes per verified function; the sixth was deferred because it needs a live game state the checker cannot provide.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite six randomly sampled small functions in Rust, prove each rewrite behaves identically to the original with the project's differential checker, and record honest per-function timings including failures. Each function was described as a leaf of 40 to 150 bytes with no calls.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The sample was not quite what the label said: two of the six functions contain register-indirect calls the inventory could not see, and one listed size cuts its function in half mid-instruction. One of the two indirect-call functions was still verifiable with a new technique; the other was deferred.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Function</th><th role="columnheader">Size in bytes</th><th role="columnheader">Behaviour in one sentence</th><th role="columnheader">Trials run</th><th role="columnheader">Outcome</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">vehicles copy</td><td role="cell" data-label="Size in bytes">65</td><td role="cell" data-label="Behaviour in one sentence">Copies four floating point values into global slots unless a flag is set.</td><td role="cell" data-label="Trials run">1400</td><td role="cell" data-label="Outcome">verified</td></tr>
+      <tr role="row"><td role="cell">pool index select</td><td role="cell" data-label="Size in bytes">53</td><td role="cell" data-label="Behaviour in one sentence">Selects a table entry by index with a cached-index early exit.</td><td role="cell" data-label="Trials run">1400</td><td role="cell" data-label="Outcome">verified</td></tr>
+      <tr role="row"><td role="cell">slot dispatch</td><td role="cell" data-label="Size in bytes">48</td><td role="cell" data-label="Behaviour in one sentence">Dispatches a tabled pointer through a thread-state indirect call, then clears the slot.</td><td role="cell" data-label="Trials run">0</td><td role="cell" data-label="Outcome">deferred</td></tr>
+      <tr role="row"><td role="cell">gated status check</td><td role="cell" data-label="Size in bytes">81</td><td role="cell" data-label="Behaviour in one sentence">Checks a virtual call result, a tag, and a float threshold before answering true.</td><td role="cell" data-label="Trials run">1360</td><td role="cell" data-label="Outcome">verified</td></tr>
+      <tr role="row"><td role="cell">state latch</td><td role="cell" data-label="Size in bytes">44</td><td role="cell" data-label="Behaviour in one sentence">Forces a global state on nonzero input, clears it on zero input from two states.</td><td role="cell" data-label="Trials run">1400</td><td role="cell" data-label="Outcome">verified</td></tr>
+      <tr role="row"><td role="cell">mode store</td><td role="cell" data-label="Size in bytes">67</td><td role="cell" data-label="Behaviour in one sentence">Stores two floats at a table and mode selected offset and returns the offset.</td><td role="cell" data-label="Trials run">1400</td><td role="cell" data-label="Outcome">verified</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Every verified function passed all checker comparisons with zero failures, and every deliberately broken copy (one per function, four for the indirect-call one) was caught. All floating point results matched bit-exactly; none of the functions does floating point arithmetic.</p>
+      <p><span class="evidence verified">Verified</span> The indirect call in the gated status check was verified by placing a tiny return-a-constant stub in the checker's own executable heap and pointing the function's object graph at it, with the returned constant scripted per trial. Both sides execute the identical stub, so the trial genuinely tests everything around the call. This works for simple call shapes only.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>The slot dispatch function is deferred, not attempted further: its call target chains from per-thread game state that no contract field can set, and testing only its do-nothing path would be a fake pass.</li>
+      <li>Three small driver extensions (scripted global fills, scripted stack words, scripted heap words) are proposed for folding back into the checker; without them random inputs cannot align two values or hold a branch split.</li>
+      <li>Verdicts should report how many trials ended in faults (see below); until then, a mutant must fail before any pass is trusted.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Copy the checker driver and runtime into the lane folder, write one contract per function describing its calling convention, inputs, and checks, write each rewrite as a plain Rust export in its own uniquely named crate, build the 32-bit library, and run the driver. Run a full-data-scan pass first to prove there are no undeclared writes, then the 1200-trial final, then confirm a subtly broken copy of each rewrite fails. Timings come from machine timestamps around each function.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> The first passing run of the gated status check was vacuous: a hand-computed stub word was wrong, so both sides faulted identically on every call-path trial and all trials passed while testing nothing. Only the mutant run exposed it, because the mutant passed too. Fault-against-fault agreement is a real checker behaviour, and the verdict never says it happened.</p>
+      <p>Two smaller stumbles: a missing import broke the first rebuild, and two file edits failed on line-ending mismatch before switching to a patch script. Neither cost more than a minute. The shared build folder also made cargo wait on another lane's lock twice, which was harmless.</p>
+      </article>
 
       <article class="entry" id="pilot2-01">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
