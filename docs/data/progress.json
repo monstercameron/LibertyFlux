@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-04",
-  "updated_at": "2026-10-04 11:42",
+  "updated_at": "2026-10-04 11:47",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,12 +12,12 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 14690,
-    "rewritten": 7884,
-    "verified": 7655
+    "named": 14926,
+    "rewritten": 7990,
+    "verified": 7765
   },
   "structures": 340,
-  "symbols": 7770,
+  "symbols": 7880,
   "measured": [
     {
       "label": "Code section",
@@ -99,28 +99,28 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 14690,
+      "value": 14926,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (5686); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (5922); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 7884,
+      "value": 7990,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 7655,
+      "value": 7765,
       "unit": "functions",
       "source": "rewrites/pending/index.json in the repository"
     }
   ],
   "activity": {
-    "lanes_running": 27,
-    "lanes_finished": 751,
+    "lanes_running": 26,
+    "lanes_finished": 760,
     "lanes_incomplete": 71,
-    "devlog_entries": 317
+    "devlog_entries": 319
   },
   "map": [
     {
@@ -641,7 +641,7 @@
       "from": "0x0053E87A",
       "to": "0x0054419B",
       "count": 206,
-      "named": 112,
+      "named": 206,
       "rewritten": 0,
       "verified": 0
     },
@@ -650,7 +650,7 @@
       "from": "0x0054419C",
       "to": "0x00549ABC",
       "count": 203,
-      "named": 21,
+      "named": 77,
       "rewritten": 0,
       "verified": 0
     },
@@ -2486,9 +2486,9 @@
       "from": "0x009B4860",
       "to": "0x009BA181",
       "count": 261,
-      "named": 117,
-      "rewritten": 79,
-      "verified": 79
+      "named": 122,
+      "rewritten": 99,
+      "verified": 99
     },
     {
       "stage": "identified",
@@ -2830,7 +2830,7 @@
       "count": 76,
       "named": 15,
       "rewritten": 13,
-      "verified": 10
+      "verified": 13
     },
     {
       "stage": "identified",
@@ -4061,18 +4061,18 @@
       "from": "0x00D83656",
       "to": "0x00D88F77",
       "count": 26,
-      "named": 5,
-      "rewritten": 4,
-      "verified": 4
+      "named": 9,
+      "rewritten": 7,
+      "verified": 6
     },
     {
-      "stage": "rewritten",
+      "stage": "verified",
       "from": "0x00D88F78",
       "to": "0x00D8E898",
       "count": 72,
       "named": 41,
       "rewritten": 37,
-      "verified": 35
+      "verified": 37
     },
     {
       "stage": "identified",
@@ -4142,18 +4142,18 @@
       "from": "0x00DB5884",
       "to": "0x00DBB1A5",
       "count": 89,
-      "named": 17,
-      "rewritten": 4,
-      "verified": 4
+      "named": 19,
+      "rewritten": 6,
+      "verified": 6
     },
     {
       "stage": "identified",
       "from": "0x00DBB1A6",
       "to": "0x00DC0AC7",
       "count": 31,
-      "named": 7,
-      "rewritten": 5,
-      "verified": 5
+      "named": 8,
+      "rewritten": 6,
+      "verified": 6
     },
     {
       "stage": "identified",
@@ -4421,18 +4421,18 @@
       "from": "0x00E62396",
       "to": "0x00E67CB6",
       "count": 666,
-      "named": 347,
-      "rewritten": 345,
-      "verified": 345
+      "named": 419,
+      "rewritten": 417,
+      "verified": 417
     },
     {
       "stage": "identified",
       "from": "0x00E67CB7",
       "to": "0x00E6D5D8",
       "count": 618,
-      "named": 85,
-      "rewritten": 85,
-      "verified": 85
+      "named": 93,
+      "rewritten": 93,
+      "verified": 93
     },
     {
       "stage": "identified",
