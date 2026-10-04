@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Cookie-check stubs silently destroy the return value they precede",
+    "title": "Devlog: The compiler quietly swaps float operands, and NaN payloads notice",
     "commit": null,
+    "summary": "Findings from the r-b137 lane.",
+    "changes": [
+      "New devlog entry: The compiler quietly swaps float operands, and NaN payloads notice.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Cookie-check stubs silently destroy the return value they precede",
+    "commit": "0f7102473b555f1cb076c5ff928c490cbcb034e8",
     "summary": "Findings from the r-b127 lane.",
     "changes": [
       "New devlog entry: Cookie-check stubs silently destroy the return value they precede.",
