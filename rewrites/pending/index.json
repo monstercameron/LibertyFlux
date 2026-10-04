@@ -27873,6 +27873,24 @@
   "lane": "a-18"
  },
  {
+  "address": "0x00AE0180",
+  "name": "present_input_record",
+  "kind": "function",
+  "file": "functions/fn_00ae0180.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b201"
+ },
+ {
+  "address": "0x00AE0690",
+  "name": "dispatch_input_group",
+  "kind": "function",
+  "file": "functions/fn_00ae0690.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b201"
+ },
+ {
   "address": "0x00AE0CC0",
   "name": "ui_scaled_byte_push",
   "kind": "function",
@@ -27898,6 +27916,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-18"
+ },
+ {
+  "address": "0x00AE0E70",
+  "name": "fetch_active_view",
+  "kind": "function",
+  "file": "functions/fn_00ae0e70.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b201"
  },
  {
   "address": "0x00AE0E80",
@@ -52909,6 +52936,186 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s75"
+ },
+ {
+  "address": "0x00CB26E0",
+  "name": "CTaskComplexGoToPointAnyMeans::vf19",
+  "kind": "function",
+  "file": "functions/fn_00cb26e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB2770",
+  "name": "CTaskComplexMoveAroundCoverPoints::vf19",
+  "kind": "function",
+  "file": "functions/fn_00cb2770.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB27D0",
+  "name": "CTaskComplexMoveBeInFormation::vf19",
+  "kind": "function",
+  "file": "functions/fn_00cb27d0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB2820",
+  "name": "CTaskComplexMoveCrossRoadAtTrafficLights::vf19",
+  "kind": "function",
+  "file": "functions/fn_00cb2820.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB28E0",
+  "name": "CTaskComplexMoveCrowdAroundLocation::vf19",
+  "kind": "function",
+  "file": "functions/fn_00cb28e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB2C00",
+  "name": "CTaskComplexMoveGetToPointContinuous::vf19",
+  "kind": "function",
+  "file": "functions/fn_00cb2c00.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB2EB0",
+  "name": "CTaskComplexMoveGoToPointStandStillAchieveHeading::vf19",
+  "kind": "function",
+  "file": "functions/fn_00cb2eb0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB2ED0",
+  "name": "CTaskComplexMoveGoToShelterAndWait::vf19",
+  "kind": "function",
+  "file": "functions/fn_00cb2ed0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB2F10",
+  "name": "CTaskComplexMoveWaitForTraffic::vf19",
+  "kind": "function",
+  "file": "functions/fn_00cb2f10.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB3130",
+  "name": "CTaskComplexTurnToFaceEntityOrCoord::vf19",
+  "kind": "function",
+  "file": "functions/fn_00cb3130.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB32E0",
+  "name": "CTaskComplexFollowPatrolRoute::vf18",
+  "kind": "function",
+  "file": "functions/fn_00cb32e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB33C0",
+  "name": "CTaskComplexGetOutOfWater::vf18",
+  "kind": "function",
+  "file": "functions/fn_00cb33c0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB3410",
+  "name": "CTaskComplexGoToAttractor::vf18",
+  "kind": "function",
+  "file": "functions/fn_00cb3410.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB3600",
+  "name": "CTaskComplexMoveAroundCoverPoints::vf18",
+  "kind": "function",
+  "file": "functions/fn_00cb3600.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB3B50",
+  "name": "CTaskComplexMoveFollowPointRoute::vf18",
+  "kind": "function",
+  "file": "functions/fn_00cb3b50.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB3BE0",
+  "name": "CTaskComplexMoveGetToPointContinuous::vf18",
+  "kind": "function",
+  "file": "functions/fn_00cb3be0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB3C40",
+  "name": "CTaskComplexGoToPointAndStandStillTimed::vf18",
+  "kind": "function",
+  "file": "functions/fn_00cb3c40.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB3CB0",
+  "name": "CTaskComplexMoveGoToPointStandStillAchieveHeading::vf18",
+  "kind": "function",
+  "file": "functions/fn_00cb3cb0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB3E30",
+  "name": "CTaskComplexMoveWaitForTraffic::vf18",
+  "kind": "function",
+  "file": "functions/fn_00cb3e30.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB5240",
+  "name": "subtask_factory_go_to_point",
+  "kind": "function",
+  "file": "functions/fn_00cb5240.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-s272"
  },
  {
   "address": "0x00CB5B90",
