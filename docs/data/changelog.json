@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Add the changelog page",
+    "title": "Add the devlog",
     "commit": null,
+    "summary": "Research notes and lessons, so nobody has to rediscover them.",
+    "changes": [
+      "Sixteen entries covering a first look at the executable's headers, what the first estimates got wrong, why the route is direct to Rust, harness design from other projects, replacing functions in the running game, what is known about the executable, the Xbox 360 recompilation projects and what went wrong for them, tools, dependencies, frame-rate coupling, working with agent lanes, building the site, precedents, upscalers and open questions.",
+      "Every finding is labelled Verified, Inferred or Unknown and linked to its source."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Add the changelog page",
+    "commit": "2b89370ee052e73270d864055ae6aa2ae4c1ee47",
     "summary": "This page.",
     "changes": [
       "Lists every commit, newest first, from docs/data/changelog.json.",

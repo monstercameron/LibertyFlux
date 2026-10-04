@@ -1,0 +1,902 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Devlog: LibertyFlux</title>
+<meta name="description" content="The LibertyFlux research and process notebook: what was found, what was decided and what went wrong, so nobody has to rediscover it.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;700;800&family=Overpass+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<!--
+Note for future agents: how to add an entry to this devlog.
+
+1. Add a new article with class "entry" at the top of the entries container, so the newest entry comes first.
+2. Give the article an id, and add a matching link to the contents list at the top of the page.
+3. Start the article with the entry-meta block holding a time element with the date, then an h2 title.
+4. Open with the conclusion in one or two sentences. Then say what was asked, what was found and what was decided.
+5. Label every finding that matters with an evidence span: Verified (you read it or ran it), Inferred (you reasoned from a snippet or a partial read) or Unknown. Never upgrade an inferred finding to verified.
+6. Link the source for each important finding with descriptive link text. Give numbers with their source. Where sources disagree, say so.
+7. Use only h3, p, ul, ol and table inside an entry, and only classes that exist in site.css. Tables need the role attributes and a data-label on every cell after the first, as in the existing tables.
+8. Never paste decompiled code, disassembly, raw addresses of game functions or game data. See AGENTS.md rule 1. Class names, tool names and structure facts are fine.
+-->
+
+<header class="masthead compact">
+  <div class="wrap">
+    <nav aria-label="Site"><ul class="nav">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="changelog.html">Changelog</a></li>
+      <li><a href="devlog.html" aria-current="page">Devlog</a></li>
+    </ul></nav>
+    <h1>Devlog</h1>
+    <p class="lede">The research and process notebook for LibertyFlux, kept so that no one has to rediscover what is already known, including the mistakes.</p>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap">
+    <h2>Contents</h2>
+    <ol class="toc">
+      <li><a href="#executable-first-look">What the executable shows: a first look at its headers</a></li>
+      <li><a href="#estimates">What the estimates got wrong</a></li>
+      <li><a href="#route">Why the route is direct to Rust</a></li>
+      <li><a href="#harness">Harness design taken from other projects</a></li>
+      <li><a href="#hooking">Replacing functions inside the running game</a></li>
+      <li><a href="#executable">What is already known about the GTA IV executable</a></li>
+      <li><a href="#xbox360">What the Xbox 360 recompilation projects give us</a></li>
+      <li><a href="#recomp-failures">What went wrong for the recompilation projects, and what we take from it</a></li>
+      <li><a href="#tools">Tools: what works and what does not</a></li>
+      <li><a href="#dependencies">Dependencies to remove</a></li>
+      <li><a href="#framerate">Frame-rate coupling</a></li>
+      <li><a href="#lanes">Working with agent lanes: what we learned</a></li>
+      <li><a href="#site">Building the site</a></li>
+      <li><a href="#precedents">Precedents and the repository rule</a></li>
+      <li><a href="#upscalers">Upscaling, frame generation and ray-tracing denoisers</a></li>
+      <li><a href="#open-questions">Open questions</a></li>
+    </ol>
+
+    <div class="entries">
+
+      <article class="entry" id="executable-first-look">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>What the executable shows: a first look at its headers</h2>
+        <p>The Steam build is a 2023 rebuild made with Visual Studio 2012, its main code is not encrypted, class names are present, and link-time code generation was used. That settles several open questions and confirms one risk. Everything here comes from the file's headers, read with the Python <code>pefile</code> library. No code was disassembled for this entry.</p>
+
+        <h3>What was asked</h3>
+        <p>Which exact build are we working on, what compiled it, is it packed or protected, does it carry class names, and what does it depend on at run time?</p>
+
+        <h3>What was found</h3>
+        <table role="table">
+          <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Fact</th><th role="columnheader" scope="col">Value</th><th role="columnheader" scope="col">What it means</th></tr></thead>
+          <tbody role="rowgroup">
+            <tr role="row"><td role="cell">Build</td><td role="cell" data-label="Value"><span class="evidence verified">Verified</span> Version 1.2.0.59, 17,425,752 bytes, 32-bit x86. SHA-256 <code>08759a5516f9837920ea504436236bbab89d0826a8e4d04ff106345177b5345d</code></td><td role="cell" data-label="What it means">The current Steam Complete Edition. The hash identifies the build every later address and count refers to.</td></tr>
+            <tr role="row"><td role="cell">When and with what</td><td role="cell" data-label="Value"><span class="evidence verified">Verified</span> Link timestamp of 27 January 2023 and linker version 11.0.</td><td role="cell" data-label="What it means">Linker 11.0 is Visual Studio 2012, not the 2005-era compiler of the 2008 release. Ghidra's stock library signature databases cover that version, so we may not need to build our own.</td></tr>
+            <tr role="row"><td role="cell">Link-time code generation</td><td role="cell" data-label="Value"><span class="evidence">Inferred</span> The compiler record in the header (the Rich header) lists 796 objects under the product ID normally used for C++ built with link-time code generation, and 653 under the ordinary C++ ID. The mapping of IDs to tools comes from the commonly used table, not from a Microsoft document.</td><td role="cell" data-label="What it means">A large part of the code was optimised across function boundaries. Expect inlined callees, non-standard calling conventions on internal functions, and less regular function boundaries. This makes analysis and the emulator comparison harder.</td></tr>
+            <tr role="row"><td role="cell">Older code linked in</td><td role="cell" data-label="Value"><span class="evidence">Inferred</span> The same record shows small numbers of objects from Visual C++ 2003, 2005, 2008 and 2010 toolchains.</td><td role="cell" data-label="What it means">These are probably third-party libraries built long before. They are candidates for exclusion as library code.</td></tr>
+            <tr role="row"><td role="cell">Packing</td><td role="cell" data-label="Value"><span class="evidence verified">Verified</span> The code section is 10.95 MB with an entropy of 6.71 bits per byte.</td><td role="cell" data-label="What it means">Ordinary compiled code. It is not packed or encrypted on disk, so Ghidra can analyse it directly.</td></tr>
+            <tr role="row"><td role="cell">Start-up stub</td><td role="cell" data-label="Value"><span class="evidence verified">Verified</span> The entry point is in a 657-byte section named <code>.rkstr</code> that is both writable and executable. Beside it is a 1 MB section named <code>.tbm</code> with an entropy of 8.00.</td><td role="cell" data-label="What it means"><span class="evidence">Unknown</span> A Rockstar stub runs before the game's own start-up, next to an encrypted or compressed blob. What it checks or unpacks is not known. It matters for injecting replacements into the running game and must be understood before the harness phase.</td></tr>
+            <tr role="row"><td role="cell">Class names</td><td role="cell" data-label="Value"><span class="evidence verified">Verified</span> 3,618 type descriptor strings.</td><td role="cell" data-label="What it means">Run-time type information is present, so class names and virtual tables can be recovered. The Xbox 360 build is reported to have 3,332 classes.</td></tr>
+            <tr role="row"><td role="cell">Relocations</td><td role="cell" data-label="Value"><span class="evidence verified">Verified</span> Present, 1.27 MB.</td><td role="cell" data-label="What it means">Every absolute address the code refers to is listed, which makes resolving references to functions and data reliable.</td></tr>
+            <tr role="row"><td role="cell">Symbols</td><td role="cell" data-label="Value"><span class="evidence verified">Verified</span> The debug record names a file, <code>GTA4_Win32_Final.pdb</code>, which does not ship.</td><td role="cell" data-label="What it means">Confirms there are no function names to be had from the file itself.</td></tr>
+          </tbody>
+        </table>
+
+        <h3>What it depends on</h3>
+        <p><span class="evidence verified">Verified</span> From the import table. This replaces most of the inferred dependency list in the entry on dependencies.</p>
+        <table role="table">
+          <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Imported</th><th role="columnheader" scope="col">Meaning</th></tr></thead>
+          <tbody role="rowgroup">
+            <tr role="row"><td role="cell"><code>d3d9.dll</code>, one function, and no <code>d3dx9</code></td><td role="cell" data-label="Meaning">Direct3D 9 only. The helper library is statically linked or unused, so the engine needs no DirectX end-user runtime.</td></tr>
+            <tr role="row"><td role="cell"><code>DSOUND.dll</code></td><td role="cell" data-label="Meaning">Audio output is DirectSound, not XAudio2 or OpenAL. An earlier forum claim of OpenAL was wrong for this build.</td></tr>
+            <tr role="row"><td role="cell"><code>DINPUT8.dll</code>, and no XInput</td><td role="cell" data-label="Meaning">The engine itself uses DirectInput. The research lane had classed it as used only by mod loaders. Gamepad support through XInput, if any, is loaded at run time.</td></tr>
+            <tr role="row"><td role="cell"><code>binkw32.dll</code></td><td role="cell" data-label="Meaning">Bink video. The shipped DLL is version 1.9r.</td></tr>
+            <tr role="row"><td role="cell"><code>WMVCore.DLL</code></td><td role="cell" data-label="Meaning">Windows Media, for user music or replay export.</td></tr>
+            <tr role="row"><td role="cell"><code>WS2_32.dll</code></td><td role="cell" data-label="Meaning">The engine uses network sockets directly.</td></tr>
+            <tr role="row"><td role="cell"><code>WINTRUST.dll</code>, <code>CRYPT32.dll</code></td><td role="cell" data-label="Meaning">Signature and certificate checks, probably for the start-up stub.</td></tr>
+            <tr role="row"><td role="cell">No C runtime DLL</td><td role="cell" data-label="Meaning">The runtime is statically linked, so the engine needs no Visual C++ redistributable.</td></tr>
+            <tr role="row"><td role="cell">No <code>xlive.dll</code>, no .NET, no Social Club import</td><td role="cell" data-label="Meaning">Games for Windows LIVE is gone from this build, and .NET and Social Club are not engine dependencies.</td></tr>
+          </tbody>
+        </table>
+        <p><span class="evidence verified">Verified</span> Shipped beside the executable: a launcher, a video encoder helper, the Steam API library and one more DLL. The last two are not in the import table, so the game loads them at run time.</p>
+
+        <h3>What was decided</h3>
+        <ul>
+          <li>Try Ghidra's stock Visual Studio 2012 signatures for tagging library code before building any of our own.</li>
+          <li>Treat link-time code generation as confirmed when designing the queue and the comparison: do not assume a function's arguments arrive the standard way.</li>
+          <li>Understand the start-up stub before the harness phase. It is now an explicit unknown.</li>
+          <li>Audio and input replacements target what DirectSound and DirectInput provide, not XAudio2 or XInput.</li>
+        </ul>
+
+        <h3>How to reproduce it</h3>
+        <p>Copy the executable into the ignored <code>orig</code> folder and read it with <code>pefile</code>: file header, optional header, section table with per-section entropy, <code>parse_rich_header()</code>, the debug directory, and the import and delay-import tables. Count type descriptors by searching for the byte string <code>.?AV</code>. No Ghidra run is needed for any of this.</p>
+      </article>
+
+      <article class="entry" id="estimates">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>What the estimates got wrong</h2>
+        <p>The first estimate was several years, and it was wrong in method as well as in size. It was reasoned from projects that predate agents. A search for 2026 results showed agent-driven decompilations finishing in weeks. The working estimate now rests on one comparable agent project and will be replaced by measured throughput after the phase 2 pilot.</p>
+        <p><span class="evidence verified">Verified</span> The coordinator reasoned from the GTA III decompilation, which took a small team about two years, and arrived at a multi-year effort. A web search on 2026-10-03 produced the figures below and the estimate was revised. Lesson: search for current evidence before estimating agent throughput.</p>
+
+        <table role="table">
+          <thead role="rowgroup"><tr role="row">
+            <th role="columnheader">Project</th>
+            <th role="columnheader">Size</th>
+            <th role="columnheader">Result</th>
+            <th role="columnheader">Source</th>
+          </tr></thead>
+          <tbody role="rowgroup">
+            <tr role="row">
+              <td role="cell">GTA III decompilation, before agents</td>
+              <td role="cell" data-label="Size">Small team</td>
+              <td role="cell" data-label="Result">About two years</td>
+              <td role="cell" data-label="Source">Coordinator's recollection, no source recorded</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Modern Warfare 2 decompilation</td>
+              <td role="cell" data-label="Size">16,324 functions</td>
+              <td role="cell" data-label="Result"><span class="evidence verified">Verified</span> 5,588 of 16,324 functions (about 34%) after roughly one month, almost 7,000 commits, about 199.8 billion tokens, 4 agents (3 workers and a reviewer). <span class="evidence">Inferred</span> Later posts say it is playable, then that it is nearing its end with 17 agents. About ten weeks to playable is the coordinator's estimate from the dates of those posts, not a reported figure.</td>
+              <td role="cell" data-label="Source"><a href="https://www.generationamiga.com/2026/08/18/the-modern-warfare-2-decompilation-project-has-reached-a-wild-milestone/">Generation Amiga</a> for the first figures. Author posts on X: <a href="https://x.com/momo5502/status/2103375109478326700">playable</a> and <a href="https://x.com/momo5502/status/2105360274777624902">nearing its end</a>, seen as search results only. The author's own write-ups, <a href="https://momo5502.com/posts/2026-08-17-mw2-decompilation/">200 billion tokens</a> and <a href="https://momo5502.com/posts/2026-08-22-mw2-decompilation-audit/">the audit</a>, both returned 404.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Chaos Overlords (1996 strategy game)</td>
+              <td role="cell" data-label="Size">Not recorded</td>
+              <td role="cell" data-label="Result"><span class="evidence">Inferred</span> Decompiled and ported in a single 48-minute run with Opus 5.5</td>
+              <td role="cell" data-label="Source"><a href="https://x.com/asingleoat/status/2106182432819208232">Post on X</a>, seen as a search result only</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Thief 3 (MSVC 7.1, x86)</td>
+              <td role="cell" data-label="Size">About 10,500 queued functions</td>
+              <td role="cell" data-label="Result"><span class="evidence verified">Verified</span> Matched 77% of the functions tried on the first attempt, 65% of those that reached a second, 37% a third, 39% a fourth and 23% a fifth</td>
+              <td role="cell" data-label="Source"><a href="https://raw.githubusercontent.com/Veradictus/Thief3-Decomp/main/tools/agent/common.py">common.py</a></td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Snowboard Kids 2 (N64)</td>
+              <td role="cell" data-label="Size">Not recorded</td>
+              <td role="cell" data-label="Result">25% to 58% matched fast, then a stall near 75%. The same workflow finished Snowboard Kids 1 in 84 days against 596 for the sequel.</td>
+              <td role="cell" data-label="Source"><a href="http://blog.chrislewis.au/the-long-tail-of-llm-assisted-decompilation/">Long tail</a>, <a href="http://blog.chrislewis.au/decompiling-a-nintendo-64-game-in-84-days/">84 days</a></td>
+            </tr>
+            <tr role="row">
+              <td role="cell">gta-reversed (San Andreas)</td>
+              <td role="cell" data-label="Size">8,025 functions, 702 categories</td>
+              <td role="cell" data-label="Result">586 of 702 categories fully reversed (83%)</td>
+              <td role="cell" data-label="Source"><a href="https://raw.githubusercontent.com/gta-reversed/gta-reversed/master/docs/ReversedClasses.md">ReversedClasses.md</a></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ul>
+          <li><span class="evidence">Inferred</span> None of these projects wrote Rust, and only some had symbols. They show the order of magnitude, not our schedule.</li>
+          <li><span class="evidence">Inferred</span> The PC build is expected to have a function count of the same order as the Xbox 360 build (31,782 to 36,409 by three pipelines), about twice Modern Warfare 2. Expect longer than the ten-week estimate. Phase 2 measures functions per day and replaces this guess.</li>
+        </ul>
+      </article>
+
+      <article class="entry" id="route">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>Why the route is direct to Rust</h2>
+        <p>Lanes read decompiler output from a private folder and write Rust directly, with no committed C++ stage. Each rewrite is checked by running the original function and the Rust version in a CPU emulator from the same state. This follows from the owner's rule that no decompiled code may be committed, and from the goal that the game becomes 64-bit and portable.</p>
+
+        <h3>The route changed three times</h3>
+        <ol>
+          <li><span class="evidence verified">Verified</span> A from-scratch engine that loads the original assets. Rejected once the evidence showed that decompiling is fast and carries mission logic, AI and ragdoll behaviour across intact.</li>
+          <li><span class="evidence verified">Verified</span> Decompile to C++, rebuild, then port to Rust. Rejected because only structures, symbols and Rust rewrites may be committed, so a C++ stage cannot be kept, and an uncommitted months-long intermediate is a loss risk.</li>
+          <li><span class="evidence verified">Verified</span> Rewrite directly to Rust. Current route, and one phase shorter.</li>
+        </ol>
+
+        <h3>What the direct route costs</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> Byte-matching against the original compiler is impossible for Rust, so every byte-matching tool in the reviewed projects is out. The check is an emulator comparison: results, memory writes and outgoing calls must agree. Both sides run in the emulator, so it does not depend on the game running on this ARM64 machine.</li>
+          <li><span class="evidence verified">Verified</span> The second check swaps accepted functions into the running game through an injected 32-bit DLL with a per-function switch. A regression is found by switching replacements off in halves.</li>
+          <li><span class="evidence verified">Verified</span> Known weakness: floating-point results can differ in the last bits, so those comparisons need a tolerance, and a tolerance can hide a real difference. The in-game switch is the backstop.</li>
+          <li><span class="evidence">Unknown</span> Whether the emulator comparison works at scale. It is our own design and no other project has proven it. The phase 1 gate of 50 accepted functions tests it.</li>
+        </ul>
+
+        <h3>Why Rust, and what that forces</h3>
+        <p><span class="evidence verified">Verified</span> The Rust port exists to make the game 64-bit and portable to Windows x64, Windows ARM64 and macOS. That forces the following work, which is why 64-bit and renderer work wait until after phase 4.</p>
+        <ul>
+          <li>Euphoria, the animation and ragdoll middleware, is statically linked 32-bit code with no source. It must be rewritten like game code.</li>
+          <li>Bink video needs a replacement decoder.</li>
+          <li>Resource files hold 32-bit pointers, so a converting loader is needed.</li>
+          <li>The script virtual machine needs pointer handles.</li>
+          <li>All Windows and Direct3D 9 calls go behind a platform layer.</li>
+          <li>The renderer must output motion vectors, depth and jitter for upscalers.</li>
+          <li><span class="evidence">Inferred</span> Path tracing on macOS would need native Metal, because MoltenVK does not expose ray tracing as far as we know.</li>
+        </ul>
+
+        <h3>Xbox 360 static recompilation against function-by-function rewriting</h3>
+        <p><span class="evidence">Inferred</span> Lane D compared the routes. Its facts about the 360 projects come from their repositories (<a href="https://raw.githubusercontent.com/hedge-dev/XenonRecomp/main/README.md">XenonRecomp</a>, <a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/main/LibertyRecomp/api/RAGE/README.md">LibertyRecomp RAGE API</a>). Its PC column is its own assessment. It concluded that the 360 route is the better base for a quick playable port and the worse base for reconstructing source.</p>
+        <table role="table">
+          <thead role="rowgroup"><tr role="row">
+            <th role="columnheader">Dimension</th>
+            <th role="columnheader">Xbox 360 recompilation</th>
+            <th role="columnheader">PC rewrite</th>
+          </tr></thead>
+          <tbody role="rowgroup">
+            <tr role="row">
+              <td role="cell">Output</td>
+              <td role="cell" data-label="Xbox 360 recompilation">Unreadable by design. Every function takes a machine-state context.</td>
+              <td role="cell" data-label="PC rewrite">The product is the readable code. No second lifting phase.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Rust suitability</td>
+              <td role="cell" data-label="Xbox 360 recompilation">Hostile. Big-endian memory, reversed vector lanes and goto control flow would carry into Rust.</td>
+              <td role="cell" data-label="PC rewrite">Clean. Only names and layouts come from the 360 side.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Memory model</td>
+              <td role="cell" data-label="Xbox 360 recompilation">Byte swap on every load and store, permanently.</td>
+              <td role="cell" data-label="PC rewrite">Little-endian 32-bit x86, like for like with modern hosts.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Time to playable</td>
+              <td role="cell" data-label="Xbox 360 recompilation">Fastest demonstrated. One independent port reached gameplay except collision.</td>
+              <td role="cell" data-label="PC rewrite">Slowest. Playable only after a critical mass of rewrites.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">New gameplay</td>
+              <td role="cell" data-label="Xbox 360 recompilation">Constrained. Patches wrap original functions and the engine stays a black box.</td>
+              <td role="cell" data-label="PC rewrite">Unconstrained, at the cost of understanding everything.</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="entry" id="harness">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>Harness design taken from other projects</h2>
+        <p>Thief 3 (MSVC 7.1, x86) has the closest toolchain and the most developed agent harness, so the plan copies its structure. The parts that make a compiler reproduce original bytes do not apply, because Rust cannot. The byte-match gate is replaced by the emulator comparison.</p>
+
+        <h3>Parts taken, with the real numbers</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> Queue. A script orders functions easiest first and lanes do not choose. Thief 3 scores instruction count plus 3 per branch, 2 per call, 10 per switch, 10 per exception frame and 1 per x87 instruction (<a href="https://raw.githubusercontent.com/Veradictus/Thief3-Decomp/main/tools/agent/next.py">next.py</a>). Snowboard Kids 2 later fitted its weights by logistic regression, and stack size predicted nothing (<a href="http://blog.chrislewis.au/the-unexpected-effectiveness-of-one-shot-decompilation-with-claude/">blog</a>).</li>
+          <li><span class="evidence verified">Verified</span> Claims. One file per claimed function, created atomically, expiring after 2 hours and renewed by every attempt.</li>
+          <li><span class="evidence verified">Verified</span> Context packet: the target, resolved references with names, structures touched, the most similar accepted functions with source, names that accepted callers already use, the family, and the best earlier attempt on a second pass (<a href="https://raw.githubusercontent.com/Veradictus/Thief3-Decomp/main/tools/agent/context.py">context.py</a>).</li>
+          <li><span class="evidence verified">Verified</span> Attempt budget: cap of 12 per claim, stop after 4 counted attempts with no new best. The code comment cites replayed ledgers: 3 would have refused 10 of 1,219 matches to save 36 attempts, and 4 refuses 2 to save 18 (<a href="https://raw.githubusercontent.com/Veradictus/Thief3-Decomp/main/tools/agent/common.py">common.py</a>). <span class="evidence">Inferred</span> Another lane read the workflow document and recorded 3, so sources disagree. The code is more likely current. Snowboard Kids 2 reportedly gives up after about 30 attempts, seen only in a fork.</li>
+          <li><span class="evidence verified">Verified</span> Deferral is a normal outcome, recorded with a blocker tag. Permanently unworkable functions move to an exclusion list.</li>
+          <li><span class="evidence verified">Verified</span> Routing by size. Functions up to 31 bytes: 20 per worker, cap 5. From 32 to 79 bytes: by class, cap 8. From 80 bytes: the stronger model, cap 10. A second pass uses the other model. Workers stay under about 100 tool calls and up to 20 run at once.</li>
+          <li><span class="evidence verified">Verified</span> Families. Functions identical after masking references are grouped. One accepted member is stamped onto the rest and passed through the same gate with no model call.</li>
+          <li><span class="evidence verified">Verified</span> Guard rails live in tooling. Thief 3 workers write only under a scratch folder and run only four scripts, enforced by a pre-tool hook that also denies git (<a href="https://raw.githubusercontent.com/Veradictus/Thief3-Decomp/main/tools/agent/guard-settings.json">guard-settings.json</a>).</li>
+          <li><span class="evidence verified">Verified</span> A lint runs on every candidate, and every batch ends with a sweep that releases stale claims and appends cost, attempts and deferral reasons to a ledger.</li>
+          <li><span class="evidence verified">Verified</span> Smaller ideas. Nigel defines a lane as a candidate command, a prompt template, and verify, success and reset commands (<a href="https://raw.githubusercontent.com/cdlewis/nigel/main/README.md">README</a>). The asmlift prompt demands two deliverables of equal standing: merged work and a tool defect log ranked by cost.</li>
+        </ul>
+
+        <h3>What applies to us</h3>
+        <table role="table">
+          <thead role="rowgroup"><tr role="row">
+            <th role="columnheader">Part</th>
+            <th role="columnheader">For LibertyFlux</th>
+            <th role="columnheader">Reason</th>
+          </tr></thead>
+          <tbody role="rowgroup">
+            <tr role="row">
+              <td role="cell">Queue, claims, guard rails, sweep</td>
+              <td role="cell" data-label="For LibertyFlux">Unchanged</td>
+              <td role="cell" data-label="Reason">Independent of language and of the check.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Lint</td>
+              <td role="cell" data-label="For LibertyFlux">New rules</td>
+              <td role="cell" data-label="Reason">No inline assembly, no hard-coded original addresses, no stubs.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Attempt cap and patience</td>
+              <td role="cell" data-label="For LibertyFlux">Starting values</td>
+              <td role="cell" data-label="Reason">Remeasure in phase 2. Our failures differ from register-allocation near misses.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Deferral tags, families, packet</td>
+              <td role="cell" data-label="For LibertyFlux">Adapted</td>
+              <td role="cell" data-label="Reason">Tags such as tiebreak and inline describe compiler matching. Ours need their own list. Stamped members pass the emulator gate.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Similarity search</td>
+              <td role="cell" data-label="For LibertyFlux">Different tool</td>
+              <td role="cell" data-label="Reason">coddog has no x86 backend (<a href="https://raw.githubusercontent.com/ethteck/coddog/main/crates/core/Cargo.toml">dependency list</a>). We use Ghidra BSim.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Byte-match gate: objdiff, reccmp, checksums</td>
+              <td role="cell" data-label="For LibertyFlux">Does not apply</td>
+              <td role="cell" data-label="Reason">We do not match bytes. reccmp also proves only old MSVC (4.20 era) and calls newer support in progress.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Compiler pinning, per-unit re-verification</td>
+              <td role="cell" data-label="For LibertyFlux">Does not apply</td>
+              <td role="cell" data-label="Reason">Nothing recompiles the original source. The in-game switch and regression between waves play that role. <span class="evidence">Inferred</span></td>
+            </tr>
+            <tr role="row">
+              <td role="cell">decomp.me</td>
+              <td role="cell" data-label="For LibertyFlux">Not allowed</td>
+              <td role="cell" data-label="Reason">It blocks scripted clients and forbids agent-driven requests. All iteration is local.</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="entry" id="hooking">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>Replacing functions inside the running game</h2>
+        <p>The proven method in the GTA family is to build the rewritten functions as a DLL, load it through an ASI loader (a proxy DLL that loads plugin files at startup), and redirect each original function to its replacement with a switch per function. gta-reversed does this for San Andreas at 8,000 functions. Our second check has the same shape, with Rust in place of C++.</p>
+
+        <h3>How gta-reversed registers and switches functions</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> Registration contract: each class has a static function that registers its hooks, one central function calls them all, every function is installed with its address, and a function not yet reversed is marked so that it still calls the original (<a href="https://raw.githubusercontent.com/gta-reversed/gta-reversed/master/docs/HookRegistration.md">HookRegistration.md</a>).</li>
+          <li><span class="evidence verified">Verified</span> Two-way hooks. Each hook can be switched between original and reversed at runtime, locked, restored to its previous state and written to a JSON file, and hooks are grouped by path (<a href="https://raw.githubusercontent.com/gta-reversed/gta-reversed/master/source/reversiblehooks/HookCategoryItem.cpp">HookCategoryItem.cpp</a>). An in-game debug menu toggles them.</li>
+          <li><span class="evidence">Inferred</span> Virtual functions are installed through a per-class macro taking the original virtual table address and slot count. The source is one pull request snippet whose body would not load.</li>
+          <li><span class="evidence verified">Verified</span> Layout assertions. Every reversed structure carries compile-time checks of its size and member offsets, so a wrong layout fails the build (<a href="https://raw.githubusercontent.com/gta-reversed/gta-reversed/master/source/Base.h">Base.h</a>). IV-SDK and the plugin-sdk GTA IV headers do the same.</li>
+          <li><span class="evidence verified">Verified</span> The injected build needs the exact expected executable bytes. A wrong build crashes randomly (<a href="https://raw.githubusercontent.com/gta-reversed/gta-reversed-modern/master/README.md">gta-reversed-modern</a>).</li>
+        </ul>
+
+        <h3>How those projects verified</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> There is no test suite. A fork's instructions say testing is injecting the DLL and checking behaviour in the game. The layout assertions and the runtime switch are the whole mechanism.</li>
+          <li><span class="evidence">Inferred</span> re3 began in 2018 as single-function replacement by DLL to test reversed collision and physics inside the original game, and went standalone around April 2020. Search snippets only, because the original repository is gone.</li>
+          <li>This is why the emulator comparison exists. It catches what in-game playing misses, and it runs without the game.</li>
+        </ul>
+
+        <h3>Hooking notes</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> MinHook 1.3.4 supports x86 and x64. safetyhook is C++23 for Windows x86 and x86_64. <code>retour</code> is a Rust fork of the <code>detour</code> crate: <code>static_detour</code> needs nightly, thiscall support needs rustc 1.73 or later, and its CI covers the 32-bit Windows target (<a href="https://raw.githubusercontent.com/Hpmason/retour-rs/master/README.md">retour</a>).</li>
+          <li><span class="evidence">Inferred</span> A hook for a thiscall method (the C++ convention that passes this in ECX) is written in the fastcall shape with a dummy parameter for EDX. Three practitioner sources agree.</li>
+          <li><span class="evidence verified">Verified</span> Rust's 32-bit Windows target built a DLL exporting an <code>extern "thiscall"</code> function. Current Rust requires <code>#[unsafe(no_mangle)]</code>.</li>
+          <li><span class="evidence verified">Verified</span> GTA IV needs the 32-bit ASI loader installed as <code>dinput8.dll</code> (<a href="https://raw.githubusercontent.com/techyaditya/gtaiv-ce-speedoiv/master/SETUP.md">setup notes</a>). FusionFix finds code by wildcard byte patterns and installs mid-function hooks (<a href="https://raw.githubusercontent.com/ThirteenAG/GTAIV.EFLC.FusionFix/master/source/brakelights.ixx">example</a>), but old patterns still fail on new builds, as the next entry shows.</li>
+          <li><span class="evidence">Inferred</span> To record a function's inputs and outputs from the real game, Frida's Interceptor is the standard tool. x32dbg has conditional tracing commands (<a href="https://help.x64dbg.com/en/latest/commands/tracing/index.html">index</a>).</li>
+          <li><span class="evidence">Unknown</span> No guide to hooking by virtual-table slot was found.</li>
+        </ul>
+      </article>
+
+      <article class="entry" id="executable">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>What is already known about the GTA IV executable</h2>
+        <p>The target is the Steam Complete Edition executable (1.2.0.x). Most public knowledge targets older builds, and byte patterns do not carry across builds, so names must travel by other means. No symbols exist for the PC executable.</p>
+
+        <h3>Versions and tool support</h3>
+        <table role="table">
+          <thead role="rowgroup"><tr role="row">
+            <th role="columnheader">Version</th>
+            <th role="columnheader">Known</th>
+            <th role="columnheader">Tools</th>
+          </tr></thead>
+          <tbody role="rowgroup">
+            <tr role="row">
+              <td role="cell">1.0.4.0</td>
+              <td role="cell" data-label="Known"><span class="evidence verified">Verified</span> Native names still stored in the executable. From 1.0.7.0 they are hashes (<a href="https://gtamods.com/wiki/Native_function">gtamods</a>).</td>
+              <td role="cell" data-label="Tools"><span class="evidence verified">Verified</span> IV:MP covers 1.0.4.0 to 1.0.7.0. IV-SDK does not.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">1.0.7.0 and 1.0.8.0</td>
+              <td role="cell" data-label="Known"><span class="evidence verified">Verified</span> The reference for most public classes and addresses.</td>
+              <td role="cell" data-label="Tools"><span class="evidence verified">Verified</span> IV-SDK supports exactly these two. <span class="evidence">Inferred</span> FusionFix reaches them through a legacy add-on.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">EFLC 1.1.3.0</td>
+              <td role="cell" data-label="Known"><span class="evidence">Inferred</span> The Episodes release.</td>
+              <td role="cell" data-label="Tools"><span class="evidence">Inferred</span> Not in IV-SDK. SparkIV supports it.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Complete Edition 1.2.0.30 to 1.2.0.59</td>
+              <td role="cell" data-label="Known"><span class="evidence">Inferred</span> The March 2020 Steam update added Rockstar Games Launcher DRM and removed SecuROM, Games for Windows LIVE and multiplayer.</td>
+              <td role="cell" data-label="Tools"><span class="evidence verified">Verified</span> FusionFix and scrDbg target it. IV-SDK calls support near-impossible.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Why the Steam build, and what that costs</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> The owner has it and it runs without a cracked launcher. Downgrading needs a cracked launcher, which the project will not use (<a href="https://raw.githubusercontent.com/0x52617665/PlayGTAIV.exe/master/README.md">PlayGTAIV README</a>). The 1.0.8.0 executable is used only for static analysis, if an official patch executable is available, so that Ghidra Version Tracking can carry names across.</li>
+          <li><span class="evidence verified">Verified</span> Older patterns do not transfer. An audit found nine of nine older ZolikaPatch signatures matched nothing on 1.2.0.59 (<a href="https://raw.githubusercontent.com/xowny/zolikapatch-reversed/main/analysis/notes/current_build_signature_audit.md">audit</a>). Plan on semantic ports and version tracking.</li>
+          <li><span class="evidence">Unknown</span> Whether the executable is packed or wrapped in a way that blocks Ghidra. No source says so and none says otherwise. The game is not installed yet.</li>
+        </ul>
+
+        <h3>Naming sources</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> About 3,000 script natives exist. Cross-check three databases: <a href="https://github.com/sannybuilder/library">sannybuilder gta_iv.json</a> (1.3 MB, typed), <a href="https://github.com/HappinessMP/natives">HappinessMP natives</a> and a 44 KB <code>natives.json</code> in <a href="https://github.com/DeusMaveriX/RAGEStuffIReversed">RAGEStuffIReversed</a>. <span class="evidence">Inferred</span> Some entries are debug natives stripped from release builds.</li>
+          <li><span class="evidence verified">Verified</span> IV-SDK and IV:MP (both GPLv3) hold about 40 or more hand-written class headers with offsets. The plugin-sdk GTA IV tree is thin and zlib-licensed. Read for names and layouts, copy no code.</li>
+          <li><span class="evidence verified">Verified</span> A community Hex-Rays database (25.6 MB, no licence) exists. No PDB or symbol package was found.</li>
+          <li><span class="evidence">Inferred</span> Class names from runtime type information probably survive in the PC build, as on the Xbox 360. <code>binkw32.dll</code> and <code>xlive.dll</code> look dynamically linked, from missing-DLL reports. Other static libraries are unconfirmed.</li>
+        </ul>
+
+        <h3>Script engine and resource formats</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> A game script thread is the base thread plus a 24-byte program name and flags. scrDbg and IV:MP agree on the offsets. Natives sit in an open-addressing hash table keyed by name hash. Threads run on an instruction budget. Globals are not paged, unlike GTA V. scrDbg finds all of it on the Complete Edition with ten byte patterns (<a href="https://github.com/ShinyWasabi/scrDbg">scrDbg</a>).</li>
+          <li><span class="evidence verified">Verified</span> The compiled script format has a 24-byte header, 79 opcodes plus push, and encrypted variants (<a href="https://gtamods.com/wiki/SCO">SCO</a>). Compiling with the wrong per-version natives mode silently mistranslates every native call.</li>
+          <li><span class="evidence verified">Verified</span> Resource files are literal memory images. Pointers are a 28-bit offset plus a 4-bit block type across a virtual and a physical segment, fixed up at load. Three independent sources agree. This is why a 64-bit build needs a converting loader. Structures inside a file can be identified by the virtual table values the resource compiler wrote.</li>
+          <li><span class="evidence verified">Verified</span> Archives: RPF2 for the main game, RPF3 for audio, IMG3 for streaming. An Unlicense Rust crate reads and writes them (<a href="https://github.com/VIRUXE/rpf-archive-rs">rpf-archive-rs</a>). FiveM's loader is reference only.</li>
+        </ul>
+
+        <h3>Confirmed absent</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> No public PDB, no Ghidra or IDA script collection for GTA IV, no CitizenIV source, and no repository at the claimed ElCapor gta4-modern address (HTTP 404).</li>
+          <li><span class="evidence verified">Verified</span> No surveyed source documents the render thread split or Euphoria integration. Both need first-hand analysis.</li>
+        </ul>
+      </article>
+
+      <article class="entry" id="xbox360">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>What the Xbox 360 recompilation projects give us</h2>
+        <p>They give class names, virtual table layouts and written-down engine knowledge. They do not give code or real function names, and the much-quoted analysis database was not confirmed to exist publicly. Names can move from the 360 binary to the PC binary by matching virtual table slot order, the one method that works across instruction sets.</p>
+
+        <h3>The analysis database claim</h3>
+        <ul>
+          <li><span class="evidence">Inferred</span> Search snippets quote the LibertyRecomp build document as describing a database of 31,782 functions, 3,332 RTTI classes and 51,494 symbols, with decompiled pseudocode, served to agents by a tool server. The file section would not render, so the quote was not read in place.</li>
+          <li><span class="evidence verified">Verified</span> The database is not in the repository. The tool server's code is public in <a href="https://github.com/ozordi/tt-decomp">tt-decomp</a>, but its data is local to its author. Lane F confirmed that whole-image function lists exported from Ghidra were removed from tracking on 21 January and are local only. What is tracked is a configuration with 142 hand-listed function entries and 9 runtime-library entries, built with IDA Pro, Hex-Rays and signature matching. <span class="evidence">Inferred</span> The database producer is IDA Pro with Hex-Rays.</li>
+          <li><span class="evidence verified">Verified</span> Real class names exist: RTTI scans show a CBaseDC hierarchy of 108 child classes and rage:: allocator classes. No real function names were found in any file opened. Function references are address-derived labels, and semantic names were assigned by people. Assertion file paths and Class::Method debug strings in the executable are secondary name sources.</li>
+          <li>Function counts differ by pipeline. <span class="evidence">Inferred</span> 31,782 is the IDA figure. <span class="evidence verified">Verified</span> 35,888 is one port's recompiled count and 36,409 is parsed from generated C++ in tt-decomp. The PC count is not yet measured.</li>
+        </ul>
+
+        <h3>Documents worth reading</h3>
+        <ul>
+          <li><a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/main/docs/GTA_IV_ASSET_STREAMING_SYSTEM.md">Asset streaming</a>. Camera to a registry of 24-byte records, 8 load slots, ring buffers and fixup callbacks. It uses five evidence labels, which this project copied.</li>
+          <li><a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/main/LibertyRecomp/api/RAGE/README.md">RAGE API README</a>. The rage:: and GTA4:: class lists. Many entries are stubs, and weapons and pathfinding are listed as to-dos.</li>
+          <li><a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/main/docs/uaf-handle-investigation/11-rtti-hud-handles.md">RTTI and HUD handles</a>, for the method of building class-to-virtual-table tables.</li>
+          <li><a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/main/docs/GTA4_COLLISION_VPKUWUS_ALIASING_FIX.md">Collision aliasing postmortem</a>, which shows the collision pipeline and that RAGE physics is built on Bullet. <span class="evidence">Inferred</span> for the PC build.</li>
+          <li><a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/main/docs/SHADER_PIPELINE.md">Shader pipeline</a> and <a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/main/docs/reflection-rendering-study/README.md">reflection study</a>, for the renderer phase.</li>
+          <li><span class="evidence verified">Verified</span> Not found: Euphoria notes, script VM internals, a main-loop document. These projects treat game logic as a black box. Reads truncated at about 11 to 16 KB, so several long documents were seen only in part.</li>
+        </ul>
+
+        <h3>Carrying names across by slot order</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> tt-decomp matched GTA IV against Rockstar Table Tennis, both PowerPC, in three passes. Exact normalised instruction hashes matched 0 functions. Virtual table slot position matched 5 of 5, all rage::grcSetup at 85% confidence. Prologue hash plus Jaccard similarity of at least 75% matched 0. The run took 7.6 seconds over 36,409 against 7,161 functions (<a href="https://raw.githubusercontent.com/ozordi/tt-decomp/main/docs/naming/CROSS_MATCH_GTA4_FINDINGS.md">report</a>).</li>
+          <li><span class="evidence">Inferred</span> Slot order does not depend on the instruction set, so it should work from the 360 binary to the PC binary. Instruction hashes will not. No PowerPC to x86 matcher was found. Class names, slot counts, assertion paths and string constants should also survive, but none is yet checked on the PC binary.</li>
+        </ul>
+
+        <h3>Licences and state</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> LibertyRecomp, UnleashedRecomp and MarathonRecomp are GPL-3.0. XenonRecomp and XenosRecomp are MIT, ReXGlue is BSD-3-Clause, and one independent port has no licence file and counts as all rights reserved.</li>
+          <li><span class="evidence verified">Verified</span> OZORDI/LibertyRecomp is the active line (last commit 2026-09-23) and is moving to a native GTA IV renderer. The independent luisxl15 port reached gameplay except collision and is paused. Lane D suspected its collision bug was the one OZORDI later fixed. Lane F found its cause still unknown (see the next entry).</li>
+        </ul>
+      </article>
+
+      <article class="entry" id="recomp-failures">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>What went wrong for the recompilation projects, and what we take from it</h2>
+        <p>Most of the bugs these projects hit are specific to translating PowerPC code and emulating the Xbox 360 kernel, and do not apply to a PC rewrite. The patterns around those bugs do apply: stubs that became permanent, a renderer that took months, a misdiagnosis that took weeks, hooks that broke what they instrumented, wrong addresses that failed silently, and research that was deleted. The table gives each pattern and what we do about it.</p>
+
+        <h3>What lane F read</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> Lane F listed all 240 GTA-era commits on the main branch of OZORDI/LibertyRecomp by title and date and read about 35 key commits in full. Its GitHub API access returned 403, so it used commit feeds, patch files and raw files. Each item is labelled Verified (opened and read) or Inferred (deduced from a list, a snippet or an absence), and this entry keeps those labels.</li>
+          <li><span class="evidence verified">Verified</span> The main line ran from 13 December to 9 March and then froze. A development line carried the work from January to August and replaced main by force-push on 14 August (<a href="https://github.com/OZORDI/LibertyRecomp/pull/5">pull request 5</a>). An earlier <a href="https://github.com/OZORDI/LibertyRecomp/commit/c2645c659bd6e766f29e0cba5f13598e49d01042">force-push on 26 January</a> rewrote every commit hash back to the Sonic port the project was forked from.</li>
+          <li><span class="evidence verified">Verified</span> The independent port by luisxl15 has six commits, all on 7 and 8 August 2026. It boots all 35,888 functions, renders the opening cinematic and reaches interactive gameplay with HUD and radar, but static world collision never loads, saves are rejected by the menu, and it has had no commits for about two months. Four other forks hold no work of their own except one continuous-integration fix. Their value is that they preserve commits and documents the main repository later dropped.</li>
+          <li><span class="evidence verified">Verified</span> Boot to initialisation took about 15 days (13 to 28 December), and frames to a stable run took 8 more. Audio was built on 1 January, deleted on 15 April and rebuilt from July to September.</li>
+          <li><span class="evidence">Inferred</span> In-game visuals came only with the native renderer promoted on 14 August. No drawn-content milestone was found between January and July.</li>
+        </ul>
+
+        <h3>Patterns and what we do about them</h3>
+        <table role="table">
+          <thead role="rowgroup"><tr role="row">
+            <th role="columnheader">Pattern</th>
+            <th role="columnheader">What happened to them</th>
+            <th role="columnheader">What we do</th>
+          </tr></thead>
+          <tbody role="rowgroup">
+            <tr role="row">
+              <td role="cell">Stubs became permanent</td>
+              <td role="cell" data-label="What happened to them"><span class="evidence verified">Verified</span> Seven subsystem initialisers that blocked on console synchronisation were <a href="https://github.com/OZORDI/LibertyRecomp/commit/41c28d86699d97fba70b1cecbf7c3cac19dfe59e">stubbed on 28 December</a> as temporary. Native replacements were never verified. A <a href="https://github.com/OZORDI/LibertyRecomp/commit/ee2bee51ff99c5c80190460d834f74682394c7e0">loading-gate bypass</a> after 500 iterations has no later real implementation that lane F could find (removal could not be verified either).</td>
+              <td role="cell" data-label="What we do">AGENTS.md rule 3 bans stubs presented as implementations. A function that cannot be done is deferred with a blocker tag, so it stays visible in the queue and the ledger, counted as not rewritten. Deferred functions go to a second pass on a different model.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Rendering is the long pole</td>
+              <td role="cell" data-label="What happened to them"><span class="evidence verified">Verified</span> A purple screen on 7 January meant the GPU path was alive but showed nothing. First-draw research ran from January to April and ended in a <a href="https://github.com/OZORDI/LibertyRecomp/commit/a0b17c27d03e279090198dcf55435e198d9c6990">revert</a>. Playability came only with a rewritten renderer.</td>
+              <td role="cell" data-label="What we do">The renderer is its own phase with its own exit gate (frame rate measured on all three platforms), not a tail task. A Direct3D 9 present hook has already been verified on GTA IV by the d3d9capture project, which helps early capture.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Weeks-long misdiagnosis</td>
+              <td role="cell" data-label="What happened to them"><span class="evidence verified">Verified</span> A crash was labelled an audio use-after-free and drew a 14-agent investigation. The supposed poison value was a legitimate light-grey HUD colour, the audio frame was the shared immediate-mode draw batcher, and the real bug was a render hook that had never been installed. The <a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/main/docs/uaf-handle-investigation/15-synthesis.md">synthesis</a> refutes the audio label and one sibling agent's claim.</td>
+              <td role="cell" data-label="What we do">A fix needs proof of the cause first (a log comparison or a caller graph). The emulator comparison reproduces a single function from a recorded state, so a fault is attributed to a function, not to a guessed subsystem.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Hooks broke what they instrumented</td>
+              <td role="cell" data-label="What happened to them"><span class="evidence verified">Verified</span> A hook that bypassed the original's frame-counter increment killed <a href="https://github.com/OZORDI/LibertyRecomp/commit/03b63d3f83ce8715b0d0318f99ec07f70bb52127">frame pacing after 5 frames</a>. Another hook zeroed a submitted-frame counter, so <a href="https://github.com/OZORDI/LibertyRecomp/commit/946d1439fd528d60a57d65c7ef8531d17156de40">presentation stalled after frame 2</a>. 44 hooks inherited from the Sonic port matched nothing in GTA IV, and about 100 diagnostic hooks were <a href="https://github.com/OZORDI/LibertyRecomp/commit/e463e2e343d70586da19c8bc6500ed5d12664371">removed on 11 April</a>.</td>
+              <td role="cell" data-label="What we do">The emulator comparison checks memory writes and outgoing calls, so a missing side effect shows as a disagreement. The per-function switch isolates a bad replacement.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Wrong addresses failed silently</td>
+              <td role="cell" data-label="What happened to them"><span class="evidence verified">Verified</span> Wrong addresses for two C runtime copy functions silently corrupted 149 and 161 call sites and surfaced as a null crash elsewhere. Later fixes covered <a href="https://github.com/OZORDI/LibertyRecomp/commit/f9d2495a45ff9cd0664cef80ae9864b2448be5ca">13 bad code-generation addresses</a>, <a href="https://github.com/OZORDI/LibertyRecomp/commit/8713ae3f597406bd1de980e4e5dd858d4ea85329">11 mid-function splits</a> and an offset formula that mixed two address bases.</td>
+              <td role="cell" data-label="What we do">The lint bans hard-coded original addresses, references resolve by symbol, and structures carry size and offset assertions. Function boundaries are as much a risk for us, so a wrong boundary must fail loudly in the comparison.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Rendered but not collidable</td>
+              <td role="cell" data-label="What happened to them"><span class="evidence verified">Verified</span> Both projects fell through roads that looked intact. OZORDI's cause was a translator miscompile of an aliasing form of a vector pack instruction in the physics broadphase, fixed on 21 August (<a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/main/docs/GTA4_COLLISION_VPKUWUS_ALIASING_FIX.md">postmortem</a>). luisxl15's cause is unknown after seven ruled-out hypotheses (<a href="https://raw.githubusercontent.com/luisxl15/GTA-IV-RECOMP-XBOX-360/main/docs/COLLISION_BUG.md">notes</a>). The notes say the same symptom reportedly appears in an emulator but not on native PC. <span class="evidence">Inferred</span> That hint points to timing or environment, and the underlying truth is unconfirmed.</td>
+              <td role="cell" data-label="What we do">Build an end-to-end collision test early (a body standing on a loaded road). A miscompile cannot occur in our code, but the streaming path that supplies collision data can fail in the same way.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Async reads served synchronously</td>
+              <td role="cell" data-label="What happened to them"><span class="evidence verified">Verified</span> LibertyRecomp serves even asynchronous file handles synchronously, with a hard-coded true in the condition. The game's streaming depends on completion events, callbacks and pending states, which this shortcut hides (<a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/main/docs/GTA_IV_ASSET_STREAMING_SYSTEM.md">streaming document</a>).</td>
+              <td role="cell" data-label="What we do">Model asynchronous completion in our file layer from the start, and give any shortcut an expiry date. Confirm how the PC file layer completes reads before writing it.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Diagnostic code caused slowdowns</td>
+              <td role="cell" data-label="What happened to them"><span class="evidence verified">Verified</span> About 400 stray print calls were once a major slowdown, per the project's own <a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/eead0db37c77e0fc45097c63c136e0b135343e6f/.claude/skills/libertyrecomp/DEBUGGING.md">debugging notes</a>. One run log grew from 614 MB to 1.17 GB.</td>
+              <td role="cell" data-label="What we do">Lane logs and scratch live under the untracked artifacts folder, and logs are per function with progress and an estimate, not unbounded dumps.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Research documents without behaviour change</td>
+              <td role="cell" data-label="What happened to them"><span class="evidence verified">Verified</span> The 17 April commit adds 54 research documents on the first-draw crash. Its fix regressed and was reverted, and its message says no other behaviour changed.</td>
+              <td role="cell" data-label="What we do">Measure a lane by accepted functions. Every agent conclusion needs a runnable check, and the coordinator verifies a sample.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">History rewrites and deleted research</td>
+              <td role="cell" data-label="What happened to them"><span class="evidence verified">Verified</span> Force-pushes rewrote hashes and deleted a branch. Docs were untracked on 8 March (<a href="https://github.com/OZORDI/LibertyRecomp/commit/0c433d9946c89d26cd781923d633a23b7232aac6">commit</a>), 25 documents and later the 54 research documents were deleted, and a 1,056-file accidental removal was <a href="https://github.com/DeusMaveriX/LibertyRecomp-GTAIV-XBOX-360-PORT/commit/6fa18e5ed1ab83ffb593e500abdab18661385d30">restored</a> on 9 March. Deleted material survives only at old hashes and in forks.</td>
+              <td role="cell" data-label="What we do">Lanes never commit, and the coordinator makes every commit. Findings go in this tracked devlog. AGENTS.md requires one change per commit, each with a changelog entry, and forbids force-pushing or rewriting pushed history.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Causes specific to translating PowerPC code</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> A nine-worker startup deadlock from unsignalled semaphores and kernel tasks that exited early. Console synchronisation primitives never satisfied on PC, which blocked the loading gate, the HUD and 63-subsystem initialisation. Host and guest thread-local storage that diverged. A defensive write inside the kernel import region that corrupted imports and read as vtable failures. C runtime start-up callbacks. A vertical-blank timer and timebase that froze loading. A translator miscompile in physics.</li>
+          <li>The knowledge that carries over is which subsystems wait on synchronisation and in what order the engine initialises (<a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/c2645c659bd6e766f29e0cba5f13598e49d01042/docs/REWRITE_PLAYBOOK.md">rewrite playbook</a>).</li>
+        </ul>
+
+        <h3>Engine behaviours to confirm on PC, not assume</h3>
+        <p><span class="evidence verified">Verified</span> The projects documented the following for the Xbox 360 build. <span class="evidence">Unknown</span> Each is unconfirmed for the PC build, which was designed around different memory and a different thread model. Sources: <a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/d32b7cb669803efa9717ec70f4fd6a61a672f454/docs/RUNTIME_BEHAVIOR.md">runtime behaviour</a>, the playbook above, the streaming document and the <a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/31836017f40694735276913f3c898ee0cb7e4a99/docs/RENDERING_RESEARCH.md">rendering research</a>.</p>
+        <ul>
+          <li>Boot: the engine's entry function runs once, where the console runtime called it repeatedly and a recompilation must supply the loop. Then a frame tick, a ready check, a call that starts nine workers and the subsystems, one call that initialises 63 subsystems, a loading gate, and a main loop under an orchestrator that ends in a present.</li>
+          <li>Threads: nine workers (two render, three streaming, three resource, two GPU), a special thread with a 256 KB stack, a vertical-blank path, an audio stream worker and a separate audio render driver, and content-enumeration threads. The render workers block by design.</li>
+          <li>Streaming: a registry of 24-byte records with a four-state machine, recursive dependency acquisition, 8 fixed load slots, a synthetic stream path by index, per-worker rings of 16 positions (15 usable, reads up to 32 KiB), file-device layers for disc and hard-disk cache, and per-type fixup callbacks. Scripts gate on a native that pauses for streaming, and reads use overlapped I/O.</li>
+          <li>Timing: a 50 MHz guest timebase (a wrong value freezes every time-gated loading task), a 60 Hz vertical blank, a present gate that stalls when submitted frames exceed presented frames by 2, a frame counter in the device, and cooperative-polling status codes.</li>
+          <li>Render path: a RAGE layer over a Direct3D-style wrapper over command packets; immediate-mode draw begin, add-vertex and end; HUD draw commands as a 108-class hierarchy in a per-frame bump arena whose allocator sits in a thread-local slot; six named reflection resources (mirror at 320 by 180, environment paraboloid at 256).</li>
+          <li>Collision: load and fixup, composite expansion, bounding-volume bodies, simulation identifiers, a deferred insert queue, world bounds, axis-sweep quantisation, endpoint sort, a pair cache, filtering and narrowphase. The title-update build keeps a 500-slot bounds store with a flag-byte state machine scanned every frame (<a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/main/docs/GTA4_COLLISION_VPKUWUS_ALIASING_FIX.md">collision document</a>).</li>
+          <li><span class="evidence">Unknown</span> Which script threads must run for the world to appear. Neither project documented it. Only the registration of script natives was mapped.</li>
+        </ul>
+
+        <h3>How they used agents, and what went wrong</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> Instruction files were thin and have all been removed from tracking. One <a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/624b3ce5961f0b713ba7f35cf4c6f52b2c1e796c/.claude/claude.md">briefing file</a> (18 February to 8 March) contains a pasted chat transcript. A skill with four documents was added on 17 March and removed on 12 April. There is no AGENTS.md or CLAUDE.md at the root. <span class="evidence">Inferred</span> Hidden directories could not be listed exhaustively.</li>
+          <li><span class="evidence verified">Verified</span> Work was split into swarms of numbered agents with a synthesis step (14 on the use-after-free, 10 and 15 on later fixes). Codex branches existed, and major commits carry Claude co-authorship.</li>
+          <li><span class="evidence verified">Verified</span> Guard rails were thin. The skill says to remove diagnostic prints before committing, written after the damage. Few commits were gated by tests, and the repository accumulated agent output and then purged it in bulk.</li>
+          <li><span class="evidence verified">Verified</span> Agent-related problems recorded in commit titles include removal of about 100 diagnostic hooks, a purge of the whole audio, saves, network and file runtime on 15 April (later partly rebuilt, and the restoration commit was not identified), removal of temporary Codex session documents, and an audit by one agent that mislabelled two shader-setting functions as scissor and viewport. Examples: <a href="https://github.com/OZORDI/LibertyRecomp/commit/d4572c4f1ecbf2b574cc09ba88303030956fd151">the runtime purge</a>, <a href="https://github.com/OZORDI/LibertyRecomp/commit/9af9e2ed2d05d530bd2ce18e52736171fd928e11">the dead-hook purge</a>.</li>
+          <li><span class="evidence">Inferred</span> luisxl15 shows no agent usage: no agent files, no co-authorship and a human commit style.</li>
+          <li>What we take: lanes write only to scratch and never commit, a machine check decides, every finding carries a label, and an agent's conclusion is checked before anyone builds on it.</li>
+          <li><span class="evidence verified">Verified</span> One commit that fixes an audio voice use-after-free has a title only, and its diff is over 10 MB, so its cause cannot be recovered from history. Keep per-function attempt logs so that no accepted change lacks a recorded cause.</li>
+        </ul>
+      </article>
+
+      <article class="entry" id="tools">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>Tools: what works and what does not</h2>
+        <p>Ghidra 12.1.4 works headless on this machine under emulation, with the traps below. Several tools from the reviewed projects do not fit our route, and some matching tools cannot work on x86 at all.</p>
+        <table role="table">
+          <thead role="rowgroup"><tr role="row">
+            <th role="columnheader">Tool</th>
+            <th role="columnheader">Use</th>
+            <th role="columnheader">Status or trap</th>
+          </tr></thead>
+          <tbody role="rowgroup">
+            <tr role="row">
+              <td role="cell">Ghidra 12.1.4 headless</td>
+              <td role="cell" data-label="Use">Import, analysis, export</td>
+              <td role="cell" data-label="Status or trap"><span class="evidence verified">Verified</span> Import and full analysis of a 32-bit program worked. Ghidra ships Windows native components for x64 only, so use an x64 JDK 21 and run both under emulation. A headless run fails if the project is open in the GUI. There is no official JSON export, so a post-script is the pattern.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Function ID</td>
+              <td role="cell" data-label="Use">Tag runtime-library code</td>
+              <td role="cell" data-label="Status or trap"><span class="evidence">Inferred</span> No stock database was found for the 2005 or 2008 runtimes, so build one from the matching compiler's static libraries. Importing a <code>.lib</code> fails, so extract objects with <code>llvm-ar</code> first. Populating is canonically a GUI step (<a href="https://raw.githubusercontent.com/swstegall/meteor-decomp/master/docs/fid_signature_matching.md">meteor-decomp guide</a>).</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">RTTI and class recovery</td>
+              <td role="cell" data-label="Use">Classes, virtual tables</td>
+              <td role="cell" data-label="Status or trap"><span class="evidence verified">Verified</span> Ghidra-Cpp-Class-Analyzer is end of life. Use Ghidra's built-in scripts, whose exact names were not confirmed. OOAnalyzer with Kaiju supports 32-bit MSVC programs and needs JDK 21 and Z3.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Version Tracking and BSim</td>
+              <td role="cell" data-label="Use">Carry names, find similar functions</td>
+              <td role="cell" data-label="Status or trap"><span class="evidence verified">Verified</span> Version Tracking needs the source program analysed first. BSim needs Ghidra closed because its database is single-process.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">pefile and Rich header</td>
+              <td role="cell" data-label="Use">Compiler and linker version</td>
+              <td role="cell" data-label="Status or trap"><span class="evidence verified">Verified</span> pefile installed. Visual Studio 2005 is compiler 14.00.50727 and 2008 is 15.00.21022. The GTA IV version has not been read, so do not assume it.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">objdiff, reccmp, coddog, decomp.me, delinker</td>
+              <td role="cell" data-label="Use">Byte-level matching</td>
+              <td role="cell" data-label="Status or trap"><span class="evidence verified">Verified</span> Not used. See the harness entry. The Ghidra delinker supports x86 COFF but depends on database accuracy and a graphical flow.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">MinHook, safetyhook, retour</td>
+              <td role="cell" data-label="Use">Redirect functions</td>
+              <td role="cell" data-label="Status or trap">See the hooking entry. None installed yet.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Rust <code>i686-pc-windows-msvc</code></td>
+              <td role="cell" data-label="Use">Build the injected DLL</td>
+              <td role="cell" data-label="Status or trap"><span class="evidence verified">Verified</span> Built a DLL exporting a thiscall function, and the Visual Studio Build Tools 2026 include the x86 toolset.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">CPU emulator library (Unicorn)</td>
+              <td role="cell" data-label="Use">Emulator comparison</td>
+              <td role="cell" data-label="Status or trap"><span class="evidence">Unknown</span> Not installed, not covered by any lane, untested on this ARM64 host.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">DXVK</td>
+              <td role="cell" data-label="Use">Run the game on Vulkan</td>
+              <td role="cell" data-label="Status or trap"><span class="evidence verified">Verified</span> Needs the 32-bit <code>d3d9.dll</code>, and a DXVK log must appear on launch or the run used native Direct3D 9. An open issue reports failure on Snapdragon X Elite (<a href="https://github.com/doitsujin/dxvk/issues/5125">issue</a>, body not read). No guide exists for Windows ARM64 with Adreno. Test first.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Old MSVC installers</td>
+              <td role="cell" data-label="Use">Original compiler</td>
+              <td role="cell" data-label="Status or trap"><span class="evidence">Unknown</span> Whether they run on Windows 11 ARM64 was not found. Needed only for byte-matching.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Machine traps</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> The default Python on this machine is x64, so the project environment is x64 on purpose.</li>
+          <li><span class="evidence verified">Verified</span> A 543 MB download from GitHub releases ran at about 0.3 MB/s. Long downloads must run as background tasks.</li>
+          <li><span class="evidence">Inferred</span> Prism emulation added AVX and AVX2 in October 2025, but the new instructions are off by default for 32-bit programs and need an opt-in. The game is 32-bit.</li>
+        </ul>
+      </article>
+
+      <article class="entry" id="dependencies">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>Dependencies to remove</h2>
+        <p>Launcher, DRM and dead online services can be dropped. Everything the engine links itself needs a replacement, and an open one exists for each. Most of this entry is inferred from forum posts and error reports, so it is the weakest research report. The import tables of the executable and its DLLs will settle it.</p>
+        <p><span class="evidence verified">Verified</span> Corrected the same day by <a href="#executable-first-look">the first look at the executable</a>, which read the import table: audio is DirectSound, the engine does import DirectInput, the C runtime is static, and there is no <code>d3dx9</code>, <code>xlive.dll</code> or .NET dependency. Where this entry and that one disagree, that one is right.</p>
+        <table role="table">
+          <thead role="rowgroup"><tr role="row">
+            <th role="columnheader">Dependency</th>
+            <th role="columnheader">Plan</th>
+            <th role="columnheader">Evidence</th>
+          </tr></thead>
+          <tbody role="rowgroup">
+            <tr role="row">
+              <td role="cell">.NET 3.5, Social Club, Rockstar launcher, SecuROM, Flash, <code>xlive.dll</code> (Games for Windows LIVE)</td>
+              <td role="cell" data-label="Plan">Drop</td>
+              <td role="cell" data-label="Evidence"><span class="evidence">Inferred</span> Launcher, DRM and online pieces. The XLiveLess stub shows the game runs without <code>xlive.dll</code>. <span class="evidence verified">Verified</span> WineHQ records the retail launcher failing for want of .NET 3.5.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Direct3D 9 and D3DX</td>
+              <td role="cell" data-label="Plan">Vulkan renderer, own math</td>
+              <td role="cell" data-label="Evidence"><span class="evidence">Inferred</span> The D3DX version is unknown. The lane suggested wgpu and glam. The plan chose Vulkan.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Gamepad input</td>
+              <td role="cell" data-label="Plan">SDL3</td>
+              <td role="cell" data-label="Evidence"><span class="evidence">Unknown</span> The XInput version, and whether DirectInput is imported.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Audio output and 3D audio</td>
+              <td role="cell" data-label="Plan">Decide after the import dump</td>
+              <td role="cell" data-label="Evidence"><span class="evidence">Unknown</span> One forum post says OpenAL while Wine recipes install XACT. Both are single, low-confidence sources. OpenAL Soft is LGPL (<span class="evidence verified">Verified</span>).</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Bink video</td>
+              <td role="cell" data-label="Plan">FFmpeg Bink decoder</td>
+              <td role="cell" data-label="Evidence"><span class="evidence">Inferred</span> A missing-DLL startup error proves an engine link. The Bink version is unknown. <span class="evidence verified">Verified</span> FFmpeg is LGPL-2.1 or later by default.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Windows Media: startup link, user music, replay export</td>
+              <td role="cell" data-label="Plan">FFmpeg</td>
+              <td role="cell" data-label="Evidence"><span class="evidence">Inferred</span> Running without the Windows Media components fails, and export writes WMV. User music accepts MP3, WMA and WAV. WMA decoding outside FFmpeg is weak.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Visual C++ 2005 SP1 runtime</td>
+              <td role="cell" data-label="Plan">Static Rust linking</td>
+              <td role="cell" data-label="Evidence"><span class="evidence">Unknown</span> The installer ships with the Steam game. Dynamic or static linkage was not found.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Euphoria</td>
+              <td role="cell" data-label="Plan">Rewrite like game code</td>
+              <td role="cell" data-label="Evidence"><span class="evidence verified">Verified</span> The middleware is present. <span class="evidence">Inferred</span> It is statically linked with no source.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Physics</td>
+              <td role="cell" data-label="Plan">Rewrite like game code</td>
+              <td role="cell" data-label="Evidence"><span class="evidence verified">Verified</span> The Xbox 360 build uses Bullet. <span class="evidence">Inferred</span> The PC build is assumed the same.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Audio containers</td>
+              <td role="cell" data-label="Plan">New decoders</td>
+              <td role="cell" data-label="Evidence"><span class="evidence">Inferred</span> The 360 uses XMA. The PC format comes from one mod tool's description. Bytes on disk are unconfirmed.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>What the import dump must answer</h3>
+        <ul>
+          <li><span class="evidence">Unknown</span> Every imported DLL and function or ordinal, including delay-load and runtime-loaded libraries, for 1.0.7.0, 1.0.8.0 and the Complete Edition.</li>
+          <li><span class="evidence">Unknown</span> The D3DX, XInput and audio versions, whether Windows Media, Winsock, Social Club or the Rockstar launcher are imported directly, the xlive ordinal list, and whether a libcurl DLL exists (one low-confidence listing says so, and listings are polluted by mods).</li>
+        </ul>
+        <p><span class="evidence verified">Verified</span> Other ports converge on a small set: SDL for windowing and input, OpenAL Soft or custom 3D audio, FFmpeg for Bink and codecs, a modern graphics API, and GameNetworkingSockets (BSD-3) for netcode (<a href="https://raw.githubusercontent.com/OZORDI/LibertyRecomp/main/README.md">LibertyRecomp</a>, <a href="https://wiki.openmw.org/index.php?title=Development_Environment_Setup">OpenMW</a>).</p>
+      </article>
+
+      <article class="entry" id="framerate">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>Frame-rate coupling</h2>
+        <p>Game logic is tied to the frame rate in many places, so unlocking it without fixes breaks vehicles, animation, pathfinding and cameras. The community fix lists below are the starting regression list for the fixed-timestep work in phase 6.</p>
+        <table role="table">
+          <thead role="rowgroup"><tr role="row">
+            <th role="columnheader">Area</th>
+            <th role="columnheader">Reported symptom</th>
+            <th role="columnheader">Status and source</th>
+          </tr></thead>
+          <tbody role="rowgroup">
+            <tr role="row">
+              <td role="cell">Vehicles</td>
+              <td role="cell" data-label="Reported symptom">Car, bike, boat and helicopter handling vary with frame rate. Bikes slide above 80 FPS. Handbrake camera and blinker speed.</td>
+              <td role="cell" data-label="Status and source"><span class="evidence verified">Verified</span> bike slide in the <a href="https://zolika.dev/mods/ivpatch/">ZolikaPatch list</a>. <span class="evidence">Inferred</span> the rest, from <a href="https://github.com/ThirteenAG/GTAIV.EFLC.FusionFix/releases?hl=en-US">FusionFix release notes</a>.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Helicopters</td>
+              <td role="cell" data-label="Reported symptom">Rotor animation speed, downwash strength, rotor-brake timing (main rotors about 10 seconds).</td>
+              <td role="cell" data-label="Status and source"><span class="evidence">Inferred</span> Release-note snippets.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Euphoria and objects</td>
+              <td role="cell" data-label="Reported symptom">Ragdolls and object physics differ by frame rate.</td>
+              <td role="cell" data-label="Status and source"><span class="evidence">Inferred</span> Release-note snippets.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Pathfinding and movement</td>
+              <td role="cell" data-label="Reported symptom">Player and NPC pathfinding breaks. Ladder climbing stalls. Walking speed rises.</td>
+              <td role="cell" data-label="Status and source"><span class="evidence">Inferred</span> Snippets. <span class="evidence verified">Verified</span> ZolikaPatch lists an Out of Commission climb bug.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Cameras and cutscenes</td>
+              <td role="cell" data-label="Reported symptom">Cutscene zoom and jitter at high frame rates. Recoil. Drive-by crosshair height.</td>
+              <td role="cell" data-label="Status and source"><span class="evidence verified">Verified</span> zoom, jitter and crosshair in ZolikaPatch. <span class="evidence">Inferred</span> recoil.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">World and effects</td>
+              <td role="cell" data-label="Reported symptom">Water, weapon aiming, loading screens, searchlights, toll-gate speed, drunk-driving difficulty.</td>
+              <td role="cell" data-label="Status and source"><span class="evidence">Inferred</span> News coverage of FusionFix 5.0 and 5.1.0.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Script natives</td>
+              <td role="cell" data-label="Reported symptom">At least one native (slide-object) ignores the time step above 30 FPS.</td>
+              <td role="cell" data-label="Status and source"><span class="evidence">Inferred</span> One issue-list entry. Scripts are game logic we rewrite.</td>
+            </tr>
+          </tbody>
+        </table>
+        <ul>
+          <li><span class="evidence">Inferred</span> Common advice is to cap at 60 FPS. A Midnight Club: Los Angeles recompilation reports fixed 30 Hz steps and a 15.625 ms Windows timer grid. That is a different RAGE game, so treat it as a hint to check.</li>
+          <li><span class="evidence">Unknown</span> The name and structure of the main loop. It needs first-hand analysis.</li>
+          <li><span class="evidence">Inferred</span> The port must hold 60 FPS or re-fix every delta-time use. High frame rates cannot be assumed safe.</li>
+        </ul>
+      </article>
+
+      <article class="entry" id="lanes">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>Working with agent lanes: what we learned</h2>
+        <p>A lane is one agent working on one task in its own folder. The eight research lanes worked, but a lane that cannot run shell commands is limited to web reads, and long files were read only in part. Requiring every finding to be marked Verified or Inferred made checking cheap and is now a project rule.</p>
+
+        <h3>Running Muse Spark lanes</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> The command is <code>muse exec --model muse-spark-1.3-contributor --reasoning-effort max --approval-mode never --workspace &lt;folder&gt; --prompt-file &lt;file&gt;</code>. Output appears only when the lane exits. Lanes took 15 to 60 minutes.</li>
+          <li><span class="evidence verified">Verified</span> In an untrusted workspace the lane could not run shell commands, so it could not clone repositories. Fix before phase 1 (muse sandbox, workspace trust).</li>
+          <li><span class="evidence verified">Verified</span> Web reads truncate past roughly 11 to 16 KB, so long files were only partly read. The GitHub API rate-limited one lane.</li>
+          <li><span class="evidence verified">Verified</span> Two of lane A's claims were checked against the source files and matched exactly. Lane H (dependencies) was mostly inferred from forum posts and said so. Lane F, whose GitHub API access returned 403, read history through commit feeds, patch files and raw files instead, and labelled each item.</li>
+        </ul>
+
+        <h3>Generating placeholder images with Codex</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> The image generation feature is enabled in the CLI. The lane got a small workspace (the docs folder), because large writable roots stall its sandbox on this machine.</li>
+          <li><span class="evidence verified">Verified</span> The brief told it to begin every shell command with <code>Set-Location</code>. Six 1600 by 900 WebP images took about fifteen minutes.</li>
+          <li>Every generated image on the site is captioned as a concept image, not a screenshot.</li>
+        </ul>
+
+        <h3>Practices from other agent projects</h3>
+        <ul>
+          <li>Task size. <span class="evidence verified">Verified</span> Thief 3 sizes work by function length, keeps workers under about 100 tool calls and never reuses a worker. <span class="evidence">Inferred</span> The sources give the limits, not the reason. Our reading is that context decays in long sessions, so a fresh worker with a full packet beats a long session.</li>
+          <li>Guard rails in tooling. <span class="evidence verified">Verified</span> Thief 3 and Snowboard Kids 2 enforce permissions with hooks, so a worker cannot edit the checker or generated files even when it tries. Our lane rules in AGENTS.md still need that enforcement in phase 1.</li>
+          <li>Claiming success without proof. <span class="evidence verified">Verified</span> A Thief 3 survey says the verifier is the product, because agents cheat with inline assembly, edited checksums and lenient comparison rules. Thief 3 also sweeps for the opposite failure: a worker saw a passing result and never ran the acceptance step. Our rule: a machine check decides.</li>
+          <li><span class="evidence verified">Verified</span> Thief 3 workers change one thing per attempt, say what difference it targets, treat unchanged output as a no-op, and defer rather than guess.</li>
+          <li><span class="evidence">Inferred</span> The plan records that the Modern Warfare 2 project found mixed goals stalled its lanes, hence no 64-bit or renderer work before phase 4. The source is the coordinator's search, not a lane report.</li>
+          <li><span class="evidence verified">Verified</span> Both of the Modern Warfare 2 author's write-ups returned 404 when tried. That project's verification method, audit counts of wrong or faked functions, and agent scaling are unknown to us.</li>
+          <li><span class="evidence verified">Verified</span> A recompilation project's agents produced 54 research documents in one cycle with no change in behaviour. Count a lane's output in accepted functions, not pages. The <a href="#recomp-failures">recompilation entry</a> has the details.</li>
+        </ul>
+      </article>
+
+      <article class="entry" id="site">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>Building the site</h2>
+        <p>The project site is served locally with Python's built-in web server and must be checked after its scripts have run. An independent critique of the first version found that a progress page must say plainly what does not exist yet, and that an empty state must not fabricate structure.</p>
+        <ul>
+          <li><span class="evidence verified">Verified</span> Opening a local file directly in the preview browser rendered the page without its CSS or JavaScript. The site is served with <code>python -m http.server</code>.</li>
+          <li><span class="evidence verified">Verified</span> A script injected at runtime runs asynchronously. Check the page after it has re-rendered, not immediately.</li>
+          <li><span class="evidence verified">Verified</span> An independent design critique scored the first version 6 out of 10 for design and 5 out of 10 for clarity. Among its findings: the empty state drew 420 fake squares implying data that did not exist; the progress colours ran in opposite directions in two places; the faint text failed contrast; and the page implied the rewrite was finished.</li>
+        </ul>
+      </article>
+
+      <article class="entry" id="precedents">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>Precedents and the repository rule</h2>
+        <p>Publishers have acted against decompilation and recreation projects. The repository therefore holds no decompiled code and no game files, and publishing is the owner's decision. This is a record of events and a project rule, not legal advice.</p>
+        <table role="table">
+          <thead role="rowgroup"><tr role="row">
+            <th role="columnheader">Event</th>
+            <th role="columnheader">When</th>
+            <th role="columnheader">Status and source</th>
+          </tr></thead>
+          <tbody role="rowgroup">
+            <tr role="row">
+              <td role="cell">Take-Two sued the developers of the re3 reverse-engineering project (GTA III and Vice City)</td>
+              <td role="cell" data-label="When">September 2021</td>
+              <td role="cell" data-label="Status and source"><span class="evidence">Inferred</span> Search-result summary of <a href="https://www.gamedeveloper.com/business/rockstar-parent-take-two-sues-modders-behind-i-gta-i-reverse-engineering-project-re3-">Game Developer</a>. A lane also found the original re3 repositories are no longer available.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Stipulation of dismissal filed after an out-of-court settlement on undisclosed terms</td>
+              <td role="cell" data-label="When">3 April 2023</td>
+              <td role="cell" data-label="Status and source"><span class="evidence">Inferred</span> Search-result summaries of <a href="https://www.pcgamer.com/take-two-dismisses-lawsuit-against-grand-theft-auto-modders/">PC Gamer</a> and <a href="https://torrentfreak.com/take-two-dismisses-claims-against-lead-defendants-in-gta-mods-lawsuit-230405/">TorrentFreak</a>.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Modern Warfare 2 decompilation: the developer posted a video, Activision disabled it with a copyright notice, and the associated hosting site became unreachable</td>
+              <td role="cell" data-label="When">From 30 September 2026</td>
+              <td role="cell" data-label="Status and source"><span class="evidence verified">Verified</span> <a href="https://kotaku.com/activision-and-bethesda-crackdown-on-genai-mw2-and-fallout-projects-2000739580">Kotaku</a>.</td>
+            </tr>
+            <tr role="row">
+              <td role="cell">Browser recreation of Fallout: Bethesda sent a cease and desist and the project was abandoned</td>
+              <td role="cell" data-label="When">1 October 2026</td>
+              <td role="cell" data-label="Status and source"><span class="evidence verified">Verified</span> Kotaku, same article.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>The repository rule</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> Rule 1 of AGENTS.md: no decompiled code in any tracked file. That covers decompiler output, disassembly, C or C++ reconstructions and code copied from other reverse-engineering projects. Only structures, symbols and new Rust rewrites may be tracked. If unsure, it counts as decompiled and stays in the ignored private folder. No game files or assets are committed in any form.</li>
+          <li><span class="evidence verified">Verified</span> Rule 2: agents never add a remote, push, upload anything game-derived or post about the project. The owner decides on publishing. Nothing has been pushed.</li>
+          <li><span class="evidence verified">Verified</span> Licences shape what we may read: IV-SDK, IV:MP and LibertyRecomp are GPL, FiveM's loader is reference only, and CLEO Redux is all rights reserved. Read for names and layouts, copy no code.</li>
+          <li>This devlog follows the same rule: no code, disassembly, raw function addresses or game data.</li>
+        </ul>
+      </article>
+
+      <article class="entry" id="upscalers">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>Upscaling, frame generation and ray-tracing denoisers</h2>
+        <p>The four vendor frameworks cannot all be reached from one Vulkan renderer, and two of them are narrower than we assumed. The full reference, with a source link and a verified or inferred label on every claim, is the file <code>documentation/upscaling-and-frame-generation.md</code> in the repository. Read it before designing the renderer.</p>
+        <h3>What changed in the plan</h3>
+        <ul>
+          <li><span class="evidence verified">Verified</span> DLSS 5 exists. NVIDIA's developer blog of 22 September 2026 describes it as neural rendering that needs an RTX 50 series GPU. The page does not say an SDK is available to developers, so the plan targets DLSS 4.5 through the Streamline SDK (<a href="https://developer.nvidia.com/blog/whats-new-for-game-developers-dlss-5-with-3d-guided-neural-rendering-nvidia-ace-updates-and-new-rtx-kit-capabilities/">NVIDIA developer blog</a>). The coordinator opened this page.</li>
+          <li><span class="evidence verified">Verified</span> XeSS frame generation supports DirectX 12 only and works through its own replacement swap chain. XeSS upscaling supports Vulkan (<a href="https://raw.githubusercontent.com/intel/xess/main/doc/xess_fg_developer_guide_english.md">XeSS frame generation guide</a>). The coordinator opened this page.</li>
+          <li><span class="evidence verified">Verified</span> MoltenVK has no ray tracing in any release; the extensions exist only in an open pull request (<a href="https://github.com/KhronosGroup/MoltenVK/pull/2771">MoltenVK pull request 2771</a>). Path tracing on macOS therefore needs a native Metal backend.</li>
+          <li><span class="evidence">Inferred</span> DLSS is reported as unsupported on Windows on ARM64, and XeSS documents x64 only. FSR is the only candidate there and probably needs a rebuild from source.</li>
+          <li><span class="evidence">Inferred</span> MetalFX is reachable only through Metal. FSR on macOS is unconfirmed, so the macOS target lists MetalFX alone.</li>
+          <li><span class="evidence verified">Verified</span> Rust bindings: <code>objc2-metal-fx</code> is maintained; the DLSS and FidelityFX crates are new or placeholders; XeSS has none.</li>
+        </ul>
+        <h3>What the renderer must be designed for</h3>
+        <ul>
+          <li>Every temporal upscaler needs jittered low-resolution colour, depth, per-pixel motion vectors, exposure, and a reset signal on camera cuts.</li>
+          <li>Frame generation also needs the picture without the HUD, the UI separately, and control of presentation: DLSS, FSR and XeSS each bring their own swap chain.</li>
+        </ul>
+        <h3>What is still unknown</h3>
+        <p><span class="evidence">Unknown</span> The exact motion vector, depth and jitter conventions of each framework. The research lane's web reads truncated before those sections of the long guides. A lane with a working shell should read them from cloned repositories before renderer design starts.</p>
+      </article>
+
+      <article class="entry" id="open-questions">
+        <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+        <h2>Open questions</h2>
+        <p>Everything below is unknown as of 2026-10-03. Most of it waits for the game to be installed and phase 0 to run.</p>
+        <ul>
+          <li><span class="evidence">Unknown</span> The compiler version of the Steam executable, to be read from the Rich header, and whether it was built with link-time code generation. If so, function boundaries and calling conventions are less regular and both analysis and comparison get harder.</li>
+          <li><span class="evidence">Unknown</span> Whether the game runs on this machine under emulation, and at what frame rate. No GTA IV report for Snapdragon X Elite or X2 was found, and DXVK has an open failure report there. If it does not run, is an x86 Windows PC available?</li>
+          <li><span class="evidence">Unknown</span> Which audio API the engine uses, and the PC audio codec bytes on disk.</li>
+          <li><span class="evidence">Unknown</span> The exact function count of the PC executable and the split between game and library code. The 31,782, 35,888 and 36,409 figures are for the Xbox 360 build.</li>
+          <li><span class="evidence">Unknown</span> Whether the executable is packed, whether the C runtime is static, and which Bink, D3DX and XInput versions it uses.</li>
+          <li><span class="evidence">Unknown</span> Whether the executable calls Social Club, the Rockstar launcher, Winsock, libcurl or Windows Media directly.</li>
+          <li><span class="evidence">Unknown</span> The render thread split, the Euphoria integration points and the main loop. No public source documents them.</li>
+          <li><span class="evidence">Unknown</span> Which script threads must run for the world to appear. Neither recompilation project documented it. Only the registration of script natives was mapped.</li>
+          <li><span class="evidence">Unknown</span> Whether the PC executable keeps full runtime type information, and how well 360 names match PC functions by slot order.</li>
+          <li><span class="evidence">Unknown</span> Whether the emulator comparison scales to tens of thousands of functions, how large a floating-point tolerance it needs, and whether a CPU emulator library runs well on this ARM64 host.</li>
+          <li><span class="evidence">Unknown</span> The Modern Warfare 2 project's verification method and audit results. The author's two write-ups returned 404.</li>
+          <li><span class="evidence">Unknown</span> Whether and when the repository will be published. That is the owner's decision.</li>
+        </ul>
+      </article>
+
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>LibertyFlux is an independent project. It is not affiliated with, endorsed by or connected to Rockstar Games or Take-Two Interactive. Grand Theft Auto is a trademark of Take-Two Interactive Software.</p>
+  </div>
+</footer>
+
+</body>
+</html>
