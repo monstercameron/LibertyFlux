@@ -1,29 +1,63 @@
 // original: 0x00accca0 audio_voice_xfade_update
+/// Audio voice crossfade update through the global manager.
+///
+/// Builds a blend factor from the fade position (zero past the end, a
+/// scaled span at/below zero, a ratio-clamped ramp in between), adds a
+/// flag-selected tuning offset, clamps the mixed level, then resolves the
+/// output handle twice through the global audio manager's virtual hook
+/// and mixes the final sample with the global crossfade constant.
+/// Returns the resolved handle, or the input record when the voice is
+/// parked (in which case it also flags the record).
 mod fn_00accca0_rt {
-/// Call a planted virtual hook with one stack argument.
+/// Call the virtual sample hook at vtable slot +0x24 on a lookup result.
+///
+/// The original loads the target through the object's vtable and calls it as
+/// thiscall/0, taking the float result from the x87 stack. Both sides land on
+/// the same checker-planted stub; an `f32` return type reads ST0 directly.
 #[inline(always)]
-unsafe fn virt_call1(obj: u32, slot: usize, arg: u32) -> u32 {
+unsafe fn virt_sample(obj: u32) -> f32 {
     let vtable = *(obj as *const u32);
-    let target = *((vtable as *const u8).add(slot) as *const u32);
-    let hook: extern "thiscall" fn(u32, u32) -> u32 = core::mem::transmute(target as usize);
-    hook(obj, arg)
+    let target = *((vtable as *const u8).add(0x24) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> f32 = core::mem::transmute(target as usize);
+    hook(obj)
 }
+
+/// Absolute value through the sign-bit mask, as the original's `andps` does.
 #[inline(always)]
-unsafe fn rd_f(obj: *const u8, off: usize) -> f32 {
-    *(obj.add(off) as *const f32)
+fn f32_abs_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() & 0x7FFF_FFFF)
 }
+
+/// Negation through the sign-bit flip, as the original's `xorps` with -0.0.
 #[inline(always)]
-unsafe fn wr_f(obj: *mut u8, off: usize, v: f32) {
-    *(obj.add(off) as *mut f32) = v;
+fn f32_neg_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() ^ 0x8000_0000)
 }
+
+// ---------------------------------------------------------------------------
+// Bit-exact SSE scalar ops with FORCED operand order.
+//
+// A Rust `a * b` usually compiles to `mulss` with `a` in the destination, but
+// the register allocator is free to swap the operands (it prefers whichever
+// value is already in a register). For ordinary values that is harmless, but
+// when both operands are NaNs with different payloads the destination's NaN
+// wins, so a swap changes the result bits. These helpers implement the Intel
+// rule explicitly (destination NaN wins, quieted; else source NaN; else the
+// hardware op, whose NaN-free inputs make its own operand order irrelevant)
+// so the emitted operand order no longer matters.
+// ---------------------------------------------------------------------------
+
 #[inline(always)]
-unsafe fn rd_32(obj: *const u8, off: usize) -> u32 {
-    *(obj.add(off) as *const u32)
+fn is_nan_bits(b: u32) -> bool {
+    (b & 0x7F80_0000) == 0x7F80_0000 && (b & 0x007F_FFFF) != 0
 }
+
+/// Quiet a NaN the way SSE does (set the Q-bit; already-quiet NaNs unchanged).
 #[inline(always)]
-unsafe fn wr_32(obj: *mut u8, off: usize, v: u32) {
-    *(obj.add(off) as *mut u32) = v;
+fn quiet_bits(b: u32) -> u32 {
+    b | 0x0040_0000
 }
+
 /// `mulss dest, src` with `dest` forced as the NaN winner.
 #[inline(always)]
 fn mul_ss(dest: f32, src: f32) -> f32 {
@@ -37,6 +71,7 @@ fn mul_ss(dest: f32, src: f32) -> f32 {
     }
     dest * src
 }
+
 /// `addss dest, src` with `dest` forced as the NaN winner.
 #[inline(always)]
 fn add_ss(dest: f32, src: f32) -> f32 {
@@ -50,6 +85,7 @@ fn add_ss(dest: f32, src: f32) -> f32 {
     }
     dest + src
 }
+
 /// `subss dest, src` with `dest` forced as the NaN winner.
 #[inline(always)]
 fn sub_ss(dest: f32, src: f32) -> f32 {
@@ -63,6 +99,7 @@ fn sub_ss(dest: f32, src: f32) -> f32 {
     }
     dest - src
 }
+
 /// `divss dest, src` with `dest` forced as the NaN winner.
 #[inline(always)]
 fn div_ss(dest: f32, src: f32) -> f32 {
@@ -76,21 +113,7 @@ fn div_ss(dest: f32, src: f32) -> f32 {
     }
     dest / src
 }
-/// `comiss a, b; ja keep-b; else a`: NaN on either side yields `a`.
-///
-/// Same guarding as `max_ss`: a bare `if a > b { b } else { a }` could be
-/// folded into `minss`/`minnum`, which forward the wrong NaN.
-#[inline(always)]
-fn min_ss(a: f32, b: f32) -> f32 {
-    if is_nan_bits(a.to_bits()) || is_nan_bits(b.to_bits()) {
-        return a;
-    }
-    if a > b {
-        b
-    } else {
-        a
-    }
-}
+
 /// `comiss a, b; ja keep-a; else b`: NaN on either side yields `b`.
 ///
 /// Written with explicit NaN guards so LLVM cannot fold it into a `maxss`
@@ -107,10 +130,1385 @@ fn max_ss(a: f32, b: f32) -> f32 {
         b
     }
 }
+
+/// `comiss a, b; ja keep-b; else a`: NaN on either side yields `a`.
+///
+/// Same guarding as `max_ss`: a bare `if a > b { b } else { a }` could be
+/// folded into `minss`/`minnum`, which forward the wrong NaN.
+#[inline(always)]
+fn min_ss(a: f32, b: f32) -> f32 {
+    if is_nan_bits(a.to_bits()) || is_nan_bits(b.to_bits()) {
+        return a;
+    }
+    if a > b {
+        b
+    } else {
+        a
+    }
+}
+
+/// Call a planted virtual hook at vtable slot +4 returning an integer.
+#[inline(always)]
+unsafe fn virt_query(obj: u32) -> u32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(4) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> u32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Call a planted virtual hook with one stack argument.
+#[inline(always)]
+unsafe fn virt_call1(obj: u32, slot: usize, arg: u32) -> u32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(slot) as *const u32);
+    let hook: extern "thiscall" fn(u32, u32) -> u32 = core::mem::transmute(target as usize);
+    hook(obj, arg)
+}
+/// Call the virtual sample hook at vtable slot +0x24 on a lookup result.
+///
+/// The original loads the target through the object's vtable and calls it as
+/// thiscall/0, taking the float result from the x87 stack. Both sides land on
+/// the same checker-planted stub; an `f32` return type reads ST0 directly.
+#[inline(always)]
+unsafe fn virt_sample(obj: u32) -> f32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(0x24) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> f32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Absolute value through the sign-bit mask, as the original's `andps` does.
+#[inline(always)]
+fn f32_abs_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() & 0x7FFF_FFFF)
+}
+
+/// Negation through the sign-bit flip, as the original's `xorps` with -0.0.
+#[inline(always)]
+fn f32_neg_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() ^ 0x8000_0000)
+}
+
+// ---------------------------------------------------------------------------
+// Bit-exact SSE scalar ops with FORCED operand order.
+//
+// A Rust `a * b` usually compiles to `mulss` with `a` in the destination, but
+// the register allocator is free to swap the operands (it prefers whichever
+// value is already in a register). For ordinary values that is harmless, but
+// when both operands are NaNs with different payloads the destination's NaN
+// wins, so a swap changes the result bits. These helpers implement the Intel
+// rule explicitly (destination NaN wins, quieted; else source NaN; else the
+// hardware op, whose NaN-free inputs make its own operand order irrelevant)
+// so the emitted operand order no longer matters.
+// ---------------------------------------------------------------------------
+
 #[inline(always)]
 fn is_nan_bits(b: u32) -> bool {
     (b & 0x7F80_0000) == 0x7F80_0000 && (b & 0x007F_FFFF) != 0
 }
+
+/// Quiet a NaN the way SSE does (set the Q-bit; already-quiet NaNs unchanged).
+#[inline(always)]
+fn quiet_bits(b: u32) -> u32 {
+    b | 0x0040_0000
+}
+
+/// `mulss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn mul_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest * src
+}
+
+/// `addss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn add_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest + src
+}
+
+/// `subss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn sub_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest - src
+}
+
+/// `divss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn div_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest / src
+}
+
+/// `comiss a, b; ja keep-a; else b`: NaN on either side yields `b`.
+///
+/// Written with explicit NaN guards so LLVM cannot fold it into a `maxss`
+/// or `maxnum` with different NaN forwarding; the fallback runs only on
+/// NaN-free inputs, where any lowering agrees.
+#[inline(always)]
+fn max_ss(a: f32, b: f32) -> f32 {
+    if is_nan_bits(a.to_bits()) || is_nan_bits(b.to_bits()) {
+        return b;
+    }
+    if a > b {
+        a
+    } else {
+        b
+    }
+}
+
+/// `comiss a, b; ja keep-b; else a`: NaN on either side yields `a`.
+///
+/// Same guarding as `max_ss`: a bare `if a > b { b } else { a }` could be
+/// folded into `minss`/`minnum`, which forward the wrong NaN.
+#[inline(always)]
+fn min_ss(a: f32, b: f32) -> f32 {
+    if is_nan_bits(a.to_bits()) || is_nan_bits(b.to_bits()) {
+        return a;
+    }
+    if a > b {
+        b
+    } else {
+        a
+    }
+}
+
+/// Call a planted virtual hook at vtable slot +4 returning an integer.
+#[inline(always)]
+unsafe fn virt_query(obj: u32) -> u32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(4) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> u32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Call a planted virtual hook with one stack argument.
+#[inline(always)]
+unsafe fn virt_call1(obj: u32, slot: usize, arg: u32) -> u32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(slot) as *const u32);
+    let hook: extern "thiscall" fn(u32, u32) -> u32 = core::mem::transmute(target as usize);
+    hook(obj, arg)
+}
+
+#[inline(always)]
+unsafe fn rd_f(obj: *const u8, off: usize) -> f32 {
+    *(obj.add(off) as *const f32)
+}
+/// Call the virtual sample hook at vtable slot +0x24 on a lookup result.
+///
+/// The original loads the target through the object's vtable and calls it as
+/// thiscall/0, taking the float result from the x87 stack. Both sides land on
+/// the same checker-planted stub; an `f32` return type reads ST0 directly.
+#[inline(always)]
+unsafe fn virt_sample(obj: u32) -> f32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(0x24) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> f32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Absolute value through the sign-bit mask, as the original's `andps` does.
+#[inline(always)]
+fn f32_abs_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() & 0x7FFF_FFFF)
+}
+
+/// Negation through the sign-bit flip, as the original's `xorps` with -0.0.
+#[inline(always)]
+fn f32_neg_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() ^ 0x8000_0000)
+}
+
+// ---------------------------------------------------------------------------
+// Bit-exact SSE scalar ops with FORCED operand order.
+//
+// A Rust `a * b` usually compiles to `mulss` with `a` in the destination, but
+// the register allocator is free to swap the operands (it prefers whichever
+// value is already in a register). For ordinary values that is harmless, but
+// when both operands are NaNs with different payloads the destination's NaN
+// wins, so a swap changes the result bits. These helpers implement the Intel
+// rule explicitly (destination NaN wins, quieted; else source NaN; else the
+// hardware op, whose NaN-free inputs make its own operand order irrelevant)
+// so the emitted operand order no longer matters.
+// ---------------------------------------------------------------------------
+
+#[inline(always)]
+fn is_nan_bits(b: u32) -> bool {
+    (b & 0x7F80_0000) == 0x7F80_0000 && (b & 0x007F_FFFF) != 0
+}
+
+/// Quiet a NaN the way SSE does (set the Q-bit; already-quiet NaNs unchanged).
+#[inline(always)]
+fn quiet_bits(b: u32) -> u32 {
+    b | 0x0040_0000
+}
+
+/// `mulss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn mul_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest * src
+}
+
+/// `addss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn add_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest + src
+}
+
+/// `subss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn sub_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest - src
+}
+
+/// `divss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn div_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest / src
+}
+
+/// `comiss a, b; ja keep-a; else b`: NaN on either side yields `b`.
+///
+/// Written with explicit NaN guards so LLVM cannot fold it into a `maxss`
+/// or `maxnum` with different NaN forwarding; the fallback runs only on
+/// NaN-free inputs, where any lowering agrees.
+#[inline(always)]
+fn max_ss(a: f32, b: f32) -> f32 {
+    if is_nan_bits(a.to_bits()) || is_nan_bits(b.to_bits()) {
+        return b;
+    }
+    if a > b {
+        a
+    } else {
+        b
+    }
+}
+
+/// `comiss a, b; ja keep-b; else a`: NaN on either side yields `a`.
+///
+/// Same guarding as `max_ss`: a bare `if a > b { b } else { a }` could be
+/// folded into `minss`/`minnum`, which forward the wrong NaN.
+#[inline(always)]
+fn min_ss(a: f32, b: f32) -> f32 {
+    if is_nan_bits(a.to_bits()) || is_nan_bits(b.to_bits()) {
+        return a;
+    }
+    if a > b {
+        b
+    } else {
+        a
+    }
+}
+
+/// Call a planted virtual hook at vtable slot +4 returning an integer.
+#[inline(always)]
+unsafe fn virt_query(obj: u32) -> u32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(4) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> u32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Call a planted virtual hook with one stack argument.
+#[inline(always)]
+unsafe fn virt_call1(obj: u32, slot: usize, arg: u32) -> u32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(slot) as *const u32);
+    let hook: extern "thiscall" fn(u32, u32) -> u32 = core::mem::transmute(target as usize);
+    hook(obj, arg)
+}
+
+#[inline(always)]
+unsafe fn rd_f(obj: *const u8, off: usize) -> f32 {
+    *(obj.add(off) as *const f32)
+}
+
+#[inline(always)]
+unsafe fn wr_f(obj: *mut u8, off: usize, v: f32) {
+    *(obj.add(off) as *mut f32) = v;
+}
+/// Call the virtual sample hook at vtable slot +0x24 on a lookup result.
+///
+/// The original loads the target through the object's vtable and calls it as
+/// thiscall/0, taking the float result from the x87 stack. Both sides land on
+/// the same checker-planted stub; an `f32` return type reads ST0 directly.
+#[inline(always)]
+unsafe fn virt_sample(obj: u32) -> f32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(0x24) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> f32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Absolute value through the sign-bit mask, as the original's `andps` does.
+#[inline(always)]
+fn f32_abs_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() & 0x7FFF_FFFF)
+}
+
+/// Negation through the sign-bit flip, as the original's `xorps` with -0.0.
+#[inline(always)]
+fn f32_neg_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() ^ 0x8000_0000)
+}
+
+// ---------------------------------------------------------------------------
+// Bit-exact SSE scalar ops with FORCED operand order.
+//
+// A Rust `a * b` usually compiles to `mulss` with `a` in the destination, but
+// the register allocator is free to swap the operands (it prefers whichever
+// value is already in a register). For ordinary values that is harmless, but
+// when both operands are NaNs with different payloads the destination's NaN
+// wins, so a swap changes the result bits. These helpers implement the Intel
+// rule explicitly (destination NaN wins, quieted; else source NaN; else the
+// hardware op, whose NaN-free inputs make its own operand order irrelevant)
+// so the emitted operand order no longer matters.
+// ---------------------------------------------------------------------------
+
+#[inline(always)]
+fn is_nan_bits(b: u32) -> bool {
+    (b & 0x7F80_0000) == 0x7F80_0000 && (b & 0x007F_FFFF) != 0
+}
+
+/// Quiet a NaN the way SSE does (set the Q-bit; already-quiet NaNs unchanged).
+#[inline(always)]
+fn quiet_bits(b: u32) -> u32 {
+    b | 0x0040_0000
+}
+
+/// `mulss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn mul_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest * src
+}
+
+/// `addss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn add_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest + src
+}
+
+/// `subss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn sub_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest - src
+}
+
+/// `divss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn div_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest / src
+}
+
+/// `comiss a, b; ja keep-a; else b`: NaN on either side yields `b`.
+///
+/// Written with explicit NaN guards so LLVM cannot fold it into a `maxss`
+/// or `maxnum` with different NaN forwarding; the fallback runs only on
+/// NaN-free inputs, where any lowering agrees.
+#[inline(always)]
+fn max_ss(a: f32, b: f32) -> f32 {
+    if is_nan_bits(a.to_bits()) || is_nan_bits(b.to_bits()) {
+        return b;
+    }
+    if a > b {
+        a
+    } else {
+        b
+    }
+}
+
+/// `comiss a, b; ja keep-b; else a`: NaN on either side yields `a`.
+///
+/// Same guarding as `max_ss`: a bare `if a > b { b } else { a }` could be
+/// folded into `minss`/`minnum`, which forward the wrong NaN.
+#[inline(always)]
+fn min_ss(a: f32, b: f32) -> f32 {
+    if is_nan_bits(a.to_bits()) || is_nan_bits(b.to_bits()) {
+        return a;
+    }
+    if a > b {
+        b
+    } else {
+        a
+    }
+}
+
+/// Call a planted virtual hook at vtable slot +4 returning an integer.
+#[inline(always)]
+unsafe fn virt_query(obj: u32) -> u32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(4) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> u32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Call a planted virtual hook with one stack argument.
+#[inline(always)]
+unsafe fn virt_call1(obj: u32, slot: usize, arg: u32) -> u32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(slot) as *const u32);
+    let hook: extern "thiscall" fn(u32, u32) -> u32 = core::mem::transmute(target as usize);
+    hook(obj, arg)
+}
+
+#[inline(always)]
+unsafe fn rd_f(obj: *const u8, off: usize) -> f32 {
+    *(obj.add(off) as *const f32)
+}
+
+#[inline(always)]
+unsafe fn wr_f(obj: *mut u8, off: usize, v: f32) {
+    *(obj.add(off) as *mut f32) = v;
+}
+
+#[inline(always)]
+unsafe fn rd_32(obj: *const u8, off: usize) -> u32 {
+    *(obj.add(off) as *const u32)
+}
+/// Call the virtual sample hook at vtable slot +0x24 on a lookup result.
+///
+/// The original loads the target through the object's vtable and calls it as
+/// thiscall/0, taking the float result from the x87 stack. Both sides land on
+/// the same checker-planted stub; an `f32` return type reads ST0 directly.
+#[inline(always)]
+unsafe fn virt_sample(obj: u32) -> f32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(0x24) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> f32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Absolute value through the sign-bit mask, as the original's `andps` does.
+#[inline(always)]
+fn f32_abs_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() & 0x7FFF_FFFF)
+}
+
+/// Negation through the sign-bit flip, as the original's `xorps` with -0.0.
+#[inline(always)]
+fn f32_neg_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() ^ 0x8000_0000)
+}
+
+// ---------------------------------------------------------------------------
+// Bit-exact SSE scalar ops with FORCED operand order.
+//
+// A Rust `a * b` usually compiles to `mulss` with `a` in the destination, but
+// the register allocator is free to swap the operands (it prefers whichever
+// value is already in a register). For ordinary values that is harmless, but
+// when both operands are NaNs with different payloads the destination's NaN
+// wins, so a swap changes the result bits. These helpers implement the Intel
+// rule explicitly (destination NaN wins, quieted; else source NaN; else the
+// hardware op, whose NaN-free inputs make its own operand order irrelevant)
+// so the emitted operand order no longer matters.
+// ---------------------------------------------------------------------------
+
+#[inline(always)]
+fn is_nan_bits(b: u32) -> bool {
+    (b & 0x7F80_0000) == 0x7F80_0000 && (b & 0x007F_FFFF) != 0
+}
+
+/// Quiet a NaN the way SSE does (set the Q-bit; already-quiet NaNs unchanged).
+#[inline(always)]
+fn quiet_bits(b: u32) -> u32 {
+    b | 0x0040_0000
+}
+
+/// `mulss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn mul_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest * src
+}
+
+/// `addss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn add_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest + src
+}
+
+/// `subss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn sub_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest - src
+}
+
+/// `divss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn div_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest / src
+}
+
+/// `comiss a, b; ja keep-a; else b`: NaN on either side yields `b`.
+///
+/// Written with explicit NaN guards so LLVM cannot fold it into a `maxss`
+/// or `maxnum` with different NaN forwarding; the fallback runs only on
+/// NaN-free inputs, where any lowering agrees.
+#[inline(always)]
+fn max_ss(a: f32, b: f32) -> f32 {
+    if is_nan_bits(a.to_bits()) || is_nan_bits(b.to_bits()) {
+        return b;
+    }
+    if a > b {
+        a
+    } else {
+        b
+    }
+}
+
+/// `comiss a, b; ja keep-b; else a`: NaN on either side yields `a`.
+///
+/// Same guarding as `max_ss`: a bare `if a > b { b } else { a }` could be
+/// folded into `minss`/`minnum`, which forward the wrong NaN.
+#[inline(always)]
+fn min_ss(a: f32, b: f32) -> f32 {
+    if is_nan_bits(a.to_bits()) || is_nan_bits(b.to_bits()) {
+        return a;
+    }
+    if a > b {
+        b
+    } else {
+        a
+    }
+}
+
+/// Call a planted virtual hook at vtable slot +4 returning an integer.
+#[inline(always)]
+unsafe fn virt_query(obj: u32) -> u32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(4) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> u32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Call a planted virtual hook with one stack argument.
+#[inline(always)]
+unsafe fn virt_call1(obj: u32, slot: usize, arg: u32) -> u32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(slot) as *const u32);
+    let hook: extern "thiscall" fn(u32, u32) -> u32 = core::mem::transmute(target as usize);
+    hook(obj, arg)
+}
+
+#[inline(always)]
+unsafe fn rd_f(obj: *const u8, off: usize) -> f32 {
+    *(obj.add(off) as *const f32)
+}
+
+#[inline(always)]
+unsafe fn wr_f(obj: *mut u8, off: usize, v: f32) {
+    *(obj.add(off) as *mut f32) = v;
+}
+
+#[inline(always)]
+unsafe fn rd_32(obj: *const u8, off: usize) -> u32 {
+    *(obj.add(off) as *const u32)
+}
+
+#[inline(always)]
+unsafe fn wr_32(obj: *mut u8, off: usize, v: u32) {
+    *(obj.add(off) as *mut u32) = v;
+}
+/// Call the virtual sample hook at vtable slot +0x24 on a lookup result.
+///
+/// The original loads the target through the object's vtable and calls it as
+/// thiscall/0, taking the float result from the x87 stack. Both sides land on
+/// the same checker-planted stub; an `f32` return type reads ST0 directly.
+#[inline(always)]
+unsafe fn virt_sample(obj: u32) -> f32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(0x24) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> f32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Absolute value through the sign-bit mask, as the original's `andps` does.
+#[inline(always)]
+fn f32_abs_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() & 0x7FFF_FFFF)
+}
+
+/// Negation through the sign-bit flip, as the original's `xorps` with -0.0.
+#[inline(always)]
+fn f32_neg_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() ^ 0x8000_0000)
+}
+
+// ---------------------------------------------------------------------------
+// Bit-exact SSE scalar ops with FORCED operand order.
+//
+// A Rust `a * b` usually compiles to `mulss` with `a` in the destination, but
+// the register allocator is free to swap the operands (it prefers whichever
+// value is already in a register). For ordinary values that is harmless, but
+// when both operands are NaNs with different payloads the destination's NaN
+// wins, so a swap changes the result bits. These helpers implement the Intel
+// rule explicitly (destination NaN wins, quieted; else source NaN; else the
+// hardware op, whose NaN-free inputs make its own operand order irrelevant)
+// so the emitted operand order no longer matters.
+// ---------------------------------------------------------------------------
+
+#[inline(always)]
+fn is_nan_bits(b: u32) -> bool {
+    (b & 0x7F80_0000) == 0x7F80_0000 && (b & 0x007F_FFFF) != 0
+}
+
+/// Quiet a NaN the way SSE does (set the Q-bit; already-quiet NaNs unchanged).
+#[inline(always)]
+fn quiet_bits(b: u32) -> u32 {
+    b | 0x0040_0000
+}
+
+/// `mulss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn mul_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest * src
+}
+/// Call the virtual sample hook at vtable slot +0x24 on a lookup result.
+///
+/// The original loads the target through the object's vtable and calls it as
+/// thiscall/0, taking the float result from the x87 stack. Both sides land on
+/// the same checker-planted stub; an `f32` return type reads ST0 directly.
+#[inline(always)]
+unsafe fn virt_sample(obj: u32) -> f32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(0x24) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> f32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Absolute value through the sign-bit mask, as the original's `andps` does.
+#[inline(always)]
+fn f32_abs_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() & 0x7FFF_FFFF)
+}
+
+/// Negation through the sign-bit flip, as the original's `xorps` with -0.0.
+#[inline(always)]
+fn f32_neg_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() ^ 0x8000_0000)
+}
+
+// ---------------------------------------------------------------------------
+// Bit-exact SSE scalar ops with FORCED operand order.
+//
+// A Rust `a * b` usually compiles to `mulss` with `a` in the destination, but
+// the register allocator is free to swap the operands (it prefers whichever
+// value is already in a register). For ordinary values that is harmless, but
+// when both operands are NaNs with different payloads the destination's NaN
+// wins, so a swap changes the result bits. These helpers implement the Intel
+// rule explicitly (destination NaN wins, quieted; else source NaN; else the
+// hardware op, whose NaN-free inputs make its own operand order irrelevant)
+// so the emitted operand order no longer matters.
+// ---------------------------------------------------------------------------
+
+#[inline(always)]
+fn is_nan_bits(b: u32) -> bool {
+    (b & 0x7F80_0000) == 0x7F80_0000 && (b & 0x007F_FFFF) != 0
+}
+
+/// Quiet a NaN the way SSE does (set the Q-bit; already-quiet NaNs unchanged).
+#[inline(always)]
+fn quiet_bits(b: u32) -> u32 {
+    b | 0x0040_0000
+}
+
+/// `mulss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn mul_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest * src
+}
+
+/// `addss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn add_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest + src
+}
+/// Call the virtual sample hook at vtable slot +0x24 on a lookup result.
+///
+/// The original loads the target through the object's vtable and calls it as
+/// thiscall/0, taking the float result from the x87 stack. Both sides land on
+/// the same checker-planted stub; an `f32` return type reads ST0 directly.
+#[inline(always)]
+unsafe fn virt_sample(obj: u32) -> f32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(0x24) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> f32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Absolute value through the sign-bit mask, as the original's `andps` does.
+#[inline(always)]
+fn f32_abs_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() & 0x7FFF_FFFF)
+}
+
+/// Negation through the sign-bit flip, as the original's `xorps` with -0.0.
+#[inline(always)]
+fn f32_neg_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() ^ 0x8000_0000)
+}
+
+// ---------------------------------------------------------------------------
+// Bit-exact SSE scalar ops with FORCED operand order.
+//
+// A Rust `a * b` usually compiles to `mulss` with `a` in the destination, but
+// the register allocator is free to swap the operands (it prefers whichever
+// value is already in a register). For ordinary values that is harmless, but
+// when both operands are NaNs with different payloads the destination's NaN
+// wins, so a swap changes the result bits. These helpers implement the Intel
+// rule explicitly (destination NaN wins, quieted; else source NaN; else the
+// hardware op, whose NaN-free inputs make its own operand order irrelevant)
+// so the emitted operand order no longer matters.
+// ---------------------------------------------------------------------------
+
+#[inline(always)]
+fn is_nan_bits(b: u32) -> bool {
+    (b & 0x7F80_0000) == 0x7F80_0000 && (b & 0x007F_FFFF) != 0
+}
+
+/// Quiet a NaN the way SSE does (set the Q-bit; already-quiet NaNs unchanged).
+#[inline(always)]
+fn quiet_bits(b: u32) -> u32 {
+    b | 0x0040_0000
+}
+
+/// `mulss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn mul_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest * src
+}
+
+/// `addss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn add_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest + src
+}
+
+/// `subss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn sub_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest - src
+}
+/// Call the virtual sample hook at vtable slot +0x24 on a lookup result.
+///
+/// The original loads the target through the object's vtable and calls it as
+/// thiscall/0, taking the float result from the x87 stack. Both sides land on
+/// the same checker-planted stub; an `f32` return type reads ST0 directly.
+#[inline(always)]
+unsafe fn virt_sample(obj: u32) -> f32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(0x24) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> f32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Absolute value through the sign-bit mask, as the original's `andps` does.
+#[inline(always)]
+fn f32_abs_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() & 0x7FFF_FFFF)
+}
+
+/// Negation through the sign-bit flip, as the original's `xorps` with -0.0.
+#[inline(always)]
+fn f32_neg_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() ^ 0x8000_0000)
+}
+
+// ---------------------------------------------------------------------------
+// Bit-exact SSE scalar ops with FORCED operand order.
+//
+// A Rust `a * b` usually compiles to `mulss` with `a` in the destination, but
+// the register allocator is free to swap the operands (it prefers whichever
+// value is already in a register). For ordinary values that is harmless, but
+// when both operands are NaNs with different payloads the destination's NaN
+// wins, so a swap changes the result bits. These helpers implement the Intel
+// rule explicitly (destination NaN wins, quieted; else source NaN; else the
+// hardware op, whose NaN-free inputs make its own operand order irrelevant)
+// so the emitted operand order no longer matters.
+// ---------------------------------------------------------------------------
+
+#[inline(always)]
+fn is_nan_bits(b: u32) -> bool {
+    (b & 0x7F80_0000) == 0x7F80_0000 && (b & 0x007F_FFFF) != 0
+}
+
+/// Quiet a NaN the way SSE does (set the Q-bit; already-quiet NaNs unchanged).
+#[inline(always)]
+fn quiet_bits(b: u32) -> u32 {
+    b | 0x0040_0000
+}
+
+/// `mulss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn mul_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest * src
+}
+
+/// `addss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn add_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest + src
+}
+
+/// `subss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn sub_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest - src
+}
+
+/// `divss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn div_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest / src
+}
+/// Call the virtual sample hook at vtable slot +0x24 on a lookup result.
+///
+/// The original loads the target through the object's vtable and calls it as
+/// thiscall/0, taking the float result from the x87 stack. Both sides land on
+/// the same checker-planted stub; an `f32` return type reads ST0 directly.
+#[inline(always)]
+unsafe fn virt_sample(obj: u32) -> f32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(0x24) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> f32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Absolute value through the sign-bit mask, as the original's `andps` does.
+#[inline(always)]
+fn f32_abs_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() & 0x7FFF_FFFF)
+}
+
+/// Negation through the sign-bit flip, as the original's `xorps` with -0.0.
+#[inline(always)]
+fn f32_neg_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() ^ 0x8000_0000)
+}
+
+// ---------------------------------------------------------------------------
+// Bit-exact SSE scalar ops with FORCED operand order.
+//
+// A Rust `a * b` usually compiles to `mulss` with `a` in the destination, but
+// the register allocator is free to swap the operands (it prefers whichever
+// value is already in a register). For ordinary values that is harmless, but
+// when both operands are NaNs with different payloads the destination's NaN
+// wins, so a swap changes the result bits. These helpers implement the Intel
+// rule explicitly (destination NaN wins, quieted; else source NaN; else the
+// hardware op, whose NaN-free inputs make its own operand order irrelevant)
+// so the emitted operand order no longer matters.
+// ---------------------------------------------------------------------------
+
+#[inline(always)]
+fn is_nan_bits(b: u32) -> bool {
+    (b & 0x7F80_0000) == 0x7F80_0000 && (b & 0x007F_FFFF) != 0
+}
+
+/// Quiet a NaN the way SSE does (set the Q-bit; already-quiet NaNs unchanged).
+#[inline(always)]
+fn quiet_bits(b: u32) -> u32 {
+    b | 0x0040_0000
+}
+
+/// `mulss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn mul_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest * src
+}
+
+/// `addss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn add_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest + src
+}
+
+/// `subss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn sub_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest - src
+}
+
+/// `divss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn div_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest / src
+}
+
+/// `comiss a, b; ja keep-a; else b`: NaN on either side yields `b`.
+///
+/// Written with explicit NaN guards so LLVM cannot fold it into a `maxss`
+/// or `maxnum` with different NaN forwarding; the fallback runs only on
+/// NaN-free inputs, where any lowering agrees.
+#[inline(always)]
+fn max_ss(a: f32, b: f32) -> f32 {
+    if is_nan_bits(a.to_bits()) || is_nan_bits(b.to_bits()) {
+        return b;
+    }
+    if a > b {
+        a
+    } else {
+        b
+    }
+}
+
+/// `comiss a, b; ja keep-b; else a`: NaN on either side yields `a`.
+///
+/// Same guarding as `max_ss`: a bare `if a > b { b } else { a }` could be
+/// folded into `minss`/`minnum`, which forward the wrong NaN.
+#[inline(always)]
+fn min_ss(a: f32, b: f32) -> f32 {
+    if is_nan_bits(a.to_bits()) || is_nan_bits(b.to_bits()) {
+        return a;
+    }
+    if a > b {
+        b
+    } else {
+        a
+    }
+}
+/// Call the virtual sample hook at vtable slot +0x24 on a lookup result.
+///
+/// The original loads the target through the object's vtable and calls it as
+/// thiscall/0, taking the float result from the x87 stack. Both sides land on
+/// the same checker-planted stub; an `f32` return type reads ST0 directly.
+#[inline(always)]
+unsafe fn virt_sample(obj: u32) -> f32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(0x24) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> f32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Absolute value through the sign-bit mask, as the original's `andps` does.
+#[inline(always)]
+fn f32_abs_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() & 0x7FFF_FFFF)
+}
+
+/// Negation through the sign-bit flip, as the original's `xorps` with -0.0.
+#[inline(always)]
+fn f32_neg_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() ^ 0x8000_0000)
+}
+
+// ---------------------------------------------------------------------------
+// Bit-exact SSE scalar ops with FORCED operand order.
+//
+// A Rust `a * b` usually compiles to `mulss` with `a` in the destination, but
+// the register allocator is free to swap the operands (it prefers whichever
+// value is already in a register). For ordinary values that is harmless, but
+// when both operands are NaNs with different payloads the destination's NaN
+// wins, so a swap changes the result bits. These helpers implement the Intel
+// rule explicitly (destination NaN wins, quieted; else source NaN; else the
+// hardware op, whose NaN-free inputs make its own operand order irrelevant)
+// so the emitted operand order no longer matters.
+// ---------------------------------------------------------------------------
+
+#[inline(always)]
+fn is_nan_bits(b: u32) -> bool {
+    (b & 0x7F80_0000) == 0x7F80_0000 && (b & 0x007F_FFFF) != 0
+}
+
+/// Quiet a NaN the way SSE does (set the Q-bit; already-quiet NaNs unchanged).
+#[inline(always)]
+fn quiet_bits(b: u32) -> u32 {
+    b | 0x0040_0000
+}
+
+/// `mulss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn mul_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest * src
+}
+
+/// `addss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn add_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest + src
+}
+
+/// `subss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn sub_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest - src
+}
+
+/// `divss dest, src` with `dest` forced as the NaN winner.
+#[inline(always)]
+fn div_ss(dest: f32, src: f32) -> f32 {
+    let db = dest.to_bits();
+    let sb = src.to_bits();
+    if is_nan_bits(db) {
+        return f32::from_bits(quiet_bits(db));
+    }
+    if is_nan_bits(sb) {
+        return f32::from_bits(quiet_bits(sb));
+    }
+    dest / src
+}
+
+/// `comiss a, b; ja keep-a; else b`: NaN on either side yields `b`.
+///
+/// Written with explicit NaN guards so LLVM cannot fold it into a `maxss`
+/// or `maxnum` with different NaN forwarding; the fallback runs only on
+/// NaN-free inputs, where any lowering agrees.
+#[inline(always)]
+fn max_ss(a: f32, b: f32) -> f32 {
+    if is_nan_bits(a.to_bits()) || is_nan_bits(b.to_bits()) {
+        return b;
+    }
+    if a > b {
+        a
+    } else {
+        b
+    }
+}
+/// Call the virtual sample hook at vtable slot +0x24 on a lookup result.
+///
+/// The original loads the target through the object's vtable and calls it as
+/// thiscall/0, taking the float result from the x87 stack. Both sides land on
+/// the same checker-planted stub; an `f32` return type reads ST0 directly.
+#[inline(always)]
+unsafe fn virt_sample(obj: u32) -> f32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(0x24) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> f32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Absolute value through the sign-bit mask, as the original's `andps` does.
+#[inline(always)]
+fn f32_abs_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() & 0x7FFF_FFFF)
+}
+
+/// Negation through the sign-bit flip, as the original's `xorps` with -0.0.
+#[inline(always)]
+fn f32_neg_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() ^ 0x8000_0000)
+}
+
+// ---------------------------------------------------------------------------
+// Bit-exact SSE scalar ops with FORCED operand order.
+//
+// A Rust `a * b` usually compiles to `mulss` with `a` in the destination, but
+// the register allocator is free to swap the operands (it prefers whichever
+// value is already in a register). For ordinary values that is harmless, but
+// when both operands are NaNs with different payloads the destination's NaN
+// wins, so a swap changes the result bits. These helpers implement the Intel
+// rule explicitly (destination NaN wins, quieted; else source NaN; else the
+// hardware op, whose NaN-free inputs make its own operand order irrelevant)
+// so the emitted operand order no longer matters.
+// ---------------------------------------------------------------------------
+
+#[inline(always)]
+fn is_nan_bits(b: u32) -> bool {
+    (b & 0x7F80_0000) == 0x7F80_0000 && (b & 0x007F_FFFF) != 0
+}
+/// Call the virtual sample hook at vtable slot +0x24 on a lookup result.
+///
+/// The original loads the target through the object's vtable and calls it as
+/// thiscall/0, taking the float result from the x87 stack. Both sides land on
+/// the same checker-planted stub; an `f32` return type reads ST0 directly.
+#[inline(always)]
+unsafe fn virt_sample(obj: u32) -> f32 {
+    let vtable = *(obj as *const u32);
+    let target = *((vtable as *const u8).add(0x24) as *const u32);
+    let hook: extern "thiscall" fn(u32) -> f32 = core::mem::transmute(target as usize);
+    hook(obj)
+}
+
+/// Absolute value through the sign-bit mask, as the original's `andps` does.
+#[inline(always)]
+fn f32_abs_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() & 0x7FFF_FFFF)
+}
+
+/// Negation through the sign-bit flip, as the original's `xorps` with -0.0.
+#[inline(always)]
+fn f32_neg_bits(x: f32) -> f32 {
+    f32::from_bits(x.to_bits() ^ 0x8000_0000)
+}
+
+// ---------------------------------------------------------------------------
+// Bit-exact SSE scalar ops with FORCED operand order.
+//
+// A Rust `a * b` usually compiles to `mulss` with `a` in the destination, but
+// the register allocator is free to swap the operands (it prefers whichever
+// value is already in a register). For ordinary values that is harmless, but
+// when both operands are NaNs with different payloads the destination's NaN
+// wins, so a swap changes the result bits. These helpers implement the Intel
+// rule explicitly (destination NaN wins, quieted; else source NaN; else the
+// hardware op, whose NaN-free inputs make its own operand order irrelevant)
+// so the emitted operand order no longer matters.
+// ---------------------------------------------------------------------------
+
+#[inline(always)]
+fn is_nan_bits(b: u32) -> bool {
+    (b & 0x7F80_0000) == 0x7F80_0000 && (b & 0x007F_FFFF) != 0
+}
+
 /// Quiet a NaN the way SSE does (set the Q-bit; already-quiet NaNs unchanged).
 #[inline(always)]
 fn quiet_bits(b: u32) -> u32 {
@@ -119,15 +1517,6 @@ fn quiet_bits(b: u32) -> u32 {
 }
 use self::fn_00accca0_rt::*;
 
-/// Audio voice crossfade update through the global manager.
-///
-/// Builds a blend factor from the fade position (zero past the end, a
-/// scaled span at/below zero, a ratio-clamped ramp in between), adds a
-/// flag-selected tuning offset, clamps the mixed level, then resolves the
-/// output handle twice through the global audio manager's virtual hook
-/// and mixes the final sample with the global crossfade constant.
-/// Returns the resolved handle, or the input record when the voice is
-/// parked (in which case it also flags the record).
 export!(thiscall, rw_00accca0(obj: *mut u8, arg0: u32) -> u32 {
     unsafe {
         // Blend factor from the fade position: zero past the end, a scaled

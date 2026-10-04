@@ -25137,6 +25137,285 @@
   "lane": "r-s227"
  },
  {
+  "address": "0x009FD120",
+  "name": "fragInstGta::vf0",
+  "kind": "function",
+  "file": "functions/fn_009fd120.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FD190",
+  "name": "atSingleton<rage::fragTuneStruct>::vf0",
+  "kind": "function",
+  "file": "functions/fn_009fd190.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FD1C0",
+  "name": "frag_typed_dispatch",
+  "kind": "function",
+  "file": "functions/fn_009fd1c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FD220",
+  "name": "frag_ready_flag",
+  "kind": "function",
+  "file": "functions/fn_009fd220.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FD240",
+  "name": "frag_drain_pending",
+  "kind": "function",
+  "file": "functions/fn_009fd240.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FD270",
+  "name": "frag_space_notify",
+  "kind": "function",
+  "file": "functions/fn_009fd270.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FD320",
+  "name": "frag_schedule_side_a",
+  "kind": "function",
+  "file": "functions/fn_009fd320.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FD350",
+  "name": "frag_schedule_side_b",
+  "kind": "function",
+  "file": "functions/fn_009fd350.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FD380",
+  "name": "frag_side_a_callback",
+  "kind": "function",
+  "file": "functions/fn_009fd380.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FD3D0",
+  "name": "frag_side_b_callback",
+  "kind": "function",
+  "file": "functions/fn_009fd3d0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FD420",
+  "name": "frag_member_or_null",
+  "kind": "function",
+  "file": "functions/fn_009fd420.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FD440",
+  "name": "frag_classify_probe",
+  "kind": "function",
+  "file": "functions/fn_009fd440.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FD490",
+  "name": "frag_triple_table_find",
+  "kind": "function",
+  "file": "functions/fn_009fd490.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FD510",
+  "name": "frag_pool_init",
+  "kind": "function",
+  "file": "functions/fn_009fd510.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FDFB0",
+  "name": "frag_pools_init",
+  "kind": "function",
+  "file": "functions/fn_009fdfb0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FE020",
+  "name": "frag_pools_drain",
+  "kind": "function",
+  "file": "functions/fn_009fe020.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FE040",
+  "name": "frag_list_insert_head",
+  "kind": "function",
+  "file": "functions/fn_009fe040.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FE060",
+  "name": "frag_freelist_take",
+  "kind": "function",
+  "file": "functions/fn_009fe060.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FE0A0",
+  "name": "frag_batch_refresh",
+  "kind": "function",
+  "file": "functions/fn_009fe0a0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FE1D0",
+  "name": "frag_pair_update_guarded",
+  "kind": "function",
+  "file": "functions/fn_009fe1d0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FF280",
+  "name": "frag_triple_table_append",
+  "kind": "function",
+  "file": "functions/fn_009ff280.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FF2C0",
+  "name": "frag_list_unlink",
+  "kind": "function",
+  "file": "functions/fn_009ff2c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FF2E0",
+  "name": "frag_node_move_to_obj",
+  "kind": "function",
+  "file": "functions/fn_009ff2e0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FF300",
+  "name": "frag_push_default_vector",
+  "kind": "function",
+  "file": "functions/fn_009ff300.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FF540",
+  "name": "frag_watch_list_sweep",
+  "kind": "function",
+  "file": "functions/fn_009ff540.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FF7A0",
+  "name": "frag_vector_scale_submit",
+  "kind": "function",
+  "file": "functions/fn_009ff7a0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FF7F0",
+  "name": "frag_buffer_release",
+  "kind": "function",
+  "file": "functions/fn_009ff7f0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FFAA0",
+  "name": "frag_side_a_followup",
+  "kind": "function",
+  "file": "functions/fn_009ffaa0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FFAD0",
+  "name": "frag_side_b_followup",
+  "kind": "function",
+  "file": "functions/fn_009ffad0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FFEB0",
+  "name": "frag_dual_probe",
+  "kind": "function",
+  "file": "functions/fn_009ffeb0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x009FFF10",
+  "name": "frag_named_slot_add",
+  "kind": "function",
+  "file": "functions/fn_009fff10.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
   "address": "0x00A00380",
   "name": "ADD_OBJECT_TO_INTERIOR_ROOM_BY_KEY",
   "kind": "native",
@@ -26451,6 +26730,33 @@
   "lane": "a-06"
  },
  {
+  "address": "0x00A02790",
+  "name": "frag_ray_pair_cast_a",
+  "kind": "function",
+  "file": "functions/fn_00a02790.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x00A029B0",
+  "name": "frag_ray_pair_cast_b",
+  "kind": "function",
+  "file": "functions/fn_00a029b0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
+  "address": "0x00A04360",
+  "name": "frag_traced_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00a04360.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s294"
+ },
+ {
   "address": "0x00A2B1F0",
   "name": "NativeImpl_SET_PLAYER_GROUP_TO_FOLLOW_ALWAYS",
   "kind": "function",
@@ -26998,6 +27304,186 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b167"
+ },
+ {
+  "address": "0x00A6D3A0",
+  "name": "CTaskSimplePauseSystemTimer::vf0",
+  "kind": "function",
+  "file": "functions/fn_00a6d3a0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6E140",
+  "name": "task_request_with_followup",
+  "kind": "function",
+  "file": "functions/fn_00a6e140.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6EBB0",
+  "name": "task_attach_by_tag_and_slot",
+  "kind": "function",
+  "file": "functions/fn_00a6ebb0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6EC80",
+  "name": "task_gate_by_meter_and_kind",
+  "kind": "function",
+  "file": "functions/fn_00a6ec80.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6ED60",
+  "name": "task_request_abort_or_release",
+  "kind": "function",
+  "file": "functions/fn_00a6ed60.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6EDC0",
+  "name": "CTaskComplexPlayerGun::vf1",
+  "kind": "function",
+  "file": "functions/fn_00a6edc0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6EDE0",
+  "name": "CTaskComplexPlayerIdles::vf1",
+  "kind": "function",
+  "file": "functions/fn_00a6ede0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6EE00",
+  "name": "CTaskComplexPlayerInCover::vf1",
+  "kind": "function",
+  "file": "functions/fn_00a6ee00.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6EE30",
+  "name": "CTaskComplexPlayerOnFoot::vf1",
+  "kind": "function",
+  "file": "functions/fn_00a6ee30.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6EE70",
+  "name": "CTaskComplexPlayerPlaceCarBomb::vf1",
+  "kind": "function",
+  "file": "functions/fn_00a6ee70.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6EEA0",
+  "name": "CTaskSimpleMoveInAir::vf1",
+  "kind": "function",
+  "file": "functions/fn_00a6eea0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6EED0",
+  "name": "CTaskSimpleMovePlayer::vf1",
+  "kind": "function",
+  "file": "functions/fn_00a6eed0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6EEF0",
+  "name": "CTaskSimpleMoveSwim::vf1",
+  "kind": "function",
+  "file": "functions/fn_00a6eef0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6EF10",
+  "name": "CTaskSimplePauseSystemTimer::vf1",
+  "kind": "function",
+  "file": "functions/fn_00a6ef10.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6EF60",
+  "name": "CEventAcquaintancePedDislike::vf21",
+  "kind": "function",
+  "file": "functions/fn_00a6ef60.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6F8B0",
+  "name": "CTaskComplexPlayerInCover::vf20",
+  "kind": "function",
+  "file": "functions/fn_00a6f8b0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A70990",
+  "name": "CTaskComplexPlayerPlaceCarBomb::vf20",
+  "kind": "function",
+  "file": "functions/fn_00a70990.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A70C40",
+  "name": "CTaskComplexPlayerIdles::vf18",
+  "kind": "function",
+  "file": "functions/fn_00a70c40.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A71040",
+  "name": "CTaskComplexPlayerOnFoot::vf19",
+  "kind": "function",
+  "file": "functions/fn_00a71040.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
+ },
+ {
+  "address": "0x00A712C0",
+  "name": "CTaskComplexPlayerGun::vf18",
+  "kind": "function",
+  "file": "functions/fn_00a712c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s300"
  },
  {
   "address": "0x00A712F0",
@@ -57094,6 +57580,33 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b163"
+ },
+ {
+  "address": "0x00D80C10",
+  "name": "refresh_cached_selection",
+  "kind": "function",
+  "file": "functions/fn_00d80c10.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b215"
+ },
+ {
+  "address": "0x00D80EA0",
+  "name": "sweep_tile_window",
+  "kind": "function",
+  "file": "functions/fn_00d80ea0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b215"
+ },
+ {
+  "address": "0x00D815C0",
+  "name": "scan_box_commit_matches",
+  "kind": "function",
+  "file": "functions/fn_00d815c0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b215"
  },
  {
   "address": "0x00D81E30",
