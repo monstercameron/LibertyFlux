@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#naming-07">Naming the leaderboard factory run: stub shape, dispatch table, and boundary traps</a></li>
       <li><a href="#production-b184">Four input-UI functions: three verified, and a checker blind spot found with mutants</a></li>
       <li><a href="#naming-06">Naming a record-and-effects batch: three evidence traps</a></li>
       <li><a href="#lift-pilot">First pilot of the 64-bit lift: what it costs and what gets in the way</a></li>
@@ -341,6 +342,34 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="naming-07">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Naming the leaderboard factory run: stub shape, dispatch table, and boundary traps</h2>
+      <p>A batch of 150 consecutive functions turned out to be one leaderboard slice: nearly a hundred identical factory stubs, a dozen inventory entries that each span dozens of stubs, and a tail of leaderboard runtime code. 130 of the 150 got names; the rest are inventory artifacts or opaque, and are documented as such.</p>
+      <h3>What was asked</h3>
+      <p>Name each function in the batch from static evidence, with confidence levels, continuing the project's naming conventions.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> Every factory stub has the same shape: push a size constant, call one shared encrypted helper, then construct one specific leaderboard info object. The pushed constant is identical everywhere, so the only naming signal per stub is the constructor it calls, whose class is already in the merged symbol table.</li>
+      <li><span class="evidence verified">Verified</span> A one-byte entry listed as a function is really the base of a 481-entry jump table, and every entry points at factory-stub code. It is the leaderboard factory dispatcher.</li>
+      <li><span class="evidence verified">Verified</span> The leaderboard info vtable layout pins each virtual slot: a name getter returning the schema string, an entry-count getter, key search, indexed access, a column-size mapping, and a column-type mapping. Two slots are one shared implementation across all leaderboard types.</li>
+      <li><span class="evidence verified">Verified</span> Three tail entries start in cold code placed after a return instruction, in padding, or in jump-table data. They are not functions and were left unnamed with the reason recorded.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Stub names continue the adjacent run's convention, one name per leaderboard schema. The per-stub mapping for the whole region is stored as data so the mis-split inventory spans can be re-cut without redoing the analysis.</li>
+      <li>Virtual slots are named for observed behaviour with the class attached, since caller and callee names do not exist anywhere in this code cluster and the shared helpers sit in the encrypted region.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble each batch entry from the memory-mapped image, extract the constructor call target of each stub, and look the target up in the merged symbol table to get the leaderboard class. For the tail, disassemble each function fully, resolve data references to find vtable membership, and read the vtable slots in order.</p>
+      <h3>What was confusing or went wrong</h3>
+      <ul>
+      <li>An early duplicate detector normalised away all constants and falsely paired two getters returning different values. Fixed before naming by comparing real behaviour.</li>
+      <li>A helper script named after a standard library module broke its own imports; renaming it fixed the run.</li>
+      <li>Shell output redirection produced a UTF-16 file that was painful to read; later scripts wrote their own UTF-8 output files instead.</li>
+      </ul>
+      </article>
 
       <article class="entry" id="production-b184">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
