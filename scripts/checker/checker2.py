@@ -800,7 +800,10 @@ def run_contract(w, contract, export, trials, seed, stop_after_fails=None):
             return {"error": "worker-lost", "results": results}
         if check_names is None:
             check_names = [c["name"] for c in r.get("checks", [])]
-        results.append(r)
+        # Keep only what the verdict and the coverage report read. A full
+        # trial response carries every compared word; holding a thousand of
+        # them per contract drove this process past 8 GB on long runs.
+        results.append(_slim(r))
         if not r.get("pass"):
             fails += 1
             if first_fail is None:
@@ -827,6 +830,21 @@ def run_contract(w, contract, export, trials, seed, stop_after_fails=None):
     return {"results": results, "fails": fails, "first_fail": first_fail,
             "wall_s": wall, "check_names": check_names or [],
             "status_hist": hist, "call_coverage": cov}
+
+
+def _slim(r):
+    """The fields of one trial response that verdict() and coverage_of() use."""
+    def side(s):
+        s = s or {}
+        return {"status": s.get("status"),
+                "calls": [{"id": c.get("id")} for c in (s.get("calls") or [])],
+                "heap_n": s.get("heap_n"), "stack_n": s.get("stack_n"),
+                "globals_writes": bool(s.get("globals_writes"))}
+    return {"pass": r.get("pass"),
+            "checks": [{"name": c.get("name"), "passed": c.get("passed")}
+                       for c in r.get("checks", [])],
+            "fp_exact": r.get("fp_exact"), "trial_us": r.get("trial_us", 0),
+            "orig": side(r.get("orig")), "rw": side(r.get("rw"))}
 
 
 def coverage_of(contract, results):

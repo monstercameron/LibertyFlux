@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Checker driver: stop keeping every trial's full response in memory",
+    "commit": null,
+    "summary": "Fixes the memory growth that twice brought the machine close to running out of memory.",
+    "changes": [
+      "The driver kept the worker's complete response for every trial of every contract; with full data comparison on, a long run grew past 8 GB.",
+      "It now keeps only the fields the verdict and the coverage report read: pass flag, check results, statuses, call ids and write counts. The full response is kept for the first failing trial only, as before.",
+      "Checked on six proof contracts including one designed to fail: verdicts, wrong-rewrite detection and the designed failure are unchanged."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 43 more functions pass the checker (4612 in total)",
     "commit": "b09211a2b71b367dcd32241c8bcce7c6c5a8b3d8",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
