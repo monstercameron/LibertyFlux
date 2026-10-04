@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Rewrites: 20 more functions pass the checker (7447 in total)",
+    "title": "Scripts: the devlog scan no longer contains an account name",
     "commit": null,
+    "summary": "A check meant to keep a machine account name out of the devlog had that name written in it.",
+    "changes": [
+      "The script that screens devlog fragments before they are published looked for a machine account name by spelling it out, which put the name in a public file. It now takes the name from the machine at run time.",
+      "The publication check does the same when it runs on a personal machine, so a name of that kind in any tracked text file is reported before a push. On a build machine there is no personal account and that part does nothing.",
+      "Found by the lane that cleaned the operating scripts for the repository."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Rewrites: 20 more functions pass the checker (7447 in total)",
+    "commit": "9b85a75094eaa5082247823993c0023d988425a9",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "20 rewrites added under rewrites/pending: 0 script native handlers and 20 other functions.",

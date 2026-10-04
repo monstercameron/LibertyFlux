@@ -11,6 +11,7 @@ paths, user names, byte dumps, long hex strings, scripts, inline styles, or more
 Use --force only after reading the fragment and deciding a flagged item is harmless.
 """
 
+import getpass
 import re
 import sys
 from pathlib import Path
@@ -18,11 +19,17 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DEVLOG = ROOT / "docs" / "devlog.html"
 
+# The account name is taken from the machine at run time: writing it here would publish it.
+try:
+    ACCOUNT = re.compile(re.escape(getpass.getuser()), re.I)
+except Exception:  # no account name available: this one check has nothing to match
+    ACCOUNT = re.compile(r"(?!x)x")
+
 CHECKS = [
     ("hexadecimal address", re.compile(r"\b0x[0-9A-Fa-f]{5,}\b")),
     ("auto-generated function label", re.compile(r"\b(?:sub|FUN|loc|dword|off)_[0-9A-Fa-f]{5,}\b")),
     ("local path", re.compile(r"\b[A-Za-z]:\\")),
-    ("user name", re.compile(r"mreca", re.I)),
+    ("user name", ACCOUNT),
     ("byte dump", re.compile(r"(?:\b[0-9A-Fa-f]{2}\s){8,}")),
     ("long hex string", re.compile(r"\b[0-9A-Fa-f]{32,}\b")),
     ("script or style", re.compile(r"<script|<style|\sstyle=|<pre|<img|<iframe", re.I)),
