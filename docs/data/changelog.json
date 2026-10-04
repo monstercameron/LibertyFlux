@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: Checker version 3: closing the ways a wrong rewrite could pass",
+    "commit": null,
+    "summary": "Findings from the k-checker3 lane.",
+    "changes": [
+      "New devlog entry: Checker version 3: closing the ways a wrong rewrite could pass.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 43 more functions pass the checker (4244 in total)",
     "commit": "bcab8e4add50a69a72d36742c6627904942fab30",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

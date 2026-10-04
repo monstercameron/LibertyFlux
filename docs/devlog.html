@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#checker-v3">Checker version 3: closing the ways a wrong rewrite could pass</a></li>
       <li><a href="#production-n118">Verifying native handlers whose bool arguments carry garbage high bytes</a></li>
       <li><a href="#production-b45">Four audio functions verified, and one that ships garbage in a field</a></li>
       <li><a href="#production-n116">First jump-thunk native verified, via a checker tail-call fix</a></li>
@@ -263,6 +264,32 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="checker-v3">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Checker version 3: closing the ways a wrong rewrite could pass</h2>
+      <p>Version 3 of the differential checker fixes seven proven ways a wrong rewrite could pass or a correct one could fail, plus one partial fix, across eight work items. Every fix was proven against the real lane cases that reported it: a correct rewrite passes and a deliberately wrong one fails. The full proof suite still behaves exactly as before.</p>
+      <h3>What was asked</h3>
+      <p>Production and re-run lanes had found defects and gaps in checker version 2: nearly constant random fills, verdicts that passed without comparing anything, call arguments past the eighth going uncompared, wild input pointers misreported as cheating, missing second vector register support, no per-call answer sequences for polled callees, mislogged tail-call arguments, and input forms that stopped older contracts from being ported.</p>
+      <h3>What was found</h3>
+      <p>Each reported defect reproduced on the version 2 code before it was fixed:</p>
+      <ul>
+      <li><span class="evidence verified">Verified</span> Trial pairs shared identical first fill words because the generator seed erased the bit consecutive trials differ in.</li>
+      <li><span class="evidence verified">Verified</span> An overstated callee argument count made every trial fault identically on both sides and pass with zero completed trials.</li>
+      <li><span class="evidence verified">Verified</span> A fifteen-argument call with two late arguments swapped passed, because only the first eight were logged; callee-cleaned calls past eight arguments also popped too few bytes and corrupted the frame.</li>
+      <li><span class="evidence verified">Verified</span> One trial in a thousand drew a wild pointer into the original code pages, where the faithful rewrite was misreported as cheating.</li>
+      <li><span class="evidence verified">Verified</span> Tail-call stubs logged the return address instead of the forwarded argument for calls with stack arguments.</li>
+      <li><span class="evidence verified">Verified</span> Three older contract forms crashed the version 2 driver or silently tested fewer input combinations than designed.</li>
+      </ul>
+      <p>Two more gaps were confirmed by reading the worker source: no second vector register channel at calls, and one scripted answer shared by every call in a trial.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Fills are now a per-word hash that varies across trials, ranges and words. A verdict with no failures still fails as vacuous unless a stated share of trials completed, every enabled check ran, and every declared callee fired; coverage is reported in every verdict. All call arguments up to forty are logged and compared, wider contracts are rejected loudly, and stubs pop the full count. Random draws never land in the original code pages while authored values are untouched, and cheat detection is unchanged. Callees gained second vector register logging with a rewrite-side transport, and per-call answer sequences for polled loops. Older contracts run unchanged: every addition is optional.</p>
+      <p>Contracts that used the old random fills should be re-run under the fixed worker. The second vector register channel still wants a real-function proof once a rewrite lane takes one of the two deferred cases with the provided retry kits.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the worker and proof library for 32-bit x86 from the repository root, then run the driver over all proof contracts: every correct export passes except the three documented negatives, every declared mutant fails, and no verdict is vacuous. Each fix ships with a gate script that demonstrates the defect on version 2 and proves the fix on version 3 using the reporting lane's own function, contract and rewrite.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The new log slots sit past byte 127, out of reach of the short address encoding first used for them; the mis-encoded writes corrupted neighbouring entries and one by-design-negative proof passed instead of failing. The proof suite caught it, all moved slots were switched to the long encoding, and the negative proof now matches version 2 exactly. Rebuilds repeatedly failed with access-denied errors while a scanner held the fresh binary; renaming it aside and rebuilding worked every time.</p>
+      </article>
 
       <article class="entry" id="production-n118">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
