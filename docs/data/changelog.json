@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: A pass that proves nothing: fault parity and nine-argument calls",
+    "title": "Rewrites: 43 more functions pass the checker (4612 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "43 rewrites added under rewrites/pending: 0 script native handlers and 43 other functions.",
+      "The tree now holds 4612 rewrites, 4593 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "204 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: A pass that proves nothing: fault parity and nine-argument calls",
+    "commit": "4f899b31a5b6dcc3ca7877825e9fdfb69c9b941f",
     "summary": "Findings from the r-s121 lane.",
     "changes": [
       "New devlog entry: A pass that proves nothing: fault parity and nine-argument calls.",
