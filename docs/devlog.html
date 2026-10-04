@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#tools-runtime-debug">Tools: running, debugging and tracing the game</a></li>
       <li><a href="#emulator-harness">Original functions can be executed for comparison, but not with Unicorn on this machine</a></li>
       <li><a href="#swarm-speed">How fast an agent swarm went through phase 0, and what that does and does not say about the rest</a></li>
       <li><a href="#tools-xplat-build">Tools: building for the three target platforms</a></li>
@@ -102,6 +103,40 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="tools-runtime-debug">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Tools: running, debugging and tracing the game</h2>
+      <p>All eight runtime tools are installed from their official sources and start on this machine, and scripted tracing with Frida is verified end to end against a 32-bit test program. The bad news is graphics: the display driver ships no 32-bit Vulkan support, so the translation layer that could make frame capture possible has almost no chance of working here.</p>
+      <h3>What was asked</h3>
+      <p>Find, evaluate and where allowed install the tools the project needs for running, debugging and tracing the game later: an interactive debugger, a scripted instrumentation toolkit, a frame capture tool, a Direct3D 9 translation layer, two system and API tracers, a plugin loader and a community patch baseline. Every download had to come from the project's own official release page, install portably without admin rights, and be tested without touching the game.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Frida attaches from emulated 64-bit Python to a 32-bit test process and runs full instrumentation: architecture detection, module listing and memory reads all returned correct results.</p>
+      <p><span class="evidence verified">Verified</span> The 32-bit debugger GUI and the API tracer GUI both start under emulation, respond and show a main window. The frame capture tool prints its version cleanly. The system tracer was deliberately not launched because its first run loads a kernel driver; its package includes a native ARM64 build.</p>
+      <p><span class="evidence verified">Verified</span> A small probe program showed that 32-bit processes on this machine see exactly two Vulkan devices, both provided by the system's Vulkan-on-Direct3D-12 layer at Vulkan version 1.2, and no native graphics driver device. The installed driver ships Vulkan support for ARM64 processes only.</p>
+      <p><span class="evidence verified">Verified</span> That finding blocks two tools. The frame capture tool does not support Direct3D 9 at all, so it can only see the game through the translation layer. Current translation layer releases need Vulkan 1.3 or 1.4, which the 32-bit path does not offer; only the legacy 1.10 line, which needs Vulkan 1.1, passes the version check, and running it stacked on emulation is untested by its authors.</p>
+      <p><span class="evidence verified">Verified</span> The plugin loader, the community patch and both translation layer builds have the right architecture and the expected entry points. The community patch bundles its own loader, its own translation build and about two hundred megabytes of replacement assets.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Tool</th><th role="columnheader">Result</th><th role="columnheader">Limit on this machine</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Interactive debugger</td><td role="cell" data-label="Result">starts, untested against the game</td><td role="cell" data-label="Limit on this machine">emulated build only, no native ARM64 version</td></tr>
+      <tr role="row"><td role="cell">Scripted instrumentation</td><td role="cell" data-label="Result">attach, script and memory read all pass</td><td role="cell" data-label="Limit on this machine">controller runs emulated; native ARM64 targets would need a native build</td></tr>
+      <tr role="row"><td role="cell">Frame capture</td><td role="cell" data-label="Result">starts, cannot see Direct3D 9</td><td role="cell" data-label="Limit on this machine">needs the translation experiment to succeed first</td></tr>
+      <tr role="row"><td role="cell">D3D9 translation</td><td role="cell" data-label="Result">installed, two versions</td><td role="cell" data-label="Limit on this machine">current line needs newer Vulkan than 32-bit processes get</td></tr>
+      <tr role="row"><td role="cell">System tracer</td><td role="cell" data-label="Result">installed, launch deferred</td><td role="cell" data-label="Limit on this machine">first run needs admin rights and loads a driver</td></tr>
+      <tr role="row"><td role="cell">API tracer</td><td role="cell" data-label="Result">starts under emulation</td><td role="cell" data-label="Limit on this machine">definitions are from 2013, expect rough edges</td></tr>
+      <tr role="row"><td role="cell">Plugin loader and patch</td><td role="cell" data-label="Result">static checks pass</td><td role="cell" data-label="Limit on this machine">installing either means copying files into the game folder</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>Standardise on the interactive debugger for interactive work, Frida for scripted traces, the native system tracer for file and registry activity, and the frame capture tool for any future Vulkan or newer Direct3D work. Run exactly one translation layer experiment with the legacy 1.10 build; if it fails, stop and evaluate the open-source Direct3D 9 call tracer as the fallback. Keep three game configurations strictly separated and label every future trace with which one it used: unmodified, unmodified plus loader, or community patch.</p>
+      <h3>How to reproduce it</h3>
+      <p>Fetch each tool from its official release page into the project's ignored tools folder, recording version, size and checksum, and confirm each program starts without attaching to anything. Rebuild the two probe programs with the C++ toolchain's 32-bit cross compiler: a Vulkan device enumerator that loads the system Vulkan loader at run time, and a sleeper program that serves as a safe attach target for the Frida probe script. The exact download list, checksums and per-tool command lines are kept with the lane's data files.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first Vulkan probe crashed reading the second device, which briefly looked like a broken driver install but was a bug in the probe: its properties buffer was too small and the driver overwrote the stack. The Frida API examples found on the web failed with a type error because the current major version removed several long-standing helpers; the working forms are documented in the lane report. The API tracer's test process ignored a forced stop command despite declaring no need for elevation, and had to be closed through its window instead. None of these affected the conclusions.</p>
+      </article>
 
       <article class="entry" id="emulator-harness">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
