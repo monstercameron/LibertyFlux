@@ -7281,6 +7281,15 @@
   "lane": "r-n75"
  },
  {
+  "address": "0x009CB950",
+  "name": "ADD_LINE_TO_SCRIPTED_CONVERSATION",
+  "kind": "native",
+  "file": "natives/fn_009cb950.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
+ },
+ {
   "address": "0x009CB970",
   "name": "ADD_NEW_CONVERSATION_SPEAKER",
   "kind": "native",
@@ -7767,6 +7776,15 @@
   "lane": "r-n72"
  },
  {
+  "address": "0x009CC1C0",
+  "name": "PLAY_STREAM_FROM_OBJECT",
+  "kind": "native",
+  "file": "natives/fn_009cc1c0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
+ },
+ {
   "address": "0x009CC1D0",
   "name": "PLAY_STREAM_FROM_PED",
   "kind": "native",
@@ -7981,6 +7999,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-n94"
+ },
+ {
+  "address": "0x009CC610",
+  "name": "SET_PLAYER_PAIN_ROOT_BANK_NAME",
+  "kind": "native",
+  "file": "natives/fn_009cc610.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
  },
  {
   "address": "0x009CC620",
@@ -9054,6 +9081,15 @@
   "lane": "a-03"
  },
  {
+  "address": "0x00A01180",
+  "name": "HAS_OBJECT_BEEN_DAMAGED_BY_CAR",
+  "kind": "native",
+  "file": "natives/fn_00a01180.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
+ },
+ {
   "address": "0x00A011C0",
   "name": "HAS_OBJECT_BEEN_PHOTOGRAPHED",
   "kind": "native",
@@ -9106,6 +9142,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-n95"
+ },
+ {
+  "address": "0x00A01350",
+  "name": "IS_NON_FRAG_OBJECT_SMASHED",
+  "kind": "native",
+  "file": "natives/fn_00a01350.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
  },
  {
   "address": "0x00A013A0",
@@ -9340,6 +9385,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-01"
+ },
+ {
+  "address": "0x00A01A20",
+  "name": "SET_ARMOUR_PICKUP_NETWORK_REGEN_TIME",
+  "kind": "native",
+  "file": "natives/fn_00a01a20.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
  },
  {
   "address": "0x00A01A40",
@@ -11205,6 +11259,33 @@
   "lane": "a-08"
  },
  {
+  "address": "0x00B5DC70",
+  "name": "audio_directional_gain",
+  "kind": "function",
+  "file": "functions/fn_00b5dc70.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b30"
+ },
+ {
+  "address": "0x00B5DDE0",
+  "name": "audio_event_gate",
+  "kind": "function",
+  "file": "functions/fn_00b5dde0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b30"
+ },
+ {
+  "address": "0x00B5DF50",
+  "name": "audio_scene_mix",
+  "kind": "function",
+  "file": "functions/fn_00b5df50.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b30"
+ },
+ {
   "address": "0x00B64570",
   "name": "release_slot_and_indexed_entry",
   "kind": "function",
@@ -11671,6 +11752,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-01"
+ },
+ {
+  "address": "0x00B86710",
+  "name": "CAM_IS_SPHERE_VISIBLE",
+  "kind": "native",
+  "file": "natives/fn_00b86710.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
  },
  {
   "address": "0x00B867A0",
@@ -12166,6 +12256,15 @@
   "trials": 1000,
   "checker": "version 1",
   "lane": "r-n76"
+ },
+ {
+  "address": "0x00B86E70",
+  "name": "IS_CAM_SHAKING",
+  "kind": "native",
+  "file": "natives/fn_00b86e70.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
  },
  {
   "address": "0x00B86E90",
@@ -12724,6 +12823,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-05"
+ },
+ {
+  "address": "0x00B87940",
+  "name": "SET_FOLLOW_PED_PITCH_LIMIT_DOWN",
+  "kind": "native",
+  "file": "natives/fn_00b87940.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
  },
  {
   "address": "0x00B87960",
@@ -13777,6 +13885,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-n98"
+ },
+ {
+  "address": "0x00B8C5E0",
+  "name": "FLASH_BLIP_ALT",
+  "kind": "native",
+  "file": "natives/fn_00b8c5e0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
  },
  {
   "address": "0x00B8C600",
@@ -15633,6 +15750,15 @@
   "lane": "a-06"
  },
  {
+  "address": "0x00B94B90",
+  "name": "LIMIT_ANGLE",
+  "kind": "native",
+  "file": "natives/fn_00b94b90.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
+ },
+ {
   "address": "0x00B94BB0",
   "name": "OBFUSCATE_STRING",
   "kind": "native",
@@ -15811,6 +15937,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-06"
+ },
+ {
+  "address": "0x00B95050",
+  "name": "SET_UP_TRIP_SKIP",
+  "kind": "native",
+  "file": "natives/fn_00b95050.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
  },
  {
   "address": "0x00B95090",
@@ -20583,6 +20718,15 @@
   "lane": "a-06"
  },
  {
+  "address": "0x00BB1DF0",
+  "name": "GET_LOCAL_PLAYER_MP_CASH",
+  "kind": "native",
+  "file": "natives/fn_00bb1df0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
+ },
+ {
   "address": "0x00BB1E00",
   "name": "GET_LOCAL_PLAYER_WEAPON_STAT",
   "kind": "native",
@@ -21267,6 +21411,15 @@
   "lane": "a-03"
  },
  {
+  "address": "0x00BB28C0",
+  "name": "SET_DRAW_PLAYER_COMPONENT",
+  "kind": "native",
+  "file": "natives/fn_00bb28c0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
+ },
+ {
   "address": "0x00BB2900",
   "name": "SET_FREE_HEALTH_CARE",
   "kind": "native",
@@ -21879,6 +22032,15 @@
   "lane": "a-03"
  },
  {
+  "address": "0x00BB6630",
+  "name": "REGISTER_STRING_FOR_FRONTEND_STAT",
+  "kind": "native",
+  "file": "natives/fn_00bb6630.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
+ },
+ {
   "address": "0x00BB6650",
   "name": "SET_FLOAT_STAT",
   "kind": "native",
@@ -22192,6 +22354,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-14"
+ },
+ {
+  "address": "0x00BB7600",
+  "name": "SET_REDUCE_PED_MODEL_BUDGET",
+  "kind": "native",
+  "file": "natives/fn_00bb7600.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
  },
  {
   "address": "0x00BB7620",
@@ -25218,6 +25389,15 @@
   "lane": "a-05"
  },
  {
+  "address": "0x00BC7010",
+  "name": "LOCK_CAR_DOORS",
+  "kind": "native",
+  "file": "natives/fn_00bc7010.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
+ },
+ {
   "address": "0x00BC7050",
   "name": "MARK_CAR_AS_NO_LONGER_NEEDED",
   "kind": "native",
@@ -25684,6 +25864,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-03"
+ },
+ {
+  "address": "0x00BC7920",
+  "name": "SET_EXTRA_CAR_COLOURS",
+  "kind": "native",
+  "file": "natives/fn_00bc7920.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
  },
  {
   "address": "0x00BC7940",
@@ -27000,6 +27189,15 @@
   "lane": "r-n83"
  },
  {
+  "address": "0x00BD3F80",
+  "name": "FORCE_NOISE_OFF",
+  "kind": "native",
+  "file": "natives/fn_00bd3f80.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
+ },
+ {
   "address": "0x00BD3FA0",
   "name": "GET_ASPECT_RATIO",
   "kind": "native",
@@ -27333,6 +27531,15 @@
   "lane": "a-07"
  },
  {
+  "address": "0x00BD7160",
+  "name": "COMPARE_TWO_DATES",
+  "kind": "native",
+  "file": "natives/fn_00bd7160.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
+ },
+ {
   "address": "0x00BD7190",
   "name": "FORCE_TIME_OF_DAY",
   "kind": "native",
@@ -27657,6 +27864,15 @@
   "lane": "a-14"
  },
  {
+  "address": "0x00BD7A60",
+  "name": "GET_LCPD_COP_SCORE",
+  "kind": "native",
+  "file": "natives/fn_00bd7a60.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
+ },
+ {
   "address": "0x00BD7A70",
   "name": "GET_LCPD_CRIMINAL_SCORE",
   "kind": "native",
@@ -27745,6 +27961,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-n99"
+ },
+ {
+  "address": "0x00BD7BC0",
+  "name": "GET_PED_FROM_NETWORK_ID",
+  "kind": "native",
+  "file": "natives/fn_00bd7bc0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
  },
  {
   "address": "0x00BD7BE0",
@@ -28141,6 +28366,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-02"
+ },
+ {
+  "address": "0x00BD8300",
+  "name": "NETWORK_FINISH_EXTENDED_SEARCH",
+  "kind": "native",
+  "file": "natives/fn_00bd8300.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
  },
  {
   "address": "0x00BD8310",
@@ -29088,6 +29322,15 @@
   "lane": "a-04"
  },
  {
+  "address": "0x00BD90F0",
+  "name": "SAVE_SCRIPT_ARRAY_IN_SCRATCHPAD",
+  "kind": "native",
+  "file": "natives/fn_00bd90f0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
+ },
+ {
   "address": "0x00BD9110",
   "name": "SEND_CLIENT_BROADCAST_VARIABLES_NOW",
   "kind": "native",
@@ -29608,6 +29851,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-05"
+ },
+ {
+  "address": "0x00BDE140",
+  "name": "GET_TASK_PLACE_CAR_BOMB_UNSUCCESSFUL",
+  "kind": "native",
+  "file": "natives/fn_00bde140.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n110"
  },
  {
   "address": "0x00BDE160",
@@ -30166,6 +30418,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b29"
+ },
+ {
+  "address": "0x00C8B0C0",
+  "name": "audio_mix_grid_build",
+  "kind": "function",
+  "file": "functions/fn_00c8b0c0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b28"
+ },
+ {
+  "address": "0x00C8B410",
+  "name": "audio_voice_build",
+  "kind": "function",
+  "file": "functions/fn_00c8b410.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b28"
  },
  {
   "address": "0x00C8C310",
