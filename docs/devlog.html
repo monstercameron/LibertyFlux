@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot2-12">Second pilot, lane 12: medium functions (250 to 600 bytes)</a></li>
       <li><a href="#pilot2-07">Second pilot, lane 07: small functions that make calls (60 to 250 bytes, one to three callees)</a></li>
       <li><a href="#pilot2-06">Second pilot, lane 06: small functions that make calls (60 to 250 bytes, one to three callees)</a></li>
       <li><a href="#pilot2-05">Second pilot, lane 05: small functions that make calls (60 to 250 bytes, one to three callees)</a></li>
@@ -196,6 +197,67 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot2-12">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Second pilot, lane 12: medium functions (250 to 600 bytes)</h2>
+      <p>One of four medium functions was rewritten in Rust and verified equivalent over two thousand trials; the other three are deferred, each naming a precise checker-side blocker, including two checker defects with reproductions.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite four randomly sampled medium game functions in Rust and prove each rewrite behaves identically to the original with the project's differential checker, recording honest timings including failures.</p>
+      <h3>What was found</h3>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Function</th>
+      <th role="columnheader">Size</th>
+      <th role="columnheader">Outcome</th>
+      <th role="columnheader">Trials</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">Vector blend helper</td>
+      <td role="cell" data-label="Size">250 bytes, 1 call, float math</td>
+      <td role="cell" data-label="Outcome"><span class="evidence verified">Verified</span> deferred: every check passes except raw call-argument comparison on two frame pointers</td>
+      <td role="cell" data-label="Trials">100</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Animation context initializer</td>
+      <td role="cell" data-label="Size">280 bytes, 4 calls, globals</td>
+      <td role="cell" data-label="Outcome"><span class="evidence verified">Verified</span> deferred on analysis: reads thread-local state and dispatches through an indirect call neither Rust nor the checker can express</td>
+      <td role="cell" data-label="Trials">0</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Peer-connect task tick</td>
+      <td role="cell" data-label="Size">301 bytes, 3 calls, globals, loop</td>
+      <td role="cell" data-label="Outcome"><span class="evidence verified">Verified</span> verified: 1000 of 1000 trials pass in each of two independent runs, honesty mutant caught</td>
+      <td role="cell" data-label="Trials">2060</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Solver query helper</td>
+      <td role="cell" data-label="Size">282 bytes, 3 calls, float math</td>
+      <td role="cell" data-label="Outcome"><span class="evidence verified">Verified</span> deferred: frame-pointer call arguments plus two checker defects found while testing it</td>
+      <td role="cell" data-label="Trials">203</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The verified function is a state machine with a timer countdown, a global counter, two stubbed calls and a polling loop; its virtual-hook path faults identically on both sides and its call logs match under the checker's own argument rule.</p>
+      <p><span class="evidence verified">Verified</span> The checker's call stubs pop at most eight stack words even when the callee takes more, so a thirteen-argument call corrupts the stack pointer by twenty bytes on both sides; the checked original then diverges from real behavior.</p>
+      <p><span class="evidence verified">Verified</span> After a trial where only the rewrite faults, later trials in the same worker observe corrupted registers and stale memory on both sides for identical inputs; a minimal reproduction script is attached to the lane report.</p>
+      <p><span class="evidence">Inferred</span> Both-fault trials do not trigger the corruption, so the verified result, which contains only that fault pattern and reproduced identically in a second worker, stands.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Defer the three blocked functions with the stated reasons rather than weakening any comparison.</li>
+      <li>Recommend the checker pop the full argument count for wide calls, restart the worker after any rewrite-only fault, and later compare pointed-to content and scripted callee outputs instead of raw pointer values.</li>
+      <li>Fold back the lane's two small runtime macros for thiscall and fastcall callees; the verified rewrite depends on them.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Copy the lane's driver, runtime and contracts, build the uniquely named rewrite crate for the 32-bit target without rebuilding the shared worker, and run the driver on the peer-task contract for the full thousand trials plus the one-bit mutant; run the reproduction script for the post-fault corruption with any contract whose rewrite faults alone.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first honesty mutant escaped twice: once because every trial exercising its code path ended in a fault, which skips all comparisons, and once because a bitmask hid the flipped bit on the observed trials; a mutant that drops a forced bit is caught every time.</p>
+      <p>A relocation query double-counted block addresses and wrongly reported a missing entry, sending the first rewrite down the wrong path until the call log showed the relocated value; the corrected query is recorded in the lane report.</p>
+      <p>Most of the lane's time went to diagnosing the two checker defects behind impossible-looking values, including return bytes that neither side's code could produce, which turned out to be post-fault observation corruption.</p>
+      </article>
 
       <article class="entry" id="pilot2-07"><div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div><h2>Second pilot, lane 07: small functions that make calls (60 to 250 bytes, one to three callees)</h2><p>One of five sampled callers verified fully; the other four are written and partially proven but blocked on three checker gaps, with the evidence and the unblock for each recorded. The verified function is an audio state machine with two callees, proven over one thousand exactly-compared trials plus a caught honesty-test mutant. Total lane time was under an hour, most of it spent analysing functions that could not verify rather than the one that did.</p><h3>What was asked</h3><p>Rewrite five original game functions in Rust and prove each rewrite behaves identically to the original with the project checker, recording honest per-function timings including failures. The five were a random sample of small functions that make calls, spread across subsystems, each given only with size, subsystem guess, and a callee list. Each rewrite had to make the same outgoing calls with the same arguments through the checker runtime, with at least one thousand trials including edge values, and one honesty test with a deliberately introduced mistake.</p><h3>What was found</h3><p><span class="evidence verified">Verified</span> The audio state machine verified: four states driven by one state byte, two intercepted callees, one thousand trials with the state byte cycled through eight values including edges, all exactly compared, zero failures, and the subtle mutant caught through the heap comparison.</p><p><span class="evidence verified">Verified</span> Three of the remaining four are blocked by uninterceptable indirect calls. Two make virtual calls through object tables, which the checker cannot patch to its recorder stubs. One calls through callback hooks held in plain data globals, which are not imports, so import-slot patching cannot reach them either. Their directly reachable prefixes are verified (hundreds of exactly-compared trials each); past the first indirect call both sides fault identically, which the checker counts as a pass without comparing anything else.</p><p><span class="evidence verified">Verified</span> The fifth is blocked differently: it dereferences an output object that its first callee would fill in, but stubbed callees return scalars only and write no memory, so every path faults on the stubbed output before any comparable logic runs. All one thousand trials are fault-equivalent only, which is reported as such rather than as verification.</p><p><span class="evidence verified">Verified</span> Two local checker extensions were needed and are proposed for fold-back: deterministic input pokes that cycle flag bytes per trial (without them, branch coverage is one-in-256 luck), and a per-run histogram of trial outcomes, because a bare pass hides how many trials were exactly compared versus vacuously fault-equivalent. A third extension adds rewrite-side helpers for callees that take their first argument in a register; six of the sample's nine direct callees need it.</p><table role="table"><thead role="rowgroup"><tr role="row"><th role="columnheader">Function</th><th role="columnheader">Calls</th><th role="columnheader">Trials</th><th role="columnheader">Exactly compared</th><th role="columnheader">Outcome</th></tr></thead><tbody role="rowgroup"><tr role="row"><td role="cell">Task poll, 113 bytes</td><td role="cell" data-label="Calls">1 direct, 3 virtual</td><td role="cell" data-label="Trials">1100</td><td role="cell" data-label="Exactly compared">668 of 1000</td><td role="cell" data-label="Outcome">deferred: virtual calls</td></tr><tr role="row"><td role="cell">Audio state machine, 153 bytes</td><td role="cell" data-label="Calls">2 direct</td><td role="cell" data-label="Trials">2138</td><td role="cell" data-label="Exactly compared">1000 of 1000</td><td role="cell" data-label="Outcome">verified</td></tr><tr role="row"><td role="cell">Input dispatch, 110 bytes</td><td role="cell" data-label="Calls">1 direct, 2 data-pointer</td><td role="cell" data-label="Trials">1000</td><td role="cell" data-label="Exactly compared">1 of 1000</td><td role="cell" data-label="Outcome">deferred: data-pointer hooks</td></tr><tr role="row"><td role="cell">Script rescale, 78 bytes</td><td role="cell" data-label="Calls">1 direct, 1 virtual</td><td role="cell" data-label="Trials">1100</td><td role="cell" data-label="Exactly compared">500 of 1000</td><td role="cell" data-label="Outcome">deferred: virtual call</td></tr><tr role="row"><td role="cell">Locale lookup, 175 bytes</td><td role="cell" data-label="Calls">3 direct</td><td role="cell" data-label="Trials">1020</td><td role="cell" data-label="Exactly compared">0 of 1000</td><td role="cell" data-label="Outcome">deferred: callee outputs</td></tr></tbody></table><p><span class="evidence">Inferred</span> The verified function took eight minutes of direct work; the all-in lane cost per verified function is about three quarters of an hour once setup, deferred-function analysis and write-up are included. On this sample the schedule risk is not rewrite speed but the share of callers that need checker extensions first.</p><h3>What was decided or recommended</h3><ul><li>Four functions deferred with precise stated blockers; partial verification evidence kept per function rather than claimed as passes.</li><li>Recommended checker work in sample-frequency order: intercept register-indirect call sites, allow per-trial redirection of data-pointer call slots, let stubs produce scripted callee output memory, and fold back the input pokes and outcome histogram.</li><li>Recommended pilot-reporting rule: every verdict carries its exactly-compared trial fraction, since fault-equivalent trials prove fault behaviour only.</li></ul><h3>How to reproduce it</h3><p>From the lane folder, build the lane rewrite crate for 32-bit with aborts on panic, then run the lane checker copy against each of the five contracts. Each contract pins its seed and trial count; the verdict files record pass state, trial counts and the outcome histogram. The honesty test reruns automatically with the audio contract through its mutant export. The shared checker worker binary is used unchanged.</p><h3>What was confusing or went wrong</h3><p>The fault-equivalence rule was the main surprise: two sides that fault with the same code pass with nothing else compared, so early "passes" on indirect-call functions proved almost nothing until the outcome histogram made the split visible. A designed fifty-fifty path split came out two-to-one because the checker's rotating heap fill interacted with the pokes; both sides still agreed on every trial, so the run was valid but the coverage math needed rechecking. One driver edit for the no-mutant path crashed on a missing summary key and was fixed before any final run. A shared build-directory lock from another lane delayed one rebuild by seconds. Nothing else went wrong: every contract passed on its first or second attempt.</p></article>
 
