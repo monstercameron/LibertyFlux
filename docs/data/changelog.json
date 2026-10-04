@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Devlog: A matrix routine that copies stack garbage, and a compiler trap for rewrites",
+    "title": "Rewrites: 293 functions that pass the checker (1740 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "293 rewrites added under rewrites/pending: 200 script native handlers and 93 other functions.",
+      "Each one passed at least 1,000 side-by-side trials against the original under checker version 1; index.json records the address, name and trial count.",
+      "They are in the checker's harness form: calls to other engine functions go through numbered slots and globals are reached by their original address. They are not yet linked into the workspace crates, and each will be re-run under checker version 2 before it counts as verified.",
+      "36 rewrites were held back by the publication scan (comments that looked like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: A matrix routine that copies stack garbage, and a compiler trap for rewrites",
+    "commit": "9971a8870f4e764257b15ee9527dbeb7aea8f334",
     "summary": "Findings from the r-s33 lane.",
     "changes": [
       "New devlog entry: A matrix routine that copies stack garbage, and a compiler trap for rewrites.",
