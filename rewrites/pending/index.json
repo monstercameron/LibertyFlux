@@ -53352,6 +53352,42 @@
   "lane": "r-b180"
  },
  {
+  "address": "0x00DCF950",
+  "name": "rb_tree_erase",
+  "kind": "function",
+  "file": "functions/fn_00dcf950.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b187"
+ },
+ {
+  "address": "0x00DCFB90",
+  "name": "rb_tree_erase_fixup",
+  "kind": "function",
+  "file": "functions/fn_00dcfb90.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b187"
+ },
+ {
+  "address": "0x00DCFFC0",
+  "name": "ui_overview_row_add",
+  "kind": "function",
+  "file": "functions/fn_00dcffc0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b187"
+ },
+ {
+  "address": "0x00DD0270",
+  "name": "ui_overview_build",
+  "kind": "function",
+  "file": "functions/fn_00dd0270.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b187"
+ },
+ {
   "address": "0x00DD6870",
   "name": "ui_element_set_init",
   "kind": "function",

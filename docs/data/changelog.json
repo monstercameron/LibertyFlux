@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Naming the ranked-race leaderboard methods, races 37 to 53",
+    "title": "Rewrites: 4 more functions pass the checker (7156 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "4 rewrites added under rewrites/pending: 0 script native handlers and 4 other functions.",
+      "The tree now holds 7156 rewrites, 7137 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "306 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Naming the ranked-race leaderboard methods, races 37 to 53",
+    "commit": "6931bb84f6b67dbe9df30d659bf76f89f6660667",
     "summary": "Findings from the nm-10 lane.",
     "changes": [
       "New devlog entry: Naming the ranked-race leaderboard methods, races 37 to 53.",
