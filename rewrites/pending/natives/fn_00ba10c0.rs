@@ -6,6 +6,6 @@
 export!(cdecl, rw_00ba10c0(ctx: *mut NativeCtx) -> u32 {
     unsafe {
         let a = (*ctx).args;
-        callee_cdecl!(1, u32, *a.add(0), coerced(ctx, *a.add(1)))
+        callee_cdecl!(1, u32, *a.add(0), u32::from(*a.add(1) != 0))
     }
 });

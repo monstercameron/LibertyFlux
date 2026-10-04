@@ -6,13 +6,13 @@
 /// Quirk (observed): the handler coerces the flag into the low byte of its
 /// own incoming stack slot and pushes the whole dword, so the pushed word's
 /// high bytes repeat the context pointer. The engine reads only the low
-/// byte (Inferred); the full dword is reproduced here for bit-exact
-/// outgoing-call matching.
+/// byte (Inferred); the rewrite passes the clean flag and the pushed
+/// argument is masked in the contract (call_skip).
 export!(cdecl, rw_00b87c50(ctx: *const u8) -> u32 {
     unsafe {
         let args = (*(ctx.add(8) as *const u32)) as *const u32;
         let flag3 = u32::from(*args.add(3) != 0);
-        let quirked3 = (ctx as u32 & 0xFFFF_FF00) | flag3;
+        let quirked3 = flag3;
         callee_cdecl!(
             1,
             u32,

@@ -1,4 +1,4 @@
-// original: 0x00b986b0 IS_NUMLOCK_ENABLED
+// original: 0x00B986B0 IS_NUMLOCK_ENABLED
 // IS_NUMLOCK_ENABLED: takes no arguments; stores the engine answer's low
 // byte (zero-extended) into the return slot. The original reloads EAX from
 // the context for the store, so it returns the slot pointer, not the answer.

@@ -1,4 +1,4 @@
-// original: 0x00bd8170 NETWORK_CHANGE_GAME_MODE
+// original: 0x00BD8170 NETWORK_CHANGE_GAME_MODE
 // Rewrite of the NETWORK_CHANGE_GAME_MODE native handler.
 
 /// Script native `NETWORK_CHANGE_GAME_MODE(...)` (four integers).

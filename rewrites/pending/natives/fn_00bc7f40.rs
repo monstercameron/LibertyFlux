@@ -1,4 +1,4 @@
-// original: 0x00bc7f40 SET_VEH_ALARM_DURATION
+// original: 0x00BC7F40 SET_VEH_ALARM_DURATION
 // Rewrite of the SET_VEH_ALARM_DURATION native handler.
 
 /// Script native `SET_VEH_ALARM_DURATION(veh, duration)`.

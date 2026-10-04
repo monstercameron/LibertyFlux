@@ -1,4 +1,4 @@
-// original: 0x00bd10b0 HAS_OBJECT_BEEN_DAMAGED_BY_WEAPON
+// original: 0x00BD10B0 HAS_OBJECT_BEEN_DAMAGED_BY_WEAPON
 /// Script native handler `HAS_OBJECT_BEEN_DAMAGED_BY_WEAPON`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 integer, arg1 integer, calls the engine worker

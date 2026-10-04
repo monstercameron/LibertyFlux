@@ -1,4 +1,4 @@
-// original: 0x00bc7200 REMOVE_UPSIDEDOWN_CAR_CHECK
+// original: 0x00BC7200 REMOVE_UPSIDEDOWN_CAR_CHECK
 /// Script native handler `REMOVE_UPSIDEDOWN_CAR_CHECK`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 integer, calls the engine worker

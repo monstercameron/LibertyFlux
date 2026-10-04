@@ -1,4 +1,4 @@
-// original: 0x00bb6670 SET_INT_STAT
+// original: 0x00BB6670 SET_INT_STAT
 //
 // Script native handler: forwards the stat id and value to one engine
 // function (cdecl/2). No return value stored.

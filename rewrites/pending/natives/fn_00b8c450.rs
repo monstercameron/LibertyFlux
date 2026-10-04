@@ -1,4 +1,4 @@
-// original: 0x00b8c450 DISPLAY_TEXT_WITH_TWO_SUBSTRINGS_GIVEN_HASH_KEYS
+// original: 0x00B8C450 DISPLAY_TEXT_WITH_TWO_SUBSTRINGS_GIVEN_HASH_KEYS
 /// Script native handler `DISPLAY_TEXT_WITH_TWO_SUBSTRINGS_GIVEN_HASH_KEYS`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 float bits, arg1 float bits, arg2 integer, arg3 integer, arg4 integer, calls the engine worker

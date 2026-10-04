@@ -1,4 +1,4 @@
-// original: 0x00bd4020 GET_SCREEN_RESOLUTION
+// original: 0x00BD4020 GET_SCREEN_RESOLUTION
 //
 // Script native handler: forwards two out-pointers to one engine function
 // (cdecl/2), which reports the resolution through them. The handler itself

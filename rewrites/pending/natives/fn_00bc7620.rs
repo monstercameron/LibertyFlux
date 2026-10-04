@@ -1,4 +1,4 @@
-// original: 0x00bc7620 SET_CAR_HEALTH
+// original: 0x00BC7620 SET_CAR_HEALTH
 // Rewrite of the SET_CAR_HEALTH native handler.
 
 /// Script native `SET_CAR_HEALTH(car, health)`.

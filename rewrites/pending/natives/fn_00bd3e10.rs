@@ -1,4 +1,4 @@
-// original: 0x00bd3e10 DRAW_TOPLEVEL_SPRITE
+// original: 0x00BD3E10 DRAW_TOPLEVEL_SPRITE
 // Rewrite of the DRAW_TOPLEVEL_SPRITE native handler.
 
 /// Script native `DRAW_TOPLEVEL_SPRITE(...)` (ten arguments).

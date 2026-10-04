@@ -1,4 +1,6 @@
-// original: 0x00b9ecb0 GET_CHAR_ANIM_EVENT_TIME
+// original: 0x00B9ECB0 GET_CHAR_ANIM_EVENT_TIME
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// GET_CHAR_ANIM_EVENT_TIME: query an animation event time flag.
 ///
 /// Native handler. Forwards ped, anim and event ids to the animation engine, stores the boolean answer through the return slot.

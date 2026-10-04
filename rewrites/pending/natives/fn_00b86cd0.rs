@@ -1,4 +1,4 @@
-// original: 0x00b86cd0 GET_SCREEN_VIEWPORT_ID
+// original: 0x00B86CD0 GET_SCREEN_VIEWPORT_ID
 // Rewrite of the GET_SCREEN_VIEWPORT_ID native handler.
 
 /// Script native `GET_SCREEN_VIEWPORT_ID(...)`.

@@ -1,4 +1,4 @@
-// original: 0x00b9ae60 SWITCH_PED_ROADS_BACK_TO_ORIGINAL
+// original: 0x00B9AE60 SWITCH_PED_ROADS_BACK_TO_ORIGINAL
 //
 // Script native handler: forwards six float arguments (two xyz corners) to
 // one engine function (cdecl/6). The original moves each through an SSE

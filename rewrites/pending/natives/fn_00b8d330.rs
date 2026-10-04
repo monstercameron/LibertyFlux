@@ -1,4 +1,6 @@
-// original: 0x00b8d330 PRINT_WITH_NUMBER
+// original: 0x00B8D330 PRINT_WITH_NUMBER
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// PRINT_WITH_NUMBER: show a text with numbers.
 ///
 /// Native handler. Forwards text id plus three numbers to the text engine.

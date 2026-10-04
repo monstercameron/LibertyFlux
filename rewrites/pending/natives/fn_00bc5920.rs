@@ -1,4 +1,4 @@
-// original: 0x00bc5920 GET_CAR_ANIM_CURRENT_TIME
+// original: 0x00BC5920 GET_CAR_ANIM_CURRENT_TIME
 //
 // Forwards the vehicle handle, the two animation names and the output slot
 // to the engine query. The handler itself never touches the return slot:

@@ -1,4 +1,5 @@
 // original: 0x00b9ada0 SWITCH_PED_PATHS_OFF
+
 /// Native handler `SWITCH_PED_PATHS_OFF`.
 ///
 /// Switch ped paths off inside a box given by six float bounds.

@@ -1,4 +1,4 @@
-// original: 0x00bd8ad0 NETWORK_PLAYER_HAS_COMM_PRIVS
+// original: 0x00BD8AD0 NETWORK_PLAYER_HAS_COMM_PRIVS
 // Rewrite of the NETWORK_PLAYER_HAS_COMM_PRIVS native handler.
 
 /// Script native `NETWORK_PLAYER_HAS_COMM_PRIVS()`.

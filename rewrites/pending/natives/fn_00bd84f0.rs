@@ -1,4 +1,6 @@
-// original: 0x00bd84f0 NETWORK_GET_NUM_UNFILLED_RESERVATIONS
+// original: 0x00BD84F0 NETWORK_GET_NUM_UNFILLED_RESERVATIONS
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// NETWORK_GET_NUM_UNFILLED_RESERVATIONS: count open net slots.
 ///
 /// Native handler. Takes no script args; calls the network engine and stores the count through the return slot.

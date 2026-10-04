@@ -1,4 +1,5 @@
 // original: 0x00ba0540 LOCATE_CHAR_ANY_MEANS_OBJECT_2D
+
 /// Native handler `LOCATE_CHAR_ANY_MEANS_OBJECT_2D`.
 ///
 /// Test whether a character is within 2D range of an object; the flag argument is coerced to boolean.
@@ -10,6 +11,7 @@
 /// is the context address with its low byte replaced by the flag.
 /// The value is reproduced exactly here; only that caller-slot
 /// clobber (which no caller can observe) is out of checker scope.
+/// v2 port: the rewrite pushes the bare 0/1 flag; the high-byte slot residue is masked in the contract (call_skip).
 export!(cdecl, rw_00ba0540(ctx: *const u32) -> u32 {
     unsafe {
         let args = *ctx.add(2) as *const u32;
@@ -21,7 +23,8 @@ export!(cdecl, rw_00ba0540(ctx: *const u32) -> u32 {
         let _ = arg0;
         // Boolean-coerced flag(s), blended into the context address
         // exactly as the original's in-place computation does.
-        let flag4 = (ctx as u32 & 0xFFFF_FF00) | u32::from(arg4 != 0);
+        // v2 port: push the bare flag; the slot-residue high byte is masked in the contract (call_skip).
+        let flag4 = u32::from(arg4 != 0);
         // The original keeps only the low byte of the answer.
         let answer = callee_cdecl!(1, u32, arg0, arg1, arg2, arg3, flag4);
         *(*ctx as *mut u32) = answer & 0xFF;

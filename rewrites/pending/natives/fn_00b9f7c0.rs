@@ -1,4 +1,4 @@
-// original: 0x00b9f7c0 IS_CHAR_GESTURING
+// original: 0x00B9F7C0 IS_CHAR_GESTURING
 //
 // Script native handler: passes the script character handle to one engine
 // function and stores the low byte of its answer (movzx from AL) into the

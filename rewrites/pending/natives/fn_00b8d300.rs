@@ -1,4 +1,4 @@
-// original: 0x00b8d300 PRINT_WITH_6_NUMBERS_NOW
+// original: 0x00B8D300 PRINT_WITH_6_NUMBERS_NOW
 //
 // Forwards all nine print arguments (string plus numbers) to the engine
 // text routine. No return value.

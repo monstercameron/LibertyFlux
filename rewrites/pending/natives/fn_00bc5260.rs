@@ -1,4 +1,4 @@
-// original: 0x00bc5260 BURST_CAR_TYRE
+// original: 0x00BC5260 BURST_CAR_TYRE
 // BURST_CAR_TYRE: forwards (car, tyre) to the engine. No return.
 export!(cdecl, rw_fn_bc5260(ctx: *mut u8) -> () {
     unsafe {

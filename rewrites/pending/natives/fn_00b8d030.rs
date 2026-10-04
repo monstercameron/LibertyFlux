@@ -1,4 +1,6 @@
-// original: 0x00b8d030 PRINT_HELP_WITH_TWO_NUMBERS
+// original: 0x00B8D030 PRINT_HELP_WITH_TWO_NUMBERS
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// PRINT_HELP_WITH_TWO_NUMBERS: show a help text with two values.
 ///
 /// Native handler. Forwards text id plus two numbers to the text engine.

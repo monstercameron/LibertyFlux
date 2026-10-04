@@ -1,4 +1,4 @@
-// original: 0x00ba11a0 SET_CHAR_COORDINATES
+// original: 0x00BA11A0 SET_CHAR_COORDINATES
 /// Script native handler `SET_CHAR_COORDINATES`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 integer, arg1 float bits, arg2 float bits, arg3 float bits, calls the engine worker

@@ -10,7 +10,8 @@
 /// byte of its own incoming stack slot with the flag, which is dead after
 /// return and therefore not reproduced (see contract note).
 /// handler function: `0x00b9f8d0`, engine call site: `0x00b9f936`.
-export!(cdecl, rw_b9f8d0(ctx: *const NativeCtx) -> u32 {
+/// v2 port: the rewrite pushes the bare 0/1 flag; the high-byte slot residue is masked in the contract (call_skip).
+export!(cdecl, rw_b9f8d0(ctx: *const NativeCtx03) -> u32 {
     unsafe {
         let args = (*ctx).args_ptr;
         let ped = *args.add(0);
@@ -21,7 +22,8 @@ export!(cdecl, rw_b9f8d0(ctx: *const NativeCtx) -> u32 {
         let y2 = *args.add(5);
         let z2 = *args.add(6);
         let angle = *args.add(7);
-        let use_z = ((*args.add(8) != 0) as u32) | ((ctx as u32) & 0xFFFF_FF00);
+        // v2 port: push the bare flag; the slot-residue high byte is masked in the contract (call_skip).
+        let use_z = ((*args.add(8) != 0) as u32);
         let answer: u32 = callee_cdecl!(1, u32, ped, x1, y1, z1, x2, y2, z2, angle, use_z);
         *(*ctx).ret_ptr = answer & 0xFF;
         (*ctx).ret_ptr as u32

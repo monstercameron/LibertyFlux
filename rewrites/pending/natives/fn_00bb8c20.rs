@@ -4,7 +4,7 @@
 /// Forwards 1 script argument to the engine function and stores the
 /// low byte of its answer (zero-extended) into the return slot.
 /// handler function: `0x00bb8c20`, engine call site: `0x00bb8c2a`.
-export!(cdecl, rw_bb8c20(ctx: *const NativeCtx) -> u32 {
+export!(cdecl, rw_bb8c20(ctx: *const NativeCtx03) -> u32 {
     unsafe {
         let args = (*ctx).args_ptr;
         let a0 = *args.add(0);

@@ -1,4 +1,4 @@
-// original: 0x00ba0070 IS_PED_A_MISSION_PED
+// original: 0x00BA0070 IS_PED_A_MISSION_PED
 // IS_PED_A_MISSION_PED: forwards the ped handle and stores the engine
 // answer's low byte (zero-extended) into the return slot. Returns the slot
 // pointer: the original reloads EAX from the context for the store.

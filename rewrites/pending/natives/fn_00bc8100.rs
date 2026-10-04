@@ -1,4 +1,4 @@
-// original: 0x00bc8100 START_PLAYBACK_RECORDED_CAR_WITH_OFFSET
+// original: 0x00BC8100 START_PLAYBACK_RECORDED_CAR_WITH_OFFSET
 //
 // Script native handler: forwards the car handle and path number to one
 // engine function as two stack words. The original also copies the three

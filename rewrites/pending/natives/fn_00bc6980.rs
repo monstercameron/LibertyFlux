@@ -1,4 +1,6 @@
-// original: 0x00bc6980 IS_CAR_ON_SCREEN
+// original: 0x00BC6980 IS_CAR_ON_SCREEN
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// IS_CAR_ON_SCREEN: test vehicle visibility.
 ///
 /// Native handler. Forwards the vehicle handle, stores the boolean answer through the return slot.

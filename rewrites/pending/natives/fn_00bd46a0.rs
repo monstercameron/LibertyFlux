@@ -1,4 +1,4 @@
-// original: 0x00bd46a0 UPDATE_PTFX_TINT
+// original: 0x00BD46A0 UPDATE_PTFX_TINT
 //
 // Forwards the particle id and the RGBA tint (floats, bitwise) to the
 // engine routine. No return value.

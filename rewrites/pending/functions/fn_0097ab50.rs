@@ -20,7 +20,7 @@ export!(cdecl, rw_0097ab50(arg: *const u8) -> u32 {
                 }
             }
         }
-        let free = callee_cdecl!(1, u32);
+        let free = callee_cdecl!(1, u32,);
         let mut slot = free;
         if free == 0 {
             let mut best = 9u32;

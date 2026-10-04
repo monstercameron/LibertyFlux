@@ -1,4 +1,4 @@
-// original: 0x00b874d0 SET_CAM_NEAR_CLIP
+// original: 0x00B874D0 SET_CAM_NEAR_CLIP
 //
 // Forwards the camera handle and the new near-clip distance (a float, moved
 // bitwise) to the engine setter. No return value.

@@ -1,4 +1,5 @@
 // original: 0x00ba1920 SET_CHAR_PROP_INDEX
+
 /// Native handler `SET_CHAR_PROP_INDEX`.
 ///
 /// Set a character prop index.

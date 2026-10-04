@@ -1,4 +1,5 @@
 // original: 0x00b9e9c0 DOES_DECISION_MAKER_EXIST
+
 /// Native handler `DOES_DECISION_MAKER_EXIST`.
 ///
 /// Report whether a decision maker id is in use.

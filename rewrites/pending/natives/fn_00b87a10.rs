@@ -1,4 +1,4 @@
-// original: 0x00b87a10 SET_FORCE_LOOK_BEHIND
+// original: 0x00B87A10 SET_FORCE_LOOK_BEHIND
 /// Script native handler `SET_FORCE_LOOK_BEHIND`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 bool, calls the engine worker
@@ -11,7 +11,7 @@ export!(cdecl, rw_00b87a10(ctx: *const u8) -> u32 {
     unsafe {
         let args = *(ctx.add(8) as *const *const u32);
         // Bool argument: the original coerces it with cmp/setne into its own incoming argument slot, so the pushed dword keeps the slot's high bytes. Only the low byte (arg != 0) is the value; the high bytes alias the caller's ctx word.
-        let a0 = ((ctx as u32) & 0xFFFFFF00) | ((*args.add(0) != 0) as u32);
+        let a0 = ((*args.add(0) != 0) as u32);
         let ans: u32 = callee_cdecl!(1, u32, a0,);
         ans
     }

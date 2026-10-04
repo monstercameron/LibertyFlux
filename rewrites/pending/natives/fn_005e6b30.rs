@@ -1,4 +1,4 @@
-// original: 0x005e6b30 TASK_CHAR_ARREST_CHAR
+// original: 0x005E6B30 TASK_CHAR_ARREST_CHAR
 //
 // Forwards the two character handles to the engine task routine.
 // No return value.

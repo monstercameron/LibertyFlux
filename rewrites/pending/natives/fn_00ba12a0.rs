@@ -1,4 +1,4 @@
-// original: 0x00ba12a0 SET_CHAR_COORDINATES_NO_OFFSET
+// original: 0x00BA12A0 SET_CHAR_COORDINATES_NO_OFFSET
 // Rewrite of the SET_CHAR_COORDINATES_NO_OFFSET native handler.
 
 /// Script native `SET_CHAR_COORDINATES_NO_OFFSET(char, x, y, z)`.

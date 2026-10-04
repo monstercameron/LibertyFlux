@@ -1,4 +1,4 @@
-// original: 0x00b94e50 SET_FAKE_WANTED_CIRCLE
+// original: 0x00B94E50 SET_FAKE_WANTED_CIRCLE
 /// Script native handler `SET_FAKE_WANTED_CIRCLE`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 float bits, arg1 float bits, arg2 float bits, calls the engine worker

@@ -1,4 +1,6 @@
-// original: 0x00a00610 ATTACH_OBJECT_TO_PED_PHYSICALLY
+// original: 0x00A00610 ATTACH_OBJECT_TO_PED_PHYSICALLY
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// ATTACH_OBJECT_TO_PED_PHYSICALLY: forward to the shared attach unpacker.
 ///
 /// Native handler. Pushes the call context and the attach engine address, then calls the shared unpacker that expands 15 script args into vectors.

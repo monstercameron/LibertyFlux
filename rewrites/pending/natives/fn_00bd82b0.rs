@@ -1,4 +1,4 @@
-// original: 0x00bd82b0 NETWORK_FIND_GAME
+// original: 0x00BD82B0 NETWORK_FIND_GAME
 // NETWORK_FIND_GAME: forwards 4 script words to the engine. No return.
 export!(cdecl, rw_fn_bd82b0(ctx: *mut u8) -> () {
     unsafe {

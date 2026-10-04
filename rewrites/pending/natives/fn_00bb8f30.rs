@@ -1,4 +1,4 @@
-// original: 0x00bb8f30 SET_GUNSHOT_SENSE_RANGE_FOR_RIOT2
+// original: 0x00BB8F30 SET_GUNSHOT_SENSE_RANGE_FOR_RIOT2
 /// Script native handler `SET_GUNSHOT_SENSE_RANGE_FOR_RIOT2`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 float bits, calls the engine worker

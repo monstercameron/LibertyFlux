@@ -1,4 +1,4 @@
-// original: 0x00b9fb80 IS_CHAR_IN_MELEE_COMBAT
+// original: 0x00B9FB80 IS_CHAR_IN_MELEE_COMBAT
 //
 // Forwards the character handle; the engine answers in the low byte and the
 // handler zero-extends it into the return slot.

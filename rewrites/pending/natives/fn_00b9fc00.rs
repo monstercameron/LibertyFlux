@@ -1,4 +1,6 @@
-// original: 0x00b9fc00 IS_CHAR_IN_ZONE
+// original: 0x00B9FC00 IS_CHAR_IN_ZONE
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// IS_CHAR_IN_ZONE: test whether a ped is inside a named zone.
 ///
 /// Native handler. Forwards ped handle and zone name, stores the boolean answer through the return slot.

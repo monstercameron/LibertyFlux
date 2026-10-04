@@ -1,4 +1,5 @@
 // original: 0x00bd8880 NETWORK_IS_PLAYER_MUTED_BY_ME
+
 /// Native handler `NETWORK_IS_PLAYER_MUTED_BY_ME`.
 ///
 /// Report whether a network player is muted by the local player.

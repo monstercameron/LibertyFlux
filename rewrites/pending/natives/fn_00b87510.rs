@@ -1,4 +1,5 @@
 // original: 0x00b87510 SET_CAM_POINT_DAMPING_PARAMS
+
 /// Native handler `SET_CAM_POINT_DAMPING_PARAMS`.
 ///
 /// Set camera point damping parameters (id plus three floats).

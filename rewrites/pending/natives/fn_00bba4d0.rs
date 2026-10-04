@@ -1,4 +1,4 @@
-// original: 0x00bba4d0 TASK_SAY
+// original: 0x00BBA4D0 TASK_SAY
 //
 // Script native handler: forwards two script arguments to one engine
 // function (cdecl/2). No return value stored.

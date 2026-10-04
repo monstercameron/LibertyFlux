@@ -5,8 +5,8 @@
 export!(cdecl, rw_00b86300(ctx: u32) -> u32 {
     unsafe {
         let a = args_of(ctx);
-        let flag = quirk_bool(ctx, *a.add(3) != 0);
-        *arg_slot_of(ctx) = flag;
+        let flag = u32::from(*a.add(3) != 0);
+        *arg_slot_of(ctx) = quirk_bool(ctx, flag != 0);
         callee_cdecl!(1, u32, *a, *a.add(1), *a.add(2), flag)
     }
 });

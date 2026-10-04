@@ -1,4 +1,4 @@
-// original: 0x00bd0dc0 FORCE_CHAR_TO_DROP_WEAPON
+// original: 0x00BD0DC0 FORCE_CHAR_TO_DROP_WEAPON
 //
 // Forwards the character handle (argument 0) to the engine routine that
 // makes the character drop its weapon. No return value.

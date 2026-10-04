@@ -6,7 +6,7 @@
 /// three words to scratch words `(idx + 2) * 4`, advances the scratch index,
 /// and calls the engine function with the blip handle and the copy address.
 /// All address arithmetic wraps mod 2^32 exactly like the original.
-rt::export!(cdecl, rw_00b8c740(ctx: u32) -> u32 {
+export!(cdecl, rw_00b8c740(ctx: u32) -> u32 {
     const ARG_ARRAY: usize = 2;
     const SCRATCH_INDEX: u32 = 0x0C;
     const PTR_SLOT_BASE: u32 = 0x10;
@@ -29,5 +29,5 @@ rt::export!(cdecl, rw_00b8c740(ctx: u32) -> u32 {
         *((copy_at.wrapping_add(8)) as *mut u32) = z;
         *((ctx.wrapping_add(SCRATCH_INDEX)) as *mut u32) = idx.wrapping_add(1);
     }
-    rt::callee_cdecl!(1, u32, handle, copy_at)
+    callee_cdecl!(1, u32, handle, copy_at)
 });

@@ -1,4 +1,4 @@
-// original: 0x0086f280 EXP
+// original: 0x0086F280 EXP
 //
 // Loads the float argument and calls the CRT exponential; the callee takes
 // its input in a vector register and returns the result the same way (both

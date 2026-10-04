@@ -1,4 +1,5 @@
 // original: 0x00b8ce50 LOAD_ADDITIONAL_TEXT
+
 /// Native handler `LOAD_ADDITIONAL_TEXT`.
 ///
 /// Load an additional text table by name and slot.

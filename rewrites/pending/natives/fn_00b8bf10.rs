@@ -1,4 +1,6 @@
-// original: 0x00b8bf10 CLEAR_THIS_PRINT_BIG_NOW
+// original: 0x00B8BF10 CLEAR_THIS_PRINT_BIG_NOW
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// CLEAR_THIS_PRINT_BIG_NOW: clear a bigonscreen text slot.
 ///
 /// Native handler. Forwards the slot handle to the text engine.

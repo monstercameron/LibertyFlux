@@ -1,4 +1,4 @@
-// original: 0x00bd0dd0 GET_AMMO_IN_CHAR_WEAPON
+// original: 0x00BD0DD0 GET_AMMO_IN_CHAR_WEAPON
 /// Script native handler `GET_AMMO_IN_CHAR_WEAPON`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 integer, arg1 integer, arg2 integer, calls the engine worker

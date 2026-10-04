@@ -1,4 +1,6 @@
-// original: 0x00b9e7f0 CREATE_RANDOM_CHAR
+// original: 0x00B9E7F0 CREATE_RANDOM_CHAR
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// CREATE_RANDOM_CHAR: spawn a random ped at a position.
 ///
 /// Native handler. Forwards 3 float coordinates plus a flags word to the ped-creation engine. Floats are bit-copied, never converted.

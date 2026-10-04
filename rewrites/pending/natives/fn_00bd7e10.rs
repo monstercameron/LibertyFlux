@@ -1,4 +1,5 @@
 // original: 0x00bd7e10 IS_IN_SPECTATOR_MODE
+
 /// Native handler `IS_IN_SPECTATOR_MODE`.
 ///
 /// Report whether the local player is in spectator mode.

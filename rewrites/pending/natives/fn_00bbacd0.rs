@@ -1,4 +1,6 @@
-// original: 0x00bbacd0 TASK_TURN_CHAR_TO_FACE_CHAR
+// original: 0x00BBACD0 TASK_TURN_CHAR_TO_FACE_CHAR
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// TASK_TURN_CHAR_TO_FACE_CHAR: face-task between two peds.
 ///
 /// Native handler. Forwards both ped handles to the task engine.

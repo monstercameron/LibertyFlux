@@ -1,4 +1,6 @@
-// original: 0x00b942e0 GENERATE_RANDOM_FLOAT_IN_RANGE
+// original: 0x00B942E0 GENERATE_RANDOM_FLOAT_IN_RANGE
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// GENERATE_RANDOM_FLOAT_IN_RANGE: random float from the engine RNG.
 ///
 /// Native handler. Forwards min, max and an extra seed word to the engine RNG. The engine answer stays in eax; no return slot is written.

@@ -1,4 +1,5 @@
 // original: 0x00b9e610 COPY_COMBAT_DECISION_MAKER
+
 /// Native handler `COPY_COMBAT_DECISION_MAKER`.
 ///
 /// Copy a combat decision maker into another slot.

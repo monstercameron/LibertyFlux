@@ -1,4 +1,4 @@
-// original: 0x00b8dac0 SET_TEXT_WRAP
+// original: 0x00B8DAC0 SET_TEXT_WRAP
 // SET_TEXT_WRAP: forwards 2 float words by value (32-bit copies).
 export!(cdecl, rw_fn_b8dac0(ctx: *mut u8) -> () {
     unsafe {

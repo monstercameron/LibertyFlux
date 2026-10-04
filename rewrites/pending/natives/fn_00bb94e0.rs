@@ -1,4 +1,6 @@
-// original: 0x00bb94e0 TASK_COMBAT_HATED_TARGETS_AROUND_CHAR_TIMED
+// original: 0x00BB94E0 TASK_COMBAT_HATED_TARGETS_AROUND_CHAR_TIMED
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// TASK_COMBAT_HATED_TARGETS_AROUND_CHAR_TIMED: timed combat task.
 ///
 /// Native handler. Forwards ped handle, radius and duration to the task engine. Floats are bit-copied.

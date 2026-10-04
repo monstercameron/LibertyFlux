@@ -1,4 +1,4 @@
-// original: 0x00bc6000 GET_NUMBER_OF_PASSENGERS
+// original: 0x00BC6000 GET_NUMBER_OF_PASSENGERS
 /// Script native handler `GET_NUMBER_OF_PASSENGERS`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 integer, arg1 integer, calls the engine worker

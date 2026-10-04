@@ -26,8 +26,8 @@ export!(cdecl, rw_00908D20(a: u32, b: u32, ptr1: u32, ptr2: u32, ptr3: u32) -> u
                 1,
                 u32,
                 2,
-                checker_rt::relocated(0x10344B8),
-                checker_rt::relocated(0x10344C0),
+                lf_k2_rt::relocated(0x10344B8),
+                lf_k2_rt::relocated(0x10344C0),
                 0
             );
             let s0: u32 = callee_cdecl!(2, u32,);

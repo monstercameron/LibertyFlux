@@ -1,4 +1,4 @@
-// original: 0x00bd8940 NETWORK_IS_SESSION_INVITABLE
+// original: 0x00BD8940 NETWORK_IS_SESSION_INVITABLE
 /// Script native handler `NETWORK_IS_SESSION_INVITABLE`.
 ///
 /// Reads the argument array at ctx+8, no script arguments, calls the engine worker

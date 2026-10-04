@@ -6,9 +6,8 @@
 export!(cdecl, rw_00b947a0(ctx: *mut NativeCtx) -> u32 {
     unsafe {
         let a = (*ctx).args;
-        let measure: extern "cdecl" fn(u32) -> f32 =
-            core::mem::transmute(callee_addr(1) as usize);
-        *((*ctx).ret as *mut f32) = measure(*a.add(0));
+        let w: f32 = callee_cdecl!(1, f32, *a.add(0));
+        *((*ctx).ret as *mut f32) = w;
         (*ctx).ret as u32
     }
 });

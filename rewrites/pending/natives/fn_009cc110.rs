@@ -1,4 +1,4 @@
-// original: 0x009cc110 PLAY_SOUND_FROM_PED
+// original: 0x009CC110 PLAY_SOUND_FROM_PED
 //
 // Script native handler: forwards the sound id, sound name and ped handle
 // to one engine function (cdecl/3). No return value stored.

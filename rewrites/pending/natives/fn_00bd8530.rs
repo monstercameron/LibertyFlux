@@ -1,4 +1,4 @@
-// original: 0x00bd8530 NETWORK_GET_TEAM_OPTION
+// original: 0x00BD8530 NETWORK_GET_TEAM_OPTION
 // Rewrite of the NETWORK_GET_TEAM_OPTION native handler.
 
 /// Script native `NETWORK_GET_TEAM_OPTION()`.

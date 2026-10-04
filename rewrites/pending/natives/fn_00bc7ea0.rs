@@ -1,4 +1,4 @@
-// original: 0x00bc7ea0 SET_VEHICLE_QUATERNION
+// original: 0x00BC7EA0 SET_VEHICLE_QUATERNION
 /// Script native handler `SET_VEHICLE_QUATERNION`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 integer, arg1 float bits, arg2 float bits, arg3 float bits, arg4 float bits, calls the engine worker

@@ -1,4 +1,4 @@
-// original: 0x00b8d130 PRINT_STRING_WITH_TWO_LITERAL_STRINGS_NOW
+// original: 0x00B8D130 PRINT_STRING_WITH_TWO_LITERAL_STRINGS_NOW
 // PRINT_STRING_WITH_TWO_LITERAL_STRINGS_NOW: forwards 5 script words.
 export!(cdecl, rw_fn_b8d130(ctx: *mut u8) -> () {
     unsafe {

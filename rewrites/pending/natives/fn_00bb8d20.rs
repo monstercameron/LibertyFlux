@@ -1,4 +1,4 @@
-// original: 0x00bb8d20 IS_CHAR_GETTING_UP
+// original: 0x00BB8D20 IS_CHAR_GETTING_UP
 // Rewrite of the IS_CHAR_GETTING_UP native handler.
 
 /// Script native `IS_CHAR_GETTING_UP(char)`.

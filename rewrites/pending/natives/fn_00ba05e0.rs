@@ -6,7 +6,7 @@
 export!(cdecl, rw_00ba05e0(ctx: *mut NativeCtx) -> u32 {
     unsafe {
         let a = (*ctx).args;
-        let r = callee_cdecl!(1, u32, *a.add(0), *a.add(1), *a.add(2), *a.add(3), *a.add(4), coerced(ctx, *a.add(5)));
+        let r = callee_cdecl!(1, u32, *a.add(0), *a.add(1), *a.add(2), *a.add(3), *a.add(4), u32::from(*a.add(5) != 0));
         // The original keeps only AL and zero-extends it into the slot.
         *(*ctx).ret = r & 0xFF;
         (*ctx).ret as u32

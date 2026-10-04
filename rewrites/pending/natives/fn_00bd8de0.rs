@@ -1,4 +1,6 @@
-// original: 0x00bd8de0 NETWORK_SHOW_MET_PLAYER_FEEDBACK_UI
+// original: 0x00BD8DE0 NETWORK_SHOW_MET_PLAYER_FEEDBACK_UI
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// NETWORK_SHOW_MET_PLAYER_FEEDBACK_UI: open the met-player feedback screen.
 ///
 /// Native handler. Forwards the player index to the network UI engine.

@@ -1,4 +1,4 @@
-// original: 0x00bd3c20 DRAW_SPHERE
+// original: 0x00BD3C20 DRAW_SPHERE
 //
 // Forwards position (x, y, z) and radius to the debug-sphere renderer.
 // The floats travel as themselves through stack slots; the moves are bitwise.

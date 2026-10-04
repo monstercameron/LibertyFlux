@@ -1,4 +1,6 @@
-// original: 0x00bd8570 NETWORK_GET_UNACCEPTED_INVITE_EPISODE
+// original: 0x00BD8570 NETWORK_GET_UNACCEPTED_INVITE_EPISODE
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// NETWORK_GET_UNACCEPTED_INVITE_EPISODE: query pending invite episode.
 ///
 /// Native handler. Forwards the player index, stores the episode id through the return slot.

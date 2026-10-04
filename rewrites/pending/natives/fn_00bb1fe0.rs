@@ -1,4 +1,4 @@
-// original: 0x00bb1fe0 GET_PLAYER_TEAM
+// original: 0x00BB1FE0 GET_PLAYER_TEAM
 /// Script native handler `GET_PLAYER_TEAM`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 integer, calls the engine worker

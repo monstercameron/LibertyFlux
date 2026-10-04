@@ -1,4 +1,4 @@
-// original: 0x00bb7340 GET_NUM_STREAMING_REQUESTS
+// original: 0x00BB7340 GET_NUM_STREAMING_REQUESTS
 //
 // Calls the engine counter with no arguments and stores the result word
 // into the return slot.

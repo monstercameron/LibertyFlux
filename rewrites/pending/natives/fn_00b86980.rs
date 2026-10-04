@@ -1,4 +1,4 @@
-// original: 0x00b86980 DESTROY_CAM
+// original: 0x00B86980 DESTROY_CAM
 // Rewrite of the DESTROY_CAM native handler.
 
 /// Script native `DESTROY_CAM(cam)`.

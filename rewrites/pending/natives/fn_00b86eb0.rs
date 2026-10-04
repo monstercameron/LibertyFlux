@@ -1,4 +1,5 @@
 // original: 0x00b86eb0 IS_FOLLOW_VEHICLE_CAM_OFFSET_ACTIVE
+
 /// Native handler `IS_FOLLOW_VEHICLE_CAM_OFFSET_ACTIVE`.
 ///
 /// Report whether the follow-vehicle camera offset is active.

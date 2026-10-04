@@ -1,4 +1,4 @@
-// original: 0x00bc6600 HAS_RESPRAY_HAPPENED
+// original: 0x00BC6600 HAS_RESPRAY_HAPPENED
 // Rewrite of the HAS_RESPRAY_HAPPENED native handler.
 
 /// Script native `HAS_RESPRAY_HAPPENED()`.

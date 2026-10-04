@@ -1,4 +1,5 @@
 // original: 0x00bb5fd0 GET_NUMBER_OF_INSTANCES_OF_STREAMED_SCRIPT
+
 /// Native handler `GET_NUMBER_OF_INSTANCES_OF_STREAMED_SCRIPT`.
 ///
 /// Report how many instances of a streamed script are running.

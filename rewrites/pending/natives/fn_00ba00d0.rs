@@ -1,4 +1,4 @@
-// original: 0x00ba00d0 IS_PED_DOING_DRIVEBY
+// original: 0x00BA00D0 IS_PED_DOING_DRIVEBY
 // Rewrite of the IS_PED_DOING_DRIVEBY native handler.
 
 /// Script native `IS_PED_DOING_DRIVEBY(ped)`.

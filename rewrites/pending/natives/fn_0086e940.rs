@@ -1,4 +1,4 @@
-// original: 0x0086e940 WAIT
+// original: 0x0086E940 WAIT
 /// Native handler `WAIT`.
 ///
 /// Advance the script sleep timer: while the timer state word is 1, add one
@@ -14,9 +14,9 @@
 ///
 /// `ctx` is the native call context: word 2 points at the script argument
 /// array, whose first word is the frame count to wait.
-lf_rn14_rt::export!(cdecl, rw_0086e940(ctx: u32) -> u32 {
+lf_k2_rt::export!(cdecl, rw_0086e940(ctx: u32) -> u32 {
     unsafe {
-        let state = *lf_rn14_rt::global::<u32>(0x1BB54DC) as *mut u32;
+        let state = *lf_k2_rt::global::<u32>(0x1BB54DC) as *mut u32;
         let mode = *state.add(3);
         if mode != 1 {
             *(state as *mut f32).add(10) = 0.0;
@@ -31,8 +31,8 @@ lf_rn14_rt::export!(cdecl, rw_0086e940(ctx: u32) -> u32 {
             *state.add(3) = 0;
             return 1;
         }
-        let step = *lf_rn14_rt::global::<f32>(0x110B730)
-            * *lf_rn14_rt::global::<f32>(0xFE8C58);
+        let step = *lf_k2_rt::global::<f32>(0x110B730)
+            * *lf_k2_rt::global::<f32>(0xFE8C58);
         let total = step + acc;
         *(state as *mut f32).add(10) = total;
         let args = *((ctx + 8) as *const u32) as *const u32;

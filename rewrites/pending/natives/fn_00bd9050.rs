@@ -1,4 +1,5 @@
 // original: 0x00bd9050 RESERVE_NETWORK_MISSION_VEHICLES
+
 /// Native handler `RESERVE_NETWORK_MISSION_VEHICLES`.
 ///
 /// Reserve mission vehicles for the network session.

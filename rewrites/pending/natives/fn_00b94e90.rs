@@ -1,4 +1,4 @@
-// original: 0x00b94e90 SET_FAKE_WANTED_LEVEL
+// original: 0x00B94E90 SET_FAKE_WANTED_LEVEL
 /// Script native handler `SET_FAKE_WANTED_LEVEL`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 integer, calls the engine worker

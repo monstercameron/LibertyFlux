@@ -1,4 +1,6 @@
-// original: 0x00bc5b60 GET_CAR_LIVERY
+// original: 0x00BC5B60 GET_CAR_LIVERY
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// GET_CAR_LIVERY: query a vehicle livery index.
 ///
 /// Native handler. Forwards vehicle handle plus out-index word to the vehicle engine.

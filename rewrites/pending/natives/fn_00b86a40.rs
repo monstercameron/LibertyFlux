@@ -1,4 +1,4 @@
-// original: 0x00b86a40 DO_SCREEN_FADE_OUT
+// original: 0x00B86A40 DO_SCREEN_FADE_OUT
 // Rewrite of the DO_SCREEN_FADE_OUT native handler.
 
 /// Script native `DO_SCREEN_FADE_OUT(duration)`.

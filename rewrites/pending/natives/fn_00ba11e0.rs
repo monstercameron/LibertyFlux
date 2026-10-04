@@ -1,4 +1,5 @@
 // original: 0x00ba11e0 SET_CHAR_COORDINATES_DONT_CLEAR_PLAYER_TASKS
+
 /// Native handler `SET_CHAR_COORDINATES_DONT_CLEAR_PLAYER_TASKS`.
 ///
 /// Move a character to coordinates without clearing player tasks.

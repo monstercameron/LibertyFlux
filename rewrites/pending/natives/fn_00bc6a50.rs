@@ -8,8 +8,9 @@ export!(cdecl, rw_00bc6a50(ctx: u32) -> u32 {
         let args = *((ctx + 8) as *const u32) as *const u32;
         // The original coerces this flag with a byte-wide setnz over the
         // incoming context slot, so the pushed dword keeps the slot's high
-        // bytes; reproduce that shape exactly.
-        let flag5 = (ctx & 0xFFFF_FF00) | u32::from(*args.add(5) != 0);
+        // bytes; v2 port: push the bare flag, mask the arg in the contract.
+        // v2 port: push the bare flag; the slot-residue high byte is masked in the contract (call_skip).
+        let flag5 = u32::from(*args.add(5) != 0);
         let ans = callee_cdecl!(1, u32, *args.add(0), *args.add(1), *args.add(2), *args.add(3), *args.add(4), flag5,);
         // The engine returns a byte-wide boolean; the handler stores it
         // zero-extended to 32 bits.

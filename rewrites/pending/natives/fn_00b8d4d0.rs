@@ -1,4 +1,4 @@
-// original: 0x00b8d4d0 REQUEST_ADDITIONAL_TEXT
+// original: 0x00B8D4D0 REQUEST_ADDITIONAL_TEXT
 /// Script native handler `REQUEST_ADDITIONAL_TEXT`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 integer, arg1 integer, calls the engine worker

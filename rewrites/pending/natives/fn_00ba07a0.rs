@@ -1,4 +1,4 @@
-// original: 0x00ba07a0 LOCATE_CHAR_IN_CAR_CHAR_3D
+// original: 0x00BA07A0 LOCATE_CHAR_IN_CAR_CHAR_3D
 /// Script native handler `LOCATE_CHAR_IN_CAR_CHAR_3D`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 integer, arg1 integer, arg2 float bits, arg3 float bits, arg4 float bits, arg5 bool, calls the engine worker
@@ -16,7 +16,7 @@ export!(cdecl, rw_00ba07a0(ctx: *const u8) -> u32 {
         let a3 = *args.add(3);
         let a4 = *args.add(4);
         // Bool argument: the original coerces it with cmp/setne into its own incoming argument slot, so the pushed dword keeps the slot's high bytes. Only the low byte (arg != 0) is the value; the high bytes alias the caller's ctx word.
-        let a5 = ((ctx as u32) & 0xFFFFFF00) | ((*args.add(5) != 0) as u32);
+        let a5 = ((*args.add(5) != 0) as u32);
         let ans: u32 = callee_cdecl!(1, u32, a0, a1, a2, a3, a4, a5,);
         let slot = *(ctx as *const u32) as *mut u32;
         *slot = ans & 0xFF;

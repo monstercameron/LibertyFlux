@@ -1,4 +1,4 @@
-// original: 0x00bd88e0 NETWORK_IS_RENDEZVOUS
+// original: 0x00BD88E0 NETWORK_IS_RENDEZVOUS
 // Rewrite of the NETWORK_IS_RENDEZVOUS native handler.
 
 /// Script native `NETWORK_IS_RENDEZVOUS()`.

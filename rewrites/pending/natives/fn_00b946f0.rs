@@ -1,4 +1,6 @@
-// original: 0x00b946f0 GET_PROFILE_SETTING
+// original: 0x00B946F0 GET_PROFILE_SETTING
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// GET_PROFILE_SETTING: read a profile setting value.
 ///
 /// Native handler. Forwards the setting id to the profile engine, stores the full dword answer through the return slot.

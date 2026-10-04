@@ -1,4 +1,4 @@
-// original: 0x00bc6140 GET_POSITION_OF_CAR_RECORDING_AT_TIME
+// original: 0x00BC6140 GET_POSITION_OF_CAR_RECORDING_AT_TIME
 //
 // Script native handler: samples a car-recording slot. Reads the recording
 // handle, the time float and the script out-pointer from the argument array,

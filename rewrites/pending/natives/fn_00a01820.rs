@@ -1,4 +1,4 @@
-// original: 0x00a01820 PLAYER_IS_NEAR_FIRST_PIGEON
+// original: 0x00A01820 PLAYER_IS_NEAR_FIRST_PIGEON
 // PLAYER_IS_NEAR_FIRST_PIGEON: slot 0 points at an xyz vector. The handler
 // stashes that pointer in the context scratch header, copies the vector
 // into scratch slot `scratch + 2`, bumps the scratch index, calls the

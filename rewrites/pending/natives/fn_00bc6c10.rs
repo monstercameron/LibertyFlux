@@ -1,4 +1,4 @@
-// original: 0x00bc6c10 IS_EMERGENCY_SERVICES_VEHICLE
+// original: 0x00BC6C10 IS_EMERGENCY_SERVICES_VEHICLE
 /// Script native handler `IS_EMERGENCY_SERVICES_VEHICLE`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 integer, calls the engine worker

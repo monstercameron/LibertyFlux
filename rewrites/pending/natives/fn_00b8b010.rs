@@ -1,4 +1,4 @@
-// original: 0x00b8b010 ADD_WIDGET_FLOAT_READ_ONLY
+// original: 0x00B8B010 ADD_WIDGET_FLOAT_READ_ONLY
 /// Script native handler `ADD_WIDGET_FLOAT_READ_ONLY`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 integer, arg1 integer, calls the engine worker

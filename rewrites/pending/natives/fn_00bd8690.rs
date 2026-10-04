@@ -1,4 +1,4 @@
-// original: 0x00bd8690 NETWORK_HOST_GAME_PENDING
+// original: 0x00BD8690 NETWORK_HOST_GAME_PENDING
 // Rewrite of the NETWORK_HOST_GAME_PENDING native handler.
 
 /// Script native `NETWORK_HOST_GAME_PENDING()`.

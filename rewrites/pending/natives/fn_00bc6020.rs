@@ -1,4 +1,4 @@
-// original: 0x00bc6020 GET_NUM_CAR_COLOURS
+// original: 0x00BC6020 GET_NUM_CAR_COLOURS
 //
 // Script native handler: forwards the vehicle handle and an out-pointer to
 // one engine function (cdecl/2), which reports through the pointer. The

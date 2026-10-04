@@ -1,4 +1,4 @@
-// original: 0x00bb62c0 CONVERT_METRES_TO_FEET_INT
+// original: 0x00BB62C0 CONVERT_METRES_TO_FEET_INT
 // Rewrite of the CONVERT_METRES_TO_FEET_INT native handler.
 
 /// Script native `CONVERT_METRES_TO_FEET_INT(metres)`.

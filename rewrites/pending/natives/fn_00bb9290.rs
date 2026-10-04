@@ -1,4 +1,4 @@
-// original: 0x00bb9290 TASK_CAR_MISSION_PED_TARGET
+// original: 0x00BB9290 TASK_CAR_MISSION_PED_TARGET
 // Rewrite of the TASK_CAR_MISSION_PED_TARGET native handler.
 
 /// Script native `TASK_CAR_MISSION_PED_TARGET(...)` (nine arguments).
@@ -12,7 +12,7 @@
 export!(cdecl, rw_bb9290(ctx: *const u8) -> u32 {
     unsafe {
         let args = *((ctx.add(8)) as *const *const u32);
-        let flag = (ctx as u32 & 0xFFFFFF00) | ((*args.add(8) != 0) as u32);
+        let flag = ((*args.add(8) != 0) as u32);
         callee_cdecl!(
             1,
             u32,

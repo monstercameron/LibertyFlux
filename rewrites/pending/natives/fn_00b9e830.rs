@@ -1,4 +1,4 @@
-// original: 0x00b9e830 CREATE_RANDOM_CHAR_AS_DRIVER
+// original: 0x00B9E830 CREATE_RANDOM_CHAR_AS_DRIVER
 /// Script native handler `CREATE_RANDOM_CHAR_AS_DRIVER`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 integer, arg1 integer, calls the engine worker

@@ -1,4 +1,4 @@
-// original: 0x00ba0010 IS_PEDS_VEHICLE_HOT
+// original: 0x00BA0010 IS_PEDS_VEHICLE_HOT
 //
 // Script native handler: passes the script character handle to one engine
 // function and stores the low byte of its answer (movzx from AL) into the

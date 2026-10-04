@@ -7,7 +7,7 @@
 export!(cdecl, rw_005e6d80(ctx: *const u8) -> u32 {
     unsafe {
         let args = (*(ctx.add(8) as *const u32)) as *const u32;
-        *lf_rn35_rt::global::<u32>(0x018B6EEC) = *args;
+        *lf_k2_rt::global::<u32>(0x018B6EEC) = *args;
         args as u32
     }
 });

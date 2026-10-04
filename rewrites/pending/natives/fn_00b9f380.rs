@@ -5,7 +5,7 @@
 ///
 /// Forwards 3 script arguments to the engine function; no return slot.
 /// handler function: `0x00b9f380`, engine call site: `0x00b9f38f`.
-export!(cdecl, rw_b9f380(ctx: *const NativeCtx) -> u32 {
+export!(cdecl, rw_b9f380(ctx: *const NativeCtx03) -> u32 {
     unsafe {
         let args = (*ctx).args_ptr;
         let group = *args.add(0);

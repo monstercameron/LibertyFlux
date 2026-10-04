@@ -1,4 +1,4 @@
-// original: 0x00bd0d30 ADD_AMMO_TO_CHAR
+// original: 0x00BD0D30 ADD_AMMO_TO_CHAR
 // ADD_AMMO_TO_CHAR: forwards (char, weapon, amount) to the engine. No return.
 export!(cdecl, rw_fn_bd0d30(ctx: *mut u8) -> () {
     unsafe {

@@ -1,4 +1,6 @@
-// original: 0x00bb9660 TASK_DRIVE_POINT_ROUTE
+// original: 0x00BB9660 TASK_DRIVE_POINT_ROUTE
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// TASK_DRIVE_POINT_ROUTE: drive-task along a point route.
 ///
 /// Native handler. Forwards ped, route id and a float parameter to the task engine. The float is bit-copied.

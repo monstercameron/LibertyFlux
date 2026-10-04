@@ -1,4 +1,6 @@
-// original: 0x00bb27d0 PLAYER_HAS_GREYED_OUT_STARS
+// original: 0x00BB27D0 PLAYER_HAS_GREYED_OUT_STARS
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// PLAYER_HAS_GREYED_OUT_STARS: test wanted-grey-out state.
 ///
 /// Native handler. Forwards the player index, stores the boolean answer through the return slot.

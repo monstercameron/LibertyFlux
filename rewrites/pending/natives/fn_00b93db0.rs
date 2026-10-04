@@ -1,4 +1,5 @@
 // original: 0x00b93db0 ADD_STRING_TO_NEWS_SCROLLBAR
+
 /// Native handler `ADD_STRING_TO_NEWS_SCROLLBAR`.
 ///
 /// Pass the string argument to the news scrollbar engine routine.

@@ -5,7 +5,7 @@
 // Handler mechanics: calls one engine function returning a float and stores it in the return slot.
 // The call context at `ctx` holds the return-slot pointer at +0 and the
 // argument-array pointer at +8; argument slot `i` is the dword at `args + 4*i`.
-checker_rt::export!(cdecl, rn30_00b94770(ctx: u32) -> () {
+lf_k2_rt::export!(cdecl, rn30_00b94770(ctx: u32) -> () {
     const CTX_RET: u32 = 0; // offset of the return-slot pointer in the context
     const CTX_ARGS: u32 = 8; // offset of the argument-array pointer in the context
     let argv = unsafe { ((ctx + CTX_ARGS) as *const u32).read() };
@@ -17,7 +17,7 @@ checker_rt::export!(cdecl, rn30_00b94770(ctx: u32) -> () {
     // input including NaNs; the clobber of the incoming slot itself is
     // the same compiler scratch-slot artefact as in the bool handlers
     // (unwritable from safe Rust) and is excluded from the stack check.
-    let answer: f32 = checker_rt::callee_cdecl!(1, f32, slot(0), slot(1));
+    let answer: f32 = lf_k2_rt::callee_cdecl!(1, f32, slot(0), slot(1));
     let ret = unsafe { ((ctx + CTX_RET) as *const *mut f32).read() };
     unsafe { ret.write(answer) };
 });

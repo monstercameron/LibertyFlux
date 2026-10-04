@@ -1,4 +1,4 @@
-// original: 0x00b8c8d0 GET_HELP_MESSAGE_BOX_SIZE
+// original: 0x00B8C8D0 GET_HELP_MESSAGE_BOX_SIZE
 /// Script native handler `GET_HELP_MESSAGE_BOX_SIZE`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 integer, arg1 integer, calls the engine worker

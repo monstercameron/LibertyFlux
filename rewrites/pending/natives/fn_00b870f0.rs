@@ -1,4 +1,4 @@
-// original: 0x00b870f0 POINT_FIXED_CAM_AT_PED
+// original: 0x00B870F0 POINT_FIXED_CAM_AT_PED
 // Rewrite of the POINT_FIXED_CAM_AT_PED native handler.
 
 /// Script native `POINT_FIXED_CAM_AT_PED(cam, ped)`.

@@ -1,4 +1,4 @@
-// original: 0x00bc5170 ATTACH_CAR_TO_OBJECT
+// original: 0x00BC5170 ATTACH_CAR_TO_OBJECT
 // ATTACH_CAR_TO_OBJECT: forwards (car, object, flags) plus two by-value
 // vectors (offset xyz, rotation xyz) to the engine. No return.
 export!(cdecl, rw_fn_bc5170(ctx: *mut u8) -> () {

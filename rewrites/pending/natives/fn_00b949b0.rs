@@ -1,4 +1,4 @@
-// original: 0x00b949b0 IS_MEMORY_CARD_IN_USE
+// original: 0x00B949B0 IS_MEMORY_CARD_IN_USE
 //
 // Calls the save-system query with no arguments and stores its zero-extended
 // low byte into the return slot.

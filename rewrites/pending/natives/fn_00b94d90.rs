@@ -1,4 +1,4 @@
-// original: 0x00b94d90 SET_EXTRA_HOSPITAL_RESTART_POINT
+// original: 0x00B94D90 SET_EXTRA_HOSPITAL_RESTART_POINT
 // SET_EXTRA_HOSPITAL_RESTART_POINT: forwards 5 float words by value. Each
 // moves through a vector register in the original, i.e. a 32-bit copy.
 export!(cdecl, rw_fn_b94d90(ctx: *mut u8) -> () {

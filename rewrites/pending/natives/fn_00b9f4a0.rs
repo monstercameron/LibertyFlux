@@ -1,4 +1,4 @@
-// original: 0x00b9f4a0 GET_PED_STEERS_AROUND_OBJECTS
+// original: 0x00B9F4A0 GET_PED_STEERS_AROUND_OBJECTS
 //
 // Script native handler: passes the script character handle to one engine
 // function and stores the low byte of its answer (movzx from AL) into the

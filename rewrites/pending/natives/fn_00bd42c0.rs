@@ -1,4 +1,4 @@
-// original: 0x00bd42c0 SET_MOVIE_VOLUME
+// original: 0x00BD42C0 SET_MOVIE_VOLUME
 // Rewrite of the SET_MOVIE_VOLUME native handler.
 
 /// Script native `SET_MOVIE_VOLUME(volume)`.

@@ -1,4 +1,4 @@
-// original: 0x00b9ec90 GET_CHAR_ANIM_CURRENT_TIME
+// original: 0x00B9EC90 GET_CHAR_ANIM_CURRENT_TIME
 //
 // Forwards the character handle, the animation group and name plus the
 // output slot to the engine query; like its vehicle twin it never touches

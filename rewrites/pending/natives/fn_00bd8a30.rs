@@ -1,4 +1,4 @@
-// original: 0x00bd8a30 NETWORK_JOIN_SUMMONS
+// original: 0x00BD8A30 NETWORK_JOIN_SUMMONS
 // Rewrite of the NETWORK_JOIN_SUMMONS native handler.
 
 /// Script native `NETWORK_JOIN_SUMMONS()`.

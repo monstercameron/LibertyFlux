@@ -1,4 +1,4 @@
-// original: 0x00b86870 CAM_SET_INTERP_GRAPH_POS
+// original: 0x00B86870 CAM_SET_INTERP_GRAPH_POS
 /// Script native handler `CAM_SET_INTERP_GRAPH_POS`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 integer, arg1 integer, calls the engine worker

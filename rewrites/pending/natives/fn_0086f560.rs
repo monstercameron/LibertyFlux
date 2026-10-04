@@ -1,4 +1,4 @@
-// original: 0x0086f560 GET_CONSOLE_COMMAND_TOKEN
+// original: 0x0086F560 GET_CONSOLE_COMMAND_TOKEN
 //
 // Debug leftover stub: ignores its arguments and stores a fixed data pointer
 // to the return slot addressed by ctx+0. The immediate is a relocated image

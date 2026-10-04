@@ -1,4 +1,4 @@
-// original: 0x00b86ef0 IS_SCREEN_FADED_IN
+// original: 0x00B86EF0 IS_SCREEN_FADED_IN
 //
 // Calls the fade-state query with no arguments and stores its zero-extended
 // low byte into the return slot.

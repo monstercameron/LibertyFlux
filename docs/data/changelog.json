@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Tail-jump checks fail for thunks that forward stack arguments",
+    "title": "Rewrites: 172 more functions pass the checker (3605 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "172 rewrites added under rewrites/pending: 64 script native handlers and 108 other functions.",
+      "382 rewrites that had passed checker version 1 were re-run under version 2 and replaced by the version that passed it.",
+      "The tree now holds 3605 rewrites, 2027 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "154 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Tail-jump checks fail for thunks that forward stack arguments",
+    "commit": "8d8562e8878bf1dc714d273866383c57b2104ca4",
     "summary": "Findings from the r-n100 lane.",
     "changes": [
       "New devlog entry: Tail-jump checks fail for thunks that forward stack arguments.",

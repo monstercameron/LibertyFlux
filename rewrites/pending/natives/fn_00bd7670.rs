@@ -6,7 +6,7 @@
 /// Forwards 5 script arguments to the engine function; no return slot.
 /// Float arguments pass through by value as raw bits (bit-exact copies).
 /// handler function: `0x00bd7670`, engine call site: `0x00bd76be`.
-export!(cdecl, rw_bd7670(ctx: *const NativeCtx) -> u32 {
+export!(cdecl, rw_bd7670(ctx: *const NativeCtx03) -> u32 {
     unsafe {
         let args = (*ctx).args_ptr;
         let x = *args.add(0);

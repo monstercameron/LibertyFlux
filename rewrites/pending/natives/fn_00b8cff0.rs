@@ -1,4 +1,4 @@
-// original: 0x00b8cff0 PRINT_HELP_WITH_STRING
+// original: 0x00B8CFF0 PRINT_HELP_WITH_STRING
 //
 // Script native handler: forwards two string slots to one engine function
 // (cdecl/2). No return value stored.

@@ -1,4 +1,4 @@
-// original: 0x00bc8290 SWITCH_RANDOM_TRAINS
+// original: 0x00BC8290 SWITCH_RANDOM_TRAINS
 //
 // Forwards a single boolean-ised flag with the incoming-slot graffiti
 // (measured offset, checked each trial).
@@ -6,13 +6,8 @@ export!(cdecl, rw_00bc8290(ctx: *mut u8) -> u32 {
     unsafe {
         let args = args_of(ctx);
         let flag = (*args != 0) as u8;
-        let probe = 0u32;
-        let slot = (core::ptr::addr_of!(probe) as u32).wrapping_add(RW_00BC8290_K);
-        *(slot as *mut u8) = flag;
-        let coerced = (ctx as u32 & 0xFFFF_FF00) | flag as u32;
+        let coerced = flag as u32;
         callee_cdecl!(1, u32, coerced)
     }
 });
 
-/// Measured bytes from `probe` to the incoming context slot in rw_00bc8290.
-const RW_00BC8290_K: u32 = 0x48;

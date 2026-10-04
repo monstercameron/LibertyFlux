@@ -1,4 +1,5 @@
 // original: 0x00bb2210 HAS_ACHIEVEMENT_BEEN_PASSED
+
 /// Native handler `HAS_ACHIEVEMENT_BEEN_PASSED`.
 ///
 /// Report whether an achievement id has been passed.

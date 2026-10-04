@@ -1,4 +1,5 @@
 // original: 0x00a01c40 SET_OBJECT_CCD
+
 /// Native handler `SET_OBJECT_CCD`.
 ///
 /// Toggle continuous collision detection on an object; the flag is boolean-coerced.
@@ -9,6 +10,7 @@
 /// is the context address with its low byte replaced by the flag.
 /// The value is reproduced exactly here; only that caller-slot
 /// clobber (which no caller can observe) is out of checker scope.
+/// v2 port: the rewrite pushes the bare 0/1 flag; the high-byte slot residue is masked in the contract (call_skip).
 export!(cdecl, rw_00a01c40(ctx: *const u32) -> u32 {
     unsafe {
         let args = *ctx.add(2) as *const u32;
@@ -17,7 +19,8 @@ export!(cdecl, rw_00a01c40(ctx: *const u32) -> u32 {
         let _ = arg0;
         // Boolean-coerced flag(s), blended into the context address
         // exactly as the original's in-place computation does.
-        let flag1 = (ctx as u32 & 0xFFFF_FF00) | u32::from(arg1 != 0);
+        // v2 port: push the bare flag; the slot-residue high byte is masked in the contract (call_skip).
+        let flag1 = u32::from(arg1 != 0);
         callee_cdecl!(1, u32, arg0, flag1);
         0
     }

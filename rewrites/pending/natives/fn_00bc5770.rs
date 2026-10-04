@@ -1,4 +1,4 @@
-// original: 0x00bc5770 EXTINGUISH_CAR_FIRE
+// original: 0x00BC5770 EXTINGUISH_CAR_FIRE
 /// Script native handler `EXTINGUISH_CAR_FIRE`.
 ///
 /// Reads the argument array at ctx+8, passes arg0 integer, calls the engine worker

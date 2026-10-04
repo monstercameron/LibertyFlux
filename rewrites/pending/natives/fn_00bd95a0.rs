@@ -1,4 +1,6 @@
-// original: 0x00bd95a0 SET_RICH_PRESENCE_TEMPLATEMP4
+// original: 0x00BD95A0 SET_RICH_PRESENCE_TEMPLATEMP4
+use lf_k2_rt::{callee_cdecl, export, relocated};
+
 /// SET_RICH_PRESENCE_TEMPLATEMP4: set a rich-presence template.
 ///
 /// Native handler. Forwards two template words to the presence engine.

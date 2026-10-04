@@ -1,4 +1,4 @@
-// original: 0x00b9dfd0 ARE_ENEMY_PEDS_IN_AREA
+// original: 0x00B9DFD0 ARE_ENEMY_PEDS_IN_AREA
 // Rewrite of the ARE_ENEMY_PEDS_IN_AREA native handler.
 
 /// Script native `ARE_ENEMY_PEDS_IN_AREA(ped, x, y, z, radius)`.

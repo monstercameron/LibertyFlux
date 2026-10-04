@@ -1,4 +1,4 @@
-// original: 0x00bb9910 TASK_FOLLOW_NAV_MESH_TO_COORD_NO_STOP
+// original: 0x00BB9910 TASK_FOLLOW_NAV_MESH_TO_COORD_NO_STOP
 //
 // Forwards the character handle, target coordinates, move state, time and
 // radius to the engine task routine. Floats move bitwise. No return value.

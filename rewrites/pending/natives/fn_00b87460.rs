@@ -1,4 +1,4 @@
-// original: 0x00b87460 SET_CAM_INTERP_STYLE_DETAILED
+// original: 0x00B87460 SET_CAM_INTERP_STYLE_DETAILED
 // SET_CAM_INTERP_STYLE_DETAILED: forwards 5 script words. No return.
 export!(cdecl, rw_fn_b87460(ctx: *mut u8) -> () {
     unsafe {

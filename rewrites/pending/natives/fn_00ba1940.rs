@@ -1,4 +1,4 @@
-// original: 0x00ba1940 SET_CHAR_PROP_INDEX_TEXTURE
+// original: 0x00BA1940 SET_CHAR_PROP_INDEX_TEXTURE
 //
 // Forwards the character handle and three integers to the engine setter.
 // No return value.

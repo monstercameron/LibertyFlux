@@ -1,4 +1,4 @@
-// original: 0x009cc6d0 SET_STREAM_PARAMS
+// original: 0x009CC6D0 SET_STREAM_PARAMS
 //
 // Script native handler: forwards a float parameter and an integer to one
 // engine function (cdecl/2). The float travels through an SSE register and

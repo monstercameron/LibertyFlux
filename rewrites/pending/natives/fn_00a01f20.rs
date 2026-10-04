@@ -1,4 +1,4 @@
-// original: 0x00a01f20 SET_OBJECT_ROTATION
+// original: 0x00A01F20 SET_OBJECT_ROTATION
 //
 // Script native handler: forwards the object handle and three rotation
 // floats to one engine function (cdecl/4). The original shuffles the floats

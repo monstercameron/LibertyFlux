@@ -1,4 +1,4 @@
-// original: 0x00bc69f0 IS_CAR_SIREN_ON
+// original: 0x00BC69F0 IS_CAR_SIREN_ON
 //
 // Script native handler: passes the script vehicle handle to one engine
 // function and stores the low byte of its answer (movzx from AL) into the

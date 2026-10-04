@@ -1,4 +1,4 @@
-// original: 0x00bb2d50 SET_SCRIPT_LIMIT_TO_GANG_SIZE
+// original: 0x00BB2D50 SET_SCRIPT_LIMIT_TO_GANG_SIZE
 // Rewrite of the SET_SCRIPT_LIMIT_TO_GANG_SIZE native handler.
 
 /// Script native `SET_SCRIPT_LIMIT_TO_GANG_SIZE(limit)`.
