@@ -15,6 +15,6 @@ lf_checker_rt::export!(cdecl, rw_00b3a2c0(obj: u32, key: u32, scale: u32, mode: 
         if gate & 0xff == 0 {
             return gate;
         }
-        lf_checker_rt::callee_cdecl!(REPOSITION, u32, obj, scale, 0, key, mode)
+        lf_checker_rt::callee_cdecl!(REPOSITION, u32, obj, scale, key, mode)
     }
 });

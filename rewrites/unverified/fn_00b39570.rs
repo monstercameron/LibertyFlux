@@ -4,7 +4,7 @@
 /// mover kind and clear the mover serial, run the prepare callee, then
 /// unless the `flags` word has the skip bit, run the adjust callee with the
 /// `rate` word. Always run the settle callee, then build the mover
-/// descriptor (the blend factor in its two float slots, zeros elsewhere) and
+/// descriptor (the rate word in its two float slots, zeros elsewhere) and
 /// run the attach callee with `obj` twice, the descriptor, a zero word and
 /// the flags word twice. Returns the attach callee's answer. Original:
 /// 0x00b39570 (cdecl, four stack words: obj, rate, blend, flags).
@@ -26,7 +26,7 @@ lf_checker_rt::export!(cdecl, rw_00b39570(obj: u32, rate: u32, blend: u32, flags
         }
         let _: u32 = lf_checker_rt::callee_cdecl!(SETTLE, u32,);
         lf_checker_rt::callee_cdecl!(
-            ATTACH, u32, obj, obj, 0, blend, 0, blend, 0, 0, 0, flags, flags
+            ATTACH, u32, obj, obj, 0, rate, 0, rate, 0, 0, 0, flags, flags
         )
     }
 });

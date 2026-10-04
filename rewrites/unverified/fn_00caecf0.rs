@@ -27,10 +27,11 @@
 ///   are refreshed from the position block (`+MID = P.x`, `+MID2 = P.z+4`)
 ///   before the limit is read.
 /// - Otherwise, when `DIVERGE` is set, return 0. Fetch the steering vector
-///   (id 3) with a slot holding the global tick float, project
-///   `px = P.x + z0*sx`, `py = P.y + z0*sy`, and form
-///   `q = (a0.y-py)*dy + (a0.x-px)*dx` (in that order). When `0 < q`
-///   (strict, ordered) or `INHIBIT` is set, return 0; return 1 iff
+///   (id 3) with an uninitialised slot (defined fill 0; the original's tick
+///   store addresses the slot below it instead, so the projection scales by
+///   the tick float `tickf`: `px = P.x + tickf*sx`, `py = P.y + tickf*sy`),
+///   and form `q = (a0.y-py)*dy + (a0.x-px)*dx` (in that order). When
+///   `0 < q` (strict, ordered) or `INHIBIT` is set, return 0; return 1 iff
 ///   `settled`.
 ///
 /// Original: 0x00caecf0 (thiscall, two stack words). Single-precision SSE in
@@ -150,7 +151,12 @@ fn decide_00caecf0<const EARLY_ZERO: bool>(this: u32, a0: u32, ped: u32) -> u32 
         if c4b & DIVERGE != 0 {
             return 0;
         }
-        let mut buf: u32 = lf_checker_rt::global::<u32>(TICKF_GVA).read_unaligned();
+        // Quirk: the original computes &buf, pushes it, and only then stores
+        // the tick float at [esp+0x40] -- which now addresses the z0 slot, 4
+        // bytes below buf. So buf stays uninitialised (defined fill 0) while
+        // the projection below scales by the tick float, not z0.
+        let tickf = lf_checker_rt::global::<f32>(TICKF_GVA).read_unaligned();
+        let mut buf: u32 = 0;
         let buf_ptr = (&mut buf as *mut u32) as u32;
         let pv = rd32(ped);
         let ft = rd32(pv + 0xec);
@@ -159,8 +165,8 @@ fn decide_00caecf0<const EARLY_ZERO: bool>(this: u32, a0: u32, ped: u32) -> u32 
         let r2 = fetch(ped, buf_ptr);
         let r2x = ((r2) as *const f32).read_unaligned();
         let r2y = ((r2 + 4) as *const f32).read_unaligned();
-        let px = fadd(((vecp) as *const f32).read_unaligned(), fmul(z0, r2x));
-        let py = fadd(((vecp + 4) as *const f32).read_unaligned(), fmul(r2y, z0));
+        let px = fadd(((vecp) as *const f32).read_unaligned(), fmul(tickf, r2x));
+        let py = fadd(((vecp + 4) as *const f32).read_unaligned(), fmul(r2y, tickf));
         let qx = fmul(fsub(((a0) as *const f32).read_unaligned(), px), x);
         let qy = fmul(fsub(((a0 + 4) as *const f32).read_unaligned(), py), y);
         let qq = fadd(qy, qx);

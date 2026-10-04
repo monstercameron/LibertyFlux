@@ -6,7 +6,9 @@
 /// returns 0), compare the squared distance against the squared radius with
 /// the ordered greater test (NaN takes the commit path), and on commit call
 /// the placer with the point, the `param` word and a zero word, returning
-/// nonzero when the placer does. Out of range returns the point address with
+/// nonzero when the placer does (the placer pops its five argument words:
+/// the original has no stack fix-up after the call). Out of range returns
+/// the point address with
 /// its low byte cleared; the commit path keeps the placer's answer with its
 /// low byte replaced by the placer-nonzero flag. The float operation order
 /// is the original's. Original: 0x00b3a160 (cdecl, three stack words: point,
@@ -56,7 +58,7 @@ lf_checker_rt::export!(cdecl, rw_00b3a160(point: u32, param: u32, radius_bits: u
         if dist2 > r2 {
             return point & 0xffff_ff00;
         }
-        let placed: u32 = lf_checker_rt::callee_cdecl!(
+        let placed: u32 = lf_checker_rt::callee_stdcall!(
             PLACER, u32, px.to_bits(), py.to_bits(), pz.to_bits(), param, 0
         );
         (placed & 0xffff_ff00) | ((placed != 0) as u32)

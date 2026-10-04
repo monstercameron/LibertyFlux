@@ -162,8 +162,7 @@ lf_checker_rt::export!(thiscall, rw_00cb5870(this: u32, arg1: u32, code: u32) ->
                         let y = add(mul(x, ONE_HALF), ONE_HALF);
                         lf_checker_rt::callee_thiscall!(
                             SCALE_CALLEE, u32, mgr,
-                            y.to_bits(), this.wrapping_add(0x30),
-                            this.wrapping_add(0x30), 0xffffffff
+                            y.to_bits(), this.wrapping_add(0x30), 0xffffffff
                         )
                     };
                     let mgr2 = gate(2);

@@ -6,8 +6,8 @@
 /// value word. The range is never empty in the checked contract (an empty
 /// range would return the caller's entry register, which no rewrite can
 /// observe); the result is the last step's answer. Original: 0x00b35090
-/// (cdecl, three stack words: first, last, fill).
-lf_checker_rt::export!(cdecl, rw_00b35090(first: u32, last: u32, fill: u32) -> u32 {
+/// (cdecl, four stack words: first, last, an unread pad word, fill).
+lf_checker_rt::export!(cdecl, rw_00b35090(first: u32, last: u32, _pad: u32, fill: u32) -> u32 {
     unsafe {
         const STEP: u32 = 1;
         const ELEM: u32 = 28;
