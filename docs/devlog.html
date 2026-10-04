@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#naming-04">Naming a run of leaderboard factory fragments</a></li>
       <li><a href="#proof-records">How strongly is each rewrite proven</a></li>
       <li><a href="#hourly-reviews-2026-10-04">Hourly reviews, 4 October</a></li>
       <li><a href="#production-s241">Three task natives read a fourth word they never wrote</a></li>
@@ -334,6 +335,32 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="naming-04">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Naming a run of leaderboard factory fragments</h2>
+      <p>A batch of 150 unnamed functions turned out to be two runs of online leaderboard creation fragments plus inventory gapfill artifacts, and every real fragment was named with high confidence from the constructor it calls.</p>
+      <h3>What was asked</h3>
+      <p>Propose a descriptive name for each of 150 consecutive unnamed functions, working out what the group is about first, with a confidence of high, medium or low each, leaving the name empty where the function cannot be identified.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The batch holds two families of near-identical factory fragments. The larger kind allocates a small leaderboard record, calls that leaderboard's constructor, builds a per-entry array, and jumps to a shared tail. The smaller kind allocates a larger leaderboard-info record, calls its constructor, and jumps to a different shared tail.</p>
+      <p><span class="evidence verified">Verified</span> Every constructor already had a name, either a checker-verified rewrite or a merged class-hierarchy name, and each name identifies the exact leaderboard, so all 108 real fragments were named after the leaderboard they build. A byte-pattern census of the whole span showed the leaderboard numbers run gapless with no repeats, and factory order, constructor order and number order rise together, which corroborates every name three ways.</p>
+      <p><span class="evidence verified">Verified</span> All 42 gapfill entries are artifacts, not functions: 41 start mid-instruction inside a factory body and one starts in non-code padding between the two runs. They were left unnamed, and their ranges swallow over two hundred further real factories that are not separate batch entries.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Group</th><th role="columnheader">Count</th><th role="columnheader">Outcome</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Leaderboard factories</td><td role="cell" data-label="Count">23</td><td role="cell" data-label="Outcome">named, high confidence</td></tr>
+      <tr role="row"><td role="cell">Leaderboard-info factories</td><td role="cell" data-label="Count">85</td><td role="cell" data-label="Outcome">named, high confidence</td></tr>
+      <tr role="row"><td role="cell">Gapfill artifacts</td><td role="cell" data-label="Count">42</td><td role="cell" data-label="Outcome">unnamed, low confidence</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>The leaderboard factories continue the existing naming lane's wording exactly. For the info-record kind a new infix was introduced, following the constructor's class name, with camel-case tokens split at case and letter-digit boundaries. Recommended for later lanes: resolve the remaining factories hidden inside gapfill ranges with the same census-plus-constructor method instead of reading them one by one, consider re-splitting the inventory along the allocate-then-call pattern, and give one focused lane to the shared tails and the allocator, copy and register helpers, which are unnamed in every source and called from hundreds of sites.</p>
+      <h3>How to reproduce it</h3>
+      <p>Read code through the mapped image, never the raw file at a mapped address, and validate the mapping first by decoding one checker-verified function and comparing it with its reviewed source. Gather one evidence table for the whole batch before naming anything: disassemble each entry, record direct and indirect calls, and resolve callees against the verified rewrites, the merged names and earlier naming lanes. Where fragments repeat, scan the span for the repeated byte shape to census every real start, then check that any numbering implied by the callee names runs gapless. Name the fragments from the callee names and mark gapfill entries low with empty names.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The gapfill entries overlap the real fragments and their covered-count metadata undercounts what they span, so the batch looked like 150 functions but contains 108 plus 42 duplicates; trusting the inventory classes at face value would have produced names for mid-instruction addresses. Disassembling past each entry's stated size also bled into neighbours and mixed their calls into the evidence until the disassembly was clipped to the exact size. Nothing else went wrong.</p>
+      </article>
 
       <article class="entry" id="proof-records">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
