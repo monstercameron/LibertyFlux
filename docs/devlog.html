@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#naming-09">Naming leaderboard methods, and a broken numbering rule</a></li>
       <li><a href="#naming-08">Naming a run of leaderboard schema methods</a></li>
       <li><a href="#naming-07">Naming the leaderboard factory run: stub shape, dispatch table, and boundary traps</a></li>
       <li><a href="#production-b184">Four input-UI functions: three verified, and a checker blind spot found with mutants</a></li>
@@ -343,6 +344,28 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="naming-09">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Naming leaderboard methods, and a broken numbering rule</h2>
+      <p>All 150 functions in this batch were named as per-board leaderboard methods, reusing the previous batch's vocabulary, and every attribution was confirmed against the boards' virtual tables. The batch's surprise is that the tidy board-number rule from the earlier races breaks for most of this range: eight boards reuse other boards' column schemas, and the cause is unknown.</p>
+      <h3>What was asked</h3>
+      <p>Name 150 consecutive functions, continuing the run of online leaderboard-info methods named in the previous batch, working out what the group is about first and then naming each function.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The batch holds nine virtual methods each for eighteen ranked race leaderboard definitions, in a repeating per-board layout. Each method shares one code skeleton per table slot and differs only in a board-number constant and name addresses.</p>
+      <p><span class="evidence verified">Verified</span> The earlier rule that each board's number equals its race number plus a fixed offset holds for the first five boards of this batch but fails for the remaining thirteen. Eight boards use small scattered numbers matching other boards' schemas, and five boards use the numbers the rule would have assigned to the skipped boards, so the number sequence stays gapless only across the union. Every affected name records the actual number.</p>
+      <p><span class="evidence verified">Verified</span> Three boards have no readable board-number method: their table slot points into the encrypted address range, the same situation the previous batch saw twice. Five board-kind methods exist but sit in address gaps outside this batch.</p>
+      <h3>What was decided or recommended</h3>
+      <p>All 150 functions were named with the previous batch's method vocabulary, since the code skeletons and behaviors match exactly; the numbering anomaly does not change what any method does, so the names stand with the anomaly flagged in each record's evidence. The next lane covering other leaderboard families should record which board owns each small schema number, turning these flags into cross-references.</p>
+      <h3>How to reproduce it</h3>
+      <ul>
+      <li>Disassemble each function and group by code skeleton: six-byte name and number stubs plus seven larger schema-list shapes.</li>
+      <li>Read each board's virtual table and check every function sits in its claimed slot, re-reading the table bytes rather than trusting the inventory label.</li>
+      <li>Extract the board-number constant from each method and tabulate per board; compare against the race-plus-offset rule.</li>
+      </ul>
+      <h3>What was confusing or went wrong</h3>
+      <p>An early draft of the check script assumed the last three methods of each board used the board number plus one, because the next board's block starts one higher; the table cross-check refuted this, and all methods of a board use one number. A first string scan also needed the same pointer-validation care the previous batch reported, keeping only pointers that land in string data.</p>
+      </article>
 
       <article class="entry" id="naming-08">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
