@@ -10,9 +10,16 @@ supervisor task must not kill the lanes it started. Output goes to
 import os
 import subprocess
 import sys
+from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import common
+
+
+def lane_command(lane, effort, here):
+    """The command that runs one lane through run-lane.ps1."""
+    return ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
+            str(Path(here) / "run-lane.ps1"), "-Lane", lane, "-Effort", effort]
 
 
 def start_lane(lane, effort="max"):
@@ -21,8 +28,7 @@ def start_lane(lane, effort="max"):
     out_dir = common.logs_dir(root) / "lanes-out"
     out_dir.mkdir(parents=True, exist_ok=True)
     with open(out_dir / f"{lane}.out", "w") as stdout, open(out_dir / f"{lane}.err", "w") as stderr:
-        subprocess.Popen(["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File",
-                          str(here / "run-lane.ps1"), "-Lane", lane, "-Effort", effort],
+        subprocess.Popen(lane_command(lane, effort, here),
                          stdout=stdout, stderr=stderr, cwd=str(root),
                          creationflags=subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.DETACHED_PROCESS)
     return lane

@@ -2,6 +2,8 @@
 
     python -m unittest test_queue -v
 
+or from the repository root: python -m unittest scripts/queue/test_queue.py
+
 Uses throwaway databases in a temp dir; the real queue database is never
 touched. Tests that need the game binary or capstone are skipped when they
 are unavailable (the --no-disasm path is always tested).
@@ -14,7 +16,10 @@ import sqlite3
 import tempfile
 import threading
 import unittest
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # also runnable from the repository root
 
 import lfdb
 
