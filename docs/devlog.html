@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#natives-20">Native handlers SET_VIEWPORT_PRIORITY to SYNCH_RECORDING_WITH_WATER: what they reveal</a></li>
       <li><a href="#natives-18">Native handlers SET_MULTIPLAYER_HUD_TIME to SET_RADAR_AS_INTERIOR_THIS_FRAME: what they reveal</a></li>
       <li><a href="#natives-14">Native handlers PRINT_WITH_5_NUMBERS_NOW to RETUNE_RADIO_DOWN: what they reveal</a></li>
       <li><a href="#natives-13">Native handlers NETWORK_SET_LAN_SESSION to PRINT_WITH_5_NUMBERS: what they reveal</a></li>
@@ -130,6 +131,37 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="natives-20">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Native handlers SET_VIEWPORT_PRIORITY to SYNCH_RECORDING_WITH_WATER: what they reveal</h2>
+      <p>All 140 script native handlers in this batch were disassembled and matched against public documentation and the decompiled mission scripts. The call context layout is now pinned down, the shared script-handle lookup used by every entity native is identified by its callers, and most handlers turn out to be thin wrappers over one engine function each.</p>
+      <h3>What was asked</h3>
+      <p>Disassemble the handler of each native from SET_VIEWPORT_PRIORITY to SYNCH_RECORDING_WITH_WATER, work out the call context layout, describe what each handler does at engine level, propose names for the engine functions it calls and meanings for the fields it touches, and aggregate shared lookups across the batch.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The call context holds a return-slot pointer at offset zero and an argument-array pointer at offset eight, with four bytes per argument. A second word at offset four exists but no handler in this batch reads it, so its purpose stays unknown.</p>
+      <p><span class="evidence verified">Verified</span> Handler shapes across the batch:</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Shape</th><th role="columnheader">Count</th><th role="columnheader">Meaning</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Thin wrapper</td><td role="cell" data-label="Count">91</td><td role="cell" data-label="Meaning">Push documented args, call one engine function, return</td></tr>
+      <tr role="row"><td role="cell">Fuller wrapper</td><td role="cell" data-label="Count">18</td><td role="cell" data-label="Meaning">Adds bool normalisation or vector marshalling</td></tr>
+      <tr role="row"><td role="cell">Tail jump</td><td role="cell" data-label="Count">17</td><td role="cell" data-label="Meaning">Passes the context straight to the engine function</td></tr>
+      <tr role="row"><td role="cell">Inline</td><td role="cell" data-label="Count">4</td><td role="cell" data-label="Meaning">Shift, sine and square-root need no engine call</td></tr>
+      <tr role="row"><td role="cell">Shared or stub</td><td role="cell" data-label="Count">8</td><td role="cell" data-label="Meaning">Four debug checks share one handler; five stripped natives share an encrypted stub</td></tr>
+      <tr role="row"><td role="cell">Thread start</td><td role="cell" data-label="Count">2</td><td role="cell" data-label="Meaning">START_NEW_SCRIPT pair with indirect thread creation</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> One shared lookup converts script handles to entity pointers and is called by all 27 entity-handle engine functions in the batch, with a per-pool manager pointer passed alongside the handle. Its body sits in the encrypted range, so only its usage is established. Companion finds include a thread lookup by id, a current-thread getter, a zone-name to zone-index lookup, a fire-creation helper, a road-region list updater, a recording-playback slot allocator, and generic vector-marshalling thunks shared by the ragdoll and particle-effect natives.</p>
+      <p><span class="evidence verified">Verified</span> Field meanings with strong evidence: a ped flag bit for being inside a vehicle plus the current-vehicle pointer, the entity placement-matrix pointer and the position inside it, and the script-thread id field. The public signature database matched the code for 101 handlers; the rest are natives it lists without signatures or handlers that delegate argument reading to a shared thunk.</p>
+      <p><span class="evidence verified">Verified</span> Surprises: one pad-shake native ignores its arguments and only sets a flag; the sine native takes degrees, not radians; a failed START_NEW_SCRIPT marks the calling thread rather than just returning zero; and 33 of the 140 natives are never called by any decompiled mission script. No handler varies with frame time.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Proposed names were recorded for 144 engine functions and 11 structure fields with confidence levels, in the lane data files for later lanes to confirm or correct. The handle-to-pointer lookup description should be treated as the shared reference until its body can be read from a decrypted image. One table-resolving helper with mixed callers is flagged for a dedicated follow-up because its key domain could not be pinned down.</p>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble each listed handler from the executable with capstone using recursive traversal, stopping only at returns; disassemble one level into each direct callee the same way; compare the highest argument slot read against the public native signature database; and count calls per native across the public decompiled mission scripts. The lane scripts and raw dumps are kept with the lane data.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> The argument cross-check initially flagged most handlers as mismatched because the check counted the prologue instruction that loads the argument-array pointer as if it were an argument read. Restricting the scan to instructions after that load fixed it. The shared debug stub address in the encrypted range also needed care: several natives resolve there and yield no code at all, which is a normal outcome, not a tool failure.</p>
+      </article>
 
       <article class="entry" id="natives-18">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
