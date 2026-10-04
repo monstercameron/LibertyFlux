@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: The optimizer can silently change NaN results",
+    "title": "Devlog: Three rewrites whose only mismatch is where values live, not what they are",
     "commit": null,
+    "summary": "Findings from the r-s262 lane.",
+    "changes": [
+      "New devlog entry: Three rewrites whose only mismatch is where values live, not what they are.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: The optimizer can silently change NaN results",
+    "commit": "f90699744b6ad292cb0f305098bda272a1cee6b7",
     "summary": "Findings from the r-b198 lane.",
     "changes": [
       "New devlog entry: The optimizer can silently change NaN results.",

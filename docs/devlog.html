@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s262">Three rewrites whose only mismatch is where values live, not what they are</a></li>
       <li><a href="#production-b198">The optimizer can silently change NaN results</a></li>
       <li><a href="#naming-13">Standard race boards reuse the nine leaderboard methods, with folded id getters</a></li>
       <li><a href="#naming-12">Naming the ranked race leaderboard methods</a></li>
@@ -351,6 +352,33 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s262">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Three rewrites whose only mismatch is where values live, not what they are</h2>
+      <p>A production batch of twenty small game functions verified eighteen of them, and three of the eighteen only mismatch the original in stack or stack-pointer bookkeeping that no safe rewrite can reproduce; the values themselves match through other checks.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty neighbouring game functions from the pedestrian and task subsystem in Rust and prove each one equivalent to the original with the differential checker, which runs both sides from identical state and compares return values, memory, stack behaviour, calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Eighteen functions passed one thousand trials each with no failures, including two that call through fabricated object tables and one with a computed tail jump. Two functions were deferred with stated reasons.</p>
+      <p><span class="evidence verified">Verified</span> Three verified functions each needed one comparison disabled for a structural reason, with a full-comparison run kept first showing everything else green:</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Pattern</th><th role="columnheader">Why it mismatches</th><th role="columnheader">Where the values are still verified</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Tail jump that overwrites its own incoming argument slots</td><td role="cell" data-label="Why it mismatches">The rewrite passes the same argument values by call, but cannot address its own incoming frame</td><td role="cell" data-label="Where the values are still verified">Call log compares object and arguments</td></tr>
+      <tr role="row"><td role="cell">Spill of a coprocessor result onto the incoming argument slot</td><td role="cell" data-label="Why it mismatches">Same inaddressability as above</td><td role="cell" data-label="Where the values are still verified">Heap store and return value</td></tr>
+      <tr role="row"><td role="cell">Computed tail jump through a planted table</td><td role="cell" data-label="Why it mismatches">The interception stub returns without popping, so the observed stack adjustment differs from the real callee's</td><td role="cell" data-label="Where the values are still verified">Non-tail trials plus return, heap and call checks</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> A deliberately wrong one-bit mutant of the simplest function fails every trial from the first, so the checks bite.</p>
+      <p><span class="evidence">Inferred</span> The batch shares one guard prelude and one notify shape across three sibling functions, and two further functions share a trigger routine, which made grouped analysis faster than one-by-one work.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Disabling a single bookkeeping comparison is acceptable when a prior full run shows everything else green, the difference is a proven interception artifact rather than behaviour, and the values are verified through another comparison; the verdict and contract keep this visible for review. Lanes hitting a locked rewrite library should rename it aside and rebuild rather than stopping shared workers. The two deferred functions go back to the queue with their blocker codes.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the lane rewrite crate for 32-bit Windows with panics set to abort, then run the lane driver copy once per contract with the stock worker binary; each contract pins branch coverage with per-trial value cycles and runs one thousand trials. The lane folder keeps the contracts, verdicts, single-function rewrite files, generation scripts and the mutant probe.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two branch misreads on one function each failed half the trials: a below-threshold jump returns the source point rather than falling through, and a null link still takes the measuring path. One rewrite passed raw image addresses where relocated ones were needed, which the call detail exposed as unnormalised values. One verdict ran against a stale library after a locked rebuild; the file timestamp caught it and the run was repeated.</p>
+      </article>
 
       <article class="entry" id="production-b198">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
