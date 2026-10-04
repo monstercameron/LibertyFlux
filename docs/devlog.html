@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#subsystem-streaming">Subsystem survey: streaming and resources</a></li>
       <li><a href="#subsystem-script-vm">Subsystem survey: the script virtual machine</a></li>
       <li><a href="#subsystem-peds-tasks">Subsystem survey: pedestrians, AI and the task system</a></li>
       <li><a href="#subsystem-files-memory">Subsystem survey: file system, configuration, memory and save games</a></li>
@@ -84,6 +85,31 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="subsystem-streaming">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Subsystem survey: streaming and resources</h2>
+      <p>The streaming subsystem splits into a readable edge and an opaque core: 49 related classes were identified through type information, but the central file-device and archive code has all of its virtual methods in the encrypted part of the executable, while the media readers, one loader variant and the resource-dictionary plumbing are readable.</p>
+      <h3>What was asked</h3>
+      <p>Survey how the game loads assets at run time: the streaming request system, resource files and pointer fix-up, archives, file devices, asset dictionaries and memory budgets. The work was done by direct analysis of the executable file with Python, without the pending Ghidra analysis and without decrypting or running anything.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> 49 classes belong to this subsystem, 47 with measurable virtual tables totalling 597 slots. The file layer is a virtual filesystem family of 8 device classes with 34 to 38 virtual methods each: local disk, memory buffer, relative path remount, network stream, growable buffer, caching decorator, archive files and a streaming device.</li>
+      <li><span class="evidence verified">Verified</span> the pageable resource system centres on a small base class with 8 typed dictionary instantiations covering animations, textures, drawables, physics bounds, particles and render mesh fragments, plus typed cross-file references that are resolved at load time.</li>
+      <li><span class="evidence verified">Verified</span> the main streaming scheduler classes have no type information at all: no descriptors exist for the streaming controller, the streaming module, the asset stores, or archive and resource manager classes, so they must be static classes or plain structures and can only be found through strings and code references.</li>
+      <li><span class="evidence verified">Verified</span> every virtual method of all 8 file-device classes and all parameter-stream classes points into the encrypted region, as do nearly all asset-loader methods. Readable code covers the media stream readers, the direct loader variant, dictionary plumbing and file-system call sites.</li>
+      <li><span class="evidence verified">Verified</span> 533 distinct subsystem strings, revealing a slot-based request model with active and requested state, per-area streaming set files, an on-disk cache with validation and a defragmentation pass, virtual paths split between shared and platform-specific data, streamed fonts, and a heavily duplicated resource-validation failure message in five languages.</li>
+      <li><span class="evidence verified">Verified</span> about ten code regions attributed to streaming through 492 specific references plus 73 direct file-system calls, all sample-checked as genuine code. They cover dictionaries, archives, async streaming, low-level file access, caching and cross-file references.</li>
+      <li><span class="evidence verified">Verified</span> compression uses a statically linked zlib, movie playback uses Bink and Windows Media components, and audio streaming uses DirectSound plus the multimedia timers.</li>
+      <li><span class="evidence">Inferred</span> the readable streaming code is on the order of low hundreds of functions; the encrypted region holds most of the archive and scheduler method bodies, so no exact total can be measured from the file on disk.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <p>Rewrite work should start with the readable and documented parts in this order: local file device and virtual paths, archive reader checked against public format notes, decompression, resource block loading with pointer fix-up, dictionary containers, cross-file references, then the cache and the request scheduler last, since the scheduler needs dynamic analysis or a decrypted image. The archive format and the general resource design are publicly documented, but the streaming set files, the cache format, the defragmentation pass and the scheduling and eviction policy are not and remain the unknowns.</p>
+      <h3>How to reproduce it</h3>
+      <p>Parse the executable headers and relocation table, scan the data sections for C++ type descriptors and object locators, resolve base classes through the hierarchy descriptors, measure virtual tables by counting consecutive relocated code pointers, filter class names for streaming and resource keywords, filter the string table to trustworthy sections only, and collect relocation fixups in the unencrypted code that target subsystem tables, strings and file-system imports, then group nearby references into clusters and validate a sample by disassembly.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two traps cost time. First, a case-insensitive name filter matched unrelated classes such as camera script instructions and destroy-car tasks, and a word-boundary pattern silently missed the whole file-device family; both were caught by inspecting the candidate list and the filter was rewritten case-sensitively. Second, clustering code by synchronisation calls produced bogus mega-clusters because every subsystem uses locks; synchronisation was excluded from attribution and the clusters were recomputed from subsystem-specific references only. Public sources were thinner than expected: the archive format page is thorough, but the canonical modding SDK repository and the resource-format notes could not be located in the time available and stay open leads.</p>
+      </article>
 
       <article class="entry" id="subsystem-script-vm">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
