@@ -1,8 +1,23 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Progress data: the named count now includes names given during rewriting",
+    "title": "Checker version 4: lane fixes folded back, two silent passes closed",
     "commit": null,
+    "summary": "The tracked checker gains the harness abilities lanes had built in private copies, and fails loudly in two cases where it used to pass without comparing.",
+    "changes": [
+      "A stand-in for a called function can now leave registers as it found them, for originals that rely on the real callee doing so (a base constructor that keeps the object pointer; a check called after the return value is set). Without this, a run of 80 constructors could not be verified at all.",
+      "New contract options, all off by default so version 3 contracts run unchanged: an argument passed in the accumulator, a callee that leaves stack clean-up to its caller, an out-parameter written at an offset, and a byte mask on a pushed argument for one-byte values pushed as full words. A mask is recorded in the verdict and a mask of zero is rejected.",
+      "Closed: when one trial made more calls than the call log holds, the calls past the limit were not compared and the verdict was still a pass. That now fails, and a contract can raise the limit to 1,024.",
+      "Closed: asking for the accumulator to be compared at a call without the option that carries it compared zeros on both sides. That now fails. The coordinator's review added the reverse rule: using the option without asking for the comparison also fails, because the argument would be compared nowhere.",
+      "A trial lost because the worker died or timed out is retried on a fresh worker, at most twice, and every retry is recorded in the verdict. Lanes had been doing this by hand.",
+      "When the only difference in a failing trial is the sign or payload of a not-a-number, the verdict says so and points at operand order. The trial still fails. The proposal to treat such values as equal was not taken.",
+      "Regression on the rebuilt worker: all 38 proofs and all 34 deliberately wrong versions give the same result as before. Not done in this version: arguments on the x87 stack and vector-register arguments beyond the second."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Progress data: the named count now includes names given during rewriting",
+    "commit": "4a9e22e333283b11470182a295e7d2dc4eea378b",
     "summary": "The named count had been frozen at 9,006 since the one symbol merge. It is 11,881 with the names lanes have given since.",
     "changes": [
       "The count of named functions came from a single merge of symbol sources done before production started, so it stood still while lanes went on naming every function they rewrote.",

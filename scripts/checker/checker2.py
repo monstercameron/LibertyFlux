@@ -73,7 +73,10 @@ How a trial works
 
 A hang is cut off by a watchdog: each trial runs on its own thread with a
 timeout; on expiry the worker reports `hang` and exits so the driver starts
-a fresh worker (a hung trial taints the process).
+a fresh worker (a hung trial taints the process). v4: a trial lost to a
+silent/crashed worker is retried on a fresh worker (same inputs, at most 2
+retries) and recorded in the verdict; only exhausted retries stay
+`worker-lost`.
 
 Contract format
 ---------------
@@ -89,7 +92,9 @@ One JSON file per function:
   {"int":N}, {"small":max} (ranged int), {"cycle":[...]}, {"null":true}.
 - `stack`: list of {kind}: `int`, `byte`, `float`, `ptr` (+seg),
   `zero`/`null`, `ptr_or_null` (+seg, NULL on even trials),
-  `small` (+max), `smallint` (switch-index-like), `cycle` (+values).
+  `small` (+max), `smallint` (switch-index-like), `cycle` (+values),
+  v4 `srange` (+lo, +hi: signed-range sweep, lo+trial while trial <
+  span else uniform rng in [lo,hi]; lo may be negative).
   v3 adds: `heapidx` (+seg, +count default 16: 2/3 of trials index heap
   words as (heap+off)>>2 + trial%count for functions that scale the arg
   by 4, 1/3 wild ints redrawn while arg*4 lands in code pages);
@@ -118,14 +123,16 @@ One JSON file per function:
   ([{rva,words}] with word specs, supports heap/stub pointers), or
   `globals_fill_spec` (`heap_ptr`/`cycle`/`words` per range).
 - `callees`: [{id,conv,nargs,ret,script,writes,wscript,snap,logxmm,
-  xmm0_from_stack,logxmm1,xmm1_from_stack,seq}]. `conv` sets cleanup
+  xmm0_from_stack,logxmm1,xmm1_from_stack,seq,preserve}]. `conv` sets cleanup
   (`cdecl` callers clean up, all others pop nargs*4); `ret` is the
   scripted answer channel (`u32`, `u64`, `al`, `f32xmm0`, `f64xmm0`,
-  `f32st0`, `f64st0`); `script` is a value list cycled per trial (each
+  `f32st0`, `f64st0`, and v4 `preserve`); `script` is a value list cycled per trial (each
   callee gets its own slot), `"edges"`, or entries resolving to heap
   pointers. `writes` declares out-param stores:
   [{arg:N|reg:"ecx"/"edx", at, n}]; `wscript` is the per-trial word
-  matrix cycled alongside. `snap` declares pointed-to snapshots:
+  matrix cycled alongside. v4 adds an optional `dst` byte offset per
+  write (default 0): the words land at [pointer+dst] instead of
+  [pointer+0], for out-slots past the pointer. `snap` declares pointed-to snapshots:
   [{kind:"arg"/"ecx"/"edx", idx, n}], at most 8 words total per callee.
   `logxmm` logs the 16 bytes of XMM0 at the call.
   `xmm0_from_stack` names the stack arg the stub loads XMM0 from on
@@ -137,7 +144,24 @@ One JSON file per function:
   same entry shapes as `script`) consumed in call order per callee per
   side -- for callees polled in a loop until a sentinel. Calls past
   the last step repeat it. Without `seq` every call in the trial gets
-  the script value, as before.
+  the script value, as before. v4 adds two register-preservation
+  options (both default off, existing stubs byte-identical):
+  `ret: "preserve"` sets no scripted answer and exits the stub with
+  the entry eax/ecx/edx intact, for callees the original calls after
+  its return value is set (e.g. the CRT security-cookie check, which
+  genuinely preserves them); any script/seq value is ignored.
+  `"preserve": true` keeps the scripted eax answer but restores entry
+  ecx (and edx, except for `u64` returns where edx carries the high
+  word), for callees whose callers keep registers live across the
+  call (e.g. a base constructor that leaves the object pointer in
+  ecx). Use it only after confirming the real callee preserves them.
+  v4 also adds `eax_from_stack` (the stack arg the stub loads eax from
+  on the rewrite side only, mirroring `xmm0_from_stack`; the logged
+  entry eax is compared via `call_regs` `"eax"`, and the stack args are
+  then skipped on both sides like the other transports) and `noclean`
+  (the real callee takes register args but pops nothing: the stub
+  returns plain `ret` on the original side and `ret N` on the rewrite
+  side, so the rewrite's stack stays balanced).
 - `patches`: [{site (RVA hex of an E8), id}]. `tailpatches`:
   [{site (RVA hex of an E9), id}]; the tail stub logs like a normal stub
   then returns straight to the trampoline with `outer_pop + 4`
@@ -159,8 +183,18 @@ One JSON file per function:
   exact v2 stream for audit.
 - `checks`: `ret`, `esp`, `heap`, `stack`, `globals`, `calls`,
   `undeclared` (all bool), `fulldata` (bool), `fp_tol`, `fp64`,
-  `call_regs` (optional {id:[regs]}), `call_skip`
-  ({id:[stack arg indexes]} dropped from the call comparison).
+  `call_regs` (optional {id:[regs]}, v4 adds `"eax"` for
+  `eax_from_stack` callees -- rejected without the transport),
+  `call_skip` ({id:[stack arg indexes]} dropped from the call
+  comparison), v4 `call_mask` ({id:{idx:mask}}: compare only
+  (value & mask) of a pushed argument as raw hex, for one-byte values
+  pushed as full words; declared per callee and argument, recorded in
+  the verdict, zero rejected) and its alias `call_low8`
+  ({id:[idx,...]}, each compared low-byte-only, i.e. mask 0xFF).
+- Top-level `log_max` (v4, default 256, max 1024): per-side call-log
+  cap. A trial where either side attempts more calls than the cap fails
+  its `calls` check (the tail would go uncompared); raise the cap and
+  rerun. Previously such trials passed silently.
 
 Indirect calls: the planting design
 -----------------------------------
@@ -231,7 +265,10 @@ non-zero before any fault-driven pass counts). v3 adds `coverage` (trials
 completed, checks seen, callees fired on completed trials, distinct
 call-sequence shapes, trials where the original wrote), `vacuous` (true
 when the verdict has no failures but the coverage rule below refused it)
-and `vacuous_reasons`.
+and `vacuous_reasons`. v4 adds `call_masks_used` (the effective masks,
+alias resolved, so a narrowed comparison is always visible), `log_max`
+(the cap in force), and `worker_retries` (one record per retried trial:
+trial, attempt, loss class and worker exit code).
 
 v3 coverage rule: a verdict with zero failures still fails as `vacuous`
 unless (a) at least `min_orig_ok_share` of trials (default 0.10,
@@ -295,8 +332,10 @@ after the first fault in a trial.
 Current limits: one worker is single-trial-at-a-time (run one driver per
 core); snapshots cap at 8 words per callee and out-param words at 16 per
 callee; call arguments log and compare up to 40 words per callee and setup
-rejects more (v2 silently compared only the first 8); computed `jmp reg`
-with non-vtable targets still needs per-case analysis.
+rejects more (v2 silently compared only the first 8); the call log holds
+256 calls per side by default and trials past it fail loudly (raise
+`log_max` to 1024); computed `jmp reg` with non-vtable targets still needs
+per-case analysis.
 """
 import json, os, sys, time, random, struct, hashlib, subprocess, threading, queue
 
@@ -570,6 +609,19 @@ def resolve_stack(contract, rng, trial, heap):
                         break
                     v = rng.getrandbits(32)
                 out.append(v)
+        elif k == "srange":  # v4: v1 r-s18 signed-range kind (a-F03/a-09
+            # translated these by hand; now native). {"kind":"srange",
+            # "lo":L,"hi":H}: trial-indexed sweep lo+trial while trial <
+            # span, uniform rng in [lo,hi] after. lo may be negative
+            # (masked to u32); the sweep is contract-authored (undemapped),
+            # the rng tail is demapped like gen_small.
+            lo, hi = s["lo"], s["hi"]
+            span = hi - lo + 1
+            assert span >= 1, s
+            if trial < span:
+                out.append((lo + trial) & 0xFFFFFFFF)
+            else:
+                out.append(demap(rng.randint(lo, hi)))
         elif k == "small":  # q-01/q-16 unified ranged int
             out.append(gen_small(rng, trial + len(out) * 3, s.get("max", 3)))
         elif k == "smallint":  # q-13 switch-index-like values
@@ -762,6 +814,95 @@ def resolve_xmm(contract, rng, trial):
     return out
 
 
+def build_trial_req(contract, rng, t, heap, stubs, export, seed):
+    """One trial request. Shared by the main loop and the retry replay so
+    regenerated inputs after a worker restart are bit-identical."""
+    req = {
+        "cmd": "trial",
+        "fn_rva": int(contract["function"], 16),
+        "export": export,
+        "trial": t,
+        "seed": seed & 0xFFFFFFFF,
+        "regs": resolve_regs(contract, rng, t, heap),
+        "stack": resolve_stack(contract, rng, t, heap),
+        "heapsegs": resolve_segs(contract, rng, t, heap, stubs),
+        "globals_fill": resolve_globals_fill(contract, rng, t, heap, stubs),
+        "script_vals": resolve_scripts(contract, rng, t, heap, stubs),
+        "checks": contract["checks"],
+        "timeout_ms": contract.get("timeout_ms", 10000),
+    }
+    tls = resolve_tls(contract, t, heap)
+    if tls:
+        req["tls"] = tls
+    xmm = resolve_xmm(contract, rng, t)
+    if xmm:
+        req["xmm"] = xmm
+    if "stack_fill" in contract:
+        req["stack_fill"] = contract["stack_fill"]
+    return req
+
+
+# v4: bounded retries of a lost trial on a fresh worker. Many lanes report
+# a few worker-lost trials per run that pass on rerun; the driver now
+# retries the same trial inputs (regenerated identically) instead of
+# abandoning the contract, and records every retry in the verdict.
+WORKER_RETRIES = 2
+
+
+def _retry_lost(w, contract, export, seed, t, req, retries, first_err):
+    """Retry trial t on a fresh worker (bounded). Returns the trial response,
+    or None when the retries are exhausted (the contract is then worker-lost
+    as before). Appends one record per attempt to `retries` with the loss
+    class (timeout vs pipe vs crash exit code) for the verdict."""
+    kind = type(first_err).__name__
+    for attempt in range(WORKER_RETRIES):
+        try:
+            code = w.p.poll()
+        except Exception:
+            code = "unknown"
+        # None = process alive but silent (timeout/hang); an int = the
+        # worker exited (crash or watchdog exit) or the pipe broke.
+        retries.append({"trial": t, "attempt": attempt + 1, "loss": kind,
+                        "worker_code": code})
+        try:
+            w.stop()
+            w.start()
+            # Full export list, not just the running export: the worker is
+            # shared by the correct and mutant runs, and narrowing here
+            # would break the later run with "unknown export".
+            exps = [export] + ([contract["mut_export"]]
+                               if contract.get("mut_export") else [])
+            exps = [e for e in exps if not e.startswith("CHECKER_")]
+            setup_worker(w, contract, exps)
+        except Exception as e:
+            kind = "resetup:%s" % type(e).__name__
+            continue
+        # A fresh worker may map the image/heap elsewhere (preferred
+        # addresses can be taken under load), which would stale heap
+        # pointers baked into the saved request. Regenerate trial t's
+        # inputs by replaying the seeded stream, then send. Identical to
+        # the lost attempt when the mapping is stable (the common case);
+        # valid either way, since every trial is self-consistent.
+        try:
+            rrng = random.Random(seed)
+            for i in range(t):
+                build_trial_req(contract, rrng, i, w.heap, w.stubs,
+                                export, seed)
+            req = build_trial_req(contract, rrng, t, w.heap, w.stubs,
+                                  export, seed)
+            r = w.call(req, timeout=contract.get("timeout_ms", 10000)
+                       / 1000.0 + 30)
+            return (r, req)
+        except (TimeoutError, BrokenPipeError, ConnectionError,
+                OSError) as e:
+            kind = type(e).__name__
+            continue
+        except Exception as e:
+            kind = "call:%s" % type(e).__name__
+            continue
+    return None
+
+
 def run_contract(w, contract, export, trials, seed, stop_after_fails=None):
     global CODE_ALLOW
     CODE_ALLOW = bool(contract.get("allow_code_pointers", False))
@@ -770,34 +911,18 @@ def run_contract(w, contract, export, trials, seed, stop_after_fails=None):
     fails = 0
     first_fail = None
     check_names = None
+    retries = []
     t0 = time.perf_counter()
     for t in range(trials):
-        req = {
-            "cmd": "trial",
-            "fn_rva": int(contract["function"], 16),
-            "export": export,
-            "trial": t,
-            "seed": seed & 0xFFFFFFFF,
-            "regs": resolve_regs(contract, rng, t, w.heap),
-            "stack": resolve_stack(contract, rng, t, w.heap),
-            "heapsegs": resolve_segs(contract, rng, t, w.heap, w.stubs),
-            "globals_fill": resolve_globals_fill(contract, rng, t, w.heap, w.stubs),
-            "script_vals": resolve_scripts(contract, rng, t, w.heap, w.stubs),
-            "checks": contract["checks"],
-            "timeout_ms": contract.get("timeout_ms", 10000),
-        }
-        tls = resolve_tls(contract, t, w.heap)
-        if tls:
-            req["tls"] = tls
-        xmm = resolve_xmm(contract, rng, t)
-        if xmm:
-            req["xmm"] = xmm
-        if "stack_fill" in contract:
-            req["stack_fill"] = contract["stack_fill"]
+        req = build_trial_req(contract, rng, t, w.heap, w.stubs, export, seed)
         try:
             r = w.call(req, timeout=contract.get("timeout_ms", 10000) / 1000.0 + 30)
-        except (TimeoutError, BrokenPipeError, ConnectionError, OSError):
-            return {"error": "worker-lost", "results": results}
+        except (TimeoutError, BrokenPipeError, ConnectionError, OSError) as e:
+            rr = _retry_lost(w, contract, export, seed, t, req, retries, e)
+            if rr is None:
+                return {"error": "worker-lost", "results": results,
+                        "worker_retries": retries}
+            r, req = rr
         if check_names is None:
             check_names = [c["name"] for c in r.get("checks", [])]
         # Keep only what the verdict and the coverage report read. A full
@@ -829,7 +954,8 @@ def run_contract(w, contract, export, trials, seed, stop_after_fails=None):
             pass
     return {"results": results, "fails": fails, "first_fail": first_fail,
             "wall_s": wall, "check_names": check_names or [],
-            "status_hist": hist, "call_coverage": cov}
+            "status_hist": hist, "call_coverage": cov,
+            "worker_retries": retries}
 
 
 def _slim(r):
@@ -911,6 +1037,40 @@ def coverage_of(contract, results):
     }
 
 
+def resolved_masks(contract):
+    """v4: the effective per-argument call masks, alias resolved.
+
+    Merges checks.call_mask {id:{idx:mask}} over checks.call_low8
+    {id:[idx,...]} (each alias entry = 0xFF), explicit entries winning.
+    Values are hex strings. The verdict records this so a narrowed
+    comparison is always visible."""
+    out = {}
+    checks = contract.get("checks", {})
+    low8 = checks.get("call_low8") or {}
+    for cid, idxs in low8.items():
+        for i in idxs:
+            out.setdefault(str(cid), {})[str(i)] = "0xff"
+    masks = checks.get("call_mask") or {}
+    for cid, per in masks.items():
+        for i, m in per.items():
+            v = int(m, 16) if isinstance(m, str) else m
+            out.setdefault(str(cid), {})[str(i)] = "0x%x" % (v & 0xFFFFFFFF)
+    return out
+
+
+def validate_contract(contract):
+    """v4: fail-fast contract checks the worker also enforces per trial."""
+    masks = (contract.get("checks", {}) or {}).get("call_mask") or {}
+    for cid, per in masks.items():
+        for i, m in per.items():
+            v = int(m, 16) if isinstance(m, str) else m
+            if (v & 0xFFFFFFFF) == 0:
+                raise ValueError(
+                    "contract %s: call_mask %s.%s is zero (rejected: "
+                    "a zero mask compares nothing)"
+                    % (contract.get("name"), cid, i))
+
+
 def verdict(contract, run, export):
     chash = hashlib.sha1(json.dumps(contract, sort_keys=True).encode()).hexdigest()
     results = run["results"]
@@ -953,7 +1113,10 @@ def verdict(contract, run, export):
         "passed": passed,
         "inputs_tested": n,
         "comparisons": [{"name": c["name"], "passed": c["passed"]} for c in comps],
-        "checker_version": "checker3",
+        "checker_version": "checker4",
+        "call_masks_used": resolved_masks(contract),
+        "log_max": int(contract.get("log_max", 256)),
+        "worker_retries": run.get("worker_retries", []),
         "name": contract["name"],
         "export": export,
         "contract_hash": chash,
@@ -974,7 +1137,7 @@ def verdict(contract, run, export):
     if run.get("first_fail"):
         ff = run["first_fail"]
         v["first_mismatch"] = {"trial": ff["trial"],
-                               "detail": ff["resp"].get("first_mismatch"),
+                               "detail": ff["resp"].get("first_mismatch") or "",
                                "checks": ff["resp"].get("checks")}
     if run.get("error"):
         v["error"] = run["error"]
@@ -1002,7 +1165,8 @@ def setup_worker(w, contract, all_exports):
          "tailpatches": contract.get("tailpatches", []),
          "outer_pop": outer_pop_for(contract),
          "iat": contract.get("iat", []),
-         "globals": contract.get("globals", [])}
+         "globals": contract.get("globals", []),
+         "log_max": contract.get("log_max", 256)}
     # resolve "edges" scripts to concrete lists for the worker record
     for c in q["callees"]:
         if c.get("script") == "edges":
@@ -1048,6 +1212,8 @@ def main(argv):
     os.makedirs(os.path.join(OUT, "verdicts"), exist_ok=True)
     os.makedirs(os.path.join(OUT, "mutants"), exist_ok=True)
     contracts = [json.load(open(os.path.join(HERE, "contracts", n + ".json"))) for n in names]
+    for c in contracts:
+        validate_contract(c)
     w = Worker()
     summary = []
     t_all = time.perf_counter()

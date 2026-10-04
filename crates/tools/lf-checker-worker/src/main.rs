@@ -334,13 +334,18 @@ const STACK_SNAP_OFF: usize = 0xFC000;
 const STACK_SNAP_LEN: usize = 0x1100;
 const SCRATCH_FILL_OFF: usize = 0xF4000; // below-ESP scratch reset region
 const SCRATCH_FILL_LEN: usize = 0x8000; // 32KB, ends at STACK_SNAP_OFF
-const LOG_MAX: usize = 256;
-const LOG_ENTRY: usize = 256;
-// Log entry v3 layout: 0:id 4:ecx 8:edx 12:ebx 16:esi 20:edi 24:nargs
-// 28:args[40] 188:snap_n 192:snap[8] 224:xmm0[4] 240:xmm1[4]
+const LOG_MAX: usize = 256; // default per-trial-side call-log cap
+const LOG_HARD_MAX: usize = 1024; // setup rejects log_max above this
+const LOG_ENTRY: usize = 272;
+// Log entry v4 layout: 0:id 4:ecx 8:edx 12:ebx 16:esi 20:edi 24:nargs
+// 28:args[40] 188:snap_n 192:snap[8] 224:xmm0[4] 240:xmm1[4] 256:eax
 // (v2 logged args[8] only, so trailing call arguments passed uncompared;
 // v3 logs and compares every argument up to LOG_MAXW. Contracts declaring
-// more are rejected at setup rather than silently truncated.)
+// more are rejected at setup rather than silently truncated. v4 appends the
+// stub-entry eax for eax-argument callees (lane r-s111).)
+// The log region always reserves LOG_HARD_MAX entries so a contract can
+// raise the cap with top-level "log_max" (v4 item 6c); the stub's full
+// check uses the setup-time value, byte-identical at the default 256.
 const LOG_MAXW: usize = 40;
 const SNAP_MAXW: usize = 8;
 const WRITEW_PER_ID: usize = 16;
@@ -355,12 +360,16 @@ struct Callee {
     ret: String,
     stub_addr: u32,
     tail_addr: u32,                         // E9 tail-patch variant (0 when unbuilt)
-    writes: Vec<(u8, usize, usize, usize)>, // (kind 0=stack arg,1=ecx,2=edx; idx; wstart; nwords)
+    writes: Vec<(u8, usize, usize, usize, usize)>, // (kind 0=stack arg,1=ecx,2=edx; idx; wstart; nwords; dst_off)
     snap: Vec<(u8, usize, usize)>,          // (kind 0=stack arg,1=ecx,2=edx; idx; nwords)
     logxmm: bool,                           // log xmm0 words into the call entry
     xmm0_from_stack: Option<usize>,         // rw-side transport: load xmm0 from stack arg
     logxmm1: bool,                          // v3: log xmm1 words into the call entry
     xmm1_from_stack: Option<usize>, // v3: rw-side transport for xmm1-arg callees
+    preserve: bool, // v4: restore entry ecx/edx from m_save slots at stub exit
+    eax_from_stack: Option<usize>, // v4: rw-side transport, load eax from stack arg
+    noclean: bool, // v4: real callee pops nothing; stub pops only on the rw side
+    pop_rw: u32,   // v4: rewrite-side pop for noclean stubs (nargs*4)
 }
 
 struct State {
@@ -388,6 +397,7 @@ struct State {
     m_side: u32,     // 0 = original side, 1 = rewrite side (for xmm transport)
     m_save_ecx: u32, // stub-entry spill for register out-param writes
     m_save_edx: u32,
+    m_save_eax: u32, // v4: stub-entry spill for ret="preserve" callees
     m_xmm_mirror: u32, // 32 words: scripted xmm0-7 entry values, readable by rewrites
     m_tls_mirror: u32, // 256 words: fabricated TLS slot values, readable by rewrites
     m_script_tab: u32, // 256 x (lo,hi) per-callee script slots
@@ -395,6 +405,7 @@ struct State {
     m_seq_tab: u32,    // v3: 256 x 16 per-call answer steps (lo,hi)
     m_seq_len: u32,    // v3: 256 sequence lengths (trial_body fills)
     m_seq_idx: u32,    // v3: 256 per-side consumption indexes (run_side zeroes)
+    log_max: u32,      // v4: setup-time call-log cap (default 256, max 1024)
     m_step: u32,       // v3: stub scratch for the clamped step index
     tls_helper: u32,   // emitted mov eax,fs:[0x2c]; ret
     log_base: u32,
@@ -449,6 +460,7 @@ impl State {
             m_side: 0,
             m_save_ecx: 0,
             m_save_edx: 0,
+            m_save_eax: 0,
             m_xmm_mirror: 0,
             m_tls_mirror: 0,
             m_script_tab: 0,
@@ -456,6 +468,7 @@ impl State {
             m_seq_tab: 0,
             m_seq_len: 0,
             m_seq_idx: 0,
+            log_max: LOG_MAX as u32,
             m_step: 0,
             tls_helper: 0,
             log_base: 0,
@@ -755,22 +768,24 @@ fn map_image(exe: &[u8]) -> Result<(), String> {
     s.m_save_ecx = (meta + 112) as u32;
     s.m_save_edx = (meta + 116) as u32;
     s.m_step = (meta + 120) as u32;
+    // v4: meta+124 was the last free word between m_step and the XMM mirror.
+    s.m_save_eax = (meta + 124) as u32;
     s.m_xmm_mirror = (meta + 128) as u32;
     s.m_tls_mirror = (meta + 384) as u32;
-    // v3 layout inside the scratch stack region (all below the snapshot window):
-    // stubs 0x1000-0x11000, call log 0x12000-0x22000 (256 x 256B), ctable
-    // 0x22000, per-callee script table 0x23000 (256 x 8B), out-param write
-    // buffer 0x24000-0x28000 (256 x 16 words), per-call answer sequences
-    // 0x28000-0x30000 (256 x 16 steps x 8B), sequence lengths 0x30000
-    // (256 dwords), per-side sequence indexes 0x31000 (256 dwords).
+    // v4 layout inside the scratch stack region (all below the snapshot window):
+    // stubs 0x1000-0x11000, call log 0x12000-0x56000 (1024 x 272B max),
+    // ctable 0x56000, per-callee script table 0x57000 (256 x 8B), out-param
+    // write buffer 0x58000-0x5C000 (256 x 16 words), per-call answer
+    // sequences 0x5C000-0x64000 (256 x 16 steps x 8B), sequence lengths
+    // 0x64000 (256 dwords), per-side sequence indexes 0x65000 (256 dwords).
     s.log_base = (sb + 0x12000) as u32;
     s.stub_base = (sb + 0x1000) as u32;
-    s.ctable = (sb + 0x22000) as u32;
-    s.m_script_tab = (sb + 0x23000) as u32;
-    s.m_writebuf = (sb + 0x24000) as u32;
-    s.m_seq_tab = (sb + 0x28000) as u32;
-    s.m_seq_len = (sb + 0x30000) as u32;
-    s.m_seq_idx = (sb + 0x31000) as u32;
+    s.ctable = (sb + 0x56000) as u32;
+    s.m_script_tab = (sb + 0x57000) as u32;
+    s.m_writebuf = (sb + 0x58000) as u32;
+    s.m_seq_tab = (sb + 0x5C000) as u32;
+    s.m_seq_len = (sb + 0x64000) as u32;
+    s.m_seq_idx = (sb + 0x65000) as u32;
     s.fxbuf = (sb + 0xFD800) as u32;
     s.tramp = sb + 0xFE000;
     s.esp0 = (sb + 0xFD000) as u32;
@@ -936,6 +951,14 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
     u(&mut t, s.m_save_ecx); // mov [m_save_ecx],ecx
     t.extend_from_slice(&[0x89, 0x15]);
     u(&mut t, s.m_save_edx); // mov [m_save_edx],edx
+    // v4 (lanes r-b79, r-s111): ret="preserve" callees must exit with the
+    // entry registers intact, and eax-argument callees must log entry eax,
+    // so spill eax first. Everything below clobbers it (starting with the
+    // logidx load); the preserve arm restores all three.
+    if c.ret == "preserve" || c.eax_from_stack.is_some() {
+        t.push(0xA3);
+        u(&mut t, s.m_save_eax); // mov [m_save_eax],eax
+    }
     // v2 rewrite-side transport for xmm0-arg callees: on the rewrite side
     // only, load xmm0 from the declared stack arg before logging it.
     // NOTE: disp32 SIB forms (modrm 0x84/0x8C): a transport index past 30
@@ -957,11 +980,33 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
         t.extend_from_slice(&[0xF3, 0x0F, 0x10, 0x8C, 0x24]);
         u(&mut t, 4 + idx as u32 * 4); // movss xmm1,[esp+4+idx*4]
     }
-    // eax = logidx; if >= 256 skip logging (writes + scripted return still run)
+    // v4 rewrite-side transport for eax-arg callees (lane r-s111): on the
+    // rewrite side only, load eax from the declared stack arg. A Rust
+    // rewrite cannot set eax for a call any other way; the original holds
+    // the same value in eax genuinely, so comparing the logged entry eax
+    // still verifies the value, only the transport differs. Base is 4 even
+    // in tail stubs: transports run on the rewrite side only, which always
+    // calls the normal stub via ctable (r-s101). disp32 SIB form, so any
+    // declared index is encodable.
+    if let Some(idx) = c.eax_from_stack {
+        t.extend_from_slice(&[0x83, 0x3D]); // cmp dword [m_side],0
+        u(&mut t, s.m_side);
+        t.push(0x00);
+        t.extend_from_slice(&[0x74, 0x07]); // je +7 (skip the 7-byte mov)
+        t.extend_from_slice(&[0x8B, 0x84, 0x24]);
+        u(&mut t, 4 + idx as u32 * 4); // mov eax,[esp+4+idx*4]
+        // Re-spill: the logged eax is the post-transport value on the
+        // rewrite side (the entry spill above predates the transport).
+        t.push(0xA3);
+        u(&mut t, s.m_save_eax); // mov [m_save_eax],eax
+    }
+    // eax = logidx; if >= cap skip logging (writes + scripted return still run).
+    // v4: the cap is the setup-time log_max (default 256), so raising it
+    // needs no layout change; the region always reserves LOG_HARD_MAX.
     t.push(0xA1);
     u(&mut t, s.m_logidx); // mov eax,[m_logidx]
     t.extend_from_slice(&[0x3D]);
-    u(&mut t, LOG_MAX as u32); // cmp eax,256
+    u(&mut t, s.log_max); // cmp eax,log_max
     // jae, not ja: with ja the entry at index 256 was written one past the
     // log, onto the callee stub table that follows it, and a correct rewrite
     // making more than 256 calls in a trial then faulted (three lanes hit this).
@@ -1031,6 +1076,16 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
         t.extend_from_slice(&[0x0F, 0x17, 0x88]);
         u(&mut t, 248); // movhps [eax+248],xmm1
     }
+    // v4: entry-eax logging for eax-argument callees (lane r-s111).
+    // Post-transport on the rewrite side (re-spilled above), genuine on
+    // the original side. Compared only when checks.call_regs selects "eax".
+    // disp32 form: byte 256 is out of disp8 reach.
+    if c.eax_from_stack.is_some() {
+        t.extend_from_slice(&[0x8B, 0x0D]);
+        u(&mut t, s.m_save_eax); // mov ecx,[m_save_eax]
+        t.extend_from_slice(&[0x89, 0x88]);
+        u(&mut t, 256); // mov [eax+256],ecx
+    }
     // logidx++
     t.push(0xFF);
     t.push(0x05);
@@ -1062,7 +1117,7 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
     u(&mut t, s.m_step); // mov [m_step],ecx (writes below clobber ecx)
     // v2 out-param writes: words from the per-callee write buffer stored
     // through the pointer found at the declared stack arg or register.
-    for (kind, idx, wstart, n) in &c.writes {
+    for (kind, idx, wstart, n, dst) in &c.writes {
         match *kind {
             1 => {
                 t.extend_from_slice(&[0x8B, 0x15]);
@@ -1080,8 +1135,8 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
         for j in 0..*n {
             t.extend_from_slice(&[0x8B, 0x0D]);
             u(&mut t, s.m_writebuf + c.id * 64 + (*wstart + j) as u32 * 4);
-            t.extend_from_slice(&[0x89, 0x8A]); // mov ecx,[wbuf]; mov [edx+j*4],ecx
-            u(&mut t, (j * 4) as u32);
+            t.extend_from_slice(&[0x89, 0x8A]); // mov ecx,[wbuf]; mov [edx+dst+j*4],ecx
+            u(&mut t, (*dst as u32).wrapping_add((j * 4) as u32));
         }
     }
     // edx = this call's (lo,hi) step address: seq_tab + id*128 + step*8.
@@ -1122,9 +1177,38 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
             t.extend_from_slice(&[0xDD, 0x02]); // fld qword [edx]
             t.extend_from_slice(&[0x8B, 0x02]); // mov eax,[edx]
         }
+        // v4 (lane r-b79): no scripted answer; restore the entry registers
+        // the logging above clobbered. For callees the original calls after
+        // its return value is already set, such as the CRT security-cookie
+        // check, which genuinely preserves eax (and the scratch registers).
+        // Any script/seq declared for the callee still advances but its value
+        // is ignored.
+        "preserve" => {
+            t.push(0xA1);
+            u(&mut t, s.m_save_eax); // mov eax,[m_save_eax]
+            t.extend_from_slice(&[0x8B, 0x0D]);
+            u(&mut t, s.m_save_ecx); // mov ecx,[m_save_ecx]
+            t.extend_from_slice(&[0x8B, 0x15]);
+            u(&mut t, s.m_save_edx); // mov edx,[m_save_edx]
+        }
         _ => {
             // u32 default: eax = step lo
             t.extend_from_slice(&[0x8B, 0x02]); // mov eax,[edx]
+        }
+    }
+    // v4 (lane r-s172): optional scratch-register preservation for callees
+    // with a scripted answer. The stub spills entry ecx/edx but never
+    // restores them, leaving sequence scratch in place; real MSVC callees
+    // (e.g. a base constructor) effectively preserve ecx, and callers built
+    // on that fault under the stock stub on every trial. edx is NOT restored
+    // for u64 returns, where it carries the high word. Default off: existing
+    // contracts emit byte-identical stubs.
+    if c.preserve {
+        t.extend_from_slice(&[0x8B, 0x0D]);
+        u(&mut t, s.m_save_ecx); // mov ecx,[m_save_ecx]
+        if c.ret != "u64" {
+            t.extend_from_slice(&[0x8B, 0x15]);
+            u(&mut t, s.m_save_edx); // mov edx,[m_save_edx]
         }
     }
     match tail_pop {
@@ -1140,7 +1224,23 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
             }
         }
         None => {
-            if c.pop > 0 {
+            // v4 (lane r-s94): "noclean" models callees that take register
+            // args (thiscall/fastcall logging) but pop nothing (cdecl
+            // cleanup). The stub then returns side-conditionally: plain ret
+            // on the original side (the original cleans its own stack) and
+            // ret N on the rewrite side (Rust cannot emit caller-cleanup
+            // with ECX live, so the stub balances the rewrite's stack).
+            // Observed calls are identical on both sides.
+            if c.noclean && c.conv.as_str() != "cdecl" {
+                t.extend_from_slice(&[0x83, 0x3D]); // cmp dword [m_side],0
+                u(&mut t, s.m_side);
+                t.push(0x00);
+                t.extend_from_slice(&[0x74, 0x03]); // je +3 (skip ret N)
+                t.push(0xC2);
+                t.push((c.pop_rw & 0xFF) as u8);
+                t.push((c.pop_rw >> 8) as u8); // ret N (rewrite side)
+                t.push(0xC3); // ret (original side)
+            } else if c.pop > 0 {
                 t.push(0xC2);
                 t.push((c.pop & 0xFF) as u8);
                 t.push((c.pop >> 8) as u8); // ret pop
@@ -1348,6 +1448,7 @@ type CallRec = (
     Vec<u32>,
     [u32; 4],
     [u32; 4],
+    u32, // v4: stub-entry eax (post-transport on the rw side)
 );
 
 #[derive(Clone, Default)]
@@ -1362,13 +1463,17 @@ struct Obs {
     heap_n: u32,
     heap_writes: Vec<(usize, u32)>,
     heap_hash: u64,
+    heap_chash: u64, // v4: hash over NaN-canonicalized writes (diagnostic only)
     stack_n: u32,
     stack_writes: Vec<(usize, u32)>,
     stack_hash: u64,
+    stack_chash: u64, // v4: hash over NaN-canonicalized writes (diagnostic only)
     globals_writes: Vec<(u32, u32)>, // (rva, val)
     undeclared: Vec<(u32, u32)>,
     undeclared_n: u32,
-    calls: Vec<CallRec>, // (id, ecx, edx, args, snap, xmm0, xmm1)
+    calls: Vec<CallRec>, // (id, ecx, edx, args, snap, xmm0, xmm1, eax)
+    log_attempted: u32,  // v4: stub entries this side (sum of per-callee seqidx)
+    log_logged: u32,     // v4: records actually logged (min(logidx, log_max))
     fault: String,       // "" or "code=.. eip=.. ..."
     fault_code: u32,
     fault_eip: u32,
@@ -1391,12 +1496,13 @@ fn obs_json(o: &Obs) -> String {
     let jc = o
         .calls
         .iter()
-        .map(|(id, cx, dx, a, snap, x0, x1)| {
+        .map(|(id, cx, dx, a, snap, x0, x1, ax)| {
             format!(
-                "{{\"id\":{},\"ecx\":{},\"edx\":{},\"args\":[{}],\"snap\":[{}],\"xmm0\":[{}],\"xmm1\":[{}]}}",
+                "{{\"id\":{},\"ecx\":{},\"edx\":{},\"eax\":{},\"args\":[{}],\"snap\":[{}],\"xmm0\":[{}],\"xmm1\":[{}]}}",
                 id,
                 hx(*cx),
                 hx(*dx),
+                hx(*ax),
                 a.iter().map(|x| hx(*x)).collect::<Vec<_>>().join(","),
                 snap.iter().map(|x| hx(*x)).collect::<Vec<_>>().join(","),
                 x0.iter().map(|x| hx(*x)).collect::<Vec<_>>().join(","),
@@ -1406,7 +1512,7 @@ fn obs_json(o: &Obs) -> String {
         .collect::<Vec<_>>()
         .join(",");
     format!(
-        "{{\"status\":\"{}\",\"eax\":{},\"ecx\":{},\"edx\":{},\"ebx\":{},\"esi\":{},\"edi\":{},\"ebp\":{},\"esp\":{},\"eflags\":{},\"st0\":\"{}\",\"xmm0\":\"{}\",\"esp_delta\":{},\"heap_n\":{},\"heap_writes\":[{}],\"heap_hash\":\"0x{:x}\",\"stack_n\":{},\"stack_writes\":[{}],\"stack_hash\":\"0x{:x}\",\"globals_writes\":[{}],\"undeclared\":[{}],\"undeclared_n\":{},\"calls\":[{}],\"fault\":\"{}\",\"fault_code\":{},\"fault_eip\":{},\"fault_badva\":{}}}",
+        "{{\"status\":\"{}\",\"eax\":{},\"ecx\":{},\"edx\":{},\"ebx\":{},\"esi\":{},\"edi\":{},\"ebp\":{},\"esp\":{},\"eflags\":{},\"st0\":\"{}\",\"xmm0\":\"{}\",\"esp_delta\":{},\"log_attempted\":{},\"log_logged\":{},\"heap_n\":{},\"heap_writes\":[{}],\"heap_hash\":\"0x{:x}\",\"stack_n\":{},\"stack_writes\":[{}],\"stack_hash\":\"0x{:x}\",\"globals_writes\":[{}],\"undeclared\":[{}],\"undeclared_n\":{},\"calls\":[{}],\"fault\":\"{}\",\"fault_code\":{},\"fault_eip\":{},\"fault_badva\":{}}}",
         o.status,
         hx(o.regs[0]),
         hx(o.regs[1]),
@@ -1420,6 +1526,8 @@ fn obs_json(o: &Obs) -> String {
         o.st0,
         o.xmm0,
         o.esp_delta,
+        o.log_attempted,
+        o.log_logged,
         o.heap_n,
         jw(&o.heap_writes),
         o.heap_hash,
@@ -1676,6 +1784,7 @@ fn run_side(
     }
     // heap diff
     let mut hh = 0xcbf29ce484222325u64;
+    let mut hc = 0xcbf29ce484222325u64; // v4: canonical-NaN hash (diagnostic only)
     unsafe {
         let hp = h as *const u32;
         for i in 0..(HEAP_USE / 4) {
@@ -1692,6 +1801,7 @@ fn run_side(
             if got != expect {
                 o.heap_n += 1;
                 hh = fnv1a(hh, byte, got);
+                hc = fnv1a(hc, byte, canon_f32(got));
                 if o.heap_writes.len() < 64 {
                     o.heap_writes.push((byte, got));
                 }
@@ -1699,8 +1809,10 @@ fn run_side(
         }
     }
     o.heap_hash = hh;
+    o.heap_chash = hc;
     // stack diff
     let mut sh = 0xcbf29ce484222325u64;
+    let mut sc = 0xcbf29ce484222325u64; // v4: canonical-NaN hash (diagnostic only)
     let esp_after = o.regs[7] as usize;
     unsafe {
         let sp = (sb + STACK_SNAP_OFF) as *const u32;
@@ -1727,6 +1839,7 @@ fn run_side(
                 }
                 o.stack_n += 1;
                 sh = fnv1a(sh, STACK_SNAP_OFF + i * 4, got);
+                sc = fnv1a(sc, STACK_SNAP_OFF + i * 4, canon_f32(got));
                 if o.stack_writes.len() < 64 {
                     o.stack_writes.push((STACK_SNAP_OFF + i * 4, got));
                 }
@@ -1734,6 +1847,7 @@ fn run_side(
         }
     }
     o.stack_hash = sh;
+    o.stack_chash = sc;
     // declared globals diff + full-data undeclared discovery
     for (gi, &(lo, len)) in st().globals.clone().iter().enumerate() {
         for k in 0..(len / 4) {
@@ -1779,7 +1893,21 @@ fn run_side(
     // call log
     {
         let s = st();
-        let n = unsafe { *((s.m_logidx) as *const u32) }.min(LOG_MAX as u32);
+        let cap = s.log_max;
+        let n = unsafe { *((s.m_logidx) as *const u32) }.min(cap);
+        o.log_logged = n;
+        // v4: attempted calls = sum of the per-callee sequence indexes. The
+        // stub advances one index per entry (logged or dropped) and run_side
+        // zeroes the table per side, so attempted > logged means the log
+        // filled and calls went uncompared: the calls check must fail.
+        let mut attempted = 0u32;
+        unsafe {
+            let tab = s.m_seq_idx as *const u32;
+            for i in 0..256 {
+                attempted = attempted.wrapping_add(*tab.add(i));
+            }
+        }
+        o.log_attempted = attempted;
         for i in 0..n {
             let e = (s.log_base + i * LOG_ENTRY as u32) as *const u32;
             unsafe {
@@ -1804,7 +1932,14 @@ fn run_side(
                 for (k, slot) in x1.iter_mut().enumerate() {
                     *slot = *e.add(60 + k);
                 }
-                o.calls.push((id, cx, dx, args, snap, x0, x1));
+                // v4: entry eax at byte 256, meaningful only for callees
+                // with eax_from_stack (other stubs never store it, so the
+                // slot would show a stale record: report 0 instead).
+                let ax = match s.callees.get(&id) {
+                    Some(c) if c.eax_from_stack.is_some() => *e.add(64),
+                    _ => 0,
+                };
+                o.calls.push((id, cx, dx, args, snap, x0, x1, ax));
             }
         }
     }
@@ -1813,6 +1948,120 @@ fn run_side(
 
 // Compare two observations per the checks object. Returns (pass, checks_json, first_mismatch).
 fn compare(a: &Obs, b: &Obs, checks: &J) -> (bool, String, String) {
+    let (pass, json, first) = compare_inner(a, b, checks);
+    if pass {
+        return (true, json, first);
+    }
+    // v4 NaN diagnostic (lane r-b91's case, NOT their fix: all-NaN-equal is
+    // unsound and stays out). If the trial fails but passes with every NaN
+    // canonicalized (sign/payload erased), the only difference is NaN bits
+    // and the verdict says so, pointing at operand order. The trial still
+    // fails; this is text only, never a pass.
+    let ca = canon_nan_obs(a);
+    let cb = canon_nan_obs(b);
+    if compare_inner(&ca, &cb, checks).0 {
+        let diag = "[nan-diagnostic: sides differ ONLY in NaN sign/payload bits; check operand order in the rewrite]";
+        let first = if first.is_empty() {
+            diag.to_string()
+        } else {
+            format!("{} {}", first, diag)
+        };
+        return (false, json, first);
+    }
+    (false, json, first)
+}
+
+fn is_f32_nan(v: u32) -> bool {
+    (v & 0x7F800000) == 0x7F800000 && (v & 0x007FFFFF) != 0
+}
+
+fn canon_f32(v: u32) -> u32 {
+    if is_f32_nan(v) { 0x7FC00000 } else { v }
+}
+
+// Canonicalize every float-comparable word for the NaN diagnostic recheck:
+// call args, snapshots and call vector words (f32 lanes), the st0/xmm0
+// return channels, pointed-to globals, and the heap/stack hashes (via the
+// canonical hashes run_side maintains over the full write stream, since the
+// kept write prefixes are truncated and cannot be re-hashed).
+fn canon_nan_obs(o: &Obs) -> Obs {
+    let mut c = o.clone();
+    for rec in c.calls.iter_mut() {
+        for w in rec.3.iter_mut() {
+            *w = canon_f32(*w);
+        }
+        for w in rec.4.iter_mut() {
+            *w = canon_f32(*w);
+        }
+        for w in rec.5.iter_mut() {
+            *w = canon_f32(*w);
+        }
+        for w in rec.6.iter_mut() {
+            *w = canon_f32(*w);
+        }
+        rec.7 = canon_f32(rec.7);
+    }
+    c.st0 = canon_st0_hex(&c.st0);
+    c.xmm0 = canon_xmm0_hex(&c.xmm0);
+    for (_, v) in c.globals_writes.iter_mut() {
+        *v = canon_f32(*v);
+    }
+    c.heap_hash = c.heap_chash;
+    c.stack_hash = c.stack_chash;
+    c
+}
+
+fn unhex(h: &str) -> Vec<u8> {
+    let mut v = Vec::new();
+    let b = h.as_bytes();
+    let mut i = 0;
+    while i + 1 < b.len() {
+        let hi = (b[i] as char).to_digit(16).unwrap_or(0);
+        let lo = (b[i + 1] as char).to_digit(16).unwrap_or(0);
+        v.push((hi * 16 + lo) as u8);
+        i += 2;
+    }
+    v
+}
+
+fn canon_st0_hex(h: &str) -> String {
+    let b = unhex(h);
+    if b.len() < 10 {
+        return h.to_string();
+    }
+    let man = u64::from_le_bytes([
+        b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
+    ]);
+    let ex = u16::from_le_bytes([b[8], b[9]]);
+    if (ex & 0x7FFF) == 0x7FFF && (man & 0x7FFFFFFFFFFFFFFF) != 0 {
+        "00000000000000c0ff7f".to_string() // +qNaN, zero payload
+    } else {
+        h.to_string()
+    }
+}
+
+fn canon_xmm0_hex(h: &str) -> String {
+    let b = unhex(h);
+    if b.len() < 16 {
+        return h.to_string();
+    }
+    let mut b = b;
+    let w0 = u32::from_le_bytes([b[0], b[1], b[2], b[3]]);
+    if is_f32_nan(w0) {
+        b[0..4].copy_from_slice(&0x7FC00000u32.to_le_bytes());
+    }
+    let d0 = u64::from_le_bytes([
+        b[0], b[1], b[2], b[3], b[4], b[5], b[6], b[7],
+    ]);
+    if (d0 & 0x7FF0000000000000) == 0x7FF0000000000000
+        && (d0 & 0x000FFFFFFFFFFFFF) != 0
+    {
+        b[0..8].copy_from_slice(&0x7FF8000000000000u64.to_le_bytes());
+    }
+    hexbytes(&b)
+}
+
+fn compare_inner(a: &Obs, b: &Obs, checks: &J) -> (bool, String, String) {
     let mut parts: Vec<String> = Vec::new();
     let mut first = String::new();
     let mut ok_all = true;
@@ -1957,14 +2206,39 @@ fn compare(a: &Obs, b: &Obs, checks: &J) -> (bool, String, String) {
         // (cdecl/stdcall: none; thiscall: ecx; fastcall: ecx+edx; override
         // via checks.call_regs {id:[regs]}). Scratch regs at the call site
         // differ legitimately between original and rewrite codegen.
-        let ka: Vec<String> = a.calls.iter().map(|c| callkey(c, checks)).collect();
-        let kb: Vec<String> = b.calls.iter().map(|c| callkey(c, checks)).collect();
-        let p = ka == kb;
-        chk(
-            "calls",
-            p,
-            format!("orig={:?} rw={:?}", lims(&ka, 3), lims(&kb, 3)),
-        );
+        // v4 fail-closed validations run before the key comparison: a zero
+        // mask, an eax reg without its transport, or a filled call log all
+        // mean calls went uncompared, so the check fails loudly.
+        if let Some(z) = find_zero_mask(checks) {
+            chk("calls", false, z);
+        } else if let Some(e) = validate_eax_regs(checks) {
+            chk("calls", false, e);
+        } else if let Some(e) = validate_eax_transport(checks) {
+            chk("calls", false, e);
+        } else if a.log_attempted > a.log_logged || b.log_attempted > b.log_logged {
+            chk(
+                "calls",
+                false,
+                format!(
+                    "call log truncated: orig attempted {} logged {}; rw attempted {} logged {} (cap {}; raise top-level log_max, max {})",
+                    a.log_attempted,
+                    a.log_logged,
+                    b.log_attempted,
+                    b.log_logged,
+                    st().log_max,
+                    LOG_HARD_MAX
+                ),
+            );
+        } else {
+            let ka: Vec<String> = a.calls.iter().map(|c| callkey(c, checks)).collect();
+            let kb: Vec<String> = b.calls.iter().map(|c| callkey(c, checks)).collect();
+            let p = ka == kb;
+            chk(
+                "calls",
+                p,
+                format!("orig={:?} rw={:?}", lims(&ka, 3), lims(&kb, 3)),
+            );
+        }
     }
     if want("undeclared", true) {
         let p = a.undeclared_n == 0 && b.undeclared_n == 0;
@@ -2007,6 +2281,90 @@ fn norm_ptr(v: u32) -> String {
     format!("0x{:x}", v)
 }
 
+// v4: a zero mask compares nothing (every value masks to 0), so it is
+// rejected instead of comparing. Returns the failure detail, if any.
+fn find_zero_mask(checks: &J) -> Option<String> {
+    let m = checks.get("call_mask")?;
+    let obj = match m {
+        J::Obj(o) => o,
+        _ => return None,
+    };
+    for (id, per) in obj {
+        let per = match per {
+            J::Obj(o) => o,
+            _ => continue,
+        };
+        for (idx, mask) in per {
+            if mask.as_u32() == 0 {
+                return Some(format!(
+                    "call_mask {}.{} is zero (rejected: a zero mask compares nothing)",
+                    id, idx
+                ));
+            }
+        }
+    }
+    None
+}
+
+// v4: "eax" in checks.call_regs is only meaningful with the callee's
+// eax_from_stack transport (a rewrite cannot set eax any other way, and
+// stubs without it never log eax). Without it the reg would compare
+// stale zeros on both sides and pass vacuously: reject instead.
+fn validate_eax_regs(checks: &J) -> Option<String> {
+    let m = checks.get("call_regs")?;
+    let obj = match m {
+        J::Obj(o) => o,
+        _ => return None,
+    };
+    for (id, regs) in obj {
+        let wants_eax = regs.as_arr().iter().any(|r| r.as_str() == "eax");
+        if !wants_eax {
+            continue;
+        }
+        let cid = id.parse::<u32>().unwrap_or(u32::MAX);
+        let ok = st()
+            .callees
+            .get(&cid)
+            .map(|c| c.eax_from_stack.is_some())
+            .unwrap_or(false);
+        if !ok {
+            return Some(format!(
+                "call_regs {} selects eax without eax_from_stack transport (rejected: eax would be uncompared)",
+                id
+            ));
+        }
+    }
+    None
+}
+
+// v4 (coordinator review): the reverse must hold as well. A callee with the
+// eax transport has its stack arguments left out of the call key, so unless
+// call_regs selects "eax" for it the transported argument would be compared
+// nowhere. Reject instead of passing with it uncompared.
+fn validate_eax_transport(checks: &J) -> Option<String> {
+    let mut ids: Vec<u32> = st()
+        .callees
+        .iter()
+        .filter(|(_, c)| c.eax_from_stack.is_some())
+        .map(|(id, _)| *id)
+        .collect();
+    ids.sort();
+    for id in ids {
+        let selected = checks
+            .get("call_regs")
+            .and_then(|m| m.get(id.to_string().as_str()))
+            .map(|regs| regs.as_arr().iter().any(|r| r.as_str() == "eax"))
+            .unwrap_or(false);
+        if !selected {
+            return Some(format!(
+                "callee {} has eax_from_stack but call_regs does not select eax (rejected: the transported argument would be uncompared)",
+                id
+            ));
+        }
+    }
+    None
+}
+
 fn callkey(c: &CallRec, checks: &J) -> String {
     let id = c.0.to_string();
     let cal = st().callees.get(&c.0).cloned().unwrap_or_default();
@@ -2023,23 +2381,54 @@ fn callkey(c: &CallRec, checks: &J) -> String {
         match r.as_str() {
             "ecx" => k.push_str(&format!(" ecx={}", norm_ptr(c.1))),
             "edx" => k.push_str(&format!(" edx={}", norm_ptr(c.2))),
+            "eax" => k.push_str(&format!(" eax={}", norm_ptr(c.7))), // v4 (r-s111)
             _ => {}
         }
     }
     // v2: stack args are normalized too; volatile indexes can be dropped
     // with checks.call_skip {id:[idx,...]} (folded from lane q-16). Args of
-    // an xmm0-transport callee are skipped: the original side pushes nothing.
+    // a transport callee are skipped: the original side pushes nothing.
     let skip: Vec<usize> = match checks.get("call_skip").and_then(|m| m.get(id.as_str())) {
         Some(v) => v.as_arr().iter().map(|x| x.as_usize()).collect(),
         None => Vec::new(),
     };
-    if cal.xmm0_from_stack.is_none() && cal.xmm1_from_stack.is_none() {
-        let args: Vec<String> =
-            c.3.iter()
-                .enumerate()
-                .filter(|(i, _)| !skip.contains(i))
-                .map(|(_, &a)| norm_ptr(a))
-                .collect();
+    if cal.xmm0_from_stack.is_none()
+        && cal.xmm1_from_stack.is_none()
+        && cal.eax_from_stack.is_none()
+    {
+        // v4 per-argument masks (lanes r-b39, r-n117, r-n86; alias
+        // checks.call_low8 from lane r-n118): checks.call_mask
+        // {id:{idx:mask}} compares (value & mask) as raw hex instead of the
+        // normalized pointer. Use: the original pushes a one-byte value as
+        // a full word whose upper bytes are caller leftovers (not
+        // behaviour); the mask keeps the meaningful bytes compared exactly,
+        // unlike call_skip which drops the arg. A full (all-ones) mask is
+        // the default comparison. Zero masks never reach here (rejected
+        // above). The alias maps each listed index to 0xFF; an explicit
+        // call_mask entry wins over the alias for the same argument.
+        let mut masks: HashMap<usize, u32> = HashMap::new();
+        if let Some(v) = checks.get("call_low8").and_then(|m| m.get(id.as_str())) {
+            for x in v.as_arr() {
+                masks.insert(x.as_usize(), 0xFF);
+            }
+        }
+        if let Some(J::Obj(o)) = checks.get("call_mask").and_then(|m| m.get(id.as_str())) {
+            for (idx, m) in o {
+                if let Ok(i) = idx.parse::<usize>() {
+                    masks.insert(i, m.as_u32());
+                }
+            }
+        }
+        let args: Vec<String> = c
+            .3
+            .iter()
+            .enumerate()
+            .filter(|(i, _)| !skip.contains(i))
+            .map(|(i, &a)| match masks.get(&i) {
+                Some(0xFFFF_FFFF) | None => norm_ptr(a),
+                Some(m) => format!("0x{:x}", a & m),
+            })
+            .collect();
         k.push_str(&format!(" args={:?}", args));
     } else {
         k.push_str(" args=transport");
@@ -2181,6 +2570,16 @@ fn cmd_setup(q: &J) -> String {
             return format!("{{\"ok\":false,\"error\":\"{}\"}}", esc(&e));
         }
     }
+    // v4: per-setup call-log cap (default 256). The region always
+    // reserves LOG_HARD_MAX entries, so raising needs no layout change.
+    let log_max = q.get("log_max").map(|v| v.as_u32()).unwrap_or(LOG_MAX as u32);
+    if log_max == 0 || log_max as usize > LOG_HARD_MAX {
+        return format!(
+            "{{\"ok\":false,\"error\":\"log_max {} out of range 1..{}\"}}",
+            log_max, LOG_HARD_MAX
+        );
+    }
+    s.log_max = log_max;
     // callees (stub space is reused per setup, but the first 16 bytes
     // hold the emitted TLS/ESP helpers and are never reused)
     s.callees.clear();
@@ -2210,10 +2609,17 @@ fn cmd_setup(q: &J) -> String {
             // v3: callee-cleaned stubs pop the full argument count. (v2 capped
             // the cleanup at 8 words like the log window, under-popping for
             // nargs > 8 and corrupting the caller's frame: lane r-b01's fix.)
-            let pop = match conv.as_str() {
+            // v4 (lane r-s94): "noclean" callees pop nothing on the original
+            // side; the stub pops pop_rw only on the rewrite side.
+            let noclean = c.get("noclean").map(|v| v.as_bool(false)).unwrap_or(false);
+            let pop_rw = (nargs as u32) * 4;
+            let mut pop = match conv.as_str() {
                 "cdecl" => 0,
                 _ => (nargs as u32) * 4, // stdcall/thiscall/fastcall/custom pop
             };
+            if noclean {
+                pop = 0;
+            }
             // v2: out-param writes [{arg|reg, at, n}], snapshots, xmm logging.
             let mut writes = Vec::new();
             if let Some(ws) = c.get("writes") {
@@ -2234,7 +2640,10 @@ fn cmd_setup(q: &J) -> String {
                             id
                         );
                     }
-                    writes.push((kind, idx, at, n));
+                    // v4 (lane r-b109): optional destination byte offset
+                    // added to the pointer (default 0 = v3 behavior exactly).
+                    let dst = w.get("dst").map(|v| v.as_usize()).unwrap_or(0);
+                    writes.push((kind, idx, at, n, dst));
                 }
             }
             let mut snap = Vec::new();
@@ -2260,6 +2669,8 @@ fn cmd_setup(q: &J) -> String {
             let xmm0_from_stack = c.get("xmm0_from_stack").map(|v| v.as_usize());
             let logxmm1 = c.get("logxmm1").map(|v| v.as_bool(false)).unwrap_or(false);
             let xmm1_from_stack = c.get("xmm1_from_stack").map(|v| v.as_usize());
+            let preserve = c.get("preserve").map(|v| v.as_bool(false)).unwrap_or(false);
+            let eax_from_stack = c.get("eax_from_stack").map(|v| v.as_usize());
             let cal = Callee {
                 id,
                 conv,
@@ -2274,6 +2685,10 @@ fn cmd_setup(q: &J) -> String {
                 xmm0_from_stack,
                 logxmm1,
                 xmm1_from_stack,
+                preserve,
+                eax_from_stack,
+                noclean,
+                pop_rw,
             };
             let bytes = emit_stub(&cal, None);
             let addr = s.stub_base + s.stub_off as u32;
@@ -2763,7 +3178,7 @@ fn main() {
     let lines = stdin.lock().lines();
     let mut out = std::io::stdout();
     // ready banner (driver waits for this)
-    writeln!(out, "{{\"ready\":true,\"checker_version\":\"checker3\"}}").unwrap();
+    writeln!(out, "{{\"ready\":true,\"checker_version\":\"checker4\"}}").unwrap();
     out.flush().unwrap();
     for line in lines {
         let line = match line {
