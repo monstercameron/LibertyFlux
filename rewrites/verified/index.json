@@ -7623,6 +7623,15 @@
   "lane": "r-s374"
  },
  {
+  "address": "0x0052D010",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race22Standard, player_schema::LeaderboardInfo, 10>::vf6",
+  "kind": "function",
+  "file": "functions/fn_0052d010.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s374"
+ },
+ {
   "address": "0x0052D070",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race22Standard, player_schema::LeaderboardInfo, 10>::vf7",
   "kind": "function",
@@ -23116,6 +23125,60 @@
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_241, player_schema::LeaderboardInfo, 10>::vf12",
   "kind": "function",
   "file": "functions/fn_0058fc30.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s375"
+ },
+ {
+  "address": "0x0058FCA0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_241, player_schema::LeaderboardInfo, 10>::vf13",
+  "kind": "function",
+  "file": "functions/fn_0058fca0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s375"
+ },
+ {
+  "address": "0x0058FE90",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_241, player_schema::LeaderboardInfo, 10>::vf6",
+  "kind": "function",
+  "file": "functions/fn_0058fe90.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s375"
+ },
+ {
+  "address": "0x0058FEF0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_241, player_schema::LeaderboardInfo, 10>::vf7",
+  "kind": "function",
+  "file": "functions/fn_0058fef0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s375"
+ },
+ {
+  "address": "0x0058FF30",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_241, player_schema::LeaderboardInfo, 10>::vf8",
+  "kind": "function",
+  "file": "functions/fn_0058ff30.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s375"
+ },
+ {
+  "address": "0x00590060",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_242, player_schema::LeaderboardInfo, 10>::vf2",
+  "kind": "function",
+  "file": "functions/fn_00590060.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s375"
+ },
+ {
+  "address": "0x00590090",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_242, player_schema::LeaderboardInfo, 10>::vf12",
+  "kind": "function",
+  "file": "functions/fn_00590090.rs",
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s375"
@@ -77611,6 +77674,24 @@
   "name": "ped_task_dispatch_extended",
   "kind": "function",
   "file": "functions/fn_00cb5330.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b337"
+ },
+ {
+  "address": "0x00CB5530",
+  "name": "ped_task_row_copy_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00cb5530.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b337"
+ },
+ {
+  "address": "0x00CB5870",
+  "name": "ped_task_dispatch_large",
+  "kind": "function",
+  "file": "functions/fn_00cb5870.rs",
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b337"
