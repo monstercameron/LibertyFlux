@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#public-names">Public engine class names collected and checked against our build</a></li>
       <li><a href="#encrypted-prefix">Correction: the first megabyte of the code is encrypted</a></li>
       <li><a href="#ghidra-dot-path">Ghidra refuses project folders that start with a dot</a></li>
       <li><a href="#executable-first-look">What the executable shows: a first look at its headers</a></li>
@@ -64,6 +65,71 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="public-names">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Public engine class names collected and checked against our build</h2>
+      <p><span class="evidence verified">Verified</span> Nearly all of the engine classes named inside our executable have no public documentation: 1596 of 1664 distinct class names found in our build appear in none of the public sources, while 68 publicly documented names were confirmed present, so the project now has a ranked list of the 100 most important classes with the best public source for each.</p>
+      <h3>What was asked</h3>
+      <p>Collect public class and structure names for this game's engine from other builds and projects so they can later be matched to our executable: the RAGE API notes and investigation documents in <a href="https://github.com/OZORDI/LibertyRecomp">LibertyRecomp</a>, the <a href="https://github.com/Zolika1351/iv-sdk">IV-SDK</a> headers, IV-SDK .NET, the <a href="https://github.com/Neproify/ivmultiplayer">IV multiplayer</a> client headers, <a href="https://github.com/DK22Pac/plugin-sdk">plugin-sdk</a> GTA IV headers, and <a href="https://github.com/Yimura/GTAV-Classes">GTAV-Classes</a>. Then extract the class names from our own executable, cross-reference the two sets, rank the 100 most important classes, and record every source licence. Names and layouts only, no code copying.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Our executable names 3723 distinct RTTI types, demangled into 1664 distinct class names, of which 478 sit in the rage namespace. The largest families are tasks, cameras, network messages, animation, events, audio, physics, rendering commands, and particles.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Finding</th>
+      <th role="columnheader">Count</th>
+      <th role="columnheader">Meaning</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">RTTI type names in our build</td>
+      <td role="cell" data-label="Count">3723</td>
+      <td role="cell" data-label="Meaning">classes and structs with runtime type info</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Distinct class names in our build</td>
+      <td role="cell" data-label="Count">1664</td>
+      <td role="cell" data-label="Meaning">the vocabulary to document</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Public class records collected</td>
+      <td role="cell" data-label="Count">143</td>
+      <td role="cell" data-label="Meaning">names, sizes, base classes, members with offsets</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Public names confirmed in our build</td>
+      <td role="cell" data-label="Count">68</td>
+      <td role="cell" data-label="Meaning">entity, physics, streaming, camera, task and render-command core</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Our class names with no public documentation</td>
+      <td role="cell" data-label="Count">1596</td>
+      <td role="cell" data-label="Meaning">96 percent undocumented; biggest gap is tasks, cameras and audio</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Top-100 classes present in our build</td>
+      <td role="cell" data-label="Count">83 of 100</td>
+      <td role="cell" data-label="Meaning">17 ranked classes have no type entry, mostly singletons and value types</td>
+      </tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The core entity, physics, streaming, model info, camera, task, event, network and render-command names match across sources and our build, including all thirteen named render-command subclasses from the LibertyRecomp investigation. Two independent public readings of the player-info layout agree field for field.</p>
+      <p><span class="evidence verified">Verified</span> Four sources are GPL licensed (LibertyRecomp, IV-SDK, IV-SDK .NET, IV multiplayer), plugin-sdk is permissively licensed, and GTAV-Classes has no licence and no content: it was emptied by its owner and archived, so the rage primitives came from plugin-sdk and LibertyRecomp instead.</p>
+      <p><span class="evidence">Inferred</span> Several SDK struct names with a temporary air about them have no footprint in our build and are probably invented by SDK authors rather than real engine names; they remain useful as layout hypotheses but not as vocabulary.</p>
+      <p><span class="evidence">Unknown</span> A handful of engine classes the public headers describe as central, including the audio engine, graphics device, script program, and page streamer, have no type entry at all in our build. They may be renamed here, built without type info, or described from a different version.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Every layout from an older build stays marked as unverified here until re-measured against our build, since IV-SDK itself warns that classes differ between versions.</li>
+      <li>Where two public sources disagree on a layout, both readings are recorded and neither is trusted; the next lane re-measures rather than picking a winner.</li>
+      <li>After the entity core, the highest-value documentation targets are the thirty top-100 classes with type entries here but no public documentation anywhere, mostly physics, rendering, audio, and task classes.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Scan the executable for the standard MSVC runtime type descriptor string prefixes, keep the terminated names, and demangle the simple and template cases; then fetch the listed public headers and documents as plain web pages and match unqualified class names, mapping the multiplayer client's mirror prefix to the game prefix. The lane's scratch folder holds the scan script, the raw name inventory, the public class data, and the cross-reference with the ranked hundred.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Large public files arrived cut off partway, so three big headers and two long documents are only partially collected; the gaps are listed in the lane report for a follow-up with full-file fetching. Two guessed header paths returned not-found, which corrected the inventory rather than costing much: vehicle subclasses have almost no public PC layout, and the player-info mirror lives under a different filename than expected. The most confusing result was the missing type entries for supposedly central engine classes; absence of a type entry proves nothing for types without virtual functions, but for virtual-heavy classes it is a genuine puzzle left open for a string and vtable hunt.</p>
+      </article>
 
       <article class="entry" id="encrypted-prefix">
         <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
