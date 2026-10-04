@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Naming the episodic race leaderboard boards, part 29",
+    "title": "Rewrites: 91 more functions pass the checker (8650 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "91 rewrites added under rewrites/verified: 0 script native handlers and 91 other functions.",
+      "The tree now holds 8650 rewrites, 8631 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "388 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Naming the episodic race leaderboard boards, part 29",
+    "commit": "e64e3349485a77e9742defcfc0b5db8f5f908db6",
     "summary": "Findings from the nm-29 lane.",
     "changes": [
       "New devlog entry: Naming the episodic race leaderboard boards, part 29.",
