@@ -1,0 +1,8 @@
+// original: 0x008a2f50 forward_cdecl2_to_thiscall1_8a2a40
+/// Forwards two cdecl arguments to a one-argument `thiscall` callee.
+///
+/// The first argument becomes the `this` pointer; the second is passed on the
+/// stack. Returns the callee's answer unchanged.
+export!(cdecl, rw_008a2f50(a0: u32, a1: u32) -> u32 {
+    unsafe { callee_thiscall!(1, u32, a0, a1) }
+});
