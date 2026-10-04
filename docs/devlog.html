@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n16">Twenty native handlers verified, and three traps for the next lanes</a></li>
       <li><a href="#production-n20">Production batch n20: twenty-five native handlers, one compiler surprise</a></li>
       <li><a href="#production-n08">Some native handlers cannot be rewritten without assembly</a></li>
       <li><a href="#production-s29">A whole batch that ends in jumps, not returns</a></li>
@@ -212,6 +213,30 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n16">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Twenty native handlers verified, and three traps for the next lanes</h2>
+      <p>Twenty of twenty-five script native handlers now have Rust rewrites proven identical to the originals over one thousand trials each, with a fulldata second phase confirming none of them touch global state. The five that could not be verified taught us more than the twenty that could.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty-five script native handlers in Rust and prove each rewrite behaves identically to the original using the differential checker, which runs the original and the rewrite from identical starting state and compares return values, memory writes, stack effects, outgoing calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Most handlers in the batch are thin wrappers: read script arguments from the call context, forward them to one engine function, and either return its answer or store one byte of it into the return slot. Twenty followed shapes the checker handles well and all passed.</p>
+      <p><span class="evidence verified">Verified</span> Two console-debug stub handlers store a fixed word to the return slot. That word is a relocated image address, not a plain magic constant: an early rewrite that stored it literally failed every trial, and resolving it through the mapped image base passes. A wrong relocation-table script had claimed otherwise; the checker settled it on the first trial.</p>
+      <p><span class="evidence verified">Verified</span> One handler passes its engine argument in a register with no stack arguments at all, unlike its four lookalikes which push. Modelling it as a stack-argument call failed every trial on the call comparison; modelling the register call passes.</p>
+      <p><span class="evidence verified">Verified</span> Four handlers coerce a script argument to a boolean by writing the flag into the low byte of their own incoming stack-argument slot, then push that clobbered word to the engine function. The pushed value therefore carries address bits from the caller's stack slot alongside the flag. That stack-slot write is covered by the checker's stack comparison but is not reachable from stable Rust without inline assembly, so all four are deferred with a stated reason rather than fudged.</p>
+      <p><span class="evidence verified">Verified</span> One handler passes a pointer to its own stack frame as a call argument. Stack call arguments are always compared in full and frame addresses cannot match across code generation, so it is deferred too.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Deferring with a precise reason beats weakening a comparison. Five functions are recorded as deferred with the exact blocker, so a future worker extension can unblock them honestly.</li>
+      <li>Lanes hitting a boolean-coercion handler should check for the write into the incoming argument slot first: if it is there, the function cannot be verified as the checker stands, and no rewrite attempt will change that.</li>
+      <li>The lane driver now survives the check worker dying mid-batch under load by starting a fresh worker and continuing; that change is proposed for foldback into the shared driver.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run the checker driver in the lane scratch folder over the twenty contracts: each must report one thousand passing trials with zero failures, plus a two-hundred-trial fulldata confirmation each. The honesty mutant, which drops the low-byte mask on one return-value handler, must fail on the heap comparison within a few trials.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>A relocation-table script repeated a documented pilot mistake and wrongly cleared two relocated addresses as plain constants; the checker caught it immediately. The check worker died once mid-batch under the shared host load and once the driver crashed the whole run on a malformed contract of our own making (a heap segment index off by one); both are handled now. Build throughput is several times slower than the pilots measured because dozens of lanes share the host.</p>
+      </article>
 
       <article class="entry" id="production-n20">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

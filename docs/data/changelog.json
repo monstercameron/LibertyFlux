@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "README: repository layout lists the Rust workspace and the rewrites",
+    "title": "Devlog: Twenty native handlers verified, and three traps for the next lanes",
     "commit": null,
+    "summary": "Findings from the r-n16 lane.",
+    "changes": [
+      "New devlog entry: Twenty native handlers verified, and three traps for the next lanes.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "README: repository layout lists the Rust workspace and the rewrites",
+    "commit": "24cc96077aa545290b7b7e20a4360a9503504299",
     "summary": "The layout table now covers the two places Rust code lives.",
     "changes": [
       "Added the cargo workspace and its crates to the repository layout table.",
