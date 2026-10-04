@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Work queue tools",
+    "title": "Capture tool for the owner's running copy",
     "commit": null,
+    "summary": "Reads the code that is encrypted on disk, and the data the game fills in at start-up, from the owner's own running copy.",
+    "changes": [
+      "scripts/capture/capture.py: read-only against the running process; writes only under orig/, which is never committed.",
+      "Its self-test passes and it exits cleanly when the game is not running. It has not been run against the game yet.",
+      "Assembled from the lanes' scratch folders by the tools lane and scanned for machine paths, byte dumps and disassembly before publication."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Work queue tools",
+    "commit": "baa0c44f96ffb90e6c6f87f39160a7c7fe6d4a1e",
     "summary": "The SQLite work queue: claim, context, accept, defer, export.",
     "changes": [
       "scripts/queue: twelve tools over one database file kept under .artifacts.",
