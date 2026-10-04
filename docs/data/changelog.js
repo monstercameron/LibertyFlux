@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Tools: audio and video",
+    "title": "Devlog: Tools: models, textures and collision",
     "commit": null,
+    "summary": "Findings from the t-models-textures lane.",
+    "changes": [
+      "New devlog entry: Tools: models, textures and collision.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Tools: audio and video",
+    "commit": "1b1bb7066bce631a395eaf687d7d0a5db34bc97e",
     "summary": "Findings from the t-audio-video lane.",
     "changes": [
       "New devlog entry: Tools: audio and video.",

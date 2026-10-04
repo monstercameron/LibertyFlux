@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#tools-models-textures">Tools: models, textures and collision</a></li>
       <li><a href="#tools-audio-video">Tools: audio and video</a></li>
       <li><a href="#subsystem-world-pools">Subsystem survey: world, entities and object pools</a></li>
       <li><a href="#subsystem-streaming">Subsystem survey: streaming and resources</a></li>
@@ -87,6 +88,65 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="tools-models-textures">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Tools: models, textures and collision</h2>
+      <p><span class="evidence verified">Verified</span> A working asset pipeline for models, textures and map placement now runs on the project machine: a community map extractor built from source converts game map archives to open glTF models and standard texture files, and the long-standing archive browser SparkIV runs for day-to-day inspection.</p>
+      <h3>What was asked</h3>
+      <p>Find, evaluate and where allowed install the tools the project needs for drawable, fragment, texture dictionary, collision, animation and map placement formats, test each one on this machine, collect the best public format documentation, and recommend which tool to standardise on for each job.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Nine candidates were examined. Three were installed and tested successfully:</p>
+      <ul>
+      <li>SparkIV, the archive browser and viewer for game archives, models and textures. The latest prebuilt release launches and stays running on this machine.</li>
+      <li>A community map extractor plus its pinned game-asset parsing library. It compiled with no errors and converted a small map sector (62 archive entries) into 41 out of 41 models with textures, with nothing skipped.</li>
+      <li>A Rust parsing crate for a newer game in the series. All 108 of its self-contained tests pass here. It cannot read this game's files directly, but its structure is the best template for a new loader.</li>
+      </ul>
+      <p><span class="evidence verified">Verified</span> Four more were collected as reference but could not be fully tested: a Blender add-on whose code needs Blender itself (not installed), a maintained SparkIV source fork (the prebuilt release covers the need), and two recompilation-project resource readers, one without a licence statement and one under a restricted licence, so both are read-only references.</p>
+      <p><span class="evidence verified">Verified</span> The public wiki documents several formats field by field (drawables, collision dictionaries, placements, and the two text map formats), but the texture dictionary and vehicle fragment pages are stubs with no layouts; the parsing library source fills that gap.</p>
+      <h3>What was decided or recommended</h3>
+      <p><span class="evidence">Inferred</span> The project should standardise on SparkIV for browsing archives, the extractor plus parsing library as the asset pipeline, and a new clean-room Rust loader modelled on the Rust crate's design using the documented layouts. The closed-source editor OpenIV, the 3ds Max plugins, a paid modelling tool and Blender itself are left for the owner to install.</p>
+      <h3>How to reproduce it</h3>
+      <ol>
+      <li>Fetch the latest SparkIV prebuilt release from the project's own release page, unpack it into the tools folder, and launch the browser.</li>
+      <li>Clone the map extractor and the pinned asset library revision, build the extractor with the installed .NET SDK, and run it against a copy-safe output folder with framework roll-forward enabled.</li>
+      <li>Clone the Rust parsing crate and run its test suite with the Rust toolchain; no game files are needed.</li>
+      <li>Read the public wiki pages for the drawable, collision, placement and text formats, and the parsing library source for the texture and fragment layouts.</li>
+      </ol>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> One named Blender add-on repository no longer exists on its hosting site, so it could not be evaluated. One candidate name in the task turned out to be a different game series' recompilation project, not a texture tool; its resource reader was still useful as documentation. A first extraction test silently used an archive with no matching map files and produced nothing; re-running against a real map sector worked. The main closed-source editor's website showed an expired certificate on the day, so its details were confirmed from secondary sources instead.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Job</th>
+      <th role="columnheader">Recommended tool</th>
+      <th role="columnheader">Basis</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">Browsing archives and previewing assets</td>
+      <td role="cell" data-label="Recommended tool">SparkIV prebuilt release</td>
+      <td role="cell" data-label="Basis">Launches and runs on this machine</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Extracting models, textures and placements</td>
+      <td role="cell" data-label="Recommended tool">Community map extractor with pinned parsing library</td>
+      <td role="cell" data-label="Basis">Builds cleanly, converts a full sector with nothing skipped</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Future Rust loader design</td>
+      <td role="cell" data-label="Recommended tool">Rust parsing crate as template, documented layouts as source</td>
+      <td role="cell" data-label="Basis">All self-contained tests pass here</td>
+      </tr>
+      <tr role="row">
+      <td role="row">Interactive editing and export round-trips</td>
+      <td role="cell" data-label="Recommended tool">Closed-source editor, 3ds Max plugins (owner installs)</td>
+      <td role="cell" data-label="Basis">Outside what a lane may install</td>
+      </tr>
+      </tbody>
+      </table>
+      </article>
 
       <article class="entry" id="tools-audio-video"><div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div><h2>Tools: audio and video</h2><p>The project now has a tested open toolchain for all of the game's sound and video: FFmpeg reads every cutscene video, vgmstream reads the game's audio banks, and a small Python library extracts those banks from the archives. All sampled game audio turned out to be a single simple codec, which makes the port's audio job smaller than expected.</p><h3>What was asked</h3><p>Find, evaluate and where allowed install the tools the project needs for audio and video: the game's audio containers and codecs, speech and radio streams, Bink video files, and user music. Test whether vgmstream supports this game's PC audio, install a portable FFmpeg build and use it to identify the Bink files without converting them, identify the audio container format from headers, and name the Rust crates that could decode each format in the port.</p><h3>What was found</h3><p><span class="evidence verified">Verified</span> The game ships nine Bink version 1 videos: two long TV channels for the base game, four shorter ones for the two episodes, and three small clips. FFmpeg's Bink support reads all nine, reporting resolutions from 256 by 192 to 512 by 384 at about 30 frames per second, with Bink DCT audio at 22050 Hz (one small clip uses 11000 Hz mono; two clips have no sound).</p><p><span class="evidence verified">Verified</span> All game audio lives in encrypted RPF version 3 archives: forty in the base game plus three per episode. The entries inside are Rockstar AUD banks holding between one and over a hundred streams each. Every sampled bank, across ringtones, ambient radio, a music station and speech, uses IMA 4-bit ADPCM at 24000 to 32000 Hz. No MP3, Vorbis, XMA or Miles audio was found in the PC game audio path.</p><p><span class="evidence verified">Verified</span> vgmstream supports this game's PC audio: it reported correct metadata for all five sampled banks and decoded one stream to WAV. FFmpeg cannot open the AUD banks at all, so the two tools complement each other rather than overlap.</p><p><span class="evidence">Inferred</span> User music works by scanning a user music folder for WMA and MP3 files, and a small encoder program beside the game exports replay clips to Windows Media Video 9. Both conclusions come from program text strings, not from running the game. <span class="evidence">Unknown</span> The exact folder path on a player's machine was not checked.</p><table role="table"><thead role="rowgroup"><tr role="row"><th role="columnheader">Job</th><th role="columnheader">Tool</th><th role="columnheader">Licence</th></tr></thead><tbody role="rowgroup"><tr role="row"><td role="cell">Bink video and audio</td><td role="cell" data-label="Tool">FFmpeg, native ARM64 build</td><td role="cell" data-label="Licence">LGPL</td></tr><tr role="row"><td role="cell">Game audio banks</td><td role="cell" data-label="Tool">vgmstream command-line tool</td><td role="cell" data-label="Licence">permissive MIT-style</td></tr><tr role="row"><td role="cell">Archive extraction</td><td role="cell" data-label="Tool">pyrpfiv Python library</td><td role="cell" data-label="Licence">MIT</td></tr><tr role="row"><td role="cell">User music and replay formats</td><td role="cell" data-label="Tool">FFmpeg decoders</td><td role="cell" data-label="Licence">LGPL</td></tr></tbody></table><h3>What was decided or recommended</h3><p>The project should standardise on FFmpeg for video and Windows Media formats, vgmstream for inspecting and decoding game audio banks, and pyrpfiv for scripted archive extraction. The closed-source OpenIV editor is left as an optional install for the owner; nothing in this phase depends on it.</p><p>For the port itself, the lowest-risk path is the Symphonia crate family (MPL-2.0, pure Rust) for the ADPCM game audio and MP3 user tracks, plus a project-written AUD container reader, with FFmpeg bindings covering Bink video and the WMA edge case. There is no maintained pure-Rust Bink or WMA decoder, and the one Bink-aware Rust framework found is under the AGPL and therefore excluded.</p><h3>How to reproduce it</h3><p>Install a portable FFmpeg build from one of the Windows build sets linked on the <a href="https://ffmpeg.org/download.html">FFmpeg download page</a>, the command-line build from the <a href="https://github.com/vgmstream/vgmstream/releases">vgmstream releases page</a>, and pyrpfiv from PyPI. Point FFmpeg's probe tool at the game's movie files, extract audio banks from the sound archives with pyrpfiv using the owner's own game executable, and run vgmstream in metadata mode on the extracted banks. Full commands, versions and checksums are in the lane report.</p><h3>What was confusing or went wrong</h3><p>The extraction library's documentation names older game versions, but it parsed the current version's archives without complaint, so the version list is out of date rather than the code being broken. The same library prints thousands of log lines and fills in its file list through a side channel instead of returning it, which needed a small wrapper. The word ivaud, the community's name for the PC audio format, appears nowhere in the game executable, which briefly suggested the format might be absent until vgmstream identified the banks directly.</p></article>
 
