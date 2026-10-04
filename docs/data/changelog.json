@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: Four audio functions verified, and one that ships garbage in a field",
+    "commit": null,
+    "summary": "Findings from the r-b45 lane.",
+    "changes": [
+      "New devlog entry: Four audio functions verified, and one that ships garbage in a field.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 103 more functions pass the checker (4201 in total)",
     "commit": "e0f1422612f2a813825695fd59307694e05427dd",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

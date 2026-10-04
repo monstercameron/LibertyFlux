@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b45">Four audio functions verified, and one that ships garbage in a field</a></li>
       <li><a href="#production-n116">First jump-thunk native verified, via a checker tail-call fix</a></li>
       <li><a href="#production-n112">Production batch: a tail-thunk checker bug and twenty-five verified natives</a></li>
       <li><a href="#rerun-16">Rerun finds a call-log overflow in checker version 2</a></li>
@@ -261,6 +262,34 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b45">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Four audio functions verified, and one that ships garbage in a field</h2>
+      <p>All four audio functions in this batch now have Rust rewrites proven equivalent to the originals over one thousand trials each, but the largest one stores an uninitialized stack slot into two output records, so those fields carry caller-stack residue in the real game.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite four adjacent audio functions in Rust and prove each rewrite behaves identically to the original with the version 2 checker, which answers outgoing calls by script and compares return values, memory, stack use, calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All four rewrites passed one thousand trials with zero failures and zero fault-driven passes, and every control mutant was caught.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Function</th><th role="columnheader">Size</th><th role="columnheader">Outgoing calls</th><th role="columnheader">Attempts</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Gated forward to the engine</td><td role="cell" data-label="Size">small</td><td role="cell" data-label="Outgoing calls">2</td><td role="cell" data-label="Attempts">1</td></tr>
+      <tr role="row"><td role="cell">Slot update with filtered level</td><td role="cell" data-label="Size">medium</td><td role="cell" data-label="Outgoing calls">2</td><td role="cell" data-label="Attempts">1</td></tr>
+      <tr role="row"><td role="cell">Voice render through virtual slots</td><td role="cell" data-label="Size">medium</td><td role="cell" data-label="Outgoing calls">8</td><td role="cell" data-label="Attempts">1</td></tr>
+      <tr role="row"><td role="cell">Batch voice render</td><td role="cell" data-label="Size">large</td><td role="cell" data-label="Outgoing calls">4</td><td role="cell" data-label="Attempts">2</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The largest function reads a stack frame slot it never writes and stores that word into the same field of both output records. Under the checker's defined zero fill for uninitialized stack this is a stable zero, which the rewrite reproduces; in the running game the field holds whatever the caller left on the stack.</p>
+      <p><span class="evidence">Inferred</span> This looks like a genuine bug in the original, or a field nothing ever reads. Whether any later code reads that field is still unknown.</p>
+      <p><span class="evidence verified">Verified</span> A length gate built from a flag-load, mask test and parity jump normalizes unless the length is exactly zero, with non-numbers taking the divide path. The parity jump tests the mask result, not the original flags, which is easy to misread.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The uninitialized slot is handled by defining uninitialized stack as zero in the proof contract, and the rewrite stores zero with a comment. Sibling lanes should treat any frame slot the original never writes the same way rather than trying to reproduce garbage. A future lane could check whether anything reads the affected field, which would promote the finding from curiosity to real bug.</p>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble the largest function in the batch and list every store to its frame slots: one slot high in the frame has loads but no store. Run the proof contract with a defined zero stack fill and confirm both sides store zero into the records; flip one rotation accumulation in a copy of the rewrite and confirm the checker catches it.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first attempt at the largest function failed one trial in thirty because a divisor reuses a register that held the projected point by then, not the matrix row it held earlier. The checker's mismatch pointed at the exact call argument, and the fix was one line. A first reading of the parity-jump gate as non-number detection was wrong and was corrected before running. The rewrite library stays locked after a run, so each rebuild renames the old library aside first.</p>
+      </article>
 
       <article class="entry" id="production-n116">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
