@@ -1,6 +1,6 @@
 window.LF_PROGRESS = {
   "updated": "2026-10-03",
-  "updated_at": "2026-10-03 20:30",
+  "updated_at": "2026-10-03 20:33",
   "phase": {
     "index": 0,
     "name": "Measure"
@@ -57,10 +57,10 @@ window.LF_PROGRESS = {
     }
   ],
   "activity": {
-    "lanes_running": 35,
-    "lanes_finished": 3,
+    "lanes_running": 22,
+    "lanes_finished": 16,
     "lanes_incomplete": 0,
-    "devlog_entries": 21
+    "devlog_entries": 30
   },
   "map": []
 };
