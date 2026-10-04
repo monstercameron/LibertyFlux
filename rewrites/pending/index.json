@@ -3240,6 +3240,186 @@
   "lane": "r-s112"
  },
  {
+  "address": "0x00874170",
+  "name": "oneshot_init_guard",
+  "kind": "function",
+  "file": "functions/fn_00874170.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x00874240",
+  "name": "test_state_tag_or_flag",
+  "kind": "function",
+  "file": "functions/fn_00874240.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x00874270",
+  "name": "anim_node_init",
+  "kind": "function",
+  "file": "functions/fn_00874270.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x00874310",
+  "name": "anim_node_reset",
+  "kind": "function",
+  "file": "functions/fn_00874310.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x00874410",
+  "name": "anim_node_init_if_present",
+  "kind": "function",
+  "file": "functions/fn_00874410.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x00874420",
+  "name": "anim_node_init_fields",
+  "kind": "function",
+  "file": "functions/fn_00874420.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x00874470",
+  "name": "rage::crmtNodeAnimation::vf1",
+  "kind": "function",
+  "file": "functions/fn_00874470.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x008744C0",
+  "name": "rage::crmtNodeAnimation::vf2",
+  "kind": "function",
+  "file": "functions/fn_008744c0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x00874580",
+  "name": "rage::crmtNodeAnimation::vf4",
+  "kind": "function",
+  "file": "functions/fn_00874580.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x008745C0",
+  "name": "rage::crmtNodeAnimation::vf5",
+  "kind": "function",
+  "file": "functions/fn_008745c0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x00874820",
+  "name": "locked_node_lookup_and_unlink",
+  "kind": "function",
+  "file": "functions/fn_00874820.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x00874890",
+  "name": "locked_node_relink",
+  "kind": "function",
+  "file": "functions/fn_00874890.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x008749B0",
+  "name": "find_slot_by_id",
+  "kind": "function",
+  "file": "functions/fn_008749b0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x00874A10",
+  "name": "filter_node_init",
+  "kind": "function",
+  "file": "functions/fn_00874a10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x00874B30",
+  "name": "filter_node_init_ptr",
+  "kind": "function",
+  "file": "functions/fn_00874b30.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x00874B80",
+  "name": "filter_node_tag_if_present",
+  "kind": "function",
+  "file": "functions/fn_00874b80.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x00874BA0",
+  "name": "rage::crmtNodeFilter::vf1",
+  "kind": "function",
+  "file": "functions/fn_00874ba0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x00874BF0",
+  "name": "rage::crmtNodeFilter::vf4",
+  "kind": "function",
+  "file": "functions/fn_00874bf0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x00874C20",
+  "name": "filter_replace_child",
+  "kind": "function",
+  "file": "functions/fn_00874c20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
+  "address": "0x00874C80",
+  "name": "composite_node_teardown",
+  "kind": "function",
+  "file": "functions/fn_00874c80.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s171"
+ },
+ {
   "address": "0x00874D00",
   "name": "rage::crmtRequestBlendN::vf1",
   "kind": "function",
@@ -8280,6 +8460,15 @@
   "lane": "a-16"
  },
  {
+  "address": "0x008E71F0",
+  "name": "PlayerSet_FindLargestCluster",
+  "kind": "function",
+  "file": "functions/fn_008e71f0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b118"
+ },
+ {
   "address": "0x008E79C0",
   "name": "project_point_onto_segment",
   "kind": "function",
@@ -8287,6 +8476,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-16"
+ },
+ {
+  "address": "0x008E8590",
+  "name": "TableScan_FindBestEntry",
+  "kind": "function",
+  "file": "functions/fn_008e8590.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b118"
  },
  {
   "address": "0x008E8C00",
@@ -18934,6 +19132,186 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s121"
+ },
+ {
+  "address": "0x00B55100",
+  "name": "fetch_scalar_to_field_f0",
+  "kind": "function",
+  "file": "functions/fn_00b55100.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55490",
+  "name": "fetch_scaled_vector_to_fields",
+  "kind": "function",
+  "file": "functions/fn_00b55490.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55560",
+  "name": "index_of_link_in_helper_chain",
+  "kind": "function",
+  "file": "functions/fn_00b55560.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B557D0",
+  "name": "drain_work_queue_a",
+  "kind": "function",
+  "file": "functions/fn_00b557d0.rs",
+  "trials": 2000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55800",
+  "name": "drain_work_queue_b",
+  "kind": "function",
+  "file": "functions/fn_00b55800.rs",
+  "trials": 2000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55830",
+  "name": "dllist_unlink_10_14",
+  "kind": "function",
+  "file": "functions/fn_00b55830.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55860",
+  "name": "dllist_unlink_8c_90",
+  "kind": "function",
+  "file": "functions/fn_00b55860.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B558B0",
+  "name": "crFrameFilterBoneMask::vf3",
+  "kind": "function",
+  "file": "functions/fn_00b558b0.rs",
+  "trials": 2000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55B10",
+  "name": "find_typed_descendant",
+  "kind": "function",
+  "file": "functions/fn_00b55b10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55B70",
+  "name": "find_node_by_field18",
+  "kind": "function",
+  "file": "functions/fn_00b55b70.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55BC0",
+  "name": "resolve_then_find_node",
+  "kind": "function",
+  "file": "functions/fn_00b55bc0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55BE0",
+  "name": "find_node_by_field44",
+  "kind": "function",
+  "file": "functions/fn_00b55be0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55C20",
+  "name": "find_node_by_field_pair",
+  "kind": "function",
+  "file": "functions/fn_00b55c20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55C70",
+  "name": "find_node_by_key_unchecked",
+  "kind": "function",
+  "file": "functions/fn_00b55c70.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55C80",
+  "name": "find_node_by_key_with_float_check",
+  "kind": "function",
+  "file": "functions/fn_00b55c80.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55CF0",
+  "name": "load_field0c_float_or_zero",
+  "kind": "function",
+  "file": "functions/fn_00b55cf0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55D20",
+  "name": "scan_global_table_by_nested_keys",
+  "kind": "function",
+  "file": "functions/fn_00b55d20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55D80",
+  "name": "scan_global_table_by_direct_keys",
+  "kind": "function",
+  "file": "functions/fn_00b55d80.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55DD0",
+  "name": "find_node_by_bitmask",
+  "kind": "function",
+  "file": "functions/fn_00b55dd0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
+ },
+ {
+  "address": "0x00B55E40",
+  "name": "find_first_live_node",
+  "kind": "function",
+  "file": "functions/fn_00b55e40.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s162"
  },
  {
   "address": "0x00B56E30",
@@ -44458,6 +44836,33 @@
   "trials": 1200,
   "checker": "version 3",
   "lane": "r-b93"
+ },
+ {
+  "address": "0x00E55550",
+  "name": "pick_named_record",
+  "kind": "function",
+  "file": "functions/fn_00e55550.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b122"
+ },
+ {
+  "address": "0x00E55740",
+  "name": "find_key_record",
+  "kind": "function",
+  "file": "functions/fn_00e55740.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b122"
+ },
+ {
+  "address": "0x00E55FE0",
+  "name": "UIRawClipViewer::vf103",
+  "kind": "function",
+  "file": "functions/fn_00e55fe0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b122"
  },
  {
   "address": "0x00E5C460",

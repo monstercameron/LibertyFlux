@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: A callee write offset that means something else",
+    "title": "Rewrites: 45 more functions pass the checker (5660 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "45 rewrites added under rewrites/pending: 0 script native handlers and 45 other functions.",
+      "The tree now holds 5660 rewrites, 5641 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "251 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: A callee write offset that means something else",
+    "commit": "5e0c9614f63887d1c848aabf6d82f93de3cf33d9",
     "summary": "Findings from the r-s162 lane.",
     "changes": [
       "New devlog entry: A callee write offset that means something else.",
