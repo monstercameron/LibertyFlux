@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: One node reader copies an uninitialized stack slot on its fail path",
+    "title": "Devlog: A partition routine that swaps stale stack contents into its output",
     "commit": null,
+    "summary": "Findings from the r-s64 lane.",
+    "changes": [
+      "New devlog entry: A partition routine that swaps stale stack contents into its output.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: One node reader copies an uninitialized stack slot on its fail path",
+    "commit": "2ef03cd9b131ebb5052a251ef1cac97122a1d3aa",
     "summary": "Findings from the r-s49 lane.",
     "changes": [
       "New devlog entry: One node reader copies an uninitialized stack slot on its fail path.",
