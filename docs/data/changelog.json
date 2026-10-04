@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-03",
+    "title": "Devlog: A matrix routine that copies stack garbage, and a compiler trap for rewrites",
+    "commit": null,
+    "summary": "Findings from the r-s33 lane.",
+    "changes": [
+      "New devlog entry: A matrix routine that copies stack garbage, and a compiler trap for rewrites.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
     "title": "Rewrites: 312 functions that pass the checker (1447 in total)",
     "commit": "09d8ff8f7863e788a09a142d5fbbf9f7386c2a1f",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s33">A matrix routine that copies stack garbage, and a compiler trap for rewrites</a></li>
       <li><a href="#production-s07">A faithful rewrite can fail the cheat check</a></li>
       <li><a href="#production-n29">Native handlers that stash a flag in their own doorstep</a></li>
       <li><a href="#production-n16">Twenty native handlers verified, and three traps for the next lanes</a></li>
@@ -215,6 +216,25 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s33">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A matrix routine that copies stack garbage, and a compiler trap for rewrites</h2>
+      <p><span class="evidence verified">Verified</span> One large matrix-transform routine in this batch reads a stack slot it never wrote and stores the result into the object, so three output fields receive whatever the caller left on the stack; it cannot be faithfully rewritten and was deferred.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small game functions in Rust and prove each rewrite behaves identically to the original with the differential checker, deferring any function the checker cannot verify.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Seventeen of the twenty functions verified with one thousand trials each and zero failures. They are flag-gated float updates, small vector copies, and single-call forwarding wrappers.</p>
+      <p><span class="evidence verified">Verified</span> Two functions end in a tail jump to shared code after doing a little work of their own, which the checker cannot follow, so both were deferred.</p>
+      <p><span class="evidence verified">Verified</span> The matrix routine reserves a sixteen-byte stack area, never writes to it, then loads one float from it three times into three output fields. The slot always lies below the frame, in caller-owned stack, so the values are caller residue. A rewrite has no way to observe that memory, and copying whatever the test harness happens to leave there would be a fake pass.</p>
+      <p><span class="evidence">Inferred</span> The stack read looks like an uninitialized-variable bug in the original code rather than anything deliberate.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The matrix routine was deferred as unverifiable, and the two tail-jump functions likewise. Sibling lanes should treat any function whose output depends on uninitialized stack or register state as unrewritable rather than encoding harness-specific residue.</p>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble the routine and list every write to the stack between the frame setup and the three float loads: there are none, and the loaded slot is always at a lower address than the frame pointer. Any input state gives the same verdict, since the value comes from outside the function.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> One rewrite failed two trials in a thousand with no visible cause: the Rust compiler had packed three independent scalar float operations into vector instructions and swapped their operands, which changes the result only when both sides are not-a-number values with different payloads. The fix computes through small helpers that settle the not-a-number cases explicitly. Any lane rewriting parallel independent float arithmetic should check its compiled output for the same repacking.</p>
+      </article>
 
       <article class="entry" id="production-s07">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
