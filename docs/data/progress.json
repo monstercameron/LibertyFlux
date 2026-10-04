@@ -6,14 +6,14 @@
     "name": "Rewrite"
   },
   "functions": {
-    "total": 43140,
-    "library": 5441,
-    "game": 37699
+    "total": 42824,
+    "library": 5411,
+    "game": 37413
   },
   "stages": {
-    "identified": 37699,
-    "named": 13818,
-    "rewritten": 7442,
+    "identified": 37413,
+    "named": 13968,
+    "rewritten": 7443,
     "verified": 7231
   },
   "structures": 340,
@@ -93,19 +93,19 @@
     },
     {
       "label": "Functions after the inventory repair",
-      "value": 43140,
+      "value": 42824,
       "unit": "functions",
       "source": "f-boundaries lane: recursive-descent check of every inventory entry"
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 13818,
+      "value": 13968,
       "unit": "functions",
-      "source": "m-names lane's merge (9006) plus descriptive names given by production and naming lanes (4812); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (4964); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 7442,
+      "value": 7443,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
@@ -523,7 +523,7 @@
       "stage": "named",
       "from": "0x004F61C5",
       "to": "0x004FBAE6",
-      "count": 19,
+      "count": 15,
       "named": 15,
       "rewritten": 0,
       "verified": 0
@@ -532,7 +532,7 @@
       "stage": "named",
       "from": "0x004FBAE7",
       "to": "0x00501408",
-      "count": 109,
+      "count": 84,
       "named": 84,
       "rewritten": 0,
       "verified": 0
@@ -541,7 +541,7 @@
       "stage": "named",
       "from": "0x00501409",
       "to": "0x00506D29",
-      "count": 99,
+      "count": 62,
       "named": 53,
       "rewritten": 0,
       "verified": 0
@@ -550,7 +550,7 @@
       "stage": "named",
       "from": "0x00506D2A",
       "to": "0x0050C64B",
-      "count": 290,
+      "count": 277,
       "named": 275,
       "rewritten": 82,
       "verified": 82
@@ -568,7 +568,7 @@
       "stage": "verified",
       "from": "0x00511F6D",
       "to": "0x0051788E",
-      "count": 197,
+      "count": 196,
       "named": 192,
       "rewritten": 131,
       "verified": 131
@@ -610,11 +610,11 @@
       "verified": 20
     },
     {
-      "stage": "identified",
+      "stage": "named",
       "from": "0x0052DD15",
       "to": "0x00533636",
       "count": 202,
-      "named": 47,
+      "named": 197,
       "rewritten": 0,
       "verified": 0
     },
@@ -631,7 +631,7 @@
       "stage": "identified",
       "from": "0x00538F59",
       "to": "0x0053E879",
-      "count": 205,
+      "count": 203,
       "named": 23,
       "rewritten": 0,
       "verified": 0
@@ -649,7 +649,7 @@
       "stage": "identified",
       "from": "0x0054419C",
       "to": "0x00549ABC",
-      "count": 204,
+      "count": 203,
       "named": 21,
       "rewritten": 0,
       "verified": 0
@@ -658,7 +658,7 @@
       "stage": "identified",
       "from": "0x00549ABD",
       "to": "0x0054F3DE",
-      "count": 208,
+      "count": 205,
       "named": 39,
       "rewritten": 20,
       "verified": 20
@@ -676,7 +676,7 @@
       "stage": "identified",
       "from": "0x00554D00",
       "to": "0x0055A621",
-      "count": 209,
+      "count": 206,
       "named": 37,
       "rewritten": 20,
       "verified": 20
@@ -685,7 +685,7 @@
       "stage": "identified",
       "from": "0x0055A622",
       "to": "0x0055FF43",
-      "count": 205,
+      "count": 203,
       "named": 23,
       "rewritten": 0,
       "verified": 0
@@ -694,7 +694,7 @@
       "stage": "identified",
       "from": "0x0055FF44",
       "to": "0x00565864",
-      "count": 201,
+      "count": 200,
       "named": 21,
       "rewritten": 0,
       "verified": 0
@@ -703,7 +703,7 @@
       "stage": "identified",
       "from": "0x00565865",
       "to": "0x0056B186",
-      "count": 207,
+      "count": 206,
       "named": 39,
       "rewritten": 20,
       "verified": 20
@@ -712,7 +712,7 @@
       "stage": "identified",
       "from": "0x0056B187",
       "to": "0x00570AA7",
-      "count": 209,
+      "count": 205,
       "named": 56,
       "rewritten": 40,
       "verified": 40
@@ -721,7 +721,7 @@
       "stage": "identified",
       "from": "0x00570AA8",
       "to": "0x005763C9",
-      "count": 206,
+      "count": 205,
       "named": 21,
       "rewritten": 0,
       "verified": 0
@@ -730,7 +730,7 @@
       "stage": "identified",
       "from": "0x005763CA",
       "to": "0x0057BCEB",
-      "count": 208,
+      "count": 205,
       "named": 39,
       "rewritten": 20,
       "verified": 20
@@ -739,7 +739,7 @@
       "stage": "identified",
       "from": "0x0057BCEC",
       "to": "0x0058160C",
-      "count": 206,
+      "count": 202,
       "named": 38,
       "rewritten": 20,
       "verified": 20
@@ -766,7 +766,7 @@
       "stage": "identified",
       "from": "0x0058C850",
       "to": "0x00592171",
-      "count": 208,
+      "count": 204,
       "named": 39,
       "rewritten": 20,
       "verified": 20
@@ -784,7 +784,7 @@
       "stage": "identified",
       "from": "0x00597A94",
       "to": "0x0059D3B4",
-      "count": 130,
+      "count": 129,
       "named": 12,
       "rewritten": 0,
       "verified": 0
@@ -793,7 +793,7 @@
       "stage": "named",
       "from": "0x0059D3B5",
       "to": "0x005A2CD6",
-      "count": 42,
+      "count": 40,
       "named": 21,
       "rewritten": 16,
       "verified": 16
@@ -811,7 +811,7 @@
       "stage": "identified",
       "from": "0x005A85F8",
       "to": "0x005ADF19",
-      "count": 13,
+      "count": 10,
       "named": 0,
       "rewritten": 0,
       "verified": 0
@@ -820,7 +820,7 @@
       "stage": "named",
       "from": "0x005ADF1A",
       "to": "0x005B383A",
-      "count": 19,
+      "count": 18,
       "named": 11,
       "rewritten": 8,
       "verified": 8
@@ -829,7 +829,7 @@
       "stage": "identified",
       "from": "0x005B383B",
       "to": "0x005B915C",
-      "count": 86,
+      "count": 85,
       "named": 18,
       "rewritten": 17,
       "verified": 17
@@ -847,7 +847,7 @@
       "stage": "identified",
       "from": "0x005BEA7F",
       "to": "0x005C439F",
-      "count": 93,
+      "count": 92,
       "named": 7,
       "rewritten": 0,
       "verified": 0
@@ -856,7 +856,7 @@
       "stage": "identified",
       "from": "0x005C43A0",
       "to": "0x005C9CC1",
-      "count": 17,
+      "count": 16,
       "named": 0,
       "rewritten": 0,
       "verified": 0
@@ -874,7 +874,7 @@
       "stage": "identified",
       "from": "0x005CF5E3",
       "to": "0x005D4F04",
-      "count": 83,
+      "count": 82,
       "named": 11,
       "rewritten": 0,
       "verified": 0
@@ -883,7 +883,7 @@
       "stage": "identified",
       "from": "0x005D4F05",
       "to": "0x005DA826",
-      "count": 110,
+      "count": 109,
       "named": 36,
       "rewritten": 17,
       "verified": 17
@@ -892,7 +892,7 @@
       "stage": "identified",
       "from": "0x005DA827",
       "to": "0x005E0147",
-      "count": 112,
+      "count": 110,
       "named": 33,
       "rewritten": 0,
       "verified": 0
@@ -946,7 +946,7 @@
       "stage": "identified",
       "from": "0x005FBEF0",
       "to": "0x00601811",
-      "count": 93,
+      "count": 92,
       "named": 2,
       "rewritten": 0,
       "verified": 0
@@ -955,7 +955,7 @@
       "stage": "identified",
       "from": "0x00601812",
       "to": "0x00607132",
-      "count": 102,
+      "count": 101,
       "named": 7,
       "rewritten": 0,
       "verified": 0
@@ -1072,7 +1072,7 @@
       "stage": "identified",
       "from": "0x00649EC6",
       "to": "0x0064F7E7",
-      "count": 47,
+      "count": 46,
       "named": 4,
       "rewritten": 2,
       "verified": 2
@@ -1090,7 +1090,7 @@
       "stage": "identified",
       "from": "0x0065510A",
       "to": "0x0065AA2A",
-      "count": 67,
+      "count": 66,
       "named": 6,
       "rewritten": 1,
       "verified": 1
@@ -1108,7 +1108,7 @@
       "stage": "identified",
       "from": "0x0066034D",
       "to": "0x00665C6D",
-      "count": 97,
+      "count": 93,
       "named": 42,
       "rewritten": 31,
       "verified": 31
@@ -1117,7 +1117,7 @@
       "stage": "identified",
       "from": "0x00665C6E",
       "to": "0x0066B58F",
-      "count": 123,
+      "count": 122,
       "named": 1,
       "rewritten": 0,
       "verified": 0
@@ -1126,7 +1126,7 @@
       "stage": "identified",
       "from": "0x0066B590",
       "to": "0x00670EB1",
-      "count": 137,
+      "count": 136,
       "named": 4,
       "rewritten": 0,
       "verified": 0
@@ -1162,7 +1162,7 @@
       "stage": "identified",
       "from": "0x00681A16",
       "to": "0x00687337",
-      "count": 108,
+      "count": 106,
       "named": 17,
       "rewritten": 14,
       "verified": 14
@@ -1189,7 +1189,7 @@
       "stage": "identified",
       "from": "0x0069257B",
       "to": "0x00697E9C",
-      "count": 153,
+      "count": 152,
       "named": 25,
       "rewritten": 22,
       "verified": 22
@@ -1207,7 +1207,7 @@
       "stage": "identified",
       "from": "0x0069D7BE",
       "to": "0x006A30DF",
-      "count": 86,
+      "count": 85,
       "named": 13,
       "rewritten": 4,
       "verified": 4
@@ -1216,7 +1216,7 @@
       "stage": "identified",
       "from": "0x006A30E0",
       "to": "0x006A8A00",
-      "count": 79,
+      "count": 77,
       "named": 2,
       "rewritten": 0,
       "verified": 0
@@ -1342,7 +1342,7 @@
       "stage": "verified",
       "from": "0x006F10B6",
       "to": "0x006F69D7",
-      "count": 62,
+      "count": 61,
       "named": 38,
       "rewritten": 37,
       "verified": 37
@@ -1954,8 +1954,8 @@
       "stage": "named",
       "from": "0x0086BDA2",
       "to": "0x008716C3",
-      "count": 130,
-      "named": 94,
+      "count": 128,
+      "named": 93,
       "rewritten": 28,
       "verified": 28
     },
@@ -1972,7 +1972,7 @@
       "stage": "identified",
       "from": "0x00876FE5",
       "to": "0x0087C906",
-      "count": 161,
+      "count": 160,
       "named": 20,
       "rewritten": 16,
       "verified": 16
@@ -1981,7 +1981,7 @@
       "stage": "identified",
       "from": "0x0087C907",
       "to": "0x00882228",
-      "count": 65,
+      "count": 64,
       "named": 0,
       "rewritten": 0,
       "verified": 0
@@ -1990,7 +1990,7 @@
       "stage": "identified",
       "from": "0x00882229",
       "to": "0x00887B49",
-      "count": 135,
+      "count": 133,
       "named": 3,
       "rewritten": 0,
       "verified": 0
@@ -2017,7 +2017,7 @@
       "stage": "named",
       "from": "0x00892D8D",
       "to": "0x008986AE",
-      "count": 101,
+      "count": 92,
       "named": 92,
       "rewritten": 9,
       "verified": 7
@@ -2035,7 +2035,7 @@
       "stage": "verified",
       "from": "0x0089DFD0",
       "to": "0x008A38F1",
-      "count": 116,
+      "count": 115,
       "named": 115,
       "rewritten": 86,
       "verified": 86
@@ -2044,7 +2044,7 @@
       "stage": "verified",
       "from": "0x008A38F2",
       "to": "0x008A9213",
-      "count": 103,
+      "count": 101,
       "named": 77,
       "rewritten": 52,
       "verified": 52
@@ -2089,7 +2089,7 @@
       "stage": "identified",
       "from": "0x008BF69A",
       "to": "0x008C4FBB",
-      "count": 60,
+      "count": 58,
       "named": 4,
       "rewritten": 0,
       "verified": 0
@@ -2098,7 +2098,7 @@
       "stage": "identified",
       "from": "0x008C4FBC",
       "to": "0x008CA8DC",
-      "count": 113,
+      "count": 109,
       "named": 12,
       "rewritten": 0,
       "verified": 0
@@ -2107,7 +2107,7 @@
       "stage": "identified",
       "from": "0x008CA8DD",
       "to": "0x008D01FE",
-      "count": 69,
+      "count": 66,
       "named": 5,
       "rewritten": 0,
       "verified": 0
@@ -2161,7 +2161,7 @@
       "stage": "verified",
       "from": "0x008EBFA7",
       "to": "0x008F18C7",
-      "count": 86,
+      "count": 85,
       "named": 65,
       "rewritten": 58,
       "verified": 51
@@ -2170,7 +2170,7 @@
       "stage": "identified",
       "from": "0x008F18C8",
       "to": "0x008F71E9",
-      "count": 32,
+      "count": 31,
       "named": 7,
       "rewritten": 0,
       "verified": 0
@@ -2188,7 +2188,7 @@
       "stage": "identified",
       "from": "0x008FCB0C",
       "to": "0x0090242C",
-      "count": 80,
+      "count": 78,
       "named": 16,
       "rewritten": 5,
       "verified": 5
@@ -2233,7 +2233,7 @@
       "stage": "verified",
       "from": "0x009188B3",
       "to": "0x0091E1D4",
-      "count": 29,
+      "count": 28,
       "named": 20,
       "rewritten": 19,
       "verified": 19
@@ -2287,7 +2287,7 @@
       "stage": "identified",
       "from": "0x00939F7D",
       "to": "0x0093F89E",
-      "count": 94,
+      "count": 91,
       "named": 8,
       "rewritten": 0,
       "verified": 0
@@ -2305,7 +2305,7 @@
       "stage": "verified",
       "from": "0x009451C0",
       "to": "0x0094AAE1",
-      "count": 82,
+      "count": 81,
       "named": 51,
       "rewritten": 44,
       "verified": 44
@@ -2314,7 +2314,7 @@
       "stage": "named",
       "from": "0x0094AAE2",
       "to": "0x00950402",
-      "count": 110,
+      "count": 108,
       "named": 65,
       "rewritten": 35,
       "verified": 35
@@ -2323,7 +2323,7 @@
       "stage": "verified",
       "from": "0x00950403",
       "to": "0x00955D24",
-      "count": 119,
+      "count": 116,
       "named": 67,
       "rewritten": 61,
       "verified": 61
@@ -2332,7 +2332,7 @@
       "stage": "identified",
       "from": "0x00955D25",
       "to": "0x0095B646",
-      "count": 12,
+      "count": 10,
       "named": 0,
       "rewritten": 0,
       "verified": 0
@@ -2341,7 +2341,7 @@
       "stage": "identified",
       "from": "0x0095B647",
       "to": "0x00960F67",
-      "count": 73,
+      "count": 72,
       "named": 0,
       "rewritten": 0,
       "verified": 0
@@ -2350,7 +2350,7 @@
       "stage": "identified",
       "from": "0x00960F68",
       "to": "0x00966889",
-      "count": 74,
+      "count": 70,
       "named": 7,
       "rewritten": 6,
       "verified": 6
@@ -2359,7 +2359,7 @@
       "stage": "identified",
       "from": "0x0096688A",
       "to": "0x0096C1AA",
-      "count": 67,
+      "count": 66,
       "named": 1,
       "rewritten": 0,
       "verified": 0
@@ -2386,7 +2386,7 @@
       "stage": "verified",
       "from": "0x009773EE",
       "to": "0x0097CD0F",
-      "count": 76,
+      "count": 75,
       "named": 56,
       "rewritten": 45,
       "verified": 45
@@ -2404,7 +2404,7 @@
       "stage": "identified",
       "from": "0x00982632",
       "to": "0x00987F52",
-      "count": 53,
+      "count": 51,
       "named": 24,
       "rewritten": 20,
       "verified": 20
@@ -2494,7 +2494,7 @@
       "stage": "identified",
       "from": "0x009BA182",
       "to": "0x009BFAA2",
-      "count": 118,
+      "count": 117,
       "named": 4,
       "rewritten": 0,
       "verified": 0
@@ -2512,7 +2512,7 @@
       "stage": "identified",
       "from": "0x009C53C5",
       "to": "0x009CACE5",
-      "count": 35,
+      "count": 33,
       "named": 2,
       "rewritten": 0,
       "verified": 0
@@ -2521,7 +2521,7 @@
       "stage": "named",
       "from": "0x009CACE6",
       "to": "0x009D0607",
-      "count": 309,
+      "count": 308,
       "named": 291,
       "rewritten": 126,
       "verified": 118
@@ -2530,7 +2530,7 @@
       "stage": "identified",
       "from": "0x009D0608",
       "to": "0x009D5F29",
-      "count": 90,
+      "count": 89,
       "named": 17,
       "rewritten": 16,
       "verified": 16
@@ -2539,7 +2539,7 @@
       "stage": "identified",
       "from": "0x009D5F2A",
       "to": "0x009DB84A",
-      "count": 56,
+      "count": 55,
       "named": 1,
       "rewritten": 0,
       "verified": 0
@@ -2548,7 +2548,7 @@
       "stage": "identified",
       "from": "0x009DB84B",
       "to": "0x009E116C",
-      "count": 159,
+      "count": 158,
       "named": 29,
       "rewritten": 16,
       "verified": 16
@@ -2557,7 +2557,7 @@
       "stage": "identified",
       "from": "0x009E116D",
       "to": "0x009E6A8D",
-      "count": 92,
+      "count": 91,
       "named": 29,
       "rewritten": 23,
       "verified": 22
@@ -2566,7 +2566,7 @@
       "stage": "identified",
       "from": "0x009E6A8E",
       "to": "0x009EC3AF",
-      "count": 76,
+      "count": 75,
       "named": 7,
       "rewritten": 0,
       "verified": 0
@@ -2593,7 +2593,7 @@
       "stage": "verified",
       "from": "0x009F75F3",
       "to": "0x009FCF14",
-      "count": 108,
+      "count": 103,
       "named": 73,
       "rewritten": 60,
       "verified": 58
@@ -2629,7 +2629,7 @@
       "stage": "identified",
       "from": "0x00A0DA79",
       "to": "0x00A1339A",
-      "count": 62,
+      "count": 61,
       "named": 0,
       "rewritten": 0,
       "verified": 0
@@ -2701,7 +2701,7 @@
       "stage": "identified",
       "from": "0x00A3A386",
       "to": "0x00A3FCA7",
-      "count": 80,
+      "count": 79,
       "named": 9,
       "rewritten": 0,
       "verified": 0
@@ -2719,7 +2719,7 @@
       "stage": "identified",
       "from": "0x00A455C9",
       "to": "0x00A4AEEA",
-      "count": 69,
+      "count": 68,
       "named": 6,
       "rewritten": 0,
       "verified": 0
@@ -2764,7 +2764,7 @@
       "stage": "identified",
       "from": "0x00A61371",
       "to": "0x00A66C92",
-      "count": 131,
+      "count": 130,
       "named": 36,
       "rewritten": 26,
       "verified": 26
@@ -2791,7 +2791,7 @@
       "stage": "identified",
       "from": "0x00A71ED6",
       "to": "0x00A777F7",
-      "count": 55,
+      "count": 54,
       "named": 1,
       "rewritten": 0,
       "verified": 0
@@ -2800,7 +2800,7 @@
       "stage": "identified",
       "from": "0x00A777F8",
       "to": "0x00A7D118",
-      "count": 81,
+      "count": 79,
       "named": 30,
       "rewritten": 30,
       "verified": 30
@@ -2818,7 +2818,7 @@
       "stage": "identified",
       "from": "0x00A82A3B",
       "to": "0x00A8835B",
-      "count": 231,
+      "count": 229,
       "named": 21,
       "rewritten": 16,
       "verified": 16
@@ -2863,7 +2863,7 @@
       "stage": "identified",
       "from": "0x00A9E7E3",
       "to": "0x00AA4103",
-      "count": 96,
+      "count": 95,
       "named": 2,
       "rewritten": 0,
       "verified": 0
@@ -2899,7 +2899,7 @@
       "stage": "identified",
       "from": "0x00AB4C69",
       "to": "0x00ABA58A",
-      "count": 113,
+      "count": 112,
       "named": 41,
       "rewritten": 35,
       "verified": 35
@@ -2944,7 +2944,7 @@
       "stage": "identified",
       "from": "0x00AD0A11",
       "to": "0x00AD6332",
-      "count": 74,
+      "count": 72,
       "named": 19,
       "rewritten": 14,
       "verified": 14
@@ -2962,7 +2962,7 @@
       "stage": "identified",
       "from": "0x00ADBC54",
       "to": "0x00AE1575",
-      "count": 76,
+      "count": 75,
       "named": 30,
       "rewritten": 29,
       "verified": 27
@@ -2980,7 +2980,7 @@
       "stage": "identified",
       "from": "0x00AE6E97",
       "to": "0x00AEC7B8",
-      "count": 42,
+      "count": 40,
       "named": 0,
       "rewritten": 0,
       "verified": 0
@@ -2998,7 +2998,7 @@
       "stage": "identified",
       "from": "0x00AF20DB",
       "to": "0x00AF79FB",
-      "count": 125,
+      "count": 124,
       "named": 4,
       "rewritten": 0,
       "verified": 0
@@ -3007,7 +3007,7 @@
       "stage": "identified",
       "from": "0x00AF79FC",
       "to": "0x00AFD31D",
-      "count": 57,
+      "count": 56,
       "named": 8,
       "rewritten": 2,
       "verified": 2
@@ -3016,7 +3016,7 @@
       "stage": "verified",
       "from": "0x00AFD31E",
       "to": "0x00B02C3E",
-      "count": 71,
+      "count": 69,
       "named": 46,
       "rewritten": 40,
       "verified": 40
@@ -3034,7 +3034,7 @@
       "stage": "identified",
       "from": "0x00B08561",
       "to": "0x00B0DE82",
-      "count": 57,
+      "count": 56,
       "named": 16,
       "rewritten": 12,
       "verified": 12
@@ -3043,7 +3043,7 @@
       "stage": "identified",
       "from": "0x00B0DE83",
       "to": "0x00B137A3",
-      "count": 91,
+      "count": 90,
       "named": 7,
       "rewritten": 0,
       "verified": 0
@@ -3061,7 +3061,7 @@
       "stage": "identified",
       "from": "0x00B190C6",
       "to": "0x00B1E9E6",
-      "count": 50,
+      "count": 48,
       "named": 0,
       "rewritten": 0,
       "verified": 0
@@ -3079,7 +3079,7 @@
       "stage": "identified",
       "from": "0x00B24309",
       "to": "0x00B29C29",
-      "count": 89,
+      "count": 87,
       "named": 29,
       "rewritten": 15,
       "verified": 15
@@ -3088,7 +3088,7 @@
       "stage": "identified",
       "from": "0x00B29C2A",
       "to": "0x00B2F54B",
-      "count": 71,
+      "count": 66,
       "named": 27,
       "rewritten": 20,
       "verified": 20
@@ -3106,7 +3106,7 @@
       "stage": "identified",
       "from": "0x00B34E6E",
       "to": "0x00B3A78E",
-      "count": 78,
+      "count": 77,
       "named": 23,
       "rewritten": 17,
       "verified": 17
@@ -3160,7 +3160,7 @@
       "stage": "identified",
       "from": "0x00B56537",
       "to": "0x00B5BE58",
-      "count": 155,
+      "count": 154,
       "named": 23,
       "rewritten": 13,
       "verified": 13
@@ -3232,7 +3232,7 @@
       "stage": "verified",
       "from": "0x00B82E44",
       "to": "0x00B88764",
-      "count": 309,
+      "count": 308,
       "named": 277,
       "rewritten": 188,
       "verified": 179
@@ -3268,8 +3268,8 @@
       "stage": "verified",
       "from": "0x00B992CA",
       "to": "0x00B9EBEB",
-      "count": 227,
-      "named": 223,
+      "count": 226,
+      "named": 222,
       "rewritten": 131,
       "verified": 128
     },
@@ -3403,7 +3403,7 @@
       "stage": "named",
       "from": "0x00BECBC2",
       "to": "0x00BF24E3",
-      "count": 75,
+      "count": 74,
       "named": 71,
       "rewritten": 14,
       "verified": 14
@@ -3448,7 +3448,7 @@
       "stage": "identified",
       "from": "0x00C0896A",
       "to": "0x00C0E28B",
-      "count": 104,
+      "count": 99,
       "named": 5,
       "rewritten": 0,
       "verified": 0
@@ -3457,7 +3457,7 @@
       "stage": "identified",
       "from": "0x00C0E28C",
       "to": "0x00C13BAC",
-      "count": 93,
+      "count": 92,
       "named": 20,
       "rewritten": 20,
       "verified": 20
@@ -3484,7 +3484,7 @@
       "stage": "identified",
       "from": "0x00C1EDF0",
       "to": "0x00C24711",
-      "count": 75,
+      "count": 74,
       "named": 1,
       "rewritten": 0,
       "verified": 0
@@ -3493,7 +3493,7 @@
       "stage": "identified",
       "from": "0x00C24712",
       "to": "0x00C2A033",
-      "count": 96,
+      "count": 95,
       "named": 3,
       "rewritten": 0,
       "verified": 0
@@ -3502,7 +3502,7 @@
       "stage": "identified",
       "from": "0x00C2A034",
       "to": "0x00C2F954",
-      "count": 99,
+      "count": 91,
       "named": 31,
       "rewritten": 26,
       "verified": 25
@@ -3511,7 +3511,7 @@
       "stage": "identified",
       "from": "0x00C2F955",
       "to": "0x00C35276",
-      "count": 36,
+      "count": 35,
       "named": 1,
       "rewritten": 0,
       "verified": 0
@@ -3601,7 +3601,7 @@
       "stage": "identified",
       "from": "0x00C674A5",
       "to": "0x00C6CDC6",
-      "count": 106,
+      "count": 105,
       "named": 24,
       "rewritten": 22,
       "verified": 22
@@ -3619,7 +3619,7 @@
       "stage": "identified",
       "from": "0x00C726E8",
       "to": "0x00C78009",
-      "count": 88,
+      "count": 87,
       "named": 4,
       "rewritten": 0,
       "verified": 0
@@ -3664,7 +3664,7 @@
       "stage": "identified",
       "from": "0x00C8E490",
       "to": "0x00C93DB1",
-      "count": 52,
+      "count": 51,
       "named": 3,
       "rewritten": 0,
       "verified": 0
@@ -3799,7 +3799,7 @@
       "stage": "identified",
       "from": "0x00CE1D88",
       "to": "0x00CE76A9",
-      "count": 21,
+      "count": 15,
       "named": 0,
       "rewritten": 0,
       "verified": 0
@@ -3817,7 +3817,7 @@
       "stage": "identified",
       "from": "0x00CECFCB",
       "to": "0x00CF28EC",
-      "count": 50,
+      "count": 49,
       "named": 9,
       "rewritten": 2,
       "verified": 2
@@ -4042,7 +4042,7 @@
       "stage": "identified",
       "from": "0x00D78413",
       "to": "0x00D7DD34",
-      "count": 37,
+      "count": 36,
       "named": 1,
       "rewritten": 0,
       "verified": 0
@@ -4087,7 +4087,7 @@
       "stage": "identified",
       "from": "0x00D941BB",
       "to": "0x00D99ADC",
-      "count": 58,
+      "count": 57,
       "named": 1,
       "rewritten": 0,
       "verified": 0
@@ -4105,7 +4105,7 @@
       "stage": "identified",
       "from": "0x00D9F3FE",
       "to": "0x00DA4D1F",
-      "count": 97,
+      "count": 95,
       "named": 20,
       "rewritten": 15,
       "verified": 15
@@ -4141,7 +4141,7 @@
       "stage": "identified",
       "from": "0x00DB5884",
       "to": "0x00DBB1A5",
-      "count": 90,
+      "count": 89,
       "named": 17,
       "rewritten": 4,
       "verified": 4
@@ -4150,16 +4150,16 @@
       "stage": "identified",
       "from": "0x00DBB1A6",
       "to": "0x00DC0AC7",
-      "count": 32,
-      "named": 5,
-      "rewritten": 4,
+      "count": 31,
+      "named": 7,
+      "rewritten": 5,
       "verified": 4
     },
     {
       "stage": "identified",
       "from": "0x00DC0AC8",
       "to": "0x00DC63E8",
-      "count": 40,
+      "count": 38,
       "named": 1,
       "rewritten": 0,
       "verified": 0
@@ -4222,7 +4222,7 @@
       "stage": "identified",
       "from": "0x00DE7AB3",
       "to": "0x00DED3D3",
-      "count": 67,
+      "count": 66,
       "named": 13,
       "rewritten": 1,
       "verified": 1
@@ -4363,10 +4363,10 @@
       "verified": 24
     },
     {
-      "stage": "named",
+      "stage": "rewritten",
       "from": "0x00E40CCC",
       "to": "0x00E465ED",
-      "count": 62,
+      "count": 60,
       "named": 36,
       "rewritten": 30,
       "verified": 28
@@ -4375,7 +4375,7 @@
       "stage": "identified",
       "from": "0x00E465EE",
       "to": "0x00E4BF0E",
-      "count": 58,
+      "count": 56,
       "named": 13,
       "rewritten": 2,
       "verified": 2
@@ -4384,7 +4384,7 @@
       "stage": "identified",
       "from": "0x00E4BF0F",
       "to": "0x00E51830",
-      "count": 59,
+      "count": 58,
       "named": 13,
       "rewritten": 3,
       "verified": 2
@@ -4438,7 +4438,7 @@
       "stage": "identified",
       "from": "0x00E6D5D9",
       "to": "0x00E72EFA",
-      "count": 601,
+      "count": 598,
       "named": 137,
       "rewritten": 128,
       "verified": 128
