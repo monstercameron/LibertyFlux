@@ -9,3 +9,10 @@ publish = false
 
 [lib]
 path = "src/lib.rs"
+
+[lints]
+workspace = true
+
+[dependencies]
+# Layout assertions (assert_size!, assert_offset!); see lf-core.
+lf-core = { path = "../lf-core" }

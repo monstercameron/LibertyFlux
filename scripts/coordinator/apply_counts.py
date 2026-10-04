@@ -101,9 +101,11 @@ def main():
     stages["verified"] = min(stages.get("verified", 0), len(rewritten))
 
     # Structures and symbols are counted from tracked files only (rule 4).
-    types = ROOT / "crates" / "lf-types-draft" / "src" / "lib.rs"
-    if types.exists():
-        progress["structures"] = max(0, types.read_text(encoding="utf-8").count("\npub struct ") - 1)  # minus the Ptr32 helper
+    # The layouts are split into one module per subsystem; count across every file of the crate.
+    types = ROOT / "crates" / "lf-types-draft" / "src"
+    if types.is_dir():
+        text = "".join("\n" + p.read_text(encoding="utf-8") for p in sorted(types.glob("*.rs")))
+        progress["structures"] = max(0, text.count("\npub struct ") - 1)  # minus the Ptr32 helper
     index = ROOT / "rewrites" / "verified" / "index.json"
     if index.exists():
         entries = json.loads(index.read_text(encoding="utf-8"))
