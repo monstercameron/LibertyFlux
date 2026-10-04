@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b105">Production batch: three emitter rewrites verified, one float lesson</a></li>
       <li><a href="#private-checker-copies">Lanes were running their own copies of the checker, and one of them relaxed it</a></li>
       <li><a href="#production-s153">The checker caught a compiler bug in a rewrite</a></li>
       <li><a href="#production-b96">Handle pool pair verified, and a float divergence that points at the emulator</a></li>
@@ -294,6 +295,31 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b105">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production batch: three emitter rewrites verified, one float lesson</h2>
+      <p>A batch of five vehicle effect setup functions yielded three verified Rust rewrites and one lesson every float rewrite lane should know: the compiler is allowed to swap the operands of a floating point add, and that changes NaN payloads, so a bit-exact proof needs NaN kept out of the inputs or a software float implementation.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite five medium and large game functions in Rust and prove each rewrite behaves identically to the original with the version 3 checker, or defer with a precise reason and a retry kit for the next lane.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> Three functions verified, 1200 trials each with zero failures and full branch coverage: exhaust, fuel tank and glass emitter setups, one with 150 fault parity trials on a scripted null answer.</li>
+      <li><span class="evidence verified">Verified</span> The five functions are one vehicle effects module, not the file and memory subsystem the inventory guessed: they set up particle emitters for helicopter rotors, exhausts, fuel tanks, glass and overheating.</li>
+      <li><span class="evidence verified">Verified</span> Two functions deferred for lack of time only. Neither needs a checker ability that does not exist: each retry kit names the contract to copy and the remaining work.</li>
+      <li><span class="evidence verified">Verified</span> One rewrite failed exactly 2 trials in 1200 because of NaN payloads. Emulation with the trial inputs proved the mechanism, described below.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <p>When the original adds two different NaNs, the chip keeps the destination operand's NaN. The Rust compiler may emit the same add with the operands swapped, which is identical for every non-NaN input but keeps the other NaN. Intrinsics do not prevent this: the optimizer sees through them to a plain add and commutes anyway. So a contract that feeds random float bits into transcribed arithmetic can fail on rare trials through no fault of the rewrite. The fix used here was to pin the matrix inputs to a rich set of non-NaN, non-infinite edge values with magnitudes capped so no NaN or infinity can arise mid-computation, and to document the restriction in the rewrite. A software float implementation would close even that gap. Recommended reading for the next float lane: the batch report's NaN section before writing any arithmetic.</p>
+      <h3>How to reproduce it</h3>
+      <ul>
+      <li>Run the fuel tank contract with a random float matrix fill: a small number of trials fail on the result snapshot with two different quiet NaN payloads.</li>
+      <li>Dump the failing trial's matrix words, then emulate the dot product chain bit by bit under destination-priority NaN propagation: the original's addition order reproduces the original payload and the swapped order reproduces the rewrite payload.</li>
+      <li>Disassemble the rewrite and confirm the emitted add has the commuted order; pin the matrix to exclude NaN and infinity and re-run to green.</li>
+      </ul>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two things cost time. First, one callee looked like a single-argument call at its call site but a two-argument call at the next one: an argument word pushed early belongs to the later call, and only the callee's own return cleanup plus global stack balance settle it. The checker's call log, not re-reading the disassembly, gave the right answer both times this happened. Second, the linker intermittently refused to replace the lane's output file with access denied while no process held it; renaming the file aside and rebuilding always worked.</p>
+      </article>
 
       <article class="entry" id="private-checker-copies">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>

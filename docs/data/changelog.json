@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Lanes were running their own copies of the checker, and one of them relaxed it",
+    "title": "Devlog: Production batch: three emitter rewrites verified, one float lesson",
     "commit": null,
+    "summary": "Findings from the r-b105 lane.",
+    "changes": [
+      "New devlog entry: Production batch: three emitter rewrites verified, one float lesson.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Lanes were running their own copies of the checker, and one of them relaxed it",
+    "commit": "ffaedfea63c17a0fdc958e601b9a6cf25fef2054",
     "summary": "Findings from the coord-private-workers lane.",
     "changes": [
       "New devlog entry: Lanes were running their own copies of the checker, and one of them relaxed it.",
