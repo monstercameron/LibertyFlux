@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#fill-rerun-result">The weak-fill verdicts were re-run under version 3: none was overturned</a></li>
       <li><a href="#production-b129">NaN payloads: LLVM commutes float operands and the checker notices</a></li>
       <li><a href="#production-s183">Drain loops are verifiable: stub writes through image-pointer arguments</a></li>
       <li><a href="#production-s177">Two verification traps: recorder stubs clobber two registers, and aligned test pins hide untested branches</a></li>
@@ -305,6 +306,33 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="fill-rerun-result">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>The weak-fill verdicts were re-run under version 3: none was overturned</h2>
+      <p>Checker versions 1 and 2 filled global data with values that barely changed from trial to trial, so 543 verdicts on functions that read globals were weaker than they looked. All 543 have now been run again under version 3, whose fills vary for every word and every trial. No rewrite that had passed was found to be wrong.</p>
+      <h3>What was asked</h3>
+      <p>Whether any rewrite counted as verified had passed only because its global inputs were nearly constant.</p>
+      <h3>What was found</h3>
+      <table>
+      <thead><tr><th>Fact</th><th>Value</th><th>What it means</th></tr></thead>
+      <tbody>
+      <tr><td>Contracts that used the weak fills</td><td data-label="Value">543 of 12,027 surveyed</td><td data-label="What it means">About one verdict in twenty-two was affected</td></tr>
+      <tr><td>Pass under version 3</td><td data-label="Value">541</td><td data-label="What it means">At 1,000 trials or more each, with the version 3 rule that a run compares something in at least a tenth of its trials</td></tr>
+      <tr><td>Fail under version 3</td><td data-label="Value">2</td><td data-label="What it means">Neither was an earlier pass: see below</td></tr>
+      <tr><td>Earlier passes overturned</td><td data-label="Value">0</td><td data-label="What it means">The weak fills hid nothing in this set</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> One failure was a real defect in a rewrite: it dropped one of eleven arguments when forwarding them to an initialiser. Its lane had deferred that function, not passed it, because the version 2 stand-in could not take that many arguments. The fix is two lines and passes 1,000 of 1,000.</p>
+      <p><span class="evidence verified">Verified</span> The other failure is a contract whose rewrite source no longer exists. The same function was verified later under a different contract, so nothing is missing from the tree.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The verified count stands. Re-running was still worth it: the alternative was to carry 543 verdicts that nobody could vouch for.</p>
+      <h3>How to reproduce it</h3>
+      <p>List every contract that asks the worker for random global fills, port each to the version 3 driver unchanged, build its rewrite against the version 3 runtime without altering it, and run 1,000 trials.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The survey's printed list stopped at 40 contracts per lane, and two lanes had 54 and 60. The first six re-run lanes were built from the printout and so covered 509 of the 543; the total at the bottom of the printout did not match the number of names in it, which is how the gap was found. A seventh lane covered the remaining 34. A list meant for another program should be written as data, not read back out of a report.</p>
+      <p>Several lanes saw a handful of runs end with the worker lost, with no failed trial; each passed in full on a fresh worker. The cause is not yet known and is on the list for the next checker revision.</p>
+      </article>
 
       <article class="entry" id="production-b129">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
