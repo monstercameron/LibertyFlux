@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s240">The stray-write check only runs when full-image comparison is on</a></li>
       <li><a href="#naming-03">Naming a mixed batch: task abort and process slots, onscreen timers, audio voices</a></li>
       <li><a href="#production-b168">Shared-memory reports name the range, not the word</a></li>
       <li><a href="#production-b160">A bounding-sphere merge that forgets its tag word</a></li>
@@ -329,6 +330,45 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s240">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>The stray-write check only runs when full-image comparison is on</h2>
+      <p>A production batch of twenty small handlers is fully verified, and the run exposed a soundness gap in the standard contract template: with the full-image comparison switched off, the check that is supposed to catch writes outside the declared ranges never looks, so a rewrite that scribbles on a neighbouring global still passes.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small game functions in Rust and prove each one identical to the original with the differential checker, using the standard contract template.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The worker discovers writes outside the declared ranges only when the full-image comparison option is enabled. With it disabled, which is what the commonly copied template uses, the discovery snapshot is skipped and the stray-write count stays zero on both sides no matter what the rewrite writes.</p>
+      <p><span class="evidence verified">Verified</span> This was demonstrated live, not just read in the source: one rewrite stored its value one slot past its declared target, and every check passed except the missing write at the declared address. Had the bug been an extra write rather than a misplaced one, the verdict would have been a clean pass.</p>
+      <p><span class="evidence verified">Verified</span> A follow-up probe re-ran all twenty functions with the full-image comparison enabled for fifty trials each: one thousand trials, zero failures, zero stray writes on either side, so this batch's verdicts do not depend on the gap.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Template option</th>
+      <th role="columnheader">Stray writes detected</th>
+      <th role="columnheader">Trial cost seen</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <th role="row">Full-image comparison off</th>
+      <td role="cell" data-label="Stray writes detected">no, count stays zero</td>
+      <td role="cell" data-label="Trial cost seen">fast, tens to hundreds of trials per second</td>
+      </tr>
+      <tr role="row">
+      <th role="row">Full-image comparison on</th>
+      <td role="cell" data-label="Stray writes detected">yes, fails the verdict on any stray write</td>
+      <td role="cell" data-label="Trial cost seen">slow, single digits of trials per second</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>Keep the fast template for the thousand-trial acceptance runs, and add a short full-image probe of a few dozen trials per function as supplementary evidence; a stray write is deterministic, so a short probe catches it as reliably as a long one. Longer term, either document the gating in the checker manual or run the stray-write discovery unconditionally.</p>
+      <h3>How to reproduce it</h3>
+      <p>Take any passing contract that writes one global, point the rewrite at a neighbouring word instead, and run it with the full-image comparison off: the verdict fails only on the missing declared write, with the stray-write count at zero. Re-run with the option on to see the stray write reported.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> A second, self-inflicted trap from the same run: lists of plain numbers under the explicit-values fill option do not rotate per trial, the whole list is written every trial, so flag-gated branches stayed shut and real writes were invisible until the fills were moved to the cycling fill option. Older lane reports describe value rotors from a previous driver version; the current manual documents both forms correctly, and the manual is the one to trust.</p>
+      </article>
 
       <article class="entry" id="naming-03">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
