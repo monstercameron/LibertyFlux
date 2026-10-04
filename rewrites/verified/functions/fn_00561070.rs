@@ -2,7 +2,7 @@
 
 /// Looks up the caller's entry index in this board's value table, then
 /// finds that value's position in the board's key table.
-/// ///
+/// 
 /// The loader callee (id `LEADERBOARD_ID`) fills three out words through a
 /// frame pointer: the key count (at `+0x04`), the key array (at `+0x08`)
 /// and the value array (at `+0x14`). When the loader reports failure the
@@ -10,7 +10,7 @@
 /// -1, as does a zero count) and the keys are scanned with an unsigned
 /// bound for the first equal word; the result is its index, or -1 when no
 /// key matches.
-/// ///
+/// 
 /// Original: 0x00561070 (stdcall, one stack word). Episodic race board 70;
 /// only the loader id differs between instantiations.
 lf_checker_rt::export!(stdcall, rw_00561070(index: u32) -> u32 {

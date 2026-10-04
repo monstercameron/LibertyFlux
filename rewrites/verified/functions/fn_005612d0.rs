@@ -1,14 +1,14 @@
 // original: 0x005612d0 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_70, player_schema::LeaderboardInfo, 10>::vf6
 
 /// Finds a key's position in this board's key table.
-/// ///
+/// 
 /// The loader callee (id `LEADERBOARD_ID`) fills two out words through a
 /// frame pointer: the entry count (at `+0x0c`) and the key array (at
 /// `+0x10`). When the loader reports failure, or the count is zero or
 /// negative, the result is -1. Otherwise the keys are scanned with a
 /// signed bound for `key`; the result is the first matching index, or -1
 /// when no key matches.
-/// ///
+/// 
 /// Original: 0x005612d0 (stdcall, one stack word). Episodic race board 70;
 /// only the loader id differs between instantiations.
 lf_checker_rt::export!(stdcall, rw_005612d0(key: u32) -> u32 {

@@ -2,14 +2,14 @@
 
 /// Verifies a leaderboard key through the secondary info object, then
 /// publishes this board's vtable pointer to the caller's out slot.
-/// ///
+/// 
 /// `this` points to the board info object whose first word is a pointer to
 /// its secondary vtable; slot 1 (at `+0x04`) is called with `this` and
 /// returns the live key. When that key equals `key` and `out` is non-null,
 /// the board vtable address (`VTABLE`, relocated) is stored to `*out`
 /// and `out` is returned; otherwise the result is null (a null `out` or
 /// a key mismatch both yield 0, and a mismatch stores nothing).
-/// ///
+/// 
 /// Original: 0x0055fa60 (thiscall: this in ECX, two stack words, callee
 /// pops 8). Episodic race board 65 of the template family; only the
 /// vtable address differs between instantiations.

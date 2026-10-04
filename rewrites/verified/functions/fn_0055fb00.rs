@@ -1,7 +1,7 @@
 // original: 0x0055fb00 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_65, player_schema::LeaderboardInfo, 10>::vf13
 
 /// Maps a key to its value through this board's parallel tables.
-/// ///
+/// 
 /// The loader callee (id `LEADERBOARD_ID`) fills three out words through a
 /// frame pointer: the entry count (at `+0x0c`), the key array (at `+0x10`)
 /// and the value array (at `+0x14`). When the loader reports failure, or
@@ -10,7 +10,7 @@
 /// the matching position, or -1 when no key matches. (The original has a
 /// dead compare of the found index against -1 left over from signed
 /// codegen; the index is never negative there.)
-/// ///
+/// 
 /// Original: 0x0055fb00 (stdcall, one stack word). Episodic race board 65;
 /// only the loader id differs between instantiations.
 lf_checker_rt::export!(stdcall, rw_0055fb00(key: u32) -> u32 {

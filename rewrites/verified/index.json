@@ -7542,6 +7542,42 @@
   "lane": "r-s374"
  },
  {
+  "address": "0x0052C950",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race21Standard, player_schema::LeaderboardInfo, 10>::vf12",
+  "kind": "function",
+  "file": "functions/fn_0052c950.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s374"
+ },
+ {
+  "address": "0x0052C9C0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race21Standard, player_schema::LeaderboardInfo, 10>::vf13",
+  "kind": "function",
+  "file": "functions/fn_0052c9c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s374"
+ },
+ {
+  "address": "0x0052CBB0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race21Standard, player_schema::LeaderboardInfo, 10>::vf6",
+  "kind": "function",
+  "file": "functions/fn_0052cbb0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s374"
+ },
+ {
+  "address": "0x0052CC10",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race21Standard, player_schema::LeaderboardInfo, 10>::vf7",
+  "kind": "function",
+  "file": "functions/fn_0052cc10.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s374"
+ },
+ {
   "address": "0x0052D070",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race22Standard, player_schema::LeaderboardInfo, 10>::vf7",
   "kind": "function",
@@ -12411,6 +12447,15 @@
   "lane": "r-s324"
  },
  {
+  "address": "0x00550F50",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_11, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_00550f50.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b342"
+ },
+ {
   "address": "0x005510D0",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_11, player_schema::LeaderboardInfo, 10>::vf6",
   "kind": "function",
@@ -12463,6 +12508,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s361"
+ },
+ {
+  "address": "0x005513B0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_12, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_005513b0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b342"
  },
  {
   "address": "0x00551530",
@@ -40914,6 +40968,42 @@
   "lane": "a-V03"
  },
  {
+  "address": "0x009E3AD0",
+  "name": "ped_apply_params6",
+  "kind": "function",
+  "file": "functions/fn_009e3ad0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
+  "address": "0x009E3B30",
+  "name": "ped_apply_params4",
+  "kind": "function",
+  "file": "functions/fn_009e3b30.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
+  "address": "0x009E3B90",
+  "name": "ped_iter_apply_float",
+  "kind": "function",
+  "file": "functions/fn_009e3b90.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
+  "address": "0x009E4670",
+  "name": "ped_state_probe",
+  "kind": "function",
+  "file": "functions/fn_009e4670.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
   "address": "0x009E4740",
   "name": "angle_check_routed",
   "kind": "function",
@@ -40932,10 +41022,82 @@
   "lane": "r-s377"
  },
  {
+  "address": "0x009E4AB0",
+  "name": "task_kind_lookup",
+  "kind": "function",
+  "file": "functions/fn_009e4ab0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
   "address": "0x009E4DD0",
   "name": "ped_slots_unlink_all",
   "kind": "function",
   "file": "functions/fn_009e4dd0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
+  "address": "0x009E4E10",
+  "name": "ped_bit_fill",
+  "kind": "function",
+  "file": "functions/fn_009e4e10.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
+  "address": "0x009E4E90",
+  "name": "CTaskSimpleMoveDoNothing::vf1",
+  "kind": "function",
+  "file": "functions/fn_009e4e90.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
+  "address": "0x009E4ED0",
+  "name": "CPedData::vf4",
+  "kind": "function",
+  "file": "functions/fn_009e4ed0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
+  "address": "0x009E5030",
+  "name": "CPedData::vf3",
+  "kind": "function",
+  "file": "functions/fn_009e5030.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
+  "address": "0x009E54C0",
+  "name": "CPlayerPed::vf16",
+  "kind": "function",
+  "file": "functions/fn_009e54c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
+  "address": "0x009E5940",
+  "name": "CPlayerPed::vf69",
+  "kind": "function",
+  "file": "functions/fn_009e5940.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
+  "address": "0x009E59C0",
+  "name": "ped_job_dispatch",
+  "kind": "function",
+  "file": "functions/fn_009e59c0.rs",
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s377"
@@ -40968,10 +41130,55 @@
   "lane": "r-s377"
  },
  {
+  "address": "0x009E6080",
+  "name": "ped_link_rebind",
+  "kind": "function",
+  "file": "functions/fn_009e6080.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
   "address": "0x009E6FF0",
   "name": "task_flag_classify",
   "kind": "function",
   "file": "functions/fn_009e6ff0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
+  "address": "0x009E7000",
+  "name": "ped_scaled_index",
+  "kind": "function",
+  "file": "functions/fn_009e7000.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
+  "address": "0x009E7070",
+  "name": "task_forward_guarded_a",
+  "kind": "function",
+  "file": "functions/fn_009e7070.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
+  "address": "0x009E71E0",
+  "name": "ped_value_route",
+  "kind": "function",
+  "file": "functions/fn_009e71e0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s377"
+ },
+ {
+  "address": "0x009E7280",
+  "name": "task_forward_guarded_b",
+  "kind": "function",
+  "file": "functions/fn_009e7280.rs",
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s377"
@@ -78118,6 +78325,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF9220",
+  "name": "ladder_reachability_check",
+  "kind": "function",
+  "file": "functions/fn_00cf9220.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b336"
  },
  {
   "address": "0x00CF96B0",

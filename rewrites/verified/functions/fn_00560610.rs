@@ -1,11 +1,11 @@
 // original: 0x00560610 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_67, player_schema::LeaderboardInfo, 10>::vf7
 
 /// Reads one entry from this board's value table by index.
-/// ///
+/// 
 /// The loader callee (id `LEADERBOARD_ID`) fills one out word through a
 /// frame pointer: the value array base (at `+0x10`). When the loader
 /// reports failure the result is -1, otherwise it is `base[index]`.
-/// ///
+/// 
 /// Original: 0x00560610 (stdcall, one stack word). Episodic race board 67;
 /// only the loader id differs between instantiations.
 lf_checker_rt::export!(stdcall, rw_00560610(index: u32) -> u32 {
