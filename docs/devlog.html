@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot-02">Pilot lane 02: five functions rewritten and timed</a></li>
       <li><a href="#natives-02">Native handlers ATTACH_PED_TO_CAR to CLEAR_ROOM_FOR_OBJECT: what they reveal</a></li>
       <li><a href="#checker">The checker: proving rewrites match the original</a></li>
       <li><a href="#format-savegame">Rust reader: save game files</a></li>
@@ -164,6 +165,46 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot-02">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Pilot lane 02: five functions rewritten and timed</h2>
+      <p>Four of five small leaf functions were rewritten in Rust and each proved bit-identical to the original over one thousand comparison trials; the fifth was deferred because the table it reads is filled in at game startup and cannot be known from the executable file.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite the sixth through tenth pilot-candidate functions in Rust, prove each rewrite behaves identically to the original using the native execution helper built by the emulator-harness lane, record honest per-function timings for the project schedule estimate, and deliberately break one passing rewrite to confirm the comparison catches it.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Four rewrites agree with the originals on every trial: two small data-structure initialisers, one floating-point matrix builder of about fifty instructions, and one function returning a fixed data address. The comparison covered one thousand trials each with random inputs plus edge values, including unaligned buffers, extreme integers, infinities, NaN variants and denormal floats.</p>
+      <p><span class="evidence verified">Verified</span> The matrix builder is bit-exact for all float inputs tested. This needed the operations replayed in the original evaluation and operand order, since operand order changes NaN results. The two constants it uses were read from the read-only data section and embedded by exact bit pattern.</p>
+      <p><span class="evidence verified">Verified</span> One function was deferred, not failed: it indexes a table that lives in a zero-initialised region of writable data, so from the file alone every index takes the same degenerate path. Its true behaviour depends on values written by game startup code, which this lane cannot observe. Shipping a rewrite against the all-zero image would enshrine wrong behaviour.</p>
+      <p><span class="evidence verified">Verified</span> The honesty test worked: a one-bit change to a single output byte was caught on every trial it ran against.</p>
+      <p><span class="evidence verified">Verified</span> The exported rewrites use the same calling conventions as the originals, confirmed by inspecting the compiler's own assembly output: pointer in the expected register, one stack argument cleaned by the callee where the original does so.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Function</th><th role="columnheader">Trials</th><th role="columnheader">Outcome</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Block initialiser</td><td role="cell" data-label="Trials">1000</td><td role="cell" data-label="Outcome">verified, all agree</td></tr>
+      <tr role="row"><td role="cell">Header initialiser</td><td role="cell" data-label="Trials">1000</td><td role="cell" data-label="Outcome">verified, all agree</td></tr>
+      <tr role="row"><td role="cell">Matrix builder</td><td role="cell" data-label="Trials">1000</td><td role="cell" data-label="Outcome">verified, all agree</td></tr>
+      <tr role="row"><td role="cell">Indexed float setter</td><td role="cell" data-label="Trials">probe only</td><td role="cell" data-label="Outcome">deferred, runtime table</td></tr>
+      <tr role="row"><td role="cell">Fixed address</td><td role="cell" data-label="Trials">1000</td><td role="cell" data-label="Outcome">verified, all agree</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Small leaf functions of this shape are practical pilot material: four took about an hour end to end including harness setup, with most wall time in the comparison loops rather than the rewriting.</li>
+      <li>Functions reading writable data sections should be screened out of the pilot set or marked blocked, since their behaviour can depend on game startup state; one such function slipped through the current filter.</li>
+      <li>Every lane should prefix its helper program names with its lane id, because all lanes share one build output folder and identical names collide.</li>
+      <li>The comparison loop should run trials in parallel across cores; single-threaded it would have taken several times longer.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble each candidate with a scriptable disassembler, note its inputs, outputs and constants, and write an independent Rust implementation with the matching calling convention in a 32-bit crate. Build the native helper and a small driver that feeds both sides identical inputs over at least one thousand trials with random and edge values, then compare written memory bytes, return values and stack-pointer movement exactly. Confirm the convention from the compiler's assembly output, and confirm the comparison itself by mutating one passing rewrite and re-running.</p>
+      <h3>What was confusing or went wrong</h3>
+      <ul>
+      <li>A first read of the deferred function's table showed readable text, which was my own bug: the read ran past the end of the section's file bytes into a later section. Checking raw section bounds showed the table region is zero-initialised, which reframed the whole function.</li>
+      <li>The first comparison build failed its struct-size checks because C layout pads a 71-byte struct to 72 bytes; the field offsets were right and only the size assertion was wrong.</li>
+      <li>An early comparison failure on unaligned buffers was a driver bug (it compared aligned words instead of bytes), not a rewrite bug; byte-level comparison fixed it with no rewrite change.</li>
+      <li>One build failed with an access-denied error while another lane held the shared build folder lock, and my first helper name collided with another lane's identical name; a unique name and a retry fixed both.</li>
+      </ul>
+      </article>
 
       <article class="entry" id="natives-02">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
