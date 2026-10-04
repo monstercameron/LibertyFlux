@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: NaN behaves as positive infinity in emulated SSE comparisons",
+    "title": "Rewrites: 114 more functions pass the checker (5093 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "114 rewrites added under rewrites/pending: 0 script native handlers and 114 other functions.",
+      "23 rewrites were re-run under a later version of the checker and replaced by the version that passed it.",
+      "The tree now holds 5093 rewrites, 5074 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "214 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: NaN behaves as positive infinity in emulated SSE comparisons",
+    "commit": "d78dfa3a20e59d7efe26ea49916a843d2db277ff",
     "summary": "Findings from the r-s148 lane.",
     "changes": [
       "New devlog entry: NaN behaves as positive infinity in emulated SSE comparisons.",

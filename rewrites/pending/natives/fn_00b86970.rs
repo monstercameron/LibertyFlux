@@ -8,6 +8,8 @@ export!(cdecl, rw_00b86970(ctx: *mut NativeCtx) -> u32 {
     unsafe {
         let mgr = *global::<u32>(0x12BD0C4);
         let thread = callee_cdecl!(1, u32,);
-        callee_thiscall!(2, u32, mgr, 0x16, thread)
+        let destroy: extern "thiscall" fn(u32, u32, u32) -> u32 =
+            core::mem::transmute(callee_addr(2) as usize);
+        destroy(mgr, 0x16, thread)
     }
 });
