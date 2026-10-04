@@ -10,7 +10,7 @@ export!(thiscall, rw_00890700(this: u32) -> u32 {
     } else {
         unsafe {
             let tag = ((tail + 4) as *const u8).read();
-            (tail & !0xff) | (tag as u32)
+            tail ^ (((tail ^ (tag as u32)) & 0xff)) // same value as `(tail & !0xff) | tag`; the or-form is miscompiled by this toolchain on i686 (high bits dropped), see report
         }
     }
 });
