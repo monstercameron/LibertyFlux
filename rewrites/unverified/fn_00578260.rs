@@ -12,23 +12,23 @@
 /// Original: 0x00578260 (declared stdcall/1; incoming ECX ignored; schema id
 /// 0x172).
 lf_checker_rt::export!(stdcall, rw_00578260(index: u32) -> u32 {
-    unsafe {        const SCHEMA_ID: u32 = {sid:#X};
+    unsafe {        const SCHEMA_ID: u32 = 0x172;
         const LOOKUP: u32 = 1;
         const MISSING: u32 = 0xFFFF_FFFF;
         const TABLE_SLOT: usize = 4;
 
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
-            unsafe {{ (a as *const u32).read_unaligned() }}
+            unsafe { (a as *const u32).read_unaligned() }
         }
 
         let mut out = [0u32; 6];
         let ok: u32 = lf_checker_rt::callee_fastcall!(LOOKUP, u32, SCHEMA_ID, out.as_mut_ptr() as u32);
-        if ok & 0xFF == 0 {{
+        if ok & 0xFF == 0 {
             return MISSING;
-        }}
+        }
         let table = out[TABLE_SLOT];
-        rd32(table.wrapping_add(({idx}).wrapping_mul(4)))
+        rd32(table.wrapping_add((index).wrapping_mul(4)))
 
     }
 });

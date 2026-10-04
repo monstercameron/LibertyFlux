@@ -26,11 +26,10 @@
 ///   again with its fourth word scaled by the global factor (seed times
 ///   factor, in that order) through the scaler with the descriptor.
 /// - Copy bit 2 of the snapshot's status byte into the phase status byte and
-///   return the snapshot pointer with its low byte replaced by the full
-///   status byte (the status load overwrites the accumulator's low byte).
+///   return the snapshot pointer with its low byte replaced by that same bit.
 ///
 /// Original: 0x00d77600 (thiscall, one stack argument, returns the argument
-/// with its low byte replaced).
+/// with its low byte replaced by the status bit).
 lf_checker_rt::export!(thiscall, rw_00d77600(this: u32, arg: u32) -> u32 {
     unsafe {
         const DESC0: u32 = 0xb0;
@@ -159,9 +158,11 @@ lf_checker_rt::export!(thiscall, rw_00d77600(this: u32, arg: u32) -> u32 {
         }
 
         let source = rd8(arg.wrapping_add(SNAP_STATUS));
-        unsafe { ((this.wrapping_add(STATUS)) as *mut u8).write((source >> 2) & 1) };
-        // The status load overwrites the accumulator's low byte, so the
-        // returned snapshot pointer carries the status byte in its low byte.
-        (arg & 0xffff_ff00) | (source as u32)
+        let status = (source >> 2) & 1;
+        unsafe { ((this.wrapping_add(STATUS)) as *mut u8).write(status) };
+        // The snapped status bit is also the accumulator's low byte on
+        // return: the snapshot pointer comes back with its low byte replaced
+        // by the bit.
+        (arg & 0xffff_ff00) | (status as u32)
     }
 });

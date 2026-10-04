@@ -10,18 +10,18 @@
 /// fabricated object on both sides of the comparison).
 lf_checker_rt::export!(thiscall, rw_00577F70(this: u32, out: u32, expect: u32) -> u32 {
     unsafe {        const TAG_SLOT: u32 = 4;
-        const MARKER: u32 = {marker:#X};
+        const MARKER: u32 = 0xFCF1DC;
 
         let vtable = (this as *const u32).read_unaligned();
         let slot = (vtable.wrapping_add(TAG_SLOT) as *const u32).read_unaligned();
         let tag: extern "thiscall" fn(u32) -> u32 =
-            unsafe {{ core::mem::transmute(slot as usize) }};
-        if tag(this) != expect {{
+            unsafe { core::mem::transmute(slot as usize) };
+        if tag(this) != expect {
             return 0;
-        }}
-        if out == 0 {{
+        }
+        if out == 0 {
             return 0;
-        }}
+        }
         (out as *mut u32).write_unaligned(MARKER);
         0
 

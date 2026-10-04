@@ -3,13 +3,14 @@
 /// Leaderboard slot check: calls virtual slot 1 of the object in `this`
 /// and compares the result with `expected`.
 ///
-/// On a match with a non-null `out`, writes the per-race mark 0xfcff1c to `*out`
-/// and returns `out`; otherwise returns 0 (mismatch, or match with null).
+/// On a match with a non-null `out`, writes the per-race mark (file VA 0xfcff1c,
+/// relocated by the loader) to `*out` and returns `out`; otherwise returns 0
+/// (mismatch, or match with null).
 ///
 /// Original: thiscall, object in ECX plus two stack words, callee pops 8.
 lf_checker_rt::export!(thiscall, rw_00580b60(this: u32, out: u32, expected: u32) -> u32 {
     unsafe {
-        const MARK: u32 = 0xfcff1c;
+        const MARK_FILE_VA: u32 = 0xfcff1c;
         const VTABLE_SLOT: u32 = 4;
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
@@ -25,7 +26,9 @@ lf_checker_rt::export!(thiscall, rw_00580b60(this: u32, out: u32, expected: u32)
         if out == 0 {
             return 0;
         }
-        (out as *mut u32).write_unaligned(MARK);
+        // The stored mark is an image address: the original's immediate is
+        // relocated by the loader, so derive it from the file VA.
+        (out as *mut u32).write_unaligned(lf_checker_rt::relocated(MARK_FILE_VA));
         out
     }
 });

@@ -7,7 +7,9 @@
 /// (`+4`) is called with `this` and returns the object's leaderboard id.
 /// `want` is the expected id, `out` the caller's out pointer (may be null).
 /// When the ids differ, or `out` is null, nothing is stored and 0 is returned.
-/// Otherwise `LEADERBOARD_TAG` is stored to `out` and `out` is returned.
+/// Otherwise the address of this variant's leaderboard tag record
+/// (`LEADERBOARD_TAG`, relocated like any image pointer) is stored to `out`
+/// and `out` is returned.
 ///
 /// Original: thiscall, `this` in `ecx`, two stack words, callee pops 8.
 lf_checker_rt::export!(thiscall, rw_0054f400(this: u32, out: u32, want: u32) -> u32 {
@@ -33,7 +35,7 @@ lf_checker_rt::export!(thiscall, rw_0054f400(this: u32, out: u32, want: u32) -> 
         if out == 0 {
             return 0;
         }
-        wr32(out, LEADERBOARD_TAG);
+        wr32(out, lf_checker_rt::relocated(LEADERBOARD_TAG));
         out
     }
 });

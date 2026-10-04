@@ -19,9 +19,8 @@
 /// incremented, and a next-entry call refreshes the entry. Returns the last
 /// entry seen.
 ///
-/// Layout notes: the hash input starts 8 bytes below the formatted name, so
-/// the hashed words are the saved entry, `arg0`, then the name bytes; the
-/// rewrite lays its buffer out the same way. The format string and the name
+/// Layout notes: the hash call reads the same formatted-name buffer the
+/// format call wrote. The format string and the name
 /// table are read from the original image. Original is thiscall, one stack
 /// word, returns the entry in eax.
 lf_checker_rt::export!(thiscall, rw_00ab95e0(this: u32, arg0: u32) -> u32 {
@@ -74,15 +73,12 @@ lf_checker_rt::export!(thiscall, rw_00ab95e0(this: u32, arg0: u32) -> u32 {
         let mut saved = count;
         for slot in 0..SLOTS {
             for pos in 0..POSITIONS {
-                let mut hbuf = [0u32; 12];
-                hbuf[0] = saved;
-                hbuf[1] = arg0;
-                let name = hbuf.as_mut_ptr().wrapping_add(2);
+                let mut name = [0u32; 8];
                 let entry = rd32(lf_checker_rt::relocated(NAME_TABLE) + slot * 4);
                 lf_checker_rt::callee_cdecl!(
                     CAL_FORMAT,
                     u32,
-                    name as u32,
+                    name.as_mut_ptr() as u32,
                     lf_checker_rt::relocated(NAME_FMT),
                     entry,
                     pos
@@ -90,7 +86,7 @@ lf_checker_rt::export!(thiscall, rw_00ab95e0(this: u32, arg0: u32) -> u32 {
                 let hash = lf_checker_rt::callee_cdecl!(
                     CAL_HASH,
                     u32,
-                    hbuf.as_mut_ptr() as u32,
+                    name.as_mut_ptr() as u32,
                     0u32
                 );
                 let found = lf_checker_rt::callee_stdcall!(CAL_LOOKUP, u32, hash);

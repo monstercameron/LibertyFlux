@@ -119,7 +119,7 @@ lf_checker_rt::export!(cdecl, rw_00d88240(angle: u32, a1: u32, a2: u32, a3: u32,
         let x1a = sub(x3a, d0);
         let x0d = add(x4a, w2);
         let x0e = sub(x4a, d1);
-        if sep(a0, a1v, c0, c1, d0.to_bits(), d1.to_bits(), x0e.to_bits(), x1a.to_bits()) & 0xFF != 0 {
+        if sep(a0, a1v, c0, c1, d0.to_bits(), d1.to_bits(), x1a.to_bits(), x0e.to_bits()) & 0xFF != 0 {
             return 1;
         }
         // Blocks 2-4: differences of block 1 values.

@@ -16,7 +16,7 @@
 /// before any use, so the implicit this pointer is not modeled; schema id
 /// 0x177).
 lf_checker_rt::export!(stdcall, rw_00579580(index: u32) -> u32 {
-    unsafe {        const SCHEMA_ID: u32 = {sid:#X};
+    unsafe {        const SCHEMA_ID: u32 = 0x177;
         const LOOKUP: u32 = 1;
         const MISSING: u32 = 0xFFFF_FFFF;
         const COUNT_SLOT: usize = 1;
@@ -25,32 +25,32 @@ lf_checker_rt::export!(stdcall, rw_00579580(index: u32) -> u32 {
 
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
-            unsafe {{ (a as *const u32).read_unaligned() }}
+            unsafe { (a as *const u32).read_unaligned() }
         }
 
         let mut out = [0u32; 6];
         let ok: u32 = lf_checker_rt::callee_fastcall!(LOOKUP, u32, SCHEMA_ID, out.as_mut_ptr() as u32);
-        if ok & 0xFF == 0 {{
+        if ok & 0xFF == 0 {
             return MISSING;
-        }}
+        }
         // Table entry first: a null table faults before the count test.
         let table = out[TABLE_SLOT];
         let key = rd32(table.wrapping_add(index.wrapping_mul(4)));
-        if key == MISSING {{
+        if key == MISSING {
             return MISSING;
-        }}
+        }
         let count = out[COUNT_SLOT];
-        if count == 0 {{
+        if count == 0 {
             return MISSING;
-        }}
+        }
         let rows = out[ROWS_SLOT];
         let mut i = 0u32;
-        while i < count {{
-            if rd32(rows.wrapping_add(i.wrapping_mul(4))) == key {{
-                return {ret};
-            }}
+        while i < count {
+            if rd32(rows.wrapping_add(i.wrapping_mul(4))) == key {
+                return i;
+            }
             i = i.wrapping_add(1);
-        }}
+        }
         MISSING
 
     }
