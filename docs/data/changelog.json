@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: hourly review, 18:08",
+    "title": "Repository: the coordinator's resume file is not tracked",
     "commit": null,
+    "summary": "A private hand-over note at the repository root stays out of git.",
+    "changes": [
+      "When the swarm is parked, the coordinator writes where to pick up in a text file at the repository root. Like the private notes file, it holds operating details that are not for publication, so it is ignored."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: hourly review, 18:08",
+    "commit": "5fe67f274679b984ad3c1f74bbdb899b28361a1e",
     "summary": "The sixth hourly review, written as the swarm was parked.",
     "changes": [
       "10,873 functions verified, 16.0% of the code by size. The model quota ran out at 17:42 and every lane stopped; the cloud review was merged and checker version 5 put live while nothing was running.",
