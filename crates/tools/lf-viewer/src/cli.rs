@@ -1,8 +1,10 @@
 //! The command line: argument parsing, reading inputs, writing outputs.
 //!
-//! The tool reads only the files named on the command line and writes only
-//! inside the `--out` folder. It never overwrites a file unless `--force` is
-//! given, and checks every planned output before writing the first one.
+//! The tool reads only the files named on the command line (for `batch`,
+//! the files in the folder named) and writes only inside the `--out`
+//! folder; `info` writes nothing. It never overwrites a file unless
+//! `--force` is given, and checks every planned output of an input before
+//! writing the first one.
 
 use std::ffi::OsString;
 use std::fmt;
@@ -14,8 +16,10 @@ use lf_model::rsc5::{TYPE_DRAWABLE, TYPE_FRAGMENT};
 use lf_model::{Drawable, DrawableDictionary, Fragment};
 use lf_texture::Dictionary;
 
+use crate::batch;
 use crate::convert::{self, LodChoice, Options, TEXTURE_DIR};
 use crate::gltf;
+use crate::info::{self, FileKind};
 
 /// The `--help` text.
 pub const HELP: &str = "\
@@ -25,12 +29,25 @@ into standard files a viewer opens (glTF 2.0 and PNG).
 USAGE:
     lf-viewer model <MODEL> --out <DIR> [OPTIONS]
     lf-viewer texture <TEXTURES.wtd> --out <DIR> [--force]
+    lf-viewer info <FILE> [--json] [--kind <wdr|wdd|wft|wtd>]
+    lf-viewer batch <FOLDER> --out <DIR> [--recursive] [OPTIONS]
     lf-viewer --help
 
 MODEL is a drawable (.wdr), drawable dictionary (.wdd) or fragment (.wft).
 The model command writes <DIR>/<name>.gltf, <DIR>/<name>.bin and the
 textures it uses as <DIR>/textures/*.png. The texture command writes every
 texture of a dictionary as <DIR>/*.png.
+
+The info command prints what a model or texture dictionary holds (meshes
+and their vertex, index and triangle counts, vertex layouts, materials and
+the textures they name, texture formats, sizes and mip levels) and writes
+nothing.
+
+The batch command converts every .wdr, .wdd, .wft and .wtd file in FOLDER,
+each into its own folder <DIR>/<name>/ as the model and texture commands
+would, and ends with a summary of what was converted and what was skipped
+and why. It writes nothing outside <DIR>, and fails only when nothing
+could be converted.
 
 MODEL OPTIONS:
     --textures <FILE.wtd>   A texture dictionary to take textures from;
@@ -47,8 +64,21 @@ MODEL OPTIONS:
                             appears to use them for baked lighting).
     --keep-z-up             Do not rotate the game's +Z-up axes to glTF's +Y.
 
+INFO OPTIONS:
+    --json                  Print JSON instead of text.
+    --kind <wdr|wdd|wft|wtd>
+                            Read the file as this kind instead of guessing
+                            from the extension and the file header.
+
+BATCH OPTIONS:
+    --recursive             Also convert the files in subfolders, mirroring
+                            them under <DIR>.
+    The model options --textures, --lod, --all-lods, --flip-winding,
+    --vertex-colors and --keep-z-up apply to every model.
+
 COMMON OPTIONS:
-    --out <DIR>             Output folder (created if missing). Required.
+    --out <DIR>             Output folder (created if missing). Required by
+                            every command but info, which takes none.
     --force                 Overwrite existing files.
     -h, --help              Show this text.
 
@@ -156,6 +186,30 @@ pub enum Command {
         /// Overwrite existing files.
         force: bool,
     },
+    /// Print what a model or texture dictionary holds; writes nothing.
+    Info {
+        /// The file.
+        input: PathBuf,
+        /// Kind override.
+        kind: Option<FileKind>,
+        /// Print JSON instead of text.
+        json: bool,
+    },
+    /// Convert every model and texture dictionary in a folder.
+    Batch {
+        /// The folder.
+        input: PathBuf,
+        /// Texture dictionaries to search for every model.
+        textures: Vec<PathBuf>,
+        /// Output folder.
+        out: PathBuf,
+        /// Overwrite existing files.
+        force: bool,
+        /// Descend into subfolders.
+        recursive: bool,
+        /// Conversion settings for every model.
+        options: Options,
+    },
 }
 
 /// Parses arguments (without the program name).
@@ -174,14 +228,20 @@ pub fn parse_args(args: &[OsString]) -> Result<Command, CliError> {
     if matches!(sub.as_ref(), "-h" | "--help" | "help") {
         return Ok(Command::Help);
     }
-    if sub != "model" && sub != "texture" {
+    if sub == "info" {
+        return parse_info(it);
+    }
+    if sub != "model" && sub != "texture" && sub != "batch" {
         return Err(usage(&format!("unknown command `{sub}`")));
     }
+    // The batch command takes the model options (but not --kind).
+    let models = sub == "model" || sub == "batch";
     let mut input = None;
     let mut out = None;
     let mut textures = Vec::new();
     let mut kind = None;
     let mut force = false;
+    let mut recursive = false;
     let mut options = Options::default();
     while let Some(arg) = it.next() {
         let text = arg.to_string_lossy();
@@ -194,8 +254,8 @@ pub fn parse_args(args: &[OsString]) -> Result<Command, CliError> {
             "-h" | "--help" => return Ok(Command::Help),
             "--out" => out = Some(PathBuf::from(value("--out")?)),
             "--force" => force = true,
-            "--textures" if sub == "model" => textures.push(PathBuf::from(value("--textures")?)),
-            "--lod" if sub == "model" => {
+            "--textures" if models => textures.push(PathBuf::from(value("--textures")?)),
+            "--lod" if models => {
                 let v = value("--lod")?;
                 let n = v
                     .to_string_lossy()
@@ -203,7 +263,7 @@ pub fn parse_args(args: &[OsString]) -> Result<Command, CliError> {
                     .map_err(|_| usage("--lod needs a whole number"))?;
                 options.lod = LodChoice::Index(n);
             }
-            "--all-lods" if sub == "model" => options.lod = LodChoice::All,
+            "--all-lods" if models => options.lod = LodChoice::All,
             "--kind" if sub == "model" => {
                 let v = value("--kind")?;
                 kind = Some(
@@ -211,9 +271,10 @@ pub fn parse_args(args: &[OsString]) -> Result<Command, CliError> {
                         .ok_or_else(|| usage("--kind must be wdr, wdd or wft"))?,
                 );
             }
-            "--flip-winding" if sub == "model" => options.flip_winding = true,
-            "--vertex-colors" if sub == "model" => options.vertex_colors = true,
-            "--keep-z-up" if sub == "model" => options.z_up_to_y_up = false,
+            "--flip-winding" if models => options.flip_winding = true,
+            "--vertex-colors" if models => options.vertex_colors = true,
+            "--keep-z-up" if models => options.z_up_to_y_up = false,
+            "--recursive" if sub == "batch" => recursive = true,
             t if t.starts_with('-') => {
                 return Err(usage(&format!("unknown option `{t}` for `{sub}`")));
             }
@@ -225,30 +286,81 @@ pub fn parse_args(args: &[OsString]) -> Result<Command, CliError> {
             }
         }
     }
-    let input = input.ok_or_else(|| usage("no input file given"))?;
+    let input = input.ok_or_else(|| {
+        usage(if sub == "batch" {
+            "no input folder given"
+        } else {
+            "no input file given"
+        })
+    })?;
     let out = out.ok_or_else(|| usage("--out is required"))?;
-    Ok(if sub == "model" {
-        Command::Model {
+    Ok(match sub.as_ref() {
+        "model" => Command::Model {
             input,
             textures,
             kind,
             out,
             force,
             options,
-        }
-    } else {
-        Command::Texture { input, out, force }
+        },
+        "batch" => Command::Batch {
+            input,
+            textures,
+            out,
+            force,
+            recursive,
+            options,
+        },
+        _ => Command::Texture { input, out, force },
     })
 }
 
-fn read(path: &Path) -> Result<Vec<u8>, CliError> {
+/// Parses the arguments after `info`.
+fn parse_info<'a>(mut it: impl Iterator<Item = &'a OsString>) -> Result<Command, CliError> {
+    let usage = |m: &str| CliError::Usage(m.to_string());
+    let mut input = None;
+    let mut kind = None;
+    let mut json = false;
+    while let Some(arg) = it.next() {
+        let text = arg.to_string_lossy();
+        match text.as_ref() {
+            "-h" | "--help" => return Ok(Command::Help),
+            "--json" => json = true,
+            "--kind" => {
+                let v = it.next().ok_or_else(|| usage("--kind needs a value"))?;
+                kind = Some(
+                    FileKind::parse(&v.to_string_lossy())
+                        .ok_or_else(|| usage("--kind must be wdr, wdd, wft or wtd"))?,
+                );
+            }
+            "--out" | "--force" => {
+                return Err(usage(&format!(
+                    "`info` writes nothing, so it takes no `{text}`"
+                )));
+            }
+            t if t.starts_with('-') => {
+                return Err(usage(&format!("unknown option `{t}` for `info`")));
+            }
+            _ => {
+                if input.is_some() {
+                    return Err(usage(&format!("unexpected extra argument `{text}`")));
+                }
+                input = Some(PathBuf::from(arg));
+            }
+        }
+    }
+    let input = input.ok_or_else(|| usage("no input file given"))?;
+    Ok(Command::Info { input, kind, json })
+}
+
+pub(crate) fn read(path: &Path) -> Result<Vec<u8>, CliError> {
     fs::read(path).map_err(|error| CliError::Io {
         path: path.to_path_buf(),
         error,
     })
 }
 
-fn format_err(path: &Path, e: &dyn fmt::Display) -> CliError {
+pub(crate) fn format_err(path: &Path, e: &dyn fmt::Display) -> CliError {
     CliError::Format {
         path: path.to_path_buf(),
         message: e.to_string(),
@@ -295,7 +407,7 @@ fn write_all(files: &[(PathBuf, Vec<u8>)], force: bool) -> Result<(), CliError> 
 
 /// Picks the model kind: the override, else the extension, else the
 /// resource type (drawable first, then dictionary).
-fn guess_kind(path: &Path, res: &lf_model::Resource) -> ModelKind {
+pub(crate) fn guess_kind(path: &Path, res: &lf_model::Resource) -> ModelKind {
     if let Some(k) = path
         .extension()
         .and_then(|e| ModelKind::parse(&e.to_string_lossy()))
@@ -320,30 +432,61 @@ fn run_model(
 ) -> Result<(), CliError> {
     let bytes = read(input)?;
     let res = lf_model::Resource::open(&bytes).map_err(|e| format_err(input, &e))?;
+    let dictionaries = read_dictionaries(texture_paths)?;
+    convert_model(
+        input,
+        &res,
+        &dictionaries,
+        kind,
+        out_dir,
+        force,
+        options,
+        log,
+    )
+}
+
+/// Reads the `--textures` dictionaries, tagged with their paths.
+pub(crate) fn read_dictionaries(paths: &[PathBuf]) -> Result<Vec<(String, Dictionary)>, CliError> {
     let mut dictionaries = Vec::new();
-    for path in texture_paths {
+    for path in paths {
         let dict = Dictionary::parse(&read(path)?).map_err(|e| format_err(path, &e))?;
         dictionaries.push((path.display().to_string(), dict));
     }
+    Ok(dictionaries)
+}
+
+/// Converts an opened model resource and writes its glTF, buffer and
+/// textures into `out_dir` (the `model` command after reading its inputs).
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn convert_model(
+    input: &Path,
+    res: &lf_model::Resource,
+    dictionaries: &[(String, Dictionary)],
+    kind: Option<ModelKind>,
+    out_dir: &Path,
+    force: bool,
+    options: Options,
+    log: &mut dyn Write,
+) -> Result<(), CliError> {
     let stem = stem_of(input);
-    let kind = kind.unwrap_or_else(|| guess_kind(input, &res));
+    let kind = kind.unwrap_or_else(|| guess_kind(input, res));
     let converted = match kind {
         ModelKind::Drawable => {
-            let d = Drawable::parse(&res).map_err(|e| format_err(input, &e))?;
-            convert::convert(&stem, &[(stem.clone(), &d)], &res, &dictionaries, options)
+            let d = Drawable::parse(res).map_err(|e| format_err(input, &e))?;
+            convert::convert(&stem, &[(stem.clone(), &d)], res, dictionaries, options)
         }
         ModelKind::Fragment => {
-            let f = Fragment::parse(&res).map_err(|e| format_err(input, &e))?;
+            let f = Fragment::parse(res).map_err(|e| format_err(input, &e))?;
             convert::convert(
                 &stem,
                 &[(stem.clone(), &f.drawable)],
-                &res,
-                &dictionaries,
+                res,
+                dictionaries,
                 options,
             )
         }
         ModelKind::Dictionary => {
-            let dict = DrawableDictionary::parse(&res).map_err(|e| format_err(input, &e))?;
+            let dict = DrawableDictionary::parse(res).map_err(|e| format_err(input, &e))?;
             let labelled: Vec<(String, &Drawable)> = dict
                 .entries
                 .iter()
@@ -353,7 +496,7 @@ fn run_model(
                     (format!("{stem}_{hash:08x}"), d)
                 })
                 .collect();
-            convert::convert(&stem, &labelled, &res, &dictionaries, options)
+            convert::convert(&stem, &labelled, res, dictionaries, options)
         }
     };
     if converted.scene.meshes.is_empty() {
@@ -390,12 +533,14 @@ fn run_model(
     Ok(())
 }
 
-fn run_texture(
+/// The `texture` command. Returns the textures written and the textures
+/// the dictionary holds.
+pub(crate) fn run_texture(
     input: &Path,
     out_dir: &Path,
     force: bool,
     log: &mut dyn Write,
-) -> Result<(), CliError> {
+) -> Result<(usize, usize), CliError> {
     let dict = Dictionary::parse(&read(input)?).map_err(|e| format_err(input, &e))?;
     let (pngs, warnings) = convert::dictionary_to_pngs(&dict);
     let files: Vec<(PathBuf, Vec<u8>)> = pngs
@@ -413,7 +558,34 @@ fn run_texture(
         dict.len(),
         out_dir.display()
     );
-    Ok(())
+    Ok((files.len(), dict.len()))
+}
+
+/// The `info` command: describes the file on `log`, writes no file.
+fn run_info(
+    input: &Path,
+    kind: Option<FileKind>,
+    json: bool,
+    log: &mut dyn Write,
+) -> Result<(), CliError> {
+    let bytes = read(input)?;
+    let described = info::inspect(input, &bytes, kind).map_err(|message| CliError::Format {
+        path: input.to_path_buf(),
+        message,
+    })?;
+    let name = input.display().to_string();
+    let text = if json {
+        let mut j = described.to_json(&name).to_json_string();
+        j.push('\n');
+        j
+    } else {
+        described.to_text(&name)
+    };
+    log.write_all(text.as_bytes())
+        .map_err(|error| CliError::Io {
+            path: PathBuf::from("<output>"),
+            error,
+        })
 }
 
 /// Runs the tool with `args` (without the program name), writing progress
@@ -437,6 +609,15 @@ pub fn run(args: &[OsString], log: &mut dyn Write) -> Result<(), CliError> {
             force,
             options,
         } => run_model(&input, &textures, kind, &out, force, options, log),
-        Command::Texture { input, out, force } => run_texture(&input, &out, force, log),
+        Command::Texture { input, out, force } => run_texture(&input, &out, force, log).map(|_| ()),
+        Command::Info { input, kind, json } => run_info(&input, kind, json, log),
+        Command::Batch {
+            input,
+            textures,
+            out,
+            force,
+            recursive,
+            options,
+        } => batch::run(&input, &textures, &out, force, recursive, options, log).map(|_| ()),
     }
 }

@@ -584,3 +584,497 @@ fn argument_parsing() {
         other => panic!("{other:?}"),
     }
 }
+
+/// The `info` and `batch` commands, on the same invented fixtures.
+mod info_and_batch {
+    use std::path::Path;
+
+    use lf_model::drawable::PrimitiveType;
+    use lf_model::{ElementType, ElementUsage};
+    use lf_texture::{D3DFormat, TextureKind};
+
+    use super::*;
+    use crate::batch;
+    use crate::cli::ModelKind;
+    use crate::info::{self, FileInfo, FileKind, MaterialInfo, Totals};
+
+    fn wdr_bytes(spec: ModelSpec) -> Vec<u8> {
+        let (sys, gfx) = model_segments(spec);
+        rsc_file(TYPE_DRAWABLE, MODEL_FLAGS, &sys, &gfx)
+    }
+
+    fn wtd_bytes() -> Vec<u8> {
+        let (sys, gfx) = texture_segments();
+        rsc_file(TYPE_TEXTURE, TEX_FLAGS, &sys, &gfx)
+    }
+
+    fn model_info(path: &str, bytes: &[u8]) -> info::ModelInfo {
+        match info::inspect(Path::new(path), bytes, None).unwrap() {
+            FileInfo::Model(m) => m,
+            FileInfo::Textures(_) => panic!("read as textures"),
+        }
+    }
+
+    /// The sorted names in a folder.
+    fn listing(dir: &Path) -> Vec<String> {
+        let mut names: Vec<String> = std::fs::read_dir(dir)
+            .unwrap()
+            .map(|e| e.unwrap().file_name().to_string_lossy().into_owned())
+            .collect();
+        names.sort();
+        names
+    }
+
+    #[test]
+    fn info_describes_a_drawable() {
+        let m = model_info("thing.wdr", &wdr_bytes(ModelSpec::default()));
+        assert_eq!(m.kind, ModelKind::Drawable);
+        assert_eq!(m.resource_type, TYPE_DRAWABLE);
+        assert_eq!((m.system_bytes, m.graphics_bytes), (MODEL_SYS_LEN, GFX_LEN));
+        assert_eq!(m.fragment_children, None);
+        let d = &m.drawables[0];
+        assert_eq!(d.label, "thing");
+        assert_eq!(d.bones, None);
+        assert_eq!(d.lods.len(), 1);
+        assert_eq!(d.lods[0].models, 1);
+        let g = &d.lods[0].geometries[0];
+        assert_eq!(g.primitive, PrimitiveType::TriangleList);
+        assert_eq!((g.vertices, g.indices, g.triangles), (3, 3, 1));
+        assert_eq!((g.stride, g.shader, g.palette), (36, Some(0), 0));
+        let layout: Vec<(ElementUsage, ElementType)> =
+            g.elements.iter().map(|e| (e.usage, e.kind)).collect();
+        assert_eq!(
+            layout,
+            [
+                (ElementUsage::Position, ElementType::F32x3),
+                (ElementUsage::Normal, ElementType::F32x3),
+                (ElementUsage::Color(0), ElementType::Color),
+                (ElementUsage::TexCoord(0), ElementType::F32x2),
+            ]
+        );
+        assert_eq!(
+            d.materials,
+            [MaterialInfo {
+                name: "test_shader".into(),
+                parameters: 1,
+                textures: vec![PARAM_TEX_NAME.into()],
+            }]
+        );
+        assert_eq!(d.embedded, None);
+        assert_eq!(
+            m.totals(),
+            Totals {
+                drawables: 1,
+                lods: 1,
+                models: 1,
+                geometries: 1,
+                vertices: 3,
+                indices: 3,
+                triangles: 1,
+                materials: 1,
+                embedded_textures: 0,
+            }
+        );
+        // A strip of three indices draws one triangle too.
+        let strip = model_info(
+            "thing.wdr",
+            &wdr_bytes(ModelSpec {
+                primitive: 4,
+                ..ModelSpec::default()
+            }),
+        );
+        let g = &strip.drawables[0].lods[0].geometries[0];
+        assert_eq!(
+            (g.primitive, g.triangles),
+            (PrimitiveType::TriangleStrip, 1)
+        );
+    }
+
+    #[test]
+    fn info_lists_embedded_and_standalone_textures() {
+        let m = model_info(
+            "thing.wdr",
+            &wdr_bytes(ModelSpec {
+                embedded: true,
+                ..ModelSpec::default()
+            }),
+        );
+        let Some(Ok(embedded)) = &m.drawables[0].embedded else {
+            panic!("no embedded dictionary: {:?}", m.drawables[0].embedded);
+        };
+        let expected = info::TextureInfo {
+            name: TEX_NAME.into(),
+            format: D3DFormat::Dxt1,
+            width: 4,
+            height: 4,
+            levels: 1,
+            kind: TextureKind::Flat,
+            readable_levels: 1,
+            data_bytes: Some(8),
+        };
+        assert_eq!(embedded.textures, std::slice::from_ref(&expected));
+        assert_eq!(m.totals().embedded_textures, 1);
+        match info::inspect(Path::new("thing.wtd"), &wtd_bytes(), None).unwrap() {
+            FileInfo::Textures(dict) => assert_eq!(dict.textures, [expected]),
+            FileInfo::Model(_) => panic!("read as a model"),
+        }
+    }
+
+    #[test]
+    fn info_guesses_the_kind_and_reports_bad_files() {
+        let wdr = wdr_bytes(ModelSpec::default());
+        let wtd = wtd_bytes();
+        // No extension: the header decides.
+        assert!(matches!(
+            info::inspect(Path::new("blob"), &wtd, None),
+            Ok(FileInfo::Textures(_))
+        ));
+        assert!(matches!(
+            info::inspect(Path::new("blob"), &wdr, None),
+            Ok(FileInfo::Model(m)) if m.kind == ModelKind::Drawable
+        ));
+        // The override beats the extension.
+        assert!(matches!(
+            info::inspect(
+                Path::new("thing.wtd"),
+                &wdr,
+                Some(FileKind::Model(ModelKind::Drawable))
+            ),
+            Ok(FileInfo::Model(_))
+        ));
+        assert!(info::inspect(Path::new("thing.wdr"), &wtd, None).is_err());
+        assert!(info::inspect(Path::new("thing.wtd"), &wdr, None).is_err());
+        assert!(info::inspect(Path::new("junk"), b"not a resource", None).is_err());
+        assert_eq!(
+            FileKind::parse("WTD"),
+            Some(FileKind::Textures),
+            "kinds ignore case"
+        );
+        assert_eq!(
+            FileKind::parse("wft"),
+            Some(FileKind::Model(ModelKind::Fragment))
+        );
+        assert_eq!(FileKind::parse("obj"), None);
+    }
+
+    #[test]
+    fn info_command_prints_text_and_json_and_writes_nothing() {
+        let tmp = TempDir::new("info");
+        let wdr = tmp.0.join("thing.wdr");
+        let wtd = tmp.0.join("thing.wtd");
+        std::fs::write(&wdr, wdr_bytes(ModelSpec::default())).unwrap();
+        std::fs::write(&wtd, wtd_bytes()).unwrap();
+        let (wdr_s, wtd_s) = (wdr.to_str().unwrap(), wtd.to_str().unwrap());
+        let before = listing(&tmp.0);
+
+        let (r, text) = run(&["info", wdr_s]);
+        r.unwrap();
+        for needle in [
+            ": drawable; resource type 0x6e; system segment 2048 bytes, graphics segment 256 bytes\n",
+            "\ndrawable thing\n",
+            "\n  skeleton: none\n",
+            "\n  LOD 0: 1 model, 1 geometry, 3 vertices, 3 indices, 1 triangle\n",
+            "\n    model 0 geometry 0: triangle list, 3 vertices, 3 indices, 1 triangle, stride 36, shader 0\n",
+            "\n      vertex: position f32x3, normal f32x3, color0 color, texcoord0 f32x2\n",
+            "\n  materials: 1\n    0 test_shader: 1 parameter; textures: fixture_tex\n",
+            "\n  embedded textures: none\n",
+            "\ntotals: 1 drawable, 1 LOD, 1 model, 1 geometry, 3 vertices, 3 indices, 1 triangle, 1 material, 0 embedded textures\n",
+        ] {
+            assert!(text.contains(needle), "{needle}\n{text}");
+        }
+
+        let (r, json) = run(&["info", wdr_s, "--json"]);
+        r.unwrap();
+        let doc: Value = serde_json::from_str(&json).unwrap();
+        assert_eq!(doc["type"], "drawable");
+        assert_eq!(doc["resource_type"], 0x6e);
+        let d = &doc["drawables"][0];
+        assert_eq!(d["label"], "thing");
+        assert_eq!(d["bones"], Value::Null);
+        assert_eq!(d["embedded_textures"], Value::Null);
+        let g = &d["lods"][0]["geometries"][0];
+        assert_eq!(g["primitive"], "triangle list");
+        assert_eq!(g["vertices"], 3);
+        assert_eq!(g["shader"], 0);
+        assert_eq!(g["elements"][3]["usage"], "texcoord0");
+        assert_eq!(g["elements"][3]["offset"], 28);
+        assert_eq!(d["materials"][0]["textures"][0], "fixture_tex");
+        assert_eq!(doc["totals"]["triangles"], 1);
+
+        let (r, json) = run(&["info", wtd_s, "--json"]);
+        r.unwrap();
+        let doc: Value = serde_json::from_str(&json).unwrap();
+        assert_eq!(doc["type"], "texture dictionary");
+        let t = &doc["textures"][0];
+        assert_eq!(t["name"], TEX_NAME);
+        assert_eq!(t["format"], "DXT1");
+        assert_eq!(t["format_code"], DXT1);
+        assert_eq!(
+            (t["width"].as_u64(), t["height"].as_u64()),
+            (Some(4), Some(4))
+        );
+        assert_eq!(t["levels"], 1);
+        assert_eq!(t["readable_levels"], 1);
+        assert_eq!(t["data_bytes"], 8);
+        assert_eq!(t["kind"], "flat");
+        let (r, text) = run(&["info", wtd_s]);
+        r.unwrap();
+        assert!(
+            text.contains(
+                "texture dictionary, 1 texture\n  pack:/fixture_tex.dds: DXT1 4x4, 1 mip level, flat, 8 bytes, 1 of 1 readable\n"
+            ),
+            "{text}"
+        );
+
+        // Nothing was written next to the inputs.
+        assert_eq!(listing(&tmp.0), before);
+        let (r, _) = run(&["info", wtd_s, "--kind", "wdr"]);
+        assert!(matches!(r, Err(CliError::Format { .. })));
+        let missing = tmp.0.join("missing.wdr");
+        let (r, _) = run(&["info", missing.to_str().unwrap()]);
+        assert!(matches!(r, Err(CliError::Io { .. })));
+    }
+
+    #[test]
+    fn info_and_batch_arguments() {
+        for bad in [
+            &["info"][..],
+            &["info", "a.wdr", "--out", "o"],
+            &["info", "a.wdr", "--force"],
+            &["info", "a.wdr", "b.wdr"],
+            &["info", "a.wdr", "--kind", "obj"],
+            &["info", "a.wdr", "--kind"],
+            &["info", "a.wdr", "--wat"],
+            &["batch", "--out", "o"],
+            &["batch", "in"],
+            &["batch", "in", "--out", "o", "--kind", "wdr"],
+            &["model", "a.wdr", "--out", "o", "--recursive"],
+            &["texture", "a.wtd", "--out", "o", "--recursive"],
+        ] {
+            assert!(
+                matches!(cli::parse_args(&args(bad)), Err(CliError::Usage(_))),
+                "{bad:?}"
+            );
+        }
+        assert_eq!(
+            cli::parse_args(&args(&["info", "a.wtd", "--json", "--kind", "WDD"])).unwrap(),
+            Command::Info {
+                input: PathBuf::from("a.wtd"),
+                kind: Some(FileKind::Model(ModelKind::Dictionary)),
+                json: true,
+            }
+        );
+        assert_eq!(
+            cli::parse_args(&args(&["info", "a.wdr", "--help"])).unwrap(),
+            Command::Help
+        );
+        match cli::parse_args(&args(&[
+            "batch",
+            "in",
+            "--out",
+            "o",
+            "--recursive",
+            "--textures",
+            "t.wtd",
+            "--all-lods",
+            "--force",
+        ]))
+        .unwrap()
+        {
+            Command::Batch {
+                input,
+                textures,
+                out,
+                force,
+                recursive,
+                options,
+            } => {
+                assert_eq!(input, PathBuf::from("in"));
+                assert_eq!(textures, [PathBuf::from("t.wtd")]);
+                assert_eq!(out, PathBuf::from("o"));
+                assert!(force && recursive);
+                assert_eq!(options.lod, LodChoice::All);
+            }
+            other => panic!("{other:?}"),
+        }
+        let (r, log) = run(&["--help"]);
+        r.unwrap();
+        assert!(log.contains("lf-viewer info <FILE>"));
+        assert!(log.contains("lf-viewer batch <FOLDER>"));
+    }
+
+    #[test]
+    fn output_folders_are_sanitized_and_unique() {
+        let inputs: Vec<(PathBuf, FileKind)> = [
+            "a.wdr",
+            "a.wtd",
+            "A.wft",
+            "a_wtd.wdr",
+            "a.WTD",
+            "sub/a.wdr",
+            "b c.wdr",
+        ]
+        .iter()
+        .map(|p| {
+            let path = PathBuf::from(p);
+            let kind = FileKind::from_extension(&path).unwrap();
+            (path, kind)
+        })
+        .collect();
+        let folders: Vec<PathBuf> = batch::output_folders(&inputs);
+        let expected: Vec<PathBuf> = [
+            "a",
+            "a_wtd",
+            "A_wft",
+            "a_wtd_wdr",
+            "a_wtd_2",
+            "sub/a",
+            "b_c",
+        ]
+        .iter()
+        .map(PathBuf::from)
+        .collect();
+        assert_eq!(folders, expected);
+    }
+
+    #[test]
+    fn batch_converts_a_folder_and_summarises() {
+        let tmp = TempDir::new("batch");
+        let input = tmp.0.join("in");
+        std::fs::create_dir_all(input.join("sub")).unwrap();
+        std::fs::write(input.join("thing.wdr"), wdr_bytes(ModelSpec::default())).unwrap();
+        std::fs::write(input.join("thing.wtd"), wtd_bytes()).unwrap();
+        std::fs::write(input.join("broken.wdr"), b"not a model").unwrap();
+        std::fs::write(input.join("notes.txt"), b"x").unwrap();
+        std::fs::write(input.join("README"), b"x").unwrap();
+        std::fs::write(
+            input.join("sub").join("other.wdr"),
+            wdr_bytes(ModelSpec::default()),
+        )
+        .unwrap();
+        let before = listing(&input);
+        let out = tmp.0.join("out");
+        let (in_s, out_s) = (input.to_str().unwrap(), out.to_str().unwrap());
+
+        let (r, log) = run(&["batch", in_s, "--out", out_s]);
+        r.unwrap();
+        assert!(out.join("thing").join("thing.gltf").exists(), "{log}");
+        assert!(out.join("thing").join("thing.bin").exists());
+        assert!(out.join("thing_wtd").join("fixture_tex.png").exists());
+        assert!(!out.join("sub").exists(), "subfolders need --recursive");
+        assert_eq!(listing(&out), ["thing", "thing_wtd"]);
+        for needle in [
+            "[1/3] broken.wdr -> ",
+            "\nskipped: ",
+            "[2/3] thing.wdr -> ",
+            "1 meshes, 3 vertices, 1 triangles, 0 textures",
+            "[3/3] thing.wtd -> ",
+            "wrote 1 of 1 textures",
+            "\nbatch: 2 converted, 1 skipped, 2 ignored; output in ",
+            "\nskipped:\n  broken.wdr: ",
+            "\nignored (not .wdr, .wdd, .wft or .wtd): (none) 1, .txt 1\n",
+        ] {
+            assert!(log.contains(needle), "{needle}\n{log}");
+        }
+        assert_eq!(listing(&input), before, "the input folder is untouched");
+
+        // Again: everything exists now, so nothing converts and the run fails.
+        let (r, log) = run(&["batch", in_s, "--out", out_s]);
+        assert!(matches!(r, Err(CliError::Empty(_))), "{r:?}");
+        assert!(log.contains("already exists (use --force to overwrite)"));
+        assert!(log.contains("batch: 0 converted, 3 skipped"));
+        let (r, _) = run(&["batch", in_s, "--out", out_s, "--force"]);
+        r.unwrap();
+
+        // --recursive mirrors subfolders; --textures reaches every model.
+        let out2 = tmp.0.join("out2");
+        let wtd = input.join("thing.wtd");
+        let (r, log) = run(&[
+            "batch",
+            in_s,
+            "--out",
+            out2.to_str().unwrap(),
+            "--recursive",
+            "--textures",
+            wtd.to_str().unwrap(),
+        ]);
+        r.unwrap();
+        assert!(log.contains("batch: 3 converted, 1 skipped"), "{log}");
+        assert!(out2.join("sub").join("other").join("other.gltf").exists());
+        assert!(
+            out2.join("thing")
+                .join("textures")
+                .join("fixture_tex.png")
+                .exists()
+        );
+    }
+
+    #[test]
+    fn batch_never_walks_its_own_output_and_reports_empty_folders() {
+        let tmp = TempDir::new("batch-self");
+        let input = tmp.0.join("in");
+        std::fs::create_dir_all(&input).unwrap();
+        std::fs::write(input.join("thing.wdr"), wdr_bytes(ModelSpec::default())).unwrap();
+        let out = input.join("converted");
+        let (in_s, out_s) = (input.to_str().unwrap(), out.to_str().unwrap());
+        let mut log = Vec::new();
+        let first =
+            batch::run(&input, &[], &out, false, true, Options::default(), &mut log).unwrap();
+        assert_eq!(first.converted.len(), 1);
+        // The second run would see .gltf and .bin files if it walked `converted`.
+        let second =
+            batch::run(&input, &[], &out, true, true, Options::default(), &mut log).unwrap();
+        assert!(second.ignored.is_empty(), "{:?}", second.ignored);
+        assert_eq!(
+            second.converted,
+            [(PathBuf::from("thing.wdr"), PathBuf::from("thing"))]
+        );
+        let found = batch::find(&input, true, None).unwrap();
+        assert!(
+            found.ignored.contains_key(".gltf"),
+            "without the exclusion it is walked"
+        );
+
+        let empty = tmp.0.join("empty");
+        std::fs::create_dir_all(&empty).unwrap();
+        let (r, _) = run(&["batch", empty.to_str().unwrap(), "--out", out_s]);
+        match r {
+            Err(CliError::Empty(msg)) => assert!(msg.contains("no .wdr, .wdd, .wft or .wtd files")),
+            other => panic!("{other:?}"),
+        }
+        let (r, _) = run(&[
+            "batch",
+            tmp.0.join("nope").to_str().unwrap(),
+            "--out",
+            out_s,
+        ]);
+        assert!(matches!(r, Err(CliError::Io { .. })));
+        let (r, _) = run(&[
+            "batch",
+            in_s,
+            "--out",
+            out_s,
+            "--textures",
+            tmp.0.join("nope.wtd").to_str().unwrap(),
+        ]);
+        assert!(matches!(r, Err(CliError::Io { .. })));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn batch_reads_file_links_but_not_folder_links() {
+        let tmp = TempDir::new("batch-links");
+        let input = tmp.0.join("in");
+        let elsewhere = tmp.0.join("elsewhere");
+        std::fs::create_dir_all(&input).unwrap();
+        std::fs::create_dir_all(&elsewhere).unwrap();
+        std::fs::write(elsewhere.join("far.wdr"), wdr_bytes(ModelSpec::default())).unwrap();
+        std::os::unix::fs::symlink(elsewhere.join("far.wdr"), input.join("near.wdr")).unwrap();
+        std::os::unix::fs::symlink(&elsewhere, input.join("loop")).unwrap();
+        std::os::unix::fs::symlink(&input, input.join("self")).unwrap();
+        let found = batch::find(&input, true, None).unwrap();
+        let names: Vec<PathBuf> = found.inputs.iter().map(|(p, _)| p.clone()).collect();
+        assert_eq!(names, [PathBuf::from("near.wdr")]);
+        assert!(found.unreadable.is_empty());
+    }
+}

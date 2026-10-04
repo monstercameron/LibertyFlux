@@ -17,6 +17,11 @@
 //!   Inferred or Unknown.
 //! - It reads only the paths the user passes and writes only inside the
 //!   output folder the user passes, never overwriting without `--force`.
+//! - Two more commands build on the same readers: `info` ([`info`]) prints
+//!   what a model or texture dictionary holds, as text or `--json`, and
+//!   writes nothing; `batch` ([`batch`]) converts every model and texture
+//!   dictionary in a folder, each into its own folder under the output
+//!   folder, and ends with a summary of what was converted and skipped.
 //!
 //! **Outputs are derived from the user's own copy of the game and must never
 //! be committed, uploaded or shared** (AGENTS.md: no game files or assets
@@ -27,9 +32,11 @@
 //! format crates build fixtures). Converting real files is a local check on
 //! a machine with the game.
 
+pub mod batch;
 pub mod cli;
 pub mod convert;
 pub mod gltf;
+pub mod info;
 pub mod json;
 pub mod png;
 
