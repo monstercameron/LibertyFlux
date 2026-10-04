@@ -9,6 +9,286 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A whole leaderboard family verified, and a checker anomaly that only fails on mismatch</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s342"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s342</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>A batch of forty small leaderboard functions turned out to be one template family in seven shapes, and thirty-three of them verified first try from a single generator, while the seventh shape exposed a deterministic checker-side anomaly worth knowing about.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of forty small leaderboard functions turned out to be one template family in seven shapes, and thirty-three of them verified first try from a single generator, while the seventh shape exposed a deterministic checker-side anomaly worth knowing about.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite forty small neighbouring game functions in Rust and prove each rewrite equivalent to the original with the version four checker, generating one contract per function and one deliberately wrong version per function.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch collapses into seven byte-uniform shapes: six table-lookup and rank-classify shapes that call one scripted fetch routine and differ only in a leaderboard index constant, plus one key-check shape that calls through an object function table and publishes a per-instance tag.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Thirty-three functions passed twelve hundred trials each with every wrong version caught. Two genuine misunderstandings were caught along the way: the key-check shape returns the out-pointer rather than the key on a match, and its stored tag is an image address that must be relocated at run time.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The key-check shape cannot be verified on the stock checker: the original side returns zero with the zero flag set whenever the scripted key differs from the expected key, and behaves perfectly whenever they are equal. Minimal all-fixed ten-trial contracts reproduce this exactly, on two separate instances, while the stock indirect-call controls pass.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;The seven key-check functions were deferred with the anomaly documented, keeping their rewrites and contracts for re-run. Proving only the matching path and calling that verified would have inverted the function under test, so it was recorded as not proven instead. A checker-debug lane can reproduce the failure in about a second from the kept minimal contracts.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Generate one contract per shape with scripted fetch answers covering success, failure, empty tables, present and absent keys, and run twelve hundred trials per function with a one-behaviour wrong version each. The anomaly reproduces with a single fixed script answer and a fixed differing expected key.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The anomaly consumed most of the lane because every obvious cause checked out: the contract matches the passing controls structurally, the worker applies identical setup to both sides by construction, and the rewrite side of the same trials behaves correctly. The trigger turned out to be pure value inequality, which no mechanism in the harness should depend on. Parking it after isolating a minimal repro, rather than continuing to theorise, is what saved the other thirty-three functions.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Naming a frontend batch: wide strings and overlapping entries</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-37"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-37</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>A batch of one hundred and fifty consecutive unnamed functions turned out to be almost entirely the pause-menu, player-variation and frontend-session system, and one hundred and forty-three of them could be named from strings, known callers and callees, and virtual-table slots.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of one hundred and fifty consecutive unnamed functions turned out to be almost entirely the pause-menu, player-variation and frontend-session system, and one hundred and forty-three of them could be named from strings, known callers and callees, and virtual-table slots.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose descriptive names with confidence levels for one hundred and fifty consecutive unnamed functions, working out what the group is about first and then naming each function.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch is one coherent frontend system: menu drawing, record tables and vectors, player-settings file loading and parsing, a large player-variation lookup family, session setup and teardown, menu XML parsing, and small math and allocator helpers.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two functions query the operating system and processor through wide-character database queries. An ASCII-only string scan misses them completely; checking every immediate for wide text as well as narrow text named both at high confidence.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Six listed entries overlap their neighbours: two start inside another function (one mid-code fragment, one inside a detached tail block) and four list sizes that run past their true end. Three further real functions exist only as inner entry points with no listing of their own. True sizes were measured from return instructions and padding for all seven affected entries.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two five-byte entries are plain jump thunks to base-class virtual slots, and two virtual-slot overrides each return their own viewport type name, a pattern confirmed across five viewport classes.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Names were proposed for one hundred and forty-three functions: thirty-three high confidence, one hundred and ten medium, seven left empty where only a vague name was possible. Later lanes should scan wide strings alongside narrow ones, verify entry bytes and true ends before trusting listed sizes, and recount calls with corrected sizes near size-disputed entries. The overlapping entries and the three unlisted inner functions were reported for relisting.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Read the executable only through the mapped-image interface, validate the mapping by decoding one known function from entry to return, then gather per-function evidence (referenced strings in both encodings, imports called, named callers and callees, virtual-table membership) into one table before naming. Caller containers come from the function-boundary inventory ranges, and class membership from the virtual-table data.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;An early call-attribution table silently mixed neighbouring functions' calls wherever listed sizes overlapped, and the widest entry appeared to call routines that belonged to eight following functions. Re-measuring true ends from return instructions and recounting fixed it. Several core callees sit in the encrypted region and disassemble as garbage, so functions depending on them were named from structure and named siblings only.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Forty task-system functions verified, and two arity traps documented</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s333"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s333</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>A production batch of forty small pedestrian task functions was rewritten in Rust and verified against the original, one thousand trials each with a deliberately wrong version caught every time, in about forty-eight minutes of lane work.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of forty small pedestrian task functions was rewritten in Rust and verified against the original, one thousand trials each with a deliberately wrong version caught every time, in about forty-eight minutes of lane work.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite a batch of forty neighbouring small game functions in clear Rust and prove each behaves identically to the original with the differential checker, deferring anything the checker cannot verify.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All forty verified with zero deferrals: nine deleting destructors, eight clone routines, five destructors with tail calls, four constructors, seven event and update handlers, and seven helpers.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One update handler contains a call that is reachable only through unsigned integer wraparound; the proof fires it with a wraparound trial and would be vacuous without it.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; In two event handlers, a middle call provably always receives the object pointer, because its call site requires an argument value that only occurs on the path where that register still holds it.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two handlers use their own incoming argument slot as scratch memory, which the stack comparison counts as a difference no faithful Rust rewrite can reproduce, so those two proofs run with the stack check off and say so.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Count pushes against pops at every intercepted call before running: a pushed register may be an argument rather than a save, and a missed push breaks the original's return in a way that looks alarming but always means the same thing. The next lanes should reuse the generator-per-family pattern, which verified the first twenty-two functions with no failures.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run the lane's contracts with the stock checker worker and the lane's rewrite crate; every verdict passes and every mutant fails. The per-function records list trials, mutants, and everything that narrowed each proof.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Two callee arities were miscounted (a three-argument call read as two, a ten-argument call read as nine), and one comparison was attributed to the wrong stack argument. All three failed loudly on the first probe and were fixed within minutes. The failure signature of an arity miscount is now written up in the lane report: the original faults while returning, and the fault address is a value the function itself pushed.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Naming a leaderboard and benchmark batch: reusable shapes</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-36"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-36</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>One hundred and fifty consecutive functions split into a leaderboard virtual-method family that matched a previous batch exactly, plus leaderboard update, network blending, benchmark survey, frontend, streaming, controls and settings code, with one hundred and thirty-seven named.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred and fifty consecutive functions split into a leaderboard virtual-method family that matched a previous batch exactly, plus leaderboard update, network blending, benchmark survey, frontend, streaming, controls and settings code, with one hundred and thirty-seven named.&lt;/p&gt;&lt;h3&gt;What was asked&lt;/h3&gt;&lt;p&gt;Propose a descriptive name and confidence for each of one hundred and fifty consecutive unnamed functions, working out what the group is about first and naming each function from strings, imports, known callers and class evidence.&lt;/p&gt;&lt;h3&gt;What was found&lt;/h3&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Sixty-three functions are seven instantiations of one leaderboard info template with nine virtual slots each, and every member is instruction-identical to the same slot in an earlier batch.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The leaderboard update code is built on a small container family: byte arrays, sixteen-byte entries and large rows sharing one header layout and one grow-by-sixteen pattern, which makes each operation recognizable from its element size and copy helper.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The benchmark hardware survey is a probe cluster: one dispatcher runs four probes that each derive integer settings from memory or processor data, and a separate applier combines them into engine settings.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One function listing starts twenty-four bytes early with the previous function's detached tail, and its match path continues past its listed end, so both its start and size in the inventory are wrong.&lt;/p&gt;&lt;h3&gt;What was decided or recommended&lt;/h3&gt;&lt;p&gt;Mirror names across template instantiations only after asserting shape identity member by member, and check any suspicious listing by decoding across its boundaries before trusting its start and size. Vtable cross-checks confirm class membership cheaply: six slots of one network blender class all pointed into this batch.&lt;/p&gt;&lt;h3&gt;How to reproduce it&lt;/h3&gt;&lt;p&gt;Read the executable through the mapped image, gather per-function strings, imports and calls into one table, compare family shapes against the earlier batch, read every short function end to end, and generate names from a decision table with assertions.&lt;/p&gt;&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;&lt;p&gt;One frontend function decodes cleanly at its entry but contains what looks like embedded data mid-body, so linear disassembly drifts; it was left unnamed rather than guessed. Two tiny leaderboard-update getters return pointers to unknown members and were also left unnamed. Board id constants do not run in the same order as board numbers.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Leaderboard boards differ by family: column counts and board ids</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-35"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-35</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>Naming the last ranked episodic race boards and the first two standard episodic boards showed that boards of different families share identical code shapes but differ in two constants, so evidence must be read per family, not copied.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Naming the last ranked episodic race boards and the first two standard episodic boards showed that boards of different families share identical code shapes but differ in two constants, so evidence must be read per family, not copied.&lt;/p&gt;&lt;h3&gt;What was asked&lt;/h3&gt;&lt;p&gt;Propose descriptive names for 150 consecutive game functions, all virtual methods of leaderboard info classes, continuing the same template family earlier naming lanes had worked through.&lt;/p&gt;&lt;h3&gt;What was found&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds seventeen instantiations of one leaderboard info template: fifteen ranked episodic race boards and two standard episodic boards, each contributing the same nine virtual methods.&lt;/li&gt;&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All nine method shapes match the previous batch exactly, and the same method vocabulary applies. Twenty-nine functions have verified rewrites whose descriptions confirm five of the nine behaviours.&lt;/li&gt;&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The row-packing method loops over nineteen columns on ranked boards but twenty-six on standard boards. The two versions are otherwise instruction-identical.&lt;/li&gt;&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Board id constants do not follow one formula across the batch: the first four race boards use one id range, the remaining eleven jump to a higher range, and the two standard boards use lower ids again.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;What was decided or recommended&lt;/h3&gt;&lt;p&gt;All 150 functions were named with the established method vocabulary at high or medium confidence. Later lanes covering further standard boards should read the column loop bound and board id from each board's own code rather than reusing ranked-board values.&lt;/p&gt;&lt;h3&gt;How to reproduce it&lt;/h3&gt;&lt;p&gt;Disassemble each function from the executable's mapped image, group members by size and vtable slot, and compare mnemonic shapes across boards; read each board's name string, id constant, and row-packing loop bound from its own members. The lane folder keeps the evidence table and the assertion script that checks every claim.&lt;/p&gt;&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;&lt;p&gt;Nothing went wrong. The one surprise was the board id jump partway through the race sequence, which invalidated the simple race-plus-constant formula an earlier batch had found. Nothing in the batch depended on the formula, so no rework was needed.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Naming the leaderboard info vtable slots</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-34"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-34</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>All 150 functions in this batch were the same nine per-board virtual methods of one leaderboard template, repeated for eighteen ranked episodic race boards, and all 150 were named from a single nine-slot map.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;All 150 functions in this batch were the same nine per-board virtual methods of one leaderboard template, repeated for eighteen ranked episodic race boards, and all 150 were named from a single nine-slot map.&lt;/p&gt;&lt;h3&gt;What was asked&lt;/h3&gt;&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed functions, with a confidence and one sentence of evidence each.&lt;/p&gt;&lt;h3&gt;What was found&lt;/h3&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds slots 3, 4, 6, 7, 8, 9, 12, 13 and 14 of the concrete leaderboard info template for eighteen race boards. Each slot has a unique code size, so size alone identifies the slot.&lt;/p&gt;&lt;table role="table"&gt;&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Slot&lt;/th&gt;&lt;th role="columnheader"&gt;Method name&lt;/th&gt;&lt;th role="columnheader"&gt;Behaviour&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;3&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;get_board_name&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;returns the board name string&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;4&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;get_board_id&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;returns the numeric board id&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;6&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;find_index_by_id&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;index of a key in the id array, or -1&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;7&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;get_value_at_index&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;value array element, or -1&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;8&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;get_size_class_at_index&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;byte width class of an element grade, or 0&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;9&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;get_kind_at_index&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;kind code of an element, or -1&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;12&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;find_index_by_key_column&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;index matching a key-column entry, or -1&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;13&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;find_value_by_id&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;value at the row matching a key, or -1&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;14&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;fetch_row&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;fetches all 19 columns of one row, returns success&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Thirty functions the inventory left unnamed sit exactly in slot 3 and slot 9 positions with the matching sizes; the slot 3 ones return their own board name string and the slot 9 ones use their own board id, confirming the attribution.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; An earlier analysis guessed slot 3 returns a schema descriptor; it returns the plain board name string.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Board ids are assigned per board, not derived from the board number: one board in the batch uses an id far off the otherwise sequential run, and verified rewrites of later boards show the same.&lt;/p&gt;&lt;h3&gt;What was decided or recommended&lt;/h3&gt;&lt;p&gt;All 150 functions were named with the class and method above: 32 at high confidence (name string or cross-checked id constant) and 118 at medium (behaviour clear, wording mine). The nine-slot map should be reused for the remaining boards of this template, checking one member's size and jump table first. The two shared helpers the slots call (board schema fetch, grade classifier) still need names; both sit in the encrypted code range.&lt;/p&gt;&lt;h3&gt;How to reproduce it&lt;/h3&gt;&lt;p&gt;Read the executable through its memory-mapped image and disassemble one member of each size group. Scan the image for strings to resolve the slot 3 targets, compare each slot against the verified rewrite doc comments for the same slot on other boards, and read the small jump tables of the classifier slots to confirm the return mappings.&lt;/p&gt;&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;&lt;p&gt;The thirty unnamed functions carried a boundary tag suggesting vtable data, which briefly suggested they might not be functions at all; decoding them showed ordinary code in exactly the expected positions. The off-sequence board id first looked like a misattribution until the board's own name and id functions past the batch end confirmed it. Shell output redirection wrote UTF-16 files twice, which had to be converted before reading.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Naming 150 leaderboard methods by slot, not one by one</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-33"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-33</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>All 150 unnamed functions in this batch turned out to be nine virtual methods of one leaderboard template, repeated once per race board, so the whole batch was named from nine behaviour analyses plus machine-checked uniformity assertions.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;All 150 unnamed functions in this batch turned out to be nine virtual methods of one leaderboard template, repeated once per race board, so the whole batch was named from nine behaviour analyses plus machine-checked uniformity assertions.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose descriptive names for 150 consecutive unnamed game functions, which mostly come from the same source files, with a confidence and one sentence of evidence each.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds seventeen instantiations of a single leaderboard-info template, one per episodic race board, each contributing the same nine virtual methods in the same order. Every method has an identical instruction shape across all seventeen boards and differs only in its board id constant or name string.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Sixty of the 150 functions already had verified rewrites whose documentation described each method's behaviour, and an earlier naming lane had already named the same nine slots for other boards of this template, so a consistent vocabulary existed to reuse.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The two shared helpers every method calls sit in the encrypted part of the code and decode as nonsense, so static analysis cannot reach them; the verified rewrites treat them as intercepted calls instead.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The row-packing method loops over nineteen columns on these boards, while the earlier lane's boards loop over seven, so evidence sentences cannot be copied across board families without checking the loop bound.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Four small helpers used by the row-packing method are inventoried as image-library code but disassemble as ordinary bitmask and record-list routines, so that library label looks wrong for them.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Named all 150 functions with the earlier lane's method vocabulary: 34 at high confidence where a name string or id constant makes the behaviour plain, 116 at medium where the behaviour is clear but the wording is the lanes' own.&lt;/li&gt;
+&lt;li&gt;Recommended that the next naming lane on a template-family batch first join earlier lanes' names to inventory sizes to recover the slot vocabulary, then assert one instruction shape per slot before generating names.&lt;/li&gt;
+&lt;li&gt;Flagged the older competing method wordings and the suspect library labels for the coordinator to reconcile rather than renaming unilaterally.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Read the executable through the mapped-image interface, never the raw file at a mapped address, and validate the mapping by decoding one already-rewritten function from entry to return before trusting anything else. Then build one evidence table for the whole batch (called functions, referenced strings, constant operands, first and last instructions), group by size and slot, confirm each group has a single instruction signature, and generate the names from the slot table with assertions that fail the run if any member differs.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Two things needed care. First, untagged entries with no class attribution had to be assigned to a board by position, and the first attempt assigned trailing entries to the following board instead of the preceding one; the board-id assertion caught it immediately. Second, the generated dump file picked up stray null bytes from a shell redirect, which made it awkward to read but did not affect any result.&lt;/p&gt;
+&lt;table role="table"&gt;
+&lt;thead role="rowgroup"&gt;
+&lt;tr role="row"&gt;
+&lt;th role="columnheader"&gt;Slot behaviour&lt;/th&gt;
+&lt;th role="columnheader"&gt;Method name&lt;/th&gt;
+&lt;th role="columnheader"&gt;Confidence&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody role="rowgroup"&gt;
+&lt;tr role="row"&gt;
+&lt;td role="cell"&gt;Board name string&lt;/td&gt;
+&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;get_board_name&lt;/code&gt;&lt;/td&gt;
+&lt;td role="cell" data-label="Confidence"&gt;high&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr role="row"&gt;
+&lt;td role="cell"&gt;Board id constant&lt;/td&gt;
+&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;get_board_id&lt;/code&gt;&lt;/td&gt;
+&lt;td role="cell" data-label="Confidence"&gt;high&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr role="row"&gt;
+&lt;td role="cell"&gt;Column search and lookup&lt;/td&gt;
+&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;find_column_index&lt;/code&gt;, &lt;code&gt;get_column_id&lt;/code&gt;, &lt;code&gt;map_column_id&lt;/code&gt;, &lt;code&gt;get_mapped_column_index&lt;/code&gt;&lt;/td&gt;
+&lt;td role="cell" data-label="Confidence"&gt;medium&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr role="row"&gt;
+&lt;td role="cell"&gt;Column size and kind&lt;/td&gt;
+&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;get_column_size&lt;/code&gt;, &lt;code&gt;get_column_kind&lt;/code&gt;&lt;/td&gt;
+&lt;td role="cell" data-label="Confidence"&gt;medium&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr role="row"&gt;
+&lt;td role="cell"&gt;Row buffer builder&lt;/td&gt;
+&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;pack_row&lt;/code&gt;&lt;/td&gt;
+&lt;td role="cell" data-label="Confidence"&gt;medium&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</content>
+  </entry>
+  <entry>
+    <title>Naming 150 leaderboard methods by alignment to verified rewrites</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-32"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-32</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>All 150 functions in this batch were named at high confidence: they are nine virtual methods repeated across seventeen ranked episodic race leaderboard types, and six of the nine slots are instruction-for-instruction identical to already verified rewrites of the same slots.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;All 150 functions in this batch were named at high confidence: they are nine virtual methods repeated across seventeen ranked episodic race leaderboard types, and six of the nine slots are instruction-for-instruction identical to already verified rewrites of the same slots.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose descriptive names for 150 consecutive unnamed game functions, working out what the group is about first and then naming each function with a confidence level.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds nine vtable slots shared by seventeen leaderboard types. Two unnamed groups resolved by position and shape: tiny getters returning each board's own name string, and larger functions classifying a column entry through a jump table.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Six of the nine slots disassemble to exactly the same instruction sequences as checker-verified rewrites of the same slots in other leaderboard types, with equal instruction counts, so their behaviours and names transfer directly. The remaining three were verified by full reads: a name getter checked against its board's own name string in all seventeen cases, an id getter cross-checked against the id every sibling slot uses, and a row-packing routine read end to end.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Each leaderboard type uses a single numeric board id across all its methods, and in this batch the ids run sequentially with the board number.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The row-packing routine loops over nineteen columns here, while an earlier lane reported twenty-five for a different board family. Either the bound varies by family or the earlier read was off; one look at the other family's routine would settle it.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;All 150 functions were named with the same method wording earlier lanes established for this family. The fastest reliable naming signal for repeated template code is mnemonic alignment against verified rewrites of the same slot: when every instruction matches, the verified behaviour description transfers without re-analysis.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Disassemble each batch function through the executable's memory-mapped image indexed by relative address, group by instruction-shape hash, and compare each group's shape against the verified rewrite sources for the same vtable slot. Confirm the name getters by reading their target strings and confirm the board ids by comparing the getter's return value with the constant sibling slots pass to the shared table-fetch helper.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Nothing went wrong. The family had been solved by an earlier lane whose report named the exact verification steps, so most of the work was re-running those checks on the new batch rather than discovering them.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Naming a leaderboard template family end to end</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-31"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-31</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>All one hundred and fifty functions in this batch turned out to be one thing: nine virtual methods of a leaderboard info template, repeated once per race board. Every function was named, none left unknown, and every identification was checked four independent ways.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;All one hundred and fifty functions in this batch turned out to be one thing: nine virtual methods of a leaderboard info template, repeated once per race board. Every function was named, none left unknown, and every identification was checked four independent ways.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose descriptive names for one hundred and fifty consecutive unnamed game functions, working out what the group is about first and then naming each function with a confidence level.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds nine method shapes, one per virtual slot, instantiated for eighteen race leaderboard boards. Each board carries a name getter, an id getter, five column lookup helpers, and a row packing routine.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Thirty-one entries had no inventory label. Fifteen tiny ones each return their board's name string, and sixteen larger ones share one exact instruction shape and each embed their own board's id. Dumped virtual tables for three boards confirmed all nine slots at their expected positions.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The board id is the race number plus a fixed offset, true for every checked function with zero mismatches. Seventeen batch members already had verified rewrites, and their descriptions agreed with the behaviours found here for all six slots they cover.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The two shared schema helpers the methods call live in the encrypted part of the executable, so their roles are inferred from call sites only: one fetches column tables for a board id, the other classifies a cell.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Method wording reuses the vocabulary an earlier lane set for the same family, so names stay consistent across boards.&lt;/li&gt;
+&lt;li&gt;The next lane covering neighbouring boards should check the per-board slot just below each row packing group: it differs per board and is not yet named.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Read code through the mapped image rather than the raw file, decode one member of each slot fully, then compare normalized instruction shapes per slot, verify each member's embedded id constant and name string, and confirm slot positions by dumping a few virtual tables. A script that asserts shape, id, and string for every member before writing names catches mistakes mechanically.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;A first string-matching pass accepted very short reads and reported jump-table bytes as text. Restricting matches to longer terminated strings removed all false hits and left only the genuine board names. No real method names for this class exist anywhere in the collected sources, so the wording is the project's own.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Assembling the rewrites into something the game can load</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#assembling-the-rewrites"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#assembling-the-rewrites</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>The verified rewrites now build into a loadable 32-bit library: one thin top crate owning the replacement table, plus eighteen member crates of at most four hundred rewrites each, all sharing one small runtime. The full build takes under four minutes and the compiler stays under half a gigabyte. A sample of replacements was then proven against the original code without launching the game. PROOF-NUMBERS-PENDING.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;The verified rewrites now build into a loadable 32-bit library: one thin top crate owning the replacement table, plus eighteen member crates of at most four hundred rewrites each, all sharing one small runtime. The full build takes under four minutes and the compiler stays under half a gigabyte. A sample of replacements was then proven against the original code without launching the game. PROOF-NUMBERS-PENDING.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;An earlier lane had written a generator that places every verified rewrite into a single crate, plus the runtime the rewrites call into and a harness that tests replacements against the original. But the single crate never compiled: building it exhausted the machine's memory and harmed other work. The task was to split the output into several crates, get a built library, and prove a sample of the replacements.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Every rewrite module is self-contained: the only thing modules share is the runtime crate and one re-exported name. Any partition of the module set therefore builds, and module files could be reused byte for byte with only the crate scaffolding generated.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Splitting into groups of four hundred made the build cheap. The first group compiled in under a minute with the compiler using about two hundred megabytes. The whole workspace builds in under four minutes with peak compiler memory under half a gigabyte, against a ten gigabyte watchdog limit.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One group of four hundred could not compile: some of its modules define the same helper twice, a defect inherited from the generator's output, not caused by the split. The group was left out and recorded, leaving about seven thousand replacements in the library.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The harness's own checks pass, and the sampled proof ran. PROOF-RESULT-PENDING.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Keep the split layout: small member crates plus one thin top crate. It compiles fast and a bad group can be left out without touching the rest.&lt;/li&gt;
+&lt;li&gt;Fix the generator's duplicate-helper handling next, or drop affected modules individually, so a future round recovers most of the left-out group instead of all-or-nothing.&lt;/li&gt;
+&lt;li&gt;Follow the existing first-start checklist for ever enabling replacements in the running game; this lane proved replacements only in isolation, never with the game running.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run the splitter from the lane folder to regenerate the workspace, build it for the 32-bit target, build the sample work file from the registry table, and run the proof orchestrator against the built library and a read-only copy of the executable. The lane report lists the exact commands.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Two progress-log lines were written with estimated times before the machine clock was read; they were off by about twenty minutes and were corrected against file timestamps. The proof run needed heavy bisection because many sampled original functions crash when called in isolation; those samples are inconclusive by construction, not rewrite failures. PROOF-CONTEXT-PENDING.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>A mutant catches a hollow proof: copies over zeroed memory are invisible</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b267"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b267</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>This lane verified a large task-parameter dispatcher, and the per-function wrong version earned its keep twice: first it showed the mutant trial window never reached the mutated behaviour, then it showed the behaviour itself was unobservable because every copied block reads zero on a pristine image.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;This lane verified a large task-parameter dispatcher, and the per-function wrong version earned its keep twice: first it showed the mutant trial window never reached the mutated behaviour, then it showed the behaviour itself was unobservable because every copied block reads zero on a pristine image.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite one large game function in Rust and prove it identical to the original with the checker: a task setup routine that matches parameter names against ten behaviour groups and fires one setter per match, copying default parameter blocks over value blocks on its default branches.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The function is pure integer control code with direct calls only, so the checker can verify it fully; the rewrite passed two thousand trials with every setter firing and no failures.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The first wrong version, which dropped one default-block copy, passed unnoticed for two reasons found in turn. First, the mutant run covers only the first hundred trials while the mutated branch first completed much later, so the window never included it. Second, and more important, every parameter block on the pristine image reads zero, so all seventeen copies were zero-over-zero no-ops and the globals comparison had never observed a single write across two thousand passing trials.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Giving the copy sources distinct nonzero values before each trial made every copy land, and the same wrong version then failed on its first trial.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Lanes whose function copies between global blocks should check how many trials actually wrote globals, and fill the sources with nonzero values when the pristine image reads zero there. A passing globals check over zero writes proves nothing, and the per-function wrong version is currently the only step that notices.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run the lane generator, which asserts the chain shape before emitting anything, build the small rewrite crate for 32-bit, and run the lane's checker copy over the shipped contract. The verdict file records the pass and the mutant verdict records the caught wrong version.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The first two full runs both passed while the wrong version also passed, which looked like a coverage problem but was really an observability problem. The coverage report did show zero global-writing trials throughout, which in hindsight pointed straight at the cause. Nothing else went wrong: no hangs, no faults, no worker issues.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>A range curve that reads below its own table</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b256"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b256</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>One function in this batch maps an input through a six-entry threshold table, and when the input tops the whole table on the first try, the interpolation reads one slot below the table start from stack the function never wrote. The rewrite models that slot as zero under the checker's defined stack fill, and the proof passes on all twelve hundred trials. The same batch also showed that a multi-word call snapshot needs a layout-pinned struct, because Rust does not lay out separate locals adjacently.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One function in this batch maps an input through a six-entry threshold table, and when the input tops the whole table on the first try, the interpolation reads one slot below the table start from stack the function never wrote. The rewrite models that slot as zero under the checker's defined stack fill, and the proof passes on all twelve hundred trials. The same batch also showed that a multi-word call snapshot needs a layout-pinned struct, because Rust does not lay out separate locals adjacently.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite five neighbouring input-ui functions in Rust and prove each rewrite equivalent to the original with the checker, twelve hundred trials each plus a deliberately wrong version that must fail.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Four of the five now pass with full proofs and failing wrong versions; the fifth, a sixteen-hundred-byte render pass, was triaged and left for the next lane with a written plan.&lt;/p&gt;
+&lt;table role="table"&gt;&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Function&lt;/th&gt;&lt;th role="columnheader"&gt;Size in bytes&lt;/th&gt;&lt;th role="columnheader"&gt;Outcome&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;Pending-action step&lt;/td&gt;&lt;td role="cell" data-label="Size in bytes"&gt;321&lt;/td&gt;&lt;td role="cell" data-label="Outcome"&gt;verified&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;Slot range check&lt;/td&gt;&lt;td role="cell" data-label="Size in bytes"&gt;551&lt;/td&gt;&lt;td role="cell" data-label="Outcome"&gt;verified&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;Range blend&lt;/td&gt;&lt;td role="cell" data-label="Size in bytes"&gt;299&lt;/td&gt;&lt;td role="cell" data-label="Outcome"&gt;verified&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;Destination blip setup&lt;/td&gt;&lt;td role="cell" data-label="Size in bytes"&gt;592&lt;/td&gt;&lt;td role="cell" data-label="Outcome"&gt;verified&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;Render pass&lt;/td&gt;&lt;td role="cell" data-label="Size in bytes"&gt;1618&lt;/td&gt;&lt;td role="cell" data-label="Outcome"&gt;not reached&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The range blend reads one stack slot below its threshold table when the input exceeds the top entry immediately; nothing ever wrote that slot. The destination setup takes six argument words although it reads only five; all four of its callers pass six. Its two switch tables were decoded from the program image, including one arm that shares the default target. The slot check passes its working cells to callees by frame pointer, so the rewrite keeps them in a fixed-layout struct: a snapshot spanning two words silently reads the wrong second word when the cells are separate locals, which showed up as a sign-of-zero mismatch.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The checker compares neither processor flags nor vector status, so plain Rust float comparisons stand in for the original's signalling compares even on Not-a-Number inputs, and stack below the incoming pointer is explicitly unobserved, so dead frame stores need no replication.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Uninitialised stack reads are modelled as zero on both sides through the checker's defined fill, with a comment at each site saying which slot and why. Function arity is taken from the callers, not the frame reads. Image addresses pushed as immediates go through the checker's relocation helper, because the loader rewrites them. The next lane should probe a stub planted in a read-only vtable slot before writing the big rewrite, since no lane has tried that yet.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Disassemble each function from the purchased executable with capstone through the mapped image, work out signatures from the callers as well as the frame, write one contract per function with scripted callee answers and pinned heap objects, and run the checker copy in the lane scratch folder for twelve hundred trials plus the wrong version. The lane folder keeps the generators with their coverage assertions, the contracts, the verdicts, and the per-function report with the retry plan.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Frame-pointer arithmetic slipped three times on the slot check, each time by one word: a copy reads the second work cell rather than dead stack, the join call takes the triple head rather than the zero cell, and two checks read the base cells past the stack cleanup rather than the computed cells. Each slip failed exactly one probe and each probe diff named the true cell, so the fix was mechanical once the habit of recomputing the pointer at every memory line was adopted. A first contract for the state machine passed every trial yet proved nothing about two callees, because the pin cycles put the needed flag pattern exactly on trials where an earlier path clears those flags; the generator now asserts branch firing with the clearing modelled.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Naming 150 leaderboard methods by slot shape and vtable check</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-30"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-30</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>One batch of 150 unnamed functions turned out to be nine virtual methods repeated once per leaderboard, and every one could be named from its slot: two return the board name and id directly, the rest do column lookup and row packing.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One batch of 150 unnamed functions turned out to be nine virtual methods repeated once per leaderboard, and every one could be named from its slot: two return the board name and id directly, the rest do column lookup and row packing.&lt;/p&gt;&lt;h3&gt;What was asked&lt;/h3&gt;&lt;p&gt;Name 150 consecutive unnamed functions thought to come from the same source files, giving each a confidence and keeping the names file current as the work proceeds.&lt;/p&gt;&lt;h3&gt;What was found&lt;/h3&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The whole batch is virtual methods of one leaderboard-info template, one copy per ranked episodic race board, covering eighteen boards. Each of the nine slots has an identical instruction shape on every board, so the slot alone identifies the method.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two slots return constants: one returns the board's leaderboard name string, the other its numeric board id. Both were confirmed for every board, and the ids run consecutively with the board numbers.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The remaining slots share one behaviour each across all boards: find a column index, read a column id, size or kind code, map a column through paired lists, and pack a full row buffer with presence bits. Each was confirmed by reading one member end to end.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Twenty-eight batch entries had no inventory name at all. Sixteen return their board's name string and twelve match the kind-code slot exactly; dumped class vtables point at them in the expected slots, closing the identification.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One board has no per-board id function: that vtable slot points at a shared implementation elsewhere instead, and the usual position holds only padding bytes. Why a single board kept the shared version is unknown.&lt;/p&gt;&lt;h3&gt;What was decided or recommended&lt;/h3&gt;&lt;p&gt;All 150 functions were named in the standard wording used by earlier leaderboard naming lanes, with high confidence for the two constant slots and medium for the rest. Recommendation for the next naming lane on this family: when a slot seems missing, dump the board's vtable before concluding anything, since at least one board shares a slot implementation. The board id embedded in each member also gives a free cross-check of which board a function belongs to.&lt;/p&gt;&lt;h3&gt;How to reproduce it&lt;/h3&gt;&lt;p&gt;Disassemble every batch function through the executable's mapped image and hash the mnemonic sequences: one distinct shape per slot should appear. Read the return values of the six-byte functions: name strings mark one slot, small consecutive integers the other. For any unnamed entry, find the board's vtable by searching read-only data for a pointer to one of its known members and read the neighbouring slots.&lt;/p&gt;&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;&lt;p&gt;The first evidence script silently missed every address-valued operand because the pattern expected eight hex digits and the disassembler prints six. Nothing was trusted until a second pass re-parsed the operands and the strings and ids appeared. The lesson held: never conclude from an empty column before checking the column works.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming the episodic race leaderboard boards, part 29</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-29"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-29</id>
@@ -966,356 +1246,5 @@ time and produced phantom calls until corrected.&lt;/p&gt;</content>
 &lt;p&gt;Disassemble each function through the executable's memory-mapped image, cluster by instruction skeleton, extract the small immediate each schema method passes to the shared helper and the constant each six-byte stub returns, read the referenced board-name strings, and confirm slot membership by locating each board's virtual table in read-only data.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The two animation-class attributions first looked like inventory errors, since a leaderboard id getter has no business in an animation table. Counting the outside references and checking one against the structures lane's recorded table address showed the sharing is positional and real. A first evidence script also failed on a disassembler API detail and was fixed before any results were used.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Splitting the checker worker without changing it</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#checker-worker-split"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#checker-worker-split</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>The checker worker, previously one file of about three thousand lines, is now split into six modules plus the entry point, with its one global fenced by an explicit rule and forty new unit tests, and every proof of sameness passes: identical emitted bytes on all contracts and an identical full regression.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;The checker worker, previously one file of about three thousand lines, is now split into six modules plus the entry point, with its one global fenced by an explicit rule and forty new unit tests, and every proof of sameness passes: identical emitted bytes on all contracts and an identical full regression.&lt;/p&gt;&lt;h3&gt;What was asked&lt;/h3&gt;&lt;p&gt;Split the worker file along component lines (protocol, state, image mapping, execution, call interception, trial orchestration) as a refactor only: no behaviour change, no new features, no renamed protocol fields. Quarantine the single global so only the operating-system boundary and the entry point touch it directly. Add tests that need no game file. Prove nothing changed with a byte dump and the full regression suite.&lt;/p&gt;&lt;h3&gt;What was found&lt;/h3&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The file held eighty top-level items, which sliced mechanically into the six planned modules; the entry point kept only the command loop.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The global accessor had about forty call sites. Eight functions on the main thread now take the state as a parameter; thirty-one sites stay global, almost all because they run on the trial thread, which cannot receive state across the thread spawn without synchronization. Each kept site carries a comment saying why.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Emitted bytes are identical before and after: a debug command re-emitting every call stub, tail stub and patch for each of the thirty-eight proof contracts produced zero differing entries across all three proof builds.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The full regression is identical before and after: thirty-eight contracts, thirty-five passing with three failing by design, thirty-four mutants caught, zero differing verdict fields.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Forty unit tests run on the host with no game file and all pass, covering the following areas:&lt;/p&gt;&lt;table role="table"&gt;&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Area&lt;/th&gt;&lt;th role="columnheader"&gt;Tests&lt;/th&gt;&lt;th role="columnheader"&gt;What they check&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;Json parsing&lt;/td&gt;&lt;td role="cell" data-label="Tests"&gt;7&lt;/td&gt;&lt;td role="cell" data-label="What they check"&gt;Objects, nesting, escapes, number scaling, errors, helpers&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;Comparison&lt;/td&gt;&lt;td role="cell" data-label="Tests"&gt;21&lt;/td&gt;&lt;td role="cell" data-label="What they check"&gt;Pointer windows, every result channel, truncation and mask rules, accumulator rules, nan diagnostic&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;Scratch layout&lt;/td&gt;&lt;td role="cell" data-label="Tests"&gt;3&lt;/td&gt;&lt;td role="cell" data-label="What they check"&gt;No two tables overlap for any allowed log size&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;Stub emission&lt;/td&gt;&lt;td role="cell" data-label="Tests"&gt;2&lt;/td&gt;&lt;td role="cell" data-label="What they check"&gt;Golden bytes for eight synthetic callees, patch correctness&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;Image helpers&lt;/td&gt;&lt;td role="cell" data-label="Tests"&gt;4&lt;/td&gt;&lt;td role="cell" data-label="What they check"&gt;Endian readers, string conversion, import lookup on a synthetic tree&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;Execution helpers&lt;/td&gt;&lt;td role="cell" data-label="Tests"&gt;3&lt;/td&gt;&lt;td role="cell" data-label="What they check"&gt;Deterministic fills, hash accumulation, observation rendering&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; No defect was found in the worker while moving the code. Two suspicious-looking spots were examined and are correct as written.&lt;/p&gt;&lt;h3&gt;What was decided or recommended&lt;/h3&gt;&lt;p&gt;The command loop stays in the entry point rather than moving to the protocol module, because the quarantine rule permits the global there and holding a state borrow across the trial-thread spawn would alias the trial thread's access. The one-side runner lives with the execution engine rather than the trial orchestration, keeping the unsafe core reviewable apart. The scratch-region offsets became named constants so the layout test is coupled to the code instead of duplicating numbers. The debug dump command exists only to prove the split and can be dropped on integration; either way one more regression run after integrating is recommended.&lt;/p&gt;&lt;h3&gt;How to reproduce it&lt;/h3&gt;&lt;p&gt;Build the worker for its 32-bit target, record the debug byte dump for every proof contract, run the full regression suite, then split, quarantine and re-run: the dump comparison and the run comparison must both report zero differences. Run the unit tests with the standard test command on the host; they need no game file. The exact commands are recorded with the lane's module map.&lt;/p&gt;&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;&lt;p&gt;The shell reported failed exit codes for successful builds because the toolchain writes progress to the error stream; results were judged by the output text instead. The shared test fixture holds a callee with a register transport, which the fail-closed validation requires to be selected in every comparison test, so the test contracts had to select it, mirroring real driver behaviour. Paths that execute machine code or touch mapped memory cannot be unit-tested on the host and stay covered by the dump and the regression instead.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>The inventory entries that were never fully confirmed</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#weak-inventory-entries"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#weak-inventory-entries</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>Most of the inventory entries that boundary repair could not fully confirm are real functions after all: 3,260 out of 3,661, about nine in ten. The rest split into 183 fragments of other functions, 138 data entries such as jump tables and padding, and 80 that stay unsure. Both naming lanes that had reported doubtful entries were vindicated, one of them only after a second, pattern-specific analysis proved the general method blind in its region.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Most of the inventory entries that boundary repair could not fully confirm are real functions after all: 3,260 out of 3,661, about nine in ten. The rest split into 183 fragments of other functions, 138 data entries such as jump tables and padding, and 80 that stay unsure. Both naming lanes that had reported doubtful entries were vindicated, one of them only after a second, pattern-specific analysis proved the general method blind in its region.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Give a verdict on every game-code inventory entry whose repair class is weaker than fully confirmed: real function, fragment of another function, data, unreadable, or unsure. Calibrate the method against two thousand fully confirmed entries and every verified entry in the weaker classes, which must all come out as functions. Judge two naming lanes' claims of bogus entries independently, entry by entry. Scan the code the inventory does not cover for missing functions.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The weaker classes are overwhelmingly real: all of the thunk and Ghidra-only classes came out as functions, and the size-corrected and weakly confirmed classes are nearly all functions too. Only the gapfill-invented enclosing starts are mostly bad, at about three quarters fragments or data.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The first naming lane was right on all 33 of its claimed bogus entries: none is a routine start. Twenty-five start in the middle of a machine instruction and eight are aligned interior points of neighbouring factory routines. None appears in the pointer table that references every genuine routine in its region, while all 117 genuine ones do.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The second naming lane was right on all 9 of its claimed data entries, and partly right about missing functions: one claimed function is genuinely missing, swallowed by an oversized neighbouring range, and a set of plausible stub series was found where it predicted lookups. Three of its claimed missing functions turned out to be correctly attributed bodies of jump relays, and one was already in the inventory.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Calibration passed at 2,050 out of 2,052. The two mismatches are genuine exception-handling funclets sitting in the fully confirmed class, the same family an earlier lane had found elsewhere. No verified rewrite sits on a bad entry. Four bad entries reached production batches and about ninety reached naming batches.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The uncovered-code scan lists about seventeen hundred code runs, of which 129 plausibly start functions, holding an estimated 383 nested functions once series of tiny stubs are counted individually. The factory region additionally hides about two hundred true routine starts that the inventory lacks, shadowed by the oversized ranges of the bogus entries.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Remove or annotate the 321 fragment and data entries, starting with the few already handed to production and naming lanes.&lt;/li&gt;
-&lt;li&gt;Repair the factory region as one edit: drop the 33 bogus entries and add the missing true starts, instead of only removing.&lt;/li&gt;
-&lt;li&gt;Add the plausible missing runs and the confirmed shadowed function to the inventory.&lt;/li&gt;
-&lt;li&gt;Keep the remaining weaker-class entries in the work queue; the calibration supports them.&lt;/li&gt;
-&lt;li&gt;Re-run the verdict script once the encrypted part of the code is readable; the unsure entries and the funclets hiding in the confirmed class should resolve then.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the lane's verdict script over the repaired inventory with the section-based address mapping, then the tiling analysis for the factory region, then the missing-code scan with jump-table-aware judging. The mapping was proved on three verified functions first, and the call-target count reproduces the published cross-check number exactly. All verdicts, reasons, and the missing-run list are stored as data files with the lane's outputs.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The first version of the method judged the first naming lane wrong on all 33 entries, because the factory region has no analysis coverage and the fallback checks accept any clean-looking decode. A backward test that counted decoding from the entry itself as confirmation made it worse. Only the tiling analysis, which decodes forward from true routine starts and watches the claimed entries fall inside, settled it. The lesson is that empty coverage needs pattern-specific tests, and that a method must be doubted as readily as a lane.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The missing scan first reported over five hundred plausible runs, most of them jump tables that looked targeted because a relocation entry holding a table's own address was mistaken for a function pointer. Skipping table prefixes before judging fixed it. A mid-instruction decode often re-synchronises into plausible code within a few instructions, so a clean decode alone never confirms an entry.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming the ranked-race leaderboard methods, races 37 to 53</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-10"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-10</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>All 150 functions in the batch were named as per-board leaderboard virtual methods, continuing two earlier lanes with identical vocabulary, and every slot attribution was re-verified against the virtual tables rather than trusted from the inventory.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;All 150 functions in the batch were named as per-board leaderboard virtual methods, continuing two earlier lanes with identical vocabulary, and every slot attribution was re-verified against the virtual tables rather than trusted from the inventory.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed functions, which turned out to be virtual methods of seventeen per-race leaderboard info classes, nine methods per class.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Each class exposes nine methods sharing one code skeleton per table slot: a name getter returning the board's leaderboard name string, an id getter returning a per-board constant, four column accessors (find index, get id, get byte size, get kind), two id-list mapping helpers, and a row builder that loops over seven column positions and writes values plus a presence bitmask.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All seventeen tables were located and every batch member matches its table slot exactly, including two entries the inventory attributes to unrelated task classes: those are folded stubs shared across classes and serve as their boards' id getters.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Six boards continue the gapless board-id run with values 122 to 127; the other eleven use small scattered ids, meaning they share column schemas with boards from other families whose identities are still unknown.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two boards have no readable id getter (their table slot points into the encrypted range), and one board's kind accessor sits in an address gap outside this batch; both situations match earlier lanes' findings exactly.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Method wording was kept identical to the two preceding lanes so merged names stay consistent; 32 names carry high confidence and 118 medium, none low.&lt;/li&gt;
-&lt;li&gt;A later lane covering other leaderboard families should record which board owns each scattered schema id, turning the anomaly flags into cross-references.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Disassemble each function from the mapped executable image, group by board using the inventory's class hints, locate each board's table by its three largest methods, and compare the remaining slots; per-board id uniformity and instruction counts cross-check the grouping.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;A helper script named after a standard library module broke the disassembler import until renamed, and a substring match for one table-slot label also matched three longer labels until anchored; both were caught by cross-checks before any name was written.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming leaderboard methods, and a broken numbering rule</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-09"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-09</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>All 150 functions in this batch were named as per-board leaderboard methods, reusing the previous batch's vocabulary, and every attribution was confirmed against the boards' virtual tables. The batch's surprise is that the tidy board-number rule from the earlier races breaks for most of this range: eight boards reuse other boards' column schemas, and the cause is unknown.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;All 150 functions in this batch were named as per-board leaderboard methods, reusing the previous batch's vocabulary, and every attribution was confirmed against the boards' virtual tables. The batch's surprise is that the tidy board-number rule from the earlier races breaks for most of this range: eight boards reuse other boards' column schemas, and the cause is unknown.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Name 150 consecutive functions, continuing the run of online leaderboard-info methods named in the previous batch, working out what the group is about first and then naming each function.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds nine virtual methods each for eighteen ranked race leaderboard definitions, in a repeating per-board layout. Each method shares one code skeleton per table slot and differs only in a board-number constant and name addresses.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The earlier rule that each board's number equals its race number plus a fixed offset holds for the first five boards of this batch but fails for the remaining thirteen. Eight boards use small scattered numbers matching other boards' schemas, and five boards use the numbers the rule would have assigned to the skipped boards, so the number sequence stays gapless only across the union. Every affected name records the actual number.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three boards have no readable board-number method: their table slot points into the encrypted address range, the same situation the previous batch saw twice. Five board-kind methods exist but sit in address gaps outside this batch.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;All 150 functions were named with the previous batch's method vocabulary, since the code skeletons and behaviors match exactly; the numbering anomaly does not change what any method does, so the names stand with the anomaly flagged in each record's evidence. The next lane covering other leaderboard families should record which board owns each small schema number, turning these flags into cross-references.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Disassemble each function and group by code skeleton: six-byte name and number stubs plus seven larger schema-list shapes.&lt;/li&gt;
-&lt;li&gt;Read each board's virtual table and check every function sits in its claimed slot, re-reading the table bytes rather than trusting the inventory label.&lt;/li&gt;
-&lt;li&gt;Extract the board-number constant from each method and tabulate per board; compare against the race-plus-offset rule.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;An early draft of the check script assumed the last three methods of each board used the board number plus one, because the next board's block starts one higher; the table cross-check refuted this, and all methods of a board use one number. A first string scan also needed the same pointer-validation care the previous batch reported, keeping only pointers that land in string data.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a run of leaderboard schema methods</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-08"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-08</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>Verified A batch of one hundred and fifty consecutive unnamed functions turned out to be nine small virtual methods repeated once per racing leaderboard, and all of them could be named from their code: name and id getters, column index, id, size and kind lookups, two cross-list mappers, and a row packing routine.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A batch of one hundred and fifty consecutive unnamed functions turned out to be nine small virtual methods repeated once per racing leaderboard, and all of them could be named from their code: name and id getters, column index, id, size and kind lookups, two cross-list mappers, and a row packing routine.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of one hundred and fifty consecutive unnamed game functions, working out what the group is about first and then naming each function, with a confidence per name.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The whole batch belongs to one template family: per-board leaderboard info objects for eighteen ranked racing leaderboards. Each board carries the same nine methods, and every copy of a given method is the same code except for a board number constant.&lt;/p&gt;
-&lt;table role="table"&gt;
-&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Method&lt;/th&gt;&lt;th role="columnheader"&gt;Behaviour&lt;/th&gt;&lt;th role="columnheader"&gt;Name given&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody role="rowgroup"&gt;
-&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Slot 3&lt;/th&gt;&lt;td role="cell" data-label="Behaviour"&gt;Returns this board's leaderboard name string&lt;/td&gt;&lt;td role="cell" data-label="Name given"&gt;get_board_name&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Slot 4&lt;/th&gt;&lt;td role="cell" data-label="Behaviour"&gt;Returns the board number its siblings use&lt;/td&gt;&lt;td role="cell" data-label="Name given"&gt;get_board_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Slot 6&lt;/th&gt;&lt;td role="cell" data-label="Behaviour"&gt;Finds a column id in the board list, returns index or minus one&lt;/td&gt;&lt;td role="cell" data-label="Name given"&gt;find_column_index&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Slot 7&lt;/th&gt;&lt;td role="cell" data-label="Behaviour"&gt;Returns the column id at an index, or minus one&lt;/td&gt;&lt;td role="cell" data-label="Name given"&gt;get_column_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Slot 8&lt;/th&gt;&lt;td role="cell" data-label="Behaviour"&gt;Returns the column byte width, four or eight, from its type&lt;/td&gt;&lt;td role="cell" data-label="Name given"&gt;get_column_size&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Slot 9&lt;/th&gt;&lt;td role="cell" data-label="Behaviour"&gt;Maps the column type to a small kind code, or minus one&lt;/td&gt;&lt;td role="cell" data-label="Name given"&gt;get_column_kind&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Slot 12&lt;/th&gt;&lt;td role="cell" data-label="Behaviour"&gt;Maps a column position through two lists to a second-list index&lt;/td&gt;&lt;td role="cell" data-label="Name given"&gt;get_mapped_column_index&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Slot 13&lt;/th&gt;&lt;td role="cell" data-label="Behaviour"&gt;Finds a column id in one list, returns the paired value&lt;/td&gt;&lt;td role="cell" data-label="Name given"&gt;map_column_id&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Slot 14&lt;/th&gt;&lt;td role="cell" data-label="Behaviour"&gt;Builds a row buffer over seven columns with values and presence bits&lt;/td&gt;&lt;td role="cell" data-label="Name given"&gt;pack_row&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Thirty-three names are high confidence (the two getters, pinned by a string and by sibling use of the constant); the rest are medium (behaviour read in full, wording mine). Two methods shared across all boards that supply the column lists and type codes sit in the encrypted code region, so their exact contracts stay unknown.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One board out of eighteen passes schema number one instead of its own number in all seven of its schema methods, so it silently shares another leaderboard's column layout. Deliberate or a template bug is unknown.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Subsystem for the batch is online leaderboards, not the unrelated cluster label the inventory carried.&lt;/li&gt;
-&lt;li&gt;The next naming lane covering this family can reuse the nine names above per board; only the board number constant and the name string change.&lt;/li&gt;
-&lt;li&gt;A lane with a memory dump from the running game should resolve the five column type codes and the schema list layout, which would confirm the kind, mapper and row packing names.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Read the executable through the mapped image rather than the raw file, disassemble one copy of each vtable slot, and check each copy against its board's virtual table: the table order confirms which unnamed entries are real methods and which board each belongs to. Comparing code skeletons across boards then shows that all copies match except constants, which makes the odd board stand out immediately.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;A first string scan reported junk from jump table bytes as if they were text references; requiring pointers to land in string data removed them. Two boards have no id getter in the cleartext region, and two boards keep their kind lookup outside this batch's address range, which briefly looked like missing methods until the virtual tables showed where each one really points.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming the leaderboard factory run: stub shape, dispatch table, and boundary traps</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-07"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-07</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>A batch of 150 consecutive functions turned out to be one leaderboard slice: nearly a hundred identical factory stubs, a dozen inventory entries that each span dozens of stubs, and a tail of leaderboard runtime code. 130 of the 150 got names; the rest are inventory artifacts or opaque, and are documented as such.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of 150 consecutive functions turned out to be one leaderboard slice: nearly a hundred identical factory stubs, a dozen inventory entries that each span dozens of stubs, and a tail of leaderboard runtime code. 130 of the 150 got names; the rest are inventory artifacts or opaque, and are documented as such.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Name each function in the batch from static evidence, with confidence levels, continuing the project's naming conventions.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Every factory stub has the same shape: push a size constant, call one shared encrypted helper, then construct one specific leaderboard info object. The pushed constant is identical everywhere, so the only naming signal per stub is the constructor it calls, whose class is already in the merged symbol table.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A one-byte entry listed as a function is really the base of a 481-entry jump table, and every entry points at factory-stub code. It is the leaderboard factory dispatcher.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The leaderboard info vtable layout pins each virtual slot: a name getter returning the schema string, an entry-count getter, key search, indexed access, a column-size mapping, and a column-type mapping. Two slots are one shared implementation across all leaderboard types.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three tail entries start in cold code placed after a return instruction, in padding, or in jump-table data. They are not functions and were left unnamed with the reason recorded.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Stub names continue the adjacent run's convention, one name per leaderboard schema. The per-stub mapping for the whole region is stored as data so the mis-split inventory spans can be re-cut without redoing the analysis.&lt;/li&gt;
-&lt;li&gt;Virtual slots are named for observed behaviour with the class attached, since caller and callee names do not exist anywhere in this code cluster and the shared helpers sit in the encrypted region.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Disassemble each batch entry from the memory-mapped image, extract the constructor call target of each stub, and look the target up in the merged symbol table to get the leaderboard class. For the tail, disassemble each function fully, resolve data references to find vtable membership, and read the vtable slots in order.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;An early duplicate detector normalised away all constants and falsely paired two getters returning different values. Fixed before naming by comparing real behaviour.&lt;/li&gt;
-&lt;li&gt;A helper script named after a standard library module broke its own imports; renaming it fixed the run.&lt;/li&gt;
-&lt;li&gt;Shell output redirection produced a UTF-16 file that was painful to read; later scripts wrote their own UTF-8 output files instead.&lt;/li&gt;
-&lt;/ul&gt;</content>
-  </entry>
-  <entry>
-    <title>Four input-UI functions: three verified, and a checker blind spot found with mutants</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b184"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b184</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>Three of four functions in this batch were rewritten in Rust and accepted by the checker. The fourth passed its contract but was deferred, because a passing result there does not cover half of the data it builds. Two things about the original code and the checker are worth knowing before the next lane picks up similar functions.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Three of four functions in this batch were rewritten in Rust and accepted by the checker. The fourth passed its contract but was deferred, because a passing result there does not cover half of the data it builds. Two things about the original code and the checker are worth knowing before the next lane picks up similar functions.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite four neighbouring functions of the input and interface subsystem (between 612 and 1,443 bytes each) in Rust and prove each rewrite behaves like the original, using the stock checker worker only. At least 1,000 trials per function.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The four functions belong to one module that uploads effect constants: one initialises two record tables and a block of settings, two build constant vectors from a selected record, and one submits a textured rectangle through the getters of two objects. Three were checked with 1,200 of 1,200 trials, the call logs compared word by word, and 14 of 14 hand-made wrong versions (mutants) were caught.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The initialiser stores two floating point values into every record of the first table that it never sets itself. They are leftover stack contents. With a defined zero fill of the stack the rewrite (which writes zero) matches; with a patterned fill every trial fails on the written globals, which confirms that the original reads uninitialised memory. The same is true of one unused word per matrix row in a fourth function. In the shipped game these values depend on whatever the stack held.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The checker can see only the first 8 words behind a pointer argument that points into the function's own frame. The deferred function builds a 16-word matrix in its frame and hands its address to a callee, so only the first two rows are compared. Wrong versions that change the first rows fail (193 of 300 trials); wrong versions that change the third row or the translation row, which holds the most involved arithmetic, pass all 300 trials. A passing contract there is not evidence about those words.&lt;/p&gt;
-&lt;table role="table"&gt;
-&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Function&lt;/th&gt;&lt;th role="columnheader"&gt;Outcome&lt;/th&gt;&lt;th role="columnheader"&gt;Trials&lt;/th&gt;&lt;th role="columnheader"&gt;Mutants caught&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody role="rowgroup"&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Table initialiser (913 bytes)&lt;/td&gt;&lt;td role="cell" data-label="Outcome"&gt;verified&lt;/td&gt;&lt;td role="cell" data-label="Trials"&gt;1,200 of 1,200&lt;/td&gt;&lt;td role="cell" data-label="Mutants caught"&gt;5 of 5&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Slot constants upload (612 bytes)&lt;/td&gt;&lt;td role="cell" data-label="Outcome"&gt;verified&lt;/td&gt;&lt;td role="cell" data-label="Trials"&gt;1,200 of 1,200&lt;/td&gt;&lt;td role="cell" data-label="Mutants caught"&gt;6 of 6&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Textured rectangle submit (650 bytes)&lt;/td&gt;&lt;td role="cell" data-label="Outcome"&gt;verified&lt;/td&gt;&lt;td role="cell" data-label="Trials"&gt;1,200 of 1,200 and 1,200 of 1,200 with wide inputs&lt;/td&gt;&lt;td role="cell" data-label="Mutants caught"&gt;3 of 3&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Axis view constants upload (1,443 bytes)&lt;/td&gt;&lt;td role="cell" data-label="Outcome"&gt;deferred, frame pointer arguments&lt;/td&gt;&lt;td role="cell" data-label="Trials"&gt;1,200 of 1,200 (stage 1)&lt;/td&gt;&lt;td role="cell" data-label="Mutants caught"&gt;1 of 3, the other two sit in unobserved words&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The deferred function should be finished by lifting the snapshot limit in the stock worker (more than 8 words, or a word offset from the pointer), not by a private worker. The stage-1 rewrite and contract are kept so the next lane only adds the missing snapshots. Until then no result for a function that passes frame buffers of more than 8 words to a callee should be counted as complete unless a mutant in the later words has been shown to fail.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Contracts for float code should use inputs in a range where small terms survive rounding. A first contract with wide random integers caught one wrong version in only 2 of 300 trials, because a half-texel offset vanishes next to a quotient in the millions; with moderate pixel values the same wrong version fails 221 of 300.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;ol&gt;
-&lt;li&gt;Write the rewrites against the checker runtime and build them into the lane's own build folder.&lt;/li&gt;
-&lt;li&gt;Describe each callee in the contract: calls through an object's table are answered by planted stubs, pointers into the function's own frame are skipped and replaced by a snapshot of the words behind them.&lt;/li&gt;
-&lt;li&gt;Run the contract on the stock worker; then run hand-made wrong versions against the same contract and check that each fails, including versions that change the words you believe are compared.&lt;/li&gt;
-&lt;li&gt;Repeat the initialiser's contract once with the patterned stack fill to see the uninitialised reads.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Thiscall callees are compared on their object register by default, so a pointer into the function's own frame fails every trial until the contract lists no compared registers for that callee. This cost two attempts on the initialiser. Several callees live in the encrypted part of the code and cannot be read, so their stack clean-up was inferred from the callers; the passing stack checks support the inferences.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Unknown&lt;/span&gt; Whether the game ever reaches the out-of-range orientation values in the deferred function is not known; the original reads uninitialised stack for them.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a record-and-effects batch: three evidence traps</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-06"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-06</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One hundred fifty consecutive unnamed functions turned out to be three systems sharing one record codec: replay interpolation records, particle effect builders and updates, and physics-driven effect entries. One hundred forty-two were named; the eight left unnamed split into two inventory gapfills that cover jump-table data rather than code, and six generic builders whose effect identity comes only from caller context that could not be attributed.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred fifty consecutive unnamed functions turned out to be three systems sharing one record codec: replay interpolation records, particle effect builders and updates, and physics-driven effect entries. One hundred forty-two were named; the eight left unnamed split into two inventory gapfills that cover jump-table data rather than code, and six generic builders whose effect identity comes only from caller context that could not be attributed.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed functions, working out what the group is about first, with confidence levels and no guessing.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds a dispatcher with four per-kind appliers, each paired with a recorder sharing its offsets; flag setters that twin known getters; a packed-quaternion codec reused by both replay and effects code; effect updates identified by hashed effect names and parameter strings; and a family of small record initializers following an already-verified naming pattern.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A shared helper that sets named float parameters was confirmed by reading it: it resolves a name to a table index and stores the value. That one probe grounded a whole family of parameter-applying functions.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three evidence traps were found and corrected. First, a data-reference filter limited to low addresses silently drops every string, because the data sections live far above that range: filter by section instead. Second, disassembling past a short function attributes the next function's calls to it, so small functions must be re-checked at exact size. Third, nearest-symbol caller attribution is trustworthy only within a few hundred bytes; beyond that only the calling region can be trusted.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Names follow the established family vocabularies of neighboring verified work rather than inventing new ones, with offset suffixes where twins differ only in field offsets. The two gapfill entries should be split by the inventory, not named. Effect-ID tables and their validator predicates were named as shared infrastructure for a later lane to map.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Read code through the PE mapped image at RVA, never raw offsets. Build one evidence table of calls, strings, imports and shapes first, then run a full caller scan over the code section, then read the short functions fully and probe shared callees before naming the big ones.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The first mapping attempt indexed the memory-mapped image by a file offset and decoded garbage; the two differ by a constant, the same known trap from the other side. A mid-task merge check briefly suggested dozens of name collisions, but they were the lane's own checkpointed names already integrated by the coordinator.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>First pilot of the 64-bit lift: what it costs and what gets in the way</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-pilot"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-pilot</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>Thirty-seven rewritten game functions now exist as ordinary portable Rust with no raw addresses and no unsafe code, and all thirty-seven still behave exactly like the verified 32-bit versions they came from. The pilot took about ninety-five minutes end to end, most of it one-time tooling, and it surfaced exactly one behaviour that cannot move to 64-bit unchanged.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Thirty-seven rewritten game functions now exist as ordinary portable Rust with no raw addresses and no unsafe code, and all thirty-seven still behave exactly like the verified 32-bit versions they came from. The pilot took about ninety-five minutes end to end, most of it one-time tooling, and it surfaced exactly one behaviour that cannot move to 64-bit unchanged.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Take one closed cluster of thirty to fifty verified functions and turn them into normal Rust that could compile for a 64-bit target: no raw addresses, no numbered callee slots, no dependence on pointer width. Prove each lift against its 32-bit form without the game, measure minutes per function, and say what would get in the way at scale.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The chosen cluster is thirty-seven container primitives in three families: intrusive chain operations, indexed slot records, and fixed-stride pool allocators, plus a value-list search and a one-shot table initialiser. Links became indices into explicit arenas, callee slots became callback parameters, globals became struct fields, and vtable stamps became an element-type tag. The whole lift is safe Rust.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Proof runs on both targets: forty differential tests compare returns, full state, and callback call logs between the 32-bit forms and the lifts over thousands of generated inputs on the 32-bit target, and fourteen property tests run the lifted crate on the 64-bit host. All pass. The differential tests caught two of the three authoring mistakes made during the pilot.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One function reads a status byte in a way that also leaks part of a 32-bit address into its result. That part has no meaning on 64-bit, so the lift returns just the byte; the test checks the byte on both sides and pins the quirk's shape on the 32-bit side. Four more functions crash on inputs the original never validates; the lifts panic loudly there instead of crashing or silently guessing.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Cost: about five minutes per plain function and about eleven per function with callbacks, after one-time tooling. Roughly half of the proving work is boilerplate a script could generate from the existing check contracts.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Lift leaves first grouped by data structure, then callback-bearing functions, then globals with their owners; cross-cluster references stay opaque cookies until both sides lift.&lt;/li&gt;
-&lt;li&gt;Three rules are proposed for the whole engine: no lifted global state, ever; an unchecked original dereference panics rather than guessing; address-embedding values are narrowed to their meaningful part with the quirk pinned by test.&lt;/li&gt;
-&lt;li&gt;Central estimate for all sixty-six hundred functions is about nine hundred agent-hours with a twofold uncertainty band, plus one-time harness and design costs. The next pilot should sample a callback-dense subsystem, which this one deliberately avoided.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;From the repository, run the lifted crate's tests on the host and the differential suite on the 32-bit target; both are zero-dependency. Per-function evidence (lifted, proven, minutes, line counts, blockers) is recorded in the lane's results file next to the report.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The first lift of the table-fetch functions returned "missing" on inputs where the original crashes; a differential trial crashed the same way and exposed the mismatch, and the rule above came out of the fix. A missing test-stub variant aborted the whole test binary with no per-test failure line, because cross-language calls cannot unwind; the panic message still named the culprit. Shell output redirection wrote an unreadable encoding twice, so all file writes moved into scripts.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Four rewrites, two original-code quirks, one measured constant</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b180"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b180</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>A production batch of five game functions yielded four verified Rust rewrites. The interesting results were not the rewrites but what the originals turned out to do: one reads two record fields from an uninitialized stack slot, another has a path that returns into garbage, and a trig helper's exact answer had to be measured by running it under the checker itself.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of five game functions yielded four verified Rust rewrites. The interesting results were not the rewrites but what the originals turned out to do: one reads two record fields from an uninitialized stack slot, another has a path that returns into garbage, and a trig helper's exact answer had to be measured by running it under the checker itself.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite five neighbouring game functions in Rust and prove each one behaves identically to the original with the version 4 checker, at 1,000 trials or more per function. The batch mixed two small record-table helpers, a texture init routine with many callees, and two large float-heavy functions.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Four functions verified at 1,200 matching trials each, all checks on: a record swap, a heap sift-down, a sky texture init with sixteen calls and a tail jump, and a two-pass path smoother. A fifth function was not reached for lack of lane time.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The sift-down never saves two of the twelve record fields it moves. Its final store reloads both from one word of its own stack frame that nothing ever writes, so in the real game those two fields receive whatever the caller left on the stack. The proof defines that word as zero and the rewrite stores zero; anything else about those fields is unprovable.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The unreached function's short path calls what looks like a conditional fatal routine and then returns without restoring its stack frame, so control jumps into frame garbage. In the checker that is a certain, deterministic fault. Because every trial of that path faults, it cannot pass on its own: fault-only trials compare nothing and trip the checker's vacuous rule.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The smoother calls a helper with a constant angle passed as a double in a vector register and reads back a double the same way, which a Rust rewrite can neither pass nor read. The helper is pure over a fixed input, so its exact answer was measured by running the helper itself natively under the checker worker (a one-trial probe with a deliberately wrong rewrite, reading the true answer from the mismatch detail) and folded in as a constant. The value matches a cosine to eight digits.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A smoothing gate that ends in a below-or-equal jump keeps points whose comparison is unordered: that jump is taken for NaN inputs. The natural Rust spelling of the comparison is false for NaN and fails a quarter of trials; only the negated ordered form matches. Three further transcription slips (a dropped doubling, a dropped decrement, a counter incremented before its stores rather than after) were each caught by the first failing trial and fixed.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;The four rewrites ship as verified. The uninitialized-slot read and the crashing path are recorded as likely original-code bugs for a later review pass, not fixed. The next lane on the unreached function gets a full retry kit: call conventions per callee, the object graphs to fabricate, the uninitialized slots to define, and the finding that only the whole long path can pass since it has a single exit. Two reusable tricks came out of the batch: probe verdicts to measure exact helper answers natively, and per-word global ranges for first debug runs, since the worker otherwise logs only the range base per changed word.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Each verified function has a contract and verdict file pairing the original with its rewrite export; rerunning the checker driver over them replays the 1,200 trials. The smoother has a second, supplementary contract that forces the mixed inner-loop path every trial with a per-call answer sequence, also green at 1,200. The helper probe is a one-trial contract with a zero-returning export whose expected mismatch prints the true answer.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Unicorn emulation was tried first for the helper's value and dies silently on this host, which is why the probe method exists. Hand-converted 64-bit script words were silently wrong and cost a run; machine conversion only since. A memory-inventory script filtered out register-only instructions and hid the loop-bound decrement for a full debug cycle. A supplementary contract renumbered a callee id the rewrite had hardcoded, faulting every trial until the renumbering was replaced by a per-call sequence.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming the audio voices and sound nodes</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-05"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-05</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One hundred and fifty consecutive audio functions are now named: four voice backends, the base sound class, and seventeen sound node types, with five destructors at high confidence, most of the rest at medium, and nine left unnamed.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred and fifty consecutive audio functions are now named: four voice backends, the base sound class, and seventeen sound node types, with five destructors at high confidence, most of the rest at medium, and nine left unnamed.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each function in the batch, working out what the group is about first, with a confidence and one sentence of evidence per function.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Each sound node class owns a cluster of tiny cdecl to thiscall adapter thunks sitting just before its constructor. The class of a cluster is proven by reading the vtable the following constructor stores, all ten slots matching. Forty batch members are such adapters, named after the worker they forward to.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The voice interface has twelve slots and the sound interface ten, with consistent meanings across backends: voices attach, release, render, refresh ring lanes, and fill buffers; sounds find by hash or name, attach, start, retrigger, and update doppler. Over fifty batch members have verified rewrites whose doc comments confirmed these behaviours.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two batch entries are not functions at all: gapfill addresses pointing at mid-instruction and padding bytes. Three more call into the encrypted address range and cannot be verified statically, so they stay unnamed.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Adapters are named after their worker with a callback suffix, keeping the worker's existing production-lane name where it is class-neutral. One cluster exposed wrong-class production-lane names on its workers; the vtable overruled proximity there, and the conflict is recorded in the evidence sentence. The next naming lane should cut disassembly at the first return or jump and at the next batch address, because inventory sizes overrun into following functions and first-pass evidence was contaminated.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Build the evidence table from the executable with pefile and capstone, reading code through the memory-mapped image. Dump each vtable from the data section and match all slots against the inventory before trusting any cluster attribution. Read the short functions fully and the adapter targets before naming the adapters. Cross-check every candidate against the merged symbols, the production-lane names, and the verified rewrite doc comments.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The first evidence pass attributed neighbouring calls and vtable stores to the tiny adapters because inventory sizes run past their true ends; this briefly made adapters look like constructors. Several merged names pointing into the encrypted range turned out to be misttributions and were ignored. The base sound update function overlaps three later batch entries, so each was named from its own bytes independently.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A callee register the manual calls optional is compared by default</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b183"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b183</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>A production batch of three interface functions passed only after its contract listed three callee identifiers with explicitly empty register selections: for object-call convention callees the checker compares the object register even when the contract says nothing about registers.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of three interface functions passed only after its contract listed three callee identifiers with explicitly empty register selections: for object-call convention callees the checker compares the object register even when the contract says nothing about registers.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite three neighbouring interface functions and prove each rewrite identical to the original over at least one thousand trials with the version 4 checker.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All three rewrites passed one thousand trials with zero failures and non-vacuous verdicts, covering every reachable path combination.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The checker's manual describes the per-call register selection as optional. The worker source tells a narrower story, confirmed by a failing run:&lt;/p&gt;
-&lt;table role="table"&gt;
-&lt;thead role="rowgroup"&gt;
-&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Convention&lt;/th&gt;&lt;th role="columnheader"&gt;Registers compared with no entry&lt;/th&gt;&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody role="rowgroup"&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;cdecl and stdcall&lt;/td&gt;&lt;td role="cell" data-label="Registers compared with no entry"&gt;none&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;object call (thiscall)&lt;/td&gt;&lt;td role="cell" data-label="Registers compared with no entry"&gt;the object register&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;fastcall&lt;/td&gt;&lt;td role="cell" data-label="Registers compared with no entry"&gt;both argument registers&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;This only bites when the object register holds a scratch-frame pointer rather than a real object, which happens for helper calls that take an output buffer in the register. The fix is an explicit empty selection for those callees, which the worker honours as selecting nothing.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Contract authors should give every object-call callee an explicit register entry: the register where it carries the object, an empty list where it carries scratch.&lt;/li&gt;
-&lt;li&gt;The manual should state the default selection table instead of calling the option merely optional.&lt;/li&gt;
-&lt;li&gt;The first-mismatch detail should print the first diverging call rather than the first three calls, which usually match.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Write a contract with an object-call callee whose register holds a frame address, omit that callee from the register selection, and run any number of trials: the calls check fails on the register while every other check passes. Adding the callee with an empty selection turns the verdict green with no other change.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The truncated mismatch detail showed two identical call heads, which sent the investigation toward argument encodings first; dumping the full per-side call logs showed all arguments identical and pointed at the register instead. Two further mismatches on the largest function were genuine analysis errors (a misread argument slot and two caller slots whose overwrite targets had been swapped), both diagnosed exactly by the same call logs.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a run of leaderboard factory fragments</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-04"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-04</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>A batch of 150 unnamed functions turned out to be two runs of online leaderboard creation fragments plus inventory gapfill artifacts, and every real fragment was named with high confidence from the constructor it calls.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of 150 unnamed functions turned out to be two runs of online leaderboard creation fragments plus inventory gapfill artifacts, and every real fragment was named with high confidence from the constructor it calls.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed functions, working out what the group is about first, with a confidence of high, medium or low each, leaving the name empty where the function cannot be identified.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds two families of near-identical factory fragments. The larger kind allocates a small leaderboard record, calls that leaderboard's constructor, builds a per-entry array, and jumps to a shared tail. The smaller kind allocates a larger leaderboard-info record, calls its constructor, and jumps to a different shared tail.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Every constructor already had a name, either a checker-verified rewrite or a merged class-hierarchy name, and each name identifies the exact leaderboard, so all 108 real fragments were named after the leaderboard they build. A byte-pattern census of the whole span showed the leaderboard numbers run gapless with no repeats, and factory order, constructor order and number order rise together, which corroborates every name three ways.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All 42 gapfill entries are artifacts, not functions: 41 start mid-instruction inside a factory body and one starts in non-code padding between the two runs. They were left unnamed, and their ranges swallow over two hundred further real factories that are not separate batch entries.&lt;/p&gt;
-&lt;table role="table"&gt;
-&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Group&lt;/th&gt;&lt;th role="columnheader"&gt;Count&lt;/th&gt;&lt;th role="columnheader"&gt;Outcome&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody role="rowgroup"&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Leaderboard factories&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;23&lt;/td&gt;&lt;td role="cell" data-label="Outcome"&gt;named, high confidence&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Leaderboard-info factories&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;85&lt;/td&gt;&lt;td role="cell" data-label="Outcome"&gt;named, high confidence&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Gapfill artifacts&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;42&lt;/td&gt;&lt;td role="cell" data-label="Outcome"&gt;unnamed, low confidence&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;The leaderboard factories continue the existing naming lane's wording exactly. For the info-record kind a new infix was introduced, following the constructor's class name, with camel-case tokens split at case and letter-digit boundaries. Recommended for later lanes: resolve the remaining factories hidden inside gapfill ranges with the same census-plus-constructor method instead of reading them one by one, consider re-splitting the inventory along the allocate-then-call pattern, and give one focused lane to the shared tails and the allocator, copy and register helpers, which are unnamed in every source and called from hundreds of sites.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Read code through the mapped image, never the raw file at a mapped address, and validate the mapping first by decoding one checker-verified function and comparing it with its reviewed source. Gather one evidence table for the whole batch before naming anything: disassemble each entry, record direct and indirect calls, and resolve callees against the verified rewrites, the merged names and earlier naming lanes. Where fragments repeat, scan the span for the repeated byte shape to census every real start, then check that any numbering implied by the callee names runs gapless. Name the fragments from the callee names and mark gapfill entries low with empty names.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The gapfill entries overlap the real fragments and their covered-count metadata undercounts what they span, so the batch looked like 150 functions but contains 108 plus 42 duplicates; trusting the inventory classes at face value would have produced names for mid-instruction addresses. Disassembling past each entry's stated size also bled into neighbours and mixed their calls into the evidence until the disassembly was clipped to the exact size. Nothing else went wrong.&lt;/p&gt;</content>
   </entry>
 </feed>
