@@ -1,19 +1,19 @@
 {
   "updated": "2026-10-03",
-  "updated_at": "2026-10-03 22:28",
+  "updated_at": "2026-10-03 22:31",
   "phase": {
     "index": 0,
     "name": "Measure"
   },
   "functions": {
-    "total": 45229,
-    "library": 4748,
-    "game": 40481
+    "total": 43156,
+    "library": 4753,
+    "game": 38403
   },
   "stages": {
-    "identified": 40481,
-    "named": 3699,
-    "rewritten": 0,
+    "identified": 38403,
+    "named": 9031,
+    "rewritten": 46,
     "verified": 0
   },
   "structures": 0,
@@ -90,12 +90,30 @@
       "value": 612,
       "unit": "102 unique in 6 GPU variants",
       "source": "renderer lane"
+    },
+    {
+      "label": "Functions after the inventory repair",
+      "value": 43156,
+      "unit": "functions",
+      "source": "f-boundaries lane: recursive-descent check of every inventory entry"
+    },
+    {
+      "label": "Functions with a meaningful name",
+      "value": 9031,
+      "unit": "functions",
+      "source": "m-names lane: merge of 22 native-handler lanes and the inventory"
+    },
+    {
+      "label": "Rewrites that pass checker version 1",
+      "value": 46,
+      "unit": "functions",
+      "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     }
   ],
   "activity": {
     "lanes_running": 52,
-    "lanes_finished": 136,
-    "lanes_incomplete": 1,
+    "lanes_finished": 137,
+    "lanes_incomplete": 0,
     "devlog_entries": 157
   },
   "map": [
