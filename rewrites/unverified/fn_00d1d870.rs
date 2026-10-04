@@ -100,8 +100,8 @@ lf_checker_rt::export!(thiscall, rw_00d1d870(this: u32, src: u32) -> u32 {
         // Scripted double answers; the stub returns only the low dword, so
         // the contract constrains them to hi == lo and the rewrite rebuilds
         // the same 64 bits the original converts.
-        let c_lo = lf_checker_rt::callee_cdecl!(3, u32);
-        let d_lo = lf_checker_rt::callee_cdecl!(4, u32);
+        let c_lo = lf_checker_rt::callee_cdecl!(3, u32,);
+        let d_lo = lf_checker_rt::callee_cdecl!(4, u32,);
         let c = f64::from_bits((c_lo as u64) | ((c_lo as u64) << 32)) as f32;
         let d = f64::from_bits((d_lo as u64) | ((d_lo as u64) << 32)) as f32;
         let nx = sub(mul(dx, d), mul(dy, c));

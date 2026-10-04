@@ -2340,7 +2340,7 @@
   "name": null,
   "file": "fn_00ca00a0.rs",
   "lane": "r-b352",
-  "outcome": "not_reached",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -2355,6 +2355,14 @@
   "address": "0x00CB2D60",
   "name": "CTaskComplexMoveGoToPointRelativeToEntityAndStandStill::vf19",
   "file": "fn_00cb2d60.rs",
+  "lane": "r-b350",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00CB36F0",
+  "name": "CTaskComplexMoveBeInFormation::vf18",
+  "file": "fn_00cb36f0.rs",
   "lane": "r-b350",
   "outcome": "not_reached",
   "reason": ""
@@ -2673,7 +2681,7 @@
  },
  {
   "address": "0x00D1D870",
-  "name": "",
+  "name": "seek_cover_slot_usable",
   "file": "fn_00d1d870.rs",
   "lane": "r-b346",
   "outcome": "not_reached",
