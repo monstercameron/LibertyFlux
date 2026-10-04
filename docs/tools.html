@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Tools: LibertyFlux</title>
+<meta name="description" content="The LibertyFlux tools: file-format readers, the checker that compares rewrites with the original, the ledger, the pattern and build checks, the assembler, and the generators behind this site. What each is for, who can run it and the command.">
+<link rel="canonical" href="https://monstercameron.github.io/LibertyFlux/tools.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="LibertyFlux">
+<meta property="og:title" content="Tools: LibertyFlux">
+<meta property="og:description" content="The LibertyFlux tools: file-format readers, the checker that compares rewrites with the original, the ledger, the pattern and build checks, the assembler, and the generators behind this site. What each is for, who can run it and the command.">
+<meta property="og:url" content="https://monstercameron.github.io/LibertyFlux/tools.html">
+<meta property="og:image" content="https://monstercameron.github.io/LibertyFlux/img/social.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="LibertyFlux: Grand Theft Auto IV's engine, being rewritten in Rust. A grid of squares, one per slice of the game's code, shaded by how far each slice has got.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tools: LibertyFlux">
+<meta name="twitter:description" content="The LibertyFlux tools: file-format readers, the checker that compares rewrites with the original, the ledger, the pattern and build checks, the assembler, and the generators behind this site. What each is for, who can run it and the command.">
+<meta name="twitter:image" content="https://monstercameron.github.io/LibertyFlux/img/social.png">
+<meta name="twitter:image:alt" content="LibertyFlux: Grand Theft Auto IV's engine, being rewritten in Rust. A grid of squares, one per slice of the game's code, shaded by how far each slice has got.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/overpass-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="tools.css">
+</head>
+<body>
+<!--
+Note for future agents: every command on this page is copied from the tool's own docstring, usage text or
+--help. When a tool's options change, change its card here. Do not add a flag the tool does not have.
+-->
+
+<header class="masthead compact">
+  <div class="wrap">
+    <nav aria-label="Site"><ul class="nav">
+      <li><a href="index.html">Overview</a></li>
+      <li><a href="engine.html">Engine</a></li>
+      <li><a href="quality.html">Quality</a></li>
+      <li><a href="tools.html" aria-current="page">Tools</a></li>
+      <li><a href="changelog.html">Changelog</a></li>
+      <li><a href="devlog.html">Devlog</a></li>
+      <li><a href="https://github.com/monstercameron/LibertyFlux">GitHub</a></li>
+    </ul></nav>
+    <h1>Tools</h1>
+    <p class="lede">The programs and scripts the project runs, what each is for, who can run it and the command. Every one is in the repository; the commands are run from its root.</p>
+    <nav class="page-toc" aria-label="On this page"><ul>
+      <li><a href="#files">Reading the game's files</a></li>
+      <li><a href="#checking">Checking rewrites</a></li>
+      <li><a href="#tree">Keeping the tree honest</a></li>
+      <li><a href="#assembly">Building for the game</a></li>
+      <li><a href="#running">Running the project</a></li>
+      <li><a href="#glossary">Glossary</a></li>
+    </ul></nav>
+  </div>
+</header>
+
+<main>
+  <section id="who" class="band">
+    <div class="wrap">
+      <h2>Who can run what</h2>
+      <ul class="who-key">
+        <li><span class="who repo">Anyone with the repository</span> Needs only a checkout, Python 3 and, for the Rust tools, the Rust toolchain.</li>
+        <li><span class="who game">Needs your own copy of the game</span> Reads files from a copy of Grand Theft Auto IV that you bought, on <a href="https://store.steampowered.com/app/12210/">Steam</a>, from an authorised key seller or from a retailer. Nothing from the game is in the repository or in the tools, and what they produce from your files must not be committed or shared.</li>
+        <li><span class="who windows">Windows</span> Builds or runs a 32-bit Windows program.</li>
+        <li><span class="who workstation">The project's workstation</span> Reads the agent lanes' working files, which are never published.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="files">
+    <div class="wrap">
+      <h2>Reading the game's files</h2>
+      <ul class="tools">
+        <li class="tool" id="lf-inspect">
+          <h3>lf-inspect</h3>
+          <p>One command-line tool for every file format the project reads: archives, resources, textures, models, collision, navigation, text, scripts, shaders, audio, animation, cutscenes and more. It prints summaries, listings and dumps, and measures how fast each reader parses a file. It replaces the example programs the format crates used to carry. Every command only reads; where an archive needs a key, the key is found in your copy's executable at run time and kept in memory only.</p>
+          <p class="tool-who"><span class="who game">Needs your own copy of the game</span> <span class="who repo">Anyone with the repository</span> for the synthetic benchmark, which makes its own inputs.</p>
+          <ul class="tool-cmd" aria-label="Commands"><li><code>cargo run --release -p lf-inspect -- formats</code></li><li><code>cargo run --release -p lf-inspect -- &lt;format&gt; [&lt;command&gt;] &lt;file&gt;</code></li><li><code>cargo run --release -p lf-inspect -- bench synthetic [--iters N]</code></li></ul>
+          <p class="tool-src"><a href="https://github.com/monstercameron/LibertyFlux/tree/main/crates/tools/lf-inspect">Source: crates/tools/lf-inspect</a></p>
+        </li>
+        <li class="tool" id="lf-viewer">
+          <h3>lf-viewer</h3>
+          <p>Converts a model and its textures from your own game files into standard files any viewer opens: glTF 2.0 for meshes and PNG for textures. It is a command-line converter, not a window. It reads only the paths you pass and writes only into the output folder you name, never overwriting without <code>--force</code>.</p>
+          <p class="tool-who"><span class="who game">Needs your own copy of the game</span></p>
+          <ul class="tool-cmd" aria-label="Commands"><li><code>cargo run --release -p lf-viewer -- model &lt;MODEL&gt; --out &lt;DIR&gt; [--textures &lt;FILE.wtd&gt;]</code></li><li><code>cargo run --release -p lf-viewer -- texture &lt;TEXTURES.wtd&gt; --out &lt;DIR&gt;</code></li><li><code>cargo run --release -p lf-viewer -- --help</code></li></ul>
+          <p class="tool-src"><a href="https://github.com/monstercameron/LibertyFlux/tree/main/crates/tools/lf-viewer">Source: crates/tools/lf-viewer</a></p>
+        </li>
+        <li class="tool" id="lf-dxso-convert">
+          <h3>Shader converter</h3>
+          <p>An example program of <code>lf-dxso-spirv</code>, the translator from the game's Direct3D 9 shader bytecode to SPIR-V for Vulkan. It translates every program in one compiled shader container and writes one <code>.spv</code> file per program into a folder that must already exist, printing each program's stage, size and interface.</p>
+          <p class="tool-who"><span class="who game">Needs your own copy of the game</span></p>
+          <ul class="tool-cmd" aria-label="Commands"><li><code>cargo run --release -p lf-dxso-spirv --example lf_dxso_convert -- &lt;file.fxc&gt; &lt;output-folder&gt;</code></li></ul>
+          <p class="tool-src"><a href="https://github.com/monstercameron/LibertyFlux/blob/main/crates/lf-dxso-spirv/examples/lf_dxso_convert.rs">Source: crates/lf-dxso-spirv</a></p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="checking" class="band">
+    <div class="wrap">
+      <h2>Checking rewrites</h2>
+      <p class="prose">How these fit together is explained on the <a href="quality.html#method">quality page</a>.</p>
+      <ul class="tools">
+        <li class="tool" id="checker">
+          <h3>The checker (checker2.py)</h3>
+          <p>Decides whether a Rust rewrite of one original function behaves the same as the original. It runs both from bit-identical starting state over many generated inputs and compares the return value, memory writes, the stack pointer, outgoing calls and faults. One contract per function says what to generate and what to compare. A 32-bit worker process runs the trials; this script drives it and writes the verdicts.</p>
+          <p class="tool-who"><span class="who game">Needs your own copy of the game</span> <span class="who windows">Windows</span> The <code>--selftest</code> checks of the driver itself run anywhere.</p>
+          <ul class="tool-cmd" aria-label="Commands"><li><code>cargo build --release --target i686-pc-windows-msvc -p lf-checker-worker</code></li><li><code>RUSTFLAGS="-C panic=abort" cargo build --release --target i686-pc-windows-msvc -p lf-checker-proofs</code></li><li><code>python scripts/checker/checker2.py CONTRACT [CONTRACT ...]</code></li><li><code>python scripts/checker/checker2.py --smoke</code></li><li><code>python scripts/checker/checker2.py --selftest</code></li></ul>
+          <p class="tool-src"><a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/checker/checker2.py">Source: scripts/checker/checker2.py</a></p>
+        </li>
+        <li class="tool" id="validate-contracts">
+          <h3>validate_contracts.py</h3>
+          <p>Checks contracts before they run. The checker ignores keys it does not know, so a misspelt setting would silently drop an observation; this makes such mistakes loud. It reports errors (do not run), warnings (narrowings: what the proof will not cover, by name) and notes.</p>
+          <p class="tool-who"><span class="who repo">Anyone with the repository</span></p>
+          <ul class="tool-cmd" aria-label="Commands"><li><code>python3 scripts/checker/validate_contracts.py</code></li><li><code>python3 scripts/checker/validate_contracts.py PATH [PATH ...]</code></li><li><code>python3 scripts/checker/validate_contracts.py --json ...</code></li><li><code>python3 scripts/checker/validate_contracts.py --quiet ...</code></li></ul>
+          <p class="tool-src"><a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/checker/validate_contracts.py">Source: scripts/checker/validate_contracts.py</a></p>
+        </li>
+        <li class="tool" id="mutate-rewrite">
+          <h3>mutate_rewrite.py</h3>
+          <p>Writes deliberately wrong versions of a rewrite, each with one change (a flipped comparison, a constant off by one, a dropped write, swapped call arguments and more), to find contracts that cannot see a change. A wrong version that passes the checker marks a blind spot.</p>
+          <p class="tool-who"><span class="who repo">Anyone with the repository</span> to write them; running them through the checker <span class="who game">needs your own copy of the game</span></p>
+          <ul class="tool-cmd" aria-label="Commands"><li><code>python3 scripts/checker/mutate_rewrite.py FILE [FILE ...] --out DIR [-n 8] [--seed 0]</code></li><li><code>python3 scripts/checker/mutate_rewrite.py FILE ... --dry-run [--json]</code></li></ul>
+          <p class="tool-src"><a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/checker/mutate_rewrite.py">Source: scripts/checker/mutate_rewrite.py</a></p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="tree">
+    <div class="wrap">
+      <h2>Keeping the tree honest</h2>
+      <ul class="tools">
+        <li class="tool" id="ledger">
+          <h3>The ledger (ledger.py)</h3>
+          <p>Checks the tracked rewrite tree against itself and against the published counts: an index entry without its file, a file no index names, an address listed twice or in both halves, a file name that disagrees with its address. It also validates the optional proof records. CI runs it with <code>--check</code>.</p>
+          <p class="tool-who"><span class="who repo">Anyone with the repository</span></p>
+          <ul class="tool-cmd" aria-label="Commands"><li><code>python scripts/coordinator/ledger.py</code></li><li><code>python scripts/coordinator/ledger.py --json</code></li><li><code>python scripts/coordinator/ledger.py --check</code></li></ul>
+          <p class="tool-src"><a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/coordinator/ledger.py">Source: scripts/coordinator/ledger.py</a></p>
+        </li>
+        <li class="tool" id="lint-rewrites">
+          <h3>lint_rewrites.py</h3>
+          <p>Pattern checks over every verified rewrite, for what the checker cannot see: arithmetic that panics in a debug build, plain reads at odd offsets, an export that is not the code the checker ran, a file that says its own proof is partial. Each finding says whether the text alone proves it or a heuristic suggests it.</p>
+          <p class="tool-who"><span class="who repo">Anyone with the repository</span></p>
+          <ul class="tool-cmd" aria-label="Commands"><li><code>python scripts/coordinator/lint_rewrites.py</code></li><li><code>python scripts/coordinator/lint_rewrites.py --json</code></li><li><code>python scripts/coordinator/lint_rewrites.py --write PATH</code></li></ul>
+          <p class="tool-src"><a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/coordinator/lint_rewrites.py">Source: scripts/coordinator/lint_rewrites.py</a></p>
+        </li>
+        <li class="tool" id="check-rewrites-build">
+          <h3>check_rewrites_build.py</h3>
+          <p>Answers whether every verified rewrite compiles from the repository alone. Each lane compiled its rewrites with its own helpers; this type-checks every file against the shared runtime only, for the 32-bit Windows target, dropping failures and repeating until the rest compiles. No linker is needed, so it runs on any machine with that Rust target.</p>
+          <p class="tool-who"><span class="who repo">Anyone with the repository</span> with the <code>i686-pc-windows-msvc</code> Rust target installed.</p>
+          <ul class="tool-cmd" aria-label="Commands"><li><code>python scripts/ci/check_rewrites_build.py [--out PATH] [--edition 2021|2024]</code></li></ul>
+          <p class="tool-src"><a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/ci/check_rewrites_build.py">Source: scripts/ci/check_rewrites_build.py</a></p>
+        </li>
+        <li class="tool" id="issue-log">
+          <h3>issue_log.py</h3>
+          <p>Collects every known problem with a verified rewrite into one file: the pattern checks, the build check's failures and reading reviews. Every issue keeps its source and status, so a reviewer's verdict survives the next regeneration. The <a href="quality.html#problems">quality page</a> is drawn from it.</p>
+          <p class="tool-who"><span class="who repo">Anyone with the repository</span></p>
+          <ul class="tool-cmd" aria-label="Commands"><li><code>python scripts/coordinator/issue_log.py [--build PATH] [--review PATH] [--out PATH]</code></li></ul>
+          <p class="tool-src"><a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/coordinator/issue_log.py">Source: scripts/coordinator/issue_log.py</a> · <a href="https://github.com/monstercameron/LibertyFlux/blob/main/rewrites/review/issues.json">the issue log</a></p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="assembly" class="band">
+    <div class="wrap">
+      <h2>Building for the game</h2>
+      <ul class="tools">
+        <li class="tool" id="assemble">
+          <h3>assemble.py</h3>
+          <p>Assembles the verified rewrites into one injectable 32-bit library for the in-game test. It cuts them into shard crates of a few hundred each, compiles each shard against the shared runtime alone, leaves out what does not compile with the reason recorded, and writes a manifest of what went in. Generated code goes under <code>.artifacts/</code> and is never committed.</p>
+          <p class="tool-who"><span class="who repo">Anyone with the repository</span> for the type-check; <span class="who windows">Windows</span> for <code>--build</code>, which needs the Microsoft linker.</p>
+          <ul class="tool-cmd" aria-label="Commands"><li><code>python scripts/assemble/assemble.py</code></li><li><code>python scripts/assemble/assemble.py --callee-map FILE</code></li><li><code>python scripts/assemble/assemble.py --build-shards</code></li><li><code>python scripts/assemble/assemble.py --build</code></li></ul>
+          <p class="tool-src"><a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/assemble/assemble.py">Source: scripts/assemble/assemble.py</a></p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="running">
+    <div class="wrap">
+      <h2>Running the project</h2>
+      <ul class="tools">
+        <li class="tool" id="dashboard">
+          <h3>The dashboard</h3>
+          <p>A local page for watching the agent lanes without a model in the loop: every lane, its log and results, and the machine's load. It reads what is already on disk and starts nothing. It listens on the machine itself only, because lane logs hold paths and addresses that are not for publication.</p>
+          <p class="tool-who"><span class="who workstation">The project's workstation</span></p>
+          <ul class="tool-cmd" aria-label="Commands"><li><code>python scripts/dashboard/server.py [port]</code></li></ul>
+          <p class="tool-src"><a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/dashboard/server.py">Source: scripts/dashboard/server.py</a> (default port 8772)</p>
+        </li>
+        <li class="tool" id="site-generators">
+          <h3>The site's generators</h3>
+          <p>The data behind this site. <code>devlog_db.py</code> stores devlog entries in the database the devlog page searches; <code>devlog_feed.py</code> writes the devlog's Atom feed; <code>history.py</code> writes the progress-over-time series from the git history of the progress file; <code>quality.py</code> writes the quality page's counts; <code>social.py</code> draws the link-preview image. The feed and the quality data are checked against the publication rules before they are written; a lane's devlog entry is checked by <code>integrate_devlog.py</code> on its way in.</p>
+          <p class="tool-who"><span class="who repo">Anyone with the repository</span></p>
+          <ul class="tool-cmd" aria-label="Commands"><li><code>python scripts/devlog_db.py put &lt;fragment.html&gt;</code></li><li><code>python scripts/site/devlog_feed.py</code></li><li><code>python scripts/site/history.py</code></li><li><code>python scripts/site/quality.py</code></li><li><code>python scripts/site/social.py</code></li></ul>
+          <p class="tool-src"><a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/devlog_db.py">Source: scripts/devlog_db.py</a> · <a href="https://github.com/monstercameron/LibertyFlux/tree/main/scripts/site">scripts/site</a></p>
+        </li>
+        <li class="tool" id="publication-check">
+          <h3>The publication check</h3>
+          <p>Fails if a tracked file breaks the repository's publication rules: anything from the game folder or the scratch area tracked, game or binary files, a path on someone's machine or an account name, inline assembly in a rewrite, or a file over the size limit. The repository is public and every commit is pushed, so CI runs it on every push.</p>
+          <p class="tool-who"><span class="who repo">Anyone with the repository</span></p>
+          <ul class="tool-cmd" aria-label="Commands"><li><code>python scripts/ci/check_publication.py</code></li></ul>
+          <p class="tool-src"><a href="https://github.com/monstercameron/LibertyFlux/blob/main/scripts/ci/check_publication.py">Source: scripts/ci/check_publication.py</a></p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="glossary" class="band">
+    <div class="wrap">
+      <h2>Glossary</h2>
+      <dl class="glossary">
+        <div id="term-lane"><dt>Lane</dt><dd>One AI agent working on one assignment: a batch of functions to rewrite or name, or a research question. A lane writes only in its own scratch folder and never commits; a script hands it its work.</dd></div>
+        <div id="term-contract"><dt>Contract</dt><dd>The file that tells the checker how to test one function: how to call it, which inputs to generate, what each function it calls should answer, and what to compare.</dd></div>
+        <div id="term-checker"><dt>Checker</dt><dd>The program that runs an original game function and its Rust rewrite from identical starting state, many times, and compares everything a caller could observe. Its verdict, not an agent's opinion, decides whether a rewrite passes.</dd></div>
+        <div id="term-wrong-version"><dt>Wrong version</dt><dd>A copy of a rewrite with one deliberate mistake, run through the same contract. It must fail; if it passes, the contract cannot see that kind of change.</dd></div>
+        <div id="term-verified"><dt>Verified</dt><dd>Accepted by the checker under version 2 or later. The overview's verified count includes game code only.</dd></div>
+        <div id="term-rewritten"><dt>Rewritten</dt><dd>Has a Rust implementation. Every verified function is also counted as rewritten.</dd></div>
+        <div id="term-named"><dt>Named</dt><dd>Has a meaningful name instead of a placeholder.</dd></div>
+        <div id="term-lift"><dt>Lift</dt><dd>Restating a verified 32-bit rewrite as portable, safe Rust: no addresses, no numbered callee slots, no global state, and the same results on a 64-bit machine. It is the step from rewrites that run inside the original game towards a game that runs without it.</dd></div>
+        <div id="term-shard"><dt>Shard</dt><dd>One crate of a few hundred verified rewrites, cut in address order. The library for the in-game test is built shard by shard so that no single build is too large for the machine.</dd></div>
+        <div id="term-callee-slot"><dt>Callee slot</dt><dd>The numbered entry through which a rewrite calls another function. In the checker every slot is a recording stub; in the game each slot must point at the real function, which a callee map supplies.</dd></div>
+        <div id="term-tick"><dt>Tick</dt><dd>The coordinator's five-minute cycle: it brings in what finished lanes produced, updates the progress data behind this site, commits and pushes.</dd></div>
+      </dl>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>LibertyFlux is an independent project. It is not affiliated with, endorsed by or connected to Rockstar Games or Take-Two Interactive. Grand Theft Auto is a trademark of Take-Two Interactive Software.</p>
+  </div>
+</footer>
+</body>
+</html>
