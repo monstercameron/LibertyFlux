@@ -29,8 +29,8 @@
 #![allow(clippy::not_unsafe_ptr_arg_deref)]
 
 use lf_checker_rt::{
-    callee_addr, callee_cdecl, callee_fastcall, callee_stdcall, callee_thiscall, export, global,
-    relocated, tls_slot, xmm_word,
+    callee_addr, callee_cdecl, callee_fastcall, callee_stdcall, callee_thiscall, export,
+    f80_to_f32_bits, f80_to_f64_bits, global, relocated, tls_slot, x87_raw, xmm_word,
 };
 
 // 1. const58: returns one fixed constant.
@@ -1084,4 +1084,140 @@ export!(thiscall, mut_k2_f3(obj: *mut u8, arg: u32) -> u32 {
             callee_thiscall!(1, u32, inner, arg, v)
         }
     }
+});
+
+// ---------------------------------------------------------------------------
+// Checker v5 proofs (contracts k5_*). Three run on built-in self-test
+// originals (selftest:<name>, emitted by the worker; the verdicts are
+// marked as self-tests), because no tracked original is known to take x87
+// arguments, pass XMM2-XMM7 to a callee or read through an unrelocated
+// absolute address. Two run on a real original with wider snapshots.
+// Each mutant is invisible to the v4 checker and caught by the v5 feature
+// its contract exercises.
+// ---------------------------------------------------------------------------
+
+/// Byte offset of the `f32` store (from ST0) in the x87_store record.
+const X87_REC_F32: usize = 0;
+/// Byte offset of the `f64` store (from ST1).
+const X87_REC_F64: usize = 4;
+/// Byte offset of the 80-bit store (from ST2).
+const X87_REC_F80: usize = 12;
+
+/// Write the x87_store record: ST(`a`) rounded to `f32`, ST(`b`) rounded to
+/// `f64` (both as an x87 store rounds, through the runtime's converters),
+/// and ST2's exact 80 bits.
+fn write_x87_record(rec: *mut u8, a: usize, b: usize) {
+    let (m0, e0) = x87_raw(a);
+    let (m1, e1) = x87_raw(b);
+    let (m2, e2) = x87_raw(2);
+    unsafe {
+        (rec.add(X87_REC_F32) as *mut u32).write_unaligned(f80_to_f32_bits(m0, e0));
+        (rec.add(X87_REC_F64) as *mut u64).write_unaligned(f80_to_f64_bits(m1, e1));
+        (rec.add(X87_REC_F80) as *mut u64).write_unaligned(m2);
+        (rec.add(X87_REC_F80 + 8) as *mut u16).write_unaligned(e2);
+    }
+}
+
+// k5_x87 / k5_x87bal (selftest:x87_store): the original pops three x87
+// entry values into an f32, an f64 and an 80-bit slot of the record and
+// returns the record pointer. The rewrite reads the entries from the x87
+// mirror and rounds them exactly as the stores do.
+export!(cdecl, rw_k5_x87(rec: *mut u8) -> u32 {
+    write_x87_record(rec, 0, 1);
+    rec as u32
+});
+
+// Mutant (k5_x87): ST0 and ST1 swapped. The v4 checker could not load x87
+// entry values at all, so the order was unobservable.
+export!(cdecl, mut_k5_x87(rec: *mut u8) -> u32 {
+    write_x87_record(rec, 1, 0);
+    rec as u32
+});
+
+// Mutant (k5_x87bal): the record is right, but the rewrite returns a value
+// in ST0, leaving the x87 stack one deeper than the original's (which
+// consumed its entries). Its contract compares no return channel (ret
+// "none") and memory matches, so only the v5 x87 state check sees it.
+export!(cdecl, mut_k5_x87bal(rec: *mut u8) -> f64 {
+    write_x87_record(rec, 0, 1);
+    let (m, e) = x87_raw(0);
+    f64::from_bits(f80_to_f64_bits(m, e))
+});
+
+// k5_xmm (selftest:xmm_call): the original passes its two stack words to
+// callee 1 in XMM2 and XMM5 (no stack arguments) and returns the low word
+// of the XMM6 entry value. The rewrite passes them on the stack; the stub
+// moves them into XMM2/XMM5 on the rewrite side (xmm_from_stack), and the
+// logged registers compare.
+export!(cdecl, rw_k5_xmm(a: u32, b: u32) -> u32 {
+    let _: u32 = callee_cdecl!(1, u32, a, b);
+    xmm_word(6, 0)
+});
+
+// Mutant: the two vector arguments swapped. v4 logged XMM0/XMM1 only, so
+// XMM2 and XMM5 at the call were unobservable.
+export!(cdecl, mut_k5_xmm(a: u32, b: u32) -> u32 {
+    let _: u32 = callee_cdecl!(1, u32, b, a);
+    xmm_word(6, 0)
+});
+
+// k5_abs (selftest:abs_read with abs_shadow): the original reads a dword
+// through an absolute file address with no relocation; the rewrite reads
+// the same datum through the relocated image, as rewrites must.
+export!(cdecl, rw_k5_abs(file_va: u32) -> u32 {
+    unsafe { *global::<u32>(file_va) }
+});
+
+// Mutant: reads the unrelocated file address directly. Under v4 both sides
+// read the same unrelated worker memory there, so it matched; under v5 the
+// window is inaccessible to the rewrite and it faults.
+export!(cdecl, mut_k5_abs(file_va: u32) -> u32 {
+    unsafe { *(file_va as *const u32) }
+});
+
+/// Byte offset (from the object) of the word mut_k5_snap disturbs during
+/// the call: inside the k5_snap window (0x1D8 + 16 words), past its eighth
+/// word, so no v4 snapshot (8 words from offset 0) could cover it.
+const SNAP_POKE_OFF: usize = 0x1F8;
+/// Bytes below the object that mut_k5_snapneg disturbs (inside k5_snapneg's
+/// window at -16).
+const SNAP_POKE_NEG: usize = 8;
+/// Value XORed into the disturbed word during the call.
+const SNAP_POKE_XOR: u32 = 0x5A5A_5A5A;
+
+/// rw_k2_f4's body with one word disturbed while callee 1 runs and
+/// restored afterwards: final memory is identical, only the callee's view
+/// at call time differs.
+fn k2_f4_with_poke(obj: *mut u8, arg_bits: u32, poke: *mut u32) -> u32 {
+    unsafe {
+        let reference = if *(obj.add(0x1EC) as *const u32) == 0 {
+            let vtable = *(obj as *const u32);
+            let target = *((vtable as *const u8).add(0x98) as *const u32);
+            let sample: extern "thiscall" fn(u32) -> f32 = core::mem::transmute(target as usize);
+            sample(obj as u32)
+        } else {
+            0.0f32
+        };
+        let base = f32::from_bits(*(obj.add(0x210) as *const u32));
+        let ratio = f32::from_bits(arg_bits) / (base - reference);
+        let saved = poke.read_volatile();
+        poke.write_volatile(saved ^ SNAP_POKE_XOR);
+        let r: u32 = callee_thiscall!(1, u32, obj as u32, ratio.to_bits());
+        poke.write_volatile(saved);
+        r
+    }
+}
+
+// Mutant (k5_snap, original 0x9e09f0 with rw_k2_f4 as the rewrite): a
+// field past the eighth snapshot word is wrong while the callee runs.
+export!(thiscall, mut_k5_snap(obj: *mut u8, arg_bits: u32) -> u32 {
+    let poke = unsafe { obj.add(SNAP_POKE_OFF) } as *mut u32;
+    k2_f4_with_poke(obj, arg_bits, poke)
+});
+
+// Mutant (k5_snapneg): a word just below the object (a header or the
+// previous record) is wrong while the callee runs.
+export!(thiscall, mut_k5_snapneg(obj: *mut u8, arg_bits: u32) -> u32 {
+    let poke = unsafe { obj.sub(SNAP_POKE_NEG) } as *mut u32;
+    k2_f4_with_poke(obj, arg_bits, poke)
 });

@@ -1,0 +1,140 @@
+{
+ "name": "k5_snap",
+ "function": "0x9e09f0",
+ "conv": "thiscall",
+ "export": "rw_k2_f4",
+ "mut_export": "mut_k5_snap",
+ "trials": 1000,
+ "seed": 50506,
+ "timeout_ms": 10000,
+ "ret": "none",
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "heap": 0
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [
+  {
+   "kind": "float"
+  }
+ ],
+ "heapsegs": [
+  {
+   "off": 4096,
+   "size": 536,
+   "fill": "floats",
+   "floats_at": [
+    132
+   ],
+   "links": [
+    {
+     "at": 0,
+     "to_seg": 1
+    }
+   ]
+  },
+  {
+   "off": 8192,
+   "size": 160,
+   "fill": "random",
+   "pin": [
+    {
+     "at": 152,
+     "vals": [
+      {
+       "stub": 2
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "pokes": [
+  {
+   "seg": 0,
+   "at": 492,
+   "size": 4,
+   "vals": [
+    0,
+    1
+   ]
+  }
+ ],
+ "globals": [],
+ "globals_fill": "pristine",
+ "callees": [
+  {
+   "id": 1,
+   "conv": "thiscall",
+   "nargs": 1,
+   "ret": "u32",
+   "script": "edges",
+   "snap": [
+    {
+     "kind": "ecx",
+     "at": 472,
+     "n": 16
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "conv": "thiscall",
+   "nargs": 0,
+   "ret": "f32st0",
+   "script": [
+    0,
+    2147483648,
+    1065353216,
+    3212836864,
+    1056964608,
+    1078530011,
+    2139095040,
+    4286578688,
+    2143289344,
+    8388608,
+    8388607,
+    1,
+    1343554297,
+    786163455,
+    3221225472
+   ]
+  }
+ ],
+ "patches": [
+  {
+   "site": "0x9e0a34",
+   "id": 1
+  }
+ ],
+ "iat": [],
+ "checks": {
+  "ret": "none",
+  "esp": true,
+  "heap": true,
+  "stack": true,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": false,
+  "fp_tol": "0,0"
+ }
+}

@@ -1,0 +1,97 @@
+{
+ "name": "k5_xmm",
+ "function": "selftest:xmm_call",
+ "conv": "cdecl",
+ "export": "rw_k5_xmm",
+ "mut_export": "mut_k5_xmm",
+ "trials": 1000,
+ "seed": 50503,
+ "timeout_ms": 10000,
+ "ret": "eax",
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [
+  {
+   "kind": "float"
+  },
+  {
+   "kind": "float"
+  }
+ ],
+ "heapsegs": [],
+ "xmm": {
+  "2": [
+   286331153,
+   572662306,
+   858993459,
+   1145324612
+  ],
+  "5": [
+   1431655765,
+   1717986918,
+   2004318071,
+   2290649224
+  ],
+  "6": [
+   "float",
+   0,
+   0,
+   0
+  ]
+ },
+ "globals": [],
+ "globals_fill": "pristine",
+ "callees": [
+  {
+   "id": 1,
+   "conv": "cdecl",
+   "nargs": 2,
+   "ret": "u32",
+   "script": [
+    0
+   ],
+   "logxmm_regs": [
+    2,
+    5
+   ],
+   "xmm_from_stack": {
+    "2": 0,
+    "5": 1
+   }
+  }
+ ],
+ "patches": [],
+ "iat": [],
+ "checks": {
+  "ret": "eax",
+  "esp": true,
+  "heap": true,
+  "stack": true,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": false,
+  "fp_tol": "0,0"
+ }
+}

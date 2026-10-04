@@ -1,0 +1,74 @@
+{
+ "name": "k5_x87bal",
+ "function": "selftest:x87_store",
+ "conv": "cdecl",
+ "export": "rw_k5_x87",
+ "mut_export": "mut_k5_x87bal",
+ "trials": 1000,
+ "seed": 50502,
+ "timeout_ms": 10000,
+ "ret": "none",
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [
+  {
+   "kind": "ptr",
+   "seg": 0
+  }
+ ],
+ "heapsegs": [
+  {
+   "off": 4096,
+   "size": 24,
+   "fill": "random"
+  }
+ ],
+ "x87": [
+  {
+   "kind": "f32"
+  },
+  {
+   "kind": "f64"
+  },
+  {
+   "kind": "f80"
+  }
+ ],
+ "globals": [],
+ "globals_fill": "pristine",
+ "callees": [],
+ "patches": [],
+ "iat": [],
+ "checks": {
+  "ret": "none",
+  "esp": true,
+  "heap": true,
+  "stack": true,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": false,
+  "fp_tol": "0,0"
+ }
+}

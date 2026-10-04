@@ -1,0 +1,65 @@
+{
+ "name": "k5_abs",
+ "function": "selftest:abs_read",
+ "conv": "cdecl",
+ "export": "rw_k5_abs",
+ "mut_export": "mut_k5_abs",
+ "trials": 200,
+ "seed": 50504,
+ "timeout_ms": 10000,
+ "ret": "eax",
+ "abs_shadow": true,
+ "regs": [
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  },
+  {
+   "any": true
+  }
+ ],
+ "stack": [
+  {
+   "kind": "rot",
+   "values": [
+    4194304,
+    4194306,
+    4194364,
+    4194432,
+    4194436,
+    4194560
+   ]
+  }
+ ],
+ "heapsegs": [],
+ "globals": [],
+ "globals_fill": "pristine",
+ "callees": [],
+ "patches": [],
+ "iat": [],
+ "checks": {
+  "ret": "eax",
+  "esp": true,
+  "heap": true,
+  "stack": true,
+  "globals": true,
+  "calls": true,
+  "undeclared": true,
+  "fulldata": false,
+  "fp_tol": "0,0"
+ }
+}
