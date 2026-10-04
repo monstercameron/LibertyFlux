@@ -6,9 +6,9 @@
 /// `handler` points to the event handler (`+0x04` holds its ped, `+0x08`
 /// and `+0x0c` receive tasks on different paths). `event` is the event
 /// record (`+0x10` is the kind: 0xc8 stores zero and returns the subject,
-/// 0x137 takes the observer path with the second stack argument, 0x76c
+/// 0x137 takes the observer path with the third stack argument, 0x76c
 /// takes the main path, anything else returns the subject with nothing
-/// stored). The third stack argument is not read.
+/// stored). The second stack argument is not read.
 ///
 /// The main path requires a subject mode mask of 0xc0, then optionally
 /// runs a weapon check (a lookup, a positive power float, a weapon-info
@@ -20,10 +20,11 @@
 /// power block, a null pool slot): both sides fault identically there.
 /// The observer path validates the object (kind 0x19f, non-negative tag)
 /// and either finishes directly or falls into the alternate task chain
-/// (a predicate, an allocation, a two-call build).
+/// (a predicate, an allocation, a two-call build whose first call leaves
+/// a stack word the second consumes).
 ///
-/// Original: 0x00ca9570 (thiscall, three stack words; the third is not read).
-lf_checker_rt::export!(thiscall, rw_00ca9570(handler: u32, event: u32, observer: u32, _a3: u32) -> u32 {
+/// Original: 0x00ca9570 (thiscall, three stack words; the second is not read).
+lf_checker_rt::export!(thiscall, rw_00ca9570(handler: u32, event: u32, _a2: u32, observer: u32) -> u32 {
     unsafe {
         const HANDLER_PED: u32 = 0x04;
         const HANDLER_ALT: u32 = 0x08;
@@ -212,10 +213,12 @@ lf_checker_rt::export!(thiscall, rw_00ca9570(handler: u32, event: u32, observer:
             wr32(handler + HANDLER_TASK, 0);
             return 0;
         }
-        // Three words pushed, callee pops one; the rewrite pushes the one
-        // the callee consumes.
-        let g: u32 = lf_checker_rt::callee_stdcall!(ALT_A, u32, 0xbb8);
-        let task: u32 = lf_checker_rt::callee_thiscall!(ALT_B, u32, slot3, 1, g);
+        // Three words pushed, callee pops none, caller drops two: the
+        // third word stays for the task builder, which pops three. The
+        // rewrite pushes all three twice (once per call) while the stub
+        // balances each side.
+        let g: u32 = lf_checker_rt::callee_stdcall!(ALT_A, u32, 0xbb8, 0x1388, 0x3e8);
+        let task: u32 = lf_checker_rt::callee_thiscall!(ALT_B, u32, slot3, 1, g, 0x3e8);
         wr32(handler + HANDLER_TASK, task);
         task
     }

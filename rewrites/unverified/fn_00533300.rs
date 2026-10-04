@@ -22,8 +22,11 @@
 /// and helper 8 stores the row; success sets bit `i` of `hit_mask` (low word
 /// for rows below 32, high word at and past it) and the status, failure
 /// clears the status. The caller slot holding `rows` is refreshed only on
-/// the miss path. The return is the status byte in the low 8 bits over the
-/// last helper answer (or output pointer) left in the register.
+/// the miss path. The return is the status byte in the low 8 bits over
+/// whatever the last executed path left in the register: the info answer on
+/// the early path, the flag pointer on a wanted hit, the mask pointer on a
+/// store, the classify answer minus one (the dispatch decrements first) on a
+/// bounds failure, or the last accept/store answer otherwise.
 ///
 /// Original: 0x00533300 (thiscall, six stack words).
 lf_checker_rt::export!(thiscall, rw_00533300(this: u32, rows: u32, row_copy: u32, hit_mask: u32, wrote_flag: u32, store: u32, row_cap: u32) -> u32 {
@@ -76,10 +79,13 @@ lf_checker_rt::export!(thiscall, rw_00533300(this: u32, rows: u32, row_copy: u32
                 let mut stride: u32 = 0;
                 let elem = rd32(info[2].wrapping_add(index.wrapping_mul(4)));
                 let class: u32 = lf_checker_rt::callee_thiscall!(5, u32, elem);
-                eax = class;
-                if class != 0xffff_ffff {
-                    let slot = class.wrapping_sub(1);
-                    if slot <= 4 && slot != 3 {
+                // The original compares against -1, then decrements before
+                // dispatching, so EAX holds class - 1 past this point.
+                if class == 0xffff_ffff {
+                    eax = class;
+                } else {
+                    eax = class.wrapping_sub(1);
+                    if eax <= 4 && eax != 3 {
                         stride = FULL_ROW;
                     }
                 }

@@ -1,15 +1,15 @@
 // original: 0x00542720 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_3, player_schema::LeaderboardInfo, 10>::vf13
 /// Mapped value for a key looked up in the board's key column.
-/// ///
-/// /// Calls the leaderboard-info callee (fastcall slot 0) with this board's
-/// /// numeric id in ECX and a scratch info block in EDX. When the callee
-/// /// reports failure, or the signed `count` (at +0x0c) is not positive, the
-/// /// result is NOT_FOUND. Otherwise the key array (at +0x10) is scanned
-/// /// linearly for `key`; on a match at position i the mapping array (at
-/// /// +0x14) entry i is returned. No match gives NOT_FOUND. The object
-/// /// pointer in ECX is unused. Original is thiscall with one stack word;
-/// /// its re-check of the found index against -1 is dead (the index is
-/// /// always in range) and is not reproduced.
+///
+/// Calls the leaderboard-info callee (fastcall slot 0) with this board's
+/// numeric id in ECX and a scratch info block in EDX. When the callee
+/// reports failure, or the signed `count` (at +0x0c) is not positive, the
+/// result is NOT_FOUND. Otherwise the key array (at +0x10) is scanned
+/// linearly for `key`; on a match at position i the mapping array (at
+/// +0x14) entry i is returned. No match gives NOT_FOUND. The object
+/// pointer in ECX is unused. Original is thiscall with one stack word;
+/// its re-check of the found index against -1 is dead (the index is
+/// always in range) and is not reproduced.
 lf_checker_rt::export!(thiscall, rw_00542720(_this: u32, key: u32) -> u32 {
     unsafe {
         const LEADER_ID: u32 = 0xA3;

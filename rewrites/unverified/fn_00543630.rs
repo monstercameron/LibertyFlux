@@ -1,13 +1,13 @@
 // original: 0x00543630 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_6, player_schema::LeaderboardInfo, 10>::vf6
 /// Position of a key inside the board's key column.
-/// ///
-/// /// Calls the leaderboard-info callee (fastcall slot 0) with this board's
-/// /// numeric id in ECX and a scratch info block in EDX. When the callee
-/// /// reports failure, or the signed `count` (at +0x0c) is not positive, the
-/// /// result is NOT_FOUND. Otherwise the key array (at +0x10) is scanned
-/// /// linearly for `key` and the first matching position returned, or
-/// /// NOT_FOUND when absent. The object pointer in ECX is unused. Original
-/// /// is thiscall with one stack word.
+///
+/// Calls the leaderboard-info callee (fastcall slot 0) with this board's
+/// numeric id in ECX and a scratch info block in EDX. When the callee
+/// reports failure, or the signed `count` (at +0x0c) is not positive, the
+/// result is NOT_FOUND. Otherwise the key array (at +0x10) is scanned
+/// linearly for `key` and the first matching position returned, or
+/// NOT_FOUND when absent. The object pointer in ECX is unused. Original
+/// is thiscall with one stack word.
 lf_checker_rt::export!(thiscall, rw_00543630(_this: u32, key: u32) -> u32 {
     unsafe {
         const LEADER_ID: u32 = 0xA6;

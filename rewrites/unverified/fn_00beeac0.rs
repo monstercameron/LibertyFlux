@@ -67,7 +67,7 @@ lf_checker_rt::export!(thiscall, rw_00beeac0(this: u32, out: u32, dir: u32, src:
         }
 
         let mut q = [0u32; 4];
-        lf_checker_rt::callee_cdecl!(CALLEE_QUAT, u32, rd32(this + QUAT_SEED), q.as_mut_ptr() as u32);
+        lf_checker_rt::callee_cdecl!(CALLEE_QUAT, u32, q.as_mut_ptr() as u32, rd32(this + QUAT_SEED));
         let tt = f32::from_bits(t);
         let qf = [
             f32::from_bits(q[0]),

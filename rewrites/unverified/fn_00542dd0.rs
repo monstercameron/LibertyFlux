@@ -1,12 +1,12 @@
 // original: 0x00542DD0 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_4, player_schema::LeaderboardInfo, 10>::vf7
 /// Fetch one leaderboard column value by row index.
-/// ///
-/// /// Calls the leaderboard-info callee (fastcall slot 0) with this board's
-/// /// numeric id in ECX and ascratch info block in EDX. When the callee
-/// /// reports failure (low byte clear) the result is NOT_FOUND. Otherwise the
-/// /// info block's value-array pointer (at +0x10) is read and the row at
-/// /// `index` returned. The object pointer in ECX is unused. Original is
-/// /// thiscall with one stack word.
+///
+/// Calls the leaderboard-info callee (fastcall slot 0) with this board's
+/// numeric id in ECX and a scratch info block in EDX. When the callee
+/// reports failure (low byte clear) the result is NOT_FOUND. Otherwise the
+/// info block's value-array pointer (at +0x10) is read and the row at
+/// `index` returned. The object pointer in ECX is unused. Original is
+/// thiscall with one stack word.
 lf_checker_rt::export!(thiscall, rw_00542dd0(_this: u32, index: u32) -> u32 {
     unsafe {
         const LEADER_ID: u32 = 0xA4;
