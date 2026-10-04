@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#p0-libraries">Library inventory: what the executable borrows, and what it owns</a></li>
       <li><a href="#ghidra-export-scripts">Ghidra export scripts are written and tested</a></li>
       <li><a href="#startup-stub">The start-up stub: a tiny loader, an encrypted first megabyte, and an external unlocker</a></li>
       <li><a href="#game-folder-inventory">What the game folder contains</a></li>
@@ -68,6 +69,45 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="p0-libraries">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Library inventory: what the executable borrows, and what it owns</h2>
+      <p>The executable statically links six third-party or runtime code bases (zlib, libjpeg, a CyaSSL-era TLS stack, Bullet collision detection, NaturalMotion Euphoria, and the C runtime), keeps three more behind external DLLs or services (Bink video, Steamworks, Social Club), and encrypts its first megabyte of code with an unidentified packer. Roughly one fifth of the code section is library code; the rest is engine and game.</p>
+      <h3>What was asked</h3>
+      <p>Identify the third-party and runtime library code statically linked into the game executable so it can be excluded from the rewrite queue, with evidence, versions where stated, code locations, Rich-header toolchain clues, an estimate of the library share of the code section, and a note of which middleware has no source and no open replacement.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> zlib 1.2.3 (2005) is linked in, identified by its inflate and deflate banners, its error strings, and its checksum constant used as code immediates.</p>
+      <p><span class="evidence verified">Verified</span> An IJG JPEG codec is linked in, identified by its full error-message table including encoder warnings. No version string survives, so the exact release is unknown.</p>
+      <p><span class="evidence verified">Verified</span> A TLS stack is linked in, identified by a large table of cipher-suite names and error strings plus a bundled set of CA certificates. <span class="evidence">Inferred</span> The string set matches CyaSSL 2.x, the library later renamed to wolfSSL, circa 2012 to 2014. Hash support is confirmed present but the AES tables could not be found in any readable section, so part of the crypto may sit inside the encrypted region.</p>
+      <p><span class="evidence verified">Verified</span> Bullet Physics is linked in as collision detection only: broadphase, dispatcher, and a handful of narrowphase algorithms, with RAGE-written wrappers. No rigid-body dynamics, no soft bodies, and no Havok anywhere.</p>
+      <p><span class="evidence verified">Verified</span> NaturalMotion Euphoria is linked in behind a Rockstar-authored layer, with dozens of behaviour classes for shot reactions, falls, balance, grabbing, flinching, and stairs. This is the largest middleware item and the only one with neither source nor an open replacement.</p>
+      <p><span class="evidence verified">Verified</span> The C runtime is statically linked: no runtime DLL is imported. Standard C++ library use is essentially zero; the engine uses its own containers.</p>
+      <p><span class="evidence verified">Verified</span> Bink video, Steamworks, and the Social Club SDK contribute only small glue code in the executable (a video-player wrapper, a Steam API loader with callbacks, COM-shaped stubs). The real code lives in external DLLs and services.</p>
+      <p><span class="evidence verified">Verified</span> Absent as linked code: PNG, Ogg Vorbis, Speex, MP3, FLAC, Miles, FMOD, OpenAL, curl, Lua, any script language, Scaleform or any UI middleware, any XML parser library, LZX or other compression beyond zlib, Havok, PhysX, Granny, D3DX, OpenSSL banners, and all Games-for-Windows-Live traces. Audio decode is the engine plus operating-system codecs, with user MP3 tracks transcoded by a separate helper process.</p>
+      <p><span class="evidence verified">Verified</span> The first megabyte of the code section is encrypted and a second section holds a verbatim copy of it. The entry point sits in a tiny unpacker stub. No known packer or DRM brand markers were found, so the protector is unidentified.</p>
+      <p><span class="evidence">Inferred</span> Library and runtime code is about fifteen to twenty-five percent of the code section, best guess one fifth. The mapped libraries account for roughly one eighth in readable code; the rest of the estimate allows for runtime startup and crypto inside the encrypted megabyte.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Library</th><th role="columnheader">Version</th><th role="columnheader">Share of code</th><th role="columnheader">Replacement</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">zlib</td><td role="cell" data-label="Version">1.2.3</td><td role="cell" data-label="Share of code">small</td><td role="cell" data-label="Replacement">open source</td></tr>
+      <tr role="row"><td role="cell">libjpeg</td><td role="cell" data-label="Version">unknown</td><td role="cell" data-label="Share of code">medium</td><td role="cell" data-label="Replacement">open source</td></tr>
+      <tr role="row"><td role="cell">CyaSSL-era TLS</td><td role="cell" data-label="Version">2.x, circa 2012 to 2014</td><td role="cell" data-label="Share of code">medium</td><td role="cell" data-label="Replacement">source available</td></tr>
+      <tr role="row"><td role="cell">Bullet collision</td><td role="cell" data-label="Version">2.7 era</td><td role="cell" data-label="Share of code">medium</td><td role="cell" data-label="Replacement">open source</td></tr>
+      <tr role="row"><td role="cell">Euphoria</td><td role="cell" data-label="Version">unknown</td><td role="cell" data-label="Share of code">large</td><td role="cell" data-label="Replacement">none</td></tr>
+      <tr role="row"><td role="cell">C runtime</td><td role="cell" data-label="Version">static, 2012 toolchain</td><td role="cell" data-label="Share of code">medium</td><td role="cell" data-label="Replacement">recompile</td></tr>
+      <tr role="row"><td role="cell">Bink, Steam, Social Club</td><td role="cell" data-label="Version">external</td><td role="cell" data-label="Share of code">glue only</td><td role="cell" data-label="Replacement">DLL, stub, or reimplement</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>The mapped library ranges should be excluded from the rewrite queue, and Euphoria plus the Social Club online layer should be planned as clean-room reimplementation rather than ports. The encrypted first megabyte must be revisited after a runtime memory dump before its contents can be queued or excluded. The Rich header shows a 2012-era rebuild with a small residue of older prebuilt objects, consistent with most middleware having been rebuilt from source.</p>
+      <h3>How to reproduce it</h3>
+      <p>All checks run offline against the executable with Python and a PE parser. Extract printable strings and search for version banners (zlib), error tables (JPEG, TLS), interface names (Steam, Social Club), and import names (Bink, runtime). List class names from runtime type information to confirm Bullet, Euphoria, and the absence of standard-library use. Scan for well-known constants such as hash tables and cipher boxes. Walk the relocation table from each identifying data block back to the code that references it, then follow class tables to member functions to bound each library's code range. Measure per-block entropy of the code section to find the encrypted region, and compare the spare section against it byte for byte.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two keyword hits looked like libraries but were game words: bullet impact effects are ammunition, not Bullet Physics, and toggle text is not the Ogg container. A Lua hit turned out to be random bytes inside encrypted code. The SHA-256 table first looked like a false positive because it sits directly after a text translation table, but the surrounding finished-message labels confirmed it belongs to the TLS code. The Steam DLL name appears nowhere in the file even though the API names do, which remains unexplained. The vtable walk initially matched nothing because class tables point eight bytes before the name string, not at it; the windowed pass before that fix overstated every range. About one tenth of the relocation targets read as garbage until the encrypted region explained them.</p>
+      </article>
 
       <article class="entry" id="ghidra-export-scripts">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
