@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Add the upscaler reference",
+    "title": "Add the README",
     "commit": null,
+    "summary": "The repository's front page.",
+    "changes": [
+      "Status, goals, the method with a diagram, the repository rule, the roadmap, how progress is tracked, the layout, requirements, credits and a legal notice.",
+      "Shows the progress badges generated from docs/data/progress.json."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Add the upscaler reference",
+    "commit": "2a5a2809a0a7320b6e02e54f8d6e7741de174d35",
     "summary": "documentation/upscaling-and-frame-generation.md.",
     "changes": [
       "Reference for DLSS, FSR, XeSS and MetalFX: components, platforms, per-frame inputs, integration outline, licences, pitfalls and links to the official guides.",
