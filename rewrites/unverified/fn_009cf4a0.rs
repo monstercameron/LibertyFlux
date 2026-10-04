@@ -43,10 +43,14 @@ lf_checker_rt::export!(cdecl, rw_009CF4A0(arg0: u32) -> u32 {
         const ERR_CODE: u32 = 0x80040904;
         const GET_A: u32 = 1;
         const GET_OBJ: u32 = 2;
+        #[allow(dead_code)]
         const HOOK: u32 = 3;
         const MAKE_CB1: u32 = 4;
         const MAKE_CB2: u32 = 5;
+        // Callee ids reached through planted slots rather than the stub table.
+        #[allow(dead_code)]
         const CALLBACK: u32 = 6;
+        #[allow(dead_code)]
         const VTABLE_FN: u32 = 7;
         const REPORT_ERROR: u32 = 8;
         const NOTIFY: u32 = 9;
@@ -85,41 +89,42 @@ lf_checker_rt::export!(cdecl, rw_009CF4A0(arg0: u32) -> u32 {
         }
         #[inline(always)]
         unsafe fn get_obj() -> u32 {
-            unsafe { lf_checker_rt::callee_cdecl!(GET_OBJ, u32,) }
+            lf_checker_rt::callee_cdecl!(GET_OBJ, u32,)
         }
 
         let inst = lf_checker_rt::callee_cdecl!(GET_A, u32,);
         if inst == 0 {
             return 0;
         }
+        let hook_arg = lf_checker_rt::relocated(HOOK_ARG);
         // Step 1: mark present.
         let obj = get_obj();
         let hook_pre = rd32(HOOK_PRE_SLOT);
         if flag() != 0 {
-            hook(hook_pre, HOOK_ARG);
+            hook(hook_pre, hook_arg);
         }
         wr8h(obj + MARK_B, 1);
         let hook_post = rd32(HOOK_POST_SLOT);
         if flag() != 0 {
-            hook(hook_post, HOOK_ARG);
+            hook(hook_post, hook_arg);
         }
         // Step 2: first gated callback, then clear its enable.
         let obj = get_obj();
         if flag() != 0 {
-            hook(hook_pre, HOOK_ARG);
+            hook(hook_pre, hook_arg);
         }
         let en = rd8h(obj + EN_CB1);
         if flag() != 0 {
-            hook(hook_post, HOOK_ARG);
+            hook(hook_post, hook_arg);
         }
         if en == 1 {
             let obj = get_obj();
             if flag() != 0 {
-                hook(hook_pre, HOOK_ARG);
+                hook(hook_pre, hook_arg);
             }
             let cb = rd32h(obj + PTR_CB1);
             if flag() != 0 {
-                hook(hook_post, HOOK_ARG);
+                hook(hook_post, hook_arg);
             }
             if cb != 0 {
                 let o = get_obj();
@@ -129,30 +134,30 @@ lf_checker_rt::export!(cdecl, rw_009CF4A0(arg0: u32) -> u32 {
             }
             let obj = get_obj();
             if flag() != 0 {
-                hook(hook_pre, HOOK_ARG);
+                hook(hook_pre, hook_arg);
             }
             wr8h(obj + EN_CB1, 0);
             if flag() != 0 {
-                hook(hook_post, HOOK_ARG);
+                hook(hook_post, hook_arg);
             }
         }
         // Step 3: second gated callback, then clear its enable.
         let obj = get_obj();
         if flag() != 0 {
-            hook(hook_pre, HOOK_ARG);
+            hook(hook_pre, hook_arg);
         }
         let en = rd8h(obj + EN_CB2);
         if flag() != 0 {
-            hook(hook_post, HOOK_ARG);
+            hook(hook_post, hook_arg);
         }
         if en == 1 {
             let obj = get_obj();
             if flag() != 0 {
-                hook(hook_pre, HOOK_ARG);
+                hook(hook_pre, hook_arg);
             }
             let cb = rd32h(obj + PTR_CB2);
             if flag() != 0 {
-                hook(hook_post, HOOK_ARG);
+                hook(hook_post, hook_arg);
             }
             if cb != 0 {
                 let o = get_obj();
@@ -162,21 +167,21 @@ lf_checker_rt::export!(cdecl, rw_009CF4A0(arg0: u32) -> u32 {
             }
             let obj = get_obj();
             if flag() != 0 {
-                hook(hook_pre, HOOK_ARG);
+                hook(hook_pre, hook_arg);
             }
             wr8h(obj + EN_CB2, 0);
             if flag() != 0 {
-                hook(hook_post, HOOK_ARG);
+                hook(hook_post, hook_arg);
             }
         }
         // Step 4: clear the mark.
         let obj = get_obj();
         if flag() != 0 {
-            hook(hook_pre, HOOK_ARG);
+            hook(hook_pre, hook_arg);
         }
         wr8h(obj + MARK_B, 0);
         if flag() != 0 {
-            hook(hook_post, HOOK_ARG);
+            hook(hook_post, hook_arg);
         }
         // Virtual status call; report on failure.
         let vt = rd32h(inst);
@@ -188,41 +193,41 @@ lf_checker_rt::export!(cdecl, rw_009CF4A0(arg0: u32) -> u32 {
         // Step 5: clear field +0x4.
         let obj = get_obj();
         if flag() != 0 {
-            hook(hook_pre, HOOK_ARG);
+            hook(hook_pre, hook_arg);
         }
         wr32h(obj + FIELD_4, 0);
         if flag() != 0 {
-            hook(hook_post, HOOK_ARG);
+            hook(hook_post, hook_arg);
         }
         // Step 6 (gated on the argument's low byte): notify, then clear +0x8.
         if (arg0 as u8) != 0 {
             let obj = get_obj();
             if flag() != 0 {
-                hook(hook_pre, HOOK_ARG);
+                hook(hook_pre, hook_arg);
             }
             let p = rd32h(obj + FIELD_8);
             if flag() != 0 {
-                hook(hook_post, HOOK_ARG);
+                hook(hook_post, hook_arg);
             }
             if p != 0 {
                 lf_checker_rt::callee_cdecl!(NOTIFY, u32, p);
             }
             let obj = get_obj();
             if flag() != 0 {
-                hook(hook_pre, HOOK_ARG);
+                hook(hook_pre, hook_arg);
             }
             wr32h(obj + FIELD_8, 0);
             if flag() != 0 {
-                hook(hook_post, HOOK_ARG);
+                hook(hook_post, hook_arg);
             }
         }
         // Step 7: zero eight words at +0x0c.
         let obj = get_obj();
         if flag() != 0 {
-            hook(hook_pre, HOOK_ARG);
+            hook(hook_pre, hook_arg);
         }
         if flag() != 0 {
-            hook(hook_post, HOOK_ARG);
+            hook(hook_post, hook_arg);
         }
         let mut i = 0u32;
         while i < ZERO_WORDS {
@@ -232,21 +237,21 @@ lf_checker_rt::export!(cdecl, rw_009CF4A0(arg0: u32) -> u32 {
         // Step 8: clear a block at +0x2c through callee 10.
         let obj = get_obj();
         if flag() != 0 {
-            hook(hook_pre, HOOK_ARG);
+            hook(hook_pre, hook_arg);
         }
         let buf = obj + MEMSET_AT;
         if flag() != 0 {
-            hook(hook_post, HOOK_ARG);
+            hook(hook_post, hook_arg);
         }
         lf_checker_rt::callee_cdecl!(MEMSET, u32, buf, 0u32, MEMSET_LEN);
         // Step 9: clear the last mark; the final call's value is returned.
         let obj = get_obj();
         if flag() != 0 {
-            hook(hook_pre, HOOK_ARG);
+            hook(hook_pre, hook_arg);
         }
         wr8h(obj + MARK_A, 0);
         if flag() != 0 {
-            hook(hook_post, HOOK_ARG)
+            hook(hook_post, hook_arg)
         } else {
             obj
         }

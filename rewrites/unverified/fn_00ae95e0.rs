@@ -110,7 +110,8 @@ lf_checker_rt::export!(cdecl, rw_00ae95e0(token: u32) -> u32 {
         const C_EMIT: u32 = 3;
         const C_COOKIE: u32 = 4;
         const C_RESET: u32 = 5;
-        // Code-address tags forwarded to the emit callee (raw immediates).
+        // Code-address tags forwarded to the emit callee (file VAs; the worker
+        // relocates the image, so the original pushes relocated addresses).
         const TAG_FIRST: u32 = 0x00AE95B0;
         const TAG_SECOND: u32 = 0x00AE93C0;
 
@@ -195,11 +196,14 @@ lf_checker_rt::export!(cdecl, rw_00ae95e0(token: u32) -> u32 {
         wr16(obj.wrapping_add(O_SEQ), seq);
         let sb = f32::from_bits(rd32(state.wrapping_add(SI_B)));
         let sa = f32::from_bits(rd32(state.wrapping_add(SI_A)));
-        st[S_BUF / 4] = neg_bits(sb, sign).to_bits();
-        st[S_BUF / 4 + 1] = sb.to_bits();
-        st[S_BUF / 4 + 2] = sa.to_bits();
-        st[(S_BUF + 0x14) / 4] = neg_bits(sa, sign).to_bits();
-        let buf_ptr = core::ptr::addr_of_mut!(st[S_BUF / 4]) as u32;
+        // Note: the stores below address esp while one word is pushed, so the
+        // buffer sits 4 bytes below the face-value offsets: buf+0..12 hold
+        // -B, B, A, -A at frame offsets 0xF0..0xFC.
+        st[S_F0 / 4] = neg_bits(sb, sign).to_bits();
+        st[S_BUF / 4] = sb.to_bits();
+        st[S_BUF / 4 + 1] = sa.to_bits();
+        st[S_BUF / 4 + 2] = neg_bits(sa, sign).to_bits();
+        let buf_ptr = core::ptr::addr_of_mut!(st[S_F0 / 4]) as u32;
         let fill_ans: u32 =
             lf_checker_rt::callee_cdecl!(C_FILL, u32, buf_ptr, edi, obj);
         obj = rd32(lf_checker_rt::relocated(G_OBJ));
@@ -521,7 +525,16 @@ lf_checker_rt::export!(cdecl, rw_00ae95e0(token: u32) -> u32 {
             let ge2 = (x2 >= x0) as u32;
             let dbuf = core::ptr::addr_of_mut!(st[S_COPY / 4]) as u32;
             let _: u32 = lf_checker_rt::callee_cdecl!(
-                C_EMIT, u32, dbuf, count1, edi, TAG_FIRST, ge2, ge3, above, 0
+                C_EMIT,
+                u32,
+                dbuf,
+                count1,
+                edi,
+                lf_checker_rt::relocated(TAG_FIRST),
+                ge2,
+                ge3,
+                above,
+                0
             );
             x7 = fr(&st, 0x174);
             x3 = fr(&st, 0x170);
@@ -619,7 +632,16 @@ lf_checker_rt::export!(cdecl, rw_00ae95e0(token: u32) -> u32 {
             let ge2b = (x2 >= x0) as u32;
             let dbuf2 = core::ptr::addr_of_mut!(st[S_OUT / 4]) as u32;
             let _: u32 = lf_checker_rt::callee_cdecl!(
-                C_EMIT, u32, dbuf2, count2, edi, TAG_SECOND, ge2b, ge3b, above2, 0
+                C_EMIT,
+                u32,
+                dbuf2,
+                count2,
+                edi,
+                lf_checker_rt::relocated(TAG_SECOND),
+                ge2b,
+                ge3b,
+                above2,
+                0
             );
         }
         wr8(lf_checker_rt::relocated(G_DONE), 0);

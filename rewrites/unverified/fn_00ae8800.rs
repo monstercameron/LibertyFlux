@@ -308,6 +308,8 @@ lf_checker_rt::export!(cdecl, rw_00AE8800(_a0: u32, start: u32, end: u32, ctx: u
                         skip_rest = true;
                     }
                     if !skip_rest {
+                        // +1421 block and everything above it is skipped
+                        // when callee 7 accepts.
                         if rd8(class + CLASS_FLAGS) & 8 != 0 {
                             if rd32(obj + COUNT2) == 0 {
                                 let rel: extern "thiscall" fn(u32) -> u32 =
@@ -318,7 +320,7 @@ lf_checker_rt::export!(cdecl, rw_00AE8800(_a0: u32, start: u32, end: u32, ctx: u
                             let uncovered = !rd32(obj + SEEN) & rd32(obj + BITS);
                             wr16(obj + FLAGS, rd16(obj + FLAGS) & 0xBFFF);
                             if g32(LEVEL_MASK).read_unaligned() & uncovered != 0 {
-                                let a: u32 = lf_checker_rt::callee_cdecl!(10, u32);
+                                let a: u32 = lf_checker_rt::callee_cdecl!(10, u32,);
                                 if a & 0xFF == 0 {
                                     wr8(obj + LEVEL, 0);
                                 }
@@ -421,13 +423,13 @@ lf_checker_rt::export!(cdecl, rw_00AE8800(_a0: u32, start: u32, end: u32, ctx: u
                                 }
                             }
                         }
-                    }
-                    if rd32(obj + BITS) & 0x4000_0000 != 0 {
-                        let keep = !(1u32.wrapping_shl(bitsel & 31)) | 0xFF00_0000;
-                        wr32(obj + MASK_A, rd32(obj + MASK_A) & keep);
-                        wr32(obj + MASK_B, rd32(obj + MASK_B) & keep);
-                        wr32(obj + BITS, rd32(obj + BITS) & 0xBFFF_FFFF);
-                        wr32(cur, 0);
+                        if rd32(obj + BITS) & 0x4000_0000 != 0 {
+                            let keep = !(1u32.wrapping_shl(bitsel & 31)) | 0xFF00_0000;
+                            wr32(obj + MASK_A, rd32(obj + MASK_A) & keep);
+                            wr32(obj + MASK_B, rd32(obj + MASK_B) & keep);
+                            wr32(obj + BITS, rd32(obj + BITS) & 0xBFFF_FFFF);
+                            wr32(cur, 0);
+                        }
                     }
                 }
             }

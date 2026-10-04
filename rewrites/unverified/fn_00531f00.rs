@@ -1,4 +1,4 @@
-// original: 0x00531ab0 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race39Standard, player_schema::LeaderboardInfo, 10>::vf7
+// original: 0x00531f00 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race40Standard, player_schema::LeaderboardInfo, 10>::vf7
 
 /// Look up one entry of this leaderboard's row table by index.
 ///
@@ -8,11 +8,11 @@
 /// On success returns `table[index]` (32-bit wraparound addressing, no
 /// bounds check); when the callee reports failure returns `NOT_FOUND` (-1).
 ///
-/// Original: 0x00531ab0 (thiscall, one stack word; ECX is overwritten before
+/// Original: 0x00531f00 (thiscall, one stack word; ECX is overwritten before
 /// any read, so the entry object pointer is ignored).
-lf_checker_rt::export!(thiscall, rw_00531ab0(_this: u32, index: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00531f00(_this: u32, index: u32) -> u32 {
     unsafe {
-        const BOARD_ID: u32 = 0x97;
+        const BOARD_ID: u32 = 0x98;
         const FETCH_CALLEE: u32 = 1;
         const TABLE_SLOT: usize = 4;
         const NOT_FOUND: u32 = 0xffff_ffff;

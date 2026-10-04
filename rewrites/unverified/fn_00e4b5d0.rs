@@ -14,7 +14,10 @@
 /// `<base-dir>` is the NUL-terminated global string. Append `.wmv` and
 /// delete that file; if the deletion reports failure, take the backend
 /// error code instead. Append the full `.wmv` path to the string at
-/// `+0x228`. Then strip the last four characters and repeat with `.tag`
+/// `+0x228`, at the first NUL at index 1 or later (the original's scan
+/// never tests byte 0, so an empty destination keeps its NUL and the
+/// path lands at index 1). Then strip the last four characters and
+/// repeat with `.tag`
 /// and with `.meta`. Returns the third round's deletion result, or the
 /// error code when that deletion failed. A path that would need more than
 /// the scratch buffer takes the fatal-report callee; the contract keeps
@@ -66,9 +69,19 @@ lf_checker_rt::export!(thiscall, rw_00e4b5d0(this: u32) -> u32 {
         }
 
         let subsys = rd32(this.wrapping_add(SUBSYS));
-        lf_checker_rt::callee_thiscall!(1, u32, subsys, RENDER_KEY);
+        lf_checker_rt::callee_thiscall!(
+            1,
+            u32,
+            subsys,
+            lf_checker_rt::relocated(RENDER_KEY)
+        );
         lf_checker_rt::callee_cdecl!(2, u32, rd32(subsys.wrapping_add(BACKEND_SLOT)));
-        lf_checker_rt::callee_cdecl!(3, u32, 0u32, VIDEOS_RENDERED);
+        lf_checker_rt::callee_cdecl!(
+            3,
+            u32,
+            lf_checker_rt::relocated(VIDEOS_RENDERED),
+            0u32
+        );
 
         let delete_file: extern "stdcall" fn(u32) -> u32 =
             core::mem::transmute(rd32(lf_checker_rt::relocated(DELETE_FILE_A)) as usize);
@@ -110,8 +123,16 @@ lf_checker_rt::export!(thiscall, rw_00e4b5d0(this: u32) -> u32 {
             }
             if round == 0 {
                 // First round only: append the .wmv path to the entry.
+                // Quirk: the original's scan reads the byte past the
+                // cursor before advancing, so it never tests byte 0: an
+                // empty destination keeps its NUL and the path lands at
+                // index 1. Replicated exactly.
                 let dest = this.wrapping_add(DEST_OFF);
-                strappend(dest + strlen(dest) as u32, buf.as_ptr() as u32, len);
+                let mut pos = 1usize;
+                while rd8(dest + pos as u32) != 0 {
+                    pos += 1;
+                }
+                strappend(dest + pos as u32, buf.as_ptr() as u32, len);
             }
             // Strip the suffix for the next round.
             len -= 4;

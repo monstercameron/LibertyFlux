@@ -9,14 +9,16 @@
 /// Behaviour: after two priming calls (the first fills a scratch word that
 /// is never read again), the mode bytes pick a constant (`7` unless the
 /// first byte is `0x6a` or the second is nonzero, else `2`) for a third
-/// call. Two more callees each fill one scratch float; those two floats are
-/// handed (twice) to a pair-taking callee, then the constant pair
+/// call. Two more callees share one two-word out-pointer (the first one's
+/// word is overwritten before any read); those two floats are handed
+/// (twice) to a pair-taking callee, then the constant pair
 /// `(-5.0, 5.0)` goes to another. A flag byte starts at `0xff` and, when
 /// the enable byte is set, becomes the low byte of a registry callee's
-/// answer; it is patched into the low byte of the second scratch float.
-/// A probe callee's nonzero answer combined with the selector dword not
-/// being `2` picks a trailing constant (`0x41`, else `0x3b`); a lookup
-/// callee takes the float's address, that constant and the patched float,
+/// answer; it is patched into the low byte of a scratch word the function
+/// never writes (uninitialized stack, pinned to 0 by the contract's stack
+/// fill). A probe callee's nonzero answer combined with the selector dword
+/// not being `2` picks a trailing constant (`0x41`, else `0x3b`); a lookup
+/// callee takes that word's address, the constant and the patched word,
 /// and returns a pointer whose pointed-to word feeds the next call. The
 /// flag byte shifted to the top byte goes to one more call, a zero to the
 /// next, and a final status call's nonzero answer selects `1.0`, else
@@ -59,10 +61,12 @@ lf_checker_rt::export!(cdecl, rw_00E3E7F0() -> u32 {
         }
 
         // Scratch words filled by the priming and float callees. The first
-        // is never read back; the other two feed the pair calls.
+        // is never read back. Both float callees share one out-pointer: the
+        // first fills word 0 (immediately overwritten), the second fills
+        // both words; word 0 feeds the pair calls as the first float and
+        // word 1 as the second.
         let mut _unused: u32 = 0;
-        let mut second: u32 = 0;
-        let mut first: u32 = 0;
+        let mut pair: [u32; 2] = [0, 0];
         lf_checker_rt::callee_cdecl!(
             CAL_PRIME0,
             u32,
@@ -76,7 +80,7 @@ lf_checker_rt::export!(cdecl, rw_00E3E7F0() -> u32 {
         lf_checker_rt::callee_cdecl!(
             CAL_FLOAT_A,
             u32,
-            &mut first as *mut u32 as u32,
+            pair.as_mut_ptr() as u32,
             0x2c
         );
         lf_checker_rt::callee_cdecl!(
@@ -84,12 +88,18 @@ lf_checker_rt::export!(cdecl, rw_00E3E7F0() -> u32 {
             u32,
             7,
             0,
-            &mut second as *mut u32 as u32,
+            pair.as_mut_ptr() as u32,
             0
         );
-        lf_checker_rt::callee_cdecl!(CAL_PAIR, u32, first, second);
+        let first = pair[0];
+        let float2 = pair[1];
+        // A third scratch word the original never writes: it reads
+        // uninitialized stack here, which the contract pins to 0 with a
+        // defined stack fill, so this starts at 0 on both sides.
+        let mut uninit: u32 = 0;
+        lf_checker_rt::callee_cdecl!(CAL_PAIR, u32, first, float2);
         lf_checker_rt::callee_cdecl!(CAL_PRIME1, u32, 1);
-        lf_checker_rt::callee_cdecl!(CAL_PAIR, u32, first, second);
+        lf_checker_rt::callee_cdecl!(CAL_PAIR, u32, first, float2);
         lf_checker_rt::callee_cdecl!(CAL_FIVE, u32, NEG_FIVE, POS_FIVE);
 
         // Incoming EBX is forced to 0xff by an OR; its entry value is dead.
@@ -102,7 +112,7 @@ lf_checker_rt::export!(cdecl, rw_00E3E7F0() -> u32 {
             );
             flag = (answer & 0xff) as u8;
         }
-        second = (second & 0xffffff00) | flag as u32;
+        uninit = (uninit & 0xffffff00) | flag as u32;
         let probe: u32 = lf_checker_rt::callee_cdecl!(CAL_PROBE, u32, 0);
         let tail = if probe & 0xff != 0
             && rd32(lf_checker_rt::relocated(SELECTOR)) != 2
@@ -114,9 +124,9 @@ lf_checker_rt::export!(cdecl, rw_00E3E7F0() -> u32 {
         let cell_ptr: u32 = lf_checker_rt::callee_cdecl!(
             CAL_LOOKUP,
             u32,
-            &mut second as *mut u32 as u32,
+            &mut uninit as *mut u32 as u32,
             tail,
-            second
+            uninit
         );
         lf_checker_rt::callee_cdecl!(CAL_CELL, u32, rd32(cell_ptr));
         lf_checker_rt::callee_cdecl!(CAL_FLAG, u32, (flag as u32) << 24);
