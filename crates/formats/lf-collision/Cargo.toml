@@ -1,0 +1,17 @@
+[package]
+name = "lf-collision"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Reader for GTA IV collision bounds resources (WBN/WBD)"
+
+[lints]
+workspace = true
+
+[dependencies]
+flate2.workspace = true
+
+[dev-dependencies]
+aes.workspace = true
+cipher.workspace = true
