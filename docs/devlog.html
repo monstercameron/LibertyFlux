@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#structures-events">Class layouts: event classes (CEvent*)</a></li>
       <li><a href="#structures-audio">Class layouts: audio classes</a></li>
       <li><a href="#pilot-09">Pilot lane 09: five functions rewritten and timed</a></li>
       <li><a href="#natives-19">Native handlers SET_RADAR_SCALE to SET_VIEWPORT_MIRRORED: what they reveal</a></li>
@@ -157,6 +158,38 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="structures-events">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Class layouts: event classes (CEvent*)</h2>
+      <p><span class="evidence verified">Verified</span> All 82 event classes now have recovered virtual interfaces, and 58 have recovered constructors. The headline finding is that nearly every leaf event answers two virtual slots with its own pair of constant numbers, which look like per-type identity codes. About two thirds of the family's virtual slots point into the encrypted code range and stay unknown.</p>
+      <h3>What was asked</h3>
+      <p>Recover the object layouts and virtual interfaces of the event family: for each class, which virtual slots it overrides or inherits and what those functions do, its constructors and destructors, its size, its fields with widths and likely kinds, and what it contains or creates. Then describe the family as a whole: the inheritance tree, the shared base interface, per-class sizes, how much of the code is encrypted, and a rewrite order.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The family has five roots with single inheritance throughout. The main root carries 21 virtual slots; a mid-level response branch adds one slot; two leaf classes add their own slot directly under the root; the handler, scanner, factory and group classes form four small separate hierarchies with 84, 4, 2 and 1 slots.</p>
+      <p><span class="evidence verified">Verified</span> Slot counts and coverage across all 82 classes:</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Classes matched to a virtual table</td><td role="cell" data-label="Value">82 of 82</td><td role="cell" data-label="What it means">every class in the batch is analysed</td></tr>
+      <tr role="row"><td role="cell">Virtual slots counted</td><td role="cell" data-label="Value">1772</td><td role="cell" data-label="What it means">the full interface surface of the family</td></tr>
+      <tr role="row"><td role="cell">Slots in the encrypted range</td><td role="cell" data-label="Value">1118 (63 percent)</td><td role="cell" data-label="What it means">not analysable without running the game</td></tr>
+      <tr role="row"><td role="cell">Standalone constructors found</td><td role="cell" data-label="Value">63 in 58 classes</td><td role="cell" data-label="What it means">the rest build events inline or in encrypted code</td></tr>
+      <tr role="row"><td role="cell">Exact object sizes</td><td role="cell" data-label="Value">1 (76 bytes)</td><td role="cell" data-label="What it means">all other sizes are lower bounds</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Slot zero of every class is the scalar deleting destructor; the shape was confirmed for every readable target. Three classes merge the deleting step into a single destructor body instead.</p>
+      <p><span class="evidence verified">Verified</span> 55 classes override the first virtual slot after the destructor with a stub returning a per-class constant, and 49 do the same for the second slot. <span class="evidence">Inferred</span> These two numbers are most likely an event type identity and a category or response code. The full per-class table is in the lane data file.</p>
+      <p><span class="evidence verified">Verified</span> Base layouts are small: the root holds one integer and one flag byte above its table pointer, and the response branch adds one flag and two integers with fixed initial values. Richer leaves include a damage event that embeds a ped damage-response object and carries refcounted entity pointers, a gunshot event with a triple of floating-point fields, an event group holding an inline queue of eight fixed entries, and a scanner of at least 296 bytes with several embedded members.</p>
+      <p><span class="evidence verified">Verified</span> Events are normally built as short-lived stack values or through a custom pool allocator that takes no size argument, which is why almost no exact sizes could be recovered. The one exception is the global event group, built once as a singleton through the normal allocator at 76 bytes.</p>
+      <p><span class="evidence">Inferred</span> Two size hints from an older public build (handler and scanner pads) sit just above the observed field extents here, which is consistent with those sizes still holding, but they remain unverified for this build.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Suggested rewrite order: the two base classes first (layouts, destructor shape, identity-stub convention), then the event group container, then leaf events parents-before-children, then the factory, and the scanner and handler dispatch loop last since they depend on every event type. The handler's per-event methods can likely be mapped to event types using the new identity table. The 24 classes without a standalone constructor and the pool allocator behind heap events are explicit follow-up work.</p>
+      <h3>How to reproduce it</h3>
+      <p>Join the batch classes to the recovered virtual tables by their object-locator entries. Scan the unencrypted code for each table address as an immediate value, keeping only hits backed by a relocation entry. Treat a function as a constructor only if disassembly shows it storing that table at the object's start; treat slot-zero targets as deleting destructors only if they show the flags-check, delete and return-this shape. Find allocation sites by scanning for direct calls to each constructor and matching the strict push-size, call, move-to-this pattern in the disassembled caller. Collect field accesses across each class's own methods and roll base-class fields into each descendant for cumulative layouts.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first run reported ten constructors for a task event class; manual reading showed nine were large functions building the event as a stack temporary. Constructor attribution was then restricted to functions storing the table at the object's start, which cut the total to the 63 real ones. A second bug classified dozens of handler dispatch methods as deleting destructors because they also call constructors; requiring the exact destructor ending fixed it. An early size heuristic that accepted any nearby constant produced impossible odd sizes, so it was replaced with a strict allocator-call pattern, which left exactly one size standing. The darkest class keeps only one analysable method with its destructor encrypted, and both New-York factory and scanner variants show almost nothing readable.</p>
+      </article>
 
       <article class="entry" id="structures-audio">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
