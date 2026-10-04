@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot-01">Pilot lane 01: five functions rewritten and timed</a></li>
       <li><a href="#merge-structures">Merging the class layouts into one set of Rust types</a></li>
       <li><a href="#merge-names">Merging the names: what 22 native lanes agree on</a></li>
       <li><a href="#replacement-loader">Replacement loader built and tested without the game</a></li>
@@ -176,6 +177,44 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot-01">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Pilot lane 01: five functions rewritten and timed</h2>
+      <p>Five small original game functions were rewritten in Rust and each rewrite was shown to behave identically to its original over at least a thousand differential trials, with honest per-function timings recorded for the schedule estimate. <span class="evidence verified">Verified</span> All five passed; the comparison caught one genuine rewrite bug, one driver bug, and a deliberately planted mutant.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite the first five pilot leaf functions in Rust, prove each rewrite behaves identically to the original by native execution comparison, and record exactly how long each one takes, including failures. The schedule estimate will be built from these timings.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All five rewrites agree with their originals on every trial: 5,100 matching trials in total plus 13 fault-parity trials where both sides fault identically on wild inputs.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Function</th><th role="columnheader">What it does</th><th role="columnheader">Trials agreed</th><th role="columnheader">Attempts</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">First</td><td role="cell" data-label="What it does">returns a game datum address derived from the load base</td><td role="cell" data-label="Trials agreed">1010 of 1010</td><td role="cell" data-label="Attempts">1</td></tr>
+      <tr role="row"><td role="cell">Second</td><td role="cell" data-label="What it does">returns a second game datum address derived from the load base</td><td role="cell" data-label="Trials agreed">1010 of 1010</td><td role="cell" data-label="Attempts">1</td></tr>
+      <tr role="row"><td role="cell">Third</td><td role="cell" data-label="What it does">appends one row to three parallel tables and returns the row count</td><td role="cell" data-label="Trials agreed">1038 of 1038</td><td role="cell" data-label="Attempts">2</td></tr>
+      <tr role="row"><td role="cell">Fourth</td><td role="cell" data-label="What it does">copies one table entry to an output slot</td><td role="cell" data-label="Trials agreed">1018 of 1018</td><td role="cell" data-label="Attempts">2</td></tr>
+      <tr role="row"><td role="cell">Fifth</td><td role="cell" data-label="What it does">stores two arguments into fixed structure slots</td><td role="cell" data-label="Trials agreed">1024 of 1024</td><td role="cell" data-label="Attempts">1</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The comparison is strict: return values, every written word, stack pointer movement, untouched registers, and exact stack artifacts are all asserted per trial. The two simplest functions return relocated addresses, so their rewrites take the load base as an explicit parameter rather than baking in an address.</p>
+      <p><span class="evidence verified">Verified</span> The table-append function re-reads its row count before every store, which matters when a wraparound count makes an early store land on the count slot itself. The first rewrite read the count once and failed 28 trials; the fixed rewrite matches on all of them including dedicated aliasing trials.</p>
+      <p><span class="evidence verified">Verified</span> The table-copy function reads from uninitialised-image memory that is zero in a fresh process, so each trial sets the entry under test to a known value first. Its byte shuffle provably reproduces its input for every possible word, and the rewrite expresses the net copy directly.</p>
+      <p><span class="evidence verified">Verified</span> A deliberately planted one-bit mistake in a copy of the first rewrite was caught on all 1010 honesty-test trials.</p>
+      <p><span class="evidence verified">Verified</span> Lane time was about 52 minutes for five verified functions, roughly 10 minutes per function including write-up, or about 8 minutes excluding it. The comparison runs were the largest cost at 18 minutes; single-shot trials cost a fraction of a second each under load.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Rewrites that need a game address take it as an explicit parameter (load base or table pointer) instead of baking in a value. This worked for three of the five functions and keeps the Rust portable.</li>
+      <li>Wraparound counts and indices stay in every future corpus: the one genuine bug this lane found only triggers on a wraparound input.</li>
+      <li>The checker should record memory diffs on faults too, so faults after partial writes become comparable; this lane had to exclude that case and cover the same code path with mapped trials instead.</li>
+      <li>A persistent checker worker that maps the image once would cut the largest time cost, the per-trial process setup, to nearly nothing.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build the lane's extended 32-bit harness and the rewrites crate for the 32-bit Windows target, then run the comparison driver, which executes both sides over edge values plus a thousand seeded-random trials per function and asserts identical observations. A separate script confirms the built library exports all five symbols with the expected callee stack cleanup. All scripts, seeds, and expected trial counts are recorded with the lane's scratch outputs.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> A first probe of the relocation table double-added the page base and wrongly concluded the absolute addresses were unrelocated. The running functions contradicted it immediately, and a corrected probe settled every site. Lesson kept: a cheap runtime check beats re-reading library docs.</p>
+      <p><span class="evidence verified">Verified</span> A first dump of the copied table read past the end of the file-backed data and returned bytes belonging to a later section. The table actually lives in zero-filled memory, which changed the test design: every trial now sets the entry under test explicitly.</p>
+      <p><span class="evidence verified">Verified</span> One driver assertion wrongly claimed a register holds the result at return; the register actually carries the result mid-function but is saved and restored. It failed all 1018 trials while the rewrite matched on every stored word, which made the driver bug obvious.</p>
+      </article>
 
       <article class="entry" id="merge-structures">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
