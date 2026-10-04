@@ -10,6 +10,8 @@ and counts by source, category and severity. Every issue keeps its source and st
 pass can mark them `fixed` or `not-an-issue` and the log is regenerated without losing that.
 
 Usage: python issue_log.py [--build PATH] [--review PATH] [--out PATH]
+A source not given on a run keeps its issues (and their statuses) from the previous log, for files still in the
+verified tree, so refreshing only the pattern checks never drops the build check's or the review's findings.
 
 Working through the log. These read or change the log named by --out (default rewrites/review/issues.json) and
 never regenerate it:
@@ -91,6 +93,22 @@ def merge(issues, previous=None):
         listed = sorted(by_file[path].values(), key=lambda i: (SEVERITY[i["severity"]], i["category"], i["title"]))
         files.append({"file": path, "worst": listed[0]["severity"], "issues": listed})
     return files
+
+
+def carried_over(previous, given, exists):
+    """Issues of the previous log whose source this run does not supply, by source, so that regenerating without
+    --build or --review keeps them (and their statuses) instead of dropping them. Lint is always rerun, so lint
+    issues are never carried; issues of files no longer in the verified tree are dropped. Pure: `given` maps
+    "build" and "review" to whether this run supplies them, `exists` tells whether a tree path still exists."""
+    kept = {}
+    for entry in (previous or {}).get("files", []):
+        if not exists(entry["file"]):
+            continue
+        for issue in entry["issues"]:
+            source = issue["source"].split(":")[0]
+            if source in given and not given[source]:
+                kept.setdefault(source, []).append(dict(issue, file=entry["file"]))
+    return kept
 
 
 def summarise(files):
@@ -304,9 +322,16 @@ def main(argv=None):
     if args.review:
         issues += from_review(read_json_lines(args.review))
     previous = json.loads(open(out, encoding="utf-8").read()) if os.path.exists(out) else None
+    kept = carried_over(previous, given={"build": bool(args.build), "review": bool(args.review)},
+                        exists=lambda path: (root / "rewrites" / "verified" / path).is_file())
+    for source, rows in sorted(kept.items()):
+        issues += rows
+        flag = "--build" if source == "build" else "--review"
+        print(f"kept {len(rows)} {source} issues from the previous log (pass {flag} to refresh them)", file=sys.stderr)
     files = merge(issues, previous)
     log = {"checked": checked, "summary": summarise(files), "systemic": systemic, "files": files}
-    os.makedirs(os.path.dirname(out), exist_ok=True)
+    if os.path.dirname(out):
+        os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, "w", encoding="utf-8", newline="\n") as fh:
         json.dump(log, fh, indent=1)
         fh.write("\n")

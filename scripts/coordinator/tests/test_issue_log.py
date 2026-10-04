@@ -201,6 +201,30 @@ class TestMainOnDisk(unittest.TestCase):
         self.assertEqual(self.run_main()[0], 0)  # regenerate
         self.assertEqual(self.statuses(), [("functions/fn_00401000.rs", "lint:header", "fixed")])
 
+    def test_sources_not_given_keep_their_issues(self):
+        review = self.root / "review.jsonl"
+        review.write_text(json.dumps({"file": "functions/fn_00401020.rs", "severity": "high", "category": "ub",
+                                      "title": "t", "detail": "d", "when": "post-bring-up", "label": "Verified"}) + "\n")
+        self.assertEqual(self.run_main("--review", str(review))[0], 0)
+        self.run_main("--mark", "functions/fn_00401020.rs", "review", "fixed")
+        code, _, err = self.run_main()  # lint only: the review's issue and its status must survive
+        self.assertEqual(code, 0)
+        self.assertIn("kept 1 review issues from the previous log (pass --review to refresh them)", err)
+        self.assertIn(("functions/fn_00401020.rs", "review", "fixed"), self.statuses())
+        # A file that leaves the verified tree takes its carried issues with it.
+        (self.root / "rewrites" / "verified" / "functions" / "fn_00401020.rs").unlink()
+        self.run_main()
+        self.assertNotIn("functions/fn_00401020.rs", [f for f, _, _ in self.statuses()])
+
+    def test_out_without_a_folder(self):
+        cwd = os.getcwd()
+        os.chdir(self.root)
+        try:
+            self.assertEqual(self.run_main("--out", "issues.json")[0], 0)
+            self.assertTrue((self.root / "issues.json").is_file())
+        finally:
+            os.chdir(cwd)
+
     def test_read_modes_do_not_regenerate(self):
         code, _, err = self.run_main("--summary")
         self.assertEqual(code, 1)

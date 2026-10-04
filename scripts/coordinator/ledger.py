@@ -213,7 +213,7 @@ def files_under(folder):
 
 
 def load_game_set(path):
-    rows = common.load_rows(json.loads(open(path, encoding="utf-8").read()), "functions")
+    rows = common.load_rows(json.loads(Path(path).read_text(encoding="utf-8")), "functions")
     return {common.va(r.get("address") or r["start"]) for r in rows if r.get("kind") not in ("library", "runtime")}
 
 
