@@ -177,12 +177,34 @@
 //! merges, operand types of the instructions this crate emits, and the
 //! Vulkan interface decorations. An ignored test runs the real `spirv-val`
 //! when `LF_SPIRV_VAL` points at it.
+//!
+//! # 7. Debugging aids
+//!
+//! Three modules turn programs and modules into text for people, built on
+//! the decoder, the translator and the validator above:
+//!
+//! * [`listing`]: one line per decoded instruction in assembler syntax,
+//!   with the dword offsets that [`Error`] reports;
+//! * [`spirv_text`]: the emitted SPIR-V as text (every opcode this crate
+//!   emits by name, ids by their unique `OpName`), and a summary of a
+//!   [`Module`]'s reflection;
+//! * [`coverage`]: a census over many programs (opcodes, register files,
+//!   modifiers and declarations used, and the translator's verdict on each
+//!   program), so a run over the game's shaders shows what fraction
+//!   translates and what stops the rest.
+//!
+//! The `lf_dxso_dump` example prints all three for a `.fxc` file. Their
+//! output for the game's own shaders is derived from game files: it stays
+//! on the user's machine and is never committed (`AGENTS.md`, rule 1).
 
 #![forbid(unsafe_code)]
 
 pub mod binding;
+pub mod coverage;
 pub mod decode;
+pub mod listing;
 pub mod spirv;
+pub mod spirv_text;
 mod translate;
 pub mod validate;
 
