@@ -7,15 +7,16 @@
 /// its own last-run slot and interval: callee 1 re-seeds the collector, the
 /// callee 2 block re-resolves the active pair, callee 4 refreshes the cache,
 /// and the main body below runs only when the body slot expired. The stamp is
-/// recorded in the body slot on exit; the function returns the stamp.
+/// recorded in the body slot on exit; the function returns the stamp, or the
+/// elapsed time since the body slot when it exits early through the gate.
 ///
 /// The callee 2 block resolves a table entry from callee 2's answer (a small
 /// integer at `SEL_OFF` selects one of its words) and, when the entry equals
 /// the current word but the pair changed, runs callee 3 on it, then stores
 /// the pair. The main body has three bounded loops driven by scripted
 /// callees: loop 1 walks `FLOAT_N` floats comparing the live table against
-/// the shadow table selected by callee 5's answer (a zero base compares the
-/// table with itself, so only an unordered comparison proceeds), loop 2
+/// the shadow array callee 5 points at (an unordered comparison, including
+/// either side NaN, proceeds to the update), loop 2
 /// walks `INT_N` words comparing a probed array against the live table, and
 /// loop 3 walks `STR_N` string slots resolving each through callee 20. Each
 /// iteration is filtered by its loop's gatekeeper call; a changed entry is
@@ -93,7 +94,8 @@ lf_checker_rt::export!(cdecl, rw_009fc880() -> u32 {
         let since_body = rd32(g(BODY_SLOT));
         if since_body != 0 && stamp.wrapping_sub(since_body) < rd32(g(BODY_AFTER)) {
             let _: u32 = lf_checker_rt::callee_cdecl!(28, u32,);
-            return stamp;
+            // The early exit returns the elapsed time still in eax, not the stamp.
+            return stamp.wrapping_sub(since_body);
         }
         // Shadow buffers for the three loops (contents unobserved).
         let mut m1 = [0u32; 24];
@@ -109,18 +111,20 @@ lf_checker_rt::export!(cdecl, rw_009fc880() -> u32 {
             while (i as i32) < float_n as i32 {
                 let gate: u32 = lf_checker_rt::callee_cdecl!(7, u32, i);
                 if gate & 0xFF == 0 {
-                    let a = rdf(shadow.wrapping_add(i.wrapping_mul(4)).wrapping_add(tab));
+                    // The original subtracts the table base from the shadow
+                    // pointer first, so the shadow side reads the pointer as-is.
+                    let a = rdf(shadow.wrapping_add(i.wrapping_mul(4)));
                     let b = rdf(tab.wrapping_add(i.wrapping_mul(4)));
                     if a != b {
                         let _: u32 = lf_checker_rt::callee_thiscall!(
                             8, u32, m1.as_mut_ptr() as u32, 4u32, 0x1du32
                         );
-                        let v = rd32(shadow.wrapping_add(i.wrapping_mul(4)).wrapping_add(tab));
+                        let v = rd32(shadow.wrapping_add(i.wrapping_mul(4)));
                         wr32(tab.wrapping_add(i.wrapping_mul(4)), v);
                         let _: u32 = lf_checker_rt::callee_cdecl!(
                             9, u32, m1.as_mut_ptr() as u32, 0x3cu32
                         );
-                        let w = rd32(shadow.wrapping_add(i.wrapping_mul(4)).wrapping_add(tab));
+                        let w = rd32(shadow.wrapping_add(i.wrapping_mul(4)));
                         wr32(tab.wrapping_add(i.wrapping_mul(4)), w);
                         let _: u32 =
                             lf_checker_rt::callee_thiscall!(10, u32, m1.as_mut_ptr() as u32);

@@ -28,7 +28,7 @@ lf_checker_rt::export!(thiscall, rw_00ca76f0(this: u32, _a0: u32, _a1: u32, _a2:
         let ready: extern "thiscall" fn(u32) -> u32 =
             core::mem::transmute(slot as usize);
         if (ready(owner) as u8) != 0 {
-            let check = lf_checker_rt::callee_cdecl!(CHECK, u32);
+            let check = lf_checker_rt::callee_cdecl!(CHECK, u32,);
             if (check as u8) != 0 {
                 return check;
             }

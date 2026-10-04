@@ -20,7 +20,7 @@ lf_checker_rt::export!(stdcall, rw_0052fdb0(index: u32) -> u32 {
             _unused: u32,
             count: u32,
             keys: u32,
-            _gap: [u32; 3],
+            _gap: [u32; 2],
             values: u32,
         }
         #[inline(always)]
@@ -28,7 +28,7 @@ lf_checker_rt::export!(stdcall, rw_0052fdb0(index: u32) -> u32 {
             unsafe { (a as *const u32).read_unaligned() }
         }
 
-        let mut out = FetchOut { _unused: 0, count: 0, keys: 0, _gap: [0; 3], values: 0 };
+        let mut out = FetchOut { _unused: 0, count: 0, keys: 0, _gap: [0; 2], values: 0 };
         let ok: u32 = lf_checker_rt::callee_fastcall!(FETCH, u32, BOARD_ID, core::ptr::addr_of_mut!(out) as u32);
         if ok & 0xff == 0 {
             return NONE;
