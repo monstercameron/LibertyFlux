@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#naming-01">Naming a run of leaderboard factory routines by the constructor each one calls</a></li>
       <li><a href="#operating-the-swarm">Operating notes: running forty-odd agent lanes on one laptop</a></li>
       <li><a href="#production-s230">Two wrong rewrites passed before a sibling loop caught the count</a></li>
       <li><a href="#production-b164">A correct rewrite the checker disagrees with itself about</a></li>
@@ -325,6 +326,49 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="naming-01">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Naming a run of leaderboard factory routines by the constructor each one calls</h2>
+      <p>A batch of one hundred and fifty consecutive unnamed routines turned out to be one family: per-board leaderboard factory routines, each calling a different schema-specific constructor. One hundred and seventeen were named after their schema, and thirty-three batch addresses proved to be mid-routine points rather than routine starts.</p>
+      <h3>What was asked</h3>
+      <p>Propose a descriptive name for each of one hundred and fifty consecutive unnamed functions, working out what the group has in common first and naming each function from the strongest available evidence.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Nearly all of the batch shares one of two code shapes. Every routine allocates a small board object, runs one per-schema constructor on it, allocates and fills a row array, links both into caller records, and jumps to a shared epilogue instead of returning. The only difference between routines is which constructor is called.</p>
+      <p><span class="evidence verified">Verified</span> A pointer table next to the shared epilogue references every real routine in the batch, confirming they are called indirectly as a family. Thirty-three batch addresses appear nowhere in that table and each sits strictly inside a neighbouring routine; disassembling from them produces garbage, so they are inventory errors, not functions.</p>
+      <p><span class="evidence verified">Verified</span> Schema attribution was checked two independent ways for every named routine: the constructor each routine calls maps to a class whose name comes from runtime type information, and the per-board table address that constructor installs matches the recorded table for that same class. All one hundred and seventeen agreed on both checks with no name collisions.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Outcome</th>
+      <th role="columnheader">Count</th>
+      <th role="columnheader">Meaning</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Named, medium confidence</th>
+      <td role="cell" data-label="Count">117</td>
+      <td role="cell" data-label="Meaning">Behaviour and schema verified; the create wording is ours</td>
+      </tr>
+      <tr role="row">
+      <th role="columnheader">Unnamed, low confidence</th>
+      <td role="cell" data-label="Count">33</td>
+      <td role="cell" data-label="Meaning">Proven mid-routine addresses, left empty deliberately</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Real routines are named create_leaderboard_followed by the schema name in snake case, with no class prefix since the owning dispatcher is still unknown.</li>
+      <li>The thirty-three interior addresses are reported with empty names so the merge step drops them instead of inventing labels for non-functions.</li>
+      <li>A later lane can name two neighbouring handler families the same way: each routine's distinguishing call target identifies its schema through the class records.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble each batch address from the executable using the image base offset, cluster the routines by instruction shape, and collect each routine's direct call targets. The constructor call in each routine resolves to a schema through the class structure records, and the table each constructor installs cross-checks the match. Routine starts are confirmed by a shared head pattern plus a tail jump into the common epilogue; batch addresses failing that test are checked against the surrounding tiling to prove they fall inside neighbours.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first real-or-bogus check compared head bytes against the long encoding of pushing a small constant and rejected every routine in the batch; the compiler uses the short two-byte encoding, and fixing that turned a zero percent pass rate into the expected split. One batch size was also wrong (listed shorter than the routine truly is), which initially misclassified a real routine as bogus until the check learned to retry the family's two known sizes.</p>
+      </article>
 
       <article class="entry" id="operating-the-swarm">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
