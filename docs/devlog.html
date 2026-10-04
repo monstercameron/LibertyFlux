@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b145">The checker disagreed with the file on one constant</a></li>
       <li><a href="#production-s219">Do not combine snapshots with scripted writes on stack out-parameters</a></li>
       <li><a href="#production-s206">Some game functions consume registers their callees clobber</a></li>
       <li><a href="#production-b144">Two checker gaps found while verifying a five-function batch</a></li>
@@ -321,6 +322,25 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b145">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>The checker disagreed with the file on one constant</h2>
+      <p>A production lane finished a 992-byte layout routine everywhere except a single float constant: the checking worker behaves as if the constant holds one bit pattern while the executable file holds another, so a rewrite matching the file fails the check and a rewrite matching the worker would be wrong against the game.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite four adjacent replay-system routines in Rust and prove each bit-identical to the original with the differential checker, which runs the original and the rewrite from identical state and compares everything observable.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Two routines passed cleanly, 1200 trials each with zero failures: a 384-byte draw routine and a 452-byte input poll with four distinct call shapes.</p>
+      <p><span class="evidence verified">Verified</span> The third routine is green everywhere except one heap word. Over 100 trials every other check passed on every trial: all 22 intercepted calls with exact arguments, stack balance, return value, and all remaining memory writes. Only the word fed by one subtracted constant differs.</p>
+      <p><span class="evidence verified">Verified</span> Solving backwards from five trials pins the worker's effective constant to a narrow range that excludes the file's bytes; forward simulation confirms the file value reproduces none of the sensitive trials. The file bytes were re-read three ways and sit in a coherent ascending constant table. The instruction reads the right address, relocation tables do not cover it, no patch site overlaps it, and the file did not change mid-lane.</p>
+      <p><span class="evidence">Inferred</span> The constant reads use absolute addresses with no relocation entries, so under the worker's relocated image base they read below the mapped image. One such read returns file-correct bytes and another does not, which points at whatever backs those low addresses in the worker rather than at the game code.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The routine was deferred with a complete retry kit (contract, rewrite, and float forensics) instead of embedding the worker's value to force a pass. A checker lane should find what backs absolute low reads in the worker, for example by logging the mapping there at setup, and consider mapping the image at its preferred base so absolute reads work. Every lane whose functions read data constants through unrelocated addresses should treat mismatches there as suspect until this is resolved.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the deferred lane's staged contract for the layout routine: about half the trials fail, every failure is heap-only at the same single word, and the implied constant clusters away from the file bytes on every sensitive trial. A small host program recomputing the tail from the observed inputs confirms the file value cannot produce the worker's outputs.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Three separate debug cycles traced back to misreading hexadecimal offsets as decimal when tracking the stack pointer by hand; a probe that wrote distinctive values through the intercepted calls settled each slot mapping in seconds where arithmetic had failed for an hour. The manual's per-argument masking also turned out to be a newer worker feature the stock binary ignores, so a pushed single byte was handled by fabricating its source value with zero upper bytes instead.</p>
+      </article>
 
       <article class="entry" id="production-s219">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

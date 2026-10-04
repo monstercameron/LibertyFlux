@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Code map: rebuilt from live data on every status update",
+    "title": "Devlog: The checker disagreed with the file on one constant",
     "commit": null,
+    "summary": "Findings from the r-b145 lane.",
+    "changes": [
+      "New devlog entry: The checker disagreed with the file on one constant.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Code map: rebuilt from live data on every status update",
+    "commit": "146c7e5d2d4b52e64645c9382872349a4d0ea0a4",
     "summary": "The map of squares on the front page had not changed since the first inventory. It now follows the work.",
     "changes": [
       "The map was written once, from the first function inventory, and nothing regenerated it. It still described 45,224 functions and showed nothing rewritten or verified.",

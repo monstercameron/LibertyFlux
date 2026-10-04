@@ -12,8 +12,8 @@
   },
   "stages": {
     "identified": 37699,
-    "named": 11903,
-    "rewritten": 6351,
+    "named": 11908,
+    "rewritten": 6369,
     "verified": 6093
   },
   "structures": 340,
@@ -99,13 +99,13 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 11903,
+      "value": 11908,
       "unit": "functions",
-      "source": "m-names lane's merge (9006) plus descriptive names given by production and naming lanes (2897); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9006) plus descriptive names given by production and naming lanes (2902); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 6351,
+      "value": 6369,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
@@ -4021,12 +4021,12 @@
       "verified": 25
     },
     {
-      "stage": "named",
+      "stage": "rewritten",
       "from": "0x00D6D1D0",
       "to": "0x00D72AF0",
       "count": 37,
-      "named": 20,
-      "rewritten": 17,
+      "named": 23,
+      "rewritten": 19,
       "verified": 17
     },
     {
@@ -4376,8 +4376,8 @@
       "from": "0x00E465EE",
       "to": "0x00E4BF0E",
       "count": 58,
-      "named": 10,
-      "rewritten": 0,
+      "named": 13,
+      "rewritten": 2,
       "verified": 0
     },
     {
