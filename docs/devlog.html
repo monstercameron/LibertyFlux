@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-rpf-img">Rust reader: RPF and IMG archives</a></li>
       <li><a href="#format-models">Rust reader: drawables and fragments (WDR, WDD, WFT)</a></li>
       <li><a href="#format-map-data">Rust reader: map definition and placement files (IDE, WPL, IPL-style text)</a></li>
       <li><a href="#reloc-reconcile">The relocation table is fine; three lanes read it wrong</a></li>
@@ -109,6 +110,26 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-rpf-img">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: RPF and IMG archives</h2>
+      <p>A new Rust crate called lf-archive now opens every archive the game ships, all 49 RPF files and all 254 IMG files, with no parse failures. It lists every entry, reads entry bytes, decrypts tables with a key found at run time, and decompresses where the format allows it.</p>
+      <h3>What was asked</h3>
+      <p>Write a clean Rust reader for the two archive containers the game ships, RPF and IMG version 3, covering headers, tables of contents including encryption, entry records, directories, and reading entry bytes. The reader had to be original work, platform independent, return errors instead of panicking, and prove itself by opening every archive in the game folder.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The game ships two RPF versions: version 3 for the 45 audio banks and version 2 for the three model archives and the single game data archive. All tables of contents are encrypted, and one small data archive also encrypts its file contents.</p>
+      <p><span class="evidence verified">Verified</span> IMG archives are all version 3. All but four are encrypted; the four open ones are small path and script index files. Five archives are empty headers with no entries.</p>
+      <p><span class="evidence verified">Verified</span> Across all archives there are about three and a half thousand RPF files and fifty two thousand IMG entries. Roughly nine in ten IMG entries are engine resources in the RSC container, which uses standard zlib compression. No shipped RPF entry uses the archive-level compression flag.</p>
+      <p><span class="evidence verified">Verified</span> RPF version 3 stores name hashes instead of names, so file names must be resolved through an external hash table. Directory hashes in those archives do not resolve through public tables.</p>
+      <p><span class="evidence">Inferred</span> Three header words remain unknown: one in the RPF header that is always zero, one in RPF directory records, and one in the IMG header where a single file differs from all the rest. None affects reading.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The crate exposes one shared archive interface so later code can open either container the same way. The encryption key is located in the owner's game executable at run time by its published identifier and kept in memory only. Name resolution for hashed archives takes an external table rather than embedding one. The next step is wiring that table up and handing payload decoding to the model and texture work.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the crate and run its tests with the game folder pointed to by an environment variable. Unit tests use hand-built fixtures only; the integration test walks the whole game folder, parses every archive, checks every entry range, and reads back small entries. A bundled example prints a per-file summary, and a second example emits the per-archive census used for the counts above.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>An early probe applied decryption to a file that needed none and produced a nonsense entry count; the full survey was already correct and the probe was fixed. A hand-built test archive accidentally gave one record two parents, which real archives never do, and the fixture was rebuilt as a strict tree. The shell reports failures for successful build commands because build progress goes to the error stream, so every result was confirmed from the tool's own summary lines instead.</p>
+      </article>
 
       <article class="entry" id="format-models">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
