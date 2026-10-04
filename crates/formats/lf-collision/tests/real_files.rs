@@ -147,10 +147,10 @@ fn parse_img(path: &Path, key: &[u8; 32]) -> Result<Vec<ArchiveEntry>, String> {
         .into_iter()
         .enumerate()
         .map(|(i, (size, offset))| ArchiveEntry {
-            name: names
-                .get(i)
-                .map(|n| String::from_utf8_lossy(n).into_owned())
-                .unwrap_or_else(|| format!("?{i}")),
+            name: names.get(i).map_or_else(
+                || format!("?{i}"),
+                |n| String::from_utf8_lossy(n).into_owned(),
+            ),
             offset,
             size,
         })
@@ -165,8 +165,7 @@ fn list_img_files(dir: &Path, out: &mut Vec<PathBuf>) {
             list_img_files(&path, out);
         } else if path
             .extension()
-            .map(|e| e.eq_ignore_ascii_case("img"))
-            .unwrap_or(false)
+            .is_some_and(|e| e.eq_ignore_ascii_case("img"))
         {
             out.push(path);
         }
@@ -297,11 +296,7 @@ fn whole_corpus_parses_and_validates() {
                         {
                             box_shape_bad += 1;
                         }
-                        let want_flag = if m.mesh_kind == lf_collision::MeshKind::Bvh {
-                            1
-                        } else {
-                            0
-                        };
+                        let want_flag = u8::from(m.mesh_kind == lf_collision::MeshKind::Bvh);
                         if m.tree_flag != want_flag {
                             tree_flag_bad += 1;
                         }

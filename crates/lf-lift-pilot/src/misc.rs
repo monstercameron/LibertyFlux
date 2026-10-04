@@ -22,6 +22,7 @@ pub struct ListArena {
 }
 
 /// Report whether any node holds `val`. (Original: `list_contains`.)
+#[must_use]
 pub fn list_contains(arena: &ListArena, head: Option<ListId>, val: u32) -> bool {
     let mut node = head;
     while let Some(id) = node {
@@ -65,7 +66,7 @@ pub fn oneshot_table_init(
         return;
     }
     if st.count != 0 {
-        setup(st.table, st.count as u32, 8, SetupProgram::Default);
+        setup(st.table, u32::from(st.count), 8, SetupProgram::Default);
     }
     st.done = true;
 }

@@ -116,10 +116,10 @@ fn read_img(path: &std::path::Path, key: Option<&[u8]>) -> Result<(bool, Vec<Mem
     let names: Vec<&[u8]> = toc[count * 16..].split(|b| *b == 0).collect();
     let mut out = Vec::with_capacity(count);
     for (i, (off, size)) in entries.iter().enumerate() {
-        let name = names
-            .get(i)
-            .map(|n| String::from_utf8_lossy(n).into_owned())
-            .unwrap_or_else(|| format!("?{i}"));
+        let name = names.get(i).map_or_else(
+            || format!("?{i}"),
+            |n| String::from_utf8_lossy(n).into_owned(),
+        );
         let bytes = file
             .get(*off..off + size)
             .ok_or_else(|| format!("short member {name}"))?

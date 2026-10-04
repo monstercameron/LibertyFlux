@@ -50,7 +50,7 @@ fn extra() -> Vec<&'static [u8]> {
 
 #[test]
 fn truncated_inputs_never_panic() {
-    for base in patterns(&extra()).iter() {
+    for base in &patterns(&extra()) {
         for len in lengths(base.len()) {
             let b = &base[..len];
             check_no_panic(&format!("container prefix {len}"), || {
@@ -80,13 +80,13 @@ fn corrupted_inputs_never_panic() {
                 let what = format!("pattern {pi} byte {pos} xor {mask:#04X}");
                 check_no_panic(&what, || {
                     let b = &bad;
-                    check_no_panic(&format!("corrupt container prefix "), || {
+                    check_no_panic("corrupt container prefix ", || {
                         let _ = lf_audio_config::container::MetaFile::parse(b);
                     });
-                    check_no_panic(&format!("corrupt speech prefix "), || {
+                    check_no_panic("corrupt speech prefix ", || {
                         let _ = lf_audio_config::speech::SpeechFile::parse(b);
                     });
-                    check_no_panic(&format!("corrupt detect prefix "), || {
+                    check_no_panic("corrupt detect prefix ", || {
                         let text = String::from_utf8_lossy(b);
                         let _ = lf_audio_config::schema::Schema::detect(&text);
                     });

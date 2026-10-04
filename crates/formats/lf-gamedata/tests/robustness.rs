@@ -50,7 +50,7 @@ fn extra() -> Vec<&'static [u8]> {
 
 #[test]
 fn truncated_inputs_never_panic() {
-    for base in patterns(&extra()).iter() {
+    for base in &patterns(&extra()) {
         for len in lengths(base.len()) {
             let b = &base[..len];
             for name in [

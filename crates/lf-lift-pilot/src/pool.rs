@@ -70,8 +70,8 @@ pub struct Pool {
 /// saturating at `u32::MAX`. Kept verbatim so the clamp stays proven.
 #[must_use]
 pub fn checked_total(count: u32, stride: u32) -> u32 {
-    let total = (count as u64) * (stride as u64) + 0x10;
-    if total > u32::MAX as u64 {
+    let total = u64::from(count) * u64::from(stride) + 0x10;
+    if total > u64::from(u32::MAX) {
         u32::MAX
     } else {
         total as u32

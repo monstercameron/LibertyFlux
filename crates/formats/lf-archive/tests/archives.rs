@@ -34,8 +34,7 @@ fn collect_archives(dir: &Path, ext: &str) -> Vec<PathBuf> {
                 stack.push(path);
             } else if path
                 .extension()
-                .map(|e| e.eq_ignore_ascii_case(ext))
-                .unwrap_or(false)
+                .is_some_and(|e| e.eq_ignore_ascii_case(ext))
             {
                 out.push(path);
             }
@@ -83,7 +82,7 @@ fn all_rpf_archives_list() {
                 continue;
             }
         };
-        let file_len = file.metadata().map(|m| m.len()).unwrap_or(0);
+        let file_len = file.metadata().map_or(0, |m| m.len());
         let mut reader = BufReader::new(file);
         let archive = match rpf::RpfArchive::open(&mut reader, Some(&key)) {
             Ok(a) => a,
@@ -126,10 +125,10 @@ fn all_rpf_archives_list() {
                     }
                     // Fully read small entries (exercises decompression and
                     // the content cipher where present).
-                    if entry.stored_size <= 65536 {
-                        if let Err(e) = archive.read_file(&mut reader, i, Some(&key)) {
-                            failures.push(format!("{rel} {}: read failed: {e}", entry.path));
-                        }
+                    if entry.stored_size <= 65536
+                        && let Err(e) = archive.read_file(&mut reader, i, Some(&key))
+                    {
+                        failures.push(format!("{rel} {}: read failed: {e}", entry.path));
                     }
                 }
             }
@@ -200,7 +199,7 @@ fn all_img_archives_list() {
                 continue;
             }
         };
-        let file_len = file.metadata().map(|m| m.len()).unwrap_or(0);
+        let file_len = file.metadata().map_or(0, |m| m.len());
         let mut reader = BufReader::new(file);
         let archive = match img::ImgArchive::open(&mut reader, Some(&key)) {
             Ok(a) => a,
@@ -243,10 +242,10 @@ fn all_img_archives_list() {
                 reader.seek(SeekFrom::Start(entry.offset)).unwrap();
                 reader.read_exact(&mut probe[..want]).unwrap();
             }
-            if entry.stored_size <= 65536 {
-                if let Err(e) = archive.read_file(&mut reader, i, Some(&key)) {
-                    failures.push(format!("{rel} {}: read failed: {e}", entry.path));
-                }
+            if entry.stored_size <= 65536
+                && let Err(e) = archive.read_file(&mut reader, i, Some(&key))
+            {
+                failures.push(format!("{rel} {}: read failed: {e}", entry.path));
             }
         }
         total_entries += archive.len() as u64;

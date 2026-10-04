@@ -71,6 +71,7 @@ impl ChainArena {
 /// Is `target` reachable from `start` via forward links?
 /// Every visited node must carry flag bits 2 and 3; the first node that
 /// fails ends the walk. (Original: `chain_contains_target`.)
+#[must_use]
 pub fn contains(arena: &ChainArena, start: NodeId, target: NodeId) -> bool {
     let mut node = start;
     loop {
@@ -91,6 +92,7 @@ pub fn contains(arena: &ChainArena, start: NodeId, target: NodeId) -> bool {
 
 /// Do `start` and every forward successor carry flag bits 2 and 3?
 /// (Original: `chain_all_flagged`.)
+#[must_use]
 pub fn all_flagged(arena: &ChainArena, start: NodeId) -> bool {
     let mut node = start;
     loop {
@@ -178,6 +180,7 @@ pub fn find_flagged_node(
 /// Follow +0x124 once, then walk +0x11C links to the end; return the last
 /// node reached, or null when the anchor is null.
 /// (Original: `last_link_in_chain`.)
+#[must_use]
 pub fn last_link(arena: &ChainArena, this: NodeId) -> Option<NodeId> {
     let mut node = arena.get(this).anchor?;
     loop {
@@ -281,7 +284,7 @@ mod tests {
             x
         }
         fn below(&mut self, n: u32) -> u32 {
-            (self.next() % n as u64) as u32
+            (self.next() % u64::from(n)) as u32
         }
     }
 

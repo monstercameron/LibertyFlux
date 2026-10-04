@@ -111,10 +111,10 @@ fn real_shader_files_parse_and_validate() {
                     if pass.vs_index >= pack.vs_programs.len() {
                         failures.push(format!("{label}: vs index out of range"));
                     }
-                    if let Some(ps) = pass.ps_index {
-                        if ps >= pack.ps_programs.len() {
-                            failures.push(format!("{label}: ps index out of range"));
-                        }
+                    if let Some(ps) = pass.ps_index
+                        && ps >= pack.ps_programs.len()
+                    {
+                        failures.push(format!("{label}: ps index out of range"));
                     }
                 }
             }
@@ -179,7 +179,7 @@ fn real_sidecars_parse() {
     let mut dcl_stems = BTreeSet::new();
     for entry in fs::read_dir(shaders.join("dcl")).expect("list dcl") {
         let path = entry.expect("entry").path();
-        if path.extension().map(|e| e == "dcl").unwrap_or(false) {
+        if path.extension().is_some_and(|e| e == "dcl") {
             let text = fs::read_to_string(&path).expect("read dcl");
             match lf_shaderpack::dcl::parse_dcl(&text) {
                 Ok(_) => dcl_ok += 1,

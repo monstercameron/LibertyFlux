@@ -502,7 +502,7 @@ mod tests {
         let file = GxtFile::parse(&buf).unwrap();
         assert_eq!(
             file.lookup("MAIN", "a").unwrap(),
-            &[b'H' as u16, b'i' as u16]
+            &[u16::from(b'H'), u16::from(b'i')]
         );
     }
 

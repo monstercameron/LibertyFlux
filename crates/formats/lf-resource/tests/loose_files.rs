@@ -37,12 +37,11 @@ fn is_rsc(path: &Path) -> bool {
 
 #[test]
 fn loose_resources_all_parse() {
-    let game_dir = match std::env::var("LIBERTYFLUX_GAME_DIR") {
-        Ok(d) => d,
-        Err(_) => {
-            println!("LIBERTYFLUX_GAME_DIR unset: skipping real-file census");
-            return;
-        }
+    let game_dir = if let Ok(d) = std::env::var("LIBERTYFLUX_GAME_DIR") {
+        d
+    } else {
+        println!("LIBERTYFLUX_GAME_DIR unset: skipping real-file census");
+        return;
     };
     let mut files = Vec::new();
     collect(Path::new(&game_dir), &mut files);

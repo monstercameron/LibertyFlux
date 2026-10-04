@@ -217,7 +217,7 @@ mod tests {
 
     #[test]
     fn flatten_splits_merged_fields() {
-        let f = vec!["a b".to_string(), "".to_string(), "c".to_string()];
+        let f = vec!["a b".to_string(), String::new(), "c".to_string()];
         assert_eq!(flatten_fields(&f), vec!["a", "b", "c"]);
     }
 }

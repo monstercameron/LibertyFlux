@@ -50,7 +50,7 @@ fn extra() -> Vec<&'static [u8]> {
 
 #[test]
 fn truncated_inputs_never_panic() {
-    for base in patterns(&extra()).iter() {
+    for base in &patterns(&extra()) {
         for len in lengths(base.len()) {
             let b = &base[..len];
             check_no_panic(&format!("load prefix {len}"), || {
@@ -81,10 +81,10 @@ fn corrupted_inputs_never_panic() {
                 let what = format!("pattern {pi} byte {pos} xor {mask:#04X}");
                 check_no_panic(&what, || {
                     let b = &bad;
-                    check_no_panic(&format!("corrupt load prefix "), || {
+                    check_no_panic("corrupt load prefix ", || {
                         let _ = lf_sco::container::load(b, None);
                     });
-                    check_no_panic(&format!("corrupt decode_all prefix "), || {
+                    check_no_panic("corrupt decode_all prefix ", || {
                         let _ = lf_sco::isa::decode_all(b);
                     });
                     for off in [0, bad.len() / 2, bad.len()] {

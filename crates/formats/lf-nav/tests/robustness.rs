@@ -50,7 +50,7 @@ fn extra() -> Vec<&'static [u8]> {
 
 #[test]
 fn truncated_inputs_never_panic() {
-    for base in patterns(&extra()).iter() {
+    for base in &patterns(&extra()) {
         for len in lengths(base.len()) {
             let b = &base[..len];
             check_no_panic(&format!("nod prefix {len}"), || {
@@ -83,16 +83,16 @@ fn corrupted_inputs_never_panic() {
                 let what = format!("pattern {pi} byte {pos} xor {mask:#04X}");
                 check_no_panic(&what, || {
                     let b = &bad;
-                    check_no_panic(&format!("corrupt nod prefix "), || {
+                    check_no_panic("corrupt nod prefix ", || {
                         let _ = lf_nav::nod::Nod::parse(b);
                     });
-                    check_no_panic(&format!("corrupt wnv prefix "), || {
+                    check_no_panic("corrupt wnv prefix ", || {
                         let _ = lf_nav::wnv::Tile::parse(b);
                     });
-                    check_no_panic(&format!("corrupt rsc prefix "), || {
+                    check_no_panic("corrupt rsc prefix ", || {
                         let _ = lf_nav::rsc::Resource::parse(b);
                     });
-                    check_no_panic(&format!("corrupt ipl prefix "), || {
+                    check_no_panic("corrupt ipl prefix ", || {
                         let text = String::from_utf8_lossy(b);
                         let _ = lf_nav::ipl::IplPaths::parse(&text);
                     });

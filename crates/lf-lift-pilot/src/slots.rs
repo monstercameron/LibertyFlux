@@ -162,7 +162,7 @@ pub fn bind_aux_and_combine(
     let input = st.inners[record.0 as usize].aux_input;
     let answer = aux_step(st, input);
     st.slots[this.0 as usize].bit2a |= 8;
-    let counter = st.slots[this.0 as usize].counter as u32;
+    let counter = u32::from(st.slots[this.0 as usize].counter);
     let total = counter.wrapping_add(answer);
     // The original passes the counter's ADDRESS to the combine step; the
     // lift passes the slot id, which names the same word.
@@ -200,6 +200,7 @@ pub fn forward_flags_if_present(
 /// The original null-checks only the child and the index sign: a null
 /// holder faults, and an upper-out-of-range index reads out of bounds. The
 /// lift panics loudly on both instead of faulting or reading garbage.
+#[must_use]
 pub fn indexed_entry_or_null(st: &Slots, this: SlotId) -> Option<u32> {
     let child = st.slots[this.0 as usize].child?;
     let inner = &st.inners[child.0 as usize];
@@ -215,6 +216,7 @@ pub fn indexed_entry_or_null(st: &Slots, this: SlotId) -> Option<u32> {
 
 /// Fetch the entry below the child's one-based position.
 /// (Original: `prev_indexed_entry_or_null`.)
+#[must_use]
 pub fn prev_indexed_entry_or_null(st: &Slots, this: SlotId) -> Option<u32> {
     let child = st.slots[this.0 as usize].child?;
     let inner = &st.inners[child.0 as usize];
@@ -232,6 +234,7 @@ pub fn prev_indexed_entry_or_null(st: &Slots, this: SlotId) -> Option<u32> {
 
 /// Fetch the entry below this record's own one-based position.
 /// (Original: `prev_entry_or_null`.)
+#[must_use]
 pub fn prev_entry_or_null(st: &Slots, this: SlotId) -> Option<u32> {
     let slot = &st.slots[this.0 as usize];
     if slot.index == 0 || (slot.index.wrapping_sub(1) as i32) < 0 {
@@ -251,6 +254,7 @@ pub fn prev_entry_or_null(st: &Slots, this: SlotId) -> Option<u32> {
 /// bytes into EAX (a partial-register merge), so the upper 24 bits of the
 /// result leak the address. That value cannot exist on 64-bit; the lift
 /// returns just the byte. The differential test compares the low byte only.
+#[must_use]
 pub fn status_byte_or_zero(st: &Slots, this: SlotId) -> u8 {
     match st.slots[this.0 as usize].linked {
         None => 0,
@@ -275,7 +279,7 @@ pub fn probe_value_differs(
         return false;
     }
     let cookie = st.slots[this.0 as usize].probe_child;
-    let sample = (probe(st, cookie) & 0xFF) as u8 as f32;
+    let sample = f32::from((probe(st, cookie) & 0xFF) as u8);
     sample != limit
 }
 
@@ -375,10 +379,8 @@ pub fn maybe_refresh_and_forward(
     head_fetch: &mut dyn FnMut(&mut Slots, Option<InnerId>) -> u32,
 ) -> u32 {
     let flag_byte = (flag & 0xFF) as u8;
-    if st.slots[this.0 as usize].linked.is_some() && flag_byte != 0 {
-        if probe(st, this) & 0xFF != 0 {
-            refresh(st, this, 0);
-        }
+    if st.slots[this.0 as usize].linked.is_some() && flag_byte != 0 && probe(st, this) & 0xFF != 0 {
+        refresh(st, this, 0);
     }
     let Some(slot_id) = st.slots[this.0 as usize].slot else {
         return 0;
@@ -413,7 +415,7 @@ pub fn step_word_store_flag(
         .expect("step cleared aux; original faults");
     let flag_byte = (flag & 0xFF) as u8;
     st.slots[aux_now.0 as usize].flag_1c = flag_byte;
-    (answer & 0xFFFF_FF00) | flag_byte as u32
+    (answer & 0xFFFF_FF00) | u32::from(flag_byte)
 }
 
 #[cfg(test)]

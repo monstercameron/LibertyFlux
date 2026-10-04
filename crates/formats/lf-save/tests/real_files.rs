@@ -20,7 +20,7 @@ fn collect_slots(dir: &Path, out: &mut Vec<PathBuf>) {
         let path = entry.path();
         if path.is_dir() {
             // Skip reparse points to avoid cycles; only descend into real dirs.
-            if entry.file_type().map(|t| t.is_dir()).unwrap_or(false) {
+            if entry.file_type().is_ok_and(|t| t.is_dir()) {
                 collect_slots(&path, out);
             }
         } else if entry
@@ -35,12 +35,11 @@ fn collect_slots(dir: &Path, out: &mut Vec<PathBuf>) {
 
 #[test]
 fn real_save_files() {
-    let game_dir = match std::env::var("LIBERTYFLUX_GAME_DIR") {
-        Ok(d) => d,
-        Err(_) => {
-            eprintln!("skipped: LIBERTYFLUX_GAME_DIR is not set");
-            return;
-        }
+    let game_dir = if let Ok(d) = std::env::var("LIBERTYFLUX_GAME_DIR") {
+        d
+    } else {
+        eprintln!("skipped: LIBERTYFLUX_GAME_DIR is not set");
+        return;
     };
 
     let mut files = Vec::new();

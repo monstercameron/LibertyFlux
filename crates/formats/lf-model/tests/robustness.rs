@@ -50,7 +50,7 @@ fn extra() -> Vec<&'static [u8]> {
 
 #[test]
 fn truncated_inputs_never_panic() {
-    for base in patterns(&extra()).iter() {
+    for base in &patterns(&extra()) {
         for len in lengths(base.len()) {
             let b = &base[..len];
             check_no_panic(&format!("open prefix {len}"), || {
@@ -73,7 +73,7 @@ fn corrupted_inputs_never_panic() {
                 let what = format!("pattern {pi} byte {pos} xor {mask:#04X}");
                 check_no_panic(&what, || {
                     let b = &bad;
-                    check_no_panic(&format!("corrupt open prefix "), || {
+                    check_no_panic("corrupt open prefix ", || {
                         let _ = lf_model::rsc5::Resource::open(b);
                     });
                 });

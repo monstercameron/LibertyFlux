@@ -273,14 +273,13 @@ pub fn rust_literal(bytes: &[u8]) -> String {
 
 /// Run `check` on `input`; a panic fails the test with a reproducible report.
 pub fn assert_no_panic<F: Fn(&[u8])>(what: &str, input: &[u8], check: &F) {
-    if catch_unwind(AssertUnwindSafe(|| check(input))).is_err() {
-        panic!(
-            "{what}: parser panicked on this input ({} bytes, base seed {:#x}):\n{}",
-            input.len(),
-            base_seed(),
-            rust_literal(input)
-        );
-    }
+    assert!(
+        catch_unwind(AssertUnwindSafe(|| check(input))).is_ok(),
+        "{what}: parser panicked on this input ({} bytes, base seed {:#x}):\n{}",
+        input.len(),
+        base_seed(),
+        rust_literal(input)
+    );
 }
 
 /// Mutation fuzzer: for `iterations(default_iters)` rounds, mutate one of

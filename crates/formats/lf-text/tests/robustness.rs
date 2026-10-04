@@ -50,7 +50,7 @@ fn extra() -> Vec<&'static [u8]> {
 
 #[test]
 fn truncated_inputs_never_panic() {
-    for base in patterns(&extra()).iter() {
+    for base in &patterns(&extra()) {
         for len in lengths(base.len()) {
             let b = &base[..len];
             check_no_panic(&format!("gxt prefix {len}"), || {
@@ -90,23 +90,23 @@ fn corrupted_inputs_never_panic() {
                 let what = format!("pattern {pi} byte {pos} xor {mask:#04X}");
                 check_no_panic(&what, || {
                     let b = &bad;
-                    check_no_panic(&format!("corrupt gxt prefix "), || {
+                    check_no_panic("corrupt gxt prefix ", || {
                         let _ = lf_text::GxtFile::parse(b);
                     });
-                    check_no_panic(&format!("corrupt fonts prefix "), || {
+                    check_no_panic("corrupt fonts prefix ", || {
                         let _ = lf_text::FontFile::parse(b);
                     });
-                    check_no_panic(&format!("corrupt menus prefix "), || {
+                    check_no_panic("corrupt menus prefix ", || {
                         let _ = lf_text::MenuFile::parse(b);
                     });
-                    check_no_panic(&format!("corrupt dat prefix "), || {
+                    check_no_panic("corrupt dat prefix ", || {
                         let _ = lf_text::FrontendLayout::parse(b);
                     });
-                    check_no_panic(&format!("corrupt radio prefix "), || {
+                    check_no_panic("corrupt radio prefix ", || {
                         let _ = lf_text::RadioHudFile::parse(b);
                         let _ = lf_text::RadioHud::parse(b);
                     });
-                    check_no_panic(&format!("corrupt hud prefix "), || {
+                    check_no_panic("corrupt hud prefix ", || {
                         let _ = lf_text::HudFile::parse(b);
                         let _ = lf_text::HudColours::parse(b);
                     });

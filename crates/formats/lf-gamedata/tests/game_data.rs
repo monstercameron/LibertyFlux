@@ -111,12 +111,11 @@ fn json_escape(s: &str) -> String {
 
 #[test]
 fn parse_game_data_folder() {
-    let game_dir = match std::env::var("LIBERTYFLUX_GAME_DIR") {
-        Ok(d) => PathBuf::from(d),
-        Err(_) => {
-            println!("LIBERTYFLUX_GAME_DIR not set; skipping game-data integration test");
-            return;
-        }
+    let game_dir = if let Ok(d) = std::env::var("LIBERTYFLUX_GAME_DIR") {
+        PathBuf::from(d)
+    } else {
+        println!("LIBERTYFLUX_GAME_DIR not set; skipping game-data integration test");
+        return;
     };
     let roots = [
         game_dir.join("GTAIV").join("common").join("data"),

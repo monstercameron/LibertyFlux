@@ -52,7 +52,7 @@ use std::io::Cursor;
 
 #[test]
 fn truncated_inputs_never_panic() {
-    for base in patterns(&extra()).iter() {
+    for base in &patterns(&extra()) {
         for len in lengths(base.len()) {
             let b = &base[..len];
             check_no_panic(&format!("header prefix {len}"), || {
@@ -81,13 +81,13 @@ fn corrupted_inputs_never_panic() {
                 let what = format!("pattern {pi} byte {pos} xor {mask:#04X}");
                 check_no_panic(&what, || {
                     let b = &bad;
-                    check_no_panic(&format!("corrupt header prefix "), || {
+                    check_no_panic("corrupt header prefix ", || {
                         let _ = lf_resource::Header::parse(b);
                     });
-                    check_no_panic(&format!("corrupt resource prefix "), || {
+                    check_no_panic("corrupt resource prefix ", || {
                         let _ = lf_resource::Resource::parse(b);
                     });
-                    check_no_panic(&format!("corrupt reader prefix "), || {
+                    check_no_panic("corrupt reader prefix ", || {
                         let _ = lf_resource::Resource::parse_reader(Cursor::new(b));
                     });
                 });
