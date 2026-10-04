@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Black box does not pin down float multiply order",
+    "title": "Rewrites: 26 more functions pass the checker (7392 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "26 rewrites added under rewrites/pending: 0 script native handlers and 26 other functions.",
+      "The tree now holds 7392 rewrites, 7373 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "307 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Black box does not pin down float multiply order",
+    "commit": "5c016425148392addc17943a5a764c6b031094f7",
     "summary": "Findings from the r-s263 lane.",
     "changes": [
       "New devlog entry: Black box does not pin down float multiply order.",
