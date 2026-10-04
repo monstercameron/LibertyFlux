@@ -121,23 +121,18 @@ lf_checker_rt::export!(thiscall, rw_00662440(this: u32, delta: u32) -> u32 {
                     if field(this, 0x9c) != 0 {
                         wr32(this.wrapping_add(STATE), 4);
                     } else {
-                        let flag: u8 =
-                            unsafe { lf_checker_rt::global::<u8>(FLAG_BYTE).read_unaligned() };
+                        let flag: u8 = lf_checker_rt::global::<u8>(FLAG_BYTE).read_unaligned();
                         if flag & 2 == 0 {
                             wr32(this.wrapping_add(STATE), 4);
                         } else {
                             // The upper half lands over the lower half's first
                             // word; the callee sees upper[0] then lower[1].
-                            let w0 = unsafe {
-                                lf_checker_rt::global::<u32>(GLOB_HI).read_unaligned()
-                            };
-                            let w1 = unsafe {
-                                lf_checker_rt::global::<u32>(GLOB_LO + 4).read_unaligned()
-                            };
+                            let w0 = lf_checker_rt::global::<u32>(GLOB_HI).read_unaligned();
+                            let w1 = lf_checker_rt::global::<u32>(GLOB_LO + 4).read_unaligned();
                             let frame = [w0, w1];
                             let r: u32 = lf_checker_rt::callee_thiscall!(
                                 6, u32, inner.wrapping_add(INNER_SUB),
-                                &frame as *const u32 as u32,
+                                frame.as_ptr() as u32,
                                 this.wrapping_add(0xa0),
                                 1,
                                 this.wrapping_add(0x94)

@@ -1,8 +1,8 @@
 // original: 0x0051cf50 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race23NoHolds, player_schema::LeaderboardInfo, 10>::vf9
 /// Row-type code of one leaderboard row value.
 ///
-/// Looks the row value up exactly like the sibling getters (schema lookup
-/// with this leaderboard's id, table at info `+0x10`, indexed by the stack
+/// Looks the row value up through the schema lookup (this leaderboard's
+/// id; the value table is info word `+0x14`, indexed by the stack
 /// argument), classifies it through a second callee, then maps the class
 /// to a code: 1 -> 0, 2 -> 1, 3 -> 3, 5 -> 2, anything else (including
 /// lookup failure and class -1) -> -1.
@@ -15,7 +15,7 @@ lf_checker_rt::export!(thiscall, rw_0051cf50(_this: u32, index: u32) -> u32 {
         const SCHEMA_ID: u32 = 0x74;
         const LOOKUP_CALLEE: u32 = 1;
         const CLASSIFY_CALLEE: u32 = 2;
-        const TABLE_WORD: usize = 4;
+        const TABLE_WORD: usize = 5;
         const NONE: u32 = 0xffff_ffff;
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {

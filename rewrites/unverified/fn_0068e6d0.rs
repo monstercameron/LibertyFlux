@@ -28,7 +28,9 @@
 /// lookup (callee 8, thiscall on the owner, index plus a 16-bit out word).
 /// When that answers true and its out word is below the track key, a final
 /// remap call runs (callee 9, thiscall on the set, kind, key, kind and the
-/// full out word).
+/// full out word). Only the low byte of the two kind words is meaningful:
+/// the original sets AL over the index lookup's answer register, so their
+/// upper bytes are harness leftovers, compared low-byte-only.
 ///
 /// Original: 0x0068e6d0 (thiscall, two stack words; the second is not read).
 /// Pure integer code, no floating point.

@@ -3,12 +3,7 @@
 /// Refresh one table slot's object chain, emitting the convertible members.
 ///
 /// `a1` and `a2` select the chain: the head is read from a global table at
-/// index `a1 + a2 * 30`. `entry_esi` carries the original's entry-`esi`
-/// value, which the original forwards to two callees; the checker cannot pass
-/// an incoming `esi` to a Rust export, so the contract scripts the third
-/// stack word with the same per-trial value as the `esi` register (a
-/// rewrite-side transport in the documented `xmm0_from_stack` spirit: same
-/// value, different channel; the original never reads its third stack word).
+/// index `a1 + a2 * 30`.
 ///
 /// Behaviour: a tick callee is asked for the current time and the function
 /// returns when the masked distance to the stored tick reaches `0x10000`. For
@@ -21,11 +16,11 @@
 /// are published through a second interlocked slot instead of being emitted:
 /// a fill callee resolves the object to an emitter (a null answer skips the
 /// node), the emitter's virtual slot `+0x6C` prepares a buffer, a step callee
-/// consumes it, and two final callees observe the forwarded entry-`esi` plus
-/// a scratch float that reads as zero under interception. The original's
-/// software prefetches are omitted (unobservable). Original: cdecl, two stack
-/// words plus the transport word, no meaningful return value.
-lf_checker_rt::export!(cdecl, rw_00ae9260(a1: u32, a2: u32, entry_esi: u32) -> u32 {
+/// consumes it, and two final callees observe the emitter plus a scratch
+/// float that reads as zero under interception. The original's software
+/// prefetches are omitted (unobservable). Original: cdecl, two stack words,
+/// no meaningful return value.
+lf_checker_rt::export!(cdecl, rw_00ae9260(a1: u32, a2: u32) -> u32 {
     unsafe {
         const G_TICK: u32 = 0x01593BC4;
         const G_WORD: u32 = 0x011A8908;
@@ -142,18 +137,21 @@ lf_checker_rt::export!(cdecl, rw_00ae9260(a1: u32, a2: u32, entry_esi: u32) -> u
                                 sink,
                                 core::ptr::addr_of_mut!(vbuf[0]) as u32
                             );
-                            // Scratch float the original reads from an
+                            // The original reloads the emitter from its scratch
+                            // word here (not entry-esi as a first reading
+                            // suggested: the slot holds the fill callee's
+                            // answer). The scratch float comes from an
                             // unwritten frame slot: zero under the contract's
                             // stack fill on both sides.
                             let _: u32 = lf_checker_rt::callee_cdecl!(
                                 C_APPLY,
                                 u32,
-                                entry_esi,
+                                emitter,
                                 lf_checker_rt::relocated(IMM_ARG),
                                 sink
                             );
                             let _: u32 =
-                                lf_checker_rt::callee_cdecl!(C_EMIT, u32, entry_esi, 0);
+                                lf_checker_rt::callee_cdecl!(C_EMIT, u32, emitter, 0);
                         }
                     }
                 }

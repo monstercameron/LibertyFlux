@@ -18,10 +18,11 @@
 /// re-checked on every path and skips the action silently. Returns `al` 1
 /// after the action or the silent skip.
 ///
-/// The original spills the scratch word, the condition bytes and the updated
-/// selector over its own stack; the rewrite uses locals (every value stays
-/// observed through the outgoing calls). The meaningful return is the low
-/// byte; the upper bytes are stub residue on both sides.
+/// The original spills the condition bytes and the updated selector over its
+/// own incoming argument slots; the rewrite uses locals (every value stays
+/// observed through the outgoing calls). The refresh callee's scratch words
+/// are overwritten before any read; only the selector survives. The
+/// meaningful return is the low byte; the upper bytes are stub residue.
 lf_checker_rt::export!(thiscall, rw_00aec5c0(this: u32, obj: u32, f: u32, a: u32, b: u32, sel: u32) -> u32 {
     unsafe {
         const ROWS: u32 = 0x40;
@@ -60,11 +61,14 @@ lf_checker_rt::export!(thiscall, rw_00aec5c0(this: u32, obj: u32, f: u32, a: u32
         let mut sel_w = sel;
         let mut scratch = 0u32;
         let mut scratch2 = 0u32;
+        // Five stack words: the float rides in the pushed slot above the four
+        // explicit pushes (the callee pops 0x14).
         lf_checker_rt::callee_thiscall!(
             1, u32, this, obj, &mut sel_w as *mut u32 as u32,
-            &mut scratch2 as *mut u32 as u32, &mut scratch as *mut u32 as u32,
+            &mut scratch2 as *mut u32 as u32, &mut scratch as *mut u32 as u32, f,
         );
         let _ = scratch2;
+        let _ = scratch;
         let row = || unsafe { rd32(obj + ROWS + sel_w.wrapping_mul(4)) };
         if row() == 0 {
             return 0;
@@ -87,8 +91,10 @@ lf_checker_rt::export!(thiscall, rw_00aec5c0(this: u32, obj: u32, f: u32, a: u32
         if a != 0 {
             if row() != 0 {
                 if picked != 0 && rd32(picked + MODE_THIS) != 0 {
+                    // Last word is the flags: the original stores them over
+                    // the refresh callee's scratch slot before reading it here.
                     lf_checker_rt::callee_thiscall!(
-                        4, u32, rd32(picked + MODE_THIS), 0u32, a, peer_val, sel_w, scratch,
+                        4, u32, rd32(picked + MODE_THIS), 0u32, a, peer_val, sel_w, flags,
                     );
                 } else if c1 {
                     vcall5(VT_A, obj, 0u32, a, sel_w, if c2 { 1u32 } else { 2u32 }, peer_val);
@@ -100,7 +106,7 @@ lf_checker_rt::export!(thiscall, rw_00aec5c0(this: u32, obj: u32, f: u32, a: u32
             if row() != 0 {
                 if picked != 0 {
                     lf_checker_rt::callee_thiscall!(
-                        4, u32, rd32(picked + MODE_THIS), f, b, peer_val, sel_w, scratch,
+                        4, u32, rd32(picked + MODE_THIS), f, b, peer_val, sel_w, flags,
                     );
                 } else if c1 {
                     vcall5(VT_A, obj, f, b, sel_w, if c2 { 1u32 } else { 2u32 }, peer_val);

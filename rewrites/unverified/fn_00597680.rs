@@ -6,12 +6,14 @@
 /// word at +4) reports the live row id. When it differs from EXPECTED, or
 /// when OUT is null, the result is 0 and nothing is stored. When it matches
 /// and OUT is non-null, ROW_ID is stored through OUT and OUT is returned.
+/// ROW_ID is an address in the original image, so it is derived with
+/// relocated() from its file VA, never hard-coded.
 ///
 /// Original: thiscall, object in ecx, (out, expected) on the stack. The
 /// virtual call keeps (this) in ecx and is intercepted by a planted stub.
 lf_checker_rt::export!(thiscall, rw_00597680(this: u32, out: u32, expected: u32) -> u32 {
     unsafe {
-        const ROW_ID: u32 = 0xfce8ac;
+        const ROW_FILE_VA: u32 = 0xfce8ac;
         const VTABLE_SLOT1_OFF: u32 = 4;
         let vtable = (this as *const u32).read_unaligned();
         let target = (vtable.wrapping_add(VTABLE_SLOT1_OFF) as *const u32).read_unaligned();
@@ -24,7 +26,7 @@ lf_checker_rt::export!(thiscall, rw_00597680(this: u32, out: u32, expected: u32)
         if out == 0 {
             return 0;
         }
-        (out as *mut u32).write_unaligned(ROW_ID);
+        (out as *mut u32).write_unaligned(lf_checker_rt::relocated(ROW_FILE_VA));
         out
     }
 });
