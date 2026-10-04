@@ -6,14 +6,14 @@
     "name": "Rewrite"
   },
   "functions": {
-    "total": 43156,
-    "library": 5455,
-    "game": 37701
+    "total": 43140,
+    "library": 5441,
+    "game": 37699
   },
   "stages": {
-    "identified": 37701,
+    "identified": 37699,
     "named": 9006,
-    "rewritten": 6135,
+    "rewritten": 6165,
     "verified": 5950
   },
   "structures": 340,
@@ -93,7 +93,7 @@
     },
     {
       "label": "Functions after the inventory repair",
-      "value": 43156,
+      "value": 43140,
       "unit": "functions",
       "source": "f-boundaries lane: recursive-descent check of every inventory entry"
     },
@@ -105,7 +105,7 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 6135,
+      "value": 6165,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },

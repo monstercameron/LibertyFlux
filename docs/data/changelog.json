@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Progress data: 16 inventory entries are pieces of other functions",
+    "commit": null,
+    "summary": "The function total goes down by 16. A lane's larger claim, that a whole batch of 20 was not functions, was checked and found wrong.",
+    "changes": [
+      "A lane screened all 11,078 game entries that are known only from a pointer. 11,062 are real functions: most are virtual functions reached through tables. 16 are exception-handler blocks inside other functions. Its method was checked against 1,267 entries already verified as functions and agreed on every one.",
+      "The 16 leave the inventory: the total goes from 43,156 to 43,140. Two of them had been counted as game code (37,701 becomes 37,699) and fourteen as runtime library code (5,455 becomes 5,441). None had been counted as rewritten or verified.",
+      "A production lane had reported that all 20 entries in its batch were fragments. That was an addressing mistake in the lane, the same one an earlier lane made: it read the executable's raw file at a mapped address. All 20 are real small functions; the lane's result is void and its batch is back in the queue.",
+      "The rewrite queue now holds the 16 out, and lane briefs describe the addressing mistake and how to rule it out before claiming an entry is not a function."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 10 more functions pass the checker (6065 in total)",
     "commit": "c128e6fe31a6513d8567d724fb682821204778ec",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
