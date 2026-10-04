@@ -324,6 +324,15 @@
   "lane": "r-s161"
  },
  {
+  "address": "0x005AE630",
+  "name": "gated_accumulator_update",
+  "kind": "function",
+  "file": "functions/fn_005ae630.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b152"
+ },
+ {
   "address": "0x005B0430",
   "name": "select_market_menu_overlay",
   "kind": "function",
@@ -41695,6 +41704,42 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b115"
+ },
+ {
+  "address": "0x00C17760",
+  "name": "cam_replay_update",
+  "kind": "function",
+  "file": "functions/fn_00c17760.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b141"
+ },
+ {
+  "address": "0x00C17F10",
+  "name": "CCamReplay::vf6",
+  "kind": "function",
+  "file": "functions/fn_00c17f10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b141"
+ },
+ {
+  "address": "0x00C18050",
+  "name": "cam_vec_filter",
+  "kind": "function",
+  "file": "functions/fn_00c18050.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b141"
+ },
+ {
+  "address": "0x00C18CC0",
+  "name": "shared_mem_proc_init",
+  "kind": "function",
+  "file": "functions/fn_00c18cc0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-b141"
  },
  {
   "address": "0x00C2C3E0",
