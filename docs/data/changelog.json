@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Agent rules: an hourly critical review",
+    "commit": null,
+    "summary": "A new rule: once an hour the coordinator reviews direction, throughput, trust and process, and changes things in the same hour.",
+    "changes": [
+      "Rule 8 in the agent instructions. Each review checks whether the work is still pointed at the goal or at a proxy such as the function count, compares verified functions and verified bytes per hour with the previous review, lists what weakened confidence in the results, and says what changes because of it and what to stop doing.",
+      "The review is posted in chat and one row per review goes into that day's devlog entry.",
+      "The first review started two things nothing had been running against: a pilot of the 64-bit lift, and assembling the rewrites into a library the game can load."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 110 more functions pass the checker (6886 in total)",
     "commit": "6c333ff500141825b414ad86db1df998c790b171",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

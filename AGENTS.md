@@ -173,6 +173,26 @@ before running it. Do not pad an update, do not repeat unchanged
 detail, and do not report a lane's result before it has finished. Interesting, confusing or
 surprising findings go in the devlog the same day, not only in the chat.
 
+## Rule 8: the coordinator reviews the project critically every hour
+
+Once an hour, for the rest of the project, the coordinator stops reporting and reviews. The point is
+to catch a wrong direction or a wasteful process within an hour, using what the last hour taught.
+
+Each review answers, with numbers from machine sources:
+
+- Direction: is the work still pointed at the goal (a 64-bit, portable Rust version of the game), or
+  at a proxy such as the function count? What is the largest risk nothing is running against?
+- Throughput: verified functions and verified bytes per hour against the previous review, by lane
+  kind; where time and memory went; what was deferred and why.
+- Trust: anything in the last hour that weakens confidence in "verified", and what was done.
+- Process: what was learned, and which brief, script, guard or allocation changes because of it.
+- Stop doing: one thing that is no longer worth its cost.
+
+The changes are made in the same hour, not listed for later. The review is posted in chat, and one row
+(time, main finding, decision) is added to that day's "Hourly reviews" entry in the devlog, in a commit
+with a changelog entry. `review_metrics.py` in the coordinator's scratch folder produces the numbers
+and keeps a history so each review is compared with the one before.
+
 ## Commit history: one feature at a time
 
 Keep the history readable as a sequence of single changes. Someone reading the log should be able to
