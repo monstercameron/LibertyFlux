@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Rewrites: 1 more functions pass the checker (7347 in total)",
+    "title": "Progress data: 316 more inventory entries are not functions",
     "commit": null,
+    "summary": "A screening of the entries the boundary repair never fully confirmed. The function total goes down by 316; the naming lanes' doubts were right.",
+    "changes": [
+      "A lane judged all 3,661 game entries with a weaker confirmation class. 3,260 are functions, 183 are pieces of other functions, 138 are data (jump tables and padding) and 80 could not be decided. Its method agreed with 2,050 of 2,052 fully confirmed entries used as a control; the two exceptions are real exception-handler blocks.",
+      "The 321 fragment and data entries leave the inventory (five of them had already left with the pointer-only fragments). The total goes from 43,140 to 42,824: game functions from 37,699 to 37,413, library and runtime from 5,441 to 5,411. None had been counted as verified. They are also out of the rewrite queue and the naming batches.",
+      "Two naming lanes had reported doubtful entries in their batches, 33 and 9. The screening confirmed all 42. Almost all the bad entries come from one confirmation class, in which three quarters turned out not to be functions; every other weak class is at least 96% functions.",
+      "Not applied yet: the lane also lists code the inventory does not cover, with several hundred candidate functions. Those are added only after a separate check, so the total may go up again."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Rewrites: 1 more functions pass the checker (7347 in total)",
+    "commit": "9894a325692fdd9c59e00a65cef829c111cc828c",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "1 rewrites added under rewrites/pending: 0 script native handlers and 1 other functions.",
