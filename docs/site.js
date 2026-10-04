@@ -129,6 +129,34 @@
     mapEl.addEventListener("mouseleave", function () { tip.classList.remove("on"); });
   }
 
+  // What has been measured so far, and how much work is in flight. Shown until functions are counted.
+  function renderMeasured(after) {
+    var facts = Array.isArray(data.measured) ? data.measured : [];
+    var activity = data.activity;
+    if (!facts.length && !activity) return;
+    var wrap = el("div", "measured");
+    if (activity) {
+      var line = "Right now: " + fmt.format(activity.lanes_running || 0) + " agent lanes running, " +
+        fmt.format(activity.lanes_finished || 0) + " finished, " +
+        fmt.format(activity.devlog_entries || 0) + " devlog entries written.";
+      if (data.updated_at) line += " As of " + data.updated_at + ".";
+      wrap.appendChild(el("p", "prose", line));
+    }
+    if (facts.length) {
+      wrap.appendChild(el("h3", null, "Measured so far"));
+      var list = el("ul", "facts");
+      facts.forEach(function (fact) {
+        var li = el("li");
+        li.appendChild(document.createTextNode(fact.label + ": "));
+        li.appendChild(el("strong", null, fmt.format(fact.value)));
+        if (fact.unit) li.appendChild(document.createTextNode(" " + fact.unit));
+        list.appendChild(li);
+      });
+      wrap.appendChild(list);
+    }
+    after.insertAdjacentElement("afterend", wrap);
+  }
+
   // Meters
   var metersEl = document.getElementById("meters");
   var note = document.getElementById("meter-note");
@@ -138,6 +166,7 @@
     empty.textContent = "No functions have been counted yet, so there is nothing to chart. For scale: the LibertyRecomp and GTA-IV-RECOMP projects count between about 31,800 and 36,400 functions in the Xbox 360 version of the same game. The PC version should be similar.";
     metersEl.hidden = true;
     note.hidden = true;
+    renderMeasured(empty);
   } else {
     ["identified", "named", "rewritten", "verified"].forEach(function (key) {
       var count = stages[key] || 0;

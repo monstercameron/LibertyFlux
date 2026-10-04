@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Record the standing instructions to push and to update progress every tick",
+    "title": "Show measured facts and lane activity on the site",
     "commit": null,
+    "summary": "The overview page now says what has been measured and how much work is in flight.",
+    "changes": [
+      "The progress file gains a list of measured facts and an activity block with the number of lanes running and finished and the number of devlog entries.",
+      "The overview page shows them in the Progress section until functions have been counted.",
+      "The status script can now write the activity and timestamp into the progress file, regenerate the site data, and commit and push the result."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Record the standing instructions to push and to update progress every tick",
+    "commit": "6e0b044f66a41ba7ecae84035c7b93a74945ad0d",
     "summary": "Two instructions from the owner, written into the agent rules.",
     "changes": [
       "Rule 2: the coordinator pushes straight after every commit. Lanes still never commit or push, and force-pushing stays forbidden.",

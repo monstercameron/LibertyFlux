@@ -250,6 +250,11 @@ main section.band {
 .meter-fill { height: 100%; background: var(--meter-fill); border-radius: 0 6px 6px 0; }
 .meter-note { color: var(--ink-soft); margin-top: 20px; max-width: var(--measure); }
 
+.measured { margin-top: 1.4em; max-width: var(--wide); }
+.facts { list-style: none; margin: 0.4em 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0 32px; }
+.facts li { padding: 9px 0; border-top: 1px solid var(--rule); color: var(--ink-soft); }
+.facts strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+
 /* Steps: a real sequence, so it is numbered. */
 .steps { list-style: none; counter-reset: step; padding: 0; margin: 0; max-width: var(--wide); }
 .steps li {

@@ -1,5 +1,6 @@
 window.LF_PROGRESS = {
   "updated": "2026-10-03",
+  "updated_at": "2026-10-03 20:30",
   "phase": {
     "index": 0,
     "name": "Measure"
@@ -17,5 +18,49 @@ window.LF_PROGRESS = {
   },
   "structures": 0,
   "symbols": 0,
+  "measured": [
+    {
+      "label": "Code section",
+      "value": 10952704,
+      "unit": "bytes",
+      "source": "executable headers"
+    },
+    {
+      "label": "Encrypted on disk, not yet readable",
+      "value": 1024000,
+      "unit": "bytes of code",
+      "source": "start-up stub lane and entropy scan"
+    },
+    {
+      "label": "Class names in the type information",
+      "value": 3723,
+      "unit": "",
+      "source": "public class names lane"
+    },
+    {
+      "label": "Imported operating system functions",
+      "value": 329,
+      "unit": "in 21 DLLs",
+      "source": "imports lane log"
+    },
+    {
+      "label": "Files in the game folder",
+      "value": 5702,
+      "unit": "in 42 formats",
+      "source": "game folder lane"
+    },
+    {
+      "label": "Precompiled shaders",
+      "value": 612,
+      "unit": "102 unique in 6 GPU variants",
+      "source": "renderer lane"
+    }
+  ],
+  "activity": {
+    "lanes_running": 35,
+    "lanes_finished": 3,
+    "lanes_incomplete": 0,
+    "devlog_entries": 21
+  },
   "map": []
 };

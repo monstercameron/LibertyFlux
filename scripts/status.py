@@ -1,16 +1,22 @@
 """Print the facts for a project status update.
 
-Usage: python scripts/status.py
+Usage: python scripts/status.py [--write [--commit]]
 
 Reads lane logs and deliverables under .artifacts/, the running process list, memory, the Ghidra
 analysis log, the progress file and git. Prints plain text. Windows only (uses PowerShell for the
 process list and memory).
+
+--write   also record this tick in docs/data/progress.json (timestamps and lane activity) and
+          regenerate the site data and badges.
+--commit  with --write, commit the progress files if they changed, with a subject starting
+          "Progress:". Progress commits need no changelog entry.
 """
 
 import datetime
 import json
 import re
 import subprocess
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -111,6 +117,45 @@ def main():
     ahead = subprocess.run(["git", "-C", str(ROOT), "rev-list", "--count", "origin/main..HEAD"],
                            capture_output=True, text=True).stdout.strip()
     print(f"git: {len(git.splitlines())} uncommitted paths, {ahead or '?'} commits not pushed")
+
+    if "--write" in sys.argv:
+        write_progress(progress, counts)
+
+
+def write_progress(progress, counts):
+    """Record this tick in docs/data/progress.json, regenerate the site data, and commit it.
+
+    Only the activity block and the timestamps are written here. Measured numbers are set by the
+    coordinator from lane results, never by this function.
+    """
+    devlog = (ROOT / "docs" / "devlog.html").read_text(encoding="utf-8")
+    now = datetime.datetime.now()
+    progress["updated"] = now.strftime("%Y-%m-%d")
+    progress["updated_at"] = now.strftime("%Y-%m-%d %H:%M")
+    progress["activity"] = {
+        "lanes_running": counts.get("running", 0),
+        "lanes_finished": counts.get("finished", 0),
+        "lanes_incomplete": counts.get("exited-incomplete", 0) + counts.get("not-running", 0),
+        "devlog_entries": devlog.count('<article class="entry"'),
+    }
+    path = ROOT / "docs" / "data" / "progress.json"
+    path.write_text(json.dumps(progress, indent=2) + "\n", encoding="utf-8", newline="\n")
+    subprocess.run([sys.executable, str(ROOT / "scripts" / "update_progress.py")], cwd=ROOT, capture_output=True)
+    if "--commit" in sys.argv:
+        paths = ["docs/data/progress.json", "docs/data/progress.js", "docs/badges"]
+        subprocess.run(["git", "-C", str(ROOT), "add", "--"] + paths)
+        staged = subprocess.run(["git", "-C", str(ROOT), "diff", "--cached", "--quiet", "--"] + paths).returncode
+        if staged:
+            a = progress["activity"]
+            subject = (f"Progress: phase {progress['phase']['index']}, {a['lanes_running']} lanes running, "
+                       f"{a['lanes_finished']} finished, {a['devlog_entries']} devlog entries")
+            subprocess.run(["git", "-C", str(ROOT), "commit", "-q", "-m", subject, "--"] + paths)
+            push = subprocess.run(["git", "-C", str(ROOT), "push", "-q", "origin", "main"],
+                                  capture_output=True, text=True)
+            print("progress committed: " + subject + (" (pushed)" if push.returncode == 0 else
+                                                      " (PUSH FAILED: " + push.stderr.strip()[:120] + ")"))
+        else:
+            print("progress unchanged, nothing committed")
 
 
 if __name__ == "__main__":
