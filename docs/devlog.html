@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#tools-format-docs">Tools: public documentation of the game's file formats</a></li>
       <li><a href="#subsystem-mainloop-timing">Subsystem survey: start-up, the main loop, threads and timing</a></li>
       <li><a href="#subsystem-input-ui">Subsystem survey: input, front end and HUD</a></li>
       <li><a href="#subsystem-animation-euphoria">Subsystem survey: animation and the Euphoria ragdoll system</a></li>
@@ -75,6 +76,88 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="tools-format-docs">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Tools: public documentation of the game's file formats</h2>
+      <p>The public documentation for the game's file formats is now indexed in one place, and spot checks against real game files matched it: the archive split, the resource wrapper, the text database and the shader packaging all look the way the wiki and tool authors describe. The gaps are also mapped: everything packed inside archives still needs an extraction tool before its documentation can be checked.</p>
+      <h3>What was asked</h3>
+      <p>Build a complete index of public documentation for every file format the game uses, starting from the modding wiki and the open parsers, and verify at least one documented detail of each format against a real file header. Research and writing only; install nothing.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> A read-only census of the game folder counted over five thousand files in four dozen extensions. Two archive families hold nearly all the bytes: dozens of general archives for audio, player models and one data pack, and hundreds of image archives for maps, vehicles, scripts, animation, navigation meshes and paths. The most numerous loose files are vehicle path recordings, fragment tuning files, in-game web pages and compiled shaders.</p>
+      <p><span class="evidence verified">Verified</span> Header checks matched the documentation for the formats stored as loose files: the general archives use one format version for audio and another for everything else, all loose binary resources share one container with a different version word per resource kind, the text database opens with its documented version and table directory, and the compiled shaders are wrapped platform blobs around standard shader bytecode. Text formats for vehicles, peds, placement, zones, decisions and configuration are plain readable files with commented headers.</p>
+      <p><span class="evidence verified">Verified</span> The documentation landscape, ranked by usefulness, is: the modding wiki prose specs; the open RageLib parser set inside the Unity reimplementation project; the SparkIV archive editor sources; the web-map project, which holds the only navigation-mesh documentation because no other reader exists; the FiveM format library's container reconstruction; script tools; audio tools including a scriptable archive reader on the Python package index; and the closed-source reference viewer with its interchange specs.</p>
+      <p><span class="evidence">Inferred</span> Several formats have no prose documentation at all and are only described by reader source code or not at all: effects packages, streaming request lists, control mappings, binary audio configuration, vehicle recordings, save-game internals and the benchmark capture files.</p>
+      <p><span class="evidence">Unknown</span> Every format that exists only inside archives could not be header-checked, because checking them needs an extraction tool this task was scoped not to install.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Area</th>
+      <th role="columnheader">Best documentation</th>
+      <th role="columnheader">Check result</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">Archives</td>
+      <td role="cell" data-label="Best documentation">Wiki archive page plus two open readers</td>
+      <td role="cell" data-label="Check result">Matched</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Models and textures</td>
+      <td role="cell" data-label="Best documentation">Wiki model page plus open readers</td>
+      <td role="cell" data-label="Check result">Loose files matched; archived files unchecked</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Navigation meshes</td>
+      <td role="cell" data-label="Best documentation">Web-map project notes, the only source</td>
+      <td role="cell" data-label="Check result">Unchecked, inside archives</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Scripts</td>
+      <td role="cell" data-label="Best documentation">Community wiki header table plus script tools</td>
+      <td role="cell" data-label="Check result">Unchecked, inside archives</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Text and localisation</td>
+      <td role="cell" data-label="Best documentation">Wiki text page with field tables</td>
+      <td role="cell" data-label="Check result">Matched exactly</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Audio</td>
+      <td role="cell" data-label="Best documentation">Radio editor docs plus scriptable archive reader</td>
+      <td role="cell" data-label="Check result">Archive and config versions matched</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Shaders</td>
+      <td role="cell" data-label="Best documentation">No prose docs; standard platform layout inside</td>
+      <td role="cell" data-label="Check result">Matched</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Vehicle and ped data</td>
+      <td role="cell" data-label="Best documentation">Wiki per-file pages</td>
+      <td role="cell" data-label="Check result">Matched</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Save games</td>
+      <td role="cell" data-label="Best documentation">Only location and naming documented</td>
+      <td role="cell" data-label="Check result">Not touched; live outside the game folder</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Later lanes should start from the new format index for any asset work, and from the ranked documentation list when the index is not enough.</li>
+      <li>The recommended open parsers are the RageLib set for archives, models, textures, fragments and placement, the web-map extractor for navigation meshes, the script toolbox and compiler for scripts, and the Python archive reader for audio.</li>
+      <li>The closed-source reference viewer and the commercial modelling plug-in are matters for the owner, not the project, because one needs an installer and the other a paid host.</li>
+      <li>No Blender path exists for the game's meshes; the only Blender plug-in covers animation and is unfinished.</li>
+      <li>The next tool lane should install the scriptable archive reader and the open parser set, extract one sample of each archived format, and confirm the documented headers.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>List the game folder read-only and count files by extension; read the first bytes of one file per extension and compare the container tags, version words and table names against the wiki pages; scan a few archives for inner container tags to confirm they hold no plaintext structure; and record every documentation link with whether its page was read in full or only excerpted. The scripts and raw outputs live in the lane scratch folder.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The script wiki page refused direct fetching, so its header table is second-hand from a search excerpt and needs a re-fetch before anyone quotes it. One project search returned junk and near-piracy results, which were discarded; that engine index is unreliable for this topic. Licence labels for most open tools could not be confirmed in the time available, so every reuse must check the repository licence file first — two key parsers are reported as copyleft and are reference-only under project rules. The most numerous loose format, vehicle recordings, has the thinnest usable documentation of any common format.</p>
+      </article>
 
       <article class="entry" id="subsystem-mainloop-timing">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
