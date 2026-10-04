@@ -1,8 +1,17 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Show measured facts and lane activity on the site",
+    "title": "Derive missing table labels in devlog fragments",
     "commit": null,
+    "summary": "A lane's entry was refused for a formatting detail the script can fix itself.",
+    "changes": [
+      "The devlog integration script now fills in the phone-layout label of each table cell from its column header instead of refusing the fragment."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Show measured facts and lane activity on the site",
+    "commit": "9aad11171b822cff48d35ddb3be83af0beac7794",
     "summary": "The overview page now says what has been measured and how much work is in flight.",
     "changes": [
       "The progress file gains a list of measured facts and an activity block with the number of lanes running and finished and the number of devlog entries.",

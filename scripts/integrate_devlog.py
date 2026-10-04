@@ -29,6 +29,35 @@ CHECKS = [
 ]
 
 
+def add_missing_labels(fragment):
+    """Give every table cell after the first a data-label taken from its column header.
+
+    The stylesheet turns table rows into labelled blocks on phones and needs these labels.
+    Lanes often forget them, and they can be derived, so derive them instead of refusing.
+    """
+    def fix_table(table_match):
+        table = table_match.group(0)
+        headers = [re.sub(r"<[^>]+>", "", h).strip() for h in re.findall(r"<th\b[^>]*>(.*?)</th>", table, re.S)]
+
+        def fix_row(row_match):
+            index = -1
+
+            def fix_cell(cell_match):
+                nonlocal index
+                index += 1
+                attrs = cell_match.group(1)
+                if index == 0 or "data-label" in attrs or index >= len(headers):
+                    return cell_match.group(0)
+                label = headers[index].replace('"', "&quot;")
+                return f'<td{attrs} data-label="{label}">'
+
+            return re.sub(r"<td\b([^>]*)>", fix_cell, row_match.group(0))
+
+        return re.sub(r"<tr\b[^>]*>.*?</tr>", fix_row, table, flags=re.S)
+
+    return re.sub(r"<table\b.*?</table>", fix_table, fragment, flags=re.S)
+
+
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     force = "--force" in sys.argv
@@ -40,6 +69,7 @@ def main():
         sys.exit(f"{lane}: no devlog-entry.html")
     fragment = fragment_path.read_text(encoding="utf-8", errors="replace").replace("\r\n", "\n").strip()
 
+    fragment = add_missing_labels(fragment)
     articles = re.findall(r"<article\b", fragment)
     opening = re.search(r'<article class="entry" id="([a-z0-9-]+)">', fragment)
     title = re.search(r"<h2>(.*?)</h2>", fragment, re.S)
