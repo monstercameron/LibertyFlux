@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#structures-audio">Class layouts: audio classes</a></li>
       <li><a href="#pilot-09">Pilot lane 09: five functions rewritten and timed</a></li>
       <li><a href="#natives-19">Native handlers SET_RADAR_SCALE to SET_VIEWPORT_MIRRORED: what they reveal</a></li>
       <li><a href="#natives-08">Native handlers GET_PLAYER_RADIO_STATION_INDEX to HAS_CAR_BEEN_DAMAGED_BY_CHAR: what they reveal</a></li>
@@ -156,6 +157,43 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="structures-audio">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Class layouts: audio classes</h2>
+      <p>All 78 audio classes now have recovered object layouts and virtual interfaces: every vtable slot is labelled overridden or inherited, nearly every class has its constructor and destructor identified, and most have a measured size. The sound-node family shares one base implementation with a single behaviour slot per node, while the game-side emitters range from under a hundred bytes to around twenty eight kilobytes.</p>
+      <h3>What was asked</h3>
+      <p>Recover the object layouts and virtual interfaces of the audio class family: per-slot override analysis, constructors and destructors, object sizes, field lists with proposed meanings, and relationships between classes, working only on unencrypted code.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The batch holds 78 classes in 9 single-inheritance families plus two orphans, with 646 vtable slots in total. About 28 percent of slot targets fall in the opaque range and were not analysed; the remaining 257 distinct code targets were all disassembled across 474 functions with no failures.</p>
+      <ul>
+      <li>Sound nodes: one base of ten slots with 24 subclasses. The base implements most slots once and every subclass overrides the same behaviour slot plus its destructor. Six node sizes are confirmed by two independent methods.</li>
+      <li>Effects: a base of seven slots with seven subclasses that reimplement nearly every slot each, plus six small platform backends with three slots each.</li>
+      <li>Voices: a base of twelve slots with four backends that override everything except one shared default slot. The backends look like they share one creation helper.</li>
+      <li>Game emitters: a tiny root (a vtable pointer plus one id word) with nineteen per-type emitters. Most emitters override one key behaviour slot; eight of them point it at a shared default, effectively disabling it.</li>
+      <li>Radio: a seventeen-slot interface whose base holds no state; both children override most slots with small bodies that delegate through a single pointer field.</li>
+      <li>Odd cases: one sound base puts its deleting destructor in slot five instead of slot zero; one attribute class belongs to the 2d-effect family rather than the audio tree and shares its deleting code with a sibling class; four classes and one vtable-less root have fully opaque construction.</li>
+      </ul>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Family</th><th role="columnheader">Classes</th><th role="columnheader">Slots per table</th><th role="columnheader">Typical size</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Sound nodes</td><td role="cell" data-label="Classes">25</td><td role="cell" data-label="Slots per table">10</td><td role="cell" data-label="Typical size">176 to 252 bytes</td></tr>
+      <tr role="row"><td role="cell">Effects</td><td role="cell" data-label="Classes">8</td><td role="cell" data-label="Slots per table">7</td><td role="cell" data-label="Typical size">116 to 340 bytes</td></tr>
+      <tr role="row"><td role="cell">Effect backends</td><td role="cell" data-label="Classes">6</td><td role="cell" data-label="Slots per table">3</td><td role="cell" data-label="Typical size">40 to 664 bytes</td></tr>
+      <tr role="row"><td role="cell">Voices</td><td role="cell" data-label="Classes">5</td><td role="cell" data-label="Slots per table">12 to 13</td><td role="cell" data-label="Typical size">144 to 340 bytes</td></tr>
+      <tr role="row"><td role="cell">Game emitters</td><td role="cell" data-label="Classes">21</td><td role="cell" data-label="Slots per table">6 to 7</td><td role="cell" data-label="Typical size">96 bytes to about 28 kilobytes</td></tr>
+      <tr role="row"><td role="cell">Radio</td><td role="cell" data-label="Classes">3</td><td role="cell" data-label="Slots per table">17</td><td role="cell" data-label="Typical size">4 to 68 bytes</td></tr>
+      <tr role="row"><td role="cell">Occlusion, tracker, misc</td><td role="cell" data-label="Classes">10</td><td role="cell" data-label="Slots per table">2 to 30</td><td role="cell" data-label="Typical size">4 bytes to about 1.3 kilobytes</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence">Inferred</span> The opaque-range slot fillers shared by hundreds of tables are pure-call or deleted-function defaults, judged from fan-in alone. Several large emitters embed whole radio or speech objects as members.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Rewrite in this order: the tiny roots first, then the sound base once plus one behaviour slot per node, then effects, voices, radio, the thin emitters, and the big partly-opaque emitters last. Per-class layouts, sizes and confidence levels are stored as machine-readable data for later lanes.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane script from the repository root with the project Python environment. It scans the executable for vtable addresses confirmed by relocations, disassembles the owning and called functions, attributes each to its class through the class hierarchy, and writes one record per class. Runtime is a few minutes. Hand-read dumps of the destructor patterns and the root constructor confirmed the automatic classification.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Early runs attributed derived-class destructors to the base class because link-time optimisation inlines base destructors into derived ones; the fix was to attribute multi-vtable functions to the most-derived class. Identical destructors are folded across sibling classes by the linker, so one code body can serve several classes. A variable in the script briefly shadowed the disassembler handle and silently emptied 54 analyses; error capture was added and the final run has zero failures. One shared helper resisted automatic attribution for a while and was verified by hand instead. Two data labels in the machine output name a base class where the most-derived class is meant; the written report corrects them.</p>
+      </article>
 
       <article class="entry" id="pilot-09">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
