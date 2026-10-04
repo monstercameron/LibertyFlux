@@ -9,7 +9,8 @@
 /// is byte `+0x08` of the record (0 for the scratch record).
 ///
 /// The sink callee (cdecl, two arguments) is called with the saved index
-/// (length 4), a byte beside the scratch record (length 1), then the record
+/// (length 4), the flag byte itself (length 1; the caller's pushes
+/// accumulate, so the address is frame+7), then the record
 /// fields at offsets `0x20` (2), `0x30` (16), `0x40` (4), `0x24` (4),
 /// `0x60` (60), `0x00` (2), `0x04` (4), `0x44` (4), `0x48` (4), `0x4c` (4),
 /// `0x50` (4), `0x54` (4), `0x58` (1), then a computed word (length 4) and a
@@ -33,7 +34,9 @@ lf_checker_rt::export!(cdecl, rw_00908480(index: u32) -> u32 {
         // the scratch record the initialiser fills through `entry`.
         let mut frame = [0u32; 48];
         frame[2] = index;
-        let base = frame.as_mut_ptr() as u32;
+        // Escape the address so the stores below survive optimisation: the
+        // checker stubs read and write this buffer through the raw address.
+        let base = core::hint::black_box(frame.as_mut_ptr() as u32);
         let entry = base.wrapping_add(16);
         // Initialiser (thiscall, record pointer in ecx).
         lf_checker_rt::callee_thiscall!(1, u32, entry);
@@ -51,8 +54,11 @@ lf_checker_rt::export!(cdecl, rw_00908480(index: u32) -> u32 {
             ((esi.wrapping_add(FLAG_OFF) as *const u8).read() != 0) as u8
         };
 
+        // The flag byte lives at frame+7 with the saved index right after it,
+        // matching the original's snapshot of [flag, index, zeros].
+        frame[1] = (flag as u32) << 24;
         lf_checker_rt::callee_cdecl!(2, u32, base.wrapping_add(8), 4u32);
-        lf_checker_rt::callee_cdecl!(2, u32, base.wrapping_add(15), 1u32);
+        lf_checker_rt::callee_cdecl!(2, u32, base.wrapping_add(7), 1u32);
         lf_checker_rt::callee_cdecl!(2, u32, esi.wrapping_add(0x20), 2u32);
         lf_checker_rt::callee_cdecl!(3, u32, esi.wrapping_add(0x30), 0x10u32);
         lf_checker_rt::callee_cdecl!(2, u32, esi.wrapping_add(0x40), 4u32);

@@ -15,11 +15,12 @@
 /// return value is `out_zero_byte` unchanged.
 ///
 /// Algorithm: the offset from the center to the aimed point is normalized
-/// (a zero or NaN length yields a zero offset) and scaled by -12.0 when the
-/// flag bit is set, else by 26.0, with the x component negated. The first
-/// heading is taken between the re-aimed point and the center, the second
-/// between the normalized frame direction (a zero or NaN length yields the
-/// raw y component paired with 1.0); their difference is wrapped into
+/// (a zero length yields a zero offset; a NaN length normalizes to NaN) and
+/// scaled by -12.0 when the flag bit is set, else by 26.0, with the x
+/// component negated. The first heading is taken between the re-aimed point
+/// and the center, the second between the normalized frame direction (a zero
+/// length yields the raw y component paired with 1.0; NaN normalizes to
+/// NaN); their difference is wrapped into
 /// [-pi, pi] and clamped into [-0.99, 0.99]. The gain compares the limit
 /// against the length of the provided vector: a non-positive margin maps to
 /// -0.1 above -5.0 else -0.2, a positive margin maps to 1.0 past a quarter
@@ -101,11 +102,12 @@ lf_checker_rt::export!(cdecl, rw_00d82a30(state: u32, target: u32, out_angle: u3
         let dx = sub(rdf(aim), rdf(frame + CENTER_X));
         let dy = sub(rdf(aim + 4), rdf(frame + CENTER_Y));
         let len2 = add(mul(dy, dy), mul(dx, dx));
-        let inv = if len2 > 0.0 {
+        // The flag test only skips a zero length; NaN normalizes to NaN.
+        let inv = if len2 == 0.0 {
+            0.0
+        } else {
             let root = core::hint::black_box(len2).sqrt();
             core::hint::black_box(ONE) / core::hint::black_box(root)
-        } else {
-            0.0
         };
         let gain = if rd8(state + FLAGS_OFF) & GAIN_FLAG != 0 { GAIN_SET } else { GAIN_CLEAR };
         let oy = mul(mul(inv, dy), gain);
@@ -116,9 +118,9 @@ lf_checker_rt::export!(cdecl, rw_00d82a30(state: u32, target: u32, out_angle: u3
         let vx = rdf(frame + DIR_X);
         let vy = rdf(frame + DIR_Y);
         let vlen = add(mul(vy, vy), mul(vx, vx)).sqrt();
-        // Normalized frame direction; a zero or NaN length keeps the raw y
-        // paired with 1.0.
-        let (n0, n1) = if vlen == 0.0 || vlen.is_nan() {
+        // Normalized frame direction; only a zero length keeps the raw y
+        // paired with 1.0, NaN normalizes to NaN.
+        let (n0, n1) = if vlen == 0.0 {
             (vy, ONE)
         } else {
             let s = core::hint::black_box(ONE) / core::hint::black_box(vlen);
