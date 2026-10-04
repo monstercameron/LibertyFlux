@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#script-interpreter">The script interpreter, mapped end to end</a></li>
       <li><a href="#structures-ui">Class layouts: user interface, front end, HUD, replay editor and web browser classes</a></li>
       <li><a href="#structures-tasks-b">Class layouts: AI task classes, second half (CTaskSimple* and other CTask*)</a></li>
       <li><a href="#structures-tasks-a">Class layouts: AI task classes, first half (CTaskComplex*)</a></li>
@@ -147,6 +148,40 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="script-interpreter">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>The script interpreter, mapped end to end</h2>
+      <p>The whole script virtual machine interpreter is now mapped: every opcode handler, the thread layout, the functions around it, and the first behavioural test of original engine code on this project, which ran a tiny synthetic program and left the right answer on the script stack.</p>
+      <h3>What was asked</h3>
+      <p>Map the script virtual machine interpreter precisely: find its opcode dispatch, enumerate every opcode with its stack effect and operand bytes, describe the thread context as the interpreter uses it, identify the surrounding functions, and if possible run the original interpreter in isolation on a synthetic program.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> The interpreter is a single function that fetches one opcode byte and dispatches through a jump table of 78 entries, one per named opcode.</li>
+      <li><span class="evidence verified">Verified</span> High byte values are not looked up: each pushes its own value minus a constant, giving small integers directly. Only two byte values are invalid and abort the thread.</li>
+      <li><span class="evidence verified">Verified</span> All 78 handlers were read individually. Their behaviour matches the public instruction names in every case, with five quirks a rewrite must copy, including division by zero leaving the dividend in place and a supposedly unsigned push that sign-extends.</li>
+      <li><span class="evidence verified">Verified</span> Native calls are bound when a script loads, not looked up while it runs: the loader overwrites each native hash in the code with the handler address, writing zero for unknown hashes, and the interpreter simply calls whatever address it finds.</li>
+      <li><span class="evidence verified">Verified</span> The thread layout derived from the handlers agrees with the layout published by the open-source script debugger on every field, with no disagreements, including the five thread states and the order of the five virtual functions.</li>
+      <li><span class="evidence verified">Verified</span> Eighty-two related functions were identified with roles, including the per-frame scheduler, thread reset, kill and spawn, the program and native tables, the loader, the native binder, and the game-specific thread overrides.</li>
+      <li><span class="evidence verified">Verified</span> The original interpreter bytes executed a synthetic program (push two numbers, add) and produced the correct stack, plus both error paths. The per-instruction budget, the saved instruction pointer and the restored globals all behaved as the static analysis predicted.</li>
+      </ul>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Named opcodes</td><td role="cell" data-label="Value">78</td><td role="cell" data-label="What it means">one handler each in the dispatch table</td></tr>
+      <tr role="row"><td role="row">Push-immediate byte values</td><td role="cell" data-label="Value">176</td><td role="cell" data-label="What it means">each pushes a small integer with no operand bytes</td></tr>
+      <tr role="row"><td role="cell">Invalid byte values</td><td role="cell" data-label="Value">2</td><td role="cell" data-label="What it means">both abort the thread with the same error</td></tr>
+      <tr role="row"><td role="cell">Related functions identified</td><td role="cell" data-label="Value">82</td><td role="cell" data-label="What it means">scheduler, lifecycle, tables, loader and overrides</td></tr>
+      <tr role="row"><td role="row">Behavioural tests passed</td><td role="cell" data-label="Value">3</td><td role="cell" data-label="What it means">arithmetic plus both error paths on real interpreter bytes</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>A Rust rewrite should implement the loader-time native binder rather than any run-time hash lookup, reproduce the five arithmetic quirks exactly, and take the text-formatting helper and the log sink as engine-provided hooks, since both live in the encrypted part of the executable and cannot be studied statically. The three behavioural tests are the seed vectors for the rewrite's test suite. Two small corrections for earlier survey notes: the script file extension string does appear in the executable, and opcode zero is invalid rather than a no-op.</p>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble the interpreter function with a standard x86 disassembler and follow the single computed jump to the opcode table; each entry leads to one handler whose stack traffic can be read directly. The instruction-length helper next to it confirms every operand size independently. The behavioural test maps the interpreter's code pages into a scratch process with relocation fixups, builds a synthetic thread, program and bytecode program on a scratch heap, calls the interpreter entry point with a small instruction budget, and reads back the thread state and stack words.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The Python emulator crashes on this machine even for two trivial instructions, so the planned unicorn demo was rebuilt as a small native runner instead, which took several iterations of mapping and relocation work. The native call path looked impossible at first: the handler calls the operand with no lookup in sight, until the loader's binding pass explained that the operand is already a handler address by run time. A block of composer-data code just past the interpreter was briefly mistaken for script thread management until its virtual table gave it away.</p>
+      </article>
 
       <article class="entry" id="structures-ui">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
