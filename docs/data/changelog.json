@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: The checker driver grows without bound on long runs",
+    "commit": null,
+    "summary": "Findings from the coord-driver-leak lane.",
+    "changes": [
+      "New devlog entry: The checker driver grows without bound on long runs.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 58 more functions pass the checker (3976 in total)",
     "commit": "c120cb1d315da89ec9b13cb2d7eedbe544e9926a",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

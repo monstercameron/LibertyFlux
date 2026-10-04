@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#checker-driver-memory">The checker driver grows without bound on long runs</a></li>
       <li><a href="#production-b25">NaN payloads need explicit handling in float rewrites</a></li>
       <li><a href="#production-b13">One audio function returns into the heap on a rare path</a></li>
       <li><a href="#production-n103">Twenty-five native handlers verified, and a widened call log for wide calls</a></li>
@@ -252,6 +253,32 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="checker-driver-memory">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>The checker driver grows without bound on long runs</h2>
+      <p>A second memory squeeze, two hours after the first, had a different cause: one Python process. A re-run lane had started the checker driver over its whole batch in a single process, and that process had grown to 8.9 GB. Stopping it returned the machine from 1.7 GB free to 11.5 GB.</p>
+      <h3>What was asked</h3>
+      <p>Why commit headroom was falling again with only 39 lanes running, well under the ceiling measured in the earlier incident.</p>
+      <h3>What was found</h3>
+      <table>
+      <thead><tr><th>Fact</th><th>Value</th><th>What it means</th></tr></thead>
+      <tbody>
+      <tr><td>Process</td><td data-label="Value">the checker's Python driver, run once over all of a lane's contracts</td><td data-label="What it means">Lanes normally run it per contract or in small groups</td></tr>
+      <tr><td>Contracts in the run</td><td data-label="Value">170, of which 88 were finished</td><td data-label="What it means">About 100 MB retained per contract</td></tr>
+      <tr><td>Private memory</td><td data-label="Value">8.9 GB and rising</td><td data-label="What it means">It would have passed 17 GB by the end of the batch</td></tr>
+      <tr><td>Free memory before and after stopping it</td><td data-label="Value">1.7 GB, then 11.5 GB</td><td data-label="What it means">One process accounted for most of the squeeze</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence">Inferred</span> The driver keeps every trial's observations for every contract it has run, instead of writing each verdict and letting the data go. That has not been confirmed by reading the code; the growth per contract is what points to it.</p>
+      <p><span class="evidence">Inferred</span> The same growth probably contributed to the first incident, when thirteen re-run lanes each ran a whole batch through one driver while also starting a dozen workers.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Lanes are now told to run at most 20 contracts per driver process. The coordinator's tick stops any checker driver process above 4 GB and reports it. The driver should write each verdict as it finishes and keep nothing: that fix is queued for the next checker revision.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the driver over a hundred or more contracts in one process with full data comparison on, and watch its private memory.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The earlier incident was explained entirely by lane count and worker count, and the guard added afterwards was built on that explanation. It kept new lanes from starting but could do nothing about one process inside a running lane. The lane whose driver was stopped lost its run in progress; the verdicts it had already written are on disk.</p>
+      </article>
 
       <article class="entry" id="production-b25">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
