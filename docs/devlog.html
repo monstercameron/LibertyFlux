@@ -44,6 +44,8 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#proof-records">How strongly is each rewrite proven</a></li>
+      <li><a href="#hourly-reviews-2026-10-04">Hourly reviews, 4 October</a></li>
       <li><a href="#production-s241">Three task natives read a fourth word they never wrote</a></li>
       <li><a href="#naming-02">Naming batch two: the batch was all audio, and the voice block has eight channels</a></li>
       <li><a href="#production-s240">The stray-write check only runs when full-image comparison is on</a></li>
@@ -332,6 +334,52 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="proof-records">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>How strongly is each rewrite proven</h2>
+      <p>Every accepted rewrite now has a proof record with a level from P0 (unproven) to P5 (cross-checked). Of 6,776 rewrites, 6,254 sit at P2 (passing with adequate coverage), 452 at P3 (strict), 25 at P4 (a wrong version was run and caught), and 45 at P1 (coverage inadequate or unshown). The most common gap by far is that 96 percent of functions have never had a wrong version run against them.</p>
+      <h3>What was asked</h3>
+      <p>Define a proof record per rewrite that captures how strongly it was proven, build it for every entry in the rewrite index from the stored verdict and contract files, report which weaknesses are common and which rewrites are weakest, cost a wrong-version run per function, and specify how the index and site should carry the levels.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The builder matched all 6,776 index entries to on-disk verdicts and contracts; nothing was missing and nothing was guessed. The level counts are P1: 45, P2: 6,254, P3: 452, P4: 25, with P0 and P5 empty.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Weakness</th><th role="columnheader">Rewrites</th><th role="columnheader">Meaning</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><th role="row">No wrong version run</th><td role="cell" data-label="Rewrites">6,515</td><td role="cell" data-label="Meaning">No deliberately wrong variant was ever run and caught</td></tr>
+      <tr role="row"><th role="row">Older checker</th><td role="cell" data-label="Rewrites">6,224</td><td role="cell" data-label="Meaning">Verdict came from a checker older than the current one</td></tr>
+      <tr role="row"><th role="row">Narrowed comparison</th><td role="cell" data-label="Rewrites">1,809</td><td role="cell" data-label="Meaning">A return channel, check, or call argument was not compared</td></tr>
+      <tr role="row"><th role="row">Private worker</th><td role="cell" data-label="Rewrites">250</td><td role="cell" data-label="Meaning">Lane results came from a private copy of the checker worker</td></tr>
+      <tr role="row"><th role="row">Low coverage</th><td role="cell" data-label="Rewrites">45</td><td role="cell" data-label="Meaning">Passing verdict but the original rarely completed or a callee never fired</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The cheapest lift is a re-run of 4,280 rewrites on the current checker: each needs nothing else to reach P3. A wrong-version run costs a median of under half a second per function because the driver stops after three failures; generation is a script edit, but the rebuild time of each lane crate was not measured. <span class="evidence verified">Verified</span> The index labels the checker version wrongly for 284 entries whose lanes already re-ran on the current checker, and 20 verdicts match no contract on file.</p>
+      <h3>What was decided or recommended</h3>
+      <p><span class="evidence">Inferred</span> Record facts per comparison channel (whether it applied, whether it was compared) and derive the level from them, so functions with no calls or no floating point are not penalised for empty rungs. Keep narrowed comparisons below P3 even when they look legitimate, with per-function exemption reasons recorded in the contract. The import step should refuse vacuous verdicts and hash-mismatched contracts, which it does not check today, and a new checker release should demote stale records by query instead of by hand.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane script over the rewrite index; it walks each lane folder for verdict, contract, and wrong-version verdict files, matches them by function, recomputes the contract hashes, and writes one record per rewrite plus the level and weakness tables. A two-contract smoke run of the stock checker confirmed the verdict field meanings and the hash construction.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Lanes store verdicts and contracts under many different folder names, and several runs per function often exist, so the builder had to search whole lane folders and pick the best verdict by stated rule rather than by path. The result files use relative function numbers that can look like full addresses, which broke the first matcher until matching compared both forms. The index kept growing while the lane ran, so all counts cite a recorded snapshot hash.</p>
+      </article>
+
+      <article class="entry" id="hourly-reviews-2026-10-04">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Hourly reviews, 4 October</h2>
+      <p>From today the coordinator reviews the project critically once an hour: whether the work is still pointed at the goal, what the last hour produced, what weakened confidence in the results, and what changes because of it. One row is added here per review. The first one found that the count of verified functions had become the thing being optimised, while the two questions that decide whether the project reaches its goal (does the rewritten code run in the game, and what does the 64-bit lift cost) had nothing running against them.</p>
+      <h3>What was asked</h3>
+      <p>To check every hour that the project is going in the right direction and to improve the process from what was just learned.</p>
+      <h3>What was found</h3>
+      <table>
+      <thead><tr><th>Time</th><th>Main finding</th><th>Decision</th></tr></thead>
+      <tbody>
+      <tr><td>09:10</td><td data-label="Main finding">17.7% of functions are verified but 7.9% of the code by size. In the last hour large-function lanes verified 61 of 82 (74%, up from 61% under the previous checker) and small-function lanes 318 of 320; a lane of either kind verifies about the same number of bytes per hour. Memory, not the model, set the pace: the supervisor waited for memory on every pass and averaged 34 lanes against a target of 44. Of 35 older results re-run on the stock checker, 9 did not reproduce as ported, none through a defect in a rewrite so far.</td><td data-label="Decision">Started a pilot of the 64-bit lift on one cluster and a lane that assembles the rewrites into a loadable library, so both open questions are being measured. Weighted new lanes towards large functions in proportion to remaining bytes. Lowered the free-memory guard after confirming commit headroom, not free memory, was the limit that caused the first incident. Started a lane to restore or withdraw the nine results. Stopped waking the coordinator for every lane that ends: a supervisor process now does that.</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>The review is now a rule in the agent instructions. Its numbers come from a script that keeps a history, so each hour is compared with the one before.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the review script over the last hour: it reports totals by function count and by bytes, the change since the previous review, pass rates and deferral reasons by lane kind, how often the supervisor was waiting for memory, and which lanes ended in an error.</p>
+      </article>
 
       <article class="entry" id="production-s241">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

@@ -1,8 +1,28 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Agent rules: an hourly critical review",
+    "title": "Devlog: How strongly is each rewrite proven",
     "commit": null,
+    "summary": "Findings from the k-proof lane.",
+    "changes": [
+      "New devlog entry: How strongly is each rewrite proven.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Hourly reviews, 4 October",
+    "commit": null,
+    "summary": "Findings from the coord-reviews-1004 lane.",
+    "changes": [
+      "New devlog entry: Hourly reviews, 4 October.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Agent rules: an hourly critical review",
+    "commit": "7d81cf9ef06eecbd65a6ea3469b317b38cac8a8d",
     "summary": "A new rule: once an hour the coordinator reviews direction, throughput, trust and process, and changes things in the same hour.",
     "changes": [
       "Rule 8 in the agent instructions. Each review checks whether the work is still pointed at the goal or at a proxy such as the function count, compares verified functions and verified bytes per hour with the previous review, lists what weakened confidence in the results, and says what changes because of it and what to stop doing.",
