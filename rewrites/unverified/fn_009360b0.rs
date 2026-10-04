@@ -121,7 +121,7 @@ lf_checker_rt::export!(thiscall, rw_009360B0(obj: u32) -> u32 {
         if !(alt > dz) {
             return exact & !0xFF;
         }
-        let prev: u32;
+        let mut prev: u32;
         if exact == 0 {
             let a4 = lf_checker_rt::callee_cdecl!(4, u32,);
             prev = a4;

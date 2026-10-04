@@ -178,7 +178,7 @@ lf_checker_rt::export!(thiscall, rw_00ca8950(handler: u32, event: u32, _a2: u32,
         } else {
             (0, 0)
         };
-        let draw: u32 = lf_checker_rt::callee_cdecl!(RAND, u32);
+        let draw: u32 = lf_checker_rt::callee_cdecl!(RAND, u32,);
         let scaled = mul(mul((draw & 0xffff) as f32, RAND_SCALE_HI), RAND_SCALE_LO);
         // In range and finite for every masked draw, so this truncates
         // exactly like the original's `cvttss2si`.
