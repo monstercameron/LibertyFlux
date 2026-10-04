@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#natives-02">Native handlers ATTACH_PED_TO_CAR to CLEAR_ROOM_FOR_OBJECT: what they reveal</a></li>
       <li><a href="#checker">The checker: proving rewrites match the original</a></li>
       <li><a href="#format-savegame">Rust reader: save game files</a></li>
       <li><a href="#format-data-files">Rust reader: plain-text gameplay data files</a></li>
@@ -163,6 +164,27 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="natives-02">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Native handlers ATTACH_PED_TO_CAR to CLEAR_ROOM_FOR_OBJECT: what they reveal</h2>
+      <p>All 140 handlers in this batch were disassembled and matched against the public native database and the decompiled mission scripts. Nearly every handler is a thin wrapper that unpacks script arguments and calls one engine function, and the engine functions resolve script handles through a single shared pool lookup. Four public param counts are wrong, one documented return value never reaches scripts, and the shared pool lookup sits in the encrypted part of the executable so it could only be observed, not read.</p>
+      <h3>What was asked</h3>
+      <p>Recover engine names and meanings from a batch of 140 script native handlers, propose names for the functions each handler calls, record object fields the handlers touch, and note stubs, shared handlers and encrypted code.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Every handler receives one pointer to a call context. Slot zero of that context points at the return-value slot and the third slot points at the argument array. No handler in this batch reads anything else from the context, and none writes back into the argument array. Twenty-five handlers return a value; the rest are void at the script level.</p>
+      <p><span class="evidence verified">Verified</span> Most handlers share one shape: read the arguments, call a single engine function, store the result if there is one. Ten handlers are a bare jump to the engine function, three are jump chains ending in a few inline instructions that flip a global flag, and two attach handlers pass through a shared second-stage unpacker. The breakpoint native is a lone trap instruction and is never called by shipped scripts.</p>
+      <p><span class="evidence verified">Verified</span> Forty-three engine functions resolve script handles through one shared lookup routine, always with the pool pointer in the same register and the handle on the stack. The same routine serves the ped, vehicle and object pools. It lives in the encrypted first megabyte of the code section, so its internals stay unknown; only its call pattern is established.</p>
+      <p><span class="evidence verified">Verified</span> The observed argument counts agree with the public database for all but four natives. The travel-distance native reads six arguments, not seven; the mission-entity check reads three, not zero; the ceiling function reads one, not two; and the event-precedence clear reads two, not zero. The decompiled scripts agree with the binary in each case.</p>
+      <p><span class="evidence verified">Verified</span> The camera-sequence progress handler calls its engine function but never stores the result, so whatever the engine computes never reaches scripts. No shipped script calls that native. Separately, three decision-maker natives share one identical handler, and the two cell-camera visibility natives share one engine function.</p>
+      <p><span class="evidence">Inferred</span> Field meanings proposed from single-purpose wrappers include the two car colour bytes, the last-damage bone and last-weapon-damage fields (the latter at the same offset on peds, vehicles and objects, so it sits on a shared base class), ped flag words for blocked animations and cover behaviour, per-bit player damage flags, and a stat-id range that decides which stats can carry a string.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Engine wrapper functions are proposed for naming after their native, with the shared pool lookup, the second-stage unpackers and the pool and manager globals proposed as cross-lane shared names. The four wrong public param counts and the dropped progress return should be fed back to the native documentation. The encrypted pool lookup needs the decrypted executable before anyone can go further.</p>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble each handler address from the batch list with capstone, follow jumps to the end of each chain, record argument-array reads, direct calls and return-slot writes, and compare the highest argument index against the public param counts. Then disassemble one level down from each engine function and record which pool or manager global it loads before resolving handles. The per-native records, proposed names and proposed fields ship as JSON alongside the lane report.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The disassembler prints small numbers without a base prefix, so an early version of the analysis script misread offsets and found no arguments at all until the parser was fixed. A register-tracking bug then tagged the wrong values until stack loads were excluded from propagation. The shared pool lookup initially decoded to two plausible instructions before its bytes were recognised as ciphertext, and those two phantom instructions were thrown out. A script-usage scan over the decompiled missions took far longer than planned because of per-native regex passes.</p>
+      </article>
 
       <article class="entry" id="checker">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
