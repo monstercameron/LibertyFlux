@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Site: the tick regenerates the progress history, quality data and devlog feed",
+    "commit": null,
+    "summary": "Three pages that arrived with pull request 1 read data files that nothing was refreshing.",
+    "changes": [
+      "The status script now runs the three site generators after it writes the progress file: the series behind the progress chart, the numbers behind the quality page, and the devlog's Atom feed. Their output is committed with the progress commit every five minutes.",
+      "Each generator was run by hand first: together they take about fifteen seconds, and each writes only when its output changed. If one fails, its file is left as it was, the failure is printed, and the tick carries on."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Changelog: the commits of pull request 1",
     "commit": "1c57634d7a7768e5aeea55516223d3f120caa55b",
     "summary": "One entry for each commit the cloud review brought, and one for the merge.",

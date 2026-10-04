@@ -161,9 +161,19 @@ def write_progress(progress, counts):
     path = ROOT / "docs" / "data" / "progress.json"
     path.write_text(json.dumps(progress, indent=2) + "\n", encoding="utf-8", newline="\n")
     subprocess.run([sys.executable, str(ROOT / "scripts" / "update_progress.py")], cwd=ROOT, capture_output=True)
+    # The site's derived data, regenerated from what was just written so the pages never lag the counts: the
+    # progress chart's series, the quality page's numbers and the devlog's feed. Each writes only on a change;
+    # a generator that fails leaves its file as it was and is reported, and the tick goes on.
+    for generator in ("history.py", "quality.py", "devlog_feed.py"):
+        script = ROOT / "scripts" / "site" / generator
+        if script.exists():
+            made = subprocess.run([sys.executable, str(script)], cwd=ROOT, capture_output=True, text=True)
+            if made.returncode != 0:
+                print(f"site generator {generator} failed: " + (made.stderr.strip().splitlines() or ["no message"])[-1][:160])
     if "--commit" in sys.argv:
         # changelog.json is included because regenerating fills in the hash of the newest entry.
-        paths = ["docs/data/progress.json", "docs/data/changelog.json", "docs/badges"]
+        paths = ["docs/data/progress.json", "docs/data/changelog.json", "docs/badges",
+                 "docs/data/history.json", "docs/data/quality.json", "docs/devlog.xml"]
         subprocess.run(["git", "-C", str(ROOT), "add", "--"] + paths)
         staged = subprocess.run(["git", "-C", str(ROOT), "diff", "--cached", "--quiet", "--"] + paths).returncode
         if staged:
