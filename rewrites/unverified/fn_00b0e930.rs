@@ -30,8 +30,8 @@
 /// is non-zero else the answer plus 0x10, and the id word is the
 /// sign-extended word at `+0x2E`; the result is -1. The build path zeroes
 /// three scratch words, runs the 13-argument build call with (slot, scratch
-/// pointer, id word, two scratch words, 0, 0, 0, 0, 0, answer, 1, 1) where
-/// slot mirrors the submit position, saves its answer, and returns it unless
+/// pointer, id word, selector, 0, count, 0, 0, 0, 0, answer, 1, 1) where slot
+/// mirrors the submit position, saves its answer, and returns it unless
 /// predicate A holds and it is not -1, in which case a query call on the aux
 /// object, a convert call on the saved answer (the original also pushes the
 /// masked query word, but the callee pops only the top word and the caller
@@ -39,10 +39,9 @@
 /// global with (convert answer - 0x578), and a flush call on the post result
 /// run first; the saved answer is still returned.
 ///
-/// The two scratch words and the scratch pointer passed to the build call
-/// read stack the function never wrote; the contract defines that fill as
-/// zero (see `stack_fill`), so the rewrite passes 0 and skips the pointer
-/// comparison (contents snapped instead).
+/// The scratch pointer passed to the build call points into each side's own
+/// stack frame, so its comparison is skipped and the three pointed-to words
+/// are snapped instead.
 ///
 /// Original: 0x00B0E930 (cdecl, one stack argument).
 lf_checker_rt::export!(cdecl, rw_00B0E930(arg: u32) -> u32 {
@@ -160,11 +159,10 @@ lf_checker_rt::export!(cdecl, rw_00B0E930(arg: u32) -> u32 {
         wr8(answer + ANS_MARK, 6);
         let selector: u32 = if pred_a() & 0xff != 0 { 4 } else { 5 };
         /// Shared tail: the 13-argument build call and the post chain.
-        /// `scratch` stands in for the original's uninitialized scratch
-        /// words: the contract's zero stack fill makes them read 0 on the
-        /// original side, and the pointer comparison is skipped (contents
+        /// `scratch` mirrors the three scratch words the original zeroes
+        /// before the call; the pointer comparison is skipped (contents
         /// snapped instead).
-        unsafe fn build_tail(edi: u32, answer: u32) -> u32 {
+        unsafe fn build_tail(edi: u32, answer: u32, count: u32, selector: u32) -> u32 {
             unsafe {
                 let slot_base = rd32(answer + ANS_POS);
                 let slot = if slot_base != 0 {
@@ -173,16 +171,16 @@ lf_checker_rt::export!(cdecl, rw_00B0E930(arg: u32) -> u32 {
                     answer + ANS_BASE
                 };
                 let idw = rd16sx(answer + ANS_IDW);
-                let mut scratch = [0u32; 2];
+                let mut scratch = [0u32; 3];
                 let saved: u32 = lf_checker_rt::callee_cdecl!(
                     CALLEE_BUILD,
                     u32,
                     slot,
                     scratch.as_mut_ptr() as u32,
                     idw,
+                    selector,
                     0,
-                    0,
-                    0,
+                    count,
                     0,
                     0,
                     0,
@@ -212,7 +210,7 @@ lf_checker_rt::export!(cdecl, rw_00B0E930(arg: u32) -> u32 {
         }
 
         if pred_a() & 0xff == 0 {
-            return build_tail(edi, answer);
+            return build_tail(edi, answer, count, selector);
         }
         let probe: u32 = lf_checker_rt::callee_thiscall!(CALLEE_PROBE, u32, edi);
         if probe & 0xff != 0 {
@@ -220,7 +218,7 @@ lf_checker_rt::export!(cdecl, rw_00B0E930(arg: u32) -> u32 {
         }
         let pb: u32 = lf_checker_rt::callee_cdecl!(CALLEE_PRED_B, u32,);
         if pb & 0xff != 0 {
-            return build_tail(edi, answer);
+            return build_tail(edi, answer, count, selector);
         }
         if first == 0 || aux == 0 {
             return 0xffff_ffff;

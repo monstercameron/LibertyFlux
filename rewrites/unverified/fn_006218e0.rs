@@ -130,8 +130,10 @@ lf_checker_rt::export!(thiscall, rw_006218e0(this: u32, a: u32, b: u32, c: u32) 
                 let r1: u32 = lf_checker_rt::callee_thiscall!(15, u32, this, a + ITEMS,
                     rd32(a + COUNT), rd32(a + TAG), scratch, 1, scratch);
                 if (r1 as u8) == 0 {
+                    // The original reuses the first probe's exit ecx here; the
+                    // stub preserves entry ecx, so that is `this` on both sides.
                     let r2: u32 = lf_checker_rt::callee_thiscall!(16, u32, this, a + ITEMS,
-                        rd32(a + COUNT), 0, scratch, 1, scratch);
+                        rd32(a + COUNT), 0, this, 1, this);
                     if (r2 as u8) == 0 {
                         return lf_checker_rt::callee_thiscall!(3, u32, this, b, 2, 0, 0);
                     }

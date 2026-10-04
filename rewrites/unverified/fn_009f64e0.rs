@@ -21,8 +21,13 @@
 /// amount, or the adjusted rating when it is not above the amount (which also
 /// zeroes the stored field).
 ///
+/// The clamp callee's second argument is not the sum: the sum is spilled four
+/// bytes past the argument slot, so the callee reads the caller's entry `esi`
+/// still sitting in its register-save slot. The rewrite takes that value as
+/// an explicit third parameter fed with the same per-trial value.
+///
 /// Original: cdecl, two stack words (id, float bits), no meaningful return.
-lf_checker_rt::export!(cdecl, rw_009F64E0(stat_id: u32, amount_bits: u32) -> u32 {
+lf_checker_rt::export!(cdecl, rw_009F64E0(stat_id: u32, amount_bits: u32, entry_esi: u32) -> u32 {
     unsafe {
         const MAX_FLOAT_STAT: u32 = 0xfc;
         const INT_STAT_BASE: u32 = 0xfd;
@@ -76,8 +81,10 @@ lf_checker_rt::export!(cdecl, rw_009F64E0(stat_id: u32, amount_bits: u32) -> u32
         }
         /// One record step for `id`: look up the current value, add the
         /// amount, maybe clamp, and store. Ids outside both tables do nothing.
+        /// `entry_esi` is the caller's register-save slot, which the clamp
+        /// callee reads as its second argument.
         #[inline(always)]
-        unsafe fn record(id: u32, amount: f32, float_stats: u32, int_stats: u32) {
+        unsafe fn record(id: u32, amount: f32, float_stats: u32, int_stats: u32, entry_esi: u32) {
             unsafe {
                 let current = if id <= MAX_FLOAT_STAT {
                     f32::from_bits(rd32(float_stats + id * 4))
@@ -88,7 +95,7 @@ lf_checker_rt::export!(cdecl, rw_009F64E0(stat_id: u32, amount_bits: u32) -> u32
                 };
                 let mut total = add(current, amount);
                 let clamped =
-                    lf_checker_rt::callee_cdecl!(CLAMP_CALLEE, u32, id, total.to_bits()) != 0;
+                    lf_checker_rt::callee_cdecl!(CLAMP_CALLEE, u32, id, entry_esi) != 0;
                 if clamped {
                     let max = rdf(lf_checker_rt::relocated(STAT_MAXIMUM));
                     if !(max > total) {
@@ -110,7 +117,7 @@ lf_checker_rt::export!(cdecl, rw_009F64E0(stat_id: u32, amount_bits: u32) -> u32
         if !(amount > 0.0) {
             return 0;
         }
-        record(id, amount, float_stats, int_stats);
+        record(id, amount, float_stats, int_stats, entry_esi);
         if id == CHAIN_STAT {
             id = DERIVED_STAT;
             if lf_checker_rt::callee_cdecl!(GATE_CALLEE, u32, id) == 0 {
@@ -119,7 +126,7 @@ lf_checker_rt::export!(cdecl, rw_009F64E0(stat_id: u32, amount_bits: u32) -> u32
             if !(amount > 0.0) {
                 return 0;
             }
-            record(id, amount, float_stats, int_stats);
+            record(id, amount, float_stats, int_stats, entry_esi);
         } else if id != DERIVED_STAT {
             return 0;
         }

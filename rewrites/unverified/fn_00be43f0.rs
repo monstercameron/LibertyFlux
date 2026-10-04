@@ -61,6 +61,15 @@ lf_checker_rt::export!(thiscall, rw_00be43f0(this: u32, arg: u32) -> u32 {
                 return 0;
             }
             let counter = (chain.wrapping_add(COUNTER_OFF) as *const u32).read_unaligned();
+            if counter == 0 {
+                // The original jumps to a null-page write on this path
+                // rather than adding: mirror its fault address exactly so
+                // both sides fault alike (compared for parity).
+                const NULL_PAGE_AT: u32 = 0x410;
+                let at = (NULL_PAGE_AT as *const u32).read_unaligned();
+                (NULL_PAGE_AT as *mut u32).write_unaligned(at.wrapping_add(COUNT_STEP));
+                return 0;
+            }
             let at = (counter.wrapping_add(COUNT_AT) as *const u32).read_unaligned();
             (counter.wrapping_add(COUNT_AT) as *mut u32)
                 .write_unaligned(at.wrapping_add(COUNT_STEP));

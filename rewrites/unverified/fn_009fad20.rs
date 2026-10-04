@@ -64,15 +64,21 @@ lf_checker_rt::export!(cdecl, rw_009fad20() -> u32 {
         let flag = rd32(GEN_FLAG);
         wr32(STAMP_SLOT, stamp);
         let mut result = tick;
+        // The worker relocates the image: every absolute address the original
+        // forms as a value (call arguments, stored pointers) must be relocated too.
+        let gate_obj = lf_checker_rt::relocated(GATE_OBJ);
+        let bank_obj = lf_checker_rt::relocated(BANK_OBJ);
+        let bank_arg = lf_checker_rt::relocated(BANK_ARG);
+        let bank_lo = lf_checker_rt::relocated(BANK_LO);
         if flag != 0 {
-            let gate: u32 = lf_checker_rt::callee_thiscall!(1, u32, GATE_OBJ);
+            let gate: u32 = lf_checker_rt::callee_thiscall!(1, u32, gate_obj);
             result = gate;
             if gate & 0xFF != 0 {
                 let toggled: u32 = if rd32(ACTIVE_SET) == 0 { 1 } else { 0 };
                 wr32(ACTIVE_SET, toggled);
-                wr32(SET_BASE, toggled.wrapping_shl(BANK_STRIDE_SHIFT).wrapping_add(BANK_LO));
+                wr32(SET_BASE, toggled.wrapping_shl(BANK_STRIDE_SHIFT).wrapping_add(bank_lo));
                 wr32(GEN_MIRROR, rd32(GEN_FLAG));
-                let _: u32 = lf_checker_rt::callee_thiscall!(2, u32, BANK_OBJ, BANK_ARG);
+                let _: u32 = lf_checker_rt::callee_thiscall!(2, u32, bank_obj, bank_arg);
                 let src_a = rd32(SRC_A);
                 let src_b = rd32(SRC_B);
                 if src_a | src_b == 0 {
@@ -91,11 +97,16 @@ lf_checker_rt::export!(cdecl, rw_009fad20() -> u32 {
                     reseed = elapsed >= rd32(RESEED_AFTER);
                 }
                 if reseed {
-                    let _: u32 = lf_checker_rt::callee_cdecl!(3, u32, RESEED_OBJ, RESEED_SIZE);
+                    let _: u32 = lf_checker_rt::callee_cdecl!(
+                        3,
+                        u32,
+                        lf_checker_rt::relocated(RESEED_OBJ),
+                        RESEED_SIZE
+                    );
                     lf_checker_rt::global::<u8>(SEEDED_BYTE).write(1);
                     wr32(LAST_STAMP, stamp);
                 }
-                let _: u32 = lf_checker_rt::callee_thiscall!(4, u32, GATE_OBJ);
+                let _: u32 = lf_checker_rt::callee_thiscall!(4, u32, gate_obj);
                 result = lf_checker_rt::callee_cdecl!(5, u32, rd32(FINAL_ARG));
             }
         }

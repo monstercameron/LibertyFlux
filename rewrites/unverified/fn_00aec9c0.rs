@@ -2,10 +2,11 @@
 
 /// Main timing update: build a worker object and run the update chain.
 ///
-/// STAGE B2: short path, middle chain and row loop; only the table
-/// section is still excluded (the stage contract clears the table gate
-/// word). See `stage_b_plan.md` in the lane folder for the remaining
-/// stage (C = table).
+/// Full rewrite: short path, middle chain, row loop and table section.
+/// `this`+0x14 is a byte gate for the table section; the index global
+/// selects one of the table rows through a bit-count loop, the float query
+/// (virtual slot +0x58) picks between two row addresses, and the close
+/// sequence links the worker through the row callee's answer.
 ///
 /// Thiscall with one stack word (`arg`); `this` is a controller. Returns the
 /// entry accumulator (contract-fixed to 0) when `arg` is null or when the
@@ -100,6 +101,8 @@ lf_checker_rt::export!(thiscall, rw_00aec9c0(this: u32, arg: u32) -> u32 {
         bind(worker, arg.wrapping_add(ARGBASE), 1, 0);
         ((worker + WOBJ_FLAGS) as *mut u32)
             .write_unaligned(rd32(worker + WOBJ_FLAGS) | 0x0000_0100);
+        // Scratch slot: the row loop's table object, else the fill (0).
+        let mut slot12 = 0u32;
         if ebp == 0 {
             ((worker + WOBJ_TAG) as *mut u8).write(2);
             lf_checker_rt::callee_cdecl!(27, u32, worker, 0u32);
@@ -177,6 +180,7 @@ lf_checker_rt::export!(thiscall, rw_00aec9c0(this: u32, arg: u32) -> u32 {
                     lf_checker_rt::relocated(ROW_TABLE)
                         .wrapping_add((tidx as i32 as u32).wrapping_mul(4)),
                 );
+                slot12 = tobj;
                 let mut k = 0u32;
                 let mut broke = 0u32;
                 let mut did_break = false;
@@ -243,10 +247,42 @@ lf_checker_rt::export!(thiscall, rw_00aec9c0(this: u32, arg: u32) -> u32 {
             }
         }
         lf_checker_rt::callee_thiscall!(29, u32, worker);
-        // Short path (the stage contract clears the table gate word, so the
-        // table section and the float query never run; the scratch slot kept
-        // the defined fill 0, which the close sequence stores).
-        core::hint::black_box(rd32(this + GATEW));
-        lf_checker_rt::callee_thiscall!(32, u32, 0u32)
+        if ((this + GATEW) as *const u8).read() != 0 {
+            let mut eax =
+                (lf_checker_rt::global::<u32>(0x0159af24)).read_unaligned();
+            let mut ecx = 0u32;
+            if (eax as i32) >= 0 {
+                loop {
+                    eax = eax.wrapping_mul(2);
+                    ecx = ecx.wrapping_add(1);
+                    eax |= 1;
+                    if (eax as i32) < 0 {
+                        break;
+                    }
+                }
+            }
+            let ptr = lf_checker_rt::relocated(0x016156bc)
+                .wrapping_sub(ecx.wrapping_mul(0x54));
+            let x = f32::from_bits(rd32(ptr + 0x50));
+            let qc = if x >= 0.0 {
+                let q: extern "thiscall" fn(u32) -> f32 =
+                    core::mem::transmute(rd32(rd32(worker) + 0x58) as usize);
+                let x0 = core::hint::black_box(q(worker))
+                    * core::hint::black_box(
+                        (lf_checker_rt::global::<f32>(0x00fe8a24)).read_unaligned(),
+                    );
+                if x0 > x {
+                    ptr.wrapping_add(0x30)
+                } else {
+                    ptr.wrapping_add(0x10)
+                }
+            } else {
+                ptr.wrapping_add(0x10)
+            };
+            let a31: u32 = lf_checker_rt::callee_thiscall!(31, u32, qc, 0x10u32);
+            (a31 as *mut u32).write_unaligned(worker);
+            (a31.wrapping_add(4) as *mut u32).write_unaligned(slot12);
+        }
+        lf_checker_rt::callee_thiscall!(32, u32, slot12)
     }
 });

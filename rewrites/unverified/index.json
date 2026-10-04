@@ -1768,9 +1768,9 @@
   "reason": ""
  },
  {
-  "address": "0x00662200",
-  "name": "rage::snHostSessionTask::vf7",
-  "file": "fn_00662200.rs",
+  "address": "0x00662960",
+  "name": "rage::snJoinSessionTask::vf7",
+  "file": "fn_00662960.rs",
   "lane": "r-b290",
   "outcome": "not_reached",
   "reason": ""
@@ -2272,16 +2272,8 @@
   "reason": ""
  },
  {
-  "address": "0x00969040",
-  "name": "quantized_grid_pair",
-  "file": "fn_00969040.rs",
-  "lane": "r-b292",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x00969440",
-  "name": "sample_blend_2d",
+  "name": "bilinear_sample_2d",
   "file": "fn_00969440.rs",
   "lane": "r-b292",
   "outcome": "not_reached",
@@ -2297,7 +2289,7 @@
  },
  {
   "address": "0x00969810",
-  "name": "radial_basis_2d",
+  "name": "radial_weight_2d",
   "file": "fn_00969810.rs",
   "lane": "r-b292",
   "outcome": "not_reached",
@@ -2305,7 +2297,7 @@
  },
  {
   "address": "0x009699F0",
-  "name": "radial_basis_3d",
+  "name": "radial_weight_3d",
   "file": "fn_009699f0.rs",
   "lane": "r-b292",
   "outcome": "not_reached",
@@ -3448,6 +3440,14 @@
   "reason": null
  },
  {
+  "address": "0x00BE4C70",
+  "name": "sub_BEBE4C70",
+  "file": "fn_00be4c70.rs",
+  "lane": "r-s341",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00BE4D50",
   "name": "sub_BEBE4D50",
   "file": "fn_00be4d50.rs",
@@ -4424,35 +4424,19 @@
   "reason": null
  },
  {
+  "address": "0x00D72F30",
+  "name": null,
+  "file": "fn_00d72f30.rs",
+  "lane": "r-b307",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00D82CD0",
   "name": null,
   "file": "fn_00d82cd0.rs",
   "lane": "r-b212",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00DA6080",
-  "name": "CTaskComplexShockingEventFlee::vf18",
-  "file": "fn_00da6080.rs",
-  "lane": "r-s343",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DA6120",
-  "name": "CTaskComplexShockingEventHurryAway::vf18",
-  "file": "fn_00da6120.rs",
-  "lane": "r-s343",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DA67B0",
-  "name": "CTaskComplexShockingEventWatch::vf5",
-  "file": "fn_00da67b0.rs",
-  "lane": "r-s343",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -4560,38 +4544,6 @@
   "reason": ""
  },
  {
-  "address": "0x00E3E570",
-  "name": null,
-  "file": "fn_00e3e570.rs",
-  "lane": "r-b271",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00E3E7F0",
-  "name": null,
-  "file": "fn_00e3e7f0.rs",
-  "lane": "r-b271",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00E3EEB0",
-  "name": null,
-  "file": "fn_00e3eeb0.rs",
-  "lane": "r-b271",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00E3F060",
-  "name": null,
-  "file": "fn_00e3f060.rs",
-  "lane": "r-b271",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00E49C80",
   "name": "E1_SELECT",
   "file": "fn_00e49c80.rs",
@@ -4621,14 +4573,6 @@
   "file": "fn_00e4ba30.rs",
   "lane": "r-b287",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00E66960",
-  "name": "global_ratio_store_00",
-  "file": "fn_00e66960.rs",
-  "lane": "r-s358",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -4699,14 +4643,6 @@
   "address": "0x00E66D50",
   "name": "register_stub_03",
   "file": "fn_00e66d50.rs",
-  "lane": "r-s358",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E66D60",
-  "name": "register_stub_04",
-  "file": "fn_00e66d60.rs",
   "lane": "r-s358",
   "outcome": "not_reached",
   "reason": null
@@ -4995,14 +4931,6 @@
   "address": "0x00E67260",
   "name": "global_ratio_store_09",
   "file": "fn_00e67260.rs",
-  "lane": "r-s358",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E67280",
-  "name": "global_ratio_store_10",
-  "file": "fn_00e67280.rs",
   "lane": "r-s358",
   "outcome": "not_reached",
   "reason": null
