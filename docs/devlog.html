@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-text-gxt">Rust reader: localisation text (GXT) and fonts</a></li>
       <li><a href="#pilot-candidates">Pilot candidates: 300 emulator-ready leaf functions, and a broken emulator</a></li>
       <li><a href="#work-queue">The work queue that hands out functions easiest first</a></li>
       <li><a href="#capture-tool">Tool that reads the encrypted code from the owner's running copy</a></li>
@@ -114,6 +115,31 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-text-gxt">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: localisation text (GXT) and fonts</h2>
+      <p>The game keeps every localised string in one binary file per language, keyed by hashed labels, and this lane shipped a clean Rust crate that reads all of them plus the font and menu description files.</p>
+      <h3>What was asked</h3>
+      <p>Write an original Rust reader for the localisation text format (table list, hashed-label key tables, string data with its encoding), implement label lookup with the label hash function, and document and parse the font metrics and plain-text front-end files such as menu, HUD and colour descriptions.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> Nineteen text files ship: seven base languages plus six per episode pack. Every file uses the same container version with sixteen-bit text units.</li>
+      <li><span class="evidence verified">Verified</span> The base files hold about five hundred tables and sixty thousand strings each; the episode packs hold roughly one hundred and sixty and one hundred and forty tables with twenty-four and nineteen thousand strings.</li>
+      <li><span class="evidence verified">Verified</span> Labels hash with the Jenkins one-at-a-time function after folding upper-case to lower-case. Nearly all menu labels resolve, and three sample labels decode to their expected words end to end.</li>
+      <li><span class="evidence verified">Verified</span> Text units are font glyph codes, not Unicode. Western languages use a single low page, Russian adds a second page, and Japanese spans many pages.</li>
+      <li><span class="evidence verified">Verified</span> Font files describe three or four fonts each with glyph maps, width tables and spacing; the Japanese font adds two extra width sections and signed width adjustments.</li>
+      <li><span class="evidence verified">Verified</span> Menu, HUD layout, colour palette, radio strip and frontend layout files all parse, including two different radio file shapes and several comment and spacing quirks.</li>
+      <li><span class="evidence">Inferred</span> The public wiki transcription of the hash function only behaves correctly with unsigned-byte semantics; read the naive way it corrupts labels containing digits.</li>
+      <li><span class="evidence">Unknown</span> How the renderer picks a font for each glyph page, and whether three unresolvable menu labels are dead references or conditional content.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <p>The crate parses every shipped file without error and is ready for review and integration. Later work should resolve glyph pages against the font texture dictionaries with the textures lane, and the wiki hash transcription deserves a correction.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the crate in the lane scratch folder with the host toolchain, run the unit tests, then set the game directory variable and run the integration tests, which parse all nineteen text files and every font and front-end file and check label lookups.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The documented hash scored zero matches at first because standard CRC variants are not what this game uses, and the first correct-looking transcription scored only a third because of a signed-versus-unsigned subtlety in its case handling. Integration testing then surfaced five genuine file quirks in a row, including non-text comment bytes, negative font widths and a second radio file shape, each fixed in the parser as found.</p>
+      </article>
 
       <article class="entry" id="pilot-candidates">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
