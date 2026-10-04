@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Add progress tracking",
+    "title": "Add the project site overview",
     "commit": null,
+    "summary": "The front page of the GitHub Pages site in docs.",
+    "changes": [
+      "A map of the executable's code from start to end, where each square changes shade as its functions are identified, named, rewritten and verified. With no data it shows a plain statement that nothing is measured yet.",
+      "Progress meters, the method step by step, the repository rule, the roadmap, the planned features and platforms, and credits.",
+      "Six placeholder concept images, generated for the page and captioned as not being screenshots.",
+      "Plain HTML, CSS and JavaScript with no build step. Works at phone, tablet and desktop widths, in light and dark themes, and the map can be read with the keyboard."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Add progress tracking",
+    "commit": "1ec4a61c483daed946bd3d847d10247a175f4d1b",
     "summary": "One data file drives the badges and the site's numbers.",
     "changes": [
       "docs/data/progress.json holds the counts: phase, functions, stages, structures, symbols and the code map. Everything is zero or empty because nothing has been measured.",

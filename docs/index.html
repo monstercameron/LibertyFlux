@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>LibertyFlux: GTA IV's engine, being rewritten in Rust</title>
+<meta name="description" content="An agent-driven rewrite of the Grand Theft Auto IV engine in Rust, aimed at 64-bit Windows, Windows on ARM and macOS. Progress is tracked function by function.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Overpass:wght@400;700;800&family=Overpass+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <nav aria-label="Site"><ul class="nav">
+      <li><a href="index.html" aria-current="page">Overview</a></li>
+      <li><a href="changelog.html">Changelog</a></li>
+      <li><a href="devlog.html">Devlog</a></li>
+    </ul></nav>
+    <h1>LibertyFlux</h1>
+    <p class="lede">Grand Theft Auto IV's engine, being rewritten in Rust by AI agents one function at a time, so the game can eventually run as a native 64-bit program on Windows, Windows on ARM and macOS.</p>
+    <p class="status-line" id="status-line">Phase 0 of 7: measuring the executable. Nothing is rewritten yet and the game is not playable.</p>
+
+    <figure class="map-figure">
+      <figcaption class="map-head">
+        <span id="map-title"><strong>The game's code, start to end.</strong></span>
+        <span class="addr" id="map-readout" aria-live="polite"></span>
+      </figcaption>
+      <div class="map-empty" id="map-empty" hidden>
+        <p>Nothing has been measured yet. Once the executable is analysed, this becomes a map of its code: one square per slice, getting lighter as its functions are named, rewritten and verified.</p>
+      </div>
+      <div class="map" id="map" hidden></div>
+      <ul class="legend" id="legend" aria-label="What the shades mean" hidden>
+        <li><span class="swatch unmeasured"></span>Not measured</li>
+        <li><span class="swatch identified"></span>Identified</li>
+        <li><span class="swatch named"></span>Named</li>
+        <li><span class="swatch rewritten"></span>Rewritten in Rust</li>
+        <li><span class="swatch verified"></span>Verified</li>
+        <li class="legend-note">Lighter means further along.</li>
+      </ul>
+    </figure>
+  </div>
+</header>
+
+<main>
+  <section id="progress" class="band">
+    <div class="wrap">
+      <h2>Progress</h2>
+      <p class="prose" id="progress-empty" hidden></p>
+      <ul class="meters" id="meters"></ul>
+      <p class="meter-note" id="meter-note"></p>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <h2>How it works, step by step</h2>
+      <p class="prose">AI agents do the rewriting. A machine check, not an agent's opinion, decides when a function is finished.</p>
+      <ol class="steps">
+        <li><div><h3>Measure the executable</h3><p>Ghidra, a reverse-engineering tool, analyses the original program. Functions are counted, the compiler's own runtime and third-party library code is set aside, and class names are recovered from the type information the compiler left behind.</p></div></li>
+        <li><div><h3>Queue the work</h3><p>A script orders the functions from easiest to hardest and hands them out one at a time. Agents never choose their own.</p></div></li>
+        <li><div><h3>Rewrite in Rust</h3><p>An agent studies what the function does, with the most similar finished functions as reference, and writes a Rust implementation.</p></div></li>
+        <li><div><h3>Compare against the original</h3><p>The original function and the Rust version are run in a CPU emulator from the same starting state. If their results, memory writes and outgoing calls agree, the function is accepted. If not, the agent tries again or hands it on.</p></div></li>
+        <li><div><h3>Swap it into the running game</h3><p>Accepted functions are loaded into the original game, each with its own on/off switch. If the game misbehaves, switches are flipped in halves until the faulty function is found.</p></div></li>
+        <li><div><h3>Cut the original loose</h3><p>When every function has a Rust replacement, the Rust code is built on its own, made 64-bit, and given a new renderer.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="rule">
+    <div class="wrap">
+      <h2>What is in the repository, and what never is</h2>
+      <div class="rule-grid">
+        <div class="allowed">
+          <h3>Committed</h3>
+          <ul>
+            <li>Structures: fields, sizes, offsets, enums, virtual table order</li>
+            <li>Symbols: names, addresses, signatures, hashes, class hierarchy</li>
+            <li>Rust rewrites of the engine's behaviour</li>
+            <li>Tooling, tests and documentation</li>
+          </ul>
+        </div>
+        <div class="never">
+          <h3>Never committed</h3>
+          <ul>
+            <li>Decompiler output or disassembly, edited or not</li>
+            <li>C or C++ reconstructions of original functions</li>
+            <li>Code copied from other reverse-engineering projects</li>
+            <li>Game executables, data or assets</li>
+          </ul>
+        </div>
+      </div>
+      <p class="prose after-grid">You need your own copy of Grand Theft Auto IV. Nothing here contains the game.</p>
+    </div>
+  </section>
+
+  <section id="roadmap">
+    <div class="wrap">
+      <h2>Roadmap</h2>
+      <table role="table">
+        <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Phase</th><th role="columnheader" scope="col">Work</th><th role="columnheader" scope="col">Finished when</th><th role="columnheader" scope="col">Status</th></tr></thead>
+        <tbody role="rowgroup" id="roadmap-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="possible">
+    <div class="wrap">
+      <h2>What the rewrite makes possible</h2>
+      <p class="note">None of this exists yet. These are the reasons for doing the work, and each depends on the phases above it in the roadmap. The pictures are concept images made for this page, not screenshots.</p>
+
+      <ul class="features">
+        <li class="feature">
+          <figure><img src="img/high-frame-rate.webp" width="1600" height="900" loading="lazy" alt="Concept painting of a car crossing a suspension bridge at dusk, the bridge streaking past."><figcaption>Concept image, not a screenshot.</figcaption></figure>
+          <div>
+            <h3>Hundreds of frames per second</h3>
+            <p>The original ties parts of its physics, animation and scripting to the frame rate, which is why it misbehaves above 60. The rewrite runs the simulation at a fixed rate and draws as fast as the hardware allows.</p>
+            <p class="when">Planned for phase 6.</p>
+          </div>
+        </li>
+        <li class="feature">
+          <figure><img src="img/upscaling.webp" width="1600" height="900" loading="lazy" alt="Concept painting of a row of brownstone buildings, coarse and blocky on the left and resolving to fine detail on the right."><figcaption>Concept image, not a screenshot.</figcaption></figure>
+          <div>
+            <h3>Modern upscaling and frame generation</h3>
+            <p>DLSS, FSR, XeSS and MetalFX behind one setting. The new renderer is designed from the start to produce the motion and depth information these need, which the original never did.</p>
+            <p class="when">Planned for phase 7.</p>
+          </div>
+        </li>
+        <li class="feature">
+          <figure><img src="img/path-tracing.webp" width="1600" height="900" loading="lazy" alt="Concept painting of a rain-soaked street at night with streetlights reflected in puddles."><figcaption>Concept image, not a screenshot.</figcaption></figure>
+          <div>
+            <h3>Path tracing</h3>
+            <p>Light that bounces, reflects and casts soft shadows the way it does outdoors, in a city made of wet streets, brick and sodium lamps.</p>
+            <p class="when">A stretch goal, after the new renderer exists.</p>
+          </div>
+        </li>
+        <li class="feature">
+          <figure><img src="img/platforms.webp" width="1600" height="900" loading="lazy" alt="Concept painting of a desk with a monitor and two laptops showing the same city skyline."><figcaption>Concept image, not a screenshot.</figcaption></figure>
+          <div>
+            <h3>Native on three platforms</h3>
+            <p>64-bit Windows, Windows on ARM and macOS on Apple silicon, each as a native build with no emulation layer in between.</p>
+            <p class="when">Planned for phases 5 and 6.</p>
+          </div>
+        </li>
+        <li class="feature">
+          <figure><img src="img/new-gameplay.webp" width="1600" height="900" loading="lazy" alt="Concept painting of a busy city intersection seen from a rooftop."><figcaption>Concept image, not a screenshot.</figcaption></figure>
+          <div>
+            <h3>New gameplay and graphics</h3>
+            <p>Once the engine is Rust that this project wrote, any part of it can change: new mechanics, denser streets, longer draw distances, and mods that reach parts of the engine no script hook can.</p>
+            <p class="when">Planned for phase 7.</p>
+          </div>
+        </li>
+      </ul>
+
+      <ul class="plain-features">
+        <li><strong>Nothing extra to install.</strong> No .NET, no launcher, no Visual C++ or DirectX runtime packages.</li>
+        <li><strong>The game you already own.</strong> It uses the data files from your own copy and ships none of them.</li>
+        <li><strong>Old bugs become tests.</strong> The community's list of high-frame-rate bugs is the checklist the new simulation has to pass.</li>
+      </ul>
+
+      <h3 class="after-grid">Planned platforms</h3>
+      <table role="table">
+        <thead role="rowgroup"><tr role="row"><th role="columnheader" scope="col">Platform</th><th role="columnheader" scope="col">Graphics</th><th role="columnheader" scope="col">Upscaling</th></tr></thead>
+        <tbody role="rowgroup">
+          <tr role="row"><td role="cell">Windows x64</td><td role="cell" data-label="Graphics">Vulkan, with Direct3D 12 optional</td><td role="cell" data-label="Upscaling">DLSS, FSR, XeSS</td></tr>
+          <tr role="row"><td role="cell">Windows on ARM</td><td role="cell" data-label="Graphics">Vulkan</td><td role="cell" data-label="Upscaling">FSR</td></tr>
+          <tr role="row"><td role="cell">macOS on Apple silicon</td><td role="cell" data-label="Graphics">MoltenVK, then native Metal</td><td role="cell" data-label="Upscaling">MetalFX</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="credits">
+    <div class="wrap">
+      <h2>Projects this builds on</h2>
+      <p class="prose">The method is borrowed. These projects were studied for how they work, not for their code.</p>
+      <ul class="sources">
+        <li><a href="https://github.com/Veradictus/Thief3-Decomp">Thief 3 decompilation</a>: the work queue, attempt limits, and the rule that workers can only write to scratch space.</li>
+        <li><a href="https://github.com/gta-reversed/gta-reversed">gta-reversed</a>: replacing functions inside the running game with a switch for each, and compile-time checks on structure sizes.</li>
+        <li><a href="https://github.com/cdlewis/snowboardkids2-decomp">Snowboard Kids 2 decompilation</a>: letting a script pick the next function, and showing agents similar finished work.</li>
+        <li><a href="https://github.com/OZORDI/LibertyRecomp">LibertyRecomp</a>: written-up engine internals from the Xbox 360 version, and what a renderer must supply for modern upscalers.</li>
+        <li><a href="https://github.com/ShinyWasabi/scrDbg">scrDbg</a>: the script engine's layout on the current Steam build.</li>
+        <li><a href="https://github.com/Zolika1351/iv-sdk">IV-SDK</a> and <a href="https://github.com/ThirteenAG/GTAIV.EFLC.FusionFix">FusionFix</a>: years of community knowledge about the game's classes and its frame-rate bugs.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="closing" id="pitch">
+    <img src="img/closing.webp" width="1600" height="900" loading="lazy" alt="">
+    <div class="wrap">
+      <h2>Liberty City deserves a better program around it</h2>
+      <p>The city, the writing and the physics still hold up. The 2008 PC port around them does not: it is 32-bit, it renders on one thread, and its simulation changes with the frame rate.</p>
+      <p>LibertyFlux replaces that program one function at a time, checks each replacement against the original, and keeps the game playing exactly as it did. When the last function is done, everything on this page becomes buildable.</p>
+      <div class="actions">
+        <a class="primary" href="#roadmap">See the roadmap</a>
+        <a href="#how">See how each function is checked</a>
+      </div>
+      <p class="closing-credit">Background: concept image, not a screenshot.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>LibertyFlux is an independent project. It is not affiliated with, endorsed by or connected to Rockstar Games or Take-Two Interactive. Grand Theft Auto is a trademark of Take-Two Interactive Software.</p>
+  </div>
+</footer>
+
+<div class="tip" id="tip" aria-hidden="true"></div>
+<script src="data/progress.js"></script>
+<script src="site.js"></script>
+</body>
+</html>
