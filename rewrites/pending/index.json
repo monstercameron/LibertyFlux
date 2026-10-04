@@ -2700,6 +2700,168 @@
   "lane": "r-s112"
  },
  {
+  "address": "0x00875830",
+  "name": "crmt_request_retarget",
+  "kind": "function",
+  "file": "functions/fn_00875830.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x00875860",
+  "name": "rage::crmtRequestFilter::vf1",
+  "kind": "function",
+  "file": "functions/fn_00875860.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x00875880",
+  "name": "rage::crmtRequestFilter::vf2",
+  "kind": "function",
+  "file": "functions/fn_00875880.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x008758D0",
+  "name": "crmt_node_link",
+  "kind": "function",
+  "file": "functions/fn_008758d0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x008759A0",
+  "name": "crmt_filter_request_init",
+  "kind": "function",
+  "file": "functions/fn_008759a0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x00875AC0",
+  "name": "crmt_filter_request_init_guarded",
+  "kind": "function",
+  "file": "functions/fn_00875ac0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x00875B10",
+  "name": "crmt_filter_request_set_vtable_guarded",
+  "kind": "function",
+  "file": "functions/fn_00875b10.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x00875B20",
+  "name": "crmt_channel_publish",
+  "kind": "function",
+  "file": "functions/fn_00875b20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x00875B60",
+  "name": "rage::crmtNodeExpression::vf4",
+  "kind": "function",
+  "file": "functions/fn_00875b60.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x00875BC0",
+  "name": "crmt_extrapolate_node_init",
+  "kind": "function",
+  "file": "functions/fn_00875bc0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x00875CC0",
+  "name": "crmt_extrapolate_node_init_guarded",
+  "kind": "function",
+  "file": "functions/fn_00875cc0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x00875CD0",
+  "name": "crmt_extrapolate_node_set_vtable_guarded",
+  "kind": "function",
+  "file": "functions/fn_00875cd0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x00875E30",
+  "name": "rage::crmtNodeExtrapolate::vf1",
+  "kind": "function",
+  "file": "functions/fn_00875e30.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x00875EA0",
+  "name": "rage::crmtNodeExtrapolate::vf4",
+  "kind": "function",
+  "file": "functions/fn_00875ea0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x00876110",
+  "name": "crmt_extrapolate_node_store_rate",
+  "kind": "function",
+  "file": "functions/fn_00876110.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x00876150",
+  "name": "crmt_addsubtract_request_init",
+  "kind": "function",
+  "file": "functions/fn_00876150.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x008761B0",
+  "name": "crmt_addsubtract_request_teardown",
+  "kind": "function",
+  "file": "functions/fn_008761b0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
+  "address": "0x00876210",
+  "name": "rage::crmtRequestAddSubtract::vf1",
+  "kind": "function",
+  "file": "functions/fn_00876210.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s156"
+ },
+ {
   "address": "0x0088ABB0",
   "name": "audio_store_triplet",
   "kind": "function",
@@ -40644,6 +40806,186 @@
   "lane": "a-08"
  },
  {
+  "address": "0x00DB1650",
+  "name": "forward_to_global_ui_object",
+  "kind": "function",
+  "file": "functions/fn_00db1650.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB1660",
+  "name": "UILayoutFrame::vf23",
+  "kind": "function",
+  "file": "functions/fn_00db1660.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB1690",
+  "name": "clear_three_state_flags",
+  "kind": "function",
+  "file": "functions/fn_00db1690.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB16B0",
+  "name": "UILayoutFrame::vf107",
+  "kind": "function",
+  "file": "functions/fn_00db16b0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB1700",
+  "name": "UILayoutFrame::vf108",
+  "kind": "function",
+  "file": "functions/fn_00db1700.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB1740",
+  "name": "UILayoutFrame::vf112",
+  "kind": "function",
+  "file": "functions/fn_00db1740.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB17F0",
+  "name": "UILayoutFrame::vf113",
+  "kind": "function",
+  "file": "functions/fn_00db17f0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB1840",
+  "name": "UILayoutFrame::vf114",
+  "kind": "function",
+  "file": "functions/fn_00db1840.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB1890",
+  "name": "UILayoutFrame::vf111",
+  "kind": "function",
+  "file": "functions/fn_00db1890.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB18C0",
+  "name": "UILayoutFrame::vf63",
+  "kind": "function",
+  "file": "functions/fn_00db18c0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB1920",
+  "name": "reset_ui_mode_state",
+  "kind": "function",
+  "file": "functions/fn_00db1920.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB1940",
+  "name": "UILayoutFrame::vf9",
+  "kind": "function",
+  "file": "functions/fn_00db1940.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB1950",
+  "name": "UILayoutFrame::vf10",
+  "kind": "function",
+  "file": "functions/fn_00db1950.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB1960",
+  "name": "UILayoutFrame::vf12",
+  "kind": "function",
+  "file": "functions/fn_00db1960.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB1970",
+  "name": "UILayoutFrame::vf77",
+  "kind": "function",
+  "file": "functions/fn_00db1970.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB1980",
+  "name": "UILayoutFrame::vf24",
+  "kind": "function",
+  "file": "functions/fn_00db1980.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB19A0",
+  "name": "UILayoutFrame::vf26",
+  "kind": "function",
+  "file": "functions/fn_00db19a0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB1A00",
+  "name": "UILayoutFrame::vf55",
+  "kind": "function",
+  "file": "functions/fn_00db1a00.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB1AA0",
+  "name": "UILayoutFrame::vf54",
+  "kind": "function",
+  "file": "functions/fn_00db1aa0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
+  "address": "0x00DB1AC0",
+  "name": "process_ui_state_change",
+  "kind": "function",
+  "file": "functions/fn_00db1ac0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s150"
+ },
+ {
   "address": "0x00DB90E0",
   "name": "UIMusicClip::vf97",
   "kind": "function",
@@ -42489,6 +42831,78 @@
   "lane": "a-F06"
  },
  {
+  "address": "0x00E603C0",
+  "name": "timing_init_register_01",
+  "kind": "function",
+  "file": "functions/fn_00e603c0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E603E0",
+  "name": "timing_init_register_02",
+  "kind": "function",
+  "file": "functions/fn_00e603e0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E60400",
+  "name": "timing_init_register_03",
+  "kind": "function",
+  "file": "functions/fn_00e60400.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E60420",
+  "name": "timing_init_register_04",
+  "kind": "function",
+  "file": "functions/fn_00e60420.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E60440",
+  "name": "timing_init_register_05",
+  "kind": "function",
+  "file": "functions/fn_00e60440.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E60460",
+  "name": "timing_init_register_06",
+  "kind": "function",
+  "file": "functions/fn_00e60460.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E60480",
+  "name": "timing_init_register_07",
+  "kind": "function",
+  "file": "functions/fn_00e60480.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E604A0",
+  "name": "timing_init_register_08",
+  "kind": "function",
+  "file": "functions/fn_00e604a0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
   "address": "0x00E604C0",
   "name": "reset_timing_state",
   "kind": "function",
@@ -42534,6 +42948,33 @@
   "lane": "a-19"
  },
  {
+  "address": "0x00E60680",
+  "name": "timing_init_register_09",
+  "kind": "function",
+  "file": "functions/fn_00e60680.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E606A0",
+  "name": "timing_init_register_10",
+  "kind": "function",
+  "file": "functions/fn_00e606a0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E606C0",
+  "name": "timing_entry_pool_init",
+  "kind": "function",
+  "file": "functions/fn_00e606c0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
   "address": "0x00E60760",
   "name": "zero_timing_table_and_forward",
   "kind": "function",
@@ -42541,6 +42982,150 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "a-F06"
+ },
+ {
+  "address": "0x00E607C0",
+  "name": "timing_state_clear_01",
+  "kind": "function",
+  "file": "functions/fn_00e607c0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E607E0",
+  "name": "timing_register_callback_01",
+  "kind": "function",
+  "file": "functions/fn_00e607e0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E607F0",
+  "name": "timing_init_register_11",
+  "kind": "function",
+  "file": "functions/fn_00e607f0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E60810",
+  "name": "timing_init_register_12",
+  "kind": "function",
+  "file": "functions/fn_00e60810.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E60830",
+  "name": "timing_state_register_indirect",
+  "kind": "function",
+  "file": "functions/fn_00e60830.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E60850",
+  "name": "timing_init_register_13",
+  "kind": "function",
+  "file": "functions/fn_00e60850.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E60870",
+  "name": "timing_register_callback_02",
+  "kind": "function",
+  "file": "functions/fn_00e60870.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E60880",
+  "name": "timing_state_clear_02",
+  "kind": "function",
+  "file": "functions/fn_00e60880.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E608A0",
+  "name": "timing_init_register_14",
+  "kind": "function",
+  "file": "functions/fn_00e608a0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s160"
+ },
+ {
+  "address": "0x00E60E00",
+  "name": "init_then_submit_00",
+  "kind": "function",
+  "file": "functions/fn_00e60e00.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E60E20",
+  "name": "submit_stub_00",
+  "kind": "function",
+  "file": "functions/fn_00e60e20.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E60E30",
+  "name": "submit_this_init",
+  "kind": "function",
+  "file": "functions/fn_00e60e30.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E60E50",
+  "name": "zero_global_pair",
+  "kind": "function",
+  "file": "functions/fn_00e60e50.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E60E70",
+  "name": "submit_stub_01",
+  "kind": "function",
+  "file": "functions/fn_00e60e70.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E60E80",
+  "name": "fill_sentinel_table",
+  "kind": "function",
+  "file": "functions/fn_00e60e80.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E60EB0",
+  "name": "zero_block_then_submit",
+  "kind": "function",
+  "file": "functions/fn_00e60eb0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
  },
  {
   "address": "0x00E60F20",
@@ -42595,6 +43180,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-19"
+ },
+ {
+  "address": "0x00E61070",
+  "name": "init_then_submit_01",
+  "kind": "function",
+  "file": "functions/fn_00e61070.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
  },
  {
   "address": "0x00E61090",
@@ -42721,6 +43315,114 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "a-F01"
+ },
+ {
+  "address": "0x00E612E0",
+  "name": "submit_stub_02",
+  "kind": "function",
+  "file": "functions/fn_00e612e0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E612F0",
+  "name": "submit_with_frame_args",
+  "kind": "function",
+  "file": "functions/fn_00e612f0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E61310",
+  "name": "init_then_submit_02",
+  "kind": "function",
+  "file": "functions/fn_00e61310.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E61330",
+  "name": "init_then_submit_03",
+  "kind": "function",
+  "file": "functions/fn_00e61330.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E61350",
+  "name": "init_then_submit_04",
+  "kind": "function",
+  "file": "functions/fn_00e61350.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E61370",
+  "name": "init_then_submit_05",
+  "kind": "function",
+  "file": "functions/fn_00e61370.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E61390",
+  "name": "init_then_submit_06",
+  "kind": "function",
+  "file": "functions/fn_00e61390.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E613B0",
+  "name": "init_then_submit_07",
+  "kind": "function",
+  "file": "functions/fn_00e613b0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E613D0",
+  "name": "init_then_submit_08",
+  "kind": "function",
+  "file": "functions/fn_00e613d0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E613F0",
+  "name": "init_then_submit_09",
+  "kind": "function",
+  "file": "functions/fn_00e613f0.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E61410",
+  "name": "init_then_submit_10",
+  "kind": "function",
+  "file": "functions/fn_00e61410.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
+ },
+ {
+  "address": "0x00E61430",
+  "name": "init_then_submit_11",
+  "kind": "function",
+  "file": "functions/fn_00e61430.rs",
+  "trials": 1000,
+  "checker": "version 3",
+  "lane": "r-s159"
  },
  {
   "address": "0x00E62880",
