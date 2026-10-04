@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: A full call log silently corrupts the next verdict",
+    "title": "Devlog: A worker bug that fails correct rewrites above 256 calls",
     "commit": null,
+    "summary": "Findings from the r-s128 lane.",
+    "changes": [
+      "New devlog entry: A worker bug that fails correct rewrites above 256 calls.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: A full call log silently corrupts the next verdict",
+    "commit": "afab8b5195294b22ba86f97ec65ed4f5fccc3fb5",
     "summary": "Findings from the r-s123 lane.",
     "changes": [
       "New devlog entry: A full call log silently corrupts the next verdict.",

@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s128">A worker bug that fails correct rewrites above 256 calls</a></li>
       <li><a href="#production-s123">A full call log silently corrupts the next verdict</a></li>
       <li><a href="#production-b65">Production batch: three audio functions verified, and a compiler lesson about NaN bits</a></li>
       <li><a href="#production-b59">Audio batch of seven verified, and a float-compare idiom worth knowing</a></li>
@@ -281,6 +282,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s128">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A worker bug that fails correct rewrites above 256 calls</h2>
+      <p>A production batch of startup initializers exposed an off-by-one error in the check worker: any function making more than 256 outgoing calls in a single trial fails every trial on the rewrite side, even when the rewrite is correct.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small related functions and prove each rewrite equivalent to the original with the version three checker, one thousand trials per function.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Nineteen of twenty functions passed with zero failures across all trials. The batch turned out to be startup initializers with a uniform shape: build a global object, then register a teardown routine, with array variants that loop the build step.</p>
+      <p><span class="evidence verified">Verified</span> The twentieth function, which makes 257 calls per trial, failed all one thousand trials with the rewrite side faulting at a tiny address while the original side stayed healthy. Reading the worker source showed the cause: the call log holds 256 entries and sits directly before the callee address table, and the log-full guard uses the wrong comparison, so entry index 256 is written past the end of the log onto the address table. The original side runs first and its final call overwrites the table; the rewrite side then calls through the corrupted entry and faults. The observed fault signature matches this mechanism exactly.</p>
+      <p><span class="evidence verified">Verified</span> The bug fails safe: a wrong rewrite faults the same way, so no false pass is possible. It is a hard blocker for high-call-count functions only. A mutant control with a wrong address and a skipped call was caught on every trial, confirming the batch contracts discriminate.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The affected function was deferred with the worker bug recorded as the blocker, and its contract kept for rerun after the central fix. The suggested fix is a single comparison in the worker stub emitter: skip logging when the index reaches the limit, not only when it passes it. The lane did not patch the worker itself, leaving that to the coordinator.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run any contract whose function makes more than 256 outgoing calls in one trial under the stock worker. Every trial reports the original healthy and the rewrite faulted at a small address. Functions at or below the limit are unaffected.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The fault signature looked at first like a bug in the rewrite, since only the rewrite side faulted. The giveaway was the fault address matching a table slot value rather than any address the rewrite computes, which pointed at corrupted checker state instead of bad rewrite code.</p>
+      </article>
 
       <article class="entry" id="production-s123">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
