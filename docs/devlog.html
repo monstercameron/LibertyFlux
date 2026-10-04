@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n104">Production batch: a tail-call logging bug and an eight-argument ceiling</a></li>
       <li><a href="#production-b24">A vector-register gap in the checker and a stub pattern that worked</a></li>
       <li><a href="#production-b16">Rust does not pin floating-point operand order, and NaN payloads notice</a></li>
       <li><a href="#rerun-12">Re-run batch a-12: the second checker caught a miscompiled rewrite the first one passed</a></li>
@@ -245,6 +246,28 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n104">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production batch: a tail-call logging bug and an eight-argument ceiling</h2>
+      <p>A production batch of twenty-five script native handlers verified twenty-four and found two checker gaps: tail calls with stack arguments were logged from the wrong slot, and call arguments past the eighth are silently never compared.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty-five script native handlers in Rust and prove each rewrite behaves identically to the original with the version two differential checker, which runs the original and the rewrite from identical starting state and compares return values, written memory, stack use, outgoing calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Twenty-four handlers verified at one thousand trials each with zero failures, covering plain argument forwarding, boolean coercion through the known stack-slot quirk, byte and floating-point answer stores, a shared-unpacker passthrough, a global-pointer store, and three single-jump thunks checked through tail-call patching.</p>
+      <p><span class="evidence verified">Verified</span> The checker's tail-call stub logged stack arguments from the wrong slot: patching a jump into a call leaves one extra return slot on the stack, and the stub read argument zero from that slot instead of from the true first argument. The checker's own proofs only covered tail calls with register arguments, so the bug never fired before. It was fixed in the lane's private worker copy by reading stack arguments one slot higher in the tail variant only; normal stubs emit identical code to before, and the three thunks then passed.</p>
+      <p><span class="evidence verified">Verified</span> The worker logs and compares at most eight stack arguments per outgoing call, silently dropping the rest. One handler in this batch makes a ten-argument call whose last two words are coerced booleans, so a rewrite with wrong boolean logic there would still pass every trial. It was deferred rather than verified, since a pass that cannot see the behaviour is worse than no pass.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Fold the tail-stub slot fix back into the shared worker; no driver or contract change is needed, and a tail call with a stack argument plus a shifted-argument mutant would prove it.</li>
+      <li>Widen the call-log entry past eight arguments before any lane verifies a call that large; until then such functions stay deferred.</li>
+      <li>One earlier batch's eleven-argument verification passed with its last three arguments uncompared and should be re-read in that light.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run any tail-jump contract whose shared routine takes a stack argument under the unpatched worker and watch the calls channel log a scratch-stack value where the context pointer belongs; declare a callee with more than eight stack arguments and confirm by reading the worker source that only the first eight are logged and compared.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first tail failure looked like a broken rewrite until the logged value was recognised as the patch's own return slot rather than any program value. A first attempt at checking relocation entries double-counted the table base and wrongly reported two absolute references as unrelocated; rechecking with the correct arithmetic confirmed both are relocated.</p>
+      </article>
 
       <article class="entry" id="production-b24">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
