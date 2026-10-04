@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: hourly review, 13:10",
+    "commit": null,
+    "summary": "The fourth hourly review, with a refined estimate.",
+    "changes": [
+      "8,089 functions verified, 11.0% of the code by size; four hours of measurements average about 60,000 bytes an hour.",
+      "The processors are now a limit alongside memory. The estimate for the remaining rewrite is seven to ten days of this machine.",
+      "Next steps recorded: the checker speed-up and split go into the live checker; the lanes should not depend on the coordinator being awake."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rust in progress: 106 files from lanes (809 unverified rewrites, 200 in review)",
     "commit": "fecf75a463e5b263984c60579b58917d99b19a77",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
