@@ -22,12 +22,21 @@ counted. The report says how many entries carry one.
 Usage: python ledger.py            report
        python ledger.py --json     the ledger as JSON on stdout (includes every proof record under "proofs")
        python ledger.py --check    report, exit 1 if there is any error (CI)
+       python ledger.py --since REF
+                                   also report what changed in rewrites/verified/index.json between a git ref and
+                                   the working tree: entries added, removed and changed, by kind and checker
+                                   version (an import wave: --since HEAD~1, or the commit before the wave). With
+                                   --json the change is under "since".
+       python ledger.py --markdown a short Markdown table instead of the report, for a pull request or the devlog
+                                   (with --since, a table of the change); counts only, no addresses or file names
+--check keeps its meaning with every option: the exit status is 1 when the ledger has any error.
 """
 
 import argparse
 import json
 import os
 import re
+import subprocess
 import sys
 from collections import Counter
 from pathlib import Path
@@ -42,6 +51,8 @@ from validate_contracts import SchemaValidator  # noqa: E402  (the stdlib JSON S
 
 HEADER = re.compile(r"//\s*original:\s*(0x[0-9A-Fa-f]+)\b")
 FILE_NAME = re.compile(r"^fn_([0-9a-f]{8})\.rs$")
+VERIFIED_INDEX = "rewrites/verified/index.json"
+EXAMPLES = 10  # removed and changed entries named by --since's text report; --json lists them all
 
 
 def header_address(text):
@@ -245,17 +256,162 @@ def report(ledger):
             print(f"  {kind}: {n} (e.g. {', '.join(examples)})")
 
 
+def index_at(root, ref, relative=VERIFIED_INDEX):
+    """(rows, present) of an index as committed at a git ref: present is False, with no rows, when the ref has no
+    such file. Raises ValueError when the ref does not name a commit."""
+    def git(*args):
+        return subprocess.run(["git", "-C", str(root), *args], capture_output=True)
+    if git("rev-parse", "--verify", "--quiet", f"{ref}^{{commit}}").returncode != 0:
+        raise ValueError(f"{ref!r} does not name a commit in this repository")
+    shown = git("show", f"{ref}:{relative}")
+    if shown.returncode != 0:
+        return [], False
+    return json.loads(shown.stdout.decode("utf-8")), True
+
+
+def diff_index(old, new):
+    """What changed from one version of an index to another, matched by address. Pure. Returns a dict: added and
+    removed (lists of rows) and changed (a list of (old row, new row, sorted names of the fields that differ)).
+    Rows without a readable address are left out; the ledger's own checks report them."""
+    def by_address(rows):
+        keyed = {}
+        for row in rows:
+            try:
+                keyed[common.va(row["address"])] = row
+            except (KeyError, ValueError, TypeError):
+                continue
+        return keyed
+    before, after = by_address(old), by_address(new)
+    changed = []
+    for address in sorted(before.keys() & after.keys()):
+        fields = sorted(k for k in before[address].keys() | after[address].keys()
+                        if k != "address" and before[address].get(k) != after[address].get(k))
+        if fields:
+            changed.append((before[address], after[address], fields))
+    return {"added": [after[a] for a in sorted(after.keys() - before.keys())],
+            "removed": [before[a] for a in sorted(before.keys() - after.keys())],
+            "changed": changed}
+
+
+def summarise_diff(diff):
+    """Counts for a diff_index result: added and removed by kind, by checker version and by both; changed by
+    field and by checker transition; the lanes the added entries came from."""
+    def by(rows, key):
+        return dict(sorted(Counter(str(r.get(key)) for r in rows).items()))
+
+    def by_both(rows):
+        table = {}
+        for row in rows:
+            cell = table.setdefault(str(row.get("kind")), {})
+            cell[str(row.get("checker"))] = cell.get(str(row.get("checker")), 0) + 1
+        return {kind: dict(sorted(cells.items())) for kind, cells in sorted(table.items())}
+
+    changed = diff["changed"]
+    return {
+        "added": len(diff["added"]), "removed": len(diff["removed"]), "changed": len(changed),
+        "added_by_kind": by(diff["added"], "kind"), "added_by_checker": by(diff["added"], "checker"),
+        "added_by_kind_and_checker": by_both(diff["added"]),
+        "removed_by_kind": by(diff["removed"], "kind"), "removed_by_checker": by(diff["removed"], "checker"),
+        "changed_fields": dict(sorted(Counter(f for _, _, fields in changed for f in fields).items())),
+        "checker_transitions": {f"{a} -> {b}": n for (a, b), n in sorted(Counter(
+            (str(o.get("checker")), str(n.get("checker"))) for o, n, fields in changed if "checker" in fields).items())},
+        "added_by_lane": dict(Counter(str(r.get("lane")) for r in diff["added"]).most_common()),
+    }
+
+
+def since_record(ref, old, present, new):
+    """The --since result as one JSON-ready dict: the ref, entry counts at both ends, the summary and every
+    added, removed and changed entry (for a changed one, its current kind and checker and only the fields that
+    differ, before and after)."""
+    diff = diff_index(old, new)
+    return {"ref": ref, "present_at_ref": present, "before": len(old), "after": len(new),
+            "summary": summarise_diff(diff), "added": diff["added"], "removed": diff["removed"],
+            "changed": [{"address": b.get("address"), "file": b.get("file"), "kind": b.get("kind"), "checker": b.get("checker"),
+                         "fields": fields, "before": {f: a.get(f) for f in fields}, "after": {f: b.get(f) for f in fields}}
+                        for a, b, fields in diff["changed"]]}
+
+
+def report_since(record):
+    """The --since section of the text report."""
+    s = record["summary"]
+    absent = "" if record["present_at_ref"] else ", where the index did not exist yet"
+    print(f"since {record['ref']}: {record['before']} entries at the ref{absent}, {record['after']} now")
+    lanes = ", ".join(f"{lane} {n}" for lane, n in list(s["added_by_lane"].items())[:EXAMPLES])
+    print(f"  added {s['added']}" + (f": by kind {s['added_by_kind']}; by checker {s['added_by_checker']}; "
+                                     f"from {len(s['added_by_lane'])} lanes ({lanes})" if s["added"] else ""))
+    print(f"  removed {s['removed']}" + (f": by kind {s['removed_by_kind']}; by checker {s['removed_by_checker']} (e.g. "
+                                         f"{', '.join(str(r.get('file')) for r in record['removed'][:EXAMPLES])})" if s["removed"] else ""))
+    transitions = "; checker " + ", ".join(f"{k}: {n}" for k, n in s["checker_transitions"].items()) if s["checker_transitions"] else ""
+    print(f"  changed {s['changed']}" + (f": fields {s['changed_fields']}{transitions} (e.g. "
+                                         f"{', '.join(str(c['file']) for c in record['changed'][:EXAMPLES])})" if s["changed"] else ""))
+
+
+def markdown_since(record):
+    """A Markdown table of the change since a ref: one row each for added, removed and changed (a changed entry
+    counted under its new kind and checker), one column per kind and per checker version. Counts only."""
+    s = record["summary"]
+    rows = {"Added": record["added"], "Removed": record["removed"], "Changed": record["changed"]}
+    kinds = sorted({str(r.get("kind")) for v in rows.values() for r in v})
+    checkers = sorted({str(r.get("checker")) for v in rows.values() for r in v})
+    head = ["Since `" + record["ref"] + "`", "Entries"] + kinds + checkers
+    lines = ["| " + " | ".join(head) + " |", "|---|" + "---:|" * (len(head) - 1)]
+    for label, items in rows.items():
+        kind_counts = Counter(str(r.get("kind")) for r in items)
+        checker_counts = Counter(str(r.get("checker")) for r in items)
+        cells = [label, str(len(items))] + [str(kind_counts[k]) for k in kinds] + [str(checker_counts[c]) for c in checkers]
+        lines.append("| " + " | ".join(cells) + " |")
+    lines.append("")
+    lines.append(f"Verified index: {record['before']} entries at `{record['ref']}`, {record['after']} now; "
+                 f"the added entries come from {len(s['added_by_lane'])} lanes.")
+    if s["checker_transitions"]:
+        lines.append("Checker changes: " + ", ".join(f"{k} ({n})" for k, n in s["checker_transitions"].items()) + ".")
+    return "\n".join(lines)
+
+
+def markdown_ledger(ledger):
+    """The ledger's summary as a two-column Markdown table. Counts only."""
+    s = ledger["summary"]
+    rows = [("Verified entries", s["verified_entries"])]
+    rows += [(f"by kind: {k}", n) for k, n in s["by_kind"].items()]
+    rows += [(f"by checker: {k}", n) for k, n in s["by_checker"].items()]
+    rows.append(("Checked by checker version 2 or later", s["modern_checker"]))
+    if "verified_game" in s:
+        rows.append(("Game code (version 2 or later)", s["verified_game"]))
+    rows.append(("Unverified entries", s["unverified_entries"]))
+    if "proofs" in s:
+        rows.append(("Entries with a proof record", s["proofs"]["with_proof"]))
+    rows += [(f"Published {r['fact']} / from the tree", f"{r['published']} / {r['derived']}") for r in ledger["reconcile"]]
+    rows += [("Errors", len(ledger["errors"])), ("Warnings", len(ledger["warnings"]))]
+    return "\n".join(["| Ledger | Count |", "|---|---:|"] + [f"| {label} | {value} |" for label, value in rows])
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--json", action="store_true", help="print the ledger as JSON")
+    output = parser.add_mutually_exclusive_group()
+    output.add_argument("--json", action="store_true", help="print the ledger as JSON")
     parser.add_argument("--check", action="store_true", help="exit 1 when there is any error")
     parser.add_argument("--inventory", help="JSON rows with address/start and kind, to restrict to game code")
+    parser.add_argument("--since", metavar="REF", help="also report what changed in the verified index since a git ref")
+    output.add_argument("--markdown", action="store_true", help="a short Markdown table instead of the report")
     args = parser.parse_args(argv)
-    ledger = build(common.find_root(), args.inventory)
+    root = common.find_root()
+    ledger = build(root, args.inventory)
+    since = None
+    if args.since:
+        try:
+            old, present = index_at(root, args.since)
+        except ValueError as problem:
+            print(f"ledger.py: {problem}", file=sys.stderr)
+            return 2
+        since = since_record(args.since, old, present, load_index(root / "rewrites" / "verified"))
     if args.json:
-        print(json.dumps(ledger, indent=1))
+        print(json.dumps(dict(ledger, since=since) if since else ledger, indent=1))
+    elif args.markdown:
+        print(markdown_since(since) if since else markdown_ledger(ledger))
     else:
         report(ledger)
+        if since:
+            report_since(since)
     return 1 if args.check and ledger["errors"] else 0
 
 

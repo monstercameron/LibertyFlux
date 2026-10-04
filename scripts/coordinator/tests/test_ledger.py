@@ -4,10 +4,12 @@ import contextlib
 import io
 import json
 import os
+import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import ledger
@@ -205,6 +207,119 @@ class TestProofRecords(unittest.TestCase):
             with contextlib.redirect_stdout(out):
                 ledger.report(built)
             self.assertIn("proof records: 2 of 2", out.getvalue())
+
+
+class TestDiffIndex(unittest.TestCase):
+    def test_added_removed_changed(self):
+        old = [row(0), row(1), row(2, checker="version 2"), {"address": "not hex"}, {"file": "no address"}]
+        new = [row(0), row(2, checker="version 4", trials=500), row(3, kind="native", lane="b-2"), row(4)]
+        diff = ledger.diff_index(old, new)
+        self.assertEqual([r["name"] for r in diff["added"]], ["f3", "f4"])
+        self.assertEqual([r["name"] for r in diff["removed"]], ["f1"])
+        self.assertEqual([(a["name"], fields) for a, _, fields in diff["changed"]], [("f2", ["checker", "trials"])])
+        s = ledger.summarise_diff(diff)
+        self.assertEqual((s["added"], s["removed"], s["changed"]), (2, 1, 1))
+        self.assertEqual(s["added_by_kind"], {"function": 1, "native": 1})
+        self.assertEqual(s["added_by_kind_and_checker"], {"function": {"version 2": 1}, "native": {"version 2": 1}})
+        self.assertEqual(s["removed_by_checker"], {"version 2": 1})
+        self.assertEqual(s["changed_fields"], {"checker": 1, "trials": 1})
+        self.assertEqual(s["checker_transitions"], {"version 2 -> version 4": 1})
+        self.assertEqual(s["added_by_lane"], {"a-1": 1, "b-2": 1})
+
+    def test_identical_and_empty(self):
+        self.assertEqual(ledger.diff_index([row(0)], [row(0)]), {"added": [], "removed": [], "changed": []})
+        self.assertEqual(len(ledger.diff_index([], [row(0), row(1)])["added"]), 2)
+
+    def test_markdown_is_counts_only(self):
+        record = ledger.since_record("HEAD~1", [row(0), row(1), row(2)], True,
+                                     [row(0, checker="version 4"), row(2), row(3, kind="native")])
+        text = ledger.markdown_since(record)
+        lines = text.splitlines()
+        self.assertEqual(lines[0], "| Since `HEAD~1` | Entries | function | native | version 2 | version 4 |")
+        self.assertEqual(lines[2:5], ["| Added | 1 | 0 | 1 | 1 | 0 |", "| Removed | 1 | 1 | 0 | 1 | 0 |",
+                                      "| Changed | 1 | 1 | 0 | 0 | 1 |"])
+        self.assertIn("Checker changes: version 2 -> version 4 (1).", text)
+        self.assertNotRegex(text, r"0x|fn_[0-9a-f]")  # no addresses or file names: it may go to the devlog
+        self.assertEqual(record["changed"][0]["before"], {"checker": "version 2"})
+
+
+def git(root, *args):
+    return subprocess.run(["git", *args], cwd=root, capture_output=True, text=True, check=True).stdout
+
+
+@unittest.skipUnless(subprocess.run(["git", "--version"], capture_output=True).returncode == 0, "git not available")
+class TestSinceInARepository(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        (self.root / "docs" / "data").mkdir(parents=True)
+        (self.root / "docs" / "data" / "progress.json").write_text(json.dumps({"stages": {"verified": 3, "rewritten": 3}}))
+        git(self.root, "init", "-q")
+        git(self.root, "config", "user.email", "test@example.invalid")
+        git(self.root, "config", "user.name", "test")
+        git(self.root, "config", "commit.gpgsign", "false")
+        git(self.root, "add", ".")
+        git(self.root, "commit", "-q", "-m", "before the index")
+        self.write_tree([row(0), row(1), row(2)])
+        git(self.root, "add", ".")
+        git(self.root, "commit", "-q", "-m", "first wave")
+        self.write_tree([row(0, checker="version 4"), row(2), row(3, kind="native")])  # left uncommitted
+        self.env = mock.patch.dict(os.environ, {"LIBERTYFLUX_ROOT": str(self.root)})
+        self.env.start()
+
+    def tearDown(self):
+        self.env.stop()
+        self.tmp.cleanup()
+
+    def write_tree(self, rows):
+        folder = self.root / "rewrites" / "verified"
+        for path in folder.rglob("*.rs"):
+            path.unlink()
+        for r in rows:
+            (folder / r["file"]).parent.mkdir(parents=True, exist_ok=True)
+            (folder / r["file"]).write_text(text_for(r["file"]), encoding="utf-8")
+        (folder / "index.json").write_text(json.dumps(rows), encoding="utf-8")
+
+    def run_main(self, *argv):
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = ledger.main(list(argv))
+        return code, out.getvalue(), err.getvalue()
+
+    def test_text_report_gains_a_section(self):
+        code, plain, _ = self.run_main()
+        code_since, out, _ = self.run_main("--since", "HEAD", "--check")
+        self.assertEqual((code, code_since), (0, 0))
+        self.assertTrue(out.startswith(plain))  # the usual report, unchanged, comes first
+        section = out[len(plain):].splitlines()
+        self.assertEqual(section[0], "since HEAD: 3 entries at the ref, 3 now")
+        self.assertTrue(section[1].startswith("  added 1: by kind {'native': 1}; by checker {'version 2': 1}; from 1 lanes (a-1 1)"))
+        self.assertTrue(section[2].startswith("  removed 1: by kind {'function': 1}"))
+        self.assertIn(row(1)["file"], section[2])
+        self.assertTrue(section[3].startswith("  changed 1: fields {'checker': 1}; checker version 2 -> version 4: 1"))
+
+    def test_json_markdown_and_errors(self):
+        code, out, _ = self.run_main("--since", "HEAD~1", "--json")
+        since = json.loads(out)["since"]
+        self.assertEqual((since["present_at_ref"], since["before"], since["after"]), (False, 0, 3))
+        self.assertEqual(since["summary"]["added"], 3)
+        _, plain_json, _ = self.run_main("--json")
+        self.assertNotIn("since", json.loads(plain_json))
+        code, out, _ = self.run_main("--since", "HEAD", "--markdown")
+        self.assertTrue(out.startswith("| Since `HEAD` | Entries |"))
+        code, out, _ = self.run_main("--markdown")
+        self.assertTrue(out.startswith("| Ledger | Count |\n|---|---:|\n| Verified entries | 3 |"))
+        code, _, err = self.run_main("--since", "no-such-ref")
+        self.assertEqual(code, 2)
+        self.assertIn("does not name a commit", err)
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            ledger.main(["--json", "--markdown"])
+
+    def test_check_keeps_its_meaning(self):
+        (self.root / "rewrites" / "verified" / row(2)["file"]).unlink()
+        self.assertEqual(self.run_main("--since", "HEAD", "--check")[0], 1)
+        self.assertEqual(self.run_main("--since", "HEAD", "--check", "--markdown")[0], 1)
+        self.assertEqual(self.run_main("--since", "HEAD")[0], 0)
 
 
 if __name__ == "__main__":
