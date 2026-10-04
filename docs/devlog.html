@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b180">Four rewrites, two original-code quirks, one measured constant</a></li>
       <li><a href="#naming-05">Naming the audio voices and sound nodes</a></li>
       <li><a href="#production-b183">A callee register the manual calls optional is compared by default</a></li>
       <li><a href="#naming-04">Naming a run of leaderboard factory fragments</a></li>
@@ -337,6 +338,26 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b180">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Four rewrites, two original-code quirks, one measured constant</h2>
+      <p>A production batch of five game functions yielded four verified Rust rewrites. The interesting results were not the rewrites but what the originals turned out to do: one reads two record fields from an uninitialized stack slot, another has a path that returns into garbage, and a trig helper's exact answer had to be measured by running it under the checker itself.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite five neighbouring game functions in Rust and prove each one behaves identically to the original with the version 4 checker, at 1,000 trials or more per function. The batch mixed two small record-table helpers, a texture init routine with many callees, and two large float-heavy functions.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Four functions verified at 1,200 matching trials each, all checks on: a record swap, a heap sift-down, a sky texture init with sixteen calls and a tail jump, and a two-pass path smoother. A fifth function was not reached for lack of lane time.</p>
+      <p><span class="evidence verified">Verified</span> The sift-down never saves two of the twelve record fields it moves. Its final store reloads both from one word of its own stack frame that nothing ever writes, so in the real game those two fields receive whatever the caller left on the stack. The proof defines that word as zero and the rewrite stores zero; anything else about those fields is unprovable.</p>
+      <p><span class="evidence verified">Verified</span> The unreached function's short path calls what looks like a conditional fatal routine and then returns without restoring its stack frame, so control jumps into frame garbage. In the checker that is a certain, deterministic fault. Because every trial of that path faults, it cannot pass on its own: fault-only trials compare nothing and trip the checker's vacuous rule.</p>
+      <p><span class="evidence verified">Verified</span> The smoother calls a helper with a constant angle passed as a double in a vector register and reads back a double the same way, which a Rust rewrite can neither pass nor read. The helper is pure over a fixed input, so its exact answer was measured by running the helper itself natively under the checker worker (a one-trial probe with a deliberately wrong rewrite, reading the true answer from the mismatch detail) and folded in as a constant. The value matches a cosine to eight digits.</p>
+      <p><span class="evidence verified">Verified</span> A smoothing gate that ends in a below-or-equal jump keeps points whose comparison is unordered: that jump is taken for NaN inputs. The natural Rust spelling of the comparison is false for NaN and fails a quarter of trials; only the negated ordered form matches. Three further transcription slips (a dropped doubling, a dropped decrement, a counter incremented before its stores rather than after) were each caught by the first failing trial and fixed.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The four rewrites ship as verified. The uninitialized-slot read and the crashing path are recorded as likely original-code bugs for a later review pass, not fixed. The next lane on the unreached function gets a full retry kit: call conventions per callee, the object graphs to fabricate, the uninitialized slots to define, and the finding that only the whole long path can pass since it has a single exit. Two reusable tricks came out of the batch: probe verdicts to measure exact helper answers natively, and per-word global ranges for first debug runs, since the worker otherwise logs only the range base per changed word.</p>
+      <h3>How to reproduce it</h3>
+      <p>Each verified function has a contract and verdict file pairing the original with its rewrite export; rerunning the checker driver over them replays the 1,200 trials. The smoother has a second, supplementary contract that forces the mixed inner-loop path every trial with a per-call answer sequence, also green at 1,200. The helper probe is a one-trial contract with a zero-returning export whose expected mismatch prints the true answer.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Unicorn emulation was tried first for the helper's value and dies silently on this host, which is why the probe method exists. Hand-converted 64-bit script words were silently wrong and cost a run; machine conversion only since. A memory-inventory script filtered out register-only instructions and hid the loop-bound decrement for a full debug cycle. A supplementary contract renumbered a callee id the rewrite had hardcoded, faulting every trial until the renumbering was replaced by a per-call sequence.</p>
+      </article>
 
       <article class="entry" id="naming-05">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
