@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#subsystem-physics">Subsystem survey: physics and collision</a></li>
       <li><a href="#tools-scripts">Tools: mission scripts and the script format</a></li>
       <li><a href="#tools-engine-crates">Tools: the future Rust engine's libraries</a></li>
       <li><a href="#tools-archives">Tools: archives and compression</a></li>
@@ -95,6 +96,41 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="subsystem-physics">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Subsystem survey: physics and collision</h2>
+      <p>The game's physics is RAGE-native collision code over a statically linked Bullet broadphase and narrow phase, with NaturalMotion Euphoria driving ragdolls, and no Havok anywhere. The survey counted 94 physics-owned classes, 792 related strings, and at least 789 physics functions in readable code, concentrated in one large engine block plus fragment, material, and entity-glue regions.</p>
+      <h3>What was asked</h3>
+      <p>Survey the physics and collision subsystem of the original executable by working directly on the file with Python: extract its classes from run-time type information with base classes and virtual table sizes, collect its strings, locate its code through relocation references, identify its operating system and library dependencies, compare against public knowledge, note frame-rate dependencies, and leave rewrite notes with a ranked list of what to understand first.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The subsystem owns 94 classes: 19 collision bound types from boxes and spheres up to composite, mesh, and octree bounds; live instances, three collider types, joints, rope, constraints, archetypes, materials, a simulator, sleep management, a level world, broadphase variants, Bullet narrow-phase algorithms, and a fragment family for breakable objects. Sixteen more classes in other systems carry physics names, and 24 Euphoria behaviour classes plus two fragment render dictionaries sit at the boundary.</p>
+      <p><span class="evidence verified">Verified</span> Both the broadphase and the narrow phase are Bullet-derived, with Bullet class names appearing both under the engine namespace and without any namespace. Euphoria appears as behaviour, effector, and engine classes in a dedicated animation namespace, reached through dedicated physics instance types. No Havok class or string exists in the binary.</p>
+      <p><span class="evidence verified">Verified</span> Game entities attach through a single physics entity class with 72 virtual functions, the parent of pedestrians, vehicles, and objects, with matching network mirror classes. Fragments use multiple inheritance with the largest tables in the subsystem at 65 and 66 slots, while the simulator exposes only 8 virtual functions and the level world only one, so most of their interface is non-virtual.</p>
+      <p><span class="evidence verified">Verified</span> Of 792 related strings, the most revealing are resource paths for fragments and natural motion data, ragdoll state messages, task parameter asserts for ten Euphoria behaviours, debug dump formats for collision state and velocity, 19 wheel friction surface names, tuning keys for damage, inertia, and self collision, and broadphase debug text. Collision file extensions, Havok names, and physics source file paths are all absent.</p>
+      <p><span class="evidence verified">Verified</span> Relocation clustering plus virtual function targets attribute at least 789 functions and about 309 kilobytes of code to the subsystem across 168 clusters, with disassembly spot checks passing on 94 percent of sampled sites. About two-thirds of the attributed functions sit in one large engine block covering bounds, colliders, joints, rope, archetypes, both Bullet phases, and the simulator, with separate regions for fragments, materials, and game-side glue.</p>
+      <p><span class="evidence verified">Verified</span> The subsystem calls almost no operating system functions directly: only thread synchronisation primitives and a thread affinity query were found in its code. The C library is statically linked, file access goes through the resource system, and both Bullet and Euphoria are statically linked.</p>
+      <p><span class="evidence">Inferred</span> The physics stepper takes variable frame time as a parameter rather than using a fixed-step constant, since no frame constant is referenced from physics code. This matches public reports that running above 60 frames per second breaks vehicle handling, ragdolls, object physics, and helicopters, which community fixes address by restoring frame-rate scaling.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Physics-owned classes</td><td role="cell" data-label="Value">94</td><td role="cell" data-label="What it means">The core type surface a rewrite must cover</td></tr>
+      <tr role="row"><td role="cell">Virtual function floor</td><td role="cell" data-label="Value">789 in readable code, 32 in the encrypted prefix</td><td role="cell" data-label="What it means">Minimum function count; the true total is estimated at 1200 to 2000</td></tr>
+      <tr role="row"><td role="cell">Attributed code</td><td role="cell" data-label="Value">About 309 kilobytes in 168 clusters</td><td role="cell" data-label="What it means">Lower bound; code without references is invisible to this method</td></tr>
+      <tr role="row"><td role="cell">Physics strings</td><td role="cell" data-label="Value">792 of 162981 total</td><td role="cell" data-label="What it means">Resource paths, asserts, debug formats, materials, tuning keys</td></tr>
+      <tr role="row"><td role="cell">Third-party physics code</td><td role="cell" data-label="Value">Bullet broadphase plus narrow phase, Euphoria behaviours</td><td role="cell" data-label="What it means">Both statically linked; no Havok present</td></tr>
+      <tr role="row"><td role="cell">OS calls from physics code</td><td role="cell" data-label="Value">4, all thread related</td><td role="cell" data-label="What it means">The subsystem is nearly self-contained at the system call level</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>A rewrite should proceed from bound primitives and mesh bounds with a bounds-file reader, through instances, broadphase, narrow phase, colliders, joints, the simulator, the level world, fragments, and game attachment, leaving the Euphoria bridge for last together with the animation work. Pure geometry queries, solver steps, and broadphase operations can be checked in a CPU emulator in isolation, while stepping, level queries, streaming, entity glue, and behaviours need the running game. Fixed-step-only simulation would be a behaviour change, so the rewrite must reproduce variable frame-time quirks, and field layouts, file formats, and the behaviour interface still need to come from debugger work or community sources.</p>
+      <h3>How to reproduce it</h3>
+      <p>Four scripts in the lane scratch folder run in order with the project Python environment: an environment check that verifies the encrypted prefix against its mirror section, a class scan that filters the shared type inventory and measures every virtual table through relocations, a string scan that filters the shared string inventory with physics patterns, and a cluster scan that groups code references with slot targets and spot-checks them with the disassembler. Each script reads only the original executable and the shared probe inventories and writes only to the scratch folder, finishing in about ten minutes. The class, string, and cluster data files it produces hold every address and count behind this entry.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Several name filters misfired before review caught them: audio hardware voices, pixel-shader fragments, render phases, camera graph parameters, and a particle attribute all matched physics patterns and had to be excluded by hand, while one iterator class lost its enclosing scope to a name printer bug and had to be re-read from its mangled form. Tiny clusters pairing two type descriptors turned out to be data tables embedded in code rather than functions. A text search over the single-line string inventory hung and had to be replaced with a JSON load. Two Euphoria behaviour name strings looked like noise until the matching behaviour classes confirmed them, and the absence of collision file extensions was checked three ways before being trusted.</p>
+      </article>
 
       <article class="entry" id="tools-scripts">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

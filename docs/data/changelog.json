@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Load progress and changelog data directly from JSON",
+    "title": "Devlog: Subsystem survey: physics and collision",
     "commit": null,
+    "summary": "Findings from the s-physics lane.",
+    "changes": [
+      "New devlog entry: Subsystem survey: physics and collision.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Load progress and changelog data directly from JSON",
+    "commit": "1c8448fb6394752803af54e509242510b84b05a9",
     "summary": "The site pages now fetch the JSON files themselves.",
     "changes": [
       "The overview page fetches data/progress.json and the changelog page fetches data/changelog.json, with caching disabled so a new push shows up on reload.",
