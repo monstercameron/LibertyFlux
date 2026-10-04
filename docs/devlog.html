@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot-06">Pilot lane 06: five functions rewritten and timed</a></li>
       <li><a href="#pilot-05">Pilot lane 05: five functions rewritten and timed</a></li>
       <li><a href="#pilot-03">Pilot lane 03: five functions rewritten and timed</a></li>
       <li><a href="#pilot-01">Pilot lane 01: five functions rewritten and timed</a></li>
@@ -179,6 +180,73 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot-06">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Pilot lane 06: five functions rewritten and timed</h2>
+      <p>Five small original functions were rewritten in Rust and each rewrite was compared against the original over more than a thousand trials: every trial agreed, and a deliberately planted bug was caught every time. The honest cost was about seven minutes per verified function, most of it spent running the comparisons rather than writing the code.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite pilot functions 26 to 30 as clear Rust, prove each one behaves identically to the original with at least a thousand random plus edge-case trials, record how long each step takes, and run one honesty test showing the comparison actually catches mistakes.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All five rewrites agree with the originals on every trial: 5,182 agreements out of 5,182 trials. The set covered an object field-copy routine, two small object initialisers, a table-indexed word store, and a bounded string comparison.</p>
+      <p><span class="evidence verified">Verified</span> The honesty test worked: a one-word typo planted in a copy of the first rewrite failed 200 out of 200 trials, each time at exactly the differing memory location.</p>
+      <p><span class="evidence verified">Verified</span> Total time was about 36 minutes for five verified functions, roughly seven minutes each. Understanding and writing took minutes; running the thousand-plus native comparison trials per function took most of the time.</p>
+      <p><span class="evidence verified">Verified</span> One pilot function reads a global data table, even though the pilot list described its entries as touching no global data. The leaf-selection filter has a gap for tables that live in zero-initialised memory, and a specimen has been handed to the coordinator.</p>
+      <p><span class="evidence">Inferred</span> The string comparison function looks like a statically linked C library routine rather than game-specific code, based on its structure and behaviour. Its identity is unconfirmed but its behaviour is fully covered by the trials.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Function</th>
+      <th role="columnheader">Trials</th>
+      <th role="columnheader">Attempts</th>
+      <th role="columnheader">Outcome</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">Field copy</td>
+      <td role="cell" data-label="Trials">1037</td>
+      <td role="cell" data-label="Attempts">3</td>
+      <td role="cell" data-label="Outcome">verified</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Header stamp</td>
+      <td role="cell" data-label="Trials">1028</td>
+      <td role="cell" data-label="Attempts">2</td>
+      <td role="cell" data-label="Outcome">verified</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">String compare</td>
+      <td role="cell" data-label="Trials">1090</td>
+      <td role="cell" data-label="Attempts">1</td>
+      <td role="cell" data-label="Outcome">verified</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Indexed word store</td>
+      <td role="cell" data-label="Trials">1020</td>
+      <td role="cell" data-label="Attempts">2</td>
+      <td role="cell" data-label="Outcome">verified</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Object init</td>
+      <td role="cell" data-label="Trials">1007</td>
+      <td role="cell" data-label="Attempts">1</td>
+      <td role="cell" data-label="Outcome">verified</td>
+      </tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Comparisons should check the full final memory state, not just the list of reported writes, because writing a value that is already there is invisible to write-listing.</li>
+      <li>The checker must compare relocatable pointer constants modulo the image load offset rather than raw, or every such function will mismatch.</li>
+      <li>The leaf-selection filter should treat reads into zero-initialised global memory as global-data reads.</li>
+      <li>Simple functions budget at about seven minutes each with current single-shot tooling; a persistent comparison worker would shrink checking to seconds.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build the 32-bit harness and the rewrite crate from the lane scratch folder, then run the five check scripts, each of which drives the original function natively and the Rust rewrite over the same seeded random and edge-case inputs and compares return values and touched memory bytes exactly. The honesty test rebuilds the crate with a one-word error and reruns a subset of trials. No game process is launched at any point.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Every failed attempt was a bug in the test driver, not in a rewrite, and each one taught something real: the harness shows its own return address on the stack for one calling convention, pointer constants must be normalised before comparing, a mis-shaped test input silently corrupted a table, and huge table values do not always crash because 32-bit address arithmetic wraps around. One early file read also misidentified the contents of the global table by reading past the end of its section; checking section sizes corrected it. These fixes are all in the final scripts.</p>
+      </article>
 
       <article class="entry" id="pilot-05">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
