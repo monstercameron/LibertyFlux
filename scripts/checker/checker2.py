@@ -9,6 +9,7 @@ Then run contracts:
   checker2.py --smoke                   2 contracts x 10 trials, fast check
   checker2.py --trials N ...            override trial counts
   checker2.py --exe PATH ...            original executable (default below)
+  checker2.py --selftest                driver-only host checks (no worker)
   checker2.py --out DIR ...             output dir for verdicts (default below)
 Run with the repo Python, e.g.:
   .venv/Scripts/python.exe scripts/checker/checker2.py --smoke
@@ -31,7 +32,14 @@ This driver folds every pilot-lane driver extension into one contract format:
 small/edge-biased inputs, scripted heap words and pins, seeded/linked globals
 incl. heap pointers, null args, per-callee scripts, stub out-param words, TLS
 fabrication, XMM entry values, defined stack fills, status histograms and
-orig-ok counts.
+orig-ok counts. Version 5 adds, each opt-in per contract and recorded in
+the verdict's `features`: x87 entry values and the x87 state check,
+XMM2-XMM7 call arguments, snapshots of up to 64 words at any offset, a
+read-only shadow for unrelocated absolute reads (`abs_shadow`), and
+built-in self-test originals for the checker's own regression. One v5
+change is not opt-in: the worker holds the preferred-base window, so an
+unrelocated absolute access by the original faults loudly instead of
+silently reading worker memory (see "Unrelocated absolute accesses").
 
 What it is
 ----------
@@ -56,10 +64,11 @@ How a trial works
 1. The driver generates inputs from the contract (seeded RNG + edge values)
    and sends one `trial` request to the worker: register values, stack words,
    heap segment contents, global fills, per-callee scripted answers and
-   out-param words, TLS slots, XMM values.
+   out-param words, TLS slots, XMM values, v5 x87 entry values.
 2. The worker fills the heap with a trial-specific pattern, applies the
    segments, resets data sections to pristine + fill, plants the TLS slots,
-   loads the XMM entry values, and calls the ORIGINAL through a trampoline
+   loads the XMM entry values (and, on the original side only, pushes the
+   x87 entry values), and calls the ORIGINAL through a trampoline
    that captures registers, EFLAGS, x87/SSE state (fxsave), heap/stack/
    global diffs and the call log. Faults are caught in-process by a vectored
    handler that resumes at a landing pad; the worker never dies on a bad trial.
@@ -84,7 +93,10 @@ One JSON file per function:
 - `name`, `function` (original RVA hex), `conv` (`cdecl`, `stdcall`,
   `thiscall`, `fastcall`), `export` / `mut_export` (mutant optional),
   `trials`, `seed`, `timeout_ms`, `dll` (optional override of the rewrite
-  DLL; also LF_CHECKER_DLL in the environment).
+  DLL; also LF_CHECKER_DLL in the environment). v5: `function` may be
+  `selftest:<name>`, a built-in self-test original the worker emits
+  (`x87_store`, `xmm_call`, `abs_read`; see "Regression"). Such a verdict
+  carries `"selftest": true` and never verifies a game function.
 - `ret`: compared return channel: `eax`, `ax`, `al`, `edx_eax`, `st0`,
   `xmm0`, `none`.
 - `regs`: 7 input specs [eax,ecx,edx,ebx,esi,edi,ebp]: {"any":true},
@@ -123,7 +135,8 @@ One JSON file per function:
   ([{rva,words}] with word specs, supports heap/stub pointers), or
   `globals_fill_spec` (`heap_ptr`/`cycle`/`words` per range).
 - `callees`: [{id,conv,nargs,ret,script,writes,wscript,snap,logxmm,
-  xmm0_from_stack,logxmm1,xmm1_from_stack,seq,preserve}]. `conv` sets cleanup
+  xmm0_from_stack,logxmm1,xmm1_from_stack,logxmm_regs,xmm_from_stack,
+  seq,preserve}]. `conv` sets cleanup
   (`cdecl` callers clean up, all others pop nargs*4); `ret` is the
   scripted answer channel (`u32`, `u64`, `al`, `f32xmm0`, `f64xmm0`,
   `f32st0`, `f64st0`, and v4 `preserve`); `script` is a value list cycled per trial (each
@@ -133,8 +146,18 @@ One JSON file per function:
   matrix cycled alongside. v4 adds an optional `dst` byte offset per
   write (default 0): the words land at [pointer+dst] instead of
   [pointer+0], for out-slots past the pointer. `snap` declares pointed-to snapshots:
-  [{kind:"arg"/"ecx"/"edx", idx, n}], at most 8 words total per callee.
-  `logxmm` logs the 16 bytes of XMM0 at the call.
+  [{kind:"arg"/"ecx"/"edx", idx, n, at}]: n words copied at call time
+  from `at` bytes past the pointer (v5; default 0, may be negative,
+  |at| <= 0x10000), at most 64 words total per callee (v5; v4 allowed 8
+  at offset 0). Setup refuses more, an unknown kind or a bad `at`; a
+  snapshot is never truncated. v5 also fixes a second ecx/edx entry in
+  one callee, which v4 read through a clobbered register.
+  `logxmm` logs the 16 bytes of XMM0 at the call. v5 `logxmm_regs`
+  [n, ...] logs any of XMM0-XMM7 and `xmm_from_stack` {"n": idx} is the
+  rewrite-side transport for any of them (`movss` from stack arg idx,
+  upper lanes zeroed, as the v2/v3 keys do for XMM0/XMM1, which keep
+  their meaning). The v5 keys fail closed: a transported register must
+  be logged and idx must be below `nargs`.
   `xmm0_from_stack` names the stack arg the stub loads XMM0 from on
   the rewrite side (transport for xmm0-arg callees; call args are then
   skipped on both sides and only XMM0 is compared). v3 adds `logxmm1`
@@ -169,8 +192,28 @@ One JSON file per function:
   `iat`: [{dll,name,id}] import slots rewritten to recorder stubs.
 - `tls`: [{slot|slot_rva, seg, plus} | {slot, int}]: fabricated
   TLS slots, planted on the trial thread before each side. Slots 0-63.
-- `xmm`: {reg: [4 word specs]}: scripted XMM entry values; use the
-  string `"float"` for a float-edge low word. Unlisted words are zero.
+- `xmm`: {reg: [4 word specs]}: scripted XMM entry values for any of
+  xmm0-xmm7 (both sides since v2); use the string `"float"` for a
+  float-edge low word. Unlisted words are zero.
+- v5 `x87`: [{kind, vals?}, ...]: x87 entry values, ST0 first, at most 8.
+  `kind` is `f32`, `f64` (the value an `fld dword`/`fld qword` of those bits
+  loads: exact, a signalling NaN quieted) or `f80` (an 80-bit value).
+  Without `vals` the driver generates them (f32: FLOAT_EDGES then fbits;
+  f64: F64_EDGES then f64bits; f80: F80_EDGES then f80rand, which never
+  yield a signalling NaN or an invalid encoding); `vals` cycles literal
+  bits per trial (f32/f64: an int; f80: [significand, sign/exponent]).
+  The original receives them on its FPU stack (pushed deepest first by
+  the trampoline). The rewrite starts with an EMPTY FPU stack and reads
+  them through `lf_checker_rt::x87_raw`/`x87_f64`/`x87_f32` (the
+  `CHECKER_X87` mirror): a Rust rewrite cannot pop x87 registers, so it
+  is treated as having consumed them. Declaring `x87` turns the x87 state
+  check on (`checks.x87_state: false` beside it is refused), which then
+  also verifies the original consumed exactly its entry values. A rewrite
+  DLL without `CHECKER_X87` fails setup for such a contract.
+- v5 `abs_shadow` (bool, default false): serve the original's unrelocated
+  absolute reads of headers and read-only sections from a read-only copy
+  of the file at the preferred base (see "Unrelocated absolute
+  accesses"). Random draws are then also kept out of that window.
 - `stack_fill`: a defined fill for uninitialized stack (integer, or
   `"pattern"` for the default trial pattern). Use `0` when either side
   reads stack it did not write.
@@ -183,6 +226,9 @@ One JSON file per function:
   exact v2 stream for audit.
 - `checks`: `ret`, `esp`, `heap`, `stack`, `globals`, `calls`,
   `undeclared` (all bool), `fulldata` (bool), `fp_tol`, `fp64`,
+  v5 `x87_state` (bool, default false; implied by `x87`: the final x87
+  stack top, abridged tag byte and the 80-bit contents of every valid
+  register must be identical; check name `x87`),
   `call_regs` (optional {id:[regs]}, v4 adds `"eax"` for
   `eax_from_stack` callees -- rejected without the transport),
   `call_skip` ({id:[stack arg indexes]} dropped from the call
@@ -251,7 +297,36 @@ differs, which the contract documents:
   original reads from its register.
 - `xmm0_from_stack` (callee option) has the stub load XMM0 from a stack
   argument on the rewrite side only; the original side passes real XMM0.
-  The logged XMM0 bytes are then compared.
+  The logged XMM0 bytes are then compared. v5 `xmm_from_stack` does the
+  same for any of XMM0-XMM7.
+- v5 `x87_raw(i)` (runtime) reads the x87 entry value the original
+  receives in ST(i); `x87_f64(i)`/`x87_f32(i)` round it exactly as an x87
+  `fst qword`/`fst dword` does (round to nearest even, the trampoline's
+  control word).
+
+Unrelocated absolute accesses (v5)
+----------------------------------
+The image runs away from its preferred base with relocations applied, so
+a forgotten relocation is caught. The executable has absolute operands
+WITHOUT relocation entries (it never needs relocating in the game); in the
+worker they point at the preferred base, which v4 left to whatever the
+worker allocated there, so the original silently read unrelated memory
+(devlog "The checker disagreed with the file on one constant": a float
+constant read that way made a correct rewrite fail). v5:
+- the worker reserves that window at start-up (it is linked at a high
+  base so its own image is not in it). An access there faults, and the
+  fault detail carries an "abs-window" note with the file address.
+  Contracts whose original makes such accesses now fail loudly on the
+  original side instead of comparing against worker memory.
+- `abs_shadow: true` commits a read-only copy of the file's headers and
+  read-only sections there (unrelocated, as the game sees them), readable
+  only while the original runs. The rewrite must still read through
+  `relocated()`/`global()`; reading the file address directly faults.
+  Writable sections stay unmapped in the window (an unrelocated access to
+  writable data still faults), and so do writes. Pointer-valued read-only
+  data (vtables) holds unrelocated values there, so it cannot match a
+  relocated read; the shadow suits constants. A worker whose window is
+  not fully free fails setup; the driver retries on fresh workers.
 
 Verdict format (accept.py-compatible)
 -------------------------------------
@@ -268,7 +343,13 @@ when the verdict has no failures but the coverage rule below refused it)
 and `vacuous_reasons`. v4 adds `call_masks_used` (the effective masks,
 alias resolved, so a narrowed comparison is always visible), `log_max`
 (the cap in force), and `worker_retries` (one record per retried trial:
-trial, attempt, loss class and worker exit code).
+trial, attempt, loss class and worker exit code). v5 adds `features`
+(x87 entry kinds and whether the x87 state check ran, xmm entry
+registers, logged and transported call registers per callee, snapshot
+words and non-zero offsets per callee, `abs_shadow` and the worker's
+reported window coverage, the self-test name) and `selftest: true` for a
+self-test verdict. `checker_version` stays "checker4" until the
+coordinator adopts v5.
 
 v3 coverage rule: a verdict with zero failures still fails as `vacuous`
 unless (a) at least `min_orig_ok_share` of trials (default 0.10,
@@ -296,7 +377,10 @@ Rewrites live in a 32-bit cdylib and use `lf-checker-rt`:
   sides land on the same planted stub.
 - Read fabricated TLS through `tls_slot(n)` and scripted XMM entry values
   through `xmm_word(reg, i)`; pass xmm0-arg values on the stack when the
-  callee declares `xmm0_from_stack`.
+  callee declares `xmm0_from_stack` (v5: any `xmm_from_stack` register).
+- v5: read x87 entry values through `x87_raw(i)` (exact 80 bits) or
+  `x87_f64(i)`/`x87_f32(i)`; prefer the bit converters
+  `f80_to_f64_bits`/`f80_to_f32_bits` when the result is stored as bits.
 - Return FP through the real channel (`f64` return = ST0 on this target;
   an `f32` return type reads an ST0 float result without assembly).
 - Use wrapping arithmetic explicitly; the DLL builds with `panic=abort`
@@ -314,6 +398,30 @@ is false; it fails by design), k2_stw1b is a mutant-as-export control
 (passes by design); everything else must pass, and every declared mutant
 must fail.
 
+v5 adds seven k5 contracts (generated by gen_contracts.py), each with a
+mutant the v4 checker could not see:
+- k5_x87 (selftest:x87_store): three x87 entry values popped into an f32,
+  an f64 and an 80-bit slot; mutant swaps ST0 and ST1.
+- k5_x87bal: the same original with no return channel compared; the
+  mutant leaves a value in ST0 (only the x87 state check sees it).
+- k5_xmm (selftest:xmm_call): XMM2/XMM5 call arguments with rewrite-side
+  transports plus an XMM6 entry value; mutant swaps the two registers.
+- k5_abs (selftest:abs_read, abs_shadow): unrelocated reads of the
+  header page; mutant reads the file address directly (v4: both sides
+  read the same worker memory and matched).
+- k5_snap / k5_snapneg (original 0x9e09f0, rewrite rw_k2_f4): a 16-word
+  snapshot 0x1D8 bytes into the object, and a negative offset as a second
+  ECX entry; each mutant disturbs one covered word only while the callee
+  runs (final memory identical, so only the call-time snapshot sees it).
+- k5_absguard: documented negative (fails by design, no mutant): without
+  abs_shadow the original's unrelocated read faults in the reserved
+  window ("abs-window" note) while the correct rewrite completes.
+The self-test originals are a few hand-written instructions in the worker
+(build_selftests), used because no tracked original is known to take x87
+arguments, pass XMM2-XMM7 to a callee or read through an unrelocated
+address. `checker2.py --selftest` runs the driver's own host-side checks
+(no worker needed).
+
 What it can and cannot verify
 -----------------------------
 Can: multi-callee branch coverage via per-callee answers; callees that
@@ -321,17 +429,26 @@ fill structs and buffers; register-indirect, vtable, data-table and tail
 calls; frame-pointer call arguments (address skipped, contents compared);
 TLS-slot-driven logic (slots 0-63); xmm0-arg callees and xmm entry
 values; functions reading uninitialized stack (with a defined fill).
+v5: x87 entry values the original consumes; the final x87 stack (top,
+tags, valid registers); XMM0-XMM7 call arguments; call-time snapshots of
+up to 64 words at any offset; unrelocated absolute reads of read-only
+data (with abs_shadow).
 
 Still cannot: functions in the encrypted first megabyte of the code
 section; behaviour needing a running game (initialized heap graphs, OS
 handles); import implementations (calls observed, answers scripted);
 timing/`rdtsc`/CPUID paths; self-modifying or preferred-base-dependent
-code; concurrency; TLS expansion slots (>= 64); x87 entry values; anything
-after the first fault in a trial.
+code; concurrency; TLS expansion slots (>= 64); anything after the first
+fault in a trial. v5 limits: an original that leaves x87 entry values on
+the stack cannot be matched by a Rust rewrite (the x87 check fails);
+80-bit signalling NaNs and invalid encodings are not generated; the
+transports load 4 bytes (`movss`); unrelocated writes and unrelocated
+accesses to writable data always fault; the x87 control word, MXCSR and
+FPU condition codes after return are not compared.
 
 Current limits: one worker is single-trial-at-a-time (run one driver per
-core); snapshots cap at 8 words per callee and out-param words at 16 per
-callee; call arguments log and compare up to 40 words per callee and setup
+core); snapshots cap at 64 words per callee (v5; 8 before) and out-param
+words at 16 per callee; call arguments log and compare up to 40 words per callee and setup
 rejects more (v2 silently compared only the first 8); the call log holds
 256 calls per side by default and trials past it fail loudly (raise
 `log_max` to 1024); computed `jmp reg` with non-vtable targets still needs
@@ -383,6 +500,89 @@ FLOAT_EDGES = [0x00000000, 0x80000000, 0x3F800000, 0xBF800000, 0x3F000000,
                0x007FFFFF, 0x00000001, 0x501502F9, 0x2EDBE6FF, 0xC0000000]
 
 
+# v5 x87 entry values. FLOAT_EDGES serve "f32" entries; these serve "f64"
+# and "f80" entries. The f80 pool exercises rounding (ties to even, carries
+# into the exponent, overflow, denormal results) as stored by fst; it holds
+# no signalling NaN and no encoding the FPU rejects (unnormal, pseudo-NaN),
+# whose store behaviour is not modelled.
+F64_EDGES = [0x0000000000000000, 0x8000000000000000, 0x3FF0000000000000,
+             0xBFF0000000000000, 0x3FE0000000000000, 0x400921FB54442D18,
+             0x7FF0000000000000, 0xFFF0000000000000, 0x7FF8000000000000,
+             0x0010000000000000, 0x000FFFFFFFFFFFFF, 0x0000000000000001,
+             0x47EFFFFFE0000000, 0x3810000000000000, 0x36A0000000000000,
+             0x3FF0000010000000, 0xC00FFFFFFFFFFFFF]
+F80_EDGES = [(0, 0x0000), (0, 0x8000), (1 << 63, 0x3FFF), (1 << 63, 0xBFFF),
+             (1 << 63, 0x7FFF), (1 << 63, 0xFFFF), (0xC000000000000000, 0x7FFF),
+             (0xC000000000000000, 0xFFFF), (0xC000000000000801, 0x7FFF),
+             (0xC90FDAA22168C235, 0x4000), (0x8000000000000400, 0x3FFF),
+             (0x8000000000000C00, 0x3FFF), (0x8000008000000000, 0x3FFF),
+             (0x8000018000000000, 0x3FFF), (0xFFFFFFFFFFFFFFFF, 0x3FFF + 127),
+             (0xFFFFFFFFFFFFFFFF, 0x3FFF + 1023), (1 << 63, 0x0001), (1, 0x0000),
+             (1 << 63, 0x3FFF - 1022), (1 << 63, 0x3FFF - 1074),
+             (0xC000000000000000, 0x3FFF - 149), (0xAAAAAAAAAAAAAAAB, 0x3FFD)]
+
+
+def f32_to_f80(bits):
+    """(significand, sign/exponent) an x87 `fld dword` loads for these f32
+    bits: exact, denormals normalised, a signalling NaN quieted."""
+    bits &= 0xFFFFFFFF
+    sign = (bits >> 31) << 15
+    e = (bits >> 23) & 0xFF
+    f = bits & 0x7FFFFF
+    if e == 0xFF:
+        q = (1 << 62) if f else 0
+        return ((1 << 63) | (f << 40) | q, sign | 0x7FFF)
+    if e == 0:
+        if f == 0:
+            return (0, sign)
+        msb = f.bit_length() - 1
+        return (f << (63 - msb), sign | (msb - 149 + 16383))
+    return ((1 << 63) | (f << 40), sign | (e - 127 + 16383))
+
+
+def f64_to_f80(bits):
+    """As f32_to_f80, for an x87 `fld qword`."""
+    bits &= 0xFFFFFFFFFFFFFFFF
+    sign = (bits >> 63) << 15
+    e = (bits >> 52) & 0x7FF
+    f = bits & ((1 << 52) - 1)
+    if e == 0x7FF:
+        q = (1 << 62) if f else 0
+        return ((1 << 63) | (f << 11) | q, sign | 0x7FFF)
+    if e == 0:
+        if f == 0:
+            return (0, sign)
+        msb = f.bit_length() - 1
+        return (f << (63 - msb), sign | (msb - 1074 + 16383))
+    return ((1 << 63) | (f << 11), sign | (e - 1023 + 16383))
+
+
+def f64bits(rng):
+    """f64 bits biased like fbits: edges, denormals, small normals, random."""
+    r = rng.random()
+    if r < 0.15:
+        return rng.choice(F64_EDGES)
+    if r < 0.20:
+        return rng.getrandbits(52)
+    if r < 0.25:
+        return (0x3FF - 30 + rng.randint(0, 60)) << 52 | rng.getrandbits(52)
+    return rng.getrandbits(64)
+
+
+def f80rand(rng):
+    """A random 80-bit value: mostly normal around 1.0, some across the whole
+    exponent range, some denormal. Never a NaN or an invalid encoding."""
+    sign = rng.getrandbits(1) << 15
+    r = rng.random()
+    if r < 0.1:
+        return (rng.getrandbits(63) >> rng.randint(0, 62), sign)
+    if r < 0.3:
+        e = rng.randint(1, 0x7FFE)
+    else:
+        e = 0x3FFF + rng.randint(-200, 200)
+    return ((1 << 63) | rng.getrandbits(63), sign | e)
+
+
 def fbits(rng):
     r = rng.random()
     if r < 0.15:
@@ -411,11 +611,17 @@ def fbits(rng):
 CODE_LO = 0
 CODE_HI = 0
 CODE_ALLOW = False
+# v5: with abs_shadow the preferred-base window is readable by the original
+# and not by the rewrite, so a random draw landing there is unjudgeable in
+# the same way as a code pointer and is remapped the same way. Only set for
+# abs_shadow contracts, so every other contract keeps its v4 stream.
+ABS_LO = 0
+ABS_HI = 0
 
 
 def demap(v):
     v &= 0xFFFFFFFF
-    if not CODE_ALLOW and CODE_LO <= v < CODE_HI:
+    if not CODE_ALLOW and (CODE_LO <= v < CODE_HI or ABS_LO <= v < ABS_HI):
         v = (v + 0x80000000) & 0xFFFFFFFF
     return v
 
@@ -428,6 +634,7 @@ class Worker:
     def __init__(self):
         self.heap = 0
         self.stubs = {}
+        self.setup = {}
         self.start()
 
     def start(self):
@@ -795,6 +1002,50 @@ def resolve_tls(contract, trial, heap):
     return out
 
 
+X87_KINDS = ("f32", "f64", "f80")
+
+
+def resolve_x87(contract, rng, trial):
+    """v5: the trial's x87 entry values, ST0 first, each as the worker's
+    [significand lo, significand hi, sign/exponent] words; None when the
+    contract declares none (so no RNG is consumed and v4 streams stay
+    bit-identical). Entry kinds: "f32" (float-edge words, then fbits),
+    "f64" (F64_EDGES, then f64bits), "f80" (F80_EDGES, then f80rand); "vals"
+    instead cycles literal bits per trial (f32/f64: an int; f80: [man, sexp])."""
+    xs = contract.get("x87")
+    if not xs:
+        return None
+    out = []
+    for slot, e in enumerate(xs):
+        k = e["kind"]
+        vals = e.get("vals")
+        if k == "f32":
+            if vals is not None:
+                b = vals[trial % len(vals)]
+            elif trial < len(FLOAT_EDGES):
+                b = FLOAT_EDGES[(trial + slot) % len(FLOAT_EDGES)]
+            else:
+                b = fbits(rng)
+            man, sexp = f32_to_f80(b)
+        elif k == "f64":
+            if vals is not None:
+                b = vals[trial % len(vals)]
+            elif trial < len(F64_EDGES):
+                b = F64_EDGES[(trial + slot) % len(F64_EDGES)]
+            else:
+                b = f64bits(rng)
+            man, sexp = f64_to_f80(b)
+        else:
+            if vals is not None:
+                man, sexp = vals[trial % len(vals)]
+            elif trial < len(F80_EDGES):
+                man, sexp = F80_EDGES[(trial + slot) % len(F80_EDGES)]
+            else:
+                man, sexp = f80rand(rng)
+        out.append([man & 0xFFFFFFFF, (man >> 32) & 0xFFFFFFFF, sexp & 0xFFFF])
+    return out
+
+
 def resolve_xmm(contract, rng, trial):
     xm = contract.get("xmm")
     if xm is None:
@@ -817,9 +1068,11 @@ def resolve_xmm(contract, rng, trial):
 def build_trial_req(contract, rng, t, heap, stubs, export, seed):
     """One trial request. Shared by the main loop and the retry replay so
     regenerated inputs after a worker restart are bit-identical."""
+    fn = contract["function"]
+    selftest = fn[len("selftest:"):] if fn.startswith("selftest:") else None
     req = {
         "cmd": "trial",
-        "fn_rva": int(contract["function"], 16),
+        "fn_rva": 0 if selftest else int(fn, 16),
         "export": export,
         "trial": t,
         "seed": seed & 0xFFFFFFFF,
@@ -837,6 +1090,11 @@ def build_trial_req(contract, rng, t, heap, stubs, export, seed):
     xmm = resolve_xmm(contract, rng, t)
     if xmm:
         req["xmm"] = xmm
+    x87 = resolve_x87(contract, rng, t)  # v5; None (no RNG used) when absent
+    if x87:
+        req["x87"] = x87
+    if selftest:  # v5 built-in self-test original (checker regression only)
+        req["fn_selftest"] = selftest
     if "stack_fill" in contract:
         req["stack_fill"] = contract["stack_fill"]
     return req
@@ -953,6 +1211,7 @@ def run_contract(w, contract, export, trials, seed, stop_after_fails=None):
         except Exception:
             pass
     return {"results": results, "fails": fails, "first_fail": first_fail,
+            "setup": getattr(w, "setup", {}),
             "wall_s": wall, "check_names": check_names or [],
             "status_hist": hist, "call_coverage": cov,
             "worker_retries": retries}
@@ -1016,6 +1275,8 @@ def coverage_of(contract, results):
     for k in ("esp", "heap", "stack", "globals", "calls", "undeclared"):
         if checks_cfg.get(k, True):
             enabled.append(k)
+    if x87_state_on(contract):  # v5
+        enabled.append("x87")
     missing = [k for k in enabled if k not in checks_seen]
     exempt = set(str(x) for x in contract.get("coverage_exempt_callees", []))
     unfired = sorted(i for i in declared if i not in fired_on_ok and i not in exempt)
@@ -1058,8 +1319,131 @@ def resolved_masks(contract):
     return out
 
 
+def x87_state_on(contract):
+    """v5: the x87 state check runs when the contract declares x87 entry
+    values (it verifies the original consumed them) or asks for it."""
+    return bool(contract.get("x87")) or bool(
+        (contract.get("checks", {}) or {}).get("x87_state", False))
+
+
+SNAP_CAP_WORDS = 64     # v5 per-callee snapshot cap (the worker enforces it too)
+SNAP_AT_LIMIT = 0x10000  # v5 bound on |at|
+
+
+def validate_v5(contract):
+    """v5: fail-fast checks of the v5 contract keys (x87, snapshots with
+    `at` and more than 8 words, XMM0-XMM7 call options, abs_shadow,
+    self-test originals). Contracts without these keys are untouched."""
+    name = contract.get("name")
+    xs = contract.get("x87")
+    if xs is not None:
+        if not isinstance(xs, list) or not 1 <= len(xs) <= 8:
+            raise ValueError("contract %s: x87 needs 1-8 entries (st0 first)" % name)
+        for i, e in enumerate(xs):
+            if e.get("kind") not in X87_KINDS:
+                raise ValueError("contract %s: x87 st%d kind %r (f32, f64, f80)"
+                                 % (name, i, e.get("kind")))
+            vals = e.get("vals")
+            if vals is not None:
+                if not vals:
+                    raise ValueError("contract %s: x87 st%d vals is empty" % (name, i))
+                for v in vals:
+                    ok = (isinstance(v, list) and len(v) == 2 and 0 <= v[0] < 1 << 64
+                          and 0 <= v[1] < 1 << 16) if e["kind"] == "f80" else \
+                        (isinstance(v, int) and 0 <= v < 1 << (32 if e["kind"] == "f32" else 64))
+                    if not ok:
+                        raise ValueError("contract %s: x87 st%d value %r does not fit %s"
+                                         % (name, i, v, e["kind"]))
+        if (contract.get("checks", {}) or {}).get("x87_state", True) is False:
+            raise ValueError("contract %s: x87 entry values need the x87 state check "
+                             "(x87_state false refused)" % name)
+    for c in contract.get("callees", []):
+        cid = c.get("id")
+        total = 0
+        for sn in c.get("snap", []) or []:
+            if sn.get("kind", "arg") not in ("arg", "ecx", "edx"):
+                raise ValueError("contract %s: callee %s snap kind %r" % (name, cid, sn.get("kind")))
+            at = sn.get("at", 0)
+            if not isinstance(at, int) or abs(at) > SNAP_AT_LIMIT:
+                raise ValueError("contract %s: callee %s snap at %r (integer, |at| <= %d)"
+                                 % (name, cid, at, SNAP_AT_LIMIT))
+            total += sn.get("n", 0)
+        if total > SNAP_CAP_WORDS:
+            raise ValueError("contract %s: callee %s snap declares %d words (cap %d)"
+                             % (name, cid, total, SNAP_CAP_WORDS))
+        regs = c.get("logxmm_regs")
+        if regs is not None and (not isinstance(regs, list) or
+                                 any(not isinstance(r, int) or not 0 <= r < 8 for r in regs)):
+            raise ValueError("contract %s: callee %s logxmm_regs %r (registers 0-7)"
+                             % (name, cid, regs))
+        logged = set(regs or [])
+        if c.get("logxmm"):
+            logged.add(0)
+        if c.get("logxmm1"):
+            logged.add(1)
+        for k, idx in (c.get("xmm_from_stack") or {}).items():
+            r = int(k)
+            if not 0 <= r < 8 or not isinstance(idx, int) or not 0 <= idx < c.get("nargs", 0):
+                raise ValueError("contract %s: callee %s xmm_from_stack %s:%r (register 0-7, "
+                                 "a declared stack argument)" % (name, cid, k, idx))
+            if r not in logged:
+                raise ValueError("contract %s: callee %s transports xmm%d without logging it "
+                                 "(the argument would be compared nowhere)" % (name, cid, r))
+    fn = contract.get("function", "")
+    if fn.startswith("selftest:") and fn[len("selftest:"):] not in SELFTESTS:
+        raise ValueError("contract %s: unknown self-test original %s (known: %s)"
+                         % (name, fn, ", ".join(SELFTESTS)))
+
+
+# v5 built-in self-test originals the worker emits (checker regression only).
+SELFTESTS = ("x87_store", "xmm_call", "abs_read")
+
+
+def features_of(contract, setup):
+    """v5: what the contract used of the v5 abilities, for the verdict, so a
+    proof's reach is visible without reading the contract."""
+    callees = contract.get("callees", [])
+    snap_words, snap_at, xmm_logged, xmm_transport = {}, {}, {}, {}
+    for c in callees:
+        cid = str(c["id"])
+        sn = c.get("snap") or []
+        if sn:
+            snap_words[cid] = sum(x.get("n", 0) for x in sn)
+            ats = sorted({x.get("at", 0) for x in sn} - {0})
+            if ats:
+                snap_at[cid] = ats
+        regs = set(c.get("logxmm_regs") or [])
+        if c.get("logxmm"):
+            regs.add(0)
+        if c.get("logxmm1"):
+            regs.add(1)
+        if regs:
+            xmm_logged[cid] = sorted(regs)
+        tr = {str(k): v for k, v in (c.get("xmm_from_stack") or {}).items()}
+        if c.get("xmm0_from_stack") is not None:
+            tr["0"] = c["xmm0_from_stack"]
+        if c.get("xmm1_from_stack") is not None:
+            tr["1"] = c["xmm1_from_stack"]
+        if tr:
+            xmm_transport[cid] = dict(sorted(tr.items()))
+    fn = contract.get("function", "")
+    return {
+        "x87_entry": [e["kind"] for e in contract.get("x87", []) or []],
+        "x87_state": x87_state_on(contract),
+        "xmm_entry_regs": sorted(int(k) for k in (contract.get("xmm") or {})),
+        "xmm_call_logged": xmm_logged,
+        "xmm_call_transport": xmm_transport,
+        "snap_words": snap_words,
+        "snap_offsets": snap_at,
+        "abs_shadow": bool(contract.get("abs_shadow")),
+        "abs_window": (setup or {}).get("abs_window"),
+        "selftest": fn[len("selftest:"):] if fn.startswith("selftest:") else None,
+    }
+
+
 def validate_contract(contract):
     """v4: fail-fast contract checks the worker also enforces per trial."""
+    validate_v5(contract)
     masks = (contract.get("checks", {}) or {}).get("call_mask") or {}
     for cid, per in masks.items():
         for i, m in per.items():
@@ -1133,7 +1517,11 @@ def verdict(contract, run, export):
         "min_orig_ok_share": min_share,
         "vacuous": vacuous,
         "vacuous_reasons": reasons,
+        "features": features_of(contract, run.get("setup")),
     }
+    if contract.get("function", "").startswith("selftest:"):
+        # A self-test exercises the checker; it never verifies a function.
+        v["selftest"] = True
     if run.get("first_fail"):
         ff = run["first_fail"]
         v["first_mismatch"] = {"trial": ff["trial"],
@@ -1166,7 +1554,11 @@ def setup_worker(w, contract, all_exports):
          "outer_pop": outer_pop_for(contract),
          "iat": contract.get("iat", []),
          "globals": contract.get("globals", []),
-         "log_max": contract.get("log_max", 256)}
+         "log_max": contract.get("log_max", 256),
+         # v5: the read-only shadow at the preferred base, and whether the
+         # rewrite DLL must export the x87 mirror.
+         "abs_shadow": bool(contract.get("abs_shadow")),
+         "x87": bool(contract.get("x87"))}
     # resolve "edges" scripts to concrete lists for the worker record
     for c in q["callees"]:
         if c.get("script") == "edges":
@@ -1177,16 +1569,110 @@ def setup_worker(w, contract, all_exports):
     assert r.get("ok"), r
     w.heap = int(r["heap"], 16)
     w.stubs = {k: int(v, 16) for k, v in r.get("stub_addrs", {}).items()}
-    global CODE_LO, CODE_HI
+    global CODE_LO, CODE_HI, ABS_LO, ABS_HI
     if "text_lo" in r and "text_hi" in r:  # v3 worker reports the code range
         CODE_LO = int(r["text_lo"], 16)
         CODE_HI = int(r["text_hi"], 16)
+    aw = r.get("abs_window") or {}
+    if contract.get("abs_shadow"):
+        if not aw.get("shadow"):
+            raise RuntimeError("abs_shadow requested but the worker reports no shadow: %r" % aw)
+        ABS_LO, ABS_HI = int(aw["lo"], 16), int(aw["hi"], 16)
+    else:
+        ABS_LO = ABS_HI = 0
+    w.setup = r
     return r
+
+
+def selftest():
+    """Host-side checks of the driver's pure parts (no worker, no game):
+    the f32/f64 to 80-bit conversions, the v5 contract validation over
+    every tracked contract plus refused samples, the x87 input generation,
+    the unchanged v4 input streams, and the features record. Prints one
+    line per check; returns 0 when all pass."""
+    fails = []
+
+    def check(name, ok):
+        print("%s %s" % ("ok  " if ok else "FAIL", name))
+        if not ok:
+            fails.append(name)
+
+    check("f32 1.0", f32_to_f80(0x3F800000) == (1 << 63, 0x3FFF))
+    check("f32 -0", f32_to_f80(0x80000000) == (0, 0x8000))
+    check("f32 min denormal", f32_to_f80(1) == (1 << 63, 16383 - 149))
+    check("f32 snan quieted", f32_to_f80(0x7F800001) == ((1 << 63) | (1 << 62) | (1 << 40), 0x7FFF))
+    check("f64 pi", f64_to_f80(0x400921FB54442D18) == (0xC90FDAA22168C000, 0x4000))
+    check("f64 -inf", f64_to_f80(0xFFF0000000000000) == (1 << 63, 0xFFFF))
+    check("f64 max denormal", f64_to_f80(0x000FFFFFFFFFFFFF)
+          == (0xFFFFFFFFFFFFF000, 16383 - 1023))
+    names = sorted(f[:-5] for f in os.listdir(os.path.join(HERE, "contracts")) if f.endswith(".json"))
+    bad = []
+    for n in names:
+        try:
+            validate_contract(json.load(open(os.path.join(HERE, "contracts", n + ".json"))))
+        except Exception as e:  # noqa: BLE001 - reported below
+            bad.append("%s: %s" % (n, e))
+    check("every tracked contract validates (%d)%s" % (len(names), "" if not bad else ": " + "; ".join(bad)),
+          not bad)
+    base = json.load(open(os.path.join(HERE, "contracts", "k5_x87.json")))
+
+    def refused(mut):
+        c = json.loads(json.dumps(base))
+        mut(c)
+        try:
+            validate_contract(c)
+        except ValueError:
+            return True
+        return False
+    check("refuse 9 x87 entries", refused(lambda c: c.__setitem__("x87", [{"kind": "f64"}] * 9)))
+    check("refuse x87 kind", refused(lambda c: c["x87"][0].__setitem__("kind", "f16")))
+    check("refuse x87_state false", refused(lambda c: c["checks"].__setitem__("x87_state", False)))
+    check("refuse f80 value", refused(lambda c: c["x87"][1].__setitem__("vals", [[1 << 64, 0]])))
+    check("refuse unknown selftest", refused(lambda c: c.__setitem__("function", "selftest:nope")))
+    cal = {"id": 1, "conv": "cdecl", "nargs": 2, "ret": "u32", "script": [0]}
+    check("refuse 65 snap words", refused(lambda c: c.__setitem__("callees", [dict(cal, snap=[
+        {"kind": "arg", "idx": 0, "n": 40}, {"kind": "ecx", "n": 25}])])))
+    check("refuse snap at", refused(lambda c: c.__setitem__("callees", [dict(cal, snap=[
+        {"kind": "ecx", "n": 1, "at": 0x10004}])])))
+    check("refuse snap kind", refused(lambda c: c.__setitem__("callees", [dict(cal, snap=[
+        {"kind": "esi", "n": 1}])])))
+    check("refuse xmm8", refused(lambda c: c.__setitem__("callees", [dict(cal, logxmm_regs=[8])])))
+    check("refuse unlogged transport", refused(lambda c: c.__setitem__("callees", [dict(
+        cal, xmm_from_stack={"3": 0})])))
+    check("refuse transport past nargs", refused(lambda c: c.__setitem__("callees", [dict(
+        cal, logxmm_regs=[3], xmm_from_stack={"3": 2})])))
+    # x87 generation: shape, determinism, kinds.
+    xs = [resolve_x87(base, random.Random(7), t) for t in range(40)]
+    check("x87 words shape", all(len(x) == 3 and all(len(w) == 3 for w in x) for x in xs))
+    check("x87 deterministic", xs == [resolve_x87(base, random.Random(7), t) for t in range(40)])
+    check("x87 st0 is an f64 edge at trial 0", xs[0][0] == [0, 0, 0])
+    # v4 contracts: no x87 means no RNG consumed, so streams are unchanged.
+    old = json.load(open(os.path.join(HERE, "contracts", "k2_xmm1.json")))
+    r1, r2 = random.Random(5), random.Random(5)
+    check("no x87, no RNG", resolve_x87(old, r1, 3) is None and r1.random() == r2.random())
+    check("demap unchanged without shadow", ABS_LO == ABS_HI == 0 and demap(0x400000) == 0x400000)
+    f = features_of(json.load(open(os.path.join(HERE, "contracts", "k5_xmm.json"))), {})
+    check("features xmm", f["xmm_call_logged"] == {"1": [2, 5]}
+          and f["xmm_call_transport"] == {"1": {"2": 0, "5": 1}} and f["selftest"] == "xmm_call"
+          and f["xmm_entry_regs"] == [2, 5, 6])
+    f = features_of(json.load(open(os.path.join(HERE, "contracts", "k5_snapneg.json"))), {})
+    check("features snap", f["snap_words"] == {"1": 6} and f["snap_offsets"] == {"1": [-16]}
+          and f["selftest"] is None)
+    f = features_of(old, {})
+    check("features v4 legacy keys", f["xmm_call_logged"] == {"1": [0], "2": [0]}
+          and f["x87_entry"] == [] and not f["x87_state"])
+    print("selftest: %d failed" % len(fails))
+    return 1 if fails else 0
+
+
+SHADOW_RETRIES = 3
 
 
 def main(argv):
     global EXE, OUT
     args = argv[1:]
+    if args == ["--selftest"]:
+        return selftest()
     trials_override = None
     if "--trials" in args:
         i = args.index("--trials")
@@ -1233,7 +1719,22 @@ def main(argv):
             print("SETUP FAILED, restarting worker:", e, flush=True)
             w.stop()
             w = Worker()
-            sr = setup_worker(w, c, c_exports)
+            # v5: an abs_shadow setup fails when something in the fresh
+            # worker already sits in the preferred-base window (address
+            # layout varies per process); a few more fresh workers are
+            # tried before giving up loudly.
+            tries = SHADOW_RETRIES if c.get("abs_shadow") else 0
+            while True:
+                try:
+                    sr = setup_worker(w, c, c_exports)
+                    break
+                except Exception as e2:
+                    if tries <= 0:
+                        raise
+                    tries -= 1
+                    print("SETUP FAILED again (%s), fresh worker" % e2, flush=True)
+                    w.stop()
+                    w = Worker()
         if sr.get("errors"):
             print("setup errors:", sr["errors"], flush=True)
         print("img=%s heap=%s dll=%s stubs=%s" % (sr.get("img_base"), sr.get("heap"),
