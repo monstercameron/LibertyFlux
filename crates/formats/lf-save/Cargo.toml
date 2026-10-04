@@ -1,0 +1,14 @@
+[package]
+name = "lf-save"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Read-only parser for the GTA IV (1.2.0.59) save game container"
+
+[lints]
+workspace = true
+
+[dependencies]
+lf-archive = { path = "../lf-archive" }
+lf-resource = { path = "../lf-resource" }

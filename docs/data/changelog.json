@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Reader crate: lf-audio-config",
+    "title": "Reader crate: lf-save",
     "commit": null,
+    "summary": "Save games: header, blocks, checksum, end block, save locations.",
+    "changes": [
+      "New crate crates/formats/lf-save: Save games: header, blocks, checksum, end block, save locations.",
+      "About 1,363 lines of Rust with 22 unit tests and 4 integration tests; tests that need the game's files skip unless the game folder is given in an environment variable.",
+      "Third-party dependencies: none.",
+      "Written by the fmt-savegame lane from the file format alone, then audited by the integration lane for game data, key material and machine paths before publication."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Reader crate: lf-audio-config",
+    "commit": "044b7476c4a749c55c6f8c7ec27536c76de3de55",
     "summary": "Audio configuration: versioned data tables and speech banks.",
     "changes": [
       "New crate crates/formats/lf-audio-config: Audio configuration: versioned data tables and speech banks.",
