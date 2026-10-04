@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: hourly review, 12:08",
+    "title": "Devlog: Naming a block of leaderboard helpers, and a data-read trap",
     "commit": null,
+    "summary": "Findings from the nm-19 lane.",
+    "changes": [
+      "New devlog entry: Naming a block of leaderboard helpers, and a data-read trap.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: hourly review, 12:08",
+    "commit": "2fa92a3fc37c259fe1e176d34ec42ad68c6e3f3d",
     "summary": "The third hourly review: results of twelve controlled lane experiments, and two memory incidents explained.",
     "changes": [
       "Experiments, one change each against the current brief: batches of 40 small functions and generated families of same-shaped functions were clearly better and are adopted; lower reasoning effort, six checker workers and one-function lanes were not.",
