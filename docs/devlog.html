@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#rerun-09">V2 rerun catches a release-build fold that v1 never saw</a></li>
       <li><a href="#production-n104">Production batch: a tail-call logging bug and an eight-argument ceiling</a></li>
       <li><a href="#production-b24">A vector-register gap in the checker and a stub pattern that worked</a></li>
       <li><a href="#production-b16">Rust does not pin floating-point operand order, and NaN payloads notice</a></li>
@@ -246,6 +247,40 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="rerun-09">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>V2 rerun catches a release-build fold that v1 never saw</h2>
+      <p><span class="evidence verified">Verified</span> Re-running 146 production rewrites under checker version 2 passed 145 at once and caught 1 real defect: a correct rewrite source whose release build silently dropped a partial-register merge. The version 1 pass had used a debug build where the merge survived, so the defect was invisible until now. The fix was verified and the batch stands at 146 of 146.</p>
+      <h3>What was asked</h3>
+      <p>Nine production lanes had proven 146 small rewrites under checker version 1. Version 2 folds the lanes' driver extensions into one driver, one contract format and one runtime, and a rewrite counts as verified only once it passes version 2. This lane ported every rewrite and contract to the version 2 form without weakening any input, built all rewrites as one crate, and ran each contract for at least one thousand trials.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Counts after the rerun:</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Outcome</th><th role="columnheader">Functions</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Passed version 2 on the first run</td><td role="cell" data-label="Functions">145</td></tr>
+      <tr role="row"><td role="cell">Failed, then fixed and re-passed</td><td role="cell" data-label="Functions">1</td></tr>
+      <tr role="row"><td role="cell">Not ported or not reached</td><td role="cell" data-label="Functions">0</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The one failure was a small helper that reads a status byte through a linked record and returns it merged over the link pointer's own high bytes. The original does this with a partial-register write; the rewrite source stated the merge plainly. But the release-built rewrite returned only the zero-extended byte on every trial where the link had nonzero high bytes, failing about half of one thousand trials while the original kept the high bytes.</p>
+      <p><span class="evidence verified">Verified</span> Inspection of the built rewrite showed the merge was gone from the machine code: the optimizer had reduced the whole expression to a single zero-extending byte load. A standalone compilation test of the same load-and-merge sequence folds identically, while the same merge over plain values (no memory loads) compiles correctly, so the fold needs the load context. Rewordings did not help: explicit parentheses, a shift-based merge, a byte-array assembly and a statement form all fold the same way.</p>
+      <p><span class="evidence verified">Verified</span> Version 1 passed this function honestly: that lane had built its rewrite crate without optimization, where the merge survives, and both checker versions feed the function equivalent inputs. The defect was in the release artifact, not the source and not the contract.</p>
+      <p><span class="evidence verified">Verified</span> The other seven rewrites in the batch that merge a byte over high bits were each inspected in the built crate and all keep their merges; only this one dataflow folds. Fault trials across the batch show exact parity with no asymmetric outcomes, and global fills were confirmed to vary per trial under version 2.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>The rewrite now passes the masked high bits through an optimizer barrier before merging, with a comment citing the evidence. The rebuilt crate contains the merge and the contract re-passes one thousand trials with zero failures.</li>
+      <li>Any rewrite that merges a loaded byte over the high bits of the value its address was derived from should have its built machine code inspected, not just its source reviewed. Source-correct is not enough for this pattern under optimization.</li>
+      <li>Rerun lanes should validate every ported contract with a worker-free dry run before launching workers, and isolate each contract so one bad port cannot kill a whole batch. Both practices paid off here.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Compile the helper's load-and-merge sequence (load a word, early-out on zero, load a byte through the word plus an offset, merge the word's high bytes with the byte) with the project's release settings for the 32-bit target and inspect the resulting machine code: the merge is absent and only a zero-extending byte load remains. Compiling the same merge over plain function arguments keeps it. Running the helper's contract with the folded build fails about half the trials on the return channel with the high bytes zeroed; with the barrier in place it passes all trials.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first surprise was that the source was plainly correct yet the check failed, which first looked like a checker bug. Comparing the built machine code against the source settled it within minutes: the binary did not implement the source.</p>
+      <p>Earlier in the run, the port script itself had a bug that added an empty word list to heap segments that use fill-driven generation, which the version 2 driver rejects; two run shards crashed on it before the cause was found. The fix was a three-line change, all contracts were regenerated and re-validated, and the ten verdicts already banked were confirmed to still match. The runner now isolates each contract so a single bad port can no longer stop a batch.</p>
+      <p>This lane is a restart: the previous attempt ran eight workers and the machine ran out of memory. This attempt used three workers throughout and finished all 146 functions with nothing left for another lane.</p>
+      </article>
 
       <article class="entry" id="production-n104">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: V2 rerun catches a release-build fold that v1 never saw",
+    "commit": null,
+    "summary": "Findings from the a-09 lane.",
+    "changes": [
+      "New devlog entry: V2 rerun catches a release-build fold that v1 never saw.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 92 more functions pass the checker (3697 in total)",
     "commit": "c9f4572e1b4ab13959b408a1cb87f681197a24db",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
