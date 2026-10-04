@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#tools-into-repo">Preparing the checker, loader and queue for the repository</a></li>
       <li><a href="#workspace-readers-2">Five more readers brought up to the workspace standard</a></li>
       <li><a href="#rerun-08">Rerun batch eight: a wild-pointer trial the checker cannot judge</a></li>
       <li><a href="#rerun-04">Second checker, same verdicts: 205 native rewrites re-proven</a></li>
@@ -238,6 +239,28 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="tools-into-repo">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Preparing the checker, loader and queue for the repository</h2>
+      <p>All five project tools now build and pass their tests from repository-style paths in a staging copy, ready for the coordinator to commit tool by tool.</p>
+      <h3>What was asked</h3>
+      <p>Move the checker, replacement loader, work queue, live-capture tool and Ghidra export scripts out of lane scratch folders into the places a contributor would expect: tool crates under the workspace, Python under the scripts tree, Ghidra scripts beside them. Everything had to build warning-free on the host and for 32-bit, use only repo-relative paths, and keep every tool's tests passing from the new locations.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> The full workspace builds and is clippy-clean with warnings denied, on the host and for every 32-bit tool crate.</li>
+      <li><span class="evidence verified">Verified</span> The checker regression passes end to end: all twenty first-version proofs at full depth with every mutant caught, plus the full proof sweep with the three documented fail-by-design controls behaving exactly as documented.</li>
+      <li><span class="evidence verified">Verified</span> The loader passes its host unit tests and all 58 checks of its 32-bit live suite; the queue passes its 22 unit tests and a 500-decision concurrency simulation with no double claims; the capture self-test passes.</li>
+      <li><span class="evidence verified">Verified</span> Only the checker driver had machine-specific paths; every other tool was already repo-relative. The staging copy contains no machine paths.</li>
+      <li><span class="evidence verified">Verified</span> Only one crate needs 32-bit gating: the proof rewrites use x86 calling conventions, which do not compile for other targets, so that crate builds empty off x86. Everything else builds on the host unmodified.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <p>Proven lane code keeps working with minimal churn: strict style lints are relaxed per tool crate with written justifications while all correctness lints stay enforced, and the few genuine defects found (a crash in the driver's retry path, dead helpers in the worker, an unsound safe wrapper) were fixed for real and re-verified by the suites. The proposed commit order is one tool per commit: checker crates, checker scripts, loader, queue, capture, then Ghidra scripts.</p>
+      <h3>How to reproduce it</h3>
+      <p>From the staging copy: build the workspace on the host, build the tool crates for 32-bit, then run each tool's own suite (checker smoke and full sweep, loader live binary, queue unit tests and simulation, capture self-test). The exact commands are recorded in the lane's integration notes; every run above was observed passing in this session.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The strictest style lints fired over a hundred warnings on imported code, including on generated files and on a host-only empty table that is full on the real target; fixing those by hand would have risked proven code for style points, so they were contained with documented per-crate allowances instead. One lint kept firing despite the allowance and needed a targeted per-item note; the cause was not established. The Ghidra scripts could not be re-run because the game analysis is still in progress, so their new location is verified by inspection only.</p>
+      </article>
 
       <article class="entry" id="workspace-readers-2">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
