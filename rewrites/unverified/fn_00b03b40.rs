@@ -12,20 +12,21 @@
 /// When the threshold strictly exceeds `f` and the enable flag is set, the
 /// fill hook (virtual slot `+0x50`) fills a two-word scratch buffer, then the
 /// select flag picks the back end: select set with mode clear calls back end
-/// A (five words: 0, 0, `f`, buffer, table slot for `+0x8F8`) and returns its
+/// A (five words: table slot for `+0x8F8`, buffer, `f`, 0, 0) and returns its
 /// byte; select clear with mode set, or select set with mode set, calls back
-/// end B (three words: `f`, buffer, table slot for `+0x8FC`) and returns the
+/// end B (three words: table slot for `+0x8FC`, buffer, `f`) and returns the
 /// inverted byte; the remaining combination returns 0.
 /// Otherwise (threshold at or below `f`, unordered, or enable flag clear) a
 /// 32-byte entry picked by the halfword at `+0x2E` from the entry table is
 /// split into two 16-byte halves, the scan call takes the end of the first
 /// half, and the select flag picks again: select set with mode clear calls
-/// back end C (six words: 0, 0, end, second half, first half, table slot for
-/// `+0x8F8`); any mode-set combination calls back end D (five words: end,
-/// second half, first half, table slot for `+0x8FC`, shared `this`) and
-/// returns the inverted byte; a negative table index returns 0 instead of
-/// calling. The original pushes a dead register word that it overwrites with
-/// `f` before each of the first two back-end calls; only `f` is passed on.
+/// back end C (six words: table slot for `+0x8F8`, first half, second half,
+/// end, 0, 0); any mode-set combination calls back end D (five words: shared
+/// `this`, table slot for `+0x8FC`, first half, second half, end) and returns
+/// the inverted byte; a negative table index returns 0 instead of calling.
+/// The original pushes its words left to right, so the last pushed is the
+/// first argument; a dead register word it pushes is overwritten with `f`
+/// before each of the first two back-end calls, and only `f` is passed on.
 /// The words past the first half are unread stack (the checker's defined
 /// fill), materialised as zeros.
 ///
@@ -81,7 +82,7 @@ lf_checker_rt::export!(thiscall, rw_00b03b40(this: u32, arg: u32) -> u32 {
                     return 0;
                 }
                 let slot = g32(G_TABLE.wrapping_add(idx as u32 * 4));
-                let r: u32 = lf_checker_rt::callee_thiscall!(M_B, u32, g_this, f.to_bits(), bufp, slot,);
+                let r: u32 = lf_checker_rt::callee_thiscall!(M_B, u32, g_this, slot, bufp, f.to_bits(),);
                 u32::from((r & 0xff) == 0)
             }
         };
@@ -92,7 +93,7 @@ lf_checker_rt::export!(thiscall, rw_00b03b40(this: u32, arg: u32) -> u32 {
                     return 0;
                 }
                 let slot = g32(G_TABLE.wrapping_add(idx as u32 * 4));
-                let r: u32 = lf_checker_rt::callee_thiscall!(M_D, u32, g_this, endp, second, first, slot, g_this,);
+                let r: u32 = lf_checker_rt::callee_thiscall!(M_D, u32, g_this, g_this, slot, first, second, endp,);
                 u32::from((r & 0xff) == 0)
             }
         };
@@ -129,7 +130,7 @@ lf_checker_rt::export!(thiscall, rw_00b03b40(this: u32, arg: u32) -> u32 {
                     return 0;
                 }
                 let slot = g32(G_TABLE.wrapping_add(idx as u32 * 4));
-                let r: u32 = lf_checker_rt::callee_thiscall!(M_A, u32, g_this, 0u32, 0u32, f.to_bits(), bufp, slot,);
+                let r: u32 = lf_checker_rt::callee_thiscall!(M_A, u32, g_this, slot, bufp, f.to_bits(), 0u32, 0u32,);
                 return r;
             }
             if mode as u8 == 0 {
@@ -164,7 +165,7 @@ lf_checker_rt::export!(thiscall, rw_00b03b40(this: u32, arg: u32) -> u32 {
         }
         let slot = g32(G_TABLE.wrapping_add(idx as u32 * 4));
         let r: u32 = lf_checker_rt::callee_thiscall!(
-            M_C, u32, g_this, 0u32, 0u32, endp, second.as_mut_ptr() as u32, first.as_mut_ptr() as u32, slot,
+            M_C, u32, g_this, slot, first.as_mut_ptr() as u32, second.as_mut_ptr() as u32, endp, 0u32, 0u32,
         );
         r
     }

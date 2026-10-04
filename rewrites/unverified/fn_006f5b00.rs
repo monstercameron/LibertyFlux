@@ -84,14 +84,16 @@ lf_checker_rt::export!(thiscall, rw_006F5B00(this: u32, a0: u32, a1: u32, a2: u3
                 ID_LISTADD, u32, this.wrapping_add(0x50), link_out.as_mut_ptr() as u32, 0, slot
             );
         }
+        // The original reuses one stack slot for the notify input and the
+        // emit frame: on the notify path the emit snapshot still sees `seq`.
+        let mut shared_slot = [0u32; 2];
         let header2 = rd32(slot);
         if kind_bit(rd8(header2.wrapping_add(1))) != 0 {
             let mut note_out = [0u32; 2];
-            let mut note_in = [0u32; 2];
-            note_in[0] = seq as u32;
+            shared_slot[0] = seq as u32;
             lf_checker_rt::callee_thiscall!(
                 ID_NOTE, u32, this.wrapping_add(0x5c), note_out.as_mut_ptr() as u32,
-                note_in.as_mut_ptr() as u32, slot
+                shared_slot.as_mut_ptr() as u32, slot
             );
             wr16(this + 0x86, seq);
         }
@@ -99,9 +101,8 @@ lf_checker_rt::export!(thiscall, rw_006F5B00(this: u32, a0: u32, a1: u32, a2: u3
             wr16(a3, seq);
         }
         wr16(this + SEQ, seq.wrapping_add(1));
-        let mut emit_out = [0u32; 2];
         lf_checker_rt::callee_thiscall!(
-            ID_EMIT, u32, this.wrapping_add(0x5c), emit_out.as_mut_ptr() as u32,
+            ID_EMIT, u32, this.wrapping_add(0x5c), shared_slot.as_mut_ptr() as u32,
             this.wrapping_add(SEQ), a3
         );
         1

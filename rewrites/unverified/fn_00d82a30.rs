@@ -91,7 +91,10 @@ lf_checker_rt::export!(cdecl, rw_00d82a30(state: u32, target: u32, out_angle: u3
         }
         #[inline(always)]
         fn neg(a: f32) -> f32 {
-            f32::from_bits(a.to_bits() ^ SIGN)
+            // The bits go through black_box as integers: without it LLVM
+            // pushes the negation through the enclosing multiply
+            // (-(a*b) becomes (-a)*b), which flips the sign of a NaN result.
+            f32::from_bits(core::hint::black_box(a.to_bits()) ^ SIGN)
         }
 
         // Aimed point: through the extension object when present.

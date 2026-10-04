@@ -16,7 +16,7 @@
 /// `HIGH - fa` (ordered comparison, unordered takes the first), and only
 /// when `m` is not below zero, `LOW` becomes `fa - m` and `HIGH` `m + fa`.
 /// `CENTER` is `fb` minus `GAIN_LO`. Callee 3 answers a factor `f` (x87);
-/// `SCALE` is `f * sel_answer + fa + GAIN_LO`, where the solver's integer
+/// `SCALE` is `f * sel_answer + fb + GAIN_LO`, where the solver's integer
 /// answer converts as a signed dword. The function returns callee 3's `eax`
 /// (the factor bits) untouched.
 ///
@@ -90,7 +90,9 @@ lf_checker_rt::export!(cdecl, rw_0091c9f0(out: u32, fa: f32, fb: f32, sel: u32) 
         wrf(out + 8, high);
         wrf(out + 4, sub(fb, GAIN_LO));
         let f: f32 = lf_checker_rt::callee_cdecl!(3, f32,);
-        let acc = add(add(mul(f, (n as i32) as f32), fa), GAIN_LO);
+        // The original pops edi before these adds, so the stack reload below
+        // sees fb (arg2), not fa: SCALE = f * n + fb + GAIN_LO.
+        let acc = add(add(mul(f, (n as i32) as f32), fb), GAIN_LO);
         wrf(out + 12, acc);
         f.to_bits()
     }
