@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#natives-18">Native handlers SET_MULTIPLAYER_HUD_TIME to SET_RADAR_AS_INTERIOR_THIS_FRAME: what they reveal</a></li>
       <li><a href="#natives-14">Native handlers PRINT_WITH_5_NUMBERS_NOW to RETUNE_RADIO_DOWN: what they reveal</a></li>
       <li><a href="#natives-13">Native handlers NETWORK_SET_LAN_SESSION to PRINT_WITH_5_NUMBERS: what they reveal</a></li>
       <li><a href="#natives-11">Native handlers IS_PED_IN_GROUP to LOCATE_OBJECT_2D: what they reveal</a></li>
@@ -129,6 +130,27 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="natives-18">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Native handlers SET_MULTIPLAYER_HUD_TIME to SET_RADAR_AS_INTERIOR_THIS_FRAME: what they reveal</h2>
+      <p><span class="evidence verified">Verified</span> All 140 handlers in this batch were disassembled. Nearly every one is a thin wrapper that unpacks script arguments and calls a single engine function, which made it possible to propose names for 193 engine functions and 125 object fields and globals, most at high confidence.</p>
+      <h3>What was asked</h3>
+      <p>Work through a batch of 140 script natives, disassemble each handler, recover the engine functions each one calls and the object fields each one touches, and propose names for them based on the natives' publicly documented meanings.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The script call context layout is now pinned down: the first slot points at the return-value slot and the third slot points at the argument array. The middle slot is never read by any handler seen so far and stays unknown.</p>
+      <p><span class="evidence verified">Verified</span> Three shared lookups do most of the work: a pool lookup turning script handles into object, ped and vehicle pointers, a player-index lookup, and a network-id lookup. The pool lookup's algorithm was confirmed from a handler that inlines the whole thing.</p>
+      <p><span class="evidence verified">Verified</span> Objects and peds share base-class fields at identical offsets, including the alpha value and the invincibility flag. Ped behaviour flags sit in four flag words, and this batch pinned down the exact bit for about twenty of them, from evasive dives to weapon animation blending.</p>
+      <p><span class="evidence verified">Verified</span> Several natives use inverted logic: motion blur, the four ped pathing options and player targetting all store the opposite of the script argument. The object-proofs native writes its five arguments to bits in shuffled order and always clears one extra bit.</p>
+      <p><span class="evidence verified">Verified</span> Three natives cannot be analysed statically: one handler and two engine targets sit in the encrypted part of the executable. The natural-motion message table has live names only on even slots, which script authors must already know.</p>
+      <p><span class="evidence">Inferred</span> One object native scales its spin by the last frame time, and two natives stamp events with a millisecond game clock, so those behaviours depend on frame timing.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Proposed names use plain engine vocabulary (pool lookup, player info, damage flags) with a confidence grade each, so later lanes can adopt, adjust or reject them. The encrypted callees keep low-confidence shape-based names until runtime analysis can see them. The next lane in this series should check the odd message-table slots against actual script calls.</p>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble each handler address from the batch list with capstone straight from the executable, follow its single call one level deeper, and record pool lookups, flag bit operations and global stores. Cross-check argument counts against the public native database and usage examples against the public decompiled mission scripts.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The console output redirect wrote UTF-16 on one run and a careless conversion step then truncated the file, so that analysis step had to be re-run. A histogram script initially misread argument slots because capstone prints small offsets without a hex prefix; the affected numbers were re-derived rather than trusted.</p>
+      </article>
 
       <article class="entry" id="natives-14">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
