@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#natives-21">Native handlers TAKE_CAR_OUT_OF_PARKED_CARS_BUDGET to TASK_SWIM_TO_COORD: what they reveal</a></li>
       <li><a href="#natives-01">Native handlers ABORT_ALL_GARAGE_ACTIVITY to ATTACH_PARACHUTE_MODEL_TO_PLAYER: what they reveal</a></li>
       <li><a href="#structures-misc-b">Class layouts: remaining game classes, second half by name</a></li>
       <li><a href="#structures-cameras">Class layouts: camera classes (CCam*)</a></li>
@@ -123,6 +124,29 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="natives-21">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Native handlers TAKE_CAR_OUT_OF_PARKED_CARS_BUDGET to TASK_SWIM_TO_COORD: what they reveal</h2>
+      <p>All 140 handlers in this batch were disassembled and matched against the public native database and the shipped mission scripts. Nearly every handler is a thin straight-line wrapper that forwards script arguments to one small engine function, and the engine functions share a tiny set of pool-lookup and task-assignment helpers. Seven undocumented natives had their true argument counts measured, and two car-mission natives read one more argument than any mission passes.</p>
+      <h3>What was asked</h3>
+      <p>Disassemble each native handler in the batch, recover the call-context layout, compare handler behaviour with the publicly documented parameters, propose names for the engine functions each handler calls, record object fields touched, and aggregate shared helpers across the batch.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The call context is a pointer to three slots: a return-slot pointer, an unread slot, and an argument-array pointer holding 32-bit argument slots. No handler checks the argument count.</p>
+      <p><span class="evidence verified">Verified</span> Handler shapes: 135 thin wrappers calling one engine function each, 3 handlers that pass through a shared argument-unpacking adapter, 1 handler that only clears the script route-point counter, and 1 debug native routed to the shared encrypted stub.</p>
+      <p><span class="evidence verified">Verified</span> 128 of 140 handlers take exactly the documented number of arguments. Seven natives with no documented parameters were measured: most take one to three integer arguments, one takes eight arguments including two flags, one takes a position vector, and one fifteen-argument variant goes through the adapter.</p>
+      <p><span class="evidence verified">Verified</span> Two ped-target car-mission natives read a ninth script argument as a flag, but missions pass eight. The engine supports a parameter the public docs omit and no shipped mission uses.</p>
+      <p><span class="evidence verified">Verified</span> Only four natives return values: one float math function and three shimmy movement queries returning true or false. All other natives in the batch return nothing.</p>
+      <p><span class="evidence verified">Verified</span> The engine functions converge on three shared helpers: a handle-to-pointer pool lookup selected by a pool register, a task-setup allocator, and a task-assignment routine taking handle, task and slot. The pool helpers sit in the encrypted code range so their names rest on call-position evidence.</p>
+      <p><span class="evidence verified">Verified</span> One vehicle flag byte toggled by the parked-cars-budget native, and the script route-point counter incremented by route extension and cleared by route flush, were pinned down. The tangent native takes degrees: its engine code multiplies by the exact pi-over-180 constant.</p>
+      <p><span class="evidence verified">Verified</span> Fourteen natives are never called by any shipped mission, including all of the newly measured undocumented ones and a fully wired spaceship movement native.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Proposed names were recorded for every engine function in the batch: per-native engine glue named after its native at high confidence, shared helpers named by role at medium confidence, and a few frequently called unknowns left unnamed with call counts. The next lane should confirm the pool-helper names against decrypted code or runtime observation, and check every ped-target car-mission call site for a nine-argument caller.</p>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble each handler address from the batch list with a direct x86 decoder, following jumps until return; extract direct call targets and argument-slot accesses; join native names against the cached public native database for documented parameters; count handler argument slots against documented inputs; scan each engine callee for its own call targets and tally the shared ones; search the decompiled mission scripts for each native name with word-boundary matching and depth-counted argument lists.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>An early argument-count pass double-counted one slot because the instruction that loads the argument-array pointer itself looks like an argument read; every handler appeared to take three arguments. Re-running the count with that instruction excluded made all documented natives match exactly, which is what exposed the two genuine nine-argument readers. The two most-called helpers initially decoded as garbage until recognised as residents of the encrypted code range, so they were characterised by position and frequency instead of disassembly.</p>
+      </article>
 
       <article class="entry" id="natives-01">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
