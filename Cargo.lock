@@ -253,6 +253,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-lift-diff"
+version = "0.1.0"
+dependencies = [
+ "lf-checker-rt",
+ "lf-core",
+ "lf-lift",
+]
+
+[[package]]
 name = "lf-lift-pilot"
 version = "0.1.0"
 
