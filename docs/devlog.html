@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#tools-engine-crates">Tools: the future Rust engine's libraries</a></li>
       <li><a href="#tools-archives">Tools: archives and compression</a></li>
       <li><a href="#subsystem-vehicles">Subsystem survey: vehicles</a></li>
       <li><a href="#subsystem-network">Subsystem survey: networking</a></li>
@@ -93,6 +94,127 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="tools-engine-crates">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Tools: the future Rust engine's libraries</h2>
+      <p>A survey of Rust crates and C libraries for the future 64-bit engine found a maintained, permissively licensed crate for nearly every need, with three licence flags and one platform risk to resolve. <span class="evidence verified">Verified</span> Seventy-three crates were checked against the package index, twenty-two repositories had their build configurations read, and every recommendation below names its version, licence and maintenance state as of the survey date.</p>
+      <h3>What was asked</h3>
+      <p>Find the best maintained Rust crate or C library with bindings for each need of the future engine: Vulkan bindings and allocators, Metal bindings, windowing and input, audio output and 3D audio, decoding, physics, maths, compression, archive parsing helpers, networking, scripting, profiling and the upscaler SDKs. Check which build for Windows on ARM64 by reading build configurations, flag every licence outside the permissive set, and end with a recommended dependency list. Research only; nothing was installed.</p>
+      <h3>What was found</h3>
+      <p>Most of the stack is uncontroversial. Vulkan goes through the long-standard binding whose repository is still active, with a pure Rust allocator beside it. Windowing and gamepad input collapse into a single C library that already supports Windows on ARM64 and Apple silicon. Audio output, the game mixer, physics, maths, compression, parsing helpers, networking and the profiler each have a maintained crate with recent releases. The 3D audio answer is the maintained wrapper around the now open source Steam audio SDK.</p>
+      <p>Four findings needed more care. First, only one crate in the survey tests Windows on ARM64 in its build configuration; everything else is trusted there because it is pure Rust on what is now a top-tier compiler target, while crates with C build steps each need one compile check. Second, the audio decoding library is pure Rust and complete but carries a weak copyleft licence that needs sign-off, and it cannot decode the game's videos, so a video library is still required for those. Third, the physics engine the original game derived from has only tiny or stale Rust bindings, so the maintained pure Rust physics engine wins despite the family resemblance. Fourth, upscaler bindings are new or placeholder, except for the Metal ones, so thin project-owned bindings are expected later.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row">
+      <th role="columnheader">Need</th>
+      <th role="columnheader">Recommendation</th>
+      <th role="columnheader">Licence</th>
+      </tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row">
+      <td role="cell">Vulkan bindings</td>
+      <td role="cell" data-label="Recommendation">ash</td>
+      <td role="cell" data-label="Licence">permissive</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">GPU allocator</td>
+      <td role="cell" data-label="Recommendation">gpu-allocator</td>
+      <td role="cell" data-label="Licence">permissive</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Metal and MetalFX</td>
+      <td role="cell" data-label="Recommendation">objc2-metal, objc2-metal-fx</td>
+      <td role="cell" data-label="Licence">permissive</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Window, input, gamepad</td>
+      <td role="cell" data-label="Recommendation">SDL3 bindings</td>
+      <td role="cell" data-label="Licence">permissive</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Audio output</td>
+      <td role="cell" data-label="Recommendation">cpal</td>
+      <td role="cell" data-label="Licence">permissive</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Game mixer</td>
+      <td role="cell" data-label="Recommendation">kira</td>
+      <td role="cell" data-label="Licence">permissive</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">3D audio</td>
+      <td role="cell" data-label="Recommendation">audionimbus (Steam Audio)</td>
+      <td role="cell" data-label="Licence">permissive</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Audio decoding</td>
+      <td role="cell" data-label="Recommendation">symphonia</td>
+      <td role="cell" data-label="Licence">flagged, see below</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Video decoding</td>
+      <td role="cell" data-label="Recommendation">FFmpeg bindings</td>
+      <td role="cell" data-label="Licence">flagged, see below</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Physics</td>
+      <td role="cell" data-label="Recommendation">rapier3d</td>
+      <td role="cell" data-label="Licence">permissive</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Maths</td>
+      <td role="cell" data-label="Recommendation">glam</td>
+      <td role="cell" data-label="Licence">permissive</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Compression</td>
+      <td role="cell" data-label="Recommendation">flate2, with zstd and lz4</td>
+      <td role="cell" data-label="Licence">permissive</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Binary parsing</td>
+      <td role="cell" data-label="Recommendation">binrw, nom, byteorder</td>
+      <td role="cell" data-label="Licence">permissive</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">New netcode</td>
+      <td role="cell" data-label="Recommendation">quinn and tokio</td>
+      <td role="cell" data-label="Licence">permissive</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Scripting</td>
+      <td role="cell" data-label="Recommendation">mlua with vendored Lua</td>
+      <td role="cell" data-label="Licence">permissive</td>
+      </tr>
+      <tr role="row">
+      <td role="cell">Profiling</td>
+      <td role="cell" data-label="Recommendation">tracy-client and Tracy</td>
+      <td role="cell" data-label="Licence">permissive</td>
+      </tr>
+      </tbody>
+      </table>
+      <p>Licence flags, all <span class="evidence verified">Verified</span> from package metadata or primary sources:</p>
+      <ul>
+      <li>Audio decoding: weak copyleft, file level. Usable inside a larger work but needs an explicit decision.</li>
+      <li>Video library: copyleft terms that depend on build options; a minimal build keeps obligations small but they still exist, and only this library decodes the game's videos.</li>
+      <li>OpenAL: rejected. Its Rust bindings are frozen since 2019, the maintained implementation is copyleft, and the system framework is deprecated on the Mac.</li>
+      <li>Upscaler and store SDKs: proprietary redistribution terms each; relevant only at the upscaling phase.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <p>Standardise on the table above. Prefer the single C windowing library over the three-crate windowing plus gamepad plus audio combination. Prefer the pure Rust allocator over the C++ one for the simpler ARM64 story. Take the maintained pure Rust physics engine and drop the idea that matching the original engine's physics family buys fidelity, since behaviour is rewritten rather than carried over. Write thin project-owned upscaler bindings at the upscaling phase instead of waiting for the ecosystem. The full versioned list with reasons, risks and rejected alternatives lives in the lane report.</p>
+      <h3>How to reproduce it</h3>
+      <ol>
+      <li>Query the package index API for each candidate crate and record version, licence, release date and download counts.</li>
+      <li>Run package searches for the binding families where the crate name is uncertain (physics, spatial audio, video, networking) and confirm the maintained candidate by release date and repository activity.</li>
+      <li>Read the build configuration files of each main repository and note which target triples and machine types are tested.</li>
+      <li>Read the platform tables in the audio, windowing and physics project readmes, and the licence files of the profiler, the spatial audio SDK and the video library.</li>
+      <li>Compare against the existing upscaling reference for the upscaler SDK state rather than re-researching it.</li>
+      </ol>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two searches returned misleading names. <span class="evidence verified">Verified</span> A crate named exactly for the physics engine turned out to be an unrelated virtual machine project, and the crate named for the game's video format is a reserved-name stub; both wasted one lookup each before the package descriptions gave them away. Build configuration scanning missed several projects that use non-standard workflow filenames, which was corrected by listing one project's workflow directory directly. The oldest Vulkan binding release looked stale until the commit history showed active maintenance without recent releases, a reminder that release date alone misleads. Several platform claims rest on consistent secondary sources rather than primary documents because the time budget did not stretch to reading every upstream manual; those are marked as inferred in the report.</p>
+      </article>
 
       <article class="entry" id="tools-archives">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
