@@ -13,8 +13,8 @@
 /// index selects `TABLE` entries whose flag byte (`+0x08`) gates stores.
 ///
 /// When the enable byte argument is zero, or the selector is negative,
-/// or the resolve helper (cdecl, index and selector) answers -1, returns
-/// 0. Else the record takes the low word at `+0x00` and a dword at
+/// or the resolve helper (cdecl, sampled word and selector) answers -1,
+/// returns 0. Else the record takes the low word at `+0x00` and a dword at
 /// `+0x04`; the combine helper (cdecl, selector and block pointer) runs;
 /// a clear flag on the selector record returns 1; else the record takes a
 /// word at `+0x20`, three field setters run, a set flag on the selector
@@ -22,8 +22,10 @@
 /// on the selector record stores a float at `+0x50`, two more setters
 /// run, and the finish
 /// helper (cdecl, selector and 0, or the table-2 entry with the index
-/// decremented) runs before returning 1. Returns the last helper answer
-/// with its low byte forced to 1 (0 on the early paths). Ends with the
+/// decremented) runs before returning 1. The full paths return the
+/// finish answer with the low byte set; the early paths return the fill,
+/// selector or resolve answer with the low byte cleared, or the selector
+/// with the low byte set when its record flag is clear. Ends with the
 /// standard cookie check. Original: 0x00905930 (cdecl, one byte word).
 lf_checker_rt::export!(cdecl, rw_00905930(arg: u32) -> u32 {
     unsafe {
@@ -115,7 +117,7 @@ lf_checker_rt::export!(cdecl, rw_00905930(arg: u32) -> u32 {
         let s4 = rd32(base.wrapping_add(4));
         if (s4 as i32) < 0 {
             lf_checker_rt::callee_thiscall!(34, u32, cookie);
-            return last & 0xFFFFFF00;
+            return s4 & 0xFFFFFF00;
         }
         last = lf_checker_rt::callee_cdecl!(3, u32, rd32(base.wrapping_add(0x0c)), s4);
         wr32(base.wrapping_add(4), last);
@@ -140,7 +142,7 @@ lf_checker_rt::export!(cdecl, rw_00905930(arg: u32) -> u32 {
         let rec = entry(tab, rd32(base.wrapping_add(4)));
         if ((rec.wrapping_add(8) as *const u8).read()) == 0 {
             lf_checker_rt::callee_thiscall!(34, u32, cookie);
-            return (last & 0xFFFFFF00) | 1;
+            return (rd32(base.wrapping_add(4)) & 0xFFFFFF00) | 1;
         }
         wr16(rec.wrapping_add(0x20), rd16(base.wrapping_add(0x30)));
         last = lf_checker_rt::callee_cdecl!(
@@ -155,7 +157,7 @@ lf_checker_rt::export!(cdecl, rw_00905930(arg: u32) -> u32 {
             rd32(base.wrapping_add(4)),
             base.wrapping_add(0x70)
         );
-        last = lf_checker_rt::callee_cdecl!(7, u32, rd32(base.wrapping_add(8)), 0x40u32);
+        last = lf_checker_rt::callee_cdecl!(7, u32, rd32(base.wrapping_add(4)), 0x40u32);
         let mut farg = rd32(base.wrapping_add(4));
         let rec = entry(tab, farg);
         if ((rec.wrapping_add(8) as *const u8).read()) != 0 {
