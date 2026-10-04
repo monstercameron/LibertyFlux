@@ -3204,6 +3204,24 @@
   "lane": "r-s42"
  },
  {
+  "address": "0x008ABFB0",
+  "name": "rage::audBiquadFilterEffect::vf1",
+  "kind": "function",
+  "file": "functions/fn_008abfb0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b10"
+ },
+ {
+  "address": "0x008AC350",
+  "name": "rage::audReverbEffect::vf1",
+  "kind": "function",
+  "file": "functions/fn_008ac350.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b10"
+ },
+ {
   "address": "0x008AC930",
   "name": "rage::audDelayEffect::vf4",
   "kind": "function",
@@ -3265,6 +3283,15 @@
   "trials": 1000,
   "checker": "version 1",
   "lane": "r-s30"
+ },
+ {
+  "address": "0x008ACEF0",
+  "name": "audio_curve_evaluate",
+  "kind": "function",
+  "file": "functions/fn_008acef0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b10"
  },
  {
   "address": "0x008AD290",
@@ -7659,6 +7686,15 @@
   "lane": "a-05"
  },
  {
+  "address": "0x00A01310",
+  "name": "IS_MONEY_PICKUP_AT_COORDS",
+  "kind": "native",
+  "file": "natives/fn_00a01310.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
+ },
+ {
   "address": "0x00A013A0",
   "name": "IS_OBJECT_ATTACHED",
   "kind": "native",
@@ -7747,6 +7783,15 @@
   "trials": 1000,
   "checker": "version 1",
   "lane": "r-n18"
+ },
+ {
+  "address": "0x00A01660",
+  "name": "LOCATE_OBJECT_2D",
+  "kind": "native",
+  "file": "natives/fn_00a01660.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
  },
  {
   "address": "0x00A01730",
@@ -8091,6 +8136,15 @@
   "lane": "r-n31"
  },
  {
+  "address": "0x00A020B0",
+  "name": "SET_SUPPRESS_HEADLIGHT_SWITCH",
+  "kind": "native",
+  "file": "natives/fn_00a020b0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
+ },
+ {
   "address": "0x00A020D0",
   "name": "SET_USES_COLLISION_OF_CLOSEST_OBJECT_OF_TYPE",
   "kind": "native",
@@ -8289,6 +8343,105 @@
   "lane": "r-s65"
  },
  {
+  "address": "0x00A7C2F0",
+  "name": "bu_task_poll_and_reset",
+  "kind": "function",
+  "file": "functions/fn_00a7c2f0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7C310",
+  "name": "bu_task_detach_and_teardown",
+  "kind": "function",
+  "file": "functions/fn_00a7c310.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7C360",
+  "name": "bu_task_collect_subtree",
+  "kind": "function",
+  "file": "functions/fn_00a7c360.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7C410",
+  "name": "bu_task_alloc_field_12c",
+  "kind": "function",
+  "file": "functions/fn_00a7c410.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7C450",
+  "name": "bu_task_alloc_ptr_110",
+  "kind": "function",
+  "file": "functions/fn_00a7c450.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7C550",
+  "name": "bu_task_unlink",
+  "kind": "function",
+  "file": "functions/fn_00a7c550.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7C5B0",
+  "name": "bu_task_release_field_128",
+  "kind": "function",
+  "file": "functions/fn_00a7c5b0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7C5F0",
+  "name": "bu_task_free_field_12c",
+  "kind": "function",
+  "file": "functions/fn_00a7c5f0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7C620",
+  "name": "bu_task_free_ptr_110",
+  "kind": "function",
+  "file": "functions/fn_00a7c620.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7C650",
+  "name": "bu_task_broadcast_all",
+  "kind": "function",
+  "file": "functions/fn_00a7c650.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7C690",
+  "name": "bu_task_broadcast_children",
+  "kind": "function",
+  "file": "functions/fn_00a7c690.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
   "address": "0x00A7C6D0",
   "name": "chain_contains_target",
   "kind": "function",
@@ -8352,6 +8505,15 @@
   "lane": "r-s13"
  },
  {
+  "address": "0x00A7C9F0",
+  "name": "bu_task_root",
+  "kind": "function",
+  "file": "functions/fn_00a7c9f0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
   "address": "0x00A7CA00",
   "name": "sweep_touch_and_link",
   "kind": "function",
@@ -8395,6 +8557,78 @@
   "trials": 1000,
   "checker": "version 1",
   "lane": "r-s13"
+ },
+ {
+  "address": "0x00A7CF20",
+  "name": "forward_shifted_tail_call",
+  "kind": "function",
+  "file": "functions/fn_00a7cf20.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7CF30",
+  "name": "bu_task_maybe_notify",
+  "kind": "function",
+  "file": "functions/fn_00a7cf30.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7CF60",
+  "name": "bu_task_notify_flagged_children",
+  "kind": "function",
+  "file": "functions/fn_00a7cf60.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7CF90",
+  "name": "euphoria_message_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00a7cf90.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7CFD0",
+  "name": "euphoria_message_route",
+  "kind": "function",
+  "file": "functions/fn_00a7cfd0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7D0D0",
+  "name": "taskinfo_init_from_desc",
+  "kind": "function",
+  "file": "functions/fn_00a7d0d0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7D1B0",
+  "name": "taskinfo_init_default",
+  "kind": "function",
+  "file": "functions/fn_00a7d1b0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
+ },
+ {
+  "address": "0x00A7D1F0",
+  "name": "CComplexClimbLadderTaskInfo::CComplexClimbLadderTaskInfo",
+  "kind": "function",
+  "file": "functions/fn_00a7d1f0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s79"
  },
  {
   "address": "0x00AB9840",
@@ -9846,6 +10080,15 @@
   "lane": "r-n65"
  },
  {
+  "address": "0x00B866C0",
+  "name": "ATTACH_CAM_TO_VEHICLE",
+  "kind": "native",
+  "file": "natives/fn_00b866c0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
+ },
+ {
   "address": "0x00B866E0",
   "name": "ATTACH_CAM_TO_VIEWPORT",
   "kind": "native",
@@ -10575,6 +10818,15 @@
   "lane": "r-n92"
  },
  {
+  "address": "0x00B87490",
+  "name": "SET_CAM_MOTION_BLUR",
+  "kind": "native",
+  "file": "natives/fn_00b87490.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
+ },
+ {
   "address": "0x00B874B0",
   "name": "SET_CAM_NAME",
   "kind": "native",
@@ -11277,6 +11529,15 @@
   "lane": "r-n90"
  },
  {
+  "address": "0x00B8BCC0",
+  "name": "CHANGE_BLIP_DISPLAY",
+  "kind": "native",
+  "file": "natives/fn_00b8bcc0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
+ },
+ {
   "address": "0x00B8BCE0",
   "name": "CHANGE_BLIP_NAME_FROM_ASCII",
   "kind": "native",
@@ -11320,6 +11581,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-05"
+ },
+ {
+  "address": "0x00B8BD80",
+  "name": "CHANGE_BLIP_SCALE",
+  "kind": "native",
+  "file": "natives/fn_00b8bd80.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
  },
  {
   "address": "0x00B8BDC0",
@@ -11662,6 +11932,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-07"
+ },
+ {
+  "address": "0x00B8C680",
+  "name": "GET_BLIP_COLOUR",
+  "kind": "native",
+  "file": "natives/fn_00b8c680.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
  },
  {
   "address": "0x00B8C6A0",
@@ -12681,6 +12960,15 @@
   "lane": "r-n92"
  },
  {
+  "address": "0x00B8DB60",
+  "name": "TURN_OFF_RADIOHUD_IN_LOBBY",
+  "kind": "native",
+  "file": "natives/fn_00b8db60.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
+ },
+ {
   "address": "0x00B93CD0",
   "name": "ACOS",
   "kind": "native",
@@ -12850,6 +13138,15 @@
   "trials": 1000,
   "checker": "version 1",
   "lane": "r-n81"
+ },
+ {
+  "address": "0x00B941B0",
+  "name": "DID_SAVE_COMPLETE_SUCCESSFULLY",
+  "kind": "native",
+  "file": "natives/fn_00b941b0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
  },
  {
   "address": "0x00B94210",
@@ -13131,6 +13428,15 @@
   "lane": "a-05"
  },
  {
+  "address": "0x00B948A0",
+  "name": "IS_BULLET_IN_BOX",
+  "kind": "native",
+  "file": "natives/fn_00b948a0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
+ },
+ {
   "address": "0x00B94910",
   "name": "IS_EPISODE_AVAILABLE",
   "kind": "native",
@@ -13138,6 +13444,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-06"
+ },
+ {
+  "address": "0x00B94930",
+  "name": "IS_EPISODIC_DISC_BUILD",
+  "kind": "native",
+  "file": "natives/fn_00b94930.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
  },
  {
   "address": "0x00B94950",
@@ -14157,6 +14472,15 @@
   "lane": "a-03"
  },
  {
+  "address": "0x00B9DEE0",
+  "name": "ALLOW_GANG_RELATIONSHIPS_TO_BE_CHANGED_BY_NEXT_COMMAND",
+  "kind": "native",
+  "file": "natives/fn_00b9dee0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
+ },
+ {
   "address": "0x00B9DF00",
   "name": "ALLOW_REACTION_ANIMS",
   "kind": "native",
@@ -14254,6 +14578,24 @@
   "trials": 1000,
   "checker": "version 1",
   "lane": "r-n15"
+ },
+ {
+  "address": "0x00B9E380",
+  "name": "BLOCK_CHAR_HEAD_IK",
+  "kind": "native",
+  "file": "natives/fn_00b9e380.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
+ },
+ {
+  "address": "0x00B9E3C0",
+  "name": "BLOCK_COWERING_IN_COVER",
+  "kind": "native",
+  "file": "natives/fn_00b9e3c0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
  },
  {
   "address": "0x00B9E400",
@@ -14704,6 +15046,15 @@
   "trials": 1000,
   "checker": "version 1",
   "lane": "r-n63"
+ },
+ {
+  "address": "0x00B9ED30",
+  "name": "GET_CHAR_AREA_VISIBLE",
+  "kind": "native",
+  "file": "natives/fn_00b9ed30.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
  },
  {
   "address": "0x00B9ED50",
@@ -18153,6 +18504,15 @@
   "lane": "r-n77"
  },
  {
+  "address": "0x00BB2880",
+  "name": "RESET_NO_LAW_VEHICLES_DESTROYED_BY_LOCAL_PLAYER",
+  "kind": "native",
+  "file": "natives/fn_00bb2880.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
+ },
+ {
   "address": "0x00BB2890",
   "name": "RESET_NUM_OF_MODELS_KILLED_BY_PLAYER",
   "kind": "native",
@@ -18313,6 +18673,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-07"
+ },
+ {
+  "address": "0x00BB2C40",
+  "name": "SET_PLAYER_MAY_ONLY_ENTER_THIS_VEHICLE",
+  "kind": "native",
+  "file": "natives/fn_00bb2c40.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
  },
  {
   "address": "0x00BB2C60",
@@ -20005,6 +20374,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-07"
+ },
+ {
+  "address": "0x00BB9FA0",
+  "name": "TASK_LOOK_AT_COORD",
+  "kind": "native",
+  "file": "natives/fn_00bb9fa0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
  },
  {
   "address": "0x00BB9FE0",
@@ -21852,6 +22230,15 @@
   "lane": "r-n15"
  },
  {
+  "address": "0x00BC7350",
+  "name": "SET_CAR_ALWAYS_CREATE_SKIDS",
+  "kind": "native",
+  "file": "natives/fn_00bc7350.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
+ },
+ {
   "address": "0x00BC7370",
   "name": "SET_CAR_ANIM_CURRENT_TIME",
   "kind": "native",
@@ -22831,6 +23218,15 @@
   "trials": 1100,
   "checker": "version 1",
   "lane": "r-n13"
+ },
+ {
+  "address": "0x00BD10F0",
+  "name": "IS_CHAR_ARMED",
+  "kind": "native",
+  "file": "natives/fn_00bd10f0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
  },
  {
   "address": "0x00BD1110",
@@ -24687,6 +25083,15 @@
   "lane": "r-n12"
  },
  {
+  "address": "0x00BD8A50",
+  "name": "NETWORK_KICK_PLAYER",
+  "kind": "native",
+  "file": "natives/fn_00bd8a50.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
+ },
+ {
   "address": "0x00BD8A70",
   "name": "NETWORK_LEAVE_GAME",
   "kind": "native",
@@ -25083,6 +25488,15 @@
   "lane": "r-n35"
  },
  {
+  "address": "0x00BD9170",
+  "name": "SET_CELLPHONE_RANKED",
+  "kind": "native",
+  "file": "natives/fn_00bd9170.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
+ },
+ {
   "address": "0x00BD9190",
   "name": "SET_DISPLAY_PLAYER_NAME_AND_ICON",
   "kind": "native",
@@ -25299,6 +25713,15 @@
   "lane": "a-05"
  },
  {
+  "address": "0x00BD9540",
+  "name": "SET_RICH_PRESENCE_TEMPLATELOBBY",
+  "kind": "native",
+  "file": "natives/fn_00bd9540.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
+ },
+ {
   "address": "0x00BD9550",
   "name": "SET_RICH_PRESENCE_TEMPLATEMP1",
   "kind": "native",
@@ -25333,6 +25756,15 @@
   "trials": 1000,
   "checker": "version 1",
   "lane": "r-n17"
+ },
+ {
+  "address": "0x00BD95E0",
+  "name": "SET_RICH_PRESENCE_TEMPLATEMP6",
+  "kind": "native",
+  "file": "natives/fn_00bd95e0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-n95"
  },
  {
   "address": "0x00BD9610",
@@ -25999,6 +26431,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b04"
+ },
+ {
+  "address": "0x00C8C310",
+  "name": "audio_emitter_poll",
+  "kind": "function",
+  "file": "functions/fn_00c8c310.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-b15"
  },
  {
   "address": "0x00CA4E10",
@@ -29043,6 +29484,96 @@
   "lane": "r-s14"
  },
  {
+  "address": "0x00E65700",
+  "name": "audio_slot_init_00",
+  "kind": "function",
+  "file": "functions/fn_00e65700.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
+  "address": "0x00E65720",
+  "name": "audio_slot_init_01",
+  "kind": "function",
+  "file": "functions/fn_00e65720.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
+  "address": "0x00E65740",
+  "name": "audio_slot_init_02",
+  "kind": "function",
+  "file": "functions/fn_00e65740.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
+  "address": "0x00E65760",
+  "name": "audio_slot_init_03",
+  "kind": "function",
+  "file": "functions/fn_00e65760.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
+  "address": "0x00E65780",
+  "name": "audio_slot_init_04",
+  "kind": "function",
+  "file": "functions/fn_00e65780.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
+  "address": "0x00E657A0",
+  "name": "audio_slot_init_05",
+  "kind": "function",
+  "file": "functions/fn_00e657a0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
+  "address": "0x00E657C0",
+  "name": "audio_slot_init_06",
+  "kind": "function",
+  "file": "functions/fn_00e657c0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
+  "address": "0x00E657E0",
+  "name": "audio_slot_init_07",
+  "kind": "function",
+  "file": "functions/fn_00e657e0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
+  "address": "0x00E65800",
+  "name": "audio_slot_init_08",
+  "kind": "function",
+  "file": "functions/fn_00e65800.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
+  "address": "0x00E65820",
+  "name": "audio_slot_init_09",
+  "kind": "function",
+  "file": "functions/fn_00e65820.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
   "address": "0x00E65840",
   "name": "VEHICLES_WHEEL_LOOPS_TARMAC_SCRAPE",
   "kind": "function",
@@ -29079,6 +29610,15 @@
   "lane": "r-s14"
  },
  {
+  "address": "0x00E658C0",
+  "name": "audio_slot_init_10",
+  "kind": "function",
+  "file": "functions/fn_00e658c0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
   "address": "0x00E658E0",
   "name": "VEHICLES_EXTRAS_DOOR_LIMIT",
   "kind": "function",
@@ -29086,6 +29626,42 @@
   "trials": 1200,
   "checker": "version 1",
   "lane": "r-s14"
+ },
+ {
+  "address": "0x00E65900",
+  "name": "audio_slot_init_11",
+  "kind": "function",
+  "file": "functions/fn_00e65900.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
+  "address": "0x00E65920",
+  "name": "audio_slot_init_12",
+  "kind": "function",
+  "file": "functions/fn_00e65920.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
+  "address": "0x00E65940",
+  "name": "audio_slot_init_13",
+  "kind": "function",
+  "file": "functions/fn_00e65940.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
+  "address": "0x00E65960",
+  "name": "audio_slot_init_14",
+  "kind": "function",
+  "file": "functions/fn_00e65960.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
  },
  {
   "address": "0x00E65980",
@@ -29248,6 +29824,51 @@
   "trials": 1000,
   "checker": "version 1",
   "lane": "r-s39"
+ },
+ {
+  "address": "0x00E65BC0",
+  "name": "NO_VOICE",
+  "kind": "function",
+  "file": "functions/fn_00e65bc0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
+  "address": "0x00E65BE0",
+  "name": "ON_FIRE",
+  "kind": "function",
+  "file": "functions/fn_00e65be0.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
+  "address": "0x00E65C00",
+  "name": "PAIN_FEMALE_EXTRAS",
+  "kind": "function",
+  "file": "functions/fn_00e65c00.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
+  "address": "0x00E65C20",
+  "name": "PAIN_MALE_EXTRAS",
+  "kind": "function",
+  "file": "functions/fn_00e65c20.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
+ },
+ {
+  "address": "0x00E65C40",
+  "name": "NIKO_EXTRAS",
+  "kind": "function",
+  "file": "functions/fn_00e65c40.rs",
+  "trials": 1000,
+  "checker": "version 2",
+  "lane": "r-s86"
  },
  {
   "address": "0x00E65D80",
@@ -29615,8 +30236,8 @@
   "kind": "function",
   "file": "functions/fn_00e6dab0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DAD0",
@@ -29624,8 +30245,8 @@
   "kind": "function",
   "file": "functions/fn_00e6dad0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DAF0",
@@ -29633,8 +30254,8 @@
   "kind": "function",
   "file": "functions/fn_00e6daf0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DB10",
@@ -29642,8 +30263,8 @@
   "kind": "function",
   "file": "functions/fn_00e6db10.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DB30",
@@ -29651,8 +30272,8 @@
   "kind": "function",
   "file": "functions/fn_00e6db30.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DB50",
@@ -29660,8 +30281,8 @@
   "kind": "function",
   "file": "functions/fn_00e6db50.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DB70",
@@ -29669,8 +30290,8 @@
   "kind": "function",
   "file": "functions/fn_00e6db70.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DB90",
@@ -29678,8 +30299,8 @@
   "kind": "function",
   "file": "functions/fn_00e6db90.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DBB0",
@@ -29687,8 +30308,8 @@
   "kind": "function",
   "file": "functions/fn_00e6dbb0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DBD0",
@@ -29696,8 +30317,8 @@
   "kind": "function",
   "file": "functions/fn_00e6dbd0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DBF0",
@@ -29705,8 +30326,8 @@
   "kind": "function",
   "file": "functions/fn_00e6dbf0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DC10",
@@ -29714,8 +30335,8 @@
   "kind": "function",
   "file": "functions/fn_00e6dc10.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DC30",
@@ -29723,8 +30344,8 @@
   "kind": "function",
   "file": "functions/fn_00e6dc30.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DC50",
@@ -29732,8 +30353,8 @@
   "kind": "function",
   "file": "functions/fn_00e6dc50.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DC70",
@@ -29741,8 +30362,8 @@
   "kind": "function",
   "file": "functions/fn_00e6dc70.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DC90",
@@ -29750,8 +30371,8 @@
   "kind": "function",
   "file": "functions/fn_00e6dc90.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DCB0",
@@ -29759,8 +30380,8 @@
   "kind": "function",
   "file": "functions/fn_00e6dcb0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DCD0",
@@ -29768,8 +30389,8 @@
   "kind": "function",
   "file": "functions/fn_00e6dcd0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DCF0",
@@ -29777,8 +30398,8 @@
   "kind": "function",
   "file": "functions/fn_00e6dcf0.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DD10",
@@ -29786,8 +30407,8 @@
   "kind": "function",
   "file": "functions/fn_00e6dd10.rs",
   "trials": 1000,
-  "checker": "version 1",
-  "lane": "r-s52"
+  "checker": "version 2",
+  "lane": "a-13"
  },
  {
   "address": "0x00E6DD30",

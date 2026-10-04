@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Production batch: a tail-call logging bug and two contract lessons",
+    "title": "Rewrites: 69 more functions pass the checker (3433 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "69 rewrites added under rewrites/pending: 25 script native handlers and 44 other functions.",
+      "The tree now holds 3433 rewrites, 1152 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "131 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Production batch: a tail-call logging bug and two contract lessons",
+    "commit": "3850da54fedd0f5c012f112c8495878f38dd79d2",
     "summary": "Findings from the r-s79 lane.",
     "changes": [
       "New devlog entry: Production batch: a tail-call logging bug and two contract lessons.",
