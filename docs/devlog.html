@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot2-09">Second pilot, lane 09: medium functions (250 to 600 bytes)</a></li>
       <li><a href="#pilot-results">Two pilots, 130 functions: what the rewrite rate really is</a></li>
       <li><a href="#rewrite-order">The rewrite order: levels, clusters and what the checker can take today</a></li>
       <li><a href="#pilot2-13">Second pilot, lane 13: large functions (600 to 1,500 bytes)</a></li>
@@ -200,6 +201,41 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot2-09">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Second pilot, lane 09: medium functions (250 to 600 bytes)</h2>
+      <p>Two of four sampled medium functions were rewritten in Rust and verified bit-identical to the originals over 1200 trials each; the other two were deferred with precise blockers. The main surprise was a seed-bias bug in the checker's random global fill that made one function's deep paths run on 6 percent of trials, found by a coverage audit and fixed in the lane's worker copy.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite four randomly sampled medium game functions in Rust and prove each rewrite behaves identically to the original with the differential checker, recording honest timings including failures. Each rewrite runs against the original from identical starting state over at least 1000 trials with edge values, with outgoing calls intercepted and answered by script.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> A main-loop table refresh with nine call sites, including two atomic operating-system calls, passed 1200 of 1200 trials on the second attempt, and a deliberately introduced mutant was caught.</p>
+      <p><span class="evidence verified">Verified</span> A script proximity tracker built on single-precision vector math passed 1200 of 1200 trials with bit-exact floating point, including not-a-number, infinities, subnormals and signed zeroes, after input shaping and a worker fix described below.</p>
+      <p><span class="evidence verified">Verified</span> The two remaining functions cannot be verified with the current checker: one executes a heap-resident callback through two register-indirect call sites the checker cannot intercept, and the other is driven throughout by eight register-indirect virtual calls plus thread-local-storage reads.</p>
+      <p><span class="evidence verified">Verified</span> A coverage audit of the proximity tracker showed only 1 in 200 fresh trials reached its deep logic. Bisecting this exposed a checker bug: the per-trial random fill for globals seeds its generator with the trial number directly, so consecutive trials produce near-identical values and global-driven branches go one way on nearly every trial. Mixing the seed first restored uniform fills and took deep-path coverage to 64 in 200 across every input kind.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Function</th><th role="columnheader">Result</th><th role="columnheader">Trials</th><th role="columnheader">Attempts</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">World pools session matcher</td><td role="cell" data-label="Result">deferred, indirect callback</td><td role="cell" data-label="Trials">0</td><td role="cell" data-label="Attempts">0</td></tr>
+      <tr role="row"><td role="cell">Animation behaviour binder</td><td role="cell" data-label="Result">deferred, virtual calls and thread-local state</td><td role="cell" data-label="Trials">0</td><td role="cell" data-label="Attempts">0</td></tr>
+      <tr role="row"><td role="cell">Main-loop table refresh</td><td role="cell" data-label="Result">verified</td><td role="cell" data-label="Trials">1200</td><td role="cell" data-label="Attempts">2</td></tr>
+      <tr role="row"><td role="cell">Script proximity tracker</td><td role="cell" data-label="Result">verified</td><td role="cell" data-label="Trials">1200</td><td role="cell" data-label="Attempts">1</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Four small checker extensions were added in the lane's own copies and are recommended for folding back: frame-pointer-tolerant call comparison, selective stack-argument comparison, per-callee scripted answers, and a seed-mixing fix for random global fills.</li>
+      <li>Coverage audits with a fresh seed should be routine for every verified function, since a passing run can still exercise deep paths on only a few trials.</li>
+      <li>Register-indirect call interception, thread-local-storage virtualization, and scripted callee out-parameters are the three checker gaps that blocked the deferred functions, in that order of value.</li>
+      <li>Earlier verdicts that used random global fills remain valid as differential results, but their branch coverage wherever globals decide branches should be re-audited.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Copy the checker driver, runtime crate, and worker into a lane folder, build the worker and the rewrite library for 32-bit x86 with panic-abort, write one contract per function describing its calling convention, heap layout, callees, and comparisons, then run the driver for 1200 trials plus a 200-trial coverage audit with a fresh seed and a mutant run. All lane inputs, contracts, verdicts, and scripts stay in the lane's scratch folder.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> The first rewrite attempt failed on one call argument: a register I read as a data value turned out to be a frame pointer, which the call-log diff showed immediately. The fix took minutes.</p>
+      <p><span class="evidence verified">Verified</span> The thin-coverage finding took longer to chase down, through input shaping, a pinned-global experiment, and a replication of the worker's generator in a standalone script before the seed bias was confirmed. It was worth it: without the audit the verification would have passed while barely testing the interesting logic.</p>
+      <p><span class="evidence">Inferred</span> The two deferred functions looked tempting to force through fault-equivalence passes, but that would have verified nothing, so they were recorded as deferred with concrete unblock plans instead.</p>
+      </article>
 
       <article class="entry" id="pilot-results">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
