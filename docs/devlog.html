@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-audio-config">Rust reader: audio configuration and metadata tables</a></li>
       <li><a href="#structures-render">Class layouts: render phases, draw commands and other rendering classes</a></li>
       <li><a href="#structures-events">Class layouts: event classes (CEvent*)</a></li>
       <li><a href="#structures-audio">Class layouts: audio classes</a></li>
@@ -159,6 +160,30 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-audio-config">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: audio configuration and metadata tables</h2>
+      <p>The game's audio metadata is fully mapped and a zero-dependency Rust reader now parses every object of every shipped file: five versioned table kinds plus the speech lookup, about thirty-two thousand objects in total, with per-type field layouts verified by exact byte consumption.</p>
+      <h3>What was asked</h3>
+      <p>Write a clean Rust reader for the versioned audio metadata files that drive the audio engine: the container header, name and hash tables, the object table, and each object type's fields as far as determinable, with confidence levels. No game data in the crate, permissive licences only, platform-independent parsing, tests on hand-built bytes plus a real-data test gated on an environment variable.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The versioned files share one container: a version number, a packed object blob, an archive-name table, an object directory, and two relocation tables for hashed references. Every shipped file ends exactly after the relocation tables, and every object range lands inside the blob.</p>
+      <p><span class="evidence verified">Verified</span> Object types decoded per file kind: one category type, fifteen curve kinds, seven effect kinds, twenty-three sound-graph node kinds, and twenty-six game-object kinds covering collisions, emitters, radio scheduling, interiors, vehicles, zones, weapons and more. Speech files use a separate unversioned layout of voices, contexts and bank names, all cross-references checked.</p>
+      <p><span class="evidence verified">Verified</span> The field schemas were checked by decoding all thirty-two thousand objects and requiring each schema to consume its object's bytes exactly. All but one object pass; the exception is a single debug curve object with twelve unexplained trailing bytes, which the reader preserves rather than failing.</p>
+      <p><span class="evidence verified">Verified</span> Two corrections to public documentation came out of the verification. The sound node that prints a variable value stores a counted string, not the fixed fifteen bytes the reference tool assumes; one shipped object uses a shorter label, which proves it. And the supposed sixteen-byte file header from an earlier probe does not exist: those words are the start of the object blob.</p>
+      <p><span class="evidence">Inferred</span> Seven game-object kinds keep unknown bodies. Five have fixed sizes, so their layouts are at least bounded; scripted reports look like a count plus seven-byte entries, and train stations look like a struct plus a counted name. Speech voices and contexts are anonymous hashes with no public name list.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>The crate decodes leniently: bytes a schema does not describe are returned as trailing bytes on the object, never an error, so partial knowledge stays usable and explicit.</li>
+      <li>No dependency on the archive or resource crates: these files are loose and uncompressed, and the archive crate's hash normalisation differs from the audio hash, so the reader carries its own twelve-line hash function.</li>
+      <li>Next work is the unknown fixed-size game objects, the XML sidecars for wave slots and archive maps, and a name list to resolve speech hashes.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build and test the crate named lf-audio-config in the lane scratch area with the standard build and test commands; set the game-directory environment variable to also parse and fully decode all twenty-one shipped metadata files and check the locked census totals. The manual example prints a per-file summary of names, counts and type histograms without writing anything.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first container reading put the name table right after a sixteen-byte header, which fit the offsets of small files but misaligned everything else; the reference tool's model of a blob size followed by packed objects resolved it and then verified byte-exact on all files. A hand-guessed hash test vector was wrong and was replaced with a machine-computed value. The shared build lock and PowerShell's habit of failing on tool stderr noise each cost a few retries and are worth knowing about rather than fighting.</p>
+      </article>
 
       <article class="entry" id="structures-render">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
