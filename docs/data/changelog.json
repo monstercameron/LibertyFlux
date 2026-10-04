@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Production batch: swapped string arguments and a vector-register gap",
+    "title": "Devlog: NaN behaves as positive infinity in emulated SSE comparisons",
     "commit": null,
+    "summary": "Findings from the r-s148 lane.",
+    "changes": [
+      "New devlog entry: NaN behaves as positive infinity in emulated SSE comparisons.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Production batch: swapped string arguments and a vector-register gap",
+    "commit": "884c0379c219a7694f090622725b885292ea28a6",
     "summary": "Findings from the r-s140 lane.",
     "changes": [
       "New devlog entry: Production batch: swapped string arguments and a vector-register gap.",

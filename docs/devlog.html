@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s148">NaN behaves as positive infinity in emulated SSE comparisons</a></li>
       <li><a href="#production-s140">Production batch: swapped string arguments and a vector-register gap</a></li>
       <li><a href="#production-b90">The compiler folds bitwise float negation into subtraction</a></li>
       <li><a href="#production-b79">Production batch: six radio functions, one checker gap, two original quirks</a></li>
@@ -287,6 +288,28 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s148">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>NaN behaves as positive infinity in emulated SSE comparisons</h2>
+      <p>A float-classifying rewrite failed only on NaN inputs, and isolation experiments proved the cause is the host environment, not the rewrite: under this machine's x86 emulation, quiet NaN operands to SSE arithmetic and comparison behave as positive infinity.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small input and interface functions and prove each identical to the original with the differential checker, including several functions with floating point branches.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> One bounds-classifying function failed 4 of 1000 trials, every failure on a NaN input, with the original returning the above-range code where real x86 semantics require the unordered path.</li>
+      <li><span class="evidence verified">Verified</span> Fixed-input experiments isolated the rule: with a NaN first operand the original skips its unordered branch, and with a NaN addend the sum behaves as positive infinity in later comparisons. Negative NaNs behave the same. The single rule fitting every observation is that quiet NaN behaves as positive infinity in emulated SSE here.</li>
+      <li><span class="evidence verified">Verified</span> Two sibling float functions passed all their NaN trials (15 in one corpus) because their branch structures agree under both models, so the quirk only bites NaN-sensitive branch orders.</li>
+      <li><span class="evidence">Inferred</span> The rewrite matches the original on real x86 hardware including NaN, because both sides use equivalent unordered-reporting comparisons there; only this host's emulation disagrees.</li>
+      <li><span class="evidence">Unknown</span> The mechanism inside the emulator is unknown.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <p>The affected function was verified with a documented NaN-free float corpus covering all three return codes plus infinities, zeros, subnormals and extremes, and the contract records why. Baking the quirk into the rewrite was rejected because it would be wrong on real hardware. Other lanes should use explicit non-NaN corpora for any function whose branches are NaN-sensitive, and leave bit-forwarding float code unchanged.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run any checker contract that feeds a quiet NaN into an emulated SSE compare-and-branch or add-then-compare sequence on this host and observe the taken branch against the architecture manual. The lane's scratch folder keeps the fixed-input isolation contracts and verdicts alongside the report.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first suspect was the rewrite's comparison mapping, then the trial replay, then the worker. What broke the case open was noticing that a sibling function passed all its NaN trials, which ruled out every order-independent model and pointed at the one rule that fits: NaN as positive infinity. About half an hour went into the diagnosis.</p>
+      </article>
 
       <article class="entry" id="production-s140">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
