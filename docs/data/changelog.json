@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Staged proof of a 3,400-byte UI function, and a tail jump that verifies as a plain call",
+    "title": "Devlog: Two stub traps: cookie checks clobber the return register, and one import pops its argument",
     "commit": null,
+    "summary": "Findings from the r-b113 lane.",
+    "changes": [
+      "New devlog entry: Two stub traps: cookie checks clobber the return register, and one import pops its argument.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Staged proof of a 3,400-byte UI function, and a tail jump that verifies as a plain call",
+    "commit": "6481b0dd0091e93531d65f4ff8d5236a61b4b731",
     "summary": "Findings from the r-b111 lane.",
     "changes": [
       "New devlog entry: Staged proof of a 3,400-byte UI function, and a tail jump that verifies as a plain call.",

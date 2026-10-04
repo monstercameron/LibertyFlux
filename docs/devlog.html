@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b113">Two stub traps: cookie checks clobber the return register, and one import pops its argument</a></li>
       <li><a href="#production-b111">Staged proof of a 3,400-byte UI function, and a tail jump that verifies as a plain call</a></li>
       <li><a href="#production-b110">Three quiet ways a proof can lie to you</a></li>
       <li><a href="#production-s172">Twenty leaderboard constructors needed a fairer call stub</a></li>
@@ -299,6 +300,31 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b113">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Two stub traps: cookie checks clobber the return register, and one import pops its argument</h2>
+      <p>Two production verifications failed for contract reasons, not rewrite reasons: stubbing a stack cookie check overwrites the status byte the function just computed, and declaring an import callee with the wrong convention shifts the stack and trips the cookie check at the exit. Both fixes are one line each and both are checkable from the cleanup code.</p>
+      <h3>What was asked</h3>
+      <p>Verify six file-handling functions against Rust rewrites with the version 3 checker, scripting every outgoing call. Two of the six carry compiler-inserted stack cookie checks, and one calls a system file routine through the import table.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Every stub answer channel writes the return register, but the real cookie check preserves it. The original computes its one-byte answer, then calls the check; with a stubbed check the answer registers read back as zero on both rows that should return one, while every other row passed. The real check is three instructions that compare and return, and it passes self-consistently for any cookie value, so the original can safely run it for real.</p>
+      <p><span class="evidence verified">Verified</span> The import call site cleans three words for four pushed arguments, which proves the callee pops one word, matching the real system routine. Declaring it as caller-cleans left the stack one word low: later frame reads landed a word off (a buffer pointer read back as the saved register value on every failing trial) and the exit cookie check failed after the last call.</p>
+      <p><span class="evidence verified">Verified</span> Two unrelated functions home a byte local over their own incoming argument slot, visibly clobbering it. This is irreproducible from Rust, so both contracts disable only the stack check, with the justification recorded; every other comparison still runs.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Symptom</th><th role="columnheader">Cause</th><th role="columnheader">Fix</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Correct rewrite fails only on rows returning nonzero</td><td role="cell" data-label="Cause">Stubbed cookie check overwrites the answer register</td><td role="cell" data-label="Fix">Leave cookie checks unpatched; omit them in the rewrite</td></tr>
+      <tr role="row"><td role="cell">Original faults after its last call; pointers read as saved registers</td><td role="cell" data-label="Cause">Stack imbalance from a wrong callee convention</td><td role="cell" data-label="Fix">Derive the convention from the cleanup math at that exact site</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>Never stub a cookie check on a function that returns in the low byte; run it for real and document why. The worker could grow a stub channel that preserves the return register for exactly this case. Always derive each callee convention from the push and cleanup counts at its own call sites, never by analogy with a nearby site. When the original faults after completing all its calls, check for a stack imbalance tripping the cookie check before suspecting anything else.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run any contract whose function returns a computed low byte through a stubbed cookie check and watch those rows fail while the call log shows the right path. For the convention bug, compare the argument count pushed at the import call site against the words its cleanup removes; a shortfall of one word is the callee pop.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The convention bug took about twenty five minutes because every declaration looked right in isolation: all patch sites were valid calls, every other convention string was spelled correctly, and the stack math balanced everywhere I checked. The break came from noticing the corrupted pointer values exactly equalled the generated register inputs, which proved which slot was really being read, and from there that the batch cleanup I had trusted belonged to a different call site one screen up.</p>
+      </article>
 
       <article class="entry" id="production-b111">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
