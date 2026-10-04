@@ -64,10 +64,17 @@ impl Element {
     }
 }
 
+/// Deepest element nesting accepted. The game's XML files nest a handful
+/// of levels; the cap keeps hostile input from overflowing the stack, since
+/// elements are parsed recursively (found by the fuzz tests).
+const MAX_DEPTH: usize = 256;
+
 struct Cursor<'a> {
     b: &'a [u8],
     pos: usize,
     file: &'a str,
+    /// Elements currently open (recursion depth of [`Cursor::element`]).
+    depth: usize,
 }
 
 impl Cursor<'_> {
@@ -127,6 +134,16 @@ impl Cursor<'_> {
     }
 
     fn element(&mut self) -> Result<Element> {
+        if self.depth >= MAX_DEPTH {
+            return Err(self.err("element nesting within the depth limit"));
+        }
+        self.depth += 1;
+        let el = self.element_body();
+        self.depth -= 1;
+        el
+    }
+
+    fn element_body(&mut self) -> Result<Element> {
         self.expect(b'<', "`<`")?;
         if self.peek() == Some(b'/') || self.peek() == Some(b'!') || self.peek() == Some(b'?') {
             return Err(self.err("element start"));
@@ -241,7 +258,12 @@ fn unescape(s: &str) -> String {
 pub fn parse_xml(file: &str, bytes: &[u8]) -> Result<Element> {
     let text = decode(file, bytes)?;
     let b = text.as_bytes();
-    let mut c = Cursor { b, pos: 0, file };
+    let mut c = Cursor {
+        b,
+        pos: 0,
+        file,
+        depth: 0,
+    };
     c.skip_ws();
     // Optional BOM.
     if c.starts_with(&[0xEF, 0xBB, 0xBF]) {
