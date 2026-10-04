@@ -1,8 +1,18 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Narrow the anti-piracy rule to piracy",
+    "title": "Add the devlog integration script",
     "commit": null,
+    "summary": "Lane findings reach the devlog through one checked path.",
+    "changes": [
+      "scripts/integrate_devlog.py inserts a lane's devlog fragment into the devlog and its contents list.",
+      "It refuses a fragment that contains addresses, auto-generated function labels, local paths, user names, byte dumps, long hex strings, scripts or inline styles, or that is not exactly one entry."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Narrow the anti-piracy rule to piracy",
+    "commit": "0e9d4b27e051581b5f3be8bfd55d57bbc7e4e57f",
     "summary": "The rule had been written wider than the owner asked for.",
     "changes": [
       "AGENTS.md rule 6 now covers piracy only: never distribute game files, keys or cracks, never help anyone run an unbought copy, tell readers to buy the game.",
