@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n11">Nine-argument native calls exceed the checker call log</a></li>
       <li><a href="#production-n09">Native handlers smuggle booleans through their own stack slot</a></li>
       <li><a href="#production-n03">Native handlers hide a one-byte stack trick</a></li>
       <li><a href="#format-audio">Rust reader: audio banks and their ADPCM streams</a></li>
@@ -207,6 +208,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n11">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Nine-argument native calls exceed the checker call log</h2>
+      <p>One native handler in this batch forwards nine words to its engine function, but the checker call stub records at most eight stack arguments, so the ninth word is passed by the rewrite without being machine-checked. Everything else about the function is verified; the gap is documented, not hidden.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of script native handlers in Rust and prove each identical to the original with the differential checker, which compares return values, written memory, stack behavior, and outgoing calls over one thousand trials per function.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Twenty-three of twenty-five handlers verified with zero failures in twenty-three thousand trials. Two were deferred: one is a single trap instruction and the other is a bare jump to its engine function.</p>
+      <p><span class="evidence verified">Verified</span> The vehicle-attach handler passes nine words to its engine call (three handles and flags plus two by-value vectors). The checker stub that records outgoing calls keeps the callee id plus the first eight stack words, so the ninth word never appears in the call comparison. A rewrite that passed a wrong ninth word would still get a passing verdict on every check.</p>
+      <p><span class="evidence verified">Verified</span> Seven bool-taking handlers build their engine argument inside their own dead incoming-argument stack slot, so the pushed word keeps the context pointer's high bytes with the low byte replaced by the bool. The rewrites reproduce that exact word and the call comparison checks it, but the stack comparison is disabled for those seven because the dead-slot clobber itself cannot be reproduced without inline assembly.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The nine-word rewrite was accepted as verified with the eighth-word-plus gap stated in the lane report: it passes all nine words and every machine-checked comparison passes. The recommended fix is a worker extension that widens call-log entries beyond eight stack words, after which this function should be re-verified with no contract change. Other lanes with handlers forwarding more than eight words should state the same caveat until then.</p>
+      <h3>How to reproduce it</h3>
+      <p>Read any verified contract whose callee declares nine stack arguments and compare the recorded call log against the pushed words: the log holds the first eight only. The worker source states the eight-word cap where it emits the recorder stub.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first run of the vector-scratch handler failed on the return register: the original reloads it from the context for the return-slot store, so it returns the slot pointer rather than the engine answer. Re-reading the other return handlers before running them caught the same shape in three more and confirmed the fifth genuinely returns the answer. A transposed address typo in one contract was refused at setup, and one run died to machine load with zero failures in its completed trials; all three passed on the second attempt.</p>
+      </article>
 
       <article class="entry" id="production-n09">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

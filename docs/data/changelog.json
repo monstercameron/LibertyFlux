@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Native handlers smuggle booleans through their own stack slot",
+    "title": "Devlog: Nine-argument native calls exceed the checker call log",
     "commit": null,
+    "summary": "Findings from the r-n11 lane.",
+    "changes": [
+      "New devlog entry: Nine-argument native calls exceed the checker call log.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Native handlers smuggle booleans through their own stack slot",
+    "commit": "dca598fa1757ae9cdd1dae2877a4769d2ba6b903",
     "summary": "Findings from the r-n09 lane.",
     "changes": [
       "New devlog entry: Native handlers smuggle booleans through their own stack slot.",
