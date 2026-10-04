@@ -5,7 +5,6 @@
 /// offset +0x28 with 0x3C0: full EAX is the masked value with its low byte
 /// replaced by 1 on match (0x100) and 0 otherwise, because the original only
 /// ever writes AL.
-#[allow(non_snake_case)]
 export!(cdecl, rw_008d6d80(handle: *const *const u32) -> u32 {
     unsafe {
         let inner = *handle;

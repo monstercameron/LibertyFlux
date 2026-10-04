@@ -4,7 +4,6 @@
 /// Returns `s` when `q > p`, `t` when `p > r`, else the linear blend
 /// `s + ((p - q) / (r - q)) * (t - s)`. NaN inputs fall through the ordered
 /// comparisons exactly as `comiss`+`jbe` do.
-#[allow(non_snake_case)]
 export!(cdecl, rw_008d70e0(p: f32, q: f32, r: f32, s: f32, t: f32) -> f32 {
     /// Scalar op with the original's exact NaN routing: a quiet-NaN dest
     /// wins, else a quiet-NaN src, else the real operation. A plain Rust op

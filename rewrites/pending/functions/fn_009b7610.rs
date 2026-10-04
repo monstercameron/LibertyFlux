@@ -5,9 +5,7 @@
 export!(thiscall, rw_009b7610(this_: u32, key: u32, out: u32) -> u32 {
     unsafe {
         const FIELD: u32 = 0x78;
-        let elem: extern "thiscall" fn(u32, u32) -> u32 =
-            core::mem::transmute(callee_addr(1) as usize);
-        let obj = elem(this_, key);
+        let obj = callee_thiscall!(1, u32, this_, key);
         *(out as *mut u32) = *((obj.wrapping_add(FIELD)) as *const u32);
         out
     }

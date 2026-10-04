@@ -3,7 +3,6 @@
 ///
 /// When the selector bit is clear the dword at +0 is returned as-is;
 /// otherwise bits 0..10 are shifted left by (8 + bits 11..14).
-#[allow(non_snake_case)]
 export!(thiscall, rw_008d83d0(this_: *const u8) -> u32 {
     unsafe {
         let flags = (this_.byte_add(0x0E) as *const u16).read_unaligned();

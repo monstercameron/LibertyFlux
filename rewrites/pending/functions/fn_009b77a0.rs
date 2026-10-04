@@ -15,9 +15,7 @@ export!(thiscall, rw_009b77a0(this_: u32) -> u32 {
         *((this_.wrapping_add(0x528)) as *mut u32) = TIMEOUT;
         *((this_.wrapping_add(0x538)) as *mut u32) = FAR_PLANE;
         *((this_.wrapping_add(0x53C)) as *mut u32) = FAR_PLANE;
-        let init: extern "thiscall" fn(u32) -> u32 =
-            core::mem::transmute(callee_addr(1) as usize);
-        let ans = init(this_);
+        let ans = callee_thiscall!(1, u32, this_);
         (ans & 0xFFFF_FF00) | 1
     }
 });

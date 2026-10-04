@@ -11,9 +11,7 @@ export!(stdcall, rw_009b6a10(handle: u32, force: u8) -> u8 {
         const STATUS_OFF: u32 = 0x13C;
         const BUSY_BIT: u8 = 2;
         let pool = *global::<u32>(POOL);
-        let lookup: extern "thiscall" fn(u32, u32) -> u32 =
-            core::mem::transmute(callee_addr(1) as usize);
-        let obj = lookup(pool, handle);
+        let obj = callee_thiscall!(1, u32, pool, handle);
         if obj == 0 {
             return 0;
         }

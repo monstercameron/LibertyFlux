@@ -1,6 +1,5 @@
 // original: 0x008d80e0 lerp_vec3
 /// Component-wise lerp of two 3-vectors: `out[i] = a[i] + (b[i] - a[i]) * t`.
-#[allow(non_snake_case)]
 export!(cdecl, rw_008d80e0(a: *const f32, b: *const f32, t: f32, out: *mut f32) -> u32 {
     unsafe {
     /// Scalar op with the original's exact NaN routing: a quiet-NaN dest

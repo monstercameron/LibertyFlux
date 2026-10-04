@@ -3,7 +3,6 @@
 ///
 /// `this` points at 0x20 bytes: words at +0x10/+0x14/+0x18 become all-ones,
 /// words at +0/+4/+8/+0xC and the byte at +0x1C become zero.
-#[allow(non_snake_case)]
 export!(thiscall, rw_008d6ae0(this_: *mut u32) -> u32 {
     unsafe {
         // Tag words first, then the zeroed fields, in the original's order.

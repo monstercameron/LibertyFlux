@@ -8,9 +8,7 @@ export!(stdcall, rw_009b74f0(out: u32) -> u32 {
         const OBJ_G: u32 = 0x12FB1A0;
         let arg = *global::<u32>(ARG_G);
         let obj = *global::<u32>(OBJ_G);
-        let lookup: extern "thiscall" fn(u32, u32) -> u32 =
-            core::mem::transmute(callee_addr(1) as usize);
-        let ans = lookup(obj, arg);
+        let ans = callee_thiscall!(1, u32, obj, arg);
         *(out as *mut u32) = ans;
         ans
     }
