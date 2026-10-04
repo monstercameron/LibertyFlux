@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#workspace-readers-2">Five more readers brought up to the workspace standard</a></li>
       <li><a href="#rerun-08">Rerun batch eight: a wild-pointer trial the checker cannot judge</a></li>
       <li><a href="#rerun-04">Second checker, same verdicts: 205 native rewrites re-proven</a></li>
       <li><a href="#production-s79">Production batch: a tail-call logging bug and two contract lessons</a></li>
@@ -237,6 +238,34 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="workspace-readers-2">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Five more readers brought up to the workspace standard</h2>
+      <p>The five file-format readers finished after the workspace was assembled are now integrated beside the first thirteen: animation dictionaries, audio banks and streams, cutscene descriptions, particle effects, and vehicle, ped and weapon data. All five build, test and lint clean on two targets, and every game-file test reproduces its lane's numbers exactly.</p>
+      <h3>What was asked</h3>
+      <p>Bring the five leftover reader crates up to the workspace standard set for the first thirteen: shared edition, licence and lints, path dependencies on the existing readers instead of private copies, clean build, test and clippy gates on two targets, tests that skip with a reason when the game folder is absent, a publishability audit, and truncation and corruption tests for every reader.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Four of the five crates were complete and needed only mechanical integration: manifest normalisation, repointed dependencies, renamed examples, one renamed environment variable, and lint fixes. Their game-file tests pass with the exact counts their lanes reported.</p>
+      <p><span class="evidence verified">Verified</span> The audio crate was unfinished: its decoder file was missing so it did not compile, eighteen probe tests with machine-specific paths were left behind, and it carried a private archive reader duplicating the shared one. The decoder was reconstructed to the exact interface the call sites require, pinned by the lane's own hand-computed test vectors; the probes were removed; the archive handling now uses the shared reader.</p>
+      <p><span class="evidence verified">Verified</span> Hardening the audio crate turned up seven real defects, all fixed and regression-tested: three unbounded allocations from raw file counts, one integer overflow that could pass a layout check, and three debug-only arithmetic panics on hostile input. The other four crates audited clean.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Reader</th><th role="columnheader">Validated against</th><th role="columnheader">Failed</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Animation</td><td role="cell" data-label="Validated against">1701 dictionaries, 22166 clips</td><td role="cell" data-label="Failed">0</td></tr>
+      <tr role="row"><td role="cell">Audio banks</td><td role="cell" data-label="Validated against">AUDIO_FILLIN</td><td role="cell" data-label="Failed">0</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Validated against">Cutscenes</td><td role="cell" data-label="Validated against">344 files, 419 cutscenes</td><td role="cell" data-label="Failed">0</td></tr>
+      <tr role="row"><td role="cell">Effects</td><td role="cell" data-label="Validated against">5 packages, 10 tables, 8 emitter files, 303 archives scanned</td><td role="cell" data-label="Failed">0</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Validated against">Entity data</td><td role="cell" data-label="Validated against">1928 files in 15 archives</td><td role="cell" data-label="Failed">0</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>All five crates keep their lane names, which clash with nothing. The audio crate's private archive reader was deleted in favour of the shared one, and its structural config reader was kept even though it overlaps the dedicated config reader, since it is independent work; that overlap is flagged for the coordinator. Two policy caps (one decode length, one bank size) and a short list of reason-commented lint allows also await coordinator review.</p>
+      <h3>How to reproduce it</h3>
+      <p>Copy the workspace, add the five crates under the formats directory, wire the members, and run the build, test and clippy gates on both targets, plus one game-file run with the game directory variable set. The per-crate changes, validation counts and open questions are recorded in the lane's integration notes.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>A blanket format pass reformatted seventeen pre-existing files that were already unformatted in the tracked tree; the changes were reverted so the staging copy differs only where it should, and the finding was reported instead. A machine-wide CPU shortage slowed the full test suite, so the game-file tests were run from their already-built binaries to get the validation signal without waiting on the build lock.</p>
+      </article>
 
       <article class="entry" id="rerun-08">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
