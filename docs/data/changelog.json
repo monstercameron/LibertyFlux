@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Agent rules: what the first 800 lanes taught, written down for the next wave",
+    "title": "Devlog: Leaderboard naming, third round: the same nine methods, new boards",
     "commit": null,
+    "summary": "Findings from the nm-26 lane.",
+    "changes": [
+      "New devlog entry: Leaderboard naming, third round: the same nine methods, new boards.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Agent rules: what the first 800 lanes taught, written down for the next wave",
+    "commit": "b4071ee201fbfee498fa6dbc72ecabfe69e91b5d",
     "summary": "The lessons of the first day and a half of production are now in the rules every lane reads, and in the production brief.",
     "changes": [
       "Rule 3 gains four requirements: a pass counts only on the stock checker; every function gets its own deliberately wrong version, which must fail; a proof says what it does not cover; floating-point results match bit for bit, and a difference is fixed in the rewrite.",
