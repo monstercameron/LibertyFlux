@@ -1,8 +1,19 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Add the devlog",
+    "title": "Add the upscaler reference",
     "commit": null,
+    "summary": "documentation/upscaling-and-frame-generation.md.",
+    "changes": [
+      "Reference for DLSS, FSR, XeSS and MetalFX: components, platforms, per-frame inputs, integration outline, licences, pitfalls and links to the official guides.",
+      "Also covers ray-tracing denoisers, Rust bindings and how other projects integrated these.",
+      "Every claim carries a source link and a verified or inferred label. The frameworks' exact motion vector, depth and jitter conventions are not established yet."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Add the devlog",
+    "commit": "880d3efda7267f9e167b4bdc28ba09b4696e8f63",
     "summary": "Research notes and lessons, so nobody has to rediscover them.",
     "changes": [
       "Sixteen entries covering a first look at the executable's headers, what the first estimates got wrong, why the route is direct to Rust, harness design from other projects, replacing functions in the running game, what is known about the executable, the Xbox 360 recompilation projects and what went wrong for them, tools, dependencies, frame-rate coupling, working with agent lanes, building the site, precedents, upscalers and open questions.",
