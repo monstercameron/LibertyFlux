@@ -1,6 +1,20 @@
 [
   {
     "date": "2026-10-03",
+    "title": "Engine page: revised after an independent design review",
+    "commit": null,
+    "summary": "A critic agent scored the first version 6 out of 10; this change fixes the problems it ranked highest.",
+    "changes": [
+      "The line map now defines frame and thread in one sentence, shows each line's measured thread count, draws the hand-off of the draw list from the game thread to the render thread, and has a marker riding each rail to show the lines run at once.",
+      "Stop details moved to a fixed panel beside the map so pressing a stop no longer moves the page; each stop now says what was measured and what is inferred, and a Next stop button walks through all 21.",
+      "On narrow screens the four lines collapse and open one at a time, with details opening under the pressed stop.",
+      "The unreadable-megabyte strip was drawn at about 25% of the width for a 9% share; it is now drawn in true proportion with its labels in a key.",
+      "The frame-rate ruler now labels its ticks, shades the part of a frame after the last whole millisecond, offers 30, 60, 144 and 240 presets, and states the error as up to 1 ms instead of claiming exact readings at round frame times.",
+      "The task diagram became three layers with an event arrow into each, the function chart's title and note now say it counts functions and not bytes, causal claims that were not measured were reworded, and key numbers are set large."
+    ]
+  },
+  {
+    "date": "2026-10-03",
     "title": "Devlog: Second pilot, lane 20: very large functions (1,500 to 4,000 bytes)",
     "commit": "575e4f21b74229ae34abac83ed58209ed5d0e35c",
     "summary": "Findings from the q-20 lane.",
