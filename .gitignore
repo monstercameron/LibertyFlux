@@ -1,0 +1,88 @@
+# Everything generated goes under .artifacts/ and is never committed:
+# build output, caches, lane logs, scratch attempts, Ghidra project databases.
+/.artifacts/
+
+# Private notes: local paths, machine and account details, anything not for publication.
+/notes.md
+
+# Local toolchain (JDK, Ghidra) and the Python environment. Reinstallable.
+/tools/
+/.venv/
+
+# Original game files and anything derived directly from them.
+# No executables, assets, disassembly or raw decompiler output in the repository.
+/orig/
+*.exe
+*.dll
+*.asi
+*.pdb
+*.rpf
+*.img
+*.sco
+*.wdr
+*.wdd
+*.wft
+*.wtd
+*.wbn
+*.wbd
+*.wpl
+*.wad
+*.xex
+*.iso
+
+# Ghidra and IDA databases, wherever they end up
+*.gpr
+*.rep/
+*.i64
+*.idb
+*.id0
+*.id1
+*.id2
+*.nam
+*.til
+
+# Build output that tools create next to sources when not redirected
+target/
+build/
+out/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+.ninja_deps
+.ninja_log
+*.obj
+*.o
+*.lib
+*.a
+*.exp
+*.ilk
+*.rlib
+*.rmeta
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Editor and OS
+.vs/
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Local agent state and secrets
+.claude/settings.local.json
+.muse/
+.env
+.env.*
