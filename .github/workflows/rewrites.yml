@@ -1,0 +1,101 @@
+# Checks on the rewrite tree, run on the commits that change it.
+#
+# The main pipeline (ci.yml) skips rewrite-import commits on purpose: they arrive every few minutes and would
+# rebuild and republish everything. This workflow is small instead, and runs only on them:
+#   - the ledger (gate): every index entry has its file, every file is indexed, no address twice;
+#   - the static checks and the build check (advisory): what the checker cannot see, and which rewrites do not
+#     compile from the repository alone. Both report counts in the run summary and upload their JSON; they do
+#     not turn the run red until the tree is clean enough for that to mean something.
+
+name: Rewrites
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "rewrites/**"
+      - "scripts/coordinator/ledger.py"
+      - "scripts/coordinator/lint_rewrites.py"
+      - "scripts/ci/check_rewrites_build.py"
+      - "crates/tools/lf-checker-rt/**"
+      - ".github/workflows/rewrites.yml"
+  pull_request:
+    paths:
+      - "rewrites/**"
+      - "scripts/coordinator/ledger.py"
+      - "scripts/coordinator/lint_rewrites.py"
+      - "scripts/ci/check_rewrites_build.py"
+      - "crates/tools/lf-checker-rt/**"
+  workflow_dispatch:
+
+concurrency:
+  group: rewrites-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: "0"
+  RUSTUP_TOOLCHAIN: "1.96.1"
+
+jobs:
+  ledger:
+    name: Rewrite tree is consistent
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Ledger
+        run: |
+          python scripts/coordinator/ledger.py --check | tee ledger.txt
+          { echo '## Ledger'; echo; echo '```'; cat ledger.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+  static:
+    name: Static checks (advisory)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Static checks
+        run: |
+          python scripts/coordinator/lint_rewrites.py --write lint.json | tee lint.txt
+          { echo '## Static checks'; echo; echo '```'; cat lint.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rewrite-static-checks
+          path: lint.json
+          retention-days: 14
+
+  build:
+    name: Rewrites compile from the repository (advisory)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install the pinned toolchain with the 32-bit Windows target
+        # Type-checking needs only the target's standard library, not a Windows linker, so a Linux runner does.
+        run: rustup toolchain install 1.96.1 --profile minimal --no-self-update --target i686-pc-windows-msvc
+      - name: Build check
+        run: |
+          python scripts/ci/check_rewrites_build.py --out build.json | tee build.txt || true
+          { echo '## Build check'; echo; echo '```'; cat build.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          python -c "import json,sys; sys.exit(1 if json.load(open('build.json'))['failed'] else 0)"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rewrite-build-check
+          path: build.json
+          retention-days: 14
