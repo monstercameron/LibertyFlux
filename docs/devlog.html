@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#naming-16">Leaderboard team boards named, and a missing id method</a></li>
       <li><a href="#naming-15">Naming a run of leaderboard schema accessors</a></li>
       <li><a href="#function-ledger">One ledger for 37,000 functions</a></li>
       <li><a href="#production-s268">One batch, two stack surprises: a shared argument slot and reads from unwritten stack</a></li>
@@ -359,6 +360,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="naming-16">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Leaderboard team boards named, and a missing id method</h2>
+      <p>All 150 functions in this batch were per-board leaderboard methods for seventeen team and cooperative multiplayer boards, and every one is now named with the same nine-method vocabulary an earlier lane established for the race boards.</p>
+      <h3>What was asked</h3>
+      <p>Propose a descriptive name for each of 150 consecutive unnamed functions, working out what the group is about first and grading each name high, medium or low confidence.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The batch holds seventeen instantiations of one leaderboard info template, one per team or cooperative board, each with the same nine virtual methods in the same order: a board-name stub, a board-id stub, five column lookup methods, and two schema-mapping methods plus a row builder. Every unnamed entry was attributed to its board by reading that board's virtual table, and all thirty-one attributions matched.</p>
+      <p><span class="evidence verified">Verified</span> Each board carries a small numeric id used consistently by all of its methods; the seventeen ids were recorded and all siblings agreed, so there were no mismatches of the kind found in the race boards.</p>
+      <p><span class="evidence verified">Verified</span> One board has no board-id method: its table slot points at a shared encrypted stub, so its id is known only from its seven sibling methods. The batch also ends mid-board, leaving that last board's final two column methods for the next batch.</p>
+      <h3>What was decided or recommended</h3>
+      <p>The earlier lane's method names were reused unchanged, since the code skeletons are identical in shape. The next leaderboard batch should reuse the same table-check procedure: locate each board's table through its first mapping method, confirm the neighbouring slots, then read the two unnamed slots directly. The last board's two remaining column methods should be named with board id noted in the lane report.</p>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble each function through the executable's memory-mapped image, collect the small board-id constant each method passes to the shared schema helper, and scan the read-only data section for the one virtual table holding each board's mapping methods to confirm the unnamed slots. The lane's scratch folder keeps the gathering, analysis and naming scripts plus the full per-function evidence table.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Nothing went wrong. The inventory's subsystem labels for this range are incorrect (they point at unrelated game systems), and one table slot is mislabelled as another class's method, but the virtual tables themselves resolved both cases without ambiguity.</p>
+      </article>
 
       <article class="entry" id="naming-15">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
