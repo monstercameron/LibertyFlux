@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b66">The compiler re-paired my arithmetic and changed the answer</a></li>
       <li><a href="#production-b54">Two traps from the audio production batch: float-jump NaN polarity and the silent eight-argument call log cap</a></li>
       <li><a href="#production-b43">The compiler swaps float operands and the checker notices</a></li>
       <li><a href="#production-s111">Twenty dispatch stubs verified, and a gap in what the checker observes</a></li>
@@ -271,6 +272,23 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b66">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>The compiler re-paired my arithmetic and changed the answer</h2>
+      <p>A rewrite whose floating point code was a faithful line by line translation still failed differential testing, because the Rust compiler packed the scalar operations into vector instructions that combine values in a different order. The values were identical but rare not-a-number payloads differed. Every lane rewriting float-heavy functions must check the compiled output, not just the source.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a medium sized audio function in Rust and prove it bit-identical to the original over one thousand generated trials, covering all control flow paths including edge floating point inputs.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The first rewrite attempt passed nine hundred ninety-nine of one thousand trials. The single failure was a call argument carrying a not-a-number value: the original propagated the input payload while the rewrite produced the canonical payload. Disassembling the compiled rewrite showed the cause: the optimizer had fused the scalar single-precision chain into packed vector operations with lane shuffling, which reorders the reduction tree. Reordering is invisible for ordinary values but changes which payload survives when inputs are not-a-number.</p>
+      <p><span class="evidence verified">Verified</span> Placing each arithmetic operation behind its own never-inlined helper function pinned the exact scalar instruction sequence. Re-disassembly confirmed scalar-only code, and the full thousand trials then passed with every callee and path covered at its designed count.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Any rewrite containing more than one floating point operation in a chain must disassemble its own compiled output and confirm the instruction order matches the original before trusting a passing run, since mostly-passing runs can hide a re-pairing that only surfaces on rare inputs. Opaque single-operation helpers are the current approved pattern. A crate-wide compiler flag to disable the re-pairing was considered but rejected as less explicit and harder to verify per function.</p>
+      <h3>How to reproduce it</h3>
+      <p>Compile a chain of three or more dependent single-precision operations in release mode, disassemble the result, and compare the operation order against the source. Then run both orders over inputs containing not-a-number values with distinct payloads and compare the output bits.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The failure appeared only once in a thousand trials and every other check was green, so the first instinct was to suspect the test setup rather than the rewrite. The mismatch detail showed identical call sequences at a glance; only the full per-trial log revealed the single differing argument. Separately, a hand-copied address during relocation checks briefly suggested a missing relocation entry in the game itself, which re-verification from the relocation table disproved. Addresses are now always extracted by script.</p>
+      </article>
 
       <article class="entry" id="production-b54">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
