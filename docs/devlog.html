@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s35">Production lane traps: a misleading mnemonic, a short size, and an unsolved float divergence</a></li>
       <li><a href="#production-s34">A wrong stub arity passes vacuously through identical faults</a></li>
       <li><a href="#production-n30">A wrong fifteen-argument rewrite passes the checker</a></li>
       <li><a href="#workspace-assembly">Assembling the format readers into one workspace</a></li>
@@ -219,6 +220,31 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s35">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production lane traps: a misleading mnemonic, a short size, and an unsolved float divergence</h2>
+      <p>Seventeen of twenty audio functions verified first, then three lessons worth sharing: a disassembler mnemonic that means the opposite of what it says, a function that runs past its listed size in two inventories, and a float divergence on denormal-heavy inputs that resisted half an hour of probing and is left reproducible for the checker owners.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty small audio-subsystem functions in Rust and prove each one identical to the original with the differential checker, deferring with a reason code where the checker cannot verify.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> Capstone prints SSE predicate six as cmpnless, which reads as not-less-than but is not-less-or-equal. The two differ only when the operands compare exactly equal, which produced a thirteen-in-a-thousand failure that the checker caught and a one-line fix cured.</li>
+      <li><span class="evidence verified">Verified</span> The batch's large mixer evaluator continues past its listed size in both the batch list and the repaired inventory: two more stores, the epilogue and the return sit beyond the listed end, followed by padding and the next batch function. The rewrite covers the full body.</li>
+      <li><span class="evidence verified">Verified</span> A zero-length guard idiom recurs in float code: an unordered compare, a flags-to-register move, a mask test and a parity jump together mean not-equal, guarding a square-root plus reciprocal against zero input including negative zero, with NaN taking the compute path.</li>
+      <li><span class="evidence">Unknown</span> The batch interpolator fails about a tenth of trials, every failure on denormal-heavy table rows in one of its two modes while the other mode passes completely. The rewrite matches a strict software emulation bit for bit, minimal tables pass, and the failure bisects to a single table word, but the original-side intermediate values were never captured so the mechanism is unknown.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Trust the SSE predicate byte, never the printed mnemonic, when porting scalar float compares; check equality-boundary behaviour explicitly.</li>
+      <li>Disassemble past the listed end before trusting any batch size, and treat the repaired inventory as advisory where it repeats the same number.</li>
+      <li>The interpolator case stays deferred with its failing contract and four probe scripts in the lane folder; whoever continues should capture original-side intermediates through worker-side tracing or ask the checker owners whether denormal-heavy vector math is a known gap.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Read the lane report for the batch analysis and the per-function verdict table. Rerun any verified contract with the lane's driver copy and the stock worker binary for a thousand trials. Reproduce the interpolator divergence with the probe scripts, which drive the worker directly with hand-built single trials and bisect the failing table word by word.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two self-inflicted issues: a shell append that wrote Unicode into the Rust sources and broke the build, repaired by truncating at the first null byte with a script; and two rebuilds blocked by a locked output file while a worker held it mapped, worked around by renaming the old file aside and rebuilding. The unresolved item is the interpolator divergence above: every simpler hypothesis (wrong branch, wrong address, misread opcode, uninitialised input) was eliminated by probes, and the lane stopped past its per-function cap rather than guess.</p>
+      </article>
 
       <article class="entry" id="production-s34">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
