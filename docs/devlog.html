@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pointer-tables">Pointer tables: the functions calls alone cannot reach</a></li>
       <li><a href="#p0-libraries">Library inventory: what the executable borrows, and what it owns</a></li>
       <li><a href="#ghidra-export-scripts">Ghidra export scripts are written and tested</a></li>
       <li><a href="#startup-stub">The start-up stub: a tiny loader, an encrypted first megabyte, and an external unlocker</a></li>
@@ -69,6 +70,45 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pointer-tables">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Pointer tables: the functions calls alone cannot reach</h2>
+      <p>Most of the game's indirectly called functions are now mapped: about three thousand virtual tables confirmed through type data, two dozen dispatch tables dominated by online-service handlers, over two thousand switch jump tables, and nearly fourteen thousand code targets that no direct call reaches. The planned method failed first — the relocation table turned out to be unusable — and the first pages of the code section are encrypted, so everything below comes from value-based scanning of the readable parts only.</p>
+      <h3>What was asked</h3>
+      <p>Find the function pointer tables in the executable's data, because functions reachable only through pointers are easy for analysis tools to miss. The task named five classes to look for: C++ virtual tables, C runtime initialiser arrays, callback and dispatch tables, switch jump tables, and anything unclassified, plus counts, the functions reachable only through pointers, the static constructor count, and the largest dispatch tables with string evidence.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The relocation table cannot be used as a detector. Of roughly 292,000 entries, nearly half sit at unaligned offsets a linker would never emit, and under 3% of the values they point at land anywhere inside the image. Detection was rebuilt on values instead: runs of consecutive words in data sections whose contents fall inside the code section.</p>
+      <p><span class="evidence verified">Verified</span> The first 250 pages of the code section are encrypted or obfuscated: per-page entropy near maximum and no decodable instructions, against normal code entropy everywhere after a page-exact boundary. A separate section holds a byte-identical copy of that encrypted prefix plus one page. Table slots landing in the encrypted region, about sixteen hundred of them, have unknown reachability.</p>
+      <p><span class="evidence verified">Verified</span> Raw value scanning found over eleven thousand runs, but three fifths were text, not pointers: lowercase prose and UTF-16 strings fall numerically inside the huge code range all the time. A byte-pattern filter removed nearly seven thousand text runs, including every large fake dispatch-looking and fake initialiser-looking run.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Table class</th><th role="columnheader">Tables</th><th role="columnheader">Slots</th><th role="columnheader">Standing</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Virtual tables, type-data confirmed</td><td role="cell" data-label="Tables">about 3,100</td><td role="cell" data-label="Slots">about 42,400</td><td role="cell" data-label="Standing">Verified</td></tr>
+      <tr role="row"><td role="cell">Virtual tables without readable type data</td><td role="cell" data-label="Tables">72</td><td role="cell" data-label="Slots">about 400</td><td role="cell" data-label="Standing">Inferred</td></tr>
+      <tr role="row"><td role="row">Dispatch and callback tables</td><td role="cell" data-label="Tables">22</td><td role="cell" data-label="Slots">about 3,200</td><td role="cell" data-label="Standing">Inferred</td></tr>
+      <tr role="row"><td role="row">Jump tables in data sections</td><td role="cell" data-label="Tables">30</td><td role="cell" data-label="Slots">about 580</td><td role="cell" data-label="Standing">Inferred</td></tr>
+      <tr role="row"><td role="row">Jump tables inside code</td><td role="cell" data-label="Tables">about 2,260</td><td role="cell" data-label="Slots">about 19,700</td><td role="cell" data-label="Standing">Inferred</td></tr>
+      <tr role="row"><td role="row">Small unclassified runs</td><td role="cell" data-label="Tables">about 1,200</td><td role="cell" data-label="Slots">about 2,600</td><td role="cell" data-label="Standing">Unknown</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The confirmed virtual tables name just over three thousand distinct classes, mostly engine and audio names. <span class="evidence">Inferred</span> The largest dispatch table, with just over two thousand slots, points at evenly spaced stubs that each push an identifier, which reads like a script-native registration table. Nearly every other large dispatch table sits beside online-service strings: presence, matchmaking, tickets, authentication, clans, friends, and net messages, each handler scattered across its own subsystem with a repeated default entry.</p>
+      <p><span class="evidence verified">Verified</span> Jump tables use plain 32-bit absolute addresses: for over a thousand tables the address baked into a nearby table-jump instruction equals the table address exactly. Their targets are case labels inside functions, not function entries, so they are counted separately. Three data-resident jump tables have byte-identical twins elsewhere in data, presumably backup copies like the encrypted code copy.</p>
+      <p><span class="evidence verified">Verified</span> Nearly fourteen thousand distinct readable-code targets appear in data tables but in no direct call instruction; all but a small fraction also appear in no direct jump. These are the functions reachable only through pointers, as an upper bound, since calls from the encrypted region are invisible. There are zero TLS callbacks. <span class="evidence">Unknown</span> The static constructor count could not be established: every large null-delimited run proved to be something else, and the startup code that would anchor the real initialiser groups sits in the encrypted region.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Later tools must not trust the relocation table for pointer detection; the lane's value-based tables ship as JSON instead.</li>
+      <li>Backup copies (the encrypted code duplicate and the twinned jump tables) should be deduplicated by content hash before any function counting.</li>
+      <li>The small unclassified runs still mix string fragments with real pointer pairs and need per-item review, starting with the ones flanked by encrypted-region pointers.</li>
+      <li>Static constructors stay unknown until an unpacking or dynamic lane reads the startup code; candidate groups are listed in the lane report.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Work only on a copy of the executable with read-only scripts. Map the sections and confirm the encrypted prefix by per-page entropy, then scan the file-backed data sections for runs of consecutive aligned words valued inside the code range. Drop runs whose bytes are UTF-16 or printable ASCII, confirm virtual tables through the type-descriptor name behind each table's header pointer, census direct calls by scanning readable code for call and jump opcodes, and verify jump-table encoding by comparing each nearby table-jump instruction's embedded address against the table address. The lane's scripts run in this order: layout survey, relocation probe, encryption probe, value scan, bridged and filtered passes, then relabelling.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first full analysis trusted the relocation table and reported sixteen tables; the real count was thousands. That failure took one probe to diagnose and forced the value-based rewrite. The value scan then reported over eleven thousand runs, most of them strings, and the classifier initially labelled nearly three hundred string runs as initialiser tables — the byte-pattern text filter fixed that but certainly left string fragments among the small unknowns. Two self-checks were built on flawed reasoning and caught before shipping: a span comparison meant to test address encoding is translation-invariant and proves nothing, and a merge pass for split runs was unnecessary because runs already spanned encrypted-region slots. Both were replaced with direct evidence.</p>
+      </article>
 
       <article class="entry" id="p0-libraries">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

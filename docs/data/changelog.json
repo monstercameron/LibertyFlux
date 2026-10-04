@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Devlog: Library inventory: what the executable borrows, and what it owns",
+    "title": "Devlog: Pointer tables: the functions calls alone cannot reach",
     "commit": null,
+    "summary": "Findings from the p0-pointer-tables lane.",
+    "changes": [
+      "New devlog entry: Pointer tables: the functions calls alone cannot reach.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Devlog: Library inventory: what the executable borrows, and what it owns",
+    "commit": "cd61bdbe54dc7eb10f5587475b8c2a8914b9b5f8",
     "summary": "Findings from the p0-libraries lane.",
     "changes": [
       "New devlog entry: Library inventory: what the executable borrows, and what it owns.",
