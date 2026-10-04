@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot2-17">Second pilot, lane 17: very large functions (1,500 to 4,000 bytes)</a></li>
       <li><a href="#pilot2-16">Second pilot, lane 16: large functions (600 to 1,500 bytes)</a></li>
       <li><a href="#pilot2-15">Second pilot, lane 15: large functions (600 to 1,500 bytes)</a></li>
       <li><a href="#pilot2-14">Second pilot, lane 14: large functions (600 to 1,500 bytes)</a></li>
@@ -187,6 +188,39 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot2-17">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Second pilot, lane 17: very large functions (1,500 to 4,000 bytes)</h2>
+      <p>Neither of the two very large sample functions could be verified, and the reason is the result: one reads per-thread engine state the checker cannot fabricate, and the other dispatches almost entirely through object vtables the checker cannot intercept. A control run then showed a stub that implements nothing can pass against a faulting original, so the accept gate must require the original to actually run.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite two randomly sampled very large game functions in Rust and prove each rewrite behaves identically to the original with the differential checker, recording honest timings including failures.</p>
+      <h3>What was found</h3>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Finding</th><th role="columnheader">Status</th><th role="columnheader">Detail</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><th role="columnheader">First function shape</th><td role="cell" data-label="Status"><span class="evidence verified">Verified</span></td><td role="cell" data-label="Detail">About 1,900 bytes and just under 500 instructions: an audio routine that plays distance-attenuated impact sounds for a human character, with roughly 160 floating-point operations, 29 direct calls and 2 virtual calls.</td></tr>
+      <tr role="row"><th role="columnheader">Thread-local read blocks it</th><td role="cell" data-label="Status"><span class="evidence verified">Verified</span></td><td role="cell" data-label="Detail">The audio routine reads per-thread engine state on every live path. Under the checker that read returns uninitialized worker-thread garbage, so the original faults on most trials and hangs on others; nothing about its real behaviour can be compared.</td></tr>
+      <tr role="row"><th role="columnheader">Second function shape</th><td role="cell" data-label="Status"><span class="evidence verified">Verified</span></td><td role="cell" data-label="Detail">About 2,400 bytes and just over 600 instructions: a scrolling-menu update routine with roughly 160 floating-point operations and 80 calls, 62 of them indirect dispatches through member-object vtables.</td></tr>
+      <tr role="row"><th role="columnheader">Indirect calls block it</th><td role="cell" data-label="Status"><span class="evidence verified">Verified</span></td><td role="cell" data-label="Detail">The checker only intercepts direct calls, so the menu routine faults at its first vtable lookup on every trial and none of its call behaviour can be compared.</td></tr>
+      <tr role="row"><th role="columnheader">Empty stub passes</th><td role="cell" data-label="Status"><span class="evidence verified">Verified</span></td><td role="cell" data-label="Detail">A control rewrite that only crashes immediately passed both trials against the crashing original, because matching crashes currently count as a pass with nothing else compared.</td></tr>
+      <tr role="row"><th role="columnheader">Routine outcome</th><td role="cell" data-label="Status"><span class="evidence verified">Verified</span></td><td role="cell" data-label="Detail">Zero of two functions verified, both deferred with machine-measured blockers, in about a quarter of an hour of lane time.</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Both functions deferred: they belong to classes the current checker cannot express, so writing full rewrites now would be unverifiable labour.</li>
+      <li>Recommended: keep thread-state-dependent and vtable-heavy functions out of the pilot sample until the checker can fabricate thread state and intercept indirect calls.</li>
+      <li>Recommended: the accept gate must require the original to complete normally on compared trials, otherwise any always-crashing function is verifiable by an empty stub.</li>
+      <li>Recommended: fix a driver crash when the worker exits after a hung trial.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Disassemble the two sample functions and note the per-thread state read near the top of the audio routine and the repeated load-then-indirect-call dispatch sequences in the menu routine. Then run the checker with convention-matching stub rewrites and zeroed object memory: the audio original faults at its first state-derived load with a fault address that varies by trial and sometimes hangs instead, while the menu original faults at its first vtable lookup every time. Finally run the crashing stub control and confirm its trials pass with no other comparison performed.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first disassembly script was named after a standard library module and crashed on import until renamed. A cargo build waited on another lane's file lock, which cost about half a minute. The most surprising moment was the audio original hanging on a trial where it had faulted twice before, which showed the worker-thread garbage it depends on is not even stable run to run.</p>
+      </article>
 
       <article class="entry" id="pilot2-16">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
