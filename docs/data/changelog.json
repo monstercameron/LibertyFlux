@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: A relocation-table trap and a bit-exact vector rewrite",
+    "title": "Devlog: A relocation lookup bug the checker caught, and 24 verified native handlers",
     "commit": null,
+    "summary": "Findings from the r-n74 lane.",
+    "changes": [
+      "New devlog entry: A relocation lookup bug the checker caught, and 24 verified native handlers.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: A relocation-table trap and a bit-exact vector rewrite",
+    "commit": "1d9056f7ea28576ff930452af314862b1012e225",
     "summary": "Findings from the r-n68 lane.",
     "changes": [
       "New devlog entry: A relocation-table trap and a bit-exact vector rewrite.",

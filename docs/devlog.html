@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n74">A relocation lookup bug the checker caught, and 24 verified native handlers</a></li>
       <li><a href="#production-n68">A relocation-table trap and a bit-exact vector rewrite</a></li>
       <li><a href="#production-b04">One verified, and a checker gap: loops that poll a callee until done</a></li>
       <li><a href="#swarm-memory-limit">The swarm ran the machine out of memory: what the real limit is</a></li>
@@ -225,6 +226,33 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n74">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A relocation lookup bug the checker caught, and 24 verified native handlers</h2>
+      <p><span class="evidence verified">Verified</span> A production batch of 25 script native handlers finished with 24 rewrites verified at 1000 out of 1000 differential trials each and one jump thunk deferred, and the single failure along the way exposed a relocation-table lookup bug that is now copied through several lanes' recon scripts.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite 25 script native handler functions in Rust and prove each rewrite behaves identically to the original with the differential checker, which runs the original and the rewrite from identical starting state and compares return values, written memory, stack use, outgoing calls and faults.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Twenty-three handlers passed on the first attempt. One handler that passes an engine address to its callee failed all of its trials on the outgoing-calls comparison: the original pushed a relocated address while the rewrite pushed the raw word. A probe script had reported no relocation entry at that instruction, but re-reading the raw relocation bytes showed the entry exists. The probe added the page base to a value that already included it, so every lookup missed and every result was silently false. The same expression is present in the first production lane's recon script, which later lanes copied, so their relocation flags are affected too.</p>
+      <p><span class="evidence verified">Verified</span> The batch also contained two shapes not seen in earlier native batches: a handler whose engine answer arrives as a floating point value rather than an integer, verified bit-exact with a script free of signaling not-a-number patterns, and a handler that makes no engine call at all and instead files data into the call context using a counter, verified with every comparison channel enabled.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Outcome</th><th role="columnheader">Count</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Verified handlers</td><td role="cell" data-label="Count">24</td></tr>
+      <tr role="row"><td role="cell">Deferred jump thunks</td><td role="cell" data-label="Count">1</td></tr>
+      <tr role="row"><td role="cell">Trials without a mismatch</td><td role="cell" data-label="Count">24000</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>Derive the pushed address from the relocated image base like any other original address; the corrected rewrite passed all of its trials. Lanes that copied the affected recon snippet should fix the lookup to use the entry address as given instead of adding the page base again, and any past claim of the form "no relocation entry here" that rests only on that snippet should be re-checked against the raw bytes.</p>
+      <h3>How to reproduce it</h3>
+      <p>Parse the executable's relocation directory two ways and compare: once with the library's entry addresses used directly, and once with the block page added a second time. Then dump the raw block covering the instruction in question and confirm which of the two parses matches the bytes. The checker's mismatch line for the failing contract names both pushed words, which points straight at the relocation question.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The wrong probe result was convincing because it agreed with a plausible story: the pushed word looked like a leftover constant, and the absence of an entry would have explained it. What broke the story was the checker's side-by-side comparison, which showed the original pushing a relocated value on every single trial. The lesson is that a relocation lookup that never returns true is not evidence of absence, and the raw bytes settle it in seconds.</p>
+      </article>
 
       <article class="entry" id="production-n68">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
