@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot2-15">Second pilot, lane 15: large functions (600 to 1,500 bytes)</a></li>
       <li><a href="#pilot2-14">Second pilot, lane 14: large functions (600 to 1,500 bytes)</a></li>
       <li><a href="#pilot2-08">Second pilot, lane 08: small functions that make calls (60 to 250 bytes, one to three callees)</a></li>
       <li><a href="#pilot2-03">Second pilot, lane 03: small leaf functions (40 to 150 bytes, no calls)</a></li>
@@ -185,6 +186,41 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot2-15">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Second pilot, lane 15: large functions (600 to 1,500 bytes)</h2>
+      <p>One of three large functions was rewritten in Rust and verified identical to the original over one thousand differential trials; the other two were deferred because the checker cannot set up the state they need. The pattern is clear: large functions are gated by global pointers and virtual calls the harness cannot yet express, so schedule estimates must include checker extensions, not just rewrite time.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite three randomly sampled large game functions in idiomatic Rust and prove each behaves identically to the original with the project's differential checker, recording honest timings including failures. Each rewrite runs against the original from identical starting state over at least one thousand trials with edge values; outgoing calls are intercepted and answered by script, so callees are not rewritten.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The first function, an object-slot refresh routine of about seven hundred bytes with twenty-three calls to sixteen helpers and no floating point, passed all one thousand trials with zero failures, and a deliberately introduced off-by-one mistake was caught at once. Analysis took minutes; the checker runs took about a minute.</p>
+      <p><span class="evidence verified">Verified</span> Trial coverage was uneven in a way the pass count hides: the function's table-scan loop body never executed because its table pointer lives in a global the harness fills with unreadable random bytes. Eight of sixteen helpers never fired. The rewrite is proven identical on all harness-reachable behavior, with the deep loop covered by analysis only.</p>
+      <p><span class="evidence verified">Verified</span> The second function, a float-heavy computation of about eight hundred bytes, is unverifiable with the current checker for two independent reasons: its deep path starts by dereferencing a global pointer the contract cannot aim at valid memory, and its main path passes about ten stack-local addresses as call arguments, which the checker compares by raw value and can never match.</p>
+      <p><span class="evidence verified">Verified</span> The third function, a task-system virtual method, is blocked by two register-indirect virtual calls the checker cannot intercept. A cross-check with another lane's structure file confirmed it is a vtable slot with exactly the decoded size and call count.</p>
+      <p><span class="evidence verified">Verified</span> The checker's shared scripted answer for all callees did not block anything: differential soundness holds with one value per trial, only edge variety suffers. The missing rewrite-side helper for object-style callee calls was added in about ten lines and can be folded back.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Function</th><th role="columnheader">Outcome</th><th role="columnheader">Trials</th><th role="columnheader">Minutes</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Slot refresh, integer only</td><td role="cell" data-label="Outcome">verified with coverage debt</td><td role="cell" data-label="Trials">1000 pass, mutant caught</td><td role="cell" data-label="Minutes">8</td></tr>
+      <tr role="row"><td role="cell">Float computation</td><td role="cell" data-label="Outcome">deferred</td><td role="cell" data-label="Trials">0</td><td role="cell" data-label="Minutes">3</td></tr>
+      <tr role="row"><td role="cell">Task virtual method</td><td role="cell" data-label="Outcome">deferred</td><td role="cell" data-label="Trials">0</td><td role="cell" data-label="Minutes">3</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Count the first function as verified-with-coverage-debt, not fully proven; the pilot schedule should add a coverage-debt category for harness-unreachable code.</li>
+      <li>Build three checker extensions before scheduling more large functions, in this order: initialize globals to heap pointers, compare pointer call arguments by pointed-to content, intercept register-indirect calls.</li>
+      <li>Fold the ten-line object-call helper back into the shared rewrite runtime.</li>
+      <li>Keep per-trial call observations: the coverage histogram, not the pass count, showed which helpers never fired.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>From the repository root, build the lane's rewrite crate for the 32-bit target with panics set to abort, generate the function contract with the lane's generator script (it asserts every call-site opcode and target), then run the lane's checker driver copy for the function contract: the verdict file records the thousand-trial pass and the mutant file records the caught mistake. No rebuild of the shared worker is needed.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> One pushed constant looked like an argument to the call beneath it but belonged to the call after; only careful stack accounting caught it, and it would have been the most likely rewrite bug. A scratch constant written by the compiler also turned out to be a real global store, not dead code.</p>
+      <p><span class="evidence verified">Verified</span> Shell output redirection wrote an unopenable encoding twice before the cause (wide-character redirect) was spotted; later scripts wrote their own output files directly.</p>
+      <p><span class="evidence">Inferred</span> The all-pass verdict initially felt complete until the coverage histogram showed half the helpers never fired; pass counts alone will overstate pilot progress unless every lane reports reachability.</p>
+      </article>
 
       <article class="entry" id="pilot2-14">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
