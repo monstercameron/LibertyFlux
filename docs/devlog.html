@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#pilot2-13">Second pilot, lane 13: large functions (600 to 1,500 bytes)</a></li>
       <li><a href="#pilot2-12">Second pilot, lane 12: medium functions (250 to 600 bytes)</a></li>
       <li><a href="#pilot2-07">Second pilot, lane 07: small functions that make calls (60 to 250 bytes, one to three callees)</a></li>
       <li><a href="#pilot2-06">Second pilot, lane 06: small functions that make calls (60 to 250 bytes, one to three callees)</a></li>
@@ -197,6 +198,31 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="pilot2-13">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Second pilot, lane 13: large functions (600 to 1,500 bytes)</h2>
+      <p>One of three large functions was rewritten in Rust and verified over one thousand differential trials; the other two were deferred because the checker cannot compare calls that pass pointers to the caller's own stack frame, which turned out to be the main thing separating large functions from the tiny leaves of the first pilot.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite three randomly sampled large game functions in Rust, prove each one identical to the original with the project checker over at least one thousand trials, record honest timings, and confirm on one function that the checker catches a deliberately introduced mistake.</p>
+      <h3>What was found</h3>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Finding</th><th role="columnheader">Evidence</th><th role="columnheader">What it means</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><th role="columnheader">First function verified</th><td role="cell" data-label="Evidence"><span class="evidence verified">Verified</span> one thousand out of one thousand trials passed, plus a targeted honesty trial</td><td role="cell" data-label="What it means">A category-scaled accumulation routine with a jump table, float conversion, seven callees and a self-recursion site is fully checkable</td></tr>
+      <tr role="row"><th role="row"><th role="columnheader">Stack-pointer call arguments</th><td role="cell" data-label="Evidence"><span class="evidence verified">Verified</span> read in both the disassembly and the checker's comparison code</td><td role="cell" data-label="What it means">Functions that hand callees pointers to their own temporary storage can never match, because the two sides keep different frame layouts; this blocked both remaining functions</td></tr>
+      <tr role="row"><th role="row"><th role="columnheader">Indirect call through a table</th><td role="cell" data-label="Evidence"><span class="evidence verified">Verified</span> read in the disassembly and the patcher code</td><td role="cell" data-label="What it means">A virtual-style call cannot be intercepted, so one function would run wild on that path</td></tr>
+      <tr role="row"><th role="row"><th role="columnheader">Mutant survived random trials</th><td role="cell" data-label="Evidence"><span class="evidence verified">Verified</span> wrong constant passed one hundred stock trials, failed a crafted one as predicted</td><td role="cell" data-label="What it means">Random inputs can saturate and hide a real difference; a distinguishing trial is sometimes needed</td></tr>
+      <tr role="row"><th role="row"><th role="columnheader">Time per verified function</th><td role="cell" data-label="Evidence"><span class="evidence verified">Verified</span> about fifteen minutes including setup, from wall-clock anchors</td><td role="cell" data-label="What it means">Understanding dominates; the thousand-trial run itself took little more than a minute</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>The verified rewrite stands as checked in. Both other functions are recorded as deferred with precise reasons rather than weakly verified with comparisons switched off. The recommended checker improvements, in order of pilot impact, are pointer-aware comparison of outgoing call arguments, interception of register-indirect calls, per-callee scripted answers, and driver input kinds for small-range integers and heap-valued script answers, the first of which was prototyped and tested during this lane.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the lane's rewrite crate for 32-bit Windows against the shared cargo output folder, generate the contract with the lane's generator script, and run the lane's copy of the checker driver on it; the verdict file records one thousand passing trials. The honesty test script runs one hand-built trial where the correct rewrite passes and the wrong-constant mutant fails on heap writes. The shared worker binary is reused as is and never rebuilt.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first attempt failed because one callee is called from two sites and only the first was patched, so the original ran the real callee and faulted; the fix was one line. Two flag words pushed to a callee carry stale high bytes from unrelated registers, which required reading the checker's stub code to reproduce exactly. The stock mutant run passing looked like a checker failure until analysis showed both multipliers overflow to the same indefinite value on random inputs. Timestamps written to the progress log from memory drifted ahead of the real clock and were corrected against file timestamps; the published timings use the corrected values.</p>
+      </article>
 
       <article class="entry" id="pilot2-12">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
