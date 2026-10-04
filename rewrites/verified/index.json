@@ -18774,6 +18774,33 @@
   "lane": "r-b184"
  },
  {
+  "address": "0x00927690",
+  "name": "input_ui_dispatch_scaled",
+  "kind": "function",
+  "file": "functions/fn_00927690.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b232"
+ },
+ {
+  "address": "0x009277F0",
+  "name": "input_ui_proximity_scan",
+  "kind": "function",
+  "file": "functions/fn_009277f0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b232"
+ },
+ {
+  "address": "0x009284D0",
+  "name": "input_ui_state_copy",
+  "kind": "function",
+  "file": "functions/fn_009284d0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b232"
+ },
+ {
   "address": "0x0092B370",
   "name": "cam_state_refresh",
   "kind": "function",
@@ -20284,6 +20311,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b113"
+ },
+ {
+  "address": "0x00963640",
+  "name": "replay_mode_select",
+  "kind": "function",
+  "file": "functions/fn_00963640.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b222"
+ },
+ {
+  "address": "0x00963F30",
+  "name": "replay_target_open",
+  "kind": "function",
+  "file": "functions/fn_00963f30.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b222"
  },
  {
   "address": "0x00967120",
@@ -33379,6 +33424,177 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s77"
+ },
+ {
+  "address": "0x00B6E4C0",
+  "name": "CTaskSimpleCarSetPedOut::vf1",
+  "kind": "function",
+  "file": "functions/fn_00b6e4c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6E510",
+  "name": "CTaskSimpleCarShuffle::vf1",
+  "kind": "function",
+  "file": "functions/fn_00b6e510.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6E540",
+  "name": "CTaskSimpleCarSlowBeDraggedOut::vf1",
+  "kind": "function",
+  "file": "functions/fn_00b6e540.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6E570",
+  "name": "CTaskSimpleCarSlowDragPedOut::vf1",
+  "kind": "function",
+  "file": "functions/fn_00b6e570.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6E5A0",
+  "name": "CTaskSimpleCreateCarAndGetIn::vf1",
+  "kind": "function",
+  "file": "functions/fn_00b6e5a0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6E5D0",
+  "name": "CTaskSimpleSetPedAsAutoDriver::vf1",
+  "kind": "function",
+  "file": "functions/fn_00b6e5d0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6E600",
+  "name": "CTaskSimpleShunt::vf1",
+  "kind": "function",
+  "file": "functions/fn_00b6e600.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6E630",
+  "name": "CTaskSimpleSmashCarWindow::vf1",
+  "kind": "function",
+  "file": "functions/fn_00b6e630.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6E660",
+  "name": "CTaskSimpleStartCar::vf1",
+  "kind": "function",
+  "file": "functions/fn_00b6e660.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6E690",
+  "name": "CTaskSimpleWaitUntilPedIsOutCar::vf1",
+  "kind": "function",
+  "file": "functions/fn_00b6e690.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6E6C0",
+  "name": "select_anim_and_invoke",
+  "kind": "function",
+  "file": "functions/fn_00b6e6c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6E740",
+  "name": "select_anim_flagged_and_invoke",
+  "kind": "function",
+  "file": "functions/fn_00b6e740.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6E7D0",
+  "name": "select_anim_float_gated_and_invoke",
+  "kind": "function",
+  "file": "functions/fn_00b6e7d0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6EB60",
+  "name": "vehicle_door_table_lookup",
+  "kind": "function",
+  "file": "functions/fn_00b6eb60.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6FDA0",
+  "name": "cond_init_then_release_slot",
+  "kind": "function",
+  "file": "functions/fn_00b6fda0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6FDE0",
+  "name": "release_slot_cond_call_init",
+  "kind": "function",
+  "file": "functions/fn_00b6fde0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B70C40",
+  "name": "task_gate_on_state_and_subcheck",
+  "kind": "function",
+  "file": "functions/fn_00b70c40.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B70C60",
+  "name": "go_to_car_door_within_radius",
+  "kind": "function",
+  "file": "functions/fn_00b70c60.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
+ },
+ {
+  "address": "0x00B70CC0",
+  "name": "CTaskComplexGoToCarDoorAndStandStill::vf5",
+  "kind": "function",
+  "file": "functions/fn_00b70cc0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-s303"
  },
  {
   "address": "0x00B78E60",
