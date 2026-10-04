@@ -138,7 +138,7 @@
         </div>
       </div>
 
-      <p class="lines-note">Thread counts are measured where a number is shown. The order of stops along a line is our reading of the evidence: the main loop itself sits in the part of the program that cannot be read yet, described at the end of this page. The moving markers only show that the lines run at once; they imply no timings.</p>
+      <p class="lines-note">Thread counts are measured where a number is shown. The order of stops along a line is our reading of the evidence: the main loop itself sits in the part of the program that cannot be read yet, described at the end of this page.<span class="marker-note"> The moving markers only show that the lines run at once; they imply no timings.</span></p>
     </figure>
   </div>
 </header>
@@ -162,19 +162,19 @@
         <li style="--v:1620"><span class="bar-label">World and object pools</span><span class="bar-track"><span class="bar-fill"></span></span><span class="bar-value">1,620</span></li>
         <li style="--v:1276"><span class="bar-label">Animation and Euphoria</span><span class="bar-track"><span class="bar-fill"></span></span><span class="bar-value">1,276</span></li>
       </ol>
-      <p class="note">This counts functions, not bytes of code. Each function is assigned to the nearest subsystem whose code could be identified, so the split is approximate; 25 could not be placed. The bars were counted on the first inventory of 45,229 entries. A later repair removed 4,540 that were not functions and added 2,467 that had been missed, which changes the totals but not the picture. The counts include the libraries built into the program and leave out the megabyte that cannot be read yet. There is no rendering group because the survey behind these labels did not have one: rendering functions are spread across the groups above, and much of the low-level graphics code is in the unreadable megabyte.</p>
+      <p class="note">This counts functions, not bytes of code. Each function is assigned to the nearest subsystem whose code could be identified, so the split is approximate; 25 could not be placed. The bars were counted on the first inventory of 45,229 entries. A later repair removed 4,540 that were not functions and added 2,467 that had been missed, and later checks removed 332 more, leaving 42,824. That changes the totals but not the picture. The counts include the libraries built into the program and leave out the megabyte that cannot be read yet. There is no rendering group because the survey behind these labels did not have one: rendering functions are spread across the groups above, and much of the low-level graphics code is in the unreadable megabyte.</p>
 
       <div class="split">
         <div>
           <h3>More than half of the classes are leaderboards</h3>
-          <p>A class is a blueprint for one kind of object. The program declares 3,727 of them. About 1,927 are four leaderboard templates, each stamped out once for every one of 481 multiplayer leaderboards. The largest family that does real work is the AI's 334 task classes.</p>
+          <p>A class is a blueprint for one kind of object. The program declares 3,727 of them. 1,927 are leaderboard classes, nearly all of them four templates stamped out once for every one of 481 multiplayer leaderboards. The largest family that does real work is the AI's 334 task classes.</p>
           <ul class="waffle-key">
-            <li><span class="key-swatch lb"></span>Leaderboard templates, 1,927</li>
+            <li><span class="key-swatch lb"></span>Leaderboard classes, 1,927</li>
             <li><span class="key-swatch task"></span>AI tasks, 334</li>
             <li><span class="key-swatch rest"></span>Everything else, 1,466</li>
           </ul>
         </div>
-        <div class="waffle" id="waffle" role="img" aria-label="A grid of 100 squares: 52 are leaderboard templates, 9 are AI tasks and 39 are everything else."></div>
+        <div class="waffle" id="waffle" role="img" aria-label="A grid of 100 squares: 52 are leaderboard classes, 9 are AI tasks and 39 are everything else."></div>
       </div>
     </div>
   </section>
@@ -238,10 +238,10 @@
         </div>
         <div class="vm-stack-wrap">
           <h3>Stack</h3>
-          <div class="vm-stack" id="vm-stack" aria-live="polite"></div>
+          <div class="vm-stack" id="vm-stack"></div>
         </div>
         <div class="vm-controls">
-          <p id="vm-status">Press Step to run the first instruction.</p>
+          <p id="vm-status" aria-live="polite">Press Step to run the first instruction.</p>
           <button type="button" id="vm-step">Step</button>
           <button type="button" id="vm-reset" class="quiet">Start again</button>
         </div>

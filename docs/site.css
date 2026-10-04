@@ -99,6 +99,8 @@ p { margin: 0 0 1em; }
 .nav a[aria-current="page"] { color: var(--on-asphalt); font-weight: 700; border-bottom-color: var(--sodium); }
 .masthead.compact { padding-bottom: clamp(22px, 4vw, 36px); }
 .masthead.compact .lede { margin-bottom: 0; }
+/* Links inside the dark masthead: the paper link colour is too dark on asphalt in the light theme. */
+.masthead .lede a { color: var(--on-asphalt); }
 
 /* Changelog and devlog entries */
 .entries { max-width: var(--wide); }
@@ -112,6 +114,8 @@ p { margin: 0 0 1em; }
 .entry ul, .entry ol { padding-left: 1.2em; margin: 0 0 1em; max-width: var(--measure); }
 .entry li { margin-bottom: 0.4em; }
 .entry p { max-width: var(--measure); }
+/* Titles and lines can hold long native names with no break opportunity; let them wrap instead of widening the page. */
+.entry h2, .entry p, .entry li { overflow-wrap: break-word; }
 .entry table { margin: 0.4em 0 1.2em; font-size: 0.9875rem; max-width: 100%; }
 /* Devlog tables carry sentences in the first column, so it must wrap. */
 .entry td:first-child { white-space: normal; min-width: 9em; }

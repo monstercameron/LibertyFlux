@@ -35,7 +35,8 @@
 .roundel { width: 16px; height: 16px; border-radius: 50%; background: var(--line); flex: none; }
 
 .stops { position: relative; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-.stops > li { position: relative; }
+/* Not the marker: it is positioned on the rail, and a plain position here would make it a ninth grid cell. */
+.stops > li:not(.train) { position: relative; }
 /* The rail: each stop draws the segment to the next one. */
 .stops > li:not(.train):not(:nth-last-child(2))::after { content: ""; position: absolute; top: 14px; left: 50%; width: 100%; height: 6px; background: var(--line); }
 
@@ -63,7 +64,7 @@
 .line[data-line="audio"] .train { animation-delay: -1.5s; }
 .line[data-line="loader"] .train { animation-delay: -5s; }
 @keyframes ride { from { left: calc(100% / 14); } to { left: calc((2 * var(--n) - 1) * 100% / 14); } }
-@media (prefers-reduced-motion: reduce) { .train { display: none; } .stop .dot { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .train, .marker-note { display: none; } .stop .dot { transition: none; } }
 
 /* The hand-off between the game thread and the render thread. */
 .handoff { display: grid; grid-template-columns: 10.5rem minmax(0, 1fr); gap: 0 16px; align-items: stretch; padding: 8px 0 3px; }
@@ -110,7 +111,7 @@
   .stops { grid-template-columns: 1fr; padding-bottom: 12px; }
   .stops > li:not(.train):not(:nth-last-child(2))::after { top: 22px; left: 14px; width: 6px; height: 100%; }
   .stop { flex-direction: row; gap: 14px; text-align: left; padding: 6px; font-size: 1rem; }
-  .train { display: none; }
+  .train, .marker-note { display: none; }
   .handoff { display: block; padding: 0 0 12px 46px; position: relative; }
   .handoff::before { content: ""; position: absolute; left: 16px; top: 0; bottom: 12px; border-left: 3px dashed var(--on-asphalt-soft); }
   .handoff-path { display: none; }
@@ -147,7 +148,9 @@ main .facts.big { grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%
 .split p { max-width: 58ch; color: var(--ink-soft); }
 .split h3 { font-size: clamp(1.25rem, 2.4vw, 1.5rem); margin-bottom: 0.5em; }
 .waffle { display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; }
-.waffle span { aspect-ratio: 1; border-radius: 2px; background: var(--rule); }
+/* "Everything else" is recessive but must still read as squares: --rule was 1.3:1 on paper in light and 1.6:1 in dark. */
+main { --rest: #9aa1a9; }
+.waffle span { aspect-ratio: 1; border-radius: 2px; background: var(--rest); }
 .waffle .lb { background: var(--meter-fill); }
 .waffle .task { background: var(--sodium); }
 .waffle-key, .strip-key { list-style: none; margin: 1em 0 0; padding: 0; display: grid; gap: 6px; }
@@ -155,6 +158,7 @@ main .facts.big { grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%
 .key-swatch { width: 16px; height: 16px; border-radius: 2px; flex: none; background: var(--rule); }
 .key-swatch.lb, .key-swatch.clear { background: var(--meter-fill); }
 .key-swatch.task { background: var(--sodium); }
+.key-swatch.rest { background: var(--rest); }
 @media (max-width: 700px) {
   .split { grid-template-columns: 1fr; }
   .waffle { max-width: 320px; }
@@ -222,7 +226,7 @@ main .facts.big { grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%
 .seg:first-child { border-radius: 6px 0 0 6px; }
 .seg:last-child { border-radius: 0 6px 6px 0; }
 .seg.rpf { --seg: #2b628c; }
-.seg.img { --seg: #3f7fae; }
+.seg.img { --seg: #3b79a8; }
 .seg.loose { --seg: #5d6975; }
 @media (max-width: 640px) {
   .disk-bar { flex-direction: column; }
@@ -250,7 +254,7 @@ main .facts.big { grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%
 .ruler-caption { font-size: 0.9375rem; color: var(--ink-soft); margin: 0 0 6px; }
 .ruler { position: relative; height: 64px; border: 2px solid var(--ink); border-radius: 4px; background: var(--paper); overflow: hidden; }
 .ruler .tick { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--ink); }
-.ruler .tick b { position: absolute; bottom: 3px; left: 4px; padding: 0 3px; border-radius: 2px; background: var(--paper); font-size: 0.75rem; font-weight: 400; color: var(--ink-soft); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ruler .tick b { position: absolute; z-index: 1; bottom: 3px; left: 4px; padding: 0 3px; border-radius: 2px; background: var(--paper); font-size: 0.75rem; font-weight: 400; color: var(--ink-soft); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .ruler .leftover, .key-swatch.leftover { background: repeating-linear-gradient(135deg, var(--sodium) 0 5px, color-mix(in srgb, var(--sodium) 45%, var(--paper)) 5px 10px); }
 .ruler .leftover { position: absolute; top: 0; bottom: 0; right: 0; }
 .clock-readout { margin: 14px 0 8px; max-width: 70ch; font-size: 1.0625rem; }
@@ -265,6 +269,7 @@ main .facts.big { grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%
 .key-swatch.dark { background: #14181d repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0 2px, transparent 2px 5px); }
 .strip-key { margin-bottom: 1.6em; }
 @media (prefers-color-scheme: dark) {
+  main { --rest: #515a66; }
   .strip-dark, .key-swatch.dark { outline: 1px solid var(--ink-faint); outline-offset: -1px; }
   .vm-stack span { color: #0c0f13; }
 }
