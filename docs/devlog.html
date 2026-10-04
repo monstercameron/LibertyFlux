@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s172">Twenty leaderboard constructors needed a fairer call stub</a></li>
       <li><a href="#production-b115">Optimized builds can fail bit-exact float checks, and five sibling functions share one shape</a></li>
       <li><a href="#production-b105">Production batch: three emitter rewrites verified, one float lesson</a></li>
       <li><a href="#private-checker-copies">Lanes were running their own copies of the checker, and one of them relaxed it</a></li>
@@ -296,6 +297,29 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s172">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Twenty leaderboard constructors needed a fairer call stub</h2>
+      <p>A batch of twenty near-identical object constructors is now verified, but only after a small proven fix to the checker's call stub: the stock stub drops a register the original code reuses, so every one of these functions failed against a correct rewrite until the stub learned to preserve it.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty small game functions in Rust and prove each behaves identically to the original with the differential checker. The batch turned out to be a family of leaderboard object constructors, one per leaderboard type, each calling a shared base constructor and then installing its own tables and state.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All twenty functions share one shape: call the base constructor, store two table pointers, set a flag bit, initialise six state words, return the object pointer.</p>
+      <p><span class="evidence verified">Verified</span> None of them can pass on the stock checker. The checker's stubbed stand-in for the base constructor leaves a scratch value in a register the original reuses immediately after the call, so the original side faults on every trial while any correct rewrite succeeds. The failure is fail-closed (a mismatch, never a false pass), and reproducing the stub's scratch value in a rewrite would be dishonest, since the real callee preserves the register.</p>
+      <p><span class="evidence verified">Verified</span> The real base constructor was checked instruction by instruction and preserves the register, confirming the stub is the unfaithful party.</p>
+      <p><span class="evidence verified">Verified</span> A minimal optional stub fix (restore the two registers from the stub's own entry spills, off by default) was built in an isolated copy of the worker and proven four ways: the stock setup fails first, the fixed setup passes a hundred trials, a deliberately wrong rewrite fails on the exact planted difference, and the fix with the option off reproduces the stock failure exactly.</p>
+      <p><span class="evidence">Inferred</span> An earlier lane recorded that the previous checker version preserved the register in this situation, so the unconditional clobber may be a regression introduced by newer stub machinery. This needs confirmation by a checker lane and is not assumed.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>All twenty rewrites are verified at a thousand trials each against the fixed worker, with the fix documented for folding back into the main checker.</li>
+      <li>Once folded back, a checker lane should re-run the full regression suite and this batch should be re-verified on the stock binary so no result depends on a lane-local build.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run any one of the batch contracts on the stock worker: the original side faults at the first store after the call on every trial. Re-run with the register-preserving stub option enabled: all trials pass with full coverage. Swap in a rewrite with one table pointer altered by a word: it fails on the memory comparison at that offset within three trials.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The compiled rewrite library could not be replaced while a checker process still held it open, a trap earlier lanes had already documented; renaming the old file aside and rebuilding worked. Separately, the shell reported failed exit codes for builds that had actually finished, because compiler warnings passed through a text filter; checking the output file's timestamp gave the true answer.</p>
+      </article>
 
       <article class="entry" id="production-b115">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
