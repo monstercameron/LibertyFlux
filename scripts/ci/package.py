@@ -1,8 +1,8 @@
 """Build the project's runnable programs and collect them into one folder for a release.
 
 What gets packaged today:
-- the inspection tools for the game's file formats (the example programs of the crates under crates/formats),
-  built for the machine this runs on;
+- lf-inspect, the one inspection tool for the game's file formats (crates/tools/lf-inspect; it replaced the
+  per-crate example programs), built for the machine this runs on;
 - on Windows, the 32-bit developer tools as well: the checker's worker, the loader's proxy library and its
   test program.
 
@@ -29,7 +29,7 @@ WIN32_TOOLS = ["lf-checker-worker", "lf-proxy", "lf-test-target"]
 parser = argparse.ArgumentParser()
 parser.add_argument("--out", required=True)
 parser.add_argument("--debug", action="store_true", help="build without optimisation (for trying the script out)")
-parser.add_argument("--only", default="", help="comma-separated crate names to limit the format tools to")
+parser.add_argument("--only", default="", help="comma-separated crate names to limit the format tools to (lf-inspect)")
 parser.add_argument("--no-win32-tools", action="store_true")
 args = parser.parse_args()
 
@@ -51,26 +51,17 @@ target_dir = Path(metadata["target_directory"])
 only = {name for name in args.only.split(",") if name}
 packaged = []
 
-# Format tools: one crate at a time, because several crates use the same example names.
-for package in sorted(metadata["packages"], key=lambda p: p["name"]):
-    manifest = Path(package["manifest_path"]).as_posix()
-    if "/crates/formats/" not in manifest or (only and package["name"] not in only):
-        continue
-    examples = [t["name"] for t in package["targets"] if "example" in t["kind"]]
-    if not examples:
-        continue
-    run("cargo", "build", *profile_flag, "-p", package["name"], "--examples")
-    for example in examples:
-        built = target_dir / profile_dir / "examples" / (example + exe)
-        if not built.exists():
-            print(f"missing after build: {built}", file=sys.stderr)
-            sys.exit(1)
-        # Most examples already carry their crate's name; add it only where they do not.
-        stem = example if example.startswith(package["name"]) else f"{package['name']}-{example}"
-        name = stem.replace("_", "-") + exe
-        (out / "format-tools").mkdir(exist_ok=True)
-        shutil.copy2(built, out / "format-tools" / name)
-        packaged.append({"file": f"format-tools/{name}", "crate": package["name"], "kind": "format tool"})
+# Format tool: lf-inspect, one program with a subcommand per format (`lf-inspect formats` lists them).
+FORMAT_TOOL = "lf-inspect"
+if not only or FORMAT_TOOL in only:
+    run("cargo", "build", *profile_flag, "-p", FORMAT_TOOL)
+    built = target_dir / profile_dir / (FORMAT_TOOL + exe)
+    if not built.exists():
+        print(f"missing after build: {built}", file=sys.stderr)
+        sys.exit(1)
+    (out / "format-tools").mkdir(exist_ok=True)
+    shutil.copy2(built, out / "format-tools" / built.name)
+    packaged.append({"file": f"format-tools/{built.name}", "crate": FORMAT_TOOL, "kind": "format tool"})
 
 if os.name == "nt" and not args.no_win32_tools:
     run("cargo", "build", *profile_flag, "--target", WIN32_TARGET, *[x for tool in WIN32_TOOLS for x in ("-p", tool)])
@@ -93,8 +84,9 @@ for {platform.system()} {platform.machine()}.
 
 What this is
   Tools from the LibertyFlux project, which is rewriting Grand Theft Auto IV's engine in Rust.
-  format-tools/   programs that read and describe the game's file formats (archives, models, textures,
-                  collision, scripts, text, audio configuration, saves and more)
+  format-tools/   lf-inspect, which reads and describes the game's file formats (archives, models,
+                  textures, collision, scripts, text, audio configuration, saves and more); run
+                  `lf-inspect formats` for the list and `lf-inspect help` for usage
   tools-win32/    (Windows builds only) the project's 32-bit developer tools: the checker's worker, the
                   loader's proxy library and its test program
 
