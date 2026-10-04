@@ -16,8 +16,10 @@
 /// store skips keeps the previous state. Otherwise the row's cell kind sets
 /// the row size (8 bytes for kinds 1, 2, 3 and 5, else 0). The selected row
 /// is looked up and, when found with a value of at most 8 bytes, copied to
-/// `value_out`; any other row advances the cursor and, when inside the bound
-/// and committed by the store, writes its one-hot mask. The first failing row
+/// `value_out`; any other row advances the cursor first (the advance sticks
+/// even past the bound), then, when inside the bound and committed by the
+/// store, writes its one-hot mask, with the store call seeing the previous
+/// cursor. The first failing row
 /// clears the status and ends the walk; the return value is that status.
 ///
 /// Edge cases: a failed table lookup returns 0 at once; a null lookup or an
@@ -83,12 +85,13 @@ lf_checker_rt::export!(thiscall, rw_005295D0(this: u32, base: u32, value_out: u3
                     }
                     (flag_out as *mut u8).write(alive);
                 } else {
+                    let prev = cursor;
                     cursor = cursor.wrapping_add(size);
                     if cursor > limit {
                         alive = 0;
                     } else {
                         let done: u8 =
-                            lf_checker_rt::callee_thiscall!(8, u8, store, handle, cursor, size);
+                            lf_checker_rt::callee_thiscall!(8, u8, store, handle, prev, size);
                         if done == 0 {
                             alive = 0;
                         } else {

@@ -5,6 +5,8 @@
 /// `this` points to the board object (vtable pointer at word 0). Slot 1 of
 /// the vtable is called with `this` and its result compared against `want`;
 /// on a match with a non-null `out`, the mark 0xfdc99c is stored to `out`.
+/// The mark is an address (a file VA): it is stored relocated to the loaded
+/// image, never as a raw constant.
 /// Returns `out` on a storing match, else null.
 /// Edge cases: a null `out` stores nothing but still matches; the vtable
 /// call carries no stack arguments.
@@ -25,7 +27,7 @@ lf_checker_rt::export!(thiscall, rw_00521a60(this: u32, out: u32, want: u32) -> 
         if out == 0 {
             return 0;
         }
-        (out as *mut u32).write_unaligned(MARK);
+        (out as *mut u32).write_unaligned(lf_checker_rt::relocated(MARK));
         out
     }
 });

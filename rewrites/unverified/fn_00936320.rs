@@ -42,11 +42,14 @@ lf_checker_rt::export!(stdcall, rw_00936320(sample: u32, out: u32) -> u32 {
             }
             i += 1;
         }
-        lf_checker_rt::callee_cdecl!(1, u32, TABLE, TAG[sel]);
+        // The original's address immediates carry relocations, so both sides
+        // observe relocated addresses; derive them the same way here.
+        let table = lf_checker_rt::relocated(TABLE);
+        lf_checker_rt::callee_cdecl!(1, u32, table, lf_checker_rt::relocated(TAG[sel]));
         let code = CODE[sel];
         if out != 0 {
             wr32(out, code);
         }
-        TABLE
+        table
     }
 });

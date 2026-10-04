@@ -91,6 +91,14 @@ lf_checker_rt::export!(thiscall, rw_00cc0620(this: u32) -> u32 {
         fn mul(a: f32, b: f32) -> f32 {
             core::hint::black_box(a) * core::hint::black_box(b)
         }
+        #[inline(always)]
+        fn sub(a: f32, b: f32) -> f32 {
+            core::hint::black_box(a) - core::hint::black_box(b)
+        }
+        #[inline(always)]
+        unsafe fn wr16(a: u32, v: u16) {
+            unsafe { (a as *mut u16).write_unaligned(v) }
+        }
 
         let state = rd32(this.wrapping_add(STATE_OFF));
         let flag_obj = rd32(state.wrapping_add(FLAG_OBJ_OFF));
@@ -173,8 +181,12 @@ lf_checker_rt::export!(thiscall, rw_00cc0620(this: u32) -> u32 {
             if (c8 as u8) == 0 {
                 ebx = 0x31;
             }
+            // Scratch byte the walk-exit detour sets; 0 on stages 1-4 paths.
+            let flag_0e: u8 = 0;
             let st4 = rd32(this.wrapping_add(STATE_OFF));
             let mut saved_ebx = ebx;
+            // Scratch slot holding ebx across the object-resolution block.
+            let mut slot_18: u32 = 0;
             if rd32(st4.wrapping_add(0x2a0)) & 0x400 != 0 {
                 let mut node = rd32(rd32(st4.wrapping_add(0x224)).wrapping_add(0x2e0));
                 if node != 0 {
@@ -252,6 +264,7 @@ lf_checker_rt::export!(thiscall, rw_00cc0620(this: u32) -> u32 {
                 let _: u32 = lf_checker_rt::callee_thiscall!(18, u32, edi, st);
             }
             ebx = rd32(edi.wrapping_add(4));
+            slot_18 = ebx;
             let mut ebp: u32 = 0;
             if ebx != 0xffff_ffff {
                 ebp = lf_checker_rt::callee_cdecl!(17, u32, ebx);
@@ -287,6 +300,7 @@ lf_checker_rt::export!(thiscall, rw_00cc0620(this: u32) -> u32 {
                         if edi == 0 {
                             edi = lf_checker_rt::callee_cdecl!(23, u32, 0x2f);
                         }
+                        slot_18 = 0xffff_ffff;
                     }
                 }
             }
