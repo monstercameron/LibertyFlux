@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Two stub traps: cookie checks clobber the return register, and one import pops its argument",
+    "title": "Rewrites: 110 more functions pass the checker (5615 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "110 rewrites added under rewrites/pending: 0 script native handlers and 110 other functions.",
+      "The tree now holds 5615 rewrites, 5596 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "251 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Two stub traps: cookie checks clobber the return register, and one import pops its argument",
+    "commit": "036abee2565db1cd27143ca48a4d040df21cfc43",
     "summary": "Findings from the r-b113 lane.",
     "changes": [
       "New devlog entry: Two stub traps: cookie checks clobber the return register, and one import pops its argument.",
