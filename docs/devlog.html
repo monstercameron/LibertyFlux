@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s230">Two wrong rewrites passed before a sibling loop caught the count</a></li>
       <li><a href="#production-b164">A correct rewrite the checker disagrees with itself about</a></li>
       <li><a href="#production-b145">The checker disagreed with the file on one constant</a></li>
       <li><a href="#production-s219">Do not combine snapshots with scripted writes on stack out-parameters</a></li>
@@ -323,6 +324,38 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s230">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Two wrong rewrites passed before a sibling loop caught the count</h2>
+      <p><span class="evidence verified">Verified</span> A production batch of twenty small reset functions verified 20/20, but only after a loop-count error that first passed two incorrect rewrites with clean verdicts. The lesson is one line: a signed-count loop runs N+1 times, and a verdict with too-small declared ranges cannot see the extra iteration.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty neighbouring initialisation functions in Rust and prove each identical to the original with one thousand differential trials. The batch forms one family: most functions clear a static block or table, call a shared registrar routine, and return its answer.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Four functions use a counted loop that decrements a counter and jumps while the sign flag is clear. An initial counter of N gives N+1 iterations, because decrementing to zero leaves the sign flag clear and the loop runs once more. The first attempt counted N, which was wrong in all four.</p>
+      <p><span class="evidence verified">Verified</span> The mistake surfaced unevenly. The function whose loop body is a call failed all one thousand trials on the outgoing-calls comparison (eighteen logged calls against seventeen). But the two functions whose loops only clear memory passed all one thousand trials with the wrong count, because the extra final record fell outside the declared global ranges and undiscovered writes outside declared ranges are not compared.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Loop shape</th><th role="columnheader">First count</th><th role="columnheader">True count</th><th role="columnheader">First verdict</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Slot-clear table, narrow stride</td><td role="cell" data-label="First count">59</td><td role="cell" data-label="True count">60</td><td role="cell" data-label="First verdict">passed, wrong</td></tr>
+      <tr role="row"><td role="cell">Slot-clear table, wide stride</td><td role="cell" data-label="First count">74</td><td role="cell" data-label="True count">75</td><td role="cell" data-label="First verdict">passed, wrong</td></tr>
+      <tr role="row"><td role="row">Pool initialisation loop</td><td role="cell" data-label="First count">17</td><td role="cell" data-label="True count">18</td><td role="cell" data-label="First verdict">failed on calls</td></tr>
+      <tr role="row"><td role="row">Large pool loop with register call</td><td role="cell" data-label="First count">959</td><td role="cell" data-label="True count">960</td><td role="cell" data-label="First verdict">fixed before verdict</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> After fixing the counts and widening the declared ranges, all four pass. A further fourteen hundred trials with full data-section discovery over every global-touching function in the batch confirm no write falls outside any declared range.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Recount every signed-count loop as N+1 before writing the rewrite, and treat the call-logging sibling as the check on the memory-only ones.</li>
+      <li>After any loop-count fix, re-run with full data-section discovery at a few hundred trials; a green verdict with too-small ranges proves nothing about the uncovered tail.</li>
+      <li>Keep one honesty mutant per new loop shape (one iteration short). All three mutants in this batch were caught within three trials.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Take any counted loop that ends in decrement-then-jump-on-not-sign, contract it with the short count and a matching short global range, and run the checker: the verdict passes despite the missing final iteration. Widen the range to cover the true final record and the same rewrite fails on the memory comparison until the count is fixed.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> A popular executable-parsing library reported nearly every address constant in the batch as unrelocated, with stray hits on small constants. A manual parse of the relocation blocks reports all constants relocated, matching the previous lane's finding. Trust the manual parse.</p>
+      <p><span class="evidence verified">Verified</span> The checker moved from version 3 to version 4 during the lane: the stock worker and the tracked driver were both replaced mid-session. One early probe showed the old 256-entry call-log cap and then never reproduced; every full verdict ran on the new binaries with complete call coverage, including a function making over nine hundred calls per trial.</p>
+      </article>
 
       <article class="entry" id="production-b164">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
