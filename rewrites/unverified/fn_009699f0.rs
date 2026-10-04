@@ -139,11 +139,10 @@ lf_checker_rt::export!(thiscall, rw_009699f0(this: u32, p: u32, out: u32) -> f32
         let mut round = 0u32;
         while round < 4 {
             let wbase = WEIGHTS + round * 16;
+            // The running total starts in the x lane: (cx*gx)+(cy*gy),
+            // then adds the z lane. Operand order matters for NaN signs.
             let mut t = add(
-                add(
-                    mul(cy, gf(wbase + 4)),
-                    mul(cx, gf(wbase)),
-                ),
+                add(mul(cx, gf(wbase)), mul(cy, gf(wbase + 4))),
                 mul(cz, gf(wbase + 8)),
             );
             if t < 0.0 {

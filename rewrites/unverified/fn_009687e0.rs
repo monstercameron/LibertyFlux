@@ -13,8 +13,9 @@
 /// `{x, y, z, index}` each.
 ///
 /// The reduction runs an outer loop of four with an inner loop of nine: per
-/// inner step two difference vectors are formed (one against a fixed
-/// coordinate pair, one chaining the previous step), near-zero ones take a
+/// inner step two difference vectors are formed against one running carry
+/// (seeded per outer step, fed by the previous step's join value),
+/// near-zero ones take a
 /// constant path while the rest zero out through a NaN guard, and the pair
 /// combines into two clamped factors whose product is stored; the nine
 /// products normalise nine weights that scale the nine cell vectors into the
@@ -150,14 +151,16 @@ lf_checker_rt::export!(thiscall, rw_009687e0(this: u32, a1: u32, scale: f32, a3:
         let mut outer = 0u32;
         while outer < 4 {
             let (pp0, pp1) = (pairs[(outer * 2) as usize], pairs[(outer * 2 + 1) as usize]);
-            let mut e_prev = t94;
+            // xmm3 carries across inner iterations: the previous step's join
+            // value, mutilated by the blend multiply (seeded with t94).
+            let mut x3carry = t94;
             let mut o = [0.0f32; 9];
             let mut i = 0u32;
             while i < 9 {
-                // First difference vector (constant across the inner loop).
+                // First difference vector.
                 let d7 = sub(t90, pp0);
-                let d6 = sub(t94, pp1);
-                let dd = add(mul(d7, d7), mul(d6, d6));
+                let d6 = sub(x3carry, pp1);
+                let dd = add(mul(d6, d6), mul(d7, d7));
                 let (v7, v6): (f32, f32);
                 if !(eps > dd) {
                     // NaN guard: ordered input zeroes the vector.
@@ -174,29 +177,33 @@ lf_checker_rt::export!(thiscall, rw_009687e0(this: u32, a1: u32, scale: f32, a3:
                     v7 = 1.0;
                     v6 = 0.0;
                 }
-                // Second difference vector, chained through e_prev.
-                let c1 = sub(e_prev, cell_f(i as usize, 5));
+                // Second difference vector, anchored at the same carry.
+                let c1 = sub(x3carry, cell_f(i as usize, 5));
                 let c2 = sub(t90, cell_f(i as usize, 4));
                 let ee = add(mul(c1, c1), mul(c2, c2));
-                let (w3, w0): (f32, f32);
+                let (w3, w0, x3j): (f32, f32, f32);
                 if !(eps > ee) {
                     if ee.is_nan() {
                         let root = ee.sqrt();
                         let inv = core::hint::black_box(one) / core::hint::black_box(root);
                         w3 = mul(c2, inv);
                         w0 = mul(c1, inv);
+                        x3j = w3;
                     } else {
                         w3 = mul(c2, zero);
                         w0 = mul(c1, zero);
+                        x3j = w3;
                     }
                 } else {
                     w3 = 1.0;
                     w0 = 0.0;
+                    x3j = 1.0;
                 }
-                e_prev = ee;
                 let f_a = if i == 4 {
+                    x3carry = x3j;
                     one
                 } else {
+                    x3carry = mul(x3j, v7);
                     clamp01(add(mul(w0, v6), mul(w3, v7)))
                 };
                 let cd = cdata();

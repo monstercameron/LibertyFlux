@@ -1,35 +1,32 @@
 // original: 0x00585E80 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_205, player_schema::LeaderboardInfo, 10>::vf2
 
-/// Interface query: publish this interface's table when the id matches.
+/// Leaderboard info tag check: when the object's tag matches `key`, stamp
+/// the tag constant into `*out` (race 205).
 ///
-/// Calls the object's own id getter (slot 1 of its table, `this` in ECX).
-/// When the answer equals `want_id` and `out` is non-null, the interface's
-/// table address is stored through `out` and `out` is returned; otherwise
-/// NULL is returned and nothing is stored.
+/// The object's virtual slot 1 (double indirection through `this`) yields
+/// its tag. If the tag differs from `key`, or `out` is null, the result is
+/// 0 and nothing is written. Otherwise the tag descriptor address (file VA
+/// 0xfdce9c, relocated at load) is stored to `*out` and `out` is
+/// returned.
 ///
-/// The published table address is a link-time constant that the original
-/// stores relocated (its HIGHLOW entry is applied like any other), so the
-/// rewrite derives it with `relocated()` rather than a literal. The indirect
-/// call runs through the same fabricated table on both sides and lands on
-/// the same stub.
-///
-/// Original: thiscall, two stack words, callee pops 8.
-lf_checker_rt::export!(thiscall, rw_00585E80(this: u32, out: u32, want_id: u32) -> u32 {
-    unsafe {
-        const ID_SLOT_BYTES: u32 = 4;
-        const IFACE_TABLE_FILE_VA: u32 = 0x00FDCE9C;
+/// Calling convention: thiscall with two stack words (`this` in ECX).
 
-        let table = (this as *const u32).read_unaligned();
-        let get_id: extern "thiscall" fn(u32) -> u32 = core::mem::transmute(
-            (table.wrapping_add(ID_SLOT_BYTES) as *const u32).read_unaligned() as usize);
-        let got: u32 = get_id(this);
-        if got != want_id {
+lf_checker_rt::export!(thiscall, rw_00585e80(this: u32, out: u32, key: u32) -> u32 {
+    unsafe {
+        const TAG_FILE_VA: u32 = 0xfdce9c;
+        /// Byte offset of the tag getter in the object's vtable.
+        const VTABLE_SLOT: u32 = 4;
+        let vtable = (this as *const u32).read_unaligned();
+        let slot = (vtable.wrapping_add(VTABLE_SLOT) as *const u32).read_unaligned();
+        let tag_of: extern "thiscall" fn(u32) -> u32 =
+            core::mem::transmute(slot as usize);
+        if tag_of(this) != key {
             return 0;
         }
         if out == 0 {
             return 0;
         }
-        (out as *mut u32).write_unaligned(lf_checker_rt::relocated(IFACE_TABLE_FILE_VA));
+        (out as *mut u32).write_unaligned(lf_checker_rt::relocated(TAG_FILE_VA));
         out
     }
 });

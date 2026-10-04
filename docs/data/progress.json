@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-04",
-  "updated_at": "2026-10-04 14:17",
+  "updated_at": "2026-10-04 15:22",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,12 +12,12 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 18519,
-    "rewritten": 9544,
-    "verified": 9204
+    "named": 19282,
+    "rewritten": 10039,
+    "verified": 9635
   },
   "structures": 340,
-  "symbols": 9319,
+  "symbols": 9750,
   "measured": [
     {
       "label": "Code section",
@@ -99,28 +99,28 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 18519,
+      "value": 19282,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (9515); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (10278); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 9544,
+      "value": 10039,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 9204,
+      "value": 9635,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
   ],
   "activity": {
-    "lanes_running": 47,
-    "lanes_finished": 873,
-    "lanes_incomplete": 78,
-    "devlog_entries": 350
+    "lanes_running": 30,
+    "lanes_finished": 904,
+    "lanes_incomplete": 79,
+    "devlog_entries": 355
   },
   "map": [
     {
@@ -574,13 +574,13 @@
       "verified": 131
     },
     {
-      "stage": "named",
+      "stage": "rewritten",
       "from": "0x0051788F",
       "to": "0x0051D1B0",
       "count": 202,
       "named": 202,
-      "rewritten": 40,
-      "verified": 28
+      "rewritten": 105,
+      "verified": 93
     },
     {
       "stage": "named",
@@ -588,8 +588,8 @@
       "to": "0x00522AD1",
       "count": 201,
       "named": 201,
-      "rewritten": 33,
-      "verified": 33
+      "rewritten": 48,
+      "verified": 48
     },
     {
       "stage": "named",
@@ -606,8 +606,8 @@
       "to": "0x0052DD14",
       "count": 200,
       "named": 200,
-      "rewritten": 20,
-      "verified": 20
+      "rewritten": 38,
+      "verified": 38
     },
     {
       "stage": "named",
@@ -615,8 +615,8 @@
       "to": "0x00533636",
       "count": 202,
       "named": 202,
-      "rewritten": 64,
-      "verified": 64
+      "rewritten": 86,
+      "verified": 86
     },
     {
       "stage": "named",
@@ -687,8 +687,8 @@
       "to": "0x0055FF43",
       "count": 203,
       "named": 203,
-      "rewritten": 40,
-      "verified": 40
+      "rewritten": 80,
+      "verified": 80
     },
     {
       "stage": "named",
@@ -696,8 +696,8 @@
       "to": "0x00565864",
       "count": 200,
       "named": 200,
-      "rewritten": 20,
-      "verified": 20
+      "rewritten": 60,
+      "verified": 60
     },
     {
       "stage": "named",
@@ -741,8 +741,8 @@
       "to": "0x0058160C",
       "count": 202,
       "named": 202,
-      "rewritten": 80,
-      "verified": 80
+      "rewritten": 85,
+      "verified": 83
     },
     {
       "stage": "named",
@@ -750,16 +750,16 @@
       "to": "0x00586F2E",
       "count": 208,
       "named": 208,
-      "rewritten": 20,
-      "verified": 20
+      "rewritten": 67,
+      "verified": 60
     },
     {
-      "stage": "named",
+      "stage": "rewritten",
       "from": "0x00586F2F",
       "to": "0x0058C84F",
       "count": 206,
       "named": 206,
-      "rewritten": 75,
+      "rewritten": 115,
       "verified": 35
     },
     {
@@ -777,8 +777,8 @@
       "to": "0x00597A93",
       "count": 208,
       "named": 208,
-      "rewritten": 43,
-      "verified": 39
+      "rewritten": 83,
+      "verified": 79
     },
     {
       "stage": "named",
@@ -844,65 +844,65 @@
       "verified": 0
     },
     {
-      "stage": "identified",
+      "stage": "named",
       "from": "0x005BEA7F",
       "to": "0x005C439F",
       "count": 92,
-      "named": 30,
+      "named": 83,
       "rewritten": 0,
       "verified": 0
     },
     {
-      "stage": "identified",
+      "stage": "named",
       "from": "0x005C43A0",
       "to": "0x005C9CC1",
       "count": 16,
-      "named": 0,
-      "rewritten": 0,
-      "verified": 0
-    },
-    {
-      "stage": "identified",
-      "from": "0x005C9CC2",
-      "to": "0x005CF5E2",
-      "count": 33,
-      "named": 1,
-      "rewritten": 0,
-      "verified": 0
-    },
-    {
-      "stage": "identified",
-      "from": "0x005CF5E3",
-      "to": "0x005D4F04",
-      "count": 82,
       "named": 11,
       "rewritten": 0,
       "verified": 0
     },
     {
-      "stage": "identified",
-      "from": "0x005D4F05",
-      "to": "0x005DA826",
-      "count": 109,
-      "named": 36,
-      "rewritten": 17,
-      "verified": 17
-    },
-    {
-      "stage": "identified",
-      "from": "0x005DA827",
-      "to": "0x005E0147",
-      "count": 110,
-      "named": 33,
+      "stage": "named",
+      "from": "0x005C9CC2",
+      "to": "0x005CF5E2",
+      "count": 33,
+      "named": 32,
       "rewritten": 0,
       "verified": 0
     },
     {
-      "stage": "identified",
+      "stage": "named",
+      "from": "0x005CF5E3",
+      "to": "0x005D4F04",
+      "count": 82,
+      "named": 76,
+      "rewritten": 0,
+      "verified": 0
+    },
+    {
+      "stage": "named",
+      "from": "0x005D4F05",
+      "to": "0x005DA826",
+      "count": 109,
+      "named": 105,
+      "rewritten": 17,
+      "verified": 17
+    },
+    {
+      "stage": "named",
+      "from": "0x005DA827",
+      "to": "0x005E0147",
+      "count": 110,
+      "named": 108,
+      "rewritten": 0,
+      "verified": 0
+    },
+    {
+      "stage": "named",
       "from": "0x005E0148",
       "to": "0x005E5A69",
       "count": 90,
-      "named": 19,
+      "named": 87,
       "rewritten": 5,
       "verified": 5
     },
@@ -911,16 +911,16 @@
       "from": "0x005E5A6A",
       "to": "0x005EB38A",
       "count": 164,
-      "named": 104,
+      "named": 162,
       "rewritten": 44,
       "verified": 42
     },
     {
-      "stage": "identified",
+      "stage": "named",
       "from": "0x005EB38B",
       "to": "0x005F0CAC",
       "count": 89,
-      "named": 20,
+      "named": 62,
       "rewritten": 0,
       "verified": 0
     },
@@ -929,34 +929,34 @@
       "from": "0x005F0CAD",
       "to": "0x005F65CE",
       "count": 63,
-      "named": 8,
+      "named": 30,
       "rewritten": 0,
       "verified": 0
     },
     {
-      "stage": "identified",
+      "stage": "named",
       "from": "0x005F65CF",
       "to": "0x005FBEEF",
       "count": 34,
-      "named": 2,
+      "named": 18,
       "rewritten": 0,
       "verified": 0
     },
     {
-      "stage": "identified",
+      "stage": "named",
       "from": "0x005FBEF0",
       "to": "0x00601811",
       "count": 92,
-      "named": 2,
+      "named": 89,
       "rewritten": 0,
       "verified": 0
     },
     {
-      "stage": "identified",
+      "stage": "named",
       "from": "0x00601812",
       "to": "0x00607132",
       "count": 101,
-      "named": 7,
+      "named": 51,
       "rewritten": 0,
       "verified": 0
     },
@@ -992,7 +992,7 @@
       "from": "0x00617C98",
       "to": "0x0061D5B9",
       "count": 73,
-      "named": 8,
+      "named": 13,
       "rewritten": 8,
       "verified": 7
     },
@@ -1002,17 +1002,17 @@
       "to": "0x00622EDA",
       "count": 113,
       "named": 49,
-      "rewritten": 32,
-      "verified": 32
+      "rewritten": 34,
+      "verified": 34
     },
     {
       "stage": "identified",
       "from": "0x00622EDB",
       "to": "0x006287FC",
       "count": 109,
-      "named": 29,
-      "rewritten": 16,
-      "verified": 16
+      "named": 33,
+      "rewritten": 17,
+      "verified": 17
     },
     {
       "stage": "identified",
@@ -1100,18 +1100,18 @@
       "from": "0x0065AA2B",
       "to": "0x0066034C",
       "count": 143,
-      "named": 40,
-      "rewritten": 9,
-      "verified": 9
+      "named": 43,
+      "rewritten": 15,
+      "verified": 15
     },
     {
       "stage": "named",
       "from": "0x0066034D",
       "to": "0x00665C6D",
       "count": 93,
-      "named": 49,
-      "rewritten": 34,
-      "verified": 34
+      "named": 52,
+      "rewritten": 42,
+      "verified": 42
     },
     {
       "stage": "identified",
@@ -1164,7 +1164,7 @@
       "to": "0x00687337",
       "count": 106,
       "named": 24,
-      "rewritten": 14,
+      "rewritten": 20,
       "verified": 14
     },
     {
@@ -1177,13 +1177,13 @@
       "verified": 3
     },
     {
-      "stage": "named",
+      "stage": "verified",
       "from": "0x0068CC59",
       "to": "0x0069257A",
       "count": 30,
       "named": 18,
-      "rewritten": 12,
-      "verified": 12
+      "rewritten": 17,
+      "verified": 17
     },
     {
       "stage": "identified",
@@ -2361,8 +2361,8 @@
       "to": "0x0096C1AA",
       "count": 66,
       "named": 34,
-      "rewritten": 25,
-      "verified": 24
+      "rewritten": 29,
+      "verified": 28
     },
     {
       "stage": "identified",
@@ -2370,8 +2370,8 @@
       "to": "0x00971ACC",
       "count": 24,
       "named": 5,
-      "rewritten": 0,
-      "verified": 0
+      "rewritten": 2,
+      "verified": 2
     },
     {
       "stage": "identified",
@@ -2514,8 +2514,8 @@
       "to": "0x009CACE5",
       "count": 33,
       "named": 4,
-      "rewritten": 1,
-      "verified": 1
+      "rewritten": 2,
+      "verified": 2
     },
     {
       "stage": "named",
@@ -2523,8 +2523,8 @@
       "to": "0x009D0607",
       "count": 308,
       "named": 296,
-      "rewritten": 130,
-      "verified": 122
+      "rewritten": 131,
+      "verified": 123
     },
     {
       "stage": "identified",
@@ -2585,18 +2585,18 @@
       "from": "0x009F1CD1",
       "to": "0x009F75F2",
       "count": 102,
-      "named": 44,
-      "rewritten": 38,
-      "verified": 38
+      "named": 48,
+      "rewritten": 44,
+      "verified": 43
     },
     {
       "stage": "verified",
       "from": "0x009F75F3",
       "to": "0x009FCF14",
       "count": 103,
-      "named": 73,
-      "rewritten": 60,
-      "verified": 58
+      "named": 76,
+      "rewritten": 63,
+      "verified": 60
     },
     {
       "stage": "verified",
@@ -2648,9 +2648,9 @@
       "from": "0x00A18CBD",
       "to": "0x00A1E5DD",
       "count": 55,
-      "named": 21,
-      "rewritten": 12,
-      "verified": 12
+      "named": 22,
+      "rewritten": 21,
+      "verified": 21
     },
     {
       "stage": "identified",
@@ -2658,8 +2658,8 @@
       "to": "0x00A23EFF",
       "count": 58,
       "named": 19,
-      "rewritten": 11,
-      "verified": 10
+      "rewritten": 14,
+      "verified": 13
     },
     {
       "stage": "identified",
@@ -2972,18 +2972,18 @@
       "from": "0x00AE1576",
       "to": "0x00AE6E96",
       "count": 72,
-      "named": 24,
-      "rewritten": 17,
-      "verified": 17
+      "named": 25,
+      "rewritten": 18,
+      "verified": 18
     },
     {
       "stage": "identified",
       "from": "0x00AE6E97",
       "to": "0x00AEC7B8",
       "count": 40,
-      "named": 10,
-      "rewritten": 7,
-      "verified": 7
+      "named": 13,
+      "rewritten": 13,
+      "verified": 12
     },
     {
       "stage": "identified",
@@ -2991,8 +2991,8 @@
       "to": "0x00AF20DA",
       "count": 45,
       "named": 2,
-      "rewritten": 0,
-      "verified": 0
+      "rewritten": 1,
+      "verified": 1
     },
     {
       "stage": "identified",
@@ -3026,27 +3026,27 @@
       "from": "0x00B02C3F",
       "to": "0x00B08560",
       "count": 85,
-      "named": 35,
-      "rewritten": 21,
-      "verified": 21
+      "named": 36,
+      "rewritten": 22,
+      "verified": 22
     },
     {
-      "stage": "identified",
+      "stage": "named",
       "from": "0x00B08561",
       "to": "0x00B0DE82",
       "count": 56,
-      "named": 17,
-      "rewritten": 12,
-      "verified": 12
+      "named": 28,
+      "rewritten": 19,
+      "verified": 17
     },
     {
       "stage": "identified",
       "from": "0x00B0DE83",
       "to": "0x00B137A3",
       "count": 90,
-      "named": 7,
-      "rewritten": 0,
-      "verified": 0
+      "named": 10,
+      "rewritten": 2,
+      "verified": 2
     },
     {
       "stage": "identified",
@@ -3377,18 +3377,18 @@
       "from": "0x00BDC05D",
       "to": "0x00BE197E",
       "count": 223,
-      "named": 147,
-      "rewritten": 26,
-      "verified": 26
+      "named": 150,
+      "rewritten": 29,
+      "verified": 29
     },
     {
-      "stage": "identified",
+      "stage": "named",
       "from": "0x00BE197F",
       "to": "0x00BE72A0",
       "count": 100,
-      "named": 27,
-      "rewritten": 3,
-      "verified": 3
+      "named": 57,
+      "rewritten": 33,
+      "verified": 33
     },
     {
       "stage": "named",
@@ -3711,8 +3711,8 @@
       "to": "0x00CAFB59",
       "count": 180,
       "named": 112,
-      "rewritten": 33,
-      "verified": 33
+      "rewritten": 40,
+      "verified": 40
     },
     {
       "stage": "identified",
@@ -3728,7 +3728,7 @@
       "from": "0x00CB547B",
       "to": "0x00CBAD9C",
       "count": 112,
-      "named": 20,
+      "named": 21,
       "rewritten": 19,
       "verified": 19
     },
@@ -3828,17 +3828,17 @@
       "to": "0x00CF820D",
       "count": 86,
       "named": 38,
-      "rewritten": 18,
-      "verified": 18
+      "rewritten": 33,
+      "verified": 33
     },
     {
       "stage": "named",
       "from": "0x00CF820E",
       "to": "0x00CFDB2F",
       "count": 129,
-      "named": 89,
-      "rewritten": 51,
-      "verified": 22
+      "named": 90,
+      "rewritten": 56,
+      "verified": 27
     },
     {
       "stage": "identified",
@@ -3908,7 +3908,7 @@
       "from": "0x00D24B1B",
       "to": "0x00D2A43C",
       "count": 82,
-      "named": 3,
+      "named": 34,
       "rewritten": 0,
       "verified": 0
     },
@@ -4030,11 +4030,11 @@
       "verified": 20
     },
     {
-      "stage": "named",
+      "stage": "identified",
       "from": "0x00D72AF1",
       "to": "0x00D78412",
       "count": 65,
-      "named": 33,
+      "named": 30,
       "rewritten": 18,
       "verified": 18
     },
@@ -4080,8 +4080,8 @@
       "to": "0x00D941BA",
       "count": 52,
       "named": 28,
-      "rewritten": 21,
-      "verified": 20
+      "rewritten": 23,
+      "verified": 22
     },
     {
       "stage": "identified",
@@ -4111,13 +4111,13 @@
       "verified": 15
     },
     {
-      "stage": "identified",
+      "stage": "named",
       "from": "0x00DA4D20",
       "to": "0x00DAA640",
       "count": 127,
-      "named": 63,
-      "rewritten": 47,
-      "verified": 47
+      "named": 72,
+      "rewritten": 56,
+      "verified": 55
     },
     {
       "stage": "identified",
@@ -4187,8 +4187,8 @@
       "from": "0x00DD162C",
       "to": "0x00DD6F4D",
       "count": 57,
-      "named": 23,
-      "rewritten": 3,
+      "named": 24,
+      "rewritten": 4,
       "verified": 2
     },
     {
@@ -4214,9 +4214,9 @@
       "from": "0x00DE2191",
       "to": "0x00DE7AB2",
       "count": 88,
-      "named": 20,
-      "rewritten": 0,
-      "verified": 0
+      "named": 21,
+      "rewritten": 2,
+      "verified": 1
     },
     {
       "stage": "identified",
@@ -4358,9 +4358,9 @@
       "from": "0x00E3B3AB",
       "to": "0x00E40CCB",
       "count": 50,
-      "named": 25,
-      "rewritten": 25,
-      "verified": 25
+      "named": 31,
+      "rewritten": 30,
+      "verified": 29
     },
     {
       "stage": "rewritten",
@@ -4421,9 +4421,9 @@
       "from": "0x00E62396",
       "to": "0x00E67CB6",
       "count": 666,
-      "named": 459,
-      "rewritten": 457,
-      "verified": 457
+      "named": 499,
+      "rewritten": 466,
+      "verified": 466
     },
     {
       "stage": "identified",
