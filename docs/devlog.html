@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#format-models">Rust reader: drawables and fragments (WDR, WDD, WFT)</a></li>
       <li><a href="#format-map-data">Rust reader: map definition and placement files (IDE, WPL, IPL-style text)</a></li>
       <li><a href="#reloc-reconcile">The relocation table is fine; three lanes read it wrong</a></li>
       <li><a href="#library-ranges">Library code mapped to exact function lists</a></li>
@@ -108,6 +109,41 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="format-models">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Rust reader: drawables and fragments (WDR, WDD, WFT)</h2>
+      <p>A new Rust crate reads the game's model files end to end, and every file in a 112-file sample now parses with all indices in range and all positions inside their stated bounds.</p>
+      <h3>What was asked</h3>
+      <p>Write a clean Rust reader for the drawable, drawable-dictionary and fragment formats, covering shader groups and parameters, skeletons, level-of-detail groups, models, geometries, vertex and index buffers and vertex declarations, with vertex data decoded into positions, normals, colours and texture coordinates. Validate on real files and report counts.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The game ships tens of thousands of model files: drawables are the most numerous by far, followed by dictionaries and fragments. A sample of just over a hundred files, plus the two dictionaries that ship loose, was extracted with key-handling tools and parsed two ways, in Python and in Rust, with identical results.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Measure</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><th role="columnheader">Files parsed</th><td role="cell" data-label="Value">112 of 112</td><td role="cell" data-label="What it means">Drawables, fragments and both loose dictionaries</td></tr>
+      <tr role="row"><th role="row"><th role="columnheader">Geometries</th><td role="cell" data-label="Value">about 1,300</td><td role="cell" data-label="What it means">Single draw calls across all LODs</td></tr>
+      <tr role="row"><th role="row"><th role="columnheader">Vertices / triangles</th><td role="cell" data-label="Value">about 906,000 / 744,000</td><td role="cell" data-label="What it means">Decoded through the vertex declarations</td></tr>
+      <tr role="row"><th role="row"><th role="columnheader">Indices checked</th><td role="cell" data-label="Value">about 2.2 million, none out of range</td><td role="cell" data-label="What it means">Every index points at a real vertex</td></tr>
+      <tr role="row"><th role="row"><th role="columnheader">Positions checked</th><td role="cell" data-label="Value">about 755,000, none out of bounds</td><td role="cell" data-label="What it means">Geometry sits inside its stated bounds</td></tr>
+      <tr role="row"><th role="row"><th role="columnheader">Primitive type</th><td role="cell" data-label="Value">triangle lists throughout</td><td role="cell" data-label="What it means">No strips, fans, lines or points in the sample</td></tr>
+      <tr role="row"><th role="row"><th role="columnheader">Vertex formats</th><td role="cell" data-label="Value">plain 32-bit floats plus packed colours</td><td role="cell" data-label="What it means">Compact half-float and packed-normal forms never appear here</td></tr>
+      <tr role="row"><th role="row"><th role="columnheader">Shader names</th><td role="cell" data-label="Value">21 distinct</td><td role="cell" data-label="What it means">One default effect for props, a paint/glass/tire family for vehicles</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The most surprising finding concerns fragments: their child records carry no models at all. All render geometry lives in the main drawable, and the per-child record that one open-source reader labels as a drawable is really a small transform node with empty bounds. The new reader exposes the node without misparsing it.</p>
+      <p><span class="evidence">Inferred</span> Several documentation details needed correction along the way: vtable figures on the wiki mix byte orders from row to row, the so-called codec word is just the start of the compressed stream, and the primitive-type list starts counting at zero, not one.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>The new crate is original code with a single permissive dependency, no unsafe blocks, and unit tests built from hand-made byte patterns plus an integration test over real files.</li>
+      <li>It carries a minimal private copy of the resource-container logic until the shared container crate lands, at which point the private copy should be deleted.</li>
+      <li>Fragment physics, skinning palettes, half-float vertices and texture dictionaries inside model files are parsed as far as offsets and left for later lanes.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Build and test the crate from its own folder with the normal Rust commands, then run the integration test with the game folder path set so it can read the two loose dictionaries and the extracted sample. An example program prints a one-file summary of names, counts and sizes without writing anything.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first Rust draft failed on every file with an absurd collection count. The cause was passing an already-resolved item list where the collection header was expected, so padding bytes were read as a count. A second early mistake undercounted triangles by assuming the primitive list started at one; reading the actual enumeration fixed it. Both mistakes were invisible until the real-file test ran, which is why the sample comparison against the independent Python walk mattered.</p>
+      </article>
 
       <article class="entry" id="format-map-data">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
