@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: Production batch: five audio functions verified, and a compiler trap for float rewrites",
+    "commit": null,
+    "summary": "Findings from the r-b73 lane.",
+    "changes": [
+      "New devlog entry: Production batch: five audio functions verified, and a compiler trap for float rewrites.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 23 more functions pass the checker (4755 in total)",
     "commit": "0d7a01e0aa048944210972a0575293241099e825",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

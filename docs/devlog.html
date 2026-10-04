@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b73">Production batch: five audio functions verified, and a compiler trap for float rewrites</a></li>
       <li><a href="#production-b63">Production batch: a checker pop-cap flaw, NaN payload codegen, and three verified audio functions</a></li>
       <li><a href="#production-s128">A worker bug that fails correct rewrites above 256 calls</a></li>
       <li><a href="#production-s123">A full call log silently corrupts the next verdict</a></li>
@@ -283,6 +284,26 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b73">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production batch: five audio functions verified, and a compiler trap for float rewrites</h2>
+      <p>Five medium-size audio functions were rewritten in Rust and proved bit-identical to the originals over one thousand trials each, and the work surfaced a compiler behaviour every future float rewrite must handle: the Rust compiler reorders single floating-point additions and multiplications, which changes which not-a-number payload the hardware keeps.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of six neighbouring audio functions in Rust and prove each rewrite behaves identically to the original using the version two checker, which runs both sides from identical state with scripted answers for outgoing calls.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> Five of six functions passed one thousand trials each with zero mismatches, covering return values, written memory, stack behaviour, outgoing calls and fault parity.</p>
+      <p><span class="evidence verified">Verified</span> The compiler freely swaps the two operands of a single float addition or multiplication when generating code. For ordinary numbers this is harmless, but when both operands are not-a-number values with different payloads, the hardware keeps the destination operand's payload, so the swap changes the result bits. Splitting expressions into separate accumulation statements did not prevent it; this was confirmed by disassembling the built rewrite twice.</p>
+      <p><span class="evidence verified">Verified</span> The fix used here is small exact-operation helpers that reproduce the hardware rule directly: a not-a-number destination wins, otherwise a not-a-number source wins, otherwise the real operation runs. Four thousand float trials with not-a-number-heavy inputs then passed bit-exact. Subtraction, division and square root need no helper because the compiler cannot reorder them.</p>
+      <p><span class="evidence verified">Verified</span> Two functions read stack slots they never wrote, passing the garbage on to an output or a call argument. These were reproduced as genuine uninitialized reads, which the checker defines through its stack fill setting, rather than hardcoded to zero.</p>
+      <p><span class="evidence verified">Verified</span> The sixth function was triaged but not attempted: it is several times larger than the others with about twenty distinct callees, and needs an estimated two to three hours. No checker gap was found in it; it is deferred on volume alone.</p>
+      <h3>What was decided or recommended</h3>
+      <p>Float-heavy lanes should use exact-operation helpers or an equivalent for every addition and multiplication whose operands can both be not-a-number, and should transcribe each operation's operand side individually rather than assuming uniformity. A shared runtime module for these helpers would save every future lane the same debugging. The deferred function is ready for pickup from the triage notes.</p>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane's five contracts through the version two checker with one thousand trials each; all pass. Reverting any final addition's operand side, or replacing an exact helper with a plain operator, fails within the not-a-number-heavy early trials.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Two self-inflicted tracing errors cost the most time: a missed instruction that saved a register to the frame (misread as uninitialized memory), and a backwards byte-order assumption when composing a call-argument word from neighbouring byte stores. Both were caught by the checker's call logs and single-trial probes, not by re-reading. Rebuilt rewrite files were also repeatedly locked by lingering worker processes; renaming the file aside with a fresh name and rebuilding worked every time.</p>
+      </article>
 
       <article class="entry" id="production-b63">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
