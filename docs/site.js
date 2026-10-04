@@ -58,6 +58,30 @@ function render(data) {
   var tip = document.getElementById("tip");
   var cells = Array.isArray(data.map) && data.map.length ? data.map : null;
 
+  // The map can count a slice by functions (always) or by bytes of code (when the data has them).
+  // Bytes field, written by the coordinator's progress script when function sizes are available: each slice
+  // may carry  "bytes": {"total": n, "named": n, "rewritten": n, "verified": n}  where total is the size of
+  // the slice's game functions and each stage is the size of those that have reached it (cumulative, like the
+  // function counts). A top-level "bytes": {"game": n, ...} may carry the totals. The bytes view is offered
+  // only when every slice that holds game functions has a numeric bytes.total; otherwise the map shows
+  // functions and the switch stays hidden. No size is ever estimated here.
+  function hasBytes(list) {
+    return list.some(function (entry) { return entry.count > 0; }) && list.every(function (entry) {
+      return !entry.count || (entry.bytes && typeof entry.bytes.total === "number" && entry.bytes.total > 0);
+    });
+  }
+  // The stage at least half of a slice has reached, by bytes, mirroring how "stage" is defined by functions.
+  function byteStage(b) {
+    if (!b || !b.total) return "unmeasured";
+    var reached = ["verified", "rewritten", "named"].filter(function (key) { return (b[key] || 0) * 2 >= b.total; })[0];
+    return reached || "identified";
+  }
+  function bytesText(n) {
+    if (n >= 1048576) return (n / 1048576).toFixed(n >= 10485760 ? 0 : 1) + " MB";
+    if (n >= 1024) return (n / 1024).toFixed(n >= 10240 ? 0 : 1) + " KB";
+    return fmt.format(n) + " bytes";
+  }
+
   if (!cells) {
     emptyEl.hidden = false;
   } else {
@@ -65,34 +89,85 @@ function render(data) {
     legendEl.hidden = false;
     var perCell = total ? Math.round(total / cells.length) : null;
     var title = document.getElementById("map-title");
-    title.appendChild(document.createTextNode(
-      " Each square is " + (perCell ? "about " + fmt.format(perCell) + " functions" : "a slice of the code") +
-      " in address order, left to right and top to bottom. Its shade is the stage at least half of them have reached;" +
-      " the pale band rising from the bottom is the share already verified."));
+    var titleText = document.createTextNode("");
+    title.appendChild(titleText);
+    var bytesReady = hasBytes(cells);
+    var mode = "functions";
+    var modeButtons = [];
+    if (bytesReady) {
+      try { if (localStorage.getItem("map-mode") === "bytes") mode = "bytes"; } catch (e) { /* storage blocked: default view */ }
+      var switcher = el("div", "map-mode");
+      switcher.setAttribute("role", "group");
+      switcher.setAttribute("aria-label", "Count each square by");
+      switcher.appendChild(el("span", "map-mode-label", "Count by"));
+      [["functions", "Functions"], ["bytes", "Bytes of code"]].forEach(function (option) {
+        var button = el("button", null, option[1]);
+        button.type = "button";
+        button.dataset.mode = option[0];
+        button.addEventListener("click", function () {
+          mode = option[0];
+          try { localStorage.setItem("map-mode", mode); } catch (e) { /* not remembered */ }
+          paint();
+        });
+        switcher.appendChild(button);
+        modeButtons.push(button);
+      });
+      title.parentNode.insertAdjacentElement("afterend", switcher);
+    }
 
     var defaultReadout = data.mapRange || "";
     readout.textContent = defaultReadout;
 
     var nodes = cells.map(function (entry) {
       var cell = el("span", "cell");
-      var stage = STAGE_NAMES[entry.stage] ? entry.stage : "unmeasured";
-      cell.dataset.stage = stage;
       cell.dataset.range = entry.from + " to " + entry.to;
-      var detail = entry.count ? fmt.format(entry.count) + " functions" : "no game functions";
-      if (entry.count && typeof entry.verified === "number") {
-        detail += ": " + fmt.format(entry.named || 0) + " named, " + fmt.format(entry.rewritten || 0) + " rewritten, " +
-          fmt.format(entry.verified) + " verified";
-        if (entry.verified > 0 && stage !== "verified") {
-          cell.style.setProperty("--done", Math.max(12, Math.round(100 * entry.verified / entry.count)) + "%");
-          cell.classList.add("part");
-        }
-      } else if (entry.count) {
-        detail = STAGE_NAMES[stage] + ", " + detail;
-      }
-      cell.dataset.detail = detail;
       mapEl.appendChild(cell);
       return cell;
     });
+
+    // Shade every square, its verified band and its tooltip for the current count.
+    function paint() {
+      var byBytes = mode === "bytes";
+      modeButtons.forEach(function (button) { button.setAttribute("aria-pressed", String(button.dataset.mode === mode)); });
+      var bytesTotal = byBytes ? cells.reduce(function (sum, entry) { return sum + (entry.count ? entry.bytes.total : 0); }, 0) : 0;
+      titleText.textContent = byBytes
+        ? " Each square is a slice of the code in address order, about " + bytesText(Math.round(bytesTotal / cells.length)) +
+          " of game code on average, left to right and top to bottom. Its shade is the stage at least half of its bytes have reached;" +
+          " the pale band rising from the bottom is the share of bytes already verified."
+        : " Each square is " + (perCell ? "about " + fmt.format(perCell) + " functions" : "a slice of the code") +
+          " in address order, left to right and top to bottom. Its shade is the stage at least half of them have reached;" +
+          " the pale band rising from the bottom is the share already verified.";
+      cells.forEach(function (entry, index) {
+        var cell = nodes[index];
+        var stage, detail, share = 0;
+        cell.classList.remove("part");
+        if (byBytes) {
+          var b = entry.count ? entry.bytes : null;
+          stage = byteStage(b);
+          detail = b ? bytesText(b.total) + " of game code in " + fmt.format(entry.count) + " functions: " +
+            bytesText(b.named || 0) + " named, " + bytesText(b.rewritten || 0) + " rewritten, " + bytesText(b.verified || 0) + " verified"
+            : "no game functions";
+          if (b && b.verified > 0) share = b.verified / b.total;
+        } else {
+          stage = STAGE_NAMES[entry.stage] ? entry.stage : "unmeasured";
+          detail = entry.count ? fmt.format(entry.count) + " functions" : "no game functions";
+          if (entry.count && typeof entry.verified === "number") {
+            detail += ": " + fmt.format(entry.named || 0) + " named, " + fmt.format(entry.rewritten || 0) + " rewritten, " +
+              fmt.format(entry.verified) + " verified";
+            if (entry.verified > 0) share = entry.verified / entry.count;
+          } else if (entry.count) {
+            detail = STAGE_NAMES[stage] + ", " + detail;
+          }
+        }
+        cell.dataset.stage = stage;
+        if (share > 0 && stage !== "verified") {
+          cell.style.setProperty("--done", Math.max(12, Math.round(100 * share)) + "%");
+          cell.classList.add("part");
+        }
+        cell.dataset.detail = detail;
+      });
+      if (active >= 0) select(active);
+    }
 
     mapEl.tabIndex = 0;
     mapEl.setAttribute("role", "group");
@@ -114,6 +189,7 @@ function render(data) {
     function columns() {
       return getComputedStyle(mapEl).gridTemplateColumns.split(" ").length;
     }
+    paint();
 
     mapEl.addEventListener("keydown", function (e) {
       var step = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: columns(), ArrowUp: -columns() }[e.key];
