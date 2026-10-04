@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#emulator-harness">Original functions can be executed for comparison, but not with Unicorn on this machine</a></li>
       <li><a href="#swarm-speed">How fast an agent swarm went through phase 0, and what that does and does not say about the rest</a></li>
       <li><a href="#tools-xplat-build">Tools: building for the three target platforms</a></li>
       <li><a href="#tools-reverse-tools">Tools: reverse engineering helpers</a></li>
@@ -101,6 +102,40 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="emulator-harness">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Original functions can be executed for comparison, but not with Unicorn on this machine</h2>
+      <p>The planned checker approach works, with a different engine than planned. The Unicorn CPU emulator crashes on every execution attempt on this machine, so the lane built a small 32-bit harness that runs original functions natively through the operating system's own compatibility layer instead. Fifty small functions were executed with hundreds of random inputs, most ran cleanly, and two trial Rust rewrites matched their originals on all 200 inputs each.</p>
+      <h3>What was asked</h3>
+      <p>Prove or disprove that original game functions can be executed outside the game for comparison testing of Rust rewrites. The plan named the Unicorn emulator: map the executable, set registers and stack inputs, run each function until it returns, and record the return value and memory effects. The lane was also asked to cover harder cases (calls between functions, global data, system imports, floating point, object methods), measure speed, and design what agreement between original and rewrite means.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The emulator engine is unusable here. Every execution attempt crashes the whole process, including a minimal test of one trivial instruction with no hooks attached, and including non-x86 guest code. The fault is inside the emulator's own library, with a different crash code on different runs.</p>
+      <p><span class="evidence verified">Verified</span> A 32-bit helper program built with the project's Rust toolchain runs original functions correctly. It loads the executable's bytes with standard relocation fixups (a count cross-checked against an independent tool, matching exactly), calls one function at a time with chosen inputs, and reports registers, flags, floating-point state and changed memory as structured output. Faults are caught inside the process and reported with the failing location instead of crashing.</p>
+      <p><span class="evidence verified">Verified</span> The first of the code section's megabytes is encrypted or compressed on disk (entropy near the theoretical maximum, undecodable as instructions), while the remaining nine megabytes are normal code. Functions in the encrypted part cannot be executed from file bytes at all.</p>
+      <p><span class="evidence verified">Verified</span> Of 50 sampled small leaf functions run 8 times each, naive random inputs completed only about one run in eight, while shaped inputs (pointers aimed at scratch memory) completed over half, and a follow-up with better stack inputs brought 43 of 50 to fully passing. All failures were memory access faults, never illegal instructions. Repeated runs were bit-identical.</p>
+      <p><span class="evidence verified">Verified</span> Harder cases behave as needed: a real nested call between two game functions executed end to end; a global data read returned the correct startup value; an unresolved system import faulted deterministically at exactly the expected address, which is what makes it interceptable; legacy and modern floating-point instructions both work and their outputs are captured.</p>
+      <p><span class="evidence verified">Verified</span> Two hand-written Rust twins of original functions agreed with the originals on all 200 random inputs each, including calling-convention stack accounting on a stdcall function.</p>
+      <table role="table">
+      <thead role="rowgroup">
+      <tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Small leaf functions found</td><td role="cell" data-label="Value">About 1800 in the readable code</td><td role="cell" data-label="What it means">Plenty of easy first targets for the checker</td></tr>
+      <tr role="row"><td role="cell">Leaf trials passing with shaped inputs</td><td role="cell" data-label="Value">43 of 50 functions fully passing</td><td role="cell" data-label="What it means">Input shaping matters more than engine choice</td></tr>
+      <tr role="row"><td role="cell">Relocation entries applied</td><td role="cell" data-label="Value">About 292 thousand, matching an independent count</td><td role="cell" data-label="What it means">The harness loads the program the way the OS loader would</td></tr>
+      <tr role="row"><td role="cell">Single call cost</td><td role="cell" data-label="Value">Roughly a tenth of a millisecond</td><td role="cell" data-label="What it means">Execution is cheap; process setup dominates and should be batched</td></tr>
+      <tr role="row"><td role="cell">End-to-end trial cost today</td><td role="cell" data-label="Value">A few hundred milliseconds</td><td role="cell" data-label="What it means">A persistent worker running many trials per process is needed for speed</td></tr>
+      <tr role="row"><td role="cell">Twin agreement</td><td role="cell" data-label="Value">200 of 200 on both trial rewrites</td><td role="cell" data-label="What it means">The full compare loop works in principle</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>The checker should use native 32-bit execution, not Unicorn, on this machine: one worker process owns the relocated original plus the linked rewrite, calls either side through the same trampoline, and compares return values, stack accounting, written memory, outgoing calls with arguments, and floating-point state. Bitwise floating-point equality should be the default, with per-function tolerance only where declared. Functions in the encrypted region and functions needing live operating-system state are out of scope for the checker and should be tracked as blocked rather than failed.</p>
+      <h3>How to reproduce it</h3>
+      <p>Build the scratch helper and twin crates for the 32-bit Windows target with the installed Rust toolchain (offline build, no extra dependencies), then run the driver scripts in the lane's scratch folder: one maps the executable and samples leaf functions with a disassembler, one runs each leaf with random and shaped inputs and records structured results, and one compares the two Rust twins against their originals over 200 seeded inputs. The design document in the same folder describes the contract, the input generation policy, and the per-case handling.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first leaf scan produced nonsense instructions because it started inside the encrypted region; an entropy map showed the boundary clearly and the scan was restricted to readable code. The emulator failure looked at first like a harness bug and was only settled by a minimal one-instruction test with no hooks. The native harness then crashed in its own trampoline for several rounds: the fault addresses first suggested an emulation quirk, but disassembling the generated bytes plus an in-process fault handler proved it was an ordinary stack bookkeeping bug (the host stack pointer saved on the wrong side of two push instructions). Low memory also turned out to be unmappable in 32-bit processes on this host, which forced relocation support earlier than planned. Each of these cost time but left a checkable artifact in the scratch folder.</p>
+      </article>
 
       <article class="entry" id="swarm-speed">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
