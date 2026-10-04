@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n68">A relocation-table trap and a bit-exact vector rewrite</a></li>
       <li><a href="#production-b04">One verified, and a checker gap: loops that poll a callee until done</a></li>
       <li><a href="#swarm-memory-limit">The swarm ran the machine out of memory: what the real limit is</a></li>
       <li><a href="#production-s48">Production batch: eighteen small functions verified, one checker anomaly</a></li>
@@ -224,6 +225,32 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n68">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A relocation-table trap and a bit-exact vector rewrite</h2>
+      <p>Verifying one batch of script handlers caught a wrong assumption about a pushed constant, traced it to a relocation-lookup bug that silently reports nothing as relocated, and proved a floating-point handler bit-exact with explicit SSE operations.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty-five script native handlers in Rust and prove each one behaves identically to the original with the differential checker.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> Twenty-three handlers verified, each over one thousand trials with zero failures. One handler is a single jump to a shared implementation with nothing of its own to rewrite, and one pushes boolean bytes whose upper bytes are leftover stack contents rather than behaviour, which the checker cannot mask per argument.</li>
+      <li><span class="evidence verified">Verified</span> One handler passes a constant tag together with the call context itself, leaving argument unpacking to the engine. The tag looked like a plain constant but the checker showed the original pushing the relocated address; a direct parse of the relocation table confirmed the entry, and deriving the address at load passed every trial.</li>
+      <li><span class="evidence verified">Verified</span> The relocation lookup snippet used for reconnaissance adds the table block base to a value that already includes it, so it matches no entry anywhere and every address looks unrelocated. The checker's failure was the only thing that exposed the wrong conclusion.</li>
+      <li><span class="evidence verified">Verified</span> One handler does its own arithmetic instead of calling the engine: a three-component vector magnitude. Rewriting it with the same scalar SSE operations in the same order is bit-exact across edge inputs including zeros, infinities and quiet NaN.</li>
+      <li><span class="evidence verified">Verified</span> Two handlers stage a float value through a scratch register push, but overwrite the whole word before the call, so no register garbage survives; plain forwarding matches with all comparisons enabled.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Reconnaissance code should use the relocation entry value directly as the full address, never add the block base to it, and any earlier not-relocated conclusion drawn with the doubling formula should be treated as unknown until rechecked against a raw table parse.</li>
+      <li>Pure-compute floating-point handlers should be rewritten with explicit SIMD operations in the original order rather than plain arithmetic, so the result is identical by construction on every input class.</li>
+      <li>Handlers whose pushed call words contain leftover bytes the rewrite cannot observe stay deferred until the checker can mask individual call arguments.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane's checker contracts for the batch: the tag-forwarding handler fails every trial with a plain constant and passes every trial once the address is derived at load, and the vector handler passes every trial over float edge values with the SIMD rewrite. The lookup bug is visible by comparing the entry values against a raw walk of the relocation table.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>A rebuild failed because a lingering worker held the output file open, and the failure was missed because only the output length had been captured, so the next checker run tested the stale file and failed identically. Comparing file timestamps exposed it; renaming the locked file aside and rebuilding fixed it. The lesson is to always capture build output and compare timestamps before re-running after a rebuild.</p>
+      </article>
 
       <article class="entry" id="production-b04">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
