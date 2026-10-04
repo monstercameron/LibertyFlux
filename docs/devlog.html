@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#naming-14">Naming 150 leaderboard info methods from one board-key signal</a></li>
       <li><a href="#production-b208">A view-system initializer that reads its own uninitialized stack</a></li>
       <li><a href="#how-lanes-die">Three ways the coordinator lost lanes in one morning</a></li>
       <li><a href="#production-s263">Black box does not pin down float multiply order</a></li>
@@ -355,6 +356,40 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="naming-14">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Naming 150 leaderboard info methods from one board-key signal</h2>
+      <p>All 150 functions in the batch were named: they are nine virtual methods repeated across eighteen leaderboard definitions, and every copy carries the same per-board numeric key, which makes the naming check mechanical.</p>
+      <h3>What was asked</h3>
+      <p>Name 150 consecutive unnamed game functions, working out what the group is about first and then naming each function with a confidence of high, medium or low.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> The batch holds nine virtual methods of the leaderboard info template, repeated once per leaderboard definition: sixteen race boards and two car-steal boards. The nine behaviours are: return the board name string, return the board numeric id, find a column index by id, return the column id at an index, return a column byte size, return a column type code, map a column index to a position in a second id list, map a column id through a parallel array, and transfer a row through packed-buffer helpers.</p>
+      <p><span class="evidence verified">Verified</span> Every method of one board embeds the same small numeric constant: one method returns it and the other seven pass it to a shared schema routine. All eighteen boards showed exactly one distinct constant each, so a wrongly grouped function would stand out immediately. The constants are not sequential with board number.</p>
+      <p><span class="evidence verified">Verified</span> The shared schema routine and its type-mapping callee sit in the encrypted on-disk region and cannot be disassembled statically, so the exact domain of the id arrays (columns, stats or properties) stays unknown. The packed-buffer helpers used by the row-transfer method decode normally.</p>
+      <p><span class="evidence verified">Verified</span> The name-string method refines an earlier inference: its target is a plain name string in read-only data, with neighbouring boards' names stored back to back, not a descriptor struct.</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Method</th><th role="columnheader">Copies</th><th role="columnheader">Confidence</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">get_name</td><td role="cell" data-label="Copies">17</td><td role="cell" data-label="Confidence">high</td></tr>
+      <tr role="row"><td role="cell">get_leaderboard_id</td><td role="cell" data-label="Copies">16</td><td role="cell" data-label="Confidence">medium</td></tr>
+      <tr role="row"><td role="row"><td role="cell" data-label="Copies">get_column_index</td><td role="cell" data-label="Copies">18</td><td role="cell" data-label="Confidence">medium</td></tr>
+      <tr role="row"><td role="cell">get_column_id</td><td role="cell" data-label="Copies">17</td><td role="cell" data-label="Confidence">medium</td></tr>
+      <tr role="row"><td role="cell">get_column_size</td><td role="cell" data-label="Copies">17</td><td role="cell" data-label="Confidence">medium</td></tr>
+      <tr role="row"><td role="cell">get_column_type</td><td role="cell" data-label="Copies">14</td><td role="cell" data-label="Confidence">medium</td></tr>
+      <tr role="row"><td role="cell">get_mapped_column_position</td><td role="cell" data-label="Copies">17</td><td role="cell" data-label="Confidence">medium</td></tr>
+      <tr role="row"><td role="cell">map_column_id</td><td role="cell" data-label="Copies">17</td><td role="cell" data-label="Confidence">medium</td></tr>
+      <tr role="row"><td role="cell">transfer_row</td><td role="cell" data-label="Copies">17</td><td role="cell" data-label="Confidence">medium</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <p>All 150 functions got descriptive names in the class method style with subsystem network: 17 high, 133 medium, none low, none left empty. Later batches should reuse these nine method words verbatim for the remaining leaderboard definitions, since the same shapes repeat. If a later lane identifies the true domain nouns from a decrypted helper or a running game, the column wording wants one mechanical rename per method across every batch.</p>
+      <h3>How to reproduce it</h3>
+      <p>Read each function through the mapped image helper rather than the raw file, disassemble one copy of each distinct size fully from entry to return, and extract the embedded board constant and any referenced strings. Then check that every function attributed to one board shares that board's constant and size pattern before writing the names file incrementally.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p><span class="evidence verified">Verified</span> The inventory tags the batch as peds-tasks, which is wrong; the code, the class hierarchy lane and the shared callees all say network. Two of the tiny id getters are also referenced from unrelated event vtables, which looks like the linker folded identical constant-returning functions across subsystems.</p>
+      <p><span class="evidence verified">Verified</span> The disassembler prints small immediates in decimal and larger ones in hex, so the first version of the check script missed one board's key entirely. Matching both number formats fixed it.</p>
+      </article>
 
       <article class="entry" id="production-b208">
       <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
