@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Rewrites: 32 more functions pass the checker (9668 in total)",
+    "title": "Devlog: hourly review, 15:04",
     "commit": null,
+    "summary": "The fifth hourly review.",
+    "changes": [
+      "9,521 functions verified, 13.6% of the code by size; the rate since the last review was about 107,000 bytes an hour, against 60,000 in the morning.",
+      "The assembled library of verified rewrites was built for the first time, as 19 member crates, and 132 of 200 sampled replacements pass."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Rewrites: 32 more functions pass the checker (9668 in total)",
+    "commit": "e1dc61b668bd037ff67aa390cd8856edfc3e5656",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "32 rewrites added under rewrites/verified: 0 script native handlers and 32 other functions.",
