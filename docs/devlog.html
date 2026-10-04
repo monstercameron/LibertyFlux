@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-n77">A wrong calling convention, and two checker weaknesses it exposed</a></li>
       <li><a href="#production-n74">A relocation lookup bug the checker caught, and 24 verified native handlers</a></li>
       <li><a href="#production-n68">A relocation-table trap and a bit-exact vector rewrite</a></li>
       <li><a href="#production-b04">One verified, and a checker gap: loops that poll a callee until done</a></li>
@@ -226,6 +227,38 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-n77">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>A wrong calling convention, and two checker weaknesses it exposed</h2>
+      <p>A production lane rewriting script native handlers found that one handler's engine routine pops its own argument instead of using the usual convention, and that declaring the wrong convention makes the checker run the original into wild code; the same investigation showed faulting trials can report zero failures while comparing almost nothing, and that the shared checker binary disagrees with its own source on what counts as a pass.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite a batch of twenty-five script native handlers in Rust and prove each one equivalent to the original with the differential checker, deferring with a reason code any function the checker cannot verify.</p>
+      <h3>What was found</h3>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Handlers verified</td><td role="cell" data-label="Value">22 of 25, 1000 trials each, 0 failures</td><td role="cell" data-label="What it means"><span class="evidence verified">Verified</span> rewrites behave identically on every trial</td></tr>
+      <tr role="row"><td role="cell">Handlers deferred</td><td role="cell" data-label="Value">3 (two carry entry-register garbage in a call argument, one calls through a float register)</td><td role="cell" data-label="What it means"><span class="evidence verified">Verified</span> the checker cannot script these shapes today</td></tr>
+      <tr role="row"><td role="cell">Popping engine routine</td><td role="cell" data-label="Value">one handler performs no caller-side stack cleanup</td><td role="cell" data-label="What it means"><span class="evidence verified">Verified</span> its engine routine pops its own argument; every other handler in the batch uses the normal convention</td></tr>
+      <tr role="row"><td role="cell">Wrong-convention symptom</td><td role="cell" data-label="Value">original returns to a register value instead of its caller, then runs wild</td><td role="cell" data-label="What it means"><span class="evidence verified">Verified</span> the fault address equalled the register input on every probed trial</td></tr>
+      <tr role="row"><td role="cell">Silent worker death</td><td role="cell" data-label="Value">worker stopped responding at the same trial number on repeated runs</td><td role="cell" data-label="What it means"><span class="evidence">Inferred</span> wild execution corrupted the worker; deterministic per seed because inputs are seeded</td></tr>
+      <tr role="row"><td role="cell">Faulting trials compare little</td><td role="cell" data-label="Value">a faulting trial emits 2 of 9 comparisons, and same-code fault pairs pass</td><td role="cell" data-label="What it means"><span class="evidence verified">Verified</span> a run can show zero failures while comparing almost nothing</td></tr>
+      <tr role="row"><td role="cell">Binary disagrees with source</td><td role="cell" data-label="Value">binary returned pass with a failed termination check, which the source cannot produce</td><td role="cell" data-label="What it means"><span class="evidence verified">Verified</span> the shared binary was built from different logic than the tracked source</td></tr>
+      </tbody>
+      </table>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Call-site cleanup decides the declared convention: no cleanup after the call means the routine pops, so declare that convention; the one misdeclared handler passed fully once corrected.</li>
+      <li>Lanes should read the per-comparison totals in verdict files, not just the failure count, before calling a function verified.</li>
+      <li>The accept gate should keep requiring every comparison to pass, which is what blocks the vacuous fault-only runs from counting as verified.</li>
+      <li>The shared worker binary should be rebuilt from the tracked source, or the source difference documented, before wider rollout.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Take any handler whose call site has no caller-side cleanup, declare its engine routine with the normal convention, and run the checker: every trial faults at an address equal to one of the register inputs, and the worker eventually stops responding mid-contract at a seed-determined trial. Declaring the popping convention instead yields a clean full-comparison pass.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The silent mid-contract death first looked exactly like the known shared-worker flake seen by earlier lanes, and a re-seed only moved the death to a different trial. Probing single trials showed every trial was faulting for the same reason, which pointed at the contract rather than the worker. The deeper confusion was a run that reported zero failures while the original faulted on every trial; reading the worker source showed that faulting trials skip nearly all comparisons by design.</p>
+      </article>
 
       <article class="entry" id="production-n74">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

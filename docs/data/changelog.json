@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: A relocation lookup bug the checker caught, and 24 verified native handlers",
+    "title": "Devlog: A wrong calling convention, and two checker weaknesses it exposed",
     "commit": null,
+    "summary": "Findings from the r-n77 lane.",
+    "changes": [
+      "New devlog entry: A wrong calling convention, and two checker weaknesses it exposed.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: A relocation lookup bug the checker caught, and 24 verified native handlers",
+    "commit": "e44c5aa4bc8db598ea173e2c5775457b3fe637c3",
     "summary": "Findings from the r-n74 lane.",
     "changes": [
       "New devlog entry: A relocation lookup bug the checker caught, and 24 verified native handlers.",
