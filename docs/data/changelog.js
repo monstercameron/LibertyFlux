@@ -1,8 +1,21 @@
 window.LF_CHANGELOG = [
   {
     "date": "2026-10-03",
-    "title": "Add the agent rules",
+    "title": "Add the project plan",
     "commit": null,
+    "summary": "plan.md: the goal, the decisions and why, and the eight phases.",
+    "changes": [
+      "Goal and target platforms: Windows x64, Windows on ARM and macOS, with upscaling, frame generation and path tracing as later work.",
+      "Decisions: rewrite straight to Rust with no committed C++ stage, check each function by emulator comparison, then swap it into the running game behind a switch.",
+      "Eight phases with exit gates, and the phase 0 task list.",
+      "Harness design taken from other projects, the dependency table, pitfalls from the recompilation projects' history, risks and open questions.",
+      "First findings from the executable's headers: built with Visual Studio 2012, link-time code generation in use, main code not encrypted, class names present."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Add the agent rules",
+    "commit": "234c64e7d96d4d6b1919b3c8292f62c8395b59af",
     "summary": "AGENTS.md: what every agent and contributor must follow.",
     "changes": [
       "Rule 1: no decompiled code in any tracked file. Only structures, symbols and Rust rewrites derived from the game may be committed.",
