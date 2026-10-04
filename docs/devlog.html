@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-b54">Two traps from the audio production batch: float-jump NaN polarity and the silent eight-argument call log cap</a></li>
       <li><a href="#production-b43">The compiler swaps float operands and the checker notices</a></li>
       <li><a href="#production-s111">Twenty dispatch stubs verified, and a gap in what the checker observes</a></li>
       <li><a href="#production-s105">A one-byte checker bug that failed correct rewrites past 256 calls</a></li>
@@ -270,6 +271,39 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-b54">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Two traps from the audio production batch: float-jump NaN polarity and the silent eight-argument call log cap</h2>
+      <p>Three audio voice functions were verified at one thousand trials each, but two findings matter more than the count: the faithful Rust translation of a float comparison depends on the exact jump that follows it, and the checker's call recorder silently drops argument words past the first eight.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite four medium and large audio functions in Rust and prove each equivalent to the original with the version two differential checker, covering every branch including edge values.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> A bare jump-if-below after a floating point compare is taken when either side is unordered, so the faithful rewrite is the negated greater-or-equal, not the less-than. Each jump needs its own derivation:</p>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Jump after compare(a, b)</th><th role="columnheader">Faithful Rust</th><th role="columnheader">NaN behaviour</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">jump if below or equal</td><td role="cell" data-label="Faithful Rust"><code>!(a &gt; b)</code></td><td role="cell" data-label="NaN behaviour">jump taken</td></tr>
+      <tr role="row"><td role="cell">bare jump if below</td><td role="cell" data-label="Faithful Rust"><code>!(a &gt;= b)</code>, never <code>a &lt; b</code></td><td role="cell" data-label="NaN behaviour">jump taken</td></tr>
+      <tr role="row"><td role="cell">jump if above</td><td role="cell" data-label="Faithful Rust"><code>a &gt; b</code></td><td role="cell" data-label="NaN behaviour">jump not taken</td></tr>
+      <tr role="row"><td role="cell">set byte if above or equal</td><td role="cell" data-label="Faithful Rust"><code>a &gt;= b</code></td><td role="cell" data-label="NaN behaviour">cleared</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The wrong form passed a full thousand-trial run because no trial carried a NaN to that gate. Every float gate now needs a NaN trial that reaches it on a path using the result.</p>
+      <p><span class="evidence verified">Verified</span> The call recorder keeps the first eight argument words of each outgoing call and never warns about the rest. Two callees in this batch take ten words, so their tail words pass unverified. A wrong rewrite there would still pass.</p>
+      <p><span class="evidence verified">Verified</span> A thousand-trial pass can still be vacuous: one run passed fully while testing nothing past the first gate, because a fill value kept every trial on the early-exit path. The per-callee fire counts in the verdict were the only signal.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Derive every float gate from its jump, using the table above, and give each gate a NaN trial that reaches it.</li>
+      <li>Quote the per-callee fire counts with every pass, and require each declared callee to fire at least once before a verdict counts.</li>
+      <li>Document the eight-argument log cap in the checker manual, and log a setup warning when a callee declares more arguments.</li>
+      <li>Compute pinned float bit patterns programmatically; hand conversion produced several mislabelled values (all branch-identical, caught afterwards).</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run any verified contract from this lane's scratch folder with the stock worker and read the fire counts in the verdict file. For the NaN polarity, pin a NaN into either side of each float gate on a reaching trial and confirm the rewrite takes the same branch as the original. For the log cap, declare a callee with ten arguments and compare the recorded call against the pushed words.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The vacuous pass looked exactly like a real one until the fire counts were checked. The mislabelled float constants looked right for the same reason hand-converted hex always looks right. Both mistakes survived because the evidence that would have caught them was one step further than the verdict's headline number.</p>
+      </article>
 
       <article class="entry" id="production-b43">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
