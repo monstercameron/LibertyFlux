@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s219">Do not combine snapshots with scripted writes on stack out-parameters</a></li>
       <li><a href="#production-s206">Some game functions consume registers their callees clobber</a></li>
       <li><a href="#production-b144">Two checker gaps found while verifying a five-function batch</a></li>
       <li><a href="#production-s209">A one-byte flag the checker cannot stub</a></li>
@@ -320,6 +321,24 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s219">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Do not combine snapshots with scripted writes on stack out-parameters</h2>
+      <p>A production batch of twenty small network functions verified cleanly, but three contracts failed first for an instructive reason: combining a pointed-to snapshot with a scripted out-parameter write on a stack address compares each side's pre-write scratch garbage instead of the written value, so identical behaviour fails the call comparison.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty small game functions in Rust and prove each one equivalent to the original with the version 3 checker, including several that pass a stack address to a callee as an out-parameter and read the result back afterwards.</p>
+      <h3>What was found</h3>
+      <p><span class="evidence verified">Verified</span> All twenty rewrites passed with one thousand trials each and zero failures, covering every fail point of the multi-stage functions.</p>
+      <p><span class="evidence verified">Verified</span> The snapshot of a pointed-to call argument is captured before the stub performs the scripted out-parameter write. On stack addresses the two sides' frames legitimately differ, so the snapshot compared unrelated scratch contents while the actual out value, read back by both sides and stored to compared memory, matched. Removing the snapshot and keeping the write plus the downstream store comparison turned the failures into passes with no rewrite change.</p>
+      <p><span class="evidence verified">Verified</span> One function passes its own incoming argument slot as the out-parameter, so the callee visibly overwrites that caller slot. Its contract runs with the stack comparison off and documents why; the value is still verified through the store the function makes with it. Sibling functions that pass scratch below the stack pointer keep the stack comparison on, because the worker excludes that region.</p>
+      <h3>What was decided or recommended</h3>
+      <p>For out-parameters, declare the write and skip the address, but do not snapshot the pointed-to words; verify the value through whatever the function does with it next. The checker manual should say that snapshots and writes do not compose on frame pointers.</p>
+      <h3>How to reproduce it</h3>
+      <p>Contract any function that passes a stack address as a callee out-parameter with both a write script and a snapshot on that argument, and run a few hundred trials. The call comparison fails on the snapshot while the return value and memory comparisons pass; removing the snapshot passes.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The first failure looked like a rewrite bug, because the call log showed two different snapshot values. It was the contract: the values were each side's pre-write scratch, which are supposed to differ. Three driver runs also ended with the worker process lost under machine load despite zero failures; all passed on re-run.</p>
+      </article>
 
       <article class="entry" id="production-s206">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

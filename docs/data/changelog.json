@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Some game functions consume registers their callees clobber",
+    "title": "Devlog: Do not combine snapshots with scripted writes on stack out-parameters",
     "commit": null,
+    "summary": "Findings from the r-s219 lane.",
+    "changes": [
+      "New devlog entry: Do not combine snapshots with scripted writes on stack out-parameters.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Some game functions consume registers their callees clobber",
+    "commit": "6b0458e702db890bec40f517dbfe911368fd55a0",
     "summary": "Findings from the r-s206 lane.",
     "changes": [
       "New devlog entry: Some game functions consume registers their callees clobber.",
