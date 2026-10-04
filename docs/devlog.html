@@ -43,6 +43,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#function-inventory">First unified function inventory: 45,229 functions, 30 percent named</a></li>
       <li><a href="#tools-shaders">Tools: shaders</a></li>
       <li><a href="#tools-runtime-debug">Tools: running, debugging and tracing the game</a></li>
       <li><a href="#emulator-harness">Original functions can be executed for comparison, but not with Unicorn on this machine</a></li>
@@ -104,6 +105,43 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="function-inventory">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>First unified function inventory: 45,229 functions, 30 percent named</h2>
+      <p><span class="evidence verified">Verified</span> The project now has its first unified function inventory: 45,229 function records merged from the lanes' own analyses and the finished Ghidra export, of which 13,787 carry a provisional name. A 300-entry spot check found zero implausible entries, and Ghidra agrees on starts and sizes almost everywhere the two overlap.</p>
+      <h3>What was asked</h3>
+      <p>Build the first inventory the progress numbers can use: take the function-estimate lane's list of about 45,000 function starts, verify a 300-entry sample by disassembly, attach every available kind of evidence (virtual tables, script native handlers, string hints, import call sites, library ranges, subsystem clusters), assign each function a provisional name, a subsystem and a kind, and produce the site totals plus a 480-slice code map. Halfway through, the finished Ghidra export became available as a second independent source to compare against.</p>
+      <h3>What was found</h3>
+      <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Fact</th><th role="columnheader">Value</th><th role="columnheader">What it means</th></tr></thead>
+      <tbody role="rowgroup">
+      <tr role="row"><td role="cell">Functions found</td><td role="cell" data-label="Value">45,229</td><td role="cell" data-label="What it means">45,224 in readable code plus 5 loader stub entries</td></tr>
+      <tr role="row"><td role="cell">Game functions</td><td role="cell" data-label="Value">35,431</td><td role="cell" data-label="What it means">after removing library, runtime, thunk and unknown rows</td></tr>
+      <tr role="row"><td role="cell">Library and runtime rows</td><td role="cell" data-label="Value">4,748</td><td role="cell" data-label="What it means">4,739 in library ranges, 9 stub and entry records</td></tr>
+      <tr role="row"><td role="cell">Provisional names</td><td role="cell" data-label="Value">13,787</td><td role="cell" data-label="What it means">2,950 high, 10,122 medium, 715 low confidence</td></tr>
+      <tr role="row"><td role="cell">Virtual functions matched</td><td role="cell" data-label="Value">10,048</td><td role="cell" data-label="What it means">starts claimed by at least one virtual table slot</td></tr>
+      <tr role="row"><td role="cell">Native handlers matched</td><td role="cell" data-label="Value">2,942 of 2,945</td><td role="cell" data-label="What it means">two real handlers sit in coverage gaps, missed by every analysis</td></tr>
+      <tr role="row"><td role="cell">300-sample check</td><td role="cell" data-label="Value">0 implausible</td><td role="cell" data-label="What it means">297 decoded cleanly, all 300 independently reachable</td></tr>
+      <tr role="row"><td role="cell">Ghidra agreement</td><td role="cell" data-label="Value">28,269 matches</td><td role="cell" data-label="What it means">97 percent exact size match where starts agree</td></tr>
+      <tr role="row"><td role="cell">Code map</td><td role="cell" data-label="Value">480 slices</td><td role="cell" data-label="What it means">44 unmeasured (encrypted ninth), 345 identified, 91 named</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> The relocation table is valid: 93 percent of its entries hold real image addresses, and essentially all of the remainder sit in the encrypted prefix where the on-disk values are ciphertext. An earlier lane's claim that the table was garbage is refuted, which puts the reloc-seeded function and cluster analyses on solid ground.</p>
+      <p><span class="evidence verified">Verified</span> The Ghidra export contains over 900 functions inside the encrypted prefix that are disassembly of ciphertext and must be discarded by every consumer. Outside that region the two sources corroborate each other: Ghidra confirms three-fifths of the lane list with near-perfect size agreement, while the lane list adds about 17,000 pointer-only functions Ghidra cannot see, and Ghidra adds about 1,200 real functions sitting in the lane list's coverage gaps.</p>
+      <p><span class="evidence">Inferred</span> About half the subsystem assignments rest on neighbouring functions rather than direct evidence, because related code is scattered across the image. These rows are tagged as weak in the data and should be replaced once cross-reference data lands.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>The lane function list stays the master inventory; Ghidra is the confirming second source, not the base.</li>
+      <li>Next is a merge pass: add the roughly 1,200 gap functions, drop 54 zero-size seed artifacts, and adjudicate about 140 places where the two sources split functions differently.</li>
+      <li>Static C runtime functions still need signature tagging before the game-function denominator can be trusted for progress percentages.</li>
+      <li>The encrypted ninth of the code stays unmeasured until the unpack lane delivers decrypted bytes.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Run the lane's build script, then the verification script, from the lane scratch folder using the project Python environment with pefile and capstone. The build loads the lane data files and the Ghidra export, runs its own call-target, relocation and import scans over the readable code, joins everything per function, and writes the inventory, statistics and code map files. The sample seed is fixed, so the 300-entry check repeats exactly.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>Three lanes disagreed about the relocation table: one called it garbage, one used it as seed data, one counted it as ground truth. Recounting it directly settled the dispute in favour of the table, with the encrypted prefix explaining the garbage subset. The string-hint file also claims reference counts for over two thousand entries whose address lists are empty, so those hints could not be attached to any function. Both issues are recorded in the lane report for the producing lanes.</p>
+      </article>
 
       <article class="entry" id="tools-shaders">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>

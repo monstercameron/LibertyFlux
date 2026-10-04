@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Commit the changelog with each progress update",
+    "title": "Devlog: First unified function inventory: 45,229 functions, 30 percent named",
     "commit": null,
+    "summary": "Findings from the f-function-inventory lane.",
+    "changes": [
+      "New devlog entry: First unified function inventory: 45,229 functions, 30 percent named.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Commit the changelog with each progress update",
+    "commit": "321de4a609966c943aa10c547b3729064de6e3a1",
     "summary": "Each tick was leaving one file uncommitted.",
     "changes": [
       "Regenerating the site data fills in the commit hash of the newest changelog entry. The status script now commits that file together with the progress files."
