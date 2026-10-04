@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Devlog: Production batch: a tail-call logging bug and two contract lessons",
+    "commit": null,
+    "summary": "Findings from the r-s79 lane.",
+    "changes": [
+      "New devlog entry: Production batch: a tail-call logging bug and two contract lessons.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Rewrites: 56 more functions pass the checker (3364 in total)",
     "commit": "685532437bcf2a309e3edaafbf6129c6b81d6cff",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

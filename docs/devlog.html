@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#production-s79">Production batch: a tail-call logging bug and two contract lessons</a></li>
       <li><a href="#production-b05">Two large animation functions verified, one checker fix, one game quirk</a></li>
       <li><a href="#production-s64">A partition routine that swaps stale stack contents into its output</a></li>
       <li><a href="#production-s49">One node reader copies an uninitialized stack slot on its fail path</a></li>
@@ -234,6 +235,32 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="production-s79">
+      <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
+      <h2>Production batch: a tail-call logging bug and two contract lessons</h2>
+      <p>All twenty rewrites in this batch verified, but the checker needed a one-line fix first: its tail-call recorder logged stack arguments from the wrong slot, failing a correct rewrite on every trial.</p>
+      <h3>What was asked</h3>
+      <p>Rewrite twenty small behaviour-task functions in Rust and prove each one equivalent to the original with the version 2 checker, including a jump thunk, a recursive collector, two broadcast loops over scratch arrays, and a large message router.</p>
+      <h3>What was found</h3>
+      <ul>
+      <li><span class="evidence verified">Verified</span> The tail-call recorder reads stack arguments one word too low. A tail call arrives with two return addresses on the stack, so the first argument sits one word higher than in a normal call, and the recorder captured the trampoline return address instead of the argument.</li>
+      <li><span class="evidence verified">Verified</span> Pointed-to snapshots are taken before scripted callee writes land, so a snapshot of a stub-filled buffer compares pre-write garbage rather than verifying the writes. Three contracts failed on this before the snapshots were dropped.</li>
+      <li><span class="evidence verified">Verified</span> One callee takes two stack words and pops none; its words are reused as arguments of the next call. Calling it from Rust in a way that leaves the stack unbalanced corrupts all later frame addressing in the rewrite.</li>
+      <li><span class="evidence">Inferred</span> One router function pushes a word whose value tracks its second argument across eighty varied trials, although the addressing implies its own save slot. The mechanism is unknown; the value rule held on every trial including the full thousand-trial run.</li>
+      </ul>
+      <h3>What was decided or recommended</h3>
+      <p>The tail recorder was fixed in the lane's own worker copy only, proved with an off-by-one mutant that fails in three trials, and documented for folding back; every other contract ran on the stock checker. Recommended for other lanes:</p>
+      <ol>
+      <li>Do not snapshot stub-written stack. Verify written words through what the function does with them downstream instead.</li>
+      <li>Call pop-nothing callees so the rewrite side stays balanced, and confirm the final stack adjustment still matches.</li>
+      <li>Check every verdict's per-callee fire counts. One callee here never fired because its script phase collided with the null-argument trials, and re-phasing fixed it.</li>
+      </ol>
+      <h3>How to reproduce it</h3>
+      <p>Run any tail-jump contract with at least one stack argument against the stock checker: the original side logs a stack-window address while the rewrite side logs the real argument, failing every trial. With the one-word recorder fix, the correct rewrite passes a thousand trials and a mutant that shifts the argument by one is caught on the call comparison within three trials.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The router's argument-valued slot resisted about forty minutes of static analysis: every byte, relocation entry, push and pop was checked several ways and no writer to the slot exists, yet the value robustly tracks the argument. The lane stopped theorising, characterised the value over eighty varied trials, reproduced it, and let the checker arbitrate. A relocation probe also initially added the page base twice and reported no fixups anywhere; validating it against two known absolute reads caught the bug at once.</p>
+      </article>
 
       <article class="entry" id="production-b05">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
