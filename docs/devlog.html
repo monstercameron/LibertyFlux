@@ -44,6 +44,7 @@ Note for future agents: how to add an entry to this devlog.
   <div class="wrap">
     <h2>Contents</h2>
     <ol class="toc">
+      <li><a href="#how-lanes-die">Three ways the coordinator lost lanes in one morning</a></li>
       <li><a href="#production-s263">Black box does not pin down float multiply order</a></li>
       <li><a href="#production-s262">Three rewrites whose only mismatch is where values live, not what they are</a></li>
       <li><a href="#production-b198">The optimizer can silently change NaN results</a></li>
@@ -353,6 +354,37 @@ Note for future agents: how to add an entry to this devlog.
     </ol>
 
     <div class="entries">
+
+      <article class="entry" id="how-lanes-die">
+      <div class="entry-meta"><time datetime="2026-10-04">2026-10-04</time></div>
+      <h2>Three ways the coordinator lost lanes in one morning</h2>
+      <p>Twelve experiment lanes were reported as launched and never ran; eight production lanes were killed by a restart of the supervisor; and the lane assembling the rewrites into a loadable library was stopped at the two-hour limit with nothing written down. All three come from the same gap: the coordinator did not know what happens to a lane's process when the thing that started it ends. That is now tested and written into the operating notes.</p>
+      <h3>What was asked</h3>
+      <p>Why experiment lanes had no log files half an hour after their launch was announced, and why nine lanes showed an error exit in the hourly review.</p>
+      <h3>What was found</h3>
+      <table>
+      <thead><tr><th>How the launcher ended</th><th>What happened to its lanes</th><th>How it is known</th></tr></thead>
+      <tbody>
+      <tr><td>Stopped by hand</td><td data-label="What happened to its lanes">Killed with it. Eight lanes died in the same second.</td><td data-label="How it is known">Their logs all end at the moment the supervisor was stopped to change a setting.</td></tr>
+      <tr><td>Stopped by the two-hour limit on background tasks</td><td data-label="What happened to its lanes">Killed with it. The assembly lane lost two hours of work; several lanes started by slots went the same way earlier and had been counted only as "not running".</td><td data-label="How it is known">The lane's log ends within the minute of the limit; no agent process remained.</td></tr>
+      <tr><td>Ended normally</td><td data-label="What happened to its lanes">They keep running.</td><td data-label="How it is known">A test launcher started a child, exited after eight seconds, and the child kept writing for as long as it was watched.</td></tr>
+      <tr><td>A short foreground command that starts detached processes and returns</td><td data-label="What happened to its lanes">Nothing started at all: no log line, no output, no process.</td><td data-label="How it is known">Twelve lanes prepared this way had no log file thirty minutes later.</td></tr>
+      </tbody>
+      </table>
+      <p><span class="evidence verified">Verified</span> Each row was observed today. The earlier note in this log's operating entry, that a lane outlives its launcher when the launcher is stopped, was wrong; it holds only when the launcher ends normally.</p>
+      <p><span class="evidence">Unknown</span> Why detached processes started from a foreground command did not run. It was not investigated further once a working method existed.</p>
+      <h3>What was decided or recommended</h3>
+      <ul>
+      <li>Lanes are started only from a long-lived background launcher, which ends by itself before the two-hour limit and is never stopped by hand. Its settings are changed through a file it reads on every pass.</li>
+      <li>A launch is not reported until the lane's log file exists.</li>
+      <li>A lane started directly as its own background task is told to write its results file in the first minutes and keep it current, and to finish well inside two hours. The assembly lane was restarted with that instruction and an 80-minute budget.</li>
+      <li>A lane that dies without results gives its batch back to the queue on the next tick, but never within fifteen minutes of its launch.</li>
+      </ul>
+      <h3>How to reproduce it</h3>
+      <p>Start a launcher that starts a child writing a heartbeat line every five seconds. End the launcher three ways (let it finish, stop it, let it hit the time limit) and watch whether the heartbeat continues.</p>
+      <h3>What was confusing or went wrong</h3>
+      <p>The coordinator announced the experiment lanes from the launch script's own output, which printed the lane names it had prepared. Printing a name is not evidence that a process is running. The half hour was lost because the check that would have shown it, whether each lane had a log file, was run only when results were expected.</p>
+      </article>
 
       <article class="entry" id="production-s263">
       <div class="entry-meta"><time datetime="2026-10-03">2026-10-03</time></div>
