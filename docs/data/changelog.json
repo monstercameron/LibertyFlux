@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-03",
-    "title": "Add the project plan",
+    "title": "Add progress tracking",
     "commit": null,
+    "summary": "One data file drives the badges and the site's numbers.",
+    "changes": [
+      "docs/data/progress.json holds the counts: phase, functions, stages, structures, symbols and the code map. Everything is zero or empty because nothing has been measured.",
+      "scripts/update_progress.py regenerates the seven SVG badges and the site's data files from it, and fills commit hashes into the changelog.",
+      "The badges are generated into the repository, so they need no external badge service."
+    ]
+  },
+  {
+    "date": "2026-10-03",
+    "title": "Add the project plan",
+    "commit": "5beeaffe71b2d4ede67a603735d4aa0f8db07661",
     "summary": "plan.md: the goal, the decisions and why, and the eight phases.",
     "changes": [
       "Goal and target platforms: Windows x64, Windows on ARM and macOS, with upscaling, frame generation and path tracing as later work.",
