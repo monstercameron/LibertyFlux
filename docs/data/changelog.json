@@ -2,7 +2,7 @@
   {
     "date": "2026-10-04",
     "title": "Site: the tick regenerates the progress history, quality data and devlog feed",
-    "commit": null,
+    "commit": "a32f2f69bf87db56de529727331595d4b64ed431",
     "summary": "Three pages that arrived with pull request 1 read data files that nothing was refreshing.",
     "changes": [
       "The status script now runs the three site generators after it writes the progress file: the series behind the progress chart, the numbers behind the quality page, and the devlog's Atom feed. Their output is committed with the progress commit every five minutes.",
