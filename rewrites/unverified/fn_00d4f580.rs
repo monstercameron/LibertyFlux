@@ -4,6 +4,7 @@
 ///
 /// Allocates a block (intercepted callee 1); on success constructs the first
 /// object on it through intercepted callee 2 with (2, arg0, 0.5, const, -1,
+/// 1, 0, 0, 0, 1),
 /// 1, 0, 0, 0), where const is the float stored in the image. Then allocates
 /// a second block (intercepted callee 3); on success constructs the second
 /// object through intercepted callee 4 with (first, 0, 0, 0) and returns its
@@ -26,7 +27,7 @@ lf_checker_rt::export!(cdecl, rw_00d4f580(arg0: u32) -> u32 {
         if block != 0 {
             let k = lf_checker_rt::global::<u32>(BLEND_CONST).read();
             first = lf_checker_rt::callee_thiscall!(
-                MAKE1, u32, block, 2, arg0, HALF_BITS, k, 0xFFFFFFFF, 1, 0, 0, 0);
+                MAKE1, u32, block, 2, arg0, HALF_BITS, k, 0xFFFFFFFF, 1, 0, 0, 0, 1);
         }
         let alloc2 = lf_checker_rt::global::<u32>(ALLOCATOR_SLOT).read();
         let block2: u32 = lf_checker_rt::callee_thiscall!(ALLOC2, u32, alloc2);

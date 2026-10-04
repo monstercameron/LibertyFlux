@@ -6,7 +6,10 @@
 /// that is 1 when the mode word at `+MODE_OFF` is zero. The callee's float
 /// result `f` is added into the float at `+FIELD_OFF` of each of `a1` and
 /// `a2` (`f + field`, in that operand order, evaluated separately from
-/// the same `f`). Returns nothing.
+/// the same `f`). (The original also spills `f` over the caller's `a0`
+/// slot, which a Rust rewrite cannot address; the stack check is off for
+/// this function and `f` is still observed through both heap stores.)
+/// Returns nothing.
 ///
 /// Original: 0x00a1df30 (thiscall, three stack words).
 lf_checker_rt::export!(thiscall, rw_00a1df30(this: u32, a0: u32, a1: u32, a2: u32) -> u32 {

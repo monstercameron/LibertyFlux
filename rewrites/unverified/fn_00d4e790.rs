@@ -22,7 +22,7 @@ lf_checker_rt::export!(thiscall, rw_00d4e790(this: u32, arg0: u32) -> u32 {
         fn mul(a: f32, b: f32) -> f32 {
             core::hint::black_box(a) * core::hint::black_box(b)
         }
-        lf_checker_rt::callee_thiscall!(C1, u32, arg0, 0xFFFFFFFF, 1);
+        lf_checker_rt::callee_thiscall!(C1, u32, arg0, 1, 0xFFFFFFFF);
         let tick = lf_checker_rt::global::<u32>(TICK_SLOT).read();
         ((this + 0x14) as *mut u32).write_unaligned(tick);
         if ((this + 0x1c) as *const i16).read_unaligned() > -1 {

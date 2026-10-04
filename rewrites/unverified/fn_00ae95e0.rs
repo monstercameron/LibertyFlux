@@ -186,7 +186,7 @@ lf_checker_rt::export!(cdecl, rw_00ae95e0(token: u32) -> u32 {
         if seq < 0xFFFF {
             seq = seq.wrapping_add(1);
         } else {
-            let _: u32 = lf_checker_rt::callee_cdecl!(C_RESET, u32);
+            let _: u32 = lf_checker_rt::callee_cdecl!(C_RESET, u32,);
             obj = rd32(lf_checker_rt::relocated(G_OBJ));
             seq = 1;
         }
@@ -205,7 +205,7 @@ lf_checker_rt::export!(cdecl, rw_00ae95e0(token: u32) -> u32 {
         obj = rd32(lf_checker_rt::relocated(G_OBJ));
         if (fill_ans as u8) == 0 {
             wr8(obj.wrapping_add(O_MARK), rd8(obj.wrapping_add(O_MARK)) & 0xFE);
-            let _: u32 = lf_checker_rt::callee_cdecl!(C_COOKIE, u32);
+            let _: u32 = lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
             return 0;
         }
         wr8(obj.wrapping_add(O_MARK), rd8(obj.wrapping_add(O_MARK)) | 1);
@@ -261,7 +261,7 @@ lf_checker_rt::export!(cdecl, rw_00ae95e0(token: u32) -> u32 {
         st[S_80 / 4] = x2.to_bits();
         st[S_2C / 4] = x6.to_bits();
         st[S_A0 / 4] = x0.to_bits();
-        let mut x7: f32;
+        let mut x7 = 0.0f32;
         if flag_set {
             // Rate-limited fold of the seeded rows.
             x0 = f32::from_bits(rd32(state.wrapping_add(SI_RATE)));
@@ -400,3 +400,230 @@ lf_checker_rt::export!(cdecl, rw_00ae95e0(token: u32) -> u32 {
                 }
             }
         }
+        // Normalise one row, then build the first output row.
+        x0 = f32::from_bits(rd32(state.wrapping_add(SI_N0)));
+        st[S_P1 / 4] = x0.to_bits();
+        obj = rd32(lf_checker_rt::relocated(G_OBJ));
+        x0 = f32::from_bits(rd32(state.wrapping_add(SI_N1)));
+        let p1_ptr = core::ptr::addr_of_mut!(st[S_P1 / 4]) as u32;
+        st[S_P1 / 4 + 1] = x0.to_bits();
+        x0 = f32::from_bits(rd32(state.wrapping_add(SI_N2)));
+        let p2_ptr = core::ptr::addr_of_mut!(st[S_ROW / 4]) as u32;
+        let this_norm = obj.wrapping_add(0x50);
+        st[S_P1 / 4 + 2] = x0.to_bits();
+        let _: u32 = lf_checker_rt::callee_thiscall!(C_NORM, u32, this_norm, p2_ptr, p1_ptr);
+        obj = rd32(lf_checker_rt::relocated(G_OBJ));
+        wr8(obj.wrapping_add(O_MARK), rd8(obj.wrapping_add(O_MARK)) | 8);
+        x7 = fr(&st, S_ROW + 4);
+        x3 = fr(&st, S_ROW);
+        let mut mode = rd8(lf_checker_rt::relocated(G_FLAG));
+        wr8(lf_checker_rt::relocated(G_ZERO_B), 0);
+        let flag2_set = rd8(state.wrapping_add(SI_FLAG)) != 0;
+        let count1: u32;
+        if !flag2_set && mode == 0 {
+            let mut x4 = f32::from_bits(rd32(state.wrapping_add(SI_D2)));
+            x1 = f32::from_bits(rd32(state.wrapping_add(SI_D1)));
+            x6 = f32::from_bits(rd32(state.wrapping_add(SI_D3)));
+            x0 = fr(&st, S_0C);
+            x5 = fr(&st, S_10);
+            x5 = add(x5, f32::from_bits(rd32(state.wrapping_add(SI_D0))));
+            x3 = img(C_SCALE1);
+            x1 = add(x1, fr(&st, S_10));
+            x6 = add(x6, fr(&st, S_0C));
+            x2 = img(C_BIAS1);
+            x0 = add(x0, x4);
+            x4 = add(x4, fr(&st, S_10));
+            x5 = mul(x5, x3);
+            x1 = mul(x1, x3);
+            x0 = mul(x0, x3);
+            x4 = mul(x4, x3);
+            x6 = mul(x6, x3);
+            x3 = fr(&st, S_ROW);
+            x5 = add(x5, x2);
+            x0 = add(x0, x2);
+            x6 = add(x6, x2);
+            x1 = add(x1, x2);
+            x4 = add(x4, x2);
+            st[S_OUT / 4] = x5.to_bits();
+            st[S_OUT / 4 + 1] = x0.to_bits();
+            st[S_OUT / 4 + 3] = x0.to_bits();
+            st[S_OUT / 4 + 2] = x1.to_bits();
+            st[S_OUT / 4 + 4] = x4.to_bits();
+            st[S_OUT / 4 + 5] = x6.to_bits();
+            st[S_OUT / 4 + 6] = x5.to_bits();
+            st[S_OUT / 4 + 7] = x6.to_bits();
+            count1 = 4;
+        } else {
+            x2 = img(C_SCALE1);
+            x1 = img(C_BIAS1);
+            x0 = x3;
+            x0 = mul(x0, x2);
+            count1 = 5;
+            x0 = add(x0, x1);
+            st[S_OUT / 4] = x0.to_bits();
+            x0 = x7;
+            x0 = mul(x0, x2);
+            x0 = add(x0, x1);
+            st[S_OUT / 4 + 1] = x0.to_bits();
+            x0 = fr(&st, 0x1A0);
+            x0 = mul(x0, x2);
+            x0 = add(x0, x1);
+            st[S_OUT / 4 + 2] = x0.to_bits();
+            x0 = fr(&st, 0x1A4);
+            x0 = mul(x0, x2);
+            x0 = add(x0, x1);
+            st[S_OUT / 4 + 3] = x0.to_bits();
+            x0 = fr(&st, 0x1B0);
+            x0 = mul(x0, x2);
+            x0 = add(x0, x1);
+            st[S_OUT / 4 + 4] = x0.to_bits();
+            x0 = fr(&st, 0x1B4);
+            x0 = mul(x0, x2);
+            x0 = add(x0, x1);
+            st[S_OUT / 4 + 5] = x0.to_bits();
+            x0 = fr(&st, 0x1E0);
+            x0 = mul(x0, x2);
+            x0 = add(x0, x1);
+            st[S_OUT / 4 + 6] = x0.to_bits();
+            x0 = fr(&st, 0x1E4);
+            x0 = mul(x0, x2);
+            x0 = add(x0, x1);
+            st[S_OUT / 4 + 7] = x0.to_bits();
+            x0 = fr(&st, 0x1F0);
+            x0 = mul(x0, x2);
+            x0 = add(x0, x1);
+            st[S_OUT / 4 + 8] = x0.to_bits();
+            x0 = fr(&st, 0x1F4);
+            x0 = mul(x0, x2);
+            x0 = add(x0, x1);
+            st[S_OUT / 4 + 9] = x0.to_bits();
+        }
+        obj = rd32(lf_checker_rt::relocated(G_OBJ));
+        x4 = f32::from_bits(absm);
+        if rd32(obj.wrapping_add(O_FLAGS)) & 0x200087 != 0 {
+            if (count1 as i32) > 0 {
+                let n = ((count1 & 0x1FFF_FFFF) * 2) as usize;
+                let mut k = 0usize;
+                while k < n {
+                    st[S_COPY / 4 + k] = st[S_OUT / 4 + k];
+                    k += 1;
+                }
+            }
+            x2 = fr(&st, S_50);
+            x3 = fr(&st, S_4C);
+            x0 = x3;
+            x1 = x2;
+            x0 = abs_bits(x0, x4.to_bits());
+            x1 = abs_bits(x1, x4.to_bits());
+            let above = (x1 > x0) as u32;
+            x0 = 0.0;
+            let ge3 = (x3 >= x0) as u32;
+            let ge2 = (x2 >= x0) as u32;
+            let dbuf = core::ptr::addr_of_mut!(st[S_COPY / 4]) as u32;
+            let _: u32 = lf_checker_rt::callee_cdecl!(
+                C_EMIT, u32, dbuf, count1, edi, TAG_FIRST, ge2, ge3, above, 0
+            );
+            x7 = fr(&st, 0x174);
+            x3 = fr(&st, 0x170);
+            mode = rd8(lf_checker_rt::relocated(G_FLAG));
+            obj = rd32(lf_checker_rt::relocated(G_OBJ));
+        }
+        if rd32(obj.wrapping_add(O_FLAGS)) & 0x100 != 0 {
+            let flag3_set = rd8(state.wrapping_add(SI_FLAG)) != 0;
+            let count2: u32;
+            if !flag3_set && mode == 0 {
+                x4 = f32::from_bits(rd32(state.wrapping_add(SI_D2)));
+                x6 = f32::from_bits(rd32(state.wrapping_add(SI_D0)));
+                x1 = f32::from_bits(rd32(state.wrapping_add(SI_D1)));
+                x5 = f32::from_bits(rd32(state.wrapping_add(SI_D3)));
+                x7 = fr(&st, S_10);
+                x5 = add(x5, fr(&st, S_0C));
+                x3 = img(C_SCALE2);
+                x2 = img(C_BIAS2);
+                x0 = x4;
+                x0 = add(x0, fr(&st, S_0C));
+                x6 = add(x6, x7);
+                x1 = add(x1, x7);
+                x4 = add(x4, x7);
+                x5 = mul(x5, x3);
+                x6 = mul(x6, x3);
+                x0 = mul(x0, x3);
+                x1 = mul(x1, x3);
+                x4 = mul(x4, x3);
+                x6 = add(x6, x2);
+                x0 = add(x0, x2);
+                x5 = add(x5, x2);
+                x1 = add(x1, x2);
+                x4 = add(x4, x2);
+                st[S_OUT / 4] = x6.to_bits();
+                st[S_OUT / 4 + 1] = x0.to_bits();
+                st[S_OUT / 4 + 3] = x0.to_bits();
+                st[S_OUT / 4 + 2] = x1.to_bits();
+                st[S_OUT / 4 + 4] = x4.to_bits();
+                st[S_OUT / 4 + 5] = x5.to_bits();
+                st[S_OUT / 4 + 6] = x6.to_bits();
+                st[S_OUT / 4 + 7] = x5.to_bits();
+                count2 = 4;
+            } else {
+                x2 = img(C_SCALE2);
+                x1 = img(C_BIAS2);
+                x0 = fr(&st, 0x160);
+                x0 = mul(x0, x2);
+                x3 = mul(x3, x2);
+                x0 = add(x0, x1);
+                x7 = mul(x7, x2);
+                x3 = add(x3, x1);
+                count2 = 5;
+                st[S_OUT / 4 + 2] = x0.to_bits();
+                x0 = fr(&st, 0x164);
+                x0 = mul(x0, x2);
+                x7 = add(x7, x1);
+                st[S_OUT / 4] = x3.to_bits();
+                x0 = add(x0, x1);
+                st[S_OUT / 4 + 1] = x7.to_bits();
+                st[S_OUT / 4 + 3] = x0.to_bits();
+                x0 = fr(&st, 0x170);
+                x0 = mul(x0, x2);
+                x0 = add(x0, x1);
+                st[S_OUT / 4 + 4] = x0.to_bits();
+                x0 = fr(&st, 0x174);
+                x0 = mul(x0, x2);
+                x0 = add(x0, x1);
+                st[S_OUT / 4 + 5] = x0.to_bits();
+                x0 = fr(&st, 0x180);
+                x0 = mul(x0, x2);
+                x0 = add(x0, x1);
+                st[S_OUT / 4 + 6] = x0.to_bits();
+                x0 = fr(&st, 0x184);
+                x0 = mul(x0, x2);
+                x0 = add(x0, x1);
+                st[S_OUT / 4 + 7] = x0.to_bits();
+                x0 = fr(&st, 0x190);
+                x0 = mul(x0, x2);
+                x0 = add(x0, x1);
+                st[S_OUT / 4 + 8] = x0.to_bits();
+                x0 = fr(&st, 0x194);
+                x0 = mul(x0, x2);
+                x0 = add(x0, x1);
+                st[S_OUT / 4 + 9] = x0.to_bits();
+            }
+            x2 = fr(&st, S_50);
+            x3 = fr(&st, S_4C);
+            x0 = x3;
+            x0 = abs_bits(x0, absm);
+            x1 = x2;
+            x1 = abs_bits(x1, absm);
+            let above2 = (x1 > x0) as u32;
+            x0 = 0.0;
+            let ge3b = (x3 >= x0) as u32;
+            let ge2b = (x2 >= x0) as u32;
+            let dbuf2 = core::ptr::addr_of_mut!(st[S_OUT / 4]) as u32;
+            let _: u32 = lf_checker_rt::callee_cdecl!(
+                C_EMIT, u32, dbuf2, count2, edi, TAG_SECOND, ge2b, ge3b, above2, 0
+            );
+        }
+        wr8(lf_checker_rt::relocated(G_DONE), 0);
+        let _: u32 = lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
+        0
+    }
+});

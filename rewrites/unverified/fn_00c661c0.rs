@@ -168,7 +168,7 @@ lf_checker_rt::export!(thiscall, rw_00c661c0(this: u32) -> u32 {
             let table = lf_checker_rt::global::<u32>(TABLE_G) as u32;
             let ent = rd32(table.wrapping_add((sx as u32).wrapping_mul(4)));
             if rd8(ent + FLAG_OFF) != 0 {
-                let p = lf_checker_rt::callee_cdecl!(7, u32);
+                let p = lf_checker_rt::callee_cdecl!(7, u32,);
                 let w = rd32(p + 0xe98);
                 return lf_checker_rt::callee_cdecl!(8, u32, w);
             }
@@ -229,7 +229,7 @@ lf_checker_rt::export!(thiscall, rw_00c661c0(this: u32) -> u32 {
             let x = mul((w2c as i32) as f32, gf(WIN_SCALE_G));
             gf(WIN_LO_G) > x || gf(WIN_HI_G) > x
         };
-        if go_g && g32(SETUP_FLAG_G) & 2 == 0 {
+        if go_g && (g32(SETUP_FLAG_G) & 2) == 0 {
             lf_checker_rt::callee_thiscall!(
                 9, u32, this, 0x32u32, 0x33u32, 1u32, 1u32, ONE_BITS, ebx, edi, 0u32
             );
@@ -250,14 +250,71 @@ lf_checker_rt::export!(thiscall, rw_00c661c0(this: u32) -> u32 {
             if (idx_a as i32) < 0 || (i6c as i32) < 0 || (i50 as i32) < 0 || (i84 as i32) < 0 {
                 return i84;
             }
-            return k_region(
-                this, ebx, edi, bcc, idx_a, i6c, i50, i84, gf(QK_G), gf(KN_G),
-                gf(K_A4_G), gf(K_A5_G), gf(K_A6_G), g32(K_A8_G), gf(WX_G), gf(K0_G),
+            // K region: four-bone average plus difference lengths.
+            let arr1 = rd32(lf_checker_rt::callee_thiscall!(11, u32, this) + BONE_ARR);
+            let (x1, y1, z1) = bone_row(arr1, idx_a);
+            let arr2 = rd32(lf_checker_rt::callee_thiscall!(11, u32, this) + BONE_ARR);
+            let (x2, y2, z2) = bone_row(arr2, i6c);
+            let arr3 = rd32(lf_checker_rt::callee_thiscall!(11, u32, this) + BONE_ARR);
+            let (x3, y3, z3) = bone_row(arr3, i50);
+            let arr4 = rd32(lf_checker_rt::callee_thiscall!(11, u32, this) + BONE_ARR);
+            let (x4, y4, z4) = bone_row(arr4, i84);
+            let qk = gf(QK_G);
+            let qx = mul(add(add(x3, add(x2, x1)), x4), qk);
+            let qy = mul(add(add(y3, add(y2, y1)), y4), qk);
+            let qz = mul(add(add(z3, add(z2, z1)), z4), qk);
+            let zero = 0.0f32;
+            let e0 = rdf(edi);
+            let e4 = rdf(edi + 4);
+            let e8 = rdf(edi + 8);
+            let e10 = rdf(edi + 0x10);
+            let e14 = rdf(edi + 0x14);
+            let e18 = rdf(edi + 0x18);
+            let e20 = rdf(edi + 0x20);
+            let e24 = rdf(edi + 0x24);
+            let e28 = rdf(edi + 0x28);
+            let k0 = gf(K0_G);
+            // B block: same blend shape as J.
+            let b0 = sub(add(mul(e10, zero), mul(e0, zero)), mul(e20, k0));
+            let b4 = sub(add(mul(e14, zero), mul(e4, zero)), mul(e24, k0));
+            let b8 = sub(add(mul(e18, zero), mul(e8, zero)), mul(e28, k0));
+            // C block: rows plus their zero multiples.
+            let c0 = add(add(e10, mul(e0, zero)), mul(e20, zero));
+            let c4 = add(add(e14, mul(e4, zero)), mul(e24, zero));
+            let c8 = add(add(e18, mul(e8, zero)), mul(e28, zero));
+            let mut blks = [0u32; 12];
+            blks[0] = qx.to_bits();
+            blks[1] = qy.to_bits();
+            blks[2] = qz.to_bits();
+            blks[3] = 0; // fill-defined tail
+            blks[4] = b0.to_bits();
+            blks[5] = b4.to_bits();
+            blks[6] = b8.to_bits();
+            blks[7] = 0; // fill-defined tail
+            blks[8] = c0.to_bits();
+            blks[9] = c4.to_bits();
+            blks[10] = c8.to_bits();
+            blks[11] = 0; // fill-defined tail
+            let kn = gf(KN_G);
+            // Lengths of difference triples; note each sum's lane order.
+            let len_a = fsqrt(add(add(sqr(sub(y2, y4)), sqr(sub(x2, x4))), sqr(sub(z2, z4))));
+            let len_b = fsqrt(add(add(sqr(sub(y1, y3)), sqr(sub(x1, x3))), sqr(sub(z1, z3))));
+            let arg5 = mul(mul(add(len_a, len_b), kn), gf(K_A5_G));
+            let arg5 = mul(arg5, kn);
+            let len_c = fsqrt(add(add(sqr(sub(y3, y4)), sqr(sub(x3, x4))), sqr(sub(z3, z4))));
+            let len_d = fsqrt(add(add(sqr(sub(y2, y1)), sqr(sub(x2, x1))), sqr(sub(z2, z1))));
+            let arg4 = mul(mul(add(len_c, len_d), kn), gf(K_A4_G));
+            let arg4 = mul(arg4, kn);
+            let arg6 = mul(mul(mul(rdf(ebx + WEIGHT_OFF), gf(WX_G)), gf(K_A6_G)), kn);
+            let bp = core::ptr::addr_of_mut!(blks) as u32;
+            return lf_checker_rt::callee_cdecl!(
+                13, u32, edi, bp, bp + 16, bp + 32, arg4.to_bits(), arg5.to_bits(),
+                arg6.to_bits(), ONE_BITS, g32(K_A8_G)
             );
         }
         let idx_b = rd32(bcc + 0x34);
         if (idx_a as i32) < 0 {
-            return bcc;
+            return idx_b;
         }
         if (idx_b as i32) < 0 {
             return idx_b;

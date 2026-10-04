@@ -98,8 +98,11 @@ lf_checker_rt::export!(thiscall, rw_00618310(this: u32, matrix: u32) -> u32 {
                 let b1 = (re.to_bits() & m1) | b3;
                 let x2 = sub(add(x, f32::from_bits(b1)), f32::from_bits(b1));
                 let t2 = sub(x2, x);
-                let below = f32::from_bits(t2.to_bits()) < f32::from_bits(b3);
-                let m2 = if below { 0u32 } else { 0xffff_ffffu32 };
+                // CMPSS predicate 6: not-less-or-equal (true for unordered
+                // and for greater-than, false for equal), not not-less-than:
+                // equal inputs must yield a zero mask.
+                let le = f32::from_bits(t2.to_bits()) <= f32::from_bits(b3);
+                let m2 = if le { 0u32 } else { 0xffff_ffffu32 };
                 cvtt(sub(x2, f32::from_bits(m2 & one)))
             }
         }

@@ -6,7 +6,7 @@
 /// ECX with (0, 4, 4.0, -1) to intercepted callee 1, and stores the result at
 /// `+0x18`. A null result sets the byte at `+0x14` instead. Otherwise flag
 /// bits 0x8000 then 0x4000 are or-ed into the result's word at `+4`, and the
-/// result goes in ECX with a fixed address and 2 to intercepted callee 2.
+/// result goes in ECX with (2, a fixed address, the object pointer) to intercepted callee 2.
 /// Returns the last callee result (null on the early path).
 ///
 /// Original: 0x00D4E810 (thiscall, one stack word).
@@ -32,6 +32,6 @@ lf_checker_rt::export!(thiscall, rw_00d4e810(this: u32, container: u32) -> u32 {
         let f2 = ((got2 + 4) as *const u32).read_unaligned();
         ((got2 + 4) as *mut u32).write_unaligned(f2 | HELD_B);
         lf_checker_rt::callee_thiscall!(
-            ATTACH, u32, got2, lf_checker_rt::relocated(FIXED_ADDR), 2)
+            ATTACH, u32, got2, 2, lf_checker_rt::relocated(FIXED_ADDR), this)
     }
 });
