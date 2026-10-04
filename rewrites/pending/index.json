@@ -15435,6 +15435,15 @@
   "lane": "r-s143"
  },
  {
+  "address": "0x0091BAD0",
+  "name": "key_table_lookup",
+  "kind": "function",
+  "file": "functions/fn_0091bad0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b190"
+ },
+ {
   "address": "0x0091BC50",
   "name": "text_scale_factor",
   "kind": "function",
@@ -15442,6 +15451,33 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s143"
+ },
+ {
+  "address": "0x0091BC80",
+  "name": "scaled_input_lookup",
+  "kind": "function",
+  "file": "functions/fn_0091bc80.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b190"
+ },
+ {
+  "address": "0x0091BDE0",
+  "name": "context_scaled_lookup",
+  "kind": "function",
+  "file": "functions/fn_0091bde0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b190"
+ },
+ {
+  "address": "0x0091BFD0",
+  "name": "string_width_accumulator",
+  "kind": "function",
+  "file": "functions/fn_0091bfd0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b190"
  },
  {
   "address": "0x0091C180",
@@ -15496,6 +15532,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s143"
+ },
+ {
+  "address": "0x0091C7C0",
+  "name": "biased_input_lookup",
+  "kind": "function",
+  "file": "functions/fn_0091c7c0.rs",
+  "trials": 1000,
+  "checker": "version 4",
+  "lane": "r-b190"
  },
  {
   "address": "0x0091C9A0",
@@ -17960,8 +18005,8 @@
   "kind": "function",
   "file": "functions/fn_00985460.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s105"
+  "checker": "version 4",
+  "lane": "a-V04"
  },
  {
   "address": "0x00985530",
@@ -18095,8 +18140,8 @@
   "kind": "function",
   "file": "functions/fn_00986170.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-b11"
+  "checker": "version 4",
+  "lane": "a-V04"
  },
  {
   "address": "0x009872C0",
@@ -25430,8 +25475,8 @@
   "kind": "function",
   "file": "functions/fn_00ace110.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-b63"
+  "checker": "version 4",
+  "lane": "a-V04"
  },
  {
   "address": "0x00ACEF70",
@@ -28193,8 +28238,8 @@
   "kind": "function",
   "file": "functions/fn_00b5f4e0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-b64"
+  "checker": "version 4",
+  "lane": "a-V04"
  },
  {
   "address": "0x00B5FA50",

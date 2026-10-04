@@ -9,10 +9,12 @@
 /// output vector. Returns nothing; effects are the outgoing calls and the
 /// output-vector writes.
 ///
-/// Build note: this rewrite is verified bit-exact as compiled without
-/// optimizations. The optimizing compiler reorders some SSE operands, which
-/// changes NaN payload propagation on trials where two different-payload
-/// NaNs meet (random-bit harness fills only); see the lane report.
+/// Build note: verified bit-exact in the optimizing release build. The
+/// optimizer otherwise reorders some SSE operands, which changes NaN payload
+/// propagation where two different-payload NaNs meet (random-bit harness
+/// fills only); opaque `black_box` barriers on the cascade sub-terms and the
+/// reciprocal uses below pin the original's operand order (value-preserving:
+/// association unchanged, all finite results bit-identical).
 export!(cdecl, rw_ace110(
     a: u32,
     b: u32,
@@ -174,24 +176,42 @@ export!(cdecl, rw_ace110(
         let v0 = e3[0];
         let v1 = e3[1];
         let v2 = e3[2];
-        let r1 = (v0 * e0 + v1 * e1) + v2 * e2;
-        let r4 = (e5 * v1 + e4 * v0) + e6 * v2;
-        let r2 = (e9 * v1 + v0 * e8v) + e10 * v2;
-        let s5 = r1 * *af.add(0xa0 / 4);
-        let s2 = *af.add(0xa4 / 4) * r4;
-        let s3 = *af.add(0xa8 / 4) * r2;
-        let f78 = ((s5 * e0) + (e4 * s2)) + (s3 * e8v);
-        let f7c = ((e5 * s2) + (s5 * e1)) + (e9 * s3);
-        let f80 = ((e6 * s2) + (s5 * e2)) + (e10 * s3);
+        // Opaque barriers pin the original's SSE operand order (see the
+        // build note above); association is unchanged, so every finite and
+        // single-NaN value is bit-identical with or without them.
+        let r1 = core::hint::black_box(
+            core::hint::black_box(v0 * e0) + core::hint::black_box(v1 * e1),
+        ) + core::hint::black_box(v2 * e2);
+        let r4 = core::hint::black_box(
+            core::hint::black_box(e5 * v1) + core::hint::black_box(e4 * v0),
+        ) + core::hint::black_box(e6 * v2);
+        let r2 = core::hint::black_box(
+            core::hint::black_box(e9 * v1) + core::hint::black_box(v0 * e8v),
+        ) + core::hint::black_box(e10 * v2);
+        let s5 = core::hint::black_box(r1) * *af.add(0xa0 / 4);
+        let s2 = *af.add(0xa4 / 4) * core::hint::black_box(r4);
+        let s3 = *af.add(0xa8 / 4) * core::hint::black_box(r2);
+        let f78 = core::hint::black_box(
+            core::hint::black_box(core::hint::black_box(s5) * e0)
+                + core::hint::black_box(e4 * core::hint::black_box(s2)),
+        ) + core::hint::black_box(core::hint::black_box(s3) * e8v);
+        let f7c = core::hint::black_box(
+            core::hint::black_box(e5 * core::hint::black_box(s2))
+                + core::hint::black_box(core::hint::black_box(s5) * e1),
+        ) + core::hint::black_box(e9 * core::hint::black_box(s3));
+        let f80 = core::hint::black_box(
+            core::hint::black_box(e6 * core::hint::black_box(s2))
+                + core::hint::black_box(core::hint::black_box(s5) * e2),
+        ) + core::hint::black_box(e10 * core::hint::black_box(s3));
         e3[0] = f78;
         e3[1] = f7c;
         e3[2] = f80;
         // The original also spills one word from below the resolve block
         // here; that slot is never written, so the harness defines it as
         // zero, and the stored word is never read again either.
-        t3[0] = f78 * r;
-        t3[1] = f7c * r;
-        t3[2] = f80 * r;
+        t3[0] = f78 * core::hint::black_box(r);
+        t3[1] = f7c * core::hint::black_box(r);
+        t3[2] = f80 * core::hint::black_box(r);
         let slot88 = *((vt + 0x88) as *const u32);
         let hook88: extern "thiscall" fn(u32, u32) -> u32 =
             core::mem::transmute(slot88 as usize);
