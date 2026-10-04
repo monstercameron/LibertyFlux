@@ -77,6 +77,10 @@ lf_checker_rt::export!(thiscall, rw_006218e0(this: u32, a: u32, b: u32, c: u32) 
             unsafe { (a as *const u32).read_unaligned() }
         }
 
+        // All logic funnels through one exit so the intercepted
+        // security-cookie check runs last on every path, as in the original.
+        unsafe fn body(this: u32, a: u32, b: u32, c: u32) -> u32 {
+            unsafe {
         unsafe fn free_slots(this: u32) -> u32 {
             unsafe {
                 let mut f = rd32(this + F_A).wrapping_sub(rd32(this + F_B));
@@ -249,5 +253,11 @@ lf_checker_rt::export!(thiscall, rw_006218e0(this: u32, a: u32, b: u32, c: u32) 
             return single_path(this, a, b, c);
         }
         main_section(this, a, b, c)
+            }
+        }
+
+        let ans = body(this, a, b, c);
+        lf_checker_rt::callee_cdecl!(18, u32,);
+        ans
     }
 });

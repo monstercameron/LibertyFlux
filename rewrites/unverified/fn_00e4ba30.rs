@@ -492,10 +492,10 @@ lf_checker_rt::export!(thiscall, rw_00e4ba30(this: u32) -> u32 {
         slot2(tt_vt, VT_TITLE, tt_obj, arg, 0);
         slot1(tt_vt, VT_RES, tt_obj, 1);
         slot1(tt_vt, VT_FIN, tt_obj, 1);
-        slot1(tt_vt, VT_SEAL, tt_obj, 1);
         emit(tt_obj, tt_vt, 0, 0x4000_0000, 4, 0x00f1_7cd4, 4, zeros_ptr);
         emit(tt_obj, tt_vt, 0, 0xc000_0000, 4, 0x00f1_7d1c, 0x10, zeros_ptr);
         emit(tt_obj, tt_vt, 0x40a0_0000, 0, 2, 0x00f1_7d4c, 2, zeros_ptr);
+        slot1(tt_vt, VT_SEAL, tt_obj, 1);
         let handle = slot0(vt0, VT_HANDLE, this);
         slot1(tt_vt, VT_ATTACH, tt_obj, handle);
         slot1(tt_vt, VT_CURRENT, tt_obj, 1);
@@ -565,13 +565,13 @@ lf_checker_rt::export!(thiscall, rw_00e4ba30(this: u32) -> u32 {
         slot2(rs_vt, VT_TITLE, rs_obj, arg, 0);
         slot1(rs_vt, VT_RES, rs_obj, 1);
         slot1(rs_vt, VT_FIN, rs_obj, 1);
-        slot1(rs_vt, VT_SEAL, rs_obj, 1);
         emit(rs_obj, rs_vt, 0, 0x4000_0000, 4, 0x00f1_7f7c, 4, zeros_ptr);
         emit(rs_obj, rs_vt, 0, 0xc000_0000, 4, 0x00f1_7fd8, 0x10, zeros_ptr);
         emit(rs_obj, rs_vt, 0xc0a0_0000, 0, 8, 0x00f1_8018, 8, zeros_ptr);
+        slot1(rs_vt, VT_SEAL, rs_obj, 1);
+        slot1(rs_vt, VT_CURRENT, rs_obj, 1);
         let handle = slot0(vt0, VT_HANDLE, this);
         slot1(rs_vt, VT_ATTACH, rs_obj, handle);
-        slot1(rs_vt, VT_CURRENT, rs_obj, 1);
 
         // Teardown: release both title strings, rebind the stem slot,
         // notify this twice, return the last answer.

@@ -3,8 +3,9 @@
 ///
 /// `this` is the leaderboard-info object; its virtual slot at `+0x04` returns
 /// the owner's current id. When that id equals `want` and `out` is non-null,
-/// this leaderboard's constant id `LEADERBOARD_ID` is stored to `*out` and
-/// `out` is returned; otherwise null is returned and nothing is stored.
+/// this leaderboard's constant address `LEADERBOARD_ID` (a file VA, relocated
+/// at load like the original's) is stored to `*out` and `out` is returned;
+/// otherwise null is returned and nothing is stored.
 ///
 /// Original: 0x0055d750 (thiscall, two stack words).
 lf_checker_rt::export!(thiscall, rw_0055d750(this: u32, out: u32, want: u32) -> u32 {
@@ -24,7 +25,7 @@ lf_checker_rt::export!(thiscall, rw_0055d750(this: u32, out: u32, want: u32) -> 
         if out == 0 {
             return 0;
         }
-        (out as *mut u32).write_unaligned(LEADERBOARD_ID);
+        (out as *mut u32).write_unaligned(lf_checker_rt::relocated(LEADERBOARD_ID));
         out
     }
 });

@@ -75,10 +75,10 @@ lf_checker_rt::export!(thiscall, rw_006866B0(this: u32, a0: u32, a1: u32) -> u32
             let ans: u32 = lf_checker_rt::callee_stdcall!(
                 PROBE,
                 u32,
-                ctx,
-                a1,
+                blk.as_mut_ptr() as u32,
                 inner,
-                blk.as_mut_ptr() as u32
+                a1,
+                ctx
             );
             if (ans as u8) == 0 {
                 let _c: u32 =
@@ -90,7 +90,7 @@ lf_checker_rt::export!(thiscall, rw_006866B0(this: u32, a0: u32, a1: u32) -> u32
             }
             let o1 = blk[1];
             let av = if o1 == 0 { 0 } else { unsafe { rd32(o1 + FWD_OFF) } };
-            let _d: u32 = lf_checker_rt::callee_thiscall!(EQ_IND, u32, this, a0, a1, av);
+            let _d: u32 = lf_checker_rt::callee_thiscall!(EQ_IND, u32, this, a0, ctx, av);
             let _c: u32 = lf_checker_rt::callee_thiscall!(CLEANUP, u32, blk.as_mut_ptr() as u32);
             return 0;
         }
@@ -108,10 +108,10 @@ lf_checker_rt::export!(thiscall, rw_006866B0(this: u32, a0: u32, a1: u32) -> u32
         let ans: u32 = lf_checker_rt::callee_stdcall!(
             PROBE,
             u32,
-            ctx,
-            a1,
+            blk.as_mut_ptr() as u32,
             inner,
-            blk.as_mut_ptr() as u32
+            a1,
+            ctx
         );
         if (ans as u8) == 0 {
             let _c: u32 = lf_checker_rt::callee_thiscall!(CLEANUP, u32, blk.as_mut_ptr() as u32);
@@ -122,7 +122,7 @@ lf_checker_rt::export!(thiscall, rw_006866B0(this: u32, a0: u32, a1: u32) -> u32
         }
         let o1 = blk[1];
         let av = if o1 == 0 { 0 } else { unsafe { rd32(o1 + FWD_OFF) } };
-        let _d: u32 = lf_checker_rt::callee_thiscall!(BR_IND, u32, this, a0, a1, av);
+        let _d: u32 = lf_checker_rt::callee_thiscall!(BR_IND, u32, this, a0, ctx, av);
         let _c: u32 = lf_checker_rt::callee_thiscall!(CLEANUP, u32, blk.as_mut_ptr() as u32);
         0
     }

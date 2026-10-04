@@ -34,7 +34,7 @@ lf_checker_rt::export!(thiscall, rw_00be41a0(this: u32, arg: u32) -> u32 {
         const LIMIT_AT: u32 = 10;
         const SET_LO: u32 = 0;
         const SET_HI: u32 = 0xfffffff6; // -10
-        const RAND_SCALE_BITS: u32 = 0x37800000; // 2^-15
+        const RAND_SCALE_BITS: u32 = 0x38000000; // 2^-15
         const RAND_SPAN_BITS: u32 = 0xc2480000; // -50.0f
         const TUNE_ZERO: u32 = 2;
         const DRAW: u32 = 3;

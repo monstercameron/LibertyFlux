@@ -4,8 +4,9 @@
 ///
 /// `this` is passed through untouched to the lattice helper, and `a` and
 /// `b` are the sample coordinates. Coordinates at or beyond +-4 in either
-/// axis sample as zero; NaN coordinates take the main path with an
-/// indefinite cell. Otherwise each axis splits into a
+/// axis sample as zero; NaN coordinates take the main path with a
+/// zero cell (the low word of the converter's indefinite integer).
+/// Otherwise each axis splits into a
 /// truncated integer cell and a `1 - fraction` weight; the four cells
 /// around the point are read through the lattice helper (indices stride
 /// by nine along the second axis from a base of forty, mirrored by each
@@ -48,9 +49,10 @@ lf_checker_rt::export!(thiscall, rw_00969440(this: u32, a: f32, b: f32) -> f32 {
         }
         // Chop-mode truncation of a value in [0, 4): 0..3, exact.
         // NaN reaches the converter and comes out as the indefinite
-        // integer, whose low word is read as the cell.
-        let t1 = if abs_a.is_nan() { i32::MIN } else { abs_a as i32 };
-        let t2 = if abs_b.is_nan() { i32::MIN } else { abs_b as i32 };
+        // integer, whose low word (zero) is read as the cell: exactly
+        // what the saturating cast below produces for NaN.
+        let t1 = abs_a as i32;
+        let t2 = abs_b as i32;
         // The original's int-to-float trip: signed double conversion
         // plus 2^32 when the input is negative (dead here: cells are
         // never negative), narrowed back to float.
