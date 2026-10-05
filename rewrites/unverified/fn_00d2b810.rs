@@ -70,7 +70,7 @@ lf_checker_rt::export!(thiscall, rw_00d2b810(this: u32) -> u32 {
             d
         }
 
-        let singleton: u32 = lf_checker_rt::global::<u32>(SINGLETON).read_unaligned();
+        let singleton: u32 = *lf_checker_rt::global::<u32>(SINGLETON);
         let src: u32 = lf_checker_rt::callee_thiscall!(BUILDER_THIS, u32, singleton);
         let sub: u32;
         if src == 0 {

@@ -21,8 +21,10 @@
 // 6; states 5 and 6 dispatch on the partner limit (5 replays the state-3
 // randomisation through the shared range tail, 6 takes a narrow range,
 // anything else yields or hands off with state 5 when the state/limit pair
-// is exactly 6/2); state 4 yields. The limit-5 wide range and the limit-6
-// narrow range share one call site and its follow-up chat-end call.
+// is exactly 6/2). The limit-5 wide range and the limit-6 narrow range
+// share one call site and its follow-up chat-end call; state 4, a declined
+// state-3 random draw and the exact 6/2 pair share one handoff tail that
+// hands off with state 5.
 // Random draws scale the raw generator by `RAND_SCALE` (2^-15).
 //
 // Two reads need care. The state dispatch jumps through a relocated table,
@@ -58,11 +60,6 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
         const CHAT_THRESHOLD: f32 = f32::from_bits(0x3ea8f5c3); // 0.33
         const HALF: f32 = 0.5;
         const FULL_WEIGHT: f32 = 1.0;
-        /// Value the checker's recorder stub leaves in ECX at exit (its
-        /// per-trial step index, always 0 without a `seq`): the state-3 arm
-        /// compares exactly this. A real callee's leftover is unknowable;
-        /// the arm is dead (never 2) under the checker either way.
-        const STUB_SCRATCH_ECX: u32 = 0;
         const CAL_PARTNER: u32 = 2;
         const CAL_CHAT_NEW: u32 = 3;
         const CAL_CHAT_JOIN: u32 = 4;
@@ -249,16 +246,13 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
                 let draw1: u32 =
                     lf_checker_rt::callee_cdecl!(CAL_RAND_STATE3, u32,);
                 if CHAT_THRESHOLD <= scaled(draw1) {
-                    // Random declined: the exact 6/2 pair hands off with
-                    // state 5, anything else yields. The ECX comparison
-                    // reads the stub's exit scratch (see constant).
-                    if draw1 == 6 && STUB_SCRATCH_ECX == 2 {
-                        lf_checker_rt::callee_thiscall!(CAL_HANDOFF, u32, ped, aux);
-                        wr32(this + STATE, 5);
-                    }
+                    // Random declined: hand off with state 5.
+                    lf_checker_rt::callee_thiscall!(CAL_HANDOFF, u32, ped, aux);
+                    wr32(this + STATE, 5);
                     return rd32(this + SUB_TASK);
                 }
                 wr32(this + STATE, 0);
+                // State 3 takes no chat-end follow-up on either sub-path.
                 randomise_timer(
                     this,
                     ped,
@@ -269,7 +263,11 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
                 );
                 rd32(this + SUB_TASK)
             }
-            4 => rd32(this + SUB_TASK),
+            4 => {
+                lf_checker_rt::callee_thiscall!(CAL_HANDOFF, u32, ped, aux);
+                wr32(this + STATE, 5);
+                rd32(this + SUB_TASK)
+            }
             _ => {
                 // States 5 and 6 dispatch on the partner limit.
                 if limit == 5 {
@@ -332,7 +330,7 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
             retry_id: u32,
             timer_id: u32,
             range_id: u32,
-            range_followup_done: bool,
+            followup_done: bool,
         ) {
             unsafe {
                 if rd32(this + CHAT_MODE) == CHAT_MODE_RANDOM {
@@ -343,11 +341,13 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
                             lf_checker_rt::callee_cdecl!(timer_id, u32,);
                         let t = add(mul(scaled(draw3), HALF), HALF);
                         wrf(this + CHAT_TIMER, t);
-                        let _done: u32 = lf_checker_rt::callee_thiscall!(
-                            CAL_CHAT_DONE,
-                            u32,
-                            ped
-                        );
+                        if followup_done {
+                            let _done: u32 = lf_checker_rt::callee_thiscall!(
+                                CAL_CHAT_DONE,
+                                u32,
+                                ped
+                            );
+                        }
                         return;
                     }
                 }
@@ -356,7 +356,7 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
                 let span: f32 =
                     lf_checker_rt::callee_cdecl!(range_id, f32, lo, hi);
                 wrf(this + CHAT_TIMER, span);
-                if range_followup_done {
+                if followup_done {
                     let _done: u32 = lf_checker_rt::callee_thiscall!(
                         CAL_CHAT_DONE,
                         u32,
