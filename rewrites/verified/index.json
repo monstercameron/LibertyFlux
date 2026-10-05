@@ -30492,6 +30492,15 @@
   "lane": "r-b376"
  },
  {
+  "address": "0x0088B050",
+  "name": "audVoice_setSlotByte",
+  "kind": "function",
+  "file": "functions/fn_0088b050.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
+ },
+ {
   "address": "0x0088B750",
   "name": "audio_update_slot_fields",
   "kind": "function",
@@ -30528,6 +30537,15 @@
   "lane": "a-12"
  },
  {
+  "address": "0x0088BD90",
+  "name": "audVoice_control_88BD90",
+  "kind": "function",
+  "file": "functions/fn_0088bd90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b376"
+ },
+ {
   "address": "0x0088BF80",
   "name": "rage::audVoiceDSound::vf10",
   "kind": "function",
@@ -30544,6 +30562,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-12"
+ },
+ {
+  "address": "0x0088C340",
+  "name": "rage::audVoiceDSound::vf3",
+  "kind": "function",
+  "file": "functions/fn_0088c340.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b376"
  },
  {
   "address": "0x0088C4A0",
@@ -30699,6 +30726,15 @@
   "lane": "r-b32"
  },
  {
+  "address": "0x0088E230",
+  "name": "rage::audVoiceSoft::vf10",
+  "kind": "function",
+  "file": "functions/fn_0088e230.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
+ },
+ {
   "address": "0x0088E280",
   "name": "rage::audVoiceSoft::vf1",
   "kind": "function",
@@ -30814,6 +30850,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b31"
+ },
+ {
+  "address": "0x0088F030",
+  "name": "rage::audVoicePcAdpcm::vf10",
+  "kind": "function",
+  "file": "functions/fn_0088f030.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
  },
  {
   "address": "0x0088F0D0",
@@ -39933,6 +39978,24 @@
   "lane": "r-b66"
  },
  {
+  "address": "0x00997370",
+  "name": "audio_voice_slot_update",
+  "kind": "function",
+  "file": "functions/fn_00997370.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b375"
+ },
+ {
+  "address": "0x00997600",
+  "name": "audio_mix_channel_frame",
+  "kind": "function",
+  "file": "functions/fn_00997600.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b375"
+ },
+ {
   "address": "0x0099CC60",
   "name": "audVehicleAudioEntity::vf4",
   "kind": "function",
@@ -40180,6 +40243,15 @@
   "name": "PAIN_POSITIONED",
   "kind": "function",
   "file": "functions/fn_0099f9a0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b366"
+ },
+ {
+  "address": "0x009A0050",
+  "name": "audio_start_positioned",
+  "kind": "function",
+  "file": "functions/fn_009a0050.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b366"
@@ -83803,6 +83875,15 @@
   "name": "audio_slot_gather_filter",
   "kind": "function",
   "file": "functions/fn_00d8d0f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b374"
+ },
+ {
+  "address": "0x00D8DB20",
+  "name": "audio_voice_spawn_setup",
+  "kind": "function",
+  "file": "functions/fn_00d8db20.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b374"
