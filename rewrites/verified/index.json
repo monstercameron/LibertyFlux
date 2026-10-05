@@ -89361,6 +89361,15 @@
   "lane": "r-s448"
  },
  {
+  "address": "0x00C3B360",
+  "name": "train_car_in_consist",
+  "kind": "function",
+  "file": "functions/fn_00c3b360.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
   "address": "0x00C3B5A0",
   "name": "train_kind_small_or_class_le3",
   "kind": "function",
@@ -89397,6 +89406,24 @@
   "lane": "r-s448"
  },
  {
+  "address": "0x00C3E740",
+  "name": "train_build_frame_via_helpers",
+  "kind": "function",
+  "file": "functions/fn_00c3e740.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
+  "address": "0x00C3E790",
+  "name": "train_assemble_matrix_from_ptr",
+  "kind": "function",
+  "file": "functions/fn_00c3e790.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
   "address": "0x00C3E860",
   "name": "train_assemble_matrix_from_pair",
   "kind": "function",
@@ -89428,6 +89455,15 @@
   "name": "train_any_slot_active",
   "kind": "function",
   "file": "functions/fn_00c3ecd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
+  "address": "0x00C3ECF0",
+  "name": "train_fill_carriages_loop",
+  "kind": "function",
+  "file": "functions/fn_00c3ecf0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s448"
@@ -94473,6 +94509,15 @@
   "lane": "r-b267"
  },
  {
+  "address": "0x00CE95A0",
+  "name": "CTaskSimpleNMHighFall::vf26",
+  "kind": "function",
+  "file": "functions/fn_00ce95a0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b448"
+ },
+ {
   "address": "0x00CF1B50",
   "name": "stat_value_dispatch",
   "kind": "function",
@@ -96448,6 +96493,15 @@
   "name": "peds_task_weighted_pick",
   "kind": "function",
   "file": "functions/fn_00d44ab0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b445"
+ },
+ {
+  "address": "0x00D459B0",
+  "name": "peds_task_react_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00d459b0.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b445"
