@@ -1024,19 +1024,19 @@ mod x86 {
             table_b_idx: None,
         });
         rt::set_classify(script);
-        rt::set_skip(|_, key| u32::from(!rules14::skip(key)));
+        rt::set_skip(|_, key| u32::from(rules14::skip(key)));
         rt::set_write(|_, key, _, _| u32::from(rules14::write_ok(key)));
         let forced = forced_cells();
         let mut image = Image::new();
-        // Object and vtable: pick at +44 (word 11), row at +48 (word 12).
+        // Object at word 0, vtable at word 8: pick at +44 (word 19), row at +48 (word 20).
         let obj = image.addr(0);
         let vt = image.addr(8);
         image.words[0] = vt;
         for w in image.words[8..24].iter_mut() {
             *w = 0xEEEE_EEEE;
         }
-        image.words[11] = rt::pick_stub_addr();
-        image.words[12] = rt::row_stub_addr();
+        image.words[8 + 11] = rt::pick_stub_addr();
+        image.words[8 + 12] = rt::row_stub_addr();
         let id_addr = image.addr(384);
         let mask_addr = image.addr(386);
         let flag_addr = image.addr(388);
@@ -1044,6 +1044,7 @@ mod x86 {
         let item_addrs: Vec<u32> = (0..4).map(|i| item_base + i * 16).collect();
 
         for (case_idx, case) in cases.iter().enumerate() {
+            eprintln!("vf14 case {case_idx} {}", case.file);
             rt::set_roles(&[
                 (case.fetch_slot, rt::Role::Fetch),
                 (case.skip_slot, rt::Role::Skip),
@@ -1131,8 +1132,8 @@ mod x86 {
                 for w in image.words[8..24].iter_mut() {
                     *w = 0xEEEE_EEEE;
                 }
-                image.words[11] = rt::pick_stub_addr();
-                image.words[12] = rt::row_stub_addr();
+                image.words[8 + 11] = rt::pick_stub_addr();
+                image.words[8 + 12] = rt::row_stub_addr();
                 // Forced classify answers across the used keys.
                 for (r, &k) in keys.iter().enumerate() {
                     image.words[64 + k as usize] = forced[r % 8];
@@ -1193,6 +1194,7 @@ mod x86 {
                 let (r0, c0) = rt::capture(|| {
                     (case.call)(obj, input.cursor, id_addr, mask_addr, flag_addr, manager.get(), input.size)
                 });
+
                 // Unsigned-camp files on huge lengths: the lift follows the
                 // original (signed accept) and the rewrite rejects. That is
                 // the documented divergence, demonstrated, not a failure.
