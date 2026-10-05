@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Rewrites: one verified rewrite withdrawn, wrong comparison",
+    "title": "Rewrites: 4 more functions pass the checker (15763 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "4 rewrites added under rewrites/verified: 0 script native handlers and 4 other functions.",
+      "The tree now holds 15763 rewrites, 15744 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 672 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "21 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Rewrites: one verified rewrite withdrawn, wrong comparison",
+    "commit": "bec9a51cf5354b2696546046253baa2be28578a1",
     "summary": "The verified count goes down by one. A rewrite of a combat task method compares a callee's answer unsigned where the original compares it signed, and its proof could not tell.",
     "changes": [
       "CTaskComplexCombat::vf5 is removed from rewrites/verified. The rewrite tests a value returned by a callee with an unsigned greater-or-equal against two; the original uses the signed form, so the two differ whenever the callee answers with the high bit set. The lane measuring blind proofs found it; the coordinator confirmed it by reading the original independently.",
