@@ -427,9 +427,9 @@ lf_checker_rt::export!(thiscall, rw_00cff4e0(this: u32, par: u32) -> u32 {
             let r9: u32 = lf_checker_rt::callee_thiscall!(9, u32, h);
             eaxv = r9;
             if (r9 as i32) > 0 {
-                let _dead = rd32(par.wrapping_add(PAR_X20));
+                let aim = rd32(par.wrapping_add(PAR_X20)).wrapping_add(0x30);
                 let r10: u32 = lf_checker_rt::callee_cdecl!(
-                    10, u32, par, RATE_BITS, h, 0xffff_ffff, 0xffff_ffff, 0, 0
+                    10, u32, par, aim, RATE_BITS, 0xffff_ffff, 0xffff_ffff, 0, 0
                 );
                 eaxv = r10;
                 if (r10 as i32) > 0 {

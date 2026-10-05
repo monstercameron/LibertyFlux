@@ -73,6 +73,10 @@ lf_checker_rt::export!(thiscall, rw_00b4e880(this: u32, a0: u32, a1: u32) -> u32
             unsafe { (a as *const u8).read() as u32 }
         }
         #[inline(always)]
+        unsafe fn rd16(a: u32) -> u32 {
+            unsafe { (a as *const u16).read_unaligned() as u32 }
+        }
+        #[inline(always)]
         unsafe fn rdf(a: u32) -> f32 {
             unsafe { f32::from_bits(rd32(a)) }
         }
@@ -89,9 +93,10 @@ lf_checker_rt::export!(thiscall, rw_00b4e880(this: u32, a0: u32, a1: u32) -> u32
             unsafe { rd32(lf_checker_rt::relocated(a)) }
         }
 
+        let r: u32 = (|| -> u32 {
         let _cookie: u32 = g(G_COOKIE);
         if g(G_MODE) == 1 {
-            return lf_checker_rt::callee_cdecl!(COOKIE, u32,) as u32 & 0 | 0;
+            return 0;
         }
         if g(G_A) != g(G_B) {
             return 0;
@@ -152,13 +157,6 @@ lf_checker_rt::export!(thiscall, rw_00b4e880(this: u32, a0: u32, a1: u32) -> u32
         if fc as u8 == 0 {
             return 0;
         }
-        let vtab = rd32(this);
-        let get1: extern "thiscall" fn(u32) -> u32 =
-            core::mem::transmute(rd32(vtab + 0xD0) as usize);
-        let _ = get1;
-        let getf: extern "thiscall" fn(u32) -> u32 =
-            core::mem::transmute(rd32(this) as usize);
-        let _ = getf;
         let g5: u32 = lf_checker_rt::callee_thiscall!(GETTER, u32, this);
         if g5 != 0 {
             let mf: extern "thiscall" fn(u32, u32) -> f32 = core::mem::transmute(
@@ -213,7 +211,7 @@ lf_checker_rt::export!(thiscall, rw_00b4e880(this: u32, a0: u32, a1: u32) -> u32
                     continue;
                 }
                 if (rd32(s + 0x24) >> 2) & 1 == 0 {
-                    let idx = rd32(s + 0x2E) as u16 as i16 as i32 as u32;
+                    let idx = rd16(s + 0x2E) as u16 as i16 as i32 as u32;
                     let p = rd32(
                         lf_checker_rt::relocated(POOL)
                             .wrapping_add(idx.wrapping_mul(4)),
@@ -256,5 +254,8 @@ lf_checker_rt::export!(thiscall, rw_00b4e880(this: u32, a0: u32, a1: u32) -> u32
             }
         }
         1
+        })();
+        lf_checker_rt::callee_cdecl!(COOKIE, u32,);
+        r
     }
 });

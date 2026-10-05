@@ -92,6 +92,17 @@ lf_checker_rt::export!(cdecl, rw_00d19a30(a0: u32, a1: u32, a2: u32, a3: u32, a4
         fn cvt_f64_answer(bits: u64) -> f32 {
             core::hint::black_box(f64::from_bits(bits)) as f32
         }
+        /// Exact `cvttss2si`: truncate toward zero; NaN, +2^31 and above,
+        /// and below -2^31 yield the indefinite 0x80000000. (Rust's `as`
+        /// saturates instead, which differs on those inputs.)
+        #[inline(always)]
+        fn cvttss2si(x: f32) -> i32 {
+            if x.is_nan() || x >= 2147483648.0 || x < -2147483648.0 {
+                i32::MIN
+            } else {
+                x as i32
+            }
+        }
 
         let g = lf_checker_rt::relocated(G_THRESH);
         let fstd1: f32 = lf_checker_rt::callee_cdecl!(1, f32, a0);
@@ -114,7 +125,7 @@ lf_checker_rt::export!(cdecl, rw_00d19a30(a0: u32, a1: u32, a2: u32, a3: u32, a4
         // Arctangent #1: the conversion chain feeding its vector inputs is
         // omitted (unobservable); the call and its carried answer are kept.
         lf_checker_rt::callee_cdecl!(6, u32,);
-        let ans1 = (fr30[6] as u64) | ((fr30[7] as u64) << 32);
+        let ans1 = (fr30[4] as u64) | ((fr30[5] as u64) << 32);
         let xmm3 = cvt_f64_answer(ans1);
         wrf(a1, add(f32::from_bits(fr50[0]), rdf(lf_checker_rt::relocated(G_OFF0))));
         wrf(a1.wrapping_add(4), add(f32::from_bits(fr50[1]), rdf(lf_checker_rt::relocated(G_OFF1))));
@@ -171,7 +182,7 @@ lf_checker_rt::export!(cdecl, rw_00d19a30(a0: u32, a1: u32, a2: u32, a3: u32, a4
             lf_checker_rt::callee_thiscall!(7, u32, d68, s30, 0);
         }
         lf_checker_rt::callee_cdecl!(8, u32,);
-        let ans2 = (fr30[8] as u64) | ((fr30[9] as u64) << 32);
+        let ans2 = (fr30[6] as u64) | ((fr30[7] as u64) << 32);
         let a35arg = cvt_f64_answer(ans2);
         let fstd9: f32 = lf_checker_rt::callee_cdecl!(9, f32, a35arg.to_bits());
         let scaled = mul(fstd9, rdf(lf_checker_rt::relocated(C_SCALE)));
@@ -185,7 +196,7 @@ lf_checker_rt::export!(cdecl, rw_00d19a30(a0: u32, a1: u32, a2: u32, a3: u32, a4
             0
         } else if stride[F1F0] == 0 {
             if ecx == edx { 0 } else { 1 }
-        } else if stride[F1F0 + 2] != 0 {
+        } else if stride[F1F0 + 2] == 0 {
             1
         } else if flag_e != 0 {
             1
@@ -196,9 +207,9 @@ lf_checker_rt::export!(cdecl, rw_00d19a30(a0: u32, a1: u32, a2: u32, a3: u32, a4
         };
         let al2: u8 = if stride[F1A0] == 0 {
             0
-        } else if stride[F1A0 + 0x190 - 0x140] == 0 {
+        } else if stride[0x2d0] == 0 {
             if ecx == edx { 0 } else { 1 }
-        } else if stride[F1A0 + 0x192 - 0x140] != 0 {
+        } else if stride[0x2d2] == 0 {
             1
         } else if flag_e != 0 {
             1
@@ -228,9 +239,9 @@ lf_checker_rt::export!(cdecl, rw_00d19a30(a0: u32, a1: u32, a2: u32, a3: u32, a4
             }
         }
         let mut edxb = (((edx & 3) << 2) | (stack28 & 3)) << 3;
-        let ival = scaled as i32;
+        let ival = cvttss2si(scaled);
         let aim = a0.wrapping_add(OFF_AIM);
-        let mut ecx_b = ((((ival as u8) as u32) << 15) | (rd32(aim) & 0xff80_7ffc)) & 0xffff_8007;
+        let ecx_b = ((((ival as u8) as u32) << 15) | (rd32(aim) & 0xff80_7ffc)) & 0xffff_8007;
         wrf(aim.wrapping_add(4), f32::from_bits(fr50[0]));
         wrf(aim.wrapping_add(8), f32::from_bits(fr50[1]));
         edxb |= ecx_b;

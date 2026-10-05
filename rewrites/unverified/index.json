@@ -1776,14 +1776,6 @@
   "reason": "abs_shadow_unavailable"
  },
  {
-  "address": "0x00B3F120",
-  "name": "peds_task_fn_B3F120",
-  "file": "fn_00b3f120.rs",
-  "lane": "r-b518",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x00B4E880",
   "name": "ped_task_gate_large",
   "file": "fn_00b4e880.rs",
@@ -1835,6 +1827,14 @@
   "address": "0x00B769A0",
   "name": null,
   "file": "fn_00b769a0.rs",
+  "lane": "r-b507",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B76C90",
+  "name": null,
+  "file": "fn_00b76c90.rs",
   "lane": "r-b507",
   "outcome": "not yet run",
   "reason": null
@@ -2112,9 +2112,9 @@
   "reason": null
  },
  {
-  "address": "0x00BBD270",
-  "name": "proposed: ped_task_unknown_d270",
-  "file": "fn_00bbd270.rs",
+  "address": "0x00BBCB60",
+  "name": "proposed: ped_task_unknown_cb60",
+  "file": "fn_00bbcb60.rs",
   "lane": "r-b516",
   "outcome": "not_reached",
   "reason": ""
@@ -2485,14 +2485,6 @@
   "file": "fn_00ca00a0.rs",
   "lane": "r-b352",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00CA2480",
-  "name": "ped_task_param_compute (proposed)",
-  "file": "fn_00ca2480.rs",
-  "lane": "r-b509",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -2950,6 +2942,14 @@
   "lane": "r-s352",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00D282B0",
+  "name": "target_score_by_distance",
+  "file": "fn_00d282b0.rs",
+  "lane": "a-R03",
+  "outcome": "not yet run",
+  "reason": ""
  },
  {
   "address": "0x00D283D0",
