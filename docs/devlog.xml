@@ -9,6 +9,28 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming batch 66: input, viewports, text, hud, settings</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-66"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-66</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>Named 141 of 150 consecutive functions across six areas: keyboard and pad input, the viewport manager, the styled text and brief system, hud elements and draw, and profile settings. The rest were single unexplained stores or calls into encrypted code.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Named 141 of 150 consecutive functions across six areas: keyboard and pad input, the viewport manager, the styled text and brief system, hud elements and draw, and profile settings. The rest were single unexplained stores or calls into encrypted code.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed functions, with a confidence and one sentence of evidence each, working from strings, imports, known callers and callees, and neighbouring structure layouts.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into six groups: keyboard layout translation and pad polling with rumble control; a viewport manager with per-frame update, sorting and render-phase draw emission; hud colour loading; a large styled-text system built on two brief tables and timed print slots; hud element creation and per-type draw; and a profile settings list with save-slot load and store.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two inventory entries with size zero are real, called functions: one resets every print slot, the other releases a text row's object slots. One entry starts in the middle of a jump table; the real function starts a few dozen bytes later.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One tiny float setter is genuinely a virtual-table slot of the on-foot ped movement-blend class, and the documented field at that offset is the move animation speed, so it names itself.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The brief-label resolver tries a platform-suffixed label variant before falling back to the raw label. The shared pad-effect helper fed by explosion, weather and audio paths is most likely the rumble trigger.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;79 names at high confidence, 62 at medium, 9 left empty at low. The next naming lane should distrust size-zero entries and mid-table starts, and check unnamed gap functions between batch entries, since several small helpers live there. Functions whose only evidence is a call into encrypted code should stay unnamed.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Build one evidence table per batch first: disassemble each function from the mapped image, record direct callees with looked-up names, import calls, referenced strings, raw caller counts, and data cross-references for virtual-table attribution. Read the short functions fully, probe unknown callees by entry disassembly, then name from the table.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The raw caller scan reports false callers from call-opcode bytes inside other instructions, and enclosing-function attribution misfires where an inventory size overruns into the next function. Both needed manual discounting. Several shared helpers carry wrong native-mapping labels from symbol merging, so labels were only trusted when the code shape agreed.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Two contract mistakes that pass quietly</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b376"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b376</id>
@@ -1054,31 +1076,5 @@
 &lt;p&gt;Build the lane's rewrite crate for 32-bit Windows with panics set to abort, copy the resulting library next to the lane's contracts, and run the lane's copy of the checker driver once per contract with the stock worker. Each contract runs twelve hundred trials for the rewrite and up to a hundred for its wrong version. The float-order defect shows as a small number of call-comparison failures flagged by the checker's not-a-number diagnostic, all in the staged-descriptor snapshot of the solver-probe function.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The most confusing moment was the second fix failing: the black box pattern is the project's recommended way to pin float order, and it looked airtight, yet the compiler merged the two additions anyway. It took reading the compiled output instruction by instruction to see the paired instruction with swapped lanes. The lesson is that black box hides values from the optimizer but does not stop it from pairing two identical-looking operations, which is exactly what the no-inline fence prevents.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Three traps from verifying user interface text routines</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b243"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b243</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>A production batch of five user interface functions verified three and surfaced three traps that will bite other lanes: a float-branch translation that is wrong only for NaN, rewrite builds that need frame pointers when callees leave deliberate stack residue, and a near-twin function whose loop has no exit guard.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of five user interface functions verified three and surfaced three traps that will bite other lanes: a float-branch translation that is wrong only for NaN, rewrite builds that need frame pointers when callees leave deliberate stack residue, and a near-twin function whose loop has no exit guard.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite five medium-sized input-ui functions in Rust and prove each equivalent to the original with the checker: two text-fitting routines that truncate strings with an ellipsis, one text container refresh routine, and two larger constructor-style routines.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Take-if-below after a float compare is taken when the operands are unordered. A rewrite that rendered it as a negated ordered compare matched on every finite input but kept a NaN where the original kept it too only after the branch was written the other way round. The exact pairs are: take-if-below means not-above-or-equal, take-if-above means ordered-above. Every float jump must be checked against the NaN row, not just the ordered rows.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One routine calls helpers with deliberately unbalanced cleanup: one pops nothing while taking a stack word, another pops eight words while taking three, and the leftover bytes sit on the frame until a later call consumes them. Rust function types assume cleanup matches the argument count, so the compiler's stack tracking drifted from reality and later argument setup read wrong slots. The failure appeared only in the call log while everything else passed. Building the rewrite crate with forced frame pointers fixes it with no change to observable behaviour.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The two text-fitting routines look like twins but their shrink loops differ: one guards a shrinking length with signed compares, the other loops purely on the width compare with unsigned compares and no guard. Constant scripted widths make the unguarded original loop without end and corrupt its own tables, so its proof drives the width down per call the way the running game would.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three functions verified at one thousand trials each with per-function wrong versions that fail as required. The two largest functions were deferred with retry kits: their call inventories, cleanup values, and contract sketches are recorded for the next lane.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The checker's call-mismatch display shows only the first three calls with no truncation marker, which made a late difference look like two identical logs. A first-difference index in the stock display would save significant debugging time.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the lane's three contracts with the stock worker and read the verdicts: each shows one thousand passing trials, full branch-shape coverage, and a failing wrong version. Rebuilding the rewrite crate without forced frame pointers reproduces the container routine's call-log failure within sixty trials.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The container routine's first full-path failure presented as two identical three-call logs that still failed, because the display truncates after three calls. A display-only debug worker build showed the real difference at the twenty-second call. Separately, an early assumption that the twin routines shared control flow cost one full contract run before a careful diff showed the missing guard.&lt;/p&gt;</content>
   </entry>
 </feed>
