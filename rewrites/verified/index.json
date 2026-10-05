@@ -9333,6 +9333,15 @@
   "lane": "r-s363"
  },
  {
+  "address": "0x0052ED20",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race29Standard, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_0052ed20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-S01"
+ },
+ {
   "address": "0x0052EEA0",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race29Standard, player_schema::LeaderboardInfo, 10>::vf6",
   "kind": "function",
@@ -9385,6 +9394,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s363"
+ },
+ {
+  "address": "0x0052F180",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race30Standard, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_0052f180.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-S01"
  },
  {
   "address": "0x0052F2F0",
@@ -11349,6 +11367,15 @@
   "lane": "r-s373"
  },
  {
+  "address": "0x005381A0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CompDeathmatch, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_005381a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-S01"
+ },
+ {
   "address": "0x00538310",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CompDeathmatch, player_schema::LeaderboardInfo, 10>::vf6",
   "kind": "function",
@@ -11403,6 +11430,15 @@
   "lane": "r-s373"
  },
  {
+  "address": "0x005385F0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CompDeathmatch_BG, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_005385f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-S01"
+ },
+ {
   "address": "0x00538770",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CompDeathmatch_BG, player_schema::LeaderboardInfo, 10>::vf6",
   "kind": "function",
@@ -11428,6 +11464,51 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s373"
+ },
+ {
+  "address": "0x00538A50",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CompMafiaWork, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_00538a50.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-S01"
+ },
+ {
+  "address": "0x00538EA0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CompMafiaWork_BG, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_00538ea0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-S01"
+ },
+ {
+  "address": "0x00539300",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CoopBombBase, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_00539300.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-S01"
+ },
+ {
+  "address": "0x00539750",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CoopBombBase_BG, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_00539750.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-S01"
+ },
+ {
+  "address": "0x00539BB0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CoopBombBase_BG_TIME, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_00539bb0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-S01"
  },
  {
   "address": "0x0053A460",
@@ -33903,6 +33984,51 @@
   "lane": "r-s186"
  },
  {
+  "address": "0x0062A9D0",
+  "name": "streaming_object_init",
+  "kind": "function",
+  "file": "functions/fn_0062a9d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s481"
+ },
+ {
+  "address": "0x0062D030",
+  "name": "rage::ProceduralTextureVerletWater::vf3",
+  "kind": "function",
+  "file": "functions/fn_0062d030.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s481"
+ },
+ {
+  "address": "0x0062D790",
+  "name": "procedural_texture_skyhat_init",
+  "kind": "function",
+  "file": "functions/fn_0062d790.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s481"
+ },
+ {
+  "address": "0x0062DB60",
+  "name": "skyhat_set_param_1c",
+  "kind": "function",
+  "file": "functions/fn_0062db60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s481"
+ },
+ {
+  "address": "0x0062DB80",
+  "name": "skyhat_set_param_20",
+  "kind": "function",
+  "file": "functions/fn_0062db80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s481"
+ },
+ {
   "address": "0x00648A80",
   "name": "rage__rmPtfxShaderVar_Bool__ctor",
   "kind": "function",
@@ -45828,6 +45954,15 @@
   "lane": "r-s479"
  },
  {
+  "address": "0x008DDF20",
+  "name": "CShaderFx_PushForcedTechnique::vf1",
+  "kind": "function",
+  "file": "functions/fn_008ddf20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
   "address": "0x008DDF60",
   "name": "CSmashMan_ResetDrawBuckets::vf1",
   "kind": "function",
@@ -45841,6 +45976,33 @@
   "name": "CSmashMan_SetDrawBuckets::vf1",
   "kind": "function",
   "file": "functions/fn_008ddfc0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
+  "address": "0x008DE020",
+  "name": "CUnLockRenderTargetDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008de020.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
+  "address": "0x008DE050",
+  "name": "CViewport_Callback_DC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008de050.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
+  "address": "0x008DE110",
+  "name": "alloc_then_dispatch",
+  "kind": "function",
+  "file": "functions/fn_008de110.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s479"
@@ -45900,6 +46062,15 @@
   "lane": "r-s479"
  },
  {
+  "address": "0x008DFA70",
+  "name": "broadcast_table_callback",
+  "kind": "function",
+  "file": "functions/fn_008dfa70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
   "address": "0x008DFCF0",
   "name": "pair_subinit",
   "kind": "function",
@@ -45909,10 +46080,37 @@
   "lane": "r-s479"
  },
  {
+  "address": "0x008DFD30",
+  "name": "quantize_sample_pairs",
+  "kind": "function",
+  "file": "functions/fn_008dfd30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
+  "address": "0x008DFEA0",
+  "name": "pool_slot_assign",
+  "kind": "function",
+  "file": "functions/fn_008dfea0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
   "address": "0x008E0210",
   "name": "pool_slot_data_word",
   "kind": "function",
   "file": "functions/fn_008e0210.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
+  "address": "0x008E0240",
+  "name": "pool_context_create",
+  "kind": "function",
+  "file": "functions/fn_008e0240.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s479"
@@ -45940,6 +46138,24 @@
   "name": "lookup_forward_or_tail",
   "kind": "function",
   "file": "functions/fn_008e0600.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
+  "address": "0x008E0710",
+  "name": "swap_global_resource",
+  "kind": "function",
+  "file": "functions/fn_008e0710.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
+  "address": "0x008E0770",
+  "name": "assign_retained_slot",
+  "kind": "function",
+  "file": "functions/fn_008e0770.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s479"
