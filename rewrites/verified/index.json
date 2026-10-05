@@ -34857,6 +34857,15 @@
   "lane": "r-b540"
  },
  {
+  "address": "0x00680B70",
+  "name": "euphoria_solve_blend (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00680b70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b540"
+ },
+ {
   "address": "0x006812E0",
   "name": "euphoria_solve_quat (proposed)",
   "kind": "function",
@@ -44253,6 +44262,15 @@
   "lane": "r-s136"
  },
  {
+  "address": "0x008D58C0",
+  "name": "build_arc_vertex_records",
+  "kind": "function",
+  "file": "functions/fn_008d58c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q01"
+ },
+ {
   "address": "0x008D5A10",
   "name": "build_blend_block_and_dispatch",
   "kind": "function",
@@ -45144,6 +45162,33 @@
   "lane": "r-s431"
  },
  {
+  "address": "0x008DDEF0",
+  "name": "CShaderFx_PopForcedTechnique::vf1",
+  "kind": "function",
+  "file": "functions/fn_008ddef0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
+  "address": "0x008DDF60",
+  "name": "CSmashMan_ResetDrawBuckets::vf1",
+  "kind": "function",
+  "file": "functions/fn_008ddf60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
+  "address": "0x008DDFC0",
+  "name": "CSmashMan_SetDrawBuckets::vf1",
+  "kind": "function",
+  "file": "functions/fn_008ddfc0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
   "address": "0x008DEAA0",
   "name": "CDataBlockDC::vf2",
   "kind": "function",
@@ -45162,6 +45207,24 @@
   "lane": "r-s479"
  },
  {
+  "address": "0x008DEB10",
+  "name": "alloc_and_process",
+  "kind": "function",
+  "file": "functions/fn_008deb10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
+  "address": "0x008DEB40",
+  "name": "aligned_alloc_forward",
+  "kind": "function",
+  "file": "functions/fn_008deb40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
   "address": "0x008DF9F0",
   "name": "hash_lookup_3c",
   "kind": "function",
@@ -45175,6 +45238,15 @@
   "name": "hash_lookup_30",
   "kind": "function",
   "file": "functions/fn_008dfa30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
+  "address": "0x008DFCF0",
+  "name": "pair_subinit",
+  "kind": "function",
+  "file": "functions/fn_008dfcf0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s479"
@@ -45202,6 +45274,42 @@
   "name": "pin_global_resource",
   "kind": "function",
   "file": "functions/fn_008e05e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
+  "address": "0x008E0600",
+  "name": "lookup_forward_or_tail",
+  "kind": "function",
+  "file": "functions/fn_008e0600.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
+  "address": "0x008E07A0",
+  "name": "forward_slot_pair",
+  "kind": "function",
+  "file": "functions/fn_008e07a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
+  "address": "0x008E0840",
+  "name": "sweep_and_tail",
+  "kind": "function",
+  "file": "functions/fn_008e0840.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
+  "address": "0x008E0880",
+  "name": "pool_indexed_store",
+  "kind": "function",
+  "file": "functions/fn_008e0880.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s479"
@@ -50182,6 +50290,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b377"
+ },
+ {
+  "address": "0x0096FB80",
+  "name": "audio spatial update",
+  "kind": "function",
+  "file": "functions/fn_0096fb80.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b551"
  },
  {
   "address": "0x00970000",
@@ -101475,6 +101592,15 @@
   "lane": "r-s475"
  },
  {
+  "address": "0x00C08150",
+  "name": "stream_header_check",
+  "kind": "function",
+  "file": "functions/fn_00c08150.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
   "address": "0x00C084B0",
   "name": "stream_state_save_a",
   "kind": "function",
@@ -101515,6 +101641,15 @@
   "name": "stream_name_set",
   "kind": "function",
   "file": "functions/fn_00c08a80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C08AB0",
+  "name": "stream_message_emit",
+  "kind": "function",
+  "file": "functions/fn_00c08ab0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s475"
@@ -101619,10 +101754,37 @@
   "lane": "r-s475"
  },
  {
+  "address": "0x00C0A920",
+  "name": "stream_entry_detach",
+  "kind": "function",
+  "file": "functions/fn_00c0a920.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
   "address": "0x00C0A990",
   "name": "stream_item_reset_and_forward",
   "kind": "function",
   "file": "functions/fn_00c0a990.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C0A9C0",
+  "name": "stream_drain_all",
+  "kind": "function",
+  "file": "functions/fn_00c0a9c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C0AF30",
+  "name": "stream_blend_factor",
+  "kind": "function",
+  "file": "functions/fn_00c0af30.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s475"
