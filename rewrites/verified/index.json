@@ -51714,6 +51714,15 @@
   "lane": "r-s262"
  },
  {
+  "address": "0x009EBED0",
+  "name": "CPlayerPed::vf33",
+  "kind": "function",
+  "file": "functions/fn_009ebed0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b519"
+ },
+ {
   "address": "0x009EDAD0",
   "name": "ped_scaled_rate_store",
   "kind": "function",
@@ -56484,6 +56493,15 @@
   "lane": "r-s462"
  },
  {
+  "address": "0x00A47A10",
+  "name": "vehicle_model_part_lookup",
+  "kind": "function",
+  "file": "functions/fn_00a47a10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R04"
+ },
+ {
   "address": "0x00A47A60",
   "name": "Vehicle_GetDoor",
   "kind": "function",
@@ -56511,10 +56529,28 @@
   "lane": "a-R04"
  },
  {
+  "address": "0x00A49180",
+  "name": "vehicle_info_thunk",
+  "kind": "function",
+  "file": "functions/fn_00a49180.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R04"
+ },
+ {
   "address": "0x00A491A0",
   "name": "CVehicle::vf105",
   "kind": "function",
   "file": "functions/fn_00a491a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R04"
+ },
+ {
+  "address": "0x00A49280",
+  "name": "vehicle_window_state_check",
+  "kind": "function",
+  "file": "functions/fn_00a49280.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "a-R04"
@@ -56542,6 +56578,15 @@
   "name": "vehicle_info_field_3bc",
   "kind": "function",
   "file": "functions/fn_00a49470.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R04"
+ },
+ {
+  "address": "0x00A494E0",
+  "name": "vehicle_transform_fill",
+  "kind": "function",
+  "file": "functions/fn_00a494e0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "a-R04"
@@ -56626,6 +56671,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s462"
+ },
+ {
+  "address": "0x00A49B40",
+  "name": "NativeImpl_IS_VEH_WINDOW_INTACT",
+  "kind": "function",
+  "file": "functions/fn_00a49b40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R04"
  },
  {
   "address": "0x00A49BC0",
@@ -96507,6 +96561,15 @@
   "lane": "r-s337"
  },
  {
+  "address": "0x00CA1A80",
+  "name": "ped_task_state_update (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00ca1a80.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b509"
+ },
+ {
   "address": "0x00CA1D70",
   "name": "ped_task_block_init (proposed)",
   "kind": "function",
@@ -99477,6 +99540,15 @@
   "lane": "r-s406"
  },
  {
+  "address": "0x00CD2630",
+  "name": "blend_pair_by_direction",
+  "kind": "function",
+  "file": "functions/fn_00cd2630.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "a-R02"
+ },
+ {
   "address": "0x00CD5480",
   "name": "ped_task_pick_or_scan",
   "kind": "function",
@@ -100393,6 +100465,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s85"
+ },
+ {
+  "address": "0x00CFD810",
+  "name": "ped_task_seek_target_setup",
+  "kind": "function",
+  "file": "functions/fn_00cfd810.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "a-R02"
+ },
+ {
+  "address": "0x00CFDEE0",
+  "name": "ped_task_aim_update",
+  "kind": "function",
+  "file": "functions/fn_00cfdee0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "a-R02"
  },
  {
   "address": "0x00CFE550",
