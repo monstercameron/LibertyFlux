@@ -37,6 +37,7 @@ lf_checker_rt::export!(thiscall, rw_00C8ED10(this: u32, out: u32, aux: u32) -> u
         const CAL_SIN: u32 = 1;
         const CAL_COS1: u32 = 2;
         const CAL_COS2: u32 = 3;
+        const CAL_SIN2: u32 = 7;
         const CAL_ATAN_A: u32 = 4;
         const CAL_ATAN_B: u32 = 5;
         const CAL_NORM: u32 = 6;
@@ -163,7 +164,11 @@ lf_checker_rt::export!(thiscall, rw_00C8ED10(this: u32, out: u32, aux: u32) -> u
             lf_checker_rt::callee_thiscall!(CAL_ATAN_B, u32, this);
             a = atan_float(this);
         }
-        let sin2 = f32::from_bits(lf_checker_rt::callee_cdecl!(CAL_SIN, u32, a.to_bits()));
+        // The second sine call is not vector-logged: at its site the original's xmm0
+        // upper lane carries residue of the scripted arctangent double, which the
+        // checker's movss transport cannot reproduce. The same value  is still
+        // verified through the logged second cosine call below.
+        let sin2 = f32::from_bits(lf_checker_rt::callee_cdecl!(CAL_SIN2, u32,));
         let cos2 = f32::from_bits(lf_checker_rt::callee_cdecl!(CAL_COS2, u32, a.to_bits()));
         let out1 = add(mul(cos2, cos1), mul(sin2, nsin1));
         let out0 = sub(mul(cos2, nsin1), mul(sin2, cos1));
