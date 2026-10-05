@@ -54720,6 +54720,15 @@
   "lane": "r-b420"
  },
  {
+  "address": "0x00A758B0",
+  "name": "ped_task_heading_update",
+  "kind": "function",
+  "file": "functions/fn_00a758b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b446"
+ },
+ {
   "address": "0x00A7C2F0",
   "name": "bu_task_poll_and_reset",
   "kind": "function",
@@ -63441,6 +63450,60 @@
   "lane": "r-b77"
  },
  {
+  "address": "0x00B62FC0",
+  "name": "veh_lookup_or_null",
+  "kind": "function",
+  "file": "functions/fn_00b62fc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B63F10",
+  "name": "veh_clamp_handle_5c",
+  "kind": "function",
+  "file": "functions/fn_00b63f10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B63F40",
+  "name": "veh_clamp_store_60",
+  "kind": "function",
+  "file": "functions/fn_00b63f40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B64030",
+  "name": "veh_init_full",
+  "kind": "function",
+  "file": "functions/fn_00b64030.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B641E0",
+  "name": "veh_init_048",
+  "kind": "function",
+  "file": "functions/fn_00b641e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B642F0",
+  "name": "veh_add_clamp_store_04",
+  "kind": "function",
+  "file": "functions/fn_00b642f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
   "address": "0x00B64570",
   "name": "release_slot_and_indexed_entry",
   "kind": "function",
@@ -63601,6 +63664,42 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-09"
+ },
+ {
+  "address": "0x00B65C80",
+  "name": "veh_guard_forward_2",
+  "kind": "function",
+  "file": "functions/fn_00b65c80.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B65CB0",
+  "name": "veh_guarded_forward",
+  "kind": "function",
+  "file": "functions/fn_00b65cb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B65FA0",
+  "name": "veh_clamp_store_04",
+  "kind": "function",
+  "file": "functions/fn_00b65fa0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B66680",
+  "name": "veh_release_slot_14",
+  "kind": "function",
+  "file": "functions/fn_00b66680.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
  },
  {
   "address": "0x00B6D610",
@@ -91179,6 +91278,366 @@
   "lane": "r-b04"
  },
  {
+  "address": "0x00C7A530",
+  "name": "task_scenario_ctor_value",
+  "kind": "function",
+  "file": "functions/fn_00c7a530.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A560",
+  "name": "task_scenario_ctor_copy3",
+  "kind": "function",
+  "file": "functions/fn_00c7a560.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A5C0",
+  "name": "task_scenario_ctor_default",
+  "kind": "function",
+  "file": "functions/fn_00c7a5c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A5E0",
+  "name": "ctask_chat_scenario_dtor",
+  "kind": "function",
+  "file": "functions/fn_00c7a5e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A610",
+  "name": "ctask_driving_scenario_dtor",
+  "kind": "function",
+  "file": "functions/fn_00c7a610.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A640",
+  "name": "ctask_get_in_car_scenario_dtor",
+  "kind": "function",
+  "file": "functions/fn_00c7a640.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A670",
+  "name": "ctask_mobile_chat_dtor",
+  "kind": "function",
+  "file": "functions/fn_00c7a670.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A6B0",
+  "name": "ctask_move_between_points_dtor",
+  "kind": "function",
+  "file": "functions/fn_00c7a6b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A740",
+  "name": "ctask_wait_seat_free_dtor",
+  "kind": "function",
+  "file": "functions/fn_00c7a740.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A790",
+  "name": "CTaskComplexChatScenario::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c7a790.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A7C0",
+  "name": "CTaskComplexDrivingScenario::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c7a7c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A7F0",
+  "name": "CTaskComplexGetInCarScenario::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c7a7f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A820",
+  "name": "CTaskComplexMobileChatScenario::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c7a820.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A850",
+  "name": "CTaskComplexMobileMakeCall::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c7a850.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A880",
+  "name": "CTaskComplexMoveBetweenPointsScenario::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c7a880.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A8B0",
+  "name": "CTaskComplexPoliceSniperScenario::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c7a8b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A8E0",
+  "name": "CTaskComplexScenario::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c7a8e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A910",
+  "name": "CTaskComplexSeatedScenario::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c7a910.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A940",
+  "name": "CTaskComplexStationaryScenario::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c7a940.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A970",
+  "name": "CTaskComplexWaitForDoorToBeOpen::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c7a970.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A9A0",
+  "name": "CTaskComplexWaitForSeatToBeFree::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c7a9a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7A9D0",
+  "name": "CTaskComplexWalkWithPedScenario::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c7a9d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7AA00",
+  "name": "CTaskComplexWanderingScenario::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c7aa00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7AA30",
+  "name": "scenario_slot_register",
+  "kind": "function",
+  "file": "functions/fn_00c7aa30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7AA60",
+  "name": "scenario_task_create_and_queue",
+  "kind": "function",
+  "file": "functions/fn_00c7aa60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7AB60",
+  "name": "CTaskComplexDriveWanderForTime::vf21",
+  "kind": "function",
+  "file": "functions/fn_00c7ab60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7AB90",
+  "name": "CTaskComplexWaitForDoorToBeOpen::vf21",
+  "kind": "function",
+  "file": "functions/fn_00c7ab90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7ABD0",
+  "name": "CTaskComplexWaitForMyCarToStop::vf21",
+  "kind": "function",
+  "file": "functions/fn_00c7abd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7AC40",
+  "name": "CTaskComplexWaitForSeatToBeFree::vf21",
+  "kind": "function",
+  "file": "functions/fn_00c7ac40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7ADC0",
+  "name": "CTaskComplexWaitForTime::vf21",
+  "kind": "function",
+  "file": "functions/fn_00c7adc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7ADE0",
+  "name": "CTaskComplexWaitTillItsOkToStop::vf21",
+  "kind": "function",
+  "file": "functions/fn_00c7ade0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7B0D0",
+  "name": "CTaskComplexChatScenario::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c7b0d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7B110",
+  "name": "CTaskComplexDriveWanderForTime::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c7b110.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7B160",
+  "name": "CTaskComplexDrivingScenario::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c7b160.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7B190",
+  "name": "CTaskComplexGetInCarScenario::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c7b190.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7B1C0",
+  "name": "CTaskComplexMobileChatScenario::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c7b1c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7B1F0",
+  "name": "CTaskComplexMobileMakeCall::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c7b1f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7B220",
+  "name": "CTaskComplexMoveBetweenPointsScenario::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c7b220.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7B250",
+  "name": "CTaskComplexPoliceSniperScenario::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c7b250.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
+  "address": "0x00C7B280",
+  "name": "CTaskComplexSeatedScenario::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c7b280.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s449"
+ },
+ {
   "address": "0x00C7B4E0",
   "name": "CTaskComplexChatScenario::vf20",
   "kind": "function",
@@ -91393,6 +91852,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s337"
+ },
+ {
+  "address": "0x00C9DBB0",
+  "name": "build_vector_query_and_match",
+  "kind": "function",
+  "file": "functions/fn_00c9dbb0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b450"
  },
  {
   "address": "0x00C9DE50",
@@ -94527,6 +94995,15 @@
   "lane": "r-b267"
  },
  {
+  "address": "0x00CE9090",
+  "name": "CTaskSimpleNMFlinch::vf26",
+  "kind": "function",
+  "file": "functions/fn_00ce9090.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b448"
+ },
+ {
   "address": "0x00CE95A0",
   "name": "CTaskSimpleNMHighFall::vf26",
   "kind": "function",
@@ -95218,6 +95695,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b405"
+ },
+ {
+  "address": "0x00D17410",
+  "name": "cover_slot_path_filter",
+  "kind": "function",
+  "file": "functions/fn_00d17410.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b451"
  },
  {
   "address": "0x00D17CC0",

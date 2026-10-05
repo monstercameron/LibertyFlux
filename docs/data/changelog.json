@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: One clone factory forgot its null check, and two contract traps that hid branches",
+    "title": "Rewrites: 54 more functions pass the checker (13018 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "54 rewrites added under rewrites/verified: 0 script native handlers and 54 other functions.",
+      "The tree now holds 13018 rewrites, 12999 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "780 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: One clone factory forgot its null check, and two contract traps that hid branches",
+    "commit": "f3d6431d57c4ddcb42ff54a4fb61062433585877",
     "summary": "Findings from the r-s449 lane.",
     "changes": [
       "New devlog entry: One clone factory forgot its null check, and two contract traps that hid branches.",
