@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Lift: the leaderboard family joins the workspace",
+    "commit": null,
+    "summary": "The first family lifted by a lane is now a workspace crate: eight virtual functions that the game instantiates once per leaderboard, each written once as portable Rust with no unsafe code.",
+    "changes": [
+      "New crate crates/lf-leaderboard: the six table lookups, the probe and the row collector of the leaderboard-info class, one generic function each, with a generated table of one descriptor per leaderboard. The game holds several hundred copies of each function; about 3,200 verified rewrites stand behind these eight.",
+      "The crate has no addresses, no global state and no dependence on pointer width, and forbids unsafe code. Its 13 host tests pass here and now run on Windows, Linux and macOS in the pipeline.",
+      "The lane that wrote it reports all eight functions proven against every verified rewrite of the same slot. That 32-bit test crate is not in the workspace yet, so the pipeline has not repeated the run, and the crate's registry says so. The row collector's run predates the re-proof of 144 rewrites that compared a length unsigned and is to be repeated.",
+      "Changed on the way in: the signed reads of unsigned words are written with cast_signed, comments that named the lane or its report were rewritten, and the manifest follows the workspace's edition and lints."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 3 files from lanes (296 unverified rewrites, 29 in review)",
     "commit": "c76bea9e64050b13d75c1e733f609922d3b70eea",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

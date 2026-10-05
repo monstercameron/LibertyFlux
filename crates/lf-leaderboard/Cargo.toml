@@ -1,0 +1,12 @@
+[package]
+name = "lf-leaderboard"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+# Never published to crates.io; path dependencies between the project's crates rely on it.
+publish = false
+description = "The leaderboard-info class family lifted from its verified 32-bit rewrites to portable, safe Rust"
+
+[lints]
+workspace = true
