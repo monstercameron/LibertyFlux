@@ -5,11 +5,11 @@
 /// The original walks the tree rooted at `this + 4` with the time at
 /// `key + 4` (stepping left while the node time is strictly above the key,
 /// right otherwise) and then either inserts through the insert callee
-/// (passing a spill slot for the new node) when the walk ends left of the
-/// first node or past a node above the key, or reports the neighbour
-/// (thiscall, two stack pointers: `key`, `out`). It writes the node and a
-/// 1/0 inserted flag to `out` and returns `out`.
-lf_checker_rt::export!(thiscall, rw_00AC5D60(this: u32, key: u32, out: u32) -> u32 {
+/// (passing the address of the incoming key slot for the new node) when the
+/// walk ends left of the first node or past a node above the key, or reports
+/// the neighbour (thiscall, two stack pointers: `out`, `key`). It writes the
+/// node and a 1/0 inserted flag to `out` and returns `out`.
+lf_checker_rt::export!(thiscall, rw_00AC5D60(this: u32, out: u32, key: u32) -> u32 {
     unsafe {
         const INSERT: u32 = 1;
         const TOUCH: u32 = 2;
@@ -39,14 +39,18 @@ lf_checker_rt::export!(thiscall, rw_00AC5D60(this: u32, key: u32, out: u32) -> u
                 }
             }
         }
-        /// Insert through the callee and report the new node.
-        unsafe fn insert(this: u32, key: u32, out: u32, found: u32, edge: u32) -> u32 {
+        /// Insert through the callee and report the new node. The slot's
+        /// content matches the original's incoming key slot (the key
+        /// pointer); the node is read back from the key word the callee
+        /// filled.
+        unsafe fn insert(this: u32, out: u32, key: u32, found: u32, edge: u32) -> u32 {
             unsafe {
-                let mut slot: u32 = 0;
+                let mut slot: u32 = key;
                 lf_checker_rt::callee_thiscall!(
                     1, u32, this, &mut slot as *mut u32 as u32, found, key, edge, 0u32
                 );
-                (out as *mut u32).write_unaligned(slot);
+                let node = (key as *const u32).read_unaligned();
+                (out as *mut u32).write_unaligned(node);
                 (out.wrapping_add(4) as *mut u8).write(1);
                 out
             }
@@ -55,13 +59,13 @@ lf_checker_rt::export!(thiscall, rw_00AC5D60(this: u32, key: u32, out: u32) -> u
             if above {
                 let first = (this.wrapping_add(FIRST) as *const u32).read_unaligned();
                 if found == first {
-                    return insert(this, key, out, found, found);
+                    return insert(this, out, key, found, found);
                 }
                 lf_checker_rt::callee_cdecl!(TOUCH, u32, found);
             }
             let ft = (found.wrapping_add(TIME) as *const f32).read_unaligned();
             if want > ft {
-                return insert(this, key, out, found, 0);
+                return insert(this, out, key, found, 0);
             }
             (out as *mut u32).write_unaligned(found);
             (out.wrapping_add(4) as *mut u8).write(0);
