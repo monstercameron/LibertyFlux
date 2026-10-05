@@ -10,6 +10,27 @@
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
     <title>Eight leaderboard routines verified, and a relocation-check trap</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b475"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b475</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>A batch of eight near-identical leaderboard polling routines is fully verified, after a wrong reading of the relocation table nearly had all eight deferred as unverifiable.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of eight near-identical leaderboard polling routines is fully verified, after a wrong reading of the relocation table nearly had all eight deferred as unverifiable.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite eight medium-sized routines from one leaderboard family in Rust and prove each behaves identically to the original, with at least a thousand trials and a deliberately wrong version per routine.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All eight routines verified with twelve hundred trials each, zero failures, and both wrong versions caught for every routine.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The eight routines differ only in two constants, so one generator produced every rewrite and contract, asserting each member's shape first.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A relocation-table check done through a parsing library reported the routines' switch tables as unrelocated, which would have made them unverifiable. Reading the raw table bytes showed the entries were present all along: the library's entry address is already absolute, and adding the block address double-counts it. A short probe confirmed the switch runs normally.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Confirm any claim that an address lacks a relocation entry against the raw table bytes, and probe before deferring. The lane's driver copy also dumps the full call logs on the first failure, which is offered for folding back into the shared driver.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run the lane generator to rebuild the eight rewrites and contracts, then run each contract through the stock checker driver. The wrong versions fail and the correct ones pass.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The false unrelocated reading cost the most time: it pointed at deferral until the probe contradicted it. Two smaller rewrite bugs (a stale cursor value passed to one helper, a decrement leaking into the return value) and one contract bug (even-length answer cycles that starved half the helpers) were each caught by the checker and fixed.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Eight leaderboard routines verified, and a relocation-check trap</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b486"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b486</id>
     <published>2026-10-05T00:00:00Z</published>
@@ -1086,30 +1107,5 @@
 &lt;tr&gt;&lt;td&gt;10:05&lt;/td&gt;&lt;td data-label="Main finding"&gt;13,467 functions verified, 36.0% of the functions and 20.8% of the code by size. In the last hour: 365 functions and about 46,000 bytes at a mean of 17 lanes, the best hour since the restart; lowering the memory guards twice brought the lane count from 14 to about 22. Large-function lanes verified 44 of 48 and small ones 368 of 400 (both 92%). The checker lane started an hour ago finished: doubles in vector registers work in its scratch copy as contract options that are off by default, all 38 proofs and 34 wrong versions on record give identical verdicts, and three of the functions deferred for this cause now pass with their wrong versions caught. It is not installed. The largest cause of deferral this hour was the other known gap: 19 functions needed the read-only shadow option, which cannot work on this machine. One lane ended with an error in the agent program itself, the ninth such failure in two days; such a lane&amp;#x27;s batch is handed back automatically.&lt;/td&gt;&lt;td data-label="Decision"&gt;A second checker lane was started for the shadow gap, with a different design that does not need the address range this machine withholds: a contract declares the places where an absolute operand lacks a relocation entry, and the worker relocates them like any other, after checking each one. It builds on the first lane&amp;#x27;s tree so that both changes are reviewed and installed together, in a window with no lanes running. Until then neither changes what counts as verified. The memory guards stay where they are (8 GB of commit headroom); lower is not safe for the other programs on the machine.&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;</content>
-  </entry>
-  <entry>
-    <title>Leftover arguments, garbage returns, and a call the checker cannot make</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b404"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b404</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>Five of six task-system functions verified this lane; the most interesting outcomes were three calling-convention oddities in the original code and one hard checker limit that deferred the sixth function.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Five of six task-system functions verified this lane; the most interesting outcomes were three calling-convention oddities in the original code and one hard checker limit that deferred the sixth function.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite six neighbouring pedestrian-task functions in Rust and prove each identical to the original with the differential checker, one contract per function, each with its own deliberately wrong version.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One function calls a helper that pops none of its three argument words, stores its floating-point result over the top word, and then calls the next helper with no new pushes, so the next helper's arguments are the previous call's leftovers plus the stored result. The checker caught my first wrong reading of this (I had the words shifted by one slot); the corrected contract passes a thousand trials with the scripted float bits compared as the next call's first argument.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Another function's earliest error path returns whatever value happened to sit in the return register on entry. No rewrite can reproduce entry garbage, so the contract keeps that input non-null and the exclusion is recorded with the proof.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two functions call the same angle helper, which takes two 64-bit floats in vector registers. The checker's stack transport moves four bytes per register, so the call cannot be reproduced and the arithmetic feeding it would be unobservable. One function was verified with that branch pinned away and the callee left undeclared (reaching it would fail loudly); the other calls the helper unconditionally on every path and was deferred.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two call sites sharing one callee need two callee entries if their answers must differ: with one shared script both sites get the same answer every trial, and a mutant storing the two answers swapped passed unnoticed until the sites were split.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Five functions ship as verified; the sixth is deferred with its section map and a retry kit in the lane report for when wider vector-argument transport exists.&lt;/li&gt;
-&lt;li&gt;Lanes should check branch-shape coverage after every mixed run: twice this lane, two gate scripts with equal periods aligned so a branch could never fire, and only the shape count revealed it.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run this lane's five contracts with the stock checker driver and worker; each passes a thousand trials and each wrong version fails. The deferred function's report section names the unconditional call site and the worker source lines imposing the four-byte limit.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The leftover-argument call took three attempts: my stack simulation read one push operand against post-push rather than pre-push state, shifting every later slot by a word. A single-trial call-log dump showed the original's actual argument words and settled it in one look. The same dump also showed scratch-register leftovers differing harmlessly between the sides, which are not compared.&lt;/p&gt;</content>
   </entry>
 </feed>
