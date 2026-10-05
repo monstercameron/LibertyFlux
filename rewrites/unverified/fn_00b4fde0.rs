@@ -5,8 +5,9 @@
 /// The current task at `this + 0x128`, when present, is asked to yield
 /// through its virtual slot at `+0x14` (thiscall on the task with `this`,
 /// `flag` and 0). A refusal (zero low byte) ends the call: with a null
-/// flag nothing more happens, otherwise the flag object is released
-/// (virtual slot `+0x00`, thiscall on it with 1); either way 0 is returned.
+/// new task nothing more happens, otherwise the incoming new task is
+/// released (virtual slot `+0x00`, thiscall on it with 1); either way 0
+/// is returned.
 /// On acceptance with `flag` other than 1, or when the kind query (virtual
 /// slot `+0x04` on the current task) is non-zero, the current task is
 /// released the same way. Otherwise the old task at `this + 0x12C` is
@@ -36,12 +37,12 @@ lf_checker_rt::export!(thiscall, rw_00b4fde0(this: u32, newtask: u32, flag: u32)
                 ((vt + YIELD_SLOT) as *const u32).read_unaligned() as usize,
             );
             if yield_(cur, this, flag, 0) & 0xff == 0 {
-                if flag != 0 {
-                    let fvt = (flag as *const u32).read_unaligned();
+                if newtask != 0 {
+                    let nvt = (newtask as *const u32).read_unaligned();
                     let rel: extern "thiscall" fn(u32, u32) -> u32 = core::mem::transmute(
-                        ((fvt + RELEASE_SLOT) as *const u32).read_unaligned() as usize,
+                        ((nvt + RELEASE_SLOT) as *const u32).read_unaligned() as usize,
                     );
-                    rel(flag, RELEASE_ARG);
+                    rel(newtask, RELEASE_ARG);
                 }
                 return 0;
             }

@@ -73,12 +73,12 @@ lf_checker_rt::export!(thiscall, rw_00b4f420(this: u32) -> u32 {
                 k += 1;
             }
         }
-        let slot = this + DRIVER;
-        let vt2 = (slot as *const u32).read_unaligned();
+        let field = this + DRIVER;
+        let slot = (field as *const u32).read_unaligned();
         let step: extern "thiscall" fn(u32) -> u32 = core::mem::transmute(
-            ((vt2 + STEPPER_SLOT) as *const u32).read_unaligned() as usize,
+            ((slot + STEPPER_SLOT) as *const u32).read_unaligned() as usize,
         );
-        step(slot);
+        step(field);
         lf_checker_rt::callee_thiscall!(FINISH, u32, this)
     }
 });

@@ -9,7 +9,7 @@
 /// context echo at `+0x18` and code at `+0x10`. The second and third stack
 /// arguments are not read. (thiscall: `this` in ecx, three stack words.)
 ///
-/// The event is stale unless its time is negative or NaN; the context must
+/// The event is fresh only when its time is positive or NaN; the context must
 /// be nonzero and match the echo. Codes: `0xc8` returns zero; `0x2d9` joins
 /// the shared subject check below; `0x2c2` builds through id 12; `0x2d6`
 /// builds through id 14 (kind 3) or id 13 (other kinds) and then joins the
@@ -141,7 +141,7 @@ lf_checker_rt::export!(thiscall, rw_00ca9cd0(this: u32, ev: u32, _a1: u32, _a2: 
         }
 
         let time = rdf(ev + EVT_TIME);
-        if time >= 0.0 {
+        if time <= 0.0 {
             return INCOMING_EAX;
         }
         let subj = rd32(ev + EVT_SUBJECT);
