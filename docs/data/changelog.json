@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: One pose function verified; absolute reads into writable memory fail silently here",
+    "title": "Rust in progress: 11 files from lanes (402 unverified rewrites, 0 in review)",
     "commit": null,
+    "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
+    "changes": [
+      "rewrites/unverified holds 402 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
+      "rewrites/in-review holds 0 Rust files from 0 other lanes (checker changes, assembly, lifted code, tools), waiting for review before they move to their real place.",
+      "20 files were held back by the publication scan."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: One pose function verified; absolute reads into writable memory fail silently here",
+    "commit": "b462f23b9d9cc6192bdb9e515e3cbcd2d03e4d8a",
     "summary": "Findings from the r-b398 lane.",
     "changes": [
       "New devlog entry: One pose function verified; absolute reads into writable memory fail silently here.",

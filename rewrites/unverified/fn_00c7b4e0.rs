@@ -128,8 +128,8 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
         }
         /// Scaled random draw in the original's operand order.
         #[inline(always)]
-        unsafe fn scaled(_raw: u32) -> f32 {
-            mul(_raw as i32 as f32, RAND_SCALE)
+        unsafe fn scaled(draw: u32) -> f32 {
+            mul(draw as i32 as f32, RAND_SCALE)
         }
 
         // Shared prologue: mark the ped's intelligence scenario-driven.

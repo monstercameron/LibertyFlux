@@ -2,7 +2,7 @@
 /// Map an index through a lookup call to a small mode byte, or leave 0.
 ///
 /// Writes 0 to `[out]`. When `idx` is negative, that is all. Otherwise calls
-/// the resolver (cdecl, two stack args: `idx` and 1; intercepted) and, when
+/// the resolver (cdecl, two stack args: 1 and `idx`; intercepted) and, when
 /// it returns non-null, decodes `([answer+0x28] >> 6) & 0xf`: values 2, 3
 /// and 4 are stored to `[out]`, anything else leaves the 0. Returns `idx`
 /// when negative, the decoded value (or 0 for a null answer) otherwise.
@@ -15,7 +15,7 @@ export!(cdecl, rw_00beabb0(idx: u32, out: u32) -> u32 {
         if (idx as i32) < 0 {
             return idx;
         }
-        let answer: u32 = callee_cdecl!(RESOLVER, u32, idx, 1);
+        let answer: u32 = callee_cdecl!(RESOLVER, u32, 1, idx);
         if answer == 0 {
             return 0;
         }
