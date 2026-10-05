@@ -24,11 +24,12 @@
 /// whole of `0x1F40` (pick equal to the fallback) or `0xBB8` sets the
 /// accumulator; the third and fourth \$RAND results, scaled by -750 and
 /// -300, set two budgets of 500 minus the scaled value, whose minimum and
-/// first value join a nine-word issue request with (0xEDADE4, 0, pick,
-/// accumulator, 0x4B5, 0, 0). That request's object pointer is read one
-/// word past this function's single argument — caller-stack residue the
-/// proof leaves uncompared (the rewrite passes zero). An accumulator of -1
-/// takes the slow path instead of committing.
+/// first value join a ten-word issue request (a literal 1 first, then the
+/// budgets, 0, 0, 0x4B5, accumulator, pick, 0, 0xEDADE4). That request's
+/// object pointer is read one word past this function's single argument —
+/// caller-stack residue the proof leaves uncompared (the rewrite passes
+/// zero). Only after the issue request, an accumulator of -1 takes the slow
+/// path instead of committing.
 ///
 /// The slow path scales the fifth \$RAND result by -7000 into an accumulator
 /// of 1000 minus it. Committing writes the image word to `+0x20`, the
@@ -130,25 +131,28 @@ lf_checker_rt::export!(thiscall, rw_00cd9860(this: u32, p0: u32) -> u32 {
                 let v5 = draw(CALLEE_R5, SCALE_SLOW);
                 acc = (0x3e8i32 - v5) as u32;
             } else {
-                let whole = if pick == fallback { 0x1f40u32 } else { 0xbB8u32 };
+                let whole = if pick == fallback { 0x1f40u32 } else { 0x0bb8u32 };
                 let half = (whole as i32 / 2) as u32;
                 let c: u32 = lf_checker_rt::callee_cdecl!(CALLEE_COMBINE, u32, half, whole);
+                let v3 = draw(CALLEE_R3, SCALE_B1);
+                let b1 = 0x1f4i32 - v3;
+                let v4 = draw(CALLEE_R4, SCALE_B2);
+                let b2 = 0x1f4i32 - v4;
+                let lo = if b2 < b1 { b2 } else { b1 };
+                // Ten words: a literal 1 is pushed first, then the budgets,
+                // zeros, 0x4b5, accumulator, pick, zero, 0xedade4. The issue
+                // object comes from one word past this function's argument
+                // (caller residue, uncompared here).
+                let _: u32 = lf_checker_rt::callee_thiscall!(
+                    CALLEE_ISSUE, u32, 0u32, lf_checker_rt::relocated(0xedade4), 0u32, pick,
+                    c, 0x4b5u32, 0u32, 0u32, b1 as u32, lo as u32, 1u32
+                );
+                // The -1 check runs after the issue request, not before it.
                 if c == 0xffff_ffff {
                     let v5 = draw(CALLEE_R5, SCALE_SLOW);
                     acc = (0x3e8i32 - v5) as u32;
                 } else {
                     acc = c;
-                    let v3 = draw(CALLEE_R3, SCALE_B1);
-                    let b1 = 0x1f4i32 - v3;
-                    let v4 = draw(CALLEE_R4, SCALE_B2);
-                    let b2 = 0x1f4i32 - v4;
-                    let lo = if b2 < b1 { b2 } else { b1 };
-                    // The original reads the issue object from one word past
-                    // its argument (caller residue, uncompared here).
-                    let _: u32 = lf_checker_rt::callee_thiscall!(
-                        CALLEE_ISSUE, u32, 0u32, 0xedad_e4u32, 0u32, pick, acc, 0x4b5u32,
-                        0u32, 0u32, b1 as u32, lo as u32
-                    );
                 }
             }
         } else {
