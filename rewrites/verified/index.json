@@ -60246,6 +60246,33 @@
   "lane": "r-s443"
  },
  {
+  "address": "0x00B18E80",
+  "name": "sweep_tagged_slots",
+  "kind": "function",
+  "file": "functions/fn_00b18e80.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B18EE0",
+  "name": "sweep_flagged_items",
+  "kind": "function",
+  "file": "functions/fn_00b18ee0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B18F70",
+  "name": "ccutsceneobject_vf57",
+  "kind": "function",
+  "file": "functions/fn_00b18f70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
   "address": "0x00B1A410",
   "name": "lowercase_wstr_in_place",
   "kind": "function",
@@ -60300,10 +60327,37 @@
   "lane": "r-s443"
  },
  {
+  "address": "0x00B1B5A0",
+  "name": "scale_level_by_rate",
+  "kind": "function",
+  "file": "functions/fn_00b1b5a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
   "address": "0x00B1B5E0",
   "name": "lerp_by_ratio",
   "kind": "function",
   "file": "functions/fn_00b1b5e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1B630",
+  "name": "rebuild_palette_gated",
+  "kind": "function",
+  "file": "functions/fn_00b1b630.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1C5F0",
+  "name": "refresh_channel_gated",
+  "kind": "function",
+  "file": "functions/fn_00b1c5f0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s443"
@@ -60381,10 +60435,28 @@
   "lane": "r-s443"
  },
  {
+  "address": "0x00B1E810",
+  "name": "dispatch_stream_event",
+  "kind": "function",
+  "file": "functions/fn_00b1e810.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
   "address": "0x00B1EE80",
   "name": "run_shutdown_sequence",
   "kind": "function",
   "file": "functions/fn_00b1ee80.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1F870",
+  "name": "fill_level_rows",
+  "kind": "function",
+  "file": "functions/fn_00b1f870.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s443"
@@ -60430,6 +60502,15 @@
   "name": "init_cell_state",
   "kind": "function",
   "file": "functions/fn_00b1fd00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B20180",
+  "name": "maybe_rebuild_cache",
+  "kind": "function",
+  "file": "functions/fn_00b20180.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s443"
