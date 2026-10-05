@@ -35190,6 +35190,15 @@
   "lane": "r-b151"
  },
  {
+  "address": "0x0065BD50",
+  "name": "rage::DayLighting::DayLightingVarCache::vf0",
+  "kind": "function",
+  "file": "functions/fn_0065bd50.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b547"
+ },
+ {
   "address": "0x0065CEA0",
   "name": "rage::AtmosphericScattering::AtmoscattVarCache::vf0",
   "kind": "function",
@@ -42795,6 +42804,33 @@
   "lane": "r-s95"
  },
  {
+  "address": "0x008A8120",
+  "name": "audio_voice_mix_bias15",
+  "kind": "function",
+  "file": "functions/fn_008a8120.rs",
+  "trials": 1100,
+  "checker": "version 6",
+  "lane": "r-b544"
+ },
+ {
+  "address": "0x008A8230",
+  "name": "audio_voice_mix_bias10",
+  "kind": "function",
+  "file": "functions/fn_008a8230.rs",
+  "trials": 1100,
+  "checker": "version 6",
+  "lane": "r-b544"
+ },
+ {
+  "address": "0x008A8340",
+  "name": "audio_voice_gain_normalize",
+  "kind": "function",
+  "file": "functions/fn_008a8340.rs",
+  "trials": 1100,
+  "checker": "version 6",
+  "lane": "r-b544"
+ },
+ {
   "address": "0x008A84A0",
   "name": "audio_apply_gain_matrix",
   "kind": "function",
@@ -42829,6 +42865,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-12"
+ },
+ {
+  "address": "0x008A8BE0",
+  "name": "audio_voice_spatialize_a",
+  "kind": "function",
+  "file": "functions/fn_008a8be0.rs",
+  "trials": 1100,
+  "checker": "version 6",
+  "lane": "r-b544"
+ },
+ {
+  "address": "0x008A8F50",
+  "name": "audio_voice_spatialize_b",
+  "kind": "function",
+  "file": "functions/fn_008a8f50.rs",
+  "trials": 1100,
+  "checker": "version 6",
+  "lane": "r-b544"
  },
  {
   "address": "0x008A92C0",
@@ -69037,6 +69091,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD7190",
+  "name": "audio_grid_emit (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00ad7190.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b545"
  },
  {
   "address": "0x00AD7C40",
@@ -102661,6 +102724,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s109"
+ },
+ {
+  "address": "0x00C2C500",
+  "name": "audEntityRadioEmitter::vf8",
+  "kind": "function",
+  "file": "functions/fn_00c2c500.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b548"
  },
  {
   "address": "0x00C2C610",

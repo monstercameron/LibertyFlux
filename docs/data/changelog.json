@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Rewrites: 8 more functions pass the checker (15087 in total)",
+    "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "8 rewrites added under rewrites/verified: 0 script native handlers and 8 other functions.",
+      "The tree now holds 15087 rewrites, 15068 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 690 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "19 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 53 files from lanes (384 unverified rewrites, 40 in review)",
     "commit": "e463b4049b989af3d573f5d923335d041436f83e",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
