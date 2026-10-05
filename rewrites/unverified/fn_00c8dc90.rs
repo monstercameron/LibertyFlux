@@ -73,6 +73,9 @@ lf_checker_rt::export!(cdecl, rw_00c8dc90(q: u32, ctx: u32, mode: u32, typefilte
         let mut best: f32 = rd(lf_checker_rt::relocated(BEST_INIT));
         let mut winner: u32 = 0;
         let mut i: u32 = 0;
+        // One out-slot for the whole scan, like the original's single frame
+        // slot: leftovers from one entity are still there for the next.
+        let mut pos = [0u32; 3];
         loop {
             let count = ((lf_checker_rt::relocated(COUNT) as *const u16).read_unaligned()) as u32;
             if i >= count {
@@ -98,7 +101,6 @@ lf_checker_rt::export!(cdecl, rw_00c8dc90(q: u32, ctx: u32, mode: u32, typefilte
                             break 'entity;
                         }
                     }
-                    let mut pos = [0u32; 3];
                     let out = &mut pos as *mut [u32; 3] as u32;
                     lf_checker_rt::callee_thiscall!(2u32, u32, ent, out, 0u32);
                     if (lf_checker_rt::callee_thiscall!(3u32, u32, ent) & 0xff) != 0 {
