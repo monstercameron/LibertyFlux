@@ -1417,82 +1417,82 @@
  },
  {
   "address": "0x00A4A9E0",
-  "name": null,
+  "name": "vehicle_slot_f50_equals",
   "file": "fn_00a4a9e0.rs",
   "lane": "r-s455",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00A4AA00",
-  "name": null,
+  "name": "CVehicle::vf74",
   "file": "fn_00a4aa00.rs",
   "lane": "r-s455",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00A4AB10",
-  "name": null,
+  "name": "vehicle_array_contains",
   "file": "fn_00a4ab10.rs",
   "lane": "r-s455",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00A4ACC0",
-  "name": null,
+  "name": "vehicle_kind_in_234",
   "file": "fn_00a4acc0.rs",
   "lane": "r-s455",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00A4AD00",
-  "name": null,
+  "name": "CVehicle::vf81",
   "file": "fn_00a4ad00.rs",
   "lane": "r-s455",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00A4C760",
-  "name": null,
+  "name": "vehicle_counter_dec",
   "file": "fn_00a4c760.rs",
   "lane": "r-s455",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00A4D060",
-  "name": null,
+  "name": "NativeImpl_SET_CAR_LIVERY",
   "file": "fn_00a4d060.rs",
   "lane": "r-s455",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00A4DB10",
-  "name": null,
+  "name": "CHeli::vf56",
   "file": "fn_00a4db10.rs",
   "lane": "r-s455",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00A4DC90",
-  "name": null,
+  "name": "vehicle_clear_flags",
   "file": "fn_00a4dc90.rs",
   "lane": "r-s455",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00A4DE70",
-  "name": null,
+  "name": "vehicle_arm_f48",
   "file": "fn_00a4de70.rs",
   "lane": "r-s455",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -1640,6 +1640,14 @@
   "reason": null
  },
  {
+  "address": "0x00A4FB80",
+  "name": "vehicle_slot_pos_call",
+  "file": "fn_00a4fb80.rs",
+  "lane": "r-s452",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A4FF80",
   "name": "vehicle_count_free_slots",
   "file": "fn_00a4ff80.rs",
@@ -1648,9 +1656,49 @@
   "reason": null
  },
  {
+  "address": "0x00A50610",
+  "name": "vehicle_teardown_all_slots",
+  "file": "fn_00a50610.rs",
+  "lane": "r-s452",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A51830",
+  "name": "vehicle_tune_gears",
+  "file": "fn_00a51830.rs",
+  "lane": "r-s452",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A52350",
   "name": "vehicle_box_from_center",
   "file": "fn_00a52350.rs",
+  "lane": "r-s452",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A531C0",
+  "name": "vehicle_emit_box",
+  "file": "fn_00a531c0.rs",
+  "lane": "r-s452",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A53240",
+  "name": "vehicle_add_part",
+  "file": "fn_00a53240.rs",
+  "lane": "r-s452",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A53290",
+  "name": "vehicle_add_part_auto",
+  "file": "fn_00a53290.rs",
   "lane": "r-s452",
   "outcome": "not_reached",
   "reason": null
@@ -1776,6 +1824,14 @@
   "reason": ""
  },
  {
+  "address": "0x00B2FE80",
+  "name": "ped_task_range_check",
+  "file": "fn_00b2fe80.rs",
+  "lane": "r-b457",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00B37240",
   "name": "pending-triage",
   "file": "fn_00b37240.rs",
@@ -1822,54 +1878,6 @@
   "lane": "r-s407",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00B64E70",
-  "name": "fn_00B64E70",
-  "file": "fn_00b64e70.rs",
-  "lane": "r-s450",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B64F00",
-  "name": "fn_00B64F00",
-  "file": "fn_00b64f00.rs",
-  "lane": "r-s450",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B65B90",
-  "name": "fn_00B65B90",
-  "file": "fn_00b65b90.rs",
-  "lane": "r-s450",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B65BD0",
-  "name": "fn_00B65BD0",
-  "file": "fn_00b65bd0.rs",
-  "lane": "r-s450",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B68510",
-  "name": "fn_00B68510",
-  "file": "fn_00b68510.rs",
-  "lane": "r-s450",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B68580",
-  "name": "fn_00B68580",
-  "file": "fn_00b68580.rs",
-  "lane": "r-s450",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00B77C30",
@@ -2320,25 +2328,9 @@
   "reason": null
  },
  {
-  "address": "0x00C3B230",
-  "name": "CTrain::vf42",
-  "file": "fn_00c3b230.rs",
-  "lane": "r-s448",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00C3DCC0",
+  "address": "0x00C3ACB0",
   "name": "tbd",
-  "file": "fn_00c3dcc0.rs",
-  "lane": "r-s448",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00C3E460",
-  "name": "tbd",
-  "file": "fn_00c3e460.rs",
+  "file": "fn_00c3acb0.rs",
   "lane": "r-s448",
   "outcome": "not_reached",
   "reason": ""
@@ -2496,9 +2488,9 @@
   "reason": "abs_shadow_unavailable"
  },
  {
-  "address": "0x00C9E000",
+  "address": "0x00C9DCC0",
   "name": "proposed-tbd",
-  "file": "fn_00c9e000.rs",
+  "file": "fn_00c9dcc0.rs",
   "lane": "r-b450",
   "outcome": "not_reached",
   "reason": ""
@@ -2558,6 +2550,14 @@
   "lane": "r-b350",
   "outcome": "not_reached",
   "reason": ""
+ },
+ {
+  "address": "0x00CBF090",
+  "name": "CPedMoveBlendOnFoot::vf5",
+  "file": "fn_00cbf090.rs",
+  "lane": "r-b458",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00CC0620",
@@ -3016,14 +3016,6 @@
   "reason": "other"
  },
  {
-  "address": "0x00D3BFF0",
-  "name": "CDummyTask_Wander::vf3",
-  "file": "fn_00d3bff0.rs",
-  "lane": "r-b453",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x00D82CD0",
   "name": null,
   "file": "fn_00d82cd0.rs",
@@ -3060,6 +3052,14 @@
   "name": "tbd",
   "file": "fn_00dacb90.rs",
   "lane": "r-b447",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DC5560",
+  "name": "TaskShoot_UpdateAim",
+  "file": "fn_00dc5560.rs",
+  "lane": "r-b455",
   "outcome": "not_reached",
   "reason": null
  },

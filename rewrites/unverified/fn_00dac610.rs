@@ -154,7 +154,7 @@ lf_checker_rt::export!(cdecl, rw_00dac610(a0: u32, a1: u32, a2: u32) -> u32 {
         wrf_at(base, 0x30, y1);
         wrf_at(base, 0x34, y2);
         let p2: u32 = lf_checker_rt::callee_cdecl!(
-            P2, u32, a0, base + 0x10, base + 0x30, base + 0x50, F6, 0, 0, 0x8e, 0
+            P2, u32, a0, base + 0x20, base + 0x30, base + 0x50, F6, 0, 0, 0x8e, 0
         );
         if p2 & 0xff != 0 {
             (p2 & !0xff) | 1

@@ -4,7 +4,8 @@
 ///
 /// `inner = [this + LINK]` (always dereferenced), `slot = [inner + SLOT_PTR]`;
 /// when `slot` is non-null the argument is written to `slot + VALUE` (0xD8).
-/// A null `slot` skips the store. Returns `inner` in `eax` on every path.
+/// A null `slot` skips the store. Returns the argument in `eax` when the
+/// store happens, else `inner` (the original reloads `eax` from the stack).
 ///
 /// Original: 0x00A4D060 (thiscall, one stack word), leaf, no globals.
 lf_checker_rt::export!(thiscall, rw_00A4D060(this: u32, val: u32) -> u32 {
@@ -16,6 +17,7 @@ lf_checker_rt::export!(thiscall, rw_00A4D060(this: u32, val: u32) -> u32 {
         let slot = ((inner + SLOT_PTR) as *const u32).read_unaligned();
         if slot != 0 {
             ((slot + VALUE) as *mut u32).write_unaligned(val);
+            return val;
         }
         inner
     }

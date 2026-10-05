@@ -23,12 +23,16 @@
 ///
 /// The tail jump is a computed jump through a planted vtable. The
 /// original writes its argument over its incoming arg slot and jumps, so
-/// its stack adjustment on that path is +4, not +8; the rewrite pushes
-/// the argument and calls the plain-return stub through the thiscall
-/// macro (which emits no caller cleanup), leaking the same word, so both
-/// sides adjust +4. The leaked word differs from the original's slot, so
-/// the stack check is off for this function. One predicate argument is a
-/// single byte pushed as a full word; only its low byte is compared.
+/// its stack adjustment on that path is +4, not +8; the rewrite cannot
+/// reproduce a computed tail jump in safe Rust, so it makes a balanced
+/// call (the stub returns plain on the original side and pops the word
+/// on the rewrite side) and returns normally. The call itself, its
+/// argument and ECX, and the returned answer are all compared; only the
+/// stack-pointer adjustment differs on tail-path trials, so the ESP
+/// check is off (a post-hoc audit compares it on the other paths). One
+/// predicate argument is a single byte pushed as a full word; only its
+/// low byte is compared. Early exits return whatever EAX holds there,
+/// including two spots where a byte test has replaced AL.
 /// Calling convention: thiscall, one stack word, EAX return.
 lf_checker_rt::export!(thiscall, rw_00a75a40(this: u32, arg1: u32) -> u32 {
     unsafe {
@@ -234,7 +238,7 @@ lf_checker_rt::export!(thiscall, rw_00a75a40(this: u32, arg1: u32) -> u32 {
                     );
                     return r;
                 }
-                n
+                return n;
             }
         }
         // Mode-2 query block.
@@ -269,7 +273,7 @@ lf_checker_rt::export!(thiscall, rw_00a75a40(this: u32, arg1: u32) -> u32 {
         }
         let esi2: u32 = lf_checker_rt::callee_thiscall!(D_SEL_C, u32, grp, 1u32);
         wr16(esi2 + HEAD, flag_value(this, arg1));
-        // Tail: successor query, then the leaking tail call (see doc).
+        // Tail: successor query, then the balanced tail call (see doc).
         let t1: u32 = vcall0(esi2, NEXT_SLOT, esi2);
         lf_checker_rt::callee_thiscall!(V_TAIL, u32, t1, 1u32)
     }
