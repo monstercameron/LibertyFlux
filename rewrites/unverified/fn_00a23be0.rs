@@ -20,8 +20,8 @@
 /// dead zone, between easing the energy at `+0x228` from indexed tables
 /// (entry 0 or 1 of the game mode: forced to 1 when sensor `+0x328d` is set,
 /// else the game-filled selector) scaled by the game-filled rate, or
-/// resetting it to 1; the energy is then clamped to at most 1 (exactly 1 when
-/// the extended flag is set) and multiplied by a third table entry.
+/// resetting it to 1; the energy is then floored at 1 (exactly 1 when the
+/// extended flag is set) and multiplied by a third table entry.
 ///
 /// The game-filled divisor (converted from integer) scales a quotient that is
 /// remapped to a slope pair, defaulting to constants when the extended flag
@@ -203,10 +203,10 @@ lf_checker_rt::export!(thiscall, rw_00a23be0(
         } else {
             wr32(this.wrapping_add(0x228), 0x3f800000);
         }
-        // Clamp the energy.
+        // Floor the energy at 1 (fall-through of the jbe assigns).
         let mut xe2 = rdf(this.wrapping_add(0x228));
         let one = cf(C_ONE);
-        if !(one > xe2) {
+        if one > xe2 {
             xe2 = one;
         }
         if ext != 0 {
@@ -243,22 +243,6 @@ lf_checker_rt::export!(thiscall, rw_00a23be0(
         x1f = mul(x1f, x0f);
         let mut t1 = x2f;
         let mut v1c = x2f;
-        // r-b430 DEBUG: capture intermediates (REMOVE BEFORE SHIP).
-        unsafe {
-            let dbg = this.wrapping_add(0x3af0);
-            wr32(dbg, v10a.to_bits());
-            wr32(dbg.wrapping_add(4), v14.to_bits());
-            wr32(dbg.wrapping_add(8), vc.to_bits());
-            wr32(dbg.wrapping_add(12), x4.to_bits());
-            wr32(dbg.wrapping_add(16), x3.to_bits());
-            wr32(dbg.wrapping_add(20), x0f.to_bits());
-            wr32(dbg.wrapping_add(24), x1f.to_bits());
-            wr32(dbg.wrapping_add(28), x2f.to_bits());
-            wr32(dbg.wrapping_add(32), xe2.to_bits());
-            wr32(dbg.wrapping_add(36), x1.to_bits());
-            wr32(dbg.wrapping_add(40), f0.to_bits());
-            wr32(dbg.wrapping_add(44), a3b);
-        }
         v10a = x1f;
         let x0g: f32;
         if ext != 0 {

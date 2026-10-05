@@ -54,6 +54,6 @@ lf_checker_rt::export!(thiscall, rw_00a9c7f0(this: u32) -> u32 {
         }
         lf_checker_rt::callee_thiscall!(POST_PASS, u32, this);
         lf_checker_rt::callee_thiscall!(STOP_WORKER, u32, this);
-        lf_checker_rt::callee_cdecl!(TEARDOWN, u32)
+        lf_checker_rt::callee_cdecl!(TEARDOWN, u32,)
     }
 });

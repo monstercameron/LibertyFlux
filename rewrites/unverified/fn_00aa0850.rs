@@ -4,13 +4,13 @@
 ///
 /// `slot` points to a record with an owner word at `+0x70`. When the owner
 /// is not `-1` the slot is already adopted and the owner word's own address
-/// is returned unchanged. Otherwise `gen` (the third stack word; the second
+/// is returned unchanged. Otherwise `gen` (the second stack word; the third
 /// is unused) is stored as the owner, the change hook is called with the
 /// owner address, the slot is marked live through the neighbouring marker
 /// routine, and the marker's answer is the result.
 ///
 /// Original: 0x00aa0850 (thiscall, three stack words).
-lf_checker_rt::export!(thiscall, rw_00aa0850(this: u32, slot: u32, _unused: u32, gen: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00aa0850(this: u32, slot: u32, gen: u32, _unused: u32) -> u32 {
     unsafe {
         const OWNER_OFF: u32 = 0x70;
         const ORPHAN: u32 = 0xffff_ffff;
