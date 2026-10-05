@@ -58131,6 +58131,15 @@
   "lane": "r-s300"
  },
  {
+  "address": "0x00A711C0",
+  "name": "CTaskComplexPlayerSettingsTask::vf19",
+  "kind": "function",
+  "file": "functions/fn_00a711c0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b531"
+ },
+ {
   "address": "0x00A712C0",
   "name": "CTaskComplexPlayerGun::vf18",
   "kind": "function",
@@ -99693,6 +99702,15 @@
   "lane": "r-b416"
  },
  {
+  "address": "0x00CC5590",
+  "name": "euphoria_find_feedback_by_key",
+  "kind": "function",
+  "file": "functions/fn_00cc5590.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
   "address": "0x00CC55E0",
   "name": "euphoria_behaviour_find_or_create",
   "kind": "function",
@@ -99700,6 +99718,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b06"
+ },
+ {
+  "address": "0x00CC5E60",
+  "name": "euphoria_feedback_init_34",
+  "kind": "function",
+  "file": "functions/fn_00cc5e60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
+  "address": "0x00CC5F20",
+  "name": "list_advance_n",
+  "kind": "function",
+  "file": "functions/fn_00cc5f20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
  },
  {
   "address": "0x00CC5F40",
@@ -99711,6 +99747,15 @@
   "lane": "a-V03"
  },
  {
+  "address": "0x00CC5F90",
+  "name": "list_append_link",
+  "kind": "function",
+  "file": "functions/fn_00cc5f90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
   "address": "0x00CC5FB0",
   "name": "notify_forward_b",
   "kind": "function",
@@ -99718,6 +99763,51 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "a-V03"
+ },
+ {
+  "address": "0x00CC6000",
+  "name": "list_delete_all",
+  "kind": "function",
+  "file": "functions/fn_00cc6000.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
+  "address": "0x00CC6BA0",
+  "name": "euphoria_pick_best_match",
+  "kind": "function",
+  "file": "functions/fn_00cc6ba0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
+  "address": "0x00CC6C20",
+  "name": "euphoria_kind_table",
+  "kind": "function",
+  "file": "functions/fn_00cc6c20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
+  "address": "0x00CC6FA0",
+  "name": "euphoria_contains_match",
+  "kind": "function",
+  "file": "functions/fn_00cc6fa0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
+  "address": "0x00CC7010",
+  "name": "list_pop_front",
+  "kind": "function",
+  "file": "functions/fn_00cc7010.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
  },
  {
   "address": "0x00CC70C0",
@@ -99729,6 +99819,33 @@
   "lane": "a-F06"
  },
  {
+  "address": "0x00CC7110",
+  "name": "euphoria_notify_tagged",
+  "kind": "function",
+  "file": "functions/fn_00cc7110.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
+  "address": "0x00CC71F0",
+  "name": "euphoria_set_param_by_key",
+  "kind": "function",
+  "file": "functions/fn_00cc71f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
+  "address": "0x00CC7240",
+  "name": "euphoria_teardown_lists",
+  "kind": "function",
+  "file": "functions/fn_00cc7240.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
   "address": "0x00CC7480",
   "name": "subobject_init_a",
   "kind": "function",
@@ -99736,6 +99853,87 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "a-F06"
+ },
+ {
+  "address": "0x00CC74B0",
+  "name": "euphoria_zero_block",
+  "kind": "function",
+  "file": "functions/fn_00cc74b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
+  "address": "0x00CC74F0",
+  "name": "euphoria_widget_ctor_args",
+  "kind": "function",
+  "file": "functions/fn_00cc74f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
+  "address": "0x00CC7540",
+  "name": "euphoria_widget_ctor_default",
+  "kind": "function",
+  "file": "functions/fn_00cc7540.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
+  "address": "0x00CC7580",
+  "name": "euphoria_controller_ctor",
+  "kind": "function",
+  "file": "functions/fn_00cc7580.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
+  "address": "0x00CC7600",
+  "name": "euphoria_handler_ctor",
+  "kind": "function",
+  "file": "functions/fn_00cc7600.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
+  "address": "0x00CC7640",
+  "name": "euphoria_widget_dtor_chain",
+  "kind": "function",
+  "file": "functions/fn_00cc7640.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
+  "address": "0x00CC7660",
+  "name": "euphoria_controller_dtor_chain",
+  "kind": "function",
+  "file": "functions/fn_00cc7660.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
+  "address": "0x00CC7690",
+  "name": "euphoria_handler_dtor_chain",
+  "kind": "function",
+  "file": "functions/fn_00cc7690.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
+ },
+ {
+  "address": "0x00CC76B0",
+  "name": "ART::ARTFeedbackInterface::vf0",
+  "kind": "function",
+  "file": "functions/fn_00cc76b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s468"
  },
  {
   "address": "0x00CC9E60",
@@ -100462,6 +100660,15 @@
   "name": "blend_pair_by_direction",
   "kind": "function",
   "file": "functions/fn_00cd2630.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "a-R02"
+ },
+ {
+  "address": "0x00CD2C80",
+  "name": "aim_cone_test",
+  "kind": "function",
+  "file": "functions/fn_00cd2c80.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "a-R02"
@@ -107224,6 +107431,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b522"
+ },
+ {
+  "address": "0x00DC2F10",
+  "name": "ped_task_list_refine",
+  "kind": "function",
+  "file": "functions/fn_00dc2f10.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b529"
  },
  {
   "address": "0x00DC3C50",
