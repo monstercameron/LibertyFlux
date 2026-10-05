@@ -51786,6 +51786,15 @@
   "lane": "r-b478"
  },
  {
+  "address": "0x009F4200",
+  "name": "peds_tasks_register_all",
+  "kind": "function",
+  "file": "functions/fn_009f4200.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b478"
+ },
+ {
   "address": "0x009F4980",
   "name": "net_stage_03",
   "kind": "function",
@@ -66121,6 +66130,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s407"
+ },
+ {
+  "address": "0x00B4E180",
+  "name": "ped_task_blend_lookup",
+  "kind": "function",
+  "file": "functions/fn_00b4e180.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b494"
  },
  {
   "address": "0x00B4E2B0",
@@ -101083,6 +101101,15 @@
   "name": "task_route_box_collect",
   "kind": "function",
   "file": "functions/fn_00d2fc00.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b489"
+ },
+ {
+  "address": "0x00D30130",
+  "name": "task_navmesh_route_request",
+  "kind": "function",
+  "file": "functions/fn_00d30130.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b489"
