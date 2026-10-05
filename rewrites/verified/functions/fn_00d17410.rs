@@ -10,8 +10,8 @@
 /// point), and each further point forms a dot product with the running
 /// direction. A dot below 0.707 records the slot index (only the first
 /// time; a second one aborts the scan), a dot above 0.95 bumps one of two
-/// counters. Afterwards the flags below (or, when the high-dot counter
-/// wins, above) the recorded index are cleared and the function returns 1;
+/// counters. Afterwards the flags above (or, when the high-dot counter
+/// wins, below) the recorded index are cleared and the function returns 1;
 /// otherwise it returns 0. The tail always runs: over slots 1-3 it takes
 /// the max (from 0.0) and min (from 9999.0) of the mid values of set slots,
 /// and when all three are set and the game's range limit exceeds the spread,

@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: hourly review, 09:05 on 5 October",
+    "title": "Rewrites: 22 more functions pass the checker (13239 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "22 rewrites added under rewrites/verified: 0 script native handlers and 22 other functions.",
+      "1 rewrites were re-run under a later version of the checker and replaced by the version that passed it.",
+      "The tree now holds 13239 rewrites, 13220 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "792 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: hourly review, 09:05 on 5 October",
+    "commit": "9c25a193ca5b3d3a9f6e43ad9bf73a49d9465ba1",
     "summary": "One row added to the day's hourly reviews.",
     "changes": [
       "13,102 functions verified, 20.2% of the code by size. The most common reason for deferral in the last three hours is one missing checker ability: doubles passed and returned in vector registers.",
