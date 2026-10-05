@@ -90333,6 +90333,15 @@
   "lane": "r-s448"
  },
  {
+  "address": "0x00C3DBF0",
+  "name": "tbd",
+  "kind": "function",
+  "file": "functions/fn_00c3dbf0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
   "address": "0x00C3DCC0",
   "name": "train_speed_limit_for_class",
   "kind": "function",
@@ -96682,6 +96691,15 @@
   "name": "slide_cover_pose_update",
   "kind": "function",
   "file": "functions/fn_00d17e90.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b451"
+ },
+ {
+  "address": "0x00D18170",
+  "name": "slide_cover_task_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00d18170.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b451"
