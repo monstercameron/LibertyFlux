@@ -180,14 +180,14 @@ fn joined_fetch_edges() {
 
 #[test]
 fn descriptors_cover_every_board() {
-    assert_eq!(desc::DESCRIPTORS.len(), 447);
-    assert_eq!(desc::BOARDS_WITHOUT_IDS.len(), 30);
+    assert_eq!(desc::DESCRIPTORS.len(), 487);
+    assert_eq!(desc::BOARDS_WITHOUT_IDS.len(), 1);
     let mut ids: Vec<u32> = desc::DESCRIPTORS.iter().map(|d| d.board_id).collect();
     ids.sort_unstable();
     ids.dedup();
     // Eight ids are each shared by a ranked/unranked pair; the sharing is
     // name-only (no two disagree on a known parameter: rows 0 is unknown).
-    assert_eq!(ids.len(), 439);
+    assert_eq!(ids.len(), 479);
     for id in &ids {
         let rows: Vec<u32> = desc::DESCRIPTORS
             .iter()
@@ -352,7 +352,7 @@ fn collect_edges() {
     // Found: rows 0 and 2 written (mask bit 2), row 1 distinguished.
     let s = S {
         ok: true,
-        cells: vec![1, 1, 1, 1],
+        cells: vec![1, 1, 1, 1, 1],
         items: vec![(8, [1, 2, 3, 4, 5, 6, 7, 8]); 4],
         fail_write: false,
         calls: RefCell::new(Vec::new()),
@@ -371,7 +371,7 @@ fn collect_edges() {
     // Huge lengths count as negative (signed check, as the original).
     let s = S {
         ok: true,
-        cells: vec![1, 1],
+        cells: vec![1, 1, 1],
         items: vec![(0xFFFF_FFFF, [9u8; 8]); 4],
         fail_write: false,
         calls: RefCell::new(Vec::new()),
@@ -424,7 +424,7 @@ fn collect_edges() {
     // Bound failure and write failure end the scan.
     let s = S {
         ok: true,
-        cells: vec![1, 1],
+        cells: vec![1, 1, 1],
         items: vec![(8, [9u8; 8]); 4],
         fail_write: false,
         calls: RefCell::new(Vec::new()),
@@ -440,7 +440,7 @@ fn collect_edges() {
         fail_write: true,
         ..S {
             ok: true,
-            cells: vec![1, 1],
+            cells: vec![1, 1, 1],
             items: vec![(8, [9u8; 8]); 4],
             fail_write: false,
             calls: RefCell::new(Vec::new()),
@@ -452,7 +452,7 @@ fn collect_edges() {
     // Class 4 advances zero: the write still runs (length 0), mask set.
     let s = S {
         ok: true,
-        cells: vec![4, 4],
+        cells: vec![4, 4, 4],
         items: vec![(8, [9u8; 8]); 4],
         fail_write: false,
         calls: RefCell::new(Vec::new()),

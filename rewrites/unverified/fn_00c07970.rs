@@ -39,8 +39,9 @@ lf_checker_rt::export!(thiscall, rw_00c07970(this: u32, count: u32) -> f32 {
         let mut sum = if main == 0 {
             0.0f32
         } else {
-            // Horizontal fold in the original's order.
-            add(add(lanes[0], lanes[2]), add(lanes[1], lanes[3]))
+            // Horizontal fold in the original's operand order: the high
+            // lanes are moved down and added to by the low lanes.
+            add(add(lanes[2], lanes[0]), add(lanes[3], lanes[1]))
         };
         let mut r = main;
         while r < count {

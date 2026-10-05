@@ -26,7 +26,7 @@ pub const SLOTS: &[SlotRecord] = &[
     SlotRecord {
         slot: "vf6",
         lifted: "tables::find_index",
-        members: 417,
+        members: 457,
         proven: true,
         narrowings: &[
             "scan bound counts tested 1..=300 plus non-positive signed counts; larger positive counts untested (same code path)",
@@ -36,7 +36,7 @@ pub const SLOTS: &[SlotRecord] = &[
     SlotRecord {
         slot: "vf7",
         lifted: "tables::fetch_id",
-        members: 416,
+        members: 455,
         proven: true,
         narrowings: &[
             "index inside the table (stated domain; the original reads unchecked and the lift panics outside)",
@@ -45,7 +45,7 @@ pub const SLOTS: &[SlotRecord] = &[
     SlotRecord {
         slot: "vf8",
         lifted: "tables::class_tag",
-        members: 415,
+        members: 456,
         proven: true,
         narrowings: &[
             "index inside the table (stated domain, as vf7)",
@@ -55,7 +55,7 @@ pub const SLOTS: &[SlotRecord] = &[
     SlotRecord {
         slot: "vf9",
         lifted: "tables::class_rank",
-        members: 53,
+        members: 57,
         proven: true,
         narrowings: &[
             "index inside the table (stated domain, as vf7)",
@@ -65,7 +65,7 @@ pub const SLOTS: &[SlotRecord] = &[
     SlotRecord {
         slot: "vf12",
         lifted: "tables::reverse_lookup",
-        members: 414,
+        members: 456,
         proven: true,
         narrowings: &[
             "key index inside the primary table (stated domain, as vf7)",
@@ -75,7 +75,7 @@ pub const SLOTS: &[SlotRecord] = &[
     SlotRecord {
         slot: "vf13",
         lifted: "tables::joined_fetch",
-        members: 417,
+        members: 457,
         proven: true,
         narrowings: &[
             "scan bound counts tested 1..=300 plus non-positive signed counts; larger positive counts untested (same code path)",
@@ -85,7 +85,7 @@ pub const SLOTS: &[SlotRecord] = &[
     SlotRecord {
         slot: "vf2",
         lifted: "probe::query_tag",
-        members: 412,
+        members: 444,
         proven: true,
         narrowings: &[
             "result narrowed from the out-address to Option<Tag>; the 32-bit return-address shape and the no-store cases are pinned by the test",
@@ -95,7 +95,7 @@ pub const SLOTS: &[SlotRecord] = &[
     SlotRecord {
         slot: "vf14",
         lifted: "rows::collect",
-        members: 224,
+        members: 413,
         proven: true,
         narrowings: &[
             "row keys inside the key table (stated domain; the original reads unchecked)",
@@ -106,7 +106,7 @@ pub const SLOTS: &[SlotRecord] = &[
     SlotRecord {
         slot: "ctor",
         lifted: "(designed, not proven)",
-        members: 444,
+        members: 440,
         proven: false,
         narrowings: &["not lifted yet: base call, two per-board vtables, member init, flag bit; one one-off small-object shape"],
     },

@@ -6,7 +6,7 @@
 /// on the stack. Frees the old buffer through the TLS allocator, runs the
 /// (intercepted) resize for `count` samples, then copies 16 bytes per sample
 /// with plain word moves (the original's SSE moves carry no arithmetic).
-/// Returns the first word of the last sample with its low byte forced to 1,
+/// Returns the fourth word of the last sample with its low byte forced to 1,
 /// or the resize answer treated the same way when nothing is copied.
 /// Original: 0x0069ABE0, 117 bytes.
 lf_checker_rt::export!(thiscall, rw_0069ABE0(this: u32, src: u32, count: u32, _a2: u32) -> u32 {
@@ -64,11 +64,11 @@ lf_checker_rt::export!(thiscall, rw_0069ABE0(this: u32, src: u32, count: u32, _a
         let total = count as i32;
         while i < total {
             let d = dst + (i as u32) * 16;
-            last = rd32(p - 8);
-            wr32(d, last);
-            wr32(d + 4, rd32(p - 4));
+            wr32(d, rd32(p.wrapping_sub(8)));
+            wr32(d + 4, rd32(p.wrapping_sub(4)));
             wr32(d + 8, rd32(p));
-            wr32(d + 12, rd32(p + 4));
+            last = rd32(p.wrapping_add(4));
+            wr32(d + 12, last);
             p = p.wrapping_add(0x10);
             i += 1;
         }
