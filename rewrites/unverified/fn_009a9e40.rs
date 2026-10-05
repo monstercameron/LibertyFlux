@@ -5,8 +5,8 @@
 /// `key`. The count byte at record `+0x0a` selects a sub-record at
 /// `record + count*8 + 0x0b`, whose byte is the entry count; a null
 /// record or a zero count fails. Otherwise a random start is drawn
-/// (stubbed, cdecl/2), iteration 0 probes `(start) mod count` and
-/// later iterations probe slot `i` (signed arithmetic). Entries are
+/// (stubbed, cdecl/2), iteration `i` probes `(i + start) mod count`
+/// (signed arithmetic, the start reloaded after every probe). Entries are
 /// 8-byte id/count pairs; an entry whose signed count is not below
 /// the best is pruned, the rest are liveness-probed (stubbed,
 /// cdecl/1). With no live entry the output word gets -1 and null is
@@ -33,11 +33,7 @@ export!(stdcall, rw_009A9E40(key: u32, out: u32) -> u32 {
         let mut best_slot: i32 = -1;
         let mut i = 0i32;
         while i < nn {
-            let slot = if i == 0 {
-                (start as i32).wrapping_rem(nn)
-            } else {
-                i
-            };
+            let slot = (i.wrapping_add(start as i32)).wrapping_rem(nn);
             let mut probe_it = best == -1;
             if !probe_it {
                 let c = ((rec + (slot as u32) * 8 + 4) as *const i32).read_unaligned();

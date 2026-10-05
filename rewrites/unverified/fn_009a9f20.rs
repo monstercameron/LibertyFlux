@@ -3,9 +3,8 @@
 ///
 /// Asks the conversation hub (stubbed, thiscall/1) for the record of
 /// `key`; a null record or a zero count byte at record `+0x0a` fails.
-/// Otherwise a random start is drawn (stubbed, cdecl/2), iteration 0
-/// probes `(start) mod count` and later iterations probe slot `i`
-/// (signed arithmetic). Entries pack id and count unaligned at
+/// Otherwise a random start is drawn (stubbed, cdecl/2), iteration `i` probes `(i + start) mod count`
+/// (signed arithmetic, the start reloaded after every probe). Entries pack id and count unaligned at
 /// `record + 0x0b + slot*8` (id) and `+4` past that (count); an entry
 /// whose signed count is not below the best is pruned, the rest are
 /// liveness-probed (stubbed, cdecl/1). With no live entry the output
@@ -30,11 +29,7 @@ export!(stdcall, rw_009A9F20(key: u32, out: u32) -> u32 {
         let mut best_slot: i32 = -1;
         let mut i = 0i32;
         while i < nn {
-            let slot = if i == 0 {
-                (start as i32).wrapping_rem(nn)
-            } else {
-                i
-            };
+            let slot = (i.wrapping_add(start as i32)).wrapping_rem(nn);
             let mut probe_it = best == -1;
             if !probe_it {
                 let c = ((rec + (slot as u32) * 8 + 4) as *const i32).read_unaligned();

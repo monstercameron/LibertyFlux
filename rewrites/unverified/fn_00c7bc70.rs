@@ -379,7 +379,6 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                         CAL_DOCK, u32, world_c, 0, NEG_ONE.to_bits(), 0, 0, 0, 0xc
                     );
                 }
-                let _dockslot = dock;
                 let world_d: u32 =
                     lf_checker_rt::callee_thiscall!(CAL_WORLD_S1D, u32, world);
                 let mut boarded: u32 = 0;
@@ -408,7 +407,7 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                     u32,
                     dockw,
                     boarded,
-                    schedz[2],
+                    dock,
                     0,
                     0
                 );

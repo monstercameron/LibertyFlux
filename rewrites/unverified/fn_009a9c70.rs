@@ -4,11 +4,10 @@
 /// Asks the sub-table lookup (stubbed, stdcall/2) for the entry list
 /// of `key`, with the count through a stack out-byte; a null list or
 /// a zero count fails. Otherwise a random start below the count is
-/// drawn (stubbed, cdecl/2 with `(0, count-1)`). Entry 0 is probed at
-/// `(start) mod count`, but every later entry `i` is probed at slot
-/// `i` itself: the loop reloads the divisor base with the count after
-/// the first probe, discarding the start (all arithmetic signed, as
-/// the original's `idiv` does it). An entry whose signed vote count
+/// drawn (stubbed, cdecl/2 with `(0, count-1)`). Iteration `i` probes
+/// slot `(i + start) mod count`: the loop reloads the start into its
+/// working register after every probe (all arithmetic signed, as the
+/// original's `idiv` does it). An entry whose signed vote count
 /// is not below the best so far is pruned; the rest are liveness-
 /// probed (stubbed, cdecl/1), and a live entry with a lower count
 /// becomes the new best. With no live entry the output word gets -1
@@ -32,13 +31,7 @@ export!(stdcall, rw_009A9C70(key: u32, out: u32) -> u32 {
         let mut best_slot: i32 = -1;
         let mut i = 0i32;
         while i < nn {
-            // Iteration 0 probes (start) mod nn; later iterations
-            // probe slot i: the start is clobbered after iter 0.
-            let slot = if i == 0 {
-                (start as i32).wrapping_rem(nn)
-            } else {
-                i
-            };
+            let slot = (i.wrapping_add(start as i32)).wrapping_rem(nn);
             let probe_it = if best == -1 {
                 true
             } else {
