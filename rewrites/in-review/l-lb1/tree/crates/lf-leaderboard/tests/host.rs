@@ -137,7 +137,7 @@ fn class_rank_map() {
 #[test]
 fn reverse_lookup_edges() {
     let d = Store::desc(1);
-    let mut s = Store::new(&[50, 60], 2);
+    let mut s = Store::new(&[50, 60], 3);
     s.b = Some(vec![60, 70, 50]);
     assert_eq!(reverse_lookup(&mut s, &d, 0), 2);
     assert_eq!(reverse_lookup(&mut s, &d, 1), 0);
@@ -180,12 +180,26 @@ fn joined_fetch_edges() {
 
 #[test]
 fn descriptors_cover_every_board() {
-    assert_eq!(desc::DESCRIPTORS.len(), 463);
+    assert_eq!(desc::DESCRIPTORS.len(), 447);
     assert_eq!(desc::BOARDS_WITHOUT_IDS.len(), 30);
     let mut ids: Vec<u32> = desc::DESCRIPTORS.iter().map(|d| d.board_id).collect();
     ids.sort_unstable();
     ids.dedup();
-    assert_eq!(ids.len(), 463, "board ids are unique per board");
+    // Eight ids are each shared by a ranked/unranked pair; the sharing is
+    // name-only (no two disagree on a known parameter: rows 0 is unknown).
+    assert_eq!(ids.len(), 439);
+    for id in &ids {
+        let rows: Vec<u32> = desc::DESCRIPTORS
+            .iter()
+            .filter(|d| d.board_id == *id)
+            .map(|d| d.rows)
+            .collect();
+        let known: Vec<u32> = rows.iter().copied().filter(|r| *r != 0).collect();
+        assert!(
+            known.iter().all(|r| *r == known[0]),
+            "id {id} has mixed known rows"
+        );
+    }
     assert!(ids.iter().all(|&id| (1..=481).contains(&id)));
     // Spot lookups.
     assert!(desc::describe(ids[0]).is_some());

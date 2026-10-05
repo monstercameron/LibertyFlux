@@ -152,8 +152,8 @@ lf_checker_rt::export!(thiscall, rw_00be3030(task: u32, ped: u32) -> u32 {
             let f1 = rdf(e.wrapping_add(BLEND_P1));
             let va = vcall0(e, SLOT_RUN);
             let f2 = rdf(va.wrapping_add(VTA_WEIGHT));
-            let x: f32 = lf_checker_rt::callee_cdecl!(6, f32, f2.to_bits());
-            let y: f32 = lf_checker_rt::callee_cdecl!(7, f32, f2.to_bits());
+            let x: f32 = f32::from_bits(lf_checker_rt::callee_cdecl!(6, u32, f2.to_bits()));
+            let y: f32 = f32::from_bits(lf_checker_rt::callee_cdecl!(7, u32, f2.to_bits()));
             let g0 = rdf(lf_checker_rt::relocated(GAIN0));
             let g1 = rdf(lf_checker_rt::relocated(GAIN1));
             let t_g1x = mul(g1, x);
@@ -170,8 +170,8 @@ lf_checker_rt::export!(thiscall, rw_00be3030(task: u32, ped: u32) -> u32 {
             let m28 = rdf(task.wrapping_add(ACC2));
             wr32(task.wrapping_add(ACC0), add(o0, m20).to_bits());
             wr32(task.wrapping_add(ACC1), add(s, m24).to_bits());
-            wr32(task.wrapping_add(ACC2), g0.to_bits()); // TEMP-EXFIL g0
-            wr32(task.wrapping_add(BLEND), x.to_bits()); // TEMP-EXFIL x);
+            wr32(task.wrapping_add(ACC2), add(m28, f1g).to_bits());
+            wr32(task.wrapping_add(BLEND), f2.to_bits());
         }
         be3030_tail(task, ped)
     }
