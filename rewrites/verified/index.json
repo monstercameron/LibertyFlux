@@ -54837,6 +54837,15 @@
   "lane": "r-b53"
  },
  {
+  "address": "0x009A0E70",
+  "name": "audio_update_large (proposed)",
+  "kind": "function",
+  "file": "functions/fn_009a0e70.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b561"
+ },
+ {
   "address": "0x009A2690",
   "name": "keyed_audio_mode_selector",
   "kind": "function",
@@ -57447,6 +57456,15 @@
   "lane": "r-n116"
  },
  {
+  "address": "0x009CBAB0",
+  "name": "ENABLE_END_CREDITS_FADE",
+  "kind": "function",
+  "file": "functions/fn_009cbab0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
+ },
+ {
   "address": "0x009CBAD0",
   "name": "ENABLE_GPS_IN_VEHICLE",
   "kind": "native",
@@ -57978,6 +57996,15 @@
   "lane": "a-16"
  },
  {
+  "address": "0x009CC1E0",
+  "name": "PLAY_STREAM_FRONTEND",
+  "kind": "function",
+  "file": "functions/fn_009cc1e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
+ },
+ {
   "address": "0x009CC1F0",
   "name": "PRELOAD_STREAM",
   "kind": "native",
@@ -58066,6 +58093,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-01"
+ },
+ {
+  "address": "0x009CC350",
+  "name": "REPORT_SUSPECT_ARRESTED",
+  "kind": "function",
+  "file": "functions/fn_009cc350.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
  },
  {
   "address": "0x009CC370",
@@ -58356,6 +58392,15 @@
   "lane": "r-n99"
  },
  {
+  "address": "0x009CC880",
+  "name": "STOP_MOBILE_PHONE_RINGING",
+  "kind": "function",
+  "file": "functions/fn_009cc880.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
+ },
+ {
   "address": "0x009CC890",
   "name": "STOP_PED_MOBILE_RINGING",
   "kind": "native",
@@ -58372,6 +58417,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-14"
+ },
+ {
+  "address": "0x009CC8C0",
+  "name": "STOP_PREVIEW_RINGTONE",
+  "kind": "function",
+  "file": "functions/fn_009cc8c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
  },
  {
   "address": "0x009CC8D0",
@@ -58446,6 +58500,15 @@
   "lane": "a-07"
  },
  {
+  "address": "0x009CC9C0",
+  "name": "UNREGISTER_SCRIPT_WITH_AUDIO",
+  "kind": "function",
+  "file": "functions/fn_009cc9c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
+ },
+ {
   "address": "0x009CCEB0",
   "name": "NativeImpl_HIGH_FALL_SCREAM",
   "kind": "function",
@@ -58453,6 +58516,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s191"
+ },
+ {
+  "address": "0x009CD140",
+  "name": "NEW_SCRIPTED_CONVERSATION",
+  "kind": "function",
+  "file": "functions/fn_009cd140.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
  },
  {
   "address": "0x009CD170",
@@ -80307,6 +80379,24 @@
   "lane": "r-n110"
  },
  {
+  "address": "0x00B86780",
+  "name": "CAM_RESTORE_JUMPCUT",
+  "kind": "function",
+  "file": "functions/fn_00b86780.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
+ },
+ {
+  "address": "0x00B86790",
+  "name": "CAM_SEQUENCE_CLOSE",
+  "kind": "function",
+  "file": "functions/fn_00b86790.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
+ },
+ {
   "address": "0x00B867A0",
   "name": "CAM_SEQUENCE_GET_PROGRESS",
   "kind": "native",
@@ -81522,6 +81612,15 @@
   "lane": "r-n102"
  },
  {
+  "address": "0x00B878B0",
+  "name": "SET_DANCE_SHAKE_INACTIVE_IMMEDIATELY",
+  "kind": "function",
+  "file": "functions/fn_00b878b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
+ },
+ {
   "address": "0x00B878C0",
   "name": "SET_DRUNK_CAM",
   "kind": "native",
@@ -81682,6 +81781,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-05"
+ },
+ {
+  "address": "0x00B87B70",
+  "name": "SET_HINT_TIMES_DEFAULT",
+  "kind": "function",
+  "file": "functions/fn_00b87b70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
  },
  {
   "address": "0x00B87B80",
@@ -82042,6 +82150,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-n102"
+ },
+ {
+  "address": "0x00B8B970",
+  "name": "ACTIVATE_FRONTEND",
+  "kind": "function",
+  "file": "functions/fn_00b8b970.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
  },
  {
   "address": "0x00B8B980",
@@ -83095,6 +83212,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-n100"
+ },
+ {
+  "address": "0x00B8CC30",
+  "name": "HIDE_HUD_AND_RADAR_THIS_FRAME",
+  "kind": "function",
+  "file": "functions/fn_00b8cc30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
  },
  {
   "address": "0x00B8CC40",
@@ -84339,6 +84465,15 @@
   "lane": "r-n117"
  },
  {
+  "address": "0x00B93F10",
+  "name": "CANCEL_OVERRIDE_RESTART",
+  "kind": "function",
+  "file": "functions/fn_00b93f10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
+ },
+ {
   "address": "0x00B93F20",
   "name": "CAN_START_MISSION_PASSED_TUNE",
   "kind": "native",
@@ -84418,6 +84553,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-15"
+ },
+ {
+  "address": "0x00B94160",
+  "name": "CLEAR_NEWS_SCROLLBAR",
+  "kind": "function",
+  "file": "functions/fn_00b94160.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
  },
  {
   "address": "0x00B94180",
@@ -84996,6 +85140,15 @@
   "lane": "a-04"
  },
  {
+  "address": "0x00B94CD0",
+  "name": "RELEASE_WEATHER",
+  "kind": "function",
+  "file": "functions/fn_00b94cd0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
+ },
+ {
   "address": "0x00B94CE0",
   "name": "IS_PC_VERSION",
   "kind": "native",
@@ -85293,6 +85446,15 @@
   "lane": "a-03"
  },
  {
+  "address": "0x00B95290",
+  "name": "TERMINATE_ALL_SCRIPTS_FOR_NETWORK_GAME",
+  "kind": "function",
+  "file": "functions/fn_00b95290.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
+ },
+ {
   "address": "0x00B952A0",
   "name": "TERMINATE_ALL_SCRIPTS_WITH_THIS_NAME",
   "kind": "native",
@@ -85489,6 +85651,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s418"
+ },
+ {
+  "address": "0x00B98200",
+  "name": "CLEAR_SHAKE_PLAYERPAD_WHEN_CONTROLLER_DISABLED",
+  "kind": "function",
+  "file": "functions/fn_00b98200.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
  },
  {
   "address": "0x00B98210",
@@ -91683,6 +91854,15 @@
   "lane": "a-15"
  },
  {
+  "address": "0x00BB2840",
+  "name": "REMOVE_RC_BUGGY",
+  "kind": "function",
+  "file": "functions/fn_00bb2840.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
+ },
+ {
   "address": "0x00BB2860",
   "name": "RESET_LOCAL_PLAYER_WEAPON_STAT",
   "kind": "native",
@@ -92610,6 +92790,15 @@
   "lane": "a-03"
  },
  {
+  "address": "0x00BB7330",
+  "name": "FINISH_STREAMING_REQUEST_LIST",
+  "kind": "function",
+  "file": "functions/fn_00bb7330.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
+ },
+ {
   "address": "0x00BB7340",
   "name": "GET_NUM_STREAMING_REQUESTS",
   "kind": "native",
@@ -92689,6 +92878,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-01"
+ },
+ {
+  "address": "0x00BB7470",
+  "name": "LOAD_ALL_OBJECTS_NOW",
+  "kind": "function",
+  "file": "functions/fn_00bb7470.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
  },
  {
   "address": "0x00BB7480",
@@ -93040,6 +93238,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-n114"
+ },
+ {
+  "address": "0x00BB8B50",
+  "name": "FLUSH_PATROL_ROUTE",
+  "kind": "function",
+  "file": "functions/fn_00bb8b50.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
  },
  {
   "address": "0x00BB8B60",
@@ -95085,6 +95292,15 @@
   "lane": "r-s355"
  },
  {
+  "address": "0x00BC4F90",
+  "name": "ABORT_ALL_GARAGE_ACTIVITY",
+  "kind": "function",
+  "file": "functions/fn_00bc4f90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
+ },
+ {
   "address": "0x00BC4FA0",
   "name": "ACTIVATE_HELI_SPEED_CHEAT",
   "kind": "native",
@@ -96667,6 +96883,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-15"
+ },
+ {
+  "address": "0x00BC7060",
+  "name": "MARK_MISSION_TRAINS_AS_NO_LONGER_NEEDED",
+  "kind": "function",
+  "file": "functions/fn_00bc7060.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
  },
  {
   "address": "0x00BC7070",
@@ -101635,6 +101860,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-14"
+ },
+ {
+  "address": "0x00BDB8C0",
+  "name": "NETWORK_STORE_GAME_CONFIG",
+  "kind": "function",
+  "file": "functions/fn_00bdb8c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
  },
  {
   "address": "0x00BDBDD0",
@@ -109143,6 +109377,51 @@
   "lane": "a-R06"
  },
  {
+  "address": "0x00C80E60",
+  "name": "Classify scenario entry `idx` and report its kind word through `out`.",
+  "kind": "function",
+  "file": "functions/fn_00c80e60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R07"
+ },
+ {
+  "address": "0x00C80EB0",
+  "name": "CTaskComplexSeatedScenario::vf23",
+  "kind": "function",
+  "file": "functions/fn_00c80eb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R07"
+ },
+ {
+  "address": "0x00C817F0",
+  "name": "CTaskComplexGetInCarScenario::vf5",
+  "kind": "function",
+  "file": "functions/fn_00c817f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R07"
+ },
+ {
+  "address": "0x00C819E0",
+  "name": "CTaskComplexMoveBetweenPointsScenario::vf5",
+  "kind": "function",
+  "file": "functions/fn_00c819e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R07"
+ },
+ {
+  "address": "0x00C81AE0",
+  "name": "CTaskComplexSeatedScenario::vf5",
+  "kind": "function",
+  "file": "functions/fn_00c81ae0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R07"
+ },
+ {
   "address": "0x00C81DC0",
   "name": "flag_gated_code_select",
   "kind": "function",
@@ -109150,6 +109429,51 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "a-R03"
+ },
+ {
+  "address": "0x00C820E0",
+  "name": "Detach the child object at `this+0x18` and clear the slot.",
+  "kind": "function",
+  "file": "functions/fn_00c820e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R07"
+ },
+ {
+  "address": "0x00C82F60",
+  "name": "Attach `new` as the child at `this+0x18`, replacing whatever sat there.",
+  "kind": "function",
+  "file": "functions/fn_00c82f60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R07"
+ },
+ {
+  "address": "0x00C830E0",
+  "name": "Replace the handle at `this+0x1c` with `new`, releasing/retaining around it.",
+  "kind": "function",
+  "file": "functions/fn_00c830e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R07"
+ },
+ {
+  "address": "0x00C84A20",
+  "name": "Report whether the scenario object is in its active state.",
+  "kind": "function",
+  "file": "functions/fn_00c84a20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R07"
+ },
+ {
+  "address": "0x00C84A40",
+  "name": "Fold the three-float vectors `a` and `b` into the box kept on `this`.",
+  "kind": "function",
+  "file": "functions/fn_00c84a40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R07"
  },
  {
   "address": "0x00C84B60",
@@ -109204,6 +109528,15 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b554"
+ },
+ {
+  "address": "0x00C8A800",
+  "name": "audio_slot_liveness_gate",
+  "kind": "function",
+  "file": "functions/fn_00c8a800.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q03"
  },
  {
   "address": "0x00C8A850",
