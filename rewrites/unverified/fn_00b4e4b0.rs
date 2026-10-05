@@ -17,15 +17,16 @@
 /// fallback pointer is used, else the selected object's own getter at
 /// `+0xe0` supplies a handle), and a direct predicate call taking no
 /// stack words feed a ten-word constructor call together
-/// with the pool index, the stack words, the flag, and the `+0x63` tag. Two
-/// of its words carry only a meaningful low byte (the flag, the tag); one
-/// word the original reads from its own uninitialized scratch and is not
-/// compared. The constructor's result goes through the reporter and its
+/// with the pool index, the stack words, the flag, the third getter
+/// result plus `0x80`, and both tags. Three of its words carry only a
+/// meaningful low byte (the flag, the two tags) and compare masked. The
+/// constructor's result goes through the reporter and its
 /// answer is returned. Thiscall, two stack words.
 lf_checker_rt::export!(thiscall, rw_00b4e4b0(this: u32, arg0: u32, arg1: u32) -> u32 {
     unsafe {
         const VT: u32 = 0x00;
         const INDEX: u32 = 0x2e;
+        const TAG_A: u32 = 0x5b;
         const TAG_B: u32 = 0x63;
         const FALLBACK: u32 = 0x100;
         const SLOT_GETTER: u32 = 0xd0;
@@ -83,6 +84,7 @@ lf_checker_rt::export!(thiscall, rw_00b4e4b0(this: u32, arg0: u32, arg1: u32) ->
         if buf == 0 {
             return lf_checker_rt::callee_cdecl!(REPORT, u32, 0);
         }
+        let tag_a = rd8(this + TAG_A);
         let tag_b = rd8(this + TAG_B);
         let st3 = get1(this);
         let sel1_fn: extern "thiscall" fn(u32) -> u32 =
@@ -99,8 +101,8 @@ lf_checker_rt::export!(thiscall, rw_00b4e4b0(this: u32, arg0: u32, arg1: u32) ->
         let pred: u32 = lf_checker_rt::callee_thiscall!(PREDICATE, u32, this);
         let pred_byte = pred & 0xFF;
         let built: u32 = lf_checker_rt::callee_thiscall!(
-            CONSTRUCT, u32, buf, index, handle, 0, arg0, tag_b, st3,
-            pred_byte, flag, arg1, 0
+            CONSTRUCT, u32, buf, index, handle, st3.wrapping_add(0x80), arg0,
+            tag_b, tag_a, pred_byte, flag, arg1, 0
         );
         lf_checker_rt::callee_cdecl!(REPORT, u32, built)
     }
