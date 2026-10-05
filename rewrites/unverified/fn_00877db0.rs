@@ -4,10 +4,10 @@
 ///
 /// `this` points to a composer object. In immediate mode (flag byte at
 /// `+0x98` non-zero) the sequence counter at `+0x72` grows by 1, the index
-/// at `this + 0x14` is decremented, and the helper runs with the one-word
-/// frame (table[inner-index]) as `this`, `a0` in XMM3 and table2[index]
-/// on the stack, where table is `inner + 4` (`inner` is the word at
-/// `+0x0c`) and table2 is the word at `this + 4`. The float reaches the
+/// at `inner + 0x14` (`inner` is the word at `+0x0c`) is decremented, and
+/// the helper runs with the one-word frame (table[index - 1]) as `this`,
+/// `a0` in XMM3 and table[index] on the stack, where table is the word at
+/// `inner + 4` and index is the value before the decrement. The float reaches the
 /// stub through stack slot 0, so the stack arguments go uncompared and
 /// only the snapshot and XMM3 are observed. Otherwise a node is popped
 /// from the free list at `+0x88` (refilled through vtable slot `+0x78`
@@ -25,7 +25,6 @@ lf_checker_rt::export!(thiscall, rw_00877DB0(this: u32, a0: u32, a1: u32) -> u32
         const NEXT_OFF: u32 = 4;
         const REFILL_VT_SLOT: u32 = 0x78;
         const INNER_OFF: u32 = 0x0c;
-        const T2_OFF: u32 = 0x04;
         const SEQ_OFF: u32 = 0x72;
         const TABLE_OFF: u32 = 0x04;
         const INDEX_OFF: u32 = 0x14;
@@ -73,13 +72,12 @@ lf_checker_rt::export!(thiscall, rw_00877DB0(this: u32, a0: u32, a1: u32) -> u32
             let seq = rd16(this.wrapping_add(SEQ_OFF));
             wr16(this.wrapping_add(SEQ_OFF), seq.wrapping_add(1));
             let inner = rd32(this.wrapping_add(INNER_OFF));
-            let index = rd32(this.wrapping_add(INDEX_OFF));
-            wr32(this.wrapping_add(INDEX_OFF), index.wrapping_sub(1));
+            let index = rd32(inner.wrapping_add(INDEX_OFF));
+            wr32(inner.wrapping_add(INDEX_OFF), index.wrapping_sub(1));
             let table = rd32(inner.wrapping_add(TABLE_OFF));
-            let inner_index = rd32(inner.wrapping_add(INDEX_OFF));
-            let framed = rd32(table.wrapping_add(inner_index.wrapping_mul(4)));
-            let table2 = rd32(this.wrapping_add(T2_OFF));
-            let item = rd32(table2.wrapping_add(index.wrapping_mul(4)));
+            let prev_index = rd32(inner.wrapping_add(INDEX_OFF));
+            let framed = rd32(table.wrapping_add(prev_index.wrapping_mul(4)));
+            let item = rd32(table.wrapping_add(index.wrapping_mul(4)));
             // The original's second frame slot is its own return address;
             // only the first word is observed (snapshot).
             let pad = [framed, 0u32];

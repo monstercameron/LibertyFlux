@@ -16,7 +16,7 @@ lf_checker_rt::export!(thiscall, rw_009D2040(this: u32) -> u32 {
         let _: u32 = lf_checker_rt::callee_thiscall!(
             RESET, u32, this.wrapping_add(VEC), 0);
         for v in [80, 73, 77, 75, 79, 71] {
-            let mut slot = v;
+            let mut slot: u32 = v;
             let _: u32 = lf_checker_rt::callee_thiscall!(
                 APPEND, u32, this.wrapping_add(VEC), (&mut slot as *mut u32) as u32);
         }

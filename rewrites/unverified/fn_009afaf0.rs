@@ -333,9 +333,22 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
         if run_blend {
             let stride = gu32(STRIDE_G);
             let tabbase = gu32(TABBASE_G);
-            // DEBUG-TEMP: return obj itself to observe it via call-log mismatch.
-            let spread = |obj: u32| obj;
-            let _ = (stride, tabbase);
+            // DEBUG-TEMP: distinguish null/small obj from real spread.
+            let spread = |obj: u32| {
+                if obj < 0x10000 {
+                    0xBADC0DEu32
+                } else {
+                    let b4 = rd8(obj.wrapping_add(4));
+                    if b4 == 0xFF {
+                        0u32
+                    } else {
+                        let c40 = rd8(obj.wrapping_add(0x40));
+                        (b4 as u32).wrapping_mul(stride).wrapping_add(rd32(
+                            (c40 as u32).wrapping_mul(0x6F40).wrapping_add(tabbase).wrapping_add(0x6F14),
+                        ))
+                    }
+                }
+            };
             let a4pair = [a4_2, a4_3];
             // middle entry reads an uninitialised frame slot in the original
             // (no writer: the loop outputs around it); the rewrite uses +0.0,

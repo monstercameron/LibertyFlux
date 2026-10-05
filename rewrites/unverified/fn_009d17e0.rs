@@ -5,8 +5,8 @@
 /// Unless the init flag at `0x012958B0` is set (bit 0), sets it and runs the
 /// creator (callee 1) and the seeder (callee 2 with `0xE72000`); both returns
 /// are ignored. A null context global (`0x012958AC`) returns null. When the
-/// context's first byte AND the argument's low byte are both nonzero, the
-/// context is returned as is; otherwise a key pair is fetched (callee 3 into
+/// context's first byte is nonzero while the argument's low byte is zero,
+/// the context is returned as is; otherwise a key pair is fetched (callee 3 into
 /// a frame slot and the incoming arg slot, which the original reuses as
 /// scratch; the rewrite keeps a local instead, so the stack-word check is off
 /// and the keys are observed through what the next call consumes) and
@@ -24,15 +24,15 @@ lf_checker_rt::export!(stdcall, rw_009D17E0(arg: u32) -> u32 {
         let flag = lf_checker_rt::global::<u32>(FLAG);
         if flag.read() & 1 == 0 {
             flag.write(flag.read() | 1);
-            let _: u32 = lf_checker_rt::callee_cdecl!(CREATE, u32);
-            let _: u32 = lf_checker_rt::callee_cdecl!(SEEDER, u32, SEED);
+            let _: u32 = lf_checker_rt::callee_cdecl!(CREATE, u32,);
+            let _: u32 = lf_checker_rt::callee_cdecl!(SEEDER, u32, lf_checker_rt::relocated(SEED));
         }
         let ctx = lf_checker_rt::global::<u32>(CTX).read();
         if ctx == 0 {
             return 0;
         }
         let live = (ctx as *const u8).read();
-        if live != 0 && (arg as u8) != 0 {
+        if live != 0 && (arg as u8) == 0 {
             return ctx;
         }
         let mut k0 = 0u32;
