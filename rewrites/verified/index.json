@@ -39168,6 +39168,15 @@
   "lane": "r-s485"
  },
  {
+  "address": "0x00870110",
+  "name": "crmt_composer_optimized_reset",
+  "kind": "function",
+  "file": "functions/fn_00870110.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s485"
+ },
+ {
   "address": "0x00870180",
   "name": "rage::crmtComposerOptimizedData::vf2",
   "kind": "function",
@@ -43308,6 +43317,15 @@
   "lane": "a-10"
  },
  {
+  "address": "0x0089C3E0",
+  "name": "aud_slot_action_dispatch",
+  "kind": "function",
+  "file": "functions/fn_0089c3e0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b565"
+ },
+ {
   "address": "0x0089C7E0",
   "name": "fn_0089c7e0",
   "kind": "function",
@@ -46303,6 +46321,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b88"
+ },
+ {
+  "address": "0x008BB730",
+  "name": "files_memory_shutdown_chain_stub",
+  "kind": "function",
+  "file": "functions/fn_008bb730.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b570"
+ },
+ {
+  "address": "0x008BB780",
+  "name": "files_memory_indexed_dispatch_stub",
+  "kind": "function",
+  "file": "functions/fn_008bb780.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b570"
  },
  {
   "address": "0x008BE0F0",
