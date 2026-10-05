@@ -62316,6 +62316,24 @@
   "lane": "r-b384"
  },
  {
+  "address": "0x00B75320",
+  "name": "task_candidate_probe_loop",
+  "kind": "function",
+  "file": "functions/fn_00b75320.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b437"
+ },
+ {
+  "address": "0x00B75540",
+  "name": "table_alloc_first_clear",
+  "kind": "function",
+  "file": "functions/fn_00b75540.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b437"
+ },
+ {
   "address": "0x00B757D0",
   "name": "slot_array_reset",
   "kind": "function",
@@ -96277,6 +96295,15 @@
   "name": "CPedFormation_Arrowhead::vf2",
   "kind": "function",
   "file": "functions/fn_00d97820.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b436"
+ },
+ {
+  "address": "0x00D97BE0",
+  "name": "CPedFormation_FollowInLine::vf2",
+  "kind": "function",
+  "file": "functions/fn_00d97be0.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b436"
