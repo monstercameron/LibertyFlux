@@ -12,7 +12,7 @@
 /// Original: cdecl (key, aux). `aux` is only forwarded.
 lf_checker_rt::export!(cdecl, rw_008e0340(key: u32, aux: u32) -> u32 {
     unsafe {
-        let ctx = lf_checker_rt::global::<u32>(lf_checker_rt::relocated(0x11764C0)) as *mut u32;
+        let ctx = lf_checker_rt::global::<u32>(0x11764C0) as *mut u32;
         let base = *ctx as *mut u32;
         let flags = *ctx.add(1) as *const u8;
         let flag = *flags.add(key as usize);

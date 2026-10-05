@@ -13,19 +13,19 @@
 /// Original: cdecl (flag byte); no return value.
 lf_checker_rt::export!(cdecl, rw_008e0690(only_live: u8) -> () {
     unsafe {
-        let ctx = lf_checker_rt::global::<u32>(lf_checker_rt::relocated(0x11764C0)) as *mut u32;
+        let ctx = lf_checker_rt::global::<u32>(0x11764C0) as *mut u32;
         if *ctx.add(2) <= 0 {
             return;
         }
         let mut i = 0u32;
         loop {
             let live = {
-                let c = lf_checker_rt::global::<u32>(lf_checker_rt::relocated(0x11764C0)) as *mut u32;
+                let c = lf_checker_rt::global::<u32>(0x11764C0) as *mut u32;
                 let flags = *c.add(1) as *const u8;
                 *flags.add(i as usize) & 0x80 == 0
             };
             if live {
-                let c = lf_checker_rt::global::<u32>(lf_checker_rt::relocated(0x11764C0)) as *mut u32;
+                let c = lf_checker_rt::global::<u32>(0x11764C0) as *mut u32;
                 let base = *c as *mut u8;
                 let stride = *c.add(3);
                 let entry = base.byte_add(i.wrapping_mul(stride) as usize);
@@ -34,7 +34,7 @@ lf_checker_rt::export!(cdecl, rw_008e0690(only_live: u8) -> () {
                         lf_checker_rt::callee_cdecl!(4, u32, i);
                     } else if lf_checker_rt::callee_cdecl!(2, u32, i) == 0 {
                         let probe =
-                            lf_checker_rt::callee_cdecl!(3, u32, i, *lf_checker_rt::global::<u32>(lf_checker_rt::relocated(0x1032F58)));
+                            lf_checker_rt::callee_cdecl!(3, u32, i, *lf_checker_rt::global::<u32>(0x1032F58));
                         if probe as u8 & 0xC6 == 0 {
                             lf_checker_rt::callee_cdecl!(4, u32, i);
                         }

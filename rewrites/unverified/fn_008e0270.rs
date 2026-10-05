@@ -15,7 +15,7 @@ lf_checker_rt::export!(cdecl, rw_008e0270() -> u32 {
         let key_w = *geom;
         let val_w = *geom.add(1);
         lf_checker_rt::callee_cdecl!(1, u32, val_w, key_w);
-        lf_checker_rt::callee_cdecl!(2, u32, *lf_checker_rt::global::<u32>(lf_checker_rt::relocated(0x1032F58)));
+        lf_checker_rt::callee_cdecl!(2, u32, *lf_checker_rt::global::<u32>(0x1032F58));
         let desc = lf_checker_rt::relocated(0xE81E5C) as u32;
         let extra = lf_checker_rt::relocated(0xE81E58) as u32;
         let cap = 0x1770u32;
