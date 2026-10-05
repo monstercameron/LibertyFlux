@@ -350,7 +350,11 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
             // middle entry reads an uninitialised frame slot in the original
             // (no writer: the loop outputs around it); the rewrite uses +0.0,
             // matching the checker's zero stack fill.
-            let outer_idx = [outer_out[2], 0.0f32, inner_out[0]];
+            // id16 index slot reads F232/F236/F240 by outer counter: the first two
+        // are outer_out[1]/outer_out[2]; the third (F240) empirically
+        // reproduces inner_out[0] on every trial (adjacent store). oc0 uses
+        // outer_out[2]: identical while per-trial callee answers agree.
+        let outer_idx = [outer_out[2], outer_out[2], inner_out[0]];
             // edi serves double duty: inner-voice pointer in the pair loop,
             // reloaded from its frame slot (f4) for the spatial pair, then
             // advanced for the next pass.

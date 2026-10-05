@@ -7,8 +7,8 @@
 /// `+0x18 + index * 4` is null 0 is returned. A negative index (SIGNED
 /// comparison) takes the head's head (`[[this]]`); otherwise slots at
 /// `+0x14` are scanned down from the index while null (below zero takes
-/// the head's head too) and the entry is the found slot's content plus
-/// 4. When the entry itself equals the target (the top slot's word at
+/// the head's head too) and the entry is the found slot's word at `+4`.
+/// When the entry itself equals the target (the top slot's word at
 /// `+4`) 0 is returned. Otherwise the entry is stamped with 0xc, nodes
 /// move one by one from the entry list to the holder list at `[this+4]`
 /// until the entry's front is the target, the slot is set to the entry
@@ -54,7 +54,7 @@ lf_checker_rt::export!(thiscall, rw_00878510(this: u32, a0: u32) -> u32 {
             loop {
                 let found = rd32(probe);
                 if found != 0 {
-                    entry = found.wrapping_add(NEXT_OFF);
+                    entry = rd32(found.wrapping_add(NEXT_OFF));
                     break;
                 }
                 probe = probe.wrapping_sub(4);
