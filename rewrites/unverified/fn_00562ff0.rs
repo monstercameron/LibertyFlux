@@ -16,8 +16,9 @@
 /// slot; a skip test against `ctx` may pass it over. Otherwise the row's
 /// kind decides the
 /// cursor step (8 for kinds 1, 2, 3 and 5, else 0). When the handle equals
-/// the iteration number the row object is fetched and, if it fits in 8
-/// bytes, its payload copied to `payload_out` and `flag_out` set.
+/// the iteration number the row object is fetched and, if its signed
+/// size is at most 8 (a negative size copies), its payload copied to
+/// `payload_out` and `flag_out` set.
 /// Otherwise the cursor advances by the step: it must stay within
 /// `base + span`, and a place call must accept the row, whose bit is then
 /// written into `bits_out` (overwriting the previous iteration's bit).
@@ -100,7 +101,8 @@ lf_checker_rt::export!(thiscall, rw_00562FF0(this: u32, base: u32, payload_out: 
                     if row != 0 {
                         let size: u32 =
                             lf_checker_rt::callee_thiscall!(7, u32, row);
-                        if size <= PAYLOAD_MAX {
+                        // Signed compare (jg): a negative size copies.
+                        if (size as i32) <= PAYLOAD_MAX as i32 {
                             wr64(payload_out, rd64(row.wrapping_add(ROW_PAYLOAD_OFF)));
                             ok = 1;
                         }
