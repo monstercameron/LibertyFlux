@@ -96,8 +96,8 @@ unsafe fn threshold(row: u32, hi: u32, lo: u32) -> f32 {
 /// Nibble acceptance rule for mode B (see doc comment).
 #[inline(always)]
 fn nibble_accepts(nibble: u8, kind: u32, flags: u32) -> bool {
-    {
-            0 => true,
+    match nibble {
+        0 => true,
             1 => (flags >> FLAG_BIT_A) & 1 != 0,
             2 => (flags >> FLAG_BIT_A) & 1 == 0,
             3 => (flags >> FLAG_BIT_B) & 1 != 0,
@@ -107,7 +107,6 @@ fn nibble_accepts(nibble: u8, kind: u32, flags: u32) -> bool {
             7 => (flags >> FLAG_BIT_C) & 1 != 0,
             8 => (flags >> FLAG_BIT_C) & 1 == 0,
             _ => false,
-        }
     }
 }
 
@@ -189,7 +188,7 @@ unsafe fn run_00b75940(this: u32, mode_list_a: u8) -> u32 {
         let mut d1slot = dist1;
         let out = lf_checker_rt::callee_thiscall!(ID_PRODUCE, u32, (&mut d1slot as *mut f32) as u32);
         (lf_checker_rt::global::<u32>(RESULT_SLOT) as *mut u32).write_unaligned(out);
-        lf_checker_rt::callee_cdecl!(ID_COOKIE, u32);
+        lf_checker_rt::callee_cdecl!(ID_COOKIE, u32,);
         out
     }
 }

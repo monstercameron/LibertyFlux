@@ -15,7 +15,7 @@
 /// 12-byte scratch) must answer nonzero, else the function returns 0 at once,
 /// and leaves the class table pointer at scratch word 2. Each of the 7
 /// rounds, unless an earlier round already failed: the vtable slot at `+0x30`
-/// maps the round index to a key; the skip callee (ECX = `status`, key) ends
+/// maps the round index to a key; the skip callee (ECX = `filter`, key) ends
 /// the round when nonzero; otherwise the class callee (ECX =
 /// `table[key]`, read as `table + key*4`) classifies the key and a switch on
 /// its answer (1, 2, 3 or 5) steps the running total by 8, else by 0. When
@@ -87,7 +87,7 @@ lf_checker_rt::export!(thiscall, rw_0051de30(this: u32, depth: u32, out_row: u32
                 break;
             }
             let key = key_of_round(this, round);
-            let skip: u32 = lf_checker_rt::callee_thiscall!(CAL_SKIP, u32, status, key);
+            let skip: u32 = lf_checker_rt::callee_thiscall!(CAL_SKIP, u32, filter, key);
             if (skip & 0xFF) != 0 {
                 round += 1;
                 continue;

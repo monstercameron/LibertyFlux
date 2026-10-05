@@ -22,14 +22,14 @@
 /// (xored `a0`, 0, first product), (`a0`, 0, scaled `a1`) and
 /// (xored `a0`, 0, scaled `a1`).
 ///
-/// Two quirks are reproduced exactly. The fourth step's middle scale is read
-/// from a frame slot that is never written, so it is zero under the checker's
-/// zero stack fill (and indeterminate stack garbage in a live game). The
-/// minimum/maximum selections are single-precision comparisons where an
+/// The minimum/maximum selections are single-precision comparisons where an
 /// unordered (NaN) pair keeps the first operand for the upper clamp and takes
 /// the second for the lower clamp; the truncation follows the hardware
 /// convert instruction, yielding `0x80000000` (low word zero) for NaN and
-/// out-of-range values rather than saturating.
+/// out-of-range values rather than saturating. One subtlety: the first tail
+/// push lands in the middle of the fourth step's arithmetic, so its middle
+/// scale is addressed one slot higher than in the other steps, naming the
+/// same stored scale.
 ///
 /// The tail issues four six-argument configuration calls carrying the object,
 /// small-integer constants, `a0` in the fourth slot (each site pushes a
@@ -210,8 +210,9 @@ lf_checker_rt::export!(stdcall, rw_00C751D0(a0b: u32, a1b: u32, a2b: u32) -> u32
         step!(a0, 0.0f32, prod_b, s1, 0);
         step!(g8, 0.0f32, prod_b, s1, 6);
         step!(a0, 0.0f32, a1slot, s1, 0x0c);
-        // Fourth step: the middle scale reads a never-written frame slot.
-        step!(g8, 0.0f32, a1slot, 0.0f32, 0x12);
+        // Fourth step: its middle scale is read after the first tail push, so
+        // the slot address names the same stored scale one word up.
+        step!(g8, 0.0f32, a1slot, s1, 0x12);
 
         // Tail configuration calls with sign-flipped constant triples.
         let c50 = lf_checker_rt::relocated(C_LOW);

@@ -3,7 +3,7 @@
 /// Emit one positioned record through the sink callee.
 ///
 /// `this` is the pool. Returns the incoming register (fixed by the proof)
-/// when the ready byte at +0x38 is clear. Otherwise marks the pool
+/// when the ready word at +0x38 is clear. Otherwise marks the pool
 /// emitting (+0xE0), asks the source slot for the record pointer, asks
 /// the position slot for the depth float, and calls the sink with the
 /// record block (three record words, a zero word, the depth bits), the
@@ -27,7 +27,7 @@ lf_checker_rt::export!(thiscall, rw_00a8d5f0(this: u32) -> u32 {
         const SINK_A: u32 = 0x2c;
         const SINK_B: u32 = 0xd;
         const INCOMING_EAX: u32 = 0x12345678;
-        let ready = ((this + READY) as *const u8).read_unaligned();
+        let ready = ((this + READY) as *const u32).read_unaligned();
         if ready == 0 {
             return INCOMING_EAX;
         }
