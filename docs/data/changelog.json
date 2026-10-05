@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Devlog: hourly review, 10:05 on 5 October",
+    "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "13,467 functions verified, 20.8% of the code by size; 365 in the last hour, the best hour since the restart.",
+      "The checker lane for doubles in vector registers finished with an identical regression; a second checker lane was started for functions that read data through unrelocated absolute addresses. Neither is installed until reviewed."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 56 files from lanes (423 unverified rewrites, 20 in review)",
     "commit": "171e913de8791babb1fd97551f2af2fe34abcb6f",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
