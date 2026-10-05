@@ -27,8 +27,9 @@ lf_checker_rt::export!(thiscall, rw_00A4D800(
         const CHAIN_SLOT: u32 = 0xE0;
         const WORK_CALLEE: u32 = 3;
         let model = ((this + MODEL) as *const i16).read_unaligned() as i32;
-        let entry = lf_checker_rt::relocated(TABLE)
+        let slot = lf_checker_rt::relocated(TABLE)
             .wrapping_add((model * 4) as u32);
+        let entry = (slot as *const u32).read_unaligned();
         let info = ((entry + INFO) as *const u32).read_unaligned();
         let vtable = (this as *const u32).read_unaligned();
         let src: extern "thiscall" fn(u32) -> u32 = core::mem::transmute(

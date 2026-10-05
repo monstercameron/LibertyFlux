@@ -13,7 +13,7 @@
 /// thiscall/0). Finishes with the virtual tail slot 0x30 (planted stub,
 /// thiscall/1) with argument 1 and returns its answer; the original
 /// overwrites its incoming argument slot with 1 and jumps, the rewrite calls
-/// and returns. Thiscall, one stack word.
+/// with 1 and returns. Thiscall, one stack word.
 
 export!(thiscall, rw_00b65e60(this: u32, a0: u32) -> u32 {
     unsafe {

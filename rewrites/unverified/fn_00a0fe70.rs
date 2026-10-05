@@ -11,7 +11,7 @@ export!(cdecl, rw_00a0fe70(id: u32, sub: u32) -> u32 {
         if (id as i32) > 0 && sub != SKIP_SUB && sub != 0xffff_ffff {
             1
         } else {
-            ((callee_cdecl!(FALLBACK, u32) & 0xff) != 1) as u32
+            ((callee_cdecl!(FALLBACK, u32,) & 0xff) != 1) as u32
         }
     }
 });
