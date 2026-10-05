@@ -37,7 +37,7 @@ lf_checker_rt::export!(cdecl, rw_00B864C0() -> u32 {
         }
         let mut pt = [0u32; 4];
         lf_checker_rt::callee_cdecl!(4, u32, pt.as_mut_ptr() as u32);
-        let hit = lf_checker_rt::callee_thiscall!(5, u32, TABLE, slot, pt.as_ptr() as u32);
+        let hit = lf_checker_rt::callee_thiscall!(5, u32, lf_checker_rt::relocated(TABLE), slot, pt.as_ptr() as u32);
         if hit & 0xFF != 0 { 1 } else { 0 }
     }
 });

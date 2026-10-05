@@ -59,19 +59,19 @@ lf_checker_rt::export!(thiscall, rw_00d2b300(this: u32, route: u32, cur: u32, go
 
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
-            unsafe { (a as *const u32).read_unaligned() }
+            (a as *const u32).read_unaligned()
         }
         #[inline(always)]
         unsafe fn rdf(a: u32) -> f32 {
-            unsafe { f32::from_bits(rd32(a)) }
+            f32::from_bits(rd32(a))
         }
         #[inline(always)]
         unsafe fn wr32(a: u32, v: u32) {
-            unsafe { (a as *mut u32).write_unaligned(v) }
+            (a as *mut u32).write_unaligned(v)
         }
         #[inline(always)]
         unsafe fn wrf(a: u32, v: f32) {
-            unsafe { wr32(a, v.to_bits()) }
+            wr32(a, v.to_bits())
         }
         #[inline(always)]
         fn add(a: f32, b: f32) -> f32 {
@@ -92,13 +92,11 @@ lf_checker_rt::export!(thiscall, rw_00d2b300(this: u32, route: u32, cur: u32, go
         /// Squared length in the original's accumulation order:
         /// (dy*dy + dx*dx) + dz*dz.
         #[inline(always)]
-        unsafe fn lensq(dx: f32, dy: f32, dz: f32) -> f32 {
-            unsafe {
-                let xx = mul(dx, dx);
-                let yy = mul(dy, dy);
-                let zz = mul(dz, dz);
-                add(add(yy, xx), zz)
-            }
+        fn lensq(dx: f32, dy: f32, dz: f32) -> f32 {
+            let xx = mul(dx, dx);
+            let yy = mul(dy, dy);
+            let zz = mul(dz, dz);
+            add(add(yy, xx), zz)
         }
         /// Reciprocal length: 0 for a zero length, else 1/sqrt.
         /// (The original tests the flags of an unordered-compare against
@@ -160,7 +158,7 @@ lf_checker_rt::export!(thiscall, rw_00d2b300(this: u32, route: u32, cur: u32, go
         if len2 < RADIUS {
             return keep(cur, out);
         }
-        let idx = unsafe { (this as *const u8).add(FLAG_BYTE as usize).read() } as i8 as i32;
+        let idx = (this as *const u8).add(FLAG_BYTE as usize).read() as i8 as i32;
         if idx > 0 {
             let e = rd32(this + ENTRY_BASE).wrapping_add((idx as u32) << 4);
             let d3 = lensq(
