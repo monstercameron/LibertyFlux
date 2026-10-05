@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: hourly review, 19:05 on 5 October",
+    "title": "Devlog: A full class batch verified, including a float returned on the x87 stack",
     "commit": null,
+    "summary": "Findings from the r-b564 lane.",
+    "changes": [
+      "New devlog entry: A full class batch verified, including a float returned on the x87 stack.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: hourly review, 19:05 on 5 October",
+    "commit": "df9d599d207bc49ab2ec478e61eed758e1aed77e",
     "summary": "One row added to the day's hourly reviews.",
     "changes": [
       "15,424 functions verified, 26.9% of the code by size. A stuck tick let the supervisor's task reach its time limit and three lanes were stopped with it; all three were resumed from their saved state and the four causes are fixed.",
