@@ -40293,6 +40293,51 @@
   "lane": "r-s482"
  },
  {
+  "address": "0x00878440",
+  "name": "conduit_entry_find",
+  "kind": "function",
+  "file": "functions/fn_00878440.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00878490",
+  "name": "conduit_entry_unlink",
+  "kind": "function",
+  "file": "functions/fn_00878490.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00878510",
+  "name": "conduit_entry_take",
+  "kind": "function",
+  "file": "functions/fn_00878510.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00878640",
+  "name": "rage::crmtComposerOptimized::CombiningFilter::vf0",
+  "kind": "function",
+  "file": "functions/fn_00878640.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00878670",
+  "name": "rage::crmtComposerOptimized::CombiningFilter::vf3",
+  "kind": "function",
+  "file": "functions/fn_00878670.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
   "address": "0x008786E0",
   "name": "rage::crmtComposerOptimized::CombiningFilter::vf4",
   "kind": "function",
@@ -40333,6 +40378,15 @@
   "name": "filter_slot_push",
   "kind": "function",
   "file": "functions/fn_00879090.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00879110",
+  "name": "rage::crFrameFilters<7$0A>::vf4",
+  "kind": "function",
+  "file": "functions/fn_00879110.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s482"
@@ -53233,6 +53287,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b377"
+ },
+ {
+  "address": "0x00970140",
+  "name": "audio_voice_filter_update",
+  "kind": "function",
+  "file": "functions/fn_00970140.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b558"
  },
  {
   "address": "0x00970D70",
