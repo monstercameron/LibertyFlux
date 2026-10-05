@@ -58806,6 +58806,33 @@
   "lane": "r-s440"
  },
  {
+  "address": "0x00AEF7F0",
+  "name": "stream_id_index",
+  "kind": "function",
+  "file": "functions/fn_00aef7f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AEF820",
+  "name": "stream_id_factor",
+  "kind": "function",
+  "file": "functions/fn_00aef820.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AEF860",
+  "name": "stream_id_index_or_neg",
+  "kind": "function",
+  "file": "functions/fn_00aef860.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
   "address": "0x00AEF9E0",
   "name": "stream_level_blend",
   "kind": "function",
@@ -58846,6 +58873,15 @@
   "name": "clamp_scaled_global",
   "kind": "function",
   "file": "functions/fn_00aefbf0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AEFC50",
+  "name": "stream_table_fetch",
+  "kind": "function",
+  "file": "functions/fn_00aefc50.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s440"
@@ -58905,6 +58941,15 @@
   "lane": "r-s440"
  },
  {
+  "address": "0x00AF4670",
+  "name": "drawable_destroy_all",
+  "kind": "function",
+  "file": "functions/fn_00af4670.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
   "address": "0x00AF46C0",
   "name": "gtaDrawable::~gtaDrawable__deleting",
   "kind": "function",
@@ -58927,6 +58972,15 @@
   "name": "drawable_release_slot",
   "kind": "function",
   "file": "functions/fn_00af4700.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AF4710",
+  "name": "drawable_acquire_guarded",
+  "kind": "function",
+  "file": "functions/fn_00af4710.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s440"
@@ -59796,10 +59850,37 @@
   "lane": "r-s443"
  },
  {
+  "address": "0x00B1A410",
+  "name": "lowercase_wstr_in_place",
+  "kind": "function",
+  "file": "functions/fn_00b1a410.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1AAC0",
+  "name": "FRONTEND_MENU_TOGGLE_ON",
+  "kind": "function",
+  "file": "functions/fn_00b1aac0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
   "address": "0x00B1AB70",
   "name": "row_active_check",
   "kind": "function",
   "file": "functions/fn_00b1ab70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1ABD0",
+  "name": "init_table_owner",
+  "kind": "function",
+  "file": "functions/fn_00b1abd0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s443"
@@ -59841,6 +59922,15 @@
   "lane": "r-s443"
  },
  {
+  "address": "0x00B1CF00",
+  "name": "find_free_row",
+  "kind": "function",
+  "file": "functions/fn_00b1cf00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
   "address": "0x00B1CF70",
   "name": "override_or_default",
   "kind": "function",
@@ -59872,6 +59962,33 @@
   "name": "free_list_deep",
   "kind": "function",
   "file": "functions/fn_00b1e4c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1E520",
+  "name": "run_init_sequence",
+  "kind": "function",
+  "file": "functions/fn_00b1e520.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1E610",
+  "name": "run_subinit_sequence",
+  "kind": "function",
+  "file": "functions/fn_00b1e610.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1EE80",
+  "name": "run_shutdown_sequence",
+  "kind": "function",
+  "file": "functions/fn_00b1ee80.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s443"

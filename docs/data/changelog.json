@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: A wrong rewrite passed until the contract was widened",
+    "title": "Rewrites: 13 more functions pass the checker (12726 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "13 rewrites added under rewrites/verified: 0 script native handlers and 13 other functions.",
+      "The tree now holds 12726 rewrites, 12707 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "755 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: A wrong rewrite passed until the contract was widened",
+    "commit": "4b9e6f99966bd853b5be3fcbcb72abd61b65e11f",
     "summary": "Findings from the r-s439 lane.",
     "changes": [
       "New devlog entry: A wrong rewrite passed until the contract was widened.",
