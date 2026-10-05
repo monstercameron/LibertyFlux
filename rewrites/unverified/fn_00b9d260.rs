@@ -8,8 +8,8 @@
 /// row as [maxx, maxy, maxz, scratch, minx, miny, minz, scratch] (scratch
 /// words are zero under the contract's `stack_fill`), sets bit 0 of the
 /// flag word at offset `FLAG_OFF` of the singleton from `GET`, reads a
-/// word at offset `W_OFF` from it, and passes two overlapping views of
-/// the row (row[1..] then row[0..]) plus that word through the 3-argument
+/// word at offset `W_OFF` from it, and passes the min half (row[4..8])
+/// then the full row (row[0..8]) plus that word through the 3-argument
 /// `APPLY` call. Returns whatever `APPLY` returns.
 ///
 /// Both view pointers are skipped call arguments with snapshot-verified
@@ -39,6 +39,6 @@ lf_checker_rt::export!(cdecl, rw_00b9d260(x0: u32, y0: u32, z0: u32, x1: u32, y1
         let p2: u32 = lf_checker_rt::callee_cdecl!(GET, u32,);
         let w = (p2.wrapping_add(W_OFF) as *const u32).read_unaligned();
         let base = row.as_mut_ptr();
-        lf_checker_rt::callee_cdecl!(APPLY, u32, base.add(1) as u32, base as u32, w)
+        lf_checker_rt::callee_cdecl!(APPLY, u32, base.add(4) as u32, base as u32, w)
     }
 });

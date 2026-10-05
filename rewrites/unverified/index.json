@@ -1448,6 +1448,14 @@
   "reason": null
  },
  {
+  "address": "0x009B97B0",
+  "name": "CCamScriptInstruction_EnableDebugCam::vf2",
+  "file": "fn_009b97b0.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x009B9800",
   "name": "CCamScriptInstruction_ForceTelescopeCam::vf2",
   "file": "fn_009b9800.rs",
@@ -1483,6 +1491,14 @@
   "address": "0x009B98C0",
   "name": "CCamScriptInstruction_InterpolateToScriptCam::vf2",
   "file": "fn_009b98c0.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B98F0",
+  "name": "CCamScriptInstruction_PointCamAtVehicle_Q::vf2",
+  "file": "fn_009b98f0.rs",
   "lane": "r-s421",
   "outcome": "not_reached",
   "reason": null
@@ -1536,9 +1552,25 @@
   "reason": null
  },
  {
+  "address": "0x009B9D80",
+  "name": "CCamScriptInstruction_SetCamLookAtPos_Q::vf2",
+  "file": "fn_009b9d80.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x009B9E10",
   "name": "CCamScriptInstruction_SetCamPos_Q::vf2",
   "file": "fn_009b9e10.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B9E80",
+  "name": "CCamScriptInstruction_SetCamRot_Q::vf2",
+  "file": "fn_009b9e80.rs",
   "lane": "r-s421",
   "outcome": "not_reached",
   "reason": null
@@ -1582,6 +1614,326 @@
   "lane": "r-s421",
   "outcome": "not_reached",
   "reason": null
+ },
+ {
+  "address": "0x009BA200",
+  "name": "CCamScriptInstruction_SetFollowVehiclePitchLimitDown::vf2",
+  "file": "fn_009ba200.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA210",
+  "name": "CCamScriptInstruction_SetFollowVehiclePitchLimitUp::vf2",
+  "file": "fn_009ba210.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA220",
+  "name": "CCamScriptInstruction_SetGameCamHeading::vf2",
+  "file": "fn_009ba220.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA250",
+  "name": "CCamScriptInstruction_SetGameCamPitch::vf2",
+  "file": "fn_009ba250.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA280",
+  "name": "CCamScriptInstruction_SetGameCameraControlsActive::vf2",
+  "file": "fn_009ba280.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA2B0",
+  "name": "CCamScriptInstruction_SetGameFollowVehicleCamSubMode::vf2",
+  "file": "fn_009ba2b0.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA310",
+  "name": "CCamScriptInstruction_SetHintAdvancedParams::vf2",
+  "file": "fn_009ba310.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA360",
+  "name": "CCamScriptInstruction_SetHintFOV::vf2",
+  "file": "fn_009ba360.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA390",
+  "name": "CCamScriptInstruction_SetHintMoveInDist::vf2",
+  "file": "fn_009ba390.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA3B0",
+  "name": "CCamScriptInstruction_SetHintMoveInDistDefault::vf2",
+  "file": "fn_009ba3b0.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA3D0",
+  "name": "CCamScriptInstruction_SetHintTimes::vf2",
+  "file": "fn_009ba3d0.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA400",
+  "name": "CCamScriptInstruction_SetHintTimesDefault::vf2",
+  "file": "fn_009ba400.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA420",
+  "name": "CCamScriptInstruction_SetInterpDetail_Rot_Style_Angles::vf2",
+  "file": "fn_009ba420.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA440",
+  "name": "CCamScriptInstruction_SetInterpDetail_Rot_Style_Quats::vf2",
+  "file": "fn_009ba440.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA460",
+  "name": "CCamScriptInstruction_SetInterpGraphTypePos::vf2",
+  "file": "fn_009ba460.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA490",
+  "name": "CCamScriptInstruction_SetInterpGraphTypeRot::vf2",
+  "file": "fn_009ba490.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA4C0",
+  "name": "CCamScriptInstruction_SetInterpStateSrc::vf2",
+  "file": "fn_009ba4c0.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA4E0",
+  "name": "CCamScriptInstruction_SetInterpStyleCore::vf2",
+  "file": "fn_009ba4e0.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA530",
+  "name": "CCamScriptInstruction_SetInterpStyleDetailed::vf2",
+  "file": "fn_009ba530.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA590",
+  "name": "CCamScriptInstruction_SetLookDampingParams::vf2",
+  "file": "fn_009ba590.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA5D0",
+  "name": "CCamScriptInstruction_SetLookTargetCam::vf2",
+  "file": "fn_009ba5d0.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA620",
+  "name": "CCamScriptInstruction_SetLookTargetEntity::vf2",
+  "file": "fn_009ba620.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA690",
+  "name": "CCamScriptInstruction_SetLookTargetOffset::vf2",
+  "file": "fn_009ba690.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA720",
+  "name": "CCamScriptInstruction_SetLookTargetOffsetRelative::vf2",
+  "file": "fn_009ba720.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA770",
+  "name": "CCamScriptInstruction_SetLookTargetPos::vf2",
+  "file": "fn_009ba770.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA7B0",
+  "name": "CCamScriptInstruction_SetMotionBlur::vf2",
+  "file": "fn_009ba7b0.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA7F0",
+  "name": "CCamScriptInstruction_SetNear::vf2",
+  "file": "fn_009ba7f0.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA810",
+  "name": "CCamScriptInstruction_SetNearDOF::vf2",
+  "file": "fn_009ba810.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA830",
+  "name": "CCamScriptInstruction_SetPos::vf2",
+  "file": "fn_009ba830.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA8A0",
+  "name": "CCamScriptInstruction_SetPosTargetEntity::vf2",
+  "file": "fn_009ba8a0.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA8C0",
+  "name": "CCamScriptInstruction_SetPosTargetOffset::vf2",
+  "file": "fn_009ba8c0.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA910",
+  "name": "CCamScriptInstruction_SetPosTargetOffsetRelative::vf2",
+  "file": "fn_009ba910.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BA950",
+  "name": "CCamScriptInstruction_SetRoll::vf2",
+  "file": "fn_009ba950.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BABA0",
+  "name": "CCamScriptInstruction_SetScreenFade::vf2",
+  "file": "fn_009baba0.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BAD70",
+  "name": "CCamScriptInstruction_SetScriptModeActive::vf2",
+  "file": "fn_009bad70.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BAF00",
+  "name": "CCamScriptInstruction_SetSniperZoomFactor::vf2",
+  "file": "fn_009baf00.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BAF20",
+  "name": "CCamScriptInstruction_SetSplineDuration::vf2",
+  "file": "fn_009baf20.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BAF40",
+  "name": "CCamScriptInstruction_SetSplineProgress::vf2",
+  "file": "fn_009baf40.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BAF70",
+  "name": "CCamScriptInstruction_SetSplineSpeedConstant::vf2",
+  "file": "fn_009baf70.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BAF90",
+  "name": "CCamScriptInstruction_SetSplineSpeedGraph::vf2",
+  "file": "fn_009baf90.rs",
+  "lane": "r-s422",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x009CBBC0",
@@ -1845,46 +2197,6 @@
   "file": "fn_00b9aa70.rs",
   "lane": "r-n88",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B9B060",
-  "name": "NativeImpl_ADD_SPAWN_BLOCKING_AREA",
-  "file": "fn_00b9b060.rs",
-  "lane": "r-s423",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B9B0B0",
-  "name": "NativeImpl_ADD_SPAWN_BLOCKING_DISC",
-  "file": "fn_00b9b0b0.rs",
-  "lane": "r-s423",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B9B1D0",
-  "name": "NativeImpl_DEFINE_PED_GENERATION_CONSTRAINT_AREA",
-  "file": "fn_00b9b1d0.rs",
-  "lane": "r-s423",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B9B230",
-  "name": "NativeImpl_FIND_STREET_NAME_AT_POSITION",
-  "file": "fn_00b9b230.rs",
-  "lane": "r-s423",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B9B2B0",
-  "name": "NativeImpl_GENERATE_DIRECTIONS_2",
-  "file": "fn_00b9b2b0.rs",
-  "lane": "r-s423",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -2240,6 +2552,30 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00C46F10",
+  "name": "ccam_indexed_getter",
+  "file": "fn_00c46f10.rs",
+  "lane": "r-s424",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C47260",
+  "name": "CCamScript::vf6",
+  "file": "fn_00c47260.rs",
+  "lane": "r-s424",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C48210",
+  "name": "CCamScripted::vf8",
+  "file": "fn_00c48210.rs",
+  "lane": "r-s424",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00CA00A0",
   "name": null,
   "file": "fn_00ca00a0.rs",
@@ -2584,28 +2920,20 @@
   "reason": null
  },
  {
-  "address": "0x00D108F0",
-  "name": "pending",
-  "file": "fn_00d108f0.rs",
-  "lane": "r-b405",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00D10C20",
-  "name": "pending",
-  "file": "fn_00d10c20.rs",
-  "lane": "r-b405",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x00D1D870",
   "name": "seek_cover_slot_usable",
   "file": "fn_00d1d870.rs",
   "lane": "r-b346",
   "outcome": "not_reached",
   "reason": ""
+ },
+ {
+  "address": "0x00D1E060",
+  "name": null,
+  "file": "fn_00d1e060.rs",
+  "lane": "r-b408",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00D26830",
