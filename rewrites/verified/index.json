@@ -50400,6 +50400,15 @@
   "lane": "r-s331"
  },
  {
+  "address": "0x00A248A0",
+  "name": "task_heading_update",
+  "kind": "function",
+  "file": "functions/fn_00a248a0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b410"
+ },
+ {
   "address": "0x00A25390",
   "name": "task_state_value_blend",
   "kind": "function",
@@ -58729,6 +58738,15 @@
   "name": "CTaskSimpleCarShuffle::vf17",
   "kind": "function",
   "file": "functions/fn_00b729e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b413"
+ },
+ {
+  "address": "0x00B72B70",
+  "name": "CTaskSimpleCarSlowBeDraggedOut::vf17",
+  "kind": "function",
+  "file": "functions/fn_00b72b70.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b413"
@@ -82260,6 +82278,87 @@
   "lane": "a-F03"
  },
  {
+  "address": "0x00C05830",
+  "name": "stream_item_init_tag7c",
+  "kind": "function",
+  "file": "functions/fn_00c05830.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C05C80",
+  "name": "stream_item_init_tag8d",
+  "kind": "function",
+  "file": "functions/fn_00c05c80.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C05CD0",
+  "name": "stream_slot_clear",
+  "kind": "function",
+  "file": "functions/fn_00c05cd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C05D10",
+  "name": "stream_header_init",
+  "kind": "function",
+  "file": "functions/fn_00c05d10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C064C0",
+  "name": "stream_set_field24",
+  "kind": "function",
+  "file": "functions/fn_00c064c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C06500",
+  "name": "stream_set_field20",
+  "kind": "function",
+  "file": "functions/fn_00c06500.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C06680",
+  "name": "stream_view_init_defaults",
+  "kind": "function",
+  "file": "functions/fn_00c06680.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C078A0",
+  "name": "stream_slot_ptr_at",
+  "kind": "function",
+  "file": "functions/fn_00c078a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C07A40",
+  "name": "stream_table_entry_or_default",
+  "kind": "function",
+  "file": "functions/fn_00c07a40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
   "address": "0x00C0F2B0",
   "name": "UIFrame::vf119",
   "kind": "function",
@@ -83716,6 +83815,87 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s166"
+ },
+ {
+  "address": "0x00C69BE0",
+  "name": "stream_purge_state1",
+  "kind": "function",
+  "file": "functions/fn_00c69be0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s425"
+ },
+ {
+  "address": "0x00C69CA0",
+  "name": "stream_purge_flagmask",
+  "kind": "function",
+  "file": "functions/fn_00c69ca0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s425"
+ },
+ {
+  "address": "0x00C69E00",
+  "name": "stream_remove_id",
+  "kind": "function",
+  "file": "functions/fn_00c69e00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s425"
+ },
+ {
+  "address": "0x00C6A060",
+  "name": "stream_purge_range_done",
+  "kind": "function",
+  "file": "functions/fn_00c6a060.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s425"
+ },
+ {
+  "address": "0x00C6A140",
+  "name": "stream_purge_bit12",
+  "kind": "function",
+  "file": "functions/fn_00c6a140.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s425"
+ },
+ {
+  "address": "0x00C6A1A0",
+  "name": "stream_purge_bit47",
+  "kind": "function",
+  "file": "functions/fn_00c6a1a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s425"
+ },
+ {
+  "address": "0x00C6A210",
+  "name": "stream_purge_no_reqbits",
+  "kind": "function",
+  "file": "functions/fn_00c6a210.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s425"
+ },
+ {
+  "address": "0x00C6A2A0",
+  "name": "stream_purge_bit_clear",
+  "kind": "function",
+  "file": "functions/fn_00c6a2a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s425"
+ },
+ {
+  "address": "0x00C6A330",
+  "name": "stream_purge_bit_set",
+  "kind": "function",
+  "file": "functions/fn_00c6a330.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s425"
  },
  {
   "address": "0x00C6DB30",
