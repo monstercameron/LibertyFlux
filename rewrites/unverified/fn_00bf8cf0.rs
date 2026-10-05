@@ -15,8 +15,8 @@
 /// a strictly negative sum xors the four solve words with a global mask word
 /// and stores them back. A build call then combines the cells into a
 /// four-word object, a transform call expands that into eleven words, and an
-/// apply call takes a fifteen-word block (a zero word, the eleven transform
-/// words, three computed floats) plus a global-minus-factor chain scaled by
+/// apply call takes a fifteen-word block (the eleven transform words, a
+/// zero word, three computed floats) plus a global-minus-factor chain scaled by
 /// `c` and the `+0x20` floats. The tail lerps the target's `+0x18` float
 /// towards `this`'s by `c` and pushes it under a fixed key; that call's
 /// answer is the return value on both paths.
@@ -112,11 +112,13 @@ lf_checker_rt::export!(thiscall, rw_00bf8cf0(this: u32, a8: u32, a_target: u32, 
                 cell10.as_mut_ptr() as u32,
                 cell20.as_mut_ptr() as u32
             );
-            let mut obj54 = [0u32; 11];
+            // The transform context starts one word below the block's second
+            // word: the lea runs after the argument push.
+            let mut obj50 = [0u32; 11];
             lf_checker_rt::callee_thiscall!(
                 C_XFORM,
                 u32,
-                obj54.as_mut_ptr() as u32,
+                obj50.as_mut_ptr() as u32,
                 obj40.as_mut_ptr() as u32
             );
             let g = rdf(lf_checker_rt::relocated(G_SUB));
@@ -137,19 +139,21 @@ lf_checker_rt::export!(thiscall, rw_00bf8cf0(this: u32, a8: u32, a_target: u32, 
             t0 = add(t0, t3);
             t1 = add(t1, t2);
             t5 = add(t5, t4);
+            // Block: eleven transform words, one never-stored word, three
+            // computed floats (contract stack_fill 0 for the hole).
             let mut blk = [
+                obj50[0],
+                obj50[1],
+                obj50[2],
+                obj50[3],
+                obj50[4],
+                obj50[5],
+                obj50[6],
+                obj50[7],
+                obj50[8],
+                obj50[9],
+                obj50[10],
                 0u32,
-                obj54[0],
-                obj54[1],
-                obj54[2],
-                obj54[3],
-                obj54[4],
-                obj54[5],
-                obj54[6],
-                obj54[7],
-                obj54[8],
-                obj54[9],
-                obj54[10],
                 t1.to_bits(),
                 t0.to_bits(),
                 t5.to_bits(),
