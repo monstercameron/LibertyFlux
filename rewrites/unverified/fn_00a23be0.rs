@@ -243,6 +243,22 @@ lf_checker_rt::export!(thiscall, rw_00a23be0(
         x1f = mul(x1f, x0f);
         let mut t1 = x2f;
         let mut v1c = x2f;
+        // r-b430 DEBUG: capture intermediates (REMOVE BEFORE SHIP).
+        unsafe {
+            let dbg = this.wrapping_add(0x3af0);
+            wr32(dbg, v10a.to_bits());
+            wr32(dbg.wrapping_add(4), v14.to_bits());
+            wr32(dbg.wrapping_add(8), vc.to_bits());
+            wr32(dbg.wrapping_add(12), x4.to_bits());
+            wr32(dbg.wrapping_add(16), x3.to_bits());
+            wr32(dbg.wrapping_add(20), x0f.to_bits());
+            wr32(dbg.wrapping_add(24), x1f.to_bits());
+            wr32(dbg.wrapping_add(28), x2f.to_bits());
+            wr32(dbg.wrapping_add(32), xe2.to_bits());
+            wr32(dbg.wrapping_add(36), x1.to_bits());
+            wr32(dbg.wrapping_add(40), f0.to_bits());
+            wr32(dbg.wrapping_add(44), a3b);
+        }
         v10a = x1f;
         let x0g: f32;
         if ext != 0 {
@@ -407,8 +423,6 @@ lf_checker_rt::export!(thiscall, rw_00a23be0(
         wrf(this.wrapping_add(0x158), x0u);
         wrf(this.wrapping_add(0x154), x3t);
         wrf(this.wrapping_add(0x15c), f32::from_bits(STACK_FILL_WORD));
-        // r-b430 DEBUG: capture intermediates to heap seg 6 (remove before ship)
-        // NOTE: disabled by default; enabled via debug env during triage only.
         if cl != 0 {
             idx
         } else {
