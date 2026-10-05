@@ -89586,6 +89586,15 @@
   "lane": "r-s448"
  },
  {
+  "address": "0x00C3D650",
+  "name": "train_activate_flagged_cars",
+  "kind": "function",
+  "file": "functions/fn_00c3d650.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
   "address": "0x00C3D850",
   "name": "train_clear_low_nibble_guarded",
   "kind": "function",
@@ -89635,6 +89644,15 @@
   "name": "train_free_slot_table",
   "kind": "function",
   "file": "functions/fn_00c3d9f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
+  "address": "0x00C3E0C0",
+  "name": "train_init_transform_params",
+  "kind": "function",
+  "file": "functions/fn_00c3e0c0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s448"
@@ -95877,6 +95895,15 @@
   "lane": "r-b405"
  },
  {
+  "address": "0x00D17120",
+  "name": "CTaskSimplePlayAnimAndSlideOutOfCover::vf13",
+  "kind": "function",
+  "file": "functions/fn_00d17120.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b451"
+ },
+ {
   "address": "0x00D17410",
   "name": "cover_slot_path_filter",
   "kind": "function",
@@ -96847,6 +96874,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s78"
+ },
+ {
+  "address": "0x00D3BAF0",
+  "name": "CDummyTask_Stationary::vf3",
+  "kind": "function",
+  "file": "functions/fn_00d3baf0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b453"
  },
  {
   "address": "0x00D3C860",
@@ -101266,6 +101302,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b427"
+ },
+ {
+  "address": "0x00DC58A0",
+  "name": "TaskShoot_AttachWeaponAnim",
+  "kind": "function",
+  "file": "functions/fn_00dc58a0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b455"
  },
  {
   "address": "0x00DC8160",
