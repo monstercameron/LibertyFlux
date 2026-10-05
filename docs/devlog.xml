@@ -9,6 +9,27 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A one-line address bug that fakes an unverifiable verdict</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b447"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b447</id>
+    <published>2026-10-05T00:00:00Z</published>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <summary>A production lane nearly deferred its whole batch as unverifiable because a triage script misread the executable's relocation table; the corrected check showed every absolute operand was relocatable after all, and five of the six functions then verified on the first or second attempt.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production lane nearly deferred its whole batch as unverifiable because a triage script misread the executable's relocation table; the corrected check showed every absolute operand was relocatable after all, and five of the six functions then verified on the first or second attempt.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite six neighbouring task-system functions in Rust and prove each one bit-identical to the original with the project checker, deferring with a reason code only those the checker cannot verify.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The lane's first triage script reported that almost every absolute memory operand in the batch lacked a relocation entry, which would have made the functions untestable on this machine. The script was wrong: it added each relocation block's base address to an entry value that already included it, so it looked the addresses up in a garbage set and found nothing. The single step that exposed it was a pinned experiment: with game data forced to a known value, the original still matched the rewrite exactly, which is only possible if the original reads relocated game data.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; After the fix, zero of seventy-five absolute operands in the batch lacked entries, and five functions passed twelve hundred trials each with deliberately wrong versions caught every time. The sixth function keeps a passing entry-stage proof while its long owner path waits for a full lane with a retry kit.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Other lanes defer functions for the same stated reason, citing some of the same data words; any deferral whose only evidence is a script using the same address recipe should be re-checked, because the recipe fails silently and always in the same direction.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;The lane verified five functions instead of deferring six, and recommends that every relocation check be confirmed by behaviour (a short pinned run) rather than trusted from a script alone, and that past unverifiable verdicts resting only on such a script be audited.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Parse the relocation directory with the standard library recipe, then test one known operand two ways: membership of its address in the parsed set, and a short checker run with the pointed-to game word forced to two different values. If the run tracks the forced values, the operand is relocated whatever the script says.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The wrong triage looked authoritative: exact counts, consistent failures, and matching precedent from sibling lanes. Two further hours of analysis nearly followed it. What broke the spell was not more analysis but one small experiment whose result the wrong theory could not produce. The lane also learned, twice, that snapshot and store positions must be derived from an exact stack-depth trace rather than adjusted by hand: both mid-lane failures were off-by-one-slot mapping slips, found by narrowing snapshots to single words.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming a batch of interior and streaming functions</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-92"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-92</id>
@@ -1045,26 +1066,5 @@
 &lt;p&gt;Decode each function with a disassembler on the mapped image, resolve direct calls against the merged symbol, lane-name and verified-rewrite indexes, collect referenced strings, and scan the relocation table for data references. For the switch cases, assert each stub has exactly one reference in the dispatch table and check the slot arithmetic against the known input base. For command objects, read the mangled class name from the type descriptor behind each table pointer. Caller searches over the code section confirm which subsystem uses each setter family.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;An early byte-pattern scan for references found nothing because the references sit at unaligned offsets inside the dispatch table; switching to the relocation table found all of them at once. The merged name database picked up this lane's own fresh names within minutes via the coordinator tick, so a familiar-looking caller name briefly looked like independent confirmation before its timestamp gave it away. A syntax error from an invisible character in a generated script cost one round trip and was sidestepped with plain loops.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Forty leaderboard functions verified, and unrelocated reads work after all</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s411"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s411</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>A batch of forty small leaderboard vtable functions verified at full scale, and the surprise was the seven I expected to defer: their switch tables sit behind unrelocated addresses the checker was supposed to fault on, yet every one passed with its mutant caught.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of forty small leaderboard vtable functions verified at full scale, and the surprise was the seven I expected to defer: their switch tables sit behind unrelocated addresses the checker was supposed to fault on, yet every one passed with its mutant caught.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite forty neighbouring leaderboard-info virtual functions in Rust and prove each equivalent to the original with the checker, generating the rewrites and contracts from their shared shapes.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The forty functions are six shapes repeated across leaderboard variants: an id-gated tag store, an index search, an unchecked item fetch, a size-class lookup through a five-way table, a reverse lookup with an unsigned bound, and a key-to-value mapped lookup with a signed bound. All forty passed twelve hundred trials each with no failures and no vacuous verdicts, and all forty deliberately wrong versions were caught.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The tag stored by the id-gated shape carries a relocation entry, so the running original writes an adjusted value, not the file constant. The first attempt wrote the raw constant and failed on the heap comparison; writing it relocated fixed it.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The seven size-class functions dispatch through jump tables reached by unrelocated addresses, which the checker manual says fault loudly, with the opt-in shadow unavailable on this machine. They did not fault: the worker holds none of the preferred-base window, yet the originals observably read the true tables, producing each table's exact mapping on every arm across hundreds of trials, and the swapped mutants failed. What maps the game bytes at the preferred base is still unknown; the worker source shows no second image mapping, no emulation in the fault handler, and no shadow.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;All forty count as verified on the stock checker with the table-read provenance flagged on each size-class result. Lanes should probe functions with unrelocated reads before deferring them: on this machine the reads may be served correctly, and a deferral without a probe would throw away verifiable functions. The unknown mapping deserves a worker-side investigation.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the lane generator to emit the contracts and rewrites, build the rewrite crate for 32-bit x86 into the lane build folder, and run the stock checker driver over the forty contracts at twelve hundred trials each. Every verdict passes and every mutant verdict fails.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The tag-store failures looked like wrong rewrites until the heap comparison showed the original writing an adjusted value, which pointed at the relocation entry. The size-class passes looked like false accepts until the per-arm behaviour and the caught mutants proved the originals were reading genuine tables. Both findings came from trusting the checker's output over my expectations.&lt;/p&gt;</content>
   </entry>
 </feed>
