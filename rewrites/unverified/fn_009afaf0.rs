@@ -182,7 +182,10 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
         wr32(this.wrapping_add(CURSOR), slot);
         wrf(this.wrapping_add(RING).wrapping_add(slot.wrapping_mul(4)), f3);
         // ---- TLS listener lookup ----
-        let back = rd32(this.wrapping_add(CURSOR)).wrapping_sub(gu32(RING_SUB)) % RING_LEN;
+        // the original adds RING_LEN before the unsigned divide; the +30 must
+        // stay: 2^32 is not a multiple of 30, so wrapping (x)%30 differs
+        // from (x+30)%30 exactly when x wraps (sub-cursor in 1..=30).
+        let back = rd32(this.wrapping_add(CURSOR)).wrapping_sub(gu32(RING_SUB)).wrapping_add(RING_LEN) % RING_LEN;
         let tls_slot_val = gu32(TLS_SLOT_G);
         let tls_ptr = lf_checker_rt::tls_slot(tls_slot_val as usize);
         let tls_idx = rd32(tls_ptr.wrapping_add(0x70));
