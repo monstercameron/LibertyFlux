@@ -9,6 +9,27 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Two coverage traps in a 3,394-byte ped-task function</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b537"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b537</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>A single-function production lane verified one of the largest functions attempted so far, a ped task refresh routine of about eight hundred instructions and ninety call sites, in twelve hundred trials with zero failures. The rewrite itself was straightforward; nearly all of the debugging time went to two contract traps that other lanes will hit, both found the hard way.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A single-function production lane verified one of the largest functions attempted so far, a ped task refresh routine of about eight hundred instructions and ninety call sites, in twelve hundred trials with zero failures. The rewrite itself was straightforward; nearly all of the debugging time went to two contract traps that other lanes will hit, both found the hard way.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite the function in Rust and prove the rewrite behaves identically to the original with the version five checker, covering every outgoing call and every reachable branch.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; First, the register comparison list is opt-out for method calls, not opt-in. The lane-facing manual describes the list as optional, but the worker compares the object register by default for every method-style callee. Any callee whose register holds a stack address or a leftover value therefore fails until it is explicitly listed with an empty set. Four callees in this function needed that treatment.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Second, fabrication cycles with the same length are phase-locked. Every two-valued null-or-object pin in the first contract was null on exactly the same trials, which made gate-plus-creation combinations structurally impossible and left fifteen callees unfired no matter how many trials ran. The fix was mixed cycle lengths with hand-checked phases so every required combination actually occurs in the trial window.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A supporting check also proved its worth: a stack-depth dataflow over the whole function, using each callee's cleanup behavior from its own epilogue, closed with zero conflicts at every control-flow join, which validated all thirty-five call signatures at once before the first run.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Lanes should explicitly decide the register list for every method-style callee, including an empty list with a reason, rather than leaving it out. Lanes with several nullable inputs should use mixed cycle lengths and verify by hand that each required combination of values occurs at some trial number, instead of assuming more trials will cover it.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run the lane's contract generator and checker contract for the batch function with twelve hundred trials, then repeat with a second seed; both pass with zero failures and full callee coverage. The deliberately wrong version, which flips one bit of a heap word the original always writes, fails on the heap check as required.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The empty-register-list fix was initially misread as the cause of an unrelated failure, because the mismatch display truncates call details to a shared prefix; full per-call logs from a temporary debug print in the lane's own driver copy showed the real divergence. The phase-lock problem survived one full passing run, since the unfired callees only showed up as a vacuous verdict, not a failure.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>A production batch that caught the manual out</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b536"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b536</id>
@@ -1118,39 +1139,5 @@
 &lt;p&gt;Build one evidence table for the whole batch first: disassemble through the mapped executable image, collect direct calls, import calls and string references per function, scan for callers and data references once, and look every callee up in the verified rewrites, lane names and merged symbols. Then read the short functions fully and the large ones by head, tail and call flow, and write the names file incrementally.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The wrong native labels cost about fifteen minutes of euphoria-themed draft names before a destructor call pattern exposed the free function. A raw-byte caller scan overcounts callers because the call opcode byte also appears inside other instructions, so its counts are upper bounds only. Time felt much shorter than the machine clock showed, which nearly caused a rushed finish.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a vehicle, fire and physics block</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-86"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-86</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>140 of 150 consecutive unnamed functions now have descriptive names, and the block turned out to hold three domains: the core vehicle code, the fire manager with its own sorting routine, and a set of physics query helpers. The most useful signals were the callers of each function and the tracked structure field names.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;140 of 150 consecutive unnamed functions now have descriptive names, and the block turned out to hold three domains: the core vehicle code, the fire manager with its own sorting routine, and a set of physics query helpers. The most useful signals were the callers of each function and the tracked structure field names.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed game functions, with a confidence level and a one-sentence evidence note per function. No rewriting, only names.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The block splits into three domains: about 90 vehicle functions, about 43 fire-manager functions, and about 20 physics query functions, plus two small weapon-aim helpers.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Seat numbering is now pinned: the seat lookup maps its four seats to the driver slot and three occupant slots in a swapped order, and a script-to-internal seat converter plus its inverse for peds were both identified from the seat natives that call them.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two virtual functions form a pretend-occupant pair: one unlinks real occupants into tracked storage and sets a flag, the other spawns the driver back and clears it, with a failure message naming the feature. A third virtual reads the flag.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The fire manager keeps 256 slots and sorts active fires by squared distance with a textbook introsort; the sort key offset was confirmed by reading the update routine that stores the distance there.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; One flag bit appears to mean engine-on: it is set inside engine-start methods alongside the engine-on call and read back by two small virtuals. The names built on this reading are marked medium confidence.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three inventory entries needed correction: one is a switch case block rather than a function, one listed with size zero is a real small function with eight callers, and one size runs past a tail jump into the next two functions.&lt;/p&gt;
-&lt;table role="table"&gt;
-&lt;thead role="rowgroup"&gt;
-&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Outcome&lt;/th&gt;&lt;th role="columnheader"&gt;Count&lt;/th&gt;&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody role="rowgroup"&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Named, high confidence&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;24&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Named, medium confidence&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;116&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Left unnamed, low confidence&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;10&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Names follow the project style, with a class prefix only where the vehicle layout or a virtual table proves the class. Ten functions were left unnamed where only the arithmetic was clear and the role was not. The pretend-occupant pair plus its flag readers should be rewritten as one group, since the flag bit is the contract between them. Functions calling into the encrypted address range are flagged in the lane report so their checks can plan for native execution or stated masking.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Build one evidence table per function first: disassembly head and tail, direct calls resolved against the merged symbol lists and verified rewrites, referenced strings and imports, structure offsets used, float constants, and callers found by scanning for call instructions. Then resolve every caller and unknown callee to its nearest known function, read the verified doc comments of the callees, and read the short functions fully before naming the large ones from their structure.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;An early script had broken string quoting and needed three small fixes before it ran. One shared helper carries a node-search attribution in the symbol list, but decoding showed a vertical ground raycast used by teleport and placement code, so the attribution was set aside in favour of the observed behaviour. The engine flag reading took the longest to settle and stayed at medium confidence.&lt;/p&gt;</content>
   </entry>
 </feed>
