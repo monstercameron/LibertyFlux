@@ -30258,6 +30258,33 @@
   "lane": "r-s158"
  },
  {
+  "address": "0x0066DB10",
+  "name": "rage::sysTimeManager::vf1",
+  "kind": "function",
+  "file": "functions/fn_0066db10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s435"
+ },
+ {
+  "address": "0x0066DD20",
+  "name": "sub_0066dd20",
+  "kind": "function",
+  "file": "functions/fn_0066dd20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s435"
+ },
+ {
+  "address": "0x0066F1F0",
+  "name": "sub_0066f1f0",
+  "kind": "function",
+  "file": "functions/fn_0066f1f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s435"
+ },
+ {
   "address": "0x00683F30",
   "name": "quat_dof_apply_twist",
   "kind": "function",
@@ -38637,6 +38664,141 @@
   "lane": "r-s134"
  },
  {
+  "address": "0x008DCB00",
+  "name": "CClearRenderTargetDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dcb00.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DCB60",
+  "name": "CCustomShaderEffectDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dcb60.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DCB80",
+  "name": "CDrawCurvedWindowDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dcb80.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DD170",
+  "name": "CDrawMobilePhoneCameraDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dd170.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DD570",
+  "name": "CDrawPolyLoadingClockDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dd570.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DD660",
+  "name": "CDrawRadarCircleDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dd660.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DD890",
+  "name": "CDrawRectDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dd890.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DDC00",
+  "name": "CGrcState_SetCullMode::vf1",
+  "kind": "function",
+  "file": "functions/fn_008ddc00.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DDC10",
+  "name": "CGrcState_SetDepthBias::vf1",
+  "kind": "function",
+  "file": "functions/fn_008ddc10.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DDC30",
+  "name": "CGrcState_SetDepthWrite::vf1",
+  "kind": "function",
+  "file": "functions/fn_008ddc30.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DDC60",
+  "name": "CHud_RenderBarDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008ddc60.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DDD00",
+  "name": "CHud_RenderWindowDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008ddd00.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DDD40",
+  "name": "CRAGE_SetRenderStateDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008ddd40.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DDDD0",
+  "name": "CSetClipPlaneDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dddd0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DDDF0",
+  "name": "CSetColorWrite::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dddf0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
   "address": "0x008E5970",
   "name": "probe_then_demote_state",
   "kind": "function",
@@ -41017,6 +41179,15 @@
   "name": "stream_publish_quad3",
   "kind": "function",
   "file": "functions/fn_0093e610.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093E6A0",
+  "name": "stream_publish_scene",
+  "kind": "function",
+  "file": "functions/fn_0093e6a0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s429"
@@ -51597,6 +51768,15 @@
   "lane": "r-s331"
  },
  {
+  "address": "0x00A20DA0",
+  "name": "ped_task_blend_matrix_update",
+  "kind": "function",
+  "file": "functions/fn_00a20da0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b421"
+ },
+ {
   "address": "0x00A20F20",
   "name": "cam_rate_adapt",
   "kind": "function",
@@ -51622,6 +51802,24 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s331"
+ },
+ {
+  "address": "0x00A218A0",
+  "name": "ped_task_turn_update",
+  "kind": "function",
+  "file": "functions/fn_00a218a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b421"
+ },
+ {
+  "address": "0x00A219B0",
+  "name": "ped_task_state_select",
+  "kind": "function",
+  "file": "functions/fn_00a219b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b421"
  },
  {
   "address": "0x00A21B10",
@@ -91737,6 +91935,15 @@
   "lane": "r-b60"
  },
  {
+  "address": "0x00D4AFD0",
+  "name": "CTaskSimpleHandsUp::vf17",
+  "kind": "function",
+  "file": "functions/fn_00d4afd0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b422"
+ },
+ {
   "address": "0x00D4B1C0",
   "name": "run-named-anim-start-helper",
   "kind": "function",
@@ -94041,6 +94248,15 @@
   "lane": "r-s343"
  },
  {
+  "address": "0x00DA5D00",
+  "name": "CTaskComplexShockingEventHurryAway::vf19",
+  "kind": "function",
+  "file": "functions/fn_00da5d00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b426"
+ },
+ {
   "address": "0x00DA6080",
   "name": "CTaskComplexShockingEventFlee::vf18",
   "kind": "function",
@@ -94975,6 +95191,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b203"
+ },
+ {
+  "address": "0x00DC4350",
+  "name": "path_distance_to_marked_node",
+  "kind": "function",
+  "file": "functions/fn_00dc4350.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b427"
  },
  {
   "address": "0x00DC8160",
