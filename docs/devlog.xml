@@ -9,6 +9,36 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Sixty-three functions deferred for a checker gap that was not there</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#sixty-three-false-deferrals-2026-10-05"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#sixty-three-false-deferrals-2026-10-05</id>
+    <published>2026-10-05T00:00:00Z</published>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <summary>Since checker version 5 went live, production lanes had deferred sixty-three functions with one reason: the function reads data through an absolute address that has no relocation entry, and the checker option that serves such reads cannot work on this machine. The coordinator took that at face value for half a day, reported it as a growing cost, and started a checker lane to build a replacement for the option. That lane found the real cause before it was cut off: the functions have no such addresses. Checked independently, not one of the sixty-three does.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Since checker version 5 went live, production lanes had deferred sixty-three functions with one reason: the function reads data through an absolute address that has no relocation entry, and the checker option that serves such reads cannot work on this machine. The coordinator took that at face value for half a day, reported it as a growing cost, and started a checker lane to build a replacement for the option. That lane found the real cause before it was cut off: the functions have no such addresses. Checked independently, not one of the sixty-three does.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;What it means&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Functions deferred for this reason&lt;/td&gt;&lt;td&gt;63, in about fifteen lanes&lt;/td&gt;&lt;td&gt;Most are in the ped-task code, where functions reference many global tables.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Absolute in-image operands in those functions&lt;/td&gt;&lt;td&gt;674&lt;/td&gt;&lt;td&gt;Counted by disassembling each function and taking every four-byte operand whose value lies inside the program's image.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Of those, without a relocation entry&lt;/td&gt;&lt;td&gt;4&lt;/td&gt;&lt;td&gt;All four are bit masks that happen to fall in the image's address range. None is an address.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Functions that truly need the option&lt;/td&gt;&lt;td&gt;0&lt;/td&gt;&lt;td&gt;The stock checker applies every relocation entry when it loads the original; these functions run as they are.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;How sixty-three lanes' worth of care went wrong the same way&lt;/h3&gt;
+&lt;p&gt;The relocation table is stored in blocks. Each entry is a small offset within its block. The library the lanes use to read the file already adds the block's base and reports each entry's complete address. The lanes' audits added the block's base again, so every address they looked up was wrong, no entry ever matched, and every absolute operand looked unrelocated. The audit was written carefully, with counts and cross-checks, and it was wrong in one line. Status: Verified, by the checker lane's note and by an independent count.&lt;/p&gt;
+&lt;p&gt;The coordinator made it worse. The brief for version 5 introduced the deferral reason and told lanes to use it when a function reads through an unrelocated address, without giving them a correct way to tell. A rule that names an exit without a test for it invites exactly this: a plausible audit, a confident deferral, and no proof run, because the brief also says not to spend time proving a known gap again.&lt;/p&gt;
+&lt;h3&gt;What was decided&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;A script now does the check correctly for any function and lists the operands that truly lack an entry. The production brief (version b11) forbids deferring for this reason on a lane's own audit and tells lanes to run the script first.&lt;/li&gt;
+&lt;li&gt;Four re-run lanes took the sixty-three functions back to verify them on the stock checker.&lt;/li&gt;
+&lt;li&gt;The replacement checker option the second checker lane built (contract-declared relocations, with passing proofs and an identical regression) is kept in its scratch folder but is not planned for installation: there is no longer a known function that needs it.&lt;/li&gt;
+&lt;li&gt;An earlier case is now suspect for the same reason: three functions deferred as reading writable data through unrelocated addresses. They are to be checked with the same script.&lt;/li&gt;
+&lt;li&gt;Rule for the coordinator: a deferral reason that a brief introduces must come with a machine check for it, and the first handful of deferrals under a new reason are verified independently before the reason is trusted.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To reproduce: for a deferred function, disassemble it from the mapped image, collect the four-byte operands whose value lies inside the image, and look each operand's position up in the set of relocation entry addresses as the library reports them, with nothing added.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming the event vtable: one batch pins down twelve virtual slots</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-101"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-101</id>
@@ -1072,27 +1102,5 @@
 &lt;p&gt;Read code through the mapped executable image and verify the mapping against a known function first. Gather strings, direct and import calls, byte-scan callers across the code section, data cross-references and vtable slots into one table before naming anything, then read the short and unclear functions fully.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;A linear-sweep disassembly of the whole code section found zero callers into the batch because decoding desynchronises; a plain byte scan for call instructions found over three hundred. One weather routine calls into the speech manager with its global object, which briefly made a speech helper look like weather code until the call setup was read.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a run of vehicle, ped and radio audio functions</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-75"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-75</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One hundred and fifty consecutive audio functions were named from evidence: 54 at high confidence, 91 at medium, and 5 left unnamed where the purpose could not be pinned down.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred and fifty consecutive audio functions were named from evidence: 54 at high confidence, 91 at medium, and 5 left unnamed where the purpose could not be pinned down.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose descriptive names for a consecutive run of unnamed game functions, working out what the group is about first and naming each function from the strongest available evidence, with a confidence grade per name.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The run is the game's audio-entity code in four blocks: cutscene audio, vehicle audio with its constructor, destructor and update plus dozens of loop and one-shot helpers, ped speech and conversation helpers with a small sorting family, and radio plus script-audio routines.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Class layouts from an earlier analysis lane matched the observed callers exactly: engine start-up calls the initialisers, engine shutdown calls the shutdown routines, and the per-frame updates are reached only through virtual tables, which confirmed the init, shutdown and update names independently.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One-shot sound functions share a single recognisable shape and differ only in the hashed sound name, so the name string plus the caller pins each one down. Six channel-setter wrappers and three heli break-sound routines are near-identical families of this kind.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Repeated field use across the batch yields a partial map of the vehicle audio entity: bound vehicle, config handles, engine loop voices, heli damage slots, radio station and mute state, horn variant, siren damage flag and headlamp switch triggers, among others.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Names follow the project's style with the class attached where the virtual table proves it. The five functions whose purpose stayed unclear were left unnamed at low confidence rather than guessed. A speech dispatcher sitting between two batch members looks like a gap in the function inventory and was reported for the coordinator to add.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Build one evidence table per function first: referenced strings, imported calls, named callees and callers from the merged name databases, and data cross-references. Verify caller hits by decoding forward from the nearest known function start and requiring an instruction boundary exactly on the call; a plain byte scan over-attributes calls past short functions into their neighbours. Read the short bodies fully and the long ones at head and tail, then name from the strongest signal in this order: virtual-table slot with caller role, hashed sound string, native-implementation caller, shared family shape.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;A whole-code-section linear decode desynchronised and found zero callers; the byte-scan plus boundary-verified approach replaced it. Inventory token-hint names on some callers proved to be nearby strings rather than identities and were ignored as evidence. One caller attribution was caught overrunning a short function and is documented in the lane report.&lt;/p&gt;</content>
   </entry>
 </feed>
