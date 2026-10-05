@@ -100,9 +100,8 @@ lf_checker_rt::export!(cdecl, rw_00957100(ctx: u32, arg1: u32, arg2: u32, esi_in
 
         let _: u32 = lf_checker_rt::callee_cdecl!(C_ENTER, u32,);
         let xmm1 = g_rdf(C_DISPATCH_XMM);
-        // Loop-carried esi, seeded from the transported entry value. No
-        // stage-3 handler reassigns it yet; later ones do.
-        let esi = esi_in;
+        // Loop-carried esi, seeded from the transported entry value.
+        let mut esi = esi_in;
         loop {
             let base = m_rd32(ctx);
             let cursor = m_rd32(ctx.wrapping_add(4));
@@ -172,7 +171,8 @@ lf_checker_rt::export!(cdecl, rw_00957100(ctx: u32, arg1: u32, arg2: u32, esi_in
                     } else {
                         let a: u32 =
                             lf_checker_rt::callee_cdecl!(C_OPF_PROBE, u32, 1, w);
-                        if (esi & a) != 0 {
+                        esi = a;
+                        if esi != 0 {
                             let _: u32 = lf_checker_rt::callee_cdecl!(
                                 C_OPF_OPEN, u32, 1, w, esi
                             );

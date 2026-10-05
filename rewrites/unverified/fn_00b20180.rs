@@ -25,26 +25,27 @@ lf_checker_rt::export!(cdecl, rw_00b20180() -> u32 {
         const WORKER: u32 = 0x00b20520;
         let generation =
             (lf_checker_rt::global::<u32>(GENERATION) as *const u32).read_unaligned();
-        if (lf_checker_rt::global::<u32>(BUSY) as *const u32).read_unaligned() == 1 {
-            return generation;
-        }
-        if generation
+        let result = if (lf_checker_rt::global::<u32>(BUSY) as *const u32).read_unaligned() == 1
+        {
+            generation
+        } else if generation
             != (lf_checker_rt::global::<u32>(GEN_REF) as *const u32).read_unaligned()
         {
-            return generation;
-        }
-        if (lf_checker_rt::global::<u32>(MODE) as *const u32).read_unaligned() == MODE_SKIP {
-            return generation;
-        }
-        let mut scratch = [0u32; 4];
-        lf_checker_rt::callee_cdecl!(
-            1,
-            u32,
-            lf_checker_rt::relocated(WORKER),
-            scratch.as_mut_ptr() as u32
-        );
-        let result: u32 = lf_checker_rt::callee_cdecl!(2, u32,);
-        lf_checker_rt::callee_thiscall!(3, u32, 0);
+            generation
+        } else if (lf_checker_rt::global::<u32>(MODE) as *const u32).read_unaligned() == MODE_SKIP
+        {
+            generation
+        } else {
+            let mut scratch = [0u32; 4];
+            lf_checker_rt::callee_cdecl!(
+                1,
+                u32,
+                lf_checker_rt::relocated(WORKER),
+                scratch.as_mut_ptr() as u32
+            );
+            lf_checker_rt::callee_cdecl!(2, u32,)
+        };
+        lf_checker_rt::callee_cdecl!(3, u32,);
         result
     }
 });

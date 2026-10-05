@@ -28,7 +28,9 @@ lf_checker_rt::export!(thiscall, rw_00b18f70(this: u32, a: u32, b: u32) -> u32 {
         };
         let answer: u32 = lf_checker_rt::callee_thiscall!(1, u32, this, a, b);
         if mode == 2 || mode == 5 || mode == 3 || mode == 6 {
-            return answer;
+            // The mode test reloads AL, so the low byte of the placer's
+            // answer is replaced by the mode on this path.
+            return (answer & 0xffff_ff00) | mode as u32;
         }
         let mut anchor = [0u32; 3];
         anchor[0] = (src as *const u32).read_unaligned();
