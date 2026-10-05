@@ -47,7 +47,7 @@ lf_checker_rt::export!(thiscall, rw_00b1b630(this: u32) -> u32 {
         }
         let level_f = cvtt(level) as u8 as f32;
         let level2_block: u32 =
-            lf_checker_rt::callee_cdecl!(4, u32, scratch.as_mut_ptr() as u32, 0x37);
+            lf_checker_rt::callee_cdecl!(10, u32, scratch.as_mut_ptr() as u32, 0x37);
         let cap = (level2_block as *const f32).read_unaligned();
         let clamped = if 0.0f32 > level_f {
             0.0f32

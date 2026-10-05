@@ -9,7 +9,9 @@
 /// the placer runs with the same two arguments, and for modes 2, 3, 5
 /// and 6 that is all. Any other nonzero mode additionally runs the
 /// pose writer (thiscall of the anchor triple's address and two ones).
-/// Returns the last call's result.
+/// Returns the last call's result, except on the mode 2/3/5/6 path where
+/// the mode test has replaced the low byte of the placer's answer with
+/// the mode itself.
 lf_checker_rt::export!(thiscall, rw_00b18f70(this: u32, a: u32, b: u32) -> u32 {
     unsafe {
         const MODE_OFF: u32 = 0x22b;

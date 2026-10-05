@@ -26,13 +26,9 @@
 /// 5 (halt). Unhandled opcodes abort: they never occur under the stage-3
 /// contract, which pins every reachable byte to a covered opcode.
 ///
-/// The fourth word is not part of the original's signature: it transports
-/// the entry `esi` value, which the original reads but Rust cannot observe
-/// (a poor-man's register mirror; the original ignores the word).
-///
 /// Original: 0x00957100 (cdecl, three stack words; the second is read as a
 /// float, the third only as its low byte).
-lf_checker_rt::export!(cdecl, rw_00957100(ctx: u32, arg1: u32, arg2: u32, esi_in: u32) -> u32 {
+lf_checker_rt::export!(cdecl, rw_00957100(ctx: u32, arg1: u32, arg2: u32) -> u32 {
     unsafe {
         const C_ENTER: u32 = 1;
         const C_OP2: u32 = 2;
@@ -100,11 +96,13 @@ lf_checker_rt::export!(cdecl, rw_00957100(ctx: u32, arg1: u32, arg2: u32, esi_in
 
         let _: u32 = lf_checker_rt::callee_cdecl!(C_ENTER, u32,);
         let xmm1 = g_rdf(C_DISPATCH_XMM);
-        // Loop-carried esi, seeded from the transported entry value.
-        let mut esi = esi_in;
+        // Loop-carried esi. Dispatch reloads it from the base on every
+        // iteration, so entry esi is never read; some handlers reassign it.
+        let mut esi = 0u32;
         loop {
             let base = m_rd32(ctx);
             let cursor = m_rd32(ctx.wrapping_add(4));
+            esi = base;
             let entry = base.wrapping_add(cursor);
             let op = m_rd8(entry);
             if op == 5 {
