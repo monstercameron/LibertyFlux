@@ -97,21 +97,24 @@ lf_checker_rt::export!(thiscall, rw_00a2b000(this: u32, arg0: u32) -> u32 {
             let h = rd32(this.wrapping_add(HANDLE));
             let blocked = rd32(h.wrapping_add(0x264)) & 0x800000 != 0;
             let gready: u32 = lf_checker_rt::global::<u32>(G_READY).read();
-            let mut tail = blocked || gready == 0;
-            if !tail {
+            // A blocked handle or an unready global skips the gate checks
+            // below but still runs the kind check; only a refused gate or
+            // a set flag forces the measure path outright.
+            let mut force_measure = false;
+            if !(blocked || gready == 0) {
                 let gate2: u32 =
                     lf_checker_rt::callee_cdecl!(GATE_CALLEE, u32,);
                 if gate2 == 0 {
-                    tail = true;
+                    force_measure = true;
                 } else {
                     let gflag: u8 =
                         lf_checker_rt::global::<u8>(G_FLAG).read();
                     if gflag != 0 {
-                        tail = true;
+                        force_measure = true;
                     }
                 }
             }
-            if tail {
+            if force_measure {
                 take_measure_path = true;
             } else {
                 // Dead branch in the original (neither code has bit 12);

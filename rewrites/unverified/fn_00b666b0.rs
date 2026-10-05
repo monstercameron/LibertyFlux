@@ -5,7 +5,8 @@
 /// word clear, returns the entry EAX at once; that exit is excluded from the
 /// proof). Otherwise reads a manager from a global, enlists up to 9 element
 /// words through it into a frame buffer — the scan starts one word below
-/// the buffer the call is given, which the contract models with a -4 write
+/// the buffer the call is given (the contract models this with a wrapping
+/// -4 write offset, 0xFFFFFFFC, since the schema takes no negatives) --
 /// offset — visits each nonzero element, clears bits 5 and 6 of the word at
 /// binding `+0x1e2`, reconfigures through `[binding+0x38]`, emits through
 /// vtable slot `+0xdc` of the binding, and clears bit 0 of binding `+0x24`.

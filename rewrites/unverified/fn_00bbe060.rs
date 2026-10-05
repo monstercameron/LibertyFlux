@@ -83,7 +83,7 @@ lf_checker_rt::export!(cdecl, rw_00BBE060(group: u32) -> u32 {
             let mut task = 0u32;
             if alloc != 0 {
                 let _: u32 = lf_checker_rt::callee_thiscall!(4, u32, alloc);
-                wr32(alloc, TASK_VTABLE);
+                wr32(alloc, lf_checker_rt::relocated(TASK_VTABLE));
                 wr32(alloc.wrapping_add(TASK_TIMER), 0);
                 wr16(alloc.wrapping_add(TASK_UNIT_HALF), 1);
                 wr8(alloc.wrapping_add(TASK_UNIT_BYTE), 1);
@@ -92,7 +92,7 @@ lf_checker_rt::export!(cdecl, rw_00BBE060(group: u32) -> u32 {
             let leader_again = rd32(ent.wrapping_add(LEADER_SLOT));
             let handle: u32 =
                 lf_checker_rt::callee_thiscall!(5, u32, ped_pool, leader_again);
-            let _: u32 = lf_checker_rt::callee_cdecl!(6, u32, TASK_SLOT, task, handle);
+            let _: u32 = lf_checker_rt::callee_cdecl!(6, u32, handle, task, TASK_SLOT);
         }
         if rd8(ent.wrapping_add(MEMBER_COUNT)) == 0 {
             return 0;
@@ -116,7 +116,7 @@ lf_checker_rt::export!(cdecl, rw_00BBE060(group: u32) -> u32 {
                     let _: u32 = lf_checker_rt::callee_thiscall!(4, u32, alloc);
                     let f2 = mul(f1, gain);
                     let delay = f2 as i32;
-                    wr32(alloc, TASK_VTABLE);
+                    wr32(alloc, lf_checker_rt::relocated(TASK_VTABLE));
                     wr16(alloc.wrapping_add(TASK_UNIT_HALF), 1);
                     let timer = round.wrapping_sub(delay as u32).wrapping_add(TIMER_BIAS);
                     wr32(alloc.wrapping_add(TASK_TIMER), timer);
@@ -126,7 +126,7 @@ lf_checker_rt::export!(cdecl, rw_00BBE060(group: u32) -> u32 {
                 let mem_again = rd32(ent.wrapping_add(MEMBER_SLOTS).wrapping_add((index as u32).wrapping_mul(4)));
                 let handle: u32 =
                     lf_checker_rt::callee_thiscall!(5, u32, ped_pool, mem_again);
-                let _: u32 = lf_checker_rt::callee_cdecl!(6, u32, TASK_SLOT, task, handle);
+                let _: u32 = lf_checker_rt::callee_cdecl!(6, u32, handle, task, TASK_SLOT);
             }
             index += 1;
             round = round.wrapping_add(ROUND_STRIDE);

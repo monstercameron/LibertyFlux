@@ -20,7 +20,7 @@
 /// whose flag byte has bit 4 set and whose three anchor floats each lie
 /// strictly between the matching `lo`/`hi` pair triggers one call, a
 /// different callee for a zero or nonzero `flags`, and the nonzero case
-/// also clears bit 0 of the entry's flag byte. Returns `flags & 0x20`.
+/// also clears bit 0 of the entry's flag byte. Returns `flags`.
 ///
 /// Original: 0x00b760a0 (cdecl, seven stack words; the two callees take
 /// no arguments).
@@ -160,7 +160,7 @@ unsafe fn run_00b760a0(a0: u32, a1: u32, a2: u32, a3: u32, a4: u32, a5: u32, fla
             }
             entry = entry.wrapping_add(ENTRY_STRIDE);
         }
-        (flag & 0x20) as u32
+        flag as u32
     }
 }
 

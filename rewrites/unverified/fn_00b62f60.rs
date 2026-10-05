@@ -24,7 +24,7 @@ lf_checker_rt::export!(thiscall, rw_00b62f60(this: u32, a0: u32, a1: u32, a2: u3
         let f: f32 = lf_checker_rt::callee_thiscall!(CONVERT, f32, h, a0);
         (a2 as *mut u32).write_unaligned(0);
         (a3 as *mut u32).write_unaligned(f.to_bits());
-        let n: u32 = lf_checker_rt::callee_stdcall!(COUNT, u32);
+        let n: u32 = lf_checker_rt::callee_stdcall!(COUNT, u32,);
         let scale = f32::from_bits(lf_checker_rt::global::<u32>(SCALE_VA).read_unaligned());
         let x = (n as i32) as f32;
         let y = core::hint::black_box(x) * core::hint::black_box(scale);
@@ -48,7 +48,7 @@ lf_checker_rt::export!(thiscall, mut_00b62f60(this: u32, a0: u32, a1: u32, a2: u
         // MUTANT: 1 instead of 0.
         (a2 as *mut u32).write_unaligned(1);
         (a3 as *mut u32).write_unaligned(f.to_bits());
-        let n: u32 = lf_checker_rt::callee_stdcall!(COUNT, u32);
+        let n: u32 = lf_checker_rt::callee_stdcall!(COUNT, u32,);
         let scale = f32::from_bits(lf_checker_rt::global::<u32>(SCALE_VA).read_unaligned());
         let x = (n as i32) as f32;
         let y = core::hint::black_box(x) * core::hint::black_box(scale);
