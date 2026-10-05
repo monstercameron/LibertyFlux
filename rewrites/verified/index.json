@@ -48195,6 +48195,15 @@
   "lane": "r-s422"
  },
  {
+  "address": "0x009C1520",
+  "name": "task_tick_secondary",
+  "kind": "function",
+  "file": "functions/fn_009c1520.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b443"
+ },
+ {
   "address": "0x009CA7E0",
   "name": "timed_element_sweep_update",
   "kind": "function",
@@ -93609,6 +93618,24 @@
   "lane": "r-b441"
  },
  {
+  "address": "0x00CD8E10",
+  "name": "CTaskComplexFollowPedFootsteps::vf18",
+  "kind": "function",
+  "file": "functions/fn_00cd8e10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b441"
+ },
+ {
+  "address": "0x00CD90E0",
+  "name": "peds_task_dispatch_1",
+  "kind": "function",
+  "file": "functions/fn_00cd90e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b441"
+ },
+ {
   "address": "0x00CDCBF0",
   "name": "CTaskSimpleNM_generic_timer_update",
   "kind": "function",
@@ -96118,6 +96145,339 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b07"
+ },
+ {
+  "address": "0x00D584B0",
+  "name": "CCamFireTruck::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d584b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D584E0",
+  "name": "ccam_radar_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d584e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58500",
+  "name": "ccam_radar_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d58500.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58520",
+  "name": "CCamRadar::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d58520.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D587A0",
+  "name": "ccam_weapon_aiming_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d587a0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D587C0",
+  "name": "ccam_weapon_aiming_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d587c0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D587E0",
+  "name": "CCamWeaponAiming::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d587e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58820",
+  "name": "ccam_view_seq_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d58820.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58840",
+  "name": "ccam_view_seq_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d58840.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58860",
+  "name": "CCamViewSeq::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d58860.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58890",
+  "name": "ccam_view_seq_spawn_pair",
+  "kind": "function",
+  "file": "functions/fn_00d58890.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58900",
+  "name": "ccam_view_seq_child_check",
+  "kind": "function",
+  "file": "functions/fn_00d58900.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58940",
+  "name": "ccam_view_seq_child_ready",
+  "kind": "function",
+  "file": "functions/fn_00d58940.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58980",
+  "name": "CCamViewSeq::vf4",
+  "kind": "function",
+  "file": "functions/fn_00d58980.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D589C0",
+  "name": "ccam_view_find_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d589c0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D589E0",
+  "name": "ccam_view_find_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d589e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58A00",
+  "name": "CCamViewFind::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d58a00.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58C00",
+  "name": "ccam_view_find_child_metric",
+  "kind": "function",
+  "file": "functions/fn_00d58c00.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58C20",
+  "name": "ccam_view_find_child_value",
+  "kind": "function",
+  "file": "functions/fn_00d58c20.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58C50",
+  "name": "ccam_view_find_init",
+  "kind": "function",
+  "file": "functions/fn_00d58c50.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58CA0",
+  "name": "CCamViewFind::vf5",
+  "kind": "function",
+  "file": "functions/fn_00d58ca0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58CF0",
+  "name": "ccam_player_settings_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d58cf0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58D10",
+  "name": "ccam_player_settings_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d58d10.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D58D30",
+  "name": "CCamPlayerSettings::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d58d30.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D595F0",
+  "name": "ccam_cinematic_veh_offset_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d595f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D59620",
+  "name": "ccam_cinematic_veh_offset_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d59620.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D59640",
+  "name": "CCamCinematicVehOffset::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d59640.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D59E00",
+  "name": "ccam_cinematic_veh_offset_init",
+  "kind": "function",
+  "file": "functions/fn_00d59e00.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D5A590",
+  "name": "ccam_market_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d5a590.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D5A5B0",
+  "name": "ccam_market_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d5a5b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D5A5D0",
+  "name": "CCamMarket::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d5a5d0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D5A600",
+  "name": "ccam_market_init",
+  "kind": "function",
+  "file": "functions/fn_00d5a600.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D5AB90",
+  "name": "ccam_sector_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d5ab90.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D5ABB0",
+  "name": "ccam_sector_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d5abb0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D5ABD0",
+  "name": "CCamSector::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d5abd0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D5AC00",
+  "name": "ccam_sector_init",
+  "kind": "function",
+  "file": "functions/fn_00d5ac00.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
+ },
+ {
+  "address": "0x00D5AD30",
+  "name": "ccam_sector_slot_register",
+  "kind": "function",
+  "file": "functions/fn_00d5ad30.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s444"
  },
  {
   "address": "0x00D670B0",
