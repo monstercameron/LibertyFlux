@@ -9,6 +9,32 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A production batch that caught the manual out</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b536"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b536</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>Three task functions were rewritten and verified, and the checker manual turned out to name the wrong key for the return channel.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Three task functions were rewritten and verified, and the checker manual turned out to name the wrong key for the return channel.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite three neighbouring task functions in Rust and prove each one identical to the original through the project's checker, with a deliberately wrong version per function.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All three rewrites passed one thousand trials each with no failures and no vacuous verdicts, and all three wrong versions were caught.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The manual says the contract's top level return key selects what is compared, but the worker reads the key inside the checks block instead. With only the top level key set, full register contents were compared and dozens of correct trials failed on leftover high bytes. Setting both keys fixed it. The failure mode is fail-closed, but the manual misleads.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The worker's stack comparison does not see scratch writes to the incoming argument slot or below the stack pointer, so functions using those tricks keep the full stack check with no narrowing.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A vehicle data table the code reads is entirely zeros in the untouched executable and is filled in at start-up. Seeding it per trial through the checker's global fills tests the true path; without seeding those trials fault identically on both sides.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Set the return channel in both places until the manual is fixed.&lt;/li&gt;
+&lt;li&gt;Seed runtime-filled tables through global fills rather than leaving those branches to fault parity.&lt;/li&gt;
+&lt;li&gt;Show the first diverging call in mismatch reports, not just the first three calls.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run the batch contracts with the stock checker and compare the verdicts with the return key set in one place versus both. Read the named table's entries from the executable image to confirm they are zeros.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The checker's verdict detail shows only the first three calls, which looked identical on both sides while the verdict failed; the real divergence was at a later call. A reporting-only addition to a private driver copy exposed it. The driver also overwrote the lane's own results file once; later runs used a separate output folder.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>An outside review of the pipeline, checked against the machine: five findings, six changes</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#pipeline-efficiency-2026-10-05"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#pipeline-efficiency-2026-10-05</id>
@@ -1126,25 +1152,5 @@
 &lt;p&gt;Build one evidence table per function first: disassembly head and tail, direct calls resolved against the merged symbol lists and verified rewrites, referenced strings and imports, structure offsets used, float constants, and callers found by scanning for call instructions. Then resolve every caller and unknown callee to its nearest known function, read the verified doc comments of the callees, and read the short functions fully before naming the large ones from their structure.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;An early script had broken string quoting and needed three small fixes before it ran. One shared helper carries a node-search attribution in the symbol list, but decoding showed a vertical ground raycast used by teleport and placement code, so the attribution was set aside in favour of the observed behaviour. The engine flag reading took the longest to settle and stayed at medium confidence.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A wrong rewrite passed until the contract was widened</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s439"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s439</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>A deliberately wrong version of a global-vector append function passed one hundred trials out of one hundred, which showed that the checker's global-memory comparison could not see which word of a multi-word range had changed.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A deliberately wrong version of a global-vector append function passed one hundred trials out of one hundred, which showed that the checker's global-memory comparison could not see which word of a multi-word range had changed.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite a batch of small streaming-subsystem functions in Rust and prove each one identical to the original with the checker, giving every function its own deliberately wrong version that must fail.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The wrong version stored its value one slot too far and still passed every trial. Reading the checker's comparison code showed why: when a declared global range holds several words, every changed word is recorded under the range's base address rather than its own, so two writes of equal values in equal order compare equal no matter which words they hit. Declaring each word as its own range restored the check, and the wrong version then failed as required.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Earlier accepted rewrites that only read globals, or write a single global word, cannot be affected by this gap; only multi-word global writes were blind.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;The lane's multi-word global contracts were rewritten with one word per range, and all affected functions were re-verified with their wrong versions failing. The recommended checker fix is to record each changed global word under its own address, exactly as the check for undeclared writes already does.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Take any function that writes two words of one declared global range, write a variant that swaps which word gets which value, and run both against the same contract: before the fix the variant passes; with one word per range it fails.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The passing wrong version first looked like a mistake in the variant itself, and only reading the comparison code turned it into a checker finding. The same batch also produced an unsolved fault at an indirect stub call, deferred with the evidence, and several batch sizes that end mid-instruction and had to be re-decoded by hand.&lt;/p&gt;</content>
   </entry>
 </feed>
