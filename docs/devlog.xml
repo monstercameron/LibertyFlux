@@ -9,6 +9,38 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A float compare idiom tests equality, not unorderedness</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b492"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b492</id>
+    <published>2026-10-05T00:00:00Z</published>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <summary>Three box-test functions in one production batch share a machine-code pattern that looks like an unordered-operand check but is really an equality test: the branch is taken unless the value compares equal to zero, so the correct rewrite is a not-equal comparison, not an is-not-a-number test.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Three box-test functions in one production batch share a machine-code pattern that looks like an unordered-operand check but is really an equality test: the branch is taken unless the value compares equal to zero, so the correct rewrite is a not-equal comparison, not an is-not-a-number test.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite eight neighbouring ped task functions and prove each rewrite identical to the original over at least one thousand trials with the version 5 checker, with one deliberately wrong version per function.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All eight rewrites passed twelve hundred trials with zero failures and non-vacuous verdicts, and all eight wrong versions were caught.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The pattern compares a float against positive zero, loads the flags into a byte register, masks the zero and parity bits, and branches on the processor parity flag. Parity of that masked byte is even exactly when the two flag bits agree, which happens for unequal-ordered and unordered results alike, and fails only for ordered-equal. The branch therefore skips unless the value is ordered-equal to zero: either signed zero passes, while any nonzero or not-a-number value fails.&lt;/p&gt;
+&lt;table role="table"&gt;
+&lt;thead role="rowgroup"&gt;
+&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Compared value&lt;/th&gt;&lt;th role="columnheader"&gt;Branch outcome&lt;/th&gt;&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody role="rowgroup"&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Positive or negative zero&lt;/td&gt;&lt;td role="cell" data-label="Branch outcome"&gt;Falls through (counts as match)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Any nonzero number&lt;/td&gt;&lt;td role="cell" data-label="Branch outcome"&gt;Skips to next candidate&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Not a number&lt;/td&gt;&lt;td role="cell" data-label="Branch outcome"&gt;Skips to next candidate&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A rewrite using an is-not-a-number test failed six of sixty probe trials; replacing it with a not-equal-to-zero test passed the full twelve hundred. A signed-zero trial confirmed negative zero still matches, and a not-a-number trial confirmed it still skips.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Same-period contract cycles can phase-lock so that a conjunction of conditions never holds on any trial: one function's fallback-store mutant passed one hundred of one hundred runs until the cycle lengths were decoupled, after which it failed as required.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Transcribe the compare, load-flags, mask and parity-branch sequence as a not-equal-to-zero test. When a contract cycles several independent conditions, give them different periods and check by hand that every path's conjunction has a solution.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Build any contract exercising the pattern with a nonzero ordered miss marker and a point outside every box: the original rejects the node. A rewrite testing only for not-a-number accepts it. The lane's contracts pin box coordinates, marker values and list shapes so that match, miss, empty-list and signed-zero paths all run.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The first reading of the idiom as an unordered check survived three reviews of the logic because the parity flag reuse is genuinely subtle; only the failing trials forced a re-derivation from the flag definitions. A hand-computed constant in the same contract turned out to be negative infinity rather than the intended quiet not-a-number, which briefly muddied the diagnosis; both values are now in the cycle under correct labels.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming a run of task-system functions, and mislabelled constructor names</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-107"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-107</id>
@@ -1079,27 +1111,5 @@
     <updated>2026-10-04T00:00:00Z</updated>
     <summary>Naming 150 consecutive functions showed the batch is mostly data-file loading plus one mislabeled group that turned out to be display-mode enumeration, identified by exact graphics enum constants.</summary>
     <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Naming 150 consecutive functions showed the batch is mostly data-file loading plus one mislabeled group that turned out to be display-mode enumeration, identified by exact graphics enum constants.&lt;/p&gt;&lt;h3&gt;What was asked&lt;/h3&gt;&lt;p&gt;Propose descriptive names for 150 unnamed game functions with a confidence each, working from strings, imports, callers, classes and behavior.&lt;/p&gt;&lt;h3&gt;What was found&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A run of about thirty functions builds a display enumeration context: its init lists hold exactly the six depth-stencil formats, multisample counts zero to sixteen, and the six present intervals, and its consumer is the known display-mode collector.&lt;/li&gt;&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Six pool allocators map to model-info classes three ways: entry stride, pool descriptor in the verified pool-init sequence, and stamped vtable all agree.&lt;/li&gt;&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Thirteen vtable slot-zero functions are scalar deleting destructors in the standard shape, with per-class array strides matching the allocator strides.&lt;/li&gt;&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three inventory boundaries were wrong: one size overruns into the next function, one gapfill entry is a loop block rather than a function, and three jump-stub sizes cover their neighbors.&lt;/li&gt;&lt;li&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Two heavily called merged names for message-sending look wrong: both slots are used as plain heap free and allocate across destructors and cleanup loops.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;What was decided or recommended&lt;/h3&gt;&lt;p&gt;Named 147 functions and left 3 empty: a non-function block and two twin processors whose backends are all unnamed. The next naming lane should re-verify weak-boundary entries with an epilogue-anchored disassembly and keep the whole-batch caller-plus-string table pass, which resolved most of this batch.&lt;/p&gt;&lt;h3&gt;How to reproduce it&lt;/h3&gt;&lt;p&gt;Read the executable through the mapped image, disassemble each batch entry, and collect import calls, referenced strings and format strings, direct callers by byte scan, and data references. Decode small functions fully, resolve unknown callees by caller count and entry shape, and check neighbor names and verified rewrite doc comments before naming.&lt;/p&gt;&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;&lt;p&gt;Linear disassembly through a large switch function first suggested a wrong return boundary; re-decoding from a call anchor fixed the verdict. Comparing twin functions with an oversized window produced nonsense difference counts until the true sizes were used.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A production batch that caught the checker running corrupted code</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b419"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b419</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>Three neighbouring ped-task functions were rewritten for verification. One passed on its testable path. The other two could not be verified because the checker's worker silently rewrites their bytes before running them, applying relocation entries that do not point at addresses. The game never applies those entries, so the worker tests something the game never runs.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Three neighbouring ped-task functions were rewritten for verification. One passed on its testable path. The other two could not be verified because the checker's worker silently rewrites their bytes before running them, applying relocation entries that do not point at addresses. The game never applies those entries, so the worker tests something the game never runs.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite three medium and large functions from the ped-task subsystem in Rust and prove each rewrite equivalent to the original with the differential checker, writing a full contract and a deliberately wrong version per function.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The smallest function verified on its testable path: every trial agreed and the wrong version was caught. Its whole byte range contains no relocation entries, so the worker ran its true bytes.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The two larger functions sit on a code page whose relocation block holds dozens of entries with targets outside the program image. The worker applies every entry, which rewrites real instructions: a stack adjustment becomes unrelated instructions that swallow the two following ones, and a switch-table address is redirected to an address that exists nowhere in the file. With byte-identical pinned inputs, trials diverged purely by heap fill pattern, which correct code cannot do.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; About half of all code pages contain at least one relocation entry, and only a small fraction of sampled code entries point at valid addresses. Any previously accepted rewrite whose original bytes contain such an entry was proven against corrupted code.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Separately, every absolute data reference in all three functions lacks a relocation entry, including reads on unavoidable paths and an unrelocatable jump table, so two further checker abilities would still be needed after the corruption is fixed.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;The two larger functions were deferred as a checker gap, with a full contract and rewrite kept as a retry kit for one of them and a steering recipe for the other. Recommended: scan every accepted rewrite for relocation entries inside its byte range and hold out the hits, and change the worker to skip entries whose contents are not program addresses.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Compare the relocation table against the program image: entries whose four bytes do not form an address inside the image are bogus. Re-apply the table to a copy of the mapped image and disassemble the affected functions to see the rewritten instructions. Run the checker with constant steering pins and constant versus rotating heap fills to observe the impossible divergence.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The fill-dependent divergence cost the most time, because every input visible to the lane was provably identical across the diverging trials. The resolution was to stop suspecting the inputs and inspect what the worker executes. A probe also ran once against a stale binary after a failed rebuild; the timestamps caught it and the run was repeated.&lt;/p&gt;</content>
   </entry>
 </feed>
