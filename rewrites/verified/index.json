@@ -51723,6 +51723,15 @@
   "lane": "r-b519"
  },
  {
+  "address": "0x009EC040",
+  "name": "ped_target_picker",
+  "kind": "function",
+  "file": "functions/fn_009ec040.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b519"
+ },
+ {
   "address": "0x009EDAD0",
   "name": "ped_scaled_rate_store",
   "kind": "function",
@@ -56448,6 +56457,15 @@
   "lane": "r-s451"
  },
  {
+  "address": "0x00A452A0",
+  "name": "NativeImpl_SET_CAR_CAN_BE_DAMAGED",
+  "kind": "function",
+  "file": "functions/fn_00a452a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R04"
+ },
+ {
   "address": "0x00A453A0",
   "name": "vehicle_copy_extra_state",
   "kind": "function",
@@ -56704,6 +56722,24 @@
   "name": "vehicle_clamped_delta",
   "kind": "function",
   "file": "functions/fn_00a49bc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R04"
+ },
+ {
+  "address": "0x00A4A770",
+  "name": "CVehicle::vf42",
+  "kind": "function",
+  "file": "functions/fn_00a4a770.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R04"
+ },
+ {
+  "address": "0x00A4A8C0",
+  "name": "vehicle_probe_with_struct",
+  "kind": "function",
+  "file": "functions/fn_00a4a8c0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "a-R04"
@@ -66402,6 +66438,24 @@
   "lane": "r-s407"
  },
  {
+  "address": "0x00B4E2F0",
+  "name": "ped_task_alloc_variant_a",
+  "kind": "function",
+  "file": "functions/fn_00b4e2f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b494"
+ },
+ {
+  "address": "0x00B4E4B0",
+  "name": "ped_task_alloc_variant_b",
+  "kind": "function",
+  "file": "functions/fn_00b4e4b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b494"
+ },
+ {
   "address": "0x00B4E5D0",
   "name": "task_chain_apply_flag",
   "kind": "function",
@@ -66436,6 +66490,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s407"
+ },
+ {
+  "address": "0x00B4EC40",
+  "name": "ped_task_proximity_check",
+  "kind": "function",
+  "file": "functions/fn_00b4ec40.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b494"
  },
  {
   "address": "0x00B4EEC0",
@@ -96442,6 +96505,24 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "a-R01"
+ },
+ {
+  "address": "0x00C95C50",
+  "name": "sphere_contact_point",
+  "kind": "function",
+  "file": "functions/fn_00c95c50.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b521"
+ },
+ {
+  "address": "0x00C96270",
+  "name": "sphere_intersection_circle",
+  "kind": "function",
+  "file": "functions/fn_00c96270.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b521"
  },
  {
   "address": "0x00C98370",
