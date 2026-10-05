@@ -208,7 +208,7 @@ lf_checker_rt::export!(thiscall, rw_00CD0860(this: u32, arg: u32) -> u32 {
         }
         wr8(this + FLAGS2, rd8(this + FLAGS2) & 0xfd);
         wr8(this + FLAGS2, rd8(this + FLAGS2) & 0xfe);
-        let b7 = f32::from_bits(buf[7]);
+        let b7 = f32::from_bits(buf[6]);
         wr32(this + COUNT, 0);
         wr32(this + 0xd0, 0);
         wr32(this + 0x20, 0);

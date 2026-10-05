@@ -13,7 +13,7 @@
 /// Returns the final flag (0 once anything fails).
 ///
 /// Flow: zero the outputs, call vf11, then fetch the column-entry table for
-/// this board id through `CAL_FETCH` (writes two words through `info`).
+/// this board id through `CAL_FETCH` (writes the table pointer at `info`+8).
 /// When the fetch reports false, return 0. Otherwise run 19 columns: stop
 /// early once the flag is clear; fetch the column id via vf12; ask
 /// `CAL_CHECK` whether to skip the column; classify the table entry with
@@ -63,14 +63,14 @@ lf_checker_rt::export!(thiscall, rw_0057F240(this: u32, cur: u32, val_out: u32, 
                 core::mem::transmute(rd32(vtable.wrapping_add(VT_COUNT)) as usize);
             f(this)
         };
-        let mut info = [0u32; 2];
-        info[1] = 0;
+        let mut info = [0u32; 3];
+        info[2] = 0;
         let fetched =
             lf_checker_rt::callee_fastcall!(CAL_FETCH, u32, LEADERBOARD_ID, info.as_mut_ptr() as u32);
         if fetched & 0xFF == 0 {
             return fetched & 0xFF;
         }
-        let table = info[1];
+        let table = info[2];
         let mut flag: u8 = 1;
         let mut index = 0u32;
         while index < N_COLUMNS {
@@ -108,12 +108,15 @@ lf_checker_rt::export!(thiscall, rw_0057F240(this: u32, cur: u32, val_out: u32, 
                 wr8(flag_out, column_flag);
                 flag = column_flag;
             } else {
+                // The callee sees the pre-add cursor: it is passed from the
+                // saved slot, which is only written back after the call.
+                let prev = cursor;
                 cursor = cursor.wrapping_add(width);
                 if cursor > bound {
                     flag = 0;
                 } else {
                     let emitted =
-                        lf_checker_rt::callee_thiscall!(CAL_EMIT, u32, ctx, column, cursor, width);
+                        lf_checker_rt::callee_thiscall!(CAL_EMIT, u32, ctx, column, prev, width);
                     if emitted & 0xFF == 0 {
                         flag = 0;
                     } else {

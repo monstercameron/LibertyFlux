@@ -22,9 +22,9 @@
 /// vector onto the reference segment with a clamped factor, and adds a
 /// capped surplus when the projected distance exceeds the direct one.
 /// Returns 0, except path B which returns whether the solve-eight answer's
-/// low byte was zero. On path B that low byte also replaces byte 1 of the
-/// reference pointer used by the tail; the contract keeps the scripted
-/// answers small so the tail stays in mapped heap. The high bytes of the
+/// low byte was zero. On path B that low byte lives in a scratch slot and is
+/// only tested for the return code; the reference pointer stays the
+/// global object on every path. The high bytes of the
 /// flag word passed to the solve-eight callee are read before ever being
 /// written on the mismatch route; the contract fills uninitialised stack
 /// with zero, so they read as zero here.
@@ -120,7 +120,7 @@ lf_checker_rt::export!(cdecl, rw_00dc37f0(_a0: u32, a1: u32, a2: u32, a3: u32, a
         }
 
         // Frame slots: l1 starts as the global object, l2 starts zero.
-        let mut l1: u32 = g;
+        let l1: u32 = g;
         let mut l2: u32 = 0;
         let edx: u32;
         if gu32(G_DW) == 0 || gu8(G_BY) != 0 {
@@ -172,7 +172,6 @@ lf_checker_rt::export!(cdecl, rw_00dc37f0(_a0: u32, a1: u32, a2: u32, a3: u32, a
                     let s: f32 = lf_checker_rt::callee_cdecl!(C_SQRT, f32, x.to_bits());
                     wrf(a5, div(one, s));
                 }
-                l1 = (l1 & 0xffff_00ff) | ((o & 0xff) << 8);
                 edx = if (o & 0xff) == 0 { 1 } else { 0 };
             } else {
                 // Path A: solve-seven score with the saved slot.
@@ -208,7 +207,6 @@ lf_checker_rt::export!(cdecl, rw_00dc37f0(_a0: u32, a1: u32, a2: u32, a3: u32, a
                 let s: f32 = lf_checker_rt::callee_cdecl!(C_SQRT, f32, x.to_bits());
                 wrf(a5, div(one, s));
             }
-            l1 = (l1 & 0xffff_00ff) | ((o & 0xff) << 8);
             edx = if (o & 0xff) == 0 { 1 } else { 0 };
         }
 
