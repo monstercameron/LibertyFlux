@@ -29,11 +29,11 @@
 /// check `slot == -1` before the calls can never fire (an all-zero table
 /// returned early) and is kept for fidelity.
 ///
-/// Float evaluation uses scalar SSE intrinsics with the original's exact
-/// instruction form and operand order (see the `load`/`mul`/`add` helpers):
-/// the destination register decides the sign of a NaN result, and on this
-/// machine a memory source operand propagates NaN signs differently from a
-/// register source, so both are pinned.
+/// Float evaluation decides operand order by a branch (see `fadd`): the
+/// destination register decides the sign of a NaN result, and the compiler
+/// swaps the operands of scalar operations even across call boundaries, so
+/// both-NaN pairs forward the destination operand explicitly while every
+/// other case runs as a plain operation whose order is irrelevant.
 ///
 /// Original: 0x00C8A590 (thiscall shape with six stack words, callee pops
 /// 0x18; the upper bytes of the flag words and the incoming `ecx` are not
@@ -66,48 +66,51 @@ lf_checker_rt::export!(thiscall, rw_00C8A590(
         unsafe fn rd8(a: u32) -> u8 {
             unsafe { (a as *const u8).read() }
         }
-        // Scalar float ops with the original's exact instruction form and
-        // operand order: one mulss/addss each, first argument as the
-        // destination, all arithmetic in register form. Every float enters
-        // through its bits passed to `black_box`: the barrier hides the
-        // values (so LLVM cannot fold the known coefficient -1.0 into the
-        // arithmetic, which it otherwise does, turning an add into a
-        // subtraction) and routes them through general registers. A value
-        // that reaches an arithmetic instruction straight from a load is
-        // fused into a memory source operand by the backend, and on this
-        // machine a memory source propagates NaN signs differently from a
-        // register source (seen on `inf * +0`).
-        type V = core::arch::x86::__m128;
+        // Operand order is decided by a branch, not by the compiler: the
+        // destination register decides a NaN result's sign, and the
+        // compiler swaps the operands of scalar float operations even
+        // across call boundaries. Order matters only when both operands
+        // are NaN, so those pairs forward the destination operand
+        // explicitly and everything else runs as a plain operation whose
+        // order is irrelevant. SNaN cannot occur (audited: no SNaN in any
+        // input pool, and no operation here creates one).
+        type F = u32; // bits of one f32
         #[inline(always)]
-        unsafe fn splat_bits(b: u32) -> V {
-            unsafe {
-                core::arch::x86::_mm_set_ss(f32::from_bits(core::hint::black_box(b)))
+        fn is_nan_bits(x: u32) -> bool {
+            x & 0x7F800000 == 0x7F800000 && x & 0x007FFFFF != 0
+        }
+        #[inline(never)]
+        fn fadd(a: F, b: F) -> F {
+            if is_nan_bits(a) && is_nan_bits(b) {
+                a | 0x00400000
+            } else {
+                unsafe {
+                    let va = core::arch::x86::_mm_set_ss(f32::from_bits(a));
+                    let vb = core::arch::x86::_mm_set_ss(f32::from_bits(b));
+                    let mut o = 0f32;
+                    core::arch::x86::_mm_store_ss(
+                        &mut o,
+                        core::arch::x86::_mm_add_ss(va, vb),
+                    );
+                    o.to_bits()
+                }
             }
         }
-        #[inline(always)]
-        unsafe fn load(a: u32) -> V {
-            unsafe { splat_bits((a as *const u32).read_unaligned()) }
-        }
-        // The arithmetic sits behind call boundaries on purpose: with the
-        // operand trees visible, LLVM swaps the operands of these scalar
-        // operations (they lower to plain commutative fadd/fmul), and the
-        // destination decides the sign of a NaN result. Opaque call operands
-        // cannot be reordered; the DLL inspection below the contract
-        // confirms the emitted order.
         #[inline(never)]
-        fn mul(a: V, b: V) -> V {
-            unsafe { core::arch::x86::_mm_mul_ss(a, b) }
-        }
-        #[inline(never)]
-        fn add(a: V, b: V) -> V {
-            unsafe { core::arch::x86::_mm_add_ss(a, b) }
-        }
-        #[inline(always)]
-        unsafe fn store(v: V) -> f32 {
-            unsafe {
-                let mut r = 0f32;
-                core::arch::x86::_mm_store_ss(&mut r, v);
-                r
+        fn fmul(a: F, b: F) -> F {
+            if is_nan_bits(a) && is_nan_bits(b) {
+                a | 0x00400000
+            } else {
+                unsafe {
+                    let va = core::arch::x86::_mm_set_ss(f32::from_bits(a));
+                    let vb = core::arch::x86::_mm_set_ss(f32::from_bits(b));
+                    let mut o = 0f32;
+                    core::arch::x86::_mm_store_ss(
+                        &mut o,
+                        core::arch::x86::_mm_mul_ss(va, vb),
+                    );
+                    o.to_bits()
+                }
             }
         }
 
@@ -132,33 +135,33 @@ lf_checker_rt::export!(thiscall, rw_00C8A590(
 
         // Phase 2: one pass per slot (first, then last).
         let vec = rd32(obj.wrapping_add(VEC_OFF));
-        let zero = splat_bits(0);
+        let zero = 0u32;
         let mut pass = 0u32;
         while pass < 2 {
-            let c = splat_bits(if pass == 0 { 0xBF800000u32 } else { 0x3F800000u32 });
+            let c = if pass == 0 { 0xBF800000u32 } else { 0x3F800000u32 };
             let sel = if pass == 0 { first } else { last };
             let bias = if pass == 0 { 0x0Eu32 } else { 0x13u32 };
             let bias2 = BIAS2[pass as usize];
             // out[i] = (v[i] * c + v[i+3] * 0) + v[i+6] * 0, in order.
-            let o0 = store(add(
-                add(mul(load(vec), c), mul(load(vec.wrapping_add(0x10)), zero)),
-                mul(load(vec.wrapping_add(0x20)), zero),
-            ));
-            let o1 = store(add(
-                add(
-                    mul(load(vec.wrapping_add(0x04)), c),
-                    mul(load(vec.wrapping_add(0x14)), zero),
+            let o0 = fadd(
+                fadd(fmul(rd32(vec), c), fmul(rd32(vec.wrapping_add(0x10)), zero)),
+                fmul(rd32(vec.wrapping_add(0x20)), zero),
+            );
+            let o1 = fadd(
+                fadd(
+                    fmul(rd32(vec.wrapping_add(0x04)), c),
+                    fmul(rd32(vec.wrapping_add(0x14)), zero),
                 ),
-                mul(load(vec.wrapping_add(0x24)), zero),
-            ));
-            let o2 = store(add(
-                add(
-                    mul(load(vec.wrapping_add(0x08)), c),
-                    mul(load(vec.wrapping_add(0x18)), zero),
+                fmul(rd32(vec.wrapping_add(0x24)), zero),
+            );
+            let o2 = fadd(
+                fadd(
+                    fmul(rd32(vec.wrapping_add(0x08)), c),
+                    fmul(rd32(vec.wrapping_add(0x18)), zero),
                 ),
-                mul(load(vec.wrapping_add(0x28)), zero),
-            ));
-            let outs = [o0, o1, o2];
+                fmul(rd32(vec.wrapping_add(0x28)), zero),
+            );
+            let outs = [f32::from_bits(o0), f32::from_bits(o1), f32::from_bits(o2)];
             let row = table.wrapping_add(group.wrapping_add(sel) << ROW_SHIFT);
             if sel != NO_SLOT {
                 if (flag_a & 0xFF) != 0 {

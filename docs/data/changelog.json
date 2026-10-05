@@ -1,8 +1,22 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Pin cycles in lockstep hide branch combinations",
+    "title": "Rewrites: 13 more functions pass the checker (15151 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "13 rewrites added under rewrites/verified: 0 script native handlers and 13 other functions.",
+      "1 rewrites were re-run under a later version of the checker and replaced by the version that passed it.",
+      "The tree now holds 15151 rewrites, 15132 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 661 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "19 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Pin cycles in lockstep hide branch combinations",
+    "commit": "fee6c98876a0e68ea307829d0980f6731b3f1152",
     "summary": "Findings from the r-b556 lane.",
     "changes": [
       "New devlog entry: Pin cycles in lockstep hide branch combinations.",
