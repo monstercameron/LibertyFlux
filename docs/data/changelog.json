@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Naming a run of vehicle functions: damage tables, sirens, and an encrypted boundary",
+    "title": "Rewrites: 54 more functions pass the checker (12591 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "54 rewrites added under rewrites/verified: 0 script native handlers and 54 other functions.",
+      "The tree now holds 12591 rewrites, 12572 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "748 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Naming a run of vehicle functions: damage tables, sirens, and an encrypted boundary",
+    "commit": "0d5b5d0ac2542725492c207697025e1c6fd1af37",
     "summary": "Findings from the nm-85 lane.",
     "changes": [
       "New devlog entry: Naming a run of vehicle functions: damage tables, sirens, and an encrypted boundary.",
