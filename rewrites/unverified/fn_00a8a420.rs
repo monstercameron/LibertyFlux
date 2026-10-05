@@ -1,94 +1,97 @@
-// original: 0x00a8a420 pool_acquire_guarded (proposed)
+// original: 0x00A8A420 pool_guarded_lookup (proposed)
 
-/// Acquire the guarded slot for the key object, scanning on a miss.
+/// Look up the entry for the argument unless its kind selects the null one.
 ///
-/// `this` is the pool and `key` points to the key object. Under the
-/// shared lock, the key's word at +0x28 selects the path: kinds 2 and 3
-/// (bits 6..9) return 0 at once. Otherwise the find callee runs on the
-/// key; a non-null answer is returned. On a miss the node list at
-/// +0x18 is walked to its anchor at +8 for the first node whose object
-/// lacks bit 0xA00 in its word at +0x24, that object is released through
-/// its slot, and the find callee runs once more. Always unlocks before
-/// returning. The proof cycles the kind through all paths; lock, unlock
-/// and find frame addresses are uncompared.
+/// The session helper first runs on a frame slot with the global scope;
+/// the kind bits (`+0x28` of `*arg`, shifted down 6, low four) 2 or 3
+/// select the null entry: tear down and return 0. Otherwise the fetch
+/// helper runs on the sub-object at `this+8` with the argument slot; a
+/// non-zero answer tears down and is returned. On zero the list rooted at
+/// `this+0x18` (ending at `this+8`) is walked for the first object whose
+/// `+0x24` word has none of bits `0xA00` set, which is poked through its
+/// function table slot `+0x44`; the fetch helper runs once more and its
+/// answer (after tear-down) is returned.
 ///
-/// Original: 0x00A8A420 (thiscall, one stack word).
-lf_checker_rt::export!(thiscall, rw_00a8a420(this: u32, key: u32) -> u32 {
+/// Original: thiscall, one stack word, returns u32 in EAX. Four callee
+/// shapes: session (thiscall, one stack word, frame object), fetch
+/// (thiscall, one stack word), tear-down (thiscall, no stack words,
+/// frame object), poke (thiscall through the object, no stack words),
+/// the last intercepted by a planted stub address.
+lf_checker_rt::export!(thiscall, rw_00A8A420(this: u32, arg: u32) -> u32 {
     unsafe {
-        const CALLEE_LOCK: u32 = 1;
-        const CALLEE_FIND: u32 = 2;
-        const CALLEE_RELEASE: u32 = 3;
-        const CALLEE_UNLOCK: u32 = 4;
-        const LOCK_ID: u32 = 0x12fb1dc;
-        const KEY_KIND: u32 = 0x28;
-        const KIND_SHIFT: u32 = 6;
-        const KIND_MASK: u32 = 0xf;
-        const ANCHOR: u32 = 8;
-        const LIST_HEAD: u32 = 0x18;
-        const NODE_NEXT: u32 = 4;
-        const OBJ_FLAGS: u32 = 0x24;
-        const DIRTY_BIT: u32 = 0xa00;
-        const RELEASE_SLOT: u32 = 0x44;
-        let mut slot: u32 = 0;
-        let slot_addr = core::ptr::addr_of_mut!(slot) as u32;
-        lf_checker_rt::callee_thiscall!(
-            CALLEE_LOCK,
+        const SCOPE_FILE_VA: u32 = 0x12fb1dc;
+        const SUB_OFF: u32 = 8;
+        const HEAD_OFF: u32 = 0x18;
+        const KIND_OFF: u32 = 0x28;
+        const FLAG_OFF: u32 = 0x24;
+        const FLAG_MASK: u32 = 0xa00;
+        const POKE_SLOT: u32 = 0x44;
+        const SESSION: u32 = 1;
+        const FETCH: u32 = 2;
+        const TEARDOWN: u32 = 3;
+        let scope = lf_checker_rt::relocated(SCOPE_FILE_VA);
+        let mut session_slot: [u32; 2] = [0, 0];
+        let _: u32 = lf_checker_rt::callee_thiscall!(
+            SESSION,
             u32,
-            slot_addr,
-            lf_checker_rt::relocated(LOCK_ID)
+            &mut session_slot as *mut u32 as u32,
+            scope
         );
-        let kind_bits = ((key + KEY_KIND) as *const u32).read_unaligned();
-        let kind = (kind_bits >> KIND_SHIFT) & KIND_MASK;
+        let kind = ((((arg + KIND_OFF) as *const u32).read_unaligned() >> 6) & 0xf) as u8;
+        // The tear-down takes the session slot; its contents are the
+        // session helper's and unobserved here.
+        let teardown = |slot: &mut [u32; 2]| {
+            let _: u32 = lf_checker_rt::callee_thiscall!(
+                TEARDOWN,
+                u32,
+                slot as *mut [u32; 2] as u32
+            );
+        };
         if kind == 2 || kind == 3 {
-            lf_checker_rt::callee_thiscall!(CALLEE_UNLOCK, u32, slot_addr);
+            teardown(&mut session_slot);
             return 0;
         }
-        let anchor = this.wrapping_add(ANCHOR);
-        // The original passes the address of its key slot (a frame
-        // pointer, uncompared); the stub never writes it observably.
-        let mut key_slot = key;
-        let key_addr = core::ptr::addr_of_mut!(key_slot) as u32;
-        let found = lf_checker_rt::callee_thiscall!(
-            CALLEE_FIND,
+        let sub = this.wrapping_add(SUB_OFF);
+        // The fetch helper takes the address of our argument slot, like
+        // the original takes its incoming stack slot; both are S+4.
+        let mut arg_copy = arg;
+        let r: u32 = lf_checker_rt::callee_thiscall!(
+            FETCH,
             u32,
-            anchor,
-            key_addr
+            sub,
+            &mut arg_copy as *mut u32 as u32
         );
-        if found != 0 {
-            lf_checker_rt::callee_thiscall!(CALLEE_UNLOCK, u32, slot_addr);
-            return found;
+        if r != 0 {
+            teardown(&mut session_slot);
+            return r;
         }
-        let mut node =
-            ((this + LIST_HEAD) as *const u32).read_unaligned();
-        if node != anchor {
+        let end = sub;
+        let mut link = ((this + HEAD_OFF) as *const u32).read_unaligned();
+        if link != end {
             loop {
-                let obj = (node as *const u32).read_unaligned();
-                let flags =
-                    ((obj + OBJ_FLAGS) as *const u32).read_unaligned();
-                if (flags & DIRTY_BIT) == 0 {
-                    let vtable =
-                        (obj as *const u32).read_unaligned();
-                    let target = ((vtable + RELEASE_SLOT) as *const u32)
+                let obj = (link as *const u32).read_unaligned();
+                if ((obj + FLAG_OFF) as *const u32).read_unaligned() & FLAG_MASK == 0 {
+                    let slot = ((((obj as *const u32).read_unaligned()) + POKE_SLOT)
+                        as *const u32)
                         .read_unaligned();
                     let f: extern "thiscall" fn(u32) -> u32 =
-                        core::mem::transmute(target as usize);
-                    f(obj);
+                        core::mem::transmute(slot as usize);
+                    let _ = f(obj);
                     break;
                 }
-                node =
-                    ((node + NODE_NEXT) as *const u32).read_unaligned();
-                if node == anchor {
+                link = ((link + 4) as *const u32).read_unaligned();
+                if link == end {
                     break;
                 }
             }
         }
-        let found2 = lf_checker_rt::callee_thiscall!(
-            CALLEE_FIND,
+        let r2: u32 = lf_checker_rt::callee_thiscall!(
+            FETCH,
             u32,
-            anchor,
-            key_addr
+            sub,
+            &mut arg_copy as *mut u32 as u32
         );
-        lf_checker_rt::callee_thiscall!(CALLEE_UNLOCK, u32, slot_addr);
-        found2
+        teardown(&mut session_slot);
+        r2
     }
 });

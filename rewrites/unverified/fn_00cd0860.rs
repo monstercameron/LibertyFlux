@@ -199,8 +199,10 @@ lf_checker_rt::export!(thiscall, rw_00CD0860(this: u32, arg: u32) -> u32 {
         lf_checker_rt::callee_thiscall!(22, u32, this, arg, buf[1], f10, buf[0]);
         buf[0] = 0;
         buf[1] = 0;
+        // Note: the second word comes from the slot below f10 (esp is 8
+        // down at that push, so [esp+0x14] is fc's slot, not f10's).
         let r23: u32 = lf_checker_rt::callee_thiscall!(
-            23, u32, this, arg, f10, buf.as_ptr() as u32 + 4, buf.as_ptr() as u32
+            23, u32, this, arg, fc, buf.as_ptr() as u32 + 4, buf.as_ptr() as u32
         );
         let mut fb = (r23 as u8) & 0xff;
         if rd32(this + COUNT) != 0 {

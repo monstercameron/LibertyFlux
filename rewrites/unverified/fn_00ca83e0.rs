@@ -35,8 +35,8 @@
 /// (which must differ from the subject), runs a probe whose low byte must be
 /// zero and equal the byte at subject `+0x211`, runs an unanswered check,
 /// then builds: with a factory object the reaction is made from the subject
-/// (or 0 without one), passed with 4 through a gate call, and the gate's
-/// answer is stored.
+/// (or 0 without one), passed with 4 through a gate call whose answer is
+/// discarded: the chain always stores and returns 0.
 ///
 /// The gauntlet compares two table floats against 1.5: the words at `+0xF8`
 /// of the table entries indexed by the signed words at ped `+0x2E` and
@@ -231,9 +231,10 @@ unsafe fn ca83e0_chain_tail(this: u32, esi: u32, hped: u32, mid2: u32, b15: u8) 
         } else {
             lf_checker_rt::callee_thiscall!(6, u32, fac, esi)
         };
-        let gated: u32 =
+        let _gated: u32 =
             lf_checker_rt::callee_thiscall!(11, u32, mid2.wrapping_add(GATE_OFF), made, 4);
-        ca83e0_epilogue(this, gated)
+        // The gate answer is discarded: the chain always stores 0.
+        ca83e0_epilogue(this, 0)
     }
 }
 

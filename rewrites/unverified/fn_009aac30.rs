@@ -8,9 +8,12 @@
 /// entries (id dword, refcount dword) and writes the entry count through
 /// the out-pointer. The first entry whose id equals `key` has its refcount
 /// decremented and the search stops; a miss in all three tables changes
-/// nothing. Returns nothing.
+/// nothing. The stack words are (`sub`, `key`): `sub` is forwarded to the
+/// callees, `key` is the searched id. The original reuses the `key` argument
+/// slot as each out-slot after clearing its low byte; the out-words below
+/// are seeded the same way so the call-time snapshots match. Returns nothing.
 /// Original: 0x009AAC30 (thiscall, two stack words).
-lf_checker_rt::export!(thiscall, rw_009AAC30(this: u32, key: u32, sub: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_009AAC30(this: u32, sub: u32, key: u32) -> u32 {
     unsafe {
         const ENTRY_SIZE: u32 = 8;
         const REF_OFF: u32 = 4;
@@ -30,7 +33,7 @@ lf_checker_rt::export!(thiscall, rw_009AAC30(this: u32, key: u32, sub: u32) -> u
         if key == 0 {
             return 0;
         }
-        let mut out_a: u32 = 0;
+        let mut out_a: u32 = key & 0xffffff00;
         let arr_a: u32 = lf_checker_rt::callee_thiscall!(
             LOOKUP_A,
             u32,
@@ -48,7 +51,7 @@ lf_checker_rt::export!(thiscall, rw_009AAC30(this: u32, key: u32, sub: u32) -> u
             }
             i += 1;
         }
-        let mut out_b: u32 = 0;
+        let mut out_b: u32 = key & 0xffffff00;
         let arr_b: u32 = lf_checker_rt::callee_thiscall!(
             LOOKUP_B,
             u32,
@@ -66,7 +69,7 @@ lf_checker_rt::export!(thiscall, rw_009AAC30(this: u32, key: u32, sub: u32) -> u
             }
             j += 1;
         }
-        let mut out_c: u32 = 0;
+        let mut out_c: u32 = key & 0xffffff00;
         let arr_c: u32 = lf_checker_rt::callee_thiscall!(
             LOOKUP_C,
             u32,

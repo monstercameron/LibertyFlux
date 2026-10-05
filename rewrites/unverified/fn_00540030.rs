@@ -13,7 +13,8 @@
 /// size is at most 8 in the signed sense copies its 8 payload bytes to
 /// `entry_out` and keeps the walk alive, anything else kills it and records
 /// the flag) or advances the cursor by the block size inside `base + limit`
-/// and records the row bit on success.
+/// and records the row bit on success. The range callee receives the
+/// pre-step cursor; the stepped value is kept (and compared) regardless.
 ///
 /// Arguments (thiscall: `this` in ECX, six words on the stack, callee pops
 /// 0x18): `this` is the leaderboard-info object (vtable at `+0`); `base` is
@@ -126,8 +127,12 @@ lf_checker_rt::export!(thiscall, rw_00540030(this: u32, base: u32, entry_out: u3
                     }
                     wr8(flag_out, live);
                 } else {
-                    cursor = cursor.wrapping_add(blk);
-                    if cursor > cap {
+                    // The step is compared but the callee receives the
+                    // pre-step cursor (the original pushes its saved slot,
+                    // refreshed only at the end of the iteration); the
+                    // stepped value is kept even when the step fails.
+                    let stepped = cursor.wrapping_add(blk);
+                    if stepped > cap {
                         live = 0;
                     } else {
                         let w: u32 = lf_checker_rt::callee_thiscall!(C_WRITE, u32, ctx, key, cursor, blk);
@@ -151,6 +156,7 @@ lf_checker_rt::export!(thiscall, rw_00540030(this: u32, base: u32, entry_out: u3
                             wr32(bits_out + 4, hi);
                         }
                     }
+                    cursor = stepped;
                 }
             }
             row += 1;

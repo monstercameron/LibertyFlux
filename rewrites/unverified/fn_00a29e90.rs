@@ -27,7 +27,7 @@
 ///
 /// The transform callee takes `(ent, owner, &blk)` with a 10-word block
 /// pre-filled with the float argument, the y/x anchor deltas and the z
-/// delta at words 0, 1, 2 and 8; words 0, 4, 5 and 8 are reread as the
+/// delta at words 0, 1, 2 and 8; words 0, 1, 2 and 8 are reread as the
 /// radius and the three distance components. The callee is scripted by the
 /// contract to fill words 0 through 8. The distance test is an unsigned
 /// `ja` over the ordered comparison, so an unordered (NaN) pair falls
@@ -115,12 +115,12 @@ unsafe fn run_00a29e90(
         let blk_ptr = blk.as_mut_ptr() as u32;
         let _: u32 =
             lf_checker_rt::callee_cdecl!(TRANSFORM_CALLEE, u32, ent, owner, blk_ptr);
-        let c4 = f32::from_bits(blk[4]);
-        let c5 = f32::from_bits(blk[5]);
-        let c8 = f32::from_bits(blk[8]);
+        let v1 = f32::from_bits(blk[1]);
+        let v2 = f32::from_bits(blk[2]);
+        let v8 = f32::from_bits(blk[8]);
         let radius = f32::from_bits(blk[0]);
-        // Operand order is the original's: (c4*c4 + c5*c5) + c8*c8.
-        let dist2 = add(add(mul(c4, c4), mul(c5, c5)), mul(c8, c8));
+        // Operand order is the original's: (v1*v1 + v2*v2) + v8*v8.
+        let dist2 = add(add(mul(v1, v1), mul(v2, v2)), mul(v8, v8));
         let r2 = mul(radius, radius);
         if dist2 > r2 {
             return 0;

@@ -5,7 +5,7 @@
 ///
 /// Record selector: index byte at `this + a + 0x368` plus `3 * a`, times the
 /// 96-byte record size. Stores `b` at record `+ 0x14`, calls the notify
-/// callee with (`c`, address of record `+ 0x18`), then stores `d` at record
+/// callee with (address of record `+ 0x18`, `c`), then stores `d` at record
 /// `+ 0x58`. The callee's answer is ignored. Returns nothing.
 /// Original: 0x009AABC0 (thiscall, four stack words).
 lf_checker_rt::export!(thiscall, rw_009AABC0(this: u32, a: u32, b: u32, c: u32, d: u32) -> u32 {
@@ -23,8 +23,8 @@ lf_checker_rt::export!(thiscall, rw_009AABC0(this: u32, a: u32, b: u32, c: u32, 
         let _: u32 = lf_checker_rt::callee_cdecl!(
             NOTIFY,
             u32,
-            c,
-            base.wrapping_add(NOTIFY_OFF)
+            base.wrapping_add(NOTIFY_OFF),
+            c
         );
         ((base.wrapping_add(STORE_B_OFF)) as *mut u32).write_unaligned(d);
         0
