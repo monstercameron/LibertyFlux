@@ -48231,6 +48231,15 @@
   "lane": "r-s422"
  },
  {
+  "address": "0x009C1300",
+  "name": "task_system_tick",
+  "kind": "function",
+  "file": "functions/fn_009c1300.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b443"
+ },
+ {
   "address": "0x009C1520",
   "name": "task_tick_secondary",
   "kind": "function",
@@ -89019,10 +89028,37 @@
   "lane": "r-b33"
  },
  {
+  "address": "0x00C3A3F0",
+  "name": "train_tail_car_via_prev",
+  "kind": "function",
+  "file": "functions/fn_00c3a3f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
+  "address": "0x00C3A8E0",
+  "name": "train_count_cars_via_next",
+  "kind": "function",
+  "file": "functions/fn_00c3a8e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
   "address": "0x00C3AC20",
   "name": "CTrain::vf59",
   "kind": "function",
   "file": "functions/fn_00c3ac20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
+  "address": "0x00C3D8B0",
+  "name": "train_set_flag_bit4_chain",
+  "kind": "function",
+  "file": "functions/fn_00c3d8b0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s448"
@@ -96057,6 +96093,15 @@
   "lane": "r-b445"
  },
  {
+  "address": "0x00D45DD0",
+  "name": "peds_task_collect_candidates",
+  "kind": "function",
+  "file": "functions/fn_00d45dd0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b445"
+ },
+ {
   "address": "0x00D47FC0",
   "name": "set_fixture_kind_by_name",
   "kind": "function",
@@ -96714,6 +96759,24 @@
   "lane": "r-s446"
  },
  {
+  "address": "0x00D552E0",
+  "name": "ccam_wasted_fetch_pose",
+  "kind": "function",
+  "file": "functions/fn_00d552e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D55B80",
+  "name": "CCamWasted::vf7",
+  "kind": "function",
+  "file": "functions/fn_00d55b80.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
   "address": "0x00D55BB0",
   "name": "ccam_idle_ctor",
   "kind": "function",
@@ -96754,6 +96817,15 @@
   "name": "ccam_mark_active",
   "kind": "function",
   "file": "functions/fn_00d56d60.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D56DB0",
+  "name": "ccam_polar_from_vec",
+  "kind": "function",
+  "file": "functions/fn_00d56db0.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s446"
