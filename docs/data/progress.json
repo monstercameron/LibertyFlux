@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-05",
-  "updated_at": "2026-10-05 07:30",
+  "updated_at": "2026-10-05 07:36",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,12 +12,12 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 26009,
-    "rewritten": 13372,
-    "verified": 12699
+    "named": 26094,
+    "rewritten": 13391,
+    "verified": 12708
   },
   "structures": 340,
-  "symbols": 12811,
+  "symbols": 12820,
   "measured": [
     {
       "label": "Code section",
@@ -99,26 +99,26 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 26009,
+      "value": 26094,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (17005); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (17090); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 13372,
+      "value": 13391,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 12699,
+      "value": 12708,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
   ],
   "activity": {
-    "lanes_running": 13,
-    "lanes_finished": 1132,
+    "lanes_running": 14,
+    "lanes_finished": 1133,
     "lanes_incomplete": 131,
     "devlog_entries": 429
   },
@@ -714,7 +714,7 @@
       "to": "0x00570AA7",
       "count": 205,
       "named": 205,
-      "rewritten": 130,
+      "rewritten": 133,
       "verified": 130
     },
     {
@@ -723,7 +723,7 @@
       "to": "0x005763C9",
       "count": 205,
       "named": 205,
-      "rewritten": 130,
+      "rewritten": 135,
       "verified": 96
     },
     {
@@ -2505,7 +2505,7 @@
       "to": "0x009C53C4",
       "count": 53,
       "named": 50,
-      "rewritten": 1,
+      "rewritten": 3,
       "verified": 1
     },
     {
@@ -3053,27 +3053,27 @@
       "from": "0x00B137A4",
       "to": "0x00B190C5",
       "count": 59,
-      "named": 3,
-      "rewritten": 3,
-      "verified": 3
+      "named": 6,
+      "rewritten": 6,
+      "verified": 6
     },
     {
       "stage": "identified",
       "from": "0x00B190C6",
       "to": "0x00B1E9E6",
       "count": 48,
-      "named": 16,
-      "rewritten": 15,
-      "verified": 15
+      "named": 20,
+      "rewritten": 19,
+      "verified": 19
     },
     {
       "stage": "identified",
       "from": "0x00B1E9E7",
       "to": "0x00B24308",
       "count": 71,
-      "named": 14,
-      "rewritten": 12,
-      "verified": 10
+      "named": 16,
+      "rewritten": 14,
+      "verified": 12
     },
     {
       "stage": "identified",
@@ -3521,16 +3521,16 @@
       "from": "0x00C35277",
       "to": "0x00C3AB97",
       "count": 46,
-      "named": 4,
+      "named": 6,
       "rewritten": 0,
       "verified": 0
     },
     {
-      "stage": "identified",
+      "stage": "named",
       "from": "0x00C3AB98",
       "to": "0x00C404B9",
       "count": 73,
-      "named": 6,
+      "named": 40,
       "rewritten": 3,
       "verified": 3
     },
@@ -4430,7 +4430,7 @@
       "from": "0x00E67CB7",
       "to": "0x00E6D5D8",
       "count": 618,
-      "named": 252,
+      "named": 292,
       "rewritten": 252,
       "verified": 252
     },
