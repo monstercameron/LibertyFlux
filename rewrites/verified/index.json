@@ -54261,6 +54261,15 @@
   "lane": "r-s407"
  },
  {
+  "address": "0x00B4E5D0",
+  "name": "task_chain_apply_flag",
+  "kind": "function",
+  "file": "functions/fn_00b4e5d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
   "address": "0x00B4E850",
   "name": "CDummyPed::vf13",
   "kind": "function",
@@ -54292,6 +54301,15 @@
   "name": "reset_slot_118h",
   "kind": "function",
   "file": "functions/fn_00b4ef60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
+  "address": "0x00B4EFC0",
+  "name": "find_task_by_ids",
+  "kind": "function",
+  "file": "functions/fn_00b4efc0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s407"
@@ -54412,6 +54430,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s384"
+ },
+ {
+  "address": "0x00B4FEB0",
+  "name": "ped_spawn_init",
+  "kind": "function",
+  "file": "functions/fn_00b4feb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
  },
  {
   "address": "0x00B4FFA0",
@@ -54589,6 +54616,15 @@
   "name": "assign_ped_to_slot",
   "kind": "function",
   "file": "functions/fn_00b512f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
+  "address": "0x00B513B0",
+  "name": "update_ped_blends",
+  "kind": "function",
+  "file": "functions/fn_00b513b0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s407"
@@ -82332,6 +82368,15 @@
   "lane": "r-s406"
  },
  {
+  "address": "0x00CCB4A0",
+  "name": "CTaskComplexOnFire::vf20",
+  "kind": "function",
+  "file": "functions/fn_00ccb4a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
   "address": "0x00CCB8D0",
   "name": "CTaskComplexHitResponse::vf19",
   "kind": "function",
@@ -82354,6 +82399,15 @@
   "name": "CTaskComplexOnFire::vf19",
   "kind": "function",
   "file": "functions/fn_00ccbd20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
+  "address": "0x00CCBDA0",
+  "name": "CTaskComplexRevive::vf19",
+  "kind": "function",
+  "file": "functions/fn_00ccbda0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s406"
@@ -82399,6 +82453,15 @@
   "name": "CTaskComplexDie::vf5",
   "kind": "function",
   "file": "functions/fn_00cce010.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
+  "address": "0x00CCE060",
+  "name": "CTaskComplexInjuredOnGround::vf5",
+  "kind": "function",
+  "file": "functions/fn_00cce060.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s406"
