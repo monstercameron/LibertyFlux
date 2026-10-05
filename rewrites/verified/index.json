@@ -30942,6 +30942,15 @@
   "lane": "a-12"
  },
  {
+  "address": "0x0088F700",
+  "name": "rage::audSound::audSound_2",
+  "kind": "function",
+  "file": "functions/fn_0088f700.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
+ },
+ {
   "address": "0x0088F7F0",
   "name": "audio_voice_accumulate",
   "kind": "function",
@@ -39022,6 +39031,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b296"
+ },
+ {
+  "address": "0x0096F860",
+  "name": "audio_dual_fade_update",
+  "kind": "function",
+  "file": "functions/fn_0096f860.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b377"
  },
  {
   "address": "0x00970000",
