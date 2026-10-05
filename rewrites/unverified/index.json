@@ -929,7 +929,7 @@
  },
  {
   "address": "0x0066F230",
-  "name": "sub_0066f230",
+  "name": "tok_pushback_token",
   "file": "fn_0066f230.rs",
   "lane": "r-s435",
   "outcome": "not_reached",
@@ -937,7 +937,7 @@
  },
  {
   "address": "0x0066F2B0",
-  "name": "sub_0066f2b0",
+  "name": "tok_next_char",
   "file": "fn_0066f2b0.rs",
   "lane": "r-s435",
   "outcome": "not_reached",
@@ -945,7 +945,7 @@
  },
  {
   "address": "0x0066F310",
-  "name": "sub_0066f310",
+  "name": "tok_skip_comment",
   "file": "fn_0066f310.rs",
   "lane": "r-s435",
   "outcome": "not_reached",
@@ -953,7 +953,7 @@
  },
  {
   "address": "0x0066F660",
-  "name": "sub_0066f660",
+  "name": "tok_match_and_pushback",
   "file": "fn_0066f660.rs",
   "lane": "r-s435",
   "outcome": "not_reached",
@@ -961,7 +961,7 @@
  },
  {
   "address": "0x0066F710",
-  "name": "sub_0066f710",
+  "name": "tok_match_and_pushback_named",
   "file": "fn_0066f710.rs",
   "lane": "r-s435",
   "outcome": "not_reached",
@@ -969,7 +969,7 @@
  },
  {
   "address": "0x0066F8C0",
-  "name": "sub_0066f8c0",
+  "name": "tok_skip_to_eol",
   "file": "fn_0066f8c0.rs",
   "lane": "r-s435",
   "outcome": "not_reached",
@@ -1025,7 +1025,7 @@
  },
  {
   "address": "0x00670160",
-  "name": "sub_00670160",
+  "name": "tok_write_indent",
   "file": "fn_00670160.rs",
   "lane": "r-s435",
   "outcome": "not_reached",
@@ -1062,6 +1062,38 @@
   "lane": "r-b247",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00882F50",
+  "name": null,
+  "file": "fn_00882f50.rs",
+  "lane": "r-s438",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00883AA0",
+  "name": null,
+  "file": "fn_00883aa0.rs",
+  "lane": "r-s438",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00884530",
+  "name": null,
+  "file": "fn_00884530.rs",
+  "lane": "r-s438",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x008845A0",
+  "name": null,
+  "file": "fn_008845a0.rs",
+  "lane": "r-s438",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x008900F0",
@@ -2016,6 +2048,14 @@
   "reason": null
  },
  {
+  "address": "0x00A24220",
+  "name": null,
+  "file": "fn_00a24220.rs",
+  "lane": "r-b430",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A7E990",
   "name": "CComplexGangDrivebyTaskInfo::vf6",
   "file": "fn_00a7e990.rs",
@@ -2056,6 +2096,38 @@
   "reason": "other"
  },
  {
+  "address": "0x00A9F010",
+  "name": "tbd",
+  "file": "fn_00a9f010.rs",
+  "lane": "r-s437",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A9F040",
+  "name": "tbd",
+  "file": "fn_00a9f040.rs",
+  "lane": "r-s437",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A9F460",
+  "name": "tbd",
+  "file": "fn_00a9f460.rs",
+  "lane": "r-s437",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AA0880",
+  "name": "tbd",
+  "file": "fn_00aa0880.rs",
+  "lane": "r-s437",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00AB2C40",
   "name": "stream_remove_refs",
   "file": "fn_00ab2c40.rs",
@@ -2080,6 +2152,30 @@
   "reason": ""
  },
  {
+  "address": "0x00AB59A0",
+  "name": "idmap_insert_small",
+  "file": "fn_00ab59a0.rs",
+  "lane": "r-s436",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00AB5A40",
+  "name": "idmap_insert_large",
+  "file": "fn_00ab5a40.rs",
+  "lane": "r-s436",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00AB5AF0",
+  "name": "idmap_insert_named",
+  "file": "fn_00ab5af0.rs",
+  "lane": "r-s436",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00AB5BB0",
   "name": "idmap_init",
   "file": "fn_00ab5bb0.rs",
@@ -2091,6 +2187,14 @@
   "address": "0x00AB5DD0",
   "name": "stream_append_handle",
   "file": "fn_00ab5dd0.rs",
+  "lane": "r-s436",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00AB6110",
+  "name": "idmap_clone",
+  "file": "fn_00ab6110.rs",
   "lane": "r-s436",
   "outcome": "not_reached",
   "reason": ""

@@ -24,7 +24,13 @@ lf_checker_rt::export!(thiscall, rw_00ab6740(this: u32, flag: u32) -> u32 {
         (this as *mut u8).write(0);
         lf_checker_rt::callee_thiscall!(SETUP, u32, this.wrapping_add(SUB_OFF), LANES, 1);
         (this as *mut u8).write(0);
-        lf_checker_rt::callee_thiscall!(REGISTER, u32, flag, MAGIC, this);
+        lf_checker_rt::callee_thiscall!(
+            REGISTER,
+            u32,
+            flag,
+            lf_checker_rt::relocated(MAGIC),
+            this
+        );
         0
     }
 });

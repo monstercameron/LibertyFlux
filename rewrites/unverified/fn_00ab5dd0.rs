@@ -9,8 +9,8 @@
 ///
 /// Callees: 1 = handle resolver (stdcall, two words).
 ///
-/// Original: 0x00ab5dd0 (cdecl, two stack words).
-lf_checker_rt::export!(cdecl, rw_00ab5dd0(a: u32, b: u32) -> u32 {
+/// Original: 0x00ab5dd0 (stdcall, two stack words).
+lf_checker_rt::export!(stdcall, rw_00ab5dd0(a: u32, b: u32) -> u32 {
     unsafe {
         const RESOLVER: u32 = 1;
         const TABLE: u32 = 0x0150_E100;
