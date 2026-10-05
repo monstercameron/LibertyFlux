@@ -9,6 +9,29 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming the script camera instruction family</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-77"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-77</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>One batch of 150 consecutive functions turned out to be almost entirely the scripted camera system: per-instruction factory functions, one execute override per instruction class, and the sequence machinery that queues and runs them. All 150 were named, and reading the sequence pump fixed the meaning of two vtable slots for the whole family at once.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One batch of 150 consecutive functions turned out to be almost entirely the scripted camera system: per-instruction factory functions, one execute override per instruction class, and the sequence machinery that queues and runs them. All 150 were named, and reading the sequence pump fixed the meaning of two vtable slots for the whole family at once.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed functions, working out what the group is about first and then naming each function with a confidence level.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into 41 instruction factories, 89 virtual execute overrides, and 20 helpers. Each factory allocates one instruction object, installs that class's vtable, stores the script arguments, and is called by exactly one script-native handler.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The out-of-batch sequence pump shows what the two vtable slots mean: slot 2 runs exactly once per instruction the first time it is reached, then slot 1 is polled every frame and the sequence advances only when it reports done. So slot 2 is execute and slot 1 is a completion check. Only the wait instruction overrides slot 1, with an elapsed-time test; its execute only records the start time.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The submit helper used across the subsystem appends an instruction to the open sequence when one is open, and otherwise executes it immediately and deletes it, which independently confirms the execute meaning of slot 2.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three sibling point-the-camera instruction classes share a single execute body. Two near-identical sequence-reset loops exist with different codegen, one used from init paths and one from reset paths.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; A camera sequence slot holds an instruction list, a current index, a count, and a state of free, stopped, or processing, with ten slots in the manager.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Factories follow the existing family convention with a create suffix, and every slot 2 override is named execute on its own class. The next naming lane covering instruction families should read the dispatch site first: fifteen minutes there fixed the verb for ninety functions here. Caller discovery must byte-scan for call opcodes rather than linear-sweep disassembling the code section, because the sweep desynchronises on the encrypted prefix and silently finds nothing.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Build one evidence table per batch function with its head disassembly, referenced strings, imports called, direct callees with merged names, byte-scan callers, and data references resolved back to vtable bases and classes. Confirm each factory's class from the vtable it installs, each override's class from the vtable slot that points at it, and read the small helpers fully.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Linear-sweep caller search returned zero hits for the whole batch before the encrypted-prefix desync was spotted; the byte scan then found hundreds of calls. One native-handler caller mapping carries a bogus single-letter native name, so the factory name there comes from its installed vtable instead. Two log timestamps were written from memory and one was badly wrong; the machine clock is now the only source used.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming an audio-and-camera stretch: slots, hashes and fades</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-76"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-76</id>
@@ -1033,27 +1056,5 @@
 &lt;p&gt;Disassemble the statistic add routine and trace the stack offsets of the spill store and the helper call: the store lands one word above the slot the helper reads. Then run the checker contract for the function with a rewrite that passes the computed sum: every trial that reaches the helper call fails on that argument, showing the entry register value instead.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The first probe failures looked paradoxical: the helper received a tiny value while the recorded total was large, which no arithmetic could explain. The paradox resolved only after re-deriving every stack offset from the entry pushes. A second function initially failed the same way: its low-byte test reads one word above its own argument, which is caller stack, not the argument. Both cases were the same lesson: trust the offsets, not the apparent intent.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A wrong rewrite passed, and it should not have</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b303"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b303</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>A deliberately wrong rewrite that stored a table row at the wrong index passed its proof contract on every trial, which exposed a soundness hole in the checker's comparison of written global values: only the start of each watched region is recorded, never the address of each write.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A deliberately wrong rewrite that stored a table row at the wrong index passed its proof contract on every trial, which exposed a soundness hole in the checker's comparison of written global values: only the start of each watched region is recorded, never the address of each write.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite a batch of six network-subsystem functions in Rust and prove each one identical to the original with the project's checker, giving every function its own deliberately wrong version that must fail the same proof.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Five of the six functions were verified at 1200 trials each with their wrong versions caught. The sixth was deferred on time with a passing first stage and a written plan for the rest.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One wrong version changed a table scan from strict to non-strict comparison, so tied rows resolved to the last index instead of the first. It passed every trial. The cause is in the checker's write log: for each changed word it records the watched region's base address instead of the word's own address, so identical values stored at different offsets inside one region compare equal. The heap and stack comparisons both use exact offsets, which is why only globals are affected.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Declaring one watched region per word restores exact comparison: the same wrong version then fails immediately, showing the two differing addresses. All of this lane's globals contracts were rewritten that way.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Earlier verdicts that watch multi-word regions are weaker than they look wherever a rewrite could misplace a store without changing the stored values or their order. Offset errors that reorder differently-valued writes were always caught.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;The defect was reported to the coordinator with a reproducer (the wrong version plus a forced-tie contract) and a suggested one-line fix. Until the checker is fixed, lanes should declare single-word watched regions. A re-run sweep of earlier multi-word-region verdicts was recommended.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Take any verified function that stores the same values at an index chosen by the trial, write a wrong version that picks a different index with equal values in the same order, and run it against a contract with one wide watched region: it passes. Split the region into one word each and it fails.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The escaping wrong version looked impossible for a while: the tie trials demonstrably ran, the comparison code looked sound at first glance, and the heap behaviour was correct, which kept pointing suspicion at the contract instead of the checker. Printing both sides' raw write logs side by side showed identical entries for different addresses and ended the hunt. Two smaller environment snags cost a few minutes each: a rewrite library stays locked after a worker uses it, so each rebuild went under a new file name, and the driver overwrites the lane results file, so all driver output went to a separate folder.&lt;/p&gt;</content>
   </entry>
 </feed>
