@@ -20,8 +20,6 @@ lf_checker_rt::export!(thiscall, rw_008dfd30(this: u32, arg0: u32, arg1: u32) ->
         const OUT_OFF: u32 = 0x48;
         const FLAG_OFF: u32 = 0x59;
         const FLAG_BIT: u8 = 4;
-        const I32_MAX_PLUS_1: f32 = 2147483648.0;
-        const I32_MIN: f32 = -2147483648.0;
 
         #[inline(always)]
         fn add(a: f32, b: f32) -> f32 {
@@ -44,14 +42,33 @@ lf_checker_rt::export!(thiscall, rw_008dfd30(this: u32, arg0: u32, arg1: u32) ->
             }
             t
         }
-        /// `cvttss2si` in full: truncate toward zero, `0x80000000` for NaN
-        /// and out-of-range inputs (what Rust's `as` would saturate).
+        /// `cvttss2si` in full, computed with integers: truncate toward zero,
+        /// `0x80000000` for NaN and out-of-range inputs. Deliberately not
+        /// written as a guarded `x as i32`: the compiler merges such a guard
+        /// with the saturating cast into saturation fixups (clamping toward
+        /// `i32::MAX`/zero) instead of preserving invalid-to-`0x80000000`.
         #[inline(always)]
         fn cvtt(x: f32) -> u32 {
-            if x.is_nan() || x >= I32_MAX_PLUS_1 || x < I32_MIN {
-                0x8000_0000
+            let b = x.to_bits();
+            let exp = (((b >> 23) & 0xff) as i32) - 127;
+            if exp < 0 {
+                // |x| < 1 (zeros, denormals, fractions) truncates to 0.
+                return 0;
+            }
+            if exp >= 31 {
+                // NaN, infinities and |x| >= 2^31 are all invalid; -2^31
+                // itself also encodes as 0x80000000, so no special case.
+                return 0x8000_0000;
+            }
+            let mag = if exp >= 23 {
+                (0x0080_0000 | (b & 0x007f_ffff)) << (exp - 23)
             } else {
-                x as i32 as u32
+                (0x0080_0000 | (b & 0x007f_ffff)) >> (23 - exp)
+            };
+            if b & 0x8000_0000 != 0 {
+                mag.wrapping_neg()
+            } else {
+                mag
             }
         }
         #[inline(always)]

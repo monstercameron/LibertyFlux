@@ -31,7 +31,9 @@ lf_checker_rt::export!(cdecl, rw_008e0710(index: u32) -> u32 {
                 } else {
                     base.wrapping_add(stride.wrapping_mul(index))
                 };
-            (entry as *const u32).read_unaligned()
+            // Kept opaque: a dead slot reads through null and faults, and
+            // the compiler would otherwise fold the null load away.
+            (core::hint::black_box(entry) as *const u32).read_unaligned()
         };
         let slot = lf_checker_rt::global::<u32>(CURRENT);
         let old = slot.read_unaligned();

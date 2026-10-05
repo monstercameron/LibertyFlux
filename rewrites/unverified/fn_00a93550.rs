@@ -9,6 +9,8 @@
 /// (`set+0x00 + stride*i`, stride at `set+0x0c`) is non-null, its head word
 /// is nonzero and its state byte at `+0x54` is nonzero. The verdict byte (1
 /// for live, 0 otherwise) is passed to callee 2 together with the length 1.
+/// The verdict lives in a full word so the checker's word-sized snapshot of
+/// it reads deterministic neighbor bytes.
 ///
 /// Returns 1 in al (upper bytes are call leftovers). Cdecl, no arguments.
 lf_checker_rt::export!(cdecl, rw_00a93550() -> u32 {
@@ -27,7 +29,7 @@ lf_checker_rt::export!(cdecl, rw_00a93550() -> u32 {
         let mut i = FIRST;
         while i < LIMIT {
             let selbase = ((set + SELECT_OFF) as *const u32).read_unaligned();
-            let mut live = 0u8;
+            let mut live = 0u32;
             if (((selbase + i) as *const u8).read() & SKIP_BIT) == 0 {
                 let stride = ((set + STRIDE_OFF) as *const u32).read_unaligned();
                 let base = ((set + BASE_OFF) as *const u32).read_unaligned();
@@ -39,7 +41,7 @@ lf_checker_rt::export!(cdecl, rw_00a93550() -> u32 {
                     live = 1;
                 }
             }
-            lf_checker_rt::callee_cdecl!(2, u32, &live as *const u8 as u32, 1);
+            lf_checker_rt::callee_cdecl!(2, u32, &live as *const u32 as u32, 1);
             i += 1;
         }
         1

@@ -285,8 +285,10 @@ lf_checker_rt::export!(thiscall, rw_0096f210(this: u32) -> u32 {
                 );
             }
         }
-        // State query with out-byte.
-        let mut outbyte: u32 = 0;
+        // State query with out-byte. The original zeroes only the low byte
+        // of a slot still holding |f14b| above it, and the call-time
+        // snapshot observes the whole word: reproduce it exactly.
+        let mut outbyte: u32 = af14.to_bits() & 0xffffff00;
         let al10: u32 = lf_checker_rt::callee_thiscall!(
             C_STATE, u32, this, &outbyte as *const u32 as u32, 0
         );

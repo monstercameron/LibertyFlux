@@ -9,7 +9,8 @@
 /// set, or while the row address (`set+0x00 + stride*i`, stride at
 /// `set+0x0c`) is null. A nonzero flag byte dispatches the index to callee 3;
 /// a zero flag byte dispatches to callee 4 only when the row's head word is
-/// nonzero and its state byte at `+0x54` is nonzero.
+/// nonzero and its state byte at `+0x54` is nonzero. The flag is a full word:
+/// the checker's scripted callee write is word-sized.
 ///
 /// Returns 1 in al (upper bytes are call leftovers). Cdecl, no arguments.
 lf_checker_rt::export!(cdecl, rw_00a934d0() -> u32 {
@@ -27,8 +28,8 @@ lf_checker_rt::export!(cdecl, rw_00a934d0() -> u32 {
         lf_checker_rt::callee_cdecl!(1, u32, scratch.as_mut_ptr() as u32, 4);
         let mut i = FIRST;
         while i < LIMIT {
-            let mut flag = 0u8;
-            lf_checker_rt::callee_cdecl!(2, u32, &mut flag as *mut u8 as u32, 1);
+            let mut flag = 0u32;
+            lf_checker_rt::callee_cdecl!(2, u32, &mut flag as *mut u32 as u32, 1);
             let killed =
                 (lf_checker_rt::global::<u32>(FLAG_WORD).read_unaligned() >> 8) & 0xff;
             if killed == 0 {

@@ -24,6 +24,9 @@ lf_checker_rt::export!(cdecl, rw_008dfea0(index: u32, value: u32) -> u32 {
         } else {
             base.wrapping_add(stride.wrapping_mul(index))
         };
+        // Kept opaque: a dead slot stores through null and faults, and the
+        // compiler would otherwise fold the null store away (see fn_008e07a0).
+        let entry = core::hint::black_box(entry);
         (entry as *mut u32).write_unaligned(value);
         if value != 0 {
             lf_checker_rt::callee_cdecl!(CALLEE_NOTIFY, u32, index);

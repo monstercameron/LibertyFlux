@@ -391,7 +391,7 @@ unsafe fn drain_records(
         while n != 0 {
             if rdu8(esi, R_LIVE) != 0 {
                 if rdu8(esi, R_MODE) != 0 {
-                    refresh_record(edi, esi, slot18);
+                    refresh_record(edi, esi, slot18, slot14);
                 } else {
                     let obj = rdu(esi, R_OBJ);
                     if obj != 0 {
@@ -421,7 +421,9 @@ unsafe fn drain_records(
 }
 
 /// Refresh one live record in mode != 0.
-unsafe fn refresh_record(edi: u32, esi: u32, slot18: &mut f32) {
+unsafe fn refresh_record(
+    edi: u32, esi: u32, slot18: &mut f32, slot14w: &mut u32,
+) {
     unsafe {
         let ctx = rdu(esi, R_CTX);
         if ctx == 0 {
@@ -455,17 +457,16 @@ unsafe fn refresh_record(edi: u32, esi: u32, slot18: &mut f32) {
         xx0 *= x5;
         let slot28 = x5;
         x1 += xx0;
-        let slot14l = x1;
+        *slot14w = x1.to_bits();
         if is_inf_or_nan_bits(x1) {
             return;
         }
         let obj = rdu(esi, R_OBJ);
-        let mut ran_tls = false;
         if rdu8(obj, V_KIND) == KIND_WANT {
             let ctx3 = rdu(esi, R_CTX);
             let r: f32 =
                 callee_thiscall!(12, f32, ctx3, relocated(S_COLLISION));
-            let slot0c = r;
+            let filt_ans = r;
             let flag = g32(G_HASH_FLAG2);
             let hash = if flag & 1 == 0 {
                 global::<u32>(G_HASH_FLAG2).write_unaligned(flag | 1);
@@ -481,11 +482,10 @@ unsafe fn refresh_record(edi: u32, esi: u32, slot18: &mut f32) {
             let vt = rdu(obj2, V_VT);
             let f: extern "stdcall" fn(u32, u32, u32) -> u32 =
                 core::mem::transmute(rdu(vt, 8) as usize);
-            f(hash, slot0c.to_bits(), obj2);
+            f(hash, filt_ans.to_bits(), obj2);
             // The filter answer gates the TLS block: equal to zero
             // (including -0.0, excluding NaN) runs it.
-            if slot0c == 0.0 {
-                ran_tls = true;
+            if filt_ans == 0.0 {
                 let tslot = g32(G_TLS_SLOT);
                 let tls = tls_slot(tslot as usize);
                 let tidx = rdu(tls, 0x70);
@@ -512,7 +512,6 @@ unsafe fn refresh_record(edi: u32, esi: u32, slot18: &mut f32) {
                 }
             }
         }
-        let _ = (ran_tls, slot14l, slot20, slot24, slot28);
         // Router block over the measured energy.
         let mut e3 = x3;
         let mut e4 = x4;
@@ -674,4 +673,85 @@ unsafe fn drain_pending(
             }
         }
     }
+}
+
+/// Listener resolve, positional updates, emitters, wave sweep, throttle.
+unsafe fn tail_section(
+    edi: u32, arg: u32, _slot10: u32, slot1c_in: u32, slot14: &mut u32,
+) {
+    unsafe {
+        let tslot = g32(G_TLS_SLOT);
+        let tls = tls_slot(tslot as usize);
+        let tidx = rdu(tls, 0x70);
+        let base =
+            relocated(G_PAIR_TAB).wrapping_add(tidx.wrapping_mul(64));
+        let b0 = rdf(base, 0);
+        let b1 = rdf(base, 4);
+        let b2 = rdf(base, 8);
+        // setae after comiss(value, ref): set unless strictly below.
+        let above = gf(G_EARSHOT) >= gf(K_EARSHOT_REF);
+        let setae = above as u8;
+        *slot14 = (*slot14 & 0xffffff00) | (setae as u32);
+        let heard: u32 = callee_cdecl!(19, u32,);
+        let left = g32(G_SI_BASE).wrapping_sub(heard);
+        let setb = (left < 0x4e20) as u8;
+        let slot1c = (slot1c_in & 0xffffff00) | (setb as u32);
+        let mut slot20 = [b0.to_bits(), b1.to_bits(), b2.to_bits(), 0u32];
+        // Word 3 is never written (stack fill, defined 0).
+        for _ in 0..3u32 {
+            let n = rdu16(edi, O_EMIT_N) as u32;
+            let cur = rdu(edi, O_EMIT_CUR);
+            if cur < n {
+                let this = rdu(edi, O_EMIT_BASE)
+                    .wrapping_add(cur.wrapping_mul(EMIT_STRIDE));
+                let a2 = (*slot14 & 0xffffff00) | (setae as u32);
+                let a3 = (slot1c & 0xffffff00) | (setb as u32);
+                let _: u32 = callee_thiscall!(
+                    20, u32, this, arg, slot20.as_mut_ptr() as u32, a2, a3
+                );
+            }
+            // Cursor advance with wraparound (0 on a zero count is
+            // unreachable: the divisor is pinned nonzero).
+            let curn = rdu(edi, O_EMIT_CUR);
+            let nn = rdu16(edi, O_EMIT_N) as u32;
+            wru(edi, O_EMIT_CUR, curn.wrapping_add(1) % nn);
+        }
+        let wn = rdu16(edi, O_WAVE_N) as u32;
+        if wn > 0 {
+            for _ in 0..7u32 {
+                let wc = rdu(edi, O_WAVE_CUR);
+                let this = rdu(edi, O_WAVE_BASE)
+                    .wrapping_add(wc.wrapping_mul(WAVE_STRIDE));
+                let _: u32 = callee_thiscall!(21, u32, this);
+                let wcn = rdu(edi, O_WAVE_CUR);
+                wru(edi, O_WAVE_CUR, wcn.wrapping_add(1) % wn);
+            }
+            let wbase = rdu(edi, O_WAVE_BASE);
+            let amp = g32(G_WAVE_AMP);
+            let mut off: u32 = 0;
+            let mut k: u32 = 0;
+            while k < wn {
+                let ent = wbase.wrapping_add(off);
+                if rdu8(ent, 0x150) != 0 {
+                    let _: u32 =
+                        callee_thiscall!(22, u32, ent, amp);
+                }
+                off = off.wrapping_add(WAVE_STRIDE);
+                k = k.wrapping_add(1);
+            }
+        }
+        // Throttled maintenance: x mod 0x708 by multiply-shift.
+        let x = g32(G_THROTTLE);
+        let q = (((x as u64).wrapping_mul(THROTTLE_MUL as u64) >> 32) >> 10) as u32;
+        let rem = x.wrapping_sub(q.wrapping_mul(THROTTLE_MOD));
+        if rem != 0 {
+            let _: u32 = callee_cdecl!(23, u32,);
+        }
+        let _: u32 = callee_thiscall!(24, u32, 0);
+    }
+}
+
+#[inline(always)]
+unsafe fn gf(va: u32) -> f32 {
+    unsafe { *global::<f32>(va) }
 }
