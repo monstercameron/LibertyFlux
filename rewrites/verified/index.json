@@ -82548,10 +82548,28 @@
   "lane": "r-s426"
  },
  {
+  "address": "0x00C05D90",
+  "name": "stream_maybe_release_slot",
+  "kind": "function",
+  "file": "functions/fn_00c05d90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
   "address": "0x00C064C0",
   "name": "stream_set_field24",
   "kind": "function",
   "file": "functions/fn_00c064c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C064D0",
+  "name": "stream_set_name_if_present",
+  "kind": "function",
+  "file": "functions/fn_00c064d0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s426"
@@ -82566,6 +82584,15 @@
   "lane": "r-s426"
  },
  {
+  "address": "0x00C06650",
+  "name": "stream_pair_reset",
+  "kind": "function",
+  "file": "functions/fn_00c06650.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
   "address": "0x00C06680",
   "name": "stream_view_init_defaults",
   "kind": "function",
@@ -82575,10 +82602,73 @@
   "lane": "r-s426"
  },
  {
+  "address": "0x00C06D90",
+  "name": "stream_alloc_slot_array",
+  "kind": "function",
+  "file": "functions/fn_00c06d90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C07320",
+  "name": "stream_compact_slots_from",
+  "kind": "function",
+  "file": "functions/fn_00c07320.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C07510",
+  "name": "stream_teardown_and_free",
+  "kind": "function",
+  "file": "functions/fn_00c07510.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C07530",
+  "name": "stream_pair_forward_reset",
+  "kind": "function",
+  "file": "functions/fn_00c07530.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C07780",
+  "name": "stream_set_slot_limit24",
+  "kind": "function",
+  "file": "functions/fn_00c07780.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C07800",
+  "name": "stream_set_slot_limit20",
+  "kind": "function",
+  "file": "functions/fn_00c07800.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
   "address": "0x00C078A0",
   "name": "stream_slot_ptr_at",
   "kind": "function",
   "file": "functions/fn_00c078a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C07930",
+  "name": "stream_get_or_create_root",
+  "kind": "function",
+  "file": "functions/fn_00c07930.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s426"
@@ -87340,6 +87430,15 @@
   "name": "CTaskComplexFollowLeaderAnyMeans::vf20",
   "kind": "function",
   "file": "functions/fn_00cd7c40.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b411"
+ },
+ {
+  "address": "0x00CD7DF0",
+  "name": "CTaskComplexFollowLeaderInFormation::vf20",
+  "kind": "function",
+  "file": "functions/fn_00cd7df0.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b411"
