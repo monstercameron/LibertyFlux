@@ -222,7 +222,8 @@ unsafe fn ca7ca0_leg2e2(this: u32) -> u32 {
         let hped = rd32(this.wrapping_add(H_PED));
         let link = rd32(hped.wrapping_add(PED_LINK));
         if link == 0 {
-            return 0;
+            // Bare exit keeps the ped pointer in eax.
+            return hped;
         }
         if (hped.wrapping_add(PED_READY) as *const u8).read() & READY_BIT == 0 {
             return hped;
@@ -261,9 +262,7 @@ unsafe fn ca7ca0_leg38d(this: u32, edi: u32) -> u32 {
             wr32(made.wrapping_add(0x60), rd32(made.wrapping_add(0x60)) | 8);
             let hped = rd32(this.wrapping_add(H_PED));
             let mid = rd32(hped.wrapping_add(PED_LINK));
-            return lf_checker_rt::callee_thiscall!(
-                8, u32, mid.wrapping_add(GATE_OFF), edi, 1
-            );
+            return lf_checker_rt::callee_thiscall!(8, u32, mid, edi, 1);
         }
         let fac = ca7ca0_factory();
         if fac == 0 {
@@ -443,7 +442,8 @@ unsafe fn ca7ca0_leg3fe(this: u32, edi: u32) -> u32 {
         }
         let link = rd32(hped.wrapping_add(PED_LINK));
         if link == 0 {
-            return 0;
+            // Bare exit keeps the ped pointer in eax.
+            return hped;
         }
         if hped == rd32(link.wrapping_add(LINK_BACK)) {
             return link;

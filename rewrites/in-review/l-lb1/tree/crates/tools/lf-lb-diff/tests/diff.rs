@@ -30,7 +30,7 @@ mod x86 {
         pub call: fn(u32, u32) -> u32,
     }
 
-    include!("diff_gen.rs");
+    include!("support/diff_gen.rs");
 
     /// Small deterministic generator.
     struct Rng(u64);
@@ -367,7 +367,8 @@ mod x86 {
             let Some(view) = store.fetch(desc.board_id) else {
                 return 0;
             };
-            match store.classify(view.primary[index as usize]) {
+            let entry = view.primary[index as usize];
+            match store.classify(entry) {
                 1 => 8,
                 2 | 3 => 8,
                 5 => 4,
@@ -384,7 +385,8 @@ mod x86 {
             let Some(view) = store.fetch(desc.board_id) else {
                 return NOT_FOUND;
             };
-            match store.classify(view.primary[index as usize]) {
+            let entry = view.primary[index as usize];
+            match store.classify(entry) {
                 1 => 0,
                 2 => 0,
                 3 => 3,
@@ -501,8 +503,9 @@ mod x86 {
             let mut distinguished = false;
             for input in inputs(slot, case_idx) {
                 image.fill(input.seed);
-                let a = &mut image.words[0..TABLE_WORDS];
-                let b = &mut image.words[512..512 + TABLE_WORDS];
+                let (front, back) = image.words.split_at_mut(512);
+                let a = &mut front[0..TABLE_WORDS];
+                let b = &mut back[0..TABLE_WORDS];
                 match slot {
                     Slot::Vf6 | Slot::Vf13 => {
                         let bound = if (input.count as i32) > 0 {

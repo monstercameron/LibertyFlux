@@ -255,7 +255,7 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
             }
             wr8(eax.wrapping_add(0xaa), 0);
             lf_checker_rt::callee_cdecl!(C_CKY, u32,);
-            return 0;
+            return eax;
         }
         // Main path.
         let obj0 = rd32(this.wrapping_add(T_OBJ));
@@ -285,8 +285,8 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
             } else {
                 eax = lf_checker_rt::callee_cdecl!(C_ALT, u32, nid);
             }
+            wr32(this.wrapping_add(T_T170), rd32(fp(F_TD)));
         }
-        wr32(this.wrapping_add(T_T170), rd32(fp(F_TD)));
 
         let obj1 = rd32(this.wrapping_add(T_OBJ));
         let ok2: u8 =
