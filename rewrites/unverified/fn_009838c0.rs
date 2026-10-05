@@ -291,8 +291,9 @@ unsafe fn main_path(esi: u32, farg: f32) {
         lerp1 *= rdf(esi, F_LEVEL);
         lerp1 += rdf(ttab, o.wrapping_add(4));
         // Transform the pair; the answers come back through the
-        // out-words, followed by a zero word the frame commit reads.
-        let mut inout = [lerp0.to_bits(), lerp1.to_bits(), 0u32, 0u32, 0u32];
+        // out-words, followed by a zero word and an untouched fill
+        // word the frame commit reads.
+        let mut inout = [lerp0.to_bits(), lerp1.to_bits(), 0u32, 0u32, 0u32, 0u32];
         let _: u32 = callee_thiscall!(
             C_XFORM, u32,
             inout.as_mut_ptr().add(2) as u32,
@@ -333,22 +334,25 @@ unsafe fn main_path(esi: u32, farg: f32) {
         }
         // Program the voice: filter, shape, route by index, commit.
         let r1: f32 = callee_thiscall!(C_FILT, f32, relocated(O_FILT_A), x2.to_bits());
-        let slot10 = r1.to_bits();
         xx0 = r1 * slot_c;
+        // The shaper's answer overwrites the filter's in the shared
+        // slot, so the router below receives r2, not r1.
         let r2: f32 = callee_cdecl!(C_SHAPE, f32, xx0.to_bits());
         let voice = rdu(edi, 0);
         let this1 = resolve_voice(voice);
-        let _: u32 = callee_thiscall!(C_ROUTE2, u32, this1, slot10);
-        let _r3: f32 = callee_thiscall!(C_FILT, f32, relocated(O_FILT_B), r2.to_bits());
+        let _: u32 = callee_thiscall!(C_ROUTE2, u32, this1, r2.to_bits());
+        // Both filter calls below take the gain ratio, which sits in
+        // its own slot untouched by the shaper's store.
+        let _r3: f32 = callee_thiscall!(C_FILT, f32, relocated(O_FILT_B), x2.to_bits());
         let t: u32 = callee_cdecl!(C_TRUNC, u32,);
         let voice2 = rdu(edi, 0);
         let this2 = resolve_voice(voice2);
         let _: u32 = callee_thiscall!(C_ROUTE1, u32, this2, t);
-        let r4: f32 = callee_thiscall!(C_FILT, f32, relocated(O_FILT_C), r2.to_bits());
+        let r4: f32 = callee_thiscall!(C_FILT, f32, relocated(O_FILT_C), x2.to_bits());
         let this3 = rdu(edi, 0);
         let _: u32 = callee_thiscall!(C_COMMIT_V, u32, this3, r4.to_bits());
         let this4 = rdu(edi, 0);
-        let _: u32 = callee_thiscall!(C_COMMIT_F, u32, this4, inout.as_mut_ptr().add(1) as u32);
+        let _: u32 = callee_thiscall!(C_COMMIT_F, u32, this4, inout.as_mut_ptr().add(2) as u32);
         exit_slot(esi);
     }
 }
@@ -407,7 +411,9 @@ unsafe fn second_half(esi: u32) {
                     callee_thiscall!(C_FILT, f32, relocated(O_FILT_D), bf.to_bits());
                 let x0m = r5 * sel;
                 let r6: f32 = callee_cdecl!(C_SHAPE, f32, x0m.to_bits());
-                e50[1] = r6.to_bits();
+                // The store lands in the struct's first word: the
+                // cdecl argument is still on the stack above it.
+                e50[0] = r6.to_bits();
                 if rdu8(esi, B_FLAG151) == 0 {
                     let _: u32 = callee_thiscall!(
                         C_SUBMIT, u32, relocated(O_SPAWN), relocated(S_SUB_A),
