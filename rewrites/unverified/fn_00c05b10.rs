@@ -2,7 +2,7 @@
 /// Dispatch a streaming request by its mode field.
 ///
 /// Returns quietly when the flag at `this`+1 is set, when the request id at
-/// +8 is -1, or when the lookup helper (cdecl/2: id, 1) answers null. For a
+/// +8 is -1, or when the lookup helper (cdecl/2: 1, id) answers null. For a
 /// mode at +0xc of -3, -2 or -1, publishes 0x27, 0x25 or 0x14 to the mode
 /// global, notifies through the notify helper (thiscall/1 on the fixed
 /// notify object with the lookup answer) and restores the global. For any
@@ -65,7 +65,7 @@ lf_checker_rt::export!(thiscall, rw_00c05b10(this: u32) -> u32 {
         if id == NONE {
             return 0;
         }
-        let handle: u32 = lf_checker_rt::callee_cdecl!(LOOKUP, u32, id as u32, 1);
+        let handle: u32 = lf_checker_rt::callee_cdecl!(LOOKUP, u32, 1, id as u32);
         if handle == 0 {
             return 0;
         }

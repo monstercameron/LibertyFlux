@@ -6,8 +6,9 @@
 /// allocates through the allocator (cdecl/1 with `src`+0x4c) into `this`+0x48,
 /// and, unless that failed, copies through the copy helper (cdecl/3 with
 /// the fresh buffer, `src`+0x48 and `src`+0x4c) and records `src`+0x4c at
-/// `this`+0x4c. Returns the fresh buffer (or the early value). Thiscall: one
-/// stack word, callee cleans 4.
+/// `this`+0x4c. Returns the copy helper's answer on the full path (0 when
+/// `src` is null or allocation fails, `src` when `src`+0x48 is null).
+/// Thiscall: one stack word, callee cleans 4.
 lf_checker_rt::export!(thiscall, rw_00c06090(this: u32, src: u32) -> u32 {
     unsafe {
 #[inline(always)]
@@ -66,8 +67,8 @@ lf_checker_rt::export!(thiscall, rw_00c06090(this: u32, src: u32) -> u32 {
         if buf == 0 {
             return 0;
         }
-        let _: u32 = lf_checker_rt::callee_cdecl!(COPY, u32, buf, size, aux);
+        let done: u32 = lf_checker_rt::callee_cdecl!(COPY, u32, buf, size, aux);
         wr32(this + AUX_OFF, aux);
-        buf
+        done
     }
 });

@@ -8,7 +8,9 @@
 /// * 0.30103 * 40.0` with the original's SSE operation order (each multiply,
 /// add and subtract pinned through `black_box`). The double table `D` is read
 /// at index `e >> 31`, which is always 0 for a 9-bit value. Cdecl: one stack
-/// word holding float bits, result in ST0.
+/// word holding float bits, result in ST0. The stack check is off: the
+/// original spills intermediate values into its incoming argument slot
+/// (see `narrowed`).
 lf_checker_rt::export!(cdecl, rw_00c058a0(a0: u32) -> f32 {
     unsafe {
 #[inline(always)]

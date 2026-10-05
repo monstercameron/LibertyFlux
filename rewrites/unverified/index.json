@@ -2592,14 +2592,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00C46560",
-  "name": "CCamFinal::vf5",
-  "file": "fn_00c46560.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00C46AA0",
   "name": "CCamFinal::vf1",
   "file": "fn_00c46aa0.rs",
@@ -2608,169 +2600,9 @@
   "reason": null
  },
  {
-  "address": "0x00C46F10",
-  "name": "ccam_indexed_getter",
-  "file": "fn_00c46f10.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C46F90",
-  "name": "ccamscript_ctor",
-  "file": "fn_00c46f90.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C46FB0",
-  "name": "ccamscript_dtor",
-  "file": "fn_00c46fb0.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C47010",
-  "name": "CCamScript::vf5",
-  "file": "fn_00c47010.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00C47030",
   "name": "CCamScript::vf4",
   "file": "fn_00c47030.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C47260",
-  "name": "CCamScript::vf6",
-  "file": "fn_00c47260.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C47280",
-  "name": "ccamscripted_ctor",
-  "file": "fn_00c47280.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C472B0",
-  "name": "ccamscripted_dtor",
-  "file": "fn_00c472b0.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C48210",
-  "name": "CCamScripted::vf8",
-  "file": "fn_00c48210.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C48440",
-  "name": "CCamScripted::vf7",
-  "file": "fn_00c48440.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C484A0",
-  "name": "ccamcinematic_ctor",
-  "file": "fn_00c484a0.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C484C0",
-  "name": "ccamcinematic_dtor",
-  "file": "fn_00c484c0.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C48B90",
-  "name": "ccam_forward_124",
-  "file": "fn_00c48b90.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C48BA0",
-  "name": "ccamcinematic_ensure_slot",
-  "file": "fn_00c48ba0.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C48CE0",
-  "name": "CCamCinematic::vf5",
-  "file": "fn_00c48ce0.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C490D0",
-  "name": "ccamcinematic_maybe_a",
-  "file": "fn_00c490d0.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C490F0",
-  "name": "ccamcinematic_maybe_b",
-  "file": "fn_00c490f0.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C49110",
-  "name": "ccamcinematic_maybe_c",
-  "file": "fn_00c49110.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C49130",
-  "name": "ccamcinematic_push_17",
-  "file": "fn_00c49130.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C49150",
-  "name": "ccamcinematic_push_timed",
-  "file": "fn_00c49150.rs",
-  "lane": "r-s424",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C492E0",
-  "name": "CCamCinematic::vf7",
-  "file": "fn_00c492e0.rs",
   "lane": "r-s424",
   "outcome": "not_reached",
   "reason": null
@@ -2870,6 +2702,14 @@
   "lane": "r-b321",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00CC2230",
+  "name": "ped_task_tick_a (proposed)",
+  "file": "fn_00cc2230.rs",
+  "lane": "r-b416",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00CC2EB0",

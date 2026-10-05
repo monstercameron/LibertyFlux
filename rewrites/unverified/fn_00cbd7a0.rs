@@ -146,8 +146,11 @@ lf_checker_rt::export!(thiscall, rw_00CBD7A0(this: u32, a0: u32, a1: u32, _a2: u
         #[inline(always)]
         unsafe fn emit(arg0: u32, arg1: f32, arg7: f32) {
             unsafe {
+                // The original loads this pointer from a relocated
+                // immediate, so it is the relocated table address.
+                let this = lf_checker_rt::relocated(EMIT_THIS);
                 let _: u32 = lf_checker_rt::callee_thiscall!(
-                    C_EMIT, u32, EMIT_THIS, arg0, arg1.to_bits(), 0, 0, 0, 0, 0xFFFF_FFFF,
+                    C_EMIT, u32, this, arg0, arg1.to_bits(), 0, 0, 0, 0, 0xFFFF_FFFF,
                     arg7.to_bits()
                 );
             }
@@ -266,7 +269,7 @@ lf_checker_rt::export!(thiscall, rw_00CBD7A0(this: u32, a0: u32, a1: u32, _a2: u
                 let al: u8 = if (p1 as u8) != 0 {
                     1
                 } else {
-                    let p2: u32 = lf_checker_rt::callee_cdecl!(C_POLL2, u32);
+                    let p2: u32 = lf_checker_rt::callee_cdecl!(C_POLL2, u32,);
                     if (p2 as u8) != 0 { 1 } else { 0 }
                 };
                 let mut o1: f32;

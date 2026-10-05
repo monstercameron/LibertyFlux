@@ -11,17 +11,20 @@
 /// `end` with its low byte replaced by `extra`'s low byte (the original
 /// keeps that byte in its dead `end` home slot; the rewrite computes the
 /// same value directly). Returns the final span masked to words. The
-/// middle two words are never read.
+/// fourth word is never read.
 ///
-/// Original: 0x0093e070 (cdecl, six stack words; three direct callees).
+/// Original: 0x0093e070 (cdecl, five stack words; three direct callees).
 lf_checker_rt::export!(cdecl, rw_0093e070(
-    base: u32, end: u32, _a2: u32, _a3: u32, extra: u32, run_end: u32,
+    base: u32, end: u32, run_end: u32, _pad: u32, extra: u32,
 ) -> u32 {
     const BUILD: u32 = 1;
     const HEAP_CALLEE: u32 = 2;
     const TAIL: u32 = 3;
     unsafe {
         lf_checker_rt::callee_cdecl!(BUILD, u32, base, end, extra);
+        // Note: the index below stays (end - base) / 4 for every slot; the
+        // original derives it from the range end, not from the cursor.
+        let idx = ((end.wrapping_sub(base)) as i32 >> 2) as u32;
         let mut cur = end;
         if end < run_end {
             loop {
@@ -30,7 +33,6 @@ lf_checker_rt::export!(cdecl, rw_0093e070(
                 if ((slot_val as *const u32).read_unaligned())
                     < ((first as *const u32).read_unaligned())
                 {
-                    let idx = ((cur.wrapping_sub(base)) as i32 >> 2) as u32;
                     (cur as *mut u32).write_unaligned(first);
                     lf_checker_rt::callee_cdecl!(HEAP_CALLEE, u32, base, 0u32, idx, slot_val, extra);
                 }
