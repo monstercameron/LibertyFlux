@@ -10,8 +10,9 @@
 /// (callee 5); a null answer stops. Otherwise a header (callee 6) holding a
 /// count at `+4` and a base at `+8` yields slot `base + count * 8`, the
 /// count is written back incremented, the slot is registered on the resolved
-/// object (callee 7, thiscall), and value and object are stored into the
-/// slot pair. Returns the resolved object in all paths. The trailing
+/// object (callee 7, thiscall), and the aux and value slots are stored into
+/// the slot pair. Returns the value slot on the full path, else the null
+/// object. The trailing
 /// security cookie check (callee 8) preserves registers and is called for
 /// sequence parity. Cdecl, one word.
 lf_checker_rt::export!(cdecl, rw_009D5A40(text: u32) -> u32 {
@@ -64,9 +65,9 @@ lf_checker_rt::export!(cdecl, rw_009D5A40(text: u32) -> u32 {
         hdr.add(COUNT_OFF as usize).write(cnt.wrapping_add(1));
         let slot: u32 = base.wrapping_add(cnt.wrapping_mul(SLOT_STRIDE));
         let _: u32 = lf_checker_rt::callee_thiscall!(REGISTER, u32, obj, slot);
-        (slot as *mut u32).write(o_val);
-        (slot.wrapping_add(4) as *mut u32).write(obj);
+        (slot as *mut u32).write(o_aux);
+        (slot.wrapping_add(4) as *mut u32).write(o_val);
         let _: u32 = lf_checker_rt::callee_cdecl!(COOKIE, u32,);
-        obj
+        o_val
     }
 });

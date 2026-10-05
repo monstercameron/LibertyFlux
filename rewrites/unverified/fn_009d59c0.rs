@@ -8,8 +8,9 @@
 /// slot to an index, or -1 (equality compare, signedness-neutral) to stop.
 /// Otherwise the dword at `TABLE + index * 4` (a relocated global) is the
 /// target object; a null entry stops. The key slot is converted (callee 4)
-/// and the value slot plus the converted key are dispatched on the object
-/// (callee 5, thiscall). The trailing security cookie check (callee 6)
+/// and the value in the value slot plus the converted key are dispatched
+/// by value on the object (callee 5, thiscall). The trailing security
+/// cookie check (callee 6)
 /// preserves registers and is called for sequence parity. Cdecl, one word.
 lf_checker_rt::export!(cdecl, rw_009D59C0(text: u32) -> u32 {
     unsafe {
@@ -47,7 +48,7 @@ lf_checker_rt::export!(cdecl, rw_009D59C0(text: u32) -> u32 {
         let k: u32 = lf_checker_rt::callee_cdecl!(
             CONVERT, u32, (&mut o_key as *mut u32) as u32, 0);
         let r: u32 = lf_checker_rt::callee_thiscall!(
-            DISPATCH, u32, tgt, (&mut o_val as *mut u32) as u32, k);
+            DISPATCH, u32, tgt, o_val, k);
         let _: u32 = lf_checker_rt::callee_cdecl!(COOKIE, u32,);
         r
     }
