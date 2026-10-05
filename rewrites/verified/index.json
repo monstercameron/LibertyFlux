@@ -39375,6 +39375,15 @@
   "lane": "r-s106"
  },
  {
+  "address": "0x009AAE30",
+  "name": "MOBILE_CHAT",
+  "kind": "function",
+  "file": "functions/fn_009aae30.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b367"
+ },
+ {
   "address": "0x009AB350",
   "name": "audWeatherAudioEntity::audWeatherAudioEntity",
   "kind": "function",
@@ -74664,6 +74673,51 @@
   "lane": "r-b155"
  },
  {
+  "address": "0x00BF7810",
+  "name": "task_ctor_36_vec_bytes",
+  "kind": "function",
+  "file": "functions/fn_00bf7810.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF7860",
+  "name": "task_ctor_35_flags_packed",
+  "kind": "function",
+  "file": "functions/fn_00bf7860.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF78D0",
+  "name": "task_ctor_34_float_pair",
+  "kind": "function",
+  "file": "functions/fn_00bf78d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF7930",
+  "name": "task_ctor_33_quantize",
+  "kind": "function",
+  "file": "functions/fn_00bf7930.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF7980",
+  "name": "task_ctor_2f_vec5_flags",
+  "kind": "function",
+  "file": "functions/fn_00bf7980.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
   "address": "0x00BF7A30",
   "name": "task_vec3_scale_to_bytes_1e",
   "kind": "function",
@@ -74677,6 +74731,51 @@
   "name": "task_vec3_copy_to_18",
   "kind": "function",
   "file": "functions/fn_00bf7a70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF8F90",
+  "name": "task_ctor_3a_sub_flags",
+  "kind": "function",
+  "file": "functions/fn_00bf8f90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF8FF0",
+  "name": "task_ctor_3b_compare_consts",
+  "kind": "function",
+  "file": "functions/fn_00bf8ff0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF9070",
+  "name": "task_ctor_3d_minimal",
+  "kind": "function",
+  "file": "functions/fn_00bf9070.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF90A0",
+  "name": "task_ctor_3c_copy3",
+  "kind": "function",
+  "file": "functions/fn_00bf90a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF90E0",
+  "name": "task_ctor_3e_single_float",
+  "kind": "function",
+  "file": "functions/fn_00bf90e0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s398"
@@ -74713,6 +74812,78 @@
   "name": "task_words_1c_to_scaled_floats",
   "kind": "function",
   "file": "functions/fn_00bf9de0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF9E30",
+  "name": "task_ctor_41_flags_float",
+  "kind": "function",
+  "file": "functions/fn_00bf9e30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF9EB0",
+  "name": "task_ctor_44_trunc_flag",
+  "kind": "function",
+  "file": "functions/fn_00bf9eb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF9F00",
+  "name": "task_ctor_45_branch_flags",
+  "kind": "function",
+  "file": "functions/fn_00bf9f00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF9FA0",
+  "name": "task_ctor_46_single_float",
+  "kind": "function",
+  "file": "functions/fn_00bf9fa0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF9FE0",
+  "name": "task_ctor_43_chain",
+  "kind": "function",
+  "file": "functions/fn_00bf9fe0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BFA030",
+  "name": "task_ctor_40_toggle_float",
+  "kind": "function",
+  "file": "functions/fn_00bfa030.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BFA080",
+  "name": "task_ctor_42_chain",
+  "kind": "function",
+  "file": "functions/fn_00bfa080.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BFA0B0",
+  "name": "task_ctor_3f_toggle",
+  "kind": "function",
+  "file": "functions/fn_00bfa0b0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s398"
