@@ -88,7 +88,14 @@ lf_checker_rt::export!(thiscall, rw_00526a10(this: u32, base: u32, out8: u32, ma
             if skip & 0xFF == 0 {
                 let gate = rd32(table.wrapping_add(row.wrapping_mul(4)));
                 let rank: u32 = lf_checker_rt::callee_thiscall!(5, u32, gate);
-                eax = rank;
+                // The switch decrements the rank first (except on the -1 arm,
+                // which jumps out before it); the decremented value is what a
+                // later budget failure returns in the high bytes.
+                eax = if rank == 0xFFFFFFFF {
+                    rank
+                } else {
+                    rank.wrapping_sub(1)
+                };
                 // Cost class from the rank: ranks 1, 2, 3 and 5 cost 8
                 // cursor steps, every other rank is free.
                 let step: u32 = match rank {

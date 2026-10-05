@@ -21,7 +21,8 @@
 /// its 8 bytes at `+4` to `out_row` and set the flag; the flag is then
 /// stored to `out_flag` either way. For any other entry, advance the cursor
 /// by `step`, clearing the flag when it passes the limit, else asking the
-/// commit helper and, on success, writing bit `i` as a 64-bit mask to
+/// commit helper (which sees the pre-advance slot value) and, on success,
+/// writing bit `i` as a 64-bit mask to
 /// `out_mask` and setting the flag. Returns the flag in the low byte.
 ///
 /// The mask formerly split at bit 32 and bit 64 is written by the same
@@ -115,8 +116,11 @@ lf_checker_rt::export!(thiscall, rw_00594310(this: u32, cursor: u32, out_row: u3
                     }
                     (out_flag as *mut u8).write(flag);
                 } else {
-                    cursor = cursor.wrapping_add(step);
-                    if cursor > limit {
+                    // The original advances its register cursor but passes
+                    // the still-stale argument slot to the commit helper;
+                    // the slot is refreshed only at the loop bottom.
+                    let advanced = cursor.wrapping_add(step);
+                    if advanced > limit {
                         flag = 0;
                     } else {
                         let ok: u32 = lf_checker_rt::callee_thiscall!(
@@ -142,6 +146,7 @@ lf_checker_rt::export!(thiscall, rw_00594310(this: u32, cursor: u32, out_row: u3
                             flag = 1;
                         }
                     }
+                    cursor = advanced;
                 }
             }
             i += 1;
