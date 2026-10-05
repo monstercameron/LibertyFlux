@@ -1976,41 +1976,17 @@
   "reason": null
  },
  {
-  "address": "0x00C3B330",
+  "address": "0x00C3B360",
   "name": "tbd",
-  "file": "fn_00c3b330.rs",
+  "file": "fn_00c3b360.rs",
   "lane": "r-s448",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x00C3B5A0",
+  "address": "0x00C3ECF0",
   "name": "tbd",
-  "file": "fn_00c3b5a0.rs",
-  "lane": "r-s448",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00C3D900",
-  "name": "tbd",
-  "file": "fn_00c3d900.rs",
-  "lane": "r-s448",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00C3EA10",
-  "name": "tbd",
-  "file": "fn_00c3ea10.rs",
-  "lane": "r-s448",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00C3EAB0",
-  "name": "tbd",
-  "file": "fn_00c3eab0.rs",
+  "file": "fn_00c3ecf0.rs",
   "lane": "r-s448",
   "outcome": "not_reached",
   "reason": ""
@@ -2025,147 +2001,147 @@
  },
  {
   "address": "0x00C7FD60",
-  "name": "fn_00c7fd60",
+  "name": "Probe scenario slot `probe`, iterating the owner list for a live entry.",
   "file": "fn_00c7fd60.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "frame_pointer_args"
  },
  {
   "address": "0x00C80840",
-  "name": "fn_00c80840",
+  "name": "Look `id` up in the conversation table and report its two payload words.",
   "file": "fn_00c80840.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "needs_encrypted_code"
  },
  {
   "address": "0x00C80930",
   "name": "CTaskComplexScenario::vf21",
   "file": "fn_00c80930.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "needs_encrypted_code"
  },
  {
   "address": "0x00C80990",
-  "name": "fn_00c80990",
+  "name": "Address row `idx` of the conversation table, or null when out of range.",
   "file": "fn_00c80990.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "needs_encrypted_code"
  },
  {
   "address": "0x00C809B0",
-  "name": "fn_00c809b0",
+  "name": "Name of conversation row `id`, or the unknown-name string when absent.",
   "file": "fn_00c809b0.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "needs_encrypted_code"
  },
  {
   "address": "0x00C809F0",
-  "name": "fn_00c809f0",
+  "name": "Tag word of conversation row `id`, or -1 when absent.",
   "file": "fn_00c809f0.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "needs_encrypted_code"
  },
  {
   "address": "0x00C80AC0",
-  "name": "fn_00c80ac0",
+  "name": "Rewrite the argument through `c1`, then continue at the scenario core.",
   "file": "fn_00c80ac0.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00C80C50",
-  "name": "fn_00c80c50",
+  "name": "Acquire a scenario slot for record `a1`, resolving the slot id first.",
   "file": "fn_00c80c50.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "needs_encrypted_code"
  },
  {
   "address": "0x00C80CA0",
-  "name": "fn_00c80ca0",
+  "name": "Bind record `a0` to slot `a2`, resolving -1 through the slot allocator.",
   "file": "fn_00c80ca0.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "frame_pointer_args"
  },
  {
   "address": "0x00C80D30",
-  "name": "fn_00c80d30",
+  "name": "Query scenario details for subject `a0`, returning a row count or 0.",
   "file": "fn_00c80d30.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "frame_pointer_args"
  },
  {
   "address": "0x00C80E60",
-  "name": "fn_00c80e60",
+  "name": "Classify scenario entry `idx` and report its kind word through `out`.",
   "file": "fn_00c80e60.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "needs_encrypted_code"
  },
  {
   "address": "0x00C80EB0",
   "name": "CTaskComplexSeatedScenario::vf23",
   "file": "fn_00c80eb0.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "needs_encrypted_code"
  },
  {
   "address": "0x00C820E0",
-  "name": "fn_00c820e0",
+  "name": "Detach the child object at `this+0x18` and clear the slot.",
   "file": "fn_00c820e0.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "needs_encrypted_code"
  },
  {
   "address": "0x00C82120",
-  "name": "fn_00c82120",
+  "name": "Store the caller's scratch float into `this+0xac`; return 0.",
   "file": "fn_00c82120.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00C82470",
-  "name": "fn_00c82470",
+  "name": "Emit one record per live owner into `out`, advancing `*cursor` each time.",
   "file": "fn_00c82470.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "frame_pointer_args"
  },
  {
   "address": "0x00C849A0",
-  "name": "fn_00c849a0",
+  "name": "Run the four scenario staging passes over chained scratch buffers.",
   "file": "fn_00c849a0.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "frame_pointer_args"
  },
  {
   "address": "0x00C84A20",
-  "name": "fn_00c84a20",
+  "name": "Report whether the scenario object is in its active state.",
   "file": "fn_00c84a20.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "needs_encrypted_code"
  },
  {
   "address": "0x00C84B60",
-  "name": "fn_00c84b60",
+  "name": "Format the scenario clock as five characters into `dst`.",
   "file": "fn_00c84b60.rs",
   "lane": "r-s442",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "abs_shadow_unavailable"
  },
  {
   "address": "0x00CA00A0",
@@ -2358,14 +2334,6 @@
   "lane": "r-s84",
   "outcome": "not yet run",
   "reason": null
- },
- {
-  "address": "0x00CD6C40",
-  "name": "CTaskSimpleFall::vf17",
-  "file": "fn_00cd6c40.rs",
-  "lane": "r-b444",
-  "outcome": "not_reached",
-  "reason": ""
  },
  {
   "address": "0x00CF8050",
