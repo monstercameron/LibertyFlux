@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: production batch: three task functions verified, one deferred on an unservable read",
+    "title": "Devlog: Eight ped-task builders verified, and one stores uninitialised stack",
     "commit": null,
+    "summary": "Findings from the r-b516 lane.",
+    "changes": [
+      "New devlog entry: Eight ped-task builders verified, and one stores uninitialised stack.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: production batch: three task functions verified, one deferred on an unservable read",
+    "commit": "4522cf4635b6428ca0fddf3323dc8c26a7ddd943",
     "summary": "Findings from the r-b514 lane.",
     "changes": [
       "New devlog entry: production batch: three task functions verified, one deferred on an unservable read.",
