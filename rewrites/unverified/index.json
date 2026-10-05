@@ -168,54 +168,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00519400",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race10NoHolds, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00519400.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x00519850",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race11NoHolds, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00519850.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x00519CB0",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race12NoHolds, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00519cb0.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x0051A110",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race13NoHolds, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_0051a110.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x0051A570",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race14NoHolds, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_0051a570.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x0051A9D0",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race15NoHolds, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_0051a9d0.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
   "address": "0x0051AE30",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race16NoHolds, player_schema::LeaderboardInfo, 10>::vf14",
   "file": "fn_0051ae30.rs",
@@ -293,7 +245,7 @@
   "file": "fn_00528d10.rs",
   "lane": "a-S01",
   "outcome": "not yet run",
-  "reason": ""
+  "reason": "partial verdict (100 trials), full run pending"
  },
  {
   "address": "0x00529170",
@@ -493,7 +445,7 @@
   "file": "fn_005385f0.rs",
   "lane": "a-S01",
   "outcome": "not yet run",
-  "reason": ""
+  "reason": "partial verdict (100 trials), full run pending"
  },
  {
   "address": "0x00538A50",
@@ -549,7 +501,7 @@
   "file": "fn_0054f510.rs",
   "lane": "a-S01",
   "outcome": "not yet run",
-  "reason": ""
+  "reason": "partial verdict (100 trials), full run pending"
  },
  {
   "address": "0x0054F970",
@@ -1389,7 +1341,7 @@
   "file": "fn_00597bf0.rs",
   "lane": "a-S01",
   "outcome": "not yet run",
-  "reason": ""
+  "reason": "partial verdict (100 trials), full run pending"
  },
  {
   "address": "0x00598050",
@@ -1553,7 +1505,7 @@
  },
  {
   "address": "0x00887270",
-  "name": null,
+  "name": "stream_global_init",
   "file": "fn_00887270.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1561,7 +1513,7 @@
  },
  {
   "address": "0x008872F0",
-  "name": null,
+  "name": "stream_slot_lock",
   "file": "fn_008872f0.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1569,7 +1521,7 @@
  },
  {
   "address": "0x00887310",
-  "name": null,
+  "name": "stream_slot_acquire",
   "file": "fn_00887310.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1577,7 +1529,7 @@
  },
  {
   "address": "0x00887380",
-  "name": null,
+  "name": "stream_min_store",
   "file": "fn_00887380.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1585,7 +1537,7 @@
  },
  {
   "address": "0x008873A0",
-  "name": null,
+  "name": "stream_free_pair",
   "file": "fn_008873a0.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1593,7 +1545,7 @@
  },
  {
   "address": "0x008873C0",
-  "name": null,
+  "name": "stream_slot_resolve",
   "file": "fn_008873c0.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1601,7 +1553,7 @@
  },
  {
   "address": "0x00887570",
-  "name": null,
+  "name": "stream_slot_unlock",
   "file": "fn_00887570.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1609,7 +1561,7 @@
  },
  {
   "address": "0x00887860",
-  "name": null,
+  "name": "stream_hash_lookup",
   "file": "fn_00887860.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1617,7 +1569,7 @@
  },
  {
   "address": "0x008878F0",
-  "name": null,
+  "name": "stream_hash_lookup_key",
   "file": "fn_008878f0.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1625,7 +1577,7 @@
  },
  {
   "address": "0x00887990",
-  "name": null,
+  "name": "stream_hash_insert",
   "file": "fn_00887990.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1633,7 +1585,7 @@
  },
  {
   "address": "0x00887B00",
-  "name": null,
+  "name": "stream_object_init",
   "file": "fn_00887b00.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1641,7 +1593,7 @@
  },
  {
   "address": "0x00887BD0",
-  "name": null,
+  "name": "stream_ref_inc",
   "file": "fn_00887bd0.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1649,7 +1601,7 @@
  },
  {
   "address": "0x00887BF0",
-  "name": null,
+  "name": "stream_reset_view",
   "file": "fn_00887bf0.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1657,7 +1609,7 @@
  },
  {
   "address": "0x00887CF0",
-  "name": null,
+  "name": "stream_forward_1",
   "file": "fn_00887cf0.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1665,7 +1617,7 @@
  },
  {
   "address": "0x00887D00",
-  "name": null,
+  "name": "stream_best_slot",
   "file": "fn_00887d00.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1673,7 +1625,7 @@
  },
  {
   "address": "0x00887D60",
-  "name": null,
+  "name": "stream_chain_find",
   "file": "fn_00887d60.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1681,7 +1633,7 @@
  },
  {
   "address": "0x00887DF0",
-  "name": null,
+  "name": "stream_lookup_word",
   "file": "fn_00887df0.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1689,7 +1641,7 @@
  },
  {
   "address": "0x00887E10",
-  "name": null,
+  "name": "stream_rebase",
   "file": "fn_00887e10.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1697,7 +1649,7 @@
  },
  {
   "address": "0x00887EA0",
-  "name": null,
+  "name": "stream_probe_or_tail",
   "file": "fn_00887ea0.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1705,7 +1657,7 @@
  },
  {
   "address": "0x00887EC0",
-  "name": null,
+  "name": "stream_state_probe",
   "file": "fn_00887ec0.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1713,7 +1665,7 @@
  },
  {
   "address": "0x00887F50",
-  "name": null,
+  "name": "stream_forward_word",
   "file": "fn_00887f50.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1721,7 +1673,7 @@
  },
  {
   "address": "0x00888020",
-  "name": null,
+  "name": "stream_slot_ptr",
   "file": "fn_00888020.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1729,7 +1681,7 @@
  },
  {
   "address": "0x00888040",
-  "name": null,
+  "name": "stream_slot_index",
   "file": "fn_00888040.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1737,7 +1689,7 @@
  },
  {
   "address": "0x00888060",
-  "name": null,
+  "name": "stream_close",
   "file": "fn_00888060.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1745,7 +1697,7 @@
  },
  {
   "address": "0x00888980",
-  "name": null,
+  "name": "stream_table_free",
   "file": "fn_00888980.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1753,7 +1705,7 @@
  },
  {
   "address": "0x008889E0",
-  "name": null,
+  "name": "stream_table_free_deep",
   "file": "fn_008889e0.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1761,7 +1713,7 @@
  },
  {
   "address": "0x00888A40",
-  "name": null,
+  "name": "stream_tag_set",
   "file": "fn_00888a40.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1769,7 +1721,7 @@
  },
  {
   "address": "0x00888AD0",
-  "name": null,
+  "name": "stream_tag_set_zero",
   "file": "fn_00888ad0.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1777,7 +1729,7 @@
  },
  {
   "address": "0x00888B20",
-  "name": null,
+  "name": "stream_tag_set_value",
   "file": "fn_00888b20.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1785,7 +1737,7 @@
  },
  {
   "address": "0x00888B70",
-  "name": null,
+  "name": "stream_insert_word",
   "file": "fn_00888b70.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1793,7 +1745,7 @@
  },
  {
   "address": "0x00888B90",
-  "name": null,
+  "name": "stream_hash_regrow",
   "file": "fn_00888b90.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1801,7 +1753,7 @@
  },
  {
   "address": "0x00888C50",
-  "name": null,
+  "name": "stream_hash_regrow_key",
   "file": "fn_00888c50.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1809,7 +1761,7 @@
  },
  {
   "address": "0x00888D30",
-  "name": null,
+  "name": "stream_ref_dec",
   "file": "fn_00888d30.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1817,7 +1769,7 @@
  },
  {
   "address": "0x00888D60",
-  "name": null,
+  "name": "stream_bank_attach",
   "file": "fn_00888d60.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1825,7 +1777,7 @@
  },
  {
   "address": "0x00889530",
-  "name": null,
+  "name": "stream_record_find",
   "file": "fn_00889530.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -1833,7 +1785,7 @@
  },
  {
   "address": "0x008895C0",
-  "name": null,
+  "name": "stream_find_dispatch",
   "file": "fn_008895c0.rs",
   "lane": "r-s480",
   "outcome": "not_reached",
@@ -2400,6 +2352,14 @@
   "reason": null
  },
  {
+  "address": "0x009A2C40",
+  "name": "GIGGLE",
+  "file": "fn_009a2c40.rs",
+  "lane": "r-b555",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x009A3600",
   "name": null,
   "file": "fn_009a3600.rs",
@@ -2628,6 +2588,14 @@
   "name": "pool_emit_positioned",
   "file": "fn_00a8d5f0.rs",
   "lane": "r-s463",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A91840",
+  "name": "tbd",
+  "file": "fn_00a91840.rs",
+  "lane": "r-s477",
   "outcome": "not_reached",
   "reason": null
  },

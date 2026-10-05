@@ -172,11 +172,12 @@ lf_checker_rt::export!(thiscall, rw_0096f210(this: u32) -> u32 {
             }
             d = d.wrapping_add(1);
         }
-        // Double-precision seed conversion, twice.
+        // Double-precision seed conversion, twice. Both blocks convert quo
+        // (eax still holds it after the table loop), not rem.
         let dbl0 = f64::from_bits(rd64(
-            lf_checker_rt::relocated(G_DBLTAB).wrapping_add((rem >> 31).wrapping_mul(8)),
+            lf_checker_rt::relocated(G_DBLTAB).wrapping_add((quo >> 31).wrapping_mul(8)),
         ));
-        let dd = core::hint::black_box(rem as i32 as f64) + core::hint::black_box(dbl0);
+        let dd = core::hint::black_box(quo as i32 as f64) + core::hint::black_box(dbl0);
         let mut h = sub(dd as f32, g32(G_D60));
         h = add(h, g32(G_D05));
         h = mul(h, g32(G_D50));
@@ -197,11 +198,13 @@ lf_checker_rt::export!(thiscall, rw_0096f210(this: u32) -> u32 {
             edi = 0x1f;
         }
         let (sel18, eo): (u32, u32);
+        // jbe taken (f14b<=0 or NaN) keeps the earlier 0x27 and takes edi-1;
+        // not taken stores 0x29 and takes edi+1.
         if f14b > 0.0 {
-            sel18 = 0x27;
+            sel18 = 0x29;
             eo = edi.wrapping_add(1);
         } else {
-            sel18 = 0x29;
+            sel18 = 0x27;
             eo = edi.wrapping_sub(1);
         }
         let af14 = f32::from_bits(
@@ -244,7 +247,7 @@ lf_checker_rt::export!(thiscall, rw_0096f210(this: u32) -> u32 {
             C_MIX, f32, this, f14b.to_bits(), sub(f1cb, k34).to_bits()
         );
         let e4: f32 = lf_checker_rt::callee_thiscall!(
-            C_MIX, f32, this, sub(f1cb, k34).to_bits(), f14b.to_bits()
+            C_MIX, f32, this, sub(f14b, k34).to_bits(), f1cb.to_bits()
         );
         // Four-iteration output loop.
         let mut p14 = this.wrapping_add(0x28cc);
