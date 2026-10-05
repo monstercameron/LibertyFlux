@@ -19,7 +19,7 @@ lf_checker_rt::export!(thiscall, rw_00AC5E70(this: u32) -> u32 {
         const COLOR: u32 = 0x350;
         const ONE: u32 = 0x3f80_0000;
         lf_checker_rt::callee_thiscall!(ALLOC, u32, this, SIZE);
-        (this as *mut u32).write_unaligned(VTABLE);
+        (this as *mut u32).write_unaligned(lf_checker_rt::relocated(VTABLE));
         for i in 0..BODY_WORDS {
             (this.wrapping_add(BODY + i * 4) as *mut u32).write_unaligned(0);
         }

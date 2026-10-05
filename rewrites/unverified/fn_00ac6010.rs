@@ -13,7 +13,7 @@ lf_checker_rt::export!(thiscall, rw_00AC6010(this: u32, source: u32) -> u32 {
         const FIRST: u32 = 0x08;
         let obj = (source.wrapping_add(8) as *const u32).read_unaligned();
         for i in 0..6u32 {
-            let h = lf_checker_rt::callee_thiscall!(LOOKUP, u32, obj, NAMES[i as usize], 1u32);
+            let h = lf_checker_rt::callee_thiscall!(LOOKUP, u32, obj, lf_checker_rt::relocated(NAMES[i as usize]), 1u32);
             (this.wrapping_add(FIRST + i * 4) as *mut u32).write_unaligned(h);
         }
         1

@@ -17,7 +17,7 @@ lf_checker_rt::export!(cdecl, rw_00ABF290(id: u32, time: u32) -> u32 {
         lf_checker_rt::callee_thiscall!(
             INSERT,
             u32,
-            KEYSET,
+            lf_checker_rt::relocated(KEYSET),
             &mut wid as *mut u32 as u32,
             &mut wtime as *mut u32 as u32
         );

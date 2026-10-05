@@ -16,14 +16,14 @@ lf_checker_rt::export!(cdecl, rw_00ABF0C0(time: u32) -> u32 {
         const MISSING: u32 = 0x280;
         const ID_OFF: u32 = 0x10;
         const TIME_OFF: u32 = 0x14;
-        let cur = lf_checker_rt::callee_cdecl!(FETCH, u32, KEYSET);
+        let cur = lf_checker_rt::callee_cdecl!(FETCH, u32, lf_checker_rt::relocated(KEYSET));
         let id = (cur.wrapping_add(ID_OFF) as *const u32).read_unaligned();
         let ct = (cur.wrapping_add(TIME_OFF) as *const f32).read_unaligned();
         if !(ct > f32::from_bits(time)) {
             return MISSING;
         }
         let mut w = [id, ct.to_bits()];
-        lf_checker_rt::callee_thiscall!(PRUNE, u32, KEYSET, &mut w as *mut u32 as u32);
+        lf_checker_rt::callee_thiscall!(PRUNE, u32, lf_checker_rt::relocated(KEYSET), &mut w as *mut u32 as u32);
         lf_checker_rt::callee_cdecl!(INSERT, u32, id, time);
         id
     }

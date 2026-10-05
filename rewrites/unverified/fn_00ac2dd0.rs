@@ -30,7 +30,7 @@ lf_checker_rt::export!(cdecl, rw_00AC2DD0() -> u32 {
         let n0 = if n0 == 3 { 0 } else { n0 };
         let base = (lf_checker_rt::relocated(CUR_BASE) as *const u32).read_unaligned();
         (lf_checker_rt::relocated(PREV_BASE) as *mut u32).write_unaligned(base);
-        let a0 = n0.wrapping_mul(STRIDE0).wrapping_add(BASE0);
+        let a0 = n0.wrapping_mul(STRIDE0).wrapping_add(lf_checker_rt::relocated(BASE0));
         (lf_checker_rt::relocated(CUR0) as *mut u32).write_unaligned(n0);
         (lf_checker_rt::relocated(SLOT0).wrapping_add(n0.wrapping_mul(4)) as *mut u32)
             .write_unaligned(0);
@@ -38,7 +38,7 @@ lf_checker_rt::export!(cdecl, rw_00AC2DD0() -> u32 {
         let n1 = c1.wrapping_add(1);
         let n1 = if n1 == 2 { 0 } else { n1 };
         (lf_checker_rt::relocated(CUR_BASE) as *mut u32).write_unaligned(a0);
-        let a1 = n1.wrapping_mul(STRIDE1).wrapping_add(BASE1);
+        let a1 = n1.wrapping_mul(STRIDE1).wrapping_add(lf_checker_rt::relocated(BASE1));
         (lf_checker_rt::relocated(BASE1REG) as *mut u32).write_unaligned(a1);
         let taken = (lf_checker_rt::relocated(TAKEN_IN) as *const u32).read_unaligned();
         (lf_checker_rt::relocated(QUEUED) as *mut u32).write_unaligned(0);
