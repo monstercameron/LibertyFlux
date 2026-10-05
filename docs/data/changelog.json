@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Naming 150 car-task functions from vtable slots",
+    "title": "Devlog: A player-ped routine reads an uninitialized stack slot",
     "commit": null,
+    "summary": "Findings from the r-b478 lane.",
+    "changes": [
+      "New devlog entry: A player-ped routine reads an uninitialized stack slot.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Naming 150 car-task functions from vtable slots",
+    "commit": "19fe22e2345c43cacaa9199f06f5328502459a3b",
     "summary": "Findings from the nm-105 lane.",
     "changes": [
       "New devlog entry: Naming 150 car-task functions from vtable slots.",
