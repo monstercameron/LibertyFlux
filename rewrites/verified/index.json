@@ -40968,10 +40968,118 @@
   "lane": "r-s429"
  },
  {
+  "address": "0x0093E340",
+  "name": "stream_density_raise",
+  "kind": "function",
+  "file": "functions/fn_0093e340.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093E410",
+  "name": "stream_epoch_tick",
+  "kind": "function",
+  "file": "functions/fn_0093e410.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093E480",
+  "name": "stream_request_emit",
+  "kind": "function",
+  "file": "functions/fn_0093e480.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093E4F0",
+  "name": "stream_publish_pair",
+  "kind": "function",
+  "file": "functions/fn_0093e4f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093E590",
+  "name": "stream_publish_quad",
+  "kind": "function",
+  "file": "functions/fn_0093e590.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093E610",
+  "name": "stream_publish_quad3",
+  "kind": "function",
+  "file": "functions/fn_0093e610.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093E790",
+  "name": "stream_publish_quad2",
+  "kind": "function",
+  "file": "functions/fn_0093e790.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093E800",
+  "name": "stream_lists_reset",
+  "kind": "function",
+  "file": "functions/fn_0093e800.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
   "address": "0x0093F050",
   "name": "LocalPlayerPed",
   "kind": "function",
   "file": "functions/fn_0093f050.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093F070",
+  "name": "Player_GetCurrentPos",
+  "kind": "function",
+  "file": "functions/fn_0093f070.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093F090",
+  "name": "stream_selected_triplet",
+  "kind": "function",
+  "file": "functions/fn_0093f090.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093F0D0",
+  "name": "stream_selected_forward",
+  "kind": "function",
+  "file": "functions/fn_0093f0d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093F140",
+  "name": "stream_selected_apply",
+  "kind": "function",
+  "file": "functions/fn_0093f140.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s429"
@@ -41008,6 +41116,60 @@
   "name": "stream_slot_find_by_id",
   "kind": "function",
   "file": "functions/fn_0093f390.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093F3C0",
+  "name": "stream_slots_rank",
+  "kind": "function",
+  "file": "functions/fn_0093f3c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093F470",
+  "name": "stream_slots_apply",
+  "kind": "function",
+  "file": "functions/fn_0093f470.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093F4B0",
+  "name": "stream_nodes_in_box",
+  "kind": "function",
+  "file": "functions/fn_0093f4b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093F600",
+  "name": "stream_nodes_overlap_box",
+  "kind": "function",
+  "file": "functions/fn_0093f600.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093F860",
+  "name": "stream_nodes_in_dilated_box",
+  "kind": "function",
+  "file": "functions/fn_0093f860.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s429"
+ },
+ {
+  "address": "0x0093F950",
+  "name": "stream_nodes_in_sphere",
+  "kind": "function",
+  "file": "functions/fn_0093f950.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s429"
@@ -89836,6 +89998,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF7850",
+  "name": "ladder_mount_points_world",
+  "kind": "function",
+  "file": "functions/fn_00cf7850.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b423"
  },
  {
   "address": "0x00CF7AD0",
