@@ -448,6 +448,6 @@ lf_checker_rt::export!(thiscall, rw_00d1e350(this: u32, ped: u32) -> u32 {
             return late(this, ped);
         }
         lf_checker_rt::callee_thiscall!(15, u32, ped);
-        icall1(this, 0x54, 0x3e8)
+        icall3(this, 0x54, 0x3e8, 0, 0)
     }
 });
