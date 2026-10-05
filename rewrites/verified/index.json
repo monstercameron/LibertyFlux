@@ -17568,6 +17568,15 @@
   "lane": "r-s378"
  },
  {
+  "address": "0x00561150",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_70, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_00561150.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b461"
+ },
+ {
   "address": "0x005612D0",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_70, player_schema::LeaderboardInfo, 10>::vf6",
   "kind": "function",
@@ -17620,6 +17629,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s299"
+ },
+ {
+  "address": "0x005615B0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_71, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_005615b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b461"
  },
  {
   "address": "0x00561730",
@@ -49950,6 +49968,24 @@
   "lane": "r-s377"
  },
  {
+  "address": "0x009E4B30",
+  "name": "ped_task_availability_gate",
+  "kind": "function",
+  "file": "functions/fn_009e4b30.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b464"
+ },
+ {
+  "address": "0x009E4C90",
+  "name": "ped_task_slot_probe",
+  "kind": "function",
+  "file": "functions/fn_009e4c90.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b464"
+ },
+ {
   "address": "0x009E4DD0",
   "name": "ped_slots_unlink_all",
   "kind": "function",
@@ -60390,10 +60426,91 @@
   "lane": "r-s440"
  },
  {
+  "address": "0x00AF7000",
+  "name": "veh_node_apply_logged_params",
+  "kind": "function",
+  "file": "functions/fn_00af7000.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF7060",
+  "name": "veh_node_collect_bitmask",
+  "kind": "function",
+  "file": "functions/fn_00af7060.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF73B0",
+  "name": "veh_pool_release",
+  "kind": "function",
+  "file": "functions/fn_00af73b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF7400",
+  "name": "veh_pools_drain_all",
+  "kind": "function",
+  "file": "functions/fn_00af7400.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF74C0",
+  "name": "veh_handle_reset",
+  "kind": "function",
+  "file": "functions/fn_00af74c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF74E0",
+  "name": "veh_handle_teardown",
+  "kind": "function",
+  "file": "functions/fn_00af74e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF7560",
+  "name": "veh_handle_copy",
+  "kind": "function",
+  "file": "functions/fn_00af7560.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF7620",
+  "name": "veh_slots_find_matching",
+  "kind": "function",
+  "file": "functions/fn_00af7620.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
   "address": "0x00AF76D0",
   "name": "veh_state_is_ready",
   "kind": "function",
   "file": "functions/fn_00af76d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF76F0",
+  "name": "veh_handle_init",
+  "kind": "function",
+  "file": "functions/fn_00af76f0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s457"
@@ -60444,6 +60561,15 @@
   "lane": "r-s457"
  },
  {
+  "address": "0x00AF78B0",
+  "name": "veh_slots_remap_range",
+  "kind": "function",
+  "file": "functions/fn_00af78b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
   "address": "0x00AF7910",
   "name": "veh_last_active_slot",
   "kind": "function",
@@ -60471,10 +60597,28 @@
   "lane": "r-s457"
  },
  {
+  "address": "0x00AF8390",
+  "name": "veh_slot_has_flagged",
+  "kind": "function",
+  "file": "functions/fn_00af8390.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
   "address": "0x00AF8420",
   "name": "veh_code_is_active",
   "kind": "function",
   "file": "functions/fn_00af8420.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF8470",
+  "name": "veh_slots_all_guarded",
+  "kind": "function",
+  "file": "functions/fn_00af8470.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s457"
@@ -60498,10 +60642,109 @@
   "lane": "r-s457"
  },
  {
+  "address": "0x00AF8590",
+  "name": "veh_handle_copy_into",
+  "kind": "function",
+  "file": "functions/fn_00af8590.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF8660",
+  "name": "veh_float_mix2",
+  "kind": "function",
+  "file": "functions/fn_00af8660.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF8800",
+  "name": "veh_point_line_distance",
+  "kind": "function",
+  "file": "functions/fn_00af8800.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF88B0",
+  "name": "veh_side_tests_2d",
+  "kind": "function",
+  "file": "functions/fn_00af88b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF89B0",
+  "name": "veh_bounds_store",
+  "kind": "function",
+  "file": "functions/fn_00af89b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF8C50",
+  "name": "veh_best_zone_pick",
+  "kind": "function",
+  "file": "functions/fn_00af8c50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF8E20",
+  "name": "veh_zone_add_ref",
+  "kind": "function",
+  "file": "functions/fn_00af8e20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
   "address": "0x00AF8E30",
   "name": "veh_zone_slot_ptr",
   "kind": "function",
   "file": "functions/fn_00af8e30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF8F80",
+  "name": "veh_init_forward",
+  "kind": "function",
+  "file": "functions/fn_00af8f80.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF8FF0",
+  "name": "veh_zone_find_0",
+  "kind": "function",
+  "file": "functions/fn_00af8ff0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF9050",
+  "name": "veh_zone_find_1",
+  "kind": "function",
+  "file": "functions/fn_00af9050.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF90B0",
+  "name": "veh_zone_find_2",
+  "kind": "function",
+  "file": "functions/fn_00af90b0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s457"
@@ -60516,10 +60759,28 @@
   "lane": "r-s457"
  },
  {
+  "address": "0x00AF9740",
+  "name": "veh_limit_check",
+  "kind": "function",
+  "file": "functions/fn_00af9740.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
   "address": "0x00AF97B0",
   "name": "veh_count_below_cap",
   "kind": "function",
   "file": "functions/fn_00af97b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s457"
+ },
+ {
+  "address": "0x00AF9A50",
+  "name": "veh_pool_count_model",
+  "kind": "function",
+  "file": "functions/fn_00af9a50.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s457"
@@ -96840,6 +97101,24 @@
   "lane": "r-s335"
  },
  {
+  "address": "0x00CFB180",
+  "name": "climb_ladder_setup_anims",
+  "kind": "function",
+  "file": "functions/fn_00cfb180.rs",
+  "trials": 1100,
+  "checker": "version 5",
+  "lane": "r-b466"
+ },
+ {
+  "address": "0x00CFBC10",
+  "name": "climb_ladder_reset_state",
+  "kind": "function",
+  "file": "functions/fn_00cfbc10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b466"
+ },
+ {
   "address": "0x00CFCB20",
   "name": "euphoria_ctor_dual_vec",
   "kind": "function",
@@ -116800,6 +117079,366 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s459"
+ },
+ {
+  "address": "0x00E697E0",
+  "name": "veh_global_ratio_01",
+  "kind": "function",
+  "file": "functions/fn_00e697e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69800",
+  "name": "veh_table_loop_dispatch_01",
+  "kind": "function",
+  "file": "functions/fn_00e69800.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69830",
+  "name": "veh_global_ratio_02",
+  "kind": "function",
+  "file": "functions/fn_00e69830.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69850",
+  "name": "veh_global_ratio_03",
+  "kind": "function",
+  "file": "functions/fn_00e69850.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69880",
+  "name": "veh_dispatch_push_01",
+  "kind": "function",
+  "file": "functions/fn_00e69880.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69890",
+  "name": "veh_objcall_dispatch_01",
+  "kind": "function",
+  "file": "functions/fn_00e69890.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E698B0",
+  "name": "veh_objcall_dispatch_02",
+  "kind": "function",
+  "file": "functions/fn_00e698b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E698D0",
+  "name": "veh_global_ratio_04",
+  "kind": "function",
+  "file": "functions/fn_00e698d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E698F0",
+  "name": "veh_global_ratio_05",
+  "kind": "function",
+  "file": "functions/fn_00e698f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69910",
+  "name": "veh_global_ratio_06",
+  "kind": "function",
+  "file": "functions/fn_00e69910.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69930",
+  "name": "veh_global_ratio_07",
+  "kind": "function",
+  "file": "functions/fn_00e69930.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69950",
+  "name": "veh_objcall_4arg_01",
+  "kind": "function",
+  "file": "functions/fn_00e69950.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69970",
+  "name": "veh_global_ratio_08",
+  "kind": "function",
+  "file": "functions/fn_00e69970.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69990",
+  "name": "veh_table_loop_01",
+  "kind": "function",
+  "file": "functions/fn_00e69990.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E699B0",
+  "name": "veh_table_loop_dispatch_02",
+  "kind": "function",
+  "file": "functions/fn_00e699b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E699E0",
+  "name": "veh_global_ratio_09",
+  "kind": "function",
+  "file": "functions/fn_00e699e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69A00",
+  "name": "veh_global_ratio_10",
+  "kind": "function",
+  "file": "functions/fn_00e69a00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69A20",
+  "name": "veh_table_bulk_init_01",
+  "kind": "function",
+  "file": "functions/fn_00e69a20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69AA0",
+  "name": "veh_global_ratio_11",
+  "kind": "function",
+  "file": "functions/fn_00e69aa0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69AC0",
+  "name": "veh_table_loop_02",
+  "kind": "function",
+  "file": "functions/fn_00e69ac0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69AE0",
+  "name": "veh_global_ratio_12",
+  "kind": "function",
+  "file": "functions/fn_00e69ae0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69B00",
+  "name": "veh_global_ratio_13",
+  "kind": "function",
+  "file": "functions/fn_00e69b00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69B20",
+  "name": "veh_global_ratio_14",
+  "kind": "function",
+  "file": "functions/fn_00e69b20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69B40",
+  "name": "veh_global_ratio_15",
+  "kind": "function",
+  "file": "functions/fn_00e69b40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69B60",
+  "name": "veh_asset_lookup_01",
+  "kind": "function",
+  "file": "functions/fn_00e69b60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69B80",
+  "name": "INTRO_END",
+  "kind": "function",
+  "file": "functions/fn_00e69b80.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69BA0",
+  "name": "INTRO_START",
+  "kind": "function",
+  "file": "functions/fn_00e69ba0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69BC0",
+  "name": "veh_asset_lookup_04",
+  "kind": "function",
+  "file": "functions/fn_00e69bc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69BE0",
+  "name": "OUTRO_START",
+  "kind": "function",
+  "file": "functions/fn_00e69be0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69C00",
+  "name": "TRACKID",
+  "kind": "function",
+  "file": "functions/fn_00e69c00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69C20",
+  "name": "veh_global_ratio_16",
+  "kind": "function",
+  "file": "functions/fn_00e69c20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69C40",
+  "name": "veh_table_loop_03",
+  "kind": "function",
+  "file": "functions/fn_00e69c40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69C60",
+  "name": "veh_global_ratio_17",
+  "kind": "function",
+  "file": "functions/fn_00e69c60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69C80",
+  "name": "veh_global_ratio_18",
+  "kind": "function",
+  "file": "functions/fn_00e69c80.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69CA0",
+  "name": "veh_global_ratio_19",
+  "kind": "function",
+  "file": "functions/fn_00e69ca0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69CC0",
+  "name": "veh_global_ratio_20",
+  "kind": "function",
+  "file": "functions/fn_00e69cc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69CE0",
+  "name": "veh_global_ratio_21",
+  "kind": "function",
+  "file": "functions/fn_00e69ce0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69D00",
+  "name": "veh_global_ratio_22",
+  "kind": "function",
+  "file": "functions/fn_00e69d00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69D20",
+  "name": "veh_global_ratio_23",
+  "kind": "function",
+  "file": "functions/fn_00e69d20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
+ },
+ {
+  "address": "0x00E69D40",
+  "name": "veh_global_ratio_24",
+  "kind": "function",
+  "file": "functions/fn_00e69d40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s460"
  },
  {
   "address": "0x00E69D60",
