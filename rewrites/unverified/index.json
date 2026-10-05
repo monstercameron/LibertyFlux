@@ -1344,86 +1344,6 @@
   "reason": null
  },
  {
-  "address": "0x009A8780",
-  "name": "audio_param_push",
-  "file": "fn_009a8780.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A8930",
-  "name": "script_idle_check",
-  "file": "fn_009a8930.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A89D0",
-  "name": "script_ready_check",
-  "file": "fn_009a89d0.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A8FF0",
-  "name": "audio_table_shutdown",
-  "file": "fn_009a8ff0.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A94D0",
-  "name": "conv_vote_bump",
-  "file": "fn_009a94d0.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A9AF0",
-  "name": "conv_state_advance",
-  "file": "fn_009a9af0.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A9C70",
-  "name": "conv_pick_min_a",
-  "file": "fn_009a9c70.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A9D50",
-  "name": "conv_pick_min_gang",
-  "file": "fn_009a9d50.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A9E40",
-  "name": "conv_pick_min_b",
-  "file": "fn_009a9e40.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A9F20",
-  "name": "conv_pick_min_c",
-  "file": "fn_009a9f20.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x009AA110",
   "name": "conv_first_or_null",
   "file": "fn_009aa110.rs",
@@ -1432,10 +1352,10 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x009AA180",
-  "name": "CONV_GANG_STATE",
-  "file": "fn_009aa180.rs",
-  "lane": "r-s420",
+  "address": "0x009B9550",
+  "name": "CCamScriptInstruction_AddPedToCinematographyAI::vf2",
+  "file": "fn_009b9550.rs",
+  "lane": "r-s421",
   "outcome": "not_reached",
   "reason": null
  },
@@ -1451,6 +1371,30 @@
   "address": "0x009B9FD0",
   "name": "CCamScriptInstruction_SetCinematicButtonEnabled::vf2",
   "file": "fn_009b9fd0.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009BA140",
+  "name": "CCamScriptInstruction_SetFOV::vf2",
+  "file": "fn_009ba140.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009BA160",
+  "name": "CCamScriptInstruction_SetFar::vf2",
+  "file": "fn_009ba160.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009BA180",
+  "name": "CCamScriptInstruction_SetFarDOF::vf2",
+  "file": "fn_009ba180.rs",
   "lane": "r-s421",
   "outcome": "not_reached",
   "reason": null
@@ -1582,6 +1526,14 @@
   "lane": "r-b166",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00B2E290",
+  "name": "wreck_task_scan_nearest",
+  "file": "fn_00b2e290.rs",
+  "lane": "r-b406",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00B37240",

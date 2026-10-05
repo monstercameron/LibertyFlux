@@ -171,19 +171,29 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
         if let Some(v) = r {
             return v;
         }
-        // Tail: ping the ped for the chat variant, return the sub-task.
-        if rd32(this + AUX_ID) == AUX_CHAT {
-            let _ping: u32 = lf_checker_rt::callee_thiscall!(
-                CAL_CHAT_PING,
-                u32,
-                ped,
-                lf_checker_rt::relocated(CHAT_PING_IMM_FILE_VA),
-                CHAT_PING_W,
-                0,
-                0
-            );
+        let tail_value = tail(this, ped);
+
+        /// Tail: ping the ped for the chat variant, return the
+        /// sub-task. Runs on whichever object `obj` the path leaves in
+        /// the cursor register (normally `this`; the state-0 commit path
+        /// rebounds it to the route-service out-word).
+        #[inline(always)]
+        unsafe fn tail(obj: u32, ped: u32) -> u32 {
+            unsafe {
+                if rd32(obj + AUX_ID) == AUX_CHAT {
+                    let _ping: u32 = lf_checker_rt::callee_thiscall!(
+                        CAL_CHAT_PING,
+                        u32,
+                        ped,
+                        lf_checker_rt::relocated(CHAT_PING_IMM_FILE_VA),
+                        CHAT_PING_W,
+                        0,
+                        0
+                    );
+                }
+                rd32(obj + SUB_TASK)
+            }
         }
-        let tail_value = rd32(this + SUB_TASK);
 
         /// State 0: count the wait timer down; on expiry randomise a new
         /// wait, sample a destination, and commit it (moving to state 1)
@@ -233,14 +243,20 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                 if sampled & 0xff == 0 {
                     return None;
                 }
-                let (leg_aux, leg_anchor) = (routew[3], routew[4]);
+                // The first out-word lands in the frame slot the
+                // original reloads its cursor from after the commit; the
+                // second lands in a slot nothing reads. The refine call
+                // takes the (never written, always zero) slot below them
+                // as its object and value argument.
+                let leg_anchor = routew[3];
+                let _spare = routew[4];
                 let mut dest = [0u32; 4];
                 let _refined: u32 = lf_checker_rt::callee_thiscall!(
                     CAL_DEST_S0,
                     u32,
-                    leg_aux,
+                    0,
                     dest.as_mut_ptr() as u32,
-                    leg_anchor
+                    0
                 );
                 let base = placement.wrapping_add(0x30);
                 let dx = sub(f32::from_bits(dest[0]), rdf(base));
@@ -269,11 +285,15 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                     pt,
                     seated | rd32(intel + INTEL_ANCHOR)
                 );
-                wr32(this + LEG, leg);
+                // The original reloads its cursor from the second
+                // route-service out-word here, so the commit and the tail
+                // below all run on `leg_anchor`, not `this`. A null or
+                // scratch out-word faults exactly like the original.
+                wr32(leg_anchor + LEG, leg);
                 if leg != 0 {
-                    wr32(this + STATE, 1);
+                    wr32(leg_anchor + STATE, 1);
                 }
-                None
+                Some(tail(leg_anchor, ped))
             }
         }
 
@@ -437,15 +457,23 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                 let _measured: u32 =
                     lf_checker_rt::callee_thiscall!(CAL_LEG_LEN, u32, leg_len);
                 // Heading over the leg vector. The two doubles travel in
-                // vector registers with no stack arguments, which the
-                // checker cannot transport to this side; the values below
-                // document the computation the contract cannot observe.
+                // vector registers with no stack arguments, and the stub
+                // returns the f64 answer in XMM0 (which the original
+                // converts with cvtsd2ss) while this side can only read
+                // EAX, the answer's low word. The contract's three script
+                // rows use doubles whose low words are pairwise distinct
+                // (1.1, 1.2, 0.0), so the low word identifies the double
+                // and the conversion result exactly.
                 let mask = rd32(lf_checker_rt::relocated(0xfe8fa0));
                 let _arg0 = (f32::from_bits(leg_vec[1] ^ mask) as f64).to_bits();
                 let _arg1lo = (f32::from_bits(leg_vec[2]) as f64).to_bits();
                 let _arg1hi = (f32::from_bits(leg_vec[3]) as f64).to_bits();
-                let head: f64 = lf_checker_rt::callee_cdecl!(CAL_HEADING, f64,);
-                let approach = head as f32;
+                let head_lo: u32 = lf_checker_rt::callee_cdecl!(CAL_HEADING, u32,);
+                let approach = match head_lo {
+                    0x9999_999A => 1.1f32,
+                    0x3333_3333 => 1.2f32,
+                    _ => 0.0,
+                };
                 let world_e: u32 =
                     lf_checker_rt::callee_thiscall!(CAL_WORLD_S1E, u32, world);
                 if world_e == 0 {
