@@ -15,8 +15,8 @@
 /// single-precision result must lie within its bound pair (`[a3]`/`[a2]`
 /// and `[a3+8]`/`[a2+8]`): strictly above the first bound fails, strictly
 /// below the second passes only when the first comparison already failed.
-/// The result is 1 when both tests pass and 0 otherwise, except that a first
-/// result strictly above its bound returns `a1` with its low byte cleared.
+/// The result is 1 when both tests pass and 0 otherwise, except that a second result strictly above its bound returns `a2` with
+/// its low byte cleared.
 ///
 /// NOTE: the two solver calls take their arguments only in vector registers
 /// (pairs of doubles in xmm0/xmm1) and the checker cannot observe them (see
@@ -110,7 +110,7 @@ lf_checker_rt::export!(thiscall, rw_00C9D9D0(this: u32, a1: u32, a2: u32, a3: u3
         // the stub leaves the low word in eax, which is all the rewrite can
         // read (the vector arguments the original passes cannot be observed
         // by the checker at all).
-        let s1lo: u32 = lf_checker_rt::callee_cdecl!(5, u32,);
+        let s1lo: u32 = lf_checker_rt::callee_thiscall!(5, u32, r4);
         let s1 = f64::from_bits(s1lo as u64);
         let q = add(mul(c_val, c_val), mul(b_val, b_val));
         let f1 = s1 as f32;
@@ -121,15 +121,17 @@ lf_checker_rt::export!(thiscall, rw_00C9D9D0(this: u32, a1: u32, a2: u32, a3: u3
         let s2 = f64::from_bits(s2lo as u64);
         let f2 = s2 as f32;
 
-        // Bound tests.
-        let b0 = rdf(a3);
-        if f1 > b0 {
-            return a1 & 0xFFFF_FF00;
-        }
-        let flag1 = if rdf(a2) > f1 { 0u32 } else { 1u32 };
-        let b1 = rdf(a3 + 8);
-        if f2 > b1 {
-            return a1 & 0xFFFF_FF00;
+        // Bound tests. A first result above its bound only clears the
+        // flag; a second result above its bound returns a2 masked.
+        let flag1 = if f1 > rdf(a3) {
+            0u32
+        } else if rdf(a2) > f1 {
+            0u32
+        } else {
+            1u32
+        };
+        if f2 > rdf(a3 + 8) {
+            return a2 & 0xFFFF_FF00;
         }
         let e = if rdf(a2 + 8) > f2 { 0u32 } else { 1u32 };
         if flag1 == 0 || e == 0 {

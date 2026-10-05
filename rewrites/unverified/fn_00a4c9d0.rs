@@ -12,7 +12,8 @@
 /// callee (thiscall, constant object in `ecx`, the three answers on the
 /// stack with the emit order's last answer first), and finally stores
 /// `DONE` (0xC8) into the word at `this + STATE` (0x12) and 1 into the byte
-/// at `this + READY` (0x10).
+/// at `this + READY` (0x10). The emit object's address is an immediate with
+/// a relocation, so it arrives relocated and the rewrite relocates it too.
 ///
 /// Original: 0x00A4C9D0 (thiscall, one stack word), four callees.
 lf_checker_rt::export!(thiscall, rw_00A4C9D0(this: u32, arg: u32) -> u32 {
@@ -23,7 +24,7 @@ lf_checker_rt::export!(thiscall, rw_00A4C9D0(this: u32, arg: u32) -> u32 {
         const TARGET: u32 = 0x6C;
         const STATE: u32 = 0x12;
         const READY: u32 = 0x10;
-        const EMIT_THIS: u32 = 0x018ECFB0;
+        const EMIT_THIS_FILE_VA: u32 = 0x018ECFB0;
         const DONE: u16 = 0xC8;
         const CLASSIFY_CALLEE: u32 = 1;
         const MEASURE_CALLEE: u32 = 2;
@@ -63,7 +64,7 @@ lf_checker_rt::export!(thiscall, rw_00A4C9D0(this: u32, arg: u32) -> u32 {
         lf_checker_rt::callee_thiscall!(
             EMIT_CALLEE,
             u32,
-            EMIT_THIS,
+            lf_checker_rt::relocated(EMIT_THIS_FILE_VA),
             m2 & 0xFFFF,
             m1 & 0xFFFF,
             class

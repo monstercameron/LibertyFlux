@@ -1416,6 +1416,14 @@
   "reason": null
  },
  {
+  "address": "0x00A14B30",
+  "name": "CCamFollowVehicle::vf5",
+  "file": "fn_00a14b30.rs",
+  "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A4C930",
   "name": "vehicle_attach_links",
   "file": "fn_00a4c930.rs",
@@ -1427,6 +1435,14 @@
   "address": "0x00A4C9D0",
   "name": "vehicle_emit_event",
   "file": "fn_00a4c9d0.rs",
+  "lane": "r-s455",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A4D860",
+  "name": "vehicle_spawn_copy",
+  "file": "fn_00a4d860.rs",
   "lane": "r-s455",
   "outcome": "not_reached",
   "reason": null
@@ -1448,6 +1464,14 @@
   "reason": null
  },
  {
+  "address": "0x00A4F590",
+  "name": "vehicle_find_nearest_slot",
+  "file": "fn_00a4f590.rs",
+  "lane": "r-s452",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A4F690",
   "name": "vehicle_dispatch_kind3",
   "file": "fn_00a4f690.rs",
@@ -1462,6 +1486,14 @@
   "lane": "r-s452",
   "outcome": "not_reached",
   "reason": null
+ },
+ {
+  "address": "0x00A62A10",
+  "name": "ped_task_pose_transform",
+  "file": "fn_00a62a10.rs",
+  "lane": "r-b459",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00A75A40",
@@ -1552,38 +1584,6 @@
   "reason": "other"
  },
  {
-  "address": "0x00B2FD30",
-  "name": "ped_task_collect_typed_records",
-  "file": "fn_00b2fd30.rs",
-  "lane": "r-b457",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B2FE80",
-  "name": "ped_task_range_check",
-  "file": "fn_00b2fe80.rs",
-  "lane": "r-b457",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B300A0",
-  "name": "ped_task_state_switch",
-  "file": "fn_00b300a0.rs",
-  "lane": "r-b457",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B30400",
-  "name": "ped_task_unknown_b",
-  "file": "fn_00b30400.rs",
-  "lane": "r-b457",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x00B37240",
   "name": "pending-triage",
   "file": "fn_00b37240.rs",
@@ -1630,22 +1630,6 @@
   "lane": "r-s407",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00B65440",
-  "name": "fn_00B65440",
-  "file": "fn_00b65440.rs",
-  "lane": "r-s450",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B65CE0",
-  "name": "fn_00B65CE0",
-  "file": "fn_00b65ce0.rs",
-  "lane": "r-s450",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00B77C30",
@@ -2056,6 +2040,14 @@
   "reason": null
  },
  {
+  "address": "0x00BE9960",
+  "name": null,
+  "file": "fn_00be9960.rs",
+  "lane": "r-b456",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00BE9AA0",
   "name": null,
   "file": "fn_00be9aa0.rs",
@@ -2265,11 +2257,11 @@
  },
  {
   "address": "0x00C9D9D0",
-  "name": "proposed-tbd",
+  "name": "aim_error_test",
   "file": "fn_00c9d9d0.rs",
   "lane": "r-b450",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "checker_gap"
  },
  {
   "address": "0x00CA00A0",
@@ -2331,6 +2323,14 @@
   "address": "0x00CBE470",
   "name": "ped_task_blend_00CBE470",
   "file": "fn_00cbe470.rs",
+  "lane": "r-b458",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00CBEA40",
+  "name": "ped_task_blend_00CBEA40",
+  "file": "fn_00cbea40.rs",
   "lane": "r-b458",
   "outcome": "not_reached",
   "reason": ""
@@ -2805,14 +2805,6 @@
   "file": "fn_00d82cd0.rs",
   "lane": "r-b212",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00DC5560",
-  "name": "TaskShoot_UpdateAim",
-  "file": "fn_00dc5560.rs",
-  "lane": "r-b455",
-  "outcome": "not_reached",
   "reason": null
  },
  {
