@@ -1352,14 +1352,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x009B9580",
-  "name": "CCamScriptInstruction_AttachCamToViewport::vf2",
-  "file": "fn_009b9580.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x009B9600",
   "name": "CCamScriptInstruction_DestroyAllCams::vf2",
   "file": "fn_009b9600.rs",
@@ -1416,33 +1408,9 @@
   "reason": null
  },
  {
-  "address": "0x009B97B0",
-  "name": "CCamScriptInstruction_EnableDebugCam::vf2",
-  "file": "fn_009b97b0.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B9830",
-  "name": "CCamScriptInstruction_InheritRoll::vf2",
-  "file": "fn_009b9830.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x009B9860",
   "name": "CCamScriptInstruction_InsertSplineNode::vf2",
   "file": "fn_009b9860.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B98F0",
-  "name": "CCamScriptInstruction_PointCamAtVehicle_Q::vf2",
-  "file": "fn_009b98f0.rs",
   "lane": "r-s421",
   "outcome": "not_reached",
   "reason": null
@@ -1467,38 +1435,6 @@
   "address": "0x009B9A90",
   "name": "CCamScriptInstruction_SequenceEmpty::vf2",
   "file": "fn_009b9a90.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B9D80",
-  "name": "CCamScriptInstruction_SetCamLookAtPos_Q::vf2",
-  "file": "fn_009b9d80.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B9E10",
-  "name": "CCamScriptInstruction_SetCamPos_Q::vf2",
-  "file": "fn_009b9e10.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B9E80",
-  "name": "CCamScriptInstruction_SetCamRot_Q::vf2",
-  "file": "fn_009b9e80.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B9FE0",
-  "name": "CCamScriptInstruction_SetCinematicCam_Q::vf2",
-  "file": "fn_009b9fe0.rs",
   "lane": "r-s421",
   "outcome": "not_reached",
   "reason": null
@@ -1648,9 +1584,9 @@
   "reason": "other"
  },
  {
-  "address": "0x00B729E0",
-  "name": "CTaskSimpleCarShuffle::vf17",
-  "file": "fn_00b729e0.rs",
+  "address": "0x00B72B70",
+  "name": "CTaskSimpleCarSlowBeDraggedOut::vf17",
+  "file": "fn_00b72b70.rs",
   "lane": "r-b413",
   "outcome": "not_reached",
   "reason": null
@@ -2328,6 +2264,14 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00C46AA0",
+  "name": "CCamFinal::vf1",
+  "file": "fn_00c46aa0.rs",
+  "lane": "r-s424",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00C46F10",
   "name": "ccam_indexed_getter",
   "file": "fn_00c46f10.rs",
@@ -2852,14 +2796,6 @@
   "name": "seek_cover_slot_usable",
   "file": "fn_00d1d870.rs",
   "lane": "r-b346",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00D1DB20",
-  "name": "unknown",
-  "file": "fn_00d1db20.rs",
-  "lane": "r-b408",
   "outcome": "not_reached",
   "reason": ""
  },
