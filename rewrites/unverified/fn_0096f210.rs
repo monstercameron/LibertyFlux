@@ -295,7 +295,9 @@ lf_checker_rt::export!(thiscall, rw_0096f210(this: u32) -> u32 {
         let al10: u32 = lf_checker_rt::callee_thiscall!(
             C_STATE, u32, this, &outbyte as *const u32 as u32, 0
         );
-        let x0: f32 = if al10 & 0xff != 0 && outbyte & 0xff != 0 {
+        // Zero constant iff the query answered nonzero AND the out-byte stayed
+        // zero (je falls to the load on al==0; jne falls through on byte==0).
+        let x0: f32 = if al10 & 0xff != 0 && outbyte & 0xff == 0 {
             f32::from_bits(0)
         } else {
             one
