@@ -182,7 +182,7 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
         wr32(this.wrapping_add(CURSOR), slot);
         wrf(this.wrapping_add(RING).wrapping_add(slot.wrapping_mul(4)), f3);
         // ---- TLS listener lookup ----
-        let back = rd32(this.wrapping_add(CURSOR)).wrapping_sub(gu32(RING_SUB)).wrapping_add(RING_LEN) % RING_LEN;
+        let back = rd32(this.wrapping_add(CURSOR)).wrapping_sub(gu32(RING_SUB)) % RING_LEN;
         let tls_slot_val = gu32(TLS_SLOT_G);
         let tls_ptr = lf_checker_rt::tls_slot(tls_slot_val as usize);
         let tls_idx = rd32(tls_ptr.wrapping_add(0x70));
@@ -248,11 +248,11 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
         // ---- proximity pair ----
         let mut out64 = 0u32;
         let in136 = [pair1_b, pair1_c, pair1_a];
-        let a9: f32 = lf_checker_rt::callee_thiscall!(9, f32, OBJ_A, in136.as_ptr() as u32, &mut out64 as *mut u32 as u32);
+        let a9: f32 = lf_checker_rt::callee_thiscall!(9, f32, lf_checker_rt::relocated(OBJ_A), in136.as_ptr() as u32, &mut out64 as *mut u32 as u32);
         let f64o = f32::from_bits(out64);
         let mut out156 = 0u32;
         let in104 = [pair0_b, pair0_c, pair0_a];
-        let a10: f32 = lf_checker_rt::callee_thiscall!(10, f32, OBJ_A, in104.as_ptr() as u32, &mut out156 as *mut u32 as u32);
+        let a10: f32 = lf_checker_rt::callee_thiscall!(10, f32, lf_checker_rt::relocated(OBJ_A), in104.as_ptr() as u32, &mut out156 as *mut u32 as u32);
         let _ = out156;
         // ---- gain staging ----
         let a11_1: f32 = lf_checker_rt::callee_thiscall!(11, f32, lf_checker_rt::relocated(OBJ_C), a9.to_bits());
@@ -276,7 +276,7 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
         let o2 = if m1delayed > a12_2 { m1delayed } else { a12_2 };
         let a13: f32 = lf_checker_rt::callee_thiscall!(13, f32, lf_checker_rt::relocated(OBJ_E));
         let a11_4: f32 = lf_checker_rt::callee_thiscall!(11, f32, this.wrapping_add(0x9C0), a13.to_bits());
-        let a11_5: f32 = lf_checker_rt::callee_thiscall!(11, f32, lf_checker_rt::relocated(OBJ_D), o1.to_bits());
+        let a11_5: f32 = lf_checker_rt::callee_thiscall!(11, f32, lf_checker_rt::relocated(OBJ_D), l2.to_bits());
         let o3 = if a11_4 > a11_5 { a11_4 } else { a11_5 };
         // ---- sub-voice loop nest ----
         let w = sub(g1, o3);
