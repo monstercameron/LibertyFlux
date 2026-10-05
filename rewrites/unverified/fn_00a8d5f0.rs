@@ -31,7 +31,7 @@ lf_checker_rt::export!(thiscall, rw_00a8d5f0(this: u32) -> u32 {
         if ready == 0 {
             return INCOMING_EAX;
         }
-        ((this + EMITTING) as *mut u32).write_unaligned(1);
+        ((this + EMITTING) as *mut u8).write_unaligned(1);
         let vtable = ((this) as *const u32).read_unaligned();
         let out_addr = {
             let target = ((vtable + SOURCE_SLOT) as *const u32)

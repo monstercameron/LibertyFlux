@@ -7,7 +7,7 @@
 /// (bits 6..9) return 0 at once. Otherwise the find callee runs on the
 /// key; a non-null answer is returned. On a miss the node list at
 /// +0x18 is walked to its anchor at +8 for the first node whose object
-/// has bit 0xA00 in its word at +0x24, that object is released through
+/// lacks bit 0xA00 in its word at +0x24, that object is released through
 /// its slot, and the find callee runs once more. Always unlocks before
 /// returning. The proof cycles the kind through all paths; lock, unlock
 /// and find frame addresses are uncompared.
@@ -65,7 +65,7 @@ lf_checker_rt::export!(thiscall, rw_00a8a420(this: u32, key: u32) -> u32 {
                 let obj = (node as *const u32).read_unaligned();
                 let flags =
                     ((obj + OBJ_FLAGS) as *const u32).read_unaligned();
-                if flags & DIRTY_BIT != 0 {
+                if (flags & DIRTY_BIT) == 0 {
                     let vtable =
                         (obj as *const u32).read_unaligned();
                     let target = ((vtable + RELEASE_SLOT) as *const u32)

@@ -7,7 +7,8 @@
 /// callee on the tick constant and resolves its answer: a non-null
 /// resolution is registered. Then loops while the shared window still
 /// covers `base` or the resolution sits below `arg2`: each pass runs the
-/// stage callee on 0x20 and re-steps. The loop exits through the settle
+/// stage callee on 0x20 and re-steps (inheriting the stage script's
+/// step index as ecx). The loop exits through the settle
 /// test (returning the window bit in the low byte over the window
 /// leftover) or, when the stage idles with the pool primed (word +0x48
 /// at 7), through the final window test. The proof pins the window,
@@ -29,6 +30,7 @@ lf_checker_rt::export!(thiscall, rw_00a8ad20(this: u32, base: u32, arg2: u32) ->
         const PRIMED_VALUE: u32 = 7;
         const STAGE_ARG: u32 = 0x20;
         const TICK_BITS: u32 = 0x3f666666;
+        const STAGE_SEQ_LAST: u32 = 2;
         lf_checker_rt::callee_thiscall!(CALLEE_BIND, u32, this);
         ((this + STATE) as *mut u32).write_unaligned(0);
         // The original calls the step callee without setting ecx, so it
@@ -49,6 +51,9 @@ lf_checker_rt::export!(thiscall, rw_00a8ad20(this: u32, base: u32, arg2: u32) ->
                 resolved
             );
         }
+        // The step callee keeps the stage stub's exit ecx, which is
+        // the stage script's step index (clamped to its last step).
+        let mut pass: u32 = 0;
         loop {
             let hi =
                 lf_checker_rt::global::<u32>(WINDOW_HI).read_unaligned();
@@ -69,9 +74,10 @@ lf_checker_rt::export!(thiscall, rw_00a8ad20(this: u32, base: u32, arg2: u32) ->
             let step = lf_checker_rt::callee_thiscall!(
                 CALLEE_STEP,
                 u32,
-                0,
+                pass,
                 TICK_BITS
             );
+            pass = (pass + 1).min(STAGE_SEQ_LAST);
             resolved =
                 lf_checker_rt::callee_thiscall!(CALLEE_RESOLVE, u32, step);
             if busy as u8 != 0 {

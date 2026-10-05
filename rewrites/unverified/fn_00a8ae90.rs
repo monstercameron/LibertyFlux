@@ -47,7 +47,7 @@ lf_checker_rt::export!(thiscall, rw_00a8ae90(this: u32, a1: u32, a2: u32, a3: u3
         let target = ((vtable + HANDLER_SLOT) as *const u32).read_unaligned();
         let f: extern "thiscall" fn(u32, u32, u32) -> u32 =
             core::mem::transmute(target as usize);
-        let checked = f(resolved, buf1, buf_addr);
+        let checked = f(resolved, buf_addr, buf1);
         if checked != a3 {
             lf_checker_rt::callee_thiscall!(CALLEE_COOKIE, u32, 0);
             return 1;

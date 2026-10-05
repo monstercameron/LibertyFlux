@@ -32,9 +32,9 @@
 /// out-of-range values rather than saturating.
 ///
 /// The tail issues four six-argument configuration calls carrying the object,
-/// `a0`, small integers, a truncation result or prior-call leftover in one
-/// slot, and pointers to sign-flipped constant triples (one triple's middle
-/// word is the same never-written frame slot, hence zero), then a two-argument
+/// small-integer constants, `a0` in the fourth slot (each site pushes a
+/// placeholder there and overwrites it with `a0`), and pointers to
+/// sign-flipped constant triples (or constant addresses), then a two-argument
 /// vtable call (slot `+0x60`), a one-argument lookup callee handed a data
 /// address, a data-table call reached through a global pointer with a constant
 /// address and -1, and a final one-argument call through slot `+0x60` carrying

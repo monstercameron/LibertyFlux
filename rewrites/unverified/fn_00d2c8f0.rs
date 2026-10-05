@@ -162,7 +162,7 @@ lf_checker_rt::export!(thiscall, rw_00D2C8F0(this: u32, ped: u32) -> u32 {
             return 0;
         }
 
-        let sub = rd32(this + SUB_TASK);
+        let subtask = rd32(this + SUB_TASK);
         let mut scaled = [0u32; 3];
         let data = rd32(this + DROP_DATA);
         if data != 0 {
@@ -178,15 +178,14 @@ lf_checker_rt::export!(thiscall, rw_00D2C8F0(this: u32, ped: u32) -> u32 {
                 core::ptr::addr_of_mut!(extra) as u32,
                 rd32(data + INIT_FLAG)
             );
-            let t = task_type(sub);
-            if t == TYPE_POS {
-                wr32(sub + OUT_X, out[0]);
-                wr32(sub + OUT_Y, out[1]);
-                wr32(sub + OUT_Z, out[2]);
-                wr32(sub + OUT_W, out[3]);
-                wr32(sub + OUT_EXTRA, extra);
-            } else if t == TYPE_ROUTE {
-                let obj = lf_checker_rt::callee_thiscall!(7, u32, sub, ped);
+            if task_type(subtask) == TYPE_POS {
+                wr32(subtask + OUT_X, out[0]);
+                wr32(subtask + OUT_Y, out[1]);
+                wr32(subtask + OUT_Z, out[2]);
+                wr32(subtask + OUT_W, out[3]);
+                wr32(subtask + OUT_EXTRA, extra);
+            } else if task_type(subtask) == TYPE_ROUTE {
+                let obj = lf_checker_rt::callee_thiscall!(7, u32, subtask, ped);
                 if obj != 0 && task_type(obj) == TYPE_TARGET {
                     let mut wframe = [0u32; 7];
                     lf_checker_rt::callee_thiscall!(
@@ -205,8 +204,8 @@ lf_checker_rt::export!(thiscall, rw_00D2C8F0(this: u32, ped: u32) -> u32 {
                 }
             }
         }
-        if task_type(sub) == TYPE_ROUTE {
-            let obj = lf_checker_rt::callee_thiscall!(7, u32, sub, ped);
+        if task_type(subtask) == TYPE_ROUTE {
+            let obj = lf_checker_rt::callee_thiscall!(7, u32, subtask, ped);
             if obj != 0 && task_type(obj) == TYPE_TARGET {
                 let mid = rd32(obj + OBJ_MID);
                 let measure: extern "thiscall" fn(u32, u32) -> u32 =
@@ -221,6 +220,6 @@ lf_checker_rt::export!(thiscall, rw_00D2C8F0(this: u32, ped: u32) -> u32 {
                 }
             }
         }
-        sub
+        subtask
     }
 });

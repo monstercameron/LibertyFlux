@@ -2,8 +2,8 @@
 
 /// Drain whichever queue still holds work, reporting whether any did.
 ///
-/// `this` is unused; `mode` selects the two-shot (non-zero low byte) or
-/// three-shot shape, and its upper bytes ride along into the worker id.
+/// `mode` selects the two-shot (non-zero low byte) or three-shot
+/// shape; `this` supplies the worker id's upper bytes.
 /// First the shared toggle byte is flipped to whether it was zero: when
 /// set, queue A is asked for its depth and, if above the shape's limit,
 /// runs one worker. Then queue B is asked and, if above 2, runs its own
@@ -21,13 +21,15 @@ lf_checker_rt::export!(thiscall, rw_00a8ab20(this: u32, mode: u32) -> u32 {
         const QUEUE_B: u32 = 0x16dd2bc;
         const TOGGLE: u32 = 0x12fb200;
         const B_LIMIT: i32 = 2;
-        let _ = this;
         // Both queue words are relocated immediates in the original.
         let queue_a = lf_checker_rt::relocated(QUEUE_A);
         let queue_b = lf_checker_rt::relocated(QUEUE_B);
         let two_shot = mode as u8 != 0;
         let limit: i32 = if two_shot { 2 } else { 3 };
-        let worker = (mode & 0xffffff00) | (if two_shot { 1 } else { 0 });
+        // The worker id is the entry ecx slot (this) with its low byte
+        // replaced by the shape flag, not the mode word.
+        let worker =
+            (this & 0xffffff00) | (if two_shot { 1 } else { 0 });
         let was_zero =
             (lf_checker_rt::global::<u8>(TOGGLE).read_unaligned() == 0)
                 as u32;
