@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Three traps from a network batch: a 14-count loop, shifted stack reads, garbage call arguments",
+    "title": "Rewrites: 15 more functions pass the checker (11388 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "15 rewrites added under rewrites/verified: 0 script native handlers and 15 other functions.",
+      "The tree now holds 11388 rewrites, 11369 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "661 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Three traps from a network batch: a 14-count loop, shifted stack reads, garbage call arguments",
+    "commit": "2cbacf4ba6c2315cda9a344411ebe84c45fffdf7",
     "summary": "Findings from the r-b383 lane.",
     "changes": [
       "New devlog entry: Three traps from a network batch: a 14-count loop, shifted stack reads, garbage call arguments.",

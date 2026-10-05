@@ -19152,6 +19152,60 @@
   "lane": "r-s314"
  },
  {
+  "address": "0x00571670",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_130,player_schema::LeaderboardInfo,10>::LeaderboardInfo,10>_2",
+  "kind": "function",
+  "file": "functions/fn_00571670.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s409"
+ },
+ {
+  "address": "0x00571AD0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_131,player_schema::LeaderboardInfo,10>::LeaderboardInfo,10>_2",
+  "kind": "function",
+  "file": "functions/fn_00571ad0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s409"
+ },
+ {
+  "address": "0x00571F30",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_132,player_schema::LeaderboardInfo,10>::LeaderboardInfo,10>_2",
+  "kind": "function",
+  "file": "functions/fn_00571f30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s409"
+ },
+ {
+  "address": "0x00572390",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_133,player_schema::LeaderboardInfo,10>::LeaderboardInfo,10>_2",
+  "kind": "function",
+  "file": "functions/fn_00572390.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s409"
+ },
+ {
+  "address": "0x005727F0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_134,player_schema::LeaderboardInfo,10>::LeaderboardInfo,10>_2",
+  "kind": "function",
+  "file": "functions/fn_005727f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s409"
+ },
+ {
+  "address": "0x00572C50",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_135,player_schema::LeaderboardInfo,10>::LeaderboardInfo,10>_2",
+  "kind": "function",
+  "file": "functions/fn_00572c50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s409"
+ },
+ {
   "address": "0x00572F40",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_135, player_schema::LeaderboardInfo, 10>::vf7",
   "kind": "function",
@@ -80091,6 +80145,24 @@
   "lane": "r-b334"
  },
  {
+  "address": "0x00CA9780",
+  "name": "CEventHandler::vf60",
+  "kind": "function",
+  "file": "functions/fn_00ca9780.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b388"
+ },
+ {
+  "address": "0x00CA9B40",
+  "name": "CEventHandler::vf62",
+  "kind": "function",
+  "file": "functions/fn_00ca9b40.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b388"
+ },
+ {
   "address": "0x00CAA5B0",
   "name": "CEventHandler::vf28",
   "kind": "function",
@@ -81765,10 +81837,73 @@
   "lane": "a-F01"
  },
  {
+  "address": "0x00CCB8D0",
+  "name": "CTaskComplexHitResponse::vf19",
+  "kind": "function",
+  "file": "functions/fn_00ccb8d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
+  "address": "0x00CCBC90",
+  "name": "CTaskComplexMoveAboutInjured::vf19",
+  "kind": "function",
+  "file": "functions/fn_00ccbc90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
+  "address": "0x00CCBD20",
+  "name": "CTaskComplexOnFire::vf19",
+  "kind": "function",
+  "file": "functions/fn_00ccbd20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
   "address": "0x00CCDEB0",
   "name": "CTaskSimpleDead::vf6",
   "kind": "function",
   "file": "functions/fn_00ccdeb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
+  "address": "0x00CCDEE0",
+  "name": "CTaskComplexDie::vf7",
+  "kind": "function",
+  "file": "functions/fn_00ccdee0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
+  "address": "0x00CCDF70",
+  "name": "CTaskSimpleDead::vf7",
+  "kind": "function",
+  "file": "functions/fn_00ccdf70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
+  "address": "0x00CCE010",
+  "name": "CTaskComplexDie::vf5",
+  "kind": "function",
+  "file": "functions/fn_00cce010.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
+  "address": "0x00CCE140",
+  "name": "CTaskComplexMoveAboutInjured::vf5",
+  "kind": "function",
+  "file": "functions/fn_00cce140.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s406"
