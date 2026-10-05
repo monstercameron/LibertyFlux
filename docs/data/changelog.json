@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Rust in progress: 14 files from lanes (292 unverified rewrites, 39 in review)",
+    "title": "Devlog: hourly review, 14:05 on 5 October",
     "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "14,873 functions verified, 25.2% of the code by size. Of the hour's 1,014, 715 were earlier work released by a corrected publication scan, 117 came from one generator lane for a template family, and about 180 from ordinary lanes.",
+      "Checker version 6 is live; the production brief is version b15; hand-prepared lanes now start under the supervisor's memory guards."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Rust in progress: 14 files from lanes (292 unverified rewrites, 39 in review)",
+    "commit": "cc614c20cd6fa7292cce8f623ca424713c4007b0",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 292 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
