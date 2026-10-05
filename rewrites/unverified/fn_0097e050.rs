@@ -3,39 +3,41 @@
 /// Handle a ped bike-collision audio event with loudness gating.
 ///
 /// `this` is the audio manager object (dword at `+0x08` carried into the
-/// request block, dword at `+0x120` passed to the submit call). `target`
-/// points at an object whose dword at `+0x1304` selects the voice (`1`
-/// uses the initialised global voice, anything else indexes the voice
-/// table by `key`). `level` is a float loudness seed; `key` is a small
-/// integer used as a table index and locator argument (its bits also
-/// travel as a float to the first filter call); the last two stack words
-/// are never read.
+/// request block, dword at `+0x120` passed to the submit call). `tag` is
+/// an object pointer copied into the request block's word 5. `sel` points
+/// at an object whose dword at `+0x1304` selects the voice (`1` uses the
+/// initialised global voice, anything else indexes the voice table by
+/// `index`). `key` is a small integer seed for the two filter calls;
+/// `index` is a small integer used as the locator argument and table
+/// index; the last stack word is never read.
 ///
 /// Behaviour: the three global gates must pass or the function returns at
-/// once. The key is filtered twice (a missing second filter answer skips
-/// the locator call), then a one-time initialisation runs once (flag word
-/// bit 0) storing a resolver answer into the global voice. The level is
-/// filtered; if the answer is not above the `1e-5` constant (including
-/// NaN, which takes the exit like `comiss`+`jbe`) the function returns the
-/// filter answer's own bits (the EAX residue the call leaves, which the
-/// proof's stub sets to the same bits it pushes on ST0; the real callee's
-/// residue is unobserved). Otherwise a request block is built in frame
-/// scratch (block at frame `+0x10`, reshaped level at word 0, tag at
-/// `+0x20`; word 5 receives the caller's return-address slot, which no
-/// rewrite can reproduce and the proof skips), a slot is allocated and
-/// resolved, and the request is issued: success submits it (triple
-/// `0,-1,0x5D` beside the block) and returns the submit answer, failure
-/// releases the slot and returns the release answer.
+/// once. The key is filtered; a missing threshold answer skips the
+/// locator call (which takes the index). Then a one-time initialisation
+/// runs once (flag word bit 0) storing a resolver answer into the global
+/// voice. The key is filtered again; if the answer is not above the `1e-5`
+/// constant (including NaN, which takes the exit like `comiss`+`jbe`) the
+/// function returns that answer's own bits (the EAX residue the call
+/// leaves, which the proof's stub sets to the same bits it pushes on
+/// ST0; the real callee's residue is unobserved). Otherwise a request
+/// block is built in frame scratch (block at frame `+0x14`, reshaped
+/// level at word 0, tag at word 5, `this+0x08` at word 8), a slot is
+/// allocated and resolved, and the request is issued: success submits it
+/// (triple `0,-1,0x5D` at frame `+0x08`) and returns the submit answer,
+/// failure releases the slot and returns the release answer.
 ///
 /// The only float comparison is the `!(answer > 1e-5)` gate, written to
 /// match `comiss`+`jbe` exactly (NaN exits). All other floats are passed
 /// through untouched. The gate-1 exit returns the caller's entry EAX,
 /// which a rewrite cannot observe; the proof keeps gate 1 passing and
-/// notes this.
+/// notes this. The original also overwrites its incoming key slot with
+/// the filter answer; that store is above the frame, unaddressable from
+/// Rust, so the stack check is off and the value is verified through the
+/// reshape call log and block word 0 instead.
 ///
-/// Original: 0x0097E050 (thiscall, five stack words, the last two unread).
+/// Original: 0x0097E050 (thiscall, five stack words, the last unread).
 lf_checker_rt::export!(thiscall, rw_0097e050(
-    this: u32, target: u32, level: u32, key: u32, _u3: u32, _u4: u32,
+    this: u32, tag: u32, sel: u32, key: u32, index: u32, _u4: u32,
 ) -> u32 {
     unsafe {
         const GATE_INIT: u32 = 0x11F7060;
@@ -50,12 +52,13 @@ lf_checker_rt::export!(thiscall, rw_0097e050(
         const RESOLVER_NAME: u32 = 0xE8CBC8;
         const LOUDNESS_MIN: u32 = 0xFE8670;
         const VOICE_TABLE: u32 = 0x1231670;
-        const TARGET_SEL_OFF: u32 = 0x1304;
+        const SEL_OFF: u32 = 0x1304;
         const THIS_TAG: u32 = 0x08;
         const THIS_X120: u32 = 0x120;
         const SUBMIT_ID: u32 = 0x5D;
-        const F_TRIPLE: usize = 0x04 / 4;
-        const F_BLOCK: usize = 0x10 / 4;
+        const F_TRIPLE: usize = 0x08 / 4;
+        const F_BLOCK: usize = 0x14 / 4;
+        const BLOCK_TAGPTR: usize = 0x14 / 4;
         const BLOCK_TAG: usize = 0x20 / 4;
         const C_FILTER_A: u32 = 1;
         const C_THRESH: u32 = 2;
@@ -92,19 +95,19 @@ lf_checker_rt::export!(thiscall, rw_0097e050(
         let keep = lf_checker_rt::callee_cdecl!(C_THRESH, u32, f1.to_bits());
         let mut last = keep;
         if (keep as u8) != 0 {
-            last = lf_checker_rt::callee_thiscall!(C_LOCATOR, u32, this, key);
+            last = lf_checker_rt::callee_thiscall!(C_LOCATOR, u32, this, index);
         }
         let flag = lf_checker_rt::global::<u32>(INIT_FLAG).read();
         if flag & 1 == 0 {
             lf_checker_rt::global::<u32>(INIT_FLAG).write(flag | 1);
             let v = lf_checker_rt::callee_cdecl!(
-                C_RESOLVER, u32, 0, lf_checker_rt::relocated(RESOLVER_NAME)
+                C_RESOLVER, u32, lf_checker_rt::relocated(RESOLVER_NAME), 0
             );
             lf_checker_rt::global::<u32>(INIT_VOICE).write(v);
             last = v;
         }
         let f2: f32 =
-            lf_checker_rt::callee_thiscall!(C_FILTER_B, f32, lf_checker_rt::relocated(FILTER_B_OBJ), level);
+            lf_checker_rt::callee_thiscall!(C_FILTER_B, f32, lf_checker_rt::relocated(FILTER_B_OBJ), key);
         // The stub answers EAX with the same bits it pushes on ST0, and the
         // original returns EAX on the quiet exit below, so that value (not
         // the earlier answers) is what the exit observes.
@@ -118,14 +121,13 @@ lf_checker_rt::export!(thiscall, rw_0097e050(
         let block = base.wrapping_add((F_BLOCK * 4) as u32);
         lf_checker_rt::callee_thiscall!(C_BLOCK_INIT, u32, block);
         frame[F_BLOCK + BLOCK_TAG] = rd32(this.wrapping_add(THIS_TAG));
-        // NOTE: the original stores its caller return-address slot at
-        // block word 5 here; it is skipped in every snapshot (see proof).
+        frame[F_BLOCK + BLOCK_TAGPTR] = tag;
         let shaped: f32 = lf_checker_rt::callee_cdecl!(C_RESHAPE, f32, f2.to_bits());
         frame[F_BLOCK] = shaped.to_bits();
-        let voice = if rd32(target.wrapping_add(TARGET_SEL_OFF)) == 1 {
+        let voice = if rd32(sel.wrapping_add(SEL_OFF)) == 1 {
             lf_checker_rt::global::<u32>(INIT_VOICE).read()
         } else {
-            rd32(lf_checker_rt::relocated(VOICE_TABLE).wrapping_add(key.wrapping_mul(4)))
+            rd32(lf_checker_rt::relocated(VOICE_TABLE).wrapping_add(index.wrapping_mul(4)))
         };
         let slot = lf_checker_rt::callee_cdecl!(C_SLOT_ALLOC, u32,);
         let resolved = lf_checker_rt::callee_cdecl!(C_SLOT_RESOLVE, u32, slot);
