@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Naming the draw-command constructors and their draw methods",
+    "title": "Rewrites: 3 more functions pass the checker (11171 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "3 rewrites added under rewrites/verified: 0 script native handlers and 3 other functions.",
+      "The tree now holds 11171 rewrites, 11152 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "525 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Naming the draw-command constructors and their draw methods",
+    "commit": "a58be1ba48530ccfcba29f5530c27aeb23077bce",
     "summary": "Findings from the nm-64 lane.",
     "changes": [
       "New devlog entry: Naming the draw-command constructors and their draw methods.",
