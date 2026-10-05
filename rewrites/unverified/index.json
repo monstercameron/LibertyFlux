@@ -1344,6 +1344,54 @@
   "reason": null
  },
  {
+  "address": "0x009A8150",
+  "name": "script_slot_clear",
+  "file": "fn_009a8150.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A8220",
+  "name": "script_slot_release",
+  "file": "fn_009a8220.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A8740",
+  "name": "audio_ptr_tailjump",
+  "file": "fn_009a8740.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A8810",
+  "name": "script_event_forward",
+  "file": "fn_009a8810.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A8A50",
+  "name": "audScriptAudioEntity::vf2",
+  "file": "fn_009a8a50.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A8E90",
+  "name": "script_stop_forward",
+  "file": "fn_009a8e90.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x009AA110",
   "name": "conv_first_or_null",
   "file": "fn_009aa110.rs",
@@ -1352,9 +1400,81 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x009AA3F0",
+  "name": "table_scaled_random",
+  "file": "fn_009aa3f0.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B94D0",
+  "name": "CCamScriptInstruction_ActivateCam::vf2",
+  "file": "fn_009b94d0.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B9500",
+  "name": "CCamScriptInstruction_ActivateViewport::vf2",
+  "file": "fn_009b9500.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x009B9550",
   "name": "CCamScriptInstruction_AddPedToCinematographyAI::vf2",
   "file": "fn_009b9550.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B9800",
+  "name": "CCamScriptInstruction_ForceTelescopeCam::vf2",
+  "file": "fn_009b9800.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B9890",
+  "name": "CCamScriptInstruction_InterpolateToGameCam::vf2",
+  "file": "fn_009b9890.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B98C0",
+  "name": "CCamScriptInstruction_InterpolateToScriptCam::vf2",
+  "file": "fn_009b98c0.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B9980",
+  "name": "CCamScriptInstruction_PropagateCam::vf2",
+  "file": "fn_009b9980.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B9AB0",
+  "name": "CCamScriptInstruction_SequenceStartProcessing::vf2",
+  "file": "fn_009b9ab0.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B9AD0",
+  "name": "CCamScriptInstruction_SequenceStopProcessing::vf2",
+  "file": "fn_009b9ad0.rs",
   "lane": "r-s421",
   "outcome": "not_reached",
   "reason": null
@@ -1528,14 +1648,6 @@
   "reason": "other"
  },
  {
-  "address": "0x00B2E290",
-  "name": "wreck_task_scan_nearest",
-  "file": "fn_00b2e290.rs",
-  "lane": "r-b406",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x00B37240",
   "name": "pending-triage",
   "file": "fn_00b37240.rs",
@@ -1680,171 +1792,11 @@
   "reason": null
  },
  {
-  "address": "0x00B91170",
-  "name": "NativeImpl_RENDER_LOADING_CLOCK_2",
-  "file": "fn_00b91170.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B913A0",
-  "name": "NativeImpl_SET_BLIP_COORDINATES_2",
-  "file": "fn_00b913a0.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B921C0",
-  "name": "NativeImpl_GET_BLIP_INFO_ID_POSITION",
-  "file": "fn_00b921c0.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B92370",
-  "name": "Text_ResolveGxtEntry",
-  "file": "fn_00b92370.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B925E0",
-  "name": "tbd",
-  "file": "fn_00b925e0.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B928D0",
-  "name": "tbd",
-  "file": "fn_00b928d0.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00B94F20",
   "name": null,
   "file": "fn_00b94f20.rs",
   "lane": "r-n86",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B95520",
-  "name": "NativeImpl_ADD_HOSPITAL_RESTART",
-  "file": "fn_00b95520.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B955A0",
-  "name": "NativeImpl_ADD_POLICE_RESTART",
-  "file": "fn_00b955a0.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B958C0",
-  "name": "NativeImpl_CLEAR_AREA",
-  "file": "fn_00b958c0.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B95950",
-  "name": "NativeImpl_CLEAR_AREA_OF_CARS",
-  "file": "fn_00b95950.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B959E0",
-  "name": "NativeImpl_CLEAR_AREA_OF_CHARS",
-  "file": "fn_00b959e0.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B95A60",
-  "name": "NativeImpl_CLEAR_AREA_OF_COPS",
-  "file": "fn_00b95a60.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B95AE0",
-  "name": "NativeImpl_CLEAR_AREA_OF_OBJECTS",
-  "file": "fn_00b95ae0.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B96950",
-  "name": "NativeImpl_IS_BULLET_IN_AREA_2",
-  "file": "fn_00b96950.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B969B0",
-  "name": "NativeImpl_IS_BULLET_IN_BOX_2",
-  "file": "fn_00b969b0.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B96B00",
-  "name": "NativeImpl_IS_POINT_OBSCURED_BY_A_MISSION_ENTITY_2",
-  "file": "fn_00b96b00.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B96DE0",
-  "name": "NativeImpl_OVERRIDE_NEXT_RESTART",
-  "file": "fn_00b96de0.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B972C0",
-  "name": "NativeImpl_SET_UP_TRIP_SKIP",
-  "file": "fn_00b972c0.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B97310",
-  "name": "NativeImpl_SET_UP_TRIP_SKIP_AFTER_MISSION",
-  "file": "fn_00b97310.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00B97420",
-  "name": "NativeImpl_SET_UP_TRIP_SKIP_TO_BE_FINISHED_BY_SCRIPT",
-  "file": "fn_00b97420.rs",
-  "lane": "r-s418",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -2526,6 +2478,14 @@
   "lane": "r-s286",
   "outcome": "not yet run",
   "reason": null
+ },
+ {
+  "address": "0x00D108F0",
+  "name": "pending",
+  "file": "fn_00d108f0.rs",
+  "lane": "r-b405",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00D1D870",
