@@ -1344,68 +1344,12 @@
   "reason": null
  },
  {
-  "address": "0x009A8150",
-  "name": "script_slot_clear",
-  "file": "fn_009a8150.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A8220",
-  "name": "script_slot_release",
-  "file": "fn_009a8220.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A8740",
-  "name": "audio_ptr_tailjump",
-  "file": "fn_009a8740.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A8810",
-  "name": "script_event_forward",
-  "file": "fn_009a8810.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A8A50",
-  "name": "audScriptAudioEntity::vf2",
-  "file": "fn_009a8a50.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A8E90",
-  "name": "script_stop_forward",
-  "file": "fn_009a8e90.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x009AA110",
   "name": "conv_first_or_null",
   "file": "fn_009aa110.rs",
   "lane": "r-s420",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x009AA3F0",
-  "name": "table_scaled_random",
-  "file": "fn_009aa3f0.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x009B94D0",
@@ -1435,6 +1379,14 @@
   "address": "0x009B9550",
   "name": "CCamScriptInstruction_AddPedToCinematographyAI::vf2",
   "file": "fn_009b9550.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B9580",
+  "name": "CCamScriptInstruction_AttachCamToViewport::vf2",
+  "file": "fn_009b9580.rs",
   "lane": "r-s421",
   "outcome": "not_reached",
   "reason": null
@@ -1499,6 +1451,14 @@
   "address": "0x009B9800",
   "name": "CCamScriptInstruction_ForceTelescopeCam::vf2",
   "file": "fn_009b9800.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B9830",
+  "name": "CCamScriptInstruction_InheritRoll::vf2",
+  "file": "fn_009b9830.rs",
   "lane": "r-s421",
   "outcome": "not_reached",
   "reason": null
@@ -1571,6 +1531,22 @@
   "address": "0x009B9AD0",
   "name": "CCamScriptInstruction_SequenceStopProcessing::vf2",
   "file": "fn_009b9ad0.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B9E10",
+  "name": "CCamScriptInstruction_SetCamPos_Q::vf2",
+  "file": "fn_009b9e10.rs",
+  "lane": "r-s421",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B9FE0",
+  "name": "CCamScriptInstruction_SetCinematicCam_Q::vf2",
+  "file": "fn_009b9fe0.rs",
   "lane": "r-s421",
   "outcome": "not_reached",
   "reason": null
@@ -1907,6 +1883,62 @@
   "address": "0x00B9B2B0",
   "name": "NativeImpl_GENERATE_DIRECTIONS_2",
   "file": "fn_00b9b2b0.rs",
+  "lane": "r-s423",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B9C680",
+  "name": "NativeImpl_GET_PARKING_NODE_IN_AREA",
+  "file": "fn_00b9c680.rs",
+  "lane": "r-s423",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B9C730",
+  "name": "NativeImpl_GET_RANDOM_CAR_NODE",
+  "file": "fn_00b9c730.rs",
+  "lane": "r-s423",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B9C7C0",
+  "name": "NativeImpl_GET_RANDOM_CAR_NODE_INCLUDE_SWITCHED_OFF_NODES",
+  "file": "fn_00b9c7c0.rs",
+  "lane": "r-s423",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B9CB50",
+  "name": "NativeImpl_GET_RANDOM_WATER_NODE_2",
+  "file": "fn_00b9cb50.rs",
+  "lane": "r-s423",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B9D1C0",
+  "name": "NativeImpl_SWITCH_PED_PATHS_OFF",
+  "file": "fn_00b9d1c0.rs",
+  "lane": "r-s423",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B9D260",
+  "name": "NativeImpl_SWITCH_PED_PATHS_ON",
+  "file": "fn_00b9d260.rs",
+  "lane": "r-s423",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B9D300",
+  "name": "NativeImpl_SWITCH_PED_ROADS_BACK_TO_ORIGINAL",
+  "file": "fn_00b9d300.rs",
   "lane": "r-s423",
   "outcome": "not_reached",
   "reason": null
