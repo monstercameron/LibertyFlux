@@ -44514,6 +44514,87 @@
   "lane": "a-10"
  },
  {
+  "address": "0x009B94D0",
+  "name": "CCamScriptInstruction_ActivateCam::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b94d0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B9500",
+  "name": "CCamScriptInstruction_ActivateViewport::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9500.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B9550",
+  "name": "CCamScriptInstruction_AddPedToCinematographyAI::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9550.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B9800",
+  "name": "CCamScriptInstruction_ForceTelescopeCam::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9800.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B9890",
+  "name": "CCamScriptInstruction_InterpolateToGameCam::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9890.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B98C0",
+  "name": "CCamScriptInstruction_InterpolateToScriptCam::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b98c0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B9980",
+  "name": "CCamScriptInstruction_PropagateCam::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9980.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B9AB0",
+  "name": "CCamScriptInstruction_SequenceStartProcessing::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9ab0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B9AD0",
+  "name": "CCamScriptInstruction_SequenceStopProcessing::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9ad0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
   "address": "0x009B9F10",
   "name": "CCamScriptInstruction_SetCamSplineCustomSpeedGraph::vf2",
   "kind": "function",
@@ -44527,6 +44608,33 @@
   "name": "CCamScriptInstruction_SetCinematicButtonEnabled::vf2",
   "kind": "function",
   "file": "functions/fn_009b9fd0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009BA140",
+  "name": "CCamScriptInstruction_SetFOV::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba140.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009BA160",
+  "name": "CCamScriptInstruction_SetFar::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba160.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009BA180",
+  "name": "CCamScriptInstruction_SetFarDOF::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba180.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s421"
@@ -44557,6 +44665,366 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s421"
+ },
+ {
+  "address": "0x009BA200",
+  "name": "CCamScriptInstruction_SetFollowVehiclePitchLimitDown::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba200.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA210",
+  "name": "CCamScriptInstruction_SetFollowVehiclePitchLimitUp::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba210.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA220",
+  "name": "CCamScriptInstruction_SetGameCamHeading::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba220.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA250",
+  "name": "CCamScriptInstruction_SetGameCamPitch::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba250.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA280",
+  "name": "CCamScriptInstruction_SetGameCameraControlsActive::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba280.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA2B0",
+  "name": "CCamScriptInstruction_SetGameFollowVehicleCamSubMode::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba2b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA310",
+  "name": "CCamScriptInstruction_SetHintAdvancedParams::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba310.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA360",
+  "name": "CCamScriptInstruction_SetHintFOV::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba360.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA390",
+  "name": "CCamScriptInstruction_SetHintMoveInDist::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba390.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA3B0",
+  "name": "CCamScriptInstruction_SetHintMoveInDistDefault::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba3b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA3D0",
+  "name": "CCamScriptInstruction_SetHintTimes::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba3d0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA400",
+  "name": "CCamScriptInstruction_SetHintTimesDefault::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba400.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA420",
+  "name": "CCamScriptInstruction_SetInterpDetail_Rot_Style_Angles::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba420.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA440",
+  "name": "CCamScriptInstruction_SetInterpDetail_Rot_Style_Quats::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba440.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA460",
+  "name": "CCamScriptInstruction_SetInterpGraphTypePos::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba460.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA490",
+  "name": "CCamScriptInstruction_SetInterpGraphTypeRot::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba490.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA4C0",
+  "name": "CCamScriptInstruction_SetInterpStateSrc::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba4c0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA4E0",
+  "name": "CCamScriptInstruction_SetInterpStyleCore::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba4e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA530",
+  "name": "CCamScriptInstruction_SetInterpStyleDetailed::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba530.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA590",
+  "name": "CCamScriptInstruction_SetLookDampingParams::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba590.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA5D0",
+  "name": "CCamScriptInstruction_SetLookTargetCam::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba5d0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA620",
+  "name": "CCamScriptInstruction_SetLookTargetEntity::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba620.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA690",
+  "name": "CCamScriptInstruction_SetLookTargetOffset::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba690.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA720",
+  "name": "CCamScriptInstruction_SetLookTargetOffsetRelative::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba720.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA770",
+  "name": "CCamScriptInstruction_SetLookTargetPos::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba770.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA7B0",
+  "name": "CCamScriptInstruction_SetMotionBlur::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba7b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA7F0",
+  "name": "CCamScriptInstruction_SetNear::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba7f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA810",
+  "name": "CCamScriptInstruction_SetNearDOF::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba810.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA830",
+  "name": "CCamScriptInstruction_SetPos::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba830.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA8A0",
+  "name": "CCamScriptInstruction_SetPosTargetEntity::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba8a0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA8C0",
+  "name": "CCamScriptInstruction_SetPosTargetOffset::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba8c0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA910",
+  "name": "CCamScriptInstruction_SetPosTargetOffsetRelative::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba910.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BA950",
+  "name": "CCamScriptInstruction_SetRoll::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba950.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BABA0",
+  "name": "CCamScriptInstruction_SetScreenFade::vf2",
+  "kind": "function",
+  "file": "functions/fn_009baba0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BAD70",
+  "name": "CCamScriptInstruction_SetScriptModeActive::vf2",
+  "kind": "function",
+  "file": "functions/fn_009bad70.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BAF00",
+  "name": "CCamScriptInstruction_SetSniperZoomFactor::vf2",
+  "kind": "function",
+  "file": "functions/fn_009baf00.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BAF20",
+  "name": "CCamScriptInstruction_SetSplineDuration::vf2",
+  "kind": "function",
+  "file": "functions/fn_009baf20.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BAF40",
+  "name": "CCamScriptInstruction_SetSplineProgress::vf2",
+  "kind": "function",
+  "file": "functions/fn_009baf40.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BAF70",
+  "name": "CCamScriptInstruction_SetSplineSpeedConstant::vf2",
+  "kind": "function",
+  "file": "functions/fn_009baf70.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
+ },
+ {
+  "address": "0x009BAF90",
+  "name": "CCamScriptInstruction_SetSplineSpeedGraph::vf2",
+  "kind": "function",
+  "file": "functions/fn_009baf90.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s422"
  },
  {
   "address": "0x009CA7E0",
@@ -86353,6 +86821,24 @@
   "trials": 2000,
   "checker": "version 2",
   "lane": "r-b03"
+ },
+ {
+  "address": "0x00CD7990",
+  "name": "CEntitySeekPosCalculatorRadiusAngleOffset::vf1",
+  "kind": "function",
+  "file": "functions/fn_00cd7990.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b411"
+ },
+ {
+  "address": "0x00CD7C40",
+  "name": "CTaskComplexFollowLeaderAnyMeans::vf20",
+  "kind": "function",
+  "file": "functions/fn_00cd7c40.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b411"
  },
  {
   "address": "0x00CDCBF0",
