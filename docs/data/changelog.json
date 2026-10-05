@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Five event-handler methods verified, one with a surprising register mix-up",
+    "title": "Devlog: Production lane: the worker relocates absolute immediates, and data reads work without the shadow",
     "commit": null,
+    "summary": "Findings from the r-b390 lane.",
+    "changes": [
+      "New devlog entry: Production lane: the worker relocates absolute immediates, and data reads work without the shadow.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Five event-handler methods verified, one with a surprising register mix-up",
+    "commit": "9cc520d4403462eef35d96a76bcf6deab3fbaf7b",
     "summary": "Findings from the r-b388 lane.",
     "changes": [
       "New devlog entry: Five event-handler methods verified, one with a surprising register mix-up.",
