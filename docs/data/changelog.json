@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: hourly review, 14:05 on 5 October",
+    "title": "Devlog: Two coverage traps in a 3,394-byte ped-task function",
     "commit": null,
+    "summary": "Findings from the r-b537 lane.",
+    "changes": [
+      "New devlog entry: Two coverage traps in a 3,394-byte ped-task function.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: hourly review, 14:05 on 5 October",
+    "commit": "3797f23b241e042f429378ca265205cf08f71e02",
     "summary": "One row added to the day's hourly reviews.",
     "changes": [
       "14,873 functions verified, 25.2% of the code by size. Of the hour's 1,014, 715 were earlier work released by a corrected publication scan, 117 came from one generator lane for a template family, and about 180 from ordinary lanes.",
