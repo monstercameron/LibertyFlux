@@ -1352,110 +1352,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x009B9600",
-  "name": "CCamScriptInstruction_DestroyAllCams::vf2",
-  "file": "fn_009b9600.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B9620",
-  "name": "CCamScriptInstruction_DestroyCam::vf2",
-  "file": "fn_009b9620.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B9660",
-  "name": "CCamScriptInstruction_DoFadeIn_Q::vf2",
-  "file": "fn_009b9660.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B96B0",
-  "name": "CCamScriptInstruction_DoFadeIn_UNHACKED_Q::vf2",
-  "file": "fn_009b96b0.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B96F0",
-  "name": "CCamScriptInstruction_DoFadeOut_Q::vf2",
-  "file": "fn_009b96f0.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B9740",
-  "name": "CCamScriptInstruction_DoFadeOut_UNHACKED_Q::vf2",
-  "file": "fn_009b9740.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B9780",
-  "name": "CCamScriptInstruction_EnableCamCollision::vf2",
-  "file": "fn_009b9780.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B9860",
-  "name": "CCamScriptInstruction_InsertSplineNode::vf2",
-  "file": "fn_009b9860.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B99D0",
-  "name": "CCamScriptInstruction_RestoreJumpCut_Q::vf2",
-  "file": "fn_009b99d0.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B9A20",
-  "name": "CCamScriptInstruction_Restore_Q::vf2",
-  "file": "fn_009b9a20.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B9A90",
-  "name": "CCamScriptInstruction_SequenceEmpty::vf2",
-  "file": "fn_009b9a90.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009BA040",
-  "name": "CCamScriptInstruction_SetDollyZoomLock::vf2",
-  "file": "fn_009ba040.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009BA070",
-  "name": "CCamScriptInstruction_SetDrunkCam::vf2",
-  "file": "fn_009ba070.rs",
-  "lane": "r-s421",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x009CBBC0",
   "name": null,
   "file": "fn_009cbbc0.rs",
@@ -2112,6 +2008,14 @@
   "reason": null
  },
  {
+  "address": "0x00C06480",
+  "name": "stream_read_counted_span",
+  "file": "fn_00c06480.rs",
+  "lane": "r-s426",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00C064D0",
   "name": "stream_set_name_if_present",
   "file": "fn_00c064d0.rs",
@@ -2128,6 +2032,86 @@
   "reason": null
  },
  {
+  "address": "0x00C06780",
+  "name": "stream_view_copy",
+  "file": "fn_00c06780.rs",
+  "lane": "r-s426",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C067E0",
+  "name": "stream_object_adopt",
+  "file": "fn_00c067e0.rs",
+  "lane": "r-s426",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C06860",
+  "name": "stream_slot_insert_at",
+  "file": "fn_00c06860.rs",
+  "lane": "r-s426",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C068E0",
+  "name": "stream_slot_alloc_init",
+  "file": "fn_00c068e0.rs",
+  "lane": "r-s426",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C06900",
+  "name": "stream_slot_append_or_forward",
+  "file": "fn_00c06900.rs",
+  "lane": "r-s426",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C069B0",
+  "name": "stream_slot_build",
+  "file": "fn_00c069b0.rs",
+  "lane": "r-s426",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C06BF0",
+  "name": "stream_dup_name_register",
+  "file": "fn_00c06bf0.rs",
+  "lane": "r-s426",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C06C40",
+  "name": "stream_view_register_init",
+  "file": "fn_00c06c40.rs",
+  "lane": "r-s426",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C06CF0",
+  "name": "stream_view_register_copy",
+  "file": "fn_00c06cf0.rs",
+  "lane": "r-s426",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C06D50",
+  "name": "stream_alloc_clear_pairs",
+  "file": "fn_00c06d50.rs",
+  "lane": "r-s426",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00C06D90",
   "name": "stream_alloc_slot_array",
   "file": "fn_00c06d90.rs",
@@ -2136,9 +2120,33 @@
   "reason": null
  },
  {
+  "address": "0x00C06ED0",
+  "name": "stream_slots_adopt",
+  "file": "fn_00c06ed0.rs",
+  "lane": "r-s426",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C06F60",
+  "name": "stream_view_init_from_parts",
+  "file": "fn_00c06f60.rs",
+  "lane": "r-s426",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00C07320",
   "name": "stream_compact_slots_from",
   "file": "fn_00c07320.rs",
+  "lane": "r-s426",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C07370",
+  "name": "stream_slot_remove_at",
+  "file": "fn_00c07370.rs",
   "lane": "r-s426",
   "outcome": "not_reached",
   "reason": null
@@ -2155,6 +2163,14 @@
   "address": "0x00C07530",
   "name": "stream_pair_forward_reset",
   "file": "fn_00c07530.rs",
+  "lane": "r-s426",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C07550",
+  "name": "stream_group_release",
+  "file": "fn_00c07550.rs",
   "lane": "r-s426",
   "outcome": "not_reached",
   "reason": null
@@ -2732,6 +2748,14 @@
   "name": "seek_cover_slot_usable",
   "file": "fn_00d1d870.rs",
   "lane": "r-b346",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00D1E350",
+  "name": "CTaskComplexSeekCoverShooting::vf20",
+  "file": "fn_00d1e350.rs",
+  "lane": "r-b408",
   "outcome": "not_reached",
   "reason": ""
  },

@@ -104,7 +104,10 @@ lf_checker_rt::export!(thiscall, rw_00cadd10(this: u32, ctx: u32) -> u32 {
         let inv = if q != 0.0 { div(one, q.sqrt()) } else { 0.0 };
         let mut invec = [mul(dx, inv).to_bits(), mul(inv, dy).to_bits(), mul(inv, 0.0).to_bits()];
         let mut outvec = [0u32; 3];
-        lf_checker_rt::callee_thiscall!(1, u32, driver, invec.as_ptr() as u32, outvec.as_mut_ptr() as u32);
+        // NOTE: the original pushes the two vectors left-to-right, so stack
+        // slot 0 is the output vector and slot 1 the input; the reversed
+        // argument order here reproduces that exact layout.
+        lf_checker_rt::callee_thiscall!(1, u32, driver, outvec.as_mut_ptr() as u32, invec.as_ptr() as u32);
 
         let handle = lf_checker_rt::callee_thiscall!(2, u32, ctx);
         let f1 = lf_checker_rt::callee_cdecl!(4, u32, lf_checker_rt::callee_thiscall!(3, u32, handle)) as i32 as f32;
@@ -125,7 +128,10 @@ lf_checker_rt::export!(thiscall, rw_00cadd10(this: u32, ctx: u32) -> u32 {
         let d9 = f64::from_bits(((F64_HI as u64) << 32) | answer_lo as u64);
         let e8b = neg_bits(d9 as f32, signmask);
 
-        let r10 = f32::from_bits(lf_checker_rt::callee_cdecl!(10, u32, e8b.to_bits()));
+        // Second float stage: its xmm0 entry has an untransportable leftover
+        // in lane 1 (the double stage's answer high word), so the contract
+        // compares only the answer, which arrives in eax like the others.
+        let r10 = f32::from_bits(lf_checker_rt::callee_stdcall!(10, u32,));
         let acc_hi = mul(r10, acc_hi);
         let r11 = f32::from_bits(lf_checker_rt::callee_cdecl!(11, u32, e8b.to_bits()));
         let res = sub(acc_hi, mul(r11, acc_lo));

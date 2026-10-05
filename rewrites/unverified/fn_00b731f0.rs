@@ -120,6 +120,10 @@ lf_checker_rt::export!(thiscall, rw_00B731F0(this: u32, ped: u32) -> u32 {
             unsafe { (a as *mut u16).write_unaligned(v) }
         }
         #[inline(always)]
+        unsafe fn wr32(a: u32, v: u32) {
+            unsafe { (a as *mut u32).write_unaligned(v) }
+        }
+        #[inline(always)]
         unsafe fn rdf(a: u32) -> f32 {
             unsafe { f32::from_bits(rd32(a)) }
         }
@@ -161,6 +165,61 @@ lf_checker_rt::export!(thiscall, rw_00B731F0(this: u32, ped: u32) -> u32 {
             }
         }
 
+        /// Release path shared by the helper-failure exits.
+        unsafe fn release(task: u32) -> u32 {
+            unsafe {
+                const TASK_CAR: u32 = 0x34;
+                const CAR_BITS1: u32 = 0xf16;
+                const CAR_GATE_BIT: u8 = 0x04;
+                #[inline(always)]
+                unsafe fn rd8(a: u32) -> u8 {
+                    unsafe { (a as *const u8).read() }
+                }
+                #[inline(always)]
+                unsafe fn rd32(a: u32) -> u32 {
+                    unsafe { (a as *const u32).read_unaligned() }
+                }
+                #[inline(always)]
+                unsafe fn wr8(a: u32, v: u8) {
+                    unsafe { (a as *mut u8).write(v) }
+                }
+                lf_checker_rt::callee_thiscall!(
+                    5,
+                    u32,
+                    rd32(task.wrapping_add(TASK_CAR)),
+                    0
+                );
+                let car = rd32(task.wrapping_add(TASK_CAR));
+                wr8(
+                    car.wrapping_add(CAR_BITS1),
+                    rd8(car.wrapping_add(CAR_BITS1)) & !CAR_GATE_BIT,
+                );
+                1
+            }
+        }
+        /// Continuation shared after a zeroed working float: clear the
+        /// sub-task's armed bit when set.
+        unsafe fn clear_armed(task: u32) {
+            unsafe {
+                const TASK_SUB: u32 = 0x14;
+                const SUB_OUT: u32 = 0x04;
+                const SUB_ARMED: u32 = 0x40;
+                #[inline(always)]
+                unsafe fn rd32(a: u32) -> u32 {
+                    unsafe { (a as *const u32).read_unaligned() }
+                }
+                #[inline(always)]
+                unsafe fn wr32(a: u32, v: u32) {
+                    unsafe { (a as *mut u32).write_unaligned(v) }
+                }
+                let sub = rd32(task.wrapping_add(TASK_SUB));
+                let flags = rd32(sub.wrapping_add(SUB_OUT));
+                if (flags >> 6) & 1 != 0 {
+                    wr32(sub.wrapping_add(SUB_OUT), flags & !SUB_ARMED);
+                }
+            }
+        }
+
         if rd32(this.wrapping_add(TASK_FLAGS)) & FLAG_SHORT == 0 {
             let car = rd32(this.wrapping_add(TASK_CAR));
             if car == 0 {
@@ -192,11 +251,12 @@ lf_checker_rt::export!(thiscall, rw_00B731F0(this: u32, ped: u32) -> u32 {
             let entry = rd32(table.wrapping_add(index.wrapping_mul(4)));
             let param = rd32(entry.wrapping_add(ENTRY_PARAM));
             let mut slot: u32 = seed;
+            let slot_addr: u32 = core::ptr::addr_of_mut!(slot) as u32;
             let started: u32 = lf_checker_rt::callee_cdecl!(
                 2,
                 u32,
                 param,
-                &mut slot as *mut u32 as u32,
+                slot_addr,
                 ped,
                 car,
                 0,
@@ -267,8 +327,7 @@ lf_checker_rt::export!(thiscall, rw_00B731F0(this: u32, ped: u32) -> u32 {
                 let car = rd32(this.wrapping_add(TASK_CAR));
                 if rd8(car.wrapping_add(CAR_BITS0)) & 0x10 != 0
                     && rd8(car.wrapping_add(CAR_KIND)) >= 1
-                    && !(rdf(car.wrapping_add(CAR_LEVEL)) > C_ONE)
-                    == false
+                    && rdf(car.wrapping_add(CAR_LEVEL)) > C_ONE
                 {
                     if let Some(answer) = rung() {
                         if (answer as i32) > 1 {
@@ -293,51 +352,33 @@ lf_checker_rt::export!(thiscall, rw_00B731F0(this: u32, ped: u32) -> u32 {
         {
             return 0;
         }
+        let mut picked: Option<f32> = None;
         if let Some(answer) = rung() {
             if (answer as i32) > 2 {
-                work = C_ONE;
-            } else if let Some(answer) = rung() {
-                if answer == 2 {
-                    work = C_066;
-                } else if let Some(answer) = rung() {
-                    if answer == 1 {
-                        work = C_033;
-                    } else {
-                        work = C_025;
-                    }
-                } else {
-                    work = C_025;
-                }
-            } else {
-                // A null probe on the second rung skips the third rung's
-                // probes: the original falls through to the default.
-                work = C_025;
+                picked = Some(C_ONE);
             }
-        } else {
-            work = C_025;
         }
+        if picked.is_none() {
+            if let Some(answer) = rung() {
+                if answer == 2 {
+                    picked = Some(C_066);
+                }
+            }
+            if picked.is_none() {
+                if let Some(answer) = rung() {
+                    if answer == 1 {
+                        picked = Some(C_033);
+                    }
+                }
+            }
+        }
+        work = picked.unwrap_or(C_025);
         let fired: u32 = lf_checker_rt::callee_cdecl!(10, u32, work.to_bits());
         if fired & 0xff == 0 {
             return 0;
         }
         notify(ped, lf_checker_rt::relocated(NOTIFY1_FILE_VA));
-        return 0;
-
-        // Local helpers sharing the constants above are not expressible here;
-        // the two tail routines are inlined below through named closures.
-        #[allow(unreachable_code)]
-        {
-            return 0;
-        }
+        0
     }
 
-    /// Release path shared by the helper-failure exits (unreachable wrapper;
-    /// real logic lives in the `release`/`clear_armed` items below).
-    unsafe fn release(_task: u32) -> u32 {
-        unsafe { 0 }
-    }
-    /// Continuation path shared after a zeroed working float.
-    unsafe fn clear_armed(_task: u32) -> u32 {
-        unsafe { 0 }
-    }
 });
