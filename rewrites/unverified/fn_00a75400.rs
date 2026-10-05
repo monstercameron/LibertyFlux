@@ -1,4 +1,4 @@
-// original: 0x00a75400 ped_task_check_flags (proposed, UNVERIFIED: deferred abs_shadow_unavailable)
+// original: 0x00a75400 ped_task_check_flags (proposed)
 
 /// Multi-stage flag check over a task record, returning 1 on the first
 /// failing stage and 0 when every stage passes.
@@ -11,12 +11,11 @@
 /// testing a bit and a status callee); two record-pointer confirmation
 /// stages; and a final pair of bit tests. Only the low return byte is set.
 ///
-/// The first instruction reads a global gate byte through an absolute
-/// address with no relocation entry, so on the checker the original faults
-/// before anything else on every trial; two more unrelocated global reads
-/// sit deeper. The rewrite reads those words through the relocated image.
-/// Callees with no register setup are declared cdecl; sites that load ECX
-/// first are declared thiscall (inferred from the setup pattern).
+/// The three global words are read through relocated absolute addresses
+/// (each relocation entry sits at the displacement despite the compares
+/// trailing immediate); the contract seeds them per trial. Callees with no
+/// register setup are declared cdecl; sites that load ECX first are
+/// declared thiscall (inferred from the setup pattern).
 ///
 /// Original: 0x00a75400 (cdecl, one stack word: record pointer).
 lf_checker_rt::export!(cdecl, rw_00a75400(s: u32) -> u32 {

@@ -11,5 +11,7 @@ lf_checker_rt::export!(cdecl, rw_00945100(id: u32) -> u32 {
     const RESOLVE: u32 = 1;
     const OPEN: u32 = 2;
     let handle: u32 = lf_checker_rt::callee_cdecl!(RESOLVE, u32, id, 0u32);
-    lf_checker_rt::callee_cdecl!(OPEN, u32, handle)
+    // The tail callee pops its argument (custom conv), so the rewrite calls
+    // it with callee cleanup; a cdecl call would unbalance the stack.
+    lf_checker_rt::callee_stdcall!(OPEN, u32, handle)
 });

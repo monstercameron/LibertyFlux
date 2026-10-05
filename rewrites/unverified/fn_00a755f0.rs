@@ -1,4 +1,4 @@
-// original: 0x00a755f0 ped_task_gate_flag_pair (proposed, UNVERIFIED: deferred abs_shadow_unavailable)
+// original: 0x00a755f0 ped_task_gate_flag_pair (proposed)
 
 /// Gate on paired flag bytes with a middle record-lookup section.
 ///
@@ -14,11 +14,12 @@
 /// selects the second half, two more flag-pair groups are scanned the same
 /// way for the low bit. Returns 1 when either half is set, else 0.
 ///
-/// The mode-word read uses an absolute address with no relocation entry, so
-/// on the checker the original faults there on every trial that reaches it;
-/// the rewrite reads the same word through the relocated image. All calls
-/// are direct: one thiscall lookup, two thiscall probes (two sites each),
-/// one thiscall resolver (three sites) and one cdecl table call (two sites).
+/// The mode word is read through a relocated absolute address (its
+/// relocation entry sits at the displacement despite the trailing
+/// immediate); the contract seeds the word per trial. All calls are direct:
+/// one thiscall lookup, two thiscall probes (two sites each, the first
+/// positive answer short-circuits the rest), one thiscall resolver (three
+/// sites) and one cdecl table call (two sites).
 ///
 /// Original: 0x00a755f0 (stdcall, one stack word: record pointer).
 lf_checker_rt::export!(stdcall, rw_00a755f0(arg: u32) -> u32 {

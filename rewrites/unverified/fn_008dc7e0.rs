@@ -7,13 +7,11 @@
 /// slot-free marker set). The slot lookup runs on the slot count, the
 /// blockinfo call returns the block object, two tag queries feed a
 /// signed divide/modulo chain whose result lands in bits 14..20 of
-/// the block flags, and the payload is copied from the call site
-/// address with the copy length. The copy source is the function's
-/// own return address: compared by pointed-to bytes with the length
-/// capped at 256 so the whole source range is observed.
+/// the block flags, and the payload is copied from the nullable
+/// source pointer in the first stack argument (skipped when null).
 ///
-/// Original: 0x008DC7E0 (thiscall: `this` in ECX, `slot_arg`, `size`).
-lf_checker_rt::export!(thiscall, rw_008dc7e0(this: u32, _slot: u32, size: u32) -> u32 {
+/// Original: 0x008DC7E0 (thiscall: `this` in ECX, nullable `src`, `size`).
+lf_checker_rt::export!(thiscall, rw_008dc7e0(this: u32, src: u32, size: u32) -> u32 {
     unsafe {
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
@@ -61,10 +59,11 @@ lf_checker_rt::export!(thiscall, rw_008dc7e0(this: u32, _slot: u32, size: u32) -
         let dst = (this.wrapping_add(stride.wrapping_mul(4)) as *const u32)
             .read()
             .wrapping_add(rd32(this + USED));
-        // The copy source is the function's own return address, which a
-        // Rust rewrite cannot observe; the address is skipped (see the
-        // contract) and the null guard below is dead in every trial.
-        lf_checker_rt::callee_cdecl!(4, u32, dst, 0, size);
+        // The copy source is the first stack argument (nullable): only
+        // copy when it is non-null, exactly like the original's guard.
+        if src != 0 {
+            lf_checker_rt::callee_cdecl!(4, u32, dst, src, size);
+        }
         (this.wrapping_add(USED) as *mut u32)
             .write(rd32(this + USED).wrapping_add(aligned));
         dst
