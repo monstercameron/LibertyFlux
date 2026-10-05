@@ -1976,17 +1976,17 @@
   "reason": null
  },
  {
-  "address": "0x00C3B360",
+  "address": "0x00C3D890",
   "name": "tbd",
-  "file": "fn_00c3b360.rs",
+  "file": "fn_00c3d890.rs",
   "lane": "r-s448",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x00C3ECF0",
+  "address": "0x00C3EEE0",
   "name": "tbd",
-  "file": "fn_00c3ecf0.rs",
+  "file": "fn_00c3eee0.rs",
   "lane": "r-s448",
   "outcome": "not_reached",
   "reason": ""
@@ -1998,6 +1998,326 @@
   "lane": "r-b300",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x00C7A530",
+  "name": "task_scenario_ctor_value",
+  "file": "fn_00c7a530.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A560",
+  "name": "task_scenario_ctor_copy3",
+  "file": "fn_00c7a560.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A5C0",
+  "name": "task_scenario_ctor_default",
+  "file": "fn_00c7a5c0.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A5E0",
+  "name": "ctask_chat_scenario_dtor",
+  "file": "fn_00c7a5e0.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A610",
+  "name": "ctask_driving_scenario_dtor",
+  "file": "fn_00c7a610.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A640",
+  "name": "ctask_get_in_car_scenario_dtor",
+  "file": "fn_00c7a640.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A670",
+  "name": "ctask_mobile_chat_dtor",
+  "file": "fn_00c7a670.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A6B0",
+  "name": "ctask_move_between_points_dtor",
+  "file": "fn_00c7a6b0.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A740",
+  "name": "ctask_wait_seat_free_dtor",
+  "file": "fn_00c7a740.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A790",
+  "name": "CTaskComplexChatScenario::vf0",
+  "file": "fn_00c7a790.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A7C0",
+  "name": "CTaskComplexDrivingScenario::vf0",
+  "file": "fn_00c7a7c0.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A7F0",
+  "name": "CTaskComplexGetInCarScenario::vf0",
+  "file": "fn_00c7a7f0.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A820",
+  "name": "CTaskComplexMobileChatScenario::vf0",
+  "file": "fn_00c7a820.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A850",
+  "name": "CTaskComplexMobileMakeCall::vf0",
+  "file": "fn_00c7a850.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A880",
+  "name": "CTaskComplexMoveBetweenPointsScenario::vf0",
+  "file": "fn_00c7a880.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A8B0",
+  "name": "CTaskComplexPoliceSniperScenario::vf0",
+  "file": "fn_00c7a8b0.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A8E0",
+  "name": "CTaskComplexScenario::vf0",
+  "file": "fn_00c7a8e0.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A910",
+  "name": "CTaskComplexSeatedScenario::vf0",
+  "file": "fn_00c7a910.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A940",
+  "name": "CTaskComplexStationaryScenario::vf0",
+  "file": "fn_00c7a940.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A970",
+  "name": "CTaskComplexWaitForDoorToBeOpen::vf0",
+  "file": "fn_00c7a970.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A9A0",
+  "name": "CTaskComplexWaitForSeatToBeFree::vf0",
+  "file": "fn_00c7a9a0.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7A9D0",
+  "name": "CTaskComplexWalkWithPedScenario::vf0",
+  "file": "fn_00c7a9d0.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7AA00",
+  "name": "CTaskComplexWanderingScenario::vf0",
+  "file": "fn_00c7aa00.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7AA30",
+  "name": "scenario_slot_register",
+  "file": "fn_00c7aa30.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7AA60",
+  "name": "scenario_task_create_and_queue",
+  "file": "fn_00c7aa60.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7AB60",
+  "name": "CTaskComplexDriveWanderForTime::vf21",
+  "file": "fn_00c7ab60.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7AB90",
+  "name": "CTaskComplexWaitForDoorToBeOpen::vf21",
+  "file": "fn_00c7ab90.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7ABD0",
+  "name": "CTaskComplexWaitForMyCarToStop::vf21",
+  "file": "fn_00c7abd0.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7AC40",
+  "name": "CTaskComplexWaitForSeatToBeFree::vf21",
+  "file": "fn_00c7ac40.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7ADC0",
+  "name": "CTaskComplexWaitForTime::vf21",
+  "file": "fn_00c7adc0.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7ADE0",
+  "name": "CTaskComplexWaitTillItsOkToStop::vf21",
+  "file": "fn_00c7ade0.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7B0D0",
+  "name": "CTaskComplexChatScenario::vf1",
+  "file": "fn_00c7b0d0.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7B110",
+  "name": "CTaskComplexDriveWanderForTime::vf1",
+  "file": "fn_00c7b110.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7B160",
+  "name": "CTaskComplexDrivingScenario::vf1",
+  "file": "fn_00c7b160.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7B190",
+  "name": "CTaskComplexGetInCarScenario::vf1",
+  "file": "fn_00c7b190.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7B1C0",
+  "name": "CTaskComplexMobileChatScenario::vf1",
+  "file": "fn_00c7b1c0.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7B1F0",
+  "name": "CTaskComplexMobileMakeCall::vf1",
+  "file": "fn_00c7b1f0.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7B220",
+  "name": "CTaskComplexMoveBetweenPointsScenario::vf1",
+  "file": "fn_00c7b220.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7B250",
+  "name": "CTaskComplexPoliceSniperScenario::vf1",
+  "file": "fn_00c7b250.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C7B280",
+  "name": "CTaskComplexSeatedScenario::vf1",
+  "file": "fn_00c7b280.rs",
+  "lane": "r-s449",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00C7FD60",
@@ -2142,6 +2462,14 @@
   "lane": "r-s442",
   "outcome": "deferred",
   "reason": "abs_shadow_unavailable"
+ },
+ {
+  "address": "0x00C9DE50",
+  "name": "proposed-tbd",
+  "file": "fn_00c9de50.rs",
+  "lane": "r-b450",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00CA00A0",
@@ -2334,6 +2662,14 @@
   "lane": "r-s84",
   "outcome": "not yet run",
   "reason": null
+ },
+ {
+  "address": "0x00CD5480",
+  "name": "peds_task_00CD5480",
+  "file": "fn_00cd5480.rs",
+  "lane": "r-b444",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00CF8050",
@@ -2646,14 +2982,6 @@
   "lane": "r-b403",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00D459B0",
-  "name": "peds_task_react_dispatch",
-  "file": "fn_00d459b0.rs",
-  "lane": "r-b445",
-  "outcome": "not_reached",
-  "reason": ""
  },
  {
   "address": "0x00D82CD0",
