@@ -8,7 +8,7 @@
 /// entries, at `MAP0` and `MAP1`) are filled with strided pointers into the
 /// table itself. A row buffer of `ROWBUF` bytes comes from the allocator
 /// (callee 2), the capacity fields at `CAPW` and `CAPD` are set to `NSLOT`,
-/// and the allocator's answer comes back with its low byte forced to 1.
+/// and the constant 0x201 is returned (the slot count, low byte forced to 1).
 ///
 /// Original: 0x00c09d20 (thiscall, no stack words; 1 is thiscall, 2 cdecl).
 lf_checker_rt::export!(thiscall, rw_00c09d20(this: u32) -> u32 {
@@ -56,6 +56,6 @@ lf_checker_rt::export!(thiscall, rw_00c09d20(this: u32) -> u32 {
         (this.wrapping_add(ROWS) as *mut u32).write_unaligned(r);
         (this.wrapping_add(CAPW) as *mut u16).write_unaligned(NSLOT as u16);
         (this.wrapping_add(CAPD) as *mut u32).write_unaligned(NSLOT);
-        (r & 0xffff_ff00) | 1
+        (NSLOT & 0xffff_ff00) | 1
     }
 });

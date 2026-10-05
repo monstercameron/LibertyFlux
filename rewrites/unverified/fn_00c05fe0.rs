@@ -5,7 +5,9 @@
 /// `this` points to the set. The header fields at `F0`, `F1`, `F2`, `F3`,
 /// `FB` and `F4` are cleared (with `F1` set to all-bits), every entry of the
 /// array at `ITEMS` (16-bit length at `COUNT`) goes to the release helper
-/// (callee 1) and its slot is cleared, then the range helper (callee 2)
+/// (callee 1) and its slot is cleared (the loop's entry test reads the
+/// incoming `ax`, so with entry `ax` zero it runs exactly when the length is
+/// non-zero; other entry values gate it), then the range helper (callee 2)
 /// receives the array's start and end with the array field itself in `ecx`.
 /// Finally the aux pointer at `AUX` goes to the release helper when set, and
 /// `AUX` and `AUX2` are cleared. Returns the last helper answer.

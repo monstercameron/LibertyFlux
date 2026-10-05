@@ -7,7 +7,8 @@
 /// nothing else happens. Otherwise the releaser (callee 2) receives the buffer
 /// at `BUF` and the count at `COUNT`, the buffer and the count dword are
 /// cleared, the closer (callee 3, no arguments) runs, and the done byte is
-/// set. Returns the opener's answer with its low byte forced to 1.
+/// set. Returns the last helper's answer with its low byte forced to 1 (the
+/// opener's on the already-done path, the closer's after a teardown).
 ///
 /// Original: 0x00c08520 (thiscall, no stack words; opener is cdecl).
 lf_checker_rt::export!(thiscall, rw_00c08520(this: u32) -> u32 {
@@ -28,8 +29,9 @@ lf_checker_rt::export!(thiscall, rw_00c08520(this: u32) -> u32 {
             let _s: u32 = lf_checker_rt::callee_thiscall!(RELEASE, u32, this, buf, count);
             (this.wrapping_add(BUF) as *mut u32).write_unaligned(0);
             (this.wrapping_add(COUNT_DW) as *mut u32).write_unaligned(0);
-            let _t: u32 = lf_checker_rt::callee_thiscall!(CLOSE, u32, this);
+            let t: u32 = lf_checker_rt::callee_thiscall!(CLOSE, u32, this);
             (this.wrapping_add(DONE) as *mut u8).write(1);
+            return (t & 0xffff_ff00) | 1;
         }
         (r & 0xffff_ff00) | 1
     }

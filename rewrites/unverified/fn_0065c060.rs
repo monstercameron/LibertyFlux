@@ -7,7 +7,7 @@
 /// slot 0 (`[slot + 8]` -> vtable -> slot `+8`, called with (`0x40, 0x10, 0)
 /// with the allocator in ECX), runs the constructor callee on it, publishes it
 /// to the slot
-/// and fills the descriptor: name id `0xF9AFE8` at `+0x04`, kind `0x70` at `+0x10`,
+/// and fills the descriptor: name pointer `0xF9AFE8` at `+0x04`, kind `0x70` at `+0x10`,
 /// handler table `0x65DE70` at `+0x24`, trailer `0x61B460` at `+0x2c`, zeroes at
 /// `+0x20`/`+0x28`. Then writes 3 small constants into the shared offset
 /// table, links the parent object from `0x018B74C4` at `+0x08` (building it first
@@ -79,7 +79,7 @@ lf_checker_rt::export!(cdecl, rw_0065c060() -> u32 {
             0
         };
         wg32(SELF_SLOT, obj);
-        wr32(obj + 0x04, DESCR_NAME);
+        wr32(obj + 0x04, relocated(DESCR_NAME));
         wr32(g32(SELF_SLOT) + 0x10, DESCR_KIND);
         wr32(g32(SELF_SLOT) + 0x20, 0);
         wr32(g32(SELF_SLOT) + 0x24, relocated(DESCR_OPS));

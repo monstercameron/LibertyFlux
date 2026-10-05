@@ -8,14 +8,14 @@
 /// TLS slot named by the global `TLS_INDEX`, field `TLS_THREAD_FIELD`.
 /// (thiscall, four stack words; the return value is caller-ignored scratch.)
 ///
-/// When `count` is 1 and some weight is positive or NaN, the early path
+/// When `count` is 1 and some weight is nonzero, the early path
 /// runs: slot block `k` (the first such weight) is installed into `obj`
 /// through callee 2, then copied over `obj[0..0xE0]` by memcpy, which runs
 /// natively on the original side and as an identical copy here.
 ///
 /// Otherwise the main path runs. Each slot `i` is eligible when the gate
 /// dword at `this + t*4 + GATE_BASE + i*GATE_STRIDE` is nonzero, bit `i` of
-/// `obj[OBJ_FLAGS]` is set, and `array[i]` is positive or NaN. Phase 1 keeps
+/// `obj[OBJ_FLAGS]` is set, and `array[i]` is nonzero. Phase 1 keeps
 /// the maximum over eligible slots of `buffer[i][0xA8] + buffer[i][0xA4]`
 /// (seeded with `MAX_INIT`, strictly ordered greater-than, NaN never wins)
 /// and its index. Phase 2 re-checks eligibility, clamps the same sum from
@@ -29,7 +29,7 @@
 /// `obj[0xB0..0xB8]`, `obj[0xBC]` and copies the winning block's words at
 /// 0xA4/0xA8, then for each slot `j` with a nonzero dword at
 /// `this + (t + IDX_BASE + j*4)*4`, a nonzero `obj[OBJ_FLAGS] & (j+1)` and a
-/// positive-or-NaN `array[j]` (note: the mask is `j+1`, not `1<<j`) mixes
+/// nonzero `array[j]` (note: the mask is `j+1`, not `1<<j`) mixes
 /// `h = g[j]/acc` of block `j` into `obj[0x60..0x6C]`, `obj[0xBC]` and the
 /// truncated integer accumulators `obj[0xB0]`/`obj[0xB4]` (x87 truncate
 /// semantics, indefinite on overflow/NaN), and max-merges scaled block
@@ -90,10 +90,11 @@ lf_checker_rt::export!(thiscall, rw_008A6EB0(this: u32, obj: u32, array: u32, co
         fn div(a: f32, b: f32) -> f32 {
             core::hint::black_box(a) / core::hint::black_box(b)
         }
-        /// Positive-or-NaN test matching ucomiss+lahf/test/jp.
+        /// Nonzero test matching ucomiss+lahf/test/jp (jp iff ZF==PF iff the
+        /// values differ or are unordered; ±0.0 skips, NaN takes).
         #[inline(always)]
-        fn pos_or_nan(v: f32) -> bool {
-            v > 0.0 || v.is_nan()
+        fn nonzero(v: f32) -> bool {
+            v != 0.0
         }
         /// Ordered max-merge: the current value wins only on strictly
         /// ordered greater-than (comiss/ja), so a NaN candidate takes.
@@ -124,14 +125,14 @@ lf_checker_rt::export!(thiscall, rw_008A6EB0(this: u32, obj: u32, array: u32, co
                 if flags & (1u8 << i) == 0 {
                     return false;
                 }
-                pos_or_nan(rdf(array.wrapping_add(i.wrapping_mul(4))))
+                nonzero(rdf(array.wrapping_add(i.wrapping_mul(4))))
             }
         }
 
-        // Pre-scan: count==1 with a positive-or-NaN weight takes the early path.
+        // Pre-scan: count==1 with a nonzero weight takes the early path.
         if count == 1 {
             for k in 0..N_SLOTS {
-                if pos_or_nan(rdf(array.wrapping_add(k.wrapping_mul(4)))) {
+                if nonzero(rdf(array.wrapping_add(k.wrapping_mul(4)))) {
                     let blk = buffer.wrapping_add(k.wrapping_mul(BLOCK));
                     lf_checker_rt::callee_thiscall!(INSTALL_CALLEE, u32, obj, blk);
                     let mut off = 0u32;
@@ -162,7 +163,7 @@ lf_checker_rt::export!(thiscall, rw_008A6EB0(this: u32, obj: u32, array: u32, co
             if flags & (1u8 << i) == 0 {
                 continue;
             }
-            if !pos_or_nan(rdf(array.wrapping_add(i.wrapping_mul(4)))) {
+            if !nonzero(rdf(array.wrapping_add(i.wrapping_mul(4)))) {
                 continue;
             }
             let blk = buffer.wrapping_add(i.wrapping_mul(BLOCK));
@@ -208,7 +209,7 @@ lf_checker_rt::export!(thiscall, rw_008A6EB0(this: u32, obj: u32, array: u32, co
             acc = add(acc, gi);
         }
 
-        // Unless the accumulator is positive or NaN, the function ends here.
+        // Unless the accumulator is above zero or NaN, the function ends here.
         if 0.0 >= acc {
             return 0;
         }
@@ -241,7 +242,7 @@ lf_checker_rt::export!(thiscall, rw_008A6EB0(this: u32, obj: u32, array: u32, co
             if flags & (j.wrapping_add(1) as u8) == 0 {
                 continue;
             }
-            if !pos_or_nan(rdf(array.wrapping_add(j.wrapping_mul(4)))) {
+            if !nonzero(rdf(array.wrapping_add(j.wrapping_mul(4)))) {
                 continue;
             }
             let q = g[j as usize];
