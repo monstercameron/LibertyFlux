@@ -357,6 +357,11 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
             let mut edi_p = this.wrapping_add(8);
             let mut edi_s = this.wrapping_add(8);
             let mut eap_idx = 0usize;
+            // DEBUG-TEMP breadcrumbs at this+0xD00 (function never touches it).
+            wr32(this.wrapping_add(0xD00), this);
+            wr32(this.wrapping_add(0xD04), rd32(this.wrapping_add(8)));
+            wr32(this.wrapping_add(0xD08), edi_p);
+            wr32(this.wrapping_add(0xD0C), rd32(edi_p));
             for oc in 0..3u32 {
                 for ic in 0..2u32 {
                     let v0 = add(add(add(f2, inner_out[eap_idx]), a4pair[ic as usize]), x1v);
