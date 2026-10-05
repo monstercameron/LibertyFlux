@@ -81,8 +81,12 @@ lf_checker_rt::export!(thiscall, rw_00936840(
                     wr32(&mut tab, base(2), 0x18);
                     idx = 3;
                 }
+                wr32(
+                    &mut tab,
+                    base(idx) + 4,
+                    rd32(lf_checker_rt::relocated(PARAM)),
+                );
             }
-            wr32(&mut tab, base(idx) + 4, rd32(lf_checker_rt::relocated(PARAM)));
             wr32(&mut tab, base(idx), 0x15);
             idx += 1;
             wr32(
