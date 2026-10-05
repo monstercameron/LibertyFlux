@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Lift: animation channel decoders, with their proof in the pipeline",
+    "title": "Rewrites: 2 more functions pass the checker (15765 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "2 rewrites added under rewrites/verified: 0 script native handlers and 2 other functions.",
+      "The tree now holds 15765 rewrites, 15746 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 672 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "21 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Lift: animation channel decoders, with their proof in the pipeline",
+    "commit": "3ef020a79c5f15538651d830a3c51454124bb9c6",
     "summary": "The first lift of whole classes: 22 verified methods of nine animation channel classes are now portable Rust in crates/lf-animation, and the tests that prove them against the verified rewrites run in the pipeline.",
     "changes": [
       "New module crates/lf-animation/src/channel: a channel trait and one owning type per channel class (constant and uncompressed channels for floats, integers, booleans, vectors and quaternions, and one method of the quantized float channel). It holds behaviour: how a frame number becomes a key index, when a sample snaps to a key and when it interpolates, in what order the interpolation multiplies and adds. No unsafe code, no addresses, no dependence on pointer width. 32 host tests.",

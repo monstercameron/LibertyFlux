@@ -38637,6 +38637,15 @@
   "lane": "r-b564"
  },
  {
+  "address": "0x0069D7F0",
+  "name": "rage::crAnimChannelRleInt::compress",
+  "kind": "function",
+  "file": "functions/fn_0069d7f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b572"
+ },
+ {
   "address": "0x0069D980",
   "name": "rage::crAnimChannelRleInt::get_alloc_size",
   "kind": "function",
@@ -123622,6 +123631,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-12"
+ },
+ {
+  "address": "0x00DFB950",
+  "name": "stack_align_tail_00dfb950",
+  "kind": "function",
+  "file": "functions/fn_00dfb950.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
  },
  {
   "address": "0x00DFC099",
