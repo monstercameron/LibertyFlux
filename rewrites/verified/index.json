@@ -82323,6 +82323,15 @@
   "lane": "a-F01"
  },
  {
+  "address": "0x00CCB420",
+  "name": "CTaskComplexMoveAboutInjured::vf20",
+  "kind": "function",
+  "file": "functions/fn_00ccb420.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
   "address": "0x00CCB8D0",
   "name": "CTaskComplexHitResponse::vf19",
   "kind": "function",
@@ -82597,6 +82606,15 @@
   "name": "melee_pair_find",
   "kind": "function",
   "file": "functions/fn_00cd15f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
+  "address": "0x00CD1630",
+  "name": "die_task_reset_anim",
+  "kind": "function",
+  "file": "functions/fn_00cd1630.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s406"
