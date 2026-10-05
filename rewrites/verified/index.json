@@ -36072,6 +36072,15 @@
   "lane": "r-s435"
  },
  {
+  "address": "0x006812E0",
+  "name": "euphoria_solve_quat (proposed)",
+  "kind": "function",
+  "file": "functions/fn_006812e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b540"
+ },
+ {
   "address": "0x00683F30",
   "name": "quat_dof_apply_twist",
   "kind": "function",
@@ -36763,6 +36772,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-10"
+ },
+ {
+  "address": "0x00698C20",
+  "name": "packed_cost_total",
+  "kind": "function",
+  "file": "functions/fn_00698c20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s473"
+ },
+ {
+  "address": "0x00698C70",
+  "name": "bitstream_read_bits",
+  "kind": "function",
+  "file": "functions/fn_00698c70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s473"
  },
  {
   "address": "0x00698DB0",
@@ -38043,6 +38070,24 @@
   "lane": "r-s182"
  },
  {
+  "address": "0x00872F60",
+  "name": "crmt_global_pool_lazy_init",
+  "kind": "function",
+  "file": "functions/fn_00872f60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
+ },
+ {
+  "address": "0x00872FB0",
+  "name": "crmt_global_array_grow_and_append",
+  "kind": "function",
+  "file": "functions/fn_00872fb0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
+ },
+ {
   "address": "0x00873080",
   "name": "blend_child_slot_init",
   "kind": "function",
@@ -38115,6 +38160,15 @@
   "lane": "r-s474"
  },
  {
+  "address": "0x00873280",
+  "name": "crmt_guarded_member_teardown",
+  "kind": "function",
+  "file": "functions/fn_00873280.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
+ },
+ {
   "address": "0x008732D0",
   "name": "crmtObserverFunctorNoRefCount::vf3",
   "kind": "function",
@@ -38131,6 +38185,33 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s182"
+ },
+ {
+  "address": "0x00873340",
+  "name": "crmt_member_release_and_clear",
+  "kind": "function",
+  "file": "functions/fn_00873340.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
+ },
+ {
+  "address": "0x00873370",
+  "name": "crmt_vector_grow_and_append",
+  "kind": "function",
+  "file": "functions/fn_00873370.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
+ },
+ {
+  "address": "0x00873410",
+  "name": "crmt_zeroing_array_alloc",
+  "kind": "function",
+  "file": "functions/fn_00873410.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
  },
  {
   "address": "0x00873460",
@@ -109132,6 +109213,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "a-R02"
+ },
+ {
+  "address": "0x00CD3130",
+  "name": "task_state_update",
+  "kind": "function",
+  "file": "functions/fn_00cd3130.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "a-R05"
  },
  {
   "address": "0x00CD33E0",
