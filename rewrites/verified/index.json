@@ -44451,6 +44451,51 @@
   "lane": "a-10"
  },
  {
+  "address": "0x009B9F10",
+  "name": "CCamScriptInstruction_SetCamSplineCustomSpeedGraph::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9f10.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B9FD0",
+  "name": "CCamScriptInstruction_SetCinematicButtonEnabled::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9fd0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009BA1A0",
+  "name": "CCamScriptInstruction_SetFollowPedPitchLimitDown::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba1a0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009BA1B0",
+  "name": "CCamScriptInstruction_SetFollowPedPitchLimitUp::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba1b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009BA1C0",
+  "name": "CCamScriptInstruction_SetFollowVehicleCamOffset::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba1c0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
   "address": "0x009CA7E0",
   "name": "timed_element_sweep_update",
   "kind": "function",
@@ -83131,6 +83176,42 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b04"
+ },
+ {
+  "address": "0x00C7B4E0",
+  "name": "CTaskComplexChatScenario::vf20",
+  "kind": "function",
+  "file": "functions/fn_00c7b4e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b397"
+ },
+ {
+  "address": "0x00C7B8E0",
+  "name": "CTaskComplexMobileChatScenario::vf20",
+  "kind": "function",
+  "file": "functions/fn_00c7b8e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b397"
+ },
+ {
+  "address": "0x00C7BA80",
+  "name": "CTaskComplexMobileMakeCall::vf20",
+  "kind": "function",
+  "file": "functions/fn_00c7ba80.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b397"
+ },
+ {
+  "address": "0x00C7BC70",
+  "name": "CTaskComplexMoveBetweenPointsScenario::vf20",
+  "kind": "function",
+  "file": "functions/fn_00c7bc70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b397"
  },
  {
   "address": "0x00C87920",
