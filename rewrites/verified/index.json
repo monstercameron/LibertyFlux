@@ -55647,6 +55647,15 @@
   "lane": "r-b504"
  },
  {
+  "address": "0x00A260F0",
+  "name": "ped_task_heading_update",
+  "kind": "function",
+  "file": "functions/fn_00a260f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b504"
+ },
+ {
   "address": "0x00A28CD0",
   "name": "task_timer_blend",
   "kind": "function",
@@ -96219,6 +96228,33 @@
   "lane": "r-b15"
  },
  {
+  "address": "0x00C8D240",
+  "name": "facing_check_by_type",
+  "kind": "function",
+  "file": "functions/fn_00c8d240.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b497"
+ },
+ {
+  "address": "0x00C8D7F0",
+  "name": "merge_bounds_checked",
+  "kind": "function",
+  "file": "functions/fn_00c8d7f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b497"
+ },
+ {
+  "address": "0x00C8DC90",
+  "name": "find_nearest_in_radius",
+  "kind": "function",
+  "file": "functions/fn_00c8dc90.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b497"
+ },
+ {
   "address": "0x00C8DF30",
   "name": "ped_task_best_in_radius",
   "kind": "function",
@@ -98469,6 +98505,15 @@
   "lane": "r-b500"
  },
  {
+  "address": "0x00CB9D30",
+  "name": "CTaskSimpleMoveTrackingEntity::vf20",
+  "kind": "function",
+  "file": "functions/fn_00cb9d30.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b500"
+ },
+ {
   "address": "0x00CBA9D0",
   "name": "CTaskSimpleMoveSlideToCoord::vf13",
   "kind": "function",
@@ -99693,6 +99738,15 @@
   "lane": "r-b510"
  },
  {
+  "address": "0x00CE83E0",
+  "name": "CTaskSimpleNMExplosion::vf26",
+  "kind": "function",
+  "file": "functions/fn_00ce83e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b510"
+ },
+ {
   "address": "0x00CE9090",
   "name": "CTaskSimpleNMFlinch::vf26",
   "kind": "function",
@@ -100348,6 +100402,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "a-R03"
+ },
+ {
+  "address": "0x00CFFB40",
+  "name": "combat_range_gate",
+  "kind": "function",
+  "file": "functions/fn_00cffb40.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b513"
  },
  {
   "address": "0x00D01700",
