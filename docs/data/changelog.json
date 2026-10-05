@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Cmpnless means greater-than",
+    "title": "Rewrites: 47 more functions pass the checker (15109 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "47 rewrites added under rewrites/verified: 0 script native handlers and 47 other functions.",
+      "The tree now holds 15109 rewrites, 15090 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 659 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "19 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Cmpnless means greater-than",
+    "commit": "20ee21d54e87a7c26dafc38aa183dc6e61d7c134",
     "summary": "Findings from the r-b540 lane.",
     "changes": [
       "New devlog entry: Cmpnless means greater-than.",
