@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-04",
+    "title": "Rewrites: 1 more functions pass the checker (10989 in total)",
+    "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "1 rewrites added under rewrites/verified: 0 script native handlers and 1 other functions.",
+      "The tree now holds 10989 rewrites, 10970 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "514 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
     "title": "Repository: the coordinator's resume file is not tracked",
     "commit": "d3511c9ab295bc98df9253504b5c120cad61a54c",
     "summary": "A private hand-over note at the repository root stays out of git.",
