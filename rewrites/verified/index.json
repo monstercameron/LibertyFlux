@@ -17820,6 +17820,15 @@
   "lane": "r-s350"
  },
  {
+  "address": "0x005622D0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_74, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_005622d0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b461"
+ },
+ {
   "address": "0x00562450",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_74, player_schema::LeaderboardInfo, 10>::vf6",
   "kind": "function",
@@ -17872,6 +17881,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-s350"
+ },
+ {
+  "address": "0x00562730",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_75, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_00562730.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b461"
  },
  {
   "address": "0x005628B0",
@@ -54169,6 +54187,366 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b204"
+ },
+ {
+  "address": "0x00A34FE0",
+  "name": "vehicle_feature_gate",
+  "kind": "function",
+  "file": "functions/fn_00a34fe0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A35010",
+  "name": "vehicle_deref_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00a35010.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A35030",
+  "name": "vehicle_pair_lookup",
+  "kind": "function",
+  "file": "functions/fn_00a35030.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A35080",
+  "name": "vehicle_handle_lookup",
+  "kind": "function",
+  "file": "functions/fn_00a35080.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A350B0",
+  "name": "vehicle_locked_lookup",
+  "kind": "function",
+  "file": "functions/fn_00a350b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A35170",
+  "name": "vehicle_bank_refresh",
+  "kind": "function",
+  "file": "functions/fn_00a35170.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A351D0",
+  "name": "vehicle_node_rebuild",
+  "kind": "function",
+  "file": "functions/fn_00a351d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A35220",
+  "name": "vehicle_node_attach",
+  "kind": "function",
+  "file": "functions/fn_00a35220.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A35280",
+  "name": "vehicle_banks_rebuild",
+  "kind": "function",
+  "file": "functions/fn_00a35280.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A352F0",
+  "name": "vehicle_best_entry",
+  "kind": "function",
+  "file": "functions/fn_00a352f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A353D0",
+  "name": "vehicle_event_create",
+  "kind": "function",
+  "file": "functions/fn_00a353d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A354B0",
+  "name": "vehicle_event_build_a",
+  "kind": "function",
+  "file": "functions/fn_00a354b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A354E0",
+  "name": "vehicle_event_build_b",
+  "kind": "function",
+  "file": "functions/fn_00a354e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A35650",
+  "name": "vehicle_tag_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00a35650.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A357D0",
+  "name": "vehicle_angle_degrees",
+  "kind": "function",
+  "file": "functions/fn_00a357d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A35830",
+  "name": "vehicle_phase_index",
+  "kind": "function",
+  "file": "functions/fn_00a35830.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A358D0",
+  "name": "vehicle_angle_index",
+  "kind": "function",
+  "file": "functions/fn_00a358d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A35910",
+  "name": "vehicle_quadrant_blend",
+  "kind": "function",
+  "file": "functions/fn_00a35910.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A359E0",
+  "name": "vehicle_wrapped_pick",
+  "kind": "function",
+  "file": "functions/fn_00a359e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A35A90",
+  "name": "vehicle_wrapped_lerp",
+  "kind": "function",
+  "file": "functions/fn_00a35a90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A35BC0",
+  "name": "vehicle_trio_init",
+  "kind": "function",
+  "file": "functions/fn_00a35bc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A35C70",
+  "name": "vehicle_subobj_init",
+  "kind": "function",
+  "file": "functions/fn_00a35c70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A35CD0",
+  "name": "vehicle_linked_notify",
+  "kind": "function",
+  "file": "functions/fn_00a35cd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A35CF0",
+  "name": "CEventVehicleDamageWeapon::vf0",
+  "kind": "function",
+  "file": "functions/fn_00a35cf0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3A950",
+  "name": "vehicle_pair_test",
+  "kind": "function",
+  "file": "functions/fn_00a3a950.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3A9D0",
+  "name": "vehicle_slots_drain",
+  "kind": "function",
+  "file": "functions/fn_00a3a9d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3AA00",
+  "name": "CEventVehicleDamageWeapon::vf21",
+  "kind": "function",
+  "file": "functions/fn_00a3aa00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3AB50",
+  "name": "vehicle_indexed_release",
+  "kind": "function",
+  "file": "functions/fn_00a3ab50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3AD40",
+  "name": "vehicle_slot_release",
+  "kind": "function",
+  "file": "functions/fn_00a3ad40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3AD80",
+  "name": "vehicle_dir_filter",
+  "kind": "function",
+  "file": "functions/fn_00a3ad80.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3AE70",
+  "name": "vehicle_rate_in_window",
+  "kind": "function",
+  "file": "functions/fn_00a3ae70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3AEA0",
+  "name": "vehicle_lane_ready",
+  "kind": "function",
+  "file": "functions/fn_00a3aea0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3AF90",
+  "name": "vehicle_slot_gt",
+  "kind": "function",
+  "file": "functions/fn_00a3af90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3B3A0",
+  "name": "vehicle_lane_value",
+  "kind": "function",
+  "file": "functions/fn_00a3b3a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3B3F0",
+  "name": "vehicle_state_flags",
+  "kind": "function",
+  "file": "functions/fn_00a3b3f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3B450",
+  "name": "vehicle_tune_attach",
+  "kind": "function",
+  "file": "functions/fn_00a3b450.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3B4A0",
+  "name": "vehicle_split_transcend",
+  "kind": "function",
+  "file": "functions/fn_00a3b4a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3C150",
+  "name": "vehicle_table_transcend",
+  "kind": "function",
+  "file": "functions/fn_00a3c150.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3C6E0",
+  "name": "vehicle_limits_reset",
+  "kind": "function",
+  "file": "functions/fn_00a3c6e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
+ },
+ {
+  "address": "0x00A3C7C0",
+  "name": "vehicle_float_slot_store",
+  "kind": "function",
+  "file": "functions/fn_00a3c7c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s451"
  },
  {
   "address": "0x00A4A9E0",
@@ -95002,6 +95380,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-s272"
+ },
+ {
+  "address": "0x00CB2F70",
+  "name": "CTaskComplexMoveWander::vf19",
+  "kind": "function",
+  "file": "functions/fn_00cb2f70.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b462"
  },
  {
   "address": "0x00CB3130",
