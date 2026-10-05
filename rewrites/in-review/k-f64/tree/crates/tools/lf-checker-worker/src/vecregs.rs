@@ -19,7 +19,12 @@
 //! registers: on the rewrite side the stub loads the low 8 bytes of `XMMn`
 //! (`movsd`, upper half zeroed) from stack arguments `idx` (low word) and
 //! `idx + 1` (high word). It fails closed exactly like the 4-byte keys and
-//! refuses to share a register with them.
+//! refuses to share a register with them. The extension also adds
+//! `logxmm64_regs: [n, ...]`: logged registers whose comparison is only
+//! their low 8 bytes (the double the callee reads; a callee that takes one
+//! double per register never looks at the upper half, which may hold
+//! whatever an earlier conversion left there). The stub still logs all 16
+//! bytes; only the comparison narrows, and the contract records it.
 
 /// Number of XMM registers on a 32-bit x86 target.
 pub const XMM_REGS: usize = 8;
@@ -47,6 +52,10 @@ pub struct XmmCallCfg {
     /// argument (low word) and the next one (high word). Doubles extension,
     /// unset unless the contract asks.
     pub from_stack64: [Option<usize>; XMM_REGS],
+    /// `cmp64[n]`: the call key compares only the low 8 bytes of the
+    /// logged `XMMn` (the double the callee reads). Doubles extension,
+    /// unset unless the contract asks.
+    pub cmp64: [bool; XMM_REGS],
 }
 
 /// The contract's vector-register options for one callee, as parsed.
@@ -67,6 +76,9 @@ pub struct XmmCallKeys {
     /// Doubles extension `xmm_from_stack64` as (register, low stack
     /// argument) pairs; the high word comes from the next argument.
     pub xmm_from_stack64: Vec<(usize, usize)>,
+    /// Doubles extension `logxmm64_regs`: logged registers compared on
+    /// their low 8 bytes only.
+    pub logxmm64_regs: Vec<usize>,
 }
 
 impl XmmCallCfg {
@@ -76,10 +88,11 @@ impl XmmCallCfg {
     /// Returns a message for a register above 7, a version 5 transport
     /// that disagrees with the legacy key for the same register, a version 5
     /// transport of an argument the callee does not declare, a version 5
-    /// transported register that is not logged, or any doubles-extension
+    /// transported register that is not logged, any doubles-extension
     /// (`xmm_from_stack64`) entry that names a missing register, shares a
     /// register with the 4-byte transport, reaches past the declared
-    /// arguments, or is not logged.
+    /// arguments, or is not logged, or a `logxmm64_regs` entry that names
+    /// a missing register or one that is not logged.
     pub fn merge(id: u32, k: &XmmCallKeys, nargs: usize) -> Result<XmmCallCfg, String> {
         let mut c = XmmCallCfg::default();
         c.log[0] = k.logxmm;
@@ -142,6 +155,21 @@ impl XmmCallCfg {
                 ));
             }
             c.from_stack64[r] = Some(idx);
+        }
+        // A narrowed comparison of an unlogged register would read slots
+        // the stub never stores, so it is refused, not silently scoped.
+        for &r in &k.logxmm64_regs {
+            if r >= XMM_REGS {
+                return Err(format!(
+                    "callee {id} logxmm64_regs names xmm{r} (0-7 exist)"
+                ));
+            }
+            if !c.log[r] {
+                return Err(format!(
+                    "callee {id} narrows xmm{r} to 8 bytes without logging it (add {r} to logxmm_regs)"
+                ));
+            }
+            c.cmp64[r] = true;
         }
         Ok(c)
     }
@@ -362,6 +390,30 @@ mod tests {
             ..keys()
         };
         assert!(XmmCallCfg::merge(1, &clash5, 3).is_err());
+    }
+
+    #[test]
+    fn narrowed_comparison_needs_a_logged_register() {
+        let k = XmmCallKeys {
+            logxmm_regs: vec![0, 1],
+            logxmm64_regs: vec![0],
+            ..keys()
+        };
+        let c = XmmCallCfg::merge(6, &k, 0).unwrap();
+        assert!(c.cmp64[0] && !c.cmp64[1]);
+        let plain = XmmCallCfg::merge(6, &keys(), 0).unwrap();
+        assert!(plain.cmp64.iter().all(|&b| !b));
+        let bad_reg = XmmCallKeys {
+            logxmm64_regs: vec![9],
+            ..keys()
+        };
+        assert!(XmmCallCfg::merge(1, &bad_reg, 0).is_err());
+        let unlogged = XmmCallKeys {
+            logxmm64_regs: vec![1],
+            ..keys()
+        };
+        let e = XmmCallCfg::merge(1, &unlogged, 0).unwrap_err();
+        assert!(e.contains("without logging it"), "{e}");
     }
 
     #[test]

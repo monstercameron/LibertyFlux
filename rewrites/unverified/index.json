@@ -1456,6 +1456,14 @@
   "reason": ""
  },
  {
+  "address": "0x009E4C90",
+  "name": "peds_tasks_fn_9e4c90",
+  "file": "fn_009e4c90.rs",
+  "lane": "r-b464",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x009FCC50",
   "name": "net_worker_thread",
   "file": "fn_009fcc50.rs",
@@ -1624,9 +1632,25 @@
   "reason": null
  },
  {
+  "address": "0x00A12820",
+  "name": null,
+  "file": "fn_00a12820.rs",
+  "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A128E0",
   "name": null,
   "file": "fn_00a128e0.rs",
+  "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A130D0",
+  "name": null,
+  "file": "fn_00a130d0.rs",
   "lane": "r-s456",
   "outcome": "not_reached",
   "reason": null
@@ -2064,110 +2088,6 @@
   "reason": null
  },
  {
-  "address": "0x00A4AEF0",
-  "name": "vehicle_init_two_buffers",
-  "file": "fn_00a4aef0.rs",
-  "lane": "r-s455",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4B670",
-  "name": "vehicle_accumulate_10c8",
-  "file": "fn_00a4b670.rs",
-  "lane": "r-s455",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4B740",
-  "name": "CVehicle::vf98",
-  "file": "fn_00a4b740.rs",
-  "lane": "r-s455",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4C7D0",
-  "name": "NativeImpl_REMOVE_CAR_WINDOW",
-  "file": "fn_00a4c7d0.rs",
-  "lane": "r-s455",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4C930",
-  "name": "vehicle_attach_links",
-  "file": "fn_00a4c930.rs",
-  "lane": "r-s455",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4C990",
-  "name": "vehicle_probe_buffers",
-  "file": "fn_00a4c990.rs",
-  "lane": "r-s455",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4C9D0",
-  "name": "vehicle_emit_event",
-  "file": "fn_00a4c9d0.rs",
-  "lane": "r-s455",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4D5F0",
-  "name": "vehicle_route_a",
-  "file": "fn_00a4d5f0.rs",
-  "lane": "r-s455",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4D800",
-  "name": "vehicle_route_b",
-  "file": "fn_00a4d800.rs",
-  "lane": "r-s455",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4D860",
-  "name": "vehicle_spawn_copy",
-  "file": "fn_00a4d860.rs",
-  "lane": "r-s455",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4E0B0",
-  "name": "CVehicle::vf76",
-  "file": "fn_00a4e0b0.rs",
-  "lane": "r-s455",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4E4F0",
-  "name": "vehicle_unlink_pair",
-  "file": "fn_00a4e4f0.rs",
-  "lane": "r-s455",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4E690",
-  "name": "vehicle_accumulate_12f8",
-  "file": "fn_00a4e690.rs",
-  "lane": "r-s455",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00A4F590",
   "name": "vehicle_find_nearest_slot",
   "file": "fn_00a4f590.rs",
@@ -2568,9 +2488,9 @@
   "reason": "other"
  },
  {
-  "address": "0x00B6F750",
-  "name": "CTaskComplexGoToCarDoorAndStandStill::vf18",
-  "file": "fn_00b6f750.rs",
+  "address": "0x00B6FA80",
+  "name": "task_go_to_car_door_helper",
+  "file": "fn_00b6fa80.rs",
   "lane": "r-b465",
   "outcome": "not_reached",
   "reason": null
@@ -3195,9 +3115,9 @@
   "address": "0x00CB2D60",
   "name": "CTaskComplexMoveGoToPointRelativeToEntityAndStandStill::vf19",
   "file": "fn_00cb2d60.rs",
-  "lane": "r-b350",
+  "lane": "r-b462",
   "outcome": "not_reached",
-  "reason": ""
+  "reason": null
  },
  {
   "address": "0x00CB36F0",
@@ -3376,17 +3296,9 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00CFB180",
-  "name": "climb_ladder_setup_anims",
-  "file": "fn_00cfb180.rs",
-  "lane": "r-b466",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00CFBC10",
-  "name": "climb_ladder_reset_state",
-  "file": "fn_00cfbc10.rs",
+  "address": "0x00CFAEC0",
+  "name": "CTaskSimpleClimbLadder::vf13",
+  "file": "fn_00cfaec0.rs",
   "lane": "r-b466",
   "outcome": "not_reached",
   "reason": ""
@@ -4428,7 +4340,7 @@
   "name": "veh_array_init_a0",
   "file": "fn_00e6cda0.rs",
   "lane": "r-s461",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "checker_gap"
  }
 ]

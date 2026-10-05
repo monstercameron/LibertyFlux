@@ -5,8 +5,8 @@
 /// `obj + 0x70`, fetches the occupant list head through the virtual slot at
 /// `+0x2c` of `item`, and when its word at `+0x38` is non-negative, walks
 /// the `count` occupants: a null occupant is skipped; otherwise the pair
-/// gate runs on (identity, global), and when the head carries flag
-/// 0x400000 at `+0x8e8` and the gate's low byte is zero, the register gate
+/// gate runs on (identity, global), and when `item` carries flag 0x400000
+/// at `+0x8e8` and the gate's low byte is zero, the register gate
 /// runs and a non-zero answer from the final check stores 0xff at occupant
 /// `+0x63`. No return value is set. Cdecl, two stack arguments.
 export!(cdecl, rw_00a11da0(obj: u32, item: u32) -> u32 {
@@ -54,7 +54,7 @@ export!(cdecl, rw_00a11da0(obj: u32, item: u32) -> u32 {
             }
             let id = ((occ + ID_OFF) as *const u16).read_unaligned() as i16 as i32 as u32;
             let g = callee_cdecl!(PAIR_GATE, u32, id, shared);
-            if ((head + HEAD_FLAG_OFF) as *const u32).read_unaligned() & HEAD_FLAG_BIT
+            if ((item + HEAD_FLAG_OFF) as *const u32).read_unaligned() & HEAD_FLAG_BIT
                 == 0
             {
                 continue;

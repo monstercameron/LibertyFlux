@@ -1236,6 +1236,20 @@ export!(cdecl, mut_k6_f64_ans(a: u32, b: u32, p: *mut u32) -> u32 {
     }
 });
 
+// k6_f64entry (selftest:xmm_wide, doubles extension): the original returns
+// word 3 of the XMM6 entry value; the rewrite reads the same word from
+// the entry mirror. The contract scripts two per-trial doubles there, so
+// this proves the entry path carries all 16 bytes per register (and that
+// the "double" entry form varies them per trial, like "float" does).
+export!(cdecl, rw_k6_f64entry() -> u32 {
+    xmm_word(6, 3)
+});
+
+// Mutant: reads word 2 instead of word 3.
+export!(cdecl, mut_k6_f64entry() -> u32 {
+    xmm_word(6, 2)
+});
+
 // k5_abs (selftest:abs_read with abs_shadow): the original reads a dword
 // through an absolute file address with no relocation; the rewrite reads
 // the same datum through the relocated image, as rewrites must.
