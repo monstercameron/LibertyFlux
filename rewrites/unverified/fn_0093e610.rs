@@ -19,9 +19,11 @@ lf_checker_rt::export!(cdecl, rw_0093e610(q: u32, level: u32) -> u32 {
     const SLOT_SET_B: u32 = 0x18B6F10;
     const SLOT_SET_C: u32 = 0x12E22A4;
     const SLOT_PASS: u32 = 1;
-    const REQUEST_CB_A: u32 = 0x009407C0;
-    const REQUEST_CB_B: u32 = 0x00940860;
-    const REQUEST_CB_C: u32 = 0x0093E480;
+    // File addresses of the request callbacks, relocated like the
+    // original's pushed immediates (the worker's reloc pass covers them).
+    const REQUEST_CB_A_FILE: u32 = 0x009407C0;
+    const REQUEST_CB_B_FILE: u32 = 0x00940860;
+    const REQUEST_CB_C_FILE: u32 = 0x0093E480;
     unsafe {
         for i in 0..4u32 {
             let w = ((q + i * 4) as *const u32).read_unaligned();
@@ -29,12 +31,18 @@ lf_checker_rt::export!(cdecl, rw_0093e610(q: u32, level: u32) -> u32 {
         }
         (lf_checker_rt::global::<u32>(LEVEL) as *mut u32).write_unaligned(level);
         let a = (lf_checker_rt::global::<u32>(SLOT_SET_A) as *const u32).read_unaligned();
-        lf_checker_rt::callee_thiscall!(SLOT_PASS, u32, a, REQUEST_CB_A, 0u32);
+        lf_checker_rt::callee_thiscall!(
+            SLOT_PASS, u32, a, lf_checker_rt::relocated(REQUEST_CB_A_FILE), 0u32
+        );
         let b = (lf_checker_rt::global::<u32>(SLOT_SET_B) as *const u32).read_unaligned();
-        lf_checker_rt::callee_thiscall!(SLOT_PASS, u32, b, REQUEST_CB_B, 0u32);
+        lf_checker_rt::callee_thiscall!(
+            SLOT_PASS, u32, b, lf_checker_rt::relocated(REQUEST_CB_B_FILE), 0u32
+        );
         let c = (lf_checker_rt::global::<u32>(SLOT_SET_C) as *const u32).read_unaligned();
         (lf_checker_rt::global::<u8>(MODE_ARMED) as *mut u8).write(1);
         (lf_checker_rt::global::<u8>(MODE) as *mut u8).write(1);
-        lf_checker_rt::callee_thiscall!(SLOT_PASS, u32, c, REQUEST_CB_C, 0u32)
+        lf_checker_rt::callee_thiscall!(
+            SLOT_PASS, u32, c, lf_checker_rt::relocated(REQUEST_CB_C_FILE), 0u32
+        )
     }
 });

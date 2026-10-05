@@ -18,7 +18,9 @@ lf_checker_rt::export!(cdecl, rw_0093e590(q: u32, level: u32, m0: u32, m1: u32, 
     const ARMED_SRC: u32 = 0x11A4FB6;
     const SLOT_SET: u32 = 0x12E22A4;
     const SLOT_PASS: u32 = 1;
-    const REQUEST_CB: u32 = 0x0093E480;
+    // File address of the request callback, relocated like the original's
+    // pushed immediate (the worker's reloc pass covers it).
+    const REQUEST_CB_FILE: u32 = 0x0093E480;
     unsafe {
         for i in 0..4u32 {
             let w = ((q + i * 4) as *const u32).read_unaligned();
@@ -30,6 +32,8 @@ lf_checker_rt::export!(cdecl, rw_0093e590(q: u32, level: u32, m0: u32, m1: u32, 
         (lf_checker_rt::global::<u8>(MODE_ARMED) as *mut u8).write(0);
         (lf_checker_rt::global::<u8>(ARMED_SRC) as *mut u8).write(m2 as u8);
         let set = (lf_checker_rt::global::<u32>(SLOT_SET) as *const u32).read_unaligned();
-        lf_checker_rt::callee_thiscall!(SLOT_PASS, u32, set, REQUEST_CB, 0u32)
+        lf_checker_rt::callee_thiscall!(
+            SLOT_PASS, u32, set, lf_checker_rt::relocated(REQUEST_CB_FILE), 0u32
+        )
     }
 });

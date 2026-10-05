@@ -33,12 +33,10 @@
 /// low lane, so scalar roots match bit for bit. The double calibration
 /// answers reach the rewrite as their low word in `eax` (all the stub
 /// exposes); the contract fixes every high word to `F64_HI` (doubles in
-/// [1, 2)), which the rewrite rejoins before narrowing. Slots the
-/// original never writes before reading (`E+0x20/0x24/0x44` at the
-/// reconcile step, the saved goal on skipped paths) read the checker's
-/// zero stack fill, which the rewrite mirrors with zeroed locals; the
-/// dead store to `E+0x5C` is omitted. Only the low return byte is
-/// compared.
+/// [1, 2)), which the rewrite rejoins before narrowing. The reconcile
+/// step reloads the phase-2 outputs from scratch slots rather than
+/// registers; the dead store to `E+0x5C` is omitted. Only the low return
+/// byte is compared.
 ///
 /// Original: 0x00cadfe0 (thiscall, ECX plus one stack word, callee
 /// cleans 4). All globals are read relocated.
@@ -140,6 +138,9 @@ lf_checker_rt::export!(thiscall, rw_00cadfe0(this: u32, ctx: u32) -> u32 {
         let mut e60 = 0.0f32;
         let mut e64 = 0.0f32;
         let mut e68 = 0.0f32;
+        // Shared scratch: the original reuses slot S+0x60 for callee 2's
+        // out-vector and later reads it back (e.g. callee 15's inputs).
+        let mut v60 = [0u32; 3];
         // Phase-7 carried value (see below), set on every path that runs it.
         let mut ph7_t7 = 0.0f32;
         let mut run_phase7 = false;
@@ -151,7 +152,6 @@ lf_checker_rt::export!(thiscall, rw_00cadfe0(this: u32, ctx: u32) -> u32 {
                 e10 = rdf(this + 0x30);
                 e0c = rdf(this + 0x34);
                 e30 = rdf(this + 0x38);
-                let mut v60 = [0u32; 3];
                 lf_checker_rt::callee_thiscall!(2, u32, driver, v60.as_mut_ptr() as u32);
                 e60 = f32::from_bits(v60[0]);
                 e64 = f32::from_bits(v60[1]);
@@ -275,7 +275,6 @@ lf_checker_rt::export!(thiscall, rw_00cadfe0(this: u32, ctx: u32) -> u32 {
             // overwrites it before any read; that dead store is omitted.)
             if x == 0 {
                 let driver = rd32(ctx + D68);
-                let mut v60 = [0u32; 3];
                 lf_checker_rt::callee_thiscall!(15, u32, driver, v60.as_mut_ptr() as u32);
                 e60 = f32::from_bits(v60[0]);
                 e64 = f32::from_bits(v60[1]);
@@ -371,10 +370,11 @@ lf_checker_rt::export!(thiscall, rw_00cadfe0(this: u32, ctx: u32) -> u32 {
             }
             let v50 = [e50.to_bits(), e54.to_bits(), e58.to_bits()];
             lf_checker_rt::callee_cdecl!(24, u32, driver, ctx, v50.as_ptr() as u32, this + 0x20, 0u32);
-            // The scratch slots read here are the checker's zero fill.
-            let s70 = add(0.0, anch_x);
-            let s74 = add(anch_y, 0.0);
-            let s78 = add(anch_z, 0.0);
+            // The scratch slots read here were saved earlier in the tick:
+            // [S+0x10] holds e50, [S+0xC] holds e54, [S+0x30] holds e58.
+            let s70 = add(e50, anch_x);
+            let s74 = add(anch_y, e54);
+            let s78 = add(anch_z, e58);
             let v70b = [s70.to_bits(), s74.to_bits(), s78.to_bits()];
             lf_checker_rt::callee_thiscall!(25, u32, ctx, v70b.as_ptr() as u32);
         }
