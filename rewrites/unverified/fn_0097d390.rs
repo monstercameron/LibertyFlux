@@ -20,8 +20,10 @@
 /// descriptor block in frame scratch (block at frame `+0x38`, position
 /// copied to frame `+0x20`, tag `0xFFFFFFFF` and tail `0x46BAB800`) and
 /// issue it: the bank sample always plays, and the extra voice plays only
-/// when the flag was set. On a clear flag the descriptor root comes back
-/// through two float conversions; on a set flag the emitter itself is it.
+/// when the flag was set. The emitter itself anchors the issue call, the
+/// tag and the bank lookups; on a clear flag two float conversions feed a
+/// scratch word that becomes the descriptor head and the sample stash, and
+/// on a set flag that word stays zero.
 ///
 /// Floats are only copied or carried as bits, never computed, so no
 /// arithmetic order applies. The gate-1 exit returns the caller's entry
@@ -47,6 +49,7 @@ mod d390 {
     pub const RING_BITS: u32 = 0x3F000000;
     pub const F_POS: usize = 0x20 / 4;
     pub const F_BLOCK: usize = 0x38 / 4;
+    pub const F_STASH: usize = 0x1C / 4;
     pub const C_OUTER: u32 = 1;
     pub const C_RESOLVE: u32 = 2;
     pub const C_SLOT_ALLOC: u32 = 3;
@@ -192,8 +195,11 @@ mod d390 {
             frame[F_POS + 2] = rd32(pos_obj.wrapping_add(0x18));
             let base = frame.as_mut_ptr() as u32;
             let block = base.wrapping_add((F_BLOCK * 4) as u32);
-            let root: u32 = if flag {
-                this
+            // On a clear flag the float result lands in the scratch word that
+            // becomes the descriptor head and the bank-sample stash; on a set
+            // flag that word still holds the zero stored above.
+            let fbits: u32 = if flag {
+                0
             } else {
                 let f: f32 = lf_checker_rt::callee_thiscall!(
                     C_FLOAT_CVT,
@@ -205,21 +211,22 @@ mod d390 {
                 g.to_bits()
             };
             lf_checker_rt::callee_thiscall!(C_BLOCK_INIT, u32, block);
+            frame[F_STASH] = pos_block;
             let s = frame.as_mut_ptr().add(F_BLOCK);
-            let idx_bank = rd32(root.wrapping_add(0x120));
+            let idx_bank = rd32(this.wrapping_add(0x120));
             let idx = rd16(idx_bank.wrapping_add(0x2E)) as i16 as i32 as u32;
             let entry = lf_checker_rt::global::<u32>(VOICE_TABLE.wrapping_add(idx.wrapping_mul(4)))
                 .read();
             let dl = rd32(entry.wrapping_add(0x120)) & 2 != 0;
-            s.add(0).write(if dl { 0 } else { STRUCT_HEAD });
-            s.add(1).write(0);
+            s.add(0).write(fbits);
+            s.add(1).write(if dl { 0 } else { STRUCT_HEAD });
             s.add(2).write(0);
             s.add(3).write(0);
             s.add(4).write(0);
             s.add(5).write(base.wrapping_add((F_POS * 4) as u32));
             s.add(6).write(0);
             s.add(7).write(0);
-            s.add(8).write(rd32(root.wrapping_add(8)));
+            s.add(8).write(rd32(this.wrapping_add(8)));
             s.add(9).write(0);
             s.add(10).write(0);
             s.add(11).write(0);
@@ -230,14 +237,14 @@ mod d390 {
             let _issue = lf_checker_rt::callee_thiscall!(
                 C_ISSUE,
                 u32,
-                root,
+                this,
                 voice,
                 block,
                 0xFFFFFFFF,
                 0,
                 0
             );
-            let root120 = rd32(root.wrapping_add(0x120));
+            let root120 = rd32(this.wrapping_add(0x120));
             let play = lf_checker_rt::callee_cdecl!(
                 C_PLAY_BANK,
                 u32,
@@ -245,7 +252,7 @@ mod d390 {
                 index,
                 flag as u32,
                 base.wrapping_add((F_POS * 4) as u32),
-                root,
+                fbits,
                 e14
             );
             if !flag {
@@ -257,8 +264,8 @@ mod d390 {
                 C_PLAY_EXTRA,
                 u32,
                 q2.wrapping_add(0x3C0),
-                RING_BITS,
-                si
+                si,
+                RING_BITS
             )
         }
     }
