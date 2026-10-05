@@ -36747,6 +36747,15 @@
   "lane": "a-10"
  },
  {
+  "address": "0x00698A30",
+  "name": "bitset_builder_698A30",
+  "kind": "function",
+  "file": "functions/fn_00698a30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b542"
+ },
+ {
   "address": "0x00698B90",
   "name": "unary_bitstream_decode",
   "kind": "function",
@@ -38223,6 +38232,15 @@
   "lane": "r-s474"
  },
  {
+  "address": "0x008739A0",
+  "name": "crmt_cached_alloc_tag13",
+  "kind": "function",
+  "file": "functions/fn_008739a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
+ },
+ {
   "address": "0x00873A30",
   "name": "crmt_node_zero_and_set_vtable",
   "kind": "function",
@@ -38430,6 +38448,15 @@
   "lane": "r-s171"
  },
  {
+  "address": "0x008743B0",
+  "name": "crmt_cached_alloc_tag4",
+  "kind": "function",
+  "file": "functions/fn_008743b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
+ },
+ {
   "address": "0x00874410",
   "name": "anim_node_init_if_present",
   "kind": "function",
@@ -38518,6 +38545,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s171"
+ },
+ {
+  "address": "0x00874AD0",
+  "name": "crmt_cached_alloc_tag7",
+  "kind": "function",
+  "file": "functions/fn_00874ad0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
  },
  {
   "address": "0x00874B30",
@@ -38862,6 +38898,15 @@
   "lane": "r-s474"
  },
  {
+  "address": "0x00875A60",
+  "name": "crmt_cached_alloc_tag19",
+  "kind": "function",
+  "file": "functions/fn_00875a60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
+ },
+ {
   "address": "0x00875AC0",
   "name": "crmt_filter_request_init_guarded",
   "kind": "function",
@@ -38911,6 +38956,15 @@
   "name": "rage::crmtNodeExtrapolate::vf0",
   "kind": "function",
   "file": "functions/fn_00875c20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
+ },
+ {
+  "address": "0x00875C60",
+  "name": "crmt_cached_alloc_tag18",
+  "kind": "function",
+  "file": "functions/fn_00875c60.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s474"
@@ -54403,6 +54457,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s422"
+ },
+ {
+  "address": "0x009BE040",
+  "name": "spawn_effect_slot_alloc",
+  "kind": "function",
+  "file": "functions/fn_009be040.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b532"
  },
  {
   "address": "0x009BF120",
@@ -101410,6 +101473,60 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s426"
+ },
+ {
+  "address": "0x00C07A60",
+  "name": "stream_table_get_checked",
+  "kind": "function",
+  "file": "functions/fn_00c07a60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C07D40",
+  "name": "stream_list_get_checked",
+  "kind": "function",
+  "file": "functions/fn_00c07d40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C08C10",
+  "name": "stream_slot_configure",
+  "kind": "function",
+  "file": "functions/fn_00c08c10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C08C40",
+  "name": "stream_state_set_pair",
+  "kind": "function",
+  "file": "functions/fn_00c08c40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C08C60",
+  "name": "stream_state_set_float",
+  "kind": "function",
+  "file": "functions/fn_00c08c60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C0A990",
+  "name": "stream_item_reset_and_forward",
+  "kind": "function",
+  "file": "functions/fn_00c0a990.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
  },
  {
   "address": "0x00C0F2B0",
