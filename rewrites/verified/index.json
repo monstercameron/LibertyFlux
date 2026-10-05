@@ -89019,6 +89019,42 @@
   "lane": "r-b33"
  },
  {
+  "address": "0x00C3AC20",
+  "name": "CTrain::vf59",
+  "kind": "function",
+  "file": "functions/fn_00c3ac20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
+  "address": "0x00C3E650",
+  "name": "train_copy_state_9_or_12",
+  "kind": "function",
+  "file": "functions/fn_00c3e650.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
+  "address": "0x00C3E860",
+  "name": "train_assemble_matrix_from_pair",
+  "kind": "function",
+  "file": "functions/fn_00c3e860.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
+  "address": "0x00C3ECD0",
+  "name": "train_any_slot_active",
+  "kind": "function",
+  "file": "functions/fn_00c3ecd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
   "address": "0x00C3F4F0",
   "name": "timing_channel_eval",
   "kind": "function",
@@ -96498,6 +96534,33 @@
   "lane": "r-b07"
  },
  {
+  "address": "0x00D54600",
+  "name": "CCamFree::vf6",
+  "kind": "function",
+  "file": "functions/fn_00d54600.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D54650",
+  "name": "ccam_free_clear_vec",
+  "kind": "function",
+  "file": "functions/fn_00d54650.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D54670",
+  "name": "ccam_init_float_params",
+  "kind": "function",
+  "file": "functions/fn_00d54670.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
   "address": "0x00D54770",
   "name": "ccam_shake_ctor",
   "kind": "function",
@@ -96606,6 +96669,24 @@
   "lane": "r-s446"
  },
  {
+  "address": "0x00D549F0",
+  "name": "ccam_lookup_param",
+  "kind": "function",
+  "file": "functions/fn_00d549f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D54A20",
+  "name": "ccam_busted_init",
+  "kind": "function",
+  "file": "functions/fn_00d54a20.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
   "address": "0x00D55270",
   "name": "ccam_wasted_ctor",
   "kind": "function",
@@ -96633,6 +96714,15 @@
   "lane": "r-s446"
  },
  {
+  "address": "0x00D55BB0",
+  "name": "ccam_idle_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d55bb0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
   "address": "0x00D55BE0",
   "name": "ccam_idle_dtor",
   "kind": "function",
@@ -96646,6 +96736,24 @@
   "name": "CCamIdle::vf0",
   "kind": "function",
   "file": "functions/fn_00d55c00.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D56100",
+  "name": "ccam_init_timing_params",
+  "kind": "function",
+  "file": "functions/fn_00d56100.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D56D60",
+  "name": "ccam_mark_active",
+  "kind": "function",
+  "file": "functions/fn_00d56d60.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s446"
@@ -113634,6 +113742,258 @@
   "lane": "r-s368"
  },
  {
+  "address": "0x00E6BD20",
+  "name": "veh_array_init_32x50",
+  "kind": "function",
+  "file": "functions/fn_00e6bd20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BD40",
+  "name": "veh_ratio_store_01",
+  "kind": "function",
+  "file": "functions/fn_00e6bd40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BD60",
+  "name": "veh_obj_init_register_1",
+  "kind": "function",
+  "file": "functions/fn_00e6bd60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BD80",
+  "name": "veh_ratio_store_02",
+  "kind": "function",
+  "file": "functions/fn_00e6bd80.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BDA0",
+  "name": "veh_callback_register_1",
+  "kind": "function",
+  "file": "functions/fn_00e6bda0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BDB0",
+  "name": "veh_callback_register_2",
+  "kind": "function",
+  "file": "functions/fn_00e6bdb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BDC0",
+  "name": "veh_array_init_50x280",
+  "kind": "function",
+  "file": "functions/fn_00e6bdc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BE10",
+  "name": "veh_callback_register_3",
+  "kind": "function",
+  "file": "functions/fn_00e6be10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BE20",
+  "name": "veh_flag_table_clear_register",
+  "kind": "function",
+  "file": "functions/fn_00e6be20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BE50",
+  "name": "veh_array_init_16x20_register",
+  "kind": "function",
+  "file": "functions/fn_00e6be50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BE90",
+  "name": "veh_fanout_copy_1",
+  "kind": "function",
+  "file": "functions/fn_00e6be90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BEC0",
+  "name": "veh_fanout_copy_2",
+  "kind": "function",
+  "file": "functions/fn_00e6bec0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BEF0",
+  "name": "veh_ratio_store_03",
+  "kind": "function",
+  "file": "functions/fn_00e6bef0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BF10",
+  "name": "veh_ratio_store_04",
+  "kind": "function",
+  "file": "functions/fn_00e6bf10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BF30",
+  "name": "veh_ratio_store_05",
+  "kind": "function",
+  "file": "functions/fn_00e6bf30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BF50",
+  "name": "veh_ratio_store_06",
+  "kind": "function",
+  "file": "functions/fn_00e6bf50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BF70",
+  "name": "veh_ratio_store_07",
+  "kind": "function",
+  "file": "functions/fn_00e6bf70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BF90",
+  "name": "veh_ratio_store_08",
+  "kind": "function",
+  "file": "functions/fn_00e6bf90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BFB0",
+  "name": "veh_obj_init_register_2",
+  "kind": "function",
+  "file": "functions/fn_00e6bfb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BFD0",
+  "name": "veh_callback_register_4",
+  "kind": "function",
+  "file": "functions/fn_00e6bfd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6BFE0",
+  "name": "veh_ratio_store_09",
+  "kind": "function",
+  "file": "functions/fn_00e6bfe0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6C020",
+  "name": "veh_obj_init_register_3",
+  "kind": "function",
+  "file": "functions/fn_00e6c020.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6C040",
+  "name": "veh_ratio_store_10",
+  "kind": "function",
+  "file": "functions/fn_00e6c040.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6C060",
+  "name": "veh_callback_register_5",
+  "kind": "function",
+  "file": "functions/fn_00e6c060.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6C070",
+  "name": "veh_ratio_store_11",
+  "kind": "function",
+  "file": "functions/fn_00e6c070.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6C090",
+  "name": "veh_ratio_store_12",
+  "kind": "function",
+  "file": "functions/fn_00e6c090.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6C0B0",
+  "name": "veh_ratio_store_13",
+  "kind": "function",
+  "file": "functions/fn_00e6c0b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6C0D0",
+  "name": "veh_obj_init_register_4",
+  "kind": "function",
+  "file": "functions/fn_00e6c0d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
   "address": "0x00E6C0F0",
   "name": "cache_moveflag_Execution_Pistol_Act",
   "kind": "function",
@@ -113902,6 +114262,87 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s317"
+ },
+ {
+  "address": "0x00E6C4B0",
+  "name": "veh_ratio_store_14",
+  "kind": "function",
+  "file": "functions/fn_00e6c4b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6C4D0",
+  "name": "veh_ratio_store_15",
+  "kind": "function",
+  "file": "functions/fn_00e6c4d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6C4F0",
+  "name": "veh_ratio_store_16",
+  "kind": "function",
+  "file": "functions/fn_00e6c4f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6C510",
+  "name": "veh_obj_forward_1",
+  "kind": "function",
+  "file": "functions/fn_00e6c510.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6C520",
+  "name": "veh_array_init_4xb0",
+  "kind": "function",
+  "file": "functions/fn_00e6c520.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6C550",
+  "name": "veh_array_init_2x54",
+  "kind": "function",
+  "file": "functions/fn_00e6c550.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6C570",
+  "name": "veh_obj_forward_2",
+  "kind": "function",
+  "file": "functions/fn_00e6c570.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6C580",
+  "name": "veh_array_init_6x38",
+  "kind": "function",
+  "file": "functions/fn_00e6c580.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
+ },
+ {
+  "address": "0x00E6C5A0",
+  "name": "veh_array_init_2x40",
+  "kind": "function",
+  "file": "functions/fn_00e6c5a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s447"
  },
  {
   "address": "0x00E6CA30",
