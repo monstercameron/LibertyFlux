@@ -5,6 +5,10 @@
 //! target only.
 
 #![allow(unsafe_code)]
+// Rewrite calls keep explicit unsafe blocks (raw addresses flow through them)
+// even though the included exports are declared safe; out-boxes mutate
+// through those addresses, so their bindings stay non-mut.
+#![allow(unused_unsafe)]
 
 #[cfg(target_arch = "x86")]
 mod x86 {
@@ -15,7 +19,7 @@ mod x86 {
 
     #[path = "../support/mod.rs"]
     mod support;
-    use support::{F32_EDGE, Rng, RawObj, SlotObj, addr};
+    use support::{F32_EDGE, Rng, RawObj, SlotObj, U32_EDGE, addr};
 
     mod wrong {
         use lf_animation::channel::RawVec3;
@@ -137,7 +141,7 @@ mod x86 {
                 } else {
                     rng.f32_bits()
                 };
-                let mut out = Box::new([0xAA55_AA55u32; 4]);
+                let out = Box::new([0xAA55_AA55u32; 4]);
                 let r = unsafe {
                     fn_006964A0::rw_006964A0(addr(&*obj), idx, t.to_bits(), addr(&out[0]))
                 };
@@ -190,7 +194,7 @@ mod x86 {
                 frames.push(k as f32 + 0.9995);
             }
             for f in frames {
-                let mut out = Box::new([0xBAAD_F00Du32; 4]);
+                let out = Box::new([0xBAAD_F00Du32; 4]);
                 let out_addr = addr(&out[0]);
                 let r = unsafe { fn_0069AAA0::rw_0069aaa0(addr(&*obj), f, out_addr) };
                 let mut s = Vec4::from_array([0.0, 0.0, 0.0, f32::from_bits(0xBAAD_F00D)]);
@@ -222,7 +226,7 @@ mod x86 {
             let keys: Vec<Vec4> = words.iter().map(|&w| words_to_vec4(w)).collect();
             let lift = RawVec3::new(keys);
             let f = rng.frame(len as f32 - 1.0);
-            let mut out = Box::new([rng.u32(); 4]);
+            let out = Box::new([rng.u32(); 4]);
             let preset = *out;
             let r = unsafe { fn_0069AAA0::rw_0069aaa0(addr(&*obj), f, addr(&out[0])) };
             let mut s = Vec4::from_array(preset.map(f32::from_bits));
@@ -267,7 +271,7 @@ mod x86 {
             let slot = Box::new(w);
             let obj = slot_obj(addr(&*slot));
             let lift = StaticVec3::new(words_to_vec4(w));
-            let mut out = Box::new([0xDEAD_BEEFu32; 4]);
+            let out = Box::new([0xDEAD_BEEFu32; 4]);
             let r = unsafe {
                 fn_0069A740::rw_0069a740(addr(&*obj), rng.u32(), rng.u32(), addr(&out[0]))
             };
@@ -371,13 +375,27 @@ mod x86 {
                 f32::from_bits(w[2]),
                 f32::from_bits(w[3]),
             ));
-            let mut out = Box::new([0xDEAD_BEEFu32; 4]);
+            let out = Box::new([0xDEAD_BEEFu32; 4]);
             let r = unsafe {
                 fn_0069A720::rw_0069a720(addr(&*obj), rng.u32(), rng.u32(), addr(&out[0]))
             };
             let q = lift.get();
             assert_eq!(r, addr(&out[0]), "vf8 answers out");
             assert_eq!(*out, [q.x.to_bits(), q.y.to_bits(), q.z.to_bits(), q.w.to_bits()]);
+            // vf3: the same copy through the frame sampler, frame ignored.
+            let out3 = Box::new([0xDEAD_BEEFu32; 4]);
+            let fbits = rng.u32();
+            let r3 = unsafe {
+                fn_0069B5A0::rw_0069b5a0(addr(&*obj), fbits, addr(&out3[0]))
+            };
+            let mut s = Quat::from_xyzw(0.0, 0.0, 0.0, 0.0);
+            lift.sample_into(f32::from_bits(fbits), &mut s);
+            assert_eq!(r3, addr(&out3[0]), "vf3 answers out");
+            assert_eq!(
+                *out3,
+                [s.x.to_bits(), s.y.to_bits(), s.z.to_bits(), s.w.to_bits()],
+                "vf3 copy"
+            );
             // Wrong: z and w swapped.
             if [w[0], w[1], w[3], w[2]] != *out {
                 caught += 1;
@@ -385,6 +403,110 @@ mod x86 {
             let _ = (slot, obj);
         }
         assert!(caught > 0, "wrong copy never caught");
+    }
+
+    #[test]
+    fn static_quat_compress_matches() {
+        let mut rng = Rng(0xB5C0);
+        let mut caught = 0;
+        let run = |records: Vec<[u32; 4]>, count: i32, tol: f32, caught: &mut u32| {
+            let boxed: Box<[[u32; 4]]> = records.clone().into_boxed_slice();
+            let mut dst = Box::new([0xCDCD_CDCdu32; 4]);
+            let mut obj = slot_obj(addr(&dst[0]));
+            let r = unsafe {
+                fn_0069B5C0::rw_0069b5c0(
+                    (&mut *obj) as *mut SlotObj as *mut u8,
+                    addr(&boxed[0]) as usize as *const u8,
+                    count,
+                    tol.to_bits(),
+                )
+            };
+            let recs: Vec<Quat> = records
+                .iter()
+                .map(|&w| {
+                    Quat::from_xyzw(
+                        f32::from_bits(w[0]),
+                        f32::from_bits(w[1]),
+                        f32::from_bits(w[2]),
+                        f32::from_bits(w[3]),
+                    )
+                })
+                .collect();
+            let mut lift = StaticQuat::new(Quat::from_xyzw(1.0, 2.0, 3.0, 4.0));
+            let ok = lift.adopt_if_uniform(&recs, count, tol);
+            assert_eq!(r, u32::from(ok), "count {count} tol {tol}");
+            let q = lift.get();
+            assert_eq!(
+                *dst,
+                [q.x.to_bits(), q.y.to_bits(), q.z.to_bits(), q.w.to_bits()],
+                "copied record 0"
+            );
+            let _ = (boxed, obj);
+            // Wrong: sum of squares instead of the maximum ladder.
+            let mut wok = true;
+            if count > 1 {
+                let first = recs[0];
+                let limit = tol * tol;
+                let mut k = 1;
+                while k < count {
+                    let r = recs[k as usize];
+                    let s = (first.x - r.x).powi(2)
+                        + (first.y - r.y).powi(2)
+                        + (first.z - r.z).powi(2)
+                        + (first.w - r.w).powi(2);
+                    if s > limit {
+                        wok = false;
+                        break;
+                    }
+                    k += 1;
+                }
+            }
+            if wok != ok {
+                *caught += 1;
+            }
+        };
+        let rec = |x: f32, y: f32, z: f32, w: f32| {
+            [x.to_bits(), y.to_bits(), z.to_bits(), w.to_bits()]
+        };
+        for &count in &[-2i32, 0, 1, 2, 3, 9] {
+            let n = (count.max(1) as usize).min(9).max(1);
+            for &tol in &[0.0f32, 0.01, 0.5] {
+                run(
+                    (0..n).map(|_| rec(0.0, 0.0, 0.0, 1.0)).collect(),
+                    count,
+                    tol,
+                    &mut caught,
+                );
+                let mut v: Vec<[u32; 4]> =
+                    (0..n).map(|_| rec(0.0, 0.0, 0.0, 1.0)).collect();
+                if n > 1 {
+                    v[n - 1] = rec(0.0, 0.0, 0.5, 1.0);
+                }
+                run(v, count, tol, &mut caught);
+                // Spread over all four: max passes, sum fails at tol 0.5.
+                let mut v: Vec<[u32; 4]> =
+                    (0..n).map(|_| rec(0.0, 0.0, 0.0, 1.0)).collect();
+                if n > 1 {
+                    v[1] = rec(0.3, 0.3, 0.3, 1.3);
+                }
+                run(v, count, tol, &mut caught);
+                // NaN component falls through the ladder.
+                let mut v: Vec<[u32; 4]> =
+                    (0..n).map(|_| rec(0.0, 0.0, 0.0, 1.0)).collect();
+                if n > 1 {
+                    v[1] = rec(f32::NAN, 0.0, 0.0, 1.0);
+                }
+                run(v, count, tol, &mut caught);
+            }
+        }
+        for _ in 0..30 {
+            let count = 2 + (rng.u32() % 7) as i32;
+            let v: Vec<[u32; 4]> = (0..count as usize)
+                .map(|_| [rng.u32(), rng.u32(), rng.u32(), rng.u32()])
+                .collect();
+            run(v, count, rng.small(0, 2), &mut caught);
+        }
+        assert!(caught > 0, "wrong uniformity never caught");
     }
 
     #[test]

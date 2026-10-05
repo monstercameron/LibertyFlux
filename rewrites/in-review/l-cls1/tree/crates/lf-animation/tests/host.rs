@@ -87,6 +87,11 @@ fn static_float_ignores_everything_but_value() {
     // NaN payloads survive untouched.
     let nan = StaticFloat::new(f32::from_bits(0x7FC0_1234));
     assert_eq!(nan.eval().to_bits(), 0x7FC0_1234);
+    // A signalling NaN is quieted by the floating-point return, payload kept.
+    let snan = StaticFloat::new(f32::from_bits(0x7F80_0001));
+    assert_eq!(snan.eval().to_bits(), 0x7FC0_0001);
+    // Copies (which write memory, not the float stack) keep every bit.
+    assert_eq!(snan.copy_key().to_bits(), 0x7F80_0001);
 }
 
 #[test]
@@ -319,6 +324,30 @@ fn static_quat_holds_rotation() {
     let c = StaticQuat::new(q(0.0, 0.0, 0.0, 1.0));
     assert_eq!(c.get(), q(0.0, 0.0, 0.0, 1.0));
     assert_eq!(StaticQuat::default().get(), Quat::IDENTITY);
+    assert_eq!(c.sample(123.5), q(0.0, 0.0, 0.0, 1.0));
+    assert_eq!(c.key_count(), 1);
+}
+
+#[test]
+fn static_quat_adopt_checks_all_four_components() {
+    let mut c = StaticQuat::default();
+    let records = [q(0.0, 0.0, 0.0, 1.0), q(0.0, 0.0, 0.0, 1.0)];
+    assert!(c.adopt_if_uniform(&records, 2, 0.01));
+    assert_eq!(c.get(), q(0.0, 0.0, 0.0, 1.0));
+    // A w outlier beyond tolerance fails.
+    let mut c = StaticQuat::default();
+    let records = [q(0.0, 0.0, 0.0, 1.0), q(0.0, 0.0, 0.0, 0.5)];
+    assert!(!c.adopt_if_uniform(&records, 2, 0.1));
+    // Count 1 adopts without comparing.
+    let mut c = StaticQuat::default();
+    assert!(c.adopt_if_uniform(&records, 1, 0.0));
+    assert_eq!(c.get(), q(0.0, 0.0, 0.0, 1.0));
+}
+
+#[test]
+#[should_panic]
+fn static_quat_adopt_empty_panics() {
+    StaticQuat::default().adopt_if_uniform(&[], 1, 0.0);
 }
 
 // Quantized float fragment.
@@ -345,7 +374,7 @@ fn quantize_float_scales_biases_and_blends() {
 #[test]
 fn registry_counts_match_proof_scope() {
     let (proven, lifted, missing) = registry::counts();
-    assert_eq!(proven, 20, "proven methods");
+    assert_eq!(proven, 22, "proven methods");
     assert_eq!(lifted, 0, "everything lifted is proven");
     assert!(missing > 0, "missing methods are listed, not hidden");
     for row in registry::ROWS {

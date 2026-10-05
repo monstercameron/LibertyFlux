@@ -37,7 +37,7 @@ pub struct Row {
 /// Every verified method of the lifted classes, in class order.
 pub const ROWS: &[Row] = &[
     // Static float: all six verified methods.
-    Row { channel: "StaticFloat", method: "eval_indexed", state: State::Proven, narrows: &["x87 return travels as f32: same bits"] },
+    Row { channel: "StaticFloat", method: "eval_indexed", state: State::Proven, narrows: &["float-stack return travels as f32; its signalling-NaN quieting is reproduced as bit operations"] },
     Row { channel: "StaticFloat", method: "vf9", state: State::Proven, narrows: &["out-pointer answer narrows to the value"] },
     Row { channel: "StaticFloat", method: "vf4", state: State::Proven, narrows: &["out-pointer answer narrows to the value"] },
     Row { channel: "StaticFloat", method: "vf14", state: State::Proven, narrows: &["samples arrive as a slice: count and stride must stay in it", "1/0 answer narrows to bool"] },
@@ -90,8 +90,8 @@ pub const ROWS: &[Row] = &[
     Row { channel: "StaticQuat", method: "vf0", state: State::Missing, narrows: &["deleting destructor through the thread allocator: Drop covers it"] },
     Row { channel: "StaticQuat", method: "copy_from", state: State::Missing, narrows: &["copy through session-relocation and allocator callees"] },
     Row { channel: "StaticQuat", method: "map", state: State::Missing, narrows: &["session slot remap through relocation callees: no portable meaning yet"] },
-    Row { channel: "StaticQuat", method: "vf3", state: State::Missing, narrows: &["meaning not established this lane: 28-byte slot, not triaged to behaviour"] },
-    Row { channel: "StaticQuat", method: "vf16", state: State::Missing, narrows: &["build-from-source through allocator and sizer callees (by analogy with the raw siblings' vf15/vf16/vf17)"] },
+    Row { channel: "StaticQuat", method: "vf3", state: State::Proven, narrows: &["out-pointer answer narrows to the value"] },
+    Row { channel: "StaticQuat", method: "vf16", state: State::Proven, narrows: &["records arrive as a slice: count must stay in it", "1/0 answer narrows to bool"] },
     Row { channel: "StaticQuat", method: "vf20", state: State::Missing, narrows: &["single call through a helper: no behaviour in it"] },
     // Quantized float: the evaluator alone; the rest needs the extractor callee.
     Row { channel: "QuantizeFloat", method: "vf13", state: State::Proven, narrows: &["x87 double return travels as f64: same bits"] },

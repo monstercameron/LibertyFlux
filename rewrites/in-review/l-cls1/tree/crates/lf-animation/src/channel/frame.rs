@@ -107,8 +107,9 @@ pub fn clamp_index(index: i32, last: i32) -> i32 {
 /// compares every byte.
 ///
 /// Only channels whose at-frame sampler is verified implement this. The
-/// static integer, static vector and static quaternion channels have no
-/// verified sampler yet, so they expose inherent methods only.
+/// static integer and static vector channels have no verified sampler
+/// yet (the vector's frame sampler is unverified), so they expose
+/// inherent methods only.
 pub trait AnimChannel {
     /// One decoded sample.
     type Sample: Copy + Default;

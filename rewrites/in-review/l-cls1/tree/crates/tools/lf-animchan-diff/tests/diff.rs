@@ -6,6 +6,10 @@
 //! caught at least once. 32-bit target only.
 
 #![allow(unsafe_code)]
+// Rewrite calls keep explicit unsafe blocks (raw addresses flow through them)
+// even though the included exports are declared safe; out-boxes mutate
+// through those addresses, so their bindings stay non-mut.
+#![allow(unused_unsafe)]
 
 #[cfg(target_arch = "x86")]
 mod x86 {
@@ -407,7 +411,7 @@ mod x86 {
                 frames.push(k as f32 + 0.9995);
             }
             for f in frames {
-                let mut out = Box::new(0xBAAD_F00Du32);
+                let out = Box::new(0xBAAD_F00Du32);
                 let r = unsafe { fn_0069A7F0::rw_0069a7f0(addr(&*obj), f, addr(&*out)) };
                 let mut s = 0.0f32;
                 lift.sample_into(f, &mut s);
@@ -427,7 +431,7 @@ mod x86 {
             let obj = raw_obj(addr(&boxed[0]), len as u16);
             let lift = RawFloat::new(keys);
             let f = rng.frame(len as f32 - 1.0);
-            let mut out = Box::new(0u32);
+            let out = Box::new(0u32);
             let r = unsafe { fn_0069A7F0::rw_0069a7f0(addr(&*obj), f, addr(&*out)) };
             let mut s = 0.0f32;
             lift.sample_into(f, &mut s);
@@ -450,7 +454,7 @@ mod x86 {
             let lift = RawInt::new(keys.clone());
             // Key copy at every index.
             for idx in 0..len as u32 {
-                let mut out = Box::new(0u32);
+                let out = Box::new(0u32);
                 let r = unsafe {
                     fn_0069A6E0::rw_0069a6e0(addr(&*obj), idx, rng.u32(), addr(&*out))
                 };
@@ -466,7 +470,7 @@ mod x86 {
                 frames.push(rng.frame(len as f32 - 1.0));
             }
             for f in frames {
-                let mut out = Box::new(0xBAAD_F00Du32);
+                let out = Box::new(0xBAAD_F00Du32);
                 let r = unsafe { fn_0069B070::rw_0069b070(addr(&*obj), f, addr(&*out)) };
                 let mut s = 0u32;
                 lift.sample_into(f, &mut s);
@@ -507,7 +511,7 @@ mod x86 {
             let boxed: Box<[u8]> = bytes.clone().into_boxed_slice();
             let obj = raw_obj(addr(&boxed[0]), 2);
             let lift = RawBool::new(bytes);
-            let mut out = Box::new(0xFFu8);
+            let out = Box::new(0xFFu8);
             let r = unsafe { fn_0069B120::rw_0069b120(addr(&*obj), 12.0, addr(&*out)) };
             let mut s = 0u8;
             lift.sample_into(12.0, &mut s);
@@ -537,7 +541,7 @@ mod x86 {
                 if index >> 3 >= len as u32 {
                     continue;
                 }
-                let mut out = Box::new(0xFFu8);
+                let out = Box::new(0xFFu8);
                 let r = unsafe { fn_0069B120::rw_0069b120(addr(&*obj), f, addr(&*out)) };
                 let mut s = 0u8;
                 lift.sample_into(f, &mut s);

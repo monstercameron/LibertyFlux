@@ -28,11 +28,19 @@ impl StaticFloat {
 
     /// Evaluates the channel, ignoring index, time and flags: the value.
     ///
-    /// The original returns it in floating point; the lift returns it as
-    /// an `f32`, the same bits.
+    /// The original returns it through the floating-point stack, which
+    /// quiets a signalling NaN (sets the quiet bit, keeps the payload);
+    /// the lift reproduces that quieting as bit operations, so the bits
+    /// match for every value.
     #[must_use]
     pub const fn eval(self) -> f32 {
-        self.value
+        let bits = self.value.to_bits();
+        let is_nan = bits & 0x7F80_0000 == 0x7F80_0000 && bits & 0x007F_FFFF != 0;
+        if is_nan {
+            f32::from_bits(bits | 0x0040_0000)
+        } else {
+            self.value
+        }
     }
 
     /// Copies the value out, ignoring the key index and blend: the value.
