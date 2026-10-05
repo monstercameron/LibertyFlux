@@ -65835,6 +65835,15 @@
   "lane": "r-s403"
  },
  {
+  "address": "0x00B39840",
+  "name": "ped_task_schedule_probe",
+  "kind": "function",
+  "file": "functions/fn_00b39840.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b525"
+ },
+ {
   "address": "0x00B39FE0",
   "name": "copy_two_global_floats",
   "kind": "function",
@@ -66004,6 +66013,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b390"
+ },
+ {
+  "address": "0x00B3DAF0",
+  "name": "bvh_query_emit_sample",
+  "kind": "function",
+  "file": "functions/fn_00b3daf0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "a-R02"
  },
  {
   "address": "0x00B3E540",
@@ -83484,6 +83502,15 @@
   "lane": "r-s241"
  },
  {
+  "address": "0x00BBCB60",
+  "name": "ped_assign_drive_to_point_task",
+  "kind": "function",
+  "file": "functions/fn_00bbcb60.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b516"
+ },
+ {
   "address": "0x00BBD270",
   "name": "ped_assign_sequence_goto_drive_to_point",
   "kind": "function",
@@ -96624,6 +96651,15 @@
   "lane": "r-b521"
  },
  {
+  "address": "0x00C95F90",
+  "name": "guided_projection_point",
+  "kind": "function",
+  "file": "functions/fn_00c95f90.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b521"
+ },
+ {
   "address": "0x00C96270",
   "name": "sphere_intersection_circle",
   "kind": "function",
@@ -100863,6 +100899,15 @@
   "lane": "r-b405"
  },
  {
+  "address": "0x00D14DA0",
+  "name": "combat_range_local_offset_update",
+  "kind": "function",
+  "file": "functions/fn_00d14da0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b520"
+ },
+ {
   "address": "0x00D17120",
   "name": "CTaskSimplePlayAnimAndSlideOutOfCover::vf13",
   "kind": "function",
@@ -101230,6 +101275,24 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s352"
+ },
+ {
+  "address": "0x00D282B0",
+  "name": "target_score_by_distance",
+  "kind": "function",
+  "file": "functions/fn_00d282b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R03"
+ },
+ {
+  "address": "0x00D283D0",
+  "name": "target_heading_update",
+  "kind": "function",
+  "file": "functions/fn_00d283d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R03"
  },
  {
   "address": "0x00D284D0",
