@@ -49,8 +49,11 @@ lf_checker_rt::export!(thiscall, rw_00A1DA00(this: u32, kind_obj: u32, sel: u32,
         const SEL_TABLE: u32 = 0x64;
         const SLOT_A: u32 = 0xf0;
         const SLOT_B: u32 = 0xf4;
-        const K1: u32 = 0x01110090;
-        const K2: u32 = 0x01b4b320;
+        // The original pushes these two addresses as immediates; both carry
+        // relocation entries, so the worker maps them and the rewrite must
+        // pass the relocated values, not the file addresses.
+        const K1_VA: u32 = 0x01110090;
+        const K2_VA: u32 = 0x01b4b320;
         const PRED: u32 = 1;
         const COMBINE_DIRECT: u32 = 2;
         const COMBINE_STAGED: u32 = 3;
@@ -120,7 +123,13 @@ lf_checker_rt::export!(thiscall, rw_00A1DA00(this: u32, kind_obj: u32, sel: u32,
                     let x = f32::from_bits(rd32(this + RADIUS));
                     let sq = core::hint::black_box(x) * core::hint::black_box(x);
                     lf_checker_rt::callee_thiscall!(
-                        COMBINE_DIRECT, u32, sel, K1, K2, this + TRIPLE, sq.to_bits()
+                        COMBINE_DIRECT,
+                        u32,
+                        sel,
+                        lf_checker_rt::relocated(K1_VA),
+                        lf_checker_rt::relocated(K2_VA),
+                        this + TRIPLE,
+                        sq.to_bits()
                     );
                     let slot: extern "thiscall" fn(u32, u32) -> u32 =
                         core::mem::transmute(rd32(rd32(kind_obj) + SLOT_A) as usize);

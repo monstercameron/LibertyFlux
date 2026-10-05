@@ -30,10 +30,10 @@
 /// upper three bytes are register leftovers (part of `owner` or of the
 /// candidate's last dword, depending on the path) and are not reproduced.
 ///
-/// The limit is read through `relocated` because the original's reference to
-/// it carries no relocation entry; the proof pins limit-straddling inputs
-/// (0.9, 1.0, 1.0+1ulp, 1.1 against the file's 1.0) so any value other than
-/// the file's constant at the original's address would fail the run.
+/// The limit is read through `relocated`, matching the relocated reference
+/// in the original; the proof pins limit-straddling inputs (0.9, 1.0,
+/// 1.0+1ulp, 1.1 against the file's 1.0) so any value other than the file's
+/// constant at the original's address would fail the run.
 ///
 /// Original: 0x00A1CD70 (thiscall, two stack words).
 lf_checker_rt::export!(thiscall, rw_00A1CD70(this: u32, owner: u32, cand: u32) -> u32 {

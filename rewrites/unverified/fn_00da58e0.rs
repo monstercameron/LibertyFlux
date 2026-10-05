@@ -201,14 +201,12 @@ lf_checker_rt::export!(thiscall, rw_00da58e0(this: u32, ped: u32) -> u32 {
                         }
                     }
                 }
-                // Task A. The original pushes a word of unwritten scratch as
-                // the first build word; under the contract's zero stack fill
-                // that word is 0.
+                // Task A. The original pushes the saved secondary state here.
                 let o2: u32 = lf_checker_rt::callee_thiscall!(MGR2_CALLEE, u32, mgr);
                 let edx: u32 = if o2 == 0 {
                     0
                 } else {
-                    lf_checker_rt::callee_thiscall!(BUILD_A_CALLEE, u32, o2, 0, 0)
+                    lf_checker_rt::callee_thiscall!(BUILD_A_CALLEE, u32, o2, state, 0)
                 };
                 let flag_bit = rd8(this + FLAG_BYTE) as u32;
                 set_flag_bits(edx.wrapping_add(0x60), flag_bit);
@@ -219,8 +217,8 @@ lf_checker_rt::export!(thiscall, rw_00da58e0(this: u32, ped: u32) -> u32 {
                 return edx;
             }
         }
-        // Fallback: the scratch the builders see holds two zero words, the
-        // saved state, and the three position floats, in that order.
+        // Fallback: the scratch pointer the builders receive points at the
+        // three position floats the function spilled on entry.
         if rd8(ped + 0x26c) & 4 != 0 {
             let target = rd32(ped + 0xb30);
             if target == 0 {
@@ -230,11 +228,10 @@ lf_checker_rt::export!(thiscall, rw_00da58e0(this: u32, ped: u32) -> u32 {
             if o4 == 0 {
                 return 0;
             }
-            let mut buf = [0u32; 8];
-            buf[2] = state;
-            buf[3] = f0.to_bits();
-            buf[4] = f1.to_bits();
-            buf[5] = f2.to_bits();
+            let mut buf = [0u32; 4];
+            buf[0] = f0.to_bits();
+            buf[1] = f1.to_bits();
+            buf[2] = f2.to_bits();
             return lf_checker_rt::callee_thiscall!(
                 BUILD_C_CALLEE,
                 u32,
@@ -247,11 +244,10 @@ lf_checker_rt::export!(thiscall, rw_00da58e0(this: u32, ped: u32) -> u32 {
         let edx: u32 = if o3 == 0 {
             0
         } else {
-            let mut buf = [0u32; 8];
-            buf[2] = state;
-            buf[3] = f0.to_bits();
-            buf[4] = f1.to_bits();
-            buf[5] = f2.to_bits();
+            let mut buf = [0u32; 4];
+            buf[0] = f0.to_bits();
+            buf[1] = f1.to_bits();
+            buf[2] = f2.to_bits();
             let rate = lf_checker_rt::global::<u32>(RATE_WORD).read();
             lf_checker_rt::callee_thiscall!(
                 BUILD_B_CALLEE,
