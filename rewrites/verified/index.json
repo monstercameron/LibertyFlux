@@ -37323,6 +37323,15 @@
   "lane": "r-b564"
  },
  {
+  "address": "0x00696510",
+  "name": "rage::crAnimChannelRawQuaternion::sample_indexed",
+  "kind": "function",
+  "file": "functions/fn_00696510.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b572"
+ },
+ {
   "address": "0x00698110",
   "name": "rage::crCreatureComponentMover::vf2",
   "kind": "function",
@@ -43591,6 +43600,15 @@
   "name": "aud_slot_pair_update",
   "kind": "function",
   "file": "functions/fn_0089ba10.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b565"
+ },
+ {
+  "address": "0x0089BB20",
+  "name": "aud_voice_stage_update",
+  "kind": "function",
+  "file": "functions/fn_0089bb20.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b565"
@@ -54486,6 +54504,15 @@
   "lane": "a-08"
  },
  {
+  "address": "0x0097AF80",
+  "name": "audio_iface_forward_if_armed",
+  "kind": "function",
+  "file": "functions/fn_0097af80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
   "address": "0x0097AFB0",
   "name": "audio_bank_stamp_if_flagged",
   "kind": "function",
@@ -55242,6 +55269,15 @@
   "lane": "r-s486"
  },
  {
+  "address": "0x009860B0",
+  "name": "audEmitterAudioEntity::vf1",
+  "kind": "function",
+  "file": "functions/fn_009860b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s486"
+ },
+ {
   "address": "0x00986170",
   "name": "HOSPITALS_POLICE_SCANNER",
   "kind": "function",
@@ -55318,6 +55354,15 @@
   "name": "audEmitter_range_check",
   "kind": "function",
   "file": "functions/fn_00987040.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s486"
+ },
+ {
+  "address": "0x009870F0",
+  "name": "audEmitterAudioEntity::vf2",
+  "kind": "function",
+  "file": "functions/fn_009870f0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s486"
@@ -68400,6 +68445,15 @@
   "lane": "a-09"
  },
  {
+  "address": "0x00A7CB80",
+  "name": "attach_cam_to_chain",
+  "kind": "function",
+  "file": "functions/fn_00a7cb80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
   "address": "0x00A7CBB0",
   "name": "thunk_00a7cbb0",
   "kind": "function",
@@ -75589,6 +75643,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-11"
+ },
+ {
+  "address": "0x00B05B20",
+  "name": "dispatch_indexed_jump",
+  "kind": "function",
+  "file": "functions/fn_00b05b20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
  },
  {
   "address": "0x00B05B50",
@@ -119752,6 +119815,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-09"
+ },
+ {
+  "address": "0x00D698A0",
+  "name": "checked_fetch",
+  "kind": "function",
+  "file": "functions/fn_00d698a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
  },
  {
   "address": "0x00D698C0",
