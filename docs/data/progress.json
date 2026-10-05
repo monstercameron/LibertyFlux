@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-04",
-  "updated_at": "2026-10-04 22:27",
+  "updated_at": "2026-10-04 22:33",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,12 +12,12 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 21651,
-    "rewritten": 11350,
-    "verified": 10929
+    "named": 21658,
+    "rewritten": 11369,
+    "verified": 10948
   },
   "structures": 340,
-  "symbols": 11041,
+  "symbols": 11060,
   "measured": [
     {
       "label": "Code section",
@@ -99,19 +99,19 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 21651,
+      "value": 21658,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (12647); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (12654); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 11350,
+      "value": 11369,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 10929,
+      "value": 10948,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
@@ -2396,7 +2396,7 @@
       "from": "0x0097CD10",
       "to": "0x00982631",
       "count": 82,
-      "named": 23,
+      "named": 30,
       "rewritten": 20,
       "verified": 20
     },
@@ -2469,8 +2469,8 @@
       "to": "0x009AEF3D",
       "count": 61,
       "named": 6,
-      "rewritten": 3,
-      "verified": 2
+      "rewritten": 4,
+      "verified": 3
     },
     {
       "stage": "identified",
@@ -3414,8 +3414,8 @@
       "to": "0x00BF7E04",
       "count": 76,
       "named": 76,
-      "rewritten": 44,
-      "verified": 38
+      "rewritten": 49,
+      "verified": 43
     },
     {
       "stage": "named",
@@ -3423,8 +3423,8 @@
       "to": "0x00BFD726",
       "count": 95,
       "named": 85,
-      "rewritten": 24,
-      "verified": 24
+      "rewritten": 37,
+      "verified": 37
     },
     {
       "stage": "identified",
