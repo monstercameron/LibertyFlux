@@ -9,6 +9,28 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming a mixed batch through vtable slots and twin diffs</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-111"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-111</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>A batch of one hundred and fifty consecutive functions covering rain effects, vehicle audio and vehicle code yielded eighty-four names, with vtable slot joins doing most of the work.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of one hundred and fifty consecutive functions covering rain effects, vehicle audio and vehicle code yielded eighty-four names, with vtable slot joins doing most of the work.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose descriptive names for a consecutive run of unnamed functions, with a confidence per name, working from strings, callers, callees and class information rather than reading every function.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The run splits into rain particle effects code, boat audio code, a materials data loader, train and cable car audio code, radio emitter slots and vehicle class slots, plus thirty-three labels that are not functions.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Dumping the vehicle and audio vtables from the binary and joining slot numbers with already-named sibling overrides named most vehicle slots, including shared base-class implementations used by several classes at once.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two pairs of near-identical neighbours differ only in where they take an entity from, so one variant serves an external tick and the other an in-update call.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; About a fifth of the batch are size-zero inventory labels pointing at mid-function code, jump targets or epilogues; one listed size swallowed four following functions.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Later naming lanes should join vtable slots against prior lane names first, diff near-identical neighbours before reading them, and verify inventory sizes against the first return instruction.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Read code through the mapped executable image, build one evidence table of strings, calls and callers for the whole batch, dump the relevant class vtables and match slot numbers to named siblings, then disassemble only the short and unclear functions fully.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Three functions funnel into encrypted code so their behaviour stays hidden, and a family of handling float-math helpers was left unnamed because the exact outputs could not be pinned down. Nearest-name caller matches beyond a few dozen bytes proved unreliable and were used only as supporting hints.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>A dead scan loop and a vector-register gap on the peds-tasks batch</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b525"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b525</id>
@@ -1113,28 +1135,5 @@
 &lt;p&gt;Run the stock version 5 checker worker against this lane's four contracts and rewrite crate; each contract reproduces 1200 passing trials plus a caught wrong version. The dead descriptor shows as fill pattern in the callee argument snapshots of the configuration function's contract.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;Two early failures came from mistyped patch-site addresses (a dropped hex digit) and one from passing a relocated constant as a raw value. A relocation-audit script initially double-counted block addresses and wrongly reported zero relocations; it was fixed and cross-checked against the worker's own relocation behaviour.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a run of vehicle functions: damage tables, sirens, and an encrypted boundary</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-85"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-85</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>A consecutive run of one hundred and fifty unnamed functions turned out to be mostly the vehicle damage system plus a siren-light family, with a task-slot pool and heading-math helpers mixed in at the start. One hundred and thirty-six functions were named, fourteen were left unnamed where the evidence ran out.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A consecutive run of one hundred and fifty unnamed functions turned out to be mostly the vehicle damage system plus a siren-light family, with a task-slot pool and heading-math helpers mixed in at the start. One hundred and thirty-six functions were named, fourteen were left unnamed where the evidence ran out.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose descriptive names in project style for each function in the batch, with a confidence of high, medium or low, leaving the name empty when the behaviour cannot be told. No rewriting and no checker work.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Fifteen functions sit in the shared vehicle virtual table, identifying them as base-class methods; the destructor pair, the draw routine, a full-repair routine and occupant helpers are among them.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch contains a sixteen-slot damage table with acquire, release, priority refresh and teardown routines, plus directional damage accumulators and severity classifiers.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Six same-shape routines dispatched by vehicle model id, driven by the game clock through sine phases into a ring buffer, form a siren and emergency-light pattern family.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The first seventeen functions belong to task timing slots and heading math, not vehicles, judging by their pools, constants and callers.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Several key callees sit in the encrypted first megabyte and decode as garbage, which caps what static naming can say about the routines that depend on them.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Names use plain behaviour wording with medium confidence where the behaviour is clear but the phrasing is new. Three identical severity classifiers carry letter suffixes until runtime data shows which direction each covers. The next naming lane should treat inventory subsystem labels as hints only, and should check whether an unknown callee is simply in the encrypted region before spending time on it.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Read the executable through the mapped image, never the raw file at a mapped address. Gather per-function calls, imports, float constants, caller addresses and virtual-table membership with RTTI class names into one table first, then read the short functions fully and the large ones by entry shape plus callee and caller sets. Resolve unknown callees by decoding their entries, which also reveals the encrypted ones.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Caller attribution by nearest known function below the call site misattributed two destructor helpers to an audio constructor; the call-site arithmetic put them inside the destructor body instead. One function turned out to be a short jump stub whose inventory size covered its neighbour, giving both identical call lists until the overlap was noticed.&lt;/p&gt;</content>
   </entry>
 </feed>
