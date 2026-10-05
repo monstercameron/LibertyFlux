@@ -273,12 +273,12 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
             let nid: u32 = lf_checker_rt::callee_thiscall!(C_NEW, u32, fp(F_M));
             let fin: u32 = lf_checker_rt::callee_cdecl!(C_FIN, u32, nid);
             let made: u8 = lf_checker_rt::callee_thiscall!(
-                C_MK1, u8, this, 0xe8cc24u32, fp(F_M), nid, fin, 0u32);
+                C_MK1, u8, this, lf_checker_rt::relocated(0xe8cc24), fp(F_M), nid, fin, 0u32);
             if made != 0 {
                 wr32(fp(F_TR0), 0);
                 wr32(fp(F_TR1), 0xffffffff);
                 wr32(fp(F_TR2), 0x37);
-                let h: u32 = lf_checker_rt::callee_cdecl!(C_FMT, u32, 0xe8cc34u32, 0u32);
+                let h: u32 = lf_checker_rt::callee_cdecl!(C_FMT, u32, lf_checker_rt::relocated(0xe8cc34), 0u32);
                 eax = lf_checker_rt::callee_cdecl!(
                     C_RUN, u32, h, 0u32, 0u32, 1u32, fp(F_M), fp(F_TR0),
                     rd32(this.wrapping_add(T_OBJ)), nid);
@@ -316,7 +316,7 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
             }
             wrf(fp(F_TC), m);
             let c: f32 =
-                lf_checker_rt::callee_thiscall!(C_F2A, f32, 0x1231478u32, m.to_bits());
+                lf_checker_rt::callee_thiscall!(C_F2A, f32, lf_checker_rt::relocated(0x1231478), m.to_bits());
             wrf(fp(F_TA), c);
             // min against the ceiling, NaN keeps the value (`jbe`).
             let mut d = rdf(fp(F_TA));
@@ -325,7 +325,7 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
             }
             wrf(fp(F_TA), d);
             let e: f32 = lf_checker_rt::callee_thiscall!(
-                C_F2B, f32, 0x12315ecu32, rdf(fp(F_TC)).to_bits());
+                C_F2B, f32, lf_checker_rt::relocated(0x12315ec), rdf(fp(F_TC)).to_bits());
             wrf(fp(F_TC), e);
             let scaled = mul(rdf(fp(F_TC)), gf(F_8BB0));
             wr32(fp(F_TC), cvt(scaled));
@@ -407,7 +407,7 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
             let slot14 = this.wrapping_add(T_PH14);
             if rd32(this.wrapping_add(T_PH14)) == 0 {
                 lf_checker_rt::callee_thiscall!(
-                    C_MK14, u32, this, 0xe8cc44u32, slot14, 1u32, 0u32,
+                    C_MK14, u32, this, lf_checker_rt::relocated(0xe8cc44), slot14, 1u32, 0u32,
                     rd32(this.wrapping_add(T_PTR8)), 0xffffffffu32, 0u32, 0u32);
             }
             if rd32(slot14) != 0 {
@@ -428,7 +428,7 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
                 wrf(fp(F_M9C), rdf(fp(F_IS).wrapping_add(8)));
                 wr32(fp(F_MA8), 3);
                 wr8(fp(F_MB2), 1);
-                let h: u32 = lf_checker_rt::callee_cdecl!(C_FMT, u32, 0xe8cc64u32, 0u32);
+                let h: u32 = lf_checker_rt::callee_cdecl!(C_FMT, u32, lf_checker_rt::relocated(0xe8cc64), 0u32);
                 let id0: u32 = lf_checker_rt::callee_cdecl!(
                     C_RUN, u32, h, 0u32, 1u32, 0u32, fp(F_S48), fp(F_TR0),
                     rd32(this.wrapping_add(T_OBJ)), 0xffffffffu32);
@@ -476,7 +476,7 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
                     C_F4A, f32, this.wrapping_add(0x90), bl.to_bits(), timer2);
                 wrf(fp(F_TC), r);
                 let s: f32 =
-                    lf_checker_rt::callee_thiscall!(C_K7, f32, 0x1289230u32, 7u32);
+                    lf_checker_rt::callee_thiscall!(C_K7, f32, lf_checker_rt::relocated(0x1289230), 7u32);
                 wrf(fp(F_TB), s);
                 let mut x2 = rdf(fp(F_TB));
                 let mut x1 = rdf(fp(F_TC));
@@ -573,7 +573,7 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
             if fl & 1 == 0 {
                 fl |= 1;
                 gset(G_FLAGS, fl);
-                let d: u32 = lf_checker_rt::callee_cdecl!(C_FMT, u32, 0xe8cc94u32, 0u32);
+                let d: u32 = lf_checker_rt::callee_cdecl!(C_FMT, u32, lf_checker_rt::relocated(0xe8cc94), 0u32);
                 eax = d;
                 gset(G_D20, d);
             }
@@ -654,7 +654,7 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
                         rd32(ob.wrapping_add(O_VT)).wrapping_add(VT_SLOT),
                     ) as usize);
                 got2 = hook(ob, fp(F_IS));
-                hconst = 0x12314ccu32;
+                hconst = lf_checker_rt::relocated(0x12314cc);
             }
         } else {
             let hook: extern "thiscall" fn(u32, u32) -> u32 =
@@ -662,7 +662,7 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
                     rd32(ob4.wrapping_add(O_VT)).wrapping_add(VT_SLOT),
                 ) as usize);
             got2 = hook(ob4, fp(F_IS));
-            hconst = 0x1231548u32;
+            hconst = lf_checker_rt::relocated(0x1231548);
         }
         if !skip_hook {
             let y = rdf(got2.wrapping_add(4));
@@ -688,7 +688,7 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
                         fl |= 2;
                         gset(G_FLAGS, fl);
                         let d: u32 =
-                            lf_checker_rt::callee_cdecl!(C_FMT, u32, 0xe8ccc0u32, 0u32);
+                            lf_checker_rt::callee_cdecl!(C_FMT, u32, lf_checker_rt::relocated(0xe8ccc0), 0u32);
                         eax = d;
                         gset(G_D198, d);
                     }

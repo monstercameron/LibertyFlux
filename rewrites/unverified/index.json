@@ -1904,14 +1904,6 @@
   "reason": null
  },
  {
-  "address": "0x00BE3030",
-  "name": "CTaskComplexSitDownThenIdleThenStandUp::vf19",
-  "file": "fn_00be3030.rs",
-  "lane": "r-b528",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00BE33D0",
   "name": "CTaskComplexSitIdle::vf19",
   "file": "fn_00be33d0.rs",
@@ -2072,11 +2064,11 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00CA7CA0",
-  "name": "CEventHandler::vf32",
-  "file": "fn_00ca7ca0.rs",
-  "lane": "r-b534",
-  "outcome": "not_reached",
+  "address": "0x00C9F6B0",
+  "name": "CSimpleIkManager::vf1",
+  "file": "fn_00c9f6b0.rs",
+  "lane": "a-R06",
+  "outcome": "not yet run",
   "reason": ""
  },
  {
@@ -2152,6 +2144,14 @@
   "reason": "other"
  },
  {
+  "address": "0x00CD33E0",
+  "name": "task_flag_update",
+  "file": "fn_00cd33e0.rs",
+  "lane": "a-R05",
+  "outcome": "not yet run",
+  "reason": ""
+ },
+ {
   "address": "0x00CD4E60",
   "name": "peds_task_steer_blend",
   "file": "fn_00cd4e60.rs",
@@ -2206,14 +2206,6 @@
   "lane": "r-s286",
   "outcome": "not yet run",
   "reason": null
- },
- {
-  "address": "0x00CFE020",
-  "name": "ped_task_decision_scan",
-  "file": "fn_00cfe020.rs",
-  "lane": "a-R05",
-  "outcome": "not yet run",
-  "reason": ""
  },
  {
   "address": "0x00CFEAB0",
