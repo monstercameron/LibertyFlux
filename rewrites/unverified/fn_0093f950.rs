@@ -51,7 +51,7 @@ lf_checker_rt::export!(cdecl, rw_0093f950(list: u32, bx: u32, func: u32, ctx: u3
                     (((((obj as *const u32).read_unaligned()) + RANGE_SLOT) as *const u32)
                         .read_unaligned()) as usize,
                 );
-                let r = f32::from_bits(bb(range(obj)));
+                let r = f32::from_bits(core::hint::black_box(range(obj)));
                 let s = bb(r) + bb(reach);
                 let s2 = bb(s) * bb(s);
                 let sum = (bb(bb(d1) * bb(d1)) + bb(bb(d0) * bb(d0))) + bb(bb(d2) * bb(d2));

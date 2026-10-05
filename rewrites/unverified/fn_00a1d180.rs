@@ -72,7 +72,7 @@ lf_checker_rt::export!(thiscall, rw_00A1D180(this: u32) -> u32 {
 
         /// Distance of the point at (px, py, pz) from the centre.
         #[inline(always)]
-        unsafe fn dist(this: u32, px: u32, py: u32, pz: u32, cx: f32, cy: f32, cz: f32) -> f32 {
+        unsafe fn dist(px: u32, py: u32, pz: u32, cx: f32, cy: f32, cz: f32) -> f32 {
             unsafe {
                 let dx = sub(rdf(px), cx);
                 let dy = sub(rdf(py), cy);
@@ -102,9 +102,9 @@ lf_checker_rt::export!(thiscall, rw_00A1D180(this: u32) -> u32 {
             while i < n {
                 let base = this + 0x108 + (i as u32) * 0xb0;
                 if rd8(this + 0x410 + (i as u32)) != 0 {
-                    best = consider(best, dist(this, base - 0x18, base - 0x14, base - 0x10, cx, cy, cz));
+                    best = consider(best, dist(base - 0x18, base - 0x14, base - 0x10, cx, cy, cz));
                     wrf(this + RADIUS, best);
-                    best = consider(best, dist(this, base - 8, base - 4, base, cx, cy, cz));
+                    best = consider(best, dist(base - 8, base - 4, base, cx, cy, cz));
                     wrf(this + RADIUS, best);
                 }
                 i += 1;
@@ -117,7 +117,7 @@ lf_checker_rt::export!(thiscall, rw_00A1D180(this: u32) -> u32 {
             while i < n {
                 let base = this + 0x1d8 + (i as u32) * 0xc0;
                 if rd8(this + 0x411 + (i as u32)) != 0 {
-                    let d = add(dist(this, base - 8, base - 4, base, cx, cy, cz), rdf(base + 0x18));
+                    let d = add(dist(base - 8, base - 4, base, cx, cy, cz), rdf(base + 0x18));
                     best = consider(best, d);
                     wrf(this + RADIUS, best);
                 }
@@ -132,10 +132,10 @@ lf_checker_rt::export!(thiscall, rw_00A1D180(this: u32) -> u32 {
                 let base = this + 0x2a8 + (i as u32) * 0xe0;
                 if rd8(this + 0x412 + (i as u32)) != 0 {
                     let extra = rdf(base + 0x28);
-                    let d = add(dist(this, base - 0x18, base - 0x14, base - 0x10, cx, cy, cz), extra);
+                    let d = add(dist(base - 0x18, base - 0x14, base - 0x10, cx, cy, cz), extra);
                     best = consider(best, d);
                     wrf(this + RADIUS, best);
-                    let d = add(dist(this, base - 8, base - 4, base, cx, cy, cz), extra);
+                    let d = add(dist(base - 8, base - 4, base, cx, cy, cz), extra);
                     best = consider(best, d);
                     wrf(this + RADIUS, best);
                 }
@@ -153,7 +153,7 @@ lf_checker_rt::export!(thiscall, rw_00A1D180(this: u32) -> u32 {
                     let vy = rdf(base + 0x4c);
                     let vz = rdf(base + 0x50);
                     let vlen = add(add(mul(vx, vx), mul(vy, vy)), mul(vz, vz)).sqrt();
-                    let d = add(vlen, dist(this, base - 8, base - 4, base, cx, cy, cz));
+                    let d = add(vlen, dist(base - 8, base - 4, base, cx, cy, cz));
                     best = consider(best, d);
                     wrf(this + RADIUS, best);
                 }

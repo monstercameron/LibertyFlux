@@ -992,9 +992,25 @@
   "reason": "other"
  },
  {
+  "address": "0x008DC7E0",
+  "name": "draw_command_alloc",
+  "file": "fn_008dc7e0.rs",
+  "lane": "r-s431",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x008DC8B0",
   "name": "CDrawCommandAllocator::vf2",
   "file": "fn_008dc8b0.rs",
+  "lane": "r-s431",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008DC9E0",
+  "name": "draw_command_alloc_checked",
+  "file": "fn_008dc9e0.rs",
   "lane": "r-s431",
   "outcome": "not_reached",
   "reason": null
@@ -1064,9 +1080,41 @@
   "reason": null
  },
  {
+  "address": "0x008DD0B0",
+  "name": "CDrawFragTypeDC::vf1",
+  "file": "fn_008dd0b0.rs",
+  "lane": "r-s431",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x008DD170",
   "name": "CDrawMobilePhoneCameraDC::vf1",
   "file": "fn_008dd170.rs",
+  "lane": "r-s431",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008DD310",
+  "name": "CDrawPedPropDC::vf1",
+  "file": "fn_008dd310.rs",
+  "lane": "r-s431",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008DD3B0",
+  "name": "CDrawPedPropsDC::vf1",
+  "file": "fn_008dd3b0.rs",
+  "lane": "r-s431",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008DD4A0",
+  "name": "CDrawPlayerDC::vf1",
+  "file": "fn_008dd4a0.rs",
   "lane": "r-s431",
   "outcome": "not_reached",
   "reason": null
@@ -1080,6 +1128,14 @@
   "reason": null
  },
  {
+  "address": "0x008DD5A0",
+  "name": "CDrawPtxEffectInst::vf1",
+  "file": "fn_008dd5a0.rs",
+  "lane": "r-s431",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x008DD660",
   "name": "CDrawRadarCircleDC::vf1",
   "file": "fn_008dd660.rs",
@@ -1088,9 +1144,57 @@
   "reason": null
  },
  {
+  "address": "0x008DD680",
+  "name": "CDrawRadarMapSectionDC::vf1",
+  "file": "fn_008dd680.rs",
+  "lane": "r-s431",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x008DD890",
   "name": "CDrawRectDC::vf1",
   "file": "fn_008dd890.rs",
+  "lane": "r-s431",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008DD8B0",
+  "name": "CDrawSLODPedDC::vf1",
+  "file": "fn_008dd8b0.rs",
+  "lane": "r-s431",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008DDA30",
+  "name": "CDrawSpriteDC::vf1",
+  "file": "fn_008dda30.rs",
+  "lane": "r-s431",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008DDA80",
+  "name": "CDrawSpriteInPerspectiveDC::vf1",
+  "file": "fn_008dda80.rs",
+  "lane": "r-s431",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008DDAD0",
+  "name": "CDrawSpriteUVDC::vf1",
+  "file": "fn_008ddad0.rs",
+  "lane": "r-s431",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008DDB30",
+  "name": "CDrawTriShapeDC::vf1",
+  "file": "fn_008ddb30.rs",
   "lane": "r-s431",
   "outcome": "not_reached",
   "reason": null
@@ -2032,6 +2136,14 @@
   "reason": ""
  },
  {
+  "address": "0x00A20DA0",
+  "name": "ped_task_blend_matrix_update (proposed)",
+  "file": "fn_00a20da0.rs",
+  "lane": "r-b421",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00A218A0",
   "name": "ped_task_turn_update (proposed)",
   "file": "fn_00a218a0.rs",
@@ -2051,6 +2163,22 @@
   "address": "0x00A74B70",
   "name": null,
   "file": "fn_00a74b70.rs",
+  "lane": "r-b420",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00A75400",
+  "name": null,
+  "file": "fn_00a75400.rs",
+  "lane": "r-b420",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00A755F0",
+  "name": null,
+  "file": "fn_00a755f0.rs",
   "lane": "r-b420",
   "outcome": "not yet run",
   "reason": null
@@ -2094,6 +2222,158 @@
   "lane": "r-b110",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00ABF0B0",
+  "name": "triage_pending",
+  "file": "fn_00abf0b0.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00ABF270",
+  "name": "triage_pending",
+  "file": "fn_00abf270.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC4790",
+  "name": "triage_pending",
+  "file": "fn_00ac4790.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC5AA0",
+  "name": "triage_pending",
+  "file": "fn_00ac5aa0.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC5AD0",
+  "name": "triage_pending",
+  "file": "fn_00ac5ad0.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC5E00",
+  "name": "triage_pending",
+  "file": "fn_00ac5e00.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC6440",
+  "name": "triage_pending",
+  "file": "fn_00ac6440.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC6740",
+  "name": "triage_pending",
+  "file": "fn_00ac6740.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC6750",
+  "name": "triage_pending",
+  "file": "fn_00ac6750.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC6A90",
+  "name": "triage_pending",
+  "file": "fn_00ac6a90.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC6DB0",
+  "name": "triage_pending",
+  "file": "fn_00ac6db0.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC6E10",
+  "name": "triage_pending",
+  "file": "fn_00ac6e10.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC6E30",
+  "name": "triage_pending",
+  "file": "fn_00ac6e30.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC6E50",
+  "name": "triage_pending",
+  "file": "fn_00ac6e50.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC6EF0",
+  "name": "triage_pending",
+  "file": "fn_00ac6ef0.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC6F30",
+  "name": "triage_pending",
+  "file": "fn_00ac6f30.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC6F70",
+  "name": "triage_pending",
+  "file": "fn_00ac6f70.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC6FB0",
+  "name": "triage_pending",
+  "file": "fn_00ac6fb0.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AC6FF0",
+  "name": "triage_pending",
+  "file": "fn_00ac6ff0.rs",
+  "lane": "r-s434",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00ADDCF0",
@@ -2568,155 +2848,107 @@
   "reason": null
  },
  {
-  "address": "0x00C03050",
-  "name": null,
-  "file": "fn_00c03050.rs",
-  "lane": "r-s433",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C03100",
-  "name": null,
-  "file": "fn_00c03100.rs",
-  "lane": "r-s433",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00C03ED0",
-  "name": null,
+  "name": "stream_quat_get_a",
   "file": "fn_00c03ed0.rs",
   "lane": "r-s433",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C03FD0",
-  "name": null,
+  "name": "stream_quat_get_b",
   "file": "fn_00c03fd0.rs",
   "lane": "r-s433",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C040C0",
-  "name": null,
+  "name": "stream_quat_get_c",
   "file": "fn_00c040c0.rs",
   "lane": "r-s433",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C041B0",
-  "name": null,
-  "file": "fn_00c041b0.rs",
-  "lane": "r-s433",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C041D0",
-  "name": null,
+  "name": "stream_short3_get",
   "file": "fn_00c041d0.rs",
   "lane": "r-s433",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C04890",
-  "name": null,
+  "name": "stream_dir_set_a",
   "file": "fn_00c04890.rs",
   "lane": "r-s433",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C048E0",
-  "name": null,
+  "name": "stream_dir_set_b",
   "file": "fn_00c048e0.rs",
   "lane": "r-s433",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C04930",
-  "name": null,
+  "name": "stream_dir_set_c",
   "file": "fn_00c04930.rs",
   "lane": "r-s433",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C04980",
-  "name": null,
-  "file": "fn_00c04980.rs",
-  "lane": "r-s433",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C049A0",
-  "name": null,
+  "name": "stream_short3_set",
   "file": "fn_00c049a0.rs",
   "lane": "r-s433",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C04B60",
-  "name": null,
+  "name": "stream_byte3_get_a",
   "file": "fn_00c04b60.rs",
   "lane": "r-s433",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C04BB0",
-  "name": null,
+  "name": "stream_byte3_get_b",
   "file": "fn_00c04bb0.rs",
   "lane": "r-s433",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C04C00",
-  "name": null,
-  "file": "fn_00c04c00.rs",
-  "lane": "r-s433",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C04D00",
-  "name": null,
+  "name": "stream_byte3_set_a",
   "file": "fn_00c04d00.rs",
   "lane": "r-s433",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C04D40",
-  "name": null,
+  "name": "stream_byte3_set_b",
   "file": "fn_00c04d40.rs",
   "lane": "r-s433",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C04D80",
-  "name": null,
-  "file": "fn_00c04d80.rs",
-  "lane": "r-s433",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00C05800",
-  "name": null,
+  "name": "stream_init_7f",
   "file": "fn_00c05800.rs",
   "lane": "r-s433",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
