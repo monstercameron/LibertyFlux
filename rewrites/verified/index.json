@@ -32931,6 +32931,15 @@
   "lane": "r-b152"
  },
  {
+  "address": "0x005AE7F0",
+  "name": "hud_text_list_update",
+  "kind": "function",
+  "file": "functions/fn_005ae7f0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b569"
+ },
+ {
   "address": "0x005B0430",
   "name": "select_market_menu_overlay",
   "kind": "function",
@@ -37053,6 +37062,15 @@
   "lane": "r-b282"
  },
  {
+  "address": "0x00691D80",
+  "name": "audio_blend_pass",
+  "kind": "function",
+  "file": "functions/fn_00691d80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b568"
+ },
+ {
   "address": "0x00692450",
   "name": "audio_mix_pass",
   "kind": "function",
@@ -37078,6 +37096,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b48"
+ },
+ {
+  "address": "0x00692A30",
+  "name": "audio_scaled_mix_pass",
+  "kind": "function",
+  "file": "functions/fn_00692a30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b568"
+ },
+ {
+  "address": "0x00692CB0",
+  "name": "audio_keyed_scaled_mix_pass",
+  "kind": "function",
+  "file": "functions/fn_00692cb0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b568"
  },
  {
   "address": "0x00694E40",
@@ -43794,6 +43830,15 @@
   "lane": "a-10"
  },
  {
+  "address": "0x0089D740",
+  "name": "table_call_then_tail_jump",
+  "kind": "function",
+  "file": "functions/fn_0089d740.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
   "address": "0x0089D7E0",
   "name": "audio_voice_probe_3slot",
   "kind": "function",
@@ -44494,6 +44539,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b56"
+ },
+ {
+  "address": "0x008A2F10",
+  "name": "audSound_lookup_and_tailcall",
+  "kind": "function",
+  "file": "functions/fn_008a2f10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
  },
  {
   "address": "0x008A2F50",
@@ -54351,6 +54405,15 @@
   "lane": "r-s103"
  },
  {
+  "address": "0x00979C60",
+  "name": "audio_bus_param_forward",
+  "kind": "function",
+  "file": "functions/fn_00979c60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
   "address": "0x00979CA0",
   "name": "audCollisionAudioEntity::vf2",
   "kind": "function",
@@ -55060,6 +55123,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-11"
+ },
+ {
+  "address": "0x00982210",
+  "name": "audio_emitter_lookup_and_forward",
+  "kind": "function",
+  "file": "functions/fn_00982210.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00982280",
+  "name": "audio_emitter_lookup_and_forward_0",
+  "kind": "function",
+  "file": "functions/fn_00982280.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
  },
  {
   "address": "0x009822C0",
@@ -73359,6 +73440,15 @@
   "lane": "a-R01"
  },
  {
+  "address": "0x00AD3A10",
+  "name": "audio_voice_preset_apply",
+  "kind": "function",
+  "file": "functions/fn_00ad3a10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q07"
+ },
+ {
   "address": "0x00AD4010",
   "name": "audio_clamp_mix_entry",
   "kind": "function",
@@ -79342,6 +79432,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-08"
+ },
+ {
+  "address": "0x00B57560",
+  "name": "update_mode_with_tail_fini",
+  "kind": "function",
+  "file": "functions/fn_00b57560.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
  },
  {
   "address": "0x00B576F0",
