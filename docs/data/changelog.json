@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Naming a 150-function run: cleanup tables, wanted state and three shared spans",
+    "title": "Rewrites: 24 more functions pass the checker (12351 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "24 rewrites added under rewrites/verified: 0 script native handlers and 24 other functions.",
+      "The tree now holds 12351 rewrites, 12332 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "739 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Naming a 150-function run: cleanup tables, wanted state and three shared spans",
+    "commit": "3926811d1e6334a32f31e1ee5e09ff3ff5746b42",
     "summary": "Findings from the nm-82 lane.",
     "changes": [
       "New devlog entry: Naming a 150-function run: cleanup tables, wanted state and three shared spans.",
