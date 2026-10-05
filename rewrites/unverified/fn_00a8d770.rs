@@ -11,8 +11,9 @@
 /// limit at +0xE8 walks its node list from table+bucket*0xA0+8: each
 /// node's object resolves through its word at +0x34, and a resolved
 /// object whose word at +0x44 is not -1 and whose word at +0x28 selects
-/// bit 0x100 is notified through its slot. Returns the last notify
-/// answer, or the incoming register when nothing ran.
+/// bit 0x100 is notified through its slot. Returns the bucket limit
+/// (reloaded into eax by the loop bottom, discarding notify answers),
+/// or the incoming register on the immediate-return path.
 ///
 /// Original: 0x00A8D770 (thiscall, no stack words, vtable callees).
 lf_checker_rt::export!(thiscall, rw_00a8d770(this: u32) -> u32 {
@@ -38,9 +39,8 @@ lf_checker_rt::export!(thiscall, rw_00a8d770(this: u32) -> u32 {
         const INCOMING_EAX: u32 = 0x12345678;
         let enabled = ((this + ENABLE) as *const u8).read_unaligned();
         let sweep = ((this + SWEEP) as *const u8).read_unaligned();
-        let mut last = INCOMING_EAX;
         if enabled == 0 && sweep != 0 {
-            return last;
+            return INCOMING_EAX;
         }
         if sweep != 0 {
             ((this + STATE_A) as *mut u32).write_unaligned(0);
@@ -67,7 +67,7 @@ lf_checker_rt::export!(thiscall, rw_00a8d770(this: u32) -> u32 {
                                     .read_unaligned();
                             let f: extern "thiscall" fn(u32) -> u32 =
                                 core::mem::transmute(target as usize);
-                            last = f(entry);
+                            f(entry);
                         }
                     }
                     more = lf_checker_rt::callee_thiscall!(
@@ -80,13 +80,8 @@ lf_checker_rt::export!(thiscall, rw_00a8d770(this: u32) -> u32 {
                         break;
                     }
                 }
-            } else {
-                last = more;
             }
         }
-        // The original zeroes eax entering the bucket phase, discarding
-        // any sweep answer.
-        last = 0;
         let table = ((this + TABLE) as *const u32).read_unaligned();
         let limit =
             ((this + LIMIT) as *const u16).read_unaligned() as u32;
@@ -119,10 +114,13 @@ lf_checker_rt::export!(thiscall, rw_00a8d770(this: u32) -> u32 {
                     .read_unaligned();
                 let f: extern "thiscall" fn(u32) -> u32 =
                     core::mem::transmute(target as usize);
-                last = f(linked);
+                f(linked);
             }
             bucket += 1;
         }
-        last
+        // The loop bottom reloads the limit into eax every pass, so the
+        // return is the limit (0 when no bucket ran), whatever the
+        // notify callees answered.
+        limit
     }
 });
