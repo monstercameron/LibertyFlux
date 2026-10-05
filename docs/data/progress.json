@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-05",
-  "updated_at": "2026-10-05 06:08",
+  "updated_at": "2026-10-05 06:11",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,12 +12,12 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 25184,
+    "named": 25185,
     "rewritten": 12972,
-    "verified": 12326
+    "verified": 12327
   },
   "structures": 340,
-  "symbols": 12438,
+  "symbols": 12439,
   "measured": [
     {
       "label": "Code section",
@@ -99,9 +99,9 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 25184,
+      "value": 25185,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (16180); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (16181); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
@@ -111,16 +111,16 @@
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 12326,
+      "value": 12327,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
   ],
   "activity": {
-    "lanes_running": 13,
+    "lanes_running": 15,
     "lanes_finished": 1104,
     "lanes_incomplete": 131,
-    "devlog_entries": 419
+    "devlog_entries": 420
   },
   "map": [
     {
@@ -1127,7 +1127,7 @@
       "from": "0x0066B590",
       "to": "0x00670EB1",
       "count": 136,
-      "named": 135,
+      "named": 136,
       "rewritten": 23,
       "verified": 23
     },
@@ -3730,7 +3730,7 @@
       "count": 112,
       "named": 66,
       "rewritten": 60,
-      "verified": 50
+      "verified": 51
     },
     {
       "stage": "identified",
