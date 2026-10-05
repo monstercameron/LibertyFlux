@@ -9,6 +9,33 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming batch 95: shader globals, deferred lighting, and wheels misfiled as audio</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-95"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-95</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>One hundred fifty consecutive functions turned out to be lights, a ped bone-damage shader effect, shader-global setters, wheel and tyre simulation, deferred lighting setup, an audio grid, and UI plus render phases, and the batch produced reusable parameter maps along with several earlier names that now look wrong.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred fifty consecutive functions turned out to be lights, a ped bone-damage shader effect, shader-global setters, wheel and tyre simulation, deferred lighting setup, an audio grid, and UI plus render phases, and the batch produced reusable parameter maps along with several earlier names that now look wrong.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Name each function in the batch from evidence, strongest first: referenced strings, called imports, known callers and callees, class and virtual-table analysis, then behaviour.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The shader-global setters form one family: an init routine binds handles for the scalar, screen-size, fog, depth-effect, day-night and stencil globals, and each setter matches its handle and cache entry exactly. The same family contains an already-verified rewrite whose stream name does not fit what it sets.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The deferred-lighting setup resolves about forty named handles for lights, g-buffer textures, shadow params and reflection, and a separate refresh routine creates the g-buffer, stencil and back-z targets from name strings. Two small getters return the g-buffer-3 and stencil handles.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The wheel code owns two objects: a small wheel-data record with a twelve-slot pool and registry, and a larger wheel-state object holding a burst level and flag words. All five large math kernels in the group touch those same state words.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Those wheel kernels are called from functions named as audio mixers, one of them verified. Either the mixers are vehicle-update code under the wrong name or the kernels serve both systems; the shared object size and field offsets lean toward misnamed callers.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Two merged native names collide with shared stubs: one address every deleting destructor calls to free memory, and one the lights and wheel kernels call as a math helper. Native-mapped names on shared stubs should not be trusted.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Name the 146 functions the evidence supports and leave 4 empty rather than guess.&lt;/li&gt;
+&lt;li&gt;Flag the suspect earlier names for re-examination instead of renaming them from this lane.&lt;/li&gt;
+&lt;li&gt;Recommend the next naming lane decode the render-state number enum, which would sharpen about ten state-block names.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Read code only through the mapped image, never the raw file at a mapped address, and decode one known function end to end first. Gather strings, imports, callees and callers per function into one table, resolve callers through the function-inventory ranges rather than nearest names, confirm every class claim against its virtual table, then read the short functions fully and the large ones by call context.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Nearest-name caller attribution was wrong for about one call in seven, with offsets reaching far into huge neighbouring functions; every caller claim had to be re-resolved through inventory ranges. The encrypted low-memory helpers forced all callee-side reasoning onto strings and data flow. Two render-phase virtual slots both carry the name render from different lanes, and only one of them can be right.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming a render-list batch: bleed, merged entries and the encrypted megabyte</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-96"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-96</id>
@@ -1035,27 +1062,5 @@
 &lt;p&gt;Disassemble each batch function from the memory-mapped image, resolve its direct calls against verified rewrites, lane names and merged symbols, collect referenced strings, scan the code section for callers at the byte level, and close-read the short functions plus one member of each near-identical family before naming.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The first caller scan used linear disassembly and silently found nothing because decoding desynchronises; the byte-level scan fixed it. The subsystem label on the batch said streaming for nearly every function, which was misleading until the call graph showed radio, entity and game-logic groups instead. Shell output redirection wrote one drill file in an unexpected encoding, so later scripts wrote their own output files directly.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a mixed batch: cascade shadows, postfx, imposters, content slots, routes, radio</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-70"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-70</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One batch of one hundred fifty consecutive functions turned out to span six subsystems, and the strongest naming signals were virtual tables checked dword by dword, string references, and a full-text caller scan, in that order.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One batch of one hundred fifty consecutive functions turned out to span six subsystems, and the strongest naming signals were virtual tables checked dword by dword, string references, and a full-text caller scan, in that order.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of one hundred fifty consecutive unnamed functions, with a confidence level and one sentence of evidence each.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into cascade shadow code, a postfx class with constructor, destructor and factory, tree imposter rendering, downloadable content slot management, network route handling, and a radio display state machine with logo loading.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Four inventory sizes swallow later entries; the true functions end at their return or jump instructions. Three real functions between batch entries appear in no list and should be claimed by the next lane.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Code below a boundary early in the executable is encrypted on disk and decodes as garbage, so any name depending on those callees can rest only on call-site shape. Two low-confidence native labels in that area were disproved by reading their readable neighbors.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The radio display modes are plain numbers in a switch, so those names describe each case's effect rather than a mode meaning.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;One hundred forty-three functions were named, thirty-six at high confidence and the rest at medium. Seven were left empty: one unknown flag getter, two jump stubs, two dispatch thunks with unknown targets, and two thunks into the encrypted region. The next naming lane should verify virtual table slots directly before trusting slot labels, and should decode jump tables rather than treating switch cases as independent functions.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Disassemble each function from the memory-mapped image, resolve string and import references, scan the full text for direct callers, attribute each caller to its nearest known symbol, read the small functions completely, and check claimed virtual table slots against the read-only data section.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Caller attribution by nearest symbol initially credited one short orchestrator with calls that physically sit past its padding; linear disassembly showed they belong to an unlisted neighbor function. Several lane-given caller names in the area describe unrelated behavior and were treated as context only.&lt;/p&gt;</content>
   </entry>
 </feed>
