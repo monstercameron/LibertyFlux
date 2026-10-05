@@ -33,7 +33,6 @@ lf_checker_rt::export!(thiscall, rw_00c09d20(this: u32) -> u32 {
         let mut k = 0u32;
         while k < NSLOT {
             let s = this.wrapping_add(SLOTS).wrapping_add(k.wrapping_mul(SLOT));
-            (s.wrapping_sub(0x0c) as *mut u32).write_unaligned(0);
             (s.wrapping_sub(4) as *mut u32).write_unaligned(0);
             (s as *mut u32).write_unaligned(0);
             (s.wrapping_add(4) as *mut u32).write_unaligned(0);

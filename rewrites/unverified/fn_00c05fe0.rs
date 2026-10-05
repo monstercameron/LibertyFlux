@@ -9,8 +9,9 @@
 /// incoming `ax`, so with entry `ax` zero it runs exactly when the length is
 /// non-zero; other entry values gate it), then the range helper (callee 2)
 /// receives the array's start and end with the array field itself in `ecx`.
-/// Finally the aux pointer at `AUX` goes to the release helper when set, and
-/// `AUX` and `AUX2` are cleared. Returns the last helper answer.
+/// Finally, when the aux pointer at `AUX` is set it goes to the release
+/// helper and `AUX` and `AUX2` are cleared, otherwise both are left alone.
+/// Returns the last helper answer.
 ///
 /// Original: 0x00c05fe0 (thiscall, no stack words; 1 is cdecl, 2 thiscall).
 lf_checker_rt::export!(thiscall, rw_00c05fe0(this: u32) -> u32 {
@@ -53,9 +54,9 @@ lf_checker_rt::export!(thiscall, rw_00c05fe0(this: u32) -> u32 {
         let aux = (this.wrapping_add(AUX) as *const u32).read_unaligned();
         if aux != 0 {
             r = lf_checker_rt::callee_cdecl!(FREE, u32, aux);
+            (this.wrapping_add(AUX) as *mut u32).write_unaligned(0);
+            (this.wrapping_add(AUX2) as *mut u32).write_unaligned(0);
         }
-        (this.wrapping_add(AUX) as *mut u32).write_unaligned(0);
-        (this.wrapping_add(AUX2) as *mut u32).write_unaligned(0);
         r
     }
 });

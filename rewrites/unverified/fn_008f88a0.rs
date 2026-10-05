@@ -5,20 +5,19 @@
 /// mode byte is forced to 1 when the group is 1. Unless the force
 /// flag is set, the four slots of the group are scanned for a free
 /// (zero head) one; a full group returns the address past it. The
-/// chosen slot is then cleared through the clear routine and filled
-/// with the call result, the two header words, a fallback global and
-/// the six trailing arguments, ending with the valid flag. Cdecl;
-/// the first three stack words are padding the original never reads.
-/// Returns the trailing argument on the store path.
-export!(cdecl, rw_008f88a0(_p0: u32, _p1: u32, _p2: u32, group: u32, flag: u32,
-        v0: u32, v1: u32, _p7: u32, _p8: u32,
+/// chosen slot is then cleared through the clear routine (whose
+/// answer is discarded) and filled with the three header words, a
+/// fallback global and the six trailing arguments, ending with the
+/// valid flag. Cdecl, eleven stack arguments (three header words,
+/// group, flag byte, six trailing words). Returns the last trailing
+/// word on the store path.
+export!(cdecl, rw_008f88a0(h0: u32, h1: u32, h2: u32, group: u32, flag: u32,
         s0: u32, s1: u32, s2: u32, s3: u32, s4: u32, s5: u32) -> u32 {
     unsafe {
         const MODE: u32 = 0x118e7d0;
         const TABLE: u32 = 0x118dec0;
         const FALLBACK: u32 = 0x11735b4;
         const ENTRY: u32 = 0x40;
-        const GROUP_STRIDE: u32 = 0x100;
         let mut mode = *global::<u8>(MODE);
         if group == 1 {
             mode = 1;
@@ -41,12 +40,12 @@ export!(cdecl, rw_008f88a0(_p0: u32, _p1: u32, _p2: u32, group: u32, flag: u32,
                 return p;
             }
         }
-        let ans: u32 = callee_cdecl!(1, u32, group, slot);
+        let _: u32 = callee_cdecl!(1, u32, group, slot);
         let e = relocated(TABLE)
             .wrapping_add(slot.wrapping_add(group.wrapping_mul(4)).wrapping_mul(ENTRY));
-        ((e) as *mut u32).write_unaligned(ans);
-        ((e + 0x04) as *mut u32).write_unaligned(v0);
-        ((e + 0x10) as *mut u32).write_unaligned(v1);
+        ((e) as *mut u32).write_unaligned(h0);
+        ((e + 0x04) as *mut u32).write_unaligned(h1);
+        ((e + 0x10) as *mut u32).write_unaligned(h2);
         ((e + 0x14) as *mut u32).write_unaligned(*global::<u32>(FALLBACK));
         ((e + 0x18) as *mut u32).write_unaligned(s0);
         ((e + 0x1c) as *mut u32).write_unaligned(s1);

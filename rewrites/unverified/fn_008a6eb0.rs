@@ -28,8 +28,8 @@
 /// The heavy path zeroes `obj[0..0x60]`, `obj[0x60..0x70]`,
 /// `obj[0xB0..0xB8]`, `obj[0xBC]` and copies the winning block's words at
 /// 0xA4/0xA8, then for each slot `j` with a nonzero dword at
-/// `this + (t + IDX_BASE + j*4)*4`, a nonzero `obj[OBJ_FLAGS] & (j+1)` and a
-/// nonzero `array[j]` (note: the mask is `j+1`, not `1<<j`) mixes
+/// `this + (t + IDX_BASE + j*4)*4`, bit `j` of `obj[OBJ_FLAGS]` set and a
+/// nonzero `array[j]` mixes
 /// `h = g[j]/acc` of block `j` into `obj[0x60..0x6C]`, `obj[0xBC]` and the
 /// truncated integer accumulators `obj[0xB0]`/`obj[0xB4]` (x87 truncate
 /// semantics, indefinite on overflow/NaN), and max-merges scaled block
@@ -239,7 +239,7 @@ lf_checker_rt::export!(thiscall, rw_008A6EB0(this: u32, obj: u32, array: u32, co
                 continue;
             }
             let flags = ((obj.wrapping_add(OBJ_FLAGS)) as *const u8).read();
-            if flags & (j.wrapping_add(1) as u8) == 0 {
+            if flags & (1u8 << j) == 0 {
                 continue;
             }
             if !nonzero(rdf(array.wrapping_add(j.wrapping_mul(4)))) {
