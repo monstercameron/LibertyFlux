@@ -172,7 +172,7 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
         if state > 6 {
             return rd32(this + SUB_TASK);
         }
-        match state {
+        let state_result = match state {
             0 | 1 => {
                 let step = f32::from_bits(rd32(lf_checker_rt::relocated(0x117359c)));
                 let next = sub(rdf(this + CHAT_TIMER), step);
@@ -245,7 +245,7 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
                     return rd32(this + SUB_TASK);
                 }
                 let draw1: u32 =
-                    lf_checker_rt::callee_cdecl!(CAL_RAND_STATE3, u32);
+                    lf_checker_rt::callee_cdecl!(CAL_RAND_STATE3, u32,);
                 if CHAT_THRESHOLD <= scaled(draw1) {
                     // Random declined: the exact 6/2 pair hands off with
                     // state 5, anything else yields. The ECX comparison
@@ -288,7 +288,7 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
                     rd32(this + SUB_TASK)
                 }
             }
-        }
+        };
 
         /// Yield epilogue shared by the partner-miss paths.
         #[inline(always)]
@@ -318,10 +318,10 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
             unsafe {
                 if rd32(this + CHAT_MODE) == CHAT_MODE_RANDOM {
                     let draw2: u32 =
-                        lf_checker_rt::callee_cdecl!(retry_id, u32);
+                        lf_checker_rt::callee_cdecl!(retry_id, u32,);
                     if HALF > scaled(draw2) {
                         let draw3: u32 =
-                            lf_checker_rt::callee_cdecl!(timer_id, u32);
+                            lf_checker_rt::callee_cdecl!(timer_id, u32,);
                         let t = add(mul(scaled(draw3), HALF), HALF);
                         wrf(this + CHAT_TIMER, t);
                         let _done: u32 = lf_checker_rt::callee_thiscall!(
@@ -339,5 +339,6 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
                 wrf(this + CHAT_TIMER, span);
             }
         }
+        state_result
     }
 });

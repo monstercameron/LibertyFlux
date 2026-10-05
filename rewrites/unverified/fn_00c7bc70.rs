@@ -61,6 +61,7 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
         const WAIT_HI: f32 = f32::from_bits(0x3f99999a); // 1.2
         const FAR2: f32 = f32::from_bits(0x40800000); // 4.0
         const FULL_WEIGHT: f32 = 1.0;
+        const NEG_ONE: f32 = f32::from_bits(0xbf800000); // -1.0
         const CHAT_PING_IMM: u32 = 0xed4a40;
         const CHAT_PING_W: u32 = 0x3d4ccccd; // 0.05f
         const CAL_CONFIG: u32 = 2;
@@ -182,7 +183,7 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                 0
             );
         }
-        rd32(this + SUB_TASK)
+        let tail_value = rd32(this + SUB_TASK);
 
         /// State 0: count the wait timer down; on expiry randomise a new
         /// wait, sample a destination, and commit it (moving to state 1)
@@ -194,18 +195,16 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                 let step = f32::from_bits(rd32(lf_checker_rt::relocated(0x11735bc)));
                 let left = sub(rdf(this + WAIT_TIMER), step);
                 wrf(this + WAIT_TIMER, left);
-                if left >= 0.0 || !(left <= 0.0) {
+                if !(0.0 > left) {
                     // Still waiting (or unordered): tail.
                     return None;
                 }
                 let span = rdf(config.wrapping_add(0x44));
                 let s0 = mul(span, WAIT_LO);
                 let s1 = mul(span, WAIT_HI);
-                let draw: u32 = lf_checker_rt::callee_cdecl!(CAL_RAND, u32);
+                let draw: u32 = lf_checker_rt::callee_cdecl!(CAL_RAND, u32,);
                 let width = sub(s1, s0);
                 let frac = mul(draw as i32 as f32, RAND_SCALE);
-                let mut leg_anchor: u32 = 0;
-                let mut leg_aux: u32 = 0;
                 wrf(this + WAIT_TIMER, add(mul(frac, width), s0));
                 let weight_bits = if rd32(this + AUX_ID) == AUX_NARROW {
                     rd32(lf_checker_rt::relocated(0xfe8ad8))
@@ -213,7 +212,10 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                     rd32(lf_checker_rt::relocated(0xfe8b38))
                 };
                 let placement = rd32(ped + PED_PLACEMENT);
-                let mut dest = [0u32; 4];
+                // Route-service scratch: the two frame slots the original
+                // passes plus the two out-words it reads back. The contract
+                // writes the out-words 12 bytes past each frame pointer.
+                let mut routew = [0u32; 8];
                 let sampled: u32 = lf_checker_rt::callee_thiscall!(
                     CAL_ROUTE_S0,
                     u32,
@@ -222,8 +224,8 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                     weight_bits,
                     1,
                     this.wrapping_add(AUX_ID),
-                    &mut leg_anchor as *mut u32 as u32,
-                    &mut leg_aux as *mut u32 as u32,
+                    &mut routew[0] as *mut u32 as u32,
+                    &mut routew[1] as *mut u32 as u32,
                     1,
                     ped,
                     1
@@ -231,6 +233,8 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                 if sampled & 0xff == 0 {
                     return None;
                 }
+                let (leg_aux, leg_anchor) = (routew[3], routew[4]);
+                let mut dest = [0u32; 4];
                 let _refined: u32 = lf_checker_rt::callee_thiscall!(
                     CAL_DEST_S0,
                     u32,
@@ -287,8 +291,10 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                 if leg_ok & 0xff == 0 {
                     return None;
                 }
+                // Schedule-service scratch: three zeroed words plus the
+                // three out-words the original passes frame pointers for.
+                let schedz = [0u32; 3];
                 let mut sched = [0u32; 3];
-                let mut aux = [0u32; 3];
                 let slot = rd32(this + LEG);
                 let planned: u32 = lf_checker_rt::callee_cdecl!(
                     CAL_SCHEDULE,
@@ -306,6 +312,7 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                     wr32(this + STATE, 0);
                     return None;
                 }
+                // Route-service out-words, zeroed before the call.
                 let mut leg_anchor: u32 = 0;
                 let mut leg_aux: u32 = 0;
                 let routed: u32 = lf_checker_rt::callee_thiscall!(
@@ -316,8 +323,8 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                     FULL_WEIGHT.to_bits(),
                     1,
                     this.wrapping_add(AUX_ID),
-                    &mut leg_aux as *mut u32 as u32,
                     &mut leg_anchor as *mut u32 as u32,
+                    &mut leg_aux as *mut u32 as u32,
                     1,
                     ped,
                     0
@@ -348,73 +355,39 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                     leg_anchor
                 );
                 let world = rd32(lf_checker_rt::relocated(0x167e2a0));
-                let anchor = {
-                    let w: u32 =
-                        lf_checker_rt::callee_thiscall!(CAL_WORLD_S1A, u32, world);
-                    if w == 0 {
-                        0
-                    } else {
-                        let inner: u32 =
-                            lf_checker_rt::callee_thiscall!(CAL_ANCHOR, u32, w);
-                        lf_checker_rt::callee_thiscall!(CAL_WORLD_S1B, u32, world);
-                        inner
-                    }
+                let world_a: u32 =
+                    lf_checker_rt::callee_thiscall!(CAL_WORLD_S1A, u32, world);
+                let anchor = if world_a == 0 {
+                    0
+                } else {
+                    lf_checker_rt::callee_thiscall!(CAL_ANCHOR, u32, world_a)
                 };
-                // NOTE: the second world lookup is consumed below; its
-                // result selects the dock/approach arm.
-                let docked: u32 = {
-                    let w: u32 =
-                        lf_checker_rt::callee_thiscall!(CAL_WORLD_S1B, u32, world);
-                    if w == 0 {
-                        0
-                    } else {
-                        leg_anchor = w;
-                        1
-                    }
-                };
-                if docked == 0 {
-                    let _attached: u32 = lf_checker_rt::callee_thiscall!(
-                        CAL_ATTACH,
-                        u32,
-                        anchor,
-                        0
-                    );
-                    // Falls through to the heading block with a null dock.
-                    return heading(this, ped, anchor, 0, world, &mut aux);
+                let dockw: u32 =
+                    lf_checker_rt::callee_thiscall!(CAL_WORLD_S1B, u32, world);
+                if dockw == 0 {
+                    // Null dock: attach a null boarding and head along.
+                    return Some(heading(anchor, 0, world, leg_anchor));
                 }
-                Some(seat_and_head(this, ped, anchor, world, &mut aux))
-            }
-        }
-
-        /// State-1 docked arm: dock, board, seat, then head along the leg.
-        #[inline(always)]
-        unsafe fn seat_and_head(
-            this: u32,
-            ped: u32,
-            anchor: u32,
-            world: u32,
-            aux: &mut [u32; 3],
-        ) -> u32 {
-            unsafe {
-                let w: u32 = lf_checker_rt::callee_thiscall!(CAL_WORLD_S1C, u32, world);
+                let world_c: u32 =
+                    lf_checker_rt::callee_thiscall!(CAL_WORLD_S1C, u32, world);
                 let mut dock: u32 = 0;
-                if w != 0 {
+                if world_c != 0 {
                     dock = lf_checker_rt::callee_thiscall!(
-                        CAL_DOCK, u32, w, 0, f32::from_bits(0xbf800000).to_bits(), 0, 0, 0, 0xc
+                        CAL_DOCK, u32, world_c, 0, NEG_ONE.to_bits(), 0, 0, 0, 0xc
                     );
                 }
-                aux[1] = dock;
-                let w2: u32 =
+                let _dockslot = dock;
+                let world_d: u32 =
                     lf_checker_rt::callee_thiscall!(CAL_WORLD_S1D, u32, world);
                 let mut boarded: u32 = 0;
-                if w2 != 0 {
+                if world_d != 0 {
                     let fare_hi = rd32(lf_checker_rt::relocated(0xee1eb4));
                     let fare_lo = rd32(lf_checker_rt::relocated(0xee1eb0));
                     let mut gate: u32 = 0;
                     boarded = lf_checker_rt::callee_thiscall!(
                         CAL_BOARD,
                         u32,
-                        w2,
+                        world_d,
                         2,
                         &mut gate as *mut u32 as u32,
                         fare_lo,
@@ -430,44 +403,35 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                 let _seated: u32 = lf_checker_rt::callee_thiscall!(
                     CAL_SEAT_INFO,
                     u32,
-                    leg_anchor_of(aux),
+                    dockw,
                     boarded,
-                    aux[1],
+                    schedz[2],
                     0,
                     0
                 );
-                heading(this, ped, anchor, boarded, world, aux).unwrap_or(anchor)
+                Some(heading(anchor, boarded, world, leg_anchor))
             }
         }
 
-        /// Reads back the docked-world value stashed in the scratch model.
-        #[inline(always)]
-        unsafe fn leg_anchor_of(aux: &[u32; 3]) -> u32 {
-            aux[0]
-        }
-
-        /// Heading block shared by the docked and null-dock arms: resolve
-        /// the leg vector through the schedule service, derive the heading,
-        /// seat the ped. Returns the function result, or `None` for the one
-        /// early arm that returns the anchor directly.
+        /// Heading block: resolve the leg vector through the schedule
+        /// service, derive the heading, seat the ped. Always returns the
+        /// function result (the anchor).
         #[inline(always)]
         unsafe fn heading(
-            this: u32,
-            _ped: u32,
             anchor: u32,
             boarded: u32,
             world: u32,
-            aux: &mut [u32; 3],
-        ) -> Option<u32> {
+            leg_anchor: u32,
+        ) -> u32 {
             unsafe {
                 let _attached: u32 =
                     lf_checker_rt::callee_thiscall!(CAL_ATTACH, u32, anchor, boarded);
                 let mut leg_vec = [0u32; 4];
-                let sched_obj = aux[0];
-                let leg_slot = rd32(rd32(sched_obj) + SCHED_VT_LEG);
+                let leg_slot = rd32(rd32(leg_anchor) + SCHED_VT_LEG);
                 let leg_svc: extern "thiscall" fn(u32, u32, u32) -> u32 =
                     core::mem::transmute(leg_slot as usize);
-                let leg_len: u32 = leg_svc(sched_obj, leg_vec.as_mut_ptr() as u32, 0);
+                let leg_len: u32 =
+                    leg_svc(leg_anchor, leg_vec.as_mut_ptr() as u32, 0);
                 let _measured: u32 =
                     lf_checker_rt::callee_thiscall!(CAL_LEG_LEN, u32, leg_len);
                 // Heading over the leg vector. The two doubles travel in
@@ -475,57 +439,55 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                 // checker cannot transport to this side; the values below
                 // document the computation the contract cannot observe.
                 let mask = rd32(lf_checker_rt::relocated(0xfe8fa0));
-                let _arg0 = f64::from_bits(
-                    ((f32::from_bits(leg_vec[0].wrapping_add(0) ^ mask) as f64).to_bits()),
-                );
-                let _arg1lo = f32::from_bits(leg_vec[1]) as f64;
-                let _arg1hi = f32::from_bits(leg_vec[2]) as f64;
-                let head: f64 = lf_checker_rt::callee_cdecl!(CAL_HEADING, f64);
-                let mut seat: u32 = 0;
-                let approach: u32 = head as f32;
-                let w3: u32 =
+                let _arg0 = (f32::from_bits(leg_vec[1] ^ mask) as f64).to_bits();
+                let _arg1lo = (f32::from_bits(leg_vec[2]) as f64).to_bits();
+                let _arg1hi = (f32::from_bits(leg_vec[3]) as f64).to_bits();
+                let head: f64 = lf_checker_rt::callee_cdecl!(CAL_HEADING, f64,);
+                let approach = head as f32;
+                let world_e: u32 =
                     lf_checker_rt::callee_thiscall!(CAL_WORLD_S1E, u32, world);
-                aux[2] = w3;
-                if w3 == 0 {
+                if world_e == 0 {
                     let _attached2: u32 =
                         lf_checker_rt::callee_thiscall!(CAL_ATTACH, u32, anchor, 0);
-                    return Some(anchor);
+                    return anchor;
                 }
-                let w4: u32 =
+                let world_f: u32 =
                     lf_checker_rt::callee_thiscall!(CAL_WORLD_S1F, u32, world);
-                if w4 != 0 {
+                let mut seat: u32 = 0;
+                if world_f != 0 {
                     seat = lf_checker_rt::callee_thiscall!(
-                        CAL_DOCK, u32, w4, 0, f32::from_bits(0xbf800000).to_bits(), 0, 0, 0, 0xc
+                        CAL_DOCK, u32, world_f, 0, NEG_ONE.to_bits(), 0, 0, 0, 0xc
                     );
                 }
-                let w5: u32 =
+                let world_g: u32 =
                     lf_checker_rt::callee_thiscall!(CAL_WORLD_S1G, u32, world);
                 let mut gate2: u32 = 0;
-                if w5 != 0 {
+                if world_g != 0 {
                     let fare_hi = rd32(lf_checker_rt::relocated(0xed7e70));
                     let fare_lo = rd32(lf_checker_rt::relocated(0xed7e68));
                     gate2 = lf_checker_rt::callee_thiscall!(
                         CAL_APPROACH,
                         u32,
-                        w5,
+                        world_g,
                         approach.to_bits(),
                         fare_lo,
                         fare_hi
                     );
                 }
-                let _seated2: u32 = lf_checker_rt::callee_thiscall!(
+                let boarded2: u32 = lf_checker_rt::callee_thiscall!(
                     CAL_SEAT_INFO,
                     u32,
-                    aux[2],
+                    world_e,
                     gate2,
                     seat,
                     0,
                     0
                 );
                 let _attached3: u32 =
-                    lf_checker_rt::callee_thiscall!(CAL_ATTACH, u32, anchor, gate2);
-                Some(anchor)
+                    lf_checker_rt::callee_thiscall!(CAL_ATTACH, u32, anchor, boarded2);
+                anchor
             }
         }
+        tail_value
     }
 });
