@@ -1344,6 +1344,94 @@
   "reason": null
  },
  {
+  "address": "0x009A8910",
+  "name": "byte_pair_gate",
+  "file": "fn_009a8910.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A8E50",
+  "name": "flag_byte_store",
+  "file": "fn_009a8e50.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A9040",
+  "name": "slot_table_sweep",
+  "file": "fn_009a9040.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A9570",
+  "name": "ring_slot_append",
+  "file": "fn_009a9570.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A95E0",
+  "name": "ring_record_find_copy",
+  "file": "fn_009a95e0.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A9970",
+  "name": "table_flag_test_a",
+  "file": "fn_009a9970.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A99A0",
+  "name": "table_flag_test_b",
+  "file": "fn_009a99a0.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A9C40",
+  "name": "indexed_slot_lookup",
+  "file": "fn_009a9c40.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A9C60",
+  "name": "indexed_byte_fetch",
+  "file": "fn_009a9c60.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009AA4A0",
+  "name": "table_id_search",
+  "file": "fn_009aa4a0.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009AA510",
+  "name": "table_value_fetch",
+  "file": "fn_009aa510.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x009CBBC0",
   "name": null,
   "file": "fn_009cbbc0.rs",
@@ -1558,6 +1646,294 @@
   "lane": "r-s292",
   "outcome": "deferred",
   "reason": "needs_encrypted_code"
+ },
+ {
+  "address": "0x00B81730",
+  "name": "thread_slot_set_vt",
+  "file": "fn_00b81730.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B81810",
+  "name": "gta_thread_ctor",
+  "file": "fn_00b81810.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B81840",
+  "name": "gta_thread_dtor_tail",
+  "file": "fn_00b81840.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B81850",
+  "name": "GtaThread::vf0",
+  "file": "fn_00b81850.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B819B0",
+  "name": "script_globals_zero_a",
+  "file": "fn_00b819b0.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B819D0",
+  "name": "script_globals_zero_b",
+  "file": "fn_00b819d0.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B81A40",
+  "name": "thread_wake_commit",
+  "file": "fn_00b81a40.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B81B20",
+  "name": "thread_state_reset",
+  "file": "fn_00b81b20.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B82760",
+  "name": "thread_can_run_check",
+  "file": "fn_00b82760.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B827B0",
+  "name": "thread_flag_clear",
+  "file": "fn_00b827b0.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B82830",
+  "name": "GtaThread::vf3",
+  "file": "fn_00b82830.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B82A70",
+  "name": "flag_router_this",
+  "file": "fn_00b82a70.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B82AF0",
+  "name": "slot_search_float",
+  "file": "fn_00b82af0.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B82BD0",
+  "name": "triple_array_init",
+  "file": "fn_00b82bd0.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B82C00",
+  "name": "slot_array_init",
+  "file": "fn_00b82c00.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B82C30",
+  "name": "slot_init",
+  "file": "fn_00b82c30.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B82C50",
+  "name": "dist_check_3d",
+  "file": "fn_00b82c50.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B82CD0",
+  "name": "dist_check_vt",
+  "file": "fn_00b82cd0.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B82F00",
+  "name": "triple_array_remove",
+  "file": "fn_00b82f00.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B82F60",
+  "name": "flag_set_1810",
+  "file": "fn_00b82f60.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B835C0",
+  "name": "wrap_B85C20",
+  "file": "fn_00b835c0.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B835D0",
+  "name": "row_insert_6",
+  "file": "fn_00b835d0.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B83750",
+  "name": "row_insert_indexed",
+  "file": "fn_00b83750.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B83B30",
+  "name": "subset12_check",
+  "file": "fn_00b83b30.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B83C10",
+  "name": "row_copy_6",
+  "file": "fn_00b83c10.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B83CC0",
+  "name": "block_addr",
+  "file": "fn_00b83cc0.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B83CF0",
+  "name": "parse_or_format",
+  "file": "fn_00b83cf0.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B83D60",
+  "name": "all_c8_check",
+  "file": "fn_00b83d60.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B83D80",
+  "name": "forward_4",
+  "file": "fn_00b83d80.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B83E90",
+  "name": "bitflag_via_lookup",
+  "file": "fn_00b83e90.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B83EC0",
+  "name": "bitflag_direct",
+  "file": "fn_00b83ec0.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B85780",
+  "name": "row_insert_searched",
+  "file": "fn_00b85780.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B859A0",
+  "name": "scaled_pick",
+  "file": "fn_00b859a0.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B85C60",
+  "name": "registry_release_lazy",
+  "file": "fn_00b85c60.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B86450",
+  "name": "dist_probe_a",
+  "file": "fn_00b86450.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B864C0",
+  "name": "dist_probe_b",
+  "file": "fn_00b864c0.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00B870D0",
@@ -2518,6 +2894,14 @@
   "lane": "r-s352",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00D2B300",
+  "name": "peds_task_unknown_D2B300",
+  "file": "fn_00d2b300.rs",
+  "lane": "r-b403",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00D82CD0",

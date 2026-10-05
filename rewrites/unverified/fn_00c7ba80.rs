@@ -90,8 +90,11 @@ lf_checker_rt::export!(thiscall, rw_00c7ba80(this: u32, ped: u32) -> u32 {
                 f(this, ped, kind, 0)
             }
         }
-        /// Ped scenario query through the ped's vtable; `urgent` selects the
-        /// one- or two-argument shape.
+        /// Ped scenario query through the ped's vtable. The original uses
+        /// two shapes (one argument, or two with the urgent flag) through
+        /// one slot, while the stub pops a fixed count; the one-argument
+        /// shape therefore carries a dummy second word (skipped, like the
+        /// flag, in the comparison) so both shapes stay balanced.
         #[inline(always)]
         unsafe fn ped_query(ped: u32, scenario_global: u32, urgent: bool) -> u32 {
             unsafe {
@@ -101,9 +104,9 @@ lf_checker_rt::export!(thiscall, rw_00c7ba80(this: u32, ped: u32) -> u32 {
                         core::mem::transmute(slot as usize);
                     f(ped, scenario_global, URGENT)
                 } else {
-                    let f: extern "thiscall" fn(u32, u32) -> u32 =
+                    let f: extern "thiscall" fn(u32, u32, u32) -> u32 =
                         core::mem::transmute(slot as usize);
-                    f(ped, scenario_global)
+                    f(ped, scenario_global, 0)
                 }
             }
         }

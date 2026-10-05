@@ -16,7 +16,9 @@
 /// a dispatcher and creates a dive task through it; when the blast is
 /// inside the radius (or the distance is unordered, NaN) it asks the same
 /// manager and creates either a directional flee task (selector non-zero,
-/// passed along) or a plain flee task (selector zero, ped passed along).
+/// passed along) or a plain flee task (selector zero, given the task's own
+/// target point: the original reuses its ped register for that address
+/// after the distance check).
 /// Any null answer, or the far-but-flagged case, returns 0.
 ///
 /// Float order is the original's: dy squared plus dx squared, plus dz
@@ -109,7 +111,9 @@ lf_checker_rt::export!(thiscall, rw_00DA79E0(this: u32, ped: u32) -> u32 {
                     5, u32, dispatch, selector, 0, reach, FLEE_TIME, FLEE_RANGE, ONE_BITS, 0
                 )
             } else {
-                lf_checker_rt::callee_thiscall!(6, u32, dispatch, ped, 0, reach, FLEE_TIME, 0)
+                lf_checker_rt::callee_thiscall!(
+                    6, u32, dispatch, this.wrapping_add(TASK_TARGET_X), 0, reach, FLEE_TIME, 0
+                )
             }
         }
     }
