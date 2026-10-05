@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: hourly review, 07:36 on 5 October",
+    "title": "Devlog: Naming batch 88: task slots, RTTI ctors and a full sort family",
     "commit": null,
+    "summary": "Findings from the nm-88 lane.",
+    "changes": [
+      "New devlog entry: Naming batch 88: task slots, RTTI ctors and a full sort family.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: hourly review, 07:36 on 5 October",
+    "commit": "3a93b807327f3a9d74ea1b9a3ab516e6f02371f2",
     "summary": "The second review of the day.",
     "changes": [
       "12,708 functions verified, 19.6% of the code by size. About 14 lanes fit of a target of 52, because the kernel holds 14.9 GB of memory that cannot be paged out.",
