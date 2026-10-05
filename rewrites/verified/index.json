@@ -32850,6 +32850,15 @@
   "lane": "a-12"
  },
  {
+  "address": "0x008A97E0",
+  "name": "aud_acquire_slot_sound",
+  "kind": "function",
+  "file": "functions/fn_008a97e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b369"
+ },
+ {
   "address": "0x008A9A50",
   "name": "audio_lookup_store",
   "kind": "function",
@@ -32857,6 +32866,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-12"
+ },
+ {
+  "address": "0x008A9A90",
+  "name": "aud_build_and_play_slot",
+  "kind": "function",
+  "file": "functions/fn_008a9a90.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b369"
+ },
+ {
+  "address": "0x008A9D40",
+  "name": "aud_manager_init",
+  "kind": "function",
+  "file": "functions/fn_008a9d40.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b369"
  },
  {
   "address": "0x008A9EB0",
@@ -32877,6 +32904,15 @@
   "lane": "a-12"
  },
  {
+  "address": "0x008AA230",
+  "name": "aud_toggle_slot_flag",
+  "kind": "function",
+  "file": "functions/fn_008aa230.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b369"
+ },
+ {
   "address": "0x008AA3A0",
   "name": "audio_voice_store_e0",
   "kind": "function",
@@ -32893,6 +32929,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-12"
+ },
+ {
+  "address": "0x008AA610",
+  "name": "aud_retire_slot_chain",
+  "kind": "function",
+  "file": "functions/fn_008aa610.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b369"
  },
  {
   "address": "0x008AAD70",
@@ -82926,6 +82971,15 @@
   "lane": "r-b173"
  },
  {
+  "address": "0x00D8BB70",
+  "name": "audio_voice_param_init",
+  "kind": "function",
+  "file": "functions/fn_00d8bb70.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b374"
+ },
+ {
   "address": "0x00D8BE10",
   "name": "Weapon_MatchesAnyCategory",
   "kind": "function",
@@ -83023,6 +83077,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-12"
+ },
+ {
+  "address": "0x00D8D0F0",
+  "name": "audio_slot_gather_filter",
+  "kind": "function",
+  "file": "functions/fn_00d8d0f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b374"
  },
  {
   "address": "0x00D8DED0",
