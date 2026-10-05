@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-04",
-  "updated_at": "2026-10-04 22:40",
+  "updated_at": "2026-10-04 22:44",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,7 +12,7 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 21661,
+    "named": 21803,
     "rewritten": 11415,
     "verified": 10994
   },
@@ -99,9 +99,9 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 21661,
+      "value": 21803,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (12657); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (12799); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
@@ -117,7 +117,7 @@
     }
   ],
   "activity": {
-    "lanes_running": 8,
+    "lanes_running": 10,
     "lanes_finished": 995,
     "lanes_incomplete": 129,
     "devlog_entries": 379
@@ -2099,16 +2099,16 @@
       "from": "0x008C4FBC",
       "to": "0x008CA8DC",
       "count": 109,
-      "named": 61,
+      "named": 102,
       "rewritten": 0,
       "verified": 0
     },
     {
-      "stage": "identified",
+      "stage": "named",
       "from": "0x008CA8DD",
       "to": "0x008D01FE",
       "count": 66,
-      "named": 5,
+      "named": 61,
       "rewritten": 0,
       "verified": 0
     },
@@ -2117,7 +2117,7 @@
       "from": "0x008D01FF",
       "to": "0x008D5B1F",
       "count": 103,
-      "named": 60,
+      "named": 102,
       "rewritten": 47,
       "verified": 46
     },
@@ -2428,11 +2428,11 @@
       "verified": 0
     },
     {
-      "stage": "identified",
+      "stage": "named",
       "from": "0x00993196",
       "to": "0x00998AB7",
       "count": 15,
-      "named": 5,
+      "named": 8,
       "rewritten": 1,
       "verified": 1
     },
