@@ -11,12 +11,13 @@
 /// the table base is far from null, recorded in the proof notes). No calls.
 ///
 /// Original: cdecl, one stack word, plain `ret`, returns `eax`.
-lf_checker_rt::export!(cdecl, rw_00be9f30(mut index: u32) -> u32 {
+lf_checker_rt::export!(cdecl, rw_00be9f30(start: u32) -> u32 {
     unsafe {
         const TABLE_FILE: u32 = 0x12E25F8;
         const STRIDE: u32 = 0xE0;
         const COUNT: u32 = 0x100;
 
+        let mut index = start;
         if index >= COUNT {
             return 0;
         }
