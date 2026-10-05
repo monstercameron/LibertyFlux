@@ -29,7 +29,7 @@ lf_checker_rt::export!(thiscall, rw_006701b0(this: u32, text: u32, count: u32) -
         }
 
         #[inline(always)]
-        unsafe fn put(stream: u32, b: u8, wcallee: u32) {
+        unsafe fn put(stream: u32, b: u8, wcallee: u32, hibase: u32) {
             unsafe {
                 const STREAM_BUF: u32 = 0x08;
                 const STREAM_POS: u32 = 0x10;
@@ -37,12 +37,12 @@ lf_checker_rt::export!(thiscall, rw_006701b0(this: u32, text: u32, count: u32) -
                 const STREAM_END: u32 = 0x18;
                 let mode = ((stream + STREAM_MODE) as *const u32).read_unaligned();
                 if mode != 0 {
-                    slow(stream, b, wcallee);
+                    slow(stream, b, wcallee, hibase);
                     return;
                 }
                 let pos = ((stream + STREAM_POS) as *const u32).read_unaligned();
                 if (pos as i32) >= (((stream + STREAM_END) as *const u32).read_unaligned() as i32) {
-                    slow(stream, b, wcallee);
+                    slow(stream, b, wcallee, hibase);
                     return;
                 }
                 let buf = ((stream + STREAM_BUF) as *const u32).read_unaligned();
@@ -51,11 +51,13 @@ lf_checker_rt::export!(thiscall, rw_006701b0(this: u32, text: u32, count: u32) -
             }
         }
         #[inline(always)]
-        unsafe fn slow(stream: u32, b: u8, wcallee: u32) {
+        unsafe fn slow(stream: u32, b: u8, wcallee: u32, hibase: u32) {
             unsafe {
-                let mut cell = [0u8; 4];
-                cell[0] = b;
-                lf_checker_rt::callee_thiscall!(wcallee, u32, stream, cell.as_mut_ptr() as u32, 1);
+                // The original sets one byte of a word slot that still holds
+                // an older value (`hibase`: its saved register or argument);
+                // the cell reproduces that word exactly.
+                let mut cell: u32 = (hibase & 0xFFFF_FF00) | (b as u32);
+                lf_checker_rt::callee_thiscall!(wcallee, u32, stream, &mut cell as *mut u32 as u32, 1);
             }
         }
         ((this + STATE) as *mut u32).write_unaligned(0);
@@ -71,7 +73,7 @@ lf_checker_rt::export!(thiscall, rw_006701b0(this: u32, text: u32, count: u32) -
         let mut left = count;
         while left != 0 {
             left = left.wrapping_sub(1);
-            put(stream, TAB, TAB_WRITE_CALLEE);
+            put(stream, TAB, TAB_WRITE_CALLEE, text);
         }
         (got == expect) as u32
     }

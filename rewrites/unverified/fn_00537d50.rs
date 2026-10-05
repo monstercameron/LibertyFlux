@@ -23,11 +23,14 @@
 /// default leave it). When the token equals the row index, fetch the row's
 /// key object instead: with no object, or a key longer than 8 bytes, clear
 /// the flag, else copy the 8 key bytes to `copy_dst` and set it; either way
-/// store the flag into `flag_out`. When the token differs, advance the
-/// cursor by the step: past the limit, or on a backend refusal, clear the
-/// flag, else set the row's bit in `bits_out` and set the flag. Once
-/// cleared the flag stays cleared and the remaining rows are skipped.
-/// Returns the flag (0 or 1).
+/// store the flag into `flag_out`, and reload the cursor register from the
+/// slot. When the token differs, advance the cursor by the step: past the
+/// limit, or on a backend refusal, clear the flag, else set the row's bit
+/// in `bits_out` and set the flag. The advance call's cursor argument is
+/// the slot's value, which lags the compared cursor by one not-equal row:
+/// the arm stores the register back only at its end. Once cleared the flag
+/// stays cleared and the remaining rows are skipped. Returns the flag
+/// (0 or 1).
 ///
 /// Edge cases: a zero token answer returns before touching the loop; an
 /// out-of-range classification falls through to the cursor logic with a zero
@@ -89,6 +92,10 @@ lf_checker_rt::export!(thiscall, rw_00537D50(this: u32, base: u32, copy_dst: u32
             core::mem::transmute(rd32(rd32(this).wrapping_add(VTBL_RESOLVE)) as usize);
         let mut flag: u8 = 1;
         let mut cursor = base;
+        // The original's first stack slot, reused as scratch: it holds the
+        // cursor the advance call reports, one not-equal row behind the
+        // register the limit check compares.
+        let mut cursor_slot = base;
         let mut row: u32 = 0;
         while row < ROWS {
             if flag != 0 {
@@ -119,13 +126,14 @@ lf_checker_rt::export!(thiscall, rw_00537D50(this: u32, base: u32, copy_dst: u32
                             }
                         }
                         wr8(flag_out, flag);
+                        cursor = cursor_slot;
                     } else {
                         cursor = cursor.wrapping_add(step);
                         if cursor > cursor_limit {
                             flag = 0;
                         } else {
                             let advanced: u8 = lf_checker_rt::callee_thiscall!(
-                                CAL_ADVANCE, u8, ctx, handle, cursor, step
+                                CAL_ADVANCE, u8, ctx, handle, cursor_slot, step
                             );
                             if advanced == 0 {
                                 flag = 0;
@@ -142,6 +150,7 @@ lf_checker_rt::export!(thiscall, rw_00537D50(this: u32, base: u32, copy_dst: u32
                                 flag = 1;
                             }
                         }
+                        cursor_slot = cursor;
                     }
                 }
             }
