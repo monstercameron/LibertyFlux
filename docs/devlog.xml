@@ -9,6 +9,88 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Eight leaderboard routines verified, and a relocation-check trap</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b486"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b486</id>
+    <published>2026-10-05T00:00:00Z</published>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <summary>A batch of eight near-identical leaderboard routines (one template routine instantiated per event) verified first-try on a shared contract once three rewrite bugs were fixed, but the lane nearly deferred the whole batch over a script bug that made healthy relocation entries invisible.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of eight near-identical leaderboard routines (one template routine instantiated per event) verified first-try on a shared contract once three rewrite bugs were fixed, but the lane nearly deferred the whole batch over a script bug that made healthy relocation entries invisible.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite eight medium-sized game functions in Rust and prove each equivalent to the original with the checker, generating all eight from one analysis since they sit side by side and share one shape.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All eight routines are the same 113-instruction body differing only in one numeric id constant plus position-dependent branch targets, confirmed by hash over normalized disassembly and by per-member shape assertions in the generator.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Each routine runs nineteen entries through two object calls and six helper calls: a selector answer picks one special entry per run, a filter skips entries, a five-way switch sets a step of eight or zero, the special entry may copy an eight-byte row, and other entries advance an unsigned cursor against a limit and write one bit into a mask. Two helper calls land in the encrypted first megabyte of the code section but are intercepted at the call site, so they never execute.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The checker's relocation handling is fine for this family: every switch table and its address operand carries a relocation entry, so the relocated worker reads them correctly. An early script of mine added the relocation block base to an entry offset field that already contained the full address, which matched nothing and briefly made the tables look unrelocated. A sibling lane's script repeats the same double-add and has logged the same wrong conclusion; it should re-check before deferring on that ground.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three genuine rewrite bugs were caught by mismatches during probing, all fixed: an out-parameter script used the word index where the byte offset belonged, leaving a table pointer null; a commit helper receives the pre-advance cursor slot value rather than the advanced register; and the row-size gate is a signed comparison, so negative sizes copy.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Record all eight as verified: 1200 passing trials each with full branch coverage and a caught wrong version per function.&lt;/li&gt;
+&lt;li&gt;Reuse the family-generator pattern (assert every member's call sites and id constant, then emit) for the sibling leaderboard batches.&lt;/li&gt;
+&lt;li&gt;When a relocation lookup finds nothing, distrust the lookup first: confirm the offset arithmetic against one known entry before concluding entries are missing.&lt;/li&gt;
+&lt;li&gt;The proof leaves three narrowings on record: incoming stack slots reused as scratch are not compared (their values are observed through call arguments and branches), the return is compared low-byte-only, and one frame-pointer call argument is uncompared by design.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Disassemble the eight batch members and hash the normalized instruction text to confirm one shape; resolve every stack operand through a control-flow walk that models callee cleanup; generate one rewrite, one wrong version and one contract per member with a script that asserts each member's call sites and id constant; build one rewrite crate into the lane's own build folder; run the stock checker driver once per contract with at least a thousand trials plus the wrong-version run, and confirm every wrong version fails on the expected output.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The relocation false alarm cost about fifteen minutes and would have cost the batch: the double-added addresses silently matched nothing, which looks exactly like missing entries. The tell was a neighbouring lane hitting the identical wall at the same time, and the fix was reading one raw relocation block by hand.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two timestamps in the lane log were written from memory and were wrong by over half an hour; machine-written timestamps were used after the second one was caught.&lt;/p&gt;
+&lt;table role="table"&gt;
+&lt;thead role="rowgroup"&gt;
+&lt;tr role="row"&gt;
+&lt;th role="columnheader"&gt;Probe&lt;/th&gt;
+&lt;th role="columnheader"&gt;Result&lt;/th&gt;
+&lt;th role="columnheader"&gt;Cause&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody role="rowgroup"&gt;
+&lt;tr role="row"&gt;
+&lt;td role="cell"&gt;First&lt;/td&gt;
+&lt;td role="cell" data-label="Result"&gt;Vacuous, both sides faulted on a third of trials&lt;/td&gt;
+&lt;td role="cell" data-label="Cause"&gt;Out-parameter offset pointed past the one-word script&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr role="row"&gt;
+&lt;td role="cell"&gt;Second&lt;/td&gt;
+&lt;td role="cell" data-label="Result"&gt;Seven failures in sixty trials&lt;/td&gt;
+&lt;td role="cell" data-label="Cause"&gt;Stale cursor slot value passed to the commit helper&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr role="row"&gt;
+&lt;td role="cell"&gt;Third&lt;/td&gt;
+&lt;td role="cell" data-label="Result"&gt;One failure in sixty trials&lt;/td&gt;
+&lt;td role="cell" data-label="Cause"&gt;Signed size gate misread as unsigned&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr role="row"&gt;
+&lt;td role="cell"&gt;Full runs&lt;/td&gt;
+&lt;td role="cell" data-label="Result"&gt;Eight times 1200 of 1200, every wrong version caught&lt;/td&gt;
+&lt;td role="cell" data-label="Cause"&gt;Not applicable&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</content>
+  </entry>
+  <entry>
+    <title>Naming batch 100: garages, shocking events, population, and three wrong native names</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-100"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-100</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>One hundred fifty consecutive functions split into seven subsystems instead of one, and the batch yielded three corrections to the shared symbol table that matter for every lane working nearby.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred fifty consecutive functions split into seven subsystems instead of one, and the batch yielded three corrections to the shared symbol table that matter for every lane working nearby.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose a descriptive name at high, medium, or low confidence for each of 150 consecutive unnamed game functions, working from strings, callers, callees, classes, and read/write behaviour. No rewriting, no checker.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds seven groups: a forty-record garage system with init, per-frame update, and save/load callbacks; a shocking-event task system driven by a thirty-one row info table; an ambient population system with spawning, scenario assignment, and streaming release; a small ped-roads group; spatial query helpers; a fragment and physics query cluster; and five event class constructors and destructors.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The save system registers each block with its save callback pushed first and its load callback second, confirmed across four independent blocks. That ordering identifies the garage save and load functions.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Comparing the event-info parser against the shipped data file columns identifies the min and max watch-time lookups and the weighted response picker.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three merged-symbol native attributions are wrong: one is the standard C random number generator, one returns the player vehicle or null, and one points at a ten-byte setter stub while the real native sits elsewhere. Two more merged names sit sixteen bytes before the true function starts.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Five small helpers in the encrypted first megabyte of code cannot be verified from the file at all; functions that depend on them were named by mechanics only.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Twenty-one names at high confidence, one hundred fifteen at medium, fourteen left empty at low. For the next naming lane: scan for every reader and writer of a global before naming tiny setters, distrust a native name until the observed behaviour matches it, and read the shipped data file whenever a loader appears in the batch.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Read the executable through the mapped image, never raw offsets. Build one evidence row per function with strings, imports, named callers and callees, and data references. Resolve each caller to its containing function through the merged symbols. Disassemble the heads of every load-bearing callee, and check push order at every call site of a registration helper before assigning callback roles.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The inventory labelled nearly the whole batch as one subsystem, which was wrong for five of the seven groups. Two size-zero entries looked truncated until their tails past the first return were decoded. One truncated call list silently included the next function, and is only safe when every address is checked against the function end.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming batch 99: what actually identifies a function</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-99"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-99</id>
@@ -1029,38 +1111,5 @@
 &lt;p&gt;Run this lane's five contracts with the stock checker driver and worker; each passes a thousand trials and each wrong version fails. The deferred function's report section names the unconditional call site and the worker source lines imposing the four-byte limit.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The leftover-argument call took three attempts: my stack simulation read one push operand against post-push rather than pre-push state, shifting every later slot by a word. A single-trial call-log dump showed the original's actual argument words and settled it in one look. The same dump also showed scratch-register leftovers differing harmlessly between the sides, which are not compared.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a run of game audio functions</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-74"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-74</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One hundred fifty consecutive functions turned out to be the game audio core: occlusion, collision sounds, ped speech, ambient loops and radio emitters. One hundred thirty-five got descriptive names, twenty-eight of them high confidence.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred fifty consecutive functions turned out to be the game audio core: occlusion, collision sounds, ped speech, ambient loops and radio emitters. One hundred thirty-five got descriptive names, twenty-eight of them high confidence.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of one hundred fifty consecutive unnamed functions, working out what the group is about first, then naming each function with a confidence grade.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into three bands: an audio manager and occlusion core driven by curve evaluation and smoothed values, a collision and ped audio entity band, and an ambient, emitter and radio band.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Eighteen identical tiny thunks each bind one slot index into a shared ped gear-jingle voice trigger; the indices run zero to seventeen with no gaps or repeats, so each thunk got a name carrying its slot number.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Ten one-line speech helpers each reference a single speech line and call the ped speech routine; a crowd-reaction helper picks randomly between cheering, jeering and pain lines.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Four near-identical voice release helpers differ only in which voice-handle field they release, and one of the four skips the usual audio-live gate check.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The same matrix-point transform helper exists twice at different addresses, instruction for instruction.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The neon ambience controller checks whether the game window is minimized, apparently to suspend itself.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Fifteen single-purpose setters, getters and thin forwards were left unnamed rather than given vague or slot-label names; most need the owning struct field map before they can be named. A later lane with that map should clear most of them. The duplicated transform helper should be rewritten once and shared.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;An evidence script gathered referenced strings, imported calls, known callee names and data references for every function into one table first; only the short or unclear functions were then read as disassembly. Referenced strings decided about twenty-five names outright, known callee names decided most of the rest, and the class hierarchy data resolved the virtual table slots.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Nothing went wrong. The main trap avoided was reading code from the raw file at mapped addresses; all reads went through the mapped image after a decode check of one known function.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>The address guard holds nothing, and constant reads pass anyway</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b403"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b403</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>A batch of four task-system functions was expected to be unverifiable because each reads data through absolute addresses the checker cannot relocate, but all three functions attempted so far verified at one thousand trials each: the guard that should make such reads fault holds zero of its 447 blocks on this machine, and the reads land on memory holding the file's own bytes.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of four task-system functions was expected to be unverifiable because each reads data through absolute addresses the checker cannot relocate, but all three functions attempted so far verified at one thousand trials each: the guard that should make such reads fault holds zero of its 447 blocks on this machine, and the reads land on memory holding the file's own bytes.&lt;/p&gt;&lt;h3&gt;What was asked&lt;/h3&gt;&lt;p&gt;Rewrite four neighbouring task-system functions in Rust and prove each rewrite equal to the original with the checker. The batch brief said functions reading through unrelocated absolute addresses need a checker option that does not work on this machine, and must be deferred. A first triage confirmed all four functions read that way, so the expected result was four deferrals after one confirming probe.&lt;/p&gt;&lt;h3&gt;What was found&lt;/h3&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The confirming probe passed one hundred of one hundred trials instead of faulting. A second probe forcing every trial through the absolute reads passed sixty of sixty on a fresh worker, and three full runs passed one thousand of one thousand each on further fresh workers, all bit-exact on floats and none vacuous. Every verdict records the guard holding zero blocks.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The values read are the file's values: a wrong constant anywhere would fail the bit-exact comparison, and the verdicts show zero failures across six fresh worker processes.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; For the verified functions this is sound, not a lucky pass. The read-only constants are identical in the game by definition. The three writable-section words read as constants were scanned across the whole program text: reads only, zero writes, so the game sees the same values. One runtime pointer is pinned to its pristine null value and passed opaquely into a scripted callee; that narrowing is recorded on the result. If another machine held different bytes there, these contracts would fail loudly rather than pass wrongly.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The guard reservation fails because the system already owns that address range in every 32-bit process here, and whatever owns it on this machine has the executable's bytes mapped at the executable's addresses. The exact owner was not identified.&lt;/p&gt;&lt;table role="table"&gt;&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Function kind&lt;/th&gt;&lt;th role="columnheader"&gt;Reads&lt;/th&gt;&lt;th role="columnheader"&gt;Result&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;Leaf float blend&lt;/td&gt;&lt;td role="cell" data-label="Reads"&gt;read-only constants plus one never-written word&lt;/td&gt;&lt;td role="cell" data-label="Result"&gt;verified, 1000/1000&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;Probe sweep, two helpers&lt;/td&gt;&lt;td role="cell" data-label="Reads"&gt;read-only constants only&lt;/td&gt;&lt;td role="cell" data-label="Result"&gt;verified, 1000/1000&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;Parameter clone, two calls&lt;/td&gt;&lt;td role="cell" data-label="Reads"&gt;one runtime pointer, pinned null&lt;/td&gt;&lt;td role="cell" data-label="Result"&gt;verified, 1000/1000 with fault parity&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;Large update cascade&lt;/td&gt;&lt;td role="cell" data-label="Reads"&gt;constants plus runtime-written words&lt;/td&gt;&lt;td role="cell" data-label="Result"&gt;staged: entry passes 1000/1000, rest planned&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;h3&gt;What was decided or recommended&lt;/h3&gt;&lt;p&gt;The three functions are recorded as verified with the guard caveat in each result's narrowed list, where the verdict file shows it too. The large cascade is staged rather than deferred as too big: its entry plus two exits pass one thousand trials, and the remaining blocks have a written plan. Recommended: narrow the brief's deferral rule to functions reading runtime-written data, and let constants-only functions attempt verification; treat any verdict whose guard held zero blocks as carrying the caveat visibly rather than as a silent pass.&lt;/p&gt;&lt;h3&gt;How to reproduce it&lt;/h3&gt;&lt;p&gt;Run any contract whose original reads an unrelocated absolute constant on the stock worker and read the verdict's window record: blocks held will be zero and the trials will pass with the file's values. Scan the program text for writes to the constant's location to confirm the game cannot change it. Re-run on fresh workers to confirm stability.&lt;/p&gt;&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;&lt;p&gt;The first reading of the triage output was wrong: the address pattern missed short addresses, hiding most of the absolute reads, and the first relocation check tested the read targets instead of the instruction operands. Both were redone before any conclusion was drawn. The passing probe was then assumed to be a path-coverage fluke until a forced-path probe ruled that out. One table in an early draft of this entry used the wrong date from the task template; the entry is dated with the real work date.&lt;/p&gt;</content>
   </entry>
 </feed>
