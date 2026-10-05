@@ -7,7 +7,7 @@
 /// descriptor halves through the wire callee (each taking a frame slot,
 /// a zero tag, a handler address and two zero words; the wire callee
 /// fills four words per slot). The eight slot words are then shuffled
-/// into the config callee's eight arguments as [w1 w2 w6 w7 w0 w1 w2 w3]
+/// into the config callee's eight arguments as [w4 w5 w6 w7 w0 w1 w2 w3]
 /// with the two tag slots reading as the join address. Returns whatever
 /// the config callee returns. The proof models the wire footprint as four
 /// words per slot feeding the config arguments; frame addresses are
@@ -60,8 +60,8 @@ lf_checker_rt::export!(thiscall, rw_00a8abe0(this: u32) -> u32 {
         lf_checker_rt::callee_cdecl!(
             CALLEE_CONFIG,
             u32,
-            f[1],
-            f[2],
+            f[4],
+            f[5],
             f[6],
             f[7],
             f[0],

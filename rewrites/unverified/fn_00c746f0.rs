@@ -150,7 +150,10 @@ lf_checker_rt::export!(thiscall, rw_00C746F0(this: u32) -> u32 {
             let index2_fn: extern "cdecl" fn(u32) -> u32 =
                 core::mem::transmute(rd32(vtable.wrapping_add(VT_SLOT_INDEX)) as usize);
             let index2 = index2_fn(this);
-            let look: u32 = lf_checker_rt::callee_thiscall!(LOOKUP_B, u32, this, index2);
+            // Stdcall: one stack argument with callee cleanup; the entry ecx
+            // is whatever the index callee left, so it is not part of the
+            // call on either side.
+            let look: u32 = lf_checker_rt::callee_stdcall!(LOOKUP_B, u32, index2);
             wr32(
                 rd32(this.wrapping_add(OFF_INFO)).wrapping_add(4),
                 lf_checker_rt::callee_thiscall!(

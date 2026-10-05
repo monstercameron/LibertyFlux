@@ -17,7 +17,8 @@
 /// early once the status flag clears: fetch entry index `idx`; ask the
 /// filter and skip the entry when it answers nonzero; classify the table
 /// object (`step` 8 for codes 1, 2, 3 and 5, else 0). When `sel == i`, fetch
-/// the row and, when it and its measured size (at most 8) check out, copy
+/// the row and, when it and its measured size (signed, at most 8) check
+/// out, copy
 /// its 8 bytes at `+4` to `out_row` and set the flag; the flag is then
 /// stored to `out_flag` either way. For any other entry, advance the cursor
 /// by `step`, clearing the flag when it passes the limit, else asking the
@@ -108,7 +109,9 @@ lf_checker_rt::export!(thiscall, rw_005935F0(this: u32, cursor: u32, out_row: u3
                     let row: u32 = lf_checker_rt::callee_thiscall!(Q_FETCH, u32, ctx, idx);
                     if row != 0 {
                         let size: u32 = lf_checker_rt::callee_thiscall!(Q_MEASURE, u32, row);
-                        if size <= ROW_LEN_MAX {
+                        // Signed compare in the original (jg): negative
+                        // sizes copy too.
+                        if (size as i32) <= ROW_LEN_MAX as i32 {
                             let v = ((row + 4) as *const u64).read_unaligned();
                             (out_row as *mut u64).write_unaligned(v);
                             flag = 1;
