@@ -91035,6 +91035,15 @@
   "lane": "r-s341"
  },
  {
+  "address": "0x00BE2C30",
+  "name": "CTaskComplexReact::vf19",
+  "kind": "function",
+  "file": "functions/fn_00be2c30.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b528"
+ },
+ {
   "address": "0x00BE2FF0",
   "name": "task_dispatch_indexed_child_lo",
   "kind": "function",
@@ -91060,6 +91069,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE3730",
+  "name": "CTaskComplexUseMobilePhone::vf19",
+  "kind": "function",
+  "file": "functions/fn_00be3730.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b528"
  },
  {
   "address": "0x00BE3970",
@@ -91105,6 +91123,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE3B10",
+  "name": "CTaskComplexControlMovement::vf18",
+  "kind": "function",
+  "file": "functions/fn_00be3b10.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b528"
  },
  {
   "address": "0x00BE3DD0",
@@ -91321,6 +91348,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s341"
+ },
+ {
+  "address": "0x00BE4F60",
+  "name": "peds_task_react_code",
+  "kind": "function",
+  "file": "functions/fn_00be4f60.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b528"
  },
  {
   "address": "0x00BE5090",
@@ -92725,6 +92761,24 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF93E0",
+  "name": "task_handle_acquire_scaled",
+  "kind": "function",
+  "file": "functions/fn_00bf93e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b517"
+ },
+ {
+  "address": "0x00BF9500",
+  "name": "task_handle_cascade",
+  "kind": "function",
+  "file": "functions/fn_00bf9500.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b517"
  },
  {
   "address": "0x00BF9700",
@@ -95497,6 +95551,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b419"
+ },
+ {
+  "address": "0x00C60B20",
+  "name": "player_be_arrested_tick",
+  "kind": "function",
+  "file": "functions/fn_00c60b20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b536"
  },
  {
   "address": "0x00C62260",
@@ -106852,6 +106915,15 @@
   "name": "ped_probe_gated",
   "kind": "function",
   "file": "functions/fn_00dabb50.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b533"
+ },
+ {
+  "address": "0x00DABCA0",
+  "name": "ped_probe_looped",
+  "kind": "function",
+  "file": "functions/fn_00dabca0.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b533"
