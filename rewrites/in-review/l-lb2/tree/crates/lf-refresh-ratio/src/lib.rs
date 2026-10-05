@@ -54,12 +54,11 @@ pub struct RatioBank {
 /// When `desc.index` is outside the bank (a caller bug; every
 /// differential case builds the bank in descriptor order).
 pub fn refresh_ratio(bank: &mut RatioBank, desc: &RatioDesc) {
+    let len = bank.slots.len();
     let slot = bank.slots.get_mut(desc.index as usize).unwrap_or_else(|| {
         panic!(
-            "{}: ratio index {} outside {} slots",
-            desc.name,
-            desc.index,
-            bank.slots.len()
+            "{}: ratio index {} outside {len} slots",
+            desc.name, desc.index
         )
     });
     slot.out = slot.num / slot.den;

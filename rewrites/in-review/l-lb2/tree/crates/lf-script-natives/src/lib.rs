@@ -72,7 +72,7 @@ const MAX_ARGS: usize = 24;
 /// When `args` holds fewer than `desc.nargs` words (a caller bug: the
 /// original reads exactly `nargs` words) or `desc.nargs` exceeds [`MAX_ARGS`]
 /// (a descriptor bug). Every differential case feeds at least `nargs` words.
-fn forward_words(desc: &NativeDesc, args: &[u32], out: &mut [u32; MAX_ARGS]) -> &[u32] {
+fn forward_words(desc: &NativeDesc, args: &[u32], out: &mut [u32; MAX_ARGS]) -> usize {
     let n = desc.nargs as usize;
     assert!(
         n <= MAX_ARGS,
@@ -93,7 +93,7 @@ fn forward_words(desc: &NativeDesc, args: &[u32], out: &mut [u32; MAX_ARGS]) -> 
             w
         };
     }
-    &out[..n]
+    n
 }
 
 /// A no-return native: forward the words, return the engine's answer.
@@ -102,9 +102,7 @@ fn forward_words(desc: &NativeDesc, args: &[u32], out: &mut [u32; MAX_ARGS]) -> 
 /// return slot; so does this function (it takes no slot at all).
 pub fn forward(eng: &mut impl NativeEngine, desc: &NativeDesc, args: &[u32]) -> u32 {
     let mut buf = [0u32; MAX_ARGS];
-    // The borrow of `buf` ends before `eng.call` runs: copy out first.
-    let n = desc.nargs as usize;
-    let _ = forward_words(desc, args, &mut buf);
+    let n = forward_words(desc, args, &mut buf);
     eng.call(desc, &buf[..n])
 }
 

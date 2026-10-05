@@ -1,49 +1,55 @@
 // original: 0x0069AF00 rage::crAnimChannelRawQuaternion::vf16
 
-/// Rebuild a raw-quaternion channel, flipping sign for continuity.
+/// Serializer: frees the old buffer, asks the intercepted direct
+/// callee to size the member at `+8`, then copies `count`
+/// quaternions from the source. After the first, each new entry is
+/// sign-aligned with its predecessor: when their dot product is
+/// negative the new x lane is xored with the sign mask kept in the
+/// static at file address `0x00FE8FA0`. Float operation order is
+/// the original's. Returns the destination base with its low byte
+/// set to 1 (1 when nothing was copied).
 ///
-/// `thiscall` with the channel in ECX and source, count plus one ignored word
-/// on the stack. Frees the old buffer through the TLS allocator, runs the
-/// (intercepted) resize for `count` quaternions, then copies 16 bytes per
-/// quaternion; from the second one on, dots it against its predecessor in the
-/// original's exact SSE order and negates all four lanes (via the sign mask
-/// in the read-only global) when the dot is strictly negative. A NaN dot
-/// keeps the sign, matching `comiss`. Returns the buffer address with its low
-/// byte forced to 1, or the resize answer treated the same way when the count
-/// is not positive.
-/// Original: 0x0069AF00, 247 bytes.
-lf_checker_rt::export!(thiscall, rw_0069AF00(this: u32, src: u32, count: u32, _a2: u32) -> u32 {
+/// Original: 0x0069AF00 (thiscall, source, count, one unused word).
+lf_checker_rt::export!(thiscall, rw_0069AF00(this: u32, src: u32, count: u32, _u: u32) -> u32 {
     unsafe {
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
             unsafe { (a as *const u32).read_unaligned() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr32(a: u32, v: u32) {
             unsafe { (a as *mut u32).write_unaligned(v) }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd16(a: u32) -> u16 {
             unsafe { (a as *const u16).read_unaligned() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr16(a: u32, v: u16) {
             unsafe { (a as *mut u16).write_unaligned(v) }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd8(a: u32) -> u8 {
             unsafe { (a as *const u8).read() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr8(a: u32, v: u8) {
             unsafe { (a as *mut u8).write(v) }
         }
+
+        // Thread-allocator chain: tls slot 0 -> [+8] -> vtable slot +0xc.
+        let heap_obj = rd32(lf_checker_rt::tls_slot(0) + 8);
+        let vtable = rd32(heap_obj);
+        let free_mem: extern "thiscall" fn(u32, u32) -> u32 =
+            core::mem::transmute(rd32(vtable + 0xC) as usize);
+        let old = rd32(this + 8);
+        if old != 0 {
+            free_mem(heap_obj, old);
+        }
+        wr32(this + 8, 0);
+        wr32(this + 8 + 4, 0);
+        lf_checker_rt::callee_thiscall!(3, u32, this + 8, count);
+        let mask = lf_checker_rt::global::<u32>(0x00FE8FA0).read_unaligned();
         #[inline(always)]
         fn mul(a: f32, b: f32) -> f32 {
             core::hint::black_box(a) * core::hint::black_box(b)
@@ -52,58 +58,35 @@ lf_checker_rt::export!(thiscall, rw_0069AF00(this: u32, src: u32, count: u32, _a
         fn add(a: f32, b: f32) -> f32 {
             core::hint::black_box(a) + core::hint::black_box(b)
         }
-        const TLS_MGR_OFF: u32 = 0x08;
-        const VT_ALLOC_SLOT: u32 = 0x08;
-        const VT_FREE_SLOT: u32 = 0x0c;
-        const ALLOC_ALIGN: u32 = 0x10;
-        let tls = lf_checker_rt::tls_slot(0);
-        let mgr = rd32(tls + TLS_MGR_OFF);
-        let free: extern "thiscall" fn(u32, u32) -> u32 =
-            core::mem::transmute(rd32(rd32(mgr) + VT_FREE_SLOT) as usize);
-        let inner = this.wrapping_add(8);
-        let old = rd32(inner);
-        if old != 0 {
-            let _ = free(mgr, old);
+        #[inline(always)]
+        unsafe fn rdf(a: u32) -> f32 {
+            unsafe { f32::from_bits(rd32(a)) }
         }
-        wr32(inner, 0);
-        wr32(inner + 4, 0);
-        let ans: u32 = lf_checker_rt::callee_thiscall!(2, u32, inner, count);
-        let mask: u32 = (lf_checker_rt::global::<u32>(0x00FE8FA0) as *const u32).read_unaligned();
-        let dst = rd32(inner);
-        let mut i: i32 = 0;
-        let total = count as i32;
-        while i < total {
-            let s = src + (i as u32) * 16;
-            let d = dst + (i as u32) * 16;
-            wr32(d, rd32(s));
-            wr32(d + 4, rd32(s + 4));
-            wr32(d + 8, rd32(s + 8));
-            wr32(d + 12, rd32(s + 12));
-            if i > 0 {
-                let pd = d - 16;
-                let px = f32::from_bits(rd32(pd));
-                let py = f32::from_bits(rd32(pd + 4));
-                let pz = f32::from_bits(rd32(pd + 8));
-                let pw = f32::from_bits(rd32(pd + 12));
-                let cx = f32::from_bits(rd32(d));
-                let cy = f32::from_bits(rd32(d + 4));
-                let cz = f32::from_bits(rd32(d + 8));
-                let cw = f32::from_bits(rd32(d + 12));
-                let tx = mul(px, cx);
-                let ty = mul(py, cy);
-                let mut dot = add(ty, tx);
-                dot = add(dot, mul(pz, cz));
-                dot = add(dot, mul(pw, cw));
-                if 0.0 > dot {
-                    wr32(d, rd32(d) ^ mask);
-                    wr32(d + 4, rd32(d + 4) ^ mask);
-                    wr32(d + 8, rd32(d + 8) ^ mask);
-                    wr32(d + 12, rd32(d + 12) ^ mask);
+        let mut last: u32 = 0;
+        let mut i: u32 = 0;
+        while (i as i32) < (count as i32) {
+            let dst = rd32(this + 8);
+            last = dst;
+            let so = src.wrapping_add(i.wrapping_mul(16));
+            let dd = dst.wrapping_add(i.wrapping_mul(16));
+            wr32(dd, rd32(so));
+            wr32(dd.wrapping_add(4), rd32(so.wrapping_add(4)));
+            wr32(dd.wrapping_add(8), rd32(so.wrapping_add(8)));
+            wr32(dd.wrapping_add(12), rd32(so.wrapping_add(12)));
+            if (i as i32) > 0 {
+                let prev = dd.wrapping_sub(16);
+                let dot = add(
+                    add(add(mul(rdf(prev.wrapping_add(4)), rdf(dd.wrapping_add(4))),
+                                mul(rdf(prev), rdf(dd))),
+                            mul(rdf(prev.wrapping_add(8)), rdf(dd.wrapping_add(8)))),
+                        mul(rdf(prev.wrapping_add(12)), rdf(dd.wrapping_add(12))));
+                if dot < 0.0 {
+                    wr32(dd, rdf(dd).to_bits() ^ mask);
                 }
             }
-            i += 1;
+            i = i.wrapping_add(1);
         }
-        let base = if total > 0 { dst } else { ans };
-        (base & 0xFFFF_FF00) | 1
+        (last & 0xFFFF_FF00) | 1
+
     }
 });

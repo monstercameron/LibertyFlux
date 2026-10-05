@@ -1,61 +1,53 @@
 // original: 0x00699850 rage::crAnimChannelQuantizeFloat::vf0
 
-/// Conditionally destroy and release an animation channel.
+/// Deleting destructor: stamps the vtable, frees the member at `+x8`
+/// through the thread-local allocator when it is non-null, stamps the base vtable, then
+/// frees the object itself when the low bit of the flag argument is
+/// set. Returns the object pointer.
 ///
-/// `thiscall` with the object in ECX and a flags word on the stack. Stamps
-/// the class vtable, frees the buffer at `+8` when it is non-null, stamps the base vtable, and when bit 0 of the
-/// flags is set releases the object itself through the TLS allocator.
-/// Returns the object.
-/// Original: 0x00699850, 66 bytes.
-lf_checker_rt::export!(thiscall, rw_00699850(this: u32, flags: u32) -> u32 {
+/// Original: 0x00699850 (thiscall, flag word on the stack).
+lf_checker_rt::export!(thiscall, rw_00699850(obj: u32, flag: u32) -> u32 {
     unsafe {
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
             unsafe { (a as *const u32).read_unaligned() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr32(a: u32, v: u32) {
             unsafe { (a as *mut u32).write_unaligned(v) }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd16(a: u32) -> u16 {
             unsafe { (a as *const u16).read_unaligned() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr16(a: u32, v: u16) {
             unsafe { (a as *mut u16).write_unaligned(v) }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd8(a: u32) -> u8 {
             unsafe { (a as *const u8).read() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr8(a: u32, v: u8) {
             unsafe { (a as *mut u8).write(v) }
         }
-        const TLS_MGR_OFF: u32 = 0x08;
-        const VT_ALLOC_SLOT: u32 = 0x08;
-        const VT_FREE_SLOT: u32 = 0x0c;
-        const ALLOC_ALIGN: u32 = 0x10;
-        let tls = lf_checker_rt::tls_slot(0);
-        let mgr = rd32(tls + TLS_MGR_OFF);
-        let free: extern "thiscall" fn(u32, u32) -> u32 =
-            core::mem::transmute(rd32(rd32(mgr) + VT_FREE_SLOT) as usize);
-        wr32(this, lf_checker_rt::relocated(0x00FE3B8C));
-        let inner = rd32(this + 8);
-        if inner != 0 {
-            let _ = free(mgr, inner);
+
+        // Thread-allocator chain: tls slot 0 -> [+8] -> vtable slot +0xc.
+        let heap_obj = rd32(lf_checker_rt::tls_slot(0) + 8);
+        let vtable = rd32(heap_obj);
+        let free_mem: extern "thiscall" fn(u32, u32) -> u32 =
+            core::mem::transmute(rd32(vtable + 0xC) as usize);
+        wr32(obj, lf_checker_rt::relocated(0x00FE3B8C));
+        let member = rd32(obj + 0x8);
+        if member != 0 {
+            free_mem(heap_obj, member);
         }
-        wr32(this, lf_checker_rt::relocated(0x00FE3A74));
-        if flags & 1 != 0 {
-            let _ = free(mgr, this);
+        wr32(obj, lf_checker_rt::relocated(0x00FE3A74));
+        if flag & 1 != 0 {
+            free_mem(heap_obj, obj);
         }
-        this
+        obj
+
     }
 });

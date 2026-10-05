@@ -1,75 +1,78 @@
 // original: 0x0069A8F0 rage::crAnimChannelRawFloat::vf14
 
-/// Rebuild a raw-float channel from a strided source table.
+/// Serializer: frees the old buffer, asks the intercepted direct
+/// callee to size the member at `+8`, then gathers `count` dwords
+/// from the source at a stride of `count+1` dwords (four at a time,
+/// then a scalar tail). Returns the last source word read with its
+/// low byte set to 1 (1 when nothing was read).
 ///
-/// `thiscall` with the channel in ECX and source, count, stride plus one
-/// ignored word on the stack. Frees the old sample buffer through the TLS
-/// allocator, runs the (intercepted) resize for `count` samples, then copies
-/// one word per sample from `src[i*stride]` (stride words are `arg2*4+4`
-/// bytes apart). Returns the last word copied with its low byte forced to 1,
-/// or the resize answer treated the same way when no sample is copied.
-/// Original: 0x0069A8F0, 171 bytes.
-lf_checker_rt::export!(thiscall, rw_0069A8F0(this: u32, src: u32, count: u32, stride: u32, _a3: u32) -> u32 {
+/// Original: 0x0069A8F0 (thiscall, source, count and two unused words).
+lf_checker_rt::export!(thiscall, rw_0069A8F0(this: u32, src: u32, count: u32, _u1: u32, _u2: u32) -> u32 {
     unsafe {
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
             unsafe { (a as *const u32).read_unaligned() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr32(a: u32, v: u32) {
             unsafe { (a as *mut u32).write_unaligned(v) }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd16(a: u32) -> u16 {
             unsafe { (a as *const u16).read_unaligned() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr16(a: u32, v: u16) {
             unsafe { (a as *mut u16).write_unaligned(v) }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd8(a: u32) -> u8 {
             unsafe { (a as *const u8).read() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr8(a: u32, v: u8) {
             unsafe { (a as *mut u8).write(v) }
         }
-        const TLS_MGR_OFF: u32 = 0x08;
-        const VT_ALLOC_SLOT: u32 = 0x08;
-        const VT_FREE_SLOT: u32 = 0x0c;
-        const ALLOC_ALIGN: u32 = 0x10;
-        let tls = lf_checker_rt::tls_slot(0);
-        let mgr = rd32(tls + TLS_MGR_OFF);
-        let free: extern "thiscall" fn(u32, u32) -> u32 =
-            core::mem::transmute(rd32(rd32(mgr) + VT_FREE_SLOT) as usize);
-        let inner = this.wrapping_add(8);
-        let old = rd32(inner);
+
+        // Thread-allocator chain: tls slot 0 -> [+8] -> vtable slot +0xc.
+        let heap_obj = rd32(lf_checker_rt::tls_slot(0) + 8);
+        let vtable = rd32(heap_obj);
+        let free_mem: extern "thiscall" fn(u32, u32) -> u32 =
+            core::mem::transmute(rd32(vtable + 0xC) as usize);
+        let old = rd32(this + 8);
         if old != 0 {
-            let _ = free(mgr, old);
+            free_mem(heap_obj, old);
         }
-        wr32(inner, 0);
-        wr32(inner + 4, 0);
-        let ans: u32 = lf_checker_rt::callee_thiscall!(2, u32, inner, count);
-        let dst = rd32(inner);
-        let step = stride.wrapping_mul(4).wrapping_add(4);
-        let mut last = ans;
+        wr32(this + 8, 0);
+        wr32(this + 8 + 4, 0);
+        lf_checker_rt::callee_thiscall!(3, u32, this + 8, count);
+        let mut last: u32 = 0;
+        let mut i: u32 = 0;
         let mut p = src;
-        let mut i: i32 = 0;
-        let total = count as i32;
-        while i < total {
-            let v = rd32(p);
-            wr32(dst + (i as u32) * 4, v);
-            last = v;
-            p = p.wrapping_add(step);
-            i += 1;
+        if (count as i32) >= 4 {
+            let stride = count.wrapping_mul(4).wrapping_add(4);
+            let limit = count.wrapping_sub(3);
+            while (i as i32) < (limit as i32) {
+                let dst = rd32(this + 8);
+                for k in 0..4u32 {
+                    last = rd32(p);
+                    wr32(dst.wrapping_add(i.wrapping_mul(4)).wrapping_add(k * 4), last);
+                    p = p.wrapping_add(stride);
+                }
+                i = i.wrapping_add(4);
+            }
+        }
+        if (i as i32) < (count as i32) {
+            let stride = count.wrapping_mul(4).wrapping_add(4);
+            while (i as i32) < (count as i32) {
+                let dst = rd32(this + 8);
+                last = rd32(p);
+                wr32(dst.wrapping_add(i.wrapping_mul(4)), last);
+                p = p.wrapping_add(stride);
+                i = i.wrapping_add(1);
+            }
         }
         (last & 0xFFFF_FF00) | 1
+
     }
 });

@@ -1,77 +1,64 @@
 // original: 0x0069ABE0 rage::crAnimChannelRawVector3::vf15
 
-/// Rebuild a raw-vector3 channel from packed 16-byte samples.
+/// Serializer: frees the old buffer, asks the intercepted direct
+/// callee to size the member at `+8`, then copies `count` 16-byte
+/// vector entries (three floats and a pad word) from the source.
+/// Returns the last source word read with its low byte set to 1.
 ///
-/// `thiscall` with the channel in ECX and source, count plus one ignored word
-/// on the stack. Frees the old buffer through the TLS allocator, runs the
-/// (intercepted) resize for `count` samples, then copies 16 bytes per sample
-/// with plain word moves (the original's SSE moves carry no arithmetic).
-/// Returns the fourth word of the last sample with its low byte forced to 1,
-/// or the resize answer treated the same way when nothing is copied.
-/// Original: 0x0069ABE0, 117 bytes.
-lf_checker_rt::export!(thiscall, rw_0069ABE0(this: u32, src: u32, count: u32, _a2: u32) -> u32 {
+/// Original: 0x0069ABE0 (thiscall, source, count, one unused word).
+lf_checker_rt::export!(thiscall, rw_0069ABE0(this: u32, src: u32, count: u32, _u: u32) -> u32 {
     unsafe {
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
             unsafe { (a as *const u32).read_unaligned() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr32(a: u32, v: u32) {
             unsafe { (a as *mut u32).write_unaligned(v) }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd16(a: u32) -> u16 {
             unsafe { (a as *const u16).read_unaligned() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr16(a: u32, v: u16) {
             unsafe { (a as *mut u16).write_unaligned(v) }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd8(a: u32) -> u8 {
             unsafe { (a as *const u8).read() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr8(a: u32, v: u8) {
             unsafe { (a as *mut u8).write(v) }
         }
-        const TLS_MGR_OFF: u32 = 0x08;
-        const VT_ALLOC_SLOT: u32 = 0x08;
-        const VT_FREE_SLOT: u32 = 0x0c;
-        const ALLOC_ALIGN: u32 = 0x10;
-        let tls = lf_checker_rt::tls_slot(0);
-        let mgr = rd32(tls + TLS_MGR_OFF);
-        let free: extern "thiscall" fn(u32, u32) -> u32 =
-            core::mem::transmute(rd32(rd32(mgr) + VT_FREE_SLOT) as usize);
-        let inner = this.wrapping_add(8);
-        let old = rd32(inner);
+
+        // Thread-allocator chain: tls slot 0 -> [+8] -> vtable slot +0xc.
+        let heap_obj = rd32(lf_checker_rt::tls_slot(0) + 8);
+        let vtable = rd32(heap_obj);
+        let free_mem: extern "thiscall" fn(u32, u32) -> u32 =
+            core::mem::transmute(rd32(vtable + 0xC) as usize);
+        let old = rd32(this + 8);
         if old != 0 {
-            let _ = free(mgr, old);
+            free_mem(heap_obj, old);
         }
-        wr32(inner, 0);
-        wr32(inner + 4, 0);
-        let ans: u32 = lf_checker_rt::callee_thiscall!(2, u32, inner, count);
-        let dst = rd32(inner);
-        let mut last = ans;
+        wr32(this + 8, 0);
+        wr32(this + 8 + 4, 0);
+        lf_checker_rt::callee_thiscall!(3, u32, this + 8, count);
+        let mut last: u32 = 0;
+        let mut i: u32 = 0;
         let mut p = src.wrapping_add(8);
-        let mut i: i32 = 0;
-        let total = count as i32;
-        while i < total {
-            let d = dst + (i as u32) * 16;
-            wr32(d, rd32(p.wrapping_sub(8)));
-            wr32(d + 4, rd32(p.wrapping_sub(4)));
-            wr32(d + 8, rd32(p));
-            last = rd32(p.wrapping_add(4));
-            wr32(d + 12, last);
-            p = p.wrapping_add(0x10);
-            i += 1;
+        while (i as i32) < (count as i32) {
+            let dst = rd32(this + 8).wrapping_add(i.wrapping_mul(16));
+            last = rd32(p.wrapping_sub(8));
+            wr32(dst, last);
+            wr32(dst.wrapping_add(4), rd32(p.wrapping_sub(4)));
+            wr32(dst.wrapping_add(8), rd32(p));
+            wr32(dst.wrapping_add(12), rd32(p.wrapping_add(4)));
+            p = p.wrapping_add(16);
+            i = i.wrapping_add(1);
         }
         (last & 0xFFFF_FF00) | 1
+
     }
 });

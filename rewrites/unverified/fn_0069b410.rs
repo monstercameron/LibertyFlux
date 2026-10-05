@@ -1,12 +1,11 @@
-// original: 0x00698DD0 rage::crAnimChannelDeltaFloat::vf0
+// original: 0x0069B410 crAnimChannelStaticQuaternion_init (proposed)
 
-/// Deleting destructor: runs the intercepted direct destructor on the
-/// object, then frees it through the thread-local allocator
-/// (`tls[0] -> [+8] -> vtable[+0xc]`) when the low bit of the flag
-/// argument is set. Returns the object pointer.
+/// In-place initializer: stamps the vtable with tag 0x900, zeroes the
+/// member at `+8`, then allocates 0x10 bytes through the thread-local
+/// allocator and stores the pointer there. Returns `this`.
 ///
-/// Original: 0x00698DD0 (thiscall, flag word on the stack).
-lf_checker_rt::export!(thiscall, rw_00698DD0(obj: u32, flag: u32) -> u32 {
+/// Original: 0x0069B410 (thiscall, object in ecx).
+lf_checker_rt::export!(thiscall, rw_0069B410(this: u32) -> u32 {
     unsafe {
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
@@ -33,16 +32,17 @@ lf_checker_rt::export!(thiscall, rw_00698DD0(obj: u32, flag: u32) -> u32 {
             unsafe { (a as *mut u8).write(v) }
         }
 
-        // Thread-allocator chain: tls slot 0 -> [+8] -> vtable slot +0xc.
+        // Thread-allocator chain: tls slot 0 -> [+8] -> vtable slot +8.
         let heap_obj = rd32(lf_checker_rt::tls_slot(0) + 8);
         let vtable = rd32(heap_obj);
-        let free_mem: extern "thiscall" fn(u32, u32) -> u32 =
-            core::mem::transmute(rd32(vtable + 0xC) as usize);
-        lf_checker_rt::callee_thiscall!(3, u32, obj);
-        if flag & 1 != 0 && obj != 0 {
-            free_mem(heap_obj, obj);
-        }
-        obj
+        let alloc: extern "thiscall" fn(u32, u32, u32, u32) -> u32 =
+            core::mem::transmute(rd32(vtable + 8) as usize);
+        wr32(this + 4, 0x900);
+        wr32(this, lf_checker_rt::relocated(0x00FE3C3C));
+        wr32(this + 8, 0);
+        let member = alloc(heap_obj, 0x10, 0x10, 0);
+        wr32(this + 8, member);
+        this
 
     }
 });

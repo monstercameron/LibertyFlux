@@ -1,74 +1,74 @@
-// original: 0x006988C0 bit_matrix_alloc_zero
+// original: 0x006988C0 bitset_builder_6988C0 (proposed)
 
-/// Replace a bit matrix with a zeroed one of new dimensions.
+/// Bit-set zero builder: frees the old buffer through the
+/// thread-local allocator, stores the two dimension arguments,
+/// allocates `ceil(d0*d1/32)` words (byte size saturates to
+/// all-ones on overflow) and zeroes them. Returns the word count.
 ///
-/// `thiscall` with the object in ECX and width/height on the stack. Frees the
-/// old word array through the TLS allocator when non-null, stores the new
-/// dimensions, allocates `ceil(w*h/32)` words and zeroes them. Returns the
-/// word count. The size multiply saturates to all-ones on overflow.
-/// Original: 0x006988C0, 136 bytes.
-lf_checker_rt::export!(thiscall, rw_006988C0(this: u32, w: u32, h: u32) -> u32 {
+/// Original: 0x006988C0 (thiscall, two dimension words on the stack).
+lf_checker_rt::export!(thiscall, rw_006988C0(this: u32, d0: u32, d1: u32) -> u32 {
     unsafe {
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
             unsafe { (a as *const u32).read_unaligned() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr32(a: u32, v: u32) {
             unsafe { (a as *mut u32).write_unaligned(v) }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd16(a: u32) -> u16 {
             unsafe { (a as *const u16).read_unaligned() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr16(a: u32, v: u16) {
             unsafe { (a as *mut u16).write_unaligned(v) }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd8(a: u32) -> u8 {
             unsafe { (a as *const u8).read() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr8(a: u32, v: u8) {
             unsafe { (a as *mut u8).write(v) }
         }
-        const TLS_MGR_OFF: u32 = 0x08;
-        const VT_ALLOC_SLOT: u32 = 0x08;
-        const VT_FREE_SLOT: u32 = 0x0c;
-        const ALLOC_ALIGN: u32 = 0x10;
-        let tls = lf_checker_rt::tls_slot(0);
-        let mgr = rd32(tls + TLS_MGR_OFF);
+
+        // Thread-allocator chain: tls slot 0 -> [+8] -> vtable slot +8.
+        let heap_obj = rd32(lf_checker_rt::tls_slot(0) + 8);
+        let vtable = rd32(heap_obj);
         let alloc: extern "thiscall" fn(u32, u32, u32, u32) -> u32 =
-            core::mem::transmute(rd32(rd32(mgr) + VT_ALLOC_SLOT) as usize);
-        let free: extern "thiscall" fn(u32, u32) -> u32 =
-            core::mem::transmute(rd32(rd32(mgr) + VT_FREE_SLOT) as usize);
+            core::mem::transmute(rd32(vtable + 8) as usize);
+
+        // Thread-allocator chain: tls slot 0 -> [+8] -> vtable slot +0xc.
+        let heap_obj = rd32(lf_checker_rt::tls_slot(0) + 8);
+        let vtable = rd32(heap_obj);
+        let free_mem: extern "thiscall" fn(u32, u32) -> u32 =
+            core::mem::transmute(rd32(vtable + 0xC) as usize);
         let old = rd32(this);
         if old != 0 {
-            let _ = free(mgr, old);
+            free_mem(heap_obj, old);
         }
-        wr32(this + 4, w);
-        let prod = w.wrapping_mul(h);
-        wr32(this + 8, h);
-        let mut nwords = prod >> 5;
+        wr32(this + 4, d0);
+        wr32(this + 8, d1);
+        let prod = d0.wrapping_mul(d1);
+        let mut n = prod >> 5;
         if prod & 0x1F != 0 {
-            nwords = nwords.wrapping_add(1);
+            n += 1;
         }
-        let (sz, ov) = nwords.overflowing_mul(4);
-        let size = if ov { 0xFFFF_FFFF } else { sz };
-        let p = alloc(mgr, size, ALLOC_ALIGN, 0);
-        wr32(this, p);
-        let mut i: u32 = 0;
-        while i < nwords {
-            wr32(p + i * 4, 0);
+        let size = n.checked_mul(4).unwrap_or(0xFFFF_FFFF);
+        let bits = alloc(heap_obj, size, 0x10, 0);
+        wr32(this, bits);
+        let prod2 = rd32(this + 4).wrapping_mul(rd32(this + 8));
+        let mut m = prod2 >> 5;
+        if prod2 & 0x1F != 0 {
+            m += 1;
+        }
+        let mut i = 0u32;
+        while i < m {
+            wr32(bits.wrapping_add(i.wrapping_mul(4)), 0);
             i += 1;
         }
-        nwords
+        m
+
     }
 });

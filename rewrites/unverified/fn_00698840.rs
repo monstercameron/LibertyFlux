@@ -1,71 +1,63 @@
-// original: 0x00698840 bit_matrix_copy_init
+// original: 0x00698840 bitset_builder_698840 (proposed)
 
-/// Attach a copied bit matrix: dimensions stored, bits duplicated.
+/// Bit-set copy builder: stores the two dimension words from the
+/// argument block, sizes the bit set as `ceil(d0*d1/32)` words
+/// (allocation size in bytes saturates to all-ones on 32-bit
+/// overflow), allocates it through the thread-local allocator and
+/// copies the words from the source table. Returns `this`.
 ///
-/// `thiscall` with the destination in ECX and a source descriptor on the
-/// stack. Stores the width/height, allocates room for `ceil(w*h/32)` words
-/// through the TLS allocator and copies the source words. Returns the
-/// destination. The size multiply saturates to all-ones on overflow.
-/// Original: 0x00698840, 119 bytes.
-lf_checker_rt::export!(thiscall, rw_00698840(this: u32, st: u32) -> u32 {
+/// Original: 0x00698840 (thiscall, argument block on the stack).
+lf_checker_rt::export!(thiscall, rw_00698840(this: u32, arg: u32) -> u32 {
     unsafe {
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
             unsafe { (a as *const u32).read_unaligned() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr32(a: u32, v: u32) {
             unsafe { (a as *mut u32).write_unaligned(v) }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd16(a: u32) -> u16 {
             unsafe { (a as *const u16).read_unaligned() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr16(a: u32, v: u16) {
             unsafe { (a as *mut u16).write_unaligned(v) }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd8(a: u32) -> u8 {
             unsafe { (a as *const u8).read() }
         }
-        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr8(a: u32, v: u8) {
             unsafe { (a as *mut u8).write(v) }
         }
-        const TLS_MGR_OFF: u32 = 0x08;
-        const VT_ALLOC_SLOT: u32 = 0x08;
-        const VT_FREE_SLOT: u32 = 0x0c;
-        const ALLOC_ALIGN: u32 = 0x10;
-        let tls = lf_checker_rt::tls_slot(0);
-        let mgr = rd32(tls + TLS_MGR_OFF);
+
+        // Thread-allocator chain: tls slot 0 -> [+8] -> vtable slot +8.
+        let heap_obj = rd32(lf_checker_rt::tls_slot(0) + 8);
+        let vtable = rd32(heap_obj);
         let alloc: extern "thiscall" fn(u32, u32, u32, u32) -> u32 =
-            core::mem::transmute(rd32(rd32(mgr) + VT_ALLOC_SLOT) as usize);
-        let w = rd32(st + 4);
-        wr32(this + 4, w);
-        let h = rd32(st + 8);
-        let prod = w.wrapping_mul(h);
-        let mut nwords = prod >> 5;
+            core::mem::transmute(rd32(vtable + 8) as usize);
+        wr32(this + 4, rd32(arg + 4));
+        let d1 = rd32(arg + 8);
+        wr32(this + 8, d1);
+        let prod = rd32(this + 4).wrapping_mul(d1);
+        let mut dwords = prod >> 5;
         if prod & 0x1F != 0 {
-            nwords = nwords.wrapping_add(1);
+            dwords += 1;
         }
-        wr32(this + 8, h);
-        let (sz, ov) = nwords.overflowing_mul(4);
-        let size = if ov { 0xFFFF_FFFF } else { sz };
-        let p = alloc(mgr, size, ALLOC_ALIGN, 0);
-        wr32(this, p);
-        let arr = rd32(st);
-        let mut i: u32 = 0;
-        while i < nwords {
-            wr32(p + i * 4, rd32(arr + i * 4));
+        let size = dwords.checked_mul(4).unwrap_or(0xFFFF_FFFF);
+        let bits = alloc(heap_obj, size, 0x10, 0);
+        wr32(this, bits);
+        let src = rd32(arg);
+        let mut i = 0u32;
+        while i < dwords {
+            wr32(bits.wrapping_add(i.wrapping_mul(4)),
+                 rd32(src.wrapping_add(i.wrapping_mul(4))));
             i += 1;
         }
         this
+
     }
 });
