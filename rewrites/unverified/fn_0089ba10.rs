@@ -1,56 +1,77 @@
-// original: 0x0089BA10 audio_dual_voice_probe
-//! Dual voice probe: looks up two voice slots from the audio route table,
-//! forwards a stored parameter through a setter, then polls both voices and
-//! merges the two poll results (2 dominates, then 0, else 1).
-//!
-//! Table walk per voice: `row = table_base + route*0x6F40 + 0x6F10`,
-//! `voice = stride*slot + *row`; slot 0xFF means "no voice" (null).
+// original: 0x0089BA10 aud_slot_pair_update (proposed)
 
-use lf_k2_rt::{callee_thiscall, export, global};
-
-const ROUTE_STRIDE: u32 = 0x6F40;
-const ROW_HDR: u32 = 0x6F10;
-const NO_VOICE: u8 = 0xFF;
-
-fn voice_ptr(stride: u32, table: u32, route: u8, slot: u8) -> u32 {
-    if slot == NO_VOICE {
-        return 0;
-    }
-    let row = table
-        .wrapping_add((route as u32).wrapping_mul(ROUTE_STRIDE))
-        .wrapping_add(ROW_HDR);
-    stride
-        .wrapping_mul(slot as u32)
-        .wrapping_add(unsafe { *(row as *const u32) })
-}
-
-export!(thiscall, rw_0089BA10(this: u32, arg0: u32, arg1: u32) -> u32 {
+/// Run the start hook and then the pair-update helper twice, once per slot.
+///
+/// `this` is an audio sound object. Bytes at `+0x40` (category) and
+/// `+0x48`/`+0x49` (slot indexes) select rows of the global slot table:
+/// when the slot byte is `0xFF` there is no row (null is passed), otherwise
+/// the row is `stride * slot + row_base[category]`, where `stride` is the
+/// global at `G_SLOT_STRIDE` and `row_base` the table at `G_TABLE_BASE`
+/// (each category row is `CAT_STRIDE` bytes, the base pointer lives at
+/// `+TABLE_ROW` within the row).
+///
+/// Behaviour: call the start hook (callee 0) with the `+0x48` row, the
+/// dword at `+0x54` and 0 (its answer is ignored); then call the pair
+/// helper (callee 1) twice, with the `+0x48` row and then the `+0x49` row,
+/// each time with the two incoming stack arguments and a middle word built
+/// from bit 5 of the byte at `+0x39` planted in the low byte of `this`
+/// (the original writes that bit over its own saved `this` slot and
+/// re-pushes the whole dword). Returns 2 if either helper answer is 2,
+/// else 0 if either is 0, else 1. All comparisons are equalities
+/// (`cmp`/`je`, `test`/`je`), so signedness does not apply.
+///
+/// Original: 0x0089BA10 (thiscall, two stack words, returns full `eax`).
+lf_checker_rt::export!(thiscall, rw_0089BA10(this: u32, arg1: u32, arg2: u32) -> u32 {
     unsafe {
-        let t = this as *const u8;
-        let route = *t.add(0x40);
-        let slot_a = *t.add(0x48);
-        let slot_b = *t.add(0x49);
-        let flag = (*t.add(0x39) >> 5) & 1;
-        let stored = *(this as *const u32).add(0x54 / 4);
-        let stride = *global::<u32>(0x115D964);
-        let table = *global::<u32>(0x115D988);
+        const CAT_INDEX: u32 = 0x40;
+        const FLAG_BYTE: u32 = 0x39;
+        const SLOT_A: u32 = 0x48;
+        const SLOT_B: u32 = 0x49;
+        const START_PARAM: u32 = 0x54;
+        const CAT_STRIDE: u32 = 0x6F40;
+        const TABLE_ROW: u32 = 0x6F10;
+        const NO_SLOT: u8 = 0xFF;
+        const G_SLOT_STRIDE: u32 = 0x115D964;
+        const G_TABLE_BASE: u32 = 0x115D988;
+        const CALLEE_START: u32 = 0;
+        const CALLEE_PAIR: u32 = 1;
 
-        let va = voice_ptr(stride, table, route, slot_a);
-        // Setter takes (stored_param, 0); result ignored.
-        callee_thiscall!(1, u32, va, stored, 0);
+        #[inline(always)]
+        unsafe fn rd8(a: u32) -> u8 {
+            unsafe { (a as *const u8).read() }
+        }
+        #[inline(always)]
+        unsafe fn rd32(a: u32) -> u32 {
+            unsafe { (a as *const u32).read_unaligned() }
+        }
+        /// Row pointer for the slot byte at `this + slot_off`, or null.
+        unsafe fn slot_row(this: u32, slot_off: u32) -> u32 {
+            unsafe {
+                let slot = rd8(this + slot_off);
+                if slot == NO_SLOT {
+                    return 0;
+                }
+                let stride = (lf_checker_rt::global::<u32>(G_SLOT_STRIDE)).read_unaligned();
+                let base = (lf_checker_rt::global::<u32>(G_TABLE_BASE)).read_unaligned();
+                let cat = rd8(this + CAT_INDEX) as u32;
+                let row = rd32(base.wrapping_add(cat.wrapping_mul(CAT_STRIDE)).wrapping_add(TABLE_ROW));
+                stride.wrapping_mul(slot as u32).wrapping_add(row)
+            }
+        }
+        /// Middle helper word: bit 5 of the flag byte over the low byte of `this`.
+        unsafe fn middle_word(this: u32) -> u32 {
+            unsafe { (this & 0xFFFF_FF00) | (((rd8(this + FLAG_BYTE) >> 5) & 1) as u32) }
+        }
 
-        // The original stages the one-byte flag in its pushed-ECX stack slot
-        // and forwards the whole word, so the upper three bytes are the entry
-        // ECX (this) with the flag in the low byte. Entry ECX is a declared
-        // checker input, identical on both sides, so this word is reproduced
-        // exactly rather than skipped: skipping would blind the flag bit.
-        let flag_word = (this & 0xFFFF_FF00) | flag as u32;
-        let ra = callee_thiscall!(2, u32, va, arg0, flag_word, arg1);
-        let vb = voice_ptr(stride, table, route, slot_b);
-        let rb = callee_thiscall!(3, u32, vb, arg0, flag_word, arg1);
-        if ra == 2 || rb == 2 {
+        let start_row = slot_row(this, SLOT_A);
+        lf_checker_rt::callee_thiscall!(CALLEE_START, u32, start_row, rd32(this + START_PARAM), 0);
+        let first: u32 =
+            lf_checker_rt::callee_thiscall!(CALLEE_PAIR, u32, slot_row(this, SLOT_A), arg1, middle_word(this), arg2);
+        let second: u32 =
+            lf_checker_rt::callee_thiscall!(CALLEE_PAIR, u32, slot_row(this, SLOT_B), arg1, middle_word(this), arg2);
+        if first == 2 || second == 2 {
             2
-        } else if ra == 0 || rb == 0 {
+        } else if first == 0 || second == 0 {
             0
         } else {
             1

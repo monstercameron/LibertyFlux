@@ -46,7 +46,7 @@ lf_checker_rt::export!(thiscall, rw_0069B4A0(this: u32, src: u32) -> u32 {
         unsafe fn wr32(a: u32, v: u32) {
             unsafe { (a as *mut u32).write_unaligned(v) }
         }
-        wr32(this, BASE_VTABLE);
+        wr32(this, lf_checker_rt::relocated(BASE_VTABLE));
         unsafe {
             let b4 = ((src + 4) as *const u8).read();
             ((this + 4) as *mut u8).write(b4);
@@ -55,7 +55,7 @@ lf_checker_rt::export!(thiscall, rw_0069B4A0(this: u32, src: u32) -> u32 {
             let w6 = ((src + 6) as *const u16).read_unaligned();
             ((this + 6) as *mut u16).write_unaligned(w6);
         }
-        wr32(this, CLASS_VTABLE);
+        wr32(this, lf_checker_rt::relocated(CLASS_VTABLE));
         let tls_base = lf_checker_rt::tls_slot(TLS_SLOT);
         let tobj = tls_base;
         let heap_obj = rd32(tobj + ALLOC_OBJ_OFF);
