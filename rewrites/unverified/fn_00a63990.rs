@@ -126,7 +126,7 @@ lf_checker_rt::export!(thiscall, rw_00a63990(this: u32, pt: u32, _a1: u32) -> u3
         let px = add(mul(cosv, radius), fa[0]);
         let sinv = f32::from_bits(lf_checker_rt::callee_cdecl!(CALLEE_SIN, u32, ang.to_bits()));
         let neg = glob_w(G_NEG);
-        let py = add(f32::from_bits(sinv.to_bits() ^ neg), fa[1]);
+        let py = add(f32::from_bits(mul(sinv, radius).to_bits() ^ neg), fa[1]);
         let cx = fa[0];
         let cy = fa[1];
         let dx1 = sub(fb[0], cx);

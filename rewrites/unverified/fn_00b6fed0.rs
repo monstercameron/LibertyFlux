@@ -160,7 +160,7 @@ lf_checker_rt::export!(cdecl, rw_00b6fed0(a0: u32, a1: u32, a2: u32, a3: u32) ->
         }
         if lf_checker_rt::callee_thiscall!(CAL_CHECK1, u32, a1, a2) as u8 == 0 {
             let model = rd16s(a1.wrapping_add(MODEL_WORD));
-            if lf_checker_rt::callee_cdecl!(CAL_MODEL, u32, model, 0x18) as u8 != 0 {
+            if lf_checker_rt::callee_cdecl!(CAL_MODEL, u32, 0x18, model) as u8 != 0 {
                 return build_full(a0, 0xeb1904, a2, handle);
             }
         }
