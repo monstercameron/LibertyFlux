@@ -9,6 +9,27 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A wrong rewrite passed: the checker could not see which global word changed</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s421"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s421</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>A deliberately wrong rewrite passed one hundred trials against the original, which meant the proof could not see the change. The cause was a defect in the checker's comparison of engine globals, now reported with a contract-side workaround.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A deliberately wrong rewrite passed one hundred trials against the original, which meant the proof could not see the change. The cause was a defect in the checker's comparison of engine globals, now reported with a contract-side workaround.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite a batch of forty small script-instruction functions in Rust and prove each one against the original, with a deliberately wrong version per function that must fail.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The wrong version of one function stored its value one slot off in a global array and still passed every trial. Reading the checker's comparison code showed why: for changed global words it records the declared range's base address rather than each word's own address, so two behaviours writing equal values to different words of one range compare equal. The heap, stack and undeclared-write comparisons all record per-word addresses; only the globals one has the defect. Single-word ranges are unaffected.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Restating the contract with one declared range per global word closes the gap on the stock checker: the same wrong version then fails as required and the correct rewrite passes its full trial count. A second contract with a multi-word range was widened the same way before running.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two smaller findings from the same batch. One function's counter word shares its address with list slot two, so when the count is two the slot store overwrites the counter and the increment applies to the stored value; the first rewrite missed this and failed exactly the trials with that count. And one callee cleans no stack arguments while its siblings do, which the contract states explicitly.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;The defect was reported for the coordinator with the exact location and a one-line fix. Until it lands, lanes should declare one global range per word whenever a function writes more than one word of a range, and should treat any passing wrong version as a contract or checker gap to investigate, never as luck.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Take any verified contract whose rewrite writes equal values to two words of one multi-word global range, move one store to the neighbouring word in a wrong version, and run it: it passes. Split the range into one range per word and re-run: it fails.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The first draft of one generator was written from crossed disassembly (three functions' listings mixed while reading chunked output). Byte-level assertions of every call site against the executable caught it before anything ran; all three were re-decoded from the file. An early relocation script also double-counted one table's base and reported nonsense until a value sample exposed it.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming the script camera instruction family</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-77"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-77</id>
@@ -1035,26 +1056,5 @@
 &lt;p&gt;Read the executable through mapped addresses, disassemble each batch entry, scan the code section for direct calls to batch addresses and resolve the callers against the merged symbols, lane names and verified index, scan batch bodies for vtable-pointer stores and confirm targets through runtime type information, then read the short functions fully and the heads of the large ones. The lane scratch folder keeps the scripts used.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;An early pass misresolved a plain code call as a cryptography import and briefly suggested the fragment relocate helper used encryption; checking the target showed a normal relocation applier. String harvesting initially included the code section, which decodes as garbage pseudo-strings; only data-section references were used after that. Several callees sit in the encrypted region and cannot be read, which caps a number of names at medium.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A stat function passes its caller's leftover register to its clamp check</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b308"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b308</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>One statistic routine in the network batch passes its caller's saved register contents, not the sum it just computed, as the second argument to its clamp-check helper. The routine still clamps correctly, because it reloads the sum from its spill slot afterwards. The finding is verified by differential testing: a rewrite that passed the sum failed every trial that reached the call, and passing the entry register value instead passes all trials.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One statistic routine in the network batch passes its caller's saved register contents, not the sum it just computed, as the second argument to its clamp-check helper. The routine still clamps correctly, because it reloads the sum from its spill slot afterwards. The finding is verified by differential testing: a rewrite that passed the sum failed every trial that reached the call, and passing the entry register value instead passes all trials.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite a batch of seven statistic-subsystem functions in Rust and prove each rewrite behaves identically to the original with the project checker, which runs both sides from identical starting state and compares return values, memory writes, outgoing calls and faults.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The statistic add routine spills its new total four bytes past the helper's argument slot, so the helper reads the caller's entry register value still sitting in the register-save slot. Reproducing the trial inputs showed the helper receiving the entry register value exactly, and no input float added to the trial amount could produce the observed value any other way.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A sibling routine in the same batch reads its own return address off the stack and uses it as an evolving exclusive-or key for stored bytes. That behaviour cannot be reproduced by a rewrite, so the function was deferred with the reason recorded.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A two-switch dispatcher in the batch has only eleven live key mappings out of several hundred table entries; the rest return immediately. A ratio-report path in it is guarded by two ordered comparisons that proceed on unordered (not-a-number) inputs rather than skipping.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;The rewrites take the leftover register value and the caller-stack word as explicit extra parameters fed with the same per-trial values, keeping the comparison exact with no narrowing. The return-address keyed function is deferred as unimplementable. Later lanes should check spill-slot arithmetic against argument-slot positions whenever a helper call immediately follows a spill: two functions in this batch read a different slot than a quick reading suggests.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Disassemble the statistic add routine and trace the stack offsets of the spill store and the helper call: the store lands one word above the slot the helper reads. Then run the checker contract for the function with a rewrite that passes the computed sum: every trial that reaches the helper call fails on that argument, showing the entry register value instead.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The first probe failures looked paradoxical: the helper received a tiny value while the recorded total was large, which no arithmetic could explain. The paradox resolved only after re-deriving every stack offset from the entry pushes. A second function initially failed the same way: its low-byte test reads one word above its own argument, which is caller stack, not the argument. Both cases were the same lesson: trust the offsets, not the apparent intent.&lt;/p&gt;</content>
   </entry>
 </feed>
