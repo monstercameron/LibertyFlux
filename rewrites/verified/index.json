@@ -40221,6 +40221,15 @@
   "lane": "r-b383"
  },
  {
+  "address": "0x00937510",
+  "name": "stream_global_scan_update",
+  "kind": "function",
+  "file": "functions/fn_00937510.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s430"
+ },
+ {
   "address": "0x00937B20",
   "name": "stream_unknown",
   "kind": "function",
@@ -40261,6 +40270,60 @@
   "name": "stream_unknown",
   "kind": "function",
   "file": "functions/fn_00937d20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s430"
+ },
+ {
+  "address": "0x00938790",
+  "name": "stream_ready_gate_a",
+  "kind": "function",
+  "file": "functions/fn_00938790.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s430"
+ },
+ {
+  "address": "0x00938850",
+  "name": "stream_ready_gate_b",
+  "kind": "function",
+  "file": "functions/fn_00938850.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s430"
+ },
+ {
+  "address": "0x00938910",
+  "name": "stream_state_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00938910.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s430"
+ },
+ {
+  "address": "0x009389A0",
+  "name": "stream_unknown",
+  "kind": "function",
+  "file": "functions/fn_009389a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s430"
+ },
+ {
+  "address": "0x009389F0",
+  "name": "stream_unknown",
+  "kind": "function",
+  "file": "functions/fn_009389f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s430"
+ },
+ {
+  "address": "0x00939140",
+  "name": "stream_best_score_select",
+  "kind": "function",
+  "file": "functions/fn_00939140.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s430"
@@ -40338,6 +40401,15 @@
   "lane": "r-s430"
  },
  {
+  "address": "0x00939610",
+  "name": "stream_gate_c",
+  "kind": "function",
+  "file": "functions/fn_00939610.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s430"
+ },
+ {
   "address": "0x00939810",
   "name": "stream_wrap_a",
   "kind": "function",
@@ -40378,6 +40450,24 @@
   "name": "stream_unknown",
   "kind": "function",
   "file": "functions/fn_0093b510.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s430"
+ },
+ {
+  "address": "0x0093B530",
+  "name": "stream_unknown",
+  "kind": "function",
+  "file": "functions/fn_0093b530.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s430"
+ },
+ {
+  "address": "0x0093B5C0",
+  "name": "stream_unknown",
+  "kind": "function",
+  "file": "functions/fn_0093b5c0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s430"
