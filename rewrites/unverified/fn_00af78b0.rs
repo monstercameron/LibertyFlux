@@ -13,6 +13,7 @@ lf_checker_rt::export!(thiscall, rw_00AF78B0(this: u32, start: u32) -> u32 {
     unsafe {
         const TRANSLATE: u32 = 1;
         const TRANSLATOR: u32 = 0x1177A80;
+        let translator = lf_checker_rt::relocated(TRANSLATOR);
         const TOP: u32 = 13;
         const OUT: u32 = 0x38;
         const EMPTY: u16 = 0xFFFF;
@@ -28,7 +29,7 @@ lf_checker_rt::export!(thiscall, rw_00AF78B0(this: u32, start: u32) -> u32 {
             } else {
                 let a = ((this + i * 4) as *const u32).read_unaligned();
                 let b = ((this + 4 + i * 4) as *const u32).read_unaligned();
-                let v = lf_checker_rt::callee_thiscall!(TRANSLATE, u32, TRANSLATOR, a, b);
+                let v = lf_checker_rt::callee_thiscall!(TRANSLATE, u32, translator, a, b);
                 out.write_unaligned(v as u16);
             }
         }
