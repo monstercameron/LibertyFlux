@@ -51831,6 +51831,15 @@
   "lane": "r-b478"
  },
  {
+  "address": "0x009F33D0",
+  "name": "CPlayerPed::vf31",
+  "kind": "function",
+  "file": "functions/fn_009f33d0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b478"
+ },
+ {
   "address": "0x009F39C0",
   "name": "ped_task_resolve_chain",
   "kind": "function",
@@ -55629,6 +55638,15 @@
   "lane": "r-b410"
  },
  {
+  "address": "0x00A25A30",
+  "name": "ped_task_state_init",
+  "kind": "function",
+  "file": "functions/fn_00a25a30.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b504"
+ },
+ {
   "address": "0x00A28CD0",
   "name": "task_timer_blend",
   "kind": "function",
@@ -55672,6 +55690,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b324"
+ },
+ {
+  "address": "0x00A2A6C0",
+  "name": "pedtask_range_gate",
+  "kind": "function",
+  "file": "functions/fn_00a2a6c0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "a-R01"
  },
  {
   "address": "0x00A2B1F0",
@@ -56457,6 +56484,33 @@
   "lane": "r-s462"
  },
  {
+  "address": "0x00A47B40",
+  "name": "CVehicle::vf78",
+  "kind": "function",
+  "file": "functions/fn_00a47b40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R04"
+ },
+ {
+  "address": "0x00A49160",
+  "name": "vehicle_model_row_addr",
+  "kind": "function",
+  "file": "functions/fn_00a49160.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R04"
+ },
+ {
+  "address": "0x00A491A0",
+  "name": "CVehicle::vf105",
+  "kind": "function",
+  "file": "functions/fn_00a491a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R04"
+ },
+ {
   "address": "0x00A49300",
   "name": "NativeImpl_GET_CAR_LIVERY",
   "kind": "function",
@@ -56473,6 +56527,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s462"
+ },
+ {
+  "address": "0x00A49470",
+  "name": "vehicle_info_field_3bc",
+  "kind": "function",
+  "file": "functions/fn_00a49470.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R04"
  },
  {
   "address": "0x00A49680",
@@ -56554,6 +56617,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s462"
+ },
+ {
+  "address": "0x00A49BC0",
+  "name": "vehicle_clamped_delta",
+  "kind": "function",
+  "file": "functions/fn_00a49bc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R04"
  },
  {
   "address": "0x00A4A9B0",
@@ -61810,6 +61882,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "a-F01"
+ },
+ {
+  "address": "0x00AD3560",
+  "name": "audio_channel_lookup",
+  "kind": "function",
+  "file": "functions/fn_00ad3560.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "a-R01"
  },
  {
   "address": "0x00AD4410",
@@ -96057,6 +96138,15 @@
   "lane": "r-b454"
  },
  {
+  "address": "0x00C84B60",
+  "name": "Format the scenario clock as five characters into `dst`.",
+  "kind": "function",
+  "file": "functions/fn_00c84b60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R03"
+ },
+ {
   "address": "0x00C87920",
   "name": "audio_bank_refresh",
   "kind": "function",
@@ -96379,6 +96469,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s337"
+ },
+ {
+  "address": "0x00CA1D70",
+  "name": "ped_task_block_init (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00ca1d70.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b509"
  },
  {
   "address": "0x00CA1EA0",
@@ -99585,6 +99684,15 @@
   "lane": "r-b485"
  },
  {
+  "address": "0x00CE7F20",
+  "name": "CTaskSimpleNMBrace::vf26",
+  "kind": "function",
+  "file": "functions/fn_00ce7f20.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b510"
+ },
+ {
   "address": "0x00CE9090",
   "name": "CTaskSimpleNMFlinch::vf26",
   "kind": "function",
@@ -100233,6 +100341,15 @@
   "lane": "r-s85"
  },
  {
+  "address": "0x00CFE550",
+  "name": "ped_task_aim_check",
+  "kind": "function",
+  "file": "functions/fn_00cfe550.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R03"
+ },
+ {
   "address": "0x00D01700",
   "name": "cover_slot_bound_radius",
   "kind": "function",
@@ -100366,6 +100483,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b451"
+ },
+ {
+  "address": "0x00D1A340",
+  "name": "peds_tasks_fn3 (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00d1a340.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b514"
  },
  {
   "address": "0x00D1D3D0",
