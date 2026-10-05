@@ -48402,6 +48402,15 @@
   "lane": "a-F01"
  },
  {
+  "address": "0x00AD2B60",
+  "name": "audio_mode_preset_apply",
+  "kind": "function",
+  "file": "functions/fn_00ad2b60.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b371"
+ },
+ {
   "address": "0x00AD2EE0",
   "name": "mgr_forward_224",
   "kind": "function",
@@ -74284,6 +74293,96 @@
   "trials": 1200,
   "checker": "version 3",
   "lane": "r-b155"
+ },
+ {
+  "address": "0x00BF7A30",
+  "name": "task_vec3_scale_to_bytes_1e",
+  "kind": "function",
+  "file": "functions/fn_00bf7a30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF7A70",
+  "name": "task_vec3_copy_to_18",
+  "kind": "function",
+  "file": "functions/fn_00bf7a70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF9D20",
+  "name": "task_bytes_10_to_scaled_floats",
+  "kind": "function",
+  "file": "functions/fn_00bf9d20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF9D70",
+  "name": "task_vec3_copy_from_14",
+  "kind": "function",
+  "file": "functions/fn_00bf9d70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF9D90",
+  "name": "task_words_28_to_scaled_floats",
+  "kind": "function",
+  "file": "functions/fn_00bf9d90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF9DE0",
+  "name": "task_words_1c_to_scaled_floats",
+  "kind": "function",
+  "file": "functions/fn_00bf9de0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BFA140",
+  "name": "task_vec3_copy_to_14",
+  "kind": "function",
+  "file": "functions/fn_00bfa140.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BFA160",
+  "name": "task_vec3_scale_to_words_28",
+  "kind": "function",
+  "file": "functions/fn_00bfa160.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BFA1B0",
+  "name": "task_vec3_scale_to_words_1c",
+  "kind": "function",
+  "file": "functions/fn_00bfa1b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BFA200",
+  "name": "task_vec3_scale_to_bytes_10",
+  "kind": "function",
+  "file": "functions/fn_00bfa200.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
  },
  {
   "address": "0x00BFA7A0",
