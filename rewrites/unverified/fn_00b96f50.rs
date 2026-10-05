@@ -1,4 +1,4 @@
-// original: 0x00b96f50 script_vec_store_a (proposed)
+// original: 0x00b96f50 NativeImpl_SET_EXTRA_HOSPITAL_RESTART_POINT
 
 /// Stores six float arguments into two global float blocks.
 ///

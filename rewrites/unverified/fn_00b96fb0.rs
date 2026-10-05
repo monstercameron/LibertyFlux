@@ -1,4 +1,4 @@
-// original: 0x00b96fb0 script_vec_store_b (proposed)
+// original: 0x00b96fb0 NativeImpl_SET_EXTRA_POLICE_STATION_RESTART_POINT
 
 /// Stores six float arguments into two global float blocks.
 ///
