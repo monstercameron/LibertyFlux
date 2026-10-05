@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: A rebuild routine that returns with a scratch register holding float bits",
+    "title": "Rewrites: 29 more functions pass the checker (15078 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "29 rewrites added under rewrites/verified: 0 script native handlers and 29 other functions.",
+      "The tree now holds 15078 rewrites, 15059 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 689 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "19 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: A rebuild routine that returns with a scratch register holding float bits",
+    "commit": "894b3e61ddcd8d5107d2f3d4552f1829aea109f3",
     "summary": "Findings from the r-s474 lane.",
     "changes": [
       "New devlog entry: A rebuild routine that returns with a scratch register holding float bits.",
