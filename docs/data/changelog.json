@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: A full class batch verified, including a float returned on the x87 stack",
+    "title": "Rewrites: 12 more functions pass the checker (15554 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "12 rewrites added under rewrites/verified: 0 script native handlers and 12 other functions.",
+      "The tree now holds 15554 rewrites, 15535 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 673 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "21 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: A full class batch verified, including a float returned on the x87 stack",
+    "commit": "d159d034dd315f4b4a0eca1ff2557f43fdfb3776",
     "summary": "Findings from the r-b564 lane.",
     "changes": [
       "New devlog entry: A full class batch verified, including a float returned on the x87 stack.",
