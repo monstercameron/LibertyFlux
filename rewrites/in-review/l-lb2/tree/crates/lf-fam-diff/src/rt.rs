@@ -86,6 +86,8 @@ pub fn capture<R>(f: impl FnOnce() -> R) -> (R, Vec<Call>) {
 pub enum Sig {
     /// `cdecl` with `n` argument words.
     Cdecl(u8),
+    /// `cdecl` with `n` argument words, answering through the x87 stack.
+    CdeclF(u8),
     /// `stdcall` with one argument word.
     Stdcall1,
     /// `thiscall` with the object and one argument word.
@@ -180,6 +182,7 @@ pub fn xbase_for(buf_addr: u32, base: u32) -> u32 {
 pub fn stub_addr(slot: u32, sig: Sig) -> u32 {
     match sig {
         Sig::Cdecl(n) => cdecl_addr(slot, n),
+        Sig::CdeclF(n) => faddr(slot, n),
         Sig::Stdcall1 => {
             assert_eq!(slot, 1, "stdcall stub only on slot 1");
             u32::try_from(s1 as usize).expect("32-bit code address")

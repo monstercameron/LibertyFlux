@@ -2,11 +2,12 @@
 //!
 //! Every script native handler in the original is one routine instantiated
 //! per native: read the script words from the call context, boolean-coerce
-//! the flagged ones, call the engine worker, and either discard its answer
-//! or store it (masked to a byte or whole) into the return slot. The
-//! verified rewrites prove each instantiation separately in the checker's
-//! 32-bit form; this crate restates the routine three times (once per
-//! return convention) as portable Rust following the lift method:
+//! the flagged ones, call the engine worker, and either return its answer,
+//! store it (masked to a byte or whole) into the return slot, or drop it
+//! and return zero. The verified rewrites prove each instantiation
+//! separately in the checker's 32-bit form; this crate restates the routine
+//! four times (once per return convention) as portable Rust following the
+//! lift method:
 //!
 //! - No addresses: the context layout (slot pointer first, argument array
 //!   second) stays at the boundary. The lift takes a word slice and, where
@@ -138,4 +139,13 @@ pub fn forward_full(
     let answer = forward(eng, desc, args);
     *ret = answer;
     *ret
+}
+
+/// A zero-return native: forward the words, drop the answer, return zero.
+///
+/// The 32-bit form calls the worker and returns constant zero, writing no
+/// return slot; the outgoing call is still compared argument for argument.
+pub fn forward_zero(eng: &mut impl NativeEngine, desc: &NativeDesc, args: &[u32]) -> u32 {
+    forward(eng, desc, args);
+    0
 }

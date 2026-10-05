@@ -4,8 +4,8 @@
 /// callee to size the member at `+8`, then copies `count`
 /// quaternions from the source. After the first, each new entry is
 /// sign-aligned with its predecessor: when their dot product is
-/// negative the new x lane is xored with the sign mask kept in the
-/// static at file address `0x00FE8FA0`. Float operation order is
+/// negative the whole new entry is xored with the sign mask kept
+/// in the static at file address `0x00FE8FA0`. Float operation order is
 /// the original's. Returns the destination base with its low byte
 /// set to 1 (1 when nothing was copied).
 ///
@@ -82,6 +82,9 @@ lf_checker_rt::export!(thiscall, rw_0069AF00(this: u32, src: u32, count: u32, _u
                         mul(rdf(prev.wrapping_add(12)), rdf(dd.wrapping_add(12))));
                 if dot < 0.0 {
                     wr32(dd, rdf(dd).to_bits() ^ mask);
+                    wr32(dd.wrapping_add(4), rdf(dd.wrapping_add(4)).to_bits() ^ mask);
+                    wr32(dd.wrapping_add(8), rdf(dd.wrapping_add(8)).to_bits() ^ mask);
+                    wr32(dd.wrapping_add(12), rdf(dd.wrapping_add(12)).to_bits() ^ mask);
                 }
             }
             i = i.wrapping_add(1);

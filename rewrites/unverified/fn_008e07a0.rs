@@ -33,7 +33,10 @@ lf_checker_rt::export!(cdecl, rw_008e07a0(index: u32) -> u32 {
             return 0;
         }
         let entry2 = if (flag_base.wrapping_add(next) as *const u8).read() & DEAD_FLAG != 0 {
-            (0 as *const u32).read_unaligned()
+            // The original pushes the word at address zero here and faults;
+            // the zero is kept opaque so the load is really emitted (a
+            // literal null load would be folded away as undefined behaviour).
+            (core::hint::black_box(0u32) as *const u32).read_unaligned()
         } else {
             ((base.wrapping_add(stride.wrapping_mul(next))) as *const u32).read_unaligned()
         };

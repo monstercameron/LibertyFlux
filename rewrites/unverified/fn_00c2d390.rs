@@ -20,8 +20,8 @@
 /// - Above the fade end otherwise, the full path: each live slot's id is
 ///   released, the silencer runs, then a request block of 18 words is
 ///   initialized (callee 3) and customized (flag byte `FLAG_OFF` OR-ed
-///   with `FLAG_BITS`, word 5 set to the copied position, word 9 to the
-///   flavor answer of callee 4, word 11 to the rolling `COUNTER`).
+///   with `FLAG_BITS`, word 5 set to the copied position, word 8 to the
+///   flavor answer of callee 4, word 9 to the rolling `COUNTER`).
 ///   Three voices open in turn (callees 5, 6, 7 with tags `TAG0..2`,
 ///   out-pointers to the three slots); each live voice is configured
 ///   with three zero words (callee 9), given two generated ids (callees
@@ -31,11 +31,10 @@
 ///   sequence. The counter advances by `COUNTER_STEP` modulo
 ///   `COUNTER_MOD` (signed remainder, stored back), nine constant voice
 ///   words go to the tuner (callee 13), and a final mix call (callee 14)
-///   takes two reserved zero words, the third voice's id (or -1), the
-///   mix word, and the flavor answer.
+///   takes the first two voices' ids (or -1 each), the third voice's id
+///   (or -1), the mix word, and the counter seed.
 ///
-/// The two reserved mix words sit in frame slots the original never
-/// writes; they read 0 under a zero stack fill. The request block's word
+/// A skipped voice reports id -1 from its slot's sentinel. The request block's word
 /// 5 holds a frame address, so snapshots skip it. Callee answers that
 /// arrive in registers are scripted by the checker.
 ///
@@ -142,9 +141,9 @@ lf_checker_rt::export!(thiscall, rw_00c2d390(this: u32, arg: u32, level: u32) ->
             *(req.as_mut_ptr() as *mut u8).add(FLAG_OFF) |= FLAG_BITS;
             req[5] = pos.as_mut_ptr() as u32;
             let flavor: u32 = lf_checker_rt::callee_thiscall!(4, u32, arg);
-            req[9] = flavor;
+            req[8] = flavor;
             let seed = rd32(lf_checker_rt::relocated(COUNTER));
-            req[11] = seed;
+            req[9] = seed;
 
             let slot0 = this.wrapping_add(SLOT0);
             lf_checker_rt::callee_thiscall!(
@@ -152,19 +151,19 @@ lf_checker_rt::export!(thiscall, rw_00c2d390(this: u32, arg: u32, level: u32) ->
                 0xFFFF_FFFF, 0, 0
             );
             let h0 = rd32(slot0);
-            if h0 != 0 {
-                voice(h0);
-            }
+            let first = if h0 != 0 { voice(h0) } else { 0xFFFF_FFFF };
             let slot1 = this.wrapping_add(SLOT1);
             lf_checker_rt::callee_thiscall!(
                 6, u32, this, lf_checker_rt::relocated(TAG1), slot1, req.as_mut_ptr() as u32,
                 0xFFFF_FFFF, 0, 0
             );
             let h1 = rd32(slot1);
-            if h1 != 0 {
-                lf_checker_rt::callee_thiscall!(8, u32, h1, lf_checker_rt::relocated(MARKER));
-                voice(h1);
-            }
+            let second = if h1 != 0 {
+                lf_checker_rt::callee_thiscall!(8, u32, h1, MARKER);
+                voice(h1)
+            } else {
+                0xFFFF_FFFF
+            };
             let slot2 = this.wrapping_add(SLOT2);
             lf_checker_rt::callee_thiscall!(
                 7, u32, this, lf_checker_rt::relocated(TAG2), slot2, req.as_mut_ptr() as u32,
@@ -186,7 +185,7 @@ lf_checker_rt::export!(thiscall, rw_00c2d390(this: u32, arg: u32, level: u32) ->
                 0x3F000000, 0
             );
             let mixw = rd32(arg.wrapping_add(MIX_WORD));
-            lf_checker_rt::callee_cdecl!(14, u32, 0, 0, third, mixw, flavor);
+            lf_checker_rt::callee_cdecl!(14, u32, first, second, third, mixw, seed);
         }
 
         let floor = (lf_checker_rt::relocated(VOL_FLOOR) as *const f32).read_unaligned();

@@ -2,7 +2,7 @@
 
 /// Tear down the stream's view and reset its position fields.
 ///
-/// Calls the view-release entry (callee 1) with `[this+0xc], 0, [this+4]`,
+/// Calls the view-release entry (callee 1) with `[this+4], 0, [this+0xc]`,
 /// copies the word at `+0x42` to `+0x44`, moves `[this+0x18]` to `+0x1c`,
 /// then zeroes `+0x3c`, `+0x18`, `+0x14` and the word at `+0x46`, sets
 /// `+0x40` to -1, and calls the drain entry (callee 2) with 0. The answer
@@ -15,7 +15,7 @@ lf_checker_rt::export!(thiscall, rw_00887BF0(this: u32) -> u32 {
         const DRAIN: u32 = 2;
         let a = ((this + 0x0c) as *const u32).read_unaligned();
         let b = ((this + 0x04) as *const u32).read_unaligned();
-        lf_checker_rt::callee_cdecl!(RELEASE, u32, a, 0, b);
+        lf_checker_rt::callee_cdecl!(RELEASE, u32, b, 0, a);
         let w = ((this + 0x42) as *const u16).read_unaligned();
         ((this + 0x44) as *mut u16).write_unaligned(w);
         let pos = ((this + 0x18) as *const u32).read_unaligned();

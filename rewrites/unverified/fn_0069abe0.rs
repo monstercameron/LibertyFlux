@@ -54,7 +54,8 @@ lf_checker_rt::export!(thiscall, rw_0069ABE0(this: u32, src: u32, count: u32, _u
             wr32(dst, last);
             wr32(dst.wrapping_add(4), rd32(p.wrapping_sub(4)));
             wr32(dst.wrapping_add(8), rd32(p));
-            wr32(dst.wrapping_add(12), rd32(p.wrapping_add(4)));
+            last = rd32(p.wrapping_add(4));
+            wr32(dst.wrapping_add(12), last);
             p = p.wrapping_add(16);
             i = i.wrapping_add(1);
         }

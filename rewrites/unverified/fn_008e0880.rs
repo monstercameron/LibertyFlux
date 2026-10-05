@@ -6,8 +6,9 @@
 /// `+0x00`, flag bytes at `+0x04`, stride at `+0x0c`), faulting through null
 /// when its `0x80` flag bit is set, and reads the successor index at entry
 /// `+0x0c`, returning 0 when it is -1. Otherwise runs the refresh (callee 1)
-/// on the pool context, then stores `table[scale * 100 + entry + 0x58] +
-/// successor` through `out` (where `scale` is the global at `SCALE`) and
+/// on the pool context, then stores `table[scale * 100 + answer + 0x58] +
+/// successor` through `out` (where `scale` is the global at `SCALE` and
+/// `answer` is the refresh call's return value, used as the row base) and
 /// returns 1. Cdecl, two stack arguments.
 lf_checker_rt::export!(cdecl, rw_008e0880(index: u32, out: u32) -> u32 {
     unsafe {
@@ -35,10 +36,10 @@ lf_checker_rt::export!(cdecl, rw_008e0880(index: u32, out: u32) -> u32 {
             return 0;
         }
         let scale = lf_checker_rt::global::<u32>(SCALE).read_unaligned();
-        lf_checker_rt::callee_thiscall!(CALLEE_REFRESH, u32, ctx);
+        let answer = lf_checker_rt::callee_thiscall!(CALLEE_REFRESH, u32, ctx);
         let cell_addr = scale
             .wrapping_mul(ROW_STRIDE)
-            .wrapping_add(entry)
+            .wrapping_add(answer)
             .wrapping_add(ROW_OFF);
         let cell = (cell_addr as *const u32).read_unaligned();
         (out as *mut u32).write_unaligned(cell.wrapping_add(next));

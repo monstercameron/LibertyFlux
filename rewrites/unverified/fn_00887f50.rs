@@ -9,8 +9,9 @@
 /// Original: 0x00887F50 (cdecl, one stack word).
 lf_checker_rt::export!(cdecl, rw_00887F50(arg: u32) -> u32 {
     unsafe {
-        const MANAGER: u32 = 0x0115_dc18;
+        const MANAGER_FILE_VA: u32 = 0x0115_dc18;
         const ENTRY: u32 = 1;
-        lf_checker_rt::callee_thiscall!(ENTRY, u32, MANAGER, arg & 0xffff)
+        let manager = lf_checker_rt::relocated(MANAGER_FILE_VA);
+        lf_checker_rt::callee_thiscall!(ENTRY, u32, manager, arg & 0xffff)
     }
 });
