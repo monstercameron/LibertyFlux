@@ -13,6 +13,18 @@
 //! also be logged (the stack arguments of a transport callee are left out
 //! of the call key, so an unlogged transported register would be compared
 //! nowhere), and the transported argument must be one the callee declares.
+//!
+//! The doubles extension (lane k-f64, unadopted) adds an 8-byte transport,
+//! `xmm_from_stack64: {"n": idx}`, for callees that take doubles in vector
+//! registers: on the rewrite side the stub loads the low 8 bytes of `XMMn`
+//! (`movsd`, upper half zeroed) from stack arguments `idx` (low word) and
+//! `idx + 1` (high word). It fails closed exactly like the 4-byte keys and
+//! refuses to share a register with them. The extension also adds
+//! `logxmm64_regs: [n, ...]`: logged registers whose comparison is only
+//! their low 8 bytes (the double the callee reads; a callee that takes one
+//! double per register never looks at the upper half, which may hold
+//! whatever an earlier conversion left there). The stub still logs all 16
+//! bytes; only the comparison narrows, and the contract records it.
 
 /// Number of XMM registers on a 32-bit x86 target.
 pub const XMM_REGS: usize = 8;
@@ -35,6 +47,15 @@ pub struct XmmCallCfg {
     /// `from_stack[n]`: on the rewrite side only, the stub loads `XMMn`
     /// (`movss`, 4 bytes, upper lanes zeroed) from this stack argument.
     pub from_stack: [Option<usize>; XMM_REGS],
+    /// `from_stack64[n]`: on the rewrite side only, the stub loads the low
+    /// 8 bytes of `XMMn` (`movsd`, upper half zeroed) from this stack
+    /// argument (low word) and the next one (high word). Doubles extension,
+    /// unset unless the contract asks.
+    pub from_stack64: [Option<usize>; XMM_REGS],
+    /// `cmp64[n]`: the call key compares only the low 8 bytes of the
+    /// logged `XMMn` (the double the callee reads). Doubles extension,
+    /// unset unless the contract asks.
+    pub cmp64: [bool; XMM_REGS],
 }
 
 /// The contract's vector-register options for one callee, as parsed.
@@ -52,6 +73,12 @@ pub struct XmmCallKeys {
     pub logxmm_regs: Vec<usize>,
     /// Version 5 `xmm_from_stack` as (register, stack argument) pairs.
     pub xmm_from_stack: Vec<(usize, usize)>,
+    /// Doubles extension `xmm_from_stack64` as (register, low stack
+    /// argument) pairs; the high word comes from the next argument.
+    pub xmm_from_stack64: Vec<(usize, usize)>,
+    /// Doubles extension `logxmm64_regs`: logged registers compared on
+    /// their low 8 bytes only.
+    pub logxmm64_regs: Vec<usize>,
 }
 
 impl XmmCallCfg {
@@ -60,8 +87,12 @@ impl XmmCallCfg {
     /// # Errors
     /// Returns a message for a register above 7, a version 5 transport
     /// that disagrees with the legacy key for the same register, a version 5
-    /// transport of an argument the callee does not declare, or a version 5
-    /// transported register that is not logged.
+    /// transport of an argument the callee does not declare, a version 5
+    /// transported register that is not logged, any doubles-extension
+    /// (`xmm_from_stack64`) entry that names a missing register, shares a
+    /// register with the 4-byte transport, reaches past the declared
+    /// arguments, or is not logged, or a `logxmm64_regs` entry that names
+    /// a missing register or one that is not logged.
     pub fn merge(id: u32, k: &XmmCallKeys, nargs: usize) -> Result<XmmCallCfg, String> {
         let mut c = XmmCallCfg::default();
         c.log[0] = k.logxmm;
@@ -99,6 +130,47 @@ impl XmmCallCfg {
             }
             c.from_stack[r] = Some(idx);
         }
+        // Doubles extension: same fail-closed rules, over a word pair, and
+        // never beside the 4-byte transport on the same register.
+        for &(r, idx) in &k.xmm_from_stack64 {
+            if r >= XMM_REGS {
+                return Err(format!(
+                    "callee {id} xmm_from_stack64 names xmm{r} (0-7 exist)"
+                ));
+            }
+            if c.from_stack[r].is_some() {
+                return Err(format!(
+                    "callee {id} transports xmm{r} as 4 bytes and 8 bytes (pick one)"
+                ));
+            }
+            if idx.saturating_add(1) >= nargs {
+                return Err(format!(
+                    "callee {id} xmm_from_stack64 loads xmm{r} from stack args {idx} and {}, but nargs is {nargs}",
+                    idx.saturating_add(1)
+                ));
+            }
+            if !c.log[r] {
+                return Err(format!(
+                    "callee {id} transports xmm{r} without logging it (add {r} to logxmm_regs): the argument would be compared nowhere"
+                ));
+            }
+            c.from_stack64[r] = Some(idx);
+        }
+        // A narrowed comparison of an unlogged register would read slots
+        // the stub never stores, so it is refused, not silently scoped.
+        for &r in &k.logxmm64_regs {
+            if r >= XMM_REGS {
+                return Err(format!(
+                    "callee {id} logxmm64_regs names xmm{r} (0-7 exist)"
+                ));
+            }
+            if !c.log[r] {
+                return Err(format!(
+                    "callee {id} narrows xmm{r} to 8 bytes without logging it (add {r} to logxmm_regs)"
+                ));
+            }
+            c.cmp64[r] = true;
+        }
         Ok(c)
     }
 
@@ -107,6 +179,7 @@ impl XmmCallCfg {
     #[must_use]
     pub fn any_transport(&self) -> bool {
         self.from_stack.iter().any(Option::is_some)
+            || self.from_stack64.iter().any(Option::is_some)
     }
 
     /// Logged registers above XMM1, in register order (the extension log).
@@ -153,6 +226,17 @@ fn reg_field(reg: usize) -> u8 {
 #[must_use]
 pub fn movss_from_esp(reg: usize, disp: u32) -> Vec<u8> {
     let mut v = vec![0xF3, 0x0F, 0x10, 0x84 | reg_field(reg), 0x24];
+    v.extend_from_slice(&disp.to_le_bytes());
+    v
+}
+
+/// `movsd xmm<reg>, [esp + disp]` with a SIB byte and a 32-bit
+/// displacement (9 bytes): the doubles-extension transport. It moves the
+/// low 8 bytes (a double across two stack words) and zeroes the upper half,
+/// so the compared register is fully determined by the two words.
+#[must_use]
+pub fn movsd_from_esp(reg: usize, disp: u32) -> Vec<u8> {
+    let mut v = vec![0xF2, 0x0F, 0x10, 0x84 | reg_field(reg), 0x24];
     v.extend_from_slice(&disp.to_le_bytes());
     v
 }
@@ -254,6 +338,85 @@ mod tests {
     }
 
     #[test]
+    fn doubles_transport_needs_a_logged_word_pair() {
+        let k = XmmCallKeys {
+            logxmm_regs: vec![0, 1],
+            xmm_from_stack64: vec![(0, 0), (1, 2)],
+            ..keys()
+        };
+        let c = XmmCallCfg::merge(6, &k, 4).unwrap();
+        assert_eq!(c.from_stack64[0], Some(0));
+        assert_eq!(c.from_stack64[1], Some(2));
+        assert!(c.any_transport());
+        // The default is untouched: no 8-byte transport without the key.
+        let plain = XmmCallCfg::merge(6, &keys(), 0).unwrap();
+        assert!(plain.from_stack64.iter().all(Option::is_none));
+    }
+
+    #[test]
+    fn doubles_transport_fails_closed() {
+        let bad_reg = XmmCallKeys {
+            logxmm_regs: vec![0],
+            xmm_from_stack64: vec![(8, 0)],
+            ..keys()
+        };
+        assert!(XmmCallCfg::merge(1, &bad_reg, 2).is_err());
+        let unlogged = XmmCallKeys {
+            xmm_from_stack64: vec![(3, 0)],
+            ..keys()
+        };
+        let e = XmmCallCfg::merge(1, &unlogged, 2).unwrap_err();
+        assert!(e.contains("compared nowhere"), "{e}");
+        // The high word must be declared too: idx + 1 < nargs.
+        let past_nargs = XmmCallKeys {
+            logxmm_regs: vec![0],
+            xmm_from_stack64: vec![(0, 1)],
+            ..keys()
+        };
+        assert!(XmmCallCfg::merge(1, &past_nargs, 2).is_err());
+        // Never beside the 4-byte transport on the same register.
+        let clash = XmmCallKeys {
+            logxmm: true,
+            xmm0_from_stack: Some(0),
+            xmm_from_stack64: vec![(0, 1)],
+            ..keys()
+        };
+        let e = XmmCallCfg::merge(1, &clash, 3).unwrap_err();
+        assert!(e.contains("4 bytes and 8 bytes"), "{e}");
+        let clash5 = XmmCallKeys {
+            logxmm_regs: vec![2],
+            xmm_from_stack: vec![(2, 0)],
+            xmm_from_stack64: vec![(2, 1)],
+            ..keys()
+        };
+        assert!(XmmCallCfg::merge(1, &clash5, 3).is_err());
+    }
+
+    #[test]
+    fn narrowed_comparison_needs_a_logged_register() {
+        let k = XmmCallKeys {
+            logxmm_regs: vec![0, 1],
+            logxmm64_regs: vec![0],
+            ..keys()
+        };
+        let c = XmmCallCfg::merge(6, &k, 0).unwrap();
+        assert!(c.cmp64[0] && !c.cmp64[1]);
+        let plain = XmmCallCfg::merge(6, &keys(), 0).unwrap();
+        assert!(plain.cmp64.iter().all(|&b| !b));
+        let bad_reg = XmmCallKeys {
+            logxmm64_regs: vec![9],
+            ..keys()
+        };
+        assert!(XmmCallCfg::merge(1, &bad_reg, 0).is_err());
+        let unlogged = XmmCallKeys {
+            logxmm64_regs: vec![1],
+            ..keys()
+        };
+        let e = XmmCallCfg::merge(1, &unlogged, 0).unwrap_err();
+        assert!(e.contains("without logging it"), "{e}");
+    }
+
+    #[test]
     fn slots_keep_legacy_offsets_and_extend_past_them() {
         assert_eq!(slot(0), XmmSlot::Base(224));
         assert_eq!(slot(1), XmmSlot::Base(240));
@@ -278,5 +441,17 @@ mod tests {
         assert_eq!(&v[10..14], &232u32.to_le_bytes());
         assert_eq!(log_store(1, 240)[2], 0x88);
         assert_eq!(log_store(7, 0)[2], 0xB8);
+    }
+
+    #[test]
+    fn movsd_transport_matches_movss_shape_with_f2_prefix() {
+        // Same 9-byte SIB form as movss_from_esp, only the prefix differs
+        // (F2 = movsd, F3 = movss), so the stub's je +9 skip fits both.
+        assert_eq!(
+            movsd_from_esp(0, 4),
+            vec![0xF2, 0x0F, 0x10, 0x84, 0x24, 4, 0, 0, 0]
+        );
+        assert_eq!(movsd_from_esp(1, 12)[3], 0x8C);
+        assert_eq!(movsd_from_esp(7, 0)[3], 0xBC);
     }
 }

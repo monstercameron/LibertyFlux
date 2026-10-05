@@ -516,6 +516,24 @@ def semantic_errors(contract, limits):
             for reg, idx in c["xmm_from_stack"].items():
                 if isinstance(idx, int) and nargs and idx >= nargs:
                     err(("callees", ci, "xmm_from_stack", reg), f"stack argument {idx} is past nargs {nargs}", "range")
+        if isinstance(c.get("xmm_from_stack64"), dict):
+            logged = set(c.get("logxmm_regs") or [])
+            if c.get("logxmm"):
+                logged.add(0)
+            if c.get("logxmm1"):
+                logged.add(1)
+            narrow = set(c.get("xmm_from_stack") or {})
+            if c.get("xmm0_from_stack") is not None:
+                narrow.add("0")
+            if c.get("xmm1_from_stack") is not None:
+                narrow.add("1")
+            for reg, idx in c["xmm_from_stack64"].items():
+                if isinstance(idx, int) and nargs and idx + 1 >= nargs:
+                    err(("callees", ci, "xmm_from_stack64", reg), f"stack arguments {idx} and {idx + 1} reach past nargs {nargs}", "range")
+                if str(reg) in narrow:
+                    err(("callees", ci, "xmm_from_stack64", reg), "the same register has a 4-byte transport too (the worker rejects it: pick one)", "form")
+                if to_int(reg) is not None and to_int(reg) not in logged:
+                    err(("callees", ci, "xmm_from_stack64", reg), "transported register is not logged (the worker rejects it: the argument would be uncompared)", "form")
         cid = c.get("id")
         regs = checks.get("call_regs", {}).get(str(cid)) if isinstance(checks.get("call_regs"), dict) else None
         wants_eax = isinstance(regs, list) and "eax" in regs
@@ -523,6 +541,15 @@ def semantic_errors(contract, limits):
             err(("checks", "call_regs", str(cid)), "selects eax without the callee's eax_from_stack transport (the worker rejects it)", "form")
         if "eax_from_stack" in c and not wants_eax:
             err(("callees", ci, "eax_from_stack"), "eax transport without call_regs selecting eax (the worker rejects it: the argument would be uncompared)", "form")
+        if isinstance(c.get("logxmm64_regs"), list):
+            logged = set(c.get("logxmm_regs") or [])
+            if c.get("logxmm"):
+                logged.add(0)
+            if c.get("logxmm1"):
+                logged.add(1)
+            for reg in c["logxmm64_regs"]:
+                if isinstance(reg, int) and reg not in logged:
+                    err(("callees", ci, "logxmm64_regs"), f"xmm{reg} is narrowed without being logged (the worker rejects it)", "form")
     if isinstance(checks.get("call_mask"), dict):
         for cid, per in checks["call_mask"].items():
             if isinstance(per, dict):
@@ -603,9 +630,12 @@ def narrowing(contract):
                 idxs = sorted(per) if isinstance(per, dict) else per
                 add(f"call-mask:{cid}", f"callee {cid} arguments {idxs} are compared through a mask ({key})")
     for cid, callee in sorted((k, v) for k, v in callees.items() if isinstance(k, int)):
-        transports = [k for k in ("xmm0_from_stack", "xmm1_from_stack", "eax_from_stack", "xmm_from_stack") if k in callee]
+        transports = [k for k in ("xmm0_from_stack", "xmm1_from_stack", "eax_from_stack", "xmm_from_stack", "xmm_from_stack64") if k in callee]
         if transports and callee.get("nargs", 0) > 1:
             add(f"transport-skips-args:{cid}", f"callee {cid} uses {', '.join(transports)}: its {callee.get('nargs')} stack arguments are not compared, only the transported register")
+        cmp64 = callee.get("logxmm64_regs")
+        if isinstance(cmp64, list) and cmp64:
+            add(f"xmm-cmp64:{cid}", f"callee {cid} vector registers {sorted(cmp64)} compare only their low 8 bytes (the upper halves are not compared)")
     if "mut_export" not in contract:
         add("no-mut-export", "no wrong version is declared: nothing shows the contract can see a change")
     share = contract.get("min_orig_ok_share")

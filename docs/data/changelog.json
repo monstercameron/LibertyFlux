@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Checker: version 6 carries doubles in vector registers",
+    "commit": null,
+    "summary": "The checker ability whose absence was deferring the most functions is installed.",
+    "changes": [
+      "A callee that takes doubles in vector registers, or returns one, can now be stood in for and compared: a contract may ask for an 8-byte transport per register, a scripted double answer that the rewrite reads as a 64-bit return, doubles in a callee's script, and double entry values. Every option is off unless a contract asks and is recorded in the verdict. A preflight scan of the game's code finds 989 functions, holding 932,000 bytes, that very probably need it.",
+      "One option narrows a comparison: a logged vector register may be compared on its low 8 bytes only, for a callee that reads one double per register. The call key then takes a visibly different form, and lanes list it as a narrowing.",
+      "How it was installed: written by a checker lane in a scratch copy; the worker's and the driver's changes read in full by the coordinator; built from the tree into its own folder; then two regressions against the game's executable before the swap. With the new driver and the new worker, all 38 existing proofs and 34 wrong versions give the verdicts on record and the four new proofs behave as designed. With the driver that running lanes already hold and the new worker, the same 38 and 34 match. The version 5 worker and proof library are kept beside the new ones.",
+      "It was installed while lanes were running, which the earlier rule forbade. The rule was written when a change also touched the runtime crate that lanes build against; this one does not, each lane works from its own copy of the driver, and the one new combination a running lane can meet was tested first.",
+      "The scripts that rank checker versions and the lane-results schema know version 6."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 6 files from lanes (324 unverified rewrites, 38 in review)",
     "commit": "534e5719c8e10fb773ce653e2b664bc4bf30ab68",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

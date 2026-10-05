@@ -22,7 +22,7 @@
   "size": {"description": "Size in bytes, from the repaired inventory.", "type": ["integer", "null"], "minimum": 0},
   "outcome": {
    "description": "What happened. The verified forms are scan.PASSED (sync_rewrites.py imports only those); deferred needs a reason; not_reached and not yet run (brief note 15: every row starts as not yet run) leave the function to be released; failed forms have been seen from re-run lanes.",
-   "enum": ["verified", "verified_v2", "verified_v3", "verified_v4", "verified_v5", "deferred", "not_reached", "not yet run",
+   "enum": ["verified", "verified_v2", "verified_v3", "verified_v4", "verified_v5", "verified_v6", "deferred", "not_reached", "not yet run",
             "failed", "failed_v2", "failed_v3", "failed_v4"]
   },
   "reason": {
@@ -60,7 +60,7 @@
   },
   {
    "$comment": "A pass carries what AGENTS.md rule 3 asks of it: trials, the wrong version's result (which must have been caught), what narrowed the proof, and the checker and brief versions.",
-   "if": {"required": ["outcome"], "properties": {"outcome": {"enum": ["verified", "verified_v2", "verified_v3", "verified_v4", "verified_v5"]}}},
+   "if": {"required": ["outcome"], "properties": {"outcome": {"enum": ["verified", "verified_v2", "verified_v3", "verified_v4", "verified_v5", "verified_v6"]}}},
    "then": {
     "required": ["trials", "mutant_caught", "narrowed", "checker", "brief"],
     "properties": {

@@ -1161,6 +1161,95 @@ export!(cdecl, mut_k5_xmm(a: u32, b: u32) -> u32 {
     xmm_word(6, 0)
 });
 
+/// Bit-exact widening of f32 bits to f64 bits, as `cvtss2sd` does: exact
+/// values, infinities kept, NaNs quieted with the payload preserved,
+/// denormals normalised, signed zeros kept. (A plain `as f64` widens
+/// values but its NaN payload handling is not pinned down, so the proof
+/// does the conversion on bits.)
+fn cvtss2sd_bits(a: u32) -> u64 {
+    let sign = u64::from(a >> 31) << 63;
+    let e = (a >> 23) & 0xFF;
+    let f = u64::from(a & 0x7F_FFFF);
+    if e == 0xFF {
+        if f == 0 {
+            return sign | 0x7FF0_0000_0000_0000; // infinity
+        }
+        return sign | 0x7FF8_0000_0000_0000 | (f << 29); // NaN, quieted
+    }
+    if e == 0 {
+        if f == 0 {
+            return sign; // signed zero
+        }
+        // Denormal: value = f * 2^-149 = m * 2^(-127-lz) with m in [1,2).
+        let lz = (f as u32).leading_zeros() - 9; // 0..=22 within 23 bits
+        let exp = 896 - lz; // 1023 - 127 - lz
+        let frac = ((f << (lz + 1)) & 0x7F_FFFF) << 29;
+        return sign | (u64::from(exp) << 52) | frac;
+    }
+    sign | (u64::from(e + 896) << 52) | (f << 29)
+}
+
+/// Low and high words of a double, the order `xmm_from_stack64` takes them.
+fn lo_hi(d: u64) -> (u32, u32) {
+    ((d & 0xFFFF_FFFF) as u32, ((d >> 32) & 0xFFFF_FFFF) as u32)
+}
+
+// k6_f64 (selftest:f64_call, doubles extension): the original widens two
+// f32 stack words to doubles in XMM0/XMM1, calls callee 1 with no stack
+// arguments, stores the double answer from XMM0 at p and returns its low
+// word. The rewrite passes each double as two stack words (the stub moves
+// them into XMM0/XMM1 on the rewrite side) and reads the answer as the
+// callee's u64 return; the logged registers compare bit for bit.
+export!(cdecl, rw_k6_f64(a: u32, b: u32, p: *mut u32) -> u32 {
+    let (a0, a1) = lo_hi(cvtss2sd_bits(a));
+    let (b0, b1) = lo_hi(cvtss2sd_bits(b));
+    let ans: u64 = callee_cdecl!(1, u64, a0, a1, b0, b1);
+    unsafe {
+        (p as *mut u64).write_unaligned(ans);
+        *p
+    }
+});
+
+// Mutant (k6_f64arg): the first double argument negated. Without the
+// 8-byte transport the doubles at the call are unobservable and this
+// passes (see k6_f64neg).
+export!(cdecl, mut_k6_f64_arg(a: u32, b: u32, p: *mut u32) -> u32 {
+    let (a0, a1) = lo_hi(cvtss2sd_bits(a) ^ 0x8000_0000_0000_0000);
+    let (b0, b1) = lo_hi(cvtss2sd_bits(b));
+    let ans: u64 = callee_cdecl!(1, u64, a0, a1, b0, b1);
+    unsafe {
+        (p as *mut u64).write_unaligned(ans);
+        *p
+    }
+});
+
+// Mutant (k6_f64ans): the double answer ignored, a constant stored. The
+// stub answers the same double on both sides, so only the rewrite's use
+// of the answer differs; the heap check sees it.
+export!(cdecl, mut_k6_f64_ans(a: u32, b: u32, p: *mut u32) -> u32 {
+    let (a0, a1) = lo_hi(cvtss2sd_bits(a));
+    let (b0, b1) = lo_hi(cvtss2sd_bits(b));
+    let _: u64 = callee_cdecl!(1, u64, a0, a1, b0, b1);
+    unsafe {
+        (p as *mut u64).write_unaligned(0);
+        *p
+    }
+});
+
+// k6_f64entry (selftest:xmm_wide, doubles extension): the original returns
+// word 3 of the XMM6 entry value; the rewrite reads the same word from
+// the entry mirror. The contract scripts two per-trial doubles there, so
+// this proves the entry path carries all 16 bytes per register (and that
+// the "double" entry form varies them per trial, like "float" does).
+export!(cdecl, rw_k6_f64entry() -> u32 {
+    xmm_word(6, 3)
+});
+
+// Mutant: reads word 2 instead of word 3.
+export!(cdecl, mut_k6_f64entry() -> u32 {
+    xmm_word(6, 2)
+});
+
 // k5_abs (selftest:abs_read with abs_shadow): the original reads a dword
 // through an absolute file address with no relocation; the rewrite reads
 // the same datum through the relocated image, as rewrites must.

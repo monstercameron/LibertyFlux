@@ -178,11 +178,14 @@
       },
       {
        "const": "float"
+      },
+      {
+       "const": "double"
       }
      ]
     }
    },
-   "description": "Scripted XMM entry values, {reg: [up to 4 words]}; registers 0-7 (the worker loads all eight)."
+   "description": "Scripted XMM entry values, {reg: [up to 4 words]}; registers 0-7 (the worker loads all eight). \"double\" at an even word index fills that word and the next with one per-trial double."
   },
   "x87": {
    "x-pending": "x87 entry values (checker extension in progress: the worker takes up to eight [lo, hi, sexp] triples, st0 first); the driver's contract form is not settled, so only the type and the eight-entry limit are checked.",
@@ -529,9 +532,33 @@
        "$ref": "#/definitions/wordSpec"
       }
      }
+    },
+    {
+     "type": "object",
+     "required": [
+      "double"
+     ],
+     "additionalProperties": false,
+     "properties": {
+      "double": {
+       "anyOf": [
+        {
+         "type": "integer",
+         "minimum": 0,
+         "maximum": 18446744073709551615
+        },
+        {
+         "enum": [
+          "edges",
+          "random"
+         ]
+        }
+       ]
+      }
+     }
     }
    ],
-   "description": "A scripted callee answer: a word spec, or {lo, hi} for 64-bit answers."
+   "description": "A scripted callee answer: a word spec, {lo, hi} for 64-bit answers, or {double} for a scripted double (bits, edges or random)."
   },
   "regSpec": {
    "anyOf": [
@@ -1064,7 +1091,8 @@
       "f64xmm0",
       "f32st0",
       "f64st0",
-      "preserve"
+      "preserve",
+      "f64xmm0edx"
      ]
     },
     "script": {
@@ -1130,6 +1158,15 @@
      },
      "description": "v5: log these XMM registers (0-7) at the call."
     },
+    "logxmm64_regs": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 7
+     },
+     "description": "Doubles extension: logged registers compared on their low 8 bytes only."
+    },
     "xmm_from_stack": {
      "type": "object",
      "propertyNames": {
@@ -1140,6 +1177,17 @@
       "minimum": 0
      },
      "description": "v5: {register: stack argument} transports for XMM0-XMM7 on the rewrite side."
+    },
+    "xmm_from_stack64": {
+     "type": "object",
+     "propertyNames": {
+      "pattern": "^[0-7]$"
+     },
+     "additionalProperties": {
+      "type": "integer",
+      "minimum": 0
+     },
+     "description": "Doubles extension: {register: low stack argument} 8-byte transports for XMM0-XMM7 on the rewrite side (the high word comes from the next argument)."
     },
     "seq": {
      "type": "array",

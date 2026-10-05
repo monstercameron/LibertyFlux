@@ -125,7 +125,7 @@ class TestEdgeCases(unittest.TestCase):
 
     def test_constants_agree(self):
         self.assertEqual(set(scan.MODERN), {v for v, r in scan.RANK.items() if r >= 2})
-        self.assertEqual({p for p in scan.PASSED if p != "verified"}, {f"verified_v{r}" for r in (2, 3, 4, 5)})
+        self.assertEqual({p for p in scan.PASSED if p != "verified"}, {f"verified_v{r}" for r in (2, 3, 4, 5, 6)})
         for version in scan.RANK:
             self.assertEqual(scan.short_version(version), "v" + version[-1])
 

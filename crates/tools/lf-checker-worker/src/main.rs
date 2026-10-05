@@ -1047,6 +1047,14 @@ fn trampoline_bytes() -> (Vec<u8>, usize) {
 // - xmm_call (cdecl, a, b): xmm2 = a, xmm5 = b (movd, upper lanes zero),
 //   call callee 1 through the stub table with no stack arguments, return
 //   the low word of the xmm6 entry value.
+// - f64_call (cdecl, a, b, p; doubles extension): xmm0 = (double)a,
+//   xmm1 = (double)b (cvtss2sd, upper halves zero), call callee 1 through
+//   the stub table with no stack arguments, store the double answer from
+//   xmm0 at p, return its low word. The game pattern: floats widened to
+//   doubles across a helper call.
+// - xmm_wide (cdecl; doubles extension): return word 3 (the high word of
+//   the high double) of the XMM6 entry value, proving the entry path
+//   carries all 16 bytes per register to both sides.
 // - abs_read (cdecl, addr): return the dword at addr, an absolute address
 //   used as is (the shape of an unrelocated absolute operand).
 fn build_selftests() {
@@ -1097,6 +1105,29 @@ fn selftest_code(base: usize, ctab1: u32) -> (Vec<u8>, HashMap<String, u32>) {
         0xC3, // ret
     ]);
     add("xmm_call", &xc);
+    let mut fc: Vec<u8> = vec![
+        0xF3, 0x0F, 0x10, 0x44, 0x24, 0x04, // movss xmm0,[esp+4]
+        0xF3, 0x0F, 0x5A, 0xC0, // cvtss2sd xmm0,xmm0
+        0xF3, 0x0F, 0x10, 0x4C, 0x24, 0x08, // movss xmm1,[esp+8]
+        0xF3, 0x0F, 0x5A, 0xC9, // cvtss2sd xmm1,xmm1
+        0xFF, 0x15, // call [ctable+4]
+    ];
+    fc.extend_from_slice(&ctab1.to_le_bytes());
+    fc.extend_from_slice(&[
+        0x8B, 0x4C, 0x24, 0x0C, // mov ecx,[esp+12]
+        0x0F, 0x13, 0x01, // movlps [ecx],xmm0
+        0x8B, 0x01, // mov eax,[ecx]
+        0xC3, // ret
+    ]);
+    add("f64_call", &fc);
+    add(
+        "xmm_wide",
+        &[
+            0x66, 0x0F, 0x70, 0xC6, 0xFF, // pshufd xmm0,xmm6,0xFF
+            0x66, 0x0F, 0x7E, 0xC0, // movd eax,xmm0
+            0xC3, // ret
+        ],
+    );
     add(
         "abs_read",
         &[
@@ -1282,6 +1313,25 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
         t.extend_from_slice(&[0x74, 0x09]); // je +9 (skip the 9-byte movss)
         // movss xmm<reg>,[esp+4+idx*4]
         t.extend_from_slice(&vecregs::movss_from_esp(reg, 4 + idx as u32 * 4));
+    }
+    // Doubles extension (lane k-f64, opt-in per callee): on the rewrite
+    // side only, load the low 8 bytes of the register (a double across two
+    // stack words) before logging it. The encoding is the same 9-byte SIB
+    // form with the movsd prefix, so the je +9 skip fits unchanged, and
+    // callees without the key emit byte-identical stubs.
+    for (reg, idx) in c
+        .xmm
+        .from_stack64
+        .iter()
+        .enumerate()
+        .filter_map(|(r, i)| i.map(|i| (r, i)))
+    {
+        t.extend_from_slice(&[0x83, 0x3D]); // cmp dword [m_side],0
+        u(&mut t, s.m_side);
+        t.push(0x00);
+        t.extend_from_slice(&[0x74, 0x09]); // je +9 (skip the 9-byte movsd)
+        // movsd xmm<reg>,[esp+4+idx*4] (words idx,idx+1; upper half zeroed)
+        t.extend_from_slice(&vecregs::movsd_from_esp(reg, 4 + idx as u32 * 4));
     }
     // v4 rewrite-side transport for eax-arg callees (lane r-s111): on the
     // rewrite side only, load eax from the declared stack arg. A Rust
@@ -1493,6 +1543,16 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
             t.extend_from_slice(&[0x0F, 0x12, 0x02]); // movlps xmm0,[edx]
             t.extend_from_slice(&[0x8B, 0x02]); // mov eax,[edx] too
         }
+        // Doubles extension (lane k-f64, opt-in per callee): the scripted
+        // double answers in XMM0 for the original and in edx:eax for the
+        // rewrite, which reads it as a u64 return (a Rust rewrite cannot
+        // read XMM0 after a call, so f64xmm0's eax-only mirror left the
+        // high word unobservable there).
+        "f64xmm0edx" => {
+            t.extend_from_slice(&[0x0F, 0x12, 0x02]); // movlps xmm0,[edx]
+            t.extend_from_slice(&[0x8B, 0x02]); // mov eax,[edx] (low word)
+            t.extend_from_slice(&[0x8B, 0x52, 0x04]); // mov edx,[edx+4] (high word)
+        }
         "f32st0" => {
             t.extend_from_slice(&[0xD9, 0x02]); // fld dword [edx]
             t.extend_from_slice(&[0x8B, 0x02]); // mov eax,[edx]
@@ -1530,7 +1590,9 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
     if c.preserve {
         t.extend_from_slice(&[0x8B, 0x0D]);
         u(&mut t, s.m_save_ecx); // mov ecx,[m_save_ecx]
-        if c.ret != "u64" {
+        // edx carries the high word for u64 and for the doubles extension's
+        // f64xmm0edx answer, so it is not restored for either.
+        if c.ret != "u64" && c.ret != "f64xmm0edx" {
             t.extend_from_slice(&[0x8B, 0x15]);
             u(&mut t, s.m_save_edx); // mov edx,[m_save_edx]
         }
@@ -2855,16 +2917,28 @@ fn callkey(c: &CallRec, checks: &J) -> String {
         k.push_str(&format!(" snap={:?}", c.4));
     }
     if cal.xmm.log[0] {
-        k.push_str(&format!(" xmm0={:?}", c.5));
+        k.push_str(&xmm_key(0, &c.5, cal.xmm.cmp64[0]));
     }
     if cal.xmm.log[1] {
-        k.push_str(&format!(" xmm1={:?}", c.6));
+        k.push_str(&xmm_key(1, &c.6, cal.xmm.cmp64[1]));
     }
     // v5: XMM2-XMM7, in register order.
     for (r, w) in &c.8 {
-        k.push_str(&format!(" xmm{}={:?}", r, w));
+        k.push_str(&xmm_key(*r, w, cal.xmm.cmp64[usize::from(*r)]));
     }
     k
+}
+
+// One logged vector register's call-key fragment. Registers the doubles
+// extension's `logxmm64_regs` names compare only their low 8 bytes (the
+// double the callee reads); the two-word form marks the narrowing in
+// every mismatch, so a narrowed key never looks full.
+fn xmm_key(reg: u8, w: &[u32; 4], cmp64: bool) -> String {
+    if cmp64 {
+        format!(" xmm{}=[{}, {}]", reg, w[0], w[1])
+    } else {
+        format!(" xmm{}={:?}", reg, w)
+    }
 }
 
 fn lims(v: &[String], n: usize) -> Vec<String> {
@@ -3030,6 +3104,21 @@ fn parse_xmm(c: &J, id: u32, nargs: usize) -> Result<vecregs::XmmCallCfg, String
                 .push(usize::try_from(*n).unwrap_or(usize::MAX));
         }
     }
+    if let Some(v) = c.get("logxmm64_regs") {
+        let J::Arr(a) = v else {
+            return Err(format!("callee {} logxmm64_regs must be a list", id));
+        };
+        for r in a {
+            let J::Int(n) = r else {
+                return Err(format!(
+                    "callee {} logxmm64_regs entries must be integers",
+                    id
+                ));
+            };
+            keys.logxmm64_regs
+                .push(usize::try_from(*n).unwrap_or(usize::MAX));
+        }
+    }
     if let Some(v) = c.get("xmm_from_stack") {
         let J::Obj(m) = v else {
             return Err(format!(
@@ -3055,6 +3144,34 @@ fn parse_xmm(c: &J, id: u32, nargs: usize) -> Result<vecregs::XmmCallCfg, String
         }
         pairs.sort_unstable();
         keys.xmm_from_stack = pairs;
+    }
+    // Doubles extension (lane k-f64): same shape as xmm_from_stack; the
+    // high word comes from the next argument. Absent by default.
+    if let Some(v) = c.get("xmm_from_stack64") {
+        let J::Obj(m) = v else {
+            return Err(format!(
+                "callee {} xmm_from_stack64 must be an object {{reg: idx}}",
+                id
+            ));
+        };
+        let mut pairs = Vec::new();
+        for (k, idx) in m {
+            let reg = k.parse::<usize>().map_err(|_| {
+                format!(
+                    "callee {} xmm_from_stack64 key {:?} is not a register number",
+                    id, k
+                )
+            })?;
+            let J::Int(i) = idx else {
+                return Err(format!(
+                    "callee {} xmm_from_stack64 index must be an integer",
+                    id
+                ));
+            };
+            pairs.push((reg, usize::try_from(*i).unwrap_or(usize::MAX)));
+        }
+        pairs.sort_unstable();
+        keys.xmm_from_stack64 = pairs;
     }
     vecregs::XmmCallCfg::merge(id, &keys, nargs)
 }
@@ -4119,6 +4236,21 @@ mod tests {
         assert!(l.log[1] && l.from_stack[1] == Some(0) && l.ext_logged().is_empty());
     }
 
+    #[test]
+    fn parse_xmm_doubles_transport() {
+        let c = j(r#"{"logxmm_regs":[0,1],"xmm_from_stack64":{"0":0,"1":2}}"#);
+        let x = parse_xmm(&c, 6, 4).unwrap();
+        assert_eq!(x.from_stack64[0], Some(0));
+        assert_eq!(x.from_stack64[1], Some(2));
+        assert!(x.any_transport());
+        assert!(parse_xmm(&j(r#"{"xmm_from_stack64":{"0":0}}"#), 1, 2).is_err());
+        assert!(parse_xmm(&j(r#"{"xmm_from_stack64":"0"}"#), 1, 2).is_err());
+        let n = j(r#"{"logxmm_regs":[0],"logxmm64_regs":[0]}"#);
+        let y = parse_xmm(&n, 6, 0).unwrap();
+        assert!(y.cmp64[0] && !y.cmp64[1]);
+        assert!(parse_xmm(&j(r#"{"logxmm64_regs":[1]}"#), 1, 0).is_err());
+    }
+
     // --- fill and hash helpers -----------------------------------------
 
     #[test]
@@ -4282,6 +4414,48 @@ mod tests {
             assert!(contains(&b, &vecregs::log_store(2, ext)));
             assert!(contains(&b, &vecregs::log_store(7, ext + 80)));
             assert!(!contains(&b, &vecregs::movss_from_esp(7, 4)));
+        });
+    }
+
+    #[test]
+    fn stub_emits_movsd_transport_and_mirrored_double_answer() {
+        with_state(|_| {
+            let mut c = callee(1);
+            c.xmm = vecregs::XmmCallCfg::merge(
+                1,
+                &vecregs::XmmCallKeys {
+                    logxmm_regs: vec![0, 1],
+                    xmm_from_stack64: vec![(0, 0), (1, 2)],
+                    ..Default::default()
+                },
+                4,
+            )
+            .unwrap();
+            c.ret = "f64xmm0edx".to_string();
+            let b = emit_stub(&c, None);
+            // 8-byte transports from the word pairs, skipped on the
+            // original side by the same je +9 as the 4-byte form.
+            assert!(contains(&b, &vecregs::movsd_from_esp(0, 4)));
+            assert!(contains(&b, &vecregs::movsd_from_esp(1, 12)));
+            assert!(!contains(&b, &vecregs::movss_from_esp(0, 4)));
+            // The answer lands in XMM0 and in edx:eax together.
+            assert!(contains(&b, &[0x0F, 0x12, 0x02, 0x8B, 0x02, 0x8B, 0x52, 0x04]));
+            // Without the keys the stub has neither the transport nor the
+            // edx mirror.
+            let mut plain = callee(1);
+            plain.xmm = vecregs::XmmCallCfg::merge(
+                1,
+                &vecregs::XmmCallKeys {
+                    logxmm: true,
+                    ..Default::default()
+                },
+                0,
+            )
+            .unwrap();
+            plain.ret = "f64xmm0".to_string();
+            let p = emit_stub(&plain, None);
+            assert!(!contains(&p, &[0xF2, 0x0F, 0x10]));
+            assert!(!contains(&p, &[0x8B, 0x52, 0x04]));
         });
     }
 
@@ -4492,6 +4666,46 @@ mod tests {
             let key = callkey(&a.calls[0], &j("{}"));
             assert!(
                 key.contains("args=transport") && key.contains("xmm2=[9, 0, 0, 0]"),
+                "{key}"
+            );
+        });
+    }
+
+    #[test]
+    fn narrowed_registers_compare_their_low_double_only() {
+        with_state(|s| {
+            let mut cal = callee(6);
+            cal.nargs = 4;
+            cal.xmm.log[0] = true;
+            cal.xmm.cmp64[0] = true;
+            cal.xmm.log[1] = true;
+            s.callees.insert(6, cal);
+            let rec = |x0: [u32; 4], x1: [u32; 4]| {
+                (
+                    6,
+                    0,
+                    0,
+                    vec![1, 2, 3, 4],
+                    vec![],
+                    x0,
+                    x1,
+                    0,
+                    Vec::new(),
+                )
+            };
+            let a = rec([11, 22, 33, 44], [1, 2, 3, 4]);
+            // Upper-half-only drift on the narrowed register is invisible.
+            let b = rec([11, 22, 77, 88], [1, 2, 3, 4]);
+            assert_eq!(callkey(&a, &j("{}")), callkey(&b, &j("{}")));
+            // A low-word drift is still caught, bit for bit.
+            let c = rec([11, 23, 33, 44], [1, 2, 3, 4]);
+            assert_ne!(callkey(&a, &j("{}")), callkey(&c, &j("{}")));
+            // The un-narrowed register still compares all four words.
+            let d = rec([11, 22, 33, 44], [1, 2, 3, 5]);
+            assert_ne!(callkey(&a, &j("{}")), callkey(&d, &j("{}")));
+            let key = callkey(&a, &j("{}"));
+            assert!(
+                key.contains("xmm0=[11, 22]") && key.contains("xmm1=[1, 2, 3, 4]"),
                 "{key}"
             );
         });

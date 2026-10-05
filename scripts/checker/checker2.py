@@ -40,6 +40,11 @@ built-in self-test originals for the checker's own regression. One v5
 change is not opt-in: the worker holds the preferred-base window, so an
 unrelocated absolute access by the original faults loudly instead of
 silently reading worker memory (see "Unrelocated absolute accesses").
+The doubles extension (lane k-f64, unadopted) adds, likewise opt-in per
+contract and recorded in `features`: an 8-byte rewrite-side transport
+for doubles in vector registers (`xmm_from_stack64`), a double answer
+the rewrite can read (`ret: "f64xmm0edx"`), scripted doubles
+(`{"double": ...}`), and per-trial double XMM entry values (`"double").
 
 What it is
 ----------
@@ -139,9 +144,15 @@ One JSON file per function:
   seq,preserve}]. `conv` sets cleanup
   (`cdecl` callers clean up, all others pop nargs*4); `ret` is the
   scripted answer channel (`u32`, `u64`, `al`, `f32xmm0`, `f64xmm0`,
-  `f32st0`, `f64st0`, and v4 `preserve`); `script` is a value list cycled per trial (each
+  `f32st0`, `f64st0`, v4 `preserve`, and the doubles extension's
+  `f64xmm0edx`: the scripted double answers in XMM0 for the original and
+  in edx:eax for the rewrite, which reads it as a u64 return); `script`
+  is a value list cycled per trial (each
   callee gets its own slot), `"edges"`, or entries resolving to heap
-  pointers. `writes` declares out-param stores:
+  pointers. A script or `seq` entry may be `{"double": bits}` (an f64 as
+  an integer), `{"double": "edges"}` (the f64 edge pool cycled per
+  trial), or `{"double": "random"}` (a drawn double): the two words
+  reach the stub as lo and hi. `writes` declares out-param stores:
   [{arg:N|reg:"ecx"/"edx", at, n}]; `wscript` is the per-trial word
   matrix cycled alongside. v4 adds an optional `dst` byte offset per
   write (default 0): the words land at [pointer+dst] instead of
@@ -157,7 +168,17 @@ One JSON file per function:
   rewrite-side transport for any of them (`movss` from stack arg idx,
   upper lanes zeroed, as the v2/v3 keys do for XMM0/XMM1, which keep
   their meaning). The v5 keys fail closed: a transported register must
-  be logged and idx must be below `nargs`.
+  be logged and idx must be below `nargs`. The doubles extension adds
+  `xmm_from_stack64` {"n": idx} for doubles: on the rewrite side the
+  stub loads the low 8 bytes of XMMn (`movsd`, upper half zeroed) from
+  stack args idx (low word) and idx+1 (high word). It fails closed like
+  the 4-byte keys (both words declared, register logged) and refuses to
+  share a register with them. `logxmm64_regs` [n, ...] narrows the
+  comparison of logged registers to their low 8 bytes (the double the
+  callee reads; use it when the upper half holds whatever an earlier
+  conversion left there rather than a callee input): the stub still logs
+  all 16 bytes, the call key keeps the low two words, and the verdict's
+  `features` records it. The register must still be logged.
   `xmm0_from_stack` names the stack arg the stub loads XMM0 from on
   the rewrite side (transport for xmm0-arg callees; call args are then
   skipped on both sides and only XMM0 is compared). v3 adds `logxmm1`
@@ -194,7 +215,10 @@ One JSON file per function:
   TLS slots, planted on the trial thread before each side. Slots 0-63.
 - `xmm`: {reg: [4 word specs]}: scripted XMM entry values for any of
   xmm0-xmm7 (both sides since v2); use the string `"float"` for a
-  float-edge low word. Unlisted words are zero.
+  float-edge low word. The doubles extension adds `"double"` at an even
+  word index: one per-trial double across that word and the next (f64
+  edges first, then drawn doubles, mirroring `"float"`). Unlisted words
+  are zero.
 - v5 `x87`: [{kind, vals?}, ...]: x87 entry values, ST0 first, at most 8.
   `kind` is `f32`, `f64` (the value an `fld dword`/`fld qword` of those bits
   loads: exact, a signalling NaN quieted) or `f80` (an 80-bit value).
@@ -298,7 +322,10 @@ differs, which the contract documents:
 - `xmm0_from_stack` (callee option) has the stub load XMM0 from a stack
   argument on the rewrite side only; the original side passes real XMM0.
   The logged XMM0 bytes are then compared. v5 `xmm_from_stack` does the
-  same for any of XMM0-XMM7.
+  same for any of XMM0-XMM7. The doubles extension's `xmm_from_stack64`
+  loads a double (two stack words); its `f64xmm0edx` answer channel puts
+  the scripted double in XMM0 for the original and in edx:eax for the
+  rewrite, which reads it as a u64 return.
 - v5 `x87_raw(i)` (runtime) reads the x87 entry value the original
   receives in ST(i); `x87_f64(i)`/`x87_f32(i)` round it exactly as an x87
   `fst qword`/`fst dword` does (round to nearest even, the trampoline's
@@ -349,7 +376,10 @@ registers, logged and transported call registers per callee, snapshot
 words and non-zero offsets per callee, `abs_shadow` and the worker's
 reported window coverage, the self-test name) and `selftest: true` for a
 self-test verdict. `checker_version` stays "checker4" until the
-coordinator adopts v5.
+coordinator adopts v5. The doubles extension adds three `features` keys:
+`xmm_call_transport64` (8-byte transports per callee), `xmm_call_cmp64`
+(registers compared on their low 8 bytes only, per callee) and
+`f64_answers` (callees answering `f64xmm0edx`).
 
 v3 coverage rule: a verdict with zero failures still fails as `vacuous`
 unless (a) at least `min_orig_ok_share` of trials (default 0.10,
@@ -378,6 +408,8 @@ Rewrites live in a 32-bit cdylib and use `lf-checker-rt`:
 - Read fabricated TLS through `tls_slot(n)` and scripted XMM entry values
   through `xmm_word(reg, i)`; pass xmm0-arg values on the stack when the
   callee declares `xmm0_from_stack` (v5: any `xmm_from_stack` register).
+  Pass a double as two stack words (low, high) when the callee declares
+  `xmm_from_stack64`, and read its `f64xmm0edx` answer as a u64 return.
 - v5: read x87 entry values through `x87_raw(i)` (exact 80 bits) or
   `x87_f64(i)`/`x87_f32(i)`; prefer the bit converters
   `f80_to_f64_bits`/`f80_to_f32_bits` when the result is stored as bits.
@@ -416,6 +448,14 @@ mutant the v4 checker could not see:
 - k5_absguard: documented negative (fails by design, no mutant): without
   abs_shadow the original's unrelocated read faults in the reserved
   window ("abs-window" note) while the correct rewrite completes.
+The doubles extension adds four k6 contracts: k6_f64arg, k6_f64ans and
+k6_f64neg over the self-test original f64_call (floats widened to
+doubles across a helper call that answers a double): k6_f64arg (mutant
+negates one double argument), k6_f64ans (mutant ignores the double
+answer) and k6_f64neg (documented negative: the same mutant without the
+new options, passing by design); k6_f64entry over xmm_wide (the high
+word of an XMM entry value from two per-trial doubles, proving the
+entry path carries all 16 bytes per register).
 The self-test originals are a few hand-written instructions in the worker
 (build_selftests), used because no tracked original is known to take x87
 arguments, pass XMM2-XMM7 to a callee or read through an unrelocated
@@ -432,7 +472,8 @@ values; functions reading uninitialized stack (with a defined fill).
 v5: x87 entry values the original consumes; the final x87 stack (top,
 tags, valid registers); XMM0-XMM7 call arguments; call-time snapshots of
 up to 64 words at any offset; unrelocated absolute reads of read-only
-data (with abs_shadow).
+data (with abs_shadow). Doubles extension: doubles in vector registers
+across calls, in both directions, with scripted double answers.
 
 Still cannot: functions in the encrypted first megabyte of the code
 section; behaviour needing a running game (initialized heap graphs, OS
@@ -442,9 +483,10 @@ code; concurrency; TLS expansion slots (>= 64); anything after the first
 fault in a trial. v5 limits: an original that leaves x87 entry values on
 the stack cannot be matched by a Rust rewrite (the x87 check fails);
 80-bit signalling NaNs and invalid encodings are not generated; the
-transports load 4 bytes (`movss`); unrelocated writes and unrelocated
-accesses to writable data always fault; the x87 control word, MXCSR and
-FPU condition codes after return are not compared.
+4-byte transports load 4 bytes (`movss`) and the doubles extension's
+8-byte transports load a double (`movsd`); unrelocated writes and
+unrelocated accesses to writable data always fault; the x87 control
+word, MXCSR and FPU condition codes after return are not compared.
 
 Current limits: one worker is single-trial-at-a-time (run one driver per
 core); snapshots cap at 64 words per callee (v5; 8 before) and out-param
@@ -945,6 +987,17 @@ def resolve_script_val(v, rng, trial, heap, contract, stubs):
     return v & 0xFFFFFFFF
 
 
+def resolve_double_bits(spec, rng, trial):
+    """Doubles extension: the f64 bits a {"double": ...} script entry names:
+    an int is literal bits, "edges" cycles F64_EDGES per trial (no RNG, so
+    the stream is untouched), "random" draws f64bits."""
+    if spec == "edges":
+        return F64_EDGES[trial % len(F64_EDGES)]
+    if spec == "random":
+        return f64bits(rng)
+    return spec & 0xFFFFFFFFFFFFFFFF
+
+
 def resolve_scripts(contract, rng, trial, heap, stubs):
     out = []
     for c in contract.get("callees", []):
@@ -953,7 +1006,10 @@ def resolve_scripts(contract, rng, trial, heap, stubs):
             v, hi = INT_EDGES[trial % len(INT_EDGES)], 0
         else:
             raw = sc[trial % len(sc)]
-            if isinstance(raw, dict) and "lo" in raw:  # 64-bit script word
+            if isinstance(raw, dict) and "double" in raw:  # scripted double
+                bits = resolve_double_bits(raw["double"], rng, trial)
+                v, hi = bits & 0xFFFFFFFF, (bits >> 32) & 0xFFFFFFFF
+            elif isinstance(raw, dict) and "lo" in raw:  # 64-bit script word
                 v = resolve_script_val(raw["lo"], rng, trial, heap, contract, stubs)
                 hi = resolve_script_val(raw.get("hi", 0), rng, trial, heap, contract, stubs)
             else:
@@ -970,6 +1026,10 @@ def resolve_scripts(contract, rng, trial, heap, stubs):
                 raise ValueError("callee %s seq exceeds 16 steps" % c["id"])
             steps = []
             for raw in sq:
+                if isinstance(raw, dict) and "double" in raw:
+                    bits = resolve_double_bits(raw["double"], rng, trial)
+                    steps.append([bits & 0xFFFFFFFF, (bits >> 32) & 0xFFFFFFFF])
+                    continue
                 if isinstance(raw, dict) and "lo" in raw:  # 64-bit step word
                     slo = resolve_script_val(raw["lo"], rng, trial, heap,
                                              contract, stubs)
@@ -1059,8 +1119,26 @@ def resolve_xmm(contract, rng, trial):
                     words.append(FLOAT_EDGES[trial % len(FLOAT_EDGES)])
                 else:
                     words.append(fbits(rng))
+            elif isinstance(sp, str) and sp == "double":
+                # Doubles extension: one per-trial double across this word
+                # and the next (edges first, then f64bits, mirroring
+                # "float"). Must land on an even word with room for two.
+                if len(words) % 2 or len(words) + 1 >= 4:
+                    raise ValueError(
+                        "contract %s: xmm %s \"double\" needs an even word "
+                        "index with room for two words"
+                        % (contract.get("name"), reg))
+                if trial < len(F64_EDGES):
+                    bits = F64_EDGES[trial % len(F64_EDGES)]
+                else:
+                    bits = f64bits(rng)
+                words.append(bits & 0xFFFFFFFF)
+                words.append((bits >> 32) & 0xFFFFFFFF)
             else:
                 words.append(sp & 0xFFFFFFFF)
+        if len(words) > 4:
+            raise ValueError("contract %s: xmm %s expands past 4 words"
+                             % (contract.get("name"), reg))
         out[str(reg)] = words
     return out
 
@@ -1381,6 +1459,16 @@ def validate_v5(contract):
             logged.add(0)
         if c.get("logxmm1"):
             logged.add(1)
+        regs64 = c.get("logxmm64_regs")
+        if regs64 is not None and (not isinstance(regs64, list) or
+                                   any(not isinstance(r, int) or not 0 <= r < 8
+                                       for r in regs64)):
+            raise ValueError("contract %s: callee %s logxmm64_regs %r (registers 0-7)"
+                             % (name, cid, regs64))
+        for r in regs64 or []:
+            if r not in logged:
+                raise ValueError("contract %s: callee %s narrows xmm%d to 8 bytes without "
+                                 "logging it" % (name, cid, r))
         for k, idx in (c.get("xmm_from_stack") or {}).items():
             r = int(k)
             if not 0 <= r < 8 or not isinstance(idx, int) or not 0 <= idx < c.get("nargs", 0):
@@ -1389,6 +1477,50 @@ def validate_v5(contract):
             if r not in logged:
                 raise ValueError("contract %s: callee %s transports xmm%d without logging it "
                                  "(the argument would be compared nowhere)" % (name, cid, r))
+        narrow = {int(k) for k in (c.get("xmm_from_stack") or {})}
+        if c.get("xmm0_from_stack") is not None:
+            narrow.add(0)
+        if c.get("xmm1_from_stack") is not None:
+            narrow.add(1)
+        for k, idx in (c.get("xmm_from_stack64") or {}).items():
+            # Doubles extension: the high word comes from the next stack
+            # argument, so both must be declared; never beside the 4-byte
+            # transport on the same register.
+            r = int(k)
+            if not 0 <= r < 8 or not isinstance(idx, int) \
+                    or not 0 <= idx + 1 < c.get("nargs", 0):
+                raise ValueError("contract %s: callee %s xmm_from_stack64 %s:%r (register 0-7, "
+                                 "a declared stack-argument pair)" % (name, cid, k, idx))
+            if r in narrow:
+                raise ValueError("contract %s: callee %s transports xmm%d as 4 bytes and "
+                                 "8 bytes (pick one)" % (name, cid, r))
+            if r not in logged:
+                raise ValueError("contract %s: callee %s transports xmm%d without logging it "
+                                 "(the argument would be compared nowhere)" % (name, cid, r))
+        for key in ("script", "seq"):
+            entries = c.get(key)
+            if entries is None or entries == "edges":
+                continue
+            for e in entries:
+                if isinstance(e, dict) and "double" in e:
+                    d = e["double"]
+                    if not (isinstance(d, int) and 0 <= d < 1 << 64
+                            or d in ("edges", "random")):
+                        raise ValueError("contract %s: callee %s %s double %r "
+                                         "(bits, edges or random)" % (name, cid, key, d))
+    for reg, specs in (contract.get("xmm") or {}).items():
+        # Doubles extension: "double" fills two words from an even word.
+        words = 0
+        for sp in specs:
+            if sp == "double":
+                if words % 2 or words + 1 >= 4:
+                    raise ValueError("contract %s: xmm %s \"double\" needs an even word "
+                                     "index with room for two words" % (name, reg))
+                words += 2
+            else:
+                words += 1
+        if words > 4:
+            raise ValueError("contract %s: xmm %s expands past 4 words" % (name, reg))
     fn = contract.get("function", "")
     if fn.startswith("selftest:") and fn[len("selftest:"):] not in SELFTESTS:
         raise ValueError("contract %s: unknown self-test original %s (known: %s)"
@@ -1396,14 +1528,19 @@ def validate_v5(contract):
 
 
 # v5 built-in self-test originals the worker emits (checker regression only).
-SELFTESTS = ("x87_store", "xmm_call", "abs_read")
+# The doubles extension adds f64_call (floats widened to doubles across a
+# helper call that answers a double) and xmm_wide (the high word of an XMM
+# entry value, proving the entry path carries all 16 bytes per register).
+SELFTESTS = ("x87_store", "xmm_call", "abs_read", "f64_call", "xmm_wide")
 
 
 def features_of(contract, setup):
     """v5: what the contract used of the v5 abilities, for the verdict, so a
     proof's reach is visible without reading the contract."""
     callees = contract.get("callees", [])
-    snap_words, snap_at, xmm_logged, xmm_transport = {}, {}, {}, {}
+    snap_words, snap_at, xmm_logged, xmm_transport, xmm_transport64 = {}, {}, {}, {}, {}
+    xmm_cmp64 = {}
+    f64_answers = []
     for c in callees:
         cid = str(c["id"])
         sn = c.get("snap") or []
@@ -1419,6 +1556,9 @@ def features_of(contract, setup):
             regs.add(1)
         if regs:
             xmm_logged[cid] = sorted(regs)
+        cmp64 = sorted(set(c.get("logxmm64_regs") or []))
+        if cmp64:
+            xmm_cmp64[cid] = cmp64
         tr = {str(k): v for k, v in (c.get("xmm_from_stack") or {}).items()}
         if c.get("xmm0_from_stack") is not None:
             tr["0"] = c["xmm0_from_stack"]
@@ -1426,6 +1566,11 @@ def features_of(contract, setup):
             tr["1"] = c["xmm1_from_stack"]
         if tr:
             xmm_transport[cid] = dict(sorted(tr.items()))
+        tr64 = {str(k): v for k, v in (c.get("xmm_from_stack64") or {}).items()}
+        if tr64:
+            xmm_transport64[cid] = dict(sorted(tr64.items()))
+        if c.get("ret") == "f64xmm0edx":
+            f64_answers.append(c["id"])
     fn = contract.get("function", "")
     return {
         "x87_entry": [e["kind"] for e in contract.get("x87", []) or []],
@@ -1433,6 +1578,9 @@ def features_of(contract, setup):
         "xmm_entry_regs": sorted(int(k) for k in (contract.get("xmm") or {})),
         "xmm_call_logged": xmm_logged,
         "xmm_call_transport": xmm_transport,
+        "xmm_call_transport64": xmm_transport64,
+        "xmm_call_cmp64": xmm_cmp64,
+        "f64_answers": sorted(f64_answers),
         "snap_words": snap_words,
         "snap_offsets": snap_at,
         "abs_shadow": bool(contract.get("abs_shadow")),
@@ -1661,6 +1809,60 @@ def selftest():
     f = features_of(old, {})
     check("features v4 legacy keys", f["xmm_call_logged"] == {"1": [0], "2": [0]}
           and f["x87_entry"] == [] and not f["x87_state"])
+    # Doubles extension (host-side only): scripted doubles resolve to the
+    # two words, the transport validates like the 4-byte keys, and every
+    # new key lands in the features record.
+    check("double script bits split lo/hi",
+          resolve_double_bits(0x3FF0000000000001, None, 0) == 0x3FF0000000000001)
+    r1, r2 = random.Random(9), random.Random(9)
+    check("double edges cycle per trial, no RNG",
+          resolve_double_bits("edges", r1, 3) == F64_EDGES[3] and r1.random() == r2.random())
+    r1, r2 = random.Random(9), random.Random(9)
+    check("double xmm entry is an f64 edge at trial 0",
+          resolve_xmm({"name": "t", "xmm": {"0": ["double", 5]}}, r1, 0)["0"]
+          == [F64_EDGES[0] & 0xFFFFFFFF, (F64_EDGES[0] >> 32) & 0xFFFFFFFF, 5]
+          and r1.random() == r2.random())
+    bad64 = json.loads(json.dumps(base))
+    bad64["name"] = "t64"
+    bad64["function"] = "selftest:f64_call"
+    bad64["callees"] = [{"id": 1, "conv": "cdecl", "nargs": 4, "ret": "f64xmm0edx",
+                         "script": [{"double": "edges"}],
+                         "logxmm_regs": [0, 1],
+                         "logxmm64_regs": [0],
+                         "xmm_from_stack64": {"0": 0, "1": 2}}]
+    try:
+        validate_contract(bad64)
+        ok64 = True
+    except Exception:
+        ok64 = False
+    check("doubles contract validates", ok64)
+    f = features_of(bad64, {})
+    check("features doubles", f["xmm_call_transport64"] == {"1": {"0": 0, "1": 2}}
+          and f["f64_answers"] == [1] and f["selftest"] == "f64_call"
+          and f["xmm_call_cmp64"] == {"1": [0]})
+
+    def refused64(mut):
+        c = json.loads(json.dumps(bad64))
+        mut(c)
+        try:
+            validate_contract(c)
+            return False
+        except ValueError:
+            return True
+    check("transport64 past nargs refused",
+          refused64(lambda c: c["callees"][0]["xmm_from_stack64"].update({"1": 3})))
+    check("transport64 unlogged refused",
+          refused64(lambda c: c["callees"][0].update({"logxmm_regs": [0]})))
+    check("narrowed comparison unlogged refused",
+          refused64(lambda c: c["callees"][0].update({"logxmm64_regs": [2]})))
+    check("narrowed comparison past xmm7 refused",
+          refused64(lambda c: c["callees"][0].update({"logxmm64_regs": [8]})))
+    check("transport64 clashing with 4-byte refused",
+          refused64(lambda c: c["callees"][0].update({"xmm_from_stack": {"0": 1}})))
+    check("bad double script refused",
+          refused64(lambda c: c["callees"][0].update({"script": [{"double": "nope"}]})))
+    check("double entry on odd word refused",
+          refused64(lambda c: c.update({"xmm": {"0": ["float", "double"]}})))
     print("selftest: %d failed" % len(fails))
     return 1 if fails else 0
 
