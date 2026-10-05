@@ -41895,6 +41895,15 @@
   "lane": "a-12"
  },
  {
+  "address": "0x008A9490",
+  "name": "rage::audEffect::vf2",
+  "kind": "function",
+  "file": "functions/fn_008a9490.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
   "address": "0x008A94D0",
   "name": "audeffect_cycle_index",
   "kind": "function",
@@ -41913,6 +41922,15 @@
   "lane": "a-12"
  },
  {
+  "address": "0x008A9790",
+  "name": "audio_lock_guard_store",
+  "kind": "function",
+  "file": "functions/fn_008a9790.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
   "address": "0x008A97E0",
   "name": "aud_acquire_slot_sound",
   "kind": "function",
@@ -41920,6 +41938,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b369"
+ },
+ {
+  "address": "0x008A9A20",
+  "name": "audio_counter_bump",
+  "kind": "function",
+  "file": "functions/fn_008a9a20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
  },
  {
   "address": "0x008A9A50",
@@ -41949,6 +41976,15 @@
   "lane": "r-b369"
  },
  {
+  "address": "0x008A9E50",
+  "name": "audio_state_init",
+  "kind": "function",
+  "file": "functions/fn_008a9e50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
   "address": "0x008A9EB0",
   "name": "audio_voice_set_flag8",
   "kind": "function",
@@ -41958,6 +41994,24 @@
   "lane": "a-12"
  },
  {
+  "address": "0x008A9EF0",
+  "name": "audio_voice_update",
+  "kind": "function",
+  "file": "functions/fn_008a9ef0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
+  "address": "0x008A9FE0",
+  "name": "audio_slot_alloc",
+  "kind": "function",
+  "file": "functions/fn_008a9fe0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
   "address": "0x008AA080",
   "name": "audio_slot_alloc",
   "kind": "function",
@@ -41965,6 +42019,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-12"
+ },
+ {
+  "address": "0x008AA0F0",
+  "name": "audio_slot_sweep",
+  "kind": "function",
+  "file": "functions/fn_008aa0f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
+  "address": "0x008AA1D0",
+  "name": "audio_flag_set",
+  "kind": "function",
+  "file": "functions/fn_008aa1d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
  },
  {
   "address": "0x008AA230",
@@ -41992,6 +42064,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-12"
+ },
+ {
+  "address": "0x008AA440",
+  "name": "audio_voice_teardown",
+  "kind": "function",
+  "file": "functions/fn_008aa440.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
  },
  {
   "address": "0x008AA610",
@@ -42534,6 +42615,33 @@
   "lane": "a-11"
  },
  {
+  "address": "0x008AD480",
+  "name": "audio_param_dispatch",
+  "kind": "function",
+  "file": "functions/fn_008ad480.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
+  "address": "0x008AD5B0",
+  "name": "audio_param_lookup",
+  "kind": "function",
+  "file": "functions/fn_008ad5b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
+  "address": "0x008AD5D0",
+  "name": "audio_float_lerp",
+  "kind": "function",
+  "file": "functions/fn_008ad5d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
   "address": "0x008AD660",
   "name": "audio_copy_voice_params",
   "kind": "function",
@@ -42732,6 +42840,60 @@
   "lane": "a-16"
  },
  {
+  "address": "0x008B0FE0",
+  "name": "audio_float_store_1750",
+  "kind": "function",
+  "file": "functions/fn_008b0fe0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
+  "address": "0x008B1000",
+  "name": "audio_block_copy_17a0",
+  "kind": "function",
+  "file": "functions/fn_008b1000.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
+  "address": "0x008B1080",
+  "name": "audio_pair_store_17e4",
+  "kind": "function",
+  "file": "functions/fn_008b1080.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
+  "address": "0x008B10E0",
+  "name": "rage::audNullEffect::vf0",
+  "kind": "function",
+  "file": "functions/fn_008b10e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
+  "address": "0x008B1110",
+  "name": "rage::audNullEffect::vf5",
+  "kind": "function",
+  "file": "functions/fn_008b1110.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
+  "address": "0x008B1770",
+  "name": "rage::audBiquadFilterEffectPc::vf0",
+  "kind": "function",
+  "file": "functions/fn_008b1770.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
   "address": "0x008B1830",
   "name": "rage::audBiquadFilterEffectPc::vf2",
   "kind": "function",
@@ -42739,6 +42901,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b46"
+ },
+ {
+  "address": "0x008B1C10",
+  "name": "audio_filter_init",
+  "kind": "function",
+  "file": "functions/fn_008b1c10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
  },
  {
   "address": "0x008B2450",
@@ -42757,6 +42928,33 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b41"
+ },
+ {
+  "address": "0x008B3CE0",
+  "name": "rage::audDelayEffectPc::vf1",
+  "kind": "function",
+  "file": "functions/fn_008b3ce0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
+  "address": "0x008B3DD0",
+  "name": "rage::audWaveshaperEffectPc::vf0",
+  "kind": "function",
+  "file": "functions/fn_008b3dd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
+ },
+ {
+  "address": "0x008B3E90",
+  "name": "audio_curve_fill",
+  "kind": "function",
+  "file": "functions/fn_008b3e90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s472"
  },
  {
   "address": "0x008B4170",
@@ -51804,6 +52002,15 @@
   "lane": "r-b367"
  },
  {
+  "address": "0x009AB500",
+  "name": "audExplosionAudioEntity::vf0",
+  "kind": "function",
+  "file": "functions/fn_009ab500.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s471"
+ },
+ {
   "address": "0x009AB530",
   "name": "audio_entity_update",
   "kind": "function",
@@ -51820,6 +52027,42 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b367"
+ },
+ {
+  "address": "0x009AB980",
+  "name": "audio_float_mix",
+  "kind": "function",
+  "file": "functions/fn_009ab980.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s471"
+ },
+ {
+  "address": "0x009ABA00",
+  "name": "audio_float_lookup",
+  "kind": "function",
+  "file": "functions/fn_009aba00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s471"
+ },
+ {
+  "address": "0x009ABA40",
+  "name": "audio_positional_resolve",
+  "kind": "function",
+  "file": "functions/fn_009aba40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s471"
+ },
+ {
+  "address": "0x009ABB30",
+  "name": "audio_cyclic_float_fetch",
+  "kind": "function",
+  "file": "functions/fn_009abb30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s471"
  },
  {
   "address": "0x009ABB60",
@@ -60354,6 +60597,15 @@
   "lane": "a-R05"
  },
  {
+  "address": "0x00A2A180",
+  "name": "pedtask_accumulator_update",
+  "kind": "function",
+  "file": "functions/fn_00a2a180.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "a-R05"
+ },
+ {
   "address": "0x00A2A6C0",
   "name": "pedtask_range_gate",
   "kind": "function",
@@ -67041,6 +67293,15 @@
   "lane": "r-b65"
  },
  {
+  "address": "0x00ACCDD0",
+  "name": "audio_forward_9_to_engine",
+  "kind": "function",
+  "file": "functions/fn_00accdd0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
   "address": "0x00ACD970",
   "name": "audio_submit_voice_request",
   "kind": "function",
@@ -67131,6 +67392,15 @@
   "lane": "r-b45"
  },
  {
+  "address": "0x00ACFEE0",
+  "name": "audio_voice_start_param",
+  "kind": "function",
+  "file": "functions/fn_00acfee0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
   "address": "0x00ACFF90",
   "name": "accumulate_scaled_projection",
   "kind": "function",
@@ -67138,6 +67408,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-11"
+ },
+ {
+  "address": "0x00AD0020",
+  "name": "audio_drain_pending",
+  "kind": "function",
+  "file": "functions/fn_00ad0020.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
  },
  {
   "address": "0x00AD0070",
@@ -67194,6 +67473,15 @@
   "lane": "a-11"
  },
  {
+  "address": "0x00AD0510",
+  "name": "audio_update_voice_flags",
+  "kind": "function",
+  "file": "functions/fn_00ad0510.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
   "address": "0x00AD05A0",
   "name": "update_signed_clamped_13c",
   "kind": "function",
@@ -67230,6 +67518,69 @@
   "lane": "a-11"
  },
  {
+  "address": "0x00AD1240",
+  "name": "audio_maybe_trigger_80",
+  "kind": "function",
+  "file": "functions/fn_00ad1240.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD18D0",
+  "name": "audio_chan_preset_a",
+  "kind": "function",
+  "file": "functions/fn_00ad18d0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD1980",
+  "name": "audio_chan_preset_b",
+  "kind": "function",
+  "file": "functions/fn_00ad1980.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD1A90",
+  "name": "audio_get_or_create_handle",
+  "kind": "function",
+  "file": "functions/fn_00ad1a90.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD23F0",
+  "name": "audio_chan_preset_c",
+  "kind": "function",
+  "file": "functions/fn_00ad23f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD2430",
+  "name": "audio_chan_preset_d",
+  "kind": "function",
+  "file": "functions/fn_00ad2430.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD2510",
+  "name": "audio_chan_preset_e",
+  "kind": "function",
+  "file": "functions/fn_00ad2510.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
   "address": "0x00AD2690",
   "name": "audio_param_apply",
   "kind": "function",
@@ -67237,6 +67588,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b26"
+ },
+ {
+  "address": "0x00AD2AE0",
+  "name": "audio_release_handle",
+  "kind": "function",
+  "file": "functions/fn_00ad2ae0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
  },
  {
   "address": "0x00AD2B00",
@@ -67293,6 +67653,15 @@
   "lane": "a-F01"
  },
  {
+  "address": "0x00AD3040",
+  "name": "audio_dispatch_by_index",
+  "kind": "function",
+  "file": "functions/fn_00ad3040.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
   "address": "0x00AD3510",
   "name": "mgr_forward_float_1f8",
   "kind": "function",
@@ -67320,6 +67689,24 @@
   "lane": "a-R01"
  },
  {
+  "address": "0x00AD4010",
+  "name": "audio_clamp_mix_entry",
+  "kind": "function",
+  "file": "functions/fn_00ad4010.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD40B0",
+  "name": "audio_store_tagged_word",
+  "kind": "function",
+  "file": "functions/fn_00ad40b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
   "address": "0x00AD4410",
   "name": "audio_enqueue_sorted_triple",
   "kind": "function",
@@ -67329,6 +67716,15 @@
   "lane": "r-b62"
  },
  {
+  "address": "0x00AD4560",
+  "name": "audio_find_or_add_pair",
+  "kind": "function",
+  "file": "functions/fn_00ad4560.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
   "address": "0x00AD4660",
   "name": "audio_stencil_blend_accumulate",
   "kind": "function",
@@ -67336,6 +67732,51 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b62"
+ },
+ {
+  "address": "0x00AD4A70",
+  "name": "audio_register_pair_bounded",
+  "kind": "function",
+  "file": "functions/fn_00ad4a70.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD4E80",
+  "name": "audio_zero_pair_tables",
+  "kind": "function",
+  "file": "functions/fn_00ad4e80.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD4EA0",
+  "name": "audio_zero_column_strided",
+  "kind": "function",
+  "file": "functions/fn_00ad4ea0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD4EE0",
+  "name": "audio_zero_block_100",
+  "kind": "function",
+  "file": "functions/fn_00ad4ee0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD4F20",
+  "name": "audio_init_slot_pointers",
+  "kind": "function",
+  "file": "functions/fn_00ad4f20.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
  },
  {
   "address": "0x00AD5190",
@@ -67374,6 +67815,33 @@
   "lane": "r-b34"
  },
  {
+  "address": "0x00AD5A00",
+  "name": "audio_tick_or_reset",
+  "kind": "function",
+  "file": "functions/fn_00ad5a00.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD5AB0",
+  "name": "audio_convert_position_words",
+  "kind": "function",
+  "file": "functions/fn_00ad5ab0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD5CD0",
+  "name": "audio_slot_ptr_from_top",
+  "kind": "function",
+  "file": "functions/fn_00ad5cd0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
   "address": "0x00AD5EA0",
   "name": "audio_grid_probe",
   "kind": "function",
@@ -67381,6 +67849,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b34"
+ },
+ {
+  "address": "0x00AD61A0",
+  "name": "audio_slot_ptr_from_base",
+  "kind": "function",
+  "file": "functions/fn_00ad61a0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD67B0",
+  "name": "audio_reset_state_words",
+  "kind": "function",
+  "file": "functions/fn_00ad67b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s470"
  },
  {
   "address": "0x00AD7C40",
@@ -102150,6 +102636,15 @@
   "lane": "r-b536"
  },
  {
+  "address": "0x00C60E90",
+  "name": "vehicle_grenade_throw_tick",
+  "kind": "function",
+  "file": "functions/fn_00c60e90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b536"
+ },
+ {
   "address": "0x00C62260",
   "name": "anim_blend_signed_weight",
   "kind": "function",
@@ -107469,6 +107964,24 @@
   "lane": "r-s406"
  },
  {
+  "address": "0x00CD0550",
+  "name": "melee_dispatch_event",
+  "kind": "function",
+  "file": "functions/fn_00cd0550.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b527"
+ },
+ {
+  "address": "0x00CD0860",
+  "name": "CTaskComplexMelee::vf20",
+  "kind": "function",
+  "file": "functions/fn_00cd0860.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b527"
+ },
+ {
   "address": "0x00CD0D00",
   "name": "CTaskComplexMelee::vf19",
   "kind": "function",
@@ -107485,6 +107998,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s406"
+ },
+ {
+  "address": "0x00CD0D90",
+  "name": "melee_process_event",
+  "kind": "function",
+  "file": "functions/fn_00cd0d90.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b527"
  },
  {
   "address": "0x00CD15C0",
