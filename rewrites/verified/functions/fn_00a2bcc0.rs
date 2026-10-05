@@ -32,8 +32,8 @@
 ///
 /// The truncation assumes a finite non-negative frame cost, which holds for
 /// game delta times; NaN or out-of-range costs would truncate differently
-/// from the x87 path. The original reads its game data through unrelocated
-/// absolute addresses; the rewrite reads the relocated copies.
+/// from the x87 path. The original reads its game data through relocated
+/// absolute addresses; the rewrite reads the same addresses.
 ///
 /// Original: 0x00a2bcc0 head plus its tail at 0xa2c320 (thiscall, no stack
 /// words). The batch inventory counted only the head's one callee; the tail

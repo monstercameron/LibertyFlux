@@ -21,8 +21,8 @@
 /// 1); exactly 1 re-checks through callee 2 and returns 0 only when that
 /// answer is `obj_a` itself.
 ///
-/// The original reads its game data through unrelocated absolute addresses;
-/// the rewrite reads the relocated copies. Only the low byte of the result
+/// The original reads its game data through relocated absolute addresses;
+/// the rewrite reads the same addresses. Only the low byte of the result
 /// is significant.
 ///
 /// Original: 0x00a2b550 (thiscall, three stack words; returns low byte).

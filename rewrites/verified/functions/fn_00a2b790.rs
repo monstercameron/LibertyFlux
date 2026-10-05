@@ -20,8 +20,8 @@
 /// the enumeration's answer when the list is empty, a tagged callee answer,
 /// or a skipped candidate pointer (the list load itself sets the slot).
 ///
-/// The original reads its constants and table pointer through unrelocated
-/// absolute addresses; the rewrite reads the relocated copies.
+/// The original reads its constants and table pointer through relocated
+/// absolute addresses; the rewrite reads the same addresses.
 ///
 /// Original: 0x00a2b790 (thiscall, no stack words).
 lf_checker_rt::export!(thiscall, rw_00a2b790(obj: u32) -> u32 {

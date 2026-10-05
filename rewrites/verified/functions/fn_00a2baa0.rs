@@ -28,8 +28,8 @@
 /// then discards; it has no observable effect and is not repeated here.
 /// Only the low byte of the result is significant.
 ///
-/// The original reads its constant through an unrelocated absolute address;
-/// the rewrite reads the relocated copy.
+/// The original reads its constant through a relocated absolute address;
+/// the rewrite reads the same address.
 ///
 /// Original: 0x00a2baa0 (cdecl, two stack words; returns low byte).
 lf_checker_rt::export!(cdecl, rw_00a2baa0(a1: u32, a2: u32) -> u32 {

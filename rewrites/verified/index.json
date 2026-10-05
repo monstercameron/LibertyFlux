@@ -49041,6 +49041,15 @@
   "lane": "r-b385"
  },
  {
+  "address": "0x00A2BCD0",
+  "name": "CPlayerPed::vf29",
+  "kind": "function",
+  "file": "functions/fn_00a2bcd0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b385"
+ },
+ {
   "address": "0x00A2CBD0",
   "name": "ped_timer_advance",
   "kind": "function",
@@ -55584,6 +55593,24 @@
   "lane": "r-s407"
  },
  {
+  "address": "0x00B4F420",
+  "name": "CDummyPed::vf33",
+  "kind": "function",
+  "file": "functions/fn_00b4f420.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
+  "address": "0x00B4FAC0",
+  "name": "aim_blend_and_stamp",
+  "kind": "function",
+  "file": "functions/fn_00b4fac0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
   "address": "0x00B4FDC0",
   "name": "ped_set_dwords130_134",
   "kind": "function",
@@ -55591,6 +55618,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s384"
+ },
+ {
+  "address": "0x00B4FDE0",
+  "name": "swap_task_pair",
+  "kind": "function",
+  "file": "functions/fn_00b4fde0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
  },
  {
   "address": "0x00B4FEA0",
@@ -55687,6 +55723,15 @@
   "name": "event_singleton",
   "kind": "function",
   "file": "functions/fn_00b50a30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
+  "address": "0x00B50AC0",
+  "name": "pick_best_event",
+  "kind": "function",
+  "file": "functions/fn_00b50ac0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s407"
@@ -81103,6 +81148,15 @@
   "name": "task_heading_query",
   "kind": "function",
   "file": "functions/fn_00c8ed10.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b391"
+ },
+ {
+  "address": "0x00C8F4B0",
+  "name": "task_blend_query",
+  "kind": "function",
+  "file": "functions/fn_00c8f4b0.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b391"
