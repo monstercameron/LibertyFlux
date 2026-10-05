@@ -15,7 +15,8 @@
 /// +0x9c0, two slots at +0x9e8/+0xa04, 12 slots from +0xa54, five curves from
 /// +0xc24, a slot at +0xcf4, a curve at +0xd5c, a slot at +0xfb0, 16 slots
 /// from +0x11e0, 4 slots from +0x13b4, 4 slots from +0x1444, and 11 curves
-/// from +0x14b4. Every construction call takes only the member address in
+/// from +0x14b4 (with one 0x38 step at 0x157c->0x15b4 where a slot is
+/// skipped). Every construction call takes only the member address in
 /// ECX and returns nothing used. Returns `this`.
 ///
 /// Original: 0x009AB350 (thiscall, no stack arguments).
@@ -78,11 +79,19 @@ lf_checker_rt::export!(thiscall, rw_009ab350(this: u32) -> u32 {
             member = member.wrapping_add(0x1c);
         }
 
-        member = this.wrapping_add(0x14b4);
-        for _ in 0..11 {
-            lf_checker_rt::callee_thiscall!(CURVE_CTOR, u32, member);
-            member = member.wrapping_add(0x28);
-        }
+        // Eleven unrolled singles; the stride is 0x28 throughout except for
+        // one 0x38 step (0x157c -> 0x15b4), so they stay unrolled here too.
+        lf_checker_rt::callee_thiscall!(CURVE_CTOR, u32, this.wrapping_add(0x14b4));
+        lf_checker_rt::callee_thiscall!(CURVE_CTOR, u32, this.wrapping_add(0x14dc));
+        lf_checker_rt::callee_thiscall!(CURVE_CTOR, u32, this.wrapping_add(0x1504));
+        lf_checker_rt::callee_thiscall!(CURVE_CTOR, u32, this.wrapping_add(0x152c));
+        lf_checker_rt::callee_thiscall!(CURVE_CTOR, u32, this.wrapping_add(0x1554));
+        lf_checker_rt::callee_thiscall!(CURVE_CTOR, u32, this.wrapping_add(0x157c));
+        lf_checker_rt::callee_thiscall!(CURVE_CTOR, u32, this.wrapping_add(0x15b4));
+        lf_checker_rt::callee_thiscall!(CURVE_CTOR, u32, this.wrapping_add(0x15dc));
+        lf_checker_rt::callee_thiscall!(CURVE_CTOR, u32, this.wrapping_add(0x1604));
+        lf_checker_rt::callee_thiscall!(CURVE_CTOR, u32, this.wrapping_add(0x162c));
+        lf_checker_rt::callee_thiscall!(CURVE_CTOR, u32, this.wrapping_add(0x1654));
 
         this
     }
