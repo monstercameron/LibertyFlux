@@ -148,6 +148,10 @@ lf_checker_rt::export!(thiscall, rw_0099E570(this: u32, out_level_a: u32, out_le
         let mut l20 = 0.0f32;
         let mut l24 = 0.0f32;
         let mut l28 = 0.0f32;
+        // Second interpolation answer slot; written and read only on the
+        // spatial path (it is a different slot from l24, which keeps the
+        // second curve answer).
+        let mut l2c = 0.0f32;
 
         if rd8(lf_checker_rt::relocated(FLAG_REFRESH)) != 0 {
             let mut src = [0u32, ONE_BITS, 0u32, 0u32];
@@ -262,7 +266,7 @@ lf_checker_rt::export!(thiscall, rw_0099E570(this: u32, out_level_a: u32, out_le
                     0u32,
                     ONE_BITS,
                     mul(l1c, l20).to_bits());
-                l24 = lerp2;
+                l2c = lerp2;
                 let c1 = gf(CLAMP_C1);
                 let c2 = gf(CLAMP_C2);
                 let c3 = gf(CLAMP_C3);
@@ -293,7 +297,7 @@ lf_checker_rt::export!(thiscall, rw_0099E570(this: u32, out_level_a: u32, out_le
                 if sub(x4, c5) >= 0.0 {
                     l14 = gf(CLAMP_C6);
                 }
-                l1c = l24;
+                l1c = l2c;
             }
         }
 
