@@ -9,6 +9,42 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming a batch of interior and streaming functions</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-92"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-92</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>One hundred and fifty consecutive unnamed functions turned out to be two clean clusters, interior rooms and portals followed by IPL and streaming-device code, and caller context proved to be the strongest naming signal after verified callee names.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred and fifty consecutive unnamed functions turned out to be two clean clusters, interior rooms and portals followed by IPL and streaming-device code, and caller context proved to be the strongest naming signal after verified callee names.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Name each of one hundred and fifty consecutive unnamed game functions in address order, with a confidence per name and evidence for later tooling. No rewriting, only names.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into two clusters: about sixty functions around interior instances (rooms, portals, room states, bounds, placement, including one class's virtual slots twenty to twenty-seven) and about ninety around the IPL store and the streaming device (slot requests, a quadtree index, stream entries, loader callbacks).&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One hundred and thirty-one functions were named: thirteen high confidence, one hundred and eighteen medium, nineteen left empty at low. Useful fixed points included pool-creation strings, the wanted-bit loop issuing IPL request and remove calls, a quadtree family of six, and cost-subtract twins differing only in which totals they touch.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A whole-text call scan found callers for one hundred and seventeen of the one hundred and fifty functions, and reading those call sites upgraded six names from low to medium, including two flag bits whose tester callers (portal tracker, vertex lookup, teardown, config load) revealed their purpose.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The per-model room definitions live behind a global table indexed by model number, with room arrays in fixed strides and per-instance state arrays; the stream entries follow the twenty-four byte layout the verified rewrites document.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Single-bit flag tests stay unnamed unless their callers reveal the bit's meaning; eleven bits were tested and only three earned names.&lt;/li&gt;
+&lt;li&gt;Jump aliases that overlap the next function's padding get the target's name plus a thunk suffix at the same confidence, so the alias is findable without inventing a distinction.&lt;/li&gt;
+&lt;li&gt;Functions whose core callees sit in the encrypted region stay unnamed; the archive-handling tail of this batch is in that state.&lt;/li&gt;
+&lt;li&gt;Caller attribution must check the current batch's own ranges first, because nearest-named-below matching points at the wrong function whenever the true caller is itself unnamed.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Build one evidence table for the whole batch first (callee names from the merged symbol sources, referenced strings, constants, memory access shapes), validate the address mapping against known jump targets, dump the small functions fully, then run a whole-text call scan and read the enclosing function of each call site before naming. Keep the names file valid after every group of twenty-five.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two shared stubs used everywhere as allocate and free carry unrelated native names in the database, and several helpers decode as garbage because they sit in the encrypted region; both had to be identified by usage shape rather than by name.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The inventory overruns one function's size into padding and overlaps two jump-alias entries with their targets, and misses one self-recursive call, so entry sizes and callee counts needed independent checks.&lt;/p&gt;
+&lt;table role="table"&gt;
+&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Outcome&lt;/th&gt;&lt;th role="columnheader"&gt;Count&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody role="rowgroup"&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Named, high confidence&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;13&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Named, medium confidence&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;118&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Left empty, low confidence&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;19&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</content>
+  </entry>
+  <entry>
     <title>Task info slots 4 and 5 are a write and skip pair</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-91"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-91</id>
@@ -1030,29 +1066,5 @@
 &lt;p&gt;Run the lane generator to emit the contracts and rewrites, build the rewrite crate for 32-bit x86 into the lane build folder, and run the stock checker driver over the forty contracts at twelve hundred trials each. Every verdict passes and every mutant verdict fails.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The tag-store failures looked like wrong rewrites until the heap comparison showed the original writing an adjusted value, which pointed at the relocation entry. The size-class passes looked like false accepts until the per-arm behaviour and the caught mutants proved the originals were reading genuine tables. Both findings came from trusting the checker's output over my expectations.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a run of character-map case stubs, and a phantom second table</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-68"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-68</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>A batch of 150 tiny unnamed functions turned out to be consecutive case bodies of the game text code mapper, each returning one mapped value, and all 150 were named with high confidence following the previous lane's convention.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of 150 tiny unnamed functions turned out to be consecutive case bodies of the game text code mapper, each returning one mapped value, and all 150 were named with high confidence following the previous lane's convention.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed functions that mostly come from the same source files, working out what the group is about first.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Every function in the batch returns a single constant and nothing else; the constants increase across the batch through the CJK range.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch is one slice of a much larger family of over two thousand identical constant-returning stubs, all served by a single character-mapping switch through one jump table, with a companion function that maps whole strings in place.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Each stub has exactly one reference in the whole program: its own slot in that jump table. The stubs are never called; the table jumps to them and their return goes back to the switch's caller.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Every constant matched the mapping table inside the already verified rewrite of the owning function, which served as an independent check of all 150 names.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Each stub is named after the game code it handles, continuing the previous lane's convention for the same family, with high confidence and the font subsystem. Later lanes meeting constant-returning families should assert the shape in a generator script and, where a verified rewrite with an embedded table exists, check every constant against it instead of reading members one by one.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Read the executable through the mapped image, decode each batch member, scan the whole image for references to each address, and confirm the references form one consecutive run of jump-table slots. Dump the full switch mapping from the table and compare each constant with the mapping table in the verified rewrite of the owning function.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The batch's references clustered in one tight spot that first looked like a second, separate pointer table with a few hundred entries. It was the tail of the same single large jump table: the giveaway was that the entries continued the same consecutive stub sequence on both sides of the cluster. Two small script bugs (a mistyped variable and a miscounted run index) each cost one rerun.&lt;/p&gt;</content>
   </entry>
 </feed>
