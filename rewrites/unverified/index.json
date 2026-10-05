@@ -992,38 +992,6 @@
   "reason": null
  },
  {
-  "address": "0x008C6190",
-  "name": "fn_008c6190",
-  "file": "fn_008c6190.rs",
-  "lane": "r-s441",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008C6A50",
-  "name": "fn_008c6a50",
-  "file": "fn_008c6a50.rs",
-  "lane": "r-s441",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008C6B40",
-  "name": "fn_008c6b40",
-  "file": "fn_008c6b40.rs",
-  "lane": "r-s441",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008C6EE0",
-  "name": "fn_008c6ee0",
-  "file": "fn_008c6ee0.rs",
-  "lane": "r-s441",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x008CA880",
   "name": "stream_load_maybe_chain",
   "file": "fn_008ca880.rs",
@@ -1073,11 +1041,11 @@
  },
  {
   "address": "0x00957100",
-  "name": "pending triage",
+  "name": "task_seq_player",
   "file": "fn_00957100.rs",
   "lane": "r-b433",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00962180",
@@ -1539,6 +1507,14 @@
   "address": "0x00B18E80",
   "name": "sub_00b18e80",
   "file": "fn_00b18e80.rs",
+  "lane": "r-s443",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B18EE0",
+  "name": "sub_00b18ee0",
+  "file": "fn_00b18ee0.rs",
   "lane": "r-s443",
   "outcome": "not_reached",
   "reason": null
@@ -2056,6 +2032,30 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00C80C50",
+  "name": "fn_00c80c50",
+  "file": "fn_00c80c50.rs",
+  "lane": "r-s442",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C80E60",
+  "name": "fn_00c80e60",
+  "file": "fn_00c80e60.rs",
+  "lane": "r-s442",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C820E0",
+  "name": "fn_00c820e0",
+  "file": "fn_00c820e0.rs",
+  "lane": "r-s442",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00C84A20",
   "name": "fn_00c84a20",
   "file": "fn_00c84a20.rs",
@@ -2256,9 +2256,9 @@
   "reason": null
  },
  {
-  "address": "0x00CD96A0",
-  "name": "CTaskComplexFollowLeaderAnyMeans::vf5",
-  "file": "fn_00cd96a0.rs",
+  "address": "0x00CD9860",
+  "name": "peds_task_unnamed_3",
+  "file": "fn_00cd9860.rs",
   "lane": "r-b441",
   "outcome": "not_reached",
   "reason": ""

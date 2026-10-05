@@ -10,7 +10,9 @@
 /// word 0 of the returned block), truncates the fetched level (cdecl of
 /// a scratch buffer and 0x37; word 0 of the returned block) to an
 /// integer, optionally pokes the live flag (thiscall on the flag word,
-/// no stack arguments), clamps the level byte against a second fetch
+/// no stack arguments; when the poke fires the level byte is the poke
+/// answer's low byte, otherwise the truncation's), clamps the level byte
+/// against a second fetch
 /// (nonnegative levels cap at the fetch, negative levels and NaN yield
 /// 0 and the fetch respectively), and submits the colour with the level
 /// in the top byte (cdecl of one word) before running two local passes
@@ -42,10 +44,17 @@ lf_checker_rt::export!(thiscall, rw_00b1b630(this: u32) -> u32 {
         let level_block: u32 =
             lf_checker_rt::callee_cdecl!(4, u32, scratch.as_mut_ptr() as u32, 0x37);
         let level = (level_block as *const f32).read_unaligned();
-        if (lf_checker_rt::global::<u8>(LIVE_FLAG) as *const u8).read() != 0 {
-            lf_checker_rt::callee_thiscall!(5, u32, lf_checker_rt::relocated(LIVE_FLAG));
-        }
-        let level_f = cvtt(level) as u8 as f32;
+        let truncated = cvtt(level) as u8;
+        // The level byte is read after the poke call, so when the poke
+        // fires it contributes the poke answer's low byte instead.
+        let level_byte =
+            if (lf_checker_rt::global::<u8>(LIVE_FLAG) as *const u8).read() != 0 {
+                lf_checker_rt::callee_thiscall!(5, u32, lf_checker_rt::relocated(LIVE_FLAG))
+                    as u8
+            } else {
+                truncated
+            };
+        let level_f = level_byte as f32;
         let level2_block: u32 =
             lf_checker_rt::callee_cdecl!(10, u32, scratch.as_mut_ptr() as u32, 0x37);
         let cap = (level2_block as *const f32).read_unaligned();
