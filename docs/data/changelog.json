@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: hourly review, 16:05 on 5 October",
+    "title": "Devlog: Float operand order needs a branch, not a black box",
     "commit": null,
+    "summary": "Findings from the r-b554 lane.",
+    "changes": [
+      "New devlog entry: Float operand order needs a branch, not a black box.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: hourly review, 16:05 on 5 October",
+    "commit": "d9d4a7e1fe9d1f1aaa09943a4ecc861d5a03afe0",
     "summary": "One row added to the day's hourly reviews.",
     "changes": [
       "15,023 functions verified, 25.7% of the code by size, after 144 were withdrawn. Lanes verified about 47,000 bytes in the hour, 3,200 per lane-hour.",
