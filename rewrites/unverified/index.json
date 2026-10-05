@@ -384,177 +384,57 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00696370",
-  "name": "rage::crAnimChannel::dtor",
-  "file": "fn_00696370.rs",
+  "address": "0x0069B550",
+  "name": "rage::crAnimChannelStaticQuaternion::map",
+  "file": "fn_0069b550.rs",
   "lane": "r-b564",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x006963A0",
-  "name": "rage::crAnimChannelRawVector3::clone",
-  "file": "fn_006963a0.rs",
+  "address": "0x0069B820",
+  "name": "rage::crAnimChannelStaticVector3::map",
+  "file": "fn_0069b820.rs",
   "lane": "r-b564",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x006963D0",
-  "name": "rage::crAnimChannelRawVector3::dtor",
-  "file": "fn_006963d0.rs",
+  "address": "0x0069C8C0",
+  "name": "rage::crAnimChannelCurveFloat::copy_segment",
+  "file": "fn_0069c8c0.rs",
   "lane": "r-b564",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00696420",
-  "name": "rage::crAnimChannelRawQuaternion::clone",
-  "file": "fn_00696420.rs",
+  "address": "0x0069C9E0",
+  "name": "rage::crAnimChannelCurveFloat::alloc_keys",
+  "file": "fn_0069c9e0.rs",
   "lane": "r-b564",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00696450",
-  "name": "rage::crAnimChannelRawQuaternion::dtor",
-  "file": "fn_00696450.rs",
+  "address": "0x0069CAA0",
+  "name": "rage::crAnimChannelCurveFloat::free_keys",
+  "file": "fn_0069caa0.rs",
   "lane": "r-b564",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x0069A710",
-  "name": "rage::crAnimChannelStaticFloat::eval_indexed",
-  "file": "fn_0069a710.rs",
+  "address": "0x0069CAF0",
+  "name": "rage::crAnimChannelCurveFloat::purge_list",
+  "file": "fn_0069caf0.rs",
   "lane": "r-b564",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x0069B6D0",
-  "name": "rage::crAnimChannelStaticVector3::crAnimChannelStaticVector3",
-  "file": "fn_0069b6d0.rs",
-  "lane": "r-b564",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0069B710",
-  "name": "rage::crAnimChannelStaticVector3::~crAnimChannelStaticVector3__deleting",
-  "file": "fn_0069b710.rs",
-  "lane": "r-b564",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0069B940",
-  "name": "rage::crAnimChannelStaticVector3::vf20",
-  "file": "fn_0069b940.rs",
-  "lane": "r-b564",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0069BAA0",
-  "name": "rage::crAnimChannelCurveFloat::clone",
-  "file": "fn_0069baa0.rs",
-  "lane": "r-b564",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0069BAD0",
-  "name": "rage::crAnimChannelCurveFloat::create",
-  "file": "fn_0069bad0.rs",
-  "lane": "r-b564",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0069BB10",
-  "name": "rage::crAnimChannelCurveFloat::init_guarded",
-  "file": "fn_0069bb10.rs",
-  "lane": "r-b564",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0069BB30",
-  "name": "rage::crAnimChannelCurveFloat::~crAnimChannelCurveFloat__deleting",
-  "file": "fn_0069bb30.rs",
-  "lane": "r-b564",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0069BB70",
-  "name": "rage::crAnimChannelCurveFloat::copy_from",
-  "file": "fn_0069bb70.rs",
-  "lane": "r-b564",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0069BBD0",
-  "name": "rage::crAnimChannelCurveFloat::eval_segment",
-  "file": "fn_0069bbd0.rs",
-  "lane": "r-b564",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0069CA30",
-  "name": "rage::crAnimChannelCurveFloat::copy_keys",
-  "file": "fn_0069ca30.rs",
-  "lane": "r-b564",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0069D450",
-  "name": "rage::crAnimChannelRleInt::clone",
-  "file": "fn_0069d450.rs",
-  "lane": "r-b564",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0069D480",
-  "name": "rage::crAnimChannelRleInt::create",
-  "file": "fn_0069d480.rs",
-  "lane": "r-b564",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0069D4C0",
-  "name": "rage::crAnimChannelRleInt::init_guarded",
-  "file": "fn_0069d4c0.rs",
-  "lane": "r-b564",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0069D500",
-  "name": "rage::crAnimChannelRleInt::copy_from",
-  "file": "fn_0069d500.rs",
-  "lane": "r-b564",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0069D560",
-  "name": "rage::crAnimChannelRleInt::~crAnimChannelRleInt__deleting",
-  "file": "fn_0069d560.rs",
-  "lane": "r-b564",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0069D7C0",
-  "name": "rage::crAnimChannelRleInt::vf5",
-  "file": "fn_0069d7c0.rs",
+  "address": "0x0069D6D0",
+  "name": "rage::crAnimChannelRleInt::decode_at",
+  "file": "fn_0069d6d0.rs",
   "lane": "r-b564",
   "outcome": "not_reached",
   "reason": null
