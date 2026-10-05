@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-05",
-  "updated_at": "2026-10-05 10:46",
+  "updated_at": "2026-10-05 10:50",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,12 +12,12 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 28433,
-    "rewritten": 14310,
-    "verified": 13585
+    "named": 28435,
+    "rewritten": 14332,
+    "verified": 13607
   },
   "structures": 340,
-  "symbols": 13697,
+  "symbols": 13719,
   "measured": [
     {
       "label": "Code section",
@@ -99,27 +99,27 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 28433,
+      "value": 28435,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (19429); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (19431); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 14310,
+      "value": 14332,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 13585,
+      "value": 13607,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
   ],
   "activity": {
-    "lanes_running": 26,
-    "lanes_finished": 1204,
-    "lanes_incomplete": 134,
+    "lanes_running": 25,
+    "lanes_finished": 1207,
+    "lanes_incomplete": 136,
     "devlog_entries": 452
   },
   "map": [
@@ -2549,9 +2549,9 @@
       "from": "0x009DB84B",
       "to": "0x009E116C",
       "count": 158,
-      "named": 143,
-      "rewritten": 34,
-      "verified": 34
+      "named": 145,
+      "rewritten": 56,
+      "verified": 56
     },
     {
       "stage": "verified",
@@ -3134,7 +3134,7 @@
       "from": "0x00B459D2",
       "to": "0x00B4B2F3",
       "count": 231,
-      "named": 228,
+      "named": 229,
       "rewritten": 53,
       "verified": 20
     },
