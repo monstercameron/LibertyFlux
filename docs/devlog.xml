@@ -9,6 +9,50 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Averaging helper reads an uninitialized stack word into its output</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b520"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b520</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>Verified One of this batch's task functions writes four output words, and the fourth is whatever happened to be on the stack: the function never stores to that slot. Its in-batch caller never reads the word back, so the garbage goes nowhere there.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One of this batch's task functions writes four output words, and the fourth is whatever happened to be on the stack: the function never stores to that slot. Its in-batch caller never reads the word back, so the garbage goes nowhere there.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite four neighbouring task-system functions in Rust and prove each rewrite identical to the original with the checker, covering the documented edge cases.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All four rewrites passed twelve hundred trials each with bit-exact float comparison and a caught wrong version per function. While mapping the averaging helper's outputs, its fourth output word traced back to a stack slot the function reserves but never writes: on every call the word leaks one word of whatever the stack held below the call frame.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The proof contract pins uninitialized stack to zero, so both sides read zero there deterministically; the rewrite writes the zero explicitly and the narrowing is recorded. The word is a genuine output of the original, just not a meaningful one.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The neighbouring selector function calls this helper with scratch memory and checks only the success flag, so the garbage word is harmless on that path. Whether any other caller reads it is unknown.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Record stack-fill narrowing explicitly whenever a rewrite replaces an uninitialized read with the filled value, and check the in-batch callers for whether the word is consumed. Later lanes mapping other outputs of this helper family should assume trailing words may be uninitialized until traced.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Disassemble the averaging helper and list every store to its frame: three float slots and the count get stored, the slot later copied to the fourth output word does not. Run the checker contract with a defined stack fill and confirm the output word equals the fill on both sides.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Two mapping mistakes cost the most time. First, two registers were assumed to hold the same argument where the push count showed they hold different ones; the probe faulted on nearly every trial until the arithmetic was redone. Second, one float store was attributed to the wrong frame slot because a push sits between the address computation and the store; the snapshot comparison caught it on the first probe.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Naming a mixed batch: zone population, montage music UI, replay records</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-109"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-109</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>A batch of 150 consecutive functions split into four clear groups: a zone population density system, the montage video editor music container UI, replay audio event records, and the replay camera. 85 got names and 65 were left unnamed, almost all of them one-instruction shared UI accessors whose field purpose no tracked source defines.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of 150 consecutive functions split into four clear groups: a zone population density system, the montage video editor music container UI, replay audio event records, and the replay camera. 85 got names and 65 were left unnamed, almost all of them one-instruction shared UI accessors whose field purpose no tracked source defines.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose a descriptive name at high, medium, or low confidence for each of 150 consecutive unnamed functions, working out what the group is about first and leaving the name empty where the purpose cannot be told.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The population system reads six parallel per-zone density tables through one shared index shape, and the counts it computes feed cop-spawn checks and slot clamps.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The montage clip-tag and music-track lists are stored as obfuscated comma-separated strings that a shared pipeline decodes and tokenizes before use.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Replay audio events come in writer and applier pairs keyed by a one-byte record tag: writers serialize timestamp, entity, and payload from emit handlers, while appliers resolve the handle and replay the event during record processing. Nine tags were mapped.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The frame container classes share one slot-list protocol (array pointer, count, add, remove), and the class-hash virtual slot is used for runtime type checks between frame classes.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two batch entries are alternate entries or tail continuations of neighbours rather than independent functions: one frontend update reached two bytes into another, and one zone update that jumps into the next function.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;One-instruction accessors shared across dozens of UI classes were left unnamed at low confidence, since their mechanical behavior is clear but no source defines what the fields control. The next naming lane covering UI accessors should check whether any caller or override has since given those fields meaning before renaming them. The two entry-sharing pairs should probably be merged in the function queue.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Read the executable through the mapped image, disassemble each batch entry, and cross-reference string references, import calls, caller names from merged lane symbols, class slot descriptions, and verified rewrite doc comments. A global-reference scan over the whole image finds the consumers of shared state that single-function reads miss.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Caller attribution by nearest known name below the call site repeatedly misfired inside long unnamed spans, blaming a UI slot stub or a script native stub for calls made by replay and camera code. Native-mapping names in the merged symbols turned out to be low-confidence lane guesses rather than native-table facts, so they were only trusted where the code shape agreed. The zone data filename could not be recovered because the path buffer lives in a load-state struct shared by many unrelated loaders.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Two adjacent task-system functions never return</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b522"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b522</id>
@@ -1091,50 +1135,5 @@
 &lt;p&gt;Run the lane generator to rebuild the eight rewrites and contracts, build the rewrite crate for 32-bit Windows, and run the stock checker driver over the eight contracts at a thousand trials each. All eight pass with their mutants caught.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The wrong relocation result plus a plausible story about unrelocated reads made deferral look certain for about twenty minutes, until a probe showed most trials passing with correct dispatch. The probe data overruled the static analysis, and re-checking the script found the double-added page.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming the follow cameras and the player ped</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-83"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-83</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One hundred and fifty consecutive functions turned out to be three chase-camera classes, a camera probe-query family, shared camera math, and the player-ped class with its aim-target scanner; 143 of them are now named, most at medium confidence.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred and fifty consecutive functions turned out to be three chase-camera classes, a camera probe-query family, shared camera math, and the player-ped class with its aim-target scanner; 143 of them are now named, most at medium confidence.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of 150 unnamed functions in one address run, working out what the group is about first, with a confidence per name and no guessing presented as fact.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The run holds the vehicle follow camera, the on-foot follow camera, the weapon-aim camera, and the player ped, in that order, plus a vehicle camera-data loader and shared vector math.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All three camera classes share vtable slot meanings: a deleting destructor, a target-entity getter, a large per-frame update, a publish step, and a deactivate step, which made the virtuals nameable with confidence.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One inventory entry is not a function at all: its byte range overlaps neighbouring parser code, so it was left unnamed and flagged.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; A family of about twenty functions walks four parallel probe arrays for camera collision queries; the per-element helpers they call are still unnamed, which caps the whole family at medium confidence.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Names went into the batch file with evidence and confidence: 25 high, 118 medium, 7 left empty. The next naming lane covering nearby code should name the small physics query helpers first, since about twenty camera names depend on them.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Disassemble each function through the mapped image, collect referenced strings, imported calls, known callee names and vtable slots into one table, then sweep the code section for direct callers of every batch member; the caller list was the single most useful signal after strings.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Two early guesses were wrong and had to be corrected: a clamp that looked like a field-of-view limit turned out to clamp follow distance, and a timer test sits next to the health field but is not one. Both were caught by already-verified rewrites of the same functions, which are worth checking before naming anything.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a 150-function run: cleanup tables, wanted state and three shared spans</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-82"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-82</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One hundred forty-four of one hundred fifty consecutive functions got descriptive names, and the run exposed three reusable naming signals plus three inventory spans that hold more than one function.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred forty-four of one hundred fifty consecutive functions got descriptive names, and the run exposed three reusable naming signals plus three inventory spans that hold more than one function.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name at high, medium or low confidence for each of 150 consecutive unnamed functions, working out what the group is about first and leaving the name empty where the behaviour cannot be told.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The run splits into five groups: a single network socket helper, fragment and physics lifecycle code, mission cleanup and entity creation, the wanted level system, and interiors with the follow-vehicle camera.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The mission cleanup object holds two fixed tables of small entries carrying handle type, handle, owner thread and flags, and the entity-kind nibble selects the ped, vehicle or object pool.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The wanted object holds a sixteen-slot crime table with position and timestamp, plus level, heat and grey-out timer fields nearby.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three inventory spans each contain more than one function: one holds switch-table data with the real function starting later, and two hold a small entry prefix with a separate function after padding.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two size-zero inventory entries are real, called functions: a fragment dirty-bit setter and a one-star wanted setter.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Names follow the destructor convention already in the merged symbols, with a plain destructor body and a deleting wrapper variant. Later lanes should name tiny single-global functions by the global effect, distrust size-zero and gapfill entries until disassembled, and add batch addresses as enclosing anchors before mapping callers, or every caller misattributes to one distant function. Tail-call callees need collecting too: the jump-based evidence pass used here misses them.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Read code through the mapped executable image and confirm the mapping by decoding one known function first. Build one evidence table per function with direct calls, imports, string references, a caller scan and name lookups in the merged symbols, lane names and verified rewrites, then read the short functions and the leftovers directly. The lane scratch folder keeps the scripts and tables.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The first caller map attributed most calls in the interiors group to one unrelated vtable function, because no nearby function starts were known; adding the batch addresses as anchors fixed it. A helper script named after a standard library module shadowed it and crashed on import until renamed. Shell output redirection mangled one evidence dump into wide characters, so later tables were written by the scripts themselves.&lt;/p&gt;</content>
   </entry>
 </feed>
