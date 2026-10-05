@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-05",
-  "updated_at": "2026-10-05 02:02",
+  "updated_at": "2026-10-05 02:07",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,8 +12,8 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 23082,
-    "rewritten": 12141,
+    "named": 23086,
+    "rewritten": 12142,
     "verified": 11535
   },
   "structures": 340,
@@ -99,13 +99,13 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 23082,
+      "value": 23086,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (14078); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (14082); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 12141,
+      "value": 12142,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
@@ -118,9 +118,9 @@
   ],
   "activity": {
     "lanes_running": 10,
-    "lanes_finished": 1044,
+    "lanes_finished": 1045,
     "lanes_incomplete": 130,
-    "devlog_entries": 396
+    "devlog_entries": 397
   },
   "map": [
     {
@@ -3251,7 +3251,7 @@
       "from": "0x00B8E087",
       "to": "0x00B939A8",
       "count": 219,
-      "named": 212,
+      "named": 215,
       "rewritten": 0,
       "verified": 0
     },
@@ -3693,7 +3693,7 @@
       "to": "0x00CA4916",
       "count": 79,
       "named": 43,
-      "rewritten": 35,
+      "rewritten": 36,
       "verified": 35
     },
     {
@@ -3791,7 +3791,7 @@
       "from": "0x00CDC466",
       "to": "0x00CE1D87",
       "count": 77,
-      "named": 4,
+      "named": 5,
       "rewritten": 4,
       "verified": 4
     },
