@@ -9,6 +9,25 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A callee slot called with two different arities, verified by fault parity</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s407"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s407</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>One rewrite in this batch is proven identical even though an eighth of its trials crash on both sides: the original calls one virtual slot first with an argument and later without, and the checker's fixed-pop stub pops the return address on the second call. Matching the crash exactly turned out to be the proof.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One rewrite in this batch is proven identical even though an eighth of its trials crash on both sides: the original calls one virtual slot first with an argument and later without, and the checker's fixed-pop stub pops the return address on the second call. Matching the crash exactly turned out to be the proof.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite forty small task-system functions and prove each identical over a thousand trials, with one deliberately wrong version per function that must fail.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Thirty-seven functions verified, three deferred, none unreached. Two findings stood out. First, a gated refresh routine invokes the same driver slot twice with different stack shapes: once with its object pushed, once with register only. Against the one-word callee the second call unbalances the stack, and both the original and the rewrite fault with the same code before the float copy that follows. A wrong version that balances the call survives and is caught, which shows the contract observes the behaviour. Second, an event constructor plants a vtable pointer off by exactly sixteen megabytes on the stock worker while mapping, relocation, patch and stub evidence all check out, so its provably correct rewrite waits on a worker fix.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;The refresh routine counts as verified with the unexecuted float copy listed as narrowing, and the constructor stays deferred with its rewrite kept for re-run. Lanes meeting a mixed-arity slot should reproduce the imbalance rather than route around it, and should re-decode with the recursive decoder before trusting triage reads.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run the lane's contracts for the gated refresh routine: about an eighth of trials end fault against fault with identical codes while the rest compare fully, and the balanced-call wrong version fails on termination. The constructor's planted pointer differs from the correct value by a constant sixteen megabytes on every seed.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Contract addresses are file addresses minus the image base while rewrites use absolute ones, and mixing the two faulted every trial until spotted. A per-trial pin cycle silently phase-locked with a gate so a whole path never ran, and probe runs kept overwriting the lane results file until it was rebuilt from the generator scripts.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Production lane: the worker relocates absolute immediates, and data reads work without the shadow</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b390"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b390</id>
@@ -1057,27 +1076,5 @@
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming 150 leaderboard methods by alignment to verified rewrites</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-32"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-32</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>All 150 functions in this batch were named at high confidence: they are nine virtual methods repeated across seventeen ranked episodic race leaderboard types, and six of the nine slots are instruction-for-instruction identical to already verified rewrites of the same slots.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;All 150 functions in this batch were named at high confidence: they are nine virtual methods repeated across seventeen ranked episodic race leaderboard types, and six of the nine slots are instruction-for-instruction identical to already verified rewrites of the same slots.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose descriptive names for 150 consecutive unnamed game functions, working out what the group is about first and then naming each function with a confidence level.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds nine vtable slots shared by seventeen leaderboard types. Two unnamed groups resolved by position and shape: tiny getters returning each board's own name string, and larger functions classifying a column entry through a jump table.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Six of the nine slots disassemble to exactly the same instruction sequences as checker-verified rewrites of the same slots in other leaderboard types, with equal instruction counts, so their behaviours and names transfer directly. The remaining three were verified by full reads: a name getter checked against its board's own name string in all seventeen cases, an id getter cross-checked against the id every sibling slot uses, and a row-packing routine read end to end.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Each leaderboard type uses a single numeric board id across all its methods, and in this batch the ids run sequentially with the board number.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The row-packing routine loops over nineteen columns here, while an earlier lane reported twenty-five for a different board family. Either the bound varies by family or the earlier read was off; one look at the other family's routine would settle it.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;All 150 functions were named with the same method wording earlier lanes established for this family. The fastest reliable naming signal for repeated template code is mnemonic alignment against verified rewrites of the same slot: when every instruction matches, the verified behaviour description transfers without re-analysis.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Disassemble each batch function through the executable's memory-mapped image indexed by relative address, group by instruction-shape hash, and compare each group's shape against the verified rewrite sources for the same vtable slot. Confirm the name getters by reading their target strings and confirm the board ids by comparing the getter's return value with the constant sibling slots pass to the shared table-fetch helper.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Nothing went wrong. The family had been solved by an earlier lane whose report named the exact verification steps, so most of the work was re-running those checks on the new batch rather than discovering them.&lt;/p&gt;</content>
   </entry>
 </feed>
