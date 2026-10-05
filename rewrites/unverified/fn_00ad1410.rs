@@ -178,14 +178,14 @@ lf_checker_rt::export!(cdecl, rw_00ad1410(count: u32, rate: u32, mode: u32, form
             0
         };
         desc[11] = mode1;
-        wr32(g(BANK_TAB), create_fn(factory, 0x00ea_6900, 3, rate, mode, format, dp));
+        wr32(g(BANK_TAB), create_fn(factory, lf_checker_rt::relocated(0x00EA6900), 3, rate, mode, format, dp));
         wr32(
             g(BANK_TAB).wrapping_add(4),
-            create_fn(factory, 0x00ea_6918, 3, rate, mode, format, dp),
+            create_fn(factory, lf_checker_rt::relocated(0x00EA6918), 3, rate, mode, format, dp),
         );
         wr32(
             g(BANK_TAB).wrapping_add(8),
-            create_fn(factory, 0x00ea_6930, 3, rate, mode, format, dp),
+            create_fn(factory, lf_checker_rt::relocated(0x00EA6930), 3, rate, mode, format, dp),
         );
         let (mode2, dx2) = if rd32(g(OVERRIDE)) == 1 {
             wr32(g(ST_FORMAT), 0x20);
@@ -202,13 +202,11 @@ lf_checker_rt::export!(cdecl, rw_00ad1410(count: u32, rate: u32, mode: u32, form
             (2u32, 0x20u32)
         };
         desc[11] = mode2;
-        wr32(g(SIDE_B), create_fn(factory, 0x00ea_6948, 3, rate, mode, dx2, dp));
+        wr32(g(SIDE_B), create_fn(factory, lf_checker_rt::relocated(0x00EA6948), 3, rate, mode, dx2, dp));
         desc[11] = 0x0e;
-        wr32(g(SLOT_C), create_fn(factory, 0x00ea_695c, 3, rate, mode, 0x20, dp));
+        wr32(g(SLOT_C), create_fn(factory, lf_checker_rt::relocated(0x00EA695C), 3, rate, mode, 0x20, dp));
         if setne == 1 {
-            let mut blk = [0u32; 2];
-            let bp = (&blk[0] as *const u32) as u32;
-            lf_checker_rt::callee_stdcall!(LINK0, u32, 0, bp);
+            lf_checker_rt::callee_stdcall!(LINK0, u32, 0);
             let z = [0u32; 1];
             let zp = (&z[0] as *const u32) as u32;
             lf_checker_rt::callee_cdecl!(LINK1, u32, zp);
@@ -237,7 +235,7 @@ lf_checker_rt::export!(cdecl, rw_00ad1410(count: u32, rate: u32, mode: u32, form
         t[10] = desc[9];
         t[11] = desc[10];
         let tp = (&t[0] as *const u32) as u32;
-        wr32(g(SIDE_A), create_fn(factory, 0x00ea_6974, 3, rate, mode, 0x20, tp));
+        wr32(g(SIDE_A), create_fn(factory, lf_checker_rt::relocated(0x00EA6974), 3, rate, mode, 0x20, tp));
         let pa = rd32(g(SIDE_A));
         let pvt = rd32(pa);
         let t10 = rd32(pvt.wrapping_add(CHAIN_SLOT0));
@@ -252,7 +250,7 @@ lf_checker_rt::export!(cdecl, rw_00ad1410(count: u32, rate: u32, mode: u32, form
         let t482 = rd32(qvt.wrapping_add(CHAIN_SLOT1));
         let f482: extern "thiscall" fn(u32, u32, u32, u32) -> u32 =
             unsafe { core::mem::transmute(t482 as usize) };
-        f482(qvt, q, 0, 0x0154_E188);
+        f482(qvt, q, 0, lf_checker_rt::relocated(0x0154E188));
         lf_checker_rt::callee_cdecl!(LINK3, u32, rd32(g(CHAIN_PTR)));
         lf_checker_rt::callee_cdecl!(FIN, u32,);
         0
