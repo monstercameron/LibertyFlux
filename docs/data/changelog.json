@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Rust in progress: 44 files from lanes (502 unverified rewrites, 38 in review)",
+    "title": "Devlog: an outside review of the pipeline, checked against the machine",
     "commit": null,
+    "summary": "Five findings and six changes; the verified count rose by 715 in one step, and this entry says why.",
+    "changes": [
+      "The verified count rose by 715 at 13:18. These rewrites had passed the checker hours or days earlier and were held out of the repository by the publication scan: its pattern mistook ordinary English for assembly, and many comments noted a calling convention by quoting the return instruction. The pattern is corrected and such comments are reworded on import; code is never touched, and the importer checks that. No proof was changed and nothing was re-counted.",
+      "A preflight table now records what each function will ask of the checker. Functions that need an ability the checker lacks are held out of batches until it is installed (989 functions, 932,000 bytes, very probably pass doubles across a call in vector registers); about 1,600 functions excluded by a rule written for an early checker version are admitted.",
+      "Deferred functions are sorted into queues by what clears them (1,046 functions, 678,000 bytes), and two lane kinds were added: one drains the largest actionable queue, one takes only the largest functions. A lane kind that silently produces nothing now raises an alarm.",
+      "The progress data now carries the share of code verified by size (25.4%) and in functions of 1,000 bytes and more (14.6%).",
+      "The memory ceiling was traced to a probable cause outside the project: one platform service holds 81,215 thread handles, and the kernel memory that pins grows with every process the lanes start."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Rust in progress: 44 files from lanes (502 unverified rewrites, 38 in review)",
+    "commit": "5d5bd7b71e20f7af0ec7362dc77abe1148a4d082",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 502 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",

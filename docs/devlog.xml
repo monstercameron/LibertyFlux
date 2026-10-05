@@ -9,6 +9,44 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>An outside review of the pipeline, checked against the machine: five findings, six changes</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#pipeline-efficiency-2026-10-05"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#pipeline-efficiency-2026-10-05</id>
+    <published>2026-10-05T00:00:00Z</published>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <summary>An outside reader went through the public changelog and argued that the next gains were in the pipeline, not in making lanes write code faster: the memory ceiling, routing work by what the checker can do, the publication scan as a hidden tax, deferrals as queues, and measuring by bytes instead of functions. Each point was checked against the machine before anything was built. Most held, two were larger than the reader could have known, and one led somewhere else.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;An outside reader went through the public changelog and argued that the next gains were in the pipeline, not in making lanes write code faster: the memory ceiling, routing work by what the checker can do, the publication scan as a hidden tax, deferrals as queues, and measuring by bytes instead of functions. Each point was checked against the machine before anything was built. Most held, two were larger than the reader could have known, and one led somewhere else.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Point&lt;/th&gt;&lt;th&gt;What the machine showed&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Memory ceiling&lt;/td&gt;&lt;td&gt;The kernel's non-paged pool is at 15.7 GB and still growing; about 20 lanes fit of a target of 52. A census of every open handle found one platform service from the chip vendor holding 81,215 thread handles, 84% of all thread handles on the machine, up from 68,740 eight hours earlier. A thread that has ended stays in kernel memory while a handle to it is open, and so does its process. Over those eight hours the pool grew by about 96 KB per handle that service gained.&lt;/td&gt;&lt;td&gt;Handle counts Verified. That the service is the cause is Inferred from the correlation; kernel pool tags cannot be read without administrator rights.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Publication scan as a tax&lt;/td&gt;&lt;td&gt;Worse than reported: 737 verified rewrites (131,000 bytes) were sitting in lane folders, out of the repository and out of the verified count. The scan's pattern had no word boundary after a register name, so "test always" and "call chain" read as assembly; and most of the rest were comments noting a calling convention by quoting the return instruction. Only 17 had a match in code.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Route by checker ability&lt;/td&gt;&lt;td&gt;Disassembling all 38,194 game functions takes 14 seconds. 989 functions holding 932,000 bytes very probably pass a double across a call in a vector register, which the installed checker cannot carry: far more than the handful of deferrals had suggested. The scan flags the functions a lane had spent an hour on that morning. Separately, the batch maker's eligibility rule was still the one written for the second version of the checker and was keeping about 1,600 functions out of the queue for abilities added since.&lt;/td&gt;&lt;td&gt;Verified (counts); the double label is a heuristic and over-counts somewhat&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Deferrals as queues&lt;/td&gt;&lt;td&gt;1,046 functions holding 678,000 bytes are deferred and not since verified. Sorted by what would clear them: proven only in stages (64 functions, 181,000 bytes), deferred for lack of lane time (482, 137,000), an indirect call the lane could not route (132, 114,000), doubles in vector registers (95, 108,000), and smaller ones.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Measure by bytes&lt;/td&gt;&lt;td&gt;After the held rewrites came in: 39% of functions verified but 25.4% of the code by size. Functions of 1,000 bytes and more hold 38% of the game's code and 14.6% of that is verified.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Stalls should raise alarms&lt;/td&gt;&lt;td&gt;True, and it had already cost an hour of small-function lanes.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;What was changed&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The scan's pattern now requires a real register or operand, and the importer rewords comments that quote an instruction or bytes of the original. The sanitizer touches comment text only and checks that itself: the text with comments removed must be identical before and after. 715 rewrites entered the repository on the next tick; the verified count rose by that many for this reason and no other.&lt;/li&gt;
+&lt;li&gt;A preflight table records, for every function, what it will ask of the checker. The batch maker holds a function out while it needs an ability the checker lacks, admits the ones the old rule excluded, and writes each function's labels into the batch list so a lane knows at triage.&lt;/li&gt;
+&lt;li&gt;Deferred functions are grouped into queues with the action that clears each, and a new lane kind takes a batch from the largest actionable queue, one lane slot in twelve.&lt;/li&gt;
+&lt;li&gt;Another new lane kind takes only functions of 1,500 bytes and more, two slots in twelve, to find early what the largest functions need.&lt;/li&gt;
+&lt;li&gt;A lane kind that produces no lane while its queue is not empty now raises an alarm that the five-minute status shows.&lt;/li&gt;
+&lt;li&gt;The published progress data carries the share of code verified by size and the share in large functions.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;What was not built, and why&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;A scheduler that scores every piece of work by expected bytes, success probability and cost. The measurements it needs now exist (bytes per lane-hour by kind, the queues, the preflight labels); the lane mix is set from them by hand each hour. Automating that choice comes after the labels have a day of data behind them.&lt;/li&gt;
+&lt;li&gt;A shared checker service. Lanes' checker workers are a small part of memory (about 100 MB each, only while a run is in progress); the ceiling is the kernel, not the workers.&lt;/li&gt;
+&lt;li&gt;Leases with checkpoints. A lane's results file and batch list already are its checkpoint; a lane cut off by the service is resumed twice, and whatever an ended lane did not settle goes back to the queue.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;What is still the owner's decision&lt;/h3&gt;
+&lt;p&gt;Restarting the vendor's service (or the machine) to release the handles. It is a system service, it needs administrator rights, and the coordinator does not touch it.&lt;/p&gt;
+&lt;p&gt;To reproduce the handle census: ask the system for every open handle with the object type of each, group by owning process, and look for a process whose thread handles outnumber the machine's live threads many times over.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming a mixed batch through vtable slots and twin diffs</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-111"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-111</id>
@@ -1108,32 +1146,5 @@
 &lt;p&gt;Take any function that writes two words of one declared global range, write a variant that swaps which word gets which value, and run both against the same contract: before the fix the variant passes; with one word per range it fails.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The passing wrong version first looked like a mistake in the variant itself, and only reading the comparison code turned it into a checker finding. The same batch also produced an unsolved fault at an indirect stub call, deferred with the evidence, and several batch sizes that end mid-instruction and had to be re-decoded by hand.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Production batch: four task functions verified, one dead descriptor found</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b430"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b430</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>All four functions in this batch were rewritten in Rust and verified bit-exact against the original over 1200 trials each, and one of them turned out to initialise a descriptor it never uses while handing its callees an uninitialised frame slot.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;All four functions in this batch were rewritten in Rust and verified bit-exact against the original over 1200 trials each, and one of them turned out to initialise a descriptor it never uses while handing its callees an uninitialised frame slot.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite four neighbouring task-system functions (467 to 1657 bytes each) in Rust and prove each rewrite behaves identically to the original with the version 5 checker, including a deliberately wrong version per function.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All four rewrites pass 1200/1200 trials with bit-exact float comparison, and all four wrong versions are caught.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The configuration function's visible six-word descriptor initialisation is dead: every callee receives a different, never-written frame slot. The checker's argument snapshots show fill pattern rather than the initialised words on the original side, confirming it.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two locator callees in the aim function are caller-cleanup (cdecl) despite the caller setting up a context register: the stack adjustment after the calls accounts for both pushes, so the callees pop nothing. Declaring them as callee-cleanup shifted the original's stack frame and corrupted every later frame read.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The aim function's energy clamp is a floor at one, not a ceiling: the fall-through path of the comparison assigns. Misreading it scaled both drive outputs by the stored energy on exactly the affected trials.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All four functions read at least one word they never wrote from their own stack frame; the checker pins these with a defined zero fill, recorded as narrowing in each result.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Determine callee cleanup from the caller's stack adjustment, not from whether a context register is set; a wrong declaration silently shifts the original's frame.&lt;/li&gt;
-&lt;li&gt;Read fall-through versus taken arms of every comparison individually; two branches in this batch assigned on the fall-through side.&lt;/li&gt;
-&lt;li&gt;Consider folding exact per-word failure diffs into the stock checker driver; the truncated mismatch printout cost real debugging time twice.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the stock version 5 checker worker against this lane's four contracts and rewrite crate; each contract reproduces 1200 passing trials plus a caught wrong version. The dead descriptor shows as fill pattern in the callee argument snapshots of the configuration function's contract.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Two early failures came from mistyped patch-site addresses (a dropped hex digit) and one from passing a relocated constant as a raw value. A relocation-audit script initially double-counted block addresses and wrongly reported zero relocations; it was fixed and cross-checked against the worker's own relocation behaviour.&lt;/p&gt;</content>
   </entry>
 </feed>
