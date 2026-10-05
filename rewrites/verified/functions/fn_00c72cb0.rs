@@ -2,30 +2,31 @@
 
 /// Rescale the timing fields of a ped task parameter block.
 ///
-/// `this` points to the block (at least 0xFC bytes). The routine divides the
-/// constant `K_RATE` by the tick count at `+0x30` (read as a signed integer)
-/// and stores the rate at `+0x34`; scales the duration at `+0x9C` by `K_TICK`
-/// and stores `K_BASE` over it at `+0xA0`; derives three more reciprocals of
-/// `K_BASE` at `+0xA8`, `+0x90`, `+0x98` (the last over the difference of
-/// `+0x8C` and `+0x94`); multiplies the pair at `+0xB8`/`+0xBC` by one of two
-/// game speed factors depending on flag bit 0x20000000 at `+0xF0`; multiplies
-/// `+0x14` by a third game factor; folds `+0x50` through two constants into
-/// `+0x50` and `+0x4C`; clamps the level byte at `+0x40` down to 7; reports
-/// the folded value, the clamped level and a pointer at `+0x54` to the
-/// parameter consumer (intercepted cdecl callee of three arguments); and
-/// finally scales `+0x84` by `K_TICK` with `K_BASE` over it at `+0x88`. All
-/// arithmetic is single precision in the original's operand order.
+/// `this` points to the block (at least 0xFC bytes). The routine divides 100
+/// by the tick count at `+0x30` (read as a signed integer) and stores the
+/// rate at `+0x34`; converts the duration at `+0x9C` from degrees to radians
+/// and stores its reciprocal at `+0xA0`; derives three more reciprocals at
+/// `+0xA8`, `+0x90`, `+0x98` (the last over the difference of `+0x8C` and
+/// `+0x94`); multiplies the pair at `+0xB8`/`+0xBC` by the game speed factor
+/// (0.1, or 0.3 when flag bit 0x20000000 at `+0xF0` is set); multiplies `+0x14`
+/// by a third game factor; converts the speed at `+0x50` from km/h to m/s and
+/// then scales it by 1.2 into `+0x4C`; clamps the level byte at `+0x40` down
+/// to 7; reports the folded speed, the clamped level and a pointer at `+0x54`
+/// to the parameter consumer (intercepted cdecl callee of three arguments);
+/// and finally converts `+0x84` from degrees to radians with its reciprocal
+/// at `+0x88`. All arithmetic is single precision in the original's operand
+/// order.
 ///
 /// Original: 0x00C72CB0 (thiscall, no stack arguments; no defined return).
 lf_checker_rt::export!(thiscall, rw_00C72CB0(this: u32) -> u32 {
     unsafe {
-        const K_RATE: u32 = 0xFE8BB0;
-        const K_BASE: u32 = 0xFE88E8;
-        const K_TICK: u32 = 0xFE8728;
-        const K_FOLD_A: u32 = 0xED3760;
-        const K_FOLD_B: u32 = 0xFE891C;
-        const G_SPEED_LO: u32 = 0x104B6E8;
-        const G_SPEED_HI: u32 = 0x104B6EC;
+        const HUNDRED: u32 = 0xFE8BB0; // 100.0
+        const ONE: u32 = 0xFE88E8; // 1.0
+        const DEG_TO_RAD: u32 = 0xFE8728; // pi/180
+        const KMH_TO_MS: u32 = 0xED3760; // 5/18
+        const HEADROOM: u32 = 0xFE891C; // 1.2
+        const G_SPEED_LO: u32 = 0x104B6E8; // 0.1
+        const G_SPEED_HI: u32 = 0x104B6EC; // 0.3
         const G_MISC: u32 = 0x104B6F0;
         const SPEED_FLAG: u32 = 0x2000_0000;
         const LEVEL_MAX: u8 = 7;
@@ -61,20 +62,20 @@ lf_checker_rt::export!(thiscall, rw_00C72CB0(this: u32) -> u32 {
         }
 
         let speed_hi = rd32(this + 0xF0) & SPEED_FLAG != 0;
-        let base = gk(K_BASE);
+        let one = gk(ONE);
 
         let ticks = rd32(this + 0x30) as i32 as f32;
-        wrf(this + 0x34, div(gk(K_RATE), ticks));
+        wrf(this + 0x34, div(gk(HUNDRED), ticks));
 
-        let dur = mul(rdf(this + 0x9C), gk(K_TICK));
+        let dur = mul(rdf(this + 0x9C), gk(DEG_TO_RAD));
         wrf(this + 0x9C, dur);
-        wrf(this + 0xA0, div(base, dur));
+        wrf(this + 0xA0, div(one, dur));
 
-        wrf(this + 0xA8, div(base, rdf(this + 0xA4)));
+        wrf(this + 0xA8, div(one, rdf(this + 0xA4)));
 
         let v = rdf(this + 0x8C);
-        wrf(this + 0x90, div(base, v));
-        wrf(this + 0x98, div(base, sub(v, rdf(this + 0x94))));
+        wrf(this + 0x90, div(one, v));
+        wrf(this + 0x98, div(one, sub(v, rdf(this + 0x94))));
 
         let speed = gk(if speed_hi { G_SPEED_HI } else { G_SPEED_LO });
         wrf(this + 0xB8, mul(rdf(this + 0xB8), speed));
@@ -83,9 +84,9 @@ lf_checker_rt::export!(thiscall, rw_00C72CB0(this: u32) -> u32 {
         let over = ((this + 0x40) as *const u8).read() > LEVEL_MAX;
         wrf(this + 0x14, mul(rdf(this + 0x14), gk(G_MISC)));
 
-        let folded = mul(rdf(this + 0x50), gk(K_FOLD_A));
+        let folded = mul(rdf(this + 0x50), gk(KMH_TO_MS));
         wrf(this + 0x50, folded);
-        let folded = mul(folded, gk(K_FOLD_B));
+        let folded = mul(folded, gk(HEADROOM));
         wrf(this + 0x4C, folded);
 
         if over {
@@ -94,9 +95,9 @@ lf_checker_rt::export!(thiscall, rw_00C72CB0(this: u32) -> u32 {
         let level = ((this + 0x40) as *const u8).read() as u32;
         let _: u32 = lf_checker_rt::callee_cdecl!(CONSUMER, u32, folded.to_bits(), level, this + 0x54);
 
-        let tail = mul(rdf(this + 0x84), gk(K_TICK));
+        let tail = mul(rdf(this + 0x84), gk(DEG_TO_RAD));
         wrf(this + 0x84, tail);
-        wrf(this + 0x88, div(base, tail));
+        wrf(this + 0x88, div(one, tail));
         0
     }
 });
