@@ -16,6 +16,7 @@ lf_checker_rt::export!(cdecl, rw_009431b0(event: u32) -> u32 {
     const REGISTRY: u32 = 0x0117374C;
     const NOTIFY: u32 = 1;
     const FOLLOW_UP: u32 = 2;
-    let _: u32 = lf_checker_rt::callee_thiscall!(NOTIFY, u32, REGISTRY, event);
+    let _: u32 =
+        lf_checker_rt::callee_thiscall!(NOTIFY, u32, lf_checker_rt::relocated(REGISTRY), event);
     lf_checker_rt::callee_cdecl!(FOLLOW_UP, u32, 0u32)
 });

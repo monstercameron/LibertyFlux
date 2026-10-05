@@ -41,7 +41,8 @@ lf_checker_rt::export!(thiscall, rw_00945120(this: u32, id: u32, a1: u32, a2: u3
         if ((rec + INIT_FLAG) as *const u8).read() != 0 {
             let _: u32 = lf_checker_rt::callee_thiscall!(INIT, u32, rec);
         }
-        let found: u32 = lf_checker_rt::callee_thiscall!(LOOKUP, u32, REGISTRY, id);
+        let found: u32 =
+            lf_checker_rt::callee_thiscall!(LOOKUP, u32, lf_checker_rt::relocated(REGISTRY), id);
         if found == 0 {
             return 0;
         }

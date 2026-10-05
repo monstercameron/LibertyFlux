@@ -310,6 +310,10 @@ lf_checker_rt::export!(thiscall, rw_00a74b70(obj: u32, arg0: u32, dt_bits: u32) 
         x3 = add(x3, a0);
         x2 = add(x2, a1);
         let m38 = rdf(mat + 0x38);
+        // The call setup zeroes this frame slot just before the call, so the
+        // callee always sees 0.0 here (the case-C value above is overwritten
+        // before any read) and its out-word becomes the live value.
+        s38 = 0.0;
         let answer: u32 = {
             let frame_slot = &mut s38 as *mut f32 as u32;
             lf_checker_rt::callee_cdecl!(
@@ -359,7 +363,7 @@ lf_checker_rt::export!(thiscall, rw_00a74b70(obj: u32, arg0: u32, dt_bits: u32) 
                             xb = mul(xb, dt);
                             xb = add(xb, rdf(obj + OBJ_PHASE));
                             wrf(obj + OBJ_PHASE, xb);
-                        } else if dt > s38 {
+                        } else if x2q > s38 {
                             if s48 > K_0P025 {
                                 wrf(obj + OBJ_RATE, mul(s48, K_0P95));
                             }
