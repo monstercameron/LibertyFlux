@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: a stuck tick stopped the lanes",
+    "title": "Rewrites: 22 more functions pass the checker (15527 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "22 rewrites added under rewrites/verified: 0 script native handlers and 22 other functions.",
+      "The tree now holds 15527 rewrites, 15508 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 668 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "21 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: a stuck tick stopped the lanes",
+    "commit": "8abe025b1fef8412dd0214a72cc338ddfec9b38d",
     "summary": "At 18:40 every running lane stopped at once. A finished lane's leftover scripts, a tick that slowed to a crawl and a supervisor that waits for the tick added up to the supervisor's task reaching its time limit with three lanes under it.",
     "changes": [
       "New devlog entry with the chain of causes, what was lost (about two lane-hours interrupted, no results) and four changes: time limits on every step of the tick, no tick near the end of the supervisor's window, lanes cut off from outside are resumed from their folders, and a finished lane's leftover processes are stopped after five minutes instead of two and a half hours.",
