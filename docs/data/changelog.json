@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: A production batch that caught the checker running corrupted code",
+    "title": "Rewrites: 5 more functions pass the checker (12142 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "5 rewrites added under rewrites/verified: 0 script native handlers and 5 other functions.",
+      "The tree now holds 12142 rewrites, 12123 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "737 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: A production batch that caught the checker running corrupted code",
+    "commit": "425a62192e63b47176dbc8972475594018822b23",
     "summary": "Findings from the r-b419 lane.",
     "changes": [
       "New devlog entry: A production batch that caught the checker running corrupted code.",

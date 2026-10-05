@@ -82917,6 +82917,24 @@
   "lane": "r-s426"
  },
  {
+  "address": "0x00C058A0",
+  "name": "stream_amplitude_to_db",
+  "kind": "function",
+  "file": "functions/fn_00c058a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C05B10",
+  "name": "stream_request_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00c05b10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
   "address": "0x00C05C80",
   "name": "stream_item_init_tag8d",
   "kind": "function",
@@ -82948,6 +82966,33 @@
   "name": "stream_maybe_release_slot",
   "kind": "function",
   "file": "functions/fn_00c05d90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C06090",
+  "name": "stream_buffer_attach",
+  "kind": "function",
+  "file": "functions/fn_00c06090.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C06200",
+  "name": "stream_cached_copy",
+  "kind": "function",
+  "file": "functions/fn_00c06200.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s426"
+ },
+ {
+  "address": "0x00C063A0",
+  "name": "stream_table_load",
+  "kind": "function",
+  "file": "functions/fn_00c063a0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s426"
