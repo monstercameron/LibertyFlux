@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Naming a mixed batch: cam instructions, movie player, projectiles, cutscenes",
+    "title": "Rewrites: 12 more functions pass the checker (12062 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "12 rewrites added under rewrites/verified: 0 script native handlers and 12 other functions.",
+      "The tree now holds 12062 rewrites, 12043 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "717 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Naming a mixed batch: cam instructions, movie player, projectiles, cutscenes",
+    "commit": "4d0156466fba818ed66c536b270ea12b2b3dc1e7",
     "summary": "Findings from the nm-78 lane.",
     "changes": [
       "New devlog entry: Naming a mixed batch: cam instructions, movie player, projectiles, cutscenes.",
