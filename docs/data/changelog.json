@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: verified, and wrong: 144 rewrites the checker passed and the lift caught",
+    "title": "Rewrites: 3 more functions pass the checker (15044 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "3 rewrites added under rewrites/verified: 0 script native handlers and 3 other functions.",
+      "The tree now holds 15044 rewrites, 15025 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 659 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "19 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: verified, and wrong: 144 rewrites the checker passed and the lift caught",
+    "commit": "1d3d4a56ba12257846cdceb81e676e466ae2865d",
     "summary": "Why 144 verified rewrites were withdrawn, and what it says about what verified has meant.",
     "changes": [
       "Records how lifting one template family compared its verified rewrites with one another and found 144 that compare a length unsigned where the original compares it signed.",
