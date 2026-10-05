@@ -63684,6 +63684,24 @@
   "lane": "a-09"
  },
  {
+  "address": "0x00B64E70",
+  "name": "veh_adjust_limit",
+  "kind": "function",
+  "file": "functions/fn_00b64e70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B64F00",
+  "name": "veh_bind_indexed",
+  "kind": "function",
+  "file": "functions/fn_00b64f00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
   "address": "0x00B653A0",
   "name": "step_with_override_3",
   "kind": "function",
@@ -63718,6 +63736,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-09"
+ },
+ {
+  "address": "0x00B65B90",
+  "name": "veh_visit_positive_11",
+  "kind": "function",
+  "file": "functions/fn_00b65b90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B65BD0",
+  "name": "veh_maybe_forward_deep",
+  "kind": "function",
+  "file": "functions/fn_00b65bd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
  },
  {
   "address": "0x00B65C80",
@@ -63796,6 +63832,24 @@
   "name": "CHeli::vf0",
   "kind": "function",
   "file": "functions/fn_00b66e50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B68510",
+  "name": "veh_heli_aux_0",
+  "kind": "function",
+  "file": "functions/fn_00b68510.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B68580",
+  "name": "veh_heli_aux_1",
+  "kind": "function",
+  "file": "functions/fn_00b68580.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s450"
@@ -89550,6 +89604,15 @@
   "lane": "r-s448"
  },
  {
+  "address": "0x00C3B230",
+  "name": "CTrain::vf42",
+  "kind": "function",
+  "file": "functions/fn_00c3b230.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
   "address": "0x00C3B330",
   "name": "train_is_helper_owned",
   "kind": "function",
@@ -89649,10 +89712,28 @@
   "lane": "r-s448"
  },
  {
+  "address": "0x00C3DCC0",
+  "name": "train_speed_limit_for_class",
+  "kind": "function",
+  "file": "functions/fn_00c3dcc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
   "address": "0x00C3E0C0",
   "name": "train_init_transform_params",
   "kind": "function",
   "file": "functions/fn_00c3e0c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
+  "address": "0x00C3E460",
+  "name": "train_slot_by_index",
+  "kind": "function",
+  "file": "functions/fn_00c3e460.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s448"
@@ -92065,6 +92146,15 @@
   "name": "ik_joint_step_and_clamp",
   "kind": "function",
   "file": "functions/fn_00c9de50.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b450"
+ },
+ {
+  "address": "0x00C9E000",
+  "name": "frame_from_lookup_pair",
+  "kind": "function",
+  "file": "functions/fn_00c9e000.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b450"
@@ -96880,6 +96970,15 @@
   "name": "CDummyTask_Stationary::vf3",
   "kind": "function",
   "file": "functions/fn_00d3baf0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b453"
+ },
+ {
+  "address": "0x00D3BFF0",
+  "name": "CDummyTask_Wander::vf3",
+  "kind": "function",
+  "file": "functions/fn_00d3bff0.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b453"
