@@ -64872,6 +64872,51 @@
   "lane": "r-n106"
  },
  {
+  "address": "0x00B9B060",
+  "name": "NativeImpl_ADD_SPAWN_BLOCKING_AREA",
+  "kind": "function",
+  "file": "functions/fn_00b9b060.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9B0B0",
+  "name": "NativeImpl_ADD_SPAWN_BLOCKING_DISC",
+  "kind": "function",
+  "file": "functions/fn_00b9b0b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9B1D0",
+  "name": "NativeImpl_DEFINE_PED_GENERATION_CONSTRAINT_AREA",
+  "kind": "function",
+  "file": "functions/fn_00b9b1d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9B230",
+  "name": "NativeImpl_FIND_STREET_NAME_AT_POSITION",
+  "kind": "function",
+  "file": "functions/fn_00b9b230.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9B2B0",
+  "name": "NativeImpl_GENERATE_DIRECTIONS_2",
+  "kind": "function",
+  "file": "functions/fn_00b9b2b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
   "address": "0x00B9DD90",
   "name": "ADD_ADDITIONAL_POPULATION_MODEL",
   "kind": "native",
@@ -86929,6 +86974,33 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b335"
+ },
+ {
+  "address": "0x00D108F0",
+  "name": "task_aim_update",
+  "kind": "function",
+  "file": "functions/fn_00d108f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b405"
+ },
+ {
+  "address": "0x00D10C20",
+  "name": "task_geometry_update",
+  "kind": "function",
+  "file": "functions/fn_00d10c20.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b405"
+ },
+ {
+  "address": "0x00D10F80",
+  "name": "task_scan_accept",
+  "kind": "function",
+  "file": "functions/fn_00d10f80.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b405"
  },
  {
   "address": "0x00D1D3D0",
