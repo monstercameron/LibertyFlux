@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Naming batch: streaming emitters, player variation, and a mislabelled lights cluster",
+    "title": "Rewrites: 40 more functions pass the checker (13330 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "40 rewrites added under rewrites/verified: 0 script native handlers and 40 other functions.",
+      "The tree now holds 13330 rewrites, 13311 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "792 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Naming batch: streaming emitters, player variation, and a mislabelled lights cluster",
+    "commit": "1ca65e22d34cd21fd3ad542a7b5b575e349f8b70",
     "summary": "Findings from the nm-94 lane.",
     "changes": [
       "New devlog entry: Naming batch: streaming emitters, player variation, and a mislabelled lights cluster.",
