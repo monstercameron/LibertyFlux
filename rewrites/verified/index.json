@@ -29835,6 +29835,42 @@
   "lane": "a-18"
  },
  {
+  "address": "0x006F7380",
+  "name": "rbtree_erase_rebalance",
+  "kind": "function",
+  "file": "functions/fn_006f7380.rs",
+  "trials": 1600,
+  "checker": "version 5",
+  "lane": "r-b381"
+ },
+ {
+  "address": "0x006F7600",
+  "name": "rbtree_erase_rebalance_alt",
+  "kind": "function",
+  "file": "functions/fn_006f7600.rs",
+  "trials": 1600,
+  "checker": "version 5",
+  "lane": "r-b381"
+ },
+ {
+  "address": "0x006F77C0",
+  "name": "rbtree_insert_rebalance",
+  "kind": "function",
+  "file": "functions/fn_006f77c0.rs",
+  "trials": 1400,
+  "checker": "version 5",
+  "lane": "r-b381"
+ },
+ {
+  "address": "0x006F7A00",
+  "name": "rbtree_insert_rebalance_alt",
+  "kind": "function",
+  "file": "functions/fn_006f7a00.rs",
+  "trials": 1400,
+  "checker": "version 5",
+  "lane": "r-b381"
+ },
+ {
   "address": "0x0086E870",
   "name": "TIMERB",
   "kind": "native",
@@ -35350,6 +35386,15 @@
   "trials": 1100,
   "checker": "version 3",
   "lane": "r-b149"
+ },
+ {
+  "address": "0x008BA230",
+  "name": "float_mix_and_dispatch",
+  "kind": "function",
+  "file": "functions/fn_008ba230.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b378"
  },
  {
   "address": "0x008BA5A0",
@@ -84247,6 +84292,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b224"
+ },
+ {
+  "address": "0x00D72B90",
+  "name": "CReplayOverlay::vf2",
+  "kind": "function",
+  "file": "functions/fn_00d72b90.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b382"
  },
  {
   "address": "0x00D740A0",
