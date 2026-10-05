@@ -7,7 +7,7 @@
 /// the doomed row.
 ///
 /// Original: 0x00B82F00 (thiscall, three stack arguments, no return value).
-lf_checker_rt::export!(thiscall, rw_00B82F00(this: u32, k0: u32, k2: u32, k1: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00B82F00(this: u32, k0: u32, k1: u32, k2: u32) -> u32 {
     unsafe {
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {

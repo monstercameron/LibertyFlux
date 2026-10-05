@@ -7,7 +7,7 @@
 /// a negative probe releases the new object again and clears the slot.
 ///
 /// Original: 0x00B81730 (thiscall, two stack arguments, no return value).
-lf_checker_rt::export!(thiscall, rw_00B81730(this: u32, idx: u32, val: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00B81730(this: u32, val: u32, idx: u32) -> u32 {
     unsafe {
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
