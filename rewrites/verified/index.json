@@ -43245,6 +43245,186 @@
   "lane": "r-s106"
  },
  {
+  "address": "0x009A86E0",
+  "name": "entity_notify_all",
+  "kind": "function",
+  "file": "functions/fn_009a86e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A8710",
+  "name": "flag_lookup_or_default",
+  "kind": "function",
+  "file": "functions/fn_009a8710.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A8910",
+  "name": "byte_pair_gate",
+  "kind": "function",
+  "file": "functions/fn_009a8910.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A8E00",
+  "name": "flag_fetch_or_default",
+  "kind": "function",
+  "file": "functions/fn_009a8e00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A8E20",
+  "name": "flag_byte_set",
+  "kind": "function",
+  "file": "functions/fn_009a8e20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A8E50",
+  "name": "flag_byte_store",
+  "kind": "function",
+  "file": "functions/fn_009a8e50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A94B0",
+  "name": "audSpeechManager::vf0",
+  "kind": "function",
+  "file": "functions/fn_009a94b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A9570",
+  "name": "ring_slot_append",
+  "kind": "function",
+  "file": "functions/fn_009a9570.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A95E0",
+  "name": "ring_record_find_copy",
+  "kind": "function",
+  "file": "functions/fn_009a95e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A9970",
+  "name": "table_flag_test_a",
+  "kind": "function",
+  "file": "functions/fn_009a9970.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A99A0",
+  "name": "table_flag_test_b",
+  "kind": "function",
+  "file": "functions/fn_009a99a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A9C40",
+  "name": "indexed_slot_lookup",
+  "kind": "function",
+  "file": "functions/fn_009a9c40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A9C60",
+  "name": "indexed_byte_fetch",
+  "kind": "function",
+  "file": "functions/fn_009a9c60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009AA140",
+  "name": "conv_table_lookup_a",
+  "kind": "function",
+  "file": "functions/fn_009aa140.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009AA200",
+  "name": "conv_table_lookup_b",
+  "kind": "function",
+  "file": "functions/fn_009aa200.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009AA380",
+  "name": "conv_table_first",
+  "kind": "function",
+  "file": "functions/fn_009aa380.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009AA3B0",
+  "name": "conv_table_lookup_c",
+  "kind": "function",
+  "file": "functions/fn_009aa3b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009AA4A0",
+  "name": "table_id_search",
+  "kind": "function",
+  "file": "functions/fn_009aa4a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009AA4F0",
+  "name": "table_id_of_mapped",
+  "kind": "function",
+  "file": "functions/fn_009aa4f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009AA510",
+  "name": "table_value_fetch",
+  "kind": "function",
+  "file": "functions/fn_009aa510.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
   "address": "0x009AAE30",
   "name": "MOBILE_CHAT",
   "kind": "function",
@@ -50443,6 +50623,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s275"
+ },
+ {
+  "address": "0x00A72F80",
+  "name": "CTaskComplexPlayerOnFoot::vf5",
+  "kind": "function",
+  "file": "functions/fn_00a72f80.rs",
+  "trials": 2400,
+  "checker": "version 5",
+  "lane": "r-b396"
  },
  {
   "address": "0x00A73150",
