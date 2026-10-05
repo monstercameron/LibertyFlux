@@ -1,6 +1,6 @@
 """Progress over time: write docs/data/history.json, the series behind the overview page's progress chart.
 
-Usage: python scripts/site/history.py [--check]
+Usage: python scripts/site/history.py [--check] [--full]
 
 Every committed version of docs/data/progress.json is one recorded state of the project. This script walks
 them in git history (`git log -- docs/data/progress.json`, then `git show <hash>:docs/data/progress.json`)
@@ -23,6 +23,9 @@ version from git instead, so the file never keeps two points for one state.
 
 Runs of identical counts are thinned to their first and last point, so a quiet hour costs two points rather
 than twelve, and the chart still shows when the run began and ended.
+
+Only commits later than the newest committed point already in the file are read from git; --full reads every
+commit again, which is what to run after history.json has been edited by hand or restored.
 
 The output is written only when it changed. --check exits 1 if history.json is out of date and writes nothing.
 
@@ -73,11 +76,24 @@ def point(stamp, progress):
     return entry
 
 
-def from_git():
-    """One point per commit that changed progress.json and still parses, oldest first."""
+def latest_committed(existing):
+    """The time of the newest recorded point that came from a commit, or None when there is none."""
+    times = [p["t"] for p in existing if isinstance(p, dict) and "t" in p and not p.get("tree")]
+    return max(times) if times else None
+
+
+def from_git(after=None):
+    """One point per commit that changed progress.json and still parses, oldest first.
+
+    With `after` (a UTC time as written in the file), only commits later than it are read. A committed
+    version never changes, so a commit at or before the newest recorded point has nothing new to say, and
+    reading every one of them on every run cost one git call per commit: 51 seconds of each tick at 411.
+    """
     points = []
     for line in git("log", "--format=%H %cI", "--", PROGRESS).splitlines():
         commit, _, stamp = line.partition(" ")
+        if after and to_utc(stamp) <= after:
+            continue
         try:
             progress = json.loads(git("show", f"{commit}:{PROGRESS}"))
         except (subprocess.CalledProcessError, json.JSONDecodeError):
@@ -163,7 +179,8 @@ def render(points):
 
 
 def main():
-    points = combine(read_existing(HISTORY), from_git(), from_tree())
+    existing = read_existing(HISTORY)
+    points = combine(existing, from_git(None if "--full" in sys.argv else latest_committed(existing)), from_tree())
     text = render(points)
     current = HISTORY.read_text(encoding="utf-8") if HISTORY.exists() else ""
     if "--check" in sys.argv:

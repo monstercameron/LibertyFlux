@@ -116,5 +116,46 @@ class TestRepository(unittest.TestCase):
             self.assertLessEqual(p["named"], p["game"])
 
 
+class TestIncremental(unittest.TestCase):
+    def setUp(self):
+        self.real_git = history.git
+        self.shown = []
+        log = "\n".join(["c3 2026-10-01T00:10:00+00:00", "c2 2026-10-01T00:05:00+00:00", "c1 2026-09-30T20:00:00-04:00"])
+        named = {"c1": 1, "c2": 2, "c3": 3}
+
+        def fake_git(*args):
+            if args[0] == "log":
+                return log
+            commit = args[1].partition(":")[0]
+            self.shown.append(commit)
+            return json.dumps(progress(10, named[commit], 0, 0))
+
+        history.git = fake_git
+
+    def tearDown(self):
+        history.git = self.real_git
+
+    def test_only_commits_after_the_newest_recorded_point_are_read(self):
+        points = history.from_git("2026-10-01T00:05:00Z")
+        self.assertEqual(self.shown, ["c3"])
+        self.assertEqual([p["named"] for p in points], [3])
+
+    def test_without_a_recorded_point_every_commit_is_read(self):
+        points = history.from_git(None)
+        self.assertEqual(sorted(self.shown), ["c1", "c2", "c3"])
+        self.assertEqual([p["named"] for p in points], [1, 2, 3])
+
+    def test_incremental_run_gives_the_same_file_as_a_full_one(self):
+        full = history.combine([], history.from_git(None))
+        earlier = full[:-1]
+        again = history.combine(earlier, history.from_git(history.latest_committed(earlier)))
+        self.assertEqual(again, full)
+
+    def test_a_provisional_point_is_not_the_newest_committed_one(self):
+        provisional = dict(pt("2026-10-01T00:09:00Z", named=3), tree=True)
+        self.assertEqual(history.latest_committed([pt("2026-10-01T00:05:00Z"), provisional]), "2026-10-01T00:05:00Z")
+        self.assertIsNone(history.latest_committed([provisional]))
+
+
 if __name__ == "__main__":
     unittest.main()
