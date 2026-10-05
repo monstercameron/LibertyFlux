@@ -1432,6 +1432,30 @@
   "reason": null
  },
  {
+  "address": "0x00A4AA10",
+  "name": "vehicle_id_in_table_a",
+  "file": "fn_00a4aa10.rs",
+  "lane": "r-s455",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A4AA90",
+  "name": "vehicle_id_in_table_b",
+  "file": "fn_00a4aa90.rs",
+  "lane": "r-s455",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A4AAE0",
+  "name": "vehicle_abs_ge_point8",
+  "file": "fn_00a4aae0.rs",
+  "lane": "r-s455",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A4AB10",
   "name": "vehicle_array_contains",
   "file": "fn_00a4ab10.rs",
@@ -1448,9 +1472,33 @@
   "reason": null
  },
  {
+  "address": "0x00A4ACE0",
+  "name": "vehicle_value_le_neg_point9",
+  "file": "fn_00a4ace0.rs",
+  "lane": "r-s455",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A4AD00",
   "name": "CVehicle::vf81",
   "file": "fn_00a4ad00.rs",
+  "lane": "r-s455",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A4AF30",
+  "name": "vehicle_pick_nonzero_slot",
+  "file": "fn_00a4af30.rs",
+  "lane": "r-s455",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A4B550",
+  "name": "vehicle_decay_u16_f48",
+  "file": "fn_00a4b550.rs",
   "lane": "r-s455",
   "outcome": "not_reached",
   "reason": null
@@ -1467,6 +1515,14 @@
   "address": "0x00A4D060",
   "name": "NativeImpl_SET_CAR_LIVERY",
   "file": "fn_00a4d060.rs",
+  "lane": "r-s455",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A4D460",
+  "name": "vehicle_lerp_f34",
+  "file": "fn_00a4d460.rs",
   "lane": "r-s455",
   "outcome": "not_reached",
   "reason": null
@@ -1827,6 +1883,14 @@
   "address": "0x00B2FE80",
   "name": "ped_task_range_check",
   "file": "fn_00b2fe80.rs",
+  "lane": "r-b457",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00B300A0",
+  "name": "ped_task_state_switch",
+  "file": "fn_00b300a0.rs",
   "lane": "r-b457",
   "outcome": "not_reached",
   "reason": ""
@@ -2280,6 +2344,14 @@
   "reason": null
  },
  {
+  "address": "0x00BE9260",
+  "name": null,
+  "file": "fn_00be9260.rs",
+  "lane": "r-b456",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00BE9AA0",
   "name": null,
   "file": "fn_00be9aa0.rs",
@@ -2328,9 +2400,17 @@
   "reason": null
  },
  {
-  "address": "0x00C3ACB0",
+  "address": "0x00C3B5D0",
   "name": "tbd",
-  "file": "fn_00c3acb0.rs",
+  "file": "fn_00c3b5d0.rs",
+  "lane": "r-s448",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C3E910",
+  "name": "tbd",
+  "file": "fn_00c3e910.rs",
   "lane": "r-s448",
   "outcome": "not_reached",
   "reason": ""
@@ -2342,6 +2422,14 @@
   "lane": "r-b300",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x00C7E200",
+  "name": "CTaskComplexStationaryScenario::vf19",
+  "file": "fn_00c7e200.rs",
+  "lane": "r-b454",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00C7FD60",
@@ -2488,9 +2576,9 @@
   "reason": "abs_shadow_unavailable"
  },
  {
-  "address": "0x00C9DCC0",
+  "address": "0x00C9D6C0",
   "name": "proposed-tbd",
-  "file": "fn_00c9dcc0.rs",
+  "file": "fn_00c9d6c0.rs",
   "lane": "r-b450",
   "outcome": "not_reached",
   "reason": ""
@@ -3021,6 +3109,14 @@
   "file": "fn_00d82cd0.rs",
   "lane": "r-b212",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00DAC130",
+  "name": "tbd",
+  "file": "fn_00dac130.rs",
+  "lane": "r-b447",
+  "outcome": "not_reached",
   "reason": null
  },
  {

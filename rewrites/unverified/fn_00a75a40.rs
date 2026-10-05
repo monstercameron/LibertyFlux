@@ -158,7 +158,15 @@ lf_checker_rt::export!(thiscall, rw_00a75a40(this: u32, arg1: u32) -> u32 {
                     as u8;
                 // The original compares the arg slot's low byte, which by
                 // now holds is8 (a byte store overwrote it); al is 0 there.
-                if bl2 != 0 || bh != 0 || dl != 0 {
+                // Note bl set skips the bh test: with bl set the flag is
+                // 0x100 only when dl is also set.
+                if bl2 != 0 {
+                    if dl != 0 {
+                        0x100
+                    } else {
+                        0x101
+                    }
+                } else if bh != 0 || dl != 0 {
                     0x100
                 } else if al != 0 || !is8 {
                     0x101

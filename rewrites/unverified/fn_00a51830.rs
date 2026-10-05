@@ -23,14 +23,15 @@ lf_checker_rt::export!(thiscall, rw_00a51830(this: u32) -> u32 {
         fn div(a: f32, b: f32) -> f32 {
             core::hint::black_box(a) / core::hint::black_box(b)
         }
-        lf_checker_rt::callee_thiscall!(TUNE, u32, TUNE_OBJ, this, 0, BASE.1, BASE.0);
+        let tune = lf_checker_rt::relocated(TUNE_OBJ);
+        lf_checker_rt::callee_thiscall!(TUNE, u32, tune, this, 0, BASE.1, BASE.0);
         let ratio = div(rdf(this.wrapping_add(NUM)), rdf(this.wrapping_add(DEN)));
         let mut k: u32 = 0;
         while k < 4 {
             let t = rdf(this.wrapping_add(THR).wrapping_add(k.wrapping_mul(4)));
             if t > ratio {
                 let (a3, a2) = PAIRS[k as usize];
-                lf_checker_rt::callee_thiscall!(TUNE, u32, TUNE_OBJ, this, k.wrapping_add(1), a2, a3);
+                lf_checker_rt::callee_thiscall!(TUNE, u32, tune, this, k.wrapping_add(1), a2, a3);
             }
             k = k.wrapping_add(1);
         }
