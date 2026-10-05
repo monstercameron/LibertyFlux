@@ -44550,6 +44550,69 @@
   "lane": "r-s421"
  },
  {
+  "address": "0x009B9600",
+  "name": "CCamScriptInstruction_DestroyAllCams::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9600.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B9620",
+  "name": "CCamScriptInstruction_DestroyCam::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9620.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B9660",
+  "name": "CCamScriptInstruction_DoFadeIn_Q::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9660.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B96B0",
+  "name": "CCamScriptInstruction_DoFadeIn_UNHACKED_Q::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b96b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B96F0",
+  "name": "CCamScriptInstruction_DoFadeOut_Q::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b96f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B9740",
+  "name": "CCamScriptInstruction_DoFadeOut_UNHACKED_Q::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9740.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B9780",
+  "name": "CCamScriptInstruction_EnableCamCollision::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9780.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
   "address": "0x009B97B0",
   "name": "CCamScriptInstruction_EnableDebugCam::vf2",
   "kind": "function",
@@ -44572,6 +44635,15 @@
   "name": "CCamScriptInstruction_InheritRoll::vf2",
   "kind": "function",
   "file": "functions/fn_009b9830.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B9860",
+  "name": "CCamScriptInstruction_InsertSplineNode::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9860.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s421"
@@ -44608,6 +44680,33 @@
   "name": "CCamScriptInstruction_PropagateCam::vf2",
   "kind": "function",
   "file": "functions/fn_009b9980.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B99D0",
+  "name": "CCamScriptInstruction_RestoreJumpCut_Q::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b99d0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B9A20",
+  "name": "CCamScriptInstruction_Restore_Q::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9a20.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009B9A90",
+  "name": "CCamScriptInstruction_SequenceEmpty::vf2",
+  "kind": "function",
+  "file": "functions/fn_009b9a90.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s421"
@@ -44680,6 +44779,24 @@
   "name": "CCamScriptInstruction_SetCinematicCam_Q::vf2",
   "kind": "function",
   "file": "functions/fn_009b9fe0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009BA040",
+  "name": "CCamScriptInstruction_SetDollyZoomLock::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba040.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s421"
+ },
+ {
+  "address": "0x009BA070",
+  "name": "CCamScriptInstruction_SetDrunkCam::vf2",
+  "kind": "function",
+  "file": "functions/fn_009ba070.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s421"
@@ -87082,6 +87199,15 @@
   "trials": 2000,
   "checker": "version 2",
   "lane": "r-b03"
+ },
+ {
+  "address": "0x00CD6F90",
+  "name": "CTaskSimpleGetUp::vf17",
+  "kind": "function",
+  "file": "functions/fn_00cd6f90.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b411"
  },
  {
   "address": "0x00CD7990",
