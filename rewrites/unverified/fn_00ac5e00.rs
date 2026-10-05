@@ -26,7 +26,7 @@ lf_checker_rt::export!(cdecl, rw_00AC5E00(flag: u32, lo: u32, hi: u32, out_a: u3
         }
         #[inline(always)]
         fn neg(a: f32) -> f32 {
-            f32::from_bits(a.to_bits() ^ SIGN)
+            core::hint::black_box(f32::from_bits(core::hint::black_box(a).to_bits() ^ SIGN)) // opaque: LLVM reassociates a visible fneg(fmul)
         }
         unsafe {
             if flag & 0xff == 0 {

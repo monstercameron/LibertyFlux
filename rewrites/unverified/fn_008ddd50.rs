@@ -8,8 +8,9 @@
 /// pixel width: `len` as an unsigned 64-bit float scaled by -0.5 and
 /// truncated toward zero, doubled, and subtracted from the allocated
 /// address to form the two arguments of the blit call. The float chain
-/// is `cvtdq2pd` + 0/2^32 table adjust, `cvtpd2ps`, `mulss`, `cvttss2si`,
-/// all exact or round-to-nearest-even, reproduced in the same order.
+/// is int-to-double conversion plus a 0-or-2^32 table adjust, narrowing
+/// to float, a multiply and truncation to int, each exact or
+/// round-to-nearest-even, reproduced in the same order.
 ///
 /// Original: 0x008DDD50 (thiscall, `this` in ECX).
 lf_checker_rt::export!(thiscall, rw_008ddd50(this: u32) -> u32 {
