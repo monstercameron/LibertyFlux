@@ -53334,6 +53334,186 @@
   "lane": "r-s276"
  },
  {
+  "address": "0x00B34890",
+  "name": "heap_loop_28_a",
+  "kind": "function",
+  "file": "functions/fn_00b34890.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B34920",
+  "name": "heap_loop_28_b",
+  "kind": "function",
+  "file": "functions/fn_00b34920.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B349B0",
+  "name": "heap_loop_16",
+  "kind": "function",
+  "file": "functions/fn_00b349b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B34A40",
+  "name": "heap_adjust_28_a",
+  "kind": "function",
+  "file": "functions/fn_00b34a40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B34B10",
+  "name": "heap_adjust_28_b",
+  "kind": "function",
+  "file": "functions/fn_00b34b10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B34BE0",
+  "name": "heap_adjust_16",
+  "kind": "function",
+  "file": "functions/fn_00b34be0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B34CD0",
+  "name": "heap_push_one_28_a",
+  "kind": "function",
+  "file": "functions/fn_00b34cd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B34D60",
+  "name": "heap_push_one_28_b",
+  "kind": "function",
+  "file": "functions/fn_00b34d60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B34DF0",
+  "name": "push_heap_28_key12",
+  "kind": "function",
+  "file": "functions/fn_00b34df0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B34ED0",
+  "name": "push_heap_28_key0",
+  "kind": "function",
+  "file": "functions/fn_00b34ed0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B34FB0",
+  "name": "push_heap_16",
+  "kind": "function",
+  "file": "functions/fn_00b34fb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B35040",
+  "name": "heap_fix_loop_a",
+  "kind": "function",
+  "file": "functions/fn_00b35040.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B35090",
+  "name": "heap_fix_loop_b",
+  "kind": "function",
+  "file": "functions/fn_00b35090.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B350E0",
+  "name": "heap_fix_loop_16",
+  "kind": "function",
+  "file": "functions/fn_00b350e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B35120",
+  "name": "linear_insert_28_key12",
+  "kind": "function",
+  "file": "functions/fn_00b35120.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B351E0",
+  "name": "linear_insert_28_key0",
+  "kind": "function",
+  "file": "functions/fn_00b351e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B352A0",
+  "name": "linear_insert_16",
+  "kind": "function",
+  "file": "functions/fn_00b352a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B35580",
+  "name": "unguarded_partition_16",
+  "kind": "function",
+  "file": "functions/fn_00b35580.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B35660",
+  "name": "heap_wrap_a",
+  "kind": "function",
+  "file": "functions/fn_00b35660.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B35680",
+  "name": "heap_wrap_b",
+  "kind": "function",
+  "file": "functions/fn_00b35680.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
   "address": "0x00B356A0",
   "name": "forward_abc_with_two_zeros",
   "kind": "function",
@@ -53503,6 +53683,168 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b348"
+ },
+ {
+  "address": "0x00B39570",
+  "name": "task_init_float",
+  "kind": "function",
+  "file": "functions/fn_00b39570.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B39610",
+  "name": "task_vec_compute",
+  "kind": "function",
+  "file": "functions/fn_00b39610.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B39FE0",
+  "name": "copy_two_global_floats",
+  "kind": "function",
+  "file": "functions/fn_00b39fe0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3A010",
+  "name": "scaled_index_clamp",
+  "kind": "function",
+  "file": "functions/fn_00b3a010.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3A090",
+  "name": "index_sum_clamp",
+  "kind": "function",
+  "file": "functions/fn_00b3a090.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3A0C0",
+  "name": "subsys_init_counters",
+  "kind": "function",
+  "file": "functions/fn_00b3a0c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3A160",
+  "name": "point_in_radius_or_vol",
+  "kind": "function",
+  "file": "functions/fn_00b3a160.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3A210",
+  "name": "task_flag_or_check",
+  "kind": "function",
+  "file": "functions/fn_00b3a210.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3A250",
+  "name": "table_flag_is_clear",
+  "kind": "function",
+  "file": "functions/fn_00b3a250.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3A280",
+  "name": "table_range_check",
+  "kind": "function",
+  "file": "functions/fn_00b3a280.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3A2A0",
+  "name": "table_flag_is_set",
+  "kind": "function",
+  "file": "functions/fn_00b3a2a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3A2C0",
+  "name": "gate_then_check",
+  "kind": "function",
+  "file": "functions/fn_00b3a2c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3A660",
+  "name": "word_table_contains",
+  "kind": "function",
+  "file": "functions/fn_00b3a660.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3A8F0",
+  "name": "id_lookup_or_log",
+  "kind": "function",
+  "file": "functions/fn_00b3a8f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3AAE0",
+  "name": "store_bounds_a",
+  "kind": "function",
+  "file": "functions/fn_00b3aae0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3AB70",
+  "name": "store_bounds_b",
+  "kind": "function",
+  "file": "functions/fn_00b3ab70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3B2B0",
+  "name": "point_in_bounds_or_vol",
+  "kind": "function",
+  "file": "functions/fn_00b3b2b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3B330",
+  "name": "point_in_bounds_b",
+  "kind": "function",
+  "file": "functions/fn_00b3b330.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s403"
  },
  {
   "address": "0x00B3F640",
@@ -53910,6 +54252,15 @@
   "lane": "r-s407"
  },
  {
+  "address": "0x00B4E2B0",
+  "name": "CDummyPed::vf35",
+  "kind": "function",
+  "file": "functions/fn_00b4e2b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
   "address": "0x00B4E850",
   "name": "CDummyPed::vf13",
   "kind": "function",
@@ -53928,6 +54279,33 @@
   "lane": "r-s407"
  },
  {
+  "address": "0x00B4EF00",
+  "name": "CDummyPed::vf47",
+  "kind": "function",
+  "file": "functions/fn_00b4ef00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
+  "address": "0x00B4EF60",
+  "name": "reset_slot_118h",
+  "kind": "function",
+  "file": "functions/fn_00b4ef60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
+  "address": "0x00B4F010",
+  "name": "read_timer_value",
+  "kind": "function",
+  "file": "functions/fn_00b4f010.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
   "address": "0x00B4F060",
   "name": "get_model_or_49",
   "kind": "function",
@@ -53937,10 +54315,28 @@
   "lane": "r-s407"
  },
  {
+  "address": "0x00B4F1E0",
+  "name": "forward_status_arg",
+  "kind": "function",
+  "file": "functions/fn_00b4f1e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
   "address": "0x00B4F250",
   "name": "get_field_1ch_if_6",
   "kind": "function",
   "file": "functions/fn_00b4f250.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
+  "address": "0x00B4F280",
+  "name": "check_status_not_6",
+  "kind": "function",
+  "file": "functions/fn_00b4f280.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s407"
@@ -53971,6 +54367,33 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s384"
+ },
+ {
+  "address": "0x00B4F310",
+  "name": "route_point_in_range",
+  "kind": "function",
+  "file": "functions/fn_00b4f310.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
+  "address": "0x00B4F380",
+  "name": "attach_anim_or_fallback",
+  "kind": "function",
+  "file": "functions/fn_00b4f380.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
+  "address": "0x00B4F400",
+  "name": "CDummyPed::vf51",
+  "kind": "function",
+  "file": "functions/fn_00b4f400.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
  },
  {
   "address": "0x00B4FDC0",
@@ -54016,6 +54439,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s384"
+ },
+ {
+  "address": "0x00B4FFD0",
+  "name": "path_length_below_limit",
+  "kind": "function",
+  "file": "functions/fn_00b4ffd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
  },
  {
   "address": "0x00B50560",
@@ -54072,6 +54504,15 @@
   "lane": "r-s384"
  },
  {
+  "address": "0x00B50E10",
+  "name": "remove_event_and_release",
+  "kind": "function",
+  "file": "functions/fn_00b50e10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
   "address": "0x00B50F90",
   "name": "retain_all_events",
   "kind": "function",
@@ -54108,10 +54549,46 @@
   "lane": "r-s407"
  },
  {
+  "address": "0x00B510A0",
+  "name": "find_slot_by_word0",
+  "kind": "function",
+  "file": "functions/fn_00b510a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
+  "address": "0x00B510D0",
+  "name": "find_slot_by_word1",
+  "kind": "function",
+  "file": "functions/fn_00b510d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
   "address": "0x00B51100",
   "name": "has_active_model",
   "kind": "function",
   "file": "functions/fn_00b51100.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
+  "address": "0x00B51150",
+  "name": "find_empty_slot",
+  "kind": "function",
+  "file": "functions/fn_00b51150.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s407"
+ },
+ {
+  "address": "0x00B512F0",
+  "name": "assign_ped_to_slot",
+  "kind": "function",
+  "file": "functions/fn_00b512f0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s407"
@@ -80154,6 +80631,15 @@
   "lane": "r-b388"
  },
  {
+  "address": "0x00CA98E0",
+  "name": "CEventHandler::vf47",
+  "kind": "function",
+  "file": "functions/fn_00ca98e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b388"
+ },
+ {
   "address": "0x00CA9B40",
   "name": "CEventHandler::vf62",
   "kind": "function",
@@ -81864,6 +82350,15 @@
   "lane": "r-s406"
  },
  {
+  "address": "0x00CCDE30",
+  "name": "CTaskComplexDie::vf6",
+  "kind": "function",
+  "file": "functions/fn_00ccde30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
   "address": "0x00CCDEB0",
   "name": "CTaskSimpleDead::vf6",
   "kind": "function",
@@ -81909,10 +82404,28 @@
   "lane": "r-s406"
  },
  {
+  "address": "0x00CCE190",
+  "name": "CTaskComplexOnFire::vf5",
+  "kind": "function",
+  "file": "functions/fn_00cce190.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
   "address": "0x00CCE200",
   "name": "CTaskSimpleDead::vf5",
   "kind": "function",
   "file": "functions/fn_00cce200.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
+  "address": "0x00CCE220",
+  "name": "CTaskSimpleDie::vf5",
+  "kind": "function",
+  "file": "functions/fn_00cce220.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s406"
@@ -82008,6 +82521,15 @@
   "lane": "r-s406"
  },
  {
+  "address": "0x00CCFA00",
+  "name": "melee_event_fire",
+  "kind": "function",
+  "file": "functions/fn_00ccfa00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
   "address": "0x00CCFA70",
   "name": "melee_cleanup_refs",
   "kind": "function",
@@ -82053,6 +82575,15 @@
   "lane": "r-s406"
  },
  {
+  "address": "0x00CD0D40",
+  "name": "CTaskComplexMelee::vf18",
+  "kind": "function",
+  "file": "functions/fn_00cd0d40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
   "address": "0x00CD15C0",
   "name": "melee_id_find",
   "kind": "function",
@@ -82066,6 +82597,15 @@
   "name": "melee_pair_find",
   "kind": "function",
   "file": "functions/fn_00cd15f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
+  "address": "0x00CD16D0",
+  "name": "melee_subtask_check",
+  "kind": "function",
+  "file": "functions/fn_00cd16d0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s406"
