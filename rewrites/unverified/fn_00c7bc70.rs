@@ -62,7 +62,7 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
         const FAR2: f32 = f32::from_bits(0x40800000); // 4.0
         const FULL_WEIGHT: f32 = 1.0;
         const NEG_ONE: f32 = f32::from_bits(0xbf800000); // -1.0
-        const CHAT_PING_IMM: u32 = 0xed4a40;
+        const CHAT_PING_IMM_FILE_VA: u32 = 0xed4a40; // relocated immediate
         const CHAT_PING_W: u32 = 0x3d4ccccd; // 0.05f
         const CAL_CONFIG: u32 = 2;
         const CAL_LEG_OK: u32 = 3;
@@ -177,7 +177,7 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                 CAL_CHAT_PING,
                 u32,
                 ped,
-                CHAT_PING_IMM,
+                lf_checker_rt::relocated(CHAT_PING_IMM_FILE_VA),
                 CHAT_PING_W,
                 0,
                 0
