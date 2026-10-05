@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Rewrites: sixteen verified rewrites removed for relabelling",
+    "commit": null,
+    "summary": "A lane recorded sixteen functions under addresses that were too low by the image base.",
+    "changes": [
+      "Lane r-b526 read the addresses in its batch as offsets from the image base instead of virtual addresses. It looked one image-base too high, reported its five batch entries as not being functions (all five are: each has a caller and an ordinary prologue), and verified sixteen other real functions, which it recorded under labels one image-base too low.",
+      "The proofs are sound: a checker contract names its function by offset from the image base, so the original ran at the right place. Only the labels were wrong. The sixteen mislabelled files and index entries are removed here; the same rewrites return under their true addresses with the next import. None of the sixteen was counted as verified in the meantime, because the wrong addresses are not in the function inventory.",
+      "The five functions the lane never attempted are back in the queue. The production brief (version b12) now states which addresses are virtual and which field is an offset, and gives lanes a script to run before they claim an inventory entry is not a function."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 18 files from lanes (407 unverified rewrites, 27 in review)",
     "commit": "e95b7fc5fc62b16a1c3bf739bedb006f7f993f27",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
