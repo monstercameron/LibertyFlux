@@ -14,7 +14,7 @@
 /// a flag slot whose follow-up must be nonzero.
 ///
 /// Nonzero `arg0` or `arg1` bypasses the rest with byte 1. Otherwise ten
-/// frame slots are zeroed and a scan call fills the upper seven; a nonzero
+/// frame slots are zeroed and a scan call fills the first seven; a nonzero
 /// scan result also bypasses with 1. A second getter plus a vtable check
 /// set the sweep's excluded pointer and tag, then each slot is skipped when
 /// null, `this`, the avoid pointer, or the excluded pointer; kind 4 (from
@@ -130,26 +130,27 @@ lf_checker_rt::export!(thiscall, rw_00b4e880(this: u32, a0: u32, a1: u32) -> u32
                 if tr as u8 == 0 {
                     return 0;
                 }
-            }
-        }
-        let s1: u32 = lf_checker_rt::callee_thiscall!(
-            SINGLE, u32, lf_checker_rt::relocated(D2_IMM), 1, 0
-        );
-        if s1 as u8 == 0 {
-            return 0;
-        }
-        let ch2 = rd32(this + CHAIN);
-        if ch2 != 0 {
-            let pa: u32 = lf_checker_rt::callee_thiscall!(PROBE_A, u32, ch2);
-            if pa as u8 != 0 {
-                return 0;
-            }
-        }
-        let ch3 = rd32(this + CHAIN);
-        if ch3 != 0 {
-            let pb: u32 = lf_checker_rt::callee_thiscall!(PROBE_B, u32, ch3, 0x20);
-            if pb as u8 != 0 {
-                return 0;
+            } else {
+                let s1: u32 = lf_checker_rt::callee_thiscall!(
+                    SINGLE, u32, lf_checker_rt::relocated(D2_IMM), 1, 0
+                );
+                if s1 as u8 == 0 {
+                    return 0;
+                }
+                let ch2 = rd32(this + CHAIN);
+                if ch2 != 0 {
+                    let pa: u32 = lf_checker_rt::callee_thiscall!(PROBE_A, u32, ch2);
+                    if pa as u8 != 0 {
+                        return 0;
+                    }
+                }
+                let ch3 = rd32(this + CHAIN);
+                if ch3 != 0 {
+                    let pb: u32 = lf_checker_rt::callee_thiscall!(PROBE_B, u32, ch3, 0x20);
+                    if pb as u8 != 0 {
+                        return 0;
+                    }
+                }
             }
         }
         let frame = rd32(this + FRAME);
@@ -157,22 +158,25 @@ lf_checker_rt::export!(thiscall, rw_00b4e880(this: u32, a0: u32, a1: u32) -> u32
         if fc as u8 == 0 {
             return 0;
         }
-        let g5: u32 = lf_checker_rt::callee_thiscall!(GETTER, u32, this);
-        if g5 != 0 {
-            let mf: extern "thiscall" fn(u32, u32) -> f32 = core::mem::transmute(
-                rd32(rd32(g5) + 0x1C) as usize,
-            );
-            let f = mf(g5, this);
-            if f < 0.0 {
+        let ch4 = rd32(this + CHAIN);
+        if ch4 == 0 || rd8(ch4 + CHAIN_FLAG) == 0 {
+            let g5: u32 = lf_checker_rt::callee_thiscall!(GETTER, u32, this);
+            if g5 != 0 {
+                let mf: extern "thiscall" fn(u32, u32) -> f32 = core::mem::transmute(
+                    rd32(rd32(g5) + 0x1C) as usize,
+                );
+                let f = mf(g5, this);
+                if f < 0.0 {
+                    return 0;
+                }
+            }
+            let fl: extern "thiscall" fn(u32, u32) -> u32 =
+                core::mem::transmute(rd32(rd32(this) + 0xD4) as usize);
+            let f2 = fl(this, ONE_F);
+            let fol: u32 = lf_checker_rt::callee_thiscall!(FOLLOW, u32, f2);
+            if fol as u8 == 0 {
                 return 0;
             }
-        }
-        let fl: extern "thiscall" fn(u32, u32) -> u32 =
-            core::mem::transmute(rd32(rd32(this) + 0xD4) as usize);
-        let f2 = fl(this, ONE_F);
-        let fol: u32 = lf_checker_rt::callee_thiscall!(FOLLOW, u32, f2);
-        if fol as u8 == 0 {
-            return 0;
         }
         if a0 != 0 || a1 != 0 {
             return 1;
@@ -180,7 +184,7 @@ lf_checker_rt::export!(thiscall, rw_00b4e880(this: u32, a0: u32, a1: u32) -> u32
         let mut slots = [0u32; 10];
         let sc: u32 = lf_checker_rt::callee_cdecl!(
             SCAN, u32, frame.wrapping_add(0x30), SCAN_F, 1, 0xA,
-            slots.as_mut_ptr().wrapping_add(3) as u32, 1, 1, 1
+            slots.as_mut_ptr() as u32, 1, 1, 1
         );
         if sc as u8 != 0 {
             return 1;
@@ -246,11 +250,11 @@ lf_checker_rt::export!(thiscall, rw_00b4e880(this: u32, a0: u32, a1: u32) -> u32
                 }
             }
             lf_checker_rt::callee_thiscall!(
-                REPORT, u32, 0, s, slots[4], cw, 1, 0, 0, 0, 0, 0
+                REPORT, u32, 0, s, rd32(frame + 0x38), cw, 1, 0, 0, 0, 0, 0
             );
             let vd: u32 = lf_checker_rt::callee_thiscall!(VERDICT, u32, 0, 0);
             if vd as u8 != 0 {
-                return 1;
+                return 0;
             }
         }
         1

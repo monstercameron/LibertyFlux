@@ -23,22 +23,23 @@
 /// The target's virtual slot `+0xec`
 /// is then called with a zeroed scratch word; three dwords from its answer
 /// are stored at handle `+0x190`, a second vector call and a register call
-/// run, and a non-zero flag runs the stamp trio (vector push of the first two
-/// parameter floats plus a zero word, post call, tick stamp at `+0x1d4`,
+/// run, and a non-zero flag runs the stamp trio (vector push of a zero word
+/// plus the two live parameter floats, post call, tick stamp at `+0x1d4`,
 /// bumped when the tick-check answer equals the compare word).
 ///
 /// Both paths then run a linear-congruential step over two global words
 /// (multiplier 0x5CDCFAA7 with carry) and fold the low 23 bits into a random
 /// float scaled into the global range. Two check calls select either the
 /// range base or that random float; it is multiplied by the frame cell and
-/// three accumulators combine the matrix rows with the parameter floats (the
-/// third parameter float's slot is never stored, so it reads as zero, and the
-/// `[target+0x38]` float is overwritten by the random float before any read).
+/// three accumulators combine the matrix rows with zero and the two live
+/// parameter floats (the first parameter float is overwritten with zero
+/// before any read).
 /// The dispatch call takes three zero/-1/constant words, four block pointers
-/// (parameter float plus two zeros; accumulators plus a zero read from an
-/// unwritten frame slot plus three copied constants plus a zero; 0/1/0; 0/0/1),
-/// the scaled float, a zero, a global word, a constant word, two zeros, -1
-/// and two zeros. Its answer is the return value. Unlike its sibling,
+/// (three copied constants, aliasing the tail of the second block;
+/// accumulators plus a zero read from an unwritten frame slot plus three
+/// copied constants plus a zero; 0/1/0; 0/0/1), the scaled float, a zero, a
+/// global word, a constant word, two zeros, -1 and two zeros. Its answer is
+/// the return value. Unlike its sibling,
 /// neither the set/check/apply section nor the stamp section exits: every
 /// acquired handle runs the query, the stamp test and the dispatch tail.
 ///
@@ -151,8 +152,10 @@ lf_checker_rt::export!(thiscall, rw_00bf8910(this: u32, target: u32, blend: u32)
             return 0xffffffff;
         }
         let params = lf_checker_rt::callee_thiscall!(C_GET, u32, target, value);
-        let p30 = rd32(params.wrapping_add(0x30));
+        // The first parameter float is stored and then overwritten with zero
+        // before any read, so only the other two are live.
         let p34 = rd32(params.wrapping_add(0x34));
+        let p38 = rd32(params.wrapping_add(0x38));
         let mut flag: u32 = 0;
         let handle = lf_checker_rt::callee_thiscall!(
             C_ACQUIRE,
@@ -201,8 +204,8 @@ lf_checker_rt::export!(thiscall, rw_00bf8910(this: u32, target: u32, blend: u32)
         lf_checker_rt::callee_thiscall!(C_VEC2, u32, handle, mat_ptr);
         lf_checker_rt::callee_thiscall!(C_REG, u32, lf_checker_rt::relocated(TASK_MGR), handle, target, 0);
         if flag & 0xff != 0 {
-            // Third word reads adjacent unstored stack (contract stack_fill 0).
-            let mut triple = [p30, p34, 0u32];
+            // First word is the zeroed-over store of the dead float.
+            let mut triple = [0u32, p34, p38];
             lf_checker_rt::callee_thiscall!(C_SETVEC, u32, handle, triple.as_mut_ptr() as u32);
             lf_checker_rt::callee_thiscall!(C_POST, u32, handle);
             let tick_answer = lf_checker_rt::callee_cdecl!(C_TICK2, u32,);
@@ -242,11 +245,11 @@ lf_checker_rt::export!(thiscall, rw_00bf8910(this: u32, target: u32, blend: u32)
                 rand
             }
         };
-        // Matrix combine. The third parameter float's slot is never stored
-        // (contract stack_fill 0); operand order is the original's.
-        let x6 = f32::from_bits(p30);
+        // Matrix combine. The first parameter slot holds the zero written
+        // over the dead float; operand order is the original's.
+        let x6 = 0.0f32;
         let x3 = f32::from_bits(p34);
-        let x4 = 0.0f32;
+        let x4 = f32::from_bits(p38);
         let m = mat_ptr;
         let t0 = mul(rdf(m), x6);
         let mut x5 = mul(rdf(m.wrapping_add(0x10)), x3);
@@ -270,7 +273,12 @@ lf_checker_rt::export!(thiscall, rw_00bf8910(this: u32, target: u32, blend: u32)
         x1 = add(x1, rdf(m.wrapping_add(0x38)));
         // Dispatch blocks. Zero words below are slots the original never
         // stores (contract stack_fill 0), including one it reads back.
-        let mut blk_a = [p34, 0u32, 0u32];
+        // Block A aliases the const-copy tail of block B.
+        let mut blk_a = [
+            rd32(lf_checker_rt::relocated(C_E8)),
+            rd32(lf_checker_rt::relocated(C_EC)),
+            rd32(lf_checker_rt::relocated(C_F4)),
+        ];
         let mut blk_b = [
             x5.to_bits(),
             x2.to_bits(),

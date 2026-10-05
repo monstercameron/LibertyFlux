@@ -267,7 +267,8 @@ lf_checker_rt::export!(thiscall, rw_00a264b0(
                 );
                 count = count.wrapping_add(add);
             }
-            lf_checker_rt::callee_cdecl!(4, u32, &mut count as *mut u32 as u32, tbase);
+            // Argument order matches the original's pushes: array, then &count.
+            lf_checker_rt::callee_cdecl!(4, u32, tbase, &mut count as *mut u32 as u32);
             edi = count;
             if (edi as i32) > 0 {
                 for i in 0..edi as usize {
@@ -291,7 +292,9 @@ lf_checker_rt::export!(thiscall, rw_00a264b0(
                 x3 = fadd(x3, x0);
             }
             fst(esi, 0x268, x3);
-            let do_second = g8(G_SECOND) != 0 && flag == 0;
+            // Note: the original ANDs the flag with 1 before this test, so
+            // only the low bit gates the second pass, not the whole byte.
+            let do_second = g8(G_SECOND) != 0 && (flag & 1) == 0;
             if do_second {
                 // Smoothstep-style relaxation of the stash toward +0x1e0.
                 x2 = fld(esi, 0x1e0);
@@ -355,7 +358,7 @@ lf_checker_rt::export!(thiscall, rw_00a264b0(
                     count = count.wrapping_add(add);
                 }
                 lf_checker_rt::callee_cdecl!(
-                    4, u32, &mut count as *mut u32 as u32, tbase
+                    4, u32, tbase, &mut count as *mut u32 as u32
                 );
                 edi = count;
                 if (edi as i32) > 0 {
