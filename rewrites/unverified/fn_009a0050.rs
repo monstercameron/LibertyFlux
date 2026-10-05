@@ -244,12 +244,12 @@ lf_checker_rt::export!(thiscall, rw_009A0050(this: u32, a0: u32, a1: u32, a2: u3
                 return rr;
             }
             esi_v = r;
+        } else {
+            let g = fp(&mut frame, -264);
+            lf_checker_rt::callee_cdecl!(I_FMT4F, u32, g, fmt_b, rf(&frame, -420), esi_v);
+            let g2 = fp(&mut frame, -264);
+            lf_checker_rt::callee_cdecl!(I_RENDER_B, u32, g2, 0u32);
         }
-        let g = fp(&mut frame, -264);
-        lf_checker_rt::callee_cdecl!(I_FMT4F, u32, g, fmt_b, rf(&frame, -420), esi_v);
-        let g2 = fp(&mut frame, -264);
-        lf_checker_rt::callee_cdecl!(I_RENDER_B, u32, g2, 0u32);
-        wr32(this.wrapping_add(BASE_VOL), 0);
         let gain = f32::from_bits(g32!(GAIN));
         wff(&mut frame, -424, 0.0);
         wff(&mut frame, -432, UNIT);
@@ -266,6 +266,7 @@ lf_checker_rt::export!(thiscall, rw_009A0050(this: u32, a0: u32, a1: u32, a2: u3
         let fa = fp(&mut frame, -336);
         lf_checker_rt::callee_thiscall!(I_FILL, u32, fa);
         wf(&mut frame, -308, g32!(STASH));
+        wr32(this.wrapping_add(BASE_VOL), 0);
         let mut eax_v = rf(&frame, -400);
         wb(&mut frame, -392, 0);
         wb(&mut frame, -416, 0);
