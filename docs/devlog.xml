@@ -9,6 +9,35 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Lockstep test cycles can silently skip the path they were built to hit</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s428"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s428</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>A production batch of forty small streaming functions verified thirty-nine of them, and the two hardest failures were both contracts whose cycling inputs never aligned: every trial took an early exit while the target path sat untested, and only the deliberately wrong version per function exposed it.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of forty small streaming functions verified thirty-nine of them, and the two hardest failures were both contracts whose cycling inputs never aligned: every trial took an early exit while the target path sat untested, and only the deliberately wrong version per function exposed it.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite a batch of forty small game functions in Rust and prove each rewrite identical to the original on the stock checker, with one wrong version per function that must fail.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Thirty-nine functions passed one thousand trials each with their wrong versions caught; one was deferred because its argument-dependent conditional tail jump has no checker transport.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two contracts passed all trials while testing nothing they intended, in two different ways. First, a string-parsing function's pinned string bytes only take effect on one of three rotating heap fills, and that fill's phase never coincided with the trials that reached the store path, so the store fired zero times in sixty trials. Second, a cursor-scan function's table entries cycled valid and null out of phase with the index cycle, so every trial exited before the loops. A third contract did run its loops, but a wrap-to-zero step erased the wrong version's changed cursor on every trial, making the wrong version pass until per-slot pins forced blocked and clear slots to mix.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Prefer fully explicit per-word heap contents over pins plus random fill for inputs a path depends on, so coverage cannot depend on fill phase. When two cycles must coincide, check the combined phase by hand for at least one trial before running. A wrong version that passes is always a contract defect to fix, never a weak wrong version to excuse: all three cases above were fixed in the contract and then caught their wrong versions.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run any affected contract and read the coverage block of its verdict: trials where the original wrote to the heap, per-callee fire counts, and distinct call-sequence shapes. Zero heap-write trials on a function known to store, or a callee firing far less often than designed, signals a phase mismatch.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The checker's run summary file is written next to the driver and overwrote the lane's own results file twice; later runs redirected driver output elsewhere and the lane file was regenerated from the verdict files at the end. A per-call answer sequence takes plain values, not pairs, which the contract validator rejects. Zero-argument callee macros require a trailing comma to compile.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Naming a batch of loaders: display formats, pools and boundary traps</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-79"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-79</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>Naming 150 consecutive functions showed the batch is mostly data-file loading plus one mislabeled group that turned out to be display-mode enumeration, identified by exact graphics enum constants.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Naming 150 consecutive functions showed the batch is mostly data-file loading plus one mislabeled group that turned out to be display-mode enumeration, identified by exact graphics enum constants.&lt;/p&gt;&lt;h3&gt;What was asked&lt;/h3&gt;&lt;p&gt;Propose descriptive names for 150 unnamed game functions with a confidence each, working from strings, imports, callers, classes and behavior.&lt;/p&gt;&lt;h3&gt;What was found&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A run of about thirty functions builds a display enumeration context: its init lists hold exactly the six depth-stencil formats, multisample counts zero to sixteen, and the six present intervals, and its consumer is the known display-mode collector.&lt;/li&gt;&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Six pool allocators map to model-info classes three ways: entry stride, pool descriptor in the verified pool-init sequence, and stamped vtable all agree.&lt;/li&gt;&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Thirteen vtable slot-zero functions are scalar deleting destructors in the standard shape, with per-class array strides matching the allocator strides.&lt;/li&gt;&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three inventory boundaries were wrong: one size overruns into the next function, one gapfill entry is a loop block rather than a function, and three jump-stub sizes cover their neighbors.&lt;/li&gt;&lt;li&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Two heavily called merged names for message-sending look wrong: both slots are used as plain heap free and allocate across destructors and cleanup loops.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;What was decided or recommended&lt;/h3&gt;&lt;p&gt;Named 147 functions and left 3 empty: a non-function block and two twin processors whose backends are all unnamed. The next naming lane should re-verify weak-boundary entries with an epilogue-anchored disassembly and keep the whole-batch caller-plus-string table pass, which resolved most of this batch.&lt;/p&gt;&lt;h3&gt;How to reproduce it&lt;/h3&gt;&lt;p&gt;Read the executable through the mapped image, disassemble each batch entry, and collect import calls, referenced strings and format strings, direct callers by byte scan, and data references. Decode small functions fully, resolve unknown callees by caller count and entry shape, and check neighbor names and verified rewrite doc comments before naming.&lt;/p&gt;&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;&lt;p&gt;Linear disassembly through a large switch function first suggested a wrong return boundary; re-decoding from a call anchor fixed the verdict. Comparing twin functions with an oversized window produced nonsense difference counts until the true sizes were used.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>A production batch that caught the checker running corrupted code</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b419"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b419</id>
@@ -994,56 +1023,5 @@
 &lt;p&gt;Build one evidence table per batch first: referenced strings, imports, internal callees with merged names, and caller sites resolved to enclosing functions through the full inventory. Disassemble small functions fully, large ones by head and tail, and cap every decode at the next inventory start. Check any zlib-looking string by scanning for who pushes it before believing it.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The first evidence script indexed the mapped image by file offset and produced garbage; the mandated known-function decode check caught it at once. A text-search tool silently returned nothing on files a plain script search matched, so all searching moved to scripts. One instruction that looked like a zlib string use turned out to be a flag-byte check, and no readable code pushes those strings at all.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming 150 functions: water, chat, fragments and particles</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-46"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-46</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One batch of 150 unnamed functions turned out to be four subsystems in a row: procedural water and sky textures, multiplayer text chat plus a sibling peer table, fragment parsing with its event and dictionary helpers, and particle effect loading. All but one function got a name, about two thirds of them at high confidence.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One batch of 150 unnamed functions turned out to be four subsystems in a row: procedural water and sky textures, multiplayer text chat plus a sibling peer table, fragment parsing with its event and dictionary helpers, and particle effect loading. All but one function got a name, about two thirds of them at high confidence.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Name each function in the batch with a descriptive name and a confidence, using strings, imports, known callers and class layouts as evidence, without rewriting anything.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The opening group builds and renders procedural water and sky: setup, resource creation, per-frame update and render virtuals, a reflection constructor, noise-texture slot setters whose exact textures fell out of the sky initialisation path, and a small shader-variable registry.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The middle group is multiplayer text chat: registration, serialisation and sending for the text and typing-indicator messages, plus a full peer manager (init, start, stop, add, clear, find, receive, update). A second manager shares the same framework but has smaller payload-less entries and inline bitstream sync; its domain stayed unknown, so its names stay structural.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The fragment group parses child definitions field by field. Each parser's identity came from the field registry, which records group, field and handler together: masses, bone index, four event blocks, animations, bone tags, locators, bounds and skeleton references. Supporting pieces include event-set copy and place routines, a binary-search name dictionary with dictionary place support, and bound loaders driven by a type factory.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The closing group loads particle effects: chunk loading, four rule-dictionary loaders with per-element constructors, dictionary destructors, effect removal from three global lists, quad-vertex emission and keyframe teardown.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three techniques carried the batch: walking runtime type records to name every vtable touched, reading field-registry call sites to get group-field-handler triples for parsers, and mapping callers to already-named neighbours to place each function.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Next naming lanes should walk the type records first when a batch touches vtables; it settles class questions in minutes.&lt;/li&gt;
-&lt;li&gt;Parser batches should be read through their registry call sites rather than function by function; the pushed field names identify each handler exactly.&lt;/li&gt;
-&lt;li&gt;String evidence must be checked for pointer use: one function matched a compression error string only because a flag byte sat at a nearby address, and it is really a particle vertex writer.&lt;/li&gt;
-&lt;li&gt;Caller scans miss everything in the encrypted low region of the executable, so a function with no visible caller is usually driven from there, not dead.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Read code through the mapped image rather than the raw file, decode one known function end to end to confirm the mapping, then gather per-function evidence (referenced strings, imported calls, call targets, caller names from merged symbols and lane names, data references to the batch) into one table before reading bodies. Resolve vtables through their type records and parser handlers through their registry triples, then read the short and unclear functions fully.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Two blind alleys cost time. The particle vertex writer looked like a decompressor because of the false string match above; only reading the body showed pure floating-point record emission. The message descriptor blocks looked like ordinary vtables but mix code pointers with data, so slot-based guessing about the chat messages was dropped in favour of behaviour evidence. One function, a plain jump to a shared drawable routine whose callees are all encrypted, was left unnamed at low confidence rather than guessed.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming the particle system batch: class descriptors, keyframe idioms and folded vfuncs</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-48"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-48</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>A batch of one hundred and fifty consecutive functions turned out to be the whole particle effects subsystem, and one repeated code shape unlocked most of it.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of one hundred and fifty consecutive functions turned out to be the whole particle effects subsystem, and one repeated code shape unlocked most of it.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Name each function in a consecutive unnamed batch, working out what the group is about first, with a confidence per name.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch is the particle system: emission domains in four shapes, standard emit rules with keyframed emitter data, and render-side shader variables and templates. The inventory cluster labels pointed elsewhere and were ignored.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Ten functions share one registration shape: an init-once guard, an allocation, then a filled class descriptor holding the class name string, instance size, create callback and parent descriptor, registered with a factory. Each descriptor create slot points at that class factory function, which made factories trivial to confirm.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The last slot of every vtable in the batch just returns its class descriptor global, matching the naming precedent other lanes set for a different subsystem. The deleting destructors all share one identical sixteen-instruction body.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One keyframe sampling loop shape recurs across about fifteen functions: walk fixed-size entries comparing entry time, then slope-interpolate. Recognising it once made the domain evaluators, the emit-rule track samplers and the simulation kernels all readable.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The linker folded identical bodies across unrelated classes: one float setter serves a shader variable slot and two physics-node slots, and one bare return instruction serves vehicle and emit-rule slots. Shared bodies need one name with a note, not one name per class.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Names follow existing lane precedent for constructors, deleting destructors, class registration and class getters. Behaviour-clear but wording-mine names got medium confidence; six pure getters and setters of unknown fields and one opaque render setup were left empty at low confidence. The next naming lane in this area should name the small shared callees first: the keyframe init and destroy family, the dictionary find and add pair, and the path, open, parse and close file helpers, since about thirty medium names depend on them.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Build one evidence table for the whole batch before reading anything: disassembly per function, direct and indirect call targets with import names, referenced strings, and an exact call-target scan for callers. Read short functions fully and heads plus tails of large float ones. Cross-check vtable layouts, verified rewrite doc comments and lane vocabulary precedent before finalising names.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Caller attribution by nearest known symbol below the call site produced several bogus results inside dense unnamed regions; exact call-target matches are trustworthy but the attributed caller names are hints only. One log timestamp was written from memory instead of the machine clock and had to be corrected.&lt;/p&gt;</content>
   </entry>
 </feed>
