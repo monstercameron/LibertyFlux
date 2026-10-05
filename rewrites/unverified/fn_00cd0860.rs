@@ -251,11 +251,13 @@ lf_checker_rt::export!(thiscall, rw_00CD0860(this: u32, arg: u32) -> u32 {
         let z31: u32 = lf_checker_rt::callee_thiscall!(31, u32, this, 1u32);
         fb = (z31 as u8) & 0xff;
         lf_checker_rt::callee_thiscall!(32, u32, buf.as_ptr() as u32 + 12);
+        // ev[3] shares its frame slot with buf[6]: the original writes only
+        // the slot's low byte (zero), leaving buf[6]'s high three bytes.
         let ev = [
             lf_checker_rt::relocated(EVT_TAG),
             buf[4],
             buf[5],
-            0u32,
+            buf[6] & 0xffffff00,
             fc,
             0x4au32,
         ];
@@ -266,7 +268,10 @@ lf_checker_rt::export!(thiscall, rw_00CD0860(this: u32, arg: u32) -> u32 {
                 wr32(t8 + 0x0c, rd32(t8 + 0x0c) | 2);
             }
         }
-        if rd8(arg + 0x219) == 0 {
+        // The countdown block repoints esi at the scratch word c; the calls
+        // and flag update below follow esi, not `this`.
+        let countdown = rd8(arg + 0x219) == 0;
+        if countdown {
             let hi = rd32(lf_checker_rt::relocated(G_COUNT_HI)) as i32;
             let lo = rd32(lf_checker_rt::relocated(G_COUNT_LO)) as i32;
             let n: u32 = lf_checker_rt::callee_cdecl!(33, u32,);
@@ -283,17 +288,18 @@ lf_checker_rt::export!(thiscall, rw_00CD0860(this: u32, arg: u32) -> u32 {
             wr8(c + 0x4c, 1);
             wr32(c + 0x48, (t as u32).wrapping_add(lo as u32));
         }
-        lf_checker_rt::callee_thiscall!(34, u32, this, arg, f10, 1u32, 0u32);
-        lf_checker_rt::callee_thiscall!(35, u32, this, arg);
+        let esi_tail = if countdown { buf[2] } else { this };
+        lf_checker_rt::callee_thiscall!(34, u32, esi_tail, arg, f10, 1u32, 0u32);
+        lf_checker_rt::callee_thiscall!(35, u32, esi_tail, arg);
         if f10 == 0 {
-            wr8(this + FLAGS, rd8(this + FLAGS) & 0xfb);
+            wr8(esi_tail + FLAGS, rd8(esi_tail + FLAGS) & 0xfb);
         } else {
-            let old = rd8(this + FLAGS);
+            let old = rd8(esi_tail + FLAGS);
             let mut al = u32::from(fb == 0) as u8;
             al <<= 2;
             al ^= old;
             al &= 4;
-            wr8(this + FLAGS, old ^ al);
+            wr8(esi_tail + FLAGS, old ^ al);
         }
         lf_checker_rt::callee_thiscall!(36, u32, ev.as_ptr() as u32);
         fc

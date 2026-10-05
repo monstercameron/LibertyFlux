@@ -10,8 +10,9 @@
 /// decremented and the search stops; a miss in all three tables changes
 /// nothing. The stack words are (`sub`, `key`): `sub` is forwarded to the
 /// callees, `key` is the searched id. The original reuses the `key` argument
-/// slot as each out-slot after clearing its low byte; the out-words below
-/// are seeded the same way so the call-time snapshots match. Returns nothing.
+/// slot as each out-slot after clearing its low byte; the single out-word
+/// below mirrors that (seeded from `key`, low byte cleared before every
+/// call) so the call-time snapshots match. Returns nothing.
 /// Original: 0x009AAC30 (thiscall, two stack words).
 lf_checker_rt::export!(thiscall, rw_009AAC30(this: u32, sub: u32, key: u32) -> u32 {
     unsafe {
@@ -33,16 +34,17 @@ lf_checker_rt::export!(thiscall, rw_009AAC30(this: u32, sub: u32, key: u32) -> u
         if key == 0 {
             return 0;
         }
-        let mut out_a: u32 = key & 0xffffff00;
+        let mut out: u32 = key & 0xffffff00;
+        out &= 0xffffff00;
         let arr_a: u32 = lf_checker_rt::callee_thiscall!(
             LOOKUP_A,
             u32,
             this,
             sub,
-            &mut out_a as *mut u32 as u32
+            &mut out as *mut u32 as u32
         );
         let mut i: u32 = 0;
-        let n_a = out_a & 0xff;
+        let n_a = out & 0xff;
         while i < n_a {
             let e = arr_a.wrapping_add(i.wrapping_mul(ENTRY_SIZE));
             if rd32(e) == key {
@@ -51,16 +53,16 @@ lf_checker_rt::export!(thiscall, rw_009AAC30(this: u32, sub: u32, key: u32) -> u
             }
             i += 1;
         }
-        let mut out_b: u32 = key & 0xffffff00;
+        out &= 0xffffff00;
         let arr_b: u32 = lf_checker_rt::callee_thiscall!(
             LOOKUP_B,
             u32,
             this,
             sub,
-            &mut out_b as *mut u32 as u32
+            &mut out as *mut u32 as u32
         );
         let mut j: u32 = 0;
-        let n_b = out_b & 0xff;
+        let n_b = out & 0xff;
         while j < n_b {
             let e = arr_b.wrapping_add(j.wrapping_mul(ENTRY_SIZE));
             if rd32(e) == key {
@@ -69,16 +71,16 @@ lf_checker_rt::export!(thiscall, rw_009AAC30(this: u32, sub: u32, key: u32) -> u
             }
             j += 1;
         }
-        let mut out_c: u32 = key & 0xffffff00;
+        out &= 0xffffff00;
         let arr_c: u32 = lf_checker_rt::callee_thiscall!(
             LOOKUP_C,
             u32,
             this,
             sub,
-            &mut out_c as *mut u32 as u32
+            &mut out as *mut u32 as u32
         );
         let mut k: u32 = 0;
-        let n_c = out_c & 0xff;
+        let n_c = out & 0xff;
         while k < n_c {
             let e = arr_c.wrapping_add(k.wrapping_mul(ENTRY_SIZE));
             if rd32(e) == key {

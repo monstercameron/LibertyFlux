@@ -57,7 +57,7 @@ fn word(table: &[u32], index: u32, caller: &str) -> u32 {
 ///
 /// When the view carries none (a registry/boundary bug: the fetch stub
 /// always provides both tables for these slots).
-fn second(view: &BoardView<'_>, caller: &str) -> &[u32] {
+fn second<'a>(view: &BoardView<'a>, caller: &str) -> &'a [u32] {
     view.secondary.unwrap_or_else(|| {
         panic!("{caller}: two-table slot fetched a view without a second table")
     })

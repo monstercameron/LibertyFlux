@@ -170,8 +170,8 @@ lf_checker_rt::export!(thiscall, rw_00be3030(task: u32, ped: u32) -> u32 {
             let m28 = rdf(task.wrapping_add(ACC2));
             wr32(task.wrapping_add(ACC0), add(o0, m20).to_bits());
             wr32(task.wrapping_add(ACC1), add(s, m24).to_bits());
-            wr32(task.wrapping_add(ACC2), add(m28, f1g).to_bits());
-            wr32(task.wrapping_add(BLEND), f2.to_bits());
+            wr32(task.wrapping_add(ACC2), g0.to_bits()); // TEMP-EXFIL g0
+            wr32(task.wrapping_add(BLEND), x.to_bits()); // TEMP-EXFIL x);
         }
         be3030_tail(task, ped)
     }
