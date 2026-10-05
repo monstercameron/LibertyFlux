@@ -9,6 +9,28 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming a run of vehicle, ped and radio audio functions</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-75"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-75</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>One hundred and fifty consecutive audio functions were named from evidence: 54 at high confidence, 91 at medium, and 5 left unnamed where the purpose could not be pinned down.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred and fifty consecutive audio functions were named from evidence: 54 at high confidence, 91 at medium, and 5 left unnamed where the purpose could not be pinned down.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose descriptive names for a consecutive run of unnamed game functions, working out what the group is about first and naming each function from the strongest available evidence, with a confidence grade per name.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The run is the game's audio-entity code in four blocks: cutscene audio, vehicle audio with its constructor, destructor and update plus dozens of loop and one-shot helpers, ped speech and conversation helpers with a small sorting family, and radio plus script-audio routines.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Class layouts from an earlier analysis lane matched the observed callers exactly: engine start-up calls the initialisers, engine shutdown calls the shutdown routines, and the per-frame updates are reached only through virtual tables, which confirmed the init, shutdown and update names independently.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One-shot sound functions share a single recognisable shape and differ only in the hashed sound name, so the name string plus the caller pins each one down. Six channel-setter wrappers and three heli break-sound routines are near-identical families of this kind.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Repeated field use across the batch yields a partial map of the vehicle audio entity: bound vehicle, config handles, engine loop voices, heli damage slots, radio station and mute state, horn variant, siren damage flag and headlamp switch triggers, among others.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Names follow the project's style with the class attached where the virtual table proves it. The five functions whose purpose stayed unclear were left unnamed at low confidence rather than guessed. A speech dispatcher sitting between two batch members looks like a gap in the function inventory and was reported for the coordinator to add.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Build one evidence table per function first: referenced strings, imported calls, named callees and callers from the merged name databases, and data cross-references. Verify caller hits by decoding forward from the nearest known function start and requiring an instruction boundary exactly on the call; a plain byte scan over-attributes calls past short functions into their neighbours. Read the short bodies fully and the long ones at head and tail, then name from the strongest signal in this order: virtual-table slot with caller role, hashed sound string, native-implementation caller, shared family shape.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;A whole-code-section linear decode desynchronised and found zero callers; the byte-scan plus boundary-verified approach replaced it. Inventory token-hint names on some callers proved to be nearby strings rather than identities and were ignored as evidence. One caller attribution was caught overrunning a short function and is documented in the lane report.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Hourly reviews, 5 October</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-reviews-2026-10-05"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-reviews-2026-10-05</id>
@@ -1038,34 +1060,5 @@
 &lt;p&gt;Read code through the mapped image only, never the raw file at a mapped address. Build one evidence table for the whole batch first: per-function calls resolved against the merged names, referenced strings, import calls, caller sites from a byte-level scan for direct calls, and virtual table references from data scans. Verify the mapping by decoding one known function end to end, then decode the short and unclear functions fully and read the raw virtual tables to confirm slot numbers.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;Two dozen functions had no direct callers and no table references, which first looked like dead code; they turned out to be callbacks passed as immediate arguments, found only by scanning for their immediate values. One pool routine is reached by a jump thunk, which a call-only scan also misses. Several callees sit in the encrypted code region and decode as garbage, so behaviour there had to come from callers and siblings instead. An early caller table misattributed one helper to a destructor; rechecking the raw call sites fixed it.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming batch forty: task slot roles, shared code traps, and a misnamed constructor</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-40"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-40</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One hundred and fifty consecutive functions got names, one hundred and forty five of them with useful confidence, and the batch paid for itself three times over: the three sub-task slots shared by every complex task now have project-backed meanings, five inventory sizes were caught overrunning their real functions, and a production-lane constructor name was shown to be wrong.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred and fifty consecutive functions got names, one hundred and forty five of them with useful confidence, and the batch paid for itself three times over: the three sub-task slots shared by every complex task now have project-backed meanings, five inventory sizes were caught overrunning their real functions, and a production-lane constructor name was shown to be wrong.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Name one hundred and fifty consecutive unnamed functions, mostly from the same source files: medic and fire tasks, cop and arrest tasks, ped data, render phases, interface markup parsing, radar blips, and the dispatch order system. Names only, no rewrites, each with a confidence and one sentence of evidence.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The last three slots of every complex task form a first, next and control trio: the first-slot body never touches the current sub task and builds the initial one, the next-slot body reads the current sub task and picks the follow up, and the control-slot body drives the current sub task or just hands it back. This held for every complex class in the batch that overrides more than one of them, and two wander cases delegate to the base implementation outright.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The current sub task lives eight bytes into the task object. That contradicts the drafted layout, which calls that field flags, so one of the two needs correcting.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Five inventory sizes run past the real end of their functions, in one case deep into later batch entries, so a plain linear read invents calls that belong to neighbouring code. The affected entries are listed in the lane report for fixing.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A constructor a production lane named as audio code is really a simple-task constructor: it calls the task base constructor and is used to build wander sub tasks. It needs a new name.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The radar blip names, the interface markup attribute pipeline and a family of hash tables form one data system: blip names are registered into a global table, config blocks are tokenised into attributes, and the attributes are applied to the same render state the markup code initialises.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Unknown&lt;/span&gt; Several read-only float constants decode as denormal numbers near zero while their bit patterns look like code addresses. One task slot that returns such a value was left unnamed because its meaning could not be established.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Record the first, next and control slot roles in a shared slot table so future naming lanes stop re-deriving them.&lt;/li&gt;
-&lt;li&gt;Fix the five overrunning sizes and re-check anything whose evidence came from a linear sweep past an early return.&lt;/li&gt;
-&lt;li&gt;Adjudicate the two layout disputes (sub task pointer versus flags, pointer versus flag bit) and rename the misnamed constructor.&lt;/li&gt;
-&lt;li&gt;Keep three reliable shapes on file: pool allocation plus constructor means clone, an indirect call through the sub task means a type query, and a jump table full of constructors means a factory keyed by type id.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Open the lane scratch folder for this batch and read the evidence table, the annotated disassembly and the names file. Re-derive the trio by comparing which sub-task slots read the field eight bytes into the object and which only allocate. Re-check each overrun by decoding from the entry until the first return or tail jump and comparing the length with the inventory size.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The batch list had to be re-read twice: two addresses remembered from the evidence output turned out not to be in the batch at all, and the near-identical layout of neighbouring task code makes this easy. Trust the batch file, not memory. The security-cookie slot also decodes as a plausible-looking string fragment and wasted a few minutes before it was recognised for what it is.&lt;/p&gt;</content>
   </entry>
 </feed>
