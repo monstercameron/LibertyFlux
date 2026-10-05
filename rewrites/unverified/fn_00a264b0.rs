@@ -76,6 +76,10 @@ lf_checker_rt::export!(thiscall, rw_00a264b0(
             unsafe { f32::from_bits(g32(va)) }
         }
         #[inline(always)]
+        unsafe fn g8(va: u32) -> u8 {
+            unsafe { lf_checker_rt::global::<u8>(va).read() }
+        }
+        #[inline(always)]
         fn fadd(a: f32, b: f32) -> f32 {
             let x = core::hint::black_box(a);
             let y = core::hint::black_box(b);
@@ -128,6 +132,7 @@ lf_checker_rt::export!(thiscall, rw_00a264b0(
         let mut edx = target;
         let esi = this;
         let mut x4 = fld(esi, 0x1b0);
+        let mut x5 = 0.0f32;
         let mut x7 = fld(esi, 0x1b4);
         let mut x6 = fld(esi, 0x1b8);
         x4 = fmul(x4, f32::from_bits(blend));
@@ -240,6 +245,200 @@ lf_checker_rt::export!(thiscall, rw_00a264b0(
                 xtmp = rd32(edx, 0x38);
             }
             let obj = g32(G_OBJ);
-            let s48 = obj;
+            let _s48 = obj;
             let id1ans = lf_checker_rt::callee_cdecl!(1, u32,);
-            let mut id1slot = id1ans;
+            let id1slot = id1ans;
+            // First solver pass. Frame-pointer arguments are skipped in the
+            // contract; the table words they point at are the checked state.
+            let mut s50l = s50;
+            let ans2 = lf_checker_rt::callee_thiscall!(
+                2, u32, obj, &mut s50l as *mut f32 as u32, FILL_FLAG, tbase,
+                xtmp, id1ans, 0xffff_ffffu32, 7, KIND_FULL, 0
+            );
+            count = ans2;
+            if (ans2 as i32) < KIND_FULL as i32 {
+                let left = KIND_FULL.wrapping_sub(ans2);
+                let mut s70l = _s70;
+                let cont = tbase + ans2.wrapping_mul(TABLE_STRIDE as u32);
+                let add = lf_checker_rt::callee_thiscall!(
+                    3, u32, obj, &mut s50l as *mut f32 as u32,
+                    &mut s70l as *mut f32 as u32, FILL_FLAG, cont, xtmp,
+                    id1slot, 0xffff_ffffu32, 7, 1, left, 0
+                );
+                count = count.wrapping_add(add);
+            }
+            lf_checker_rt::callee_cdecl!(4, u32, &mut count as *mut u32 as u32, tbase);
+            edi = count;
+            if (edi as i32) > 0 {
+                for i in 0..edi as usize {
+                    let v = f32::from_bits(tr(tbase, i * (TABLE_STRIDE / 4) + 16));
+                    if !(v > x0stash) {
+                        x0stash = v;
+                    }
+                }
+            }
+            x0 = fld(esi, 0x1f8);
+            x3 = x0stash;
+            if !(x3 > x0) {
+                x0 = x3;
+            }
+            fst(esi, 0x1f8, x0);
+            let flag: u8 = rd8(esi, 0x216);
+            if (flag & 1) == 0 {
+                x0 = fld(esi, 0x268);
+                x3 = fsub(x3, x0);
+                x3 = fmul(x3, fld(esi, 0x26c));
+                x3 = fadd(x3, x0);
+            }
+            fst(esi, 0x268, x3);
+            let do_second = g8(G_SECOND) != 0 && flag == 0;
+            if do_second {
+                // Smoothstep-style relaxation of the stash toward +0x1e0.
+                x2 = fld(esi, 0x1e0);
+                x3 = fsub(x3, x2);
+                x1 = x3;
+                x3 = gf(C_ONE);
+                x0 = x1;
+                x0 = f32::from_bits(x0.to_bits() & g32(C_ABS));
+                x3 = fsub(x3, x0);
+                x3 = fmul(x3, gf(C_SMOOTH_A));
+                x3 = fadd(x3, gf(C_SMOOTH_B));
+                x3 = fmul(x3, x1);
+                x3 = fadd(x3, x2);
+                x0stash = x3;
+            }
+            if do_second && edi != 0 {
+                // Second solver pass over the same table.
+                x0 = s50;
+                x3 = s30;
+                x4 = fld(aim, 0);
+                x5 = fld(aim, 4);
+                x6 = fld(aim, 8);
+                x1 = s4c;
+                x2 = s40;
+                edi = obj;
+                let mut s60 = x0;
+                x0 = s54;
+                let _s64 = x0;
+                x0 = s58;
+                let _s70b = x0;
+                x0 = x3init;
+                x4 = fmul(x4, x0);
+                x5 = fmul(x5, x0);
+                x6 = fmul(x6, x0);
+                x0 = 0.0;
+                x3 = fmul(x3, x0);
+                x1 = fmul(x1, x0);
+                x3 = fadd(x3, fld(esi, 0x140));
+                x2 = fmul(x2, x0);
+                x1 = fadd(x1, fld(esi, 0x144));
+                x2 = fadd(x2, fld(esi, 0x148));
+                x3 = fsub(x3, x4);
+                x1 = fsub(x1, x5);
+                x2 = fsub(x2, x6);
+                let (a6176, a6172, a6168) = (x3, x1, x2);
+                let mut a6176l = a6176;
+                let ans2b = lf_checker_rt::callee_thiscall!(
+                    2, u32, edi, &mut s60 as *mut f32 as u32, FILL_FLAG,
+                    tbase, xtmp, id1slot, 0xffff_ffffu32, 7, KIND_FULL, 0
+                );
+                let _ = (a6172, a6168);
+                count = ans2b;
+                if (ans2b as i32) < KIND_FULL as i32 {
+                    let left = KIND_FULL.wrapping_sub(ans2b);
+                    let cont = tbase + ans2b.wrapping_mul(TABLE_STRIDE as u32);
+                    let add = lf_checker_rt::callee_thiscall!(
+                        3, u32, edi, &mut s60 as *mut f32 as u32,
+                        &mut a6176l as *mut f32 as u32, FILL_FLAG, cont,
+                        xtmp, id1slot, 0xffff_ffffu32, 7, 1, left, 0
+                    );
+                    count = count.wrapping_add(add);
+                }
+                lf_checker_rt::callee_cdecl!(
+                    4, u32, &mut count as *mut u32 as u32, tbase
+                );
+                edi = count;
+                if (edi as i32) > 0 {
+                    x0 = fld(esi, 0x1e0);
+                    x3 = gf(C_HALF);
+                    x3 = fsub(x3, x0);
+                    x3 = fmul(x3, gf(C_BLEND));
+                    x3 = fadd(x3, x0);
+                    fst(esi, 0x1e0, x3);
+                    tail_x3 = x3;
+                } else {
+                    x3 = x0stash;
+                    fst(esi, 0x1e0, x3);
+                    tail_x3 = x3;
+                }
+            } else {
+                fst(esi, 0x1e0, x3);
+                tail_x3 = x3;
+            }
+        }
+        // Tail blend. xmm3 arrives per path (pristine stash on early exit).
+        x3 = tail_x3;
+        x0 = fld(aim, 0);
+        x4 = x3init;
+        x1 = fld(aim, 4);
+        x2 = fld(aim, 8);
+        x5 = s4c;
+        x6 = s40;
+        x0 = fmul(x0, x4);
+        x1 = fmul(x1, x4);
+        x2 = fmul(x2, x4);
+        x4 = s30;
+        x4 = fmul(x4, x3);
+        x5 = fmul(x5, x3);
+        x6 = fmul(x6, x3);
+        x3 = fsub(x3, gf(C_SMOOTH_A));
+        x4 = fsub(x4, x0);
+        x5 = fsub(x5, x1);
+        x6 = fsub(x6, x2);
+        x0 = 0.0;
+        x3 = fmul(x3, gf(C_FRAC));
+        x4 = fadd(x4, fld(esi, 0x140));
+        x5 = fadd(x5, fld(esi, 0x144));
+        let x3_le0 = !(x3 > x0);
+        x6 = fadd(x6, fld(esi, 0x148));
+        fst(esi, 0x140, x4);
+        fst(esi, 0x144, x5);
+        fst(esi, 0x148, x6);
+        if x3_le0 {
+            x3 = x0;
+        } else {
+            x0 = gf(C_ONE);
+            if !(x0 > x3) {
+                x3 = x0;
+            }
+        }
+        if (use_target & 0xff) == 0 {
+            x3 = fmul(x3, gf(C_RATE1));
+            x0 = gf(C_DEG_BASE);
+            x0 = fsub(x0, x3);
+            x0 = fmul(x0, gf(C_DEG2RAD));
+            let sin_bits = lf_checker_rt::callee_cdecl!(6, u32, x0.to_bits());
+            x3 = f32::from_bits(sin_bits);
+            x3 = fadd(x3, gf(C_ONE));
+            x3 = fmul(x3, gf(C_HALF));
+        }
+        if (alt_rate & 0xff) == 0 {
+            x3 = fmul(x3, gf(C_TAIL));
+            x3 = fadd(x3, fld(esi, 0x148));
+            fst(esi, 0x148, x3);
+        }
+        x0 = fld(esi, 0x140);
+        x1 = fld(esi, 0x144);
+        x2 = fld(esi, 0x148);
+        wr32(lf_checker_rt::relocated(G_OUT0), 0, x0.to_bits());
+        wr32(lf_checker_rt::relocated(G_OUT1), 0, x1.to_bits());
+        wr32(lf_checker_rt::relocated(G_OUT2), 0, x2.to_bits());
+        x0 = fld(esi, 0x14c);
+        wr32(lf_checker_rt::relocated(G_OUT3), 0, x0.to_bits());
+        if (edi as i32) > 0 {
+            1
+        } else {
+            0
+        }
+    }
+});

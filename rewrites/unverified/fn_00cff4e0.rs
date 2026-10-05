@@ -31,8 +31,7 @@
 ///
 /// Faithfulness notes: the original keeps one scratch byte in its incoming
 /// argument slot, so the stack comparison is off for this function (its
-/// value is observed through every branch it feeds instead). One flag byte
-/// the original stores is overwritten before any read and is not kept. Two
+/// value is observed through every branch it feeds instead). Two
 /// null checks (subject re-test, helper-4 object) cannot fire because an
 /// earlier check returns first; they are kept as written. All float
 /// arithmetic is single-precision in the original's operand order.
@@ -148,7 +147,7 @@ lf_checker_rt::export!(thiscall, rw_00cff4e0(this: u32, par: u32) -> u32 {
             0
         };
         let flag1: u8 = if rglob(G_MODE) == 3 {
-            let r2: u32 = lf_checker_rt::callee_cdecl!(2, u32);
+            let r2: u32 = lf_checker_rt::callee_cdecl!(2, u32,);
             eaxv = r2;
             if r2 & 0xff != 0 && bh_orig != 0 {
                 1
@@ -158,11 +157,19 @@ lf_checker_rt::export!(thiscall, rw_00cff4e0(this: u32, par: u32) -> u32 {
         } else {
             0
         };
-        // (The 0x26c flag byte is overwritten before any read; not kept.)
+        // The 0x26c flag byte, carried to helpers 3 and 5.
+        let flag2: u8 = if rd8(par.wrapping_add(PAR_MODE)) == 1
+            && rd8(subj.wrapping_add(SUB_26C)) & 4 != 0
+            && rd8(par.wrapping_add(PAR_26C)) & 4 != 0
+        {
+            0
+        } else {
+            1
+        };
         // Step 3: weapon level in ebx.
         let mut ebx: u32 = 0;
         let r3: u32 =
-            lf_checker_rt::callee_thiscall!(3, u32, subj.wrapping_add(PAR_SEQ), s2);
+            lf_checker_rt::callee_thiscall!(3, u32, subj.wrapping_add(PAR_SEQ), flag2 as u32);
         eaxv = r3;
         let mut need_id5 = r3 & 0xff == 0;
         if !need_id5 {
@@ -177,7 +184,7 @@ lf_checker_rt::export!(thiscall, rw_00cff4e0(this: u32, par: u32) -> u32 {
         }
         if need_id5 {
             let r5: u32 =
-                lf_checker_rt::callee_thiscall!(5, u32, subj.wrapping_add(PAR_SEQ), s2);
+                lf_checker_rt::callee_thiscall!(5, u32, subj.wrapping_add(PAR_SEQ), flag2 as u32);
             eaxv = r5;
             if r5 & 0xff != 0 {
                 ebx = 2;
@@ -230,10 +237,10 @@ lf_checker_rt::export!(thiscall, rw_00cff4e0(this: u32, par: u32) -> u32 {
         let need_id8 = (b218 != 0 && cl != 0) || (b218 == 0 && b219 != 0);
         let mut alv: u8;
         if need_id8 {
-            let r8a: u32 = lf_checker_rt::callee_cdecl!(8, u32);
+            let r8a: u32 = lf_checker_rt::callee_cdecl!(8, u32,);
             eaxv = r8a;
             if r8a != 0 {
-                let r8b: u32 = lf_checker_rt::callee_cdecl!(8, u32);
+                let r8b: u32 = lf_checker_rt::callee_cdecl!(8, u32,);
                 eaxv = r8b;
                 if rd8(r8b.wrapping_add(0x5a)) & 8 != 0 && arg_local != 0 {
                     wr32(
@@ -293,86 +300,37 @@ lf_checker_rt::export!(thiscall, rw_00cff4e0(this: u32, par: u32) -> u32 {
                     return (eaxv & 0xffff_ff00) | 1;
                 }
                 alv = (arg_local & 0xff) as u8;
+                eaxv = (eaxv & 0xffff_ff00) | alv as u32;
             }
         }
         // Step 6: state word and stance fields.
-        if alv == 0 {
-            // fall through to flag1 gate below
-        } else if s2 != 0 {
+        if alv != 0 {
             eaxv = s2;
-            let k = rd32(s2.wrapping_add(0xc));
-            eaxv = k;
-            if k != 2 && k != 3 && k != 4 {
-                let ecx1 = subj;
-                if ecx1 != 0 {
-                    let shifted = rd32(ecx1.wrapping_add(SUB_STATE)) >> 0x15;
-                    eaxv = shifted;
-                    if shifted & 1 != 0 {
-                        wr32(
-                            this.wrapping_add(THIS_FLAGS),
-                            rd32(this.wrapping_add(THIS_FLAGS)) | 8,
-                        );
-                        return (eaxv & 0xffff_ff00) | 1;
+            if s2 != 0 {
+                let k = rd32(s2.wrapping_add(0xc));
+                eaxv = k;
+                if k != 2 && k != 3 && k != 4 {
+                    let ecx1 = subj;
+                    if ecx1 != 0 {
+                        let shifted = rd32(ecx1.wrapping_add(SUB_STATE)) >> 0x15;
+                        eaxv = shifted;
+                        if shifted & 1 != 0 {
+                            wr32(
+                                this.wrapping_add(THIS_FLAGS),
+                                rd32(this.wrapping_add(THIS_FLAGS)) | 8,
+                            );
+                            return (eaxv & 0xffff_ff00) | 1;
+                        }
+                        if rd32(ecx1.wrapping_add(SUB_A70)) == 1 {
+                            wr32(
+                                this.wrapping_add(THIS_FLAGS),
+                                rd32(this.wrapping_add(THIS_FLAGS)) | 8,
+                            );
+                            return (eaxv & 0xffff_ff00) | 1;
+                        }
                     }
-                    if rd32(ecx1.wrapping_add(SUB_A70)) == 1 {
-                        wr32(
-                            this.wrapping_add(THIS_FLAGS),
-                            rd32(this.wrapping_add(THIS_FLAGS)) | 8,
-                        );
-                        return (eaxv & 0xffff_ff00) | 1;
-                    }
-                }
-                if rd32(subj.wrapping_add(SUB_A70)) == 1 {
-                    wr32(
-                        this.wrapping_add(THIS_FLAGS),
-                        rd32(this.wrapping_add(THIS_FLAGS)) | 8,
-                    );
-                    return (eaxv & 0xffff_ff00) | 1;
-                }
-                let trav = rd32(subj.wrapping_add(SUB_TRAV));
-                let r11a: u32 = lf_checker_rt::callee_thiscall!(
-                    11,
-                    u32,
-                    trav.wrapping_add(0x2e0),
-                    0x2e7,
-                    0
-                );
-                eaxv = r11a;
-                if r11a & 0xff != 0 {
-                    wr32(
-                        this.wrapping_add(THIS_FLAGS),
-                        rd32(this.wrapping_add(THIS_FLAGS)) | 8,
-                    );
-                    return (eaxv & 0xffff_ff00) | 1;
-                }
-            } else {
-                // k in 2,3,4: still runs the a70 gate and helper 11a
-                if rd32(subj.wrapping_add(SUB_A70)) == 1 {
-                    wr32(
-                        this.wrapping_add(THIS_FLAGS),
-                        rd32(this.wrapping_add(THIS_FLAGS)) | 8,
-                    );
-                    return (eaxv & 0xffff_ff00) | 1;
-                }
-                let trav = rd32(subj.wrapping_add(SUB_TRAV));
-                let r11a: u32 = lf_checker_rt::callee_thiscall!(
-                    11,
-                    u32,
-                    trav.wrapping_add(0x2e0),
-                    0x2e7,
-                    0
-                );
-                eaxv = r11a;
-                if r11a & 0xff != 0 {
-                    wr32(
-                        this.wrapping_add(THIS_FLAGS),
-                        rd32(this.wrapping_add(THIS_FLAGS)) | 8,
-                    );
-                    return (eaxv & 0xffff_ff00) | 1;
                 }
             }
-        } else {
-            eaxv = s2;
             if rd32(subj.wrapping_add(SUB_A70)) == 1 {
                 wr32(
                     this.wrapping_add(THIS_FLAGS),
@@ -397,9 +355,9 @@ lf_checker_rt::export!(thiscall, rw_00cff4e0(this: u32, par: u32) -> u32 {
                 return (eaxv & 0xffff_ff00) | 1;
             }
         }
-        // Flag1 gate into helpers 12 and 13.
-        if flag1 != 0 {
-            let r12: u32 = lf_checker_rt::callee_cdecl!(12, u32);
+        // Flag1 gate into helpers 12 and 13 (runs when flag1 is clear).
+        if flag1 == 0 {
+            let r12: u32 = lf_checker_rt::callee_cdecl!(12, u32,);
             eaxv = r12;
             if r12 & 0xff != 0
                 && subj != 0
@@ -463,7 +421,7 @@ lf_checker_rt::export!(thiscall, rw_00cff4e0(this: u32, par: u32) -> u32 {
         ebx = newx;
         // Step 7c: the ranged-attack helpers.
         if newx & 0x20 == 0 && cl2 != 0 {
-            let r8c: u32 = lf_checker_rt::callee_cdecl!(8, u32);
+            let r8c: u32 = lf_checker_rt::callee_cdecl!(8, u32,);
             eaxv = r8c;
             let h = r8c;
             let r9: u32 = lf_checker_rt::callee_thiscall!(9, u32, h);
@@ -520,17 +478,23 @@ lf_checker_rt::export!(thiscall, rw_00cff4e0(this: u32, par: u32) -> u32 {
         if b64 != 0xff {
             edx = b64 as i8 as i32;
         }
-        if rd8(par.wrapping_add(PAR_MODE)) == 2
-            || rd32(rd32(par.wrapping_add(PAR_SUB)).wrapping_add(0x12c)) == 2
-            || esi_idx == rglob(G_INDEX) as i32
-        {
+        if rd8(par.wrapping_add(PAR_MODE)) == 2 {
             edx = 4;
+        } else {
+            let ps = rd32(par.wrapping_add(PAR_SUB));
+            eaxv = ps;
+            if rd32(ps.wrapping_add(0x12c)) == 2 || esi_idx == rglob(G_INDEX) as i32 {
+                edx = 4;
+            }
         }
         // Step 7e: the ally scan.
         let bl_late: u8;
+        let skip_rating: bool;
         if bh_orig == 0 {
             bl_late = (ebx & 0xff) as u8;
+            skip_rating = flag0 == 0;
         } else {
+            skip_rating = false;
             if (xc & 0xc0) > 0x40 {
                 bl_late = bh_orig;
             } else {
@@ -569,7 +533,9 @@ lf_checker_rt::export!(thiscall, rw_00cff4e0(this: u32, par: u32) -> u32 {
         }
         let bh_late: u8 = flag0;
         // Step 8: helpers 16 and 15 select the rating.
-        if flag1 != 0 {
+        if skip_rating {
+            // edx keeps its scanned value
+        } else if flag1 != 0 {
             let r16: u32 =
                 lf_checker_rt::callee_thiscall!(16, u32, par.wrapping_add(PAR_SEQ), 0);
             eaxv = r16;
@@ -633,7 +599,7 @@ lf_checker_rt::export!(thiscall, rw_00cff4e0(this: u32, par: u32) -> u32 {
             arg_local = rating.to_bits();
         }
         wr32(this.wrapping_add(THIS_RATE), 0);
-        let r17: u32 = lf_checker_rt::callee_cdecl!(17, u32);
+        let r17: u32 = lf_checker_rt::callee_cdecl!(17, u32,);
         eaxv = r17;
         let x1 = f32::from_bits(arg_local);
         let mut x0 = (r17 as i32) as f32;
@@ -670,7 +636,7 @@ lf_checker_rt::export!(thiscall, rw_00cff4e0(this: u32, par: u32) -> u32 {
             );
             return (eaxv & 0xffff_ff00) | 1;
         }
-        let r2b: u32 = lf_checker_rt::callee_cdecl!(2, u32);
+        let r2b: u32 = lf_checker_rt::callee_cdecl!(2, u32,);
         eaxv = r2b;
         if r2b & 0xff != 0 {
             return eaxv & 0xffff_ff00;
