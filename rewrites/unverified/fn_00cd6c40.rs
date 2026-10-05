@@ -16,10 +16,10 @@
 /// whose low word is kept). The result is clamped to the limit global when
 /// the ped check (callee 1) agrees and the ped's words allow it. The step
 /// callee (callee 2) is then asked with (`ped`, params, 8.0); a zero answer
-/// parks the task in state 4 with a zero timer. Otherwise a flag word
+/// parks the task in state 4 leaving the timer untouched. Otherwise a flag word
 /// reached through the ped at `+0x1f8` may set 2.0 into the helper at
 /// `+0x54`, and the state becomes 1. A ped nibble of 2 or more parks the
-/// task without doing any of this.
+/// task in state 4 without doing any of this (the timer keeps its value).
 /// State 1 raises ped bits, then compares the helper float at `+0x4c`
 /// against 1.0 and 0.8 with above-or-equal tests that also take the set
 /// branch for NaN (Rust `!(a > b)`); failures park in state 3 or return.
@@ -132,7 +132,7 @@ lf_checker_rt::export!(thiscall, rw_00CD6C40(this: u32, ped: u32) -> u32 {
         match state {
             0 => {
                 if rd8(ped + PED_NIBBLE_OFF) & 0xF >= 2 {
-                    wr32(this + TIMER_OFF, 0);
+                    // Parks with the timer untouched (jumps past its zeroing).
                     wr32(this + STATE_OFF, 4);
                     return 0;
                 }
@@ -156,7 +156,7 @@ lf_checker_rt::export!(thiscall, rw_00CD6C40(this: u32, ped: u32) -> u32 {
                     2, u32, this, ped, rd32(this + PARAM0_OFF), rd32(this + PARAM1_OFF), STEP_IDLE
                 );
                 if go & 0xFF == 0 {
-                    wr32(this + TIMER_OFF, 0);
+                    // Parks with the timer untouched, like the nibble path.
                     wr32(this + STATE_OFF, 4);
                     return 0;
                 }

@@ -16,7 +16,7 @@ lf_checker_rt::export!(cdecl, rw_00c3b5a0(arg: u32) -> u32 {
         if t <= 1 {
             return (t & 0xffff_ff00) | 1;
         }
-        let mid: u32 = lf_checker_rt::callee_cdecl!(FIRST, u32);
+        let mid: u32 = lf_checker_rt::callee_cdecl!(FIRST, u32,);
         let got: u32 = lf_checker_rt::callee_thiscall!(SECOND, u32, mid);
         (got & 0xffff_ff00) | ((got <= LIMIT) as u32)
     }

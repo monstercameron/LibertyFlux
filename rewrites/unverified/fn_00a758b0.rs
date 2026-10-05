@@ -20,9 +20,10 @@
 /// under the checker's `stack_fill` of 0 it reads as 0.0, which is what
 /// the rewrite stores. The angle callee takes two doubles in XMM0/XMM1
 /// and returns a double in XMM0, which stable Rust cannot call directly;
-/// the harness stub answers `f32xmm0` (scripted low 32 bits over the
-/// preserved entry high half), and the rewrite reassembles that same
-/// double. Production will call the rewritten angle callee directly.
+/// the harness stub answers `f32xmm0` (a `movss` load, which zeroes the
+/// upper lanes), so the double the original converts is the scripted low
+/// 32 bits over a zero high half. Production will call the rewritten
+/// angle callee directly.
 /// Calling convention: thiscall, one stack word, no defined return value.
 lf_checker_rt::export!(thiscall, rw_00a758b0(this: u32, arg1: u32) -> u32 {
     unsafe {
@@ -89,14 +90,13 @@ lf_checker_rt::export!(thiscall, rw_00a758b0(this: u32, arg1: u32) -> u32 {
             return 0;
         }
         // Angle of (-a, b) as doubles, then bias and shape. The stub
-        // delivers the scripted low 32 bits in EAX over the preserved
-        // entry high half; reassemble that double (see doc comment).
+        // answers with the scripted low 32 bits over zero (see doc
+        // comment); the doubles below are what the real callee receives.
         let na = neg(a);
-        let _db = b as f64; // second double the real callee reads from XMM1
+        let _da = na as f64;
+        let _db = b as f64;
         let ang_lo: u32 = lf_checker_rt::callee_cdecl!(C_ANGLE, u32,);
-        let ang_hi: u64 = (na as f64).to_bits() & 0xFFFF_FFFF_0000_0000;
-        let ang = f64::from_bits(ang_hi | ang_lo as u64);
-        let biased = add(ang as f32, global_f32(G_BIAS));
+        let biased = add(f64::from_bits(ang_lo as u64) as f32, global_f32(G_BIAS));
         let shaped: f64 = lf_checker_rt::callee_cdecl!(C_SHAPE, f64, biased.to_bits());
         let level: f32 = shaped as f32;
         // Components and store. The spare slot reads uninitialised stack,
