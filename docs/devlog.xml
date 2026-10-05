@@ -9,6 +9,28 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming 150 audio and frontend functions: slot patterns worth reusing</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-61"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-61</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>Named 131 of 150 consecutive audio and frontend functions; the 19 left unnamed are bare field accesses, four large float kernels of unclear role, and one inventory entry that is not a function at all.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Named 131 of 150 consecutive audio and frontend functions; the 19 left unnamed are bare field accesses, four large float kernels of unclear role, and one inventory entry that is not a function at all.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose descriptive names with confidence levels for a batch of 150 unnamed consecutive functions, working out what the group is about first. Only names, no rewrites.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into four groups: two sound-voice backend classes with near-identical twin methods, three sound-graph node classes with their tick helpers and trampolines, the DSP effect family with its platform backends and the voice render path, and the frontend menu and input code.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three slot patterns repeat across whole class families and can be reused directly by other naming lanes. In the effect family, the initialise slot runs a shared base setup then installs per-effect defaults, the refresh slot cycles an index and updates a parameter block, one slot is always a five-instruction address computation, and the advance slot rotates a table row then hands control to a linked stage. In the platform DSP backends the three slots are initialise, free buffers, and process samples. In sound-graph nodes the behaviour slot validates, binds operands, then creates a child.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One inventory entry is a mis-split: its first bytes are a jump-table case belonging to the previous function, followed by padding, with the real code starting partway in. It was left unnamed with that evidence so no production lane treats the entry bytes as a body.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The small status queries on voice objects were named literally for what they test rather than for a guessed purpose such as playing or finished, and one single-call forward was left unnamed because play and stop read identically.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Next naming lanes on nearby batches should expect the same twin structure: ADPCM voice methods mirror the plain ones at different field offsets, and the display-mode layout pickers repeat one code shape with different table ids. Caller addresses found by byte scan must be validated against the code section bounds, because identical byte patterns in data sections produce bogus callers.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;All work used mapped reads of the executable through pefile, capstone disassembly, string and import cross-references, caller and vtable-pointer scans, the verified rewrite doc comments for overlapping addresses, and the audio class-layout tables. The scripts and the per-function evidence table stay in the lane scratch folder.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;An early version of the gather script indexed the memory-mapped image by file offset instead of by relative virtual address, which silently produced wrong pointer-reference addresses; a check decodes one known function end to end caught it before any naming used the data. Two large float kernels in the voice render path were left unnamed after their callers and callees still did not pin down their exact role.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Merging the cloud review, and three traps on the way to checker version 5</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#pr1-merge-and-checker-5-2026-10-04"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#pr1-merge-and-checker-5-2026-10-04</id>
@@ -1058,28 +1080,5 @@
 &lt;p&gt;Disassemble each function from the memory-mapped image, group by code shape, confirm each against its class virtual table, and read the board id constant and name string per board. The lane scripts gather, verify and build the names file in that order.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;Nothing went wrong. The only wrinkle was the 30 inventory-unnamed entries, which resolved cleanly: the six-byte ones return their board's name string and the rest share the column-kind code shape and sit in the matching virtual-table slot.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Twenty startup registration helpers verified, two checker gaps mapped</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s289"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s289</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>Verified A batch of twenty small neighbouring startup functions, all shaped as initialise-then-register pairs, was rewritten in Rust and each rewrite passed eleven hundred differential trials against the original with its deliberately wrong version caught every time.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A batch of twenty small neighbouring startup functions, all shaped as initialise-then-register pairs, was rewritten in Rust and each rewrite passed eleven hundred differential trials against the original with its deliberately wrong version caught every time.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite a batch of twenty small timing-subsystem functions in Rust and prove each rewrite identical to the original with the version four checker, one wrong version per function included.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch is one family: most functions run a subsystem initialiser and then hand a callback to a registrar; a few initialise a lock object through a system import slot, two fold a performance-counter reading into stored values, one zeroes a 256-entry table record by record, one clears a 128-entry table, and one is a jump-only forwarder.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two checker limits were mapped to their exact causes in the checker sources. Scripted 64-bit callee answers wider than a signed 64-bit integer are rejected, plain script numbers always produce a zero high half, dictionary forms carrying a high half are zeroed before they reach the test process, and the per-call sequence form restarts every trial, so the high half of a 64-bit answer cannot currently be varied across trials.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A store-order wrong version of one function passed repeatedly while an omit-the-stores version of the same function was caught at once, and a return-value canary proved fresh code was running. The cause is unknown.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;All twenty rewrites ship as verified with the narrowing stated in each result record. Later lanes with 64-bit callee answers should not rely on scripted high halves until the checker gap above is fixed, and should treat a passing reorder mutant as no evidence that stores are covered. The unexplained passing reorder mutant is recorded in the lane report for the checker owners.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Generate the crate, contracts and rewrites from the lane generator script, build the rewrite crate into the lane build folder, run the lane copy of the checker driver once per contract, and rebuild the lane results file from the verdicts; every verdict must pass with no vacuous flag and every wrong version must fail.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Hand-counted call locations were wrong for eight of the twenty functions because data bytes can mimic call opcodes; a byte scan cross-checked with a disassembler fixed all of them, and a wrong location fails loudly at setup. One function's declared memory range came out slightly short and the checker reported it as writes outside the declared range on both sides, which pointed straight at the arithmetic slip. Trial speed varied more than tenfold over the session for no visible reason, so per-function timings in the results come from the verdict records, not from memory.&lt;/p&gt;</content>
   </entry>
 </feed>
