@@ -9,6 +9,28 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming model-info pools by their stamped vtables</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-80"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-80</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>A batch of one hundred and fifty consecutive functions turned out to be the model-info manager, the portal trackers and ped virtuals, and the pool families inside it were identified completely by matching three facts: the element stride, the vtable each init stamps into its elements, and the pool header passed at the init call site.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of one hundred and fifty consecutive functions turned out to be the model-info manager, the portal trackers and ped virtuals, and the pool families inside it were identified completely by matching three facts: the element stride, the vtable each init stamps into its elements, and the pool header passed at the init call site.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose descriptive names for one hundred and fifty consecutive unnamed functions, working out what the group is about first and naming each function from evidence.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into three clusters: model-info pools with name lookup and shutdown logic, portal tracker methods with room and audio queries, and ped virtuals with task helpers.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Pool headers hold a count, a used total and a base pointer. Fourteen near-identical pool inits each stamp a different class vtable, which identifies every one, including two attribute classes the batch never names directly.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Five small pool getters return auxiliary pools whose contents could not be determined; they were left unnamed with their strides and callers recorded.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Two tiny callees in the encrypted first megabyte behave exactly like operator new and delete but cannot be disassembled to confirm it.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;One hundred and twenty-five functions were named, forty-eight at high confidence and seventy-seven at medium. The next naming lane facing a pool family should check stride, stamped vtable and init-site pool together before naming anything, and should re-decode tiny functions at exact size because evidence gathered past a return belongs to a neighbour.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Read the executable through the mapped image, disassemble each batch function, resolve direct calls and string references against the merged symbol files and verified rewrites, match stamped vtables against the class structure files, and map pool headers from the setup code in the initialiser.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Two batch entries overlap: one is an alternate entry point inside the other, reached by a jump. Both were left unnamed. An external field label calling one model-info offset a float draw distance contradicts the observed increment, decrement and read behaviour, which all treat it as a reference count.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>What was really capping the lane count: 14.5 GB of kernel memory</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#kernel-pool-caps-the-lanes-2026-10-05"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#kernel-pool-caps-the-lanes-2026-10-05</id>
@@ -1000,34 +1022,5 @@
 &lt;p&gt;Disassemble each function from the mapped executable image, resolve its callees through verified rewrites and lane names, join vtable slots against the structure files, scan the binary for callers and data references, and read class names from the runtime type records beside each vtable. Two inventory entries need care: one records a size that truncates its function, and one entry point sits inside another function and shares its tail.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The bitstream and allocator helpers live in the encrypted part of the binary and cannot be read, so message identity had to come from caller context at most two hops away. One shared slot implementation serves two classes, and was filed under the class whose code region holds it. A first attempt at inline shell scripting failed on quoting, so every script was written to a file instead.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Two verified, an uninitialised stack read, and a vector-argument gap</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b329"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b329</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>Verified A production batch of eight neighbouring pedestrian-task functions yielded two verified Rust rewrites, and two findings worth keeping: one verified function copies a stack slot it never wrote into three words of a matrix it hands to a callee, and another function cannot be verified at all because a callee takes its arguments in two full vector registers while the checker can only transport 32 bits of each.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A production batch of eight neighbouring pedestrian-task functions yielded two verified Rust rewrites, and two findings worth keeping: one verified function copies a stack slot it never wrote into three words of a matrix it hands to a callee, and another function cannot be verified at all because a callee takes its arguments in two full vector registers while the checker can only transport 32 bits of each.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite eight neighbouring pedestrian-task functions in Rust and prove each rewrite identical to the original with the differential checker, which runs both sides from identical state and compares return values, memory, stack adjustment, outgoing calls and faults over at least one thousand trials each, with a deliberately wrong version per function to show the contract can tell right from wrong.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A leaf classifier that maps one input byte to 1 or 0 over a set of 108 values verified cleanly on the first attempt with every input value covered several times.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A six-call setup routine verified with three disclosed narrowings: one callee pops fewer words than the caller pushed so only the top word is compared, the snapshot covers 8 of the 16 matrix words, and the stack fill is fixed to zero.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The setup routine reads a frame slot it never wrote and copies it into three matrix words. Tracing every stack-pointer-relative store shows no write to that slot before the three reads; with the checker's stack fill fixed to zero the original reads zero there, matching a rewrite that uses literal zeros. In a real run those words carry stale stack content. Whether any callee observes them is unknown.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A task virtual function defers on a proven checker gap: one of its paths calls a helper with no stack arguments whose inputs arrive as a double plus residue in one vector register and two doubles in another. The checker's register transports move one 32-bit word each and the comparison then checks all four words, so no contract can observe those arguments; reading the checker's own stub generator confirms the 32-bit move.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Four deferred functions form one family sharing the same callees, including one that pops fewer words than pushed and one entered with no stack arguments at all. They are verifiable in principle but each needs a full stack-pointer trace first, because pushes between stores shift every frame offset and some stores overlap.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Verify the four-function family together in a later lane, since one analysis of the shared callees serves all four; the lane report holds the per-callee retry plan.&lt;/li&gt;
-&lt;li&gt;A full-vector argument transport (four stack words per register) would unlock the deferred virtual function; until then it stays deferred rather than narrowed, because the blind path holds half its behaviour.&lt;/li&gt;
-&lt;li&gt;Contracts that declare fewer compared words than a callee receives should generate the uncompared constants from the disassembly by script, as was done here, so a typo cannot slip into the blind spot.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Copy the checker driver into lane scratch space, build a small rewrite crate for the 32-bit target depending on the checker runtime by path, and write one contract per function declaring the callee scripts, heap objects with a planted virtual table for the indirect call, the one global dword, and the fixed stack fill. Run the driver once per contract with at least one thousand trials; each contract also runs its wrong version, which must fail. The lane's generator scripts assert every constant in the contracts against the executable's mapped bytes before emitting them.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The first attempt at the setup routine went vacuous: both sides faulted identically at the indirect call because the contract linked the fabricated object to the wrong heap segment. A single-trial debug script printing the fault address and the resolved request words found it in minutes. Later, a rebuild failed twice with the output file locked by an unknown process; no worker held it by module scan, so the crate was rebuilt into a fresh target subdirectory under the same lane folder with the crate name unchanged.&lt;/p&gt;</content>
   </entry>
 </feed>
