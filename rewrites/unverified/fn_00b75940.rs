@@ -11,10 +11,11 @@
 /// For each candidate the callee answers supply a row pointer from a global
 /// table; the row carries two threshold pairs (`+0x34`/`+0x24`,
 /// `+0x30`/`+0x20`), a kind word (`+0x6c`) and a flag word (`+0x94`).
-/// A candidate is appended to the scratch set when the ped's distances
-/// exceed both thresholds (strictly greater; an unordered NaN comparison
-/// appends nothing) and, in mode B, both eligibility answers are zero, the
-/// kind is neither 2 nor 4, and the nibble rule accepts it (nibble 0 always
+/// A candidate is appended to the scratch set when the first distance and
+/// then the second distance exceed the row's thresholds (strictly greater;
+/// an unordered NaN comparison appends nothing) and, in mode B, both
+/// eligibility answers are zero, the kind is neither 2 nor 4, and the
+/// nibble rule accepts it (nibble 0 always
 /// accepts; 1/3/7 accept on flag bits 9/1/10; 2/4/8 accept when those bits
 /// are clear; 5 accepts kind 1; 6 accepts any kind but 1; anything above 8
 /// rejects). The scratch set is then finalised, an extra step runs when it
@@ -112,8 +113,8 @@ fn nibble_accepts(nibble: u8, kind: u32, flags: u32) -> bool {
 
 unsafe fn run_00b75940(this: u32, mode_list_a: u8) -> u32 {
     unsafe {
-        let mut set = [0u32; 8];
-        let set_ptr = set.as_mut_ptr() as u32;
+        let set = [0u32; 8];
+        let set_ptr = set.as_ptr() as u32;
         lf_checker_rt::callee_thiscall!(ID_CTOR, u32, set_ptr);
         let dx0 = rdf(this.wrapping_add(THIS_D0X));
         let dy0 = rdf(this.wrapping_add(THIS_D0Y));
@@ -125,7 +126,9 @@ unsafe fn run_00b75940(this: u32, mode_list_a: u8) -> u32 {
         dist1 = dist1.sqrt();
         lf_checker_rt::callee_thiscall!(ID_CTOR, u32, set_ptr);
         let nibble = ((this.wrapping_add(THIS_MODE) as *const u8).read() as u8) & 0x0f;
-        let append_at = set_ptr.wrapping_add(4);
+        // Both modes hand the append callee the scratch set itself; the set's
+        // words are never read back, only its address is passed on.
+        let append_at = set_ptr;
         if nibble == mode_list_a {
             let mut count = lf_checker_rt::callee_thiscall!(ID_COUNT_LIST, u32, lf_checker_rt::relocated(COLL_A));
             if (count as i32) > 0 {
@@ -152,9 +155,8 @@ unsafe fn run_00b75940(this: u32, mode_list_a: u8) -> u32 {
                 loop {
                     let idx = lf_checker_rt::callee_thiscall!(ID_RESOLVE, u32, lf_checker_rt::relocated(COLL_B), i);
                     let row = row_for(idx);
-                    let probe = f32::from_bits(set[0]);
-                    if probe > threshold(row, ROW_HI0, ROW_LO0) {
-                        if dist0 > threshold(row, ROW_HI1, ROW_LO1) {
+                    if dist0 > threshold(row, ROW_HI0, ROW_LO0) {
+                        if dist1 > threshold(row, ROW_HI1, ROW_LO1) {
                             let t0 = lf_checker_rt::callee_cdecl!(ID_TEST_A, u32, idx, TEST_ARG_A);
                             if (t0 & 0xff) == 0 {
                                 let t1 = lf_checker_rt::callee_cdecl!(ID_TEST_B, u32, idx, TEST_ARG_B);
@@ -180,13 +182,14 @@ unsafe fn run_00b75940(this: u32, mode_list_a: u8) -> u32 {
         }
         lf_checker_rt::callee_thiscall!(ID_FINISH, u32, set_ptr);
         let kept = lf_checker_rt::callee_thiscall!(ID_COUNT_SET, u32, set_ptr);
+        // Both epilogue callees receive the address of the second distance.
+        let mut d1slot = dist1;
+        let d1ptr = (&mut d1slot as *mut f32) as u32;
         if (kept as i32) > 1 {
             let prev = (lf_checker_rt::global::<u32>(RESULT_SLOT) as *const u32).read_unaligned();
-            let mut d0slot = dist0;
-            lf_checker_rt::callee_thiscall!(ID_EXTRA, u32, (&mut d0slot as *mut f32) as u32, prev);
+            lf_checker_rt::callee_thiscall!(ID_EXTRA, u32, d1ptr, prev);
         }
-        let mut d1slot = dist1;
-        let out = lf_checker_rt::callee_thiscall!(ID_PRODUCE, u32, (&mut d1slot as *mut f32) as u32);
+        let out = lf_checker_rt::callee_thiscall!(ID_PRODUCE, u32, d1ptr);
         (lf_checker_rt::global::<u32>(RESULT_SLOT) as *mut u32).write_unaligned(out);
         lf_checker_rt::callee_cdecl!(ID_COOKIE, u32,);
         out

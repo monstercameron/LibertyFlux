@@ -265,9 +265,12 @@ lf_checker_rt::export!(thiscall, rw_009F33D0(this: u32, point: u32, _unused: u32
             let step: extern "thiscall" fn(u32) -> u32 =
                 core::mem::transmute(sslot as usize);
             step(a4);
-            if rd32(a4.wrapping_add(SELECT)) != 0 {
-                let a5 = lf_checker_rt::callee_thiscall!(CAL_SWEEP, u32, this);
-                lf_checker_rt::callee_thiscall!(CAL_SELECT, u32, rd32(a5.wrapping_add(SELECT)), 0);
+            // Two more sweep calls: the first one's selector word is tested,
+            // the second one's becomes callee L's object.
+            let a5 = lf_checker_rt::callee_thiscall!(CAL_SWEEP, u32, this);
+            if rd32(a5.wrapping_add(SELECT)) != 0 {
+                let a6 = lf_checker_rt::callee_thiscall!(CAL_SWEEP, u32, this);
+                lf_checker_rt::callee_thiscall!(CAL_SELECT, u32, rd32(a6.wrapping_add(SELECT)), 0);
             }
         }
 

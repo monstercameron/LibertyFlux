@@ -23,8 +23,9 @@
 /// operation order below (a NaN input propagates through the multiplies,
 /// so the order is part of the behaviour).
 ///
-/// All float gates are ordered `<` comparisons matching the original's
-/// `comiss`+`jb` (an unordered pair is accepted, never rejected).
+/// All float gates are ordered `>=` comparisons matching the original's
+/// `comiss`+`jb` (below-or-unordered rejects: a NaN operand is rejected,
+/// never accepted).
 ///
 /// Original: 0x00c8d240 (cdecl, two stack words). Returns 1/0 in `al`.
 lf_checker_rt::export!(cdecl, rw_00c8d240(ent: u32, v: u32) -> u32 {
@@ -97,7 +98,7 @@ lf_checker_rt::export!(cdecl, rw_00c8d240(ent: u32, v: u32) -> u32 {
             let s = add(p4, p3);
             let p5 = mul(t5, bz);
             let val = add(s, p5);
-            !(limit < val)
+            limit >= val
         }
         /// Second test, subtypes 4 and 6: reject when `value < limit`.
         #[inline(always)]
@@ -114,7 +115,7 @@ lf_checker_rt::export!(cdecl, rw_00c8d240(ent: u32, v: u32) -> u32 {
             let s = add(p3, p4);
             let p5 = mul(t5, bz);
             let val = add(s, p5);
-            !(val < limit)
+            val >= limit
         }
 
         if ent == 0 {
@@ -140,25 +141,25 @@ lf_checker_rt::export!(cdecl, rw_00c8d240(ent: u32, v: u32) -> u32 {
             0 => {
                 let (ox, oy, oz) = fetch(ent);
                 let dot = add(add(mul(oy, vy), mul(vx, ox)), mul(oz, vz));
-                (!(dot < rd(lf_checker_rt::relocated(LIM_SUB0)))) as u32
+                (dot >= rd(lf_checker_rt::relocated(LIM_SUB0))) as u32
             }
             1 => {
                 let (bx, by, bz) = normalised(vx, vy, 0.0);
                 let (ox, oy, oz) = fetch(ent);
                 let dot = add(add(mul(oy, by), mul(ox, bx)), mul(oz, bz));
-                (!(dot < rd(lf_checker_rt::relocated(LIM_SUB1)))) as u32
+                (dot >= rd(lf_checker_rt::relocated(LIM_SUB1))) as u32
             }
             2 => {
                 let (bx, by, bz) = normalised(vx, vy, vz);
                 let (ox, oy, oz) = fetch(ent);
                 let dot = add(add(mul(oy, by), mul(ox, bx)), mul(oz, bz));
-                (!(dot < rd(lf_checker_rt::relocated(LIM_SUB2)))) as u32
+                (dot >= rd(lf_checker_rt::relocated(LIM_SUB2))) as u32
             }
             3 => {
                 let (bx, by, bz) = normalised(vx, vy, vz);
                 let (ox, oy, oz) = fetch(ent);
                 let dot = add(add(mul(oy, by), mul(bx, ox)), mul(oz, bz));
-                if dot < rd(lf_checker_rt::relocated(LIM_SUB34)) {
+                if !(dot >= rd(lf_checker_rt::relocated(LIM_SUB34))) {
                     return 0;
                 }
                 let (x, y, z) = fetch(ent);
@@ -168,7 +169,7 @@ lf_checker_rt::export!(cdecl, rw_00c8d240(ent: u32, v: u32) -> u32 {
                 let (bx, by, bz) = normalised(vx, vy, vz);
                 let (ox, oy, oz) = fetch(ent);
                 let dot = add(add(mul(oy, by), mul(bx, ox)), mul(oz, bz));
-                if dot < rd(lf_checker_rt::relocated(LIM_SUB34)) {
+                if !(dot >= rd(lf_checker_rt::relocated(LIM_SUB34))) {
                     return 0;
                 }
                 let (x, y, z) = fetch(ent);
@@ -178,7 +179,7 @@ lf_checker_rt::export!(cdecl, rw_00c8d240(ent: u32, v: u32) -> u32 {
                 let (bx, by, bz) = normalised(vx, vy, vz);
                 let (ox, oy, oz) = fetch(ent);
                 let dot = add(add(mul(oy, by), mul(bx, ox)), mul(oz, bz));
-                if dot < rd(lf_checker_rt::relocated(LIM_SUB2)) {
+                if !(dot >= rd(lf_checker_rt::relocated(LIM_SUB2))) {
                     return 0;
                 }
                 let (x, y, z) = fetch(ent);
@@ -189,7 +190,7 @@ lf_checker_rt::export!(cdecl, rw_00c8d240(ent: u32, v: u32) -> u32 {
                 let (bx, by, bz) = normalised(vx, vy, vz);
                 let (ox, oy, oz) = fetch(ent);
                 let dot = add(add(mul(oy, by), mul(ox, bx)), mul(oz, bz));
-                if dot < rd(lf_checker_rt::relocated(LIM_SUB2)) {
+                if !(dot >= rd(lf_checker_rt::relocated(LIM_SUB2))) {
                     return 0;
                 }
                 let (x, y, z) = fetch(ent);
