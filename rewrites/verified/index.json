@@ -89496,6 +89496,24 @@
   "lane": "r-s343"
  },
  {
+  "address": "0x00DA7610",
+  "name": "CTaskComplexSmartFleeEntity::vf20",
+  "kind": "function",
+  "file": "functions/fn_00da7610.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b402"
+ },
+ {
+  "address": "0x00DA77F0",
+  "name": "CTaskComplexSmartFleePoint::vf20",
+  "kind": "function",
+  "file": "functions/fn_00da77f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b402"
+ },
+ {
   "address": "0x00DA79E0",
   "name": "CTaskComplexEscapeBlast::vf19",
   "kind": "function",
@@ -90232,6 +90250,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b203"
+ },
+ {
+  "address": "0x00DC8BE0",
+  "name": "pick_scaled_row",
+  "kind": "function",
+  "file": "functions/fn_00dc8be0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b404"
  },
  {
   "address": "0x00DCD1A0",
