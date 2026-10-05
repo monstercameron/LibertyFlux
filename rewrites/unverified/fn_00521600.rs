@@ -7,6 +7,8 @@
 /// for an id; when that id equals `want_id` and `out_ptr` is non-null, the
 /// board's constant tag is stored through `out_ptr` and `out_ptr` is
 /// returned. Any mismatch (or a null `out_ptr`) returns 0 with no store.
+/// The tag carries a relocation entry, so it is written relocated (in the
+/// game, loaded at its preferred base, that is the file value itself).
 ///
 /// Original: 0x00521600 (thiscall, two stack words).
 lf_checker_rt::export!(thiscall, rw_00521600(this: u32, out_ptr: u32, want_id: u32) -> u32 {
@@ -31,7 +33,7 @@ lf_checker_rt::export!(thiscall, rw_00521600(this: u32, out_ptr: u32, want_id: u
         if out_ptr == 0 {
             return 0;
         }
-        wr32(out_ptr, LEADERBOARD_TAG);
+        wr32(out_ptr, lf_checker_rt::relocated(LEADERBOARD_TAG));
         out_ptr
     }
 });

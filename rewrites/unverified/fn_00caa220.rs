@@ -20,9 +20,12 @@
 /// id 12 (subject, `0`, a three-factor frame block, `0`, `2`); the block
 /// address is skipped in the comparison and never read back. A nonzero
 /// measure (NaN included) builds a helper through ids 2-4 (`0` on any
-/// allocation failure), links it via id 15, builds the response through
-/// id 16 (subject, `subject[0x20]+0x30`, `6.0`, `1`, `-1.0`), links that,
-/// and stores the subject. Both reach a tail gate: id 11's answer at or
+/// allocation failure): the helper is the id-3 allocation itself, initialised
+/// in place (the id-14 answer is discarded), and the id-13 answer takes the
+/// subject's register after the helper is pushed (the reload reads one slot
+/// too low), so both id-15 links and the stored response use it while the
+/// id-16 arguments reload the subject fresh. Both reach a tail gate: id 11's
+/// answer at or
 /// above `0x3fff` (signed) exits returning it, else the ten-argument id 20
 /// (descriptor table, five zeros, `-1`, two zeros, `1.0`, two zeros) runs
 /// on `owner+0x570` and its answer is returned.
@@ -31,7 +34,7 @@
 /// allocate and build through id 18 (context, `0`), storing and returning
 /// the answer (`0` when allocation fails). Otherwise build a fallback
 /// through ids 6-8 (helper, four-argument id 19, id 16 again), link the
-/// pieces via id 15, store the helper and return it.
+/// pieces via id 15, store the helper and return the last link answer.
 lf_checker_rt::export!(thiscall, rw_00caa220(this: u32, ev: u32, _a1: u32, _a2: u32) -> u32 {
     unsafe {
         const OWNER: u32 = 0x04;
@@ -126,16 +129,16 @@ lf_checker_rt::export!(thiscall, rw_00caa220(this: u32, ev: u32, _a1: u32, _a2: 
             };
             lf_checker_rt::callee_thiscall!(LINK, u32, h, m);
             let o3: u32 = lf_checker_rt::callee_thiscall!(ALLOC_FB3, u32, global);
-            if o3 == 0 {
-                lf_checker_rt::callee_thiscall!(LINK, u32, h, 0);
+            let link_ans: u32 = if o3 == 0 {
+                lf_checker_rt::callee_thiscall!(LINK, u32, h, 0)
             } else {
                 let p = rd32(subj + LOOKUP_OFF).wrapping_add(LOOKUP_ADVANCE);
                 let r: u32 =
                     lf_checker_rt::callee_thiscall!(BUILD_RESP, u32, o3, subj, p, SIX, 1, NEG_ONE);
-                lf_checker_rt::callee_thiscall!(LINK, u32, h, r);
-            }
+                lf_checker_rt::callee_thiscall!(LINK, u32, h, r)
+            };
             wr32(this + RESPONSE, h);
-            return h;
+            return link_ans;
         }
 
         if code != 0x2c2 && code != 0x2c3 && code != 0x2e2 && code != 0x38d && code != 0x38f {
@@ -151,7 +154,7 @@ lf_checker_rt::export!(thiscall, rw_00caa220(this: u32, ev: u32, _a1: u32, _a2: 
         let f = measure(subj);
         if f == 0.0 {
             let mut factors = [0u32; 3];
-            let g: u32 = lf_checker_rt::callee_cdecl!(RNG_ZERO, u32);
+            let g: u32 = lf_checker_rt::callee_cdecl!(RNG_ZERO, u32,);
             factors[2] = if (g as i32) < GATE_LIMIT as i32 { NEG_ONE } else { ONE };
             let obj: u32 = lf_checker_rt::callee_thiscall!(ALLOC_ZERO, u32, global);
             if obj == 0 {
@@ -163,6 +166,12 @@ lf_checker_rt::export!(thiscall, rw_00caa220(this: u32, ev: u32, _a1: u32, _a2: 
                 wr32(this + RESPONSE, r);
             }
         } else {
+            // NOTE: the "helper" is the allocation itself (the id-14
+            // answer is discarded); and the reload of the saved subject
+            // after pushing the helper reads one slot too low, picking up
+            // the id-13 answer instead. Both links and the stored response
+            // use that answer, while the subject itself is reloaded fresh
+            // for the id-16 arguments.
             let h0: u32 = {
                 let o: u32 = lf_checker_rt::callee_thiscall!(ALLOC_NZ1, u32, global);
                 if o == 0 {
@@ -171,32 +180,31 @@ lf_checker_rt::export!(thiscall, rw_00caa220(this: u32, ev: u32, _a1: u32, _a2: 
                     lf_checker_rt::callee_thiscall!(BUILD_HELP, u32, o)
                 }
             };
-            let _ = h0;
             let o2: u32 = lf_checker_rt::callee_thiscall!(ALLOC_NZ2, u32, global);
             let helper: u32 = if o2 == 0 {
                 0
             } else {
-                let h: u32 = lf_checker_rt::callee_thiscall!(MAKE_HELPER, u32, o2);
-                wr32(h, lf_checker_rt::relocated(HELPER_VTABLE));
-                wr32(h + 0x14, 0);
-                ((h + 0x18) as *mut u16).write_unaligned(HELPER_WORD);
-                ((h + 0x1a) as *mut u8).write(0);
-                h
+                let _: u32 = lf_checker_rt::callee_thiscall!(MAKE_HELPER, u32, o2);
+                wr32(o2, lf_checker_rt::relocated(HELPER_VTABLE));
+                wr32(o2 + 0x14, 0);
+                ((o2 + 0x18) as *mut u16).write_unaligned(HELPER_WORD);
+                ((o2 + 0x1a) as *mut u8).write(0);
+                o2
             };
-            lf_checker_rt::callee_thiscall!(LINK, u32, subj, helper);
+            lf_checker_rt::callee_thiscall!(LINK, u32, h0, helper);
             let o3: u32 = lf_checker_rt::callee_thiscall!(ALLOC_NZ3, u32, global);
             if o3 == 0 {
-                lf_checker_rt::callee_thiscall!(LINK, u32, subj, 0);
+                lf_checker_rt::callee_thiscall!(LINK, u32, h0, 0);
             } else {
                 let p = rd32(subj + LOOKUP_OFF).wrapping_add(LOOKUP_ADVANCE);
                 let r: u32 =
                     lf_checker_rt::callee_thiscall!(BUILD_RESP, u32, o3, subj, p, SIX, 1, NEG_ONE);
-                lf_checker_rt::callee_thiscall!(LINK, u32, subj, r);
+                lf_checker_rt::callee_thiscall!(LINK, u32, h0, r);
             }
-            wr32(this + RESPONSE, subj);
+            wr32(this + RESPONSE, h0);
         }
 
-        let t: u32 = lf_checker_rt::callee_cdecl!(RNG_TAIL, u32);
+        let t: u32 = lf_checker_rt::callee_cdecl!(RNG_TAIL, u32,);
         if (t as i32) >= GATE_LIMIT as i32 {
             return t;
         }
