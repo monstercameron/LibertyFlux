@@ -42,18 +42,26 @@ lf_checker_rt::export!(thiscall, rw_00a9c7f0(this: u32) -> u32 {
         );
         lf_checker_rt::callee_cdecl!(SELECT, u32, 2, 0);
         lf_checker_rt::callee_cdecl!(SELECT, u32, 0, 2);
+        // The original never reloads ECX between the worker/helper/post-pass
+        // calls: each receives the previous call's exit ECX (the last node
+        // after a non-empty walk). The rewrite threads the same value
+        // through; the contract still declines to compare those registers
+        // (see `narrowed`), because on an empty walk the value is whatever
+        // the previous stub left behind.
+        let mut last = 0u32;
         for pass in [0u32, 1] {
             if pass == 1 {
                 lf_checker_rt::callee_cdecl!(SELECT, u32, 0, 1);
             }
             let mut node = ((this + LIST_OFF) as *const u32).read_unaligned();
             while node != 0 {
+                last = node;
                 lf_checker_rt::callee_thiscall!(RELEASE_NODE, u32, node, pass);
                 node = (node as *const u32).read_unaligned();
             }
         }
-        lf_checker_rt::callee_thiscall!(POST_PASS, u32, this);
-        lf_checker_rt::callee_thiscall!(STOP_WORKER, u32, this);
+        lf_checker_rt::callee_thiscall!(POST_PASS, u32, last);
+        lf_checker_rt::callee_thiscall!(STOP_WORKER, u32, last);
         lf_checker_rt::callee_cdecl!(TEARDOWN, u32,)
     }
 });
