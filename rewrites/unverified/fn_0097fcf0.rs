@@ -405,12 +405,15 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
         }
         if ph14_ok {
             let slot14 = this.wrapping_add(T_PH14);
-            if rd32(this.wrapping_add(T_PH14)) == 0 {
+            // The s3 chain runs only right after creation, never on the
+            // direct-run path (which jumps straight to the hook below).
+            let was_null = rd32(this.wrapping_add(T_PH14)) == 0;
+            if was_null {
                 lf_checker_rt::callee_thiscall!(
                     C_MK14, u32, this, lf_checker_rt::relocated(0xe8cc44), slot14, 1u32, 0u32,
                     rd32(this.wrapping_add(T_PTR8)), 0xffffffffu32, 0u32, 0u32);
             }
-            if rd32(slot14) != 0 {
+            if was_null && rd32(slot14) != 0 {
                 lf_checker_rt::callee_thiscall!(C_PREP, u32, this, 3u32, fp(F_IS));
                 lf_checker_rt::callee_thiscall!(C_SET, u32, rd32(slot14), fp(F_IS));
                 lf_checker_rt::callee_thiscall!(C_K3, u32, rd32(slot14), 3u32);
