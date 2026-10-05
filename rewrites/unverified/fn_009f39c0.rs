@@ -98,7 +98,14 @@ lf_checker_rt::export!(thiscall, rw_009F39C0(this: u32) -> u32 {
                 let mask = rd_global(INIT_MASK);
                 let token = if mask & bit == 0 {
                     wr_global(INIT_MASK, mask | bit);
-                    let v = lf_checker_rt::callee_cdecl!(CAL_INIT, u32, name, 0);
+                    // The name is pushed from a relocated immediate, so it
+                    // must be relocated too, not used as a raw file VA.
+                    let v = lf_checker_rt::callee_cdecl!(
+                        CAL_INIT,
+                        u32,
+                        lf_checker_rt::relocated(name),
+                        0
+                    );
                     wr_global(slot, v);
                     v
                 } else {
