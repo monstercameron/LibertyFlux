@@ -6,10 +6,10 @@
 /// skips), the height is refined by `GET_Z(x, y, 4)`, which returns an
 /// f32 in ST0; the original stores it back into its own incoming `z` slot
 /// (unobserved: the stack check is off, see `narrowed`) and reloads it.
-/// Then `SAFE` is called with (inbuf, outbuf, 25.0, 3, flagbit, y, zef)
-/// where inbuf is [x, scratch × 3], outbuf is a 3-word out-buffer,
-/// flagbit is 3 when the low byte of `flag` is nonzero else 2, and zef
-/// is the refined (or original) `z`. The out-triple is copied through
+/// Then `SAFE` is called with (inbuf, outbuf, 25.0, flagbit, 0, 0, 0)
+/// where inbuf is [x, y, zef, scratch] (zef is the refined or original
+/// `z`), outbuf is a 3-word out-buffer, and flagbit is 3 when the low
+/// byte of `flag` is nonzero else 2. The out-triple is copied through
 /// `o0`, `o1`, `o2` in order; a null out-pointer faults on its store.
 /// Returns (answer & ~0xFF) | (answer != 0).
 ///
@@ -35,7 +35,7 @@ lf_checker_rt::export!(cdecl, rw_00b9cbe0(
             zn = lf_checker_rt::callee_cdecl!(GET_Z, f32, x, y, 4);
         }
         let fbit = if flag & 0xFF != 0 { 3u32 } else { 2u32 };
-        let mut inrow = [x, 0, 0, 0];
+        let mut inrow = [x, y, zn.to_bits(), 0];
         let mut outrow = [0u32; 3];
         let r: u32 = lf_checker_rt::callee_cdecl!(
             SAFE,
@@ -43,10 +43,10 @@ lf_checker_rt::export!(cdecl, rw_00b9cbe0(
             inrow.as_mut_ptr() as u32,
             outrow.as_mut_ptr() as u32,
             R,
-            3,
             fbit,
-            y,
-            zn.to_bits()
+            0,
+            0,
+            0
         );
         (o0 as *mut u32).write_unaligned(outrow[0]);
         (o1 as *mut u32).write_unaligned(outrow[1]);

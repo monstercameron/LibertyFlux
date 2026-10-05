@@ -31,8 +31,9 @@
 /// low byte like the missing-auxiliary case. Finally, when a target existed
 /// and the outcome flag is set, clear the sub-task's `0x8000` flag if set and
 /// notify through callees 8 (thiscall on the sub-task: the task) and 9
-/// (thiscall on the sub-task: 2, the `0x00B6FE30` callback address the
-/// original pushes, the task); otherwise set the sub-task's `0x8000` and
+/// (thiscall on the sub-task: 2, the callback at file address `0x00B6FE30`
+/// the original pushes as a relocated immediate, the task); otherwise set
+/// the sub-task's `0x8000` and
 /// `0x10` flag bits and notify through the same two callees with a 1 instead
 /// of a 2. Both paths return 0.
 ///
@@ -55,7 +56,8 @@ lf_checker_rt::export!(thiscall, rw_00B729E0(this: u32, ped: u32) -> u32 {
         const FLAG_BUSY: u32 = 0x8000;
         const FLAG_EXTRA: u32 = 0x10;
         const POLL_ARG0: u32 = 0x2e2;
-        const NOTIFY_CALLBACK: u32 = 0x00b6fe30;
+        const NOTIFY_CALLBACK_FILE_VA: u32 = 0x00b6fe30;
+        let notify_callback: u32 = lf_checker_rt::relocated(NOTIFY_CALLBACK_FILE_VA);
 
         #[inline(always)]
         unsafe fn rd8(a: u32) -> u8 {
@@ -146,7 +148,7 @@ lf_checker_rt::export!(thiscall, rw_00B729E0(this: u32, ped: u32) -> u32 {
             let notify_on = rd32(this.wrapping_add(TASK_SUB));
             lf_checker_rt::callee_thiscall!(8, u32, notify_on, this);
             let notify_on = rd32(this.wrapping_add(TASK_SUB));
-            lf_checker_rt::callee_thiscall!(9, u32, notify_on, 2, NOTIFY_CALLBACK, this);
+            lf_checker_rt::callee_thiscall!(9, u32, notify_on, 2, notify_callback, this);
             0
         } else {
             let sub_task = rd32(this.wrapping_add(TASK_SUB));
@@ -162,7 +164,7 @@ lf_checker_rt::export!(thiscall, rw_00B729E0(this: u32, ped: u32) -> u32 {
             let notify_on = rd32(this.wrapping_add(TASK_SUB));
             lf_checker_rt::callee_thiscall!(8, u32, notify_on, this);
             let notify_on = rd32(this.wrapping_add(TASK_SUB));
-            lf_checker_rt::callee_thiscall!(9, u32, notify_on, 1, NOTIFY_CALLBACK, this);
+            lf_checker_rt::callee_thiscall!(9, u32, notify_on, 1, notify_callback, this);
             0
         }
     }

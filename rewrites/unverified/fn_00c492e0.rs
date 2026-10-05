@@ -9,16 +9,15 @@
 /// Returns 1 in the low byte.
 ///
 /// The block address is an absolute file VA the original loads as an
-/// immediate without a relocation entry; the rewrite reproduces the
-/// same value (it is only passed to the scripted callee, never
-/// dereferenced), so the call comparison sees identical arguments.
+/// immediate; it is relocated with the image, so the rewrite derives
+/// it with `relocated` (it is only passed to the scripted callee,
+/// never dereferenced).
 ///
 /// Original: thiscall, no stack arguments.
 lf_checker_rt::export!(thiscall, rw_00c492e0(this: u32) -> u32 {
     const SLOT: u32 = 0x1f0;
     const MODE: u32 = 0x206;
     const ACTIVE_FLAG: u32 = 0x016d8b40;
-    // Unrelocated file VA, reproduced verbatim (see above).
     const SHARED_BLOCK: u32 = 0x016d8b50;
     const RELEASE: u32 = 1;
     const SNAPSHOT: u32 = 2;
@@ -31,7 +30,8 @@ lf_checker_rt::export!(thiscall, rw_00c492e0(this: u32) -> u32 {
         (slot as *mut u32).write_unaligned(0);
         if ((this + MODE) as *const u8).read() != 0 {
             lf_checker_rt::global::<u8>(ACTIVE_FLAG).write(1);
-            lf_checker_rt::callee_thiscall!(SNAPSHOT, u32, SHARED_BLOCK, this);
+            let block = lf_checker_rt::relocated(SHARED_BLOCK);
+            lf_checker_rt::callee_thiscall!(SNAPSHOT, u32, block, this);
         } else {
             lf_checker_rt::global::<u8>(ACTIVE_FLAG).write(0);
         }
