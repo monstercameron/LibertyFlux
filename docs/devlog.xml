@@ -9,6 +9,29 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming a render-list batch: bleed, merged entries and the encrypted megabyte</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-96"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-96</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>One hundred fifty consecutive functions in the render-list and timecycle region were named from strings, known callees and verified-rewrite docs, with eight left empty where the evidence ran out.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred fifty consecutive functions in the render-list and timecycle region were named from strings, known callees and verified-rewrite docs, with eight left empty where the evidence ran out.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose a descriptive name at high, medium or low confidence for each function in the batch, working out what the group is about first and leaving the name empty when the function cannot be identified.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch is one coherent region: render phases and their callbacks, two occupancy grids, MLO and stream render lists, a key-value sort family, timecycle and visual-settings code, and drawable streaming. The inventory subsystem labels on the range are partly wrong.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Disassembling past a listed size attributes the next function calls and strings to short functions. Two names here would have been wrong from that alone; every name was re-checked against the exact-size body.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three listed entries contain a second unlisted function in their byte range, one listed entry is the tail fragment of its predecessor, and two sizes end a few bytes early. The fragment was left unnamed.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Calls below the half-megabyte mark decode as garbage because that region is encrypted on disk; those callees were identified only from verified-rewrite docs or usage shape, never from disassembly.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Several bare constant getters return render-list cursor bases, but only the one tied to a developer overflow message could be identified; the rest were left empty rather than guessed.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Named 142 of 150 functions: 38 high, 104 medium, 8 low and empty. Callback invokes follow the established full-signature style. The fragment and merged entries were reported to the coordinator for inventory fixes. New subsystem labels timecycle and core were used where the existing labels did not fit.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Read code only through the mapped image, never the raw file at a mapped address. Build one evidence table for the whole batch first (calls resolved against merged names, lane names and the verified index; immediates against a string table; indirect calls against imports), read the short bodies exactly, then name from the strongest evidence: verified docs first, strings second, class identity third.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The evidence script initially disassembled past each listed size, which silently attached neighbour calls and strings to short functions and survived two reviews before a full-body read exposed it. Timestamps written from memory were wrong twice and had to be corrected from the machine clock.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming batch: streaming emitters, player variation, and a mislabelled lights cluster</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-94"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-94</id>
@@ -1034,24 +1057,5 @@
 &lt;p&gt;Disassemble each function from the memory-mapped image, resolve string and import references, scan the full text for direct callers, attribute each caller to its nearest known symbol, read the small functions completely, and check claimed virtual table slots against the read-only data section.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;Caller attribution by nearest symbol initially credited one short orchestrator with calls that physically sit past its padding; linear disassembly showed they belong to an unlisted neighbor function. Several lane-given caller names in the area describe unrelated behavior and were treated as context only.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A callee slot called with two different arities, verified by fault parity</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s407"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s407</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>One rewrite in this batch is proven identical even though an eighth of its trials crash on both sides: the original calls one virtual slot first with an argument and later without, and the checker's fixed-pop stub pops the return address on the second call. Matching the crash exactly turned out to be the proof.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One rewrite in this batch is proven identical even though an eighth of its trials crash on both sides: the original calls one virtual slot first with an argument and later without, and the checker's fixed-pop stub pops the return address on the second call. Matching the crash exactly turned out to be the proof.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite forty small task-system functions and prove each identical over a thousand trials, with one deliberately wrong version per function that must fail.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Thirty-seven functions verified, three deferred, none unreached. Two findings stood out. First, a gated refresh routine invokes the same driver slot twice with different stack shapes: once with its object pushed, once with register only. Against the one-word callee the second call unbalances the stack, and both the original and the rewrite fault with the same code before the float copy that follows. A wrong version that balances the call survives and is caught, which shows the contract observes the behaviour. Second, an event constructor plants a vtable pointer off by exactly sixteen megabytes on the stock worker while mapping, relocation, patch and stub evidence all check out, so its provably correct rewrite waits on a worker fix.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;The refresh routine counts as verified with the unexecuted float copy listed as narrowing, and the constructor stays deferred with its rewrite kept for re-run. Lanes meeting a mixed-arity slot should reproduce the imbalance rather than route around it, and should re-decode with the recursive decoder before trusting triage reads.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the lane's contracts for the gated refresh routine: about an eighth of trials end fault against fault with identical codes while the rest compare fully, and the balanced-call wrong version fails on termination. The constructor's planted pointer differs from the correct value by a constant sixteen megabytes on every seed.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Contract addresses are file addresses minus the image base while rewrites use absolute ones, and mixing the two faulted every trial until spotted. A per-trial pin cycle silently phase-locked with a gate so a whole path never ran, and probe runs kept overwriting the lane results file until it was rebuilt from the generator scripts.&lt;/p&gt;</content>
   </entry>
 </feed>
