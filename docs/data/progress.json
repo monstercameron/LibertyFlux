@@ -13,7 +13,7 @@
   "stages": {
     "identified": 37413,
     "named": 29782,
-    "rewritten": 14625,
+    "rewritten": 14653,
     "verified": 14591
   },
   "structures": 340,
@@ -105,7 +105,7 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 14625,
+      "value": 14653,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
@@ -114,6 +114,18 @@
       "value": 14591,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
+    },
+    {
+      "label": "Game code verified, measured in bytes",
+      "value": 25.4,
+      "unit": "percent",
+      "source": "sizes from the function inventory: 1872004 of 7372579 bytes of game code are in verified functions"
+    },
+    {
+      "label": "Code in functions of 1,000 bytes and more that is verified",
+      "value": 14.6,
+      "unit": "percent",
+      "source": "224 of 1357 such functions; they hold 38% of the game's code"
     }
   ],
   "activity": {
@@ -894,7 +906,7 @@
       "to": "0x005E0147",
       "count": 110,
       "named": 109,
-      "rewritten": 0,
+      "rewritten": 28,
       "verified": 0
     },
     {
@@ -4444,5 +4456,11 @@
       "verified": 128
     }
   ],
-  "mapRange": "0x00401000 to 0x00E72EFA"
+  "mapRange": "0x00401000 to 0x00E72EFA",
+  "bytes": {
+    "game": 7372579,
+    "verified": 1872004,
+    "large_functions": 2837555,
+    "large_functions_verified": 413079
+  }
 }
