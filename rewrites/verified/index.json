@@ -63450,6 +63450,33 @@
   "lane": "r-b77"
  },
  {
+  "address": "0x00B62A00",
+  "name": "veh_copy12_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00b62a00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B62A90",
+  "name": "veh_convert_or_copy3",
+  "kind": "function",
+  "file": "functions/fn_00b62a90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B62B10",
+  "name": "veh_copy3_forward",
+  "kind": "function",
+  "file": "functions/fn_00b62b10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
   "address": "0x00B62FC0",
   "name": "veh_lookup_or_null",
   "kind": "function",
@@ -63472,6 +63499,15 @@
   "name": "veh_clamp_store_60",
   "kind": "function",
   "file": "functions/fn_00b63f40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B63F70",
+  "name": "veh_classify_store_7a8",
+  "kind": "function",
+  "file": "functions/fn_00b63f70.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s450"
@@ -89478,6 +89514,24 @@
   "lane": "r-s448"
  },
  {
+  "address": "0x00C3D850",
+  "name": "train_clear_low_nibble_guarded",
+  "kind": "function",
+  "file": "functions/fn_00c3d850.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
+  "address": "0x00C3D890",
+  "name": "train_notify_then_forward_tail",
+  "kind": "function",
+  "file": "functions/fn_00c3d890.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
   "address": "0x00C3D8B0",
   "name": "train_set_flag_bit4_chain",
   "kind": "function",
@@ -89491,6 +89545,24 @@
   "name": "train_set_level_byte_and_mirror",
   "kind": "function",
   "file": "functions/fn_00c3d900.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
+  "address": "0x00C3D9A0",
+  "name": "train_store_speed_signed",
+  "kind": "function",
+  "file": "functions/fn_00c3d9a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
+  "address": "0x00C3D9F0",
+  "name": "train_free_slot_table",
+  "kind": "function",
+  "file": "functions/fn_00c3d9f0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s448"
@@ -89563,6 +89635,15 @@
   "name": "train_fill_carriages_loop",
   "kind": "function",
   "file": "functions/fn_00c3ecf0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
+  "address": "0x00C3EEE0",
+  "name": "train_parse_fields_via_scan",
+  "kind": "function",
+  "file": "functions/fn_00c3eee0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s448"
@@ -91672,6 +91753,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-b397"
+ },
+ {
+  "address": "0x00C7E070",
+  "name": "CTaskComplexPoliceSniperScenario::vf19",
+  "kind": "function",
+  "file": "functions/fn_00c7e070.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b454"
  },
  {
   "address": "0x00C87920",
