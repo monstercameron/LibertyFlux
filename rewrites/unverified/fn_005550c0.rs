@@ -32,7 +32,7 @@ lf_checker_rt::export!(thiscall, rw_005550c0(this: u32, base: u32, row_out: u32,
     unsafe {
         // Indirect callee ids 0 (vtable+0x2c) and 2 (vtable+0x30) are
         // reached through the fabricated object, not the stub table.
-        const FILL: u32 = 1; // fastcall(0xE0, &frame) -> al ok?
+        const FILL: u32 = 1; // fastcall(FILL_ARG, &frame) -> al ok?
         const CHECK: u32 = 3; // thiscall(store, idx) -> al skip?
         const CLASSIFY: u32 = 4; // thiscall(word) -> step code
         const LOOKUP: u32 = 5; // thiscall(store, idx) -> row pointer
@@ -40,7 +40,7 @@ lf_checker_rt::export!(thiscall, rw_005550c0(this: u32, base: u32, row_out: u32,
         const COMMIT: u32 = 7; // thiscall(store, idx, total, step) -> al ok?
         const VT_INFO: u32 = 0x2c;
         const VT_INDEX: u32 = 0x30;
-        const FILL_ARG: u32 = 0xE0;
+        const FILL_ARG: u32 = 0xE9;
         const ROUNDS: u32 = 19;
         const STEP: u32 = 8;
         const ROW_COPY_OFF: u32 = 4;

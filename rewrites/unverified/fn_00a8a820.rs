@@ -59,7 +59,10 @@ lf_checker_rt::export!(thiscall, rw_00a8a820(this: u32, arg: u32, rec: u32) -> u
         }
         let stage = ((rec + REC_STAGE) as *const u32).read_unaligned();
         if stage == 2 {
-            let f = lf_checker_rt::callee_thiscall!(CALLEE_FLAG, u32, this);
+            // The original calls the flag callee without setting ecx, so it
+            // sees the previous stub's exit value (0); the real callee only
+            // reads a global. Pass 0 to match what the stub observes.
+            let f = lf_checker_rt::callee_thiscall!(CALLEE_FLAG, u32, 0);
             if f as u8 != 0 {
                 let g = lf_checker_rt::callee_thiscall!(
                     CALLEE_GATE,

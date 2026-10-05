@@ -20,7 +20,7 @@ lf_checker_rt::export!(cdecl, rw_009DE110(key: u32) -> u32 {
 
         let mut slot = 0u32;
         let found: u32 = lf_checker_rt::callee_cdecl!(
-            LOOKUP, u32, &mut slot as *mut u32 as u32, key
+            LOOKUP, u32, key, &mut slot as *mut u32 as u32
         );
         if found != 0 {
             return slot;
