@@ -9,6 +9,26 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A wrong rewrite passed until the contract was widened</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s439"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s439</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>A deliberately wrong version of a global-vector append function passed one hundred trials out of one hundred, which showed that the checker's global-memory comparison could not see which word of a multi-word range had changed.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A deliberately wrong version of a global-vector append function passed one hundred trials out of one hundred, which showed that the checker's global-memory comparison could not see which word of a multi-word range had changed.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite a batch of small streaming-subsystem functions in Rust and prove each one identical to the original with the checker, giving every function its own deliberately wrong version that must fail.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The wrong version stored its value one slot too far and still passed every trial. Reading the checker's comparison code showed why: when a declared global range holds several words, every changed word is recorded under the range's base address rather than its own, so two writes of equal values in equal order compare equal no matter which words they hit. Declaring each word as its own range restored the check, and the wrong version then failed as required.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Earlier accepted rewrites that only read globals, or write a single global word, cannot be affected by this gap; only multi-word global writes were blind.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;The lane's multi-word global contracts were rewritten with one word per range, and all affected functions were re-verified with their wrong versions failing. The recommended checker fix is to record each changed global word under its own address, exactly as the check for undeclared writes already does.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Take any function that writes two words of one declared global range, write a variant that swaps which word gets which value, and run both against the same contract: before the fix the variant passes; with one word per range it fails.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The passing wrong version first looked like a mistake in the variant itself, and only reading the comparison code turned it into a checker finding. The same batch also produced an unsolved fault at an indirect stub call, deferred with the evidence, and several batch sizes that end mid-instruction and had to be re-decoded by hand.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Production batch: four task functions verified, one dead descriptor found</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b430"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b430</id>
@@ -1048,28 +1068,5 @@
 &lt;li&gt;Still open: the supervisor should stop by itself when lanes fail with a quota error; the shadow option needs a different design on this machine (placing the shadow inside the system's reservation, or running those proofs on an x64 machine).&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;To reproduce the address-range finding: start the 32-bit worker, and from another process list the regions of its address space between the original's preferred base and the end of its image; they are one reserved, mapped region whose allocation begins far below the range.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming batch 55: animation channel slots, input devices, drawable parsing</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-55"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-55</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One hundred fifty consecutive functions across animation channels, DirectInput handling, model drawables, JPEG codec glue and graphics setup are now named, with six left explicitly unnamed where the purpose could not be determined.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred fifty consecutive functions across animation channels, DirectInput handling, model drawables, JPEG codec glue and graphics setup are now named, with six left explicitly unnamed where the purpose could not be determined.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose descriptive names for a batch of unnamed game functions, working out what each address group is about first and grading every name with a confidence.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The animation channel classes share one vtable layout whose slots now have meanings: object deletion, cloning, per-type sampling at a frame time, an adopt-or-compress slot, an allocation-size slot and a resource serializer. Static channels compress by uniformity check, curve channels by recursive least-squares fitting, run-length channels by rice encoding.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The keyboard and mouse initializers are pinned by their DirectInput device identifiers, the gamepad path by its XInput library strings, and a control-map save and load pair by a four-letter stream magic.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The drawable section parsers are pinned by their keywords: version header, skeleton, joint limits, bounding center and radius. One frustum test calls the named frustum helper.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Six JPEG glue functions are the standard image-library source and destination callbacks, recognized by the fake end-of-image marker written on stream exhaustion and by the five-callback install shape.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three symbol-table entries labelled as fragment-drawable deleting destructors are actually multiple-inheritance thunks that adjust the object pointer and call into the draw workers.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Naming lanes should read the actual virtual tables rather than trusting slot labels, check sibling lanes for per-family vocabulary before inventing names, and treat any deleting-destructor label as guilty until the disassembly shows a free. The stream read and write helpers are now pinned by direction, which future serializer lanes can rely on.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;All evidence was gathered with mapped-image reads and a linear disassembler: per-function tables of calls, imports, string references and data references, verified-rewrite doc comments for sibling slots, virtual-table dumps, and direct reads of the short functions. The batch evidence table and full disassembly stay in the lane scratch folder.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;One batch entry spans four entry points (a draw slot plus three co-located thunks), so it is named for its primary slot with the sharing noted. Two composite fan-out functions call a slot on every child drawable but no evidence says to what end, so they are unnamed rather than guessed. A six-byte jump into the encrypted code prefix is likewise unnamed.&lt;/p&gt;</content>
   </entry>
 </feed>
