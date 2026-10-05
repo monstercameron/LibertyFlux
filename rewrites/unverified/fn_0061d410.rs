@@ -18,7 +18,7 @@ lf_checker_rt::export!(thiscall, rw_0061D410(this: u32, a0: u32, a1: u32, a2: u3
         const TABLE_BASE: u32 = 0x298;
         const RECORD_BYTES: u32 = 0x10;
         const SRC_STRIDE: u32 = 0x20;
-        const answer =
+        let answer =
             lf_checker_rt::callee_thiscall!(INIT_CALLEE, u32, this, a0, a1, a2, a3, a4, a5, a6);
         ((this + COUNT_SLOT) as *mut u32).write_unaligned(count);
         let n = count as i32;

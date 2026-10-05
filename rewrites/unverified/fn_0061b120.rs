@@ -22,7 +22,7 @@ lf_checker_rt::export!(thiscall, rw_0061B120(this: u32) -> u32 {
             let pair = this + 4 + left.wrapping_mul(PAIR_BYTES);
             let hi = ((pair + 4) as *const u32).read_unaligned();
             let lo = (pair as *const u32).read_unaligned();
-            answer = lf_checker_rt::callee_cdecl!(DRAIN_CALLEE, u32, hi, lo);
+            answer = lf_checker_rt::callee_cdecl!(DRAIN_CALLEE, u32, lo, hi);
         }
         count_at.write_unaligned(count_at.read_unaligned().wrapping_sub(1));
         answer

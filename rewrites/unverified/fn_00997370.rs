@@ -4,7 +4,7 @@
 ///
 /// `this` is the voice object, `arg0` an opaque word forwarded to the
 /// combiner call, `arg1` a pointer to the input struct (floats at `+0x24`
-/// and `+0x2C`). The root object comes from the unrelocated writable
+/// and `+0x2C`). The root object comes from the writable
 /// global at file VA 0x12832AC: a null root returns immediately (leaving
 /// the entry EAX in place). Otherwise the sub-object at
 /// `[this+0x820]+0xF50` is inspected: a null pointer, a set byte at

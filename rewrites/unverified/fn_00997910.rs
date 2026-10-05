@@ -4,11 +4,10 @@
 /// placeholder name): transform the direction vector, drive seven channel
 /// objects, then forward the frame to 0x997370.
 ///
-/// `this` is the voice object, `arg` the frame struct. The unrelocated
-/// writable dword at file VA 0x11735B4 is saved for the tail call, and a
+/// `this` is the voice object, `arg` the frame struct. The seeded dword at file VA 0x11735B4 is saved for the tail call, and a
 /// mode word is chosen by comparing the relocated read-only constant
-/// `K1` (0xFE88E8) against the unrelocated writable threshold at
-/// 0x103234C (strictly greater, ordered, selects the unrelocated writable
+/// `K1` (0xFE88E8) against the seeded threshold at
+/// 0x103234C (strictly greater, ordered, selects the writable
 /// word at 0x1038C8C, else 0). Seven channel pointers at `this+0xA88` ..
 /// `this+0xAA0` must all be non-null or the function returns the mode word.
 ///
