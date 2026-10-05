@@ -9,6 +9,27 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A wrong rewrite passed because the global-write log drops word addresses</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b532"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b532</id>
+    <published>2026-10-05T00:00:00Z</published>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <summary>Verified The checker's comparison of written globals ignores which word inside a declared range each value was written to, so a rewrite that stores the right values at the wrong addresses still passes. A rewrite with one four-word block at the wrong slot offset passed 1188 of 1200 trials.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The checker's comparison of written globals ignores which word inside a declared range each value was written to, so a rewrite that stores the right values at the wrong addresses still passes. A rewrite with one four-word block at the wrong slot offset passed 1188 of 1200 trials.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite two neighbouring functions (a large effect-slot allocator and a small vector routine) and prove each identical to the original with the checker.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Both functions verified: 1200 trials each, zero failures, non-vacuous, deliberately wrong versions caught for both.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; While debugging the large function, its contract declared the whole slot table as one watched range. The worker records every changed word in a range as the range base plus the value, so the verdict compared only the sequence of values, not their addresses. A rewrite that copied one block 96 bytes too low produced the same value sequence on trials where nothing else was written between the two addresses, and passed.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Declaring the table as one single-word range per word restored exact addresses and the same rewrite failed immediately with the true offsets visible. The final contract keeps that shape (679 one-word ranges); no checker code was changed for any verdict.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Record the word address, not the range base, in the globals-write log. Until that lands, contracts covering a table with a single wide range should split it into small ranges so misplaced stores cannot hide. Past verdicts over wide ranges were weaker than they looked wherever a rewrite could shift a block without changing the value order.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Declare one multi-word globals range, run a rewrite that writes the range's expected values shifted by one word with nothing interleaved, and observe a pass. Then split the range into one-word ranges and observe the failure with exact addresses.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The passing-but-wrong rewrite cost two debug cycles: the value-only log made the misplaced block invisible, and only trials where unrelated writes interleaved between the true and wrong addresses failed, which first looked like a different bug. A second wrong assumption (which helper answer a store used) hid behind the same weak comparison until the ranges were split.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Two coverage traps in a 3,394-byte ped-task function</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b537"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b537</id>
@@ -1118,26 +1139,5 @@
 &lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two self-inflicted bugs cost the most time: passing the cursor after instead of before the stride was added, and an edit that silently dropped one call argument. The second one produced a deterministic worker crash that first looked like machine flakiness under load; disassembling the lane's own build showed the missing argument.&lt;/p&gt;
 &lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; An early relocation scare (jump tables looking unrelocated) turned out to be a script bug reading the relocation table with doubled offsets; a corrected check showed every table fully relocated, so no special checker ability was needed.&lt;/p&gt;
 &lt;p&gt;&lt;span class="evidence"&gt;Unknown&lt;/span&gt; The anomaly mechanism itself: every readable part of the stub and comparison says the mismatched call must fail, yet the stock runs pass. This stayed unknown after controls and a private-worker dump, and is reported as unknown rather than guessed at.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a batch of 150 functions: bound helpers, cull pipelines, ped intelligence</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-87"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-87</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>A naming batch of 150 consecutive unnamed functions turned out to hold three code families, and all 150 were named with 13 at high confidence, 134 at medium and 3 deliberately left empty.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A naming batch of 150 consecutive unnamed functions turned out to hold three code families, and all 150 were named with 13 at high confidence, 134 at medium and 3 deliberately left empty.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive project-style name for each of 150 consecutive unnamed game functions, with a confidence and one sentence of evidence each, working from strings, imports, known callers and callees, vtables and class layouts rather than rewriting anything.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into three families in order: composite bounding-volume helpers operating on a four-array object with counts, active flags and capped id lists; visibility, placement and attach pipelines including frustum clipping in three variants, a timing-slot table and ped-mount solvers; and ped-intelligence methods including the constructor, destructor and several table and entry helpers.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two merged script-native labels were wrong and were caught by reading call sites: one suspected message-sending native is an operator-delete style free function called from a deleting destructor, and one suspected bomb-placement native is a table-store helper called with a slot index. Five draft names written on the first wrong label were corrected.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One zero-size inventory entry is not a function but the tail of the preceding destructor, and two entries are pure jump thunks, one of which was resolved through a double jump to a global-table reset.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;High confidence is given only for vtable slots, verified-rewrite callees or layouts, and semantics read directly from the code. Low-confidence merged native labels should be treated as hints until a call site confirms them. A later lane should identify the exact class of the composite-bound object, which has no known vtable.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Build one evidence table for the whole batch first: disassemble through the mapped executable image, collect direct calls, import calls and string references per function, scan for callers and data references once, and look every callee up in the verified rewrites, lane names and merged symbols. Then read the short functions fully and the large ones by head, tail and call flow, and write the names file incrementally.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The wrong native labels cost about fifteen minutes of euphoria-themed draft names before a destructor call pattern exposed the free function. A raw-byte caller scan overcounts callers because the call opcode byte also appears inside other instructions, so its counts are upper bounds only. Time felt much shorter than the machine clock showed, which nearly caused a rushed finish.&lt;/p&gt;</content>
   </entry>
 </feed>
