@@ -2,7 +2,7 @@
   {
     "date": "2026-10-05",
     "title": "Devlog: an outside review of the pipeline, checked against the machine",
-    "commit": null,
+    "commit": "7b2dd8e2e671336d71f993e67bc160f2d46102f7",
     "summary": "Five findings and six changes; the verified count rose by 715 in one step, and this entry says why.",
     "changes": [
       "The verified count rose by 715 at 13:18. These rewrites had passed the checker hours or days earlier and were held out of the repository by the publication scan: its pattern mistook ordinary English for assembly, and many comments noted a calling convention by quoting the return instruction. The pattern is corrected and such comments are reworded on import; code is never touched, and the importer checks that. No proof was changed and nothing was re-counted.",
