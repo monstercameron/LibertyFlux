@@ -154,6 +154,7 @@ lf_checker_rt::export!(thiscall, rw_009A0E70(this: u32, a0: u32, a1: u32, a2: u3
         let mut lb = gf(G_LBINIT);
         let mut f84 = 0u8;
         let mut f92 = 0u8;
+        let mut w92 = 0u32;
         let r1 = gf(R_ONE);
 
         // Live/voice dispatch.
@@ -333,6 +334,7 @@ lf_checker_rt::export!(thiscall, rw_009A0E70(this: u32, a0: u32, a1: u32, a2: u3
                 }
                 let mut b9 = [f92 as u32, 0u32, 0u32];
                 lf_checker_rt::callee_thiscall!(9, u32, b9.as_mut_ptr() as u32);
+                w92 = b9[0];
                 let f0 = f32::from_bits(b9[0]);
                 let f1 = f32::from_bits(b9[1]);
                 let f2 = f32::from_bits(b9[2]);
@@ -373,7 +375,7 @@ lf_checker_rt::export!(thiscall, rw_009A0E70(this: u32, a0: u32, a1: u32, a2: u3
             let o94b = rd32(this.wrapping_add(VOICE_A));
             if rd8(o94b.wrapping_add(0x3B)) == MODE_OK {
                 let a15: u32 = lf_checker_rt::callee_thiscall!(15, u32, o94b,
-                    f84 as u32, a1, a6, 0u32);
+                    w88, a1, a6, 0u32);
                 if (a15 as u8) == 0 {
                     lf_checker_rt::callee_thiscall!(16, u32, o94b, 0u32);
                     lf_checker_rt::callee_thiscall!(17, u32, this, 1u32);
@@ -405,8 +407,8 @@ lf_checker_rt::export!(thiscall, rw_009A0E70(this: u32, a0: u32, a1: u32, a2: u3
         lf_checker_rt::callee_thiscall!(21, u32, o94c, opos.as_mut_ptr() as u32);
         if w60 == gd(G_44E4) {
             w60 = 0;
-            lf_checker_rt::callee_thiscall!(22, u32, this, 0u32,
-                this.wrapping_add(MIX_B), &mut w60 as *mut u32 as u32, w88);
+            lf_checker_rt::callee_thiscall!(22, u32, this, f84 as u32,
+                this.wrapping_add(MIX_B), &mut w60 as *mut u32 as u32, w92);
             let mut e = w60;
             if (a4 as i32) >= 0 {
                 e = e.wrapping_add(a4);
@@ -419,7 +421,7 @@ lf_checker_rt::export!(thiscall, rw_009A0E70(this: u32, a0: u32, a1: u32, a2: u3
             if o98 != 0 {
                 lf_checker_rt::callee_thiscall!(24, u32, o98, la.to_bits());
                 let a25: u32 = lf_checker_rt::callee_thiscall!(25, u32, o98,
-                    f84 as u32, a1, a6, 0u32);
+                    w88, a1, a6, 0u32);
                 if (a25 as u8) != 0 {
                     lf_checker_rt::callee_thiscall!(26, u32, o98, w56.to_bits());
                     let s2 = add(w56, rdf(this.wrapping_add(MIX_B)));
@@ -432,17 +434,18 @@ lf_checker_rt::export!(thiscall, rw_009A0E70(this: u32, a0: u32, a1: u32, a2: u3
                     let opos0 = f32::from_bits(opos[0]);
                     let opos1 = f32::from_bits(opos[1]);
                     let opos2 = f32::from_bits(opos[2]);
-                    let d0 = sub(q0, opos0);
-                    let d1 = sub(q1, opos1);
-                    let mut v96 = [opos1.to_bits(), opos1.to_bits(), opos2.to_bits()];
+                    let d0 = sub(opos0, q0);
+                    let d1 = sub(opos1, q1);
+                    let d2 = sub(opos2, q2);
+                    let mut v96 = [d0.to_bits(), d1.to_bits(), d2.to_bits()];
                     lf_checker_rt::callee_thiscall!(29, u32,
                         v96.as_mut_ptr() as u32,
                         rd32(lf_checker_rt::relocated(K_DE0)), PROBE_ARG);
-                    let sum0 = add(f32::from_bits(v96[0]), d0);
+                    let sum0 = add(d0, q0);
                     v96[0] = sum0.to_bits();
-                    let sum1 = add(f32::from_bits(v96[1]), d1);
+                    let sum1 = add(d1, q1);
                     v96[1] = sum1.to_bits();
-                    let sum2 = add(f32::from_bits(v96[2]), q2);
+                    let sum2 = add(d2, q2);
                     v96[2] = sum2.to_bits();
                     lf_checker_rt::callee_thiscall!(30, u32, o98, v96.as_mut_ptr() as u32);
                 } else {
@@ -458,9 +461,9 @@ lf_checker_rt::export!(thiscall, rw_009A0E70(this: u32, a0: u32, a1: u32, a2: u3
             rd32(this.wrapping_add(VOICE_A)), s32, 1u32, 0xFFFFFFFFu32);
         let o98b = rd32(this.wrapping_add(VOICE_B));
         if o98b != 0 {
-            lf_checker_rt::callee_thiscall!(34, u32, o98b, w60, 1u32, 0xFFFFFFFFu32);
+            lf_checker_rt::callee_thiscall!(34, u32, o98b, s32, 1u32, 0xFFFFFFFFu32);
         }
-        lf_checker_rt::callee_thiscall!(35, u32, obj_a, this, f84 as u32, a1, esi);
+        lf_checker_rt::callee_thiscall!(35, u32, obj_a, s3, w88, a1, esi);
         wr32(this.wrapping_add(RES_B), a0);
         wr32(this.wrapping_add(RES_C), esi);
         if a0 == gd(G_44B0) {

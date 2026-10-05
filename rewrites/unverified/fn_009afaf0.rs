@@ -125,11 +125,11 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
         }
 
         // ---- audibility gates ----
-        let r1: u32 = lf_checker_rt::callee_thiscall!(1, u32, OBJ_A, 0u32, 0u32);
+        let r1: u32 = lf_checker_rt::callee_thiscall!(1, u32, lf_checker_rt::relocated(OBJ_A), 0u32, 0u32);
         let f_sel: f32 = if (r1 as u8) != 0 {
             0.0
         } else {
-            let r2: u32 = lf_checker_rt::callee_thiscall!(2, u32, OBJ_B);
+            let r2: u32 = lf_checker_rt::callee_thiscall!(2, u32, lf_checker_rt::relocated(OBJ_B));
             if (r2 as u8) == 0 { gf(FCONST_1) } else { 0.0 }
         };
         // ---- first filter chain ----
@@ -194,7 +194,7 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
         // ---- direction solve ----
         let mut p1 = [0u32; 3];
         let p2 = [gu32(0x1168810), gu32(0x1168814), gu32(0x1168818)];
-        lf_checker_rt::callee_thiscall!(8, u32, 0x1633810u32, p2.as_ptr() as u32, p1.as_mut_ptr() as u32);
+        lf_checker_rt::callee_thiscall!(8, u32, lf_checker_rt::relocated(0x1633810), p2.as_ptr() as u32, p1.as_mut_ptr() as u32);
         let mut dx = f32::from_bits(p1[0]);
         let mut dy = f32::from_bits(p1[1]);
         let mut dz = f32::from_bits(p1[2]);
@@ -255,10 +255,10 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
         let a10: f32 = lf_checker_rt::callee_thiscall!(10, f32, OBJ_A, in104.as_ptr() as u32, &mut out156 as *mut u32 as u32);
         let _ = out156;
         // ---- gain staging ----
-        let a11_1: f32 = lf_checker_rt::callee_thiscall!(11, f32, OBJ_C, a9.to_bits());
+        let a11_1: f32 = lf_checker_rt::callee_thiscall!(11, f32, lf_checker_rt::relocated(OBJ_C), a9.to_bits());
         let g1 = gf(FCONST_1);
         let a4_2: f32 = lf_checker_rt::callee_cdecl!(4, f32, mul(a11_1, sub(g1, f64o)).to_bits());
-        let a11_2: f32 = lf_checker_rt::callee_thiscall!(11, f32, OBJ_C, a10.to_bits());
+        let a11_2: f32 = lf_checker_rt::callee_thiscall!(11, f32, lf_checker_rt::relocated(OBJ_C), a10.to_bits());
         let a4_3: f32 = lf_checker_rt::callee_cdecl!(4, f32, mul(a11_2, sub(g1, f64o)).to_bits());
         // ---- filter pair over the blend outputs ----
         let k3 = gf(RING_MUL2);
@@ -274,9 +274,9 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
         };
         let m1delayed = mul(m1, delayed);
         let o2 = if m1delayed > a12_2 { m1delayed } else { a12_2 };
-        let a13: f32 = lf_checker_rt::callee_thiscall!(13, f32, OBJ_E);
+        let a13: f32 = lf_checker_rt::callee_thiscall!(13, f32, lf_checker_rt::relocated(OBJ_E));
         let a11_4: f32 = lf_checker_rt::callee_thiscall!(11, f32, this.wrapping_add(0x9C0), a13.to_bits());
-        let a11_5: f32 = lf_checker_rt::callee_thiscall!(11, f32, OBJ_D, o1.to_bits());
+        let a11_5: f32 = lf_checker_rt::callee_thiscall!(11, f32, lf_checker_rt::relocated(OBJ_D), o1.to_bits());
         let o3 = if a11_4 > a11_5 { a11_4 } else { a11_5 };
         // ---- sub-voice loop nest ----
         let w = sub(g1, o3);
@@ -313,8 +313,8 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
         // ---- conditional sub-voice starts ----
         let esi = this;
         let starts: [(u32, u32); 6] = [
-            (8, 0xE92B4C), (0xC, 0xE92B5C), (0x10, 0xE92B6C),
-            (0x14, 0xE92B80), (0x18, 0xE92B90), (0x1C, 0xE92BA0),
+            (8, lf_checker_rt::relocated(0xE92B4C)), (0xC, lf_checker_rt::relocated(0xE92B5C)), (0x10, lf_checker_rt::relocated(0xE92B6C)),
+            (0x14, lf_checker_rt::relocated(0xE92B80)), (0x18, lf_checker_rt::relocated(0xE92B90)), (0x1C, lf_checker_rt::relocated(0xE92BA0)),
         ];
         for (off, tag) in starts {
             if rd32(esi.wrapping_add(off)) == 0 {
@@ -330,16 +330,10 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
             && rd32(this.wrapping_add(0x14)) != 0
             && rd32(this.wrapping_add(0x18)) != 0
             && rd32(this.wrapping_add(0x1C)) != 0;
-        let mut zero_site = 0xFFFFu32;
         if run_blend {
-            zero_site = 0xEEEEu32;
             let stride = gu32(STRIDE_G);
             let tabbase = gu32(TABBASE_G);
-            // DEBUG-TEMP: record first null-obj spread site (real spread otherwise).
             let spread = |obj: u32| {
-                if obj == 0 {
-                    return 0u32;
-                }
                 let b4 = rd8(obj.wrapping_add(4));
                 if b4 == 0xFF {
                     0u32
@@ -355,40 +349,35 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
             // (no writer: the loop outputs around it); the rewrite uses +0.0,
             // matching the checker's zero stack fill.
             let outer_idx = [outer_out[2], 0.0f32, inner_out[0]];
-            let mut edi_p = this.wrapping_add(8);
-            let mut edi_s = this.wrapping_add(8);
+            // edi serves double duty: inner-voice pointer in the pair loop,
+            // reloaded from its frame slot (f4) for the spatial pair, then
+            // advanced for the next pass.
+            let mut edi = this.wrapping_add(8);
+            let mut f4 = this.wrapping_add(8);
             let mut eap_idx = 0usize;
-            // DEBUG-TEMP breadcrumbs at this+0xD00 (function never touches it).
-            wr32(this.wrapping_add(0xD00), this);
-            wr32(this.wrapping_add(0xD04), rd32(this.wrapping_add(8)));
-            wr32(this.wrapping_add(0xD08), edi_p);
-            wr32(this.wrapping_add(0xD0C), rd32(edi_p));
             for oc in 0..3u32 {
                 for ic in 0..2u32 {
                     let v0 = add(add(add(f2, inner_out[eap_idx]), a4pair[ic as usize]), x1v);
-                    let obj0 = rd32(edi_p);
-                    if obj0 == 0 && zero_site == 0xEEEE { zero_site = 100 + oc * 2 + ic; }
+                    let obj0 = rd32(edi);
                     lf_checker_rt::callee_thiscall!(15, u32, spread(obj0), v0.to_bits());
-                    let obj1 = rd32(edi_p);
+                    let obj1 = rd32(edi);
                     lf_checker_rt::callee_thiscall!(16, u32, obj1, outer_idx[oc as usize].to_bits());
-                    edi_p = edi_p.wrapping_add(0xC);
+                    edi = edi.wrapping_add(0xC);
                     eap_idx += 1;
                 }
+                edi = f4;
                 let n0 = add(add(mul(in136[1], in136[1]), mul(in136[0], in136[0])), mul(in136[2], in136[2]));
                 if (n0.to_bits() & 0x7F80_0000) != 0x7F80_0000 {
                     let p = [in136[0].to_bits(), in136[1].to_bits(), in136[2].to_bits(), 0u32];
-                    let o17a = rd32(edi_s);
-                    if o17a == 0 && zero_site == 0xEEEE { zero_site = 200 + oc; }
-                    lf_checker_rt::callee_thiscall!(17, u32, spread(o17a), p.as_ptr() as u32);
+                    lf_checker_rt::callee_thiscall!(17, u32, spread(rd32(edi)), p.as_ptr() as u32);
                 }
                 let n1 = add(add(mul(in104[1], in104[1]), mul(in104[0], in104[0])), mul(in104[2], in104[2]));
                 if (n1.to_bits() & 0x7F80_0000) != 0x7F80_0000 {
                     let p = [in104[0].to_bits(), in104[1].to_bits(), in104[2].to_bits(), 0u32];
-                    let o17b = rd32(edi_s.wrapping_add(0xC));
-                    if o17b == 0 && zero_site == 0xEEEE { zero_site = 300 + oc; }
-                    lf_checker_rt::callee_thiscall!(17, u32, spread(o17b), p.as_ptr() as u32);
+                    lf_checker_rt::callee_thiscall!(17, u32, spread(rd32(edi.wrapping_add(0xC))), p.as_ptr() as u32);
                 }
-                edi_s = edi_s.wrapping_add(4);
+                edi = edi.wrapping_add(4);
+                f4 = edi;
             }
         }
         // ---- tail: voice commit ----
@@ -401,7 +390,7 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
         let ptrv = if fl & 1 == 0 {
             let fl1 = fl | 1;
             wr32(lf_checker_rt::relocated(INIT_FLAG), fl1);
-            let p: u32 = lf_checker_rt::callee_cdecl!(19, u32, INIT_C, 0u32);
+            let p: u32 = lf_checker_rt::callee_cdecl!(19, u32, lf_checker_rt::relocated(INIT_C), 0u32);
             wr32(lf_checker_rt::relocated(INIT_PTR), p);
             p
         } else {
@@ -409,11 +398,9 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
         };
         let back3 = rd32(this.wrapping_add(CURSOR)).wrapping_add(0x16) % RING_LEN;
         let fb = rdf(this.wrapping_add(RING).wrapping_add(back3.wrapping_mul(4)));
-        let ans20: u32 = lf_checker_rt::callee_thiscall!(20, u32, OBJ_F, ptrv, fb.to_bits());
+        let ans20: u32 = lf_checker_rt::callee_thiscall!(20, u32, lf_checker_rt::relocated(OBJ_F), ptrv, fb.to_bits());
         let cookie = gu32(COOKIE);
         lf_checker_rt::callee_thiscall!(21, u32, cookie);
-        // DEBUG-TEMP: side-channel the first zero-obj site via retval.
-        let _ = ans20;
-        zero_site
+        ans20
     }
 }
