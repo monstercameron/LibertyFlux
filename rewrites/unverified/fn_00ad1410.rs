@@ -206,7 +206,9 @@ lf_checker_rt::export!(cdecl, rw_00ad1410(count: u32, rate: u32, mode: u32, form
         desc[11] = 0x0e;
         wr32(g(SLOT_C), create_fn(factory, lf_checker_rt::relocated(0x00EA695C), 3, rate, mode, 0x20, dp));
         if setne == 1 {
-            lf_checker_rt::callee_stdcall!(LINK0, u32, 0);
+            let blk = [0u32; 2];
+            let bp = (&blk[0] as *const u32) as u32;
+            lf_checker_rt::callee_cdecl!(LINK0, u32, 0, bp);
             let z = [0u32; 1];
             let zp = (&z[0] as *const u32) as u32;
             lf_checker_rt::callee_cdecl!(LINK1, u32, zp);

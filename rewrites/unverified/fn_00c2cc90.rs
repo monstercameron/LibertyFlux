@@ -20,13 +20,13 @@
 ///   and 9, the second fed the first's answer), and the ids plus a zero
 ///   are stored at `+0xA4`/`+0xA8`/`+0xAC`. A null handle keeps id -1.
 /// - The secondary voice opens the same way (callee 10, tag `TAG1`), its
-///   handle arriving at offset 4 of a two-word frame out-slot; a null
-///   handle skips its setup.
+///   handle arriving in a one-word frame out-slot; a null handle skips
+///   its setup and reports id -1.
 /// - The counter advances by `COUNTER_STEP` modulo `COUNTER_MOD` (signed
 ///   remainder, stored back to the global) and nine constant voice words
 ///   go to the tuner (callee 11) with `this + 0x0C`.
 /// - A final mix call (callee 12) takes the primary id (or -1), the
-///   secondary handle, the flavor word, and the request block.
+///   secondary id (or -1), the flavor word, and the request block.
 ///
 /// The request block's word 5 holds a frame address, so snapshots skip it;
 /// the remaining 17 words plus the flag byte are compared at each use.
@@ -89,7 +89,8 @@ lf_checker_rt::export!(thiscall, rw_00c2cc90(this: u32, arg: u32) -> u32 {
 
         let slot = this.wrapping_add(HANDLE_SLOT);
         lf_checker_rt::callee_thiscall!(
-            5, u32, this, TAG0, slot, req.as_mut_ptr() as u32, 0xFFFF_FFFF, 0, 0
+            5, u32, this, lf_checker_rt::relocated(TAG0), slot, req.as_mut_ptr() as u32,
+            0xFFFF_FFFF, 0, 0
         );
         let h0 = rd32(slot);
         let primary = if h0 != 0 {
@@ -105,13 +106,13 @@ lf_checker_rt::export!(thiscall, rw_00c2cc90(this: u32, arg: u32) -> u32 {
             0xFFFF_FFFF
         };
 
-        let mut out2 = [0u32; 2];
+        let mut out2 = [0u32; 1];
         lf_checker_rt::callee_thiscall!(
-            10, u32, this, TAG1, out2.as_mut_ptr() as u32, req.as_mut_ptr() as u32,
-            0xFFFF_FFFF, 0, 0
+            10, u32, this, lf_checker_rt::relocated(TAG1), out2.as_mut_ptr() as u32,
+            req.as_mut_ptr() as u32, 0xFFFF_FFFF, 0, 0
         );
-        let h1 = out2[1];
-        if h1 != 0 {
+        let h1 = out2[0];
+        let secondary = if h1 != 0 {
             lf_checker_rt::callee_thiscall!(6, u32, h1, arg);
             lf_checker_rt::callee_thiscall!(7, u32, h1, 0, 0, 0);
             let id0: u32 = lf_checker_rt::callee_thiscall!(8, u32, h1);
@@ -119,7 +120,10 @@ lf_checker_rt::export!(thiscall, rw_00c2cc90(this: u32, arg: u32) -> u32 {
             wr32(h1.wrapping_add(VOICE_ID0), id0);
             wr32(h1.wrapping_add(VOICE_ID1), id1);
             wr32(h1.wrapping_add(VOICE_ID2), 0);
-        }
+            id0
+        } else {
+            0xFFFF_FFFF
+        };
 
         let next = (seed.wrapping_add(COUNTER_STEP) as i32 % COUNTER_MOD) as u32;
         wr32(lf_checker_rt::relocated(COUNTER), next);
@@ -130,7 +134,9 @@ lf_checker_rt::export!(thiscall, rw_00c2cc90(this: u32, arg: u32) -> u32 {
         );
 
         let flavor2 = rd32(arg.wrapping_add(FLAVOR));
-        lf_checker_rt::callee_cdecl!(12, u32, primary, h1, flavor2, req.as_mut_ptr() as u32);
+        lf_checker_rt::callee_cdecl!(
+            12, u32, primary, secondary, flavor2, req.as_mut_ptr() as u32
+        );
         0
     }
 });
