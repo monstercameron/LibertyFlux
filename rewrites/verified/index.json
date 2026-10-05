@@ -37098,6 +37098,15 @@
   "lane": "r-s80"
  },
  {
+  "address": "0x006964A0",
+  "name": "rage::crAnimChannelRawVector3::sample_indexed",
+  "kind": "function",
+  "file": "functions/fn_006964a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b564"
+ },
+ {
   "address": "0x00698110",
   "name": "rage::crCreatureComponentMover::vf2",
   "kind": "function",
@@ -37872,6 +37881,15 @@
   "lane": "r-s478"
  },
  {
+  "address": "0x0069AC60",
+  "name": "rage::crAnimChannelRawVector3::storage_size",
+  "kind": "function",
+  "file": "functions/fn_0069ac60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b564"
+ },
+ {
   "address": "0x0069AC70",
   "name": "rage::crAnimChannelRawVector3::vf20",
   "kind": "function",
@@ -37942,6 +37960,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-10"
+ },
+ {
+  "address": "0x0069B2D0",
+  "name": "rage::crAnimChannelRawBool::storage_size",
+  "kind": "function",
+  "file": "functions/fn_0069b2d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b564"
  },
  {
   "address": "0x0069B2E0",
@@ -38032,6 +38059,33 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s83"
+ },
+ {
+  "address": "0x0069B8A0",
+  "name": "rage::crAnimChannelStaticVector3::compress",
+  "kind": "function",
+  "file": "functions/fn_0069b8a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b564"
+ },
+ {
+  "address": "0x0069C7D0",
+  "name": "rage::crAnimChannelCurveFloat::get_alloc_size",
+  "kind": "function",
+  "file": "functions/fn_0069c7d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b564"
+ },
+ {
+  "address": "0x0069D980",
+  "name": "rage::crAnimChannelRleInt::get_alloc_size",
+  "kind": "function",
+  "file": "functions/fn_0069d980.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b564"
  },
  {
   "address": "0x0069DB90",
@@ -40320,6 +40374,15 @@
   "lane": "r-s482"
  },
  {
+  "address": "0x008785B0",
+  "name": "conduit_compact",
+  "kind": "function",
+  "file": "functions/fn_008785b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
   "address": "0x00878640",
   "name": "rage::crmtComposerOptimized::CombiningFilter::vf0",
   "kind": "function",
@@ -40356,6 +40419,24 @@
   "lane": "r-s482"
  },
  {
+  "address": "0x00878D90",
+  "name": "rage::crmtComposerOptimized::vf30",
+  "kind": "function",
+  "file": "functions/fn_00878d90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00878E00",
+  "name": "rage::crmtComposerOptimized::vf31",
+  "kind": "function",
+  "file": "functions/fn_00878e00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
   "address": "0x00879030",
   "name": "rage::crmtComposerOptimized::vf33",
   "kind": "function",
@@ -40378,6 +40459,15 @@
   "name": "filter_slot_push",
   "kind": "function",
   "file": "functions/fn_00879090.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x008790C0",
+  "name": "rage::crFrameFilters<7$0A>::vf3",
+  "kind": "function",
+  "file": "functions/fn_008790c0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s482"
@@ -55555,6 +55645,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b367"
+ },
+ {
+  "address": "0x009AFAF0",
+  "name": "WIND_MID_LEFT",
+  "kind": "function",
+  "file": "functions/fn_009afaf0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b559"
  },
  {
   "address": "0x009B68E0",
