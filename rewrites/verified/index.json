@@ -53460,6 +53460,339 @@
   "lane": "r-s294"
  },
  {
+  "address": "0x00A0FBC0",
+  "name": "flag_gated_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00a0fbc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A0FC40",
+  "name": "port_table_init_tail",
+  "kind": "function",
+  "file": "functions/fn_00a0fc40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A0FCA0",
+  "name": "readiness_probe",
+  "kind": "function",
+  "file": "functions/fn_00a0fca0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A0FCF0",
+  "name": "slab_dot4_test",
+  "kind": "function",
+  "file": "functions/fn_00a0fcf0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A0FDC0",
+  "name": "quad_slot_verify",
+  "kind": "function",
+  "file": "functions/fn_00a0fdc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A0FE70",
+  "name": "id_guard_or_fallback",
+  "kind": "function",
+  "file": "functions/fn_00a0fe70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A10090",
+  "name": "vehicle_event_route_a",
+  "kind": "function",
+  "file": "functions/fn_00a10090.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A100F0",
+  "name": "vehicle_event_route_b",
+  "kind": "function",
+  "file": "functions/fn_00a100f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A10450",
+  "name": "fixed_first_forward",
+  "kind": "function",
+  "file": "functions/fn_00a10450.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A111B0",
+  "name": "attach_handler_route",
+  "kind": "function",
+  "file": "functions/fn_00a111b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A11DA0",
+  "name": "occupant_flag_sweep",
+  "kind": "function",
+  "file": "functions/fn_00a11da0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A12240",
+  "name": "driver_presence_publish",
+  "kind": "function",
+  "file": "functions/fn_00a12240.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A122C0",
+  "name": "null_guarded_thiscall",
+  "kind": "function",
+  "file": "functions/fn_00a122c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A122E0",
+  "name": "follow_cam_construct",
+  "kind": "function",
+  "file": "functions/fn_00a122e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A123D0",
+  "name": "follow_cam_init_tail",
+  "kind": "function",
+  "file": "functions/fn_00a123d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A12410",
+  "name": "CCamFollowVehicle::vf0",
+  "kind": "function",
+  "file": "functions/fn_00a12410.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A12440",
+  "name": "target_slot_refresh",
+  "kind": "function",
+  "file": "functions/fn_00a12440.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A12740",
+  "name": "range_snap_clamp",
+  "kind": "function",
+  "file": "functions/fn_00a12740.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A127B0",
+  "name": "mode_index_select",
+  "kind": "function",
+  "file": "functions/fn_00a127b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A12820",
+  "name": "speed_flag_update",
+  "kind": "function",
+  "file": "functions/fn_00a12820.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A128E0",
+  "name": "latched_pair_snapshot",
+  "kind": "function",
+  "file": "functions/fn_00a128e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A130D0",
+  "name": "pending_fix_apply",
+  "kind": "function",
+  "file": "functions/fn_00a130d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A131F0",
+  "name": "dist_pair_and_flag_store",
+  "kind": "function",
+  "file": "functions/fn_00a131f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A13220",
+  "name": "dir_vector_sincos_a",
+  "kind": "function",
+  "file": "functions/fn_00a13220.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A13280",
+  "name": "null_guarded_query",
+  "kind": "function",
+  "file": "functions/fn_00a13280.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A132A0",
+  "name": "subtype_code_store",
+  "kind": "function",
+  "file": "functions/fn_00a132a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A13350",
+  "name": "dir_vector_sincos_b",
+  "kind": "function",
+  "file": "functions/fn_00a13350.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A133B0",
+  "name": "up_vector_or_default",
+  "kind": "function",
+  "file": "functions/fn_00a133b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A133F0",
+  "name": "mode_table_lookup",
+  "kind": "function",
+  "file": "functions/fn_00a133f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A13600",
+  "name": "scaled_max_select",
+  "kind": "function",
+  "file": "functions/fn_00a13600.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A13650",
+  "name": "spawn_eligibility_check",
+  "kind": "function",
+  "file": "functions/fn_00a13650.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A13710",
+  "name": "damped_value_update",
+  "kind": "function",
+  "file": "functions/fn_00a13710.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A13A50",
+  "name": "model_slot_lookup",
+  "kind": "function",
+  "file": "functions/fn_00a13a50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A14840",
+  "name": "id_slot_assign",
+  "kind": "function",
+  "file": "functions/fn_00a14840.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A14B30",
+  "name": "CCamFollowVehicle::vf5",
+  "kind": "function",
+  "file": "functions/fn_00a14b30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A14B40",
+  "name": "axis_pair_snap",
+  "kind": "function",
+  "file": "functions/fn_00a14b40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
+  "address": "0x00A14BC0",
+  "name": "gated_clamp_apply",
+  "kind": "function",
+  "file": "functions/fn_00a14bc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s456"
+ },
+ {
   "address": "0x00A1A870",
   "name": "cam_follow_avail_test",
   "kind": "function",
@@ -66330,6 +66663,15 @@
   "lane": "r-b465"
  },
  {
+  "address": "0x00B6FA80",
+  "name": "task_go_to_car_door_helper",
+  "kind": "function",
+  "file": "functions/fn_00b6fa80.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b465"
+ },
+ {
   "address": "0x00B6FDA0",
   "name": "cond_init_then_release_slot",
   "kind": "function",
@@ -66346,6 +66688,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6FED0",
+  "name": "JACKING_GENERIC",
+  "kind": "function",
+  "file": "functions/fn_00b6fed0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b465"
  },
  {
   "address": "0x00B70C40",
@@ -97960,6 +98311,15 @@
   "name": "climb_ladder_setup_anims",
   "kind": "function",
   "file": "functions/fn_00cfb180.rs",
+  "trials": 1100,
+  "checker": "version 5",
+  "lane": "r-b466"
+ },
+ {
+  "address": "0x00CFB910",
+  "name": "climb_ladder_check_state",
+  "kind": "function",
+  "file": "functions/fn_00cfb910.rs",
   "trials": 1100,
   "checker": "version 5",
   "lane": "r-b466"
