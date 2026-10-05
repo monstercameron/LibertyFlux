@@ -1310,3 +1310,52 @@ export!(thiscall, mut_k5_snapneg(obj: *mut u8, arg_bits: u32) -> u32 {
     let poke = unsafe { obj.sub(SNAP_POKE_NEG) } as *mut u32;
     k2_f4_with_poke(obj, arg_bits, poke)
 });
+
+/// File VA the absfix_ro proof reads through its unrelocated operand: the
+/// PE headers (stable bytes; the worker's ABSFIX_RO_VA).
+const ABSFIX_RO_VA: u32 = 0x0040_0000;
+/// Neighbouring header dword the absfix_ro mutant reads instead (stable
+/// and different: the MZ magic against the DOS header's third word).
+const ABSFIX_RO_NEAR: u32 = 0x0040_0004;
+/// File VA the absfix_rw proof reads and writes: the first .data dword, no
+/// relocation entry, nonzero pristine value (the worker's ABSFIX_RW_VA).
+const ABSFIX_RW_VA: u32 = 0x0103_0000;
+
+// k7_absro (selftest:absfix_ro with abs_fixups): the original reads a
+// read-only dword through an unrelocated absolute operand and adds the
+// stack argument. The worker adds delta to the declared operand, so the
+// original reaches its own mapped copy; the rewrite reads the same datum
+// through the relocated image, as rewrites must.
+export!(cdecl, rw_k7_absro(x: u32) -> u32 {
+    unsafe { *global::<u32>(ABSFIX_RO_VA) }.wrapping_add(x)
+});
+
+// Mutant: reads the neighbouring header dword instead. The two file words
+// differ on every trial, so the return check catches it.
+export!(cdecl, mut_k7_absro(x: u32) -> u32 {
+    unsafe { *global::<u32>(ABSFIX_RO_NEAR) }.wrapping_add(x)
+});
+
+// k7_absrw (selftest:absfix_rw with abs_fixups): the original adds the
+// stack argument into a writable dword through unrelocated absolute
+// operands and returns the sum. Both sides start each trial from the same
+// pristine word (the worker restores data sections per side), so the
+// rewrite repeats the read-add-write through the relocated image.
+export!(cdecl, rw_k7_absrw(x: u32) -> u32 {
+    unsafe {
+        let p = global::<u32>(ABSFIX_RW_VA);
+        let v = (*p).wrapping_add(x);
+        *p = v;
+        v
+    }
+});
+
+// Mutant: stores the argument instead of the sum. The pristine word is
+// nonzero, so the return - and the declared global - catch it.
+export!(cdecl, mut_k7_absrw(x: u32) -> u32 {
+    unsafe {
+        let p = global::<u32>(ABSFIX_RW_VA);
+        *p = x;
+        x
+    }
+});

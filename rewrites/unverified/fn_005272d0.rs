@@ -30,8 +30,8 @@
 /// round sinks); a null row object or a class word above 8 skips the copy but
 /// still writes `flag`; a wrapping `base + budget` fails every sinking round.
 /// The rank switch is decoded from the function's jump table ([L,L,L,F,L]
-/// over rank minus one); ranks that dispatch through it cannot execute under
-/// the checker (unrelocated table), so only the free ranks are exercised.
+/// over rank minus one); the table and its base carry relocation entries,
+/// so the dispatch runs as is and every rank is exercised.
 ///
 /// Original: 0x005272D0 (thiscall, ECX is `this`, six stack words).
 lf_checker_rt::export!(thiscall, rw_005272d0(this: u32, base: u32, out8: u32, mask: u32, flag: u32, mgr: u32, budget: u32) -> u32 {
@@ -112,12 +112,16 @@ lf_checker_rt::export!(thiscall, rw_005272d0(this: u32, base: u32, out8: u32, ma
                     (flag as *mut u8).write(ok);
                     eax = flag;
                 } else {
+                    // The sink is offered the round-start cursor: the original
+                    // pushes the carried value from its spill slot, while the
+                    // limit check below already uses the advanced cursor.
+                    let offered = cursor;
                     cursor = cursor.wrapping_add(step);
                     if cursor > limit {
                         ok = 0;
                     } else {
                         let acc: u32 = lf_checker_rt::callee_thiscall!(
-                            8, u32, mgr, row, cursor, step
+                            8, u32, mgr, row, offered, step
                         );
                         eax = acc;
                         if acc & 0xFF == 0 {

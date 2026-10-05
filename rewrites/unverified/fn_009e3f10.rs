@@ -401,12 +401,9 @@ lf_checker_rt::export!(thiscall, rw_009E3F10(this: u32, kind: u32, src: u32, dst
             }
             // Kind 13: index call, table lookup, window call, then T4.
             _ => {
-                let mut frame = [0u32; 16];
+                let mut frame = [0u32; 13];
                 let base = frame.as_mut_ptr() as u32;
-                // base is E0-12 in original frame terms.
-                wr32(base, 0x40400000);
-                wr32(base.wrapping_add(4), 0xFFFF_FFFF);
-                wr32(base.wrapping_add(8), 0);
+                // base is E0 (case-entry esp) in original frame terms.
                 let fixed = lf_checker_rt::relocated(FIXED2);
                 lf_checker_rt::callee_thiscall!(
                     C_8E,
@@ -422,6 +419,9 @@ lf_checker_rt::export!(thiscall, rw_009E3F10(this: u32, kind: u32, src: u32, dst
                     0u32,
                     0u32,
                     0u32,
+                    0u32,
+                    0x40400000u32,
+                    0xFFFF_FFFFu32,
                     0u32
                 );
                 let ow = rd32(base.wrapping_add(12));
@@ -436,13 +436,13 @@ lf_checker_rt::export!(thiscall, rw_009E3F10(this: u32, kind: u32, src: u32, dst
                     C_5C,
                     u32,
                     cxv,
-                    base.wrapping_add(10)
+                    base.wrapping_add(16)
                 );
                 eax = ans;
-                wr32(esi, rd32(base.wrapping_add(10)));
-                wr32(esi.wrapping_add(4), rd32(base.wrapping_add(14)));
-                wr32(esi.wrapping_add(8), rd32(base.wrapping_add(18)));
-                wr32(esi.wrapping_add(0x0C), rd32(base.wrapping_add(22)));
+                wr32(esi, rd32(base.wrapping_add(16)));
+                wr32(esi.wrapping_add(4), rd32(base.wrapping_add(20)));
+                wr32(esi.wrapping_add(8), rd32(base.wrapping_add(24)));
+                wr32(esi.wrapping_add(0x0C), rd32(base.wrapping_add(28)));
                 (eax & LOW_MASK) | 1
             }
         }

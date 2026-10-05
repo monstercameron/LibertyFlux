@@ -199,7 +199,8 @@ lf_checker_rt::export!(thiscall, rw_00C746F0(this: u32) -> u32 {
         let mut i = 0u32;
         while i < N_PROBES {
             let probe_arg = probe_table.add(i as usize).read_unaligned();
-            let mut slot: u32 = 0;
+            // The out-slot is pre-filled with 0xff before the call.
+            let mut slot: u32 = 0xff;
             lf_checker_rt::callee_thiscall!(
                 PROBE,
                 u32,
@@ -219,7 +220,9 @@ lf_checker_rt::export!(thiscall, rw_00C746F0(this: u32) -> u32 {
             let bit = flag_fn(this, flag_ptr.read_unaligned());
             flag_ptr = flag_ptr.add(1);
             let masked = bit & BIT_MASK;
-            let (word, shift) = if bit < FLAG_SPLIT {
+            // The split uses a signed comparison: negative answers land in
+            // the first mask pair.
+            let (word, shift) = if (bit as i32) < FLAG_SPLIT as i32 {
                 if masked < HALF_BITS {
                     (OFF_MASK0, masked)
                 } else {

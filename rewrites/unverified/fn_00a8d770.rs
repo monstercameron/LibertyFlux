@@ -84,6 +84,9 @@ lf_checker_rt::export!(thiscall, rw_00a8d770(this: u32) -> u32 {
                 last = more;
             }
         }
+        // The original zeroes eax entering the bucket phase, discarding
+        // any sweep answer.
+        last = 0;
         let table = ((this + TABLE) as *const u32).read_unaligned();
         let limit =
             ((this + LIMIT) as *const u16).read_unaligned() as u32;
