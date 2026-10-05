@@ -224,78 +224,6 @@
   "reason": "other"
  },
  {
-  "address": "0x0052ED20",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race29Standard, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_0052ed20.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x0052F180",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race30Standard, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_0052f180.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x005381A0",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CompDeathmatch, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_005381a0.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x005385F0",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CompDeathmatch_BG, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_005385f0.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": "partial verdict (100 trials), full run pending"
- },
- {
-  "address": "0x00538A50",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CompMafiaWork, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00538a50.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x00538EA0",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CompMafiaWork_BG, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00538ea0.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x00539300",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CoopBombBase, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00539300.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x00539750",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CoopBombBase_BG, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00539750.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x00539BB0",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CoopBombBase_BG_TIME, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00539bb0.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
   "address": "0x0053A010",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CoopDrugFactory, player_schema::LeaderboardInfo, 10>::vf14",
   "file": "fn_0053a010.rs",
@@ -1256,6 +1184,54 @@
   "reason": "other"
  },
  {
+  "address": "0x0062BD10",
+  "name": "tls_alloc_and_tail_init",
+  "file": "fn_0062bd10.rs",
+  "lane": "r-s481",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x0062BD50",
+  "name": "tls_alloc_vtable_stamp",
+  "file": "fn_0062bd50.rs",
+  "lane": "r-s481",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x0062C1B0",
+  "name": "rage::VerletWaterSimulation::vf5",
+  "file": "fn_0062c1b0.rs",
+  "lane": "r-s481",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x0062C3E0",
+  "name": "rage::VerletWaterPerturbation::vf5",
+  "file": "fn_0062c3e0.rs",
+  "lane": "r-s481",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x0062C5B0",
+  "name": "rage::VerletWaterSurface::vf5",
+  "file": "fn_0062c5b0.rs",
+  "lane": "r-s481",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x0062C840",
+  "name": "rage::SkyhatPerlinNoise::vf5",
+  "file": "fn_0062c840.rs",
+  "lane": "r-s481",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x006607F0",
   "name": "rage::snAddRemoteGamerTask::vf3",
   "file": "fn_006607f0.rs",
@@ -1718,86 +1694,6 @@
   "lane": "r-s428",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x008DDF20",
-  "name": "CShaderFx_PushForcedTechnique::vf1",
-  "file": "fn_008ddf20.rs",
-  "lane": "r-s479",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DE020",
-  "name": "CUnLockRenderTargetDC::vf1",
-  "file": "fn_008de020.rs",
-  "lane": "r-s479",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DE050",
-  "name": "CViewport_Callback_DC::vf1",
-  "file": "fn_008de050.rs",
-  "lane": "r-s479",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DE110",
-  "name": "sub_008de110",
-  "file": "fn_008de110.rs",
-  "lane": "r-s479",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DFA70",
-  "name": "sub_008dfa70",
-  "file": "fn_008dfa70.rs",
-  "lane": "r-s479",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DFD30",
-  "name": "sub_008dfd30",
-  "file": "fn_008dfd30.rs",
-  "lane": "r-s479",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DFEA0",
-  "name": "sub_008dfea0",
-  "file": "fn_008dfea0.rs",
-  "lane": "r-s479",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008E0240",
-  "name": "sub_008e0240",
-  "file": "fn_008e0240.rs",
-  "lane": "r-s479",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008E0710",
-  "name": "sub_008e0710",
-  "file": "fn_008e0710.rs",
-  "lane": "r-s479",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008E0770",
-  "name": "sub_008e0770",
-  "file": "fn_008e0770.rs",
-  "lane": "r-s479",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x008EA6E0",
