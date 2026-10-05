@@ -62010,6 +62010,15 @@
   "lane": "a-R01"
  },
  {
+  "address": "0x00AD37E0",
+  "name": "audio_bank_refresh",
+  "kind": "function",
+  "file": "functions/fn_00ad37e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "a-R01"
+ },
+ {
   "address": "0x00AD4410",
   "name": "audio_enqueue_sorted_triple",
   "kind": "function",
@@ -67518,6 +67527,15 @@
   "lane": "r-s450"
  },
  {
+  "address": "0x00B62F60",
+  "name": "fn_00B62F60",
+  "kind": "function",
+  "file": "functions/fn_00b62f60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R03"
+ },
+ {
   "address": "0x00B62FC0",
   "name": "veh_lookup_or_null",
   "kind": "function",
@@ -67788,6 +67806,15 @@
   "lane": "r-s450"
  },
  {
+  "address": "0x00B659F0",
+  "name": "fn_00B659F0",
+  "kind": "function",
+  "file": "functions/fn_00b659f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R03"
+ },
+ {
   "address": "0x00B65A60",
   "name": "lifecycle_state_machine",
   "kind": "function",
@@ -67914,6 +67941,15 @@
   "lane": "r-s450"
  },
  {
+  "address": "0x00B666B0",
+  "name": "fn_00B666B0",
+  "kind": "function",
+  "file": "functions/fn_00b666b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R03"
+ },
+ {
   "address": "0x00B66A80",
   "name": "veh_indexed_limit",
   "kind": "function",
@@ -67921,6 +67957,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s450"
+ },
+ {
+  "address": "0x00B66D80",
+  "name": "fn_00B66D80",
+  "kind": "function",
+  "file": "functions/fn_00b66d80.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R03"
  },
  {
   "address": "0x00B66E50",
@@ -83430,6 +83475,15 @@
   "lane": "r-s241"
  },
  {
+  "address": "0x00BBD490",
+  "name": "ped_assign_sequence_goto_achieve_heading",
+  "kind": "function",
+  "file": "functions/fn_00bbd490.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b516"
+ },
+ {
   "address": "0x00BBD7C0",
   "name": "NativeImpl_TASK_COMBAT_HATED_TARGETS_AROUND_CHAR",
   "kind": "function",
@@ -83500,6 +83554,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s241"
+ },
+ {
+  "address": "0x00BBE060",
+  "name": "group_assign_task_29_to_leader_and_members",
+  "kind": "function",
+  "file": "functions/fn_00bbe060.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b516"
+ },
+ {
+  "address": "0x00BBE850",
+  "name": "ped_assign_goto_task_timed_or_still",
+  "kind": "function",
+  "file": "functions/fn_00bbe850.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b516"
  },
  {
   "address": "0x00BC0070",
@@ -96318,6 +96390,15 @@
   "lane": "r-b454"
  },
  {
+  "address": "0x00C81DC0",
+  "name": "flag_gated_code_select",
+  "kind": "function",
+  "file": "functions/fn_00c81dc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R03"
+ },
+ {
   "address": "0x00C84B60",
   "name": "Format the scenario clock as five characters into `dst`.",
   "kind": "function",
@@ -100780,6 +100861,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b451"
+ },
+ {
+  "address": "0x00D19EA0",
+  "name": "peds_tasks_fn2 (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00d19ea0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b514"
  },
  {
   "address": "0x00D1A340",
