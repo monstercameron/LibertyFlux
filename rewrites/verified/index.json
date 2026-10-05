@@ -38538,6 +38538,15 @@
   "lane": "r-b564"
  },
  {
+  "address": "0x0069D5C0",
+  "name": "rage::crAnimChannelRleInt::sample_indexed",
+  "kind": "function",
+  "file": "functions/fn_0069d5c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b572"
+ },
+ {
   "address": "0x0069D6D0",
   "name": "rage::crAnimChannelRleInt::decode_at",
   "kind": "function",
@@ -39366,10 +39375,28 @@
   "lane": "r-s485"
  },
  {
+  "address": "0x00870450",
+  "name": "crmt_batch_rebuild",
+  "kind": "function",
+  "file": "functions/fn_00870450.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s485"
+ },
+ {
   "address": "0x00870540",
   "name": "crmt_keyed_entry_add",
   "kind": "function",
   "file": "functions/fn_00870540.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s485"
+ },
+ {
+  "address": "0x00870580",
+  "name": "crmt_entry_find_or_add",
+  "kind": "function",
+  "file": "functions/fn_00870580.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s485"
@@ -43119,6 +43146,15 @@
   "lane": "r-b285"
  },
  {
+  "address": "0x00894EC0",
+  "name": "this_adjusting_thunk",
+  "kind": "function",
+  "file": "functions/fn_00894ec0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
   "address": "0x00894EE0",
   "name": "init_named_object",
   "kind": "function",
@@ -43459,6 +43495,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-10"
+ },
+ {
+  "address": "0x0089AF70",
+  "name": "aud_envelope_stage_update",
+  "kind": "function",
+  "file": "functions/fn_0089af70.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b565"
  },
  {
   "address": "0x0089B2E0",
@@ -55269,6 +55314,24 @@
   "lane": "r-s486"
  },
  {
+  "address": "0x00987040",
+  "name": "audEmitter_range_check",
+  "kind": "function",
+  "file": "functions/fn_00987040.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s486"
+ },
+ {
+  "address": "0x009871E0",
+  "name": "audEmitter_transform_point",
+  "kind": "function",
+  "file": "functions/fn_009871e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s486"
+ },
+ {
   "address": "0x009872C0",
   "name": "bucket_table_remove",
   "kind": "function",
@@ -55323,6 +55386,15 @@
   "lane": "r-b49"
  },
  {
+  "address": "0x009888E0",
+  "name": "audCutscene_wait_ready",
+  "kind": "function",
+  "file": "functions/fn_009888e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s486"
+ },
+ {
   "address": "0x00988990",
   "name": "audCutsceneAudioEntity__refresh_slot",
   "kind": "function",
@@ -55330,6 +55402,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b49"
+ },
+ {
+  "address": "0x00988B40",
+  "name": "audCutsceneAudioEntity::vf2",
+  "kind": "function",
+  "file": "functions/fn_00988b40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s486"
  },
  {
   "address": "0x00988CC0",
@@ -72882,6 +72963,15 @@
   "lane": "a-11"
  },
  {
+  "address": "0x00AD0160",
+  "name": "Wheel_RepairTyre",
+  "kind": "function",
+  "file": "functions/fn_00ad0160.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
   "address": "0x00AD0180",
   "name": "update_gated_filter_140",
   "kind": "function",
@@ -73006,6 +73096,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD1A50",
+  "name": "call_then_tail_jump_stub",
+  "kind": "function",
+  "file": "functions/fn_00ad1a50.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
  },
  {
   "address": "0x00AD1A90",
@@ -75526,6 +75625,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-11"
+ },
+ {
+  "address": "0x00B05D10",
+  "name": "construct_helper",
+  "kind": "function",
+  "file": "functions/fn_00b05d10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
  },
  {
   "address": "0x00B06D70",
@@ -112644,6 +112752,186 @@
   "lane": "r-b412"
  },
  {
+  "address": "0x00CACCF0",
+  "name": "CTaskComplexFollowPatrolRoute::~CTaskComplexFollowPatrolRoute",
+  "kind": "function",
+  "file": "functions/fn_00caccf0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CACD20",
+  "name": "CTaskComplexGetOutOfWater::~CTaskComplexGetOutOfWater",
+  "kind": "function",
+  "file": "functions/fn_00cacd20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CACD60",
+  "name": "CTaskComplexGoToPointAiming::~CTaskComplexGoToPointAiming",
+  "kind": "function",
+  "file": "functions/fn_00cacd60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CACD90",
+  "name": "CTaskComplexGoToPointAndStandStillTimed::~CTaskComplexGoToPointAndStandStillTimed",
+  "kind": "function",
+  "file": "functions/fn_00cacd90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CACDB0",
+  "name": "CTaskComplexGoToPointAnyMeans::~CTaskComplexGoToPointAnyMeans",
+  "kind": "function",
+  "file": "functions/fn_00cacdb0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CACDE0",
+  "name": "CTaskComplexMoveAroundCoverPoints::~CTaskComplexMoveAroundCoverPoints",
+  "kind": "function",
+  "file": "functions/fn_00cacde0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CACE40",
+  "name": "CTaskComplexMoveCrossRoadAtTrafficLights::~CTaskComplexMoveCrossRoadAtTrafficLights",
+  "kind": "function",
+  "file": "functions/fn_00cace40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CACE70",
+  "name": "CTaskComplexMoveCrowdAroundLocation::~CTaskComplexMoveCrowdAroundLocation",
+  "kind": "function",
+  "file": "functions/fn_00cace70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CACE90",
+  "name": "CTaskComplexMoveFollowPointRoute::~CTaskComplexMoveFollowPointRoute",
+  "kind": "function",
+  "file": "functions/fn_00cace90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CACEC0",
+  "name": "CTaskComplexMoveGetToPointContinuous::~CTaskComplexMoveGetToPointContinuous",
+  "kind": "function",
+  "file": "functions/fn_00cacec0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CACF00",
+  "name": "CTaskComplexMoveGoToPointRelativeToEntityAndStandStill::~CTaskComplexMoveGoToPointRelativeToEntityAndStandStill",
+  "kind": "function",
+  "file": "functions/fn_00cacf00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CACF30",
+  "name": "CTaskComplexMoveGoToPointStandStillAchieveHeading::~CTaskComplexMoveGoToPointStandStillAchieveHeading",
+  "kind": "function",
+  "file": "functions/fn_00cacf30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CACF50",
+  "name": "CTaskComplexMoveGoToShelterAndWait::~CTaskComplexMoveGoToShelterAndWait",
+  "kind": "function",
+  "file": "functions/fn_00cacf50.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CACF80",
+  "name": "CTaskComplexMoveWaitForTraffic::~CTaskComplexMoveWaitForTraffic",
+  "kind": "function",
+  "file": "functions/fn_00cacf80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CACFF0",
+  "name": "CTaskComplexTurnToFaceEntityOrCoord::~CTaskComplexTurnToFaceEntityOrCoord",
+  "kind": "function",
+  "file": "functions/fn_00cacff0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CAD030",
+  "name": "dtor_chain_00cad030",
+  "kind": "function",
+  "file": "functions/fn_00cad030.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CAD050",
+  "name": "dtor_chain_00cad050",
+  "kind": "function",
+  "file": "functions/fn_00cad050.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CAD070",
+  "name": "dtor_chain_00cad070",
+  "kind": "function",
+  "file": "functions/fn_00cad070.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CAD090",
+  "name": "dtor_chain_00cad090",
+  "kind": "function",
+  "file": "functions/fn_00cad090.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
+  "address": "0x00CAD0B0",
+  "name": "dtor_chain_00cad0b0",
+  "kind": "function",
+  "file": "functions/fn_00cad0b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
   "address": "0x00CAD110",
   "name": "task_strings_equal_2",
   "kind": "function",
@@ -114496,6 +114784,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s81"
+ },
+ {
+  "address": "0x00CCA4C0",
+  "name": "vtable_init_with_tail_call",
+  "kind": "function",
+  "file": "functions/fn_00cca4c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
  },
  {
   "address": "0x00CCA540",
@@ -141102,6 +141399,15 @@
   "lane": "a-09"
  },
  {
+  "address": "0x00E72710",
+  "name": "fn_00e72710",
+  "kind": "function",
+  "file": "functions/fn_00e72710.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
+ },
+ {
   "address": "0x00E72730",
   "name": "teardown_array_71x48",
   "kind": "function",
@@ -141118,6 +141424,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-09"
+ },
+ {
+  "address": "0x00E72780",
+  "name": "fn_00e72780",
+  "kind": "function",
+  "file": "functions/fn_00e72780.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
  },
  {
   "address": "0x00E727A0",
@@ -141154,6 +141469,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-17"
+ },
+ {
+  "address": "0x00E72830",
+  "name": "fn_00e72830",
+  "kind": "function",
+  "file": "functions/fn_00e72830.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q06"
  },
  {
   "address": "0x00E72870",
