@@ -9,6 +9,32 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming a 150-function batch: replay engine layout and two bad inventory entries</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-72"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-72</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>Most of this batch belongs to the replay record engine and the radio system, not the subsystems the inventory hints suggested, and two of the batch entries are not function entry points at all.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Most of this batch belongs to the replay record engine and the radio system, not the subsystems the inventory hints suggested, and two of the batch entries are not function entry points at all.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose descriptive names for 150 consecutive unnamed game functions, working out what the group is about first, with a confidence for each name.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into five clusters: a radio station system at the start, script-native helpers, text drawing, script system and savegame upkeep, then a long run of replay record engine code.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The replay engine has a recognizable layout: stream rings with tag-driven records, a generation-counted handle table, a slot ring with a cursor, a large dispatch table shared with effect updates, and locked record-emission helpers at the end.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two batch entries are not functions: one points at alignment padding plus a jump table, the other at a mid-function block that jumps back to its own loop. Several more entries cover two functions each, with the second one uninventoried.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Five neighbouring tracker-removal functions are byte-identical except for one callee each, confirming the one-routine-instantiated-many-times pattern.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;138 of 150 functions named, 14 at high confidence and 124 at medium; 12 left empty.&lt;/li&gt;
+&lt;li&gt;High confidence was kept for names anchored on strings, imports, verified rewrites or high-confidence callers; behaviour that was clear but worded by the lane stayed medium.&lt;/li&gt;
+&lt;li&gt;The coordinator should re-inventory the two bad entries and the uninventoried second functions hiding inside merged entries before production lanes take them.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Disassemble each batch function from the memory-mapped image, resolve direct calls and string references, and scan every call site in the code section once to attribute callers. Read the short functions fully and the long ones from their heads plus caller and callee names, and check verified rewrite doc comments for what shared helpers do.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Caller attribution by nearest known symbol misattributes call sites that sit in unknown functions after a short batch function, so large offsets must be treated as unknown callers. The inventory subsystem hints were wrong for most of the batch and were ignored in favour of caller and callee evidence.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>One pose function verified; absolute reads into writable memory fail silently here</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b398"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b398</id>
@@ -1054,27 +1080,5 @@
 &lt;p&gt;Read the executable only through the mapped-image interface, validate the mapping by decoding one known function from entry to return, then gather per-function evidence (referenced strings in both encodings, imports called, named callers and callees, virtual-table membership) into one table before naming. Caller containers come from the function-boundary inventory ranges, and class membership from the virtual-table data.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;An early call-attribution table silently mixed neighbouring functions' calls wherever listed sizes overlapped, and the widest entry appeared to call routines that belonged to eight following functions. Re-measuring true ends from return instructions and recounting fixed it. Several core callees sit in the encrypted region and disassemble as garbage, so functions depending on them were named from structure and named siblings only.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Forty task-system functions verified, and two arity traps documented</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s333"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s333</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>A production batch of forty small pedestrian task functions was rewritten in Rust and verified against the original, one thousand trials each with a deliberately wrong version caught every time, in about forty-eight minutes of lane work.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of forty small pedestrian task functions was rewritten in Rust and verified against the original, one thousand trials each with a deliberately wrong version caught every time, in about forty-eight minutes of lane work.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite a batch of forty neighbouring small game functions in clear Rust and prove each behaves identically to the original with the differential checker, deferring anything the checker cannot verify.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All forty verified with zero deferrals: nine deleting destructors, eight clone routines, five destructors with tail calls, four constructors, seven event and update handlers, and seven helpers.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One update handler contains a call that is reachable only through unsigned integer wraparound; the proof fires it with a wraparound trial and would be vacuous without it.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; In two event handlers, a middle call provably always receives the object pointer, because its call site requires an argument value that only occurs on the path where that register still holds it.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two handlers use their own incoming argument slot as scratch memory, which the stack comparison counts as a difference no faithful Rust rewrite can reproduce, so those two proofs run with the stack check off and say so.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Count pushes against pops at every intercepted call before running: a pushed register may be an argument rather than a save, and a missed push breaks the original's return in a way that looks alarming but always means the same thing. The next lanes should reuse the generator-per-family pattern, which verified the first twenty-two functions with no failures.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the lane's contracts with the stock checker worker and the lane's rewrite crate; every verdict passes and every mutant fails. The per-function records list trials, mutants, and everything that narrowed each proof.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Two callee arities were miscounted (a three-argument call read as two, a ten-argument call read as nine), and one comparison was attributed to the wrong stack argument. All three failed loudly on the first probe and were fixed within minutes. The failure signature of an arity miscount is now written up in the lane report: the original faults while returning, and the fault address is a value the function itself pushed.&lt;/p&gt;</content>
   </entry>
 </feed>
