@@ -1,139 +1,152 @@
-// original: 0x008be0f0 input_apply_device_bindings (proposed)
+// original: 0x008BE0F0 mode_table_lookup_and_flag_set (proposed)
 
-/// Read the current device's key record and commit its binding state to the slots.
+/// Resolve the current mode from three tables, notify through a callee, then
+/// latch flag slots.
 ///
-/// Takes no arguments; the device index comes from `G_CUR_INDEX` and incoming
-/// ECX is ignored (the original pushes it and reuses its stack slot for a
-/// local before any read). The per-device table `T_DEVS` has rows of 24
-/// bytes (record-array pointer at `+0`, record count as a 16-bit word at
-/// `+4`); each record is `REC_LEN` bytes with a tag byte at `+0`, a signed
-/// 16-bit key at `+0x12` and a binding id byte at `+0x15`.
+/// The global index word selects one entry of a directory table (24 bytes per
+/// entry: row pointer, 16-bit row count). The entry's rows (22 bytes each) are
+/// scanned for the first whose tag byte is `ROW_TAG`; that row names a key
+/// byte and a signed word. The word indexes the value array; the key selects
+/// one of 62 key-table entries (12 bytes: key, pointer to a 24-byte-stride
+/// table); the mode is the dword at `+0x14` of the value-selected element.
+/// A missing row or key leaves the mode at 0.
 ///
-/// The first record tagged `TAG` selects a key whose slot value seeds a scan
-/// of the 60-row binding table `T_DEFS` (rows of 12 bytes: id at `+0`,
-/// value-list pointer at `+4`); on a hit the mode word is read from the
-/// value list at `g*24+0x14`. The dispatch callee then runs with the found
-/// index, the first answer's slot value and the device index. Mode 3, 4 or
-/// 15 takes the main path (three key-callee answers committed as 1/0/0,
-/// then slots `0x77..=0x88` cleared, returning `0x89`); any other mode, or
-/// no tagged record, takes the alternate path (two answers committed as 1/0
-/// with early `NO_LINK` returns). `NO_LINK` answers are replaced by fixed
-/// alternates except on the alternate path, where they return early.
+/// The notifier callee then sees (found row or 0, value-selected-by-lookup,
+/// index). When the mode is 3, 4 or 15 the wide path latches one slot to 1,
+/// two slots to 0 and clears slots `0x77..=0x88`, returning `0x89`;
+/// otherwise the narrow path latches one slot to 1 and one to 0 and returns
+/// the second lookup. Every lookup answer of `NONE` (`0x7fffffff`, callee for
+/// "absent") is replaced by a fixed default slot, except on the narrow path
+/// where it returns immediately.
 ///
-/// Original: 0x008be0f0 (cdecl, no arguments).
-lf_checker_rt::export!(cdecl, rw_008be0f0() -> u32 {
+/// Original: 0x008BE0F0 (cdecl, no arguments, no register inputs; callee
+/// `F` takes (handle, code) and callee `G` takes (row, value, index)).
+lf_checker_rt::export!(cdecl, rw_008BE0F0() -> u32 {
     unsafe {
-        const G_CUR_INDEX: u32 = 0x01160C40;
-        const G_SLOTS: u32 = 0x01160C48;
-        const T_DEFS: u32 = 0x019D30C0;
-        const T_DEF_END: u32 = 0x019D3390;
-        const T_DEVS: u32 = 0x019D33A0;
-        const REC_LEN: u32 = 0x16;
-        const REC_TAG: u32 = 0x0;
-        const REC_KEY: u32 = 0x12;
-        const REC_ID: u32 = 0x15;
-        const NO_LINK: u32 = 0x7FFF_FFFF;
-        const TAG: u8 = 0x19;
-        const ALT_PAIR: u32 = 0x2b;
+        const INDEX: u32 = 0x01160C40;
+        const VALS: u32 = 0x01160C48;
+        const DIR: u32 = 0x019D33A0;
+        const DIR_COUNT_OFF: u32 = 0x00000004;
+        const KEYTAB: u32 = 0x019D30C0;
+        const KEYTAB_END: u32 = 0x019D3390;
+        const NONE: u32 = 0x7FFF_FFFF;
+        const ROW_TAG: u8 = 0x19;
+        const ROW_STRIDE: u32 = 0x16;
+        const ROW_WORD_OFF: u32 = 0x12;
+        const ROW_KEY_OFF: u32 = 0x15;
+        const CAL_F: u32 = 0;
+        const CAL_G: u32 = 1;
 
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
-            unsafe { (a as *const u32).read_unaligned() }
+            unsafe { lf_checker_rt::global::<u32>(a).read_unaligned() }
         }
         #[inline(always)]
         unsafe fn rd16(a: u32) -> u16 {
-            unsafe { (a as *const u16).read_unaligned() }
+            unsafe { lf_checker_rt::global::<u16>(a).read_unaligned() }
         }
         #[inline(always)]
         unsafe fn rd8(a: u32) -> u8 {
-            unsafe { (a as *const u8).read() }
+            unsafe { lf_checker_rt::global::<u8>(a).read() }
         }
         #[inline(always)]
         unsafe fn wr32(a: u32, v: u32) {
-            unsafe { (a as *mut u32).write_unaligned(v) }
+            unsafe { lf_checker_rt::global::<u32>(a).write_unaligned(v) }
+        }
+        #[inline(always)]
+        unsafe fn val_at(i: u32) -> u32 {
+            unsafe { rd32(VALS.wrapping_add(i.wrapping_mul(4))) }
+        }
+        #[inline(always)]
+        unsafe fn val_set(i: u32, v: u32) {
+            unsafe { wr32(VALS.wrapping_add(i.wrapping_mul(4)), v) }
         }
 
-        let slots = lf_checker_rt::relocated(G_SLOTS);
-        let ebx = rd32(lf_checker_rt::relocated(G_CUR_INDEX));
-        let mut pair = lf_checker_rt::callee_cdecl!(1, u32, ebx, 0x19_u32);
-        if pair == NO_LINK {
-            pair = ALT_PAIR;
+        let idx: u32 = rd32(INDEX);
+        let mut row: u32 = 0;
+        let mut mode: u32 = 0;
+        let mut resolved: u32 = lf_checker_rt::callee_cdecl!(CAL_F, u32, idx, 0x19u32);
+        if resolved == NONE {
+            resolved = 0x2B;
         }
-        let dev_row = lf_checker_rt::relocated(T_DEVS).wrapping_add(ebx.wrapping_mul(24));
-        let n = rd16(dev_row.wrapping_add(4)) as i32;
-        let mut found = 0u32;
-        let mut mode = 0i32;
-        if n > 0 {
-            let recs = rd32(dev_row);
-            let mut c = 0i32;
-            loop {
-                if rd8(recs.wrapping_add((c as u32).wrapping_mul(REC_LEN).wrapping_add(REC_TAG))) == TAG {
-                    found = c as u32;
-                    let key = rd16(recs.wrapping_add((c as u32).wrapping_mul(REC_LEN).wrapping_add(REC_KEY))) as i16 as i32;
-                    let id = rd8(recs.wrapping_add((c as u32).wrapping_mul(REC_LEN).wrapping_add(REC_ID)));
-                    let g = rd32(slots.wrapping_add((key as u32).wrapping_mul(4)));
-                    let mut t = lf_checker_rt::relocated(T_DEFS);
-                    let end = lf_checker_rt::relocated(T_DEF_END);
-                    loop {
-                        if rd32(t) == id as u32 {
-                            let q = rd32(t.wrapping_add(4));
-                            mode = rd32(q.wrapping_add(g.wrapping_mul(24).wrapping_add(0x14))) as i32;
-                            break;
-                        }
-                        t = t.wrapping_add(12);
-                        if t >= end {
-                            break;
-                        }
+        let entry: u32 = idx.wrapping_mul(3).wrapping_mul(8);
+        let count: i32 = rd16(DIR.wrapping_add(entry).wrapping_add(DIR_COUNT_OFF)) as i32;
+        if count > 0 {
+            let rows: u32 = rd32(DIR.wrapping_add(entry));
+            let mut i: u32 = 0;
+            let mut found: u32 = count as u32;
+            while i < count as u32 {
+                if rd8(rows.wrapping_add(i.wrapping_mul(ROW_STRIDE))) == ROW_TAG {
+                    found = i;
+                    break;
+                }
+                i += 1;
+            }
+            if found < count as u32 {
+                row = found;
+                let base: u32 = rows.wrapping_add(found.wrapping_mul(ROW_STRIDE));
+                let w: i32 = rd16(base.wrapping_add(ROW_WORD_OFF)) as i16 as i32;
+                let key: u8 = rd8(base.wrapping_add(ROW_KEY_OFF));
+                let v: u32 = val_at(w as u32);
+                let mut p: u32 = KEYTAB;
+                let mut j: u32 = 0;
+                let mut hit: bool = false;
+                while p < KEYTAB_END {
+                    if rd32(p) == key as u32 {
+                        hit = true;
+                        break;
                     }
-                    break;
+                    p += 0x0C;
+                    j += 1;
                 }
-                c += 1;
-                if c >= n {
-                    break;
+                if hit {
+                    let pt: u32 = rd32(KEYTAB.wrapping_add(4).wrapping_add(j.wrapping_mul(12)));
+                    mode = rd32(pt.wrapping_add(v.wrapping_mul(24)).wrapping_add(0x14));
                 }
             }
         }
-        let gpair = rd32(slots.wrapping_add(pair.wrapping_mul(4)));
-        let esi = lf_checker_rt::callee_cdecl!(2, u32, found, gpair, ebx);
-        if mode >= 3 && (mode <= 4 || mode == 0x0f) {
-            let mut x = lf_checker_rt::callee_cdecl!(3, u32, esi, 0x1a_u32);
-            if x == NO_LINK {
-                x = 0x55;
+        let cur: u32 = val_at(resolved);
+        let handle: u32 = lf_checker_rt::callee_cdecl!(CAL_G, u32, row, cur, idx);
+        let m: i32 = mode as i32;
+        if m >= 3 && (m <= 4 || m == 0x0F) {
+            let mut r: u32 = lf_checker_rt::callee_cdecl!(CAL_F, u32, handle, 0x1Au32);
+            if r == NONE {
+                r = 0x55;
             }
-            wr32(slots.wrapping_add(x.wrapping_mul(4)), 1);
-            let mut y = lf_checker_rt::callee_cdecl!(4, u32, esi, 0x1d_u32);
-            if y == NO_LINK {
-                y = 0x2e;
+            val_set(r, 1);
+            r = lf_checker_rt::callee_cdecl!(CAL_F, u32, handle, 0x1Du32);
+            if r == NONE {
+                r = 0x2E;
             }
-            wr32(slots.wrapping_add(y.wrapping_mul(4)), 0);
-            let mut z = lf_checker_rt::callee_cdecl!(5, u32, esi, 0x1e_u32);
-            if z == NO_LINK {
-                z = 0x2f;
+            val_set(r, 0);
+            r = lf_checker_rt::callee_cdecl!(CAL_F, u32, handle, 0x1Eu32);
+            if r == NONE {
+                r = 0x2F;
             }
-            wr32(slots.wrapping_add(z.wrapping_mul(4)), 0);
-            let mut w = 0x77u32;
+            val_set(r, 0);
+            let mut s: u32 = 0x77;
             loop {
-                // The original skips NO_LINK here; w never reaches it.
-                if w != NO_LINK {
-                    wr32(slots.wrapping_add(w.wrapping_mul(4)), 0);
+                if s != NONE {
+                    val_set(s, 0);
                 }
-                w = w.wrapping_add(1);
-                if w > 0x88 {
+                s += 1;
+                if s > 0x88 {
                     break;
                 }
             }
-            return w;
+            0x89
+        } else {
+            let mut r: u32 = lf_checker_rt::callee_cdecl!(CAL_F, u32, handle, 0x1Au32);
+            if r == NONE {
+                return NONE;
+            }
+            val_set(r, 1);
+            r = lf_checker_rt::callee_cdecl!(CAL_F, u32, handle, 0x1Cu32);
+            if r == NONE {
+                return NONE;
+            }
+            val_set(r, 0);
+            r
         }
-        let x = lf_checker_rt::callee_cdecl!(6, u32, esi, 0x1a_u32);
-        if x == NO_LINK {
-            return x;
-        }
-        wr32(slots.wrapping_add(x.wrapping_mul(4)), 1);
-        let y = lf_checker_rt::callee_cdecl!(7, u32, esi, 0x1c_u32);
-        if y == NO_LINK {
-            return y;
-        }
-        wr32(slots.wrapping_add(y.wrapping_mul(4)), 0);
-        y
     }
 });
