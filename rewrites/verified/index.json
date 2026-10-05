@@ -51381,6 +51381,24 @@
   "lane": "r-b296"
  },
  {
+  "address": "0x0096E680",
+  "name": "audio graph node init",
+  "kind": "function",
+  "file": "functions/fn_0096e680.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b551"
+ },
+ {
+  "address": "0x0096E970",
+  "name": "audio emitter distance update",
+  "kind": "function",
+  "file": "functions/fn_0096e970.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b551"
+ },
+ {
   "address": "0x0096F860",
   "name": "audio_dual_fade_update",
   "kind": "function",
@@ -69019,6 +69037,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "a-V04"
+ },
+ {
+  "address": "0x00ACE640",
+  "name": "audio_voice_render",
+  "kind": "function",
+  "file": "functions/fn_00ace640.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b549"
  },
  {
   "address": "0x00ACECA0",
@@ -115891,6 +115918,15 @@
   "trials": 1100,
   "checker": "version 2",
   "lane": "r-b43"
+ },
+ {
+  "address": "0x00D916C0",
+  "name": "audio_zone_update_walk",
+  "kind": "function",
+  "file": "functions/fn_00d916c0.rs",
+  "trials": 1100,
+  "checker": "version 6",
+  "lane": "r-b546"
  },
  {
   "address": "0x00D92000",
