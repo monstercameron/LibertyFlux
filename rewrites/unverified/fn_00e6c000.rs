@@ -11,12 +11,12 @@
 /// Original: 0x00E6C000, cdecl, no arguments.
 export!(cdecl, rw_00e6c000() -> u32 {
     unsafe {
-        use core::arch::x86::{_mm_cvtss_f32, _mm_cvtsd_ss, _mm_setzero_ps};
+        use core::arch::x86::{_mm_cvtss_f32, _mm_cvtsd_ss, _mm_set_sd, _mm_setzero_ps};
         const SRC: u32 = 0xE9B9E0;
         const DST: u32 = 0x171BC08;
         let _loaded = *global::<u64>(SRC);
-        let r: f64 = callee_cdecl!(1, f64);
-        let v = _mm_cvtss_f32(_mm_cvtsd_ss(_mm_setzero_ps(), core::mem::transmute(r)));
+        let r: f64 = callee_cdecl!(1, f64,);
+        let v = _mm_cvtss_f32(_mm_cvtsd_ss(_mm_setzero_ps(), _mm_set_sd(r)));
         *global::<u32>(DST) = v.to_bits();
         0
     }

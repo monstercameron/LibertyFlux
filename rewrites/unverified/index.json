@@ -1376,14 +1376,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x009C1940",
-  "name": "triage pending",
-  "file": "fn_009c1940.rs",
-  "lane": "r-b443",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x009CBBC0",
   "name": null,
   "file": "fn_009cbbc0.rs",
@@ -1502,14 +1494,6 @@
   "lane": "r-b166",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00B1D100",
-  "name": "PC10",
-  "file": "fn_00b1d100.rs",
-  "lane": "r-s443",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00B37240",
@@ -1960,6 +1944,38 @@
   "reason": null
  },
  {
+  "address": "0x00C3AC20",
+  "name": "CTrain::vf59",
+  "file": "fn_00c3ac20.rs",
+  "lane": "r-s448",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C3E650",
+  "name": "tbd",
+  "file": "fn_00c3e650.rs",
+  "lane": "r-s448",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C3E860",
+  "name": "tbd",
+  "file": "fn_00c3e860.rs",
+  "lane": "r-s448",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C3ECD0",
+  "name": "tbd",
+  "file": "fn_00c3ecd0.rs",
+  "lane": "r-s448",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00C3F0D0",
   "name": "timing_channels_update",
   "file": "fn_00c3f0d0.rs",
@@ -1987,6 +2003,14 @@
   "address": "0x00C80E60",
   "name": "fn_00c80e60",
   "file": "fn_00c80e60.rs",
+  "lane": "r-s442",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C80EB0",
+  "name": "CTaskComplexSeatedScenario::vf23",
+  "file": "fn_00c80eb0.rs",
   "lane": "r-s442",
   "outcome": "not_reached",
   "reason": null
@@ -2198,22 +2222,6 @@
   "lane": "r-s84",
   "outcome": "not yet run",
   "reason": null
- },
- {
-  "address": "0x00CD6A00",
-  "name": "CTaskSimpleGetUp::vf5",
-  "file": "fn_00cd6a00.rs",
-  "lane": "r-b444",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x00CD6B00",
-  "name": "peds_task_00CD6B00",
-  "file": "fn_00cd6b00.rs",
-  "lane": "r-b444",
-  "outcome": "not_reached",
-  "reason": ""
  },
  {
   "address": "0x00CD9860",
@@ -2536,209 +2544,65 @@
   "reason": "other"
  },
  {
-  "address": "0x00D44AB0",
-  "name": "peds_task_weighted_pick",
-  "file": "fn_00d44ab0.rs",
-  "lane": "r-b445",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00D54770",
-  "name": "ccam_shake_ctor",
-  "file": "fn_00d54770.rs",
+  "address": "0x00D54600",
+  "name": "CCamFree::vf6",
+  "file": "fn_00d54600.rs",
   "lane": "r-s446",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00D54790",
-  "name": "ccam_shake_dtor",
-  "file": "fn_00d54790.rs",
+  "address": "0x00D54650",
+  "name": "ccam_free_clear_vec",
+  "file": "fn_00d54650.rs",
   "lane": "r-s446",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00D547B0",
-  "name": "CCamShake::vf0",
-  "file": "fn_00d547b0.rs",
+  "address": "0x00D54670",
+  "name": "ccam_init_float_params",
+  "file": "fn_00d54670.rs",
   "lane": "r-s446",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00D547E0",
-  "name": "ccam_debug_ctor",
-  "file": "fn_00d547e0.rs",
+  "address": "0x00D549F0",
+  "name": "ccam_lookup_param",
+  "file": "fn_00d549f0.rs",
   "lane": "r-s446",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00D54800",
-  "name": "ccam_debug_dtor",
-  "file": "fn_00d54800.rs",
+  "address": "0x00D54A20",
+  "name": "ccam_busted_init",
+  "file": "fn_00d54a20.rs",
   "lane": "r-s446",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00D54820",
-  "name": "CCamDebug::vf0",
-  "file": "fn_00d54820.rs",
+  "address": "0x00D55BB0",
+  "name": "ccam_idle_ctor",
+  "file": "fn_00d55bb0.rs",
   "lane": "r-s446",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00D54900",
-  "name": "ccam_2player_ctor",
-  "file": "fn_00d54900.rs",
+  "address": "0x00D56100",
+  "name": "ccam_init_timing_params",
+  "file": "fn_00d56100.rs",
   "lane": "r-s446",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00D54920",
-  "name": "ccam_2player_dtor",
-  "file": "fn_00d54920.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D54940",
-  "name": "CCam2Player::vf0",
-  "file": "fn_00d54940.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D54970",
-  "name": "ccam_busted_ctor",
-  "file": "fn_00d54970.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D54990",
-  "name": "ccam_busted_dtor",
-  "file": "fn_00d54990.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D549B0",
-  "name": "CCamBusted::vf0",
-  "file": "fn_00d549b0.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D55270",
-  "name": "ccam_wasted_ctor",
-  "file": "fn_00d55270.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D55290",
-  "name": "ccam_wasted_dtor",
-  "file": "fn_00d55290.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D552B0",
-  "name": "CCamWasted::vf0",
-  "file": "fn_00d552b0.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D55BE0",
-  "name": "ccam_idle_dtor",
-  "file": "fn_00d55be0.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D55C00",
-  "name": "CCamIdle::vf0",
-  "file": "fn_00d55c00.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D56E30",
-  "name": "ccam_photo_ctor",
-  "file": "fn_00d56e30.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D56E50",
-  "name": "ccam_photo_dtor",
-  "file": "fn_00d56e50.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D56E70",
-  "name": "CCamPhoto::vf0",
-  "file": "fn_00d56e70.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D56EA0",
-  "name": "ccam_1stperson_ctor",
-  "file": "fn_00d56ea0.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D56EC0",
-  "name": "ccam_1stperson_dtor",
-  "file": "fn_00d56ec0.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D56EE0",
-  "name": "CCam1stPerson::vf0",
-  "file": "fn_00d56ee0.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D56F10",
-  "name": "ccam_follow_ctor",
-  "file": "fn_00d56f10.rs",
-  "lane": "r-s446",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D56F30",
-  "name": "ccam_follow_dtor",
-  "file": "fn_00d56f30.rs",
+  "address": "0x00D56D60",
+  "name": "ccam_mark_active",
+  "file": "fn_00d56d60.rs",
   "lane": "r-s446",
   "outcome": "not_reached",
   "reason": null
