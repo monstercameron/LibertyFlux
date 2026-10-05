@@ -1416,289 +1416,49 @@
   "reason": null
  },
  {
-  "address": "0x00A4AD10",
-  "name": "vehicle_call_with_global_this",
-  "file": "fn_00a4ad10.rs",
+  "address": "0x00A4C930",
+  "name": "vehicle_attach_links",
+  "file": "fn_00a4c930.rs",
   "lane": "r-s455",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00A4C780",
-  "name": "vehicle_release_f50",
-  "file": "fn_00a4c780.rs",
+  "address": "0x00A4C9D0",
+  "name": "vehicle_emit_event",
+  "file": "fn_00a4c9d0.rs",
   "lane": "r-s455",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00A4C890",
-  "name": "vehicle_remove_from_array",
-  "file": "fn_00a4c890.rs",
+  "address": "0x00A4E0B0",
+  "name": "CVehicle::vf76",
+  "file": "fn_00a4e0b0.rs",
   "lane": "r-s455",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00A4D430",
-  "name": "vehicle_set_slot4",
-  "file": "fn_00a4d430.rs",
+  "address": "0x00A4E4F0",
+  "name": "vehicle_unlink_pair",
+  "file": "fn_00a4e4f0.rs",
   "lane": "r-s455",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00A4DAC0",
-  "name": "vehicle_flag_and_floats",
-  "file": "fn_00a4dac0.rs",
-  "lane": "r-s455",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4EAB0",
-  "name": "vehicle_set_ptr_logged",
-  "file": "fn_00a4eab0.rs",
+  "address": "0x00A4F690",
+  "name": "vehicle_dispatch_kind3",
+  "file": "fn_00a4f690.rs",
   "lane": "r-s452",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00A4EC10",
-  "name": "CVehicle::vf85",
-  "file": "fn_00a4ec10.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4EC40",
-  "name": "vehicle_maybe_flag_f1d",
-  "file": "fn_00a4ec40.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4ECD0",
-  "name": "sort_adjust_heap",
-  "file": "fn_00a4ecd0.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4ED40",
-  "name": "sort_insertion_dispatch",
-  "file": "fn_00a4ed40.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4ED90",
-  "name": "sort_insertion_unguarded",
-  "file": "fn_00a4ed90.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4EE00",
-  "name": "sort_introsort_loop",
-  "file": "fn_00a4ee00.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4EED0",
-  "name": "sort_make_heap",
-  "file": "fn_00a4eed0.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4EF20",
-  "name": "sort_heap_sort",
-  "file": "fn_00a4ef20.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4EFC0",
-  "name": "sort_push_heap",
-  "file": "fn_00a4efc0.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4F030",
-  "name": "sort_insertion_guarded",
-  "file": "fn_00a4f030.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4F060",
-  "name": "sort_linear_insert",
-  "file": "fn_00a4f060.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4F0A0",
-  "name": "sort_partition",
-  "file": "fn_00a4f0a0.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4F110",
-  "name": "sort_make_heap_wrap",
-  "file": "fn_00a4f110.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4F130",
-  "name": "sort_heapsort_wrap",
-  "file": "fn_00a4f130.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4F150",
-  "name": "sort_pop_heap",
-  "file": "fn_00a4f150.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4F180",
-  "name": "sort_std_sort",
-  "file": "fn_00a4f180.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4F3C0",
-  "name": "vehicle_clear_bit1",
-  "file": "fn_00a4f3c0.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4F7F0",
-  "name": "vehicle_find_slot_by_ptr",
-  "file": "fn_00a4f7f0.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4F830",
-  "name": "vehicle_slot_index_addr",
-  "file": "fn_00a4f830.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4FB80",
-  "name": "vehicle_slot_pos_call",
-  "file": "fn_00a4fb80.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A4FF80",
-  "name": "vehicle_count_free_slots",
-  "file": "fn_00a4ff80.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A50610",
-  "name": "vehicle_teardown_all_slots",
-  "file": "fn_00a50610.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A51830",
-  "name": "vehicle_tune_gears",
-  "file": "fn_00a51830.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A52350",
-  "name": "vehicle_box_from_center",
-  "file": "fn_00a52350.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A531C0",
-  "name": "vehicle_emit_box",
-  "file": "fn_00a531c0.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A53240",
-  "name": "vehicle_add_part",
-  "file": "fn_00a53240.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A53290",
-  "name": "vehicle_add_part_auto",
-  "file": "fn_00a53290.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A532B0",
-  "name": "vehicle_find_int",
-  "file": "fn_00a532b0.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A55BC0",
-  "name": "vehicle_dist_check",
-  "file": "fn_00a55bc0.rs",
-  "lane": "r-s452",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A55CD0",
-  "name": "vehicle_set_fields",
-  "file": "fn_00a55cd0.rs",
+  "address": "0x00A504A0",
+  "name": "vehicle_dispatch_kind3_b",
+  "file": "fn_00a504a0.rs",
   "lane": "r-s452",
   "outcome": "not_reached",
   "reason": null
@@ -1816,6 +1576,14 @@
   "reason": ""
  },
  {
+  "address": "0x00B30400",
+  "name": "ped_task_unknown_b",
+  "file": "fn_00b30400.rs",
+  "lane": "r-b457",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00B37240",
   "name": "pending-triage",
   "file": "fn_00b37240.rs",
@@ -1862,6 +1630,22 @@
   "lane": "r-s407",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00B65440",
+  "name": "fn_00B65440",
+  "file": "fn_00b65440.rs",
+  "lane": "r-s450",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B65CE0",
+  "name": "fn_00B65CE0",
+  "file": "fn_00b65ce0.rs",
+  "lane": "r-s450",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00B77C30",
@@ -2480,6 +2264,14 @@
   "reason": "abs_shadow_unavailable"
  },
  {
+  "address": "0x00C9D9D0",
+  "name": "proposed-tbd",
+  "file": "fn_00c9d9d0.rs",
+  "lane": "r-b450",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00CA00A0",
   "name": null,
   "file": "fn_00ca00a0.rs",
@@ -3008,59 +2800,11 @@
   "reason": "other"
  },
  {
-  "address": "0x00D3C120",
-  "name": "dummytask_helper_a",
-  "file": "fn_00d3c120.rs",
-  "lane": "r-b453",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x00D82CD0",
   "name": null,
   "file": "fn_00d82cd0.rs",
   "lane": "r-b212",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00DAC130",
-  "name": "tbd",
-  "file": "fn_00dac130.rs",
-  "lane": "r-b447",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DAC430",
-  "name": "tbd",
-  "file": "fn_00dac430.rs",
-  "lane": "r-b447",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DAC610",
-  "name": "tbd",
-  "file": "fn_00dac610.rs",
-  "lane": "r-b447",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DACA00",
-  "name": "tbd",
-  "file": "fn_00daca00.rs",
-  "lane": "r-b447",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DACB90",
-  "name": "tbd",
-  "file": "fn_00dacb90.rs",
-  "lane": "r-b447",
-  "outcome": "not_reached",
   "reason": null
  },
  {
