@@ -11,8 +11,8 @@
 /// run in order until one's answer equals the type id (or all three run). Two
 /// gather calls fill scratch cells, then the manager object is asked for the
 /// handle for (type id, 0, 0); a null handle returns 0. A matrix call takes
-/// three cell pointers and fills a fourteen-word block, an apply call takes
-/// that block plus a leading never-stored word, and the flag byte shifted
+/// two cell pointers plus a flag word and fills a fifteen-word block, an
+/// apply call takes that block, and the flag byte shifted
 /// right by one is converted to float and pushed into the handle. Bit 0 of
 /// the flag then selects between pushing 1.0 under one key or 0.0 under
 /// another; a post call runs, and the handle's stamp slot (`+0x1d4`) gets the
@@ -83,18 +83,17 @@ lf_checker_rt::export!(thiscall, rw_00bf93e0(this: u32, a: u32) -> u32 {
         if handle == 0 {
             return 0;
         }
-        let mut cell34 = [0u32; 14];
+        let mut cell30 = [0u32; 15];
         lf_checker_rt::callee_cdecl!(
             C_MAT,
             u32,
-            cell34.as_mut_ptr() as u32,
-            cell20.as_mut_ptr().add(1) as u32,
-            cell10.as_mut_ptr().add(1) as u32
+            cell30.as_mut_ptr() as u32,
+            cell20.as_mut_ptr() as u32,
+            cell10.as_mut_ptr() as u32,
+            0
         );
-        // Block: one never-stored word plus the fourteen matrix words.
-        let mut blk = [0u32; 15];
-        blk[1..].copy_from_slice(&cell34);
-        lf_checker_rt::callee_thiscall!(C_APPLY, u32, handle, blk.as_mut_ptr() as u32);
+        // The apply call takes the matrix block itself.
+        lf_checker_rt::callee_thiscall!(C_APPLY, u32, handle, cell30.as_mut_ptr() as u32);
         let flag = (rd32(this.wrapping_add(FLAG)) & 0xff) as u8;
         let scaled = (flag.wrapping_shr(1) as u32) as f32;
         lf_checker_rt::callee_thiscall!(C_SCALE, u32, handle, scaled.to_bits());

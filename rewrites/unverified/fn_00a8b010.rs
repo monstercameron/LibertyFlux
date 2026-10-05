@@ -1,85 +1,87 @@
-// original: 0x00a8b010 pool_append_entry_copy (proposed)
+// original: 0x00A8B010 pool_record_clone (proposed)
 
-/// Append a pool entry copied from another entry plus new field values.
+/// Clone a pool record into the next free slot, overriding its fields.
 ///
-/// `this` is the pool (live count at +0x9C4, entries of 0x64 bytes from
-/// +0). The new entry at index `count` takes its name from the entry at
-/// `src_idx` (+0x34, NUL-terminated copy), its label from `label` (+0x54),
-/// five header words from the source entry (+0, +0x1C, +0x20, +0x24,
-/// +0x28), and the remaining words from the trailing arguments (+4, +0x2C,
-/// +0x30, +0x10, +0x14, +0x18, +8, +0xC, bytes +0x5C/+0x5D, +0x60). Then
-/// the count is incremented, the following entry's link word (+0x58) takes
-/// the new entry's stale link, and the new entry's link takes the source
-/// entry's. Returns the previous count. The proof pins the count to 0..3
-/// and NUL-pins both strings.
+/// The pool holds 100-byte records inline from `this`; slot `count`
+/// (`this+0x9C4`) is the destination and stack argument `src_idx` the source.
+/// The two name strings (record `+0x34` from the source row, `+0x54` from the
+/// `name` argument) are copied byte by byte with the terminator; five words
+/// (`+0`, `+0x1C`, `+0x20`, `+0x24`, `+0x28`) are copied from the source row
+/// and the remaining fields come from the stack arguments. The count is then
+/// incremented: the link word at `+0x58` of the new slot is carried to the
+/// following slot and the source row's link takes its place. Returns the old
+/// count. No calls.
 ///
-/// Original: 0x00A8B010 (thiscall, thirteen stack words).
-lf_checker_rt::export!(thiscall, rw_00a8b010(
+/// Original: thiscall, thirteen stack words, returns u32 in EAX.
+lf_checker_rt::export!(thiscall, rw_00A8B010(
     this: u32,
     src_idx: u32,
-    label: u32,
-    a3: u32,
-    a4: u32,
-    a5: u32,
-    a6: u32,
-    a7: u32,
-    a8: u32,
-    a9: u32,
-    a10: u32,
-    a11: u32,
-    a12: u32,
-    a13: u32,
+    name: u32,
+    f04: u32,
+    f2c: u32,
+    f30: u32,
+    f10: u32,
+    f14: u32,
+    f18: u32,
+    f08: u32,
+    f0c: u32,
+    b5c: u32,
+    b5d: u32,
+    f60: u32,
 ) -> u32 {
     unsafe {
-        const COUNT: u32 = 0x9c4;
-        const ENTRY_SIZE: u32 = 0x64;
-        const NAME: u32 = 0x34;
-        const LABEL: u32 = 0x54;
+        const COUNT_OFF: u32 = 0x9c4;
+        const REC: u32 = 100;
+        const NAME_A: u32 = 0x34;
+        const NAME_B: u32 = 0x54;
         const LINK: u32 = 0x58;
-        const HDR: [u32; 5] = [0, 0x1c, 0x20, 0x24, 0x28];
-        let count = ((this + COUNT) as *const u32).read_unaligned();
-        let dst = this.wrapping_add(count.wrapping_mul(ENTRY_SIZE));
-        let src = this.wrapping_add(src_idx.wrapping_mul(ENTRY_SIZE));
-        let mut i = 0u32;
+        let count = ((this + COUNT_OFF) as *const u32).read_unaligned();
+        let dst = this.wrapping_add(count.wrapping_mul(REC));
+        let src = this.wrapping_add(src_idx.wrapping_mul(REC));
+        let mut p = src.wrapping_add(NAME_A);
+        let mut q = dst.wrapping_add(NAME_A);
         loop {
-            let b = ((src + NAME + i) as *const u8).read();
-            ((dst + NAME + i) as *mut u8).write(b);
+            let b = (p as *const u8).read();
+            (q as *mut u8).write(b);
+            p = p.wrapping_add(1);
+            q = q.wrapping_add(1);
             if b == 0 {
                 break;
             }
-            i = i.wrapping_add(1);
         }
-        let mut j = 0u32;
+        let mut p = name;
+        let mut q = dst.wrapping_add(NAME_B);
         loop {
-            let b = ((label + j) as *const u8).read();
-            ((dst + LABEL + j) as *mut u8).write(b);
+            let b = (p as *const u8).read();
+            (q as *mut u8).write(b);
+            p = p.wrapping_add(1);
+            q = q.wrapping_add(1);
             if b == 0 {
                 break;
             }
-            j = j.wrapping_add(1);
         }
-        for k in 0..5 {
-            let w = ((src + HDR[k]) as *const u32).read_unaligned();
-            ((dst + HDR[k]) as *mut u32).write_unaligned(w);
+        for off in [0u32, 0x1c, 0x20, 0x24, 0x28] {
+            let v = ((src + off) as *const u32).read_unaligned();
+            ((dst + off) as *mut u32).write_unaligned(v);
         }
-        ((dst + 4) as *mut u32).write_unaligned(a3);
-        ((dst + 0x2c) as *mut u32).write_unaligned(a4);
-        ((dst + 0x30) as *mut u32).write_unaligned(a5);
-        ((dst + 0x10) as *mut u32).write_unaligned(a6);
-        ((dst + 0x14) as *mut u32).write_unaligned(a7);
-        ((dst + 0x18) as *mut u32).write_unaligned(a8);
-        ((dst + 8) as *mut u32).write_unaligned(a9);
-        ((dst + 0xc) as *mut u32).write_unaligned(a10);
-        ((dst + 0x5c) as *mut u8).write(a11 as u8);
-        ((dst + 0x5d) as *mut u8).write(a12 as u8);
-        ((dst + 0x60) as *mut u32).write_unaligned(a13);
+        ((dst + 4) as *mut u32).write_unaligned(f04);
+        ((dst + 0x2c) as *mut u32).write_unaligned(f2c);
+        ((dst + 0x30) as *mut u32).write_unaligned(f30);
+        ((dst + 0x10) as *mut u32).write_unaligned(f10);
+        ((dst + 0x14) as *mut u32).write_unaligned(f14);
+        ((dst + 0x18) as *mut u32).write_unaligned(f18);
+        ((dst + 8) as *mut u32).write_unaligned(f08);
+        ((dst + 0xc) as *mut u32).write_unaligned(f0c);
+        ((dst + 0x5c) as *mut u8).write(b5c as u8);
+        ((dst + 0x5d) as *mut u8).write(b5d as u8);
+        ((dst + 0x60) as *mut u32).write_unaligned(f60);
         let new_count = count.wrapping_add(1);
-        ((this + COUNT) as *mut u32).write_unaligned(new_count);
-        let next = this.wrapping_add(new_count.wrapping_mul(ENTRY_SIZE));
-        let stale = ((dst + LINK) as *const u32).read_unaligned();
-        ((next + LINK) as *mut u32).write_unaligned(stale);
-        let src_link = ((src + LINK) as *const u32).read_unaligned();
-        ((dst + LINK) as *mut u32).write_unaligned(src_link);
+        ((this + COUNT_OFF) as *mut u32).write_unaligned(new_count);
+        let next = this.wrapping_add(new_count.wrapping_mul(REC));
+        let carried = ((dst + LINK) as *const u32).read_unaligned();
+        ((next + LINK) as *mut u32).write_unaligned(carried);
+        let from_src = ((src + LINK) as *const u32).read_unaligned();
+        ((dst + LINK) as *mut u32).write_unaligned(from_src);
         count
     }
 });

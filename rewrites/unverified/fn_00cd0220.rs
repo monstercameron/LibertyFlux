@@ -7,8 +7,9 @@
 /// `a1` is a ped object (flag bytes at `+PED_F0/F1`, float-array link at
 /// `+PED_VEC`); `a2` is an opaque value forwarded as `this` to the query
 /// callees; `a3` points to one dword consumed by the resolver; `a4` is the
-/// out flag, cleared on entry and set to 1 on success. Returns 1 with the
-/// flag set when the attack is accepted, else 0 (thiscall, AL is the result).
+/// out flag, cleared on entry. Returns 1 when the attack is accepted, else 0
+/// (thiscall, AL is the result). Only the fast path sets the flag to 1;
+/// success through either validation call returns 1 with the flag still 0.
 ///
 /// Behaviour: after a gate query and clearing the flag, a set bit 1 in the
 /// task flags selects the fast path (a six-argument validation call, then a
@@ -26,17 +27,15 @@
 /// Original: 0x00CD0220 (thiscall, four stack words; returns AL with
 /// nonzero upper bytes left over, so the contract compares AL only).
 lf_checker_rt::export!(thiscall, rw_00CD0220(this: u32, a1: u32, a2: u32, a3: u32, a4: u32) -> u32 {
-    // Final validation call shared by the slow path.
-    unsafe fn finish(a1: u32, a2: u32, a3: u32, a4: u32) -> u32 {
+    // Final validation call shared by the slow path. Success here returns
+    // 1 but leaves the out flag as it was (the jump lands past the flag
+    // store); only the fast path sets the flag.
+    unsafe fn finish(a1: u32, a2: u32, a3: u32, _a4: u32) -> u32 {
         unsafe {
             let ok: u32 = lf_checker_rt::callee_thiscall!(
                 12, u32, a2, a1, a3, 0u32, 0u32, 0u32, 0u32
             );
-            if (ok as u8) != 0 {
-                ((a4) as *mut u8).write(1);
-                return 1;
-            }
-            0
+            u32::from((ok as u8) != 0)
         }
     }
 
@@ -73,12 +72,11 @@ lf_checker_rt::export!(thiscall, rw_00CD0220(this: u32, a1: u32, a2: u32, a3: u3
                     )
                 }
             }
-            // The callee fills three floats at the passed pointer (the lea
-            // runs after the first push, so the pointer aims at the first
-            // word the original later reads back).
+            // The callee fills three floats at the pointer it takes as its
+            // first parameter (pushed last); the id word is the second.
             let mut buf = [0u32; 3];
             let pid = ((this + 0x50) as *const u32).read_unaligned();
-            lf_checker_rt::callee_cdecl!(9, u32, pid, buf.as_mut_ptr() as u32);
+            lf_checker_rt::callee_cdecl!(9, u32, buf.as_mut_ptr() as u32, pid);
             let base = ((a1 + 0x20) as *const u32).read_unaligned();
             let dx = sub(
                 f32::from_bits(((base + 0x30) as *const u32).read_unaligned()),
@@ -177,7 +175,7 @@ lf_checker_rt::export!(thiscall, rw_00CD0220(this: u32, a1: u32, a2: u32, a3: u3
                 6, u32, a2, a1, a3, 0u32, 0u32, 0u32, 0u32
             );
             if (ok as u8) != 0 {
-                wr8(a4, 1);
+                // As in `finish`: success without touching the out flag.
                 return 1;
             }
             return 0;
