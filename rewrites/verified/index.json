@@ -44748,6 +44748,15 @@
   "lane": "a-17"
  },
  {
+  "address": "0x008D6EE0",
+  "name": "build_grid_block_and_test",
+  "kind": "function",
+  "file": "functions/fn_008d6ee0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q01"
+ },
+ {
   "address": "0x008D70E0",
   "name": "clamp_lerp",
   "kind": "function",
@@ -115423,6 +115432,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s89"
+ },
+ {
+  "address": "0x00D8E840",
+  "name": "audio_voice_release_all",
+  "kind": "function",
+  "file": "functions/fn_00d8e840.rs",
+  "trials": 1100,
+  "checker": "version 6",
+  "lane": "r-b553"
  },
  {
   "address": "0x00D8EA00",

@@ -29,9 +29,9 @@
 /// `ja` after `comiss` is Rust `>`; `jbe` is `!(>)`; `jb` is `<`; `setae`
 /// and `cmovae` are `>=`; the `ucomiss`+`lahf`+`(an instruction of the original)`+`jp` idiom is
 /// Rust `!=` against `+0.0`. Arithmetic uses explicit-operand-order helpers
-/// matching the SSE NaN rule (destination NaN wins quieted, else source NaN,
-/// else the hardware op), because LLVM reorders operands at opt-level 3 and
-/// two-NaN payload forwarding follows the destination.
+/// matching the SSE NaN rule (signalling NaN wins, else quiet NaN
+/// destination-first, else the hardware op), because LLVM reorders operands
+/// at opt-level 3 and two-NaN payload forwarding is positional.
 ///
 /// Two frame words are read without ever being written (`B+0x20`, feeding
 /// the fill struct, and `B+0x2C`, inside the notify struct): the contract
@@ -44,12 +44,30 @@ fn is_nan_bits(b: u32) -> bool {
     (b & 0x7F80_0000) == 0x7F80_0000 && (b & 0x007F_FFFF) != 0
 }
 #[inline(always)]
+fn is_snan_bits(b: u32) -> bool {
+    (b & 0x7F80_0000) == 0x7F80_0000
+        && (b & 0x007F_FFFF) != 0
+        && (b & 0x0040_0000) == 0
+}
+#[inline(always)]
 fn quiet(b: u32) -> u32 {
     b | 0x0040_0000
 }
 #[inline(always)]
+// Scalar-SSE NaN rule, measured on the stock worker (two trials of
+// 0x00acce10 pin it from opposite sides): a signalling NaN wins over
+// everything (destination sNaN, then source sNaN), else a quiet NaN wins
+// destination-first, else the hardware op. Trial 22: addss of canonical
+// destination NaN and payload source sNaN forwards the source quieted.
+// Trial 0: an upstream op of two quiet NaNs forwards the destination.
 fn add_ss(d: f32, s: f32) -> f32 {
     let (db, sb) = (d.to_bits(), s.to_bits());
+    if is_snan_bits(db) {
+        return f32::from_bits(quiet(db));
+    }
+    if is_snan_bits(sb) {
+        return f32::from_bits(quiet(sb));
+    }
     if is_nan_bits(db) {
         return f32::from_bits(quiet(db));
     }
@@ -61,6 +79,12 @@ fn add_ss(d: f32, s: f32) -> f32 {
 #[inline(always)]
 fn sub_ss(d: f32, s: f32) -> f32 {
     let (db, sb) = (d.to_bits(), s.to_bits());
+    if is_snan_bits(db) {
+        return f32::from_bits(quiet(db));
+    }
+    if is_snan_bits(sb) {
+        return f32::from_bits(quiet(sb));
+    }
     if is_nan_bits(db) {
         return f32::from_bits(quiet(db));
     }
@@ -72,6 +96,12 @@ fn sub_ss(d: f32, s: f32) -> f32 {
 #[inline(always)]
 fn mul_ss(d: f32, s: f32) -> f32 {
     let (db, sb) = (d.to_bits(), s.to_bits());
+    if is_snan_bits(db) {
+        return f32::from_bits(quiet(db));
+    }
+    if is_snan_bits(sb) {
+        return f32::from_bits(quiet(sb));
+    }
     if is_nan_bits(db) {
         return f32::from_bits(quiet(db));
     }
@@ -83,6 +113,12 @@ fn mul_ss(d: f32, s: f32) -> f32 {
 #[inline(always)]
 fn div_ss(d: f32, s: f32) -> f32 {
     let (db, sb) = (d.to_bits(), s.to_bits());
+    if is_snan_bits(db) {
+        return f32::from_bits(quiet(db));
+    }
+    if is_snan_bits(sb) {
+        return f32::from_bits(quiet(sb));
+    }
     if is_nan_bits(db) {
         return f32::from_bits(quiet(db));
     }
