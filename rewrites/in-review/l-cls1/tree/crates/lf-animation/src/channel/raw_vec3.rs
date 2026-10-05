@@ -41,8 +41,9 @@ impl RawVec3 {
     }
 
     /// Blends keys `idx` and `idx + 1` at fraction `t`, per component:
-    /// the lower key plus the difference times `t`, in that order. The
-    /// padding words play no part.
+    /// the difference times `t`, plus the lower key, in that order (the
+    /// addition takes the product first, which the not-a-number payload
+    /// can observe). The padding words play no part.
     ///
     /// # Panics
     ///
@@ -52,9 +53,9 @@ impl RawVec3 {
         let lo = self.keys[idx as usize];
         let hi = self.keys[(idx as usize).wrapping_add(1)];
         Vec3 {
-            x: lo.x + (hi.x - lo.x) * t,
-            y: lo.y + (hi.y - lo.y) * t,
-            z: lo.z + (hi.z - lo.z) * t,
+            x: (hi.x - lo.x) * t + lo.x,
+            y: (hi.y - lo.y) * t + lo.y,
+            z: (hi.z - lo.z) * t + lo.z,
         }
     }
 

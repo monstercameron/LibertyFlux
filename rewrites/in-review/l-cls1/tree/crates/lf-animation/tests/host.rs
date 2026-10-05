@@ -247,7 +247,7 @@ fn raw_bool_sample_empty_panics() {
 // Raw vector.
 
 #[test]
-fn raw_vec3_lerp_adds_difference_times_t_to_lo() {
+fn raw_vec3_lerp_blends_difference_times_t_plus_lo() {
     let c = RawVec3::new(vec![
         v4(0.0, 0.0, 0.0, 1.0),
         v4(4.0, 8.0, 12.0, 2.0),
