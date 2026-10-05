@@ -43245,6 +43245,24 @@
   "lane": "r-s106"
  },
  {
+  "address": "0x009A8150",
+  "name": "script_slot_clear",
+  "kind": "function",
+  "file": "functions/fn_009a8150.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A8220",
+  "name": "script_slot_release",
+  "kind": "function",
+  "file": "functions/fn_009a8220.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
   "address": "0x009A86E0",
   "name": "entity_notify_all",
   "kind": "function",
@@ -43263,10 +43281,28 @@
   "lane": "r-s420"
  },
  {
+  "address": "0x009A8740",
+  "name": "audio_ptr_tailjump",
+  "kind": "function",
+  "file": "functions/fn_009a8740.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
   "address": "0x009A8780",
   "name": "audio_param_push",
   "kind": "function",
   "file": "functions/fn_009a8780.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A8810",
+  "name": "script_event_forward",
+  "kind": "function",
+  "file": "functions/fn_009a8810.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s420"
@@ -43299,6 +43335,15 @@
   "lane": "r-s420"
  },
  {
+  "address": "0x009A8A50",
+  "name": "audScriptAudioEntity::vf2",
+  "kind": "function",
+  "file": "functions/fn_009a8a50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
   "address": "0x009A8E00",
   "name": "flag_fetch_or_default",
   "kind": "function",
@@ -43321,6 +43366,15 @@
   "name": "flag_byte_store",
   "kind": "function",
   "file": "functions/fn_009a8e50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A8E90",
+  "name": "script_stop_forward",
+  "kind": "function",
+  "file": "functions/fn_009a8e90.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s420"
@@ -43492,6 +43546,15 @@
   "name": "conv_table_lookup_c",
   "kind": "function",
   "file": "functions/fn_009aa3b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009AA3F0",
+  "name": "table_scaled_random",
+  "kind": "function",
+  "file": "functions/fn_009aa3f0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s420"
