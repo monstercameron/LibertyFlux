@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-05",
-  "updated_at": "2026-10-05 03:12",
+  "updated_at": "2026-10-05 03:17",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -13,11 +13,11 @@
   "stages": {
     "identified": 37413,
     "named": 23555,
-    "rewritten": 12354,
-    "verified": 11739
+    "rewritten": 12367,
+    "verified": 11751
   },
   "structures": 340,
-  "symbols": 11851,
+  "symbols": 11863,
   "measured": [
     {
       "label": "Code section",
@@ -105,20 +105,20 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 12354,
+      "value": 12367,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 11739,
+      "value": 11751,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
   ],
   "activity": {
     "lanes_running": 10,
-    "lanes_finished": 1058,
+    "lanes_finished": 1059,
     "lanes_incomplete": 130,
     "devlog_entries": 401
   },
@@ -2460,8 +2460,8 @@
       "to": "0x009A961C",
       "count": 103,
       "named": 52,
-      "rewritten": 31,
-      "verified": 30
+      "rewritten": 36,
+      "verified": 35
     },
     {
       "stage": "identified",
@@ -2469,8 +2469,8 @@
       "to": "0x009AEF3D",
       "count": 61,
       "named": 26,
-      "rewritten": 16,
-      "verified": 15
+      "rewritten": 22,
+      "verified": 21
     },
     {
       "stage": "identified",
@@ -4115,8 +4115,8 @@
       "from": "0x00DA4D20",
       "to": "0x00DAA640",
       "count": 127,
-      "named": 83,
-      "rewritten": 64,
+      "named": 84,
+      "rewritten": 65,
       "verified": 63
     },
     {
@@ -4169,9 +4169,9 @@
       "from": "0x00DC63E9",
       "to": "0x00DCBD0A",
       "count": 118,
-      "named": 30,
-      "rewritten": 3,
-      "verified": 3
+      "named": 31,
+      "rewritten": 4,
+      "verified": 4
     },
     {
       "stage": "identified",
