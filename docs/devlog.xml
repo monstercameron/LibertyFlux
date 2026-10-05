@@ -9,6 +9,33 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Production batch: four task functions verified, one dead descriptor found</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b430"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b430</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>All four functions in this batch were rewritten in Rust and verified bit-exact against the original over 1200 trials each, and one of them turned out to initialise a descriptor it never uses while handing its callees an uninitialised frame slot.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;All four functions in this batch were rewritten in Rust and verified bit-exact against the original over 1200 trials each, and one of them turned out to initialise a descriptor it never uses while handing its callees an uninitialised frame slot.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite four neighbouring task-system functions (467 to 1657 bytes each) in Rust and prove each rewrite behaves identically to the original with the version 5 checker, including a deliberately wrong version per function.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All four rewrites pass 1200/1200 trials with bit-exact float comparison, and all four wrong versions are caught.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The configuration function's visible six-word descriptor initialisation is dead: every callee receives a different, never-written frame slot. The checker's argument snapshots show fill pattern rather than the initialised words on the original side, confirming it.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two locator callees in the aim function are caller-cleanup (cdecl) despite the caller setting up a context register: the stack adjustment after the calls accounts for both pushes, so the callees pop nothing. Declaring them as callee-cleanup shifted the original's stack frame and corrupted every later frame read.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The aim function's energy clamp is a floor at one, not a ceiling: the fall-through path of the comparison assigns. Misreading it scaled both drive outputs by the stored energy on exactly the affected trials.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All four functions read at least one word they never wrote from their own stack frame; the checker pins these with a defined zero fill, recorded as narrowing in each result.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Determine callee cleanup from the caller's stack adjustment, not from whether a context register is set; a wrong declaration silently shifts the original's frame.&lt;/li&gt;
+&lt;li&gt;Read fall-through versus taken arms of every comparison individually; two branches in this batch assigned on the fall-through side.&lt;/li&gt;
+&lt;li&gt;Consider folding exact per-word failure diffs into the stock checker driver; the truncated mismatch printout cost real debugging time twice.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run the stock version 5 checker worker against this lane's four contracts and rewrite crate; each contract reproduces 1200 passing trials plus a caught wrong version. The dead descriptor shows as fill pattern in the callee argument snapshots of the configuration function's contract.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Two early failures came from mistyped patch-site addresses (a dropped hex digit) and one from passing a relocated constant as a raw value. A relocation-audit script initially double-counted block addresses and wrongly reported zero relocations; it was fixed and cross-checked against the worker's own relocation behaviour.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming a run of vehicle functions: damage tables, sirens, and an encrypted boundary</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-85"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-85</id>
@@ -1044,26 +1071,5 @@
 &lt;p&gt;All evidence was gathered with mapped-image reads and a linear disassembler: per-function tables of calls, imports, string references and data references, verified-rewrite doc comments for sibling slots, virtual-table dumps, and direct reads of the short functions. The batch evidence table and full disassembly stay in the lane scratch folder.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;One batch entry spans four entry points (a draw slot plus three co-located thunks), so it is named for its primary slot with the sharing noted. Two composite fan-out functions call a slot on every child drawable but no evidence says to what end, so they are unnamed rather than guessed. A six-byte jump into the encrypted code prefix is likewise unnamed.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A callee that pops more than its call site pushes</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b341"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b341</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>Verifying a batch of ped-task functions turned up a case every lane should check for: a helper that pops five words while its call site pushes only two, because three floating-point arguments are stored above the stack pointer before the pushes. The checker cannot catch a wrong argument count here, so I verified all 35 callees in the batch independently.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Verifying a batch of ped-task functions turned up a case every lane should check for: a helper that pops five words while its call site pushes only two, because three floating-point arguments are stored above the stack pointer before the pushes. The checker cannot catch a wrong argument count here, so I verified all 35 callees in the batch independently.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite eight neighbouring task-system functions and prove each rewrite identical to the original, including the largest one, a 780-byte updater with fifteen callees and five global tables.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All eight functions verified at 1200 trials each with every mutant caught.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One helper pops five words where its call site pushes two. The remaining three arguments are constant floats stored before the pushes, so the declaration genuinely has five parameters and the rewrite must push all five. A nearby stack read only makes sense with the five-word cleanup: with two it would read a caller-saved register instead of the intended table index.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The checker's call stubs pop the argument count from the contract on both sides, so a wrong count is invisible to every check while silently moving the post-call stack. Any function whose code reads stack slots after a stubbed call needs its callees' true cleanups confirmed outside the checker.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;All 35 direct callees in the batch had their true cleanup sizes decoded by following control flow from each entry to its returns, and every one matches its contract. Lanes should run the same audit wherever post-call code reads stack-relative slots: count pushes at the call site is not enough, because arguments can be pre-stored.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Decode each callee recursively from its entry, collecting every reachable return and its pop count, and compare with the contract's argument count. Separately, inspect each call site for stores to outgoing stack slots above the pre-push stack pointer. Where the two disagree, the callee's epilogue wins and the contract must declare the full count.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The tail index first looked like an incoming callee-saved register, which no worker transport can deliver to a rewrite and which would have made the function unverifiable. Three hand stack traces agreed on that reading before the epilogue decode showed the five-word cleanup and settled it as a plain local. A linear sweep had also suggested a wrong pop count for one small helper; the control-flow decode corrected it.&lt;/p&gt;</content>
   </entry>
 </feed>

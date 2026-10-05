@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-05",
-  "updated_at": "2026-10-05 06:49",
+  "updated_at": "2026-10-05 06:55",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -13,11 +13,11 @@
   "stages": {
     "identified": 37413,
     "named": 25583,
-    "rewritten": 13133,
-    "verified": 12479
+    "rewritten": 13147,
+    "verified": 12484
   },
   "structures": 340,
-  "symbols": 12591,
+  "symbols": 12596,
   "measured": [
     {
       "label": "Code section",
@@ -105,22 +105,22 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 13133,
+      "value": 13147,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 12479,
+      "value": 12484,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
   ],
   "activity": {
-    "lanes_running": 16,
-    "lanes_finished": 1117,
+    "lanes_running": 13,
+    "lanes_finished": 1120,
     "lanes_incomplete": 131,
-    "devlog_entries": 423
+    "devlog_entries": 424
   },
   "map": [
     {
@@ -678,7 +678,7 @@
       "to": "0x0055A621",
       "count": 206,
       "named": 206,
-      "rewritten": 126,
+      "rewritten": 134,
       "verified": 126
     },
     {
@@ -1992,8 +1992,8 @@
       "to": "0x00887B49",
       "count": 133,
       "named": 42,
-      "rewritten": 36,
-      "verified": 30
+      "rewritten": 38,
+      "verified": 32
     },
     {
       "stage": "identified",
@@ -2658,8 +2658,8 @@
       "to": "0x00A23EFF",
       "count": 58,
       "named": 58,
-      "rewritten": 24,
-      "verified": 22
+      "rewritten": 25,
+      "verified": 23
     },
     {
       "stage": "named",
@@ -2991,8 +2991,8 @@
       "to": "0x00AF20DA",
       "count": 45,
       "named": 27,
-      "rewritten": 4,
-      "verified": 4
+      "rewritten": 7,
+      "verified": 6
     },
     {
       "stage": "identified",
