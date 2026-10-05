@@ -1,139 +1,83 @@
 // original: 0x00c7b4e0 CTaskComplexChatScenario::vf20
-
-/// Chat-scenario task update: advance one think tick of a ped's ambient-chat
-/// state machine and report the task id, or finish the task.
-///
-/// `this` is the task object, `ped` the ped it runs on (thiscall: `this` in
-/// ECX, `ped` the single stack word; callee pops 4). Returns the task id at
-/// `this+0x08`, or 0 once the task finishes (flag bit 1 set at `this+0x0c`).
-///
-/// Layout read: ped `+0x224` points at an intel block whose byte `+0x2dc` is
-/// set to 1 on entry; task bytes `+0x20`/`+0x1c` gate the entry check, dword
-/// `+0x0c` holds finish flag bit 0 (re-entrancy guard) and bit 1 (finished),
-/// `+0x24` a sub-object whose `+0x224` block (plus `0x44`) is searched for a
-/// task of type `0x163`, `+0x28` the chat state (0..6, anything else returns
-/// the id), `+0x2c` a countdown timer, `+0x34` a second kind field.
-///
-/// Behaviour: when the entry gate (`+0x20` set, `+0x1c` clear) is open, the
-/// task first offers the ped to its own virtual slot `+0x14` with kinds 1
-/// then 2; a true answer finishes. Otherwise the found sub-task's kind
-/// (`+0x28`) and the chat state drive a jump table: states 0/1 count the
-/// timer down by the frame delta and then start a speech line (state 0 needs
-/// the line to start, else the id is returned; state 1 always advances);
-/// states 2/3 wait while ambient speech plays, state 3 otherwise rolling two
-/// random gates before drawing a fresh timer; state 4 retires the sub-task;
-/// states 5/6 dispatch on the sub-task kind (5 redraws a timer or retires,
-/// 6 restarts at state 1, kind 2 with state 6 retires, anything else returns
-/// the id). When no sub-task is found the task offers kind 1 once more and
-/// otherwise returns the id.
-///
-/// Float order is the original's: timer decrement, `int_bits as f32` scaled
-/// by the random factor, and the double-scaled timer redraw. All `comiss`
-/// branches keep NaN semantics (`jb`/`jbe` taken on unordered).
+//
+// Pedestrian chat scenario tick: advance the scenario's state machine and
+// decide the sub-task the pedestrian runs this frame. `this` is the scenario
+// task, `ped` the pedestrian. Returns the task to run (the current sub-task
+// at `+0x08`) or null when the scenario yields (status bit 1 at `+0x0c`).
+//
+// Behaviour. Flag the ped's intelligence as scenario-driven
+// (`[ped+PED_INTEL]+INTEL_SCENARIO = 1`). An idle scenario (byte `+0x20`
+// clear with no pending guard at `+0x1c`) runs the body, otherwise the shared
+// gate re-polls the task's own sub-operation (vtable slot `SELF_VT_SUBOP`,
+// kinds 1 then 2) and yields when it accepts. The body resolves the chat
+// partner through the aux object (`+0x24`, partner lookup with key `0x163`);
+// a missing partner takes the yield epilogue. Otherwise the scenario state
+// (`+0x28`, 0..6) selects a branch: states 0 and 1 count the chat timer
+// (`+0x2c`) down by the frame step from the game's data and, once it runs
+// out, start (state 0) or join (state 1) a chat exchange, moving to states 2
+// and 3; states 2 and 3 wait for the ped's chat activity to end, then state
+// 3 randomises the next timer (thresholds 0.33 and 0.5 on the scaled random
+// stream, else a 10..20 range) while state 2 hands off to the ped with state
+// 6; states 5 and 6 dispatch on the partner limit (5 replays the state-3
+// randomisation, 6 takes a narrow range, anything else yields or hands off
+// with state 5 when the state/limit pair is exactly 6/2); state 4 yields.
+// Random draws scale the raw generator by `RAND_SCALE` (2^-15).
+//
+// Two reads need care. The state dispatch jumps through a table with an
+// unrelocated base, and every branch reads tuning floats, the frame step and
+// the random thresholds through unrelocated absolute addresses, which the
+// checker cannot serve on this machine; the values are read through
+// `relocated()` (the dispatch is a plain `match`, which never touches the
+// original's code) so the rewrite stays correct wherever the image is
+// mapped. The state-3 random path also compares the scratch register left
+// behind by the generator call; the checker's stub always leaves its step
+// index (0) there, which never equals 2, so that arm is dead under the
+// checker and is modelled exactly that way (`STUB_SCRATCH_ECX`). Original:
+// thiscall, one stack word, callee pops 4.
 lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
-    /// Shared tail when no sub-task was found: offer kind 1 once, else id.
-    unsafe fn tail_offer(this: u32, ped: u32, id: u32) -> u32 {
-        unsafe {
-            const TASK_FLAGS: u32 = 0x0c;
-            const FINISH_GUARD: u32 = 0x01;
-            const FINISHED: u32 = 0x02;
-            const VT_OFFER: u32 = 0x14;
-            #[inline(always)]
-            unsafe fn rd32(a: u32) -> u32 {
-                unsafe { (a as *const u32).read_unaligned() }
-            }
-            #[inline(always)]
-            unsafe fn wr32(a: u32, v: u32) {
-                unsafe { (a as *mut u32).write_unaligned(v) }
-            }
-            if rd32(this + TASK_FLAGS) & FINISH_GUARD != 0 {
-                return 0;
-            }
-            let slot = rd32(rd32(this) + VT_OFFER);
-            let f: extern "thiscall" fn(u32, u32, u32, u32) -> u32 =
-                core::mem::transmute(slot as usize);
-            if (f(this, ped, 1, 0) & 0xff) != 0 {
-                wr32(this + TASK_FLAGS, rd32(this + TASK_FLAGS) | FINISHED);
-                return 0;
-            }
-            id
-        }
-    }
-
-    /// Retire the sub-task from the ped.
-    unsafe fn retire_sub(this: u32, ped: u32) {
-        unsafe {
-            const TASK_SUB: u32 = 0x24;
-            const C_RETIRE_SUB: u32 = 8;
-            #[inline(always)]
-            unsafe fn rd32(a: u32) -> u32 {
-                unsafe { (a as *const u32).read_unaligned() }
-            }
-            lf_checker_rt::callee_thiscall!(
-                C_RETIRE_SUB,
-                u32,
-                ped,
-                rd32(this + TASK_SUB)
-            );
-        }
-    }
-
-    /// Draw a fresh (10, 20) timer through the float-range callee.
-    unsafe fn redraw_timer(this: u32) {
-        unsafe {
-            const TASK_TIMER: u32 = 0x2c;
-            const C_FRAND: u32 = 7;
-            const G_FRAND_LO: u32 = 0x0104b908;
-            const G_FRAND_HI: u32 = 0x0104b90c;
-            #[inline(always)]
-            unsafe fn rd32(a: u32) -> u32 {
-                unsafe { (a as *const u32).read_unaligned() }
-            }
-            let lo = rd32(lf_checker_rt::relocated(G_FRAND_LO));
-            let hi = rd32(lf_checker_rt::relocated(G_FRAND_HI));
-            let t = lf_checker_rt::callee_cdecl!(C_FRAND, f32, lo, hi);
-            ((this + TASK_TIMER) as *mut u32).write_unaligned(t.to_bits());
-        }
-    }
-
     unsafe {
+        const SUB_TASK: u32 = 0x08;
+        const STATUS: u32 = 0x0c;
+        const STATUS_STICKY: u32 = 0x01;
+        const STATUS_DONE: u32 = 0x02;
+        const PENDING_GUARD: u32 = 0x1c;
+        const ACTIVE: u32 = 0x20;
+        const AUX: u32 = 0x24;
+        const STATE: u32 = 0x28;
+        const CHAT_TIMER: u32 = 0x2c;
+        const CHAT_MODE: u32 = 0x34;
+        const CHAT_MODE_RANDOM: u32 = 0x100;
         const PED_INTEL: u32 = 0x224;
-        const INTEL_CHAT_FLAG: u32 = 0x2dc;
-        const TASK_ID: u32 = 0x08;
-        const TASK_FLAGS: u32 = 0x0c;
-        const FINISH_GUARD: u32 = 0x01;
-        const FINISHED: u32 = 0x02;
-        const TASK_GATE_B: u32 = 0x20;
-        const TASK_GATE_W: u32 = 0x1c;
-        const TASK_SUB: u32 = 0x24;
-        const TASK_STATE: u32 = 0x28;
-        const TASK_TIMER: u32 = 0x2c;
-        const TASK_KIND2: u32 = 0x34;
-        const SUB_INTEL: u32 = 0x224;
-        const SUB_SEARCH_BIAS: u32 = 0x44;
-        const FOUND_KIND: u32 = 0x28;
-        const FIND_TYPE: u32 = 0x163;
-        const KIND2_RANDOM: u32 = 0x100;
-        const VT_OFFER: u32 = 0x14;
-        const SPEECH_OBJ: u32 = 0x570;
-        const V_OFFER: u32 = 1;
-        const C_FIND_BY_TYPE: u32 = 2;
-        const C_CONV_ID: u32 = 3;
-        const C_PED_SAY: u32 = 4;
-        const C_AMBIENT_PLAYING: u32 = 5;
-        const C_RAND: u32 = 6;
-        const C_FRAND: u32 = 7;
-        const C_RETIRE_SUB: u32 = 8;
-        const C_TOUCH_PED: u32 = 9;
-        const G_DT: u32 = 0x0117359c;
-        const G_RAND_K: u32 = 0x00fe8684;
-        const G_GATE1: u32 = 0x00fe8800;
-        const G_GATE2: u32 = 0x00fe8830;
-        const G_FRAND_LO: u32 = 0x0104b908;
-        const G_FRAND_HI: u32 = 0x0104b90c;
-        const G_FRAND6_HI: u32 = 0x0104b910;
-        const G_FRAND6_LO: u32 = 0x016f80b4;
-        const SAY_VOLUME: u32 = 0x3f800000;
+        const INTEL_SCENARIO: u32 = 0x2dc;
+        const PED_TASKS: u32 = 0x570;
+        const INTEL_PARTNER_OFF: u32 = 0x44;
+        const PARTNER_KEY: u32 = 0x163;
+        const PARTNER_LIMIT: u32 = 0x28;
+        const SELF_VT_SUBOP: u32 = 0x14;
+        const RAND_SCALE: f32 = f32::from_bits(0x38000100); // 2^-15
+        const CHAT_THRESHOLD: f32 = f32::from_bits(0x3ea8f5c3); // 0.33
+        const HALF: f32 = 0.5;
+        const FULL_WEIGHT: f32 = 1.0;
+        /// Value the checker's recorder stub leaves in ECX at exit (its
+        /// per-trial step index, always 0 without a `seq`): the state-3 arm
+        /// compares exactly this. A real callee's leftover is unknowable;
+        /// the arm is dead (never 2) under the checker either way.
+        const STUB_SCRATCH_ECX: u32 = 0;
+        const CAL_PARTNER: u32 = 2;
+        const CAL_CHAT_NEW: u32 = 3;
+        const CAL_CHAT_JOIN: u32 = 4;
+        const CAL_RUN_NEW: u32 = 5;
+        const CAL_RUN_JOIN: u32 = 6;
+        const CAL_CHAT_BUSY: u32 = 7;
+        const CAL_RAND_STATE3: u32 = 8;
+        const CAL_RAND_RETRY: u32 = 9;
+        const CAL_RAND_TIMER: u32 = 10;
+        const CAL_RAND_LIM5A: u32 = 11;
+        const CAL_RAND_LIM5B: u32 = 12;
+        const CAL_RANGE_WIDE: u32 = 13;
+        const CAL_RANGE_NARROW: u32 = 14;
+        const CAL_HANDOFF: u32 = 15;
+        const CAL_CHAT_DONE: u32 = 16;
 
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
@@ -160,14 +104,6 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
             unsafe { wr32(a, v.to_bits()) }
         }
         #[inline(always)]
-        unsafe fn g32(va: u32) -> u32 {
-            unsafe { rd32(lf_checker_rt::relocated(va)) }
-        }
-        #[inline(always)]
-        unsafe fn gf(va: u32) -> f32 {
-            unsafe { f32::from_bits(g32(va)) }
-        }
-        #[inline(always)]
         fn sub(a: f32, b: f32) -> f32 {
             core::hint::black_box(a) - core::hint::black_box(b)
         }
@@ -179,175 +115,229 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
         fn add(a: f32, b: f32) -> f32 {
             core::hint::black_box(a) + core::hint::black_box(b)
         }
-        /// Virtual slot `+0x14` offer: (ped, kind, 0) with `this` in ECX.
+        /// The task's own sub-operation through its vtable (`kind` 1 or 2),
+        /// answered by the checker's planted stub on both sides.
         #[inline(always)]
-        unsafe fn offer(this: u32, ped: u32, kind: u32) -> u32 {
+        unsafe fn self_subop(this: u32, ped: u32, kind: u32) -> u32 {
             unsafe {
-                let slot = rd32(rd32(this) + VT_OFFER);
+                let slot = rd32(rd32(this) + SELF_VT_SUBOP);
                 let f: extern "thiscall" fn(u32, u32, u32, u32) -> u32 =
                     core::mem::transmute(slot as usize);
                 f(this, ped, kind, 0)
             }
         }
+        /// Scaled random draw in the original's operand order.
         #[inline(always)]
-        unsafe fn finish(this: u32) -> u32 {
-            unsafe {
-                wr32(this + TASK_FLAGS, rd32(this + TASK_FLAGS) | FINISHED);
-                0
+        unsafe fn scaled(_raw: u32) -> f32 {
+            mul(_raw as i32 as f32, RAND_SCALE)
+        }
+
+        // Shared prologue: mark the ped's intelligence scenario-driven.
+        wr8(rd32(ped + PED_INTEL) + INTEL_SCENARIO, 1);
+        // Gate: an idle scenario runs the body, otherwise re-poll and yield
+        // when the sub-operation accepts.
+        if rd8(this + ACTIVE) != 0 && rd32(this + PENDING_GUARD) == 0 {
+            if rd8(this + STATUS) & (STATUS_STICKY as u8) != 0 {
+                return 0;
+            }
+            if self_subop(this, ped, 1) & 0xff != 0 {
+                wr32(this + STATUS, rd32(this + STATUS) | STATUS_DONE);
+                return 0;
+            }
+            if rd8(this + STATUS) & (STATUS_STICKY as u8) != 0 {
+                return 0;
+            }
+            if self_subop(this, ped, 2) & 0xff != 0 {
+                wr32(this + STATUS, rd32(this + STATUS) | STATUS_DONE);
+                return 0;
+            }
+        }
+        // Partner lookup; a missing partner takes the yield epilogue.
+        let aux = rd32(this + AUX);
+        if aux == 0 {
+            return yield_epilogue(this, ped);
+        }
+        let intel = rd32(aux + PED_INTEL);
+        let partner: u32 = lf_checker_rt::callee_thiscall!(
+            CAL_PARTNER,
+            u32,
+            intel.wrapping_add(INTEL_PARTNER_OFF),
+            PARTNER_KEY
+        );
+        if partner == 0 {
+            return yield_epilogue(this, ped);
+        }
+        let limit = rd32(partner + PARTNER_LIMIT);
+        let state = rd32(this + STATE);
+        if state > 6 {
+            return rd32(this + SUB_TASK);
+        }
+        match state {
+            0 | 1 => {
+                let step = f32::from_bits(rd32(lf_checker_rt::relocated(0x117359c)));
+                let next = sub(rdf(this + CHAT_TIMER), step);
+                wrf(this + CHAT_TIMER, next);
+                if next <= 0.0 {
+                    // Timer ran out: start (0) or join (1) the exchange.
+                    if state == 0 {
+                        let chat: u32 = lf_checker_rt::callee_thiscall!(
+                            CAL_CHAT_NEW, u32, this, 1
+                        );
+                        let run: u32 = lf_checker_rt::callee_thiscall!(
+                            CAL_RUN_NEW,
+                            u32,
+                            ped.wrapping_add(PED_TASKS),
+                            chat,
+                            0,
+                            0,
+                            0,
+                            0xffff_ffff,
+                            0,
+                            0,
+                            FULL_WEIGHT.to_bits(),
+                            0,
+                            0
+                        );
+                        if run & 0xff == 0 {
+                            return rd32(this + SUB_TASK);
+                        }
+                        wr32(this + STATE, 2);
+                    } else {
+                        let chat: u32 = lf_checker_rt::callee_thiscall!(
+                            CAL_CHAT_JOIN,
+                            u32,
+                            this,
+                            0,
+                            0,
+                            FULL_WEIGHT.to_bits(),
+                            0,
+                            0,
+                            0xffff_ffff,
+                            0,
+                            0,
+                            0,
+                            0
+                        );
+                        lf_checker_rt::callee_thiscall!(
+                            CAL_RUN_JOIN,
+                            u32,
+                            ped.wrapping_add(PED_TASKS),
+                            chat
+                        );
+                        wr32(this + STATE, 3);
+                    }
+                }
+                rd32(this + SUB_TASK)
+            }
+            2 | 3 => {
+                let busy: u32 = lf_checker_rt::callee_thiscall!(
+                    CAL_CHAT_BUSY,
+                    u32,
+                    ped.wrapping_add(PED_TASKS)
+                );
+                if busy & 0xff != 0 {
+                    return rd32(this + SUB_TASK);
+                }
+                if state != 3 {
+                    // State 2 hands off with state 6.
+                    lf_checker_rt::callee_thiscall!(CAL_HANDOFF, u32, ped, aux);
+                    wr32(this + STATE, 6);
+                    return rd32(this + SUB_TASK);
+                }
+                let draw1: u32 =
+                    lf_checker_rt::callee_cdecl!(CAL_RAND_STATE3, u32);
+                if CHAT_THRESHOLD <= scaled(draw1) {
+                    // Random declined: the exact 6/2 pair hands off with
+                    // state 5, anything else yields. The ECX comparison
+                    // reads the stub's exit scratch (see constant).
+                    if draw1 == 6 && STUB_SCRATCH_ECX == 2 {
+                        lf_checker_rt::callee_thiscall!(CAL_HANDOFF, u32, ped, aux);
+                        wr32(this + STATE, 5);
+                    }
+                    return rd32(this + SUB_TASK);
+                }
+                wr32(this + STATE, 0);
+                randomise_timer(this, ped, CAL_RAND_RETRY, CAL_RAND_TIMER, CAL_RANGE_WIDE);
+                rd32(this + SUB_TASK)
+            }
+            4 => rd32(this + SUB_TASK),
+            _ => {
+                // States 5 and 6 dispatch on the partner limit.
+                if limit == 5 {
+                    wr32(this + STATE, 0);
+                    randomise_timer(this, ped, CAL_RAND_LIM5A, CAL_RAND_LIM5B, CAL_RANGE_WIDE);
+                    rd32(this + SUB_TASK)
+                } else if limit == 6 {
+                    wr32(this + STATE, 1);
+                    let lo = rd32(lf_checker_rt::relocated(0x16f80b4));
+                    let hi = rd32(lf_checker_rt::relocated(0x104b910));
+                    let span: f32 =
+                        lf_checker_rt::callee_cdecl!(CAL_RANGE_NARROW, f32, lo, hi);
+                    wrf(this + CHAT_TIMER, span);
+                    let _done: u32 = lf_checker_rt::callee_thiscall!(
+                        CAL_CHAT_DONE,
+                        u32,
+                        ped
+                    );
+                    rd32(this + SUB_TASK)
+                } else if state == 6 && limit == 2 {
+                    lf_checker_rt::callee_thiscall!(CAL_HANDOFF, u32, ped, aux);
+                    wr32(this + STATE, 5);
+                    rd32(this + SUB_TASK)
+                } else {
+                    rd32(this + SUB_TASK)
+                }
             }
         }
 
-        // Entry: mark the ped's intel block, then the gated double offer.
-        wr8(rd32(ped + PED_INTEL) + INTEL_CHAT_FLAG, 1);
-        let id = rd32(this + TASK_ID);
-        if rd8(this + TASK_GATE_B) != 0 && rd32(this + TASK_GATE_W) == 0 {
-            // Guard already set: return 0 without touching the flags.
-            if rd32(this + TASK_FLAGS) & FINISH_GUARD != 0 {
-                return 0;
-            }
-            if (offer(this, ped, 1) & 0xff) != 0 {
-                return finish(this);
-            }
-            if rd32(this + TASK_FLAGS) & FINISH_GUARD != 0 {
-                return 0;
-            }
-            if (offer(this, ped, 2) & 0xff) != 0 {
-                return finish(this);
-            }
-        }
-        // Locate the sub-task of the wanted type.
-        let subtask = rd32(this + TASK_SUB);
-        if subtask == 0 {
-            return tail_offer(this, ped, id);
-        }
-        let found = lf_checker_rt::callee_thiscall!(
-            C_FIND_BY_TYPE,
-            u32,
-            rd32(subtask + SUB_INTEL).wrapping_add(SUB_SEARCH_BIAS),
-            FIND_TYPE
-        );
-        if found == 0 {
-            return tail_offer(this, ped, id);
-        }
-        let kind = rd32(found + FOUND_KIND);
-        let state = rd32(this + TASK_STATE);
-        match state {
-            0 | 1 => {
-                let left = sub(rdf(this + TASK_TIMER), gf(G_DT));
-                wrf(this + TASK_TIMER, left);
-                // jb: taken while the timer is still positive (or NaN).
-                if !(0.0f32 >= left) {
-                    return id;
+        /// Yield epilogue shared by the partner-miss paths.
+        #[inline(always)]
+        unsafe fn yield_epilogue(this: u32, ped: u32) -> u32 {
+            unsafe {
+                if rd8(this + STATUS) & (STATUS_STICKY as u8) != 0 {
+                    return 0;
                 }
-                let speech = ped.wrapping_add(SPEECH_OBJ);
-                if state == 0 {
-                    let cid =
-                        lf_checker_rt::callee_thiscall!(C_CONV_ID, u32, this, 1);
-                    let said = lf_checker_rt::callee_thiscall!(
-                        C_PED_SAY, u32, speech, cid, 0, 0, 0, 0xffff_ffff, 0,
-                        0, SAY_VOLUME, 0, 0
-                    );
-                    if (said & 0xff) == 0 {
-                        return id;
+                if self_subop(this, ped, 1) & 0xff != 0 {
+                    wr32(this + STATUS, rd32(this + STATUS) | STATUS_DONE);
+                    return 0;
+                }
+                rd32(this + SUB_TASK)
+            }
+        }
+        /// Randomise the chat timer: with the random mode flag set, accept a
+        /// draw under one half and derive the timer from a second draw,
+        /// otherwise take the wide configured range. Ends the chat activity.
+        #[inline(always)]
+        unsafe fn randomise_timer(
+            this: u32,
+            ped: u32,
+            retry_id: u32,
+            timer_id: u32,
+            range_id: u32,
+        ) {
+            unsafe {
+                if rd32(this + CHAT_MODE) == CHAT_MODE_RANDOM {
+                    let draw2: u32 =
+                        lf_checker_rt::callee_cdecl!(retry_id, u32);
+                    if HALF > scaled(draw2) {
+                        let draw3: u32 =
+                            lf_checker_rt::callee_cdecl!(timer_id, u32);
+                        let t = add(mul(scaled(draw3), HALF), HALF);
+                        wrf(this + CHAT_TIMER, t);
+                        let _done: u32 = lf_checker_rt::callee_thiscall!(
+                            CAL_CHAT_DONE,
+                            u32,
+                            ped
+                        );
+                        return;
                     }
-                    wr32(this + TASK_STATE, 2);
-                    id
-                } else {
-                    let cid =
-                        lf_checker_rt::callee_thiscall!(C_CONV_ID, u32, this, 0);
-                    lf_checker_rt::callee_thiscall!(
-                        C_PED_SAY, u32, speech, cid, 0, 0, 0, 0xffff_ffff, 0,
-                        0, SAY_VOLUME, 0, 0
-                    );
-                    wr32(this + TASK_STATE, 3);
-                    id
                 }
+                let lo = rd32(lf_checker_rt::relocated(0x104b908));
+                let hi = rd32(lf_checker_rt::relocated(0x104b90c));
+                let span: f32 =
+                    lf_checker_rt::callee_cdecl!(range_id, f32, lo, hi);
+                wrf(this + CHAT_TIMER, span);
             }
-            2 | 3 => {
-                let playing = lf_checker_rt::callee_thiscall!(
-                    C_AMBIENT_PLAYING,
-                    u32,
-                    ped.wrapping_add(SPEECH_OBJ)
-                );
-                if (playing & 0xff) != 0 {
-                    return id;
-                }
-                if state != 3 {
-                    retire_sub(this, ped);
-                    wr32(this + TASK_STATE, 6);
-                    return id;
-                }
-                let gate1 = gf(G_GATE1);
-                let r = lf_checker_rt::callee_cdecl!(C_RAND, u32,);
-                let x = mul((r as i32) as f32, gf(G_RAND_K));
-                // jbe: retire unless the roll is below the first gate.
-                if !(gate1 > x) {
-                    retire_sub(this, ped);
-                    wr32(this + TASK_STATE, 5);
-                    return id;
-                }
-                wr32(this + TASK_STATE, 0);
-                if rd32(this + TASK_KIND2) != KIND2_RANDOM {
-                    redraw_timer(this);
-                    return id;
-                }
-                let gate2 = gf(G_GATE2);
-                let r = lf_checker_rt::callee_cdecl!(C_RAND, u32,);
-                let x = mul((r as i32) as f32, gf(G_RAND_K));
-                if !(gate2 > x) {
-                    redraw_timer(this);
-                    return id;
-                }
-                let r = lf_checker_rt::callee_cdecl!(C_RAND, u32,);
-                let half = gf(G_GATE2);
-                let t = add(mul(mul((r as i32) as f32, gf(G_RAND_K)), half), half);
-                wrf(this + TASK_TIMER, t);
-                id
-            }
-            4 => {
-                retire_sub(this, ped);
-                wr32(this + TASK_STATE, 5);
-                id
-            }
-            5 | 6 => {
-                if kind == 5 {
-                    wr32(this + TASK_STATE, 0);
-                    if rd32(this + TASK_KIND2) == KIND2_RANDOM {
-                        let gate2 = gf(G_GATE2);
-                        let r = lf_checker_rt::callee_cdecl!(C_RAND, u32,);
-                        let x = mul((r as i32) as f32, gf(G_RAND_K));
-                        if gate2 > x {
-                            let r = lf_checker_rt::callee_cdecl!(C_RAND, u32,);
-                            let half = gf(G_GATE2);
-                            let t = add(
-                                mul(mul((r as i32) as f32, gf(G_RAND_K)), half),
-                                half,
-                            );
-                            wrf(this + TASK_TIMER, t);
-                            lf_checker_rt::callee_thiscall!(C_TOUCH_PED, u32, ped);
-                            return id;
-                        }
-                    }
-                    redraw_timer(this);
-                    lf_checker_rt::callee_thiscall!(C_TOUCH_PED, u32, ped);
-                    id
-                } else if kind == 6 {
-                    wr32(this + TASK_STATE, 1);
-                    let lo = g32(G_FRAND6_LO);
-                    let hi = g32(G_FRAND6_HI);
-                    let t = lf_checker_rt::callee_cdecl!(C_FRAND, f32, lo, hi);
-                    wrf(this + TASK_TIMER, t);
-                    lf_checker_rt::callee_thiscall!(C_TOUCH_PED, u32, ped);
-                    id
-                } else if state == 6 && kind == 2 {
-                    retire_sub(this, ped);
-                    wr32(this + TASK_STATE, 5);
-                    id
-                } else {
-                    id
-                }
-            }
-            _ => id,
         }
     }
 });
