@@ -30483,6 +30483,15 @@
   "lane": "a-12"
  },
  {
+  "address": "0x0088AE30",
+  "name": "audVoice_update_88AE30",
+  "kind": "function",
+  "file": "functions/fn_0088ae30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b376"
+ },
+ {
   "address": "0x0088B750",
   "name": "audio_update_slot_fields",
   "kind": "function",
@@ -30717,6 +30726,24 @@
   "lane": "a-12"
  },
  {
+  "address": "0x0088E4A0",
+  "name": "rage::audVoiceSoft::vf3",
+  "kind": "function",
+  "file": "functions/fn_0088e4a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
+ },
+ {
+  "address": "0x0088E510",
+  "name": "audVoiceSoft_setRateInt",
+  "kind": "function",
+  "file": "functions/fn_0088e510.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
+ },
+ {
   "address": "0x0088E610",
   "name": "rage::audVoiceSoft::vf2",
   "kind": "function",
@@ -30739,6 +30766,15 @@
   "name": "rage::audVoiceSoft::vf4",
   "kind": "function",
   "file": "functions/fn_0088e680.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
+ },
+ {
+  "address": "0x0088E6C0",
+  "name": "rage::audVoiceSoft::vf11",
+  "kind": "function",
+  "file": "functions/fn_0088e6c0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s401"
@@ -30798,6 +30834,24 @@
   "lane": "a-12"
  },
  {
+  "address": "0x0088F330",
+  "name": "rage::audVoicePcAdpcm::vf3",
+  "kind": "function",
+  "file": "functions/fn_0088f330.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
+ },
+ {
+  "address": "0x0088F3A0",
+  "name": "audVoicePcAdpcm_setRateInt",
+  "kind": "function",
+  "file": "functions/fn_0088f3a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
+ },
+ {
   "address": "0x0088F4A0",
   "name": "rage::audVoicePcAdpcm::vf2",
   "kind": "function",
@@ -30820,6 +30874,15 @@
   "name": "rage::audVoicePcAdpcm::vf4",
   "kind": "function",
   "file": "functions/fn_0088f500.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
+ },
+ {
+  "address": "0x0088F540",
+  "name": "rage::audVoicePcAdpcm::vf11",
+  "kind": "function",
+  "file": "functions/fn_0088f540.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s401"
@@ -38914,6 +38977,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b296"
+ },
+ {
+  "address": "0x00970000",
+  "name": "ped_audio_task_gate",
+  "kind": "function",
+  "file": "functions/fn_00970000.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b377"
  },
  {
   "address": "0x009748C0",
@@ -83644,6 +83716,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s89"
+ },
+ {
+  "address": "0x00D8C020",
+  "name": "audio_event_dispatch_update",
+  "kind": "function",
+  "file": "functions/fn_00d8c020.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b374"
  },
  {
   "address": "0x00D8C290",
