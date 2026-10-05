@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Checker: version 6 carries doubles in vector registers",
+    "title": "Devlog: A production batch that caught the manual out",
     "commit": null,
+    "summary": "Findings from the r-b536 lane.",
+    "changes": [
+      "New devlog entry: A production batch that caught the manual out.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Checker: version 6 carries doubles in vector registers",
+    "commit": "cf0b973c089685377fcb3023a67839a60afa04b8",
     "summary": "The checker ability whose absence was deferring the most functions is installed.",
     "changes": [
       "A callee that takes doubles in vector registers, or returns one, can now be stood in for and compared: a contract may ask for an 8-byte transport per register, a scripted double answer that the rewrite reads as a 64-bit return, doubles in a callee's script, and double entry values. Every option is off unless a contract asks and is recorded in the verdict. A preflight scan of the game's code finds 989 functions, holding 932,000 bytes, that very probably need it.",
