@@ -31842,6 +31842,15 @@
   "lane": "r-s95"
  },
  {
+  "address": "0x008A5C60",
+  "name": "aud_compute_scaled_round",
+  "kind": "function",
+  "file": "functions/fn_008a5c60.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b369"
+ },
+ {
   "address": "0x008A5DC0",
   "name": "audio_fill_three_out_params",
   "kind": "function",
@@ -39001,6 +39010,15 @@
   "name": "audWeatherAudioEntity::audWeatherAudioEntity",
   "kind": "function",
   "file": "functions/fn_009ab350.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b367"
+ },
+ {
+  "address": "0x009AB530",
+  "name": "audio_entity_update",
+  "kind": "function",
+  "file": "functions/fn_009ab530.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b367"
