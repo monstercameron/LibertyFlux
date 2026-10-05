@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: A production batch that caught the manual out",
+    "title": "Rewrites: 2 more functions pass the checker (14949 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "2 rewrites added under rewrites/verified: 0 script native handlers and 2 other functions.",
+      "The tree now holds 14949 rewrites, 14930 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 682 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "18 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: A production batch that caught the manual out",
+    "commit": "16387950f8854ac89aa28029584a0ec42d42347e",
     "summary": "Findings from the r-b536 lane.",
     "changes": [
       "New devlog entry: A production batch that caught the manual out.",

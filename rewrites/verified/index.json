@@ -102852,6 +102852,15 @@
   "lane": "r-b536"
  },
  {
+  "address": "0x00C61740",
+  "name": "arrest_player_attach",
+  "kind": "function",
+  "file": "functions/fn_00c61740.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b536"
+ },
+ {
   "address": "0x00C62260",
   "name": "anim_blend_signed_weight",
   "kind": "function",
@@ -108448,6 +108457,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "a-R02"
+ },
+ {
+  "address": "0x00CD33E0",
+  "name": "task_flag_update",
+  "kind": "function",
+  "file": "functions/fn_00cd33e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "a-R05"
  },
  {
   "address": "0x00CD5480",
