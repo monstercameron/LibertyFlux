@@ -9,6 +9,28 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming a mixed batch: cascade shadows, postfx, imposters, content slots, routes, radio</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-70"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-70</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>One batch of one hundred fifty consecutive functions turned out to span six subsystems, and the strongest naming signals were virtual tables checked dword by dword, string references, and a full-text caller scan, in that order.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One batch of one hundred fifty consecutive functions turned out to span six subsystems, and the strongest naming signals were virtual tables checked dword by dword, string references, and a full-text caller scan, in that order.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose a descriptive name for each of one hundred fifty consecutive unnamed functions, with a confidence level and one sentence of evidence each.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into cascade shadow code, a postfx class with constructor, destructor and factory, tree imposter rendering, downloadable content slot management, network route handling, and a radio display state machine with logo loading.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Four inventory sizes swallow later entries; the true functions end at their return or jump instructions. Three real functions between batch entries appear in no list and should be claimed by the next lane.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Code below a boundary early in the executable is encrypted on disk and decodes as garbage, so any name depending on those callees can rest only on call-site shape. Two low-confidence native labels in that area were disproved by reading their readable neighbors.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The radio display modes are plain numbers in a switch, so those names describe each case's effect rather than a mode meaning.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;One hundred forty-three functions were named, thirty-six at high confidence and the rest at medium. Seven were left empty: one unknown flag getter, two jump stubs, two dispatch thunks with unknown targets, and two thunks into the encrypted region. The next naming lane should verify virtual table slots directly before trusting slot labels, and should decode jump tables rather than treating switch cases as independent functions.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Disassemble each function from the memory-mapped image, resolve string and import references, scan the full text for direct callers, attribute each caller to its nearest known symbol, read the small functions completely, and check claimed virtual table slots against the read-only data section.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Caller attribution by nearest symbol initially credited one short orchestrator with calls that physically sit past its padding; linear disassembly showed they belong to an unlisted neighbor function. Several lane-given caller names in the area describe unrelated behavior and were treated as context only.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>A callee slot called with two different arities, verified by fault parity</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s407"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s407</id>
@@ -1013,68 +1035,5 @@
     <updated>2026-10-04T00:00:00Z</updated>
     <summary>All 150 functions in this batch were the same nine per-board virtual methods of one leaderboard template, repeated for eighteen ranked episodic race boards, and all 150 were named from a single nine-slot map.</summary>
     <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;All 150 functions in this batch were the same nine per-board virtual methods of one leaderboard template, repeated for eighteen ranked episodic race boards, and all 150 were named from a single nine-slot map.&lt;/p&gt;&lt;h3&gt;What was asked&lt;/h3&gt;&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed functions, with a confidence and one sentence of evidence each.&lt;/p&gt;&lt;h3&gt;What was found&lt;/h3&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds slots 3, 4, 6, 7, 8, 9, 12, 13 and 14 of the concrete leaderboard info template for eighteen race boards. Each slot has a unique code size, so size alone identifies the slot.&lt;/p&gt;&lt;table role="table"&gt;&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Slot&lt;/th&gt;&lt;th role="columnheader"&gt;Method name&lt;/th&gt;&lt;th role="columnheader"&gt;Behaviour&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;&lt;tbody role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;3&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;get_board_name&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;returns the board name string&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;4&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;get_board_id&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;returns the numeric board id&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;6&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;find_index_by_id&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;index of a key in the id array, or -1&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;7&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;get_value_at_index&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;value array element, or -1&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;8&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;get_size_class_at_index&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;byte width class of an element grade, or 0&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;9&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;get_kind_at_index&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;kind code of an element, or -1&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;12&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;find_index_by_key_column&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;index matching a key-column entry, or -1&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;13&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;find_value_by_id&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;value at the row matching a key, or -1&lt;/td&gt;&lt;/tr&gt;&lt;tr role="row"&gt;&lt;td role="cell"&gt;14&lt;/td&gt;&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;fetch_row&lt;/code&gt;&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;fetches all 19 columns of one row, returns success&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Thirty functions the inventory left unnamed sit exactly in slot 3 and slot 9 positions with the matching sizes; the slot 3 ones return their own board name string and the slot 9 ones use their own board id, confirming the attribution.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; An earlier analysis guessed slot 3 returns a schema descriptor; it returns the plain board name string.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Board ids are assigned per board, not derived from the board number: one board in the batch uses an id far off the otherwise sequential run, and verified rewrites of later boards show the same.&lt;/p&gt;&lt;h3&gt;What was decided or recommended&lt;/h3&gt;&lt;p&gt;All 150 functions were named with the class and method above: 32 at high confidence (name string or cross-checked id constant) and 118 at medium (behaviour clear, wording mine). The nine-slot map should be reused for the remaining boards of this template, checking one member's size and jump table first. The two shared helpers the slots call (board schema fetch, grade classifier) still need names; both sit in the encrypted code range.&lt;/p&gt;&lt;h3&gt;How to reproduce it&lt;/h3&gt;&lt;p&gt;Read the executable through its memory-mapped image and disassemble one member of each size group. Scan the image for strings to resolve the slot 3 targets, compare each slot against the verified rewrite doc comments for the same slot on other boards, and read the small jump tables of the classifier slots to confirm the return mappings.&lt;/p&gt;&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;&lt;p&gt;The thirty unnamed functions carried a boundary tag suggesting vtable data, which briefly suggested they might not be functions at all; decoding them showed ordinary code in exactly the expected positions. The off-sequence board id first looked like a misattribution until the board's own name and id functions past the batch end confirmed it. Shell output redirection wrote UTF-16 files twice, which had to be converted before reading.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming 150 leaderboard methods by slot, not one by one</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-33"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-33</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>All 150 unnamed functions in this batch turned out to be nine virtual methods of one leaderboard template, repeated once per race board, so the whole batch was named from nine behaviour analyses plus machine-checked uniformity assertions.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;All 150 unnamed functions in this batch turned out to be nine virtual methods of one leaderboard template, repeated once per race board, so the whole batch was named from nine behaviour analyses plus machine-checked uniformity assertions.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose descriptive names for 150 consecutive unnamed game functions, which mostly come from the same source files, with a confidence and one sentence of evidence each.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds seventeen instantiations of a single leaderboard-info template, one per episodic race board, each contributing the same nine virtual methods in the same order. Every method has an identical instruction shape across all seventeen boards and differs only in its board id constant or name string.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Sixty of the 150 functions already had verified rewrites whose documentation described each method's behaviour, and an earlier naming lane had already named the same nine slots for other boards of this template, so a consistent vocabulary existed to reuse.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The two shared helpers every method calls sit in the encrypted part of the code and decode as nonsense, so static analysis cannot reach them; the verified rewrites treat them as intercepted calls instead.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The row-packing method loops over nineteen columns on these boards, while the earlier lane's boards loop over seven, so evidence sentences cannot be copied across board families without checking the loop bound.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Four small helpers used by the row-packing method are inventoried as image-library code but disassemble as ordinary bitmask and record-list routines, so that library label looks wrong for them.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Named all 150 functions with the earlier lane's method vocabulary: 34 at high confidence where a name string or id constant makes the behaviour plain, 116 at medium where the behaviour is clear but the wording is the lanes' own.&lt;/li&gt;
-&lt;li&gt;Recommended that the next naming lane on a template-family batch first join earlier lanes' names to inventory sizes to recover the slot vocabulary, then assert one instruction shape per slot before generating names.&lt;/li&gt;
-&lt;li&gt;Flagged the older competing method wordings and the suspect library labels for the coordinator to reconcile rather than renaming unilaterally.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Read the executable through the mapped-image interface, never the raw file at a mapped address, and validate the mapping by decoding one already-rewritten function from entry to return before trusting anything else. Then build one evidence table for the whole batch (called functions, referenced strings, constant operands, first and last instructions), group by size and slot, confirm each group has a single instruction signature, and generate the names from the slot table with assertions that fail the run if any member differs.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Two things needed care. First, untagged entries with no class attribution had to be assigned to a board by position, and the first attempt assigned trailing entries to the following board instead of the preceding one; the board-id assertion caught it immediately. Second, the generated dump file picked up stray null bytes from a shell redirect, which made it awkward to read but did not affect any result.&lt;/p&gt;
-&lt;table role="table"&gt;
-&lt;thead role="rowgroup"&gt;
-&lt;tr role="row"&gt;
-&lt;th role="columnheader"&gt;Slot behaviour&lt;/th&gt;
-&lt;th role="columnheader"&gt;Method name&lt;/th&gt;
-&lt;th role="columnheader"&gt;Confidence&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody role="rowgroup"&gt;
-&lt;tr role="row"&gt;
-&lt;td role="cell"&gt;Board name string&lt;/td&gt;
-&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;get_board_name&lt;/code&gt;&lt;/td&gt;
-&lt;td role="cell" data-label="Confidence"&gt;high&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr role="row"&gt;
-&lt;td role="cell"&gt;Board id constant&lt;/td&gt;
-&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;get_board_id&lt;/code&gt;&lt;/td&gt;
-&lt;td role="cell" data-label="Confidence"&gt;high&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr role="row"&gt;
-&lt;td role="cell"&gt;Column search and lookup&lt;/td&gt;
-&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;find_column_index&lt;/code&gt;, &lt;code&gt;get_column_id&lt;/code&gt;, &lt;code&gt;map_column_id&lt;/code&gt;, &lt;code&gt;get_mapped_column_index&lt;/code&gt;&lt;/td&gt;
-&lt;td role="cell" data-label="Confidence"&gt;medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr role="row"&gt;
-&lt;td role="cell"&gt;Column size and kind&lt;/td&gt;
-&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;get_column_size&lt;/code&gt;, &lt;code&gt;get_column_kind&lt;/code&gt;&lt;/td&gt;
-&lt;td role="cell" data-label="Confidence"&gt;medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr role="row"&gt;
-&lt;td role="cell"&gt;Row buffer builder&lt;/td&gt;
-&lt;td role="cell" data-label="Method name"&gt;&lt;code&gt;pack_row&lt;/code&gt;&lt;/td&gt;
-&lt;td role="cell" data-label="Confidence"&gt;medium&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;</content>
   </entry>
 </feed>
