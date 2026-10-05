@@ -346,6 +346,304 @@ mod x86 {
         classf_s0, 0; classf_s1, 1; classf_s2, 2; classf_s3, 3; classf_s4, 4;
         classf_s5, 5; classf_s6, 6; classf_s7, 7; classf_s8, 8;
     );
+
+    macro_rules! t1_stubs {
+        ($($name:ident, $slot:literal;)*) => {$(
+            pub(super) extern "thiscall" fn $name(a: u32) -> u32 {
+                super::t1_hook($slot, a)
+            }
+        )*};
+    }
+
+    macro_rules! t2_stubs {
+        ($($name:ident, $slot:literal;)*) => {$(
+            pub(super) extern "thiscall" fn $name(a: u32, b: u32) -> u32 {
+                super::t2_hook($slot, a, b)
+            }
+        )*};
+    }
+
+    macro_rules! t4_stubs {
+        ($($name:ident, $slot:literal;)*) => {$(
+            pub(super) extern "thiscall" fn $name(a: u32, b: u32, c: u32, d: u32) -> u32 {
+                super::t4_hook($slot, a, b, c, d)
+            }
+        )*};
+    }
+
+    t1_stubs!(
+        t1_s0, 0; t1_s1, 1; t1_s2, 2; t1_s3, 3; t1_s4, 4;
+        t1_s5, 5; t1_s6, 6; t1_s7, 7; t1_s8, 8;
+    );
+    t2_stubs!(
+        t2_s0, 0; t2_s1, 1; t2_s2, 2; t2_s3, 3; t2_s4, 4;
+        t2_s5, 5; t2_s6, 6; t2_s7, 7; t2_s8, 8;
+    );
+    t4_stubs!(
+        t4_s0, 0; t4_s1, 1; t4_s2, 2; t4_s3, 3; t4_s4, 4;
+        t4_s5, 5; t4_s6, 6; t4_s7, 7; t4_s8, 8;
+    );
+}
+
+/// Role of a callee slot in a row-collector case: the stub at the slot
+/// answers from that role's script.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Role {
+    /// Block-filling fetch (fastcall, two words).
+    Fetch,
+    /// Row gate (thiscall, two words).
+    Skip,
+    /// Cell classifier (thiscall, one word).
+    Classify,
+    /// Item helper (thiscall, two words).
+    Item,
+    /// Length helper (thiscall, one word).
+    Len,
+    /// Write helper (thiscall, four words).
+    Write,
+}
+
+/// Per-slot roles for the running case (row-collector cases only).
+#[cfg(target_arch = "x86")]
+static ROLES: Mutex<[Option<Role>; 9]> = Mutex::new([None; 9]);
+
+/// Sets the per-slot roles, clearing any previous map.
+#[cfg(target_arch = "x86")]
+pub fn set_roles(map: &[(u32, Role)]) {
+    let mut roles = lock(&ROLES);
+    *roles = [None; 9];
+    for &(slot, role) in map {
+        assert!(slot <= 8, "slot {slot} has no stub (slots 0..=8 covered)");
+        roles[slot as usize] = Some(role);
+    }
+}
+
+/// The role of a stubbed slot (a case bug when unset).
+#[cfg(target_arch = "x86")]
+fn role_of(slot: u32) -> Role {
+    lock(&ROLES)[slot as usize].unwrap_or_else(|| panic!("slot {slot} has no role"))
+}
+
+/// One scripted item: the address the item stub returns and the length the
+/// length stub reports for it.
+#[derive(Clone, Copy, Debug)]
+pub struct ItemSlot {
+    /// Item address.
+    pub addr: u32,
+    /// Scripted length.
+    pub len: u32,
+}
+
+/// The scripted items (row-collector cases only).
+#[cfg(target_arch = "x86")]
+static ITEMS: Mutex<Vec<ItemSlot>> = Mutex::new(Vec::new());
+
+/// Scripts the items.
+#[cfg(target_arch = "x86")]
+pub fn set_items(slots: Vec<ItemSlot>) {
+    *lock(&ITEMS) = slots;
+}
+
+type Hook2 = Box<dyn FnMut(u32, u32) -> u32 + Send>;
+type Hook4 = Box<dyn FnMut(u32, u32, u32, u32) -> u32 + Send>;
+
+/// Gate, item and write scripts (row-collector cases only).
+#[cfg(target_arch = "x86")]
+static SKIP: Mutex<Option<Hook2>> = Mutex::new(None);
+/// Gate, item and write scripts (row-collector cases only).
+#[cfg(target_arch = "x86")]
+static ITEM: Mutex<Option<Hook2>> = Mutex::new(None);
+/// Gate, item and write scripts (row-collector cases only).
+#[cfg(target_arch = "x86")]
+static WRITE: Mutex<Option<Hook4>> = Mutex::new(None);
+
+/// Scripts the gate (nonzero skips the row).
+#[cfg(target_arch = "x86")]
+pub fn set_skip(f: impl FnMut(u32, u32) -> u32 + Send + 'static) {
+    *lock(&SKIP) = Some(Box::new(f));
+}
+
+/// Scripts the item helper (zero for a null item).
+#[cfg(target_arch = "x86")]
+pub fn set_item(f: impl FnMut(u32, u32) -> u32 + Send + 'static) {
+    *lock(&ITEM) = Some(Box::new(f));
+}
+
+/// Scripts the write helper (nonzero succeeds).
+#[cfg(target_arch = "x86")]
+pub fn set_write(f: impl FnMut(u32, u32, u32, u32) -> u32 + Send + 'static) {
+    *lock(&WRITE) = Some(Box::new(f));
+}
+
+/// Length answers come from the scripted item table, by address.
+#[cfg(target_arch = "x86")]
+fn len_hook(item_addr: u32) -> u32 {
+    lock(&ITEMS)
+        .iter()
+        .find(|s| s.addr == item_addr)
+        .unwrap_or_else(|| panic!("length of unknown item {item_addr:#x}"))
+        .len
+}
+
+/// A thiscall one-word stub's work: log, answer by role.
+#[cfg(target_arch = "x86")]
+pub fn t1_hook(slot: u32, a: u32) -> u32 {
+    record(slot, &[a]);
+    match role_of(slot) {
+        Role::Classify => lock(&CLASSIFY).as_mut().map_or(0, |f| f(a)),
+        Role::Len => len_hook(a),
+        role => panic!("slot {slot} is a one-word stub with role {role:?}"),
+    }
+}
+
+/// A thiscall two-word stub's work: log, answer by role.
+#[cfg(target_arch = "x86")]
+pub fn t2_hook(slot: u32, a: u32, b: u32) -> u32 {
+    record(slot, &[a, b]);
+    match role_of(slot) {
+        Role::Skip => lock(&SKIP).as_mut().map_or(0, |f| f(a, b)),
+        Role::Item => lock(&ITEM).as_mut().map_or(0, |f| f(a, b)),
+        role => panic!("slot {slot} is a two-word stub with role {role:?}"),
+    }
+}
+
+/// A thiscall four-word stub's work: log, answer by role.
+#[cfg(target_arch = "x86")]
+pub fn t4_hook(slot: u32, a: u32, b: u32, c: u32, d: u32) -> u32 {
+    record(slot, &[a, b, c, d]);
+    match role_of(slot) {
+        Role::Write => lock(&WRITE).as_mut().map_or(0, |f| f(a, b, c, d)),
+        role => panic!("slot {slot} is a four-word stub with role {role:?}"),
+    }
+}
+
+/// Installs row-collector stubs: the fetch stub at `fetch_slot`, one-word
+/// stubs at `t1`, two-word at `t2`, four-word at `t4`.
+#[cfg(target_arch = "x86")]
+pub fn install14(fetch_slot: u32, t1: &[u32], t2: &[u32], t4: &[u32]) {
+    macro_rules! addr {
+        ($f:expr) => {
+            $f as usize as u32
+        };
+    }
+    let fetch = [
+        addr!(x86::fetch_s0),
+        addr!(x86::fetch_s1),
+        addr!(x86::fetch_s2),
+        addr!(x86::fetch_s3),
+        addr!(x86::fetch_s4),
+        addr!(x86::fetch_s5),
+        addr!(x86::fetch_s6),
+        addr!(x86::fetch_s7),
+        addr!(x86::fetch_s8),
+    ];
+    let one = [
+        addr!(x86::t1_s0),
+        addr!(x86::t1_s1),
+        addr!(x86::t1_s2),
+        addr!(x86::t1_s3),
+        addr!(x86::t1_s4),
+        addr!(x86::t1_s5),
+        addr!(x86::t1_s6),
+        addr!(x86::t1_s7),
+        addr!(x86::t1_s8),
+    ];
+    let two = [
+        addr!(x86::t2_s0),
+        addr!(x86::t2_s1),
+        addr!(x86::t2_s2),
+        addr!(x86::t2_s3),
+        addr!(x86::t2_s4),
+        addr!(x86::t2_s5),
+        addr!(x86::t2_s6),
+        addr!(x86::t2_s7),
+        addr!(x86::t2_s8),
+    ];
+    let four = [
+        addr!(x86::t4_s0),
+        addr!(x86::t4_s1),
+        addr!(x86::t4_s2),
+        addr!(x86::t4_s3),
+        addr!(x86::t4_s4),
+        addr!(x86::t4_s5),
+        addr!(x86::t4_s6),
+        addr!(x86::t4_s7),
+        addr!(x86::t4_s8),
+    ];
+    unsafe {
+        let table = core::ptr::addr_of_mut!(TABLE);
+        (*table) = [0; 256];
+        (*table)[fetch_slot as usize] = fetch[fetch_slot as usize];
+        for &s in t1 {
+            (*table)[s as usize] = one[s as usize];
+        }
+        for &s in t2 {
+            (*table)[s as usize] = two[s as usize];
+        }
+        for &s in t4 {
+            (*table)[s as usize] = four[s as usize];
+        }
+        core::ptr::addr_of_mut!(CHECKER_CTABLE).write(core::ptr::addr_of!(TABLE).cast::<u32>());
+    }
+}
+
+/// Marker slots for the picked/row vtable dispatches (object behaviour,
+///
+/// not numbered callee slots).
+pub const VTABLE_PICK: u32 = 0xFFFF_FFFD;
+/// Marker slots for the picked/row vtable dispatches (object behaviour,
+///
+/// not numbered callee slots).
+pub const VTABLE_ROW: u32 = 0xFFFF_FFFC;
+
+/// Scripted picked row and row keys (row-collector cases only).
+#[cfg(target_arch = "x86")]
+static PICK: Mutex<u32> = Mutex::new(0);
+/// Scripted picked row and row keys (row-collector cases only).
+#[cfg(target_arch = "x86")]
+static ROWKEYS: Mutex<Vec<u32>> = Mutex::new(Vec::new());
+
+/// Scripts the picked row.
+#[cfg(target_arch = "x86")]
+pub fn set_pick(picked: u32) {
+    *lock(&PICK) = picked;
+}
+
+/// Scripts the row keys.
+#[cfg(target_arch = "x86")]
+pub fn set_row_keys(keys: Vec<u32>) {
+    *lock(&ROWKEYS) = keys;
+}
+
+/// The picked stub planted in fabricated vtables.
+#[cfg(target_arch = "x86")]
+pub extern "thiscall" fn pick_stub(this: u32) -> u32 {
+    record(VTABLE_PICK, &[this]);
+    *lock(&PICK)
+}
+
+/// The row-key stub planted in fabricated vtables.
+#[cfg(target_arch = "x86")]
+pub extern "thiscall" fn row_stub(this: u32, row: u32) -> u32 {
+    record(VTABLE_ROW, &[this, row]);
+    lock(&ROWKEYS)
+        .get(row as usize)
+        .copied()
+        .unwrap_or_else(|| panic!("row {row} has no scripted key"))
+}
+
+/// Addresses of [`pick_stub`] and [`row_stub`] for fabricated vtables.
+#[cfg(target_arch = "x86")]
+#[must_use]
+pub fn pick_stub_addr() -> u32 {
+    pick_stub as usize as u32
+}
+
+/// Addresses of [`pick_stub`] and [`row_stub`] for fabricated vtables.
+#[cfg(target_arch = "x86")]
+#[must_use]
+pub fn row_stub_addr() -> u32 {
+    row_stub as usize as u32
 }
 
 /// Declare a rewrite export with the original's calling convention.

@@ -174,7 +174,7 @@ unsafe fn run_00be15b0(this: u32, arg0: u32, mutate_short: bool) -> u32 {
             if tick as u8 == 0 {
                 return rd32(this.wrapping_add(8));
             }
-            let n: u32 = lf_checker_rt::callee_cdecl!(COUNTER_CALLEE, u32);
+            let n: u32 = lf_checker_rt::callee_cdecl!(COUNTER_CALLEE, u32,);
             let mut x0 = (n as i32) as f32;
             x0 = mul(x0, gf(G_K));
             x0 = mul(x0, gf(G_K2));
@@ -226,7 +226,7 @@ unsafe fn run_00be15b0(this: u32, arg0: u32, mutate_short: bool) -> u32 {
         if rd8(arg0.wrapping_add(0x26c)) & 4 != 0 {
             return rd32(this.wrapping_add(8));
         }
-        let n: u32 = lf_checker_rt::callee_cdecl!(COUNTER_CALLEE, u32);
+        let n: u32 = lf_checker_rt::callee_cdecl!(COUNTER_CALLEE, u32,);
         let mut x1 = (n as i32) as f32;
         x1 = mul(x1, gf(G_K));
         if !(gf(G_GATE) > x1) {

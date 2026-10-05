@@ -44,6 +44,33 @@ mod x86 {
 
     include!("support/diff_gen.rs");
 
+    /// One verified row-collector rewrite under test.
+    pub struct Case14 {
+        /// Rewrite file stem, for failure messages.
+        pub file: &'static str,
+        /// Board id the rewrite fetches by.
+        pub board: u32,
+        /// Row count of this instantiation.
+        pub rows: u32,
+        /// 1 when the rewrite spells the length check signed (as the
+        /// original does), 0 for the unsigned camp.
+        pub signed_camp: u32,
+        /// Callee slots per role.
+        pub fetch_slot: u32,
+        /// Callee slots per role.
+        pub skip_slot: u32,
+        /// Callee slots per role.
+        pub class_slot: u32,
+        /// Callee slots per role.
+        pub item_slot: u32,
+        /// Callee slots per role.
+        pub len_slot: u32,
+        /// Callee slots per role.
+        pub write_slot: u32,
+        /// The rewrite as a plain function.
+        pub call: fn(u32, u32, u32, u32, u32, u32, u32) -> u32,
+    }
+
     /// Small deterministic generator.
     struct Rng(u64);
 
@@ -750,6 +777,588 @@ mod x86 {
     #[test]
     fn slot_vf13() {
         run(Slot::Vf13, CASES_VF13);
+    }
+
+    /// Shared row-collector script rules (stubs and fakes use the same).
+    mod rules14 {
+        /// Gate: every third key skips.
+        pub fn skip(key: u32) -> bool {
+            key % 3 == 0
+        }
+
+        /// Write: keys congruent 1 mod 5 fail.
+        pub fn write_ok(key: u32) -> bool {
+            key % 5 != 1
+        }
+
+        /// Item slot for a key, or null items for keys 4 mod 5.
+        pub fn item_slot(key: u32) -> Option<usize> {
+            if key % 5 == 4 {
+                None
+            } else {
+                Some((key % 4) as usize)
+            }
+        }
+    }
+
+    /// Lengths both len camps agree on (all accepted/rejected alike).
+    const AGREED_LENS: [u32; 7] = [0, 1, 7, 8, 9, 64, 0x7FFF_FFFF];
+
+    /// Lengths only the signed camp (and the original) accept.
+    const HUGE_LENS: [u32; 4] = [0x8000_0000, 0x8000_0009, 0xFFFF_FFFE, 0xFFFF_FFFF];
+
+    /// The lift side's fake row store: scripted data, translated calls.
+    struct FakeStore14<'a> {
+        fetch_slot: u32,
+        skip_slot: u32,
+        class_slot: u32,
+        item_slot: u32,
+        len_slot: u32,
+        write_slot: u32,
+        view: Option<tables14::RowTable<'a>>,
+        items: Vec<(u32, [u8; 8])>,
+        item_addrs: Vec<u32>,
+    }
+
+    /// Short alias so the fake's bounds stay readable.
+    use lf_leaderboard::rows as tables14;
+
+    impl tables14::RowStore for FakeStore14<'_> {
+        fn fetch(&mut self, board: u32) -> Option<tables14::RowTable<'_>> {
+            rt::record(self.fetch_slot, &[board]);
+            self.view
+        }
+
+        fn skip_row(&mut self, manager: tables14::Manager, key: u32) -> bool {
+            rt::record(self.skip_slot, &[manager.get(), key]);
+            rules14::skip(key)
+        }
+
+        fn classify(&mut self, cell: u32) -> u32 {
+            rt::record(self.class_slot, &[cell]);
+            script(cell)
+        }
+
+        fn item(
+            &mut self,
+            manager: tables14::Manager,
+            key: u32,
+        ) -> Option<tables14::ItemToken> {
+            rt::record(self.item_slot, &[manager.get(), key]);
+            rules14::item_slot(key).map(|i| tables14::ItemToken::new(i as u32))
+        }
+
+        fn item_len(&mut self, item: tables14::ItemToken) -> u32 {
+            let i = item.get() as usize;
+            rt::record(self.len_slot, &[self.item_addrs[i]]);
+            self.items[i].0
+        }
+
+        fn item_bytes(&self, item: tables14::ItemToken) -> [u8; 8] {
+            self.items[item.get() as usize].1
+        }
+
+        fn write(&mut self, manager: tables14::Manager, key: u32, at: u32, len: u32) -> bool {
+            rt::record(self.write_slot, &[manager.get(), key, at, len]);
+            rules14::write_ok(key)
+        }
+    }
+
+    /// The lift side's fake row picker.
+    struct FakePicker14 {
+        picked: u32,
+        keys: Vec<u32>,
+    }
+
+    impl tables14::RowPicker for FakePicker14 {
+        fn picked(&mut self) -> u32 {
+            rt::record(rt::VTABLE_PICK, &[]);
+            self.picked
+        }
+
+        fn row_key(&mut self, row: u32) -> u32 {
+            rt::record(rt::VTABLE_ROW, &[row]);
+            self.keys[row as usize]
+        }
+    }
+
+    /// Deliberately wrong collector: the gate inverted.
+    fn wrong_collect(
+        store: &mut impl tables14::RowStore,
+        picker: &mut impl tables14::RowPicker,
+        desc: &LeaderboardDesc,
+        manager: tables14::Manager,
+        cursor: u32,
+        size: u32,
+        id_out: &mut [u8; 8],
+        mask_out: &mut [u8; 8],
+        flag_out: &mut u8,
+    ) -> bool {
+        *mask_out = [0; 8];
+        *flag_out = 0;
+        let limit = size.wrapping_add(cursor);
+        let mut pos = cursor;
+        let picked = picker.picked();
+        let Some(table) = store.fetch(desc.board_id) else {
+            return false;
+        };
+        let mut live = true;
+        let mut row = 0u32;
+        while row < desc.rows {
+            if !live {
+                break;
+            }
+            let key = picker.row_key(row);
+            // WRONG: processes skipped rows, skips kept ones.
+            if store.skip_row(manager, key) {
+                let class = store.classify(table.cells[key as usize]);
+                let adv: u32 = match class {
+                    1 | 2 | 3 | 5 => tables14::ELEM,
+                    _ => 0,
+                };
+                if picked == row {
+                    let mut found = false;
+                    if let Some(item) = store.item(manager, key) {
+                        let len = store.item_len(item);
+                        if (len as i32) <= (tables14::ELEM as i32) {
+                            *id_out = store.item_bytes(item);
+                            found = true;
+                        }
+                    }
+                    *flag_out = u8::from(found);
+                    live = found;
+                } else {
+                    let old = pos;
+                    pos = pos.wrapping_add(adv);
+                    if pos > limit {
+                        live = false;
+                    } else if !store.write(manager, key, old, adv) {
+                        live = false;
+                    } else {
+                        let (lo, hi) = if row < 32 {
+                            (1u32 << row, 0)
+                        } else if row < 64 {
+                            (0, 1u32 << (row & 31))
+                        } else {
+                            (0, 0)
+                        };
+                        mask_out[0..4].copy_from_slice(&lo.to_le_bytes());
+                        mask_out[4..8].copy_from_slice(&hi.to_le_bytes());
+                        live = true;
+                    }
+                }
+            }
+            row = row.wrapping_add(1);
+        }
+        live
+    }
+
+    /// One row-collector input.
+    struct Input14 {
+        ok: bool,
+        picked: u32,
+        cursor: u32,
+        size: u32,
+        manager: u32,
+        seed: u64,
+        huge_lens: bool,
+    }
+
+    /// Canonicalizes one rewrite-side call (drops the fetch out-block and
+    /// the vtable `this` words, after asserting them).
+    fn canonical14(calls: &[Call], case: &Case14, obj: u32) -> Vec<Call> {
+        calls
+            .iter()
+            .map(|c| {
+                if c.slot == case.fetch_slot {
+                    assert_eq!(c.args.len(), 2, "fetch takes (board, out-block)");
+                    Call {
+                        slot: c.slot,
+                        args: vec![c.args[0]],
+                    }
+                } else if c.slot == rt::VTABLE_PICK {
+                    assert_eq!(c.args, vec![obj], "pick runs on the object");
+                    Call {
+                        slot: c.slot,
+                        args: vec![],
+                    }
+                } else if c.slot == rt::VTABLE_ROW {
+                    assert_eq!(c.args[0], obj, "row runs on the object");
+                    assert_eq!(c.args.len(), 2, "row takes (this, row)");
+                    Call {
+                        slot: c.slot,
+                        args: vec![c.args[1]],
+                    }
+                } else {
+                    c.clone()
+                }
+            })
+            .collect()
+    }
+
+    /// Runs the row-collector slot over all its cases.
+    fn run_vf14(cases: &[Case14]) {
+        use lf_leaderboard::rows::collect;
+
+        const CURSOR_SIZE: [(u32, u32); 6] = [
+            (0, 64),
+            (0, 0),
+            (100, 8),
+            (0xFFFF_FFF0, 0x20),
+            (0xFFFF_FFFF, 0xFFFF_FFFF),
+            (0, 8),
+        ];
+
+        let _session = rt::session();
+        rt::set_layout(FetchLayout {
+            count_idx: None,
+            table_a_idx: 2,
+            table_b_idx: None,
+        });
+        rt::set_classify(script);
+        rt::set_skip(|_, key| u32::from(!rules14::skip(key)));
+        rt::set_write(|_, key, _, _| u32::from(rules14::write_ok(key)));
+        let forced = forced_cells();
+        let mut image = Image::new();
+        // Object and vtable: pick at +44 (word 11), row at +48 (word 12).
+        let obj = image.addr(0);
+        let vt = image.addr(8);
+        image.words[0] = vt;
+        for w in image.words[8..24].iter_mut() {
+            *w = 0xEEEE_EEEE;
+        }
+        image.words[11] = rt::pick_stub_addr();
+        image.words[12] = rt::row_stub_addr();
+        let id_addr = image.addr(384);
+        let mask_addr = image.addr(386);
+        let flag_addr = image.addr(388);
+        let item_base = image.addr(512);
+        let item_addrs: Vec<u32> = (0..4).map(|i| item_base + i * 16).collect();
+
+        for (case_idx, case) in cases.iter().enumerate() {
+            use lf_leaderboard::rows::Role as _;
+            let _ = case_idx;
+            rt::set_roles(&[
+                (case.fetch_slot, rt::Role::Fetch),
+                (case.skip_slot, rt::Role::Skip),
+                (case.class_slot, rt::Role::Classify),
+                (case.item_slot, rt::Role::Item),
+                (case.len_slot, rt::Role::Len),
+                (case.write_slot, rt::Role::Write),
+            ]);
+            rt::install14(
+                case.fetch_slot,
+                &[case.class_slot, case.len_slot],
+                &[case.skip_slot, case.item_slot],
+                &[case.write_slot],
+            );
+            let addrs = item_addrs.clone();
+            rt::set_item(move |_, key| {
+                rules14::item_slot(key).map_or(0, |i| addrs[i])
+            });
+            let desc = LeaderboardDesc {
+                board: case.file,
+                board_id: case.board,
+                rows: case.rows,
+            };
+            let rows = case.rows as usize;
+            // Base inputs: fetch outcome x picked x cursor/size.
+            let mut inputs = Vec::new();
+            for &ok in &[true, false] {
+                for pi in 0..6u32 {
+                    let picked = match pi {
+                        0 => 0,
+                        1 => 1,
+                        2 => case.rows.wrapping_sub(1),
+                        3 => case.rows,
+                        4 => case.rows.wrapping_add(5),
+                        _ => 0xFFFF_FFFF,
+                    };
+                    for &(cursor, size) in &CURSOR_SIZE {
+                        inputs.push(Input14 {
+                            ok,
+                            picked,
+                            cursor,
+                            size,
+                            manager: 0x1000_0000
+                                .wrapping_add(case_idx as u32)
+                                .wrapping_mul(0x9E37_79B1),
+                            seed: ((case_idx as u64) << 32)
+                                | ((inputs.len() as u64) << 16)
+                                | (u64::from(ok) << 8)
+                                | u64::from(pi),
+                            huge_lens: false,
+                        });
+                    }
+                }
+            }
+            // Huge-length inputs: full proof for the signed camp,
+            // demonstrated divergence for the unsigned camp.
+            for &lens in &[HUGE_LENS, [0x8000_0000; 4]] {
+                let _ = lens;
+            }
+            let n_huge = if case.signed_camp == 1 { 8 } else { 4 };
+            for hi in 0..n_huge {
+                inputs.push(Input14 {
+                    ok: true,
+                    picked: if hi % 2 == 0 { 0 } else { case.rows.wrapping_sub(1) },
+                    cursor: 0,
+                    size: 64,
+                    manager: 0x2000_0000u32.wrapping_add(hi),
+                    seed: ((case_idx as u64) << 32) | 0x8000 | u64::from(hi),
+                    huge_lens: true,
+                });
+            }
+
+            let mut distinguished = false;
+            let mut diverged = case.signed_camp == 1;
+            for input in &inputs {
+                // Row keys and cells.
+                let mut rng = Rng(input.seed ^ 0x1234_5678);
+                let mut keys = Vec::with_capacity(rows);
+                for _ in 0..rows {
+                    keys.push(rng.u32() % TABLE_WORDS as u32);
+                }
+                image.fill(input.seed);
+                // Replant object/vtable words the fill disturbed.
+                image.words[0] = vt;
+                for w in image.words[8..24].iter_mut() {
+                    *w = 0xEEEE_EEEE;
+                }
+                image.words[11] = rt::pick_stub_addr();
+                image.words[12] = rt::row_stub_addr();
+                // Forced classify answers across the used keys.
+                for (r, &k) in keys.iter().enumerate() {
+                    image.words[64 + k as usize] = forced[r % 8];
+                }
+                // For huge-lens inputs the distinguished row must run:
+                // unskip its key.
+                if input.huge_lens && input.picked < case.rows {
+                    let pk = &mut keys[input.picked as usize];
+                    while rules14::skip(*pk) {
+                        *pk = pk.wrapping_add(1) % TABLE_WORDS as u32;
+                    }
+                    image.words[64 + *pk as usize] = forced[1 % 8];
+                }
+                // Items: seeded bytes, scripted lengths.
+                let mut items = Vec::new();
+                for s in 0..4usize {
+                    let d0 = Rng(input.seed ^ (s as u64) << 33).u32();
+                    let d1 = Rng(input.seed ^ (s as u64) << 33 ^ 1).u32();
+                    image.words[512 + s * 4] = 0xBBBB_BBBB;
+                    image.words[512 + s * 4 + 1] = d0;
+                    image.words[512 + s * 4 + 2] = d1;
+                    image.words[512 + s * 4 + 3] = 0xBBBB_BBBB;
+                    let len = if input.huge_lens {
+                        HUGE_LENS[(input.seed as usize + s) % HUGE_LENS.len()]
+                    } else {
+                        AGREED_LENS[(input.seed as usize + s) % AGREED_LENS.len()]
+                    };
+                    let mut bytes = [0u8; 8];
+                    bytes[0..4].copy_from_slice(&d0.to_le_bytes());
+                    bytes[4..8].copy_from_slice(&d1.to_le_bytes());
+                    items.push((len, bytes));
+                }
+                rt::set_items(
+                    items
+                        .iter()
+                        .enumerate()
+                        .map(|(i, (len, _))| rt::ItemSlot {
+                            addr: item_addrs[i],
+                            len: *len,
+                        })
+                        .collect(),
+                );
+                // Out buffers preset to prove clearing and no spurious writes.
+                for w in image.words[384..388].iter_mut() {
+                    *w = 0xCCCC_CCCC;
+                }
+                image.words[388] = 0x7F7F_7F7F;
+                rt::set_fetch(FetchScript {
+                    ok: input.ok,
+                    count: 0,
+                    table_a: image.addr(64),
+                    table_b: 0,
+                });
+                rt::set_pick(input.picked);
+                rt::set_row_keys(keys.clone());
+
+                let manager = tables14::Manager::new(input.manager);
+                let (r0, c0) = rt::capture(|| {
+                    (case.call)(obj, input.cursor, id_addr, mask_addr, flag_addr, manager.get(), input.size)
+                });
+                // Unsigned-camp files on huge lengths: the lift follows the
+                // original (signed accept) and the rewrite rejects. That is
+                // the documented divergence, demonstrated, not a failure.
+                if input.huge_lens && case.signed_camp == 0 {
+                    let mut fake = FakeStore14 {
+                        fetch_slot: case.fetch_slot,
+                        skip_slot: case.skip_slot,
+                        class_slot: case.class_slot,
+                        item_slot: case.item_slot,
+                        len_slot: case.len_slot,
+                        write_slot: case.write_slot,
+                        view: Some(tables14::RowTable {
+                            cells: &image.words[64..64 + TABLE_WORDS],
+                        }),
+                        items: items.clone(),
+                        item_addrs: item_addrs.clone(),
+                    };
+                    let mut picker = FakePicker14 {
+                        picked: input.picked,
+                        keys: keys.clone(),
+                    };
+                    let mut id = [0xCCu8; 8];
+                    let mut mask = [0xCCu8; 8];
+                    let mut flag = 0x7Fu8;
+                    let r1 = collect(
+                        &mut fake,
+                        &mut picker,
+                        &desc,
+                        manager,
+                        input.cursor,
+                        input.size,
+                        &mut id,
+                        &mut mask,
+                        &mut flag,
+                    );
+                    let rw_id = &image.bytes_of(384);
+                    diverged |= r0 != u32::from(r1) || *rw_id != id || image.words[388] as u8 != flag;
+                    continue;
+                }
+
+                let view = input.ok.then(|| tables14::RowTable {
+                    cells: &image.words[64..64 + TABLE_WORDS],
+                });
+                let mut fake = FakeStore14 {
+                    fetch_slot: case.fetch_slot,
+                    skip_slot: case.skip_slot,
+                    class_slot: case.class_slot,
+                    item_slot: case.item_slot,
+                    len_slot: case.len_slot,
+                    write_slot: case.write_slot,
+                    view,
+                    items: items.clone(),
+                    item_addrs: item_addrs.clone(),
+                };
+                let mut picker = FakePicker14 {
+                    picked: input.picked,
+                    keys: keys.clone(),
+                };
+                let mut id = [0xCCu8; 8];
+                let mut mask = [0xCCu8; 8];
+                let mut flag = 0x7Fu8;
+                let (r1, c1) = rt::capture(|| {
+                    collect(
+                        &mut fake,
+                        &mut picker,
+                        &desc,
+                        manager,
+                        input.cursor,
+                        input.size,
+                        &mut id,
+                        &mut mask,
+                        &mut flag,
+                    )
+                });
+                assert!(
+                    r0 <= 1,
+                    "{} return shape: {r0:#x} is not a clean flag",
+                    case.file
+                );
+                assert_eq!(
+                    r0,
+                    u32::from(r1),
+                    "{} return ok={} picked={} cursor={:#x} size={:#x} huge={}",
+                    case.file,
+                    input.ok,
+                    input.picked,
+                    input.cursor,
+                    input.size,
+                    input.huge_lens
+                );
+                assert_eq!(
+                    canonical14(&c0, case, obj),
+                    c1,
+                    "{} calls ok={} picked={} cursor={:#x} size={:#x}",
+                    case.file,
+                    input.ok,
+                    input.picked,
+                    input.cursor,
+                    input.size
+                );
+                assert_eq!(
+                    &image.bytes_of(384),
+                    &id,
+                    "{} id_out ok={} picked={}",
+                    case.file,
+                    input.ok,
+                    input.picked
+                );
+                assert_eq!(
+                    &image.bytes_of(386),
+                    &mask,
+                    "{} mask_out ok={} picked={} cursor={:#x} size={:#x}",
+                    case.file,
+                    input.ok,
+                    input.picked,
+                    input.cursor,
+                    input.size
+                );
+                assert_eq!(
+                    image.words[388] as u8, flag,
+                    "{} flag_out ok={} picked={}",
+                    case.file, input.ok, input.picked
+                );
+
+                // The deliberately wrong lift must be caught on this case.
+                let mut wfake = FakeStore14 {
+                    fetch_slot: case.fetch_slot,
+                    skip_slot: case.skip_slot,
+                    class_slot: case.class_slot,
+                    item_slot: case.item_slot,
+                    len_slot: case.len_slot,
+                    write_slot: case.write_slot,
+                    view,
+                    items,
+                    item_addrs: item_addrs.clone(),
+                };
+                let mut wpicker = FakePicker14 {
+                    picked: input.picked,
+                    keys,
+                };
+                let mut wid = [0xCCu8; 8];
+                let mut wmask = [0xCCu8; 8];
+                let mut wflag = 0x7Fu8;
+                let rw = wrong_collect(
+                    &mut wfake,
+                    &mut wpicker,
+                    &desc,
+                    manager,
+                    input.cursor,
+                    input.size,
+                    &mut wid,
+                    &mut wmask,
+                    &mut wflag,
+                );
+                distinguished |= rw != r1 || wid != id || wmask != mask || wflag != flag;
+            }
+            assert!(
+                distinguished,
+                "wrong lift never caught for {} (contract blind?)",
+                case.file
+            );
+            assert!(
+                diverged,
+                "unsigned camp unexpectedly matched on huge lengths for {} (camp mislabeled?)",
+                case.file
+            );
+        }
+    }
+
+    #[test]
+    fn slot_vf14() {
+        run_vf14(CASES_VF14);
     }
 }
 

@@ -33,6 +33,7 @@
 pub mod desc;
 pub mod probe;
 pub mod registry;
+pub mod rows;
 pub mod tables;
 
 pub use desc::LeaderboardDesc;
