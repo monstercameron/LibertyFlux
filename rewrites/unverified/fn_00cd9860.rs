@@ -5,7 +5,7 @@
 /// `this` is the record: byte `+0x28` arms it (zero returns at once), byte
 /// `+0x29` refreshes word `+0x20` from the image word when set (then clears
 /// itself), and words `+0x24`/`+0x20` form an expiry sum that must not exceed
-/// the image word (unsigned, wrapping), else it returns. `+0x18` holds a
+/// the image word (signed, wrapping), else it returns. `+0x18` holds a
 /// fallback word. `p0` is a subject record, only ever addressed (`+0xBB0`
 /// for the gate request, which also overwrites the incoming argument slot —
 /// dead after the callee-popped return, so the rewrite leaves it and the
@@ -98,7 +98,8 @@ lf_checker_rt::export!(thiscall, rw_00cd9860(this: u32, p0: u32) -> u32 {
             ((this + REFRESH_OFF) as *mut u8).write(0);
         }
         let sum = rd32(this + ACC_OFF).wrapping_add(rd32(this + STAMP_OFF));
-        if sum > image {
+        // setle after cmp: signed less-or-equal.
+        if (sum as i32) > (image as i32) {
             return 0;
         }
         let gate_obj = p0.wrapping_add(GATE_DISP);
