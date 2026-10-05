@@ -42840,6 +42840,15 @@
   "lane": "a-11"
  },
  {
+  "address": "0x008A6EB0",
+  "name": "audio_weight_and_mix_slots",
+  "kind": "function",
+  "file": "functions/fn_008a6eb0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b543"
+ },
+ {
   "address": "0x008A7BA0",
   "name": "audio_nearest_slot_distance",
   "kind": "function",
@@ -47212,6 +47221,357 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b171"
+ },
+ {
+  "address": "0x008F88A0",
+  "name": "NativeImpl_PRINT_WITH_NUMBER_BIG",
+  "kind": "function",
+  "file": "functions/fn_008f88a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008F8CE0",
+  "name": "stream_request_dispatch_16arg",
+  "kind": "function",
+  "file": "functions/fn_008f8ce0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008F8DB0",
+  "name": "stream_mgr_init_buffers",
+  "kind": "function",
+  "file": "functions/fn_008f8db0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008F8E80",
+  "name": "stream_slot_zero_4b0",
+  "kind": "function",
+  "file": "functions/fn_008f8e80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008F8EC0",
+  "name": "stream_entry_reset_and_release",
+  "kind": "function",
+  "file": "functions/fn_008f8ec0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008F9140",
+  "name": "stream_mgr_startup",
+  "kind": "function",
+  "file": "functions/fn_008f9140.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008F9240",
+  "name": "stream_remove_by_id_both",
+  "kind": "function",
+  "file": "functions/fn_008f9240.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008F9260",
+  "name": "stream_counters_reset",
+  "kind": "function",
+  "file": "functions/fn_008f9260.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008F9850",
+  "name": "stream_channel_setup",
+  "kind": "function",
+  "file": "functions/fn_008f9850.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008F9890",
+  "name": "stream_lane_active_check",
+  "kind": "function",
+  "file": "functions/fn_008f9890.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008F98C0",
+  "name": "stream_lane_flag_check",
+  "kind": "function",
+  "file": "functions/fn_008f98c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008F98F0",
+  "name": "stream_slot_ready_select",
+  "kind": "function",
+  "file": "functions/fn_008f98f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008F9910",
+  "name": "stream_slot_ready_check",
+  "kind": "function",
+  "file": "functions/fn_008f9910.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008F9940",
+  "name": "text_match_state_machine",
+  "kind": "function",
+  "file": "functions/fn_008f9940.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FAEC0",
+  "name": "stream_lane0_idle_check",
+  "kind": "function",
+  "file": "functions/fn_008faec0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FAEE0",
+  "name": "Text_GetByHash",
+  "kind": "function",
+  "file": "functions/fn_008faee0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FAF00",
+  "name": "stream_mode_word_select",
+  "kind": "function",
+  "file": "functions/fn_008faf00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FAF20",
+  "name": "stream_scaled_time_quantize",
+  "kind": "function",
+  "file": "functions/fn_008faf20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FAF60",
+  "name": "Text_AppendBounded",
+  "kind": "function",
+  "file": "functions/fn_008faf60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FAFC0",
+  "name": "NativeImpl_IS_THIS_PRINT_BEING_DISPLAYED",
+  "kind": "function",
+  "file": "functions/fn_008fafc0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FB030",
+  "name": "Text_CopyLiteral",
+  "kind": "function",
+  "file": "functions/fn_008fb030.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FB0A0",
+  "name": "NativeImpl_IS_THIS_PRINT_BEING_DISPLAYED_2",
+  "kind": "function",
+  "file": "functions/fn_008fb0a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FB110",
+  "name": "stream_pool_init_20",
+  "kind": "function",
+  "file": "functions/fn_008fb110.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FB170",
+  "name": "stream_pool_alloc",
+  "kind": "function",
+  "file": "functions/fn_008fb170.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FB1D0",
+  "name": "stream_tables_reset",
+  "kind": "function",
+  "file": "functions/fn_008fb1d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FB560",
+  "name": "Text_FormatWithString",
+  "kind": "function",
+  "file": "functions/fn_008fb560.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FB770",
+  "name": "stream_mgr_has_pending",
+  "kind": "function",
+  "file": "functions/fn_008fb770.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FB780",
+  "name": "HelpMsg_IsDisplayed",
+  "kind": "function",
+  "file": "functions/fn_008fb780.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FB7E0",
+  "name": "text_is_special_or_ascii",
+  "kind": "function",
+  "file": "functions/fn_008fb7e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FB980",
+  "name": "stream_request_clear_big",
+  "kind": "function",
+  "file": "functions/fn_008fb980.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FBA20",
+  "name": "NativeImpl_CLEAR_SMALL_PRINTS",
+  "kind": "function",
+  "file": "functions/fn_008fba20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FBD20",
+  "name": "text_resolve_key_or_fallback",
+  "kind": "function",
+  "file": "functions/fn_008fbd20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FBDD0",
+  "name": "MenuOrHud::SetFloatField9B8",
+  "kind": "function",
+  "file": "functions/fn_008fbdd0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FC090",
+  "name": "text_set_field_970",
+  "kind": "function",
+  "file": "functions/fn_008fc090.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FC0D0",
+  "name": "text_set_field_9a4",
+  "kind": "function",
+  "file": "functions/fn_008fc0d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FC0E0",
+  "name": "text_set_field_990",
+  "kind": "function",
+  "file": "functions/fn_008fc0e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FC120",
+  "name": "text_match_7878",
+  "kind": "function",
+  "file": "functions/fn_008fc120.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FC140",
+  "name": "stream_pools_teardown",
+  "kind": "function",
+  "file": "functions/fn_008fc140.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
+ },
+ {
+  "address": "0x008FC4E0",
+  "name": "text_scale_convert_exp",
+  "kind": "function",
+  "file": "functions/fn_008fc4e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s476"
  },
  {
   "address": "0x00900AB0",
