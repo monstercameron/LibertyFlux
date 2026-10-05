@@ -81432,6 +81432,60 @@
   "lane": "a-F01"
  },
  {
+  "address": "0x00CCDEB0",
+  "name": "CTaskSimpleDead::vf6",
+  "kind": "function",
+  "file": "functions/fn_00ccdeb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
+  "address": "0x00CCE200",
+  "name": "CTaskSimpleDead::vf5",
+  "kind": "function",
+  "file": "functions/fn_00cce200.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
+  "address": "0x00CCEEF0",
+  "name": "task_timer_commit",
+  "kind": "function",
+  "file": "functions/fn_00cceef0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
+  "address": "0x00CCFA70",
+  "name": "melee_cleanup_refs",
+  "kind": "function",
+  "file": "functions/fn_00ccfa70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
+  "address": "0x00CD15C0",
+  "name": "melee_id_find",
+  "kind": "function",
+  "file": "functions/fn_00cd15c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
+  "address": "0x00CD15F0",
+  "name": "melee_pair_find",
+  "kind": "function",
+  "file": "functions/fn_00cd15f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s406"
+ },
+ {
   "address": "0x00CD56E0",
   "name": "euphoria_static_thunk",
   "kind": "function",
