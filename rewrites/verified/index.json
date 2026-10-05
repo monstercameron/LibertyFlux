@@ -61938,6 +61938,33 @@
   "lane": "r-n95"
  },
  {
+  "address": "0x00B919E0",
+  "name": "NativeImpl_SET_MENU_ITEM_WITH_NUMBER",
+  "kind": "function",
+  "file": "functions/fn_00b919e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B91A70",
+  "name": "NativeImpl_SET_MISSION_PASSED_CASH",
+  "kind": "function",
+  "file": "functions/fn_00b91a70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B92670",
+  "name": "script_null_token_predicate",
+  "kind": "function",
+  "file": "functions/fn_00b92670.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
   "address": "0x00B93C90",
   "name": "ABSF",
   "kind": "native",
@@ -62973,6 +63000,42 @@
   "lane": "a-04"
  },
  {
+  "address": "0x00B96F50",
+  "name": "NativeImpl_SET_EXTRA_HOSPITAL_RESTART_POINT",
+  "kind": "function",
+  "file": "functions/fn_00b96f50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B96FB0",
+  "name": "NativeImpl_SET_EXTRA_POLICE_STATION_RESTART_POINT",
+  "kind": "function",
+  "file": "functions/fn_00b96fb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B970D0",
+  "name": "NativeImpl_SET_GRAVITY_OFF",
+  "kind": "function",
+  "file": "functions/fn_00b970d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B97480",
+  "name": "NativeImpl_START_KILL_FRENZY",
+  "kind": "function",
+  "file": "functions/fn_00b97480.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
   "address": "0x00B98210",
   "name": "GET_ACCEPT_BUTTON",
   "kind": "native",
@@ -63322,6 +63385,60 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-n114"
+ },
+ {
+  "address": "0x00B98CD0",
+  "name": "NativeImpl_IS_GAME_KEYBOARD_KEY_JUST_PRESSED",
+  "kind": "function",
+  "file": "functions/fn_00b98cd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B98D00",
+  "name": "NativeImpl_IS_GAME_KEYBOARD_KEY_PRESSED",
+  "kind": "function",
+  "file": "functions/fn_00b98d00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B98D30",
+  "name": "NativeImpl_IS_GAME_KEYBOARD_NAV_LEFT_PRESSED",
+  "kind": "function",
+  "file": "functions/fn_00b98d30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B98D90",
+  "name": "NativeImpl_IS_GAME_KEYBOARD_NAV_RIGHT_PRESSED",
+  "kind": "function",
+  "file": "functions/fn_00b98d90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B98DF0",
+  "name": "NativeImpl_IS_GAME_KEYBOARD_NAV_UP_PRESSED",
+  "kind": "function",
+  "file": "functions/fn_00b98df0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B98E50",
+  "name": "NativeImpl_IS_IN_CAR_FIRE_BUTTON_PRESSED_2",
+  "kind": "function",
+  "file": "functions/fn_00b98e50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
  },
  {
   "address": "0x00B9A220",
@@ -85158,6 +85275,33 @@
   "lane": "r-b318"
  },
  {
+  "address": "0x00CDE6A0",
+  "name": "CTaskSimpleNMOnFire::vf27",
+  "kind": "function",
+  "file": "functions/fn_00cde6a0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b400"
+ },
+ {
+  "address": "0x00CDED20",
+  "name": "CTaskSimpleNMShot::vf27",
+  "kind": "function",
+  "file": "functions/fn_00cded20.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b400"
+ },
+ {
+  "address": "0x00CDF940",
+  "name": "proposed: ped-task result publisher gated on flags and distances",
+  "kind": "function",
+  "file": "functions/fn_00cdf940.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b400"
+ },
+ {
   "address": "0x00CE0BB0",
   "name": "nm_task_params_apply",
   "kind": "function",
@@ -86400,6 +86544,15 @@
   "lane": "r-s371"
  },
  {
+  "address": "0x00D2B300",
+  "name": "navmesh_point_blend",
+  "kind": "function",
+  "file": "functions/fn_00d2b300.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b403"
+ },
+ {
   "address": "0x00D2B600",
   "name": "task_range_clamp",
   "kind": "function",
@@ -86407,6 +86560,24 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s371"
+ },
+ {
+  "address": "0x00D2B6C0",
+  "name": "navmesh_sweep_probe",
+  "kind": "function",
+  "file": "functions/fn_00d2b6c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b403"
+ },
+ {
+  "address": "0x00D2B810",
+  "name": "CTaskComplexMoveFollowNavMeshRoute::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d2b810.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b403"
  },
  {
   "address": "0x00D2BB00",
@@ -90250,6 +90421,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b203"
+ },
+ {
+  "address": "0x00DC87B0",
+  "name": "blend_task_vector",
+  "kind": "function",
+  "file": "functions/fn_00dc87b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b404"
  },
  {
   "address": "0x00DC8BE0",
