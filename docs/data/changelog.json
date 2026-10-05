@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Naming a batch of loaders: display formats, pools and boundary traps",
+    "title": "Devlog: Lockstep test cycles can silently skip the path they were built to hit",
     "commit": null,
+    "summary": "Findings from the r-s428 lane.",
+    "changes": [
+      "New devlog entry: Lockstep test cycles can silently skip the path they were built to hit.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Naming a batch of loaders: display formats, pools and boundary traps",
+    "commit": "7d877f2d4d4f0e4d9e474d6cc5d1e7ad583bd8a7",
     "summary": "Findings from the nm-79 lane.",
     "changes": [
       "New devlog entry: Naming a batch of loaders: display formats, pools and boundary traps.",
