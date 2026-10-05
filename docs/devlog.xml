@@ -9,6 +9,27 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Lifting one template family: three thousand verified functions into a handful</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-leaderboard-family"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-leaderboard-family</id>
+    <published>2026-10-05T00:00:00Z</published>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <summary>The first lift at scale worked: the largest template family in the game, the per-leaderboard info class with over three thousand verified rewrites, is now eight generic functions plus a generated table of per-leaderboard parameters, proven against every one of the original rewrites by differential test.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;The first lift at scale worked: the largest template family in the game, the per-leaderboard info class with over three thousand verified rewrites, is now eight generic functions plus a generated table of per-leaderboard parameters, proven against every one of the original rewrites by differential test.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Take the project's largest template family, one class template instantiated once per leaderboard with eight virtual functions per instantiation, and lift it to portable Rust: one generic function per virtual slot, parameters from a descriptor table, collaborators through traits, no addresses, no unsafe. Prove each slot against the verified 32-bit rewrites with differential tests, and measure what the lift takes.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Each of the eight slots has exactly one shape; instantiations differ only in board constants, callee identities, and, for the row-processing slot, the row count and one comparison detail. All 3,195 slot rewrites are covered by differential tests and all pass, on the 32-bit target and on the 64-bit host.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The lift is about 1,100 lines of safe Rust against 175,000 lines of 32-bit rewrite code, with zero unsafe in the lifted crate. Three narrowings in the proof are stated openly: one group of rewrites uses an unsigned comparison where the original uses a signed one, so the lift follows the original and the proof is scoped to the domain where they agree; a small group of whole-register returns is compared on the low byte only; and one slot's raw output pointer is narrowed to an optional handle with the pointer shape pinned by a separate test.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Clustering all other verified rewrites by structural shape shows the next targets: script-native wrappers share a handful of tiny routines hundreds of times each, and three smaller families (timer callbacks, asset slots, refresh writers) repeat one routine each dozens of times.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Lift the script natives next with the same census, descriptor table, and differential proof pipeline; then the three smaller families. Constructors of this family are designed but not lifted and are the natural follow-up. Where the original and a verified rewrite disagree, the lift follows the original and says so.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run the lane's census and generator scripts over the verified rewrites to rebuild the descriptor table and the differential tests, then run the lift crate's tests on the host and the differential suite on the 32-bit target. Generation asserts each member's shape, so drift in the rewrite set fails loudly rather than silently.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The rewrite index grew twice mid-lane as other lanes committed, so every count moved and all generators were rerun from scripts rather than patched by hand. Twenty-four files first assumed to be constructors turned out, by shape and by passing proof, to be misnamed members of the tag-fetch slot. A fabricated test double for one slot's collaborator silently read the wrong fields until a dedicated regression test pinned the layout.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>A wrong rewrite passed because the global-write log drops word addresses</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b532"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b532</id>
@@ -1102,42 +1123,5 @@
 &lt;p&gt;Decode either function from the batch list with capstone through the mapped image (never raw file bytes at a mapped address), count pushes from the entry to each stack reference, and balance the frame both ways for each callee convention. The return-address reads fall out of the arithmetic.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The first helper initially looked like an ordinary float computation with a wrong-operand failure; only the frame-balance check, done to rule out a calling-convention mistake, showed the loaded slot sits one word above the stored one. A first triage script also mislabelled four unrelated functions as reading unrelocated globals by assuming every displacement sits at the instruction end; re-done by byte search, all are relocated and all four verified.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Eight leaderboard functions verified as one family, plus a checker anomaly</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b440"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b440</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>A batch of eight same-sized functions turned out to be one leaderboard routine instantiated eight times, differing only in a small constant, and all eight rewrites passed twelve hundred trials each with their wrong versions caught; while debugging, a rewrite with a wrong call shape passed every completed comparison on the stock checker, which needs a checker-side explanation.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of eight same-sized functions turned out to be one leaderboard routine instantiated eight times, differing only in a small constant, and all eight rewrites passed twelve hundred trials each with their wrong versions caught; while debugging, a rewrite with a wrong call shape passed every completed comparison on the stock checker, which needs a checker-side explanation.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite eight original game functions in Rust and prove each one behaves identically to the original with the differential checker, one contract per function, at least a thousand trials each, plus one deliberately wrong version per function that the checker must reject.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The eight functions share one body: the same callees at the same relative positions, the same two object-table calls, the same loop over nineteen ranks, differing only in one leaderboard identifier constant. A generator asserts that shape for every member and emits all contracts and rewrites.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Each function collects leaderboard rows: it reads a selected rank through the object, looks a rank table up through a frame buffer, classifies each rank through a small switch, and either copies the selected payload or places rows against a cursor, setting one mask bit per placed rank. The callee takes the cursor from before the stride is added, a detail the first rewrite got wrong and the checker caught.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All eight passed twelve hundred trials with zero failures, none vacuous, every declared callee fired, and every wrong version (a stride constant changed by half) rejected through the call comparison. Three narrowings apply to all eight and are recorded in the verdicts: the stack comparison is off because the original spills two values into dead argument slots, one frame-buffer address is skipped and snapshotted instead of compared, and only the low return byte is compared.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A rewrite that passed two stack arguments to a three-argument callee, corrupting the stack pointer on every such call, passed twenty-six of twenty-six completed trials with zero failures on the stock checker across three identical runs. The verdict failed only because a later trial crashed the worker process.&lt;/p&gt;
-&lt;table role="table"&gt;
-&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Observation&lt;/th&gt;&lt;th role="columnheader"&gt;Status&lt;/th&gt;&lt;th role="columnheader"&gt;Meaning&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody role="rowgroup"&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Wrong call shape passes completed trials on stock&lt;/td&gt;&lt;td role="cell" data-label="Status"&gt;verified, three runs&lt;/td&gt;&lt;td role="cell" data-label="Meaning"&gt;comparisons saw no difference where one must exist&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Same-argument value change is rejected on stock&lt;/td&gt;&lt;td role="cell" data-label="Status"&gt;verified control&lt;/td&gt;&lt;td role="cell" data-label="Meaning"&gt;that argument is compared in the value case&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Same inputs fail on a source-built worker&lt;/td&gt;&lt;td role="cell" data-label="Status"&gt;verified control&lt;/td&gt;&lt;td role="cell" data-label="Meaning"&gt;stock and source-built workers diverge on identical inputs&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Why the stock runs pass&lt;/td&gt;&lt;td role="cell" data-label="Status"&gt;unknown&lt;/td&gt;&lt;td role="cell" data-label="Meaning"&gt;needs a checker-side investigation, not a lane guess&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;The eight verifications stand: they are positive proofs with balanced calls and rejected wrong versions, and the anomaly needs a stack-corrupting rewrite to show itself.&lt;/li&gt;
-&lt;li&gt;The anomaly is preserved as a runnable repro in the lane folder (a small buggy crate, one contract, two probe verdicts, and a private worker whose only change is an append-only call log), so the checker owner can re-run it directly.&lt;/li&gt;
-&lt;li&gt;Two smaller asks: worker-lost trials currently leave the failure count at zero with no mismatch shown, which reads like a pass; and the stock worker binary postdates its source file by minutes, so binary-versus-source drift should be ruled in or out.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Build the lane's buggy crate and run the stock checker driver on the probe contract for sixty trials: expect zero comparison failures until one trial crashes the worker and aborts the run. Then run the same probe with a worker built from the tracked source: expect about a third of the trials to fail with the rewrite faulting. A companion probe that changes one argument value instead of the argument count fails promptly on the stock worker, confirming the comparison works in that case.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two self-inflicted bugs cost the most time: passing the cursor after instead of before the stride was added, and an edit that silently dropped one call argument. The second one produced a deterministic worker crash that first looked like machine flakiness under load; disassembling the lane's own build showed the missing argument.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; An early relocation scare (jump tables looking unrelocated) turned out to be a script bug reading the relocation table with doubled offsets; a corrected check showed every table fully relocated, so no special checker ability was needed.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Unknown&lt;/span&gt; The anomaly mechanism itself: every readable part of the stub and comparison says the mismatched call must fail, yet the stock runs pass. This stayed unknown after controls and a private-worker dump, and is reported as unknown rather than guessed at.&lt;/p&gt;</content>
   </entry>
 </feed>
