@@ -9,6 +9,31 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming a frontend, audio and text batch: caller scans lie, rewrites tell the truth</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-62"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-62</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>A batch of 150 engine support functions was named with 69 high and 72 medium confidence names and 9 left unnamed, and the two most useful sources were the verified rewrites' callee comments and full disassembly of the short functions.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of 150 engine support functions was named with 69 high and 72 medium confidence names and 9 left unnamed, and the two most useful sources were the verified rewrites' callee comments and full disassembly of the short functions.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Name 150 consecutive unnamed game functions, working out what the group is about first, with a confidence and one sentence of evidence for each.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch is one address neighbourhood of engine support code: frontend menu backend and pages, settings load and store, audio engine init and update, a Windows Error Reporting crash submitter, file and settings path helpers, the GXT text manager, and save and load state machines.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; None of the 150 functions is reached through a virtual table, so every name is a plain function name with no class.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Raw byte scans for call instructions report calls that do not exist when the marker byte sits inside another instruction; three caller attributions were disproven against true disassembly, leaving two functions unnamed.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The inventory has wrong splits: one entry is a mid-function label, two entries sized zero are real large functions, one entry starts with garbage bytes, and one entry's range covers three functions.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The verified rewrites' comments about encrypted-region callees (file open, read, size, close) are the most reliable way to name code that cannot be disassembled from disk.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Name each function from strings, imports, known callers and full disassembly of the short ones, and verify every single-caller claim against the caller's true instruction list before trusting it. Next naming lanes should mine the verified rewrites' callee comments first for any batch that calls into encrypted code.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run the lane's gather script over the batch list to build the evidence table of strings, imports, callees and callers, dump full disassembly of the short functions and unknown neighbours, then name from the table and validate the result against the batch addresses.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The caller scan initially credited the async save driver with calls it never makes, which briefly misled two names until the driver's full disassembly disproved them. Several subsystem labels in the batch list were wrong (path code labelled as network code) and were reassigned from the bytes.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming 150 audio and frontend functions: slot patterns worth reusing</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-61"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-61</id>
@@ -1045,40 +1070,5 @@
 &lt;p&gt;Disassemble each batch function through the memory-mapped image, group by code skeleton with immediates stripped, read one full disassembly per slot, extract the board id immediate each method passes to the shared schema helper, and scan read-only data for pointers to each function to prove table slots and count references.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;One verification command printed a long result that arrived truncated, confirming most but not all copies of a loop bound. A second script that printed only a pass or fail summary confirmed all copies cleanly. Compact summaries beat long prints for machine checks.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming 150 leaderboard methods: board ids run sequential again</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-23"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-23</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>Verified All 150 functions in this batch were named as per-board leaderboard methods for episodic ranked-race boards 54 to 71, and every board id measured extends a simple rule: the id equals 203 plus the board number.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All 150 functions in this batch were named as per-board leaderboard methods for episodic ranked-race boards 54 to 71, and every board id measured extends a simple rule: the id equals 203 plus the board number.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed functions, which the inventory attributed to one template family of per-board leaderboard info classes, with 30 entries carrying no inventory name at all.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds 16 complete nine-method blocks plus a five-method head for board 54 and a one-method tail for board 71. Every method was confirmed against its class virtual table re-read from the executable image, with zero mismatches, and each table slot has exactly one code shape shared by all boards.&lt;/p&gt;
-&lt;table role="table"&gt;
-&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Method&lt;/th&gt;&lt;th role="columnheader"&gt;Count&lt;/th&gt;&lt;th role="columnheader"&gt;Behaviour&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody role="rowgroup"&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;get_board_name&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;16&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;returns the board name string&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;get_board_id&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;17&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;returns the board id constant&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;find_column_index&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;17&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;linear search of the id array, index or -1&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;get_column_id&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;17&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;array element by position, or -1&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;get_column_size&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;17&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;column type to byte width&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;get_column_kind&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;17&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;column type to kind code&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;get_mapped_column_index&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;17&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;map through one list, search in another&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;map_column_id&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;16&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;paired-list id translation&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;pack_row&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;16&lt;/td&gt;&lt;td role="cell" data-label="Behaviour"&gt;row builder over 19 column positions&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Board ids for boards 54 to 71 are sequential, 257 to 274. This is the second board range where the id-equals-203-plus-number rule holds exactly; an earlier batch found it for boards 21 to 24 and scattered ids for boards 25 to 37. Three batch members are independently verified rewrites whose documentation matches the chosen names exactly.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Unknown&lt;/span&gt; Why the id rule holds in some board ranges and scatters in others, and what owns a handful of orphaned schema ids seen by an earlier lane.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;The earlier lanes' nine-name vocabulary was reused unchanged so merged names stay consistent; 33 names carry high confidence and 117 medium. The next naming lane on this family should keep recording per-board ids until the orphaned schema ids are claimed, and can name mechanically from slot plus board with spot-check reads.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Disassemble each function from the memory-mapped image, group by code shape, confirm each against its class virtual table, and read the board id constant and name string per board. The lane scripts gather, verify and build the names file in that order.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Nothing went wrong. The only wrinkle was the 30 inventory-unnamed entries, which resolved cleanly: the six-byte ones return their board's name string and the rest share the column-kind code shape and sit in the matching virtual-table slot.&lt;/p&gt;</content>
   </entry>
 </feed>
