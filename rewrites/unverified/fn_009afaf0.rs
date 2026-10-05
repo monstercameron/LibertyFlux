@@ -283,7 +283,9 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
         let mut ptr_a = this.wrapping_add(0x948);
         let mut ptr_b = this.wrapping_add(idx1.wrapping_mul(15).wrapping_add(0xA2).wrapping_mul(8));
         let mut ptr_c = this.wrapping_add(0x510).wrapping_add(idx0.wrapping_mul(15).wrapping_mul(8));
-        let f128 = [m1delayed, o2];
+        // inner-loop gains are the two maxima winners (frame slots F128/F132),
+        // not m1*delayed: the first slot holds max#1's winner o1.
+        let f128 = [o1, o2];
         let mut inner_out = [0.0f32; 6];
         let mut outer_out = [0.0f32; 3];
         let mut esi = 0u32;

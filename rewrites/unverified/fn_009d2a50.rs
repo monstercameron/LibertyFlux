@@ -6,14 +6,14 @@
 /// address) into sixteen frame slots (out-only, so the pointers are skipped
 /// and the values are observed through the dispatch calls below). When the
 /// flag at `obj + 0x70` is zero, the scanner's answer is returned as is.
-/// Else slot 9 is read first and then slots 6 down to 0 in order, dispatching
-/// each (callee 2 with `(text, value)`) until a value of -1, and -1 is
-/// returned. (Slots 7 and 8 are written but never read.) The trailing
+/// Else slot 9 is read first and then slots 8 down to 0 in order, dispatching
+/// each (callee 2 with `(aux, value)`) until a value of -1, and -1 is
+/// returned. The trailing
 /// security cookie check (callee 3) preserves registers and is called for
 /// sequence parity. Cdecl; three stack words are declared because the
-/// original reads the object from slot 0 and the text from slot 2 (slot 1
-/// is never read).
-lf_checker_rt::export!(cdecl, rw_009D2A50(obj: u32, _pad: u32, text: u32) -> u32 {
+/// original reads the object from slot 0, a context word from slot 1
+/// (passed to every dispatch call) and the text from slot 2.
+lf_checker_rt::export!(cdecl, rw_009D2A50(obj: u32, aux: u32, text: u32) -> u32 {
     unsafe {
         const FLAG: u32 = 0x70;
         const FMT_FILE: u32 = 0xe96860;
@@ -52,7 +52,7 @@ lf_checker_rt::export!(cdecl, rw_009D2A50(obj: u32, _pad: u32, text: u32) -> u32
                 if v == SENTINEL {
                     break;
                 }
-                let _: u32 = lf_checker_rt::callee_stdcall!(DISPATCH, u32, text, v);
+                let _: u32 = lf_checker_rt::callee_stdcall!(DISPATCH, u32, aux, v);
             }
         }
         let _: u32 = lf_checker_rt::callee_cdecl!(COOKIE, u32,);
