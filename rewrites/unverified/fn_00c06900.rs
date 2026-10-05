@@ -1,15 +1,17 @@
 // original: 0x00c06900 stream_slot_append_or_forward
 /// Append a slot built from (`a0`, `a2`, `a3`), or forward when full.
 ///
-/// When `a0` equals the slot count at +4, forwards (`a0`, `a2`, `a3`) to the
+/// When `a1` equals the slot count at +4, forwards (`a0`, `a2`, `a3`) to the
 /// slot-append helper (thiscall/3) and returns its answer. Otherwise grows
 /// through the grow helper (thiscall/1) when count equals capacity at +6,
-/// takes a fresh slot from the allocator helper (thiscall/1), initialises it
-/// (thiscall/0), names it (thiscall/1 with `a0`), derives a float through the
-/// float helper (cdecl/1, x87 result) into +0x38 and +0x44, configures two
-/// fields (thiscall/1 with `a2`, `a3`), registers a default (cdecl/2) and
-/// finishes through the finaliser (thiscall/0), returning the slot. `a1` is
-/// never read. Thiscall: four stack words, callee cleans 0x10.
+/// takes a fresh slot from the allocator helper (thiscall/1 with `a1`),
+/// initialises it (thiscall/0), names it (thiscall/1 with `a0`), derives a
+/// float through the float helper (cdecl/1, x87 result) into +0x38 and +0x44,
+/// configures two fields (thiscall/1 with `a2`, `a3`), registers a default
+/// (cdecl/2) and finishes through the finaliser (thiscall/0), returning the
+/// slot. Thiscall: four stack words, callee cleans 0x10. The stack check is
+/// off: the original spills the x87 result into its incoming `a0` slot, an
+/// address the rewrite cannot reproduce (see `narrowed`).
 lf_checker_rt::export!(thiscall, rw_00c06900(this: u32, a0: u32, a1: u32, a2: u32, a3: u32) -> u32 {
     unsafe {
 #[inline(always)]
@@ -48,8 +50,7 @@ lf_checker_rt::export!(thiscall, rw_00c06900(this: u32, a0: u32, a1: u32, a2: u3
         const REG: u32 = 9;
         const FIN: u32 = 10;
         const DEFAULTS: u32 = 0x00EBDDE8;
-        let _ = a1;
-        if a0 == rd16(this + 4) {
+        if a1 == rd16(this + 4) {
             return lf_checker_rt::callee_thiscall!(APPEND, u32, this, a0, a2, a3);
         }
         if rd16(this + 4) == rd16(this + 6) {
@@ -57,7 +58,7 @@ lf_checker_rt::export!(thiscall, rw_00c06900(this: u32, a0: u32, a1: u32, a2: u3
             let c = rd16(this + 4);
             wr16(this + 4, c.wrapping_sub(1) as u16);
         }
-        let slot: u32 = lf_checker_rt::callee_thiscall!(ALLOC, u32, this, a0);
+        let slot: u32 = lf_checker_rt::callee_thiscall!(ALLOC, u32, this, a1);
         let _: u32 = lf_checker_rt::callee_thiscall!(SLOT_FN, u32, slot);
         let _: u32 = lf_checker_rt::callee_thiscall!(NAME, u32, slot, a0);
         let f: f32 = lf_checker_rt::callee_cdecl!(FLOATFN, f32, a0);

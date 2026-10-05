@@ -3,9 +3,9 @@
 ///
 /// Does nothing and returns `this` when `src == this`. Otherwise forwards
 /// the source fields to the parts initialiser (thiscall/8): `src`+4, `src`+8
-/// (floats), `src`+0x110, `src`+0x114, `src`+0xc, `src`+0x10c (float),
-/// `src`+0, `src`+0x118, and returns `this`. Thiscall: one stack word,
-/// callee cleans 4.
+/// (floats), the *address* `src`+0xc (the copy source), `src`+0x10c (float),
+/// `src`+0x110, `src`+0x114, `src`+0, `src`+0x118, and returns `this`.
+/// Thiscall: one stack word, callee cleans 4.
 lf_checker_rt::export!(thiscall, rw_00c06780(this: u32, src: u32) -> u32 {
     unsafe {
 #[inline(always)]
@@ -38,7 +38,7 @@ lf_checker_rt::export!(thiscall, rw_00c06780(this: u32, src: u32) -> u32 {
             return this;
         }
         let _: u32 = lf_checker_rt::callee_thiscall!(INIT, u32, this, rd32(src + 4), rd32(src + 8),
-            rd32(src + 0x110), rd32(src + 0x114), rd32(src + 0x0c), rd32(src + 0x10c),
+            src.wrapping_add(0x0c), rd32(src + 0x10c), rd32(src + 0x110), rd32(src + 0x114),
             rd32(src), rd32(src + 0x118));
         this
     }

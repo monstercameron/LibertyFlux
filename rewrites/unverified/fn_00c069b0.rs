@@ -6,7 +6,9 @@
 /// +0x38 and +0x44, configures two fields (thiscall/1 with `a1`, `a2`),
 /// registers a default (cdecl/2) and finishes through the finaliser
 /// (thiscall/0), returning the slot. Thiscall: three stack words, callee
-/// cleans 0xc.
+/// cleans 0xc. The stack check is off: the original spills the x87 result
+/// into its incoming `a0` slot, an address the rewrite cannot reproduce
+/// (see `narrowed`).
 lf_checker_rt::export!(thiscall, rw_00c069b0(this: u32, a0: u32, a1: u32, a2: u32) -> u32 {
     unsafe {
 #[inline(always)]

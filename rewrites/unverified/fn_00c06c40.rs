@@ -49,7 +49,11 @@ lf_checker_rt::export!(thiscall, rw_00c06c40(this: u32, a0: u32, a1: u32, a2: u3
         let arr = rd32(this + 8);
         let count = rd16(this + 0x0c);
         wr32(arr.wrapping_add(count.wrapping_mul(4)).wrapping_sub(4), slot);
-        let _: u32 = lf_checker_rt::callee_thiscall!(INIT, u32, slot, a0, a1, a2, a3, a4, a5, a6, a7);
+        // The original re-reads the count here; with count 0 the store above
+        // has clobbered it, and the callee address comes from the re-read.
+        let count2 = rd16(this + 0x0c);
+        let target = rd32(arr.wrapping_add(count2.wrapping_mul(4)).wrapping_sub(4));
+        let _: u32 = lf_checker_rt::callee_thiscall!(INIT, u32, target, a0, a1, a2, a3, a4, a5, a6, a7);
         rd32(arr.wrapping_add(rd16(this + 0x0c).wrapping_mul(4)).wrapping_sub(4))
     }
 });

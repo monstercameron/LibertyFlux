@@ -5,7 +5,10 @@
 /// The grid is `GRID_WIDE` by `GRID_HIGH` cells; out-of-range coordinates
 /// yield +0.0. Otherwise reads the byte at `DENSITY_TABLE + x + 120 * y`,
 /// doubles it and returns it as a float (the original loads the integer
-/// with `fild`, which is exact for every possible byte value).
+/// with `fild`, which is exact for every possible byte value). As a side
+/// effect the original also stores the doubled value into its own incoming
+/// `x` slot (a dead scratch use the caller never sees); the proof compares
+/// the value through the x87 result instead and leaves that slot unchecked.
 ///
 /// Original: 0x0093fb70 (cdecl, two stack words, x87 single-value result).
 lf_checker_rt::export!(cdecl, rw_0093fb70(x: u32, y: u32) -> f64 {

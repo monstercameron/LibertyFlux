@@ -60,7 +60,8 @@ lf_checker_rt::export!(thiscall, rw_00ca08c0(task: u32, ped: u32) -> u32 {
         const TAB_LIVE: u32 = 0x4C8;
         const STANCE_TAG: u32 = 0x1400_0000;
         const TWO63_BITS: u32 = 0x5F00_0000;
-        const INDEF_LO: u32 = 0x8000_0000;
+        /// Low word of the x87 integer indefinite (INT64_MIN): zero.
+        const INDEF_LO: u32 = 0x0000_0000;
         const TIME_GLOB: u32 = 0x11735BC;
         const SCALE_GLOB: u32 = 0xFE8C58;
         const ONE_GLOB: u32 = 0xFE88E8;
@@ -104,6 +105,26 @@ lf_checker_rt::export!(thiscall, rw_00ca08c0(task: u32, ped: u32) -> u32 {
                     core::mem::transmute(rd32(rd32(obj).wrapping_add(slot)) as usize);
                 f(obj, ped)
             }
+        }
+        /// Original-order float ops: both operands pinned so the compiler
+        /// keeps the instruction and its operand order (it otherwise merges
+        /// the add/sub select into a negated add with swapped operands,
+        /// which propagates the wrong NaN).
+        #[inline(always)]
+        fn fmul(a: f32, b: f32) -> f32 {
+            core::hint::black_box(a) * core::hint::black_box(b)
+        }
+        #[inline(always)]
+        fn fdiv(a: f32, b: f32) -> f32 {
+            core::hint::black_box(a) / core::hint::black_box(b)
+        }
+        #[inline(always)]
+        fn fadd(a: f32, b: f32) -> f32 {
+            core::hint::black_box(a) + core::hint::black_box(b)
+        }
+        #[inline(always)]
+        fn fsub(a: f32, b: f32) -> f32 {
+            core::hint::black_box(a) - core::hint::black_box(b)
         }
         /// Truncate a float toward zero to a 64-bit integer and keep the
         /// low 32 bits, exactly like the original's x87 chop-store:
@@ -187,19 +208,19 @@ lf_checker_rt::export!(thiscall, rw_00ca08c0(task: u32, ped: u32) -> u32 {
         }
 
         let one = glob_f(ONE_GLOB);
-        let step = chop_lo32(glob_f(TIME_GLOB) * glob_f(SCALE_GLOB));
+        let step = chop_lo32(fmul(glob_f(TIME_GLOB), glob_f(SCALE_GLOB)));
         let chopped = (step as i32) as f32;
         let divword = if rd8(task.wrapping_add(FLAG_SLOT)) & 8 != 0 {
             arg28
         } else {
             rd32(task.wrapping_add(DIV_ALT))
         };
-        let ratio = chopped / (divword as i32) as f32;
+        let ratio = fdiv(chopped, (divword as i32) as f32);
         let acc = f32::from_bits(rd32(task.wrapping_add(W_SLOT)));
         let acc = if f32::from_bits(rd32(task.wrapping_add(W_TARGET))) == one {
-            acc + ratio
+            fadd(acc, ratio)
         } else {
-            acc - ratio
+            fsub(acc, ratio)
         };
         let clamped = if acc < 0.0 {
             0.0

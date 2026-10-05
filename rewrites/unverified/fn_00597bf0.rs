@@ -42,7 +42,6 @@ lf_checker_rt::export!(thiscall, rw_00597bf0(this: u32, base: u32, value_out: u3
         // Contract callee ids: 1 = [this + VF_PRESENT], 2 = lookup,
         // 3 = [this + VF_COLUMN], 4..8 = probe, kind, fetch, size, commit.
         const CAL_LOOKUP: u32 = 2;
-        const CAL_VF_COLUMN: u32 = 3;
         const CAL_PROBE: u32 = 4;
         const CAL_KIND: u32 = 5;
         const CAL_FETCH: u32 = 6;

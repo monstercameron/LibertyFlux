@@ -309,19 +309,6 @@ lf_checker_rt::export!(thiscall, rw_00d1e350(this: u32, ped: u32) -> u32 {
                             let a = rd32(ped + PED_AUX);
                             or32(a + 0x50, 0x100);
                         }
-                        let k: u32 = lf_checker_rt::callee_thiscall!(28, u32, tgt);
-                        let armed = if k == 2 {
-                            true
-                        } else {
-                            let tag = rd32(ped + PED_TAG);
-                            tag != 0 && ((rd32(tag) >> 11) & 1) != 0
-                        };
-                        if armed {
-                            let ok: u32 = lf_checker_rt::callee_thiscall!(14, u32, this, ped, 1, 0);
-                            if (ok & 0xff) != 0 {
-                                return 0;
-                            }
-                        }
                     }
                 }
                 late_rest(this, ped)
@@ -350,7 +337,7 @@ lf_checker_rt::export!(thiscall, rw_00d1e350(this: u32, ped: u32) -> u32 {
                 wr32(this + 0xac, d7out[3]);
                 let pool = (lf_checker_rt::global::<u32>(POOL) as *const u32).read();
                 let w: u32 = lf_checker_rt::callee_thiscall!(17, u32, pool);
-                let slot10 = if w == 0 {
+                let _slot10 = if w == 0 {
                     0
                 } else {
                     let f98 = rdf(this + 0x98).to_bits();
@@ -399,7 +386,7 @@ lf_checker_rt::export!(thiscall, rw_00d1e350(this: u32, ped: u32) -> u32 {
                     return 0;
                 }
                 let i2b = icall3(this, 0x54, 0xea60, 0, 0);
-                lf_checker_rt::callee_thiscall!(25, u32, ped, slot10, i2b)
+                lf_checker_rt::callee_thiscall!(25, u32, ped, e18.to_bits(), i2b)
             }
         }
 
