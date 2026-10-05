@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-04",
-  "updated_at": "2026-10-04 21:47",
+  "updated_at": "2026-10-04 21:53",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,7 +12,7 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 21362,
+    "named": 21378,
     "rewritten": 11292,
     "verified": 10873
   },
@@ -99,9 +99,9 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 21362,
+      "value": 21378,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (12358); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (12374); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
@@ -117,7 +117,7 @@
     }
   ],
   "activity": {
-    "lanes_running": 0,
+    "lanes_running": 10,
     "lanes_finished": 988,
     "lanes_incomplete": 126,
     "devlog_entries": 376
@@ -2000,7 +2000,7 @@
       "from": "0x00887B4A",
       "to": "0x0088D46B",
       "count": 98,
-      "named": 16,
+      "named": 18,
       "rewritten": 12,
       "verified": 12
     },
@@ -2009,7 +2009,7 @@
       "from": "0x0088D46C",
       "to": "0x00892D8C",
       "count": 125,
-      "named": 119,
+      "named": 121,
       "rewritten": 64,
       "verified": 63
     },
@@ -2045,7 +2045,7 @@
       "from": "0x008A38F2",
       "to": "0x008A9213",
       "count": 101,
-      "named": 77,
+      "named": 79,
       "rewritten": 52,
       "verified": 52
     },
@@ -2054,7 +2054,7 @@
       "from": "0x008A9214",
       "to": "0x008AEB34",
       "count": 133,
-      "named": 97,
+      "named": 102,
       "rewritten": 81,
       "verified": 81
     },
@@ -2396,7 +2396,7 @@
       "from": "0x0097CD10",
       "to": "0x00982631",
       "count": 82,
-      "named": 23,
+      "named": 24,
       "rewritten": 20,
       "verified": 20
     },
@@ -2450,7 +2450,7 @@
       "from": "0x0099E3DA",
       "to": "0x009A3CFA",
       "count": 34,
-      "named": 22,
+      "named": 23,
       "rewritten": 17,
       "verified": 16
     },
@@ -2468,7 +2468,7 @@
       "from": "0x009A961D",
       "to": "0x009AEF3D",
       "count": 61,
-      "named": 3,
+      "named": 6,
       "rewritten": 0,
       "verified": 0
     },
