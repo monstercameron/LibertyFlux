@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Two streaming helpers read their own return address",
+    "title": "Rewrites: 20 more functions pass the checker (12809 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "20 rewrites added under rewrites/verified: 0 script native handlers and 20 other functions.",
+      "The tree now holds 12809 rewrites, 12790 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "767 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Two streaming helpers read their own return address",
+    "commit": "20f09f5d80df5921cb15baf3f20637be2b2089d1",
     "summary": "Findings from the r-s437 lane.",
     "changes": [
       "New devlog entry: Two streaming helpers read their own return address.",
