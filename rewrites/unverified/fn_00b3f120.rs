@@ -19,7 +19,8 @@
 /// (index = col + trunc(rand16 * 2^-15 * remaining)). Each shuffled id is
 /// resolved through callee 6; nulls are skipped and the rest are probed
 /// through callee 7 with the object, its word at +0x70 and the minus/plus
-/// box corners; any nonzero low byte latches the found flag. A teardown
+/// box corners; the first nonzero low byte latches the found flag and ends
+/// the scan. A teardown
 /// callee always runs; on found, four globals are copied to `out`. Returns
 /// the found flag (0 or 1).
 ///
@@ -232,6 +233,7 @@ lf_checker_rt::export!(cdecl, rw_00B3F120(cell: u32, a1b: u32, a2b: u32, a3b: u3
                 minus.as_ptr() as u32, plus.as_ptr() as u32);
             if hit & 0xFF != 0 {
                 found = 1;
+                break;
             }
         }
         lf_checker_rt::callee_thiscall!(BEGIN_CALLEE, u32, (&mut scratch as *mut u32) as u32);

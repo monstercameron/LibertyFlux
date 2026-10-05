@@ -1720,14 +1720,6 @@
   "reason": "other"
  },
  {
-  "address": "0x00AD37E0",
-  "name": "audio_bank_refresh",
-  "file": "fn_00ad37e0.rs",
-  "lane": "a-R01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
   "address": "0x00ADDCF0",
   "name": null,
   "file": "fn_00addcf0.rs",
@@ -1792,44 +1784,20 @@
   "reason": ""
  },
  {
+  "address": "0x00B4E880",
+  "name": "ped_task_gate_large",
+  "file": "fn_00b4e880.rs",
+  "lane": "r-b494",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00B505D0",
   "name": "event_ctor",
   "file": "fn_00b505d0.rs",
   "lane": "r-s407",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00B62F60",
-  "name": "fn_00B62F60",
-  "file": "fn_00b62f60.rs",
-  "lane": "a-R03",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x00B659F0",
-  "name": "fn_00B659F0",
-  "file": "fn_00b659f0.rs",
-  "lane": "a-R03",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x00B666B0",
-  "name": "fn_00B666B0",
-  "file": "fn_00b666b0.rs",
-  "lane": "a-R03",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x00B66D80",
-  "name": "fn_00B66D80",
-  "file": "fn_00b66d80.rs",
-  "lane": "a-R03",
-  "outcome": "not yet run",
-  "reason": ""
  },
  {
   "address": "0x00B75940",
@@ -2144,25 +2112,9 @@
   "reason": null
  },
  {
-  "address": "0x00BBD490",
-  "name": "proposed: ped_task_unknown_d490",
-  "file": "fn_00bbd490.rs",
-  "lane": "r-b516",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00BBE060",
-  "name": "proposed: ped_task_unknown_e060",
-  "file": "fn_00bbe060.rs",
-  "lane": "r-b516",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00BBE850",
-  "name": "proposed: ped_task_unknown_e850",
-  "file": "fn_00bbe850.rs",
+  "address": "0x00BBD270",
+  "name": "proposed: ped_task_unknown_d270",
+  "file": "fn_00bbd270.rs",
   "lane": "r-b516",
   "outcome": "not_reached",
   "reason": ""
@@ -2320,6 +2272,14 @@
   "reason": null
  },
  {
+  "address": "0x00BF8910",
+  "name": null,
+  "file": "fn_00bf8910.rs",
+  "lane": "r-b517",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00BF97C0",
   "name": "task_build_flagged",
   "file": "fn_00bf97c0.rs",
@@ -2448,14 +2408,6 @@
   "reason": "needs_encrypted_code"
  },
  {
-  "address": "0x00C81DC0",
-  "name": "flag_gated_code_select",
-  "file": "fn_00c81dc0.rs",
-  "lane": "a-R03",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
   "address": "0x00C820E0",
   "name": "Detach the child object at `this+0x18` and clear the slot.",
   "file": "fn_00c820e0.rs",
@@ -2533,6 +2485,14 @@
   "file": "fn_00ca00a0.rs",
   "lane": "r-b352",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CA2480",
+  "name": "ped_task_param_compute (proposed)",
+  "file": "fn_00ca2480.rs",
+  "lane": "r-b509",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -2936,9 +2896,9 @@
   "reason": ""
  },
  {
-  "address": "0x00D19EA0",
-  "name": "peds_tasks_fn2 (proposed)",
-  "file": "fn_00d19ea0.rs",
+  "address": "0x00D19A30",
+  "name": "peds_tasks_fn1 (proposed)",
+  "file": "fn_00d19a30.rs",
   "lane": "r-b514",
   "outcome": "not_reached",
   "reason": null
@@ -2990,6 +2950,14 @@
   "lane": "r-s352",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00D283D0",
+  "name": "target_heading_update",
+  "file": "fn_00d283d0.rs",
+  "lane": "a-R03",
+  "outcome": "not yet run",
+  "reason": ""
  },
  {
   "address": "0x00D28C60",

@@ -234,7 +234,7 @@ lf_checker_rt::export!(thiscall, rw_00cff4e0(this: u32, par: u32) -> u32 {
         // Step 4: subject-byte veto, helper-8 pair, subject slot.
         let b218 = rd8(subj.wrapping_add(SUB_218));
         let b219 = rd8(subj.wrapping_add(SUB_219));
-        let need_id8 = (b218 != 0 && cl != 0) || (b218 == 0 && b219 != 0);
+        let need_id8 = cl != 0 || (b218 == 0 && b219 != 0);
         let mut alv: u8;
         if need_id8 {
             let r8a: u32 = lf_checker_rt::callee_cdecl!(8, u32,);
@@ -618,7 +618,7 @@ lf_checker_rt::export!(thiscall, rw_00cff4e0(this: u32, par: u32) -> u32 {
                 18,
                 u32,
                 par.wrapping_add(PAR_LAUNCH),
-                0x00ed_f7e8,
+                lf_checker_rt::relocated(0x00ed_f7e8),
                 0,
                 0,
                 0,
