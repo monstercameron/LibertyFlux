@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-04",
-  "updated_at": "2026-10-04 22:21",
+  "updated_at": "2026-10-04 22:27",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -13,11 +13,11 @@
   "stages": {
     "identified": 37413,
     "named": 21651,
-    "rewritten": 11308,
-    "verified": 10888
+    "rewritten": 11350,
+    "verified": 10929
   },
   "structures": 340,
-  "symbols": 11000,
+  "symbols": 11041,
   "measured": [
     {
       "label": "Code section",
@@ -105,22 +105,22 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 11308,
+      "value": 11350,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 10888,
+      "value": 10929,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
   ],
   "activity": {
     "lanes_running": 10,
-    "lanes_finished": 990,
-    "lanes_incomplete": 126,
-    "devlog_entries": 378
+    "lanes_finished": 992,
+    "lanes_incomplete": 129,
+    "devlog_entries": 379
   },
   "map": [
     {
@@ -619,13 +619,13 @@
       "verified": 133
     },
     {
-      "stage": "named",
+      "stage": "verified",
       "from": "0x00533637",
       "to": "0x00538F58",
       "count": 200,
       "named": 200,
-      "rewritten": 77,
-      "verified": 77
+      "rewritten": 117,
+      "verified": 117
     },
     {
       "stage": "named",
@@ -2046,8 +2046,8 @@
       "to": "0x008A9213",
       "count": 101,
       "named": 97,
-      "rewritten": 53,
-      "verified": 53
+      "rewritten": 55,
+      "verified": 54
     },
     {
       "stage": "verified",

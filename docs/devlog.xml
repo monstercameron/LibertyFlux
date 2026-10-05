@@ -9,6 +9,30 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A preset table verified, and a guard that holds nothing</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b371"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b371</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>One audio preset function was verified against over a thousand trials, and a probe of its four neighbours showed that the checker's safety net for absolute memory reads is completely ineffective on this machine: the guarded region holds zero of its several hundred blocks, so bad reads silently return unrelated memory instead of failing loudly.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One audio preset function was verified against over a thousand trials, and a probe of its four neighbours showed that the checker's safety net for absolute memory reads is completely ineffective on this machine: the guarded region holds zero of its several hundred blocks, so bad reads silently return unrelated memory instead of failing loudly.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite a batch of five neighbouring audio functions in Rust and prove each rewrite behaves identically to the original, or defer with a precise reason and a retry plan.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One function, a switch over six presets that programs parameter slots through a single two-argument call, was verified: all trials passed with every check enabled, and a deliberately wrong version was caught on all of its trials.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The other four all read game data through absolute addresses that have no relocation entries, so they cannot run correctly under the checker on this machine. Short probes confirmed each one fails.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The checker's guard for exactly these reads holds none of its region on this machine, on every worker process. Reads that should fail loudly instead return unrelated memory, and the original then runs on garbage and fails far from the real cause.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Calls into the encrypted part of the program are intercepted without problems when they are direct calls; that was not the blocker for any function in this batch.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;The four data-reading functions were deferred with the reason that the read-only shadow they need is unavailable here, and the report keeps per-function retry kits with signatures, call shapes and the exact obstacle. Lanes seeing an original fail deep inside a function should suspect garbage from unguarded reads before suspecting their contract.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run any checker contract on this machine and read the guarded-window coverage in the verdict features: held blocks over total blocks. Audit a function's absolute operands by testing each operand site, not its target, against the relocation table. Confirm a deferral with a short probe using a stub rewrite and patched call sites.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The first relocation audit tested the wrong address and gave the right answer for the wrong reason; it was redone at the operand sites. A probe fault address first suggested the wrong function size until a wider decode showed the function takes ten arguments, not seven. The standard mutant run covers only a few trials, so the wrong version was also run as a dedicated contract for a full hundred.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming a frontend, audio and text batch: caller scans lie, rewrites tell the truth</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-62"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-62</id>
@@ -1044,31 +1068,5 @@
 &lt;p&gt;Disassemble the scan function and count the setup stores against the eight-iteration ranking loop; run the checker contract for it with and without the stack fill and compare the eighth ranking call's second argument.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The first contract faulted on exactly the trials where the self-indexed table was dereferenced, which first looked like a bad heap link; dumping one trial's fault record showed the index register held a pointer-sized value, which pointed at the table shape. A later mismatch showed two pairs of table values swapped, which traced to misreading a lane-interleave instruction as concatenation. Both are recorded here so the next lane recognizes the signatures.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming ranked race leaderboard methods, boards 71 to 88</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-24"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-24</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>All 150 functions in this batch were named with the established nine-method leaderboard vocabulary, re-verified slot by slot, and two new variants turned up: one board keeps its id stub in a padding gap the inventory never listed, and several id stubs carry a second reference from a descriptor record rather than a foreign table.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;All 150 functions in this batch were named with the established nine-method leaderboard vocabulary, re-verified slot by slot, and two new variants turned up: one board keeps its id stub in a padding gap the inventory never listed, and several id stubs carry a second reference from a descriptor record rather than a foreign table.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed functions, which turned out to be per-board virtual methods of the ranked episodic race leaderboard template for boards 71 through 88.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; every function falls into one of nine single-skeleton slots already named by earlier lanes: board name, board id, find column index, get column id, get column size, get column kind, mapped column index, map column id, and pack row. Table position proved the slot of every unattributed entry, and each board's methods agree on exactly one board id with zero conflicts.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; three boards have no per-board id stub in the batch, in two different ways. Two point their fourth table slot at per-board stubs in the encrypted region, matching a pattern an earlier lane reported. The third points at a genuine id stub in clear code that sits in padding bytes between two inventoried functions and has no inventory entry of its own.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; ten id stubs have a second reference outside their own table. The neighbours are a fixed pair of shared addresses in all ten cases, not the sibling methods a foreign table would hold, so these are per-board descriptor records referencing the id stub, not linker-folded sharing between tables.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; the descriptor records are leaderboard registration entries; their exact layout is unknown. &lt;span class="evidence"&gt;Unknown&lt;/span&gt; the exact contracts of the two shared encrypted helpers every schema method calls.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;All 150 names reuse the inherited nine-method vocabulary with per-board class qualification; 31 at high confidence, 119 at medium, none left empty.&lt;/li&gt;
-&lt;li&gt;Check the neighbours of any double reference before calling it folded sharing: a fixed neighbour pair means a descriptor record, sibling methods mean a table.&lt;/li&gt;
-&lt;li&gt;The next lane on this family should name the last board's remaining eight methods first, then continue upward, keeping the skeleton and id-unanimity checks.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Disassemble each batch function through the memory-mapped image, group by code skeleton with immediates stripped, read one full disassembly per slot, extract the board id immediate each method passes to the shared schema helper, and scan read-only data for pointers to each function to prove table slots and count references.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;One verification command printed a long result that arrived truncated, confirming most but not all copies of a loop bound. A second script that printed only a pass or fail summary confirmed all copies cleanly. Compact summaries beat long prints for machine checks.&lt;/p&gt;</content>
   </entry>
 </feed>
