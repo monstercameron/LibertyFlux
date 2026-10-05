@@ -30501,6 +30501,15 @@
   "lane": "r-s401"
  },
  {
+  "address": "0x0088B8F0",
+  "name": "rage::audVoiceDSound::vf8",
+  "kind": "function",
+  "file": "functions/fn_0088b8f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b376"
+ },
+ {
   "address": "0x0088BCD0",
   "name": "audio_scaled_product_to_int",
   "kind": "function",
@@ -30528,6 +30537,15 @@
   "lane": "a-12"
  },
  {
+  "address": "0x0088C4A0",
+  "name": "audVoiceDSound_setScaledInt",
+  "kind": "function",
+  "file": "functions/fn_0088c4a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
+ },
+ {
   "address": "0x0088C570",
   "name": "rage::audVoiceDSound::vf2",
   "kind": "function",
@@ -30550,6 +30568,15 @@
   "name": "rage::audVoiceDSoundAdpcm::vf0",
   "kind": "function",
   "file": "functions/fn_0088c8f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
+ },
+ {
+  "address": "0x0088C950",
+  "name": "rage::audVoiceDSoundAdpcm::vf8",
+  "kind": "function",
+  "file": "functions/fn_0088c950.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s401"
@@ -30607,6 +30634,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b70"
+ },
+ {
+  "address": "0x0088D490",
+  "name": "audVoiceDSoundAdpcm_setScaledInt",
+  "kind": "function",
+  "file": "functions/fn_0088d490.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
  },
  {
   "address": "0x0088D560",
@@ -30712,6 +30748,15 @@
   "name": "rage::audVoicePcAdpcm::vf0",
   "kind": "function",
   "file": "functions/fn_0088e750.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
+ },
+ {
+  "address": "0x0088E7B0",
+  "name": "rage::audVoicePcAdpcm::vf8",
+  "kind": "function",
+  "file": "functions/fn_0088e7b0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s401"
@@ -75690,6 +75735,42 @@
   "lane": "r-s398"
  },
  {
+  "address": "0x00BF8E90",
+  "name": "task_blend_1c_18",
+  "kind": "function",
+  "file": "functions/fn_00bf8e90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF8EF0",
+  "name": "task_blend_18",
+  "kind": "function",
+  "file": "functions/fn_00bf8ef0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF8F20",
+  "name": "task_blend_18_ret_a0",
+  "kind": "function",
+  "file": "functions/fn_00bf8f20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF8F60",
+  "name": "task_normalize_copy3",
+  "kind": "function",
+  "file": "functions/fn_00bf8f60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
   "address": "0x00BF8F90",
   "name": "task_ctor_3a_sub_flags",
   "kind": "function",
@@ -75730,6 +75811,51 @@
   "name": "task_ctor_3e_single_float",
   "kind": "function",
   "file": "functions/fn_00bf90e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF9700",
+  "name": "task_rebuild_slot",
+  "kind": "function",
+  "file": "functions/fn_00bf9700.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF9AB0",
+  "name": "task_ensure_bind_stamp",
+  "kind": "function",
+  "file": "functions/fn_00bf9ab0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF9B60",
+  "name": "task_acquire_configured",
+  "kind": "function",
+  "file": "functions/fn_00bf9b60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF9C10",
+  "name": "task_blend_vec3_to_190",
+  "kind": "function",
+  "file": "functions/fn_00bf9c10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BF9CD0",
+  "name": "task_xform_copy3",
+  "kind": "function",
+  "file": "functions/fn_00bf9cd0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s398"
@@ -75843,6 +75969,15 @@
   "lane": "r-s398"
  },
  {
+  "address": "0x00BFA0F0",
+  "name": "task_solve_copy3",
+  "kind": "function",
+  "file": "functions/fn_00bfa0f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
   "address": "0x00BFA140",
   "name": "task_vec3_copy_to_14",
   "kind": "function",
@@ -75874,6 +76009,15 @@
   "name": "task_vec3_scale_to_bytes_10",
   "kind": "function",
   "file": "functions/fn_00bfa200.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s398"
+ },
+ {
+  "address": "0x00BFA240",
+  "name": "task_attach_or_reuse",
+  "kind": "function",
+  "file": "functions/fn_00bfa240.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s398"
