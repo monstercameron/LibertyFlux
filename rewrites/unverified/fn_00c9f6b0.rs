@@ -84,6 +84,7 @@ lf_checker_rt::export!(thiscall, rw_00c9f6b0(this: u32) -> u32 {
             return eax;
         }
         let obj = ((this + OBJ_OFF) as *const u32).read_unaligned();
+        eax = obj;
         if ((obj + FLAG_OFF) as *const u8).read() & FLAG_BIT == 0 {
             return eax;
         }

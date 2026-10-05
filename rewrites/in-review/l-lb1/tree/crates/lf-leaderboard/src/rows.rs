@@ -62,35 +62,40 @@ pub struct RowTable<'a> {
 /// the leaderboard object; a trait keeps them fakeable here.)
 pub trait RowPicker {
     /// The distinguished row index.
-    fn picked(&mut self) -> u32;
+    fn picked(&self) -> u32;
 
     /// The key of one row.
-    fn row_key(&mut self, row: u32) -> u32;
+    fn row_key(&self, row: u32) -> u32;
 }
 
 /// The six helpers behind the collector (the 32-bit form's callees).
+///
+/// All methods take \&self\: the collector holds the fetched table across
+/// the loop while calling the other helpers, so exclusive borrows cannot
+/// work. That fits the collaborators, which are read-model queries; fakes
+/// log through the shared call recorder.
 pub trait RowStore {
     /// Fetches one board's key table; `None` on registry failure.
-    fn fetch(&mut self, board: u32) -> Option<RowTable<'_>>;
+    fn fetch(&self, board: u32) -> Option<RowTable<'_>>;
 
     /// The gate: true skips the row entirely.
-    fn skip_row(&mut self, manager: Manager, key: u32) -> bool;
+    fn skip_row(&self, manager: Manager, key: u32) -> bool;
 
     /// Classifies one cell.
-    fn classify(&mut self, cell: u32) -> u32;
+    fn classify(&self, cell: u32) -> u32;
 
     /// The item helper: `None` for a null item.
-    fn item(&mut self, manager: Manager, key: u32) -> Option<ItemToken>;
+    fn item(&self, manager: Manager, key: u32) -> Option<ItemToken>;
 
     /// The length helper on an item token.
-    fn item_len(&mut self, item: ItemToken) -> u32;
+    fn item_len(&self, item: ItemToken) -> u32;
 
     /// The item's eight data bytes (the 32-bit form's direct read at
     /// item word +4; bundled here because native code has no image).
     fn item_bytes(&self, item: ItemToken) -> [u8; 8];
 
     /// The write helper: records the row at the pre-advance cursor.
-    fn write(&mut self, manager: Manager, key: u32, at: u32, len: u32) -> bool;
+    fn write(&self, manager: Manager, key: u32, at: u32, len: u32) -> bool;
 }
 
 /// Reads one table cell. The original reads wherever its key says; the
@@ -136,8 +141,8 @@ fn completion_bit(row: u32) -> (u32, u32) {
 /// follows the original.
 #[allow(clippy::too_many_arguments)]
 pub fn collect(
-    store: &mut impl RowStore,
-    picker: &mut impl RowPicker,
+    store: &impl RowStore,
+    picker: &impl RowPicker,
     desc: &LeaderboardDesc,
     manager: Manager,
     cursor: u32,

@@ -141,6 +141,14 @@ mod x86 {
                 *w = rng.u32();
             }
         }
+
+        /// Eight bytes (two words, little-endian) at word `w`.
+        fn bytes_of(&self, w: usize) -> [u8; 8] {
+            let mut out = [0u8; 8];
+            out[0..4].copy_from_slice(&self.words[w].to_le_bytes());
+            out[4..8].copy_from_slice(&self.words[w + 1].to_le_bytes());
+            out
+        }
     }
 
     /// The lift side's fake collaborator: scripted data, translated calls.
@@ -824,23 +832,23 @@ mod x86 {
     use lf_leaderboard::rows as tables14;
 
     impl tables14::RowStore for FakeStore14<'_> {
-        fn fetch(&mut self, board: u32) -> Option<tables14::RowTable<'_>> {
+        fn fetch(&self, board: u32) -> Option<tables14::RowTable<'_>> {
             rt::record(self.fetch_slot, &[board]);
             self.view
         }
 
-        fn skip_row(&mut self, manager: tables14::Manager, key: u32) -> bool {
+        fn skip_row(&self, manager: tables14::Manager, key: u32) -> bool {
             rt::record(self.skip_slot, &[manager.get(), key]);
             rules14::skip(key)
         }
 
-        fn classify(&mut self, cell: u32) -> u32 {
+        fn classify(&self, cell: u32) -> u32 {
             rt::record(self.class_slot, &[cell]);
             script(cell)
         }
 
         fn item(
-            &mut self,
+            &self,
             manager: tables14::Manager,
             key: u32,
         ) -> Option<tables14::ItemToken> {
@@ -848,7 +856,7 @@ mod x86 {
             rules14::item_slot(key).map(|i| tables14::ItemToken::new(i as u32))
         }
 
-        fn item_len(&mut self, item: tables14::ItemToken) -> u32 {
+        fn item_len(&self, item: tables14::ItemToken) -> u32 {
             let i = item.get() as usize;
             rt::record(self.len_slot, &[self.item_addrs[i]]);
             self.items[i].0
@@ -858,7 +866,7 @@ mod x86 {
             self.items[item.get() as usize].1
         }
 
-        fn write(&mut self, manager: tables14::Manager, key: u32, at: u32, len: u32) -> bool {
+        fn write(&self, manager: tables14::Manager, key: u32, at: u32, len: u32) -> bool {
             rt::record(self.write_slot, &[manager.get(), key, at, len]);
             rules14::write_ok(key)
         }
@@ -871,12 +879,12 @@ mod x86 {
     }
 
     impl tables14::RowPicker for FakePicker14 {
-        fn picked(&mut self) -> u32 {
+        fn picked(&self) -> u32 {
             rt::record(rt::VTABLE_PICK, &[]);
             self.picked
         }
 
-        fn row_key(&mut self, row: u32) -> u32 {
+        fn row_key(&self, row: u32) -> u32 {
             rt::record(rt::VTABLE_ROW, &[row]);
             self.keys[row as usize]
         }
@@ -884,8 +892,8 @@ mod x86 {
 
     /// Deliberately wrong collector: the gate inverted.
     fn wrong_collect(
-        store: &mut impl tables14::RowStore,
-        picker: &mut impl tables14::RowPicker,
+        store: &impl tables14::RowStore,
+        picker: &impl tables14::RowPicker,
         desc: &LeaderboardDesc,
         manager: tables14::Manager,
         cursor: u32,
@@ -1036,8 +1044,6 @@ mod x86 {
         let item_addrs: Vec<u32> = (0..4).map(|i| item_base + i * 16).collect();
 
         for (case_idx, case) in cases.iter().enumerate() {
-            use lf_leaderboard::rows::Role as _;
-            let _ = case_idx;
             rt::set_roles(&[
                 (case.fetch_slot, rt::Role::Fetch),
                 (case.skip_slot, rt::Role::Skip),
@@ -1074,15 +1080,18 @@ mod x86 {
                         4 => case.rows.wrapping_add(5),
                         _ => 0xFFFF_FFFF,
                     };
-                    for &(cursor, size) in &CURSOR_SIZE {
+                    for (ci, &(cursor, size)) in CURSOR_SIZE.iter().enumerate() {
                         inputs.push(Input14 {
                             ok,
                             picked,
                             cursor,
                             size,
-                            manager: 0x1000_0000
+                            manager: 0x1000_0000u32
                                 .wrapping_add(case_idx as u32)
-                                .wrapping_mul(0x9E37_79B1),
+                                .wrapping_mul(0x9E37_79B1)
+                                .wrapping_add(pi.wrapping_mul(0x85EB_CA6B))
+                                .wrapping_add(ci as u32)
+                                .wrapping_add(cursor),
                             seed: ((case_idx as u64) << 32)
                                 | ((inputs.len() as u64) << 16)
                                 | (u64::from(ok) << 8)
@@ -1094,9 +1103,6 @@ mod x86 {
             }
             // Huge-length inputs: full proof for the signed camp,
             // demonstrated divergence for the unsigned camp.
-            for &lens in &[HUGE_LENS, [0x8000_0000; 4]] {
-                let _ = lens;
-            }
             let n_huge = if case.signed_camp == 1 { 8 } else { 4 };
             for hi in 0..n_huge {
                 inputs.push(Input14 {
@@ -1191,7 +1197,7 @@ mod x86 {
                 // original (signed accept) and the rewrite rejects. That is
                 // the documented divergence, demonstrated, not a failure.
                 if input.huge_lens && case.signed_camp == 0 {
-                    let mut fake = FakeStore14 {
+                    let fake = FakeStore14 {
                         fetch_slot: case.fetch_slot,
                         skip_slot: case.skip_slot,
                         class_slot: case.class_slot,
@@ -1204,7 +1210,7 @@ mod x86 {
                         items: items.clone(),
                         item_addrs: item_addrs.clone(),
                     };
-                    let mut picker = FakePicker14 {
+                    let picker = FakePicker14 {
                         picked: input.picked,
                         keys: keys.clone(),
                     };
@@ -1212,8 +1218,8 @@ mod x86 {
                     let mut mask = [0xCCu8; 8];
                     let mut flag = 0x7Fu8;
                     let r1 = collect(
-                        &mut fake,
-                        &mut picker,
+                        &fake,
+                        &picker,
                         &desc,
                         manager,
                         input.cursor,
@@ -1230,7 +1236,7 @@ mod x86 {
                 let view = input.ok.then(|| tables14::RowTable {
                     cells: &image.words[64..64 + TABLE_WORDS],
                 });
-                let mut fake = FakeStore14 {
+                let fake = FakeStore14 {
                     fetch_slot: case.fetch_slot,
                     skip_slot: case.skip_slot,
                     class_slot: case.class_slot,
@@ -1241,7 +1247,7 @@ mod x86 {
                     items: items.clone(),
                     item_addrs: item_addrs.clone(),
                 };
-                let mut picker = FakePicker14 {
+                let picker = FakePicker14 {
                     picked: input.picked,
                     keys: keys.clone(),
                 };
@@ -1250,8 +1256,8 @@ mod x86 {
                 let mut flag = 0x7Fu8;
                 let (r1, c1) = rt::capture(|| {
                     collect(
-                        &mut fake,
-                        &mut picker,
+                        &fake,
+                        &picker,
                         &desc,
                         manager,
                         input.cursor,
@@ -1312,7 +1318,7 @@ mod x86 {
                 );
 
                 // The deliberately wrong lift must be caught on this case.
-                let mut wfake = FakeStore14 {
+                let wfake = FakeStore14 {
                     fetch_slot: case.fetch_slot,
                     skip_slot: case.skip_slot,
                     class_slot: case.class_slot,
@@ -1323,7 +1329,7 @@ mod x86 {
                     items,
                     item_addrs: item_addrs.clone(),
                 };
-                let mut wpicker = FakePicker14 {
+                let wpicker = FakePicker14 {
                     picked: input.picked,
                     keys,
                 };
@@ -1331,8 +1337,8 @@ mod x86 {
                 let mut wmask = [0xCCu8; 8];
                 let mut wflag = 0x7Fu8;
                 let rw = wrong_collect(
-                    &mut wfake,
-                    &mut wpicker,
+                    &wfake,
+                    &wpicker,
                     &desc,
                     manager,
                     input.cursor,

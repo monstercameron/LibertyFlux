@@ -94,10 +94,14 @@ pub const SLOTS: &[SlotRecord] = &[
     },
     SlotRecord {
         slot: "vf14",
-        lifted: "(designed, not proven)",
+        lifted: "rows::collect",
         members: 224,
-        proven: false,
-        narrowings: &["not lifted yet: row collector over six callees plus two virtual calls; row count varies per board (5/7/19/24/26 observed)"],
+        proven: true,
+        narrowings: &[
+            "row keys inside the key table (stated domain; the original reads unchecked)",
+            "length check is signed, as the original's branch reads: the 112 unsigned-camp rewrites are proven on the agreed domain and shown to diverge on huge lengths",
+            "out buffers valid (the original faults on null; the lift takes &mut)",
+        ],
     },
     SlotRecord {
         slot: "ctor",
