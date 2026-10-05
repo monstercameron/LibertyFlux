@@ -1544,158 +1544,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00A801A0",
-  "name": "CAnimTaskInfo::vf9",
-  "file": "fn_00a801a0.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A801D0",
-  "name": "CComplexClimbLadderTaskInfo::vf9",
-  "file": "fn_00a801d0.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A801F0",
-  "name": "CComplexFallAndGetUpTaskInfo::vf9",
-  "file": "fn_00a801f0.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A80220",
-  "name": "CComplexGangDrivebyTaskInfo::vf9",
-  "file": "fn_00a80220.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A80240",
-  "name": "CComplexGunTaskInfo::vf9",
-  "file": "fn_00a80240.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A80270",
-  "name": "CComplexJumpTaskInfo::vf9",
-  "file": "fn_00a80270.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A802B0",
-  "name": "CComplexNewExitVehicleTaskInfo::vf9",
-  "file": "fn_00a802b0.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A802F0",
-  "name": "CComplexNewGetInVehicleTaskInfo::vf9",
-  "file": "fn_00a802f0.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A80330",
-  "name": "CComplexOnFireInfo::vf9",
-  "file": "fn_00a80330.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A80350",
-  "name": "CComplexPickUpAndCarryObjectTaskInfo::vf9",
-  "file": "fn_00a80350.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A80380",
-  "name": "CComplexSlideIntoCoverInfo::vf9",
-  "file": "fn_00a80380.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A803B0",
-  "name": "CDeadInfo::vf9",
-  "file": "fn_00a803b0.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A803E0",
-  "name": "CDieInfo::vf9",
-  "file": "fn_00a803e0.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A80400",
-  "name": "CPlayRandomAmbientsInfo::vf9",
-  "file": "fn_00a80400.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A80430",
-  "name": "CScriptAnimTaskInfo::vf9",
-  "file": "fn_00a80430.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A80460",
-  "name": "CSimpleAimPlayerProjectileInfo::vf9",
-  "file": "fn_00a80460.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A80480",
-  "name": "CSimpleCarDriveTaskInfo::vf9",
-  "file": "fn_00a80480.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A804A0",
-  "name": "CSimpleClimbTaskInfo::vf9",
-  "file": "fn_00a804a0.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A80520",
-  "name": "CSimpleNMBalanceTaskInfo::vf9",
-  "file": "fn_00a80520.rs",
-  "lane": "r-s467",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00A8A420",
   "name": "pool_acquire_guarded",
   "file": "fn_00a8a420.rs",
@@ -1705,10 +1553,10 @@
  },
  {
   "address": "0x00A8A4F0",
-  "name": "pool_release_all_nodes",
+  "name": null,
   "file": "fn_00a8a4f0.rs",
-  "lane": "r-s463",
-  "outcome": "not_reached",
+  "lane": "r-s466",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -1769,10 +1617,10 @@
  },
  {
   "address": "0x00A8B1D0",
-  "name": "pool_dispatch_virtual",
+  "name": null,
   "file": "fn_00a8b1d0.rs",
-  "lane": "r-s463",
-  "outcome": "not_reached",
+  "lane": "r-s466",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -1827,6 +1675,30 @@
   "address": "0x00A8E600",
   "name": null,
   "file": "fn_00a8e600.rs",
+  "lane": "r-s466",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00A8E640",
+  "name": null,
+  "file": "fn_00a8e640.rs",
+  "lane": "r-s466",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00A8E680",
+  "name": null,
+  "file": "fn_00a8e680.rs",
+  "lane": "r-s466",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00A8E730",
+  "name": null,
+  "file": "fn_00a8e730.rs",
   "lane": "r-s466",
   "outcome": "not yet run",
   "reason": null
@@ -1931,6 +1803,22 @@
   "address": "0x00A8F2B0",
   "name": null,
   "file": "fn_00a8f2b0.rs",
+  "lane": "r-s466",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00A8F310",
+  "name": null,
+  "file": "fn_00a8f310.rs",
+  "lane": "r-s466",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00A8F340",
+  "name": null,
+  "file": "fn_00a8f340.rs",
   "lane": "r-s466",
   "outcome": "not yet run",
   "reason": null
@@ -2472,6 +2360,14 @@
   "reason": null
  },
  {
+  "address": "0x00BE2C30",
+  "name": "CTaskComplexReact::vf19",
+  "file": "fn_00be2c30.rs",
+  "lane": "r-b528",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00BE33D0",
   "name": "CTaskComplexSitIdle::vf19",
   "file": "fn_00be33d0.rs",
@@ -2971,6 +2867,14 @@
   "address": "0x00CD0550",
   "name": "proposed-tbd",
   "file": "fn_00cd0550.rs",
+  "lane": "r-b527",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CD0D90",
+  "name": "proposed-tbd",
+  "file": "fn_00cd0d90.rs",
   "lane": "r-b527",
   "outcome": "not_reached",
   "reason": null

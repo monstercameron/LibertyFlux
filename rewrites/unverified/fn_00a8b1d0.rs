@@ -1,43 +1,37 @@
-// original: 0x00a8b1d0 pool_dispatch_virtual (proposed)
+// original: 0x00A8B1D0 pool_row_hook_dispatch (proposed)
 
-/// Dispatch an indexed call through the per-kind handler slot.
+/// Dispatch through a pool row's hook with an adjusted index.
 ///
-/// `this` is the pool object, `idx` the entry and `extra` an argument the
-/// handler receives. The kind byte comes from the shared kind table (held
-/// through its pointer) at `idx*24+0x17`; kind 0xFF returns 0 with no
-/// call. Otherwise the handler is loaded from `this+kind*100+0x28` and
-/// invoked with (`idx - this[kind*100+0x58]`, `extra`), returning its
-/// answer. The proof windows the table to four entries and plants the
-/// stub at the three live slots.
+/// The global table picks a byte by `3 * s`; `0xFF` means no row and
+/// returns 0. Otherwise the row at `this + 100 * byte` supplies the hook
+/// pointer (`+0x28`, called as cdecl with the adjusted index `s` minus the
+/// row's `+0x58` first and `arg1` second) and its result is returned.
 ///
-/// Original: 0x00A8B1D0 (thiscall, two stack words, register-indirect
-/// callee).
-lf_checker_rt::export!(thiscall, rw_00a8b1d0(this: u32, idx: u32, extra: u32) -> u32 {
+/// Original: thiscall, two stack words, returns u32 in EAX. One outgoing
+/// call through a register (cdecl, two stack words), intercepted by a
+/// planted stub address.
+lf_checker_rt::export!(thiscall, rw_00A8B1D0(this: u32, s: u32, arg1: u32) -> u32 {
     unsafe {
-        const KIND_TABLE_PTR: u32 = 0x103e8d0;
-        const KIND_STRIDE: u32 = 24;
-        const KIND_OFF: u32 = 0x17;
-        const KIND_ABSENT: u8 = 0xff;
-        const SLOT_STRIDE: u32 = 0x64;
-        const HANDLER_OFF: u32 = 0x28;
-        const ADJUST_OFF: u32 = 0x58;
-        let table =
-            lf_checker_rt::global::<u32>(KIND_TABLE_PTR).read_unaligned();
-        let kind = ((table
-            .wrapping_add(idx.wrapping_mul(KIND_STRIDE))
-            .wrapping_add(KIND_OFF)) as *const u8)
+        const GLOBAL_TABLE: u32 = 0x103e8d0;
+        const BYTE_BASE: u32 = 0x17;
+        const BYTE_STRIDE: u32 = 24;
+        const ROW_STRIDE: u32 = 100;
+        const HOOK_OFF: u32 = 0x28;
+        const ADJ_OFF: u32 = 0x58;
+        const ABSENT: u8 = 0xff;
+        let table = (lf_checker_rt::global::<u32>(GLOBAL_TABLE) as *const u32)
             .read_unaligned();
-        if kind == KIND_ABSENT {
+        let b = (table.wrapping_add(s.wrapping_mul(3).wrapping_mul(8)).wrapping_add(BYTE_BASE)
+            as *const u8)
+            .read();
+        if b == ABSENT {
             return 0;
         }
-        let base = this
-            .wrapping_add((kind as u32).wrapping_mul(SLOT_STRIDE));
-        let adjust =
-            ((base + ADJUST_OFF) as *const u32).read_unaligned();
-        let target =
-            ((base + HANDLER_OFF) as *const u32).read_unaligned();
+        let row = this.wrapping_add((b as u32).wrapping_mul(ROW_STRIDE));
+        let d = s.wrapping_sub(((row + ADJ_OFF) as *const u32).read_unaligned());
+        let hook = ((row + HOOK_OFF) as *const u32).read_unaligned();
         let f: extern "cdecl" fn(u32, u32) -> u32 =
-            core::mem::transmute(target as usize);
-        f(idx.wrapping_sub(adjust), extra)
+            core::mem::transmute(hook as usize);
+        f(d, arg1)
     }
 });
