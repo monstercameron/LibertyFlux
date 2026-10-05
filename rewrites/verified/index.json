@@ -40086,6 +40086,114 @@
   "lane": "r-s482"
  },
  {
+  "address": "0x008778E0",
+  "name": "rage::crmtComposerOptimized::vf7",
+  "kind": "function",
+  "file": "functions/fn_008778e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00877980",
+  "name": "rage::crmtComposerOptimized::vf8",
+  "kind": "function",
+  "file": "functions/fn_00877980.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00877A40",
+  "name": "rage::crmtComposerOptimized::vf9",
+  "kind": "function",
+  "file": "functions/fn_00877a40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00877B10",
+  "name": "rage::crmtComposerOptimized::vf10",
+  "kind": "function",
+  "file": "functions/fn_00877b10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00877BE0",
+  "name": "rage::crmtComposerOptimized::vf11",
+  "kind": "function",
+  "file": "functions/fn_00877be0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00877CC0",
+  "name": "rage::crmtComposerOptimized::vf12",
+  "kind": "function",
+  "file": "functions/fn_00877cc0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00877DB0",
+  "name": "rage::crmtComposerOptimized::vf13",
+  "kind": "function",
+  "file": "functions/fn_00877db0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00877E70",
+  "name": "rage::crmtComposerOptimized::vf14",
+  "kind": "function",
+  "file": "functions/fn_00877e70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00877F60",
+  "name": "rage::crmtComposerOptimized::vf15",
+  "kind": "function",
+  "file": "functions/fn_00877f60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00877FC0",
+  "name": "rage::crmtComposerOptimized::vf16",
+  "kind": "function",
+  "file": "functions/fn_00877fc0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00878070",
+  "name": "rage::crmtComposerOptimized::vf17",
+  "kind": "function",
+  "file": "functions/fn_00878070.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
+  "address": "0x00878100",
+  "name": "rage::crmtComposerOptimized::vf18",
+  "kind": "function",
+  "file": "functions/fn_00878100.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s482"
+ },
+ {
   "address": "0x008781B0",
   "name": "rage::crmtComposerOptimized::vf20",
   "kind": "function",
@@ -58248,6 +58356,15 @@
   "lane": "r-s191"
  },
  {
+  "address": "0x009D1070",
+  "name": "vec_reserve_capped",
+  "kind": "function",
+  "file": "functions/fn_009d1070.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s483"
+ },
+ {
   "address": "0x009D1140",
   "name": "strsafe_copy_cch",
   "kind": "function",
@@ -58270,6 +58387,33 @@
   "name": "strsafe_length_cch",
   "kind": "function",
   "file": "functions/fn_009d1230.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s483"
+ },
+ {
+  "address": "0x009D1370",
+  "name": "childlist_teardown_a",
+  "kind": "function",
+  "file": "functions/fn_009d1370.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s483"
+ },
+ {
+  "address": "0x009D13E0",
+  "name": "childlist_teardown_nested",
+  "kind": "function",
+  "file": "functions/fn_009d13e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s483"
+ },
+ {
+  "address": "0x009D1460",
+  "name": "stream_ctx_teardown",
+  "kind": "function",
+  "file": "functions/fn_009d1460.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s483"
@@ -58311,10 +58455,55 @@
   "lane": "r-s483"
  },
  {
+  "address": "0x009D1730",
+  "name": "childlist_teardown_b",
+  "kind": "function",
+  "file": "functions/fn_009d1730.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s483"
+ },
+ {
+  "address": "0x009D1770",
+  "name": "stream_singleton_ensure",
+  "kind": "function",
+  "file": "functions/fn_009d1770.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s483"
+ },
+ {
+  "address": "0x009D17E0",
+  "name": "stream_lazy_dispatch",
+  "kind": "function",
+  "file": "functions/fn_009d17e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s483"
+ },
+ {
   "address": "0x009D1FF0",
   "name": "pool_index_search",
   "kind": "function",
   "file": "functions/fn_009d1ff0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s483"
+ },
+ {
+  "address": "0x009D2040",
+  "name": "stream_tagvec_seed",
+  "kind": "function",
+  "file": "functions/fn_009d2040.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s483"
+ },
+ {
+  "address": "0x009D2240",
+  "name": "stream_flagvec_seed",
+  "kind": "function",
+  "file": "functions/fn_009d2240.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s483"
@@ -58414,6 +58603,15 @@
   "name": "guarded_table_slot1_b",
   "kind": "function",
   "file": "functions/fn_009d38f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s483"
+ },
+ {
+  "address": "0x009D3920",
+  "name": "recarray_grow_append",
+  "kind": "function",
+  "file": "functions/fn_009d3920.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s483"

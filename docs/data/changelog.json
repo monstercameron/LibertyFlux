@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Site: progress history reads only new commits",
+    "title": "Rewrites: 22 more functions pass the checker (15424 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "22 rewrites added under rewrites/verified: 0 script native handlers and 22 other functions.",
+      "The tree now holds 15424 rewrites, 15405 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 662 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "20 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Site: progress history reads only new commits",
+    "commit": "8573dd6c68d02253a153d09ac5ccbcd556098563",
     "summary": "The script behind the progress chart re-read every committed version of the progress file on every tick. It now reads only the commits later than the newest point it already has.",
     "changes": [
       "scripts/site/history.py asked git for each of 411 committed versions of the progress file on every five-minute tick, which took 51 seconds and grew with every tick. A committed version never changes, so only commits later than the newest committed point in history.json are read now: one second.",
