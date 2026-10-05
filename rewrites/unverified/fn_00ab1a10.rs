@@ -4,12 +4,13 @@
 ///
 /// When both flag bytes at `+0x151461`/`+0x151462` of the loader are clear,
 /// forwards `(a0, a1)` to the bulk-release callee and returns. Otherwise
-/// charges the entry's weight at `a0 + 0x3c` against one of the three
-/// budget words at `a1 + 0xc0`/`+0xc4`/`+0xc8` (picked by the tag bytes at
-/// `a0 + 0x50`/`+0x51`, skipped entirely when the done byte at `a0 + 0x80`
+/// charges the entry's weight at `a1 + 0x3c` against one of the three
+/// budget words at `a0 + 0xc0`/`+0xc4`/`+0xc8` (picked by the tag bytes at
+/// `a1 + 0x50`/`+0x51`, skipped entirely when the done byte at `a1 + 0x80`
 /// is set), tears the entry down through the teardown callee, unlinks it
-/// through the unlink callee on `a1 + 0xb4`, and detaches it through the
-/// detach callee. No return value.
+/// through the unlink callee on `a0 + 0xb4`, and detaches it through the
+/// detach callee. No return value. Note the argument roles: the entry is
+/// the second word, the budget holder the first.
 ///
 /// Callees: 1 = bulk release (thiscall, two words), 2 = teardown
 /// (thiscall, no words), 3 = unlink (thiscall, one word), 4 = detach
@@ -38,22 +39,22 @@ lf_checker_rt::export!(thiscall, rw_00ab1a10(this: u32, a0: u32, a1: u32) -> u32
             lf_checker_rt::callee_thiscall!(BULK, u32, this, a0, a1);
             return 0;
         }
-        if ((a0 + DONE_OFF) as *const u8).read() == 0 {
-            let w = ((a0 + WEIGHT_OFF) as *const u32).read_unaligned();
-            if ((a0 + TAG_A) as *const u8).read() != 0 {
-                let c = ((a1 + BUDGET_A) as *const u32).read_unaligned();
-                ((a1 + BUDGET_A) as *mut u32).write_unaligned(c.wrapping_sub(w));
-            } else if ((a0 + TAG_B) as *const u8).read() != 0 {
-                let c = ((a1 + BUDGET_B) as *const u32).read_unaligned();
-                ((a1 + BUDGET_B) as *mut u32).write_unaligned(c.wrapping_sub(w));
+        if ((a1 + DONE_OFF) as *const u8).read() == 0 {
+            let w = ((a1 + WEIGHT_OFF) as *const u32).read_unaligned();
+            if ((a1 + TAG_A) as *const u8).read() != 0 {
+                let c = ((a0 + BUDGET_A) as *const u32).read_unaligned();
+                ((a0 + BUDGET_A) as *mut u32).write_unaligned(c.wrapping_sub(w));
+            } else if ((a1 + TAG_B) as *const u8).read() != 0 {
+                let c = ((a0 + BUDGET_B) as *const u32).read_unaligned();
+                ((a0 + BUDGET_B) as *mut u32).write_unaligned(c.wrapping_sub(w));
             } else {
-                let c = ((a1 + BUDGET_C) as *const u32).read_unaligned();
-                ((a1 + BUDGET_C) as *mut u32).write_unaligned(c.wrapping_sub(w));
+                let c = ((a0 + BUDGET_C) as *const u32).read_unaligned();
+                ((a0 + BUDGET_C) as *mut u32).write_unaligned(c.wrapping_sub(w));
             }
         }
-        lf_checker_rt::callee_thiscall!(TEARDOWN, u32, a0);
-        lf_checker_rt::callee_thiscall!(UNLINK, u32, a1.wrapping_add(UNLINK_OFF), a0);
-        lf_checker_rt::callee_thiscall!(DETACH, u32, this, a0);
+        lf_checker_rt::callee_thiscall!(TEARDOWN, u32, a1);
+        lf_checker_rt::callee_thiscall!(UNLINK, u32, a0.wrapping_add(UNLINK_OFF), a1);
+        lf_checker_rt::callee_thiscall!(DETACH, u32, this, a1);
         0
     }
 });

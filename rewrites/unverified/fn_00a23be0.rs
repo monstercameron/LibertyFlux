@@ -407,6 +407,8 @@ lf_checker_rt::export!(thiscall, rw_00a23be0(
         wrf(this.wrapping_add(0x158), x0u);
         wrf(this.wrapping_add(0x154), x3t);
         wrf(this.wrapping_add(0x15c), f32::from_bits(STACK_FILL_WORD));
+        // r-b430 DEBUG: capture intermediates to heap seg 6 (remove before ship)
+        // NOTE: disabled by default; enabled via debug env during triage only.
         if cl != 0 {
             idx
         } else {

@@ -2,10 +2,13 @@
 
 /// Introsort main loop over 28-byte records keyed by the float at offset 0.
 ///
-/// Same routine as rw_00b34140 (same five-test median tree, same cutoff,
+/// Same routine as rw_00b34140 for a key at record offset 0 (same cutoff,
 /// same callee shapes: partition takes first, last, the seven median words
-/// and extra; the fallback takes first, last, last and extra) except the key
-/// is the float at record offset 0. Returns void.
+/// and extra; the fallback takes first, last, last and extra). The median
+/// tree tests the pairs in the opposite order from rw_00b34140's (middle
+/// against first first, as in rw_00b346a0); both pick the middle value, but
+/// NaN keys can select different records, so the trees are not shared.
+/// Returns void.
 ///
 /// Original: 0x00B343F0 (cdecl, five stack words), three call sites (the
 /// self-call runs natively on both sides), no globals.
@@ -25,22 +28,22 @@ lf_checker_rt::export!(cdecl, rw_00b343f0(first: u32, last: u32, _dead: u32, dep
             unsafe { f32::from_bits(rd32(rec.wrapping_add(KEY_OFF))) }
         }
 
-        /// Median of the three records' keys; same tree as rw_00b34140.
+        /// Median of the three records' keys; same tree as rw_00b346a0.
         #[inline(always)]
         unsafe fn median_of_three(f: u32, m: u32, l: u32) -> u32 {
             unsafe {
                 let a = key(f);
                 let b = key(m);
                 let c = key(l);
-                if !(a > b) {
-                    if !(a > c) {
-                        if b > c { l } else { m }
+                if !(b > a) {
+                    if !(c > a) {
+                        if c > b { l } else { m }
                     } else {
                         f
                     }
-                } else if b > c {
+                } else if c > b {
                     m
-                } else if a > c {
+                } else if c > a {
                     l
                 } else {
                     f

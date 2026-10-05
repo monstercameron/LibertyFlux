@@ -10,16 +10,17 @@ lf_checker_rt::export!(cdecl, rw_008c7c40() -> u32 {
         const READY_CALLEE: u32 = 1;
         const SETUP_CALLEE: u32 = 2;
         const HANDLE_CALLEE: u32 = 3;
-        const HANDLER_TOKEN: u32 = 0x018B7A4D;
-        let ready: u32 = lf_checker_rt::callee_cdecl!(READY_CALLEE, u32);
+        const HANDLER_TOKEN_FILE_VA: u32 = 0x018B7A4D;
+        let ready: u32 = lf_checker_rt::callee_cdecl!(READY_CALLEE, u32,);
         if ready == 0 {
             return 0;
         }
         *lf_checker_rt::global::<u8>(0x1172cd3) = 0;
         lf_checker_rt::callee_cdecl!(SETUP_CALLEE, u32, 0);
         let handle = *lf_checker_rt::global::<u32>(0x1172cd4);
-        lf_checker_rt::callee_thiscall!(HANDLE_CALLEE, u32, HANDLER_TOKEN,
-                                        handle);
+        // The loader relocates the original's immediate; match that address.
+        let token = lf_checker_rt::relocated(HANDLER_TOKEN_FILE_VA);
+        lf_checker_rt::callee_thiscall!(HANDLE_CALLEE, u32, token, handle);
         0
     }
 });

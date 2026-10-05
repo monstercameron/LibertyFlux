@@ -3,9 +3,9 @@
 ///
 /// `this` is the streaming control block, `key` an opaque caller value and
 /// `idx` a slot index. When the flag byte at `this + idx + 0xFE` is clear
-/// the result is 0 without calling out. Otherwise the entry pointer
-/// `this + idx * 8 + 0x1EC` and the key go to the comparison callee, and
-/// the result is 1 exactly when it reports equality (0). Only the low
+/// the result is 0 without calling out. Otherwise the comparison callee
+/// receives the entry pointer `this + idx * 8 + 0x1EC` first and the key
+/// second, and the result is 1 exactly when it reports equality (0). Only the low
 /// result byte is behaviour. Original: thiscall, two stack words.
 lf_checker_rt::export!(thiscall, rw_008c6090(this: u32, key: u32, idx: u32) -> u32 {
     unsafe {
@@ -19,7 +19,7 @@ lf_checker_rt::export!(thiscall, rw_008c6090(this: u32, key: u32, idx: u32) -> u
         }
         let entry = this.wrapping_add(idx.wrapping_mul(ENTRY_STRIDE))
             .wrapping_add(ENTRY_BASE);
-        let diff: u32 = lf_checker_rt::callee_cdecl!(CMP_CALLEE, u32, key, entry);
+        let diff: u32 = lf_checker_rt::callee_cdecl!(CMP_CALLEE, u32, entry, key);
         (diff == 0) as u32
     }
 });
