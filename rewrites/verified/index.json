@@ -52857,6 +52857,33 @@
   "lane": "r-s275"
  },
  {
+  "address": "0x00A74B70",
+  "name": "ped_task_update_float_state",
+  "kind": "function",
+  "file": "functions/fn_00a74b70.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b420"
+ },
+ {
+  "address": "0x00A75400",
+  "name": "ped_task_check_flags",
+  "kind": "function",
+  "file": "functions/fn_00a75400.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b420"
+ },
+ {
+  "address": "0x00A755F0",
+  "name": "ped_task_gate_flag_pair",
+  "kind": "function",
+  "file": "functions/fn_00a755f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b420"
+ },
+ {
   "address": "0x00A7C2F0",
   "name": "bu_task_poll_and_reset",
   "kind": "function",
@@ -89010,6 +89037,15 @@
   "lane": "r-s336"
  },
  {
+  "address": "0x00CB7CF0",
+  "name": "peds_task_state_consumer (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00cb7cf0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b428"
+ },
+ {
   "address": "0x00CB7EC0",
   "name": "shelter_task_query",
   "kind": "function",
@@ -95407,6 +95443,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b203"
+ },
+ {
+  "address": "0x00DC3FE0",
+  "name": "peds_task_fn2",
+  "kind": "function",
+  "file": "functions/fn_00dc3fe0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b427"
  },
  {
   "address": "0x00DC4350",
