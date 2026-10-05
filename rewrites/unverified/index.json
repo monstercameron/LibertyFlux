@@ -1344,84 +1344,12 @@
   "reason": null
  },
  {
-  "address": "0x009A8910",
-  "name": "byte_pair_gate",
-  "file": "fn_009a8910.rs",
+  "address": "0x009AA110",
+  "name": "conv_first_or_null",
+  "file": "fn_009aa110.rs",
   "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A8E50",
-  "name": "flag_byte_store",
-  "file": "fn_009a8e50.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A9570",
-  "name": "ring_slot_append",
-  "file": "fn_009a9570.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A95E0",
-  "name": "ring_record_find_copy",
-  "file": "fn_009a95e0.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A9970",
-  "name": "table_flag_test_a",
-  "file": "fn_009a9970.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A99A0",
-  "name": "table_flag_test_b",
-  "file": "fn_009a99a0.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A9C40",
-  "name": "indexed_slot_lookup",
-  "file": "fn_009a9c40.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009A9C60",
-  "name": "indexed_byte_fetch",
-  "file": "fn_009a9c60.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009AA4A0",
-  "name": "table_id_search",
-  "file": "fn_009aa4a0.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009AA510",
-  "name": "table_value_fetch",
-  "file": "fn_009aa510.rs",
-  "lane": "r-s420",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "checker_gap"
  },
  {
   "address": "0x009CBBC0",
@@ -1462,14 +1390,6 @@
   "lane": "r-n88",
   "outcome": "not yet run",
   "reason": null
- },
- {
-  "address": "0x00A72F80",
-  "name": "CTaskComplexPlayerOnFoot::vf5",
-  "file": "fn_00a72f80.rs",
-  "lane": "r-b396",
-  "outcome": "not_reached",
-  "reason": ""
  },
  {
   "address": "0x00A7E990",
@@ -1912,6 +1832,14 @@
   "reason": null
  },
  {
+  "address": "0x00B85A10",
+  "name": "registry_release",
+  "file": "fn_00b85a10.rs",
+  "lane": "r-s419",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00B85C60",
   "name": "registry_release_lazy",
   "file": "fn_00b85c60.rs",
@@ -1968,6 +1896,14 @@
   "reason": null
  },
  {
+  "address": "0x00B91170",
+  "name": null,
+  "file": "fn_00b91170.rs",
+  "lane": "r-s418",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00B913A0",
   "name": null,
   "file": "fn_00b913a0.rs",
@@ -2019,6 +1955,14 @@
   "address": "0x00B92670",
   "name": null,
   "file": "fn_00b92670.rs",
+  "lane": "r-s418",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B928D0",
+  "name": null,
+  "file": "fn_00b928d0.rs",
   "lane": "r-s418",
   "outcome": "not yet run",
   "reason": null
@@ -2139,6 +2083,30 @@
   "address": "0x00B970D0",
   "name": null,
   "file": "fn_00b970d0.rs",
+  "lane": "r-s418",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B972C0",
+  "name": null,
+  "file": "fn_00b972c0.rs",
+  "lane": "r-s418",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B97310",
+  "name": null,
+  "file": "fn_00b97310.rs",
+  "lane": "r-s418",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B97420",
+  "name": null,
+  "file": "fn_00b97420.rs",
   "lane": "r-s418",
   "outcome": "not yet run",
   "reason": null
@@ -3024,12 +2992,36 @@
   "reason": ""
  },
  {
+  "address": "0x00D2B6C0",
+  "name": "peds_task_unknown_D2B6C0",
+  "file": "fn_00d2b6c0.rs",
+  "lane": "r-b403",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00D2B810",
+  "name": "CTaskComplexMoveFollowNavMeshRoute::vf1",
+  "file": "fn_00d2b810.rs",
+  "lane": "r-b403",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00D82CD0",
   "name": null,
   "file": "fn_00d82cd0.rs",
   "lane": "r-b212",
   "outcome": "not yet run",
   "reason": null
+ },
+ {
+  "address": "0x00DA7610",
+  "name": "CTaskComplexSmartFleeEntity::vf20",
+  "file": "fn_00da7610.rs",
+  "lane": "r-b402",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00DD34B0",

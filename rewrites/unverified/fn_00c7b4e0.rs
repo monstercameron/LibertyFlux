@@ -19,17 +19,17 @@
 // 3 randomises the next timer (thresholds 0.33 and 0.5 on the scaled random
 // stream, else a 10..20 range) while state 2 hands off to the ped with state
 // 6; states 5 and 6 dispatch on the partner limit (5 replays the state-3
-// randomisation, 6 takes a narrow range, anything else yields or hands off
-// with state 5 when the state/limit pair is exactly 6/2); state 4 yields.
+// randomisation through the shared range tail, 6 takes a narrow range,
+// anything else yields or hands off with state 5 when the state/limit pair
+// is exactly 6/2); state 4 yields. The limit-5 wide range and the limit-6
+// narrow range share one call site and its follow-up chat-end call.
 // Random draws scale the raw generator by `RAND_SCALE` (2^-15).
 //
-// Two reads need care. The state dispatch jumps through a table with an
-// unrelocated base, and every branch reads tuning floats, the frame step and
-// the random thresholds through unrelocated absolute addresses, which the
-// checker cannot serve on this machine; the values are read through
+// Two reads need care. The state dispatch jumps through a relocated table,
+// and every branch reads tuning floats, the frame step and the random
+// thresholds through relocated absolute addresses, served through
 // `relocated()` (the dispatch is a plain `match`, which never touches the
-// original's code) so the rewrite stays correct wherever the image is
-// mapped. The state-3 random path also compares the scratch register left
+// original's code). The state-3 random path also compares the scratch register left
 // behind by the generator call; the checker's stub always leaves its step
 // index (0) there, which never equals 2, so that arm is dead under the
 // checker and is modelled exactly that way (`STUB_SCRATCH_ECX`). Original:
@@ -203,18 +203,20 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
                         }
                         wr32(this + STATE, 2);
                     } else {
+                        // Push order below is the reverse of arg order:
+                        // the weight lands at index 7, -1 at index 4.
                         let chat: u32 = lf_checker_rt::callee_thiscall!(
                             CAL_CHAT_JOIN,
                             u32,
                             this,
                             0,
                             0,
-                            FULL_WEIGHT.to_bits(),
                             0,
                             0,
                             0xffff_ffff,
                             0,
                             0,
+                            FULL_WEIGHT.to_bits(),
                             0,
                             0
                         );
@@ -257,7 +259,14 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
                     return rd32(this + SUB_TASK);
                 }
                 wr32(this + STATE, 0);
-                randomise_timer(this, ped, CAL_RAND_RETRY, CAL_RAND_TIMER, CAL_RANGE_WIDE);
+                randomise_timer(
+                    this,
+                    ped,
+                    CAL_RAND_RETRY,
+                    CAL_RAND_TIMER,
+                    CAL_RANGE_WIDE,
+                    false,
+                );
                 rd32(this + SUB_TASK)
             }
             4 => rd32(this + SUB_TASK),
@@ -265,7 +274,16 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
                 // States 5 and 6 dispatch on the partner limit.
                 if limit == 5 {
                     wr32(this + STATE, 0);
-                    randomise_timer(this, ped, CAL_RAND_LIM5A, CAL_RAND_LIM5B, CAL_RANGE_WIDE);
+                    // Wide range through the shared tail: same site as the
+                    // narrow range, then the chat-end call.
+                    randomise_timer(
+                        this,
+                        ped,
+                        CAL_RAND_LIM5A,
+                        CAL_RAND_LIM5B,
+                        CAL_RANGE_NARROW,
+                        true,
+                    );
                     rd32(this + SUB_TASK)
                 } else if limit == 6 {
                     wr32(this + STATE, 1);
@@ -314,6 +332,7 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
             retry_id: u32,
             timer_id: u32,
             range_id: u32,
+            range_followup_done: bool,
         ) {
             unsafe {
                 if rd32(this + CHAT_MODE) == CHAT_MODE_RANDOM {
@@ -337,6 +356,13 @@ lf_checker_rt::export!(thiscall, rw_00c7b4e0(this: u32, ped: u32) -> u32 {
                 let span: f32 =
                     lf_checker_rt::callee_cdecl!(range_id, f32, lo, hi);
                 wrf(this + CHAT_TIMER, span);
+                if range_followup_done {
+                    let _done: u32 = lf_checker_rt::callee_thiscall!(
+                        CAL_CHAT_DONE,
+                        u32,
+                        ped
+                    );
+                }
             }
         }
         state_result

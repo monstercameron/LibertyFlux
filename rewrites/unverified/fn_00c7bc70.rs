@@ -239,8 +239,8 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                     CAL_DEST_S0,
                     u32,
                     leg_aux,
-                    leg_anchor,
-                    dest.as_mut_ptr() as u32
+                    dest.as_mut_ptr() as u32,
+                    leg_anchor
                 );
                 let base = placement.wrapping_add(0x30);
                 let dx = sub(f32::from_bits(dest[0]), rdf(base));
@@ -338,8 +338,8 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                     CAL_DEST_S1,
                     u32,
                     leg_anchor,
-                    leg_aux,
-                    dest.as_mut_ptr() as u32
+                    dest.as_mut_ptr() as u32,
+                    leg_aux
                 );
                 let _commit_a: u32 = lf_checker_rt::callee_thiscall!(
                     CAL_COMMIT_A,

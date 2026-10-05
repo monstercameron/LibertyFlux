@@ -22,10 +22,8 @@
 // null, set bit 1) when status bit 0 is set or the task's own sub-operation
 // (vtable slot `SELF_VT_SUBOP`, kinds 1 then 2) accepts the ped.
 //
-// Reads game data through unrelocated absolute addresses (the frame-step
-// float and the scenario-global pointer), which the checker cannot serve on
-// this machine; the values are read through `relocated()` so the rewrite
-// stays correct wherever the image is mapped. Original: thiscall, one stack
+// Reads game data (the frame-step float and the scenario-global pointer)
+// through relocated absolute addresses, served through `relocated()`. Original: thiscall, one stack
 // word, callee pops 4.
 lf_checker_rt::export!(thiscall, rw_00c7b8e0(this: u32, ped: u32) -> u32 {
     unsafe {
