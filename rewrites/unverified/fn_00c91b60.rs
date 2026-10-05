@@ -21,7 +21,9 @@
 /// words. Float operation order is the original's, pinned.
 ///
 /// The task list is then scanned four times for keys `0x2c5`, `0x419`,
-/// `0x347`, `0x640`, setting `esp16`/`bh`/`bl`; all clear exits. Region B
+/// `0x347`, `0x640`, setting `esp16`/`bh`/`bl`; all clear exits. Each scan
+/// aborts its walk when the 3-bit field at node `+0x8` increases between
+/// consecutive nodes, before comparing the key. Region B
 /// runs callee 7 (`cdecl`, `[seg_o+0xc4]`), callee 8 (must answer 0),
 /// callee 9 twice, and callee 10. Region C maintains the `G_FADE` float
 /// against `G_STEP` (clamped at zero from below, `bl` set while positive)
@@ -183,19 +185,27 @@ lf_checker_rt::export!(thiscall, rw_00c91b60(this: u32) -> u32 {
             }
         }
 
-        // Task-list scans: one walk per key over the same list. The edi/eax
-        // compare inside each iteration always sees equal values, so its `jb`
-        // never fires; eax ends as the last node's 3-bit value.
+        // Task-list scans: one walk per key over the same list. Each scan
+        // loads the previous 3-bit value once, then per node loads the
+        // current one into eax, ends the scan when the previous value is
+        // below the current one (an increasing run aborts the walk before
+        // the key compare), and otherwise checks the key; eax ends as the
+        // last examined node's 3-bit value either way.
         let head = rd32(rd32(seg_a.wrapping_add(0x224)).wrapping_add(0x2E0));
         let mut esp16: u8 = 0;
         let mut node = head;
         if node != 0 {
+            let mut prev = (rd32(node.wrapping_add(8)) >> 1) & 7;
             loop {
                 eaxv = (rd32(node.wrapping_add(8)) >> 1) & 7;
+                if prev < eaxv {
+                    break;
+                }
                 if rd32(node.wrapping_add(4)) == 0x2C5 {
                     esp16 = 1;
                     break;
                 }
+                prev = eaxv;
                 node = rd32(node.wrapping_add(12));
                 if node == 0 {
                     break;
@@ -206,13 +216,18 @@ lf_checker_rt::export!(thiscall, rw_00c91b60(this: u32) -> u32 {
         let mut skip_scan3 = false;
         node = head;
         if node != 0 {
+            let mut prev = (rd32(node.wrapping_add(8)) >> 1) & 7;
             loop {
                 eaxv = (rd32(node.wrapping_add(8)) >> 1) & 7;
+                if prev < eaxv {
+                    break;
+                }
                 if rd32(node.wrapping_add(4)) == 0x419 {
                     bh = 1;
                     skip_scan3 = true;
                     break;
                 }
+                prev = eaxv;
                 node = rd32(node.wrapping_add(12));
                 if node == 0 {
                     break;
@@ -222,12 +237,17 @@ lf_checker_rt::export!(thiscall, rw_00c91b60(this: u32) -> u32 {
         if !skip_scan3 {
             node = head;
             if node != 0 {
+                let mut prev = (rd32(node.wrapping_add(8)) >> 1) & 7;
                 loop {
                     eaxv = (rd32(node.wrapping_add(8)) >> 1) & 7;
+                    if prev < eaxv {
+                        break;
+                    }
                     if rd32(node.wrapping_add(4)) == 0x347 {
                         bh = 1;
                         break;
                     }
+                    prev = eaxv;
                     node = rd32(node.wrapping_add(12));
                     if node == 0 {
                         break;
@@ -238,12 +258,17 @@ lf_checker_rt::export!(thiscall, rw_00c91b60(this: u32) -> u32 {
         let mut bl: u8 = 0;
         node = head;
         if node != 0 {
+            let mut prev = (rd32(node.wrapping_add(8)) >> 1) & 7;
             loop {
                 eaxv = (rd32(node.wrapping_add(8)) >> 1) & 7;
+                if prev < eaxv {
+                    break;
+                }
                 if rd32(node.wrapping_add(4)) == 0x640 {
                     bl = 1;
                     break;
                 }
+                prev = eaxv;
                 node = rd32(node.wrapping_add(12));
                 if node == 0 {
                     break;

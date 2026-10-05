@@ -23,7 +23,7 @@ lf_checker_rt::export!(cdecl, rw_009DBF70(arg: u32) -> u32 {
         const TABLE_VA: u32 = 0x01295CD8;
         const FLAG_VA: u32 = 0x0103AE84;
         const REGISTRY_VA: u32 = 0x0103AE88;
-        const SLOT_HASH_OFF: u32 = 0x3C;
+        const SLOT_HASH_OFF: usize = 0x3C;
         const HASH_CALLEE: u32 = 2;
         const NODE_CALLEE: u32 = 3;
 

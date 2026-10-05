@@ -6,7 +6,7 @@
 ///
 /// `this` carries the blend object at `+0x1bc`, whose context at `+0x20`
 /// supplies the basis vectors; `src` is the source record, `dst` the
-/// destination. The prologue copies ten dwords verbatim (skipping `+0x0c`)
+/// destination. The prologue copies nine dwords verbatim (skipping `+0x0c` and `+0x1c`)
 /// plus the three floats at `+0x30`, and forms a scale from the table entry
 /// selected by the signed index at `+0x2e` combined with a sign chosen by a
 /// dot product (negative picks -1.0, otherwise 1.0; NaN keeps 1.0). Each
@@ -90,7 +90,7 @@ lf_checker_rt::export!(thiscall, rw_009E3F10(this: u32, kind: u32, src: u32, dst
         t = mul(t, four);
         four = mul(rdf(ctx.wrapping_add(0x00)), t);
         // Verbatim copies (dst+0x0c skipped).
-        for off in [0u32, 4, 8, 0x10, 0x14, 0x18, 0x1C, 0x20, 0x24, 0x28] {
+        for off in [0u32, 4, 8, 0x10, 0x14, 0x18, 0x20, 0x24, 0x28] {
             wr32(dst.wrapping_add(off), rd32(src.wrapping_add(off)));
         }
         let esi = dst.wrapping_add(0x30);
@@ -116,122 +116,6 @@ lf_checker_rt::export!(thiscall, rw_009E3F10(this: u32, kind: u32, src: u32, dst
             let i = rd16(edi.wrapping_add(INDEX_OFF)) as i16 as i32 as u32;
             rd32(table.wrapping_add(i.wrapping_mul(4)))
         };
-        match eax_kind {
-            // Kinds 1,2: table float times one half, tail T1.
-            0 | 1 => {
-                reload(esi, dst, src, ctx);
-                let e = entry_of(edi);
-                eax = e;
-                let f = if eax_kind == 0 {
-                    rdf(e.wrapping_add(0x24))
-                } else {
-                    rdf(e.wrapping_add(0x34))
-                };
-                let tt = mul(f, g(G_HALF));
-                tail_t1(esi, ctx, tt, four, five, six);
-                (eax & LOW_MASK) | 1
-            }
-            // Kind 3: table float times basis directly, tail T1 mid.
-            2 => {
-                reload(esi, dst, src, ctx);
-                let e = entry_of(edi);
-                eax = e;
-                let tt = rdf(e.wrapping_add(0x24));
-                let mut x1 = mul(tt, rdf(ctx.wrapping_add(0x10)));
-                x1 = add(x1, rdf(esi));
-                tail_t1_mid(esi, ctx, x1, tt, four, five, six);
-                (eax & LOW_MASK) | 1
-            }
-            // Kind 4: table float without the half scale, tail T1.
-            3 => {
-                reload(esi, dst, src, ctx);
-                let e = entry_of(edi);
-                eax = e;
-                let tt = rdf(e.wrapping_add(0x34));
-                tail_t1(esi, ctx, tt, four, five, six);
-                (eax & LOW_MASK) | 1
-            }
-            // Kind 5: subtract the scaled basis, no reload.
-            4 => {
-                let two = g(G_TWO);
-                let f4 = mul(four, two);
-                let f5 = mul(five, two);
-                let f6 = mul(six, two);
-                wrf(esi, sub(rdf(esi), f4));
-                wrf(esi.wrapping_add(4), sub(rdf(esi.wrapping_add(4)), f5));
-                wrf(esi.wrapping_add(8), sub(rdf(esi.wrapping_add(8)), f6));
-                (eax_kind & LOW_MASK) | 1
-            }
-            // Kinds 6,7: tail T2 (no basis terms). The x1 operand order
-            // differs: kind 6 forms tt*ctx10, kind 7 ctx10*tt.
-            5 | 6 => {
-                reload(esi, dst, src, ctx);
-                let e = entry_of(edi);
-                eax = e;
-                let bias = g(G_BIAS);
-                let c10 = rdf(ctx.wrapping_add(0x10));
-                let (x1, tt) = if eax_kind == 5 {
-                    let tt = add(rdf(e.wrapping_add(0x34)), bias);
-                    (mul(tt, c10), tt)
-                } else {
-                    let tt = sub(rdf(e.wrapping_add(0x24)), bias);
-                    (mul(c10, tt), tt)
-                };
-                tail_t2_mid(esi, ctx, x1, tt);
-                (eax & LOW_MASK) | 1
-            }
-            // Kinds 8,9: tail T3 (basis terms subtracted).
-            7 | 8 => {
-                reload(esi, dst, src, ctx);
-                let e = entry_of(edi);
-                eax = e;
-                let bias = g(G_BIAS);
-                let tt = if eax_kind == 7 {
-                    add(rdf(e.wrapping_add(0x34)), bias)
-                } else {
-                    sub(rdf(e.wrapping_add(0x24)), bias)
-                };
-                tail_t3(esi, ctx, tt, four, five, six);
-                (eax & LOW_MASK) | 1
-            }
-            // Kind 10: matrix accumulation.
-            9 => {
-                wr32(esi, 0);
-                wr32(esi.wrapping_add(4), 0);
-                wr32(esi.wrapping_add(8), 0);
-                let e = entry_of(edi);
-                let mut tt = add(rdf(e.wrapping_add(0x38)), g(G_ONE));
-                let f4 = mul(rdf(ctx.wrapping_add(0x24)), tt);
-                let f5 = mul(rdf(ctx.wrapping_add(0x28)), tt);
-                let f6 = mul(tt, rdf(ctx.wrapping_add(0x20)));
-                wrf(esi.wrapping_add(4), f4);
-                wrf(esi.wrapping_add(8), f5);
-                wrf(esi, f6);
-                let c = ctx;
-                let mut x3 = mul(rdf(c.wrapping_add(0x10)), f4);
-                x3 = add(x3, mul(rdf(c.wrapping_add(0x00)), f6));
-                x3 = add(x3, mul(rdf(c.wrapping_add(0x20)), f5));
-                x3 = add(x3, rdf(c.wrapping_add(0x30)));
-                let mut x2 = mul(rdf(c.wrapping_add(0x14)), f4);
-                x2 = add(x2, mul(rdf(c.wrapping_add(0x04)), f6));
-                x2 = add(x2, mul(rdf(c.wrapping_add(0x24)), f5));
-                x2 = add(x2, rdf(c.wrapping_add(0x34)));
-                let mut x1 = mul(rdf(c.wrapping_add(0x18)), f4);
-                x1 = add(x1, mul(rdf(c.wrapping_add(0x08)), f6));
-                x1 = add(x1, mul(rdf(c.wrapping_add(0x28)), f5));
-                x1 = add(x1, rdf(c.wrapping_add(0x38)));
-                wrf(esi, x3);
-                wrf(esi.wrapping_add(4), x2);
-                wrf(esi.wrapping_add(8), x1);
-                wr32(esi.wrapping_add(0x0C), 0);
-                eax = ctx;
-                (eax & LOW_MASK) | 1
-            }
-            // Kinds 11-13: stage 2 (call cases).
-            _ => unreachable!("stage 2"),
-        }
-    }
-
     /// Tail T1: full FMA with the scaled basis added back.
     unsafe fn tail_t1(esi: u32, ctx: u32, tt: f32, four: f32, five: f32, six: f32) {
         unsafe {
@@ -365,4 +249,124 @@ lf_checker_rt::export!(thiscall, rw_009E3F10(this: u32, kind: u32, src: u32, dst
             wrf(esi.wrapping_add(8), x3);
         }
     }
+        match eax_kind {
+            // Kinds 1,2: table float times one half, tail T1.
+            0 | 1 => {
+                reload(esi, dst, src, ctx);
+                let e = entry_of(edi);
+                eax = e;
+                let f = if eax_kind == 0 {
+                    rdf(e.wrapping_add(0x24))
+                } else {
+                    rdf(e.wrapping_add(0x34))
+                };
+                let tt = mul(f, g(G_HALF));
+                tail_t1(esi, ctx, tt, four, five, six);
+                (eax & LOW_MASK) | 1
+            }
+            // Kind 3: table float times basis directly, tail T1 mid.
+            2 => {
+                reload(esi, dst, src, ctx);
+                let e = entry_of(edi);
+                eax = e;
+                let tt = rdf(e.wrapping_add(0x24));
+                let mut x1 = mul(tt, rdf(ctx.wrapping_add(0x10)));
+                x1 = add(x1, rdf(esi));
+                tail_t1_mid(esi, ctx, x1, tt, four, five, six);
+                (eax & LOW_MASK) | 1
+            }
+            // Kind 4: table float without the half scale, tail T1.
+            3 => {
+                reload(esi, dst, src, ctx);
+                let e = entry_of(edi);
+                eax = e;
+                let tt = rdf(e.wrapping_add(0x34));
+                tail_t1(esi, ctx, tt, four, five, six);
+                (eax & LOW_MASK) | 1
+            }
+            // Kind 5: subtract the scaled basis, no reload.
+            4 => {
+                let two = g(G_TWO);
+                let f4 = mul(four, two);
+                let f5 = mul(five, two);
+                let f6 = mul(six, two);
+                wrf(esi, sub(rdf(esi), f4));
+                wrf(esi.wrapping_add(4), sub(rdf(esi.wrapping_add(4)), f5));
+                wrf(esi.wrapping_add(8), sub(rdf(esi.wrapping_add(8)), f6));
+                (eax_kind & LOW_MASK) | 1
+            }
+            // Kinds 6,7: tail T2 (no basis terms). The x1 operand order
+            // differs: kind 6 forms tt*ctx10, kind 7 ctx10*tt.
+            5 | 6 => {
+                reload(esi, dst, src, ctx);
+                let e = entry_of(edi);
+                eax = e;
+                let bias = g(G_BIAS);
+                let c10 = rdf(ctx.wrapping_add(0x10));
+                let (x1, tt) = if eax_kind == 5 {
+                    let tt = add(rdf(e.wrapping_add(0x34)), bias);
+                    (mul(tt, c10), tt)
+                } else {
+                    let tt = sub(rdf(e.wrapping_add(0x24)), bias);
+                    (mul(c10, tt), tt)
+                };
+                tail_t2_mid(esi, ctx, x1, tt);
+                (eax & LOW_MASK) | 1
+            }
+            // Kinds 8,9: tail T3 (basis terms subtracted).
+            7 | 8 => {
+                reload(esi, dst, src, ctx);
+                let e = entry_of(edi);
+                eax = e;
+                let bias = g(G_BIAS);
+                let tt = if eax_kind == 7 {
+                    add(rdf(e.wrapping_add(0x34)), bias)
+                } else {
+                    sub(rdf(e.wrapping_add(0x24)), bias)
+                };
+                tail_t3(esi, ctx, tt, four, five, six);
+                (eax & LOW_MASK) | 1
+            }
+            // Kind 10: matrix accumulation.
+            9 => {
+                wr32(esi, 0);
+                wr32(esi.wrapping_add(4), 0);
+                wr32(esi.wrapping_add(8), 0);
+                let e = entry_of(edi);
+                let mut tt = add(rdf(e.wrapping_add(0x38)), g(G_ONE));
+                let f4 = mul(rdf(ctx.wrapping_add(0x24)), tt);
+                let f5 = mul(rdf(ctx.wrapping_add(0x28)), tt);
+                let f6 = mul(tt, rdf(ctx.wrapping_add(0x20)));
+                wrf(esi.wrapping_add(4), f4);
+                wrf(esi.wrapping_add(8), f5);
+                wrf(esi, f6);
+                let c = ctx;
+                let mut x3 = mul(rdf(c.wrapping_add(0x10)), f4);
+                x3 = add(x3, mul(rdf(c.wrapping_add(0x00)), f6));
+                x3 = add(x3, mul(rdf(c.wrapping_add(0x20)), f5));
+                x3 = add(x3, rdf(c.wrapping_add(0x30)));
+                let mut x2 = mul(rdf(c.wrapping_add(0x14)), f4);
+                x2 = add(x2, mul(rdf(c.wrapping_add(0x04)), f6));
+                x2 = add(x2, mul(rdf(c.wrapping_add(0x24)), f5));
+                x2 = add(x2, rdf(c.wrapping_add(0x34)));
+                let mut x1 = mul(rdf(c.wrapping_add(0x18)), f4);
+                x1 = add(x1, mul(rdf(c.wrapping_add(0x08)), f6));
+                x1 = add(x1, mul(rdf(c.wrapping_add(0x28)), f5));
+                x1 = add(x1, rdf(c.wrapping_add(0x38)));
+                wrf(esi, x3);
+                wrf(esi.wrapping_add(4), x2);
+                wrf(esi.wrapping_add(8), x1);
+                wr32(esi.wrapping_add(0x0C), 0);
+                eax = ctx;
+                (eax & LOW_MASK) | 1
+            }
+            // Kinds 11-13: stage 2 (call cases).
+            _ => unreachable!("stage 2"),
+        }
+    }
+
+
+
+
+
 });

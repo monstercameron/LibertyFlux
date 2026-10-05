@@ -11,9 +11,9 @@
 lf_checker_rt::export!(cdecl, rw_009DC5F0(index: u32) -> u32 {
     unsafe {
         const TABLE_VA: u32 = 0x01295CD8;
-        const LINK_OFF: u32 = 0x08;
-        const FALLBACK_OFF: u32 = 0x0C;
-        const DESCRIPTOR_OFF: u32 = 0xB4;
+        const LINK_OFF: usize = 0x08;
+        const FALLBACK_OFF: usize = 0x0C;
+        const DESCRIPTOR_OFF: usize = 0xB4;
 
         let obj = (lf_checker_rt::global::<u32>(TABLE_VA).wrapping_add(index as usize)
             as *const u32)

@@ -12,7 +12,7 @@
 lf_checker_rt::export!(cdecl, rw_009DE110(key: u32) -> u32 {
     unsafe {
         const INDEX_VA: u32 = 0x012B415C;
-        const FLAG_OFF: u32 = 0x40;
+        const FLAG_OFF: usize = 0x40;
         const FLAG_BIT: u32 = 0x800000;
         const LOOKUP: u32 = 1;
         const ALLOC: u32 = 2;
@@ -26,7 +26,7 @@ lf_checker_rt::export!(cdecl, rw_009DE110(key: u32) -> u32 {
             return slot;
         }
         let obj: u32 = lf_checker_rt::callee_cdecl!(ALLOC, u32, key);
-        let _: u32 = lf_checker_rt::callee_cdecl!(FIXUP, u32);
+        let _: u32 = lf_checker_rt::callee_cdecl!(FIXUP, u32, );
         let flags =
             ((obj as *const u8).wrapping_add(FLAG_OFF) as *const u32).read_unaligned();
         ((obj as *mut u8).wrapping_add(FLAG_OFF) as *mut u32)
