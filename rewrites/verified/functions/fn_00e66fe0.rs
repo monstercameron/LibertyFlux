@@ -1,0 +1,17 @@
+// original: 0x00E66FE0 task_lookup_store_00E66FE0
+/// Look up a task handle by name and store it.
+///
+/// Calls callee 1 (cdecl, two arguments: the name string `NAME`
+/// first, then 0) and stores the returned handle to the global
+/// `SLOT`.
+///
+/// Original: 0x00E66FE0 (cdecl, no arguments, no return value).
+lf_checker_rt::export!(cdecl, rw_00E66FE0() -> u32 {
+    unsafe {
+        const NAME: u32 = 0x00E9AC24;
+        const SLOT: u32 = 0x012BD1D8;
+        let handle: u32 = lf_checker_rt::callee_cdecl!(1, u32, lf_checker_rt::relocated(NAME), 0);
+        (lf_checker_rt::global::<u32>(SLOT)).write_unaligned(handle);
+        0
+    }
+});

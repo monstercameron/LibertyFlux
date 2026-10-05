@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Naming a 150-function batch: replay engine layout and two bad inventory entries",
+    "title": "Rewrites: 40 more functions pass the checker (11690 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "40 rewrites added under rewrites/verified: 0 script native handlers and 40 other functions.",
+      "The tree now holds 11690 rewrites, 11671 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "702 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Naming a 150-function batch: replay engine layout and two bad inventory entries",
+    "commit": "d1c4ebc9ae0b2f08823408c8221c8903073cc7fe",
     "summary": "Findings from the nm-72 lane.",
     "changes": [
       "New devlog entry: Naming a 150-function batch: replay engine layout and two bad inventory entries.",
