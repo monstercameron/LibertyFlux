@@ -2,7 +2,7 @@
   {
     "date": "2026-10-05",
     "title": "Devlog: sixty-three functions deferred for a checker gap that was not there",
-    "commit": null,
+    "commit": "c666ea3af10f898fccffb680f531bcee3bdf1668",
     "summary": "A deferral reason introduced with checker version 5 was being applied on a faulty audit.",
     "changes": [
       "Sixty-three functions had been deferred as reading data through absolute addresses with no relocation entry. Checked independently, none of them does: the lanes' audits added a relocation block's base to entry addresses that were already complete, so every operand looked unrelocated.",
