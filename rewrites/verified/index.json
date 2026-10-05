@@ -30555,6 +30555,15 @@
   "lane": "r-s401"
  },
  {
+  "address": "0x0088BFD0",
+  "name": "rage::audVoiceDSound::vf1",
+  "kind": "function",
+  "file": "functions/fn_0088bfd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b376"
+ },
+ {
   "address": "0x0088C320",
   "name": "rage::audVoiceDSound::vf7",
   "kind": "function",
@@ -30951,6 +30960,15 @@
   "lane": "r-s401"
  },
  {
+  "address": "0x0088F7C0",
+  "name": "rage::audSound::~audSound__deleting",
+  "kind": "function",
+  "file": "functions/fn_0088f7c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
+ },
+ {
   "address": "0x0088F7F0",
   "name": "audio_voice_accumulate",
   "kind": "function",
@@ -30958,6 +30976,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b31"
+ },
+ {
+  "address": "0x0088F900",
+  "name": "audSound_allocVoice",
+  "kind": "function",
+  "file": "functions/fn_0088f900.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
  },
  {
   "address": "0x0088F950",
@@ -30994,6 +31021,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-12"
+ },
+ {
+  "address": "0x0088FBB0",
+  "name": "audSound_dispatchSlots",
+  "kind": "function",
+  "file": "functions/fn_0088fbb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s401"
  },
  {
   "address": "0x0088FFF0",
