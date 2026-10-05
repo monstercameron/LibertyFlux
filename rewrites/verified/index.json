@@ -38313,6 +38313,33 @@
   "lane": "r-s441"
  },
  {
+  "address": "0x008C6190",
+  "name": "stream_rows_build",
+  "kind": "function",
+  "file": "functions/fn_008c6190.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s441"
+ },
+ {
+  "address": "0x008C6A50",
+  "name": "stream_slots_sweep",
+  "kind": "function",
+  "file": "functions/fn_008c6a50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s441"
+ },
+ {
+  "address": "0x008C6B40",
+  "name": "stream_altslot_publish",
+  "kind": "function",
+  "file": "functions/fn_008c6b40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s441"
+ },
+ {
   "address": "0x008C6C30",
   "name": "table_lookup_or_default",
   "kind": "function",
@@ -38399,6 +38426,15 @@
   "kind": "function",
   "file": "functions/fn_008c6e20.rs",
   "trials": 60,
+  "checker": "version 5",
+  "lane": "r-s441"
+ },
+ {
+  "address": "0x008C6EE0",
+  "name": "stream_catalog_build",
+  "kind": "function",
+  "file": "functions/fn_008c6ee0.rs",
+  "trials": 1000,
   "checker": "version 5",
   "lane": "r-s441"
  },
@@ -93811,6 +93847,15 @@
   "name": "CTaskComplexFollowPedFootsteps::vf21",
   "kind": "function",
   "file": "functions/fn_00cd9490.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b441"
+ },
+ {
+  "address": "0x00CD96A0",
+  "name": "CTaskComplexFollowLeaderAnyMeans::vf5",
+  "kind": "function",
+  "file": "functions/fn_00cd96a0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-b441"
