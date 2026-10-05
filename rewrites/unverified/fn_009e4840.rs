@@ -84,10 +84,17 @@ lf_checker_rt::export!(thiscall, rw_009E4840(this: u32, arg: u32) -> u32 {
             eax = lf_checker_rt::callee_thiscall!(C_REP, u32, sub);
             let mut scratch = 0u32;
             let sp = &mut scratch as *mut u32 as u32;
-            eax = lf_checker_rt::callee_cdecl!(C_LOG, u32, sp, LOG_STR, eax);
+            eax = lf_checker_rt::callee_cdecl!(
+                C_LOG,
+                u32,
+                sp,
+                lf_checker_rt::relocated(LOG_STR),
+                eax
+            );
             return fail(eax);
         }
         let sub = rd32(this.wrapping_add(0x6C));
+        eax = sub;
         if sub == 0 || rd8(sub.wrapping_add(0x0E)) == 0 {
             let vt = rd32(this);
             let gate: extern "thiscall" fn(u32) -> u32 =
@@ -161,7 +168,9 @@ lf_checker_rt::export!(thiscall, rw_009E4840(this: u32, arg: u32) -> u32 {
         eax = lf_checker_rt::callee_thiscall!(C_I, u32, this);
         if eax & 0xFF == 0 {
             eax = u32::from(rd8(this.wrapping_add(0xA60)) == 2);
-            eax = lf_checker_rt::callee_thiscall!(C_J, u32, FIXED_OBJ, 2u32, eax);
+            // FIXED_OBJ is a relocated image address (the mov has a reloc entry).
+            let fixed = lf_checker_rt::relocated(FIXED_OBJ);
+            eax = lf_checker_rt::callee_thiscall!(C_J, u32, fixed, 2u32, eax);
             if eax & 0xFF == 0 {
                 return fail(eax);
             }

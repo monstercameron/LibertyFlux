@@ -143,7 +143,7 @@ lf_checker_rt::export!(thiscall, rw_00cfb910(this: u32, arg0: u32) -> u32 {
         let pool = rd32(esi + POOL_OFF);
         let mut ans = 0u32;
         for slot in [0x82u32, 0x83, 0x84, 0x85, 0x86] {
-            ans = lf_checker_rt::callee_thiscall!(POOLQ, u32, pool, slot, 9);
+            ans = lf_checker_rt::callee_thiscall!(POOLQ, u32, pool, 9u32, slot);
             if ans != 0 {
                 return 0;
             }

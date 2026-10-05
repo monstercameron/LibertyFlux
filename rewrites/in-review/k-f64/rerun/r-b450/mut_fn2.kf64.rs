@@ -1,4 +1,6 @@
-// Wrong version of fn_00C9D9D0 (float dataflow; expected to PASS on stock v5: unobserved).
+// Wrong version of fn_00C9D9D0 (float dataflow; passed on stock v5: unobserved).
+// Adapted by lane k-f64: with the doubles extension it must now FAIL,
+// caught on the solver-call doubles its dataflow feeds.
 lf_checker_rt::export!(thiscall, mut_00C9D9D0(this: u32, a1: u32, a2: u32, a3: u32) -> u32 {
     unsafe {
         const CTL_OFF: u32 = 0x40;
@@ -35,6 +37,33 @@ lf_checker_rt::export!(thiscall, mut_00C9D9D0(this: u32, a1: u32, a2: u32, a3: u
         #[inline(always)]
         fn fabsb(x: f32) -> f32 {
             f32::from_bits(x.to_bits() & FABS_MASK)
+        }
+        // Bit-exact f32->f64 widening, as cvtss2sd does (k-f64).
+        #[inline(always)]
+        fn cvtss2sd_bits(a: u32) -> u64 {
+            let sign = u64::from(a >> 31) << 63;
+            let e = (a >> 23) & 0xFF;
+            let f = u64::from(a & 0x7F_FFFF);
+            if e == 0xFF {
+                if f == 0 {
+                    return sign | 0x7FF0_0000_0000_0000;
+                }
+                return sign | 0x7FF8_0000_0000_0000 | (f << 29);
+            }
+            if e == 0 {
+                if f == 0 {
+                    return sign;
+                }
+                let lz = (f as u32).leading_zeros() - 9;
+                let exp = 896 - lz;
+                let frac = ((f << (lz + 1)) & 0x7F_FFFF) << 29;
+                return sign | (u64::from(exp) << 52) | frac;
+            }
+            sign | (u64::from(e + 896) << 52) | (f << 29)
+        }
+        #[inline(always)]
+        fn lo_hi(d: u64) -> (u32, u32) {
+            ((d & 0xFFFF_FFFF) as u32, ((d >> 32) & 0xFFFF_FFFF) as u32)
         }
 
         let ctl = rd32(this + CTL_OFF);
@@ -82,20 +111,22 @@ lf_checker_rt::export!(thiscall, mut_00C9D9D0(this: u32, a1: u32, a2: u32, a3: u
             c_val = 0.0;
         }
 
-        // Solver results. The proof scripts doubles with a zero high word;
-        // the stub leaves the low word in eax, which is all the rewrite can
-        // read (the vector arguments the original passes cannot be observed
-        // by the checker at all).
-        let s1lo: u32 = lf_checker_rt::callee_thiscall!(5, u32, r4);
-        let s1 = f64::from_bits(s1lo as u64);
+        // Solver results. Each solver call takes its two doubles in
+        // xmm0/xmm1 (compared on the low 8 bytes) and answers a double as
+        // the callee's u64 return, narrowed with the same single cvtsd2ss
+        // the original uses. First call: C with B; second: -A with the
+        // root of C*C+B*B (f32 root, widened).
+        let (c0, c1) = lo_hi(cvtss2sd_bits(c_val.to_bits()));
+        let (b0, b1) = lo_hi(cvtss2sd_bits(b_val.to_bits()));
+        let s1: u64 = lf_checker_rt::callee_thiscall!(5, u64, r4, c0, c1, b0, b1);
         let q = add(mul(c_val, c_val), mul(b_val, b_val));
-        let f1 = s1 as f32;
+        let f1 = core::hint::black_box(f64::from_bits(s1)) as f32;
         let neg_a = f32::from_bits(a_val.to_bits() ^ SIGN_BIT);
-        core::hint::black_box(q);
-        core::hint::black_box(neg_a);
-        let s2lo: u32 = lf_checker_rt::callee_cdecl!(6, u32,);
-        let s2 = f64::from_bits(s2lo as u64);
-        let f2 = s2 as f32;
+        let root = core::hint::black_box(q).sqrt();
+        let (n0, n1) = lo_hi(cvtss2sd_bits(neg_a.to_bits()));
+        let (rt0, rt1) = lo_hi(cvtss2sd_bits(root.to_bits()));
+        let s2: u64 = lf_checker_rt::callee_cdecl!(6, u64, n0, n1, rt0, rt1);
+        let f2 = core::hint::black_box(f64::from_bits(s2)) as f32;
 
         // Bound tests. A first result above its bound only clears the
         // flag; a second result above its bound returns a2 masked.
