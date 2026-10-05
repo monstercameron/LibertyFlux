@@ -3,11 +3,11 @@
  "sources": {
   "verified": {
    "path": "rewrites/verified/index.json",
-   "as_of": "2026-10-05 15:57 UTC"
+   "as_of": "2026-10-05 16:02 UTC"
   },
   "unverified": {
    "path": "rewrites/unverified/index.json",
-   "as_of": "2026-10-05 15:57 UTC"
+   "as_of": "2026-10-05 16:03 UTC"
   },
   "issues": {
    "path": "rewrites/review/issues.json",
@@ -15,9 +15,9 @@
   }
  },
  "tree": {
-  "verified": 13838,
+  "verified": 13843,
   "by_kind": {
-   "function": 11317,
+   "function": 11322,
    "native": 2521
   },
   "by_checker": {
@@ -25,13 +25,13 @@
    "version 2": 4507,
    "version 3": 2006,
    "version 4": 4456,
-   "version 5": 2850
+   "version 5": 2855
   },
-  "modern_checker": 13819,
-  "lanes": 789,
+  "modern_checker": 13824,
+  "lanes": 790,
   "trials": {
-   "with_count": 13836,
-   "at_least_1000": 13774,
+   "with_count": 13841,
+   "at_least_1000": 13779,
    "least": 0
   },
   "proofs": {
@@ -42,9 +42,9 @@
   },
   "unverified": 406,
   "unverified_by_outcome": {
-   "not yet run": 239,
+   "not yet run": 241,
    "deferred": 99,
-   "not_reached": 67,
+   "not_reached": 65,
    "failed_v3": 1
   },
   "unverified_by_reason": {

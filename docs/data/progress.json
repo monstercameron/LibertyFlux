@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-05",
-  "updated_at": "2026-10-05 11:57",
+  "updated_at": "2026-10-05 12:03",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -13,11 +13,11 @@
   "stages": {
     "identified": 37413,
     "named": 29311,
-    "rewritten": 14466,
-    "verified": 13723
+    "rewritten": 14471,
+    "verified": 13728
   },
   "structures": 340,
-  "symbols": 13835,
+  "symbols": 13840,
   "measured": [
     {
       "label": "Code section",
@@ -105,20 +105,20 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 14466,
+      "value": 14471,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 13723,
+      "value": 13728,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
   ],
   "activity": {
-    "lanes_running": 23,
-    "lanes_finished": 1232,
+    "lanes_running": 22,
+    "lanes_finished": 1233,
     "lanes_incomplete": 145,
     "devlog_entries": 462
   },
@@ -3117,8 +3117,8 @@
       "to": "0x00B400B0",
       "count": 64,
       "named": 58,
-      "rewritten": 13,
-      "verified": 13
+      "rewritten": 14,
+      "verified": 14
     },
     {
       "stage": "named",
@@ -3324,8 +3324,8 @@
       "to": "0x00BC02B4",
       "count": 172,
       "named": 172,
-      "rewritten": 48,
-      "verified": 47
+      "rewritten": 50,
+      "verified": 49
     },
     {
       "stage": "verified",
@@ -3693,8 +3693,8 @@
       "to": "0x00CA4916",
       "count": 79,
       "named": 52,
-      "rewritten": 41,
-      "verified": 38
+      "rewritten": 42,
+      "verified": 39
     },
     {
       "stage": "verified",
@@ -3837,8 +3837,8 @@
       "to": "0x00CFDB2F",
       "count": 129,
       "named": 106,
-      "rewritten": 67,
-      "verified": 35
+      "rewritten": 68,
+      "verified": 36
     },
     {
       "stage": "identified",
