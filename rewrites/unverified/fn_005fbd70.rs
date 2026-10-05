@@ -11,8 +11,8 @@
 /// its own forward link, clears its back link, marks the item streaming
 /// (sets bit 0x80000000 of its flag word) and becomes the new head, with its
 /// back-pointer set to the item. The registry (global object) is then told
-/// through its virtual slot at `+0x4`, thiscall with `(0, this, forward-fn,
-/// init-fn, 0.5f, item)`, where the two function values are the module's own
+/// through its virtual slot at `+0x4`, thiscall with `(item, 0.5f, init-fn,
+/// forward-fn, this, 0)`, where the two function values are the module's own
 /// entry points. Returns the notify call's result.
 ///
 /// Original: 0x005FBD70 (thiscall, one stack word).
@@ -51,8 +51,8 @@ lf_checker_rt::export!(thiscall, rw_005fbd70(this: u32, item: u32) -> u32 {
         let vtable = rd32(registry);
         let notify: extern "thiscall" fn(u32, u32, u32, u32, u32, u32, u32) -> u32 =
             core::mem::transmute(rd32(vtable.wrapping_add(VTABLE_NOTIFY_OFF)) as usize);
-        notify(registry, 0, this, lf_checker_rt::relocated(FN_FORWARD),
-               lf_checker_rt::relocated(FN_INIT), HALF_BITS, item)
+        notify(registry, item, HALF_BITS, lf_checker_rt::relocated(FN_INIT),
+               lf_checker_rt::relocated(FN_FORWARD), this, 0)
     }
 
 });

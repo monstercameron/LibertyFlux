@@ -13,7 +13,7 @@
 /// owner's streaming bit (0x80000000 of its flag word at `+0x8`) is cleared.
 /// Both link words are then cleared and the registry (global object) is told
 /// through its virtual slot at `+0x8`, thiscall with
-/// `(this, forward-fn, init-fn, owner)`. Returns the notify call's result.
+/// `(owner, init-fn, forward-fn, this)`. Returns the notify call's result.
 ///
 /// Original: 0x005FBDC0 (thiscall, no stack words).
 lf_checker_rt::export!(thiscall, rw_005fbdc0(this: u32) -> u32 {
@@ -58,8 +58,8 @@ lf_checker_rt::export!(thiscall, rw_005fbdc0(this: u32) -> u32 {
         let vtable = rd32(registry);
         let notify: extern "thiscall" fn(u32, u32, u32, u32, u32) -> u32 =
             core::mem::transmute(rd32(vtable.wrapping_add(VTABLE_NOTIFY_OFF)) as usize);
-        notify(registry, this, lf_checker_rt::relocated(FN_FORWARD),
-               lf_checker_rt::relocated(FN_INIT), owner)
+        notify(registry, owner, lf_checker_rt::relocated(FN_INIT),
+               lf_checker_rt::relocated(FN_FORWARD), this)
     }
 
 });
