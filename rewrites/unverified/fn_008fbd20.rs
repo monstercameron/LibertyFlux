@@ -4,7 +4,7 @@
 /// When the flag byte is set, the string is null or its first byte
 /// is NUL, the string goes straight to the resolver. Otherwise a
 /// 32-byte zero frame is built, the copy routine fills its first 16
-/// bytes, the frame is scanned from offset 12 for a NUL, the tag
+/// bytes, the frame is scanned from its start for a NUL, the tag
 /// dword is written over that NUL, and the frame goes to the
 /// resolver; a non-null resolution whose first word is nonzero is
 /// returned, else the original string is resolved as a fallback.
@@ -15,7 +15,7 @@ export!(cdecl, rw_008fbd20(s: u32, flag: u32) -> u32 {
     unsafe {
         const MGR: u32 = 0x116bff0;
         const TAG: u32 = 0x0e8414c;
-        const SCAN_FROM: usize = 12;
+        const SCAN_FROM: usize = 0;
         if (flag as u8) != 0 || s == 0 || ((s as *const u8).read() == 0) {
             let ans: u32 = callee_thiscall!(3, u32, relocated(MGR), s);
             callee_thiscall!(4, u32, 0);
