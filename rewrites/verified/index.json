@@ -55134,6 +55134,15 @@
   "lane": "a-09"
  },
  {
+  "address": "0x00B2E290",
+  "name": "wreck_task_scan_nearest",
+  "kind": "function",
+  "file": "functions/fn_00b2e290.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b406"
+ },
+ {
   "address": "0x00B2F840",
   "name": "garage_slot_init",
   "kind": "function",
@@ -62577,6 +62586,24 @@
   "lane": "r-n95"
  },
  {
+  "address": "0x00B91170",
+  "name": "script_vm_pack_color_verts",
+  "kind": "function",
+  "file": "functions/fn_00b91170.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B913A0",
+  "name": "script_vm_entity_apply_offset",
+  "kind": "function",
+  "file": "functions/fn_00b913a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
   "address": "0x00B919E0",
   "name": "NativeImpl_SET_MENU_ITEM_WITH_NUMBER",
   "kind": "function",
@@ -62595,10 +62622,46 @@
   "lane": "r-s418"
  },
  {
+  "address": "0x00B921C0",
+  "name": "script_vm_entity_read_offset",
+  "kind": "function",
+  "file": "functions/fn_00b921c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B92370",
+  "name": "script_vm_resolve_named_key",
+  "kind": "function",
+  "file": "functions/fn_00b92370.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B925E0",
+  "name": "NULL",
+  "kind": "function",
+  "file": "functions/fn_00b925e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
   "address": "0x00B92670",
   "name": "script_null_token_predicate",
   "kind": "function",
   "file": "functions/fn_00b92670.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B928D0",
+  "name": "script_vm_dual_key_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00b928d0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s418"
@@ -63639,6 +63702,105 @@
   "lane": "a-04"
  },
  {
+  "address": "0x00B95520",
+  "name": "script_vm_altitude_pack_a",
+  "kind": "function",
+  "file": "functions/fn_00b95520.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B955A0",
+  "name": "script_vm_altitude_pack_b",
+  "kind": "function",
+  "file": "functions/fn_00b955a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B958C0",
+  "name": "script_vm_altitude_pack_c",
+  "kind": "function",
+  "file": "functions/fn_00b958c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B95950",
+  "name": "script_vm_altitude_pack_d",
+  "kind": "function",
+  "file": "functions/fn_00b95950.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B959E0",
+  "name": "script_vm_altitude_pack_e",
+  "kind": "function",
+  "file": "functions/fn_00b959e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B95A60",
+  "name": "script_vm_altitude_pack_f",
+  "kind": "function",
+  "file": "functions/fn_00b95a60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B95AE0",
+  "name": "script_vm_altitude_pack_g",
+  "kind": "function",
+  "file": "functions/fn_00b95ae0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B96950",
+  "name": "script_vm_pack_point_3d",
+  "kind": "function",
+  "file": "functions/fn_00b96950.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B969B0",
+  "name": "script_vm_normalize_box_corners",
+  "kind": "function",
+  "file": "functions/fn_00b969b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B96B00",
+  "name": "script_vm_test_expanded_bounds",
+  "kind": "function",
+  "file": "functions/fn_00b96b00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B96DE0",
+  "name": "script_vm_altitude_pack_h",
+  "kind": "function",
+  "file": "functions/fn_00b96de0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
   "address": "0x00B96F50",
   "name": "NativeImpl_SET_EXTRA_HOSPITAL_RESTART_POINT",
   "kind": "function",
@@ -63661,6 +63823,33 @@
   "name": "NativeImpl_SET_GRAVITY_OFF",
   "kind": "function",
   "file": "functions/fn_00b970d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B972C0",
+  "name": "script_vm_pack_words_flag0",
+  "kind": "function",
+  "file": "functions/fn_00b972c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B97310",
+  "name": "script_vm_pack_words_flag1",
+  "kind": "function",
+  "file": "functions/fn_00b97310.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s418"
+ },
+ {
+  "address": "0x00B97420",
+  "name": "script_vm_pack_words_trailflag",
+  "kind": "function",
+  "file": "functions/fn_00b97420.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s418"
@@ -64078,6 +64267,24 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s418"
+ },
+ {
+  "address": "0x00B98EA0",
+  "name": "NativeImpl_IS_KEYBOARD_KEY_JUST_PRESSED",
+  "kind": "function",
+  "file": "functions/fn_00b98ea0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B98ED0",
+  "name": "NativeImpl_IS_KEYBOARD_KEY_PRESSED",
+  "kind": "function",
+  "file": "functions/fn_00b98ed0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
  },
  {
   "address": "0x00B9A220",
@@ -86535,6 +86742,15 @@
   "lane": "r-s85"
  },
  {
+  "address": "0x00D01700",
+  "name": "cover_slot_bound_radius",
+  "kind": "function",
+  "file": "functions/fn_00d01700.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b407"
+ },
+ {
   "address": "0x00D08240",
   "name": "CTaskComplexNewUseCover::vf20",
   "kind": "function",
@@ -91093,6 +91309,15 @@
   "name": "CTaskComplexEvasiveStep::vf20",
   "kind": "function",
   "file": "functions/fn_00dc8d70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b404"
+ },
+ {
+  "address": "0x00DC8F40",
+  "name": "CTaskComplexWalkRoundEntity::vf20",
+  "kind": "function",
+  "file": "functions/fn_00dc8f40.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-b404"
