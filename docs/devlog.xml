@@ -9,6 +9,38 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Float operand order needs a branch, not a black box</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b554"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b554</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>A production lane verifying audio functions found that the standard ways of pinning floating-point operand order do not work: the compiler swapped operands past both black-box barriers and opaque call boundaries, and only an explicit both-NaN branch pins the order by construction. Two functions were verified with the branch design; a third is deferred with a complete plan.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production lane verifying audio functions found that the standard ways of pinning floating-point operand order do not work: the compiler swapped operands past both black-box barriers and opaque call boundaries, and only an explicit both-NaN branch pins the order by construction. Two functions were verified with the branch design; a third is deferred with a complete plan.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite three neighbouring audio functions in Rust and prove each rewrite bit-identical to the original with the checker, including bit-exact floating-point results with matching NaN signs. Two were verified over 1200 trials each with mutants caught; the third was fully triaged and deferred for time with an executable plan.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The compiler swaps the operands of scalar float add and multiply even when the values pass through black-box barriers and even across no-inline call boundaries. Both swaps were seen in disassembly of built rewrites. Order decides the sign of a NaN result, so a swapped build fails trials that pair two differently-signed NaNs in one operation.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Order matters only when both operands are NaN: a single NaN forwards that NaN either way, and invalid cases yield the same default NaN either way. Both shipped rewrites therefore test the bit patterns first, forward the destination operand explicitly on both-NaN, and run a plain operation otherwise. Subtraction and comparisons need no branch.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A build that had silently swapped an addition still passed small probes, purely because no trial paired two NaNs there. The lesson is that float contracts must include both-NaN pairs with opposing signs in the same operation, or a luck-dependent proof looks full.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The contract lint check caught two wrong patch offsets before anything ran, exactly the failure mode it exists to stop.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Both rewrites in this batch use the NaN-branch design; one was retrofitted from the opaque-call form and re-verified, because the opaque-call form is rebuild-fragile.&lt;/li&gt;
+&lt;li&gt;Recommended: amend the brief's float rule so black box stays (it stops constant folding) but the order pin is the NaN branch, and require opposing-sign NaN pairs in float input pools.&lt;/li&gt;
+&lt;li&gt;Previously verified float rewrites that rely on the black box alone are correct as built, but a toolchain change could silently swap them; re-running their contracts after such a change would catch it.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Build any rewrite whose float helpers are plain operations wrapped only in black boxes, disassemble the helper, and check which parameter ends up as the instruction destination; then run trials pairing plus-NaN with minus-NaN in one addition. The lane's report records the exact trial shape (a sum of three products over infinite and NaN inputs) and a pool layout that keeps the call path hot while carrying NaN coverage.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;For several builds the lane believed a memory source operand propagates NaN signs differently from a register source. That theory was wrong: re-examination found a swapped addition missed in an interleaved listing. It cost about twenty minutes and is recorded so nobody chases it again.&lt;/li&gt;
+&lt;li&gt;One rebuild failed on a locked output file because a worker from the previous run was still exiting; waiting for prior processes to clear before rebuilding fixed it.&lt;/li&gt;
+&lt;li&gt;The deferred function hides two quirks future lanes should know: two of its three multi-argument call shapes pass identical arguments and differ only in one register, and that register carries uninitialized frame fill (zero) in two shapes. Both were verified by hand-tracking the stack pointer and are in the lane report.&lt;/li&gt;
+&lt;/ul&gt;</content>
+  </entry>
+  <entry>
     <title>Pin cycles in lockstep hide branch combinations</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b556"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b556</id>
@@ -1141,27 +1173,5 @@
 &lt;tr role="row"&gt;&lt;td role="cell"&gt;Left empty, low confidence&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;19&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;</content>
-  </entry>
-  <entry>
-    <title>Task info slots 4 and 5 are a write and skip pair</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-91"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-91</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>Two virtual slots overridden by every task info class turned out to be a matched pair: one writes the object's field values into a network bit stream, and the other walks the same bit layout without storing anything. Naming all 150 functions in the batch took the high-confidence count to 6 and medium to 131, with 13 left unnamed.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Two virtual slots overridden by every task info class turned out to be a matched pair: one writes the object's field values into a network bit stream, and the other walks the same bit layout without storing anything. Naming all 150 functions in the batch took the high-confidence count to 6 and medium to 131, with 13 left unnamed.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose descriptive names for 150 consecutive unnamed game functions, working out what each address group is about first and grading every name high, medium or low confidence.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Slot 6 of the task info classes was already proven to serialize fields into a network bit stream. Slot 4 reads the object's own fields by value and passes them to bit-stream helpers, and one override writes computed zero padding in a loop, which only makes sense in the write direction.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Slot 5 replays the exact bit-count sequence of the matching slot 6 but passes no field values, writes no memory in any of its 33 overrides, and discards every intermediate result. The only reading that fits all of that is advancing past the task's data, so it was named skip rather than read.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The bit-stream helpers both slots call sit in the encrypted code range and decode as garbage, so their roles were derived from caller-side shapes only. Five more published names in that range turned out to be shared-stub mislabels on decode, including two called by these very overrides.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The rest of the batch held a camera factory with a 42-way type switch, nine single-type camera finders, render-phase render and state-copy virtuals, interior instance constructors and destructors, and a streaming cluster with a make-space retry loop, entry admission gate, slot acquisition and fragment-list handling.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Slot 4 overrides were named write task data and slot 5 overrides skip task data at medium confidence, with the read-versus-skip reasoning recorded per function so a lane with a decrypted image can confirm it in minutes. Vague setters and thin wrappers whose purpose could not be determined were left unnamed rather than given placeholder names.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Disassemble each task info slot 4 and slot 5 override from the mapped executable image, list the direct-call targets and memory writes per override, and compare the helper and bit-count sequence of each slot 5 against the same class's slot 6 serialize override. Direct callers were found with a whole code-section scan for call instructions.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The slot 5 direction took most of the lane: read, skip and write-defaults all fit the first few overrides, and only the fully worked comparison against slot 6 plus the unwritten scratch argument settled it. A disassembler output quirk hid small push constants from the evidence table, and shell output redirection wrote an unreadable text encoding, both of which cost a re-run each.&lt;/p&gt;</content>
   </entry>
 </feed>
