@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Devlog: hourly review, 11:05 on 5 October",
+    "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "13,630 functions verified, 21.3% of the code by size. Six lanes were lost in twenty minutes to network time-outs at the model service.",
+      "The second checker lane reports an identical regression; both checker changes wait for review and a window with no lanes running."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 17 files from lanes (404 unverified rewrites, 27 in review)",
     "commit": "7e6aed0203ca652a9825d8c5549ee0cbcf88d756",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
