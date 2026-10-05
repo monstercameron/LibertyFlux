@@ -10,8 +10,8 @@
 /// the tester's answer with its low byte cleared, a record found at index `i`
 /// is handed to the activator (callee 2) with that index and the activator's
 /// answer comes back with its low byte forced to 1, and a set with no match
-/// returns the last comparison's sign with its low byte cleared (0, or all
-/// high bits set when the last record's key sorted below).
+/// returns the wanted-key pointer with its low byte cleared (the loop
+/// reloads it after the last comparison, discarding that result).
 ///
 /// Original: 0x00c08560 (thiscall, one stack word; both callees thiscall).
 lf_checker_rt::export!(thiscall, rw_00c08560(this: u32, arg: u32) -> u32 {
@@ -22,28 +22,27 @@ lf_checker_rt::export!(thiscall, rw_00c08560(this: u32, arg: u32) -> u32 {
         const KEY_OFF: u32 = 0x2c;
         const TEST: u32 = 1;
         const ACTIVATE: u32 = 2;
-        /// Signed three-way compare in the original's read order: 0 when
-        /// equal, else -1 when the record byte sorts below, else 1.
-        unsafe fn compare(mut a: u32, mut b: u32) -> i32 {
+        /// Byte-wise equality in the original's read order and width.
+        unsafe fn equal(mut a: u32, mut b: u32) -> bool {
             unsafe {
                 loop {
                     let c1 = (a as *const u8).read();
                     let d1 = (b as *const u8).read();
                     if c1 != d1 {
-                        return if c1 < d1 { -1 } else { 1 };
+                        return false;
                     }
                     if c1 == 0 {
-                        return 0;
+                        return true;
                     }
                     let c2 = (a.wrapping_add(1) as *const u8).read();
                     let d2 = (b.wrapping_add(1) as *const u8).read();
                     if c2 != d2 {
-                        return if c2 < d2 { -1 } else { 1 };
+                        return false;
                     }
                     a = a.wrapping_add(2);
                     b = b.wrapping_add(2);
                     if c2 == 0 {
-                        return 0;
+                        return true;
                     }
                 }
             }
@@ -58,16 +57,14 @@ lf_checker_rt::export!(thiscall, rw_00c08560(this: u32, arg: u32) -> u32 {
         }
         let base = (this.wrapping_add(RECORDS) as *const u32).read_unaligned();
         let want = arg.wrapping_add(KEY_OFF);
-        let mut last = 0i32;
         let mut i = 0u32;
         while i < count {
-            last = compare(base.wrapping_add(i.wrapping_mul(STRIDE)), want);
-            if last == 0 {
+            if equal(base.wrapping_add(i.wrapping_mul(STRIDE)), want) {
                 let r: u32 = lf_checker_rt::callee_thiscall!(ACTIVATE, u32, this, i);
                 return (r & 0xffff_ff00) | 1;
             }
             i += 1;
         }
-        (last as u32) & 0xffff_ff00
+        want & 0xffff_ff00
     }
 });

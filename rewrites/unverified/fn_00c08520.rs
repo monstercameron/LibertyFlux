@@ -3,7 +3,7 @@
 /// Tear the streaming list down once, through its three helpers.
 ///
 /// `this` points to the list. The opener (callee 1) always runs first with
-/// the constant `MAGIC` and zero; when the done byte at `DONE` is already set
+/// the image pointer `MAGIC` (relocated) and zero; when the done byte at `DONE` is already set
 /// nothing else happens. Otherwise the releaser (callee 2) receives the buffer
 /// at `BUF` and the count at `COUNT`, the buffer and the count dword are
 /// cleared, the closer (callee 3, no arguments) runs, and the done byte is
@@ -20,7 +20,8 @@ lf_checker_rt::export!(thiscall, rw_00c08520(this: u32) -> u32 {
         const OPEN: u32 = 1;
         const RELEASE: u32 = 2;
         const CLOSE: u32 = 3;
-        let r: u32 = lf_checker_rt::callee_cdecl!(OPEN, u32, MAGIC, 0);
+        let r: u32 =
+            lf_checker_rt::callee_cdecl!(OPEN, u32, lf_checker_rt::relocated(MAGIC), 0);
         if (this.wrapping_add(DONE) as *const u8).read() == 0 {
             let buf = (this.wrapping_add(BUF) as *const u32).read_unaligned();
             let count = (this.wrapping_add(COUNT) as *const u16).read_unaligned() as u32;
