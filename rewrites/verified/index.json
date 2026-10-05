@@ -58104,6 +58104,15 @@
   "lane": "r-b531"
  },
  {
+  "address": "0x00A70B00",
+  "name": "CTaskComplexPlayerGun::vf19",
+  "kind": "function",
+  "file": "functions/fn_00a70b00.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b531"
+ },
+ {
   "address": "0x00A70C40",
   "name": "CTaskComplexPlayerIdles::vf18",
   "kind": "function",
@@ -59353,6 +59362,177 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s209"
+ },
+ {
+  "address": "0x00A801A0",
+  "name": "CAnimTaskInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a801a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A801D0",
+  "name": "CComplexClimbLadderTaskInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a801d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A801F0",
+  "name": "CComplexFallAndGetUpTaskInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a801f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A80220",
+  "name": "CComplexGangDrivebyTaskInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a80220.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A80240",
+  "name": "CComplexGunTaskInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a80240.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A80270",
+  "name": "CComplexJumpTaskInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a80270.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A802B0",
+  "name": "CComplexNewExitVehicleTaskInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a802b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A802F0",
+  "name": "CComplexNewGetInVehicleTaskInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a802f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A80330",
+  "name": "CComplexOnFireInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a80330.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A80350",
+  "name": "CComplexPickUpAndCarryObjectTaskInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a80350.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A80380",
+  "name": "CComplexSlideIntoCoverInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a80380.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A803B0",
+  "name": "CDeadInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a803b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A803E0",
+  "name": "CDieInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a803e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A80400",
+  "name": "CPlayRandomAmbientsInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a80400.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A80430",
+  "name": "CScriptAnimTaskInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a80430.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A80460",
+  "name": "CSimpleAimPlayerProjectileInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a80460.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A80480",
+  "name": "CSimpleCarDriveTaskInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a80480.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A804A0",
+  "name": "CSimpleClimbTaskInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a804a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
+ },
+ {
+  "address": "0x00A80520",
+  "name": "CSimpleNMBalanceTaskInfo::vf9",
+  "kind": "function",
+  "file": "functions/fn_00a80520.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s467"
  },
  {
   "address": "0x00A872D0",
@@ -97812,6 +97992,15 @@
   "lane": "r-s362"
  },
  {
+  "address": "0x00CA7A20",
+  "name": "CEventHandler::vf58",
+  "kind": "function",
+  "file": "functions/fn_00ca7a20.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b534"
+ },
+ {
   "address": "0x00CA7BC0",
   "name": "CEventHandler::vf35",
   "kind": "function",
@@ -106414,6 +106603,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-b395"
+ },
+ {
+  "address": "0x00DAB6F0",
+  "name": "ped_probe_gated_double",
+  "kind": "function",
+  "file": "functions/fn_00dab6f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b533"
  },
  {
   "address": "0x00DAB9B0",
