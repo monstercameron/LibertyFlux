@@ -296,14 +296,6 @@
   "reason": null
  },
  {
-  "address": "0x005E8160",
-  "name": "DELETE_ALL_HTML_SCRIPT_OBJECTS",
-  "file": "fn_005e8160.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x005E8170",
   "name": null,
   "file": "fn_005e8170.rs",
@@ -400,9 +392,9 @@
   "reason": "other"
  },
  {
-  "address": "0x00870B50",
-  "name": "crmt_list_find_and_attach",
-  "file": "fn_00870b50.rs",
+  "address": "0x00870580",
+  "name": "crmt_entry_find_or_add",
+  "file": "fn_00870580.rs",
   "lane": "r-s485",
   "outcome": "not_reached",
   "reason": null
@@ -472,6 +464,14 @@
   "reason": null
  },
  {
+  "address": "0x00894EC0",
+  "name": "fn_00894ec0",
+  "file": "fn_00894ec0.rs",
+  "lane": "a-Q06",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x0089AF70",
   "name": null,
   "file": "fn_0089af70.rs",
@@ -483,14 +483,6 @@
   "address": "0x0089BB20",
   "name": null,
   "file": "fn_0089bb20.rs",
-  "lane": "r-b21",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x0089BF00",
-  "name": null,
-  "file": "fn_0089bf00.rs",
   "lane": "r-b21",
   "outcome": "not yet run",
   "reason": null
@@ -704,33 +696,33 @@
   "reason": ""
  },
  {
-  "address": "0x00986C30",
-  "name": "audEmitter_clear_slots",
-  "file": "fn_00986c30.rs",
+  "address": "0x00987040",
+  "name": "audEmitter_range_check",
+  "file": "fn_00987040.rs",
   "lane": "r-s486",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x00986E90",
-  "name": "audEmitter_scaled_param_sink",
-  "file": "fn_00986e90.rs",
+  "address": "0x009871E0",
+  "name": "audEmitter_transform_point",
+  "file": "fn_009871e0.rs",
   "lane": "r-s486",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x00988540",
-  "name": "audCutscene_ctor",
-  "file": "fn_00988540.rs",
+  "address": "0x009888E0",
+  "name": "audCutscene_wait_ready",
+  "file": "fn_009888e0.rs",
   "lane": "r-s486",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x00988600",
-  "name": "audCutsceneAudioEntity::vf1",
-  "file": "fn_00988600.rs",
+  "address": "0x00988B40",
+  "name": "audCutsceneAudioEntity::vf2",
+  "file": "fn_00988b40.rs",
   "lane": "r-s486",
   "outcome": "not_reached",
   "reason": ""
@@ -912,54 +904,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x009CB9B0",
-  "name": "AMBIENT_AUDIO_BANK_NO_LONGER_NEEDED",
-  "file": "fn_009cb9b0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CBA10",
-  "name": "DISABLE_END_CREDITS_FADE",
-  "file": "fn_009cba10.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CBA20",
-  "name": "DISABLE_FRONTEND_RADIO",
-  "file": "fn_009cba20.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CBA50",
-  "name": "DISABLE_POLICE_SCANNER",
-  "file": "fn_009cba50.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CBAC0",
-  "name": "ENABLE_FRONTEND_RADIO",
-  "file": "fn_009cbac0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CBAF0",
-  "name": "ENABLE_POLICE_SCANNER",
-  "file": "fn_009cbaf0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x009CBBC0",
   "name": null,
   "file": "fn_009cbbc0.rs",
@@ -968,82 +912,10 @@
   "reason": null
  },
  {
-  "address": "0x009CBF00",
-  "name": "LOCK_LAZLOW_STATION",
-  "file": "fn_009cbf00.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x009CC210",
   "name": null,
   "file": "fn_009cc210.rs",
   "lane": "r-n86",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CC360",
-  "name": "REPORT_SUSPECT_DOWN",
-  "file": "fn_009cc360.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CC3C0",
-  "name": "RESTART_SCRIPTED_CONVERSATION",
-  "file": "fn_009cc3c0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CC3D0",
-  "name": "RETUNE_RADIO_DOWN",
-  "file": "fn_009cc3d0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CC400",
-  "name": "RETUNE_RADIO_UP",
-  "file": "fn_009cc400.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CC7B0",
-  "name": "START_END_CREDITS_MUSIC",
-  "file": "fn_009cc7b0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CC8F0",
-  "name": "TRIGGER_LOADING_MUSIC_ON_NEXT_FADE",
-  "file": "fn_009cc8f0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CC990",
-  "name": "UNLOCK_LAZLOW_STATION",
-  "file": "fn_009cc990.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CC9B0",
-  "name": "UNPAUSE_RADIO",
-  "file": "fn_009cc9b0.rs",
-  "lane": "a-Q05",
   "outcome": "not yet run",
   "reason": null
  },
@@ -1068,30 +940,6 @@
   "name": null,
   "file": "fn_00a011a0.rs",
   "lane": "r-n88",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00A01910",
-  "name": "REMOVE_TEMPORARY_RADAR_BLIPS_FOR_PICKUPS",
-  "file": "fn_00a01910.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00A01940",
-  "name": "RESET_ARMOUR_PICKUP_NETWORK_REGEN_TIME",
-  "file": "fn_00a01940.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00A01960",
-  "name": "RESET_MONEY_PICKUP_NETWORK_REGEN_TIME",
-  "file": "fn_00a01960.rs",
-  "lane": "a-Q05",
   "outcome": "not yet run",
   "reason": null
  },
@@ -1304,6 +1152,22 @@
   "reason": "other"
  },
  {
+  "address": "0x00AD0160",
+  "name": "fn_00ad0160",
+  "file": "fn_00ad0160.rs",
+  "lane": "a-Q06",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00AD1A50",
+  "name": "fn_00ad1a50",
+  "file": "fn_00ad1a50.rs",
+  "lane": "a-Q06",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00ADDCF0",
   "name": null,
   "file": "fn_00addcf0.rs",
@@ -1318,6 +1182,14 @@
   "lane": "r-b166",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00B05D10",
+  "name": "fn_00b05d10",
+  "file": "fn_00b05d10.rs",
+  "lane": "a-Q06",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00B37240",
@@ -1432,30 +1304,6 @@
   "reason": "needs_encrypted_code"
  },
  {
-  "address": "0x00B869B0",
-  "name": "DISABLE_HELI_CHASE_CAM_BONNET_NITRO_FIX",
-  "file": "fn_00b869b0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B869C0",
-  "name": "DISABLE_HELI_CHASE_CAM_THIS_UPDATE",
-  "file": "fn_00b869c0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B869D0",
-  "name": "DISABLE_INTERMEZZO_CAMS",
-  "file": "fn_00b869d0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00B870D0",
   "name": null,
   "file": "fn_00b870d0.rs",
@@ -1480,146 +1328,10 @@
   "reason": null
  },
  {
-  "address": "0x00B8AC40",
-  "name": "STOP_CUTSCENE",
-  "file": "fn_00b8ac40.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B8BEA0",
-  "name": "CLEAR_HELP",
-  "file": "fn_00b8bea0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B8BED0",
-  "name": "CLEAR_PRINTS",
-  "file": "fn_00b8bed0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B8BEE0",
-  "name": "CLEAR_SMALL_PRINTS",
-  "file": "fn_00b8bee0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B8C160",
-  "name": "DISPLAY_SNIPER_SCOPE_THIS_FRAME",
-  "file": "fn_00b8c160.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B8C4E0",
-  "name": "DONT_DISPLAY_LOADING_ON_FADE_THIS_FRAME",
-  "file": "fn_00b8c4e0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00B8CA40",
   "name": null,
   "file": "fn_00b8ca40.rs",
   "lane": "r-n86",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B8CC20",
-  "name": "HIDE_HELP_TEXT_THIS_FRAME",
-  "file": "fn_00b8cc20.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B8D4F0",
-  "name": "SAVE_SETTINGS",
-  "file": "fn_00b8d4f0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B8DB50",
-  "name": "SWITCH_OFF_WAYPOINT",
-  "file": "fn_00b8db50.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B8DB80",
-  "name": "USE_PREVIOUS_FONT_SETTINGS",
-  "file": "fn_00b8db80.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B93D00",
-  "name": "ACTIVATE_NETWORK_SETTINGS_MENU",
-  "file": "fn_00b93d00.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B94170",
-  "name": "CLEAR_UP_TRIP_SKIP",
-  "file": "fn_00b94170.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B941A0",
-  "name": "DEACTIVATE_NETWORK_SETTINGS_MENU",
-  "file": "fn_00b941a0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B941D0",
-  "name": "DO_AUTO_SAVE",
-  "file": "fn_00b941d0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B94270",
-  "name": "FLUSH_ALL_OUT_OF_DATE_RADAR_BLIPS_FROM_MISSION_CLEANUP_LIST",
-  "file": "fn_00b94270.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B94C40",
-  "name": "PICK_RANDOM_WEATHER",
-  "file": "fn_00b94c40.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B94D80",
-  "name": "SET_DEFAULT_GLOBAL_INSTANCE_PRIORITY",
-  "file": "fn_00b94d80.rs",
-  "lane": "a-Q05",
   "outcome": "not yet run",
   "reason": null
  },
@@ -1632,78 +1344,6 @@
   "reason": null
  },
  {
-  "address": "0x00B95190",
-  "name": "START_CREDITS",
-  "file": "fn_00b95190.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B952B0",
-  "name": "THIS_SCRIPT_IS_SAFE_FOR_NETWORK_GAME",
-  "file": "fn_00b952b0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B952F0",
-  "name": "UNPAUSE_GAME",
-  "file": "fn_00b952f0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B98770",
-  "name": "SHAKE_PLAYERPAD_WHEN_CONTROLLER_DISABLED",
-  "file": "fn_00b98770.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B9A370",
-  "name": "CALCULATE_FURTHEST_NETWORK_RESTART_NODES",
-  "file": "fn_00b9a370.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B9A3F0",
-  "name": "CLEAR_NETWORK_RESTART_NODE_GROUP_LIST",
-  "file": "fn_00b9a3f0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B9A440",
-  "name": "DESTROY_PED_GENERATION_CONSTRAINT_AREA",
-  "file": "fn_00b9a440.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B9A4A0",
-  "name": "FLUSH_ALL_PLAYER_RESPAWN_COORDS",
-  "file": "fn_00b9a4a0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B9A4B0",
-  "name": "FLUSH_ALL_SPAWN_BLOCKING_AREAS",
-  "file": "fn_00b9a4b0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00B9AA70",
   "name": null,
   "file": "fn_00b9aa70.rs",
@@ -1712,50 +1352,10 @@
   "reason": null
  },
  {
-  "address": "0x00B9AD30",
-  "name": "RELEASE_PATH_NODES",
-  "file": "fn_00b9ad30.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B9AFE0",
-  "name": "UNMARK_ALL_ROAD_NODES_AS_DONT_WANDER",
-  "file": "fn_00b9afe0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00B9E210",
   "name": null,
   "file": "fn_00b9e210.rs",
   "lane": "r-n86",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B9E2C0",
-  "name": "BEGIN_CHAR_SEARCH_CRITERIA",
-  "file": "fn_00b9e2c0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B9E560",
-  "name": "CLEAR_PED_NON_CREATION_AREA",
-  "file": "fn_00b9e560.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B9EA10",
-  "name": "DONT_SUPPRESS_ANY_PED_MODELS",
-  "file": "fn_00b9ea10.rs",
-  "lane": "a-Q05",
   "outcome": "not yet run",
   "reason": null
  },
@@ -1808,14 +1408,6 @@
   "reason": null
  },
  {
-  "address": "0x00BA0CC0",
-  "name": "REMOVE_ALL_INACTIVE_GROUPS_FROM_CLEANUP_LIST",
-  "file": "fn_00ba0cc0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00BA1140",
   "name": null,
   "file": "fn_00ba1140.rs",
@@ -1864,14 +1456,6 @@
   "reason": null
  },
  {
-  "address": "0x00BB1D60",
-  "name": "FAKE_DEATHARREST",
-  "file": "fn_00bb1d60.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00BB1E30",
   "name": null,
   "file": "fn_00bb1e30.rs",
@@ -1888,90 +1472,10 @@
   "reason": null
  },
  {
-  "address": "0x00BB2730",
-  "name": "MAKE_PLAYER_GANG_DISAPPEAR",
-  "file": "fn_00bb2730.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BB2740",
-  "name": "MAKE_PLAYER_GANG_REAPPEAR",
-  "file": "fn_00bb2740.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BB2850",
-  "name": "RESET_ACHIEVEMENTS_AWARD",
-  "file": "fn_00bb2850.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BB2DA0",
-  "name": "SHOW_SIGNIN_UI",
-  "file": "fn_00bb2da0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BB2DB0",
-  "name": "START_FIRING_AMNESTY",
-  "file": "fn_00bb2db0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BB6050",
-  "name": "TERMINATE_THIS_SCRIPT",
-  "file": "fn_00bb6050.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BB74F0",
-  "name": "PRIORITIZE_STREAMING_REQUEST",
-  "file": "fn_00bb74f0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BB7530",
-  "name": "REQUEST_ALL_SLODS_IN_WORLD",
-  "file": "fn_00bb7530.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BB7650",
-  "name": "SIMULATE_UPDATE_LOAD_SCENE",
-  "file": "fn_00bb7650.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00BB9710",
   "name": null,
   "file": "fn_00bb9710.rs",
   "lane": "r-n86",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BB97D0",
-  "name": "TASK_FLUSH_ROUTE",
-  "file": "fn_00bb97d0.rs",
-  "lane": "a-Q05",
   "outcome": "not yet run",
   "reason": null
  },
@@ -1989,14 +1493,6 @@
   "file": "fn_00bc30c0.rs",
   "lane": "r-b505",
   "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00BC56C0",
-  "name": "DONT_SUPPRESS_ANY_CAR_MODELS",
-  "file": "fn_00bc56c0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -2032,14 +1528,6 @@
   "reason": null
  },
  {
-  "address": "0x00BC7280",
-  "name": "SET_ALL_CAR_GENERATORS_BACK_TO_ACTIVE",
-  "file": "fn_00bc7280.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00BC7310",
   "name": null,
   "file": "fn_00bc7310.rs",
@@ -2064,22 +1552,6 @@
   "reason": null
  },
  {
-  "address": "0x00BD2CA0",
-  "name": "ACTIVATE_SCRIPT_POPULATION_ZONE",
-  "file": "fn_00bd2ca0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BD3860",
-  "name": "CLEAR_TIMECYCLE_MODIFIER",
-  "file": "fn_00bd3860.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00BD42A0",
   "name": null,
   "file": "fn_00bd42a0.rs",
@@ -2096,58 +1568,10 @@
   "reason": null
  },
  {
-  "address": "0x00BD4490",
-  "name": "STOP_MOVIE",
-  "file": "fn_00bd4490.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BD7260",
-  "name": "RELEASE_TIME_OF_DAY",
-  "file": "fn_00bd7260.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BD72A0",
-  "name": "SET_TIME_ONE_DAY_BACK",
-  "file": "fn_00bd72a0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BD72B0",
-  "name": "SET_TIME_ONE_DAY_FORWARD",
-  "file": "fn_00bd72b0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BD8050",
-  "name": "LAUNCH_LOCAL_PLAYER_IN_NETWORK_GAME",
-  "file": "fn_00bd8050.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00BD8130",
   "name": null,
   "file": "fn_00bd8130.rs",
   "lane": "r-n86",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BD8200",
-  "name": "NETWORK_CLEAR_SUMMONS",
-  "file": "fn_00bd8200.rs",
-  "lane": "a-Q05",
   "outcome": "not yet run",
   "reason": null
  },
@@ -2164,30 +1588,6 @@
   "name": null,
   "file": "fn_00bd88c0.rs",
   "lane": "r-n88",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BD9530",
-  "name": "SET_RICH_PRESENCE_TEMPLATEFILTER",
-  "file": "fn_00bd9530.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BD96E0",
-  "name": "SHUTDOWN_AND_LAUNCH_SINGLE_PLAYER_GAME",
-  "file": "fn_00bd96e0.rs",
-  "lane": "a-Q05",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BDCA60",
-  "name": "STORE_SCRIPT_VALUES_FOR_NETWORK_GAME",
-  "file": "fn_00bdca60.rs",
-  "lane": "a-Q05",
   "outcome": "not yet run",
   "reason": null
  },
@@ -2352,6 +1752,94 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00CACD90",
+  "name": "fn_00cacd90",
+  "file": "fn_00cacd90.rs",
+  "lane": "a-Q06",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CACDE0",
+  "name": "fn_00cacde0",
+  "file": "fn_00cacde0.rs",
+  "lane": "a-Q06",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CACE70",
+  "name": "fn_00cace70",
+  "file": "fn_00cace70.rs",
+  "lane": "a-Q06",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CACEC0",
+  "name": "fn_00cacec0",
+  "file": "fn_00cacec0.rs",
+  "lane": "a-Q06",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CACF30",
+  "name": "fn_00cacf30",
+  "file": "fn_00cacf30.rs",
+  "lane": "a-Q06",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CACF80",
+  "name": "fn_00cacf80",
+  "file": "fn_00cacf80.rs",
+  "lane": "a-Q06",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CAD030",
+  "name": "fn_00cad030",
+  "file": "fn_00cad030.rs",
+  "lane": "a-Q06",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CAD050",
+  "name": "fn_00cad050",
+  "file": "fn_00cad050.rs",
+  "lane": "a-Q06",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CAD070",
+  "name": "fn_00cad070",
+  "file": "fn_00cad070.rs",
+  "lane": "a-Q06",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CAD090",
+  "name": "fn_00cad090",
+  "file": "fn_00cad090.rs",
+  "lane": "a-Q06",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CAD0B0",
+  "name": "fn_00cad0b0",
+  "file": "fn_00cad0b0.rs",
+  "lane": "a-Q06",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00CADFE0",
   "name": "move_task_steer_update",
   "file": "fn_00cadfe0.rs",
@@ -2422,6 +1910,14 @@
   "lane": "r-b321",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00CCA4C0",
+  "name": "fn_00cca4c0",
+  "file": "fn_00cca4c0.rs",
+  "lane": "a-Q06",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00CD4E60",
