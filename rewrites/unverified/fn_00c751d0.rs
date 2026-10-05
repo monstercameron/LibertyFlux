@@ -212,7 +212,6 @@ lf_checker_rt::export!(stdcall, rw_00C751D0(a0b: u32, a1b: u32, a2b: u32) -> u32
         step!(a0, 0.0f32, a1slot, s1, 0x0c);
         // Fourth step: the middle scale reads a never-written frame slot.
         step!(g8, 0.0f32, a1slot, 0.0f32, 0x12);
-        let tail_cvtt = cvtt_i32(fadd(fmul(s2, fsub(fmin_sel(fmax_sel(base2, a1slot), hi2), o2)), k_bias));
 
         // Tail configuration calls with sign-flipped constant triples.
         let c50 = lf_checker_rt::relocated(C_LOW);
@@ -222,8 +221,11 @@ lf_checker_rt::export!(stdcall, rw_00C751D0(a0b: u32, a1b: u32, a2b: u32) -> u32
             rd32(c70.wrapping_add(4)) ^ k_neg,
             rd32(c70.wrapping_add(8)) ^ k_neg,
         ];
+        // Each site pushes a placeholder third word and overwrites it with
+        // `a0` before the remaining pushes, so the fourth argument is always
+        // `a0` and the first is the pushed constant.
         lf_checker_rt::callee_thiscall!(
-            TAIL_FIRST, u32, edi, a0b, 1u32, 0u32, tail_cvtt as u32,
+            TAIL_FIRST, u32, edi, 0u32, 1u32, 0u32, a0b,
             t1.as_ptr() as u32, c50
         );
         let t2a = [
@@ -231,10 +233,13 @@ lf_checker_rt::export!(stdcall, rw_00C751D0(a0b: u32, a1b: u32, a2b: u32) -> u32
             rd32(c50.wrapping_add(4)) ^ k_neg,
             rd32(c50.wrapping_add(8)) ^ k_neg,
         ];
-        // Middle word of the second triple is the never-written frame slot.
-        let t2b = [rd32(c70) ^ k_neg, 0u32, rd32(c70.wrapping_add(8)) ^ k_neg];
+        let t2b = [
+            rd32(c70) ^ k_neg,
+            rd32(c70.wrapping_add(4)) ^ k_neg,
+            rd32(c70.wrapping_add(8)) ^ k_neg,
+        ];
         lf_checker_rt::callee_thiscall!(
-            TAIL_REST, u32, edi, a0b, 0u32, 1u32, 0u32,
+            TAIL_REST, u32, edi, 1u32, 0u32, 1u32, a0b,
             t2b.as_ptr() as u32, t2a.as_ptr() as u32
         );
         let t3 = [
@@ -243,11 +248,11 @@ lf_checker_rt::export!(stdcall, rw_00C751D0(a0b: u32, a1b: u32, a2b: u32) -> u32
             rd32(c50.wrapping_add(8)) ^ k_neg,
         ];
         lf_checker_rt::callee_thiscall!(
-            TAIL_REST, u32, edi, a0b, 2u32, 3u32, 0u32, c70,
+            TAIL_REST, u32, edi, 2u32, 2u32, 3u32, a0b, c70,
             t3.as_ptr() as u32
         );
         lf_checker_rt::callee_thiscall!(
-            TAIL_REST, u32, edi, a0b, 3u32, 2u32, 0u32, c70, c50
+            TAIL_REST, u32, edi, 3u32, 3u32, 2u32, a0b, c70, c50
         );
 
         // Dispatch tail: vtable, lookup, data-table and final calls.
