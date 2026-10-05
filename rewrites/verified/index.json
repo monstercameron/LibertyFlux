@@ -33993,6 +33993,24 @@
   "lane": "a-02"
  },
  {
+  "address": "0x006053C0",
+  "name": "euphoria_inner_this_thunk",
+  "kind": "function",
+  "file": "functions/fn_006053c0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b541"
+ },
+ {
+  "address": "0x00605400",
+  "name": "euphoria_this_plus16_thunk",
+  "kind": "function",
+  "file": "functions/fn_00605400.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b541"
+ },
+ {
   "address": "0x00618310",
   "name": "view_bounds_commit_rect",
   "kind": "function",
@@ -38025,6 +38043,15 @@
   "lane": "r-s182"
  },
  {
+  "address": "0x008730A0",
+  "name": "rage::crmtObserver::vf0",
+  "kind": "function",
+  "file": "functions/fn_008730a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
+ },
+ {
   "address": "0x008730E0",
   "name": "blend_child_slot_teardown",
   "kind": "function",
@@ -38070,6 +38097,15 @@
   "lane": "r-s182"
  },
  {
+  "address": "0x00873210",
+  "name": "rage::crmtObserverFunctor::vf0",
+  "kind": "function",
+  "file": "functions/fn_00873210.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
+ },
+ {
   "address": "0x008732D0",
   "name": "crmtObserverFunctorNoRefCount::vf3",
   "kind": "function",
@@ -38086,6 +38122,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s182"
+ },
+ {
+  "address": "0x00873460",
+  "name": "rage::crmtRequest::vf0",
+  "kind": "function",
+  "file": "functions/fn_00873460.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
  },
  {
   "address": "0x008734C0",
@@ -38106,6 +38151,15 @@
   "lane": "r-s182"
  },
  {
+  "address": "0x00873560",
+  "name": "rage::crmtRequestInsert::vf0",
+  "kind": "function",
+  "file": "functions/fn_00873560.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
+ },
+ {
   "address": "0x008735C0",
   "name": "rage::crmtRequestInsert::vf2",
   "kind": "function",
@@ -38122,6 +38176,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s182"
+ },
+ {
+  "address": "0x008736D0",
+  "name": "rage::crmtNodeN::vf0",
+  "kind": "function",
+  "file": "functions/fn_008736d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
  },
  {
   "address": "0x00873710",
@@ -38149,6 +38212,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s182"
+ },
+ {
+  "address": "0x00873960",
+  "name": "rage::crmtNodeBlendN::vf0",
+  "kind": "function",
+  "file": "functions/fn_00873960.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
  },
  {
   "address": "0x00873A30",
@@ -38248,6 +38320,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s177"
+ },
+ {
+  "address": "0x00873FC0",
+  "name": "rage::crmtMotionTree::vf0",
+  "kind": "function",
+  "file": "functions/fn_00873fc0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
  },
  {
   "address": "0x00874000",
@@ -38538,6 +38619,15 @@
   "lane": "r-s173"
  },
  {
+  "address": "0x00874F20",
+  "name": "rage::crmtRequestBlendN::vf0",
+  "kind": "function",
+  "file": "functions/fn_00874f20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
+ },
+ {
   "address": "0x00874F90",
   "name": "blend_dtor",
   "kind": "function",
@@ -38583,6 +38673,15 @@
   "lane": "r-s173"
  },
  {
+  "address": "0x00875230",
+  "name": "rage::crmtRequestSource<202>::vf0",
+  "kind": "function",
+  "file": "functions/fn_00875230.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
+ },
+ {
   "address": "0x00875290",
   "name": "add_ctor",
   "kind": "function",
@@ -38590,6 +38689,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s173"
+ },
+ {
+  "address": "0x008752D0",
+  "name": "rage::crmtRequestAddN::vf0",
+  "kind": "function",
+  "file": "functions/fn_008752d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
  },
  {
   "address": "0x00875340",
@@ -38745,6 +38853,15 @@
   "lane": "r-s156"
  },
  {
+  "address": "0x008759F0",
+  "name": "rage::crmtNodeExpression::vf0",
+  "kind": "function",
+  "file": "functions/fn_008759f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
+ },
+ {
   "address": "0x00875AC0",
   "name": "crmt_filter_request_init_guarded",
   "kind": "function",
@@ -38788,6 +38905,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s156"
+ },
+ {
+  "address": "0x00875C20",
+  "name": "rage::crmtNodeExtrapolate::vf0",
+  "kind": "function",
+  "file": "functions/fn_00875c20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s474"
  },
  {
   "address": "0x00875CC0",
@@ -51136,6 +51262,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b524"
+ },
+ {
+  "address": "0x0097FCF0",
+  "name": "MOLOTOV_FUSE_FIRE_LOOP_IN_HAND",
+  "kind": "function",
+  "file": "functions/fn_0097fcf0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b537"
  },
  {
   "address": "0x00980CF0",
@@ -105370,6 +105505,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s337"
+ },
+ {
+  "address": "0x00C9F6B0",
+  "name": "CSimpleIkManager::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c9f6b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R06"
  },
  {
   "address": "0x00CA0040",
