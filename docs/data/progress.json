@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-05",
-  "updated_at": "2026-10-05 05:00",
+  "updated_at": "2026-10-05 05:06",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,12 +12,12 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 24284,
-    "rewritten": 12669,
-    "verified": 12027
+    "named": 24273,
+    "rewritten": 12679,
+    "verified": 12037
   },
   "structures": 340,
-  "symbols": 12139,
+  "symbols": 12149,
   "measured": [
     {
       "label": "Code section",
@@ -99,19 +99,19 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 24284,
+      "value": 24273,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (15280); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (15269); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 12669,
+      "value": 12679,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 12027,
+      "value": 12037,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
@@ -2280,8 +2280,8 @@
       "to": "0x00939F7C",
       "count": 100,
       "named": 99,
-      "rewritten": 36,
-      "verified": 36
+      "rewritten": 44,
+      "verified": 44
     },
     {
       "stage": "named",
@@ -2289,15 +2289,15 @@
       "to": "0x0093F89E",
       "count": 91,
       "named": 83,
-      "rewritten": 9,
-      "verified": 9
+      "rewritten": 11,
+      "verified": 11
     },
     {
       "stage": "named",
       "from": "0x0093F89F",
       "to": "0x009451BF",
       "count": 86,
-      "named": 67,
+      "named": 56,
       "rewritten": 2,
       "verified": 2
     },
