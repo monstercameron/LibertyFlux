@@ -10,16 +10,16 @@
 /// pointer `P = table[IDX1] + AUD_STRIDE * IDX2` is found at bank offset
 /// `BANK_ENTRY` = 0x6F10.
 ///
-/// Failures (all return -1 and store 1 to `*out` unless `out` is null):
-/// `IDX2 == 0xFF`, `P == 0`, helper 1 answers -1, helper 2 answers with a
-/// zero low byte. Helper 1 (callee id 1, thiscall on `P`) takes a flag byte
-/// that this function never reads back; helper 2 (callee id 2, thiscall on
-/// `this`) fills three out-words `L18`, `L14`, `L1C`.
+/// Early failures return -1 WITHOUT touching `*out`: `IDX2 == 0xFF`,
+/// `P == 0`, helper 1 answers -1, helper 2 answers with a zero low byte.
+/// Helper 1 (callee id 1, thiscall on `P`) takes a flag byte that this
+/// function never reads back; helper 2 (callee id 2, thiscall on `this`)
+/// fills three out-words `L18`, `L14`, `L1C`.
 ///
 /// Otherwise let `d = L14 - L18` and `c = L1C` (both single precision, in
 /// that operand order). The original's chain of `comiss`/`ucomiss` jumps
 /// computes iff `c` is NaN or (`c > 0` and `d` is not below zero); every
-/// other combination takes the failure path above with `*out = 1`.
+/// other combination returns -1 and stores 1 to `*out` (unless null).
 /// The compute path stores 0 to `*out`, forms `x = (d + 1) / c`, rounds to
 /// the nearest integer with the 2^23 magnitude trick (sign taken from `x`
 /// itself), subtracts 1 when the rounded value is not below the signed zero
@@ -69,8 +69,14 @@ lf_checker_rt::export!(thiscall, rw_008A5C60(this: u32, out: u32) -> u32 {
                 v as i32
             }
         }
+        /// Early failure: return -1, leave `*out` alone.
         #[inline(always)]
-        unsafe fn fail(out: u32) -> u32 {
+        fn early_fail() -> u32 {
+            0xFFFF_FFFF
+        }
+        /// Float-stage failure: return -1 and store 1 to `*out`.
+        #[inline(always)]
+        unsafe fn float_fail(out: u32) -> u32 {
             unsafe {
                 if out != 0 {
                     (out as *mut u8).write(1);
@@ -81,7 +87,7 @@ lf_checker_rt::export!(thiscall, rw_008A5C60(this: u32, out: u32) -> u32 {
 
         let idx2 = rd8(this + IDX2);
         if idx2 == NONE {
-            return fail(out);
+            return early_fail();
         }
         let stride = lf_checker_rt::global::<u32>(AUD_STRIDE).read();
         let base = lf_checker_rt::global::<u32>(AUD_TABLE).read();
@@ -90,7 +96,7 @@ lf_checker_rt::export!(thiscall, rw_008A5C60(this: u32, out: u32) -> u32 {
         let entry = (slot as *const u32).read_unaligned();
         let p = entry.wrapping_add(stride.wrapping_mul(idx2 as u32));
         if p == 0 {
-            return fail(out);
+            return early_fail();
         }
         let mut flag: u32 = 0;
         let r: u32 = lf_checker_rt::callee_thiscall!(
@@ -100,7 +106,7 @@ lf_checker_rt::export!(thiscall, rw_008A5C60(this: u32, out: u32) -> u32 {
             &mut flag as *mut u32 as u32
         );
         if r == 0xFFFF_FFFF {
-            return fail(out);
+            return early_fail();
         }
         let mut l18: u32 = 0;
         let mut l14: u32 = 0;
@@ -114,7 +120,7 @@ lf_checker_rt::export!(thiscall, rw_008A5C60(this: u32, out: u32) -> u32 {
             &mut l1c as *mut u32 as u32
         );
         if ans & 0xFF == 0 {
-            return fail(out);
+            return early_fail();
         }
         let d = sub(f32::from_bits(l14), f32::from_bits(l18));
         let c = f32::from_bits(l1c);
@@ -122,7 +128,7 @@ lf_checker_rt::export!(thiscall, rw_008A5C60(this: u32, out: u32) -> u32 {
         // flag table: compute iff c is NaN or (c > 0 and d is not < 0).
         let compute = c.is_nan() || (c > 0.0 && !(d < 0.0));
         if !compute {
-            return fail(out);
+            return float_fail(out);
         }
         if out != 0 {
             (out as *mut u8).write(0);
@@ -137,8 +143,9 @@ lf_checker_rt::export!(thiscall, rw_008A5C60(this: u32, out: u32) -> u32 {
         let mut q = add(x, off);
         q = sub(q, off);
         let back = sub(q, x);
-        // cmpnless(back, signed zero): true unless back < zero, NaN counts.
-        let adj = if !(back < f32::from_bits(sign)) {
+        // cmpnless(back, signed zero): not-less-or-equal, i.e. true unless
+        // back <= zero; unordered (NaN) counts as true.
+        let adj = if !(back <= f32::from_bits(sign)) {
             ALL_ONES
         } else {
             0
