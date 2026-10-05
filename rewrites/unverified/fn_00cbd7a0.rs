@@ -9,8 +9,8 @@
 /// radius at `+0x70`, and the mover object at `+0x24` (heading delta from
 /// `+0xAA4` minus `+0xAA0`, slot table at `+0x78`). `a0` is the command
 /// object (flag word at `+0x378`, words at `+0`/`+4`); `a1` points at two
-/// input floats; `a2` is unread scratch; `a3` is a threshold float whose
-/// low byte doubles as a skip flag on the table path.
+/// input floats; `a2` is a threshold float; `a3` is unread as a word and
+/// only its low byte is used, as a skip flag on the table path.
 ///
 /// Behaviour: the heading delta is normalised through callee 1 and the
 /// threshold is range-checked against the absolute inputs. When it is in
@@ -31,7 +31,7 @@
 /// the original's, pinned with `black_box` helpers. Callee 9's object
 /// argument is the unrelocated table-base constant, passed through
 /// unchanged. Original: 0x00CBD7A0 (thiscall, four stack words).
-lf_checker_rt::export!(thiscall, rw_00CBD7A0(this: u32, a0: u32, a1: u32, _a2: u32, a3: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00CBD7A0(this: u32, a0: u32, a1: u32, a2: u32, a3: u32) -> u32 {
     unsafe {
         const C_NORM: u32 = 1; // cdecl/1 f32st0: heading-delta normalise
         const C_GUARD: u32 = 2; // thiscall/0 al: timeout guard on mover
@@ -195,18 +195,20 @@ lf_checker_rt::export!(thiscall, rw_00CBD7A0(this: u32, a0: u32, a1: u32, _a2: u
         let mid = rd32(this.wrapping_add(0x24));
         let diff = sub(rdf(mid.wrapping_add(0xAA4)), rdf(mid.wrapping_add(0xAA0)));
         let norm: f32 = lf_checker_rt::callee_cdecl!(C_NORM, f32, diff.to_bits());
-        let arg3f = f32::from_bits(a3);
-        let flag_a: u8 = if below(arg3f, fabs0) {
+        // The threshold is read from the arg2 slot (the read happens
+        // while one word is pushed, shifting the slot by four).
+        let arg2f = f32::from_bits(a2);
+        let flag_a: u8 = if below(arg2f, fabs0) {
             0
-        } else if above_eq(arg3f, fabs1) {
+        } else if above_eq(arg2f, fabs1) {
             1
         } else {
             0
         };
         let t14 = fabsf(rdf(this.wrapping_add(0x14)));
-        let flag_b: u8 = if below(arg3f, t14) {
+        let flag_b: u8 = if below(arg2f, t14) {
             0
-        } else if above_eq(arg3f, fabsf(rdf(this.wrapping_add(0x18)))) {
+        } else if above_eq(arg2f, fabsf(rdf(this.wrapping_add(0x18)))) {
             1
         } else {
             0
@@ -514,7 +516,8 @@ lf_checker_rt::export!(thiscall, rw_00CBD7A0(this: u32, a0: u32, a1: u32, _a2: u
                 if q11 != 0 {
                     apply(q11);
                 }
-                (q11, 0)
+                // The original zeroes edx after the second apply.
+                (0, 0)
             };
             let f4 = rd32(a0.wrapping_add(0x378));
             let bit10 = ((f4 >> 10) & 1) != 0;
