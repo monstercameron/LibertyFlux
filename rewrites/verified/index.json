@@ -38079,6 +38079,15 @@
   "lane": "r-s478"
  },
  {
+  "address": "0x0069B550",
+  "name": "rage::crAnimChannelStaticQuaternion::map",
+  "kind": "function",
+  "file": "functions/fn_0069b550.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b564"
+ },
+ {
   "address": "0x0069B5A0",
   "name": "rage::crAnimChannelStaticQuaternion::vf3",
   "kind": "function",
@@ -38128,6 +38137,15 @@
   "name": "rage::crAnimChannelStaticVector3::~crAnimChannelStaticVector3__deleting",
   "kind": "function",
   "file": "functions/fn_0069b710.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b564"
+ },
+ {
+  "address": "0x0069B820",
+  "name": "rage::crAnimChannelStaticVector3::map",
+  "kind": "function",
+  "file": "functions/fn_0069b820.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b564"
@@ -38214,10 +38232,46 @@
   "lane": "r-b564"
  },
  {
+  "address": "0x0069C8C0",
+  "name": "rage::crAnimChannelCurveFloat::copy_segment",
+  "kind": "function",
+  "file": "functions/fn_0069c8c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b564"
+ },
+ {
+  "address": "0x0069C9E0",
+  "name": "rage::crAnimChannelCurveFloat::alloc_keys",
+  "kind": "function",
+  "file": "functions/fn_0069c9e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b564"
+ },
+ {
   "address": "0x0069CA30",
   "name": "rage::crAnimChannelCurveFloat::copy_keys",
   "kind": "function",
   "file": "functions/fn_0069ca30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b564"
+ },
+ {
+  "address": "0x0069CAA0",
+  "name": "rage::crAnimChannelCurveFloat::free_keys",
+  "kind": "function",
+  "file": "functions/fn_0069caa0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b564"
+ },
+ {
+  "address": "0x0069CAF0",
+  "name": "rage::crAnimChannelCurveFloat::purge_list",
+  "kind": "function",
+  "file": "functions/fn_0069caf0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b564"
@@ -38263,6 +38317,15 @@
   "name": "rage::crAnimChannelRleInt::~crAnimChannelRleInt__deleting",
   "kind": "function",
   "file": "functions/fn_0069d560.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b564"
+ },
+ {
+  "address": "0x0069D6D0",
+  "name": "rage::crAnimChannelRleInt::decode_at",
+  "kind": "function",
+  "file": "functions/fn_0069d6d0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b564"
@@ -109593,6 +109656,24 @@
   "lane": "a-R07"
  },
  {
+  "address": "0x00C816C0",
+  "name": "CTaskComplexChatScenario::vf5",
+  "kind": "function",
+  "file": "functions/fn_00c816c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R07"
+ },
+ {
+  "address": "0x00C81760",
+  "name": "CTaskComplexDrivingScenario::vf5",
+  "kind": "function",
+  "file": "functions/fn_00c81760.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R07"
+ },
+ {
   "address": "0x00C817F0",
   "name": "CTaskComplexGetInCarScenario::vf5",
   "kind": "function",
@@ -109602,10 +109683,37 @@
   "lane": "a-R07"
  },
  {
+  "address": "0x00C81850",
+  "name": "CTaskComplexMobileChatScenario::vf5",
+  "kind": "function",
+  "file": "functions/fn_00c81850.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R07"
+ },
+ {
+  "address": "0x00C81940",
+  "name": "CTaskComplexMobileMakeCall::vf5",
+  "kind": "function",
+  "file": "functions/fn_00c81940.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R07"
+ },
+ {
   "address": "0x00C819E0",
   "name": "CTaskComplexMoveBetweenPointsScenario::vf5",
   "kind": "function",
   "file": "functions/fn_00c819e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R07"
+ },
+ {
+  "address": "0x00C81A40",
+  "name": "CTaskComplexPoliceSniperScenario::vf5",
+  "kind": "function",
+  "file": "functions/fn_00c81a40.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "a-R07"
