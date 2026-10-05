@@ -13,8 +13,8 @@
 /// entries must be non-null and supply voice ids from `+0x0A`. A request
 /// block is built in frame scratch (block at frame `+0x10`): word 0 is a
 /// randomised float plus table 1's entry (plus `3.0` when both ids are
-/// equal), word 2 a second randomised float plus the same entry, word 3
-/// the bank base, word 8 the tag. Phase 1 issues the first id (submit
+/// equal), word 3 the bank base, word 8 the tag. Phase 1 issues
+/// the first id (submit
 /// triple `0,-1,0x59` on equal ids, `0,-1,0x5A` otherwise, or a slot
 /// release); phase 2 issues the second id (triple `0,-1,0x5B`); phase 3
 /// overwrites word 0 with table 2's entry and issues the global voice
@@ -106,6 +106,7 @@ lf_checker_rt::export!(thiscall, rw_0097d8a0(this: u32, src: u32, sel: u32) -> u
         let block = base.wrapping_add((F_BLOCK * 4) as u32);
         lf_checker_rt::callee_thiscall!(C_BLOCK_INIT, u32, block);
         frame[F_BLOCK + BLOCK_TAG] = rd32(this.wrapping_add(THIS_TAG));
+        core::hint::black_box(frame[F_BLOCK + BLOCK_TAG]);
         frame[F_BLOCK + BLOCK_BANK] =
             rd32(this.wrapping_add(THIS_X120)).wrapping_add(BANK_BIAS);
         let f0 = lf_checker_rt::global::<u32>(RAND_F0).read();
@@ -118,7 +119,8 @@ lf_checker_rt::export!(thiscall, rw_0097d8a0(this: u32, src: u32, sel: u32) -> u
         let w0 = mix1 + t1;
         frame[F_BLOCK] = if id1 == id2 { w0 + EQUAL_BOOST } else { w0 }.to_bits();
         let triple = base.wrapping_add((F_TRIPLE * 4) as u32);
-        // Phase 1: the first voice id.
+        // Phase 1: the first voice id (submit id 0x59 on equal ids).
+        // Equal ids skip phase 2 and continue at phase 3.
         let slot = lf_checker_rt::callee_cdecl!(C_SLOT_ALLOC, u32,);
         let resolved = lf_checker_rt::callee_cdecl!(C_SLOT_RESOLVE, u32, slot);
         let ok =
@@ -134,23 +136,27 @@ lf_checker_rt::export!(thiscall, rw_0097d8a0(this: u32, src: u32, sel: u32) -> u
                 rd32(this.wrapping_add(THIS_X120)), slot
             );
         }
-        // Phase 2: the second voice id; block word 2 is mixed here.
-        let mix2: f32 = lf_checker_rt::callee_cdecl!(C_RANDOMISE_B, f32, f0, f1);
-        frame[F_BLOCK + 2] = (mix2 + t1).to_bits();
-        let slot2 = lf_checker_rt::callee_cdecl!(C_SLOT_ALLOC, u32,);
-        let resolved2 = lf_checker_rt::callee_cdecl!(C_SLOT_RESOLVE, u32, slot2);
-        let ok2 =
-            lf_checker_rt::callee_thiscall!(C_ISSUE, u32, this, id2, block, slot2, resolved2, 0);
-        if (ok2 as u8) == 0 {
-            lf_checker_rt::callee_cdecl!(C_RELEASE, u32, slot2);
-        } else {
-            frame[F_TRIPLE] = 0;
-            frame[F_TRIPLE + 1] = 0xFFFF_FFFF;
-            frame[F_TRIPLE + 2] = 0x5B;
-            lf_checker_rt::callee_cdecl!(
-                C_SUBMIT, u32, id2, 0, 0, 1, block, triple,
-                rd32(this.wrapping_add(THIS_X120)), slot2
+        // Phase 2: the second voice id (unequal ids only). Its mixed
+        // float overwrites block word 0.
+        if id1 != id2 {
+            let mix2: f32 = lf_checker_rt::callee_cdecl!(C_RANDOMISE_B, f32, f0, f1);
+            frame[F_BLOCK] = (mix2 + t1).to_bits();
+            let slot2 = lf_checker_rt::callee_cdecl!(C_SLOT_ALLOC, u32,);
+            let resolved2 = lf_checker_rt::callee_cdecl!(C_SLOT_RESOLVE, u32, slot2);
+            let ok2 = lf_checker_rt::callee_thiscall!(
+                C_ISSUE, u32, this, id2, block, slot2, resolved2, 0
             );
+            if (ok2 as u8) == 0 {
+                lf_checker_rt::callee_cdecl!(C_RELEASE, u32, slot2);
+            } else {
+                frame[F_TRIPLE] = 0;
+                frame[F_TRIPLE + 1] = 0xFFFF_FFFF;
+                frame[F_TRIPLE + 2] = 0x5B;
+                lf_checker_rt::callee_cdecl!(
+                    C_SUBMIT, u32, id2, 0, 0, 1, block, triple,
+                    rd32(this.wrapping_add(THIS_X120)), slot2
+                );
+            }
         }
         // Phase 3: the global voice; block word 0 takes table 2's entry.
         let t2 = f32::from_bits(rd32(
