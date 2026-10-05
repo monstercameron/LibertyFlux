@@ -384,9 +384,65 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00696370",
+  "name": "rage::crAnimChannel::dtor",
+  "file": "fn_00696370.rs",
+  "lane": "r-b564",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x006963A0",
+  "name": "rage::crAnimChannelRawVector3::clone",
+  "file": "fn_006963a0.rs",
+  "lane": "r-b564",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x006963D0",
+  "name": "rage::crAnimChannelRawVector3::dtor",
+  "file": "fn_006963d0.rs",
+  "lane": "r-b564",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00696420",
+  "name": "rage::crAnimChannelRawQuaternion::clone",
+  "file": "fn_00696420.rs",
+  "lane": "r-b564",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00696450",
+  "name": "rage::crAnimChannelRawQuaternion::dtor",
+  "file": "fn_00696450.rs",
+  "lane": "r-b564",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0069A710",
   "name": "rage::crAnimChannelStaticFloat::eval_indexed",
   "file": "fn_0069a710.rs",
+  "lane": "r-b564",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0069B6D0",
+  "name": "rage::crAnimChannelStaticVector3::crAnimChannelStaticVector3",
+  "file": "fn_0069b6d0.rs",
+  "lane": "r-b564",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0069B710",
+  "name": "rage::crAnimChannelStaticVector3::~crAnimChannelStaticVector3__deleting",
+  "file": "fn_0069b710.rs",
   "lane": "r-b564",
   "outcome": "not_reached",
   "reason": null
@@ -400,9 +456,33 @@
   "reason": null
  },
  {
+  "address": "0x0069BAA0",
+  "name": "rage::crAnimChannelCurveFloat::clone",
+  "file": "fn_0069baa0.rs",
+  "lane": "r-b564",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0069BAD0",
+  "name": "rage::crAnimChannelCurveFloat::create",
+  "file": "fn_0069bad0.rs",
+  "lane": "r-b564",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0069BB10",
   "name": "rage::crAnimChannelCurveFloat::init_guarded",
   "file": "fn_0069bb10.rs",
+  "lane": "r-b564",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0069BB30",
+  "name": "rage::crAnimChannelCurveFloat::~crAnimChannelCurveFloat__deleting",
+  "file": "fn_0069bb30.rs",
   "lane": "r-b564",
   "outcome": "not_reached",
   "reason": null
@@ -432,6 +512,22 @@
   "reason": null
  },
  {
+  "address": "0x0069D450",
+  "name": "rage::crAnimChannelRleInt::clone",
+  "file": "fn_0069d450.rs",
+  "lane": "r-b564",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0069D480",
+  "name": "rage::crAnimChannelRleInt::create",
+  "file": "fn_0069d480.rs",
+  "lane": "r-b564",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0069D4C0",
   "name": "rage::crAnimChannelRleInt::init_guarded",
   "file": "fn_0069d4c0.rs",
@@ -443,6 +539,14 @@
   "address": "0x0069D500",
   "name": "rage::crAnimChannelRleInt::copy_from",
   "file": "fn_0069d500.rs",
+  "lane": "r-b564",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0069D560",
+  "name": "rage::crAnimChannelRleInt::~crAnimChannelRleInt__deleting",
+  "file": "fn_0069d560.rs",
   "lane": "r-b564",
   "outcome": "not_reached",
   "reason": null
@@ -2006,6 +2110,14 @@
   "lane": "r-s442",
   "outcome": "deferred",
   "reason": "needs_encrypted_code"
+ },
+ {
+  "address": "0x00C8A800",
+  "name": "audio_slot_liveness_gate",
+  "file": "fn_00c8a800.rs",
+  "lane": "a-Q03",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00C91890",
