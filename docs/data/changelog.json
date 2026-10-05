@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Rewrites: 144 verified rewrites withdrawn, they differ from the original",
+    "title": "Devlog: verified, and wrong: 144 rewrites the checker passed and the lift caught",
     "commit": null,
+    "summary": "Why 144 verified rewrites were withdrawn, and what it says about what verified has meant.",
+    "changes": [
+      "Records how lifting one template family compared its verified rewrites with one another and found 144 that compare a length unsigned where the original compares it signed.",
+      "Records why the checker passed them: the length comes from a callee whose answers the contract scripts, and no contract scripted a negative one. Comparisons on callees' answers have been tested only as far as each lane thought to test them.",
+      "Records the decisions: the withdrawal, the re-run with stronger contracts, brief version b17, and an audit of the same blind spot across the verified tree."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Rewrites: 144 verified rewrites withdrawn, they differ from the original",
+    "commit": "3e85fa767fe01c1bdae06edb13a023c781c0db11",
     "summary": "The verified count goes down by 144. These rewrites passed the checker and are wrong on an input the checker was never shown.",
     "changes": [
       "When the leaderboard template family was lifted to one generic function written from the original, every verified rewrite of its row-collector function was run against it. 144 of the 413 disagree on one class of input: the row's length. The original compares the length as a signed number, so a negative length counts as small and the row is copied; these rewrites compare it unsigned, so a negative length counts as huge and the row is not copied.",

@@ -9,6 +9,36 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Verified, and wrong: 144 rewrites that the checker passed and the lift caught</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#verified-but-wrong-signed-length-2026-10-05"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#verified-but-wrong-signed-length-2026-10-05</id>
+    <published>2026-10-05T00:00:00Z</published>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <summary>The first lift at scale turned one template family, the leaderboard class, into a handful of generic functions written from the original, and proved them by running every verified rewrite of the family against them. That cross-check found something the checker had not: 144 verified rewrites of one function differ from the original. They have been withdrawn from the verified count. This entry records what happened, because it says something about what "verified" has meant so far.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;The first lift at scale turned one template family, the leaderboard class, into a handful of generic functions written from the original, and proved them by running every verified rewrite of the family against them. That cross-check found something the checker had not: 144 verified rewrites of one function differ from the original. They have been withdrawn from the verified count. This entry records what happened, because it says something about what "verified" has meant so far.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Function&lt;/td&gt;&lt;td&gt;The family's row collector: one routine, instantiated once per leaderboard, 413 instantiations verified at the time.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;The difference&lt;/td&gt;&lt;td&gt;Inside its loop the function asks a helper for a row's length and compares it with eight. The original compares it as a signed number: a negative length counts as small and the row is copied. 144 rewrites compare it unsigned: a negative length counts as huge and the row is not copied. The other 269 compare it signed.&lt;/td&gt;&lt;td&gt;Verified twice: the lift's harness runs each of the 144 with such lengths and shows the difference, and in 60 of 60 originals read independently the compare is followed by the signed jump&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Why the checker passed them&lt;/td&gt;&lt;td&gt;The length comes from a callee, and a callee is replaced by a stand-in whose answers the contract scripts. No contract ever scripted a negative answer. Every trial ran, every comparison matched, and the one input class that separates the two versions was never tried.&lt;/td&gt;&lt;td&gt;Verified (read from contracts of both groups)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Why the wrong-version test did not help&lt;/td&gt;&lt;td&gt;Each function had its own deliberately wrong version, and each was caught. But the lanes chose wrong versions such as a query id off by one. A wrong version shows that the contract can see that one change; it says nothing about a change nobody thought to make.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;How two groups arose&lt;/td&gt;&lt;td&gt;Eighteen lanes verified members of this family, eight at a time, each working the routine out again. Some read the jump correctly and some did not. A single generator lane later did 117 members from one template, all signed.&lt;/td&gt;&lt;td&gt;Verified (lanes named in the index)&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;What this says about the count&lt;/h3&gt;
+&lt;p&gt;The checker proves that two pieces of code agree on the inputs it was given. For values the function receives directly, the inputs are generated with edge cases. For values that come back from callees, the inputs are whatever the lane scripted, and lanes script small values that steer the function down its paths. So any comparison made on a callee's answer has been tested only as far as the lane thought to test it. This family made the gap visible because the same routine was rewritten many times by different lanes and then compared. For a function rewritten once, nothing would have shown it. How many verified functions share this blind spot is not known; it is now a question with an audit attached, not an assumption.&lt;/p&gt;
+&lt;h3&gt;Decisions&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The 144 are removed from the verified tree, and the published count went down by 144 for this reason. They return only through a re-run lane whose contracts make the length helper answer with negative and edge values, and whose wrong version is exactly this mistake.&lt;/li&gt;
+&lt;li&gt;The 269 rewrites that compare correctly keep their place, with a note that their proofs are blind on the same point and are to be strengthened the same way.&lt;/li&gt;
+&lt;li&gt;The production brief (version b17) now requires, for every comparison made on a callee's answer, scripted answers that separate signed from unsigned and an exact bound from one off by one, and a wrong version that makes exactly that mistake.&lt;/li&gt;
+&lt;li&gt;An audit is to measure the blind spot across the verified tree: flip the signedness of comparisons on callee results in a sample of verified rewrites and count how many of those wrong versions pass their existing contracts.&lt;/li&gt;
+&lt;li&gt;The lift is now also a check. Wherever many verified rewrites share one routine, lifting them compares them with one another and with a version written from the original, at almost no cost.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To reproduce: take the verified rewrites of one template function, run each against one reference version on inputs that include negative answers from the length helper, and group them by result.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>A rebuild routine that returns with a scratch register holding float bits</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s474"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s474</id>
@@ -1096,28 +1126,5 @@
 &lt;p&gt;Build the lane's rewrite crate for the 32-bit Windows target at optimization level two and disassemble the kind-flag lookup export: without the barrier the final mask-and-or collapses to a zero-extending byte load. The lane's minimal reproduction file shows the same collapse for a parameter-driven variant and the correct sequence with the barrier. The checker mismatch is deterministic: the original returns the scaled index with the flag in the low byte, the miscompiled rewrite returns the flag alone.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The miscompile was initially indistinguishable from a rewrite bug: identical inputs, matching low byte, zeroed high bits. What broke the confusion was disassembling the lane's own output instead of re-reading the source. The two contract traps were quieter: both produced passing verdicts that were weaker than they looked, and both were caught only because a wrong version unexpectedly passed, which is exactly the signal the per-function wrong version exists to give.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A batch that could not be verified: the code section flaps under us</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s442"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s442</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>A production batch of forty small streaming-subsystem functions verified zero times, not because the rewrites were wrong but because the original bytes kept changing: the executable's code section flaps between a decrypted and an encrypted state while its modification time stays frozen.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of forty small streaming-subsystem functions verified zero times, not because the rewrites were wrong but because the original bytes kept changing: the executable's code section flaps between a decrypted and an encrypted state while its modification time stays frozen.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite forty small neighbouring game functions in Rust and prove each identical with the stock checker, one contract per function, one thousand trials each, plus a deliberately wrong version per function.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two reads of the batch range minutes apart were byte-identical and decoded to sensible functions; later reads of the same range decoded to garbage, with the file modification time unchanged throughout.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The checker worker reads the live file faithfully: a three-site worker-versus-local byte comparison agreed on all three sites, and a paired probe late in the lane showed both sides seeing the encrypted byte.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Five full thousand-trial runs each ended with every trial faulting on the original side while the rewrite ran cleanly. Twenty-one further contracts were written and schema-validated but never executed.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The rewriting writer is none of the usual suspects: the lane writes nothing outside its scratch folder, the checker never writes the executable, and no matching background process was found. Sibling batches verify normally, so the flap is specific to this range and time.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Unknown&lt;/span&gt; What performs the rewrite, on what schedule, and when the decrypted state returns.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;All decryptable functions were deferred as needing encrypted code, with rewrites and contracts kept for re-run. The durable lesson for other lanes: never gate a run on a local byte read. The lane probed the worker side directly by pointing a patch-site check at the batch range and reading which byte the worker reported; once, a locally confirmed decrypted window still produced encrypted-style faults. Re-run the kept contracts only after the worker itself reports decrypted bytes.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Take any validated contract for a function in the affected range and run it for a handful of trials: every trial faults on the original side. Then make a one-trial copy of a known-good probe contract with a patch site aimed into the batch range; the setup report names the byte the worker sees there, which can be compared against a mapped read of the same offset.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The disassembly files were written in UTF-16, so a script reading them with the default codec silently matched nothing; the fix was one codec argument. An early relocation check double-added the block address and falsely flagged every absolute read as unrelocated; the entry value already includes the page offset. Per-function minutes in the results file are wall-clock time split evenly, not individually measured, and are labelled as such.&lt;/p&gt;</content>
   </entry>
 </feed>
