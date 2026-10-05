@@ -333,11 +333,10 @@ lf_checker_rt::export!(thiscall, rw_00c91b60(this: u32) -> u32 {
         if edi_v == 0xFFFF_FFFF {
             return seg_p;
         }
-        let _: u32 = lf_checker_rt::callee_thiscall!(
-            11, u32,
-            frame_out.as_mut_ptr() as u32,
-            lf_checker_rt::relocated(PUSH_C)
-        );
+        // Callee 11 really cleans nothing (cdecl): the original's later
+        // [esp+X] reads prove the stub must leave esp alone.
+        let _: u32 =
+            lf_checker_rt::callee_cdecl!(11, u32, lf_checker_rt::relocated(PUSH_C));
         let _: u32 = lf_checker_rt::callee_thiscall!(
             12, u32,
             seg_b,
@@ -370,11 +369,8 @@ lf_checker_rt::export!(thiscall, rw_00c91b60(this: u32) -> u32 {
         if edi_v2 == 0xFFFF_FFFF {
             return seg_p2;
         }
-        let _: u32 = lf_checker_rt::callee_thiscall!(
-            11, u32,
-            frame_out.as_mut_ptr() as u32,
-            lf_checker_rt::relocated(PUSH_C)
-        );
+        let _: u32 =
+            lf_checker_rt::callee_cdecl!(11, u32, lf_checker_rt::relocated(PUSH_C));
         let r12b: u32 = lf_checker_rt::callee_thiscall!(
             12, u32,
             seg_b,

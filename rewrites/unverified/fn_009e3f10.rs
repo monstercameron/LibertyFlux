@@ -32,6 +32,11 @@ lf_checker_rt::export!(thiscall, rw_009E3F10(this: u32, kind: u32, src: u32, dst
         const G_BIAS: u32 = 0x00FE8828;
         const G_HALF: u32 = 0x00FE8830;
         const G_TWO: u32 = 0x00FE8A24;
+        const FIXED2: u32 = 0x01177A80;
+        const TABLE2_ADDR: u32 = 0x01178284;
+        const C_B3: u32 = 1;
+        const C_8E: u32 = 2;
+        const C_5C: u32 = 3;
         const LOW_MASK: u32 = 0xFFFF_FF00;
 
         #[inline(always)]
@@ -360,8 +365,86 @@ lf_checker_rt::export!(thiscall, rw_009E3F10(this: u32, kind: u32, src: u32, dst
                 eax = ctx;
                 (eax & LOW_MASK) | 1
             }
-            // Kinds 11-13: stage 2 (call cases).
-            _ => unreachable!("stage 2"),
+            // Kinds 11,12: frame-buffer helper call (40.0 / 100.0), then T4.
+            10 | 11 => {
+                let kconst = if eax_kind == 10 {
+                    0x42200000u32
+                } else {
+                    0x42C80000u32
+                };
+                let mut frame = [0u32; 13];
+                let base = frame.as_mut_ptr() as u32;
+                wr32(base.wrapping_add(0x20), rd32(src.wrapping_add(0x30)));
+                wr32(base.wrapping_add(0x24), rd32(src.wrapping_add(0x34)));
+                let x = add(rdf(src.wrapping_add(0x38)), g(G_TWO));
+                wr32(base.wrapping_add(0x28), x.to_bits());
+                let ans: u32 = lf_checker_rt::callee_cdecl!(
+                    C_B3,
+                    u32,
+                    base.wrapping_add(0x14),
+                    base.wrapping_add(0x04),
+                    kconst,
+                    0x0Au32,
+                    0u32,
+                    0u32,
+                    0u32
+                );
+                eax = ans;
+                if ans == 0 {
+                    return eax & LOW_MASK;
+                }
+                wr32(esi, rd32(base.wrapping_add(0x10)));
+                wr32(esi.wrapping_add(4), rd32(base.wrapping_add(0x14)));
+                wr32(esi.wrapping_add(8), rd32(base.wrapping_add(0x18)));
+                wr32(esi.wrapping_add(0x0C), rd32(base.wrapping_add(0x1C)));
+                (eax & LOW_MASK) | 1
+            }
+            // Kind 13: index call, table lookup, window call, then T4.
+            _ => {
+                let mut frame = [0u32; 16];
+                let base = frame.as_mut_ptr() as u32;
+                // base is E0-12 in original frame terms.
+                wr32(base, 0x40400000);
+                wr32(base.wrapping_add(4), 0xFFFF_FFFF);
+                wr32(base.wrapping_add(8), 0);
+                let fixed = lf_checker_rt::relocated(FIXED2);
+                lf_checker_rt::callee_thiscall!(
+                    C_8E,
+                    u32,
+                    fixed,
+                    base.wrapping_add(12),
+                    esi,
+                    0x47C34FF3u32,
+                    0u32,
+                    0u32,
+                    0u32,
+                    0u32,
+                    0u32,
+                    0u32,
+                    0u32,
+                    0u32
+                );
+                let ow = rd32(base.wrapping_add(12));
+                let idx = ow & 0xFFFF;
+                if idx == 0xFFFF {
+                    return 0xFF00;
+                }
+                let t2 = lf_checker_rt::relocated(TABLE2_ADDR);
+                let entry2 = rd32(t2.wrapping_add(idx.wrapping_mul(4)));
+                let cxv = (ow >> 16).wrapping_shl(5).wrapping_add(entry2);
+                let ans: u32 = lf_checker_rt::callee_thiscall!(
+                    C_5C,
+                    u32,
+                    cxv,
+                    base.wrapping_add(10)
+                );
+                eax = ans;
+                wr32(esi, rd32(base.wrapping_add(10)));
+                wr32(esi.wrapping_add(4), rd32(base.wrapping_add(14)));
+                wr32(esi.wrapping_add(8), rd32(base.wrapping_add(18)));
+                wr32(esi.wrapping_add(0x0C), rd32(base.wrapping_add(22)));
+                (eax & LOW_MASK) | 1
+            }
         }
     }
 

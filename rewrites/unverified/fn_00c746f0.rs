@@ -8,24 +8,26 @@
 /// option byte at `+0x8c`, two lazily built worker objects at `+0x128`/`+0x12c`,
 /// a resolved id at `+0x130` and 36 probe bytes at `+0x134`.
 ///
-/// The routine first builds worker A (`0x14` bytes through the allocator and
-/// constructor callees) when the slot is empty, then asks the object for an
-/// index through vtable slot `+0x34` and resolves it through a global
-/// registry: a validity bitset plus a row table reached from one global
-/// pointer. An index whose validity bit is set resolves to null, which the
-/// key load then faults on, exactly as the original does; otherwise the row's
-/// key goes through two lookup callees. An info block whose second word is
-/// set triggers a refresh callee. A second index query (same vtable slot, this
-/// time with the object passed as a stack argument under the cdecl convention,
-/// so the callee cleans nothing on either call shape) feeds two more lookup
-/// callees whose answer is stored into the info block, and the option byte
-/// gates one more worker-A callee.
+/// When the worker-A slot starts empty, a setup block runs first: worker A
+/// is built (`0x14` bytes through the allocator and constructor callees),
+/// then the object is asked for an index through vtable slot `+0x34`, which
+/// is resolved through a global registry (a validity bitset plus a row table
+/// reached from one global pointer). An index whose validity bit is set
+/// resolves to null, which the key load then faults on, exactly as the
+/// original does; otherwise the row's key goes through two lookup callees. An
+/// info block whose second word is set triggers a refresh callee. A second
+/// index query (same vtable slot, this time with the object passed as a stack
+/// argument under the cdecl convention, so the callee cleans nothing on
+/// either call shape) feeds two more lookup callees whose answer is stored
+/// into the info block, and the option byte gates one more worker-A callee. A
+/// task that already has worker A skips this whole block.
 ///
-/// Worker B (`0xa8` bytes) is built the same lazy way. A key word taken from
-/// the alternate source when present, else from the info block, is handed to a
-/// consuming callee; an id queried through vtable slot `+0x30` (queried twice
-/// when the first answer is not -1) is handed to a worker-B callee and the
-/// answer stored as the resolved id.
+/// When the worker-B slot starts empty, a second block runs: worker B
+/// (`0xa8` bytes) is built the same lazy way, a key word taken from the
+/// alternate source when present, else from the info block, is handed to a
+/// consuming callee, and an id queried through vtable slot `+0x30` (queried
+/// twice when the first answer is not -1) is handed to a worker-B callee
+/// whose answer is stored as the resolved id.
 ///
 /// Then 36 probe arguments from a global table are each offered, together with
 /// a stack out-slot, to a probe callee, and the returned byte is kept in the
@@ -103,8 +105,11 @@ lf_checker_rt::export!(thiscall, rw_00C746F0(this: u32) -> u32 {
             }
         }
 
-        // Lazily built worker A.
+        // Worker-A setup block: runs only when the slot starts empty; a
+        // task that already has worker A skips everything up to worker B.
+        let vtable = rd32(this);
         if rd32(this.wrapping_add(OFF_WORKER_A)) == 0 {
+            // Lazily built worker A.
             let mem: u32 = lf_checker_rt::callee_cdecl!(NEW_A, u32, 0x14u32);
             let built = if mem == 0 {
                 0
@@ -112,59 +117,59 @@ lf_checker_rt::export!(thiscall, rw_00C746F0(this: u32) -> u32 {
                 lf_checker_rt::callee_thiscall!(CTOR_A, u32, mem)
             };
             wr32(this.wrapping_add(OFF_WORKER_A), built);
-        }
-        // Index lookup through the global registry.
-        let vtable = rd32(this);
-        let index_fn: extern "thiscall" fn(u32) -> u32 =
-            core::mem::transmute(rd32(vtable.wrapping_add(VT_SLOT_INDEX)) as usize);
-        let index = index_fn(this);
-        let reg = rd32(lf_checker_rt::relocated(REGISTRY));
-        let bit_base = rd32(reg.wrapping_add(4));
-        let resolved = if (bit_base.wrapping_add(index) as *const u8).read() & INVALID_BIT != 0 {
-            0
-        } else {
-            let stride = rd32(reg.wrapping_add(0x0c));
-            let row_base = rd32(reg);
-            stride.wrapping_mul(index).wrapping_add(row_base)
-        };
-        let key = rd32(resolved.wrapping_add(OFF_KEY_WORD));
-        if key != NONE {
-            let named: u32 = lf_checker_rt::callee_cdecl!(RESOLVE_NAME, u32, key);
-            lf_checker_rt::callee_thiscall!(
-                WORKER_A_USE,
-                u32,
-                rd32(this.wrapping_add(OFF_WORKER_A)),
-                named
+            // Index lookup through the global registry.
+            let index_fn: extern "thiscall" fn(u32) -> u32 =
+                core::mem::transmute(rd32(vtable.wrapping_add(VT_SLOT_INDEX)) as usize);
+            let index = index_fn(this);
+            let reg = rd32(lf_checker_rt::relocated(REGISTRY));
+            let bit_base = rd32(reg.wrapping_add(4));
+            let resolved = if (bit_base.wrapping_add(index) as *const u8).read() & INVALID_BIT != 0 {
+                0
+            } else {
+                let stride = rd32(reg.wrapping_add(0x0c));
+                let row_base = rd32(reg);
+                stride.wrapping_mul(index).wrapping_add(row_base)
+            };
+            let key = rd32(resolved.wrapping_add(OFF_KEY_WORD));
+            if key != NONE {
+                let named: u32 = lf_checker_rt::callee_cdecl!(RESOLVE_NAME, u32, key);
+                lf_checker_rt::callee_thiscall!(
+                    WORKER_A_USE,
+                    u32,
+                    rd32(this.wrapping_add(OFF_WORKER_A)),
+                    named
+                );
+            }
+            // Conditional refresh, then the second index query.
+            let info = rd32(this.wrapping_add(OFF_INFO));
+            if info != 0 && rd32(info.wrapping_add(4)) != 0 {
+                lf_checker_rt::callee_thiscall!(MAYBE_REFRESH, u32, this);
+            }
+            // Same vtable slot as above, now with one stack argument; the callee
+            // is cdecl so it cleans nothing in either shape.
+            let index2_fn: extern "cdecl" fn(u32) -> u32 =
+                core::mem::transmute(rd32(vtable.wrapping_add(VT_SLOT_INDEX)) as usize);
+            let index2 = index2_fn(this);
+            let look: u32 = lf_checker_rt::callee_thiscall!(LOOKUP_B, u32, this, index2);
+            wr32(
+                rd32(this.wrapping_add(OFF_INFO)).wrapping_add(4),
+                lf_checker_rt::callee_thiscall!(
+                    WORKER_A_SET,
+                    u32,
+                    rd32(this.wrapping_add(OFF_WORKER_A)),
+                    look
+                ),
             );
+            if (this.wrapping_add(OFF_OPT_IN) as *const u8).read() != 0 {
+                lf_checker_rt::callee_thiscall!(
+                    WORKER_A_TOUCH,
+                    u32,
+                    rd32(this.wrapping_add(OFF_WORKER_A))
+                );
+            }
         }
-        // Conditional refresh, then the second index query.
-        let info = rd32(this.wrapping_add(OFF_INFO));
-        if info != 0 && rd32(info.wrapping_add(4)) != 0 {
-            lf_checker_rt::callee_thiscall!(MAYBE_REFRESH, u32, this);
-        }
-        // Same vtable slot as above, now with one stack argument; the callee
-        // is cdecl so it cleans nothing in either shape.
-        let index2_fn: extern "cdecl" fn(u32) -> u32 =
-            core::mem::transmute(rd32(vtable.wrapping_add(VT_SLOT_INDEX)) as usize);
-        let index2 = index2_fn(this);
-        let look: u32 = lf_checker_rt::callee_thiscall!(LOOKUP_B, u32, this, index2);
-        wr32(
-            rd32(this.wrapping_add(OFF_INFO)).wrapping_add(4),
-            lf_checker_rt::callee_thiscall!(
-                WORKER_A_SET,
-                u32,
-                rd32(this.wrapping_add(OFF_WORKER_A)),
-                look
-            ),
-        );
-        if (this.wrapping_add(OFF_OPT_IN) as *const u8).read() != 0 {
-            lf_checker_rt::callee_thiscall!(
-                WORKER_A_TOUCH,
-                u32,
-                rd32(this.wrapping_add(OFF_WORKER_A))
-            );
-        }
-        // Lazily built worker B and the resolved id.
+        // Worker-B block: runs only when that slot starts empty, together
+        // with the key handoff and the resolved id.
         if rd32(this.wrapping_add(OFF_WORKER_B)) == 0 {
             let mem: u32 = lf_checker_rt::callee_cdecl!(NEW_B, u32, 0xa8u32);
             let built = if mem == 0 {
@@ -173,21 +178,21 @@ lf_checker_rt::export!(thiscall, rw_00C746F0(this: u32) -> u32 {
                 lf_checker_rt::callee_thiscall!(CTOR_B, u32, mem)
             };
             wr32(this.wrapping_add(OFF_WORKER_B), built);
-        }
-        lf_checker_rt::callee_stdcall!(CONSUME_KEY, u32, rd32(key_object(this).wrapping_add(OFF_KEY_WORD)));
-        let id_fn: extern "thiscall" fn(u32) -> u32 =
-            core::mem::transmute(rd32(vtable.wrapping_add(VT_SLOT_ID)) as usize);
-        if id_fn(this) != NONE {
-            let id2 = id_fn(this);
-            wr32(
-                this.wrapping_add(OFF_ID),
-                lf_checker_rt::callee_thiscall!(
-                    WORKER_B_SET,
-                    u32,
-                    rd32(this.wrapping_add(OFF_WORKER_B)),
-                    id2
-                ),
-            );
+            lf_checker_rt::callee_stdcall!(CONSUME_KEY, u32, rd32(key_object(this).wrapping_add(OFF_KEY_WORD)));
+            let id_fn: extern "thiscall" fn(u32) -> u32 =
+                core::mem::transmute(rd32(vtable.wrapping_add(VT_SLOT_ID)) as usize);
+            if id_fn(this) != NONE {
+                let id2 = id_fn(this);
+                wr32(
+                    this.wrapping_add(OFF_ID),
+                    lf_checker_rt::callee_thiscall!(
+                        WORKER_B_SET,
+                        u32,
+                        rd32(this.wrapping_add(OFF_WORKER_B)),
+                        id2
+                    ),
+                );
+            }
         }
         // Probe sweep over the global probe table.
         let probe_table = lf_checker_rt::relocated(PROBE_TABLE) as *const u32;
