@@ -89604,6 +89604,15 @@
   "lane": "r-s448"
  },
  {
+  "address": "0x00C3ACB0",
+  "name": "train_lookup_and_apply",
+  "kind": "function",
+  "file": "functions/fn_00c3acb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
   "address": "0x00C3B230",
   "name": "CTrain::vf42",
   "kind": "function",
@@ -92137,6 +92146,15 @@
   "name": "build_vector_query_and_match",
   "kind": "function",
   "file": "functions/fn_00c9dbb0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b450"
+ },
+ {
+  "address": "0x00C9DCC0",
+  "name": "guarded_task_op_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00c9dcc0.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b450"
