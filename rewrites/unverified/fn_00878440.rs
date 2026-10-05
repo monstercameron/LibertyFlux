@@ -6,7 +6,7 @@
 /// from the base (`+0x10`) plus `a0` to form an index; when the slot at
 /// `+0x18 + index * 4` is null there is no entry and 0 is returned. A
 /// negative index (SIGNED comparison) resolves through the head pointer
-/// (`[[[this]]]`); otherwise slots at `+0x14` are scanned down from the
+/// (`[[this]]]`); otherwise slots at `+0x14` are scanned down from the
 /// index while null, resolving below zero the same way, and the live
 /// entry's word at `+4` is returned.
 ///
@@ -34,7 +34,7 @@ lf_checker_rt::export!(thiscall, rw_00878440(this: u32, a0: u32) -> u32 {
         if index < 0 {
             let head = rd32(this);
             let first = rd32(head);
-            return rd32(first);
+            return first;
         }
         let mut slot = this
             .wrapping_add(SCAN_OFF)
@@ -45,7 +45,7 @@ lf_checker_rt::export!(thiscall, rw_00878440(this: u32, a0: u32) -> u32 {
             if index < 0 {
                 let head = rd32(this);
                 let first = rd32(head);
-                return rd32(first);
+                return first;
             }
         }
         rd32(rd32(slot).wrapping_add(ENTRY_OFF))

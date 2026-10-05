@@ -2,10 +2,11 @@
 
 /// Initialise a combining filter and register it with the TLS owner.
 ///
-/// `this` points to a combining-filter object. The child count at `+0x2c`
+/// `this` points to a combining-filter object. FS:0x2c gives the TLS
+/// slot array, so slot 0 is read. The child count at `+0x2c`
 /// is cleared and the combining-filter vtable installed. When the low bit
 /// of `flags` is set, the filter registers itself: the thread-local owner
-/// chain (TLS slot 11 holds a block whose word `+0` leads to a holder
+/// chain (TLS slot 0 holds a block whose word `+0` leads to a holder
 /// whose word `+8` is the owner object) has its virtual at slot `+0xc`
 /// invoked with `this`. Returns `this`.
 ///
@@ -14,7 +15,7 @@ lf_checker_rt::export!(thiscall, rw_00878640(this: u32, flags: u32) -> u32 {
     unsafe {
         const COUNT_OFF: u32 = 0x2c;
         const VTABLE_VA: u32 = 0x00e86afc;
-        const TLS_SLOT: usize = 11;
+        const TLS_SLOT: usize = 0;
         const HOLDER_OFF: u32 = 0x08;
         const REG_VT_SLOT: u32 = 0x0c;
         (this.wrapping_add(COUNT_OFF) as *mut u32).write_unaligned(0);

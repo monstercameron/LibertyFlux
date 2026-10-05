@@ -13,6 +13,7 @@ lf_checker_rt::export!(thiscall, rw_00878D90(this: u32) -> u32 {
     unsafe {
         const HEAD_OFF: u32 = 0x80;
         const FREE_OFF: u32 = 0x88;
+        const TAIL_OFF: u32 = 0x84;
         const COUNT0_OFF: u32 = 0x90;
         const COUNT1_OFF: u32 = 0x94;
         const NEXT_OFF: u32 = 4;
@@ -31,10 +32,12 @@ lf_checker_rt::export!(thiscall, rw_00878D90(this: u32) -> u32 {
             core::mem::transmute(rd32(vtable.wrapping_add(SYNC_VT_SLOT)) as usize)
         };
         sync(this);
+        let mut node = rd32(this.wrapping_add(HEAD_OFF));
+        wr32(this.wrapping_add(HEAD_OFF), 0);
+        wr32(this.wrapping_add(TAIL_OFF), 0);
         let release: extern "thiscall" fn(u32, u32) -> u32 = unsafe {
             core::mem::transmute(rd32(vtable.wrapping_add(RELEASE_VT_SLOT)) as usize)
         };
-        let mut node = rd32(this.wrapping_add(HEAD_OFF));
         while node != 0 {
             let next = rd32(node.wrapping_add(NEXT_OFF));
             release(this, node);
