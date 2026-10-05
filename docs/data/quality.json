@@ -7,7 +7,7 @@
   },
   "unverified": {
    "path": "rewrites/unverified/index.json",
-   "as_of": "2026-10-05 06:29 UTC"
+   "as_of": "2026-10-05 06:35 UTC"
   },
   "issues": {
    "path": "rewrites/review/issues.json",
@@ -40,15 +40,15 @@
    "narrowed": 0,
    "mutant_caught": 0
   },
-  "unverified": 333,
+  "unverified": 381,
   "unverified_by_outcome": {
    "not yet run": 244,
+   "not_reached": 74,
    "deferred": 62,
-   "not_reached": 26,
    "failed_v3": 1
   },
   "unverified_by_reason": {
-   "none recorded": 271,
+   "none recorded": 319,
    "other": 40,
    "needs_encrypted_code": 11,
    "checker_gap": 10,

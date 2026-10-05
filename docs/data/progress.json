@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-05",
-  "updated_at": "2026-10-05 02:29",
+  "updated_at": "2026-10-05 02:35",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,7 +12,7 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 23240,
+    "named": 23276,
     "rewritten": 12242,
     "verified": 11631
   },
@@ -99,9 +99,9 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 23240,
+      "value": 23276,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (14236); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (14272); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
@@ -2459,7 +2459,7 @@
       "from": "0x009A3CFB",
       "to": "0x009A961C",
       "count": 103,
-      "named": 34,
+      "named": 51,
       "rewritten": 21,
       "verified": 21
     },
@@ -2468,7 +2468,7 @@
       "from": "0x009A961D",
       "to": "0x009AEF3D",
       "count": 61,
-      "named": 7,
+      "named": 26,
       "rewritten": 5,
       "verified": 4
     },
