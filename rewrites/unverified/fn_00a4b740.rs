@@ -16,7 +16,7 @@
 /// address is skipped as a stack address and its contents snapshotted). Calls
 /// the fourth callee (thiscall, `[arg + CTX]` (0x78) in `ecx`, `(worker_ans,
 /// TAG)`) and returns unless it answers zero; then calls the fifth
-/// (thiscall, same `ecx`, `(worker_ans, TAG, 4.0f)`). Returns nothing
+/// (thiscall, same `ecx`, `(worker_ans, TAG, 4.0f, -1)`). Returns nothing
 /// defined. (The tag store hits the dead incoming-arg slot, which a Rust
 /// rewrite cannot address: the contract switches the stack check off. The
 /// rewrite models the slot with a local holding the tag.)
@@ -77,7 +77,7 @@ lf_checker_rt::export!(thiscall, rw_00A4B740(this: u32, arg: u32, _a1: u32) -> u
             lf_checker_rt::callee_thiscall!(4, u32, ctx, work, TAG);
         if act == 0 {
             lf_checker_rt::callee_thiscall!(
-                5, u32, ctx, work, TAG, K4.to_bits()
+                5, u32, ctx, work, TAG, K4.to_bits(), 0xFFFF_FFFF
             );
         }
         0

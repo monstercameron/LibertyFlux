@@ -12,7 +12,7 @@
 /// an opaque context passed through to every helper call.
 ///
 /// The count helper (vtable slot `0x2c`) says how many rows exist; the gate
-/// helper (first direct callee, passed `0x110` and a scratch struct whose
+/// helper (first direct callee, passed `0x116` and a scratch struct whose
 /// third word it fills with the row-pointer array) vetoes the scan when its
 /// low byte is zero. Otherwise up to 19 rows (`0x13`) are visited: the
 /// index helper (vtable slot `0x30`) maps the row number to a table index,
@@ -31,7 +31,7 @@
 /// Original: 0x00562730 (thiscall, six stack words).
 lf_checker_rt::export!(thiscall, rw_00562730(this: u32, cursor: u32, quad_out: u32, mask_out: u32, flag_out: u32, ctx: u32, limit: u32) -> u32 {
     unsafe {
-        const GATE_ARG: u32 = 0x110;
+        const GATE_ARG: u32 = 0x116;
         const SLOT_COUNT: u32 = 0x2c;
         const SLOT_INDEX: u32 = 0x30;
         const SCAN_ITERS: u32 = 0x13;
