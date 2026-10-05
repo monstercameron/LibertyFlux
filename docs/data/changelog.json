@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Lift: the script natives' dispatch table joins the workspace",
+    "commit": null,
+    "summary": "2,162 script native handlers, each verified as its own function, are now one table and four short functions in a workspace crate.",
+    "changes": [
+      "New crate crates/lf-script-natives. Every handler in it does the same thing: read the script's words, turn the flagged ones into booleans, call the engine's worker, and return the answer in one of four ways. The table records, per native, its name, its hash where known, how many words it forwards and which are booleans; the handlers are grouped by how they return.",
+      "This is a dispatch table, which is data. What a native does is in the worker it forwards to, and no worker is lifted here. 458 verified handlers that do more than forward are left out.",
+      "The lane that wrote it reports every handler proven against its verified rewrite. That 32-bit test crate is not in the workspace yet, so the pipeline has not repeated the run, and the crate says so. Its 6 host tests pass here and now run on Windows, Linux and macOS.",
+      "The same lane lifted three more families (230 functions that register a timer callback, an asset slot or a stored ratio). They are not brought in: each lifted function is a single call through a trait with a name and an index, so it holds no behaviour. They are tables waiting for names, and they are not counted as lifted code. Choosing the largest groups of same-shaped functions as lift targets was the coordinator's instruction; the next targets are classes verified in full."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 4 files from lanes (293 unverified rewrites, 29 in review)",
     "commit": "57357d5f38f8d454c122c55aa3a3188538d1517d",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

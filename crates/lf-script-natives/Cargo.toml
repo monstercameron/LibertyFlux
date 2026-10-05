@@ -1,0 +1,12 @@
+[package]
+name = "lf-script-natives"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+# Never published to crates.io; path dependencies between the project's crates rely on it.
+publish = false
+description = "The script natives' dispatch table lifted from verified 32-bit rewrites: what each native forwards and how it returns"
+
+[lints]
+workspace = true
