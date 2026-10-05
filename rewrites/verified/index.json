@@ -43263,10 +43263,37 @@
   "lane": "r-s420"
  },
  {
+  "address": "0x009A8780",
+  "name": "audio_param_push",
+  "kind": "function",
+  "file": "functions/fn_009a8780.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
   "address": "0x009A8910",
   "name": "byte_pair_gate",
   "kind": "function",
   "file": "functions/fn_009a8910.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A8930",
+  "name": "script_idle_check",
+  "kind": "function",
+  "file": "functions/fn_009a8930.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A89D0",
+  "name": "script_ready_check",
+  "kind": "function",
+  "file": "functions/fn_009a89d0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s420"
@@ -43299,10 +43326,28 @@
   "lane": "r-s420"
  },
  {
+  "address": "0x009A8FF0",
+  "name": "audio_table_shutdown",
+  "kind": "function",
+  "file": "functions/fn_009a8ff0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
   "address": "0x009A94B0",
   "name": "audSpeechManager::vf0",
   "kind": "function",
   "file": "functions/fn_009a94b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A94D0",
+  "name": "conv_vote_bump",
+  "kind": "function",
+  "file": "functions/fn_009a94d0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s420"
@@ -43344,6 +43389,15 @@
   "lane": "r-s420"
  },
  {
+  "address": "0x009A9AF0",
+  "name": "conv_state_advance",
+  "kind": "function",
+  "file": "functions/fn_009a9af0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
   "address": "0x009A9C40",
   "name": "indexed_slot_lookup",
   "kind": "function",
@@ -43362,10 +43416,55 @@
   "lane": "r-s420"
  },
  {
+  "address": "0x009A9C70",
+  "name": "conv_pick_min_a",
+  "kind": "function",
+  "file": "functions/fn_009a9c70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A9D50",
+  "name": "conv_pick_min_gang",
+  "kind": "function",
+  "file": "functions/fn_009a9d50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A9E40",
+  "name": "conv_pick_min_b",
+  "kind": "function",
+  "file": "functions/fn_009a9e40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009A9F20",
+  "name": "conv_pick_min_c",
+  "kind": "function",
+  "file": "functions/fn_009a9f20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
   "address": "0x009AA140",
   "name": "conv_table_lookup_a",
   "kind": "function",
   "file": "functions/fn_009aa140.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s420"
+ },
+ {
+  "address": "0x009AA180",
+  "name": "CONV_GANG_STATE",
+  "kind": "function",
+  "file": "functions/fn_009aa180.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s420"
@@ -90961,6 +91060,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b203"
+ },
+ {
+  "address": "0x00DC8160",
+  "name": "CMovementEventHandler::vf1",
+  "kind": "function",
+  "file": "functions/fn_00dc8160.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b404"
  },
  {
   "address": "0x00DC87B0",
