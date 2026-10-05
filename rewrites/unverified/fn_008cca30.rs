@@ -23,10 +23,10 @@ lf_checker_rt::export!(cdecl, rw_008CCA30() -> u32 {
         if (lf_checker_rt::relocated(MODE) as *const u32).read() != ENABLED {
             return 0;
         }
-        let probe: u32 = lf_checker_rt::callee_cdecl!(PROBE, u32);
+        let probe: u32 = lf_checker_rt::callee_cdecl!(PROBE, u32,);
         if probe != 0 {
-            let _p: u32 = lf_checker_rt::callee_cdecl!(PREPARE, u32);
+            let _p: u32 = lf_checker_rt::callee_cdecl!(PREPARE, u32,);
         }
-        lf_checker_rt::callee_cdecl!(FINISH, u32)
+        lf_checker_rt::callee_cdecl!(FINISH, u32,)
     }
 });

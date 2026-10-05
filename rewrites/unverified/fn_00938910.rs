@@ -6,8 +6,9 @@
 /// cleared) when the probe is quiet, the scan is empty, the pool is busy,
 /// the override names any mode but 5 or 2, verification complains, or the
 /// final poll is set. A set flag late answers the verify leftover
-/// directly. Otherwise the state selects an arm: 1 and 4 fail, anything
-/// above 6 fails, the rest succeed with AL set.
+/// directly. Otherwise the state selects an arm: 1 and 4 answer 0,
+/// anything above 6 answers the state with AL cleared, the rest 1.
+/// The switch arms carry no leftover: the table index overwrites EAX.
 lf_checker_rt::export!(cdecl, rw_00938910() -> u32 {
     unsafe {
         const PROBE: u32 = 1;
@@ -66,17 +67,19 @@ lf_checker_rt::export!(cdecl, rw_00938910() -> u32 {
             return r & LOW_MASK;
         }
         // Decoded from the in-code jump table (index at code+0x938994,
-        // targets at code+0x93898C): arms 1 and 4 fail, the rest succeed.
-        // (The table lives in executable code, which a rewrite may not
-        // read, so the decoded arms are matched directly.)
-        let slot = u & LOW_MASK;
+        // targets at code+0x93898C): the index byte is zero-extended into
+        // EAX first, so the success arms answer exactly 1 and the fail
+        // arms exactly 0, whatever the poll returned. Above 6 the state
+        // itself is still in EAX, so AL is cleared on it. (The table
+        // lives in executable code, which a rewrite may not read, so the
+        // decoded arms are matched directly.)
         let v2 = g(MODE);
         if v2 > 6 {
-            return slot;
+            return v2 & LOW_MASK;
         }
         if v2 == 1 || v2 == 4 {
-            return slot;
+            return 0;
         }
-        slot | 1
+        1
     }
 });

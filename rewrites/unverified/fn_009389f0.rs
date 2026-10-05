@@ -7,8 +7,10 @@
 /// and its value (low byte cleared) is answered. Otherwise the handle is
 /// opened: a null handle, a matching
 /// stamp word, or (unreachable: the mode is already known nonzero) a zero
-/// mode reaches the tail, which answers 1 except for state 0 with mode 1.
-/// A mismatching stamp with nonzero mode flushes and answers 0.
+/// mode reaches the tail, which answers the state with AL set, except
+/// state 0 with any mode but 1, which flushes and answers 0. (State 0
+/// with mode 1 answers 1.) A mismatching stamp with nonzero mode
+/// flushes and answers 0.
 lf_checker_rt::export!(cdecl, rw_009389f0() -> u32 {
     unsafe {
         const POLL: u32 = 1;
@@ -57,13 +59,15 @@ lf_checker_rt::export!(cdecl, rw_009389f0() -> u32 {
                 return r & LOW_MASK;
             }
         }
-        // Tail: state 3, 4 or anything else nonzero answers 1, as does
-        // state 0 with any mode but 1; state 0 with mode 1 flushes.
+        // Tail: the state is reloaded into EAX first, so a 1 answer
+        // carries the state's upper bits, not the handle's. State 0 with
+        // any mode but 1 flushes; state 0 with mode 1 answers 1 like
+        // every nonzero state.
         let v = lf_checker_rt::global::<u32>(STATE).read_unaligned();
-        if v != 0 || m != 1 {
-            return (p & LOW_MASK) | 1;
+        if v == 0 && m != 1 {
+            let r: u32 = lf_checker_rt::callee_cdecl!(FLUSH, u32, 1);
+            return r & LOW_MASK;
         }
-        let r: u32 = lf_checker_rt::callee_cdecl!(FLUSH, u32, 1);
-        r & LOW_MASK
+        (v & LOW_MASK) | 1
     }
 });

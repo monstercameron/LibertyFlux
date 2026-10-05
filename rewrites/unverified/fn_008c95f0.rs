@@ -27,7 +27,7 @@ lf_checker_rt::export!(cdecl, rw_008C95F0(name: u32, out: u32) -> u32 {
                 n
             }
         }
-        let prefix: u32 = lf_checker_rt::callee_cdecl!(PREFIX, u32);
+        let prefix: u32 = lf_checker_rt::callee_cdecl!(PREFIX, u32,);
         let plen = strlen(prefix);
         let nlen = strlen(name);
         if nlen != plen.wrapping_add(SUFFIX_LEN) {

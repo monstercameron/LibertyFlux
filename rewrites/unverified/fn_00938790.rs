@@ -7,9 +7,10 @@
 /// counter, three block flags must agree, the owner must be set, the
 /// poll must be quiet, the clear flag must be down and the scan nonempty.
 /// Then the handle is opened: a null handle, a matching stamp word or a
-/// zero mode reaches the tail, which answers 1 except for state 0.
-/// A mismatching stamp flushes and answers 0. Early gates answer the
-/// entry EAX (pinned to zero by this contract).
+/// zero mode reaches the tail, which answers the state with AL set
+/// except for state 0 (flush, AL cleared). A mismatching stamp flushes
+/// and answers 0. The two pre-call gates answer the table base with AL
+/// cleared. Later 0-answers carry the last call's leftover.
 lf_checker_rt::export!(cdecl, rw_00938790(want: u32) -> u32 {
     unsafe {
         const COUNT: u32 = 1;
@@ -37,12 +38,15 @@ lf_checker_rt::export!(cdecl, rw_00938790(want: u32) -> u32 {
         let gb = |va: u32| -> u8 {
             lf_checker_rt::global::<u8>(va).read()
         };
-        let cell = ((g(TABLE) + SLOT) as *const u32).read_unaligned();
+        // NOTE: the table base is loaded into EAX first, so the two
+        // pre-call gates answer it with the low byte cleared.
+        let base = g(TABLE);
+        let cell = ((base + SLOT) as *const u32).read_unaligned();
         if want != cell && g(SKIP) != 0 {
-            return 0;
+            return base & LOW_MASK;
         }
         if g(MODE) <= 2 {
-            return 0;
+            return base & LOW_MASK;
         }
         let e: u32 = lf_checker_rt::callee_cdecl!(COUNT, u32,);
         if g(MARKER) >= e {
@@ -80,11 +84,12 @@ lf_checker_rt::export!(cdecl, rw_00938790(want: u32) -> u32 {
                 return r & LOW_MASK;
             }
         }
+        // NOTE: tail 1-answers carry the reloaded state's upper bits.
         let v = g(STATE);
         if v == 0 {
             let r: u32 = lf_checker_rt::callee_cdecl!(FLUSH, u32, 1);
             return r & LOW_MASK;
         }
-        (p & LOW_MASK) | 1
+        (v & LOW_MASK) | 1
     }
 });

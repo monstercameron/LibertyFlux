@@ -17,12 +17,12 @@ lf_checker_rt::export!(cdecl, rw_008C9840() -> u32 {
         /// Acquire callee id.
         const ACQUIRE: u32 = 1;
         (lf_checker_rt::relocated(HANDLE) as *mut u32).write(0xFFFF_FFFF);
-        let probe: u32 = lf_checker_rt::callee_cdecl!(PROBE, u32);
+        let probe: u32 = lf_checker_rt::callee_cdecl!(PROBE, u32,);
         if probe == 0 {
             return 0;
         }
-        let _again: u32 = lf_checker_rt::callee_cdecl!(PROBE, u32);
-        let handle: u32 = lf_checker_rt::callee_cdecl!(ACQUIRE, u32);
+        let _again: u32 = lf_checker_rt::callee_cdecl!(PROBE, u32,);
+        let handle: u32 = lf_checker_rt::callee_cdecl!(ACQUIRE, u32,);
         (lf_checker_rt::relocated(HANDLE) as *mut u32).write(handle);
         1
     }

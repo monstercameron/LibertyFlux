@@ -73,11 +73,11 @@ lf_checker_rt::export!(cdecl, rw_008CC330(reset: u32, detail: u32, mode: u32) ->
                 const ACTIVE: u32 = 0x1172CD0;
                 const MAGIC_AT: u32 = 0x1031BAC;
                 const MAGIC: u32 = 0x21;
-                let probe: u32 = lf_checker_rt::callee_cdecl!(PROBE, u32);
+                let probe: u32 = lf_checker_rt::callee_cdecl!(PROBE, u32,);
                 if probe == 2 {
                     if (lf_checker_rt::relocated(MAGIC_AT) as *const u32).read() == MAGIC {
                         (active_reg as *mut u8).write(0);
-                        let _f: u32 = lf_checker_rt::callee_cdecl!(FINISH, u32);
+                        let _f: u32 = lf_checker_rt::callee_cdecl!(FINISH, u32,);
                         return Some(2);
                     }
                     (state_reg as *mut u32).write(3);
@@ -87,7 +87,7 @@ lf_checker_rt::export!(cdecl, rw_008CC330(reset: u32, detail: u32, mode: u32) ->
                     return Some(1);
                 }
                 (state_reg as *mut u32).write(2);
-                let _s: u32 = lf_checker_rt::callee_cdecl!(SESSION, u32);
+                let _s: u32 = lf_checker_rt::callee_cdecl!(SESSION, u32,);
                 Some(1)
             }
         }
@@ -109,16 +109,16 @@ lf_checker_rt::export!(cdecl, rw_008CC330(reset: u32, detail: u32, mode: u32) ->
                     return 1;
                 }
                 (active_reg as *mut u8).write(0);
-                let _f: u32 = lf_checker_rt::callee_cdecl!(FINISH, u32);
+                let _f: u32 = lf_checker_rt::callee_cdecl!(FINISH, u32,);
                 0
             }
             _ => {
-                let ready: u32 = lf_checker_rt::callee_cdecl!(READY, u32);
+                let ready: u32 = lf_checker_rt::callee_cdecl!(READY, u32,);
                 if ready & 0xFF == 0 {
                     return 1;
                 }
                 (active_reg as *mut u8).write(0);
-                let _f: u32 = lf_checker_rt::callee_cdecl!(FINISH, u32);
+                let _f: u32 = lf_checker_rt::callee_cdecl!(FINISH, u32,);
                 2
             }
         }

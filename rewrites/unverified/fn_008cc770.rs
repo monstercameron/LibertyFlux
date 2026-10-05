@@ -17,14 +17,14 @@ lf_checker_rt::export!(cdecl, rw_008CC770() -> u32 {
         const COMMIT: u32 = 2;
         /// Argument passed to the commit callee.
         const COMMIT_ARG: u32 = 0x10;
-        let first: u32 = lf_checker_rt::callee_cdecl!(STATUS, u32);
+        let first: u32 = lf_checker_rt::callee_cdecl!(STATUS, u32,);
         if first & 0xFF == 0 {
             return 0;
         }
         loop {
             let _p: u32 = lf_checker_rt::callee_cdecl!(PUMP, u32, 0);
             let _c: u32 = lf_checker_rt::callee_cdecl!(COMMIT, u32, COMMIT_ARG);
-            let s: u32 = lf_checker_rt::callee_cdecl!(STATUS, u32);
+            let s: u32 = lf_checker_rt::callee_cdecl!(STATUS, u32,);
             if s & 0xFF == 0 {
                 break;
             }

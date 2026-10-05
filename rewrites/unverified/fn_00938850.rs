@@ -4,8 +4,9 @@
 ///
 /// The mode must exceed 2, the marker must sit below the counter, the
 /// class probe must answer 0x17, 0x49 or 0x18 while the family reads 7,
-/// a nonzero poll needs the clear flag down, and the scan plus three
-/// final checks must all read zero. Answers 1 in AL only then. Early
+/// a nonzero poll needs the clear flag set (a clear flag fails it), and
+/// the scan plus three final checks must all read zero. Answers 1 in AL
+/// only then. Early
 /// gates answer the entry EAX (pinned to zero by this contract); later
 /// ones the last call's leftover.
 lf_checker_rt::export!(cdecl, rw_00938850() -> u32 {
@@ -40,8 +41,10 @@ lf_checker_rt::export!(cdecl, rw_00938850() -> u32 {
             return a & LOW_MASK;
         }
         let t: u32 = lf_checker_rt::callee_cdecl!(POLL, u32,);
+        // NOTE: a set poll is excused by a set clear flag; only a set
+        // poll with a clear flag fails here.
         if (t & 0xFF) != 0
-            && lf_checker_rt::global::<u8>(CLEAR).read() != 0
+            && lf_checker_rt::global::<u8>(CLEAR).read() == 0
         {
             return t & LOW_MASK;
         }
