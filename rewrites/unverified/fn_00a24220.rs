@@ -150,8 +150,8 @@ lf_checker_rt::export!(thiscall, rw_00a24220(
             xb = mul(xb, xb);
             xa = add(xa, xb);
             xa = core::hint::black_box(xa).sqrt();
-            if !(x5b > xa) {
-                // Far path: ease towards the goal triple.
+            if x5b > xa {
+                // Close path: ease towards the goal triple (fall-through).
                 let g1 = rdf(this.wrapping_add(0x2b4));
                 let g0 = rdf(this.wrapping_add(0x2b8));
                 let g2 = rdf(this.wrapping_add(0x2b0));
@@ -177,7 +177,7 @@ lf_checker_rt::export!(thiscall, rw_00a24220(
                 xc = add(xc, s);
                 wrf(this.wrapping_add(0x2c0), xc);
             } else {
-                // Near path: keep position, only ease the weight.
+                // Far path: keep position, only ease the weight.
                 let s = rdf(this.wrapping_add(0x2c0));
                 let mut xc = sub(x5b, s);
                 xc = mul(xc, cf(C_BLEND));
@@ -322,17 +322,16 @@ lf_checker_rt::export!(thiscall, rw_00a24220(
         let htarget = rdf(a4);
         let mut hcur = rdf(this.wrapping_add(0x218));
         let hdiff = sub(htarget, hcur);
-        let mut tail_zero = 0.0f32;
-        if !(dead > absf(hdiff)) {
+        // Both arms zero the work register first; the zero below doubles as
+        // the clamp floor for the anchor weight and the final reach test.
+        let tail_zero = 0.0f32;
+        if dead > absf(hdiff) {
             wrf(this.wrapping_add(0x218), htarget);
-            tail_zero = 0.0;
+        } else if !(tail_zero > hdiff) {
+            hcur = add(hcur, dead);
+            wrf(this.wrapping_add(0x218), hcur);
         } else {
-            tail_zero = 0.0;
-            if !(tail_zero > hdiff) {
-                hcur = add(hcur, dead);
-            } else {
-                hcur = sub(hcur, dead);
-            }
+            hcur = sub(hcur, dead);
             wrf(this.wrapping_add(0x218), hcur);
         }
         // Wrap a5 into [-pi, pi].
@@ -389,7 +388,7 @@ lf_checker_rt::export!(thiscall, rw_00a24220(
         let ptgt = rdf(a5);
         let pdiff2 = sub(ptgt, pcur);
         let reach = mul(anchor_w, dead);
-        if !(reach > absf(pdiff2)) {
+        if reach > absf(pdiff2) {
             wrf(this.wrapping_add(0x21c), ptgt);
         } else if !(tail_zero > pdiff2) {
             pcur = add(pcur, reach);

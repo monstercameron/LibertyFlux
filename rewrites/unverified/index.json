@@ -224,70 +224,6 @@
   "reason": "other"
  },
  {
-  "address": "0x00535EC0",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race55Standard, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00535ec0.rs",
-  "lane": "r-b429",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00536320",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race56Standard, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00536320.rs",
-  "lane": "r-b429",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00536780",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race57Standard, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00536780.rs",
-  "lane": "r-b429",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00536BE0",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race58Standard, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00536be0.rs",
-  "lane": "r-b429",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00537040",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race59Standard, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00537040.rs",
-  "lane": "r-b429",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x005374A0",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race60Standard, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_005374a0.rs",
-  "lane": "r-b429",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00537900",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CompCarSteal, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00537900.rs",
-  "lane": "r-b429",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00537D50",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CompCarSteal_BG, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00537d50.rs",
-  "lane": "r-b429",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x0054BB60",
   "name": null,
   "file": "fn_0054bb60.rs",
@@ -1064,35 +1000,51 @@
   "reason": "other"
  },
  {
-  "address": "0x00882F50",
-  "name": null,
-  "file": "fn_00882f50.rs",
+  "address": "0x00881540",
+  "name": "stream_mgr_slot_init",
+  "file": "fn_00881540.rs",
   "lane": "r-s438",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00883AA0",
-  "name": null,
-  "file": "fn_00883aa0.rs",
+  "address": "0x00882F90",
+  "name": "stream_req_teardown",
+  "file": "fn_00882f90.rs",
   "lane": "r-s438",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00884530",
-  "name": null,
-  "file": "fn_00884530.rs",
+  "address": "0x008832F0",
+  "name": "stream_state_dispatch",
+  "file": "fn_008832f0.rs",
   "lane": "r-s438",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x008845A0",
-  "name": null,
-  "file": "fn_008845a0.rs",
+  "address": "0x00884550",
+  "name": "stream_bounded_store",
+  "file": "fn_00884550.rs",
   "lane": "r-s438",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008845D0",
+  "name": "stream_slot_notify",
+  "file": "fn_008845d0.rs",
+  "lane": "r-s438",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00884CE0",
+  "name": "stream_handle_notify",
+  "file": "fn_00884ce0.rs",
+  "lane": "r-s438",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -1214,110 +1166,6 @@
   "lane": "r-s428",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x008DC7E0",
-  "name": "draw_command_alloc",
-  "file": "fn_008dc7e0.rs",
-  "lane": "r-s431",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DC9E0",
-  "name": "draw_command_alloc_checked",
-  "file": "fn_008dc9e0.rs",
-  "lane": "r-s431",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DD0B0",
-  "name": "CDrawFragTypeDC::vf1",
-  "file": "fn_008dd0b0.rs",
-  "lane": "r-s431",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DD310",
-  "name": "CDrawPedPropDC::vf1",
-  "file": "fn_008dd310.rs",
-  "lane": "r-s431",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DD3B0",
-  "name": "CDrawPedPropsDC::vf1",
-  "file": "fn_008dd3b0.rs",
-  "lane": "r-s431",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DD4A0",
-  "name": "CDrawPlayerDC::vf1",
-  "file": "fn_008dd4a0.rs",
-  "lane": "r-s431",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DD5A0",
-  "name": "CDrawPtxEffectInst::vf1",
-  "file": "fn_008dd5a0.rs",
-  "lane": "r-s431",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DD680",
-  "name": "CDrawRadarMapSectionDC::vf1",
-  "file": "fn_008dd680.rs",
-  "lane": "r-s431",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DD8B0",
-  "name": "CDrawSLODPedDC::vf1",
-  "file": "fn_008dd8b0.rs",
-  "lane": "r-s431",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DDA30",
-  "name": "CDrawSpriteDC::vf1",
-  "file": "fn_008dda30.rs",
-  "lane": "r-s431",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DDA80",
-  "name": "CDrawSpriteInPerspectiveDC::vf1",
-  "file": "fn_008dda80.rs",
-  "lane": "r-s431",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DDAD0",
-  "name": "CDrawSpriteUVDC::vf1",
-  "file": "fn_008ddad0.rs",
-  "lane": "r-s431",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008DDB30",
-  "name": "CDrawTriShapeDC::vf1",
-  "file": "fn_008ddb30.rs",
-  "lane": "r-s431",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x008EA6E0",
@@ -2208,6 +2056,30 @@
   "reason": ""
  },
  {
+  "address": "0x00AB6AC0",
+  "name": "idmap_flag_a",
+  "file": "fn_00ab6ac0.rs",
+  "lane": "r-s436",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00AB6B10",
+  "name": "idmap_flag_b",
+  "file": "fn_00ab6b10.rs",
+  "lane": "r-s436",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00AB6B60",
+  "name": "idmap_select",
+  "file": "fn_00ab6b60.rs",
+  "lane": "r-s436",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00ABF0C0",
   "name": "triage_pending",
   "file": "fn_00abf0c0.rs",
@@ -2872,9 +2744,9 @@
   "reason": ""
  },
  {
-  "address": "0x00CB8B50",
-  "name": "peds_task_guard_8b50 (proposed)",
-  "file": "fn_00cb8b50.rs",
+  "address": "0x00CB8D80",
+  "name": "peds_task_guard_8d80 (proposed)",
+  "file": "fn_00cb8d80.rs",
   "lane": "r-b428",
   "outcome": "not_reached",
   "reason": ""
@@ -3014,6 +2886,14 @@
   "lane": "r-s84",
   "outcome": "not yet run",
   "reason": null
+ },
+ {
+  "address": "0x00CF8050",
+  "name": "CTaskComplexClimbLadder::vf20",
+  "file": "fn_00cf8050.rs",
+  "lane": "r-b423",
+  "outcome": "deferred",
+  "reason": "checker_gap"
  },
  {
   "address": "0x00CFD660",
