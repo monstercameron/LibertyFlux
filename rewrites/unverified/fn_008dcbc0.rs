@@ -4,9 +4,11 @@
 ///
 /// Sets the two light words at +0x18/+0x1c, passes four embedded
 /// vectors (+0x08/+0x0c/+0x10/+0x14) to the light-upload routine, then
-/// tail-calls the light-apply routine with `this` still in ECX.
-/// The inventory size (66) runs 22 bytes past the tail jump into the
-/// next function; the real body is 44 bytes.
+/// tail-calls the light-apply routine. ECX at the tail jump is not
+/// compared: both intermediate callees use ECX as scratch and the
+/// tail target overwrites ECX from its global on entry, so the value
+/// is indeterminate and ignored. The inventory size (66) runs 22
+/// bytes past the tail jump into the next function; the body is 44.
 ///
 /// Original: 0x008DCBC0 (thiscall, `this` in ECX).
 lf_checker_rt::export!(thiscall, rw_008dcbc0(this: u32) -> u32 {

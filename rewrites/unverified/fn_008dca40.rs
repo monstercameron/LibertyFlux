@@ -6,7 +6,8 @@
 /// from the low 16 bits of the first callee's answer for `key` and is
 /// stored at +0x04; the allocator callee returns the block, stored at
 /// +0x00, and every entry is zeroed. The low byte of `tag` is stored at
-/// +0x0b and the count is returned. The `count * 4` multiply cannot
+/// +0x0b and also replaces the low byte of the returned count. The
+/// `count * 4` multiply cannot
 /// overflow (count is 16 bits), so the overflow path is dead. The list
 /// size (88) is 4 short; the real body is 92 bytes.
 ///
@@ -38,6 +39,6 @@ lf_checker_rt::export!(thiscall, rw_008dca40(this: u32, key: u32, tag: u32) -> u
             i += 1;
         }
         (this.wrapping_add(TAG) as *mut u8).write(tag as u8);
-        count
+        count & !0xff | (tag & 0xff)
     }
 });

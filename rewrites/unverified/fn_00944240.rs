@@ -7,11 +7,12 @@
 /// id gate both agree, a set marker in the global marker table (indexed by
 /// the record id at `+0xbc4`) is cleared. Then the entry is resolved
 /// through the list lookup (thiscall, one stack argument: the kind byte);
-/// a null entry, a kind other than 2, or a set hold flag at `+0x1921` ends
-/// the call. Otherwise the resolved 10-slot ring (index byte at `+0xf`,
-/// slots at `+0x11`) is compared against the lane's current value and, on
-/// a mismatch, the value is stored into the indexed slot and the index
-/// advanced modulo 10. Returns the final ring index quotient.
+/// a null entry ends the call with 0, and kind 2 with a set hold flag at
+/// `+0x1921` ends it with the entry. Otherwise the resolved 10-slot ring
+/// (index byte at `+0xf`, slots at `+0x11`) is checked: when the slot
+/// selected by `(index + 9) % 10` already holds the lane's current value
+/// that slot number is returned, else the value is stored into the indexed
+/// slot, the index advanced modulo 10 and the new quotient returned.
 ///
 /// Original: 0x00944240 (thiscall, no stack arguments).
 lf_checker_rt::export!(thiscall, rw_00944240(this: u32) -> u32 {
@@ -56,10 +57,7 @@ lf_checker_rt::export!(thiscall, rw_00944240(this: u32) -> u32 {
         if entry == 0 {
             return 0;
         }
-        if kind != 2 {
-            return entry;
-        }
-        if ((this + HOLD) as *const u8).read() != 0 {
+        if kind == 2 && ((this + HOLD) as *const u8).read() != 0 {
             return entry;
         }
         let at = ((entry + RING_INDEX) as *const u8).read() as u32;
@@ -70,15 +68,15 @@ lf_checker_rt::export!(thiscall, rw_00944240(this: u32) -> u32 {
         if value != 0 {
             value = ((value + 4) as *const u32).read_unaligned();
         }
-        if ((this + ALT) as *const u8).read() != 0 {
+        if ((this + ALT) as *const u8).read() != 0 && kind == 2 {
             value = ((rec2 + REC_ID) as *const u32).read_unaligned();
         }
         if ((entry + slot * 4 + RING_SLOTS) as *const u32).read_unaligned() == value {
-            return entry;
+            return slot;
         }
         ((entry + at * 4 + RING_SLOTS) as *mut u32).write_unaligned(value);
         let advanced = (((entry + RING_INDEX) as *const u8).read() as u32).wrapping_add(1);
         ((entry + RING_INDEX) as *mut u8).write((advanced % RING) as u8);
-        entry
+        advanced / RING
     }
 });
