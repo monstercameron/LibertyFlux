@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Rewrites: one verified rewrite withdrawn, wrong comparison",
+    "commit": null,
+    "summary": "The verified count goes down by one. A rewrite of a combat task method compares a callee's answer unsigned where the original compares it signed, and its proof could not tell.",
+    "changes": [
+      "CTaskComplexCombat::vf5 is removed from rewrites/verified. The rewrite tests a value returned by a callee with an unsigned greater-or-equal against two; the original uses the signed form, so the two differ whenever the callee answers with the high bit set. The lane measuring blind proofs found it; the coordinator confirmed it by reading the original independently.",
+      "The checker had passed it because the contract's scripted answers for that callee were zeros and one five: no trial ever separated the two comparisons. This is the second kind of function, after the leaderboard row collector, where the blind spot measured today hid a real mistake.",
+      "The function returns only through a strengthening lane whose contract makes the callee answer with boundary and negative values and whose wrong version is exactly this mistake. That lane is already working on it."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 19 files from lanes (275 unverified rewrites, 51 in review)",
     "commit": "4d995b1ead023412b507ce24555ee24ca375e999",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
