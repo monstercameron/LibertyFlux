@@ -55,6 +55,9 @@ mod x86 {
         /// 1 when the rewrite spells the length check signed (as the
         /// original does), 0 for the unsigned camp.
         pub signed_camp: u32,
+        /// 1 when the rewrite threads full `eax` (only its low byte, the
+        /// flag, is compared).
+        pub full_eax: u32,
         /// Callee slots per role.
         pub fetch_slot: u32,
         /// Callee slots per role.
@@ -1138,11 +1141,13 @@ mod x86 {
                 for (r, &k) in keys.iter().enumerate() {
                     image.words[64 + k as usize] = forced[r % 8];
                 }
-                // For huge-lens inputs the distinguished row must run:
-                // unskip its key.
+                // For huge-lens inputs the distinguished row must run to
+                // the item step: force its key unskipped with a non-null
+                // item, so signed files prove the copy and unsigned files
+                // show the documented divergence, deterministically.
                 if input.huge_lens && input.picked < case.rows {
                     let pk = &mut keys[input.picked as usize];
-                    while rules14::skip(*pk) {
+                    while rules14::skip(*pk) || rules14::item_slot(*pk).is_none() {
                         *pk = pk.wrapping_add(1) % TABLE_WORDS as u32;
                     }
                     image.words[64 + *pk as usize] = forced[1 % 8];
@@ -1231,7 +1236,8 @@ mod x86 {
                         &mut flag,
                     );
                     let rw_id = &image.bytes_of(384);
-                    diverged |= r0 != u32::from(r1) || *rw_id != id || image.words[388] as u8 != flag;
+                    let r0flag = if case.full_eax == 1 { r0 & 0xFF } else { r0 };
+                    diverged |= r0flag != u32::from(r1) || *rw_id != id || image.words[388] as u8 != flag;
                     continue;
                 }
 
@@ -1269,13 +1275,19 @@ mod x86 {
                         &mut flag,
                     )
                 });
-                assert!(
-                    r0 <= 1,
-                    "{} return shape: {r0:#x} is not a clean flag",
-                    case.file
-                );
+                // Full-eax rewrites thread callee leftovers above the flag
+                // low byte (their own documented contract); the lift keeps
+                // only the flag, so only the low byte is compared for them.
+                let r0flag = if case.full_eax == 1 { r0 & 0xFF } else { r0 };
+                if case.full_eax == 0 {
+                    assert!(
+                        r0 <= 1,
+                        "{} return shape: {r0:#x} is not a clean flag",
+                        case.file
+                    );
+                }
                 assert_eq!(
-                    r0,
+                    r0flag,
                     u32::from(r1),
                     "{} return ok={} picked={} cursor={:#x} size={:#x} huge={}",
                     case.file,

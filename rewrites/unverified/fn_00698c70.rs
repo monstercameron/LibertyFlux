@@ -1,45 +1,68 @@
-// original: 0x00698C70 bitstream_read_bits (proposed)
+// original: 0x00698C70 bit_stream_read
 
-/// Gathers `count` bits out of a bit array through an auto-increment cursor.
+/// Read a run of bits out of a packed table, advancing a cursor.
 ///
-/// `obj` points at a header whose word at `+0` is the bit-array base.
-/// `cursor` points at a word holding the starting bit index; it is
-/// incremented once per gathered bit. Bit `c` lives in word `c >> 5` at
-/// position `c & 31`; gathered bits pack into the result low bit first.
-/// A zero count gathers nothing and leaves the cursor alone. The original
-/// also spills the bit-array base into its incoming second argument slot
-/// as scratch; that store is not reproduced (its value is observed through
-/// the gathered bits in the return value).
-///
-/// Original: thiscall `(obj: ecx, cursor, count) -> eax`, no calls.
-lf_checker_rt::export!(thiscall, rw_00698C70(obj: u32, cursor: u32, count: u32) -> u32 {
+/// Custom convention: table holder in ECX, bit cursor pointer and bit count
+/// on the stack, caller cleanup. Reads `count` bits starting at `*cursor`
+/// from the word table at `[this]`, packing them low-first into the result,
+/// and advances the cursor past them. Uses its own incoming count slot as
+/// scratch for the table pointer (the contract switches the stack comparison
+/// off) and returns with the caller's cleanup (the esp comparison is off too).
+/// A zero count returns 0 without touching memory.
+/// Original: 0x00698C70, 77 bytes.
+lf_checker_rt::export!(thiscall, rw_00698C70(this: u32, cursor: u32, count: u32) -> u32 {
     unsafe {
-        const BITS_PTR: u32 = 0;
+        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
             unsafe { (a as *const u32).read_unaligned() }
         }
+        #[allow(dead_code)]
         #[inline(always)]
         unsafe fn wr32(a: u32, v: u32) {
             unsafe { (a as *mut u32).write_unaligned(v) }
         }
+        #[allow(dead_code)]
+        #[inline(always)]
+        unsafe fn rd16(a: u32) -> u16 {
+            unsafe { (a as *const u16).read_unaligned() }
+        }
+        #[allow(dead_code)]
+        #[inline(always)]
+        unsafe fn wr16(a: u32, v: u16) {
+            unsafe { (a as *mut u16).write_unaligned(v) }
+        }
+        #[allow(dead_code)]
+        #[inline(always)]
+        unsafe fn rd8(a: u32) -> u8 {
+            unsafe { (a as *const u8).read() }
+        }
+        #[allow(dead_code)]
+        #[inline(always)]
+        unsafe fn wr8(a: u32, v: u8) {
+            unsafe { (a as *mut u8).write(v) }
+        }
         if count == 0 {
             return 0;
         }
-        let bits = rd32(obj.wrapping_add(BITS_PTR));
+        let table = rd32(this);
+        let mut pos = rd32(cursor);
+        let mut bit: u32 = 1;
         let mut out: u32 = 0;
-        let mut mask: u32 = 1;
-        let mut left = count;
-        while left != 0 {
-            let c = rd32(cursor);
-            wr32(cursor, c.wrapping_add(1));
-            let word = rd32(bits.wrapping_add((c >> 5).wrapping_mul(4)));
-            if (word.wrapping_shr(c & 31) & 1) != 0 {
-                out |= mask;
+        let mut n = count;
+        loop {
+            let w = rd32(table + (pos >> 5) * 4);
+            if (w >> (pos & 31)) & 1 != 0 {
+                out |= bit;
             }
-            mask = mask.wrapping_add(mask);
-            left = left.wrapping_sub(1);
+            pos = pos.wrapping_add(1);
+            bit = bit.wrapping_add(bit);
+            n -= 1;
+            if n == 0 {
+                break;
+            }
         }
+        wr32(cursor, pos);
         out
     }
 });

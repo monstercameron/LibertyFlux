@@ -246,3 +246,309 @@ fn query_tag_edges() {
     assert_eq!(query_tag(&obj, 0), None);
     assert_eq!(query_tag(&obj, 0xFFFF_FFFF), None);
 }
+
+#[test]
+fn collect_edges() {
+    use lf_leaderboard::desc::LeaderboardDesc;
+    use lf_leaderboard::rows::ItemToken;
+    use lf_leaderboard::rows::Manager;
+    use lf_leaderboard::rows::RowPicker;
+    use lf_leaderboard::rows::RowStore;
+    use lf_leaderboard::rows::RowTable;
+    use std::cell::RefCell;
+
+    struct S {
+        ok: bool,
+        cells: Vec<u32>,
+        items: Vec<(u32, [u8; 8])>,
+        fail_write: bool,
+        calls: RefCell<Vec<(char, u32)>>,
+    }
+
+    impl RowStore for S {
+        fn fetch(&self, board: u32) -> Option<RowTable<'_>> {
+            self.calls.borrow_mut().push(('f', board));
+            self.ok.then(|| RowTable {
+                cells: &self.cells,
+            })
+        }
+
+        fn skip_row(&self, _manager: Manager, key: u32) -> bool {
+            self.calls.borrow_mut().push(('s', key));
+            key % 3 == 0
+        }
+
+        fn classify(&self, cell: u32) -> u32 {
+            self.calls.borrow_mut().push(('c', cell));
+            cell
+        }
+
+        fn item(&self, _manager: Manager, key: u32) -> Option<ItemToken> {
+            self.calls.borrow_mut().push(('i', key));
+            (key % 5 != 4).then(|| ItemToken::new(key % 4))
+        }
+
+        fn item_len(&self, item: ItemToken) -> u32 {
+            self.items[item.get() as usize].0
+        }
+
+        fn item_bytes(&self, item: ItemToken) -> [u8; 8] {
+            self.items[item.get() as usize].1
+        }
+
+        fn write(&self, _manager: Manager, key: u32, _at: u32, _len: u32) -> bool {
+            self.calls.borrow_mut().push(('w', key));
+            !self.fail_write
+        }
+    }
+
+    struct P {
+        picked: u32,
+        keys: Vec<u32>,
+    }
+
+    impl RowPicker for P {
+        fn picked(&self) -> u32 {
+            self.picked
+        }
+
+        fn row_key(&self, row: u32) -> u32 {
+            self.keys[row as usize]
+        }
+    }
+
+    fn desc(rows: u32) -> LeaderboardDesc {
+        LeaderboardDesc {
+            board: "test",
+            board_id: 7,
+            rows,
+        }
+    }
+
+    fn run(
+        store: &S,
+        picker: &P,
+        rows: u32,
+        cursor: u32,
+        size: u32,
+    ) -> (bool, [u8; 8], [u8; 8], u8) {
+        let mut id = [0xCCu8; 8];
+        let mut mask = [0xCCu8; 8];
+        let mut flag = 0x7Fu8;
+        let r = lf_leaderboard::rows::collect(
+            store,
+            picker,
+            &desc(rows),
+            Manager::new(9),
+            cursor,
+            size,
+            &mut id,
+            &mut mask,
+            &mut flag,
+        );
+        (r, id, mask, flag)
+    }
+
+    // Found: rows 0 and 2 written (mask bit 2), row 1 distinguished.
+    let s = S {
+        ok: true,
+        cells: vec![1, 1, 1, 1],
+        items: vec![(8, [1, 2, 3, 4, 5, 6, 7, 8]); 4],
+        fail_write: false,
+        calls: RefCell::new(Vec::new()),
+    };
+    // Keys 1,2,4: none skip (1%3,2%3,4%3 nonzero), none null (4%5!=4).
+    let p = P {
+        picked: 1,
+        keys: vec![1, 2, 4],
+    };
+    let (r, id, mask, flag) = run(&s, &p, 3, 0, 64);
+    assert!(r);
+    assert_eq!(id, [1, 2, 3, 4, 5, 6, 7, 8]);
+    assert_eq!(flag, 1);
+    assert_eq!(mask, [4, 0, 0, 0, 0, 0, 0, 0]);
+
+    // Huge lengths count as negative (signed check, as the original).
+    let s = S {
+        ok: true,
+        cells: vec![1, 1],
+        items: vec![(0xFFFF_FFFF, [9u8; 8]); 4],
+        fail_write: false,
+        calls: RefCell::new(Vec::new()),
+    };
+    let p = P {
+        picked: 0,
+        keys: vec![1, 2],
+    };
+    let (r, id, _, flag) = run(&s, &p, 2, 0, 64);
+    assert!(r);
+    assert_eq!(id, [9u8; 8]);
+    assert_eq!(flag, 1);
+
+    // Length 9 rejects; null item rejects; fetch failure clears and fails.
+    for (items, keys, flag_want) in [
+        (vec![(9, [9u8; 8]); 4], vec![1], 0),
+        (vec![(8, [9u8; 8]); 4], vec![4], 0),
+    ] {
+        let s = S {
+            ok: true,
+            cells: vec![1, 2, 3, 4, 5],
+            items,
+            fail_write: false,
+            calls: RefCell::new(Vec::new()),
+        };
+        let p = P { picked: 0, keys };
+        let (r, id, mask, flag) = run(&s, &p, 1, 0, 64);
+        assert!(!r);
+        assert_eq!(id, [0xCCu8; 8]);
+        assert_eq!(mask, [0u8; 8]);
+        assert_eq!(flag, flag_want);
+    }
+    let s = S {
+        ok: false,
+        cells: vec![1],
+        items: vec![(8, [9u8; 8]); 4],
+        fail_write: false,
+        calls: RefCell::new(Vec::new()),
+    };
+    let p = P {
+        picked: 0,
+        keys: vec![1],
+    };
+    let (r, id, mask, flag) = run(&s, &p, 1, 0, 64);
+    assert!(!r);
+    assert_eq!(id, [0xCCu8; 8]);
+    assert_eq!(mask, [0u8; 8]);
+    assert_eq!(flag, 0);
+
+    // Bound failure and write failure end the scan.
+    let s = S {
+        ok: true,
+        cells: vec![1, 1],
+        items: vec![(8, [9u8; 8]); 4],
+        fail_write: false,
+        calls: RefCell::new(Vec::new()),
+    };
+    let p = P {
+        picked: 99,
+        keys: vec![1, 2],
+    };
+    let (r, _, mask, _) = run(&s, &p, 2, 0, 0);
+    assert!(!r);
+    assert_eq!(mask, [0u8; 8]);
+    let s = S {
+        fail_write: true,
+        ..S {
+            ok: true,
+            cells: vec![1, 1],
+            items: vec![(8, [9u8; 8]); 4],
+            fail_write: false,
+            calls: RefCell::new(Vec::new()),
+        }
+    };
+    let (r, _, _, _) = run(&s, &p, 2, 0, 64);
+    assert!(!r);
+
+    // Class 4 advances zero: the write still runs (length 0), mask set.
+    let s = S {
+        ok: true,
+        cells: vec![4, 4],
+        items: vec![(8, [9u8; 8]); 4],
+        fail_write: false,
+        calls: RefCell::new(Vec::new()),
+    };
+    let p = P {
+        picked: 99,
+        keys: vec![1, 2],
+    };
+    let (r, _, mask, _) = run(&s, &p, 2, 0, 64);
+    assert!(r);
+    assert_eq!(mask, [2, 0, 0, 0, 0, 0, 0, 0]);
+
+    // Mask high word past row 31 (host-only: verified rows stay below 32).
+    let s = S {
+        ok: true,
+        cells: vec![1; 64],
+        items: vec![(8, [9u8; 8]); 4],
+        fail_write: false,
+        calls: RefCell::new(Vec::new()),
+    };
+    let keys: Vec<u32> = (0..33).map(|i| (i % 64) as u32).collect();
+    let p = P { picked: 99, keys };
+    let (r, _, mask, _) = run(&s, &p, 33, 0, u32::MAX);
+    assert!(r);
+    assert_eq!(mask, [0, 0, 0, 0, 1, 0, 0, 0]);
+}
+
+#[test]
+#[should_panic(expected = "collect: cell key 9 outside 2 words")]
+fn collect_out_of_domain_panics() {
+    use lf_leaderboard::desc::LeaderboardDesc;
+    use lf_leaderboard::rows::ItemToken;
+    use lf_leaderboard::rows::Manager;
+    use lf_leaderboard::rows::RowPicker;
+    use lf_leaderboard::rows::RowStore;
+    use lf_leaderboard::rows::RowTable;
+
+    struct S;
+    impl RowStore for S {
+        fn fetch(&self, _board: u32) -> Option<RowTable<'_>> {
+            static CELLS: [u32; 2] = [1, 2];
+            Some(RowTable { cells: &CELLS })
+        }
+
+        fn skip_row(&self, _manager: Manager, _key: u32) -> bool {
+            false
+        }
+
+        fn classify(&self, cell: u32) -> u32 {
+            cell
+        }
+
+        fn item(&self, _manager: Manager, _key: u32) -> Option<ItemToken> {
+            None
+        }
+
+        fn item_len(&self, _item: ItemToken) -> u32 {
+            0
+        }
+
+        fn item_bytes(&self, _item: ItemToken) -> [u8; 8] {
+            [0; 8]
+        }
+
+        fn write(&self, _manager: Manager, _key: u32, _at: u32, _len: u32) -> bool {
+            true
+        }
+    }
+
+    struct P;
+    impl RowPicker for P {
+        fn picked(&self) -> u32 {
+            99
+        }
+
+        fn row_key(&self, _row: u32) -> u32 {
+            9
+        }
+    }
+
+    let mut id = [0u8; 8];
+    let mut mask = [0u8; 8];
+    let mut flag = 0u8;
+    let _ = lf_leaderboard::rows::collect(
+        &S,
+        &P,
+        &LeaderboardDesc {
+            board: "test",
+            board_id: 7,
+            rows: 1,
+        },
+        Manager::new(9),
+        0,
+        64,
+        &mut id,
+        &mut mask,
+        &mut flag,
+    );
+}
