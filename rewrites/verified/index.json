@@ -46440,6 +46440,15 @@
   "lane": "r-s431"
  },
  {
+  "address": "0x008DEAA0",
+  "name": "CDataBlockDC::vf2",
+  "kind": "function",
+  "file": "functions/fn_008deaa0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s479"
+ },
+ {
   "address": "0x008E5970",
   "name": "probe_then_demote_state",
   "kind": "function",
@@ -51415,6 +51424,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b377"
+ },
+ {
+  "address": "0x009733A0",
+  "name": "audio_spatial_update",
+  "kind": "function",
+  "file": "functions/fn_009733a0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b550"
  },
  {
   "address": "0x009748C0",
@@ -66789,6 +66807,15 @@
   "lane": "r-s439"
  },
  {
+  "address": "0x00A92130",
+  "name": "stream_boot_reset_pair",
+  "kind": "function",
+  "file": "functions/fn_00a92130.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s477"
+ },
+ {
   "address": "0x00A92EC0",
   "name": "stream_slot_select",
   "kind": "function",
@@ -66796,6 +66823,24 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s439"
+ },
+ {
+  "address": "0x00A93110",
+  "name": "stream_mark_slots_equal",
+  "kind": "function",
+  "file": "functions/fn_00a93110.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s477"
+ },
+ {
+  "address": "0x00A93160",
+  "name": "stream_touch_slot_then_emit",
+  "kind": "function",
+  "file": "functions/fn_00a93160.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s477"
  },
  {
   "address": "0x00A931C0",
@@ -66823,6 +66868,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s445"
+ },
+ {
+  "address": "0x00A93800",
+  "name": "stream_sweep_all_slots",
+  "kind": "function",
+  "file": "functions/fn_00a93800.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s477"
  },
  {
   "address": "0x00A938A0",
@@ -69241,6 +69295,15 @@
   "name": "audio_init_gated (proposed)",
   "kind": "function",
   "file": "functions/fn_00ad1270.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b545"
+ },
+ {
+  "address": "0x00AD1410",
+  "name": "audio_voice_set_rebuild (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00ad1410.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b545"
@@ -102123,6 +102186,15 @@
   "lane": "r-s426"
  },
  {
+  "address": "0x00C05FE0",
+  "name": "stream_set_clear",
+  "kind": "function",
+  "file": "functions/fn_00c05fe0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
   "address": "0x00C06090",
   "name": "stream_buffer_attach",
   "kind": "function",
@@ -102202,6 +102274,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s426"
+ },
+ {
+  "address": "0x00C066D0",
+  "name": "stream_group_release",
+  "kind": "function",
+  "file": "functions/fn_00c066d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
  },
  {
   "address": "0x00C06780",
@@ -102519,10 +102600,64 @@
   "lane": "r-s475"
  },
  {
+  "address": "0x00C084B0",
+  "name": "stream_state_save_a",
+  "kind": "function",
+  "file": "functions/fn_00c084b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C08520",
+  "name": "stream_teardown",
+  "kind": "function",
+  "file": "functions/fn_00c08520.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C08560",
+  "name": "stream_record_activate",
+  "kind": "function",
+  "file": "functions/fn_00c08560.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C08A00",
+  "name": "stream_state_save_b",
+  "kind": "function",
+  "file": "functions/fn_00c08a00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C08A80",
+  "name": "stream_name_set",
+  "kind": "function",
+  "file": "functions/fn_00c08a80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
   "address": "0x00C08B90",
   "name": "stream_range_check",
   "kind": "function",
   "file": "functions/fn_00c08b90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C08BD0",
+  "name": "stream_record_activate_and_commit",
+  "kind": "function",
+  "file": "functions/fn_00c08bd0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s475"
@@ -102559,6 +102694,51 @@
   "name": "stream_row_append",
   "kind": "function",
   "file": "functions/fn_00c093a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C09CE0",
+  "name": "stream_pair_register",
+  "kind": "function",
+  "file": "functions/fn_00c09ce0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C09D20",
+  "name": "stream_table_init",
+  "kind": "function",
+  "file": "functions/fn_00c09d20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C09EF0",
+  "name": "stream_flush_and_forward",
+  "kind": "function",
+  "file": "functions/fn_00c09ef0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C0A800",
+  "name": "stream_bucket_sum",
+  "kind": "function",
+  "file": "functions/fn_00c0a800.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C0A880",
+  "name": "stream_bucket_detach",
+  "kind": "function",
+  "file": "functions/fn_00c0a880.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s475"
@@ -103311,6 +103491,15 @@
   "lane": "r-s109"
  },
  {
+  "address": "0x00C2CC90",
+  "name": "FIRE_START",
+  "kind": "function",
+  "file": "functions/fn_00c2cc90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b548"
+ },
+ {
   "address": "0x00C2CE70",
   "name": "store_arg_handle",
   "kind": "function",
@@ -103336,6 +103525,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b16"
+ },
+ {
+  "address": "0x00C2D090",
+  "name": "fire_sound_update",
+  "kind": "function",
+  "file": "functions/fn_00c2d090.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b548"
  },
  {
   "address": "0x00C2D720",
@@ -115432,6 +115630,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b374"
+ },
+ {
+  "address": "0x00D8BC90",
+  "name": "audio_voice_scan",
+  "kind": "function",
+  "file": "functions/fn_00d8bc90.rs",
+  "trials": 1100,
+  "checker": "version 6",
+  "lane": "r-b553"
  },
  {
   "address": "0x00D8BE10",
