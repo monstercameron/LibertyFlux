@@ -6,14 +6,15 @@
 /// wins ties) into the hole while both children exist inside `count`;
 /// a lone last left child moves once more when the hole's doubled index
 /// plus two exactly meets `count`. Hands the array, the final hole, the
-/// start, the context and the start again to the settler and answers
+/// start, the context and the trailing argument to the settler and answers
 /// its answer.
-lf_checker_rt::export!(cdecl, rw_0093de50(arr: u32, start: u32, count: u32, ctx: u32) -> u32 {
+lf_checker_rt::export!(cdecl, rw_0093de50(arr: u32, start: u32, count: u32, ctx: u32, extra: u32) -> u32 {
     unsafe {
         const SETTLE: u32 = 1;
         const SLOT: u32 = 4;
+        // NOTE: the key is the dword stored at the record, one step.
         let key = |p: u32| -> u32 {
-            ((p as *const u32).read_unaligned() as *const u32).read_unaligned()
+            (p as *const u32).read_unaligned()
         };
         let at = |i: u32| -> u32 {
             ((arr.wrapping_add(i.wrapping_mul(SLOT))) as *const u32).read_unaligned()
@@ -41,6 +42,6 @@ lf_checker_rt::export!(cdecl, rw_0093de50(arr: u32, start: u32, count: u32, ctx:
                 .write_unaligned(at(child.wrapping_sub(1)));
             hole = child.wrapping_sub(1);
         }
-        lf_checker_rt::callee_cdecl!(SETTLE, u32, arr, hole, start, ctx, start)
+        lf_checker_rt::callee_cdecl!(SETTLE, u32, arr, hole, start, ctx, extra)
     }
 });
