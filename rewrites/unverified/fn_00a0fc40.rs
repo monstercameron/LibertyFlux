@@ -26,7 +26,7 @@ export!(cdecl, rw_00a0fc40() -> u32 {
         if *global::<u32>(SLOT) != 0xffff_ffff {
             return callee_cdecl!(STARTER, u32,);
         }
-        callee_stdcall!(SECOND, u32, relocated(PORT_B));
+        callee_cdecl!(SECOND, u32, relocated(PORT_B));
         callee_cdecl!(PRIME, u32,);
         let r = callee_cdecl!(RESOLVE, u32, relocated(PORT_C), relocated(SLOT));
         let t = (r + TAG_OFF) as *mut u32;

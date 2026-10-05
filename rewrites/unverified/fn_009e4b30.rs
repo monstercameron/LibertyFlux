@@ -6,12 +6,12 @@
 /// first word is its type tag; `aux` is a helper object passed to the lookup
 /// callee and, on the table path, holding a 16-bit table index at `+0x2e`.
 ///
-/// Kind `0x53` probes two task slots (5 and 7) through a lookup callee that
-/// returns a candidate object or null: a slot counts as usable only when the
-/// lookup answers non-null twice in a row, a stored limit (a float constant
-/// in read-only data) is strictly greater than the candidate's float at
-/// `+0x1c`, and a check callee called on the candidate answers with a
-/// non-zero low byte. When slot 5 is not usable and the tag is `0x13f` or
+/// Kind `0x53` probes two task slots (5 and 7) through a lookup callee: a slot
+/// counts as usable only when the first lookup answers non-null, a stored
+/// limit (a float constant in read-only data) is strictly greater than the
+/// second answer's float at `+0x1c`, and a check callee called on that
+/// answer returns a non-zero low byte. The second answer is dereferenced
+/// without a null check, so a null there faults the same way. When slot 5 is not usable and the tag is `0x13f` or
 /// `0x14c`, or slot 7 is not usable and the tag is `0x140` or `0x14d`, the
 /// answer is 0; when slot 7 is usable the answer is 1. Kind `0x54` reads a
 /// flags word at `+0x94` of the table entry selected by the signed index and
@@ -51,16 +51,19 @@ lf_checker_rt::export!(cdecl, rw_009E4B30(kind: u32, obj: u32, aux: u32) -> u32 
             unsafe { (a as *const u16).read_unaligned() }
         }
 
-        /// Probe one slot: the lookup must answer non-null twice, the limit
-        /// must exceed the candidate's value, and the check must answer
-        /// non-zero. Returns (usable, eax after the probe).
+        /// Probe one slot: the lookup must answer the first call non-null, the
+        /// limit must exceed the second answer's value, and the check must
+        /// answer non-zero. The second answer is dereferenced without a null
+        /// check, so a null there faults. Returns (usable, eax after the probe).
         unsafe fn probe(aux: u32, slot: u32, lookup: u32, check: u32) -> (bool, u32) {
             unsafe {
-                let _first = lf_checker_rt::callee_thiscall!(lookup, u32, aux, slot);
-                let cand: u32 = lf_checker_rt::callee_thiscall!(lookup, u32, aux, slot);
-                if cand == 0 {
+                let first: u32 = lf_checker_rt::callee_thiscall!(lookup, u32, aux, slot);
+                if first == 0 {
                     return (false, 1);
                 }
+                // No null check here: the original compares against the
+                // pointed-to float immediately, faulting on a null answer.
+                let cand: u32 = lf_checker_rt::callee_thiscall!(lookup, u32, aux, slot);
                 let limit = f32::from_bits(rd32(lf_checker_rt::relocated(LIMIT_ADDR)));
                 let got = f32::from_bits(rd32(cand.wrapping_add(CANDIDATE_VALUE)));
                 if !(limit > got) {

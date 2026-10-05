@@ -130,13 +130,17 @@ lf_checker_rt::export!(thiscall, rw_00562B90(this: u32, cursor: u32, quad_out: u
                 }
                 (flag_out as *mut u8).write(live);
             } else {
-                // Bounded path: advance the cursor and commit the row.
+                // Bounded path: advance the cursor and commit the row. The
+                // bound is checked against the advanced cursor, but the
+                // commit call receives the previous slot value: the original
+                // writes the advanced cursor back only after the call.
+                let prev = pos;
                 pos = pos.wrapping_add(step);
                 if pos > bound {
                     live = 0;
                 } else {
                     let done: u32 =
-                        lf_checker_rt::callee_thiscall!(CAL_COMMIT, u32, ctx, idx, pos, step);
+                        lf_checker_rt::callee_thiscall!(CAL_COMMIT, u32, ctx, idx, prev, step);
                     if (done as u8) == 0 {
                         live = 0;
                     } else {
