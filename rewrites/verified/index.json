@@ -48240,6 +48240,15 @@
   "lane": "r-b443"
  },
  {
+  "address": "0x009C1940",
+  "name": "task_drive_move_blend",
+  "kind": "function",
+  "file": "functions/fn_009c1940.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b443"
+ },
+ {
   "address": "0x009CA7E0",
   "name": "timed_element_sweep_update",
   "kind": "function",
@@ -60385,6 +60394,15 @@
   "name": "override_or_default",
   "kind": "function",
   "file": "functions/fn_00b1cf70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1D100",
+  "name": "PC10",
+  "kind": "function",
+  "file": "functions/fn_00b1d100.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s443"
@@ -93834,6 +93852,24 @@
   "lane": "r-b03"
  },
  {
+  "address": "0x00CD6A00",
+  "name": "CTaskSimpleGetUp::vf5",
+  "kind": "function",
+  "file": "functions/fn_00cd6a00.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b444"
+ },
+ {
+  "address": "0x00CD6B00",
+  "name": "ped_task_chain_five",
+  "kind": "function",
+  "file": "functions/fn_00cd6b00.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b444"
+ },
+ {
   "address": "0x00CD6F90",
   "name": "CTaskSimpleGetUp::vf17",
   "kind": "function",
@@ -95976,6 +96012,15 @@
   "lane": "r-s312"
  },
  {
+  "address": "0x00D44AB0",
+  "name": "peds_task_weighted_pick",
+  "kind": "function",
+  "file": "functions/fn_00d44ab0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b445"
+ },
+ {
   "address": "0x00D47FC0",
   "name": "set_fixture_kind_by_name",
   "kind": "function",
@@ -96451,6 +96496,231 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b07"
+ },
+ {
+  "address": "0x00D54770",
+  "name": "ccam_shake_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d54770.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D54790",
+  "name": "ccam_shake_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d54790.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D547B0",
+  "name": "CCamShake::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d547b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D547E0",
+  "name": "ccam_debug_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d547e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D54800",
+  "name": "ccam_debug_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d54800.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D54820",
+  "name": "CCamDebug::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d54820.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D54900",
+  "name": "ccam_2player_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d54900.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D54920",
+  "name": "ccam_2player_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d54920.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D54940",
+  "name": "CCam2Player::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d54940.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D54970",
+  "name": "ccam_busted_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d54970.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D54990",
+  "name": "ccam_busted_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d54990.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D549B0",
+  "name": "CCamBusted::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d549b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D55270",
+  "name": "ccam_wasted_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d55270.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D55290",
+  "name": "ccam_wasted_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d55290.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D552B0",
+  "name": "CCamWasted::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d552b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D55BE0",
+  "name": "ccam_idle_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d55be0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D55C00",
+  "name": "CCamIdle::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d55c00.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D56E30",
+  "name": "ccam_photo_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d56e30.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D56E50",
+  "name": "ccam_photo_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d56e50.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D56E70",
+  "name": "CCamPhoto::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d56e70.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D56EA0",
+  "name": "ccam_1stperson_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d56ea0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D56EC0",
+  "name": "ccam_1stperson_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d56ec0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D56EE0",
+  "name": "CCam1stPerson::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d56ee0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D56F10",
+  "name": "ccam_follow_ctor",
+  "kind": "function",
+  "file": "functions/fn_00d56f10.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
+ },
+ {
+  "address": "0x00D56F30",
+  "name": "ccam_follow_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d56f30.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s446"
  },
  {
   "address": "0x00D584B0",
