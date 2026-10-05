@@ -9,6 +9,29 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming an audio-and-camera stretch: slots, hashes and fades</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-76"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-76</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>A consecutive run of 150 unnamed functions turned out to be four audio entities followed by script-camera code, and nearly all of it could be named from strings plus the script natives that call it.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A consecutive run of 150 unnamed functions turned out to be four audio entities followed by script-camera code, and nearly all of it could be named from strings plus the script natives that call it.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose a descriptive name with a confidence level for each of 150 consecutive unnamed game functions, working out what the group is about first and naming each function from the strongest available evidence.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into five groups: script-driven sound effects, a speech and conversation manager, weather audio, the police scanner, and script-camera helpers with screen fades.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All four audio classes share parallel virtual slots: the first builds name and bank tables at registration time, one tears state down, and one runs the per-tick update. Recognising the pattern named a dozen functions at once.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three identical hash-test helpers were told apart because each guards a different conversation-line picker and scans a different global hash table.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two near-identical fade helpers were identified as fade-in and fade-out by triangulation: one is called only when clearing a cutscene, the other only when starting one, and the spawn code uses them on opposite branches.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Several merged names from earlier lanes are traps: encrypted-region stubs carry native names they only resemble, and some all-caps names are audio text tokens rather than function names. Behaviour at the call site was trusted over those labels.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;149 of 150 functions were named, about a third at high confidence and the rest at medium, with subsystem and class tags. Later lanes should keep the slot-parallel reading of the audio virtuals, keep the caller-native convention for the small camera object allocators, and distrust encrypted-stub names.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Read code through the mapped executable image and verify the mapping against a known function first. Gather strings, direct and import calls, byte-scan callers across the code section, data cross-references and vtable slots into one table before naming anything, then read the short and unclear functions fully.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;A linear-sweep disassembly of the whole code section found zero callers into the batch because decoding desynchronises; a plain byte scan for call instructions found over three hundred. One weather routine calls into the speech manager with its global object, which briefly made a speech helper look like weather code until the call setup was read.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming a run of vehicle, ped and radio audio functions</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-75"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-75</id>
@@ -1032,33 +1055,5 @@
 &lt;p&gt;Take any verified function that stores the same values at an index chosen by the trial, write a wrong version that picks a different index with equal values in the same order, and run it against a contract with one wide watched region: it passes. Split the region into one word each and it fails.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The escaping wrong version looked impossible for a while: the tie trials demonstrably ran, the comparison code looked sound at first glance, and the heap behaviour was correct, which kept pointing suspicion at the contract instead of the checker. Printing both sides' raw write logs side by side showed identical entries for different addresses and ended the hunt. Two smaller environment snags cost a few minutes each: a rewrite library stays locked after a worker uses it, so each rebuild went under a new file name, and the driver overwrites the lane results file, so all driver output went to a separate folder.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming fragments and particle effects: field readers fall out of one registration table</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-42"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-42</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>A batch of one hundred and fifty consecutive unnamed functions turned out to be three subsystems: fragment instances and their streaming, a type-erased container with eight holder types, and the particle effect manager. One hundred and forty-four got names; the rest stayed empty where the evidence ran out.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of one hundred and fifty consecutive unnamed functions turned out to be three subsystems: fragment instances and their streaming, a type-erased container with eight holder types, and the particle effect manager. One hundred and forty-four got names; the rest stayed empty where the evidence ran out.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive project-style name for each function in the batch, with a confidence level and one sentence of evidence, working from strings, imports, known callers, virtual tables and behaviour.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The fragment archetype registers its fields through one function that pairs each field name string with a reader callback. Every reader in the batch is referenced exactly once from inside that function, so each reader maps to its field name with certainty: twenty-two readers covering class, child, group, damage and rope flags, cache sizes, centre-of-gravity offsets, six damping vectors, self-collision data, asset id and collision events.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The matching writer virtual serialises the same fields by value, with tab characters after each field name, which pins down the text format.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The type-erased container resolves cleanly: each holder type has a distinct virtual table, each assignment routine sets one of those same tables, and the type-info getter returns a descriptor holding the mangled type name. Eight assignment routines, eight clone routines and eight type getters, all matched.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The particle manager has symmetric load and remove routines over five tables (rule banks, emit rules, effect rules, models, textures), plus spawn, depth sort, three update phases and three pools. Its create and destroy routines mirror each other through the same globals.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One heavily referenced getter is called from over a hundred sites and selects between the streamed fragment type and a stub. It is the single most connected function in the batch.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Names follow the field strings and table roles found above; wording-only guesses stay at medium confidence and six functions stay unnamed.&lt;/li&gt;
-&lt;li&gt;A memory-copy routine carries a script-native name from an earlier lane and should be renamed; nearby constructor and destructor labels on the fragment archetype look swapped and need review.&lt;/li&gt;
-&lt;li&gt;Two inventory sizes are wrong: one function extends past its listed size into padding, and one entry overlaps the two functions after it. Later lanes should distrust sizes and re-derive them from control flow.&lt;/li&gt;
-&lt;li&gt;Caller attribution by nearest known function below fails badly in sparsely named regions, with offsets of several kilobytes. Attributions that far away should be treated as unknown.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Read code through the mapped image only, never the raw file at a mapped address. Build one evidence table for the whole batch first: per-function calls resolved against the merged names, referenced strings, import calls, caller sites from a byte-level scan for direct calls, and virtual table references from data scans. Verify the mapping by decoding one known function end to end, then decode the short and unclear functions fully and read the raw virtual tables to confirm slot numbers.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Two dozen functions had no direct callers and no table references, which first looked like dead code; they turned out to be callbacks passed as immediate arguments, found only by scanning for their immediate values. One pool routine is reached by a jump thunk, which a call-only scan also misses. Several callees sit in the encrypted code region and decode as garbage, so behaviour there had to come from callers and siblings instead. An early caller table misattributed one helper to a destructor; rechecking the raw call sites fixed it.&lt;/p&gt;</content>
   </entry>
 </feed>
