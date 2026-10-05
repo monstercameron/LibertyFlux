@@ -332,7 +332,7 @@ lf_checker_rt::export!(cdecl, rw_00B3E000(center: u32, out: u32, radius: u32, fl
         gw32(WORK_COUNT, 1);
         gw32(WORK_PTR, scope);
         gw32(WORK_SLOT, slot);
-        lf_checker_rt::callee_cdecl!(RUN_WORKER, u32);
+        lf_checker_rt::callee_cdecl!(RUN_WORKER, u32,);
         if g32(RESULT_IDX) == MISS {
             cookie_check(cookie);
             return 0;

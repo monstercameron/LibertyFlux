@@ -27,20 +27,22 @@
 /// float and added to the first answer for the mix callee (callee 7), two
 /// more float callees (8, 9) answer, and the gate callee (callee 10) runs
 /// on (`a0`, address of the negated first answer, 0). On a nonzero gate
-/// answer a six-read matrix row is blended with the saved length's square
-/// root (`sqrtps` over four words, of which only the low lane is used; the
-/// other lanes, one holding the object pointer's bits, are dead) and with
-/// a scratch word the contract pins to zero; on zero the pair stays zero.
+/// answer a six-read matrix row is blended with the second float answer,
+/// the negated first answer, two zero words left by the gate call, and the
+/// square root of the stored object pointer's bits (`sqrtps` over four
+/// words of which only the low lane is used; the other lanes are dead);
+/// on zero the pair stays zero. (The gate call's argument cleanup leaves
+/// the frame four above its base, so these slots sit four higher than the
+/// pre-gate code suggests.)
 /// The pair is scaled by the second global, or, when the big block was
-/// skipped, taken from the incoming `xmm5`/`xmm6` entry values through the
-/// mirror (the original reads its registers there). Bit 1 of the flag
+/// skipped, kept as computed (zeros when the flag was clear). Bit 1 of the flag
 /// byte is set to whether the pair's squared length is above zero. The
-/// store callee (callee 11) runs on the child with the pair bits and 0,
-/// the fill callee (callee 12) runs on (`this`, `a0`, two scratch
-/// addresses preloaded from the child) with two scripted out-words that
-/// land in the child at `+8`/`+4`, and the child's virtual slot `+0x4c`
-/// is called. Float order is pinned throughout; both above-tests are
-/// false for NaN.
+/// store callee (callee 11) runs on the child with the pair bits (a third
+/// pushed zero word is left over for the frame teardown), the fill callee
+/// (callee 12) runs on (`this`, `a0`, two scratch addresses preloaded
+/// from the child) with two scripted out-words that land in the child at
+/// `+8`/`+4`, and the child's virtual slot `+0x4c` is called.
+/// Float order is pinned throughout; both above-tests are false for NaN.
 lf_checker_rt::export!(thiscall, rw_00CD4E60(this: u32, a0: u32) -> u32 {
     unsafe {
         const CHILD_OFF: u32 = 0xa80;
@@ -110,8 +112,8 @@ lf_checker_rt::export!(thiscall, rw_00CD4E60(this: u32, a0: u32) -> u32 {
             x2 = t2;
         }
         let x1 = add(mul(x2, x2), mul(x3, x3));
-        let (mut x5, mut x6);
-        if x1 > 0.0 {
+        let ran_big = x1 > 0.0;
+        if ran_big {
             let fa = f32::from_bits(lf_checker_rt::callee_thiscall!(5, u32, pool, a0, 1));
             // The double call's operands, formed exactly as the original
             // forms them (negated x3 widened; x2 and the probe answer's
@@ -131,19 +133,25 @@ lf_checker_rt::export!(thiscall, rw_00CD4E60(this: u32, a0: u32) -> u32 {
             let a2: u32 = lf_checker_rt::callee_cdecl!(9, u32, fb.to_bits());
             let ans2 = f32::from_bits(a2);
             let gate: u32 = lf_checker_rt::callee_cdecl!(10, u32, a0, (&neg1 as *const f32) as u32, 0);
+            let (mut x5, mut x6);
             if gate & 0xFF != 0 {
+                // Note the frame shift: the gate call's argument cleanup
+                // leaves esp four above the base, so every slot below sits
+                // four higher than in the pre-gate code, and the square
+                // root takes the stored object pointer's bits (its low
+                // lane; the other three sqrtps lanes are dead).
                 let m = rd32(a0 + MAT_OFF);
-                let sq = x1.sqrt();
-                let t = mul(f32::from_bits(rd32(m)), 0.0);
-                x5 = mul(f32::from_bits(rd32(m + 4)), x3);
-                x6 = mul(f32::from_bits(rd32(m + 0x14)), x3);
+                let sq = f32::from_bits(this).sqrt();
+                let t = mul(f32::from_bits(rd32(m)), neg1);
+                x5 = mul(f32::from_bits(rd32(m + 4)), ans2);
+                x6 = mul(f32::from_bits(rd32(m + 0x14)), ans2);
                 x5 = add(x5, t);
-                let u = mul(f32::from_bits(rd32(m + 8)), ans2);
+                let u = mul(f32::from_bits(rd32(m + 8)), 0.0);
                 x5 = add(x5, u);
-                let v = mul(f32::from_bits(rd32(m + 0x10)), 0.0);
+                let v = mul(f32::from_bits(rd32(m + 0x10)), neg1);
                 x5 = mul(x5, sq);
                 x6 = add(x6, v);
-                let w = mul(f32::from_bits(rd32(m + 0x18)), ans2);
+                let w = mul(f32::from_bits(rd32(m + 0x18)), 0.0);
                 x6 = add(x6, w);
                 x6 = mul(x6, sq);
             } else {
@@ -153,17 +161,19 @@ lf_checker_rt::export!(thiscall, rw_00CD4E60(this: u32, a0: u32) -> u32 {
             let g2 = gfloat(G_MUL);
             x3 = mul(g2, x5);
             x2 = mul(g2, x6);
-        } else {
-            x5 = f32::from_bits(lf_checker_rt::xmm_word(5, 0));
-            x6 = f32::from_bits(lf_checker_rt::xmm_word(6, 0));
         }
+        // Skipped (or flag clear): x3/x2 stay as computed above.
         let rr = add(mul(x2, x2), mul(x3, x3));
         let fb = rd8(this + FLAG_OFF);
         ((this + FLAG_OFF) as *mut u8).write((fb & !2) | ((rr > 0.0) as u8 * 2));
-        let _: u32 = lf_checker_rt::callee_thiscall!(11, u32, child, x2.to_bits(), x3.to_bits(), 0);
+        let _: u32 = lf_checker_rt::callee_thiscall!(11, u32, child, x2.to_bits(), x3.to_bits());
         let mut s = [rd32(child + 0x10), rd32(child + 0x0c)];
         let saddr = s.as_mut_ptr() as u32;
-        let _: u32 = lf_checker_rt::callee_thiscall!(12, u32, this, a0, saddr, saddr + 4);
+        // ecx is whatever sits four below the gate call's cleanup: `this`
+        // when the big block ran (its stored slot), else the saved
+        // squared length (zeros when the flag was clear).
+        let ecx12 = if ran_big { this } else { x1.to_bits() };
+        let _: u32 = lf_checker_rt::callee_thiscall!(12, u32, ecx12, a0, saddr, saddr + 4);
         wr32(child + 8, s[0]);
         wr32(child + 4, s[1]);
         let vt = rd32(child);

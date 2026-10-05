@@ -66,10 +66,8 @@ lf_checker_rt::export!(thiscall, rw_00a75a40(this: u32, arg1: u32) -> u32 {
         const D_COMB: u32 = 19;
         const D_FLAG_A: u32 = 20;
         const D_FLAG_B: u32 = 21;
-        const V_QUERY: u32 = 22;
-        const V_KIND_A: u32 = 23;
-        const V_KIND_B: u32 = 24;
-        const V_NEXT: u32 = 25;
+        // Planted-vtable stub ids (from the contract, via the objects):
+        // query slot +0x3c -> 22, kind slot +0xc -> 23/24, next +0x30 -> 25.
         const V_TAIL: u32 = 26;
 
         #[inline(always)]
@@ -112,6 +110,57 @@ lf_checker_rt::export!(thiscall, rw_00a75a40(this: u32, arg1: u32) -> u32 {
                 let f: extern "thiscall" fn(u32) -> u32 =
                     core::mem::transmute(rd32(vt + slot) as usize);
                 f(ecx_val)
+            }
+        }
+
+        /// Heading-flag value: second predicate pair plus four query calls.
+        /// All calls here are stack-balanced; only the tail call leaks.
+        unsafe fn flag_value(this: u32, arg1: u32) -> u16 {
+            unsafe {
+                const Q_SLOT: u32 = 0x3c;
+                const KIND_SLOT: u32 = 0xc;
+                const D_FLAG_A: u32 = 20;
+                const D_FLAG_B: u32 = 21;
+
+                let ocx = rd32(this + 4);
+                if ocx == 0 {
+                    return 0x101;
+                }
+                if vcall0(ocx, KIND_SLOT, ocx) != 4 {
+                    return 0x101;
+                }
+                let is8 = rd32(arg1) == 8;
+                let w: u32 = lf_checker_rt::callee_cdecl!(D_FLAG_A, u32, is8 as u32);
+                let bl2: u8 = if (w as u8) != 0 {
+                    1
+                } else if is8 {
+                    (lf_checker_rt::callee_cdecl!(D_FLAG_B, u32,) as u8 != 0) as u8
+                } else {
+                    0
+                };
+                let m1: u32 = vcall1(this, Q_SLOT, this, 0x413);
+                let bh: u8 = if m1 != 0 {
+                    1
+                } else {
+                    (vcall1(this, Q_SLOT, this, 0x13f) != 0) as u8
+                };
+                let ebp2: u32 = vcall1(this, Q_SLOT, this, 0x40f);
+                let eax2: u32 = vcall1(this, Q_SLOT, this, 0x422);
+                let st_e = if ebp2 != 0 { rd32(ebp2 + 0x34) } else { 0 };
+                let st_a = if eax2 != 0 { rd32(eax2 + 0x4c) } else { 0 };
+                let dl: u8 = ((ebp2 != 0 && st_e == 4) || (eax2 != 0 && st_a == 4)) as u8;
+                let al: u8 = ((ebp2 != 0 && st_e != 4 && st_e != 0xffff_ffff)
+                    || (eax2 != 0 && st_a != 4 && st_a != 0xffff_ffff))
+                    as u8;
+                // The original compares the arg slot's low byte, which by
+                // now holds is8 (a byte store overwrote it); al is 0 there.
+                if bl2 != 0 || bh != 0 || dl != 0 {
+                    0x100
+                } else if al != 0 || !is8 {
+                    0x101
+                } else {
+                    0x100
+                }
             }
         }
 
@@ -201,73 +250,26 @@ lf_checker_rt::export!(thiscall, rw_00a75a40(this: u32, arg1: u32) -> u32 {
         }
         // Selector block.
         let c1: u32 = lf_checker_rt::callee_thiscall!(D_SEL_A, u32, grp, 1u32);
+        let mut skip_helpers = false;
         if c1 != 0 {
             let c2: u32 = lf_checker_rt::callee_thiscall!(D_SEL_B, u32, grp, 1u32);
             if vcall0(c2, KIND_SLOT, c2) == 2 {
-                // Skip the helper block.
-                let esi2: u32 = lf_checker_rt::callee_thiscall!(D_SEL_C, u32, grp, 1u32);
-                return tail_finish(this, esi2);
+                skip_helpers = true;
             }
         }
-        let p: u32 = lf_checker_rt::callee_thiscall!(D_AUX, u32, g32(G_AUX));
-        let q: u32 = if p != 0 {
-            lf_checker_rt::callee_thiscall!(D_WRAP, u32, p)
-        } else {
-            0
-        };
-        let _: u32 = lf_checker_rt::callee_thiscall!(D_COMB, u32, grp, q, 1u32);
+        if !skip_helpers {
+            let p: u32 = lf_checker_rt::callee_thiscall!(D_AUX, u32, g32(G_AUX));
+            let q: u32 = if p != 0 {
+                lf_checker_rt::callee_thiscall!(D_WRAP, u32, p)
+            } else {
+                0
+            };
+            let _: u32 = lf_checker_rt::callee_thiscall!(D_COMB, u32, grp, q, 1u32);
+        }
         let esi2: u32 = lf_checker_rt::callee_thiscall!(D_SEL_C, u32, grp, 1u32);
-        tail_finish(this, esi2)
+        wr16(esi2 + HEAD, flag_value(this, arg1));
+        // Tail: successor query, then the leaking tail call (see doc).
+        let t1: u32 = vcall0(esi2, NEXT_SLOT, esi2);
+        lf_checker_rt::callee_thiscall!(V_TAIL, u32, t1, 1u32)
     }
 });
-
-/// Heading-flag store plus tail jump for `rw_00a75a40`: shared by the
-/// skip and fall-through paths of the selector block.
-#[inline(never)]
-unsafe fn tail_finish(this: u32, esi2: u32) -> u32 {
-    unsafe {
-        const HEAD: u32 = 0x20;
-        const Q_SLOT: u32 = 0x3c;
-        const KIND_SLOT: u32 = 0xc;
-        const NEXT_SLOT: u32 = 0x30;
-        const D_FLAG_A: u32 = 20;
-        const D_FLAG_B: u32 = 21;
-        const V_QUERY: u32 = 22;
-        const V_KIND_B: u32 = 24;
-        const V_NEXT: u32 = 25;
-        const V_TAIL: u32 = 26;
-
-        #[inline(always)]
-        unsafe fn rd32(a: u32) -> u32 {
-            unsafe { (a as *const u32).read_unaligned() }
-        }
-        #[inline(always)]
-        unsafe fn wr16(a: u32, v: u16) {
-            unsafe { (a as *mut u16).write_unaligned(v) }
-        }
-        #[inline(always)]
-        unsafe fn vcall1(obj: u32, slot: u32, ecx_val: u32, arg: u32) -> u32 {
-            unsafe {
-                let vt = rd32(obj);
-                let f: extern "thiscall" fn(u32, u32) -> u32 =
-                    core::mem::transmute(rd32(vt + slot) as usize);
-                f(ecx_val, arg)
-            }
-        }
-        #[inline(always)]
-        unsafe fn vcall0(obj: u32, slot: u32, ecx_val: u32) -> u32 {
-            unsafe {
-                let vt = rd32(obj);
-                let f: extern "thiscall" fn(u32) -> u32 =
-                    core::mem::transmute(rd32(vt + slot) as usize);
-                f(ecx_val)
-            }
-        }
-
-        // NOTE: the entry arg1 is not available here; the caller passes
-        // only what the tail needs. The is8 flag was computed by the
-        // caller... (see below: recomputed from a saved slot is wrong;
-        // the real code is inline — this helper takes it as a parameter).
-        unreachable!()
-    }
-}

@@ -108,31 +108,22 @@ lf_checker_rt::export!(thiscall, rw_00d3baf0(task: u32, op: u32, stream: u32) ->
                 wr8(task + F_FLAGS, rd8(task + F_FLAGS) ^ al);
             }
         }
+        /// The original answers bit reads through one shared scratch slot and
+        /// word reads through slots overlapping it; later calls observe
+        /// earlier answers there, so the slots keep the same relative layout
+        /// (bool at +0x13, words at +0x14, +0x18 and +0x1c).
         #[inline(always)]
-        unsafe fn read_bool(stream: u32) -> u8 {
+        unsafe fn read_bool_at(stream: u32, slot: u32) -> u8 {
             unsafe {
-                let mut slot: u32 = 0;
-                lf_checker_rt::callee_thiscall!(
-                    C_READ_BOOL,
-                    u32,
-                    stream,
-                    &mut slot as *mut u32 as u32
-                );
-                slot as u8
+                lf_checker_rt::callee_thiscall!(C_READ_BOOL, u32, stream, slot);
+                rd8(slot)
             }
         }
         #[inline(always)]
-        unsafe fn read_bits(stream: u32, width: u32) -> u32 {
+        unsafe fn read_bits_at(stream: u32, slot: u32, width: u32) -> u32 {
             unsafe {
-                let mut slot: u32 = 0;
-                lf_checker_rt::callee_thiscall!(
-                    C_READ_BITS,
-                    u32,
-                    stream,
-                    &mut slot as *mut u32 as u32,
-                    width
-                );
-                slot
+                lf_checker_rt::callee_thiscall!(C_READ_BITS, u32, stream, slot, width);
+                rd32(slot)
             }
         }
         /// Exact 32-to-64-bit float widening, as the original's
@@ -144,17 +135,21 @@ lf_checker_rt::export!(thiscall, rw_00d3baf0(task: u32, op: u32, stream: u32) ->
 
         match op {
             0 => {
-                let b = read_bool(stream);
+                let mut scratch = [0u8; 32];
+                let sbase = scratch.as_mut_ptr() as u32;
+                let (sbool, sbits1, sbits2, sbits3) =
+                    (sbase + 0x13, sbase + 0x14, sbase + 0x18, sbase + 0x1c);
+                let b = read_bool_at(stream, sbool);
                 fold_bit(task, b, 1, 0x02);
                 if rd8(task + F_FLAGS) & 0x02 == 0 {
                     return 0;
                 }
-                wr32(task + F_INT_B, read_bits(stream, 3).wrapping_add(INT_B_BIAS));
-                wr32(task + F_INT_A, read_bits(stream, 7));
-                let b = read_bool(stream);
+                wr32(task + F_INT_B, read_bits_at(stream, sbits1, 3).wrapping_add(INT_B_BIAS));
+                wr32(task + F_INT_A, read_bits_at(stream, sbits2, 7));
+                let b = read_bool_at(stream, sbool);
                 fold_bit(task, b, 5, 0x20);
                 if rd8(task + F_FLAGS) & 0x20 == 0 {
-                    let b = read_bool(stream);
+                    let b = read_bool_at(stream, sbool);
                     wr8(
                         task + F_FLAGS,
                         rd8(task + F_FLAGS) & 0x7f | b.wrapping_shl(7),
@@ -162,13 +157,13 @@ lf_checker_rt::export!(thiscall, rw_00d3baf0(task: u32, op: u32, stream: u32) ->
                     if rd8(task + F_FLAGS) & 0x80 == 0 {
                         return 0;
                     }
-                    let v = read_bits(stream, 0x10);
-                    let reg: u32 = lf_checker_rt::callee_cdecl!(C_REGISTRY, u32);
+                    let v = read_bits_at(stream, sbits3, 0x10);
+                    let reg: u32 = lf_checker_rt::callee_cdecl!(C_REGISTRY, u32,);
                     let scaled = v.wrapping_shl(5).wrapping_add(rd32(reg + REG_OFF));
                     lf_checker_rt::callee_thiscall!(C_HELPER, u32, task, scaled);
                     return 0;
                 }
-                let b = read_bool(stream);
+                let b = read_bool_at(stream, sbool);
                 fold_bit(task, b, 6, 0x40);
                 if rd8(task + F_FLAGS) & 0x40 == 0 {
                     lf_checker_rt::callee_thiscall!(
@@ -185,17 +180,19 @@ lf_checker_rt::export!(thiscall, rw_00d3baf0(task: u32, op: u32, stream: u32) ->
                 0
             }
             1 => {
-                let b = read_bool(stream);
+                let mut scratch = [0u8; 32];
+                let sbool = scratch.as_mut_ptr() as u32 + 0x13;
+                let b = read_bool_at(stream, sbool);
                 fold_bit(task, b, 1, 0x02);
                 if rd8(task + F_FLAGS) & 0x02 == 0 {
                     return 0;
                 }
                 lf_checker_rt::callee_thiscall!(C_WRITE_IMM, u32, stream, 3, 1);
                 lf_checker_rt::callee_thiscall!(C_WRITE_IMM, u32, stream, 7, 1);
-                let b = read_bool(stream);
+                let b = read_bool_at(stream, sbool);
                 fold_bit(task, b, 5, 0x20);
                 if rd8(task + F_FLAGS) & 0x20 == 0 {
-                    let b = read_bool(stream);
+                    let b = read_bool_at(stream, sbool);
                     wr8(
                         task + F_FLAGS,
                         rd8(task + F_FLAGS) & 0x7f | b.wrapping_shl(7),
@@ -206,7 +203,7 @@ lf_checker_rt::export!(thiscall, rw_00d3baf0(task: u32, op: u32, stream: u32) ->
                     lf_checker_rt::callee_thiscall!(C_WRITE_IMM, u32, stream, 0x10, 1);
                     return 0;
                 }
-                let b = read_bool(stream);
+                let b = read_bool_at(stream, sbool);
                 fold_bit(task, b, 6, 0x40);
                 if rd8(task + F_FLAGS) & 0x40 == 0 {
                     lf_checker_rt::callee_thiscall!(C_MARK_B, u32, stream, 1, BLOB_LEN);
@@ -264,7 +261,7 @@ lf_checker_rt::export!(thiscall, rw_00d3baf0(task: u32, op: u32, stream: u32) ->
                     let child_hook: extern "thiscall" fn(u32) -> u32 =
                         core::mem::transmute(rd32(rd32(child) + VT_SLOT_CHILD) as usize);
                     let r = child_hook(child);
-                    let reg: u32 = lf_checker_rt::callee_cdecl!(C_REGISTRY, u32);
+                    let reg: u32 = lf_checker_rt::callee_cdecl!(C_REGISTRY, u32,);
                     let v = (r as i32).wrapping_sub(rd32(reg + REG_OFF) as i32) >> 5;
                     lf_checker_rt::callee_thiscall!(C_WRITE_BITS, u32, stream, v as u32, 0x10);
                     return 0;
@@ -440,7 +437,7 @@ lf_checker_rt::export!(thiscall, rw_00d3baf0(task: u32, op: u32, stream: u32) ->
                     return SIZE_CHILD;
                 }
                 if flags & 0x40 == 0 {
-                    let base: u32 = lf_checker_rt::callee_cdecl!(C_SIZE_BASE, u32);
+                    let base: u32 = lf_checker_rt::callee_cdecl!(C_SIZE_BASE, u32,);
                     return base.wrapping_add(SIZE_BASE_ADD);
                 }
                 SIZE_WORD_PATH

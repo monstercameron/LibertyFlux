@@ -1376,6 +1376,14 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x009C1B50",
+  "name": "triage pending",
+  "file": "fn_009c1b50.rs",
+  "lane": "r-b443",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x009CBBC0",
   "name": null,
   "file": "fn_009cbbc0.rs",
@@ -1545,27 +1553,27 @@
  },
  {
   "address": "0x00B3DAF0",
-  "name": "pending",
+  "name": "bvh_query_emit_sample",
   "file": "fn_00b3daf0.rs",
   "lane": "r-b449",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "abs_shadow_unavailable"
  },
  {
   "address": "0x00B3E000",
-  "name": "pending",
+  "name": "query_publish_and_run",
   "file": "fn_00b3e000.rs",
   "lane": "r-b449",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "abs_shadow_unavailable"
  },
  {
   "address": "0x00B3E540",
-  "name": "pending",
+  "name": "worklist_scan_and_record",
   "file": "fn_00b3e540.rs",
   "lane": "r-b449",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "abs_shadow_unavailable"
  },
  {
   "address": "0x00B505D0",
@@ -2000,41 +2008,25 @@
   "reason": null
  },
  {
-  "address": "0x00C3D850",
+  "address": "0x00C3B3C0",
   "name": "tbd",
-  "file": "fn_00c3d850.rs",
+  "file": "fn_00c3b3c0.rs",
   "lane": "r-s448",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x00C3D890",
+  "address": "0x00C3E6F0",
   "name": "tbd",
-  "file": "fn_00c3d890.rs",
+  "file": "fn_00c3e6f0.rs",
   "lane": "r-s448",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x00C3D9A0",
+  "address": "0x00C3EF40",
   "name": "tbd",
-  "file": "fn_00c3d9a0.rs",
-  "lane": "r-s448",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00C3D9F0",
-  "name": "tbd",
-  "file": "fn_00c3d9f0.rs",
-  "lane": "r-s448",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00C3EEE0",
-  "name": "tbd",
-  "file": "fn_00c3eee0.rs",
+  "file": "fn_00c3ef40.rs",
   "lane": "r-s448",
   "outcome": "not_reached",
   "reason": ""
@@ -2046,14 +2038,6 @@
   "lane": "r-b300",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00C7E070",
-  "name": "CTaskComplexPoliceSniperScenario::vf19",
-  "file": "fn_00c7e070.rs",
-  "lane": "r-b454",
-  "outcome": "not_reached",
-  "reason": ""
  },
  {
   "address": "0x00C7FD60",
@@ -2736,6 +2720,14 @@
   "reason": null
  },
  {
+  "address": "0x00DAC430",
+  "name": "tbd",
+  "file": "fn_00dac430.rs",
+  "lane": "r-b447",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00DACA00",
   "name": "tbd",
   "file": "fn_00daca00.rs",
@@ -2877,6 +2869,326 @@
   "file": "fn_00e4ba30.rs",
   "lane": "r-b380",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00E68290",
+  "name": "veh_slot_bind_x4_8290",
+  "file": "fn_00e68290.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E682C0",
+  "name": "veh_ratio_82c0",
+  "file": "fn_00e682c0.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E682E0",
+  "name": "veh_table_zero_82e0",
+  "file": "fn_00e682e0.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68320",
+  "name": "veh_table_fill_neg1_8320",
+  "file": "fn_00e68320.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68340",
+  "name": "veh_ratio_8340",
+  "file": "fn_00e68340.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68360",
+  "name": "veh_ratio_8360",
+  "file": "fn_00e68360.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68380",
+  "name": "veh_ratio_8380",
+  "file": "fn_00e68380.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E683A0",
+  "name": "veh_ratio_83a0",
+  "file": "fn_00e683a0.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E683C0",
+  "name": "veh_ratio_83c0",
+  "file": "fn_00e683c0.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E683E0",
+  "name": "veh_register_83e0",
+  "file": "fn_00e683e0.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E683F0",
+  "name": "veh_ratio_83f0",
+  "file": "fn_00e683f0.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68410",
+  "name": "veh_slot_bind_8410",
+  "file": "fn_00e68410.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68430",
+  "name": "veh_ratio_8430",
+  "file": "fn_00e68430.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68450",
+  "name": "veh_ratio_8450",
+  "file": "fn_00e68450.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68470",
+  "name": "veh_ratio_8470",
+  "file": "fn_00e68470.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68490",
+  "name": "veh_ratio_8490",
+  "file": "fn_00e68490.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E684C0",
+  "name": "veh_register_84c0",
+  "file": "fn_00e684c0.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E684D0",
+  "name": "veh_register_84d0",
+  "file": "fn_00e684d0.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E684E0",
+  "name": "veh_register_84e0",
+  "file": "fn_00e684e0.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E684F0",
+  "name": "veh_register_84f0",
+  "file": "fn_00e684f0.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68500",
+  "name": "veh_register_8500",
+  "file": "fn_00e68500.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68510",
+  "name": "veh_ratio_8510",
+  "file": "fn_00e68510.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68530",
+  "name": "veh_ratio_8530",
+  "file": "fn_00e68530.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68550",
+  "name": "veh_slot_bind_8550",
+  "file": "fn_00e68550.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68570",
+  "name": "veh_ratio_8570",
+  "file": "fn_00e68570.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68590",
+  "name": "veh_slot_bind_8590",
+  "file": "fn_00e68590.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E685B0",
+  "name": "veh_ratio_85b0",
+  "file": "fn_00e685b0.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E685D0",
+  "name": "veh_pool_init_85d0",
+  "file": "fn_00e685d0.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68630",
+  "name": "veh_ratio_8630",
+  "file": "fn_00e68630.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68650",
+  "name": "veh_pool_init_8650",
+  "file": "fn_00e68650.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E686B0",
+  "name": "veh_ratio_86b0",
+  "file": "fn_00e686b0.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E686D0",
+  "name": "veh_ratio_86d0",
+  "file": "fn_00e686d0.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E686F0",
+  "name": "veh_thunk_86f0",
+  "file": "fn_00e686f0.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68700",
+  "name": "veh_ratio_8700",
+  "file": "fn_00e68700.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68720",
+  "name": "veh_register_8720",
+  "file": "fn_00e68720.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68730",
+  "name": "veh_register_8730",
+  "file": "fn_00e68730.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68740",
+  "name": "veh_ratio_8740",
+  "file": "fn_00e68740.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68760",
+  "name": "veh_slot_bind_8760",
+  "file": "fn_00e68760.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68780",
+  "name": "veh_register_8780",
+  "file": "fn_00e68780.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E68790",
+  "name": "veh_register_8790",
+  "file": "fn_00e68790.rs",
+  "lane": "r-s453",
+  "outcome": "not_reached",
   "reason": null
  },
  {

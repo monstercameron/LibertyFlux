@@ -208,7 +208,7 @@ lf_checker_rt::export!(cdecl, rw_00B3DAF0(node: u32, list: u32, param: u32, poin
             let mut tail = 4i32;
             let mut i = 0usize;
             while i < 4 {
-                let r = lf_checker_rt::callee_cdecl!(RNG, u32) & 0xffff;
+                let r = lf_checker_rt::callee_cdecl!(RNG, u32,) & 0xffff;
                 let f = fmul(fmul(r as f32, gf(RAND_SCALE)), tail as f32);
                 tail -= 1;
                 let j = i.wrapping_add(cvtt(f) as usize);
@@ -272,7 +272,7 @@ lf_checker_rt::export!(cdecl, rw_00B3DAF0(node: u32, list: u32, param: u32, poin
             cookie_check(cookie);
             return 1;
         }
-        let r = lf_checker_rt::callee_cdecl!(RNG, u32) & 0xffff;
+        let r = lf_checker_rt::callee_cdecl!(RNG, u32,) & 0xffff;
         let mut pick = cvtt(fmul(fmul(r as f32, gf(RAND_SCALE)), count as f32));
         let mut left = count;
         // Countdown scan over the candidate entries.
@@ -403,7 +403,7 @@ lf_checker_rt::export!(cdecl, rw_00B3DAF0(node: u32, list: u32, param: u32, poin
                     break v;
                 }
             };
-            let rb = lf_checker_rt::callee_cdecl!(RNG, u32);
+            let rb = lf_checker_rt::callee_cdecl!(RNG, u32,);
             let wf = fmul((rb as i32) as f32, gf(BLEND_SCALE));
             let t = fsub(gf(BLEND_ONE), wf);
             let srow =

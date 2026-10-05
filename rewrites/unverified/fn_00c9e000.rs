@@ -17,8 +17,10 @@
 /// tests exactly: a zero squared length normalizes to zero instead of
 /// dividing, and the second scale is recomputed only when its squared length
 /// differs from the running value (an unordered comparison recomputes).
-/// Twelve words are stored into `r1` at `+0x00`..`+0x2c` and `r2` is
-/// returned.
+/// Twelve words are stored into `r1` at `+0x00`..`+0x2c`. The value left in
+/// `eax` is `r2` with bits 8-15 replaced by the flags byte the second
+/// comparison leaves in `ah` (`0x47` unordered, `0x02` above, `0x03` below,
+/// `0x42` equal); that clobbered word is what the function returns.
 ///
 /// Two words the original reads were never written by it (scratch below its
 /// frame); the proof fills uninitialized stack with zero, so they read as
@@ -176,6 +178,16 @@ lf_checker_rt::export!(thiscall, rw_00C9E000(this: u32, arg1: u32, arg2: u32) ->
         wrf(r1 + 0x24, q2);
         wrf(r1 + 0x28, l0);
         wrf(r1 + 0x2C, t0);
-        r2
+        // The second comparison's flags byte survives in ah over the return.
+        let ah: u32 = if sq.is_nan() || x5.is_nan() {
+            0x47
+        } else if sq > x5 {
+            0x02
+        } else if sq < x5 {
+            0x03
+        } else {
+            0x42
+        };
+        (r2 & 0xFFFF_00FF) | (ah << 8)
     }
 });
