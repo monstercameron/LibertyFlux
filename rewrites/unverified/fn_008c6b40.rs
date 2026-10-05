@@ -72,7 +72,7 @@ lf_checker_rt::export!(thiscall, rw_008c6b40(this: u32, name: u32,
             let row = this.wrapping_add(ROW_BASE)
                 .wrapping_add(idx.wrapping_mul(ROW_STRIDE));
             let _tabled: u32 = lf_checker_rt::callee_thiscall!(
-                TABLE_CALLEE, u32, row, _dispatch, w12, w8, magic);
+                TABLE_CALLEE, u32, row, _dispatch, magic, w8, w12);
             last = _tabled;
             ((this + idx + FLAG_B) as *mut u8).write(1);
         }

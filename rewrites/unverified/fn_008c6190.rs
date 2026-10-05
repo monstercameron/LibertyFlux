@@ -9,7 +9,7 @@
 /// and from the second round on writes each row's delta word. Afterwards
 /// adds `rounds * 12` to the total at `done` and, when at least one round
 /// ran, runs the finalise helper and writes the trailing delta. Reports
-/// 1 in the low byte when any round ran, else 0.
+/// the trailing delta's low byte when any round ran, else 0.
 /// Original: thiscall, five stack words.
 lf_checker_rt::export!(thiscall, rw_008c6190(this: u32, token: u32,
                                               count: u32, done: u32,
@@ -64,8 +64,10 @@ lf_checker_rt::export!(thiscall, rw_008c6190(this: u32, token: u32,
         let ans: u32 =
             lf_checker_rt::callee_thiscall!(FINAL_CALLEE, u32, token);
         let lo = ((row - 8) as *const u32).read_unaligned();
-        ((row - 4) as *mut u32).write_unaligned(ans.wrapping_sub(lo));
+        let delta = ans.wrapping_sub(lo);
+        ((row - 4) as *mut u32).write_unaligned(delta);
         lf_checker_rt::callee_cdecl!(COOKIE_CALLEE, u32,);
-        1
+        // The finalise answer replaces al: only the delta's low byte stays.
+        delta & 0xFF
     }
 });

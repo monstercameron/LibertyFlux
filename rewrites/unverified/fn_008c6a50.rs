@@ -61,11 +61,11 @@ lf_checker_rt::export!(thiscall, rw_008c6a50(this: u32) -> u32 {
                 stage.as_mut_ptr().add((i * 8) as usize) as u32;
             if mark_a[i as usize] != 0 {
                 last = lf_checker_rt::callee_thiscall!(
-                    SLOT_CALLEE, u32, this, i, entry);
+                    SLOT_CALLEE, u32, this, entry, i);
             }
             if mark_b[i as usize] != 0 {
                 last = lf_checker_rt::callee_thiscall!(
-                    ALT_CALLEE, u32, this, i, entry);
+                    ALT_CALLEE, u32, this, entry, i);
             }
             i += 1;
         }

@@ -71,7 +71,7 @@ lf_checker_rt::export!(thiscall, rw_008c6680(this: u32, name: u32,
             &mut scratch as *mut u32 as u32);
         let token = lf_checker_rt::relocated(BIND_TOKEN_FILE_VA);
         let bound: u32 = lf_checker_rt::callee_thiscall!(
-            BIND_CALLEE, u32, token, _dispatch, 1, 0, magic);
+            BIND_CALLEE, u32, token, _dispatch, magic, 0, 1);
         let table = ((this + 0x264) as *const u32).read_unaligned();
         let word = (table.wrapping_add(handle.wrapping_mul(16))
                     .wrapping_add(8) as *const u32)
@@ -79,7 +79,7 @@ lf_checker_rt::export!(thiscall, rw_008c6680(this: u32, name: u32,
         let linked: u32 = lf_checker_rt::callee_thiscall!(
             LINK_CALLEE, u32, bound, word);
         let _committed: u32 = lf_checker_rt::callee_thiscall!(
-            COMMIT_CALLEE, u32, this, idx, linked);
+            COMMIT_CALLEE, u32, this, linked, idx);
         let done: u32 =
             lf_checker_rt::callee_thiscall!(FINISH_CALLEE, u32, linked);
         (this.wrapping_add(idx).wrapping_add(FLAG_BASE) as *mut u8).write(1);
