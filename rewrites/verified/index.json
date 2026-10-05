@@ -49860,6 +49860,15 @@
   "lane": "r-s331"
  },
  {
+  "address": "0x00A25390",
+  "name": "task_state_value_blend",
+  "kind": "function",
+  "file": "functions/fn_00a25390.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b410"
+ },
+ {
   "address": "0x00A28CD0",
   "name": "task_timer_blend",
   "kind": "function",
@@ -64912,6 +64921,69 @@
   "name": "NativeImpl_GENERATE_DIRECTIONS_2",
   "kind": "function",
   "file": "functions/fn_00b9b2b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9C680",
+  "name": "NativeImpl_GET_PARKING_NODE_IN_AREA",
+  "kind": "function",
+  "file": "functions/fn_00b9c680.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9C730",
+  "name": "NativeImpl_GET_RANDOM_CAR_NODE",
+  "kind": "function",
+  "file": "functions/fn_00b9c730.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9C7C0",
+  "name": "NativeImpl_GET_RANDOM_CAR_NODE_INCLUDE_SWITCHED_OFF_NODES",
+  "kind": "function",
+  "file": "functions/fn_00b9c7c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9CB50",
+  "name": "NativeImpl_GET_RANDOM_WATER_NODE_2",
+  "kind": "function",
+  "file": "functions/fn_00b9cb50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9D1C0",
+  "name": "NativeImpl_SWITCH_PED_PATHS_OFF",
+  "kind": "function",
+  "file": "functions/fn_00b9d1c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9D260",
+  "name": "NativeImpl_SWITCH_PED_PATHS_ON",
+  "kind": "function",
+  "file": "functions/fn_00b9d260.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9D300",
+  "name": "NativeImpl_SWITCH_PED_ROADS_BACK_TO_ORIGINAL",
+  "kind": "function",
+  "file": "functions/fn_00b9d300.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s423"
@@ -87082,6 +87154,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s243"
+ },
+ {
+  "address": "0x00D1DF40",
+  "name": "cover_stance_classifier",
+  "kind": "function",
+  "file": "functions/fn_00d1df40.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b408"
+ },
+ {
+  "address": "0x00D1E060",
+  "name": "CTaskComplexSeekCover::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d1e060.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b408"
  },
  {
   "address": "0x00D1E310",
