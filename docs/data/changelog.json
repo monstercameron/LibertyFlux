@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Naming batch 108: a caller scan beats reading, and two shared helpers are misnamed",
+    "title": "Devlog: production batch: three task functions verified, one deferred on an unservable read",
     "commit": null,
+    "summary": "Findings from the r-b514 lane.",
+    "changes": [
+      "New devlog entry: production batch: three task functions verified, one deferred on an unservable read.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Naming batch 108: a caller scan beats reading, and two shared helpers are misnamed",
+    "commit": "e85523a43b3c104c544076554c412c8aeeecd27c",
     "summary": "Findings from the nm-108 lane.",
     "changes": [
       "New devlog entry: Naming batch 108: a caller scan beats reading, and two shared helpers are misnamed.",
