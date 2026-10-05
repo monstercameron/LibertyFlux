@@ -6,12 +6,13 @@
 /// `+0x58`, `+0x54` and `+0x50` in order: a null member is skipped, otherwise
 /// its unsigned 16-bit count at `+0x0a` is decremented and, when it reaches
 /// zero on an owned member (kind byte at `+8` is 2 or 4), the member's slot-0
-/// release runs with argument 1. No base call. The accumulator at return
-/// holds incidental leftovers, so it is not compared (thiscall, no
-/// arguments).
+/// release runs with argument 1. No base call; on exit the base-class vtable
+/// pointer replaces the stamp. The accumulator at return holds incidental
+/// leftovers, so it is not compared (thiscall, no arguments).
 lf_checker_rt::export!(thiscall, rw_0062be20(this: u32) -> u32 {
     unsafe {
         const VTABLE: u32 = 0xFE24E0;
+        const VTABLE_BASE: u32 = 0xE86AFC;
         ((this + 0x00) as *mut u32).write_unaligned(lf_checker_rt::relocated(VTABLE));
         let r1 = ((this + 0x58) as *const u32).read_unaligned();
         if r1 != 0 {
@@ -61,6 +62,7 @@ lf_checker_rt::export!(thiscall, rw_0062be20(this: u32) -> u32 {
                 }
             }
         }
+        ((this + 0x00) as *mut u32).write_unaligned(lf_checker_rt::relocated(VTABLE_BASE));
         0
     }
 });

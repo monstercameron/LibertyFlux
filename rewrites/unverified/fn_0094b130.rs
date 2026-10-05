@@ -54,7 +54,7 @@
 //! single NaNs are order-free and stay in the edge pools.
 
 use core::hint::black_box;
-use lf_checker_rt::{callee_cdecl, callee_thiscall, export, global};
+use lf_checker_rt::{callee_cdecl, callee_thiscall, export, global, relocated};
 
 /// File VAs (image base 0x400000) of the globals this function reads.
 const G_FORWARD: u32 = 0x0103_7660;
@@ -70,11 +70,12 @@ const G_MODE_BYTE: u32 = 0x0103_769A;
 const G_FLAG_BYTE: u32 = 0x011E_61CB;
 const G_FACTOR: u32 = 0x00FE_8830;
 
-/// Fixed addresses the original passes as plain values (never dereferenced
-/// here; the intercepted callees only log them).
-const OBJ_FIXED: u32 = 0x0128_E94C;
-const TAIL_CONST: u32 = 0x0103_7680;
-const SETUP_CONSTS: [u32; 4] = [0x011E_E28C, 0x011E_E294, 0x011E_E29C, 0x011E_E2A4];
+/// File VAs the original passes as plain values (never dereferenced here;
+/// the intercepted callees only log them). Each sits in a relocated
+/// operand, so the body derives the runtime value with `relocated`.
+const OBJ_FIXED_VA: u32 = 0x0128_E94C;
+const TAIL_CONST_VA: u32 = 0x0103_7680;
+const SETUP_CONST_VAS: [u32; 4] = [0x011E_E28C, 0x011E_E294, 0x011E_E29C, 0x011E_E2A4];
 
 /// Mode-byte bits: argument-bit match, setup block enable, tail branch.
 const MODE_ARG_BIT: u8 = 0x01;
@@ -116,6 +117,14 @@ fn body<const MUT: bool>(a0: u32, a1: u32) -> u32 {
     let mode = unsafe { global::<u8>(G_MODE_BYTE).read() };
     let flag = unsafe { global::<u8>(G_FLAG_BYTE).read() };
     let factor = f32::from_bits(unsafe { global::<u32>(G_FACTOR).read() });
+    let obj_fixed = relocated(OBJ_FIXED_VA);
+    let tail_const = relocated(TAIL_CONST_VA);
+    let setup_consts = [
+        relocated(SETUP_CONST_VAS[0]),
+        relocated(SETUP_CONST_VAS[1]),
+        relocated(SETUP_CONST_VAS[2]),
+        relocated(SETUP_CONST_VAS[3]),
+    ];
 
     let _ = callee_cdecl!(1, u32,);
     let pair_hi = [fa.to_bits(), fb.to_bits()];
@@ -160,7 +169,7 @@ fn body<const MUT: bool>(a0: u32, a1: u32) -> u32 {
         let _ = callee_cdecl!(4, u32, 0xF, 8);
         let _ = callee_cdecl!(
             8, u32,
-            SETUP_CONSTS[0], SETUP_CONSTS[1], SETUP_CONSTS[2], SETUP_CONSTS[3],
+            setup_consts[0], setup_consts[1], setup_consts[2], setup_consts[3],
             shift_word.as_ptr() as u32
         );
         let _ = callee_cdecl!(4, u32, 2, 6);
@@ -221,7 +230,7 @@ fn body<const MUT: bool>(a0: u32, a1: u32) -> u32 {
     let mut kept: u8 = 0;
     let tail_query = (mode & MODE_TAIL) != 0;
     if tail_query {
-        kept = (callee_thiscall!(13, u32, OBJ_FIXED) & 0xFF) as u8;
+        kept = (callee_thiscall!(13, u32, obj_fixed) & 0xFF) as u8;
     } else {
         let _ = callee_cdecl!(5, u32, g_forward);
     }
@@ -231,10 +240,10 @@ fn body<const MUT: bool>(a0: u32, a1: u32) -> u32 {
         &res[2] as *const u32 as u32,
         &res[4] as *const u32 as u32,
         &res[6] as *const u32 as u32,
-        TAIL_CONST
+        tail_const
     );
     if tail_query && kept != 0 {
-        let fin = callee_thiscall!(14, u32, OBJ_FIXED);
+        let fin = callee_thiscall!(14, u32, obj_fixed);
         cookie_check();
         return fin;
     }
