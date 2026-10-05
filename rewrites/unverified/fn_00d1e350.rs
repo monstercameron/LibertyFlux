@@ -193,7 +193,7 @@ lf_checker_rt::export!(thiscall, rw_00d1e350(this: u32, ped: u32) -> u32 {
                     return tail(this, ped);
                 }
                 let sub = rd32(this + SUB);
-                let g: u32 = lf_checker_rt::callee_thiscall!(14, u32, sub, ped, 1, 0);
+                let g: u32 = lf_checker_rt::callee_thiscall!(37, u32, sub, ped, 1, 0);
                 if (g & 0xff) == 0 {
                     return tail(this, ped);
                 }
