@@ -3,9 +3,9 @@
 /// Pick and run the next update for a ped task, dispatching on task state.
 ///
 /// `this` is the task owner (vtable at `+0x0` with a query slot at `+0x3c`,
-/// sub-object at `+0x4`); `arg1` is the task record (flag word at `+0x0`,
-/// group pointer at `+0x224`, state block at `+0x2b0`, rate float at
-/// `+0xaa0`, heading flag at `+0x20`). Five `.data` globals steer the
+/// sub-object at `+0x4`); `arg1` is the task record (group pointer at
+/// `+0x224`, state block at `+0x2b0` whose first word is the flag word,
+/// rate float at `+0xaa0`, heading flag at `+0x20`). Five `.data` globals steer the
 /// dispatch: a generation pair, an enable flag, a mode flag and an
 /// auxiliary pointer. Return value is the selected callee's answer.
 ///
@@ -133,7 +133,7 @@ lf_checker_rt::export!(thiscall, rw_00a75a40(this: u32, arg1: u32) -> u32 {
                 if vcall0(ocx, KIND_SLOT, ocx) != 4 {
                     return 0x101;
                 }
-                let is8 = rd32(arg1) == 8;
+                let is8 = rd32(arg1 + ST_BLK) == 8;
                 let w: u32 = lf_checker_rt::callee_cdecl!(D_FLAG_A, u32, is8 as u32);
                 let bl2: u8 = if (w as u8) != 0 {
                     1
