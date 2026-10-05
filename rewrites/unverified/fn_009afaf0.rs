@@ -406,6 +406,8 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
         let ans20: u32 = lf_checker_rt::callee_thiscall!(20, u32, OBJ_F, ptrv, fb.to_bits());
         let cookie = gu32(COOKIE);
         lf_checker_rt::callee_thiscall!(21, u32, cookie);
-        ans20
+        // DEBUG-TEMP: side-channel the stage-2 entry state via retval.
+        let _ = ans20;
+        rd32(this.wrapping_add(8))
     }
 }

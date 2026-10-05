@@ -184,7 +184,7 @@ lf_checker_rt::export!(thiscall, rw_009A0E70(this: u32, a0: u32, a1: u32, a2: u3
                 let flag31 = (comb & 0xFF) as u8;
                 let sw = (comb >> 8) | (s1 & 0xFF000000);
                 let id7: u32 = lf_checker_rt::callee_thiscall!(7, u32,
-                    rd32(child.wrapping_add(CHILD)).wrapping_add(CHILD_HANDLE_BIAS));
+                    child.wrapping_add(CHILD_HANDLE_BIAS));
                 ctx[8] = id7;
                 let esi = a5;
                 // Min-block operands; set by arms B and default.
