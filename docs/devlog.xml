@@ -9,6 +9,89 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Eight ped-task builders verified, and one stores uninitialised stack</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b516"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b516</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>A production batch of eight pedestrian-task builder functions was rewritten in Rust and all eight were verified against the original, with one genuine quirk found: a slot-registration function writes an unstaged frame word into its global table.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of eight pedestrian-task builder functions was rewritten in Rust and all eight were verified against the original, with one genuine quirk found: a slot-registration function writes an unstaged frame word into its global table.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite a batch of eight medium-sized functions from the pedestrian-tasks subsystem and prove each rewrite behaves identically to the original with the differential checker, including a deliberately wrong version per function.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All eight rewrites passed twelve hundred trials each with zero failures, bit-exact floats throughout, and every wrong version was caught.&lt;/p&gt;
+&lt;table role="table"&gt;
+&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Behaviour&lt;/th&gt;&lt;th role="columnheader"&gt;Count&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody role="rowgroup"&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Task builders sharing one validate-allocate-construct-assign shape&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;7&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Slot-registration function with trigonometry helpers&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;1&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Distinct call-sequence shapes observed passing&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;58&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Trials ending in matching faults on both sides&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;750&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The slot-registration function stores one word into its global table from a frame slot that nothing ever writes. Under a zero stack fill the original writes zero there, and the comparison confirms it. This looks like an uninitialised read in the original rather than a deliberate zero.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A drive-task builder keeps its height argument when it is above minus one hundred or when it is not-a-number, because the below-jump is taken on unordered comparisons. An early rewrite that treated not-a-number as below failed exactly those trials.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The task-assign helper takes its arguments in the order handle, task, slot. The push order reads slot first, which misled the first rewrite until the call comparison failed.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Three builders normalise angles by looping add or subtract three-sixty; infinite inputs would loop forever in the original, so they were excluded from the inputs and the exclusion is recorded per function.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The uninitialised store is reproduced as a literal zero with the reasoning recorded in the rewrite, since the original provably writes zero under a defined fill.&lt;/li&gt;
+&lt;li&gt;Pool-lookup answers were kept always live, so the fault path for a null lookup answer stays unexercised; a later fault-parity probe could close that gap for the whole family.&lt;/li&gt;
+&lt;li&gt;Neighbouring task builders can clone these contracts: the validate-allocate-construct-assign shape, the frame-pointer snapshot pattern, and the exact float-truncation emulation repeat across the subsystem.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Each function has a contract generator that asserts every call-site address and per-callee site count, a contract, a rewrite, and a verdict file in the lane scratch folder. Rebuilding the rewrite crate and running the stock checker driver over the eight contracts replays all ninety-six hundred trials plus the eight wrong versions.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Two hand-computed frame offsets were wrong by a few bytes each (hexadecimal addition done from memory), and both were caught by failing probes before anything shipped. Frame arithmetic for these contracts is now done with a script, and the generators assert the resulting site map. The first rewrite of the drive-task builder also missed the unordered-comparison behaviour above, which the not-a-number trials caught immediately.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>production batch: three task functions verified, one deferred on an unservable read</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b514"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b514</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>A production batch of four neighbouring task-system functions yielded three verifications and one deferral, plus a checker robustness finding: the guard that should make unrelocated reads fault loudly is silently absent on this machine, so one function reads ambient memory instead.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of four neighbouring task-system functions yielded three verifications and one deferral, plus a checker robustness finding: the guard that should make unrelocated reads fault loudly is silently absent on this machine, so one function reads ambient memory instead.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite four medium and large task-system functions in Rust and prove each rewrite behaves identically to the original with the version 5 checker, at least one thousand trials per function, with a deliberately wrong version per function and an honest account of what each proof does not cover.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three functions passed twelve hundred trials each with zero failures, every declared callee firing and every wrong version caught: a task-set refresh with four member loops, a task dispatcher with an indirect handler predicate and a table-walking loop, and an aim update with two scripted phases, two arctangent calls and a flag forest folded into a bitfield.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The fourth function reads one byte of writable game data through an address with no relocation entry, on two major paths. A minimal probe reaching the first read showed the original does not fault: the memory guard that should catch such reads cannot be established on this machine, so the original silently reads whatever the operating system mapped there. The value is unservable (writable data the shadow mechanism could not provide anyway) and meaningless to reproduce, so the function was deferred with the read documented.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two smaller checker behaviours cost attempts and are worth one line each in the manual: callees using the register convention compare that register by default unless explicitly skipped, and constants baked into instructions may be relocated by the test harness, in which case the rewrite must relocate them too.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Three functions ship as verified with their narrowings disclosed (uncompared vector-register inputs to the arctangent calls, one unmodelled stride word at the out-word cap, a stack check off where the original rewrites its own argument slot, allocator callees modelled as no-ops, cookie checks left native).&lt;/li&gt;
+&lt;li&gt;The fourth is deferred as needing an unavailable checker ability, with the probe kept so the next lane continues instead of starting again.&lt;/li&gt;
+&lt;li&gt;Recommended: the worker should record whether its memory guard is actually up, or refuse to run functions with unrelocated accesses when it is down. A rewrite that copies the raw read would currently match byte for byte against ambient garbage and look verified.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run the stock version 5 worker against the three shipped contracts for twelve hundred trials each; all pass with every callee firing. Run the ten-trial probe contract for the fourth function: the original completes without faulting and takes the branch for a nonzero byte, while a rewrite that refuses to mirror the raw read diverges exactly there. Inspecting the worker source shows the guard reservation ignores failure, which is the mechanism.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Two rewrite bugs came from resolving stack-relative operands at the wrong stack-pointer value (before versus after call cleanup); both were caught by failing trials within minutes. A misread instruction address on the fourth function sent the first probe at the wrong patch site; the generator now asserts every site holds a call opcode before writing the contract. Build locks from lingering short-lived processes cleared on their own; no lane processes were left running.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Naming batch 108: a caller scan beats reading, and two shared helpers are misnamed</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-108"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-108</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>One hundred fifty consecutive unnamed functions were triaged by gathering strings, imports, callees, vtables and callers into one table first: 138 named, 12 deliberately left empty. The caller scan was the strongest signal by far.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred fifty consecutive unnamed functions were triaged by gathering strings, imports, callees, vtables and callers into one table first: 138 named, 12 deliberately left empty. The caller scan was the strongest signal by far.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Name 150 consecutive unnamed game functions, working out what each group is about before naming individuals, with a confidence per name.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds three groups: a dozen ped-task virtuals, about fifty particle-effect and replay-record functions, and about ninety streaming, replay-interface and clip-editor functions.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A full scan of direct calls attributed to known function starts gave almost every function one meaningful caller family, which named the record writers and the clip-editor helpers outright.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Resolving lane-named task methods back to vtable slots confirmed the slot map: clone, task id, abort handling, ped processing and subtask creation each sit at fixed slots across dozens of classes.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Two heavily used shared helpers look like memory allocation and release from every call pattern, not the script-message and stub names they carry in the database. Both sit in the encrypted region so this needs a check after decryption.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Names follow the neighbouring families: task virtuals by slot, replay writers by caller plus record id, effect updaters by parameter strings. Functions whose distinguishing record kind left no trace were left empty rather than guessed. Next lanes should run the caller scan first and distrust names attached to encrypted-region addresses.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Load the executable through a mapped-image reader, scan the code section for direct calls into the batch, attribute each call site to the nearest known function start below it, and cross-check vtable membership with runtime type records. The lane folder keeps the scripts and the evidence table.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Raw scans of call bytes produce bogus targets from encoded constants, so only targets inside the code image were trusted. Subsystem labels on the batch were misleading for two of the three groups. One inventory size of zero turned out to be a real 34-byte function.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Two latent bugs in one batch of task functions</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b507"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b507</id>
@@ -1054,75 +1137,5 @@
     <updated>2026-10-05T00:00:00Z</updated>
     <summary>Verified A function that passes a relocated address to a callee cannot have that argument compared exactly, because the checker's run of the original sits at a different base address in every worker process while the rewrite's value stays fixed. The fix is to skip that one argument and say so, after proving everything else matches.</summary>
     <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A function that passes a relocated address to a callee cannot have that argument compared exactly, because the checker's run of the original sits at a different base address in every worker process while the rewrite's value stays fixed. The fix is to skip that one argument and say so, after proving everything else matches.&lt;/p&gt;&lt;h3&gt;What was asked&lt;/h3&gt;&lt;p&gt;Routine production work: rewrite six neighbouring task-system functions in Rust and prove each against the original with the differential checker.&lt;/p&gt;&lt;h3&gt;What was found&lt;/h3&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One function builds a table pointer from a file constant and passes it to a calibration call. The constant carries a relocation entry, so the worker patches it for wherever it placed that run's copy of the code. Two runs of the same contract, minutes apart, logged two different raw values for that argument (heap and everything else identical), which rules out nondeterminism in the function and points at the mapping base moving per worker.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Unrelocated reads are unaffected: constants and zero data read through plain absolute addresses returned identical file bytes across thousands of trials and several workers, so only relocated operands need this treatment.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The logged form of the same address can also differ between the two sides (region-relative on the original side, raw on the rewrite side), which looks like a second problem but is only display: skipping the argument removes both.&lt;/p&gt;&lt;h3&gt;What was decided or recommended&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;Skip a call argument that carries a relocated address (call_skip), and record it in the narrowed list with the reason. The skipped value in this case was still pinned down three other ways (a second call argument, a table lookup, a stored rate), so the proof lost almost nothing.&lt;/li&gt;&lt;li&gt;Do not use a bit mask to dodge it: a mask still compares values, and the values legitimately differ across runs.&lt;/li&gt;&lt;li&gt;Suspect this whenever the calls check alone fails with two different raw hex values on consecutive runs while heap, stack and return value stay green.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;How to reproduce it&lt;/h3&gt;&lt;p&gt;Take any contract whose original passes a relocated address on to a call. Run it twice and compare the logged call arguments in the two verdicts: the address argument differs while all other comparisons pass. Adding the argument to call_skip turns both runs green.&lt;/p&gt;&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;&lt;p&gt;The first attempt at this function also had a real rewrite bug (a matrix result subtracted instead of stored), which failed heap and calls together and hid the mapping issue until the rewrite was fixed. The region-relative versus raw display then sent the diagnosis toward the pointer comparison before the second run showed the values themselves moving. Both misdirections cost about ten minutes.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming model-info pools by their stamped vtables</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-80"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-80</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>A batch of one hundred and fifty consecutive functions turned out to be the model-info manager, the portal trackers and ped virtuals, and the pool families inside it were identified completely by matching three facts: the element stride, the vtable each init stamps into its elements, and the pool header passed at the init call site.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of one hundred and fifty consecutive functions turned out to be the model-info manager, the portal trackers and ped virtuals, and the pool families inside it were identified completely by matching three facts: the element stride, the vtable each init stamps into its elements, and the pool header passed at the init call site.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose descriptive names for one hundred and fifty consecutive unnamed functions, working out what the group is about first and naming each function from evidence.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into three clusters: model-info pools with name lookup and shutdown logic, portal tracker methods with room and audio queries, and ped virtuals with task helpers.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Pool headers hold a count, a used total and a base pointer. Fourteen near-identical pool inits each stamp a different class vtable, which identifies every one, including two attribute classes the batch never names directly.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Five small pool getters return auxiliary pools whose contents could not be determined; they were left unnamed with their strides and callers recorded.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Two tiny callees in the encrypted first megabyte behave exactly like operator new and delete but cannot be disassembled to confirm it.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;One hundred and twenty-five functions were named, forty-eight at high confidence and seventy-seven at medium. The next naming lane facing a pool family should check stride, stamped vtable and init-site pool together before naming anything, and should re-decode tiny functions at exact size because evidence gathered past a return belongs to a neighbour.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Read the executable through the mapped image, disassemble each batch function, resolve direct calls and string references against the merged symbol files and verified rewrites, match stamped vtables against the class structure files, and map pool headers from the setup code in the initialiser.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Two batch entries overlap: one is an alternate entry point inside the other, reached by a jump. Both were left unnamed. An external field label calling one model-info offset a float draw distance contradicts the observed increment, decrement and read behaviour, which all treat it as a reference count.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>What was really capping the lane count: 14.5 GB of kernel memory</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#kernel-pool-caps-the-lanes-2026-10-05"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#kernel-pool-caps-the-lanes-2026-10-05</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>With the lane target at 52, the supervisor stalled at about 14 lanes and logged "waiting for memory". Fourteen lanes do not fill a 48 GB laptop. The question was what held the rest.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;With the lane target at 52, the supervisor stalled at about 14 lanes and logged "waiting for memory". Fourteen lanes do not fill a 48 GB laptop. The question was what held the rest.&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;What it means&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;&lt;td&gt;Committed memory, whole system&lt;/td&gt;&lt;td&gt;57.6 GB of a 70.6 GB limit&lt;/td&gt;&lt;td&gt;The supervisor's guard keeps 13 GB of headroom, so no more lanes start.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Private memory of every process added together&lt;/td&gt;&lt;td&gt;32.3 GB&lt;/td&gt;&lt;td&gt;About 25 GB of the commitment belongs to no process.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;All 14 lanes' agent processes&lt;/td&gt;&lt;td&gt;2.2 GB&lt;/td&gt;&lt;td&gt;The lanes are not the load.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Kernel non-paged pool&lt;/td&gt;&lt;td&gt;14.5 GB&lt;/td&gt;&lt;td&gt;Memory the kernel and drivers hold that can never be paged out. It counts against RAM and commitment both. On a healthy machine it is well under 2 GB.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Time since the machine was last restarted&lt;/td&gt;&lt;td&gt;2.5 days&lt;/td&gt;&lt;td&gt;The whole project so far, with well over a thousand lanes and many thousands of short-lived processes started in that time.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Committed memory with no lane running at all (4 October, 18:14)&lt;/td&gt;&lt;td&gt;about 50 GB&lt;/td&gt;&lt;td&gt;The baseline was already high before this was looked at; the ceiling of "about 45 lanes" measured on 4 October was this, not the lanes' own need.&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;Status: the numbers above are Verified (read from the system's own counters). What is leaking is Unknown: finding the owner of pool memory needs a kernel tool that is not installed. Inferred, not shown: a driver that leaks a little for every process created would fit, because the project creates processes at a rate an ordinary desktop never does (each lane runs hundreds of builds and checker workers, and every 32-bit worker runs under emulation on this ARM64 machine). One vendor platform service holds 68,000 handles, which is unusual and may or may not be related.&lt;/p&gt;
-&lt;h3&gt;Decisions&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;The health check now reports the non-paged pool and keeps each reading in a log, so the growth rate per hour and per lane started can be measured instead of guessed.&lt;/li&gt;
-&lt;li&gt;Only restarting the machine returns this memory. That ends every running lane and is the owner's decision; it is best done at a quota stop, when nothing is running anyway.&lt;/li&gt;
-&lt;li&gt;Earlier entries that blamed lane count, wrappers or other programs for memory pressure were looking at the symptom. The runaway lane script found on 4 October was real, but it was not the whole story.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;To reproduce: read the system's memory counters for committed bytes and the non-paged pool, and compare with the sum of private memory over all processes.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Lockstep test cycles can silently skip the path they were built to hit</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s428"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s428</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>A production batch of forty small streaming functions verified thirty-nine of them, and the two hardest failures were both contracts whose cycling inputs never aligned: every trial took an early exit while the target path sat untested, and only the deliberately wrong version per function exposed it.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of forty small streaming functions verified thirty-nine of them, and the two hardest failures were both contracts whose cycling inputs never aligned: every trial took an early exit while the target path sat untested, and only the deliberately wrong version per function exposed it.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite a batch of forty small game functions in Rust and prove each rewrite identical to the original on the stock checker, with one wrong version per function that must fail.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Thirty-nine functions passed one thousand trials each with their wrong versions caught; one was deferred because its argument-dependent conditional tail jump has no checker transport.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two contracts passed all trials while testing nothing they intended, in two different ways. First, a string-parsing function's pinned string bytes only take effect on one of three rotating heap fills, and that fill's phase never coincided with the trials that reached the store path, so the store fired zero times in sixty trials. Second, a cursor-scan function's table entries cycled valid and null out of phase with the index cycle, so every trial exited before the loops. A third contract did run its loops, but a wrap-to-zero step erased the wrong version's changed cursor on every trial, making the wrong version pass until per-slot pins forced blocked and clear slots to mix.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Prefer fully explicit per-word heap contents over pins plus random fill for inputs a path depends on, so coverage cannot depend on fill phase. When two cycles must coincide, check the combined phase by hand for at least one trial before running. A wrong version that passes is always a contract defect to fix, never a weak wrong version to excuse: all three cases above were fixed in the contract and then caught their wrong versions.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run any affected contract and read the coverage block of its verdict: trials where the original wrote to the heap, per-callee fire counts, and distinct call-sequence shapes. Zero heap-write trials on a function known to store, or a callee firing far less often than designed, signals a phase mismatch.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The checker's run summary file is written next to the driver and overwrote the lane's own results file twice; later runs redirected driver output elsewhere and the lane file was regenerated from the verdict files at the end. A per-call answer sequence takes plain values, not pairs, which the contract validator rejects. Zero-argument callee macros require a trailing comma to compile.&lt;/p&gt;</content>
   </entry>
 </feed>
