@@ -46287,6 +46287,15 @@
   "lane": "r-b524"
  },
  {
+  "address": "0x0097F4E0",
+  "name": "WET_PED_IMPACT",
+  "kind": "function",
+  "file": "functions/fn_0097f4e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b524"
+ },
+ {
   "address": "0x0097F850",
   "name": "ped_task_switch_event",
   "kind": "function",
@@ -49237,6 +49246,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s422"
+ },
+ {
+  "address": "0x009BF120",
+  "name": "rot_axis_angle_between",
+  "kind": "function",
+  "file": "functions/fn_009bf120.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b532"
  },
  {
   "address": "0x009C1300",
@@ -58149,6 +58167,15 @@
   "lane": "r-s275"
  },
  {
+  "address": "0x00A71DB0",
+  "name": "query_and_select_flagged_result",
+  "kind": "function",
+  "file": "functions/fn_00a71db0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b531"
+ },
+ {
   "address": "0x00A727F0",
   "name": "has_both_state_bits",
   "kind": "function",
@@ -66157,6 +66184,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3A300",
+  "name": "ped_task_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00b3a300.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b525"
  },
  {
   "address": "0x00B3A660",
@@ -100087,6 +100123,24 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s406"
+ },
+ {
+  "address": "0x00CD0090",
+  "name": "melee_create_action",
+  "kind": "function",
+  "file": "functions/fn_00cd0090.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b527"
+ },
+ {
+  "address": "0x00CD0220",
+  "name": "melee_range_check",
+  "kind": "function",
+  "file": "functions/fn_00cd0220.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b527"
  },
  {
   "address": "0x00CD0450",
