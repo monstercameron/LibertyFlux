@@ -411,7 +411,7 @@ lf_checker_rt::export!(thiscall, rw_009A0E70(this: u32, a0: u32, a1: u32, a2: u3
         if w60 == gd(G_44E4) {
             w60 = 0;
             lf_checker_rt::callee_thiscall!(22, u32, this, f84 as u32,
-                this.wrapping_add(MIX_B), &mut w60 as *mut u32 as u32, 0xDEADBEEFu32);
+                this.wrapping_add(MIX_B), &mut w60 as *mut u32 as u32, w92);
             let mut e = w60;
             if (a4 as i32) >= 0 {
                 e = e.wrapping_add(a4);
