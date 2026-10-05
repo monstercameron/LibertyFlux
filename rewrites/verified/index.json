@@ -38241,6 +38241,15 @@
   "lane": "r-s113"
  },
  {
+  "address": "0x00935D10",
+  "name": "net_obj_update_a",
+  "kind": "function",
+  "file": "functions/fn_00935d10.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b383"
+ },
+ {
   "address": "0x009360B0",
   "name": "net_dest_reach",
   "kind": "function",
@@ -38257,6 +38266,24 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b316"
+ },
+ {
+  "address": "0x00936510",
+  "name": "net_state_poll",
+  "kind": "function",
+  "file": "functions/fn_00936510.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b383"
+ },
+ {
+  "address": "0x00936840",
+  "name": "net_msg_build_send",
+  "kind": "function",
+  "file": "functions/fn_00936840.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b383"
  },
  {
   "address": "0x00945A10",
@@ -55143,10 +55170,28 @@
   "lane": "r-s303"
  },
  {
+  "address": "0x00B739A0",
+  "name": "task_ctor_random_duration",
+  "kind": "function",
+  "file": "functions/fn_00b739a0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b384"
+ },
+ {
   "address": "0x00B73BE0",
   "name": "task_ctor_state_dispatch",
   "kind": "function",
   "file": "functions/fn_00b73be0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b384"
+ },
+ {
+  "address": "0x00B740D0",
+  "name": "HIGH_FALL",
+  "kind": "function",
+  "file": "functions/fn_00b740d0.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b384"
@@ -84334,6 +84379,15 @@
   "name": "MO_LINEAR",
   "kind": "function",
   "file": "functions/fn_00d72f30.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b382"
+ },
+ {
+  "address": "0x00D73300",
+  "name": "FRONTEND_MENU_MONTAGE_NAVIGATE_MT",
+  "kind": "function",
+  "file": "functions/fn_00d73300.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b382"
