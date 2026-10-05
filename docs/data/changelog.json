@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: what was really capping the lane count",
+    "title": "Devlog: Naming model-info pools by their stamped vtables",
     "commit": null,
+    "summary": "Findings from the nm-80 lane.",
+    "changes": [
+      "New devlog entry: Naming model-info pools by their stamped vtables.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: what was really capping the lane count",
+    "commit": "54329c7b8ce13aed4d58eedfb38d849fe77a3c74",
     "summary": "The kernel, not the lanes, holds the memory that limits how many lanes can run.",
     "changes": [
       "With the target at 52 the supervisor stalled at about 14 lanes. The system's counters show 14.5 GB in the kernel's non-paged pool after 2.5 days without a restart, against a normal figure well under 2 GB; the 14 lanes themselves use about 2 GB.",
