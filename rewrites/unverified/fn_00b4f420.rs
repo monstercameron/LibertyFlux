@@ -9,11 +9,15 @@
 /// the fetch is non-zero; otherwise 0 when `MODE_A` is clear, else the
 /// `MODE_B`-non-zero test. The gate is then ORed with flag bytes `FLAG0`
 /// and `FLAG1`; a non-zero result returns 0 at once. Otherwise the driver
-/// resolves twice through virtual slot `+0xD0` (thiscall on `this` with
-/// `this`), adapts (callee 3, thiscall on the first resolution) and probes
-/// (callee 4, thiscall on the auxiliary block at `+0x78` with kind
-/// 0x200000 and slot 1): on success the second resolution is kept and four
-/// pose floats (`POSE`) are copied to `this + 0x370`. Finally the stepper
+/// resolves through virtual slot `+0xD0` (thiscall on `this` with `this`),
+/// adapts (callee 3, thiscall on the resolution) and probes (callee 4,
+/// thiscall on the auxiliary block at `+0x78` with kind 0x200000 and slot
+/// 1): on success the same slot is invoked a second time with NO stack
+/// argument (ecx only), after which four pose floats (`POSE`) would be
+/// copied to `this + 0x370`. Against a one-word callee the second call
+/// unbalances the stack, so neither the copy nor the calls below run
+/// on this path; the stepper and finish run only when the probe fails.
+/// Finally the stepper
 /// runs (virtual slot `+0x04` on the block at `+0x350`) and control passes
 /// tail-wise to the finish hook (callee 6, thiscall on `this`), whose
 /// result is returned.
@@ -61,11 +65,16 @@ lf_checker_rt::export!(thiscall, rw_00b4f420(this: u32) -> u32 {
         lf_checker_rt::callee_thiscall!(ADAPT, u32, h);
         let ok = lf_checker_rt::callee_thiscall!(PROBE, u32, aux, PROBE_KIND, PROBE_SLOT);
         if ok != 0 {
+            // The original re-invokes the same driver slot WITHOUT pushing
+            // the argument this time (ecx only). Against the one-word
+            // callee both sides unbalance the stack here; the pose copy
+            // below is the original's own unreachable-aftermath on this
+            // path and is reproduced for fidelity.
             let vt = (this as *const u32).read_unaligned();
-            let driver: extern "thiscall" fn(u32, u32) -> u32 = core::mem::transmute(
+            let driver0: extern "thiscall" fn(u32) -> u32 = core::mem::transmute(
                 ((vt + DRIVER_SLOT) as *const u32).read_unaligned() as usize,
             );
-            driver(this, this);
+            driver0(this);
             let mut k: u32 = 0;
             while k < 4 {
                 let w = lf_checker_rt::global::<u32>(POSE + k * 4).read_unaligned();
