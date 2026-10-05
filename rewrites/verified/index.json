@@ -33597,6 +33597,42 @@
   "lane": "r-s438"
  },
  {
+  "address": "0x00883500",
+  "name": "stream_pool_alloc",
+  "kind": "function",
+  "file": "functions/fn_00883500.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s438"
+ },
+ {
+  "address": "0x00883650",
+  "name": "stream_alloc_single",
+  "kind": "function",
+  "file": "functions/fn_00883650.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s438"
+ },
+ {
+  "address": "0x008836D0",
+  "name": "stream_alloc_double",
+  "kind": "function",
+  "file": "functions/fn_008836d0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s438"
+ },
+ {
+  "address": "0x00883750",
+  "name": "stream_slot_free",
+  "kind": "function",
+  "file": "functions/fn_00883750.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s438"
+ },
+ {
   "address": "0x00883830",
   "name": "stream_pool_release",
   "kind": "function",
@@ -33682,6 +33718,15 @@
   "name": "stream_slot_notify",
   "kind": "function",
   "file": "functions/fn_008845d0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s438"
+ },
+ {
+  "address": "0x008848E0",
+  "name": "stream_mgr_create",
+  "kind": "function",
+  "file": "functions/fn_008848e0.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s438"
@@ -55962,6 +56007,15 @@
   "lane": "r-s434"
  },
  {
+  "address": "0x00ABF290",
+  "name": "stream_insert_timed_key",
+  "kind": "function",
+  "file": "functions/fn_00abf290.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s434"
+ },
+ {
   "address": "0x00ABF420",
   "name": "stream_dispatch_param_notify",
   "kind": "function",
@@ -55971,10 +56025,28 @@
   "lane": "r-s434"
  },
  {
+  "address": "0x00AC1630",
+  "name": "stream_select_bank_and_tail",
+  "kind": "function",
+  "file": "functions/fn_00ac1630.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s434"
+ },
+ {
   "address": "0x00AC2D20",
   "name": "stream_channel_reset",
   "kind": "function",
   "file": "functions/fn_00ac2d20.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s434"
+ },
+ {
+  "address": "0x00AC2DD0",
+  "name": "stream_rotate_buffers",
+  "kind": "function",
+  "file": "functions/fn_00ac2dd0.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s434"
@@ -56137,6 +56209,15 @@
   "name": "stream_publish_state",
   "kind": "function",
   "file": "functions/fn_00ac6770.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s434"
+ },
+ {
+  "address": "0x00AC6810",
+  "name": "stream_ensure_state_applied",
+  "kind": "function",
+  "file": "functions/fn_00ac6810.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s434"

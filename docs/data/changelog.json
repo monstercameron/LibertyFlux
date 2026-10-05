@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Naming a mixed batch: entity pools, restart points and three tool traps",
+    "title": "Rewrites: 9 more functions pass the checker (12524 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "9 rewrites added under rewrites/verified: 0 script native handlers and 9 other functions.",
+      "The tree now holds 12524 rewrites, 12505 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "743 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Naming a mixed batch: entity pools, restart points and three tool traps",
+    "commit": "6984b7798ba21c0a58770e996ac2403c78739b14",
     "summary": "Findings from the nm-84 lane.",
     "changes": [
       "New devlog entry: Naming a mixed batch: entity pools, restart points and three tool traps.",
