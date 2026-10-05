@@ -245,8 +245,7 @@ unsafe fn be3030_tail(task: u32, ped: u32) -> u32 {
             let _: u32 = lf_checker_rt::callee_cdecl!(14, u32, u, p, 8u32);
             return be3030_exit(task, ped);
         }
-        let slot = rd32(task.wrapping_add(0x74));
-        let _: u32 = lf_checker_rt::callee_cdecl!(15, u32, slot);
+        let _: u32 = lf_checker_rt::callee_cdecl!(15, u32, u); // u, not [task+0x74]
         wr8(task.wrapping_add(0x82), 1);
         let t2: u32 = lf_checker_rt::callee_thiscall!(11, u32, task);
         let mut frame2 = [0u32; 1];

@@ -5,14 +5,16 @@
 ///
 /// Converts the three floats at `pos` with x86 `cvttss2si` truncation
 /// (NaN and out-of-range give `i32::MIN`, not saturation) and asks
-/// resolver callee 1 with (iz, iy, ix, out P3, out P2, out P1). The callee
-/// answers success in `al` and fills seven out-words: six at P1 (two index
-/// words, three spares, one float word) and one at P3. When it fails, the
+/// resolver callee 1 with (ix, iy, iz, out P3, out P2, out P1), three
+/// distinct frame slots. The callee answers success in `al` and fills
+/// seven out-words: five at P1 (index word, three spares, float word),
+/// one at P2 (index word), one at P3 (index word). When it fails, the
 /// default frame (four words at `this + 0x10`) is copied to `out` instead.
-/// On success an index `3 * (w1 + 8 * (32 * u0 + w0))` selects three
+/// On success an index `3 * (w1 + 8 * (32 * u0 + w0))` with `w1 = *P1`,
+/// `w0 = *P2`, `u0 = *P3` selects three
 /// signed words at `this + 0xc250`, each converted to float and multiplied
 /// by the constant 1/256 (`SCALE`) in (sample, scale) order; the frame
-/// (s0, s1, s2, w5) is stored to `out` and passed to placer callee 2 with
+/// (s0, s1, s2, float) is stored to `out` and passed to placer callee 2 with
 /// `this`. The original aligns its stack frame and passes frame pointers;
 /// the rewrite uses locals, so the pointer arguments are skipped in the
 /// contract while every value they carry is compared. Returns nothing.
@@ -50,16 +52,17 @@ lf_checker_rt::export!(thiscall, rw_009ABA40(this: u32, pos: u32, out: u32) -> u
         let ix = cvtt(f32::from_bits(rd32(pos)));
         let iy = cvtt(f32::from_bits(rd32(pos.wrapping_add(4))));
         let iz = cvtt(f32::from_bits(rd32(pos.wrapping_add(8))));
-        let mut p1 = [0u32; 6];
+        let mut p1 = [0u32; 5];
+        let mut p2 = [0u32; 1];
         let mut p3 = [0u32; 1];
         let ok: u32 = lf_checker_rt::callee_stdcall!(
             RESOLVER,
             u32,
-            iz as u32,
-            iy as u32,
             ix as u32,
+            iy as u32,
+            iz as u32,
             &mut p3 as *mut u32 as u32,
-            &mut p1 as *mut u32 as u32,
+            &mut p2 as *mut u32 as u32,
             &mut p1 as *mut u32 as u32
         );
         if ok & 0xff == 0 {
@@ -69,8 +72,8 @@ lf_checker_rt::export!(thiscall, rw_009ABA40(this: u32, pos: u32, out: u32) -> u
             wr32(out.wrapping_add(12), rd32(this.wrapping_add(FALLBACK_BASE + 12)));
             return 0;
         }
-        let c = p3[0].wrapping_shl(5).wrapping_add(p1[0]);
-        let a = p1[1].wrapping_add(c.wrapping_mul(8));
+        let c = p3[0].wrapping_shl(5).wrapping_add(p2[0]);
+        let a = p1[0].wrapping_add(c.wrapping_mul(8));
         let c2 = a.wrapping_add(a.wrapping_mul(2));
         let base = this.wrapping_add(WORDS_BASE).wrapping_add(c2.wrapping_mul(2));
         let s0 = ((base) as *const i16).read_unaligned() as i32;
@@ -80,7 +83,7 @@ lf_checker_rt::export!(thiscall, rw_009ABA40(this: u32, pos: u32, out: u32) -> u
         wr32(out, mul(s0 as f32, scale).to_bits());
         wr32(out.wrapping_add(4), mul(s1 as f32, scale).to_bits());
         wr32(out.wrapping_add(8), mul(s2 as f32, scale).to_bits());
-        wr32(out.wrapping_add(12), p1[5]);
+        wr32(out.wrapping_add(12), p1[4]);
         let _: u32 = lf_checker_rt::callee_thiscall!(PLACER, u32, this, out);
         0
     }

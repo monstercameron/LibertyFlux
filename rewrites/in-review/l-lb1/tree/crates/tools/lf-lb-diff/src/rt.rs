@@ -339,7 +339,7 @@ macro_rules! export {
 #[macro_export]
 macro_rules! callee_fastcall {
     ($id:expr, $ret:ty, $ecx_arg:expr, $edx_arg:expr $(, $arg:expr)* $(,)?) => {{
-        let f: extern "fastcall" fn(u32, u32 $(, u32 )*) -> $ret =
+        let f: extern "fastcall" fn(u32, u32 $(, $crate::__ty!($arg) )*) -> $ret =
             unsafe { core::mem::transmute($crate::callee_addr($id) as usize) };
         f($ecx_arg, $edx_arg $(, $arg )*)
     }};
@@ -349,8 +349,17 @@ macro_rules! callee_fastcall {
 #[macro_export]
 macro_rules! callee_thiscall {
     ($id:expr, $ret:ty, $this_arg:expr $(, $arg:expr)* $(,)?) => {{
-        let f: extern "thiscall" fn(u32 $(, u32 )*) -> $ret =
+        let f: extern "thiscall" fn(u32 $(, $crate::__ty!($arg) )*) -> $ret =
             unsafe { core::mem::transmute($crate::callee_addr($id) as usize) };
         f($this_arg $(, $arg )*)
     }};
+}
+
+/// Every callee argument word is `u32` (mirrors `lf-checker-rt`).
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __ty {
+    ($e:expr) => {
+        u32
+    };
 }

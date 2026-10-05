@@ -203,7 +203,8 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
             }
         }
         let mut f = [0u8; 0xD8];
-        let fp = |off: usize| unsafe { f.as_mut_ptr().add(off) as u32 };
+        let fbase = unsafe { f.as_mut_ptr() as u32 };
+        let fp = |off: usize| fbase.wrapping_add(off as u32);
         let mut eax: u32 = 0;
         wr32(fp(F_COOKIE), g32(G_COOKIE));
 
@@ -243,17 +244,17 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
             }
             eax = rd32(this.wrapping_add(T_PTR8));
             if eax == 0 {
-                lf_checker_rt::callee_cdecl!(C_CKY, u32);
+                lf_checker_rt::callee_cdecl!(C_CKY, u32,);
                 return 0;
             }
             let obj = rd32(this.wrapping_add(T_OBJ));
             if rd8(obj.wrapping_add(O_B218)) == 0 && rd8(obj.wrapping_add(O_B219)) != 0 {
                 wr8(eax.wrapping_add(0xaa), 1);
-                lf_checker_rt::callee_cdecl!(C_CKY, u32);
+                lf_checker_rt::callee_cdecl!(C_CKY, u32,);
                 return eax;
             }
             wr8(eax.wrapping_add(0xaa), 0);
-            lf_checker_rt::callee_cdecl!(C_CKY, u32);
+            lf_checker_rt::callee_cdecl!(C_CKY, u32,);
             return 0;
         }
         // Main path.
@@ -602,4 +603,146 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
                     C_ATT, u32, rd32(slot20), 0u32, 0u32, 0u32);
             }
         }
-        // __APPEND2__
+        // Run the +0x20 slot, then the tail chain.
+        let xh = h2b;
+        eax = rd32(slot20);
+        if eax != 0 {
+            let g: f32 = lf_checker_rt::callee_cdecl!(C_F3B, f32, xh.to_bits());
+            wrf(fp(F_TB), g);
+            eax = rd32(slot20);
+            let mgr = resolve(eax);
+            eax = lf_checker_rt::callee_thiscall!(
+                C_IDX, u32, mgr, rdf(fp(F_TB)).to_bits());
+            if gf(F_8670) >= rdf(fp(F_TA)) {
+                eax = rd32(slot20);
+                eax = lf_checker_rt::callee_cdecl!(
+                    C_ONE, u32, rd32(eax.wrapping_add(0xa4)));
+                eax = lf_checker_rt::callee_thiscall!(
+                    C_ZERO, u32, rd32(slot20), 0u32);
+            }
+        }
+        let ob4 = rd32(this.wrapping_add(T_OBJ));
+        if rd8(ob4.wrapping_add(O_B26C)) & 4 != 0 && rd32(ob4.wrapping_add(O_PB30)) != 0 {
+            wr32(this.wrapping_add(T_W144), 0);
+        }
+        if rd8(ob4.wrapping_add(O_B218)) != 0 || rd8(ob4.wrapping_add(O_B219)) == 0 {
+            lf_checker_rt::callee_cdecl!(C_CKY, u32,);
+            return eax;
+        }
+        // Second hook site: through the sub-object when flagged, else
+        // direct; a mismatched sub-state skips to the +0x198 single-shot.
+        let mut skip_hook = false;
+        let mut got2 = 0u32;
+        let mut hconst = 0u32;
+        if rd8(ob4.wrapping_add(O_B26C)) & 4 != 0 && rd32(ob4.wrapping_add(O_PB30)) != 0 {
+            let b = if rd8(ob4.wrapping_add(O_B26C)) & 4 != 0 {
+                rd32(ob4.wrapping_add(O_PB30))
+            } else {
+                0
+            };
+            if rd32(b.wrapping_add(0x1304)) != 1 {
+                skip_hook = true;
+            } else {
+                let ob = if rd8(ob4.wrapping_add(O_B26C)) & 4 != 0 {
+                    rd32(ob4.wrapping_add(O_PB30))
+                } else {
+                    0
+                };
+                let hook: extern "thiscall" fn(u32, u32) -> u32 =
+                    core::mem::transmute(rd32(
+                        rd32(ob.wrapping_add(O_VT)).wrapping_add(VT_SLOT),
+                    ) as usize);
+                got2 = hook(ob, fp(F_IS));
+                hconst = 0x12314ccu32;
+            }
+        } else {
+            let hook: extern "thiscall" fn(u32, u32) -> u32 =
+                core::mem::transmute(rd32(
+                    rd32(ob4.wrapping_add(O_VT)).wrapping_add(VT_SLOT),
+                ) as usize);
+            got2 = hook(ob4, fp(F_IS));
+            hconst = 0x1231548u32;
+        }
+        if !skip_hook {
+            let y = rdf(got2.wrapping_add(4));
+            let mut x = rdf(got2);
+            let mut z = rdf(got2.wrapping_add(8));
+            x = mul(x, x);
+            let yy = mul(y, y);
+            z = mul(z, z);
+            x = add(x, yy);
+            x = add(x, z);
+            let n = x.sqrt();
+            let r: f32 =
+                lf_checker_rt::callee_thiscall!(C_F2C, f32, hconst, n.to_bits());
+            let tdv = rd32(fp(F_TD));
+            let r2: f32 = lf_checker_rt::callee_thiscall!(
+                C_F4C, f32, this.wrapping_add(0x17c), r.to_bits(), tdv);
+            wrf(fp(F_TD), r2);
+            if rdf(fp(F_TD)) > gf(F_8670) {
+                let slot198 = this.wrapping_add(T_PH198);
+                if rd32(this.wrapping_add(T_PH198)) == 0 {
+                    let mut fl = g32(G_FLAGS);
+                    if fl & 2 == 0 {
+                        fl |= 2;
+                        gset(G_FLAGS, fl);
+                        let d: u32 =
+                            lf_checker_rt::callee_cdecl!(C_FMT, u32, 0xe8ccc0u32, 0u32);
+                        eax = d;
+                        gset(G_D198, d);
+                    }
+                    lf_checker_rt::callee_thiscall!(C_CLR, u32, fp(F_M));
+                    wr32(fp(F_M90), rd32(this.wrapping_add(T_OBJ)).wrapping_add(O_S780));
+                    wr32(fp(F_MA4), rd32(this.wrapping_add(T_PTR8)));
+                    let nid: u32 = lf_checker_rt::callee_thiscall!(C_NEW2, u32, fp(F_M));
+                    wr32(fp(F_TA), nid);
+                    let fin: u32 = lf_checker_rt::callee_cdecl!(C_FIN, u32, nid);
+                    let made: u8 = lf_checker_rt::callee_thiscall!(
+                        C_MK198, u8, this, g32(G_D198), slot198, fp(F_M),
+                        rd32(fp(F_TA)), fin, 0u32);
+                    if made != 0 {
+                        wr32(fp(F_TR0), 0);
+                        wr32(fp(F_TR1), 0xffffffff);
+                        wr32(fp(F_TR2), 0x38);
+                        eax = lf_checker_rt::callee_cdecl!(
+                            C_RUN, u32, g32(G_D198), 0u32, 1u32, 1u32, fp(F_M),
+                            fp(F_TR0), rd32(this.wrapping_add(T_OBJ)),
+                            rd32(fp(F_TA)));
+                    } else {
+                        eax = lf_checker_rt::callee_cdecl!(C_ALT, u32, rd32(fp(F_TA)));
+                    }
+                }
+                let x0 = rdf(fp(F_TD));
+                let edi2 = rd32(slot198);
+                if edi2 == 0 {
+                    lf_checker_rt::callee_cdecl!(C_CKY, u32,);
+                    return eax;
+                }
+                let g: f32 = lf_checker_rt::callee_cdecl!(C_F3C, f32, x0.to_bits());
+                wrf(fp(F_TB), g);
+                let x0b = rdf(fp(F_TB));
+                lf_checker_rt::callee_thiscall!(C_USE, u32, edi2, x0b.to_bits());
+                lf_checker_rt::callee_thiscall!(C_CFG, u32, fp(F_M), 0x38u32);
+                let ph = rd32(slot198);
+                let y0 = rdf(fp(F_TB));
+                let ec = rd32(ph.wrapping_add(0xa4));
+                wr8(fp(F_MB1), rd8(fp(F_MB1)) | 2);
+                wrf(fp(F_M90), y0);
+                eax = lf_checker_rt::callee_cdecl!(C_EMIT, u32, ec, fp(F_M));
+                lf_checker_rt::callee_cdecl!(C_CKY, u32,);
+                return eax;
+            }
+        }
+        // Single-shot fallback for the +0x198 slot.
+        let eph = rd32(this.wrapping_add(T_PH198));
+        if eph == 0 {
+            lf_checker_rt::callee_cdecl!(C_CKY, u32,);
+            return eph;
+        }
+        eax = lf_checker_rt::callee_cdecl!(C_ONE, u32, rd32(eph.wrapping_add(0xa4)));
+        eax = lf_checker_rt::callee_thiscall!(
+            C_ZERO, u32, rd32(this.wrapping_add(T_PH198)), 0u32);
+        lf_checker_rt::callee_cdecl!(C_CKY, u32,);
+        eax
+    }
+});

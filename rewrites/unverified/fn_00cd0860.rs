@@ -108,6 +108,9 @@ lf_checker_rt::export!(thiscall, rw_00CD0860(this: u32, arg: u32) -> u32 {
         let sw: u32 = lf_checker_rt::callee_thiscall!(11, u32, this, arg);
         let mut tail = false;
         if sw == 3 {
+            // The original spills t8 over buf[1] here; when the hook
+            // answers zero, the tail's byte-write keeps its high bytes.
+            buf[1] = t8;
             if rd8(t8 + 0x0c) & 1 == 0 {
                 let hk: extern "thiscall" fn(u32, u32, u32, u32) -> u32 = unsafe {
                     core::mem::transmute(rd32(rd32(t8) + 0x14) as usize)
@@ -131,6 +134,9 @@ lf_checker_rt::export!(thiscall, rw_00CD0860(this: u32, arg: u32) -> u32 {
             if q1(l1) == 0x38b {
                 tail = true;
             } else {
+                // Same t8 spill as sw==3 (the original reloads it after
+                // the hook); dead with these inputs but kept faithful.
+                buf[1] = t8;
                 if rd8(t8 + 0x0c) & 1 == 0 {
                     let hk: extern "thiscall" fn(u32, u32, u32, u32) -> u32 =
                         unsafe {
