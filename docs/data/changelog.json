@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Four task functions verified, and a floating-point branch trap",
+    "title": "Rewrites: 30 more functions pass the checker (12137 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "30 rewrites added under rewrites/verified: 0 script native handlers and 30 other functions.",
+      "The tree now holds 12137 rewrites, 12118 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "737 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Four task functions verified, and a floating-point branch trap",
+    "commit": "b211be8c0c29ee7ab8ea7ef491011bdc5d5f3efc",
     "summary": "Findings from the r-b416 lane.",
     "changes": [
       "New devlog entry: Four task functions verified, and a floating-point branch trap.",
