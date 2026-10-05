@@ -162,7 +162,3 @@ lf_checker_rt::export!(thiscall, rw_006812e0(ecx: u32, a: u32, b: u32, q_out: u3
         1
     }
 });
-
-/// Deliberately wrong version of [`rw_006812e0`]: the final vector subtract
-/// is left out, so `v_out` keeps the helper's raw output. The heap comparison
-/// must catch it.

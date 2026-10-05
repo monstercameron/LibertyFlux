@@ -36072,6 +36072,15 @@
   "lane": "r-s435"
  },
  {
+  "address": "0x00680240",
+  "name": "euphoria_cleanup_lists (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00680240.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b540"
+ },
+ {
   "address": "0x006812E0",
   "name": "euphoria_solve_quat (proposed)",
   "kind": "function",
@@ -101520,6 +101529,15 @@
   "lane": "r-s426"
  },
  {
+  "address": "0x00C077A0",
+  "name": "stream_name_table_assign",
+  "kind": "function",
+  "file": "functions/fn_00c077a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
   "address": "0x00C07800",
   "name": "stream_set_slot_limit20",
   "kind": "function",
@@ -101529,6 +101547,15 @@
   "lane": "r-s426"
  },
  {
+  "address": "0x00C07820",
+  "name": "stream_record_find_by_key",
+  "kind": "function",
+  "file": "functions/fn_00c07820.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
   "address": "0x00C078A0",
   "name": "stream_slot_ptr_at",
   "kind": "function",
@@ -101536,6 +101563,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s426"
+ },
+ {
+  "address": "0x00C078C0",
+  "name": "stream_record_lookup",
+  "kind": "function",
+  "file": "functions/fn_00c078c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
  },
  {
   "address": "0x00C07930",
@@ -101574,6 +101610,24 @@
   "lane": "r-s475"
  },
  {
+  "address": "0x00C080A0",
+  "name": "stream_nested_key_search",
+  "kind": "function",
+  "file": "functions/fn_00c080a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C08B90",
+  "name": "stream_range_check",
+  "kind": "function",
+  "file": "functions/fn_00c08b90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
   "address": "0x00C08C10",
   "name": "stream_slot_configure",
   "kind": "function",
@@ -101596,6 +101650,15 @@
   "name": "stream_state_set_float",
   "kind": "function",
   "file": "functions/fn_00c08c60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s475"
+ },
+ {
+  "address": "0x00C093A0",
+  "name": "stream_row_append",
+  "kind": "function",
+  "file": "functions/fn_00c093a0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s475"
