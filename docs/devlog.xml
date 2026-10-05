@@ -9,6 +9,28 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming a run of task sync, camera and vehicle functions</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-89"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-89</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>One hundred and fifty consecutive functions turned out to be three clean families: per-class task network-sync virtuals whose four slots each have one fixed meaning, a camera-chain search and link family, and vehicle model setup including spawn color selection. 139 got names, 11 stayed unnamed.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred and fifty consecutive functions turned out to be three clean families: per-class task network-sync virtuals whose four slots each have one fixed meaning, a camera-chain search and link family, and vehicle model setup including spawn color selection. 139 got names, 11 stayed unnamed.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose a descriptive name with a confidence for each of 150 consecutive unnamed game functions, working out what the group is about first. No rewriting, no checker: names only, with evidence ranked from strings and imports down to observed reads and writes.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The largest family is task-info network sync: dozens of classes each override the same four virtual slots. One slot serializes the info fields into the network bit stream and chains to its parent override, one builds a task for a given ped, one builds a task from the stored info fields, and one builds a default task ignoring them. The last two were told apart inside a single class: both call the same task constructor, one with the info byte, one with constant zero. A big id-keyed factory constructs the matching info subclass per id.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The camera family walks two chains of cam nodes using one virtual slot as a type id, with countdown matching, plus attach, copy and flag helpers. One startup function builds the heap that the camera deleting destructor frees back to.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The vehicle group holds model load and unload virtuals, a flag-string parser, a matched pair that loads and releases the shared vehicle texture dictionary, and three color-combo selectors sharing one table set: sequential advance, random avoiding current, and a spawn picker that scans nearby same-model vehicles and maximizes color distance from them.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The inventory subsystems for most of this range are address-cluster artefacts; the functions belong to tasks, cameras and vehicles instead. Four inventory sizes overrun into the next function, one size-zero entry is not a function, and one real destructor between two entries has no entry at all.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Names follow the slot meanings for the task family, the chain roles for the camera family, and observed behaviour elsewhere. Trivial getters, flag helpers with unknown bit semantics, and jumps to unknown helpers were left unnamed rather than given vague names. The next lane in a task-info range can reuse the four slot meanings directly; the destructor at the gap between two listed entries needs its own entry.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Read the executable through the memory-mapped image indexed by relative address, never the raw file at a mapped address, and decode one known function end to end first: the first attempt here decoded garbage and the check caught it. Gather per-function callees resolved against the merged symbol tables, exact-start string references only, and caller lists from a text-wide direct-call scan, then read the short functions and one member per family fully. Map vtable addresses stored in destructor bodies to classes through the class-hierarchy files.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Substring string matching produced floods of false hits; only pointers to the exact start of a string were kept. Nearest-symbol call-site attribution spills across missing function starts, so large offsets lie about the caller. Several inherited names turned out to be wrong, including a shared encrypted-range stub labelled as a helicopter method and a message-send native, and a generic container free labelled as a timing detach. The base-class task-info slots live in the encrypted range, so their meanings had to be derived from the plaintext overrides instead.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>A wrong-code backend bug, caught by the checker</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s445"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s445</id>
@@ -1048,27 +1070,5 @@
 &lt;p&gt;Disassemble through the mapped executable image and decode one known function end to end before trusting the mapping. For each batch entry collect direct callees, data references, whole-image cross references, and names of enclosing caller functions from the merged symbol sets. Check runs of tiny identical functions for a shared jump table, and check data references landing just before a vtable for type records naming the class.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The coarse cluster label said input-ui and several neighbour names said input slot, which pointed the wrong way until the blip field offsets settled it. One helper address carries a script-native name in the symbol set but behaves as the delete operator on every path examined. A first scan for cross references missed most of them because it skipped the code section, where the jump table lives; scanning the whole image fixed it.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming batch 66: input, viewports, text, hud, settings</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-66"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-66</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>Named 141 of 150 consecutive functions across six areas: keyboard and pad input, the viewport manager, the styled text and brief system, hud elements and draw, and profile settings. The rest were single unexplained stores or calls into encrypted code.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Named 141 of 150 consecutive functions across six areas: keyboard and pad input, the viewport manager, the styled text and brief system, hud elements and draw, and profile settings. The rest were single unexplained stores or calls into encrypted code.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed functions, with a confidence and one sentence of evidence each, working from strings, imports, known callers and callees, and neighbouring structure layouts.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into six groups: keyboard layout translation and pad polling with rumble control; a viewport manager with per-frame update, sorting and render-phase draw emission; hud colour loading; a large styled-text system built on two brief tables and timed print slots; hud element creation and per-type draw; and a profile settings list with save-slot load and store.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two inventory entries with size zero are real, called functions: one resets every print slot, the other releases a text row's object slots. One entry starts in the middle of a jump table; the real function starts a few dozen bytes later.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One tiny float setter is genuinely a virtual-table slot of the on-foot ped movement-blend class, and the documented field at that offset is the move animation speed, so it names itself.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The brief-label resolver tries a platform-suffixed label variant before falling back to the raw label. The shared pad-effect helper fed by explosion, weather and audio paths is most likely the rumble trigger.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;79 names at high confidence, 62 at medium, 9 left empty at low. The next naming lane should distrust size-zero entries and mid-table starts, and check unnamed gap functions between batch entries, since several small helpers live there. Functions whose only evidence is a call into encrypted code should stay unnamed.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Build one evidence table per batch first: disassemble each function from the mapped image, record direct callees with looked-up names, import calls, referenced strings, raw caller counts, and data cross-references for virtual-table attribution. Read the short functions fully, probe unknown callees by entry disassembly, then name from the table.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The raw caller scan reports false callers from call-opcode bytes inside other instructions, and enclosing-function attribution misfires where an inventory size overruns into the next function. Both needed manual discounting. Several shared helpers carry wrong native-mapping labels from symbol merging, so labels were only trusted when the code shape agreed.&lt;/p&gt;</content>
   </entry>
 </feed>
