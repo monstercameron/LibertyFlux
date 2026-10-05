@@ -1,67 +1,47 @@
-// original: 0x00a8c950 pool_collect_all (proposed)
+// original: 0x00A8C950 pool_matching_cells_collect (proposed)
 
-/// Collect every indexed table row into `head`.
+/// Prepend every matching cell of every row to the list at `*head`.
 ///
-/// `this` is the pool and `head` points at the list head word. The table
-/// callee reports the row count (0 or 2 in the proof): each row and
-/// sub-slot runs the cell callee, and non-null cells resolve to nodes
-/// pushed onto `head` (node takes the cell, links the old head).
-/// Returns the last callee answer. No enable gate: the count alone
-/// decides.
+/// The count helper (with 0) gives the row count; non-positive counts do
+/// nothing. For each row and each of four columns the cell helper runs;
+/// non-null cells are wrapped by the allocator (whose object is the global
+/// pointer) and prepended: the wrapper's first word is the cell, its second
+/// the previous head. A null wrapper faults storing the link.
 ///
-/// Original: 0x00A8C950 (thiscall, one stack word).
-lf_checker_rt::export!(thiscall, rw_00a8c950(this: u32, head: u32) -> u32 {
+/// Original: thiscall, one stack word (list-head pointer), no return
+/// value. Three callees: count (thiscall one arg), cell (thiscall three
+/// args), allocator (thiscall no args).
+lf_checker_rt::export!(thiscall, rw_00A8C950(this: u32, head: u32) -> u32 {
     unsafe {
-        const CALLEE_RESOLVE: u32 = 2;
-        const CALLEE_ROWS: u32 = 3;
-        const CALLEE_CELL: u32 = 4;
-        const RESOLVER: u32 = 0x12b4164;
-        const NODE_LINK: u32 = 4;
-        const SUB_SLOTS: u32 = 4;
-        let rows = lf_checker_rt::callee_thiscall!(
-            CALLEE_ROWS,
-            u32,
-            this,
-            0
-        );
-        let mut last = rows;
-        if (rows as i32) > 0 {
-            let mut row = 0u32;
-            while (row as i32) < (rows as i32) {
-                let mut sub = 0u32;
-                while sub < SUB_SLOTS {
-                    let cell = lf_checker_rt::callee_thiscall!(
-                        CALLEE_CELL,
-                        u32,
-                        this,
-                        0,
-                        row,
-                        sub
-                    );
-                    last = cell;
-                    if cell != 0 {
-                        let resolver = lf_checker_rt::global::<u32>(RESOLVER)
-                            .read_unaligned();
-                        let node = lf_checker_rt::callee_thiscall!(
-                            CALLEE_RESOLVE,
-                            u32,
-                            resolver
-                        );
-                        if node != 0 {
-                            (node as *mut u32).write_unaligned(cell);
-                        }
-                        let old =
-                            (head as *const u32).read_unaligned();
-                        ((node + NODE_LINK) as *mut u32)
-                            .write_unaligned(old);
-                        (head as *mut u32).write_unaligned(node);
-                        last = node;
-                    }
-                    sub += 1;
-                }
-                row += 1;
-            }
+        const ALLOC_GLOBAL: u32 = 0x12b4164;
+        const COUNT_HELPER: u32 = 1;
+        const CELL_HELPER: u32 = 2;
+        const ALLOC: u32 = 3;
+        let n: u32 = lf_checker_rt::callee_thiscall!(COUNT_HELPER, u32, this, 0);
+        if (n as i32) <= 0 {
+            return 0;
         }
-        last
+        let mut row: u32 = 0;
+        while (row as i32) < n as i32 {
+            let mut col: u32 = 0;
+            while col < 4 {
+                let cell: u32 =
+                    lf_checker_rt::callee_thiscall!(CELL_HELPER, u32, this, 0, row, col);
+                if cell != 0 {
+                    let scope = (lf_checker_rt::global::<u32>(ALLOC_GLOBAL) as *const u32)
+                        .read_unaligned();
+                    let wrap: u32 = lf_checker_rt::callee_thiscall!(ALLOC, u32, scope);
+                    if wrap != 0 {
+                        (wrap as *mut u32).write_unaligned(cell);
+                    }
+                    let prev = (head as *const u32).read_unaligned();
+                    ((wrap + 4) as *mut u32).write_unaligned(prev);
+                    (head as *mut u32).write_unaligned(wrap);
+                }
+                col = col.wrapping_add(1);
+            }
+            row = row.wrapping_add(1);
+        }
+        0
     }
 });

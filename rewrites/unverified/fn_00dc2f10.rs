@@ -255,10 +255,10 @@ lf_checker_rt::export!(thiscall, rw_00dc2f10(this: u32, arg: u32) -> u32 {
                                     if o1 == 0 {
                                         cl = flag_b;
                                     } else {
-                                        let w3c = add(w3, one);
-                                        let d2a = [w0, w1, w3c];
+                                        let w2c = add(w2, one);
+                                        let d2a = [w0, w1, w2c];
                                         let z = [0u32; 4];
-                                        let q1: u32 = lf_checker_rt::callee_thiscall!(C_SOLV_A, u32, o1, FIVE.to_bits(), z.as_ptr() as u32, d2a.as_ptr() as u32);
+                                        let q1: u32 = lf_checker_rt::callee_thiscall!(C_SOLV_A, u32, o1, d2a.as_ptr() as u32, z.as_ptr() as u32, FIVE.to_bits());
                                         if q1 == SOLV_FAIL {
                                             cl = flag_b;
                                         } else {
@@ -274,19 +274,19 @@ lf_checker_rt::export!(thiscall, rw_00dc2f10(this: u32, arg: u32) -> u32 {
                                                     let v2c = add(v2, one);
                                                     let d2b = [v0, v1, v2c];
                                                     let z = [0u32; 4];
-                                                    let q2: u32 = lf_checker_rt::callee_thiscall!(C_SOLV_B, u32, o2, FIVE.to_bits(), z.as_ptr() as u32, d2b.as_ptr() as u32);
+                                                    let q2: u32 = lf_checker_rt::callee_thiscall!(C_SOLV_B, u32, o2, d2b.as_ptr() as u32, z.as_ptr() as u32, FIVE.to_bits());
                                                     if q2 == SOLV_FAIL {
                                                         cl = flag_b;
                                                     } else {
                                                         let p2 = rd32(o2.wrapping_add(0x6c)).wrapping_add(q2.wrapping_add(q2 << 2) << 3);
                                                         lf_checker_rt::callee_thiscall!(C_PREP, u32, this);
-                                                        let t: u32 = lf_checker_rt::callee_thiscall!(C_TEST, u32, this, 0u32, p1, p2, sv.as_ptr() as u32, sw.as_ptr() as u32);
+                                                        let t: u32 = lf_checker_rt::callee_thiscall!(C_TEST, u32, this, sw.as_ptr() as u32, sv.as_ptr() as u32, p2, p1, 0u32);
                                                         flag_b = t as u8;
                                                         if flag_b == 0 {
                                                             cl = 0;
                                                         } else {
                                                             let bit = (rd32(arg.wrapping_add(OFF_FLAGS)) >> 9) & 1;
-                                                            let v: u32 = lf_checker_rt::callee_thiscall!(C_VERIFY, u32, this, bit, sv.as_ptr() as u32, sw.as_ptr() as u32);
+                                                            let v: u32 = lf_checker_rt::callee_thiscall!(C_VERIFY, u32, this, sw.as_ptr() as u32, sv.as_ptr() as u32, bit);
                                                             flag_b = v as u8;
                                                             if flag_b == 0 {
                                                                 cl = 0;
