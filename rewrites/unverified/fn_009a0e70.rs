@@ -27,11 +27,14 @@
 /// the voice slots; and a tail storing key answers and setting the done flag.
 ///
 /// The live-handle and gate answers are tested as 8-bit values (only `al`
-/// matters). The mode answer arrives packed with a flag byte in one stubbed
-/// helper's odd-addressed out word; the rewrite unpacks it the same way.
-/// Several stack slots are read without being written on some paths (a
-/// reserved helper argument, padding bytes around two flag bytes); the
-/// checker defines unwritten stack as zero and this rewrite uses 0 there.
+/// matters); the slot-lookup answer is tested as a SIGNED word (negative
+/// fails before the result word is even stored). The mode answer arrives
+/// packed with a flag byte in one stubbed helper's odd-addressed out word;
+/// the rewrite unpacks it the same way. The entry answers are reused as
+/// later call arguments (mode answer to the voice updates, slot answers to
+/// the tail updates). One stack slot is read without being written (padding
+/// bytes around the flag byte passed to the level resolver); the checker
+/// defines unwritten stack as zero and this rewrite uses 0 there.
 ///
 /// Original: 0x009A0E70 (thiscall, eight stack words; true size 2233 bytes,
 // the inventory size stops 8 bytes into the epilogue).

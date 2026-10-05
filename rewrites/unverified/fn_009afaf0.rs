@@ -293,17 +293,17 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
             let mut edi = 0u32;
             while (edi as i32) < 2 {
                 let f = f128[edi as usize];
-                let b0: f32 = lf_checker_rt::callee_thiscall!(11, f32, snap_eax, f.to_bits());
-                let b1: f32 = lf_checker_rt::callee_thiscall!(11, f32, ptr_b.wrapping_sub(0x4B0), f.to_bits());
-                let b2: f32 = lf_checker_rt::callee_thiscall!(11, f32, ptr_a.wrapping_sub(0x4B0), f.to_bits());
+                let b0: f32 = lf_checker_rt::callee_thiscall!(22, f32, snap_eax, f.to_bits());
+                let b1: f32 = lf_checker_rt::callee_thiscall!(23, f32, ptr_b.wrapping_sub(0x4B0), f.to_bits());
+                let b2: f32 = lf_checker_rt::callee_thiscall!(24, f32, ptr_a.wrapping_sub(0x4B0), f.to_bits());
                 let acc = add(mul(add(mul(b0, w3), mul(b1, w4)), w), mul(b2, o3));
                 esi = esi.wrapping_add(4);
                 inner_out[esi.wrapping_sub(4).wrapping_div(4) as usize] = acc;
                 edi = edi.wrapping_add(1);
             }
-            let c0: f32 = lf_checker_rt::callee_thiscall!(11, f32, ptr_c, o1.to_bits());
-            let c1: f32 = lf_checker_rt::callee_thiscall!(11, f32, ptr_b, o1.to_bits());
-            let c2: f32 = lf_checker_rt::callee_thiscall!(11, f32, ptr_a, o1.to_bits());
+            let c0: f32 = lf_checker_rt::callee_thiscall!(25, f32, ptr_c, o1.to_bits());
+            let c1: f32 = lf_checker_rt::callee_thiscall!(26, f32, ptr_b, o1.to_bits());
+            let c2: f32 = lf_checker_rt::callee_thiscall!(27, f32, ptr_a, o1.to_bits());
             outer_out[oi as usize] = add(mul(add(mul(c0, w3), mul(c1, w4)), w), mul(c2, o3));
             oi += 1;
             ptr_c = ptr_c.wrapping_add(0x28);
