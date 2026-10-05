@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Production batch: four animation functions verified, one truncated inventory entry, one rotation quirk",
+    "title": "Rewrites: 8 more functions pass the checker (15049 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "8 rewrites added under rewrites/verified: 0 script native handlers and 8 other functions.",
+      "The tree now holds 15049 rewrites, 15030 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 688 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "19 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Production batch: four animation functions verified, one truncated inventory entry, one rotation quirk",
+    "commit": "b561e9f92584b64c393ceb547fec2faf66b8721e",
     "summary": "Findings from the r-b542 lane.",
     "changes": [
       "New devlog entry: Production batch: four animation functions verified, one truncated inventory entry, one rotation quirk.",

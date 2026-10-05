@@ -36846,6 +36846,15 @@
   "lane": "r-s83"
  },
  {
+  "address": "0x00699030",
+  "name": "rage::crAnimChannelDeltaFloat::vf14",
+  "kind": "function",
+  "file": "functions/fn_00699030.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b542"
+ },
+ {
   "address": "0x006996C0",
   "name": "rage::crAnimChannelDeltaFloat::vf19",
   "kind": "function",
@@ -36898,6 +36907,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-10"
+ },
+ {
+  "address": "0x00699A20",
+  "name": "rage::crAnimChannelQuantizeFloat::vf4",
+  "kind": "function",
+  "file": "functions/fn_00699a20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b542"
  },
  {
   "address": "0x00699BB0",
@@ -66240,6 +66258,15 @@
   "lane": "r-s445"
  },
  {
+  "address": "0x00A94090",
+  "name": "stream_clear_flag_bits_all",
+  "kind": "function",
+  "file": "functions/fn_00a94090.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s477"
+ },
+ {
   "address": "0x00A94180",
   "name": "stream_resolve_entry",
   "kind": "function",
@@ -66427,6 +66454,42 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s445"
+ },
+ {
+  "address": "0x00A95290",
+  "name": "stream_unlink_slot_pair",
+  "kind": "function",
+  "file": "functions/fn_00a95290.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s477"
+ },
+ {
+  "address": "0x00A952D0",
+  "name": "stream_release_entry_cost_a",
+  "kind": "function",
+  "file": "functions/fn_00a952d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s477"
+ },
+ {
+  "address": "0x00A95330",
+  "name": "stream_release_entry_cost_b",
+  "kind": "function",
+  "file": "functions/fn_00a95330.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s477"
+ },
+ {
+  "address": "0x00A95750",
+  "name": "stream_slot_set_packed_fields",
+  "kind": "function",
+  "file": "functions/fn_00a95750.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s477"
  },
  {
   "address": "0x00A95A80",
@@ -68416,6 +68479,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD1270",
+  "name": "audio_init_gated (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00ad1270.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b545"
  },
  {
   "address": "0x00AD18D0",
