@@ -1,6 +1,6 @@
 // original: 0x00874190 crmt_pair_link_init
 
-/// Link two freshly allocated blocks: stash `a0`/`a1`/`a2` at +0x14/+0x18/+0x1c; allocate a 0x28-byte node, stamp vtable 0xfe8584 with a one-count and a null first slot, into `[this+0x10]` (null when allocation failed); allocate a 0xa0-byte record, initialise it through 0x877760, into `[this+0xc]`; then wire the record at +0x18/+0x1c/+0x20/+0x14 from the stashed words and the node (the +0x18/+0x20 links only when their word is nonzero). Returns the node.
+/// Link two freshly allocated blocks: stash `a0`/`a1`/`a2` at +0x14/+0x18/+0x1c; allocate a 0x28-byte node, stamp vtable 0xfe8584 with a one-count and a null first slot, into `[this+0x10]` (null when allocation failed); allocate a 0xa0-byte record, initialise it through 0x877760 (which returns the block, so the stub preserves entry eax), into `[this+0xc]`; then wire the record at +0x18/+0x1c/+0x20/+0x14 from the stashed words and the node (the +0x18/+0x20 links only when their word is nonzero). Returns the node.
 ///
 /// Original: 0x00874190 (thiscall, three stack words).
 lf_checker_rt::export!(thiscall, rw_00874190(this: u32, a0: u32, a1: u32, a2: u32) -> u32 {
@@ -31,8 +31,7 @@ lf_checker_rt::export!(thiscall, rw_00874190(this: u32, a0: u32, a1: u32, a2: u3
         ((this + 0x10) as *mut u32).write_unaligned(blk1);
         let b2 = alloc(manager, 0xa0, 0x10, 0);
         let blk2 = if b2 != 0 {
-            let _: u32 = lf_checker_rt::callee_thiscall!(INIT, u32, b2);
-            b2
+            lf_checker_rt::callee_thiscall!(INIT, u32, b2)
         } else { 0 };
         ((this + 0xc) as *mut u32).write_unaligned(blk2);
         let c0 = ((this + 0x14) as *const u32).read_unaligned();

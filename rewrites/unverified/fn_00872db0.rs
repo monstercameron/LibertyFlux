@@ -1,9 +1,9 @@
 // original: 0x00872DB0 crmt_link_or_notify
 
-/// Attach `arg0` to `this`: walk the +0x10 chain from `[this+0x1c]` for `arg0` (position 0 when missing or empty); when `arg0` is owned by `this`, bump its word refcount at +4, run the 0x8726d0 notification, run its slot-+4 hook unless `arg2`'s low byte is clear, drop the refcount and when it hits zero tear down through 0x874890 or the slot-+0 hook with argument 1; always finish through the 0x872e40 link with `(pos, arg2)`. Returns the link's answer.
+/// Attach `arg0` to `this`: walk the +0x10 chain from `[this+0x1c]` for `arg0` (position 0 when missing or empty); when `arg0` is owned by `this`, bump its word refcount at +4, run the 0x8726d0 notification, run its slot-+4 hook unless `arg2`'s low byte is clear, drop the refcount and when it hits zero tear down through 0x874890 or the slot-+0 hook with argument 1; always finish through the 0x872e40 link with `(pos, arg1)`. Returns the link's answer.
 ///
-/// Original: 0x00872DB0 (thiscall, three stack words (the middle one ignored)).
-lf_checker_rt::export!(thiscall, rw_00872db0(this: u32, arg0: u32, _a1: u32, arg2: u32) -> u32 {
+/// Original: 0x00872DB0 (thiscall, three stack words).
+lf_checker_rt::export!(thiscall, rw_00872db0(this: u32, arg0: u32, arg1: u32, arg2: u32) -> u32 {
     const NOTIFY: u32 = 1;
     const TEARDOWN: u32 = 2;
     const LINK: u32 = 3;
@@ -48,6 +48,6 @@ lf_checker_rt::export!(thiscall, rw_00872db0(this: u32, arg0: u32, _a1: u32, arg
                 }
             }
         }
-        lf_checker_rt::callee_thiscall!(LINK, u32, this, pos, arg2)
+        lf_checker_rt::callee_thiscall!(LINK, u32, this, pos, arg1)
     }
 });

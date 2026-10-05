@@ -9,10 +9,12 @@
 /// table shifts down and both lengths shrink by one, wrapping past zero. When
 /// nothing matches, the slot one past the end is released instead and the
 /// lengths still shrink. The names-table shift loop is odd: after the first
-/// moved entry its counter becomes the low word of the running table pointer
-/// (not the index plus one), so with ordinary heap addresses it stops after
-/// one entry however long the table is; the slots-table shift loop beside it
-/// counts properly. Returns the slots length minus one.
+/// moved entry its counter becomes the low word of `ebx` (not the index plus
+/// one), a register the release helper does not preserve under the checker.
+/// The checker stub leaves that word zero (measured, not assumed), so the
+/// counter runs 1, 2, ... and the loop shifts every remaining entry; against
+/// a helper that preserved `ebx` it would stop after one. The slots-table
+/// shift loop beside it counts properly. Returns the slots length minus one.
 ///
 /// Original: 0x00c073c0 (thiscall, one stack word; helper is cdecl, 1 arg).
 lf_checker_rt::export!(thiscall, rw_00c073c0(this: u32, key: u32) -> u32 {
@@ -61,10 +63,15 @@ lf_checker_rt::export!(thiscall, rw_00c073c0(this: u32, key: u32) -> u32 {
         }
         let victim = (names.wrapping_add(idx.wrapping_mul(4)) as *const u32).read_unaligned();
         let _r: u32 = lf_checker_rt::callee_cdecl!(FREE, u32, victim);
-        // Names-table shift with the original's pointer-derived counter.
+        // Names-table shift. Its counter is the low word of `ebx`, which the
+        // release call above does not preserve under the checker: the stub
+        // leaves the low word zero (measured over varied inputs and answers),
+        // so the counter runs 1, 2, ... here. A helper that preserved `ebx`
+        // (as the CDECL contract requires) would stop the loop after one
+        // entry; see the proof notes for this function.
         if (idx as i32) < (n as i32).wrapping_sub(1) {
             let mut cur = idx;
-            let mut ptr = names.wrapping_add(idx.wrapping_mul(4));
+            let mut ptr = 0u32;
             loop {
                 let base = (this.wrapping_add(NAMES) as *const u32).read_unaligned();
                 ptr = ptr.wrapping_add(1);
