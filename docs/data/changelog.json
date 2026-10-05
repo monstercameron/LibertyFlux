@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Production lane: the worker relocates absolute immediates, and data reads work without the shadow",
+    "title": "Rewrites: 47 more functions pass the checker (11592 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "47 rewrites added under rewrites/verified: 0 script native handlers and 47 other functions.",
+      "The tree now holds 11592 rewrites, 11573 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "661 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Production lane: the worker relocates absolute immediates, and data reads work without the shadow",
+    "commit": "c49b0b6f3a2528b45a62ec0e569ade65a9e42d33",
     "summary": "Findings from the r-b390 lane.",
     "changes": [
       "New devlog entry: Production lane: the worker relocates absolute immediates, and data reads work without the shadow.",
