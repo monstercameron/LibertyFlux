@@ -31,6 +31,7 @@
 #![warn(missing_docs)]
 
 pub mod desc;
+pub mod probe;
 pub mod registry;
 pub mod tables;
 

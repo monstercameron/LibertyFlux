@@ -437,8 +437,10 @@ unsafe fn ca7ca0_leg3fe(this: u32, edi: u32) -> u32 {
         const MOOD: u32 = 0x370;
         let hped = rd32(this.wrapping_add(H_PED));
         if (hped.wrapping_add(PED_READY) as *const u8).read() & READY_BIT == 0 {
-            // eax still holds the dispatch residue kind-0x39F-6-7 = 0x52.
-            return 0x52;
+            // The original returns its incoming eax here (no write on
+            // this route): unreplicable, and the contract never clears
+            // this bit on this leg.
+            return 0;
         }
         let link = rd32(hped.wrapping_add(PED_LINK));
         if link == 0 {
@@ -486,8 +488,9 @@ unsafe fn ca7ca0_leg3fe(this: u32, edi: u32) -> u32 {
         let dist = add(add(mul(dy, dy), mul(dx, dx)), mul(dz, dz)).sqrt();
         if !(radius > dist) {
             wr32(this.wrapping_add(0x0c), 0);
-            // eax still holds the double call's low word, as the stub left it.
-            return d.to_bits() as u32;
+            // Both max-paths converge on reloading the subject position
+            // into eax just above, so this exit returns that pointer.
+            return ep;
         }
         let mood = (hped.wrapping_add(MOOD) as *const u8).read() as u32;
         let fac = ca7ca0_factory();

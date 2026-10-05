@@ -230,3 +230,19 @@ fn two_table_slot_needs_both_tables() {
     let mut s = Store::new(&[50], 1);
     let _ = reverse_lookup(&mut s, &d, 0);
 }
+
+#[test]
+fn query_tag_edges() {
+    use lf_leaderboard::probe::BoardObject;
+    use lf_leaderboard::probe::query_tag;
+    use lf_leaderboard::Tag;
+
+    let obj = BoardObject {
+        key: 0x1234,
+        tag: Tag::new(0x00FD_9ADC),
+    };
+    assert_eq!(query_tag(&obj, 0x1234), Some(Tag::new(0x00FD_9ADC)));
+    assert_eq!(query_tag(&obj, 0x1235), None);
+    assert_eq!(query_tag(&obj, 0), None);
+    assert_eq!(query_tag(&obj, 0xFFFF_FFFF), None);
+}

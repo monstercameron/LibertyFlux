@@ -151,6 +151,43 @@ pub fn class_hook(slot: u32, args: &[u32]) -> u32 {
         .map_or(0, |f| f(args.first().copied().unwrap_or(0)))
 }
 
+/// Marker slot for the key-stub calls: a vtable dispatch through the
+/// fabricated object, not a numbered callee slot.
+pub const VTABLE_SLOT: u32 = 0xFFFF_FFFE;
+
+/// The key stub's scripted answer (probe-slot cases only).
+#[cfg(target_arch = "x86")]
+static KEY: Mutex<u32> = Mutex::new(0);
+
+/// Scripts the key stub's answer.
+#[cfg(target_arch = "x86")]
+pub fn set_key(key: u32) {
+    *lock(&KEY) = key;
+}
+
+/// Sets the relocated base the `relocated` answers derive from.
+#[cfg(target_arch = "x86")]
+pub fn set_xbase(xbase: u32) {
+    unsafe {
+        core::ptr::addr_of_mut!(CHECKER_XBASE).write(xbase);
+    }
+}
+
+/// The key stub planted in fabricated vtables: logs the dispatch and
+/// answers from the script.
+#[cfg(target_arch = "x86")]
+pub extern "thiscall" fn key_stub(this: u32) -> u32 {
+    record(VTABLE_SLOT, &[this]);
+    *lock(&KEY)
+}
+
+/// Address of [`key_stub`] for fabricated vtables.
+#[cfg(target_arch = "x86")]
+#[must_use]
+pub fn key_stub_addr() -> u32 {
+    key_stub as usize as u32
+}
+
 /// Stub table (256 addresses) and its pointer, mirroring `lf-checker-rt`.
 #[cfg(target_arch = "x86")]
 static mut TABLE: [u32; 256] = [0; 256];

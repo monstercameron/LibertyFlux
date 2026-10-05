@@ -299,8 +299,9 @@ lf_checker_rt::export!(thiscall, rw_0097FCF0(this: u32) -> u32 {
         eax = lf_checker_rt::callee_thiscall!(C_RST, u32, this);
 
         // Gate slot: indexed descriptor or skip to the sub-object check.
+        let arr_base = lf_checker_rt::relocated(G_ARR);
         let elem = rd32(
-            g32(G_ARR).wrapping_add(rd32(this.wrapping_add(T_IDX)).wrapping_mul(4)),
+            arr_base.wrapping_add(rd32(this.wrapping_add(T_IDX)).wrapping_mul(4)),
         );
         wr32(fp(F_TB), elem);
         if elem != 0 {

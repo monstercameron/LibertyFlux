@@ -30,6 +30,18 @@ mod x86 {
         pub call: fn(u32, u32) -> u32,
     }
 
+    /// One verified probe rewrite under test.
+    pub struct Case2 {
+        /// Rewrite file stem, for failure messages.
+        pub file: &'static str,
+        /// Tag file VA (relocated by most rewrites, hardcoded by six).
+        pub tag: u32,
+        /// 1 when the rewrite stores the tag literally.
+        pub hardcoded: u32,
+        /// The rewrite as a plain function.
+        pub call: fn(u32, u32, u32) -> u32,
+    }
+
     include!("support/diff_gen.rs");
 
     /// Small deterministic generator.
@@ -602,6 +614,112 @@ mod x86 {
                 case.file
             );
         }
+    }
+
+    /// Runs the probe slot over all its cases.
+    ///
+    /// The fabricated object lives in the image: `obj[0]` holds the vtable
+    /// address, `vt[1]` the key stub. The out word is preset to a sentinel
+    /// to prove the no-store paths store nothing.
+    fn run_vf2(cases: &[Case2]) {
+        use lf_leaderboard::probe::BoardObject;
+        use lf_leaderboard::probe::query_tag;
+        use lf_leaderboard::Tag;
+
+        const SENTINEL: u32 = 0xA5A5_A5A5;
+        const EXPECTEDS: [u32; 4] = [0, 1, 0x1234_5678, 0xFFFF_FFFF];
+
+        let _session = rt::session();
+        let mut image = Image::new();
+        let obj = image.addr(0);
+        let vt = image.addr(8);
+        let out_addr = image.addr(16);
+        image.words[0] = vt;
+        image.words[8] = 0xEEEE_EEEE;
+        image.words[9] = rt::key_stub_addr();
+        for case in cases {
+            // Relocated-tag rewrites run under two mappings; hardcoded
+            // ones only under identity (the mapping they were verified
+            // under: their store is mapping-fragile by construction).
+            let xbases: &[u32] = if case.hardcoded == 1 {
+                &[0x0040_0000]
+            } else {
+                &[0, 0x0040_0000]
+            };
+            let mut distinguished = false;
+            for &xbase in xbases {
+                rt::set_xbase(xbase);
+                for &expected in &EXPECTEDS {
+                    for key in [
+                        expected,
+                        expected.wrapping_add(1),
+                        expected.wrapping_sub(1),
+                        0,
+                        0xFFFF_FFFF,
+                        0xDEAD_BEEF,
+                    ] {
+                        for &null_out in &[false, true] {
+                            image.words[16] = SENTINEL;
+                            rt::set_key(key);
+                            let out = if null_out { 0 } else { out_addr };
+                            let (r0, c0) =
+                                rt::capture(|| (case.call)(obj, out, expected));
+                            // The key slot runs exactly once, on the object,
+                            // on every path (the rewrite calls before it
+                            // tests anything).
+                            assert_eq!(
+                                c0,
+                                vec![Call {
+                                    slot: rt::VTABLE_SLOT,
+                                    args: vec![obj],
+                                }],
+                                "{} key dispatch",
+                                case.file
+                            );
+                            let board_obj = BoardObject {
+                                key,
+                                tag: Tag::new(case.tag),
+                            };
+                            let lift = query_tag(&board_obj, expected);
+                            let stored = lift.is_some() && out != 0;
+                            assert_eq!(
+                                r0,
+                                if stored { out } else { 0 },
+                                "{} return xbase={xbase:#x} key={key:#x} expected={expected:#x} null_out={null_out}",
+                                case.file
+                            );
+                            assert_eq!(
+                                image.words[16],
+                                if stored {
+                                    rt::relocated(case.tag)
+                                } else {
+                                    SENTINEL
+                                },
+                                "{} stored word xbase={xbase:#x} key={key:#x} expected={expected:#x} null_out={null_out}",
+                                case.file
+                            );
+                            // Deliberately wrong lift: inverted match.
+                            let wrong = if board_obj.key == expected {
+                                None
+                            } else {
+                                Some(board_obj.tag)
+                            };
+                            distinguished |= wrong.is_some() != lift.is_some();
+                        }
+                    }
+                }
+            }
+            assert!(
+                distinguished,
+                "wrong lift never caught for {} (contract blind?)",
+                case.file
+            );
+        }
+    }
+
+    #[test]
+    fn slot_vf2() {
+        run_vf2(CASES_VF2);
     }
 
     #[test]

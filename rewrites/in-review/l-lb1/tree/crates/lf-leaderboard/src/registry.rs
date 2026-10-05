@@ -84,10 +84,13 @@ pub const SLOTS: &[SlotRecord] = &[
     },
     SlotRecord {
         slot: "vf2",
-        lifted: "(designed, not proven)",
-        members: 388,
-        proven: false,
-        narrowings: &["not lifted yet: probe through the object's own key slot plus a per-board tag word"],
+        lifted: "probe::query_tag",
+        members: 412,
+        proven: true,
+        narrowings: &[
+            "result narrowed from the out-address to Option<Tag>; the 32-bit return-address shape and the no-store cases are pinned by the test",
+            "six rewrites hardcode the tag instead of relocating it (checker v4 legacy): proven under identity mapping only",
+        ],
     },
     SlotRecord {
         slot: "vf14",
