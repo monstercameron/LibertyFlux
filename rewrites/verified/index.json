@@ -55917,10 +55917,37 @@
   "lane": "r-s141"
  },
  {
+  "address": "0x00A90090",
+  "name": "stream_vector_publish",
+  "kind": "function",
+  "file": "functions/fn_00a90090.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s439"
+ },
+ {
+  "address": "0x00A90390",
+  "name": "stream_detach_lookup",
+  "kind": "function",
+  "file": "functions/fn_00a90390.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s439"
+ },
+ {
   "address": "0x00A90510",
   "name": "stream_table_clear_value",
   "kind": "function",
   "file": "functions/fn_00a90510.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s439"
+ },
+ {
+  "address": "0x00A90550",
+  "name": "stream_dispatch_rows_slots",
+  "kind": "function",
+  "file": "functions/fn_00a90550.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s439"
@@ -55980,6 +56007,15 @@
   "lane": "r-s439"
  },
  {
+  "address": "0x00A91B70",
+  "name": "stream_record_make",
+  "kind": "function",
+  "file": "functions/fn_00a91b70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s439"
+ },
+ {
   "address": "0x00A91C40",
   "name": "stream_slot_flag",
   "kind": "function",
@@ -56029,6 +56065,24 @@
   "name": "stream_slot_select",
   "kind": "function",
   "file": "functions/fn_00a92ec0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s439"
+ },
+ {
+  "address": "0x00A931C0",
+  "name": "stream_slot_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00a931c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s439"
+ },
+ {
+  "address": "0x00A935C0",
+  "name": "stream_check_bit_set",
+  "kind": "function",
+  "file": "functions/fn_00a935c0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s439"
@@ -58671,6 +58725,33 @@
   "lane": "r-s440"
  },
  {
+  "address": "0x00AED1B0",
+  "name": "kv_heapify_pass",
+  "kind": "function",
+  "file": "functions/fn_00aed1b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AED220",
+  "name": "kv_range_sort",
+  "kind": "function",
+  "file": "functions/fn_00aed220.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AED300",
+  "name": "kv_reinsert_range",
+  "kind": "function",
+  "file": "functions/fn_00aed300.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
   "address": "0x00AED330",
   "name": "kv_insert_step",
   "kind": "function",
@@ -58689,6 +58770,42 @@
   "lane": "r-s440"
  },
  {
+  "address": "0x00AED3B0",
+  "name": "kv_sort_forward",
+  "kind": "function",
+  "file": "functions/fn_00aed3b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AED3D0",
+  "name": "kv_sort_with_ctx",
+  "kind": "function",
+  "file": "functions/fn_00aed3d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AED3F0",
+  "name": "kv_pop_last_to_first",
+  "kind": "function",
+  "file": "functions/fn_00aed3f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AED4A0",
+  "name": "stream_parse_pair",
+  "kind": "function",
+  "file": "functions/fn_00aed4a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
   "address": "0x00AEF9E0",
   "name": "stream_level_blend",
   "kind": "function",
@@ -58698,10 +58815,118 @@
   "lane": "r-s440"
  },
  {
+  "address": "0x00AEFAD0",
+  "name": "stream_named_float",
+  "kind": "function",
+  "file": "functions/fn_00aefad0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AEFB20",
+  "name": "stream_hashed_float",
+  "kind": "function",
+  "file": "functions/fn_00aefb20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AEFB50",
+  "name": "stream_triplet_a",
+  "kind": "function",
+  "file": "functions/fn_00aefb50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
   "address": "0x00AEFBF0",
   "name": "clamp_scaled_global",
   "kind": "function",
   "file": "functions/fn_00aefbf0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AEFCC0",
+  "name": "stream_triplet_b",
+  "kind": "function",
+  "file": "functions/fn_00aefcc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AEFD60",
+  "name": "stream_quad_c",
+  "kind": "function",
+  "file": "functions/fn_00aefd60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AF4290",
+  "name": "stream_slot_lookup_a",
+  "kind": "function",
+  "file": "functions/fn_00af4290.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AF42B0",
+  "name": "stream_slot_lookup_b",
+  "kind": "function",
+  "file": "functions/fn_00af42b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AF4600",
+  "name": "drawable_refresh_self",
+  "kind": "function",
+  "file": "functions/fn_00af4600.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AF4610",
+  "name": "drawable_attach_set",
+  "kind": "function",
+  "file": "functions/fn_00af4610.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AF46C0",
+  "name": "gtaDrawable::~gtaDrawable__deleting",
+  "kind": "function",
+  "file": "functions/fn_00af46c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AF46E0",
+  "name": "drawable_bind_slot",
+  "kind": "function",
+  "file": "functions/fn_00af46e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AF4700",
+  "name": "drawable_release_slot",
+  "kind": "function",
+  "file": "functions/fn_00af4700.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s440"
@@ -59542,6 +59767,186 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b309"
+ },
+ {
+  "address": "0x00B189E0",
+  "name": "lazy_link_or_forward",
+  "kind": "function",
+  "file": "functions/fn_00b189e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B18A10",
+  "name": "store_link_and_forward",
+  "kind": "function",
+  "file": "functions/fn_00b18a10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B18D30",
+  "name": "reset_four_slots",
+  "kind": "function",
+  "file": "functions/fn_00b18d30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1AB70",
+  "name": "row_active_check",
+  "kind": "function",
+  "file": "functions/fn_00b1ab70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1ACA0",
+  "name": "row_word_not_excluded",
+  "kind": "function",
+  "file": "functions/fn_00b1aca0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1ACD0",
+  "name": "row_word_in_set",
+  "kind": "function",
+  "file": "functions/fn_00b1acd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1B5E0",
+  "name": "lerp_by_ratio",
+  "kind": "function",
+  "file": "functions/fn_00b1b5e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1C7B0",
+  "name": "rebuild_channel",
+  "kind": "function",
+  "file": "functions/fn_00b1c7b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1CF70",
+  "name": "override_or_default",
+  "kind": "function",
+  "file": "functions/fn_00b1cf70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1DDC0",
+  "name": "frustum_point_outside",
+  "kind": "function",
+  "file": "functions/fn_00b1ddc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1E480",
+  "name": "notify_triple",
+  "kind": "function",
+  "file": "functions/fn_00b1e480.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1E4C0",
+  "name": "free_list_deep",
+  "kind": "function",
+  "file": "functions/fn_00b1e4c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1FC00",
+  "name": "cell_coords_if_inside",
+  "kind": "function",
+  "file": "functions/fn_00b1fc00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1FC70",
+  "name": "store_grid_coords",
+  "kind": "function",
+  "file": "functions/fn_00b1fc70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1FCA0",
+  "name": "store_low5bits",
+  "kind": "function",
+  "file": "functions/fn_00b1fca0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1FCB0",
+  "name": "scale_vec_by_measured",
+  "kind": "function",
+  "file": "functions/fn_00b1fcb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B1FD00",
+  "name": "init_cell_state",
+  "kind": "function",
+  "file": "functions/fn_00b1fd00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B20530",
+  "name": "scale_vec_add_scaled_normal",
+  "kind": "function",
+  "file": "functions/fn_00b20530.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B20690",
+  "name": "init_lane_fields",
+  "kind": "function",
+  "file": "functions/fn_00b20690.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
+ },
+ {
+  "address": "0x00B20760",
+  "name": "init_head_fields",
+  "kind": "function",
+  "file": "functions/fn_00b20760.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s443"
  },
  {
   "address": "0x00B24140",
