@@ -9,6 +9,34 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>What was really capping the lane count: 14.5 GB of kernel memory</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#kernel-pool-caps-the-lanes-2026-10-05"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#kernel-pool-caps-the-lanes-2026-10-05</id>
+    <published>2026-10-05T00:00:00Z</published>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <summary>With the lane target at 52, the supervisor stalled at about 14 lanes and logged "waiting for memory". Fourteen lanes do not fill a 48 GB laptop. The question was what held the rest.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;With the lane target at 52, the supervisor stalled at about 14 lanes and logged "waiting for memory". Fourteen lanes do not fill a 48 GB laptop. The question was what held the rest.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;What it means&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Committed memory, whole system&lt;/td&gt;&lt;td&gt;57.6 GB of a 70.6 GB limit&lt;/td&gt;&lt;td&gt;The supervisor's guard keeps 13 GB of headroom, so no more lanes start.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Private memory of every process added together&lt;/td&gt;&lt;td&gt;32.3 GB&lt;/td&gt;&lt;td&gt;About 25 GB of the commitment belongs to no process.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;All 14 lanes' agent processes&lt;/td&gt;&lt;td&gt;2.2 GB&lt;/td&gt;&lt;td&gt;The lanes are not the load.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Kernel non-paged pool&lt;/td&gt;&lt;td&gt;14.5 GB&lt;/td&gt;&lt;td&gt;Memory the kernel and drivers hold that can never be paged out. It counts against RAM and commitment both. On a healthy machine it is well under 2 GB.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Time since the machine was last restarted&lt;/td&gt;&lt;td&gt;2.5 days&lt;/td&gt;&lt;td&gt;The whole project so far, with well over a thousand lanes and many thousands of short-lived processes started in that time.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Committed memory with no lane running at all (4 October, 18:14)&lt;/td&gt;&lt;td&gt;about 50 GB&lt;/td&gt;&lt;td&gt;The baseline was already high before this was looked at; the ceiling of "about 45 lanes" measured on 4 October was this, not the lanes' own need.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Status: the numbers above are Verified (read from the system's own counters). What is leaking is Unknown: finding the owner of pool memory needs a kernel tool that is not installed. Inferred, not shown: a driver that leaks a little for every process created would fit, because the project creates processes at a rate an ordinary desktop never does (each lane runs hundreds of builds and checker workers, and every 32-bit worker runs under emulation on this ARM64 machine). One vendor platform service holds 68,000 handles, which is unusual and may or may not be related.&lt;/p&gt;
+&lt;h3&gt;Decisions&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The health check now reports the non-paged pool and keeps each reading in a log, so the growth rate per hour and per lane started can be measured instead of guessed.&lt;/li&gt;
+&lt;li&gt;Only restarting the machine returns this memory. That ends every running lane and is the owner's decision; it is best done at a quota stop, when nothing is running anyway.&lt;/li&gt;
+&lt;li&gt;Earlier entries that blamed lane count, wrappers or other programs for memory pressure were looking at the symptom. The runaway lane script found on 4 October was real, but it was not the whole story.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To reproduce: read the system's memory counters for committed bytes and the non-paged pool, and compare with the sum of private memory over all processes.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Lockstep test cycles can silently skip the path they were built to hit</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s428"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s428</id>
@@ -1001,27 +1029,5 @@
 &lt;p&gt;Copy the checker driver into lane scratch space, build a small rewrite crate for the 32-bit target depending on the checker runtime by path, and write one contract per function declaring the callee scripts, heap objects with a planted virtual table for the indirect call, the one global dword, and the fixed stack fill. Run the driver once per contract with at least one thousand trials; each contract also runs its wrong version, which must fail. The lane's generator scripts assert every constant in the contracts against the executable's mapped bytes before emitting them.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The first attempt at the setup routine went vacuous: both sides faulted identically at the indirect call because the contract linked the fabricated object to the wrong heap segment. A single-trial debug script printing the fault address and the resolved request words found it in minutes. Later, a rebuild failed twice with the output file locked by an unknown process; no worker held it by module scan, so the crate was rebuilt into a fresh target subdirectory under the same lane folder with the crate name unchanged.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a particle and shader batch: slots, registrars and false friends</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-49"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-49</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One hundred fifty consecutive functions across the particle system, the fragment heap, procedural textures, shader lighting classes and session networking were named 142 to 8, and the most reliable signals were vtable slot reads, a repeated class-registrar shape, and preload callback ordering.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred fifty consecutive functions across the particle system, the fragment heap, procedural textures, shader lighting classes and session networking were named 142 to 8, and the most reliable signals were vtable slot reads, a repeated class-registrar shape, and preload callback ordering.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose descriptive names for a consecutive run of unnamed functions, working out what the group is about first, with a confidence per name and no rewriting.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Sibling classes repeat one virtual interface: the same slots hold the per-frame update, a shader-variable test, a variable-cache factory and a class getter, each with an identical small size, so one solved sibling names the rest.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Class registration has a fixed shape: a singleton-guarded builder storing a descriptor and chaining base-class builders, with preload and postload callbacks pushed in string order. Reading which callback sits under which string names the parser and finalizer directly.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Reading vtable slots from the mapped image identifies constructors, destructors and factories without disassembling them: each stores or references its class table, and slot zero of each table points back at the deleting destructor.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The effect-rule class embeds six keyframe members, not three as an earlier layout lane reported; both its constructors and one virtual method iterate all six.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Follow the sibling-slot wording exactly where shape and slot agree, use the register, preload and postload vocabulary already established by neighbouring lanes, and number parallel algorithm channels rather than inventing semantics for them. Leave forwarders to unnamed slots and context-free allocators empty.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Build one evidence table per batch first: referenced strings, imports, internal callees with merged names, and caller sites resolved to enclosing functions through the full inventory. Disassemble small functions fully, large ones by head and tail, and cap every decode at the next inventory start. Check any zlib-looking string by scanning for who pushes it before believing it.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The first evidence script indexed the mapped image by file offset and produced garbage; the mandated known-function decode check caught it at once. A text-search tool silently returned nothing on files a plain script search matched, so all searching moved to scripts. One instruction that looked like a zlib string use turned out to be a flag-byte check, and no readable code pushes those strings at all.&lt;/p&gt;</content>
   </entry>
 </feed>

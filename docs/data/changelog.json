@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Devlog: what was really capping the lane count",
+    "commit": null,
+    "summary": "The kernel, not the lanes, holds the memory that limits how many lanes can run.",
+    "changes": [
+      "With the target at 52 the supervisor stalled at about 14 lanes. The system's counters show 14.5 GB in the kernel's non-paged pool after 2.5 days without a restart, against a normal figure well under 2 GB; the 14 lanes themselves use about 2 GB.",
+      "The health check now reports that pool and logs each reading so its growth can be measured. Only a restart of the machine returns the memory, which is the owner's decision."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 19 files from lanes (420 unverified rewrites, 0 in review)",
     "commit": "fecf7b2130e887901749a786779842f6deb744a8",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
