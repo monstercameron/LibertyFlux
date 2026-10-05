@@ -162,8 +162,8 @@ unsafe fn vtgauge(obj: u32) -> f32 {
 ///
 /// Edge cases: a failed creation yields a null builder and the function
 /// faults on the next virtual call, exactly like the original. Floats follow
-/// the original's operation order; the maximum keeps the running value on
-/// unordered (NaN) comparison, matching `comiss`/`ja`.
+/// the original's operation order; the stored value is the minimum, taking
+/// the new value on unordered (NaN) comparison, matching `comiss`/`ja`.
 ///
 /// Original: 0x00E4FF20 (thiscall, no stack arguments, returns a pointer).
 /// `tail_signed` selects the wrong-version hook for the brief's signedness
@@ -275,14 +275,18 @@ unsafe fn run(this: u32, tail_signed: bool) -> u32 {
         let rc = vt0(ebp, V_STAT);
         let ok = lf_checker_rt::callee_thiscall!(CHK, u32, this, rc);
         if (ok & 0xff) != 0 {
-            let s = lf_checker_rt::callee_cdecl!(STRA, u32, lf_checker_rt::relocated(STR_Z));
             let mut buf = [0u32; 8];
+            // The formatted-text local sits four bytes into the sprintf
+            // buffer, so the sprintf's writes overlap it; keep it there so
+            // the stub overwrites it exactly as in the original.
+            buf[1] = lf_checker_rt::callee_cdecl!(STRA, u32, lf_checker_rt::relocated(STR_Z));
             lf_checker_rt::callee_cdecl!(
                 SPRINTF,
                 u32,
                 buf.as_mut_ptr() as u32,
                 0x3e
             );
+            let s = buf[1];
             let raw4 = lf_checker_rt::callee_cdecl!(NEW25C, u32, 0x25c);
             let esi: u32;
             if raw4 != 0 {
@@ -336,9 +340,9 @@ unsafe fn run(this: u32, tail_signed: bool) -> u32 {
         if flag != 0 {
             let c = vt0(store, V_COUNT);
             let tab = lf_checker_rt::global::<u64>(DTAB);
-            let magic = f64::from_bits(unsafe {
-                ((tab as *const u64).add((c >> 31) as usize)).read_unaligned()
-            });
+            let magic = f64::from_bits(
+                ((tab as *const u64).add((c >> 31) as usize)).read_unaligned(),
+            );
             let d = core::hint::black_box((c as i32) as f64) + core::hint::black_box(magic);
             let rate = rdf(this + RATE);
             let mut sum = fmul(d as f32, rate);
@@ -347,7 +351,10 @@ unsafe fn run(this: u32, tail_signed: bool) -> u32 {
             let g2 = vtgauge(meter);
             let t = fmul(rate, f32::from_bits(rd32(lf_checker_rt::relocated(TWO))));
             let u = fadd(g2, t);
-            if u > sum {
+            // Minimum: `comiss`/`ja` skips the move when u is above sum, so
+            // an unordered (NaN) comparison takes u. `!(u > sum)` is true
+            // for NaN; `u <= sum` would be false there.
+            if !(u > sum) {
                 sum = u;
             }
             vt1f(aux, V_SETF, sum);
