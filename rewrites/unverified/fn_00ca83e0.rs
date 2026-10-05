@@ -35,8 +35,8 @@
 /// (which must differ from the subject), runs a probe whose low byte must be
 /// zero and equal the byte at subject `+0x211`, runs an unanswered check,
 /// then builds: with a factory object the reaction is made from the subject
-/// and stored, without one a fallback call of (0, 4) is made and its answer
-/// stored instead.
+/// (or 0 without one), passed with 4 through a gate call, and the gate's
+/// answer is stored.
 ///
 /// The gauntlet compares two table floats against 1.5: the words at `+0xF8`
 /// of the table entries indexed by the signed words at ped `+0x2E` and
@@ -148,7 +148,7 @@ lf_checker_rt::export!(thiscall, rw_00ca83e0(this: u32, a1: u32, _a2: u32, _a3: 
                     let probe: extern "thiscall" fn(u32) -> u32 =
                         core::mem::transmute(rd32(vt.wrapping_add(SLOT_VSLOT)) as usize);
                     if probe(v) == ABORT_ANSWER {
-                        return ca83e0_epilogue(0);
+                        return ca83e0_epilogue(this, 0);
                     }
                     done = true;
                     break;
@@ -163,9 +163,11 @@ lf_checker_rt::export!(thiscall, rw_00ca83e0(this: u32, a1: u32, _a2: u32, _a3: 
     }
 });
 
-/// Cookie-checking exit shared by every path of rw_00ca83e0.
-unsafe fn ca83e0_epilogue(v: u32) -> u32 {
+/// Store-and-cookie-check exit shared by every path of rw_00ca83e0: the
+/// original stores its answer at +0x0c on every exit, even the aborts.
+unsafe fn ca83e0_epilogue(this: u32, v: u32) -> u32 {
     unsafe {
+        (this.wrapping_add(0x0C) as *mut u32).write_unaligned(v);
         lf_checker_rt::callee_stdcall!(12, u32,);
         v
     }
@@ -201,42 +203,37 @@ unsafe fn ca83e0_factory() -> u32 {
     }
 }
 
-/// Store-and-exit of rw_00ca83e0.
-unsafe fn ca83e0_store(this: u32, v: u32) -> u32 {
-    unsafe {
-        (this.wrapping_add(0x0C) as *mut u32).write_unaligned(v);
-        ca83e0_epilogue(v)
-    }
-}
-
 /// Direct chain of rw_00ca83e0 past its flag-A check.
 unsafe fn ca83e0_chain_tail(this: u32, esi: u32, hped: u32, mid2: u32, b15: u8) -> u32 {
     unsafe {
         const SUBJ_MARK: u32 = 0x211;
         const GATE_OFF: u32 = 0x44;
         if b15 != 0 {
-            return ca83e0_epilogue(0);
+            return ca83e0_epilogue(this, 0);
         }
         let ident: u32 = lf_checker_rt::callee_thiscall!(2, u32, hped);
         if ident == esi {
-            return ca83e0_epilogue(0);
+            return ca83e0_epilogue(this, 0);
         }
         let probe: u32 = lf_checker_rt::callee_thiscall!(3, u32, mid2, esi);
         if probe & 0xFF != 0 {
-            return ca83e0_epilogue(0);
+            return ca83e0_epilogue(this, 0);
         }
         if (esi.wrapping_add(SUBJ_MARK) as *const u8).read() != probe as u8 {
-            return ca83e0_epilogue(0);
+            return ca83e0_epilogue(this, 0);
         }
         let _check: u32 = lf_checker_rt::callee_thiscall!(4, u32, hped, esi);
         let fac = ca83e0_factory();
-        if fac == 0 {
-            let alt: u32 =
-                lf_checker_rt::callee_thiscall!(11, u32, mid2.wrapping_add(GATE_OFF), 0, 4);
-            return ca83e0_store(this, alt);
-        }
-        let made: u32 = lf_checker_rt::callee_thiscall!(6, u32, fac, esi);
-        ca83e0_store(this, made)
+        // Both legs converge on the gate call: the made reaction, or 0 when
+        // the factory is missing.
+        let made = if fac == 0 {
+            0
+        } else {
+            lf_checker_rt::callee_thiscall!(6, u32, fac, esi)
+        };
+        let gated: u32 =
+            lf_checker_rt::callee_thiscall!(11, u32, mid2.wrapping_add(GATE_OFF), made, 4);
+        ca83e0_epilogue(this, gated)
     }
 }
 
@@ -246,7 +243,7 @@ unsafe fn ca83e0_chain_full(
 ) -> u32 {
     unsafe {
         if !b16 {
-            return ca83e0_epilogue(0);
+            return ca83e0_epilogue(this, 0);
         }
         ca83e0_chain_tail(this, esi, hped, mid2, b15)
     }
@@ -257,18 +254,18 @@ unsafe fn ca83e0_chain_full(
 unsafe fn ca83e0_block1(this: u32, hped: u32, sp: u32, dx: i32, b17: bool) -> u32 {
     unsafe {
         if !b17 {
-            return ca83e0_epilogue(0);
+            return ca83e0_epilogue(this, 0);
         }
         let subj = ca83e0_block(hped, sp);
         if dx == 2 {
-            return ca83e0_epilogue(0);
+            return ca83e0_epilogue(this, 0);
         }
         let fac = ca83e0_factory();
         if fac == 0 {
-            return ca83e0_epilogue(0);
+            return ca83e0_epilogue(this, 0);
         }
         let made: u32 = lf_checker_rt::callee_thiscall!(9, u32, fac, subj);
-        ca83e0_store(this, made)
+        ca83e0_epilogue(this, made)
     }
 }
 
@@ -278,10 +275,10 @@ unsafe fn ca83e0_block2(this: u32, hped: u32, sp: u32) -> u32 {
         let subj = ca83e0_block(hped, sp);
         let fac = ca83e0_factory();
         if fac == 0 {
-            return ca83e0_epilogue(0);
+            return ca83e0_epilogue(this, 0);
         }
         let made: u32 = lf_checker_rt::callee_thiscall!(9, u32, fac, subj);
-        ca83e0_store(this, made)
+        ca83e0_epilogue(this, made)
     }
 }
 
@@ -291,10 +288,10 @@ unsafe fn ca83e0_block3(this: u32, hped: u32, sp: u32) -> u32 {
         let subj = ca83e0_block(hped, sp);
         let fac = ca83e0_factory();
         if fac == 0 {
-            return ca83e0_epilogue(0);
+            return ca83e0_epilogue(this, 0);
         }
         let made: u32 = lf_checker_rt::callee_thiscall!(10, u32, fac, subj, 0);
-        ca83e0_store(this, made)
+        ca83e0_epilogue(this, made)
     }
 }
 
@@ -302,7 +299,7 @@ unsafe fn ca83e0_block3(this: u32, hped: u32, sp: u32) -> u32 {
 unsafe fn ca83e0_l86cd(this: u32, hped: u32, sp: u32, cx: i32) -> u32 {
     unsafe {
         if cx != 4 {
-            return ca83e0_epilogue(0);
+            return ca83e0_epilogue(this, 0);
         }
         ca83e0_block2(this, hped, sp)
     }
@@ -352,7 +349,7 @@ unsafe fn ca83e0_l866d(
 ) -> u32 {
     unsafe {
         if !b16 {
-            return ca83e0_epilogue(0);
+            return ca83e0_epilogue(this, 0);
         }
         if !b17 {
             return ca83e0_chain_tail(this, esi, hped, mid2, b15);
@@ -372,7 +369,7 @@ unsafe fn ca83e0_l8657(
         if dx == 1 || dx == 0 {
             return ca83e0_chain_full(this, esi, hped, mid2, b15, b16);
         }
-        ca83e0_epilogue(0)
+        ca83e0_epilogue(this, 0)
     }
 }
 
@@ -384,7 +381,7 @@ unsafe fn ca83e0_l8649(
         if cx == 3 || cx == 4 {
             return ca83e0_l8657(this, esi, hped, mid2, dx, b15, b16);
         }
-        ca83e0_epilogue(0)
+        ca83e0_epilogue(this, 0)
     }
 }
 

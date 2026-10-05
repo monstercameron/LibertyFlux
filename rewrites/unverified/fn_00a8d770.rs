@@ -2,14 +2,13 @@
 
 /// Notify pool nodes from the iterator and the row lists.
 ///
-/// When both enable bytes (`this+0x73`, `this+0x75`) are clear there is
-/// nothing to do. Otherwise the row lists are always swept: each row's
-/// node chain is walked and every live item whose word `+0x44` is not -1
-/// and whose flags `+0x28` select bit `0x100` is notified through its
-/// function table slot `+0x44`. When `+0x75` is set the iterator runs
-/// first instead... precisely: the iterator sweep (cursor reset to
-/// row 0 / cell -1, every yielded non-null node with word `+0x44` not -1
-/// notified) runs when `+0x75` is set, then the row sweep follows.
+/// When `this+0x73` is clear and `this+0x75` is set there is nothing to
+/// do. Otherwise the row lists are always swept: each row's node chain is
+/// walked and every live item whose word `+0x44` is not -1 and whose
+/// flags `+0x28` select bit `0x100` is notified through its function
+/// table slot `+0x44`. When both bytes are set the iterator sweep runs
+/// first (cursor reset to row 0 / cell -1, every yielded non-null node
+/// with word `+0x44` not -1 notified), then the row sweep follows.
 ///
 /// Original: thiscall, no stack words, no return value. Two callee
 /// shapes: the cell iterator (thiscall, one frame out-slot argument) and
@@ -48,10 +47,11 @@ lf_checker_rt::export!(thiscall, rw_00A8D770(this: u32) -> u32 {
         }
         let a = ((this + EN_A) as *const u8).read();
         let b = ((this + EN_B) as *const u8).read();
-        if a == 0 && b == 0 {
-            return 0;
-        }
-        if b != 0 {
+        if a == 0 {
+            if b != 0 {
+                return 0;
+            }
+        } else if b != 0 {
             ((this + CUR_ROW_OFF) as *mut u32).write_unaligned(0);
             ((this + CUR_CELL_OFF) as *mut u32).write_unaligned(0xffffffff);
             let mut out: u32 = 0;

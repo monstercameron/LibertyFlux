@@ -21,8 +21,11 @@ lf_checker_rt::export!(cdecl, rw_00A8E680(vec: u32, tag: u32, _k: u32) -> u32 {
         const GW: u32 = 0x12fb23c;
         const TAG: u32 = 0x12fb218;
         const BUSY: u32 = 0x12fb21c;
-        const ENTRY: u32 = 0xa8e7c0;
+        // The original pushes this address as an immediate that carries a
+        // relocation entry, so the worker adjusts it; pass it relocated.
+        const ENTRY_FILE_VA: u32 = 0xa8e7c0;
         const KERNEL: u32 = 1;
+        let entry = lf_checker_rt::relocated(ENTRY_FILE_VA);
         let x = ((vec + 0) as *const u32).read_unaligned();
         let y = ((vec + 4) as *const u32).read_unaligned();
         let z = ((vec + 8) as *const u32).read_unaligned();
@@ -39,7 +42,7 @@ lf_checker_rt::export!(cdecl, rw_00A8E680(vec: u32, tag: u32, _k: u32) -> u32 {
             KERNEL,
             u32,
             &mut block as *mut u32 as u32,
-            ENTRY,
+            entry,
             &mut answer as *mut u32 as u32,
             0x100,
             5

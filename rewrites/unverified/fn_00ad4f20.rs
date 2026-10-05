@@ -7,7 +7,7 @@
 /// `base + slot * 4 + 0x104c`, publishes them to their globals and zeroes
 /// the pointed-to words (re-reading each global first). Then zeroes the
 /// slot's words at offsets 0xe6c, 0xecc and 0xf2c off the registry base.
-/// Cdecl/1; returns the published third pointer.
+/// Cdecl/1; returns the registry base (the last helper answer).
 lf_checker_rt::export!(cdecl, rw_00ad4f20(slot: u32) -> u32 {
     unsafe {
         const REGISTRY: u32 = 1;
@@ -36,6 +36,6 @@ lf_checker_rt::export!(cdecl, rw_00ad4f20(slot: u32) -> u32 {
         (b2.wrapping_add(slot.wrapping_mul(4)).wrapping_add(Z1_OFF) as *mut u32).write(0);
         let b3 = lf_checker_rt::callee_cdecl!(REGISTRY, u32,);
         (b3.wrapping_add(slot.wrapping_mul(4)).wrapping_add(Z2_OFF) as *mut u32).write(0);
-        lf_checker_rt::global::<u32>(P2_GLOBAL).read()
+        b3
     }
 });

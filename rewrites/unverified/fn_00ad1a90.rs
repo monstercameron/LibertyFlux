@@ -5,7 +5,7 @@
 /// If the handle global is non-zero it is returned as is. Otherwise a block
 /// is allocated (cdecl/2: arena, 0), resolved through the handle table
 /// (the table helper reads only its second pushed word, verified from its
-/// code, so the ignored first word travels in ecx), wrapped into an object
+/// code, so the rewrite passes just that word), wrapped into an object
 /// (thiscall/0), stored into the handle global and returned. Takes no
 /// arguments (cdecl/0).
 lf_checker_rt::export!(cdecl, rw_00ad1a90() -> u32 {
@@ -22,7 +22,8 @@ lf_checker_rt::export!(cdecl, rw_00ad1a90() -> u32 {
         }
         let blk = lf_checker_rt::callee_cdecl!(ALLOC, u32, lf_checker_rt::relocated(ARENA), 0u32);
         let key = lf_checker_rt::global::<u32>(TABLE_KEY).read();
-        let resolved = lf_checker_rt::callee_thiscall!(RESOLVE, u32, blk, key);
+        let _ignored = blk;
+        let resolved = lf_checker_rt::callee_stdcall!(RESOLVE, u32, key);
         let obj = lf_checker_rt::callee_thiscall!(WRAP, u32, resolved);
         lf_checker_rt::global::<u32>(HANDLE).write(obj);
         obj

@@ -62,9 +62,9 @@ lf_checker_rt::export!(thiscall, rw_00be3030(task: u32, ped: u32) -> u32 {
         const SLOT_RUN: u32 = 0x54;
         const WANT_TYPE: u32 = 0x15f;
         const GSTATE: u32 = 0x1682f20;
-        const GAIN0: u32 = 0x1682f30;
-        const GAIN1: u32 = 0x1682f34;
-        const GAIN2: u32 = 0x1682f38;
+        const GAIN0: u32 = 0x1682f10;
+        const GAIN1: u32 = 0x1682f14;
+        const GAIN2: u32 = 0x1682f18;
         const GAIN2_INIT: u32 = 0x3f0ccccd;
         const ACT_TABLE: u32 = 0x167f628;
         const MGR_GLOBAL: u32 = 0x16dd63c;

@@ -17,8 +17,10 @@ lf_checker_rt::export!(cdecl, rw_00A8E730(vec: u32, _k: u32) -> u32 {
         const GY: u32 = 0x12fb234;
         const GZ: u32 = 0x12fb238;
         const GW: u32 = 0x12fb23c;
-        const ENTRY: u32 = 0xa8e7c0;
+        // Relocated like the original's adjusted immediate (see sibling).
+        const ENTRY_FILE_VA: u32 = 0xa8e7c0;
         const KERNEL: u32 = 1;
+        let entry = lf_checker_rt::relocated(ENTRY_FILE_VA);
         let x = ((vec + 0) as *const u32).read_unaligned();
         let y = ((vec + 4) as *const u32).read_unaligned();
         let z = ((vec + 8) as *const u32).read_unaligned();
@@ -33,7 +35,7 @@ lf_checker_rt::export!(cdecl, rw_00A8E730(vec: u32, _k: u32) -> u32 {
             KERNEL,
             u32,
             &mut block as *mut u32 as u32,
-            ENTRY,
+            entry,
             &mut answer as *mut u32 as u32,
             0x100,
             5

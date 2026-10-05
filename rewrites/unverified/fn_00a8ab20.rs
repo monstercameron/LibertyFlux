@@ -18,34 +18,37 @@
 lf_checker_rt::export!(stdcall, rw_00A8AB20(mode: u32) -> u32 {
     unsafe {
         const LATCH: u32 = 0x12fb200;
-        const SCOPE_A: u32 = 0x16dceb8;
-        const SCOPE_B: u32 = 0x16dd2bc;
+        // Scope immediates carry relocation entries; pass them relocated.
+        const SCOPE_A_FILE_VA: u32 = 0x16dceb8;
+        const SCOPE_B_FILE_VA: u32 = 0x16dd2bc;
         const LEVEL: u32 = 1;
         const ARM: u32 = 2;
         const ALT: u32 = 3;
+        let scope_a = lf_checker_rt::relocated(SCOPE_A_FILE_VA);
+        let scope_b = lf_checker_rt::relocated(SCOPE_B_FILE_VA);
         let (threshold, flag) = if mode as u8 == 0 { (3u32, 0u32) } else { (2, 1) };
         let latch = lf_checker_rt::global::<u8>(LATCH);
         let was_clear = (latch as *const u8).read() == 0;
         (latch as *mut u8).write(was_clear as u8);
         if was_clear {
-            let level: u32 = lf_checker_rt::callee_thiscall!(LEVEL, u32, SCOPE_A);
+            let level: u32 = lf_checker_rt::callee_thiscall!(LEVEL, u32, scope_a);
             if (level as i32) > threshold as i32 {
-                let ok: u32 = lf_checker_rt::callee_thiscall!(ARM, u32, SCOPE_A, flag);
+                let ok: u32 = lf_checker_rt::callee_thiscall!(ARM, u32, scope_a, flag);
                 if ok as u8 != 0 {
                     return 1;
                 }
             }
         }
-        let level: u32 = lf_checker_rt::callee_thiscall!(LEVEL, u32, SCOPE_B);
+        let level: u32 = lf_checker_rt::callee_thiscall!(LEVEL, u32, scope_b);
         if (level as i32) > 2 {
-            let ok: u32 = lf_checker_rt::callee_thiscall!(ALT, u32, SCOPE_A, flag);
+            let ok: u32 = lf_checker_rt::callee_thiscall!(ALT, u32, scope_a, flag);
             if ok as u8 != 0 {
                 return 1;
             }
         }
-        let level: u32 = lf_checker_rt::callee_thiscall!(LEVEL, u32, SCOPE_A);
+        let level: u32 = lf_checker_rt::callee_thiscall!(LEVEL, u32, scope_a);
         if (level as i32) > threshold as i32 {
-            let ok: u32 = lf_checker_rt::callee_thiscall!(ARM, u32, SCOPE_A, flag);
+            let ok: u32 = lf_checker_rt::callee_thiscall!(ARM, u32, scope_a, flag);
             if ok as u8 != 0 {
                 return 1;
             }
