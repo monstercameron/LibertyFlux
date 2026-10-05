@@ -9,8 +9,8 @@
 /// +0x2d, each also setting its bit in `[this+1]`: bit 0x01: src+0x08 ->
 /// this+0x0c; 0x02: src+0x0c -> +0x10; 0x04: src+0x10/0x14/0x18 ->
 /// +0x14/+0x18/+0x1c; 0x08: src+0x1c -> +0x20; 0x10: src+0x20 -> +0x24.
-/// Returns the last value loaded (the half-word merged under `arg0`'s high
-/// half when no group is taken). Thiscall, two stack arguments.
+/// Returns the last value loaded (the half-word merged under the shared
+/// global's high half when no group is taken). Thiscall, two stack arguments.
 export!(thiscall, rw_00beaaf0(this: u32, arg0: u32, src: u32) -> u32 {
     unsafe {
         const TYPE_ID: u8 = 0x8b;
@@ -25,7 +25,7 @@ export!(thiscall, rw_00beaaf0(this: u32, arg0: u32, src: u32) -> u32 {
         let hw = ((src + 4) as *const u16).read_unaligned();
         ((this + 2) as *mut u16).write_unaligned(hw);
         let flags = ((src + SRC_FLAGS) as *const u8).read();
-        let mut last = (arg0 & 0xFFFF0000) | hw as u32;
+        let mut last = (shared & 0xFFFF0000) | hw as u32;
         if flags & 0x01 != 0 {
             let b = ((this + 1) as *const u8).read();
             ((this + 1) as *mut u8).write(b | 0x01);

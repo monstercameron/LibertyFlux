@@ -1,16 +1,17 @@
-// original: 0x00e66e60 init_pair_call (proposed)
-/// Call a thiscall callee with a fixed global address as `this`, then call a
-/// cdecl callee with one fixed image address, returning the second result.
+// original: 0x00E66E60 task_row_then_forward_00E66E60
+/// Initialise one task row, then forward a code reference.
 ///
-/// Arguments: none (cdecl/0). Reads no globals; the two callees are
-/// intercepted by the checker. The first call's return value is discarded;
-/// the second call's return value is left in eax as the result.
-/// Calling convention: cdecl, callee 1 is thiscall/0, callee 2 is cdecl/1.
-lf_checker_rt::export!(cdecl, rw_00e66e60() -> u32 {
+/// Calls callee 1 (thiscall, no stack arguments) with `OBJ` in ECX,
+/// then calls callee 2 (cdecl, one argument: the file address `ARG`,
+/// relocated), discarding both results.
+///
+/// Original: 0x00E66E60 (cdecl, no arguments, no return value).
+lf_checker_rt::export!(cdecl, rw_00E66E60() -> u32 {
     unsafe {
-        const THIS_ADDR: u32 = 0x012B9170;
-        const PUSHED_ADDR: u32 = 0x00E72150;
-        lf_checker_rt::callee_thiscall!(1, u32, lf_checker_rt::relocated(THIS_ADDR));
-        lf_checker_rt::callee_cdecl!(2, u32, lf_checker_rt::relocated(PUSHED_ADDR))
+        const OBJ: u32 = 0x012B9170;
+        const ARG: u32 = 0x00E72150;
+        lf_checker_rt::callee_thiscall!(1, u32, lf_checker_rt::relocated(OBJ));
+        lf_checker_rt::callee_cdecl!(2, u32, lf_checker_rt::relocated(ARG));
+        0
     }
 });

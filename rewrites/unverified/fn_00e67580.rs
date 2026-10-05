@@ -1,27 +1,26 @@
-// original: 0x00e67580 init_task_slots_and_register
-/// Initialises sixteen task slots, then runs the table-registration call.
+// original: 0x00E67580 task_entries_init_00E67580
+/// Initialise the task entries, then forward a code reference.
 ///
-/// Invokes the shared slot initialiser (thiscall/0, intercepted by the
-/// checker) on each of the sixteen 0x20-byte slots in order, then passes
-/// the table callback to the registration routine (cdecl/1, intercepted).
-/// Returns the registration answer, matching the value the original
-/// leaves in EAX.
-export!(cdecl, rw_00e67580() -> u32 {
+/// Calls callee 1 (thiscall, no stack arguments) with ECX stepping
+/// from `TABLE` by `STRIDE` for `ROWS` rows (16: the original
+/// counts edi down from 0xF while non-negative), then calls
+/// callee 2 (cdecl, one argument: the file address `TAIL`,
+/// relocated).
+///
+/// Original: 0x00E67580 (cdecl, no arguments, no return value).
+lf_checker_rt::export!(cdecl, rw_00E67580() -> u32 {
     unsafe {
-        const FIRST_SLOT: u32 = 0x012F9338;
-        const SLOT_STRIDE: u32 = 0x20;
-        const SLOT_COUNT: u32 = 16;
-        const REGISTER_ARG: u32 = 0x00E72250;
-        let mut slot = relocated(FIRST_SLOT);
-        let mut remaining = SLOT_COUNT;
-        loop {
-            let _: u32 = callee_thiscall!(1, u32, slot);
-            slot = slot.wrapping_add(SLOT_STRIDE);
-            remaining -= 1;
-            if remaining == 0 {
-                break;
-            }
+        const TABLE: u32 = 0x012F9338;
+        const STRIDE: u32 = 0x20;
+        const ROWS: u32 = 16;
+        const TAIL: u32 = 0x00E72250;
+        let mut row = 0u32;
+        while row < ROWS {
+            lf_checker_rt::callee_thiscall!(1, u32,
+                lf_checker_rt::relocated(TABLE.wrapping_add(row.wrapping_mul(STRIDE))));
+            row += 1;
         }
-        callee_cdecl!(2, u32, relocated(REGISTER_ARG))
+        lf_checker_rt::callee_cdecl!(2, u32, lf_checker_rt::relocated(TAIL));
+        0
     }
 });

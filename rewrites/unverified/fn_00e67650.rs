@@ -1,13 +1,16 @@
-// original: 0x00e67650 request_model_hakuchou2
-/// Requests the "hakuchou2" model into its dedicated slot.
+// original: 0x00E67650 task_register_slot_00E67650
+/// Register the named task slot and return the registry handle.
 ///
-/// Forwards the model name string and the slot object to the shared
-/// registration routine (thiscall/1, intercepted by the checker) and
-/// returns its answer.
-export!(cdecl, rw_00e67650() -> u32 {
+/// Calls callee 1 (thiscall, one stack argument) with the slot
+/// object `OBJ` in ECX and the name string `NAME` on the stack,
+/// returning the callee's result.
+///
+/// Original: 0x00E67650 (cdecl, no arguments, returns u32).
+lf_checker_rt::export!(cdecl, rw_00E67650() -> u32 {
     unsafe {
-        const MODEL_NAME: u32 = 0x00E9E224;
-        const SLOT: u32 = 0x012FA340;
-        callee_thiscall!(1, u32, relocated(SLOT), relocated(MODEL_NAME))
+        const NAME: u32 = 0x00E9E224;
+        const OBJ: u32 = 0x012FA340;
+        lf_checker_rt::callee_thiscall!(1, u32,
+            lf_checker_rt::relocated(OBJ), lf_checker_rt::relocated(NAME))
     }
 });

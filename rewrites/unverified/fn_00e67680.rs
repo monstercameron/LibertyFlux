@@ -1,13 +1,16 @@
-// original: 0x00e67680 request_model_innovation
-/// Requests the "innovation" model into its dedicated slot.
+// original: 0x00E67680 task_register_slot_00E67680
+/// Register the named task slot and return the registry handle.
 ///
-/// Forwards the model name string and the slot object to the shared
-/// registration routine (thiscall/1, intercepted by the checker) and
-/// returns its answer.
-export!(cdecl, rw_00e67680() -> u32 {
+/// Calls callee 1 (thiscall, one stack argument) with the slot
+/// object `OBJ` in ECX and the name string `NAME` on the stack,
+/// returning the callee's result.
+///
+/// Original: 0x00E67680 (cdecl, no arguments, returns u32).
+lf_checker_rt::export!(cdecl, rw_00E67680() -> u32 {
     unsafe {
-        const MODEL_NAME: u32 = 0x00E9E210;
-        const SLOT: u32 = 0x012FA154;
-        callee_thiscall!(1, u32, relocated(SLOT), relocated(MODEL_NAME))
+        const NAME: u32 = 0x00E9E210;
+        const OBJ: u32 = 0x012FA154;
+        lf_checker_rt::callee_thiscall!(1, u32,
+            lf_checker_rt::relocated(OBJ), lf_checker_rt::relocated(NAME))
     }
 });

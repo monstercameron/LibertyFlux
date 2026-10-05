@@ -1,23 +1,27 @@
-// original: 0x00e67080 sweep_pair_call5_then_const (proposed)
-/// Call two thiscall/0 callees 5 times over strided addresses, then a const call.
+// original: 0x00E67080 task_slots_init_00E67080
+/// Initialise the task slots, then forward a code reference.
 ///
-/// For `i` in 0..5 (edi counts down from 4 while non-negative) calls callee 1
-/// then callee 2 with ecx = `0x012DD2B0 + i*0xA0`; then calls the shared
-/// cdecl/1 callee with one fixed address and returns its result.
-/// No arguments (cdecl/0). Calling convention: cdecl.
-lf_checker_rt::export!(cdecl, rw_00e67080() -> u32 {
+/// Calls callee 1 then callee 2 (both thiscall, no stack
+/// arguments) with ECX stepping from `TABLE` by `STRIDE` for
+/// `ROWS` rows (5: the original counts edi down from 4 while
+/// non-negative), then calls callee 3 (cdecl, one argument: the
+/// file address `TAIL`, relocated).
+///
+/// Original: 0x00E67080 (cdecl, no arguments, no return value).
+lf_checker_rt::export!(cdecl, rw_00E67080() -> u32 {
     unsafe {
-        const BASE: u32 = 0x012DD2B0;
+        const TABLE: u32 = 0x012DD2B0;
         const STRIDE: u32 = 0xA0;
-        const COUNT: u32 = 5;
-        const ARG: u32 = 0x00E721A0;
-        let mut i = 0u32;
-        while i < COUNT {
-            let this = lf_checker_rt::relocated(BASE.wrapping_add(i.wrapping_mul(STRIDE)));
-            lf_checker_rt::callee_thiscall!(1, u32, this);
-            lf_checker_rt::callee_thiscall!(2, u32, this);
-            i += 1;
+        const ROWS: u32 = 5;
+        const TAIL: u32 = 0x00E721A0;
+        let mut row = 0u32;
+        while row < ROWS {
+            let obj = lf_checker_rt::relocated(TABLE.wrapping_add(row.wrapping_mul(STRIDE)));
+            lf_checker_rt::callee_thiscall!(1, u32, obj);
+            lf_checker_rt::callee_thiscall!(2, u32, obj);
+            row += 1;
         }
-        lf_checker_rt::callee_cdecl!(3, u32, lf_checker_rt::relocated(ARG))
+        lf_checker_rt::callee_cdecl!(3, u32, lf_checker_rt::relocated(TAIL));
+        0
     }
 });
