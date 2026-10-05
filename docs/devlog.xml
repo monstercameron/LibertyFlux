@@ -9,6 +9,33 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming batch: streaming emitters, player variation, and a mislabelled lights cluster</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-94"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-94</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>One hundred fifty consecutive unnamed functions split into five groups: a streaming request pipeline, player variation and ped components, prop draw setup with kd-tree utilities, and a lights and draw-command cluster that the inventory labels network and input-ui. All but four were named.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred fifty consecutive unnamed functions split into five groups: a streaming request pipeline, player variation and ped components, prop draw setup with kd-tree utilities, and a lights and draw-command cluster that the inventory labels network and input-ui. All but four were named.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Name each function in the batch from static evidence only: referenced strings, called imports, known callers and callees, virtual tables, and read/write behaviour. No rewriting and no checker.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The streaming group is one pipeline: eight request emitters funnel into a single shared hub, which dispatches to a minimal builder and a frag dispatcher, with builders stamping a small state tag and five thunks adapting three embedded intrusive lists to shared push and pop helpers. One function is the per-tick streaming update, recognised by its stability gate, request aging, release, rebalance and culling steps.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The player variation group holds the cores behind the set-component-variation script natives, a call-free hash slot lookup used from eight directions, player diff table building, and a full and partial record init pair.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Seven functions sit in RTTI virtual tables as the invoke slot of callback functors and draw-command classes, confirmed by reading the raw table bytes, and two more construct such objects. Three allocator stubs each bake a different worker address into the command they allocate, which explains why those workers have no direct callers.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two inventory entries listed with size zero are real functions with named callers, one padded entry starts in the tail of its predecessor, and one stub size overruns into its siblings. The subsystem labels for the lights cluster are wrong.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Confirm every RTTI table hit by reading the raw table bytes before naming from it; it is cheap and decisive.&lt;/li&gt;
+&lt;li&gt;Cite a string only when the code uses it as one; a comparison against a single config byte next to a string blob is not string evidence.&lt;/li&gt;
+&lt;li&gt;Distrust caller hits that fall inside no known function; they are usually false positives from byte scanning.&lt;/li&gt;
+&lt;li&gt;Leave functions rooted in the encrypted code region unnamed when nothing else identifies them.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Build one evidence table for the whole batch first (calls resolved against the merged name databases, imports, strings, data references, memory accesses), then scan the code section for direct callers attributed to containing inventory functions, then check RTTI table slots and raw table bytes, then read only the short and unclear functions directly.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A prior retry kit describes two kd-tree scans as min-scans; a flag-level read shows the select keeps the strictly greater element, so they are max-scans. A zlib error string match turned out to be a config byte sitting next to the string, not a use of it. One shared stub carries a script-native name in the symbol table but is called per entry by unrelated table-clearing code, so that name is suspect.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Six task-system functions verified, and a stub write that drops its first word</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b456"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b456</id>
@@ -1026,35 +1053,5 @@
 &lt;p&gt;Run the lane's contracts for the gated refresh routine: about an eighth of trials end fault against fault with identical codes while the rest compare fully, and the balanced-call wrong version fails on termination. The constructor's planted pointer differs from the correct value by a constant sixteen megabytes on every seed.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;Contract addresses are file addresses minus the image base while rewrites use absolute ones, and mixing the two faulted every trial until spotted. A per-trial pin cycle silently phase-locked with a gate so a whole path never ran, and probe runs kept overwriting the lane results file until it was rebuilt from the generator scripts.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Production lane: the worker relocates absolute immediates, and data reads work without the shadow</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b390"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b390</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>A production batch of five task-system functions verified three of them and overturned two working assumptions about the checker: absolute immediates in executed code arrive relocated even though the executable carries no relocation entries for them, and unrelocated data reads observe true bytes with working fills and resets on this host.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of five task-system functions verified three of them and overturned two working assumptions about the checker: absolute immediates in executed code arrive relocated even though the executable carries no relocation entries for them, and unrelocated data reads observe true bytes with working fills and resets on this host.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite five neighbouring task-system functions in Rust and prove each rewrite equivalent to the original with the stock checker, at least one thousand trials each plus a deliberately wrong version per function.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three functions verified, twelve hundred trials each with zero failures: a small guarded queue routine with five callees including a virtual-table slot, a table scan with a scorer call and a frame-cookie check, and a large pure floating-point leaf with exact operation order.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The worker relocates absolute immediates. A function returning a scan-end pointer produced a value differing from the file bytes by exactly the worker image delta, although the file has no relocation entries at those sites. Rewrites must pass such pointers through the relocated-address helper or call and return comparisons fail.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Unrelocated data reads work on this host. Read-only constants came back with true file values, writable-global writes were visible through the globals check, planted values reached the original, and a one-hundred-five-trial probe showed no cross-trial contamination.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two narrowings worth knowing: one function reads an uninitialised stack slot for an output lane, and another pushes a flag dword whose upper bytes are never written; both were pinned with a zero stack fill on both sides and recorded as narrowed.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A contract list of global values writes consecutive words, not per-trial cycles; per-trial cycling needs an explicit cycle entry. A corroborating detail: the inventory size of the large leaf is twenty-four bytes short of its true return address.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Verify data-heavy functions on this worker instead of deferring them for the missing shadow; probe first, since reads, fills and resets all hold here.&lt;/li&gt;
-&lt;li&gt;Route every immediate-derived pointer through the relocated-address helper whenever it reaches a call argument or a return value.&lt;/li&gt;
-&lt;li&gt;Regenerate mutants in the same command as the build: editing a rewrite without regenerating briefly shipped a mutant that differed in two behaviours instead of one.&lt;/li&gt;
-&lt;li&gt;The two unreached functions (a deep dispatch routine and a large state machine) have full retry kits in the lane report: callee maps, plant needs and known cautions.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the lane's three contracts with the stock worker and driver: each correct rewrite passes all trials with no failures and is not vacuous, and each wrong version fails on every trial that executes the omitted store. The relocation finding reproduces by comparing the scan-end return value against the file bytes: the difference equals the worker image delta exactly. The zeros-fill mutant analysis reproduces by checking which trials pass with the omission: exactly the trials whose fill makes every omitted store a no-op.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The first triage concluded four of the five functions were unverifiable and was wrong; only a probe showing the original reading a true constant overturned it, which cost one rebuild cycle but saved the lane. A contract key placed at the wrong level and a word-versus-byte offset mix-up each cost one validation round. The stale-mutant episode above was the only real defect produced, and it was caught by reading the failure breakdown instead of the headline count.&lt;/p&gt;</content>
   </entry>
 </feed>
