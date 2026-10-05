@@ -1,116 +1,159 @@
-// original: 0x00936510 net_blend_accum (proposed)
+// original: 0x00936510 net_state_poll (proposed)
 
-/// Accumulate blended values over two mode slots into running totals.
+/// Poll the two network state slots and fold their contribution into a pair
+/// of running totals.
 ///
-/// Takes one byte argument and reads two mode dwords from globals. An
-/// availability probe decides two enable flags (both set when it answers
-/// non-zero, else both clear: the probe writes nothing, so the cleared
-/// stack slots it might have filled stay zero); the argument forces the
-/// first flag on when non-zero, and a global enable forces the second off
-/// when clear. When both modes are 2 or 3 and both flags are set, the four
-/// running totals are preset from two read-only constants instead of zero.
-/// Each mode slot is then visited once with its flag: modes 2 and 3 with
-/// the flag set fetch a reference triple through one callee and invoke a
-/// blend callee with five arguments (the first total twice, constant 1,
-/// and two reference words);
-/// mode 5 invokes a combine callee with the two live float registers. After
-/// either call the totals fold pairwise (second plus first into first,
-/// fourth plus zeroth into zeroth). The float registers carry across slots:
-/// the combine arguments on the second slot are the first slot's folded
-/// values (the preset path's copy of the incoming vector register is dead:
-/// it always folds the first slot before any use).
-/// Returns whatever the last slot's mode read or callee answer left in EAX.
-/// cdecl, one stack word.
-lf_checker_rt::export!(cdecl, rw_00936510(arg: u32) -> u32 {
+/// `arg0`'s low byte is an override flag. Callee 1 (no arguments) reports
+/// whether slot data is available; its low byte set means both slots are
+/// live. The running totals start at zero unless the first state word is 2
+/// or 3, the second state word is 2 or 3, the override or callee 1 allows
+/// slot 0, and the flag byte allows slot 1, in which case they start at
+/// (-1, -1) with weights (2, 2) taken from the read-only constants.
+///
+/// The loop then visits the three state words at `STATE0 + k*STEP`
+/// (`k = 0, 1, 2`, signed bound). A word of 2 or 3 whose slot byte is
+/// non-zero (slot 0 uses the override-derived byte, slot 1 the flag-derived
+/// byte, slot 2 the stack-fill byte, always zero) asks callee 2 for a
+/// triple of words into a stack buffer and forwards two of them, with the
+/// current first total, to callee 3 (object at 0xD64 below the state word).
+/// A word of 5 calls callee 4 with the two current lane values instead.
+/// Either call folds the weights into the totals (`t0 += w0`, `t1 += w1`,
+/// in the original's operand order); any other word value skips the fold.
+/// Returns whatever is left in eax: the last state word read, or the last
+/// callee's answer when the final iteration calls.
+///
+/// Original: 0x00936510 (cdecl, one stack word, only its low byte read).
+/// The original realigns its stack frame (`and esp, -16`); the rewrite uses
+/// a normal frame, which the stack-pointer check accepts because both are
+/// net zero. Two reads hit stack the original never wrote (a padding byte
+/// beside the saved registers, forwarded as callee 3's first argument, and
+/// slot 2's byte): both are the contract's zero stack fill, hard-coded here.
+lf_checker_rt::export!(cdecl, rw_00936510(arg0: u32) -> u32 {
     unsafe {
-        const G_EN: u32 = 0x11A2EA2;
-        const G_M0: u32 = 0x11A4024;
-        const G_M1: u32 = 0x11A4DD4;
-        const M_STEP: u32 = 0xDB0;
-        const M_END: u32 = 0x11A5B84;
-        const OBJ_OFF: u32 = 0xD64;
-        const PRE0: u32 = 0xFE8D94;
-        const PRE1: u32 = 0xFE8A24;
+        const FLAG: u32 = 0x011A_2EA2;
+        const STATE0: u32 = 0x011A_4024;
+        const STATE1: u32 = 0x011A_4DD4;
+        const STATE_END: u32 = 0x011A_5B84;
+        const STEP: u32 = 0xDB0;
+        const OBJ_BACK: u32 = 0xD64;
+        const CAL_READY: u32 = 1;
+        const CAL_TRIPLE: u32 = 2;
+        const CAL_FOLD2: u32 = 3;
+        const CAL_FOLD5: u32 = 4;
 
+        #[inline(always)]
+        unsafe fn rd8(a: u32) -> u8 {
+            unsafe { (a as *const u8).read() }
+        }
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
             unsafe { (a as *const u32).read_unaligned() }
         }
         #[inline(always)]
-        unsafe fn rd8(a: u32) -> u8 {
-            unsafe { (a as *const u8).read() }
+        unsafe fn rdf(a: u32) -> f32 {
+            unsafe { f32::from_bits(rd32(a)) }
         }
         #[inline(always)]
         fn add(a: f32, b: f32) -> f32 {
             core::hint::black_box(a) + core::hint::black_box(b)
         }
 
-        let g = lf_checker_rt::relocated;
-        let probe = lf_checker_rt::callee_cdecl!(1, u32,);
-        let (fa, fc) = if (probe as u8) != 0 { (1u8, 1u8) } else { (0u8, 0u8) };
-        let fa = if (arg as u8) != 0 { 1u8 } else { fa };
-        let fc = if rd8(g(G_EN)) == 0 { 0u8 } else { fc };
-        let m0 = rd32(g(G_M0));
-        let m1 = rd32(g(G_M1));
-        let preset = (m0 == 3 || m0 == 2)
-            && fa != 0
-            && (m1 == 3 || m1 == 2)
-            && fc != 0;
-        let (mut t0, mut t1, mut t2, mut t3);
-        let (mut x0, mut x1);
-        if preset {
-            let p = f32::from_bits(rd32(g(PRE0)));
-            let q = f32::from_bits(rd32(g(PRE1)));
-            t0 = p;
-            t1 = p;
-            t2 = q;
-            t3 = q;
-            x0 = p;
-            // The original copies the incoming vector register here, but the
-            // preset path always runs the first slot's blend and fold, which
-            // overwrites this register before any use; the value is dead.
-            x1 = 0.0f32;
+        let base = lf_checker_rt::relocated(STATE0);
+        let end = lf_checker_rt::relocated(STATE_END);
+
+        // Callee 1 answers in its low byte; the original's fallback bytes
+        // beside it are explicitly zeroed, so a zero answer means (0, 0).
+        let ready: u32 = lf_checker_rt::callee_cdecl!(CAL_READY, u32,);
+        let live: u32 = if (ready as u8) != 0 { 1 } else { 0 };
+        let slot0: u32 = if (arg0 as u8) != 0 { 1 } else { live };
+        let slot1: u32 = if rd8(lf_checker_rt::relocated(FLAG)) == 0 {
+            0
         } else {
-            t0 = 0.0f32;
-            t1 = 0.0f32;
-            t2 = 0.0f32;
-            t3 = 0.0f32;
-            x0 = 0.0f32;
-            x1 = 0.0f32;
-        }
-        // EAX at exit is whatever the last mode read or callee answer left:
-        // each slot visit starts by loading its mode into EAX.
-        let mut eax = 0u32;
-        let mut slot = g(G_M0);
-        while slot != g(M_END) {
-            let mode = rd32(slot);
-            eax = mode;
-            let flag = if slot == g(G_M0) { fa } else { fc };
-            if (mode == 3 || mode == 2) && flag != 0 {
-                let mut refp = [0u32; 3];
-                eax = lf_checker_rt::callee_cdecl!(2, u32, refp.as_mut_ptr() as u32);
-                // The first word the original passes is whatever sits 8 above
-                // its frame base; on every observed trial that word equals
-                // the first total (the preset value on preset trials, zero
-                // otherwise), so pass the tracked total.
-                eax = lf_checker_rt::callee_thiscall!(
-                    3, u32, slot.wrapping_sub(OBJ_OFF),
-                    t0.to_bits(), t0.to_bits(), 1, refp[0], refp[1]
-                );
-            } else if mode == 5 {
-                eax = lf_checker_rt::callee_thiscall!(
-                    4, u32, slot.wrapping_sub(OBJ_OFF),
-                    x1.to_bits(), x0.to_bits()
-                );
-            } else {
-                slot = slot.wrapping_add(M_STEP);
-                continue;
+            live
+        };
+
+        let neg_one = rdf(lf_checker_rt::relocated(0x00FE_8D94));
+        let two = rdf(lf_checker_rt::relocated(0x00FE_8A24));
+        let mut tot0 = 0.0f32;
+        let mut tot1 = 0.0f32;
+        let (mut w0, mut w1) = (0.0f32, 0.0f32);
+        let mut lane1 = 0.0f32;
+        let head = rd32(base);
+        if (head == 3 || head == 2) && slot0 != 0 {
+            let other = rd32(lf_checker_rt::relocated(STATE1));
+            if (other == 3 || other == 2) && slot1 != 0 {
+                tot0 = neg_one;
+                tot1 = neg_one;
+                w0 = two;
+                w1 = two;
+                lane1 = neg_one;
             }
-            x1 = add(t2, t1);
-            x0 = add(t3, t0);
-            t1 = x1;
-            t0 = x0;
-            slot = slot.wrapping_add(M_STEP);
+        }
+        let mut lane0 = tot0;
+
+        // Triple buffer for callee 2, zeroed exactly once like the
+        // original's (its frame holds the zero fill at the first call and
+        // the previous scripted words afterwards).
+        let mut triple = [0u32; 3];
+        let mut ptr = base;
+        let mut lane = 0u32;
+        // The original returns whatever is left in eax: each iteration
+        // loads the state word, and every callee answer overwrites it, so
+        // when the last iteration calls, the answer is the return value.
+        let mut eax = slot0;
+        while (ptr as i32) < (end as i32) {
+            let v = rd32(ptr);
+            eax = v;
+            let mut fold = false;
+            if v == 3 || v == 2 {
+                let b = if lane == 0 {
+                    slot0
+                } else if lane == 1 {
+                    slot1
+                } else {
+                    0
+                };
+                if b != 0 {
+                    let r2: u32 = lf_checker_rt::callee_cdecl!(
+                        CAL_TRIPLE,
+                        u32,
+                        triple.as_mut_ptr() as u32
+                    );
+                    eax = r2;
+                    let obj = ptr.wrapping_sub(OBJ_BACK);
+                    let r3: u32 = lf_checker_rt::callee_thiscall!(
+                        CAL_FOLD2,
+                        u32,
+                        obj,
+                        0u32,
+                        tot0.to_bits(),
+                        1u32,
+                        triple[0],
+                        triple[1]
+                    );
+                    eax = r3;
+                    fold = true;
+                }
+            } else if v == 5 {
+                let obj = ptr.wrapping_sub(OBJ_BACK);
+                let r4: u32 = lf_checker_rt::callee_thiscall!(
+                    CAL_FOLD5,
+                    u32,
+                    obj,
+                    lane1.to_bits(),
+                    lane0.to_bits()
+                );
+                eax = r4;
+                fold = true;
+            }
+            if fold {
+                tot1 = add(w0, tot1);
+                tot0 = add(w1, tot0);
+                lane1 = tot1;
+                lane0 = tot0;
+            }
+            ptr = ptr.wrapping_add(STEP);
+            lane += 1;
         }
         eax
     }
