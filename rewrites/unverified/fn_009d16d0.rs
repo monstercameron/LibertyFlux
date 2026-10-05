@@ -4,10 +4,10 @@
 ///
 /// Scans the `count` (`[this+0x30]`, signed; none when not positive) dwords
 /// at `[this+0x2c]`. Each value is offered to the append helper (callee,
-/// return ignored) unless skipped: when `[arg0+0x10]` is nonzero the values
+/// return ignored) unless skipped: when `[arg1+0x10]` is nonzero the values
 /// 2, 4 and 8 are dropped; otherwise, and for every other value, a zero
 /// value is kept while a nonzero one is kept only if it shares a bit with
-/// the mask at `[arg1+0x1c]`. Kept values travel through a frame slot the
+/// the mask at `[arg0+0x1c]`. Kept values travel through a frame slot the
 /// callee reads (observed via the call snapshot), so the proof is the exact
 /// append sequence. Returns nothing meaningful (`eax` is incoming-register
 /// passthrough when no iteration runs). Thiscall, two pointer arguments.
@@ -26,8 +26,8 @@ lf_checker_rt::export!(thiscall, rw_009D16D0(this: u32, arg0: u32, arg1: u32) ->
             return 0;
         }
         let array = rd(this.wrapping_add(ARRAY));
-        let flag = rd(arg0.wrapping_add(FLAG));
-        let mask = rd(arg1.wrapping_add(MASK));
+        let flag = rd(arg1.wrapping_add(FLAG));
+        let mask = rd(arg0.wrapping_add(MASK));
         let mut i = 0u32;
         while (i as i32) < (count as i32) {
             let v = rd(array.wrapping_add(i.wrapping_mul(4)));
@@ -42,7 +42,7 @@ lf_checker_rt::export!(thiscall, rw_009D16D0(this: u32, arg0: u32, arg1: u32) ->
             if keep {
                 let mut slot = v;
                 let _: u32 = lf_checker_rt::callee_thiscall!(
-                    APPEND, u32, arg0.wrapping_add(TARGET), (&mut slot as *mut u32) as u32);
+                    APPEND, u32, arg1.wrapping_add(TARGET), (&mut slot as *mut u32) as u32);
             }
             i += 1;
         }

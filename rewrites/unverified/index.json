@@ -224,46 +224,6 @@
   "reason": "other"
  },
  {
-  "address": "0x0058F8B0",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_240, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_0058f8b0.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x0058FD10",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_241, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_0058fd10.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x00590170",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_242, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00590170.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x005905D0",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_243, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_005905d0.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x00590A30",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_244, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00590a30.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
   "address": "0x00590E90",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_245, player_schema::LeaderboardInfo, 10>::vf14",
   "file": "fn_00590e90.rs",
@@ -325,38 +285,6 @@
   "file": "fn_00592d30.rs",
   "lane": "r-b351",
   "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00595490",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_261, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00595490.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x005958F0",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_262, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_005958f0.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x00595D50",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_263, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_00595d50.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
-  "reason": ""
- },
- {
-  "address": "0x005961B0",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_264, player_schema::LeaderboardInfo, 10>::vf14",
-  "file": "fn_005961b0.rs",
-  "lane": "a-S01",
-  "outcome": "not yet run",
   "reason": ""
  },
  {
@@ -512,9 +440,17 @@
   "reason": "other"
  },
  {
-  "address": "0x0062BF40",
-  "name": "streaming_list_rebuild",
-  "file": "fn_0062bf40.rs",
+  "address": "0x0062CA10",
+  "name": "streaming_global_init",
+  "file": "fn_0062ca10.rs",
+  "lane": "r-s481",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x0062DAA0",
+  "name": "streaming_multi_lookup",
+  "file": "fn_0062daa0.rs",
   "lane": "r-s481",
   "outcome": "not_reached",
   "reason": ""
@@ -566,6 +502,102 @@
   "lane": "r-b247",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x008778E0",
+  "name": "rage::crmtComposerOptimized::vf7",
+  "file": "fn_008778e0.rs",
+  "lane": "r-s482",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00877980",
+  "name": "rage::crmtComposerOptimized::vf8",
+  "file": "fn_00877980.rs",
+  "lane": "r-s482",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00877A40",
+  "name": "rage::crmtComposerOptimized::vf9",
+  "file": "fn_00877a40.rs",
+  "lane": "r-s482",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00877B10",
+  "name": "rage::crmtComposerOptimized::vf10",
+  "file": "fn_00877b10.rs",
+  "lane": "r-s482",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00877BE0",
+  "name": "rage::crmtComposerOptimized::vf11",
+  "file": "fn_00877be0.rs",
+  "lane": "r-s482",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00877CC0",
+  "name": "rage::crmtComposerOptimized::vf12",
+  "file": "fn_00877cc0.rs",
+  "lane": "r-s482",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00877DB0",
+  "name": "rage::crmtComposerOptimized::vf13",
+  "file": "fn_00877db0.rs",
+  "lane": "r-s482",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00877E70",
+  "name": "rage::crmtComposerOptimized::vf14",
+  "file": "fn_00877e70.rs",
+  "lane": "r-s482",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00877F60",
+  "name": "rage::crmtComposerOptimized::vf15",
+  "file": "fn_00877f60.rs",
+  "lane": "r-s482",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00877FC0",
+  "name": "rage::crmtComposerOptimized::vf16",
+  "file": "fn_00877fc0.rs",
+  "lane": "r-s482",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00878070",
+  "name": "rage::crmtComposerOptimized::vf17",
+  "file": "fn_00878070.rs",
+  "lane": "r-s482",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00878100",
+  "name": "rage::crmtComposerOptimized::vf18",
+  "file": "fn_00878100.rs",
+  "lane": "r-s482",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x008834A0",
