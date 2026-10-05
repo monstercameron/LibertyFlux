@@ -39078,6 +39078,15 @@
   "lane": "a-02"
  },
  {
+  "address": "0x00870BD0",
+  "name": "crmt_slot_array_init",
+  "kind": "function",
+  "file": "functions/fn_00870bd0.rs",
+  "trials": 0,
+  "checker": "version 6",
+  "lane": "r-s485"
+ },
+ {
   "address": "0x00872010",
   "name": "crmt_request_init",
   "kind": "function",
@@ -43137,6 +43146,15 @@
   "lane": "a-10"
  },
  {
+  "address": "0x0089BA10",
+  "name": "aud_slot_pair_update",
+  "kind": "function",
+  "file": "functions/fn_0089ba10.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b565"
+ },
+ {
   "address": "0x0089BE50",
   "name": "aud_blend_compute",
   "kind": "function",
@@ -43144,6 +43162,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-10"
+ },
+ {
+  "address": "0x0089C180",
+  "name": "aud_loop_level_update",
+  "kind": "function",
+  "file": "functions/fn_0089c180.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b565"
  },
  {
   "address": "0x0089C2C0",
