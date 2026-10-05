@@ -1024,14 +1024,6 @@
   "reason": null
  },
  {
-  "address": "0x009A0E70",
-  "name": "audio_update_large (proposed)",
-  "file": "fn_009a0e70.rs",
-  "lane": "r-b561",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x009A2970",
   "name": null,
   "file": "fn_009a2970.rs",
@@ -1080,14 +1072,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x009CBAB0",
-  "name": "ENABLE_END_CREDITS_FADE",
-  "file": "fn_009cbab0.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x009CBBC0",
   "name": null,
   "file": "fn_009cbbc0.rs",
@@ -1096,58 +1080,10 @@
   "reason": null
  },
  {
-  "address": "0x009CC1E0",
-  "name": "PLAY_STREAM_FRONTEND",
-  "file": "fn_009cc1e0.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x009CC210",
   "name": null,
   "file": "fn_009cc210.rs",
   "lane": "r-n86",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CC350",
-  "name": "REPORT_SUSPECT_ARRESTED",
-  "file": "fn_009cc350.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CC880",
-  "name": "STOP_MOBILE_PHONE_RINGING",
-  "file": "fn_009cc880.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CC8C0",
-  "name": "STOP_PREVIEW_RINGTONE",
-  "file": "fn_009cc8c0.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CC9C0",
-  "name": "UNREGISTER_SCRIPT_WITH_AUDIO",
-  "file": "fn_009cc9c0.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009CD140",
-  "name": "NEW_SCRIPTED_CONVERSATION",
-  "file": "fn_009cd140.rs",
-  "lane": "a-Q03",
   "outcome": "not yet run",
   "reason": null
  },
@@ -1512,42 +1448,10 @@
   "reason": "needs_encrypted_code"
  },
  {
-  "address": "0x00B86780",
-  "name": "CAM_RESTORE_JUMPCUT",
-  "file": "fn_00b86780.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B86790",
-  "name": "CAM_SEQUENCE_CLOSE",
-  "file": "fn_00b86790.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00B870D0",
   "name": null,
   "file": "fn_00b870d0.rs",
   "lane": "r-n86",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B878B0",
-  "name": "SET_DANCE_SHAKE_INACTIVE_IMMEDIATELY",
-  "file": "fn_00b878b0.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B87B70",
-  "name": "SET_HINT_TIMES_DEFAULT",
-  "file": "fn_00b87b70.rs",
-  "lane": "a-Q03",
   "outcome": "not yet run",
   "reason": null
  },
@@ -1568,14 +1472,6 @@
   "reason": null
  },
  {
-  "address": "0x00B8B970",
-  "name": "ACTIVATE_FRONTEND",
-  "file": "fn_00b8b970.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00B8CA40",
   "name": null,
   "file": "fn_00b8ca40.rs",
@@ -1584,58 +1480,10 @@
   "reason": null
  },
  {
-  "address": "0x00B8CC30",
-  "name": "HIDE_HUD_AND_RADAR_THIS_FRAME",
-  "file": "fn_00b8cc30.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B93F10",
-  "name": "CANCEL_OVERRIDE_RESTART",
-  "file": "fn_00b93f10.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B94160",
-  "name": "CLEAR_NEWS_SCROLLBAR",
-  "file": "fn_00b94160.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B94CD0",
-  "name": "RELEASE_WEATHER",
-  "file": "fn_00b94cd0.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00B94F20",
   "name": null,
   "file": "fn_00b94f20.rs",
   "lane": "r-n86",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B95290",
-  "name": "TERMINATE_ALL_SCRIPTS_FOR_NETWORK_GAME",
-  "file": "fn_00b95290.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B98200",
-  "name": "CLEAR_SHAKE_PLAYERPAD_WHEN_CONTROLLER_DISABLED",
-  "file": "fn_00b98200.rs",
-  "lane": "a-Q03",
   "outcome": "not yet run",
   "reason": null
  },
@@ -1768,38 +1616,6 @@
   "reason": null
  },
  {
-  "address": "0x00BB2840",
-  "name": "REMOVE_RC_BUGGY",
-  "file": "fn_00bb2840.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BB7330",
-  "name": "FINISH_STREAMING_REQUEST_LIST",
-  "file": "fn_00bb7330.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BB7470",
-  "name": "LOAD_ALL_OBJECTS_NOW",
-  "file": "fn_00bb7470.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BB8B50",
-  "name": "FLUSH_PATROL_ROUTE",
-  "file": "fn_00bb8b50.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00BB9710",
   "name": null,
   "file": "fn_00bb9710.rs",
@@ -1821,14 +1637,6 @@
   "file": "fn_00bc30c0.rs",
   "lane": "r-b505",
   "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00BC4F90",
-  "name": "ABORT_ALL_GARAGE_ACTIVITY",
-  "file": "fn_00bc4f90.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -1860,14 +1668,6 @@
   "name": null,
   "file": "fn_00bc7030.rs",
   "lane": "r-n86",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BC7060",
-  "name": "MARK_MISSION_TRAINS_AS_NO_LONGER_NEEDED",
-  "file": "fn_00bc7060.rs",
-  "lane": "a-Q03",
   "outcome": "not yet run",
   "reason": null
  },
@@ -1932,14 +1732,6 @@
   "name": null,
   "file": "fn_00bd88c0.rs",
   "lane": "r-n88",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BDB8C0",
-  "name": "NETWORK_STORE_GAME_CONFIG",
-  "file": "fn_00bdb8c0.rs",
-  "lane": "a-Q03",
   "outcome": "not yet run",
   "reason": null
  },
@@ -2056,30 +1848,6 @@
   "reason": "frame_pointer_args"
  },
  {
-  "address": "0x00C80E60",
-  "name": "Classify scenario entry `idx` and report its kind word through `out`.",
-  "file": "fn_00c80e60.rs",
-  "lane": "r-s442",
-  "outcome": "deferred",
-  "reason": "needs_encrypted_code"
- },
- {
-  "address": "0x00C80EB0",
-  "name": "CTaskComplexSeatedScenario::vf23",
-  "file": "fn_00c80eb0.rs",
-  "lane": "r-s442",
-  "outcome": "deferred",
-  "reason": "needs_encrypted_code"
- },
- {
-  "address": "0x00C820E0",
-  "name": "Detach the child object at `this+0x18` and clear the slot.",
-  "file": "fn_00c820e0.rs",
-  "lane": "r-s442",
-  "outcome": "deferred",
-  "reason": "needs_encrypted_code"
- },
- {
   "address": "0x00C82120",
   "name": "Store the caller's scratch float into `this+0xac`; return 0.",
   "file": "fn_00c82120.rs",
@@ -2102,22 +1870,6 @@
   "lane": "r-s442",
   "outcome": "deferred",
   "reason": "frame_pointer_args"
- },
- {
-  "address": "0x00C84A20",
-  "name": "Report whether the scenario object is in its active state.",
-  "file": "fn_00c84a20.rs",
-  "lane": "r-s442",
-  "outcome": "deferred",
-  "reason": "needs_encrypted_code"
- },
- {
-  "address": "0x00C8A800",
-  "name": "audio_slot_liveness_gate",
-  "file": "fn_00c8a800.rs",
-  "lane": "a-Q03",
-  "outcome": "not yet run",
-  "reason": null
  },
  {
   "address": "0x00C91890",

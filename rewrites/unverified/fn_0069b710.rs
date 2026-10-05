@@ -36,8 +36,7 @@ lf_checker_rt::export!(thiscall, rw_0069B710(this: u32, flags: u32) -> u32 {
         let slot = rd32(this + SLOT_OFF);
         if slot != 0 {
         let tls_base = lf_checker_rt::tls_slot(TLS_SLOT);
-        let tls_inner = rd32(tls_base);
-        let heap_obj = rd32(tls_inner + ALLOC_OBJ_OFF);
+        let heap_obj = rd32(tls_base + ALLOC_OBJ_OFF);
         let vtable = rd32(heap_obj);
             let free: extern "thiscall" fn(u32, u32) -> u32 =
                 unsafe { core::mem::transmute(rd32(vtable + FREE_SLOT) as usize) };
@@ -47,8 +46,7 @@ lf_checker_rt::export!(thiscall, rw_0069B710(this: u32, flags: u32) -> u32 {
         wr32(this, lf_checker_rt::relocated(BASE_VTABLE));
         if flags & FREE_FLAG != 0 {
             let tls_base = lf_checker_rt::tls_slot(TLS_SLOT);
-            let tls_inner = rd32(tls_base);
-            let heap_obj = rd32(tls_inner + ALLOC_OBJ_OFF);
+            let heap_obj = rd32(tls_base + ALLOC_OBJ_OFF);
             let vtable = rd32(heap_obj);
             let free: extern "thiscall" fn(u32, u32) -> u32 =
                 unsafe { core::mem::transmute(rd32(vtable + FREE_SLOT) as usize) };

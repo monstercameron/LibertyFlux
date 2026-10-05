@@ -27,8 +27,7 @@ lf_checker_rt::export!(thiscall, rw_00696420(this: u32) -> u32 {
             unsafe { (a as *const u16).read_unaligned() as u32 }
         }
         let tls_base = lf_checker_rt::tls_slot(TLS_SLOT);
-        let tls_inner = rd32(tls_base);
-        let heap_obj = rd32(tls_inner + ALLOC_OBJ_OFF);
+        let heap_obj = rd32(tls_base + ALLOC_OBJ_OFF);
         let vtable = rd32(heap_obj);
         let alloc: extern "thiscall" fn(u32, u32, u32, u32) -> u32 =
             unsafe { core::mem::transmute(rd32(vtable + ALLOC_SLOT) as usize) };
