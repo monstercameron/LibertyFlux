@@ -177,14 +177,14 @@ lf_checker_rt::export!(thiscall, rw_00bf9500(this: u32, a: u32) -> u32 {
                     u32,
                     cell20c.as_mut_ptr() as u32,
                     0,
-                    MAKE_CONST,
+                    lf_checker_rt::relocated(MAKE_CONST),
                     0,
                     0
                 );
                 wr32(handle, cell20c[0]);
                 wr32(handle.wrapping_add(4), cell20c[1]);
                 wr32(handle.wrapping_add(8), cell20c[2]);
-                wr32(handle.wrapping_add(12), TRAIL_CONST);
+                wr32(handle.wrapping_add(12), lf_checker_rt::relocated(TRAIL_CONST));
             }
             _ => {}
         }

@@ -1,126 +1,109 @@
-// original: 0x00a8d770 pool_notify_matching (proposed)
+// original: 0x00A8D770 pool_notify_nodes (proposed)
 
-/// Notify the sweep entries, then every matching table node, in order.
+/// Notify pool nodes from the iterator and the row lists.
 ///
-/// `this` is the pool. When the sweep byte at +0x75 is set and the
-/// enable byte at +0x73 is set, entries stream through the next callee
-/// (scripted to two entries then done): a non-null entry whose word at
-/// +0x44 is not -1 is notified through its slot. (Enable clear with
-/// sweep set returns the incoming register, fixed by the proof.)
-/// Otherwise the sweep is skipped. Then each bucket below the 16-bit
-/// limit at +0xE8 walks its node list from table+bucket*0xA0+8: each
-/// node's object resolves through its word at +0x34, and a resolved
-/// object whose word at +0x44 is not -1 and whose word at +0x28 selects
-/// bit 0x100 is notified through its slot. Returns the bucket limit
-/// (reloaded into eax by the loop bottom, discarding notify answers),
-/// or the incoming register on the immediate-return path.
+/// When both enable bytes (`this+0x73`, `this+0x75`) are clear there is
+/// nothing to do. Otherwise the row lists are always swept: each row's
+/// node chain is walked and every live item whose word `+0x44` is not -1
+/// and whose flags `+0x28` select bit `0x100` is notified through its
+/// function table slot `+0x44`. When `+0x75` is set the iterator runs
+/// first instead... precisely: the iterator sweep (cursor reset to
+/// row 0 / cell -1, every yielded non-null node with word `+0x44` not -1
+/// notified) runs when `+0x75` is set, then the row sweep follows.
 ///
-/// Original: 0x00A8D770 (thiscall, no stack words, vtable callees).
-lf_checker_rt::export!(thiscall, rw_00a8d770(this: u32) -> u32 {
+/// Original: thiscall, no stack words, no return value. Two callee
+/// shapes: the cell iterator (thiscall, one frame out-slot argument) and
+/// the table slot (thiscall through the object, no stack words),
+/// intercepted by a planted stub address.
+lf_checker_rt::export!(thiscall, rw_00A8D770(this: u32) -> u32 {
     unsafe {
-        const CALLEE_NEXT: u32 = 1;
-        const CALLEE_NOTIFY: u32 = 2;
-        const ENABLE: u32 = 0x73;
-        const SWEEP: u32 = 0x75;
-        const STATE_A: u32 = 0xfc;
-        const STATE_B: u32 = 0x100;
-        const ENTRY_GEN: u32 = 0x44;
-        const RETIRED: u32 = 0xffff;
-        const TABLE: u32 = 0xe4;
-        const LIMIT: u32 = 0xe8;
-        const BUCKET_SIZE: u32 = 0xa0;
-        const BUCKET_HDR: u32 = 8;
-        const NODE_NEXT: u32 = 4;
-        const OBJ_LINK: u32 = 0x34;
-        const OBJ_SEL: u32 = 0x28;
-        const SELECT_BIT: u32 = 0x100;
-        const SELECT_MASK: u32 = 0x3c0;
+        const EN_A: u32 = 0x73;
+        const EN_B: u32 = 0x75;
+        const ROW_TABLE_OFF: u32 = 0xe4;
+        const ROW_COUNT_OFF: u32 = 0xe8;
+        const CUR_ROW_OFF: u32 = 0xfc;
+        const CUR_CELL_OFF: u32 = 0x100;
+        const ROW_STRIDE: u32 = 160;
+        const LIST_OFF: u32 = 8;
+        const ITEM_OFF: u32 = 0x34;
+        const WORD_OFF: u32 = 0x44;
+        const FLAGS_OFF: u32 = 0x28;
+        const FLAGS_MASK: u32 = 0x3c0;
+        const FLAGS_WANT: u32 = 0x100;
         const NOTIFY_SLOT: u32 = 0x44;
-        const INCOMING_EAX: u32 = 0x12345678;
-        let enabled = ((this + ENABLE) as *const u8).read_unaligned();
-        let sweep = ((this + SWEEP) as *const u8).read_unaligned();
-        if enabled == 0 && sweep != 0 {
-            return INCOMING_EAX;
-        }
-        if sweep != 0 {
-            ((this + STATE_A) as *mut u32).write_unaligned(0);
-            ((this + STATE_B) as *mut u32).write_unaligned(0xffffffff);
-            let mut slot: u32 = 0;
-            let slot_addr = core::ptr::addr_of_mut!(slot) as u32;
-            let mut more = lf_checker_rt::callee_thiscall!(
-                CALLEE_NEXT,
-                u32,
-                this,
-                slot_addr
-            );
-            if more as u8 != 0 {
-                loop {
-                    let entry = slot;
-                    if entry != 0 {
-                        let gen = ((entry + ENTRY_GEN) as *const u16)
-                            .read_unaligned() as u32;
-                        if gen != RETIRED {
-                            let vtable =
-                                (entry as *const u32).read_unaligned();
-                            let target =
-                                ((vtable + NOTIFY_SLOT) as *const u32)
-                                    .read_unaligned();
-                            let f: extern "thiscall" fn(u32) -> u32 =
-                                core::mem::transmute(target as usize);
-                            f(entry);
-                        }
-                    }
-                    more = lf_checker_rt::callee_thiscall!(
-                        CALLEE_NEXT,
-                        u32,
-                        this,
-                        slot_addr
-                    );
-                    if more as u8 == 0 {
-                        break;
-                    }
-                }
-            }
-        }
-        let table = ((this + TABLE) as *const u32).read_unaligned();
-        let limit =
-            ((this + LIMIT) as *const u16).read_unaligned() as u32;
-        let mut bucket = 0u32;
-        while bucket < limit {
-            let mut node = (table
-                .wrapping_add(bucket.wrapping_mul(BUCKET_SIZE))
-                .wrapping_add(BUCKET_HDR)
-                as *const u32)
-                .read_unaligned();
-            while node != 0 {
-                let obj = (node as *const u32).read_unaligned();
-                node = ((node + NODE_NEXT) as *const u32).read_unaligned();
-                let linked =
-                    ((obj + OBJ_LINK) as *const u32).read_unaligned();
-                if linked == 0 {
-                    continue;
-                }
-                let gen = ((linked + ENTRY_GEN) as *const u16)
-                    .read_unaligned() as u32;
-                if gen == RETIRED {
-                    continue;
-                }
-                let sel = ((linked + OBJ_SEL) as *const u32).read_unaligned();
-                if sel & SELECT_MASK != SELECT_BIT {
-                    continue;
-                }
-                let vtable = (linked as *const u32).read_unaligned();
-                let target = ((vtable + NOTIFY_SLOT) as *const u32)
+        const ITERATOR: u32 = 1;
+        // The notify slot holds the planted stub for callee 2.
+        #[inline(always)]
+        unsafe fn notify(obj: u32) {
+            // Load-and-call through the object exactly like the original;
+            // both sides land on the planted stub for callee NOTIFY.
+            unsafe {
+                let slot = ((((obj as *const u32).read_unaligned()) + NOTIFY_SLOT)
+                    as *const u32)
                     .read_unaligned();
                 let f: extern "thiscall" fn(u32) -> u32 =
-                    core::mem::transmute(target as usize);
-                f(linked);
+                    core::mem::transmute(slot as usize);
+                let _ = f(obj);
             }
-            bucket += 1;
         }
-        // The loop bottom reloads the limit into eax every pass, so the
-        // return is the limit (0 when no bucket ran), whatever the
-        // notify callees answered.
-        limit
+        let a = ((this + EN_A) as *const u8).read();
+        let b = ((this + EN_B) as *const u8).read();
+        if a == 0 && b == 0 {
+            return 0;
+        }
+        if b != 0 {
+            ((this + CUR_ROW_OFF) as *mut u32).write_unaligned(0);
+            ((this + CUR_CELL_OFF) as *mut u32).write_unaligned(0xffffffff);
+            let mut out: u32 = 0;
+            loop {
+                let more: u32 = lf_checker_rt::callee_thiscall!(
+                    ITERATOR,
+                    u32,
+                    this,
+                    &mut out as *mut u32 as u32
+                );
+                if more as u8 == 0 {
+                    break;
+                }
+                let node = out;
+                if node != 0 {
+                    let w = ((node + WORD_OFF) as *const u16).read_unaligned();
+                    if w != 0xffff {
+                        notify(node);
+                    }
+                }
+            }
+        }
+        let rows = ((this + ROW_COUNT_OFF) as *const u16).read_unaligned() as u32;
+        if rows == 0 {
+            return 0;
+        }
+        let table = ((this + ROW_TABLE_OFF) as *const u32).read_unaligned();
+        let mut row: u32 = 0;
+        while (row as i32) < rows as i32 {
+            let mut link = (table
+                .wrapping_add(row.wrapping_mul(ROW_STRIDE))
+                .wrapping_add(LIST_OFF) as *const u32)
+                .read_unaligned();
+            while link != 0 {
+                let item = (link as *const u32).read_unaligned();
+                link = ((link + 4) as *const u32).read_unaligned();
+                let inner = ((item + ITEM_OFF) as *const u32).read_unaligned();
+                if inner == 0 {
+                    continue;
+                }
+                if ((inner + WORD_OFF) as *const u16).read_unaligned() == 0xffff {
+                    continue;
+                }
+                if ((inner + FLAGS_OFF) as *const u32).read_unaligned() & FLAGS_MASK
+                    != FLAGS_WANT
+                {
+                    continue;
+                }
+                notify(inner);
+            }
+            row = row.wrapping_add(1);
+        }
+        0
     }
 });
