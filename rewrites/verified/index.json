@@ -53343,6 +53343,15 @@
   "lane": "a-08"
  },
  {
+  "address": "0x00979CC0",
+  "name": "audio_collision_queues_drain",
+  "kind": "function",
+  "file": "functions/fn_00979cc0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b562"
+ },
+ {
   "address": "0x00979E30",
   "name": "audio_bank_store_entry",
   "kind": "function",
@@ -53350,6 +53359,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-08"
+ },
+ {
+  "address": "0x00979F60",
+  "name": "COLLISIONS",
+  "kind": "function",
+  "file": "functions/fn_00979f60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b562"
  },
  {
   "address": "0x0097A1D0",
@@ -53755,6 +53773,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b373"
+ },
+ {
+  "address": "0x0097DD20",
+  "name": "audio_voice_route_submit",
+  "kind": "function",
+  "file": "functions/fn_0097dd20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b562"
  },
  {
   "address": "0x0097E050",
@@ -58621,6 +58648,15 @@
   "name": "bbox_merge_minmax",
   "kind": "function",
   "file": "functions/fn_009d25b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s483"
+ },
+ {
+  "address": "0x009D2970",
+  "name": "scan_fetch_relocate",
+  "kind": "function",
+  "file": "functions/fn_009d2970.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s483"
