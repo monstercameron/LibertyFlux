@@ -1,0 +1,15 @@
+[package]
+name = "lf-animchan-diff"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Differential tests: lifted animation channel decoders against their verified 32-bit rewrites"
+publish = false
+
+[dependencies]
+lf-animation = { path = "../../lf-animation" }
+lf-math = { path = "../../lf-math" }
+
+[lints]
+workspace = true

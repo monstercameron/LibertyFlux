@@ -132,6 +132,15 @@ name = "lf-animation"
 version = "0.1.0"
 dependencies = [
  "lf-core",
+ "lf-math",
+]
+
+[[package]]
+name = "lf-animchan-diff"
+version = "0.1.0"
+dependencies = [
+ "lf-animation",
+ "lf-math",
 ]
 
 [[package]]

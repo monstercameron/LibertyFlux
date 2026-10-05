@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Lift: animation channel decoders, with their proof in the pipeline",
+    "commit": null,
+    "summary": "The first lift of whole classes: 22 verified methods of nine animation channel classes are now portable Rust in crates/lf-animation, and the tests that prove them against the verified rewrites run in the pipeline.",
+    "changes": [
+      "New module crates/lf-animation/src/channel: a channel trait and one owning type per channel class (constant and uncompressed channels for floats, integers, booleans, vectors and quaternions, and one method of the quantized float channel). It holds behaviour: how a frame number becomes a key index, when a sample snaps to a key and when it interpolates, in what order the interpolation multiplies and adds. No unsafe code, no addresses, no dependence on pointer width. 32 host tests.",
+      "New test crate crates/tools/lf-animchan-diff: each lifted method runs against its verified 32-bit rewrite on the same generated inputs, comparing the result and every written byte, floats bit for bit, and a deliberately wrong lift of each must be caught. It includes the tracked rewrite files directly, so nothing is generated or copied. 17 tests; the coordinator ran them on the 32-bit target and they pass. The pipeline's 32-bit job now runs them on every push.",
+      "This is the first lifted code whose proof the pipeline repeats. The leaderboard and script-native crates still say in their documentation that theirs has not been repeated.",
+      "Not lifted: the family's 11 unverified methods (the curve and run-length samplers first), the serializers, and five classes with no lifted method yet. The module's registry lists each method's state and what its proof narrows."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 3 files from lanes (272 unverified rewrites, 51 in review)",
     "commit": "249032d29163d5f9751bf4bbf6efcd5da1e587f0",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
