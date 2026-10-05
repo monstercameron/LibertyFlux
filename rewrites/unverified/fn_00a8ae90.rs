@@ -31,9 +31,9 @@ lf_checker_rt::export!(thiscall, rw_00a8ae90(this: u32, a1: u32, a2: u32, a3: u3
             u32,
             buf_addr,
             BUF_SIZE,
+            a1,
             a2,
             a3,
-            a1,
             0
         );
         let buf1 = core::ptr::addr_of_mut!(buf[1]) as u32;

@@ -16,13 +16,16 @@ lf_checker_rt::export!(cdecl, rw_00a06a30(handle: u32, sx: u32, sy: u32, sz: u32
         const BASIS_OFF: u32 = 0x20;
         const LOOKUP: u32 = 0;
         const APPLY: u32 = 1;
+        use core::arch::x86::{_mm_add_ss, _mm_cvtss_f32, _mm_mul_ss, _mm_set_ss};
         #[inline(always)]
-        fn mul(a: f32, b: f32) -> f32 {
-            core::hint::black_box(a) * core::hint::black_box(b)
+        unsafe fn mul(a: f32, b: f32) -> f32 {
+            _mm_cvtss_f32(_mm_mul_ss(_mm_set_ss(core::hint::black_box(a)),
+                                     _mm_set_ss(core::hint::black_box(b))))
         }
         #[inline(always)]
-        fn add(a: f32, b: f32) -> f32 {
-            core::hint::black_box(a) + core::hint::black_box(b)
+        unsafe fn add(a: f32, b: f32) -> f32 {
+            _mm_cvtss_f32(_mm_add_ss(_mm_set_ss(core::hint::black_box(a)),
+                                     _mm_set_ss(core::hint::black_box(b))))
         }
         #[inline(always)]
         unsafe fn rdf(a: u32) -> f32 {

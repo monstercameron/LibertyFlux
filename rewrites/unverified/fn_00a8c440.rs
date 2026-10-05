@@ -28,7 +28,7 @@ lf_checker_rt::export!(thiscall, rw_00a8c440(this: u32, head: u32) -> u32 {
         const SELECT_BIT: u32 = 0x40;
         const SELECT_MASK: u32 = 0x3c0;
         const NODE_LINK: u32 = 4;
-        const SUB_SLOTS: u32 = 5;
+        const SUB_SLOTS: u32 = 4;
         const INCOMING_EAX: u32 = 0x12345678;
         let enabled =
             ((this + ENABLE) as *const u8).read_unaligned();

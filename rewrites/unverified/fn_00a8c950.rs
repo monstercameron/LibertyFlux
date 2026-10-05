@@ -17,7 +17,7 @@ lf_checker_rt::export!(thiscall, rw_00a8c950(this: u32, head: u32) -> u32 {
         const CALLEE_CELL: u32 = 4;
         const RESOLVER: u32 = 0x12b4164;
         const NODE_LINK: u32 = 4;
-        const SUB_SLOTS: u32 = 5;
+        const SUB_SLOTS: u32 = 4;
         let rows = lf_checker_rt::callee_thiscall!(
             CALLEE_ROWS,
             u32,

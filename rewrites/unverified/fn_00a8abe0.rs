@@ -32,7 +32,9 @@ lf_checker_rt::export!(thiscall, rw_00a8abe0(this: u32) -> u32 {
         );
         let mut f = [0u32; 8];
         {
-            let s1 = core::ptr::addr_of_mut!(f[1]) as u32;
+            // First slot sits four words up (the original's lea lands
+            // there); the wire callee fills four words per slot.
+            let s1 = core::ptr::addr_of_mut!(f[4]) as u32;
             lf_checker_rt::callee_thiscall!(
                 CALLEE_WIRE,
                 u32,

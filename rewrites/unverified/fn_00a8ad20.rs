@@ -31,10 +31,12 @@ lf_checker_rt::export!(thiscall, rw_00a8ad20(this: u32, base: u32, arg2: u32) ->
         const TICK_BITS: u32 = 0x3f666666;
         lf_checker_rt::callee_thiscall!(CALLEE_BIND, u32, this);
         ((this + STATE) as *mut u32).write_unaligned(0);
+        // The original calls the step callee without setting ecx, so it
+        // sees the previous stub's exit value (0). Pass 0 to match.
         let step = lf_checker_rt::callee_thiscall!(
             CALLEE_STEP,
             u32,
-            this,
+            0,
             TICK_BITS
         );
         let mut resolved =
@@ -67,7 +69,7 @@ lf_checker_rt::export!(thiscall, rw_00a8ad20(this: u32, base: u32, arg2: u32) ->
             let step = lf_checker_rt::callee_thiscall!(
                 CALLEE_STEP,
                 u32,
-                this,
+                0,
                 TICK_BITS
             );
             resolved =
