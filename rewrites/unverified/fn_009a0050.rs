@@ -392,6 +392,7 @@ lf_checker_rt::export!(thiscall, rw_009A0050(this: u32, a0: u32, a1: u32, a2: u3
             let _ = join_b;
         } else {
             wff(&mut frame, -424, CN4);
+            wff(&mut frame, -432, C12);
         }
         let b266 = rb(&frame, -266);
         wb(&mut frame, -266, b266 & 0xdf);

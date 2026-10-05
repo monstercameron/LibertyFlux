@@ -15,9 +15,9 @@
 /// different sub-objects; four of those results are shaped by callee 4
 /// (cdecl, file address 0x890030) and two are truncated to integers. Six
 /// mixing calls (callee 5, file address 0x8ab800), each passed a zero
-/// argument; the first mixing result is discarded by the original (the call
-/// is kept here so the call log matches). The final section scales the
-/// scratch block by
+/// argument. The first mixing result overwrites the sixth equalizer
+/// result's stack slot, so that equalizer result only feeds one truncated
+/// integer. The final section scales the scratch block by
 /// `1 - r0` and accumulates the mixing results scaled by `r0`, where `r0` is
 /// the first equalizer result, adds the shared constants (1.0, 0.0, -100.0
 /// from read-only data), and truncates three accumulators to integers. The
@@ -115,9 +115,11 @@ lf_checker_rt::export!(thiscall, rw_00997600(this: u32, outp: u32) -> u32 {
 
         // Every mixing call takes a literal 0 argument; the sums below are
         // temporaries the original keeps on its stack for the final section.
-        let _u1: f32 = mix(this.wrapping_add(0x780), 0); // discarded by original
+        let u1: f32 = mix(this.wrapping_add(0x780), 0);
         let u2: f32 = mix(this.wrapping_add(0x5f0), 0);
-        let a3 = add(add(p6, u2), q1);
+        // a3 uses u1: the original stores u1 over p6's stack slot before
+        // reading it here, so p6 only feeds the truncated integer below.
+        let a3 = add(add(u1, u2), q1);
         let u3: f32 = mix(this.wrapping_add(0x6e0), 0);
         let u4: f32 = mix(this.wrapping_add(0x5f0), 0);
         let a5 = add(add(u3, u4), q2);
