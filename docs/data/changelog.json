@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-04",
-    "title": "Devlog: Two contract mistakes that pass quietly",
+    "title": "Rewrites: 13 more functions pass the checker (11224 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "13 rewrites added under rewrites/verified: 0 script native handlers and 13 other functions.",
+      "The tree now holds 11224 rewrites, 11205 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "546 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-04",
+    "title": "Devlog: Two contract mistakes that pass quietly",
+    "commit": "6d8da2f24516a44a43f4cad5d7dde391fc0ab46e",
     "summary": "Findings from the r-b376 lane.",
     "changes": [
       "New devlog entry: Two contract mistakes that pass quietly.",

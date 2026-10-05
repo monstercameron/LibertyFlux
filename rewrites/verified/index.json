@@ -30528,6 +30528,15 @@
   "lane": "r-b376"
  },
  {
+  "address": "0x0088BA50",
+  "name": "audVoice_process_88BA50",
+  "kind": "function",
+  "file": "functions/fn_0088ba50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b376"
+ },
+ {
   "address": "0x0088BCD0",
   "name": "audio_scaled_product_to_int",
   "kind": "function",
@@ -34630,6 +34639,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b88"
+ },
+ {
+  "address": "0x008BE0F0",
+  "name": "input_ui_lookup_and_flag_update (proposed)",
+  "kind": "function",
+  "file": "functions/fn_008be0f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b379"
  },
  {
   "address": "0x008C28E0",
@@ -75159,6 +75177,15 @@
   "lane": "r-s341"
  },
  {
+  "address": "0x00BE7A70",
+  "name": "pool_slot_release",
+  "kind": "function",
+  "file": "functions/fn_00be7a70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s400"
+ },
+ {
   "address": "0x00BE7CA0",
   "name": "task_activate_gated",
   "kind": "function",
@@ -75355,6 +75382,96 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE9440",
+  "name": "hkey_apply_pos_and_arg",
+  "kind": "function",
+  "file": "functions/fn_00be9440.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s400"
+ },
+ {
+  "address": "0x00BE94F0",
+  "name": "hkey_apply_arg_pos_arg2",
+  "kind": "function",
+  "file": "functions/fn_00be94f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s400"
+ },
+ {
+  "address": "0x00BE95E0",
+  "name": "hkey_apply_two_args",
+  "kind": "function",
+  "file": "functions/fn_00be95e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s400"
+ },
+ {
+  "address": "0x00BE96A0",
+  "name": "hkey_apply_pos_arg2",
+  "kind": "function",
+  "file": "functions/fn_00be96a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s400"
+ },
+ {
+  "address": "0x00BE9760",
+  "name": "hkey_apply_pos",
+  "kind": "function",
+  "file": "functions/fn_00be9760.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s400"
+ },
+ {
+  "address": "0x00BE97C0",
+  "name": "hkey_apply_arg70",
+  "kind": "function",
+  "file": "functions/fn_00be97c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s400"
+ },
+ {
+  "address": "0x00BE9830",
+  "name": "hkey_apply_flagged",
+  "kind": "function",
+  "file": "functions/fn_00be9830.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s400"
+ },
+ {
+  "address": "0x00BE98F0",
+  "name": "hkey_apply_arg30",
+  "kind": "function",
+  "file": "functions/fn_00be98f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s400"
+ },
+ {
+  "address": "0x00BE9EB0",
+  "name": "code_dispatch_33_6c",
+  "kind": "function",
+  "file": "functions/fn_00be9eb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s400"
+ },
+ {
+  "address": "0x00BE9F30",
+  "name": "table_first_zero_word",
+  "kind": "function",
+  "file": "functions/fn_00be9f30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s400"
  },
  {
   "address": "0x00BEE3F0",
