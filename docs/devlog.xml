@@ -9,6 +9,44 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Six task-system functions verified, and a stub write that drops its first word</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b456"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b456</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>A production batch of six neighbouring task-system functions was rewritten in Rust and all six passed 1,200 checker trials each with their own wrong versions caught. The batch also surfaced a checker quirk worth knowing: a scripted callee output through a register silently drops its first word.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of six neighbouring task-system functions was rewritten in Rust and all six passed 1,200 checker trials each with their own wrong versions caught. The batch also surfaced a checker quirk worth knowing: a scripted callee output through a register silently drops its first word.&lt;/p&gt;&lt;h3&gt;What was asked&lt;/h3&gt;&lt;p&gt;Rewrite six original game functions from the pedestrian task subsystem in Rust and prove each rewrite behaves identically to the original with the version 5 checker, with contracts covering calls, globals, floats and faults.&lt;/p&gt;&lt;h3&gt;What was found&lt;/h3&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All six functions passed with zero failures across 7,200 trials, including fault-parity trials where both sides crash identically on null records. The functions form one pipeline: a parameter-block copy, a template builder, a flag-driven dispatcher, two kind-word gates, and a 24-arm record lookup.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A scripted callee output of four words through a register lands words two to four correctly but leaves word zero as ambient stack garbage. Two words of evidence: with a zero script the snapshot showed garbage in word zero and zeros after; with a distinctive script it showed the same garbage followed by the scripted words. The emitter source reads correctly, so the cause is still open. It fails closed: contracts relying on word zero get a mismatch, never a false pass.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Cycled contract values with related lengths can lock together so a branch never fires: one pin layout made ten lookup arms unreachable because the needed handle kind always coincided with a null-handle trial. Coprime cycle lengths plus a 30-line simulator that replays all trial phases fixed it and now proves every arm fires at least 22 times.&lt;/p&gt;&lt;h3&gt;What was decided or recommended&lt;/h3&gt;&lt;ul&gt;&lt;li&gt;Route around the dropped first word by scripting and snapshotting from the second word on (offset write plus offset snapshot), and disclose the uncompared word.&lt;/li&gt;&lt;li&gt;Run a phase simulation over pin, global and script cycles for any contract with a multi-arm switch; the checker's branch count is too coarse to confirm arm coverage.&lt;/li&gt;&lt;li&gt;When pushed words and stack cleanup disagree at a call, trust the balanced return to derive the callee's pop count.&lt;/li&gt;&lt;/ul&gt;&lt;h3&gt;How to reproduce it&lt;/h3&gt;&lt;p&gt;Check any production contract that scripts a register output and snapshots it: set the script to distinctive words and compare the snapshot's first word against them. For the phase check, replay the contract's cycle lengths over the trial count and assert each needed value combination occurs.&lt;/p&gt;&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;&lt;p&gt;Two hex stack offsets were mis-added as decimal, producing an elaborate but false theory that a function leaked its entry registers into a call argument. Distinctive-value probes disproved it in minutes: the slot held a pinned callee answer, and the rewrite simplified to one line. Twice now, reading offsets in a hurry has cost more than the probe that checks them.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Naming the particle-effects region: signals that worked</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-93"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-93</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>Naming 150 consecutive functions across the particle-effects and streaming-slot code named 141 of them, and the same small set of code shapes identified nearly every one.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Naming 150 consecutive functions across the particle-effects and streaming-slot code named 141 of them, and the same small set of code shapes identified nearly every one.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose descriptive names for 150 unnamed functions with a confidence each, working out what the group is about first and reading code through the executable's mapped image rather than raw file offsets.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The span holds the game's particle-effect machinery in rough order: fade channels, streaming entry handling, the particle manager and its frame update, a queue of effect requests, one emitter function per water effect, surface and impact dispatch, the weapon-effect table loader, weapon emitters, and spatial lookup kernels.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The most reliable naming signals, strongest first:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Effect-name strings plus a shared replay-gate prelude identify emitters almost mechanically; each water effect has one function.&lt;/li&gt;
+&lt;li&gt;Named callees from already verified neighbours (slot, fade, audio and particle helpers) name the glue code between them.&lt;/li&gt;
+&lt;li&gt;This-adjusting jumps resolve to five list primitives (push front and back, pop front, remove, clear), which names every queue thunk.&lt;/li&gt;
+&lt;li&gt;A thread-storage row pattern (slot flags, row index, fixed stride) marks four identical float accessors and two functions that inline it.&lt;/li&gt;
+&lt;li&gt;A 255.0 scale factor shows a converter makes an alpha byte, confirmed by its caller using the result as alpha.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three inventory entries are not functions: two are code tails plus padding with the real entry point bytes later, and one label sits inside another function's loop while covering a stub and an emitter.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Nine functions were left unnamed: the three non-functions, two that call only into the encrypted first megabyte of code, one caller of an undetermined routine, and three large math kernels whose roles never became clear.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Names follow the vocabulary the verified neighbours already established, with an emit suffix for one-effect emitter functions and a thunk suffix for jumps to known targets. The next naming lane in nearby code should learn the replay-gate prelude and the list primitives first, since they recur constantly, and should treat any callee in the encrypted region as opaque rather than guessing.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Build one evidence table per function (referenced strings, imports called, named callees and callers, data references) from the memory-mapped image, verify the mapping on one known function, then read the short and unclear functions fully and name from the table. Heads plus tails of large functions were enough; only a handful needed a middle read.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;A promising compression-library string hit turned out to be a byte comparison against a global flag that merely sits next to unrelated text, not a string reference at all. A byte-scan caller search also reported callers that vanish under real disassembly, because the matched byte sits inside another instruction. Both now get a second check before being trusted.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>A one-line address bug that fakes an unverifiable verdict</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b447"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b447</id>
@@ -1018,54 +1056,5 @@
 &lt;p&gt;Run the lane's three contracts with the stock worker and driver: each correct rewrite passes all trials with no failures and is not vacuous, and each wrong version fails on every trial that executes the omitted store. The relocation finding reproduces by comparing the scan-end return value against the file bytes: the difference equals the worker image delta exactly. The zeros-fill mutant analysis reproduces by checking which trials pass with the omission: exactly the trials whose fill makes every omitted store a no-op.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The first triage concluded four of the five functions were unverifiable and was wrong; only a probe showing the original reading a true constant overturned it, which cost one rebuild cycle but saved the lane. A contract key placed at the wrong level and a word-versus-byte offset mix-up each cost one validation round. The stale-mutant episode above was the only real defect produced, and it was caught by reading the failure breakdown instead of the headline count.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Five event-handler methods verified, one with a surprising register mix-up</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b388"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b388</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>All five methods in this production batch were rewritten in Rust and proven identical to the originals over at least a thousand trials each. The most interesting one reloads the wrong stack slot after pushing a value, so two calls and the stored result use a build answer where the code appears to use the saved subject. The rewrite reproduces that behaviour exactly.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;All five methods in this production batch were rewritten in Rust and proven identical to the originals over at least a thousand trials each. The most interesting one reloads the wrong stack slot after pushing a value, so two calls and the stored result use a build answer where the code appears to use the saved subject. The rewrite reproduces that behaviour exactly.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite five neighbouring event-handler methods in Rust and prove each behaves identically to the original using the project checker, which runs the original and the rewrite from identical starting states and compares return values, written memory, outgoing calls and faults.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All five rewrites passed at least 1200 trials each with every outgoing call firing and a deliberately wrong version failing as required.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One method's nonzero path contains a stack-slot mix-up: after pushing the helper object, the instruction that looks like a restore of the saved subject actually reads the slot holding the previous call's answer. Both follow-up calls and the stored response use that answer instead. The checker caught the first rewrite, which had assumed a clean restore, and the corrected rewrite matches.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three early exits in the largest method return whatever the caller happened to leave in a register. The contract pins that register to a fixed value so the exits are still checked on every trial.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A float-entry gate reads "backwards" from how it looks: the compare instruction reports the reverse direction, so events are fresh when their time is positive, not negative. The first rewrite had it inverted and the checker showed the original exiting on trials where the rewrite proceeded.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;All five rewrites were accepted with their proofs. Two narrowings are disclosed with the results: one proof skips the stack comparison because the original reuses its own incoming argument slot as scratch, and the largest proof pins the incoming register and lists the deep side-branches its inputs never take. A later lane can widen those with longer input cycles; the report names the exact trials to align.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Each function has a contract file and a verdict file in the lane output folders. Regenerating a contract from its generator script and running the stock checker driver on it reproduces the pass, and the wrong-version export in each lane crate reproduces the required failure.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The first relocation screen falsely reported that the batch reads unrelocated memory, because the script added a base value the library had already included. The float-gate inversion cost one probe cycle. Two argument counts were first read wrong (seven, not eight; four, not five) and were caught by recounting every call's pushes after an earlier function returned into garbage for the same reason. A duplicate include line from a retried shell command broke one build and briefly made a wrong-version run meaningless; it was rebuilt and rerun properly.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming batch: text-case tail, font style records, cascade shadows</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-69"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-69</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One hundred fifty consecutive unnamed functions resolved into three clean groups: the tail of the game-text-to-unicode switch, the core of the font and text-style system, and render code for shader variables and cascade shadows. One hundred thirty-five received names, most at high or medium confidence, and fifteen were left unnamed where the role could not be determined.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred fifty consecutive unnamed functions resolved into three clean groups: the tail of the game-text-to-unicode switch, the core of the font and text-style system, and render code for shader variables and cascade shadows. One hundred thirty-five received names, most at high or medium confidence, and fifteen were left unnamed where the role could not be determined.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed functions, working out what the group is about first, with a confidence per name and no vague or address-based names.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The first 52 functions are the final case bodies of the per-character game-text-to-unicode switch, each returning one mapped value, continuing the run two earlier lanes had established. Each is referenced exactly once, from its own slot in the dispatch table, and the slot arithmetic confirms the input codes continue the sequence without gaps.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The middle of the batch is the font system, mislabelled as streaming in the inventory. It includes the font startup routine, the fonts data file parser, a reset routine that restores every text attribute default, and a family of small setters writing two 72-byte text-style records. The reset routine plus one field-consumer search identified nearly every field: colours, alpha, font id, scale, line-height multiplier, shadow and edge sizes, and several single-bit flags.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The script text natives write a different, larger struct, so the C++ setters used by menus and the HUD were named from behaviour and callers rather than from native names.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The end of the batch is render code. The queued draw commands carry exact class names in their runtime type records, which identified eight functions to the precise template class. The cascade-shadow render phase contributed its constructor, target setup, handle allocation and the large shadow-matrix computation, plus small matrix and bounds helpers.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One inventory entry is not a function at all: it points into the middle of the unicode switch dispatch table.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Next naming lanes facing queued draw commands should read the runtime type record just before each command table first: it names the exact class in minutes.&lt;/li&gt;
-&lt;li&gt;For families of tiny setters, read the reset routine that calls them all with defaults before reading any single setter.&lt;/li&gt;
-&lt;li&gt;Two phase slots were deliberately left unnamed because a class lane had verified the obvious reading (deleting destructor) is wrong; contradicting a verified finding to fill a name would be worse than an empty name.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Decode each function with a disassembler on the mapped image, resolve direct calls against the merged symbol, lane-name and verified-rewrite indexes, collect referenced strings, and scan the relocation table for data references. For the switch cases, assert each stub has exactly one reference in the dispatch table and check the slot arithmetic against the known input base. For command objects, read the mangled class name from the type descriptor behind each table pointer. Caller searches over the code section confirm which subsystem uses each setter family.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;An early byte-pattern scan for references found nothing because the references sit at unaligned offsets inside the dispatch table; switching to the relocation table found all of them at once. The merged name database picked up this lane's own fresh names within minutes via the coordinator tick, so a familiar-looking caller name briefly looked like independent confirmation before its timestamp gave it away. A syntax error from an invisible character in a generated script cost one round trip and was sidestepped with plain loops.&lt;/p&gt;</content>
   </entry>
 </feed>
