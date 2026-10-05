@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: A wrong-code backend bug, caught by the checker",
+    "title": "Rewrites: 44 more functions pass the checker (12954 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "44 rewrites added under rewrites/verified: 0 script native handlers and 44 other functions.",
+      "The tree now holds 12954 rewrites, 12935 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "779 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: A wrong-code backend bug, caught by the checker",
+    "commit": "c2d2702c62781028c9396f5074a2aa729b61c18c",
     "summary": "Findings from the r-s445 lane.",
     "changes": [
       "New devlog entry: A wrong-code backend bug, caught by the checker.",
