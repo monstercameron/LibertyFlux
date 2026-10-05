@@ -54189,6 +54189,15 @@
   "lane": "r-s455"
  },
  {
+  "address": "0x00A4AD10",
+  "name": "vehicle_call_with_global_this",
+  "kind": "function",
+  "file": "functions/fn_00a4ad10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
   "address": "0x00A4AF30",
   "name": "vehicle_pick_nonzero_slot",
   "kind": "function",
@@ -54207,10 +54216,37 @@
   "lane": "r-s455"
  },
  {
+  "address": "0x00A4B5D0",
+  "name": "vehicle_decay_u16_12be",
+  "kind": "function",
+  "file": "functions/fn_00a4b5d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
   "address": "0x00A4C760",
   "name": "vehicle_counter_dec",
   "kind": "function",
   "file": "functions/fn_00a4c760.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4C780",
+  "name": "vehicle_release_f50",
+  "kind": "function",
+  "file": "functions/fn_00a4c780.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4C890",
+  "name": "vehicle_remove_from_array",
+  "kind": "function",
+  "file": "functions/fn_00a4c890.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s455"
@@ -54225,10 +54261,46 @@
   "lane": "r-s455"
  },
  {
+  "address": "0x00A4D430",
+  "name": "vehicle_set_slot4",
+  "kind": "function",
+  "file": "functions/fn_00a4d430.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
   "address": "0x00A4D460",
   "name": "vehicle_lerp_f34",
   "kind": "function",
   "file": "functions/fn_00a4d460.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4D8C0",
+  "name": "CVehicle::vf80",
+  "kind": "function",
+  "file": "functions/fn_00a4d8c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4D900",
+  "name": "vehicle_set_mode_10b8",
+  "kind": "function",
+  "file": "functions/fn_00a4d900.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4DAC0",
+  "name": "vehicle_flag_and_floats",
+  "kind": "function",
+  "file": "functions/fn_00a4dac0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s455"
@@ -54252,6 +54324,15 @@
   "lane": "r-s455"
  },
  {
+  "address": "0x00A4DCA0",
+  "name": "NativeImpl_SET_CAR_ENGINE_ON",
+  "kind": "function",
+  "file": "functions/fn_00a4dca0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
   "address": "0x00A4DE70",
   "name": "vehicle_arm_f48",
   "kind": "function",
@@ -54259,6 +54340,285 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4EAB0",
+  "name": "vehicle_set_ptr_logged",
+  "kind": "function",
+  "file": "functions/fn_00a4eab0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4EC10",
+  "name": "CVehicle::vf85",
+  "kind": "function",
+  "file": "functions/fn_00a4ec10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4EC40",
+  "name": "vehicle_maybe_flag_f1d",
+  "kind": "function",
+  "file": "functions/fn_00a4ec40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4ECD0",
+  "name": "sort_adjust_heap",
+  "kind": "function",
+  "file": "functions/fn_00a4ecd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4ED40",
+  "name": "sort_insertion_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00a4ed40.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4ED90",
+  "name": "sort_insertion_unguarded",
+  "kind": "function",
+  "file": "functions/fn_00a4ed90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4EE00",
+  "name": "sort_introsort_loop",
+  "kind": "function",
+  "file": "functions/fn_00a4ee00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4EED0",
+  "name": "sort_make_heap",
+  "kind": "function",
+  "file": "functions/fn_00a4eed0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4EF20",
+  "name": "sort_heap_sort",
+  "kind": "function",
+  "file": "functions/fn_00a4ef20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4EFC0",
+  "name": "sort_push_heap",
+  "kind": "function",
+  "file": "functions/fn_00a4efc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4F030",
+  "name": "sort_insertion_guarded",
+  "kind": "function",
+  "file": "functions/fn_00a4f030.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4F060",
+  "name": "sort_linear_insert",
+  "kind": "function",
+  "file": "functions/fn_00a4f060.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4F0A0",
+  "name": "sort_partition",
+  "kind": "function",
+  "file": "functions/fn_00a4f0a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4F110",
+  "name": "sort_make_heap_wrap",
+  "kind": "function",
+  "file": "functions/fn_00a4f110.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4F130",
+  "name": "sort_heapsort_wrap",
+  "kind": "function",
+  "file": "functions/fn_00a4f130.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4F150",
+  "name": "sort_pop_heap",
+  "kind": "function",
+  "file": "functions/fn_00a4f150.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4F180",
+  "name": "sort_std_sort",
+  "kind": "function",
+  "file": "functions/fn_00a4f180.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4F3C0",
+  "name": "vehicle_clear_bit1",
+  "kind": "function",
+  "file": "functions/fn_00a4f3c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4F7F0",
+  "name": "vehicle_find_slot_by_ptr",
+  "kind": "function",
+  "file": "functions/fn_00a4f7f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4F830",
+  "name": "vehicle_slot_index_addr",
+  "kind": "function",
+  "file": "functions/fn_00a4f830.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4FB80",
+  "name": "vehicle_slot_pos_call",
+  "kind": "function",
+  "file": "functions/fn_00a4fb80.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A4FF80",
+  "name": "vehicle_count_free_slots",
+  "kind": "function",
+  "file": "functions/fn_00a4ff80.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A50610",
+  "name": "vehicle_teardown_all_slots",
+  "kind": "function",
+  "file": "functions/fn_00a50610.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A51830",
+  "name": "vehicle_tune_gears",
+  "kind": "function",
+  "file": "functions/fn_00a51830.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A52350",
+  "name": "vehicle_box_from_center",
+  "kind": "function",
+  "file": "functions/fn_00a52350.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A531C0",
+  "name": "vehicle_emit_box",
+  "kind": "function",
+  "file": "functions/fn_00a531c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A53240",
+  "name": "vehicle_add_part",
+  "kind": "function",
+  "file": "functions/fn_00a53240.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A53290",
+  "name": "vehicle_add_part_auto",
+  "kind": "function",
+  "file": "functions/fn_00a53290.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A532B0",
+  "name": "vehicle_find_int",
+  "kind": "function",
+  "file": "functions/fn_00a532b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A55BC0",
+  "name": "vehicle_dist_check",
+  "kind": "function",
+  "file": "functions/fn_00a55bc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
+ },
+ {
+  "address": "0x00A55CD0",
+  "name": "vehicle_set_fields",
+  "kind": "function",
+  "file": "functions/fn_00a55cd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s452"
  },
  {
   "address": "0x00A64130",
@@ -63693,6 +64053,15 @@
   "lane": "r-s450"
  },
  {
+  "address": "0x00B64200",
+  "name": "veh_teardown_all",
+  "kind": "function",
+  "file": "functions/fn_00b64200.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
   "address": "0x00B642F0",
   "name": "veh_add_clamp_store_04",
   "kind": "function",
@@ -63707,6 +64076,15 @@
   "kind": "function",
   "file": "functions/fn_00b64340.rs",
   "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B644D0",
+  "name": "veh_promote_detach",
+  "kind": "function",
+  "file": "functions/fn_00b644d0.rs",
+  "trials": 2000,
   "checker": "version 5",
   "lane": "r-s450"
  },
@@ -97209,6 +97587,15 @@
   "lane": "r-b453"
  },
  {
+  "address": "0x00D3C120",
+  "name": "dummytask_helper_a",
+  "kind": "function",
+  "file": "functions/fn_00d3c120.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b453"
+ },
+ {
   "address": "0x00D3C860",
   "name": "audio_source_init",
   "kind": "function",
@@ -101070,6 +101457,15 @@
   "lane": "r-b395"
  },
  {
+  "address": "0x00DAC130",
+  "name": "hassle_ped_sight_probe",
+  "kind": "function",
+  "file": "functions/fn_00dac130.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b447"
+ },
+ {
   "address": "0x00DAC360",
   "name": "flee_plan_chain",
   "kind": "function",
@@ -101077,6 +101473,24 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s244"
+ },
+ {
+  "address": "0x00DAC430",
+  "name": "hassle_ped_path_probe",
+  "kind": "function",
+  "file": "functions/fn_00dac430.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b447"
+ },
+ {
+  "address": "0x00DAC610",
+  "name": "hassle_ped_cover_probe",
+  "kind": "function",
+  "file": "functions/fn_00dac610.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b447"
  },
  {
   "address": "0x00DAC850",
@@ -101131,6 +101545,24 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s254"
+ },
+ {
+  "address": "0x00DACA00",
+  "name": "slew_param_to_curve",
+  "kind": "function",
+  "file": "functions/fn_00daca00.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b447"
+ },
+ {
+  "address": "0x00DACB90",
+  "name": "hassle_ped_steer_update",
+  "kind": "function",
+  "file": "functions/fn_00dacb90.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b447"
  },
  {
   "address": "0x00DACDA0",
@@ -115117,6 +115549,348 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s453"
+ },
+ {
+  "address": "0x00E687A0",
+  "name": "veh_link_node_setup",
+  "kind": "function",
+  "file": "functions/fn_00e687a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68810",
+  "name": "veh_slot_array_init",
+  "kind": "function",
+  "file": "functions/fn_00e68810.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68830",
+  "name": "veh_slot_array_init",
+  "kind": "function",
+  "file": "functions/fn_00e68830.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68850",
+  "name": "veh_register_callback",
+  "kind": "function",
+  "file": "functions/fn_00e68850.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68880",
+  "name": "veh_slot_array_init",
+  "kind": "function",
+  "file": "functions/fn_00e68880.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E688A0",
+  "name": "veh_subsys_register",
+  "kind": "function",
+  "file": "functions/fn_00e688a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E688C0",
+  "name": "veh_register_callback",
+  "kind": "function",
+  "file": "functions/fn_00e688c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E688D0",
+  "name": "veh_ratio_recompute",
+  "kind": "function",
+  "file": "functions/fn_00e688d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E688F0",
+  "name": "veh_ratio_recompute",
+  "kind": "function",
+  "file": "functions/fn_00e688f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68930",
+  "name": "veh_id_table_reset",
+  "kind": "function",
+  "file": "functions/fn_00e68930.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68950",
+  "name": "veh_id_table_reset",
+  "kind": "function",
+  "file": "functions/fn_00e68950.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68970",
+  "name": "veh_ratio_recompute",
+  "kind": "function",
+  "file": "functions/fn_00e68970.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68990",
+  "name": "veh_subsys_register",
+  "kind": "function",
+  "file": "functions/fn_00e68990.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E689C0",
+  "name": "veh_ratio_recompute",
+  "kind": "function",
+  "file": "functions/fn_00e689c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E689E0",
+  "name": "veh_ratio_recompute",
+  "kind": "function",
+  "file": "functions/fn_00e689e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68A00",
+  "name": "veh_pair_slot_clear",
+  "kind": "function",
+  "file": "functions/fn_00e68a00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68A70",
+  "name": "veh_ratio_recompute",
+  "kind": "function",
+  "file": "functions/fn_00e68a70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68AA0",
+  "name": "veh_subsys_register",
+  "kind": "function",
+  "file": "functions/fn_00e68aa0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68AC0",
+  "name": "veh_ratio_recompute",
+  "kind": "function",
+  "file": "functions/fn_00e68ac0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68AE0",
+  "name": "veh_register_callback",
+  "kind": "function",
+  "file": "functions/fn_00e68ae0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68B00",
+  "name": "veh_ratio_recompute",
+  "kind": "function",
+  "file": "functions/fn_00e68b00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68B20",
+  "name": "veh_zero_thunk",
+  "kind": "function",
+  "file": "functions/fn_00e68b20.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68B90",
+  "name": "veh_ratio_recompute",
+  "kind": "function",
+  "file": "functions/fn_00e68b90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68BB0",
+  "name": "veh_register_callback",
+  "kind": "function",
+  "file": "functions/fn_00e68bb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68BC0",
+  "name": "veh_slot_array_init",
+  "kind": "function",
+  "file": "functions/fn_00e68bc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68BE0",
+  "name": "veh_record_table_init",
+  "kind": "function",
+  "file": "functions/fn_00e68be0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68C60",
+  "name": "veh_record_table_init",
+  "kind": "function",
+  "file": "functions/fn_00e68c60.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68CF0",
+  "name": "veh_sparse_flag_reset",
+  "kind": "function",
+  "file": "functions/fn_00e68cf0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68D30",
+  "name": "veh_quad_slot_init",
+  "kind": "function",
+  "file": "functions/fn_00e68d30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68D70",
+  "name": "veh_ratio_recompute",
+  "kind": "function",
+  "file": "functions/fn_00e68d70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E68D90",
+  "name": "veh_register_callback",
+  "kind": "function",
+  "file": "functions/fn_00e68d90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E691F0",
+  "name": "veh_ratio_recompute",
+  "kind": "function",
+  "file": "functions/fn_00e691f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E69210",
+  "name": "veh_bank_array_init",
+  "kind": "function",
+  "file": "functions/fn_00e69210.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E69240",
+  "name": "veh_slot_array_init",
+  "kind": "function",
+  "file": "functions/fn_00e69240.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E69260",
+  "name": "veh_slot_array_init",
+  "kind": "function",
+  "file": "functions/fn_00e69260.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E69280",
+  "name": "veh_id_table_reset",
+  "kind": "function",
+  "file": "functions/fn_00e69280.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E692A0",
+  "name": "veh_ratio_recompute",
+  "kind": "function",
+  "file": "functions/fn_00e692a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
+ },
+ {
+  "address": "0x00E692C0",
+  "name": "veh_ratio_recompute",
+  "kind": "function",
+  "file": "functions/fn_00e692c0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s454"
  },
  {
   "address": "0x00E6A070",
