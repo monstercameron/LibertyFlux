@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Rewrites: sixteen verified rewrites removed for relabelling",
+    "title": "Rewrites: 20 more functions pass the checker (13904 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "20 rewrites added under rewrites/verified: 0 script native handlers and 20 other functions.",
+      "The tree now holds 13904 rewrites, 13885 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "840 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Rewrites: sixteen verified rewrites removed for relabelling",
+    "commit": "18e38f6f2a5dfed2d993150a3e17ebbea66b8bc9",
     "summary": "A lane recorded sixteen functions under addresses that were too low by the image base.",
     "changes": [
       "Lane r-b526 read the addresses in its batch as offsets from the image base instead of virtual addresses. It looked one image-base too high, reported its five batch entries as not being functions (all five are: each has a caller and an ordinary prologue), and verified sixteen other real functions, which it recorded under labels one image-base too low.",

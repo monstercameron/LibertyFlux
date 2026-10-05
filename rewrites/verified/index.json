@@ -46206,6 +46206,15 @@
   "lane": "r-b524"
  },
  {
+  "address": "0x0097F260",
+  "name": "PLAYER_BREATH",
+  "kind": "function",
+  "file": "functions/fn_0097f260.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b524"
+ },
+ {
   "address": "0x0097F850",
   "name": "ped_task_switch_event",
   "kind": "function",
@@ -92277,6 +92286,33 @@
   "lane": "r-s398"
  },
  {
+  "address": "0x00BF8800",
+  "name": "task_handle_acquire_blend",
+  "kind": "function",
+  "file": "functions/fn_00bf8800.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b517"
+ },
+ {
+  "address": "0x00BF8910",
+  "name": "task_handle_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00bf8910.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b517"
+ },
+ {
+  "address": "0x00BF8CF0",
+  "name": "task_blend_solve_apply",
+  "kind": "function",
+  "file": "functions/fn_00bf8cf0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b517"
+ },
+ {
   "address": "0x00BF8E90",
   "name": "task_blend_1c_18",
   "kind": "function",
@@ -108070,6 +108106,150 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b228"
+ },
+ {
+  "address": "0x00E220E0",
+  "name": "task_thunk_78dba2",
+  "kind": "function",
+  "file": "functions/fn_00e220e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b526"
+ },
+ {
+  "address": "0x00E22200",
+  "name": "task_thunk_785210a2",
+  "kind": "function",
+  "file": "functions/fn_00e22200.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b526"
+ },
+ {
+  "address": "0x00E22310",
+  "name": "task_thunk_cf8caf39",
+  "kind": "function",
+  "file": "functions/fn_00e22310.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b526"
+ },
+ {
+  "address": "0x00E22420",
+  "name": "task_thunk_96043cc7",
+  "kind": "function",
+  "file": "functions/fn_00e22420.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b526"
+ },
+ {
+  "address": "0x00E22530",
+  "name": "task_thunk_baaabfcc",
+  "kind": "function",
+  "file": "functions/fn_00e22530.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b526"
+ },
+ {
+  "address": "0x00E22640",
+  "name": "task_thunk_e3e89b6f",
+  "kind": "function",
+  "file": "functions/fn_00e22640.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b526"
+ },
+ {
+  "address": "0x00E22750",
+  "name": "task_thunk_37d32e69",
+  "kind": "function",
+  "file": "functions/fn_00e22750.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b526"
+ },
+ {
+  "address": "0x00E22860",
+  "name": "task_thunk_e83d6456",
+  "kind": "function",
+  "file": "functions/fn_00e22860.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b526"
+ },
+ {
+  "address": "0x00E22970",
+  "name": "task_thunk_40a505e4",
+  "kind": "function",
+  "file": "functions/fn_00e22970.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b526"
+ },
+ {
+  "address": "0x00E22A80",
+  "name": "task_thunk_d2277e3a",
+  "kind": "function",
+  "file": "functions/fn_00e22a80.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b526"
+ },
+ {
+  "address": "0x00E22B90",
+  "name": "task_thunk_36cff969",
+  "kind": "function",
+  "file": "functions/fn_00e22b90.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b526"
+ },
+ {
+  "address": "0x00E22CA0",
+  "name": "task_thunk_34c9c2d4",
+  "kind": "function",
+  "file": "functions/fn_00e22ca0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b526"
+ },
+ {
+  "address": "0x00E22DB0",
+  "name": "task_thunk_4eca2c10",
+  "kind": "function",
+  "file": "functions/fn_00e22db0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b526"
+ },
+ {
+  "address": "0x00E22EC0",
+  "name": "task_thunk_ceee8e9f",
+  "kind": "function",
+  "file": "functions/fn_00e22ec0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b526"
+ },
+ {
+  "address": "0x00E22FD0",
+  "name": "task_thunk_2ddfb66e",
+  "kind": "function",
+  "file": "functions/fn_00e22fd0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b526"
+ },
+ {
+  "address": "0x00E230F0",
+  "name": "task_thunk_c33baeb1",
+  "kind": "function",
+  "file": "functions/fn_00e230f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b526"
  },
  {
   "address": "0x00E3D670",
