@@ -56007,6 +56007,15 @@
   "lane": "r-s290"
  },
  {
+  "address": "0x00A2B3B0",
+  "name": "task_accumulator_step",
+  "kind": "function",
+  "file": "functions/fn_00a2b3b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "a-R02"
+ },
+ {
   "address": "0x00A2B510",
   "name": "CPlayerPed::vf60",
   "kind": "function",
@@ -58084,6 +58093,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s300"
+ },
+ {
+  "address": "0x00A709F0",
+  "name": "CTaskComplexPlayerSettingsTask::vf20",
+  "kind": "function",
+  "file": "functions/fn_00a709f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b531"
  },
  {
   "address": "0x00A70C40",
@@ -66202,6 +66220,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s403"
+ },
+ {
+  "address": "0x00B3A6A0",
+  "name": "ped_task_candidate_eval",
+  "kind": "function",
+  "file": "functions/fn_00b3a6a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b525"
  },
  {
   "address": "0x00B3A8F0",
@@ -106387,6 +106414,24 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-b395"
+ },
+ {
+  "address": "0x00DAB9B0",
+  "name": "ped_probe_two_pass",
+  "kind": "function",
+  "file": "functions/fn_00dab9b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b533"
+ },
+ {
+  "address": "0x00DABB50",
+  "name": "ped_probe_gated",
+  "kind": "function",
+  "file": "functions/fn_00dabb50.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b533"
  },
  {
   "address": "0x00DAC130",
