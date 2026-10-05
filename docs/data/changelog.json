@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Devlog: hourly review, 13:05 on 5 October",
+    "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "A fifth of the verified functions are instantiations of one template, and all verified code is still in 32-bit test form: the first lift lane at scale was started on that family, and one generator lane took all of its remaining members.",
+      "231 functions stranded with finished lanes were released; the lane mix moved toward large functions, where 78% of the remaining code is; the production brief is version b13."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 27 files from lanes (431 unverified rewrites, 27 in review)",
     "commit": "62a6a86788a7e144c52fd3ee748b1e7fd45b2f21",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
