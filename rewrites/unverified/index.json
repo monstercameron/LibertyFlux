@@ -792,12 +792,60 @@
   "reason": null
  },
  {
+  "address": "0x0061B080",
+  "name": "net_cost_model_a",
+  "file": "fn_0061b080.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061B120",
+  "name": "net_drain_pair_stack",
+  "file": "fn_0061b120.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0061B150",
   "name": "net_session_desc_init",
   "file": "fn_0061b150.rs",
   "lane": "r-b314",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x0061B2F0",
+  "name": "swap_u32_f32",
+  "file": "fn_0061b2f0.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061B4E0",
+  "name": "net_dispatch_by_index",
+  "file": "fn_0061b4e0.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061BD20",
+  "name": "net_store_grid_byte",
+  "file": "fn_0061bd20.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061BD40",
+  "name": "net_forward_grid_5",
+  "file": "fn_0061bd40.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x0061BD70",
@@ -808,12 +856,28 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x0061BFF0",
+  "name": "net_forward_grid_3",
+  "file": "fn_0061bff0.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0061C010",
   "name": "net_obj_sync_apply",
   "file": "fn_0061c010.rs",
   "lane": "r-b314",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x0061C5F0",
+  "name": "net_forward_grid_3b",
+  "file": "fn_0061c5f0.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x0061C610",
@@ -832,9 +896,65 @@
   "reason": null
  },
  {
+  "address": "0x0061CE90",
+  "name": "net_deserialize_00",
+  "file": "fn_0061ce90.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061CF30",
+  "name": "net_copy_session_state",
+  "file": "fn_0061cf30.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061CF90",
+  "name": "net_init_endpoint",
+  "file": "fn_0061cf90.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061D020",
+  "name": "net_init_channel",
+  "file": "fn_0061d020.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0061D0A0",
   "name": "net_serialize_check_01",
   "file": "fn_0061d0a0.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061D150",
+  "name": "net_init_channel_table",
+  "file": "fn_0061d150.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061D190",
+  "name": "net_deserialize_01",
+  "file": "fn_0061d190.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061D230",
+  "name": "net_init_small_rec",
+  "file": "fn_0061d230.rs",
   "lane": "r-s396",
   "outcome": "not_reached",
   "reason": null
@@ -848,6 +968,30 @@
   "reason": null
  },
  {
+  "address": "0x0061D3B0",
+  "name": "net_init_channel_fwd_a",
+  "file": "fn_0061d3b0.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061D410",
+  "name": "net_init_channel_fwd_b",
+  "file": "fn_0061d410.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061D470",
+  "name": "net_bitread_pair_00",
+  "file": "fn_0061d470.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0061D530",
   "name": "net_serialize_check_03",
   "file": "fn_0061d530.rs",
@@ -856,9 +1000,33 @@
   "reason": null
  },
  {
+  "address": "0x0061D5E0",
+  "name": "net_deserialize_02",
+  "file": "fn_0061d5e0.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0061D680",
   "name": "net_serialize_check_04",
   "file": "fn_0061d680.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061D730",
+  "name": "net_copy_record_list",
+  "file": "fn_0061d730.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061D780",
+  "name": "net_bitread_pair_01",
+  "file": "fn_0061d780.rs",
   "lane": "r-s396",
   "outcome": "not_reached",
   "reason": null
@@ -888,6 +1056,14 @@
   "reason": null
  },
  {
+  "address": "0x0061DA60",
+  "name": "net_init_peer_slots",
+  "file": "fn_0061da60.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0061DAB0",
   "name": "net_serialize_check_08",
   "file": "fn_0061dab0.rs",
@@ -904,6 +1080,22 @@
   "reason": null
  },
  {
+  "address": "0x0061DC10",
+  "name": "net_fill_invalid",
+  "file": "fn_0061dc10.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061DC50",
+  "name": "net_bitread_single",
+  "file": "fn_0061dc50.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0061DCD0",
   "name": "net_serialize_check_10",
   "file": "fn_0061dcd0.rs",
@@ -912,9 +1104,41 @@
   "reason": null
  },
  {
+  "address": "0x0061DE30",
+  "name": "net_install_global_ctx",
+  "file": "fn_0061de30.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061EA70",
+  "name": "net_copy_addr_rec",
+  "file": "fn_0061ea70.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0061EAC0",
   "name": "net_serialize_check_11",
   "file": "fn_0061eac0.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061EB70",
+  "name": "net_deserialize_03",
+  "file": "fn_0061eb70.rs",
+  "lane": "r-s396",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0061EC10",
+  "name": "net_init_peer_rec",
+  "file": "fn_0061ec10.rs",
   "lane": "r-s396",
   "outcome": "not_reached",
   "reason": null
@@ -1616,14 +1840,6 @@
   "reason": null
  },
  {
-  "address": "0x009AB7A0",
-  "name": "audio_entity_tick",
-  "file": "fn_009ab7a0.rs",
-  "lane": "r-b367",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x009CBBC0",
   "name": null,
   "file": "fn_009cbbc0.rs",
@@ -1702,14 +1918,6 @@
   "lane": "r-b110",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00AD2B60",
-  "name": null,
-  "file": "fn_00ad2b60.rs",
-  "lane": "r-b371",
-  "outcome": "not yet run",
-  "reason": null
  },
  {
   "address": "0x00ADDCF0",

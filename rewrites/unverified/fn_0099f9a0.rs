@@ -65,6 +65,7 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
         const PLAYING: u32 = 0xc0;
         const BUSY0: u32 = 0x188;
         const BUSY1: u32 = 0x1a4;
+        const BUSY_BIT: u8 = 2;
         const BASE_VOL: u32 = 0x1f0;
         const AUX: u32 = 0x1f4;
         const CHAN: u32 = 0xc;
@@ -93,16 +94,18 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
         const C_RENDER: u32 = 18;
         const C_COMMIT0: u32 = 19;
         const C_COMMIT1: u32 = 20;
-        const C_SETW: u32 = 21;
-        const C_SETX: u32 = 22;
-        const C_STORE: u32 = 23;
-        const C_CLOSE: u32 = 24;
-        const C_ROUTE: u32 = 25;
-        const C_FIN: u32 = 26;
-        const C_BEGIN: u32 = 27;
-        const C_EAR: u32 = 28;
-        const C_PAN: u32 = 29;
-        const C_COOKIE: u32 = 30;
+        const C_POS: u32 = 21;
+        const C_SETW: u32 = 22;
+        const C_SETX: u32 = 23;
+        const C_STORE: u32 = 24;
+        const C_CLOSE: u32 = 25;
+        const C_ROUTE: u32 = 26;
+        const C_FIN: u32 = 27;
+        const C_BEGIN: u32 = 28;
+        const C_EAR: u32 = 29;
+        const C_PAN: u32 = 30;
+        const C_COOKIE: u32 = 31;
+        const C_SUBMIT3: u32 = 32;
 
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
@@ -133,6 +136,9 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
             core::hint::black_box(a) * core::hint::black_box(b)
         }
         let mut frame = [0u8; 256];
+        let range_obj = lf_checker_rt::relocated(RANGE_OBJ);
+        let voice_obj = lf_checker_rt::relocated(VOICE_OBJ);
+        let loc_obj = lf_checker_rt::relocated(LOC_OBJ);
         #[inline(always)]
         fn rf(f: &[u8; 256], c: i32) -> u32 {
             let i = (c + 256) as usize;
@@ -174,14 +180,14 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
         }
 
         if rd8(lf_checker_rt::relocated(ENABLE)) == 0 {
-            lf_checker_rt::callee_cdecl!(C_COOKIE, u32);
+            lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
             return 0;
         }
         wf(&mut frame, -216, kind);
         if g32!(STATE) != 1 {
             if g32!(TICK_A) != g32!(TICK_B) || g32!(READY) == READY_SKIP || kind > rd32(this.wrapping_add(COUNT)) {
             } else if rd32(this.wrapping_add(HI)) > g32!(LIMIT) {
-                lf_checker_rt::callee_cdecl!(C_COOKIE, u32);
+                lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
                 return 0;
             }
         }
@@ -194,24 +200,24 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
             lf_checker_rt::callee_thiscall!(C_RELEASE, u32, s1, 0u32);
         }
         if rd32(this.wrapping_add(SLOT0)) != 0 {
-            lf_checker_rt::callee_cdecl!(C_COOKIE, u32);
+            lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
             return 0;
         }
         if rd32(this.wrapping_add(SLOT1)) != 0 {
-            lf_checker_rt::callee_cdecl!(C_COOKIE, u32);
+            lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
             return 0;
         }
         let inner = rd32(this.wrapping_add(THIS_OFF));
         let range_arg = rd32(inner.wrapping_add(0x20)).wrapping_add(0x30);
-        let dist: f32 = lf_checker_rt::callee_thiscall!(C_RANGE, f32, RANGE_OBJ, range_arg);
+        let dist: f32 = lf_checker_rt::callee_thiscall!(C_RANGE, f32, range_obj, range_arg);
         wff(&mut frame, -208, dist);
         if dist > DIST_MAX {
-            lf_checker_rt::callee_cdecl!(C_COOKIE, u32);
+            lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
             return 0;
         }
         let mode: u32;
         if rd8(inner.wrapping_add(0x218)) == 0 && rd8(inner.wrapping_add(0x219)) != 0 {
-            let q: u32 = lf_checker_rt::callee_thiscall!(C_QUIET, u32, RANGE_OBJ);
+            let q: u32 = lf_checker_rt::callee_thiscall!(C_QUIET, u32, range_obj);
             if (q as u8) == 0 {
                 mode = 0;
             } else {
@@ -233,19 +239,19 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
             0
         };
         wf(&mut frame, -192, slot);
-        let ok: u32 = lf_checker_rt::callee_thiscall!(C_PROBE, u32, VOICE_OBJ, mode);
+        let ok: u32 = lf_checker_rt::callee_thiscall!(C_PROBE, u32, voice_obj, mode);
         if (ok as u8) == 0 {
-            lf_checker_rt::callee_cdecl!(C_COOKIE, u32);
+            lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
             return 0;
         }
         let mut esi = rf(&frame, -212);
-        let ids: u32 = lf_checker_rt::callee_thiscall!(C_IDS, u32, VOICE_OBJ, esi);
+        let ids: u32 = lf_checker_rt::callee_thiscall!(C_IDS, u32, voice_obj, esi);
         wf(&mut frame, -180, ids);
-        let vol: u32 = lf_checker_rt::callee_thiscall!(C_VOL, u32, VOICE_OBJ, rf(&frame, -192), esi);
+        let vol: u32 = lf_checker_rt::callee_thiscall!(C_VOL, u32, voice_obj, esi, rf(&frame, -192));
         wf(&mut frame, -208, vol);
-        esi = lf_checker_rt::callee_thiscall!(C_PICK, u32, VOICE_OBJ, esi);
+        esi = lf_checker_rt::callee_thiscall!(C_PICK, u32, voice_obj, esi);
         wb(&mut frame, -72, 0);
-        lf_checker_rt::callee_cdecl!(C_PREP, u32);
+        lf_checker_rt::callee_cdecl!(C_PREP, u32,);
         let idval = rd32(
             lf_checker_rt::relocated(ID_TABLE).wrapping_add(rf(&frame, -212).wrapping_mul(4)),
         );
@@ -265,17 +271,16 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
         lf_checker_rt::callee_thiscall!(C_FILL, u32, fa);
         let e180 = rf(&frame, -180);
         wf(&mut frame, -120, e180);
-        wb(&mut frame, -74, (rb(&frame, -74) & 0xef) | 8);
+        let b74 = rb(&frame, -74);
+        wb(&mut frame, -74, (b74 & 0xef) | 8);
         wf(&mut frame, -116, g32!(STASH));
-        wb(
-            &mut frame,
-            -184,
-            if rf(&frame, -216) >= 2 { 1 } else { 0 },
-        );
+        let fl = if rf(&frame, -216) >= 2 { 1 } else { 0 };
+        wb(&mut frame, -184, fl);
         wr32(this.wrapping_add(BASE_VOL), 0);
         let chk: u32 = lf_checker_rt::callee_thiscall!(C_CHECK, u32, this, inner);
         if (chk as u8) != 0 {
-            wb(&mut frame, -74, rb(&frame, -74) & 0xdf);
+            let b74 = rb(&frame, -74);
+            wb(&mut frame, -74, b74 & 0xdf);
             let fa2 = fp(&mut frame, -144);
             lf_checker_rt::callee_thiscall!(
                 C_SUBMIT,
@@ -294,7 +299,7 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
             let lb = fp(&mut frame, -232);
             wf(&mut frame, -232, 0);
             wb(&mut frame, -233, 0);
-            lf_checker_rt::callee_thiscall!(C_LOCATE, u32, LOC_OBJ, lb, la);
+            lf_checker_rt::callee_thiscall!(C_LOCATE, u32, loc_obj, lb, la);
             if rb(&frame, -233) == 0 {
                 let f1v = rff(&frame, -232);
                 let mut y0 = fmul(C2, f1v);
@@ -309,7 +314,8 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
             }
             let t: u32 = lf_checker_rt::callee_thiscall!(C_TOUCH, u32, inner.wrapping_add(0x3c0));
             wf(&mut frame, -112, t);
-            wb(&mut frame, -74, rb(&frame, -74) & 0xdf);
+            let b74 = rb(&frame, -74);
+            wb(&mut frame, -74, b74 & 0xdf);
             let ap: u32 = lf_checker_rt::callee_thiscall!(C_APPLY, u32, this, rff(&frame, -220).to_bits());
             wf(&mut frame, -116, ap);
             let fa3 = fp(&mut frame, -144);
@@ -327,7 +333,7 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
         }
         let handle = rd32(this.wrapping_add(SLOT0));
         if handle == 0 {
-            lf_checker_rt::callee_cdecl!(C_COOKIE, u32);
+            lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
             return 0;
         }
         let mut vx = rff(&frame, -188);
@@ -344,7 +350,7 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
             lf_checker_rt::callee_thiscall!(C_COMMIT0, u32, handle, r1, tbl1, rf(&frame, -208), 0u32);
         if (cm0 as u8) == 0 {
             lf_checker_rt::callee_thiscall!(C_RELEASE, u32, handle, 0u32);
-            lf_checker_rt::callee_cdecl!(C_COOKIE, u32);
+            lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
             return 0;
         }
         wr8(this.wrapping_add(BUSY0), rd8(this.wrapping_add(BUSY0)) | BUSY_BIT);
@@ -367,7 +373,7 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
         }
         lf_checker_rt::callee_thiscall!(C_ROUTE, u32, handle, rf(&frame, -180), 0u32, 0u32);
         let fin: u32 =
-            lf_checker_rt::callee_thiscall!(C_FIN, u32, VOICE_OBJ, rf(&frame, -212), rf(&frame, -192));
+            lf_checker_rt::callee_thiscall!(C_FIN, u32, voice_obj, rf(&frame, -212), rf(&frame, -192));
         esi = rf(&frame, -216);
         wr32(this.wrapping_add(COUNT), esi);
         wr32(
@@ -389,10 +395,11 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
             ba,
             0u32
         );
-        wf(&mut frame, -104, rf(&frame, -216));
+        let w104 = rf(&frame, -216);
+        wf(&mut frame, -104, w104);
         let fa4 = fp(&mut frame, -144);
         lf_checker_rt::callee_thiscall!(
-            C_SUBMIT,
+            C_SUBMIT3,
             u32,
             this,
             FMT3,
@@ -408,7 +415,7 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
             // faults on both sides.
             let dead = rd32(esi);
             lf_checker_rt::callee_thiscall!(C_RELEASE, u32, dead, 0u32);
-            lf_checker_rt::callee_cdecl!(C_COOKIE, u32);
+            lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
             return 1;
         }
         lf_checker_rt::callee_thiscall!(C_SETVOL, u32, h2, rff(&frame, -188).to_bits());
@@ -420,7 +427,7 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
             lf_checker_rt::callee_thiscall!(C_COMMIT1, u32, h2, r2, tbl2, rf(&frame, -208), 0u32);
         if (cm1 as u8) == 0 {
             lf_checker_rt::callee_thiscall!(C_RELEASE, u32, rd32(esi), 0u32);
-            lf_checker_rt::callee_cdecl!(C_COOKIE, u32);
+            lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
             return 1;
         }
         lf_checker_rt::callee_thiscall!(C_SETW, u32, rd32(esi), rff(&frame, -220).to_bits());
@@ -428,7 +435,7 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
         z = fadd(z, f32::from_bits(rd32(this.wrapping_add(BASE_VOL))));
         z = fadd(z, f32::from_bits(rd32(rf(&frame, -212))));
         lf_checker_rt::callee_thiscall!(C_SETX, u32, rd32(esi), z.to_bits());
-        let ear: u32 = lf_checker_rt::callee_thiscall!(C_EAR, u32, RANGE_OBJ, 0u32);
+        let ear: u32 = lf_checker_rt::callee_thiscall!(C_EAR, u32, range_obj, 0u32);
         let e0 = f32::from_bits(rd32(ear));
         let e1 = f32::from_bits(rd32(ear.wrapping_add(4)));
         let e2 = f32::from_bits(rd32(ear.wrapping_add(8)));
@@ -455,7 +462,7 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
         let ra = fp(&mut frame, -176);
         lf_checker_rt::callee_thiscall!(C_STORE, u32, rd32(esi), ra);
         lf_checker_rt::callee_thiscall!(C_ROUTE, u32, rd32(esi), rf(&frame, -180), 0u32, 0u32);
-        lf_checker_rt::callee_cdecl!(C_COOKIE, u32);
+        lf_checker_rt::callee_cdecl!(C_COOKIE, u32,);
         1
     }
 });

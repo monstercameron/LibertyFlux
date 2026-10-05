@@ -6,30 +6,30 @@
 ///
 /// `this` is the voice object, `arg` the frame struct. The unrelocated
 /// writable dword at file VA 0x11735B4 is saved for the tail call, and a
-/// mode word is chosen by comparing the unrelocated read-only constant
+/// mode word is chosen by comparing the relocated read-only constant
 /// `K1` (0xFE88E8) against the unrelocated writable threshold at
 /// 0x103234C (strictly greater, ordered, selects the unrelocated writable
 /// word at 0x1038C8C, else 0). Seven channel pointers at `this+0xA88` ..
 /// `this+0xAA0` must all be non-null or the function returns the mode word.
 ///
 /// Otherwise: an index from `[this+0x820]+0x2E` selects a table entry from
-/// the unrelocated writable table at 0x1295CD8; callee 32 fills a 45-word
+/// the seeded table at 0x1295CD8; callee 32 fills a 45-word
 /// frame vector (callee 31 resolves its seed); a 3x4 matrix at
 /// `[[this+0x820]+0x20]` transforms the vector in place (rows at
 /// `+0x00/0x04/0x08`, `+0x10/0x14/0x18`, `+0x20/0x24/0x28`, translation at
 /// `+0x30/0x34/0x38`; the `w` slot passes through); callee 33 consumes the
-/// result. A rotor term starts at `K3` (unrelocated read-only constant at
+/// result. A rotor term starts at `K3` (relocated read-only constant at
 /// 0xFE8DF8) and is zeroed when the voice is active (callee 34, else callee
 /// 35 through `[this+0x820]+0xF50`, plus byte `this+0xB3E`) while the
-/// unrelocated writable word at 0x1168A58 equals 2. Callee 36 takes four
+/// seeded word at 0x1168A58 equals 2. Callee 36 takes four
 /// constants (all 1.0, or 1.0/0.8/0.05/0.0 when bit 3 of
 /// `[this+0x820]+0xF17` is clear) and callee 37 answers the blend factor.
 /// Two derived cutoffs come from comparing zero against the floats at
 /// `[this+0x820]+0x1EF4/0x1EF8/0x1EFC` (each `<= 0.0`, NaN counts as above).
 /// Seven `set` calls (callee 38) and three `set-indirect` calls (callee 39)
 /// drive the channels; one index is the signed max of `[arg+8]+mode` and
-/// the unrelocated writable word at 0x1038CB8. A second callee-34 test plus
-/// the unrelocated writable word at 0x11F70CC equalling 4 selects object
+/// the seeded word at 0x1038CB8. A second callee-34 test plus
+/// the seeded word at 0x11F70CC equalling 4 selects object
 /// creation (callees 40/41, then 42) over release (callees 43/44). Two
 /// lookups (callee 45, cdecl) each feed a register-indirect call through
 /// slot 0 of `[[this+0xA90]]` (callee 46, planted stub); non-null results
@@ -37,10 +37,7 @@
 /// 0x997370 (callee 47) with `(saved, arg)`, `[this+0xAD4]` gets
 /// `[arg+0x0C]` plus the first cutoff, and the forward result is returned.
 ///
-/// Original: 0x00997910 (thiscall, one stack word). Unverifiable on the
-/// stock v5 worker and under read-only shadowing alike: the original reads
-/// unrelocated writable data on every path, starting at its first memory
-/// access.
+/// Original: 0x00997910 (thiscall, one stack word).
 lf_checker_rt::export!(thiscall, rw_00997910(this: u32, arg: u32) -> u32 {
     unsafe {
         const SEED_CALLEE: u32 = 31;
@@ -161,15 +158,17 @@ lf_checker_rt::export!(thiscall, rw_00997910(this: u32, arg: u32) -> u32 {
                 core::mem::transmute(lf_checker_rt::callee_addr(SEED_CALLEE) as usize);
             let pres = seed(p);
             let s2 = s.wrapping_shl(6).wrapping_add(rd32(pres + 0x10));
-            let mut m = [0u32; 45];
+            // The vector slots sit at byte offsets 0x42/0x46/0x4A/0x4E and
+            // 0xAE (all 2 mod 4): access them by bytes, not words.
+            let mut m = [0u8; 184];
             let b = m.as_mut_ptr() as u32;
             let fill: extern "thiscall" fn(u32, u32) -> u32 =
                 core::mem::transmute(lf_checker_rt::callee_addr(VEC_CALLEE) as usize);
             fill(b, s2);
-            let vx = f32::from_bits(m[0x42 / 4]);
-            let vy = f32::from_bits(m[0x46 / 4]);
-            let vz = f32::from_bits(m[0x4a / 4]);
-            let w = m[0xae / 4];
+            let vx = rdf(b + 0x42);
+            let vy = rdf(b + 0x46);
+            let vz = rdf(b + 0x4a);
+            let w = rd32(b + 0xae);
             let mb = rd32(p + 0x20);
             let m0 = rdf(mb);
             let m4 = rdf(mb + 4);
@@ -186,10 +185,10 @@ lf_checker_rt::export!(thiscall, rw_00997910(this: u32, arg: u32) -> u32 {
             let nx = add(add(add(mul(m10, vy), mul(m0, vx)), mul(m20, vz)), m30);
             let ny = add(add(add(mul(m4, vx), mul(m14, vy)), mul(m24, vz)), m34);
             let nz = add(add(add(mul(m8, vx), mul(m18, vy)), mul(m28, vz)), m38);
-            m[0x42 / 4] = nx.to_bits();
-            m[0x46 / 4] = ny.to_bits();
-            m[0x4a / 4] = nz.to_bits();
-            m[0x4e / 4] = w;
+            wr32(b + 0x42, nx.to_bits());
+            wr32(b + 0x46, ny.to_bits());
+            wr32(b + 0x4a, nz.to_bits());
+            wr32(b + 0x4e, w);
             let usev: extern "thiscall" fn(u32, u32) -> u32 =
                 core::mem::transmute(lf_checker_rt::callee_addr(USE_CALLEE) as usize);
             usev(rd32(this + 0xa94), b + 0x42);
@@ -272,7 +271,15 @@ lf_checker_rt::export!(thiscall, rw_00997910(this: u32, arg: u32) -> u32 {
                         core::mem::transmute(
                             lf_checker_rt::callee_addr(MK2_CALLEE) as usize,
                         );
-                    mk2(this, 0x00e8_ff1c, slot, f2p, 0xFFFF_FFFF, 0, 0);
+                    mk2(
+                        this,
+                        lf_checker_rt::relocated(0x00e8_ff1c),
+                        slot,
+                        f2p,
+                        0xFFFF_FFFF,
+                        0,
+                        0,
+                    );
                 }
                 let obj = rd32(slot);
                 if obj != 0 {
@@ -298,7 +305,7 @@ lf_checker_rt::export!(thiscall, rw_00997910(this: u32, arg: u32) -> u32 {
             let look: extern "cdecl" fn(u32, u32) -> u32 = core::mem::transmute(
                 lf_checker_rt::callee_addr(LOOKUP_CALLEE) as usize,
             );
-            let ra = look(0x00e8_ff34, 0);
+            let ra = look(lf_checker_rt::relocated(0x00e8_ff34), 0);
             let s_esi = rd32(v);
             let ind: extern "thiscall" fn(u32, u32) -> u32 =
                 core::mem::transmute(rd32(s_esi) as usize);
@@ -306,7 +313,7 @@ lf_checker_rt::export!(thiscall, rw_00997910(this: u32, arg: u32) -> u32 {
             if rb != 0 {
                 wr32(rb, rd32(arg + 0x0c));
             }
-            let rc = look(0x00e8_ff44, 0);
+            let rc = look(lf_checker_rt::relocated(0x00e8_ff44), 0);
             let ind2: extern "thiscall" fn(u32, u32) -> u32 =
                 core::mem::transmute(rd32(rd32(v)) as usize);
             let rd = ind2(v, rc);

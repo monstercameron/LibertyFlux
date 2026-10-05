@@ -11,19 +11,17 @@
 /// (callee 13, planted stub, float in ST0) gives the rotor term; one `peek`
 /// (callee 14) and six `gen` calls (callee 15) finish the mix.
 ///
-/// Two reads decide the rotor term and are unrelocated absolute reads of
+/// Two reads decide the rotor term and are relocated absolute reads of
 /// writable data (file VAs 0x12832AA, 0x1038C1C): when the flag byte is
 /// clear the indirect-call result is used, otherwise the stored float. The
-/// term is scaled by the unrelocated read-only constant at 0xFE86B4 and
+/// term is scaled by the relocated read-only constant at 0xFE86B4 and
 /// clamped to `[0, K1]` (`K1` at 0xFE88E8, NaN stays NaN) before being
 /// stored at `out+0x30` and mapped once more. The `gen` results are added
 /// onto five of the earlier map outputs. Words `out+0x28`/`+0x2C` are never
 /// written (`+0x2C` is read as the eleventh map input). Returns the last
 /// `gen` result's bits (the intercepted stub leaves the float bits in EAX).
 ///
-/// Original: 0x00997E00 (thiscall, one stack word). Unverifiable on the
-/// stock v5 worker and under read-only shadowing alike: the original reads
-/// unrelocated writable data on every path.
+/// Original: 0x00997E00 (thiscall, one stack word).
 lf_checker_rt::export!(thiscall, rw_00997E00(this: u32, out: u32) -> u32 {
     unsafe {
         const MAP_CALLEE: u32 = 11;

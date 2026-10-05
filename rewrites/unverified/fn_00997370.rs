@@ -12,30 +12,27 @@
 ///
 /// Main path: four virtual calls through slot `+0x10` (callees 21-24, one
 /// id per site) build two event structs. Each struct gets the flag byte
-/// from the unrelocated writable global at 0x12832B4 at `+0x14`, the tag 8
+/// from the seeded global at 0x12832B4 at `+0x14`, the tag 8
 /// at `+0x10`, two words from `[this+0x9DC]` at `+0x00`/`+0x08`, and a
 /// mapped float product at `+0x04` (three `map` calls, callee 25). The
 /// first struct's slots are cleared first (`[r1+8] = 0`). Then the
 /// combiner (callee 26: object `this+0x488`, constant 1.0, `arg0`) answers
-/// `f4`; with `K1` (unrelocated read-only constant at 0xFE88E8) the pair
+/// `f4`; with `K1` (relocated read-only constant at 0xFE88E8) the pair
 /// `(f4, K1 - f4)` is posted (callee 27) and acknowledged (callee 28, arg
-/// 1), the unrelocated writable counter at 0x128329C is incremented, and
+/// 1), the seeded counter at 0x128329C is incremented, and
 /// the acknowledge result is returned.
 ///
 /// Fallback path: the combiner runs with constant 0 instead of 1.0,
 /// answering `f5`. A voice index is resolved from `[this+0xA90]` (bytes
-/// `+4` and `+0x40`) through the unrelocated writable table base at
+/// `+4` and `+0x40`) through the seeded table base at
 /// 0x115D988 (row stride 0x6F40, cell at `+0x6F14`, plus byte-4 times the
-/// unrelocated writable factor at 0x115D968), or zero when byte-4 is
+/// seeded factor at 0x115D968), or zero when byte-4 is
 /// 0xFF. The pair `(f5, K1 - f5)` goes to the alternate sink (callee 29);
 /// a positive `f5` increments the same counter and raises the flag word
 /// passed with the re-resolved index to callee 30, whose result is
 /// returned.
 ///
-/// Original: 0x00997370 (thiscall, two stack words). Unverifiable on the
-/// stock v5 worker and under read-only shadowing alike: the original reads
-/// unrelocated writable data on every path, starting at its fourth
-/// instruction.
+/// Original: 0x00997370 (thiscall, two stack words).
 lf_checker_rt::export!(thiscall, rw_00997370(this: u32, arg0: u32, arg1: u32) -> u32 {
     unsafe {
         const VCALL1: u32 = 21;
@@ -124,7 +121,7 @@ lf_checker_rt::export!(thiscall, rw_00997370(this: u32, arg0: u32, arg1: u32) ->
         }
         /// Resolve the fallback voice index from the `+0xA90` object, or
         /// zero when its byte-4 is 0xFF. The table base and factor are
-        /// unrelocated writable globals.
+        /// seeded globals.
         #[inline(always)]
         unsafe fn voice_index(a90: u32) -> u32 {
             unsafe {

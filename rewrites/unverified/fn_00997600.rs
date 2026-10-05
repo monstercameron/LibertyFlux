@@ -16,16 +16,14 @@
 /// truncated to int for the `ebx`/`edi` terms. The tail is pure SSE: every
 /// output is `scratch * t2 + other * t1` with `t1` the first map result and
 /// `t2 = K1 - t1`, where `K1`, `K2`, `K3` are float constants read from the
-/// original's read-only data through unrelocated absolute addresses (file
+/// original's read-only data through relocated absolute addresses (file
 /// VAs 0xFE88E8, 0xFE8628, 0xFE8DF8). The first map call takes the global
-/// map object whose address is the unrelocated immediate 0x1283898, passed
+/// map object whose address is the relocated immediate 0x1283898, passed
 /// through opaquely to the intercepted callee. Integer outputs use x86
 /// truncate-toward-zero with the 0x80000000 out-of-range/NaN result, not
 /// Rust saturation. Returns the `+0x08` word.
 ///
-/// Original: 0x00997600 (thiscall, one stack word). Unverifiable on the
-/// stock v5 worker: the original faults reading the unrelocated constants.
-/// Written for a re-run with read-only data shadowing.
+/// Original: 0x00997600 (thiscall, one stack word).
 lf_checker_rt::export!(thiscall, rw_00997600(this: u32, out: u32) -> u32 {
     unsafe {
         const INIT_CALLEE: u32 = 1;
@@ -33,7 +31,7 @@ lf_checker_rt::export!(thiscall, rw_00997600(this: u32, out: u32) -> u32 {
         const MAP_CALLEE: u32 = 3;
         const PEEK_CALLEE: u32 = 4;
         const GEN_CALLEE: u32 = 5;
-        const GLOBAL_MAP: u32 = 0x0128_3898;
+        const GLOBAL_MAP_VA: u32 = 0x0128_3898;
         const K1_VA: u32 = 0x00FE_88E8;
         const K2_VA: u32 = 0x00FE_8628;
         const K3_VA: u32 = 0x00FE_8DF8;
@@ -116,7 +114,9 @@ lf_checker_rt::export!(thiscall, rw_00997600(this: u32, out: u32) -> u32 {
             lf_checker_rt::callee_thiscall!(FILL_CALLEE, u32, this, s_ptr);
 
             let inp = rdf(out + IN_OFF);
-            let t1 = map(GLOBAL_MAP, inp);
+            // The original loads this address through a relocated
+            // immediate, so it observes the relocated value.
+            let t1 = map(lf_checker_rt::relocated(GLOBAL_MAP_VA), inp);
             let k1 = f32::from_bits(g32(K1_VA));
             let t2 = sub(k1, t1);
 
