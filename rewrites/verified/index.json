@@ -38196,6 +38196,15 @@
   "lane": "a-10"
  },
  {
+  "address": "0x0069B170",
+  "name": "rage::crAnimChannelRawBool::try_build_from_samples",
+  "kind": "function",
+  "file": "functions/fn_0069b170.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b572"
+ },
+ {
   "address": "0x0069B2D0",
   "name": "rage::crAnimChannelRawBool::storage_size",
   "kind": "function",
@@ -38428,6 +38437,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b564"
+ },
+ {
+  "address": "0x0069BD70",
+  "name": "rage::crAnimChannelCurveFloat::sample",
+  "kind": "function",
+  "file": "functions/fn_0069bd70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b572"
  },
  {
   "address": "0x0069C7D0",
@@ -55161,6 +55179,15 @@
   "lane": "r-s105"
  },
  {
+  "address": "0x009856C0",
+  "name": "audEmitter_update_slots",
+  "kind": "function",
+  "file": "functions/fn_009856c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s486"
+ },
+ {
   "address": "0x00985BB0",
   "name": "audio_activate_emitter_pair",
   "kind": "function",
@@ -55453,6 +55480,15 @@
   "name": "audCutsceneAudioEntity::vf2",
   "kind": "function",
   "file": "functions/fn_00988b40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s486"
+ },
+ {
+  "address": "0x00988BC0",
+  "name": "audCutscene_teardown_slots",
+  "kind": "function",
+  "file": "functions/fn_00988bc0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s486"
@@ -73285,6 +73321,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s470"
+ },
+ {
+  "address": "0x00AD30E0",
+  "name": "audio_spatial_params_update",
+  "kind": "function",
+  "file": "functions/fn_00ad30e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q07"
  },
  {
   "address": "0x00AD3510",
