@@ -32,7 +32,7 @@
 
 #![forbid(unsafe_code)]
 
-mod frame;
+pub mod frame;
 mod quantize_float;
 mod raw_bool;
 mod raw_float;
