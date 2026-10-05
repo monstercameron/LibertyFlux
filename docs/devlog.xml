@@ -9,6 +9,28 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A production batch that caught the checker running corrupted code</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b419"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b419</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>Three neighbouring ped-task functions were rewritten for verification. One passed on its testable path. The other two could not be verified because the checker's worker silently rewrites their bytes before running them, applying relocation entries that do not point at addresses. The game never applies those entries, so the worker tests something the game never runs.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Three neighbouring ped-task functions were rewritten for verification. One passed on its testable path. The other two could not be verified because the checker's worker silently rewrites their bytes before running them, applying relocation entries that do not point at addresses. The game never applies those entries, so the worker tests something the game never runs.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite three medium and large functions from the ped-task subsystem in Rust and prove each rewrite equivalent to the original with the differential checker, writing a full contract and a deliberately wrong version per function.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The smallest function verified on its testable path: every trial agreed and the wrong version was caught. Its whole byte range contains no relocation entries, so the worker ran its true bytes.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The two larger functions sit on a code page whose relocation block holds dozens of entries with targets outside the program image. The worker applies every entry, which rewrites real instructions: a stack adjustment becomes unrelated instructions that swallow the two following ones, and a switch-table address is redirected to an address that exists nowhere in the file. With byte-identical pinned inputs, trials diverged purely by heap fill pattern, which correct code cannot do.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; About half of all code pages contain at least one relocation entry, and only a small fraction of sampled code entries point at valid addresses. Any previously accepted rewrite whose original bytes contain such an entry was proven against corrupted code.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Separately, every absolute data reference in all three functions lacks a relocation entry, including reads on unavoidable paths and an unrelocatable jump table, so two further checker abilities would still be needed after the corruption is fixed.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;The two larger functions were deferred as a checker gap, with a full contract and rewrite kept as a retry kit for one of them and a steering recipe for the other. Recommended: scan every accepted rewrite for relocation entries inside its byte range and hold out the hits, and change the worker to skip entries whose contents are not program addresses.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Compare the relocation table against the program image: entries whose four bytes do not form an address inside the image are bogus. Re-apply the table to a copy of the mapped image and disassemble the affected functions to see the rewritten instructions. Run the checker with constant steering pins and constant versus rotating heap fills to observe the impossible divergence.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The fill-dependent divergence cost the most time, because every input visible to the lane was provably identical across the diverging trials. The resolution was to stop suspecting the inputs and inspect what the worker executes. A probe also ran once against a stale binary after a failed rebuild; the timestamps caught it and the run was repeated.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Four task functions verified, and a floating-point branch trap</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b416"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b416</id>
@@ -1023,27 +1045,5 @@
 &lt;p&gt;Build one evidence table for the whole batch before reading anything: disassembly per function, direct and indirect call targets with import names, referenced strings, and an exact call-target scan for callers. Read short functions fully and heads plus tails of large float ones. Cross-check vtable layouts, verified rewrite doc comments and lane vocabulary precedent before finalising names.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;Caller attribution by nearest known symbol below the call site produced several bogus results inside dense unnamed regions; exact call-target matches are trustworthy but the attributed caller names are hints only. One log timestamp was written from memory instead of the machine clock and had to be corrected.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a run of particle-effect functions</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-47"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-47</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One hundred and fifty consecutive functions turned out to be the particle effects system, not streaming as labelled, and nearly all of them could be named from their vtables, strings and neighbours.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred and fifty consecutive functions turned out to be the particle effects system, not streaming as labelled, and nearly all of them could be named from their vtables, strings and neighbours.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed functions, with a confidence grade, working only from the executable file.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The whole range belongs to the particle effects system: effect rules, timelines, keyframes, property lists, models, triggers, render state and spawn domains.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Every class follows the same three-part idiom: a one-time descriptor builder referencing a type name string, a small factory allocating the class-sized block, and a final vtable slot returning the descriptor. A shared table callback reaches that slot through a virtual call, which confirms what the slot does.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The range holds a complete introsort over effect instances ordered by a sort key: quicksort with a depth limit, a heap sort fallback, and a guarded insertion pass for the first entries followed by an unguarded one. The unguarded pass has no lower-bound check, which is what proves the split.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Four near-identical routines are keyframe samplers for different channel modes behind one bitmask-gated dispatcher; three produce four floats and one produces a single float.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;One hundred and forty-four functions were named and six were left empty where the meaning could not be determined, including one getter shared by dozens of unrelated classes. The next naming lane on nearby code should reuse the descriptor idiom above: any tiny routine returning a class global next to a type-name string is almost certainly the descriptor getter, and any routine taking an instance plus a time value near the timeline code is a track updater.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Read code through the mapped image rather than the raw file, rebuild the vtable runs from the read-only data section, and recover class names from the runtime type records stored just above each table. Then group functions by the class that references them before reading any bodies.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;All of the small XML, file and allocator helpers decode as garbage from the file on disk because that code range is encrypted at rest, so their roles had to be inferred from calling patterns and string arguments instead of read directly. The inventory subsystem labels for the range were also wrong, which cost an early detour before the type records settled the question.&lt;/p&gt;</content>
   </entry>
 </feed>
