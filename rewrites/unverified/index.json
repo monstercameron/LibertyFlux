@@ -320,134 +320,6 @@
   "reason": null
  },
  {
-  "address": "0x005FBC60",
-  "name": "rage::pgStreamableRef<rage::fragType>::~fragType>",
-  "file": "fn_005fbc60.rs",
-  "lane": "r-s484",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005FBCB0",
-  "name": "euphoria_init_forwarder",
-  "file": "fn_005fbcb0.rs",
-  "lane": "r-s484",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005FBCC0",
-  "name": "euphoria_streamref_init",
-  "file": "fn_005fbcc0.rs",
-  "lane": "r-s484",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005FBD70",
-  "name": "fragref_attach_notify",
-  "file": "fn_005fbd70.rs",
-  "lane": "r-s484",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005FBDC0",
-  "name": "fragref_detach_notify",
-  "file": "fn_005fbdc0.rs",
-  "lane": "r-s484",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005FBE30",
-  "name": "atany_holder_vector3_assign",
-  "file": "fn_005fbe30.rs",
-  "lane": "r-s484",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005FBEC0",
-  "name": "atany_holder_float_assign",
-  "file": "fn_005fbec0.rs",
-  "lane": "r-s484",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005FBF20",
-  "name": "atany_holder_fraginst_ptr_assign",
-  "file": "fn_005fbf20.rs",
-  "lane": "r-s484",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005FBF80",
-  "name": "atany_holder_assign_w32_fe17a4",
-  "file": "fn_005fbf80.rs",
-  "lane": "r-s484",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005FBFE0",
-  "name": "atany_holder_assign_w32_fe17c4",
-  "file": "fn_005fbfe0.rs",
-  "lane": "r-s484",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005FC040",
-  "name": "atany_holder_assign_w128_fe1764",
-  "file": "fn_005fc040.rs",
-  "lane": "r-s484",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005FC090",
-  "name": "atany_holder_assign_big_fe17f4",
-  "file": "fn_005fc090.rs",
-  "lane": "r-s484",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005FC130",
-  "name": "atany_holder_assign_w32_fe1754",
-  "file": "fn_005fc130.rs",
-  "lane": "r-s484",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005FC1A0",
-  "name": "atany_holder_vector3_clone",
-  "file": "fn_005fc1a0.rs",
-  "lane": "r-s484",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005FC1F0",
-  "name": "atany_holder_float_clone",
-  "file": "fn_005fc1f0.rs",
-  "lane": "r-s484",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005FC230",
-  "name": "atany_holder_fraginst_ptr_clone",
-  "file": "fn_005fc230.rs",
-  "lane": "r-s484",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x0061B150",
   "name": "net_session_desc_init",
   "file": "fn_0061b150.rs",
@@ -528,9 +400,9 @@
   "reason": "other"
  },
  {
-  "address": "0x00870980",
-  "name": "crmt_sync_pair_create",
-  "file": "fn_00870980.rs",
+  "address": "0x00870B50",
+  "name": "crmt_list_find_and_attach",
+  "file": "fn_00870b50.rs",
   "lane": "r-s485",
   "outcome": "not_reached",
   "reason": null
@@ -603,14 +475,6 @@
   "address": "0x0089AF70",
   "name": null,
   "file": "fn_0089af70.rs",
-  "lane": "r-b21",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x0089B3B0",
-  "name": null,
-  "file": "fn_0089b3b0.rs",
   "lane": "r-b21",
   "outcome": "not yet run",
   "reason": null
@@ -840,73 +704,33 @@
   "reason": ""
  },
  {
-  "address": "0x00986090",
-  "name": "audEmitter_slot_empty_check",
-  "file": "fn_00986090.rs",
+  "address": "0x00986C30",
+  "name": "audEmitter_clear_slots",
+  "file": "fn_00986c30.rs",
   "lane": "r-s486",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x009863F0",
-  "name": "audEmitter_slot_flag_check",
-  "file": "fn_009863f0.rs",
+  "address": "0x00986E90",
+  "name": "audEmitter_scaled_param_sink",
+  "file": "fn_00986e90.rs",
   "lane": "r-s486",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x00986410",
-  "name": "audEmitter_slot_set_byte",
-  "file": "fn_00986410.rs",
+  "address": "0x00988540",
+  "name": "audCutscene_ctor",
+  "file": "fn_00988540.rs",
   "lane": "r-s486",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x009864A0",
-  "name": "audEmitter_forward_const1",
-  "file": "fn_009864a0.rs",
-  "lane": "r-s486",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00986C70",
-  "name": "audStaticRadioEmitter::vf11",
-  "file": "fn_00986c70.rs",
-  "lane": "r-s486",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00986CA0",
-  "name": "aud_set_global_flag_inverted",
-  "file": "fn_00986ca0.rs",
-  "lane": "r-s486",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x009885C0",
-  "name": "audCutscene_slots_clear_check",
-  "file": "fn_009885c0.rs",
-  "lane": "r-s486",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00988670",
-  "name": "audCutscene_reset_forward",
-  "file": "fn_00988670.rs",
-  "lane": "r-s486",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00988CC0",
-  "name": "audEntity_ctor",
-  "file": "fn_00988cc0.rs",
+  "address": "0x00988600",
+  "name": "audCutsceneAudioEntity::vf1",
+  "file": "fn_00988600.rs",
   "lane": "r-s486",
   "outcome": "not_reached",
   "reason": ""
