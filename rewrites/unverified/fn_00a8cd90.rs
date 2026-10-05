@@ -2,7 +2,7 @@
 
 /// Blend two flag bytes from where a value falls in a range.
 ///
-/// Given `lo`, `hi` and a `divisor`, plus two output bytes: when `hi` is not
+/// Given `lo`, `hi` and a `divisor`, plus two output bytes: when `hi` is
 /// above `lo` the outputs are `0xFF` and `0` and the stored factor at
 /// `this+0x10C` is 1. Otherwise `t = (lo - hi) / divisor` and
 /// `v = 1 - t`: both outputs start at `0xFF`, the stored factor is the
@@ -61,7 +61,7 @@ lf_checker_rt::export!(thiscall, rw_00A8CD90(
         let fa = f32::from_bits(lo);
         let fb = f32::from_bits(hi);
         let dv = f32::from_bits(divisor);
-        if !(fb > fa) {
+        if fb > fa {
             (out_a as *mut u8).write(0xff);
             (out_b as *mut u8).write(0);
             ((this + FACTOR_OFF) as *mut u32).write_unaligned(0x3f800000);

@@ -62,6 +62,7 @@ lf_checker_rt::export!(thiscall, rw_00be3730(task: u32, ped: u32) -> u32 {
         const SLOT_ID: u32 = 0x12c;
         const SLOT_RUN: u32 = 0x44;
         const FOUR: u32 = 0x40800000;
+        const EIGHT: u32 = 0x41000000;
         const ONE: u32 = 0x3f800000;
 
         #[inline(always)]
@@ -167,15 +168,15 @@ lf_checker_rt::export!(thiscall, rw_00be3730(task: u32, ped: u32) -> u32 {
                 return 0;
             }
             let ans: u32 =
-                lf_checker_rt::callee_cdecl!(10, u32, ped, 0x0eu32, FOUR, 0u32, saved.to_bits(), ONE);
-            return lf_checker_rt::callee_thiscall!(11, u32, r, ans, ped, 0x0eu32, FOUR, 0u32, saved.to_bits());
+                lf_checker_rt::callee_cdecl!(10, u32, ped, 0x0eu32, FOUR, 0u32, ONE, saved.to_bits());
+            return lf_checker_rt::callee_thiscall!(11, u32, r, ans, ped, 0x0eu32, FOUR, 0u32, ONE);
         }
         wr8(task.wrapping_add(STARTED), 1);
         let entry = rd32(lf_checker_rt::relocated(TABLE).wrapping_add(slot.wrapping_mul(4)));
         let _: u32 = lf_checker_rt::callee_thiscall!(12, u32, entry);
         let mut frame = [0u32; 8];
         let fp = frame.as_mut_ptr() as u32;
-        let _: u32 = lf_checker_rt::callee_thiscall!(13, u32, fp, 0u32, 0u32, 0u32, FOUR);
+        let _: u32 = lf_checker_rt::callee_thiscall!(13, u32, fp, 0u32, 0u32, 0u32, EIGHT);
         let _: u32 = lf_checker_rt::callee_thiscall!(14, u32, fp, ped);
         let g = rd32(lf_checker_rt::relocated(DISPATCHER));
         let r: u32 = lf_checker_rt::callee_thiscall!(8, u32, g);
@@ -185,11 +186,11 @@ lf_checker_rt::export!(thiscall, rw_00be3730(task: u32, ped: u32) -> u32 {
         } else {
             let ans: u32 = lf_checker_rt::callee_cdecl!(
                 18, u32, ped, flag, FOUR, 0x642u32,
-                lf_checker_rt::relocated(PHONE_DATA), 0u32, 0u32, ONE
+                lf_checker_rt::relocated(PHONE_DATA), 0u32, ONE, 0u32
             );
             rr = lf_checker_rt::callee_thiscall!(
-                15, u32, r, ans, flag, FOUR, 0x642u32,
-                lf_checker_rt::relocated(PHONE_DATA), 0u32, 0u32, ONE
+                15, u32, r, ans, ped, flag, FOUR, 0x642u32,
+                lf_checker_rt::relocated(PHONE_DATA), 0u32, ONE
             );
         }
         vcall1(rr, SLOT_RUN, ped);

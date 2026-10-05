@@ -33,8 +33,9 @@ lf_checker_rt::export!(thiscall, rw_00A8E9B0(this: u32, out: u32) -> u32 {
                 .read_unaligned()
                 .wrapping_add(1);
             ((this + CUR_CELL_OFF) as *mut u32).write_unaligned(cell);
-            let limit = (table.wrapping_add((row as u32).wrapping_mul(ROW_STRIDE))
-                as *const u16)
+            let limit = (table
+                .wrapping_add((row as u32).wrapping_mul(ROW_STRIDE))
+                .wrapping_add(COUNT_OFF) as *const u16)
                 .read_unaligned() as u32;
             if (cell as i32) < limit as i32 {
                 break;
@@ -47,8 +48,9 @@ lf_checker_rt::export!(thiscall, rw_00A8E9B0(this: u32, out: u32) -> u32 {
             if row >= rows {
                 return 0;
             }
-            let first = (table.wrapping_add((row as u32).wrapping_mul(ROW_STRIDE))
-                as *const u16)
+            let first = (table
+                .wrapping_add((row as u32).wrapping_mul(ROW_STRIDE))
+                .wrapping_add(COUNT_OFF) as *const u16)
                 .read_unaligned();
             if 0u16 >= first {
                 continue;
