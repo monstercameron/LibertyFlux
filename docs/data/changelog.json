@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Naming the replay record engine: the kind byte tells siblings apart",
+    "title": "Rewrites: 2 more functions pass the checker (11748 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "2 rewrites added under rewrites/verified: 0 script native handlers and 2 other functions.",
+      "The tree now holds 11748 rewrites, 11729 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "706 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Naming the replay record engine: the kind byte tells siblings apart",
+    "commit": "20509df308c6bf325dad3ba13bf7ff09097c3ded",
     "summary": "Findings from the nm-73 lane.",
     "changes": [
       "New devlog entry: Naming the replay record engine: the kind byte tells siblings apart.",
