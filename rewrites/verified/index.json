@@ -61758,6 +61758,42 @@
   "lane": "a-09"
  },
  {
+  "address": "0x00B2FD30",
+  "name": "ped_task_collect_typed_records",
+  "kind": "function",
+  "file": "functions/fn_00b2fd30.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b457"
+ },
+ {
+  "address": "0x00B2FE80",
+  "name": "ped_task_range_check",
+  "kind": "function",
+  "file": "functions/fn_00b2fe80.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b457"
+ },
+ {
+  "address": "0x00B300A0",
+  "name": "ped_task_state_switch",
+  "kind": "function",
+  "file": "functions/fn_00b300a0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b457"
+ },
+ {
+  "address": "0x00B30400",
+  "name": "ped_task_match_and_adopt",
+  "kind": "function",
+  "file": "functions/fn_00b30400.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b457"
+ },
+ {
   "address": "0x00B314B0",
   "name": "task_event_forward",
   "kind": "function",
@@ -64260,6 +64296,15 @@
   "lane": "a-09"
  },
  {
+  "address": "0x00B65440",
+  "name": "veh_refresh_binding",
+  "kind": "function",
+  "file": "functions/fn_00b65440.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
   "address": "0x00B65A60",
   "name": "lifecycle_state_machine",
   "kind": "function",
@@ -64309,6 +64354,15 @@
   "name": "veh_guarded_forward",
   "kind": "function",
   "file": "functions/fn_00b65cb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B65CE0",
+  "name": "veh_reconcile_link",
+  "kind": "function",
+  "file": "functions/fn_00b65ce0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s450"
@@ -90306,6 +90360,15 @@
   "lane": "r-s448"
  },
  {
+  "address": "0x00C3E580",
+  "name": "tbd",
+  "kind": "function",
+  "file": "functions/fn_00c3e580.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
   "address": "0x00C3E650",
   "name": "train_copy_state_9_or_12",
   "kind": "function",
@@ -90373,6 +90436,15 @@
   "name": "train_free_subobject_274",
   "kind": "function",
   "file": "functions/fn_00c3eab0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
+  "address": "0x00C3EAE0",
+  "name": "tbd",
+  "kind": "function",
+  "file": "functions/fn_00c3eae0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s448"
@@ -97596,6 +97668,15 @@
   "lane": "r-b453"
  },
  {
+  "address": "0x00D3C4E0",
+  "name": "dummytask_helper_b",
+  "kind": "function",
+  "file": "functions/fn_00d3c4e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b453"
+ },
+ {
   "address": "0x00D3C860",
   "name": "audio_source_init",
   "kind": "function",
@@ -102058,6 +102139,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b427"
+ },
+ {
+  "address": "0x00DC5560",
+  "name": "TaskShoot_UpdateAim",
+  "kind": "function",
+  "file": "functions/fn_00dc5560.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b455"
  },
  {
   "address": "0x00DC58A0",
