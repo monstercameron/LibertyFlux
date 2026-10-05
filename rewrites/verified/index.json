@@ -50526,6 +50526,15 @@
   "lane": "r-b410"
  },
  {
+  "address": "0x00A24C90",
+  "name": "task_pose_integrate",
+  "kind": "function",
+  "file": "functions/fn_00a24c90.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b410"
+ },
+ {
   "address": "0x00A25390",
   "name": "task_state_value_blend",
   "kind": "function",
@@ -58887,6 +58896,15 @@
   "lane": "r-s417"
  },
  {
+  "address": "0x00B731F0",
+  "name": "CTaskSimpleStartCar::vf17",
+  "kind": "function",
+  "file": "functions/fn_00b731f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b413"
+ },
+ {
   "address": "0x00B739A0",
   "name": "task_ctor_random_duration",
   "kind": "function",
@@ -65637,10 +65655,109 @@
   "lane": "r-s423"
  },
  {
+  "address": "0x00B9C850",
+  "name": "NativeImpl_GET_RANDOM_NETWORK_RESTART_NODE",
+  "kind": "function",
+  "file": "functions/fn_00b9c850.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9C920",
+  "name": "NativeImpl_GET_RANDOM_NETWORK_RESTART_NODE_EXCLUDING_GROUP",
+  "kind": "function",
+  "file": "functions/fn_00b9c920.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9CA00",
+  "name": "NativeImpl_GET_RANDOM_NETWORK_RESTART_NODE_OF_GROUP",
+  "kind": "function",
+  "file": "functions/fn_00b9ca00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9CAB0",
+  "name": "NativeImpl_GET_RANDOM_NETWORK_RESTART_NODE_USING_GROUP_LIST",
+  "kind": "function",
+  "file": "functions/fn_00b9cab0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
   "address": "0x00B9CB50",
   "name": "NativeImpl_GET_RANDOM_WATER_NODE_2",
   "kind": "function",
   "file": "functions/fn_00b9cb50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9CBE0",
+  "name": "NativeImpl_GET_SAFE_POSITION_FOR_CHAR_2",
+  "kind": "function",
+  "file": "functions/fn_00b9cbe0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9CCB0",
+  "name": "NativeImpl_GET_SORTED_NETWORK_RESTART_NODE",
+  "kind": "function",
+  "file": "functions/fn_00b9ccb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9CD90",
+  "name": "NativeImpl_GET_SORTED_NETWORK_RESTART_NODE_EXCLUDING_GROUP",
+  "kind": "function",
+  "file": "functions/fn_00b9cd90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9CE70",
+  "name": "NativeImpl_GET_SORTED_NETWORK_RESTART_NODE_OF_GROUP",
+  "kind": "function",
+  "file": "functions/fn_00b9ce70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9CF30",
+  "name": "NativeImpl_GET_SORTED_NETWORK_RESTART_NODE_USING_GROUP_LIST",
+  "kind": "function",
+  "file": "functions/fn_00b9cf30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9CFE0",
+  "name": "NativeImpl_GET_SPAWN_COORDINATES_FOR_CAR_NODE_3",
+  "kind": "function",
+  "file": "functions/fn_00b9cfe0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s423"
+ },
+ {
+  "address": "0x00B9D120",
+  "name": "NativeImpl_REGISTER_PLAYER_RESPAWN_COORDS_2",
+  "kind": "function",
+  "file": "functions/fn_00b9d120.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s423"
