@@ -66024,6 +66024,15 @@
   "lane": "r-b518"
  },
  {
+  "address": "0x00B3F120",
+  "name": "ped_task_probe_region_grid",
+  "kind": "function",
+  "file": "functions/fn_00b3f120.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b518"
+ },
+ {
   "address": "0x00B3F640",
   "name": "task_target_select",
   "kind": "function",
@@ -83475,6 +83484,15 @@
   "lane": "r-s241"
  },
  {
+  "address": "0x00BBD270",
+  "name": "ped_assign_sequence_goto_drive_to_point",
+  "kind": "function",
+  "file": "functions/fn_00bbd270.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b516"
+ },
+ {
   "address": "0x00BBD490",
   "name": "ped_assign_sequence_goto_achieve_heading",
   "kind": "function",
@@ -83560,6 +83578,15 @@
   "name": "group_assign_task_29_to_leader_and_members",
   "kind": "function",
   "file": "functions/fn_00bbe060.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b516"
+ },
+ {
+  "address": "0x00BBE480",
+  "name": "ped_assign_follow_navmesh_route_task",
+  "kind": "function",
+  "file": "functions/fn_00bbe480.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b516"
@@ -96912,6 +96939,15 @@
   "lane": "r-s337"
  },
  {
+  "address": "0x00CA2480",
+  "name": "ped_task_param_compute (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00ca2480.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b509"
+ },
+ {
   "address": "0x00CA2740",
   "name": "face_state_init",
   "kind": "function",
@@ -100465,6 +100501,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s335"
+ },
+ {
+  "address": "0x00CF97D0",
+  "name": "ladder_mount_pose",
+  "kind": "function",
+  "file": "functions/fn_00cf97d0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b515"
  },
  {
   "address": "0x00CF9A10",
