@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-04",
-  "updated_at": "2026-10-04 23:38",
+  "updated_at": "2026-10-04 23:41",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,12 +12,12 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 22141,
-    "rewritten": 11560,
-    "verified": 11109
+    "named": 22143,
+    "rewritten": 11561,
+    "verified": 11110
   },
   "structures": 340,
-  "symbols": 11221,
+  "symbols": 11222,
   "measured": [
     {
       "label": "Code section",
@@ -99,25 +99,25 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 22141,
+      "value": 22143,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (13137); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (13139); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 11560,
+      "value": 11561,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 11109,
+      "value": 11110,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
   ],
   "activity": {
-    "lanes_running": 8,
+    "lanes_running": 10,
     "lanes_finished": 1006,
     "lanes_incomplete": 130,
     "devlog_entries": 383
@@ -1352,7 +1352,7 @@
       "from": "0x006F69D8",
       "to": "0x006FC2F8",
       "count": 41,
-      "named": 2,
+      "named": 4,
       "rewritten": 1,
       "verified": 1
     },
@@ -2082,8 +2082,8 @@
       "to": "0x008BF699",
       "count": 45,
       "named": 41,
-      "rewritten": 2,
-      "verified": 2
+      "rewritten": 3,
+      "verified": 3
     },
     {
       "stage": "named",
