@@ -139,6 +139,10 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
         let range_obj = lf_checker_rt::relocated(RANGE_OBJ);
         let voice_obj = lf_checker_rt::relocated(VOICE_OBJ);
         let loc_obj = lf_checker_rt::relocated(LOC_OBJ);
+        let fmt0 = lf_checker_rt::relocated(FMT0);
+        let fmt1 = lf_checker_rt::relocated(FMT1);
+        let fmt2 = lf_checker_rt::relocated(FMT2);
+        let fmt3 = lf_checker_rt::relocated(FMT3);
         #[inline(always)]
         fn rf(f: &[u8; 256], c: i32) -> u32 {
             let i = (c + 256) as usize;
@@ -257,7 +261,7 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
         );
         let f1 = fp(&mut frame, -71);
         let f2 = fp(&mut frame, -72);
-        lf_checker_rt::callee_cdecl!(C_FORMAT, u32, f2, 0x40u32, FMT0, idval, esi, f1, 0u32, 0x3fu32);
+        lf_checker_rt::callee_cdecl!(C_FORMAT, u32, f2, 0x40u32, fmt0, idval, esi, f1, 0u32, 0x3fu32);
         let gain = f32::from_bits(g32!(GAIN));
         let mut x0 = fmul(C4, gain);
         let mut x2 = fsub(UNIT, gain);
@@ -286,7 +290,7 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
                 C_SUBMIT,
                 u32,
                 this,
-                FMT1,
+                fmt1,
                 this.wrapping_add(SLOT0),
                 fa2,
                 0xffffffffu32,
@@ -323,7 +327,7 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
                 C_SUBMIT,
                 u32,
                 this,
-                FMT2,
+                fmt2,
                 this.wrapping_add(SLOT0),
                 fa3,
                 0xffffffffu32,
@@ -372,7 +376,7 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
             wr32(this.wrapping_add(HANDLE), 0);
         }
         lf_checker_rt::callee_thiscall!(C_ROUTE, u32, handle, rf(&frame, -180), 0u32, 0u32);
-        let fin: u32 =
+        let _fin: u32 =
             lf_checker_rt::callee_thiscall!(C_FIN, u32, voice_obj, rf(&frame, -212), rf(&frame, -192));
         esi = rf(&frame, -216);
         wr32(this.wrapping_add(COUNT), esi);
@@ -384,7 +388,7 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
             wr8(this.wrapping_add(PLAYING), 1);
         }
         wf(&mut frame, -216, 0);
-        wf(&mut frame, -212, fin);
+        wf(&mut frame, -212, this.wrapping_add(AUX));
         let ba = fp(&mut frame, -216);
         lf_checker_rt::callee_thiscall!(
             C_BEGIN,
@@ -402,7 +406,7 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
             C_SUBMIT3,
             u32,
             this,
-            FMT3,
+            fmt3,
             this.wrapping_add(SLOT1),
             fa4,
                 0xffffffffu32,
@@ -453,7 +457,7 @@ lf_checker_rt::export!(thiscall, rw_0099F9A0(this: u32, kind: u32, _unused: u32)
         let mut q = rff(&frame, -184);
         q = fadd(q, rff(&frame, -208));
         wff(&mut frame, -176, q);
-        q = rff(&frame, -176);
+        q = rff(&frame, -172);
         q = fadd(q, rff(&frame, -184));
         wff(&mut frame, -172, q);
         q = rff(&frame, -168);
