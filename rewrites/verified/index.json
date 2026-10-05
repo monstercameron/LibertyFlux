@@ -33570,6 +33570,15 @@
   "lane": "r-s438"
  },
  {
+  "address": "0x00882E50",
+  "name": "stream_sincos4",
+  "kind": "function",
+  "file": "functions/fn_00882e50.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s438"
+ },
+ {
   "address": "0x00882F50",
   "name": "stream_req_init",
   "kind": "function",
@@ -33709,6 +33718,15 @@
   "name": "stream_channel_push",
   "kind": "function",
   "file": "functions/fn_00883de0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s438"
+ },
+ {
+  "address": "0x00883E50",
+  "name": "stream_blend_vectors",
+  "kind": "function",
+  "file": "functions/fn_00883e50.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s438"
@@ -53109,6 +53127,15 @@
   "lane": "r-b430"
  },
  {
+  "address": "0x00A23BE0",
+  "name": "ped_task_solve_aim_and_pose",
+  "kind": "function",
+  "file": "functions/fn_00a23be0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b430"
+ },
+ {
   "address": "0x00A24220",
   "name": "ped_task_update_tracking_state",
   "kind": "function",
@@ -58023,10 +58050,28 @@
   "lane": "r-s440"
  },
  {
+  "address": "0x00AED330",
+  "name": "kv_insert_step",
+  "kind": "function",
+  "file": "functions/fn_00aed330.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
   "address": "0x00AED360",
   "name": "kv_partition_step",
   "kind": "function",
   "file": "functions/fn_00aed360.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s440"
+ },
+ {
+  "address": "0x00AEF9E0",
+  "name": "stream_level_blend",
+  "kind": "function",
+  "file": "functions/fn_00aef9e0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s440"

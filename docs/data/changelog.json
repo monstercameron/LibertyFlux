@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Production batch: four task functions verified, one dead descriptor found",
+    "title": "Rewrites: 5 more functions pass the checker (12599 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "5 rewrites added under rewrites/verified: 0 script native handlers and 5 other functions.",
+      "The tree now holds 12599 rewrites, 12580 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "750 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Production batch: four task functions verified, one dead descriptor found",
+    "commit": "5a8da4c5e2e4d502da7bc7b7ef9dea83cc20a303",
     "summary": "Findings from the r-b430 lane.",
     "changes": [
       "New devlog entry: Production batch: four task functions verified, one dead descriptor found.",
