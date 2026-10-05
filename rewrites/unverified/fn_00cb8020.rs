@@ -7,9 +7,10 @@
 /// block: the raw floats are copied to their slots, the three midpoints
 /// `(a+b)/2`, `(c+e)/2`, `(f+d)/2` feed an enumeration call, and the
 /// differences `(b-a)`, `(e-c)`, `(d-f)` are scaled by a multiplier that is
-/// `1/sqrt(S)` when the sum of squared differences `S` is exactly zero and
-/// `0.0` otherwise (the original tests this with `ucomiss`+`lahf`, which is
-/// exactly `== 0.0`, NaN included), then stored as vector A. Two dot
+/// `0.0` when the sum of squared differences `S` is exactly zero and
+/// `1/sqrt(S)` otherwise (the original tests this with `ucomiss`+`lahf` and a
+/// parity jump, which is exactly `== 0.0`, NaN included), then stored as
+/// vector A. Two dot
 /// products with sign flips, one square root and two words that read
 /// unwritten scratch (reproduced as zero under the checker's defined stack
 /// fill) complete the block. It then issues the enumeration call over the
@@ -108,9 +109,9 @@ lf_checker_rt::export!(thiscall, rw_00cb8020(this: u32, _unused: u32) -> u32 {
         // Sum of squared differences, then the conditional multiplier.
         let sumsq = add(add(mul(d1, d1), mul(d0, d0)), mul(d2, d2));
         let mult = if sumsq == 0.0 {
-            core::hint::black_box(1.0f32) / core::hint::black_box(sumsq.sqrt())
-        } else {
             0.0
+        } else {
+            core::hint::black_box(1.0f32) / core::hint::black_box(sumsq.sqrt())
         };
         let s0 = mul(d0, mult);
         let s1 = mul(d1, mult);
