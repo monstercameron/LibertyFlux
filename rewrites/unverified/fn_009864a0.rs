@@ -4,8 +4,9 @@
 ///
 /// Passes `index` to the callee at slot id 1 with `this` fixed to the shared
 /// object at `SHARED_EMITTER`, ignores the answer and returns 1 in `al`.
-/// Original: stdcall, one stack word (popped by the inner call).
-lf_checker_rt::export!(stdcall, rw_009864A0(index: u32) -> u32 {
+/// Original: cdecl, one stack word (caller cleans; the inner call pops only
+/// its own pushed copy).
+lf_checker_rt::export!(cdecl, rw_009864A0(index: u32) -> u32 {
     const SHARED_EMITTER: u32 = 0x12389e0;
     const FWD_CALLEE: u32 = 1;
     unsafe {

@@ -7,8 +7,9 @@
 /// the shared object at `SHARED_EMITTER`, and returns 1 when that test
 /// reports 0 (the slot word is zero), else 0. Only the low byte of the
 /// callee's answer is read.
-/// Original: stdcall, one stack word (popped by the inner call), return in `al`.
-lf_checker_rt::export!(stdcall, rw_00986090(index: u32) -> u32 {
+/// Original: cdecl, one stack word (caller cleans; the inner call pops only
+/// its own pushed copy), return in `al`.
+lf_checker_rt::export!(cdecl, rw_00986090(index: u32) -> u32 {
     const SHARED_EMITTER: u32 = 0x12389e0;
     const SLOT_TEST: u32 = 1;
     unsafe {

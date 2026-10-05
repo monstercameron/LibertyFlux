@@ -5,9 +5,10 @@
 /// Reads the entity pointer from the global `ENTITY_SLOT`; a null pointer
 /// means clear (returns 1). Otherwise scans the two slot pointers at
 /// `+SLOT0_OFF` and `+SLOT0_OFF+4`: a slot counts as active when its pointer
-/// is nonzero, its byte at `+STATE_OFF` is zero, and its dword at `+COUNT_OFF`
-/// is above zero, compared UNSIGNED (only exactly zero is inactive; a value
-/// with the top bit set is active). Returns 0 when any slot is active.
+/// is nonzero, and either its byte at `+STATE_OFF` is nonzero (the count is
+/// then unchecked) or its dword at `+COUNT_OFF` is above zero, compared
+/// UNSIGNED (only exactly zero is inactive; a value with the top bit set is
+/// active). Returns 0 when any slot is active.
 /// Original: stdcall, no stack words, return in `al`.
 lf_checker_rt::export!(stdcall, rw_009885C0() -> u32 {
     const ENTITY_SLOT: u32 = 0x1282fb8;
@@ -26,7 +27,7 @@ lf_checker_rt::export!(stdcall, rw_009885C0() -> u32 {
             }
             let state = ((slot + STATE_OFF) as *const u8).read();
             if state != 0 {
-                continue;
+                return 0;
             }
             let count = ((slot + COUNT_OFF) as *const u32).read_unaligned();
             if count > 0 {
