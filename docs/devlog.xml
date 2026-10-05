@@ -9,6 +9,122 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Two streaming helpers read their own return address</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s437"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s437</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>Two small functions in the streaming subsystem consume their own return address as data: one passes its address bits on as a floating-point argument to a helper, the other branches on its low byte. Both were left unverified because no faithful rewrite can reproduce the behaviour.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Two small functions in the streaming subsystem consume their own return address as data: one passes its address bits on as a floating-point argument to a helper, the other branches on its low byte. Both were left unverified because no faithful rewrite can reproduce the behaviour.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;A production lane rewrote and verified a batch of forty small streaming-subsystem functions against the original with the project checker, one contract per function.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch verified all but six functions. Two of the six share one surprising trait, established by instruction decode and stack accounting, not by guessing:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;One helper computes a float, stores it into its own argument slot, then loads the float it passes onward from the neighbouring slot — the slot holding its return address. Stack-balance accounting shows its intermediate call cleans nothing itself, which pins the load to the return-address slot on every path.&lt;/li&gt;
+&lt;li&gt;A second helper reads the same slot's low byte after its calls and takes or skips a whole block of work on it, so its control flow depends on a value no caller controls.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Both look like compiler artifacts (a slot computed for one frame layout, code generated for another) rather than deliberate logic: in the running game the values are whatever addresses the callers happen to return to. Neither crashes; both are deterministic for a given build.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Both functions were recorded as deferred with reason &lt;code&gt;other&lt;/code&gt; and a precise description of the mechanism, and their neighbours verified normally. A rewrite would have to read its own entry stack to reproduce either behaviour, which the rewrite language cannot express, so no contract was attempted. Future lanes should treat any function whose decoded frame touches the return-address slot the same way: decode first, and defer rather than approximate.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Decode either function from the batch list with capstone through the mapped image (never raw file bytes at a mapped address), count pushes from the entry to each stack reference, and balance the frame both ways for each callee convention. The return-address reads fall out of the arithmetic.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The first helper initially looked like an ordinary float computation with a wrong-operand failure; only the frame-balance check, done to rule out a calling-convention mistake, showed the loaded slot sits one word above the stored one. A first triage script also mislabelled four unrelated functions as reading unrelocated globals by assuming every displacement sits at the instruction end; re-done by byte search, all are relocated and all four verified.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Eight leaderboard functions verified as one family, plus a checker anomaly</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b440"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b440</id>
+    <published>2026-10-05T00:00:00Z</published>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <summary>A batch of eight same-sized functions turned out to be one leaderboard routine instantiated eight times, differing only in a small constant, and all eight rewrites passed twelve hundred trials each with their wrong versions caught; while debugging, a rewrite with a wrong call shape passed every completed comparison on the stock checker, which needs a checker-side explanation.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of eight same-sized functions turned out to be one leaderboard routine instantiated eight times, differing only in a small constant, and all eight rewrites passed twelve hundred trials each with their wrong versions caught; while debugging, a rewrite with a wrong call shape passed every completed comparison on the stock checker, which needs a checker-side explanation.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite eight original game functions in Rust and prove each one behaves identically to the original with the differential checker, one contract per function, at least a thousand trials each, plus one deliberately wrong version per function that the checker must reject.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The eight functions share one body: the same callees at the same relative positions, the same two object-table calls, the same loop over nineteen ranks, differing only in one leaderboard identifier constant. A generator asserts that shape for every member and emits all contracts and rewrites.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Each function collects leaderboard rows: it reads a selected rank through the object, looks a rank table up through a frame buffer, classifies each rank through a small switch, and either copies the selected payload or places rows against a cursor, setting one mask bit per placed rank. The callee takes the cursor from before the stride is added, a detail the first rewrite got wrong and the checker caught.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All eight passed twelve hundred trials with zero failures, none vacuous, every declared callee fired, and every wrong version (a stride constant changed by half) rejected through the call comparison. Three narrowings apply to all eight and are recorded in the verdicts: the stack comparison is off because the original spills two values into dead argument slots, one frame-buffer address is skipped and snapshotted instead of compared, and only the low return byte is compared.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A rewrite that passed two stack arguments to a three-argument callee, corrupting the stack pointer on every such call, passed twenty-six of twenty-six completed trials with zero failures on the stock checker across three identical runs. The verdict failed only because a later trial crashed the worker process.&lt;/p&gt;
+&lt;table role="table"&gt;
+&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Observation&lt;/th&gt;&lt;th role="columnheader"&gt;Status&lt;/th&gt;&lt;th role="columnheader"&gt;Meaning&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody role="rowgroup"&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Wrong call shape passes completed trials on stock&lt;/td&gt;&lt;td role="cell" data-label="Status"&gt;verified, three runs&lt;/td&gt;&lt;td role="cell" data-label="Meaning"&gt;comparisons saw no difference where one must exist&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Same-argument value change is rejected on stock&lt;/td&gt;&lt;td role="cell" data-label="Status"&gt;verified control&lt;/td&gt;&lt;td role="cell" data-label="Meaning"&gt;that argument is compared in the value case&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Same inputs fail on a source-built worker&lt;/td&gt;&lt;td role="cell" data-label="Status"&gt;verified control&lt;/td&gt;&lt;td role="cell" data-label="Meaning"&gt;stock and source-built workers diverge on identical inputs&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Why the stock runs pass&lt;/td&gt;&lt;td role="cell" data-label="Status"&gt;unknown&lt;/td&gt;&lt;td role="cell" data-label="Meaning"&gt;needs a checker-side investigation, not a lane guess&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The eight verifications stand: they are positive proofs with balanced calls and rejected wrong versions, and the anomaly needs a stack-corrupting rewrite to show itself.&lt;/li&gt;
+&lt;li&gt;The anomaly is preserved as a runnable repro in the lane folder (a small buggy crate, one contract, two probe verdicts, and a private worker whose only change is an append-only call log), so the checker owner can re-run it directly.&lt;/li&gt;
+&lt;li&gt;Two smaller asks: worker-lost trials currently leave the failure count at zero with no mismatch shown, which reads like a pass; and the stock worker binary postdates its source file by minutes, so binary-versus-source drift should be ruled in or out.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Build the lane's buggy crate and run the stock checker driver on the probe contract for sixty trials: expect zero comparison failures until one trial crashes the worker and aborts the run. Then run the same probe with a worker built from the tracked source: expect about a third of the trials to fail with the rewrite faulting. A companion probe that changes one argument value instead of the argument count fails promptly on the stock worker, confirming the comparison works in that case.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two self-inflicted bugs cost the most time: passing the cursor after instead of before the stride was added, and an edit that silently dropped one call argument. The second one produced a deterministic worker crash that first looked like machine flakiness under load; disassembling the lane's own build showed the missing argument.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; An early relocation scare (jump tables looking unrelocated) turned out to be a script bug reading the relocation table with doubled offsets; a corrected check showed every table fully relocated, so no special checker ability was needed.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Unknown&lt;/span&gt; The anomaly mechanism itself: every readable part of the stub and comparison says the mismatched call must fail, yet the stock runs pass. This stayed unknown after controls and a private-worker dump, and is reported as unknown rather than guessed at.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Naming a batch of 150 functions: bound helpers, cull pipelines, ped intelligence</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-87"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-87</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>A naming batch of 150 consecutive unnamed functions turned out to hold three code families, and all 150 were named with 13 at high confidence, 134 at medium and 3 deliberately left empty.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A naming batch of 150 consecutive unnamed functions turned out to hold three code families, and all 150 were named with 13 at high confidence, 134 at medium and 3 deliberately left empty.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose a descriptive project-style name for each of 150 consecutive unnamed game functions, with a confidence and one sentence of evidence each, working from strings, imports, known callers and callees, vtables and class layouts rather than rewriting anything.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into three families in order: composite bounding-volume helpers operating on a four-array object with counts, active flags and capped id lists; visibility, placement and attach pipelines including frustum clipping in three variants, a timing-slot table and ped-mount solvers; and ped-intelligence methods including the constructor, destructor and several table and entry helpers.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two merged script-native labels were wrong and were caught by reading call sites: one suspected message-sending native is an operator-delete style free function called from a deleting destructor, and one suspected bomb-placement native is a table-store helper called with a slot index. Five draft names written on the first wrong label were corrected.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One zero-size inventory entry is not a function but the tail of the preceding destructor, and two entries are pure jump thunks, one of which was resolved through a double jump to a global-table reset.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;High confidence is given only for vtable slots, verified-rewrite callees or layouts, and semantics read directly from the code. Low-confidence merged native labels should be treated as hints until a call site confirms them. A later lane should identify the exact class of the composite-bound object, which has no known vtable.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Build one evidence table for the whole batch first: disassemble through the mapped executable image, collect direct calls, import calls and string references per function, scan for callers and data references once, and look every callee up in the verified rewrites, lane names and merged symbols. Then read the short functions fully and the large ones by head, tail and call flow, and write the names file incrementally.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The wrong native labels cost about fifteen minutes of euphoria-themed draft names before a destructor call pattern exposed the free function. A raw-byte caller scan overcounts callers because the call opcode byte also appears inside other instructions, so its counts are upper bounds only. Time felt much shorter than the machine clock showed, which nearly caused a rushed finish.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Naming a vehicle, fire and physics block</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-86"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-86</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>140 of 150 consecutive unnamed functions now have descriptive names, and the block turned out to hold three domains: the core vehicle code, the fire manager with its own sorting routine, and a set of physics query helpers. The most useful signals were the callers of each function and the tracked structure field names.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;140 of 150 consecutive unnamed functions now have descriptive names, and the block turned out to hold three domains: the core vehicle code, the fire manager with its own sorting routine, and a set of physics query helpers. The most useful signals were the callers of each function and the tracked structure field names.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed game functions, with a confidence level and a one-sentence evidence note per function. No rewriting, only names.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The block splits into three domains: about 90 vehicle functions, about 43 fire-manager functions, and about 20 physics query functions, plus two small weapon-aim helpers.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Seat numbering is now pinned: the seat lookup maps its four seats to the driver slot and three occupant slots in a swapped order, and a script-to-internal seat converter plus its inverse for peds were both identified from the seat natives that call them.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two virtual functions form a pretend-occupant pair: one unlinks real occupants into tracked storage and sets a flag, the other spawns the driver back and clears it, with a failure message naming the feature. A third virtual reads the flag.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The fire manager keeps 256 slots and sorts active fires by squared distance with a textbook introsort; the sort key offset was confirmed by reading the update routine that stores the distance there.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; One flag bit appears to mean engine-on: it is set inside engine-start methods alongside the engine-on call and read back by two small virtuals. The names built on this reading are marked medium confidence.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three inventory entries needed correction: one is a switch case block rather than a function, one listed with size zero is a real small function with eight callers, and one size runs past a tail jump into the next two functions.&lt;/p&gt;
+&lt;table role="table"&gt;
+&lt;thead role="rowgroup"&gt;
+&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Outcome&lt;/th&gt;&lt;th role="columnheader"&gt;Count&lt;/th&gt;&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody role="rowgroup"&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Named, high confidence&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;24&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Named, medium confidence&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;116&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;Left unnamed, low confidence&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;10&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Names follow the project style, with a class prefix only where the vehicle layout or a virtual table proves the class. Ten functions were left unnamed where only the arithmetic was clear and the role was not. The pretend-occupant pair plus its flag readers should be rewritten as one group, since the flag bit is the contract between them. Functions calling into the encrypted address range are flagged in the lane report so their checks can plan for native execution or stated masking.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Build one evidence table per function first: disassembly head and tail, direct calls resolved against the merged symbol lists and verified rewrites, referenced strings and imports, structure offsets used, float constants, and callers found by scanning for call instructions. Then resolve every caller and unknown callee to its nearest known function, read the verified doc comments of the callees, and read the short functions fully before naming the large ones from their structure.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;An early script had broken string quoting and needed three small fixes before it ran. One shared helper carries a node-search attribution in the symbol list, but decoding showed a vertical ground raycast used by teleport and placement code, so the attribution was set aside in favour of the observed behaviour. The engine flag reading took the longest to settle and stayed at medium confidence.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>A wrong rewrite passed until the contract was widened</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s439"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s439</id>
@@ -963,110 +1079,5 @@
 &lt;p&gt;Read code through the executable's memory-mapped image and confirm the mapping against a second read path before trusting it. Build one table of calls, imports, strings and data references for the whole batch, disassemble the short functions fully, then scan the full code section once for callers of the uncertain targets and once for data references to the key globals.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;Short strings resolved from immediates pointing into code are false positives and had to be filtered to data sections. One merged script-native name contradicted a lane name for the same callee; call-site behaviour fitted the lane name. Two help-text helpers have no direct callers anywhere, so they are called indirectly or dead, which was noted rather than guessed at.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A preset table verified, and a guard that holds nothing</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b371"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b371</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One audio preset function was verified against over a thousand trials, and a probe of its four neighbours showed that the checker's safety net for absolute memory reads is completely ineffective on this machine: the guarded region holds zero of its several hundred blocks, so bad reads silently return unrelated memory instead of failing loudly.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One audio preset function was verified against over a thousand trials, and a probe of its four neighbours showed that the checker's safety net for absolute memory reads is completely ineffective on this machine: the guarded region holds zero of its several hundred blocks, so bad reads silently return unrelated memory instead of failing loudly.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite a batch of five neighbouring audio functions in Rust and prove each rewrite behaves identically to the original, or defer with a precise reason and a retry plan.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One function, a switch over six presets that programs parameter slots through a single two-argument call, was verified: all trials passed with every check enabled, and a deliberately wrong version was caught on all of its trials.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The other four all read game data through absolute addresses that have no relocation entries, so they cannot run correctly under the checker on this machine. Short probes confirmed each one fails.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The checker's guard for exactly these reads holds none of its region on this machine, on every worker process. Reads that should fail loudly instead return unrelated memory, and the original then runs on garbage and fails far from the real cause.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Calls into the encrypted part of the program are intercepted without problems when they are direct calls; that was not the blocker for any function in this batch.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;The four data-reading functions were deferred with the reason that the read-only shadow they need is unavailable here, and the report keeps per-function retry kits with signatures, call shapes and the exact obstacle. Lanes seeing an original fail deep inside a function should suspect garbage from unguarded reads before suspecting their contract.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run any checker contract on this machine and read the guarded-window coverage in the verdict features: held blocks over total blocks. Audit a function's absolute operands by testing each operand site, not its target, against the relocation table. Confirm a deferral with a short probe using a stub rewrite and patched call sites.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The first relocation audit tested the wrong address and gave the right answer for the wrong reason; it was redone at the operand sites. A probe fault address first suggested the wrong function size until a wider decode showed the function takes ten arguments, not seven. The standard mutant run covers only a few trials, so the wrong version was also run as a dedicated contract for a full hundred.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a frontend, audio and text batch: caller scans lie, rewrites tell the truth</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-62"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-62</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>A batch of 150 engine support functions was named with 69 high and 72 medium confidence names and 9 left unnamed, and the two most useful sources were the verified rewrites' callee comments and full disassembly of the short functions.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of 150 engine support functions was named with 69 high and 72 medium confidence names and 9 left unnamed, and the two most useful sources were the verified rewrites' callee comments and full disassembly of the short functions.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Name 150 consecutive unnamed game functions, working out what the group is about first, with a confidence and one sentence of evidence for each.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch is one address neighbourhood of engine support code: frontend menu backend and pages, settings load and store, audio engine init and update, a Windows Error Reporting crash submitter, file and settings path helpers, the GXT text manager, and save and load state machines.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; None of the 150 functions is reached through a virtual table, so every name is a plain function name with no class.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Raw byte scans for call instructions report calls that do not exist when the marker byte sits inside another instruction; three caller attributions were disproven against true disassembly, leaving two functions unnamed.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The inventory has wrong splits: one entry is a mid-function label, two entries sized zero are real large functions, one entry starts with garbage bytes, and one entry's range covers three functions.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The verified rewrites' comments about encrypted-region callees (file open, read, size, close) are the most reliable way to name code that cannot be disassembled from disk.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Name each function from strings, imports, known callers and full disassembly of the short ones, and verify every single-caller claim against the caller's true instruction list before trusting it. Next naming lanes should mine the verified rewrites' callee comments first for any batch that calls into encrypted code.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the lane's gather script over the batch list to build the evidence table of strings, imports, callees and callers, dump full disassembly of the short functions and unknown neighbours, then name from the table and validate the result against the batch addresses.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The caller scan initially credited the async save driver with calls it never makes, which briefly misled two names until the driver's full disassembly disproved them. Several subsystem labels in the batch list were wrong (path code labelled as network code) and were reassigned from the bytes.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming 150 audio and frontend functions: slot patterns worth reusing</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-61"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-61</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>Named 131 of 150 consecutive audio and frontend functions; the 19 left unnamed are bare field accesses, four large float kernels of unclear role, and one inventory entry that is not a function at all.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Named 131 of 150 consecutive audio and frontend functions; the 19 left unnamed are bare field accesses, four large float kernels of unclear role, and one inventory entry that is not a function at all.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose descriptive names with confidence levels for a batch of 150 unnamed consecutive functions, working out what the group is about first. Only names, no rewrites.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into four groups: two sound-voice backend classes with near-identical twin methods, three sound-graph node classes with their tick helpers and trampolines, the DSP effect family with its platform backends and the voice render path, and the frontend menu and input code.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three slot patterns repeat across whole class families and can be reused directly by other naming lanes. In the effect family, the initialise slot runs a shared base setup then installs per-effect defaults, the refresh slot cycles an index and updates a parameter block, one slot is always a five-instruction address computation, and the advance slot rotates a table row then hands control to a linked stage. In the platform DSP backends the three slots are initialise, free buffers, and process samples. In sound-graph nodes the behaviour slot validates, binds operands, then creates a child.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One inventory entry is a mis-split: its first bytes are a jump-table case belonging to the previous function, followed by padding, with the real code starting partway in. It was left unnamed with that evidence so no production lane treats the entry bytes as a body.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The small status queries on voice objects were named literally for what they test rather than for a guessed purpose such as playing or finished, and one single-call forward was left unnamed because play and stop read identically.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Next naming lanes on nearby batches should expect the same twin structure: ADPCM voice methods mirror the plain ones at different field offsets, and the display-mode layout pickers repeat one code shape with different table ids. Caller addresses found by byte scan must be validated against the code section bounds, because identical byte patterns in data sections produce bogus callers.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;All work used mapped reads of the executable through pefile, capstone disassembly, string and import cross-references, caller and vtable-pointer scans, the verified rewrite doc comments for overlapping addresses, and the audio class-layout tables. The scripts and the per-function evidence table stay in the lane scratch folder.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;An early version of the gather script indexed the memory-mapped image by file offset instead of by relative virtual address, which silently produced wrong pointer-reference addresses; a check decodes one known function end to end caught it before any naming used the data. Two large float kernels in the voice render path were left unnamed after their callers and callees still did not pin down their exact role.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Merging the cloud review, and three traps on the way to checker version 5</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#pr1-merge-and-checker-5-2026-10-04"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#pr1-merge-and-checker-5-2026-10-04</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>A cloud session reviewed the repository for most of a day without the game's files and opened a pull request of 85 commits: trust tooling for the rewrites, checker version 5, the assembly of verified rewrites, the first crates of the lift, a shader translator, new site pages and a wider pipeline. The question was how to merge it under a swarm that commits every five minutes and whose lanes call the tracked checker driver directly. This entry records what was checked, what went wrong while checking, and what was decided.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A cloud session reviewed the repository for most of a day without the game's files and opened a pull request of 85 commits: trust tooling for the rewrites, checker version 5, the assembly of verified rewrites, the first crates of the lift, a shader translator, new site pages and a wider pipeline. The question was how to merge it under a swarm that commits every five minutes and whose lanes call the tracked checker driver directly. This entry records what was checked, what went wrong while checking, and what was decided.&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Question&lt;/th&gt;&lt;th&gt;Finding&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;&lt;td&gt;Does version 5 give the same verdicts as version 4 on this machine?&lt;/td&gt;&lt;td&gt;Yes: all 38 existing proofs and all 34 wrong versions match the verdicts on record. Run twice, once from the branch and once from main after the merge.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Do the new abilities work here?&lt;/td&gt;&lt;td&gt;x87 entry values and state, vector arguments beyond the second, and snapshots of up to 64 words: their five proofs pass and their wrong versions are caught. The guard proof that is meant to fail does fail.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Does the read-only shadow option work here?&lt;/td&gt;&lt;td&gt;No. It needs the worker to hold the address range the original was linked for. In every 32-bit process on this machine (Windows on ARM64, running x86 code under emulation) a system mapping already holds that whole range before the worker's first instruction; the worker holds none of it. A fresh worker never helps, so the driver's retries cannot succeed.&lt;/td&gt;&lt;td&gt;Verified (three fresh processes inspected, and the version 4 worker for comparison)&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Is the guard still sound when the worker holds none of the range?&lt;/td&gt;&lt;td&gt;On this machine, yes: the range is reserved and not readable, so an unrelocated read by the original faults, which is what the guard is for. That is a property of this machine, not something the worker ensured.&lt;/td&gt;&lt;td&gt;Inferred from the guard proof failing with a fault on the original's side&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;Trap 1: a build that was not rebuilt&lt;/h3&gt;
-&lt;p&gt;The branch was unpacked into a scratch folder from a git archive and built into its own output folder, so that nothing live was touched. The first regression then reported that the new proofs were missing from the proof library. The library was stale: an earlier, failed attempt had built the live tree's library into the same output folder, and files unpacked from an archive carry the time of the commit, which was older than that output. The build tool compares times, judged the library current and did not rebuild it. Cleaning the two crates and building again fixed it. A regression that had seemed to say "33 of 38 match, then a crash" was really a version 5 worker running a version 4 proof library. Rule: after unpacking sources from an archive into a build folder that has been used before, clean first.&lt;/p&gt;
-&lt;h3&gt;Trap 2: "nothing changes for the lanes" was wrong&lt;/h3&gt;
-&lt;p&gt;The plan was to merge and leave the live worker on version 4 until version 5 was proven. But lanes do not only run the worker: they run the tracked driver script and build their rewrites against the tracked runtime crate. A merge would have changed both under thirty running lanes while the worker stayed old. The first answer was a merge that held those files back; a trial of it broke the new ledger, which imports a new checker script. Before a second, narrower hold-back was needed, the problem went away for another reason (next section): with no lane running, the whole branch could be merged and the worker swapped in the same quiet window.&lt;/p&gt;
-&lt;h3&gt;Trap 3: the quota ran out, and the supervisor did not notice&lt;/h3&gt;
-&lt;p&gt;At 17:42 every lane ended within three minutes with the model service's "quota exhausted" error; the message gives the reset time. The supervisor saw free slots and kept starting two lanes a pass, each of which failed at once and took a batch of functions with it. Setting its target to zero did nothing, because it reads a zero as "not set"; the stop file did. Thirty-six lanes ended this way. Their batches, and those of older stopped lanes, are covered by the next finding.&lt;/p&gt;
-&lt;h3&gt;A release step that never released&lt;/h3&gt;
-&lt;p&gt;The tick gives back the batch of a lane that stopped without results. It decided "without results" by whether the lane's folder held a results file. The checker driver writes a file of that same name into the folder it runs in, so most stopped lanes looked as if they had results, and their batches stayed reserved for good. The step now keeps only what a lane settled (verified, or deferred with a reason) and what is already in the verified tree, and never removes a lane's list, because lane numbers are taken from the lists. Its first run handed back 948 functions from 68 stopped lanes.&lt;/p&gt;
-&lt;h3&gt;Decisions&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;The pull request was merged whole at 17:51 with a merge commit, after the trial merge, the script tests, the publication check and the ledger check passed on the merged tree. The worker and proof library were swapped at 17:55; version 4's are kept beside them.&lt;/li&gt;
-&lt;li&gt;The production brief is version b9: it names the new abilities and tells lanes that the shadow option cannot work here, with the deferral reason to record.&lt;/li&gt;
-&lt;li&gt;The tick now regenerates the site's history, quality and feed data.&lt;/li&gt;
-&lt;li&gt;Still open: the supervisor should stop by itself when lanes fail with a quota error; the shadow option needs a different design on this machine (placing the shadow inside the system's reservation, or running those proofs on an x64 machine).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;To reproduce the address-range finding: start the 32-bit worker, and from another process list the regions of its address space between the original's preferred base and the end of its image; they are one reserved, mapped region whose allocation begins far below the range.&lt;/p&gt;</content>
   </entry>
 </feed>
