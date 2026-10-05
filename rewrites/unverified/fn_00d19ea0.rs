@@ -68,7 +68,7 @@ lf_checker_rt::export!(thiscall, rw_00d19ea0(
         wr32(this.wrapping_add(LATCH5), a5);
         let notify = a6 as u8;
         if notify != 0 {
-            lf_checker_rt::callee_thiscall!(1, u32, NOTIFY_OBJ);
+            lf_checker_rt::callee_thiscall!(1, u32, lf_checker_rt::relocated(NOTIFY_OBJ));
         }
         // The control block the original passes to its setup and lookup
         // callees is a separate frame region the original never writes, so
@@ -142,7 +142,7 @@ lf_checker_rt::export!(thiscall, rw_00d19ea0(
         }
         let ret = lf_checker_rt::callee_thiscall!(15, u32, this);
         if notify != 0 {
-            lf_checker_rt::callee_thiscall!(16, u32, NOTIFY_OBJ);
+            lf_checker_rt::callee_thiscall!(16, u32, lf_checker_rt::relocated(NOTIFY_OBJ));
         }
         ret
     }

@@ -19,7 +19,8 @@
 /// straight to the vector path; a zero flag runs a check call first and the
 /// compute/apply pair only when the check's low byte is non-zero (the compute
 /// call writes one dword through its out-cell, which becomes apply's middle
-/// argument). With a zero flag the function returns the handle. On the vector
+/// argument). With a zero flag the function returns the last call's answer
+/// (the set, check or apply call's return value, whatever it was). On the vector
 /// path the `+0x1c` vector is pushed into the handle, a post call runs, and
 /// the handle's stamp slot (`+0x1d4`) gets the global tick, bumped by one when
 /// the tick-check call's answer equals the global compare word; the stamp is

@@ -3,11 +3,8 @@
 ///
 /// `this+0x14` points at a binding record (null, or bit 0 of its `+0x24`
 /// word clear, returns the entry EAX at once; that exit is excluded from the
-/// proof). Otherwise reads a manager from a global, enlists up to 9 element
-/// words through it into a frame buffer — the scan starts one word below
-/// the buffer the call is given (the contract models this with a wrapping
-/// -4 write offset, 0xFFFFFFFC, since the schema takes no negatives) --
-/// offset — visits each nonzero element, clears bits 5 and 6 of the word at
+/// proof). Otherwise reads a manager from a global, enlists up to 8 element
+/// words through it into a frame buffer, visits each nonzero element,
 /// binding `+0x1e2`, reconfigures through `[binding+0x38]`, emits through
 /// vtable slot `+0xdc` of the binding, and clears bit 0 of binding `+0x24`.
 /// Returns the binding pointer. The stack word is ignored.
@@ -31,10 +28,10 @@ lf_checker_rt::export!(thiscall, rw_00b666b0(this: u32, _a0: u32) -> u32 {
         let mgr = lf_checker_rt::global::<u32>(MGR_VA).read_unaligned();
         let b = ((mgr + 8) as *const u32).read_unaligned();
         let key = ((d + 0x38) as *const u32).read_unaligned();
-        // Element 0 sits one word below the handed buffer (see doc comment).
+        
         let mut buf = [0u32; 10];
         let n: u32 = lf_checker_rt::callee_thiscall!(
-            ENLIST, u32, b, key, buf.as_mut_ptr().add(1) as u32, 8);
+            ENLIST, u32, b, key, buf.as_mut_ptr() as u32, 8);
         let mut i = 0u32;
         while (i as i32) < (n as i32) {
             let e = buf[i as usize];
@@ -78,10 +75,10 @@ lf_checker_rt::export!(thiscall, mut_00b666b0(this: u32, _a0: u32) -> u32 {
         let mgr = lf_checker_rt::global::<u32>(MGR_VA).read_unaligned();
         let b = ((mgr + 8) as *const u32).read_unaligned();
         let key = ((d + 0x38) as *const u32).read_unaligned();
-        // Element 0 sits one word below the handed buffer (see doc comment).
+        
         let mut buf = [0u32; 10];
         let n: u32 = lf_checker_rt::callee_thiscall!(
-            ENLIST, u32, b, key, buf.as_mut_ptr().add(1) as u32, 8);
+            ENLIST, u32, b, key, buf.as_mut_ptr() as u32, 8);
         let mut i = 0u32;
         while (i as i32) < (n as i32) {
             let e = buf[i as usize];

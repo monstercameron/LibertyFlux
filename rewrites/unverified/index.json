@@ -1472,11 +1472,11 @@
   "reason": null
  },
  {
-  "address": "0x00A2B000",
-  "name": "pedtask_followup_dispatch",
-  "file": "fn_00a2b000.rs",
-  "lane": "a-R01",
-  "outcome": "not yet run",
+  "address": "0x00A264B0",
+  "name": "",
+  "file": "fn_00a264b0.rs",
+  "lane": "r-b504",
+  "outcome": "not_reached",
   "reason": ""
  },
  {
@@ -1776,22 +1776,6 @@
   "reason": "abs_shadow_unavailable"
  },
  {
-  "address": "0x00B3E540",
-  "name": "worklist_scan_and_record",
-  "file": "fn_00b3e540.rs",
-  "lane": "r-b449",
-  "outcome": "deferred",
-  "reason": "abs_shadow_unavailable"
- },
- {
-  "address": "0x00B3EDC0",
-  "name": "peds_task_fn_B3EDC0",
-  "file": "fn_00b3edc0.rs",
-  "lane": "r-b518",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x00B4E2F0",
   "name": "ped_task_alloc_variant_a",
   "file": "fn_00b4e2f0.rs",
@@ -1803,6 +1787,14 @@
   "address": "0x00B4E4B0",
   "name": "ped_task_alloc_variant_b",
   "file": "fn_00b4e4b0.rs",
+  "lane": "r-b494",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00B4EC40",
+  "name": "ped_task_proximity_check",
+  "file": "fn_00b4ec40.rs",
   "lane": "r-b494",
   "outcome": "not_reached",
   "reason": ""
@@ -1859,6 +1851,14 @@
   "address": "0x00B760A0",
   "name": null,
   "file": "fn_00b760a0.rs",
+  "lane": "r-b507",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B76300",
+  "name": null,
+  "file": "fn_00b76300.rs",
   "lane": "r-b507",
   "outcome": "not yet run",
   "reason": null
@@ -2139,6 +2139,14 @@
   "address": "0x00BBE060",
   "name": "proposed: ped_task_unknown_e060",
   "file": "fn_00bbe060.rs",
+  "lane": "r-b516",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00BBE850",
+  "name": "proposed: ped_task_unknown_e850",
+  "file": "fn_00bbe850.rs",
   "lane": "r-b516",
   "outcome": "not_reached",
   "reason": ""
@@ -2854,6 +2862,14 @@
   "lane": "r-s286",
   "outcome": "not yet run",
   "reason": null
+ },
+ {
+  "address": "0x00CFF4E0",
+  "name": "FIGHT_RUN",
+  "file": "fn_00cff4e0.rs",
+  "lane": "r-b513",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00D00CB0",
