@@ -15,8 +15,9 @@
 /// `TAG` is pushed as a literal: its immediate has no relocation entry, so
 /// both sides push the identical raw value. Both buffer pointers are skipped
 /// call arguments with snapshot-verified contents (see `narrowed`). The
-/// normalized x minimum is stored to the frame but belongs to neither view,
-/// so it is unobservable and this rewrite drops it.
+/// normalized x and y minima are stored to the frame but belong to neither
+/// view, so they are unobservable and this rewrite drops them. The return
+/// value is a constant 0: the compared slot is zeroed just before the test.
 ///
 /// Original: 0x00B96B00 (cdecl, six stack words, returns u32 in eax).
 lf_checker_rt::export!(cdecl, rw_00b96b00(x: u32, y: u32, z: u32, r0: u32, r1: u32, r2: u32) -> u32 {
@@ -41,11 +42,11 @@ lf_checker_rt::export!(cdecl, rw_00b96b00(x: u32, y: u32, z: u32, r0: u32, r1: u
         (lo.to_bits(), hi.to_bits())
     }
 
-    let (min_x, max_x) = norm(
+    let (_min_x, max_x) = norm(
         f32::from_bits(fsub(x, r0)),
         f32::from_bits(fadd(x, r0)),
     );
-    let (min_y, max_y) = norm(
+    let (_min_y, max_y) = norm(
         f32::from_bits(fsub(y, r1)),
         f32::from_bits(fadd(y, r1)),
     );
@@ -53,10 +54,10 @@ lf_checker_rt::export!(cdecl, rw_00b96b00(x: u32, y: u32, z: u32, r0: u32, r1: u
         f32::from_bits(fsub(z, r2)),
         f32::from_bits(fadd(z, r2)),
     );
-    let mut view_a = [min_z, max_x, max_y, max_z];
-    let mut view_b = [max_x, max_y, max_z, 0];
+    let mut view_a = [0, 0, 0, min_z, 0, max_x, max_y, max_z, 0];
+    let mut view_b = [0, 0, min_z, 0, max_x, max_y, max_z, 0];
     let _: u32 = lf_checker_rt::callee_cdecl!(
         TEST, u32, view_b.as_mut_ptr() as u32, TAG, view_a.as_mut_ptr() as u32, 0x1C, 0x0D
     );
-    u32::from((min_z as i32) > 0)
+    0
 });

@@ -308,7 +308,10 @@ lf_checker_rt::export!(thiscall, rw_00c7bc70(this: u32, ped: u32) -> u32 {
                 let _used: u32 =
                     lf_checker_rt::callee_cdecl!(CAL_SCHEDULE_USE, u32, slot);
                 wr32(this + LEG, 0);
-                if planned == 0 {
+                // NOTE: the original's je falls through to the route call
+                // when the schedule answer is zero and bails out (state=0,
+                // tail) when it is nonzero.
+                if planned != 0 {
                     wr32(this + STATE, 0);
                     return None;
                 }
