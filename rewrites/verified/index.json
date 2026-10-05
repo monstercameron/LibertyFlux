@@ -90108,6 +90108,15 @@
   "lane": "r-s341"
  },
  {
+  "address": "0x00BE5090",
+  "name": "facing_dot_classify",
+  "kind": "function",
+  "file": "functions/fn_00be5090.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b498"
+ },
+ {
   "address": "0x00BE7A70",
   "name": "pool_slot_release",
   "kind": "function",
@@ -95326,6 +95335,33 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b04"
+ },
+ {
+  "address": "0x00C72A70",
+  "name": "proposed: ped_task_params_init",
+  "kind": "function",
+  "file": "functions/fn_00c72a70.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b492"
+ },
+ {
+  "address": "0x00C72CB0",
+  "name": "proposed: ped_task_params_rescale",
+  "kind": "function",
+  "file": "functions/fn_00c72cb0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b492"
+ },
+ {
+  "address": "0x00C745D0",
+  "name": "CPedModelInfo::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c745d0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b492"
  },
  {
   "address": "0x00C746F0",
