@@ -1,7 +1,8 @@
-// original: 0x00957100 task_seq_player (proposed) -- STAGE 2 of a staged rewrite.
-// Stage 2 covers entry, dispatch, halt (opcode 5) and five handlers
-// (opcodes 0, 2, 3, 4, 6). All other opcodes are unimplemented and disclosed
-// in results.json; see the lane report for the per-handler plan.
+// original: 0x00957100 task_seq_player (proposed) -- STAGE 3 of a staged rewrite.
+// Stage 3 covers entry, dispatch, halt (opcode 5) and six handlers
+// (opcodes 0, 2, 3, 4, 6, 0xf/0x1d). All other opcodes are unimplemented
+// and disclosed in results.json; see the lane report for the per-handler
+// plan.
 
 /// Play one task-sequence buffer: read the opcode byte at base+cursor,
 /// dispatch through the opcode table, run the handler (which advances the
@@ -16,16 +17,22 @@
 /// the low byte cleared: the prior word is the reset worker's answer when
 /// the flag is set, otherwise the context pointer itself.
 ///
-/// Stage-1 coverage: opcodes 2 (one thiscall taking the entry pointer and
+/// Stage-3 coverage: opcodes 2 (one thiscall taking the entry pointer and
 /// the float word), 3 (one 4-word call of three entry bytes plus -1), 4
 /// (one 1-word call of the first entry byte, then a float multiply into a
 /// global), 6 (a float multiply of the first entry byte into a global, no
-/// calls) and 5 (halt). Unhandled opcodes abort: they never occur under the
-/// stage-1 contract, which pins every reachable byte to a covered opcode.
+/// calls), 0 (a table-driven redirect or a lookup exit) and 0xf/0x1d (a
+/// three-call worker with a virtual call, or a shared one-call tail), plus
+/// 5 (halt). Unhandled opcodes abort: they never occur under the stage-3
+/// contract, which pins every reachable byte to a covered opcode.
+///
+/// The fourth word is not part of the original's signature: it transports
+/// the entry `esi` value, which the original reads but Rust cannot observe
+/// (a poor-man's register mirror; the original ignores the word).
 ///
 /// Original: 0x00957100 (cdecl, three stack words; the second is read as a
 /// float, the third only as its low byte).
-lf_checker_rt::export!(cdecl, rw_00957100(ctx: u32, arg1: u32, arg2: u32) -> u32 {
+lf_checker_rt::export!(cdecl, rw_00957100(ctx: u32, arg1: u32, arg2: u32, esi_in: u32) -> u32 {
     unsafe {
         const C_ENTER: u32 = 1;
         const C_OP2: u32 = 2;
@@ -34,6 +41,11 @@ lf_checker_rt::export!(cdecl, rw_00957100(ctx: u32, arg1: u32, arg2: u32) -> u32
         const C_RESET: u32 = 5;
         const C_OP0_LOOKUP: u32 = 6;
         const C_OP0_DRAIN: u32 = 7;
+        const C_OPF_PROBE: u32 = 8;
+        const C_OPF_OPEN: u32 = 9;
+        const C_OPF_VT: u32 = 10;
+        const C_OPF_RUN: u32 = 11;
+        const C_TAIL_ADV: u32 = 12;
 
         const G_OP4_OUT: u32 = 0x12ddeb4;
         const G_OP6_OUT: u32 = 0x11f7058;
@@ -88,6 +100,9 @@ lf_checker_rt::export!(cdecl, rw_00957100(ctx: u32, arg1: u32, arg2: u32) -> u32
 
         let _: u32 = lf_checker_rt::callee_cdecl!(C_ENTER, u32,);
         let xmm1 = g_rdf(C_DISPATCH_XMM);
+        // Loop-carried esi, seeded from the transported entry value. No
+        // stage-3 handler reassigns it yet; later ones do.
+        let esi = esi_in;
         loop {
             let base = m_rd32(ctx);
             let cursor = m_rd32(ctx.wrapping_add(4));
@@ -147,6 +162,29 @@ lf_checker_rt::export!(cdecl, rw_00957100(ctx: u32, arg1: u32, arg2: u32) -> u32
                     let b1 = m_rd8(entry.wrapping_add(1)) as u32;
                     g_wrf(G_OP6_OUT, mul(b1 as f32, xmm1));
                     m_wr32(ctx, base.wrapping_add(0x0c));
+                }
+                0x0f | 0x1d => {
+                    let w = m_rd32(entry.wrapping_add(4));
+                    if w == 0xffff_ffff {
+                        let a: u32 =
+                            lf_checker_rt::callee_cdecl!(C_TAIL_ADV, u32, op as u32);
+                        m_wr32(ctx, a.wrapping_add(esi));
+                    } else {
+                        let a: u32 =
+                            lf_checker_rt::callee_cdecl!(C_OPF_PROBE, u32, 1, w);
+                        if (esi & a) != 0 {
+                            let _: u32 = lf_checker_rt::callee_cdecl!(
+                                C_OPF_OPEN, u32, 1, w, esi
+                            );
+                            let _: u32 = lf_checker_rt::callee_thiscall!(
+                                C_OPF_VT, u32, esi
+                            );
+                            let _: u32 = lf_checker_rt::callee_cdecl!(
+                                C_OPF_RUN, u32, w, esi
+                            );
+                        }
+                        m_wr32(ctx, m_rd32(ctx).wrapping_add(8));
+                    }
                 }
                 _ => unreachable!("stage 1: opcode not covered"),
             }
