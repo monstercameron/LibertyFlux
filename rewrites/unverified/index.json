@@ -1344,12 +1344,100 @@
   "reason": null
  },
  {
+  "address": "0x009A8780",
+  "name": "audio_param_push",
+  "file": "fn_009a8780.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A8930",
+  "name": "script_idle_check",
+  "file": "fn_009a8930.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A89D0",
+  "name": "script_ready_check",
+  "file": "fn_009a89d0.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A8FF0",
+  "name": "audio_table_shutdown",
+  "file": "fn_009a8ff0.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A94D0",
+  "name": "conv_vote_bump",
+  "file": "fn_009a94d0.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A9AF0",
+  "name": "conv_state_advance",
+  "file": "fn_009a9af0.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A9C70",
+  "name": "conv_pick_min_a",
+  "file": "fn_009a9c70.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A9D50",
+  "name": "conv_pick_min_gang",
+  "file": "fn_009a9d50.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A9E40",
+  "name": "conv_pick_min_b",
+  "file": "fn_009a9e40.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A9F20",
+  "name": "conv_pick_min_c",
+  "file": "fn_009a9f20.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x009AA110",
   "name": "conv_first_or_null",
   "file": "fn_009aa110.rs",
   "lane": "r-s420",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x009AA180",
+  "name": "CONV_GANG_STATE",
+  "file": "fn_009aa180.rs",
+  "lane": "r-s420",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x009CBBC0",
@@ -1897,74 +1985,50 @@
  },
  {
   "address": "0x00B91170",
-  "name": null,
+  "name": "NativeImpl_RENDER_LOADING_CLOCK_2",
   "file": "fn_00b91170.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B913A0",
-  "name": null,
+  "name": "NativeImpl_SET_BLIP_COORDINATES_2",
   "file": "fn_00b913a0.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B919E0",
-  "name": null,
-  "file": "fn_00b919e0.rs",
-  "lane": "r-s418",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B91A70",
-  "name": null,
-  "file": "fn_00b91a70.rs",
-  "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B921C0",
-  "name": null,
+  "name": "NativeImpl_GET_BLIP_INFO_ID_POSITION",
   "file": "fn_00b921c0.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B92370",
-  "name": null,
+  "name": "Text_ResolveGxtEntry",
   "file": "fn_00b92370.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B925E0",
-  "name": null,
+  "name": "tbd",
   "file": "fn_00b925e0.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B92670",
-  "name": null,
-  "file": "fn_00b92670.rs",
-  "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B928D0",
-  "name": null,
+  "name": "tbd",
   "file": "fn_00b928d0.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -1977,194 +2041,114 @@
  },
  {
   "address": "0x00B95520",
-  "name": null,
+  "name": "NativeImpl_ADD_HOSPITAL_RESTART",
   "file": "fn_00b95520.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B955A0",
-  "name": null,
+  "name": "NativeImpl_ADD_POLICE_RESTART",
   "file": "fn_00b955a0.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B958C0",
-  "name": null,
+  "name": "NativeImpl_CLEAR_AREA",
   "file": "fn_00b958c0.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B95950",
-  "name": null,
+  "name": "NativeImpl_CLEAR_AREA_OF_CARS",
   "file": "fn_00b95950.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B959E0",
-  "name": null,
+  "name": "NativeImpl_CLEAR_AREA_OF_CHARS",
   "file": "fn_00b959e0.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B95A60",
-  "name": null,
+  "name": "NativeImpl_CLEAR_AREA_OF_COPS",
   "file": "fn_00b95a60.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B95AE0",
-  "name": null,
+  "name": "NativeImpl_CLEAR_AREA_OF_OBJECTS",
   "file": "fn_00b95ae0.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B96950",
-  "name": null,
+  "name": "NativeImpl_IS_BULLET_IN_AREA_2",
   "file": "fn_00b96950.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B969B0",
-  "name": null,
+  "name": "NativeImpl_IS_BULLET_IN_BOX_2",
   "file": "fn_00b969b0.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B96B00",
-  "name": null,
+  "name": "NativeImpl_IS_POINT_OBSCURED_BY_A_MISSION_ENTITY_2",
   "file": "fn_00b96b00.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B96DE0",
-  "name": null,
+  "name": "NativeImpl_OVERRIDE_NEXT_RESTART",
   "file": "fn_00b96de0.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B96F50",
-  "name": null,
-  "file": "fn_00b96f50.rs",
-  "lane": "r-s418",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B96FB0",
-  "name": null,
-  "file": "fn_00b96fb0.rs",
-  "lane": "r-s418",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B970D0",
-  "name": null,
-  "file": "fn_00b970d0.rs",
-  "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B972C0",
-  "name": null,
+  "name": "NativeImpl_SET_UP_TRIP_SKIP",
   "file": "fn_00b972c0.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B97310",
-  "name": null,
+  "name": "NativeImpl_SET_UP_TRIP_SKIP_AFTER_MISSION",
   "file": "fn_00b97310.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x00B97420",
-  "name": null,
+  "name": "NativeImpl_SET_UP_TRIP_SKIP_TO_BE_FINISHED_BY_SCRIPT",
   "file": "fn_00b97420.rs",
   "lane": "r-s418",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B97480",
-  "name": null,
-  "file": "fn_00b97480.rs",
-  "lane": "r-s418",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B98CD0",
-  "name": null,
-  "file": "fn_00b98cd0.rs",
-  "lane": "r-s418",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B98D00",
-  "name": null,
-  "file": "fn_00b98d00.rs",
-  "lane": "r-s418",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B98D30",
-  "name": null,
-  "file": "fn_00b98d30.rs",
-  "lane": "r-s418",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B98D90",
-  "name": null,
-  "file": "fn_00b98d90.rs",
-  "lane": "r-s418",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B98DF0",
-  "name": null,
-  "file": "fn_00b98df0.rs",
-  "lane": "r-s418",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00B98E50",
-  "name": null,
-  "file": "fn_00b98e50.rs",
-  "lane": "r-s418",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -2984,28 +2968,12 @@
   "reason": "other"
  },
  {
-  "address": "0x00D2B300",
-  "name": "peds_task_unknown_D2B300",
-  "file": "fn_00d2b300.rs",
+  "address": "0x00D2BCE0",
+  "name": "CTaskComplexMoveFollowNavMeshRoute::vf20",
+  "file": "fn_00d2bce0.rs",
   "lane": "r-b403",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00D2B6C0",
-  "name": "peds_task_unknown_D2B6C0",
-  "file": "fn_00d2b6c0.rs",
-  "lane": "r-b403",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00D2B810",
-  "name": "CTaskComplexMoveFollowNavMeshRoute::vf1",
-  "file": "fn_00d2b810.rs",
-  "lane": "r-b403",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00D82CD0",
