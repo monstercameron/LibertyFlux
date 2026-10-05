@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Devlog: a stuck tick stopped the lanes",
+    "commit": null,
+    "summary": "At 18:40 every running lane stopped at once. A finished lane's leftover scripts, a tick that slowed to a crawl and a supervisor that waits for the tick added up to the supervisor's task reaching its time limit with three lanes under it.",
+    "changes": [
+      "New devlog entry with the chain of causes, what was lost (about two lane-hours interrupted, no results) and four changes: time limits on every step of the tick, no tick near the end of the supervisor's window, lanes cut off from outside are resumed from their folders, and a finished lane's leftover processes are stopped after five minutes instead of two and a half hours.",
+      "The three lanes were resumed. A fourth had finished just before: 26 of 27 forwarding functions verified in 25 minutes, all deferred as untestable by the earliest lanes."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 44 files from lanes (301 unverified rewrites, 29 in review)",
     "commit": "8ea0acf111b65e6a60c7f1e7129afc95df940625",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

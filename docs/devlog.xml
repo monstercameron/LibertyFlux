@@ -9,6 +9,35 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A stuck tick stopped the lanes: how one slow step took down three agents</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#a-stuck-tick-stopped-the-lanes-2026-10-05"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#a-stuck-tick-stopped-the-lanes-2026-10-05</id>
+    <published>2026-10-05T00:00:00Z</published>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <summary>At 18:40 on 5 October every lane the project was running stopped at once. Nothing had crashed. A chain of three ordinary things did it, and each link had looked safe on its own.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;At 18:40 on 5 October every lane the project was running stopped at once. Nothing had crashed. A chain of three ordinary things did it, and each link had looked safe on its own.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Link&lt;/th&gt;&lt;th&gt;What happened&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;A finished lane left work running&lt;/td&gt;&lt;td&gt;A production lane ended at 17:54 and reported that nothing of its own was still running. Seventeen copies of one of its helper scripts were, and stayed busy for 52 to 117 minutes, about four processor cores between them. The watchdog stops such leftovers only when they are two and a half hours old.&lt;/td&gt;&lt;td&gt;Verified (process list, command lines, ages)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;The five-minute tick slowed to a crawl&lt;/td&gt;&lt;td&gt;The tick's rewrite importer reads every lane's results, about 1,500 folders, and normally takes a minute. From 18:30 it ran for more than ten, reading about 120 files a second with the disk idle and no paging. After the leftovers were stopped the same step took 57 seconds.&lt;/td&gt;&lt;td&gt;Timing verified; the leftovers as the cause is inferred from that before and after, not proven&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;The supervisor waits for the tick&lt;/td&gt;&lt;td&gt;The supervisor starts lanes and runs the tick itself, and runs as one background task with a two-hour limit. It is written to finish by itself after 112 minutes. It was inside the tick when the 112 minutes passed, was still there when the two hours passed, and was stopped at the limit.&lt;/td&gt;&lt;td&gt;Verified (supervisor log, task record)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Lanes are the supervisor's children&lt;/td&gt;&lt;td&gt;Stopping the task stopped everything it had started: three lanes that were 30 to 45 minutes into their work, among them the audit of blind proofs and the first class-completion lane.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;What was lost and what was not&lt;/h3&gt;
+&lt;p&gt;No results were lost: lanes keep their state in their own folders and write results as they go. About two lane-hours of model work were interrupted, and for seven minutes nothing was running. A fourth lane had finished four minutes earlier and is unaffected: it verified 26 of 27 tiny forwarding functions in 25 minutes, all of them deferred as untestable by the project's earliest lanes, because the checker of that day could not follow a jump out of a function.&lt;/p&gt;
+&lt;h3&gt;Changes&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Every step of the tick has a time limit. A step that overruns is stopped with its whole process tree, the tick says so, and the remaining steps run. The limits add up to under fourteen minutes.&lt;/li&gt;
+&lt;li&gt;The supervisor runs no tick in the last eight minutes of its window, and the window is 100 minutes, so the worst case ends before the task's limit.&lt;/li&gt;
+&lt;li&gt;The lane launcher recognises a lane that was cut off from outside (its log shows a launch, work, and no exit) and resumes it from its folder instead of starting it again. The three lanes were resumed this way.&lt;/li&gt;
+&lt;li&gt;The watchdog stops a lane's leftover processes five minutes after that lane's launcher has logged its exit, instead of after two and a half hours.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;What it says more generally&lt;/h3&gt;
+&lt;p&gt;A lane's own statement that it left nothing running is a claim, not a fact; the check has to be made from outside, soon after the lane ends. And a controller that does housekeeping in its own loop inherits every way the housekeeping can stall.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>The largest families are the emptiest: what went into the workspace from the first two lifts, and what did not</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#largest-families-are-the-emptiest-2026-10-05"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#largest-families-are-the-emptiest-2026-10-05</id>
@@ -1158,26 +1187,5 @@
 &lt;p&gt;Build one evidence table per function (referenced strings, imports called, named callees and callers, data references) from the memory-mapped image, verify the mapping on one known function, then read the short and unclear functions fully and name from the table. Heads plus tails of large functions were enough; only a handful needed a middle read.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;A promising compression-library string hit turned out to be a byte comparison against a global flag that merely sits next to unrelated text, not a string reference at all. A byte-scan caller search also reported callers that vanish under real disassembly, because the matched byte sits inside another instruction. Both now get a second check before being trusted.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A one-line address bug that fakes an unverifiable verdict</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b447"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b447</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>A production lane nearly deferred its whole batch as unverifiable because a triage script misread the executable's relocation table; the corrected check showed every absolute operand was relocatable after all, and five of the six functions then verified on the first or second attempt.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production lane nearly deferred its whole batch as unverifiable because a triage script misread the executable's relocation table; the corrected check showed every absolute operand was relocatable after all, and five of the six functions then verified on the first or second attempt.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite six neighbouring task-system functions in Rust and prove each one bit-identical to the original with the project checker, deferring with a reason code only those the checker cannot verify.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The lane's first triage script reported that almost every absolute memory operand in the batch lacked a relocation entry, which would have made the functions untestable on this machine. The script was wrong: it added each relocation block's base address to an entry value that already included it, so it looked the addresses up in a garbage set and found nothing. The single step that exposed it was a pinned experiment: with game data forced to a known value, the original still matched the rewrite exactly, which is only possible if the original reads relocated game data.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; After the fix, zero of seventy-five absolute operands in the batch lacked entries, and five functions passed twelve hundred trials each with deliberately wrong versions caught every time. The sixth function keeps a passing entry-stage proof while its long owner path waits for a full lane with a retry kit.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Other lanes defer functions for the same stated reason, citing some of the same data words; any deferral whose only evidence is a script using the same address recipe should be re-checked, because the recipe fails silently and always in the same direction.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;The lane verified five functions instead of deferring six, and recommends that every relocation check be confirmed by behaviour (a short pinned run) rather than trusted from a script alone, and that past unverifiable verdicts resting only on such a script be audited.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Parse the relocation directory with the standard library recipe, then test one known operand two ways: membership of its address in the parsed set, and a short checker run with the pointed-to game word forced to two different values. If the run tracks the forced values, the operand is relocated whatever the script says.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The wrong triage looked authoritative: exact counts, consistent failures, and matching precedent from sibling lanes. Two further hours of analysis nearly followed it. What broke the spell was not more analysis but one small experiment whose result the wrong theory could not produce. The lane also learned, twice, that snapshot and store positions must be derived from an exact stack-depth trace rather than adjusted by hand: both mid-lane failures were off-by-one-slot mapping slips, found by narrowing snapshots to single words.&lt;/p&gt;</content>
   </entry>
 </feed>
