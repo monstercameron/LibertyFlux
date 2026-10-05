@@ -15,8 +15,9 @@
 /// `f64` answer in XMM0) refines the third cached float on its first use.
 ///
 /// Algorithm: when the enable byte is clear the function returns without
-/// writing anything. When the veto bit is set, or the constant 1.0 does not
-/// exceed the estimate, the estimate is copied to `+0x18` and the function
+/// writing anything. When the veto bit is set, or the constant 1.0 is
+/// ordered-greater-or-equal to the estimate (a NaN estimate proceeds), the
+/// estimate is copied to `+0x18` and the function
 /// returns. Otherwise the cache bits are filled from constants (1.5, 2.0)
 /// and, once, from callee 1 (whose `f64` answer is narrowed to `f32`); a
 /// bound of 4.0 or 3.0 is picked by comparing the estimate against 2.0. Two
@@ -116,7 +117,7 @@ lf_checker_rt::export!(thiscall, rw_00cafc10(this: u32, a: u32, b: u32) -> u32 {
         }
         let est = rdf(this + EST_OFF);
         let one = rdf(lf_checker_rt::relocated(C_ONE));
-        if !(one > est) {
+        if one >= est {
             wr32(this + OUT_OFF, rd32(this + EST_OFF));
             return 0;
         }

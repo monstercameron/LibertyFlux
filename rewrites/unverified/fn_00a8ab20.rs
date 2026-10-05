@@ -22,6 +22,9 @@ lf_checker_rt::export!(thiscall, rw_00a8ab20(this: u32, mode: u32) -> u32 {
         const TOGGLE: u32 = 0x12fb200;
         const B_LIMIT: i32 = 2;
         let _ = this;
+        // Both queue words are relocated immediates in the original.
+        let queue_a = lf_checker_rt::relocated(QUEUE_A);
+        let queue_b = lf_checker_rt::relocated(QUEUE_B);
         let two_shot = mode as u8 != 0;
         let limit: i32 = if two_shot { 2 } else { 3 };
         let worker = (mode & 0xffffff00) | (if two_shot { 1 } else { 0 });
@@ -33,13 +36,13 @@ lf_checker_rt::export!(thiscall, rw_00a8ab20(this: u32, mode: u32) -> u32 {
             let depth_a = lf_checker_rt::callee_thiscall!(
                 CALLEE_DEPTH,
                 u32,
-                QUEUE_A
+                queue_a
             ) as i32;
             if depth_a > limit {
                 let done = lf_checker_rt::callee_thiscall!(
                     CALLEE_WORK_A,
                     u32,
-                    QUEUE_A,
+                    queue_a,
                     worker
                 );
                 if done != 0 {
@@ -50,13 +53,13 @@ lf_checker_rt::export!(thiscall, rw_00a8ab20(this: u32, mode: u32) -> u32 {
         let depth_b = lf_checker_rt::callee_thiscall!(
             CALLEE_DEPTH,
             u32,
-            QUEUE_B
+            queue_b
         ) as i32;
         if depth_b > B_LIMIT {
             let done = lf_checker_rt::callee_thiscall!(
                 CALLEE_WORK_B,
                 u32,
-                QUEUE_A,
+                queue_a,
                 worker
             );
             if done != 0 {
@@ -66,13 +69,13 @@ lf_checker_rt::export!(thiscall, rw_00a8ab20(this: u32, mode: u32) -> u32 {
         let depth_a2 = lf_checker_rt::callee_thiscall!(
             CALLEE_DEPTH,
             u32,
-            QUEUE_A
+            queue_a
         ) as i32;
         if depth_a2 > limit {
             let done = lf_checker_rt::callee_thiscall!(
                 CALLEE_WORK_A,
                 u32,
-                QUEUE_A,
+                queue_a,
                 worker
             );
             if done != 0 {

@@ -4,14 +4,14 @@
 ///
 /// `this` takes the leftover weight at +0x10C; `f1`, `f2` are the range
 /// ends, `f3` the divisor, and `p4`/`p5` receive one byte each. When `f2`
-/// does not exceed `f1`, `p4` takes 0xFF, `p5` takes 0 and the leftover is
-/// 1.0, returning `p5`. Otherwise the ratio `(f1-f2)/f3` feeds
-/// `t = 1-ratio`: both bytes start at 0xFF, then when 0.5 exceeds `t` the
-/// leftover is `1-t` and `p4` takes `(t*2*255)` truncated, else the
-/// leftover is `t` and `p5` takes `((1-t)*2*255)` truncated. Returns the
-/// truncated integer. All float operations run in the original's operand
-/// order; unordered comparisons take the below-or-equal path, as `comiss`
-/// plus `jbe` does.
+/// exceeds `f1`, `p4` takes 0xFF, `p5` takes 0 and the leftover is 1.0,
+/// returning `p5`. Otherwise the ratio `(f1-f2)/f3` feeds `t = 1-ratio`:
+/// both bytes start at 0xFF, then when 0.5 exceeds `t` the leftover is
+/// `1-t` and `p4` takes `(t*2*255)` truncated, else the leftover is `t`
+/// and `p5` takes `((1-t)*2*255)` truncated. Returns the truncated
+/// integer. All float operations run in the original's operand order; the
+/// first branch falls through exactly when `f2 > f1` (ordered greater),
+/// the second takes the below-or-equal path, as `comiss` plus `jbe` does.
 ///
 /// Original: 0x00A8CD90 (thiscall, five stack words).
 lf_checker_rt::export!(thiscall, rw_00a8cd90(
@@ -53,7 +53,7 @@ lf_checker_rt::export!(thiscall, rw_00a8cd90(
         }
         let f1 = f32::from_bits(a1);
         let f2 = f32::from_bits(a2);
-        if !(f2 > f1) {
+        if f2 > f1 {
             (p4 as *mut u8).write(0xff);
             (p5 as *mut u8).write(0);
             ((this + LEFTOVER) as *mut u32).write_unaligned(ONE_BITS);
