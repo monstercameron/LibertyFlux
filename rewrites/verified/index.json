@@ -10314,6 +10314,15 @@
   "lane": "r-s397"
  },
  {
+  "address": "0x00535EC0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race55Standard, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_00535ec0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b429"
+ },
+ {
   "address": "0x00536040",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race55Standard, player_schema::LeaderboardInfo, 10>::vf6",
   "kind": "function",
@@ -10368,6 +10377,15 @@
   "lane": "r-s397"
  },
  {
+  "address": "0x00536320",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race56Standard, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_00536320.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b429"
+ },
+ {
   "address": "0x005364A0",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race56Standard, player_schema::LeaderboardInfo, 10>::vf6",
   "kind": "function",
@@ -10420,6 +10438,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s397"
+ },
+ {
+  "address": "0x00536780",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race57Standard, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_00536780.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b429"
  },
  {
   "address": "0x00536900",
@@ -10485,6 +10512,15 @@
   "lane": "r-s373"
  },
  {
+  "address": "0x00536BE0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race58Standard, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_00536be0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b429"
+ },
+ {
   "address": "0x00536D60",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race58Standard, player_schema::LeaderboardInfo, 10>::vf6",
   "kind": "function",
@@ -10539,6 +10575,15 @@
   "lane": "r-s373"
  },
  {
+  "address": "0x00537040",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race59Standard, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_00537040.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b429"
+ },
+ {
   "address": "0x005371C0",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race59Standard, player_schema::LeaderboardInfo, 10>::vf6",
   "kind": "function",
@@ -10591,6 +10636,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s373"
+ },
+ {
+  "address": "0x005374A0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race60Standard, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_005374a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b429"
  },
  {
   "address": "0x00537620",
@@ -10656,6 +10710,15 @@
   "lane": "r-s373"
  },
  {
+  "address": "0x00537900",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CompCarSteal, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_00537900.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b429"
+ },
+ {
   "address": "0x00537A70",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CompCarSteal, player_schema::LeaderboardInfo, 10>::vf6",
   "kind": "function",
@@ -10708,6 +10771,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s373"
+ },
+ {
+  "address": "0x00537D50",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CompCarSteal_BG, player_schema::LeaderboardInfo, 10>::vf14",
+  "kind": "function",
+  "file": "functions/fn_00537d50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b429"
  },
  {
   "address": "0x00537EC0",
@@ -33345,6 +33417,60 @@
   "lane": "r-s175"
  },
  {
+  "address": "0x00882F50",
+  "name": "stream_req_init",
+  "kind": "function",
+  "file": "functions/fn_00882f50.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s438"
+ },
+ {
+  "address": "0x008838E0",
+  "name": "stream_pool_index_to_ptr",
+  "kind": "function",
+  "file": "functions/fn_008838e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s438"
+ },
+ {
+  "address": "0x00883900",
+  "name": "stream_pool_ptr_to_index",
+  "kind": "function",
+  "file": "functions/fn_00883900.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s438"
+ },
+ {
+  "address": "0x00883AA0",
+  "name": "stream_channel_init",
+  "kind": "function",
+  "file": "functions/fn_00883aa0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s438"
+ },
+ {
+  "address": "0x00884530",
+  "name": "stream_pair_set",
+  "kind": "function",
+  "file": "functions/fn_00884530.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s438"
+ },
+ {
+  "address": "0x008845A0",
+  "name": "stream_clamp_limit",
+  "kind": "function",
+  "file": "functions/fn_008845a0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s438"
+ },
+ {
   "address": "0x0088ABB0",
   "name": "audio_store_triplet",
   "kind": "function",
@@ -38844,10 +38970,28 @@
   "lane": "r-s134"
  },
  {
+  "address": "0x008DC7E0",
+  "name": "draw_command_alloc",
+  "kind": "function",
+  "file": "functions/fn_008dc7e0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
   "address": "0x008DC8B0",
   "name": "CDrawCommandAllocator::vf2",
   "kind": "function",
   "file": "functions/fn_008dc8b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DC9E0",
+  "name": "draw_command_alloc_checked",
+  "kind": "function",
+  "file": "functions/fn_008dc9e0.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s431"
@@ -38925,10 +39069,46 @@
   "lane": "r-s431"
  },
  {
+  "address": "0x008DD0B0",
+  "name": "CDrawFragTypeDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dd0b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
   "address": "0x008DD170",
   "name": "CDrawMobilePhoneCameraDC::vf1",
   "kind": "function",
   "file": "functions/fn_008dd170.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DD310",
+  "name": "CDrawPedPropDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dd310.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DD3B0",
+  "name": "CDrawPedPropsDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dd3b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DD4A0",
+  "name": "CDrawPlayerDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dd4a0.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s431"
@@ -38943,6 +39123,15 @@
   "lane": "r-s431"
  },
  {
+  "address": "0x008DD5A0",
+  "name": "CDrawPtxEffectInst::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dd5a0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
   "address": "0x008DD660",
   "name": "CDrawRadarCircleDC::vf1",
   "kind": "function",
@@ -38952,10 +39141,64 @@
   "lane": "r-s431"
  },
  {
+  "address": "0x008DD680",
+  "name": "CDrawRadarMapSectionDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dd680.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
   "address": "0x008DD890",
   "name": "CDrawRectDC::vf1",
   "kind": "function",
   "file": "functions/fn_008dd890.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DD8B0",
+  "name": "CDrawSLODPedDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dd8b0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DDA30",
+  "name": "CDrawSpriteDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dda30.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DDA80",
+  "name": "CDrawSpriteInPerspectiveDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008dda80.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DDAD0",
+  "name": "CDrawSpriteUVDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008ddad0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s431"
+ },
+ {
+  "address": "0x008DDB30",
+  "name": "CDrawTriShapeDC::vf1",
+  "kind": "function",
+  "file": "functions/fn_008ddb30.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s431"
@@ -89908,6 +90151,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s336"
+ },
+ {
+  "address": "0x00CB8B50",
+  "name": "peds_task_guard_8b50 (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00cb8b50.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b428"
  },
  {
   "address": "0x00CB9250",
