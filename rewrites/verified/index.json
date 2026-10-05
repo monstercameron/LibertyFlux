@@ -55719,6 +55719,15 @@
   "lane": "a-R01"
  },
  {
+  "address": "0x00A2B000",
+  "name": "pedtask_followup_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00a2b000.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "a-R01"
+ },
+ {
   "address": "0x00A2B1F0",
   "name": "NativeImpl_SET_PLAYER_GROUP_TO_FOLLOW_ALWAYS",
   "kind": "function",
@@ -56509,6 +56518,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s462"
+ },
+ {
+  "address": "0x00A47AB0",
+  "name": "vehicle_select_subpart_by_class",
+  "kind": "function",
+  "file": "functions/fn_00a47ab0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R04"
  },
  {
   "address": "0x00A47B40",
@@ -65943,6 +65961,24 @@
   "lane": "r-b390"
  },
  {
+  "address": "0x00B3E540",
+  "name": "worklist_scan_and_record",
+  "kind": "function",
+  "file": "functions/fn_00b3e540.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "a-R02"
+ },
+ {
+  "address": "0x00B3EDC0",
+  "name": "ped_task_search_best_position",
+  "kind": "function",
+  "file": "functions/fn_00b3edc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b518"
+ },
+ {
   "address": "0x00B3F640",
   "name": "task_target_select",
   "kind": "function",
@@ -67831,6 +67867,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s450"
+ },
+ {
+  "address": "0x00B68020",
+  "name": "CHeli::vf103",
+  "kind": "function",
+  "file": "functions/fn_00b68020.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "a-R04"
  },
  {
   "address": "0x00B68510",
@@ -95751,6 +95796,15 @@
   "lane": "r-b04"
  },
  {
+  "address": "0x00C727A0",
+  "name": "proposed: ped_task_target_update",
+  "kind": "function",
+  "file": "functions/fn_00c727a0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b492"
+ },
+ {
   "address": "0x00C72A70",
   "name": "proposed: ped_task_params_init",
   "kind": "function",
@@ -96379,6 +96433,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b391"
+ },
+ {
+  "address": "0x00C90180",
+  "name": "task_pool_free",
+  "kind": "function",
+  "file": "functions/fn_00c90180.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "a-R01"
  },
  {
   "address": "0x00C98370",

@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Naming a run of task-system functions, and mislabelled constructor names",
+    "title": "Rewrites: 7 more functions pass the checker (13819 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "7 rewrites added under rewrites/verified: 0 script native handlers and 7 other functions.",
+      "The tree now holds 13819 rewrites, 13800 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "837 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Naming a run of task-system functions, and mislabelled constructor names",
+    "commit": "ebfba43361b20eca7a52646021164046305b2bc4",
     "summary": "Findings from the nm-107 lane.",
     "changes": [
       "New devlog entry: Naming a run of task-system functions, and mislabelled constructor names.",
