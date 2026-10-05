@@ -17,8 +17,12 @@
 /// differences taken from the point's components minus the row object's
 /// three floats at `+0x30`, in the original's operand order, pinned through
 /// `core::hint::black_box` so NaN payloads propagate identically. The
-/// second predicate takes the point, a scratch 3x3 identity matrix with a
-/// zero row the rewrite builds on its own frame, a zero word and the row.
+/// second predicate takes the point, a scratch buffer the rewrite builds
+/// on its own frame, a zero word and the row. The buffer holds three
+/// four-word rows (an identity in the first three columns; the original
+/// never writes the fourth column, leaving words 3, 7 and 11
+/// uninitialized, so the contract does not compare them and the rewrite
+/// holds zero there) followed by three zero words.
 ///
 /// Original: 0x00C56DD0 (cdecl, one stack word = point with three floats,
 /// returns the winning row address or zero).
@@ -101,10 +105,10 @@ lf_checker_rt::export!(cdecl, rw_00c56dd0(pt: u32) -> u32 {
                         let r: u32 = lf_checker_rt::callee_cdecl!(CAL_PRE, u32, pt);
                         let ok: u32 = lf_checker_rt::callee_cdecl!(CAL_TEST, u32, r, row);
                         if (ok as u8) != 0 {
-                            let mut m: [u32; 12] = [0; 12];
+                            let mut m: [u32; 15] = [0; 15];
                             m[0] = 0x3F800000;
-                            m[4] = 0x3F800000;
-                            m[8] = 0x3F800000;
+                            m[5] = 0x3F800000;
+                            m[10] = 0x3F800000;
                             let done: u32 = lf_checker_rt::callee_cdecl!(
                                 CAL_MATRIX, u32, pt, m.as_mut_ptr() as u32, 0u32, row
                             );

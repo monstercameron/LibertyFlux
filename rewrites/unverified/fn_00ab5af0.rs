@@ -3,18 +3,20 @@
 /// Insert a key into the named id map, cloning the old head's table.
 ///
 /// Same lazy-init and grow protocol as its siblings, then links a fresh
-/// 0x18-byte node: `+0` key, `+4`/`+5` the old head's first two tag bytes,
-/// `+8` a table cloned from the old head through the clone callee, `+0x14`
-/// the key-pointer argument itself. The second argument is never read (its
-/// incoming slot is reused as scratch). A null allocation stores null in
-/// the bucket and returns null.
+/// 0x18-byte node: `+0` key, `+4`/`+5` the first two bytes behind the value
+/// pointer, `+8` a table cloned from four bytes past the value pointer
+/// through the clone callee, `+0x14` the old head itself. Note the slot
+/// confusion the original embodies: it saves the old head over the incoming
+/// key-pointer slot, then reads the tag bytes and the clone source from the
+/// value-pointer slot instead (the head slot is only read back for `+0x14`).
+/// A null allocation stores null in the bucket and returns null.
 ///
 /// Callees: 1 = lazy init (thiscall, two words), 2 = sizing (cdecl, one
 /// word), 3 = grow (thiscall, one word), 4 = allocator (cdecl, one word),
 /// 5 = table clone (thiscall, one word).
 ///
 /// Original: 0x00ab5af0 (thiscall, two stack words).
-lf_checker_rt::export!(thiscall, rw_00ab5af0(this: u32, keyptr: u32, _unused: u32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00ab5af0(this: u32, keyptr: u32, valptr: u32) -> u32 {
     unsafe {
         const INIT: u32 = 1;
         const SIZING: u32 = 2;
@@ -43,10 +45,15 @@ lf_checker_rt::export!(thiscall, rw_00ab5af0(this: u32, keyptr: u32, _unused: u3
         let node = lf_checker_rt::callee_cdecl!(ALLOC, u32, NODE_BYTES);
         if node != 0 {
             (node as *mut u32).write_unaligned(key);
-            ((node + 4) as *mut u8).write((old as *const u8).read());
-            ((node + 5) as *mut u8).write(((old + 1) as *const u8).read());
-            lf_checker_rt::callee_thiscall!(CLONE, u32, node.wrapping_add(8), old.wrapping_add(4));
-            ((node + 0x14) as *mut u32).write_unaligned(keyptr);
+            ((node + 4) as *mut u8).write((valptr as *const u8).read());
+            ((node + 5) as *mut u8).write(((valptr + 1) as *const u8).read());
+            lf_checker_rt::callee_thiscall!(
+                CLONE,
+                u32,
+                node.wrapping_add(8),
+                valptr.wrapping_add(4)
+            );
+            ((node + 0x14) as *mut u32).write_unaligned(old);
             (cell as *mut u32).write_unaligned(node);
             node
         } else {

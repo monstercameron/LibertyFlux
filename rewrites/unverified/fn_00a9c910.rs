@@ -9,7 +9,9 @@
 /// pointer) and an index array at `+0x10`. Entry `k` takes index `i` from
 /// that array, resolves the target through the table at `[[ctx + 8] + 8]`
 /// (`target = table[i]`), and stores the low byte of `this + 0x8ec58 + 4k`
-/// into the target at `+9`. After the loop the table pointer is returned.
+/// into the target at `+9`. Each flag byte passes through AL, so the value
+/// returned after the loop is the table pointer with its low byte replaced
+/// by the last flag byte.
 ///
 /// Original: 0x00a9c910 (thiscall, one stack word).
 lf_checker_rt::export!(thiscall, rw_00a9c910(this: u32, ctx: u32) -> u32 {
@@ -28,18 +30,22 @@ lf_checker_rt::export!(thiscall, rw_00a9c910(this: u32, ctx: u32) -> u32 {
             return row_ptr;
         }
         let mut k = 0u32;
+        let mut last = 0u8;
+        let mut table = 0u32;
         while (k as i32) < count {
             let indices = ((desc + INDEX_ARR_OFF) as *const u32).read_unaligned();
             let index =
                 ((indices + k.wrapping_mul(2)) as *const u16).read_unaligned() as u32;
             let mid = ((ctx + TABLE_OFF) as *const u32).read_unaligned();
-            let table = ((mid + TABLE_OFF) as *const u32).read_unaligned();
+            table = ((mid + TABLE_OFF) as *const u32).read_unaligned();
             let target = ((table + index.wrapping_mul(4)) as *const u32).read_unaligned();
             let flag = ((this + FLAGS_OFF + k.wrapping_mul(4)) as *const u8).read();
             ((target + TARGET_FLAG_OFF) as *mut u8).write(flag);
+            last = flag;
             k += 1;
         }
-        let mid = ((ctx + TABLE_OFF) as *const u32).read_unaligned();
-        ((mid + TABLE_OFF) as *const u32).read_unaligned()
+        // The flag load goes through AL, so the returned table pointer
+        // carries the last flag byte in its low byte.
+        (table & 0xffff_ff00) | last as u32
     }
 });

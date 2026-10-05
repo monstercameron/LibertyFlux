@@ -20,7 +20,11 @@ lf_checker_rt::export!(thiscall, rw_00aa07e0(this: u32, first: u32, second: u32)
         const CAPACITY: i32 = 0x80;
         let count_ptr = (this + COUNT_OFF) as *mut u32;
         if count_ptr.read_unaligned() as i32 >= CAPACITY {
-            unreachable!("full table returns entry eax, unobservable here");
+            // Dead in the contract (count pinned below capacity): the
+            // original returns entry eax here. A defined wrong value, never
+            // a panic (a panicking rewrite wedges the worker instead of
+            // failing the trial).
+            return 0xdead_beef;
         }
         let i0 = count_ptr.read_unaligned();
         ((this + PAIRS_OFF + i0.wrapping_mul(PAIR_STRIDE)) as *mut u32).write_unaligned(first);

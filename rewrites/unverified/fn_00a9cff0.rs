@@ -18,7 +18,10 @@ lf_checker_rt::export!(thiscall, rw_00a9cff0(this: u32, obj: u32) -> u32 {
         const WORDS_OFF: u32 = 0x8ecd8;
         const WORDS_MAX: u32 = 0x80;
         if ((obj + FLAG_OFF) as *const u32).read_unaligned() & GATE_BIT != 0 {
-            unreachable!("gate-set path returns entry eax, unobservable here");
+            // Dead in the contract (gate bit pinned clear): the original
+            // returns entry eax here. A defined wrong value, never a panic
+            // (a panicking rewrite wedges the worker instead of failing).
+            return 0xdead_beef;
         }
         let mut n = 0u32;
         while n < WORDS_MAX {

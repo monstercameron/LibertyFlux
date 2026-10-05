@@ -4,7 +4,7 @@
 ///
 /// Behaviour: if the feature flag at `FLAG` is not 1, returns the incoming
 /// `eax` unchanged (entry `eax` is pinned to 0 by the contract). Otherwise
-/// polls two float meters through the stdcall getter (selector ids
+/// polls two float meters through the cdecl getter (selector ids
 /// `METER_A`/`METER_B`), sums them and compares against `THRESHOLD` (12.0):
 /// a sum above the threshold, or an unordered (NaN) comparison, exits
 /// returning the second meter's bits (the getter also leaves its bits in
@@ -42,8 +42,8 @@ lf_checker_rt::export!(cdecl, rw_00943100() -> u32 {
         if lf_checker_rt::global::<u32>(FLAG).read() != 1 {
             return ENTRY_EAX_PIN;
         }
-        let a_bits: u32 = lf_checker_rt::callee_stdcall!(1, u32, METER_A);
-        let b_bits: u32 = lf_checker_rt::callee_stdcall!(5, u32, METER_B);
+        let a_bits: u32 = lf_checker_rt::callee_cdecl!(1, u32, METER_A);
+        let b_bits: u32 = lf_checker_rt::callee_cdecl!(5, u32, METER_B);
         let sum = fadd_pinned(f32::from_bits(a_bits), f32::from_bits(b_bits));
         let threshold = f32::from_bits(THRESHOLD_BITS);
         // Original: comiss threshold, sum / jb exit -> dialog iff ordered
