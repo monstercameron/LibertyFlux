@@ -54108,6 +54108,159 @@
   "lane": "r-b204"
  },
  {
+  "address": "0x00A4A9E0",
+  "name": "vehicle_slot_f50_equals",
+  "kind": "function",
+  "file": "functions/fn_00a4a9e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4AA00",
+  "name": "CVehicle::vf74",
+  "kind": "function",
+  "file": "functions/fn_00a4aa00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4AA10",
+  "name": "vehicle_id_in_table_a",
+  "kind": "function",
+  "file": "functions/fn_00a4aa10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4AA90",
+  "name": "vehicle_id_in_table_b",
+  "kind": "function",
+  "file": "functions/fn_00a4aa90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4AAE0",
+  "name": "vehicle_abs_ge_point8",
+  "kind": "function",
+  "file": "functions/fn_00a4aae0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4AB10",
+  "name": "vehicle_array_contains",
+  "kind": "function",
+  "file": "functions/fn_00a4ab10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4ACC0",
+  "name": "vehicle_kind_in_234",
+  "kind": "function",
+  "file": "functions/fn_00a4acc0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4ACE0",
+  "name": "vehicle_value_le_neg_point9",
+  "kind": "function",
+  "file": "functions/fn_00a4ace0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4AD00",
+  "name": "CVehicle::vf81",
+  "kind": "function",
+  "file": "functions/fn_00a4ad00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4AF30",
+  "name": "vehicle_pick_nonzero_slot",
+  "kind": "function",
+  "file": "functions/fn_00a4af30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4B550",
+  "name": "vehicle_decay_u16_f48",
+  "kind": "function",
+  "file": "functions/fn_00a4b550.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4C760",
+  "name": "vehicle_counter_dec",
+  "kind": "function",
+  "file": "functions/fn_00a4c760.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4D060",
+  "name": "NativeImpl_SET_CAR_LIVERY",
+  "kind": "function",
+  "file": "functions/fn_00a4d060.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4D460",
+  "name": "vehicle_lerp_f34",
+  "kind": "function",
+  "file": "functions/fn_00a4d460.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4DB10",
+  "name": "CHeli::vf56",
+  "kind": "function",
+  "file": "functions/fn_00a4db10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4DC90",
+  "name": "vehicle_clear_flags",
+  "kind": "function",
+  "file": "functions/fn_00a4dc90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4DE70",
+  "name": "vehicle_arm_f48",
+  "kind": "function",
+  "file": "functions/fn_00a4de70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
   "address": "0x00A64130",
   "name": "refresh_pain_voice",
   "kind": "function",
@@ -63738,6 +63891,15 @@
   "lane": "a-09"
  },
  {
+  "address": "0x00B65AE0",
+  "name": "veh_gate_visit_reset",
+  "kind": "function",
+  "file": "functions/fn_00b65ae0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
   "address": "0x00B65B90",
   "name": "veh_visit_positive_11",
   "kind": "function",
@@ -63769,6 +63931,15 @@
   "name": "veh_guarded_forward",
   "kind": "function",
   "file": "functions/fn_00b65cb0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s450"
+ },
+ {
+  "address": "0x00B65DB0",
+  "name": "veh_advance_full",
+  "kind": "function",
+  "file": "functions/fn_00b65db0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s450"
@@ -89658,6 +89829,15 @@
   "lane": "r-s448"
  },
  {
+  "address": "0x00C3B5D0",
+  "name": "tbd",
+  "kind": "function",
+  "file": "functions/fn_00c3b5d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
   "address": "0x00C3D650",
   "name": "train_activate_flagged_cars",
   "kind": "function",
@@ -89788,6 +89968,15 @@
   "name": "train_assemble_matrix_from_pair",
   "kind": "function",
   "file": "functions/fn_00c3e860.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s448"
+ },
+ {
+  "address": "0x00C3E910",
+  "name": "tbd",
+  "kind": "function",
+  "file": "functions/fn_00c3e910.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s448"
@@ -92122,6 +92311,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s337"
+ },
+ {
+  "address": "0x00C9D6C0",
+  "name": "task_simple_ik_setup",
+  "kind": "function",
+  "file": "functions/fn_00c9d6c0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b450"
  },
  {
   "address": "0x00C9D7E0",
@@ -96025,6 +96223,15 @@
   "name": "cover_slide_pose_commit",
   "kind": "function",
   "file": "functions/fn_00d17cc0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b451"
+ },
+ {
+  "address": "0x00D17E90",
+  "name": "slide_cover_pose_update",
+  "kind": "function",
+  "file": "functions/fn_00d17e90.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b451"
