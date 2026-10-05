@@ -178,8 +178,7 @@ impl XmmCallCfg {
     /// are then left out of the call key on both sides).
     #[must_use]
     pub fn any_transport(&self) -> bool {
-        self.from_stack.iter().any(Option::is_some)
-            || self.from_stack64.iter().any(Option::is_some)
+        self.from_stack.iter().any(Option::is_some) || self.from_stack64.iter().any(Option::is_some)
     }
 
     /// Logged registers above XMM1, in register order (the extension log).

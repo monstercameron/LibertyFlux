@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Lift: the script natives' dispatch table joins the workspace",
+    "title": "Checker worker: source formatted, no change in behaviour",
     "commit": null,
+    "summary": "Three places in the checker worker's version 6 source were not in the project's formatting, which had the pipeline's advisory formatting job failing on every push since the version was installed.",
+    "changes": [
+      "cargo fmt applied to crates/tools/lf-checker-worker (two places in main.rs, one in vecregs.rs). Line breaks only: no token changes, so the installed worker stays the one built from this source.",
+      "Found while checking the pipeline for the lifted leaderboard crate, whose run passed on Windows, Linux and macOS."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Lift: the script natives' dispatch table joins the workspace",
+    "commit": "4e1978bb194001e4cfa2d7f71518255334a9f38f",
     "summary": "2,162 script native handlers, each verified as its own function, are now one table and four short functions in a workspace crate.",
     "changes": [
       "New crate crates/lf-script-natives. Every handler in it does the same thing: read the script's words, turn the flagged ones into booleans, call the engine's worker, and return the answer in one of four ways. The table records, per native, its name, its hash where known, how many words it forwards and which are booleans; the handlers are grouped by how they return.",

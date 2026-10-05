@@ -4439,7 +4439,10 @@ mod tests {
             assert!(contains(&b, &vecregs::movsd_from_esp(1, 12)));
             assert!(!contains(&b, &vecregs::movss_from_esp(0, 4)));
             // The answer lands in XMM0 and in edx:eax together.
-            assert!(contains(&b, &[0x0F, 0x12, 0x02, 0x8B, 0x02, 0x8B, 0x52, 0x04]));
+            assert!(contains(
+                &b,
+                &[0x0F, 0x12, 0x02, 0x8B, 0x02, 0x8B, 0x52, 0x04]
+            ));
             // Without the keys the stub has neither the transport nor the
             // edx mirror.
             let mut plain = callee(1);
@@ -4681,17 +4684,7 @@ mod tests {
             cal.xmm.log[1] = true;
             s.callees.insert(6, cal);
             let rec = |x0: [u32; 4], x1: [u32; 4]| {
-                (
-                    6,
-                    0,
-                    0,
-                    vec![1, 2, 3, 4],
-                    vec![],
-                    x0,
-                    x1,
-                    0,
-                    Vec::new(),
-                )
+                (6, 0, 0, vec![1, 2, 3, 4], vec![], x0, x1, 0, Vec::new())
             };
             let a = rec([11, 22, 33, 44], [1, 2, 3, 4]);
             // Upper-half-only drift on the narrowed register is invisible.
