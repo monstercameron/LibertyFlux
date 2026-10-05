@@ -33687,6 +33687,33 @@
   "lane": "r-s438"
  },
  {
+  "address": "0x00883DE0",
+  "name": "stream_channel_push",
+  "kind": "function",
+  "file": "functions/fn_00883de0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s438"
+ },
+ {
+  "address": "0x00884050",
+  "name": "stream_channel_start",
+  "kind": "function",
+  "file": "functions/fn_00884050.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s438"
+ },
+ {
+  "address": "0x00884110",
+  "name": "stream_channel_update",
+  "kind": "function",
+  "file": "functions/fn_00884110.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s438"
+ },
+ {
   "address": "0x00884530",
   "name": "stream_pair_set",
   "kind": "function",
@@ -55035,6 +55062,33 @@
   "lane": "r-s439"
  },
  {
+  "address": "0x00A910D0",
+  "name": "stream_buffer_init",
+  "kind": "function",
+  "file": "functions/fn_00a910d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s439"
+ },
+ {
+  "address": "0x00A91190",
+  "name": "stream_indexed_store",
+  "kind": "function",
+  "file": "functions/fn_00a91190.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s439"
+ },
+ {
+  "address": "0x00A914F0",
+  "name": "stream_word_install",
+  "kind": "function",
+  "file": "functions/fn_00a914f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s439"
+ },
+ {
   "address": "0x00A91520",
   "name": "stream_entry_init",
   "kind": "function",
@@ -55062,6 +55116,15 @@
   "lane": "r-s439"
  },
  {
+  "address": "0x00A91DD0",
+  "name": "stream_slot_word0",
+  "kind": "function",
+  "file": "functions/fn_00a91dd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s439"
+ },
+ {
   "address": "0x00A91E00",
   "name": "stream_global_table_get",
   "kind": "function",
@@ -55071,10 +55134,28 @@
   "lane": "r-s439"
  },
  {
+  "address": "0x00A91E10",
+  "name": "stream_vector_append",
+  "kind": "function",
+  "file": "functions/fn_00a91e10.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s439"
+ },
+ {
   "address": "0x00A91E70",
   "name": "stream_slot_word1",
   "kind": "function",
   "file": "functions/fn_00a91e70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s439"
+ },
+ {
+  "address": "0x00A92EC0",
+  "name": "stream_slot_select",
+  "kind": "function",
+  "file": "functions/fn_00a92ec0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s439"
@@ -56097,10 +56178,28 @@
   "lane": "r-s434"
  },
  {
+  "address": "0x00AC5BE0",
+  "name": "stream_keyset_link_node",
+  "kind": "function",
+  "file": "functions/fn_00ac5be0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s434"
+ },
+ {
   "address": "0x00AC5CE0",
   "name": "stream_keyset_remove",
   "kind": "function",
   "file": "functions/fn_00ac5ce0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s434"
+ },
+ {
+  "address": "0x00AC5D60",
+  "name": "stream_keyset_insert",
+  "kind": "function",
+  "file": "functions/fn_00ac5d60.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s434"
@@ -56173,6 +56272,15 @@
   "name": "shader_fx_set_color4",
   "kind": "function",
   "file": "functions/fn_00ac6440.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-s434"
+ },
+ {
+  "address": "0x00AC6470",
+  "name": "stream_open_named",
+  "kind": "function",
+  "file": "functions/fn_00ac6470.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s434"
@@ -95677,6 +95785,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b272"
+ },
+ {
+  "address": "0x00D97820",
+  "name": "CPedFormation_Arrowhead::vf2",
+  "kind": "function",
+  "file": "functions/fn_00d97820.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b436"
  },
  {
   "address": "0x00DA3FA0",
