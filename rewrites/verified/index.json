@@ -54207,6 +54207,15 @@
   "lane": "r-s455"
  },
  {
+  "address": "0x00A4AEF0",
+  "name": "vehicle_init_two_buffers",
+  "kind": "function",
+  "file": "functions/fn_00a4aef0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
   "address": "0x00A4AF30",
   "name": "vehicle_pick_nonzero_slot",
   "kind": "function",
@@ -54234,6 +54243,24 @@
   "lane": "r-s455"
  },
  {
+  "address": "0x00A4B670",
+  "name": "vehicle_accumulate_10c8",
+  "kind": "function",
+  "file": "functions/fn_00a4b670.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4B740",
+  "name": "CVehicle::vf98",
+  "kind": "function",
+  "file": "functions/fn_00a4b740.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
   "address": "0x00A4C760",
   "name": "vehicle_counter_dec",
   "kind": "function",
@@ -54252,10 +54279,46 @@
   "lane": "r-s455"
  },
  {
+  "address": "0x00A4C7D0",
+  "name": "NativeImpl_REMOVE_CAR_WINDOW",
+  "kind": "function",
+  "file": "functions/fn_00a4c7d0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
   "address": "0x00A4C890",
   "name": "vehicle_remove_from_array",
   "kind": "function",
   "file": "functions/fn_00a4c890.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4C930",
+  "name": "vehicle_attach_links",
+  "kind": "function",
+  "file": "functions/fn_00a4c930.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4C990",
+  "name": "vehicle_probe_buffers",
+  "kind": "function",
+  "file": "functions/fn_00a4c990.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4C9D0",
+  "name": "vehicle_emit_event",
+  "kind": "function",
+  "file": "functions/fn_00a4c9d0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s455"
@@ -54283,6 +54346,33 @@
   "name": "vehicle_lerp_f34",
   "kind": "function",
   "file": "functions/fn_00a4d460.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4D5F0",
+  "name": "vehicle_route_a",
+  "kind": "function",
+  "file": "functions/fn_00a4d5f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4D800",
+  "name": "vehicle_route_b",
+  "kind": "function",
+  "file": "functions/fn_00a4d800.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4D860",
+  "name": "vehicle_spawn_copy",
+  "kind": "function",
+  "file": "functions/fn_00a4d860.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s455"
@@ -54346,6 +54436,33 @@
   "name": "vehicle_arm_f48",
   "kind": "function",
   "file": "functions/fn_00a4de70.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4E0B0",
+  "name": "CVehicle::vf76",
+  "kind": "function",
+  "file": "functions/fn_00a4e0b0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4E4F0",
+  "name": "vehicle_unlink_pair",
+  "kind": "function",
+  "file": "functions/fn_00a4e4f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s455"
+ },
+ {
+  "address": "0x00A4E690",
+  "name": "vehicle_accumulate_12f8",
+  "kind": "function",
+  "file": "functions/fn_00a4e690.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s455"
@@ -65149,6 +65266,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s303"
+ },
+ {
+  "address": "0x00B6F750",
+  "name": "CTaskComplexGoToCarDoorAndStandStill::vf18",
+  "kind": "function",
+  "file": "functions/fn_00b6f750.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b465"
  },
  {
   "address": "0x00B6FDA0",
@@ -91357,6 +91483,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s330"
+ },
+ {
+  "address": "0x00C5DBE0",
+  "name": "gang_driveby_can_attack",
+  "kind": "function",
+  "file": "functions/fn_00c5dbe0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b463"
  },
  {
   "address": "0x00C5FED0",
