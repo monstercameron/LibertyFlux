@@ -8,14 +8,16 @@
 /// its low byte is set, the tag callee runs (slot `+0x14`), a 0x14-byte block
 /// is allocated through the thread-local allocator's slot `+8`, the payload
 /// (`0xffffffff`, the tag answer, the argument) is stored at block `+8` and
-/// the block is linked after the node object (`+4` links). A failed
+/// the block is linked after the node object's link cell: the object
+/// pointer is advanced by 8 and the `+4` links from there (i.e. `+12` of the
+/// object) are spliced. A failed
 /// allocation faults on both sides alike. Returns the last callee answer
 /// (thiscall, one argument).
 lf_checker_rt::export!(thiscall, rw_0062bf40(this: u32, arg: u32) -> u32 {
     unsafe {
         const HEAD: u32 = 0x10;
         const NODE_OBJ: u32 = 0x10;
-        const NEXT_LINK: u32 = 0x04;
+        const NEXT_LINK: u32 = 0x0c;
         const ALLOC_SIZE: u32 = 0x14;
         const PRED_SLOT: u32 = 0x0c;
         const TAG_SLOT: u32 = 0x14;
@@ -56,11 +58,12 @@ lf_checker_rt::export!(thiscall, rw_0062bf40(this: u32, arg: u32) -> u32 {
                     wr(ecx.wrapping_add(4), b);
                     wr(ecx.wrapping_add(8), arg);
                 }
-                let nxt = rd(obj.wrapping_add(NEXT_LINK));
-                wr(mem, obj);
+                let edi = obj.wrapping_add(8);
+                let nxt = rd(edi.wrapping_add(4));
+                wr(mem, edi);
                 wr(mem.wrapping_add(4), nxt);
                 wr(nxt, mem);
-                wr(obj.wrapping_add(NEXT_LINK), mem);
+                wr(edi.wrapping_add(4), mem);
             }
             node = rd(node);
         }
