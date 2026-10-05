@@ -28,7 +28,7 @@
 /// the loop head is dead: the entry check already filtered, and no stubbed
 /// callee writes globals between them.
 ///
-/// Original: 0x008BE3A0 (cdecl, two stack arguments; thirty direct callees:
+/// Original: 0x008BE3A0 (cdecl, two stack arguments; thirty-one direct callees:
 /// float readers returning pointers, one frame-slot out-call, several
 /// object calls on constant objects, one object call on a planted heap
 /// object read through a global).
@@ -78,6 +78,7 @@ lf_checker_rt::export!(cdecl, rw_008BE3A0(arg1: u32, arg2: u32) -> u32 {
         const C_CLEAR: u32 = 27;
         const C_TEST: u32 = 28;
         const C_OBJ: u32 = 29;
+        const C_SYNC: u32 = 30;
 
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
@@ -180,6 +181,7 @@ lf_checker_rt::export!(cdecl, rw_008BE3A0(arg1: u32, arg2: u32) -> u32 {
             ))));
             lf_checker_rt::callee_thiscall!(C_CVTU, u32, CVT_THIS, n as u32, 0u32, 0xFFu32);
             lf_checker_rt::callee_cdecl!(C_FLUSH, u32,);
+            lf_checker_rt::callee_cdecl!(C_SYNC, u32,);
             lf_checker_rt::callee_cdecl!(C_UPD2, u32, 0xFFFF_FFFFu32, 0u32);
             let _ = fd;
         }
