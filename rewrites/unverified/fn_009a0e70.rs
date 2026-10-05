@@ -135,10 +135,10 @@ lf_checker_rt::export!(thiscall, rw_009A0E70(this: u32, a0: u32, a1: u32, a2: u3
         let s1: u32 = lf_checker_rt::callee_thiscall!(1, u32, obj_a, a2);
         let w88: u32 = lf_checker_rt::callee_thiscall!(2, u32, this, a3, a1);
         let s3: u32 = lf_checker_rt::callee_thiscall!(3, u32, obj_a, this);
-        wr32(this.wrapping_add(RES_A), s3);
         if (s3 as i32) < 0 {
             return 0;
         }
+        wr32(this.wrapping_add(RES_A), s3);
         // Caller-side context block (18 words) for the two filter calls.
         let mut ctx = [0u32; 18];
         lf_checker_rt::callee_thiscall!(4, u32, ctx.as_mut_ptr() as u32);
@@ -362,11 +362,14 @@ lf_checker_rt::export!(thiscall, rw_009A0E70(this: u32, a0: u32, a1: u32, a2: u3
             lf_checker_rt::callee_thiscall!(13, u32, this, w60,
                 this.wrapping_add(VOICE_A), ctx.as_mut_ptr() as u32,
                 0xFFFFFFFFu32, 0u32, 0u32);
+            let o94t = rd32(this.wrapping_add(VOICE_A));
+            if o94t != 0 {
+                lf_checker_rt::callee_thiscall!(14, u32, o94t, la.to_bits());
+            }
         }
-        // Voice slot A gate.
+        // Voice slot A gate (a null child joins here, past the filter call).
         let o94 = rd32(this.wrapping_add(VOICE_A));
         if o94 != 0 {
-            lf_checker_rt::callee_thiscall!(14, u32, o94, la.to_bits());
             let o94b = rd32(this.wrapping_add(VOICE_A));
             if rd8(o94b.wrapping_add(0x3B)) == MODE_OK {
                 let a15: u32 = lf_checker_rt::callee_thiscall!(15, u32, o94b,

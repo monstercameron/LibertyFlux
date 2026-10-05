@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Rust in progress: 3 files from lanes (296 unverified rewrites, 29 in review)",
+    "commit": null,
+    "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
+    "changes": [
+      "rewrites/unverified holds 296 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
+      "rewrites/in-review holds 29 Rust files from 2 other lanes (checker changes, assembly, lifted code, tools), waiting for review before they move to their real place.",
+      "29 files were held back by the publication scan."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 13 files from lanes (296 unverified rewrites, 29 in review)",
     "commit": "e55d6b304c5a0fb78bbca00098b362a4f9be2bce",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

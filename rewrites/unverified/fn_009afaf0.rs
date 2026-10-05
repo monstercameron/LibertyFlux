@@ -330,23 +330,24 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
             && rd32(this.wrapping_add(0x14)) != 0
             && rd32(this.wrapping_add(0x18)) != 0
             && rd32(this.wrapping_add(0x1C)) != 0;
+        let mut zero_site = 0xFFFFu32;
         if run_blend {
+            zero_site = 0xEEEEu32;
             let stride = gu32(STRIDE_G);
             let tabbase = gu32(TABBASE_G);
-            // DEBUG-TEMP: distinguish null/small obj from real spread.
+            // DEBUG-TEMP: record first null-obj spread site (real spread otherwise).
             let spread = |obj: u32| {
-                if obj < 0x10000 {
-                    0xBADC0DEu32
+                if obj == 0 {
+                    return 0u32;
+                }
+                let b4 = rd8(obj.wrapping_add(4));
+                if b4 == 0xFF {
+                    0u32
                 } else {
-                    let b4 = rd8(obj.wrapping_add(4));
-                    if b4 == 0xFF {
-                        0u32
-                    } else {
-                        let c40 = rd8(obj.wrapping_add(0x40));
-                        (b4 as u32).wrapping_mul(stride).wrapping_add(rd32(
-                            (c40 as u32).wrapping_mul(0x6F40).wrapping_add(tabbase).wrapping_add(0x6F14),
-                        ))
-                    }
+                    let c40 = rd8(obj.wrapping_add(0x40));
+                    (b4 as u32).wrapping_mul(stride).wrapping_add(rd32(
+                        (c40 as u32).wrapping_mul(0x6F40).wrapping_add(tabbase).wrapping_add(0x6F14),
+                    ))
                 }
             };
             let a4pair = [a4_2, a4_3];
@@ -366,6 +367,7 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
                 for ic in 0..2u32 {
                     let v0 = add(add(add(f2, inner_out[eap_idx]), a4pair[ic as usize]), x1v);
                     let obj0 = rd32(edi_p);
+                    if obj0 == 0 && zero_site == 0xEEEE { zero_site = 100 + oc * 2 + ic; }
                     lf_checker_rt::callee_thiscall!(15, u32, spread(obj0), v0.to_bits());
                     let obj1 = rd32(edi_p);
                     lf_checker_rt::callee_thiscall!(16, u32, obj1, outer_idx[oc as usize].to_bits());
@@ -375,12 +377,16 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
                 let n0 = add(add(mul(in136[1], in136[1]), mul(in136[0], in136[0])), mul(in136[2], in136[2]));
                 if (n0.to_bits() & 0x7F80_0000) != 0x7F80_0000 {
                     let p = [in136[0].to_bits(), in136[1].to_bits(), in136[2].to_bits(), 0u32];
-                    lf_checker_rt::callee_thiscall!(17, u32, spread(rd32(edi_s)), p.as_ptr() as u32);
+                    let o17a = rd32(edi_s);
+                    if o17a == 0 && zero_site == 0xEEEE { zero_site = 200 + oc; }
+                    lf_checker_rt::callee_thiscall!(17, u32, spread(o17a), p.as_ptr() as u32);
                 }
                 let n1 = add(add(mul(in104[1], in104[1]), mul(in104[0], in104[0])), mul(in104[2], in104[2]));
                 if (n1.to_bits() & 0x7F80_0000) != 0x7F80_0000 {
                     let p = [in104[0].to_bits(), in104[1].to_bits(), in104[2].to_bits(), 0u32];
-                    lf_checker_rt::callee_thiscall!(17, u32, spread(rd32(edi_s.wrapping_add(0xC))), p.as_ptr() as u32);
+                    let o17b = rd32(edi_s.wrapping_add(0xC));
+                    if o17b == 0 && zero_site == 0xEEEE { zero_site = 300 + oc; }
+                    lf_checker_rt::callee_thiscall!(17, u32, spread(o17b), p.as_ptr() as u32);
                 }
                 edi_s = edi_s.wrapping_add(4);
             }
@@ -406,8 +412,8 @@ unsafe fn run_wind_mid_left(this: u32, arg0: u32, mutant_skip_mix: bool) -> u32 
         let ans20: u32 = lf_checker_rt::callee_thiscall!(20, u32, OBJ_F, ptrv, fb.to_bits());
         let cookie = gu32(COOKIE);
         lf_checker_rt::callee_thiscall!(21, u32, cookie);
-        // DEBUG-TEMP: side-channel the stage-2 entry state via retval.
+        // DEBUG-TEMP: side-channel the first zero-obj site via retval.
         let _ = ans20;
-        rd32(this.wrapping_add(8))
+        zero_site
     }
 }

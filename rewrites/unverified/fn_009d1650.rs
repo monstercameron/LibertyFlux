@@ -40,9 +40,12 @@ lf_checker_rt::export!(thiscall, rw_009D1650(this: u32, arg: u32) -> u32 {
         let bc = rd(arg.wrapping_add(0xc));
         let b10 = rd(arg.wrapping_add(0x10));
         let mut i = 0u32;
+        // The fetch slot keeps its value across iterations (the original
+        // reuses its incoming arg slot), so each call observes the previous
+        // call's written result.
+        let mut slot = arg;
         while (i as i32) < (count as i32) {
             let elem = rd(arr.wrapping_add(i.wrapping_mul(4)));
-            let mut slot = arg;
             let st = f(obj, obj, b0, b4, bc, b10, elem, (&mut slot as *mut u32) as u32);
             if (st as i32) < 0 {
                 i += 1;
@@ -55,6 +58,7 @@ lf_checker_rt::export!(thiscall, rw_009D1650(this: u32, arg: u32) -> u32 {
             if v > bound {
                 v = bound;
             }
+            slot = v;
             let _: u32 = lf_checker_rt::callee_thiscall!(
                 APPEND, u32, arg.wrapping_add(0x2c), (&mut v as *mut u32) as u32);
             i += 1;
