@@ -38,7 +38,7 @@
 ///
 /// Float operation order is the original's, pinned with black_box,
 /// including the two reversed products (`obj[0x64]` uses h*word and the
-/// second max-lane uses q*word where the others use word*q).
+/// second max-lane uses q*word where the others use word*q), and the five heavy accumulations add the product first, matching addss(prod, obj): only observable when both sides are NaN with different payloads.
 lf_checker_rt::export!(thiscall, rw_008A6EB0(this: u32, obj: u32, array: u32, count: u32, buffer: u32) -> u32 {
     unsafe {
         const TLS_INDEX_GLOBAL: u32 = 0x017ABA14;
@@ -250,11 +250,11 @@ lf_checker_rt::export!(thiscall, rw_008A6EB0(this: u32, obj: u32, array: u32, co
             let q = g[j as usize];
             let h = div(q, acc);
             let blk = buffer.wrapping_add(j.wrapping_mul(BLOCK));
-            wrf(obj.wrapping_add(0xBC), add(rdf(obj.wrapping_add(0xBC)), mul(rdf(blk.wrapping_add(0xBC)), h)));
-            wrf(obj.wrapping_add(0x6C), add(rdf(obj.wrapping_add(0x6C)), mul(rdf(blk.wrapping_add(0x6C)), h)));
-            wrf(obj.wrapping_add(0x60), add(rdf(obj.wrapping_add(0x60)), mul(rdf(blk.wrapping_add(0x60)), h)));
-            wrf(obj.wrapping_add(0x64), add(rdf(obj.wrapping_add(0x64)), mul(h, rdf(blk.wrapping_add(0x64)))));
-            wrf(obj.wrapping_add(0x68), add(rdf(obj.wrapping_add(0x68)), mul(rdf(blk.wrapping_add(0x68)), h)));
+            wrf(obj.wrapping_add(0xBC), add(mul(rdf(blk.wrapping_add(0xBC)), h), rdf(obj.wrapping_add(0xBC))));
+            wrf(obj.wrapping_add(0x6C), add(mul(rdf(blk.wrapping_add(0x6C)), h), rdf(obj.wrapping_add(0x6C))));
+            wrf(obj.wrapping_add(0x60), add(mul(rdf(blk.wrapping_add(0x60)), h), rdf(obj.wrapping_add(0x60))));
+            wrf(obj.wrapping_add(0x64), add(mul(h, rdf(blk.wrapping_add(0x64))), rdf(obj.wrapping_add(0x64))));
+            wrf(obj.wrapping_add(0x68), add(mul(rdf(blk.wrapping_add(0x68)), h), rdf(obj.wrapping_add(0x68))));
             let n1 = rd32(blk.wrapping_add(0xB0));
             let p1 = mul(n1 as f32, h);
             wr32(obj.wrapping_add(0xB0), rd32(obj.wrapping_add(0xB0)).wrapping_add(fistp_trunc(p1) as u32));

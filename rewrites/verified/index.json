@@ -41913,6 +41913,15 @@
   "lane": "a-11"
  },
  {
+  "address": "0x008A6DA0",
+  "name": "audio_gather_slot_buffers",
+  "kind": "function",
+  "file": "functions/fn_008a6da0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b543"
+ },
+ {
   "address": "0x008A6EB0",
   "name": "audio_weight_and_mix_slots",
   "kind": "function",
@@ -50683,6 +50692,15 @@
   "name": "audio_spatial_update",
   "kind": "function",
   "file": "functions/fn_009733a0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b550"
+ },
+ {
+  "address": "0x00973B50",
+  "name": "audio_listener_update",
+  "kind": "function",
+  "file": "functions/fn_00973b50.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b550"
@@ -68452,6 +68470,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s470"
+ },
+ {
+  "address": "0x00ACCE10",
+  "name": "audio_mixer_render",
+  "kind": "function",
+  "file": "functions/fn_00acce10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b549"
  },
  {
   "address": "0x00ACD970",
