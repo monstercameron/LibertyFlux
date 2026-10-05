@@ -9,6 +9,49 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A dead scan loop and a vector-register gap on the peds-tasks batch</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b525"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b525</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>Three of five task-system functions were rewritten in Rust and verified bit-exact over a thousand trials each; the other two were deferred with precise missing checker abilities, and one verified function turned out to contain a scan loop that can never find anything.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Three of five task-system functions were rewritten in Rust and verified bit-exact over a thousand trials each; the other two were deferred with precise missing checker abilities, and one verified function turned out to contain a scan loop that can never find anything.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite five neighbouring task-system functions in Rust and prove each rewrite behaves identically to the original through the project's checker, with a deliberately wrong version per function that must fail.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three functions passed a thousand trials each with exact float matches and full branch coverage, and every wrong version was caught.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One function's ten-slot result scan is dead code in the original: the slots are zeroed by the function's own stores and no callee receives a pointer to them, so the two inner probe calls can never run. They stay declared and intercepted but exempt from coverage.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One function passes double-precision arguments in vector registers, which the checker cannot transport: the rewrite side moves one word per register while the comparison checks all four. Only all-zero doubles could match, so it was deferred rather than narrowed into a vacuous proof.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One function's main loop is unreachable under call interception: the function zeroes its own loop count and only an intercepted callee could set it back, which stubs cannot do for absolute globals. Only the empty-table path runs, and that alone was not claimed as a proof.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;The three passing rewrites were recorded as verified with their narrowings stated. The two deferred functions each got a retry kit naming the exact missing ability: a two-word vector-register transport, and stub writes to absolute globals. A wrong frame-map computation that cost a full attempt is recorded as a caution to re-derive stack layouts from the push and store order.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Each verified function ships its contract and verdict files; rerunning the checker driver on any contract reproduces the thousand-trial proof and the wrong-version failure.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;A single stack-arithmetic slip placed a block of zero stores eighteen hex digits from its true location, which simultaneously misidentified the scan contents, the tail index, and the fill model. The probe failures contradicted the model on all three points at once, and re-deriving the frame map from the instruction order fixed all three together.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Naming batch 110: replay cameras, planes, coronas, nav and portals</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-110"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-110</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>Verified A batch of 150 consecutive functions split cleanly into eight groups in address order: replay-camera helpers, a shared-memory media channel, particle sample baking, planes and ambient planes, corona light sprites, the nav and path system, camera interpolation, and portal instances. 137 were named, 60 with high confidence.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A batch of 150 consecutive functions split cleanly into eight groups in address order: replay-camera helpers, a shared-memory media channel, particle sample baking, planes and ambient planes, corona light sprites, the nav and path system, camera interpolation, and portal instances. 137 were named, 60 with high confidence.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose a descriptive name for each of 150 unnamed game functions, with a confidence grade and one sentence of evidence each, working group-first rather than instruction by instruction.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch held complete small subsystems: a plane class with constructor, destructor and damage, control and flight updaters; an ambient-plane manager that streams models and spawns and removes planes; a corona system from texture request through a 768-entry table to render; a nav system with config parsing, cell lookup, work queues and teardown; and portal constructors, destructors and bounds getters.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Four inventory size fields were wrong: two functions listed as hundreds of bytes are tiny jump stubs, one overruns into its neighbour, and one range loop runs past its listed end. Sizes here cannot be trusted past the next function address.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Several existing symbol names are wrong and were not reused: a supposed script-array function is a plain memory copy by call shape, audio-system names in the nav region sit on code referencing nav data, and a pool constructor carries an animation name while building the portal pool.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Names follow the families other lanes already established for camera interpolation, particles and replay code. The next naming lane should diff twin functions against each other instead of reading both, and should treat any callee below the encryption boundary as unverified: several turn out to be allocator and lock stubs identifiable only by call pattern.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Build one evidence table for the whole batch first (calls resolved against merged symbols, imports, string references, mnemonic profiles), then disassemble every short function fully and brief the large ones with entry plus call context. Confirm group membership by disassembling known callers rather than trusting callee names.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The encrypted first megabyte makes every low-address callee name suspect, which was only obvious after decoding several and getting garbage. A probe script failed three times on data-section reads that return no bytes; string and constant reads from read-only data worked. Thirteen functions were left unnamed: tiny setters, jump stubs, mode wrappers with unknown modes, and single-field getters whose meaning nothing revealed.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Averaging helper reads an uninitialized stack word into its output</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b520"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b520</id>
@@ -1093,47 +1136,5 @@
 &lt;p&gt;Read the executable through the mapped image, never the raw file at a mapped address. Gather per-function calls, imports, float constants, caller addresses and virtual-table membership with RTTI class names into one table first, then read the short functions fully and the large ones by entry shape plus callee and caller sets. Resolve unknown callees by decoding their entries, which also reveals the encrypted ones.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;Caller attribution by nearest known function below the call site misattributed two destructor helpers to an audio constructor; the call-site arithmetic put them inside the destructor body instead. One function turned out to be a short jump stub whose inventory size covered its neighbour, giving both identical call lists until the overlap was noticed.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a mixed batch: entity pools, restart points and three tool traps</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-84"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-84</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>A batch of 150 consecutive unnamed functions turned out to hold six different groups, and 145 of them got descriptive names. The most useful trick was reading pool-name strings out of pool constructors, which identified all seven entity pools at once.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of 150 consecutive unnamed functions turned out to hold six different groups, and 145 of them got descriptive names. The most useful trick was reading pool-name strings out of pool constructors, which identified all seven entity pools at once.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed game functions, working out what the group is about first, then naming each function with a confidence level.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into six groups: player-pedestrian methods, restart-point tables with save and load, weather state, allocator stubs, entity methods with the matrix pool and visibility tests, and a background probing subsystem with three work tables.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Each entity pool constructor embeds its pool name as a string, which identified all seven pools: buildings, animated buildings, objects, vehicles, pedestrians, dummy pedestrians and dummy objects. The pool sizes range from 120 pedestrians to tens of thousands of buildings.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Four inventory entries had wrong sizes: one vtable slot is a five-byte jump whose listed range overlaps eight neighbours, one init function tail-jumps into another, one listed function starts with the previous function's jump table and is not code at all, and one fragment continues far past its listed end.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Later naming lanes should read pool constructor strings to identify pools, cap enclosing-function attribution at about one kilobyte because far-away matches are wrong, and check operand types when scanning for references because plain immediate scans miss every memory reference.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Disassemble each function through the memory-mapped image, collect direct calls, imports and memory references per function, resolve targets against the merged symbol and lane-name tables, and confirm pool identities from the pool constructor call sites.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The first evidence pass found only one string reference in the whole batch because the scanner only looked at immediate operands and missed all memory-disp references. A rescan with the correct operand type confirmed the batch genuinely has almost no string references. Caller attribution also misled several times by naming far-away native functions as callers when the true caller was an unnamed neighbour.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Eight leaderboard row-fill functions verified; a reloc-script bug nearly deferred them all</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b429"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b429</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>All eight functions in this batch were verified against the stock checker with no failures over a thousand trials each, after two genuine rewrite bugs were found and fixed. The more useful finding is a tooling trap: a wrong handling of pefile relocation entries made the jump tables look unrelocated and the batch nearly got deferred for a checker gap that did not exist.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;All eight functions in this batch were verified against the stock checker with no failures over a thousand trials each, after two genuine rewrite bugs were found and fixed. The more useful finding is a tooling trap: a wrong handling of pefile relocation entries made the jump tables look unrelocated and the batch nearly got deferred for a checker gap that did not exist.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite eight medium-sized functions from the same template family in Rust and prove each equivalent to the original with the checker, generating all eight from one script because they differ only in constants.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The eight functions share identical logic with two parameters each: a leaderboard id constant and a row count (seven for one member, five for the rest). Each takes an object plus six stack words and returns a flag byte.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two subtle behaviours were confirmed by failing then passing trials: the function reports a stale stack-slot value, one iteration behind its cursor register, to one callee; and its key-length comparison is signed, so a negative length takes the copy path.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A relocation check script added the page address twice because pefile reports each entry address already combined with its page. The corrected check shows every jump-table address in the batch is relocated, so the checker handles them normally.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Future lanes should assert one known relocation entry before trusting any script that claims an address has none. Signedness of every comparison deserves its own audit pass: one signed greater-than among unsigned above-compares cost a full re-run here.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the lane generator to rebuild the eight rewrites and contracts, build the rewrite crate for 32-bit Windows, and run the stock checker driver over the eight contracts at a thousand trials each. All eight pass with their mutants caught.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The wrong relocation result plus a plausible story about unrelocated reads made deferral look certain for about twenty minutes, until a probe showed most trials passing with correct dispatch. The probe data overruled the static analysis, and re-checking the script found the double-added page.&lt;/p&gt;</content>
   </entry>
 </feed>
