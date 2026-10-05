@@ -172,12 +172,12 @@ lf_checker_rt::export!(thiscall, rw_0096f210(this: u32) -> u32 {
             }
             d = d.wrapping_add(1);
         }
-        // Double-precision seed conversion, twice. Both blocks convert quo
-        // (eax still holds it after the table loop), not rem.
+        // Double-precision seed conversion, twice: first rem, then quo
+        // (eax is reloaded from each slot before its block).
         let dbl0 = f64::from_bits(rd64(
-            lf_checker_rt::relocated(G_DBLTAB).wrapping_add((quo >> 31).wrapping_mul(8)),
+            lf_checker_rt::relocated(G_DBLTAB).wrapping_add((rem >> 31).wrapping_mul(8)),
         ));
-        let dd = core::hint::black_box(quo as i32 as f64) + core::hint::black_box(dbl0);
+        let dd = core::hint::black_box(rem as i32 as f64) + core::hint::black_box(dbl0);
         let mut h = sub(dd as f32, g32(G_D60));
         h = add(h, g32(G_D05));
         h = mul(h, g32(G_D50));
