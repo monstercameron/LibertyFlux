@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Devlog: hourly review, 08:05 on 5 October",
+    "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "12,845 functions verified, 19.8% of the code by size. A lane's report that the game's executable was changing on disk was checked and found wrong; the file is unchanged since 3 October.",
+      "The production brief is version b10 with one added rule, and the coordinator now checks the executable's hash every five minutes."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 47 files from lanes (392 unverified rewrites, 0 in review)",
     "commit": "d6a50c749ba55a011a16f2f5b5cd156fbe34c0a3",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
