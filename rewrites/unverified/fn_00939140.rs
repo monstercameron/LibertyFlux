@@ -5,8 +5,10 @@
 /// Reads up to `count` scores (the counter call, asked again each round)
 /// from the score table; the winner is the first entry strictly greater
 /// than everything before it (a NaN never wins, matching the hardware
-/// compare-then-jump-below shape). Fetches the winner's object and returns
-/// the dword at slot `+0x0A`, or 0 when any link is null.
+/// compare-then-jump-below shape). Fetches the winner's object and reads
+/// the slot link at `+0x17D0` with no null check (a null object faults,
+/// exactly like the original), then returns the dword at slot `+0x0A`,
+/// or 0 for a null slot.
 lf_checker_rt::export!(cdecl, rw_00939140() -> u32 {
     unsafe {
         const COUNT: u32 = 1;
@@ -38,15 +40,13 @@ lf_checker_rt::export!(cdecl, rw_00939140() -> u32 {
             }
         }
         let obj: u32 = lf_checker_rt::callee_cdecl!(FETCH, u32, picked as u32);
-        if obj == 0 {
+        // NOTE: no null check on the object itself: a null object faults
+        // reading the link, exactly like the original (fault parity).
+        let slot = ((obj + SLOT_LINK) as *const u32).read_unaligned();
+        if slot == 0 {
             0
         } else {
-            let slot = ((obj + SLOT_LINK) as *const u32).read_unaligned();
-            if slot == 0 {
-                0
-            } else {
-                ((slot + TAG_FIELD) as *const u32).read_unaligned()
-            }
+            ((slot + TAG_FIELD) as *const u32).read_unaligned()
         }
     }
 });

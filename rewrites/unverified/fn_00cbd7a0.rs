@@ -145,15 +145,13 @@ lf_checker_rt::export!(thiscall, rw_00CBD7A0(this: u32, a0: u32, a1: u32, a2: u3
         }
         #[inline(always)]
         unsafe fn emit(arg0: u32, arg1: f32, arg7: f32) {
-            unsafe {
-                // The original loads this pointer from a relocated
-                // immediate, so it is the relocated table address.
-                let this = lf_checker_rt::relocated(EMIT_THIS);
-                let _: u32 = lf_checker_rt::callee_thiscall!(
-                    C_EMIT, u32, this, arg0, arg1.to_bits(), 0, 0, 0, 0, 0xFFFF_FFFF,
-                    arg7.to_bits()
-                );
-            }
+            // The original loads this pointer from a relocated
+            // immediate, so it is the relocated table address.
+            let this = lf_checker_rt::relocated(EMIT_THIS);
+            let _: u32 = lf_checker_rt::callee_thiscall!(
+                C_EMIT, u32, this, arg0, arg1.to_bits(), 0, 0, 0, 0, 0xFFFF_FFFF,
+                arg7.to_bits()
+            );
         }
         #[inline(always)]
         unsafe fn store_record(idx: u32, id: u32, mid: f32, tail: f32) {
@@ -171,17 +169,15 @@ lf_checker_rt::export!(thiscall, rw_00CBD7A0(this: u32, a0: u32, a1: u32, a2: u3
         }
         #[inline(always)]
         unsafe fn slot(ecx: u32, arg: u32) -> u32 {
-            unsafe { lf_checker_rt::callee_thiscall!(C_SLOT, u32, ecx, arg) }
+            lf_checker_rt::callee_thiscall!(C_SLOT, u32, ecx, arg)
         }
         #[inline(always)]
         unsafe fn apply(ecx: u32) {
-            unsafe {
-                let _: u32 = lf_checker_rt::callee_thiscall!(C_APPLY, u32, ecx, NEG_ONE_BITS);
-            }
+            let _: u32 = lf_checker_rt::callee_thiscall!(C_APPLY, u32, ecx, NEG_ONE_BITS);
         }
         #[inline(always)]
         unsafe fn task(a0: u32, a1: u32, a2: u32, a3: u32, a4: u32) -> u32 {
-            unsafe { lf_checker_rt::callee_cdecl!(C_TASK, u32, a0, a1, a2, a3, a4) }
+            lf_checker_rt::callee_cdecl!(C_TASK, u32, a0, a1, a2, a3, a4)
         }
 
         // ---- entry ----
@@ -274,8 +270,8 @@ lf_checker_rt::export!(thiscall, rw_00CBD7A0(this: u32, a0: u32, a1: u32, a2: u3
                     let p2: u32 = lf_checker_rt::callee_cdecl!(C_POLL2, u32,);
                     if (p2 as u8) != 0 { 1 } else { 0 }
                 };
-                let mut o1: f32;
-                let mut x6: f32;
+                let o1: f32;
+                let x6: f32;
                 if !ord_eq(o14, 0.0) && al == 0 {
                     if esi == 0 || esi == 1 || esi == 6 || esi == 7 {
                         let mut t = if esi == 0 || esi == 1 {

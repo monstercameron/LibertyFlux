@@ -3,8 +3,9 @@
 /// Re-stamp the streaming marker when the count has grown past it.
 ///
 /// Needs a quiet poll, a clear flag, a nonzero mode and a nonempty scan.
-/// When the marker already covers the counter it is re-stamped and 0 is
-/// answered. Otherwise the handle is opened: a null handle, a matching
+/// When the marker already covers the counter the fresh stamp is stored
+/// and its value (low byte cleared) is answered. Otherwise the handle is
+/// opened: a null handle, a matching
 /// stamp word, or (unreachable: the mode is already known nonzero) a zero
 /// mode reaches the tail, which answers 1 except for state 0 with mode 1.
 /// A mismatching stamp with nonzero mode flushes and answers 0.
@@ -40,8 +41,11 @@ lf_checker_rt::export!(cdecl, rw_009389f0() -> u32 {
         let e: u32 = lf_checker_rt::callee_cdecl!(COUNT, u32,);
         let marker = lf_checker_rt::global::<u32>(MARKER);
         if marker.read_unaligned() >= e {
-            marker.write_unaligned(lf_checker_rt::global::<u32>(STAMP).read_unaligned());
-            return e & LOW_MASK;
+            // NOTE: the stamp is loaded into EAX first, so the answer is
+            // the stamp with its low byte cleared, not the counter.
+            let n = lf_checker_rt::global::<u32>(STAMP).read_unaligned();
+            marker.write_unaligned(n);
+            return n & LOW_MASK;
         }
         let p: u32 = lf_checker_rt::callee_cdecl!(OPEN, u32, 0);
         let m = lf_checker_rt::global::<u32>(MODE).read_unaligned();
