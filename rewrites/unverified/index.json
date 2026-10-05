@@ -1416,10 +1416,122 @@
   "reason": null
  },
  {
+  "address": "0x00A0FCF0",
+  "name": null,
+  "file": "fn_00a0fcf0.rs",
+  "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A0FE70",
+  "name": null,
+  "file": "fn_00a0fe70.rs",
+  "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A10450",
+  "name": null,
+  "file": "fn_00a10450.rs",
+  "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A12740",
+  "name": null,
+  "file": "fn_00a12740.rs",
+  "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A127B0",
+  "name": null,
+  "file": "fn_00a127b0.rs",
+  "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A128E0",
+  "name": null,
+  "file": "fn_00a128e0.rs",
+  "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A131F0",
+  "name": null,
+  "file": "fn_00a131f0.rs",
+  "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A13280",
+  "name": null,
+  "file": "fn_00a13280.rs",
+  "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A132A0",
+  "name": null,
+  "file": "fn_00a132a0.rs",
+  "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A133B0",
+  "name": null,
+  "file": "fn_00a133b0.rs",
+  "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A13600",
+  "name": null,
+  "file": "fn_00a13600.rs",
+  "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A13710",
+  "name": null,
+  "file": "fn_00a13710.rs",
+  "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A14B30",
   "name": "CCamFollowVehicle::vf5",
   "file": "fn_00a14b30.rs",
   "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A14B40",
+  "name": null,
+  "file": "fn_00a14b40.rs",
+  "lane": "r-s456",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A4AEF0",
+  "name": "vehicle_init_two_buffers",
+  "file": "fn_00a4aef0.rs",
+  "lane": "r-s455",
   "outcome": "not_reached",
   "reason": null
  },
@@ -1432,9 +1544,33 @@
   "reason": null
  },
  {
+  "address": "0x00A4C990",
+  "name": "vehicle_probe_buffers",
+  "file": "fn_00a4c990.rs",
+  "lane": "r-s455",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A4C9D0",
   "name": "vehicle_emit_event",
   "file": "fn_00a4c9d0.rs",
+  "lane": "r-s455",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A4D5F0",
+  "name": "vehicle_route_a",
+  "file": "fn_00a4d5f0.rs",
+  "lane": "r-s455",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A4D800",
+  "name": "vehicle_route_b",
+  "file": "fn_00a4d800.rs",
   "lane": "r-s455",
   "outcome": "not_reached",
   "reason": null
@@ -1480,6 +1616,14 @@
   "reason": null
  },
  {
+  "address": "0x00A4FEE0",
+  "name": "vehicle_init_slots",
+  "file": "fn_00a4fee0.rs",
+  "lane": "r-s452",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A504A0",
   "name": "vehicle_dispatch_kind3_b",
   "file": "fn_00a504a0.rs",
@@ -1496,12 +1640,20 @@
   "reason": ""
  },
  {
-  "address": "0x00A75A40",
-  "name": "pending",
-  "file": "fn_00a75a40.rs",
-  "lane": "r-b446",
+  "address": "0x00A63620",
+  "name": "ped_task_range_check",
+  "file": "fn_00a63620.rs",
+  "lane": "r-b459",
   "outcome": "not_reached",
   "reason": ""
+ },
+ {
+  "address": "0x00A75A40",
+  "name": "ped_task_update_dispatch",
+  "file": "fn_00a75a40.rs",
+  "lane": "r-b446",
+  "outcome": "deferred",
+  "reason": "checker_gap"
  },
  {
   "address": "0x00A7E990",
@@ -1584,6 +1736,126 @@
   "reason": "other"
  },
  {
+  "address": "0x00AF76D0",
+  "name": "veh_state_is_ready",
+  "file": "fn_00af76d0.rs",
+  "lane": "r-s457",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AF7750",
+  "name": "veh_handles_reset_9",
+  "file": "fn_00af7750.rs",
+  "lane": "r-s457",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AF7790",
+  "name": "veh_state_zero_tail",
+  "file": "fn_00af7790.rs",
+  "lane": "r-s457",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AF77B0",
+  "name": "veh_handles_reset_12",
+  "file": "fn_00af77b0.rs",
+  "lane": "r-s457",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AF7810",
+  "name": "veh_handles_reset_14",
+  "file": "fn_00af7810.rs",
+  "lane": "r-s457",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AF7880",
+  "name": "veh_state_zero_from",
+  "file": "fn_00af7880.rs",
+  "lane": "r-s457",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AF7910",
+  "name": "veh_last_active_slot",
+  "file": "fn_00af7910.rs",
+  "lane": "r-s457",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AF8320",
+  "name": "veh_pick_subobject",
+  "file": "fn_00af8320.rs",
+  "lane": "r-s457",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AF8350",
+  "name": "veh_kind_is_simple",
+  "file": "fn_00af8350.rs",
+  "lane": "r-s457",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AF8420",
+  "name": "veh_code_is_active",
+  "file": "fn_00af8420.rs",
+  "lane": "r-s457",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AF8500",
+  "name": "veh_arrays_shift_down",
+  "file": "fn_00af8500.rs",
+  "lane": "r-s457",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AF8540",
+  "name": "veh_arrays_shift_up",
+  "file": "fn_00af8540.rs",
+  "lane": "r-s457",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AF8E30",
+  "name": "veh_zone_slot_ptr",
+  "file": "fn_00af8e30.rs",
+  "lane": "r-s457",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AF9170",
+  "name": "veh_point_in_box",
+  "file": "fn_00af9170.rs",
+  "lane": "r-s457",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00AF97B0",
+  "name": "veh_count_below_cap",
+  "file": "fn_00af97b0.rs",
+  "lane": "r-s457",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00B37240",
   "name": "pending-triage",
   "file": "fn_00b37240.rs",
@@ -1630,6 +1902,14 @@
   "lane": "r-s407",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00B65E60",
+  "name": "fn_00B65E60",
+  "file": "fn_00b65e60.rs",
+  "lane": "r-s450",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00B77C30",
@@ -2096,6 +2376,14 @@
   "reason": null
  },
  {
+  "address": "0x00C3A700",
+  "name": "tbd",
+  "file": "fn_00c3a700.rs",
+  "lane": "r-s448",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00C3F0D0",
   "name": "timing_channels_update",
   "file": "fn_00c3f0d0.rs",
@@ -2254,6 +2542,14 @@
   "lane": "r-s442",
   "outcome": "deferred",
   "reason": "abs_shadow_unavailable"
+ },
+ {
+  "address": "0x00C9BED0",
+  "name": null,
+  "file": "fn_00c9bed0.rs",
+  "lane": "r-b460",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00C9D9D0",

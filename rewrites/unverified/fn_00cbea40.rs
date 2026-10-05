@@ -22,9 +22,10 @@
 /// to `[-pi, pi]`. Without such a target a selector over the clamped angle
 /// and the two flags picks one of five channel pairs (the latch bit
 /// choosing the alternate), a second virtual call on the blender picks a
-/// blend weight, and the blend call resolves the target; a zero clamped
-/// angle then copies `this+0x28`, otherwise the phase is clamped
-/// symmetrically around a scaled state value. The output finishes as
+/// blend weight, and the blend call resolves the target; a zero selector
+/// phase then copies `this+0x28`, otherwise the clamped angle minus the
+/// phase, divided by a callee-provided total, is clamped symmetrically
+/// around a scaled state value. The output finishes as
 /// `this+0x90` (or `this+0x30` on the early path) times the start-up
 /// global.
 ///
@@ -84,6 +85,8 @@ lf_checker_rt::export!(thiscall, rw_00cbea40(this: u32, a0: u32) -> u32 {
         const C50: f32 = 50.0;
         const PI: f32 = f32::from_bits(0x4049_0fdb);
         const NPI: f32 = f32::from_bits(0xc049_0fdb);
+        const PI2: f32 = f32::from_bits(0x3fc9_0fdb);
+        const NPI2: f32 = f32::from_bits(0xbfc9_0fdb);
         const A_ANGLE: u32 = 1;
         const A_PROBE: u32 = 2;
         const A_VT: u32 = 3;
@@ -160,20 +163,22 @@ lf_checker_rt::export!(thiscall, rw_00cbea40(this: u32, a0: u32) -> u32 {
         ) -> u32 {
             unsafe {
                 let abs2 = fabs(l2);
-                let (base, alt) = if C148 > abs2 {
-                    (0x12u32, 0x17u32)
+                // Each selector arm also stores a phase float; the default
+                // arm leaves the zero stored on entry.
+                let (base, alt, l7f) = if C148 > abs2 {
+                    (0x12u32, 0x17u32, ZERO)
                 } else if (l6 & 0xff) == 0 {
-                    (0x12u32, 0x17u32)
+                    (0x12u32, 0x17u32, ZERO)
                 } else if C209 > abs2 {
                     if l2 > ZERO {
-                        (0x13u32, 0x18u32)
+                        (0x13u32, 0x18u32, PI2)
                     } else {
-                        (0x14u32, 0x19u32)
+                        (0x14u32, 0x19u32, NPI2)
                     }
                 } else if l2 > ZERO {
-                    (0x15u32, 0x1au32)
+                    (0x15u32, 0x1au32, HI3)
                 } else {
-                    (0x16u32, 0x1bu32)
+                    (0x16u32, 0x1bu32, LO3)
                 };
                 let sel = if (l3 & 0xff) != 0 { alt } else { base };
                 let vt = rd32(this);
@@ -183,7 +188,7 @@ lf_checker_rt::export!(thiscall, rw_00cbea40(this: u32, a0: u32) -> u32 {
                 let kr = f(this, inner);
                 let x = if kr & 0xff != 0 { FOUR } else { gf(G_W44) };
                 let p: u32 = lf_checker_rt::callee_cdecl!(
-                    A_BLEND, u32, l6, rd32(a0), sel, x.to_bits(), rd32(a0 + 4));
+                    A_BLEND, u32, inner, rd32(a0), sel, x.to_bits(), rd32(a0 + 4));
                 if p == 0 {
                     return 0;
                 }
@@ -191,10 +196,10 @@ lf_checker_rt::export!(thiscall, rw_00cbea40(this: u32, a0: u32) -> u32 {
                 let a3: f32 =
                     lf_checker_rt::callee_cdecl!(A_ANGLE, f32, rdf(state + DIFF_HI).to_bits());
                 wrf(this + IN94, a3);
-                if l2 != 0.0 {
+                if l7f != 0.0 {
                     let nl1 = mul(mul(rdf(state + SCALE_OFF), C0017), C50);
                     let dv: f32 = lf_checker_rt::callee_thiscall!(A_TOTAL, f32, p);
-                    let q = div(ZERO, dv);
+                    let q = div(sub(l2, l7f), dv);
                     let neg = -nl1;
                     let r = if neg > q { neg } else { q };
                     let r2 = if r > nl1 { nl1 } else { r };
