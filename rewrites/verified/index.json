@@ -51156,6 +51156,15 @@
   "lane": "r-s376"
  },
  {
+  "address": "0x009E8320",
+  "name": "ground_height_radial_sweep",
+  "kind": "function",
+  "file": "functions/fn_009e8320.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-b487"
+ },
+ {
   "address": "0x009E8530",
   "name": "ped_link_float_field",
   "kind": "function",
@@ -51595,6 +51604,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s262"
+ },
+ {
+  "address": "0x009F3190",
+  "name": "ped_task_boot_chain",
+  "kind": "function",
+  "file": "functions/fn_009f3190.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b478"
  },
  {
   "address": "0x009F3CB0",
@@ -54243,10 +54261,109 @@
   "lane": "r-s294"
  },
  {
+  "address": "0x00A055A0",
+  "name": "NativeImpl_IS_NON_FRAG_OBJECT_SMASHED",
+  "kind": "function",
+  "file": "functions/fn_00a055a0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s465"
+ },
+ {
+  "address": "0x00A056F0",
+  "name": "NativeImpl_IS_OBJECT_IN_ANGLED_AREA_2D",
+  "kind": "function",
+  "file": "functions/fn_00a056f0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s465"
+ },
+ {
+  "address": "0x00A05760",
+  "name": "NativeImpl_IS_OBJECT_IN_ANGLED_AREA_3D",
+  "kind": "function",
+  "file": "functions/fn_00a05760.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s465"
+ },
+ {
+  "address": "0x00A057E0",
+  "name": "NativeImpl_IS_OBJECT_IN_AREA_2D",
+  "kind": "function",
+  "file": "functions/fn_00a057e0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s465"
+ },
+ {
+  "address": "0x00A05850",
+  "name": "NativeImpl_IS_OBJECT_IN_AREA_3D",
+  "kind": "function",
+  "file": "functions/fn_00a05850.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s465"
+ },
+ {
+  "address": "0x00A05A90",
+  "name": "NativeImpl_LOCATE_OBJECT_2D",
+  "kind": "function",
+  "file": "functions/fn_00a05a90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s465"
+ },
+ {
+  "address": "0x00A05B00",
+  "name": "NativeImpl_LOCATE_OBJECT_3D",
+  "kind": "function",
+  "file": "functions/fn_00a05b00.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s465"
+ },
+ {
+  "address": "0x00A05D50",
+  "name": "NativeImpl_PLACE_OBJECT_RELATIVE_TO_CAR",
+  "kind": "function",
+  "file": "functions/fn_00a05d50.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s465"
+ },
+ {
   "address": "0x00A05E90",
   "name": "NativeImpl_PLAYER_IS_NEAR_FIRST_PIGEON",
   "kind": "function",
   "file": "functions/fn_00a05e90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s465"
+ },
+ {
+  "address": "0x00A06860",
+  "name": "NativeImpl_SET_OBJECT_COORDINATES_2",
+  "kind": "function",
+  "file": "functions/fn_00a06860.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s465"
+ },
+ {
+  "address": "0x00A06A30",
+  "name": "NativeImpl_SET_OBJECT_INITIAL_ROTATION_VELOCITY",
+  "kind": "function",
+  "file": "functions/fn_00a06a30.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s465"
+ },
+ {
+  "address": "0x00A06B00",
+  "name": "NativeImpl_SET_OBJECT_INITIAL_VELOCITY",
+  "kind": "function",
+  "file": "functions/fn_00a06b00.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s465"
@@ -54265,6 +54382,15 @@
   "name": "pool_view_triplet_copy",
   "kind": "function",
   "file": "functions/fn_00a07a90.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s465"
+ },
+ {
+  "address": "0x00A07AC0",
+  "name": "object_probe_publish",
+  "kind": "function",
+  "file": "functions/fn_00a07ac0.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s465"
@@ -58797,6 +58923,15 @@
   "lane": "r-s141"
  },
  {
+  "address": "0x00A8A200",
+  "name": "pool_foreach_accumulate",
+  "kind": "function",
+  "file": "functions/fn_00a8a200.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s463"
+ },
+ {
   "address": "0x00A8A290",
   "name": "pool_dispatch_by_index",
   "kind": "function",
@@ -58833,6 +58968,15 @@
   "lane": "r-s463"
  },
  {
+  "address": "0x00A8A820",
+  "name": "pool_try_stage_transitions",
+  "kind": "function",
+  "file": "functions/fn_00a8a820.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s463"
+ },
+ {
   "address": "0x00A8A8B0",
   "name": "pool_stage_at_offset48",
   "kind": "function",
@@ -58846,6 +58990,15 @@
   "name": "pool_init_capacity_10000",
   "kind": "function",
   "file": "functions/fn_00a8abd0.rs",
+  "trials": 1000,
+  "checker": "version 5",
+  "lane": "r-s463"
+ },
+ {
+  "address": "0x00A8AC70",
+  "name": "pool_bind_or_invalidate",
+  "kind": "function",
+  "file": "functions/fn_00a8ac70.rs",
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s463"
@@ -100269,6 +100422,15 @@
   "lane": "r-s352"
  },
  {
+  "address": "0x00D290F0",
+  "name": "CPedTargetting::vf7",
+  "kind": "function",
+  "file": "functions/fn_00d290f0.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b491"
+ },
+ {
   "address": "0x00D29230",
   "name": "CPedTargetting::vf6",
   "kind": "function",
@@ -100660,6 +100822,15 @@
   "name": "task_route_point_interpolate",
   "kind": "function",
   "file": "functions/fn_00d2f130.rs",
+  "trials": 1200,
+  "checker": "version 5",
+  "lane": "r-b489"
+ },
+ {
+  "address": "0x00D2F4D0",
+  "name": "task_route_segment_probe",
+  "kind": "function",
+  "file": "functions/fn_00d2f4d0.rs",
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b489"
