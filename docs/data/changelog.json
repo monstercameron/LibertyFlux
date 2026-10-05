@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: Naming batch 95: shader globals, deferred lighting, and wheels misfiled as audio",
+    "title": "Rewrites: 80 more functions pass the checker (13542 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "80 rewrites added under rewrites/verified: 0 script native handlers and 80 other functions.",
+      "The tree now holds 13542 rewrites, 13523 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "801 rewrites are held back by the publication scan (comments that read like disassembly or byte dumps) and stay in scratch until cleaned."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: Naming batch 95: shader globals, deferred lighting, and wheels misfiled as audio",
+    "commit": "63a8faf2ffb68f52d85e5a8e00b89c92ed9eef32",
     "summary": "Findings from the nm-95 lane.",
     "changes": [
       "New devlog entry: Naming batch 95: shader globals, deferred lighting, and wheels misfiled as audio.",
