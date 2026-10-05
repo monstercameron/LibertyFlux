@@ -51,7 +51,7 @@ lf_checker_rt::export!(thiscall, rw_00a75a40(this: u32, arg1: u32) -> u32 {
         const D_PRED_A: u32 = 4;
         const D_PRED_B: u32 = 5;
         const D_KIND: u32 = 6;
-        const D_CTX: u32 = 7;
+        const D_CTX: u32 = 27;
         const D_VAL_A: u32 = 8;
         const D_VAL_B: u32 = 9;
         const D_VAL_C: u32 = 10;

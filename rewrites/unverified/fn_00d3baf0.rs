@@ -55,6 +55,8 @@ lf_checker_rt::export!(thiscall, rw_00d3baf0(task: u32, op: u32, stream: u32) ->
         const REG_OFF: u32 = 0x08;
 
         const C_READ_BOOL: u32 = 1;
+        const C_READ_BOOL2: u32 = 24;
+        const C_READ_BOOL3: u32 = 25;
         const C_READ_BITS: u32 = 2;
         const C_READ_WORD: u32 = 3;
         const C_POST_READ: u32 = 4;
@@ -113,9 +115,9 @@ lf_checker_rt::export!(thiscall, rw_00d3baf0(task: u32, op: u32, stream: u32) ->
         /// earlier answers there, so the slots keep the same relative layout
         /// (bool at +0x13, words at +0x14, +0x18 and +0x1c).
         #[inline(always)]
-        unsafe fn read_bool_at(stream: u32, slot: u32) -> u8 {
+        unsafe fn read_bool_at(stream: u32, slot: u32, id: u32) -> u8 {
             unsafe {
-                lf_checker_rt::callee_thiscall!(C_READ_BOOL, u32, stream, slot);
+                lf_checker_rt::callee_thiscall!(id, u32, stream, slot);
                 rd8(slot)
             }
         }
@@ -139,17 +141,17 @@ lf_checker_rt::export!(thiscall, rw_00d3baf0(task: u32, op: u32, stream: u32) ->
                 let sbase = scratch.as_mut_ptr() as u32;
                 let (sbool, sbits1, sbits2, sbits3) =
                     (sbase + 0x13, sbase + 0x14, sbase + 0x18, sbase + 0x1c);
-                let b = read_bool_at(stream, sbool);
+                let b = read_bool_at(stream, sbool, C_READ_BOOL);
                 fold_bit(task, b, 1, 0x02);
                 if rd8(task + F_FLAGS) & 0x02 == 0 {
                     return 0;
                 }
                 wr32(task + F_INT_B, read_bits_at(stream, sbits1, 3).wrapping_add(INT_B_BIAS));
                 wr32(task + F_INT_A, read_bits_at(stream, sbits2, 7));
-                let b = read_bool_at(stream, sbool);
+                let b = read_bool_at(stream, sbool, C_READ_BOOL2);
                 fold_bit(task, b, 5, 0x20);
                 if rd8(task + F_FLAGS) & 0x20 == 0 {
-                    let b = read_bool_at(stream, sbool);
+                    let b = read_bool_at(stream, sbool, C_READ_BOOL3);
                     wr8(
                         task + F_FLAGS,
                         rd8(task + F_FLAGS) & 0x7f | b.wrapping_shl(7),
@@ -163,7 +165,7 @@ lf_checker_rt::export!(thiscall, rw_00d3baf0(task: u32, op: u32, stream: u32) ->
                     lf_checker_rt::callee_thiscall!(C_HELPER, u32, task, scaled);
                     return 0;
                 }
-                let b = read_bool_at(stream, sbool);
+                let b = read_bool_at(stream, sbool, C_READ_BOOL3);
                 fold_bit(task, b, 6, 0x40);
                 if rd8(task + F_FLAGS) & 0x40 == 0 {
                     lf_checker_rt::callee_thiscall!(
@@ -182,17 +184,17 @@ lf_checker_rt::export!(thiscall, rw_00d3baf0(task: u32, op: u32, stream: u32) ->
             1 => {
                 let mut scratch = [0u8; 32];
                 let sbool = scratch.as_mut_ptr() as u32 + 0x13;
-                let b = read_bool_at(stream, sbool);
+                let b = read_bool_at(stream, sbool, C_READ_BOOL);
                 fold_bit(task, b, 1, 0x02);
                 if rd8(task + F_FLAGS) & 0x02 == 0 {
                     return 0;
                 }
                 lf_checker_rt::callee_thiscall!(C_WRITE_IMM, u32, stream, 3, 1);
                 lf_checker_rt::callee_thiscall!(C_WRITE_IMM, u32, stream, 7, 1);
-                let b = read_bool_at(stream, sbool);
+                let b = read_bool_at(stream, sbool, C_READ_BOOL2);
                 fold_bit(task, b, 5, 0x20);
                 if rd8(task + F_FLAGS) & 0x20 == 0 {
-                    let b = read_bool_at(stream, sbool);
+                    let b = read_bool_at(stream, sbool, C_READ_BOOL3);
                     wr8(
                         task + F_FLAGS,
                         rd8(task + F_FLAGS) & 0x7f | b.wrapping_shl(7),
@@ -203,7 +205,7 @@ lf_checker_rt::export!(thiscall, rw_00d3baf0(task: u32, op: u32, stream: u32) ->
                     lf_checker_rt::callee_thiscall!(C_WRITE_IMM, u32, stream, 0x10, 1);
                     return 0;
                 }
-                let b = read_bool_at(stream, sbool);
+                let b = read_bool_at(stream, sbool, C_READ_BOOL3);
                 fold_bit(task, b, 6, 0x40);
                 if rd8(task + F_FLAGS) & 0x40 == 0 {
                     lf_checker_rt::callee_thiscall!(C_MARK_B, u32, stream, 1, BLOB_LEN);
