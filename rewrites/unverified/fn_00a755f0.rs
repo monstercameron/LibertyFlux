@@ -61,12 +61,28 @@ lf_checker_rt::export!(stdcall, rw_00a755f0(arg: u32) -> u32 {
             if group(s, 0x2a4c, 0x2a4e, 0x2a4f) || group(s, 0x2a5c, 0x2a5e, 0x2a5f) {
                 bl = 1;
             } else {
-                let p1 = lf_checker_rt::callee_thiscall!(CAL_PROBE_A, u32, s + 0x2a88);
-                let p2 = lf_checker_rt::callee_thiscall!(CAL_PROBE_B, u32, s + 0x2a88);
-                let p3 = lf_checker_rt::callee_thiscall!(CAL_PROBE_A, u32, s + 0x2a78);
-                let p4 = lf_checker_rt::callee_thiscall!(CAL_PROBE_B, u32, s + 0x2a78);
-                if (p1 as u8) != 0 || (p2 as u8) != 0 || (p3 as u8) != 0 || (p4 as u8) != 0 {
+                // Short-circuiting probes: the first positive answer wins
+                // and later probes are not called.
+                let p1: u32 = lf_checker_rt::callee_thiscall!(CAL_PROBE_A, u32, s + 0x2a88);
+                if (p1 as u8) != 0 {
                     bl = 1;
+                } else {
+                    let p2: u32 = lf_checker_rt::callee_thiscall!(CAL_PROBE_B, u32, s + 0x2a88);
+                    if (p2 as u8) != 0 {
+                        bl = 1;
+                    } else {
+                        let p3: u32 =
+                            lf_checker_rt::callee_thiscall!(CAL_PROBE_A, u32, s + 0x2a78);
+                        if (p3 as u8) != 0 {
+                            bl = 1;
+                        } else {
+                            let p4: u32 =
+                                lf_checker_rt::callee_thiscall!(CAL_PROBE_B, u32, s + 0x2a78);
+                            if (p4 as u8) != 0 {
+                                bl = 1;
+                            }
+                        }
+                    }
                 }
             }
         } else if group(s, 0x2a4c, 0x2a4e, 0x2a4f) {

@@ -19,9 +19,9 @@
 /// entry of the constant table. Two calibration callees then run against
 /// the matrix block (first with a table pointer and a scale float, 0.05
 /// under selector 1 else 0.1; second with the rate). Finally the target
-/// point has the matrix applied to its own value subtracted from it,
-/// component by component, while the spare slot receives a word of
-/// uninitialized stack (zero under the proof's stack fill). Returns `a1`.
+/// target point is overwritten with the matrix applied to its own value,
+/// while the spare slot receives a word of uninitialized stack (zero
+/// under the proof's stack fill). Returns `a1`.
 /// Original is thiscall with one stack word.
 lf_checker_rt::export!(thiscall, rw_00A20DA0(this: u32, a1: u32) -> u32 {
     unsafe {
@@ -70,7 +70,6 @@ lf_checker_rt::export!(thiscall, rw_00A20DA0(this: u32, a1: u32) -> u32 {
         fn sub(a: f32, b: f32) -> f32 {
             core::hint::black_box(a) - core::hint::black_box(b)
         }
-
         let sel: u32 = if (rd32(this + COUNT_OFF) as i32) > 0 {
             wr32(this + COUNT_OFF, rd32(this + COUNT_OFF).wrapping_sub(1));
             rd32(lf_checker_rt::relocated(SEL_GLOBAL))
@@ -102,10 +101,10 @@ lf_checker_rt::export!(thiscall, rw_00A20DA0(this: u32, a1: u32) -> u32 {
         let r0 = add(add(mul(rdf(mat + 0x10), v1), mul(rdf(mat), v0)), mul(rdf(mat + 0x20), v2));
         let r1 = add(add(mul(rdf(mat + 0x14), v1), mul(rdf(mat + 4), v0)), mul(rdf(mat + 0x24), v2));
         let r2 = add(add(mul(rdf(mat + 0x18), v1), mul(rdf(mat + 8), v0)), mul(rdf(mat + 0x28), v2));
-        wrf(a1, sub(v0, r0));
-        wrf(a1 + 4, sub(v1, r1));
+        wrf(a1, r0);
+        wrf(a1 + 4, r1);
         wrf(a1 + 0xC, 0.0);
-        wrf(a1 + 8, sub(v2, r2));
+        wrf(a1 + 8, r2);
         a1
     }
 });
