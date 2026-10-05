@@ -9,6 +9,48 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>The largest families are the emptiest: what went into the workspace from the first two lifts, and what did not</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#largest-families-are-the-emptiest-2026-10-05"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#largest-families-are-the-emptiest-2026-10-05</id>
+    <published>2026-10-05T00:00:00Z</published>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <summary>Two lanes have now lifted families of verified functions into generic, portable Rust: the leaderboard class (3,195 verified rewrites) and four more families (2,392). The coordinator reviewed both trees today and moved two crates into the workspace. Three families were left out, and the reason changes how lift targets are chosen.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Two lanes have now lifted families of verified functions into generic, portable Rust: the leaderboard class (3,195 verified rewrites) and four more families (2,392). The coordinator reviewed both trees today and moved two crates into the workspace. Three families were left out, and the reason changes how lift targets are chosen.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Family&lt;/th&gt;&lt;th&gt;Verified functions behind it&lt;/th&gt;&lt;th&gt;What the lifted code holds&lt;/th&gt;&lt;th&gt;Decision&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Leaderboard class: six table lookups, a probe, a row collector&lt;/td&gt;&lt;td&gt;3,195&lt;/td&gt;&lt;td&gt;Eight generic functions with loops, comparisons and a result map each, and one descriptor per leaderboard. Behaviour.&lt;/td&gt;&lt;td&gt;In the workspace as &lt;code&gt;crates/lf-leaderboard&lt;/code&gt;. Verified: 13 host tests pass; the pipeline built and tested it on Windows, Linux and macOS.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Script native handlers&lt;/td&gt;&lt;td&gt;2,162&lt;/td&gt;&lt;td&gt;Four short forwarding functions and a table: per native its name, its hash where known, how many script words it forwards, which of them are booleans, and how the answer is returned. Data, and useful data: it is the script machine's interface to the engine.&lt;/td&gt;&lt;td&gt;In the workspace as &lt;code&gt;crates/lf-script-natives&lt;/code&gt;, described as a dispatch table and not as lifted behaviour. Verified: 6 host tests pass.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Timer callback registrations&lt;/td&gt;&lt;td&gt;81&lt;/td&gt;&lt;td rowspan="3"&gt;One function that makes one call through a trait, and a table of a name and an index per member. Most names are fragments of addresses, because nobody has named the things being registered. Nothing else.&lt;/td&gt;&lt;td rowspan="3"&gt;Not brought in and not counted as lifted. Each original passes one address to a registrar; the address is the whole content, and the lifted form replaces it with an index that means nothing yet. These are tables waiting for names.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Asset slot registrations&lt;/td&gt;&lt;td&gt;80&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Stored ratio refreshes&lt;/td&gt;&lt;td&gt;69&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;Why it happened&lt;/h3&gt;
+&lt;p&gt;The coordinator's brief for the second lift said to take the largest groups of same-shaped functions, in order of size. A group is large when the compiler stamped out one tiny routine hundreds of times, and the routines stamped out most often are start-up registrations and forwarders. So choosing by member count selects for the functions with the least in them. The lane did what it was asked, well, and its report said plainly where each crate's owner was unknown. The count it produced, "5,587 verified functions covered by lifted code", was true by its own definition and overstated what a port gains by at least those 230.&lt;/p&gt;
+&lt;h3&gt;What a better target looks like&lt;/h3&gt;
+&lt;p&gt;A class whose every method is verified: it has behaviour, it has a boundary the game itself drew, and nothing is missing in the middle. A census by class name (the part of a function's name before the last scope separator) gives, today:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Measure&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Game functions with a class-qualified name&lt;/td&gt;&lt;td&gt;About 9,800 of 37,413&lt;/td&gt;&lt;td&gt;Verified (census script over the inventory, the naming lanes and the verified index)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Classes with four or more named methods, all verified&lt;/td&gt;&lt;td&gt;21 classes, 127 functions, 16,600 bytes, outside the leaderboard family: three audio voice classes, several animation channel decoders, a streaming device, a few task classes&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Classes with 70% or more of their bytes verified but not all&lt;/td&gt;&lt;td&gt;467 classes, missing 1,327 functions and 60,000 bytes between them&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;What "all verified" leaves out&lt;/td&gt;&lt;td&gt;Methods nobody has named yet are invisible to the census. A class counted as complete may have virtual functions that are still anonymous.&lt;/td&gt;&lt;td&gt;Known limit&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;Decisions&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Lift targets are classes verified in full, not the largest shape groups. The animation channel decoders are first: 14 related classes, 100 named methods, 55 verified.&lt;/li&gt;
+&lt;li&gt;Production lanes take functions in address order, so a class is finished only by accident. A new kind of lane takes the missing methods of named classes, with the verified methods of the same classes named as the place to start. The first one has 42 methods of the animation channel classes.&lt;/li&gt;
+&lt;li&gt;A lifted function counts as lifted only if behaviour is in it. A family whose members differ only in an address is recorded as a table, and reported separately.&lt;/li&gt;
+&lt;li&gt;Both crates say in their own documentation that the lane's differential run against the verified rewrites has not been repeated by the pipeline. The test crates are large generated files and are still to come.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Follow-up on the 144 withdrawn rewrites&lt;/h3&gt;
+&lt;p&gt;The entry "Verified, and wrong" recorded 144 rewrites of the leaderboard row collector that compared a length unsigned. A re-run lane has re-proven all 144 with the signed comparison. Its contracts script sixteen answers for the length helper, ten of them negative or edge values, and bias the other scripted answers so that those lengths reach the comparison; the unsigned mistake, run as a wrong version, fails on every one of the 144. They are back in the verified count. The same lane found the blind spot next door in the other direction: a neighbouring function of the family compares a count unsigned, its contracts script counts from 0 to 16 only, and a rewrite that compared signed would pass. That family and the 253 row-collector rewrites that were right but had the same blind proof are queued for the same treatment. Correction to the earlier entry: it gave the number of signed members as 269; by the verified index it is 253 with the family's standard name, plus a dozen named differently.&lt;/p&gt;
+&lt;p&gt;To reproduce the census: group the game's functions by the class part of their names and compare each group with the verified index.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Float operand order needs a branch, not a black box</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b554"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b554</id>
@@ -1137,41 +1179,5 @@
 &lt;p&gt;Parse the relocation directory with the standard library recipe, then test one known operand two ways: membership of its address in the parsed set, and a short checker run with the pointed-to game word forced to two different values. If the run tracks the forced values, the operand is relocated whatever the script says.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The wrong triage looked authoritative: exact counts, consistent failures, and matching precedent from sibling lanes. Two further hours of analysis nearly followed it. What broke the spell was not more analysis but one small experiment whose result the wrong theory could not produce. The lane also learned, twice, that snapshot and store positions must be derived from an exact stack-depth trace rather than adjusted by hand: both mid-lane failures were off-by-one-slot mapping slips, found by narrowing snapshots to single words.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a batch of interior and streaming functions</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-92"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-92</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One hundred and fifty consecutive unnamed functions turned out to be two clean clusters, interior rooms and portals followed by IPL and streaming-device code, and caller context proved to be the strongest naming signal after verified callee names.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred and fifty consecutive unnamed functions turned out to be two clean clusters, interior rooms and portals followed by IPL and streaming-device code, and caller context proved to be the strongest naming signal after verified callee names.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Name each of one hundred and fifty consecutive unnamed game functions in address order, with a confidence per name and evidence for later tooling. No rewriting, only names.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into two clusters: about sixty functions around interior instances (rooms, portals, room states, bounds, placement, including one class's virtual slots twenty to twenty-seven) and about ninety around the IPL store and the streaming device (slot requests, a quadtree index, stream entries, loader callbacks).&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One hundred and thirty-one functions were named: thirteen high confidence, one hundred and eighteen medium, nineteen left empty at low. Useful fixed points included pool-creation strings, the wanted-bit loop issuing IPL request and remove calls, a quadtree family of six, and cost-subtract twins differing only in which totals they touch.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A whole-text call scan found callers for one hundred and seventeen of the one hundred and fifty functions, and reading those call sites upgraded six names from low to medium, including two flag bits whose tester callers (portal tracker, vertex lookup, teardown, config load) revealed their purpose.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The per-model room definitions live behind a global table indexed by model number, with room arrays in fixed strides and per-instance state arrays; the stream entries follow the twenty-four byte layout the verified rewrites document.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Single-bit flag tests stay unnamed unless their callers reveal the bit's meaning; eleven bits were tested and only three earned names.&lt;/li&gt;
-&lt;li&gt;Jump aliases that overlap the next function's padding get the target's name plus a thunk suffix at the same confidence, so the alias is findable without inventing a distinction.&lt;/li&gt;
-&lt;li&gt;Functions whose core callees sit in the encrypted region stay unnamed; the archive-handling tail of this batch is in that state.&lt;/li&gt;
-&lt;li&gt;Caller attribution must check the current batch's own ranges first, because nearest-named-below matching points at the wrong function whenever the true caller is itself unnamed.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Build one evidence table for the whole batch first (callee names from the merged symbol sources, referenced strings, constants, memory access shapes), validate the address mapping against known jump targets, dump the small functions fully, then run a whole-text call scan and read the enclosing function of each call site before naming. Keep the names file valid after every group of twenty-five.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two shared stubs used everywhere as allocate and free carry unrelated native names in the database, and several helpers decode as garbage because they sit in the encrypted region; both had to be identified by usage shape rather than by name.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The inventory overruns one function's size into padding and overlaps two jump-alias entries with their targets, and misses one self-recursive call, so entry sizes and callee counts needed independent checks.&lt;/p&gt;
-&lt;table role="table"&gt;
-&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Outcome&lt;/th&gt;&lt;th role="columnheader"&gt;Count&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody role="rowgroup"&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Named, high confidence&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;13&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Named, medium confidence&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;118&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Left empty, low confidence&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;19&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;</content>
   </entry>
 </feed>

@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Devlog: the largest families are the emptiest",
+    "commit": null,
+    "summary": "What the review of the first two lifts found: two crates went into the workspace, three families were left out, and lift targets are now chosen by class instead of by group size.",
+    "changes": [
+      "New devlog entry. Choosing the largest groups of same-shaped functions as lift targets selects start-up registrations and forwarders, whose lifted form holds no behaviour. 230 functions lifted that way are not counted as lifted.",
+      "A census by class name finds 21 classes verified in full outside the leaderboard family and 467 that are 70% or more verified. Lift targets are now whole classes, and a new kind of production lane finishes a class's missing methods.",
+      "The entry also records that all 144 withdrawn row-collector rewrites were re-proven with the signed comparison, and corrects the earlier entry's count of signed members."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 2 files from lanes (293 unverified rewrites, 29 in review)",
     "commit": "d6389d6a0e2e249de55bf3da13acf2a6d21e8edc",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
