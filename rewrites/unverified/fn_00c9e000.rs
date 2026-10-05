@@ -14,9 +14,9 @@
 /// mask global, of which lanes 0-2 feed two lane shuffles (all-lane-2 and
 /// all-lane-1) crossed with the triple at `r1+0x20` and the pair at
 /// `r1+0x28`, `r1+0x2c`. Two normalization guards follow the original's flag
-/// tests exactly: a zero squared length normalizes to zero instead of
-/// dividing, and the second scale is recomputed only when its squared length
-/// differs from the running value (an unordered comparison recomputes).
+/// tests exactly: each scale is zero when its squared length compares
+/// equal to zero (an unordered comparison takes the reciprocal-root path
+/// instead).
 /// Twelve words are stored into `r1` at `+0x00`..`+0x2c`. The value left in
 /// `eax` is `r2` with bits 8-15 replaced by the flags byte the second
 /// comparison leaves in `ah` (`0x47` unordered, `0x02` above, `0x03` below,
@@ -152,9 +152,10 @@ lf_checker_rt::export!(thiscall, rw_00C9E000(this: u32, arg1: u32, arg2: u32) ->
         r6 = sub(r6, j0);
         m7 = sub(m7, mul(x5, l2));
 
-        // Second guard: recompute the scale unless it already equals.
+        // Second guard: the scale is zero for a zero squared length (the
+        // comparison is against a zeroed register, not the running value).
         let sq = add(add(mul(l4, l4), mul(r6, r6)), mul(m7, m7));
-        let x5n = if sq == x5 { x5 } else { div(ONE, sqrt(sq)) };
+        let x5n = if sq == 0.0 { 0.0 } else { div(ONE, sqrt(sq)) };
         r6 = mul(r6, x5n);
         m7 = mul(m7, x5n);
         let f0 = mul(l0, r6);
@@ -179,11 +180,11 @@ lf_checker_rt::export!(thiscall, rw_00C9E000(this: u32, arg1: u32, arg2: u32) ->
         wrf(r1 + 0x28, l0);
         wrf(r1 + 0x2C, t0);
         // The second comparison's flags byte survives in ah over the return.
-        let ah: u32 = if sq.is_nan() || x5.is_nan() {
+        let ah: u32 = if sq.is_nan() {
             0x47
-        } else if sq > x5 {
+        } else if sq > 0.0 {
             0x02
-        } else if sq < x5 {
+        } else if sq < 0.0 {
             0x03
         } else {
             0x42

@@ -51,7 +51,7 @@ lf_checker_rt::export!(thiscall, rw_00a75a40(this: u32, arg1: u32) -> u32 {
         const D_PRED_A: u32 = 4;
         const D_PRED_B: u32 = 5;
         const D_KIND: u32 = 6;
-        const D_CTX: u32 = 27;
+        const D_CTX: u32 = 7;
         const D_VAL_A: u32 = 8;
         const D_VAL_B: u32 = 9;
         const D_VAL_C: u32 = 10;
@@ -204,36 +204,37 @@ lf_checker_rt::export!(thiscall, rw_00a75a40(this: u32, arg1: u32) -> u32 {
                             wg32(G_GEN, g);
                             return g;
                         }
-                        return s2;
+                        // The xor leaves its result in AL: low byte is x.
+                        return (s2 & 0xffff_ff00) | x as u32;
                     }
                     return s2;
                 }
-                // Compare block: stale EAX is the context pointer here.
-                let mut stale = ctx;
+                // Compare block: stale EAX is the context pointer here, but
+                // the xor tests replace AL before the early exits below.
                 let blo = rd8(ctx + 0x27dc);
-                if (rd8(ctx + 0x27de) ^ blo) > 0x7f
-                    && (rd8(ctx + 0x27df) ^ blo) <= 0x7f
-                    && gen_old != gen_new
-                {
-                    wg32(G_GEN, gen_new);
-                    let s3: u32 = lf_checker_rt::callee_thiscall!(D_VAL_C, u32, arg1);
-                    stale = s3;
-                    if (s3 as u8) != 0 {
-                        let r: u32 =
-                            lf_checker_rt::callee_thiscall!(D_RUN, u32, arg1, 0u32, 0xffff_ffffu32);
-                        stale = r;
-                    } else {
-                        let n: u32 = lf_checker_rt::callee_thiscall!(D_ALT, u32, arg1);
-                        stale = n;
-                        if (n as u8) != 0 {
-                            let r: u32 = lf_checker_rt::callee_thiscall!(
-                                D_RUN, u32, arg1, 1u32, 0xffff_ffffu32
-                            );
-                            stale = r;
-                        }
-                    }
+                let x1 = rd8(ctx + 0x27de) ^ blo;
+                if x1 <= 0x7f {
+                    return (ctx & 0xffff_ff00) | x1 as u32;
                 }
-                return stale;
+                let x2 = rd8(ctx + 0x27df) ^ blo;
+                if x2 > 0x7f || gen_old == gen_new {
+                    return (ctx & 0xffff_ff00) | x2 as u32;
+                }
+                wg32(G_GEN, gen_new);
+                let s3: u32 = lf_checker_rt::callee_thiscall!(D_VAL_C, u32, arg1);
+                if (s3 as u8) != 0 {
+                    let r: u32 =
+                        lf_checker_rt::callee_thiscall!(D_RUN, u32, arg1, 0u32, 0xffff_ffffu32);
+                    return r;
+                }
+                let n: u32 = lf_checker_rt::callee_thiscall!(D_ALT, u32, arg1);
+                if (n as u8) != 0 {
+                    let r: u32 = lf_checker_rt::callee_thiscall!(
+                        D_RUN, u32, arg1, 1u32, 0xffff_ffffu32
+                    );
+                    return r;
+                }
+                n
             }
         }
         // Mode-2 query block.
