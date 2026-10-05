@@ -27,8 +27,8 @@
 /// `(A17*fB'+acc) + A13*fA'` per pass in that order.
 ///
 /// The channel is then finished: `p5 = acc1*K_OUT`, `p3 = acc2*K_OUT`,
-/// `[D-0x20] = p5`, `[D] = p3/p5` unless `-p5` is below zero or NaN (then
-/// `K_FALLBACK`), and `[S-0x84..-0x7c] = E[0..2]*[D] + T[0..2]`,
+/// `[D-0x20] = p5`, `[D] = K_FALLBACK` unless `-p5` is below zero or NaN
+/// (then `p3/p5`), and `[S-0x84..-0x7c] = E[0..2]*[D] + T[0..2]`,
 /// `[S-0x78] = 0`. Returns 8. Float operation order is the original's
 /// (SSE scalar/packed, lane-exact); comparisons reproduce `comiss` NaN
 /// behaviour (unordered takes `jbe`/`jb`, not `ja`).
@@ -162,7 +162,8 @@ lf_checker_rt::export!(thiscall, rw_0096fb80(this: u32) -> u32 {
                     let r = core::hint::black_box(q).sqrt();
                     let k = div(one, r);
                     let blend0 = blend4(
-                        [mul(v6, k).to_bits(), mul(v5, k).to_bits(), mul(k, 0.0).to_bits(), 0],
+                        // Original order: k*v6 here (but v5*k below).
+                        [mul(k, v6).to_bits(), mul(v5, k).to_bits(), mul(k, 0.0).to_bits(), 0],
                         [m2.to_bits(), m1.to_bits(), m0.to_bits(), 0],
                         [mask0, mask1, mask2, mask3],
                     );
@@ -222,7 +223,8 @@ lf_checker_rt::export!(thiscall, rw_0096fb80(this: u32) -> u32 {
             let p3 = mul(acc2, k_out);
             let n5 = mul(p5, k_neg);
             wrf(d.wrapping_sub(0x20), p5);
-            let w3 = if n5 >= 0.0 { div(p3, p5) } else { k_fallback };
+            // `comiss n5, 0; jb div`: below-or-NaN divides, else fallback.
+            let w3 = if n5 >= 0.0 { k_fallback } else { div(p3, p5) };
             wrf(d, w3);
             let e0 = add(mul(rdf(e.wrapping_sub(8)), w3), t0);
             let e1 = add(mul(rdf(e.wrapping_sub(4)), w3), t1);

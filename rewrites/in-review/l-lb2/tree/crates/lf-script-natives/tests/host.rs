@@ -47,9 +47,9 @@ fn descriptors_are_sane() {
         }
         let _ = want;
     }
-    assert_eq!(DISCARD_DESCS.len(), 1476);
-    assert_eq!(MASKED_DESCS.len(), 482);
-    assert_eq!(FULL_DESCS.len(), 197);
+    assert_eq!(DISCARD_DESCS.len(), 1461);
+    assert_eq!(MASKED_DESCS.len(), 494);
+    assert_eq!(FULL_DESCS.len(), 207);
 }
 
 #[test]

@@ -3,8 +3,6 @@
 // cdecl arities 0..=17 on slots 0..=2, one stdcall word on slot 1, and a
 // thiscall object-plus-word on slot 1.
 
-use crate::rt::record;
-
 pub(super) extern "cdecl" fn c0_0() -> u32 {
     record(0, &[])
 }

@@ -46,7 +46,13 @@ lf_checker_rt::export!(thiscall, rw_00c0a920(this: u32, entry: u32, owner: u32) 
         let _: u32 = lf_checker_rt::callee_cdecl!(RELEASE, u32, obj, 0);
         let obj = (entry.wrapping_add(OBJ) as *const u32).read_unaligned();
         if obj != 0 {
-            let _: u32 = lf_checker_rt::callee_thiscall!(TEARDOWN, u32, obj, 1);
+            // Through the object's own table, like the original: slot 0 holds
+            // the planted recorder stub, so both sides land on the same one.
+            let vtable = (obj as *const u32).read_unaligned();
+            let target = (vtable as *const u32).read_unaligned();
+            let teardown: extern "thiscall" fn(u32, u32) -> u32 =
+                core::mem::transmute(target as usize);
+            let _: u32 = teardown(obj, 1);
         }
         (entry.wrapping_add(OBJ) as *mut u32).write_unaligned(0);
         if (entry.wrapping_add(MARK) as *const u8).read() != 0 {

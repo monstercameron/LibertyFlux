@@ -57,6 +57,6 @@ lf_checker_rt::export!(thiscall, rw_00c08ab0(this: u32, a0: u32, a1: u32) -> u32
             let _: u32 = lf_checker_rt::callee_cdecl!(SINK, u32, h, a0, a1);
             let _: u32 = lf_checker_rt::callee_cdecl!(RELEASE, u32, h);
         }
-        lf_checker_rt::callee_cdecl!(COOKIE, u32)
+        lf_checker_rt::callee_cdecl!(COOKIE, u32,)
     }
 });
