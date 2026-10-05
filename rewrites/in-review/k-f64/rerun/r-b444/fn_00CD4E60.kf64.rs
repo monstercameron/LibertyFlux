@@ -153,9 +153,9 @@ lf_checker_rt::export!(thiscall, rw_00CD4E60(this: u32, a0: u32) -> u32 {
             // low doubles compare, the upper halves do not. The double
             // answer arrives as the callee's u64 return and is narrowed
             // with the same single cvtsd2ss the original uses.
-            let (a0, a1) = lo_hi(cvtss2sd_bits(neg(x3).to_bits()));
-            let (b0, b1) = lo_hi(cvtss2sd_bits(x2.to_bits()));
-            let ans: u64 = lf_checker_rt::callee_cdecl!(6, u64, a0, a1, b0, b1);
+            let (d0lo, d0hi) = lo_hi(cvtss2sd_bits(neg(x3).to_bits()));
+            let (d1lo, d1hi) = lo_hi(cvtss2sd_bits(x2.to_bits()));
+            let ans: u64 = lf_checker_rt::callee_cdecl!(6, u64, d0lo, d0hi, d1lo, d1hi);
             let narrowed = core::hint::black_box(f64::from_bits(ans)) as f32;
             let mixed = add(fa, core::hint::black_box(narrowed));
             let fb = f32::from_bits(lf_checker_rt::callee_thiscall!(7, u32, 0, mixed.to_bits()));

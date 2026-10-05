@@ -56,7 +56,7 @@ export!(thiscall, rw_00a14bc0(this: u32, ent: u32, out: u32) -> u32 {
             K_B,
             0
         );
-        let got = f32::from_bits(slot[10]);
+        let got = f32::from_bits(slot[0]);
         let k = f32::from_bits(*global::<u32>(ADD_ADDR));
         let r = core::hint::black_box(got) + core::hint::black_box(k);
         let lim = f32::from_bits(f2);

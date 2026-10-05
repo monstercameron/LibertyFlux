@@ -164,9 +164,10 @@ lf_checker_rt::export!(cdecl, rw_00b6fed0(a0: u32, a1: u32, a2: u32, a3: u32) ->
                 return build_full(a0, 0xeb1904, a2, handle);
             }
         }
-        // From here a0 is the working object.
-        if rd8(a0.wrapping_add(BUSY0)) == 0
-            && rd8(a0.wrapping_add(BUSY1)) == 0
+        // From here a0 is the working object. Note the shape: a set busy0
+        // skips the busy1 test (it does not leave); only a clear busy0 with
+        // a set busy1, or a vehicle mismatch, leaves for the seat check.
+        if (rd8(a0.wrapping_add(BUSY0)) != 0 || rd8(a0.wrapping_add(BUSY1)) == 0)
             && rd32(a0.wrapping_add(CUR_VEH)) == a1
         {
             if rd32(a1.wrapping_add(VEH_STATE)) == 0 {
