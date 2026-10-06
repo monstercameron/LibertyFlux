@@ -314,7 +314,7 @@ mod x86 {
         fx.plant_entry(3, 0x4444_4444, 5, 3, 0);
         let base_key = 0x1000;
         fx.obj.w32(OBJ_BASE, base_key);
-        let mut run = |entry: Option<usize>, flags: u16, catch: &mut u32| {
+        let mut run = |fx: &mut Fixture, entry: Option<usize>, flags: u16, catch: &mut u32| {
             if let Some(idx) = entry {
                 let base = idx * ENTRY;
                 fx.entries.w16(base + ENT_FLAGS, flags);
@@ -350,17 +350,17 @@ mod x86 {
             }
             cases += 1;
         };
-        run(None, 0, &mut caught);
+        run(&mut fx, None, 0, &mut caught);
         for idx in 0..4 {
             for &flags in &flag_cases() {
-                run(Some(idx), flags, &mut caught);
+                run(&mut fx, Some(idx), flags, &mut caught);
             }
         }
         // Size words around the mask, with the present bit clear.
         for &size in &[0u32, 1, 2, 3, 4, 5, 0x8000_0000, 0xFFFF_FFFC, 0xFFFF_FFFF] {
             fx.entries.w32(ENT_SIZE, size);
             fx.entries.w16(ENT_FLAGS, 0);
-            run(Some(0), 0, &mut caught);
+            run(&mut fx, Some(0), 0, &mut caught);
         }
         assert!(caught > 0, "wrong active never caught ({cases} cases)");
     }
@@ -376,7 +376,7 @@ mod x86 {
         fx.plant_entry(1, 5, 6, 7, 8);
         let base_key = rng.u32();
         fx.obj.w32(OBJ_BASE, base_key);
-        let mut run = |entry: Option<usize>, shifted: u32, catch: &mut u32| {
+        let mut run = |fx: &mut Fixture, rng: &mut Rng, entry: Option<usize>, shifted: u32, catch: &mut u32| {
             let addr = entry.map(|i| fx.entry_addr(i)).unwrap_or(0);
             rt::set_script(&[
                 (0, StubKind::Thiscall2, vec![addr]),
@@ -415,13 +415,13 @@ mod x86 {
             }
             cases += 1;
         };
-        run(None, 0, &mut caught);
+        run(&mut fx, &mut rng, None, 0, &mut caught);
         for &shifted in U32_EDGE {
-            run(Some(0), shifted, &mut caught);
-            run(Some(1), shifted, &mut caught);
+            run(&mut fx, &mut rng, Some(0), shifted, &mut caught);
+            run(&mut fx, &mut rng, Some(1), shifted, &mut caught);
         }
         for _ in 0..32 {
-            run(Some(rng.below(2) as usize), rng.u32(), &mut caught);
+            run(&mut fx, &mut rng, Some(rng.below(2) as usize), rng.u32(), &mut caught);
         }
         assert!(caught > 0, "wrong quarter size never caught ({cases} cases)");
     }
@@ -481,7 +481,7 @@ mod x86 {
         fx.plant_entry(1, 0x1234_5678, 6, 0, 0);
         let base_key = rng.u32();
         fx.obj.w32(OBJ_BASE, base_key);
-        let mut run = |entry: Option<usize>, flags: u16, catch: &mut u32| {
+        let mut run = |fx: &mut Fixture, entry: Option<usize>, flags: u16, catch: &mut u32| {
             if let Some(idx) = entry {
                 fx.entries.w16(idx * ENTRY + ENT_FLAGS, flags);
             }
@@ -515,10 +515,10 @@ mod x86 {
             }
             cases += 1;
         };
-        run(None, 0, &mut caught);
+        run(&mut fx, None, 0, &mut caught);
         for idx in [0, 1] {
             for &flags in &flag_cases() {
-                run(Some(idx), flags, &mut caught);
+                run(&mut fx, Some(idx), flags, &mut caught);
             }
         }
         assert!(caught > 0, "wrong gated word never caught ({cases} cases)");
@@ -577,7 +577,7 @@ mod x86 {
         fx.fill_tables(&tables);
         let base_key = rng.u32();
         fx.obj.w32(OBJ_BASE, base_key);
-        let mut run = |entry: Option<usize>, data: u32, catch: &mut u32| {
+        let mut run = |fx: &mut Fixture, rng: &mut Rng, entry: Option<usize>, data: u32, catch: &mut u32| {
             let addr = entry.map(|i| fx.entry_addr(i)).unwrap_or(0);
             rt::set_script(&[
                 (0, StubKind::Thiscall2, vec![addr]),
@@ -622,16 +622,16 @@ mod x86 {
             }
             cases += 1;
         };
-        run(None, 0, &mut caught);
+        run(&mut fx, &mut rng, None, 0, &mut caught);
         for i in 0..6 {
             fx.plant_entry(i, rng.u32(), (i * 40) as u8, rng.u32(), rng.u32() as u16);
         }
         for &data in U32_EDGE {
-            run(Some(0), data, &mut caught);
-            run(Some(5), data, &mut caught);
+            run(&mut fx, &mut rng, Some(0), data, &mut caught);
+            run(&mut fx, &mut rng, Some(5), data, &mut caught);
         }
         for _ in 0..32 {
-            run(Some(rng.below(6) as usize), rng.u32(), &mut caught);
+            run(&mut fx, &mut rng, Some(rng.below(6) as usize), rng.u32(), &mut caught);
         }
         assert!(caught > 0, "wrong data span never caught ({cases} cases)");
     }
@@ -673,7 +673,7 @@ mod x86 {
             sink_arg: 0xDEAD_BEEF,
         };
         fx.fill_tables(&tables);
-        let mut run = |a0: u32, close_first: bool, a1: u32, a2: u32, catch: &mut u32| {
+        let mut run = |fx: &mut Fixture, rng: &mut Rng, a0: u32, close_first: bool, a1: u32, a2: u32, catch: &mut u32| {
             fx.obj.w8(OBJ_FLAG, u8::from(close_first));
             rt::set_script(&[]);
             fx.install_globals();
@@ -719,14 +719,14 @@ mod x86 {
         for &a0 in &[0u32, 1, 2, 3] {
             for &close in &[false, true] {
                 // Carry and no-carry cursor pairs.
-                run(a0, close, 0, 0, &mut caught);
-                run(a0, close, 1, 0, &mut caught);
-                run(a0, close, 0xFFFF_FFFF, 0xFFFF_FFFF, &mut caught);
-                run(a0, close, rng.u32(), rng.u32(), &mut caught);
+                run(&mut fx, &mut rng, a0, close, 0, 0, &mut caught);
+                run(&mut fx, &mut rng, a0, close, 1, 0, &mut caught);
+                run(&mut fx, &mut rng, a0, close, 0xFFFF_FFFF, 0xFFFF_FFFF, &mut caught);
+                run(&mut fx, &mut rng, a0, close, rng.u32(), rng.u32(), &mut caught);
             }
         }
         for _ in 0..16 {
-            run(rng.below(4), rng.u32() & 1 != 0, rng.u32(), rng.u32(), &mut caught);
+            run(&mut fx, &mut rng, rng.below(4), rng.u32() & 1 != 0, rng.u32(), rng.u32(), &mut caught);
         }
         assert!(caught > 0, "wrong post span never caught ({cases} cases)");
     }

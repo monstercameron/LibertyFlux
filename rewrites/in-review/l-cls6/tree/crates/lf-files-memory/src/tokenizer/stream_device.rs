@@ -112,8 +112,6 @@ const SIZE_MASK: u32 = 0xFFFF_FFFC;
 const PRESENT_BIT: u32 = 11;
 /// Flag bit gating the first-word query.
 const GATE_BIT: u32 = 13;
-/// Byte stride of one entry in the entry table.
-const ENTRY_STRIDE: i32 = 24;
 /// Bit shift scaling a data difference to a byte offset.
 const OFFSET_SHIFT: u32 = 11;
 
