@@ -33075,6 +33075,15 @@
   "lane": "r-s116"
  },
  {
+  "address": "0x005B3C90",
+  "name": "sample_palette_block",
+  "kind": "function",
+  "file": "functions/fn_005b3c90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b580"
+ },
+ {
   "address": "0x005B4690",
   "name": "fixed_object_forward",
   "kind": "function",
@@ -34144,6 +34153,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-02"
+ },
+ {
+  "address": "0x005E8820",
+  "name": "CCutsceneObject::vf24",
+  "kind": "function",
+  "file": "functions/fn_005e8820.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
  },
  {
   "address": "0x005FBC60",
@@ -49109,8 +49127,8 @@
   "kind": "function",
   "file": "functions/fn_008dca40.rs",
   "trials": 1200,
-  "checker": "version 5",
-  "lane": "r-s431"
+  "checker": "version 6",
+  "lane": "a-S07"
  },
  {
   "address": "0x008DCAA0",
@@ -56948,8 +56966,8 @@
   "kind": "function",
   "file": "functions/fn_009a2690.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-b79"
+  "checker": "version 6",
+  "lane": "a-S07"
  },
  {
   "address": "0x009A2970",
@@ -63401,8 +63419,8 @@
   "kind": "function",
   "file": "functions/fn_009f6930.rs",
   "trials": 1200,
-  "checker": "version 4",
-  "lane": "r-b308"
+  "checker": "version 6",
+  "lane": "a-S07"
  },
  {
   "address": "0x009F83D0",
@@ -63725,8 +63743,8 @@
   "kind": "function",
   "file": "functions/fn_009fa820.rs",
   "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-s236"
+  "checker": "version 6",
+  "lane": "a-S07"
  },
  {
   "address": "0x009FA890",
@@ -64022,8 +64040,8 @@
   "kind": "function",
   "file": "functions/fn_009fc880.rs",
   "trials": 1200,
-  "checker": "version 4",
-  "lane": "r-b312"
+  "checker": "version 6",
+  "lane": "a-S07"
  },
  {
   "address": "0x009FD120",
@@ -71123,8 +71141,8 @@
   "kind": "function",
   "file": "functions/fn_00a8c950.rs",
   "trials": 1000,
-  "checker": "version 5",
-  "lane": "r-s466"
+  "checker": "version 6",
+  "lane": "a-S07"
  },
  {
   "address": "0x00A8CD90",
@@ -71384,8 +71402,8 @@
   "kind": "function",
   "file": "functions/fn_00a8f340.rs",
   "trials": 1000,
-  "checker": "version 5",
-  "lane": "r-s466"
+  "checker": "version 6",
+  "lane": "a-S07"
  },
  {
   "address": "0x00A8F640",
@@ -77243,8 +77261,8 @@
   "kind": "function",
   "file": "functions/fn_00b0e410.rs",
   "trials": 1200,
-  "checker": "version 4",
-  "lane": "r-b309"
+  "checker": "version 6",
+  "lane": "a-S07"
  },
  {
   "address": "0x00B0E930",
@@ -110988,6 +111006,15 @@
   "lane": "r-s185"
  },
  {
+  "address": "0x00C659C0",
+  "name": "CCutsceneObject::get_bound_radius",
+  "kind": "function",
+  "file": "functions/fn_00c659c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
+ },
+ {
   "address": "0x00C659D0",
   "name": "CCutsceneObject::vf26",
   "kind": "function",
@@ -110995,6 +111022,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b274"
+ },
+ {
+  "address": "0x00C65E90",
+  "name": "CCutsceneObject::get_max_bounds",
+  "kind": "function",
+  "file": "functions/fn_00c65e90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
  },
  {
   "address": "0x00C65EA0",
@@ -111254,8 +111290,8 @@
   "kind": "function",
   "file": "functions/fn_00c68710.rs",
   "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-s166"
+  "checker": "version 6",
+  "lane": "a-S07"
  },
  {
   "address": "0x00C68C50",
@@ -111326,8 +111362,8 @@
   "kind": "function",
   "file": "functions/fn_00c69250.rs",
   "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-s166"
+  "checker": "version 6",
+  "lane": "a-S07"
  },
  {
   "address": "0x00C69360",
@@ -116798,8 +116834,8 @@
   "kind": "function",
   "file": "functions/fn_00cd5480.rs",
   "trials": 1200,
-  "checker": "version 5",
-  "lane": "r-b444"
+  "checker": "version 6",
+  "lane": "a-S07"
  },
  {
   "address": "0x00CD56E0",
@@ -117459,6 +117495,15 @@
   "lane": "r-s335"
  },
  {
+  "address": "0x00CF87E0",
+  "name": "CTaskComplexClimbLadder::vf18",
+  "kind": "function",
+  "file": "functions/fn_00cf87e0.rs",
+  "trials": 1200,
+  "checker": "version 4",
+  "lane": "r-b336"
+ },
+ {
   "address": "0x00CF89A0",
   "name": "ladder_climb_anim_request",
   "kind": "function",
@@ -117518,8 +117563,8 @@
   "kind": "function",
   "file": "functions/fn_00cf94e0.rs",
   "trials": 1200,
-  "checker": "version 5",
-  "lane": "r-b515"
+  "checker": "version 6",
+  "lane": "a-S07"
  },
  {
   "address": "0x00CF96B0",
@@ -124362,6 +124407,24 @@
   "lane": "r-b158"
  },
  {
+  "address": "0x00DD9220",
+  "name": "UIBasicClip::vf142",
+  "kind": "function",
+  "file": "functions/fn_00dd9220.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
+ },
+ {
+  "address": "0x00DD9260",
+  "name": "UIBasicClip::vf139",
+  "kind": "function",
+  "file": "functions/fn_00dd9260.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
+ },
+ {
   "address": "0x00DD9270",
   "name": "UIBasicClip::vf140",
   "kind": "function",
@@ -124369,6 +124432,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s146"
+ },
+ {
+  "address": "0x00DD9280",
+  "name": "UIBasicClip::vf143",
+  "kind": "function",
+  "file": "functions/fn_00dd9280.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
+ },
+ {
+  "address": "0x00DD9290",
+  "name": "UIBasicClip::vf148",
+  "kind": "function",
+  "file": "functions/fn_00dd9290.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
  },
  {
   "address": "0x00DD92A0",
@@ -126113,8 +126194,8 @@
   "kind": "function",
   "file": "functions/fn_00e45020.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s120"
+  "checker": "version 6",
+  "lane": "a-S07"
  },
  {
   "address": "0x00E450B0",
@@ -126131,8 +126212,8 @@
   "kind": "function",
   "file": "functions/fn_00e450d0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s120"
+  "checker": "version 6",
+  "lane": "a-S07"
  },
  {
   "address": "0x00E45160",

@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Lift tests: a signalling not-a-number told the emulator from real hardware",
+    "title": "Rewrites: 9 more functions pass the checker (15923 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "9 rewrites added under rewrites/verified: 0 script native handlers and 9 other functions.",
+      "The tree now holds 15923 rewrites, 15904 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Lift tests: a signalling not-a-number told the emulator from real hardware",
+    "commit": "7da4bfae24ab0092e29f509fe991464ae918f96f",
     "summary": "The pipeline's 32-bit job failed on the tokenizer lift where the same tests had passed on the development machine. The difference is the processor: a real x86 one quiets a signalling not-a-number when a 64-bit value is loaded onto the float stack, and the emulator that runs 32-bit code on the ARM development machine does not.",
     "changes": [
       "crates/tools/lf-tokendiff: the test of the tokenizer's double read compared the rewrite's result and the lift's bit for bit. One of its inputs is a signalling not-a-number handed back by the stand-in callee on the float stack. On the pipeline's x86 runner the rewrite's side came back quieted and the lift's did not. The test now treats two not-a-numbers as equal, which is the lift method's stated rule; every other value is still compared bit for bit.",
