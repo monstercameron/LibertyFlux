@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Rust in progress: 24 files from lanes (228 unverified rewrites, 129 in review)",
+    "title": "Tooling: the tracked scan and results schema accept checker version 7",
     "commit": null,
+    "summary": "The scripts that rank checker versions and validate lane results know the new version, so proofs made on it are counted as the strongest.",
+    "changes": [
+      "scripts/coordinator/scan.py ranks version 7 above version 6, counts it among the modern versions and reads a lane's version 7 marker; the results schema accepts the outcome verified_v7; the scan's test covers it. 17 tests pass.",
+      "The production and queue briefs are at version b20: they describe the four new checker options, tell lanes to set strict: true in every new contract, and the queue of functions blocked by a checker gap, held since 03:05, takes its turn again."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Rust in progress: 24 files from lanes (228 unverified rewrites, 129 in review)",
+    "commit": "64e62740328d3ba9491058976c8829de96ace480",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 228 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
