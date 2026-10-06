@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Rewrites: 24 more functions pass the checker (16015 in total)",
+    "title": "Rust in progress: 26 files from lanes (242 unverified rewrites, 562 in review)",
     "commit": null,
+    "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
+    "changes": [
+      "rewrites/unverified holds 242 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
+      "rewrites/in-review holds 562 Rust files from 11 other lanes (checker changes, assembly, lifted code, tools), waiting for review before they move to their real place.",
+      "38 files were held back by the publication scan."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Rewrites: 24 more functions pass the checker (16015 in total)",
+    "commit": "7c0cab061458ef88d701fe3c6c2ead73ab943e4a",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "24 rewrites added under rewrites/verified: 0 script native handlers and 24 other functions.",

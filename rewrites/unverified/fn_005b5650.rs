@@ -19,11 +19,11 @@
 /// and out-of-range values); when a flag byte is set, a one-word query (callee
 /// 5, thiscall) replaces the result's low byte.
 ///
-/// TLS slot 0 points at a small array whose first word points at a block; a
-/// nonzero word at +0x8cc of that block takes the handle path (a two-word
-/// lookup, callee 6; null finishes through callee 8 with 0, otherwise a
-/// three-word thiscall, callee 7, whose answer goes to callee 8), while zero
-/// takes the emit path: a prepare thiscall (callee 10), a two-word call
+/// TLS slot 0 holds a block pointer; a nonzero word at +0x8cc of that block
+/// takes the handle path (a two-word lookup, callee 6; null finishes through
+/// callee 8 with 0, otherwise a three-word thiscall, callee 7, whose answer
+/// goes to callee 8), while zero takes the emit path below.
+/// The emit path runs a prepare thiscall (callee 10), a two-word call
 /// (callee 11), then four guarded vertex stores. Each store runs only when both
 /// a flag global and the arena cursor are nonzero; it appends a 0x24-byte
 /// vertex (two computed floats, zeros, -1.0, an (alpha << 24) | white colour,

@@ -4,9 +4,7 @@
 //! No assertions here: the coordinator runs the same binary on a real x86
 //! runner and compares dumps. Builds and prints a stub on other targets.
 
-use lf_x87_probe::emulation_details;
-#[cfg(target_arch = "x86")]
-use lf_x87_probe::{hex16, hex32, hex64, hex_f80};
+use lf_x87_probe::{emulation_details, hex16, hex32, hex64, hex_f80};
 
 #[cfg(target_arch = "x86")]
 use lf_x87_probe::{MXCSR_DEFAULT, MXCSR_FTZ, MXCSR_RC_SHIFT, PC_24, PC_53, PC_64};
