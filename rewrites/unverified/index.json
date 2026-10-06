@@ -312,6 +312,14 @@
   "reason": null
  },
  {
+  "address": "0x005EE990",
+  "name": "",
+  "file": "fn_005ee990.rs",
+  "lane": "r-b591",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x0061B150",
   "name": "net_session_desc_init",
   "file": "fn_0061b150.rs",
@@ -342,6 +350,86 @@
   "lane": "r-b314",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x0065AF00",
+  "name": "shader_bind_pass_arrays",
+  "file": "fn_0065af00.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065AF60",
+  "name": "shader_bind_single_pass",
+  "file": "fn_0065af60.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B0D0",
+  "name": "shader_register_named_pass",
+  "file": "fn_0065b0d0.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B170",
+  "name": "tls_free_entry_array",
+  "file": "fn_0065b170.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B1D0",
+  "name": "tls_alloc_pass_block",
+  "file": "fn_0065b1d0.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B240",
+  "name": "pass_count_or_alloc",
+  "file": "fn_0065b240.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B320",
+  "name": "tls_alloc_entry_array",
+  "file": "fn_0065b320.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B450",
+  "name": "atmospheric_scattering_ctor",
+  "file": "fn_0065b450.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B690",
+  "name": "fog_control_ctor",
+  "file": "fn_0065b690.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065BA20",
+  "name": "rage::EnviromentDomeLighting::EnviromentDomeVarCache::vf0",
+  "file": "fn_0065ba20.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x006607F0",
@@ -384,6 +472,30 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00697130",
+  "name": "pending",
+  "file": "fn_00697130.rs",
+  "lane": "r-s497",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00697780",
+  "name": "pending",
+  "file": "fn_00697780.rs",
+  "lane": "r-s497",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00697840",
+  "name": "pending",
+  "file": "fn_00697840.rs",
+  "lane": "r-s497",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x006F5C50",
   "name": "input_batch_flush",
   "file": "fn_006f5c50.rs",
@@ -398,14 +510,6 @@
   "lane": "r-s438",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x008B5750",
-  "name": "FRONTEND_MENU_HIGHLIGHT",
-  "file": "fn_008b5750.rs",
-  "lane": "r-b603",
-  "outcome": "not_reached",
-  "reason": ""
  },
  {
   "address": "0x008CA880",
@@ -440,14 +544,6 @@
   "reason": "other"
  },
  {
-  "address": "0x0091AAB0",
-  "name": "kbd_scancode_map",
-  "file": "fn_0091aab0.rs",
-  "lane": "r-b595",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x0091D2E0",
   "name": "input_name_to_code",
   "file": "fn_0091d2e0.rs",
@@ -472,12 +568,44 @@
   "reason": "other"
  },
  {
-  "address": "0x009495D0",
-  "name": "NativeImpl_SET_OBJECT_COORDINATES",
-  "file": "fn_009495d0.rs",
-  "lane": "a-Q17",
-  "outcome": "not yet run",
-  "reason": null
+  "address": "0x00955910",
+  "name": "emit_pool_entry_0",
+  "file": "fn_00955910.rs",
+  "lane": "r-s499",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009559D0",
+  "name": "emit_pool_entry_1",
+  "file": "fn_009559d0.rs",
+  "lane": "r-s499",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00955A90",
+  "name": "emit_pool_entry_2",
+  "file": "fn_00955a90.rs",
+  "lane": "r-s499",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00955B50",
+  "name": "emit_pool_entry_3",
+  "file": "fn_00955b50.rs",
+  "lane": "r-s499",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00955C10",
+  "name": "emit_pool_entry_4",
+  "file": "fn_00955c10.rs",
+  "lane": "r-s499",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00957100",
@@ -499,14 +627,6 @@
   "address": "0x00997910",
   "name": "ROTOR_VOLUME",
   "file": "fn_00997910.rs",
-  "lane": "r-b370",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00997E00",
-  "name": "",
-  "file": "fn_00997e00.rs",
   "lane": "r-b370",
   "outcome": "not_reached",
   "reason": ""
@@ -776,25 +896,17 @@
   "reason": "other"
  },
  {
-  "address": "0x00B28F70",
-  "name": "rows_notify_ready",
-  "file": "fn_00b28f70.rs",
+  "address": "0x00B28D20",
+  "name": "format_and_load_slot",
+  "file": "fn_00b28d20.rs",
   "lane": "r-s498",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x00B28FB0",
-  "name": "rows_notify_match",
-  "file": "fn_00b28fb0.rs",
-  "lane": "r-s498",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B29C80",
-  "name": "rows_notify_tail_reset",
-  "file": "fn_00b29c80.rs",
+  "address": "0x00B28D70",
+  "name": "slot_row_allocate",
+  "file": "fn_00b28d70.rs",
   "lane": "r-s498",
   "outcome": "not_reached",
   "reason": ""
@@ -1720,6 +1832,14 @@
   "reason": null
  },
  {
+  "address": "0x00D86370",
+  "name": null,
+  "file": "fn_00d86370.rs",
+  "lane": "r-b600",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00DD34B0",
   "name": "UIMontageContainer::vf100",
   "file": "fn_00dd34b0.rs",
@@ -1814,6 +1934,14 @@
   "lane": "r-s155",
   "outcome": "not yet run",
   "reason": null
+ },
+ {
+  "address": "0x00E3A530",
+  "name": "RP_EXPORTHI",
+  "file": "fn_00e3a530.rs",
+  "lane": "r-b602",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00E3A660",

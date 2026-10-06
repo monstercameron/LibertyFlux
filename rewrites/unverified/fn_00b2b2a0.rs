@@ -54,6 +54,6 @@ lf_checker_rt::export!(cdecl, rw_00b2b2a0(obj: u32) -> u32 {
         if ax == NONE {
             return NONE;
         }
-        lf_checker_rt::callee_cdecl!(COMMIT, u32, 0, 5, obj)
+        lf_checker_rt::callee_cdecl!(COMMIT, u32, obj, 5, 0)
     }
 });
