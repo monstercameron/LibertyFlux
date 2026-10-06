@@ -45,7 +45,7 @@ pub const ROWS: &[Row] = &[
         state: State::Proven,
         narrows: &[
             "flag word narrows to its low byte (big or small install)",
-            "start at or past the table answers all-ones without the original's wild reads (unobservable: fitting the install needs an index below the length)",
+            "start at or past the table answers all-ones (proven against planted guard words; a start of all-ones with a non-null word before the table wraps the original's scan to slot 0, which is out of domain)",
             "allocated blocks travel as collaborator cookies; the constructor's answer address is unobservable (no routine returns it)",
         ],
     },

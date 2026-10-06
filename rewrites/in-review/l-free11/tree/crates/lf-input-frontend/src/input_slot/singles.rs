@@ -99,7 +99,10 @@ impl KeyTable {
     pub fn find(&self, key: u32) -> u32 {
         for (i, id) in self.ids.iter().enumerate() {
             if *id == key {
-                return i as u32;
+                // Eight ids: the index fits in a word.
+                #[allow(clippy::cast_possible_truncation)]
+                let i = i as u32;
+                return i;
             }
         }
         u32::MAX

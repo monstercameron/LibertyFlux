@@ -2,11 +2,11 @@
 //! code would ask about. No rewrites here; the differential proof crate
 //! runs the same methods against their verified 32-bit forms.
 
-use lf_input_frontend::input_slot::registry::{counts, ROWS};
+use lf_input_frontend::input_slot::registry::{ROWS, counts};
 use lf_input_frontend::input_slot::{
-    Announce, DestroyOutcome, FormatPayload, KeyTable, NotifySinks, NotifyTarget, RegBuild,
-    RegEntry, SlotBuild, SlotDrop, SlotLookup, SlotObject, SlotRegistry, SlotRelease, SlotStore,
-    ThreadEntry, BIG_SIZE, KIND_OFF, SMALL_SIZE, TABLE_LEN,
+    Announce, BIG_SIZE, DestroyOutcome, FormatPayload, KIND_OFF, KeyTable, NotifySinks,
+    NotifyTarget, RegBuild, RegEntry, SMALL_SIZE, SlotBuild, SlotDrop, SlotLookup, SlotObject,
+    SlotRegistry, SlotRelease, SlotStore, TABLE_LEN, ThreadEntry,
 };
 
 #[derive(Debug)]
@@ -104,11 +104,11 @@ fn find_free_installs_at_first_empty() {
         small: [0u8; SMALL_SIZE],
     };
     assert_eq!(store.find_free(true, 0, &mut build), 3);
-    assert_eq!(build.sizes, vec![BIG_SIZE as u32]);
-    assert_eq!(
-        store.slots()[3],
-        Some(SlotObject::Big([7u8; BIG_SIZE]))
-    );
+    // Small const (0xA0): fits in a word.
+    #[allow(clippy::cast_possible_truncation)]
+    let want = BIG_SIZE as u32;
+    assert_eq!(build.sizes, vec![want]);
+    assert_eq!(store.slots()[3], Some(SlotObject::Big([7u8; BIG_SIZE])));
 }
 
 #[test]
@@ -265,15 +265,21 @@ impl SlotLookup for Lookup {
 }
 
 #[derive(Debug)]
+enum Rewrite {
+    Keep,
+    Set(Option<SlotObject>),
+}
+
+#[derive(Debug)]
 struct Drop {
-    rewrite: Option<Option<SlotObject>>,
+    rewrite: Rewrite,
     log: Vec<u32>,
 }
 
 impl SlotDrop for Drop {
     fn drop_slot(&mut self, store: &mut SlotStore, idx: u32) {
         self.log.push(idx);
-        if let Some(slot) = self.rewrite.take() {
+        if let Rewrite::Set(slot) = core::mem::replace(&mut self.rewrite, Rewrite::Keep) {
             store.set_slot(idx, slot);
         }
     }
@@ -307,7 +313,7 @@ fn destroy_paths() {
     // Owned: release runs, answer masked.
     let mut store = mk();
     let mut drop = Drop {
-        rewrite: None,
+        rewrite: Rewrite::Keep,
         log: Vec::new(),
     };
     let mut release = Release {
@@ -326,7 +332,7 @@ fn destroy_paths() {
         &mut lookup,
         &mut drop,
         &mut release,
-        );
+    );
     assert_eq!(out, DestroyOutcome::Released(0x1234_5600));
     assert_eq!(drop.log, vec![2]);
     assert_eq!(store.slots()[2], None);
@@ -345,7 +351,7 @@ fn destroy_paths() {
         &mut lookup,
         &mut drop,
         &mut release,
-        );
+    );
     assert_eq!(out, DestroyOutcome::Cleared);
     assert!(release.log.is_empty());
     assert_eq!(store.slots()[2], None);
@@ -359,7 +365,7 @@ fn destroy_paths() {
         &mut lookup,
         &mut drop,
         &mut release,
-        );
+    );
     assert_eq!(out, DestroyOutcome::Invalid);
     assert_eq!(lookup.log.last(), Some(&0x77));
     assert!(store.slots()[2].is_some(), "invalid destroys nothing");
@@ -371,12 +377,12 @@ fn destroy_paths() {
         &mut lookup,
         &mut drop,
         &mut release,
-        );
+    );
     assert_eq!(out, DestroyOutcome::Empty);
     // Drop may rewrite the slot; release sees the rewrite.
     let mut store = mk();
     let mut drop = Drop {
-        rewrite: Some(None),
+        rewrite: Rewrite::Set(None),
         log: Vec::new(),
     };
     let mut release = Release {
@@ -391,7 +397,7 @@ fn destroy_paths() {
         &mut lookup,
         &mut drop,
         &mut release,
-        );
+    );
     assert_eq!(out, DestroyOutcome::Released(0));
     assert!(release.saw_none);
 }
@@ -410,11 +416,14 @@ fn registry_alloc_success_failure_wrap() {
         }
         fn init(&mut self, _block: (), arg: u32) -> RegEntry {
             self.log.push(arg);
-            RegEntry([arg as u8; 8])
+            RegEntry([arg.to_le_bytes()[0]; 8])
         }
     }
     let mut reg = SlotRegistry::new();
-    let mut build = Reg { ok: true, log: Vec::new() };
+    let mut build = Reg {
+        ok: true,
+        log: Vec::new(),
+    };
     assert_eq!(reg.alloc_slot(0xAB, &mut build), 0);
     assert_eq!(reg.count(), 1);
     assert_eq!(reg.live(), &[RegEntry([0xAB; 8])]);

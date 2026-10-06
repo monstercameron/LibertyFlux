@@ -25,14 +25,14 @@ mod x86 {
     use std::collections::VecDeque;
     use std::sync::Mutex;
 
+    use lf_input_frontend::input_slot::{
+        ANNOUNCE_BIT, ANNOUNCE_FLAG_OFF, Announce, AnnounceSink, BIG_SIZE, CLEAR_OFF, DEVICE_OFF,
+        DestroyOutcome, FLAG_OFF, FormatPayload, HI_MASK, KIND_OFF, MODE_OFF, NOTIFY_ARG_OFF,
+        NotifySinks, NotifyTarget, PAYLOAD_LEN, SMALL_SIZE, SlotBuild, SlotDrop, SlotLookup,
+        SlotObject, SlotRelease, SlotStore, TABLE_LEN, ThreadEntry,
+    };
     use lf_inputslot_diff::rewrites::*;
     use lf_inputslot_diff::rt;
-    use lf_input_frontend::input_slot::{
-        Announce, AnnounceSink, DestroyOutcome, FormatPayload, NotifySinks, NotifyTarget, SlotBuild,
-        SlotDrop, SlotLookup, SlotObject, SlotRelease, SlotStore, ThreadEntry, ANNOUNCE_BIT,
-        ANNOUNCE_FLAG_OFF, BIG_SIZE, CLEAR_OFF, DEVICE_OFF, FLAG_OFF, HI_MASK, KIND_OFF, MODE_OFF,
-        NOTIFY_ARG_OFF, PAYLOAD_LEN, SMALL_SIZE, TABLE_LEN,
-    };
 
     #[path = "../support/mod.rs"]
     mod support;
@@ -55,11 +55,7 @@ mod x86 {
                 // The small path keeps allocator fill around the kind byte.
                 let fill = *FF_SMALL.lock().unwrap();
                 unsafe {
-                    core::ptr::copy_nonoverlapping(
-                        fill.as_ptr(),
-                        block as *mut u8,
-                        SMALL_SIZE,
-                    );
+                    core::ptr::copy_nonoverlapping(fill.as_ptr(), block as *mut u8, SMALL_SIZE);
                 }
             }
             block
@@ -322,13 +318,26 @@ mod x86 {
     struct Table {
         base: u32,
         cells: &'static mut [u32; TABLE_LEN as usize],
+        /// The word before the table: a start of all-ones reads it (the
+        /// scan address wraps) and a non-null word there wraps the scan
+        /// to slot 0.
+        pre: &'static mut u32,
+        /// Words past the table: starts at or past the length read here.
+        post: &'static mut [u32; 8],
     }
 
     fn plant_table() -> Table {
-        let cells = Box::leak(Box::new([0u32; TABLE_LEN as usize]));
+        let backing = Box::leak(Box::new([0u32; TABLE_LEN as usize + 9]));
+        let (pre, rest) = backing.split_at_mut(1);
+        let (cells, post) = rest.split_at_mut(TABLE_LEN as usize);
         let base = addr(&cells[0]);
         rt::set_relocated(TABLE_VA, base);
-        Table { base, cells }
+        Table {
+            base,
+            cells: cells.try_into().unwrap(),
+            pre: &mut pre[0],
+            post: post.try_into().unwrap(),
+        }
     }
 
     fn leak_big() -> (u32, &'static mut [u8; BIG_SIZE]) {
@@ -360,7 +369,7 @@ mod x86 {
         clear_logs();
         rt::set_callee(1, ff_alloc as usize as u32);
         rt::set_callee(2, ff_ctor as usize as u32);
-        let mut table = plant_table();
+        let table = plant_table();
         let (big_addr, _) = leak_big();
         let (small_addr, _) = leak_small();
         let mut big_pool = Vec::new();
@@ -374,14 +383,16 @@ mod x86 {
         let mut rng = Rng(0xF1EE);
         let mut cases = 0u32;
         let mut caught = 0u32;
-        // Edge starts: first slots, last slots, past the end, wild.
+        // Edge starts: first slots, last slots, guarded past-the-end
+        // starts, and all-ones (whose scan address wraps to the planted
+        // word before the table).
         let starts = [
             0u32,
             1,
             TABLE_LEN - 2,
             TABLE_LEN - 1,
             TABLE_LEN,
-            TABLE_LEN + 1,
+            TABLE_LEN + 2,
             u32::MAX,
         ];
         for case in 0..140 {
@@ -389,8 +400,15 @@ mod x86 {
             let start = if (case as usize) < starts.len() {
                 starts[case as usize]
             } else {
-                rng.below(TABLE_LEN + 4)
+                rng.below(TABLE_LEN)
             };
+            // Guard words: null, so past-the-end scans stop at once. A
+            // start of all-ones with a non-null preceding word wraps the
+            // scan to slot 0; that shape is out of domain (see registry).
+            *table.pre = 0;
+            for g in table.post.iter_mut() {
+                *g = 0;
+            }
             // Occupancy: all empty, all full, empty from k on, random.
             let mut mirror = Vec::with_capacity(TABLE_LEN as usize);
             let k = rng.below(TABLE_LEN);
@@ -447,24 +465,30 @@ mod x86 {
             let l_ret = store.find_free(big, start, &mut build);
             assert_eq!(r_ret, l_ret, "case {case}: return");
             let installed = l_ret != u32::MAX;
-            let size = if big { BIG_SIZE as u32 } else { SMALL_SIZE as u32 };
+            let size = if big {
+                BIG_SIZE as u32
+            } else {
+                SMALL_SIZE as u32
+            };
             assert_eq!(
                 FF_SIZES.lock().unwrap().as_slice(),
                 build.sizes.as_slice(),
                 "case {case}: alloc sizes"
             );
+            let want_sizes: &[u32] = if installed { &[size] } else { &[] };
             assert_eq!(
                 build.sizes.as_slice(),
-                if installed { &[size] } else { &[] },
+                want_sizes,
                 "case {case}: one alloc iff installed"
             );
+            let want_ctor: &[u32] = if big && installed && alloc_ok {
+                &[block]
+            } else {
+                &[]
+            };
             assert_eq!(
                 FF_CTOR_THIS.lock().unwrap().as_slice(),
-                if big && installed && alloc_ok {
-                    &[block]
-                } else {
-                    &[]
-                },
+                want_ctor,
                 "case {case}: ctor this-arg"
             );
             assert_eq!(
@@ -533,7 +557,7 @@ mod x86 {
         let _guard = lock();
         clear_logs();
         rt::set_callee(1, notify_stub as usize as u32);
-        let mut table = plant_table();
+        let table = plant_table();
         let (slot_addr, _) = leak_big();
         let (small_addr, _) = leak_small();
         let (def_addr, _) = leak_big();
@@ -645,7 +669,7 @@ mod x86 {
     fn flag_byte_matches() {
         let _guard = lock();
         clear_logs();
-        let mut table = plant_table();
+        let table = plant_table();
         let (slot_addr, _) = leak_big();
         let (small_addr, _) = leak_small();
         let (def_addr, _) = leak_big();
@@ -718,7 +742,7 @@ mod x86 {
     fn mode_word_matches() {
         let _guard = lock();
         clear_logs();
-        let mut table = plant_table();
+        let table = plant_table();
         let (slot_addr, _) = leak_big();
         let (small_addr, _) = leak_small();
         let (def_addr, _) = leak_big();
@@ -785,12 +809,7 @@ mod x86 {
     }
 
     /// The deliberately wrong lift: tests the neighbouring flag bit.
-    fn wrong_announce(
-        store: &SlotStore,
-        idx: u32,
-        fmt: &mut Fmt,
-        sink: &mut Emit,
-    ) -> Announce {
+    fn wrong_announce(store: &SlotStore, idx: u32, fmt: &mut Fmt, sink: &mut Emit) -> Announce {
         let slots = store.slots();
         let obj = slots[idx as usize].as_ref().unwrap();
         let obj = if obj.kind() != 0 {
@@ -812,7 +831,7 @@ mod x86 {
         clear_logs();
         rt::set_callee(1, fmt_stub as usize as u32);
         rt::set_callee(2, emit_stub as usize as u32);
-        let mut table = plant_table();
+        let table = plant_table();
         let (slot_addr, _) = leak_big();
         let (small_addr, _) = leak_small();
         let (def_addr, _) = leak_big();
@@ -910,13 +929,14 @@ mod x86 {
                     &[(expected_base.wrapping_add(0x60), 0, 0)],
                     "case {case}: format args"
                 );
+                let want_payload: [u8; PAYLOAD_LEN] = unsafe {
+                    rd_bytes(expected_base.wrapping_add(0x60), PAYLOAD_LEN)
+                        .try_into()
+                        .unwrap()
+                };
                 assert_eq!(
                     fmt.payloads.as_slice(),
-                    &[unsafe {
-                        rd_bytes(expected_base.wrapping_add(0x60), PAYLOAD_LEN)
-                            .try_into()
-                            .unwrap()
-                    }],
+                    &[want_payload],
                     "case {case}: formatted payload"
                 );
                 assert_eq!(
@@ -973,7 +993,7 @@ mod x86 {
         rt::set_callee(1, lookup_stub as usize as u32);
         rt::set_callee(2, drop_stub as usize as u32);
         rt::set_callee(3, release_stub as usize as u32);
-        let mut table = plant_table();
+        let table = plant_table();
         let (slot_addr, _) = leak_big();
         let (small_addr, _) = leak_small();
         let (spare_addr, _) = leak_big();
@@ -1090,14 +1110,7 @@ mod x86 {
             // `by_handle` travels as its low byte only: high garbage pins it.
             let by_word = (rng.u32() & 0xFFFF_FF00) | u32::from(by_handle);
             let r_ret = unsafe { fn_009061E0::rw_009061e0(id, by_word) };
-            let l_ret = store.destroy(
-                id,
-                by_handle,
-                &thread,
-                &mut lookup,
-                &mut drop,
-                &mut release,
-            );
+            let l_ret = store.destroy(id, by_handle, &thread, &mut lookup, &mut drop, &mut release);
             let w_ret = wrong_destroy(
                 &mut store_wrong,
                 id,
@@ -1116,20 +1129,18 @@ mod x86 {
             };
             assert_eq!(r_ret, expected, "case {case}: return");
             assert_eq!(w_ret, l_ret, "case {case}: wrong agrees on outcome");
-            let ran = matches!(
-                l_ret,
-                DestroyOutcome::Released(_) | DestroyOutcome::Cleared
-            );
+            let ran = matches!(l_ret, DestroyOutcome::Released(_) | DestroyOutcome::Cleared);
             if in_domain {
                 let cell = unsafe { rd32(table.base.wrapping_add(idx.wrapping_mul(4))) };
                 if ran {
                     assert_eq!(cell, 0, "case {case}: cell cleared");
-                    assert_eq!(store.slots()[idx as usize], None, "case {case}: lift cleared");
-                } else {
                     assert_eq!(
-                        cell, obj_addr,
-                        "case {case}: early return keeps the cell"
+                        store.slots()[idx as usize],
+                        None,
+                        "case {case}: lift cleared"
                     );
+                } else {
+                    assert_eq!(cell, obj_addr, "case {case}: early return keeps the cell");
                 }
             }
             if ran {
@@ -1142,9 +1153,8 @@ mod x86 {
             // the nonzero pre-state word where the rewrite shows zero.
             if ran && owned && drop_mode == DropMode::Keep {
                 let w_bytes = release_wrong.log[0].as_ref().unwrap();
-                let w_word = u32::from_le_bytes(
-                    w_bytes[CLEAR_OFF..CLEAR_OFF + 4].try_into().unwrap(),
-                );
+                let w_word =
+                    u32::from_le_bytes(w_bytes[CLEAR_OFF..CLEAR_OFF + 4].try_into().unwrap());
                 let r_word = unsafe { rd32(obj_addr.wrapping_add(CLEAR_OFF as u32)) };
                 assert_eq!(r_word, 0, "case {case}: rewrite cleared");
                 if w_word != r_word {
@@ -1158,9 +1168,10 @@ mod x86 {
                 lookup.log.as_slice(),
                 "case {case}: lookup log"
             );
+            let want_lookup: &[u32] = if by_handle { &[id] } else { &[] };
             assert_eq!(
                 LK_LOG.lock().unwrap().as_slice(),
-                if by_handle { &[id] } else { &[] },
+                want_lookup,
                 "case {case}: lookup iff by handle"
             );
             assert_eq!(
@@ -1168,9 +1179,10 @@ mod x86 {
                 drop.log.as_slice(),
                 "case {case}: drop log"
             );
+            let want_drop: &[u32] = if ran { &[idx] } else { &[] };
             assert_eq!(
                 DR_LOG.lock().unwrap().as_slice(),
-                if ran { &[idx] } else { &[] },
+                want_drop,
                 "case {case}: drop iff ran"
             );
             let r_rel = REL_LOG.lock().unwrap().clone();

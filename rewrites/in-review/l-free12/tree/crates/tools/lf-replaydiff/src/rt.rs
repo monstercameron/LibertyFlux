@@ -2,46 +2,45 @@
 //!
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!`, the `callee_*` macros, `callee_addr`, `global`,
-//! `relocated`, `tls_slot`). The proof set reads and writes five globals:
-//! the default-slot index word, the three notify-sink words, the TLS slot
-//! word and the registry counter. Each global is one atomic slot; the
-//! atomics give the slots stable addresses, and the differential tests hold
-//! one lock across each whole test, so the rewrite's plain reads and writes
-//! through them never race.
+//! `relocated`). The proof set reads and writes seven globals: the four
+//! time-base words, the two stamp-publish words, and the game-state word;
+//! one relocated address (the notifier hub); and callee ids 1..=3. Each
+//! global is one atomic slot; the atomics give the slots stable addresses,
+//! and the differential tests hold one lock across each whole test, so the
+//! rewrite's plain reads and writes through them never race.
 //! Test-support code: the lifted crate itself stays `#![forbid(unsafe_code)]`.
 
 // Test-only runtime: raw addresses through scripted globals are inherent
 // here. Every access stays inside the test memory the case planted.
-// The callee macros' blocks look redundant where a rewrite already holds
-// an `unsafe` block open; they are still required on direct paths.
-#![allow(unsafe_code, unused_unsafe)]
+#![allow(unsafe_code)]
 
 use core::sync::atomic::AtomicU32;
 use core::sync::atomic::Ordering;
 
-/// The default-slot index word.
-static DEFAULT_SLOT: AtomicU32 = AtomicU32::new(0);
-/// The three notify-sink words (one sink address each).
-static SINK_SLOTS: [AtomicU32; 3] = [AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0)];
-/// The word naming the destroy routine's TLS slot.
-static TLS_WORD_SLOT: AtomicU32 = AtomicU32::new(0);
-/// The allocation registry's counter word.
-static COUNT_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The time-base numerator pair (narrow, wide).
+static NUM_SLOTS: [AtomicU32; 2] = [AtomicU32::new(0), AtomicU32::new(0)];
+/// The time-base denominator pair (narrow, wide).
+static DEN_SLOTS: [AtomicU32; 2] = [AtomicU32::new(0), AtomicU32::new(0)];
+/// The stamp-publish flag word and stamp word.
+static PUB_SLOTS: [AtomicU32; 2] = [AtomicU32::new(0), AtomicU32::new(0)];
+/// The game-state word.
+static STATE_SLOT: AtomicU32 = AtomicU32::new(0);
 
 /// Address of the global slot for a file VA.
 ///
 /// # Panics
 ///
-/// When the address is not one of the five globals the proof set reads:
+/// When the address is not one of the seven globals the proof set reads:
 /// a case bug, never a guess.
 fn slot_for(file_va: u32) -> *mut u32 {
     match file_va {
-        0x0103_4494 => DEFAULT_SLOT.as_ptr(),
-        0x012E_22A4 => SINK_SLOTS[0].as_ptr(),
-        0x018B_6F1C => SINK_SLOTS[1].as_ptr(),
-        0x0163_2C60 => SINK_SLOTS[2].as_ptr(),
-        0x017A_BA14 => TLS_WORD_SLOT.as_ptr(),
-        0x0118_F4E0 => COUNT_SLOT.as_ptr(),
+        0x0105_c880 => NUM_SLOTS[0].as_ptr(),
+        0x0105_c87c => NUM_SLOTS[1].as_ptr(),
+        0x0105_c884 => DEN_SLOTS[0].as_ptr(),
+        0x0105_c888 => DEN_SLOTS[1].as_ptr(),
+        0x011f_70e0 => PUB_SLOTS[0].as_ptr(),
+        0x011f_70e4 => PUB_SLOTS[1].as_ptr(),
+        0x0103_7720 => STATE_SLOT.as_ptr(),
         _ => panic!("unexpected global VA {file_va:#x}"),
     }
 }
@@ -57,49 +56,42 @@ pub fn global<T>(file_va: u32) -> *mut T {
     slot_for(file_va) as *mut T
 }
 
-/// The relocated addresses, planted per test: the handle-table base, the
-/// registry's live and failed tables, the announce sink object, and the
-/// key table's base and end.
-static RELOC_SLOTS: [AtomicU32; 6] = [
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-];
-
-/// The relocated slot for a file VA.
+/// Plants the word the global at a file VA holds.
 ///
 /// # Panics
 ///
-/// When the address is not one of the six relocated VAs the proof set
-/// uses: a case bug, never a guess.
-fn reloc_slot(file_va: u32) -> &'static AtomicU32 {
-    match file_va {
-        0x0118_F6F8 => &RELOC_SLOTS[0],
-        0x0118_F4EC => &RELOC_SLOTS[1],
-        0x0118_F4F0 => &RELOC_SLOTS[2],
-        0x0116_BFF0 => &RELOC_SLOTS[3],
-        0x011A_0BF0 => &RELOC_SLOTS[4],
-        0x011A_13F0 => &RELOC_SLOTS[5],
-        _ => panic!("unexpected relocated VA {file_va:#x}"),
-    }
+/// As [`slot_for`].
+pub fn set_global(file_va: u32, value: u32) {
+    unsafe { slot_for(file_va).write(value) };
 }
 
-/// Plants the relocated address of a file VA.
-pub fn set_relocated(file_va: u32, addr: u32) {
-    reloc_slot(file_va).store(addr, Ordering::Relaxed);
-}
+/// The notifier hub's relocated address, planted per test.
+static HUB_SLOT: AtomicU32 = AtomicU32::new(0);
 
 /// File VA to relocated address, mirroring `lf-checker-rt`.
 ///
 /// # Panics
 ///
-/// As [`reloc_slot`].
+/// When the address is not the hub VA the proof set relocates: a case
+/// bug, never a guess.
 #[must_use]
 pub fn relocated(file_va: u32) -> u32 {
-    reloc_slot(file_va).load(Ordering::Relaxed)
+    match file_va {
+        0x0103_e498 => HUB_SLOT.load(Ordering::Relaxed),
+        _ => panic!("unexpected relocated VA {file_va:#x}"),
+    }
+}
+
+/// Plants the relocated address of a stamp VA.
+///
+/// # Panics
+///
+/// When the address is not the hub VA.
+pub fn set_relocated(file_va: u32, addr: u32) {
+    match file_va {
+        0x0103_e498 => HUB_SLOT.store(addr, Ordering::Relaxed),
+        _ => panic!("unexpected relocated VA {file_va:#x}"),
+    }
 }
 
 /// Registered stub addresses for callee ids 0..4 (0 when none: a call
@@ -130,93 +122,6 @@ pub fn callee_addr(id: u32) -> u32 {
     let addr = slot.load(Ordering::Relaxed);
     assert!(addr != 0, "callee {id} called with no stub planted");
     addr
-}
-
-/// The fabricated TLS mirror: slot number to thread-entry address,
-/// mirroring the checker's `CHECKER_TLS`.
-static TLS: [AtomicU32; 64] = [
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-];
-
-/// Plants the thread-entry address TLS `slot` answers.
-pub fn set_tls(slot: usize, addr: u32) {
-    TLS[slot].store(addr, Ordering::Relaxed);
-}
-
-/// Thread-entry address for a TLS slot, mirroring
-/// `lf-checker-rt::tls_slot`.
-///
-/// # Panics
-///
-/// When the slot is past the mirror: a case bug.
-#[must_use]
-pub fn tls_slot(slot: usize) -> u32 {
-    TLS.get(slot)
-        .unwrap_or_else(|| panic!("unexpected TLS slot {slot}"))
-        .load(Ordering::Relaxed)
 }
 
 /// Declare a rewrite export with the original's calling convention.

@@ -14,6 +14,10 @@ pub const TABLE_LEN: u32 = 0x5DC;
 pub const BIG_SIZE: usize = 0xA0;
 /// Small record size, as the allocator is asked for it.
 pub const SMALL_SIZE: usize = 0x28;
+
+// The allocator takes words: both sizes fit (the casts below rely on it).
+const _: () = assert!(BIG_SIZE <= u32::MAX as usize);
+const _: () = assert!(SMALL_SIZE <= u32::MAX as usize);
 /// Kind byte: zero means unset, so readers fall back to the default slot.
 pub const KIND_OFF: usize = 0x08;
 /// Word the destroy routine clears.
@@ -308,12 +312,17 @@ impl SlotStore {
         if i >= TABLE_LEN {
             return u32::MAX;
         }
+        // Small consts: the fit is asserted at compile time above.
+        #[allow(clippy::cast_possible_truncation)]
+        let big_size = BIG_SIZE as u32;
+        #[allow(clippy::cast_possible_truncation)]
+        let small_size = SMALL_SIZE as u32;
         if big {
-            if let Some(block) = build.alloc(BIG_SIZE as u32) {
+            if let Some(block) = build.alloc(big_size) {
                 let bytes = build.construct_big(block);
                 self.slots[i as usize] = Some(SlotObject::Big(bytes));
             }
-        } else if let Some(block) = build.alloc(SMALL_SIZE as u32) {
+        } else if let Some(block) = build.alloc(small_size) {
             let mut bytes = build.small_fill(block);
             bytes[KIND_OFF] = 0;
             self.slots[i as usize] = Some(SlotObject::Small(bytes));
@@ -429,7 +438,7 @@ impl SlotStore {
         release: &mut impl SlotRelease,
     ) -> DestroyOutcome {
         let idx = if by_handle { lookup.lookup(id) } else { id };
-        if (idx as i32) < 0 {
+        if idx.cast_signed() < 0 {
             return DestroyOutcome::Invalid;
         }
         let cell = self

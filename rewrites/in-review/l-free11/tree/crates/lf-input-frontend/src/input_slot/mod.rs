@@ -25,10 +25,10 @@ mod slots;
 
 pub mod registry;
 
-pub use singles::{KeyTable, RegEntry, RegBuild, SlotRegistry, REG_ENTRY_SIZE};
+pub use singles::{KeyTable, REG_ENTRY_SIZE, RegBuild, RegEntry, SlotRegistry};
 pub use slots::{
-    Announce, AnnounceSink, DestroyOutcome, FormatPayload, NotifySinks, NotifyTarget, SlotBuild,
-    SlotDrop, SlotLookup, SlotObject, SlotRelease, SlotStore, ThreadEntry, ANNOUNCE_BIT,
-    ANNOUNCE_FLAG_OFF, BIG_SIZE, CLEAR_OFF, DEVICE_OFF, FLAG_OFF, HI_MASK, KIND_OFF, MODE_OFF,
-    NOTIFY_ARG_OFF, PAYLOAD_LEN, PAYLOAD_OFF, SMALL_SIZE, TABLE_LEN, THREAD_OWNED_OFF,
+    ANNOUNCE_BIT, ANNOUNCE_FLAG_OFF, Announce, AnnounceSink, BIG_SIZE, CLEAR_OFF, DEVICE_OFF,
+    DestroyOutcome, FLAG_OFF, FormatPayload, HI_MASK, KIND_OFF, MODE_OFF, NOTIFY_ARG_OFF,
+    NotifySinks, NotifyTarget, PAYLOAD_LEN, PAYLOAD_OFF, SMALL_SIZE, SlotBuild, SlotDrop,
+    SlotLookup, SlotObject, SlotRelease, SlotStore, TABLE_LEN, THREAD_OWNED_OFF, ThreadEntry,
 };
