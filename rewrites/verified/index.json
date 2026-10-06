@@ -36567,6 +36567,15 @@
   "lane": "r-b277"
  },
  {
+  "address": "0x00655AA0",
+  "name": "shaft_group_ctor",
+  "kind": "function",
+  "file": "functions/fn_00655aa0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b630"
+ },
+ {
   "address": "0x00655E20",
   "name": "pose_blend_apply",
   "kind": "function",
@@ -36583,6 +36592,42 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b277"
+ },
+ {
+  "address": "0x00656680",
+  "name": "rage::spdShaft::vf3",
+  "kind": "function",
+  "file": "functions/fn_00656680.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b630"
+ },
+ {
+  "address": "0x006569D0",
+  "name": "rage::spdShaft::vf4",
+  "kind": "function",
+  "file": "functions/fn_006569d0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b630"
+ },
+ {
+  "address": "0x00656D40",
+  "name": "rage::spdShaft::vf5",
+  "kind": "function",
+  "file": "functions/fn_00656d40.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b630"
+ },
+ {
+  "address": "0x00657DA0",
+  "name": "shaft_scaled_copy",
+  "kind": "function",
+  "file": "functions/fn_00657da0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b630"
  },
  {
   "address": "0x00657EB0",
@@ -67775,8 +67820,8 @@
   "kind": "function",
   "file": "functions/fn_009fb560.rs",
   "trials": 1200,
-  "checker": "version 4",
-  "lane": "r-b312"
+  "checker": "version 6",
+  "lane": "a-S11"
  },
  {
   "address": "0x009FB660",
@@ -127224,6 +127269,24 @@
   "lane": "r-s516"
  },
  {
+  "address": "0x00D76330",
+  "name": "reset_extents_tail_continue",
+  "kind": "function",
+  "file": "functions/fn_00d76330.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
+  "address": "0x00D76650",
+  "name": "touch_five_slots_resolve_named",
+  "kind": "function",
+  "file": "functions/fn_00d76650.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
   "address": "0x00D76760",
   "name": "render_phase_ctor_00d76760",
   "kind": "function",
@@ -132721,6 +132784,15 @@
   "trials": 1200,
   "checker": "version 3",
   "lane": "r-b165"
+ },
+ {
+  "address": "0x00E49C80",
+  "name": "E1_SELECT",
+  "kind": "function",
+  "file": "functions/fn_00e49c80.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "a-Q37"
  },
  {
   "address": "0x00E4AF00",

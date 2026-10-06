@@ -1,5 +1,5 @@
 // original: 0x009fb560 CPlayStatIntStr::CPlayStatIntStr
-
+use lf_checker_rt::{callee_cdecl, callee_stdcall, callee_thiscall, callee_fastcall, export, global, relocated};
 /// Build a playstats int/str node for `key_index`, optionally resolving a
 /// display name through `cfg_obj`.
 ///
@@ -9,7 +9,8 @@
 /// pick below, skips name resolution and goes straight to message formatting.
 /// The working structs live in the original's aligned frame and are never
 /// observed outside the call log: only argument values, the eight snapped
-/// message words, and the return value are compared.
+/// message words, the three snapped conversion words (source mark, picked
+/// id, destination tag), and the return value are compared.
 ///
 /// Sequence: callee 0 initialises the node (thiscall, 5 and 2); the node is
 /// tagged with `NODE_TAG` and callee 1 links two temporaries (cdecl, one
@@ -84,6 +85,12 @@ lf_checker_rt::export!(cdecl, rw_009fb560(key_index: u32, cfg_obj: u32) -> u32 {
                 mark = CONV_MARK;
                 core::hint::black_box(&mark);
             }
+            // Callee 7's inputs: the mark word, the picked id, and the
+            // destination tag (a relocated address); the other words of
+            // both buffers are defined fill on the original side.
+            conv_src[0] = mark as u32;
+            conv_dst[0] = picked;
+            conv_dst[5] = lf_checker_rt::relocated(NODE_TAG);
             let _: u32 = lf_checker_rt::callee_cdecl!(
                 7,
                 u32,
