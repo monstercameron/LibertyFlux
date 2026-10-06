@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Lift: 18 task parameter initialisers in portable Rust",
+    "title": "Devlog: hourly review, 08:05 on 6 October",
     "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "16,856 functions verified, 32.1% of the code by size; only 9,800 bytes in the hour: half the lanes were on audits and lifting, memory held the run to 12 lanes, and large functions end partly proven. 345 verified routines are lifted.",
+      "Measured: 116 of the 121 functions left partly proven have been worked on once only, and such functions are usually finished when revisited, so every second queue lane now goes to them. 1,185 of 1,578 proofs re-run on checker version 8 show no misplaced global write."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Lift: 18 task parameter initialisers in portable Rust",
+    "commit": "f31fa610e1c1d77fc19b9715a54c65b37798f25a",
     "summary": "18 verified routines that fill in a pedestrian task's parameter block, one per kind of task, are lifted as methods on one type, with their proof in the pipeline.",
     "changes": [
       "crates/lf-peds-tasks gains a task_ctor module with 24 host tests and no unsafe code. The lane's list was 32 functions chosen by name and held five structures; it lifted the largest, the parameter-block initialisers, and listed the other 14 routines in four shapes in the registry.",
