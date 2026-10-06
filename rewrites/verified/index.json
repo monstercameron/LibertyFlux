@@ -72414,6 +72414,15 @@
   "lane": "r-b110"
  },
  {
+  "address": "0x00A9B450",
+  "name": "spatial_resample_update",
+  "kind": "function",
+  "file": "functions/fn_00a9b450.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "a-Q09"
+ },
+ {
   "address": "0x00A9C7F0",
   "name": "stream_shutdown",
   "kind": "function",
@@ -121086,6 +121095,15 @@
   "lane": "r-s131"
  },
  {
+  "address": "0x00D6C980",
+  "name": "filemem_dual_rescale",
+  "kind": "function",
+  "file": "functions/fn_00d6c980.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b582"
+ },
+ {
   "address": "0x00D6CC20",
   "name": "replay_bar_scaled_position",
   "kind": "function",
@@ -121120,6 +121138,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s131"
+ },
+ {
+  "address": "0x00D6CEE0",
+  "name": "filemem_covered_rescale",
+  "kind": "function",
+  "file": "functions/fn_00d6cee0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b582"
  },
  {
   "address": "0x00D6D0C0",

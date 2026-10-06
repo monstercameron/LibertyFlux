@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Rewrites: 3 more functions pass the checker (15878 in total)",
+    "commit": "429eed166a6cb624e0a16f4ab4b59059ae1743d8",
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "3 rewrites added under rewrites/verified: 0 script native handlers and 3 other functions.",
+      "The tree now holds 15878 rewrites, 15859 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 681 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "21 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Lift: five more event handler methods",
-    "commit": null,
+    "commit": "a3f27f921cbb157e39687b80647bd96ec8034201",
     "summary": "Five more verified methods of the pedestrian event handler class are lifted, the first ones that make calls of their own, and their proofs join the ones the pipeline runs.",
     "changes": [
       "crates/lf-peds-tasks/src/event_handler gains five methods that look an event up and convert it into a task through the task factory, with four new shapes of request. What they call is reached through the module's traits, and the proof compares every call in order as well as results and written bytes.",
