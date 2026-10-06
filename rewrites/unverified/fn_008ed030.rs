@@ -65,6 +65,10 @@ lf_checker_rt::export!(thiscall, rw_008ED030(this: u32, vec: u32) -> u32 {
         let ylo = sub(y, pad);
         let yhi = add(y, pad);
 
+        // Range bounds live in the frame across iterations (like the
+        // original's slots): the call-time snapshot observes the previous
+        // call's values, so they must not be re-zeroed per iteration.
+        let (mut lo_slot, mut hi_slot) = (0u32, 0u32);
         let mut i = 0u32;
         while i < TABLE_LEN {
             let table = rd32(this.wrapping_add(TABLE_BASE).wrapping_add(i * 4));
@@ -97,7 +101,6 @@ lf_checker_rt::export!(thiscall, rw_008ED030(this: u32, vec: u32) -> u32 {
                     i += 1;
                     continue;
                 }
-                let (mut lo, mut hi) = (0u32, 0u32);
                 lf_checker_rt::callee_thiscall!(
                     CALLEE_RANGE,
                     u32,
@@ -105,11 +108,11 @@ lf_checker_rt::export!(thiscall, rw_008ED030(this: u32, vec: u32) -> u32 {
                     i,
                     ylo.to_bits(),
                     yhi.to_bits(),
-                    &mut lo as *mut u32 as u32,
-                    &mut hi as *mut u32 as u32
+                    &mut lo_slot as *mut u32 as u32,
+                    &mut hi_slot as *mut u32 as u32
                 );
                 // SIGNED bounds: a negative `lo` scans before the table.
-                let (lo, hi) = (lo as i32, hi as i32);
+                let (lo, hi) = (lo_slot as i32, hi_slot as i32);
                 if lo < hi {
                     let mut k = lo;
                     while k < hi {
