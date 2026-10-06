@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Devlog: hourly review, 03:05 on 6 October",
+    "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "16,508 functions verified, 30.4% of the code by size; 35,600 bytes in the hour as the run came down to 15 lanes. Five rewrites withdrawn and two repaired after every skipped pointer was read; nine more and twelve with an unreadable callee are being settled by a run.",
+      "A checker candidate with four new abilities is built and is being attacked by a second lane on 150 production contracts before any install. The checker-gap queue is held until then: its lanes verified 4 of 17."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 53 files from lanes (231 unverified rewrites, 463 in review)",
     "commit": "805b2931d68d3f1ec9459542c85b7befdf2c1533",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
