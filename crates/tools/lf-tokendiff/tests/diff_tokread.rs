@@ -659,10 +659,17 @@ mod x86 {
                 });
                 fake.doubles.push_back(bits);
                 let lift = tok.read_double(&mut fake, true);
-                assert_eq!(
+                // The stand-in hands its scripted double back on the float stack, as the
+                // callee does. A real x86 processor quiets a signalling not-a-number when a
+                // 64-bit value is loaded there; the emulator that runs 32-bit code on an
+                // ARM machine does not. This test passed under the emulator and failed on
+                // the pipeline's x86 runner for exactly that input. The lift method leaves
+                // not-a-number payloads to the hardware, so two not-a-numbers are equal.
+                assert!(
+                    got.to_bits() == lift.to_bits() || (got.is_nan() && lift.is_nan()),
+                    "token {bytes:?} bits {bits:#x}: rewrite {:#x}, lift {:#x}",
                     got.to_bits(),
-                    lift.to_bits(),
-                    "token {bytes:?} bits {bits:#x}"
+                    lift.to_bits()
                 );
                 let virtual_calls = rt::take_virtual();
                 assert_eq!(virtual_calls.len(), 1, "one fetch");
