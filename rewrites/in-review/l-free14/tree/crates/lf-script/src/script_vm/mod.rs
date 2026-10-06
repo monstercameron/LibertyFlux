@@ -19,7 +19,9 @@
 //! share: handle lookup, the flag-selected row and the kind gate.
 //! [`LoadingClock`] and [`AngledArea`] are the two pack-and-forward
 //! singles, sharing one module because neither shares state with the
-//! rest. Proof is differential: every lifted method runs against its
+//! rest. [`TextKeys`] owns the suffix and cookie words behind the
+//! state-gated text-key resolution. Proof is differential: every lifted
+//! method runs against its
 //! verified rewrite on the same generated inputs, comparing results and
 //! every effect (see the `lf-scriptvmdiff` test crate). Nothing here is
 //! verified by the checker itself.
@@ -34,6 +36,7 @@ mod area;
 mod blip;
 mod packs;
 mod skip;
+mod text;
 
 pub mod registry;
 
@@ -50,3 +53,9 @@ pub use blip::{
 };
 pub use packs::{AngledArea, AngledClear, ClockDraw, LoadingClock};
 pub use skip::{PointSkip, SkipFlags, SkipSink};
+pub use text::{
+    CookieCheck, DispatchObj, DispatchObjTag, DrawKeys, EntryId, EntryTag, FORMAT_LEN, KeyLookup,
+    LOOKUP_FLAG, NotifyA, NotifyB, SELECTOR_ARG, SETUP_NEG, SETUP_ONE, SUFFIX_SCAN_OFF, Selector,
+    SetupCall, SetupProbe, StateProbe, TextDispatch, TextEntry, TextFormat, TextKey, TextKeys,
+    TextObj, TextObjTag, TextResolve,
+};

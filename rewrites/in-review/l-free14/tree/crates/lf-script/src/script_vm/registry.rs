@@ -180,18 +180,25 @@ pub const ROWS: &[Row] = &[
     },
     Row {
         func: "script_vm_resolve_named_key",
-        method: "(not lifted)",
-        state: State::Missing,
+        method: "TextKeys::resolve_named_key",
+        state: State::Proven,
         narrows: &[
-            "not reached: needs the text-entry trait design (state probe, formatter, resolver, cookie check)",
+            "the suffix and cookie globals become owned words",
+            "the state block becomes the probe's bool; the proof scripts the flag byte and the bool together",
+            "entry emptiness arrives with the resolve answer; the proof plants entry memory and scripts both sides together",
+            "the entry object travels as an opaque handle",
+            "buffers with no zero byte where the suffix scan can reach panic, as the rewrite does",
         ],
     },
     Row {
         func: "script_vm_dual_key_dispatch",
-        method: "(not lifted)",
-        state: State::Missing,
+        method: "TextDispatch::dispatch",
+        state: State::Proven,
         narrows: &[
-            "not reached: the largest routine in the group (seven callees, four globals); needs the text-entry and draw-call designs",
+            "the shared word, gate pair and done flag become owned state; the done flag rises on every path",
+            "the probe and selector blocks become the probe bool and selector byte; the proof scripts the bytes and the answers together",
+            "the notify object travels as an opaque handle",
+            "the setup and draw calls' constant words pass through the traits so the proof compares them",
         ],
     },
     Row {

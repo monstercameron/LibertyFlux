@@ -2,9 +2,11 @@
 //!
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!`, the `callee_cdecl` macro, `callee_addr`, `global`,
-//! `relocated`). The proof set reads two globals (the altitude threshold
-//! word, the blip fallback index) and two relocated addresses (the extent
-//! test's routine word, the blip row-pointer table).
+//! `relocated`). The proof set reads eight globals (the altitude threshold
+//! word, the blip fallback index, the text suffix and cookie words, the
+//! dispatch shared word, gate pair and done flag) and four relocated
+//! addresses (the extent test's routine word, the blip row-pointer table,
+//! the text-entry and dispatch objects).
 //! Each is one atomic slot; the atomics give the slots stable addresses,
 //! and the differential tests hold one lock across each whole test, so
 //! the rewrite's plain reads through them never race.
@@ -21,21 +23,43 @@ use core::sync::atomic::Ordering;
 static THRESH_SLOT: AtomicU32 = AtomicU32::new(0);
 /// The blip fallback index.
 static GLOB_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The text suffix word.
+static SUFFIX_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The text cookie word.
+static COOKIE_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The dispatch shared word.
+static G1_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The dispatch gate pair.
+static G2A_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The dispatch gate pair's second word.
+static G2B_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The dispatch done flag.
+static DONE_SLOT: AtomicU32 = AtomicU32::new(0);
 /// The extent test's routine word (relocated).
 static ROUTINE_SLOT: AtomicU32 = AtomicU32::new(0);
 /// The blip row-pointer table (relocated).
 static TABLE_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The text-entry object (relocated).
+static TEXT_OBJ_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The dispatch notify object (relocated).
+static DISPATCH_OBJ_SLOT: AtomicU32 = AtomicU32::new(0);
 
 /// Address of the global slot for a file VA.
 ///
 /// # Panics
 ///
-/// When the address is not one of the two globals the proof set reads:
+/// When the address is not one of the globals the proof set reads:
 /// a case bug, never a guess.
 fn slot_for(file_va: u32) -> *mut u32 {
     match file_va {
         0x00FE_8DF8 => THRESH_SLOT.as_ptr(),
         0x0103_4494 => GLOB_SLOT.as_ptr(),
+        0x00EB_5394 => SUFFIX_SLOT.as_ptr(),
+        0x0105_7FB4 => COOKIE_SLOT.as_ptr(),
+        0x0116_C24C => G1_SLOT.as_ptr(),
+        0x011E_6248 => G2A_SLOT.as_ptr(),
+        0x011E_624C => G2B_SLOT.as_ptr(),
+        0x011E_622E => DONE_SLOT.as_ptr(),
         _ => panic!("unexpected global VA {file_va:#x}"),
     }
 }
@@ -61,6 +85,8 @@ fn reloc_slot(file_va: u32) -> &'static AtomicU32 {
     match file_va {
         0x0094_98C0 => &ROUTINE_SLOT,
         0x0118_F6F8 => &TABLE_SLOT,
+        0x0116_BFF0 => &TEXT_OBJ_SLOT,
+        0x0103_3130 => &DISPATCH_OBJ_SLOT,
         _ => panic!("unexpected relocated VA {file_va:#x}"),
     }
 }
@@ -80,10 +106,14 @@ pub fn relocated(file_va: u32) -> u32 {
     reloc_slot(file_va).load(Ordering::Relaxed)
 }
 
-/// Registered stub addresses for callee ids 0..4 (0 when none: a call
+/// Registered stub addresses for callee ids 0..8 (0 when none: a call
 /// there panics, which is a case bug). Each test plants the stubs its
 /// rewrites call before running.
-static CALLEES: [AtomicU32; 4] = [
+static CALLEES: [AtomicU32; 8] = [
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
     AtomicU32::new(0),
     AtomicU32::new(0),
     AtomicU32::new(0),
@@ -143,6 +173,26 @@ macro_rules! callee_cdecl {
         let f: extern "cdecl" fn($( $crate::__ty!($arg) ),*) -> $ret =
             unsafe { core::mem::transmute($crate::callee_addr($id) as usize) };
         f($( $arg ),*)
+    }};
+}
+
+/// Call intercepted callee `id` with the stdcall convention.
+#[macro_export]
+macro_rules! callee_stdcall {
+    ($id:expr, $ret:ty, $($arg:expr),* $(,)?) => {{
+        let f: extern "stdcall" fn($( $crate::__ty!($arg) ),*) -> $ret =
+            unsafe { core::mem::transmute($crate::callee_addr($id) as usize) };
+        f($( $arg ),*)
+    }};
+}
+
+/// Call intercepted callee `id` with the thiscall convention.
+#[macro_export]
+macro_rules! callee_thiscall {
+    ($id:expr, $ret:ty, $this_arg:expr $(, $arg:expr)* $(,)?) => {{
+        let f: extern "thiscall" fn(u32 $(, $crate::__ty!($arg) )*) -> $ret =
+            unsafe { core::mem::transmute($crate::callee_addr($id) as usize) };
+        f($this_arg $(, $arg )*)
     }};
 }
 
