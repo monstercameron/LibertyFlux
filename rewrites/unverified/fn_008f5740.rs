@@ -169,7 +169,7 @@ lf_checker_rt::export!(thiscall, rw_008f5740(obj: u32, strp: u32, out: u32) -> u
         let mut esi = out;
         if rd8(p) == 0 {
             wr16(esi, 0);
-            rt::callee_cdecl!(C_COOKIE, u32);
+            rt::callee_cdecl!(C_COOKIE, u32,);
             return p;
         }
         let mut ebx: u32 = 0;
@@ -313,7 +313,7 @@ lf_checker_rt::export!(thiscall, rw_008f5740(obj: u32, strp: u32, out: u32) -> u
                 break;
             }
         }
-        rt::callee_cdecl!(C_COOKIE, u32);
+        rt::callee_cdecl!(C_COOKIE, u32,);
         p
     }
 });

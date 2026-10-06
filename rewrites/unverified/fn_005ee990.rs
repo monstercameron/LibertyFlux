@@ -144,10 +144,10 @@ lf_checker_rt::export!(thiscall, rw_005ee990(this: u32) -> u32 {
                     lf_checker_rt::callee_thiscall!(4, u32, e1.wrapping_add(0x14),);
                     // Via callee 12's stub (see above); answer ignored.
                     let _: u32 = lf_checker_rt::callee_cdecl!(12, u32, 1);
-                    // Fetch via callee 14's stub (fastcall-1: the thiscall-1
-                    // stub shape misbehaves); out-word observed via snapshot.
-                    let a7: u32 = lf_checker_rt::callee_fastcall!(
-                        14, u32, e1, 0,
+                    // Fetch via callee 7's stub; out-word unwritten by the
+                    // stub (see contract notes), observed downstream.
+                    let a7: u32 = lf_checker_rt::callee_thiscall!(
+                        7, u32, e1,
                         &mut s1c as *mut u32 as u32
                     );
                     let a8: u32 = lf_checker_rt::callee_thiscall!(

@@ -336,6 +336,14 @@
   "reason": null
  },
  {
+  "address": "0x005B5AA0",
+  "name": null,
+  "file": "fn_005b5aa0.rs",
+  "lane": "r-s505",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x005CDD40",
   "name": null,
   "file": "fn_005cdd40.rs",
@@ -361,11 +369,11 @@
  },
  {
   "address": "0x005EE990",
-  "name": "",
+  "name": "CHtmlTextFormat::~CHtmlTextFormat_2",
   "file": "fn_005ee990.rs",
   "lane": "r-b591",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "checker_gap"
  },
  {
   "address": "0x0061B150",
@@ -798,6 +806,22 @@
   "lane": "r-s436",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00ABD340",
+  "name": "input_ui_ctor_tail",
+  "file": "fn_00abd340.rs",
+  "lane": "r-b610",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00ADB770",
+  "name": "input_ui_tls_gate_and_view_setup (proposed)",
+  "file": "fn_00adb770.rs",
+  "lane": "r-b613",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00ADDCF0",
