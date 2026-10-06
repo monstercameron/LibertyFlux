@@ -21,8 +21,8 @@ const F_E: u32 = 0x0171_DE54;
 
 /// Task id selecting the extended configuration.
 const TASK_GUN_EXTENDED: u32 = 12;
-/// Virtual slot (in dwords) of the ped predicate: byte offset 0x128.
-const PED_VIRT_SLOT_WORDS: u32 = 0x48;
+/// Virtual slot of the ped predicate as a byte offset (0x128).
+const PED_VIRT_SLOT_OFF: u32 = 0x128;
 
 // Task flag words.
 const FLAG_NEW: u32 = 0x4000_5A40;
@@ -343,7 +343,7 @@ fn path_b(this: u32, ped: u32, task_id: u32) -> u32 {
     // Virtual-slot predicate gate.
     if rd_u8(obj, THIS_GATE) == 0 && e1c == 3 {
         let vt = rd_u32(ped, 0);
-        let slot = rd_u32(vt, PED_VIRT_SLOT_WORDS * 4);
+        let slot = rd_u32(vt, PED_VIRT_SLOT_OFF);
         let f: extern "thiscall" fn(u32) -> u32 =
             unsafe { core::mem::transmute(slot as usize) };
         let av = f(ped) & 0xFF;

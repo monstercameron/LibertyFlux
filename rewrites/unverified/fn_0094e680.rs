@@ -7,11 +7,13 @@
 /// callee 2 as a thiscall with the context word `CTX` in ECX and
 /// (`SUBKIND`, callee 1's answer) on the stack; only the LOW byte of callee
 /// 2's answer is tested. When the tag is negative or that byte is zero, a
-/// stack struct (-1, then zeros) is the fill source instead of the record.
-/// Callee 3 runs with (source, 0x20) either way; the source pointer's value
-/// differs per side so the contract skips it and snapshots the 8 words.
-/// Ends with the stack-cookie check as an intercepted call whose cookie is
-/// uncompared (`ret: preserve`), and returns 1 in the low byte.
+/// stack struct is the fill source instead of the record: the size word is
+/// pushed before the pointer is taken, so the 8 snapshot words start at the
+/// (0, 1) header and read (0x00010000, -1, 0, 0, 0, 0, 0, 0). Callee 3 runs
+/// with (source, 0x20) either way; the source pointer's value differs per
+/// side so the contract skips it and snapshots those 8 words. Ends with the
+/// stack-cookie check as an intercepted call whose cookie is uncompared
+/// (`ret: preserve`), and returns 1 in the low byte.
 ///
 /// Original: 0x0094E680 (thiscall, no stack words).
 lf_checker_rt::export!(thiscall, rw_0094E680(this: u32) -> u32 {
@@ -26,7 +28,7 @@ lf_checker_rt::export!(thiscall, rw_0094E680(this: u32) -> u32 {
         const FILL: u32 = 3;
         const COOKIE: u32 = 4;
         let ctx = (lf_checker_rt::global::<u32>(CTX) as *const u32).read();
-        let st = [0xFFFF_FFFFu32, 0, 0, 0, 0, 0, 0, 0];
+        let st = [0x00010000u32, 0xFFFF_FFFF, 0, 0, 0, 0, 0, 0];
         let mut i = 0u32;
         while i < COUNT {
             let rec = this.wrapping_add(i.wrapping_mul(STRIDE));
