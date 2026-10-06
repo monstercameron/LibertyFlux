@@ -125,3 +125,42 @@ pub struct SlotObj {
     pub hdr: [u8; 4],
     pub slot: u32,
 }
+
+/// `#[repr(C)]` 24-byte curve object: vtable, header, key base, count,
+/// capacity, scale and bias words.
+#[repr(C)]
+pub struct CurveObj {
+    pub vtable: u32,
+    pub hdr: [u8; 4],
+    pub base: u32,
+    pub count: u16,
+    pub cap: u16,
+    pub scale: u32,
+    pub bias: u32,
+}
+
+/// `#[repr(C)]` 8-byte curve key record: key, order byte, pad, coefficient
+/// pointer.
+#[repr(C)]
+#[derive(Clone, Copy)]
+pub struct CurveKeyRec {
+    pub key: u16,
+    pub order: u8,
+    pub pad: u8,
+    pub coeff: u32,
+}
+
+/// Zeroed 64-byte object blob for methods reading words at fixed offsets.
+pub fn blob64() -> Box<[u8; 64]> {
+    Box::new([0u8; 64])
+}
+
+/// Writes a little-endian word into a blob.
+pub fn put_u32(blob: &mut [u8; 64], off: usize, v: u32) {
+    blob[off..off + 4].copy_from_slice(&v.to_le_bytes());
+}
+
+/// Writes a little-endian half word into a blob.
+pub fn put_u16(blob: &mut [u8; 64], off: usize, v: u16) {
+    blob[off..off + 2].copy_from_slice(&v.to_le_bytes());
+}

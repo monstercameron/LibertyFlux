@@ -96,6 +96,18 @@ impl CurveFloat {
         &self.keys
     }
 
+    /// Output multiplier, applied first.
+    #[must_use]
+    pub const fn scale(&self) -> f32 {
+        self.scale
+    }
+
+    /// Output offset, applied after the scale.
+    #[must_use]
+    pub const fn bias(&self) -> f32 {
+        self.bias
+    }
+
     /// Byte size of the 32-bit storage form: the header plus, per key,
     /// four bytes per order step plus the segment tail, wrapping exactly
     /// like the original.
