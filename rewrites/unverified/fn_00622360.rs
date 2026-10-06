@@ -24,8 +24,12 @@
 /// stubbed check (id 4) and is not modelled. Both direct callers ignore
 /// eax, so the contract compares no return channel.
 ///
-/// Stage 1 covers this path and the early ends. The mismatch path (state
-/// outside 2/3 or id words differing) panics here; it is stage 2.
+/// Otherwise (state outside 2/3, or the id words differing) the
+/// request's own id pair (at `arg1+0x40`/`+0x44`) is compared against the
+/// wanted pair; when it differs too, the mismatch tail (stage 2a) checks
+/// entries until the first success and reports it through callee 19
+/// (`0x620b80`, thiscall/2). When the request pair matches, the match
+/// side (stage 2b: find-scan, chain walks, task build) panics here.
 ///
 /// Original: 0x00622360 (thiscall, ecx = this, two stack words).
 lf_checker_rt::export!(thiscall, rw_00622360(this: u32, arg1: u32, arg2: u32) -> u32 {
@@ -34,6 +38,7 @@ lf_checker_rt::export!(thiscall, rw_00622360(this: u32, arg1: u32, arg2: u32) ->
         const CB_COPY: u32 = 2;
         const CB_DISPATCH: u32 = 3;
         const CB_COOKIE: u32 = 4;
+        const CB_TAIL: u32 = 19;
 
         const STATE_OFF: u32 = 0x50;
         const ID0_OFF: u32 = 0xbf0;
@@ -79,15 +84,50 @@ lf_checker_rt::export!(thiscall, rw_00622360(this: u32, arg1: u32, arg2: u32) ->
             let _: u32 = lf_checker_rt::callee_cdecl!(CB_COOKIE, u32,);
             return 0;
         }
-        // Signed state gate; both misses share one target.
+        // Signed state gate; both misses share the path-2 target.
         let state = rd32(this.wrapping_add(STATE_OFF)) as i32;
-        if state < 2 || state > 3 {
-            panic!("fn3 stage 2: state path");
-        }
-        if rd32(this.wrapping_add(ID0_OFF)) != rd32(this.wrapping_add(WANT0_OFF))
+        if state < 2
+            || state > 3
+            || rd32(this.wrapping_add(ID0_OFF)) != rd32(this.wrapping_add(WANT0_OFF))
             || rd32(this.wrapping_add(ID1_OFF)) != rd32(this.wrapping_add(WANT1_OFF))
         {
-            panic!("fn3 stage 2: id path");
+            // Path 2: compare the request's id pair, then the mismatch tail
+            // (stage 2a). The match side is stage 2b.
+            let d = rd32(arg1.wrapping_add(0x40));
+            let a = rd32(arg1.wrapping_add(0x44));
+            wr32(fb.wrapping_add(F_ARG2), d);
+            wr32(fb.wrapping_add(F_COUNT), a);
+            if d != rd32(this.wrapping_add(WANT0_OFF))
+                || a != rd32(this.wrapping_add(WANT1_OFF))
+            {
+                let n = rd32(arg2.wrapping_add(COUNT_OFF));
+                if (n as i32) > 0 {
+                    let mut e = arg2.wrapping_add(ENTRIES_OFF);
+                    let mut i = 0u32;
+                    loop {
+                        let r: u32 =
+                            lf_checker_rt::callee_thiscall!(CB_CHECK, u32, arg1, e);
+                        if r != 0 {
+                            let _: u32 = lf_checker_rt::callee_thiscall!(
+                                CB_TAIL,
+                                u32,
+                                this,
+                                rd32(fb.wrapping_add(F_ARG2)),
+                                rd32(fb.wrapping_add(F_COUNT))
+                            );
+                            break;
+                        }
+                        i += 1;
+                        if i >= n {
+                            break;
+                        }
+                        e = e.wrapping_add(ENTRY_STRIDE);
+                    }
+                }
+                let _: u32 = lf_checker_rt::callee_cdecl!(CB_COOKIE, u32,);
+                return 0;
+            }
+            panic!("fn3 stage 2b: match path");
         }
         let count = rd32(arg2.wrapping_add(COUNT_OFF));
         wr32(fb.wrapping_add(F_COUNT), count);

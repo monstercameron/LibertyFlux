@@ -52,6 +52,7 @@ pub const ROWS: &[Row] = &[
             "live text must hold a NUL within its 256 bytes",
             "scratch and converted-word addresses skipped; the eight words are compared instead",
             "cached pointer skipped; the eight words behind it are compared instead",
+            "hook answers arrive through the float-stack return; its signalling-NaN quieting is reproduced in the proof",
         ],
     },
     // The refresh-and-render pass.
@@ -59,7 +60,10 @@ pub const ROWS: &[Row] = &[
         class: "UIFontString",
         method: "vf85",
         state: State::Proven,
-        narrows: &["scale global travels as an argument"],
+        narrows: &[
+            "scale global travels as an argument",
+            "hook answers arrive through the float-stack return; its signalling-NaN quieting is reproduced in the proof",
+        ],
     },
     // The row snapshot.
     Row {

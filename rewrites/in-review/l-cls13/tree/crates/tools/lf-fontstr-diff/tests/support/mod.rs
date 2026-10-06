@@ -357,6 +357,21 @@ impl Default for Stubs {
     }
 }
 
+/// Quiets a signalling NaN the way the float-stack return does:
+/// the quiet bit set, sign and payload kept. All other values pass
+/// through untouched. The rewrite side's hook answers travel through
+/// real float-stack returns, so the fake applies this to every
+/// float answer to receive the same bits the rewrite sees.
+#[must_use]
+pub fn quiet_snan(x: f32) -> f32 {
+    let bits = x.to_bits();
+    if bits & 0x7F80_0000 == 0x7F80_0000 && bits & 0x007F_FFFF != 0 {
+        f32::from_bits(bits | 0x0040_0000)
+    } else {
+        x
+    }
+}
+
 /// One recorded lift-side call: method name, argument words, and the
 /// bytes behind a buffer argument.
 pub struct LiftCall {
@@ -474,16 +489,16 @@ impl FontWorld for Fake {
         self.call_unit("notify_b", vec![]);
     }
     fn metric_a(&mut self) -> f32 {
-        f32::from_bits(self.call("metric_a", vec![]))
+        quiet_snan(f32::from_bits(self.call("metric_a", vec![])))
     }
     fn metric_b(&mut self) -> f32 {
-        f32::from_bits(self.call("metric_b", vec![]))
+        quiet_snan(f32::from_bits(self.call("metric_b", vec![])))
     }
     fn metric_c(&mut self) -> f32 {
-        f32::from_bits(self.call("metric_c", vec![]))
+        quiet_snan(f32::from_bits(self.call("metric_c", vec![])))
     }
     fn metric_d(&mut self) -> f32 {
-        f32::from_bits(self.call("metric_d", vec![]))
+        quiet_snan(f32::from_bits(self.call("metric_d", vec![])))
     }
     fn render(&mut self) -> u32 {
         self.call("render", vec![])
@@ -498,7 +513,7 @@ impl FontWorld for Fake {
         self.call("visible", vec![]) & 0xff != 0
     }
     fn advance(&mut self) -> f32 {
-        f32::from_bits(self.call("advance", vec![]))
+        quiet_snan(f32::from_bits(self.call("advance", vec![])))
     }
     fn push_style(&mut self, style: u32) {
         self.call_unit("push_style", vec![style]);
@@ -551,10 +566,10 @@ impl FontWorld for Fake {
             words: words.to_vec(),
             bytes: Vec::new(),
         });
-        f32::from_bits(self.pop("query_height"))
+        quiet_snan(f32::from_bits(self.pop("query_height")))
     }
     fn line_height(&mut self) -> f32 {
-        f32::from_bits(self.call("line_height", vec![]))
+        quiet_snan(f32::from_bits(self.call("line_height", vec![])))
     }
     fn sink_height(&mut self, bits: u32) {
         self.call_unit("sink_height", vec![bits]);
