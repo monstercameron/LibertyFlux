@@ -384,22 +384,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00664430",
-  "name": "sn_task_join_validate",
-  "file": "fn_00664430.rs",
-  "lane": "r-b627",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00664640",
-  "name": "sn_task_member_update",
-  "file": "fn_00664640.rs",
-  "lane": "r-b627",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x006F5C50",
   "name": "input_batch_flush",
   "file": "fn_006f5c50.rs",
@@ -1190,6 +1174,22 @@
   "lane": "r-b300",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x00C68AE0",
+  "name": "mainloop_timing_d",
+  "file": "fn_00c68ae0.rs",
+  "lane": "r-b629",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C68CD0",
+  "name": "mainloop_timing_e",
+  "file": "fn_00c68cd0.rs",
+  "lane": "r-b629",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00C7E200",
