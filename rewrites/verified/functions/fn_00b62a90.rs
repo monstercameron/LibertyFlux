@@ -7,8 +7,12 @@
 /// real callee fills its out-block). When the answer's low byte is non-zero,
 /// copies those 4 words over `[a0..a0+12]`. Returns `a0`. The original forwards
 /// its ignored entry ECX to the converter; the rewrite passes 0 (unobserved).
-/// Stdcall, three stack words; the scratch-pointer argument is skipped.
-export!(stdcall, rw_00b62a90(a0: u32, a1: u32, a2: u32) -> u32 {
+/// Thiscall-shaped stdcall: entry ECX is forwarded to the converter (the
+/// nested converter reads the words at +0x18 and +0x24 through it), so the
+/// rewrite binds ECX explicitly; the stack shape is unchanged.
+/// The scratch-pointer argument is skipped; ECX words +0x18/+0x24 are snapshotted.
+use lf_checker_rt::{callee_cdecl, callee_stdcall, callee_thiscall, callee_fastcall, export, global, relocated, tls_slot};
+export!(thiscall, rw_00b62a90(ecx: u32, a0: u32, a1: u32, a2: u32) -> u32 {
     unsafe {
         for (s, d) in [(0x30u32, 0u32), (0x34, 4), (0x38, 8)] {
             ((a0 + d) as *mut u32).write_unaligned(((a1 + s) as *const u32).read_unaligned());
@@ -17,7 +21,7 @@ export!(stdcall, rw_00b62a90(a0: u32, a1: u32, a2: u32) -> u32 {
             return a0;
         }
         let mut scratch = [0u32; 16];
-        let r: u32 = callee_thiscall!(1, u32, 0, a1, scratch.as_mut_ptr() as u32, a2, 0);
+        let r: u32 = callee_thiscall!(1, u32, ecx, a1, scratch.as_mut_ptr() as u32, a2, 0);
         if (r & 0xFF) == 0 {
             return a0;
         }

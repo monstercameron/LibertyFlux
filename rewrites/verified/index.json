@@ -55413,6 +55413,15 @@
   "lane": "r-s154"
  },
  {
+  "address": "0x00925D40",
+  "name": "pick_slot_by_id_or_distance",
+  "kind": "function",
+  "file": "functions/fn_00925d40.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
   "address": "0x00925DB0",
   "name": "input_lookup",
   "kind": "function",
@@ -55566,10 +55575,28 @@
   "lane": "r-b232"
  },
  {
+  "address": "0x009288E0",
+  "name": "cascade_shadow_phase_teardown_tail",
+  "kind": "function",
+  "file": "functions/fn_009288e0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
   "address": "0x00928A00",
   "name": "CRenderPhaseCascadeShadows::vf0",
   "kind": "function",
   "file": "functions/fn_00928a00.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
+  "address": "0x00928A20",
+  "name": "plane_from_point_normal_negated",
+  "kind": "function",
+  "file": "functions/fn_00928a20.rs",
   "trials": 1200,
   "checker": "version 7",
   "lane": "r-s523"
@@ -55602,6 +55629,15 @@
   "lane": "r-b211"
  },
  {
+  "address": "0x0092B5E0",
+  "name": "ortho_projection_row_from_extents",
+  "kind": "function",
+  "file": "functions/fn_0092b5e0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
   "address": "0x0092B6C0",
   "name": "cam_matrix_from_basis",
   "kind": "function",
@@ -55620,6 +55656,15 @@
   "lane": "r-b620"
  },
  {
+  "address": "0x0092CA40",
+  "name": "matrix44_multiply_inplace",
+  "kind": "function",
+  "file": "functions/fn_0092ca40.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
   "address": "0x0092CFE0",
   "name": "T_CB_Generic_3Args<void(*)(int, const rage::Matrix44&, float), int, rage::Matrix44, float>::vf1",
   "kind": "function",
@@ -55633,6 +55678,15 @@
   "name": "CSetCurrentViewportToNULL::vf1",
   "kind": "function",
   "file": "functions/fn_0092d000.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
+  "address": "0x0092D0A0",
+  "name": "current_frame_slot_ptr",
+  "kind": "function",
+  "file": "functions/fn_0092d0a0.rs",
   "trials": 1200,
   "checker": "version 7",
   "lane": "r-s523"
@@ -83826,6 +83880,15 @@
   "lane": "a-S05"
  },
  {
+  "address": "0x00B32EF0",
+  "name": "peds_task_area_update",
+  "kind": "function",
+  "file": "functions/fn_00b32ef0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q50"
+ },
+ {
   "address": "0x00B338F0",
   "name": "peds_sift_down_key12",
   "kind": "function",
@@ -86630,8 +86693,8 @@
   "kind": "function",
   "file": "functions/fn_00b62a90.rs",
   "trials": 1000,
-  "checker": "version 5",
-  "lane": "r-s450"
+  "checker": "version 6",
+  "lane": "a-S13"
  },
  {
   "address": "0x00B62B10",
