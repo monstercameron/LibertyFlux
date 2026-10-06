@@ -25,29 +25,29 @@
 //! channel; behaviour is verified through heap, globals and calls.
 export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
     unsafe {
-        // Frame: 59 words of scratch; byte and half-word accesses share
+        // Frame: 56 words of scratch; byte and half-word accesses share
         // words with the surrounding dwords exactly like the original.
-        let mut fr = [0u32; 59];
+        let mut fr = [0u32; 56];
         #[inline(always)]
-        fn wrf(fr: &mut [u32; 59], w: usize, v: f32) {
+        fn wrf(fr: &mut [u32; 56], w: usize, v: f32) {
             fr[w] = v.to_bits();
         }
         #[inline(always)]
-        fn rdf(fr: &[u32; 59], w: usize) -> f32 {
+        fn rdf(fr: &[u32; 56], w: usize) -> f32 {
             f32::from_bits(fr[w])
         }
         #[inline(always)]
-        fn wrb(fr: &mut [u32; 59], o: usize, v: u8) {
+        fn wrb(fr: &mut [u32; 56], o: usize, v: u8) {
             let s = (o & 3) * 8;
             fr[o >> 2] = (fr[o >> 2] & !(0xff << s)) | ((v as u32) << s);
         }
         #[inline(always)]
-        fn wrh(fr: &mut [u32; 59], o: usize, v: u16) {
+        fn wrh(fr: &mut [u32; 56], o: usize, v: u16) {
             let s = (o & 3) * 8;
             fr[o >> 2] = (fr[o >> 2] & !(0xffff << s)) | ((v as u32) << s);
         }
         #[inline(always)]
-        fn fp(fr: &mut [u32; 59], w: usize) -> u32 {
+        fn fp(fr: &mut [u32; 56], w: usize) -> u32 {
             fr.as_mut_ptr().wrapping_add(w) as u32
         }
         #[inline(always)]
@@ -79,7 +79,7 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
             *global::<f32>(va)
         }
         #[inline(always)]
-        fn rdb(fr: &[u32; 59], o: usize) -> u8 {
+        fn rdb(fr: &[u32; 56], o: usize) -> u8 {
             (fr[o >> 2] >> ((o & 3) * 8)) as u8
         }
         const F_G1: u32 = 0x00E78588;
@@ -123,7 +123,7 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
         }
         // Classify the event, then run the follow-up query.
         eax = callee_stdcall!(1, u32, esi);
-        fr[0x0f] = eax;
+        fr[0x0b] = eax;
         callee_thiscall!(2, u32, edi, eax, fp(&mut fr, 0x10));
         // Level smoothing over this+0x144.
         edx = *((edi + 0x120) as *const u32);
@@ -192,7 +192,7 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                     u32,
                     edi,
                     relocated(ck),
-                    fp(&mut fr, 0x1a),
+                    fp(&mut fr, 0x14),
                     0xFFFFFFFF,
                     0,
                     0
@@ -204,7 +204,7 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                     u32,
                     edi,
                     relocated(0x00E8CDBC),
-                    fp(&mut fr, 0x1a),
+                    fp(&mut fr, 0x14),
                     0xFFFFFFFF,
                     0,
                     0
@@ -234,7 +234,7 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                     u32,
                     edi,
                     relocated(ck),
-                    fp(&mut fr, 0x1a),
+                    fp(&mut fr, 0x14),
                     0xFFFFFFFF,
                     0,
                     0
@@ -246,7 +246,7 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                     u32,
                     edi,
                     relocated(0x00E8CDE4),
-                    fp(&mut fr, 0x1a),
+                    fp(&mut fr, 0x14),
                     0xFFFFFFFF,
                     0,
                     0
@@ -274,19 +274,19 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                 eax = callee_cdecl!(7, u32, x0.to_bits());
                 x0 = f32::from_bits(eax);
                 x0 = fmul(x0, gf(F_G1));
-                fr[0x25] |= 0x0004_0000; // byte F+0x96 |= 4
+                fr[0x25] |= 0x0004_0000;
                 x0 = fmul(x0, gf(F_G2));
                 eax = cvt(x0) as u32;
                 x0 = *((edi + 0xbc) as *const f32);
-                fr[0x1b] = eax;
-                fr[0x22] = *((edi + 8) as *const u32);
-                wrf(&mut fr, 0x1e, x0);
+                fr[0x15] = eax;
+                fr[0x1c] = *((edi + 8) as *const u32);
+                wrf(&mut fr, 0x14, x0);
                 callee_thiscall!(
                     8,
                     u32,
                     edi,
                     esi,
-                    fp(&mut fr, 0x1a),
+                    fp(&mut fr, 0x14),
                     0xFFFFFFFF,
                     0,
                     0
@@ -348,13 +348,7 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                 }
                 x1 = gf(F_88E8);
             } else {
-                callee_thiscall!(
-                    10,
-                    u32,
-                    edi,
-                    fp(&mut fr, 0x06),
-                    fp(&mut fr, 0x08)
-                );
+                callee_thiscall!(10, u32, edi, fp(&mut fr, 0x04), fp(&mut fr, 0x08));
                 x0 = rdf(&fr, 0x04);
                 x1 = rdf(&fr, 0x08);
                 edx = fr[0x0c];
@@ -384,7 +378,7 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                 fr[0x04] = eax;
                 callee_thiscall!(4, u32, fp(&mut fr, 0x14));
                 fr[0x1c] = *((edi + 8) as *const u32);
-                fr[0x25] |= 0x0004_0000; // byte F+0x96 |= 4
+                fr[0x25] |= 0x0004_0000;
                 ecx = *((edi + 0x78) as *const u32);
                 ecx = *((relocated(T_12E8) + ecx.wrapping_mul(4)) as *const u32);
                 fr[0x1b] = ecx;
@@ -393,29 +387,29 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                 x0 = fmul(x0, gf(F_870C));
                 eax = callee_cdecl!(11, u32, x0.to_bits());
                 x0 = f32::from_bits(eax);
-                wrf(&mut fr, 0x0f, x0);
+                wrf(&mut fr, 0x0d, x0);
                 x1 = *((edi + 0xbc) as *const f32);
-                x1 = fadd(x1, rdf(&fr, 0x0b));
-                x2 = rdf(&fr, 0x0f);
-                x0 = rdf(&fr, 0x0a);
+                x1 = fadd(x1, rdf(&fr, 0x09));
+                x2 = rdf(&fr, 0x0d);
+                x0 = rdf(&fr, 0x08);
                 x2 = fadd(x2, x1);
-                fr[0x19] = fp(&mut fr, 0x12);
+                fr[0x19] = fp(&mut fr, 0x10);
                 wrf(&mut fr, 0x14, x2);
                 eax = callee_cdecl!(7, u32, x0.to_bits());
                 x0 = f32::from_bits(eax);
                 x0 = fmul(x0, gf(F_G1));
                 x0 = fmul(x0, gf(F_G2));
                 eax = cvt(x0) as u32;
-                fr[0x1b] = eax;
-                eax = fr[0x11];
-                fr[0x27] = eax;
-                eax = fr[0x0c];
+                fr[0x15] = eax;
+                eax = fr[0x0b];
+                fr[0x21] = eax;
+                eax = fr[0x04];
                 callee_thiscall!(
                     8,
                     u32,
                     edi,
                     eax,
-                    fp(&mut fr, 0x1a),
+                    fp(&mut fr, 0x14),
                     0xFFFFFFFF,
                     0,
                     0
@@ -436,68 +430,64 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                         u32,
                         ecx.wrapping_add(0x570),
                         1,
-                        fp(&mut fr, 0x11),
-                        fp(&mut fr, 0x39),
+                        fp(&mut fr, 0x0d),
+                        fp(&mut fr, 0x37),
                         0
                     );
                     x0 = rdf(&fr, 0x0d);
                     if x0 > gf(F_E8D718) {
                         eax = fr[0x37];
                         x0 = fsub(x0, gf(F_8AB8));
-                        fr[0x22] = eax;
-                        x0 = fadd(x0, rdf(&fr, 0x1a));
-                        eax = fr[0x0e];
-                        wrf(&mut fr, 0x20, x0);
+                        fr[0x1e] = eax;
+                        x0 = fadd(x0, rdf(&fr, 0x14));
+                        eax = fr[0x04];
+                        wrf(&mut fr, 0x14, x0);
                         callee_thiscall!(
                             13,
                             u32,
                             edi,
                             eax,
-                            fp(&mut fr, 0x10),
-                            fp(&mut fr, 0x1a),
+                            fp(&mut fr, 0x08),
+                            fp(&mut fr, 0x14),
                             0xFFFFFFFF,
                             0,
                             0
                         );
                         if fr[0x08] != 0 {
-                            eax = callee_thiscall!(
-                                14,
-                                u32,
-                                relocated(0x0115DEF0),
-                                0
-                            );
+                            eax =
+                                callee_thiscall!(14, u32, relocated(0x0115DEF0), 0);
                             x1 = *(eax as *const f32);
                             x0 = rdf(&fr, 0x10);
                             x2 = *((eax + 4) as *const f32);
                             x3 = *((eax + 8) as *const f32);
                             x0 = fsub(x0, x1);
-                            wrf(&mut fr, 0x08, x1);
-                            wrf(&mut fr, 0x34, x0);
-                            x0 = rdf(&fr, 0x15);
+                            wrf(&mut fr, 0x04, x1);
+                            wrf(&mut fr, 0x30, x0);
+                            x0 = rdf(&fr, 0x11);
                             x0 = fsub(x0, x2);
-                            wrf(&mut fr, 0x3a, x2);
-                            wrf(&mut fr, 0x12, x3);
-                            wrf(&mut fr, 0x35, x0);
-                            x0 = rdf(&fr, 0x16);
+                            wrf(&mut fr, 0x36, x2);
+                            wrf(&mut fr, 0x0e, x3);
+                            wrf(&mut fr, 0x31, x0);
+                            x0 = rdf(&fr, 0x12);
                             x0 = fsub(x0, x3);
-                            wrf(&mut fr, 0x36, x0);
+                            wrf(&mut fr, 0x32, x0);
                             callee_thiscall!(
                                 15,
                                 u32,
-                                fp(&mut fr, 0x34),
+                                fp(&mut fr, 0x30),
                                 0x3F490FDB,
                                 0x7a
                             );
                             x0 = rdf(&fr, 0x30);
                             x0 = fadd(x0, rdf(&fr, 0x04));
                             ecx = fr[0x08];
+                            wrf(&mut fr, 0x30, x0);
+                            x0 = rdf(&fr, 0x31);
+                            x0 = fadd(x0, rdf(&fr, 0x36));
+                            wrf(&mut fr, 0x31, x0);
+                            x0 = rdf(&fr, 0x32);
+                            x0 = fadd(x0, rdf(&fr, 0x0e));
                             wrf(&mut fr, 0x32, x0);
-                            x0 = rdf(&fr, 0x33);
-                            x0 = fadd(x0, rdf(&fr, 0x38));
-                            wrf(&mut fr, 0x33, x0);
-                            x0 = rdf(&fr, 0x34);
-                            x0 = fadd(x0, rdf(&fr, 0x10));
-                            wrf(&mut fr, 0x34, x0);
                             callee_thiscall!(16, u32, ecx, fp(&mut fr, 0x30));
                             ecx = fr[0x08];
                             callee_thiscall!(17, u32, ecx, 0, 0, 0);
@@ -527,12 +517,12 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                     x0 = fmul(x0, *((edi + 0x144) as *const f32));
                     eax = callee_cdecl!(11, u32, x0.to_bits());
                     x0 = f32::from_bits(eax);
-                    wrf(&mut fr, 0x10, x0);
+                    wrf(&mut fr, 0x0e, x0);
                     x0 = *((edi + 0xbc) as *const f32);
-                    x0 = fadd(x0, rdf(&fr, 0x0b));
-                    x1 = rdf(&fr, 0x10);
+                    x0 = fadd(x0, rdf(&fr, 0x09));
+                    x1 = rdf(&fr, 0x0e);
                     x1 = fadd(x1, x0);
-                    wrf(&mut fr, 0x1e, x1);
+                    wrf(&mut fr, 0x14, x1);
                     callee_thiscall!(
                         8,
                         u32,
@@ -561,16 +551,17 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                             if eax != 0 {
                                 x0 = *((edi + 0xbc) as *const f32);
                                 x0 = fadd(x0, rdf(&fr, 0x09));
-                                wrb(&mut fr, 0xb4, 0xff);
-                                wrf(&mut fr, 0x1c, x0);
-                                fr[0x1d] = 0;
-                                eax = ((eax + 0x2a) as *const u32).read_unaligned();
+                                wrb(&mut fr, 0x94, 0xff);
+                                wrf(&mut fr, 0x14, x0);
+                                fr[0x15] = 0;
+                                eax =
+                                    ((eax + 0x2a) as *const u32).read_unaligned();
                                 callee_thiscall!(
                                     8,
                                     u32,
                                     edi,
                                     eax,
-                                    fp(&mut fr, 0x1a),
+                                    fp(&mut fr, 0x14),
                                     0xFFFFFFFF,
                                     0,
                                     0
@@ -592,17 +583,17 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                     wrh(&mut fr, 0xa2, eax as u16);
                     eax = *((edi + 0xb4) as *const u32);
                     eax = *((eax + 0x38) as *const u32);
-                    wrf(&mut fr, 0x1c, x0);
-                    x0 = rdf(&fr, 0x15);
-                    fr[0x1a] = eax;
-                    wrf(&mut fr, 0x1f, x0);
-                    x0 = rdf(&fr, 0x18);
-                    wrf(&mut fr, 0x22, x0);
+                    wrf(&mut fr, 0x18, x0);
+                    x0 = rdf(&fr, 0x11);
+                    fr[0x14] = eax;
+                    wrf(&mut fr, 0x19, x0);
+                    x0 = rdf(&fr, 0x12);
+                    wrf(&mut fr, 0x1a, x0);
                     callee_thiscall!(
                         22,
                         u32,
                         relocated(0x012202E0),
-                        fp(&mut fr, 0x1a),
+                        fp(&mut fr, 0x14),
                         0x3DCCCCCD,
                         0,
                         0
@@ -611,7 +602,12 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
             }
             eax = *((edi + 0xb8) as *const u32);
             if *((eax + 0x26) as *const u8) != 0 {
-                if esi == 0 || esi == 1 || esi == 0xe || esi == 0xf || esi == 0x10 || esi == 0x11
+                if esi == 0
+                    || esi == 1
+                    || esi == 0xe
+                    || esi == 0xf
+                    || esi == 0x10
+                    || esi == 0x11
                 {
                     eax = *((edi + 0xb4) as *const u32);
                     if eax != 0 && *((eax + 0x38) as *const u32) != 0 {
@@ -623,12 +619,12 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                         wrh(&mut fr, 0xa2, eax as u16);
                         eax = *((edi + 0xb4) as *const u32);
                         eax = *((eax + 0x38) as *const u32);
+                        wrf(&mut fr, 0x18, x0);
+                        x0 = rdf(&fr, 0x11);
+                        wrf(&mut fr, 0x19, x0);
+                        x0 = rdf(&fr, 0x12);
+                        fr[0x14] = eax;
                         wrf(&mut fr, 0x1a, x0);
-                        x0 = rdf(&fr, 0x13);
-                        wrf(&mut fr, 0x1b, x0);
-                        x0 = rdf(&fr, 0x14);
-                        fr[0x16] = eax;
-                        wrf(&mut fr, 0x1c, x0);
                         eax = *((edi + 0xb8) as *const u32);
                         eax = *((eax + 0x26) as *const u8) as u32;
                         x0 = eax as f32;
@@ -638,7 +634,7 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                             22,
                             u32,
                             relocated(0x012202E0),
-                            fp(&mut fr, 0x1a),
+                            fp(&mut fr, 0x14),
                             x0.to_bits(),
                             0,
                             0
@@ -653,21 +649,21 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                 eax = *((edi + 8) as *const u32);
                 x0 = *((edi + 0xbc) as *const f32);
                 x0 = fadd(x0, rdf(&fr, 0x09));
-                fr[0x25] |= 0x0004_0000; // byte F+0x96 |= 4
+                fr[0x25] |= 0x0004_0000;
                 fr[0x1c] = eax;
                 eax = *((edi + 0x78) as *const u32);
                 eax = *((relocated(T_12E8) + eax.wrapping_mul(4)) as *const u32);
-                fr[0x1d] = eax;
-                fr[0x1b] = fp(&mut fr, 0x12);
-                eax = fr[0x0d];
-                fr[0x25] = eax;
-                wrf(&mut fr, 0x1e, x0);
+                fr[0x1b] = eax;
+                fr[0x19] = fp(&mut fr, 0x10);
+                eax = fr[0x0b];
+                fr[0x21] = eax;
+                wrf(&mut fr, 0x14, x0);
                 callee_thiscall!(
                     5,
                     u32,
                     edi,
                     relocated(0x00E8CE14),
-                    fp(&mut fr, 0x1a),
+                    fp(&mut fr, 0x14),
                     0xFFFFFFFF,
                     0,
                     0
@@ -683,39 +679,32 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                     eax = callee_cdecl!(24, u32, 0x3F4CCCCD);
                     if (eax as u8) != 0 {
                         esi = *((edi + 0x78) as *const u32);
-                        eax = callee_thiscall!(
-                            6,
-                            u32,
-                            edi,
-                            fr[0x10],
-                            4,
-                            esi
-                        );
+                        eax = callee_thiscall!(6, u32, edi, fr[0x0c], 4, esi);
                         edi = eax;
                         callee_thiscall!(4, u32, fp(&mut fr, 0x14));
                         eax = fr[0x2f];
                         x0 = rdf(&fr, 0x04);
                         ecx = *((eax + 8) as *const u32);
-                        fr[0x25] |= 0x0004_0000; // byte F+0x96 |= 4
+                        fr[0x25] |= 0x0004_0000;
                         fr[0x1c] = ecx;
-                        ecx = *((relocated(T_12E8)
-                            + esi.wrapping_mul(4))
-                            as *const u32);
-                        fr[0x1d] = ecx;
-                        fr[0x1b] = fp(&mut fr, 0x12);
+                        ecx =
+                            *((relocated(T_12E8) + esi.wrapping_mul(4))
+                                as *const u32);
+                        fr[0x1b] = ecx;
+                        fr[0x19] = fp(&mut fr, 0x10);
                         eax = callee_cdecl!(11, u32, x0.to_bits());
                         x0 = f32::from_bits(eax);
-                        wrf(&mut fr, 0x16, x0);
-                        eax = fr[0x0d];
+                        wrf(&mut fr, 0x14, x0);
+                        eax = fr[0x0b];
                         fr[0x21] = eax;
                         eax = edi;
-                        edi = fr[0x39];
+                        edi = fr[0x2f];
                         callee_thiscall!(
                             8,
                             u32,
                             edi,
                             eax,
-                            fp(&mut fr, 0x1a),
+                            fp(&mut fr, 0x14),
                             0xFFFFFFFF,
                             0,
                             0

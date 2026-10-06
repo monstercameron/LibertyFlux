@@ -101,9 +101,9 @@ lf_checker_rt::export!(thiscall, rw_005ee990(this: u32) -> u32 {
             &mut w18 as *mut u32 as u32
         );
         // Fault parity: the original reads [esi+0x4c] (null when the chain
-        // link was null) before using the fetched word.
-        let _nodeword = rd32(esi.wrapping_add(0x4c));
-        let _ = _nodeword;
+        // link was null) before using the fetched word. black_box keeps the
+        // load: an unused read would be deleted and the fault lost.
+        core::hint::black_box(rd32(esi.wrapping_add(0x4c)));
         let w14f = f32::from_bits(w14);
         let q = div(w14f, rdf(this.wrapping_add(0x18)));
         lf_checker_rt::callee_cdecl!(2, u32, 0, q.to_bits());
