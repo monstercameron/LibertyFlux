@@ -488,14 +488,6 @@
   "reason": null
  },
  {
-  "address": "0x008D3580",
-  "name": "aabb_gate_or_reseed",
-  "file": "fn_008d3580.rs",
-  "lane": "a-Q55",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x008D6FF0",
   "name": "init_record_array_and_call",
   "file": "fn_008d6ff0.rs",
@@ -1817,11 +1809,11 @@
  },
  {
   "address": "0x00DDE130",
-  "name": null,
+  "name": "UITextField pair scaler",
   "file": "fn_00dde130.rs",
   "lane": "r-s525",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "checker_gap"
  },
  {
   "address": "0x00DDE260",
