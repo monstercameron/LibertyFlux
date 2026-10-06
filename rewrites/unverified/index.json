@@ -416,14 +416,6 @@
   "reason": "other"
  },
  {
-  "address": "0x008BBCD0",
-  "name": "input_ui_menu_options_a",
-  "file": "fn_008bbcd0.rs",
-  "lane": "r-b609",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x008C2F10",
   "name": "audio_mix_update",
   "file": "fn_008c2f10.rs",
@@ -448,12 +440,52 @@
   "reason": null
  },
  {
-  "address": "0x008E87D0",
-  "name": "emit_min_scan",
-  "file": "fn_008e87d0.rs",
-  "lane": "a-Q30",
-  "outcome": "not yet run",
-  "reason": null
+  "address": "0x008E6E20",
+  "name": "NativeImpl_LOAD_ALL_PATH_NODES",
+  "file": "fn_008e6e20.rs",
+  "lane": "r-s512",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x008E6EC0",
+  "name": "path_node_loaded_check",
+  "file": "fn_008e6ec0.rs",
+  "lane": "r-s512",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x008E7AC0",
+  "name": "count_matching_rows_callback",
+  "file": "fn_008e7ac0.rs",
+  "lane": "r-s512",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x008E7B30",
+  "name": "count_flagged_rows",
+  "file": "fn_008e7b30.rs",
+  "lane": "r-s512",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x008EA8A0",
+  "name": "count_flagged_rows_global",
+  "file": "fn_008ea8a0.rs",
+  "lane": "r-s512",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x008EE520",
+  "name": "notify_64_slots",
+  "file": "fn_008ee520.rs",
+  "lane": "r-s512",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x008F4D00",
@@ -504,6 +536,14 @@
   "reason": "frame_pointer_args"
  },
  {
+  "address": "0x00928AC0",
+  "name": "CRenderPhaseCascadeShadows::vf7",
+  "file": "fn_00928ac0.rs",
+  "lane": "r-b620",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0092AE00",
   "name": "cam_pose_update",
   "file": "fn_0092ae00.rs",
@@ -512,49 +552,49 @@
   "reason": "other"
  },
  {
-  "address": "0x00948650",
-  "name": "fn_00948650",
-  "file": "fn_00948650.rs",
+  "address": "0x00947B80",
+  "name": "fn_00947B80",
+  "file": "fn_00947b80.rs",
   "lane": "r-s511",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x00949900",
-  "name": "fn_00949900",
-  "file": "fn_00949900.rs",
+  "address": "0x0094D730",
+  "name": "fn_0094D730",
+  "file": "fn_0094d730.rs",
   "lane": "r-s511",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x0094CBB0",
-  "name": "fn_0094CBB0",
-  "file": "fn_0094cbb0.rs",
+  "address": "0x0094DFE0",
+  "name": "NativeImpl_REMOVE_TXD",
+  "file": "fn_0094dfe0.rs",
   "lane": "r-s511",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x0094CC50",
-  "name": "fn_0094CC50",
-  "file": "fn_0094cc50.rs",
+  "address": "0x0094EE60",
+  "name": "fn_0094EE60",
+  "file": "fn_0094ee60.rs",
   "lane": "r-s511",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x0094CCC0",
-  "name": "fn_0094CCC0",
-  "file": "fn_0094ccc0.rs",
+  "address": "0x00952CA0",
+  "name": "fn_00952CA0",
+  "file": "fn_00952ca0.rs",
   "lane": "r-s511",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x0094DF10",
-  "name": "fn_0094DF10",
-  "file": "fn_0094df10.rs",
+  "address": "0x009536B0",
+  "name": "fn_009536B0",
+  "file": "fn_009536b0.rs",
   "lane": "r-s511",
   "outcome": "not_reached",
   "reason": ""
@@ -936,6 +976,14 @@
   "reason": ""
  },
  {
+  "address": "0x00B54940",
+  "name": "crmt_find_or_create (proposed)",
+  "file": "fn_00b54940.rs",
+  "lane": "r-s510",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00B54C60",
   "name": "crmt_channel_open_a (proposed)",
   "file": "fn_00b54c60.rs",
@@ -971,6 +1019,14 @@
   "address": "0x00B54F60",
   "name": "crmtManagerPriority::vf6",
   "file": "fn_00b54f60.rs",
+  "lane": "r-s510",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00B54FA0",
+  "name": "crmtManagerChannel::vf7",
+  "file": "fn_00b54fa0.rs",
   "lane": "r-s510",
   "outcome": "not_reached",
   "reason": ""
@@ -1694,6 +1750,14 @@
   "lane": "r-s286",
   "outcome": "not yet run",
   "reason": null
+ },
+ {
+  "address": "0x00D09170",
+  "name": "proposed: ped_task_ctor_related",
+  "file": "fn_00d09170.rs",
+  "lane": "r-b619",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00D26830",

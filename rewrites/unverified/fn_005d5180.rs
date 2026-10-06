@@ -5,7 +5,8 @@
 // `this` is the binding and the two stack words are a flags value and a
 // cookie. Four virtual calls configure it first (slots `+0x30` with 0,
 // `+0xc` with pi/2-ish 0x40490fdb, a direct mode call with 2, slot `+0xd0`
-// whose answer receives the flags at `+0x12c`, slot `+0xf4` with 100.0),
+// whose answer receives the flags at `+0x12c`, slot `+0xf4` with
+// (100.0, 0)),
 // then a direct link call with (1, 0) and flag bit 0 of `+0x24` is set.
 // Two allocator requests follow through TLS slot 0 (tags 0xa8 and 0x60):
 // each live answer is adapted by a direct callee and stored (`+0xe68`,
@@ -60,9 +61,9 @@ lf_checker_rt::export!(thiscall, rw_005d5180(this: u32, flags: u32, cookie: u32)
             core::mem::transmute(rd32(rd32(this).wrapping_add(0xd0)) as usize);
         let holder = vd0(this);
         wr32(holder.wrapping_add(0x12c), flags);
-        let vf4: extern "thiscall" fn(u32, u32) -> u32 =
+        let vf4: extern "thiscall" fn(u32, u32, u32) -> u32 =
             core::mem::transmute(rd32(rd32(this).wrapping_add(0xf4)) as usize);
-        let _: u32 = vf4(this, 0x42c80000);
+        let _: u32 = vf4(this, 0x42c80000, 0);
         let _: u32 = lf_checker_rt::callee_thiscall!(ID_LINK, u32, this, 1, 0);
         wr32(this.wrapping_add(0x24), rd32(this.wrapping_add(0x24)) | 1);
         let tls0 = lf_checker_rt::tls_slot(0);

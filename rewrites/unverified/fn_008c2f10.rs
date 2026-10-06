@@ -566,7 +566,9 @@ lf_checker_rt::export!(cdecl, rw_008c2f10() -> u32 {
                         && rd8r(off.wrapping_add(0xBCA)) != 0
                         && rd8r(off.wrapping_add(0xBC0)) != 2
                     {
-                        t0 = 0.0;
+                        // Deep fetch stores the shared frame float, not zero:
+                        // xmm0 still holds F_F18 from the unconditional load.
+                        t0 = rdf(F_F18);
                     }
                 }
             }
@@ -586,7 +588,9 @@ lf_checker_rt::export!(cdecl, rw_008c2f10() -> u32 {
                 let s38a = add(s1, v18);
                 let s2: f32 = lf_checker_rt::callee_cdecl!(C_SMOOTH, f32, u1.to_bits());
                 let x3 = sub(s38a, s2);
-                let x2 = sub(add(t0, f1cv), x3);
+                // x2 adds the shared frame float (slot C) and the tap
+                // value, not the entry word and the index float.
+                let x2 = sub(add(rdf(F_F18), v18), x3);
                 t0 = if 0.0 > x2 { x2 } else { 0.0 };
                 f1cv = sub(rdf(F_POST54), x3);
                 let x1b = sub(slot_c, x3);

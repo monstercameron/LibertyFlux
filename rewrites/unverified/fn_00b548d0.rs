@@ -27,7 +27,7 @@ lf_checker_rt::export!(thiscall, rw_00b548d0(this: u32, cfg: u32) -> u32 {
                 ((obj + off) as *mut u32).write_unaligned(0);
                 off += 4;
             }
-            (obj as *mut u32).write_unaligned(VTABLE);
+            (obj as *mut u32).write_unaligned(lf_checker_rt::relocated(VTABLE));
         }
         ((obj + 4) as *mut u16).write_unaligned(1);
         let w = ((cfg + 0x14) as *const u16).read_unaligned();
