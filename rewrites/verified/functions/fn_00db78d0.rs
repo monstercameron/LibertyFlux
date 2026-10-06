@@ -1,4 +1,4 @@
-// original: 0x00DB78D0 panel_build_textures_and_string
+// original: 0x00db78d0 panel_build_textures_and_string
 // Build a UI panel's textures, font string and layout bindings.
 //
 // Allocates and clears four working buffers, constructs the base texture
@@ -206,9 +206,12 @@ export!(thiscall, rw_db78d0_full(
     vcall_this(v2, 0x104, ui, &[4, r, a8]);
     vcall_this(v2, 0x1D4, ui, &[0x2C]);
 
+    // Frame slots a3-a8 plus a9-a10: the callee reads the first two words.
+    scratch = [a3, a4, a5, a6, a7, a8, a9, slot_a10];
     let dv: f64 = callee_thiscall!(24, f64, scratch.as_mut_ptr() as u32);
     let f = dv as f32;
     let d2 = if f > 0.0 {
+        scratch[7] = f.to_bits();
         let dv2: f64 = callee_thiscall!(24, f64, scratch.as_mut_ptr() as u32);
         let f2 = dv2 as f32;
         callee_thiscall!(9, u32, scratch.as_mut_ptr() as u32, f2.to_bits(), 0)

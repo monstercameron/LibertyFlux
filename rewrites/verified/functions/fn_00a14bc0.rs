@@ -41,7 +41,10 @@ export!(thiscall, rw_00a14bc0(this: u32, ent: u32, out: u32) -> u32 {
         let f0 = ((this + V0_OFF) as *const u32).read_unaligned();
         let f1 = ((this + V1_OFF) as *const u32).read_unaligned();
         let f2 = ((this + V2_OFF) as *const u32).read_unaligned();
+        // The callee reads the first word, which on the original side is
+        // the incoming ent argument slot itself, so seed it with ent.
         let mut slot = [0u32; 12];
+        slot[0] = ent;
         callee_cdecl!(
             RESOLVE,
             u32,

@@ -3,7 +3,9 @@
 /// Rebuild this slot: probe the registry, copy fields through a scratch
 /// buffer, allocate, solve over three scratch buffers, bind, report the
 /// +0x1c field to the field writer, then release and stamp the generation.
-/// All scratch-buffer addresses are skipped; the buffers are never read.
+/// All scratch-buffer addresses are skipped; blocks 1 and 2 are read by
+/// the solver (block 2 holds two zero words then 1.0) and compared
+/// through snapshots, block 0 is write-only there.
 ///
 /// Original: 0x00bf9700 (thiscall, 0 stack words).
 lf_checker_rt::export!(thiscall, rw_00bf9700(this: u32) -> u32 {
@@ -30,16 +32,21 @@ lf_checker_rt::export!(thiscall, rw_00bf9700(this: u32) -> u32 {
         const G1: u32 = 0x011F702C;
         const G2: u32 = 0x011F70C4;
         lf_checker_rt::callee_cdecl!(1, u32, lf_checker_rt::relocated(C0), 0);
-        let mut scratch = [0u32; 8];
-        let p = scratch.as_mut_ptr() as u32;
-        lf_checker_rt::callee_thiscall!(2, u32, this, p);
+        let mut p0 = [0u32; 8];
+        let mut p1 = [0u32; 8];
+        let mut p2 = [0u32; 8];
+        p2[2] = 1.0f32.to_bits();
+        let pa = p0.as_mut_ptr() as u32;
+        let pb = p1.as_mut_ptr() as u32;
+        let pc = p2.as_mut_ptr() as u32;
+        lf_checker_rt::callee_thiscall!(2, u32, this, pb);
         let h: u32 = lf_checker_rt::callee_thiscall!(3, u32, lf_checker_rt::relocated(SYS),
             r32u(this.wrapping_add(8)), 0, 0);
         if h == 0 {
             return 0;
         }
-        lf_checker_rt::callee_cdecl!(4, u32, p, p, p, 0);
-        lf_checker_rt::callee_thiscall!(5, u32, h, p);
+        lf_checker_rt::callee_cdecl!(4, u32, pa, pb, pc, 0);
+        lf_checker_rt::callee_thiscall!(5, u32, h, pa);
         lf_checker_rt::callee_thiscall!(6, u32, h, lf_checker_rt::relocated(C1), r32u(this.wrapping_add(0x1c)));
         lf_checker_rt::callee_thiscall!(7, u32, h);
         let t: u32 = lf_checker_rt::callee_stdcall!(8, u32,);

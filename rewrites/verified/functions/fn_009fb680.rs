@@ -103,9 +103,9 @@ lf_checker_rt::export!(
             let _: u32 = lf_checker_rt::callee_cdecl!(12, u32, desc.as_mut_ptr() as u32);
             desc[0] = first_word;
             let shared = rd32(lf_checker_rt::relocated(SHARED_SLOT));
-            // The original passes two pointers eight bytes apart (this at +8);
+            // The original passes two pointers four bytes apart (this at +4);
             // the this pointer is skipped as a frame address, arg0 is snapped.
-            let desc_this = (desc.as_mut_ptr() as u32).wrapping_add(8);
+            let desc_this = (desc.as_mut_ptr() as u32).wrapping_add(4);
             let assembled: u32 = lf_checker_rt::callee_thiscall!(
                 13, u32, desc_this, desc.as_mut_ptr() as u32, arg0, arg1, arg2, arg4, arg5,
                 handle

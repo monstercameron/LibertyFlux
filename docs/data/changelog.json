@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Devlog: hourly review, 07:05 on 6 October",
+    "title": "Rewrites: 7 functions re-checked under checker version 2",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "7 rewrites were re-run under a later version of the checker and replaced by the version that passed it.",
+      "The tree now holds 16936 rewrites, 16917 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Devlog: hourly review, 07:05 on 6 October",
+    "commit": "06d423905c7a759ffca96331f3adacbc8749ef72",
     "summary": "One row added to the day's hourly reviews.",
     "changes": [
       "16,817 functions verified, 32.0% of the code by size; 19,000 bytes in the hour because half the lanes were on trust work and lifting. 312 verified routines are lifted, 1.5% of the verified code.",

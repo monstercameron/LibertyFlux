@@ -3,8 +3,9 @@
 /// Program one audio voice (or effect) with its default parameter block.
 ///
 /// Takes no arguments (cdecl, no stack words). It issues seven calls: two to
-/// a two-pointer helper (whose answers never reach an observed call, so the
-/// frame shuffling between them is dead), then three constant setup calls,
+/// a two-pointer helper over one five-word block (second call first, words
+/// 1-3 reworked with a global float between the calls), then three
+/// constant setup calls,
 /// then a query whose x87 float answer `q` is scaled and biased,
 /// `x = q * MUL + ADD`, and handed to a final five-word programming call
 /// together with two all-ones flags and a second image address. The two
@@ -24,15 +25,27 @@ lf_checker_rt::export!(cdecl, rw_00d8bb70() -> u32 {
         const MUL_ADDR: u32 = 0x00fe8908;
         const ADD_ADDR: u32 = 0x00fe87cc;
 
-        let mut p0 = 0x3dccccdcu32;
-        let mut p1 = 0x80000000u32;
+        const BLK0: u32 = 0x8000_0000;
+        const BLK1: u32 = 0x3dcc_cccd;
+        const BLK2: u32 = 0x3f83_d70a;
+        const BLK3: u32 = 0x3f26_6667;
+        const BLK4: u32 = 0x3f73_3333;
+        const BLK0_B: u32 = 0xc4ff_ffff;
+        const K_ADDR: u32 = 0x00fe876c;
+        let mut buf = [BLK0, BLK1, BLK2, BLK3, BLK4];
         let _: u32 = lf_checker_rt::callee_cdecl!(
-            HELPER, u32, &mut p0 as *mut u32 as u32, &mut p1 as *mut u32 as u32
+            HELPER, u32, buf.as_mut_ptr().wrapping_add(1) as u32, buf.as_mut_ptr() as u32
         );
-        // Dead frame shuffling between the helper calls is omitted: neither
-        // its result nor the helper's answers reach any observed call.
+        // Between the calls the block is reworked with one global float:
+        // word 0 becomes a constant, word 1 adds it, words 2 and 3
+        // subtract it (second operand order pinned for NaN identity).
+        let k = f32::from_bits((lf_checker_rt::relocated(K_ADDR) as *const u32).read_unaligned());
+        buf[0] = BLK0_B;
+        buf[1] = (core::hint::black_box(f32::from_bits(buf[1])) + core::hint::black_box(k)).to_bits();
+        buf[2] = (core::hint::black_box(f32::from_bits(buf[2])) - core::hint::black_box(k)).to_bits();
+        buf[3] = (core::hint::black_box(f32::from_bits(buf[3])) - core::hint::black_box(k)).to_bits();
         let _: u32 = lf_checker_rt::callee_cdecl!(
-            HELPER, u32, &mut p0 as *mut u32 as u32, &mut p1 as *mut u32 as u32
+            HELPER, u32, buf.as_mut_ptr().wrapping_add(1) as u32, buf.as_mut_ptr() as u32
         );
         let _: u32 = lf_checker_rt::callee_cdecl!(SETUP2, u32, 0x3ecccccd, 0x3f19999a);
         let _: u32 = lf_checker_rt::callee_cdecl!(SETUP1, u32, 0xff000000);

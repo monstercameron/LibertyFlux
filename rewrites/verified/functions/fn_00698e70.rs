@@ -20,10 +20,10 @@ lf_k2_rt::export!(thiscall, rw_00698e70(this: *mut u8, index: u32) -> f32 {
         let gain = f32::from_bits(*((this.add(0x30)) as *const u32));
         let bias = f32::from_bits(*((this.add(0x34)) as *const u32));
         let base = (as_signed as f32) * gain + bias;
+        let mut slot = 0u32;
         if coarse != 0 {
-            // Answer feeds a dead frame slot in the original; the call itself
-            // (target, object, argument) is what the checker compares.
-            lf_k2_rt::callee_thiscall!(
+            // Answer feeds the handed frame slot (one-word snapshot).
+            slot = lf_k2_rt::callee_thiscall!(
                 1,
                 u32,
                 (this as u32).wrapping_add(0x14),
@@ -31,7 +31,6 @@ lf_k2_rt::export!(thiscall, rw_00698e70(this: *mut u8, index: u32) -> f32 {
             );
         }
         let mut acc = 0u32;
-        let mut slot = 0u32;
         for _ in 0..detail {
             let term: u32 = lf_k2_rt::callee_thiscall!(
                 2,

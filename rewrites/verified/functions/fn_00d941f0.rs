@@ -7,7 +7,9 @@ use lf_checker_rt::{callee_cdecl, callee_stdcall, callee_thiscall, callee_fastca
 /// init callee (id 0) runs once and its double answer is narrowed to the
 /// threshold global. The table callee (id 1) resolves the list; the low
 /// nibble of the head's flag word is the entry count (zero means return 0).
-/// Each entry: the generate callee (id 3) fills one word; 0xffff in its
+/// Each entry: the caller primes its two frame words (low forced to a
+/// constant mask, high accumulating a second mask pair), then the generate
+/// callee (id 3) fills one word; 0xffff in its
 /// high half or 0x6000 in its low bits skips the entry; otherwise the
 /// table callee (id 2) resolves the low 12 bits (null skips) and the entry
 /// address (table base + high-half*40) is compared against `b` (equal
@@ -106,7 +108,8 @@ lf_checker_rt::export!(thiscall, rw_00d941f0(this: u32, a: u32, b: u32) -> u32 {
         loop {
             let base = rd32(table1 + 0x64)
                 .wrapping_add((((rd32(edx + 4) & 0x1ffff).wrapping_add(e08)) & 0xffffffff).wrapping_mul(8));
-            frame[0] = esi | 0xffff0fff;
+            frame[0] = 0xffff0fff;
+            frame[1] = (frame[1] | 0x0fffffff) & 0xefffffff;
             let _: u32 = lf_checker_rt::callee_thiscall!(ID_GEN, u32, base, frame.as_mut_ptr() as u32);
             esi = frame[0];
             let w = (esi >> 16) & 0xffff;
