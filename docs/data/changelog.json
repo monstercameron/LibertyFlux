@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Tools: a floating-point probe to tell the emulator from a processor",
+    "commit": null,
+    "summary": "Every proof in the project is made on an ARM development machine under its x86 emulator. A new probe with no game code in it measures where that emulator's floating point differs from a real x86 processor, and the pipeline now runs the same probe on real hardware.",
+    "changes": [
+      "New crate crates/tools/lf-x87-probe: 269 short float-stack and vector instruction sequences, written by hand in inline assembly for this purpose, each run on chosen inputs, with 36 tests that assert the result the processor's documentation specifies. It builds and does nothing on other targets.",
+      "Run under the emulator, 18 of the 36 tests fail, for 13 distinct reasons. The ones that change a result: add, subtract, divide and square root on the float stack ignore the precision setting and always work at 53 bits; a signalling not-a-number is not quieted when a 64-bit or 80-bit value is loaded onto the float stack; a masked invalid operation gives a positive not-a-number where the processor gives the negative one; and the minimum or maximum of zeros of both signs returns the second operand. Integer conversions, remainders and comparisons agree with the documentation.",
+      "How much of the game this touches, counted from its code: 85 of 38,381 game functions use any of those instructions, and 3 of the 16,076 verified ones. The game does its arithmetic in the vector instruction set; the float stack is used almost only to return values and to convert to integers.",
+      "The pipeline's 32-bit job runs the probe after the lift tests and keeps its results as a build artifact. The step is allowed to fail without failing the job until the first runs have shown what real processors give."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 28 files from lanes (258 unverified rewrites, 562 in review)",
     "commit": "fcfb53ae41d3c9d8f1549a45fdb2ace45bf23cae",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
