@@ -97,7 +97,14 @@ mod x86 {
         for i in 0..44 {
             tw.push(word(0x1A0 + i * 4));
         }
-        let tail = [word(0x250), word(0x254), word(0x258), word(0x260), word(0x264), word(0x268)];
+        let tail = [
+            word(0x250),
+            word(0x254),
+            word(0x258),
+            word(0x260),
+            word(0x264),
+            word(0x268),
+        ];
         UiStateRecord {
             head,
             sub_head: LogSub {
@@ -141,7 +148,10 @@ mod x86 {
 
     /// Deliberately wrong copy: delegates the tail before the head. Must
     /// be caught by the call-order log on every case.
-    fn wrong_copy<H: SubRecord, T: SubRecord>(dst: &mut UiStateRecord<H, T>, src: &UiStateRecord<H, T>) {
+    fn wrong_copy<H: SubRecord, T: SubRecord>(
+        dst: &mut UiStateRecord<H, T>,
+        src: &UiStateRecord<H, T>,
+    ) {
         dst.head = src.head;
         dst.sub_tail.copy_from_source(&src.sub_tail);
         dst.mid = src.mid;
@@ -453,8 +463,16 @@ mod x86 {
                                 .iter()
                                 .map(|(l, h)| {
                                     (
-                                        [f32::from_bits(l[0]), f32::from_bits(l[1]), f32::from_bits(l[2])],
-                                        [f32::from_bits(h[0]), f32::from_bits(h[1]), f32::from_bits(h[2])],
+                                        [
+                                            f32::from_bits(l[0]),
+                                            f32::from_bits(l[1]),
+                                            f32::from_bits(l[2]),
+                                        ],
+                                        [
+                                            f32::from_bits(h[0]),
+                                            f32::from_bits(h[1]),
+                                            f32::from_bits(h[2]),
+                                        ],
                                     )
                                 })
                                 .collect::<Vec<_>>(),
@@ -482,9 +500,8 @@ mod x86 {
                     assert_eq!(got, sink_answer);
                     assert_eq!(flag, 1);
                     assert_eq!(flag_rw, 1);
-                    let expect_addrs: Vec<u32> = (0..items)
-                        .map(|k| arg1 + (k as u32) * 0x20)
-                        .collect();
+                    let expect_addrs: Vec<u32> =
+                        (0..items).map(|k| arg1 + (k as u32) * 0x20).collect();
                     assert_eq!(measure_log, expect_addrs);
                     assert_eq!(measure.log, (0..items).collect::<Vec<_>>());
                     assert_eq!(sink_log.len(), 1);
@@ -518,10 +535,8 @@ mod x86 {
                         for (l, h) in &script {
                             for k in 0..3 {
                                 let (hb, lb) = (f32::from_bits(h[k]), f32::from_bits(l[k]));
-                                whi[k] =
-                                    if whi[k] > hb { whi[k] } else { hb };
-                                wlo[k] =
-                                    if wlo[k] > lb { wlo[k] } else { lb };
+                                whi[k] = if whi[k] > hb { whi[k] } else { hb };
+                                wlo[k] = if wlo[k] > lb { wlo[k] } else { lb };
                             }
                         }
                         let wrong_differs = (0..3).any(|k| {

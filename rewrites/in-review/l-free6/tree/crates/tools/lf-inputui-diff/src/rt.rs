@@ -41,7 +41,7 @@ fn slot_for(file_va: u32) -> *mut u32 {
 /// As [`slot_for`].
 #[must_use]
 pub fn global<T>(file_va: u32) -> *mut T {
-    slot_for(file_va) as *mut T
+    slot_for(file_va).cast::<T>()
 }
 
 /// The relocated addresses, planted per test: two factory tables, three
@@ -98,11 +98,7 @@ pub fn relocated(file_va: u32) -> u32 {
 /// Registered stub addresses for callee ids 0..3 (0 when none: a call
 /// there panics, which is a case bug). Each test plants the stubs its
 /// rewrites call before running.
-static CALLEES: [AtomicU32; 3] = [
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-];
+static CALLEES: [AtomicU32; 3] = [AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0)];
 
 /// Plants the stub address callee `id` calls land on.
 pub fn set_callee(id: u32, addr: u32) {

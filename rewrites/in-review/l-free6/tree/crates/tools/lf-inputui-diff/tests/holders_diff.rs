@@ -382,9 +382,7 @@ mod x86 {
                             HolderKind::Callback16 => unsafe {
                                 fn_005EEC50::rw_005eec50(pay, head_addr)
                             },
-                            HolderKind::Callback12 => unsafe {
-                                fn_005EECB0::rw_005eecb0(pay)
-                            },
+                            HolderKind::Callback12 => unsafe { fn_005EECB0::rw_005eecb0(pay) },
                             _ => unreachable!(),
                         };
                         let (alloc_log, sink_log, blocks);
@@ -399,13 +397,11 @@ mod x86 {
                         }
                         // Lift side.
                         let mut alloc = FakeAlloc {
-                            queue: VecDeque::from(
-                                if null {
-                                    std::vec![None]
-                                } else {
-                                    std::vec![Some((1, link0))]
-                                },
-                            ),
+                            queue: VecDeque::from(if null {
+                                std::vec![None]
+                            } else {
+                                std::vec![Some((1, link0))]
+                            }),
                             log: Vec::new(),
                         };
                         let mut sink = FakeSink {
@@ -419,7 +415,11 @@ mod x86 {
                             std::vec![pay]
                         };
                         let lift = UiHolder::create_callback(
-                            &mut alloc, &mut sink, &mut counter, kind, &payload,
+                            &mut alloc,
+                            &mut sink,
+                            &mut counter,
+                            kind,
+                            &payload,
                         );
                         // Compare.
                         assert_eq!(got, lift, "kind={kind} null={null}");
@@ -436,12 +436,8 @@ mod x86 {
                             assert_eq!(slot, 1);
                             assert_eq!(sink_log, std::vec![address]);
                             let expect_link = UiHolder::stamp_link(link0, counter0);
-                            let holder = UiHolder::from_parts(
-                                1,
-                                kind,
-                                expect_link,
-                                payload.clone(),
-                            );
+                            let holder =
+                                UiHolder::from_parts(1, kind, expect_link, payload.clone());
                             assert_eq!(sink.seen, std::vec![Some(holder)]);
                             unsafe {
                                 assert_eq!(block_word(address, 0), table_addr);
@@ -491,10 +487,12 @@ mod x86 {
         rt::set_relocated(helper_va, helper_addr);
         let links = edge_words(&mut rng);
         let polls = poll_words(&mut rng);
+        // Words after ecx: five, six, and four (the tex form's p0
+        // arrives in edx with three more on the stack).
         let arity = match which {
             5 => 5,
             6 => 6,
-            _ => 3,
+            _ => 4,
         };
         for &ctor_link in &links {
             for &v1 in &polls {
@@ -554,8 +552,9 @@ mod x86 {
                         answers: VecDeque::from(std::vec![v1, v2]),
                         log: Vec::new(),
                     };
-                    let (holder, lift) =
-                        UiHolder::create_through_ctor(&mut alloc, &mut ctor, &mut poll, kind, &args);
+                    let (holder, lift) = UiHolder::create_through_ctor(
+                        &mut alloc, &mut ctor, &mut poll, kind, &args,
+                    );
                     // Compare.
                     assert_eq!(got, lift, "kind={kind} v1={v1:#x} v2={v2:#x}");
                     assert_eq!(alloc_log, std::vec![(kind.alloc_size(), 0)]);
@@ -638,7 +637,9 @@ mod x86 {
                         let w_addrs = [addr(&w_cells[0]), addr(&w_cells[1]), addr(&w_cells[2])];
                         // Rewrite side.
                         let got = unsafe {
-                            fn_005EEE30::rw_005eee30(0, head_addr, w_addrs[0], w_addrs[1], w_addrs[2])
+                            fn_005EEE30::rw_005eee30(
+                                0, head_addr, w_addrs[0], w_addrs[1], w_addrs[2],
+                            )
                         };
                         let (alloc_log, poll_log, blocks, counter_rw);
                         {

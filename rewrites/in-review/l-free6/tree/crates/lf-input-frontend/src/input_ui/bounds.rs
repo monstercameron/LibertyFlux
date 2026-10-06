@@ -74,6 +74,9 @@ pub fn fold_min(acc: f32, new: f32) -> f32 {
 ///
 /// Returns the sink's answer. `seed_hi` and `seed_lo` are the two seed
 /// floats (read-only image words in the 32-bit form, parameters here).
+// Nine arguments because each maps to one original input; bundling them
+// would hide that mapping from the differential test.
+#[allow(clippy::too_many_arguments)]
 pub fn accumulate_bounds<M: Measure + ?Sized, S: BoundsSink + ?Sized>(
     items: usize,
     seed_hi: f32,

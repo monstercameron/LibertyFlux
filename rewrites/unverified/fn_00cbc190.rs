@@ -55,7 +55,8 @@ lf_checker_rt::export!(thiscall, rw_00CBC190(this: u32, ped: u32) -> u32 {
         const PROBE_CALLEE: u32 = 2;
         const SLOT_CALLEE: u32 = 3;
         const CONTEXT_CALLEE: u32 = 4;
-        const KIND_CALLEE: u32 = 5;
+        // The kind-code callee (id 5) is reached through the fabricated
+        // vtable, not the stub table, so it needs no constant here.
         const NORMALISE_CALLEE: u32 = 6;
 
         #[inline(always)]
