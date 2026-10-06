@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-06",
-  "updated_at": "2026-10-06 04:51",
+  "updated_at": "2026-10-06 05:02",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -13,11 +13,11 @@
   "stages": {
     "identified": 37413,
     "named": 31763,
-    "rewritten": 16694,
-    "verified": 16651
+    "rewritten": 16709,
+    "verified": 16666
   },
   "structures": 340,
-  "symbols": 16766,
+  "symbols": 16781,
   "measured": [
     {
       "label": "Code section",
@@ -105,13 +105,13 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 16694,
+      "value": 16709,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 16651,
+      "value": 16666,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     },
@@ -119,13 +119,13 @@
       "label": "Game code verified, measured in bytes",
       "value": 32.7,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2391740 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2394779 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
       "value": 23.2,
       "unit": "percent",
-      "source": "350 of 1347 such functions; they hold 38% of the game's code"
+      "source": "351 of 1347 such functions; they hold 38% of the game's code"
     },
     {
       "label": "Methods lifted to portable Rust with their proof run by the pipeline",
@@ -136,8 +136,8 @@
   ],
   "activity": {
     "lanes_running": 13,
-    "lanes_finished": 1509,
-    "lanes_incomplete": 149,
+    "lanes_finished": 1512,
+    "lanes_incomplete": 150,
     "devlog_entries": 522
   },
   "map": [
@@ -813,8 +813,8 @@
       "to": "0x005A2CD6",
       "count": 40,
       "named": 38,
-      "rewritten": 23,
-      "verified": 23
+      "rewritten": 24,
+      "verified": 24
     },
     {
       "stage": "named",
@@ -2100,8 +2100,8 @@
       "to": "0x008BF699",
       "count": 45,
       "named": 41,
-      "rewritten": 29,
-      "verified": 28
+      "rewritten": 30,
+      "verified": 29
     },
     {
       "stage": "named",
@@ -2194,13 +2194,13 @@
       "verified": 21
     },
     {
-      "stage": "named",
+      "stage": "verified",
       "from": "0x008F71EA",
       "to": "0x008FCB0B",
       "count": 98,
       "named": 96,
-      "rewritten": 46,
-      "verified": 46
+      "rewritten": 58,
+      "verified": 58
     },
     {
       "stage": "named",
@@ -2271,8 +2271,8 @@
       "to": "0x00929417",
       "count": 85,
       "named": 76,
-      "rewritten": 33,
-      "verified": 32
+      "rewritten": 34,
+      "verified": 33
     },
     {
       "stage": "named",
@@ -4465,9 +4465,9 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2391740,
+    "verified": 2394779,
     "large_functions": 2801402,
-    "large_functions_verified": 649493
+    "large_functions_verified": 650936
   },
   "lifted": {
     "methods": 160,
