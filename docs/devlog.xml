@@ -9,6 +9,28 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming dummy tasks: a 12-slot vtable of their own</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-127"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-127</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>One hundred fifty consecutive task-system functions were named: 62 at high confidence and 83 at medium, with 5 left unnamed. The main finding is that the nine dummy-task classes share a 12-slot virtual table with its own layout, not the layout of the regular task classes, and each slot's role was worked out from the code.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred fifty consecutive task-system functions were named: 62 at high confidence and 83 at medium, with 5 left unnamed. The main finding is that the nine dummy-task classes share a 12-slot virtual table with its own layout, not the layout of the regular task classes, and each slot's role was worked out from the code.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose a descriptive name for each of 150 consecutive unnamed game functions, working out what the group is about first and then naming each one, with high, medium or low confidence.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds five groups: the dummy-task family and its helpers, the jumping-task family, one ambient-task class with its table helpers, explosion audio slots, and animation-request bookkeeping.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The dummy-task virtual table has 12 slots. Slot zero destroys, one slot ticks the cheap simulation, one formats debug text (its per-class format strings name flee targets, watched events and scenario positions), one builds the real task when the dummy is promoted, and one gates aborting on priority. Two slots exist only for the dead variant: a camera-visibility check and corpse presentation.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One listed function is not a function at all: it is the jump table of the neighbouring factory that builds dummy tasks by number. The factory itself was named from its eight allocation branches.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Two widely reused shared labels look wrong: the routine that frees deleting objects is labelled as a script native, and a common call target carries a weapon native label. Both sit in the encrypted region so neither could be checked directly.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Names follow the established project style: destructors and constructors under their class names, abort and clone under the standard task vocabulary, and plain helper names where no class owns the code. The next naming lane covering nearby code should check three mislabelled promotion functions currently filed as unrelated constructors, and the pending weapon-info layout will unlock three explosion-audio helpers left unnamed here.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Read the executable through the mapped image, never the raw file at a mapped address, and confirm the mapping by decoding one known constructor first. Dump each class virtual table from the data section and cross-check every slot against prior lane names; decode every small function fully and skim large ones by callee names and referenced strings.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The subsystem clustering was wrong for part of the batch: functions labelled audio turned out to be jumping and ambient task code, while the true audio group sat elsewhere. The base abort implementation shared between dummy and regular tasks lives in the encrypted region, so that alias rests on behaviour of the overrides, not on reading the shared code.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Two in a hundred old proofs do not reproduce on the current checker, and a night of audits in one table</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#old-proofs-on-the-current-checker-2026-10-06"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#old-proofs-on-the-current-checker-2026-10-06</id>
@@ -1178,26 +1200,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Run the two contracts in the lane folder with the stock checker driver and worker; each passes 1200 trials with bit-exact floats, and each bundled wrong version fails. The contract generators, the per-trial diagnosis script, and the full report with evidence labels are in the lane scratch folder.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The parity-trap finding took the longest: the wrong mental model predicted one constant on a trial where the original wrote zero, and every theory about scripting or indexing failed until the flag flow was re-read instruction by instruction. The pushed-register finding went through a longer loop first, including a stretch suspecting the checker's stub code of clobbering a register it provably preserves, before the missed reloads explained everything.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Cmpnless means greater-than</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b540"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b540</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>A large blend routine failed its proof on exact-integer loop counts only, because the disassembler's cmpnless mnemonic was transcribed as not-less-than when it is predicate 6, not-less-or-equal, a greater-than test.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A large blend routine failed its proof on exact-integer loop counts only, because the disassembler's &lt;code&gt;cmpnless&lt;/code&gt; mnemonic was transcribed as not-less-than when it is predicate 6, not-less-or-equal, a greater-than test.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite four neighbouring routines of one animation subsystem in Rust and prove each identical to the original over a thousand trials.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All four routines verified with bit-exact floating point results and a caught wrong version each; the largest is proven on its main path with the remaining paths specified as a retry kit.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The blend routine counts loop iterations with a round-and-fixup idiom whose final test disassembles as &lt;code&gt;cmpnless&lt;/code&gt;. That mnemonic is comparison predicate 6, which is true when the first operand is greater than the second, not when it is not less than it. The two readings differ only when both operands are equal, so every fractional quotient rounded correctly and only exact integers miscounted: the original ran three iterations where the rewrite ran two. A probe contract that added exactly one to an output per iteration measured both counts directly and confirmed the one-line fix.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The checker's call stand-in zeroes the upper words of one vector register on the original side between two neighbouring helper calls. Only unlogged registers are affected, so no verdict is at risk, but one helper's vector argument had to stay uncompared because of it.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Transcribe &lt;code&gt;cmpnless&lt;/code&gt; as greater-than everywhere; audit other rewrites that read it as not-less-than, since the bug hides on all non-integer inputs. Anyone extending the blend proof should start from the retry kit in the lane report.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Pin the routine's two vector inputs and the limit it reads from its object so the quotient is an exact integer, stub the helpers with fixed rows, and compare iteration counts; or read predicate 6 in the processor manual's compare-pages.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The first mismatch looked like a broken formula: every output word differed. Pinning each path separately showed the tail and the loop-free paths passing, which isolated the loop; only then did a counting probe reveal a miscount rather than a miscomputation. Two earlier hypotheses, relocated float constants and mismatched stub rows, were each disproven by a direct check before the instruction reading was questioned.&lt;/p&gt;</content>
   </entry>
 </feed>
