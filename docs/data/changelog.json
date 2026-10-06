@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Devlog: a count corrected in the entry on old proofs",
+    "title": "Lift: 113 vehicle ratio functions turned out to be one routine",
     "commit": null,
+    "summary": "A list of 113 verified functions chosen by name is a single routine repeated: a quotient of two values kept in three global words. It is lifted once and proved against all 113 verified rewrites.",
+    "changes": [
+      "crates/lf-vehicles gains a veh_ratio module with one type and one method that refreshes a ratio cell, and 12 host tests. No unsafe code and no operating-system calls.",
+      "Two new test crates (57 and 56 rewrites, to stay under the limit for one crate) run the lifted method against each of the 113 tracked verified rewrites on the 32-bit target: 113 differential tests, 5,424 bit-exact comparisons, and a deliberately wrong lift caught for each. The coordinator ran the host and 32-bit tests before committing.",
+      "What the lane found about the group: the 113 functions are one homogeneous part of a table of 458 callbacks, with no direct callers. Who walks the table, and whether more instances of the routine sit under other names, is open.",
+      "The pipeline's 32-bit job now runs twenty differential crates. Verified routines with a lifted counterpart proven in the pipeline: 466."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Devlog: a count corrected in the entry on old proofs",
+    "commit": "b883ea8cdc7cdd87b7a542abf339653fca9d02ed",
     "summary": "One figure in the entry published a few minutes earlier left out part of the audit.",
     "changes": [
       "The entry said 598 proofs never changed a global variable in any trial. That was the number that had been sorted into read-only functions and unreached write paths. The full number is 714: 581 read-only, 17 with a write path no trial reached, and 116 from the first two audit lanes that are not sorted yet."

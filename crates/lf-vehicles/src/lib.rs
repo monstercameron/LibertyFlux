@@ -15,3 +15,4 @@
 //! - Never original game code here: structures, symbols and new Rust only.
 
 pub mod layout;
+pub mod veh_ratio;
