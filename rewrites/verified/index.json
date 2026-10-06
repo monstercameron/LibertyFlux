@@ -55449,6 +55449,15 @@
   "lane": "r-b184"
  },
  {
+  "address": "0x00926580",
+  "name": "reset_sixteen_slots",
+  "kind": "function",
+  "file": "functions/fn_00926580.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
   "address": "0x009265A0",
   "name": "input_cell_reset",
   "kind": "function",
@@ -55530,6 +55539,24 @@
   "lane": "r-b232"
  },
  {
+  "address": "0x00928170",
+  "name": "input_slot_index_by_key",
+  "kind": "function",
+  "file": "functions/fn_00928170.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
+  "address": "0x00928390",
+  "name": "cascade_shadow_phase_attach",
+  "kind": "function",
+  "file": "functions/fn_00928390.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
   "address": "0x009284D0",
   "name": "input_ui_state_copy",
   "kind": "function",
@@ -55537,6 +55564,24 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b232"
+ },
+ {
+  "address": "0x00928A00",
+  "name": "CRenderPhaseCascadeShadows::vf0",
+  "kind": "function",
+  "file": "functions/fn_00928a00.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
+  "address": "0x00928A90",
+  "name": "select_frame_slot_and_init",
+  "kind": "function",
+  "file": "functions/fn_00928a90.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
  },
  {
   "address": "0x00928AC0",
@@ -55573,6 +55618,42 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b620"
+ },
+ {
+  "address": "0x0092CFE0",
+  "name": "T_CB_Generic_3Args<void(*)(int, const rage::Matrix44&, float), int, rage::Matrix44, float>::vf1",
+  "kind": "function",
+  "file": "functions/fn_0092cfe0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
+  "address": "0x0092D000",
+  "name": "CSetCurrentViewportToNULL::vf1",
+  "kind": "function",
+  "file": "functions/fn_0092d000.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
+  "address": "0x0092D2B0",
+  "name": "scaled_square_times_global",
+  "kind": "function",
+  "file": "functions/fn_0092d2b0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
+  "address": "0x0092D2D0",
+  "name": "clamped_shift_from_global",
+  "kind": "function",
+  "file": "functions/fn_0092d2d0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
  },
  {
   "address": "0x009341F0",
@@ -119691,6 +119772,15 @@
   "lane": "r-b325"
  },
  {
+  "address": "0x00C993C0",
+  "name": "ped_task_aim_solve_full",
+  "kind": "function",
+  "file": "functions/fn_00c993c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b639"
+ },
+ {
   "address": "0x00C9BDB0",
   "name": "skipset_gated_accumulator",
   "kind": "function",
@@ -126574,6 +126664,15 @@
   "trials": 1100,
   "checker": "version 4",
   "lane": "r-s312"
+ },
+ {
+  "address": "0x00D433C0",
+  "name": "task_weapon_flag_check",
+  "kind": "function",
+  "file": "functions/fn_00d433c0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-b645"
  },
  {
   "address": "0x00D443E0",
