@@ -288,14 +288,6 @@
   "reason": ""
  },
  {
-  "address": "0x005B5650",
-  "name": "fn_005B5650",
-  "file": "fn_005b5650.rs",
-  "lane": "r-b592",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x005CDD40",
   "name": null,
   "file": "fn_005cdd40.rs",
@@ -320,10 +312,66 @@
   "reason": null
  },
  {
-  "address": "0x005EE370",
+  "address": "0x005EE6A0",
   "name": "",
-  "file": "fn_005ee370.rs",
+  "file": "fn_005ee6a0.rs",
   "lane": "r-b591",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00617160",
+  "name": "init_files_mem_a (proposed)",
+  "file": "fn_00617160.rs",
+  "lane": "r-b597",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x006172A0",
+  "name": "init_files_mem_b (proposed)",
+  "file": "fn_006172a0.rs",
+  "lane": "r-b597",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x006173B0",
+  "name": "init_files_mem_c (proposed)",
+  "file": "fn_006173b0.rs",
+  "lane": "r-b597",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00617540",
+  "name": "init_files_mem_d (proposed)",
+  "file": "fn_00617540.rs",
+  "lane": "r-b597",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00617780",
+  "name": "init_files_mem_e (proposed)",
+  "file": "fn_00617780.rs",
+  "lane": "r-b597",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x006178F0",
+  "name": "init_files_mem_f (proposed)",
+  "file": "fn_006178f0.rs",
+  "lane": "r-b597",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00617A70",
+  "name": "init_files_mem_g (proposed)",
+  "file": "fn_00617a70.rs",
+  "lane": "r-b597",
   "outcome": "not_reached",
   "reason": ""
  },
@@ -358,6 +406,126 @@
   "lane": "r-b314",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x0065B040",
+  "name": "shader_pass_copy",
+  "file": "fn_0065b040.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B280",
+  "name": "tls_alloc_d0_block",
+  "file": "fn_0065b280.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B2D0",
+  "name": "tls_alloc_28_block",
+  "file": "fn_0065b2d0.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B380",
+  "name": "zero_27_words",
+  "file": "fn_0065b380.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B4B0",
+  "name": "rage::AtmosphericScattering::vf3",
+  "file": "fn_0065b4b0.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B510",
+  "name": "rage::AtmosphericScattering::vf5",
+  "file": "fn_0065b510.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B550",
+  "name": "rage::AtmosphericScattering::vf0",
+  "file": "fn_0065b550.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B5C0",
+  "name": "rage::IntervalShadows::vf5",
+  "file": "fn_0065b5c0.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B5F0",
+  "name": "rage::IntervalShadows::vf3",
+  "file": "fn_0065b5f0.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B660",
+  "name": "rage::IntervalShadows::vf0",
+  "file": "fn_0065b660.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B720",
+  "name": "rage::FogControl::vf5",
+  "file": "fn_0065b720.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B760",
+  "name": "rage::FogControl::vf3",
+  "file": "fn_0065b760.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B7D0",
+  "name": "rage::FogControl::vf0",
+  "file": "fn_0065b7d0.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B970",
+  "name": "rage::WaterFogControl::vf5",
+  "file": "fn_0065b970.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0065B9B0",
+  "name": "rage::WaterFogControl::vf3",
+  "file": "fn_0065b9b0.rs",
+  "lane": "r-s500",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x006607F0",
@@ -400,49 +568,9 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00697920",
+  "address": "0x006980B0",
   "name": "pending",
-  "file": "fn_00697920.rs",
-  "lane": "r-s497",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00697A40",
-  "name": "pending",
-  "file": "fn_00697a40.rs",
-  "lane": "r-s497",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00697D00",
-  "name": "pending",
-  "file": "fn_00697d00.rs",
-  "lane": "r-s497",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00697E30",
-  "name": "rage::crCreatureComponentMover::vf0",
-  "file": "fn_00697e30.rs",
-  "lane": "r-s497",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00697FE0",
-  "name": "pending",
-  "file": "fn_00697fe0.rs",
-  "lane": "r-s497",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00697FF0",
-  "name": "rage::crCreatureComponentMover::vf11",
-  "file": "fn_00697ff0.rs",
+  "file": "fn_006980b0.rs",
   "lane": "r-s497",
   "outcome": "not_reached",
   "reason": null
@@ -502,14 +630,6 @@
   "lane": "r-b248",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x0091F0F0",
-  "name": "buttons_360_loader",
-  "file": "fn_0091f0f0.rs",
-  "lane": "r-b595",
-  "outcome": "not_reached",
-  "reason": ""
  },
  {
   "address": "0x00926C30",
@@ -640,38 +760,6 @@
   "reason": ""
  },
  {
-  "address": "0x009A69B0",
-  "name": "audio_emit_counted",
-  "file": "fn_009a69b0.rs",
-  "lane": "r-s493",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x009A6B50",
-  "name": "audio_forward_2arg",
-  "file": "fn_009a6b50.rs",
-  "lane": "r-s493",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x009A6D90",
-  "name": "audio_forward_3arg",
-  "file": "fn_009a6d90.rs",
-  "lane": "r-s493",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x009A6DD0",
-  "name": "audio_emit_indexed",
-  "file": "fn_009a6dd0.rs",
-  "lane": "r-s493",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x009AA110",
   "name": "conv_first_or_null",
   "file": "fn_009aa110.rs",
@@ -772,22 +860,6 @@
   "name": null,
   "file": "fn_00a0b4b0.rs",
   "lane": "r-s465",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A2E370",
-  "name": "files_mem_register_blocks",
-  "file": "fn_00a2e370.rs",
-  "lane": "r-b596",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A2E7E0",
-  "name": "files_mem_table_search",
-  "file": "fn_00a2e7e0.rs",
-  "lane": "r-b596",
   "outcome": "not_reached",
   "reason": null
  },
@@ -896,14 +968,6 @@
   "reason": null
  },
  {
-  "address": "0x00A98C40",
-  "name": "attach_and_dispatch_state",
-  "file": "fn_00a98c40.rs",
-  "lane": "r-b144",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
   "address": "0x00A99420",
   "name": "init_segment_tables_and_register",
   "file": "fn_00a99420.rs",
@@ -952,12 +1016,44 @@
   "reason": "other"
  },
  {
-  "address": "0x00B28C40",
-  "name": null,
-  "file": "fn_00b28c40.rs",
+  "address": "0x00B285A0",
+  "name": "slots_rows_reset",
+  "file": "fn_00b285a0.rs",
   "lane": "r-s498",
-  "outcome": "not yet run",
-  "reason": null
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00B29B60",
+  "name": "slot_find_tail_nearest",
+  "file": "fn_00b29b60.rs",
+  "lane": "r-s498",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00B29C30",
+  "name": "slot_id_set",
+  "file": "fn_00b29c30.rs",
+  "lane": "r-s498",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00B2A4E0",
+  "name": "slot_find_tail_next",
+  "file": "fn_00b2a4e0.rs",
+  "lane": "r-s498",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00B2AC50",
+  "name": "obj_mode_setup",
+  "file": "fn_00b2ac50.rs",
+  "lane": "r-s498",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00B37240",
@@ -1389,14 +1485,6 @@
   "file": "fn_00be33d0.rs",
   "lane": "r-s341",
   "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00BF5190",
-  "name": "vehfx_overheat_emitter_setup",
-  "file": "fn_00bf5190.rs",
-  "lane": "a-Q17",
-  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -1862,14 +1950,6 @@
   "lane": "r-b493",
   "outcome": "not_reached",
   "reason": null
- },
- {
-  "address": "0x00D79F50",
-  "name": "proposed: sse_matrix_branch_dispatch",
-  "file": "fn_00d79f50.rs",
-  "lane": "r-b593",
-  "outcome": "not_reached",
-  "reason": ""
  },
  {
   "address": "0x00D82CD0",

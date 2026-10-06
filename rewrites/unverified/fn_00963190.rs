@@ -3,7 +3,8 @@
 ///
 /// Takes the new mode word. Modes 3-6 and 8-10 run the gate checks (skip
 /// the transition helper when the override flag at `0x11F7060` is 1, when
-/// the generation at `0x12088B4` differs from `0xF1C040`, or when the flag
+/// the generation at `0x12088B4` differs from the constant `0xFFFFFFFF` at
+/// `0xF1C040` (read-only file data), or when the flag
 /// word at `0x11F66A0` is non-zero; otherwise call it and latch `0x11F7077`
 /// unless the mode-guard helper vetoes); modes 11-17 call the mode-guard
 /// helper (no arguments) and skip the transition helper when its low byte

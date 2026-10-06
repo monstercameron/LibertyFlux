@@ -1,11 +1,12 @@
 // original: 0x00963d90 renderer_open
 /// Open the renderer unless its generation is already current.
 ///
-/// Takes one handle word. Returns 0 at once when the open generation at
-/// `0x12088B4` already equals the wanted one at `0xF1C040`. Otherwise
-/// raises the opening flags, runs the 7-argument create helper (whose
-/// answer becomes the new generation) and returns 0 again when that still
-/// equals the wanted generation. On a fresh generation it records the
+/// Takes one handle word. Returns at once (generation with low byte
+/// cleared) unless the open generation at `0x12088B4` already equals the
+/// wanted constant `0xFFFFFFFF` at `0xF1C040`. On a match it raises the
+/// opening flags, runs the 7-argument create helper (whose answer becomes
+/// the new generation) and returns again when that still equals the wanted
+/// generation. On a fresh generation it records the
 /// device word from the 1-argument helper at `0x11F703C`, initialises the
 /// two engine objects (thiscall, fixed object pointers), runs the extra
 /// initialiser when the second reports a non-zero low byte, submits the
@@ -24,27 +25,34 @@ lf_checker_rt::export!(cdecl, rw_00963d90(handle: u32) -> u32 {
         const MODEBYTE: u32 = 0x18b6e8d;
         const HI: u32 = 0xffff_ff00;
         let g = |va: u32| (lf_checker_rt::global::<u32>(va) as *const u32).read_unaligned();
-        if g(OPEN) == g(WANT) {
+        if g(OPEN) != g(WANT) {
             return g(OPEN) & HI;
         }
         (lf_checker_rt::global::<u8>(OPENING) as *mut u8).write(0);
         (lf_checker_rt::global::<u8>(READY) as *mut u8).write(1);
         (lf_checker_rt::global::<u32>(STATE) as *mut u32).write_unaligned(0);
+        // Code-pointer constants are relocated immediates in the original.
         let gen: u32 = lf_checker_rt::callee_cdecl!(
-            1, u32, 0x955830, handle, 0x6000, 0, 0xe8acb8, 1, 0);
+            1, u32, lf_checker_rt::relocated(0x955830), handle, 0x6000, 0,
+            lf_checker_rt::relocated(0xe8acb8), 1, 0);
         (lf_checker_rt::global::<u32>(OPEN) as *mut u32).write_unaligned(gen);
         if gen == g(WANT) {
             return gen & HI;
         }
         let dev: u32 = lf_checker_rt::callee_cdecl!(2, u32, 0);
         (lf_checker_rt::global::<u32>(DEVICE) as *mut u32).write_unaligned(dev);
-        let _: u32 = lf_checker_rt::callee_thiscall!(3, u32, 0x128e310, 1, 0, 0);
-        let rep: u32 = lf_checker_rt::callee_thiscall!(4, u32, 0x1161518);
+        // Pushed 1, 0, 0, so the stack arguments read (0, 0, 1).
+        let _: u32 = lf_checker_rt::callee_thiscall!(
+            3, u32, lf_checker_rt::relocated(0x128e310), 0, 0, 1);
+        let rep: u32 =
+            lf_checker_rt::callee_thiscall!(4, u32, lf_checker_rt::relocated(0x1161518),);
         if (rep & 0xff) != 0 {
-            let _: u32 = lf_checker_rt::callee_thiscall!(5, u32, 0x11737d0);
+            let _: u32 =
+                lf_checker_rt::callee_thiscall!(5, u32, lf_checker_rt::relocated(0x11737d0),);
         }
         let mode = (lf_checker_rt::global::<u8>(MODEBYTE) as *const u8).read() as u32;
-        let _: u32 = lf_checker_rt::callee_thiscall!(6, u32, 0x11737d0, mode);
+        let _: u32 =
+            lf_checker_rt::callee_thiscall!(6, u32, lf_checker_rt::relocated(0x11737d0), mode);
         let _: u32 = lf_checker_rt::callee_cdecl!(7, u32,);
         let fin: u32 = lf_checker_rt::callee_cdecl!(8, u32,);
         (fin & HI) | 1
