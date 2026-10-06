@@ -33057,6 +33057,15 @@
   "lane": "r-b126"
  },
  {
+  "address": "0x005B2C40",
+  "name": "apply_config_vectors",
+  "kind": "function",
+  "file": "functions/fn_005b2c40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b580"
+ },
+ {
   "address": "0x005B2F80",
   "name": "conditional_restart",
   "kind": "function",
@@ -33408,10 +33417,28 @@
   "lane": "r-b576"
  },
  {
+  "address": "0x005D7700",
+  "name": "fill_record_from_rows",
+  "kind": "function",
+  "file": "functions/fn_005d7700.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b576"
+ },
+ {
   "address": "0x005D7CC0",
   "name": "join_paths_and_rescale",
   "kind": "function",
   "file": "functions/fn_005d7cc0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b576"
+ },
+ {
+  "address": "0x005D8010",
+  "name": "run_row_session",
+  "kind": "function",
+  "file": "functions/fn_005d8010.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b576"
