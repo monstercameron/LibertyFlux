@@ -34065,6 +34065,24 @@
   "lane": "a-02"
  },
  {
+  "address": "0x005E6B50",
+  "name": "CREATE_EMERGENCY_SERVICES_CAR",
+  "kind": "function",
+  "file": "functions/fn_005e6b50.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q43"
+ },
+ {
+  "address": "0x005E6C00",
+  "name": "CREATE_EMERGENCY_SERVICES_CAR_THEN_WALK",
+  "kind": "function",
+  "file": "functions/fn_005e6c00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q43"
+ },
+ {
   "address": "0x005E6CB0",
   "name": "CREATE_EMERGENCY_SERVICES_CAR_RETURN_DRIVER",
   "kind": "native",
@@ -34236,6 +34254,15 @@
   "lane": "a-F02"
  },
  {
+  "address": "0x005E7320",
+  "name": "GET_NUMBER_OF_INJURED_PEDS_IN_RANGE",
+  "kind": "function",
+  "file": "functions/fn_005e7320.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q43"
+ },
+ {
   "address": "0x005E7370",
   "name": "FLASH_WEAPON_ICON",
   "kind": "native",
@@ -34333,6 +34360,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-04"
+ },
+ {
+  "address": "0x005E7EF0",
+  "name": "DOES_WEB_PAGE_EXIST",
+  "kind": "function",
+  "file": "functions/fn_005e7ef0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q43"
  },
  {
   "address": "0x005E7F40",
@@ -36387,6 +36423,15 @@
   "lane": "r-b638"
  },
  {
+  "address": "0x00644A00",
+  "name": "rage::ptxDomainSphere::vf5",
+  "kind": "function",
+  "file": "functions/fn_00644a00.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b638"
+ },
+ {
   "address": "0x00648A80",
   "name": "rage__rmPtfxShaderVar_Bool__ctor",
   "kind": "function",
@@ -38149,6 +38194,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-10"
+ },
+ {
+  "address": "0x006849D0",
+  "name": "RC20",
+  "kind": "function",
+  "file": "functions/fn_006849d0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b636"
  },
  {
   "address": "0x00685CE0",
@@ -49491,6 +49545,15 @@
   "lane": "r-b605"
  },
  {
+  "address": "0x008BE0E0",
+  "name": "input_mode_set",
+  "kind": "function",
+  "file": "functions/fn_008be0e0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s520"
+ },
+ {
   "address": "0x008BE0F0",
   "name": "input_ui_lookup_and_flag_update (proposed)",
   "kind": "function",
@@ -49498,6 +49561,24 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b379"
+ },
+ {
+  "address": "0x008BE280",
+  "name": "state_block_copy_e80_from_128c",
+  "kind": "function",
+  "file": "functions/fn_008be280.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s520"
+ },
+ {
+  "address": "0x008BE310",
+  "name": "state_block_copy_e80_from_12c4",
+  "kind": "function",
+  "file": "functions/fn_008be310.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s520"
  },
  {
   "address": "0x008BE7D0",
@@ -49509,6 +49590,15 @@
   "lane": "a-S06"
  },
  {
+  "address": "0x008BEB30",
+  "name": "input_mode_flag_update",
+  "kind": "function",
+  "file": "functions/fn_008beb30.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s520"
+ },
+ {
   "address": "0x008BF180",
   "name": "input_ui_row_rekey (proposed)",
   "kind": "function",
@@ -49518,6 +49608,15 @@
   "lane": "r-b379"
  },
  {
+  "address": "0x008BF300",
+  "name": "input_state_changed_check",
+  "kind": "function",
+  "file": "functions/fn_008bf300.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s520"
+ },
+ {
   "address": "0x008BF380",
   "name": "ui_state_reset",
   "kind": "function",
@@ -49525,6 +49624,33 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b605"
+ },
+ {
+  "address": "0x008BF490",
+  "name": "ui_element_init_core",
+  "kind": "function",
+  "file": "functions/fn_008bf490.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s520"
+ },
+ {
+  "address": "0x008BF5F0",
+  "name": "state_block_copy_128c_from_e80",
+  "kind": "function",
+  "file": "functions/fn_008bf5f0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s520"
+ },
+ {
+  "address": "0x008BF680",
+  "name": "state_block_copy_12c4_from_128c",
+  "kind": "function",
+  "file": "functions/fn_008bf680.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s520"
  },
  {
   "address": "0x008C2660",
@@ -94536,6 +94662,15 @@
   "lane": "r-n114"
  },
  {
+  "address": "0x00B9DE40",
+  "name": "ADD_SCENARIO_BLOCKING_AREA",
+  "kind": "function",
+  "file": "functions/fn_00b9de40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q43"
+ },
+ {
   "address": "0x00B9DEC0",
   "name": "ALLOW_AUTO_CONVERSATION_LOOKATS",
   "kind": "native",
@@ -103815,6 +103950,15 @@
   "lane": "a-07"
  },
  {
+  "address": "0x00BC59C0",
+  "name": "GET_CAR_DEFORMATION_AT_POS",
+  "kind": "function",
+  "file": "functions/fn_00bc59c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q43"
+ },
+ {
   "address": "0x00BC5A60",
   "name": "GET_CAR_DOOR_LOCK_STATUS",
   "kind": "native",
@@ -104074,6 +104218,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-01"
+ },
+ {
+  "address": "0x00BC5EC0",
+  "name": "GET_HEIGHT_OF_VEHICLE",
+  "kind": "function",
+  "file": "functions/fn_00bc5ec0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q43"
  },
  {
   "address": "0x00BC5F40",
@@ -132298,6 +132451,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-08"
+ },
+ {
+  "address": "0x00DFE594",
+  "name": "locale_convert_framebuf",
+  "kind": "function",
+  "file": "functions/fn_00dfe594.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q43"
  },
  {
   "address": "0x00DFE5C6",
