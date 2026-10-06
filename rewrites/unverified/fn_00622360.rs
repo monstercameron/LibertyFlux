@@ -29,7 +29,11 @@
 /// wanted pair; when it differs too, the mismatch tail (stage 2a) checks
 /// entries until the first success and reports it through callee 19
 /// (`0x620b80`, thiscall/2). When the request pair matches, the match
-/// side (stage 2b) scans entries with callee 5 (`0x622d90`, thiscall/1)
+/// side (stage 2b) scans entries with callee 5 (`0x622d90`, thiscall/1).
+/// Four constants in this function are relocated image addresses (each
+/// carries a relocation entry): the vtable-answer magic `0x1bb66b8`, the
+/// marker `0xfe22f8`, the task marker `0xfe1f44` and the gate `0x19f3a10`;
+/// all are derived with `relocated()` at run time, never hard-coded.
 /// for a find hit. A hit is vetted by callee 6 (thiscall/0, byte answer):
 /// zero drops to chain B, nonzero collects address blocks (callee 7,
 /// thiscall/2), runs a first-megabyte helper (callee 8, thiscall/2),
@@ -150,7 +154,7 @@ lf_checker_rt::export!(thiscall, rw_00622360(this: u32, arg1: u32, arg2: u32) ->
             if nd != 0 {
                 loop {
                     if rd32(nd.wrapping_add(CHAIN_FLAG)) != 2 {
-                        if vcall28(nd) == MAGIC {
+                        if vcall28(nd) == lf_checker_rt::relocated(MAGIC) {
                             let _: u32 = lf_checker_rt::callee_thiscall!(
                                 CB_LIVE2,
                                 u32,
@@ -167,7 +171,7 @@ lf_checker_rt::export!(thiscall, rw_00622360(this: u32, arg1: u32, arg2: u32) ->
                 }
             }
             let flag = rd8(lf_checker_rt::global::<u8>(GATE_FLAG) as u32);
-            let gate: u32 = if flag == 0 { 0 } else { GATE_PTR };
+            let gate: u32 = if flag == 0 { 0 } else { lf_checker_rt::relocated(GATE_PTR) };
             let obj = rd32(gate);
             wr32(fb.wrapping_add(F_GATE), gate);
             let vt2 = rd32(obj);
@@ -179,7 +183,7 @@ lf_checker_rt::export!(thiscall, rw_00622360(this: u32, arg1: u32, arg2: u32) ->
             }
             let _: u32 = lf_checker_rt::callee_thiscall!(CB_CTOR, u32, task);
             let saved = rd32(fb.wrapping_add(F_GATE));
-            wr32(task, TASK_VT);
+            wr32(task, lf_checker_rt::relocated(TASK_VT));
             wr32(task.wrapping_add(TASK_BUF), 0);
             wr32(task.wrapping_add(TASK_BUF).wrapping_add(4), 0);
             wr32(task.wrapping_add(TASK_REC), saved);
@@ -197,7 +201,7 @@ lf_checker_rt::export!(thiscall, rw_00622360(this: u32, arg1: u32, arg2: u32) ->
             );
             // The publish calls re-read the same gate flag.
             let flag2 = rd8(lf_checker_rt::global::<u8>(GATE_FLAG) as u32);
-            let s2: u32 = if flag2 == 0 { 0 } else { GATE_PTR };
+            let s2: u32 = if flag2 == 0 { 0 } else { lf_checker_rt::relocated(GATE_PTR) };
             if (g & 0xff) != 0 {
                 let _: u32 = lf_checker_rt::callee_thiscall!(CB_PUB_A, u32, s2, 0, task);
             } else {
@@ -306,7 +310,7 @@ lf_checker_rt::export!(thiscall, rw_00622360(this: u32, arg1: u32, arg2: u32) ->
                 wr32(fb.wrapping_add(F_BLK0), 0);
                 wr32(fb.wrapping_add(F_BLK1), 0);
                 wr32(fb.wrapping_add(F_BLKPTR), fb.wrapping_add(F_MARKER));
-                wr32(fb.wrapping_add(F_MARKER), 0xfe22f8);
+                wr32(fb.wrapping_add(F_MARKER), lf_checker_rt::relocated(0xfe22f8));
                 wr32(fb.wrapping_add(F_SAVEDNB), nb);
                 let _: u32 = lf_checker_rt::callee_thiscall!(
                     CB_RUN,
@@ -344,7 +348,7 @@ lf_checker_rt::export!(thiscall, rw_00622360(this: u32, arg1: u32, arg2: u32) ->
                 if nd2 != 0 {
                     loop {
                         if rd32(nd2.wrapping_add(CHAIN_FLAG)) != 2 {
-                            if vcall28(nd2) == MAGIC {
+                            if vcall28(nd2) == lf_checker_rt::relocated(MAGIC) {
                                 let _: u32 =
                                     lf_checker_rt::callee_thiscall!(CB_TOUCH, u32, nd2);
                             }
@@ -388,7 +392,7 @@ lf_checker_rt::export!(thiscall, rw_00622360(this: u32, arg1: u32, arg2: u32) ->
                     break;
                 }
                 if rd32(nd.wrapping_add(CHAIN_FLAG)) != 2 {
-                    if vcall28(nd) == MAGIC {
+                    if vcall28(nd) == lf_checker_rt::relocated(MAGIC) {
                         let r: u32 = lf_checker_rt::callee_thiscall!(
                             CB_LIVE,
                             u32,

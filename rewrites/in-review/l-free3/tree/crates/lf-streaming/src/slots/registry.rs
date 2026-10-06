@@ -44,9 +44,7 @@ pub const ROWS: &[Row] = &[
         func: "stream_entry_init",
         method: "StreamEntry::empty",
         state: State::Proven,
-        narrows: &[
-            "the 0 answer narrows to unit (every call answers 0)",
-        ],
+        narrows: &["the 0 answer narrows to unit (every call answers 0)"],
     },
     Row {
         func: "stream_entry_is_active",
@@ -88,7 +86,7 @@ pub const ROWS: &[Row] = &[
             "the entry address narrows to its index (byte offset idx * 24; the magic divide runs on it exactly)",
             "the kind table's stride-100 layout narrows to 256 owned base slots",
             "indexes past the owned entries panic; the original reads past its array",
-            "the planted table base is pinned equal to the entry-array base or above it by whole entries in tested cases",
+            "negative byte offsets are out of domain (no owned entry sits below the base)",
         ],
     },
     Row {

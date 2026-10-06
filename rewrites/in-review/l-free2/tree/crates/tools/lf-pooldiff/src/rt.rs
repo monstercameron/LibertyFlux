@@ -36,6 +36,17 @@ static REC_SLOTS: [AtomicU32; 7] = [
     AtomicU32::new(0),
     AtomicU32::new(0),
 ];
+/// The revocation table's header words (second lane: two words, four bytes
+/// as one word slot, one word).
+static R417_A: AtomicU32 = AtomicU32::new(0);
+static R417_B: AtomicU32 = AtomicU32::new(0);
+static R417_C: AtomicU32 = AtomicU32::new(0);
+static R417_D: AtomicU32 = AtomicU32::new(0);
+/// The bare bump pool's count and base globals.
+static BC_COUNT: AtomicU32 = AtomicU32::new(0);
+static BC_BASE: AtomicU32 = AtomicU32::new(0);
+/// The two published-object global slots.
+static OBJ_SLOTS: [AtomicU32; 2] = [AtomicU32::new(0), AtomicU32::new(0)];
 
 /// Address of the global slot for a file VA.
 ///
@@ -56,6 +67,19 @@ fn slot_for(file_va: u32) -> *mut u32 {
         0x0163_2C60 => REC_SLOTS[4].as_ptr(),
         0x018B_6F1C => REC_SLOTS[5].as_ptr(),
         0x012E_22A4 => REC_SLOTS[6].as_ptr(),
+        0x0167_CA10 => R417_A.as_ptr(),
+        0x0167_CA14 => R417_B.as_ptr(),
+        // The four header bytes share one word slot; byte accesses cast
+        // the offset pointer back to a byte pointer.
+        0x0167_CA18 => R417_C.as_ptr(),
+        0x0167_CA19 => (R417_C.as_ptr() as *mut u8).wrapping_add(1) as *mut u32,
+        0x0167_CA1A => (R417_C.as_ptr() as *mut u8).wrapping_add(2) as *mut u32,
+        0x0167_CA1B => (R417_C.as_ptr() as *mut u8).wrapping_add(3) as *mut u32,
+        0x0167_CA1C => R417_D.as_ptr(),
+        0x0103_ADBC => BC_COUNT.as_ptr(),
+        0x0103_ADC0 => BC_BASE.as_ptr(),
+        0x012B_4160 => OBJ_SLOTS[0].as_ptr(),
+        0x012B_4164 => OBJ_SLOTS[1].as_ptr(),
         _ => panic!("unexpected global VA {file_va:#x}"),
     }
 }
@@ -71,8 +95,25 @@ pub fn global<T>(file_va: u32) -> *mut T {
     slot_for(file_va) as *mut T
 }
 
-/// The thirteen pool-vector stamp addresses, planted per test.
-static RELOC_SLOTS: [AtomicU32; 13] = [
+/// The relocated addresses, planted per test: thirteen pool-vector
+/// stamps, then the second lane's fifteen (two entry-table pointers,
+/// three revocation-table pointers, the handle-table pointer, six wide
+/// stamps, two object vtables).
+static RELOC_SLOTS: [AtomicU32; 27] = [
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
     AtomicU32::new(0),
     AtomicU32::new(0),
     AtomicU32::new(0),
@@ -109,6 +150,20 @@ fn reloc_slot(file_va: u32) -> &'static AtomicU32 {
         0x00E9_761C => &RELOC_SLOTS[10],
         0x00E9_7B1C => &RELOC_SLOTS[11],
         0x00E9_781C => &RELOC_SLOTS[12],
+        0x0120_F2B8 => &RELOC_SLOTS[13],
+        0x0120_F2C0 => &RELOC_SLOTS[14],
+        0x0167_CA20 => &RELOC_SLOTS[15],
+        0x0167_0D29 => &RELOC_SLOTS[16],
+        0x0167_CA39 => &RELOC_SLOTS[17],
+        0x0129_5CD8 => &RELOC_SLOTS[18],
+        0x00E9_7B9C => &RELOC_SLOTS[19],
+        0x00E9_7C5C => &RELOC_SLOTS[20],
+        0x00E9_7C9C => &RELOC_SLOTS[21],
+        0x00E9_7BDC => &RELOC_SLOTS[22],
+        0x00E9_7D1C => &RELOC_SLOTS[23],
+        0x00E9_7CDC => &RELOC_SLOTS[24],
+        0x00E9_7EC0 => &RELOC_SLOTS[25],
+        0x00E9_7EA0 => &RELOC_SLOTS[26],
         _ => panic!("unexpected relocated VA {file_va:#x}"),
     }
 }

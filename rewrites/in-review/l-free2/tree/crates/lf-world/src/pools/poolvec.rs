@@ -33,6 +33,18 @@ impl<F: FnMut(u32) -> Option<Vec<u8>>> VecAlloc for F {
     }
 }
 
+/// Builds one vector element in place: the constructed initialisers' callee.
+pub trait ElemBuild {
+    /// Builds `slot` (exactly one stride), answering a status word.
+    fn build_elem(&mut self, slot: &mut [u8]) -> u32;
+}
+
+impl<F: FnMut(&mut [u8]) -> u32> ElemBuild for F {
+    fn build_elem(&mut self, slot: &mut [u8]) -> u32 {
+        self(slot)
+    }
+}
+
 /// A fixed-stride element buffer: the count plus stamped slots.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct PoolVec {
@@ -129,5 +141,44 @@ impl PoolVec {
     #[must_use]
     pub fn end_offset(&self) -> usize {
         self.buf.len()
+    }
+
+    /// Allocates the buffer and constructs each element through `build`,
+    /// answering the last construction's answer (0, the buffer itself, when
+    /// the pool is empty: the 32-bit form answers the block address).
+    /// Returns `None` when the allocator fails.
+    ///
+    /// # Panics
+    ///
+    /// When the backing is not exactly the computed size, or when a slot
+    /// would leave the buffer.
+    pub fn init_constructed(
+        count: u32,
+        stride: u32,
+        alloc: &mut impl VecAlloc,
+        build: &mut impl ElemBuild,
+    ) -> Option<(Self, u32)> {
+        let size = Self::alloc_size(count, stride);
+        let mut buf = alloc.alloc(size)?;
+        assert!(
+            buf.len() as u64 == u64::from(size),
+            "backing holds {} bytes for a {size}-byte buffer",
+            buf.len()
+        );
+        buf[0..4].copy_from_slice(&count.to_le_bytes());
+        let mut last = 0u32;
+        let mut slot = 4usize;
+        let mut left = count;
+        while left != 0 {
+            let end = slot + stride as usize;
+            assert!(
+                end <= buf.len(),
+                "slot {slot} of stride {stride} past the {size}-byte buffer"
+            );
+            last = build.build_elem(&mut buf[slot..end]);
+            slot = end;
+            left -= 1;
+        }
+        Some((Self { stride, buf }, last))
     }
 }

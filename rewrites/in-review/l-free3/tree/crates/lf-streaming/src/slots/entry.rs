@@ -78,8 +78,7 @@ impl StreamEntry {
         let mut i = 0;
         while i < 6 {
             let at = i * 4;
-            words[i] =
-                u32::from_le_bytes([bytes[at], bytes[at + 1], bytes[at + 2], bytes[at + 3]]);
+            words[i] = u32::from_le_bytes([bytes[at], bytes[at + 1], bytes[at + 2], bytes[at + 3]]);
             i += 1;
         }
         Self { words }
@@ -125,6 +124,8 @@ impl StreamEntry {
 
     /// The kind byte of the value word: the low byte of `+0x04`.
     #[must_use]
+    // The truncation is the behaviour: the original reads one byte.
+    #[allow(clippy::cast_possible_truncation)]
     pub const fn value_kind(self) -> u8 {
         self.words[1] as u8
     }

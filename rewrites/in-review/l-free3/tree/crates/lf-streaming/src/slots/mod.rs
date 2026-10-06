@@ -19,7 +19,7 @@ pub use entry::DataSlots;
 pub use entry::KindBytes;
 pub use entry::KindSlots;
 pub use entry::StreamEntry;
+pub use registry::ROWS;
 pub use registry::Row;
 pub use registry::State;
-pub use registry::ROWS;
 pub use table::SlotTable;
