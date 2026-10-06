@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: hourly review, 23:05 on 5 October",
+    "title": "Devlog: Stale-flags branch and script phase-lock on a staged large function",
     "commit": null,
+    "summary": "Findings from the a-Q14 lane.",
+    "changes": [
+      "New devlog entry: Stale-flags branch and script phase-lock on a staged large function.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: hourly review, 23:05 on 5 October",
+    "commit": "cc34ddfaae6ebb5864f22fc8f40c8463522e5d9a",
     "summary": "One row added to the day's hourly reviews.",
     "changes": [
       "15,829 functions verified, 27.9% of the code by size; 22 lanes running. Of nine rewrites withdrawn for a wrong signedness one was withdrawn in error and is restored; six of the eight wrong ones are repaired and back.",
