@@ -1,28 +1,35 @@
-// original: 0x00963080 slot_table_store
-/// Store a pointer into one of two 0x818-entry slot tables.
+// original: 0x00963080 handle_register
+/// Register a pointer in one of the two handle tables.
 ///
-/// Ignores null pointers, negative indexes and indexes past the table end.
-/// Otherwise writes the pointer and the index's high word as a tag into the
-/// selected table (0x1208970 when the selector is 1, else 0x12142D0).
-/// Returns nothing observable (early exits leak entry EAX).
-export!(cdecl, rw_00963080(which: u32, index: u32, ptr: u32) -> () {
+/// Arguments are `(sel, idx, ptr)`. A null pointer, a negative `idx`
+/// (signed) or a low word at or above `0x818` (signed 16-bit) rejects the
+/// call; otherwise `ptr` is stored at entry `(idx as i16)` of table A
+/// (`0x1208970`) when `sel == 1` or table B (`0x12142D0`), with the high
+/// word of `idx` kept as the tag. Note the signed bound admits a low word
+/// of `0x8000..0xFFFF`, which addresses before the table; the rewrite keeps
+/// that behaviour. Returns the entry index on success; rejected calls return
+/// the caller's EAX unchanged, so the proof pins entry EAX to `0`.
+lf_checker_rt::export!(cdecl, rw_00963080(sel: u32, idx: u32, ptr: u32) -> u32 {
     unsafe {
+        const TABLE_A: u32 = 0x1208970;
+        const TABLE_B: u32 = 0x12142d0;
+        const COUNT: i16 = 0x818;
+        const STRIDE: i32 = 8;
         if ptr == 0 {
-            return;
+            return 0;
         }
-        if (index as i32) < 0 {
-            return;
+        if (idx as i32) < 0 {
+            return 0;
         }
-        if (index as u16) >= 0x818 {
-            return;
+        let low = (idx & 0xffff) as u16 as i16;
+        if low >= COUNT {
+            return 0;
         }
-        let base = if which == 1 {
-            relocated(0x1208970)
-        } else {
-            relocated(0x12142D0)
-        };
-        let row = (index & 0xFFFF) as usize;
-        *((base as *mut u32).add(row * 2)) = ptr;
-        *((base as *mut u16).add(row * 4 + 2)) = (index >> 16) as u16;
+        let base = if sel == 1 { TABLE_A } else { TABLE_B };
+        let e = lf_checker_rt::relocated(base)
+            .wrapping_add(((low as i32).wrapping_mul(STRIDE)) as u32);
+        (e as *mut u32).write_unaligned(ptr);
+        (e.wrapping_add(4) as *mut u16).write_unaligned((idx >> 16) as u16);
+        low as i32 as u32
     }
 });

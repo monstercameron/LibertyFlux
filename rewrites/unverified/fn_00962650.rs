@@ -1,29 +1,25 @@
-// original: 0x00962650 table_init_120f2c0
-/// Initialise the 1024-entry record table starting at 0x120F2C0.
+// original: 0x00962650 pool_entry_table_init
+/// Initialise the 0x400-entry pool table at `0x120F2B8`.
 ///
-/// Writes 0x400 records of 0x14 bytes: a leading dword and word before the
-/// base (the first record's header sits 8 bytes below the base address),
-/// then per record two zeroed dwords and a zeroed word. The header word
-/// before the base is stamped 0xFFFF, not zeroed.
-export!(cdecl, rw_00962650() -> u32 {
+/// Each 20-byte entry is set to pointer `0`, tag `0xFFFF`, two zero dwords
+/// and a zero word; bytes `+6..+7` and `+18..+19` are left untouched, as in
+/// the original. Takes no arguments; returns the end pointer.
+lf_checker_rt::export!(cdecl, rw_00962650() -> u32 {
     unsafe {
-        const BASE: u32 = 0x120F2C0;
-        const COUNT: u32 = 0x400;
+        const BASE: u32 = 0x120f2b8;
+        const ENTRIES: u32 = 0x400;
         const STRIDE: u32 = 0x14;
-        let mut ptr = relocated(BASE);
-        let mut remaining = COUNT;
-        loop {
-            *(ptr.wrapping_sub(8) as *mut u32) = 0;
-            *(ptr.wrapping_sub(4) as *mut u16) = 0xFFFF;
-            *(ptr as *mut u32) = 0;
-            *(ptr.wrapping_add(4) as *mut u32) = 0;
-            *(ptr.wrapping_add(8) as *mut u16) = 0;
-            ptr = ptr.wrapping_add(STRIDE);
-            remaining -= 1;
-            if remaining == 0 {
-                break;
-            }
+        const TAG_INIT: u16 = 0xffff;
+        let mut i = 0u32;
+        while i < ENTRIES {
+            let e = lf_checker_rt::relocated(BASE).wrapping_add(i.wrapping_mul(STRIDE));
+            (e as *mut u32).write_unaligned(0);
+            (e.wrapping_add(4) as *mut u16).write_unaligned(TAG_INIT);
+            (e.wrapping_add(8) as *mut u32).write_unaligned(0);
+            (e.wrapping_add(12) as *mut u32).write_unaligned(0);
+            (e.wrapping_add(16) as *mut u16).write_unaligned(0);
+            i += 1;
         }
-        ptr
+        lf_checker_rt::relocated(0x120f2c0).wrapping_add(ENTRIES.wrapping_mul(STRIDE))
     }
 });
