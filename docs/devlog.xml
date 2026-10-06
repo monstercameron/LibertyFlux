@@ -9,6 +9,34 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming the movement-task function group</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-119"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-119</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>One hundred forty-nine of one hundred fifty consecutive movement-task functions received descriptive names, most at high confidence, by combining the project's inventory labels with vtable and caller evidence.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred forty-nine of one hundred fifty consecutive movement-task functions received descriptive names, most at high confidence, by combining the project's inventory labels with vtable and caller evidence.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose a descriptive name for each function in a batch of one hundred fifty consecutive unnamed game functions, which turned out to be almost entirely the pedestrian movement-task code: go-to-point, route following, wandering, formation, crowd, and related task classes.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The task virtual-table slots have stable meanings across classes: slot one clones, slot three returns the task id constant, slot five makes the task abortable, and slots eighteen through twenty manage subtasks (create first, create next, control).&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Movement tasks carry a second thirteen-slot interface table whose slots the inventory labels do not distinguish from primary slots. Its slot seven copies the target point to an out-param, slot eight reads a per-task float with a slot-ten setter, and slot six holds per-class readiness checks. Every batch entry in these slots was assigned to the correct table by comparing table base addresses.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Simple movement tasks run their per-tick update through slot twenty, which calls slots twenty-two and twenty-three to refresh speed and heading; the slot-seventeen process wrapper calls slot twenty first. One code stub is shared by address between a movement task and several UI layout classes through duplicate folding, with unrelated meanings on each side.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Sixteen functions are non-virtual helpers. Caller analysis attributed twelve to a single owning class, mostly subtask factories used only by one task's create-first, create-next, and control methods.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The secondary slot-eight float behaves like a per-task arrival radius, with tight values for cover movement, loose values for road crossing, and a unit default for tracking, but no direct consumer was observed.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Unknown&lt;/span&gt; One area-search predicate matching model category three could not be named because the meaning of that model category is not established.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Named one hundred twenty functions at high confidence from slot contracts, verified rewrites, and vtable proof, and twenty-nine at medium from fully read behaviour with project-style wording.&lt;/li&gt;
+&lt;li&gt;Future naming lanes over movement classes should verify the vtable base address for slots six through eight instead of trusting the slot label alone, since primary and secondary slots share numbering.&lt;/li&gt;
+&lt;li&gt;Caller attribution by nearest symbol should be treated as a hint only; two helpers in this batch belonged to unnamed functions immediately after the attributed one.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Re-run the lane's evidence gatherer (disassembly plus string, import, and named-callee collection for every batch function), the vtable scan (pointer scan of read-only data validated against runtime type records), and the whole-text caller scan from the lane scratch folder, then compare each function's slot and callers against the contracts above.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The first version of the vtable scan found nothing because type descriptors live in writable data rather than read-only data, and because the type-name prefix contains a literal question mark the matching pattern dropped. Both were fixed and the scan then confirmed one hundred thirty-four functions with no mismatches. Two script-native labels on facing helpers look wrong (vector arguments, float results) and were treated as math helpers instead.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>One table builder verified, and the compiler hides spills inside push sequences</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b598"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b598</id>
@@ -1176,25 +1204,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Join every inventory vtable label against the merged lane and verified names to get slot semantics; disassemble through the mapped image only; resolve call targets and callers against the same databases; decode registration pushes against the native hash list; check vtable addresses against the RTTI table.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The first string scan found nothing because the hex matcher only accepted full-length addresses; short immediates needed a second pass. One inventory entry is a five-byte jump whose size swallows three following functions, and one gap-fill entry starts mid-function using its caller's registers. Both were left for the inventory lane with notes.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A player-ped routine reads an uninitialized stack slot</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b478"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b478</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>One verified routine in the peds-tasks batch passes four numbers to its motion sink, but only computes three of them: the fourth word is loaded from a stack scratch slot the routine never wrote, so whatever the caller left there becomes part of the output.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One verified routine in the peds-tasks batch passes four numbers to its motion sink, but only computes three of them: the fourth word is loaded from a stack scratch slot the routine never wrote, so whatever the caller left there becomes part of the output.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite six neighbouring peds-tasks routines in Rust and prove each rewrite behaves identically to the original with the project checker, which runs both sides from identical starting state and compares calls, memory and results.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All six routines verified at 1200 trials each with distinct wrong versions caught. While contracting the player-ped motion-blend routine, its fourth output word traced back to a stack slot below the incoming stack pointer that nothing in the routine writes. A control run with a zero stack fill passes; the same contract with a 1.0 fill fails exactly the trials that take the computing path, which confirms the word is whatever the stack held.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two smaller quirks in sibling routines: a chain scan recomputes the same priority value twice and compares it against itself, so two of its branches are dead; and a probe float is compared against a live copy that no scripted callee can change, so the unequal path is reachable in the harness only through NaN inputs.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;The rewrite stores zero for the uninitialized word with a comment, and the proof is recorded as covering the zero-fill behavior only. Any future caller of this routine should treat that fourth word as meaningless rather than as a computed value. The dead branches and the NaN-only path are implemented faithfully and noted in the results.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the routine's proof contract with the stack fill set to zero and confirm it passes, then set the fill to the bit pattern for 1.0 and confirm that exactly the computing-path trials fail in the sink-call snapshot. Both runs use the stock checker worker and the committed contract for the lane's fifth routine.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;An early relocation script double-added the page base and reported every absolute operand in the batch as unrelocated, which briefly made the whole batch look unverifiable; the corrected check shows all of them have relocation entries. Separately, a pushed constant that carries a relocation entry must be relocated in the rewrite too, or the call log differs; that cost one failed probe before the pattern was clear.&lt;/p&gt;</content>
   </entry>
 </feed>
