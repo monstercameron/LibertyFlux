@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Devlog: two in a hundred old proofs do not reproduce on the current checker",
+    "commit": null,
+    "summary": "A devlog entry puts the night's five audits of the verified tree in one table and records the finding that came out of the last one: most proofs are old, and about 2% of a sample of old proofs do not reproduce on the current checker.",
+    "changes": [
+      "The entry lists each audit with its scope, result and how it was settled: skipped pointer arguments (22 rewrites repaired, 3 withdrawn, about 40 false alarms), unknown input keys (73 of 73 hold), global write positions (no misplaced write in 1,578), a batch an audit could not reproduce (all 28 reproduce), and 1,177 old proofs re-run unchanged, of which 24 did not reproduce.",
+      "It breaks the 24 down by cause (vacuous by today's rule, a call log cut short, contracts the driver no longer loads, tracked files that do not compile or are missing, and unexplained differences) and gives the verified functions by the checker version that accepted them: 11,029 by versions 1 to 4.",
+      "It records the decision: a standing regression that re-runs every proof of record on the current checker, oldest first, with what does not hold withdrawn from the count."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 41 files from lanes (209 unverified rewrites, 468 in review)",
     "commit": "d335403b495d0d4ce6e6d2915f0eae93141169b8",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

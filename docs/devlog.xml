@@ -9,6 +9,66 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Two in a hundred old proofs do not reproduce on the current checker, and a night of audits in one table</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#old-proofs-on-the-current-checker-2026-10-06"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#old-proofs-on-the-current-checker-2026-10-06</id>
+    <published>2026-10-06T00:00:00Z</published>
+    <updated>2026-10-06T00:00:00Z</updated>
+    <summary>Between midnight and eight in the morning on 6 October the checker gained two versions and five separate audits ran against the verified tree. This entry puts their results side by side, because the last one changes what the others mean: the weakness that matters most is not any one blind spot but the age of most proofs.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Between midnight and eight in the morning on 6 October the checker gained two versions and five separate audits ran against the verified tree. This entry puts their results side by side, because the last one changes what the others mean: the weakness that matters most is not any one blind spot but the age of most proofs.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Each audit asked the same question of a different part of the tree: is there a way for a rewrite to be wrong and still pass, and if so, how many verified rewrites are wrong that way?&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Audit&lt;/th&gt;&lt;th&gt;In scope&lt;/th&gt;&lt;th&gt;Result&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Pointer arguments the proof skips (the buffer behind them was not compared)&lt;/td&gt;&lt;td&gt;2,992 verified functions, 4,633 call sites&lt;/td&gt;&lt;td&gt;22 rewrites handed a callee something other than the original does and are repaired and proved again; 3 are withdrawn with a written repair; about 40 candidates turned out not to be wrong&lt;/td&gt;&lt;td&gt;Verified: every case settled by a run, with the old behaviour run as the wrong version&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Input words whose description used a key the driver did not know (it gave them random bits)&lt;/td&gt;&lt;td&gt;73 verified proofs&lt;/td&gt;&lt;td&gt;All 73 hold under the contract their authors meant&lt;/td&gt;&lt;td&gt;Verified: proved again on the stock checker&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Where inside a declared range a global variable is written (not compared before checker version 8)&lt;/td&gt;&lt;td&gt;1,578 verified proofs&lt;/td&gt;&lt;td&gt;No misplaced write in any of them. 598 of the proofs never changed a global in any trial: all but 17 of those belong to functions that only read their globals&lt;/td&gt;&lt;td&gt;Verified: 400 re-run with one-word ranges, 1,172 re-run unchanged on version 8&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Proofs an audit lane could not reproduce after adding its own snapshots&lt;/td&gt;&lt;td&gt;28&lt;/td&gt;&lt;td&gt;All 28 reproduce exactly as recorded; the audit's snapshots read through pointers that are invalid in some trials&lt;/td&gt;&lt;td&gt;Verified: run on the proving lanes' own libraries and on fresh builds&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Old proofs re-run unchanged on the current checker (a by-product of the third audit)&lt;/td&gt;&lt;td&gt;1,177&lt;/td&gt;&lt;td&gt;24 do not reproduce: about 2%&lt;/td&gt;&lt;td&gt;Verified for the count; the causes are in the next table&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;The 24 that did not reproduce&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;What happened on the current checker&lt;/th&gt;&lt;th&gt;Count&lt;/th&gt;&lt;th&gt;What it means&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Vacuous: a callee never fired on a completed trial&lt;/td&gt;&lt;td&gt;4&lt;/td&gt;&lt;td&gt;The checker that accepted them had no such rule; the proof compared nothing about those calls&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Calls or heap differ&lt;/td&gt;&lt;td&gt;4&lt;/td&gt;&lt;td&gt;Not yet explained; two are a not-a-number's payload&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Call log cut short (more than a thousand calls attempted, 256 logged)&lt;/td&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;The earlier checker passed a truncated log; the calls past the limit were never compared&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;The current driver cannot load the contract&lt;/td&gt;&lt;td&gt;4&lt;/td&gt;&lt;td&gt;Contract shapes that later versions stopped accepting; cannot be re-run without rewriting the contract&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;The tracked rewrite does not compile&lt;/td&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;The file in the repository is not the file that was proved&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;The tracked rewrite is missing or cut short&lt;/td&gt;&lt;td&gt;5&lt;/td&gt;&lt;td&gt;An index row without a usable file&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;The rewrite faults, or writes an undeclared global&lt;/td&gt;&lt;td&gt;2&lt;/td&gt;&lt;td&gt;Not yet explained&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;One trial in a hundred differs in a not-a-number's payload&lt;/td&gt;&lt;td&gt;1&lt;/td&gt;&lt;td&gt;The compiler had reordered a float addition; repaired with the order pinned and proved again&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;None of these was found by looking for it. They appeared because 1,177 proofs happened to be re-run for another reason.&lt;/p&gt;
+&lt;h3&gt;Why this is the larger finding&lt;/h3&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Checker version of the proof of record&lt;/th&gt;&lt;th&gt;Verified functions&lt;/th&gt;&lt;th&gt;Bytes&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;1 and 2&lt;/td&gt;&lt;td&gt;4,470&lt;/td&gt;&lt;td&gt;315,600&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;3&lt;/td&gt;&lt;td&gt;1,945&lt;/td&gt;&lt;td&gt;255,200&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;4&lt;/td&gt;&lt;td&gt;4,614&lt;/td&gt;&lt;td&gt;649,900&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;5&lt;/td&gt;&lt;td&gt;3,349&lt;/td&gt;&lt;td&gt;573,700&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;6&lt;/td&gt;&lt;td&gt;2,135&lt;/td&gt;&lt;td&gt;607,000&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;7 and 8&lt;/td&gt;&lt;td&gt;478&lt;/td&gt;&lt;td&gt;69,000&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Two thirds of the verified functions were accepted by checker versions 1 to 4, before the checker refused vacuous proofs, before a deliberately wrong version was required for every function, and before most of what it can now observe existed. The project's plan says the regression between waves is the re-run of every rewrite under the current checker. That stopped being done when rewrites began to be committed on every five-minute tick. If the rate in this sample holds, about 220 of those 11,029 functions have a proof that would not be accepted today. Inferred: the sample was not random (it was the proofs with a wide global range), so the true rate may differ.&lt;/p&gt;
+&lt;h3&gt;What was decided&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;A standing regression: lanes that take the verified functions oldest checker version first, 350 at a time, and re-run each proof of record unchanged on the current checker. A proof that holds is replaced by the same rewrite and contract proved on the current version. A proof that is vacuous, fails, or cannot be run is recorded with its evidence, and the coordinator withdraws it from the verified count.&lt;/li&gt;
+&lt;li&gt;Two lane starts in twelve go to it from the next supervisor window, taken from one lift start and one start on the largest functions.&lt;/li&gt;
+&lt;li&gt;Withdrawals are made on a run, or on a reading the coordinator has confirmed on both sides, never on a lane's reading alone. In this night's audits a reading lane called 16 rewrites wrong and was right about 10; an audit's snapshot run called 23 wrong and was right about 7; and the coordinator's own second opinions on ten cases were right five times.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce&lt;/h3&gt;
+&lt;p&gt;The scope lists and the re-run lanes' tables are in the audit lanes' folders under the scratch area, which is not published. The counts by checker version come from the verified index (&lt;code&gt;rewrites/verified/index.json&lt;/code&gt;, field &lt;code&gt;checker&lt;/code&gt;) and the function inventory's sizes. The regression lanes' briefs are written by a script in the coordinator's folder that takes the oldest proofs first.&lt;/p&gt;
+&lt;h3&gt;What was confusing&lt;/h3&gt;
+&lt;p&gt;The audit that looked hardest for wrong rewrites produced the most false alarms, and the plainest one, running old proofs again without changing anything, produced the finding. A stricter checker does not make old verdicts stricter; only running them again does.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Three stack bugs in the original, found by proving rewrites</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b649"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b649</id>
@@ -1139,39 +1199,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Pin the routine's two vector inputs and the limit it reads from its object so the quotient is an exact integer, stub the helpers with fixed rows, and compare iteration counts; or read predicate 6 in the processor manual's compare-pages.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The first mismatch looked like a broken formula: every output word differed. Pinning each path separately showed the tail and the loop-free paths passing, which isolated the loop; only then did a counting probe reveal a miscount rather than a miscomputation. Two earlier hypotheses, relocated float constants and mismatched stub rows, were each disproven by a direct check before the instruction reading was questioned.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Lifting the next families: script natives and three more</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-native-families"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-native-families</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>Four tiny routines now cover 2,392 verified functions: nearly every script native handler is one dispatch routine in four return conventions, and the timer, asset-slot and ratio-refresh groups are one routine each. Every member is proven against its verified rewrite by differential test.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Four tiny routines now cover 2,392 verified functions: nearly every script native handler is one dispatch routine in four return conventions, and the timer, asset-slot and ratio-refresh groups are one routine each. Every member is proven against its verified rewrite by differential test.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Repeat the leaderboard lift on the next largest families of verified functions: script native handlers in several shapes, timer register callbacks, asset slot getters and refresh ratio writers, taking them one proven group at a time.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The native handlers are far more uniform than their count suggests. Of 2,620 verified handlers, 2,162 are one engine call forwarding sequential script words, with per-word boolean coercion and four return conventions: return the answer, store its low byte, store the whole word, or return zero. What varies per handler is only its dispatch entry: name, hash, word count and coercion flags.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The other three groups are each exactly one routine: timer callbacks pass one address to a registrar, asset slots pass a slot record and a name to a registry routine, and ratio refreshers divide two stored floats into a third. All 80 asset names were read back from the executable and match.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The census corrected two labels from the earlier survey: the second native group forwards two arguments with no return, and most timer-group members carry other names. Operand-level checking also surfaced real variants the structural hash had merged: boolean coercions, a stack-slot quirk word, float-answering engine calls, and zero returns.&lt;/p&gt;
-&lt;table role="table"&gt;
-&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Family&lt;/th&gt;&lt;th role="columnheader"&gt;Members proven&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody role="rowgroup"&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Native dispatch, four conventions&lt;/td&gt;&lt;td role="cell" data-label="Members proven"&gt;2,162&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Timer registrations&lt;/td&gt;&lt;td role="cell" data-label="Members proven"&gt;81&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Asset registrations&lt;/td&gt;&lt;td role="cell" data-label="Members proven"&gt;80&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Ratio refreshes&lt;/td&gt;&lt;td role="cell" data-label="Members proven"&gt;69&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Natives go to the script subsystem, timer registrations to the main loop; asset slots probably belong to streaming and the ratio bank's owner is still unknown, so it keeps its own crate for now.&lt;/li&gt;
-&lt;li&gt;458 natives are deferred with stated reasons: bespoke argument plumbing, global-gated handlers that need their subsystem state first, float-computing handlers that form their own group, and spellings that need their lane's context layout.&lt;/li&gt;
-&lt;li&gt;Next groups in order: model registrations, timer initialisers, vehicle ratios, leaderboard constructors, and cache lookups.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the lane's census and generator scripts over the verified rewrites to rebuild the descriptor tables and differential cases, then run the seven differential suites on the 32-bit target and the four crates' own tests on the 64-bit host. Every case also runs a deliberately wrong lift that must be caught. Together with the leaderboard family, 5,587 verified rewrites are now covered by lifted code.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three defects were found by the proof rather than by reading: engine calls declared with float answers read a different return register than integer stubs provide, so those cases needed float-answering stubs; a residue spelling in store returns needed pinning per member instead of assuming two spellings; and parallel test suites shared one relocated base until each suite took it inside its own session. Each fix was confirmed by the full suite going green.&lt;/p&gt;</content>
   </entry>
 </feed>
