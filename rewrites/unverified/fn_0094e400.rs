@@ -8,15 +8,15 @@
 /// series of table slices: one word, then every 0x2C-byte record of the main
 /// table copied through a frame buffer, then per-row words of the two guard
 /// tables (each row's encrypted lookup runs only for a non-zero guard, which
-/// the proof steers away from, so the rows always sink two fixed words),
-/// then the remaining ranges word by word. Two tail passes (ids 6 and 7) run
-/// over fixed tables. The function returns the second tail pass's answer with
-/// its low byte cleared; the security-cookie check at the end runs natively.
+/// the proof steers away from), then the remaining ranges word by word. Two
+/// tail passes (ids 6 and 7) run over fixed tables. The function returns the
+/// second tail pass's answer with its low byte cleared; the security-cookie
+/// check at the end runs natively.
 ///
-/// Two of the row sinks read words the function never stored: bytes left over
-/// in the frame buffer from the last main-table record. Those words are
-/// deterministic (they come from fixed table data), so the rewrite passes the
-/// same bytes explicitly; see `leftover24`/`leftover28`.
+/// The guard-row sinks share one stack cleanup for several calls, so each
+/// address computation sees the pushes of the earlier calls in its row: the
+/// four sinks of a guard-2 row read slots E+4, E+0xC, E+0x14, E+0x10 (values
+/// 0, 0, -1, -1) and the two sinks of a guard-3 row read E+4, E+8 (0, 0).
 ///
 /// Original: 0x0094E400 (cdecl, no arguments, no register inputs; the calls
 /// into the encrypted region at four guarded sites are not covered by this
@@ -91,16 +91,10 @@ lf_checker_rt::export!(cdecl, rw_0094E400() -> u32 {
             );
             p += RECORD_LEN;
         }
-        // Frame leftovers the guard-2 rows re-read: the words at offsets 12
-        // and 16 of the last main-table record, which sits at esp+0x18 while
-        // the rows read esp+0x24 and esp+0x28. The last record starts at
-        // MAIN_END - RECORD_LEN.
-        let last = MAIN_END - RECORD_LEN;
-        let leftover24 = gr32(last + 12);
-        let leftover28 = gr32(last + 16);
-
-        // Guard table 2: rows sink (0, -1) pairs; a non-zero guard would take
-        // the encrypted lookup first (not covered: guards are always zero).
+        // Guard table 2: a non-zero guard would take the encrypted lookup
+        // first (not covered: guards are always zero). The row's four sinks
+        // share one add-esp, so the lea of each sees the earlier pushes and
+        // the sunk words are slots E+4, E+0xC, E+0x14, E+0x10 = 0, 0, -1, -1.
         let mut p2 = GUARD2_FIRST;
         while p2 < GUARD2_END {
             let guard = gr32(p2);
@@ -111,30 +105,25 @@ lf_checker_rt::export!(cdecl, rw_0094E400() -> u32 {
             }
             let zero = 0u32;
             let minus_one = 0xFFFF_FFFFu32;
-            // DEBUG ONLY: per-site ids to isolate a snapshot mismatch.
-            lf_checker_rt::callee_cdecl!(10, u32, &zero as *const u32 as u32, 4u32);
+            lf_checker_rt::callee_cdecl!(ID_SINK_FRAME4, u32, &zero as *const u32 as u32, 4u32);
+            lf_checker_rt::callee_cdecl!(ID_SINK_FRAME4, u32, &zero as *const u32 as u32, 4u32);
             lf_checker_rt::callee_cdecl!(
-                11,
+                ID_SINK_FRAME4,
                 u32,
                 &minus_one as *const u32 as u32,
                 4u32
             );
             lf_checker_rt::callee_cdecl!(
-                12,
+                ID_SINK_FRAME4,
                 u32,
-                &leftover24 as *const u32 as u32,
-                4u32
-            );
-            lf_checker_rt::callee_cdecl!(
-                13,
-                u32,
-                &leftover28 as *const u32 as u32,
+                &minus_one as *const u32 as u32,
                 4u32
             );
             p2 += 0x0C;
         }
 
-        // Guard table 3: rows sink (0, -1); same excluded lookup on nonzero.
+        // Guard table 3: same excluded lookup on nonzero; the two sinks share
+        // one add-esp, so they read slots E+4, E+8 = 0, 0.
         let mut p3 = GUARD3_FIRST;
         while p3 < GUARD3_END {
             let guard = gr32(p3);
@@ -142,16 +131,8 @@ lf_checker_rt::export!(cdecl, rw_0094E400() -> u32 {
                 core::hint::black_box(guard);
             }
             let zero = 0u32;
-            // -1 here is the leftover of guard table 2's last row.
-            let minus_one = 0xFFFF_FFFFu32;
-            // DEBUG ONLY: per-site ids to isolate a snapshot mismatch.
-            lf_checker_rt::callee_cdecl!(14, u32, &zero as *const u32 as u32, 4u32);
-            lf_checker_rt::callee_cdecl!(
-                15,
-                u32,
-                &minus_one as *const u32 as u32,
-                4u32
-            );
+            lf_checker_rt::callee_cdecl!(ID_SINK_FRAME4, u32, &zero as *const u32 as u32, 4u32);
+            lf_checker_rt::callee_cdecl!(ID_SINK_FRAME4, u32, &zero as *const u32 as u32, 4u32);
             p3 += 4;
         }
 

@@ -518,6 +518,6 @@ fn reverb_poll_orders_calls() {
     assert_eq!(v.poll(&mut w), 0x51);
     assert_eq!(
         w.log[1],
-        format!("sub {:?} {:#x}", cookie::<ReverbSubTag>(0x9000), 1 * 5 + 29)
+        format!("sub {:?} {:#x}", cookie::<ReverbSubTag>(0x9000), 5 + 29)
     );
 }

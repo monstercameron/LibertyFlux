@@ -3,12 +3,13 @@
 //!
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!`, the `callee_*` macros, `callee_addr`, `relocated`,
-//! `global`). The proof set reads three globals (the task-pool manager,
-//! the tick counter and the duck sample threshold) and stamps one class
-//! table; each diff test binary registers its own callee stubs before
-//! running (one binary per method, so the registry cells are never
-//! shared between tests). Test-support code: the lifted crate itself
-//! stays `#![forbid(unsafe_code)]`.
+//! `global`). The proof set reads five globals (the task-pool manager,
+//! the tick counter, the duck sample threshold, the flee length
+//! threshold and the spawner's manager) and stamps one class table;
+//! each diff test binary registers its own callee stubs before running
+//! (one binary per method, so the registry cells are never shared
+//! between tests). Test-support code: the lifted crate itself stays
+//! `#![forbid(unsafe_code)]`.
 
 // Test-only runtime: raw pointers through scripted addresses are inherent
 // here. Every access stays inside the test image the case built.
@@ -22,6 +23,10 @@ const MANAGER_VA: u32 = 0x0167E2A0;
 const TICK_VA: u32 = 0x011735B4;
 /// File VA of the float threshold the duck update compares against.
 const ONE_VA: u32 = 0x00FE88E8;
+/// File VA of the length threshold the flee gate compares against.
+const THRESH_VA: u32 = 0x00FE876C;
+/// File VA of the spawner's own manager word.
+const MANAGER2_VA: u32 = 0x0171FAF4;
 /// File VA of the hit-response class table (stamped by its constructor).
 const HIT_VTABLE_VA: u32 = 0x00ED9FD4;
 
@@ -31,6 +36,10 @@ static MANAGER: AtomicU32 = AtomicU32::new(0);
 static TICK: AtomicU32 = AtomicU32::new(0);
 /// The float threshold the duck update compares against.
 static ONE: AtomicU32 = AtomicU32::new(0);
+/// The length threshold the flee gate compares against.
+static THRESH: AtomicU32 = AtomicU32::new(0);
+/// The spawner's own manager word.
+static MANAGER2: AtomicU32 = AtomicU32::new(0);
 
 /// Sets the shared manager word for the next rewrite call.
 pub fn set_manager(word: u32) {
@@ -45,6 +54,16 @@ pub fn set_tick(word: u32) {
 /// Sets the float threshold (as bits) for the next rewrite call.
 pub fn set_one(bits: u32) {
     ONE.store(bits, Ordering::SeqCst);
+}
+
+/// Sets the length threshold (as bits) for the next rewrite call.
+pub fn set_threshold(bits: u32) {
+    THRESH.store(bits, Ordering::SeqCst);
+}
+
+/// Sets the spawner's manager word for the next rewrite call.
+pub fn set_manager2(word: u32) {
+    MANAGER2.store(word, Ordering::SeqCst);
 }
 
 /// Pointer to the global at a file VA, mirroring
@@ -62,8 +81,12 @@ pub fn global<T>(file_va: u32) -> *mut T {
         core::ptr::addr_of!(TICK) as *mut T
     } else if file_va == ONE_VA {
         core::ptr::addr_of!(ONE) as *mut T
+    } else if file_va == THRESH_VA {
+        core::ptr::addr_of!(THRESH) as *mut T
+    } else if file_va == MANAGER2_VA {
+        core::ptr::addr_of!(MANAGER2) as *mut T
     } else {
-        panic!("unexpected global VA {file_va:#x}: the proof set reads the manager, tick and threshold words only")
+        panic!("unexpected global VA {file_va:#x}: the proof set reads its five globals only")
     }
 }
 

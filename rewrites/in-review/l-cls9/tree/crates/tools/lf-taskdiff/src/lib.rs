@@ -22,7 +22,9 @@ pub use rt::global;
 pub use rt::relocated;
 pub use rt::set_callee;
 pub use rt::set_manager;
+pub use rt::set_manager2;
 pub use rt::set_one;
+pub use rt::set_threshold;
 pub use rt::set_tick;
 
 #[cfg(target_arch = "x86")]

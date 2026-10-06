@@ -78,6 +78,46 @@ pub const Q_VTABLE: usize = 0;
 /// Query blob word holding the state (byte offset 0x10).
 pub const Q_STATE: usize = 4;
 
+/// Flee blob word holding the table pointer.
+pub const FL_VTABLE: usize = 0;
+/// Flee blob word holding the subtask (byte offset 0x08).
+pub const FL_SUB: usize = 2;
+/// Flee blob word holding the marks (byte offset 0x0c).
+pub const FL_MARKS: usize = 3;
+/// Flee blob word holding the kind (byte offset 0x20).
+pub const FL_KIND: usize = 8;
+/// Flee blob words holding the position (byte offset 0x30).
+pub const FL_POS: usize = 12;
+/// Byte offset of the gate flag in the flee blob.
+pub const FL_FLAG_BYTE: usize = 0x46;
+/// Flee blob word holding the mode (byte offset 0x48).
+pub const FL_MODE: usize = 18;
+/// Byte offset of the state byte in the flee blob.
+pub const FL_STATE_BYTE: usize = 0x70;
+
+/// Goto blob word holding the subtask (byte offset 0x08).
+pub const G_SUB: usize = 2;
+/// Goto blob word holding the kind (byte offset 0x20).
+pub const G_KIND: usize = 8;
+/// Goto blob words holding the position (byte offset 0x30).
+pub const G_POS: usize = 12;
+/// Byte offset of the gate flag in the goto blob.
+pub const G_FLAG_BYTE: usize = 0x46;
+/// Goto blob word holding the mode (byte offset 0x48).
+pub const G_MODE: usize = 18;
+/// Goto blob word holding the wait (byte offset 0x70).
+pub const G_WAIT: usize = 28;
+/// Goto blob word holding the stamp (byte offset 0x74).
+pub const G_STAMP: usize = 29;
+/// Goto blob word holding the wait copy (byte offset 0x78).
+pub const G_WAITCP: usize = 30;
+/// Byte offset of the armed byte in the goto blob.
+pub const G_ARMED_BYTE: usize = 0x7c;
+/// Byte offset of the restamp byte in the goto blob.
+pub const G_RESTAMP_BYTE: usize = 0x7d;
+/// Goto blob word holding the speed (byte offset 0x80).
+pub const G_SPEED: usize = 32;
+
 /// Zeroed 32-byte fist blob (word-addressed, so aligned).
 pub fn fist_blob() -> Box<[u32; 8]> {
     Box::new([0u32; 8])
@@ -101,6 +141,16 @@ pub fn query_blob() -> Box<[u32; 8]> {
 /// Zeroed 16-byte ped blob (word-addressed, so aligned).
 pub fn ped_blob() -> Box<[u32; 4]> {
     Box::new([0u32; 4])
+}
+
+/// Zeroed 120-byte flee blob (word-addressed, so aligned).
+pub fn flee_blob() -> Box<[u32; 30]> {
+    Box::new([0u32; 30])
+}
+
+/// Zeroed 136-byte goto blob (word-addressed, so aligned).
+pub fn goto_blob() -> Box<[u32; 34]> {
+    Box::new([0u32; 34])
 }
 
 /// Reads one byte of a word blob.

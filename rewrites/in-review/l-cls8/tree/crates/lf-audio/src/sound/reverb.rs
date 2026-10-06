@@ -143,7 +143,8 @@ impl ReverbEffect {
         b: u32,
     ) -> u32 {
         let answer = world.base_init(a, b);
-        if answer & 0xFF == 0 {
+        // A zero low byte returns the answer unchanged.
+        if answer.trailing_zeros() >= 8 {
             return answer;
         }
         self.hold = 0;

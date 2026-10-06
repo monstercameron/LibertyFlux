@@ -319,9 +319,9 @@ mod x86 {
             assert_only_changed(&before, &fx.obj.buf, &[]);
             assert!(rt::take_numbered().is_empty());
             let row = v.channel();
-            for c in 0..WIDTH {
+            for (c, word) in row.iter().enumerate() {
                 assert_eq!(
-                    row[c],
+                    *word,
                     fx.obj.r32(CHANS + (step as usize) * WIDTH * 4 + c * 4),
                     "col {c}"
                 );
@@ -394,18 +394,18 @@ mod x86 {
             assert_eq!(fx.obj.r8(HOLD), 0);
             assert_eq!(v.hold, 0);
             for r in 0..ROWS {
-                for k in 0..4 {
-                    assert_eq!(fx.obj.r32(CHANS + r * WIDTH * 4 + k * 4), preset[k]);
-                    assert_eq!(v.chans[r][k], preset[k]);
+                for (k, (cell, expect)) in v.chans[r].iter().zip(preset.iter()).enumerate() {
+                    assert_eq!(fx.obj.r32(CHANS + r * WIDTH * 4 + k * 4), *expect);
+                    assert_eq!(*cell, *expect);
                 }
                 // The fifth word of each row is untouched.
                 let o = CHANS + r * WIDTH * 4 + 16;
                 assert_eq!(&before[o..o + 4], &fx.obj.buf[o..o + 4]);
                 assert_eq!(v.chans[r][4], u32::from_le_bytes(before[o..o + 4].try_into().unwrap()));
             }
-            for k in 0..4 {
-                assert_eq!(fx.obj.r32(STAGING + k * 4), preset[k]);
-                assert_eq!(v.staging[k], preset[k]);
+            for (k, (cell, expect)) in v.staging.iter().zip(preset.iter()).enumerate() {
+                assert_eq!(fx.obj.r32(STAGING + k * 4), *expect);
+                assert_eq!(*cell, *expect);
             }
             assert_only_changed(
                 &before,

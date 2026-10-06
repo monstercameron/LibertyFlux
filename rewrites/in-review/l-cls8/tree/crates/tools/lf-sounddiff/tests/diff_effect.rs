@@ -245,7 +245,7 @@ mod x86 {
             }
             let mut wf = Fake::new();
             wrong::reset_always(&v, &mut wf);
-            if !wf.log.is_empty() != attached {
+            if wf.log.is_empty() == attached {
                 caught += 1;
             }
         }
@@ -432,9 +432,7 @@ mod x86 {
             } else {
                 rng.u32()
             };
-            let handle = if tag == 0xFFFF_FFFF {
-                0
-            } else if i % 4 == 0 {
+            let handle = if tag == 0xFFFF_FFFF || i % 4 == 0 {
                 0
             } else {
                 fx.voice_obj.addr()

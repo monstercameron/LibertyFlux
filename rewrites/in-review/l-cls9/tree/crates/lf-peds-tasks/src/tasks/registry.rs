@@ -119,13 +119,13 @@ pub const ROWS: &[Row] = &[
             "node allocator through 2 callee slots with a table stamp and zeroed tail: not lifted in this lane",
         ],
     },
-    // ShockingEventFlee: seven methods, none lifted in this lane.
+    // ShockingEventFlee: the spawner and the periodic update are proven.
     Row {
         class: "ShockingEventFlee",
         method: "ctor",
         state: State::Missing,
         narrows: &[
-            "base constructor, table stamp and one flag-byte clear through 1 callee slot: not lifted in this lane",
+            "a single flag-byte clear behind the base constructor and table stamp: no liftable behaviour beyond the base call",
         ],
     },
     Row {
@@ -141,15 +141,17 @@ pub const ROWS: &[Row] = &[
         method: "vf1",
         state: State::Missing,
         narrows: &[
-            "clone through 2 callee slots with a member pointer and a flag-byte copy that faults on a null allocation: not lifted in this lane",
+            "clone through 2 callee slots plus a direct state-byte store into the opaquely built clone, faulting on a null allocation: no clean lift shape in this lane",
         ],
     },
     Row {
         class: "ShockingEventFlee",
         method: "vf20",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "periodic update: liveness gate, probe, own check slot and dispatch through 3 callee slots: not lifted in this lane",
+            "the probe, check and dispatch calls travel as the FleePoll trait: the proof plants a stub in a fake task table for the check slot and scripts the direct callees, comparing slot and arguments in order",
+            "the probe and dispatch calls' task address and the check call's (1, 0) words are pinned by the proof, not modelled",
+            "the length threshold travels as a value the proof maps onto the threshold global",
         ],
     },
     Row {
@@ -171,12 +173,15 @@ pub const ROWS: &[Row] = &[
     Row {
         class: "ShockingEventFlee",
         method: "vf7",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "spawner through 3 callee slots with entity and vector constructor forms: not lifted in this lane",
+            "the allocator and the two constructor forms travel as the FleeSpawn trait: the proof scripts all three stubs and compares slot and arguments in order",
+            "the constructors' (1, 1) words are pinned by the proof, not modelled",
+            "the vector form's spilled position pointer is snapped by the proof (3 words) and compared bitwise",
+            "the length threshold travels as a value the proof maps onto the threshold global; the manager word travels as a value mapped onto this method's own manager global",
         ],
     },
-    // ShockingEventGoto: five methods, none lifted in this lane.
+    // ShockingEventGoto: the clone slot is proven.
     Row {
         class: "ShockingEventGoto",
         method: "ctor",
@@ -196,9 +201,10 @@ pub const ROWS: &[Row] = &[
     Row {
         class: "ShockingEventGoto",
         method: "vf1",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "clone through 2 callee slots with a member pointer: not lifted in this lane",
+            "the allocator and the copy constructor travel as the GotoPool trait: the proof scripts both stubs and compares slot and arguments in order",
+            "the copy constructor receives the member's address: the lift passes the member word and the proof pins the address",
         ],
     },
     Row {

@@ -201,9 +201,9 @@ mod x86 {
             assert!(rt::take_numbered().is_empty());
             // The lift answers the row the address selects: same words.
             let row = v.slot();
-            for c in 0..WIDTH {
+            for (c, word) in row.iter().enumerate() {
                 assert_eq!(
-                    row[c],
+                    *word,
                     fx.obj.r32(PARAMS + (index as usize) * WIDTH * 4 + c * 4),
                     "col {c}"
                 );
