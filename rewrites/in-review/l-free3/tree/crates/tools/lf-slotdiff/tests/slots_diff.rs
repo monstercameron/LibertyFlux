@@ -291,7 +291,7 @@ mod x86 {
     #[test]
     fn locate_matches() {
         let _guard = lock();
-        rt::set_callee(0, locate_stub as usize as u32);
+        rt::set_callee(0, locate_stub as *const () as usize as u32);
         let mut rng = Rng(0x10CA);
         let mut cases = 0;
         let mut caught = 0;

@@ -8,17 +8,18 @@
 /// word is also passed through to the configuration helper). The function
 /// takes no stack arguments and no object. It queries the system
 /// configuration and the power interface, reduces a CPU count with a signed
-/// division by 6, samples the cycle counter helper twice (entry block and the
+/// division by 24, samples the cycle counter helper twice (entry block and the
 /// table-hit block below), walks one object table through two virtual calls,
 /// scans the timing table for the row matching the sampled keys, and on a hit
 /// runs the hit block (which may repeat while the filter float stays at or
 /// above 1.0). Everything is published to globals; the return value is the
 /// notifier answer when the notifier runs, otherwise the last table word.
-/// The signed division by 6 is exact (multiplier `0x2AAAAAAB`, shift 2, sign
-/// adjust); the three constant divisions in the sample blocks are exact
-/// multiply-and-shift sequences, mirrored bit for bit. Quotient zero (a
-/// difference of 1..5 or -1..-5) is excluded: the original raises a divide
-/// fault there while a Rust division aborts with a different trap.
+/// The signed division by 24 is exact (multiplier `0x2AAAAAAB`, high-word
+/// shift 2, sign adjust); the three constant divisions in the sample blocks
+/// are exact multiply-and-shift sequences, mirrored bit for bit. Quotient
+/// zero (a difference strictly between -24 and 24) is excluded: the original
+/// raises a divide fault there while a Rust division aborts with a different
+/// trap.
 /// The stack argument of the post-table helper call is caller-saved register
 /// residue from the previous virtual call, not behaviour, and is skipped.
 ///
@@ -69,7 +70,7 @@ lf_checker_rt::export!(thiscall, rw_0059E530(ecx_in: u32) -> u32 {
         unsafe fn wg32(va: u32, v: u32) {
             unsafe { wr32(lf_checker_rt::relocated(va), v) }
         }
-        /// Signed divide-by-6 exactly as the original's imul/sar/adjust
+        /// Signed divide-by-24 exactly as the original's imul/sar/adjust
         /// sequence computes it. Only the sign handling differs from an
         /// unsigned division; see the mutant.
         #[inline(always)]

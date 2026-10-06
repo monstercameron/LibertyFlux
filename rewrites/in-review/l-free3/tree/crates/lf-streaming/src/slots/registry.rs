@@ -1,16 +1,16 @@
 //! What is lifted, what is proven, and what each proof leaves out.
 //!
-//! One row per verified 32-bit routine of the streaming entry-table
-//! structure: the eleven entry routines verified by lane r-s445. `Proven`
-//! means the routine is restated on [`StreamEntry`](crate::slots::StreamEntry)
-//! or [`SlotTable`](crate::slots::SlotTable) and the differential test
-//! crate ran it against its verified rewrite on the same generated
+//! One row per verified 32-bit routine of the streaming slot-table
+//! structures: the eleven entry-table routines verified by lane r-s445
+//! and the eleven fixed-table routines verified by lane r-s437. `Proven`
+//! means the routine is restated on its slots type and the differential
+//! test crate ran it against its verified rewrite on the same generated
 //! inputs, comparing results and every effect, with a deliberately wrong
 //! lift caught alongside. Counts below come from this table.
 //!
-//! The lane's other structures (the fixed 256-entry/64-slot tables, the
-//! hash tables, the slot arrays, the codec and float tables) have no rows
-//! yet: later lanes add one section each.
+//! The lane's other structures (the hash tables, the slot arrays, the
+//! codec and float tables) have no rows yet: later lanes add one section
+//! each.
 
 /// Lift state of one verified routine.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -135,6 +135,105 @@ pub const ROWS: &[Row] = &[
         narrows: &[
             "the returned table base narrows away (callers own the table; the proof checks the rewrite returns the planted base)",
             "indexes past the owned entries panic; the original writes past its array",
+        ],
+    },
+    // The fixed-table structures (lane r-s437).
+    Row {
+        func: "stream_slot_clear_bit3",
+        method: "SlotFlags::clear_and_review",
+        state: State::Proven,
+        narrows: &[
+            "instance (3, 4) of the generic clearer; the proof pins the bits",
+        ],
+    },
+    Row {
+        func: "stream_slot_clear_bit4",
+        method: "SlotFlags::clear_and_review",
+        state: State::Proven,
+        narrows: &[
+            "instance (4, 3) of the generic clearer; the proof pins the bits",
+        ],
+    },
+    Row {
+        func: "stream_slot_mark_live",
+        method: "SlotFlags::mark_live",
+        state: State::Proven,
+        narrows: &[
+            "the returned slot pointer narrows away (callers own the record; the proof checks the rewrite answers the planted object)",
+        ],
+    },
+    Row {
+        func: "stream_find_entry_by_key",
+        method: "KeyEntries::find_by_key",
+        state: State::Proven,
+        narrows: &[
+            "the entry address narrows to its index (the proof rebuilds it per case)",
+            "the 20 unmodeled entry bytes are filler the proof randomises",
+        ],
+    },
+    Row {
+        func: "stream_find_live_entry",
+        method: "KeyEntries::find_live",
+        state: State::Proven,
+        narrows: &[
+            "the entry address narrows to its index (the proof rebuilds it per case)",
+            "the link address narrows to the owned target state (None is the null link)",
+            "the 20 unmodeled entry bytes are filler the proof randomises",
+        ],
+    },
+    Row {
+        func: "stream_find_slot_by_state",
+        method: "StateSlots::find_first_holding",
+        state: State::Proven,
+        narrows: &[
+            "the slot address narrows to its index (the proof rebuilds it per case)",
+            "the proof pins the wanted state to 3",
+            "the 108 unmodeled slot bytes are filler the proof randomises",
+        ],
+    },
+    Row {
+        func: "stream_entry_lookup_or_alloc",
+        method: "AllocTable::lookup_or_alloc",
+        state: State::Proven,
+        narrows: &[
+            "the entry address narrows to its index (the proof rebuilds it per case)",
+            "direct indexes past the owned entries answer None; the original reads past its array",
+        ],
+    },
+    Row {
+        func: "stream_slot_in_radius",
+        method: "GeoSlots::any_in_radius",
+        state: State::Proven,
+        narrows: &[
+            "the 1/0x100 answer narrows to bool",
+            "the 31 unmodeled slot bytes are filler the proof randomises",
+        ],
+    },
+    Row {
+        func: "stream_slot_adopt",
+        method: "AdoptSlot::adopt",
+        state: State::Proven,
+        narrows: &[
+            "the owner field's address narrows to AdoptOutcome::AlreadyAdopted (the proof rebuilds it per case)",
+            "the marker's answer travels as an opaque word",
+            "the hook's owner-address argument is rebuilt per case; the manager address threaded to the marker is not modeled",
+            "the rest of the slot record is filler the proof randomises",
+        ],
+    },
+    Row {
+        func: "stream_slot_construct",
+        method: "none",
+        state: State::Missing,
+        narrows: &[
+            "one forwarded call plus one address stamp: no behaviour to lift",
+        ],
+    },
+    Row {
+        func: "stream_slot_detach",
+        method: "none",
+        state: State::Missing,
+        narrows: &[
+            "two forwarded calls whose answer is the result: no behaviour to lift",
         ],
     },
 ];

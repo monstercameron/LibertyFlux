@@ -161,6 +161,9 @@ macro_rules! callee_stdcall {
 #[macro_export]
 macro_rules! callee_thiscall {
     ($id:expr, $ret:ty, $this_arg:expr $(, $arg:expr)* $(,)?) => {{
+        // The transmute needs its own unsafe when the call site is safe;
+        // rewrites that already sit in `unsafe` would flag it as unused.
+        #[allow(unused_unsafe)]
         let f: extern "thiscall" fn(u32 $(, $crate::__ty!($arg) )*) -> $ret =
             unsafe { core::mem::transmute($crate::callee_addr($id) as usize) };
         f($this_arg $(, $arg )*)
