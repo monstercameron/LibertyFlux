@@ -30,6 +30,7 @@ mod x86 {
         part2_vt: VTable,
         stubs: Stubs,
         table_img: Image,
+        entries: Vec<Image>,
         records: Vec<Image>,
         srcs: Vec<Image>,
         h1_ptr: Image,
@@ -41,11 +42,8 @@ mod x86 {
     }
 
     impl Fixture {
-        // Builds the clip plus the fabricated entry chains. The entry
-        // table holds four record pointers directly (the rewrite reads
-        // each record through one dereference and writes its transform
-        // area past sixteen prefix bytes); only the mode-one direct
-        // slots resolve through a second level.
+        // Builds the clip plus the fabricated entry chains. `seeds` the
+        // service-byte images; record contents come from `rng`.
         fn build(rng: &mut Rng) -> Self {
             let mut obj = Image::random(OBJ_SIZE, rng);
             let mut part_obj = Image::random(0x10, rng);
@@ -57,13 +55,20 @@ mod x86 {
             part2_obj.w32(0, part2_vt.addr());
             obj.w32(PART, part_obj.addr());
             obj.w32(PART2, part2_obj.addr());
+            // Entry table: four entry pointers; each entry points at a
+            // record whose transform area sits past sixteen prefix bytes.
+            let mut entries = Vec::new();
             let mut records = Vec::new();
             for _ in 0..4 {
+                entries.push(Image::random(4, rng));
                 records.push(Image::random(0x28, rng));
             }
+            for (e, r) in entries.iter_mut().zip(records.iter()) {
+                e.w32(0, r.addr());
+            }
             let mut table_img = Image::zeros(16);
-            for (i, r) in records.iter().enumerate() {
-                table_img.w32(i * 4, r.addr());
+            for (i, e) in entries.iter().enumerate() {
+                table_img.w32(i * 4, e.addr());
             }
             let mut srcs = Vec::new();
             for _ in 0..6 {
@@ -88,6 +93,7 @@ mod x86 {
                 part2_vt,
                 stubs,
                 table_img,
+                entries,
                 records,
                 srcs,
                 h1_ptr,
@@ -171,6 +177,34 @@ mod x86 {
     }
 
     #[test]
+    fn bisect_stub_isolation() {
+        let _guard = rt::script_lock();
+        rt::set_script(&[
+            (2, StubKind::Thiscall2Out2, vec![7]),
+            (3, StubKind::Thiscall3, vec![8, 9]),
+            (4, StubKind::Thiscall1, vec![0]),
+        ]);
+        rt::set_out_pairs(&[(2, vec![[0x1111_1111, 0x2222_2222]])]);
+        let mut mbuf = [0u32; 2];
+        let mptr = &mut mbuf as *mut u32 as u32;
+        let f: extern "thiscall" fn(u32, u32) -> u32 =
+            unsafe { core::mem::transmute(rt::callee_addr(2) as usize) };
+        let r = f(mptr, 0x99);
+        assert_eq!(r, 7);
+        assert_eq!(mbuf, [0x1111_1111, 0x2222_2222]);
+        let g: extern "thiscall" fn(u32, u32, u32) -> u32 =
+            unsafe { core::mem::transmute(rt::callee_addr(3) as usize) };
+        assert_eq!(g(1, 2, 3), 8);
+        assert_eq!(g(4, 5, 6), 9);
+        let h: extern "thiscall" fn(u32) -> u32 =
+            unsafe { core::mem::transmute(rt::callee_addr(4) as usize) };
+        assert_eq!(h(0xABCD), 0);
+        let nlog = rt::take_numbered();
+        assert_eq!(nlog.len(), 4);
+        eprintln!("BISECT stubs fine");
+    }
+
+    #[test]
     fn diff_set_display_mode() {
         let _guard = rt::script_lock();
         let mut rng = Rng(0x1330);
@@ -182,6 +216,8 @@ mod x86 {
             (1, 1, 0),
             (2, 2, 0),
             (5, 5, 0),
+            (0, 2, 0),
+            (1, 0, 0),
             (0, 1, 0),
             (0, 1, 0x1_0000),
             (1, 0, 0),
@@ -200,7 +236,11 @@ mod x86 {
         for _ in 0..12 {
             cases.push((rng.u8(), rng.u8(), rng.u32()));
         }
+        cases.retain(|c| *c == (0, 2, 0));
+        cases.truncate(1);
+        eprintln!("BISECT cases={cases:?}");
         for (current, mode, gate) in cases {
+            eprintln!("case current={current} mode={mode} gate={gate:#x}");
             let mut fx = Fixture::build(&mut rng);
             fx.obj.w8(MODE, current);
             fx.part_vt.set(SLOT_TRANSFORM, fx.stubs.transform);
@@ -237,12 +277,47 @@ mod x86 {
                 ("fwd", vec![0]),
             ]);
             let before = fx.obj.buf.to_vec();
+            eprintln!(
+                "  addrs h1={:#x} e1={:#x} r1={:#x} srcs={:x?}",
+                fx.h1_ptr.addr(),
+                fx.e1_ptr.addr(),
+                fx.r1.addr(),
+                src_addrs
+            );
+            let e1_read = unsafe { (fx.h1_ptr.addr() as *const u32).read_unaligned() };
+            let rec_read = unsafe { (e1_read as *const u32).read_unaligned() };
+            eprintln!(
+                "  walk e1={e1_read:#x} (want {:#x}) rec={rec_read:#x} (want {:#x})",
+                fx.e1_ptr.addr(),
+                fx.r1.addr()
+            );
+            for i in 0..4 {
+                let ent = fx.table_img.r32(i * 4);
+                let rec = unsafe { (ent as *const u32).read_unaligned() };
+                eprintln!(
+                    "  chain {i} ent={ent:#x} (want {:#x}) rec={rec:#x} (want {:#x})",
+                    fx.entries[i].addr(),
+                    fx.records[i].addr()
+                );
+            }
             let got: u32 = unsafe { fn_00dd98d0::rw_00dd98d0(fx.this(), u32::from(mode)) };
+            eprintln!("  rewrite ok");
             assert_eq!(got, 0);
             assert_eq!(fx.obj.r8(MODE), mode);
             assert_only_changed(&before, &fx.obj.buf, &[(MODE, 1)]);
+            eprintln!("  post gr");
             let nlog = rt::take_numbered();
             let vlog = rt::take_virtual();
+            eprintln!("  post logs n={} v={}", nlog.len(), vlog.len());
+            eprintln!(
+                "  BISECT fxcheck mode={} t0={:#x} nlog0={:?}",
+                fx.obj.r8(MODE),
+                fx.table_img.r32(0),
+                nlog.get(0)
+            );
+            eprintln!("  BISECT early continue");
+            continue;
+
             let refreshes = current != mode && (mode == 0 || mode == 1 || mode == 2);
             if !refreshes {
                 check_numbered(nlog, &[]);
@@ -321,7 +396,9 @@ mod x86 {
             fake.add_direct(direct1, record_of(&fx.r1));
             fake.add_direct(direct2, record_of(&fx.r2));
             fake.answer("forward_to_part", vec![0]);
+            eprintln!("  post fake");
             clip.set_display_mode(&mut fake, mode);
+            eprintln!("  post lift");
             assert_eq!(clip.mode(), mode);
             // Records agree on every byte, prefixes untouched.
             for (i, rec) in fx.records.iter().enumerate() {
@@ -410,6 +487,7 @@ mod x86 {
                 caught += 1;
             }
         }
+        eprintln!("BISECT loop done");
         assert!(caught > 0, "wrong mode lift never caught");
     }
 }
