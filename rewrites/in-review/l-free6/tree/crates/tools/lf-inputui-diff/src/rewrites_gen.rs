@@ -8,3 +8,5 @@ pub mod fn_005EEE30 { #![allow(unused_imports)] use super::{callee_addr, global,
 pub mod fn_005EEEF0 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_005eeef0.rs")); }
 pub mod fn_009284D0 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_009284d0.rs")); }
 pub mod fn_00ABAF50 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00abaf50.rs")); }
+pub mod fn_00AFE3B0 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00afe3b0.rs")); }
+pub mod fn_00AFE030 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00afe030.rs")); }

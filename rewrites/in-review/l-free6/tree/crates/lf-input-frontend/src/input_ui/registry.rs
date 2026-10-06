@@ -95,6 +95,17 @@ pub const ROWS: &[Row] = &[
         state: ProofState::Proven,
         note: "range ends narrow to an item count (misaligned ranges out of domain); doubled tag pinned on the 32-bit side; NaN results compare as NaN only",
     },
+    // The distance gates (two routines proven).
+    Row {
+        name: "input_ui_float_gate",
+        state: ProofState::Proven,
+        note: "byte answer narrows to bool; table word, constant words and probe address pinned on the 32-bit side; index confined to a 4-word table",
+    },
+    Row {
+        name: "input_ui_entry_scanner",
+        state: ProofState::Proven,
+        note: "registry base/stride narrow to slot order (null slots out of domain); entry objects behind traits; vtable slots planted per case",
+    },
 ];
 
 /// Number of proven rows.

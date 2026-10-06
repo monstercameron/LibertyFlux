@@ -1,13 +1,14 @@
-//! The 32-bit differential runtime: checker macros, globals and callee stubs.
+//! The 32-bit differential runtime: checker macros, global cells and callee stubs.
 //!
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!`, the `callee_*` macros, `callee_addr`, `global`,
-//! `relocated`). The proof set reads and writes one global (the callback
-//! counter word) and relocates nine addresses (five table/helper words
-//! and four callback words, plus the two bounds seeds). Each global is
-//! one atomic slot; the atomics give the slots stable addresses, and the
-//! differential tests hold one lock across each whole test, so the
-//! rewrite's plain reads and writes through them never race.
+//! `relocated`). The proof set touches 25 global words (the shared
+//! state block, its copy source, and the reaction classifier's threshold
+//! and bounds, one of them a double word) plus one planted code address
+//! (the state consumer, passed to the enumeration call). Each global is
+//! one 8-byte atomic cell; the atomics give the cells stable addresses,
+//! and the differential tests hold one lock across each whole test, so
+//! the rewrite's plain reads and writes through them never race.
 //! Test-support code: the lifted crate itself stays `#![forbid(unsafe_code)]`.
 
 // Test-only runtime: raw addresses through scripted globals are inherent
@@ -15,69 +16,117 @@
 #![allow(unsafe_code)]
 
 use core::sync::atomic::AtomicU32;
+use core::sync::atomic::AtomicU64;
 use core::sync::atomic::Ordering;
 
-/// The callback counter word.
-static COUNTER_SLOT: AtomicU32 = AtomicU32::new(0);
-/// The float predicate's 4-word self-indexed table.
-static FG_TAB: [AtomicU32; 4] = [
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-];
-/// The float predicate's under-threshold words.
-static FG_UNDER_A: AtomicU32 = AtomicU32::new(0);
-static FG_UNDER_B: AtomicU32 = AtomicU32::new(0);
-/// The float predicate's six threshold constants.
-static FG_CONSTS: [AtomicU32; 6] = [
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-];
-/// The entry scanner's registry pointer.
-static SC_REG: AtomicU32 = AtomicU32::new(0);
-/// The entry scanner's five threshold constants.
-static SC_CONSTS: [AtomicU32; 5] = [
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
+/// The 25 global cells, planted per test. All are 8 bytes so the one
+/// double word fits; single words use the low half.
+static CELLS: [AtomicU64; 25] = [
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
+    AtomicU64::new(0),
 ];
 
-/// Address of the global slot for a file VA.
+/// The cell index for a file VA.
 ///
 /// # Panics
 ///
-/// When the address is not one of the globals the proof set reads:
-/// a case bug, never a guess.
-fn slot_for(file_va: u32) -> *mut u32 {
+/// When the address is not one of the 25 VAs the proof set reads or
+/// writes as globals: a case bug, never a guess.
+fn cell_index(file_va: u32) -> usize {
     match file_va {
-        0x0103_27A0 => COUNTER_SLOT.as_ptr(),
-        0x0118_D818 => FG_TAB[0].as_ptr(),
-        0x0118_D81C => FG_TAB[1].as_ptr(),
-        0x0118_D820 => FG_TAB[2].as_ptr(),
-        0x0118_D824 => FG_TAB[3].as_ptr(),
-        0x012E_21F0 => FG_UNDER_A.as_ptr(),
-        0x0103_FFE8 => FG_UNDER_B.as_ptr(),
-        0x0103_FF88 => FG_CONSTS[0].as_ptr(),
-        0x0103_FF90 => FG_CONSTS[1].as_ptr(),
-        0x0103_FF64 => FG_CONSTS[2].as_ptr(),
-        0x0103_FF5C => FG_CONSTS[3].as_ptr(),
-        0x00FE_8B08 => FG_CONSTS[4].as_ptr(),
-        0x00FE_888C => FG_CONSTS[5].as_ptr(),
-        0x012E_22A4 => SC_REG.as_ptr(),
-        0x00FE_88E8 => SC_CONSTS[0].as_ptr(),
-        0x00FE_8A24 => SC_CONSTS[1].as_ptr(),
-        0x0103_F6BC => SC_CONSTS[2].as_ptr(),
-        0x0103_FFC0 => SC_CONSTS[3].as_ptr(),
-        0x0103_FFBC => SC_CONSTS[4].as_ptr(),
+        // Shared state block: flag, biases, range, gate vector + pad.
+        0x0171_BBE0 => 0,
+        0x0171_BBE4 => 1,
+        0x0171_BBE8 => 2,
+        0x0171_BBEC => 3,
+        0x0171_BC10 => 4,
+        0x0171_BC14 => 5,
+        0x0171_BC18 => 6,
+        0x0171_BC1C => 7,
+        // Work vector.
+        0x0171_BF20 => 8,
+        0x0171_BF24 => 9,
+        0x0171_BF28 => 10,
+        // Raw floats.
+        0x0171_BF00 => 11,
+        0x0171_BF04 => 12,
+        0x0171_BF08 => 13,
+        0x0171_BF0C => 14,
+        0x0171_BF10 => 15,
+        0x0171_BF14 => 16,
+        0x0171_BF18 => 17,
+        0x0171_BF1C => 18,
+        // Extra scratch word.
+        0x0171_BF2C => 19,
+        // Copy source word (also the reaction counter threshold).
+        0x0117_35B4 => 20,
+        // Reaction classifier bounds.
+        0x00FE_8D68 => 21,
+        0x00EB_9504 => 22,
+        0x00FE_891C => 23,
+        0x00EA_87B8 => 24,
         _ => panic!("unexpected global VA {file_va:#x}"),
     }
+}
+
+/// The consumer callback file VA, the only planted (non-cell) address.
+const CONSUMER_VA: u32 = 0x00CB_7CF0;
+
+/// Planted address for the consumer callback.
+static CONSUMER_ADDR: AtomicU32 = AtomicU32::new(0);
+
+/// Plants the relocated address of a file VA.
+///
+/// Only the consumer callback is planted; every other VA the proof set
+/// relocates is a global cell whose address is fixed.
+///
+/// # Panics
+///
+/// When the VA is not the consumer callback: a case bug.
+pub fn set_relocated(file_va: u32, addr: u32) {
+    assert!(
+        file_va == CONSUMER_VA,
+        "unexpected relocated VA {file_va:#x}"
+    );
+    CONSUMER_ADDR.store(addr, Ordering::Relaxed);
+}
+
+/// File VA to relocated address, mirroring `lf-checker-rt`.
+///
+/// # Panics
+///
+/// When the VA is neither a global cell nor the planted consumer: a case bug.
+#[must_use]
+pub fn relocated(file_va: u32) -> u32 {
+    if file_va == CONSUMER_VA {
+        let addr = CONSUMER_ADDR.load(Ordering::Relaxed);
+        assert!(addr != 0, "consumer address read before planting");
+        return addr;
+    }
+    &CELLS[cell_index(file_va)] as *const AtomicU64 as usize as u32
 }
 
 /// Pointer to the global at a file VA, mirroring
@@ -85,18 +134,16 @@ fn slot_for(file_va: u32) -> *mut u32 {
 ///
 /// # Panics
 ///
-/// As [`slot_for`].
+/// When the VA is not a global cell: a case bug.
 #[must_use]
 pub fn global<T>(file_va: u32) -> *mut T {
-    slot_for(file_va).cast::<T>()
+    &CELLS[cell_index(file_va)] as *const AtomicU64 as *mut T
 }
 
-/// The relocated addresses, planted per test: two factory tables, three
-/// constructor helpers, the inline table and helper, the two bounds
-/// seed cells, and the gate probe object.
-static RELOC_SLOTS: [AtomicU32; 10] = [
-    AtomicU32::new(0),
-    AtomicU32::new(0),
+/// Registered stub addresses for callee ids 0..8 (0 when none: a call
+/// there panics, which is a case bug). Each test plants the stubs its
+/// rewrites call before running.
+static CALLEES: [AtomicU32; 8] = [
     AtomicU32::new(0),
     AtomicU32::new(0),
     AtomicU32::new(0),
@@ -106,48 +153,6 @@ static RELOC_SLOTS: [AtomicU32; 10] = [
     AtomicU32::new(0),
     AtomicU32::new(0),
 ];
-
-/// The relocated-address slot for a file VA.
-///
-/// # Panics
-///
-/// When the address is not one the proof set relocates: a case bug,
-/// never a guess.
-fn reloc_slot(file_va: u32) -> &'static AtomicU32 {
-    match file_va {
-        0x00EA_5B5C => &RELOC_SLOTS[0],
-        0x00E7_E080 => &RELOC_SLOTS[1],
-        0x005E_DCB0 => &RELOC_SLOTS[2],
-        0x005E_E090 => &RELOC_SLOTS[3],
-        0x005E_E660 => &RELOC_SLOTS[4],
-        0x00FE_1534 => &RELOC_SLOTS[5],
-        0x005E_E2F0 => &RELOC_SLOTS[6],
-        0x00FE_8E1C => &RELOC_SLOTS[7],
-        0x00FE_8D18 => &RELOC_SLOTS[8],
-        0x0128_E310 => &RELOC_SLOTS[9],
-        _ => panic!("unexpected relocated VA {file_va:#x}"),
-    }
-}
-
-/// Plants the relocated address of a file VA.
-pub fn set_relocated(file_va: u32, addr: u32) {
-    reloc_slot(file_va).store(addr, Ordering::Relaxed);
-}
-
-/// File VA to relocated address, mirroring `lf-checker-rt`.
-///
-/// # Panics
-///
-/// As [`reloc_slot`].
-#[must_use]
-pub fn relocated(file_va: u32) -> u32 {
-    reloc_slot(file_va).load(Ordering::Relaxed)
-}
-
-/// Registered stub addresses for callee ids 0..8 (0 when none: a call
-/// there panics, which is a case bug). Each test plants the stubs its
-/// rewrites call before running.
-static CALLEES: [AtomicU32; 8] = [const { AtomicU32::new(0) }; 8];
 
 /// Plants the stub address callee `id` calls land on.
 pub fn set_callee(id: u32, addr: u32) {
