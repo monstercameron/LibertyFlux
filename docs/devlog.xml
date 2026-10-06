@@ -9,6 +9,47 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Seven verified rewrites compared a call's answer the wrong way, and how the last two were found</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#seven-wrong-signedness-2026-10-05"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#seven-wrong-signedness-2026-10-05</id>
+    <published>2026-10-05T00:00:00Z</published>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <summary>By the end of 5 October seven verified rewrites outside the leaderboard family had been withdrawn for one and the same mistake. This entry puts the day's findings in one place: what the mistake is, how often it occurs, how it was found from two directions, and what "verified" is worth in the light of it.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;By the end of 5 October seven verified rewrites outside the leaderboard family had been withdrawn for one and the same mistake. This entry puts the day's findings in one place: what the mistake is, how often it occurs, how it was found from two directions, and what "verified" is worth in the light of it.&lt;/p&gt;
+&lt;h3&gt;The mistake&lt;/h3&gt;
+&lt;p&gt;The original calls something, compares the value that comes back, and branches with a signed conditional jump. The rewrite holds the returned value in an unsigned word, because that is what the checker's call macros and a plain function pointer give it, and compares it with an ordering operator. In Rust that comparison is unsigned. The two agree for every answer below two to the thirty-first and disagree for every answer with the high bit set. Contracts script a callee's answers by hand, and by hand people script small numbers.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Measure&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Verified rewrites that compare a callee's answer with an ordering operator, found from the rewrites' text&lt;/td&gt;&lt;td&gt;241&lt;/td&gt;&lt;td&gt;Verified (audit lane's scan; a lower bound by design)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Of those measured, proofs that pass with the comparison's signedness flipped&lt;/td&gt;&lt;td&gt;52 of 117&lt;/td&gt;&lt;td&gt;Verified (two lanes, each function's own contract on the stock checker)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Of those measured, proofs that pass with the bound moved by one&lt;/td&gt;&lt;td&gt;56 of 146&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Blind proofs read against the original&lt;/td&gt;&lt;td&gt;About 75; five rewrites wrong&lt;/td&gt;&lt;td&gt;Verified; each wrong one read again by the coordinator before withdrawal&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Verified functions whose original compares a call's returned value and follows it with a signed jump, found from the original's code&lt;/td&gt;&lt;td&gt;570&lt;/td&gt;&lt;td&gt;Verified (coordinator's sweep over every verified function)&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Of those, flagged by a coarse count of signed comparisons in the rewrite&lt;/td&gt;&lt;td&gt;Seven; two wrong, three right, two needing a closer reading&lt;/td&gt;&lt;td&gt;Verified by reading&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;How good the coarse count is&lt;/td&gt;&lt;td&gt;Run on the five rewrites withdrawn earlier, as they were, it catches four&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Proofs made under older checker versions that the current one accepts unchanged&lt;/td&gt;&lt;td&gt;178 of 180, none vacuous&lt;/td&gt;&lt;td&gt;Verified (separate audit the same day)&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3&gt;Two directions&lt;/h3&gt;
+&lt;p&gt;The audit started from the rewrites: find comparisons whose operand came from a call macro, build the wrong versions, run them through the existing contract. That measures the proofs, and it is how blindness was shown to be common. But its population is defined by what a text scan recognises, and it said so: calls made through a function pointer taken from an object's table are not call macros.&lt;/p&gt;
+&lt;p&gt;The sweep starts from the original: disassemble every verified function, and after each call look a few instructions ahead for a compare on the returned register, or a register it was copied to, followed by a signed jump, set or conditional move. That needs no checker run and takes thirteen seconds for the whole verified tree. Its population does not depend on how the rewrite spells a call. The two rewrites it found make virtual calls; neither was among the 241.&lt;/p&gt;
+&lt;h3&gt;What this says about the count&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The mistake is real and rare: seven found among roughly 15,800 verified functions, in a population of a few hundred functions where it can occur at all. The estimate will firm up when a lane has read all 570 sites exactly; the coarse count is known to miss cases.&lt;/li&gt;
+&lt;li&gt;A blind proof is usually a weak proof of a right rewrite: about nine in ten of the blind ones read so far were right. But "usually" is what the checker exists to replace.&lt;/li&gt;
+&lt;li&gt;The age of a proof is not the problem. Proofs made under the first four checker versions pass the sixth unchanged. The problem is a kind of input the method leaves to the lane's imagination: what a callee answers.&lt;/li&gt;
+&lt;li&gt;Every withdrawn rewrite returns only with a contract that scripts the boundary, its neighbours and values with the high bit set, and with a wrong version that is exactly this mistake and must fail. The production brief has required that for new work since the first case.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Decisions&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;All seven are withdrawn; strengthening lanes have repaired and re-proven the first and are working on the rest.&lt;/li&gt;
+&lt;li&gt;A lane is reading all 570 signed sites against their rewrites, site by site, and reporting every disagreement with the earlier hand adjudications.&lt;/li&gt;
+&lt;li&gt;The population at risk is defined from the original's code from now on, not from the rewrites' text.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To reproduce the sweep: for each verified function, disassemble the original, and for each call scan forward to the next call or return for a compare on the returned register followed by a signed conditional instruction; compare the count with the signed comparisons in the rewrite.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Finishing a large staged function: shared slots with two arities</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-aq08"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-aq08</id>
@@ -1141,32 +1182,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Disassemble each function through the mapped image, collect direct call targets, referenced strings, and nearby merged names into one table, then read the short functions and decode any string tables the matchers scan. Vtable membership is confirmed by finding data words that point at the function.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The first read path mixed up file offsets with mapped-image offsets, shifting every disassembly by a constant. The shifted bytes still decoded into plausible-looking code with self-consistent call targets, which hid the mistake until vtable targets failed to decode as real methods. The fix was to read through the library's address-to-data call, and a good tripwire is that genuine vtable targets always decode as clean method prologues.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Checker extension: doubles in vector registers across calls</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#checker-doubles-in-vector-registers"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#checker-doubles-in-vector-registers</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>The checker can now observe double-precision values passed in vector registers to helper calls, the gap that was deferring the most functions. Three deferred functions pass at full trial counts with their wrong versions caught on the new build.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;The checker can now observe double-precision values passed in vector registers to helper calls, the gap that was deferring the most functions. Three deferred functions pass at full trial counts with their wrong versions caught on the new build.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Production lanes had deferred several functions whose helpers take doubles in vector registers and answer doubles the same way. The checker moved only four bytes per vector register from the rewrite side and exposed only the low word of a double answer, so wrong versions that changed doubles passed every trial. The task was to add opt-in contract options for eight-byte vector call arguments and full double answers, prove them the way the existing self-test proofs do, show every existing verdict unchanged, and re-run the deferred functions.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The call log already records and compares all sixteen bytes of each selected vector register; the four-byte limits were the rewrite-side transport (one single-precision move), the answer channel (low word only reached the rewrite), and nothing else. Entry values and the tested function's own vector return already travelled at full width.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Probing the real calls showed the upper halves of the argument registers hold conversion residue the helper never reads: a constant pair of negative float zeros in two cases, zeros elsewhere. A rewrite-side move zeroes the upper half unconditionally, so comparing all sixteen bytes could never match; the new comparison covers the low eight bytes each helper actually reads and says so in the verdict.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Four self-test proofs behave as designed: the correct rewrite passes a thousand trials, a wrong double argument and an ignored double answer are each caught, a contract without the new options lets the wrong version pass as a control, and an entry-width proof confirms all sixteen bytes reach both sides.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Regression: every contract with a recorded verdict or mutant verdict gives the identical result on the new build, and the standalone validator reports identical results on every tracked contract.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Three deferred functions now pass at full trial counts with their wrong versions caught, recorded as ready for a stock re-run (not verified: the build is not stock until reviewed and installed).&lt;/li&gt;
-&lt;li&gt;Five more deferred functions stay blocked: four kept no rewrite or only a staged plan, and one large function needs its staged regions unpinned across five helper sites, which is production work beyond this lane.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; One kept rewrite reads its helper's answer through the floating-point stack, which the stand-in never touches, yet passes because every scripted answer in its contract narrows to positive zero. Its pass may depend on how this machine's emulation handles an empty-stack read, so the adapted rewrite for the re-run avoids that path.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;The extension is proposed for review and installation: an eight-byte rewrite-side move per register, a double answer delivered to both sides, low-eight-byte comparison per register, scripted doubles, and per-trial double entry values, all off unless a contract asks and all recorded in the verdict. Still missing and recommended next: a way for a rewrite to return a vector value, which keeps vector-returning originals unverifiable, and production lanes for the five functions that stay blocked.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Build the worker and the proofs library from the lane's tree with the lane target directory, run the driver's self-test, then run the four new self-test proof contracts: the correct rewrites pass a thousand trials each, the wrong versions fail, and the documented negative passes. Re-run every existing contract except the one needing the read-only shadow option and compare each verdict and mutant verdict with the record. Rebuild each adapted re-run crate into the path its adapted contract names and run it with the new driver.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The first adapted re-run faulted on every trial that reached the helper call. Tracing the fault showed a register holding zero where the object pointer belonged, which first suggested the new stub code clobbered a preserved register. It had not: the adaptation had reused the parameter's name for a double's low word, shadowing it, so a later call received the word instead of the pointer. Renaming the locals fixed it. Separately, two log timestamps were written from memory and corrected from the clock, and one rebuild was briefly locked by a transient file handle.&lt;/p&gt;</content>
   </entry>
 </feed>

@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: hourly review, 22:05 on 5 October",
+    "title": "Devlog: seven rewrites with the wrong signedness",
     "commit": null,
+    "summary": "One entry for the day's trust findings: the mistake, how common blind proofs are, the two directions it was found from, and what it says about the verified count.",
+    "changes": [
+      "New devlog entry. Seven verified rewrites outside the leaderboard family compared a call's answer unsigned where the original compares signed; all are withdrawn. Five were found by lanes working through an audit built from the rewrites' text, two by a sweep from the original's code that reaches calls the audit's scan could not recognise.",
+      "The entry gives the measures side by side: 241 candidates by text, 570 by the original's code, how many proofs are blind to a flipped comparison, how many blind proofs were of wrong rewrites, and the separate finding that proofs made under older checker versions pass the current one unchanged."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: hourly review, 22:05 on 5 October",
+    "commit": "890ad04dc7e5bbc3b3992161919c9212757c8195",
     "summary": "One row added to the day's hourly reviews.",
     "changes": [
       "15,759 functions verified after six rewrites were withdrawn for comparing a call's answer with the wrong signedness; a static sweep from the original's side found two the audit could not list. 73 methods are lifted with their proof in the pipeline.",
