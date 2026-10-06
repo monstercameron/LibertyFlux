@@ -24,7 +24,7 @@ impl AdoptSlot {
     /// Adopts an orphan slot: records its owner, notifies, marks it.
     ///
     /// Restates `stream_slot_adopt`: when the owner is not all-ones the
-    /// slot is already adopted and nothing happens; otherwise `gen` is
+    /// slot is already adopted and nothing happens; otherwise `generation` is
     /// stored as the owner, the hook runs, the slot is marked live
     /// through the marker, and the marker's answer is the outcome. The
     /// two address answers narrow: the owner field's address becomes
@@ -32,15 +32,15 @@ impl AdoptSlot {
     /// address the marker owns) travels as an opaque word.
     pub fn adopt<H: AdoptHook, M: MarkSlot>(
         &mut self,
-        gen: u32,
+        generation: u32,
         hook: &mut H,
         marker: &mut M,
     ) -> AdoptOutcome {
         if self.owner != ORPHAN {
             return AdoptOutcome::AlreadyAdopted;
         }
-        self.owner = gen;
-        hook.adopted(gen);
+        self.owner = generation;
+        hook.adopted(generation);
         AdoptOutcome::Marked(marker.mark_live(self))
     }
 }
@@ -56,8 +56,8 @@ pub enum AdoptOutcome {
 
 /// Runs when a slot's owner is recorded: the adoption hook.
 pub trait AdoptHook {
-    /// Records the adoption of the slot now owned by `gen`.
-    fn adopted(&mut self, gen: u32);
+    /// Records the adoption of the slot now owned by `generation`.
+    fn adopted(&mut self, generation: u32);
 }
 
 /// Marks an adopted slot live: the adoption marker.
@@ -67,8 +67,8 @@ pub trait MarkSlot {
 }
 
 impl<F: FnMut(u32)> AdoptHook for F {
-    fn adopted(&mut self, gen: u32) {
-        self(gen);
+    fn adopted(&mut self, generation: u32) {
+        self(generation);
     }
 }
 

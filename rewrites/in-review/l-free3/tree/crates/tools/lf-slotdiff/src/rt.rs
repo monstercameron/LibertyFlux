@@ -5,8 +5,9 @@
 //! `relocated`). The proof set relocates four file VAs: the data-slot
 //! region base, the kind-flag region base (11 bytes into the same
 //! region), the slot-index kind table base, and one cell holding the
-//! entry-array base; one thiscall callee slot (the location routine's
-//! address callee) is replanted per test. Each global is one atomic
+//! entry-array base; three thiscall callee slots (the location
+//! routine's address callee, the adoption hook and marker) are replanted
+//! per test. Each global is one atomic
 //! slot; the atomics give the slots stable addresses, and the
 //! differential tests hold one lock across each whole test, so the
 //! rewrite's plain reads and writes through them never race.
@@ -83,30 +84,30 @@ pub fn global<T>(file_va: u32) -> *mut T {
     slot_for(file_va) as *mut T
 }
 
-/// Registered stub address for callee id 0 (0 when none: a call there
-/// panics, which is a case bug). Each test plants the stub its rewrite
-/// calls before running.
-static CALLEE0: AtomicU32 = AtomicU32::new(0);
+/// Registered stub addresses for callee ids 0..3 (0 when none: a call
+/// there panics, which is a case bug). Each test plants the stubs its
+/// rewrites call before running.
+static CALLEES: [AtomicU32; 3] = [AtomicU32::new(0), AtomicU32::new(0), AtomicU32::new(0)];
 
 /// Plants the stub address callee `id` calls land on.
 ///
 /// # Panics
 ///
-/// When `id` is not 0: the proof set calls only callee 0.
+/// When `id` is past 2: the proof set calls only callees 0, 1 and 2.
 pub fn set_callee(id: u32, addr: u32) {
-    assert!(id == 0, "unexpected callee id {id}");
-    CALLEE0.store(addr, Ordering::Relaxed);
+    assert!(id < 3, "unexpected callee id {id}");
+    CALLEES[id as usize].store(addr, Ordering::Relaxed);
 }
 
 /// Raw stub address for callee `id`.
 ///
 /// # Panics
 ///
-/// When `id` is not 0 or no stub is planted: a case bug.
+/// When `id` is past 2 or no stub is planted: a case bug.
 #[must_use]
 pub fn callee_addr(id: u32) -> u32 {
-    assert!(id == 0, "unexpected callee id {id}");
-    let addr = CALLEE0.load(Ordering::Relaxed);
+    assert!(id < 3, "unexpected callee id {id}");
+    let addr = CALLEES[id as usize].load(Ordering::Relaxed);
     assert!(addr != 0, "callee {id} called with no stub planted");
     addr
 }
@@ -117,22 +118,22 @@ pub fn callee_addr(id: u32) -> u32 {
 macro_rules! export {
     (cdecl, $name:ident ($($arg:ident : $ty:ty),* $(,)?) -> $ret:ty $body:block) => {
         /// Rewrite export, called by the differential test by name (cdecl).
-        #[unsafe(no_mangle)]
+        #[no_mangle]
         pub extern "cdecl" fn $name($($arg : $ty),*) -> $ret $body
     };
     (stdcall, $name:ident ($($arg:ident : $ty:ty),* $(,)?) -> $ret:ty $body:block) => {
         /// Rewrite export, called by the differential test by name (stdcall).
-        #[unsafe(no_mangle)]
+        #[no_mangle]
         pub extern "stdcall" fn $name($($arg : $ty),*) -> $ret $body
     };
     (thiscall, $name:ident ($($arg:ident : $ty:ty),* $(,)?) -> $ret:ty $body:block) => {
         /// Rewrite export, called by the differential test by name (thiscall).
-        #[unsafe(no_mangle)]
+        #[no_mangle]
         pub extern "thiscall" fn $name($($arg : $ty),*) -> $ret $body
     };
     (fastcall, $name:ident ($($arg:ident : $ty:ty),* $(,)?) -> $ret:ty $body:block) => {
         /// Rewrite export, called by the differential test by name (fastcall).
-        #[unsafe(no_mangle)]
+        #[no_mangle]
         pub extern "fastcall" fn $name($($arg : $ty),*) -> $ret $body
     };
 }

@@ -39,7 +39,7 @@ pub use fixed::KeyEntry;
 pub use fixed::STATE_SLOT_LEN;
 pub use fixed::StateSlots;
 pub use flags::SlotFlags;
+pub use registry::ROWS;
 pub use registry::Row;
 pub use registry::State;
-pub use registry::ROWS;
 pub use table::SlotTable;

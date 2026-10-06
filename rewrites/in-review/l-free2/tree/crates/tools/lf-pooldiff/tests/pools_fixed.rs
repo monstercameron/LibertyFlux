@@ -197,6 +197,7 @@ mod x86 {
             }
             let boxed = img.into_boxed_slice();
             let base_addr = addr(&boxed[0]);
+            assert!(base_addr.checked_add(len as u32).is_some(), "image wraps");
             rt::set_relocated(E_TAB_VA, base_addr);
             rt::set_relocated(E_END_VA, base_addr.wrapping_add(8));
             let before = unsafe { snapshot(base_addr, len) };
@@ -254,6 +255,7 @@ mod x86 {
         assert!(base.checked_add((len + 9) as u32).is_some(), "image wraps");
         let first = base.wrapping_add(9);
         let end = first.wrapping_add(len as u32);
+        assert!(end < 0x8000_0000, "cursor range must stay below 2^31");
         rt::set_relocated(R_FIRST_VA, first);
         rt::set_relocated(R_END_VA, end);
         unsafe {

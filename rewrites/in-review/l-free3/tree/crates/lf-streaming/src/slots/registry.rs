@@ -142,17 +142,13 @@ pub const ROWS: &[Row] = &[
         func: "stream_slot_clear_bit3",
         method: "SlotFlags::clear_and_review",
         state: State::Proven,
-        narrows: &[
-            "instance (3, 4) of the generic clearer; the proof pins the bits",
-        ],
+        narrows: &["instance (3, 4) of the generic clearer; the proof pins the bits"],
     },
     Row {
         func: "stream_slot_clear_bit4",
         method: "SlotFlags::clear_and_review",
         state: State::Proven,
-        narrows: &[
-            "instance (4, 3) of the generic clearer; the proof pins the bits",
-        ],
+        narrows: &["instance (4, 3) of the generic clearer; the proof pins the bits"],
     },
     Row {
         func: "stream_slot_mark_live",
@@ -224,16 +220,12 @@ pub const ROWS: &[Row] = &[
         func: "stream_slot_construct",
         method: "none",
         state: State::Missing,
-        narrows: &[
-            "one forwarded call plus one address stamp: no behaviour to lift",
-        ],
+        narrows: &["one forwarded call plus one address stamp: no behaviour to lift"],
     },
     Row {
         func: "stream_slot_detach",
         method: "none",
         state: State::Missing,
-        narrows: &[
-            "two forwarded calls whose answer is the result: no behaviour to lift",
-        ],
+        narrows: &["two forwarded calls whose answer is the result: no behaviour to lift"],
     },
 ];

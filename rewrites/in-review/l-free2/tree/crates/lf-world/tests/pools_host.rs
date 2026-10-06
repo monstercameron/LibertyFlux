@@ -3,8 +3,9 @@
 //! proof against the verified rewrites lives in `lf-pooldiff`.
 
 use lf_world::pools::{
-    CtxHandle, ElemStamp, KeyedFlags, PairPool, PoolVec, SlotPool, TagPool, TagPools, WordBlocks,
-    WordTable, registry,
+    BumpPool, CtxHandle, ElemStamp, EntryTable, HandlePool, HandleState, KeyedFlags, ObjHandle,
+    ObjVtable, Page, PairPool, PairSlot, PoolVec, PublishedObj, RevocTable, Row, RowPairs, RowTable,
+    SlotPair, SlotPool, SmallSlot, TagPool, TagPools, WideVec, WordBlocks, WordTable, registry,
 };
 
 fn pool(flags: &[u8], stride: u32) -> SlotPool {
@@ -17,10 +18,10 @@ fn pool(flags: &[u8], stride: u32) -> SlotPool {
 
 #[test]
 fn registry_counts_are_pinned() {
-    assert_eq!(registry::count(registry::State::Proven), 32);
+    assert_eq!(registry::count(registry::State::Proven), 59);
     assert_eq!(registry::count(registry::State::Lifted), 0);
-    assert_eq!(registry::count(registry::State::Missing), 26);
-    assert_eq!(registry::ROWS.len(), 58);
+    assert_eq!(registry::count(registry::State::Missing), 71);
+    assert_eq!(registry::ROWS.len(), 130);
 }
 
 #[test]
@@ -625,4 +626,411 @@ fn release_dead_is_quiet() {
     );
     assert_eq!(read_rc(&pool, 0), 1);
     assert_eq!((survives, evicts), (0, 0));
+}
+
+// Second lane: fixed tables, resets, handles, rows, wide vectors, allocators.
+
+fn entry_image() -> Vec<u8> {
+    // Varied bytes: modelled words random-looking, gaps nonzero.
+    let mut img = vec![0u8; 0x400 * 20];
+    for (i, b) in img.iter_mut().enumerate() {
+        *b = (i.wrapping_mul(37).wrapping_add(11) & 0xFF) as u8;
+    }
+    img
+}
+
+#[test]
+fn entry_init_sets_modelled_leaves_gaps() {
+    let img = entry_image();
+    let mut t = EntryTable::from_bytes(&img);
+    let end = t.init();
+    assert_eq!(end, 0x400 * 20 + 8);
+    for (i, e) in t.entries.iter().enumerate() {
+        assert_eq!((e.ptr, e.tag, e.key, e.sum, e.flag, e.flag_hi), (0, 0xFFFF, 0, 0, 0, 0));
+        let off = i * 20;
+        assert_eq!(e.gap, u16::from_le_bytes([img[off + 6], img[off + 7]]));
+        assert_eq!(e.tail, [img[off + 18], img[off + 19]]);
+    }
+}
+
+#[test]
+fn entry_round_trip() {
+    let img = entry_image();
+    let t = EntryTable::from_bytes(&img);
+    let mut back = vec![0u8; img.len()];
+    t.to_bytes(&mut back);
+    assert_eq!(back, img);
+}
+
+#[test]
+fn find_mark_first_wins_and_sets_flag() {
+    let mut img = vec![0u8; 0x400 * 20];
+    // Two matches: rows 3 and 5; row 1 matches but has a null pointer.
+    for (i, ptr) in [(1u32, 0u32), (3, 7), (5, 9)] {
+        let off = i as usize * 20;
+        img[off..off + 4].copy_from_slice(&ptr.to_le_bytes());
+        img[off + 8..off + 12].copy_from_slice(&0xAAu32.to_le_bytes());
+        img[off + 12..off + 16].copy_from_slice(&0xBBu32.to_le_bytes());
+    }
+    let mut t = EntryTable::from_bytes(&img);
+    assert_eq!(t.find_mark(0xAA, 0xB0, 0x0B), Some(3));
+    assert_eq!(t.entries[3].flag, 1);
+    assert_eq!(t.entries[5].flag, 0);
+}
+
+#[test]
+fn find_mark_miss_and_wrap_sum() {
+    let img = vec![0u8; 0x400 * 20];
+    let mut t = EntryTable::from_bytes(&img);
+    assert_eq!(t.find_mark(1, 2, 3), None);
+    // base + add wraps to the stored sum.
+    let mut img = vec![0u8; 0x400 * 20];
+    img[0..4].copy_from_slice(&1u32.to_le_bytes());
+    img[8..12].copy_from_slice(&9u32.to_le_bytes());
+    img[12..16].copy_from_slice(&4u32.to_le_bytes());
+    let mut t = EntryTable::from_bytes(&img);
+    assert_eq!(t.find_mark(9, u32::MAX, 5), Some(0));
+}
+
+fn revoc_image() -> Vec<u8> {
+    let mut img = vec![0u8; 1100 * 44];
+    for (i, b) in img.iter_mut().enumerate() {
+        *b = (i.wrapping_mul(53).wrapping_add(7) & 0xFF) as u8;
+    }
+    img
+}
+
+#[test]
+fn revoc_reset_zeroes_heads_and_bit() {
+    let img = revoc_image();
+    let mut t = RevocTable::from_parts(5, 6, [1, 2, 3, 4], 7, &img);
+    let mut calls = 0;
+    let end = t.reset(&mut || calls += 1);
+    assert_eq!(end, 1100 * 44);
+    assert_eq!((t.head_a, t.head_b, t.head_c, t.head_d, calls), (0, 0, [1, 2, 3, 4], 7, 1));
+    for e in t.entries {
+        assert_eq!(e.flag() & 0x10, 0);
+    }
+}
+
+#[test]
+fn revoc_clear_zeroes_all_but_entries() {
+    let img = revoc_image();
+    let mut t = RevocTable::from_parts(5, 6, [1, 2, 3, 4], 7, &img);
+    t.clear();
+    assert_eq!((t.head_a, t.head_b, t.head_c, t.head_d), (0, 0, [0; 4], 0));
+}
+
+#[test]
+fn revoc_revoke_rules_and_wrap() {
+    let mut img = vec![0u8; 1100 * 44];
+    // Row 0: revoked. Row 1: next byte armed, kept. Row 2: disarmed, kept.
+    img[0..2].copy_from_slice(&0x1234u16.to_le_bytes());
+    img[9] = 0x10;
+    img[10] = 0x00;
+    img[44..46].copy_from_slice(&0x1234u16.to_le_bytes());
+    img[44 + 9] = 0x10;
+    img[44 + 10] = 0x10;
+    img[88..90].copy_from_slice(&0x1234u16.to_le_bytes());
+    img[88 + 9] = 0x00;
+    let mut t = RevocTable::from_parts(0, 0, [0; 4], 0, &img);
+    t.revoke(0xAB12_1234);
+    assert_eq!(t.head_a, u32::MAX, "live count wraps down");
+    assert_eq!((t.entries[0].tag, t.entries[0].flag() & 0x10), (0, 0));
+    assert_eq!(t.entries[1].tag, 0x1234);
+    assert_eq!(t.entries[1].flag() & 0x10, 0x10);
+    assert_eq!(t.entries[2].tag, 0x1234);
+    // High bits of the key are ignored.
+    let mut t = RevocTable::from_parts(1, 0, [0; 4], 0, &img);
+    t.revoke(0x1234);
+    assert_eq!(t.head_a, 0);
+}
+
+#[test]
+fn handle_state_reset_bits_and_words() {
+    let mut img = [0xFFu8; 0x394];
+    img[0x5b] = 0xFF;
+    let mut h = HandleState::from_bytes(img);
+    h.reset();
+    assert_eq!(h.bytes()[0x5b], 0xFE);
+    for off in [0x40, 0x44, 0x48, 0x390] {
+        assert_eq!(&h.bytes()[off..off + 4], &[0, 0, 0, 0]);
+    }
+    assert_eq!(h.bytes()[0], 0xFF, "untouched bytes survive");
+}
+
+#[test]
+fn small_slot_reset_bit1() {
+    let img = [0xFFu8; 0x70];
+    let mut s = SmallSlot::from_bytes(img);
+    s.reset();
+    assert_eq!(s.bytes()[0x5b], 0xFD);
+    for off in [0x04, 0x18, 0x6c] {
+        assert_eq!(&s.bytes()[off..off + 4], &[0, 0, 0, 0]);
+    }
+    let mut img = [0xFFu8; 0x70];
+    img[0x5b] = 0x00;
+    let mut s = SmallSlot::from_bytes(img);
+    s.reset();
+    assert_eq!(s.bytes()[0x5b], 0x00, "clearing a clear bit is quiet");
+}
+
+#[test]
+fn row_pairs_zero_all_and_end() {
+    let mut r = RowPairs::from_bytes([0xFFu8; 0x384]);
+    assert_eq!(r.zero_all(), 0x384);
+    for i in 0..16 {
+        let cur = 0x84 + i * 0x30;
+        assert_eq!(&r.bytes()[cur - 4..cur + 4], &[0; 8], "row {i}");
+    }
+    assert_eq!(r.bytes()[0x358], 0xFF, "past the last pair survives");
+    assert_eq!(r.bytes()[0x7F], 0xFF, "before the first pair survives");
+}
+
+#[test]
+fn slot_pair_low_and_high() {
+    let mut p = SlotPair::from_bytes([0u8; 0xA18]);
+    assert_eq!(p.set_pair(PairSlot::Low, 1, 2), 2);
+    assert_eq!(p.set_pair(PairSlot::High, 3, 4), 4);
+    assert_eq!(&p.bytes()[0xA08..0xA0C], &1u32.to_le_bytes());
+    assert_eq!(&p.bytes()[0xA0C..0xA10], &2u32.to_le_bytes());
+    assert_eq!(&p.bytes()[0xA10..0xA14], &3u32.to_le_bytes());
+    assert_eq!(&p.bytes()[0xA14..0xA18], &4u32.to_le_bytes());
+}
+
+fn handle_pool() -> HandlePool {
+    HandlePool {
+        pages: vec![
+            Page { datum: 0x1111, flags: 1 << 15 },
+            Page { datum: 0x2222, flags: 1 << 10 },
+        ],
+    }
+}
+
+#[test]
+fn handle_reads() {
+    let p = handle_pool();
+    assert_eq!(p.datum_field(0), 0x1111);
+    assert_eq!(p.datum_field(1), 0x2222);
+    assert!(p.flag_bit(0, 15));
+    assert!(!p.flag_bit(0, 10));
+    assert!(p.flag_bit(1, 10));
+    assert!(!p.flag_bit(1, 15));
+}
+
+#[test]
+#[should_panic]
+fn handle_negative_panics() {
+    handle_pool().datum_field(-1);
+}
+
+#[test]
+#[should_panic]
+fn handle_past_end_panics() {
+    handle_pool().flag_bit(2, 0);
+}
+
+#[test]
+#[should_panic]
+fn handle_bit32_panics() {
+    handle_pool().flag_bit(0, 32);
+}
+
+fn row_table() -> RowTable {
+    RowTable {
+        rows: vec![
+            Row { cells: vec![10, 11] },
+            Row { cells: vec![] },
+            Row { cells: vec![30] },
+        ],
+    }
+}
+
+#[test]
+fn row_count_and_cell() {
+    let t = row_table();
+    assert_eq!(t.count_guarded(true, 0), 2);
+    assert_eq!(t.count_guarded(true, 1), 0);
+    assert_eq!(t.count_guarded(false, 0), 0);
+    assert_eq!(t.cell(0, 1), 11);
+    assert_eq!(t.cell(2, 0), 30);
+}
+
+#[test]
+#[should_panic]
+fn row_count_past_end_panics() {
+    row_table().count_guarded(true, 3);
+}
+
+#[test]
+#[should_panic]
+fn row_cell_past_end_panics() {
+    row_table().cell(0, 2);
+}
+
+#[test]
+fn cursor_walks_and_skips_empty() {
+    let t = row_table();
+    let mut c = t.cursor(0, u32::MAX);
+    let mut out = 0;
+    let mut seen = Vec::new();
+    while c.step(&mut out) {
+        seen.push(out);
+    }
+    assert_eq!(seen, [10, 11, 30]);
+    assert_eq!((c.row, c.cell), (3, 0));
+}
+
+#[test]
+fn cursor_empty_table_ends_quietly() {
+    let t = RowTable { rows: vec![] };
+    let mut c = t.cursor(0, u32::MAX);
+    let mut out = 0xBEEF;
+    assert!(!c.step(&mut out));
+    assert_eq!(out, 0xBEEF, "miss leaves the output alone");
+}
+
+#[test]
+#[should_panic]
+fn cursor_negative_row_panics() {
+    let t = row_table();
+    let mut c = t.cursor(-1, 0);
+    let mut out = 0;
+    c.step(&mut out);
+}
+
+#[test]
+fn wide_alloc_size_edges() {
+    assert_eq!(WideVec::alloc_size(0, 0x60), 16);
+    assert_eq!(WideVec::alloc_size(1, 0x60), 0x70);
+    // Multiply overflow saturates.
+    assert_eq!(WideVec::alloc_size(u32::MAX, 0x60), u32::MAX);
+    // Exact maximum without saturation.
+    let q = (u64::from(u32::MAX) - 16) / 0x60;
+    assert_eq!(WideVec::alloc_size(q as u32, 0x60), q as u32 * 0x60 + 16);
+    assert_eq!(WideVec::alloc_size(q as u32 + 1, 0x60), u32::MAX);
+}
+
+#[test]
+fn wide_init_shapes() {
+    let stamp = ElemStamp::new(0x1234).unwrap();
+    assert!(WideVec::init(4, 0x60, stamp, &mut |_| None).is_none());
+    let v = WideVec::init(0, 0x60, stamp, &mut |s| {
+        assert_eq!(s, 16);
+        Some(vec![0xCCu8; s as usize])
+    })
+    .unwrap();
+    assert_eq!(v.end_offset(), 16);
+    assert_eq!(v.count(), 0);
+    let v = WideVec::init(2, 0x60, stamp, &mut |s| Some(vec![0u8; s as usize])).unwrap();
+    assert_eq!(v.buf()[16..20], 0x1234u32.to_le_bytes());
+    assert_eq!(v.buf()[24..28], [0, 0, 0, 0]);
+    assert_eq!(v.buf()[16 + 0x60..20 + 0x60], 0x1234u32.to_le_bytes());
+}
+
+#[test]
+#[should_panic]
+fn wide_init_small_stride_panics() {
+    let stamp = ElemStamp::new(1).unwrap();
+    let _ = WideVec::init(1, 8, stamp, &mut |s| Some(vec![0u8; s as usize]));
+}
+
+#[test]
+fn wide_extra_end_rule() {
+    let stamp = ElemStamp::new(1).unwrap();
+    let v = WideVec::init_extra(0, 0x70, stamp, &mut |s| Some(vec![0u8; s as usize])).unwrap();
+    assert_eq!(v.end_offset_extra(), 0, "empty answers the block itself");
+    let v = WideVec::init_extra(1, 0x70, stamp, &mut |s| Some(vec![0u8; s as usize])).unwrap();
+    assert_eq!(v.end_offset_extra(), 16 + 0x70 + 8);
+    assert_eq!(v.buf()[16 + 0x60..16 + 0x64], [0, 0, 0, 0]);
+    assert_eq!(v.buf()[16 + 0x64..16 + 0x68], [0xFF, 0xFF, 0xFF, 0xFF]);
+}
+
+#[test]
+fn wide_constructed_order_and_empty() {
+    let mut seen = Vec::new();
+    let (v, last) = WideVec::init_constructed(
+        3,
+        8,
+        &mut |s| {
+            assert_eq!(s, 40);
+            Some(vec![0xAAu8; s as usize])
+        },
+        &mut |slot: &mut [u8]| {
+            seen.push(slot.len());
+            slot.fill(0xBB);
+            seen.len() as u32 * 10
+        },
+    )
+    .unwrap();
+    assert_eq!(last, 30);
+    assert_eq!(seen, [8, 8, 8]);
+    assert_eq!(&v.buf()[16..40], &[0xBB; 24]);
+    assert_eq!(v.buf()[4], 0xAA, "pad survives construction");
+    let (_, last) = WideVec::init_constructed(0, 8, &mut |s: u32| Some(vec![0u8; s as usize]), &mut |_: &mut [u8]| 99).unwrap();
+    assert_eq!(last, 0);
+}
+
+#[test]
+fn pool_vec_constructed_basic() {
+    let (v, last) = PoolVec::init_constructed(
+        2,
+        6,
+        &mut |s| {
+            assert_eq!(s, 16);
+            Some(vec![0u8; s as usize])
+        },
+        &mut |slot: &mut [u8]| {
+            slot.fill(0xC0);
+            7
+        },
+    )
+    .unwrap();
+    assert_eq!(last, 7);
+    assert_eq!(&v.buf()[4..16], &[0xC0; 12]);
+    assert!(PoolVec::init_constructed(2, 6, &mut |_: u32| None, &mut |_: &mut [u8]| 0).is_none());
+}
+
+#[test]
+fn bump_next_wraps() {
+    let mut p = BumpPool { count: u32::MAX };
+    assert_eq!(p.next(0x20), 0x20u32.wrapping_add(u32::MAX.wrapping_shl(5)));
+    assert_eq!(p.count, 0);
+    let mut p = BumpPool { count: 3 };
+    assert_eq!(p.next(0x1000), 0x1060);
+    assert_eq!(p.count, 4);
+}
+
+#[test]
+fn published_create_fail_and_ok() {
+    let vtab = ObjVtable::new(0x777).unwrap();
+    let mut inits = 0;
+    let got = PublishedObj::create(
+        0x3E80,
+        0x10,
+        vtab,
+        &mut |size| {
+            assert_eq!(size, 0x1c);
+            None
+        },
+        &mut |_, _, _, _| {
+            inits += 1;
+            ObjHandle::new(1).unwrap()
+        },
+    );
+    assert_eq!((got, inits), (None, 0));
+    let mut seen = Vec::new();
+    let got = PublishedObj::create(
+        0x3E80,
+        0x10,
+        vtab,
+        &mut |_: u32| ObjHandle::new(0x100),
+        &mut |block: ObjHandle, a: u32, vt: ObjVtable, c: u32| {
+            seen.push((block.get(), a, vt.get(), c));
+            ObjHandle::new(0x200).unwrap()
+        },
+    )
+    .unwrap();
+    assert_eq!(got.get(), 0x200);
+    assert_eq!(seen, [(0x100, 0x3E80, 0x777, 0x10)]);
 }

@@ -163,7 +163,10 @@ impl AllocTable {
     /// past its array.
     pub fn lookup_or_alloc(&mut self, idx: u32) -> Option<usize> {
         if idx > ALLOC_MAX_INDEX {
-            let at = self.entries.iter().position(|entry| entry.flag == ALLOC_FREE)?;
+            let at = self
+                .entries
+                .iter()
+                .position(|entry| entry.flag == ALLOC_FREE)?;
             let id = self.counter.wrapping_add(ALLOC_ID_BIAS);
             self.counter = self.counter.wrapping_add(1);
             let entry = &mut self.entries[at];
@@ -173,7 +176,9 @@ impl AllocTable {
             entry.link = ALLOC_LINK;
             return Some(at);
         }
-        let at = usize::try_from(idx).ok().filter(|at| *at < self.entries.len())?;
+        let at = usize::try_from(idx)
+            .ok()
+            .filter(|at| *at < self.entries.len())?;
         if self.entries[at].flag == ALLOC_TAKEN {
             Some(at)
         } else {
@@ -231,19 +236,16 @@ impl GeoSlots {
 }
 
 /// Ordered subtraction, pinned against reassociation.
-#[inline(always)]
 fn sub(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) - core::hint::black_box(b)
 }
 
 /// Ordered multiplication, pinned against reassociation.
-#[inline(always)]
 fn mul(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) * core::hint::black_box(b)
 }
 
 /// Ordered addition, pinned against reassociation.
-#[inline(always)]
 fn add(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) + core::hint::black_box(b)
 }

@@ -74,7 +74,7 @@ mod x86 {
     // Self-backing allocator stub: scripted succeed/fail per call, with a
     // log of requested sizes. Backing is scribbled so no test can mistake
     // it for zeros; only the modelled words are compared.
-    static W Arena: Mutex<Vec<Box<[u8]>>> = Mutex::new(Vec::new());
+    static W_ARENA: Mutex<Vec<Box<[u8]>>> = Mutex::new(Vec::new());
     static W_SCRIPT: Mutex<VecDeque<bool>> = Mutex::new(VecDeque::new());
     static W_SIZES: Mutex<Vec<u32>> = Mutex::new(Vec::new());
     extern "cdecl" fn w_alloc_stub(size: u32) -> u32 {
@@ -88,7 +88,7 @@ mod x86 {
             *b ^= (i & 0xFF) as u8;
         }
         let a = addr(&backing[0]);
-        W Arena.lock().unwrap().push(backing.into_boxed_slice());
+        W_ARENA.lock().unwrap().push(backing.into_boxed_slice());
         a
     }
 
@@ -354,11 +354,14 @@ mod x86 {
                 CTOR_ANS.lock().unwrap().clear();
                 let size = WideVec::alloc_size(count, stride);
                 // Distinct answers per call so the first-answer mutant
-                // is caught on multi-element pools.
+                // is caught on multi-element pools. Locals feed the lift
+                // fake; the stub drains its own queues.
                 let mut answers = Vec::new();
+                let mut pats = Vec::new();
                 for i in 0..count {
                     let a = 0x1000u32.wrapping_add(i * 0x111 + (rng.u32() & 0xFF));
                     answers.push(a);
+                    pats.push((i * 7 + 1) as u8);
                     CTOR_FILL.lock().unwrap().push_back((i * 7 + 1) as u8);
                     CTOR_ANS.lock().unwrap().push_back(a);
                 }
@@ -369,15 +372,14 @@ mod x86 {
                 let this = addr(&header[0]);
                 W_SCRIPT.lock().unwrap().push_back(ok);
                 let before = W_SIZES.lock().unwrap().len();
-                let got = unsafe { fn_009DD210::rw_009dd210(this) };
+                let got = unsafe { fn_009DD210::rw_009dd210(this as *mut u8) };
                 let spare = unsafe { get_u32_at(this.wrapping_add(4)) };
                 let body = unsafe { get_u32_at(this.wrapping_add(8)) };
                 assert_eq!(spare, 0, "count={count} spare");
                 assert_eq!(&W_SIZES.lock().unwrap()[before..], &[size]);
-                let mut fills = CTOR_FILL.lock().unwrap().clone();
+                let mut fills: VecDeque<u8> = pats.into_iter().collect();
                 let mut anss = answers.clone();
                 let mut lift_slots = Vec::new();
-                let mut lift_base = 0u32;
                 let lift = WideVec::init_constructed(
                     count,
                     stride,
@@ -402,7 +404,6 @@ mod x86 {
                     Some((v, last)) => {
                         assert!(ok, "lift succeeded on a failed allocation");
                         assert_ne!(body, 0, "body must be planted");
-                        lift_base = body;
                         assert_eq!(v.buf().len() as u64, u64::from(size));
                         assert_eq!(&v.buf()[0..4], &count.to_le_bytes());
                         // Call order and slot addresses, in order.
@@ -442,7 +443,6 @@ mod x86 {
                         assert!(CTOR_SLOTS.lock().unwrap().is_empty(), "no calls on failure");
                     }
                 }
-                let _ = lift_base;
                 cases += 1;
                 std::hint::black_box(&header);
             }
@@ -470,9 +470,11 @@ mod x86 {
                 CTOR_ANS.lock().unwrap().clear();
                 let size = PoolVec::alloc_size(count, stride);
                 let mut answers = Vec::new();
+                let mut pats = Vec::new();
                 for i in 0..count {
                     let a = 0x2000u32.wrapping_add(i * 0x131 + (rng.u32() & 0xFF));
                     answers.push(a);
+                    pats.push((i * 11 + 3) as u8);
                     CTOR_FILL.lock().unwrap().push_back((i * 11 + 3) as u8);
                     CTOR_ANS.lock().unwrap().push_back(a);
                 }
@@ -488,7 +490,7 @@ mod x86 {
                 let body = unsafe { get_u32_at(this.wrapping_add(8)) };
                 assert_eq!(spare, 0, "count={count} spare");
                 assert_eq!(&W_SIZES.lock().unwrap()[before..], &[size]);
-                let mut fills = CTOR_FILL.lock().unwrap().clone();
+                let mut fills: VecDeque<u8> = pats.into_iter().collect();
                 let mut anss = answers.clone();
                 let lift = PoolVec::init_constructed(
                     count,
@@ -693,8 +695,9 @@ mod x86 {
                     assert!(lift_log.is_empty());
                 }
             }
-            // Wrong lift: allocates 32 bytes instead of 28.
-            if 0x20u32 != 0x1C {
+            // Wrong lift: allocates 32 bytes instead of 28. The stub
+            // logged the true size above; the mutant differs from it.
+            if O_SIZES.lock().unwrap().first() != Some(&0x20u32) {
                 caught += 1;
             }
             cases += 1;

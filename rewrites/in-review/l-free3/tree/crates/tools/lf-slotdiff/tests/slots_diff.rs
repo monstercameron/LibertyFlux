@@ -25,7 +25,7 @@ mod x86 {
     #[path = "../support/mod.rs"]
     mod support;
     use support::{
-        DATA_VA, KIND_FLAG_VA, KIND_TABLE_VA, TABLE_BASE_VA, Rng, addr, get_u32, lock, put_u32,
+        addr, get_u32, lock, put_u32, Rng, DATA_VA, KIND_FLAG_VA, KIND_TABLE_VA, TABLE_BASE_VA,
     };
 
     /// Byte length of one 32-bit entry.
@@ -115,8 +115,7 @@ mod x86 {
 
         /// Kind flag scaled by 96 instead of 160.
         pub fn kind_flag_96(table: &SlotTable, idx: u32, kinds: &KindBytes) -> u32 {
-            let scaled =
-                u32::from(table.entries()[idx as usize].value_kind()).wrapping_mul(96);
+            let scaled = u32::from(table.entries()[idx as usize].value_kind()).wrapping_mul(96);
             (scaled & 0xffff_ff00) | u32::from(kinds.bytes[scaled as usize])
         }
 
@@ -204,7 +203,10 @@ mod x86 {
             }
             cases += 1;
         }
-        assert!(cases >= 40 && caught == cases, "cases={cases} caught={caught}");
+        assert!(
+            cases >= 40 && caught == cases,
+            "cases={cases} caught={caught}"
+        );
     }
 
     #[test]
@@ -258,7 +260,11 @@ mod x86 {
             // Slot values: trial 0 pins small distinct values, else random.
             let mut slots = [0u32; 256];
             for (i, slot) in slots.iter_mut().enumerate() {
-                *slot = if trial == 0 { 0x1000 + i as u32 } else { rng.u32() };
+                *slot = if trial == 0 {
+                    0x1000 + i as u32
+                } else {
+                    rng.u32()
+                };
             }
             let lift_slots = DataSlots::from_slots(slots);
             // The 32-bit region: dwords at stride 160.
@@ -413,10 +419,30 @@ mod x86 {
         let mut cases = 0;
         let mut caught = 0;
         let caps = [
-            -2i32, -1, 0, 1, 5, 6, 100, 0x1_0000, i32::MAX - 6, i32::MAX - 5, i32::MAX,
+            -2i32,
+            -1,
+            0,
+            1,
+            5,
+            6,
+            100,
+            0x1_0000,
+            i32::MAX - 6,
+            i32::MAX - 5,
+            i32::MAX,
         ];
         let idxs = [
-            0u32, 1, 5, 6, 7, 100, 0xfffe, 0xffff, 0x1_0000, 0x7fff_ffff, 0x8000_0000,
+            0u32,
+            1,
+            5,
+            6,
+            7,
+            100,
+            0xfffe,
+            0xffff,
+            0x1_0000,
+            0x7fff_ffff,
+            0x8000_0000,
             0xffff_ffff,
         ];
         for &cap in &caps {
@@ -426,10 +452,8 @@ mod x86 {
                 let (_ebuf, base) = plant_entries(&live);
                 let (obj, this) = plant_table(if base_null { 0 } else { base }, cap);
                 let _ = obj;
-                let table = SlotTable::from_parts(
-                    if base_null { vec![] } else { live.clone() },
-                    cap,
-                );
+                let table =
+                    SlotTable::from_parts(if base_null { vec![] } else { live.clone() }, cap);
                 for &idx in &idxs {
                     let got = unsafe { fn_00A94A40::rw_00a94a40(this, idx) };
                     assert_eq!(
@@ -633,8 +657,7 @@ mod x86 {
                 let back = read_back(base, shapes.len() * ENTRY_LEN);
                 let mut expect = vec![0u8; shapes.len() * ENTRY_LEN];
                 for (i, entry) in table.entries().iter().enumerate() {
-                    expect[i * ENTRY_LEN..(i + 1) * ENTRY_LEN]
-                        .copy_from_slice(&entry.to_bytes());
+                    expect[i * ENTRY_LEN..(i + 1) * ENTRY_LEN].copy_from_slice(&entry.to_bytes());
                 }
                 assert_eq!(back, expect, "idx={idx}");
                 // The wrong lift sets bit 14: compare its flag word.
