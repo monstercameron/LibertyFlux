@@ -115,9 +115,7 @@ pub trait LinkMatrix {
     /// Builds the link's matrix (runs only when none is present).
     fn build_matrix(&mut self, link: &mut Link);
     /// Fetches through the link once the matrix exists (answer ignored).
-    /// Takes the link mutably: a fetch that clears the matrix re-arms
-    /// the second build site, which the proof exercises.
-    fn fetch_matrix(&mut self, link: &mut Link);
+    fn fetch_matrix(&mut self, link: &Link);
 }
 
 /// Which of the four normaliser calls is running.
@@ -166,33 +164,44 @@ pub struct AngleTuning {
 }
 
 /// Pinned-order float multiply.
-#[inline(always)]
 fn mul(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) * core::hint::black_box(b)
 }
 
 /// Pinned-order float add.
-#[inline(always)]
 fn add(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) + core::hint::black_box(b)
 }
 
 /// Pinned-order float subtract.
-#[inline(always)]
 fn sub(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) - core::hint::black_box(b)
 }
 
 /// Pinned-order float divide.
-#[inline(always)]
 fn div(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) / core::hint::black_box(b)
+}
+
+/// The sphere path: the tag-as-float squared must strictly exceed the
+/// squared distance from the centre to the point.
+fn sphere_contains(fa: [f32; 3], fc: f32, pt: [f32; 3]) -> bool {
+    let d4 = sub(fa[1], pt[1]);
+    let d0 = sub(fa[0], pt[0]);
+    let d8 = sub(fa[2], pt[2]);
+    let dd = add(add(mul(d0, d0), mul(d4, d4)), mul(d8, d8));
+    let cc = mul(fc, fc);
+    cc > dd
 }
 
 /// One column transform `dst[i] = col_i . v`, in the original's exact
 /// operation order. The `w` slot is zero: the original copied an
 /// uninitialised scratch word there and the verified rewrite pins it to
 /// zero, which is what this matches.
+#[allow(
+    clippy::many_single_char_names,
+    reason = "names mirror the verified rewrite's accumulators one for one"
+)]
 fn xform_one(mat: &Matrix, v: [f32; 3]) -> [f32; 4] {
     let (vx, vy, vz) = (v[0], v[1], v[2]);
     let t0 = mul(mat.cols[0][0], vx);
@@ -218,7 +227,13 @@ impl PoseVolume {
     /// Builds a volume from its words.
     #[must_use]
     pub const fn new(a: [f32; 4], b: [f32; 4], tag: u32, link: Option<Link>, flags: u8) -> Self {
-        Self { a, b, tag, link, flags }
+        Self {
+            a,
+            b,
+            tag,
+            link,
+            flags,
+        }
     }
 
     /// Transforms both vectors into world space.
@@ -238,7 +253,11 @@ impl PoseVolume {
             return None;
         }
         let Some(link) = self.link.as_mut() else {
-            return Some(Transformed { a: self.a, b: self.b, tag: self.tag });
+            return Some(Transformed {
+                a: self.a,
+                b: self.b,
+                tag: self.tag,
+            });
         };
         let (mut a, mut b);
         if self.flags & FLAG_TRANSFORM == 0 {
@@ -253,7 +272,10 @@ impl PoseVolume {
             let mat = link.matrix.as_ref().expect("link build left no matrix");
             a = xform_one(mat, [self.a[0], self.a[1], self.a[2]]);
             // Second site: the matrix is re-checked and the build pair
-            // re-runs only if it somehow came back null.
+            // re-runs only if it somehow came back null. Unreachable in
+            // practice (nothing runs between the two reads, and a null
+            // after the first build faults at the first vector), kept
+            // as a faithful mirror of the 32-bit form.
             if link.matrix.is_none() {
                 links.build_matrix(link);
                 links.fetch_matrix(link);
@@ -273,7 +295,11 @@ impl PoseVolume {
         b[0] = add(t[0], b[0]);
         b[1] = add(t[1], b[1]);
         b[2] = add(t[2], b[2]);
-        Some(Transformed { a, b, tag: self.tag })
+        Some(Transformed {
+            a,
+            b,
+            tag: self.tag,
+        })
     }
 
     /// Blends the two filled pose vectors into one output.
@@ -287,7 +313,10 @@ impl PoseVolume {
         let sample = filler.fill_pose(self);
         if self.flags & FLAG_COPY != 0 {
             let cf = f32::from_bits(sample.c);
-            Blended { out1: sample.a, out2: mul(cf, cf) }
+            Blended {
+                out1: sample.a,
+                out2: mul(cf, cf),
+            }
         } else {
             let a0 = sample.a[0];
             let a1 = sample.a[1];
@@ -314,7 +343,10 @@ impl PoseVolume {
             d5 = mul(d5, d5);
             d7 = add(d7, d5);
             d7 = add(d7, s0);
-            Blended { out1: [s4, s3, s2, sample.b[3]], out2: d7 }
+            Blended {
+                out1: [s4, s3, s2, sample.b[3]],
+                out2: d7,
+            }
         }
     }
 
@@ -326,6 +358,10 @@ impl PoseVolume {
     /// tag's distance, and the point must pass two normalised dot-product
     /// gates and lie between the fills' heights. Any failed gate, or any
     /// NaN in a comparison, answers false.
+    #[allow(
+        clippy::neg_cmp_op_on_partial_ord,
+        reason = "negated comparisons reproduce the original's unordered-fails shape exactly"
+    )]
     pub fn contains<P: PoseFill, S: ConeSolvers>(
         &self,
         filler: &mut P,
@@ -341,12 +377,7 @@ impl PoseVolume {
         let fb = [sample.b[0], sample.b[1], sample.b[2]];
         let fc = f32::from_bits(sample.c);
         if self.flags & FLAG_SPHERE != 0 {
-            let d4 = sub(fa[1], pt[1]);
-            let d0 = sub(fa[0], pt[0]);
-            let d8 = sub(fa[2], pt[2]);
-            let dd = add(add(mul(d0, d0), mul(d4, d4)), mul(d8, d8));
-            let cc = mul(fc, fc);
-            return cc > dd;
+            return sphere_contains(fa, fc, pt);
         }
         let c1 = solvers.base_angle(sample.a[0], sample.a[1], sample.b[0], sample.b[1]);
         let mut ang = add(c1, tuning.half_pi);
@@ -360,7 +391,10 @@ impl PoseVolume {
         let cosv = solvers.cos_factor(ang);
         let px = add(mul(cosv, radius), fa[0]);
         let sinv = solvers.sin_factor(ang);
-        let py = add(f32::from_bits(mul(sinv, radius).to_bits() ^ tuning.neg_mask), fa[1]);
+        let py = add(
+            f32::from_bits(mul(sinv, radius).to_bits() ^ tuning.neg_mask),
+            fa[1],
+        );
         let (cx, cy) = (fa[0], fa[1]);
         let dx1 = sub(fb[0], cx);
         let dy1 = sub(fb[1], cy);
@@ -372,7 +406,11 @@ impl PoseVolume {
         let len2 = len2sq.sqrt();
         let qx = sub(pt[0], cx);
         let qy = sub(pt[1], cy);
-        let s1 = if len1sq == 0.0 { 0.0 } else { div(tuning.one, len1sq.sqrt()) };
+        let s1 = if len1sq == 0.0 {
+            0.0
+        } else {
+            div(tuning.one, len1sq.sqrt())
+        };
         let nx1 = mul(dx1, s1);
         let ny1 = mul(dy1, s1);
         let mut d1 = [0u32; 3];
@@ -381,9 +419,20 @@ impl PoseVolume {
         solvers.normalise(NormSlot::First, &mut d1, &src1, NORM_COUNT);
         let src2 = [qx.to_bits(), qy.to_bits(), nx1.to_bits()];
         solvers.normalise(NormSlot::Second, &mut d2, &src2, NORM_COUNT);
-        let fd1 = [f32::from_bits(d1[0]), f32::from_bits(d1[1]), f32::from_bits(d1[2])];
-        let fd2 = [f32::from_bits(d2[0]), f32::from_bits(d2[1]), f32::from_bits(d2[2])];
-        let dot1 = add(add(mul(fd2[0], fd1[0]), mul(fd2[1], fd1[1])), mul(fd2[2], fd1[2]));
+        let fd1 = [
+            f32::from_bits(d1[0]),
+            f32::from_bits(d1[1]),
+            f32::from_bits(d1[2]),
+        ];
+        let fd2 = [
+            f32::from_bits(d2[0]),
+            f32::from_bits(d2[1]),
+            f32::from_bits(d2[2]),
+        ];
+        let dot1 = add(
+            add(mul(fd2[0], fd1[0]), mul(fd2[1], fd1[1])),
+            mul(fd2[2], fd1[2]),
+        );
         if !(dot1 >= 0.0) {
             return false;
         }
@@ -391,16 +440,31 @@ impl PoseVolume {
             return false;
         }
         let len3sq = add(mul(ey, ey), mul(ex, ex));
-        let s3 = if len3sq == 0.0 { 0.0 } else { div(tuning.one, len3sq.sqrt()) };
+        let s3 = if len3sq == 0.0 {
+            0.0
+        } else {
+            div(tuning.one, len3sq.sqrt())
+        };
         let mx = mul(ex, s3);
         let my = mul(ey, s3);
         let src3 = [mx.to_bits(), my.to_bits(), qx.to_bits()];
         solvers.normalise(NormSlot::Third, &mut d2, &src3, NORM_COUNT);
         let src4 = [qx.to_bits(), qy.to_bits(), nx1.to_bits()];
         solvers.normalise(NormSlot::Fourth, &mut d1, &src4, NORM_COUNT);
-        let fd1 = [f32::from_bits(d1[0]), f32::from_bits(d1[1]), f32::from_bits(d1[2])];
-        let fd2 = [f32::from_bits(d2[0]), f32::from_bits(d2[1]), f32::from_bits(d2[2])];
-        let dot2 = add(add(mul(fd1[0], fd2[0]), mul(fd1[1], fd2[1])), mul(fd1[2], fd2[2]));
+        let fd1 = [
+            f32::from_bits(d1[0]),
+            f32::from_bits(d1[1]),
+            f32::from_bits(d1[2]),
+        ];
+        let fd2 = [
+            f32::from_bits(d2[0]),
+            f32::from_bits(d2[1]),
+            f32::from_bits(d2[2]),
+        ];
+        let dot2 = add(
+            add(mul(fd1[0], fd2[0]), mul(fd1[1], fd2[1])),
+            mul(fd1[2], fd2[2]),
+        );
         let absdot = f32::from_bits(dot2.to_bits() & tuning.abs_mask);
         if !(len2 >= absdot) {
             return false;

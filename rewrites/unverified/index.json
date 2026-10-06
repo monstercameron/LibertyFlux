@@ -289,11 +289,11 @@
  },
  {
   "address": "0x0059E530",
-  "name": "mainloop_timing_sysinfo_init",
+  "name": "timing_tables_calibrate",
   "file": "fn_0059e530.rs",
   "lane": "r-b640",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x005CDD40",
@@ -360,14 +360,6 @@
   "reason": "other"
  },
  {
-  "address": "0x00621C80",
-  "name": "net_handler_21c80 (proposed)",
-  "file": "fn_00621c80.rs",
-  "lane": "r-b641",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x006607F0",
   "name": "rage::snAddRemoteGamerTask::vf3",
   "file": "fn_006607f0.rs",
@@ -432,60 +424,12 @@
   "reason": "other"
  },
  {
-  "address": "0x00925D40",
-  "name": "tbd",
-  "file": "fn_00925d40.rs",
-  "lane": "r-s523",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009288E0",
-  "name": "tbd",
-  "file": "fn_009288e0.rs",
-  "lane": "r-s523",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00928A20",
-  "name": "tbd",
-  "file": "fn_00928a20.rs",
-  "lane": "r-s523",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x0092AE00",
   "name": "cam_pose_update",
   "file": "fn_0092ae00.rs",
   "lane": "r-b211",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x0092B5E0",
-  "name": "tbd",
-  "file": "fn_0092b5e0.rs",
-  "lane": "r-s523",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0092CA40",
-  "name": "tbd",
-  "file": "fn_0092ca40.rs",
-  "lane": "r-s523",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0092D0A0",
-  "name": "tbd",
-  "file": "fn_0092d0a0.rs",
-  "lane": "r-s523",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00957100",
@@ -742,14 +686,6 @@
   "lane": "r-b166",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00B32EF0",
-  "name": "peds_task_area_update",
-  "file": "fn_00b32ef0.rs",
-  "lane": "a-Q50",
-  "outcome": "not yet run",
-  "reason": ""
  },
  {
   "address": "0x00B37240",

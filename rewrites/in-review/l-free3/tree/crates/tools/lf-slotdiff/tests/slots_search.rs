@@ -324,7 +324,7 @@ mod x86 {
             ];
             for &flag in &flags {
                 for &index in &idxs {
-                    let got = unsafe { fn_008CB3A0::rw_008cb3a0(index, flag) };
+                    let got = unsafe { fn_008CB3A0::rw_008CB3A0(index, flag) };
                     assert_eq!(got, u32::from(live.is_free(index, flag)));
                     if u32::from(wrong::free_full_flag(&live, index, flag)) != got {
                         caught += 1;
@@ -352,7 +352,7 @@ mod x86 {
             let mut planted = vec![0u8; SLOT_HEADER_LEN].into_boxed_slice();
             planted.copy_from_slice(&bytes);
             let this = addr(&planted[0]);
-            let got = unsafe { fn_008CBF30::rw_008cbf30(this, value) };
+            let got = unsafe { fn_008CBF30::rw_008CBF30(this, value) };
             assert_eq!(got, 0, "trial {trial}");
             let mut lift = SlotHeader::from_bytes(bytes);
             lift.init(value);

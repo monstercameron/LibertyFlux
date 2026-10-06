@@ -43,6 +43,7 @@ pub const ROWS: &[Row] = &[
         narrows: &[
             "the w slots are zero: the original copied an uninitialised scratch word there and the rewrite pins it to zero, which is what the lift matches",
             "the link build/fetch pair travels as the LinkMatrix trait: the proof scripts the stubs, compares call order and count, and asserts the stub addresses against the planted link and matrix",
+            "the second build site is unreachable (nothing runs between the two reads, and a null after the first build faults at the first vector): mirrored in the lift, not exercised",
             "a build that leaves no matrix faults in the original and panics in the lift (host-proven)",
         ],
     },
@@ -85,9 +86,7 @@ pub const ROWS: &[Row] = &[
         class: "BuildManagers",
         method: "build5",
         state: State::Proven,
-        narrows: &[
-            "as build4, with the five-word cdecl shape pinned by the stub",
-        ],
+        narrows: &["as build4, with the five-word cdecl shape pinned by the stub"],
     },
     // ChainCloner: the entry-chain clone pair. One generic method over
     // the done-flag write, proven once per instance.

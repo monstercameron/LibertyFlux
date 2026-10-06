@@ -232,11 +232,11 @@ impl ChainCloner {
         while let Some(found) = node {
             let e = &found.entry;
             let flags = e.flags | FLAG_EXTRA;
+            // The 32-bit form tests y then x with identical bodies;
+            // one condition covers both.
             let product = if e.aux == 0 {
                 ctx.make_full(self.owner, e.y, e.x, flags, e.aux, PRIORITY, NONE)
-            } else if e.y == NONE {
-                ctx.make_alt(self.owner, e.alt_a, e.alt_b, flags, e.aux, PRIORITY)
-            } else if e.x == NONE {
+            } else if e.y == NONE || e.x == NONE {
                 ctx.make_alt(self.owner, e.alt_a, e.alt_b, flags, e.aux, PRIORITY)
             } else {
                 ctx.make_full(self.owner, e.y, e.x, flags, e.aux, PRIORITY, NONE)

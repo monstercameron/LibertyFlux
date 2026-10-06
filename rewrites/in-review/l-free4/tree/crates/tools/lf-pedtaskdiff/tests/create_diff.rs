@@ -18,8 +18,8 @@ mod x86 {
     use lf_core::Handle32;
     use lf_peds_tasks::ped_task::{
         ArgLookup, BuildManagers, ChainClone, ChainCloner, ChainEntry, ChainOwner, CloneProduct,
-        FoundEntry, Kind11Task, PedMgr, PedTaskOutcome, TaskBuildCtx, FLAG_DONE, FLAG_EXTRA,
-        KIND_11, NONE, PRIORITY,
+        FLAG_DONE, FLAG_EXTRA, FoundEntry, KIND_11, Kind11Task, NONE, PRIORITY, PedMgr,
+        PedTaskOutcome, TaskBuildCtx,
     };
     use lf_pedtaskdiff::rewrites::*;
     use lf_pedtaskdiff::{set_callee, set_relocated};
@@ -32,8 +32,8 @@ mod x86 {
     mod wrong {
         use lf_core::Handle32;
         use lf_peds_tasks::ped_task::{
-            BuildManagers, ChainClone, ChainCloner, Kind11Task, PedTaskOutcome, TaskBuildCtx,
-            FLAG_EXTRA, KIND_11,
+            BuildManagers, ChainClone, ChainCloner, FLAG_EXTRA, KIND_11, Kind11Task,
+            PedTaskOutcome, TaskBuildCtx,
         };
 
         /// The builder that ignores a kept task and always builds.
@@ -66,13 +66,43 @@ mod x86 {
                 // Wrong: raw flags instead of `flags | FLAG_EXTRA`.
                 let flags = e.flags;
                 let product = if e.aux == 0 {
-                    ctx.make_full(cloner.owner, e.y, e.x, flags, e.aux, super::PRIORITY, super::NONE)
+                    ctx.make_full(
+                        cloner.owner,
+                        e.y,
+                        e.x,
+                        flags,
+                        e.aux,
+                        super::PRIORITY,
+                        super::NONE,
+                    )
                 } else if e.y == super::NONE {
-                    ctx.make_alt(cloner.owner, e.alt_a, e.alt_b, flags, e.aux, super::PRIORITY)
+                    ctx.make_alt(
+                        cloner.owner,
+                        e.alt_a,
+                        e.alt_b,
+                        flags,
+                        e.aux,
+                        super::PRIORITY,
+                    )
                 } else if e.x == super::NONE {
-                    ctx.make_alt(cloner.owner, e.alt_a, e.alt_b, flags, e.aux, super::PRIORITY)
+                    ctx.make_alt(
+                        cloner.owner,
+                        e.alt_a,
+                        e.alt_b,
+                        flags,
+                        e.aux,
+                        super::PRIORITY,
+                    )
                 } else {
-                    ctx.make_full(cloner.owner, e.y, e.x, flags, e.aux, super::PRIORITY, super::NONE)
+                    ctx.make_full(
+                        cloner.owner,
+                        e.y,
+                        e.x,
+                        flags,
+                        e.aux,
+                        super::PRIORITY,
+                        super::NONE,
+                    )
                 };
                 if let Some(p) = product {
                     ctx.set_first(p, e.f1);
@@ -97,13 +127,43 @@ mod x86 {
                 let e = &found.entry;
                 let flags = e.flags | FLAG_EXTRA;
                 let product = if e.aux == 0 {
-                    ctx.make_full(cloner.owner, e.y, e.x, flags, e.aux, super::PRIORITY, super::NONE)
+                    ctx.make_full(
+                        cloner.owner,
+                        e.y,
+                        e.x,
+                        flags,
+                        e.aux,
+                        super::PRIORITY,
+                        super::NONE,
+                    )
                 } else if e.y == super::NONE {
-                    ctx.make_alt(cloner.owner, e.alt_a, e.alt_b, flags, e.aux, super::PRIORITY)
+                    ctx.make_alt(
+                        cloner.owner,
+                        e.alt_a,
+                        e.alt_b,
+                        flags,
+                        e.aux,
+                        super::PRIORITY,
+                    )
                 } else if e.x == super::NONE {
-                    ctx.make_alt(cloner.owner, e.alt_a, e.alt_b, flags, e.aux, super::PRIORITY)
+                    ctx.make_alt(
+                        cloner.owner,
+                        e.alt_a,
+                        e.alt_b,
+                        flags,
+                        e.aux,
+                        super::PRIORITY,
+                    )
                 } else {
-                    ctx.make_full(cloner.owner, e.y, e.x, flags, e.aux, super::PRIORITY, super::NONE)
+                    ctx.make_full(
+                        cloner.owner,
+                        e.y,
+                        e.x,
+                        flags,
+                        e.aux,
+                        super::PRIORITY,
+                        super::NONE,
+                    )
                 };
                 if let Some(p) = product {
                     ctx.set_first(p, e.f1);
@@ -225,12 +285,18 @@ mod x86 {
     static SET_LOG: Mutex<Vec<(u32, u32, u32)>> = Mutex::new(Vec::new());
     extern "thiscall" fn set_f1_stub(product: u32, f1: u32) -> u32 {
         SET_LOG.lock().unwrap().push((4, product, f1));
-        STUB_SEQ.lock().unwrap().push(StubEvent::SetFirst(product, f1));
+        STUB_SEQ
+            .lock()
+            .unwrap()
+            .push(StubEvent::SetFirst(product, f1));
         0
     }
     extern "thiscall" fn set_f3_stub(product: u32, f3: u32) -> u32 {
         SET_LOG.lock().unwrap().push((5, product, f3));
-        STUB_SEQ.lock().unwrap().push(StubEvent::SetThird(product, f3));
+        STUB_SEQ
+            .lock()
+            .unwrap()
+            .push(StubEvent::SetThird(product, f3));
         0
     }
 
@@ -266,7 +332,8 @@ mod x86 {
 
     impl TaskBuildCtx for FakeBuild {
         fn ped_task(&mut self, mgr: Option<Handle32<PedMgr>>, handle: u32) -> PedTaskOutcome {
-            self.calls.push(BuildCall::Ped(Handle32::raw_or_zero(mgr), handle));
+            self.calls
+                .push(BuildCall::Ped(Handle32::raw_or_zero(mgr), handle));
             self.ped.pop_front().unwrap()
         }
         fn resolve_arg(&mut self, lookup: Option<Handle32<ArgLookup>>, arg1: u32) -> u32 {
@@ -281,7 +348,8 @@ mod x86 {
             words: &[u32],
             kind: u32,
         ) -> Option<Handle32<Kind11Task>> {
-            self.calls.push(BuildCall::Build(handle, found, words.to_vec(), kind));
+            self.calls
+                .push(BuildCall::Build(handle, found, words.to_vec(), kind));
             self.built.pop_front().unwrap()
         }
     }
@@ -406,7 +474,7 @@ mod x86 {
         // Task image with random fill: flag byte at +0x0E.
         let mut task_img = Box::new([0u8; 0x20]);
         for (i, b) in task_img.iter_mut().enumerate() {
-            *b = (bc.task_flag.wrapping_add(i as u8 * 17)) as u8;
+            *b = (bc.task_flag as u32 + i as u32 * 17) as u8;
         }
         task_img[0x0E] = bc.task_flag;
         let real_task = heap_addr(&task_img);
@@ -414,7 +482,10 @@ mod x86 {
             put_u32(&mut ped_img[..], 0x6C, real_task);
         }
 
-        LOOKUP_SCRIPT.lock().unwrap().push_back(ped_addr);
+        // A null handle skips the ped lookup: only the resolve pops.
+        if bc.handle != 0 {
+            LOOKUP_SCRIPT.lock().unwrap().push_back(ped_addr);
+        }
         LOOKUP_SCRIPT.lock().unwrap().push_back(bc.found);
         BUILD_SCRIPT.lock().unwrap().push_back(bc.built);
 
@@ -467,7 +538,12 @@ mod x86 {
         }
         for words in rw_build.iter() {
             if N == 1 {
-                want.push(BuildCall::Build(words[0], words[1], vec![words[2]], words[3]));
+                want.push(BuildCall::Build(
+                    words[0],
+                    words[1],
+                    vec![words[2]],
+                    words[3],
+                ));
             } else {
                 want.push(BuildCall::Build(
                     words[0],
@@ -514,7 +590,11 @@ mod x86 {
                 task_addr: if task_null || shape == 0 { 0 } else { 1 },
                 task_flag: if flag_set { (rng.u32() as u8) | 1 } else { 0 },
                 found: rng.edge_word(),
-                built: if case % 7 == 0 { 0 } else { rng.edge_word() | 0x1000 },
+                built: if case % 7 == 0 {
+                    0
+                } else {
+                    rng.edge_word() | 0x1000
+                },
             };
             // Instance one: the four-word build.
             set_callee(2, build4_stub as usize as u32);
@@ -667,7 +747,11 @@ mod x86 {
             products.push_back(Handle32::new(*a));
         }
         let cloner = ChainCloner::new(Handle32::new(owner));
-        let mut fake = FakeClone { calls: Vec::new(), finds, products };
+        let mut fake = FakeClone {
+            calls: Vec::new(),
+            finds,
+            products,
+        };
         cloner.clone_chain::<FakeClone, SET_DONE>(&mut fake, key);
 
         // Stub events against lift calls (minus the direct stores).
@@ -718,7 +802,10 @@ mod x86 {
         }
         if !SET_DONE {
             assert!(
-                !fake.calls.iter().any(|c| matches!(c, CloneCall::MarkDone(_))),
+                !fake
+                    .calls
+                    .iter()
+                    .any(|c| matches!(c, CloneCall::MarkDone(_))),
                 "case {case}: never marks"
             );
         }
@@ -736,7 +823,17 @@ mod x86 {
         f2: u32,
         f3: u32,
     ) -> ChainEntry {
-        ChainEntry { flags, aux, x, y, alt_a, alt_b, f1, f2, f3 }
+        ChainEntry {
+            flags,
+            aux,
+            x,
+            y,
+            alt_a,
+            alt_b,
+            f1,
+            f2,
+            f3,
+        }
     }
 
     #[test]
@@ -762,7 +859,10 @@ mod x86 {
             let shape = case % 8;
             let key = rng.edge_word();
             let script = match shape {
-                0 => CloneScript { entries: vec![], null_product: vec![] },
+                0 => CloneScript {
+                    entries: vec![],
+                    null_product: vec![],
+                },
                 1 => CloneScript {
                     entries: vec![entry_of(1, 0, 11, 12, 13, 14, 21, 22, 23)],
                     null_product: vec![false],
@@ -828,7 +928,10 @@ mod x86 {
                         }
                         entries[i].aux |= 1;
                     }
-                    CloneScript { entries, null_product }
+                    CloneScript {
+                        entries,
+                        null_product,
+                    }
                 }
             };
 
@@ -843,8 +946,20 @@ mod x86 {
             // The raw-flags mutant is caught by maker flag words, the
             // flipped-done mutant by its mark set against the image.
             for (set_done, stub_seq, prods, caught_raw, caught_done) in [
-                (true, &stub_a, &prods_a, &mut caught_raw_a, &mut caught_done_a),
-                (false, &stub_b, &prods_b, &mut caught_raw_b, &mut caught_done_b),
+                (
+                    true,
+                    &stub_a,
+                    &prods_a,
+                    &mut caught_raw_a,
+                    &mut caught_done_a,
+                ),
+                (
+                    false,
+                    &stub_b,
+                    &prods_b,
+                    &mut caught_raw_b,
+                    &mut caught_done_b,
+                ),
             ] {
                 let mut finds = VecDeque::new();
                 for e in script.entries.iter() {
@@ -856,7 +971,11 @@ mod x86 {
                 finds.push_back(None);
                 let mut products = VecDeque::new();
                 for null in script.null_product.iter() {
-                    products.push_back(if *null { None } else { Handle32::new(0x5000_0000) });
+                    products.push_back(if *null {
+                        None
+                    } else {
+                        Handle32::new(0x5000_0000)
+                    });
                 }
                 let cloner = ChainCloner::new(Handle32::new(owner));
                 // Raw-flags mutant: maker flag words must differ from
@@ -892,7 +1011,11 @@ mod x86 {
                 }
                 // Flipped-done mutant: its mark set must equal the
                 // image-derived set; it never does when products exist.
-                let mut fake = FakeClone { calls: Vec::new(), finds, products };
+                let mut fake = FakeClone {
+                    calls: Vec::new(),
+                    finds,
+                    products,
+                };
                 if set_done {
                     wrong::clone_flipped_done::<FakeClone, true>(&cloner, &mut fake, key);
                 } else {
@@ -917,9 +1040,21 @@ mod x86 {
             }
         }
         assert_eq!(compared, 192);
-        assert!(caught_raw_a > 0, "clone-A raw-flags mutant was never caught");
-        assert!(caught_done_a > 0, "clone-A flipped-done mutant was never caught");
-        assert!(caught_raw_b > 0, "clone-B raw-flags mutant was never caught");
-        assert!(caught_done_b > 0, "clone-B flipped-done mutant was never caught");
+        assert!(
+            caught_raw_a > 0,
+            "clone-A raw-flags mutant was never caught"
+        );
+        assert!(
+            caught_done_a > 0,
+            "clone-A flipped-done mutant was never caught"
+        );
+        assert!(
+            caught_raw_b > 0,
+            "clone-B raw-flags mutant was never caught"
+        );
+        assert!(
+            caught_done_b > 0,
+            "clone-B flipped-done mutant was never caught"
+        );
     }
 }

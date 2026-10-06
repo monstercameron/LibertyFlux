@@ -508,6 +508,10 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
             cb2.as_mut_ptr() as u32,
             cb1.as_mut_ptr() as u32
         );
+        // Frame window shared with the two finalize helpers: the 8 combined
+        // values, the three second-frame components and the normalized
+        // component, at the original's offsets (words 3, 7 and 11..21 are
+        // never read by either side and stay zero here).
         let mut cbuf = [
             m78b.to_bits(),
             m7cb.to_bits(),
@@ -517,6 +521,21 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
             m8cb.to_bits(),
             m90b.to_bits(),
             0,
+            m98b.to_bits(),
+            m9cb.to_bits(),
+            ma0b.to_bits(),
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            d0v.to_bits(),
         ];
         lf_checker_rt::callee_thiscall!(11, u32, cbuf.as_mut_ptr() as u32, cb3.as_mut_ptr() as u32);
         lf_checker_rt::callee_thiscall!(12, u32, r8, r8, cbuf.as_mut_ptr() as u32, a4);

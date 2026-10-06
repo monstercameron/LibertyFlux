@@ -81,8 +81,9 @@ lf_checker_rt::export!(thiscall, rw_0059E530(ecx_in: u32) -> u32 {
             unsafe { wr32(lf_checker_rt::relocated(va), v) }
         }
         /// Signed divide-by-24 exactly as the original's imul/sar/adjust
-        /// sequence computes it. Only the sign handling differs from an
-        /// unsigned division; see the mutant.
+        /// sequence computes it (truncation toward zero via the sign-bit
+        /// add-back). The sign matters only for negative diffs, where both
+        /// sides overrun and fault identically.
         #[inline(always)]
         fn div6(diff: u32) -> i32 {
             let prod = (DIV6_MAGIC as i32 as i64).wrapping_mul(diff as i32 as i64);
