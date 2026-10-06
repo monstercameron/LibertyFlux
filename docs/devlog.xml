@@ -9,6 +9,18 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Stale-flags branch and script phase-lock on a staged large function</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#a-q14-stale-flags-branch"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#a-q14-stale-flags-branch</id>
+    <published>2026-10-05T00:00:00Z</published>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <summary>5 October 2026 — lane a-Q14 (Verified: checker runs on the stock worker).</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;time datetime="2026-10-05"&gt;5 October 2026&lt;/time&gt; — lane a-Q14 (Verified: checker runs on the stock worker).&lt;/p&gt;
+&lt;p&gt;Asked: finish the deferred second counted loop of a large staged function from the prior lane's retry kit.&lt;/p&gt;
+&lt;p&gt;Found, first: the kit's three inferences about the loop were all wrong, and the disassembly was unambiguous. The path-selecting conditional jump sits several loads after a test of a table answer's low byte, with a row word loaded into the tested register in between; since none of the loads touch flags, the branch tests the table answer, not the word it appears to test (compiler scheduling across a long load chain). The short-call site's second argument is the loop counter, not a surviving flags push, and nothing feeds back into the counter. The full-function proof (1000/1000 plus NaN torture, mutant caught) confirms this reading. Lesson: re-derive retry-kit inferences from the instruction stream before building on them.&lt;/p&gt;
+&lt;p&gt;Found, second: per-trial script cycles can phase-lock so a callee never fires. A length-14 flags cycle with the stack-cycle position offset put every loop-2 trial on even trials, locking a length-2 gate script to one answer; fixing that locked a length-6 word script against the flags cycle instead. Lengths 14/5/7/3 with a quick simulation of which (path, count) combos occur in 1000 trials fixed it. Lesson: simulate cycle interactions before the first probe when a loop's trip condition depends on a cycled input.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming batch 116: bound stores, zone volumes and scenario tasks</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-116"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-116</id>
@@ -1180,27 +1192,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;The lane scratch folder holds the evidence gatherer, the attribution script, the disassembly dumps and the per-function evidence table; rerunning the scripts against the executable and the inventory reproduces every claim.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;An operand-type constant bug silently captured zero calls on the first run and was caught by inspection. A home-made vtable matcher produced false slot attributions and was discarded in favour of the inventory tags. Six functions were left unnamed where the behaviour was readable but the purpose stayed unknown.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a batch of pickup, entity and object functions</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-98"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-98</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>148 of 150 consecutive functions got names, most from direct reads plus three reusable signals: vtable slot sharing across classes, verified-rewrite docs for same-slot overrides, and RTTI class names.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;148 of 150 consecutive functions got names, most from direct reads plus three reusable signals: vtable slot sharing across classes, verified-rewrite docs for same-slot overrides, and RTTI class names.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name with confidence for each of 150 consecutive unnamed functions, working out what the group is about first, then naming each one.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds five clusters: a pickup pool with row create, delete, update and radius search; dynamic-entity lifetime, grid registration, bounds and drawing code; object physics, doors, damage, weapons and teleport; save and load dispatchers with pool helpers; and control-map loading, saving and menu rendering.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Same vtable slot in one inheritance branch is the same method, so a verified doc comment for one class override names the slot for every class. This settled the bound getters, the bound-object creator, the list relink and the gated refresh.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The class behind a vtable can be read from the type descriptor stored just before it. This gave exact names for two draw-command constructors that had no other signal.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Two grid functions form an add and remove pair for the sector grid. This disagrees with earlier names for the base-class versions of those slots, which describe flag and matrix work instead. Both readings are recorded and the conflict is flagged for joint review.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Give each function the name of the behaviour actually read, even when a sibling class carries a different earlier name, and record the disagreement plainly. The next naming lane should reuse the slot map, the verified docs and the RTTI trick before reading instructions.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Build one evidence table per batch with a script: disassemble each function from the mapped image, collect direct calls, import calls, string references, callers from a full code scan, and vtable references from a data scan. Resolve the introducing class of each virtual from the structure dumps, look up same-slot names in other classes, read the small and unclear functions fully, then name from the table.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The first megabyte of code is encrypted on disk, so several dozen callees disassemble as garbage. Two functions that only forward into that region were left unnamed. Some existing symbol labels are known-wrong placeholders and had to be worked around rather than trusted.&lt;/p&gt;</content>
   </entry>
 </feed>
