@@ -34,19 +34,71 @@ mod x86 {
         va: u32,
     }
     const INSTANCES: [Instance; 13] = [
-        Instance { init: fn_009DC960::rw_009DC960, stride: 0x24, va: 0x00E9_791C },
-        Instance { init: fn_009DC9D0::rw_009DC9D0, stride: 0x10, va: 0x00E9_769C },
-        Instance { init: fn_009DCA40::rw_009DCA40, stride: 0x38, va: 0x00E9_771C },
-        Instance { init: fn_009DCAB0::rw_009DCAB0, stride: 0x30, va: 0x00E9_759C },
-        Instance { init: fn_009DCB20::rw_009DCB20, stride: 0x38, va: 0x00E9_789C },
-        Instance { init: fn_009DCC00::rw_009DCC00, stride: 0x4C, va: 0x00E9_7A1C },
-        Instance { init: fn_009DCC70::rw_009DCC70, stride: 0x3C, va: 0x00E9_751C },
-        Instance { init: fn_009DCCE0::rw_009DCCE0, stride: 0x3C, va: 0x00E9_779C },
-        Instance { init: fn_009DCD50::rw_009DCD50, stride: 0xA8, va: 0x00E9_7A9C },
-        Instance { init: fn_009DCDC0::rw_009DCDC0, stride: 0x20, va: 0x00E9_799C },
-        Instance { init: fn_009DCE30::rw_009DCE30, stride: 0x24, va: 0x00E9_761C },
-        Instance { init: fn_009DCEA0::rw_009DCEA0, stride: 0x1C, va: 0x00E9_7B1C },
-        Instance { init: fn_009DCF10::rw_009DCF10, stride: 0x78, va: 0x00E9_781C },
+        Instance {
+            init: fn_009DC960::rw_009DC960,
+            stride: 0x24,
+            va: 0x00E9_791C,
+        },
+        Instance {
+            init: fn_009DC9D0::rw_009DC9D0,
+            stride: 0x10,
+            va: 0x00E9_769C,
+        },
+        Instance {
+            init: fn_009DCA40::rw_009DCA40,
+            stride: 0x38,
+            va: 0x00E9_771C,
+        },
+        Instance {
+            init: fn_009DCAB0::rw_009DCAB0,
+            stride: 0x30,
+            va: 0x00E9_759C,
+        },
+        Instance {
+            init: fn_009DCB20::rw_009DCB20,
+            stride: 0x38,
+            va: 0x00E9_789C,
+        },
+        Instance {
+            init: fn_009DCC00::rw_009DCC00,
+            stride: 0x4C,
+            va: 0x00E9_7A1C,
+        },
+        Instance {
+            init: fn_009DCC70::rw_009DCC70,
+            stride: 0x3C,
+            va: 0x00E9_751C,
+        },
+        Instance {
+            init: fn_009DCCE0::rw_009DCCE0,
+            stride: 0x3C,
+            va: 0x00E9_779C,
+        },
+        Instance {
+            init: fn_009DCD50::rw_009DCD50,
+            stride: 0xA8,
+            va: 0x00E9_7A9C,
+        },
+        Instance {
+            init: fn_009DCDC0::rw_009DCDC0,
+            stride: 0x20,
+            va: 0x00E9_799C,
+        },
+        Instance {
+            init: fn_009DCE30::rw_009DCE30,
+            stride: 0x24,
+            va: 0x00E9_761C,
+        },
+        Instance {
+            init: fn_009DCEA0::rw_009DCEA0,
+            stride: 0x1C,
+            va: 0x00E9_7B1C,
+        },
+        Instance {
+            init: fn_009DCF10::rw_009DCF10,
+            stride: 0x78,
+            va: 0x00E9_781C,
+        },
     ];
 
     /// Deliberately wrong size: forgets the count prefix. Must be caught
@@ -96,7 +148,9 @@ mod x86 {
         let mut caught = 0;
         // Small counts run with both outcomes; saturating counts only
         // fail (no test backs gigabytes).
-        let mut small = vec![0u32, 1, 2, 3, 4, 5, 7, 8, 9, 15, 16, 17, 31, 32, 33, 63, 64, 100];
+        let mut small = vec![
+            0u32, 1, 2, 3, 4, 5, 7, 8, 9, 15, 16, 17, 31, 32, 33, 63, 64, 100,
+        ];
         for _ in 0..12 {
             small.push(rng.below(200));
         }
@@ -212,7 +266,3 @@ mod x86 {
     vec_test!(vec_init_0x1c_7b1c_matches, 11, 0xB00C);
     vec_test!(vec_init_0x78_781c_matches, 12, 0xB00D);
 }
-
-
-
-

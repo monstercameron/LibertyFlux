@@ -4,8 +4,9 @@
 
 use lf_core::Handle32;
 use lf_world::cutscene_object::{
-    BlockTag, BoundsRect, BoundsScale, CtxTag, CutsceneObject, CutsceneWorld, DrawTag, HelperTag,
-    Matrix34, MemberTag, PlacementTag, PoseRecord, WorldBounds, registry,
+    Accumulator, AttachTag, BlockTag, BoneRow, BoneTag, BoundsRect, BoundsScale, ChainTag, CtxTag,
+    CutsceneObject, CutsceneWorld, DrawTag, EarlyTag, EntryTag, HelperTag, Matrix34, MemberTag,
+    PlacementTag, PoseRecord, UpdateEntry, UpdateScalars, WorldBounds, registry,
 };
 use std::collections::VecDeque;
 
@@ -140,6 +141,114 @@ impl CutsceneWorld for Fake {
         self.log.push("base".to_string());
         self.scalars.pop_front().expect("scalar queued")
     }
+
+    fn entry_notify(&mut self) {
+        self.log.push("entry.1".to_string());
+    }
+
+    fn entry_second(&mut self) {
+        self.log.push("entry.2".to_string());
+    }
+
+    fn guard_a(&mut self) -> u32 {
+        self.log.push("guard.a".to_string());
+        self.scalars.pop_front().expect("scalar queued")
+    }
+
+    fn guard_b(&mut self) -> u32 {
+        self.log.push("guard.b".to_string());
+        self.scalars.pop_front().expect("scalar queued")
+    }
+
+    fn member_probe(&mut self, _m: Handle32<MemberTag>) {
+        self.log.push("probe".to_string());
+    }
+
+    fn table_entry(&mut self, index: i16) -> UpdateEntry {
+        self.log.push(format!("table:{index}"));
+        UpdateEntry {
+            id: cookie(),
+            flag: 0,
+            mode: 1,
+            weight: 1.0,
+            index_words: [0, 1, 2, 3],
+        }
+    }
+
+    fn early_block(&mut self) -> Handle32<EarlyTag> {
+        self.log.push("early.block".to_string());
+        cookie()
+    }
+
+    fn early_word(&mut self, _b: Handle32<EarlyTag>) -> u32 {
+        self.log.push("early.word".to_string());
+        self.scalars.pop_front().expect("scalar queued")
+    }
+
+    fn early_tail(&mut self, word: u32) -> u32 {
+        self.log.push(format!("early.tail:{word:#x}"));
+        self.scalars.pop_front().expect("scalar queued")
+    }
+
+    fn early_call(&mut self, sx: i32, v294: u32, v310: u32) -> u32 {
+        self.log
+            .push(format!("early.call:{sx}:{v294:#x}:{v310:#x}"));
+        self.scalars.pop_front().expect("scalar queued")
+    }
+
+    fn setup_primary(
+        &mut self,
+        _e: Handle32<EntryTag>,
+        _r: Option<Handle32<AttachTag>>,
+        _f: [u32; 6],
+    ) {
+        self.log.push("setup.9".to_string());
+    }
+
+    fn setup_secondary(
+        &mut self,
+        _e: Handle32<EntryTag>,
+        _r: Option<Handle32<AttachTag>>,
+        _f: [u32; 8],
+    ) {
+        self.log.push("setup.10".to_string());
+    }
+
+    fn store_setup(&mut self, _c: Handle32<ChainTag>, value: f32) {
+        self.log.push(format!("store:{:#x}", value.to_bits()));
+    }
+
+    fn bone_row(&mut self, index: u32) -> BoneRow {
+        self.log.push(format!("bone:{index}"));
+        BoneRow {
+            set: cookie::<BoneTag>(),
+            xyz: [index as f32, index as f32 + 1.0, index as f32 + 2.0],
+        }
+    }
+
+    fn submit_j(
+        &mut self,
+        _r: Option<Handle32<AttachTag>>,
+        _f: [u32; 4],
+        _s: [u32; 4],
+        _t: [u32; 4],
+        _c: [u32; 4],
+    ) -> u32 {
+        self.log.push("submit.j".to_string());
+        self.scalars.pop_front().expect("scalar queued")
+    }
+
+    fn submit_k(
+        &mut self,
+        _r: Option<Handle32<AttachTag>>,
+        _f: [u32; 4],
+        _s: [u32; 4],
+        _t: [u32; 4],
+        _c: [u32; 4],
+    ) -> u32 {
+        self.log.push("submit.k".to_string());
+        self.scalars.pop_front().expect("scalar queued")
+    }
 }
 
 fn cookie<T>() -> Handle32<T> {
@@ -176,13 +285,16 @@ fn test_object() -> CutsceneObject {
         member_b: None,
         blocks: [None, None, None],
         done_2ac: 0x5A,
+        script_word: 0,
+        store_chain: None,
+        attached_id: None,
     }
 }
 
 #[test]
 fn registry_counts_pinned() {
     assert_eq!(registry::ROWS.len(), 21);
-    assert_eq!(registry::counts(), (15, 0, 6));
+    assert_eq!(registry::counts(), (16, 0, 5));
 }
 
 #[test]
@@ -550,6 +662,80 @@ fn teardown_clears_and_hands_off() {
         expect.push("base");
         assert_eq!(fake.log, expect, "gate {gate}");
     }
+}
+
+#[test]
+fn update_blend_path_and_early_exit() {
+    let cfg = UpdateScalars {
+        entry_seq_byte: 0,
+        sel: 0,
+        edx_alt: 0,
+        eax: 0,
+        ecx: 0,
+        win_lo: -100.0,
+        win_hi: 100.0,
+        win_scale: 1.0,
+        setup_flag: 0,
+        store_val: 3.5,
+        k0: 1.0,
+        k1: 0.5,
+        wgt_scale: 1.0,
+        e18_scale: 1.0,
+        kn: 1.0,
+        wx: 1.0,
+        j_a4: 1.0,
+        j_a5: 1.0,
+        j_a6: 1.0,
+        j_a8: 0,
+        k_a4: 1.0,
+        k_a5: 1.0,
+        k_a6: 1.0,
+        k_a8: 0,
+        qk: 0.25,
+    };
+    // Full blend: entry pair, guards, table, setup, two bone rows, submit.
+    let mut o = test_object();
+    o.attached = Some(Matrix34 {
+        vx: [1.0, 0.0, 0.0],
+        vy: [0.0, 1.0, 0.0],
+        vz: [0.0, 0.0, 1.0],
+        origin: [0.0, 0.0, 0.0],
+    });
+    o.attached_id = maybe_cookie(true);
+    o.store_chain = maybe_cookie(true);
+    let mut acc = Accumulator {
+        flag: 1,
+        vals: [1.0, 2.0, 3.0],
+    };
+    let mut fake = Fake::new();
+    fake.scalars.push_back(0); // guard A: main path
+    fake.scalars.push_back(1); // guard B: proceed
+    fake.scalars.push_back(0xABCD); // submit answer
+    assert_eq!(o.update(&mut fake, &cfg, &mut acc), 0xABCD);
+    assert_eq!(
+        fake.log,
+        vec![
+            "entry.1",
+            "entry.2",
+            "guard.a",
+            "guard.b",
+            "table:0",
+            "setup.9",
+            "setup.10",
+            "store:0x40600000",
+            "bone:0",
+            "bone:2",
+            "submit.j",
+        ]
+    );
+    assert_eq!(acc.flag, 1, "loaded accumulator untouched");
+    assert_eq!(acc.vals, [1.0, 2.0, 3.0]);
+    // Zero guard B returns the whole word with no further calls.
+    let mut fake = Fake::new();
+    fake.scalars.push_back(0);
+    fake.scalars.push_back(0x1234_5600);
+    assert_eq!(o.update(&mut fake, &cfg, &mut acc), 0x1234_5600);
+    assert_eq!(fake.log, vec!["entry.1", "entry.2", "guard.a", "guard.b"]);
 }
 
 #[test]

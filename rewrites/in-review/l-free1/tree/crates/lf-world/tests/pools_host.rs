@@ -2,18 +2,25 @@
 //! code would ask about. These run on the 64-bit host; the differential
 //! proof against the verified rewrites lives in `lf-pooldiff`.
 
-use lf_world::pools::{CtxHandle, ElemStamp, PoolVec, SlotPool, registry};
+use lf_world::pools::{
+    CtxHandle, ElemStamp, KeyedFlags, PairPool, PoolVec, SlotPool, TagPool, TagPools, WordBlocks,
+    WordTable, registry,
+};
 
 fn pool(flags: &[u8], stride: u32) -> SlotPool {
-    SlotPool::from_parts(vec![0u8; flags.len() * stride as usize], flags.to_vec(), stride)
+    SlotPool::from_parts(
+        vec![0u8; flags.len() * stride as usize],
+        flags.to_vec(),
+        stride,
+    )
 }
 
 #[test]
 fn registry_counts_are_pinned() {
-    assert_eq!(registry::count(registry::State::Proven), 26);
+    assert_eq!(registry::count(registry::State::Proven), 32);
     assert_eq!(registry::count(registry::State::Lifted), 0);
-    assert_eq!(registry::count(registry::State::Missing), 27);
-    assert_eq!(registry::ROWS.len(), 53);
+    assert_eq!(registry::count(registry::State::Missing), 26);
+    assert_eq!(registry::ROWS.len(), 58);
 }
 
 #[test]
@@ -49,7 +56,7 @@ fn create_ctx_passes_tag_16() {
             ctx
         },
     );
-    assert_eq!(got.map(|h| h.get()), Some(0x2000));
+    assert_eq!(got.map(CtxHandle::get), Some(0x2000));
     assert_eq!(seen, [(0x1000, 7, 9, 16)]);
 }
 
@@ -63,7 +70,7 @@ fn occupied_only_bit7_kills() {
 #[test]
 #[should_panic(expected = "past 3 slots")]
 fn occupied_past_end_panics() {
-    pool(&[0, 0, 0], 8).is_occupied(3);
+    let _ = pool(&[0, 0, 0], 8).is_occupied(3);
 }
 
 #[test]
@@ -92,7 +99,7 @@ fn data_word_reads_entry_plus_4() {
 #[should_panic(expected = "dead slot 1")]
 fn data_word_dead_panics() {
     let entries: Vec<u8> = (0..32u8).collect();
-    SlotPool::from_parts(entries, vec![0x00, 0x80], 16).data_word(1);
+    let _ = SlotPool::from_parts(entries, vec![0x00, 0x80], 16).data_word(1);
 }
 
 #[test]
@@ -165,7 +172,7 @@ fn slot_at_offset_empty_pool_panics() {
 #[test]
 #[should_panic(expected = "faults on the division")]
 fn slot_at_offset_stride_zero_panics() {
-    pool(&[0x00], 0).slot_at_offset(0);
+    let _ = pool(&[0x00], 0).slot_at_offset(0);
 }
 
 #[test]
@@ -228,10 +235,16 @@ fn indexed_store_terminal_successor_calls_nothing() {
     let table = vec![0x1111_1111u32; 64];
     let mut out = 0xBEEF;
     let mut calls = 0;
-    let got = pool.indexed_store(0, 0, &table, &mut || {
-        calls += 1;
-        0
-    }, &mut out);
+    let got = pool.indexed_store(
+        0,
+        0,
+        &table,
+        &mut || {
+            calls += 1;
+            0
+        },
+        &mut out,
+    );
     assert!(!got);
     assert_eq!(calls, 0);
     assert_eq!(out, 0xBEEF);
@@ -341,9 +354,7 @@ fn vec_init_failure_is_none() {
 
 #[test]
 fn vec_init_rejects_short_backing() {
-    let r = std::panic::catch_unwind(|| {
-        PoolVec::init(4, 16, stamp(), &mut |_| Some(vec![0u8; 8]))
-    });
+    let r = std::panic::catch_unwind(|| PoolVec::init(4, 16, stamp(), &mut |_| Some(vec![0u8; 8])));
     assert!(r.is_err());
 }
 
@@ -368,4 +379,250 @@ fn vec_init_narrow_stride_overruns_like_the_original() {
         PoolVec::init(8, 1, stamp(), &mut |size| Some(vec![0u8; size as usize]))
     });
     assert!(r.is_err());
+}
+
+fn pool_with_rc(flags: &[u8], stride: u32, index: usize, rc: u32) -> SlotPool {
+    let mut entries = vec![0u8; flags.len() * stride as usize];
+    let off = index * stride as usize + 4;
+    entries[off..off + 4].copy_from_slice(&rc.to_le_bytes());
+    SlotPool::from_parts(entries, flags.to_vec(), stride)
+}
+
+fn read_rc(pool: &SlotPool, index: usize) -> u32 {
+    let off = index * pool.stride() as usize + 4;
+    u32::from_le_bytes(pool.entries()[off..off + 4].try_into().unwrap())
+}
+
+#[test]
+fn release_positive_count_calls_nothing() {
+    let mut pool = pool_with_rc(&[0x00], 16, 0, 2);
+    let mut survives = 0;
+    let mut evicts = 0;
+    pool.release(
+        0,
+        0xAA,
+        &mut |_, _| {
+            survives += 1;
+            true
+        },
+        &mut |_| evicts += 1,
+    );
+    assert_eq!(read_rc(&pool, 0), 1);
+    assert_eq!((survives, evicts), (0, 0));
+}
+
+#[test]
+fn release_zero_count_surviving_skips_evict() {
+    let mut pool = pool_with_rc(&[0x00], 16, 0, 1);
+    let mut seen = Vec::new();
+    let mut evicts = 0;
+    pool.release(
+        0,
+        0xBB,
+        &mut |i, a| {
+            seen.push((i, a));
+            true
+        },
+        &mut |_| evicts += 1,
+    );
+    assert_eq!(read_rc(&pool, 0), 0);
+    assert_eq!(seen, [(0, 0xBB)]);
+    assert_eq!(evicts, 0);
+}
+
+#[test]
+fn release_zero_count_doomed_evicts() {
+    let mut pool = pool_with_rc(&[0x00], 16, 0, 1);
+    let mut evicts = Vec::new();
+    pool.release(0, 0, &mut |_, _| false, &mut |i| evicts.push(i));
+    assert_eq!(evicts, [0]);
+}
+
+#[test]
+fn release_wrapped_count_consults_survives() {
+    // 0 - 1 wraps to MAX, which is negative signed: the survives check runs.
+    let mut pool = pool_with_rc(&[0x00], 16, 0, 0);
+    let mut survives = 0;
+    pool.release(
+        0,
+        0,
+        &mut |_, _| {
+            survives += 1;
+            true
+        },
+        &mut |_| {},
+    );
+    assert_eq!(read_rc(&pool, 0), u32::MAX);
+    assert_eq!(survives, 1);
+}
+
+fn tag_pools() -> TagPools {
+    let empty = || TagPool::from_rows(vec![], vec![], vec![]);
+    TagPools {
+        pools: [
+            TagPool::from_rows(
+                vec![7, 7, 9],
+                vec![0xAA00_0001, 0xBB00_0002, 3],
+                vec![10, 20, 30],
+            ),
+            empty(),
+            TagPool::from_rows(vec![1], vec![0xFF12_3456], vec![0xFF00_0000]),
+            empty(),
+            empty(),
+            empty(),
+        ],
+    }
+}
+
+#[test]
+fn find_first_hit_masks_top_byte() {
+    let pools = tag_pools();
+    let (mut o0, mut o1) = (0xA11CE, 0xB0B);
+    assert_eq!(pools.find(0, 7, 0, &mut o0, &mut o1), Some(0));
+    assert_eq!((o0, o1), (0x0000_0001, 10));
+}
+
+#[test]
+fn find_start_skips_earlier_rows() {
+    let pools = tag_pools();
+    let (mut o0, mut o1) = (0, 0);
+    assert_eq!(pools.find(0, 7, 1, &mut o0, &mut o1), Some(1));
+    assert_eq!((o0, o1), (0x0000_0002, 20));
+    assert_eq!(pools.find(0, 7, 2, &mut o0, &mut o1), None);
+}
+
+#[test]
+fn find_miss_leaves_outputs() {
+    let pools = tag_pools();
+    let (mut o0, mut o1) = (0xA11CE, 0xB0B);
+    assert_eq!(pools.find(0, 8, 0, &mut o0, &mut o1), None);
+    assert_eq!((o0, o1), (0xA11CE, 0xB0B));
+    assert_eq!(pools.find(1, 7, 0, &mut o0, &mut o1), None);
+    assert_eq!(pools.find(6, 7, 0, &mut o0, &mut o1), None);
+    assert_eq!(pools.find(u32::MAX, 7, 0, &mut o0, &mut o1), None);
+}
+
+#[test]
+fn find_second_payload_unmasked() {
+    let pools = tag_pools();
+    let (mut o0, mut o1) = (0, 0);
+    assert_eq!(pools.find(2, 1, 0, &mut o0, &mut o1), Some(0));
+    assert_eq!((o0, o1), (0x0012_3456, 0xFF00_0000));
+}
+
+#[test]
+fn find_negative_start_panics() {
+    let r = std::panic::catch_unwind(|| {
+        let pools = tag_pools();
+        let (mut o0, mut o1) = (0, 0);
+        pools.find(0, 7, 0x8000_0000, &mut o0, &mut o1)
+    });
+    assert!(r.is_err());
+}
+
+#[test]
+fn search_first_match_in_slice() {
+    let table = WordTable {
+        words: vec![5, 1, 5, 9, 5],
+    };
+    assert_eq!(table.search(5, 0, 5), Some(0));
+    assert_eq!(table.search(5, 1, 4), Some(2));
+    assert_eq!(table.search(5, 3, 2), Some(4));
+    assert_eq!(table.search(5, 4, 1), Some(4));
+    assert_eq!(table.search(7, 0, 5), None);
+}
+
+#[test]
+fn search_signed_bounds() {
+    let table = WordTable {
+        words: vec![1, 2, 3],
+    };
+    assert_eq!(table.search(1, -1, 3), None);
+    assert_eq!(table.search(1, 0, -1), None);
+    assert_eq!(table.search(1, 3, 1), None);
+    assert_eq!(table.search(1, 0, 0), None);
+    assert_eq!(table.search(1, 2, 2), None); // end 4 past the limit
+    assert_eq!(table.search(1, 0, 3), Some(0));
+    assert_eq!(table.search(1, i32::MAX, 1), None);
+    assert_eq!(table.search(1, 1, i32::MAX), None); // wrapped end
+}
+
+#[test]
+fn search_empty_table() {
+    let table = WordTable { words: vec![] };
+    assert_eq!(table.search(0, 0, 0), None);
+    assert_eq!(table.search(0, 0, 1), None);
+}
+
+#[test]
+fn pair_init_answers_second_and_raises_ready() {
+    let mut order: Vec<String> = Vec::new();
+    let (pool, answer) = PairPool::init(
+        "a".to_string(),
+        "b".to_string(),
+        &mut |elem: &mut String| {
+            order.push(elem.clone());
+            if elem.as_str() == "a" { 11 } else { 22 }
+        },
+    );
+    assert_eq!(answer, 22);
+    assert_eq!(order, ["a", "b"]);
+    assert!(pool.ready);
+    assert_eq!((pool.first.as_str(), pool.second.as_str()), ("a", "b"));
+}
+
+#[test]
+fn contains_present_and_absent() {
+    let blocks = WordBlocks {
+        blocks: [
+            [1, 2, 3, 4],
+            [5, 6, 7, 8],
+            [9, 10, 11, 12],
+            [13, 14, 15, 16],
+        ],
+    };
+    assert!(blocks.contains(1));
+    assert!(blocks.contains(16));
+    assert!(!blocks.contains(0));
+    assert!(!blocks.contains(17));
+    let zeros = WordBlocks {
+        blocks: [[0; 4]; 4],
+    };
+    assert!(zeros.contains(0));
+    assert!(!zeros.contains(1));
+}
+
+#[test]
+fn clear_matches_only_hits() {
+    let mut kf = KeyedFlags {
+        keys: [7; 16],
+        flags: [0xFF; 16],
+    };
+    kf.keys[3] = 8;
+    kf.clear_matches(7);
+    assert_eq!(kf.flags[3], 0xFF);
+    for (i, f) in kf.flags.iter().enumerate() {
+        if i != 3 {
+            assert_eq!(*f, 0, "entry {i}");
+        }
+    }
+    kf.clear_matches(0xDEAD);
+    assert_eq!(kf.flags[3], 0xFF);
+}
+
+#[test]
+fn release_dead_is_quiet() {
+    let mut pool = pool_with_rc(&[0x80], 16, 0, 1);
+    let (mut survives, mut evicts) = (0, 0);
+    pool.release(
+        0,
+        0,
+        &mut |_, _| {
+            survives += 1;
+            false
+        },
+        &mut |_| evicts += 1,
+    );
+    assert_eq!(read_rc(&pool, 0), 1);
+    assert_eq!((survives, evicts), (0, 0));
 }

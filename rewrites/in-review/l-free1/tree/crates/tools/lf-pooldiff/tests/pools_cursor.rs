@@ -72,10 +72,16 @@ mod x86 {
             let mut patterns: Vec<Vec<u8>> = vec![
                 vec![0x00; n],
                 vec![0x80; n],
-                (0..n).map(|i| if i % 2 == 0 { 0x00 } else { 0x80 }).collect(),
-                (0..n).map(|i| if i % 2 == 0 { 0x80 } else { 0x00 }).collect(),
+                (0..n)
+                    .map(|i| if i % 2 == 0 { 0x00 } else { 0x80 })
+                    .collect(),
+                (0..n)
+                    .map(|i| if i % 2 == 0 { 0x80 } else { 0x00 })
+                    .collect(),
                 vec![0x40; n],
-                (0..n).map(|i| if i % 3 == 0 { 0xC0 } else { 0x01 }).collect(),
+                (0..n)
+                    .map(|i| if i % 3 == 0 { 0xC0 } else { 0x01 })
+                    .collect(),
             ];
             for single in 0..n {
                 let mut p = vec![0x80; n];
@@ -113,9 +119,8 @@ mod x86 {
                     assert_eq!(c_rw, c_lift, "n={n} cursor={c0} flags={flags:?}");
                     match lift {
                         Some(idx) => {
-                            let expect = base.wrapping_add(
-                                (stride as i32).wrapping_mul(idx as i32) as u32,
-                            );
+                            let expect =
+                                base.wrapping_add((stride as i32).wrapping_mul(idx as i32) as u32);
                             assert_ne!(
                                 expect, 0,
                                 "null-slot guard would fire: case outside the proof domain"

@@ -144,6 +144,7 @@ pub const ROWS: &[Row] = &[
             "the submit callees' constant one word is pinned on the rewrite side, not modelled",
             "the script word's upper half is never read: unmodelled",
             "the counter maze's discarded counter re-reads are not modelled",
+            "the chain pointer the original loads eagerly is read only when stored: unobservable",
             "bone indices stay in the array; the early path needs the second member linked; the blend paths need the record attached and the setup path the chain set",
         ],
     },

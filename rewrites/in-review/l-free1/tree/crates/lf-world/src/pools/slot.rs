@@ -14,9 +14,9 @@ use lf_core::boundary::Handle32;
 pub const DEAD_BIT: u8 = 0x80;
 
 /// Byte offset of the data word inside an entry.
-const DATA_OFF: u64 = 0x04;
+const DATA_OFF: usize = 0x04;
 /// Byte offset of the successor index inside an entry.
-const NEXT_OFF: u64 = 0x0c;
+const NEXT_OFF: usize = 0x0c;
 /// Successor value meaning "no next entry".
 const NO_NEXT: u32 = 0xffff_ffff;
 /// Size in bytes of a pool context block.
@@ -197,15 +197,18 @@ impl SlotPool {
     ///
     /// When the access would leave the entry store (the original reads or
     /// writes the wrapped address regardless).
-    fn slot_offset(&self, index: u32, need: u64) -> usize {
+    fn slot_offset(&self, index: u32, need: usize) -> usize {
         let off = u64::from(index) * u64::from(self.stride);
-        let len = self.entries.len() as u64;
-        if off + need > len {
-            panic!(
-                "slot {index} (offset {off}, {need} bytes) past the {len}-byte entry store"
-            );
-        }
-        off as usize
+        let len = self.entries.len();
+        let fits = off
+            .checked_add(need as u64)
+            .and_then(|end| usize::try_from(end).ok())
+            .is_some_and(|end| end <= len);
+        assert!(
+            fits,
+            "slot {index} (offset {off}, {need} bytes) past the {len}-byte entry store"
+        );
+        usize::try_from(off).expect("offset fits: checked above")
     }
 
     /// Allocates and installs a pool context: the creation routine.
@@ -249,9 +252,10 @@ impl SlotPool {
     /// would leave the entry store.
     #[must_use]
     pub fn data_word(&self, index: u32) -> u32 {
-        if self.flag(index) & DEAD_BIT != 0 {
-            panic!("data word of dead slot {index}: the original faults through null");
-        }
+        assert!(
+            self.flag(index) & DEAD_BIT == 0,
+            "data word of dead slot {index}: the original faults through null"
+        );
         let off = self.slot_offset(index, DATA_OFF + 4);
         u32::from_le_bytes(self.entries[off + 4..off + 8].try_into().unwrap())
     }
@@ -267,9 +271,10 @@ impl SlotPool {
     /// when `index` is past the flag store, or when the head word would
     /// leave the entry store.
     pub fn assign(&mut self, index: u32, value: u32, notify: &mut impl Notify) -> bool {
-        if self.flag(index) & DEAD_BIT != 0 {
-            panic!("assign to dead slot {index}: the original faults through null");
-        }
+        assert!(
+            self.flag(index) & DEAD_BIT == 0,
+            "assign to dead slot {index}: the original faults through null"
+        );
         let off = self.slot_offset(index, 4);
         self.entries[off..off + 4].copy_from_slice(&value.to_le_bytes());
         if value != 0 {
@@ -301,26 +306,31 @@ impl SlotPool {
         if offset > end {
             return None;
         }
-        let stride_i = self.stride as i32;
-        let diff = offset as i32;
-        if stride_i == 0 || (diff == i32::MIN && stride_i == -1) {
-            panic!("slot offset {offset:#x} with stride {}: the original faults on the division", self.stride);
-        }
+        let stride_i = self.stride.cast_signed();
+        let diff = offset.cast_signed();
+        assert!(
+            !(stride_i == 0 || (diff == i32::MIN && stride_i == -1)),
+            "slot offset {offset:#x} with stride {}: the original faults on the division",
+            self.stride
+        );
         let index = diff / stride_i;
         let rem = diff % stride_i;
         if rem != 0 {
             return None;
         }
-        if index < 0 {
-            panic!("slot offset {offset:#x} resolves below the flag store");
-        }
-        let flag = *self.flags.get(index as usize).unwrap_or_else(|| {
-            panic!("slot offset {offset:#x} resolves past the flag store")
-        });
+        assert!(
+            index >= 0,
+            "slot offset {offset:#x} resolves below the flag store"
+        );
+        let idx = usize::try_from(index).expect("index checked non-negative above");
+        let flag = *self
+            .flags
+            .get(idx)
+            .unwrap_or_else(|| panic!("slot offset {offset:#x} resolves past the flag store"));
         if flag & DEAD_BIT != 0 {
             None
         } else {
-            Some(index as usize)
+            Some(idx)
         }
     }
 
@@ -349,7 +359,8 @@ impl SlotPool {
             return None;
         }
         loop {
-            let flag = *self.flags.get(idx as usize).unwrap_or_else(|| {
+            let at = usize::try_from(idx).expect("cursor checked non-negative above");
+            let flag = *self.flags.get(at).unwrap_or_else(|| {
                 panic!(
                     "cursor {idx} past {} slots: the original reads past the flag store",
                     self.flags.len()
@@ -357,7 +368,7 @@ impl SlotPool {
             });
             if flag & DEAD_BIT == 0 {
                 *cursor = idx;
-                return Some(idx as usize);
+                return Some(at);
             }
             idx = idx.wrapping_sub(1);
             if idx < 0 {
@@ -395,7 +406,7 @@ impl SlotPool {
         let rc = u32::from_le_bytes(self.entries[off + 4..off + 8].try_into().unwrap());
         let rc = rc.wrapping_sub(1);
         self.entries[off + 4..off + 8].copy_from_slice(&rc.to_le_bytes());
-        if (rc as i32) > 0 {
+        if rc.cast_signed() > 0 {
             return;
         }
         if survives.survives(index, aux) {
@@ -428,9 +439,10 @@ impl SlotPool {
         refresh: &mut impl Refresh,
         out: &mut u32,
     ) -> bool {
-        if self.flag(index) & DEAD_BIT != 0 {
-            panic!("indexed store of dead slot {index}: the original faults through null");
-        }
+        assert!(
+            self.flag(index) & DEAD_BIT == 0,
+            "indexed store of dead slot {index}: the original faults through null"
+        );
         let off = self.slot_offset(index, NEXT_OFF + 4);
         let next = u32::from_le_bytes(self.entries[off + 12..off + 16].try_into().unwrap());
         if next == NO_NEXT {
@@ -442,7 +454,10 @@ impl SlotPool {
             .wrapping_add(row)
             .wrapping_add(TABLE_BASE_WORDS);
         let cell = *table.get(cell_index as usize).unwrap_or_else(|| {
-            panic!("table cell {cell_index} past {} words: the original reads past the table", table.len())
+            panic!(
+                "table cell {cell_index} past {} words: the original reads past the table",
+                table.len()
+            )
         });
         *out = cell.wrapping_add(next);
         true

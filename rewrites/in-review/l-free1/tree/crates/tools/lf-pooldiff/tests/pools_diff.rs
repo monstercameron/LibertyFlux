@@ -22,7 +22,7 @@ mod x86 {
 
     #[path = "../support/mod.rs"]
     mod support;
-    use support::{CTX_VA, SCALE_VA, Rng, addr, lock, put_u32};
+    use support::{AUX_VA, CTX_VA, MGR_VA, Rng, SCALE_VA, addr, lock, put_u32};
 
     /// Dead-slot bit, as the rewrites test it.
     const DEAD: u8 = 0x80;
@@ -83,6 +83,11 @@ mod x86 {
 
         /// Allocates 32 bytes instead of 28.
         pub const CREATE_SIZE: u32 = 0x20;
+
+        /// Decides survival on the whole word instead of the low byte.
+        pub fn survives_full_word(answer: u32) -> bool {
+            answer != 0
+        }
     }
 
     // Recording stubs for the rewrite side. Each test plants the stubs
@@ -107,6 +112,19 @@ mod x86 {
         INIT_SCRIPT.lock().unwrap().pop_front().unwrap_or(0)
     }
 
+    static SURVIVES_LOG: Mutex<Vec<(u32, u32)>> = Mutex::new(Vec::new());
+    static SURVIVES_SCRIPT: Mutex<VecDeque<u32>> = Mutex::new(VecDeque::new());
+    extern "cdecl" fn survives_stub(index: u32, aux: u32) -> u32 {
+        SURVIVES_LOG.lock().unwrap().push((index, aux));
+        SURVIVES_SCRIPT.lock().unwrap().pop_front().unwrap_or(0)
+    }
+
+    static EVICT_LOG: Mutex<Vec<u32>> = Mutex::new(Vec::new());
+    extern "cdecl" fn evict_stub(index: u32) -> u32 {
+        EVICT_LOG.lock().unwrap().push(index);
+        0
+    }
+
     static REFRESH_TABLE: Mutex<u32> = Mutex::new(0);
     static REFRESH_LOG: Mutex<Vec<u32>> = Mutex::new(Vec::new());
     static REFRESH_SCRIPT: Mutex<VecDeque<u32>> = Mutex::new(VecDeque::new());
@@ -114,7 +132,10 @@ mod x86 {
     extern "thiscall" fn refresh_stub(ctx: u32) -> u32 {
         REFRESH_LOG.lock().unwrap().push(ctx);
         let row = REFRESH_SCRIPT.lock().unwrap().pop_front().unwrap_or(0);
-        REFRESH_TABLE.lock().unwrap().wrapping_add(row.wrapping_mul(4))
+        REFRESH_TABLE
+            .lock()
+            .unwrap()
+            .wrapping_add(row.wrapping_mul(4))
     }
 
     fn clear_logs() {
@@ -125,15 +146,23 @@ mod x86 {
         INIT_SCRIPT.lock().unwrap().clear();
         REFRESH_LOG.lock().unwrap().clear();
         REFRESH_SCRIPT.lock().unwrap().clear();
+        SURVIVES_LOG.lock().unwrap().clear();
+        SURVIVES_SCRIPT.lock().unwrap().clear();
+        EVICT_LOG.lock().unwrap().clear();
     }
 
-    /// Plants the context global over fresh test memory and builds the
+    /// Plants the given slot global over test memory and builds the
     /// matching lift. Returns the context address and the lift pool.
     /// The rewrite-side boxes are leaked so their addresses stay valid;
     /// each case leaks at most a few hundred bytes.
-    fn plant_pool(n: usize, stride: u32, flags: &[u8], fill: &mut Rng) -> (u32, SlotPool) {
-        let mut entries = vec![0u8; n * stride as usize];
-        fill.bytes(&mut entries);
+    fn plant_pool_entries(
+        n: usize,
+        stride: u32,
+        flags: &[u8],
+        entries: Vec<u8>,
+        slot_va: u32,
+    ) -> (u32, SlotPool) {
+        assert_eq!(entries.len(), n * stride as usize);
         let pool = SlotPool::from_parts(entries.clone(), flags.to_vec(), stride);
         let entries_box = entries.into_boxed_slice();
         let flags_box = flags.to_vec().into_boxed_slice();
@@ -143,11 +172,24 @@ mod x86 {
         put_u32(&mut ctx[..], 0x08, n as u32);
         put_u32(&mut ctx[..], 0x0c, stride);
         let ctx_addr = addr(&ctx[0]);
-        unsafe { rt::global::<u32>(CTX_VA).write(ctx_addr) };
+        unsafe { rt::global::<u32>(slot_va).write(ctx_addr) };
         std::mem::forget(entries_box);
         std::mem::forget(flags_box);
         std::mem::forget(ctx);
         (ctx_addr, pool)
+    }
+
+    /// Plants over fresh random entries (see above).
+    fn plant_pool(
+        n: usize,
+        stride: u32,
+        flags: &[u8],
+        fill: &mut Rng,
+        slot_va: u32,
+    ) -> (u32, SlotPool) {
+        let mut entries = vec![0u8; n * stride as usize];
+        fill.bytes(&mut entries);
+        plant_pool_entries(n, stride, flags, entries, slot_va)
     }
 
     #[test]
@@ -173,11 +215,10 @@ mod x86 {
                         let other = Box::leak(Box::new([0u8; 28]));
                         addr(&other[0])
                     };
-                    ALLOC_SCRIPT.lock().unwrap().push_back(if succeeds {
-                        block_addr
-                    } else {
-                        0
-                    });
+                    ALLOC_SCRIPT
+                        .lock()
+                        .unwrap()
+                        .push_back(if succeeds { block_addr } else { 0 });
                     // Script the initialiser answer only when it runs:
                     // a failed allocation leaves the queue untouched.
                     if succeeds {
@@ -209,7 +250,10 @@ mod x86 {
                     let published = unsafe { rt::global::<u32>(CTX_VA).read() };
                     assert_eq!(got, published, "create must publish its answer");
                     assert_eq!(got, lift.map_or(0, |h| h.get()), "a0={a0:#x} a1={a1:#x}");
-                    assert_eq!(&ALLOC_SIZES.lock().unwrap()[before_alloc..], &lift_alloc_sizes);
+                    assert_eq!(
+                        &ALLOC_SIZES.lock().unwrap()[before_alloc..],
+                        &lift_alloc_sizes
+                    );
                     assert_eq!(lift_alloc_sizes, [28u32]);
                     assert_eq!(&INIT_LOG.lock().unwrap()[before_init..], &lift_init_args);
                     if succeeds {
@@ -242,7 +286,9 @@ mod x86 {
                 vec![0x80; n],
                 vec![0x40; n],
                 vec![0xFF; n],
-                (0..n).map(|i| if i % 2 == 0 { 0x01 } else { 0xFE }).collect(),
+                (0..n)
+                    .map(|i| if i % 2 == 0 { 0x01 } else { 0xFE })
+                    .collect(),
             ];
             for _ in 0..3 {
                 let mut p = vec![0u8; n];
@@ -250,7 +296,7 @@ mod x86 {
                 patterns.push(p);
             }
             for flags in &patterns {
-                let (_, pool) = plant_pool(n, stride, flags, &mut rng);
+                let (_, pool) = plant_pool(n, stride, flags, &mut rng, CTX_VA);
                 for index in 0..n as u32 {
                     let got = unsafe { fn_008E0310::rw_008e0310(index) };
                     let lift = pool.is_occupied(index);
@@ -263,7 +309,10 @@ mod x86 {
             }
         }
         assert!(cases > 200, "too few comparisons ({cases})");
-        assert!(caught > 0, "wrong occupied bit never caught ({cases} cases)");
+        assert!(
+            caught > 0,
+            "wrong occupied bit never caught ({cases} cases)"
+        );
     }
 
     #[test]
@@ -276,7 +325,9 @@ mod x86 {
         for &(n, stride) in &[(1usize, 8u32), (2, 4), (3, 12), (8, 16), (9, 8), (16, 32)] {
             let mut patterns: Vec<Vec<u8>> = vec![
                 vec![0x00; n],
-                (0..n).map(|i| if i % 2 == 0 { 0x00 } else { 0x80 }).collect(),
+                (0..n)
+                    .map(|i| if i % 2 == 0 { 0x00 } else { 0x80 })
+                    .collect(),
                 vec![0x40; n],
             ];
             for _ in 0..6 {
@@ -285,7 +336,7 @@ mod x86 {
                 patterns.push(p);
             }
             for flags in &patterns {
-                let (_, pool) = plant_pool(n, stride, flags, &mut rng);
+                let (_, pool) = plant_pool(n, stride, flags, &mut rng, CTX_VA);
                 for index in 0..n as u32 {
                     let off = index as usize * stride as usize;
                     if off + 8 > pool.entries().len() {
@@ -341,13 +392,28 @@ mod x86 {
         let mut rng = Rng(0xA551);
         let mut cases = 0;
         let mut caught = 0;
-        let values = [0u32, 1, 2, 0xFF, 0x100, 0x7FFF_FFFF, 0x8000_0000, 0xFFFF_FFFF];
+        let values = [
+            0u32,
+            1,
+            2,
+            0xFF,
+            0x100,
+            0x7FFF_FFFF,
+            0x8000_0000,
+            0xFFFF_FFFF,
+        ];
         for &(n, stride) in &[(1usize, 4u32), (3, 8), (8, 16), (9, 12)] {
             for pattern in 0..4 {
                 let flags: Vec<u8> = (0..n)
                     .map(|i| match pattern {
                         0 => 0x00,
-                        1 => if i % 2 == 0 { 0x00 } else { 0x80 },
+                        1 => {
+                            if i % 2 == 0 {
+                                0x00
+                            } else {
+                                0x80
+                            }
+                        }
                         2 => 0x40,
                         _ => rng.u32() as u8,
                     })
@@ -357,7 +423,7 @@ mod x86 {
                         continue; // dead: both sides fault (host pins the lift panic).
                     }
                     for &value in &values {
-                        let (_, mut pool) = plant_pool(n, stride, &flags, &mut rng);
+                        let (_, mut pool) = plant_pool(n, stride, &flags, &mut rng, CTX_VA);
                         // The rewrite works its own boxes; find them back
                         // through the context the planter published.
                         let ctx_addr = unsafe { rt::global::<u32>(CTX_VA).read() };
@@ -375,7 +441,7 @@ mod x86 {
                         assert_eq!(rw_head, value);
                         assert_eq!(&pool.entries()[off..off + 4], &value.to_le_bytes());
                         // Wrong notifier direction.
-                        let (_, mut wpool) = plant_pool(n, stride, &flags, &mut rng);
+                        let (_, mut wpool) = plant_pool(n, stride, &flags, &mut rng, CTX_VA);
                         let mut wlog = Vec::new();
                         wrong::assign_notify_zero(&mut wpool, index, value, &mut wlog);
                         if wlog != rw_log {
@@ -387,7 +453,10 @@ mod x86 {
             }
         }
         assert!(cases > 200, "too few comparisons ({cases})");
-        assert!(caught > 0, "wrong notify direction never caught ({cases} cases)");
+        assert!(
+            caught > 0,
+            "wrong notify direction never caught ({cases} cases)"
+        );
     }
 
     /// Reads one word from test memory the rewrite wrote.
@@ -418,7 +487,9 @@ mod x86 {
                 vec![0x00; n],
                 vec![0x80; n],
                 vec![0x40; n],
-                (0..n).map(|i| if i % 2 == 0 { 0x00 } else { 0x80 }).collect(),
+                (0..n)
+                    .map(|i| if i % 2 == 0 { 0x00 } else { 0x80 })
+                    .collect(),
             ];
             for _ in 0..2 {
                 let mut p = vec![0u8; n];
@@ -472,11 +543,9 @@ mod x86 {
                             ((i as u32) & 0xFFFF_FF00) | 1,
                             "index residue must match"
                         ),
-                        None if offset > end => assert_eq!(
-                            got,
-                            val & 0xFFFF_FF00,
-                            "range residue must match"
-                        ),
+                        None if offset > end => {
+                            assert_eq!(got, val & 0xFFFF_FF00, "range residue must match")
+                        }
                         None => assert_eq!(
                             got,
                             (offset / stride) & 0xFFFF_FF00,
@@ -516,7 +585,7 @@ mod x86 {
                 for next in [0xFFFF_FFFFu32, 0, 1, 7, 0x7FFF_FFFF, 0xFFFF_FFFE, rng.u32()] {
                     for row in [0u32, 1, 7, 22, 30, 40] {
                         let flags = vec![0x00; n];
-                        let (ctx_addr, pool) = plant_pool(n, stride, &flags, &mut rng);
+                        let (ctx_addr, pool) = plant_pool(n, stride, &flags, &mut rng, CTX_VA);
                         let base = unsafe { get_u32_at(ctx_addr) };
                         // Successor at entry + 0x0c of slot 1.
                         let slot_off = stride as usize;
@@ -525,15 +594,12 @@ mod x86 {
                                 .write_unaligned(next);
                         }
                         let mut entries = pool.entries().to_vec();
-                        entries[slot_off + 12..slot_off + 16]
-                            .copy_from_slice(&next.to_le_bytes());
+                        entries[slot_off + 12..slot_off + 16].copy_from_slice(&next.to_le_bytes());
                         let pool = SlotPool::from_parts(entries, flags, stride);
                         // No-wrap check: the proof's address arithmetic
                         // must stay below 4G (see the registry).
                         let answer = table_addr.wrapping_add(row.wrapping_mul(4));
-                        let total = scale as u64 * 100
-                            + answer as u64
-                            + 0x58;
+                        let total = scale as u64 * 100 + answer as u64 + 0x58;
                         assert!(total < 0x1_0000_0000, "test layout wrapped");
                         // Script the row only when the refresh runs: a
                         // terminal successor leaves the queue untouched.
@@ -545,16 +611,24 @@ mod x86 {
                         // to the borrow checker: pass and read it raw so the
                         // compiler cannot assume the word is unchanged.
                         let mut out_rw = 0xA11CE_u32;
-                        let out_addr =
-                            std::ptr::addr_of_mut!(out_rw) as usize as u32;
+                        let out_addr = std::ptr::addr_of_mut!(out_rw) as usize as u32;
                         let got = unsafe { fn_008E0880::rw_008e0880(1, out_addr) };
                         out_rw = unsafe { get_u32_at(out_addr) };
                         let rw_calls = REFRESH_LOG.lock().unwrap().len() - before;
                         let mut lift_rows = vec![row];
                         let mut out_lift = 0xA11CE_u32;
-                        let lift =
-                            pool.indexed_store(1, scale, &table, &mut || lift_rows.remove(0), &mut out_lift);
-                        assert_eq!(got, u32::from(lift), "scale={scale} next={next:#x} row={row}");
+                        let lift = pool.indexed_store(
+                            1,
+                            scale,
+                            &table,
+                            &mut || lift_rows.remove(0),
+                            &mut out_lift,
+                        );
+                        assert_eq!(
+                            got,
+                            u32::from(lift),
+                            "scale={scale} next={next:#x} row={row}"
+                        );
                         assert_eq!(out_rw, out_lift, "out bytes must match");
                         if next == 0xFFFF_FFFF {
                             assert_eq!(rw_calls, 0, "no refresh past the end");
@@ -562,12 +636,11 @@ mod x86 {
                         } else {
                             assert_eq!(rw_calls, 1, "exactly one refresh");
                             assert_eq!(REFRESH_LOG.lock().unwrap()[before], ctx_addr);
-                            let expect_cell = table
-                                [(scale * 25 + row + 0x16) as usize]
-                                .wrapping_add(next);
+                            let expect_cell =
+                                table[(scale * 25 + row + 0x16) as usize].wrapping_add(next);
                             assert_eq!(out_lift, expect_cell);
-                            let wrong_cell = table[wrong::cell_no_base(scale, row) as usize]
-                                .wrapping_add(next);
+                            let wrong_cell =
+                                table[wrong::cell_no_base(scale, row) as usize].wrapping_add(next);
                             if wrong_cell != out_rw {
                                 caught += 1;
                             }
@@ -581,7 +654,111 @@ mod x86 {
         assert!(cases > 200, "too few comparisons ({cases})");
         assert!(caught > 0, "wrong table base never caught ({cases} cases)");
     }
+
+    #[test]
+    fn release_matches() {
+        let _guard = lock();
+        clear_logs();
+        rt::set_callee(1, survives_stub as usize as u32);
+        rt::set_callee(2, evict_stub as usize as u32);
+        let mut rng = Rng(0x9E1E);
+        let mut cases = 0;
+        let mut caught = 0;
+        let rcs = [
+            0u32,
+            1,
+            2,
+            3,
+            0x7FFF_FFFF,
+            0x8000_0000,
+            0x8000_0001,
+            0xFFFF_FFFE,
+            0xFFFF_FFFF,
+        ];
+        let auxes = [0u32, 1, 0x1234_5678, 0xFFFF_FFFF];
+        // Survival answers span full-word/low-byte agreement (0, 1, MAX)
+        // and disagreement (0x100, 0xFF00: nonzero with a zero low byte).
+        let survivals = [0u32, 1, 2, 0xFF, 0x100, 0x101, 0x1FF, 0xFF00, 0xFFFF_FFFF];
+        for &(n, stride) in &[(2usize, 16u32), (4, 8), (5, 20)] {
+            for pattern in 0..3 {
+                let flags: Vec<u8> = (0..n)
+                    .map(|i| match pattern {
+                        0 => 0x00,
+                        1 => {
+                            if i % 2 == 0 {
+                                0x00
+                            } else {
+                                0x80
+                            }
+                        }
+                        _ => rng.u32() as u8,
+                    })
+                    .collect();
+                for index in 0..n as u32 {
+                    for &rc in &rcs {
+                        for &aux in &auxes {
+                            for &surv in &survivals {
+                                let mut entries = vec![0u8; n * stride as usize];
+                                rng.bytes(&mut entries);
+                                let off = index as usize * stride as usize;
+                                entries[off + 4..off + 8].copy_from_slice(&rc.to_le_bytes());
+                                let (mgr_addr, mut pool) =
+                                    plant_pool_entries(n, stride, &flags, entries, MGR_VA);
+                                unsafe { rt::global::<u32>(AUX_VA).write(aux) };
+                                let base = unsafe { get_u32_at(mgr_addr) };
+                                // The survives answer is scripted only when
+                                // the count falls to zero or below (signed).
+                                let falls = (rc.wrapping_sub(1) as i32) <= 0;
+                                let live = flags[index as usize] & DEAD == 0;
+                                if live && falls {
+                                    SURVIVES_SCRIPT.lock().unwrap().push_back(surv);
+                                }
+                                let s_before = SURVIVES_LOG.lock().unwrap().len();
+                                let e_before = EVICT_LOG.lock().unwrap().len();
+                                let got = unsafe { fn_00BE7A70::rw_00be7a70(index) };
+                                let rw_survives = SURVIVES_LOG.lock().unwrap()[s_before..].to_vec();
+                                let rw_evicts = EVICT_LOG.lock().unwrap()[e_before..].to_vec();
+                                assert_eq!(got, 0, "release answers nothing");
+                                let rw_rc =
+                                    unsafe { get_u32_at(base.wrapping_add(off as u32 + 4)) };
+                                let mut lift_survives = Vec::new();
+                                let mut lift_evicts = Vec::new();
+                                pool.release(
+                                    index,
+                                    aux,
+                                    &mut |i, a| {
+                                        lift_survives.push((i, a));
+                                        (surv & 0xFF) != 0
+                                    },
+                                    &mut |i| lift_evicts.push(i),
+                                );
+                                assert_eq!(rw_survives, lift_survives, "survives log");
+                                assert_eq!(rw_evicts, lift_evicts, "evict log");
+                                let lift_rc = u32::from_le_bytes(
+                                    pool.entries()[off + 4..off + 8].try_into().unwrap(),
+                                );
+                                assert_eq!(rw_rc, lift_rc, "refcount bytes");
+                                if !live {
+                                    assert!(rw_survives.is_empty() && rw_evicts.is_empty());
+                                    assert_eq!(rw_rc, rc, "dead slots untouched");
+                                }
+                                if live
+                                    && falls
+                                    && wrong::survives_full_word(surv) != ((surv & 0xFF) != 0)
+                                {
+                                    caught += 1;
+                                }
+                                cases += 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        assert!(cases > 500, "too few comparisons ({cases})");
+        assert!(
+            caught > 0,
+            "wrong survives rule never caught ({cases} cases)"
+        );
+    }
 }
-
-
-

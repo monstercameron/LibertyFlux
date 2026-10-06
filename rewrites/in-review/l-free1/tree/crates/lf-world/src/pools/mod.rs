@@ -8,7 +8,11 @@
 //!
 //! [`PoolVec`] is the second structure: a count-prefixed buffer of stamped
 //! fixed-stride slots, built by one initialiser routine with thirteen
-//! verified instances.
+//! verified instances. [`TagPools`] and [`WordTable`] are the small lookup
+//! tables built on the pools: a six-pool tag search and a bounded slice
+//! search, both pure. [`PairPool`], [`WordBlocks`] and [`KeyedFlags`] are
+//! three layouts that appear once each: a constructed pair, a scattered
+//! word scan and a keyed flag clearing.
 //!
 //! Each type owns its slots as ordinary Rust data (byte vectors: no
 //! addresses, no allocator calls) and each verified 32-bit routine with
@@ -25,11 +29,13 @@
 #![forbid(unsafe_code)]
 
 mod poolvec;
+mod scans;
 mod slot;
+mod tables;
 
 pub mod registry;
 
 pub use poolvec::{ElemStamp, PoolVec, VecAlloc, VecElemTag};
-pub use slot::{
-    CtxAlloc, CtxHandle, CtxInit, CtxTag, Evict, Notify, Refresh, SlotPool, Survives,
-};
+pub use scans::{ElemInit, KeyedFlags, PairPool, WordBlocks};
+pub use slot::{CtxAlloc, CtxHandle, CtxInit, CtxTag, Evict, Notify, Refresh, SlotPool, Survives};
+pub use tables::{TagPool, TagPools, WordTable};

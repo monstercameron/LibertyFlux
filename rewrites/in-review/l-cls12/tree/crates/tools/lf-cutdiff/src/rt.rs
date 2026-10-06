@@ -359,16 +359,21 @@ pub static mut ABS_MASK: u32 = 0;
 
 /// The thirty shared words the per-frame update reads (four of them
 /// written back). Written by the running case under the script lock, in
-/// slot order: entry sequence, table base, the four maze counters, the
-/// float window triple, the setup flag and value, the accumulator flag
-/// and triple, the blend factors, and the submit factors.
+/// slot order: entry sequence, the table slot (unused: the table lives in
+/// [`UTABLE`]), the four maze counters, the float window triple, the
+/// setup flag and value, the accumulator flag and triple, the blend
+/// factors, and the submit factors.
 pub static mut UG: [u32; 30] = [0; 30];
+
+/// The update's four-entry table: the global at the table VA is indexed
+/// in place, so it needs array backing, not one value cell. Written by
+/// the running case under the script lock.
+pub static mut UTABLE: [u32; 4] = [0; 4];
 
 /// Slot of an update shared word, if it is one of the thirty.
 fn update_slot(file_va: u32) -> Option<usize> {
     match file_va {
         0x0159_3310 => Some(0),
-        0x0129_5CD8 => Some(1),
         0x0129_5854 => Some(2),
         0x0129_5848 => Some(3),
         0x0129_5858 => Some(4),
@@ -414,6 +419,7 @@ pub fn global<T>(file_va: u32) -> *mut T {
         0x0110_DB64 => core::ptr::addr_of_mut!(SCALE_Y) as *mut T,
         0x0110_DB68 => core::ptr::addr_of_mut!(SCALE_Z) as *mut T,
         0x00FE_8F80 => core::ptr::addr_of_mut!(ABS_MASK) as *mut T,
+        0x0129_5CD8 => unsafe { core::ptr::addr_of_mut!(UTABLE) as *mut T },
         va => match update_slot(va) {
             Some(i) => unsafe { core::ptr::addr_of_mut!(UG[i]) as *mut T },
             None => panic!("unexpected shared word VA {file_va:#x}"),

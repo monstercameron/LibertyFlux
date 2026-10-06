@@ -214,85 +214,113 @@ pub const ROWS: &[Row] = &[
         func: "pool_vec_init_0x10_769c",
         method: "PoolVec::init",
         state: State::Proven,
-        narrows: &["same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings"],
+        narrows: &[
+            "same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings",
+        ],
     },
     Row {
         func: "pool_vec_init_0x38_771c",
         method: "PoolVec::init",
         state: State::Proven,
-        narrows: &["same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings"],
+        narrows: &[
+            "same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings",
+        ],
     },
     Row {
         func: "pool_vec_init_0x30_759c",
         method: "PoolVec::init",
         state: State::Proven,
-        narrows: &["same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings"],
+        narrows: &[
+            "same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings",
+        ],
     },
     Row {
         func: "pool_vec_init_0x38_789c",
         method: "PoolVec::init",
         state: State::Proven,
-        narrows: &["same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings"],
+        narrows: &[
+            "same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings",
+        ],
     },
     Row {
         func: "pool_vec_init_0x4c_7a1c",
         method: "PoolVec::init",
         state: State::Proven,
-        narrows: &["same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings"],
+        narrows: &[
+            "same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings",
+        ],
     },
     Row {
         func: "pool_vec_init_0x3c_751c",
         method: "PoolVec::init",
         state: State::Proven,
-        narrows: &["same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings"],
+        narrows: &[
+            "same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings",
+        ],
     },
     Row {
         func: "pool_vec_init_0x3c_779c",
         method: "PoolVec::init",
         state: State::Proven,
-        narrows: &["same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings"],
+        narrows: &[
+            "same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings",
+        ],
     },
     Row {
         func: "pool_vec_init_0xa8_7a9c",
         method: "PoolVec::init",
         state: State::Proven,
-        narrows: &["same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings"],
+        narrows: &[
+            "same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings",
+        ],
     },
     Row {
         func: "pool_vec_init_0x20_799c",
         method: "PoolVec::init",
         state: State::Proven,
-        narrows: &["same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings"],
+        narrows: &[
+            "same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings",
+        ],
     },
     Row {
         func: "pool_vec_init_0x24_761c",
         method: "PoolVec::init",
         state: State::Proven,
-        narrows: &["same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings"],
+        narrows: &[
+            "same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings",
+        ],
     },
     Row {
         func: "pool_vec_init_0x1c_7b1c",
         method: "PoolVec::init",
         state: State::Proven,
-        narrows: &["same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings"],
+        narrows: &[
+            "same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings",
+        ],
     },
     Row {
         func: "pool_vec_init_0x78_781c",
         method: "PoolVec::init",
         state: State::Proven,
-        narrows: &["same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings"],
+        narrows: &[
+            "same routine as pool_vec_init_0x24_791c over its own stride and stamp; same narrowings",
+        ],
     },
     Row {
         func: "pool_vec_init_ctor_0x6c",
         method: "-",
         state: State::Missing,
-        narrows: &["same header and saturated size, but builds each element through a per-element constructor callee; needs a constructor trait"],
+        narrows: &[
+            "same header and saturated size, but builds each element through a per-element constructor callee; needs a constructor trait",
+        ],
     },
     Row {
         func: "pool_init_stride_60",
         method: "-",
         state: State::Missing,
-        narrows: &["wide variant: 16-byte header, zeroes element + 8; a second method, not reached"],
+        narrows: &[
+            "wide variant: 16-byte header, zeroes element + 8; a second method, not reached",
+        ],
     },
     Row {
         func: "pool_init_stride_70",
@@ -334,7 +362,9 @@ pub const ROWS: &[Row] = &[
         func: "pool_slot_alloc_0x60",
         method: "-",
         state: State::Missing,
-        narrows: &["bump-allocates from global count/base and registers through the slot vtable, hash and registry callees; needs the registry design"],
+        narrows: &[
+            "bump-allocates from global count/base and registers through the slot vtable, hash and registry callees; needs the registry design",
+        ],
     },
     Row {
         func: "pool_slot_alloc_0x70_bd90",
@@ -401,6 +431,48 @@ pub const ROWS: &[Row] = &[
         method: "-",
         state: State::Missing,
         narrows: &["binds a fresh object through gates and sync callees; not reached"],
+    },
+    // Lookup tables: pure searches over pool rows and word arrays.
+    Row {
+        func: "pool_entry_find",
+        method: "TagPools::find",
+        state: State::Proven,
+        narrows: &[
+            "row tags narrow from addresses to keys",
+            "null objects and negative starts are out of domain; the original reads on",
+            "the row count is the pool length",
+        ],
+    },
+    Row {
+        func: "pool_index_search",
+        method: "WordTable::search",
+        state: State::Proven,
+        narrows: &[
+            "the needle travels as its value",
+            "the limit is the word count",
+        ],
+    },
+    Row {
+        func: "pool_pair_init",
+        method: "PairPool::init",
+        state: State::Proven,
+        narrows: &[
+            "elements travel as owned values of a generic type; the 0xBD0 stride stays at the boundary (pinned via stub addresses)",
+        ],
+    },
+    Row {
+        func: "pool_contains_value",
+        method: "WordBlocks::contains",
+        state: State::Proven,
+        narrows: &["the 1/0 answer narrows to bool"],
+    },
+    Row {
+        func: "pool_clear_match_flags",
+        method: "KeyedFlags::clear_matches",
+        state: State::Proven,
+        narrows: &[
+            "entry bodies past the key and flag byte are unmodelled (untouched by both sides)",
+        ],
     },
 ];
 

@@ -50,6 +50,8 @@ impl PoolVec {
     /// `count * stride + 4`, saturated to `u32::MAX` exactly as the
     /// 32-bit form saturates (on multiply overflow or add carry).
     #[must_use]
+    // The cast is exact: the arm above excluded every product over u32::MAX.
+    #[allow(clippy::cast_possible_truncation)]
     pub const fn alloc_size(count: u32, stride: u32) -> u32 {
         let prod = (count as u64) * (stride as u64);
         if prod > 0xFFFF_FFFF {
@@ -112,6 +114,11 @@ impl PoolVec {
     }
 
     /// Slot count, from the buffer's count word.
+    ///
+    /// # Panics
+    ///
+    /// When the buffer is shorter than the count word (only a corrupt
+    /// `PoolVec` can do that: [`PoolVec::init`] always writes the prefix).
     #[must_use]
     pub fn count(&self) -> u32 {
         u32::from_le_bytes(self.buf[0..4].try_into().unwrap())
