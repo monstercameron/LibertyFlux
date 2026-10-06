@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Devlog: Same-period contract cyclers can starve whole code regions",
+    "title": "Devlog: A wrong rewrite passed, and the checker could not see it",
     "commit": null,
+    "summary": "Findings from the r-s522 lane.",
+    "changes": [
+      "New devlog entry: A wrong rewrite passed, and the checker could not see it.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Devlog: Same-period contract cyclers can starve whole code regions",
+    "commit": "14d81502699c4d9f5cfb27b543054fa189cbebf8",
     "summary": "Findings from the r-b642 lane.",
     "changes": [
       "New devlog entry: Same-period contract cyclers can starve whole code regions.",
