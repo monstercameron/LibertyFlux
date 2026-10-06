@@ -279,8 +279,8 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
         let lane_this = this.wrapping_add(0x14B4);
 
         // Loop A: the two five-entry curves. The first sits at arr[0..5];
-        // the second lands one slot past its nominal start, arr[5..9].
-        let mut arr = [0.0f32; 9];
+        // the second lands one slot past its nominal start, arr[5..10].
+        let mut arr = [0.0f32; 10];
         for esi in 0..5u32 {
             let ga = if esi == 4 {
                 rdf(glob(G_FB))
@@ -407,7 +407,7 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
                 s2[16] = 0xFFFFFFFF;
                 s2[17] = 0xFF;
                 let mut s76 = [0u32; 4];
-                s76[0] = arr[8].to_bits();
+                s76[0] = arr[9].to_bits();
                 let s76ptr = (&mut s76[1] as *mut u32) as u32;
                 let ans5: u32 = lf_checker_rt::callee_cdecl!(
                     C_SETUP, u32, s76ptr, 0x40, glob(TMPL_A), counter
@@ -470,7 +470,7 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
                 s2b[16] = 0xFFFFFFFF;
                 s2b[17] = 0xFF;
                 let mut s76b = [0u32; 4];
-                s76b[0] = arr[8].to_bits();
+                s76b[0] = arr[9].to_bits();
                 let s76bptr = (&mut s76b[1] as *mut u32) as u32;
                 let ans5b: u32 = lf_checker_rt::callee_cdecl!(
                     C_SETUP, u32, s76bptr, 0x20, glob(TMPL_B), counter
@@ -491,7 +491,7 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
             if run_second {
                 // The fixed addend is the second curve's last entry.
                 let mut u = mul(
-                    add(arr[5 + (edi_idx >> 2) as usize], arr[8]),
+                    add(arr[5 + (edi_idx >> 2) as usize], arr[9]),
                     slot312,
                 );
                 if u > ONE {
