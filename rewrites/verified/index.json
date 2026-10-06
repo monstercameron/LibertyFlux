@@ -48537,6 +48537,15 @@
   "lane": "r-b379"
  },
  {
+  "address": "0x008BF380",
+  "name": "ui_state_reset",
+  "kind": "function",
+  "file": "functions/fn_008bf380.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b605"
+ },
+ {
   "address": "0x008C2660",
   "name": "frontend_state_poll_update",
   "kind": "function",
@@ -55705,6 +55714,15 @@
   "name": "table_byte_clear",
   "kind": "function",
   "file": "functions/fn_009543d0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
+  "address": "0x00954400",
+  "name": "disk_free_space_check",
+  "kind": "function",
+  "file": "functions/fn_00954400.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-s499"
@@ -74196,6 +74214,15 @@
   "lane": "r-s123"
  },
  {
+  "address": "0x00A95DE0",
+  "name": "filemem_init_slot_table",
+  "kind": "function",
+  "file": "functions/fn_00a95de0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
+ },
+ {
   "address": "0x00A96290",
   "name": "NativeImpl_GET_SCREEN_FADE_ALPHA_2",
   "kind": "function",
@@ -74367,10 +74394,37 @@
   "lane": "r-b153"
  },
  {
+  "address": "0x00A989C0",
+  "name": "filemem_open_entry",
+  "kind": "function",
+  "file": "functions/fn_00a989c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
+ },
+ {
+  "address": "0x00A98A10",
+  "name": "filemem_sweep_stale_slots",
+  "kind": "function",
+  "file": "functions/fn_00a98a10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
+ },
+ {
   "address": "0x00A98AA0",
   "name": "filemem_count_ready_entries",
   "kind": "function",
   "file": "functions/fn_00a98aa0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
+ },
+ {
+  "address": "0x00A98BB0",
+  "name": "filemem_init_stream_state",
+  "kind": "function",
+  "file": "functions/fn_00a98bb0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s502"
@@ -74457,6 +74511,15 @@
   "lane": "r-b110"
  },
  {
+  "address": "0x00A9B3F0",
+  "name": "filemem_close_all_handles",
+  "kind": "function",
+  "file": "functions/fn_00a9b3f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
+ },
+ {
   "address": "0x00A9B450",
   "name": "spatial_resample_update",
   "kind": "function",
@@ -74464,6 +74527,15 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "a-Q09"
+ },
+ {
+  "address": "0x00A9C170",
+  "name": "filemem_close_all_handles_b",
+  "kind": "function",
+  "file": "functions/fn_00a9c170.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
  },
  {
   "address": "0x00A9C7F0",
@@ -123606,6 +123678,24 @@
   "lane": "r-s503"
  },
  {
+  "address": "0x00D69DF0",
+  "name": "replay_rollover_set_kind",
+  "kind": "function",
+  "file": "functions/fn_00d69df0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
+  "address": "0x00D69E30",
+  "name": "CReplayRolloverMessage::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d69e30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
   "address": "0x00D6A520",
   "name": "replay_button_dtor",
   "kind": "function",
@@ -123642,6 +123732,15 @@
   "lane": "r-s503"
  },
  {
+  "address": "0x00D6A640",
+  "name": "FRONTEND_MENU_MONTAGE_CYCLE_MT",
+  "kind": "function",
+  "file": "functions/fn_00d6a640.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
   "address": "0x00D6A6A0",
   "name": "replay_montage_next",
   "kind": "function",
@@ -123664,6 +123763,24 @@
   "name": "replay_mode_to_action",
   "kind": "function",
   "file": "functions/fn_00d6a950.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
+  "address": "0x00D6AA00",
+  "name": "FRONTEND_MENU_MONTAGE_PRESS_MT",
+  "kind": "function",
+  "file": "functions/fn_00d6aa00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
+  "address": "0x00D6AC40",
+  "name": "FRONTEND_MENU_MONTAGE_PRESS_MT",
+  "kind": "function",
+  "file": "functions/fn_00d6ac40.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s503"
