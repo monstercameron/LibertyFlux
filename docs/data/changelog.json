@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Lift: the banked-voice layer of the audio code, 17 routines in portable Rust",
+    "title": "Rewrites: 6 more functions pass the checker (16889 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "6 rewrites added under rewrites/verified: 0 script native handlers and 6 other functions.",
+      "The tree now holds 16889 rewrites, 16870 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Lift: the banked-voice layer of the audio code, 17 routines in portable Rust",
+    "commit": "6cafb461265e4634a9b455ab8574b3f2b989fdd9",
     "summary": "17 verified audio routines outside any class are lifted in five parts (parameters, the banked table, the tracker, the slots, activation), with their proof in the pipeline.",
     "changes": [
       "crates/lf-audio gains an audio_voice module. The lane worked out that the 78 functions on its list are one layer, the voices that play from a bank, in 13 data shapes; names misled (one name covered six shapes), and whether two routines are one was decided by a hash of their bodies. 30 new host tests; no unsafe code.",
