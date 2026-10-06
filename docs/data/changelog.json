@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: eight wrong, not nine, and the checker runs under an emulator",
+    "title": "Devlog: Naming batch 116: bound stores, zone volumes and scenario tasks",
     "commit": null,
+    "summary": "Findings from the nm-116 lane.",
+    "changes": [
+      "New devlog entry: Naming batch 116: bound stores, zone volumes and scenario tasks.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: eight wrong, not nine, and the checker runs under an emulator",
+    "commit": "9b8bd06c14420879e8138fb61e18fca5541a89b3",
     "summary": "The entry on rewrites with the wrong signedness gets its ending, a correction, and a limit of the checker found the same evening.",
     "changes": [
       "One of the nine rewrites withdrawn for comparing a call's answer unsigned was withdrawn in error and has been restored with its original proof: CTaskComplexClimbLadder::vf18 differs from the original in how the comparison is written, but both branches lead to the same block for every answer where the two comparisons differ. The repair lane demonstrated it on 1,800 trials. The count of observably wrong rewrites is eight; six are repaired and back.",
