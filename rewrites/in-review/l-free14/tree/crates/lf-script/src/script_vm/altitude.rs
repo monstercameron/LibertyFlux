@@ -8,6 +8,12 @@
 //! routines share one body, the three single-register routines share
 //! another; each instance is proved against its tail's method.
 
+// Signatures mirror the 32-bit routines' words one by one, so long
+// argument lists are inherent here.
+#![allow(clippy::too_many_arguments)]
+
+use core::cmp::Ordering;
+
 /// Mode word the head passes to the ground query with (`x`, `y`).
 pub const CONV_MODE: u32 = 4;
 
@@ -35,15 +41,7 @@ pub trait SinkReg {
 /// Clears an area with five trailing words: the full-area tail.
 pub trait SinkClear6 {
     /// Clears `point` with (`w`, `extra`, `z0`, `z1`, `z2`).
-    fn clear(
-        &mut self,
-        point: [u32; 3],
-        w: u32,
-        extra: u32,
-        z0: u32,
-        z1: u32,
-        z2: u32,
-    );
+    fn clear(&mut self, point: [u32; 3], w: u32, extra: u32, z0: u32, z1: u32, z2: u32);
 }
 
 /// Emits a point with four trailing words: the flag tails.
@@ -65,15 +63,7 @@ impl<F: FnMut([u32; 3], u32, u32)> SinkReg for F {
 }
 
 impl<F: FnMut([u32; 3], u32, u32, u32, u32, u32)> SinkClear6 for F {
-    fn clear(
-        &mut self,
-        point: [u32; 3],
-        w: u32,
-        extra: u32,
-        z0: u32,
-        z1: u32,
-        z2: u32,
-    ) {
+    fn clear(&mut self, point: [u32; 3], w: u32, extra: u32, z0: u32, z1: u32, z2: u32) {
         self(point, w, extra, z0, z1, z2);
     }
 }
@@ -86,7 +76,7 @@ impl<F: FnMut([u32; 3], u32, u32, u32, u32)> SinkTail4 for F {
 
 impl<F: FnMut([u32; 3], u32)> SinkReg2 for F {
     fn register(&mut self, point: [u32; 3], w: u32) {
-        self(point, w)
+        self(point, w);
     }
 }
 
@@ -119,10 +109,12 @@ impl AltitudeGate {
     /// The comparison is ordered: when the threshold is below `z`, or
     /// either side is NaN, the altitude keeps `z`; otherwise the ground
     /// query's answer takes its place.
-    fn resolve(&self, query: &mut impl GroundQuery, x: u32, y: u32, z: u32) -> [u32; 3] {
+    fn resolve(self, query: &mut impl GroundQuery, x: u32, y: u32, z: u32) -> [u32; 3] {
         let limit = f32::from_bits(self.threshold);
         let alt = f32::from_bits(z);
-        let conv = if !(limit >= alt) {
+        // The rewrite negates the ordered comparison; the match says the
+        // same with the unordered arm explicit (NaN keeps `z`).
+        let conv = if matches!(limit.partial_cmp(&alt), Some(Ordering::Less) | None) {
             z
         } else {
             Self::quiet_snan(query.ground_z(x, y, CONV_MODE))

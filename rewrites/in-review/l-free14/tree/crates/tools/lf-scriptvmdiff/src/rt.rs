@@ -2,8 +2,9 @@
 //!
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!`, the `callee_cdecl` macro, `callee_addr`, `global`,
-//! `relocated`). The proof set reads one global (the altitude threshold
-//! word) and one relocated address (the extent test's routine word).
+//! `relocated`). The proof set reads two globals (the altitude threshold
+//! word, the blip fallback index) and two relocated addresses (the extent
+//! test's routine word, the blip row-pointer table).
 //! Each is one atomic slot; the atomics give the slots stable addresses,
 //! and the differential tests hold one lock across each whole test, so
 //! the rewrite's plain reads through them never race.
@@ -18,18 +19,23 @@ use core::sync::atomic::Ordering;
 
 /// The altitude threshold word.
 static THRESH_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The blip fallback index.
+static GLOB_SLOT: AtomicU32 = AtomicU32::new(0);
 /// The extent test's routine word (relocated).
 static ROUTINE_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The blip row-pointer table (relocated).
+static TABLE_SLOT: AtomicU32 = AtomicU32::new(0);
 
 /// Address of the global slot for a file VA.
 ///
 /// # Panics
 ///
-/// When the address is not the threshold global the proof set reads:
+/// When the address is not one of the two globals the proof set reads:
 /// a case bug, never a guess.
 fn slot_for(file_va: u32) -> *mut u32 {
     match file_va {
         0x00FE_8DF8 => THRESH_SLOT.as_ptr(),
+        0x0103_4494 => GLOB_SLOT.as_ptr(),
         _ => panic!("unexpected global VA {file_va:#x}"),
     }
 }
@@ -49,11 +55,12 @@ pub fn global<T>(file_va: u32) -> *mut T {
 ///
 /// # Panics
 ///
-/// When the address is not the routine word the proof set relocates:
+/// When the address is not one of the two words the proof set relocates:
 /// a case bug, never a guess.
 fn reloc_slot(file_va: u32) -> &'static AtomicU32 {
     match file_va {
         0x0094_98C0 => &ROUTINE_SLOT,
+        0x0118_F6F8 => &TABLE_SLOT,
         _ => panic!("unexpected relocated VA {file_va:#x}"),
     }
 }

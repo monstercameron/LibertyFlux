@@ -15,10 +15,14 @@
 //! routines, all proved against one generic method. [`AreaProbe`] is the
 //! stateless bullet/box/extent test protocol: priming, corner
 //! normalisation and single-precision expansion with the original's
-//! operand order. Proof is differential: every lifted method runs against
-//! its verified rewrite on the same generated inputs, comparing results
-//! and every effect (see the `lf-scriptvmdiff` test crate). Nothing here
-//! is verified by the checker itself.
+//! operand order. [`BlipTable`] owns the marker rows both blip routines
+//! share: handle lookup, the flag-selected row and the kind gate.
+//! [`LoadingClock`] and [`AngledArea`] are the two pack-and-forward
+//! singles, sharing one module because neither shares state with the
+//! rest. Proof is differential: every lifted method runs against its
+//! verified rewrite on the same generated inputs, comparing results and
+//! every effect (see the `lf-scriptvmdiff` test crate). Nothing here is
+//! verified by the checker itself.
 //!
 //! What each lifted method covers, and what it narrows away from the
 //! original, is recorded per routine in [`registry`].
@@ -27,13 +31,22 @@
 
 mod altitude;
 mod area;
+mod blip;
+mod packs;
 mod skip;
 
 pub mod registry;
 
-pub use altitude::{AltitudeGate, CONV_MODE, GroundQuery, SinkClear6, SinkReg, SinkReg2, SinkTail4};
-pub use area::{
-    AreaProbe, ExtentRoutine, ExtentTag, Prime, TestBox, TestPoint, TestViews, EXTENT_ARG_A,
-    EXTENT_ARG_B,
+pub use altitude::{
+    AltitudeGate, CONV_MODE, GroundQuery, SinkClear6, SinkReg, SinkReg2, SinkTail4,
 };
+pub use area::{
+    AreaProbe, EXTENT_ARG_A, EXTENT_ARG_B, ExtentRoutine, ExtentTag, Prime, TestBox, TestPoint,
+    TestViews,
+};
+pub use blip::{
+    APPLY_TAG, BlipApply, BlipLookup, BlipRow, BlipTable, FLAG_OFF, KIND_OFF, LOOKUP_MISS,
+    POS_A_OFF, POS_B_OFF,
+};
+pub use packs::{AngledArea, AngledClear, ClockDraw, LoadingClock};
 pub use skip::{PointSkip, SkipFlags, SkipSink};

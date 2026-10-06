@@ -113,31 +113,41 @@ pub const ROWS: &[Row] = &[
         func: "script_vm_pack_words_flag0",
         method: "PointSkip::emit",
         state: State::Proven,
-        narrows: &["the frame buffer becomes the point triple; the proof snapshots the forwarded words"],
+        narrows: &[
+            "the frame buffer becomes the point triple; the proof snapshots the forwarded words",
+        ],
     },
     Row {
         func: "script_vm_pack_words_flag1",
         method: "PointSkip::emit",
         state: State::Proven,
-        narrows: &["the frame buffer becomes the point triple; the proof snapshots the forwarded words"],
+        narrows: &[
+            "the frame buffer becomes the point triple; the proof snapshots the forwarded words",
+        ],
     },
     Row {
         func: "script_vm_pack_words_trailflag",
         method: "PointSkip::emit",
         state: State::Proven,
-        narrows: &["the frame buffer becomes the point triple; the proof snapshots the forwarded words"],
+        narrows: &[
+            "the frame buffer becomes the point triple; the proof snapshots the forwarded words",
+        ],
     },
     Row {
         func: "script_vm_pack_point_3d",
         method: "AreaProbe::test_point",
         state: State::Proven,
-        narrows: &["the frame buffer becomes the point triple; the proof snapshots the forwarded words"],
+        narrows: &[
+            "the frame buffer becomes the point triple; the proof snapshots the forwarded words",
+        ],
     },
     Row {
         func: "script_vm_normalize_box_corners",
         method: "AreaProbe::test_box",
         state: State::Proven,
-        narrows: &["the two frame triples become the corner arrays; the proof snapshots the forwarded words"],
+        narrows: &[
+            "the two frame triples become the corner arrays; the proof snapshots the forwarded words",
+        ],
     },
     Row {
         func: "script_vm_test_expanded_bounds",
@@ -150,39 +160,53 @@ pub const ROWS: &[Row] = &[
     },
     Row {
         func: "script_vm_entity_apply_offset",
-        method: "BlipTable::apply_offset (not lifted)",
-        state: State::Missing,
-        narrows: &["not reached: the marker-row table design (lookup trait, row store, fallback id) is drawn up in the lane report"],
+        method: "BlipTable::apply_offset",
+        state: State::Proven,
+        narrows: &[
+            "the row-pointer table becomes owned rows; indexes past the store panic while the original reads past it",
+            "the fallback global becomes the table's owned index",
+        ],
     },
     Row {
         func: "script_vm_entity_read_offset",
-        method: "BlipTable::read_offset (not lifted)",
-        state: State::Missing,
-        narrows: &["not reached: see the marker-row table design in the lane report"],
+        method: "BlipTable::read_offset",
+        state: State::Proven,
+        narrows: &[
+            "the row-pointer table becomes owned rows; indexes past the store panic while the original reads past it",
+            "the output pointer becomes the returned words; the original answers the pointer itself",
+            "the fourth word is zero: the original reads uninitialized scratch, pinned to zero by the verified contract",
+            "miss answers other than 0xFFFF_FFFF (e.g. 0xFFFF_FFFE) are out of domain: the original wraps the table address",
+        ],
     },
     Row {
         func: "script_vm_resolve_named_key",
         method: "(not lifted)",
         state: State::Missing,
-        narrows: &["not reached: needs the text-entry trait design (state probe, formatter, resolver, cookie check)"],
+        narrows: &[
+            "not reached: needs the text-entry trait design (state probe, formatter, resolver, cookie check)",
+        ],
     },
     Row {
         func: "script_vm_dual_key_dispatch",
         method: "(not lifted)",
         state: State::Missing,
-        narrows: &["not reached: the largest routine in the group (seven callees, four globals); needs the text-entry and draw-call designs"],
+        narrows: &[
+            "not reached: the largest routine in the group (seven callees, four globals); needs the text-entry and draw-call designs",
+        ],
     },
     Row {
         func: "script_vm_pack_color_verts",
-        method: "(not lifted)",
-        state: State::Missing,
-        narrows: &["not reached: the colour pack plus five sliding windows need a call-shape trait of their own"],
+        method: "LoadingClock::draw",
+        state: State::Proven,
+        narrows: &["the frame array becomes the frame words; the proof snapshots every window"],
     },
     Row {
         func: "script_vm_angled_area_pack",
-        method: "(not lifted)",
-        state: State::Missing,
-        narrows: &["not reached: a bare pack-and-forward with no flags; revisit with the next thin-packing group"],
+        method: "AngledArea::clear",
+        state: State::Proven,
+        narrows: &[
+            "the two frame triples become the triple arrays; the proof snapshots the forwarded words",
+        ],
     },
 ];
 

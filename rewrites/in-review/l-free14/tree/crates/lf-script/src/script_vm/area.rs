@@ -9,6 +9,10 @@
 //! operand order, then normalises and presents the bounds as two
 //! overlapping views. All words are single-precision bits.
 
+// Signatures mirror the 32-bit routines' words one by one, so long
+// argument lists are inherent here.
+#![allow(clippy::too_many_arguments)]
+
 use lf_core::boundary::Handle32;
 
 /// Tag for the extent test's opaque routine word.
@@ -47,14 +51,7 @@ pub trait TestBox {
 /// Tests expanded bounds: the extent test's callee.
 pub trait TestViews {
     /// Tests the row and padded views with the routine word and (`a`, `b`).
-    fn test(
-        &mut self,
-        row: [u32; 8],
-        routine: ExtentRoutine,
-        view: [u32; 9],
-        a: u32,
-        b: u32,
-    );
+    fn test(&mut self, row: [u32; 8], routine: ExtentRoutine, view: [u32; 9], a: u32, b: u32);
 }
 
 impl<F: FnMut()> Prime for F {
@@ -76,14 +73,7 @@ impl<F: FnMut([u32; 3], [u32; 3], u32)> TestBox for F {
 }
 
 impl<F: FnMut([u32; 8], ExtentRoutine, [u32; 9], u32, u32)> TestViews for F {
-    fn test(
-        &mut self,
-        row: [u32; 8],
-        routine: ExtentRoutine,
-        view: [u32; 9],
-        a: u32,
-        b: u32,
-    ) {
+    fn test(&mut self, row: [u32; 8], routine: ExtentRoutine, view: [u32; 9], a: u32, b: u32) {
         self(row, routine, view, a, b);
     }
 }

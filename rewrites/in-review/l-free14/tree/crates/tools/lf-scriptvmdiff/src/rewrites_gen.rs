@@ -1,5 +1,9 @@
 // One module per verified rewrite: files share top-level helper names,
 // so they cannot live in one scope.
+pub mod fn_00B913A0 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00b913a0.rs")); }
+pub mod fn_00B921C0 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00b921c0.rs")); }
+pub mod fn_00B91170 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00b91170.rs")); }
+pub mod fn_00B95850 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00b95850.rs")); }
 pub mod fn_00B95520 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00b95520.rs")); }
 pub mod fn_00B955A0 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00b955a0.rs")); }
 pub mod fn_00B958C0 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00b958c0.rs")); }
