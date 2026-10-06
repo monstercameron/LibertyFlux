@@ -36009,6 +36009,96 @@
   "lane": "r-b594"
  },
  {
+  "address": "0x00634C40",
+  "name": "reloc_ptr_store_a",
+  "kind": "function",
+  "file": "functions/fn_00634c40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s509"
+ },
+ {
+  "address": "0x00635000",
+  "name": "bst_link_child",
+  "kind": "function",
+  "file": "functions/fn_00635000.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s509"
+ },
+ {
+  "address": "0x00635190",
+  "name": "bst_insert",
+  "kind": "function",
+  "file": "functions/fn_00635190.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s509"
+ },
+ {
+  "address": "0x006352C0",
+  "name": "bst_find_parent",
+  "kind": "function",
+  "file": "functions/fn_006352c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s509"
+ },
+ {
+  "address": "0x00635340",
+  "name": "bst_find",
+  "kind": "function",
+  "file": "functions/fn_00635340.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s509"
+ },
+ {
+  "address": "0x006353B0",
+  "name": "reloc_ptr_cdecl",
+  "kind": "function",
+  "file": "functions/fn_006353b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s509"
+ },
+ {
+  "address": "0x00635480",
+  "name": "bst_remove",
+  "kind": "function",
+  "file": "functions/fn_00635480.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s509"
+ },
+ {
+  "address": "0x00635570",
+  "name": "bst_successor",
+  "kind": "function",
+  "file": "functions/fn_00635570.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s509"
+ },
+ {
+  "address": "0x006355B0",
+  "name": "reloc_single",
+  "kind": "function",
+  "file": "functions/fn_006355b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s509"
+ },
+ {
+  "address": "0x00635600",
+  "name": "reloc_node_links",
+  "kind": "function",
+  "file": "functions/fn_00635600.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s509"
+ },
+ {
   "address": "0x00635670",
   "name": "table_iter_advance",
   "kind": "function",
@@ -36016,6 +36106,42 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b594"
+ },
+ {
+  "address": "0x00635B30",
+  "name": "list_unlink_a",
+  "kind": "function",
+  "file": "functions/fn_00635b30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s509"
+ },
+ {
+  "address": "0x00635B80",
+  "name": "rage::pgDictionary<rage::crAnimation>::vf2",
+  "kind": "function",
+  "file": "functions/fn_00635b80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s509"
+ },
+ {
+  "address": "0x00635C70",
+  "name": "list_unlink_b",
+  "kind": "function",
+  "file": "functions/fn_00635c70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s509"
+ },
+ {
+  "address": "0x00635D60",
+  "name": "list_unlink_c",
+  "kind": "function",
+  "file": "functions/fn_00635d60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s509"
  },
  {
   "address": "0x00648A80",
@@ -51723,6 +51849,15 @@
   "lane": "a-16"
  },
  {
+  "address": "0x008EAC60",
+  "name": "quantize_pair_and_store",
+  "kind": "function",
+  "file": "functions/fn_008eac60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s512"
+ },
+ {
   "address": "0x008EACD0",
   "name": "scaled_int_pair_writer",
   "kind": "function",
@@ -51874,6 +52009,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-16"
+ },
+ {
+  "address": "0x008ED550",
+  "name": "fill_node_rect_global",
+  "kind": "function",
+  "file": "functions/fn_008ed550.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s512"
  },
  {
   "address": "0x008ED6E0",
@@ -53143,6 +53287,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "a-F05"
+ },
+ {
+  "address": "0x009063A0",
+  "name": "input_ui_element_from_coords",
+  "kind": "function",
+  "file": "functions/fn_009063a0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b614"
  },
  {
   "address": "0x00908370",
@@ -55332,6 +55485,15 @@
   "lane": "r-b103"
  },
  {
+  "address": "0x00947B80",
+  "name": "fan_out_to_live_slots",
+  "kind": "function",
+  "file": "functions/fn_00947b80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
   "address": "0x00947BD0",
   "name": "scale_pair_apply",
   "kind": "function",
@@ -55818,10 +55980,28 @@
   "lane": "a-17"
  },
  {
+  "address": "0x0094D730",
+  "name": "wipe_and_link_records",
+  "kind": "function",
+  "file": "functions/fn_0094d730.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
   "address": "0x0094DF10",
   "name": "release_dead_handles",
   "kind": "function",
   "file": "functions/fn_0094df10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
+  "address": "0x0094DFE0",
+  "name": "NativeImpl_REMOVE_TXD",
+  "kind": "function",
+  "file": "functions/fn_0094dfe0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s511"
@@ -55894,6 +56074,15 @@
   "name": "describe_if_present",
   "kind": "function",
   "file": "functions/fn_0094ee30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
+  "address": "0x0094EE60",
+  "name": "build_struct_then_run",
+  "kind": "function",
+  "file": "functions/fn_0094ee60.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s511"
@@ -56367,6 +56556,15 @@
   "lane": "a-F05"
  },
  {
+  "address": "0x00952CA0",
+  "name": "claim_first_free_slot",
+  "kind": "function",
+  "file": "functions/fn_00952ca0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
   "address": "0x00952D00",
   "name": "copy_next_matching_block",
   "kind": "function",
@@ -56491,6 +56689,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s135"
+ },
+ {
+  "address": "0x009536B0",
+  "name": "resolve_handle_or_table",
+  "kind": "function",
+  "file": "functions/fn_009536b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
  },
  {
   "address": "0x00953710",
@@ -128794,6 +129001,15 @@
   "name": "UIMontageContainer::vf97",
   "kind": "function",
   "file": "functions/fn_00dd3040.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b608"
+ },
+ {
+  "address": "0x00DD37E0",
+  "name": "UIMontageContainer::vf94",
+  "kind": "function",
+  "file": "functions/fn_00dd37e0.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b608"
