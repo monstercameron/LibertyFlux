@@ -17,8 +17,8 @@ mod x86 {
     mod support;
     use support::{
         Fake, Image, Mint, Rng, Stubs, VTable, FLAG, MODE, OBJ_SIZE, PART2, SINK, SLOT_GET_TEXT,
-        SLOT_SET_TEXT, SLOT_SUBMIT_ALIAS, STORED, assert_only_changed, check_lift, check_numbered,
-        check_virtual_names, lift_of,
+        SLOT_SET_TEXT, STORED, assert_only_changed, check_lift, check_numbered,
+        check_virtual_names,
     };
 
     struct Fixture {
@@ -66,32 +66,65 @@ mod x86 {
         buf
     }
 
+    // Deliberately wrong lifts: each must be caught at least once.
+    // Each replays its method's true shape with one comparison flipped.
     mod wrong {
-        use lf_input_frontend::ui_clip::{BasicClip, ClipWorld, up_to_nul};
+        use lf_core::Handle32;
+        use lf_input_frontend::ui_clip::{ClipWorld, PartTag, SinkTag, up_to_nul};
 
         // Off-by-one fit: appends when the free space only equals the
-        // new length.
+        // new length (`<` for `<=` on the skip).
         pub fn set_child_text<W: ClipWorld>(
-            clip: &BasicClip,
             world: &mut W,
+            child: Handle32<PartTag>,
             text: &[u8],
             append: bool,
         ) -> u32 {
             const BUF_LEN: u32 = 256;
-            let child = clip.parts();
-            let _ = child;
-            // Reach the child through the world's text roles is what the
-            // true lift does; this variant replays the same calls but
-            // with the flipped comparison. It needs the child cookie:
-            // callers pass it through a one-shot world setup instead.
-            // (Implemented inline in the test; this shell keeps the shape.)
-            let _ = (world, text, append, BUF_LEN, up_to_nul);
-            0
+            let fresh = up_to_nul(text);
+            if !append {
+                return world.set_part_text(child, &text[..fresh.len() + 1]);
+            }
+            if world.part_text(child).is_none() {
+                return world.set_part_text(child, &text[..fresh.len() + 1]);
+            }
+            let current = world.part_text(child).expect("second answer");
+            let kept = &current[..current.iter().position(|b| *b == 0).unwrap()];
+            let mut buf = [0u8; 256];
+            buf[..kept.len()].copy_from_slice(kept);
+            let free = BUF_LEN.wrapping_sub(kept.len() as u32);
+            if free < fresh.len() as u32 {
+                return free;
+            }
+            let end = kept.len() + fresh.len();
+            buf[kept.len()..end].copy_from_slice(fresh);
+            world.set_part_text(child, &buf)
         }
 
         // Flipped append condition on the label path.
-        pub fn submit_label_should_append(title_len: u32, label_len: u32) -> bool {
-            256u32.wrapping_sub(title_len) <= label_len
+        pub fn submit_label<W: ClipWorld>(
+            world: &mut W,
+            sink: Handle32<SinkTag>,
+            part2: Handle32<PartTag>,
+            label: &[u8],
+            titling: bool,
+        ) {
+            const BUF_LEN: u32 = 256;
+            let bare = up_to_nul(label);
+            if !titling || !world.sink_title_present(sink) {
+                world.submit_to_sink(sink, &label[..bare.len() + 1]);
+                return;
+            }
+            let title = world.source_title(part2);
+            let kept = &title[..title.iter().position(|b| *b == 0).unwrap()];
+            let mut buf = [0u8; 256];
+            buf[..kept.len()].copy_from_slice(kept);
+            // Flipped: appends exactly when the true lift skips.
+            if BUF_LEN.wrapping_sub(kept.len() as u32) <= bare.len() as u32 {
+                let end = kept.len() + bare.len();
+                buf[kept.len()..end].copy_from_slice(bare);
+            }
+            world.submit_to_sink(sink, &buf);
         }
     }
 
@@ -238,16 +271,19 @@ mod x86 {
                 check_numbered(nlog, &[(4, vec![])]);
             }
             check_virtual_names(&vlog, &want_v);
-            // Snapshots: the setter's bytes.
+            // Snapshots: the setter's bytes. The scratch buffer must
+            // come from the call-time snapshot (its stack is gone); the
+            // forwarded original is read back whole through the recorded
+            // pointer while its image is still alive.
             if let Some(buf) = &want_buf {
                 let snap = vlog[2].2.as_ref().expect("setter snapshot");
                 assert_eq!(snap, buf, "scratch bytes");
             } else if want_v.iter().any(|(n, _)| *n == "settext") {
-                let snap = vlog
-                    .last()
-                    .and_then(|c| c.2.as_ref())
-                    .expect("setter snapshot");
-                assert_eq!(&snap[..tlen + 1], &text[..], "forwarded text");
+                let ptr = vlog.last().map(|c| c.1[1]).expect("setter call");
+                assert_eq!(ptr, text_ptr, "forwarded pointer");
+                let seen =
+                    unsafe { core::slice::from_raw_parts(ptr as *const u8, tlen + 1) };
+                assert_eq!(seen, &text[..], "forwarded text");
             }
 
             // The lifted run.
@@ -278,27 +314,36 @@ mod x86 {
             }
             check_lift(&fake.log, &expect_l);
 
-            // Wrong lift: the flipped fit comparison, replayed inline
-            // (same calls, `<` for `<=`).
-            if append && cstr.is_some() {
-                let c = cstr.unwrap();
-                let free = 256u32.wrapping_sub(c.len() as u32);
-                let wrong_appends = free > tlen as u32 || free == tlen as u32 && false;
-                // i.e. `free < m` inverted: appends unless strictly less.
-                let wrong_skips = free < tlen as u32;
-                let right_skips = free <= tlen as u32;
-                if wrong_skips != right_skips {
-                    caught += 1;
+            // Wrong lift: the same shape with `<` for `<=` on the skip.
+            // A panic counts as caught: the wrong fit cannot complete
+            // where the true one skips cleanly.
+            let mut fake = Fake::new();
+            fake.answer("set_part_text", vec![setter_ans]);
+            fake.answer_texts(match &current {
+                None => vec![None],
+                Some(c) => vec![Some(c.clone()), Some(c.clone())],
+            });
+            let probe = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                wrong::set_child_text(&mut fake, child, &text_img.buf[100..], append)
+            }));
+            match probe {
+                Err(_) => caught += 1,
+                Ok(back) => {
+                    let same_result = back == want_result;
+                    let same_log = fake.log.len() == expect_l.len()
+                        && fake.log.iter().zip(expect_l.iter()).all(
+                            |(have, (name, words, bytes))| {
+                                have.name == *name && have.words == *words && have.bytes == *bytes
+                            },
+                        );
+                    if !same_result || !same_log {
+                        caught += 1;
+                    }
                 }
-                let _ = wrong_appends;
-            } else if !append && tlen == 5 && clen.is_none() {
-                // Replace path: the wrong lift under test only differs
-                // on append rims; count structure instead (see below).
             }
         }
         // The rim cases (free == new length) separate `<` from `<=`.
         assert!(caught > 0, "wrong text lift never caught");
-        let _ = wrong::set_child_text;
     }
 
     #[test]
@@ -376,12 +421,15 @@ mod x86 {
             let titled = titling && present;
             let (want_v, want_buf): (Vec<(&str, Vec<u32>)>, Option<Vec<u8>>) = if !titled {
                 if !titling {
-                    (vec![("submit", vec![fx.sink_obj.addr(), label_ptr])], None)
+                    (
+                        vec![("submit", vec![fx.sink_obj.addr(), label_ptr, 0])],
+                        None,
+                    )
                 } else {
                     (
                         vec![
                             ("title_sink", vec![fx.sink_obj.addr()]),
-                            ("submit", vec![fx.sink_obj.addr(), label_ptr]),
+                            ("submit", vec![fx.sink_obj.addr(), label_ptr, 0]),
                         ],
                         None,
                     )
@@ -397,7 +445,7 @@ mod x86 {
                     vec![
                         ("title_sink", vec![fx.sink_obj.addr()]),
                         ("title_src", vec![fx.child_obj.addr()]),
-                        ("submit", vec![fx.sink_obj.addr(), vlog[2].1[1]]),
+                        ("submit", vec![fx.sink_obj.addr(), vlog[2].1[1], 0]),
                     ],
                     Some(buf),
                 )
@@ -407,11 +455,11 @@ mod x86 {
                 let snap = vlog[2].2.as_ref().expect("submit snapshot");
                 assert_eq!(snap, buf, "scratch bytes");
             } else {
-                let snap = vlog
-                    .last()
-                    .and_then(|c| c.2.as_ref())
-                    .expect("submit snapshot");
-                assert_eq!(&snap[..llen + 1], &label[..], "forwarded label");
+                let ptr = vlog.last().map(|c| c.1[1]).expect("submit call");
+                assert_eq!(ptr, label_ptr, "forwarded pointer");
+                let seen =
+                    unsafe { core::slice::from_raw_parts(ptr as *const u8, llen + 1) };
+                assert_eq!(seen, &label[..], "forwarded label");
             }
 
             let mut fake = Fake::new();
@@ -438,13 +486,27 @@ mod x86 {
             }
             check_lift(&fake.log, &expect_l);
 
-            // Wrong lift: the flipped append condition.
-            if titled {
-                let right_skip = 256u32.wrapping_sub(tlen as u32) <= llen as u32;
-                let wrong_appends = wrong::submit_label_should_append(tlen as u32, llen as u32);
-                // The wrong lift appends exactly when the true one skips.
-                if wrong_appends == right_skip {
-                    caught += 1;
+            // Wrong lift: the same shape with the append condition
+            // flipped. A panic counts as caught: the wrong append
+            // overruns the scratch where the true one skips.
+            let mut fake = Fake::new();
+            fake.answer("sink_title_present", vec![present_word]);
+            fake.answer_titles(vec![title.clone()]);
+            let probe = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                wrong::submit_label(&mut fake, sink, part2, &label_img.buf[100..], titling);
+            }));
+            match probe {
+                Err(_) => caught += 1,
+                Ok(()) => {
+                    let same_log = fake.log.len() == expect_l.len()
+                        && fake.log.iter().zip(expect_l.iter()).all(
+                            |(have, (name, words, bytes))| {
+                                have.name == *name && have.words == *words && have.bytes == *bytes
+                            },
+                        );
+                    if !same_log {
+                        caught += 1;
+                    }
                 }
             }
         }

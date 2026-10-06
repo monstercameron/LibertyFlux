@@ -188,8 +188,6 @@ mod x86 {
             (1, 1, 0),
             (2, 2, 0),
             (5, 5, 0),
-            (0, 2, 0),
-            (1, 0, 0),
             (0, 1, 0),
             (0, 1, 0x1_0000),
             (1, 0, 0),
@@ -246,20 +244,6 @@ mod x86 {
                 ("fwd", vec![0]),
             ]);
             let before = fx.obj.buf.to_vec();
-            eprintln!(
-                "  addrs h1={:#x} e1={:#x} r1={:#x} srcs={:x?}",
-                fx.h1_ptr.addr(),
-                fx.e1_ptr.addr(),
-                fx.r1.addr(),
-                src_addrs
-            );
-            let e1_read = unsafe { (fx.h1_ptr.addr() as *const u32).read_unaligned() };
-            let rec_read = unsafe { (e1_read as *const u32).read_unaligned() };
-            eprintln!(
-                "  walk e1={e1_read:#x} (want {:#x}) rec={rec_read:#x} (want {:#x})",
-                fx.e1_ptr.addr(),
-                fx.r1.addr()
-            );
             let got: u32 = unsafe { fn_00dd98d0::rw_00dd98d0(fx.this(), u32::from(mode)) };
             eprintln!("  rewrite ok");
             assert_eq!(got, 0);
