@@ -199,6 +199,14 @@ name = "lf-core"
 version = "0.1.0"
 
 [[package]]
+name = "lf-cutdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+ "lf-world",
+]
+
+[[package]]
 name = "lf-cutscene"
 version = "0.1.0"
 dependencies = [

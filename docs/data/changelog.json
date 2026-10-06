@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Lift: the cutscene object class, 16 methods in portable Rust with their proof in the pipeline",
+    "commit": null,
+    "summary": "The object a cutscene places in the world and drives is lifted from its verified 32-bit rewrites: one owning type and a trait for the world around it, no unsafe code, no operating-system calls.",
+    "changes": [
+      "crates/lf-world gains a module with 16 of the class's 19 verified methods: per-frame update, teardown, bounds, drawing, posing and the guards around them. It is the first lift of a class that is not verified in full; the lane lifted what is verified and the registry lists the rest. 17 host tests run on every platform.",
+      "A new test crate, lf-cutdiff, runs each lifted method against its tracked verified rewrite on the 32-bit target: 13 differential cases, about 810 comparisons, and 17 deliberately wrong lifts caught. The coordinator ran the host tests and the 32-bit tests before committing, and checked that the test crate builds on a 64-bit host.",
+      "Two things the lift had to reproduce exactly: a float that passes through the floating-point stack has a signalling not-a-number quieted, which the lift does as bit operations; and a table the class reads is a global indexed in place.",
+      "Not lifted: two methods that are not verified yet, two routines whose whole content is an address, and the deleting destructor, which is Drop in Rust.",
+      "The pipeline's 32-bit job now runs nine differential crates. Lifted methods with a proof in the pipeline: 176."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 1 files from lanes (227 unverified rewrites, 129 in review)",
     "commit": "a2812e814a64d8f9098be614113ce4c1e251827c",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
