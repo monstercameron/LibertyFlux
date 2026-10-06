@@ -50283,6 +50283,24 @@
   "lane": "a-17"
  },
  {
+  "address": "0x008EDF20",
+  "name": "weighted_proximity_mix (proposed)",
+  "kind": "function",
+  "file": "functions/fn_008edf20.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b583"
+ },
+ {
+  "address": "0x008EE550",
+  "name": "tls_logged_table_append (proposed)",
+  "kind": "function",
+  "file": "functions/fn_008ee550.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b583"
+ },
+ {
   "address": "0x008EE780",
   "name": "push_indexed_record",
   "kind": "function",
@@ -50353,6 +50371,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-17"
+ },
+ {
+  "address": "0x008EF360",
+  "name": "grid_occupancy_rebuild (proposed)",
+  "kind": "function",
+  "file": "functions/fn_008ef360.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b583"
  },
  {
   "address": "0x008EF720",
@@ -53775,6 +53802,15 @@
   "lane": "a-S05"
  },
  {
+  "address": "0x0094E400",
+  "name": "files_sink_settings_tables",
+  "kind": "function",
+  "file": "functions/fn_0094e400.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b585"
+ },
+ {
   "address": "0x0094EB40",
   "name": "store_link_and_set_flag",
   "kind": "function",
@@ -54034,6 +54070,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s133"
+ },
+ {
+  "address": "0x00951C50",
+  "name": "files_collect_flagged_entries",
+  "kind": "function",
+  "file": "functions/fn_00951c50.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b585"
  },
  {
   "address": "0x00951DB0",
@@ -106902,6 +106947,15 @@
   "lane": "r-s126"
  },
  {
+  "address": "0x00BF14C0",
+  "name": "files_memory_record_build",
+  "kind": "function",
+  "file": "functions/fn_00bf14c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q14"
+ },
+ {
   "address": "0x00BF22C0",
   "name": "refresh_copy_triple_into_this",
   "kind": "function",
@@ -111022,6 +111076,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s263"
+ },
+ {
+  "address": "0x00C644B0",
+  "name": "CCutsceneObject::~CCutsceneObject__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c644b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
  },
  {
   "address": "0x00C654D0",
@@ -124614,6 +124677,15 @@
   "lane": "a-S05"
  },
  {
+  "address": "0x00DD6790",
+  "name": "UIBasicClip::vf2",
+  "kind": "function",
+  "file": "functions/fn_00dd6790.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
+ },
+ {
   "address": "0x00DD6870",
   "name": "ui_element_set_init",
   "kind": "function",
@@ -124632,10 +124704,28 @@
   "lane": "r-b158"
  },
  {
+  "address": "0x00DD9210",
+  "name": "UIBasicClip::vf144",
+  "kind": "function",
+  "file": "functions/fn_00dd9210.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
+ },
+ {
   "address": "0x00DD9220",
   "name": "UIBasicClip::vf142",
   "kind": "function",
   "file": "functions/fn_00dd9220.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
+ },
+ {
+  "address": "0x00DD9230",
+  "name": "UIBasicClip::vf0",
+  "kind": "function",
+  "file": "functions/fn_00dd9230.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b587"
@@ -124911,6 +125001,15 @@
   "lane": "r-b188"
  },
  {
+  "address": "0x00DDA8A0",
+  "name": "UIBasicClip::vf127",
+  "kind": "function",
+  "file": "functions/fn_00dda8a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
+ },
+ {
   "address": "0x00DDA920",
   "name": "UIBasicClip::vf125",
   "kind": "function",
@@ -125019,6 +125118,15 @@
   "lane": "r-b235"
  },
  {
+  "address": "0x00DE3E90",
+  "name": "UIBasicClip::vf123",
+  "kind": "function",
+  "file": "functions/fn_00de3e90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
+ },
+ {
   "address": "0x00DE7050",
   "name": "UITimeOverview::build_rows",
   "kind": "function",
@@ -125107,6 +125215,15 @@
   "trials": 1200,
   "checker": "version 3",
   "lane": "r-b97"
+ },
+ {
+  "address": "0x00DF7C60",
+  "name": "UIGalleryFileViewer::vf88",
+  "kind": "function",
+  "file": "functions/fn_00df7c60.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b586"
  },
  {
   "address": "0x00DFB900",
