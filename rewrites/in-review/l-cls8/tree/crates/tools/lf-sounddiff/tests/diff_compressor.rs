@@ -192,7 +192,6 @@ mod x86 {
             let mut fx = Fixture::build(&mut rng);
             let index = i % 3;
             fx.obj.w32(INDEX, index);
-            let _ = &mut fx;
             let before = fx.obj.buf.clone();
             let v = fx.lift();
             rt::set_script(&[]);
@@ -227,7 +226,7 @@ mod x86 {
             0xABCD_0001, 42,
         ];
         for (i, &ans) in answers.iter().cycle().take(140).enumerate() {
-            let mut fx = Fixture::build(&mut rng);
+            let fx = Fixture::build(&mut rng);
             let a1 = U32_EDGE[i % U32_EDGE.len()];
             let a2 = rng.u32();
             let before = fx.obj.buf.clone();

@@ -95,7 +95,7 @@ impl CompressorEffect {
     /// preserved.
     pub fn set_param<W: CompressorWorld>(&mut self, world: &mut W, a1: u32, a2: u32) -> u32 {
         let answer = world.set_base(a1, a2);
-        (answer & 0xFFFF_FF00) | u32::from((answer as u8) != 0)
+        (answer & 0xFFFF_FF00) | u32::from(answer & 0xFF != 0)
     }
 
     /// Polls the effect: runs the first entry, polls the sub-object

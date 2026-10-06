@@ -7,7 +7,7 @@
 use lf_audio::sound::compressor::{CompressorEffect, CompressorWorld};
 use lf_audio::sound::effect::{Effect, EffectWorld};
 use lf_audio::sound::registry;
-use lf_audio::sound::{InfoTag, ListenerTag, SubTag, VoiceTag};
+use lf_audio::sound::{ListenerTag, SubTag, VoiceTag};
 use lf_core::Handle32;
 
 #[derive(Default)]
@@ -111,7 +111,7 @@ fn rotation_wraps_count() {
 fn rotation_copies_row_to_next() {
     let mut v = Effect::new();
     for (i, s) in v.slots.iter_mut().enumerate() {
-        *s = 100 + i as u32;
+        *s = 100 + u32::try_from(i).unwrap();
     }
     v.count = 0;
     v.limit = 5;
@@ -129,7 +129,10 @@ fn rotation_bound_reaches_trailing_word() {
     let mut v = Effect::new();
     v.count = 0;
     v.limit = 11;
-    v.slots[10] = 0xAABB_CC00;
+    // The word flows down the overlapping chain (slot 0 -> 5 -> 10 ->
+    // trailing word), not straight from slot 10, which the copy
+    // overwrites first.
+    v.slots[0] = 0xAABB_CC00;
     let last = v.rotate_slots();
     assert_eq!(last, 0xAABB_CC00);
     assert_eq!(v.limit, 0);
@@ -138,7 +141,7 @@ fn rotation_bound_reaches_trailing_word() {
 }
 
 #[test]
-#[should_panic]
+#[should_panic(expected = "index out of bounds")]
 fn rotation_panics_past_modelled_window() {
     let mut v = Effect::new();
     v.count = u32::MAX;
@@ -259,7 +262,7 @@ fn compressor_slot_selects_row() {
 }
 
 #[test]
-#[should_panic]
+#[should_panic(expected = "index out of bounds")]
 fn compressor_slot_panics_past_last_row() {
     let v = CompressorEffect {
         listener: None,

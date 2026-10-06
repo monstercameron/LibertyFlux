@@ -18,6 +18,9 @@ pub const GAIN_ROWS: u32 = 3;
 pub const GAIN_WIDTH: u32 = 5;
 /// Slots in the gain table.
 pub const GAIN_SLOTS: usize = 15;
+/// Flat index of the trailing word just past the gain table.
+const TRAILING_SLOT: u32 = 15;
+const _: () = assert!(TRAILING_SLOT as usize == GAIN_SLOTS);
 
 /// What the base effect needs from the engine around it: its attached
 /// voice, the voice-handle lookup, and the entry-refresh helper.
@@ -100,7 +103,7 @@ impl Effect {
     /// loop-bound byte, the enable flag and the two tail bytes into one
     /// word, exactly as the original's memory lays them out.
     fn read_slot(&self, idx: u32) -> u32 {
-        if idx == GAIN_SLOTS as u32 {
+        if idx == TRAILING_SLOT {
             u32::from_le_bytes([self.limit, self.enabled, self.tail[0], self.tail[1]])
         } else {
             self.slots[idx as usize]
@@ -110,7 +113,7 @@ impl Effect {
     /// Writes one slot-table word by flat index, splitting index 15
     /// back into the bound byte, the flag and the tail bytes.
     fn write_slot(&mut self, idx: u32, value: u32) {
-        if idx == GAIN_SLOTS as u32 {
+        if idx == TRAILING_SLOT {
             let bytes = value.to_le_bytes();
             self.limit = bytes[0];
             self.enabled = bytes[1];
@@ -175,11 +178,11 @@ impl Effect {
         self.count = 1;
         self.index = 0;
         self.param = param;
-        if tag != 0xFFFF_FFFF {
-            self.voice = world.lookup_voice(tag, param.wrapping_add(1));
+        self.voice = if tag == 0xFFFF_FFFF {
+            None
         } else {
-            self.voice = None;
-        }
+            world.lookup_voice(tag, param.wrapping_add(1))
+        };
         self.slots = [GAIN_ONE; GAIN_SLOTS];
         true
     }
