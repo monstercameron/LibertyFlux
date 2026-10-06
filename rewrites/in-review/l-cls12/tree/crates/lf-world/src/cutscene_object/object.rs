@@ -37,7 +37,7 @@ pub struct Matrix34 {
 }
 
 /// A 16-byte pose record: integer head and tail around two floats.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub struct PoseRecord {
     /// The leading integer word.
     pub head: u32,
@@ -195,10 +195,19 @@ const SEED_POS: f32 = f32::from_bits(0x4974_2400);
 const SEED_NEG: f32 = f32::from_bits(0xC974_2400);
 
 impl CutsceneObject {
-    /// The bound radius, bits untouched.
+    /// The bound radius. The original answers through the float stack,
+    /// which quiets a signalling NaN (sets the quiet bit, keeps the
+    /// payload); the lift reproduces that quieting as bit operations, so
+    /// the bits match exactly, NaNs included.
     #[must_use]
     pub fn bound_radius(&self) -> f32 {
-        self.radius
+        let bits = self.radius.to_bits();
+        let is_nan = bits & 0x7F80_0000 == 0x7F80_0000 && bits & 0x007F_FFFF != 0;
+        if is_nan {
+            f32::from_bits(bits | 0x0040_0000)
+        } else {
+            self.radius
+        }
     }
 
     /// True when the mode word selects the first draw path.

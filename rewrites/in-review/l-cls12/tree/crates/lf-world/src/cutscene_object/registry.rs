@@ -91,7 +91,7 @@ pub const ROWS: &[Row] = &[
     Row {
         method: "get_bound_radius",
         state: State::Proven,
-        narrows: &["float-stack return travels as f32: same bits"],
+        narrows: &["float-stack return travels as f32; its signalling-NaN quieting is reproduced as bit operations"],
     },
     Row {
         method: "vf26",
@@ -99,6 +99,7 @@ pub const ROWS: &[Row] = &[
         narrows: &[
             "out-pointer answer narrows to the written rectangle",
             "the corner callee's out and vector addresses are not compared; the pushed corner values are",
+            "the corner callee's third word is never read back: it is not modelled",
             "the unused third row of the fourth inline push is computed like the other rounds: unobservable",
         ],
     },
