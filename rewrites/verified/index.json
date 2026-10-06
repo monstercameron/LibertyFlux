@@ -42741,6 +42741,15 @@
   "lane": "r-s501"
  },
  {
+  "address": "0x0087C400",
+  "name": "crmt_orientation_init",
+  "kind": "function",
+  "file": "functions/fn_0087c400.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
   "address": "0x0087C4F0",
   "name": "crmt_buffer_assign",
   "kind": "function",
@@ -52119,6 +52128,24 @@
   "lane": "r-s504"
  },
  {
+  "address": "0x008F6A60",
+  "name": "Input_Init",
+  "kind": "function",
+  "file": "functions/fn_008f6a60.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s504"
+ },
+ {
+  "address": "0x008F6B00",
+  "name": "Input_GetObject",
+  "kind": "function",
+  "file": "functions/fn_008f6b00.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s504"
+ },
+ {
   "address": "0x008F6B20",
   "name": "Input_IsHotkeyActive",
   "kind": "function",
@@ -52141,6 +52168,24 @@
   "name": "Input_ResetSlots",
   "kind": "function",
   "file": "functions/fn_008f6ef0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s504"
+ },
+ {
+  "address": "0x008F7320",
+  "name": "InputDevice_ctor",
+  "kind": "function",
+  "file": "functions/fn_008f7320.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s504"
+ },
+ {
+  "address": "0x008F73A0",
+  "name": "SubObject_Thunk",
+  "kind": "function",
+  "file": "functions/fn_008f73a0.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-s504"
@@ -127933,6 +127978,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b225"
+ },
+ {
+  "address": "0x00DD2220",
+  "name": "UIMontageContainer.PositionBar",
+  "kind": "function",
+  "file": "functions/fn_00dd2220.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b607"
  },
  {
   "address": "0x00DD46C0",
