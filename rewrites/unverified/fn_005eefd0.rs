@@ -9,11 +9,13 @@
 /// arguments and writes its first words), then the holder takes the callback
 /// pointer `cb` at `+0x08`, the dereferenced words `*p0`/`*p1` at `+0x0C`/`+0x10`,
 /// the 16-byte rect `*rect` at `+0x14` (default rect words are written first,
-/// then overwritten), the flag byte `*flag` at `+0xE8`, and 49 words copied
-/// from `*state_src` over `+0x24`. Returns `this`.
+/// then overwritten), 49 words copied from `*state_src` over `+0x24`, and the
+/// flag byte `*flag` at `+0xE8`. Returns `this`.
 ///
 /// Original: thiscall, six stack arguments, one direct callee, callee pops 0x18.
-lf_checker_rt::export!(thiscall, rw_005eefd0(this: u32, cb: u32, p0: u32, p1: u32, rect: u32, flag: u32, state_src: u32) -> u32 {
+/// Stack order is `(cb, p0, p1, rect, state_src, flag)`: the state pointer comes
+/// fifth and the flag pointer sixth.
+lf_checker_rt::export!(thiscall, rw_005eefd0(this: u32, cb: u32, p0: u32, p1: u32, rect: u32, state_src: u32, flag: u32) -> u32 {
     unsafe {
         const VTABLE: u32 = 0x00FE1588;
         const LINK: u32 = 0x04;

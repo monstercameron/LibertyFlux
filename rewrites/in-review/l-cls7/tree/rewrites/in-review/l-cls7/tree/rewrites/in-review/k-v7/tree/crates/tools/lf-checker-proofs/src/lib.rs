@@ -1404,22 +1404,25 @@ fn k7_f32_id(x: f32) -> f32 {
 // k7_cmp32 (selftest:xmm32_call, v7): the original puts [a, b, 0, 0] in
 // XMM0 (only the low float is a callee input; the rest is scripted dirt
 // the rewrite cannot match) and calls callee 1. The rewrite's float
-// reaches XMM0's low word through k7_f32_id's return channel; the
-// 4-byte narrowing compares the low word only.
+// reaches XMM0's low word through k7_f32_id and stays there across the
+// stub call (spilling copies it, never clears it); the return keeps the
+// computation live (an unused float is deleted entirely, leaving entry
+// residue). The 4-byte narrowing compares the low word only.
 export!(cdecl, rw_k7_cmp32(a: u32, b: u32) -> u32 {
     let _ = b;
     let f = k7_f32_id(f32::from_bits(a));
     let _: u32 = callee_cdecl!(1, u32,);
-    let _ = f;
-    a
+    f.to_bits()
 });
 
-// Mutant: the low float disturbed (the narrowing still catches it).
+// Mutant: the low float disturbed (the narrowing still catches it;
+// whether the backend spills the disturbed word through XMM0 or leaves
+// entry residue there, the low word differs from the original's).
 export!(cdecl, mut_k7_cmp32(a: u32, b: u32) -> u32 {
     let _ = b;
-    let f = k7_f32_id(f32::from_bits(a ^ 1));
+    let g = k7_f32_id(f32::from_bits(a ^ 1));
     let _: u32 = callee_cdecl!(1, u32,);
-    let _ = f;
+    let _ = g;
     a
 });
 
