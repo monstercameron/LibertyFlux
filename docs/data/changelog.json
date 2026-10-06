@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Lift: audio voice classes, with their proof in the pipeline",
+    "title": "Lift: curve, delta, run-length and quaternion animation channels",
     "commit": null,
+    "summary": "Eight more verified methods of the animation channel decoders are lifted, across six classes, and their proofs join the ones the pipeline already runs.",
+    "changes": [
+      "crates/lf-animation/src/channel gains four channel types (curve float, delta float, run-length integer, raw quaternion) and extends two (quantized float, raw boolean). The curve channel is the first with real mathematics in it: it finds the segment that brackets a frame and evaluates that segment's polynomial, then scales the result.",
+      "The registry now lists 30 methods as proven and 66 as missing, each with the reason: stream serializers, builders that need the allocator, callees that are not lifted yet, and five methods that are not verified.",
+      "crates/tools/lf-animchan-diff goes from 17 to 25 differential tests, each with a deliberately wrong lift that must be caught. The coordinator ran all 25 on the 32-bit target, and the 51 host tests; they pass.",
+      "Two things the tests caught while the lane worked: the compiler swapping the operands of a float operation, which a not-a-number payload can see and which is now pinned, and a rebuild that has to zero one header word."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Lift: audio voice classes, with their proof in the pipeline",
+    "commit": "9104bed80f373ba25fcb82a6d5799ac870c6b052",
     "summary": "The second lift of whole classes: 28 verified methods of four audio voice classes are now portable Rust in crates/lf-audio, with the tests that prove them against the verified rewrites running in the pipeline.",
     "changes": [
       "New module crates/lf-audio/src/voice: the software mixer voice, the two ADPCM voices and the sound-device voice, each a type owning its header words and its ring of sample lanes, with each verified method that has behaviour in it restated as a method (stop, resume, start or seek, the stopping test, the ring refresh, the playback position, teardown). No unsafe code. 18 host tests.",

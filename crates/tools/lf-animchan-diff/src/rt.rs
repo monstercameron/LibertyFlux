@@ -2,14 +2,18 @@
 //!
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!`, the `callee_*` macros, `callee_addr`, `relocated`,
-//! `global`). The proof set is call-free, so the callee table stays
-//! empty; what the samplers need is `global`, answered from the measured
-//! constant values. Test-support code: the lifted crate itself stays
-//! `#![forbid(unsafe_code)]`.
+//! `global`, `xmm_word`). What the samplers need is `global`, answered
+//! from the measured constant values; the one rewrite that reads a
+//! constant through `relocated` gets the same answer there. Two cases
+//! exercise callees: each test registers its stub (the square root, or
+//! the lifted segment evaluator) before running. Test-support code: the
+//! lifted crate itself stays `#![forbid(unsafe_code)]`.
 
 // Test-only runtime: raw pointers through scripted addresses are inherent
 // here. Every access stays inside the test image the case built.
 #![allow(unsafe_code)]
+
+use core::sync::atomic::{AtomicU32, Ordering};
 
 /// The shared rounding half, measured from the executable's data.
 static ROUND_HALF_BITS: u32 = 0x3F00_0000;
@@ -22,6 +26,19 @@ static SNAP_LO_BITS: u32 = 0x3A83_126F;
 /// The snap-up threshold, measured the same way.
 static SNAP_HI_BITS: u32 = 0x3F7F_BE77;
 
+/// The shared constant at a file VA, if it is one of the five the proof
+/// set reads.
+fn const_bits(file_va: u32) -> Option<*const u32> {
+    match file_va {
+        0xFE86B4 => Some(&SNAP_LO_BITS),
+        0xFE88DC => Some(&SNAP_HI_BITS),
+        0xFE88E8 => Some(&ONE_BITS),
+        0xFE8CF8 => Some(&ROUND_MAGIC_BITS),
+        0xFE8830 => Some(&ROUND_HALF_BITS),
+        _ => None,
+    }
+}
+
 /// Pointer to the shared constant at a file VA, mirroring
 /// `lf-checker-rt::global` (image base `0x400000`).
 ///
@@ -31,33 +48,113 @@ static SNAP_HI_BITS: u32 = 0x3F7F_BE77;
 /// reads: a case bug, never a guess.
 #[must_use]
 pub fn global<T>(file_va: u32) -> *mut T {
-    let word: *const u32 = match file_va {
-        0xFE86B4 => &SNAP_LO_BITS,
-        0xFE88DC => &SNAP_HI_BITS,
-        0xFE88E8 => &ONE_BITS,
-        0xFE8CF8 => &ROUND_MAGIC_BITS,
-        0xFE8830 => &ROUND_HALF_BITS,
-        _ => panic!("unexpected shared constant VA {file_va:#x}"),
-    };
+    let word =
+        const_bits(file_va).unwrap_or_else(|| panic!("unexpected shared constant VA {file_va:#x}"));
     word as *mut T
 }
 
-/// Relocated base, mirroring `lf-checker-rt` (unused by the proof set:
-/// none of its files relocates an address, but the name must resolve).
+/// Relocated base, mirroring `lf-checker-rt` (the proof set never reads
+/// it: every relocated address it touches is a shared constant, but the
+/// name must resolve).
 pub static mut CHECKER_XBASE: u32 = 0;
 
-/// File VA to relocated address, mirroring `lf-checker-rt`.
+/// File VA to relocated address, mirroring `lf-checker-rt`. The five
+/// shared constants answer from the table above; anything else follows
+/// the relocated base.
 #[must_use]
 pub fn relocated(file_va: u32) -> u32 {
+    if let Some(word) = const_bits(file_va) {
+        return word as usize as u32;
+    }
     let xbase = unsafe { core::ptr::addr_of!(CHECKER_XBASE).read() };
     file_va.wrapping_sub(0x400000).wrapping_add(xbase)
 }
 
-/// Raw stub address for callee `id` (always 0: the proof set makes no
-/// callee calls, but the name must resolve).
+/// Low word of the emulated xmm0 register: the segment evaluator reads
+/// its `t` there, and each case primes it before calling.
+static XMM0_LO: AtomicU32 = AtomicU32::new(0);
+
+/// Primes the emulated xmm0 low word for the next rewrite call.
+pub fn set_xmm0_lo(bits: u32) {
+    XMM0_LO.store(bits, Ordering::SeqCst);
+}
+
+/// One word of an emulated vector register, mirroring
+/// `lf-checker-rt::xmm_word`.
+///
+/// # Panics
+///
+/// When the case asks for anything but register 0, word 0: the proof set
+/// transports a single float there, nothing else.
 #[must_use]
-pub const fn callee_addr(_id: u32) -> u32 {
-    0
+pub fn xmm_word(reg: u32, lane: u32) -> u32 {
+    assert!(reg == 0 && lane == 0, "unexpected xmm read ({reg}, {lane})");
+    XMM0_LO.load(Ordering::SeqCst)
+}
+
+/// Registered stub address for callee 1 (0 when none: a call there then
+/// faults, which is a case bug). Each callee case registers its own stub
+/// before running; no test binary mixes two callees.
+static CALLEE1: AtomicU32 = AtomicU32::new(0);
+
+/// Registers the stub address callee 1 calls land on.
+pub fn set_callee1(addr: u32) {
+    CALLEE1.store(addr, Ordering::SeqCst);
+}
+
+/// Raw stub address for callee `id`: the registered stub for id 1, 0
+/// otherwise.
+#[must_use]
+pub fn callee_addr(id: u32) -> u32 {
+    if id == 1 {
+        CALLEE1.load(Ordering::SeqCst)
+    } else {
+        0
+    }
+}
+
+/// Base address of the planted slot-0 chain (0 until [`plant_tls0`]).
+static TLS0_BASE: AtomicU32 = AtomicU32::new(0);
+
+/// Plants the thread-allocator chain for slot 0 (slot, heap object,
+/// vtable answering `free_stub` at its release slot), leaking three
+/// small boxes for the test binary's lifetime, and returns the slot base.
+///
+/// # Panics
+///
+/// When a chain is already planted: one binary plants once.
+pub fn plant_tls0(free_stub: u32) -> u32 {
+    assert_eq!(
+        TLS0_BASE.load(Ordering::SeqCst),
+        0,
+        "slot-0 chain planted twice"
+    );
+    let vtable: &'static mut [u32; 4] =
+        Box::leak(Box::new([0xAAAA_AAAA, 0xBBBB_BBBB, 0xCCCC_CCCC, free_stub]));
+    let heap_obj: &'static mut [u32; 1] = Box::leak(Box::new([vtable.as_ptr() as usize as u32]));
+    let slot: &'static mut [u32; 3] = Box::leak(Box::new([
+        0x1111_1111,
+        0x2222_2222,
+        heap_obj.as_ptr() as usize as u32,
+    ]));
+    let base = slot.as_ptr() as usize as u32;
+    TLS0_BASE.store(base, Ordering::SeqCst);
+    base
+}
+
+/// Base address of thread slot `slot`, mirroring
+/// `lf-checker-rt::tls_slot`.
+///
+/// # Panics
+///
+/// When the slot is not 0 (the proof set reaches the allocator through
+/// slot 0 only) or no chain is planted: a case bug, never a guess.
+#[must_use]
+pub fn tls_slot(slot: usize) -> u32 {
+    assert!(slot == 0, "unexpected TLS slot {slot}");
+    let base = TLS0_BASE.load(Ordering::SeqCst);
+    assert!(base != 0, "slot-0 chain not planted");
+    base
 }
 
 /// Declare a rewrite export with the original's calling convention.

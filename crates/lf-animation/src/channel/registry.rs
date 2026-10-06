@@ -1,12 +1,12 @@
 //! What is lifted, what is proven, and what each proof leaves out.
 //!
-//! One row per verified 32-bit method of the nine lifted channel classes.
-//! `Proven` means the method is restated on its channel type and the
-//! differential test crate ran it against its verified rewrite on the
+//! One row per verified 32-bit method of the thirteen lifted channel
+//! classes. `Proven` means the method is restated on its channel type and
+//! the differential test crate ran it against its verified rewrite on the
 //! same generated inputs, comparing results and every effect, with a
-//! deliberately wrong lift caught alongside. The family's other five
-//! classes (base, curve, delta, raw quaternion, run-length) have no
-//! lifted methods yet and no rows here. Counts below come from this table.
+//! deliberately wrong lift caught alongside. The base channel class has no
+//! lifted type (its methods forward to one slot each, which carries no
+//! behaviour) and no rows here. Counts below come from this table.
 
 /// Lift state of one verified method.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -212,6 +212,18 @@ pub const ROWS: &[Row] = &[
     },
     Row {
         channel: "RawBool",
+        method: "try_build_from_samples",
+        state: State::Proven,
+        narrows: &[
+            "the installed buffer travels as bytes: its address is not compared",
+            "the pair words stay zeroed on the rewrite side and are not modelled",
+            "inputs longer than 2,147,483,647 samples panic: the original reads out of bounds there",
+            "inputs packing past 65,535 bytes panic: the count word is 16 bits",
+            "the old buffer's release goes through a stub: Drop covers it",
+        ],
+    },
+    Row {
+        channel: "RawBool",
         method: "vf20",
         state: State::Missing,
         narrows: &["serializer through stream-helper callees"],
@@ -408,8 +420,8 @@ pub const ROWS: &[Row] = &[
     Row {
         channel: "QuantizeFloat",
         method: "vf19",
-        state: State::Missing,
-        narrows: &["storage words: pure arithmetic, deferred for time"],
+        state: State::Proven,
+        narrows: &[],
     },
     Row {
         channel: "QuantizeFloat",
@@ -422,6 +434,257 @@ pub const ROWS: &[Row] = &[
         method: "vf0",
         state: State::Missing,
         narrows: &["deleting destructor through the thread allocator: Drop covers it"],
+    },
+    // Raw quaternion: the indexed blend alone; the rest needs callees.
+    Row {
+        channel: "RawQuat",
+        method: "sample_indexed",
+        state: State::Proven,
+        narrows: &[
+            "out-pointer answer narrows to the value",
+            "idx + 1 must stay in the keys",
+            "the square root is shared with the rewrite's stub: its behaviour is not proven here",
+        ],
+    },
+    Row {
+        channel: "RawQuat",
+        method: "clone",
+        state: State::Missing,
+        narrows: &["clone through the thread allocator: Clone covers it"],
+    },
+    Row {
+        channel: "RawQuat",
+        method: "dtor",
+        state: State::Missing,
+        narrows: &["deleting destructor through the thread allocator: Drop covers it"],
+    },
+    Row {
+        channel: "RawQuat",
+        method: "vf3",
+        state: State::Missing,
+        narrows: &["sampler through the normalize callee"],
+    },
+    Row {
+        channel: "RawQuat",
+        method: "vf16",
+        state: State::Missing,
+        narrows: &["build-from-source through the allocator callee, with sign alignment"],
+    },
+    Row {
+        channel: "RawQuat",
+        method: "vf20",
+        state: State::Missing,
+        narrows: &["serializer through stream-helper callees"],
+    },
+    // Delta float: the size alone; the rest needs sub-object callees.
+    Row {
+        channel: "DeltaFloat",
+        method: "vf19",
+        state: State::Proven,
+        narrows: &[],
+    },
+    Row {
+        channel: "DeltaFloat",
+        method: "vf1",
+        state: State::Missing,
+        narrows: &["copy constructor through the thread allocator: Clone covers it"],
+    },
+    Row {
+        channel: "DeltaFloat",
+        method: "vf0",
+        state: State::Missing,
+        narrows: &["deleting destructor through the thread allocator: Drop covers it"],
+    },
+    Row {
+        channel: "DeltaFloat",
+        method: "vf4",
+        state: State::Missing,
+        narrows: &["sampler through sub-object callees"],
+    },
+    Row {
+        channel: "DeltaFloat",
+        method: "vf14",
+        state: State::Missing,
+        narrows: &["compressor through allocator and bit-stream callees"],
+    },
+    Row {
+        channel: "DeltaFloat",
+        method: "vf20",
+        state: State::Missing,
+        narrows: &["serializer through stream-helper callees"],
+    },
+    // Run-length int: the size alone; the decoders need the bit callee.
+    Row {
+        channel: "RleInt",
+        method: "get_alloc_size",
+        state: State::Proven,
+        narrows: &[],
+    },
+    Row {
+        channel: "RleInt",
+        method: "clone",
+        state: State::Missing,
+        narrows: &["clone through the thread allocator: Clone covers it"],
+    },
+    Row {
+        channel: "RleInt",
+        method: "create",
+        state: State::Missing,
+        narrows: &["factory through the thread allocator: new() covers it"],
+    },
+    Row {
+        channel: "RleInt",
+        method: "init_guarded",
+        state: State::Missing,
+        narrows: &["in-place init relocating pointers: new() covers it"],
+    },
+    Row {
+        channel: "RleInt",
+        method: "copy_from",
+        state: State::Missing,
+        narrows: &["copy through part-copier callees"],
+    },
+    Row {
+        channel: "RleInt",
+        method: "deleting",
+        state: State::Missing,
+        narrows: &["deleting destructor through the thread allocator: Drop covers it"],
+    },
+    Row {
+        channel: "RleInt",
+        method: "sample_indexed",
+        state: State::Missing,
+        narrows: &["decode through the bit-decoder callee"],
+    },
+    Row {
+        channel: "RleInt",
+        method: "decode_at",
+        state: State::Missing,
+        narrows: &["decode through the bit-decoder callee"],
+    },
+    Row {
+        channel: "RleInt",
+        method: "vf5",
+        state: State::Missing,
+        narrows: &["sampler through the integer-decoder callee"],
+    },
+    Row {
+        channel: "RleInt",
+        method: "compress",
+        state: State::Missing,
+        narrows: &["compressor through array and allocator callees"],
+    },
+    Row {
+        channel: "RleInt",
+        method: "serialize",
+        state: State::Missing,
+        narrows: &["serializer through stream-helper callees"],
+    },
+    // Curve float: size, segment evaluator and sampler; the key-list
+    // management needs allocator and stream callees.
+    Row {
+        channel: "CurveFloat",
+        method: "get_alloc_size",
+        state: State::Proven,
+        narrows: &[],
+    },
+    Row {
+        channel: "CurveFloat",
+        method: "eval_segment",
+        state: State::Proven,
+        narrows: &[
+            "out-pointer answer narrows to the value",
+            "order + 1 coefficients must stay in the slice",
+        ],
+    },
+    Row {
+        channel: "CurveFloat",
+        method: "sample",
+        state: State::Proven,
+        narrows: &[
+            "out-pointer answer narrows to the value",
+            "channel must hold a key (the original reads before its array when empty)",
+            "order + 1 coefficients must stay in each segment",
+            "the found-path segment call is the lifted eval_segment on both sides, proven separately",
+        ],
+    },
+    Row {
+        channel: "CurveFloat",
+        method: "clone",
+        state: State::Missing,
+        narrows: &["clone through the thread allocator: Clone covers it"],
+    },
+    Row {
+        channel: "CurveFloat",
+        method: "create",
+        state: State::Missing,
+        narrows: &["factory through the thread allocator: new() covers it"],
+    },
+    Row {
+        channel: "CurveFloat",
+        method: "init_guarded",
+        state: State::Missing,
+        narrows: &["single call through a helper: no behaviour in it"],
+    },
+    Row {
+        channel: "CurveFloat",
+        method: "deleting",
+        state: State::Missing,
+        narrows: &["deleting destructor through key and thread allocators: Drop covers it"],
+    },
+    Row {
+        channel: "CurveFloat",
+        method: "copy_from",
+        state: State::Missing,
+        narrows: &["copy through the key-copier callee"],
+    },
+    Row {
+        channel: "CurveFloat",
+        method: "map",
+        state: State::Missing,
+        narrows: &["session slot remap through relocation callees: no portable meaning yet"],
+    },
+    Row {
+        channel: "CurveFloat",
+        method: "serialize",
+        state: State::Missing,
+        narrows: &["serializer through stream-helper callees"],
+    },
+    Row {
+        channel: "CurveFloat",
+        method: "copy_segment",
+        state: State::Missing,
+        narrows: &["segment copy through the thread allocator"],
+    },
+    Row {
+        channel: "CurveFloat",
+        method: "serialize_keys",
+        state: State::Missing,
+        narrows: &["serializer through stream-helper and allocator callees"],
+    },
+    Row {
+        channel: "CurveFloat",
+        method: "alloc_keys",
+        state: State::Missing,
+        narrows: &["zeroed array through the thread allocator: Vec covers it"],
+    },
+    Row {
+        channel: "CurveFloat",
+        method: "copy_keys",
+        state: State::Missing,
+        narrows: &["segment-list copy through allocator and copier callees"],
+    },
+    Row {
+        channel: "CurveFloat",
+        method: "free_keys",
+        state: State::Missing,
+        narrows: &["release through the thread allocator: Drop covers it"],
+    },
+    Row {
+        channel: "CurveFloat",
+        method: "purge_list",
+        state: State::Missing,
+        narrows: &["list drain through the thread allocator: Drop covers it"],
     },
 ];
 

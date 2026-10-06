@@ -11,8 +11,8 @@ use lf_animation::channel::frame::{
 };
 use lf_animation::channel::registry::{self, State};
 use lf_animation::channel::{
-    QuantizeFloat, RawBool, RawFloat, RawInt, RawVec3, StaticFloat, StaticInt, StaticQuat,
-    StaticVec3,
+    CurveFloat, CurveKey, DeltaFloat, QuantizeFloat, RawBool, RawFloat, RawInt, RawQuat, RawVec3,
+    RleInt, StaticFloat, StaticInt, StaticQuat, StaticVec3,
 };
 use lf_math::{Quat, Vec3, Vec4};
 
@@ -368,7 +368,7 @@ fn quantize_float_scales_biases_and_blends() {
 #[test]
 fn registry_counts_match_proof_scope() {
     let (proven, lifted, missing) = registry::counts();
-    assert_eq!(proven, 22, "proven methods");
+    assert_eq!(proven, 30, "proven methods");
     assert_eq!(lifted, 0, "everything lifted is proven");
     assert!(missing > 0, "missing methods are listed, not hidden");
     for row in registry::ROWS {
@@ -382,4 +382,228 @@ fn registry_counts_match_proof_scope() {
             row.method
         );
     }
+}
+
+// Compressed-channel sizes.
+
+#[test]
+fn delta_storage_size_rounds_count_to_words() {
+    assert_eq!(DeltaFloat::new(0).storage_size(), 0x38);
+    assert_eq!(DeltaFloat::new(1).storage_size(), 0x38 + 4);
+    assert_eq!(DeltaFloat::new(31).storage_size(), 0x38 + 4);
+    assert_eq!(DeltaFloat::new(32).storage_size(), 0x38 + 4);
+    assert_eq!(DeltaFloat::new(33).storage_size(), 0x38 + 8);
+    assert_eq!(DeltaFloat::new(u32::MAX).storage_size(), 0x2000_0038);
+    assert_eq!(DeltaFloat::new(7).count(), 7);
+}
+
+#[test]
+fn quant_storage_size_picks_header_by_remainder() {
+    let s = |count, width| {
+        QuantizeFloat::new(1.0, 0.0)
+            .with_counts(count, width)
+            .storage_size()
+    };
+    assert_eq!(s(0, 0), 0x1C);
+    assert_eq!(s(1, 1), 0x20);
+    assert_eq!(s(2, 16), 0x20);
+    assert_eq!(s(2, 17), 0x24);
+    assert_eq!(s(0, u32::MAX), 0x1C);
+    // Wrapping multiply: MAX * 2 = 0xFFFF_FFFE, 0x7FFFFF words + tail.
+    assert_eq!(s(u32::MAX, 2), 0x2000_001C);
+}
+
+#[test]
+fn rle_alloc_size_rounds_bit_words_and_adds_samples() {
+    let s = |count, bits| RleInt::new(count, bits).alloc_size();
+    assert_eq!(s(0, 0), 0x1C);
+    assert_eq!(s(1, 0), 0x20);
+    assert_eq!(s(0, 1), 0x20);
+    assert_eq!(s(0, 32), 0x20);
+    assert_eq!(s(0, 33), 0x24);
+    assert_eq!(s(0xFFFF, 0xFFFF_FFFF), 0x2004_0018);
+    let c = RleInt::new(9, 70);
+    assert_eq!((c.sample_count(), c.bit_len()), (9, 70));
+}
+
+// Curve segments.
+
+#[test]
+fn curve_eval_segment_computes_each_order() {
+    assert_eq!(CurveFloat::eval_segment(&[5.0], 0, 99.0), 5.0);
+    assert_eq!(CurveFloat::eval_segment(&[2.0, 3.0], 1, 4.0), 11.0);
+    assert_eq!(CurveFloat::eval_segment(&[1.0, 2.0, 3.0], 2, 10.0), 123.0);
+    assert_eq!(CurveFloat::eval_segment(&[1.0, 0.0, 0.0, 0.0], 3, 2.0), 8.0);
+    // Generic loop: all ones at t = 2 doubles and adds, four times.
+    assert_eq!(CurveFloat::eval_segment(&[1.0; 5], 4, 2.0), 31.0);
+    assert_eq!(CurveFloat::eval_segment(&[1.0; 6], 5, 2.0), 63.0);
+}
+
+#[test]
+#[should_panic]
+fn curve_eval_segment_short_coeffs_panics() {
+    let _ = CurveFloat::eval_segment(&[1.0, 2.0], 2, 0.0);
+}
+
+#[test]
+#[should_panic]
+fn curve_key_short_coeffs_panics() {
+    let _ = CurveKey::new(0, 2, vec![1.0, 2.0]);
+}
+
+#[test]
+fn curve_key_holds_position_order_and_coeffs() {
+    let k = CurveKey::new(12, 1, vec![2.0, 3.0]);
+    assert_eq!(k.key(), 12);
+    assert_eq!(k.order(), 1);
+    assert_eq!(k.coeff(), &[2.0, 3.0]);
+}
+
+#[test]
+fn curve_alloc_size_sums_orders_over_base() {
+    let keys = |orders: &[u8]| {
+        orders
+            .iter()
+            .map(|&o| CurveKey::new(0, o, vec![0.0; (o as usize) + 1]))
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(CurveFloat::new(vec![], 1.0, 0.0).alloc_size(), 0x18);
+    assert_eq!(
+        CurveFloat::new(keys(&[0]), 1.0, 0.0).alloc_size(),
+        0x18 + 0x0C
+    );
+    assert_eq!(
+        CurveFloat::new(keys(&[0, 1, 2]), 1.0, 0.0).alloc_size(),
+        0x48
+    );
+    // Wrapping checked against wide arithmetic, not the same loop.
+    let wide = keys(&vec![255u8; 1000]);
+    let expect = (0x18u64
+        + wide
+            .iter()
+            .map(|k| u64::from(k.order()) * 4 + 12)
+            .sum::<u64>()) as u32;
+    assert_eq!(CurveFloat::new(wide, 1.0, 0.0).alloc_size(), expect);
+    assert_eq!(expect, 0x18 + 1000 * (255 * 4 + 12));
+}
+
+fn const_curve(keys: &[(u16, f32)], scale: f32, bias: f32) -> CurveFloat {
+    CurveFloat::new(
+        keys.iter()
+            .map(|&(k, v)| CurveKey::new(k, 0, vec![v]))
+            .collect(),
+        scale,
+        bias,
+    )
+}
+
+#[test]
+fn curve_sample_negative_time_clamps_to_zero() {
+    let c = const_curve(&[(5, 7.0)], 1.0, 0.0);
+    assert_eq!(c.sample(-3.0), 7.0);
+    assert_eq!(c.sample(100.0), 7.0);
+}
+
+#[test]
+fn curve_sample_nan_time_maps_to_last_key() {
+    // Single linear segment: NaN is not clamped, then maps to the key.
+    let c = CurveFloat::new(vec![CurveKey::new(4, 1, vec![2.0, 1.0])], 1.0, 0.0);
+    assert_eq!(c.sample(f32::NAN), 9.0);
+}
+
+#[test]
+fn curve_sample_exact_key_takes_found_path() {
+    let c = const_curve(&[(10, 1.0), (20, 2.0)], 1.0, 0.0);
+    // trunc(9) + 1 = 10: exactly the first key.
+    assert_eq!(c.sample(9.0), 1.0);
+    // trunc(10) + 1 = 11: past it, so the final segment answers.
+    assert_eq!(c.sample(10.0), 2.0);
+}
+
+#[test]
+fn curve_sample_uses_local_time_and_scale() {
+    let c = CurveFloat::new(
+        vec![
+            CurveKey::new(4, 1, vec![1.0, 0.0]),
+            CurveKey::new(10, 1, vec![1.0, 0.0]),
+        ],
+        3.0,
+        5.0,
+    );
+    // Past the first key: local time 5 - 4 = 1, value 1, scaled to 8.
+    assert_eq!(c.sample(5.0), 8.0);
+}
+
+#[test]
+#[should_panic]
+fn curve_sample_empty_panics() {
+    let _ = CurveFloat::new(vec![], 1.0, 0.0).sample(0.0);
+}
+
+// Raw quaternions.
+
+#[test]
+fn raw_quat_lerp_endpoints_stay_exact() {
+    let c = RawQuat::new(vec![q(1.0, 0.0, 0.0, 0.0), q(0.0, 1.0, 0.0, 0.0)]);
+    assert_eq!(c.lerp_normalized(0, 0.0), q(1.0, 0.0, 0.0, 0.0));
+    assert_eq!(c.lerp_normalized(0, 1.0), q(0.0, 1.0, 0.0, 0.0));
+}
+
+#[test]
+fn raw_quat_lerp_midpoint_is_unit() {
+    let c = RawQuat::new(vec![q(1.0, 0.0, 0.0, 0.0), q(0.0, 1.0, 0.0, 0.0)]);
+    let m = c.lerp_normalized(0, 0.5);
+    assert_eq!(m.x, m.y);
+    assert_eq!((m.z, m.w), (0.0, 0.0));
+    assert!((m.x * m.x * 2.0 - 1.0).abs() < 1e-6, "unit length: {m:?}");
+}
+
+#[test]
+fn raw_quat_lerp_zero_skips_normalize() {
+    let c = RawQuat::new(vec![q(0.0, 0.0, 0.0, 0.0), q(0.0, 0.0, 0.0, 0.0)]);
+    assert_eq!(c.lerp_normalized(0, 0.5), q(0.0, 0.0, 0.0, 0.0));
+}
+
+#[test]
+#[should_panic]
+fn raw_quat_lerp_past_last_key_panics() {
+    let c = RawQuat::new(vec![q(1.0, 0.0, 0.0, 0.0)]);
+    let _ = c.lerp_normalized(0, 0.0);
+}
+
+// Raw-bool packing.
+
+#[test]
+fn raw_bool_build_packs_lsb_first() {
+    assert!(RawBool::build_from_samples(&[]).bytes().is_empty());
+    assert_eq!(RawBool::build_from_samples(&[1]).bytes(), &[0xFF]);
+    assert_eq!(RawBool::build_from_samples(&[0]).bytes(), &[0x00]);
+    assert_eq!(
+        RawBool::build_from_samples(&[1, 0, 0, 0, 0, 0, 0, 0]).bytes(),
+        &[0x01]
+    );
+    assert_eq!(
+        RawBool::build_from_samples(&[0, 0, 0, 0, 0, 0, 0, 2]).bytes(),
+        &[0x80]
+    );
+    // Any non-zero byte sets its bit.
+    assert_eq!(
+        RawBool::build_from_samples(&[0xFF, 0x80, 1, 0, 7, 0, 0, 0]).bytes(),
+        &[0x17]
+    );
+}
+
+#[test]
+fn raw_bool_build_repeats_last_sample_in_short_tail() {
+    // Nine samples: the second byte reads sample 8 eight times over.
+    assert_eq!(
+        RawBool::build_from_samples(&[0, 0, 0, 0, 0, 0, 0, 0, 1]).bytes(),
+        &[0x00, 0xFF]
+    );
+    assert_eq!(
+        RawBool::build_from_samples(&[1, 1, 1, 1, 1, 1, 1, 1, 0]).bytes(),
+        &[0xFF, 0x00]
+    );
+    // Sixteen samples fill two bytes with no repeat.
+    assert_eq!(RawBool::build_from_samples(&[1; 16]).bytes(), &[0xFF, 0xFF]);
 }
