@@ -111,7 +111,7 @@ lf_checker_rt::export!(thiscall, rw_00d94a80(this: u32, p0: u32, p1: u32, p2: u3
         buf_ray[0] = rd32(p0);
         buf_ray[1] = rd32(p0 + 4);
         buf_ray[2] = fadd(f32::from_bits(rd32(p0 + 8)), rk()).to_bits();
-        buf_apk[0] = buf_ray[0] | 0xFFFF0FFF;
+        buf_apk[0] = (buf_ray[0] | 0xFFFF0FFF) & 0xFFFF0FFF;
         buf_apk[1] = (buf_ray[1] | 0x0FFFFFFF) & 0xEFFFFFFF;
         buf_apk[2] = buf_ray[2];
         buf_sub[0] = rd32(p0);
