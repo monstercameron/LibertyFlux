@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Devlog: hourly review, 23:05 on 5 October",
+    "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "15,829 functions verified, 27.9% of the code by size; 22 lanes running. Of nine rewrites withdrawn for a wrong signedness one was withdrawn in error and is restored; six of the eight wrong ones are repaired and back.",
+      "A test that passes on the ARM development machine failed on the pipeline's x86 runner: the emulator and the processor differ on a signalling not-a-number. A lane is briefed to measure the emulator against the documented processor."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 24 files from lanes (257 unverified rewrites, 830 in review)",
     "commit": "9457bf0ea7bb5ff87fd4aeb32ecc87ec17457068",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
