@@ -1310,3 +1310,119 @@ export!(thiscall, mut_k5_snapneg(obj: *mut u8, arg_bits: u32) -> u32 {
     let poke = unsafe { obj.sub(SNAP_POKE_NEG) } as *mut u32;
     k2_f4_with_poke(obj, arg_bits, poke)
 });
+
+// k7_ctail (selftest:ctail_guard, v7): the original tests its word and
+// tail-calls callee 1 (patched by the contract's ctailpatches) when it
+// is nonzero, else returns 0. The rewrite branches the same way and
+// calls the callee normally; the stub answers the scripted word.
+export!(cdecl, rw_k7_ctail(a: u32) -> u32 {
+    if a != 0 {
+        callee_cdecl!(1, u32,)
+    } else {
+        0
+    }
+});
+
+// Mutant: the guard inverted. Without the conditional-tail patch the
+// taken path runs native game code and the pair is unprovable.
+export!(cdecl, mut_k7_ctail(a: u32) -> u32 {
+    if a == 0 {
+        callee_cdecl!(1, u32,)
+    } else {
+        0
+    }
+});
+
+// k7_st0 (selftest:st0_call, v7): the original pushes its word on the
+// float stack and calls callee 1, which takes it from ST0, then returns
+// the word. The rewrite passes the word on the stack; the stub loads it
+// into ST0 on the rewrite side (st0_from_stack) and the logged ST0
+// compares.
+export!(cdecl, rw_k7_st0(a: u32) -> u32 {
+    let _: u32 = callee_cdecl!(1, u32, a);
+    a
+});
+
+// Mutant: a disturbed word reaches the callee's float stack. Without
+// the ST0 option the float at the call is unobservable and this passes
+// (see k7_st0neg).
+export!(cdecl, mut_k7_st0(a: u32) -> u32 {
+    let _: u32 = callee_cdecl!(1, u32, a.wrapping_add(1));
+    a
+});
+
+// k7_st0_64 (selftest:st0_call64, v7): the double-width form: the
+// original pushes a double from two stack words and the rewrite passes
+// the pair on the stack.
+export!(cdecl, rw_k7_st0_64(lo: u32, hi: u32) -> u32 {
+    let _: u32 = callee_cdecl!(1, u32, lo, hi);
+    lo
+});
+
+// Mutant: the high word disturbed.
+export!(cdecl, mut_k7_st0_64(lo: u32, hi: u32) -> u32 {
+    let _: u32 = callee_cdecl!(1, u32, lo, hi ^ 1);
+    lo
+});
+
+// k7_digest (selftest:digest_loop, v7): the original calls callee 1 with
+// 0..n. Past the log cap the stub folds each call into the running
+// digest; the rewrite loops the same way.
+export!(cdecl, rw_k7_digest(n: u32) -> u32 {
+    let mut i = 0u32;
+    while i < n {
+        let _: u32 = callee_cdecl!(1, u32, i);
+        i = i.wrapping_add(1);
+    }
+    0
+});
+
+// How many calls the k7_digest contracts log exactly before the digest
+// takes over (their log_max).
+const K7_DIGEST_CAP: u32 = 8;
+
+// Mutant: one past-cap argument disturbed. The logged prefix is
+// identical, so only the digest sees it.
+export!(cdecl, mut_k7_digest(n: u32) -> u32 {
+    let mut i = 0u32;
+    while i < n {
+        let arg = if i < K7_DIGEST_CAP { i } else { i ^ 0xFF };
+        let _: u32 = callee_cdecl!(1, u32, arg);
+        i = i.wrapping_add(1);
+    }
+    0
+});
+
+// Never-inlined float identity: its return channel carries the float
+// into XMM0's low word for the xmm32_call proof below (a Rust rewrite
+// cannot place a value in a vector register for a call any other way).
+#[inline(never)]
+fn k7_f32_id(x: f32) -> f32 {
+    x
+}
+
+// k7_cmp32 (selftest:xmm32_call, v7): the original puts [a, b, 0, 0] in
+// XMM0 (only the low float is a callee input; the rest is scripted dirt
+// the rewrite cannot match) and calls callee 1. The rewrite's float
+// reaches XMM0's low word through k7_f32_id and stays there across the
+// stub call (spilling copies it, never clears it); the return keeps the
+// computation live (an unused float is deleted entirely, leaving entry
+// residue). The 4-byte narrowing compares the low word only.
+export!(cdecl, rw_k7_cmp32(a: u32, b: u32) -> u32 {
+    let _ = b;
+    let f = k7_f32_id(f32::from_bits(a));
+    let _: u32 = callee_cdecl!(1, u32,);
+    f.to_bits()
+});
+
+// Mutant: the low float disturbed (the narrowing still catches it;
+// whether the backend spills the disturbed word through XMM0 or leaves
+// entry residue there, the low word differs from the original's).
+export!(cdecl, mut_k7_cmp32(a: u32, b: u32) -> u32 {
+    let _ = b;
+    let g = k7_f32_id(f32::from_bits(a ^ 1));
+    let _: u32 = callee_cdecl!(1, u32,);
+    let _ = g;
+    a
+});
+

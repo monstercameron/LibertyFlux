@@ -45,6 +45,20 @@ contract and recorded in `features`: an 8-byte rewrite-side transport
 for doubles in vector registers (`xmm_from_stack64`), a double answer
 the rewrite can read (`ret: "f64xmm0edx"`), scripted doubles
 (`{"double": ...}`), and per-trial double XMM entry values (`"double").
+Version 7 (candidate) adds, each opt-in per contract and recorded in
+the verdict's `features`: near conditional tail-jump patches
+(`ctailpatches`), x87 ST0 call arguments (`logst0` with the
+`st0_from_stack` transport), a running digest over past-cap calls
+(`log_digest`), and 4-byte vector-register narrowing
+(`logxmm32_regs`). It also records two contract shapes that were
+silently wrong before: an unknown return kind (which fell back to a
+32-bit integer) and an unknown word-spec key (which resolved to random
+bits). Contracts written before the strict option keep running exactly
+as on stock -- the word resolves to the same random bits, a boolean
+`checks.ret` compares the return register -- and the verdict records
+them under `features.unresolved_word_specs` / `features.ret_boolean`.
+A contract with the top-level option `strict: true` is refused instead
+if it holds either shape. Every NEW contract should set `strict: true`.
 
 What it is
 ----------
@@ -134,7 +148,12 @@ One JSON file per function:
   {"float":true} (float-edge bits), {"stub":id} (recorder-stub address
   for vtable/data-slot planting), {"null":...} (literal 0; v3 -- v2 fell
   through to random bits). A bare {"heap":N} with no `plus` means
-  segment N when N names one, else a byte offset.
+  segment N when N names one, else a byte offset. A dict with none of
+  these keys resolves to random bits exactly as on stock (one draw, same
+  stream position) and is recorded in the verdict's
+  `features.unresolved_word_specs` as {where, keys}; with `strict: true`
+  it is refused at load. New contracts should set `strict: true` so a
+  mistyped key fails loudly instead of silently becoming random input.
 - `globals`: [{rva,size}] declared ranges (dword-aligned). `globals_fill`:
   `random`, `pristine`, an explicit [{rva,words}] list, `globals_values`
   ([{rva,words}] with word specs, supports heap/stub pointers), or
@@ -178,7 +197,22 @@ One JSON file per function:
   callee reads; use it when the upper half holds whatever an earlier
   conversion left there rather than a callee input): the stub still logs
   all 16 bytes, the call key keeps the low two words, and the verdict's
-  `features` records it. The register must still be logged.
+  `features` records it. The register must still be logged. v7
+  `logxmm32_regs` [n, ...] narrows to the low 4 bytes instead (the
+  float the callee reads; use it when the callee never looks at the
+  upper 12, which the compiler may fill differently on the rewrite's
+  side), never beside the 8-byte narrowing on the same register.
+  v7 `logst0` ("f32" or "f64") logs the x87 ST0 call argument for a
+  callee that takes its float argument on the float stack: the stub
+  stores ST0 without popping it, so the callee still finds it on top,
+  and the call key compares one word (f32) or two (f64). v7
+  `st0_from_stack` (an argument index) is the rewrite-side transport
+  (the stub loads ST0 from that stack word, or word pair for f64, on
+  the rewrite side only); like the vector transports it skips the
+  stack words on both sides and fails closed (logged, declared). A
+  transported call leaves one value on the rewrite's FPU stack that
+  safe Rust cannot pop, so the x87 state check stays off on such
+  contracts; the argument itself is compared at the call.
   `xmm0_from_stack` names the stack arg the stub loads XMM0 from on
   the rewrite side (transport for xmm0-arg callees; call args are then
   skipped on both sides and only XMM0 is compared). v3 adds `logxmm1`
@@ -211,6 +245,15 @@ One JSON file per function:
   then returns straight to the trampoline with `outer_pop + 4`
   (`outer_pop` defaults from `conv` + stack length, overridable).
   `iat`: [{dll,name,id}] import slots rewritten to recorder stubs.
+  v7 `ctailpatches`: [{site (RVA hex of a near Jcc, 0F 80..8F), id}];
+  the site becomes a call to a per-site stub that re-evaluates the
+  same condition on the still-live flags and either logs and
+  tail-returns with `outer_pop` (taken) or resumes at site+6 with
+  registers, flags and esp untouched (not taken). Short (2-byte)
+  conditional jumps have no room for a call and are refused. As with
+  tailpatches, the contract author must confirm the site runs at entry
+  ESP. Any patch entry may use `site_selftest` + `at` instead of `site`
+  to patch the checker's own self-test originals (regression only).
 - `tls`: [{slot|slot_rva, seg, plus} | {slot, int}]: fabricated
   TLS slots, planted on the trial thread before each side. Slots 0-63.
 - `xmm`: {reg: [4 word specs]}: scripted XMM entry values for any of
@@ -248,7 +291,10 @@ One JSON file per function:
   more RNG, so every other draw keeps its v2 value. Contract-authored
   values are never remapped. `"allow_code_pointers": true` restores the
   exact v2 stream for audit.
-- `checks`: `ret`, `esp`, `heap`, `stack`, `globals`, `calls`,
+- `checks`: `ret` (a channel name, not a bool: a boolean compares the
+  return register exactly as on stock and is recorded as
+  `features.ret_boolean`, refused only with `strict: true`),
+  `esp`, `heap`, `stack`, `globals`, `calls`,
   `undeclared` (all bool), `fulldata` (bool), `fp_tol`, `fp64`,
   v5 `x87_state` (bool, default false; implied by `x87`: the final x87
   stack top, abridged tag byte and the 80-bit contents of every valid
@@ -264,7 +310,27 @@ One JSON file per function:
 - Top-level `log_max` (v4, default 256, max 1024): per-side call-log
   cap. A trial where either side attempts more calls than the cap fails
   its `calls` check (the tail would go uncompared); raise the cap and
-  rerun. Previously such trials passed silently.
+  rerun. Previously such trials passed silently. v7 `log_digest`
+  (default false): past the cap the stub folds every further call into
+  a running digest (two 32-bit FNV accumulators over the callee id,
+  the convention-default compared registers (thiscall: ecx; fastcall:
+  ecx+edx), nargs and the stack words; words inside the scratch-stack
+  window fold as value-minus-esp0, the rest raw) instead of dropping
+  it, and the calls check then requires the logged prefix, the
+  attempted counts and both digests to match. A digest match shows
+  the two sides made the same number of past-cap calls with the same
+  (id, default registers, stack words) sequence, up to a 64-bit
+  collision; it does NOT show snapshot words, vector registers
+  (including narrowed ones), entry eax, the ST0 argument, out-param
+  writes or scripted answers past the cap (they are not folded in),
+  so use it only when those do not vary past the cap, e.g.
+  scalar-argument loops. The verdict's `features` records the option
+  and on how many trials it was used.
+- Top-level `strict` (default false): refuse at load the two legacy
+  shapes the driver otherwise grandfathers (an unknown word-spec key,
+  a boolean `checks.ret`). Existing contracts omit it and run exactly
+  as on stock with the shapes recorded in the verdict's `features`;
+  every NEW contract should set `strict: true` so both fail loudly.
 
 Indirect calls: the planting design
 -----------------------------------
@@ -325,7 +391,9 @@ differs, which the contract documents:
   same for any of XMM0-XMM7. The doubles extension's `xmm_from_stack64`
   loads a double (two stack words); its `f64xmm0edx` answer channel puts
   the scripted double in XMM0 for the original and in edx:eax for the
-  rewrite, which reads it as a u64 return.
+  rewrite, which reads it as a u64 return. v7 `st0_from_stack` has the
+  stub load ST0 from a stack word (or word pair for f64) on the rewrite
+  side only; the original side passes real ST0, logged by `logst0`.
 - v5 `x87_raw(i)` (runtime) reads the x87 entry value the original
   receives in ST(i); `x87_f64(i)`/`x87_f32(i)` round it exactly as an x87
   `fst qword`/`fst dword` does (round to nearest even, the trampoline's
@@ -379,7 +447,11 @@ self-test verdict. `checker_version` stays "checker4" until the
 coordinator adopts v5. The doubles extension adds three `features` keys:
 `xmm_call_transport64` (8-byte transports per callee), `xmm_call_cmp64`
 (registers compared on their low 8 bytes only, per callee) and
-`f64_answers` (callees answering `f64xmm0edx`).
+`f64_answers` (callees answering `f64xmm0edx`). v7 adds, only when used:
+`xmm_call_cmp32` (registers compared on their low 4 bytes, per callee),
+`st0_call_logged`/`st0_call_transport` (ST0 widths and transports, per
+callee), `ctail_sites` (conditional tail patches) and `log_digest`
+(whether asked, and on how many trials it was used).
 
 v3 coverage rule: a verdict with zero failures still fails as `vacuous`
 unless (a) at least `min_orig_ok_share` of trials (default 0.10,
@@ -410,6 +482,8 @@ Rewrites live in a 32-bit cdylib and use `lf-checker-rt`:
   callee declares `xmm0_from_stack` (v5: any `xmm_from_stack` register).
   Pass a double as two stack words (low, high) when the callee declares
   `xmm_from_stack64`, and read its `f64xmm0edx` answer as a u64 return.
+  Pass an st0-arg value on the stack when the callee declares v7
+  `st0_from_stack` (a double as two stack words for f64).
 - v5: read x87 entry values through `x87_raw(i)` (exact 80 bits) or
   `x87_f64(i)`/`x87_f32(i)`; prefer the bit converters
   `f80_to_f64_bits`/`f80_to_f32_bits` when the result is stored as bits.
@@ -459,8 +533,20 @@ entry path carries all 16 bytes per register).
 The self-test originals are a few hand-written instructions in the worker
 (build_selftests), used because no tracked original is known to take x87
 arguments, pass XMM2-XMM7 to a callee or read through an unrelocated
-address. `checker2.py --selftest` runs the driver's own host-side checks
-(no worker needed).
+address. v7 adds ten k7 contracts (generated by hand, in the style of
+gen_contracts.py): k7_ctail (selftest:ctail_guard, conditional tail
+patched; mutant inverts the guard), k7_st0 (selftest:st0_call, ST0
+argument with rewrite-side transport; mutant passes a disturbed word)
+with k7_st0_64 (the double-width form) and k7_st0neg (documented
+negative: the same mutant without the ST0 option, passing by design),
+k7_digest (selftest:digest_loop past a cap of 8 with the digest; mutant
+disturbs one past-cap argument) with k7_digestfull (the same pair fully
+logged, proving the mutant is a real difference) and k7_digestneg
+(documented negative, truncated without the digest), k7_cmp32
+(selftest:xmm32_call with the 4-byte narrowing; mutant disturbs the low
+word) with k7_cmp32neg (documented negative, unnarrowed) and k7_ctailneg
+(documented negative, unpatched). `checker2.py --selftest` runs the
+driver's own host-side checks (no worker needed).
 
 What it can and cannot verify
 -----------------------------
@@ -474,6 +560,9 @@ tags, valid registers); XMM0-XMM7 call arguments; call-time snapshots of
 up to 64 words at any offset; unrelocated absolute reads of read-only
 data (with abs_shadow). Doubles extension: doubles in vector registers
 across calls, in both directions, with scripted double answers.
+v7: near conditional tail jumps; x87 ST0 call arguments; past-cap call
+tails via the running digest (id, registers and stack words); vector
+registers compared on their low float only.
 
 Still cannot: functions in the encrypted first megabyte of the code
 section; behaviour needing a running game (initialized heap graphs, OS
@@ -487,14 +576,20 @@ the stack cannot be matched by a Rust rewrite (the x87 check fails);
 8-byte transports load a double (`movsd`); unrelocated writes and
 unrelocated accesses to writable data always fault; the x87 control
 word, MXCSR and FPU condition codes after return are not compared.
+v7 limits: short (2-byte) conditional tail jumps cannot be patched;
+the digest covers only callee id, entry registers and stack words
+past the cap (no snapshots, vector registers or out-params there);
+st0-transported calls leave the argument on the rewrite's FPU stack,
+so the x87 state check stays off on those contracts.
 
 Current limits: one worker is single-trial-at-a-time (run one driver per
 core); snapshots cap at 64 words per callee (v5; 8 before) and out-param
 words at 16 per callee; call arguments log and compare up to 40 words per callee and setup
 rejects more (v2 silently compared only the first 8); the call log holds
 256 calls per side by default and trials past it fail loudly (raise
-`log_max` to 1024); computed `jmp reg` with non-vtable targets still needs
-per-case analysis.
+`log_max` to 1024, or ask for the v7 `log_digest`); computed `jmp reg`
+with non-vtable targets still needs per-case analysis. `log_digest`
+refuses to combine with checks.call_regs/call_skip/call_mask.
 """
 import json, os, sys, time, random, struct, hashlib, subprocess, threading, queue
 
@@ -735,6 +830,17 @@ def gen_byteword(rng, trial):
     return demap(lo | (rng.getrandbits(24) << 8))
 
 
+# v7: the primary keys of a unified word spec. "plus" is a secondary
+# key (it only rides beside "heap"); {"double":...} and
+# {"lo":...,"hi":...} are script/seq wrappers resolved before resolve_word.
+# v7b: a dict with none of these keys resolves to random bits exactly as
+# on stock (grandfathered; the verdict records it under
+# features.unresolved_word_specs), unless the contract sets strict:true,
+# which refuses it. Every NEW contract should set strict: true.
+WORD_SPEC_KEYS = frozenset(("stub", "heap", "heap_off", "int", "small",
+                             "cycle", "rot", "float", "null", "any"))
+
+
 def resolve_word(spec, rng, trial, heap, contract, stubs):
     """Resolve one unified word spec to a u32.
 
@@ -742,7 +848,9 @@ def resolve_word(spec, rng, trial, heap, contract, stubs):
     {"heap_off":bytes} heap-base-relative pointer; {"any":true} random;
     {"small":max} ranged int; {"cycle":[...]} per-trial rotation;
     {"rot":[...]} alias; {"stub":id} recorder-stub address (vtable planting);
-    {"float":true} float-edge-biased bits.
+    {"float":true} float-edge-biased bits. v7b: an unknown key resolves to
+    random bits exactly as on stock (same stream position), unless the
+    contract sets strict:true, which refuses it.
     """
     if isinstance(spec, int):
         return spec & 0xFFFFFFFF
@@ -776,7 +884,16 @@ def resolve_word(spec, rng, trial, heap, contract, stubs):
         return fbits(rng)
     if "null" in spec:  # v3: explicit null (v2 fell through to random bits)
         return 0
-    return rand32(rng)  # {"any": true}
+    if "any" in spec:
+        return rand32(rng)  # {"any": true}
+    # v7b: without strict, an unknown word-spec key resolves exactly as on
+    # stock (one rand32 draw, same stream position, so every later draw
+    # keeps its stock value); validation has already recorded it under
+    # features.unresolved_word_specs. With strict:true it is refused.
+    if contract.get("strict", False):
+        raise ValueError("contract %s: unknown word-spec keys %s (known: %s)"
+                         % (contract.get("name"), sorted(spec), ", ".join(sorted(WORD_SPEC_KEYS))))
+    return rand32(rng)
 
 
 def resolve_regs(contract, rng, trial, heap):
@@ -1302,7 +1419,9 @@ def _slim(r):
         return {"status": s.get("status"),
                 "calls": [{"id": c.get("id")} for c in (s.get("calls") or [])],
                 "heap_n": s.get("heap_n"), "stack_n": s.get("stack_n"),
-                "globals_writes": bool(s.get("globals_writes"))}
+                "globals_writes": bool(s.get("globals_writes")),
+                "log_attempted": s.get("log_attempted", 0),
+                "log_logged": s.get("log_logged", 0)}
     return {"pass": r.get("pass"),
             "checks": [{"name": c.get("name"), "passed": c.get("passed")}
                        for c in r.get("checks", [])],
@@ -1531,7 +1650,13 @@ def validate_v5(contract):
 # The doubles extension adds f64_call (floats widened to doubles across a
 # helper call that answers a double) and xmm_wide (the high word of an XMM
 # entry value, proving the entry path carries all 16 bytes per register).
-SELFTESTS = ("x87_store", "xmm_call", "abs_read", "f64_call", "xmm_wide")
+# v7 adds ctail_guard (a guard ending in a near conditional tail jump),
+# st0_call/st0_call64 (a callee taking its float/double argument in ST0),
+# digest_loop (a call loop for past-cap digests) and xmm32_call (a callee
+# reading only the low float of a vector register).
+SELFTESTS = ("x87_store", "xmm_call", "abs_read", "f64_call", "xmm_wide",
+             "ctail_guard", "st0_call", "st0_call64", "digest_loop",
+             "xmm32_call")
 
 
 def features_of(contract, setup):
@@ -1540,6 +1665,9 @@ def features_of(contract, setup):
     callees = contract.get("callees", [])
     snap_words, snap_at, xmm_logged, xmm_transport, xmm_transport64 = {}, {}, {}, {}, {}
     xmm_cmp64 = {}
+    xmm_cmp32 = {}
+    st0_logged = {}
+    st0_transport = {}
     f64_answers = []
     for c in callees:
         cid = str(c["id"])
@@ -1559,6 +1687,13 @@ def features_of(contract, setup):
         cmp64 = sorted(set(c.get("logxmm64_regs") or []))
         if cmp64:
             xmm_cmp64[cid] = cmp64
+        cmp32 = sorted(set(c.get("logxmm32_regs") or []))
+        if cmp32:
+            xmm_cmp32[cid] = cmp32
+        if c.get("logst0"):
+            st0_logged[cid] = c["logst0"]
+        if c.get("st0_from_stack") is not None:
+            st0_transport[cid] = c["st0_from_stack"]
         tr = {str(k): v for k, v in (c.get("xmm_from_stack") or {}).items()}
         if c.get("xmm0_from_stack") is not None:
             tr["0"] = c["xmm0_from_stack"]
@@ -1572,7 +1707,7 @@ def features_of(contract, setup):
         if c.get("ret") == "f64xmm0edx":
             f64_answers.append(c["id"])
     fn = contract.get("function", "")
-    return {
+    f = {
         "x87_entry": [e["kind"] for e in contract.get("x87", []) or []],
         "x87_state": x87_state_on(contract),
         "xmm_entry_regs": sorted(int(k) for k in (contract.get("xmm") or {})),
@@ -1587,11 +1722,238 @@ def features_of(contract, setup):
         "abs_window": (setup or {}).get("abs_window"),
         "selftest": fn[len("selftest:"):] if fn.startswith("selftest:") else None,
     }
+    # v7: new feature keys appear only when the contract uses them, so
+    # verdicts of older contracts keep their exact shape.
+    if xmm_cmp32:
+        f["xmm_call_cmp32"] = xmm_cmp32
+    if st0_logged:
+        f["st0_call_logged"] = st0_logged
+    if st0_transport:
+        f["st0_call_transport"] = st0_transport
+    if contract.get("ctailpatches"):
+        f["ctail_sites"] = len(contract["ctailpatches"])
+    if contract.get("log_digest"):
+        f["log_digest"] = True
+    # v7b: grandfathered legacy specs, so a verdict says what the author
+    # wrote that the checker resolves by stock fallback instead of by
+    # meaning. Both keys are absent when unused, so older verdicts keep
+    # their exact shape.
+    compat = []
+    for site, spec, in_seq in iter_word_spec_sites(contract):
+        collect_word_spec(spec, site, compat, in_seq)
+    if compat:
+        f["unresolved_word_specs"] = [{"where": w, "keys": k} for w, k in compat]
+    if isinstance((contract.get("checks", {}) or {}).get("ret", "eax"), bool):
+        f["ret_boolean"] = True
+    return f
+
+
+RET_KINDS = ("eax", "ax", "al", "edx_eax", "st0", "xmm0", "none")
+CALLEE_RET_KINDS = ("u32", "u64", "al", "f32xmm0", "f64xmm0", "f32st0",
+                    "f64st0", "preserve", "f64xmm0edx")
+
+
+def iter_word_spec_sites(contract):
+    """v7b: every word-spec site in the contract as (site, spec, in_seq),
+    in validation order. `site` is the path without the contract-name
+    prefix; validation prefixes it for messages, the verdict's
+    features.unresolved_word_specs records it bare."""
+    for si, sg in enumerate(contract.get("heapsegs", [])):
+        for wi, spec in enumerate(sg.get("words", [])):
+            yield ("heapsegs[%d].words[%d]" % (si, wi), spec, False)
+        for pi, pin in enumerate(sg.get("pin", [])):
+            for vi, v in enumerate(pin["vals"]):
+                yield ("heapsegs[%d].pin[%d].vals[%d]" % (si, pi, vi), v, False)
+        for vals in sg.get("pinned", []):
+            for vi, v in enumerate(vals[1]):
+                yield ("heapsegs[%d].pinned.vals[%d]" % (si, vi), v, False)
+    for pi, p in enumerate(contract.get("pokes", [])):
+        for vi, v in enumerate(p["vals"]):
+            yield ("pokes[%d].vals[%d]" % (pi, vi), v, False)
+    for hi, sc in enumerate(contract.get("heap_scripts", [])):
+        for vi, v in enumerate(sc["cycle"]):
+            yield ("heap_scripts[%d].cycle[%d]" % (hi, vi), v, False)
+    for gi, g in enumerate(contract.get("globals_values", [])):
+        for wi, spec in enumerate(g["words"]):
+            yield ("globals_values[%d].words[%d]" % (gi, wi), spec, False)
+    for c in contract.get("callees", []):
+        cid = c.get("id")
+        sc = c.get("script")
+        if isinstance(sc, list):
+            for vi, v in enumerate(sc):
+                yield ("callee %s script[%d]" % (cid, vi), v, True)
+        ws = c.get("wscript")
+        if ws is not None:
+            for ti, row in enumerate(ws):
+                for vi, v in enumerate(row):
+                    yield ("callee %s wscript[%d][%d]" % (cid, ti, vi), v, False)
+        sq = c.get("seq")
+        if isinstance(sq, list):
+            for vi, v in enumerate(sq):
+                yield ("callee %s seq[%d]" % (cid, vi), v, True)
+
+
+def collect_word_spec(spec, where, out, in_seq=False):
+    """v7b: the non-strict twin of check_word_spec. A word spec the stock
+    driver resolves to random bits is appended to `out` as (where, keys)
+    instead of refused; resolve_word then resolves it to those same bits,
+    so the verdict is unchanged. Mirrors stock resolution exactly: in a
+    script/seq entry {"double":...} is consumed by the caller and
+    {"lo":...} recurses into plain word specs, while cycle/rot entries
+    always resolve through resolve_word (a double/lo nested there is
+    random bits on stock, hence recorded)."""
+    if isinstance(spec, int):
+        return
+    if not isinstance(spec, dict):
+        raise ValueError("%s: word spec %r is not an int or a dict" % (where, spec))
+    if in_seq and ("double" in spec or "lo" in spec):
+        if "double" in spec:
+            return  # shape checked by validate_v5, resolved by the caller
+        collect_word_spec(spec["lo"], where + ".lo", out, False)
+        collect_word_spec(spec.get("hi", 0), where + ".hi", out, False)
+        return
+    if not any(k in spec for k in WORD_SPEC_KEYS):
+        out.append((where, sorted(spec)))
+        return
+    for k in ("cycle", "rot"):
+        if k in spec:
+            for i, e in enumerate(spec[k]):
+                collect_word_spec(e, "%s.%s[%d]" % (where, k, i), out, False)
+
+
+def check_word_spec(spec, where, in_seq=False):
+    """v7: refuse a word spec with no known key (it used to resolve to
+    random bits). Mirrors resolve_word's dispatch, including the
+    script/seq-only {"double":...} and {"lo":...,"hi":...} wrappers and
+    the {"cycle":...}/{"rot":...} recursion. v7b: used only when the
+    contract sets strict:true; otherwise collect_word_spec records."""
+    if isinstance(spec, int):
+        return
+    if not isinstance(spec, dict):
+        raise ValueError("%s: word spec %r is not an int or a dict" % (where, spec))
+    if "double" in spec or "lo" in spec:
+        if not in_seq:
+            raise ValueError("%s: %r is a script/seq entry, not a word spec"
+                             % (where, spec))
+        if "double" in spec:
+            return  # shape checked by validate_v5
+        check_word_spec(spec["lo"], where + ".lo", in_seq)
+        check_word_spec(spec.get("hi", 0), where + ".hi", in_seq)
+        return
+    if not any(k in spec for k in WORD_SPEC_KEYS):
+        raise ValueError("%s: unknown word-spec keys %s (known: %s)"
+                         % (where, sorted(spec), ", ".join(sorted(WORD_SPEC_KEYS))))
+    for k in ("cycle", "rot"):
+        if k in spec:
+            for i, e in enumerate(spec[k]):
+                check_word_spec(e, "%s.%s[%d]" % (where, k, i), in_seq)
+
+
+def validate_v7(contract):
+    """v7: fail-fast checks of the v7 contract keys, plus two refusals of
+    contracts that were silently wrong before (an unknown return kind fell
+    back to a 32-bit integer; an unknown word-spec key resolved to random
+    bits). v7b: existing contracts that hold those legacy shapes keep
+    running exactly as on stock (an unknown word-spec key resolves to the
+    same random bits, a boolean checks.ret compares the return register)
+    and the verdict records them under features.unresolved_word_specs /
+    features.ret_boolean; only a contract with strict:true is refused.
+    Every NEW contract should set strict: true. Contracts without the v7
+    keys are otherwise untouched."""
+    name = contract.get("name")
+    where = "contract %s" % name
+    strict = bool(contract.get("strict", False))
+    ret = (contract.get("checks", {}) or {}).get("ret", "eax")
+    if isinstance(ret, bool):
+        # On stock a boolean ret reaches the worker, whose non-string
+        # fallback compares eax; grandfathered unless strict.
+        if strict:
+            raise ValueError("%s: checks.ret %r (known: %s)"
+                             % (where, ret, ", ".join(RET_KINDS)))
+    elif ret not in RET_KINDS:
+        raise ValueError("%s: checks.ret %r (known: %s)"
+                         % (where, ret, ", ".join(RET_KINDS)))
+    ids = set()
+    for c in contract.get("callees", []):
+        cid = c.get("id")
+        ids.add(cid)
+        if c.get("ret", "u32") not in CALLEE_RET_KINDS:
+            raise ValueError("%s: callee %s ret %r (known: %s)"
+                             % (where, cid, c.get("ret"), ", ".join(CALLEE_RET_KINDS)))
+        # The v7 ST0 call argument: explicit width, transported only when
+        # logged, over declared stack words (the worker enforces this too).
+        st0 = c.get("logst0")
+        if st0 is not None and st0 not in ("f32", "f64"):
+            raise ValueError("%s: callee %s logst0 %r (f32 or f64)"
+                             % (where, cid, st0))
+        tport = c.get("st0_from_stack")
+        if tport is not None:
+            if st0 is None:
+                raise ValueError("%s: callee %s transports ST0 without logging it "
+                                 "(the argument would be compared nowhere)" % (where, cid))
+            nargs = c.get("nargs", 0)
+            need = tport + 1 if (st0 == "f64" and isinstance(tport, int)) \
+                else tport
+            if not isinstance(need, int) or not 0 <= need < nargs:
+                raise ValueError("%s: callee %s st0_from_stack %r (a declared stack "
+                                 "argument%s)" % (where, cid, tport,
+                                                  ", pair" if st0 == "f64" else ""))
+        # The v7 4-byte narrowing: logged registers only, never beside the
+        # 8-byte narrowing on the same register.
+        regs32 = c.get("logxmm32_regs")
+        if regs32 is not None:
+            if not isinstance(regs32, list) or \
+                    any(not isinstance(r, int) or not 0 <= r < 8 for r in regs32):
+                raise ValueError("%s: callee %s logxmm32_regs %r (registers 0-7)"
+                                 % (where, cid, regs32))
+            logged = set(c.get("logxmm_regs") or [])
+            if c.get("logxmm"):
+                logged.add(0)
+            if c.get("logxmm1"):
+                logged.add(1)
+            for r in regs32:
+                if r not in logged:
+                    raise ValueError("%s: callee %s narrows xmm%d to 4 bytes without "
+                                     "logging it" % (where, cid, r))
+                if r in (c.get("logxmm64_regs") or []):
+                    raise ValueError("%s: callee %s narrows xmm%d to 8 bytes and 4 "
+                                     "bytes (pick one)" % (where, cid, r))
+    for p in contract.get("ctailpatches", []):
+        if p.get("id") not in ids:
+            raise ValueError("%s: ctailpatch names undeclared callee %r"
+                             % (where, p.get("id")))
+        if "site" not in p and "site_selftest" not in p:
+            raise ValueError("%s: ctailpatch needs a site or a site_selftest"
+                             % where)
+    if "log_digest" in contract and not isinstance(contract["log_digest"], bool):
+        raise ValueError("%s: log_digest %r (true or false)"
+                         % (where, contract["log_digest"]))
+    # The digest folds the conv-default registers and all stack words, so
+    # a contract that reselects the compared stream cannot use it: one
+    # stream in the prefix and another past the cap would be two rules.
+    if contract.get("log_digest"):
+        ch = contract.get("checks", {}) or {}
+        for k in ("call_regs", "call_skip", "call_mask"):
+            if k in ch:
+                raise ValueError("%s: log_digest cannot combine with checks.%s"
+                                 % (where, k))
+    # Every word spec in the contract, so a mistyped key fails at load,
+    # not on trial 0 -- unless the contract predates strict, in which case
+    # it is recorded for the verdict's features instead (v7b).
+    compat = []  # recorded here only to fail malformed specs at load;
+    # features_of recomputes the same list for the verdict (validation
+    # must not mutate the contract: the verdict hashes it).
+    for site, spec, in_seq in iter_word_spec_sites(contract):
+        if strict:
+            check_word_spec(spec, "%s: %s" % (where, site), in_seq)
+        else:
+            collect_word_spec(spec, "%s: %s" % (where, site), compat, in_seq)
 
 
 def validate_contract(contract):
     """v4: fail-fast contract checks the worker also enforces per trial."""
     validate_v5(contract)
+    validate_v7(contract)
     masks = (contract.get("checks", {}) or {}).get("call_mask") or {}
     for cid, per in masks.items():
         for i, m in per.items():
@@ -1667,6 +2029,15 @@ def verdict(contract, run, export):
         "vacuous_reasons": reasons,
         "features": features_of(contract, run.get("setup")),
     }
+    # v7: when the contract asked for the past-cap digest, the verdict says
+    # on how many trials it was actually used (either side past the cap).
+    if contract.get("log_digest"):
+        used = sum(1 for r in results
+                   if (r.get("orig", {}) or {}).get("log_attempted", 0)
+                   > (r.get("orig", {}) or {}).get("log_logged", 0)
+                   or (r.get("rw", {}) or {}).get("log_attempted", 0)
+                   > (r.get("rw", {}) or {}).get("log_logged", 0))
+        v["features"]["log_digest"] = {"asked": True, "trials_used": used}
     if contract.get("function", "").startswith("selftest:"):
         # A self-test exercises the checker; it never verifies a function.
         v["selftest"] = True
@@ -1706,7 +2077,10 @@ def setup_worker(w, contract, all_exports):
          # v5: the read-only shadow at the preferred base, and whether the
          # rewrite DLL must export the x87 mirror.
          "abs_shadow": bool(contract.get("abs_shadow")),
-         "x87": bool(contract.get("x87"))}
+         "x87": bool(contract.get("x87")),
+         # v7: conditional tail-jump patches and the past-cap call digest.
+         "ctailpatches": contract.get("ctailpatches", []),
+         "log_digest": bool(contract.get("log_digest", False))}
     # resolve "edges" scripts to concrete lists for the worker record
     for c in q["callees"]:
         if c.get("script") == "edges":
@@ -1863,6 +2237,126 @@ def selftest():
           refused64(lambda c: c["callees"][0].update({"script": [{"double": "nope"}]})))
     check("double entry on odd word refused",
           refused64(lambda c: c.update({"xmm": {"0": ["float", "double"]}})))
+    # v7: the two silent-fallback refusals, the v7 key validation, and the
+    # v7 features record.
+    v7 = json.loads(json.dumps(base))
+    v7["name"] = "t7"
+    v7["function"] = "selftest:st0_call"
+    v7["callees"] = [{"id": 1, "conv": "cdecl", "nargs": 1, "ret": "u32",
+                      "script": [0], "logst0": "f32", "st0_from_stack": 0,
+                      "logxmm": True, "logxmm32_regs": [0]}]
+    v7["ctailpatches"] = [{"site_selftest": "ctail_guard", "at": 6, "id": 1}]
+    v7["log_digest"] = True
+    try:
+        validate_contract(v7)
+        ok7 = True
+    except Exception:
+        ok7 = False
+    check("v7 contract validates", ok7)
+    f = features_of(v7, {})
+    check("features v7", f["st0_call_logged"] == {"1": "f32"}
+          and f["st0_call_transport"] == {"1": 0}
+          and f["xmm_call_cmp32"] == {"1": [0]}
+          and f["ctail_sites"] == 1 and f["log_digest"] is True
+          and f["selftest"] == "st0_call")
+
+    def refused7(mut):
+        c = json.loads(json.dumps(v7))
+        mut(c)
+        try:
+            validate_contract(c)
+            return False
+        except ValueError:
+            return True
+    check("unknown checks.ret refused",
+          refused7(lambda c: c["checks"].__setitem__("ret", "eaxx")))
+    check("unknown callee ret refused",
+          refused7(lambda c: c["callees"][0].__setitem__("ret", "u33")))
+    # v7b: the two legacy shapes run by default (recorded in features)
+    # and are refused only with strict:true.
+    def strict7(mut):
+        c = json.loads(json.dumps(v7))
+        c["strict"] = True
+        mut(c)
+        try:
+            validate_contract(c)
+            return False
+        except ValueError:
+            return True
+
+    def accepted7(mut):
+        c = json.loads(json.dumps(v7))
+        mut(c)
+        try:
+            validate_contract(c)
+        except ValueError:
+            return None
+        return c
+    legacy_word = accepted7(lambda c: c["callees"][0].__setitem__(
+        "script", [{"bogus": 1}]))
+    check("unknown word-spec key accepted by default",
+          legacy_word is not None)
+    check("unknown word-spec key recorded in features",
+          legacy_word is not None and features_of(legacy_word, {}).get(
+              "unresolved_word_specs") == [{"where": "callee 1 script[0]",
+                                            "keys": ["bogus"]}])
+    check("unknown word-spec key refused under strict",
+          strict7(lambda c: c["callees"][0].__setitem__(
+              "script", [{"bogus": 1}])))
+    legacy_ws = accepted7(lambda c: c["callees"][0].__setitem__(
+        "wscript", [[{"double": 7}]]))
+    check("wscript double accepted by default and recorded",
+          legacy_ws is not None and features_of(legacy_ws, {}).get(
+              "unresolved_word_specs") == [{"where": "callee 1 wscript[0][0]",
+                                            "keys": ["double"]}])
+    check("wscript double refused under strict",
+          strict7(lambda c: c["callees"][0].__setitem__(
+              "wscript", [[{"double": 7}]])))
+    legacy_ret = accepted7(lambda c: c["checks"].__setitem__("ret", True))
+    check("boolean checks.ret accepted by default and recorded",
+          legacy_ret is not None and features_of(legacy_ret, {}).get(
+              "ret_boolean") is True)
+    check("boolean checks.ret refused under strict",
+          strict7(lambda c: c["checks"].__setitem__("ret", True)))
+    r_stock, r_mine = random.Random(11), random.Random(11)
+    check("unknown word-spec key resolves as stock (same stream)",
+          resolve_word({"bogus": 1}, r_mine, 0, 0x10000,
+                       {"name": "t", "heapsegs": []}, {}) == rand32(r_stock))
+    try:
+        resolve_word({"bogus": 1}, random.Random(11), 0, 0x10000,
+                     {"name": "t", "strict": True, "heapsegs": []}, {})
+        backstop = False
+    except ValueError:
+        backstop = True
+    check("resolve_word backstop refuses under strict", backstop)
+    check("bad logst0 refused",
+          refused7(lambda c: c["callees"][0].__setitem__("logst0", "f16")))
+    check("st0 transport unlogged refused",
+          refused7(lambda c: c["callees"][0].update(
+              {"logst0": None, "st0_from_stack": 0})))
+    check("st0 transport past nargs refused",
+          refused7(lambda c: c["callees"][0].update(
+              {"st0_from_stack": 1})))
+    check("narrow32 unlogged refused",
+          refused7(lambda c: c["callees"][0].update(
+              {"logxmm": False, "logxmm32_regs": [0]})))
+    check("narrow32 clashing with narrow64 refused",
+          refused7(lambda c: c["callees"][0].update({"logxmm64_regs": [0]})))
+    check("ctailpatch unknown callee refused",
+          refused7(lambda c: c.__setitem__(
+              "ctailpatches", [{"site": "0x1000", "id": 9}])))
+    check("log_digest non-bool refused",
+          refused7(lambda c: c.__setitem__("log_digest", 1)))
+    check("log_digest with call_skip refused",
+          refused7(lambda c: c["checks"].__setitem__(
+              "call_skip", {"1": [0]})))
+    # v7 features stay out of older verdicts.
+    f = features_of(old, {})
+    check("features v7 absent when unused",
+          "xmm_call_cmp32" not in f and "st0_call_logged" not in f
+          and "st0_call_transport" not in f and "ctail_sites" not in f
+          and "log_digest" not in f and "unresolved_word_specs" not in f
+          and "ret_boolean" not in f)
     print("selftest: %d failed" % len(fails))
     return 1 if fails else 0
 

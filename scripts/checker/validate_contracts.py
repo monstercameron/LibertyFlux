@@ -354,10 +354,18 @@ def all_word_specs(contract):
             if isinstance(pin, dict):
                 for vi, v in enumerate(as_list(pin.get("vals"))):
                     yield from word_specs(v, ("heapsegs", si, "pin", pi, "vals", vi))
+        for vals in as_list(seg.get("pinned")):  # v7b: q-08 alias [[word,[vals]]], resolved by the driver
+            if isinstance(vals, list) and len(vals) == 2:
+                for vi, v in enumerate(as_list(vals[1])):
+                    yield from word_specs(v, ("heapsegs", si, "pinned", vi))
     for pi, poke in enumerate(as_list(contract.get("pokes"))):
         if isinstance(poke, dict):
             for vi, v in enumerate(as_list(poke.get("vals"))):
                 yield from word_specs(v, ("pokes", pi, "vals", vi))
+    for hi, sc in enumerate(as_list(contract.get("heap_scripts"))):  # v7b: q-02 alias, resolved by the driver
+        if isinstance(sc, dict):
+            for vi, v in enumerate(as_list(sc.get("cycle"))):
+                yield from word_specs(v, ("heap_scripts", hi, "cycle", vi))
     for gi, g in enumerate(as_list(contract.get("globals_values"))):
         if isinstance(g, dict):
             for wi, w in enumerate(as_list(g.get("words"))):
@@ -377,6 +385,35 @@ def all_word_specs(contract):
 
 def as_list(value):
     return value if isinstance(value, list) else []
+
+
+# v7b: the driver's primary word-spec keys (checker2.py WORD_SPEC_KEYS).
+# A dict with none of these resolves to random bits exactly as on stock
+# (recorded in the verdict's features), refused only with strict: true.
+WORD_SPEC_KEYS = frozenset(("stub", "heap", "heap_off", "int", "small",
+                             "cycle", "rot", "float", "null", "any"))
+
+
+def unresolved_word_specs(contract):
+    """(path, keys) for every word spec the driver resolves to random bits
+    by stock fallback: a dict with no known key, mirroring the driver's
+    non-strict walk (a script/seq entry {"double":...} is consumed by the
+    caller and {"lo":...} judges its inners as plain specs; anything under
+    an already-unresolved dict resolves as part of it)."""
+    out = []
+    skipped = set()
+    for spec, path in all_word_specs(contract):
+        if any(path[:i] in skipped for i in range(1, len(path))):
+            continue
+        if not isinstance(spec, dict):
+            continue
+        if len(path) == 4 and path[0] == "callees" and path[2] in ("script", "seq") \
+                and ("double" in spec or "lo" in spec):
+            continue  # a script/seq wrapper, resolved by the caller
+        if not any(k in spec for k in WORD_SPEC_KEYS):
+            out.append((path, sorted(spec)))
+            skipped.add(path)
+    return out
 
 
 def semantic_errors(contract, limits):
@@ -409,7 +446,7 @@ def semantic_errors(contract, limits):
         if isinstance(value, int) and not isinstance(value, bool) and not 0 <= value < len(segs):
             err(path, f"heap segment {value} does not exist ({len(segs)} declared)")
 
-    for key in ("patches", "tailpatches", "iat"):
+    for key in ("patches", "tailpatches", "ctailpatches", "iat"):
         for i, p in enumerate(as_list(contract.get(key))):
             if isinstance(p, dict) and "id" in p:
                 callee_ref(p["id"], (key, i, "id"), "callee id")
@@ -550,6 +587,26 @@ def semantic_errors(contract, limits):
             for reg in c["logxmm64_regs"]:
                 if isinstance(reg, int) and reg not in logged:
                     err(("callees", ci, "logxmm64_regs"), f"xmm{reg} is narrowed without being logged (the worker rejects it)", "form")
+        # v7: the 4-byte narrowing, the ST0 call argument and its transport
+        if isinstance(c.get("logxmm32_regs"), list):
+            logged = set(c.get("logxmm_regs") or [])
+            if c.get("logxmm"):
+                logged.add(0)
+            if c.get("logxmm1"):
+                logged.add(1)
+            narrow64 = set(c.get("logxmm64_regs") or [])
+            for reg in c["logxmm32_regs"]:
+                if isinstance(reg, int) and reg not in logged:
+                    err(("callees", ci, "logxmm32_regs"), f"xmm{reg} is narrowed without being logged (the worker rejects it)", "form")
+                if isinstance(reg, int) and reg in narrow64:
+                    err(("callees", ci, "logxmm32_regs"), f"xmm{reg} is narrowed to 8 bytes and 4 bytes (the worker rejects it: pick one)", "form")
+        tport = c.get("st0_from_stack")
+        if isinstance(tport, int) and not isinstance(tport, bool):
+            if c.get("logst0") is None:
+                err(("callees", ci, "st0_from_stack"), "ST0 transport without logst0 (the worker rejects it: the argument would be uncompared)", "form")
+            need = tport + 1 if c.get("logst0") == "f64" else tport
+            if nargs and need >= nargs:
+                err(("callees", ci, "st0_from_stack"), f"stack argument {tport} is past nargs {nargs}", "range")
     if isinstance(checks.get("call_mask"), dict):
         for cid, per in checks["call_mask"].items():
             if isinstance(per, dict):
@@ -573,6 +630,11 @@ def semantic_errors(contract, limits):
             err(("checks", "x87_state"), "x87 entry values need the x87 state check (the worker refuses false)", "form")
     if contract.get("export") is not None and contract.get("export") == contract.get("mut_export"):
         err(("mut_export",), "the wrong version is the same export as the correct one", "form")
+    # v7: the digest folds the conv-default stream only.
+    if contract.get("log_digest") is True:
+        for key in ("call_regs", "call_skip", "call_mask"):
+            if key in checks:
+                err(("checks", key), f"log_digest cannot combine with {key} (the driver refuses it)", "form")
     return errors
 
 
@@ -601,6 +663,18 @@ def narrowing(contract):
         add("ret-none", "checks.ret is none: the return value is not compared")
     elif ret in ("al", "ax"):
         add(f"ret-{ret}", f"checks.ret is {ret}: only the low {8 if ret == 'al' else 16} bits of eax are compared")
+    elif isinstance(ret, bool):
+        add("ret-boolean", f"checks.ret is {str(ret).lower()}: the return register (eax) is compared exactly as on "
+            "stock, recorded as features.ret_boolean (refused with strict: true); new contracts should name a "
+            "channel and set strict: true")
+    legacy_words = unresolved_word_specs(contract)
+    if legacy_words:
+        shown = "; ".join(f"{json_path(p)}: {','.join(k)}" for p, k in legacy_words[:3])
+        more = f" (+{len(legacy_words) - 3} more)" if len(legacy_words) > 3 else ""
+        add("legacy-word-spec", f"{len(legacy_words)} word spec{'s' if len(legacy_words) != 1 else ''} "
+            f"{'hold' if len(legacy_words) != 1 else 'holds'} keys the checker does not know ({shown}{more}): "
+            "each resolves to random bits exactly as on stock, recorded in features.unresolved_word_specs (refused "
+            "with strict: true); new contracts should fix the keys and set strict: true")
     if "ret" in contract and contract["ret"] != ret:
         add("ret-unread", f"top-level ret is {contract['ret']!r} but checks.ret ({ret!r}) is what the checker compares")
     if checks.get("fulldata", True) is False:
@@ -630,12 +704,17 @@ def narrowing(contract):
                 idxs = sorted(per) if isinstance(per, dict) else per
                 add(f"call-mask:{cid}", f"callee {cid} arguments {idxs} are compared through a mask ({key})")
     for cid, callee in sorted((k, v) for k, v in callees.items() if isinstance(k, int)):
-        transports = [k for k in ("xmm0_from_stack", "xmm1_from_stack", "eax_from_stack", "xmm_from_stack", "xmm_from_stack64") if k in callee]
+        transports = [k for k in ("xmm0_from_stack", "xmm1_from_stack", "eax_from_stack", "xmm_from_stack", "xmm_from_stack64", "st0_from_stack") if k in callee]
         if transports and callee.get("nargs", 0) > 1:
             add(f"transport-skips-args:{cid}", f"callee {cid} uses {', '.join(transports)}: its {callee.get('nargs')} stack arguments are not compared, only the transported register")
         cmp64 = callee.get("logxmm64_regs")
         if isinstance(cmp64, list) and cmp64:
             add(f"xmm-cmp64:{cid}", f"callee {cid} vector registers {sorted(cmp64)} compare only their low 8 bytes (the upper halves are not compared)")
+        cmp32 = callee.get("logxmm32_regs")
+        if isinstance(cmp32, list) and cmp32:
+            add(f"xmm-cmp32:{cid}", f"callee {cid} vector registers {sorted(cmp32)} compare only their low 4 bytes (the upper 12 are not compared)")
+    if contract.get("log_digest") is True:
+        add("log-digest", "past-cap calls compare as a digest of callee id, default registers and stack words only (no snapshots, vector registers, ST0 or out-params past the cap)")
     if "mut_export" not in contract:
         add("no-mut-export", "no wrong version is declared: nothing shows the contract can see a change")
     share = contract.get("min_orig_ok_share")

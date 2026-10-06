@@ -28,6 +28,12 @@
 //! reading worker memory, with an optional read-only shadow of the file's
 //! read-only data there (`abs_shadow`). The target-independent logic lives
 //! in the library (`src/lib.rs`), where its unit tests run on any host.
+//!
+//! v7 candidate abilities (each opt-in per contract): near conditional
+//! tail-jump patches (`ctailpatches`), x87 ST0 call arguments (`logst0`
+//! with the `st0_from_stack` transport), a running digest over past-cap
+//! calls (`log_digest`), and 4-byte vector-register narrowing
+//! (`logxmm32_regs`).
 
 // The worker maps and executes original machine code, plants stubs in it,
 // and catches faults in-process: raw pointers and FFI are its whole job.
@@ -356,6 +362,7 @@ const LOG_HARD_MAX: usize = 1024; // setup rejects log_max above this
 const LOG_ENTRY: usize = 272;
 // Log entry v4 layout: 0:id 4:ecx 8:edx 12:ebx 16:esi 20:edi 24:nargs
 // 28:args[40] 188:snap_n 192:snap[8] 224:xmm0[4] 240:xmm1[4] 256:eax
+// 260:st0[2] (v7: the x87 ST0 call argument as f32+f32/f64, bytes 260-267)
 // (v2 logged args[8] only, so trailing call arguments passed uncompared;
 // v3 logs and compares every argument up to LOG_MAXW. Contracts declaring
 // more are rejected at setup rather than silently truncated. v4 appends the
@@ -411,6 +418,8 @@ struct Callee {
     eax_from_stack: Option<usize>, // v4: rw-side transport, load eax from stack arg
     noclean: bool,  // v4: real callee pops nothing; stub pops only on the rw side
     pop_rw: u32,    // v4: rewrite-side pop for noclean stubs (nargs*4)
+    st0_log: Option<u8>, // v7: log the x87 ST0 call argument (4 = f32, 8 = f64)
+    st0_from_stack: Option<usize>, // v7: rw-side transport, fld ST0 from stack arg
 }
 
 struct State {
@@ -430,8 +439,8 @@ struct State {
     m_fn: u32,
     m_hostesp: u32,
     m_mxcsr: u32,
-    m_tmp: u32,
-    m_fault: u32, // fault flag + record (9 dwords)
+    m_tmp: u32, // trampoline scratch: 4 words at m_tmp..m_tmp+12, not 1
+    m_fault: u32, // fault flag + 13 record words (14 dwords, not 9)
     m_script_lo: u32,
     m_script_hi: u32,
     m_logidx: u32,
@@ -453,6 +462,9 @@ struct State {
     m_seq_len: u32,     // v3: 256 sequence lengths (trial_body fills)
     m_seq_idx: u32,     // v3: 256 per-side consumption indexes (run_side zeroes)
     log_max: u32,       // v4: setup-time call-log cap (default 256, max 1024)
+    log_digest: bool,   // v7: digest past-cap calls instead of failing truncated
+    m_digest1: u32,     // v7: FNV-1a accumulator over dropped calls (per side)
+    m_digest2: u32,     // v7: FNV-1 accumulator over dropped calls (per side)
     m_step: u32,        // v3: stub scratch for the clamped step index
     tls_helper: u32,    // emitted mov eax,fs:[0x2c]; ret
     log_base: u32,
@@ -522,6 +534,9 @@ impl State {
             m_seq_len: 0,
             m_seq_idx: 0,
             log_max: LOG_MAX as u32,
+            log_digest: false,
+            m_digest1: 0,
+            m_digest2: 0,
             m_step: 0,
             tls_helper: 0,
             log_base: 0,
@@ -833,6 +848,15 @@ fn map_image(exe: &[u8]) -> Result<(), String> {
     s.m_mxcsr = (meta + 12) as u32;
     s.m_tmp = (meta + 16) as u32;
     s.m_fault = (meta + 32) as u32;
+    // v7: past-cap call digest accumulators (per side, seeded per side in
+    // run_side). They sit in the only free meta words: the fault record
+    // is 14 dwords (meta+32..88, see the handler and the 56-byte clear),
+    // so meta+88/92 are free below the script slots at +96. (meta+20/28
+    // look free in the assignment list but are trampoline scratch at
+    // m_tmp+4..m_tmp+12; the digest first landed there and read back the
+    // trampoline's esp.)
+    s.m_digest1 = (meta + 88) as u32;
+    s.m_digest2 = (meta + 92) as u32;
     s.m_script_lo = (meta + 96) as u32;
     s.m_script_hi = (meta + 100) as u32;
     s.m_logidx = (meta + 104) as u32;
@@ -1057,6 +1081,19 @@ fn trampoline_bytes() -> (Vec<u8>, usize) {
 //   carries all 16 bytes per register to both sides.
 // - abs_read (cdecl, addr): return the dword at addr, an absolute address
 //   used as is (the shape of an unrelocated absolute operand).
+// - ctail_guard (cdecl, a; v7): test a, jne +0 (a 6-byte near conditional
+//   tail at offset 6, patched by the contract's ctailpatches), else return
+//   0. The unpatched target is the fall-through, so without the patch the
+//   taken path is unobservable.
+// - st0_call (cdecl, a; v7): fld a, call callee 1 through the stub table
+//   (the callee takes its float argument in ST0), clean the FPU stack,
+//   return a. st0_call64 is the double-width form (fld qword [esp+4],
+//   two stack words, return the low word).
+// - digest_loop (cdecl, n; v7): call callee 1 with 0..n, return 0. For
+//   past-cap digests (n above log_max).
+// - xmm32_call (cdecl, a, b; v7): xmm0 = [a, b, 0, 0] (the callee reads
+//   only the low float; the upper words are scripted dirt), call callee
+//   1 through the stub table, return a.
 fn build_selftests() {
     let s = st();
     let base = s.s + SELFTEST_OFF;
@@ -1136,6 +1173,71 @@ fn selftest_code(base: usize, ctab1: u32) -> (Vec<u8>, HashMap<String, u32>) {
             0xC3, // ret
         ],
     );
+    add(
+        "ctail_guard",
+        &[
+            0x8B, 0x44, 0x24, 0x04, // mov eax,[esp+4]
+            0x85, 0xC0, // test eax,eax
+            // offset 6: jne +0 (near conditional tail; the contract patches
+            // this site, so the target is rewritten at setup).
+            0x0F, 0x85, 0x00, 0x00, 0x00, 0x00, // jne +0
+            0xB8, 0x00, 0x00, 0x00, 0x00, // mov eax,0
+            0xC3, // ret
+        ],
+    );
+    let mut sc: Vec<u8> = vec![
+        0xD9, 0x44, 0x24, 0x04, // fld dword [esp+4]
+        0xFF, 0x15, // call [ctable+4]
+    ];
+    sc.extend_from_slice(&ctab1.to_le_bytes());
+    sc.extend_from_slice(&[
+        0xDD, 0xD8, // fstp st(0) (the stub leaves the argument behind)
+        0x8B, 0x44, 0x24, 0x04, // mov eax,[esp+4]
+        0xC3, // ret
+    ]);
+    add("st0_call", &sc);
+    let mut sc64: Vec<u8> = vec![
+        0xDD, 0x44, 0x24, 0x04, // fld qword [esp+4]
+        0xFF, 0x15, // call [ctable+4]
+    ];
+    sc64.extend_from_slice(&ctab1.to_le_bytes());
+    sc64.extend_from_slice(&[
+        0xDD, 0xD8, // fstp st(0)
+        0x8B, 0x44, 0x24, 0x04, // mov eax,[esp+4]
+        0xC3, // ret
+    ]);
+    add("st0_call64", &sc64);
+    // The counter lives in callee-saved ebx (pushed/popped): the stub,
+    // like any callee, may clobber eax/ecx/edx across the call.
+    let mut dc: Vec<u8> = vec![
+        0x53, // push ebx
+        0x31, 0xDB, // xor ebx,ebx (i = 0)
+        0x53, // push ebx (loop: call with the counter)
+        0xFF, 0x15, // call [ctable+4]
+    ];
+    dc.extend_from_slice(&ctab1.to_le_bytes());
+    dc.extend_from_slice(&[
+        0x83, 0xC4, 0x04, // add esp,4
+        0x43, // inc ebx
+        0x3B, 0x5C, 0x24, 0x08, // cmp ebx,[esp+8]
+        0x72, 0xEF, // jb loop (rel -17)
+        0x5B, // pop ebx
+        0x33, 0xC0, // xor eax,eax
+        0xC3, // ret
+    ]);
+    add("digest_loop", &dc);
+    let mut xc32: Vec<u8> = vec![
+        0xF3, 0x0F, 0x10, 0x44, 0x24, 0x04, // movss xmm0,[esp+4]
+        0xF3, 0x0F, 0x10, 0x4C, 0x24, 0x08, // movss xmm1,[esp+8]
+        0x0F, 0x14, 0xC1, // unpcklps xmm0,xmm1 ([a,b,0,0])
+        0xFF, 0x15, // call [ctable+4]
+    ];
+    xc32.extend_from_slice(&ctab1.to_le_bytes());
+    xc32.extend_from_slice(&[
+        0x8B, 0x44, 0x24, 0x04, // mov eax,[esp+4]
+        0xC3, // ret
+    ]);
+    add("xmm32_call", &xc32);
     assert!(code.len() <= 0x1000, "self-test page overflow");
     (code, table)
 }
@@ -1259,6 +1361,138 @@ fn abs_set_readable(readable: bool) {
     s.abs.readable = readable;
 }
 
+// v7 past-cap call digest (machine code), emitted at the stub's `full`
+// label when `log_digest` is on. Folds one dropped call into two running
+// accumulators: d1 is FNV-1a-32, d2 is FNV-1-32, both over the same word
+// stream, prime 0x01000193. The stream is the callee id, the
+// convention-default compared registers (thiscall: ecx; fastcall:
+// ecx+edx; like the call key, scratch registers are never folded),
+// nargs, and the nargs stack words. Words inside the scratch-stack
+// window fold as value-minus-esp0 (frame addresses differ per side);
+// heap, image and plain words fold raw. Snapshots, vector registers,
+// entry eax and scripted answers are NOT folded in, and the digest
+// refuses to combine with call_regs/call_skip/call_mask (see the
+// driver's manual for what a digest match does and does not show).
+// eax is preserved (push/pop: the `al` answer channel below reads its
+// residue); ecx/edx are dead at this point (every later use reloads
+// from a spill) and caller-saved, so they serve as scratch;
+// ebx/esi/edi are only read, never written.
+const FNV_PRIME32: u32 = 0x0100_0193;
+const FNV_BASIS32: u32 = 0x811C_9DC5;
+
+fn emit_digest(
+    t: &mut Vec<u8>,
+    m_d1: u32,
+    m_d2: u32,
+    c: &Callee,
+    arg_base: u32,
+    sb_lo: u32,
+    sb_hi: u32,
+    esp0: u32,
+) {
+    let u = |t: &mut Vec<u8>, v: u32| t.extend_from_slice(&v.to_le_bytes());
+    // Fold-step emitters: each appends "fold one word" for its word kind
+    // to each accumulator phase (d1_first selects FNV-1a vs FNV-1 order).
+    // A register word normalizes in place (the register is dead after);
+    // a stack word loads into edx (dead too once folded, scratch before).
+    let mut norm_cx: Vec<u8> = Vec::new(); // normalize ecx in place
+    norm_cx.extend_from_slice(&[0x81, 0xF9]); // cmp ecx,sb_lo
+    u(&mut norm_cx, sb_lo);
+    norm_cx.extend_from_slice(&[0x72, 0x0E]); // jb raw (over cmp+jae+sub)
+    norm_cx.extend_from_slice(&[0x81, 0xF9]); // cmp ecx,sb_hi
+    u(&mut norm_cx, sb_hi);
+    norm_cx.extend_from_slice(&[0x73, 0x06]); // jae raw (over sub)
+    norm_cx.extend_from_slice(&[0x81, 0xE9]); // sub ecx,esp0
+    u(&mut norm_cx, esp0);
+    let mut norm_dx: Vec<u8> = Vec::new(); // normalize edx in place
+    norm_dx.extend_from_slice(&[0x81, 0xFA]); // cmp edx,sb_lo
+    u(&mut norm_dx, sb_lo);
+    norm_dx.extend_from_slice(&[0x72, 0x0E]); // jb raw
+    norm_dx.extend_from_slice(&[0x81, 0xFA]); // cmp edx,sb_hi
+    u(&mut norm_dx, sb_hi);
+    norm_dx.extend_from_slice(&[0x73, 0x06]); // jae raw
+    norm_dx.extend_from_slice(&[0x81, 0xEA]); // sub edx,esp0
+    u(&mut norm_dx, esp0);
+    // The folded words in order: id, conv-default regs, nargs, args. The
+    // immediates (id, nargs) are far below every window, so they fold raw.
+    enum Word {
+        Imm(u32),
+        RegCx,
+        RegDx,
+        Arg(u32),
+    }
+    let mut words: Vec<Word> = vec![Word::Imm(c.id)];
+    match c.conv.as_str() {
+        "thiscall" => words.push(Word::RegCx),
+        "fastcall" => {
+            words.push(Word::RegCx);
+            words.push(Word::RegDx);
+        }
+        _ => {}
+    }
+    words.push(Word::Imm(c.nargs as u32));
+    // NB: the block pushes eax first (al-residue preservation), so every
+    // [esp+d] below reads 4 above the entry displacement.
+    for k in 0..c.nargs.min(LOG_MAXW) {
+        words.push(Word::Arg(arg_base + 4 + k as u32 * 4));
+    }
+    // One word into both accumulators: normalize once into edx (or
+    // fold the immediate directly), then d1 = (d1 ^ w) * P and
+    // d2 = (d2 * P) ^ w. Each word completes before the next loads, so
+    // no entry register is needed twice.
+    t.push(0x50); // push eax
+    for w in &words {
+        // Normalize the word into edx.
+        match w {
+            Word::Imm(v) => {
+                // Immediates fold without a register (see below).
+                let _ = v;
+            }
+            Word::RegCx => {
+                t.extend_from_slice(&norm_cx);
+                t.extend_from_slice(&[0x8B, 0xD1]); // mov edx,ecx
+            }
+            Word::RegDx => {
+                t.extend_from_slice(&norm_dx);
+            }
+            Word::Arg(d) => {
+                t.extend_from_slice(&[0x8B, 0x94, 0x24]); // mov edx,[esp+d]
+                u(t, *d);
+                t.extend_from_slice(&norm_dx);
+            }
+        }
+        // d1 = (d1 ^ w) * P.
+        t.push(0xA1);
+        u(t, m_d1); // mov eax,[d1]
+        match w {
+            Word::Imm(v) => {
+                t.push(0x35); // xor eax,imm32
+                u(t, *v);
+            }
+            _ => t.extend_from_slice(&[0x31, 0xD0]), // xor eax,edx
+        }
+        t.extend_from_slice(&[0x69, 0xC0]); // imul eax,eax,P
+        u(t, FNV_PRIME32);
+        t.push(0xA3);
+        u(t, m_d1); // mov [d1],eax
+        // d2 = (d2 * P) ^ w.
+        t.push(0xA1);
+        u(t, m_d2); // mov eax,[d2]
+        t.extend_from_slice(&[0x69, 0xC0]); // imul eax,eax,P
+        u(t, FNV_PRIME32);
+        match w {
+            Word::Imm(v) => {
+                t.push(0x35); // xor eax,imm32
+                u(t, *v);
+            }
+            _ => t.extend_from_slice(&[0x31, 0xD0]), // xor eax,edx
+        }
+        t.push(0xA3);
+        u(t, m_d2); // mov [d2],eax
+    }
+    t.push(0x58); // pop eax
+}
+
 // Per-callsite recorder stub (machine code). Entry: esp->[ret][a0..].
 // Logs (id,ecx,edx,ebx,esi,edi,nargs,args[40],snap[64],xmm0-7) to the
 // call log (v5: snapshot words 8-63 and xmm2-7 in the extension logs), performs scripted out-param writes, then returns the callee's
@@ -1352,6 +1586,25 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
         // rewrite side (the entry spill above predates the transport).
         t.push(0xA3);
         u(&mut t, s.m_save_eax); // mov [m_save_eax],eax
+    }
+    // v7 rewrite-side transport for st0-arg callees: on the rewrite side
+    // only, fld the declared stack word(s) so the ST0 logged below is the
+    // rewrite's value. A Rust rewrite cannot push the FPU stack any other
+    // way; the original holds the same value in ST0 genuinely, so comparing
+    // the logged ST0 still verifies equality of the values. Base is 4 even
+    // in tail stubs (transports run on the rewrite side only, which always
+    // calls the normal stub via ctable).
+    if let Some(idx) = c.st0_from_stack {
+        t.extend_from_slice(&[0x83, 0x3D]); // cmp dword [m_side],0
+        u(&mut t, s.m_side);
+        t.push(0x00);
+        t.extend_from_slice(&[0x74, 0x07]); // je +7 (skip the 7-byte fld)
+        if c.st0_log == Some(8) {
+            t.extend_from_slice(&[0xDD, 0x84, 0x24]); // fld qword [esp+4+idx*4]
+        } else {
+            t.extend_from_slice(&[0xD9, 0x84, 0x24]); // fld dword [esp+4+idx*4]
+        }
+        u(&mut t, 4 + idx as u32 * 4);
     }
     // eax = logidx; if >= cap skip logging (writes + scripted return still run).
     // v4: the cap is the setup-time log_max (default 256), so raising it
@@ -1460,14 +1713,55 @@ fn emit_stub(c: &Callee, tail_pop: Option<u32>) -> Vec<u8> {
         t.extend_from_slice(&[0x89, 0x88]);
         u(&mut t, 256); // mov [eax+256],ecx
     }
+    // v7: ST0 call-argument logging. `fst` stores without popping, so the
+    // callee still finds its argument on top of the FPU stack. Bytes
+    // 260-267 of the base entry were free (eax ends at 260, the entry is
+    // 272); disp32 form throughout, as above.
+    if let Some(w) = c.st0_log {
+        if w == 8 {
+            t.extend_from_slice(&[0xDD, 0x98]); // fst qword [eax+260]
+        } else {
+            t.extend_from_slice(&[0xD9, 0x98]); // fst dword [eax+260]
+        }
+        u(&mut t, 260);
+    }
     // logidx++
     t.push(0xFF);
     t.push(0x05);
     u(&mut t, s.m_logidx); // inc [m_logidx]
+    // v7: when the log_digest option is on, a call past the cap updates the
+    // running digest instead of vanishing. The logged path jumps over the
+    // digest block; the jae above lands on it. Without the option neither
+    // the jump nor the block is emitted (byte-identical stubs).
+    let jmp_pos = if s.log_digest {
+        t.extend_from_slice(&[0xE9, 0x00, 0x00, 0x00, 0x00]); // jmp full (rel32, patched below)
+        Some(t.len() - 4)
+    } else {
+        None
+    };
+    let digest_pos = t.len();
+    if s.log_digest {
+        let sb = s.s as u32;
+        emit_digest(
+            &mut t,
+            s.m_digest1,
+            s.m_digest2,
+            c,
+            arg_base,
+            sb,
+            sb.wrapping_add(SSIZE as u32),
+            s.esp0,
+        );
+    }
     // full: scripted out-param writes + return value
     let full_pos = t.len();
-    let rel = (full_pos - (jae_pos + 4)) as u32;
+    let target = if s.log_digest { digest_pos } else { full_pos };
+    let rel = (target - (jae_pos + 4)) as u32;
     t[jae_pos..jae_pos + 4].copy_from_slice(&rel.to_le_bytes());
+    if let Some(jp) = jmp_pos {
+        let rel2 = (full_pos - (jp + 4)) as u32;
+        t[jp..jp + 4].copy_from_slice(&rel2.to_le_bytes());
+    }
     // v3 per-call answer sequences (lane r-b04): this call consumes step
     // idx = min([seqidx], len-1) of the callee's sequence and advances the
     // per-side index, so a callee polled in a loop can answer token, token,
@@ -1663,6 +1957,64 @@ fn patch_e9(site_mapped: usize, stub: u32) -> Result<[u8; 8], String> {
     }
 }
 
+// v7: patch a near conditional-jump (0F 80..8F) tail site to a recorder
+// stub call. The 6-byte Jcc becomes a 5-byte CALL plus a NOP; the stub
+// re-evaluates the same condition on the still-live flags (a CALL
+// preserves them) and either logs + tail-returns (taken) or returns to
+// the fall-through (not taken). Returns the saved bytes and the Jcc's
+// second opcode byte, which selects the stub's prologue jump. A short
+// (2-byte) Jcc has no room for a call and is refused.
+fn patch_ctail(site_mapped: usize, stub: u32) -> Result<([u8; 8], u8), String> {
+    unsafe {
+        let op0 = *(site_mapped as *const u8);
+        let op1 = *((site_mapped + 1) as *const u8);
+        if op0 != 0x0F || !(0x80..=0x8F).contains(&op1) {
+            return Err(format!(
+                "site {:#x} is not a near conditional jump (bytes {:#x} {:#x}); ctailpatches need 0F 80..8F",
+                site_mapped, op0, op1
+            ));
+        }
+        let mut orig = [0u8; 8];
+        std::ptr::copy_nonoverlapping(site_mapped as *const u8, orig.as_mut_ptr(), 6);
+        let rel = stub.wrapping_sub((site_mapped + 5) as u32);
+        *(site_mapped as *mut u8) = 0xE8;
+        std::ptr::write_unaligned((site_mapped + 1) as *mut u32, rel);
+        *(site_mapped as *mut u8).add(5) = 0x90; // NOP fills the 6th byte
+        let proc = GetCurrentProcess();
+        FlushInstructionCache(proc, site_mapped as *const c_void, 6);
+        Ok((orig, op1))
+    }
+}
+
+// v7: the conditional-tail stub. Entry flags are the original's (the
+// patched CALL preserves them), so the prologue re-emits the site's own
+// Jcc over a 1-byte `ret`: not taken, the `ret` resumes at site+6 with
+// registers, flags and esp untouched; taken, the tail-stub body logs,
+// answers and returns to the trampoline. A fresh stub is emitted per
+// site (the prologue depends on the condition code).
+fn emit_ctail_stub(c: &Callee, outer_pop: u32, cc: u8) -> Vec<u8> {
+    let mut t: Vec<u8> = Vec::new();
+    t.extend_from_slice(&[0x0F, cc, 0x01, 0x00, 0x00, 0x00]); // Jcc taken (rel +1)
+    t.push(0xC3); // ret: not taken, resume at site+6
+    t.extend_from_slice(&emit_stub(c, Some(outer_pop))); // taken: tail body
+    t
+}
+
+// v7: resolve a patch site: either an image RVA (`site`, as before) or a
+// self-test offset (`site_selftest` + `at`, for the checker's own
+// regression, which patches its built-in originals).
+fn resolve_site(p: &J) -> Result<usize, String> {
+    if let Some(name) = p.get("site_selftest") {
+        let at = p.get("at").map(|v| v.as_usize()).unwrap_or(0);
+        let base = *st()
+            .selftests
+            .get(name.as_str())
+            .ok_or_else(|| format!("unknown selftest {}", name.as_str()))?;
+        return Ok(base as usize + at);
+    }
+    Ok(st().img + p.get("site").map(|v| v.as_u32()).unwrap_or(0) as usize)
+}
+
 // Patch an E8 call site to a recorder stub. Returns error if not E8.
 fn patch_e8(site_mapped: usize, stub: u32) -> Result<[u8; 8], String> {
     unsafe {
@@ -1836,6 +2188,7 @@ type CallRec = (
     [u32; 4],
     u32,                 // v4: stub-entry eax (post-transport on the rw side)
     Vec<(u8, [u32; 4])>, // v5: logged XMM2-XMM7 as (register, words)
+    [u32; 2],            // v7: logged ST0 call argument (f32 in [0], f64 in [0..2])
 );
 
 #[derive(Clone, Default)]
@@ -1859,9 +2212,11 @@ struct Obs {
     globals_writes: Vec<(u32, u32)>, // (rva, val)
     undeclared: Vec<(u32, u32)>,
     undeclared_n: u32,
-    calls: Vec<CallRec>, // (id, ecx, edx, args, snap, xmm0, xmm1, eax, xmm2-7)
+    calls: Vec<CallRec>, // (id, ecx, edx, args, snap, xmm0, xmm1, eax, xmm2-7, st0)
     log_attempted: u32,  // v4: stub entries this side (sum of per-callee seqidx)
     log_logged: u32,     // v4: records actually logged (min(logidx, log_max))
+    log_d1: u32,         // v7: FNV-1a digest of past-cap calls this side
+    log_d2: u32,         // v7: FNV-1 digest of past-cap calls this side
     fault: String,       // "" or "code=.. eip=.. ..."
     fault_code: u32,
     fault_eip: u32,
@@ -1884,7 +2239,7 @@ fn obs_json(o: &Obs) -> String {
     let jc = o
         .calls
         .iter()
-        .map(|(id, cx, dx, a, snap, x0, x1, ax, xe)| {
+        .map(|(id, cx, dx, a, snap, x0, x1, ax, xe, st0c)| {
             // v5: logged XMM2-XMM7 appear only when a callee logs them, so
             // v4 responses are unchanged.
             let xmore = xe
@@ -1897,8 +2252,19 @@ fn obs_json(o: &Obs) -> String {
                     )
                 })
                 .collect::<String>();
+            // v7: the logged ST0 call argument, present only for callees
+            // that log it (so older responses keep their shape).
+            let st0j = if st()
+                .callees
+                .get(id)
+                .is_some_and(|c| c.st0_log.is_some())
+            {
+                format!(",\"st0c\":[{},{}]", hx(st0c[0]), hx(st0c[1]))
+            } else {
+                String::new()
+            };
             format!(
-                "{{\"id\":{},\"ecx\":{},\"edx\":{},\"eax\":{},\"args\":[{}],\"snap\":[{}],\"xmm0\":[{}],\"xmm1\":[{}]{}}}",
+                "{{\"id\":{},\"ecx\":{},\"edx\":{},\"eax\":{},\"args\":[{}],\"snap\":[{}],\"xmm0\":[{}],\"xmm1\":[{}]{}{}}}",
                 id,
                 hx(*cx),
                 hx(*dx),
@@ -1907,7 +2273,8 @@ fn obs_json(o: &Obs) -> String {
                 snap.iter().map(|x| hx(*x)).collect::<Vec<_>>().join(","),
                 x0.iter().map(|x| hx(*x)).collect::<Vec<_>>().join(","),
                 x1.iter().map(|x| hx(*x)).collect::<Vec<_>>().join(","),
-                xmore
+                xmore,
+                st0j
             )
         })
         .collect::<Vec<_>>()
@@ -1927,8 +2294,19 @@ fn obs_json(o: &Obs) -> String {
         ),
         None => String::new(),
     };
+    // v7: the past-cap call digest, present only when the contract asked
+    // for it (older responses keep their shape).
+    let digestj = if st().log_digest {
+        format!(
+            ",\"log_digest\":[{},{}]",
+            hx(o.log_d1),
+            hx(o.log_d2)
+        )
+    } else {
+        String::new()
+    };
     format!(
-        "{{\"status\":\"{}\",\"eax\":{},\"ecx\":{},\"edx\":{},\"ebx\":{},\"esi\":{},\"edi\":{},\"ebp\":{},\"esp\":{},\"eflags\":{},\"st0\":\"{}\",\"xmm0\":\"{}\",\"esp_delta\":{},\"log_attempted\":{},\"log_logged\":{},\"heap_n\":{},\"heap_writes\":[{}],\"heap_hash\":\"0x{:x}\",\"stack_n\":{},\"stack_writes\":[{}],\"stack_hash\":\"0x{:x}\",\"globals_writes\":[{}],\"undeclared\":[{}],\"undeclared_n\":{},\"calls\":[{}],\"fault\":\"{}\",\"fault_code\":{},\"fault_eip\":{},\"fault_badva\":{}{}}}",
+        "{{\"status\":\"{}\",\"eax\":{},\"ecx\":{},\"edx\":{},\"ebx\":{},\"esi\":{},\"edi\":{},\"ebp\":{},\"esp\":{},\"eflags\":{},\"st0\":\"{}\",\"xmm0\":\"{}\",\"esp_delta\":{},\"log_attempted\":{},\"log_logged\":{},\"heap_n\":{},\"heap_writes\":[{}],\"heap_hash\":\"0x{:x}\",\"stack_n\":{},\"stack_writes\":[{}],\"stack_hash\":\"0x{:x}\",\"globals_writes\":[{}],\"undeclared\":[{}],\"undeclared_n\":{},\"calls\":[{}],\"fault\":\"{}\",\"fault_code\":{},\"fault_eip\":{},\"fault_badva\":{}{}{}}}",
         o.status,
         hx(o.regs[0]),
         hx(o.regs[1]),
@@ -1958,7 +2336,8 @@ fn obs_json(o: &Obs) -> String {
         hx(o.fault_code),
         hx(o.fault_eip),
         hx(o.fault_badva),
-        x87j
+        x87j,
+        digestj
     )
 }
 
@@ -2054,6 +2433,9 @@ fn run_side(
         // per trial in trial_body, shared by both sides)
         std::ptr::write_bytes(s.m_fault as *mut u8, 0, 56);
         *((s.m_logidx) as *mut u32) = 0;
+        // v7: each side digests past-cap calls from the FNV bases.
+        *((s.m_digest1) as *mut u32) = FNV_BASIS32;
+        *((s.m_digest2) as *mut u32) = 0;
         // v3: each side consumes per-call sequences from step 0.
         std::ptr::write_bytes(s.m_seq_idx as *mut u8, 0, 1024);
         *((s.m_side) as *mut u32) = if is_rw { 1 } else { 0 };
@@ -2361,6 +2743,12 @@ fn run_side(
             }
         }
         o.log_attempted = attempted;
+        // v7: the past-cap digest accumulators (compared only when the
+        // contract asked for the digest; the bases otherwise).
+        unsafe {
+            o.log_d1 = *((s.m_digest1) as *const u32);
+            o.log_d2 = *((s.m_digest2) as *const u32);
+        }
         for i in 0..n {
             let e = (s.log_base + i * LOG_ENTRY as u32) as *const u32;
             unsafe {
@@ -2411,7 +2799,14 @@ fn run_side(
                         }
                     }
                 }
-                o.calls.push((id, cx, dx, args, snap, x0, x1, ax, xe));
+                // v7: the ST0 call argument at bytes 260-267, meaningful
+                // only for callees that log it (other stubs never store
+                // it, so the slot would show a stale record: report 0).
+                let st0c = match s.callees.get(&id) {
+                    Some(c) if c.st0_log.is_some() => [*e.add(65), *e.add(66)],
+                    _ => [0, 0],
+                };
+                o.calls.push((id, cx, dx, args, snap, x0, x1, ax, xe, st0c));
             }
         }
     }
@@ -2476,6 +2871,10 @@ fn canon_nan_obs(o: &Obs) -> Obs {
             for w in w4.iter_mut() {
                 *w = canon_f32(*w);
             }
+        }
+        // v7: the ST0 call argument is float-comparable too.
+        for w in rec.9.iter_mut() {
+            *w = canon_f32(*w);
         }
     }
     c.st0 = canon_st0_hex(&c.st0);
@@ -2687,19 +3086,70 @@ fn compare_inner(a: &Obs, b: &Obs, checks: &J) -> (bool, String, String) {
         } else if let Some(e) = validate_eax_transport(checks) {
             chk("calls", false, e);
         } else if a.log_attempted > a.log_logged || b.log_attempted > b.log_logged {
-            chk(
-                "calls",
-                false,
-                format!(
-                    "call log truncated: orig attempted {} logged {}; rw attempted {} logged {} (cap {}; raise top-level log_max, max {})",
+            // v7: with log_digest the stub folded every past-cap call into
+            // the running digest, so the tail still compares (counts plus
+            // the digest of callee id, conv-default registers and stack
+            // words); without it the tail went uncompared and the check
+            // fails. The digest folds the conv-default stream only, so a
+            // contract that reselects it fails loudly instead of comparing
+            // one stream in the prefix and another past the cap (the
+            // driver refuses these combinations at load; this is the
+            // backstop for hand-driven trials).
+            if st().log_digest
+                && (checks.get("call_regs").is_some()
+                    || checks.get("call_skip").is_some()
+                    || checks.get("call_mask").is_some())
+            {
+                chk(
+                    "calls",
+                    false,
+                    "log_digest cannot combine with checks.call_regs/call_skip/call_mask (the digest folds the conv-default registers and all stack words)"
+                        .to_string(),
+                );
+            } else if !st().log_digest {
+                chk(
+                    "calls",
+                    false,
+                    format!(
+                        "call log truncated: orig attempted {} logged {}; rw attempted {} logged {} (cap {}; raise top-level log_max, max {})",
+                        a.log_attempted,
+                        a.log_logged,
+                        b.log_attempted,
+                        b.log_logged,
+                        st().log_max,
+                        LOG_HARD_MAX
+                    ),
+                );
+            } else {
+                let ka: Vec<String> = a.calls.iter().map(|c| callkey(c, checks)).collect();
+                let kb: Vec<String> = b.calls.iter().map(|c| callkey(c, checks)).collect();
+                let prefix = ka == kb;
+                let counts = a.log_attempted == b.log_attempted;
+                let digests = a.log_d1 == b.log_d1 && a.log_d2 == b.log_d2;
+                let p = prefix && counts && digests;
+                let mut d = format!(
+                    "digest: orig attempted {} logged {} d=0x{:x}/0x{:x}; rw attempted {} logged {} d=0x{:x}/0x{:x}; prefix {}",
                     a.log_attempted,
                     a.log_logged,
+                    a.log_d1,
+                    a.log_d2,
                     b.log_attempted,
                     b.log_logged,
-                    st().log_max,
-                    LOG_HARD_MAX
-                ),
-            );
+                    b.log_d1,
+                    b.log_d2,
+                    if prefix { "match" } else { "DIFFER" }
+                );
+                if !counts {
+                    d.push_str(" COUNTS DIFFER");
+                }
+                if !digests {
+                    d.push_str(" DIGESTS DIFFER (past-cap calls differ)");
+                }
+                if !prefix {
+                    d.push_str(&format!(" orig={:?} rw={:?}", lims(&ka, 3), lims(&kb, 3)));
+                }
+                chk("calls", p, d);
+            }
         } else {
             let ka: Vec<String> = a.calls.iter().map(|c| callkey(c, checks)).collect();
             let kb: Vec<String> = b.calls.iter().map(|c| callkey(c, checks)).collect();
@@ -2875,7 +3325,7 @@ fn callkey(c: &CallRec, checks: &J) -> String {
         Some(v) => v.as_arr().iter().map(|x| x.as_usize()).collect(),
         None => Vec::new(),
     };
-    if !cal.xmm.any_transport() && cal.eax_from_stack.is_none() {
+    if !cal.xmm.any_transport() && cal.eax_from_stack.is_none() && cal.st0_from_stack.is_none() {
         // v4 per-argument masks (lanes r-b39, r-n117, r-n86; alias
         // checks.call_low8 from lane r-n118): checks.call_mask
         // {id:{idx:mask}} compares (value & mask) as raw hex instead of the
@@ -2917,14 +3367,23 @@ fn callkey(c: &CallRec, checks: &J) -> String {
         k.push_str(&format!(" snap={:?}", c.4));
     }
     if cal.xmm.log[0] {
-        k.push_str(&xmm_key(0, &c.5, cal.xmm.cmp64[0]));
+        k.push_str(&xmm_key(0, &c.5, cal.xmm.cmp64[0], cal.xmm.cmp32[0]));
     }
     if cal.xmm.log[1] {
-        k.push_str(&xmm_key(1, &c.6, cal.xmm.cmp64[1]));
+        k.push_str(&xmm_key(1, &c.6, cal.xmm.cmp64[1], cal.xmm.cmp32[1]));
     }
     // v5: XMM2-XMM7, in register order.
     for (r, w) in &c.8 {
-        k.push_str(&xmm_key(*r, w, cal.xmm.cmp64[usize::from(*r)]));
+        let ri = usize::from(*r);
+        k.push_str(&xmm_key(*r, w, cal.xmm.cmp64[ri], cal.xmm.cmp32[ri]));
+    }
+    // v7: the ST0 call argument, one word (f32) or two (f64). The short
+    // forms mark the width in every mismatch, so a narrowed key never
+    // looks full.
+    match cal.st0_log {
+        Some(8) => k.push_str(&format!(" st0c=[{}, {}]", c.9[0], c.9[1])),
+        Some(_) => k.push_str(&format!(" st0c=[{}]", c.9[0])),
+        None => {}
     }
     k
 }
@@ -2932,9 +3391,12 @@ fn callkey(c: &CallRec, checks: &J) -> String {
 // One logged vector register's call-key fragment. Registers the doubles
 // extension's `logxmm64_regs` names compare only their low 8 bytes (the
 // double the callee reads); the two-word form marks the narrowing in
-// every mismatch, so a narrowed key never looks full.
-fn xmm_key(reg: u8, w: &[u32; 4], cmp64: bool) -> String {
-    if cmp64 {
+// every mismatch, so a narrowed key never looks full. v7 `logxmm32_regs`
+// narrows to the low 4 bytes (the float the callee reads) the same way.
+fn xmm_key(reg: u8, w: &[u32; 4], cmp64: bool, cmp32: bool) -> String {
+    if cmp32 {
+        format!(" xmm{}=[{}]", reg, w[0])
+    } else if cmp64 {
         format!(" xmm{}=[{}, {}]", reg, w[0], w[1])
     } else {
         format!(" xmm{}={:?}", reg, w)
@@ -3119,6 +3581,22 @@ fn parse_xmm(c: &J, id: u32, nargs: usize) -> Result<vecregs::XmmCallCfg, String
                 .push(usize::try_from(*n).unwrap_or(usize::MAX));
         }
     }
+    // v7: the 4-byte narrowing, same shape as the 8-byte one.
+    if let Some(v) = c.get("logxmm32_regs") {
+        let J::Arr(a) = v else {
+            return Err(format!("callee {} logxmm32_regs must be a list", id));
+        };
+        for r in a {
+            let J::Int(n) = r else {
+                return Err(format!(
+                    "callee {} logxmm32_regs entries must be integers",
+                    id
+                ));
+            };
+            keys.logxmm32_regs
+                .push(usize::try_from(*n).unwrap_or(usize::MAX));
+        }
+    }
     if let Some(v) = c.get("xmm_from_stack") {
         let J::Obj(m) = v else {
             return Err(format!(
@@ -3206,6 +3684,9 @@ fn cmd_setup(q: &J) -> String {
         );
     }
     s.log_max = log_max;
+    // v7: past-cap calls fold into the running digest (compared per trial)
+    // instead of failing the calls check. Off unless asked.
+    s.log_digest = q.get("log_digest").map(|v| v.as_bool(false)).unwrap_or(false);
     // v5: the read-only shadow at the preferred base, for this contract
     // only (built once per process; an incompletely held window is a
     // setup error, never a partial shadow).
@@ -3292,6 +3773,43 @@ fn cmd_setup(q: &J) -> String {
                 };
             let preserve = c.get("preserve").map(|v| v.as_bool(false)).unwrap_or(false);
             let eax_from_stack = c.get("eax_from_stack").map(|v| v.as_usize());
+            // v7: x87 ST0 call argument. The width is explicit (f32/f64):
+            // anything else is refused, and the transport requires the
+            // log (an unlogged transported argument would be compared
+            // nowhere) over declared stack words.
+            let st0_log = match c.get("logst0") {
+                None => None,
+                Some(v) => match v.as_str() {
+                    "f32" => Some(4u8),
+                    "f64" => Some(8u8),
+                    other => {
+                        return format!(
+                            "{{\"ok\":false,\"error\":\"callee {} logst0 {:?} (expected f32 or f64)\"}}",
+                            id, other
+                        );
+                    }
+                },
+            };
+            let st0_from_stack = match c.get("st0_from_stack") {
+                None => None,
+                Some(v) => {
+                    let idx = v.as_usize();
+                    if st0_log.is_none() {
+                        return format!(
+                            "{{\"ok\":false,\"error\":\"callee {} transports ST0 without logging it (add logst0): the argument would be compared nowhere\"}}",
+                            id
+                        );
+                    }
+                    let need = if st0_log == Some(8) { idx + 1 } else { idx };
+                    if need >= nargs {
+                        return format!(
+                            "{{\"ok\":false,\"error\":\"callee {} st0_from_stack loads ST0 from stack arg {}, but nargs is {}\"}}",
+                            id, idx, nargs
+                        );
+                    }
+                    Some(idx)
+                }
+            };
             let cal = Callee {
                 id,
                 conv,
@@ -3307,6 +3825,8 @@ fn cmd_setup(q: &J) -> String {
                 eax_from_stack,
                 noclean,
                 pop_rw,
+                st0_log,
+                st0_from_stack,
             };
             let bytes = emit_stub(&cal, None);
             let addr = s.stub_base + s.stub_off as u32;
@@ -3329,7 +3849,6 @@ fn cmd_setup(q: &J) -> String {
     let mut errors: Vec<String> = Vec::new();
     if let Some(ps) = q.get("patches") {
         for p in ps.as_arr() {
-            let site_rva = p.get("site").map(|v| v.as_u32()).unwrap_or(0);
             let id = p.get("id").map(|v| v.as_u32()).unwrap_or(0);
             let stub = match s.callees.get(&id) {
                 Some(c) => c.stub_addr,
@@ -3338,7 +3857,14 @@ fn cmd_setup(q: &J) -> String {
                     continue;
                 }
             };
-            let site = s.img + site_rva as usize;
+            // v7: self-test sites resolve here too (same opcode check).
+            let site = match resolve_site(p) {
+                Ok(a) => a,
+                Err(e) => {
+                    errors.push(e);
+                    continue;
+                }
+            };
             match patch_e8(site, stub) {
                 Ok(orig) => s.patches.push((site, orig, 5)),
                 Err(e) => errors.push(e),
@@ -3350,7 +3876,6 @@ fn cmd_setup(q: &J) -> String {
     let outer_pop = q.get("outer_pop").map(|v| v.as_u32()).unwrap_or(0);
     if let Some(ps) = q.get("tailpatches") {
         for p in ps.as_arr() {
-            let site_rva = p.get("site").map(|v| v.as_u32()).unwrap_or(0);
             let id = p.get("id").map(|v| v.as_u32()).unwrap_or(0);
             let cal = match s.callees.get(&id) {
                 Some(c) => c.clone(),
@@ -3378,9 +3903,68 @@ fn cmd_setup(q: &J) -> String {
                 }
                 addr
             };
-            let site = s.img + site_rva as usize;
+            // v7: self-test sites resolve here too (same opcode check).
+            let site = match resolve_site(p) {
+                Ok(a) => a,
+                Err(e) => {
+                    errors.push(e);
+                    continue;
+                }
+            };
             match patch_e9(site, tail) {
                 Ok(orig) => s.patches.push((site, orig, 5)),
+                Err(e) => errors.push(e),
+            }
+        }
+    }
+    // v7 conditional-tail patches: a near Jcc (0F 80..8F) to another
+    // function becomes a call to a per-site stub that re-evaluates the
+    // condition and either tail-returns (taken) or resumes at site+6
+    // (not taken). Shares outer_pop with tailpatches.
+    if let Some(ps) = q.get("ctailpatches") {
+        for p in ps.as_arr() {
+            let id = p.get("id").map(|v| v.as_u32()).unwrap_or(0);
+            let cal = match s.callees.get(&id) {
+                Some(c) => c.clone(),
+                None => {
+                    errors.push(format!("no callee {}", id));
+                    continue;
+                }
+            };
+            let site = match resolve_site(p) {
+                Ok(a) => a,
+                Err(e) => {
+                    errors.push(e);
+                    continue;
+                }
+            };
+            // Read the condition first: the stub's prologue depends on it,
+            // and a non-Jcc site is an error, never a guess.
+            let cc = unsafe {
+                let op0 = *(site as *const u8);
+                let op1 = *((site + 1) as *const u8);
+                if op0 != 0x0F || !(0x80..=0x8F).contains(&op1) {
+                    errors.push(format!(
+                        "site {:#x} is not a near conditional jump (bytes {:#x} {:#x}); ctailpatches need 0F 80..8F",
+                        site, op0, op1
+                    ));
+                    continue;
+                }
+                op1
+            };
+            let bytes = emit_ctail_stub(&cal, outer_pop, cc);
+            let addr = s.stub_base + s.stub_off as u32;
+            if s.stub_off + bytes.len() > 0x10000 {
+                return "{\"ok\":false,\"error\":\"stub overflow\"}".to_string();
+            }
+            unsafe {
+                std::ptr::copy_nonoverlapping(bytes.as_ptr(), addr as *mut u8, bytes.len());
+                let proc = GetCurrentProcess();
+                FlushInstructionCache(proc, addr as *const c_void, bytes.len());
+            }
+            s.stub_off += (bytes.len() + 15) & !15;
+            match patch_ctail(site, addr) {
+                Ok((orig, _)) => s.patches.push((site, orig, 6)),
                 Err(e) => errors.push(e),
             }
         }
@@ -4618,6 +5202,7 @@ mod tests {
                     [0; 4],
                     0,
                     vec![(3, [x3, 0, 0, 0])],
+                    [0, 0],
                 )
             };
             let mut a = ok_obs();
@@ -4660,6 +5245,7 @@ mod tests {
                 [0; 4],
                 0,
                 vec![(2, [9, 0, 0, 0])],
+                [0, 0],
             )];
             let mut b = a.clone();
             b.calls[0].3 = vec![7, 7]; // garbage stack words on one side
@@ -4684,7 +5270,7 @@ mod tests {
             cal.xmm.log[1] = true;
             s.callees.insert(6, cal);
             let rec = |x0: [u32; 4], x1: [u32; 4]| {
-                (6, 0, 0, vec![1, 2, 3, 4], vec![], x0, x1, 0, Vec::new())
+                (6, 0, 0, vec![1, 2, 3, 4], vec![], x0, x1, 0, Vec::new(), [0, 0])
             };
             let a = rec([11, 22, 33, 44], [1, 2, 3, 4]);
             // Upper-half-only drift on the narrowed register is invisible.
@@ -4713,6 +5299,223 @@ mod tests {
             let (p, _, first) = compare(&a, &a.clone(), &j("{}"));
             assert!(!p && first.contains("call log truncated"), "{first}");
         });
+    }
+
+    #[test]
+    fn ctail_stub_prologue_reevaluates_the_condition() {
+        with_state(|_| {
+            let cal = callee(1);
+            let b = emit_ctail_stub(&cal, 4, 0x85);
+            // Jne over a 1-byte ret, then the tail body (add esp,4; ret 4).
+            assert_eq!(&b[..7], &[0x0F, 0x85, 0x01, 0x00, 0x00, 0x00, 0xC3]);
+            assert!(contains(&b, &[0x83, 0xC4, 0x04])); // add esp,4
+            assert!(contains(&b, &[0xC2, 0x04, 0x00])); // ret 4
+            // A different condition re-emits its own jump.
+            let z = emit_ctail_stub(&cal, 0, 0x84);
+            assert_eq!(&z[..7], &[0x0F, 0x84, 0x01, 0x00, 0x00, 0x00, 0xC3]);
+        });
+    }
+
+    #[test]
+    fn digest_emission_is_conditional_and_folds_documented_words() {
+        with_state(|s| {
+            let cal = callee(1);
+            let off = emit_stub(&cal, None);
+            s.log_digest = true;
+            let on = emit_stub(&cal, None);
+            // The option adds the digest block (and only the option does).
+            assert!(on.len() > off.len());
+            assert!(!contains(&off, &[0x69, 0xC0, 0x93, 0x01, 0x00, 0x01]));
+            // FNV prime multiplications, eax preserved, id and nargs folded.
+            assert!(contains(&on, &[0x69, 0xC0, 0x93, 0x01, 0x00, 0x01]));
+            assert!(contains(&on, &[0x50])); // push eax
+            assert!(contains(&on, &[0x58])); // pop eax
+            assert!(contains(&on, &[0x35, 0x01, 0x00, 0x00, 0x00])); // xor eax,id
+            assert!(contains(&on, &[0x35, 0x02, 0x00, 0x00, 0x00])); // xor eax,nargs
+            assert!(contains(&on, &[0x8B, 0x94, 0x24])); // mov edx,[esp+..]
+            // The block pushes eax first, so arg0 reads at base+4 (8 here).
+            assert!(contains(
+                &on,
+                &[0x8B, 0x94, 0x24, 0x08, 0x00, 0x00, 0x00]
+            ));
+            assert!(contains(
+                &on,
+                &[0x8B, 0x94, 0x24, 0x0C, 0x00, 0x00, 0x00]
+            ));
+            assert!(contains(&on, &[0x81, 0xFA])); // cmp edx,window (normalize)
+            // Scratch registers are never folded: a cdecl stub folds no ecx.
+            // (The normalize sequence above serves the stack words via edx.)
+            let mut tc = callee(2);
+            tc.conv = "thiscall".to_string();
+            let th = emit_stub(&tc, None);
+            assert!(contains(&th, &[0x81, 0xF9])); // cmp ecx,window: folded
+        });
+    }
+
+    #[test]
+    fn st0_transport_and_log_emission() {
+        with_state(|_| {
+            let mut cal = callee(1);
+            cal.st0_log = Some(4);
+            cal.st0_from_stack = Some(0);
+            let b32 = emit_stub(&cal, None);
+            assert!(contains(&b32, &[0xD9, 0x84, 0x24])); // fld dword [esp+..]
+            assert!(contains(&b32, &[0xD9, 0x98, 0x04, 0x01, 0x00, 0x00])); // fst [eax+260]
+            cal.st0_log = Some(8);
+            cal.st0_from_stack = Some(1);
+            let b64 = emit_stub(&cal, None);
+            assert!(contains(&b64, &[0xDD, 0x84, 0x24])); // fld qword [esp+..]
+            assert!(contains(&b64, &[0xDD, 0x98, 0x04, 0x01, 0x00, 0x00])); // fst [eax+260]
+            // Without the keys neither instruction is emitted.
+            let plain = emit_stub(&callee(1), None);
+            assert!(!contains(&plain, &[0xD9, 0x84, 0x24]));
+            assert!(!contains(&plain, &[0xDD, 0x84, 0x24]));
+            assert!(!contains(&plain, &[0xD9, 0x98]));
+            assert!(!contains(&plain, &[0xDD, 0x98]));
+        });
+    }
+
+    #[test]
+    fn digest_compare_needs_counts_digests_and_prefix() {
+        with_state(|s| {
+            s.log_digest = true;
+            let mut a = ok_obs();
+            a.log_attempted = 50;
+            a.log_logged = 8;
+            a.log_d1 = 0x1111;
+            a.log_d2 = 0x2222;
+            let b = a.clone();
+            // Identical digests, counts and (empty) prefix: pass.
+            assert!(compare(&a, &b, &j("{}")).0);
+            // A digest drift fails, and says digests.
+            let mut c = a.clone();
+            c.log_d2 = 0x2223;
+            let (p, _, first) = compare(&a, &c, &j("{}"));
+            assert!(!p && first.contains("DIGESTS DIFFER"), "{first}");
+            // A count drift fails, and says counts.
+            let mut d = a.clone();
+            d.log_attempted = 49;
+            let (p, _, first) = compare(&a, &d, &j("{}"));
+            assert!(!p && first.contains("COUNTS DIFFER"), "{first}");
+            // Without the option the same trial fails truncated instead.
+            s.log_digest = false;
+            let (p, _, first) = compare(&a, &b, &j("{}"));
+            assert!(!p && first.contains("call log truncated"), "{first}");
+        });
+    }
+
+    #[test]
+    fn st0_callkey_compares_the_declared_width() {
+        with_state(|s| {
+            let mut cal = callee(7);
+            cal.nargs = 1;
+            cal.st0_log = Some(4);
+            cal.st0_from_stack = Some(0);
+            s.callees.insert(7, cal);
+            let rec = |w0: u32, w1: u32| {
+                (
+                    7,
+                    0,
+                    0,
+                    vec![w0],
+                    Vec::new(),
+                    [0; 4],
+                    [0; 4],
+                    0,
+                    Vec::new(),
+                    [w0, w1],
+                )
+            };
+            let a = rec(0x3F80_0000, 0xDEAD_BEEF);
+            // The transport skips the stack words; the f32 compares.
+            let mut b = a.clone();
+            b.3 = vec![0x1234_5678];
+            assert_eq!(callkey(&a, &j("{}")), callkey(&b, &j("{}")));
+            let mut c = a.clone();
+            c.9[0] = 0x3F80_0001;
+            assert_ne!(callkey(&a, &j("{}")), callkey(&c, &j("{}")));
+            // The high word is not compared for an f32 argument.
+            let mut d = a.clone();
+            d.9[1] = 0;
+            assert_eq!(callkey(&a, &j("{}")), callkey(&d, &j("{}")));
+            let key = callkey(&a, &j("{}"));
+            assert!(key.contains("args=transport") && key.contains("st0c=[1065353216]"), "{key}");
+            // An f64 argument compares both words.
+            if let Some(c) = s.callees.get_mut(&7) {
+                c.st0_log = Some(8);
+            }
+            assert_ne!(callkey(&a, &j("{}")), callkey(&d, &j("{}")));
+            let key = callkey(&a, &j("{}"));
+            assert!(key.contains("st0c=[1065353216, 3735928559]"), "{key}");
+        });
+    }
+
+    #[test]
+    fn cmp32_narrowing_compares_the_low_float_only() {
+        with_state(|s| {
+            let mut cal = callee(6);
+            cal.nargs = 0;
+            cal.xmm.log[0] = true;
+            cal.xmm.cmp32[0] = true;
+            s.callees.insert(6, cal);
+            let rec = |x0: [u32; 4]| {
+                (
+                    6,
+                    0,
+                    0,
+                    Vec::new(),
+                    Vec::new(),
+                    x0,
+                    [0; 4],
+                    0,
+                    Vec::new(),
+                    [0, 0],
+                )
+            };
+            let a = rec([11, 22, 33, 44]);
+            // Upper-12 drift on the narrowed register is invisible.
+            let b = rec([11, 77, 88, 99]);
+            assert_eq!(callkey(&a, &j("{}")), callkey(&b, &j("{}")));
+            // A low-word drift is still caught, bit for bit.
+            let c = rec([12, 22, 33, 44]);
+            assert_ne!(callkey(&a, &j("{}")), callkey(&c, &j("{}")));
+            let key = callkey(&a, &j("{}"));
+            assert!(key.contains("xmm0=[11]"), "{key}");
+        });
+    }
+
+    #[test]
+    fn parse_xmm_v7_32bit_narrowing_fails_closed() {
+        let y = parse_xmm(&j(r#"{"logxmm":true,"logxmm32_regs":[0]}"#), 1, 0).unwrap();
+        assert!(y.cmp32[0] && !y.cmp32[1] && !y.cmp64[0]);
+        assert!(parse_xmm(&j(r#"{"logxmm32_regs":[0]}"#), 1, 0).is_err());
+        assert!(parse_xmm(&j(r#"{"logxmm":true,"logxmm32_regs":[8]}"#), 1, 0).is_err());
+        assert!(parse_xmm(
+            &j(r#"{"logxmm":true,"logxmm64_regs":[0],"logxmm32_regs":[0]}"#),
+            1,
+            0
+        )
+        .is_err());
+    }
+
+    #[test]
+    fn v7_selftest_originals_are_emitted() {
+        let (code, table) = selftest_code(0x3101_1000, 0x3105_6004);
+        for name in [
+            "ctail_guard",
+            "st0_call",
+            "st0_call64",
+            "digest_loop",
+            "xmm32_call",
+        ] {
+            assert!(table.contains_key(name), "{name}");
+        }
+        // The conditional tail sits at offset 6 of its routine.
+        let at = |n: &str| table[n] as usize - 0x3101_1000;
+        assert_eq!(&code[at("ctail_guard") + 6..at("ctail_guard") + 8], &[0x0F, 0x85]);
+        // The digest loop keeps its counter in pushed/popped ebx.
+        let d = &code[at("digest_loop")..];
+        assert_eq!(&d[..4], &[0x53, 0x31, 0xDB, 0x53]);
     }
 
     fn x87_obs(top: u8, tags: u8, st0: x87::F80) -> Obs {
@@ -4790,7 +5593,7 @@ mod tests {
     fn observation_json_carries_v5_fields_only_when_present() {
         with_state(|_| {
             let mut o = ok_obs();
-            o.calls = vec![(1, 0, 0, vec![], vec![], [0; 4], [0; 4], 0, vec![])];
+            o.calls = vec![(1, 0, 0, vec![], vec![], [0; 4], [0; 4], 0, vec![], [0, 0])];
             let plain = obs_json(&o);
             assert!(j(&plain).get("x87").is_none());
             assert!(!plain.contains("xmm2"));

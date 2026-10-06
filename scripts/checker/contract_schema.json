@@ -151,6 +151,21 @@
    },
    "description": "E9 tail-jump sites rewritten to tail stubs."
   },
+  "ctailpatches": {
+   "type": "array",
+   "items": {
+    "$ref": "#/definitions/patch"
+   },
+   "description": "v7: near conditional-jump (0F 80..8F) tail sites rewritten to conditional-tail stubs."
+  },
+  "log_digest": {
+   "type": "boolean",
+   "description": "v7: fold past-cap calls into the running digest instead of failing truncated."
+  },
+  "strict": {
+   "type": "boolean",
+   "description": "v7b: refuse at load the two legacy shapes the driver otherwise grandfathers (a word-spec dict with no known key, a boolean checks.ret). Existing contracts omit it and run exactly as on stock with the shapes recorded in the verdict's features; every NEW contract should set strict: true."
+  },
   "iat": {
    "type": "array",
    "items": {
@@ -328,6 +343,7 @@
    ]
   },
   "retChannel": {
+   "description": "The compared return channel. A boolean fails this schema (write a channel name) but the driver still runs it exactly as stock did (the return register is compared, recorded as features.ret_boolean), refused only with strict: true. Every NEW contract should set strict: true.",
    "enum": [
     "eax",
     "ax",
@@ -374,7 +390,7 @@
    "description": "Byte offset: a scalar, a list cycled per trial, or {rot|cycle: [...]}."
   },
   "wordSpec": {
-   "description": "One 32-bit word: a literal or a single-key spec object resolved per trial.",
+   "description": "One 32-bit word: a literal or a single-key spec object resolved per trial. A dict with no known key fails this schema (fix the key) but the driver still runs it exactly as stock did (random bits, recorded in features.unresolved_word_specs), refused only with strict: true. Every NEW contract should set strict: true.",
    "anyOf": [
     {
      "$ref": "#/definitions/u32Literal"
@@ -1167,6 +1183,27 @@
      },
      "description": "Doubles extension: logged registers compared on their low 8 bytes only."
     },
+    "logxmm32_regs": {
+     "type": "array",
+     "items": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 7
+     },
+     "description": "v7: logged registers compared on their low 4 bytes only."
+    },
+    "logst0": {
+     "enum": [
+      "f32",
+      "f64"
+     ],
+     "description": "v7: log the x87 ST0 call argument (f32: one word, f64: two)."
+    },
+    "st0_from_stack": {
+     "type": "integer",
+     "minimum": 0,
+     "description": "v7: rewrite-side transport, load ST0 from this stack argument (pair for f64)."
+    },
     "xmm_from_stack": {
      "type": "object",
      "propertyNames": {
@@ -1283,13 +1320,33 @@
   "patch": {
    "type": "object",
    "required": [
-    "site",
     "id"
+   ],
+   "anyOf": [
+    {
+     "required": [
+      "site"
+     ]
+    },
+    {
+     "required": [
+      "site_selftest"
+     ]
+    }
    ],
    "additionalProperties": false,
    "properties": {
     "site": {
      "$ref": "#/definitions/hexOrInt"
+    },
+    "site_selftest": {
+     "type": "string",
+     "description": "v7: patch this self-test original instead (regression only)."
+    },
+    "at": {
+     "type": "integer",
+     "minimum": 0,
+     "description": "v7: byte offset into the self-test original."
     },
     "id": {
      "$ref": "#/definitions/calleeId"

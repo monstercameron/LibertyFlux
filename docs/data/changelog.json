@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Checker: version 7, four new abilities and no changed verdict",
+    "commit": null,
+    "summary": "The checker can now prove four kinds of function it could not, each through an option that is off unless a contract asks for it. It was installed only after three lanes and the coordinator had failed to make it change any existing verdict.",
+    "changes": [
+      "New abilities, each recorded in the verdict when used: a patch for a function that ends in a conditional jump to another function; logging of an argument passed on the floating-point stack, with a way for the rewrite to supply it; a digest of the calls past the call log's limit, so a loop of more than 1,024 calls in a trial can be compared; and a four-byte comparison of a vector register for a callee that reads one float from it. Ten proof contracts with wrong versions cover them, including three that must fail by design.",
+      "A first lane built it and reported 47 of 48 of the checker's own contracts identical. A second lane, which had not written it, built it from source and ran 100 production contracts on both workers: every verdict equal, no reachable change in the worker. It still refused the install, because the new driver rejected 209 existing lane contracts that the old driver runs. Scanning all 21,930 lane contracts showed why: the old driver gives random bits to any input word whose description uses a key it does not know, and compares the return register when the return check is written as true or false.",
+      "A third lane made the driver a drop-in: those two shapes run exactly as before and are recorded in the verdict (features.unresolved_word_specs, features.ret_boolean), and are refused only in a contract that sets strict: true, which every new contract is now told to do. Its proof: no difference between the two validators on 22,035 contracts in either direction, identical trial inputs for 206 of the 209 (the other three fail identically), and equal decisions and compared values on 40 of the affected contracts and on the 100-contract regression.",
+      "The coordinator read the hunks that replace existing worker code, confirmed the runtime crate is byte for byte unchanged and that the installed worker is the one the second lane attacked, and ran the checker's own contracts two ways before the swap: new driver with new worker, and the old driver with the new worker, which is what lanes already running get. 38 of 38 verdicts and 34 of 34 wrong versions match in both.",
+      "The 73 verified proofs that had run on random bits were re-proved on the stock checker with the contract each author meant: all 73 hold."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 37 files from lanes (234 unverified rewrites, 129 in review)",
     "commit": "ad65184157469631843a711a7b6565fe1334a8e7",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
