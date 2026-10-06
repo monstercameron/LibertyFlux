@@ -29,7 +29,10 @@
 /// defined stack fill (zero).
 ///
 /// Original: 0x00d8db20 (thiscall, template in ecx; returns voice or null).
-lf_checker_rt::export!(thiscall, rw_00d8db20(this: u32) -> u32 {
+///
+/// The probe reads the template's leading word through its frame
+/// slot; `l24` carries it, snapshotted at the call.
+lf_checker_rt::export!(thiscall, rw_00d8db20(edi: u32) -> u32 {
     unsafe {
         const FACTORY: u32 = 1; // indirect, called through the vtable
         const GATE: u32 = 2;
@@ -97,6 +100,7 @@ lf_checker_rt::export!(thiscall, rw_00d8db20(this: u32) -> u32 {
         let c0 = rdf(lf_checker_rt::relocated(SCALE_ADDR));
         let one = rdf(lf_checker_rt::relocated(ONE_ADDR));
         let b43 = ((edi + 0x43) as *const i8).read() as f32;
+        let edi0 = rd32(edi);
         let b44 = ((edi + 0x44) as *const i8).read() as f32;
         let b45 = ((edi + 0x45) as *const i8).read() as f32;
         let x6 = mul(b43, c0);
@@ -188,7 +192,7 @@ lf_checker_rt::export!(thiscall, rw_00d8db20(this: u32) -> u32 {
         let _: u32 = lf_checker_rt::callee_thiscall!(SETUP2, u32, esi);
         ((esi + 0xf1b) as *mut u8).write(((esi + 0xf1b) as *const u8).read() | 8);
         if ((edi + 0x30) as *const u8).read() & 2 != 0 {
-            let mut l24 = 0u32;
+            let mut l24 = edi0;
             let mut l84 = 0xffffffffu32;
             let pr: u32 = lf_checker_rt::callee_cdecl!(
                 PROBE, u32, &mut l24 as *mut u32 as u32,

@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Devlog: A passing check that cannot see indirect calls",
+    "title": "Rewrites: 2 functions re-checked under checker version 2",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "2 rewrites were re-run under a later version of the checker and replaced by the version that passed it.",
+      "The tree now holds 16662 rewrites, 16643 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 711 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "23 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Devlog: A passing check that cannot see indirect calls",
+    "commit": "8693c9239afc9fc7cd42595285775b61857997b1",
     "summary": "Findings from the r-s516 lane.",
     "changes": [
       "New devlog entry: A passing check that cannot see indirect calls.",

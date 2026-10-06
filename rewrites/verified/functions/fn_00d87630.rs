@@ -22,6 +22,10 @@
 /// five-argument callee with (obj, heading, dist, 1, a1). No value is
 /// returned.
 ///
+/// The downstream callee reads all three words behind the frame
+/// slot: the own-point pair and the blend weight, passed as one
+/// triple and snapshotted.
+///
 /// Original: 0x00D87630 (cdecl, three stack words).
 lf_checker_rt::export!(cdecl, rw_00d87630(obj: u32, a1: u32, a2: u32) -> u32 {
     unsafe {
@@ -116,7 +120,8 @@ lf_checker_rt::export!(cdecl, rw_00d87630(obj: u32, a1: u32, a2: u32) -> u32 {
         let f68 = core::hint::black_box(e68) as f32;
         let f6a = core::hint::black_box(e6a as i16 as i32) as f32;
         let mut best = pick_max(f68, f6a);
-        let cand = add(rdf(obj + OBJ_WEIGHT), dist);
+        let weight = rdf(obj + OBJ_WEIGHT);
+        let cand = add(weight, dist);
         best = pick_min(best, cand);
         let trunc = cvtt(best);
         wr16(obj + OBJ_INDEX, trunc as u16);
@@ -130,13 +135,13 @@ lf_checker_rt::export!(cdecl, rw_00d87630(obj: u32, a1: u32, a2: u32) -> u32 {
         // comiss+jb: the jump is taken for less-than AND unordered, so the
         // fall-through (downstream) path needs an ordered >=, not !(a < b).
         if bb(thresh) >= bb(0.0) {
-            let mut frame_slot = 0u32;
+            let mut frame3 = [pos_x.to_bits(), pos_y.to_bits(), weight.to_bits()];
             lf_checker_rt::callee_cdecl!(
                 CAL_DOWN6,
                 u32,
                 obj,
                 thresh.to_bits(),
-                &mut frame_slot as *mut u32 as u32,
+                frame3.as_mut_ptr() as u32,
                 1u32,
                 0u32,
                 a2
