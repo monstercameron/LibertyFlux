@@ -32958,6 +32958,15 @@
   "lane": "r-b573"
  },
  {
+  "address": "0x0059F600",
+  "name": "memcfg_load_files (proposed)",
+  "kind": "function",
+  "file": "functions/fn_0059f600.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b573"
+ },
+ {
   "address": "0x005AE390",
   "name": "hud_text_attrs_update",
   "kind": "function",
@@ -33361,6 +33370,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s145"
+ },
+ {
+  "address": "0x005D7280",
+  "name": "dispatch_by_stored_kind",
+  "kind": "function",
+  "file": "functions/fn_005d7280.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b576"
  },
  {
   "address": "0x005DCD10",
@@ -77842,12 +77860,12 @@
  },
  {
   "address": "0x00B3E540",
-  "name": "worklist_scan_and_record",
+  "name": "// original: 0x00B3E540 worklist_scan_and_record (proposed)",
   "kind": "function",
   "file": "functions/fn_00b3e540.rs",
   "trials": 1200,
-  "checker": "version 5",
-  "lane": "a-R02"
+  "checker": "version 6",
+  "lane": "a-S05"
  },
  {
   "address": "0x00B3EDC0",
@@ -125359,6 +125377,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b122"
+ },
+ {
+  "address": "0x00E56C40",
+  "name": "UIRawClipViewer::vf111",
+  "kind": "function",
+  "file": "functions/fn_00e56c40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b577"
+ },
+ {
+  "address": "0x00E56DF0",
+  "name": "find_key_record_and_refresh",
+  "kind": "function",
+  "file": "functions/fn_00e56df0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b577"
  },
  {
   "address": "0x00E5BCC0",
