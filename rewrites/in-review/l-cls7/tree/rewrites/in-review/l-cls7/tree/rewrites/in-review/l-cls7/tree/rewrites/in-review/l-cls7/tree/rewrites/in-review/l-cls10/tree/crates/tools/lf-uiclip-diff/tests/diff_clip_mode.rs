@@ -321,7 +321,9 @@ mod x86 {
             fake.add_direct(direct1, record_of(&fx.r1));
             fake.add_direct(direct2, record_of(&fx.r2));
             fake.answer("forward_to_part", vec![0]);
+            eprintln!("  post fake");
             clip.set_display_mode(&mut fake, mode);
+            eprintln!("  post lift");
             assert_eq!(clip.mode(), mode);
             // Records agree on every byte, prefixes untouched.
             for (i, rec) in fx.records.iter().enumerate() {
