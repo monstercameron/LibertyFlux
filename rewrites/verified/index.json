@@ -32922,6 +32922,15 @@
   "lane": "r-s161"
  },
  {
+  "address": "0x0059E1C0",
+  "name": "mainloop_timing_tick",
+  "kind": "function",
+  "file": "functions/fn_0059e1c0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b640"
+ },
+ {
   "address": "0x0059EB70",
   "name": "memsize_class_small (proposed)",
   "kind": "function",
@@ -53514,10 +53523,46 @@
   "lane": "r-s504"
  },
  {
+  "address": "0x008F77A0",
+  "name": "input_list_collect_flagged",
+  "kind": "function",
+  "file": "functions/fn_008f77a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F7A90",
+  "name": "input_axis0_over_threshold",
+  "kind": "function",
+  "file": "functions/fn_008f7a90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F7B90",
+  "name": "input_list_notify_each",
+  "kind": "function",
+  "file": "functions/fn_008f7b90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
   "address": "0x008F7BE0",
   "name": "input_gated_flag_byte",
   "kind": "function",
   "file": "functions/fn_008f7be0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F7C00",
+  "name": "input_axis1_over_threshold",
+  "kind": "function",
+  "file": "functions/fn_008f7c00.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s521"
@@ -53532,10 +53577,82 @@
   "lane": "r-s521"
  },
  {
+  "address": "0x008F7D00",
+  "name": "input_list_update_flags",
+  "kind": "function",
+  "file": "functions/fn_008f7d00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
   "address": "0x008F7D70",
   "name": "input_stack_push_slot",
   "kind": "function",
   "file": "functions/fn_008f7d70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F7ED0",
+  "name": "input_list_broadcast",
+  "kind": "function",
+  "file": "functions/fn_008f7ed0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F8010",
+  "name": "input_list_clear",
+  "kind": "function",
+  "file": "functions/fn_008f8010.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F81F0",
+  "name": "input_forward_6f",
+  "kind": "function",
+  "file": "functions/fn_008f81f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F8250",
+  "name": "input_forward_4f",
+  "kind": "function",
+  "file": "functions/fn_008f8250.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F8290",
+  "name": "input_queue_key_event",
+  "kind": "function",
+  "file": "functions/fn_008f8290.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F8410",
+  "name": "input_list_clear_tail",
+  "kind": "function",
+  "file": "functions/fn_008f8410.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F84C0",
+  "name": "input_lookup_slot",
+  "kind": "function",
+  "file": "functions/fn_008f84c0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s521"
