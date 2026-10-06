@@ -107,6 +107,7 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
         const K_NEG100: f32 = f32::from_bits(0xC2C80000);
         const K_PI: f32 = f32::from_bits(0x40490FDB);
         const K_180_PI: f32 = f32::from_bits(0x42652EE0);
+        const K_360: f32 = f32::from_bits(0x43B40000);
         const K_QTR: f32 = f32::from_bits(0x3E800000);
         const K_I32_MAX_P1: f32 = f32::from_bits(0x4F000000);
         const K_I32_MIN: f32 = f32::from_bits(0xCF000000);
@@ -350,7 +351,15 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
             f32::from_bits(a)
         };
         let deg = mul(ang, K_180_PI);
-        let n = cvtt_exact(deg);
+        // Steering value: ((y1*0.0)+x1)+z1. Positive or NaN keeps the
+        // degrees; otherwise the truncated value is 360.0 minus degrees.
+        let cond = add(add(mul(y1, 0.0), x1), z1);
+        let n_input = if jb_f32(0.0, cond) {
+            deg
+        } else {
+            sub(K_360, deg)
+        };
+        let n = cvtt_exact(n_input);
         eaxv = n as u32;
         let loop_base = 0x1C2u32.wrapping_sub(n as u32);
 

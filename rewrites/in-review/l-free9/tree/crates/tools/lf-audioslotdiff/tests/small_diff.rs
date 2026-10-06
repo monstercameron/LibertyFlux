@@ -24,7 +24,8 @@ mod x86 {
     #[path = "../support/mod.rs"]
     mod support;
     use support::{
-        G1_VA, G2_VA, G3_VA, G4_VA, MIXER_VA, POOL_VA, TRIPLET_VA, Rng, addr, get_u32, lock, put_u32,
+        G1_VA, G2_VA, G3_VA, G4_VA, MIXER_VA, POOL_VA, Rng, TRIPLET_VA, addr, get_u32, lock,
+        put_u32,
     };
 
     /// Fresh view of a test image; rebuilt after every rewrite call so no
@@ -90,7 +91,11 @@ mod x86 {
                     vec![(1, vec![slot, tag, this, flags])],
                     "trial {trial}: setup runs once"
                 );
-                assert_eq!(seen, vec![(count, tag, flags)], "trial {trial}: lift setup key");
+                assert_eq!(
+                    seen,
+                    vec![(count, tag, flags)],
+                    "trial {trial}: lift setup key"
+                );
                 // The element word rebuilds from the lifted index.
                 assert_eq!(
                     pool_base.wrapping_add(seen[0].0.wrapping_mul(0x70)),
@@ -128,7 +133,11 @@ mod x86 {
         for trial in 0..40u32 {
             let arg0 = rng.u32();
             let arg1 = rng.u32();
-            let arg2 = if trial % 5 == 0 { TRIPLET_FREE } else { rng.u32() };
+            let arg2 = if trial % 5 == 0 {
+                TRIPLET_FREE
+            } else {
+                rng.u32()
+            };
             // Markers: first-free at k, full, edges, random mixes.
             let mut buf = vec![0u8; 32 * 20];
             rng.bytes(&mut buf);
@@ -195,7 +204,9 @@ mod x86 {
             }
             assert_eq!(after, expect, "trial {trial}: table bytes match");
             // Wrong version: the last free entry wins instead of the first.
-            let last_free = (0..32).rev().find(|i| get_u32(&buf, i * 20) == TRIPLET_FREE);
+            let last_free = (0..32)
+                .rev()
+                .find(|i| get_u32(&buf, i * 20) == TRIPLET_FREE);
             if last_free != first_free {
                 caught += 1;
             }
@@ -239,7 +250,12 @@ mod x86 {
             let live: Vec<usize> = (0..64).filter(|i| slots[*i] != 0).collect();
             let expect_calls: Vec<(u32, Vec<u32>)> = live
                 .iter()
-                .map(|i| (1, vec![this.wrapping_add(0x2A30).wrapping_add(*i as u32 * 4)]))
+                .map(|i| {
+                    (
+                        1,
+                        vec![this.wrapping_add(0x2A30).wrapping_add(*i as u32 * 4)],
+                    )
+                })
                 .collect();
             assert_eq!(calls, expect_calls, "trial {trial}: call log matches");
             assert_eq!(
@@ -249,14 +265,15 @@ mod x86 {
             );
             for (k, index) in seen.iter().enumerate() {
                 assert_eq!(
-                    this.wrapping_add(0x2A30).wrapping_add(index.wrapping_mul(4)),
+                    this.wrapping_add(0x2A30)
+                        .wrapping_add(index.wrapping_mul(4)),
                     expect_calls[k].1[0],
                     "trial {trial}: address {k} rebuilds from the index"
                 );
             }
             let after = unsafe { image(this, initial.len()) }.to_vec();
             let mut expect = initial.clone();
-            for i in live {
+            for i in &live {
                 put_u32(&mut expect, 0x2A30 + i * 4, 0);
             }
             assert_eq!(after, expect, "trial {trial}: image matches");
@@ -304,7 +321,11 @@ mod x86 {
             let sum = a.wrapping_add(slot);
             assert_eq!(ret, answer, "trial {trial}: answer matches");
             assert_eq!(out, answer, "trial {trial}: lift answers it too");
-            assert_eq!(calls, vec![(1, vec![this, sum])], "trial {trial}: one dispatch");
+            assert_eq!(
+                calls,
+                vec![(1, vec![this, sum])],
+                "trial {trial}: one dispatch"
+            );
             assert_eq!(seen, vec![sum], "trial {trial}: lifted sum matches");
             let after = unsafe { image(this, 0xB8C) }.to_vec();
             assert_eq!(after, initial, "trial {trial}: the dispatch writes nothing");
@@ -371,9 +392,9 @@ mod x86 {
             let param = rng.u32();
             // Gate words: live and each failing condition.
             let (g1, g2, g3, g4) = match trial % 6 {
-                0 => (0, 7, 7, 0), // live
-                1 => (1, 7, 7, 0), // g1 fails
-                2 => (0, 7, 8, 0), // equality fails
+                0 => (0, 7, 7, 0),    // live
+                1 => (1, 7, 7, 0),    // g1 fails
+                2 => (0, 7, 8, 0),    // equality fails
                 3 => (0, 7, 7, 0x12), // g4 fails
                 _ => (rng.u32(), rng.u32(), rng.u32(), rng.u32()),
             };
@@ -383,7 +404,8 @@ mod x86 {
             let slot_box: Box<[u8]> = vec![0u8; 0xA8].into_boxed_slice();
             let slot_addr = addr(&slot_box[0]);
             put_u32(&mut initial, 0x14, if owned { slot_addr } else { 0 });
-            unsafe { image(slot_addr, 0xA8) }[0xA4..0xA8].copy_from_slice(&param.to_le_bytes());
+            let view = unsafe { image(slot_addr, 0xA8) };
+            view[0xA4..0xA8].copy_from_slice(&param.to_le_bytes());
             let obj: Box<[u8]> = initial.clone().into_boxed_slice();
             let _this = addr(&obj[0]);
             rt::set_global(G1_VA, g1);
@@ -397,21 +419,13 @@ mod x86 {
             let ret = unsafe { fn_0097B670::rw_s103_97b670(_this as *mut u8) };
             let calls = rt::take_calls();
             let lift = OwnedSlot(if owned { slot_addr } else { 0 });
-            let gates = GateState {
-                g1,
-                g2,
-                g3,
-                g4,
-            };
+            let gates = GateState { g1, g2, g3, g4 };
             struct Ops {
                 param: u32,
                 log: Vec<(u8, u32, u32)>,
             }
             impl lf_audio::audio_slot::misc::GatedRelease for Ops {
-                fn slot_param(
-                    &mut self,
-                    slot: lf_audio::audio_slot::misc::SlotRef,
-                ) -> u32 {
+                fn slot_param(&mut self, slot: lf_audio::audio_slot::misc::SlotRef) -> u32 {
                     self.log.push((0, slot.0, 0));
                     self.param
                 }
@@ -441,16 +455,20 @@ mod x86 {
                 // pinned not to retarget the slot word.
                 assert_eq!(
                     ops.log,
-                    vec![
-                        (0, slot_addr, 0),
-                        (1, param, 0),
-                        (2, slot_addr, 0),
-                    ],
+                    vec![(0, slot_addr, 0), (1, param, 0), (2, slot_addr, 0),],
                     "trial {trial}: lift log matches"
                 );
             } else {
-                assert_eq!(calls, vec![(2, vec![slot_addr, 0])], "trial {trial}: release only");
-                assert_eq!(ops.log, vec![(2, slot_addr, 0)], "trial {trial}: lift releases once");
+                assert_eq!(
+                    calls,
+                    vec![(2, vec![slot_addr, 0])],
+                    "trial {trial}: release only"
+                );
+                assert_eq!(
+                    ops.log,
+                    vec![(2, slot_addr, 0)],
+                    "trial {trial}: lift releases once"
+                );
             }
             let after = unsafe { image(_this, 0x20) }.to_vec();
             assert_eq!(after, initial, "trial {trial}: the release writes nothing");
@@ -471,8 +489,16 @@ mod x86 {
         let mut caught = 0;
         // Float edges as bit patterns: zeros, subnormals, NaNs, infinities.
         let edges: [u32; 10] = [
-            0x0000_0000, 0x8000_0000, 0x0000_0001, 0x8000_0001, 0x3F80_0000, 0xBF80_0000,
-            0x7F80_0000, 0xFF80_0000, 0x7FC0_0000, 0x7F80_0001,
+            0x0000_0000,
+            0x8000_0000,
+            0x0000_0001,
+            0x8000_0001,
+            0x3F80_0000,
+            0xBF80_0000,
+            0x7F80_0000,
+            0xFF80_0000,
+            0x7FC0_0000,
+            0x7F80_0001,
         ];
         for trial in 0..60u32 {
             let zero = f32::from_bits(edges[trial as usize % edges.len()]);

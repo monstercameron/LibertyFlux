@@ -83,7 +83,7 @@ fn slot_for(file_va: u32) -> *mut u32 {
 /// Pointer to the shared global at a file VA.
 #[must_use]
 pub fn global<T>(file_va: u32) -> *mut T {
-    slot_for(file_va) as *mut T
+    slot_for(file_va).cast::<T>()
 }
 
 /// Plants `v` as the relocated address for a file VA.
@@ -102,13 +102,19 @@ pub fn set_relocated(file_va: u32, v: u32) {
 
 /// Relocated address for a file VA.
 ///
+/// One rewrite reads the stride/table globals through `relocated` and
+/// dereferences the answer, where the others use `global`, so those two
+/// VAs answer the slot addresses and every other VA answers a planted
+/// address.
+///
 /// # Panics
 ///
-/// When the VA is not one of the two relocated addresses the proof set
-/// reads.
+/// When the VA is not one the proof set reads.
 #[must_use]
 pub fn relocated(file_va: u32) -> u32 {
     match file_va {
+        0x0115_D964 => STRIDE_SLOT.as_ptr() as u32,
+        0x0115_D988 => TABLE_SLOT.as_ptr() as u32,
         0x0128_47D8 => TRIPLET_SLOT.load(Ordering::SeqCst),
         0x013B_0EB0 => MIXER_SLOT.load(Ordering::SeqCst),
         _ => panic!("unexpected relocated VA {file_va:#x}"),
@@ -156,7 +162,9 @@ static SCRIPT: std::sync::LazyLock<std::sync::Mutex<Script>> =
     std::sync::LazyLock::new(|| std::sync::Mutex::new(Script::new()));
 
 fn script() -> std::sync::MutexGuard<'static, Script> {
-    SCRIPT.lock().unwrap_or_else(|e| e.into_inner())
+    SCRIPT
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner)
 }
 
 /// Installs the callee script: for each id, its stub shape and its
@@ -172,6 +180,7 @@ pub fn set_script(spec: &[(u32, StubKind, Vec<u32>)]) {
 }
 
 /// Takes the recorded numbered calls, clearing the log.
+#[must_use]
 pub fn take_calls() -> Vec<NumberedCall> {
     std::mem::take(&mut script().numbered)
 }

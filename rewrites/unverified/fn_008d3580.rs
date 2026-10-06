@@ -114,12 +114,16 @@ unsafe fn run_8d3580(this: u32, mutant: bool) -> u32 {
             sa.as_ptr() as u32,
             sb.as_ptr() as u32
         );
-        let ax = f32::from_bits(sa[0]);
-        let ay = f32::from_bits(sa[1]);
-        let az = f32::from_bits(sa[2]);
-        let bx = f32::from_bits(sb[0]);
-        let by = f32::from_bits(sb[1]);
-        let bz = f32::from_bits(sb[2]);
+        // Volatile: the words were written by the stub through the raw
+        // pointers above, and plain reads can be folded to the
+        // initializers (observed: a probe returned 0 until the read was
+        // made volatile, then the scripted word).
+        let ax = f32::from_bits(core::ptr::read_volatile(sa.as_ptr()));
+        let ay = f32::from_bits(core::ptr::read_volatile(sa.as_ptr().add(1)));
+        let az = f32::from_bits(core::ptr::read_volatile(sa.as_ptr().add(2)));
+        let bx = f32::from_bits(core::ptr::read_volatile(sb.as_ptr()));
+        let by = f32::from_bits(core::ptr::read_volatile(sb.as_ptr().add(1)));
+        let bz = f32::from_bits(core::ptr::read_volatile(sb.as_ptr().add(2)));
         let ctl = load(this, OFF_CTL);
         let r1d = *(lf_checker_rt::global::<f32>(G_R1));
         let r2d = *(lf_checker_rt::global::<f32>(G_R2));

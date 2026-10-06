@@ -80,11 +80,9 @@ impl StridedPool {
         self.count = self.count.wrapping_add(1);
         let slot = self.pool_base.wrapping_add(at.wrapping_mul(POOL_STRIDE));
         setup.setup(at, tag, flags);
+        let len = self.table.len();
         let cell = self.table.get_mut(at as usize).unwrap_or_else(|| {
-            panic!(
-                "cell {at} past the {} modelled cells: the original writes on regardless",
-                self.table.len()
-            )
+            panic!("cell {at} past the {len} modelled cells: the original writes on regardless")
         });
         // The original stores the tag word first, then the element word.
         *cell = (slot, tag);
@@ -173,6 +171,8 @@ impl PtrArray {
     /// Releases every live entry: each nonzero slot runs the release
     /// call on its index, then is cleared. Answers 0.
     pub fn release_all(&mut self, release: &mut impl ReleaseSlot) -> u32 {
+        // Slot indexes stay far below `u32::MAX` (64 slots modelled).
+        #[allow(clippy::cast_possible_truncation)]
         for (i, slot) in self.slots.iter_mut().enumerate() {
             if *slot != 0 {
                 release.release(i as u32);

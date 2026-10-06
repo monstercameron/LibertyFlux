@@ -17,14 +17,14 @@
 mod x86 {
     use lf_audio::audio_slot::banked::{VoiceBankFile, VoiceNode};
     use lf_audio::audio_slot::voicelist::{
-        BIT_WORDS, NONE, SPILL_COUNT, VOICES, ChainCell, ChainStore, VoiceList, VoiceSlot,
+        BIT_WORDS, ChainCell, ChainStore, NONE, SPILL_COUNT, VOICES, VoiceList, VoiceSlot,
     };
     use lf_audioslotdiff::rewrites::*;
     use lf_audioslotdiff::rt::{self, StubKind};
 
     #[path = "../support/mod.rs"]
     mod support;
-    use support::{TABLE_VA, STRIDE_VA, Rng, addr, get_u32, lock, put_u32};
+    use support::{Rng, STRIDE_VA, TABLE_VA, addr, get_u32, lock, put_u32};
 
     /// List object bytes: covers slots, bitset pointer, spill and lock.
     const OBJ: usize = 0x3300;
@@ -127,8 +127,16 @@ mod x86 {
             // Lock order matches; the guard words are pinned, not passed.
             assert_eq!(calls.len(), 2, "trial {trial}: ctor and dtor run");
             assert_eq!(calls[0].0, 1, "trial {trial}: ctor first");
-            assert_eq!(calls[0].1[1], this.wrapping_add(0x3210), "trial {trial}: ctor on the lock");
-            assert_eq!(calls[1], (2, vec![calls[0].1[0]]), "trial {trial}: dtor on the guard");
+            assert_eq!(
+                calls[0].1[1],
+                this.wrapping_add(0x3210),
+                "trial {trial}: ctor on the lock"
+            );
+            assert_eq!(
+                calls[1],
+                (2, vec![calls[0].1[0]]),
+                "trial {trial}: dtor on the guard"
+            );
             assert_eq!(lk.log, vec![1, 2], "trial {trial}: lift locks once");
             let after = unsafe { image(this, OBJ) }.to_vec();
             let bits_after =
@@ -183,8 +191,7 @@ mod x86 {
             let mut lift = lift_list(&vec![0u32; BIT_WORDS], &initial);
             lift.spill_alloc(value);
             let after = unsafe { image(this, OBJ) }.to_vec();
-            let first_zero = (0..SPILL_COUNT)
-                .find(|i| get_u32(&initial, 0x28A8 + i * 4) == 0);
+            let first_zero = (0..SPILL_COUNT).find(|i| get_u32(&initial, 0x28A8 + i * 4) == 0);
             let mut expect = initial.clone();
             if value != 0 {
                 if let Some(i) = first_zero {
@@ -207,7 +214,7 @@ mod x86 {
     #[test]
     fn sweep_matches() {
         let _guard = lock();
-        let mut rng = Rng(0xAA0F0 & 0xFFFF_FFFF);
+        let mut rng = Rng(0xAA0F0);
         let mut caught = 0;
         for trial in 0..30u32 {
             let arg = rng.u32();
@@ -357,12 +364,10 @@ mod x86 {
                 }
                 loop {
                     let (next, b2, b3) = cells[link as usize].unwrap();
-                    let node = VoiceNode {
-                        bank: b2,
-                        slot: b3,
-                    };
+                    let node = VoiceNode { bank: b2, slot: b3 };
                     expect_keys.push((3, node));
-                    let ans = refresh_answers[expect_keys.iter().filter(|(id, _)| *id == 3).count() - 1];
+                    let ans =
+                        refresh_answers[expect_keys.iter().filter(|(id, _)| *id == 3).count() - 1];
                     if ans == arg {
                         expect_keys.push((4, node));
                     }
@@ -372,12 +377,20 @@ mod x86 {
                     }
                 }
             }
-            assert_eq!(calls.len(), expect_keys.len() + 2, "trial {trial}: call count");
+            assert_eq!(
+                calls.len(),
+                expect_keys.len() + 2,
+                "trial {trial}: call count"
+            );
             assert_eq!(calls[0].0, 1, "trial {trial}: ctor first");
-            assert_eq!(calls[0].1[1], this.wrapping_add(0x3210), "trial {trial}: ctor on the lock");
+            assert_eq!(
+                calls[0].1[1],
+                this.wrapping_add(0x3210),
+                "trial {trial}: ctor on the lock"
+            );
             for (k, (id, node)) in expect_keys.iter().enumerate() {
-                let h = rows[node.bank as usize]
-                    .wrapping_add(scale.wrapping_mul(u32::from(node.slot)));
+                let h =
+                    rows[node.bank as usize].wrapping_add(scale.wrapping_mul(u32::from(node.slot)));
                 assert_eq!(
                     calls[k + 1],
                     (*id as u32, vec![h]),

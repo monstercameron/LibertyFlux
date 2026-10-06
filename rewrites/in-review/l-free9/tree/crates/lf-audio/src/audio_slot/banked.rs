@@ -184,10 +184,10 @@ impl BankedSlots {
     /// with a nonzero value (the original divides regardless and faults).
     pub fn lookup_store(&mut self, file: &VoiceBankFile, index: u32, value: u32) -> u32 {
         if value == 0 {
+            let len = self.slots.len();
             let slot = self.slots.get_mut(index as usize).unwrap_or_else(|| {
                 panic!(
-                    "slot index {index:#x} past the {} modelled slots: the original writes on regardless",
-                    self.slots.len()
+                    "slot index {index:#x} past the {len} modelled slots: the original writes on regardless"
                 )
             });
             *slot = NO_SLOT;
@@ -195,13 +195,16 @@ impl BankedSlots {
         }
         let row = file.row_of(self.bank);
         let quot = value.wrapping_sub(row) / file.stride;
+        let len = self.slots.len();
         let slot = self.slots.get_mut(index as usize).unwrap_or_else(|| {
             panic!(
-                "slot index {index:#x} past the {} modelled slots: the original writes on regardless",
-                self.slots.len()
+                "slot index {index:#x} past the {len} modelled slots: the original writes on regardless"
             )
         });
-        *slot = quot as u8;
+        // The original stores the quotient's low byte.
+        #[allow(clippy::cast_possible_truncation)]
+        let byte = quot as u8;
+        *slot = byte;
         index
     }
 
@@ -235,12 +238,7 @@ impl BankedSlots {
     /// # Panics
     ///
     /// When the object models no slots.
-    pub fn op_forward(
-        &self,
-        file: &VoiceBankFile,
-        a1: u32,
-        op: &mut impl Operate,
-    ) -> u32 {
+    pub fn op_forward(&self, file: &VoiceBankFile, a1: u32, op: &mut impl Operate) -> u32 {
         let slot = self.slot(0);
         if slot == NO_SLOT {
             return 0;
@@ -265,12 +263,7 @@ impl BankedSlots {
     /// # Panics
     ///
     /// When the object models no slots.
-    pub fn retrigger(
-        &self,
-        file: &VoiceBankFile,
-        a1: u32,
-        ops: &mut impl Retrigger,
-    ) -> u32 {
+    pub fn retrigger(&self, file: &VoiceBankFile, a1: u32, ops: &mut impl Retrigger) -> u32 {
         let slot = self.slot(0);
         if slot == NO_SLOT {
             return u32::from(NO_SLOT);

@@ -141,11 +141,9 @@ impl VoiceList {
     ///
     /// When the bit-word is past the stored bits.
     fn set_live(&mut self, i: u32) {
+        let len = self.bits.len();
         let word = self.bits.get_mut((i >> 5) as usize).unwrap_or_else(|| {
-            panic!(
-                "slot {i} past the {} stored bit-words: the original writes on regardless",
-                self.bits.len()
-            )
+            panic!("slot {i} past the {len} stored bit-words: the original writes on regardless")
         });
         *word |= 1u32 << (i & 31);
     }
@@ -165,10 +163,10 @@ impl VoiceList {
         let mut i = 1u32;
         while i < VOICES {
             if !self.live(i) {
+                let len = self.slots.len();
                 let slot = self.slots.get_mut(i as usize).unwrap_or_else(|| {
                     panic!(
-                        "slot {i} past the {} stored records: the original writes on regardless",
-                        self.slots.len()
+                        "slot {i} past the {len} stored records: the original writes on regardless"
                     )
                 });
                 *slot = VoiceSlot {
@@ -226,12 +224,16 @@ impl VoiceList {
         let mut i = 0u32;
         while i < VOICES {
             if self.live(i) {
-                let head = self.slots.get(i as usize).unwrap_or_else(|| {
-                    panic!(
-                        "slot {i} past the {} stored records: the original reads on regardless",
-                        self.slots.len()
-                    )
-                }).head;
+                let head = self
+                    .slots
+                    .get(i as usize)
+                    .unwrap_or_else(|| {
+                        panic!(
+                            "slot {i} past the {} stored records: the original reads on regardless",
+                            self.slots.len()
+                        )
+                    })
+                    .head;
                 if head != NONE {
                     let mut link = head;
                     loop {

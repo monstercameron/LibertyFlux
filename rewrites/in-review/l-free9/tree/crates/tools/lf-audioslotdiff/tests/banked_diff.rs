@@ -25,7 +25,7 @@ mod x86 {
 
     #[path = "../support/mod.rs"]
     mod support;
-    use support::{TABLE_VA, STRIDE_VA, Rng, addr, get_u32, lock, put_u32};
+    use support::{Rng, STRIDE_VA, TABLE_VA, addr, get_u32, lock, put_u32};
 
     /// Object bytes: covers the bank, slots, parameter and indexed byte.
     const OBJ: usize = 0xC0;
@@ -183,15 +183,13 @@ mod x86 {
                 assert_eq!(ret, 0, "trial {trial}: empty slot answers null");
                 assert_eq!(out, None, "trial {trial}: lift answers None");
             } else {
-                let expect =
-                    stride.wrapping_mul(u32::from(slot)).wrapping_add(rows[bank as usize]);
+                let expect = stride
+                    .wrapping_mul(u32::from(slot))
+                    .wrapping_add(rows[bank as usize]);
                 assert_eq!(ret, expect, "trial {trial}: node address matches");
                 assert_eq!(
                     out,
-                    Some(VoiceNode {
-                        bank,
-                        slot
-                    }),
+                    Some(VoiceNode { bank, slot }),
                     "trial {trial}: lift answers the key"
                 );
                 // The translation is proven, not assumed: the address
@@ -272,7 +270,11 @@ mod x86 {
             } else {
                 assert_eq!(ret, answer, "trial {trial}: answer matches");
                 assert_eq!(out, answer, "trial {trial}: lift answers it too");
-                assert_eq!(calls, vec![(1, vec![target, a1])], "trial {trial}: one op call");
+                assert_eq!(
+                    calls,
+                    vec![(1, vec![target, a1])],
+                    "trial {trial}: one op call"
+                );
                 assert_eq!(seen.len(), 1, "trial {trial}: lift calls once");
                 assert_eq!(
                     file.node_addr(seen[0].0),
@@ -395,7 +397,10 @@ mod x86 {
                 assert_eq!(ops.log[1], (2, ops.log[1].1, a1));
             }
             let after = unsafe { image(this, OBJ) }.to_vec();
-            assert_eq!(after, initial, "trial {trial}: the retrigger writes nothing");
+            assert_eq!(
+                after, initial,
+                "trial {trial}: the retrigger writes nothing"
+            );
             // Wrong version: the chain answer dropped, 0 returned.
             if out != 0 && chained != 0 && slot0 != NO_SLOT && target != 0 {
                 caught += 1;
@@ -576,22 +581,26 @@ mod x86 {
             let nodes_after = unsafe { image(node_base, node_len) }.to_vec();
             assert_eq!(nodes_after, nodes, "trial {trial}: node bytes unchanged");
             // Wrong version: the offer latches on the full word, not the
-            // low byte (0x100 must not latch).
-            let full_word_latch = (tag(slot0) == 2
-                && slot0 != NO_SLOT
-                && node_base.wrapping_add(u32::from(slot0).wrapping_mul(stride)) != 0
-                && offer0 != 0)
-                || (tag(slot1) == 2
-                    && slot1 != NO_SLOT
-                    && node_base.wrapping_add(u32::from(slot1).wrapping_mul(stride)) != 0
-                    && offer1 != 0)
-                || (tag(slot0) == 1 && slot0 != NO_SLOT)
-                || (tag(slot1) == 1 && slot1 != NO_SLOT);
-            // Count only trials where the offer order lines up: both
-            // tag-2 slots consume answers in slot order.
-            let tag2_count =
-                u32::from(tag(slot0) == 2 && slot0 != NO_SLOT) + u32::from(tag(slot1) == 2 && slot1 != NO_SLOT);
-            if tag2_count <= 1 && full_word_latch != expect_latch {
+            // low byte (0x100 must not latch). Offers consume in walk
+            // order, exactly like the rewrite.
+            let entry_of = |s: u8| node_base.wrapping_add(u32::from(s).wrapping_mul(stride));
+            let mut full_word_latch = false;
+            let mut oi = 0;
+            for s in [slot0, slot1] {
+                if s == NO_SLOT || entry_of(s) == 0 {
+                    continue;
+                }
+                if tag(s) == 2 {
+                    let ans = [offer0, offer1][oi];
+                    oi += 1;
+                    if ans != 0 {
+                        full_word_latch = true;
+                    }
+                } else if tag(s) == 1 {
+                    full_word_latch = true;
+                }
+            }
+            if full_word_latch != expect_latch {
                 caught += 1;
             }
             let _ = (node_box, table_box);

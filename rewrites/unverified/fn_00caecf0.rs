@@ -1,174 +1,187 @@
-// original: 0x00caecf0 move_goal_satisfied_check (proposed)
+// original: 0x00CAECF0 route_task_check (proposed)
 
-/// Decide whether a ped move task's goal counts as satisfied.
+/// Decide whether a route-following task has reached its acceptance point.
 ///
-/// `this` is the task object, `p` points to three floats (the target point),
-/// `obj` is the owner object. Returns 1 in AL when the goal is satisfied, 0
-/// otherwise (thiscall: `this` in ECX, the rest on the stack, callee pops 8).
+/// `this` is the task, `target` a three-float point, `ped` a related object.
+/// Returns 1 (accept) or 0 (keep going) in `al` only: the upper 24 bits of
+/// `eax` are stale stack-address bits on every path, so the contract
+/// compares `al` alone.
 ///
-/// Layout read: `obj+0x20` is a matrix row whose words at `+0x30..+0x3C` are
-/// the current position; `obj+0xA80` is a state object (dword at `+0x48`,
-/// flag byte at `+0x50`, vtable at `+0`) whose virtual slot at `+0x34` (callee
-/// 2) yields a float; `obj+0x29C` bit 2 selects a clamped limit; the task
-/// carries two floats at `+0xA0`/`+0xA4`, a position cache at `+0x50..+0x5C`
-/// and a mode word at `+0xC4` (bit 6 vetoes acceptance, bit 1 skips the final
-/// test, bits 11..14 are refreshed from callee 1).
+/// Behaviour: runs a classifier over the task (callee 1, cdecl of three
+/// words: `ped`, `target`, then an out-pointer; only its `al` is tested). A
+/// non-zero answer with bit 6 of the control word at `this + 0xc4` clear
+/// accepts at once. Otherwise bits 11-14 of that control word are cleared
+/// and the function works through two geometric tests separated by a
+/// virtual call:
 ///
-/// Algorithm: a `blocked` flag is latched when the state flag byte has bit
-/// 0x20 set or the state dword is not -1. Callee 1 (direct, thiscall, three
-/// stack words: `obj`, `p`, and a pointer to a local holding bits 11..14 of
-/// the mode word) answers accept/reject in AL and rewrites the local. When it
-/// accepts, bit 6 is clear and nothing is blocked, the function returns 1
-/// without touching the task. Otherwise the local is merged into mode bits
-/// 11..14 and the geometry runs: dx/dy/dz-abs of target minus position, the
-/// squared planar distance, the hook float added to `+0xA0` and squared, and
-/// the dot of (target minus cache) with (dx, dy). The position row is then
-/// published into the cache (`+0x50` and `+0x5C` as bit copies, `+0x54` and
-/// `+0x58` as floats). A limit (task `+0xA4`, clamped up to the constant 4.0
-/// when the select bit is set) larger than dz-abs, with bit 6 clear and bit 1
-/// clear-or-negative-dot, accepts when unblocked. Bit 1 set rejects. Else
-/// callee 3 (virtual slot `+0xEC` on `obj`, one out-pointer argument, returns
-/// a pointer to two floats) scales an offset by the global float; the
-/// residual dot decides: a positive (or unordered) residual rejects, bit 6
-/// rejects, otherwise unblocked accepts.
+/// 1. From the 2D direction between `[[ped + 0x20] + 0x30/34` and `target`
+///    it forms the squared length (dy*dy + dx*dx), calls the virtual slot
+///    at `[[ped + 0xa80]] + 0x34` (callee 2: thiscall, no stack arguments,
+///    float answer on the x87 stack), and adds that answer to the float at
+///    `this + 0xa0`. The words at `[ped + 0x20] + 0x30..3c` are then copied
+///    to `this + 0x50..5c`. It accepts when the squared sum strictly exceeds
+///    the squared length AND bit 6 of the control word is clear AND the
+///    float at `this + 0xa4` (raised to at least 4.0 when bit 2 of the byte
+///    at `ped + 0x29c` is set) strictly exceeds the absolute z gap AND
+///    (bit 1 of the control word is clear OR the second dot below is
+///    negative).
+/// 2. Unless bit 1 of the control word is set (reject), it calls the
+///    virtual slot at `[ped] + 0xec` (callee 3: thiscall on `ped`, one
+///    argument pointing four bytes past a stack slot holding a global
+///    float), scales that callee's two returned floats by the global,
+///    offsets them by `[ped + 0x20] + 0x30/34`, and dots the result against
+///    the first direction. A positive (or NaN) dot rejects; with bit 6 of
+///    the control word set it also rejects; otherwise it accepts.
 ///
-/// Edge cases: only AL of callee 1's answer is read (upper bytes ignored);
-/// every float comparison uses ordered `comiss` semantics (unordered behaves
-/// as false, except the final residual test which rejects on unordered too);
-/// a NaN limit falls back to the constant; all arithmetic runs in the
-/// original's operand order. The out-pointer given to callee 3 addresses
-/// uninitialized frame scratch whose contents neither side observes.
-lf_checker_rt::export!(thiscall, rw_00caecf0(this: u32, p: u32, obj: u32) -> u32 {
+/// Two reads deserve a note. The callee-1 call pushes three words for a
+/// callee that pops none and is never cleaned up, so from that call on the
+/// frame sits 12 bytes low: the flag byte and the classifier out-word,
+/// written before the call, are read back from never-written slots.
+/// Under the checker's zero stack fill both read as 0, so the flag gate is
+/// always open and the out-word is always 0; the original's reads of the
+/// words those values were computed from are kept for fault parity but
+/// their values are unused. The same holds for the word above callee 3's
+/// float slot, which the rewrite fabricates as 0. Only `al` of callee 1's
+/// answer is tested (zero vs non-zero); nothing here is a signed/unsigned
+/// integer comparison.
+///
+/// Original: 0x00CAECF0 (thiscall, two stack words, callee pops 8).
+lf_checker_rt::export!(thiscall, rw_00CAECF0(this: u32, target: u32, ped: u32) -> u32 {
     unsafe {
-        const STATE_OFF: u32 = 0xA80;
-        const STATE_WORD: u32 = 0x48;
-        const STATE_FLAGS: u32 = 0x50;
-        const BLOCK_BIT: u8 = 0x20;
-        const MODE_OFF: u32 = 0xC4;
-        const MODE_SHIFT: u32 = 11;
-        const MODE_BITS: u32 = 0x7800;
-        const VETO_BIT: u32 = 0x40;
-        const SKIP_BIT: u32 = 0x02;
-        const MAT_OFF: u32 = 0x20;
-        const ROW_OFF: u32 = 0x30;
-        const CACHE_X: u32 = 0x50;
-        const CACHE_Y: u32 = 0x54;
-        const CACHE_Z: u32 = 0x58;
-        const CACHE_W: u32 = 0x5C;
-        const HOOK_BASE: u32 = 0xA0;
-        const LIMIT_OFF: u32 = 0xA4;
-        const SELECT_OFF: u32 = 0x29C;
-        const SELECT_BIT: u8 = 0x04;
-        const HOOK_SLOT: u32 = 0x34;
-        const PAIR_SLOT: u32 = 0xEC;
-        const ABS_MASK: u32 = 0x00FE8F80;
-        const CLAMP_CONST: u32 = 0x00FE8AB8;
-        const SCALE_GLOBAL: u32 = 0x011735BC;
+        const CTRL_WORD: u32 = 0xc4;
+        const CTRL_FIELD_MASK: u32 = 0x7800;
+        const CTRL_EARLY_BIT: u32 = 0x40;
+        const CTRL_DH_BIT: u32 = 0x02;
+        const SUM_SLOT: u32 = 0xa0;
+        const LIMIT_SLOT: u32 = 0xa4;
+        const COPY_DST: u32 = 0x50;
+        const PED_LINK: u32 = 0xa80;
+        const PED_BASE_OFF: u32 = 0x20;
+        const VTBL_SLOT_BACK: u32 = 0x34;
+        const VTBL_SLOT_FWD: u32 = 0xec;
+        const PED_MODE_BYTE: u32 = 0x29c;
+        const GLOBAL_FACTOR: u32 = 0x011735BC;
+        const CLASSIFY_CALLEE: u32 = 1;
+        const BACK_CALLEE: u32 = 2;
+        const FWD_CALLEE: u32 = 3;
 
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
             unsafe { (a as *const u32).read_unaligned() }
         }
         #[inline(always)]
-        unsafe fn rd8(a: u32) -> u8 {
-            unsafe { (a as *const u8).read() }
-        }
-        #[inline(always)]
         unsafe fn wr32(a: u32, v: u32) {
             unsafe { (a as *mut u32).write_unaligned(v) }
+        }
+        #[inline(always)]
+        unsafe fn rd8(a: u32) -> u8 {
+            unsafe { (a as *const u8).read() }
         }
         #[inline(always)]
         unsafe fn rdf(a: u32) -> f32 {
             unsafe { f32::from_bits(rd32(a)) }
         }
         #[inline(always)]
-        unsafe fn wrf(a: u32, v: f32) {
-            unsafe { wr32(a, v.to_bits()) }
-        }
-        #[inline(always)]
-        fn fadd(a: f32, b: f32) -> f32 {
-            core::hint::black_box(a) + core::hint::black_box(b)
-        }
-        #[inline(always)]
-        fn fsub(a: f32, b: f32) -> f32 {
+        fn sub(a: f32, b: f32) -> f32 {
             core::hint::black_box(a) - core::hint::black_box(b)
         }
         #[inline(always)]
-        fn fmul(a: f32, b: f32) -> f32 {
+        fn mul(a: f32, b: f32) -> f32 {
             core::hint::black_box(a) * core::hint::black_box(b)
         }
+        #[inline(always)]
+        fn add(a: f32, b: f32) -> f32 {
+            core::hint::black_box(a) + core::hint::black_box(b)
+        }
+        #[inline(always)]
+        fn absf(a: f32) -> f32 {
+            f32::from_bits(a.to_bits() & 0x7FFF_FFFF)
+        }
 
-        let state = rd32(obj + STATE_OFF);
-        let blocked =
-            (rd8(state + STATE_FLAGS) & BLOCK_BIT) != 0 || rd32(state + STATE_WORD) != 0xFFFF_FFFF;
-        let mut out = (rd32(this + MODE_OFF) >> MODE_SHIFT) & 0xF;
-        let ok = lf_checker_rt::callee_thiscall!(1, u32, this, obj, p, &mut out as *mut u32 as u32);
-        let c4 = rd32(this + MODE_OFF);
-        if (ok & 0xFF) != 0 && (c4 & VETO_BIT) == 0 && !blocked {
+        let vlink = rd32(ped + PED_LINK);
+        // Kept for fault parity; the values are computed into slots the
+        // shifted frame never reads back (see doc comment).
+        let _bit5 = rd8(vlink + 0x50);
+        let _neg1 = rd32(vlink + 0x48);
+
+        let ctrl = rd32(this + CTRL_WORD);
+        let mut out_word: u32 = (ctrl >> 11) & 0x0f;
+        let cls: u32 = lf_checker_rt::callee_cdecl!(
+            CLASSIFY_CALLEE,
+            u32,
+            ped,
+            target,
+            (&mut out_word as *mut u32) as u32
+        );
+        if (cls & 0xFF) != 0 && (ctrl & CTRL_EARLY_BIT) == 0 {
             return 1;
         }
-        wr32(this + MODE_OFF, (c4 & !MODE_BITS) | ((out << MODE_SHIFT) & MODE_BITS));
-        let mat = rd32(obj + MAT_OFF);
-        let dz = fsub(rdf(mat + ROW_OFF + 8), rdf(p + 8));
-        let mask = rd32(lf_checker_rt::relocated(ABS_MASK));
-        let zabs = f32::from_bits(dz.to_bits() & mask);
-        let dx = fsub(rdf(p), rdf(mat + ROW_OFF));
-        let dy = fsub(rdf(p + 4), rdf(mat + ROW_OFF + 4));
-        let sumsq = fadd(fmul(dy, dy), fmul(dx, dx));
-        let row = mat + ROW_OFF;
-        let hook_vt = rd32(state);
-        let hook: extern "thiscall" fn(u32) -> f32 =
-            unsafe { core::mem::transmute(rd32(hook_vt + HOOK_SLOT) as usize) };
-        let got = hook(state);
-        let s = fadd(rdf(this + HOOK_BASE), got);
-        let sq = fmul(s, s);
-        let t1 = fmul(fsub(rdf(p), rdf(this + CACHE_X)), dx);
-        let dl = sq > sumsq;
-        let dot = fadd(fmul(fsub(rdf(p + 4), rdf(this + CACHE_Y)), dy), t1);
+        // The out-word slot the frame reads back holds stale zero: clear.
+        wr32(this + CTRL_WORD, ctrl & !CTRL_FIELD_MASK);
+
+        let base = rd32(ped + PED_BASE_OFF);
+        let dz = absf(sub(rdf(base + 0x38), rdf(target + 8)));
+        let dx = sub(rdf(target), rdf(base + 0x30));
+        let dy = sub(rdf(target + 4), rdf(base + 0x34));
+        let d2 = add(mul(dy, dy), mul(dx, dx));
+
+        // Virtual back-call through the object's table (fabricated).
+        let vtab = rd32(vlink);
+        let back: extern "thiscall" fn(u32) -> f32 =
+            unsafe { core::mem::transmute(rd32(vtab + VTBL_SLOT_BACK) as usize) };
+        let r = back(vlink);
+
+        let sumsq = add(rdf(this + SUM_SLOT), r);
+        let sumsq2 = mul(sumsq, sumsq);
+        let dl = sumsq2 > d2;
+        // Original order: (t4diff*dy) + (t0diff*dx).
+        let dot = add(
+            mul(sub(rdf(target + 4), rdf(this + COPY_DST + 4)), dy),
+            mul(sub(rdf(target), rdf(this + COPY_DST)), dx),
+        );
         let dh = 0.0f32 > dot;
-        wr32(this + CACHE_X, rd32(row));
-        wrf(this + CACHE_Y, rdf(row + 4));
-        wrf(this + CACHE_Z, rdf(row + 8));
-        wr32(this + CACHE_W, rd32(row + 12));
-        let mut lim = rdf(this + LIMIT_OFF);
-        if (rd8(obj + SELECT_OFF) & SELECT_BIT) != 0 {
-            let c = rdf(lf_checker_rt::relocated(CLAMP_CONST));
-            if !(lim > c) {
-                lim = c;
-            }
+
+        wr32(this + COPY_DST, rd32(base + 0x30));
+        wr32(this + COPY_DST + 4, rd32(base + 0x34));
+        wr32(this + COPY_DST + 8, rd32(base + 0x38));
+        wr32(this + COPY_DST + 12, rd32(base + 0x3c));
+
+        let mut limit = rdf(this + LIMIT_SLOT);
+        if (rd8(ped + PED_MODE_BYTE) & 4) != 0 && !(limit > 4.0f32) {
+            limit = 4.0f32;
         }
-        if dl {
-            let c4b = rd32(this + MODE_OFF);
-            if (c4b & VETO_BIT) == 0 && lim > zabs && ((c4b & SKIP_BIT) == 0 || dh) && !blocked {
-                return 1;
-            }
+        if dl && (ctrl & CTRL_EARLY_BIT) == 0 && limit > dz && ((ctrl & CTRL_DH_BIT) == 0 || dh) {
+            return 1;
         }
-        if (rd32(this + MODE_OFF) & SKIP_BIT) != 0 {
+        if (ctrl & CTRL_DH_BIT) != 0 {
             return 0;
         }
-        let pair_vt = rd32(obj);
-        let pair: extern "thiscall" fn(u32, u32) -> u32 =
-            unsafe { core::mem::transmute(rd32(pair_vt + PAIR_SLOT) as usize) };
-        let mut scratch = [0u32; 2];
-        let r = pair(obj, &mut scratch as *mut u32 as u32);
-        let g = rdf(lf_checker_rt::relocated(SCALE_GLOBAL));
-        let q0 = fmul(g, rdf(r));
-        let q1 = fmul(rdf(r + 4), g);
-        let s0 = fadd(rdf(row), q0);
-        let s1 = fadd(rdf(row + 4), q1);
-        let d0 = fsub(rdf(p), s0);
-        let d1 = fsub(rdf(p + 4), s1);
-        let rr = fadd(fmul(d1, dy), fmul(d0, dx));
-        if !(0.0f32 >= rr) {
+
+        let gf_bits = (lf_checker_rt::global::<u32>(GLOBAL_FACTOR) as *const u32).read_unaligned();
+        // Callee 3's float sits four bytes below the passed pointer; the
+        // word at the pointer is stale stack (zero under the fill).
+        let mut fwd_arg = [gf_bits, 0u32];
+        let fwd_ptr = (&mut fwd_arg as *mut u32) as u32 + 4;
+        let ftab = rd32(ped);
+        let fwd: extern "thiscall" fn(u32, u32) -> u32 =
+            unsafe { core::mem::transmute(rd32(ftab + VTBL_SLOT_FWD) as usize) };
+        let rp = fwd(ped, fwd_ptr);
+
+        let gf = f32::from_bits(gf_bits);
+        let t0 = mul(gf, rdf(rp));
+        let t1 = mul(rdf(rp + 4), gf);
+        let u2 = add(rdf(base + 0x30), t0);
+        let u0 = add(rdf(base + 0x34), t1);
+        let v3 = sub(rdf(target), u2);
+        let v1 = sub(rdf(target + 4), u0);
+        let q = add(mul(v1, dy), mul(v3, dx));
+        // jb: reject on positive or NaN; continue on ordered <= 0.
+        if !(0.0f32 >= q) {
             return 0;
         }
-        if (rd32(this + MODE_OFF) & VETO_BIT) != 0 {
+        if (ctrl & CTRL_EARLY_BIT) != 0 {
             return 0;
         }
-        if !blocked {
-            1
-        } else {
-            0
-        }
+        1
     }
 });

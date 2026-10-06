@@ -152,7 +152,7 @@ impl<F: FnMut(u32) -> u32> Mixer for F {
 }
 
 /// The liveness probe: tag byte plus the two float tag words.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub struct LivenessProbe {
     /// Tag byte (`+0x00`): zero fails the gate.
     pub tag: u8,
