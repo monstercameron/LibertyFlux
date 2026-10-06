@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Lift: the audio effect classes",
+    "commit": null,
+    "summary": "Thirteen verified methods of three audio effect classes (the base effect, the compressor and the reverb) are lifted to portable Rust in crates/lf-audio, with their proof in the pipeline.",
+    "changes": [
+      "New module crates/lf-audio/src/sound with the effect base class, the compressor and the reverb: how an effect chain is walked and rotated, and what each effect does to its parameters and buffers. No unsafe code. 27 host tests.",
+      "New test crate crates/tools/lf-sounddiff, 13 differential tests against the verified rewrites, each with a deliberately wrong lift that must be caught. The coordinator ran them on the 32-bit target and they pass.",
+      "One of the verified rewrites reads a word at an odd address, which the processor allows and a debug build's pointer-alignment check aborts on. The lane ran its tests in a release build for that reason; the pipeline runs debug builds, so that check is switched off for this one test crate in the workspace manifest and the tests run like the others.",
+      "The sound classes themselves (switch, crossfade, simple, streaming) are not lifted: the lane tabulated all 60 of their methods and found they share one manager's state, which has to be modelled first. That brings the lifted methods with their proof in the pipeline to 129."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 24 files from lanes (249 unverified rewrites, 561 in review)",
     "commit": "f3dd45637af44aedf9cd8a5ce2ba59b0d988a081",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
