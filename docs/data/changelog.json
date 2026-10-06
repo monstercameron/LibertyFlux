@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Lift: five pedestrian task classes",
+    "commit": null,
+    "summary": "Twelve verified methods of five pedestrian task classes are lifted to portable Rust in crates/lf-peds-tasks, with their proof in the pipeline.",
+    "changes": [
+      "New module crates/lf-peds-tasks/src/tasks: shaking a fist, the hit response and ducking in full, and the spawning and polling methods of the two shocking-event tasks (fleeing from one, walking towards one). Each is a small state machine that picks its next subtask. No unsafe code. 46 host tests.",
+      "New test crate crates/tools/lf-taskdiff, 12 differential tests against the verified rewrites, each with a deliberately wrong lift that must be caught. The coordinator ran them on the 32-bit target and they pass.",
+      "Eighteen verified methods of these classes are not lifted yet and are listed in the module's registry, the six of the cover-seeking task among them. That brings the lifted methods with their proof in the pipeline to 141, in six class families."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 19 files from lanes (253 unverified rewrites, 562 in review)",
     "commit": "ef252393f617533b7028c79e2e0eb8248b436a9e",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

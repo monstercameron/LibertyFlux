@@ -462,6 +462,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-taskdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+ "lf-peds-tasks",
+]
+
+[[package]]
 name = "lf-test-target"
 version = "0.1.0"
 dependencies = [
