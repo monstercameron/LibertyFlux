@@ -267,6 +267,66 @@ pub trait CutsceneWorld {
     fn registry_tell(&mut self, word: u32);
     /// The base teardown entry; answers its answer.
     fn base_destroy(&mut self) -> u32;
+    /// The update's first entry call.
+    fn entry_notify(&mut self);
+    /// The update's second entry call.
+    fn entry_second(&mut self);
+    /// The object's own first guard slot; only the low byte of the
+    /// answer is tested.
+    fn guard_a(&mut self) -> u32;
+    /// The object's own second guard slot; a zero low byte returns the
+    /// whole answer.
+    fn guard_b(&mut self) -> u32;
+    /// The member probe slot on the second member; its answer is dropped.
+    fn member_probe(&mut self, member: Handle32<MemberTag>);
+    /// The update table entry for an index (the table itself is not
+    /// modelled: one entry per index).
+    fn table_entry(&mut self, index: i16) -> UpdateEntry;
+    /// The early-exit block; its word is read separately.
+    fn early_block(&mut self) -> Handle32<EarlyTag>;
+    /// The early-exit block's word.
+    fn early_word(&mut self, block: Handle32<EarlyTag>) -> u32;
+    /// The early-exit tail; answers its answer.
+    fn early_tail(&mut self, word: u32) -> u32;
+    /// The early indexed call; answers its answer.
+    fn early_call(&mut self, sx: i32, v294: u32, v310: u32) -> u32;
+    /// The primary setup call with its fixed words; its answer is dropped.
+    fn setup_primary(
+        &mut self,
+        entry: Handle32<EntryTag>,
+        record: Option<Handle32<AttachTag>>,
+        fixed: [u32; 6],
+    );
+    /// The secondary setup call with its fixed words; its answer is dropped.
+    fn setup_secondary(
+        &mut self,
+        entry: Handle32<EntryTag>,
+        record: Option<Handle32<AttachTag>>,
+        fixed: [u32; 8],
+    );
+    /// Stores the setup value through the chain.
+    fn store_setup(&mut self, chain: Handle32<ChainTag>, value: f32);
+    /// One bone row by index, with the set it was read from.
+    fn bone_row(&mut self, index: u32) -> BoneRow;
+    /// Submits the two-bone blend: the record, three blocks in argument
+    /// order, four scalars; answers its answer.
+    fn submit_j(
+        &mut self,
+        record: Option<Handle32<AttachTag>>,
+        first: [u32; 4],
+        second: [u32; 4],
+        third: [u32; 4],
+        scalars: [u32; 4],
+    ) -> u32;
+    /// Submits the four-bone average, shaped like [`CutsceneWorld::submit_j`].
+    fn submit_k(
+        &mut self,
+        record: Option<Handle32<AttachTag>>,
+        first: [u32; 4],
+        second: [u32; 4],
+        third: [u32; 4],
+        scalars: [u32; 4],
+    ) -> u32;
 }
 
 /// A cutscene object, owning its words, flags, corners and links.
@@ -312,6 +372,12 @@ pub struct CutsceneObject {
     pub blocks: [Option<Handle32<BlockTag>>; 3],
     /// The done byte, cleared by the teardown.
     pub done_2ac: u8,
+    /// The update's script word (only the read half is modelled).
+    pub script_word: u16,
+    /// The setup store chain, if one is set.
+    pub store_chain: Option<Handle32<ChainTag>>,
+    /// The attached record's identity for the update's calls.
+    pub attached_id: Option<Handle32<AttachTag>>,
 }
 
 /// Adds exactly like the original's ordered float sequence.
@@ -331,6 +397,21 @@ fn fsub(a: f32, b: f32) -> f32 {
 fn fmul(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) * core::hint::black_box(b)
 }
+
+/// Squares exactly like the original's ordered float sequence.
+#[inline(always)]
+fn fsqr(x: f32) -> f32 {
+    core::hint::black_box(x) * core::hint::black_box(x)
+}
+
+/// Takes the square root exactly like the original.
+#[inline(always)]
+fn fsqrt(x: f32) -> f32 {
+    core::hint::black_box(x).sqrt()
+}
+
+/// One as the update passes it.
+const ONE_BITS: u32 = 0x3F80_0000;
 
 /// The rectangle seeds: plus and minus one million, exactly.
 const SEED_POS: f32 = f32::from_bits(0x4974_2400);
@@ -497,6 +578,248 @@ impl CutsceneObject {
         }
         self.done_2ac = 0;
         world.base_destroy()
+    }
+
+    /// The per-frame update: guard dispatch, counter maze with setup,
+    /// then either the two-bone blend or the four-bone average submitted
+    /// to the pose entry. Every float operation is in the original's order.
+    /// Panics where the original dereferences blindly (an unlinked second
+    /// member on the early path, a missing record or chain on the setup
+    /// and blend paths): those are narrowed domains, never guesses.
+    pub fn update<W: CutsceneWorld>(
+        &self,
+        world: &mut W,
+        cfg: &UpdateScalars,
+        acc: &mut Accumulator,
+    ) -> u32 {
+        world.entry_notify();
+        if cfg.entry_seq_byte == 0 {
+            world.entry_second();
+        }
+        if world.guard_a() & 0xff != 0 {
+            let member = self
+                .member_b
+                .expect("update early path needs the second member");
+            world.member_probe(member);
+            let ent = world.table_entry(self.table_index);
+            if ent.flag != 0 {
+                let block = world.early_block();
+                let w = world.early_word(block);
+                return world.early_tail(w);
+            }
+            return world.early_call(
+                i32::from(self.table_index),
+                Handle32::raw_or_zero(self.blocks[2]),
+                Handle32::raw_or_zero(self.member_a),
+            );
+        }
+        let r2 = world.guard_b();
+        if r2 & 0xff == 0 {
+            return r2;
+        }
+        let ent = world.table_entry(self.table_index);
+        let edx = if cfg.sel != -1 { cfg.sel } else { cfg.edx_alt };
+        let w2c = u32::from(self.script_word);
+        let go_g = if edx > 0x14 {
+            true
+        } else {
+            let eax = cfg.eax;
+            let mut ecx = cfg.ecx;
+            if edx > 0x13 {
+                if eax != -1 {
+                    ecx = eax;
+                }
+                ecx > ((w2c & 0x3f) as i32)
+            } else if edx < 6 {
+                true
+            } else if edx >= 7 {
+                false
+            } else {
+                if eax != -1 {
+                    ecx = eax;
+                }
+                ecx < ((w2c & 0x3f) as i32)
+            }
+        };
+        let go_g = if go_g {
+            true
+        } else {
+            let x = fmul((w2c as i32) as f32, cfg.win_scale);
+            cfg.win_lo > x || cfg.win_hi > x
+        };
+        if go_g && (cfg.setup_flag & 2) == 0 {
+            world.setup_primary(
+                ent.id,
+                self.attached_id,
+                [0x32, 0x33, 1, 1, ONE_BITS, 0],
+            );
+            world.setup_secondary(
+                ent.id,
+                self.attached_id,
+                [0x34, 0xffff_ffff, 0x35, 1, 0, 1, ONE_BITS, 0],
+            );
+            let chain = self
+                .store_chain
+                .expect("update setup needs the store chain");
+            world.store_setup(chain, cfg.store_val);
+        }
+        let idx = ent.index_words;
+        if ent.mode != 1 {
+            if (idx[0] as i32) < 0
+                || (idx[1] as i32) < 0
+                || (idx[2] as i32) < 0
+                || (idx[3] as i32) < 0
+            {
+                return idx[3];
+            }
+            return self.average_k(world, cfg, &ent, idx);
+        }
+        if (idx[0] as i32) < 0 {
+            return idx[2];
+        }
+        if (idx[2] as i32) < 0 {
+            return idx[2];
+        }
+        self.blend_j(world, cfg, acc, &ent, idx[0], idx[2])
+    }
+
+    /// The four-bone average: mean triple, difference lengths, matrix
+    /// blocks, submitted in argument order.
+    fn average_k<W: CutsceneWorld>(
+        &self,
+        world: &mut W,
+        cfg: &UpdateScalars,
+        ent: &UpdateEntry,
+        idx: [u32; 4],
+    ) -> u32 {
+        let r1 = world.bone_row(idx[0]);
+        let r2 = world.bone_row(idx[1]);
+        let r3 = world.bone_row(idx[2]);
+        let r4 = world.bone_row(idx[3]);
+        let (x1, y1, z1) = (r1.xyz[0], r1.xyz[1], r1.xyz[2]);
+        let (x2, y2, z2) = (r2.xyz[0], r2.xyz[1], r2.xyz[2]);
+        let (x3, y3, z3) = (r3.xyz[0], r3.xyz[1], r3.xyz[2]);
+        let (x4, y4, z4) = (r4.xyz[0], r4.xyz[1], r4.xyz[2]);
+        let qx = fmul(fadd(fadd(x3, fadd(x2, x1)), x4), cfg.qk);
+        let qy = fmul(fadd(fadd(y3, fadd(y2, y1)), y4), cfg.qk);
+        let qz = fmul(fadd(fadd(z3, fadd(z2, z1)), z4), cfg.qk);
+        let m = self
+            .attached
+            .as_ref()
+            .expect("pose blend needs the attached record");
+        let zero = 0.0f32;
+        let b0 = fsub(
+            fadd(fmul(m.vy[0], zero), fmul(m.vx[0], zero)),
+            fmul(m.vz[0], cfg.k0),
+        );
+        let b4 = fsub(
+            fadd(fmul(m.vy[1], zero), fmul(m.vx[1], zero)),
+            fmul(m.vz[1], cfg.k0),
+        );
+        let b8 = fsub(
+            fadd(fmul(m.vy[2], zero), fmul(m.vx[2], zero)),
+            fmul(m.vz[2], cfg.k0),
+        );
+        let c0 = fadd(fadd(m.vy[0], fmul(m.vx[0], zero)), fmul(m.vz[0], zero));
+        let c4 = fadd(fadd(m.vy[1], fmul(m.vx[1], zero)), fmul(m.vz[1], zero));
+        let c8 = fadd(fadd(m.vy[2], fmul(m.vx[2], zero)), fmul(m.vz[2], zero));
+        let len_a = fsqrt(fadd(
+            fadd(fsqr(fsub(y2, y4)), fsqr(fsub(x2, x4))),
+            fsqr(fsub(z2, z4)),
+        ));
+        let len_b = fsqrt(fadd(
+            fadd(fsqr(fsub(y1, y3)), fsqr(fsub(x1, x3))),
+            fsqr(fsub(z1, z3)),
+        ));
+        let arg5 = fmul(fmul(fadd(len_a, len_b), cfg.kn), cfg.k_a5);
+        let arg5 = fmul(arg5, cfg.kn);
+        let len_c = fsqrt(fadd(
+            fadd(fsqr(fsub(y3, y4)), fsqr(fsub(x3, x4))),
+            fsqr(fsub(z3, z4)),
+        ));
+        let len_d = fsqrt(fadd(
+            fadd(fsqr(fsub(y2, y1)), fsqr(fsub(x2, x1))),
+            fsqr(fsub(z2, z1)),
+        ));
+        let arg4 = fmul(fmul(fadd(len_c, len_d), cfg.kn), cfg.k_a4);
+        let arg4 = fmul(arg4, cfg.kn);
+        let arg6 = fmul(fmul(fmul(ent.weight, cfg.wx), cfg.k_a6), cfg.kn);
+        world.submit_k(
+            self.attached_id,
+            [qx.to_bits(), qy.to_bits(), qz.to_bits(), 0],
+            [b0.to_bits(), b4.to_bits(), b8.to_bits(), 0],
+            [c0.to_bits(), c4.to_bits(), c8.to_bits(), 0],
+            [arg4.to_bits(), arg5.to_bits(), arg6.to_bits(), cfg.k_a8],
+        )
+    }
+
+    /// The two-bone blend: weighted triple plus accumulator, difference
+    /// shade, matrix blocks, submitted in argument order.
+    fn blend_j<W: CutsceneWorld>(
+        &self,
+        world: &mut W,
+        cfg: &UpdateScalars,
+        acc: &mut Accumulator,
+        ent: &UpdateEntry,
+        idx_a: u32,
+        idx_b: u32,
+    ) -> u32 {
+        let r1 = world.bone_row(idx_a);
+        let dk = fsub(cfg.k0, cfg.k1);
+        let r2 = world.bone_row(idx_b);
+        let (t1x, t1y, t1z) = (r1.xyz[0], r1.xyz[1], r1.xyz[2]);
+        let (t2x, t2y, t2z) = (r2.xyz[0], r2.xyz[1], r2.xyz[2]);
+        let ix = fadd(fmul(t1x, cfg.k1), fmul(t2x, dk));
+        let iy = fadd(fmul(t1y, cfg.k1), fmul(t2y, dk));
+        let iz = fadd(fmul(t1z, cfg.k1), fmul(t2z, dk));
+        let wgt = fmul(ent.weight, cfg.wgt_scale);
+        let (g0, g1, g2) = if acc.flag & 1 != 0 {
+            (acc.vals[0], acc.vals[1], acc.vals[2])
+        } else {
+            acc.flag |= 1;
+            acc.vals = [0.0, 0.0, 0.0];
+            (0.0, 0.0, 0.0)
+        };
+        let jx = fadd(ix, g0);
+        let jy = fadd(iy, g1);
+        let jz = fadd(iz, g2);
+        let dx = fsub(t1x, t2x);
+        let dy = fsub(t1y, t2y);
+        let dz = fsub(t1z, t2z);
+        let m = self
+            .attached
+            .as_ref()
+            .expect("pose blend needs the attached record");
+        let zero = 0.0f32;
+        let b0 = fsub(
+            fadd(fmul(m.vy[0], zero), fmul(m.vx[0], zero)),
+            fmul(m.vz[0], cfg.k0),
+        );
+        let b4 = fsub(
+            fadd(fmul(m.vy[1], zero), fmul(m.vx[1], zero)),
+            fmul(m.vz[1], cfg.k0),
+        );
+        let b8 = fsub(
+            fadd(fmul(m.vy[2], cfg.e18_scale), fmul(m.vx[2], zero)),
+            fmul(m.vz[2], cfg.k0),
+        );
+        let a0 = fadd(fadd(fmul(m.vx[0], zero), m.vy[0]), fmul(m.vz[0], zero));
+        let a4 = fadd(fadd(fmul(m.vx[1], zero), m.vy[1]), fmul(m.vz[1], zero));
+        let a8 = fadd(fadd(fmul(m.vx[2], zero), m.vy[2]), fmul(m.vz[2], zero));
+        let arg4 = fmul(fmul(cfg.j_a4, wgt), cfg.kn);
+        let shade = fadd(
+            fsqrt(fadd(fadd(fsqr(dy), fsqr(dx)), fsqr(dz))),
+            fmul(wgt, cfg.wx),
+        );
+        let arg5 = fmul(fmul(shade, cfg.j_a5), cfg.kn);
+        let arg6 = fmul(fmul(cfg.j_a6, wgt), cfg.kn);
+        world.submit_j(
+            self.attached_id,
+            [jx.to_bits(), jy.to_bits(), jz.to_bits(), 0],
+            [b0.to_bits(), b4.to_bits(), b8.to_bits(), 0],
+            [a0.to_bits(), a4.to_bits(), a8.to_bits(), 0],
+            [arg4.to_bits(), arg5.to_bits(), arg6.to_bits(), cfg.j_a8],
+        )
     }
 
     /// Pushes one corner through the attached record: each output row is

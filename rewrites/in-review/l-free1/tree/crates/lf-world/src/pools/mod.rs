@@ -6,6 +6,10 @@
 //! One pool hangs its descriptor behind a context global ([`SlotPool`] reads
 //! it the same way once loaded); the others keep the four words inline.
 //!
+//! [`PoolVec`] is the second structure: a count-prefixed buffer of stamped
+//! fixed-stride slots, built by one initialiser routine with thirteen
+//! verified instances.
+//!
 //! Each type owns its slots as ordinary Rust data (byte vectors: no
 //! addresses, no allocator calls) and each verified 32-bit routine with
 //! behaviour in it is restated as a method on it. Creation takes its
@@ -20,11 +24,12 @@
 
 #![forbid(unsafe_code)]
 
+mod poolvec;
 mod slot;
 
 pub mod registry;
 
+pub use poolvec::{ElemStamp, PoolVec, VecAlloc, VecElemTag};
 pub use slot::{
-    CtxAlloc, CtxHandle, CtxTag, Notify, Refresh, SlotPool,
-    CtxInit,
+    CtxAlloc, CtxHandle, CtxInit, CtxTag, Evict, Notify, Refresh, SlotPool, Survives,
 };

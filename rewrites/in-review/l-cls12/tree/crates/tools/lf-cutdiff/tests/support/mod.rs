@@ -9,8 +9,9 @@
 use lf_core::Handle32;
 use lf_cutdiff::rt;
 use lf_world::cutscene_object::{
-    BlockTag, BoundsScale, CtxTag, CutsceneObject, CutsceneWorld, DrawTag, HelperTag, Matrix34,
-    MemberTag, PlacementTag, PoseRecord,
+    AttachTag, BlockTag, BoneRow, BoneTag, BoundsScale, ChainTag, CtxTag, CutsceneObject,
+    CutsceneWorld, DrawTag, EarlyTag, EntryTag, HelperTag, Matrix34, MemberTag, PlacementTag,
+    PoseRecord, UpdateEntry,
 };
 use std::collections::{HashMap, VecDeque};
 
@@ -174,6 +175,21 @@ extern "thiscall" fn destroy_stub(member: u32, flag: u32) -> u32 {
     rt::virtual_answer("destroy")
 }
 
+extern "thiscall" fn guard_a_stub(this: u32) -> u32 {
+    rt::record_virtual("guard_a", vec![this]);
+    rt::virtual_answer("guard_a")
+}
+
+extern "thiscall" fn guard_b_stub(this: u32) -> u32 {
+    rt::record_virtual("guard_b", vec![this]);
+    rt::virtual_answer("guard_b")
+}
+
+extern "thiscall" fn probe_stub(member: u32) -> u32 {
+    rt::record_virtual("probe", vec![member]);
+    rt::virtual_answer("probe")
+}
+
 /// Addresses of the virtual-slot stubs.
 pub struct Stubs {
     /// The pose-record slot (+0x54 on the object table).
@@ -186,6 +202,12 @@ pub struct Stubs {
     pub helper: u32,
     /// The member deleting entry (+0x00 on the member table).
     pub destroy: u32,
+    /// The first guard slot (+0x24 on the object table).
+    pub guard_a: u32,
+    /// The second guard slot (+0x28 on the object table).
+    pub guard_b: u32,
+    /// The member probe slot (+0x08 on the member table).
+    pub probe: u32,
 }
 
 impl Stubs {
@@ -197,6 +219,9 @@ impl Stubs {
             successor: successor_stub as *const () as usize as u32,
             helper: helper_stub as *const () as usize as u32,
             destroy: destroy_stub as *const () as usize as u32,
+            guard_a: guard_a_stub as *const () as usize as u32,
+            guard_b: guard_b_stub as *const () as usize as u32,
+            probe: probe_stub as *const () as usize as u32,
         }
     }
 }
@@ -223,6 +248,10 @@ pub fn words<T>(c: Option<Handle32<T>>) -> u32 {
 pub struct Fake {
     answers: HashMap<&'static str, VecDeque<u32>>,
     blocks: HashMap<&'static str, VecDeque<Vec<u32>>>,
+    entries: VecDeque<UpdateEntry>,
+    brows: VecDeque<BoneRow>,
+    /// The modelled setup store cell.
+    pub store_cell: u32,
     /// Recorded lift-side calls: method name and argument words.
     pub log: Vec<(String, Vec<u32>)>,
 }
@@ -243,6 +272,18 @@ impl Fake {
     /// a call with no block queued panics).
     pub fn answer_block(&mut self, name: &'static str, values: Vec<Vec<u32>>) -> &mut Self {
         self.blocks.insert(name, values.into_iter().collect());
+        self
+    }
+
+    /// Queues table entries (popped in call order; an empty queue panics).
+    pub fn answer_entries(&mut self, values: Vec<UpdateEntry>) -> &mut Self {
+        self.entries = values.into_iter().collect();
+        self
+    }
+
+    /// Queues bone rows (popped in call order; an empty queue panics).
+    pub fn answer_brows(&mut self, values: Vec<BoneRow>) -> &mut Self {
+        self.brows = values.into_iter().collect();
         self
     }
 
@@ -383,6 +424,150 @@ impl CutsceneWorld for Fake {
 
     fn base_destroy(&mut self) -> u32 {
         self.call("base", vec![])
+    }
+
+    fn entry_notify(&mut self) {
+        self.call_unit("entry.1", vec![]);
+    }
+
+    fn entry_second(&mut self) {
+        self.call_unit("entry.2", vec![]);
+    }
+
+    fn guard_a(&mut self) -> u32 {
+        self.call("guard.a", vec![])
+    }
+
+    fn guard_b(&mut self) -> u32 {
+        self.call("guard.b", vec![])
+    }
+
+    fn member_probe(&mut self, member: Handle32<MemberTag>) {
+        self.call_unit("probe", vec![Handle32::raw_or_zero(Some(member))]);
+    }
+
+    fn table_entry(&mut self, index: i16) -> UpdateEntry {
+        let e = self
+            .entries
+            .pop_front()
+            .expect("table entry queued");
+        self.log.push((
+            "table".to_string(),
+            vec![
+                index as u32,
+                Handle32::raw_or_zero(Some(e.id)),
+                u32::from(e.flag),
+                e.mode,
+                e.weight.to_bits(),
+                e.index_words[0],
+                e.index_words[1],
+                e.index_words[2],
+                e.index_words[3],
+            ],
+        ));
+        e
+    }
+
+    fn early_block(&mut self) -> Handle32<EarlyTag> {
+        Handle32::new(self.call("early.block", vec![])).expect("early block nonzero")
+    }
+
+    fn early_word(&mut self, block: Handle32<EarlyTag>) -> u32 {
+        self.call("early.word", vec![Handle32::raw_or_zero(Some(block))])
+    }
+
+    fn early_tail(&mut self, word: u32) -> u32 {
+        self.call("early.tail", vec![word])
+    }
+
+    fn early_call(&mut self, sx: i32, v294: u32, v310: u32) -> u32 {
+        self.call("early.call", vec![sx as u32, v294, v310])
+    }
+
+    fn setup_primary(
+        &mut self,
+        entry: Handle32<EntryTag>,
+        record: Option<Handle32<AttachTag>>,
+        fixed: [u32; 6],
+    ) {
+        let mut args = vec![
+            Handle32::raw_or_zero(Some(entry)),
+            words(record),
+        ];
+        args.extend_from_slice(&fixed);
+        self.call_unit("setup.9", args);
+    }
+
+    fn setup_secondary(
+        &mut self,
+        entry: Handle32<EntryTag>,
+        record: Option<Handle32<AttachTag>>,
+        fixed: [u32; 8],
+    ) {
+        let mut args = vec![
+            Handle32::raw_or_zero(Some(entry)),
+            words(record),
+        ];
+        args.extend_from_slice(&fixed);
+        self.call_unit("setup.10", args);
+    }
+
+    fn store_setup(&mut self, chain: Handle32<ChainTag>, value: f32) {
+        self.call_unit(
+            "store",
+            vec![
+                Handle32::raw_or_zero(Some(chain)),
+                value.to_bits(),
+            ],
+        );
+        self.store_cell = value.to_bits();
+    }
+
+    fn bone_row(&mut self, index: u32) -> BoneRow {
+        let r = self.brows.pop_front().expect("bone row queued");
+        self.log.push((
+            "bone".to_string(),
+            vec![
+                index,
+                Handle32::raw_or_zero(Some(r.set)),
+                r.xyz[0].to_bits(),
+                r.xyz[1].to_bits(),
+                r.xyz[2].to_bits(),
+            ],
+        ));
+        r
+    }
+
+    fn submit_j(
+        &mut self,
+        record: Option<Handle32<AttachTag>>,
+        first: [u32; 4],
+        second: [u32; 4],
+        third: [u32; 4],
+        scalars: [u32; 4],
+    ) -> u32 {
+        let mut args = vec![words(record)];
+        args.extend_from_slice(&first);
+        args.extend_from_slice(&second);
+        args.extend_from_slice(&third);
+        args.extend_from_slice(&scalars);
+        self.call("submit.j", args)
+    }
+
+    fn submit_k(
+        &mut self,
+        record: Option<Handle32<AttachTag>>,
+        first: [u32; 4],
+        second: [u32; 4],
+        third: [u32; 4],
+        scalars: [u32; 4],
+    ) -> u32 {
+        let mut args = vec![words(record)];
+        args.extend_from_slice(&first);
+        args.extend_from_slice(&second);
+        args.extend_from_slice(&third);
+        args.extend_from_slice(&scalars);
+        self.call("submit.k", args)
     }
 }
 
@@ -543,6 +728,8 @@ pub fn lift_from(
     block1: usize,
     block2: usize,
     done: usize,
+    script: usize,
+    chain: usize,
 ) -> CutsceneObject {
     let attached = if obj.r32(attach) == 0 {
         None
@@ -582,5 +769,8 @@ pub fn lift_from(
             cookie(obj.r32(block2)),
         ],
         done_2ac: obj.r8(done),
+        script_word: obj.r16(script),
+        store_chain: cookie(obj.r32(chain)),
+        attached_id: cookie(obj.r32(attach)),
     }
 }

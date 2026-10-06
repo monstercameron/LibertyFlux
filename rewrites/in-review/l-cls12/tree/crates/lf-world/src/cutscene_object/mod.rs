@@ -40,6 +40,7 @@ pub mod object;
 pub mod registry;
 
 pub use object::{
-    BlockTag, BoundsRect, BoundsScale, CtxTag, CutsceneObject, CutsceneWorld, DrawTag, HelperTag,
-    Matrix34, MemberTag, PlacementTag, PoseRecord, WorldBounds,
+    Accumulator, AttachTag, BlockTag, BoneRow, BoneTag, BoundsRect, BoundsScale, ChainTag, CtxTag,
+    CutsceneObject, CutsceneWorld, DrawTag, EarlyTag, EntryTag, HelperTag, Matrix34, MemberTag,
+    PlacementTag, PoseRecord, UpdateEntry, UpdateScalars, WorldBounds,
 };

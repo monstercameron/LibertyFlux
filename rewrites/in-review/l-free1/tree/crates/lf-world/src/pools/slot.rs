@@ -58,6 +58,22 @@ pub trait Notify {
     fn notify(&mut self, index: u32);
 }
 
+/// Asks whether a zero-refcount slot survives: the release's first callee.
+///
+/// The 32-bit callee answers a word of which only the low byte decides;
+/// the lift takes the decided bool (the proof scripts words whose full
+/// value and low byte disagree).
+pub trait Survives {
+    /// Whether slot `index` survives, given the auxiliary word.
+    fn survives(&mut self, index: u32, aux: u32) -> bool;
+}
+
+/// Evicts a dead slot: the release's second callee.
+pub trait Evict {
+    /// Evicts slot `index`.
+    fn evict(&mut self, index: u32);
+}
+
 /// Refreshes the pool before an indexed store, answering a table row.
 pub trait Refresh {
     /// Runs the refresh, answering the table row index.
@@ -70,6 +86,18 @@ pub trait Refresh {
 
 impl<F: FnMut(u32)> Notify for F {
     fn notify(&mut self, index: u32) {
+        self(index);
+    }
+}
+
+impl<F: FnMut(u32, u32) -> bool> Survives for F {
+    fn survives(&mut self, index: u32, aux: u32) -> bool {
+        self(index, aux)
+    }
+}
+
+impl<F: FnMut(u32)> Evict for F {
+    fn evict(&mut self, index: u32) {
         self(index);
     }
 }
@@ -337,6 +365,43 @@ impl SlotPool {
                 return None;
             }
         }
+    }
+
+    /// Releases a slot's reference, evicting it when the count hits zero.
+    ///
+    /// Dead slots return quietly, as does a null slot address (which no
+    /// owned pool produces; see the registry). Otherwise the reference
+    /// count at entry + 4 is decremented (wrapping) and written back; a
+    /// count staying above zero (signed) ends the work, else the survives
+    /// check runs on the index and the auxiliary word, and a surviving
+    /// slot returns while any other is evicted. The 32-bit form answers 0
+    /// on every path, which carries no meaning.
+    ///
+    /// # Panics
+    ///
+    /// When `index` is past the flag store, or when the count word would
+    /// leave the entry store.
+    pub fn release(
+        &mut self,
+        index: u32,
+        aux: u32,
+        survives: &mut impl Survives,
+        evict: &mut impl Evict,
+    ) {
+        if self.flag(index) & DEAD_BIT != 0 {
+            return;
+        }
+        let off = self.slot_offset(index, DATA_OFF + 4);
+        let rc = u32::from_le_bytes(self.entries[off + 4..off + 8].try_into().unwrap());
+        let rc = rc.wrapping_sub(1);
+        self.entries[off + 4..off + 8].copy_from_slice(&rc.to_le_bytes());
+        if (rc as i32) > 0 {
+            return;
+        }
+        if survives.survives(index, aux) {
+            return;
+        }
+        evict.evict(index);
     }
 
     /// Stores a table cell plus the successor index through `out`.

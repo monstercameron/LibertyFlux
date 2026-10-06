@@ -137,9 +137,14 @@ pub const ROWS: &[Row] = &[
     },
     Row {
         method: "vf51",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "the per-frame update: thirteen callees, two own-table guard slots, and about thirty shared words including bone tables and accumulators: needs those models, not built yet",
+            "the update table arrives as one entry per index: the table and the parameter blocks are not modelled",
+            "the submit callees' block addresses are not compared; the twelve block words are",
+            "the submit callees' constant one word is pinned on the rewrite side, not modelled",
+            "the script word's upper half is never read: unmodelled",
+            "the counter maze's discarded counter re-reads are not modelled",
+            "bone indices stay in the array; the early path needs the second member linked; the blend paths need the record attached and the setup path the chain set",
         ],
     },
     Row {

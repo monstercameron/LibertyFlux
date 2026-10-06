@@ -2,7 +2,7 @@
 //! code would ask about. These run on the 64-bit host; the differential
 //! proof against the verified rewrites lives in `lf-pooldiff`.
 
-use lf_world::pools::{CtxHandle, SlotPool, registry};
+use lf_world::pools::{CtxHandle, ElemStamp, PoolVec, SlotPool, registry};
 
 fn pool(flags: &[u8], stride: u32) -> SlotPool {
     SlotPool::from_parts(vec![0u8; flags.len() * stride as usize], flags.to_vec(), stride)
@@ -10,10 +10,10 @@ fn pool(flags: &[u8], stride: u32) -> SlotPool {
 
 #[test]
 fn registry_counts_are_pinned() {
-    assert_eq!(registry::count(registry::State::Proven), 13);
+    assert_eq!(registry::count(registry::State::Proven), 26);
     assert_eq!(registry::count(registry::State::Lifted), 0);
-    assert_eq!(registry::count(registry::State::Missing), 7);
-    assert_eq!(registry::ROWS.len(), 20);
+    assert_eq!(registry::count(registry::State::Missing), 27);
+    assert_eq!(registry::ROWS.len(), 53);
 }
 
 #[test]
@@ -275,5 +275,97 @@ fn indexed_store_dead_panics() {
 #[test]
 fn from_parts_rejects_ragged_entries() {
     let r = std::panic::catch_unwind(|| SlotPool::from_parts(vec![0u8; 10], vec![0, 0], 8));
+    assert!(r.is_err());
+}
+
+fn stamp() -> ElemStamp {
+    ElemStamp::new(0xE9AA_BBCC).unwrap()
+}
+
+#[test]
+fn vec_alloc_size_edges() {
+    assert_eq!(PoolVec::alloc_size(0, 0x24), 4);
+    assert_eq!(PoolVec::alloc_size(1, 0x24), 0x28);
+    assert_eq!(PoolVec::alloc_size(8, 16), 8 * 16 + 4);
+    // Multiply overflow saturates.
+    assert_eq!(PoolVec::alloc_size(u32::MAX, 0x24), u32::MAX);
+    assert_eq!(PoolVec::alloc_size(u32::MAX, 1), u32::MAX);
+    // Add carry saturates: count * 1 + 4 overflows.
+    assert_eq!(PoolVec::alloc_size(u32::MAX - 3, 1), u32::MAX);
+    assert_eq!(PoolVec::alloc_size(u32::MAX - 4, 1), u32::MAX - 4 + 4);
+    // Just below the multiply edge.
+    let q = (u32::MAX - 4) / 0x24;
+    assert_eq!(PoolVec::alloc_size(q, 0x24), q * 0x24 + 4);
+    assert_eq!(PoolVec::alloc_size(q + 1, 0x24), u32::MAX);
+}
+
+#[test]
+fn vec_init_empty_is_prefix_only() {
+    let v = PoolVec::init(0, 0x24, stamp(), &mut |size| {
+        assert_eq!(size, 4);
+        Some(vec![0u8; 4])
+    })
+    .unwrap();
+    assert_eq!(v.buf(), &[0, 0, 0, 0]);
+    assert_eq!(v.count(), 0);
+    assert_eq!(v.end_offset(), 4);
+}
+
+#[test]
+fn vec_init_stamps_every_slot() {
+    let v = PoolVec::init(3, 16, stamp(), &mut |size| {
+        assert_eq!(size, 3 * 16 + 4);
+        Some(vec![0u8; size as usize])
+    })
+    .unwrap();
+    assert_eq!(v.count(), 3);
+    assert_eq!(v.end_offset(), 3 * 16 + 4);
+    for i in 0..3 {
+        let off = 4 + i * 16;
+        assert_eq!(&v.buf()[off..off + 4], &[0xCC, 0xBB, 0xAA, 0xE9]);
+    }
+    // Bodies past the stamps are backing as it came.
+    assert_eq!(&v.buf()[8..16], &[0; 8]);
+}
+
+#[test]
+fn vec_init_failure_is_none() {
+    let mut sizes = Vec::new();
+    let got = PoolVec::init(9, 32, stamp(), &mut |size| {
+        sizes.push(size);
+        None
+    });
+    assert_eq!(got, None);
+    assert_eq!(sizes, [9 * 32 + 4]);
+}
+
+#[test]
+fn vec_init_rejects_short_backing() {
+    let r = std::panic::catch_unwind(|| {
+        PoolVec::init(4, 16, stamp(), &mut |_| Some(vec![0u8; 8]))
+    });
+    assert!(r.is_err());
+}
+
+#[test]
+fn vec_init_stride_zero_single_slot() {
+    // One slot of stride 0: the stamp would land past the 4-byte
+    // buffer, where the original writes past its allocation.
+    let r = std::panic::catch_unwind(|| {
+        PoolVec::init(1, 0, stamp(), &mut |size| {
+            assert_eq!(size, 4);
+            Some(vec![0u8; 4])
+        })
+    });
+    assert!(r.is_err());
+}
+
+#[test]
+fn vec_init_narrow_stride_overruns_like_the_original() {
+    // Stride 1 with 8 slots: the last stamp would leave the buffer, where
+    // the original writes past its allocation.
+    let r = std::panic::catch_unwind(|| {
+        PoolVec::init(8, 1, stamp(), &mut |size| Some(vec![0u8; size as usize]))
+    });
     assert!(r.is_err());
 }

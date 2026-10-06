@@ -2,9 +2,10 @@
 //!
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!`, the `callee_*` macros, `callee_addr`, `global`,
-//! `relocated`). The proof set reads and writes nine globals: the pool
-//! context word, the table scale word, and the seven cursor-step record
-//! words (each holding the address of its four-word record). Each global
+//! `relocated`). The proof set reads and writes eleven globals: the pool
+//! context word, the table scale word, the release's manager and
+//! auxiliary words, and the seven cursor-step record words (each holding
+//! the address of its four-word record). Each global
 //! is one atomic slot; the atomics give the slots stable addresses, and
 //! the differential tests hold one lock across each whole test, so the
 //! rewrite's plain reads and writes through them never race.
@@ -21,6 +22,10 @@ use core::sync::atomic::Ordering;
 static CTX_SLOT: AtomicU32 = AtomicU32::new(0);
 /// The indexed store's table scale word.
 static SCALE_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The release's pool manager word (one address).
+static MGR_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The release's auxiliary word.
+static AUX_SLOT: AtomicU32 = AtomicU32::new(0);
 /// The seven cursor-step record words (one record address each).
 static REC_SLOTS: [AtomicU32; 7] = [
     AtomicU32::new(0),
@@ -36,12 +41,14 @@ static REC_SLOTS: [AtomicU32; 7] = [
 ///
 /// # Panics
 ///
-/// When the address is not one of the nine globals the proof set reads:
+/// When the address is not one of the eleven globals the proof set reads:
 /// a case bug, never a guess.
 fn slot_for(file_va: u32) -> *mut u32 {
     match file_va {
         0x0117_64C0 => CTX_SLOT.as_ptr(),
         0x0103_2F58 => SCALE_SLOT.as_ptr(),
+        0x016D_D5D0 => MGR_SLOT.as_ptr(),
+        0x0104_96E8 => AUX_SLOT.as_ptr(),
         0x016F_7D60 => REC_SLOTS[0].as_ptr(),
         0x012B_D0E8 => REC_SLOTS[1].as_ptr(),
         0x0166_D9EC => REC_SLOTS[2].as_ptr(),
@@ -64,15 +71,61 @@ pub fn global<T>(file_va: u32) -> *mut T {
     slot_for(file_va) as *mut T
 }
 
+/// The thirteen pool-vector stamp addresses, planted per test.
+static RELOC_SLOTS: [AtomicU32; 13] = [
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+];
+
+/// The stamp slot for a file VA.
+///
+/// # Panics
+///
+/// When the address is not one of the thirteen stamp VAs the proof set
+/// relocates: a case bug, never a guess.
+fn reloc_slot(file_va: u32) -> &'static AtomicU32 {
+    match file_va {
+        0x00E9_791C => &RELOC_SLOTS[0],
+        0x00E9_769C => &RELOC_SLOTS[1],
+        0x00E9_771C => &RELOC_SLOTS[2],
+        0x00E9_759C => &RELOC_SLOTS[3],
+        0x00E9_789C => &RELOC_SLOTS[4],
+        0x00E9_7A1C => &RELOC_SLOTS[5],
+        0x00E9_751C => &RELOC_SLOTS[6],
+        0x00E9_779C => &RELOC_SLOTS[7],
+        0x00E9_7A9C => &RELOC_SLOTS[8],
+        0x00E9_799C => &RELOC_SLOTS[9],
+        0x00E9_761C => &RELOC_SLOTS[10],
+        0x00E9_7B1C => &RELOC_SLOTS[11],
+        0x00E9_781C => &RELOC_SLOTS[12],
+        _ => panic!("unexpected relocated VA {file_va:#x}"),
+    }
+}
+
+/// Plants the relocated address of a stamp VA.
+pub fn set_relocated(file_va: u32, addr: u32) {
+    reloc_slot(file_va).store(addr, Ordering::Relaxed);
+}
+
 /// File VA to relocated address, mirroring `lf-checker-rt`.
 ///
 /// # Panics
 ///
-/// Always: no rewrite in this proof set relocates an address, so any
-/// call is a case bug.
+/// As [`reloc_slot`].
 #[must_use]
 pub fn relocated(file_va: u32) -> u32 {
-    panic!("unexpected relocated VA {file_va:#x}")
+    reloc_slot(file_va).load(Ordering::Relaxed)
 }
 
 /// Registered stub addresses for callee ids 0..5 (0 when none: a call

@@ -43,6 +43,15 @@ pub enum StubKind {
     Cdecl3,
     /// `extern "cdecl" fn(u32) -> u32`.
     Cdecl1,
+    /// `extern "cdecl" fn() -> u32`.
+    Cdecl0,
+    /// `extern "thiscall" fn(u32 nine times) -> u32`.
+    Thiscall9,
+    /// `extern "thiscall" fn(u32 eleven times) -> u32`.
+    Thiscall11,
+    /// The pose-submit callee: cdecl with nine words, snapshotting four
+    /// words through each of its second, third and fourth arguments.
+    SubmitSnap,
     /// The placement-matrix callee: thiscall shape, writes sixteen queued
     /// words through its second argument.
     MatrixWrite,
@@ -62,6 +71,7 @@ struct Script {
     virtual_answers: HashMap<String, VecDeque<u32>>,
     virtual_calls: Vec<VirtualCall>,
     relocs: HashMap<u32, u32>,
+    snaps: Vec<Vec<u32>>,
 }
 
 impl Script {
@@ -75,6 +85,7 @@ impl Script {
             virtual_answers: HashMap::new(),
             virtual_calls: Vec::new(),
             relocs: HashMap::new(),
+            snaps: Vec::new(),
         }
     }
 }
@@ -145,6 +156,11 @@ pub fn set_relocated(pairs: &[(u32, u32)]) {
     script().relocs = pairs.iter().copied().collect();
 }
 
+/// Takes the recorded submit snapshots, clearing the log.
+pub fn take_snaps() -> Vec<Vec<u32>> {
+    std::mem::take(&mut script().snaps)
+}
+
 /// Records a numbered call and pops its answer.
 fn record_numbered(id: u32, args: Vec<u32>) -> u32 {
     let mut s = script();
@@ -200,6 +216,65 @@ extern "cdecl" fn stub_cdecl3(a: u32, b: u32, c: u32) -> u32 {
 
 extern "cdecl" fn stub_cdecl1(a: u32) -> u32 {
     record_numbered(CURRENT_ID.with(|c| c.get()), vec![a])
+}
+
+extern "cdecl" fn stub_cdecl0() -> u32 {
+    record_numbered(CURRENT_ID.with(|c| c.get()), vec![])
+}
+
+extern "thiscall" fn stub_thiscall9(
+    a: u32,
+    b: u32,
+    c: u32,
+    d: u32,
+    e: u32,
+    f: u32,
+    g: u32,
+    h: u32,
+    i: u32,
+) -> u32 {
+    record_numbered(CURRENT_ID.with(|c| c.get()), vec![a, b, c, d, e, f, g, h, i])
+}
+
+extern "thiscall" fn stub_thiscall11(
+    a: u32,
+    b: u32,
+    c: u32,
+    d: u32,
+    e: u32,
+    f: u32,
+    g: u32,
+    h: u32,
+    i: u32,
+    j: u32,
+    k: u32,
+) -> u32 {
+    record_numbered(
+        CURRENT_ID.with(|c| c.get()),
+        vec![a, b, c, d, e, f, g, h, i, j, k],
+    )
+}
+
+extern "cdecl" fn stub_submit(
+    a0: u32,
+    a1: u32,
+    a2: u32,
+    a3: u32,
+    a4: u32,
+    a5: u32,
+    a6: u32,
+    a7: u32,
+    a8: u32,
+) -> u32 {
+    let id = CURRENT_ID.with(|c| c.get());
+    let mut snap = Vec::with_capacity(12);
+    for bp in [a1, a2, a3] {
+        for k in 0..4 {
+            snap.push(unsafe { ((bp as *const u32).add(k)).read_unaligned() });
+        }
+    }
+    script().snaps.push(snap);
+    record_numbered(id, vec![a0, a1, a2, a3, a4, a5, a6, a7, a8])
 }
 
 extern "thiscall" fn stub_matrix(obj: u32, buf: u32) -> u32 {
@@ -263,6 +338,10 @@ pub fn callee_addr(id: u32) -> u32 {
         StubKind::Thiscall5 => stub_thiscall5 as *const () as usize as u32,
         StubKind::Cdecl3 => stub_cdecl3 as *const () as usize as u32,
         StubKind::Cdecl1 => stub_cdecl1 as *const () as usize as u32,
+        StubKind::Cdecl0 => stub_cdecl0 as *const () as usize as u32,
+        StubKind::Thiscall9 => stub_thiscall9 as *const () as usize as u32,
+        StubKind::Thiscall11 => stub_thiscall11 as *const () as usize as u32,
+        StubKind::SubmitSnap => stub_submit as *const () as usize as u32,
         StubKind::MatrixWrite => stub_matrix as *const () as usize as u32,
         StubKind::CornerWrite => stub_corner as *const () as usize as u32,
     }
@@ -278,9 +357,52 @@ pub static mut SCALE_Z: u32 = 0;
 /// The shared mask word (see [`SCALE_X`]).
 pub static mut ABS_MASK: u32 = 0;
 
+/// The thirty shared words the per-frame update reads (four of them
+/// written back). Written by the running case under the script lock, in
+/// slot order: entry sequence, table base, the four maze counters, the
+/// float window triple, the setup flag and value, the accumulator flag
+/// and triple, the blend factors, and the submit factors.
+pub static mut UG: [u32; 30] = [0; 30];
+
+/// Slot of an update shared word, if it is one of the thirty.
+fn update_slot(file_va: u32) -> Option<usize> {
+    match file_va {
+        0x0159_3310 => Some(0),
+        0x0129_5CD8 => Some(1),
+        0x0129_5854 => Some(2),
+        0x0129_5848 => Some(3),
+        0x0129_5858 => Some(4),
+        0x0129_584C => Some(5),
+        0x012D_DEA0 => Some(6),
+        0x012D_DEAC => Some(7),
+        0x00E9_D0D8 => Some(8),
+        0x0129_577C => Some(9),
+        0x012E_22A8 => Some(10),
+        0x016D_CEB0 => Some(11),
+        0x016D_CEA0 => Some(12),
+        0x016D_CEA4 => Some(13),
+        0x016D_CEA8 => Some(14),
+        0x0104_9694 => Some(15),
+        0x00FE_88E8 => Some(16),
+        0x0104_9698 => Some(17),
+        0x00FE_8628 => Some(18),
+        0x00FE_8830 => Some(19),
+        0x00FE_8A24 => Some(20),
+        0x0104_969C => Some(21),
+        0x0104_96A0 => Some(22),
+        0x0104_96A4 => Some(23),
+        0x0104_96A8 => Some(24),
+        0x0104_96AC => Some(25),
+        0x0104_96B0 => Some(26),
+        0x0104_96B4 => Some(27),
+        0x016D_CEB4 => Some(28),
+        0x00FE_87E4 => Some(29),
+        _ => None,
+    }
+}
+
 /// Pointer to the shared word at a file VA, mirroring
-/// `lf-checker-rt::global`. Only the four words the proof set reads are
-/// mapped.
+/// `lf-checker-rt::global`. Only the words the proof set reads are mapped.
 ///
 /// # Panics
 ///
@@ -292,7 +414,10 @@ pub fn global<T>(file_va: u32) -> *mut T {
         0x0110_DB64 => core::ptr::addr_of_mut!(SCALE_Y) as *mut T,
         0x0110_DB68 => core::ptr::addr_of_mut!(SCALE_Z) as *mut T,
         0x00FE_8F80 => core::ptr::addr_of_mut!(ABS_MASK) as *mut T,
-        _ => panic!("unexpected shared word VA {file_va:#x}"),
+        va => match update_slot(va) {
+            Some(i) => unsafe { core::ptr::addr_of_mut!(UG[i]) as *mut T },
+            None => panic!("unexpected shared word VA {file_va:#x}"),
+        },
     }
 }
 
