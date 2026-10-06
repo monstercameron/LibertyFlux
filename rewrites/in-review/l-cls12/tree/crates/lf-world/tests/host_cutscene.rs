@@ -4,8 +4,8 @@
 
 use lf_core::Handle32;
 use lf_world::cutscene_object::{
-    BoundsRect, BoundsScale, CutsceneObject, CutsceneWorld, DrawTag, HelperTag, Matrix34,
-    MemberTag, PlacementTag, PoseRecord, WorldBounds, registry,
+    BlockTag, BoundsRect, BoundsScale, CtxTag, CutsceneObject, CutsceneWorld, DrawTag, HelperTag,
+    Matrix34, MemberTag, PlacementTag, PoseRecord, WorldBounds, registry,
 };
 use std::collections::VecDeque;
 
@@ -96,6 +96,50 @@ impl CutsceneWorld for Fake {
     fn mark_emitted(&mut self, _t: Handle32<DrawTag>) {
         self.log.push("draw.mark".to_string());
     }
+
+    fn destroy_member(&mut self, _m: Handle32<MemberTag>) {
+        self.log.push("destroy".to_string());
+    }
+
+    fn teardown_block(&mut self, _b: Handle32<BlockTag>) {
+        self.log.push("block.teardown".to_string());
+    }
+
+    fn free_block(&mut self, _b: Handle32<BlockTag>) {
+        self.log.push("block.free".to_string());
+    }
+
+    fn ask_registry(&mut self) -> u32 {
+        self.log.push("reg.ask".to_string());
+        self.scalars.pop_front().expect("scalar queued")
+    }
+
+    fn registry_word(&mut self, index: i16) -> i32 {
+        self.log.push(format!("reg.word:{index}"));
+        self.scalars.pop_front().expect("scalar queued") as i32
+    }
+
+    fn ask_gate(&mut self, word: u32) -> u32 {
+        self.log.push(format!("reg.gate:{word:#x}"));
+        self.scalars.pop_front().expect("scalar queued")
+    }
+
+    fn registry_run(&mut self) {
+        self.log.push("reg.run".to_string());
+    }
+
+    fn context_run(&mut self, _ctx: Option<Handle32<CtxTag>>, mode: u32) {
+        self.log.push(format!("reg.ctx:{mode}"));
+    }
+
+    fn registry_tell(&mut self, word: u32) {
+        self.log.push(format!("reg.tell:{word:#x}"));
+    }
+
+    fn base_destroy(&mut self) -> u32 {
+        self.log.push("base".to_string());
+        self.scalars.pop_front().expect("scalar queued")
+    }
 }
 
 fn cookie<T>() -> Handle32<T> {
@@ -125,13 +169,20 @@ fn test_object() -> CutsceneObject {
         corner_b: [3.0, 4.0, 5.0],
         member_a: None,
         mode: 0,
+        flags_24: 0,
+        table_index: 0,
+        ctx: None,
+        gate_d4: 0,
+        member_b: None,
+        blocks: [None, None, None],
+        done_2ac: 0x5A,
     }
 }
 
 #[test]
 fn registry_counts_pinned() {
     assert_eq!(registry::ROWS.len(), 21);
-    assert_eq!(registry::counts(), (14, 0, 7));
+    assert_eq!(registry::counts(), (15, 0, 6));
 }
 
 #[test]
@@ -424,6 +475,81 @@ fn rect_nan_corners_keep_seeds() {
     assert_eq!(out.max_x.to_bits(), 0xC974_2400);
     assert_eq!(out.min_y.to_bits(), 0x4974_2400);
     assert_eq!(out.max_y.to_bits(), 0xC974_2400);
+}
+
+#[test]
+fn teardown_clears_and_hands_off() {
+    // Mode 0 with everything linked and the registry step running.
+    let mut o = test_object();
+    o.mode = 0;
+    o.member_a = maybe_cookie(true);
+    o.member_b = maybe_cookie(true);
+    o.blocks = [maybe_cookie(true), None, maybe_cookie(true)];
+    o.table_index = 3;
+    o.gate_d4 = 1;
+    let mut fake = Fake::new();
+    fake.scalars.push_back(1); // ask: yes
+    fake.scalars.push_back(7); // word
+    fake.scalars.push_back(1); // gate: yes
+    fake.scalars.push_back(0xBEEF); // base answer
+    assert_eq!(o.tear_down(&mut fake), 0xBEEF);
+    assert_eq!(o.member_a, None);
+    assert_eq!(o.member_b, None);
+    assert_eq!(o.blocks, [None, None, None]);
+    assert_eq!(o.done_2ac, 0);
+    assert_eq!(
+        fake.log,
+        vec![
+            "destroy",
+            "block.teardown",
+            "block.free",
+            "block.teardown",
+            "block.free",
+            "destroy",
+            "reg.ask",
+            "reg.word:3",
+            "reg.gate:0x7",
+            "reg.run",
+            "reg.ctx:3",
+            "reg.tell:0x7",
+            "base",
+        ]
+    );
+    // Mode 1 sets the flag bit and skips the teardown.
+    let mut o = test_object();
+    o.mode = 1;
+    o.member_a = maybe_cookie(true);
+    let mut fake = Fake::new();
+    fake.scalars.push_back(0x22);
+    assert_eq!(o.tear_down(&mut fake), 0x22);
+    assert_eq!(o.flags_24, 0x0400_0000);
+    assert!(o.member_a.is_some(), "mode 1 destroys nothing");
+    assert_eq!(fake.log, vec!["base"]);
+    // The registry step stops at each gate in turn. Each entry carries
+    // the gate word, the scalars its path consumes, and its call tail.
+    for (gate, scalars, tail) in [
+        (1u32, vec![0u32, 0x44], vec!["reg.ask"]),
+        (1, vec![1, (-1i32) as u32, 0x44], vec!["reg.ask", "reg.word:0"]),
+        (1, vec![0x100, 0x44], vec!["reg.ask"]),
+        (0, vec![1, 7, 0x44], vec!["reg.ask", "reg.word:0"]),
+        (
+            1,
+            vec![1, 7, 0, 0x44],
+            vec!["reg.ask", "reg.word:0", "reg.gate:0x7"],
+        ),
+    ] {
+        let mut o = test_object();
+        o.mode = 0;
+        o.gate_d4 = gate;
+        let mut fake = Fake::new();
+        for s in scalars {
+            fake.scalars.push_back(s);
+        }
+        assert_eq!(o.tear_down(&mut fake), 0x44);
+        let mut expect = tail;
+        expect.push("base");
+        assert_eq!(fake.log, expect, "gate {gate}");
+    }
 }
 
 #[test]

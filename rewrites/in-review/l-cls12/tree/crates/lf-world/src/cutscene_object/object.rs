@@ -21,6 +21,16 @@ pub struct DrawTag;
 pub struct BlockTag;
 /// Tag for the opaque cookie of the teardown context object.
 pub struct CtxTag;
+/// Tag for the opaque cookie of the setup store chain.
+pub struct ChainTag;
+/// Tag for the opaque cookie of an update table entry.
+pub struct EntryTag;
+/// Tag for the opaque cookie of the early-exit block.
+pub struct EarlyTag;
+/// Tag for the opaque cookie of a bone set.
+pub struct BoneTag;
+/// Tag for the opaque cookie of the attached record's identity.
+pub struct AttachTag;
 
 /// A 3x4 placement record: the three coefficient columns plus the origin.
 ///
@@ -67,6 +77,97 @@ pub struct WorldBounds {
     pub max: [f32; 3],
     /// The copied second tag word.
     pub hi_tag: u32,
+}
+
+/// One update table entry: the flag, mode, weight and index words the
+/// per-frame update reads, with the entry's identity for the setup calls.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct UpdateEntry {
+    /// The entry's identity.
+    pub id: Handle32<EntryTag>,
+    /// The early-exit flag byte.
+    pub flag: u8,
+    /// The mode word: 1 selects the two-bone blend, anything else the
+    /// four-bone average.
+    pub mode: u32,
+    /// The blend weight.
+    pub weight: f32,
+    /// The four index words of the entry's parameter block.
+    pub index_words: [u32; 4],
+}
+
+/// One bone row answer: the triple and the set it was read from.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct BoneRow {
+    /// The set the row was read from.
+    pub set: Handle32<BoneTag>,
+    /// The row triple.
+    pub xyz: [f32; 3],
+}
+
+/// The shared scalar words the per-frame update reads.
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub struct UpdateScalars {
+    /// The entry-sequence byte: the second entry call runs unless set.
+    pub entry_seq_byte: u8,
+    /// The selected counter, or -1 to use the alternate.
+    pub sel: i32,
+    /// The alternate counter.
+    pub edx_alt: i32,
+    /// The first maze counter.
+    pub eax: i32,
+    /// The second maze counter.
+    pub ecx: i32,
+    /// The float window bounds and scale.
+    pub win_lo: f32,
+    /// The float window bounds and scale.
+    pub win_hi: f32,
+    /// The float window bounds and scale.
+    pub win_scale: f32,
+    /// The setup gate: the setup calls run unless bit 1 is set.
+    pub setup_flag: u32,
+    /// The value stored through the chain on setup.
+    pub store_val: f32,
+    /// The blend factors.
+    pub k0: f32,
+    /// The blend factors.
+    pub k1: f32,
+    /// The weight scale.
+    pub wgt_scale: f32,
+    /// The matrix-row scale of the blend's B block.
+    pub e18_scale: f32,
+    /// The shared normalizer.
+    pub kn: f32,
+    /// The weight mixer.
+    pub wx: f32,
+    /// The blend's scalar factors.
+    pub j_a4: f32,
+    /// The blend's scalar factors.
+    pub j_a5: f32,
+    /// The blend's scalar factors.
+    pub j_a6: f32,
+    /// The blend's trailing word.
+    pub j_a8: u32,
+    /// The average's scalar factors.
+    pub k_a4: f32,
+    /// The average's scalar factors.
+    pub k_a5: f32,
+    /// The average's scalar factors.
+    pub k_a6: f32,
+    /// The average's trailing word.
+    pub k_a8: u32,
+    /// The average's quarter factor.
+    pub qk: f32,
+}
+
+/// The shared blend accumulator: a flag bit plus a triple. The update
+/// reloads the triple when the bit is set, else zeroes it and sets the bit.
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub struct Accumulator {
+    /// The loaded flag.
+    pub flag: u32,
+    /// The accumulated triple.
+    pub vals: [f32; 3],
 }
 
 /// A bounds rectangle over the pushed corners: one float per side.

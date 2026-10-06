@@ -112,6 +112,10 @@ impl Image {
         self.buf[off..off + 4].copy_from_slice(&v.to_le_bytes());
     }
 
+    pub fn w16(&mut self, off: usize, v: u16) {
+        self.buf[off..off + 2].copy_from_slice(&v.to_le_bytes());
+    }
+
     pub fn w8(&mut self, off: usize, v: u8) {
         self.buf[off] = v;
     }

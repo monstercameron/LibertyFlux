@@ -22,7 +22,7 @@ mod x86 {
 
     #[path = "../support/mod.rs"]
     mod support;
-    use support::{CTX_VA, SCALE_VA, Rng, addr, get_u32, lock, put_u32};
+    use support::{CTX_VA, SCALE_VA, Rng, addr, lock, put_u32};
 
     /// Dead-slot bit, as the rewrites test it.
     const DEAD: u8 = 0x80;
@@ -59,15 +59,19 @@ mod x86 {
             value != 0
         }
 
-        /// Skips the end bound: any aligned live offset resolves.
-        pub fn slot_no_end(pool: &SlotPool, offset: u32) -> Option<usize> {
-            let stride = pool.stride();
-            if stride == 0 || offset % stride != 0 {
+        /// Tests bit 6 instead of bit 7 for the slot flag.
+        pub fn slot_bit6(pool: &SlotPool, offset: u32) -> Option<usize> {
+            let count = pool.slot_count() as u32;
+            let end = count.wrapping_sub(1).wrapping_mul(pool.stride());
+            if offset > end {
                 return None;
             }
-            let index = (offset / stride) as usize;
-            match pool.flags().get(index) {
-                Some(f) if f & 0x80 == 0 => Some(index),
+            let index = offset / pool.stride();
+            if offset % pool.stride() != 0 {
+                return None;
+            }
+            match pool.flags().get(index as usize) {
+                Some(f) if f & 0x40 == 0 => Some(index as usize),
                 _ => None,
             }
         }
@@ -138,7 +142,7 @@ mod x86 {
         put_u32(&mut ctx[..], 0x04, addr(&flags_box[0]));
         put_u32(&mut ctx[..], 0x08, n as u32);
         put_u32(&mut ctx[..], 0x0c, stride);
-        let ctx_addr = addr(&ctx[..]);
+        let ctx_addr = addr(&ctx[0]);
         unsafe { rt::global::<u32>(CTX_VA).write(ctx_addr) };
         std::mem::forget(entries_box);
         std::mem::forget(flags_box);
@@ -174,7 +178,11 @@ mod x86 {
                     } else {
                         0
                     });
-                    INIT_SCRIPT.lock().unwrap().push_back(ctx_addr);
+                    // Script the initialiser answer only when it runs:
+                    // a failed allocation leaves the queue untouched.
+                    if succeeds {
+                        INIT_SCRIPT.lock().unwrap().push_back(ctx_addr);
+                    }
                     let mut lift_alloc_sizes = Vec::new();
                     let mut lift_init_args = Vec::new();
                     let scripted = if succeeds {
@@ -190,7 +198,7 @@ mod x86 {
                             lift_alloc_sizes.push(size);
                             scripted
                         },
-                        &mut |block, x0, x1, tag| {
+                        &mut |block: CtxHandle, x0, x1, tag| {
                             lift_init_args.push((block.get(), x0, x1, tag));
                             scripted_ctx
                         },
@@ -271,7 +279,7 @@ mod x86 {
                 (0..n).map(|i| if i % 2 == 0 { 0x00 } else { 0x80 }).collect(),
                 vec![0x40; n],
             ];
-            for _ in 0..3 {
+            for _ in 0..6 {
                 let mut p = vec![0u8; n];
                 rng.bytes(&mut p);
                 patterns.push(p);
@@ -309,7 +317,7 @@ mod x86 {
             put_u32(&mut ctx[..], 0x00, addr(&entries_box[0]));
             put_u32(&mut ctx[..], 0x04, addr(&flags_box[0]));
             put_u32(&mut ctx[..], 0x0c, 8);
-            let ctx_addr = addr(&ctx[..]);
+            let ctx_addr = addr(&ctx[0]);
             unsafe { rt::global::<u32>(CTX_VA).write(ctx_addr) };
             for index in 0..2 {
                 let got = unsafe { fn_008E0210::rw_008e0210(index) };
@@ -475,17 +483,16 @@ mod x86 {
                             "quotient residue must match"
                         ),
                     }
-                    if wrong::slot_no_end(&pool, offset) != lift {
+                    if wrong::slot_bit6(&pool, offset) != lift {
                         caught += 1;
                     }
                     cases += 1;
                 }
                 std::hint::black_box((&desc, &entries_box, &flags_box));
-                let _ = get_u32(&[0, 0, 0, 0], 0);
             }
         }
         assert!(cases > 500, "too few comparisons ({cases})");
-        assert!(caught > 0, "wrong unbounded lookup never caught ({cases} cases)");
+        assert!(caught > 0, "wrong lookup bit never caught ({cases} cases)");
     }
 
     #[test]
@@ -528,12 +535,20 @@ mod x86 {
                             + answer as u64
                             + 0x58;
                         assert!(total < 0x1_0000_0000, "test layout wrapped");
-                        REFRESH_SCRIPT.lock().unwrap().push_back(row);
+                        // Script the row only when the refresh runs: a
+                        // terminal successor leaves the queue untouched.
+                        if next != 0xFFFF_FFFF {
+                            REFRESH_SCRIPT.lock().unwrap().push_back(row);
+                        }
                         let before = REFRESH_LOG.lock().unwrap().len();
+                        // The rewrite writes through the address, invisibly
+                        // to the borrow checker: pass and read it raw so the
+                        // compiler cannot assume the word is unchanged.
                         let mut out_rw = 0xA11CE_u32;
-                        let got = unsafe {
-                            fn_008E0880::rw_008e0880(1, addr(&out_rw))
-                        };
+                        let out_addr =
+                            std::ptr::addr_of_mut!(out_rw) as usize as u32;
+                        let got = unsafe { fn_008E0880::rw_008e0880(1, out_addr) };
+                        out_rw = unsafe { get_u32_at(out_addr) };
                         let rw_calls = REFRESH_LOG.lock().unwrap().len() - before;
                         let mut lift_rows = vec![row];
                         let mut out_lift = 0xA11CE_u32;
@@ -567,3 +582,6 @@ mod x86 {
         assert!(caught > 0, "wrong table base never caught ({cases} cases)");
     }
 }
+
+
+
