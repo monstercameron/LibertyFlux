@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-05",
-  "updated_at": "2026-10-05 20:26",
+  "updated_at": "2026-10-05 20:31",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -14,10 +14,10 @@
     "identified": 37413,
     "named": 30178,
     "rewritten": 15691,
-    "verified": 15652
+    "verified": 15654
   },
   "structures": 340,
-  "symbols": 15765,
+  "symbols": 15767,
   "measured": [
     {
       "label": "Code section",
@@ -111,7 +111,7 @@
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 15652,
+      "value": 15654,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     },
@@ -119,18 +119,18 @@
       "label": "Game code verified, measured in bytes",
       "value": 28.5,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2087277 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2090559 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
       "value": 17.2,
       "unit": "percent",
-      "source": "265 of 1347 such functions; they hold 38% of the game's code"
+      "source": "266 of 1347 such functions; they hold 38% of the game's code"
     }
   ],
   "activity": {
-    "lanes_running": 6,
-    "lanes_finished": 1338,
+    "lanes_running": 7,
+    "lanes_finished": 1339,
     "lanes_incomplete": 149,
     "devlog_entries": 493
   },
@@ -1213,7 +1213,7 @@
       "count": 169,
       "named": 169,
       "rewritten": 142,
-      "verified": 140
+      "verified": 141
     },
     {
       "stage": "named",
@@ -3193,7 +3193,7 @@
       "count": 84,
       "named": 83,
       "rewritten": 55,
-      "verified": 54
+      "verified": 55
     },
     {
       "stage": "named",
@@ -4459,8 +4459,8 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2087277,
+    "verified": 2090559,
     "large_functions": 2801402,
-    "large_functions_verified": 480539
+    "large_functions_verified": 483169
   }
 }
