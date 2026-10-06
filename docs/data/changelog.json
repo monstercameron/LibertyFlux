@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Lift: the text tokenizer and the streaming device",
+    "title": "Rewrites: 6 more functions pass the checker (15890 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "6 rewrites added under rewrites/verified: 0 script native handlers and 6 other functions.",
+      "The tree now holds 15890 rewrites, 15871 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Lift: the text tokenizer and the streaming device",
+    "commit": "c2146ae4fb6758d2eef7f232d0ae8c8bfdac024d",
     "summary": "37 verified methods of two classes are lifted to portable Rust in crates/lf-files-memory: the tokenizer the game reads its text data files with, and the streaming device beside it. Their proof runs in the pipeline.",
     "changes": [
       "New module crates/lf-files-memory/src/tokenizer. The tokenizer is parsing logic: characters come from a pushback stack, then the stream buffer, then a refill; leading whitespace is skipped and trailing whitespace trimmed; a newline counts a line, a semicolon starts a comment, and a token stops at its delimiter or when its buffer is full. Thirty of its methods and seven of the streaming device's are restated; three are left out by design (a pure forward, the deleting destructor, the constructor). No unsafe code. 19 host tests.",

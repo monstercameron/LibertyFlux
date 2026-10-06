@@ -34947,6 +34947,15 @@
   "lane": "r-s206"
  },
  {
+  "address": "0x006214C0",
+  "name": "net_collect_passing_entries",
+  "kind": "function",
+  "file": "functions/fn_006214c0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "a-S08"
+ },
+ {
   "address": "0x00621740",
   "name": "net_entry_remove_by_id_pair",
   "kind": "function",
@@ -44154,6 +44163,15 @@
   "lane": "r-b565"
  },
  {
+  "address": "0x0089C2A0",
+  "name": "audio_forward_this_thunk",
+  "kind": "function",
+  "file": "functions/fn_0089c2a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s490"
+ },
+ {
   "address": "0x0089C2C0",
   "name": "aud_thunk_to_0089ba10",
   "kind": "function",
@@ -44359,6 +44377,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b14"
+ },
+ {
+  "address": "0x0089DCF0",
+  "name": "audio_forward_this_thunk",
+  "kind": "function",
+  "file": "functions/fn_0089dcf0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s490"
  },
  {
   "address": "0x0089DD10",
@@ -50029,6 +50056,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-16"
+ },
+ {
+  "address": "0x008ED030",
+  "name": "table_range_scan (proposed)",
+  "kind": "function",
+  "file": "functions/fn_008ed030.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b583"
  },
  {
   "address": "0x008ED1E0",
@@ -124101,6 +124137,15 @@
   "lane": "r-b455"
  },
  {
+  "address": "0x00DC8160",
+  "name": "CMovementEventHandler::vf1",
+  "kind": "function",
+  "file": "functions/fn_00dc8160.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-S07"
+ },
+ {
   "address": "0x00DC87B0",
   "name": "blend_task_vector",
   "kind": "function",
@@ -124207,6 +124252,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b225"
+ },
+ {
+  "address": "0x00DD46C0",
+  "name": "UIMontageContainer::vf114",
+  "kind": "function",
+  "file": "functions/fn_00dd46c0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "a-S07"
  },
  {
   "address": "0x00DD4BA0",
