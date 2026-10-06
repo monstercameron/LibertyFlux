@@ -121275,6 +121275,15 @@
   "lane": "r-s362"
  },
  {
+  "address": "0x00CABF70",
+  "name": "follow_task_init",
+  "kind": "function",
+  "file": "functions/fn_00cabf70.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-b649"
+ },
+ {
   "address": "0x00CAC0C0",
   "name": "CTaskComplexMoveGoToPointRelativeToEntityAndStandStill ctor overload 2",
   "kind": "function",
@@ -122800,6 +122809,15 @@
   "name": "ped_task_gate_presence_flag",
   "kind": "function",
   "file": "functions/fn_00cbc190.rs",
+  "trials": 1024,
+  "checker": "version 7",
+  "lane": "r-b648"
+ },
+ {
+  "address": "0x00CBC310",
+  "name": "ped_task_acquire_move_target",
+  "kind": "function",
+  "file": "functions/fn_00cbc310.rs",
   "trials": 1024,
   "checker": "version 7",
   "lane": "r-b648"
@@ -133317,6 +133335,24 @@
   "lane": "r-b243"
  },
  {
+  "address": "0x00DDD490",
+  "name": "UITextField vtable install",
+  "kind": "function",
+  "file": "functions/fn_00ddd490.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDD4B0",
+  "name": "UITextField::vf2",
+  "kind": "function",
+  "file": "functions/fn_00ddd4b0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
   "address": "0x00DDD4D0",
   "name": "uitextfield_format_text",
   "kind": "function",
@@ -133344,6 +133380,114 @@
   "lane": "r-b235"
  },
  {
+  "address": "0x00DDE0E0",
+  "name": "UITextField::vf0",
+  "kind": "function",
+  "file": "functions/fn_00dde0e0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDE110",
+  "name": "UITextField child selector",
+  "kind": "function",
+  "file": "functions/fn_00dde110.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDE1F0",
+  "name": "UITextField grandchild field",
+  "kind": "function",
+  "file": "functions/fn_00dde1f0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDE200",
+  "name": "UITextField flag set or clear",
+  "kind": "function",
+  "file": "functions/fn_00dde200.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDE230",
+  "name": "UITextField is text empty",
+  "kind": "function",
+  "file": "functions/fn_00dde230.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDE390",
+  "name": "UITextField key classifier",
+  "kind": "function",
+  "file": "functions/fn_00dde390.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDE420",
+  "name": "UITextField key classifier",
+  "kind": "function",
+  "file": "functions/fn_00dde420.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDE490",
+  "name": "UITextField key classifier",
+  "kind": "function",
+  "file": "functions/fn_00dde490.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDE500",
+  "name": "UITextField key classifier",
+  "kind": "function",
+  "file": "functions/fn_00dde500.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDE570",
+  "name": "UITextField key classifier",
+  "kind": "function",
+  "file": "functions/fn_00dde570.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDE5A0",
+  "name": "UITextField key classifier",
+  "kind": "function",
+  "file": "functions/fn_00dde5a0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDE640",
+  "name": "UITextField cursor clamp",
+  "kind": "function",
+  "file": "functions/fn_00dde640.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
   "address": "0x00DDE6B0",
   "name": "UITextField::vf110",
   "kind": "function",
@@ -133351,6 +133495,51 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b235"
+ },
+ {
+  "address": "0x00DDE9A0",
+  "name": "UITextField mode reset",
+  "kind": "function",
+  "file": "functions/fn_00dde9a0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDEA20",
+  "name": "UITextField update default mode",
+  "kind": "function",
+  "file": "functions/fn_00ddea20.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDEB40",
+  "name": "UITextField conditional update",
+  "kind": "function",
+  "file": "functions/fn_00ddeb40.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDF640",
+  "name": "UITextField constructor",
+  "kind": "function",
+  "file": "functions/fn_00ddf640.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDF680",
+  "name": "UITextField destructor head",
+  "kind": "function",
+  "file": "functions/fn_00ddf680.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
  },
  {
   "address": "0x00DE3E90",
