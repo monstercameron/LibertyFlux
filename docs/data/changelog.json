@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Rewrites: the exact reading of signed sites finds two more",
+    "title": "Rewrites: 7 more functions pass the checker (15884 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "7 rewrites added under rewrites/verified: 0 script native handlers and 7 other functions.",
+      "The tree now holds 15884 rewrites, 15865 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 681 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "21 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Rewrites: the exact reading of signed sites finds two more",
+    "commit": "4fa3b80fc9a26107e6f3d2a92a9ba2089990fce2",
     "summary": "The verified count goes down by two. A lane read every one of the 627 places where a verified function's original compares a call's answer and branches signed, against the rewrite's comparison: 622 are right, four are wrong, one is an artefact of a function boundary.",
     "changes": [
       "net_collect_passing_entries and input_level_check are removed from rewrites/verified. The first compares a callback's answer with an unsigned greater-than against thirty-two, the second a probe's answer with an unsigned less-than against two hundred and fifty-six; the originals use the signed forms. The coordinator read both in the original before withdrawing them.",

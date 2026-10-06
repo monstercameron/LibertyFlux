@@ -44100,6 +44100,15 @@
   "lane": "a-10"
  },
  {
+  "address": "0x0089B700",
+  "name": "rage::audTwinLoopSound::vf5",
+  "kind": "function",
+  "file": "functions/fn_0089b700.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s490"
+ },
+ {
   "address": "0x0089BA10",
   "name": "aud_slot_pair_update",
   "kind": "function",
@@ -44181,6 +44190,15 @@
   "lane": "a-10"
  },
  {
+  "address": "0x0089C3B0",
+  "name": "rage::audSpeechSound::vf5",
+  "kind": "function",
+  "file": "functions/fn_0089c3b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s490"
+ },
+ {
   "address": "0x0089C3E0",
   "name": "aud_slot_action_dispatch",
   "kind": "function",
@@ -44197,6 +44215,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "a-F03"
+ },
+ {
+  "address": "0x0089C860",
+  "name": "audio_bsearch_header_first",
+  "kind": "function",
+  "file": "functions/fn_0089c860.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s490"
+ },
+ {
+  "address": "0x0089CA40",
+  "name": "audio_bsearch_records",
+  "kind": "function",
+  "file": "functions/fn_0089ca40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s490"
  },
  {
   "address": "0x0089CAA0",
@@ -44278,6 +44314,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-10"
+ },
+ {
+  "address": "0x0089D6A0",
+  "name": "rage::audOnStopSound::vf5",
+  "kind": "function",
+  "file": "functions/fn_0089d6a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s490"
  },
  {
   "address": "0x0089D740",
@@ -51523,6 +51568,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s154"
+ },
+ {
+  "address": "0x00924DF0",
+  "name": "input_level_check",
+  "kind": "function",
+  "file": "functions/fn_00924df0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "a-S08"
  },
  {
   "address": "0x00924E50",
@@ -123883,6 +123937,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b57"
+ },
+ {
+  "address": "0x00DB93E0",
+  "name": "UIMusicViewer::vf97",
+  "kind": "function",
+  "file": "functions/fn_00db93e0.rs",
+  "trials": 7000,
+  "checker": "version 6",
+  "lane": "a-Q10"
  },
  {
   "address": "0x00DBAD70",
