@@ -52713,6 +52713,33 @@
   "lane": "r-b171"
  },
  {
+  "address": "0x008F4D00",
+  "name": "input_device_poll",
+  "kind": "function",
+  "file": "functions/fn_008f4d00.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b611"
+ },
+ {
+  "address": "0x008F5300",
+  "name": "key_event_byte_map",
+  "kind": "function",
+  "file": "functions/fn_008f5300.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b611"
+ },
+ {
+  "address": "0x008F5740",
+  "name": "scancode_text_entry",
+  "kind": "function",
+  "file": "functions/fn_008f5740.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b611"
+ },
+ {
   "address": "0x008F66A0",
   "name": "BufferedAscii_Lookup",
   "kind": "function",
@@ -54234,6 +54261,15 @@
   "lane": "r-b211"
  },
  {
+  "address": "0x0092BB50",
+  "name": "cascade_shadow_map_update",
+  "kind": "function",
+  "file": "functions/fn_0092bb50.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b620"
+ },
+ {
   "address": "0x009341F0",
   "name": "alloc_init_slots_a",
   "kind": "function",
@@ -55539,6 +55575,15 @@
   "lane": "r-s132"
  },
  {
+  "address": "0x009466F0",
+  "name": "emit_node_items_and_flag_table",
+  "kind": "function",
+  "file": "functions/fn_009466f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
   "address": "0x009467E0",
   "name": "guarded_object_register",
   "kind": "function",
@@ -56232,6 +56277,15 @@
   "lane": "r-s511"
  },
  {
+  "address": "0x0094E710",
+  "name": "fill_live_records_wide",
+  "kind": "function",
+  "file": "functions/fn_0094e710.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
   "address": "0x0094E7B0",
   "name": "link_child_objects",
   "kind": "function",
@@ -56617,6 +56671,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s133"
+ },
+ {
+  "address": "0x009523A0",
+  "name": "clamp_rows_to_mean",
+  "kind": "function",
+  "file": "functions/fn_009523a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
  },
  {
   "address": "0x00952430",
@@ -62707,6 +62770,60 @@
   "name": "new_input_node_c",
   "kind": "function",
   "file": "functions/fn_009bb4a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
+ },
+ {
+  "address": "0x009BB4D0",
+  "name": "build_input_hook_xor",
+  "kind": "function",
+  "file": "functions/fn_009bb4d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
+ },
+ {
+  "address": "0x009BB550",
+  "name": "init_input_hook_copy",
+  "kind": "function",
+  "file": "functions/fn_009bb550.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
+ },
+ {
+  "address": "0x009BB5F0",
+  "name": "init_input_vec_zero",
+  "kind": "function",
+  "file": "functions/fn_009bb5f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
+ },
+ {
+  "address": "0x009BBA00",
+  "name": "clear_input_state_words",
+  "kind": "function",
+  "file": "functions/fn_009bba00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
+ },
+ {
+  "address": "0x009BBB20",
+  "name": "input_flag_is_set",
+  "kind": "function",
+  "file": "functions/fn_009bbb20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
+ },
+ {
+  "address": "0x009BBB40",
+  "name": "clear_input_slot_flags",
+  "kind": "function",
+  "file": "functions/fn_009bbb40.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s513"
@@ -126862,6 +126979,15 @@
   "trials": 1200,
   "checker": "version 3",
   "lane": "r-b162"
+ },
+ {
+  "address": "0x00D7E550",
+  "name": "gated_check_chain",
+  "kind": "function",
+  "file": "functions/fn_00d7e550.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "a-Q33"
  },
  {
   "address": "0x00D7EF80",
