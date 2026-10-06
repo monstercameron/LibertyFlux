@@ -1,5 +1,5 @@
 // original: 0x009fb680 net_session_create (proposed)
-
+use lf_checker_rt::{callee_cdecl, callee_stdcall, callee_thiscall, callee_fastcall, export, global, relocated};
 /// Create a network session object from seven parameters and register it.
 ///
 /// Takes seven cdecl stack arguments (`arg0`..`arg6`), all passed through as
@@ -14,7 +14,8 @@
 /// `CFG_LEN`). Otherwise callee 1 retests `arg3`: a nonzero answer resolves
 /// through callee 2 and converts through callee 3 (cdecl, two buffers and
 /// `CFG_LEN`), a zero answer resolves through callee 4 and converts through
-/// callee 5. Callee 7 then validates a scratch buffer (cdecl, one pointer);
+/// callee 5. Both converts take the resolver answer in the second buffer's
+/// first word (one shared frame slot); it is snapshotted on callee 3. Callee 7 then validates a scratch buffer (cdecl, one pointer);
 /// a zero answer clears the result word. Callee 10 builds the session handle
 /// (thiscall) from a descriptor whose tag word is `DESC_TAG`, with callee 8,
 /// 9, 11 and 12 preparing and checking the descriptor (thiscall/cdecl,
@@ -67,6 +68,9 @@ lf_checker_rt::export!(
                 let gate1: u32 = lf_checker_rt::callee_thiscall!(1, u32, arg3);
                 if gate1 & 0xFF != 0 {
                     first_word = lf_checker_rt::callee_thiscall!(2, u32, arg3);
+                    // The original stores the resolver answer into the
+                    // second buffer's first word before converting.
+                    cfg_b[0] = first_word;
                     let _: u32 = lf_checker_rt::callee_cdecl!(
                         3,
                         u32,
@@ -76,6 +80,8 @@ lf_checker_rt::export!(
                     );
                 } else {
                     first_word = lf_checker_rt::callee_thiscall!(4, u32, arg3);
+                    // Same shared slot on the sibling path.
+                    cfg_b[0] = first_word;
                     let _: u32 = lf_checker_rt::callee_cdecl!(
                         5,
                         u32,

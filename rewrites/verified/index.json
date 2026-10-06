@@ -67838,8 +67838,8 @@
   "kind": "function",
   "file": "functions/fn_009fb680.rs",
   "trials": 1200,
-  "checker": "version 4",
-  "lane": "r-b312"
+  "checker": "version 6",
+  "lane": "a-S11"
  },
  {
   "address": "0x009FB860",
@@ -72880,6 +72880,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b167"
+ },
+ {
+  "address": "0x00A65600",
+  "name": "validate_aim_row",
+  "kind": "function",
+  "file": "functions/fn_00a65600.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-S10"
  },
  {
   "address": "0x00A6D3A0",
@@ -118242,6 +118251,15 @@
   "lane": "r-b628"
  },
  {
+  "address": "0x00C95620",
+  "name": "task_target_solve",
+  "kind": "function",
+  "file": "functions/fn_00c95620.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b628"
+ },
+ {
   "address": "0x00C95C50",
   "name": "sphere_contact_point",
   "kind": "function",
@@ -124011,6 +124029,15 @@
   "lane": "r-s352"
  },
  {
+  "address": "0x00D27210",
+  "name": "ped_attack_aim_update",
+  "kind": "function",
+  "file": "functions/fn_00d27210.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b626"
+ },
+ {
   "address": "0x00D27D10",
   "name": "ped_targetting_construct",
   "kind": "function",
@@ -124846,6 +124873,15 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "a-S09"
+ },
+ {
+  "address": "0x00D3C4E0",
+  "name": "dummytask_helper_b",
+  "kind": "function",
+  "file": "functions/fn_00d3c4e0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "a-S10"
  },
  {
   "address": "0x00D3C860",
@@ -127386,6 +127422,15 @@
   "lane": "r-b175"
  },
  {
+  "address": "0x00D77050",
+  "name": "CRenderPhaseRainUpdate::vf7",
+  "kind": "function",
+  "file": "functions/fn_00d77050.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
   "address": "0x00D77130",
   "name": "CRenderPhaseWaterSurface::vf7",
   "kind": "function",
@@ -128626,6 +128671,15 @@
   "trials": 1100,
   "checker": "version 2",
   "lane": "r-b43"
+ },
+ {
+  "address": "0x00D916C0",
+  "name": "audio_zone_update_walk",
+  "kind": "function",
+  "file": "functions/fn_00d916c0.rs",
+  "trials": 1100,
+  "checker": "version 6",
+  "lane": "a-S10"
  },
  {
   "address": "0x00D92000",
@@ -132757,6 +132811,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b199"
+ },
+ {
+  "address": "0x00E48410",
+  "name": "UIBenchMark::vf82",
+  "kind": "function",
+  "file": "functions/fn_00e48410.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-S10"
  },
  {
   "address": "0x00E488A0",
