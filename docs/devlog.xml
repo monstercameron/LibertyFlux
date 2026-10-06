@@ -9,6 +9,32 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>lifting the interface font string</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls13"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls13</id>
+    <published>2026-10-06T00:00:00Z</published>
+    <updated>2026-10-06T00:00:00Z</updated>
+    <summary>6 October 2026 — Lane l-cls13 lifted the user-interface string class that measures and draws one line of text in a font: 18 verified methods restated as ordinary Rust on one owning type, each proven against its verified 32-bit rewrite on the same generated inputs, comparing results, every written byte and every collaborator call in order, floats bit for bit, with a deliberately wrong lift caught for each. 13 differential tests and 21 host tests pass. Nothing here counts as checker-verified; the lifts are proven against verified rewrites only.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;time datetime="2026-10-06"&gt;6 October 2026&lt;/time&gt; — Lane l-cls13 lifted the user-interface string class that measures and draws one line of text in a font: 18 verified methods restated as ordinary Rust on one owning type, each proven against its verified 32-bit rewrite on the same generated inputs, comparing results, every written byte and every collaborator call in order, floats bit for bit, with a deliberately wrong lift caught for each. 13 differential tests and 21 host tests pass. Nothing here counts as checker-verified; the lifts are proven against verified rewrites only.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Turn the family's verified 32-bit rewrites — raw addresses, numbered callee slots, globals — into a portable type that owns its data, with every behaviour-carrying method restated and proven, following the sibling clip module's world-trait pattern.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;table&gt;
+&lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;What it means&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Object shape&lt;/td&gt;&lt;td data-label="Value"&gt;Live layout words, six flag bytes, a 256-byte text buffer, one row descriptor per indexed slot&lt;/td&gt;&lt;td data-label="What it means"&gt;The lifted type owns all of it; rows are a vector of descriptors with their own text&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Backend notify shape&lt;/td&gt;&lt;td data-label="Value"&gt;One four-word call shape shared by four setters&lt;/td&gt;&lt;td data-label="What it means"&gt;One trait method serves all four call sites&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Style rule&lt;/td&gt;&lt;td data-label="Value"&gt;Draw mode with an unstyled string forces style two, else the stored tag&lt;/td&gt;&lt;td data-label="What it means"&gt;One rule restated once, used by the emitter and the measure pass&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Text resolution&lt;/td&gt;&lt;td data-label="Value"&gt;Scratch converter or shared cache, eight words either way&lt;/td&gt;&lt;td data-label="What it means"&gt;Two world methods answering word arrays; addresses never cross the trait&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Float answers&lt;/td&gt;&lt;td data-label="Value"&gt;Hook answers arrive through float-stack returns, which quiet signalling NaNs&lt;/td&gt;&lt;td data-label="What it means"&gt;The proof fake reproduces the quieting as bit operations; the lift stays pure&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Text setter proof&lt;/td&gt;&lt;td data-label="Value"&gt;Its copier is proven under a non-writing stub&lt;/td&gt;&lt;td data-label="What it means"&gt;The lift models the forced terminator only; the copy is the world's work&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Operating-system calls&lt;/td&gt;&lt;td data-label="Value"&gt;None in the family&lt;/td&gt;&lt;td data-label="What it means"&gt;Nothing goes behind the platform traits&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;h3&gt;What was decided&lt;/h3&gt;
+&lt;p&gt;Globals travel as method arguments (slot selector, interface mode bytes, scale triple, display extents, default float); the shared cache needs no handle because it is a single global object; the deleting destructor is left to Drop; the two tiny unverified methods are listed as missing and not written from their names. Verified: the differential proof compares every call in order with its arguments on both sides. Inferred: the four flag bytes no verified method reads are stored state whose role is unestablished. Unknown: nothing reached by a lifted method.&lt;/p&gt;
+&lt;h3&gt;How to reproduce&lt;/h3&gt;
+&lt;p&gt;From the lane scratch folder: host tests run in the scratch workspace, and the proof crate runs its three differential suites on the 32-bit Windows target while also building on the 64-bit host with all targets checked. The proof includes the tracked rewrite files by path and scripts every callee and slot answer.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>6 October 2026 The one-byte answer channel leaves log residue in the high bytes</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#2026-10-06-al-residue"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#2026-10-06-al-residue</id>
@@ -1146,27 +1172,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;h3&gt;What is still the owner's decision&lt;/h3&gt;
 &lt;p&gt;Restarting the vendor's service (or the machine) to release the handles. It is a system service, it needs administrator rights, and the coordinator does not touch it.&lt;/p&gt;
 &lt;p&gt;To reproduce the handle census: ask the system for every open handle with the object type of each, group by owning process, and look for a process whose thread handles outnumber the machine's live threads many times over.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a mixed batch through vtable slots and twin diffs</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-111"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-111</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>A batch of one hundred and fifty consecutive functions covering rain effects, vehicle audio and vehicle code yielded eighty-four names, with vtable slot joins doing most of the work.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of one hundred and fifty consecutive functions covering rain effects, vehicle audio and vehicle code yielded eighty-four names, with vtable slot joins doing most of the work.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose descriptive names for a consecutive run of unnamed functions, with a confidence per name, working from strings, callers, callees and class information rather than reading every function.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The run splits into rain particle effects code, boat audio code, a materials data loader, train and cable car audio code, radio emitter slots and vehicle class slots, plus thirty-three labels that are not functions.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Dumping the vehicle and audio vtables from the binary and joining slot numbers with already-named sibling overrides named most vehicle slots, including shared base-class implementations used by several classes at once.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two pairs of near-identical neighbours differ only in where they take an entity from, so one variant serves an external tick and the other an in-update call.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; About a fifth of the batch are size-zero inventory labels pointing at mid-function code, jump targets or epilogues; one listed size swallowed four following functions.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Later naming lanes should join vtable slots against prior lane names first, diff near-identical neighbours before reading them, and verify inventory sizes against the first return instruction.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Read code through the mapped executable image, build one evidence table of strings, calls and callers for the whole batch, dump the relevant class vtables and match slot numbers to named siblings, then disassemble only the short and unclear functions fully.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Three functions funnel into encrypted code so their behaviour stays hidden, and a family of handling float-math helpers was left unnamed because the exact outputs could not be pinned down. Nearest-name caller matches beyond a few dozen bytes proved unreliable and were used only as supporting hints.&lt;/p&gt;</content>
   </entry>
 </feed>
