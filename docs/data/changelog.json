@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Lift: 27 more object-pool routines, 59 of the group now portable",
+    "title": "Devlog: Running the skipped pointers that could not be read",
     "commit": null,
+    "summary": "Findings from the a-S13 lane.",
+    "changes": [
+      "New devlog entry: Running the skipped pointers that could not be read.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Lift: 27 more object-pool routines, 59 of the group now portable",
+    "commit": "e4ea039ca6e9d8ce6380abd4d5f0cba15d4a766f",
     "summary": "The pools module grows from 32 lifted routines to 59: the fixed tables, the resets and pairs, the handle and row readers, and the wide vector with its allocators. 20 new methods on 14 types, each proven against the verified rewrites.",
     "changes": [
       "crates/lf-world/src/pools gains six files. Five of the new methods are generic over several instances of one routine and are proven once per instance; seven registering allocators turned out to be three routines by a hash of their bodies. Host tests in the crate go from 69 to 98.",
