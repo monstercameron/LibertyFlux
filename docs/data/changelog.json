@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Devlog: hourly review, 00:05 on 6 October",
+    "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "16,048 functions verified, 28.6% of the code by size; 56,000 bytes in the hour with 28 lanes. 141 methods are lifted with their proof in the pipeline.",
+      "The emulator the proofs run under was measured against a real x86 processor: 24 of 269 float instruction probes give different results, and 85 of the game's 38,381 functions use the instructions involved. Two more wrong rewrites were found by stronger contracts; 2,992 proofs skip an argument and observe nothing in its place."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 32 files from lanes (252 unverified rewrites, 562 in review)",
     "commit": "3b076a7d2813e4690fdc3cb1da7287ec5ba9268f",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
