@@ -1,0 +1,50 @@
+// original: 0x008f80b0 input_poll_gate (proposed)
+
+/// Poll the sampler unless both gate bytes are clear.
+///
+/// The entry ECX is threaded into the sync callee (thiscall, no stack
+/// words). A fixed object then runs the broadcast callee, the flag callee
+/// runs with 0, and the query callee runs with the fixed object; between
+/// them the global flag byte is set to 1 and cleared again. Two global gate
+/// bytes are read: when both are zero the function returns the query
+/// answer with its low byte replaced by the second gate byte (the original
+/// loads the byte into AL after the call). Otherwise the global float is
+/// staged to scratch and the first
+/// float callee runs with (0, 0) and then with the two gate bytes read
+/// back as words (zero-extended under the checker's zero stack fill),
+/// and the second float callee runs with the float bits; its answer is
+/// returned.
+///
+/// Thiscall: thread-through ECX, no stack words. The contract fills
+/// unwritten scratch with zero, matching the original's reads of it.
+lf_checker_rt::export!(thiscall, rw_008f80b0(this: u32) -> u32 {
+    unsafe {
+        const C_SYNC: u32 = 1;
+        const C_BCAST: u32 = 2;
+        const C_FLAG: u32 = 3;
+        const C_QUERY: u32 = 4;
+        const C_F2: u32 = 5;
+        const C_F1: u32 = 6;
+        const G_FLAG: u32 = 0x118dc60;
+        const FIXED_OBJ: u32 = 0x118d7f0;
+        const G_GATES: u32 = 0x18b6ed4;
+        const G_FLOAT: u32 = 0x106c31c;
+        ((lf_checker_rt::global::<u8>(G_FLAG)) as *mut u8).write(1);
+        let _: u32 = lf_checker_rt::callee_thiscall!(C_SYNC, u32, this);
+        let fixed = lf_checker_rt::relocated(FIXED_OBJ);
+        let _: u32 = lf_checker_rt::callee_thiscall!(C_BCAST, u32, fixed);
+        let _: u32 = lf_checker_rt::callee_cdecl!(C_FLAG, u32, 0);
+        ((lf_checker_rt::global::<u8>(G_FLAG)) as *mut u8).write(0);
+        let r4: u32 = lf_checker_rt::callee_thiscall!(C_QUERY, u32, fixed);
+        let gates = (lf_checker_rt::global::<u32>(G_GATES)).read_unaligned();
+        let clo = (gates & 0xff) as u8;
+        let ahi = ((gates >> 16) & 0xff) as u8;
+        if ahi == 0 && clo == 0 {
+            return (r4 & 0xffff_ff00) | ahi as u32;
+        }
+        let f = (lf_checker_rt::global::<u32>(G_FLOAT)).read_unaligned();
+        let _: u32 = lf_checker_rt::callee_cdecl!(C_F2, u32, 0, 0);
+        let _: u32 = lf_checker_rt::callee_cdecl!(C_F2, u32, ahi as u32, clo as u32);
+        lf_checker_rt::callee_cdecl!(C_F1, u32, f)
+    }
+});

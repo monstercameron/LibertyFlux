@@ -35541,6 +35541,15 @@
   "lane": "r-s396"
  },
  {
+  "address": "0x00620FF0",
+  "name": "net_record_copy_32 (proposed)",
+  "kind": "function",
+  "file": "functions/fn_00620ff0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b641"
+ },
+ {
   "address": "0x00621120",
   "name": "net_session_copy_id_pairs",
   "kind": "function",
@@ -35638,6 +35647,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s206"
+ },
+ {
+  "address": "0x006228E0",
+  "name": "net_handler_228e0 (proposed)",
+  "kind": "function",
+  "file": "functions/fn_006228e0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b641"
  },
  {
   "address": "0x00622B90",
@@ -53532,6 +53550,15 @@
   "lane": "r-s504"
  },
  {
+  "address": "0x008F76C0",
+  "name": "input_axis_blend3",
+  "kind": "function",
+  "file": "functions/fn_008f76c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
   "address": "0x008F77A0",
   "name": "input_list_collect_flagged",
   "kind": "function",
@@ -53586,6 +53613,15 @@
   "lane": "r-s521"
  },
  {
+  "address": "0x008F7C70",
+  "name": "input_list_refresh",
+  "kind": "function",
+  "file": "functions/fn_008f7c70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
   "address": "0x008F7D00",
   "name": "input_list_update_flags",
   "kind": "function",
@@ -53613,10 +53649,46 @@
   "lane": "r-s521"
  },
  {
+  "address": "0x008F7F00",
+  "name": "input_device_attach",
+  "kind": "function",
+  "file": "functions/fn_008f7f00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F7FD0",
+  "name": "input_backend_init",
+  "kind": "function",
+  "file": "functions/fn_008f7fd0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
   "address": "0x008F8010",
   "name": "input_list_clear",
   "kind": "function",
   "file": "functions/fn_008f8010.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F80B0",
+  "name": "input_poll_gate",
+  "kind": "function",
+  "file": "functions/fn_008f80b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F8140",
+  "name": "input_sampler_update",
+  "kind": "function",
+  "file": "functions/fn_008f8140.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s521"
@@ -54027,6 +54099,15 @@
   "lane": "r-s476"
  },
  {
+  "address": "0x008FCAD0",
+  "name": "input_event_append",
+  "kind": "function",
+  "file": "functions/fn_008fcad0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
   "address": "0x00900AB0",
   "name": "ui_pending_action_step",
   "kind": "function",
@@ -54034,6 +54115,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b256"
+ },
+ {
+  "address": "0x00900C30",
+  "name": "input_compact_entries",
+  "kind": "function",
+  "file": "functions/fn_00900c30.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "r-s522"
  },
  {
   "address": "0x00900C80",
@@ -54072,6 +54162,24 @@
   "lane": "r-b256"
  },
  {
+  "address": "0x00901150",
+  "name": "input_index_in_range",
+  "kind": "function",
+  "file": "functions/fn_00901150.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "r-s522"
+ },
+ {
+  "address": "0x00901190",
+  "name": "input_handle_alloc_id",
+  "kind": "function",
+  "file": "functions/fn_00901190.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "r-s522"
+ },
+ {
   "address": "0x009011E0",
   "name": "range_curve_blend",
   "kind": "function",
@@ -54099,6 +54207,15 @@
   "lane": "a-F05"
  },
  {
+  "address": "0x009014F0",
+  "name": "input_handle_lookup",
+  "kind": "function",
+  "file": "functions/fn_009014f0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "r-s522"
+ },
+ {
   "address": "0x00901520",
   "name": "project_and_clamp_point",
   "kind": "function",
@@ -54106,6 +54223,15 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b618"
+ },
+ {
+  "address": "0x009017E0",
+  "name": "input_slot_alloc",
+  "kind": "function",
+  "file": "functions/fn_009017e0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "r-s522"
  },
  {
   "address": "0x00901830",
@@ -54180,6 +54306,24 @@
   "lane": "r-b624"
  },
  {
+  "address": "0x00904990",
+  "name": "input_slot_flag_byte",
+  "kind": "function",
+  "file": "functions/fn_00904990.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "r-s522"
+ },
+ {
+  "address": "0x009049C0",
+  "name": "input_slot_mode_word",
+  "kind": "function",
+  "file": "functions/fn_009049c0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "r-s522"
+ },
+ {
   "address": "0x00904A40",
   "name": "ui_binding_lookup",
   "kind": "function",
@@ -54223,6 +54367,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b250"
+ },
+ {
+  "address": "0x009057B0",
+  "name": "input_ready_check",
+  "kind": "function",
+  "file": "functions/fn_009057b0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "r-s522"
  },
  {
   "address": "0x009057F0",
@@ -54441,6 +54594,15 @@
   "lane": "a-08"
  },
  {
+  "address": "0x00908E70",
+  "name": "input_store_two_floats",
+  "kind": "function",
+  "file": "functions/fn_00908e70.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "r-s522"
+ },
+ {
   "address": "0x00908E90",
   "name": "BLIP_PICK",
   "kind": "function",
@@ -54502,6 +54664,42 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-08"
+ },
+ {
+  "address": "0x0090A280",
+  "name": "font_counter_init",
+  "kind": "function",
+  "file": "functions/fn_0090a280.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "r-s522"
+ },
+ {
+  "address": "0x0090A2A0",
+  "name": "font_range_init",
+  "kind": "function",
+  "file": "functions/fn_0090a2a0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "r-s522"
+ },
+ {
+  "address": "0x0090A2C0",
+  "name": "font_range_extend_max",
+  "kind": "function",
+  "file": "functions/fn_0090a2c0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "r-s522"
+ },
+ {
+  "address": "0x0090A340",
+  "name": "font_counter_delete_flag",
+  "kind": "function",
+  "file": "functions/fn_0090a340.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "r-s522"
  },
  {
   "address": "0x0090A490",
