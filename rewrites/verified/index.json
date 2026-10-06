@@ -38061,6 +38061,15 @@
   "lane": "r-b572"
  },
  {
+  "address": "0x00697130",
+  "name": "comp_group_teardown",
+  "kind": "function",
+  "file": "functions/fn_00697130.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s497"
+ },
+ {
   "address": "0x00697200",
   "name": "pool_lookup_build_a",
   "kind": "function",
@@ -38092,6 +38101,24 @@
   "name": "weight_probe_setup",
   "kind": "function",
   "file": "functions/fn_00697750.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s497"
+ },
+ {
+  "address": "0x00697780",
+  "name": "pool_lookup_build_indirect",
+  "kind": "function",
+  "file": "functions/fn_00697780.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s497"
+ },
+ {
+  "address": "0x00697840",
+  "name": "pool_init32",
+  "kind": "function",
+  "file": "functions/fn_00697840.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s497"
@@ -42345,10 +42372,28 @@
   "lane": "r-s175"
  },
  {
+  "address": "0x0087BF50",
+  "name": "rage::crmtNodeProxy::vf1",
+  "kind": "function",
+  "file": "functions/fn_0087bf50.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
   "address": "0x0087BFE0",
   "name": "crmt_node_base_init",
   "kind": "function",
   "file": "functions/fn_0087bfe0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
+  "address": "0x0087C040",
+  "name": "rage::crmtNodePair::vf1",
+  "kind": "function",
+  "file": "functions/fn_0087c040.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s501"
@@ -42363,6 +42408,33 @@
   "lane": "r-s501"
  },
  {
+  "address": "0x0087C0C0",
+  "name": "rage::crmtNodeBlend::vf0",
+  "kind": "function",
+  "file": "functions/fn_0087c0c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
+  "address": "0x0087C100",
+  "name": "crmt_node_alloc_init",
+  "kind": "function",
+  "file": "functions/fn_0087c100.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
+  "address": "0x0087C170",
+  "name": "crmt_node_reinit",
+  "kind": "function",
+  "file": "functions/fn_0087c170.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
   "address": "0x0087C190",
   "name": "crmt_node_set_vtable",
   "kind": "function",
@@ -42372,10 +42444,37 @@
   "lane": "r-s501"
  },
  {
+  "address": "0x0087C340",
+  "name": "rage::crmtNodeBlend::vf5",
+  "kind": "function",
+  "file": "functions/fn_0087c340.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
   "address": "0x0087C3A0",
   "name": "rage::crmtNodeBlend::vf14",
   "kind": "function",
   "file": "functions/fn_0087c3a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
+  "address": "0x0087C3D0",
+  "name": "rage::crmtUpdater::vf3",
+  "kind": "function",
+  "file": "functions/fn_0087c3d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
+  "address": "0x0087C4F0",
+  "name": "crmt_buffer_assign",
+  "kind": "function",
+  "file": "functions/fn_0087c4f0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s501"
@@ -55600,6 +55699,51 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b135"
+ },
+ {
+  "address": "0x00955910",
+  "name": "emit_pool_entry_0",
+  "kind": "function",
+  "file": "functions/fn_00955910.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
+  "address": "0x009559D0",
+  "name": "emit_pool_entry_1",
+  "kind": "function",
+  "file": "functions/fn_009559d0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
+  "address": "0x00955A90",
+  "name": "emit_pool_entry_2",
+  "kind": "function",
+  "file": "functions/fn_00955a90.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
+  "address": "0x00955B50",
+  "name": "emit_pool_entry_3",
+  "kind": "function",
+  "file": "functions/fn_00955b50.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
+  "address": "0x00955C10",
+  "name": "emit_pool_entry_4",
+  "kind": "function",
+  "file": "functions/fn_00955c10.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
  },
  {
   "address": "0x00956910",
@@ -113758,6 +113902,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b04"
+ },
+ {
+  "address": "0x00C6EE40",
+  "name": "parse_driveby_flags",
+  "kind": "function",
+  "file": "functions/fn_00c6ee40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q21"
  },
  {
   "address": "0x00C723B0",
