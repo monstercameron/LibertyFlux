@@ -35820,6 +35820,15 @@
   "lane": "r-b632"
  },
  {
+  "address": "0x00628C80",
+  "name": "transform_box_minmax",
+  "kind": "function",
+  "file": "functions/fn_00628c80.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b632"
+ },
+ {
   "address": "0x00629010",
   "name": "tls_guarded_float_update",
   "kind": "function",
@@ -65320,6 +65329,150 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s483"
+ },
+ {
+  "address": "0x009DB6C0",
+  "name": "CBaseModelInfo::vf0",
+  "kind": "function",
+  "file": "functions/fn_009db6c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s519"
+ },
+ {
+  "address": "0x009DB720",
+  "name": "CBuoyancyAttr::vf0",
+  "kind": "function",
+  "file": "functions/fn_009db720.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s519"
+ },
+ {
+  "address": "0x009DB780",
+  "name": "CEscalatorAttr::vf0",
+  "kind": "function",
+  "file": "functions/fn_009db780.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s519"
+ },
+ {
+  "address": "0x009DB7E0",
+  "name": "CExplosionAttr::vf0",
+  "kind": "function",
+  "file": "functions/fn_009db7e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s519"
+ },
+ {
+  "address": "0x009DB840",
+  "name": "CInstanceModelInfo::vf0",
+  "kind": "function",
+  "file": "functions/fn_009db840.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s519"
+ },
+ {
+  "address": "0x009DB8A0",
+  "name": "CLightAttr::vf0",
+  "kind": "function",
+  "file": "functions/fn_009db8a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s519"
+ },
+ {
+  "address": "0x009DB900",
+  "name": "CLightShaftAttr::vf0",
+  "kind": "function",
+  "file": "functions/fn_009db900.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s519"
+ },
+ {
+  "address": "0x009DB960",
+  "name": "CMloModelInfo::vf0",
+  "kind": "function",
+  "file": "functions/fn_009db960.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s519"
+ },
+ {
+  "address": "0x009DB9C0",
+  "name": "CPedModelInfo::vf0",
+  "kind": "function",
+  "file": "functions/fn_009db9c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s519"
+ },
+ {
+  "address": "0x009DBA20",
+  "name": "CParticleAttr::vf0",
+  "kind": "function",
+  "file": "functions/fn_009dba20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s519"
+ },
+ {
+  "address": "0x009DBA80",
+  "name": "CScrollBar::vf0",
+  "kind": "function",
+  "file": "functions/fn_009dba80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s519"
+ },
+ {
+  "address": "0x009DBAE0",
+  "name": "CSpawnPoint::vf0",
+  "kind": "function",
+  "file": "functions/fn_009dbae0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s519"
+ },
+ {
+  "address": "0x009DBB40",
+  "name": "CVehicleModelInfo::vf0",
+  "kind": "function",
+  "file": "functions/fn_009dbb40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s519"
+ },
+ {
+  "address": "0x009DBBC0",
+  "name": "CWalkDontWalkAttr::~CWalkDontWalkAttr__deleting",
+  "kind": "function",
+  "file": "functions/fn_009dbbc0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s519"
+ },
+ {
+  "address": "0x009DBC20",
+  "name": "CWorldPointAttr::~CWorldPointAttr__deleting",
+  "kind": "function",
+  "file": "functions/fn_009dbc20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s519"
+ },
+ {
+  "address": "0x009DBC80",
+  "name": "C2dEffect::~C2dEffect__deleting",
+  "kind": "function",
+  "file": "functions/fn_009dbc80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s519"
  },
  {
   "address": "0x009DBCA0",
@@ -119385,6 +119538,15 @@
   "lane": "r-s362"
  },
  {
+  "address": "0x00CAA6E0",
+  "name": "CEventHandler::update",
+  "kind": "function",
+  "file": "functions/fn_00caa6e0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b634"
+ },
+ {
   "address": "0x00CAAB30",
   "name": "ped_pair_ready",
   "kind": "function",
@@ -130806,6 +130968,15 @@
   "lane": "r-s518"
  },
  {
+  "address": "0x00DCF080",
+  "name": "csv_rect_hit_test",
+  "kind": "function",
+  "file": "functions/fn_00dcf080.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
+ },
+ {
   "address": "0x00DCF180",
   "name": "csv_at_end",
   "kind": "function",
@@ -130833,10 +131004,37 @@
   "lane": "r-s518"
  },
  {
+  "address": "0x00DCF2C0",
+  "name": "csv_read_float",
+  "kind": "function",
+  "file": "functions/fn_00dcf2c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
+ },
+ {
+  "address": "0x00DCF320",
+  "name": "csv_read_two_ints",
+  "kind": "function",
+  "file": "functions/fn_00dcf320.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
+ },
+ {
   "address": "0x00DCF3A0",
   "name": "csv_read_quoted_token",
   "kind": "function",
   "file": "functions/fn_00dcf3a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
+ },
+ {
+  "address": "0x00DCF430",
+  "name": "csv_read_int",
+  "kind": "function",
+  "file": "functions/fn_00dcf430.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s518"
@@ -130860,10 +131058,28 @@
   "lane": "r-s518"
  },
  {
+  "address": "0x00DCF520",
+  "name": "csv_open",
+  "kind": "function",
+  "file": "functions/fn_00dcf520.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
+ },
+ {
   "address": "0x00DCF5B0",
   "name": "csv_skip_records",
   "kind": "function",
   "file": "functions/fn_00dcf5b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
+ },
+ {
+  "address": "0x00DCF7D0",
+  "name": "ui_view_set_child",
+  "kind": "function",
+  "file": "functions/fn_00dcf7d0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s518"
@@ -130894,6 +131110,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b187"
+ },
+ {
+  "address": "0x00DCFD90",
+  "name": "rb_tree_find",
+  "kind": "function",
+  "file": "functions/fn_00dcfd90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
  },
  {
   "address": "0x00DCFEB0",
