@@ -9,6 +9,37 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>6 October 2026 The one-byte answer channel leaves log residue in the high bytes</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#2026-10-06-al-residue"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#2026-10-06-al-residue</id>
+    <published>2026-10-06T00:00:00Z</published>
+    <updated>2026-10-06T00:00:00Z</updated>
+    <summary>Asked: a staged rewrite exited through the shared epilogue after a callee with an al answer, and the exit value mismatch showed high bytes matching neither zero nor the previous call's answer. Both sides agreed with each other on every other channel.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Asked: a staged rewrite exited through the shared epilogue after a
+callee with an &lt;code&gt;al&lt;/code&gt; answer, and the exit value mismatch showed high
+bytes matching neither zero nor the previous call's answer. Both sides agreed
+with each other on every other channel.&lt;/p&gt;
+&lt;table&gt;
+&lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;What it means&lt;/th&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Stub code for the &lt;code&gt;al&lt;/code&gt; channel&lt;/td&gt;&lt;td data-label="Value"&gt;masks the low byte in over the live register&lt;/td&gt;&lt;td data-label="What it means"&gt;The live register at that point holds the call-log slot pointer, not the entry value: high bytes are log residue by construction (the source calls it residue semantics).&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Log index reset&lt;/td&gt;&lt;td data-label="Value"&gt;per side, before each side's trials&lt;/td&gt;&lt;td data-label="What it means"&gt;Both sides compute the same residue whenever they make the same calls in the same order, so the value is comparable.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Observed exit high bytes&lt;/td&gt;&lt;td data-label="Value"&gt;equal on both sides, nonzero, stable per trial&lt;/td&gt;&lt;td data-label="What it means"&gt;Confirmed empirically: reading the full register after the call and returning it untouched passes; assuming zero or entry-preserved high bytes fails.&lt;/td&gt;&lt;/tr&gt;
+&lt;/table&gt;
+&lt;p&gt;Decided: after an &lt;code&gt;al&lt;/code&gt; callee, rewrites read the full 32-bit
+register and propagate it exactly like any scripted answer; the residue is
+part of the stub's deterministic answer, and under the real callee both
+sides would propagate its real high bytes the same way. Lane briefs should
+say this explicitly: never assume the high bytes are zero or preserved.&lt;/p&gt;
+&lt;p&gt;Reproduce: any contract where an exit value depends on full eax after an
+&lt;code&gt;al&lt;/code&gt; call; compare returning the masked low byte against returning
+the full register. Verified on the stock worker.&lt;/p&gt;
+&lt;p&gt;Same session, second finding: image-base immediates passed as call
+arguments must go through the relocated-address helper, never as raw
+literals — the worker maps the image elsewhere and the comparison sees the
+relocated value. A mismatch that names only one register argument with
+otherwise identical logs is the signature.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming the combat tasks: slot map, two new virtuals, and an RTTI trick</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-124"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-124</id>
@@ -1136,27 +1167,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Read code through the mapped executable image, build one evidence table of strings, calls and callers for the whole batch, dump the relevant class vtables and match slot numbers to named siblings, then disassemble only the short and unclear functions fully.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;Three functions funnel into encrypted code so their behaviour stays hidden, and a family of handling float-math helpers was left unnamed because the exact outputs could not be pinned down. Nearest-name caller matches beyond a few dozen bytes proved unreliable and were used only as supporting hints.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A dead scan loop and a vector-register gap on the peds-tasks batch</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b525"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b525</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>Three of five task-system functions were rewritten in Rust and verified bit-exact over a thousand trials each; the other two were deferred with precise missing checker abilities, and one verified function turned out to contain a scan loop that can never find anything.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Three of five task-system functions were rewritten in Rust and verified bit-exact over a thousand trials each; the other two were deferred with precise missing checker abilities, and one verified function turned out to contain a scan loop that can never find anything.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite five neighbouring task-system functions in Rust and prove each rewrite behaves identically to the original through the project's checker, with a deliberately wrong version per function that must fail.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three functions passed a thousand trials each with exact float matches and full branch coverage, and every wrong version was caught.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One function's ten-slot result scan is dead code in the original: the slots are zeroed by the function's own stores and no callee receives a pointer to them, so the two inner probe calls can never run. They stay declared and intercepted but exempt from coverage.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One function passes double-precision arguments in vector registers, which the checker cannot transport: the rewrite side moves one word per register while the comparison checks all four. Only all-zero doubles could match, so it was deferred rather than narrowed into a vacuous proof.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One function's main loop is unreachable under call interception: the function zeroes its own loop count and only an intercepted callee could set it back, which stubs cannot do for absolute globals. Only the empty-table path runs, and that alone was not claimed as a proof.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;The three passing rewrites were recorded as verified with their narrowings stated. The two deferred functions each got a retry kit naming the exact missing ability: a two-word vector-register transport, and stub writes to absolute globals. A wrong frame-map computation that cost a full attempt is recorded as a caution to re-derive stack layouts from the push and store order.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Each verified function ships its contract and verdict files; rerunning the checker driver on any contract reproduces the thousand-trial proof and the wrong-version failure.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;A single stack-arithmetic slip placed a block of zero stores eighteen hex digits from its true location, which simultaneously misidentified the scan contents, the tail index, and the fill model. The probe failures contradicted the model on all three points at once, and re-deriving the frame map from the instruction order fixed all three together.&lt;/p&gt;</content>
   </entry>
 </feed>
