@@ -36036,10 +36036,64 @@
   "lane": "r-b151"
  },
  {
+  "address": "0x0065AF00",
+  "name": "shader_bind_pass_arrays",
+  "kind": "function",
+  "file": "functions/fn_0065af00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065AF60",
+  "name": "shader_bind_single_pass",
+  "kind": "function",
+  "file": "functions/fn_0065af60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
   "address": "0x0065B040",
   "name": "shader_pass_copy",
   "kind": "function",
   "file": "functions/fn_0065b040.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B0D0",
+  "name": "shader_register_named_pass",
+  "kind": "function",
+  "file": "functions/fn_0065b0d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B170",
+  "name": "tls_free_entry_array",
+  "kind": "function",
+  "file": "functions/fn_0065b170.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B1D0",
+  "name": "tls_alloc_pass_block",
+  "kind": "function",
+  "file": "functions/fn_0065b1d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B240",
+  "name": "pass_count_or_alloc",
+  "kind": "function",
+  "file": "functions/fn_0065b240.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s500"
@@ -36063,10 +36117,28 @@
   "lane": "r-s500"
  },
  {
+  "address": "0x0065B320",
+  "name": "tls_alloc_entry_array",
+  "kind": "function",
+  "file": "functions/fn_0065b320.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
   "address": "0x0065B380",
   "name": "shader_zero_9_groups",
   "kind": "function",
   "file": "functions/fn_0065b380.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B450",
+  "name": "atmospheric_scattering_ctor",
+  "kind": "function",
+  "file": "functions/fn_0065b450.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s500"
@@ -36126,6 +36198,15 @@
   "lane": "r-s500"
  },
  {
+  "address": "0x0065B690",
+  "name": "fog_control_ctor",
+  "kind": "function",
+  "file": "functions/fn_0065b690.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
   "address": "0x0065B720",
   "name": "rage::FogControl::vf5",
   "kind": "function",
@@ -36166,6 +36247,15 @@
   "name": "rage::WaterFogControl::vf3",
   "kind": "function",
   "file": "functions/fn_0065b9b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065BA20",
+  "name": "rage::EnviromentDomeLighting::EnviromentDomeVarCache::vf0",
+  "kind": "function",
+  "file": "functions/fn_0065ba20.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s500"
@@ -39994,6 +40084,15 @@
   "trials": 1400,
   "checker": "version 5",
   "lane": "r-b381"
+ },
+ {
+  "address": "0x006F8720",
+  "name": "ros_cloud_file_changed",
+  "kind": "function",
+  "file": "functions/fn_006f8720.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "a-Q22"
  },
  {
   "address": "0x0086E870",
@@ -55584,6 +55683,15 @@
   "lane": "r-s499"
  },
  {
+  "address": "0x00953BC0",
+  "name": "txd_slot_setup",
+  "kind": "function",
+  "file": "functions/fn_00953bc0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
   "address": "0x00954130",
   "name": "alloc_store_global",
   "kind": "function",
@@ -55699,6 +55807,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b135"
+ },
+ {
+  "address": "0x00955860",
+  "name": "count_valid_entries",
+  "kind": "function",
+  "file": "functions/fn_00955860.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
  },
  {
   "address": "0x00955910",
@@ -79551,6 +79668,24 @@
   "lane": "r-s498"
  },
  {
+  "address": "0x00B28D20",
+  "name": "format_and_load_slot",
+  "kind": "function",
+  "file": "functions/fn_00b28d20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s498"
+ },
+ {
+  "address": "0x00B28D70",
+  "name": "slot_row_allocate",
+  "kind": "function",
+  "file": "functions/fn_00b28d70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s498"
+ },
+ {
   "address": "0x00B28F70",
   "name": "rows_notify_ready",
   "kind": "function",
@@ -79702,6 +79837,33 @@
   "trials": 1200,
   "checker": "version 3",
   "lane": "r-b119"
+ },
+ {
+  "address": "0x00B2B210",
+  "name": "obj_mode_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00b2b210.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s498"
+ },
+ {
+  "address": "0x00B2B2A0",
+  "name": "obj_record_refresh",
+  "kind": "function",
+  "file": "functions/fn_00b2b2a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s498"
+ },
+ {
+  "address": "0x00B2B370",
+  "name": "obj_record_rebuild",
+  "kind": "function",
+  "file": "functions/fn_00b2b370.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s498"
  },
  {
   "address": "0x00B2B430",
@@ -123426,6 +123588,96 @@
   "lane": "a-09"
  },
  {
+  "address": "0x00D69B80",
+  "name": "CReplayRolloverMessage::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d69b80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
+  "address": "0x00D69BA0",
+  "name": "CReplayWidget::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d69ba0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
+  "address": "0x00D6A520",
+  "name": "replay_button_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d6a520.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
+  "address": "0x00D6A5E0",
+  "name": "CReplayButton::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d6a5e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
+  "address": "0x00D6A600",
+  "name": "CReplayButtonBar::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d6a600.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
+  "address": "0x00D6A620",
+  "name": "FRONTEND_MENU_MONTAGE_PRESS_MT",
+  "kind": "function",
+  "file": "functions/fn_00d6a620.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
+  "address": "0x00D6A6A0",
+  "name": "replay_montage_next",
+  "kind": "function",
+  "file": "functions/fn_00d6a6a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
+  "address": "0x00D6A6C0",
+  "name": "replay_montage_prev",
+  "kind": "function",
+  "file": "functions/fn_00d6a6c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
+  "address": "0x00D6A950",
+  "name": "replay_mode_to_action",
+  "kind": "function",
+  "file": "functions/fn_00d6a950.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
+  "address": "0x00D6AD70",
+  "name": "replay_reset_state_flags",
+  "kind": "function",
+  "file": "functions/fn_00d6ad70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
   "address": "0x00D6B260",
   "name": "FRONTEND_MENU_MONTAGE_NAVIGATE_MT",
   "kind": "function",
@@ -124180,6 +124432,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b230"
+ },
+ {
+  "address": "0x00D86370",
+  "name": "aim_assist_steer",
+  "kind": "function",
+  "file": "functions/fn_00d86370.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b600"
  },
  {
   "address": "0x00D874F0",
@@ -128104,6 +128365,42 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b526"
+ },
+ {
+  "address": "0x00E3A070",
+  "name": "bind_input_source",
+  "kind": "function",
+  "file": "functions/fn_00e3a070.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b602"
+ },
+ {
+  "address": "0x00E3A2F0",
+  "name": "bind_input_name",
+  "kind": "function",
+  "file": "functions/fn_00e3a2f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b602"
+ },
+ {
+  "address": "0x00E3A530",
+  "name": "RP_EXPORTHI",
+  "kind": "function",
+  "file": "functions/fn_00e3a530.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b602"
+ },
+ {
+  "address": "0x00E3A660",
+  "name": "notify_input_targets",
+  "kind": "function",
+  "file": "functions/fn_00e3a660.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b602"
  },
  {
   "address": "0x00E3D670",
