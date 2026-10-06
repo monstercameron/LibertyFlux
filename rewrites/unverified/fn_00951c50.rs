@@ -2,9 +2,10 @@
 
 /// Collect flagged entries from three global object tables, then process each one.
 ///
-/// Each of the three tables is described by a four-word header kept in the
-/// game's data: the entry array base, a parallel per-index flag-bytes array,
-/// a signed entry count and the byte stride between entries. The scan visits
+/// Each of the three tables is reached through a pointer kept in the game's
+/// data, leading to a four-word header: the entry array base, a parallel
+/// per-index flag-bytes array, a signed entry count and the byte stride
+/// between entries. The scan visits
 /// every index below the count (which is compared as a signed value: a zero
 /// or negative count selects nothing) and keeps an entry only when its flag
 /// byte lacks bit 0x80, the computed entry address is non-null, and the
@@ -26,7 +27,8 @@
 lf_checker_rt::export!(cdecl, rw_00951C50(flag: u32) -> u32 {
     unsafe {
         const TABLE_COUNT: usize = 3;
-        /// File addresses of the three table headers (base, flag bytes, signed count, stride).
+        /// File addresses of the three pointers to the table headers
+        /// (each header: base, flag bytes, signed count, stride).
         const HEADERS: [u32; TABLE_COUNT] = [0x012E22A4, 0x018B6F1C, 0x01632C60];
         const HDR_BASE: usize = 0;
         const HDR_FLAGS: usize = 1;
@@ -55,8 +57,11 @@ lf_checker_rt::export!(cdecl, rw_00951C50(flag: u32) -> u32 {
             unsafe { (a as *const u32).read_unaligned() }
         }
         #[inline(always)]
-        unsafe fn header(file_va: u32) -> [u32; 4] {
-            unsafe { *lf_checker_rt::global::<[u32; 4]>(file_va) }
+        unsafe fn header(ptr_va: u32) -> [u32; 4] {
+            unsafe {
+                let hdr = *lf_checker_rt::global::<u32>(ptr_va);
+                *(hdr as *const [u32; 4])
+            }
         }
 
         let mut slots = [0u32; MAX_KEPT];

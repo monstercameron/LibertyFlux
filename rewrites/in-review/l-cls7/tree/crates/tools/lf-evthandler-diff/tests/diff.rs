@@ -19,7 +19,7 @@ mod x86 {
     use lf_core::Handle32;
     use lf_evthandler_diff::rewrites::*;
     use lf_peds_tasks::event_handler::{
-        EventDispatch, EventHandler, EventPayload, EventSource, Owner, Task,
+        EventDispatch, EventHandler, EventPayload, EventProbe, EventRef, EventSource, Owner, Task,
     };
 
     #[path = "../support/mod.rs"]
@@ -223,6 +223,10 @@ mod x86 {
         fn dispatch_event(&mut self, kind: u32, payload: Option<Handle32<EventPayload>>) {
             self.calls.push((kind, Handle32::raw_or_zero(payload)));
         }
+
+        fn dispatch_block(&mut self, _k: u32, _e: Handle32<EventRef>, _b: u32) {
+            panic!("forward cases never dispatch blocks");
+        }
     }
 
     #[test]
@@ -327,6 +331,18 @@ mod x86 {
 
         fn clone_task(&mut self) -> Option<Handle32<Task>> {
             panic!("settle cases never clone");
+        }
+
+        fn probe_kind(&mut self) -> u32 {
+            panic!("settle cases never probe kinds");
+        }
+
+        fn readiness(&mut self) -> u32 {
+            panic!("settle cases never check readiness");
+        }
+
+        fn probe(&mut self) -> Option<Handle32<EventProbe>> {
+            panic!("settle cases never probe");
         }
     }
 
@@ -444,6 +460,18 @@ mod x86 {
         fn clone_task(&mut self) -> Option<Handle32<Task>> {
             self.calls += 1;
             Handle32::new(self.answer)
+        }
+
+        fn probe_kind(&mut self) -> u32 {
+            panic!("adopt cases never probe kinds");
+        }
+
+        fn readiness(&mut self) -> u32 {
+            panic!("adopt cases never check readiness");
+        }
+
+        fn probe(&mut self) -> Option<Handle32<EventProbe>> {
+            panic!("adopt cases never probe");
         }
     }
 

@@ -312,6 +312,14 @@
   "reason": null
  },
  {
+  "address": "0x005E8820",
+  "name": "CCutsceneObject::vf24",
+  "file": "fn_005e8820.rs",
+  "lane": "r-b587",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x0061B150",
   "name": "net_session_desc_init",
   "file": "fn_0061b150.rs",
@@ -398,22 +406,6 @@
   "lane": "r-s438",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x0089CA10",
-  "name": "triage_pending",
-  "file": "fn_0089ca10.rs",
-  "lane": "r-s490",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0089CD40",
-  "name": "triage_pending",
-  "file": "fn_0089cd40.rs",
-  "lane": "r-s490",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x008CA880",
@@ -1392,6 +1384,30 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00C659C0",
+  "name": "CCutsceneObject::get_bound_radius",
+  "file": "fn_00c659c0.rs",
+  "lane": "r-b587",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C65E90",
+  "name": "CCutsceneObject::get_max_bounds",
+  "file": "fn_00c65e90.rs",
+  "lane": "r-b587",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C66130",
+  "name": "CCutsceneObject::is_field_2a0_nonzero",
+  "file": "fn_00c66130.rs",
+  "lane": "r-b587",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00C7E200",
   "name": "CTaskComplexStationaryScenario::vf19",
   "file": "fn_00c7e200.rs",
@@ -1558,6 +1574,14 @@
   "lane": "r-b444",
   "outcome": "deferred",
   "reason": "float_register_args"
+ },
+ {
+  "address": "0x00CD6A00",
+  "name": null,
+  "file": "fn_00cd6a00.rs",
+  "lane": "a-S08",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00CF8050",
@@ -1838,6 +1862,38 @@
   "lane": "r-b164",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00DD9220",
+  "name": "UIBasicClip::vf142",
+  "file": "fn_00dd9220.rs",
+  "lane": "r-b587",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00DD9260",
+  "name": "UIBasicClip::vf139",
+  "file": "fn_00dd9260.rs",
+  "lane": "r-b587",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00DD9280",
+  "name": "UIBasicClip::vf143",
+  "file": "fn_00dd9280.rs",
+  "lane": "r-b587",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00DD9290",
+  "name": "UIBasicClip::vf148",
+  "file": "fn_00dd9290.rs",
+  "lane": "r-b587",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00DDD490",

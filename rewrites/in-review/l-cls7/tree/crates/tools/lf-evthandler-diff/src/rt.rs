@@ -4,12 +4,12 @@
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!`, the `callee_*` macros, `callee_addr`, `relocated`,
 //! `global`). The call-free proof set uses `export!` only (its virtual
-//! calls go through fake tables the cases plant); the factory-pair and
-//! refresh slots read the shared manager global and call callee slots 1
-//! and 2, which each factory test binary registers before running (one
-//! binary per slot, so the registry cells are never shared between
-//! tests). Test-support code: the lifted crate itself stays
-//! `#![forbid(unsafe_code)]`.
+//! calls go through fake tables the cases plant); the factory slots
+//! read the shared manager global (the route slot also reads two float
+//! globals) and call callee slots, which each test binary registers
+//! before running (one binary per slot shape, so the registry cells are
+//! never shared between tests). Test-support code: the lifted crate
+//! itself stays `#![forbid(unsafe_code)]`.
 
 // Test-only runtime: raw pointers through scripted addresses are inherent
 // here. Every access stays inside the test image the case built.
@@ -20,12 +20,30 @@ use core::sync::atomic::{AtomicU32, Ordering};
 /// File VA of the shared factory-manager word.
 const MANAGER_VA: u32 = 0x0167E2A0;
 
+/// File VAs of the two float words the route slot's build call carries.
+const FLOAT_A_VA: u32 = 0x00ED7E70;
+const FLOAT_B_VA: u32 = 0x00ED7E68;
+
 /// The shared manager word the factory-pair slots read.
 static MANAGER: AtomicU32 = AtomicU32::new(0);
+
+/// The two float words the route slot reads for its build call.
+static FLOAT_A: AtomicU32 = AtomicU32::new(0);
+static FLOAT_B: AtomicU32 = AtomicU32::new(0);
 
 /// Sets the shared manager word for the next rewrite call.
 pub fn set_manager(word: u32) {
     MANAGER.store(word, Ordering::SeqCst);
+}
+
+/// Sets the route slot's first float word for the next rewrite call.
+pub fn set_float_a(word: u32) {
+    FLOAT_A.store(word, Ordering::SeqCst);
+}
+
+/// Sets the route slot's second float word for the next rewrite call.
+pub fn set_float_b(word: u32) {
+    FLOAT_B.store(word, Ordering::SeqCst);
 }
 
 /// Pointer to the global at a file VA, mirroring
@@ -33,15 +51,18 @@ pub fn set_manager(word: u32) {
 ///
 /// # Panics
 ///
-/// When the address is not the shared manager word: the proof set
-/// reads nothing else, so any other call is a case bug.
+/// When the address is not one of the proof set's globals: any other
+/// call is a case bug.
 #[must_use]
 pub fn global<T>(file_va: u32) -> *mut T {
-    assert!(
-        file_va == MANAGER_VA,
-        "unexpected global VA {file_va:#x}: the proof set reads the manager word only"
-    );
-    core::ptr::addr_of!(MANAGER) as *mut T
+    match file_va {
+        MANAGER_VA => core::ptr::addr_of!(MANAGER) as *mut T,
+        FLOAT_A_VA => core::ptr::addr_of!(FLOAT_A) as *mut T,
+        FLOAT_B_VA => core::ptr::addr_of!(FLOAT_B) as *mut T,
+        _ => panic!(
+            "unexpected global VA {file_va:#x}: the proof set reads the manager and float words only"
+        ),
+    }
 }
 
 /// File VA to relocated address, mirroring `lf-checker-rt`.
@@ -70,36 +91,47 @@ pub fn relocated(file_va: u32) -> u32 {
     }
 }
 
-/// Registered stub addresses for callee slots 1 and 2 (0 until the
-/// test binary registers its stubs: a call there then faults, which is
-/// a case bug). One test binary per factory slot, so no binary mixes
-/// two callees.
-static CALLEE1: AtomicU32 = AtomicU32::new(0);
-static CALLEE2: AtomicU32 = AtomicU32::new(0);
+/// Registered stub addresses for callee slots 1 through 8 (0 until
+/// the test binary registers its stubs: a call there then faults,
+/// which is a case bug). One test binary per slot shape, so no binary
+/// mixes two callees on one slot.
+static CALLEES: [AtomicU32; 8] = [const { AtomicU32::new(0) }; 8];
+
+/// Registers the stub address callee `id` calls land on.
+///
+/// # Panics
+///
+/// When the id is outside slots 1 through 8.
+pub fn set_callee(id: u32, addr: u32) {
+    assert!(
+        (1..=8).contains(&id),
+        "unexpected callee id {id}: the proof set uses slots 1 through 8"
+    );
+    CALLEES[(id - 1) as usize].store(addr, Ordering::SeqCst);
+}
 
 /// Registers the stub address callee 1 calls land on.
 pub fn set_callee1(addr: u32) {
-    CALLEE1.store(addr, Ordering::SeqCst);
+    set_callee(1, addr);
 }
 
 /// Registers the stub address callee 2 calls land on.
 pub fn set_callee2(addr: u32) {
-    CALLEE2.store(addr, Ordering::SeqCst);
+    set_callee(2, addr);
 }
 
 /// Raw stub address for callee `id`.
 ///
 /// # Panics
 ///
-/// When the id is not 1 or 2: the factory proof set uses those two
-/// slots only.
+/// When the id is outside slots 1 through 8.
 #[must_use]
 pub fn callee_addr(id: u32) -> u32 {
-    match id {
-        1 => CALLEE1.load(Ordering::SeqCst),
-        2 => CALLEE2.load(Ordering::SeqCst),
-        _ => panic!("unexpected callee id {id}: the proof set uses slots 1 and 2 only"),
-    }
+    assert!(
+        (1..=8).contains(&id),
+        "unexpected callee id {id}: the proof set uses slots 1 through 8"
+    );
+    CALLEES[(id - 1) as usize].load(Ordering::SeqCst)
 }
 
 /// Declare a rewrite export with the original's calling convention.

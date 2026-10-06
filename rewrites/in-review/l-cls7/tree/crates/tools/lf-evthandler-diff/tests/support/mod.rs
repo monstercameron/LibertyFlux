@@ -68,6 +68,28 @@ pub const E_SEEN_BYTE: usize = 0x14;
 pub const E_FLOAT: usize = 6;
 /// Byte offset of the flag byte in the owner blob.
 pub const OWNER_FLAGS_BYTE: usize = 0x26C;
+/// Owner blob word holding the inner-object word (byte offset 0x224).
+pub const OWNER_REG_WORD: usize = 0x224 / 4;
+/// Wide event blob word holding the scalar word (byte offset 0x30).
+pub const W_W30: usize = 0x30 / 4;
+/// Wide event blob word holding the eval input (byte offset 0x34).
+pub const W_W34: usize = 0x34 / 4;
+/// Byte offset of the selector byte in the wide event blob.
+pub const W_SELECT_BYTE: usize = 0x38;
+/// Wide event blob word holding the third block word (offset 0x3C).
+pub const W_W3C: usize = 0x3C / 4;
+/// Wide event blob word holding the fourth block word (offset 0x40).
+pub const W_W40: usize = 0x40 / 4;
+/// Wide event blob word holding the flag (byte offset 0x30).
+pub const W_FLAG: usize = 0x30 / 4;
+/// Wide event blob word holding the float word (byte offset 0x34).
+pub const W_WEIGHT: usize = 0x34 / 4;
+/// Wide event blob word holding the scalar input (byte offset 0x38).
+pub const W_INPUT: usize = 0x38 / 4;
+/// Probe blob word holding the status word (byte offset 0x28).
+pub const P_STATUS: usize = 0x28 / 4;
+/// Event blob word holding the secondary link (byte offset 0x1C).
+pub const E_LINK2: usize = 0x1C / 4;
 
 /// Zeroed 16-byte handler blob (word-addressed, so aligned).
 pub fn handler_blob() -> Box<[u32; 4]> {
@@ -77,6 +99,18 @@ pub fn handler_blob() -> Box<[u32; 4]> {
 /// Zeroed 32-byte event blob (word-addressed, so aligned).
 pub fn event_blob() -> Box<[u32; 8]> {
     Box::new([0u32; 8])
+}
+
+/// Zeroed 96-byte event blob for the wide-reading slots (the
+/// scalar-vector and dual-path slots read past byte 0x40).
+pub fn event_blob_wide() -> Box<[u32; 24]> {
+    Box::new([0u32; 24])
+}
+
+/// Zeroed 48-byte probe blob for the guarded slot (the status word sits
+/// at byte 0x28).
+pub fn probe_blob() -> Box<[u32; 12]> {
+    Box::new([0u32; 12])
 }
 
 /// Zeroed owner blob big enough for the flag byte (word-addressed, so

@@ -9,10 +9,15 @@
 use lf_core::Handle32;
 use lf_peds_tasks::event_handler::registry::{self, State};
 use lf_peds_tasks::event_handler::{
-    ConvertRequest, EventChild, EventDispatch, EventHandler, EventPayload, EventRef, EventSource,
-    EventSubject, FIXED_REQUEST_A, FIXED_REQUEST_B, FactoryAnswer, FactoryHandle, FactoryState,
-    FlaggedAnswer, GatedAnswer, GuardedAnswer, KIND_CLEAR, KIND_GATED_CONVERT, KIND_RESET_B,
-    KIND_TYPE_CLEAR_B, OWNER_REFRESH_FLAG, Owner, Task, TaskFactory, TaskManager,
+    BlockWords, ConvertRequest, EventChild, EventDispatch, EventHandler, EventLink, EventLinks,
+    EventPayload, EventProbe, EventRef, EventSource, EventSubject, FIXED_REQUEST_A,
+    FIXED_REQUEST_B, FactoryAnswer, FactoryHandle, FactoryState, FlaggedAnswer, GatedAnswer,
+    GuardedAnswer, GuardedProbeAnswer, KIND_CLEAR, KIND_GATED_CONVERT, KIND_GUARDED_CONVERT,
+    KIND_RESET_B, KIND_ROUTED_CONVERT, KIND_ROUTE_BUILD, KIND_TYPE_CLEAR_B, MARKER_MASK,
+    MARKER_WANT, OWNER_REFRESH_FLAG, Owner, PROBE_EARLY_KIND, PROBE_LATE_KIND, ProbeInput,
+    ProbeRegistry, ROUTE_BLOCK, RouteInput, RoutedAnswer, ScalarEval, SETTLE_BUILD_KIND,
+    SettledAnswer, SettleStatus, StageHandle, StagedLookup, Task, TaskFactory, TaskManager,
+    VecInput,
 };
 
 fn owner(v: u32) -> Option<Handle32<Owner>> {
@@ -133,6 +138,10 @@ impl EventDispatch for Recorder {
     fn dispatch_event(&mut self, kind: u32, payload: Option<Handle32<EventPayload>>) {
         self.calls.push((kind, payload));
     }
+
+    fn dispatch_block(&mut self, _kind: u32, _event: Handle32<EventRef>, _block_offset: u32) {
+        panic!("forward tests never dispatch blocks");
+    }
 }
 
 #[test]
@@ -177,6 +186,18 @@ impl EventSource for Scripted {
     fn clone_task(&mut self) -> Option<Handle32<Task>> {
         self.clone_calls += 1;
         self.clone_answer
+    }
+
+    fn probe_kind(&mut self) -> u32 {
+        panic!("settle and adopt tests never probe kinds");
+    }
+
+    fn readiness(&mut self) -> u32 {
+        panic!("settle and adopt tests never check readiness");
+    }
+
+    fn probe(&mut self) -> Option<Handle32<EventProbe>> {
+        panic!("settle and adopt tests never probe");
     }
 }
 

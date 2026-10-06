@@ -36,16 +36,17 @@ lf_checker_rt::export!(stdcall, rw_008EE550(
     unsafe {
         const BOUND: i32 = 0x186a0;
         const LOG_BUF_OFF: u32 = 0x4c8;
+        // Format pointers: relocated immediates, derived from the file VAs.
         const LOG_RANGE_FMT: u32 = 0xe83344;
         const LOG_HASH_FMT: u32 = 0xe8336c;
         const LOG_VEC_FMT: u32 = 0xe833a4;
         const ROW_STRIDE: u32 = 0x30;
         const ROW_HASH: u32 = 0x1c;
         const REC_STRIDE: u32 = 20;
-        const LEVEL_MAX: f32 = 15.0;
         const CALLEE_LOG: u32 = 1;
         const CALLEE_HASH: u32 = 2;
         const CALLEE_LOGVEC: u32 = 3;
+        let level_max = *lf_checker_rt::global::<f32>(0xfe8b20);
 
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
@@ -65,11 +66,11 @@ lf_checker_rt::export!(stdcall, rw_008EE550(
 
         // SIGNED range check: log when either key exceeds the bound.
         if (a1 as i32) > BOUND || (a2 as i32) > BOUND {
-            lf_checker_rt::callee_cdecl!(CALLEE_LOG, u32, log_buf(), LOG_RANGE_FMT, a1, a2, a0);
+            lf_checker_rt::callee_cdecl!(CALLEE_LOG, u32, log_buf(), lf_checker_rt::relocated(LOG_RANGE_FMT), a1, a2, a0);
         }
         if a1 == a2 {
             let hash: u32 = lf_checker_rt::callee_cdecl!(CALLEE_HASH, u32, a0, 0);
-            lf_checker_rt::callee_cdecl!(CALLEE_LOG, u32, log_buf(), LOG_HASH_FMT, a0, a0, 0);
+            lf_checker_rt::callee_cdecl!(CALLEE_LOG, u32, log_buf(), lf_checker_rt::relocated(LOG_HASH_FMT), a0, a0, 0);
             let mut left = a1;
             let n = *lf_checker_rt::global::<i32>(0x1176e38);
             if n > 0 {
@@ -93,7 +94,7 @@ lf_checker_rt::export!(stdcall, rw_008EE550(
                                 CALLEE_LOGVEC,
                                 u32,
                                 log_buf(),
-                                LOG_VEC_FMT,
+                                lf_checker_rt::relocated(LOG_VEC_FMT),
                                 b0 as u32,
                                 (b0 >> 32) as u32,
                                 b1 as u32,
@@ -119,7 +120,7 @@ lf_checker_rt::export!(stdcall, rw_008EE550(
             ((e.wrapping_add(0xe)) as *mut u8).write(a3 as u8);
             ((e.wrapping_add(0xf)) as *mut u8).write(a4 as u8);
             let f = f32::from_bits(a5);
-            let fc = if LEVEL_MAX > f { f } else { LEVEL_MAX };
+            let fc = if level_max > f { f } else { level_max };
             ((e.wrapping_add(0x10)) as *mut u8).write((fc as i32) as u8);
             let u = ((e.wrapping_add(0xc)) as *const u16).read_unaligned();
             ((e.wrapping_add(0xc)) as *mut u16)
