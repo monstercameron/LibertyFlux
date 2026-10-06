@@ -440,78 +440,6 @@
   "reason": null
  },
  {
-  "address": "0x00891400",
-  "name": "triage_pending",
-  "file": "fn_00891400.rs",
-  "lane": "r-s487",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008923D0",
-  "name": "triage_pending",
-  "file": "fn_008923d0.rs",
-  "lane": "r-s487",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00892680",
-  "name": "triage_pending",
-  "file": "fn_00892680.rs",
-  "lane": "r-s487",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00892A00",
-  "name": "triage_pending",
-  "file": "fn_00892a00.rs",
-  "lane": "r-s487",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00892C60",
-  "name": "triage_pending",
-  "file": "fn_00892c60.rs",
-  "lane": "r-s487",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00892CF0",
-  "name": "triage_pending",
-  "file": "fn_00892cf0.rs",
-  "lane": "r-s487",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00893220",
-  "name": "triage_pending",
-  "file": "fn_00893220.rs",
-  "lane": "r-s487",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00893290",
-  "name": "triage_pending",
-  "file": "fn_00893290.rs",
-  "lane": "r-s487",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008932C0",
-  "name": "triage_pending",
-  "file": "fn_008932c0.rs",
-  "lane": "r-s487",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x008CA880",
   "name": "stream_load_maybe_chain",
   "file": "fn_008ca880.rs",
@@ -528,6 +456,14 @@
   "reason": "other"
  },
  {
+  "address": "0x008EB000",
+  "name": "proposed pending analysis",
+  "file": "fn_008eb000.rs",
+  "lane": "r-b578",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x008F02F0",
   "name": "n:/data/controls/controls",
   "file": "fn_008f02f0.rs",
@@ -539,6 +475,14 @@
   "address": "0x008F0A50",
   "name": "proposed",
   "file": "fn_008f0a50.rs",
+  "lane": "r-b579",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x008F10D0",
+  "name": "proposed",
+  "file": "fn_008f10d0.rs",
   "lane": "r-b579",
   "outcome": "not_reached",
   "reason": null
@@ -736,6 +680,62 @@
   "reason": ""
  },
  {
+  "address": "0x0096E860",
+  "name": "audio_slot_array_release",
+  "file": "fn_0096e860.rs",
+  "lane": "r-s489",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00974390",
+  "name": "audio_indexed_row_store",
+  "file": "fn_00974390.rs",
+  "lane": "r-s489",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009747D0",
+  "name": "aud_occlusion_group_ctor",
+  "file": "fn_009747d0.rs",
+  "lane": "r-s489",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009747F0",
+  "name": "audGtaOcclusionGroup::vf0",
+  "file": "fn_009747f0.rs",
+  "lane": "r-s489",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00974820",
+  "name": "audio_occlusion_lookup_or_tail",
+  "file": "fn_00974820.rs",
+  "lane": "r-s489",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00974850",
+  "name": "audio_ptr_release_and_clear",
+  "file": "fn_00974850.rs",
+  "lane": "r-s489",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00974880",
+  "name": "audio_guarded_pair_forward",
+  "file": "fn_00974880.rs",
+  "lane": "r-s489",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x009748B0",
   "name": "audGtaOcclusionGroup::vf2",
   "file": "fn_009748b0.rs",
@@ -768,6 +768,22 @@
   "reason": null
  },
  {
+  "address": "0x00976320",
+  "name": "audio_big_object_ctor",
+  "file": "fn_00976320.rs",
+  "lane": "r-s489",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009763C0",
+  "name": "audCollisionAudioEntity::vf0",
+  "file": "fn_009763c0.rs",
+  "lane": "r-s489",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x009767E0",
   "name": "audio_level_from_bytes",
   "file": "fn_009767e0.rs",
@@ -787,6 +803,30 @@
   "address": "0x00976DC0",
   "name": "audio_byte_to_level",
   "file": "fn_00976dc0.rs",
+  "lane": "r-s489",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00976FB0",
+  "name": "audio_first_result_or_second",
+  "file": "fn_00976fb0.rs",
+  "lane": "r-s489",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00976FF0",
+  "name": "audio_nibble_dispatch",
+  "file": "fn_00976ff0.rs",
+  "lane": "r-s489",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00977030",
+  "name": "audio_scaled_forward_or_tail",
+  "file": "fn_00977030.rs",
   "lane": "r-s489",
   "outcome": "not_reached",
   "reason": null
@@ -888,6 +928,14 @@
   "reason": null
  },
  {
+  "address": "0x0099DFA0",
+  "name": null,
+  "file": "fn_0099dfa0.rs",
+  "lane": "r-s488",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0099E3A0",
   "name": null,
   "file": "fn_0099e3a0.rs",
@@ -957,6 +1005,22 @@
   "file": "fn_009a37a0.rs",
   "lane": "r-s94",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x009A5650",
+  "name": null,
+  "file": "fn_009a5650.rs",
+  "lane": "r-s488",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009A56B0",
+  "name": null,
+  "file": "fn_009a56b0.rs",
+  "lane": "r-s488",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -2236,6 +2300,14 @@
   "name": null,
   "file": "fn_00dde260.rs",
   "lane": "r-s155",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00DF6A00",
+  "name": "UIFileViewer::vf97",
+  "file": "fn_00df6a00.rs",
+  "lane": "a-Q08",
   "outcome": "not yet run",
   "reason": null
  },
