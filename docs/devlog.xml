@@ -9,6 +9,27 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A constructor that returns to address zero, and a NaN trap in float compares</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s518"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s518</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>One function in this batch cannot be verified because the original always crashes on return: its epilogue pops two scratch words it zeroed itself and jumps to address zero, on every call. It has callers in the image, so this looks like a genuine defect in the original rather than dead code. A second function taught a subtler lesson: a float branch taken on below also fires on unordered, so NaN fails the test where a plain less-than would pass it.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One function in this batch cannot be verified because the original always crashes on return: its epilogue pops two scratch words it zeroed itself and jumps to address zero, on every call. It has callers in the image, so this looks like a genuine defect in the original rather than dead code. A second function taught a subtler lesson: a float branch taken on below also fires on unordered, so NaN fails the test where a plain less-than would pass it.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite a batch of 22 small input-ui functions in Rust and prove each rewrite equivalent to the original with the checker, one contract per function, each with its own deliberately wrong version.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A 62-byte node constructor stores three arguments, calls a sub-object initialiser, then returns to address zero on all 1000 checker trials. It reserves eight bytes of stack scratch and never releases them, so its final pop and return consume the two zero words it stored, and execution continues at address zero. The image contains four direct callers of this function.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A rectangle hit test over floats failed 145 of 1000 trials with a rewrite that used plain less-than for its four boundary checks. The original compares with a branch that is taken both on ordered-less and on unordered, so any NaN operand fails the test; the rewrite passed it. Writing the checks as negated greater-or-equal, which keeps NaN failing, made all 1000 trials pass with the wrong version still caught.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch's three tree-search functions share one lower-bound walk with unsigned key compares, and the five csv token readers share one polling shape over two callees; per-call answer sequences with per-trial cycling cover every path including truncation, quoting, carriage-return skips and mid-loop end flags.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;The crashing constructor is recorded as deferred with reason other: no faithful rewrite can pass, because the original never completes and the checker's vacuity rule rightly refuses a verdict with zero clean original trials. The rewrite draft and contract are kept for the record. Future float rewrites should treat every conditional branch after a float compare as suspect until its unordered behaviour is checked against the branch type: below-or-equal keeps NaN, below fails it.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run the batch contract for the node constructor: every trial ends with the original faulting at address zero while the rewrite returns normally, and the callee log shows the sub-object call fired once on each side, proving the crash happens after the call, on return. For the hit test, run any contract whose float inputs include NaN and compare a plain less-than rewrite against the original: the mismatches are exactly the trials where a NaN reaches a boundary check.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The constructor crash first looked like a broken patch or a bad stub address, because the fault address was zero. Dropping the register comparison changed nothing, which ruled out the contract; only reading the epilogue word by word showed the stack imbalance. The hit-test failure first looked like a clamp error, and only the direction of the mismatch, the rewrite answering yes where the original answered no, pointed at the boundary branches and their unordered behaviour.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>A passing check that cannot see indirect calls</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s516"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s516</id>
@@ -1134,26 +1155,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Build one evidence table for the whole batch first (calls resolved against merged symbols, imports, string references, mnemonic profiles), then disassemble every short function fully and brief the large ones with entry plus call context. Confirm group membership by disassembling known callers rather than trusting callee names.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The encrypted first megabyte makes every low-address callee name suspect, which was only obvious after decoding several and getting garbage. A probe script failed three times on data-section reads that return no bytes; string and constant reads from read-only data worked. Thirteen functions were left unnamed: tiny setters, jump stubs, mode wrappers with unknown modes, and single-field getters whose meaning nothing revealed.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Averaging helper reads an uninitialized stack word into its output</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b520"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b520</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>Verified One of this batch's task functions writes four output words, and the fourth is whatever happened to be on the stack: the function never stores to that slot. Its in-batch caller never reads the word back, so the garbage goes nowhere there.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One of this batch's task functions writes four output words, and the fourth is whatever happened to be on the stack: the function never stores to that slot. Its in-batch caller never reads the word back, so the garbage goes nowhere there.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite four neighbouring task-system functions in Rust and prove each rewrite identical to the original with the checker, covering the documented edge cases.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All four rewrites passed twelve hundred trials each with bit-exact float comparison and a caught wrong version per function. While mapping the averaging helper's outputs, its fourth output word traced back to a stack slot the function reserves but never writes: on every call the word leaks one word of whatever the stack held below the call frame.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The proof contract pins uninitialized stack to zero, so both sides read zero there deterministically; the rewrite writes the zero explicitly and the narrowing is recorded. The word is a genuine output of the original, just not a meaningful one.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The neighbouring selector function calls this helper with scratch memory and checks only the success flag, so the garbage word is harmless on that path. Whether any other caller reads it is unknown.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Record stack-fill narrowing explicitly whenever a rewrite replaces an uninitialized read with the filled value, and check the in-batch callers for whether the word is consumed. Later lanes mapping other outputs of this helper family should assume trailing words may be uninitialized until traced.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Disassemble the averaging helper and list every store to its frame: three float slots and the count get stored, the slot later copied to the fourth output word does not. Run the checker contract with a defined stack fill and confirm the output word equals the fill on both sides.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Two mapping mistakes cost the most time. First, two registers were assumed to hold the same argument where the push count showed they hold different ones; the probe faulted on nearly every trial until the arithmetic was redone. Second, one float store was attributed to the wrong frame slot because a push sits between the address computation and the store; the snapshot comparison caught it on the first probe.&lt;/p&gt;</content>
   </entry>
 </feed>
