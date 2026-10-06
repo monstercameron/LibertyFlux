@@ -42201,6 +42201,15 @@
   "lane": "a-12"
  },
  {
+  "address": "0x0088AD80",
+  "name": "audsound_visit_slot_triplets",
+  "kind": "function",
+  "file": "functions/fn_0088ad80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
   "address": "0x0088AE30",
   "name": "audVoice_update_88AE30",
   "kind": "function",
@@ -42768,6 +42777,15 @@
   "lane": "r-b19"
  },
  {
+  "address": "0x008900F0",
+  "name": "audsound_apply_voice_random",
+  "kind": "function",
+  "file": "functions/fn_008900f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
   "address": "0x008901E0",
   "name": "audio_walk_cache_chain",
   "kind": "function",
@@ -42912,6 +42930,15 @@
   "lane": "a-12"
  },
  {
+  "address": "0x00890930",
+  "name": "audsound_follow_chain_and_emit",
+  "kind": "function",
+  "file": "functions/fn_00890930.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
   "address": "0x008909C0",
   "name": "rage::audSound::vf7",
   "kind": "function",
@@ -42928,6 +42955,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-12"
+ },
+ {
+  "address": "0x00890BB0",
+  "name": "audsound_init_submix_table",
+  "kind": "function",
+  "file": "functions/fn_00890bb0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
  },
  {
   "address": "0x00890C80",
@@ -42982,6 +43018,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s104"
+ },
+ {
+  "address": "0x00891400",
+  "name": "audsound_slot_find_and_reindex",
+  "kind": "function",
+  "file": "functions/fn_00891400.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
  },
  {
   "address": "0x00891490",
@@ -43209,10 +43254,28 @@
   "lane": "r-s487"
  },
  {
+  "address": "0x008923D0",
+  "name": "audsound_init_object",
+  "kind": "function",
+  "file": "functions/fn_008923d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
   "address": "0x00892480",
   "name": "audsound_reset_playback_fields",
   "kind": "function",
   "file": "functions/fn_00892480.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
+  "address": "0x00892680",
+  "name": "audsound_resolve_then_open",
+  "kind": "function",
+  "file": "functions/fn_00892680.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s487"
@@ -43240,6 +43303,15 @@
   "name": "audsound_init_embedded_tables",
   "kind": "function",
   "file": "functions/fn_008929a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
+  "address": "0x00892A00",
+  "name": "audsound_teardown_voice",
+  "kind": "function",
+  "file": "functions/fn_00892a00.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s487"
@@ -43281,6 +43353,24 @@
   "lane": "r-s487"
  },
  {
+  "address": "0x00892C60",
+  "name": "audsound_match_voice_class",
+  "kind": "function",
+  "file": "functions/fn_00892c60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
+  "address": "0x00892CF0",
+  "name": "audsound_match_voice_probed",
+  "kind": "function",
+  "file": "functions/fn_00892cf0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
   "address": "0x00892DF0",
   "name": "audSound_update",
   "kind": "function",
@@ -43288,6 +43378,33 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b19"
+ },
+ {
+  "address": "0x00893220",
+  "name": "audsound_start_voice",
+  "kind": "function",
+  "file": "functions/fn_00893220.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
+  "address": "0x00893290",
+  "name": "audsound_build_entries_if_armed",
+  "kind": "function",
+  "file": "functions/fn_00893290.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
+  "address": "0x008932C0",
+  "name": "audsound_start_voice_ex",
+  "kind": "function",
+  "file": "functions/fn_008932c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
  },
  {
   "address": "0x00893B40",
@@ -50211,6 +50328,24 @@
   "lane": "r-s117"
  },
  {
+  "address": "0x008F02F0",
+  "name": "n:/data/controls/controls",
+  "kind": "function",
+  "file": "functions/fn_008f02f0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b579"
+ },
+ {
+  "address": "0x008F0A50",
+  "name": "reset_control_tables",
+  "kind": "function",
+  "file": "functions/fn_008f0a50.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b579"
+ },
+ {
   "address": "0x008F0F60",
   "name": "budget_remaining",
   "kind": "function",
@@ -50245,6 +50380,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s117"
+ },
+ {
+  "address": "0x008F10D0",
+  "name": "bind_control_slot",
+  "kind": "function",
+  "file": "functions/fn_008f10d0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b579"
  },
  {
   "address": "0x008F12F0",
