@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Lift: the event handler class, first ten methods",
+    "title": "Rewrites: 24 more functions pass the checker (15875 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "24 rewrites added under rewrites/verified: 0 script native handlers and 24 other functions.",
+      "The tree now holds 15875 rewrites, 15856 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 682 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "21 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Lift: the event handler class, first ten methods",
+    "commit": "e0bca1f7a2069e826e1e0e80dc5b809a5eed84ee",
     "summary": "Ten verified methods of the pedestrian event handler class are lifted to portable Rust in crates/lf-peds-tasks, with their proof in the pipeline. It is the first lifted code that is decision logic.",
     "changes": [
       "New module crates/lf-peds-tasks/src/event_handler: a handler type owning its two words (the owner it answers for and its pending task) with ten methods restated on it: which event kinds drop the pending task, which are forwarded to the dispatch slot, which are converted through the task factory, and how the handler adopts a task from an event. What it calls that is not lifted yet is behind three traits. No unsafe code. 19 host tests.",

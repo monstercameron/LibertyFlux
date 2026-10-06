@@ -32994,6 +32994,15 @@
   "lane": "r-b569"
  },
  {
+  "address": "0x005AFDE0",
+  "name": "MS_PAUSED",
+  "kind": "function",
+  "file": "functions/fn_005afde0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b580"
+ },
+ {
   "address": "0x005B0430",
   "name": "select_market_menu_overlay",
   "kind": "function",
@@ -49878,6 +49887,15 @@
   "lane": "a-16"
  },
  {
+  "address": "0x008EB000",
+  "name": "tri_classify_by_shape",
+  "kind": "function",
+  "file": "functions/fn_008eb000.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b578"
+ },
+ {
   "address": "0x008EB600",
   "name": "flag_query_decode",
   "kind": "function",
@@ -56367,6 +56385,15 @@
   "lane": "a-11"
  },
  {
+  "address": "0x0099D6C0",
+  "name": "audio_finish_record_sort",
+  "kind": "function",
+  "file": "functions/fn_0099d6c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
+ },
+ {
   "address": "0x0099D710",
   "name": "insertion_sort_records",
   "kind": "function",
@@ -56383,6 +56410,24 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "a-V02"
+ },
+ {
+  "address": "0x0099D8D0",
+  "name": "audio_build_max_heap",
+  "kind": "function",
+  "file": "functions/fn_0099d8d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
+ },
+ {
+  "address": "0x0099D960",
+  "name": "audio_heapify_and_compact",
+  "kind": "function",
+  "file": "functions/fn_0099d960.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
  },
  {
   "address": "0x0099DA10",
@@ -56448,6 +56493,78 @@
   "lane": "a-11"
  },
  {
+  "address": "0x0099DC80",
+  "name": "audio_sort_records",
+  "kind": "function",
+  "file": "functions/fn_0099dc80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
+ },
+ {
+  "address": "0x0099DCD0",
+  "name": "audSpeechAudioEntity_teardown",
+  "kind": "function",
+  "file": "functions/fn_0099dcd0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
+ },
+ {
+  "address": "0x0099DD80",
+  "name": "audSpeechAudioEntity::~audSpeechAudioEntity__deleting",
+  "kind": "function",
+  "file": "functions/fn_0099dd80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
+ },
+ {
+  "address": "0x0099DDA0",
+  "name": "audio_ensure_key_and_attach",
+  "kind": "function",
+  "file": "functions/fn_0099dda0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
+ },
+ {
+  "address": "0x0099DE30",
+  "name": "audio_key_positive_check",
+  "kind": "function",
+  "file": "functions/fn_0099de30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
+ },
+ {
+  "address": "0x0099DEB0",
+  "name": "audio_release_handles_and_key",
+  "kind": "function",
+  "file": "functions/fn_0099deb0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
+ },
+ {
+  "address": "0x0099DF40",
+  "name": "audio_fire_voice_event",
+  "kind": "function",
+  "file": "functions/fn_0099df40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
+ },
+ {
+  "address": "0x0099DFA0",
+  "name": "audio_voice_event_clamped",
+  "kind": "function",
+  "file": "functions/fn_0099dfa0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
+ },
+ {
   "address": "0x0099E010",
   "name": "audio_level_resolve",
   "kind": "function",
@@ -56500,6 +56617,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-11"
+ },
+ {
+  "address": "0x0099E3A0",
+  "name": "audio_dispatch_or_zero",
+  "kind": "function",
+  "file": "functions/fn_0099e3a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
+ },
+ {
+  "address": "0x0099E3B0",
+  "name": "audio_cached_word_or_resolve",
+  "kind": "function",
+  "file": "functions/fn_0099e3b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
  },
  {
   "address": "0x0099E3E0",
@@ -56565,6 +56700,15 @@
   "lane": "a-11"
  },
  {
+  "address": "0x0099F650",
+  "name": "audio_megaphone_slot_present",
+  "kind": "function",
+  "file": "functions/fn_0099f650.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
+ },
+ {
   "address": "0x0099F6E0",
   "name": "NativeImpl_IS_ANY_SPEECH_PLAYING",
   "kind": "function",
@@ -56590,6 +56734,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-11"
+ },
+ {
+  "address": "0x0099F770",
+  "name": "audio_resolve_voice_pair",
+  "kind": "function",
+  "file": "functions/fn_0099f770.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
  },
  {
   "address": "0x0099F830",
@@ -56646,6 +56799,15 @@
   "lane": "r-b79"
  },
  {
+  "address": "0x009A2970",
+  "name": "audio_select_key_and_cache",
+  "kind": "function",
+  "file": "functions/fn_009a2970.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
+ },
+ {
   "address": "0x009A29F0",
   "name": "mode_byte_store",
   "kind": "function",
@@ -56653,6 +56815,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-11"
+ },
+ {
+  "address": "0x009A2AD0",
+  "name": "audio_maybe_notify_and_release",
+  "kind": "function",
+  "file": "functions/fn_009a2ad0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
  },
  {
   "address": "0x009A2B60",
@@ -56673,6 +56844,24 @@
   "lane": "r-b555"
  },
  {
+  "address": "0x009A3600",
+  "name": "audio_entity_construct",
+  "kind": "function",
+  "file": "functions/fn_009a3600.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
+ },
+ {
+  "address": "0x009A3630",
+  "name": "audRadioAudioEntity::vf0",
+  "kind": "function",
+  "file": "functions/fn_009a3630.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
+ },
+ {
   "address": "0x009A3660",
   "name": "station_index_picker",
   "kind": "function",
@@ -56680,6 +56869,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "a-V02"
+ },
+ {
+  "address": "0x009A37A0",
+  "name": "audio_voice_level_update",
+  "kind": "function",
+  "file": "functions/fn_009a37a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
  },
  {
   "address": "0x009A38A0",
@@ -56905,6 +57103,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s106"
+ },
+ {
+  "address": "0x009A5650",
+  "name": "audio_register_voice_or_slot",
+  "kind": "function",
+  "file": "functions/fn_009a5650.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
+ },
+ {
+  "address": "0x009A56B0",
+  "name": "audio_slot_alloc",
+  "kind": "function",
+  "file": "functions/fn_009a56b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s488"
  },
  {
   "address": "0x009A8150",
