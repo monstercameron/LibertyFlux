@@ -34038,6 +34038,69 @@
   "lane": "a-Q34"
  },
  {
+  "address": "0x005E5AD0",
+  "name": "lowered_string_store_base",
+  "kind": "function",
+  "file": "functions/fn_005e5ad0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
+ },
+ {
+  "address": "0x005E5B60",
+  "name": "lowered_string_lookup_base",
+  "kind": "function",
+  "file": "functions/fn_005e5b60.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
+ },
+ {
+  "address": "0x005E5C00",
+  "name": "lowered_string_store_c",
+  "kind": "function",
+  "file": "functions/fn_005e5c00.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
+ },
+ {
+  "address": "0x005E5C90",
+  "name": "lowered_string_lookup_c",
+  "kind": "function",
+  "file": "functions/fn_005e5c90.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
+ },
+ {
+  "address": "0x005E5D30",
+  "name": "lowered_string_store_18",
+  "kind": "function",
+  "file": "functions/fn_005e5d30.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
+ },
+ {
+  "address": "0x005E5DC0",
+  "name": "lowered_string_lookup_18",
+  "kind": "function",
+  "file": "functions/fn_005e5dc0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
+ },
+ {
+  "address": "0x005E5E60",
+  "name": "parse_hash_color",
+  "kind": "function",
+  "file": "functions/fn_005e5e60.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
+ },
+ {
   "address": "0x005E5F80",
   "name": "hash_table_find_string",
   "kind": "function",
@@ -36558,6 +36621,15 @@
   "lane": "a-10"
  },
  {
+  "address": "0x00648C60",
+  "name": "rage::rmPtfxShaderVar_Float::vf1",
+  "kind": "function",
+  "file": "functions/fn_00648c60.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
+ },
+ {
   "address": "0x00648CA0",
   "name": "rage__rmPtfxShaderVar_Float2__ctor",
   "kind": "function",
@@ -37330,6 +37402,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s195"
+ },
+ {
+  "address": "0x006611E0",
+  "name": "fn_006611e0",
+  "kind": "function",
+  "file": "functions/fn_006611e0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
  },
  {
   "address": "0x00661280",
@@ -46872,6 +46953,15 @@
   "lane": "a-10"
  },
  {
+  "address": "0x0089E6E0",
+  "name": "scan_audio_slots_accumulate",
+  "kind": "function",
+  "file": "functions/fn_0089e6e0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
+ },
+ {
   "address": "0x0089E890",
   "name": "aud_seq_advance_fire",
   "kind": "function",
@@ -51201,6 +51291,15 @@
   "lane": "a-Q01"
  },
  {
+  "address": "0x008D6FF0",
+  "name": "init_record_array_and_call",
+  "kind": "function",
+  "file": "functions/fn_008d6ff0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
+ },
+ {
   "address": "0x008D70E0",
   "name": "clamp_lerp",
   "kind": "function",
@@ -51208,6 +51307,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-17"
+ },
+ {
+  "address": "0x008D7140",
+  "name": "combine_frames_and_dispatch",
+  "kind": "function",
+  "file": "functions/fn_008d7140.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
  },
  {
   "address": "0x008D7720",
@@ -51262,6 +51370,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b131"
+ },
+ {
+  "address": "0x008D7FA0",
+  "name": "init_grid_and_query",
+  "kind": "function",
+  "file": "functions/fn_008d7fa0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
  },
  {
   "address": "0x008D80A0",
@@ -67257,6 +67374,24 @@
   "lane": "a-09"
  },
  {
+  "address": "0x009DE2F0",
+  "name": "framed_query_a",
+  "kind": "function",
+  "file": "functions/fn_009de2f0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
+ },
+ {
+  "address": "0x009DE390",
+  "name": "framed_query_b",
+  "kind": "function",
+  "file": "functions/fn_009de390.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
+ },
+ {
   "address": "0x009DE530",
   "name": "pool_obj_bind_sync",
   "kind": "function",
@@ -68839,6 +68974,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "a-F01"
+ },
+ {
+  "address": "0x009F86A0",
+  "name": "Stat_SetString",
+  "kind": "function",
+  "file": "functions/fn_009f86a0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
  },
  {
   "address": "0x009F89E0",
@@ -75094,6 +75238,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-09"
+ },
+ {
+  "address": "0x00A7C970",
+  "name": "deferred_00a7c970",
+  "kind": "function",
+  "file": "functions/fn_00a7c970.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
  },
  {
   "address": "0x00A7C9C0",
@@ -83655,6 +83808,15 @@
   "lane": "a-08"
  },
  {
+  "address": "0x00B25950",
+  "name": "setup_ccd_query",
+  "kind": "function",
+  "file": "functions/fn_00b25950.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
+ },
+ {
   "address": "0x00B25A30",
   "name": "touching_list_remove",
   "kind": "function",
@@ -84706,6 +84868,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s247"
+ },
+ {
+  "address": "0x00B35C70",
+  "name": "frame_struct_call",
+  "kind": "function",
+  "file": "functions/fn_00b35c70.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
  },
  {
   "address": "0x00B36A80",
@@ -86884,6 +87055,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-08"
+ },
+ {
+  "address": "0x00B574C0",
+  "name": "init_blend_with_frame_params",
+  "kind": "function",
+  "file": "functions/fn_00b574c0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
  },
  {
   "address": "0x00B57560",
@@ -114561,6 +114741,15 @@
   "lane": "a-F03"
  },
  {
+  "address": "0x00BFC010",
+  "name": "compute_via_frame_temp",
+  "kind": "function",
+  "file": "functions/fn_00bfc010.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
+ },
+ {
   "address": "0x00BFC040",
   "name": "rs20f8",
   "kind": "function",
@@ -114631,6 +114820,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "a-F03"
+ },
+ {
+  "address": "0x00BFC490",
+  "name": "compute_field40_via_frame_temp",
+  "kind": "function",
+  "file": "functions/fn_00bfc490.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
+ },
+ {
+  "address": "0x00BFC4C0",
+  "name": "compute_field2c_copy_via_frame_temp",
+  "kind": "function",
+  "file": "functions/fn_00bfc4c0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
  },
  {
   "address": "0x00BFC510",
@@ -129402,6 +129609,15 @@
   "lane": "r-s138"
  },
  {
+  "address": "0x00D75F50",
+  "name": "accumulate_float_pair_forward_flag0",
+  "kind": "function",
+  "file": "functions/fn_00d75f50.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
+ },
+ {
   "address": "0x00D75FD0",
   "name": "draw_rect_blend_state_pair",
   "kind": "function",
@@ -130948,6 +131164,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b436"
+ },
+ {
+  "address": "0x00DA3BD0",
+  "name": "copy_via_callee_scratch",
+  "kind": "function",
+  "file": "functions/fn_00da3bd0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q52"
  },
  {
   "address": "0x00DA3FA0",
@@ -133632,6 +133857,15 @@
   "lane": "r-s525"
  },
  {
+  "address": "0x00DDE0F0",
+  "name": "UITextField virtual forward",
+  "kind": "function",
+  "file": "functions/fn_00dde0f0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
   "address": "0x00DDE110",
   "name": "UITextField child selector",
   "kind": "function",
@@ -133749,6 +133983,24 @@
   "lane": "r-s525"
  },
  {
+  "address": "0x00DDE9E0",
+  "name": "UITextField select and tail forward",
+  "kind": "function",
+  "file": "functions/fn_00dde9e0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDEA00",
+  "name": "UITextField select and notify by reference",
+  "kind": "function",
+  "file": "functions/fn_00ddea00.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
   "address": "0x00DDEA20",
   "name": "UITextField update default mode",
   "kind": "function",
@@ -133758,10 +134010,55 @@
   "lane": "r-s525"
  },
  {
+  "address": "0x00DDEA30",
+  "name": "UITextField select and notify",
+  "kind": "function",
+  "file": "functions/fn_00ddea30.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDEA50",
+  "name": "UITextField scale propagation",
+  "kind": "function",
+  "file": "functions/fn_00ddea50.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDEAE0",
+  "name": "UITextField conditional scale update",
+  "kind": "function",
+  "file": "functions/fn_00ddeae0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
   "address": "0x00DDEB40",
   "name": "UITextField conditional update",
   "kind": "function",
   "file": "functions/fn_00ddeb40.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDEB90",
+  "name": "UITextField reset and measure",
+  "kind": "function",
+  "file": "functions/fn_00ddeb90.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s525"
+ },
+ {
+  "address": "0x00DDF0B0",
+  "name": "UITextField scale validator",
+  "kind": "function",
+  "file": "functions/fn_00ddf0b0.rs",
   "trials": 1200,
   "checker": "version 7",
   "lane": "r-s525"
