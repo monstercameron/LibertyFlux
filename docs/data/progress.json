@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-06",
-  "updated_at": "2026-10-06 03:42",
+  "updated_at": "2026-10-06 03:47",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -13,11 +13,11 @@
   "stages": {
     "identified": 37413,
     "named": 31620,
-    "rewritten": 16595,
-    "verified": 16552
+    "rewritten": 16603,
+    "verified": 16560
   },
   "structures": 340,
-  "symbols": 16664,
+  "symbols": 16672,
   "measured": [
     {
       "label": "Code section",
@@ -105,13 +105,13 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 16595,
+      "value": 16603,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 16552,
+      "value": 16560,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     },
@@ -119,7 +119,7 @@
       "label": "Game code verified, measured in bytes",
       "value": 32.1,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2349261 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2349996 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
@@ -135,7 +135,7 @@
     }
   ],
   "activity": {
-    "lanes_running": 13,
+    "lanes_running": 15,
     "lanes_finished": 1490,
     "lanes_incomplete": 149,
     "devlog_entries": 519
@@ -4197,8 +4197,8 @@
       "to": "0x00DD162B",
       "count": 124,
       "named": 37,
-      "rewritten": 9,
-      "verified": 9
+      "rewritten": 17,
+      "verified": 17
     },
     {
       "stage": "identified",
@@ -4465,7 +4465,7 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2349261,
+    "verified": 2349996,
     "large_functions": 2801402,
     "large_functions_verified": 622024
   },
