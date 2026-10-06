@@ -441,17 +441,24 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
         n6 = fmul(n6, rcp1);
         n4 = fmul(n4, rcp1);
         n7 = fmul(n7, rcp1);
+        let dbg_rcp1 = rcp1;
+        let dbg_n6 = n6;
+        let dbg_n7 = n7;
         let mut s1 = m8cb;
         q0 = fmul(s1, n4);
         let mut e18 = n6;
+        let dbg_e18a = e18;
         s1 = fmul(s1, n7);
+        let dbg_s1b = s1;
         let mut e8 = q0;
         q0 = fmul(s5, n6);
         let mut g6 = e8;
         s5 = fmul(s5, n7);
+        let dbg_s5c = s5;
         g6 = fsub(g6, q0);
         let d0v = n4;
         e8 = g6;
+        let dbg_e8c = e8;
         g6 = m88b;
         q0 = fmul(g6, n4);
         n4 = e18;
@@ -459,6 +466,7 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
         s5 = fsub(s5, q0);
         q0 = e8;
         g6 = fsub(g6, s1);
+        let dbg_g6d = g6;
         q0 = fmul(q0, q0);
         s1 = s5;
         s1 = fmul(s1, s5);
@@ -466,6 +474,7 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
         q0 = g6;
         q0 = fmul(q0, g6);
         s1 = fadd(s1, q0);
+        let dbg_s1e = s1;
         let rcp3 = if s1 != 0.0 { fdiv(one, fsqrt(s1)) } else { 0.0 };
         q0 = fmul(rcp3, e8);
         e18 = q0;
@@ -524,17 +533,17 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
             m98b.to_bits(),
             m9cb.to_bits(),
             ma0b.to_bits(),
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
+            dbg_rcp1.to_bits(),
+            dbg_n6.to_bits(),
+            dbg_n7.to_bits(),
+            dbg_e18a.to_bits(),
+            dbg_s1b.to_bits(),
+            dbg_e8c.to_bits(),
+            dbg_s5c.to_bits(),
+            dbg_g6d.to_bits(),
+            dbg_s1e.to_bits(),
+            rcp3.to_bits(),
+            m70.to_bits(),
             d0v.to_bits(),
         ];
         lf_checker_rt::callee_thiscall!(11, u32, cbuf.as_mut_ptr() as u32, cb3.as_mut_ptr() as u32);

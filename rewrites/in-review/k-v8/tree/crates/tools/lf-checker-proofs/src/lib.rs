@@ -1428,7 +1428,7 @@ export!(cdecl, mut_k7_cmp32(a: u32, b: u32) -> u32 {
 
 // v8 scratch range base as a file VA (worker K8_RVA 0x167f620): 8 bytes
 // of writable image data. The k8 contracts declare it as one range.
-const K8_BASE: u32 = 0x567f620;
+const K8_BASE: u32 = 0x1A7f620;
 
 // k8_shift (selftest:glob_store_hi, v8): the original stores its word at
 // the SECOND word of the declared 8-byte range and returns it. The
