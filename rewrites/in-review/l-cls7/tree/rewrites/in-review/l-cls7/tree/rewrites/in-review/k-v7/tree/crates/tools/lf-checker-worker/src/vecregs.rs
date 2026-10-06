@@ -25,10 +25,6 @@
 //! double per register never looks at the upper half, which may hold
 //! whatever an earlier conversion left there). The stub still logs all 16
 //! bytes; only the comparison narrows, and the contract records it.
-//!
-//! Version 7 adds `logxmm32_regs: [n, ...]`, the same narrowing to the low
-//! 4 bytes for callees that take one float per register (never beside the
-//! 8-byte narrowing on the same register).
 
 /// Number of XMM registers on a 32-bit x86 target.
 pub const XMM_REGS: usize = 8;
@@ -60,10 +56,6 @@ pub struct XmmCallCfg {
     /// logged `XMMn` (the double the callee reads). Doubles extension,
     /// unset unless the contract asks.
     pub cmp64: [bool; XMM_REGS],
-    /// `cmp32[n]`: the call key compares only the low 4 bytes of the
-    /// logged `XMMn` (the float the callee reads). v7, unset unless the
-    /// contract asks, never beside `cmp64[n]` on the same register.
-    pub cmp32: [bool; XMM_REGS],
 }
 
 /// The contract's vector-register options for one callee, as parsed.
@@ -87,9 +79,6 @@ pub struct XmmCallKeys {
     /// Doubles extension `logxmm64_regs`: logged registers compared on
     /// their low 8 bytes only.
     pub logxmm64_regs: Vec<usize>,
-    /// v7 `logxmm32_regs`: logged registers compared on their low 4
-    /// bytes only (never beside `logxmm64_regs` on the same register).
-    pub logxmm32_regs: Vec<usize>,
 }
 
 impl XmmCallCfg {
@@ -103,9 +92,7 @@ impl XmmCallCfg {
     /// (`xmm_from_stack64`) entry that names a missing register, shares a
     /// register with the 4-byte transport, reaches past the declared
     /// arguments, or is not logged, or a `logxmm64_regs` entry that names
-    /// a missing register or one that is not logged, or a `logxmm32_regs`
-    /// entry that names a missing or unlogged register or shares one with
-    /// the 8-byte narrowing.
+    /// a missing register or one that is not logged.
     pub fn merge(id: u32, k: &XmmCallKeys, nargs: usize) -> Result<XmmCallCfg, String> {
         let mut c = XmmCallCfg::default();
         c.log[0] = k.logxmm;
@@ -183,26 +170,6 @@ impl XmmCallCfg {
                 ));
             }
             c.cmp64[r] = true;
-        }
-        // v7: the same fail-closed rules for the 4-byte narrowing, plus a
-        // refusal to narrow one register twice (the key would be ambiguous).
-        for &r in &k.logxmm32_regs {
-            if r >= XMM_REGS {
-                return Err(format!(
-                    "callee {id} logxmm32_regs names xmm{r} (0-7 exist)"
-                ));
-            }
-            if !c.log[r] {
-                return Err(format!(
-                    "callee {id} narrows xmm{r} to 4 bytes without logging it (add {r} to logxmm_regs)"
-                ));
-            }
-            if c.cmp64[r] {
-                return Err(format!(
-                    "callee {id} narrows xmm{r} to 8 bytes and 4 bytes (pick one)"
-                ));
-            }
-            c.cmp32[r] = true;
         }
         Ok(c)
     }
