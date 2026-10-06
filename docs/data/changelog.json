@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Devlog: Production lane: 28 text-field functions verified, two held by a global-fill gap",
+    "title": "Rewrites: 1 more functions pass the checker (16974 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "1 rewrites added under rewrites/verified: 0 script native handlers and 1 other functions.",
+      "The tree now holds 16974 rewrites, 16955 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Devlog: Production lane: 28 text-field functions verified, two held by a global-fill gap",
+    "commit": "9c3f7cc8118ea1d552f52835d5ee77cce1cea129",
     "summary": "Findings from the r-s525 lane.",
     "changes": [
       "New devlog entry: Production lane: 28 text-field functions verified, two held by a global-fill gap.",
