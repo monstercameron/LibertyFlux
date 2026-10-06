@@ -151,7 +151,7 @@ impl VoiceSlots {
             return false;
         }
         let b = self.byte(index.wrapping_add(TABLE_BASE));
-        let k = (b as u32)
+        let k = u32::from(b)
             .wrapping_add(index.wrapping_mul(2))
             .wrapping_add(KEY_BIAS);
         let at = k.wrapping_mul(3).wrapping_mul(4);
@@ -160,10 +160,10 @@ impl VoiceSlots {
 
     /// Stores two values into one voice record, notifying mid-way.
     ///
-    /// Reads the index byte at `a + INDEX_BASE`, selects record
-    /// `(byte + 3 * a) * RECORD_SIZE` (all wrapping), stores `b` at
-    /// record + [`STORE_A_OFF`], notifies with (record +
-    /// [`NOTIFY_OFF`], `c`), then stores `d` at record +
+    /// Reads the index byte at `sel + INDEX_BASE`, selects record
+    /// `(byte + 3 * sel) * RECORD_SIZE` (all wrapping), stores `first`
+    /// at record + [`STORE_A_OFF`], notifies with (record +
+    /// [`NOTIFY_OFF`], `cookie`), then stores `second` at record +
     /// [`STORE_B_OFF`]. The notify answer is ignored.
     ///
     /// # Panics
@@ -171,17 +171,19 @@ impl VoiceSlots {
     /// When a read or write would leave the store.
     pub fn slot_update(
         &mut self,
-        a: u32,
-        b: u32,
-        c: u32,
-        d: u32,
+        sel: u32,
+        first: u32,
+        cookie: u32,
+        second: u32,
         notify: &mut impl Notify,
     ) {
-        let t = self.byte(a.wrapping_add(INDEX_BASE)) as u32;
-        let rec = t.wrapping_add(a.wrapping_mul(3)).wrapping_mul(RECORD_SIZE);
-        self.set_word(rec.wrapping_add(STORE_A_OFF), b);
-        notify.notify(rec.wrapping_add(NOTIFY_OFF), c);
-        self.set_word(rec.wrapping_add(STORE_B_OFF), d);
+        let picked = u32::from(self.byte(sel.wrapping_add(INDEX_BASE)));
+        let rec = picked
+            .wrapping_add(sel.wrapping_mul(3))
+            .wrapping_mul(RECORD_SIZE);
+        self.set_word(rec.wrapping_add(STORE_A_OFF), first);
+        notify.notify(rec.wrapping_add(NOTIFY_OFF), cookie);
+        self.set_word(rec.wrapping_add(STORE_B_OFF), second);
     }
 
     /// Drops every slot whose owner id equals `id`.
@@ -197,7 +199,7 @@ impl VoiceSlots {
     /// When a read or write would leave the store.
     pub fn clear_by_id(&mut self, id: u32) {
         for k in 0..3u32 {
-            let rec = (self.byte(INDEX_BASE.wrapping_add(k)) as u32).wrapping_mul(RECORD_SIZE);
+            let rec = u32::from(self.byte(INDEX_BASE.wrapping_add(k))).wrapping_mul(RECORD_SIZE);
             let owner = rec.wrapping_add(INDEXED_BASES[k as usize]);
             if self.word(owner) == id {
                 self.set_word(owner, 0);
@@ -225,10 +227,13 @@ impl VoiceSlots {
     ///
     /// When the flag byte would leave the store.
     pub fn flag_advance(&mut self, a: u32, b: u32) {
-        let t = (b as i32).wrapping_add(1);
+        let t = b.cast_signed().wrapping_add(1);
         let r = t % 3;
-        let idx = r.wrapping_add((a as i32).wrapping_mul(3));
-        let at = (idx.wrapping_mul(RECORD_SIZE as i32) as u32).wrapping_add(FLAG_OFF);
+        let idx = r.wrapping_add(a.cast_signed().wrapping_mul(3));
+        let at = idx
+            .wrapping_mul(RECORD_SIZE.cast_signed())
+            .cast_unsigned()
+            .wrapping_add(FLAG_OFF);
         if self.byte(at) == FLAG_READY {
             self.set_byte(at, FLAG_CLEARED);
         }

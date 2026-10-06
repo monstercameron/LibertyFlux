@@ -24,7 +24,7 @@ mod x86 {
 
     #[path = "../support/mod.rs"]
     mod support;
-    use support::{Rng, addr, lock, SCALE_VA, TABLE_VA};
+    use support::{Rng, SCALE_VA, TABLE_VA, addr, lock};
 
     /// Bank-table stride and biases, as the rewrites hold them.
     const STRIDE: u32 = 0x6F40;
@@ -73,10 +73,16 @@ mod x86 {
         let table_len = (nb - 1) * STRIDE as usize + TABLE_BIAS as usize + 4;
         let mut table = vec![0u8; table_len];
         rng.bytes(&mut table);
-        let mut fx = Fixture { table: table.into_boxed_slice(), stores, scale };
+        let mut fx = Fixture {
+            table: table.into_boxed_slice(),
+            stores,
+            scale,
+        };
         let base = fx.base();
         for b in 0..nb {
-            let at = base.wrapping_add(b as u32 * STRIDE).wrapping_add(TABLE_BIAS);
+            let at = base
+                .wrapping_add(b as u32 * STRIDE)
+                .wrapping_add(TABLE_BIAS);
             let bank = fx.bank_base(b);
             unsafe {
                 std::ptr::write_unaligned(at as *mut u32, bank);
@@ -96,22 +102,32 @@ mod x86 {
             let mut recs = Vec::with_capacity(ns);
             for s in 0..ns {
                 let o = s * fx.scale as usize;
-                let slot = u32::from_le_bytes(img[o + SLOT_OFF as usize..o + SLOT_OFF as usize + 4].try_into().unwrap());
-                recs.push(BankRecord { slot, flags: img[o + FLAG_OFF as usize] });
+                let slot = u32::from_le_bytes(
+                    img[o + SLOT_OFF as usize..o + SLOT_OFF as usize + 4]
+                        .try_into()
+                        .unwrap(),
+                );
+                recs.push(BankRecord {
+                    slot,
+                    flags: img[o + FLAG_OFF as usize],
+                });
             }
             banks.push(recs);
         }
-        BankedVoices { scale: fx.scale, banks }
+        BankedVoices {
+            scale: fx.scale,
+            banks,
+        }
     }
 
     /// The record address the rewrite must compute for a selector.
-    fn target_of(fx: &Fixture, at: &VoiceSel) -> u32 {
+    fn target_of(fx: &Fixture, at: VoiceSel) -> u32 {
         fx.bank_base(at.sub as usize)
             .wrapping_add(fx.scale.wrapping_mul(at.sel as u32))
     }
 
     /// Plants the `this` object carrying a selector.
-    fn plant_sel(rng: &mut Rng, at: &VoiceSel) -> (Box<[u8]>, u32) {
+    fn plant_sel(rng: &mut Rng, at: VoiceSel) -> (Box<[u8]>, u32) {
         let mut v = vec![0u8; 0x41];
         rng.bytes(&mut v);
         v[4] = at.sel;
@@ -126,18 +142,18 @@ mod x86 {
         use lf_audio::audio_voice::banked::{BankedVoices, VoiceSel};
 
         /// Sets bit 2 instead of bit 3.
-        pub fn set_flag4(t: &mut BankedVoices, at: &VoiceSel) {
+        pub fn set_flag4(t: &mut BankedVoices, at: VoiceSel) {
             let r = &mut t.banks[at.sub as usize][at.sel as usize];
             r.flags |= 4;
         }
 
         /// Stores the complemented value.
-        pub fn store_not(t: &mut BankedVoices, at: &VoiceSel, value: u32) {
+        pub fn store_not(t: &mut BankedVoices, at: VoiceSel, value: u32) {
             t.banks[at.sub as usize][at.sel as usize].slot = !value;
         }
 
         /// Takes bit 1 of the argument instead of bit 0.
-        pub fn set_bit1_from_bit1(t: &mut BankedVoices, at: &VoiceSel, arg: u32) -> bool {
+        pub fn set_bit1_from_bit1(t: &mut BankedVoices, at: VoiceSel, arg: u32) -> bool {
             let slot = &mut t.banks[at.sub as usize][at.sel as usize].flags;
             let doubled = ((arg as u8) >> 1).wrapping_mul(2);
             let adjust = (doubled ^ *slot) & 2;
@@ -163,15 +179,19 @@ mod x86 {
                 sel: rng.below(ns as u32) as u8,
                 sub: rng.below(nb as u32) as u8,
             };
-            let (_sel_obj, this) = plant_sel(&mut rng, &at);
+            let (_sel_obj, this) = plant_sel(&mut rng, at);
             // The rewrite must resolve exactly the planted record address.
-            let target = target_of(&fx, &at);
+            let target = target_of(&fx, at);
             debug_assert!(target >= fx.bank_base(at.sub as usize));
             let mut lift = decode(&fx, ns);
             let pre = lift.clone();
             let ret = unsafe { fn_008A9EB0::rw_008a9eb0(this as *const u8) };
-            assert_eq!(ret, fx.base(), "trial {trial}: the rewrite answers the table base");
-            lift.set_flag8(&at);
+            assert_eq!(
+                ret,
+                fx.base(),
+                "trial {trial}: the rewrite answers the table base"
+            );
+            lift.set_flag8(at);
             // Every store byte must match the lift's record.
             for b in 0..nb {
                 let base = fx.bank_base(b);
@@ -180,10 +200,19 @@ mod x86 {
                     let o = s * scale as usize;
                     let want = lift.banks[b][s];
                     let got_slot = u32::from_le_bytes(
-                        img[o + SLOT_OFF as usize..o + SLOT_OFF as usize + 4].try_into().unwrap(),
+                        img[o + SLOT_OFF as usize..o + SLOT_OFF as usize + 4]
+                            .try_into()
+                            .unwrap(),
                     );
-                    assert_eq!(got_slot, want.slot, "trial {trial}: bank {b} record {s} slot");
-                    assert_eq!(img[o + FLAG_OFF as usize], want.flags, "trial {trial}: bank {b} record {s} flags");
+                    assert_eq!(
+                        got_slot, want.slot,
+                        "trial {trial}: bank {b} record {s} slot"
+                    );
+                    assert_eq!(
+                        img[o + FLAG_OFF as usize],
+                        want.flags,
+                        "trial {trial}: bank {b} record {s} flags"
+                    );
                 }
             }
             // The flag byte the rewrite touched is the lifted record's.
@@ -191,7 +220,7 @@ mod x86 {
             assert_eq!(touched, lift.banks[at.sub as usize][at.sel as usize].flags);
             assert_eq!(touched & 8, 8, "trial {trial}: bit 3 is set");
             let mut w = pre.clone();
-            wrong::set_flag4(&mut w, &at);
+            wrong::set_flag4(&mut w, at);
             let wflag = w.banks[at.sub as usize][at.sel as usize].flags;
             if wflag != touched {
                 caught += 1;
@@ -215,13 +244,13 @@ mod x86 {
                 sub: rng.below(nb as u32) as u8,
             };
             let value = if trial == 0 { 0xA5A5_A5A5 } else { rng.u32() };
-            let (_sel_obj, this) = plant_sel(&mut rng, &at);
-            let target = target_of(&fx, &at);
+            let (_sel_obj, this) = plant_sel(&mut rng, at);
+            let target = target_of(&fx, at);
             let mut lift = decode(&fx, ns);
             let pre = lift.clone();
             let ret = unsafe { fn_008AA3A0::rw_008aa3a0(this as *const u8, value) };
             assert_eq!(ret, value, "trial {trial}: the rewrite echoes the value");
-            lift.store_slot(&at, value);
+            lift.store_slot(at, value);
             for b in 0..nb {
                 let base = fx.bank_base(b);
                 let img = unsafe { image(base, fx.stores[b].len()) };
@@ -229,18 +258,29 @@ mod x86 {
                     let o = s * scale as usize;
                     let want = lift.banks[b][s];
                     let got_slot = u32::from_le_bytes(
-                        img[o + SLOT_OFF as usize..o + SLOT_OFF as usize + 4].try_into().unwrap(),
+                        img[o + SLOT_OFF as usize..o + SLOT_OFF as usize + 4]
+                            .try_into()
+                            .unwrap(),
                     );
-                    assert_eq!(got_slot, want.slot, "trial {trial}: bank {b} record {s} slot");
-                    assert_eq!(img[o + FLAG_OFF as usize], want.flags, "trial {trial}: bank {b} record {s} flags");
+                    assert_eq!(
+                        got_slot, want.slot,
+                        "trial {trial}: bank {b} record {s} slot"
+                    );
+                    assert_eq!(
+                        img[o + FLAG_OFF as usize],
+                        want.flags,
+                        "trial {trial}: bank {b} record {s} flags"
+                    );
                 }
             }
             let touched = u32::from_le_bytes(
-                unsafe { image(target.wrapping_add(SLOT_OFF), 4) }.try_into().unwrap(),
+                unsafe { image(target.wrapping_add(SLOT_OFF), 4) }
+                    .try_into()
+                    .unwrap(),
             );
             assert_eq!(touched, value, "trial {trial}: the stored word");
             let mut w = pre.clone();
-            wrong::store_not(&mut w, &at, value);
+            wrong::store_not(&mut w, at, value);
             if w.banks[at.sub as usize][at.sel as usize].slot != touched {
                 caught += 1;
             }
@@ -264,8 +304,8 @@ mod x86 {
             };
             // Trial 0 pins low-bit 1 against flag-bit 0.
             let arg = if trial == 0 { 0x01 } else { rng.u32() };
-            let (_sel_obj, this) = plant_sel(&mut rng, &at);
-            let target = target_of(&fx, &at);
+            let (_sel_obj, this) = plant_sel(&mut rng, at);
+            let target = target_of(&fx, at);
             let mut lift = decode(&fx, ns);
             if trial == 0 {
                 lift.banks[at.sub as usize][at.sel as usize].flags &= !2;
@@ -276,19 +316,30 @@ mod x86 {
             let before = unsafe { image(target.wrapping_add(FLAG_OFF), 1)[0] };
             let pre = lift.clone();
             let ret = unsafe { fn_008AA3F0::rw_008aa3f0(this as *const u8, arg) };
-            let changed = lift.set_bit1(&at, arg);
+            let changed = lift.set_bit1(at, arg);
             // The table_hi|adjust answer is rebuilt from the lifted bit.
             let expect = (fx.base() & 0xFFFF_FF00) | u32::from(changed) * 2;
-            assert_eq!(ret, expect, "trial {trial}: answer rebuilds from the lifted change");
+            assert_eq!(
+                ret, expect,
+                "trial {trial}: answer rebuilds from the lifted change"
+            );
             // The adjust mask itself is pinned against the pre-state.
             let doubled = (arg as u8).wrapping_mul(2);
             let adjust = (doubled ^ before) & 2;
-            assert_eq!(u32::from(changed) * 2, adjust as u32, "trial {trial}: mask matches the sequence");
+            assert_eq!(
+                u32::from(changed) * 2,
+                adjust as u32,
+                "trial {trial}: mask matches the sequence"
+            );
             let touched = unsafe { image(target.wrapping_add(FLAG_OFF), 1)[0] };
             assert_eq!(touched, lift.banks[at.sub as usize][at.sel as usize].flags);
-            assert_eq!(touched & 2, ((arg as u8) & 1) << 1, "trial {trial}: bit 1 follows the argument's low bit");
+            assert_eq!(
+                touched & 2,
+                ((arg as u8) & 1) << 1,
+                "trial {trial}: bit 1 follows the argument's low bit"
+            );
             let mut w = pre.clone();
-            let wchanged = wrong::set_bit1_from_bit1(&mut w, &at, arg);
+            let wchanged = wrong::set_bit1_from_bit1(&mut w, at, arg);
             let wflag = w.banks[at.sub as usize][at.sel as usize].flags;
             if wflag != touched || wchanged != changed {
                 caught += 1;

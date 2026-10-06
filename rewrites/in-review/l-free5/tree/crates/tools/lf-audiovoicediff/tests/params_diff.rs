@@ -12,7 +12,7 @@
 
 #[cfg(target_arch = "x86")]
 mod x86 {
-    use lf_audio::audio_voice::params::{ParamBlock, ParamBlocks, VoiceHead, BLOCK_COUNT};
+    use lf_audio::audio_voice::params::{BLOCK_COUNT, ParamBlock, ParamBlocks, VoiceHead};
     use lf_audiovoicediff::rewrites::*;
     use lf_audiovoicediff::rt::{self, StubKind};
 
@@ -49,11 +49,15 @@ mod x86 {
 
     /// Deliberately wrong lifts, each caught below.
     mod wrong {
-        use lf_audio::audio_voice::params::{ParamBlock, ParamBlocks, VoiceHead, BLOCK_COUNT};
+        use lf_audio::audio_voice::params::{BLOCK_COUNT, ParamBlock, ParamBlocks, VoiceHead};
 
         /// Resets the gain to 0.0 instead of 1.0.
         pub fn reset_gain_zero(p: &mut ParamBlocks) {
-            p.blocks = [ParamBlock { code: 0, gain: 0.0, flags: 0 }; BLOCK_COUNT];
+            p.blocks = [ParamBlock {
+                code: 0,
+                gain: 0.0,
+                flags: 0,
+            }; BLOCK_COUNT];
         }
 
         /// Resets only the first four blocks.

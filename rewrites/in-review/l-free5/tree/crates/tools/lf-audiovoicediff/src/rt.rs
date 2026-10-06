@@ -17,6 +17,7 @@
 
 use core::sync::atomic::AtomicU32;
 use core::sync::atomic::Ordering;
+#[cfg(target_arch = "x86")]
 use std::cell::Cell;
 use std::collections::HashMap;
 use std::collections::VecDeque;
@@ -148,7 +149,8 @@ pub fn take_calls() -> Vec<NumberedCall> {
 }
 
 /// Records a numbered call and pops its answer, then runs the call's
-/// effect hook if one is installed.
+/// effect hook if one is installed. Only the x86 stubs call it.
+#[cfg(target_arch = "x86")]
 fn record_numbered(id: u32, args: Vec<u32>) -> u32 {
     let ans = {
         let mut s = script();
@@ -189,22 +191,29 @@ pub fn clear_hooks() {
     hooks().clear();
 }
 
+// The stubs name 32-bit calling conventions, which other targets
+// reject outright: everything from here to `callee_addr` is x86-only.
+#[cfg(target_arch = "x86")]
 thread_local! {
     static CURRENT_ID: Cell<u32> = const { Cell::new(0) };
 }
 
+#[cfg(target_arch = "x86")]
 extern "thiscall" fn stub_thiscall1(a: u32) -> u32 {
     record_numbered(CURRENT_ID.with(|c| c.get()), vec![a])
 }
 
+#[cfg(target_arch = "x86")]
 extern "thiscall" fn stub_thiscall2(a: u32, b: u32) -> u32 {
     record_numbered(CURRENT_ID.with(|c| c.get()), vec![a, b])
 }
 
+#[cfg(target_arch = "x86")]
 extern "thiscall" fn stub_thiscall3(a: u32, b: u32, c: u32) -> u32 {
     record_numbered(CURRENT_ID.with(|c| c.get()), vec![a, b, c])
 }
 
+#[cfg(target_arch = "x86")]
 extern "cdecl" fn stub_cdecl2(a: u32, b: u32) -> u32 {
     record_numbered(CURRENT_ID.with(|c| c.get()), vec![a, b])
 }
@@ -214,6 +223,7 @@ extern "cdecl" fn stub_cdecl2(a: u32, b: u32) -> u32 {
 /// # Panics
 ///
 /// When no script entry covers `id`: a case bug, never a guess.
+#[cfg(target_arch = "x86")]
 #[must_use]
 // Function addresses travel as words: the rewrites call through them.
 pub fn callee_addr(id: u32) -> u32 {
@@ -231,6 +241,17 @@ pub fn callee_addr(id: u32) -> u32 {
         StubKind::Thiscall3 => stub_thiscall3 as *const () as usize as u32,
         StubKind::Cdecl2 => stub_cdecl2 as *const () as usize as u32,
     }
+}
+
+/// Non-x86 placeholder: the rewrites (the only callers) never run here.
+///
+/// # Panics
+///
+/// Always: no case should reach it off the 32-bit target.
+#[cfg(not(target_arch = "x86"))]
+#[must_use]
+pub fn callee_addr(_id: u32) -> u32 {
+    panic!("callee stubs need the 32-bit target")
 }
 
 /// Declare a rewrite export with the original's calling convention.

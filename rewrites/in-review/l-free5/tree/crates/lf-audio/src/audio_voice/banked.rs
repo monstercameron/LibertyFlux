@@ -58,7 +58,7 @@ impl BankedVoices {
     ///
     /// When `sel` is [`FAULT_SEL`] (the original faults at a near-null
     /// address there), or when the bank or record is past the table.
-    fn record(&mut self, at: &VoiceSel) -> &mut BankRecord {
+    fn record(&mut self, at: VoiceSel) -> &mut BankRecord {
         assert!(
             at.sel != FAULT_SEL,
             "selector 0xff: the original faults at a near-null address"
@@ -83,7 +83,7 @@ impl BankedVoices {
     /// # Panics
     ///
     /// As [`BankedVoices::record`].
-    pub fn set_flag8(&mut self, at: &VoiceSel) {
+    pub fn set_flag8(&mut self, at: VoiceSel) {
         self.record(at).flags |= FLAG_BIT;
     }
 
@@ -92,7 +92,7 @@ impl BankedVoices {
     /// # Panics
     ///
     /// As [`BankedVoices::record`].
-    pub fn store_slot(&mut self, at: &VoiceSel, value: u32) {
+    pub fn store_slot(&mut self, at: VoiceSel, value: u32) {
         self.record(at).slot = value;
     }
 
@@ -106,8 +106,10 @@ impl BankedVoices {
     /// # Panics
     ///
     /// As [`BankedVoices::record`].
-    pub fn set_bit1(&mut self, at: &VoiceSel, arg: u32) -> bool {
+    pub fn set_bit1(&mut self, at: VoiceSel, arg: u32) -> bool {
         let slot = &mut self.record(at).flags;
+        // The original doubles the argument's low byte: truncation intended.
+        #[allow(clippy::cast_possible_truncation)]
         let doubled = (arg as u8).wrapping_mul(2);
         let adjust = (doubled ^ *slot) & 2;
         *slot ^= adjust;

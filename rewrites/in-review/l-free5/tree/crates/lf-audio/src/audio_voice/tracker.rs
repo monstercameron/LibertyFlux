@@ -105,7 +105,11 @@ impl VoiceTracker {
         let Some(slot) = self.link.as_mut() else {
             return count;
         };
-        slot.tag = count as u8;
+        // The original stamps the count's low byte: truncation intended.
+        #[allow(clippy::cast_possible_truncation)]
+        {
+            slot.tag = count as u8;
+        }
         let fresh = world.refresh(pool, voice);
         slot.cached = fresh;
         fresh

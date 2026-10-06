@@ -43,4 +43,4 @@ pub mod tracker;
 pub use banked::{BankRecord, BankedVoices, VoiceSel};
 pub use params::{ParamBlock, ParamBlocks, SubInit, VoiceHead};
 pub use slots::{Notify, VoiceSlots};
-pub use tracker::{LinkedSlot, PoolTag, TrackerWorld, VoiceHandle, VoiceTracker, VoiceTag};
+pub use tracker::{LinkedSlot, PoolTag, TrackerWorld, VoiceHandle, VoiceTag, VoiceTracker};

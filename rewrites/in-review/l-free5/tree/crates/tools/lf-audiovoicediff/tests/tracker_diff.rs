@@ -15,8 +15,8 @@
 #[cfg(target_arch = "x86")]
 mod x86 {
     use lf_audio::audio_voice::tracker::{
-        LinkedSlot, PoolHandle, TrackerWorld, VoiceHandle, VoiceTracker,
-        INVALID_HANDLE, PARK_CACHED, PARK_TAG,
+        INVALID_HANDLE, LinkedSlot, PARK_CACHED, PARK_TAG, PoolHandle, TrackerWorld, VoiceHandle,
+        VoiceTracker,
     };
     use lf_audiovoicediff::rewrites::*;
     use lf_audiovoicediff::rt::{self, StubKind};
@@ -24,7 +24,7 @@ mod x86 {
 
     #[path = "../support/mod.rs"]
     mod support;
-    use support::{Rng, addr, lock, POOL_VA};
+    use support::{POOL_VA, Rng, addr, lock};
 
     /// Fresh view of a test image; rebuilt after every rewrite call so no
     /// pre-call borrow is read back (the compiler would forward it).
@@ -60,7 +60,10 @@ mod x86 {
         rng.bytes(&mut v);
         v[0x30..0x34].copy_from_slice(&voice.to_le_bytes());
         v[0x38..0x3C].copy_from_slice(&count.to_le_bytes());
-        let mut fx = TFixture { obj: v.into_boxed_slice(), rec };
+        let fx = TFixture {
+            obj: v.into_boxed_slice(),
+            rec,
+        };
         let link = fx.link();
         unsafe {
             image(fx.this(), 0x3C)[0x34..0x38].copy_from_slice(&link.to_le_bytes());
@@ -105,7 +108,13 @@ mod x86 {
 
     impl Fake {
         fn new() -> Self {
-            Self { calls: Vec::new(), refresh_ans: 0, bind_ans: 0, resolve_ans: 0, install_like: false }
+            Self {
+                calls: Vec::new(),
+                refresh_ans: 0,
+                bind_ans: 0,
+                resolve_ans: 0,
+                install_like: false,
+            }
         }
     }
 
@@ -258,20 +267,47 @@ mod x86 {
     }
 
     /// Asserts the 32-bit images equal the lifted tracker.
-    fn assert_images(trial: u32, what: &str, fx: &TFixture, lift: &VoiceTracker, initial_obj: &[u8], initial_rec: Option<&[u8]>) {
+    fn assert_images(
+        trial: u32,
+        what: &str,
+        fx: &TFixture,
+        lift: &VoiceTracker,
+        initial_obj: &[u8],
+        initial_rec: Option<&[u8]>,
+    ) {
         let img = unsafe { image(fx.this(), 0x3C) };
         // Untouched prefix and suffix bytes survive any method.
-        assert_eq!(&img[..0x30], &initial_obj[..0x30], "trial {trial} {what}: prefix survives");
-        assert_eq!(&img[0x34..0x38], &initial_obj[0x34..0x38], "trial {trial} {what}: link word survives");
+        assert_eq!(
+            &img[..0x30],
+            &initial_obj[..0x30],
+            "trial {trial} {what}: prefix survives"
+        );
+        assert_eq!(
+            &img[0x34..0x38],
+            &initial_obj[0x34..0x38],
+            "trial {trial} {what}: link word survives"
+        );
         let voice = u32::from_le_bytes(img[0x30..0x34].try_into().unwrap());
         let count = u32::from_le_bytes(img[0x38..0x3C].try_into().unwrap());
-        assert_eq!(voice, Handle32::raw_or_zero(lift.voice), "trial {trial} {what}: voice word");
+        assert_eq!(
+            voice,
+            Handle32::raw_or_zero(lift.voice),
+            "trial {trial} {what}: voice word"
+        );
         assert_eq!(count, lift.count, "trial {trial} {what}: count word");
         if let Some(rec) = fx.rec.as_ref() {
             let ri = unsafe { image(addr(&rec[0]), 0x4C) };
             let init = initial_rec.unwrap();
-            assert_eq!(&ri[..0x40], &init[..0x40], "trial {trial} {what}: record head survives");
-            assert_eq!(&ri[0x41..0x48], &init[0x41..0x48], "trial {trial} {what}: record middle survives");
+            assert_eq!(
+                &ri[..0x40],
+                &init[..0x40],
+                "trial {trial} {what}: record head survives"
+            );
+            assert_eq!(
+                &ri[0x41..0x48],
+                &init[0x41..0x48],
+                "trial {trial} {what}: record middle survives"
+            );
             let slot = lift.link.expect("linked lift has a slot");
             assert_eq!(ri[0x40], slot.tag, "trial {trial} {what}: tag byte");
             assert_eq!(
@@ -295,9 +331,14 @@ mod x86 {
             let count = if trial == 0 { 0x1234 } else { rng.u32() };
             let pool_raw = if trial % 5 == 0 { 0 } else { rng.u32() | 1 };
             let refresh_ans = if trial == 0 { 0x77 } else { rng.u32() };
-            let fx = plant(&mut rng, rng.u32(), with_link, rng.u32());
+            let planted_voice = rng.u32();
+            let planted_count = rng.u32();
+            let fx = plant(&mut rng, planted_voice, with_link, planted_count);
             let initial_obj = unsafe { image(fx.this(), 0x3C) }.to_vec();
-            let initial_rec = fx.rec.as_ref().map(|r| unsafe { image(addr(&r[0]), 0x4C) }.to_vec());
+            let initial_rec = fx
+                .rec
+                .as_ref()
+                .map(|r| unsafe { image(addr(&r[0]), 0x4C) }.to_vec());
             rt::set_global(POOL_VA, pool_raw);
             rt::set_script(&[(1, StubKind::Thiscall2, vec![refresh_ans])]);
             let this = fx.this();
@@ -305,14 +346,25 @@ mod x86 {
             let pre = lift.clone();
             let ret = unsafe { fn_009E15A0::rw_009e15a0(this as *mut u8, voice_raw, count) };
             let calls = rt::take_calls();
-            let expect_calls = if with_link { vec![(1, vec![pool_raw, voice_raw])] } else { vec![] };
-            assert_eq!(calls, expect_calls, "trial {trial}: refresh runs iff linked");
+            let expect_calls = if with_link {
+                vec![(1, vec![pool_raw, voice_raw])]
+            } else {
+                vec![]
+            };
+            assert_eq!(
+                calls, expect_calls,
+                "trial {trial}: refresh runs iff linked"
+            );
             assert_eq!(
                 ret,
                 if with_link { refresh_ans } else { count },
                 "trial {trial}: answer is the refresh or the count"
             );
-            assert_eq!(rt::get_global(POOL_VA), pool_raw, "trial {trial}: pool global survives");
+            assert_eq!(
+                rt::get_global(POOL_VA),
+                pool_raw,
+                "trial {trial}: pool global survives"
+            );
             let mut fake = Fake::new();
             fake.refresh_ans = refresh_ans;
             let voice = Handle32::new(voice_raw);
@@ -325,7 +377,14 @@ mod x86 {
                 vec![]
             };
             assert_eq!(fake.calls, expect_fake, "trial {trial}: lifted calls");
-            assert_images(trial, "install", &fx, &lift, &initial_obj, initial_rec.as_deref());
+            assert_images(
+                trial,
+                "install",
+                &fx,
+                &lift,
+                &initial_obj,
+                initial_rec.as_deref(),
+            );
             if with_link {
                 let mut w = pre.clone();
                 let mut wf = Fake::new();
@@ -361,10 +420,18 @@ mod x86 {
             let with_link = trial % 2 == 0;
             let with_voice = trial % 3 != 0;
             let count = COUNTS[trial as usize % COUNTS.len()];
-            let fx = plant(&mut rng, if with_voice { rng.u32() | 1 } else { 0 }, with_link, count);
-            let voice_raw = u32::from_le_bytes(unsafe { image(fx.this(), 0x3C) }[0x30..0x34].try_into().unwrap());
+            let planted_voice = if with_voice { rng.u32() | 1 } else { 0 };
+            let fx = plant(&mut rng, planted_voice, with_link, count);
+            let voice_raw = u32::from_le_bytes(
+                unsafe { image(fx.this(), 0x3C) }[0x30..0x34]
+                    .try_into()
+                    .unwrap(),
+            );
             let initial_obj = unsafe { image(fx.this(), 0x3C) }.to_vec();
-            let initial_rec = fx.rec.as_ref().map(|r| unsafe { image(addr(&r[0]), 0x4C) }.to_vec());
+            let initial_rec = fx
+                .rec
+                .as_ref()
+                .map(|r| unsafe { image(addr(&r[0]), 0x4C) }.to_vec());
             rt::set_script(&[(1, StubKind::Thiscall2, vec![0])]);
             let this = fx.this();
             let mut lift = decode(&fx);
@@ -372,16 +439,38 @@ mod x86 {
             let ret = unsafe { fn_009E1320::rw_009e1320(this as *mut u8) };
             let calls = rt::take_calls();
             let must_call = with_voice && count.cast_signed() > 0;
-            let expect_calls = if must_call { vec![(1, vec![voice_raw, this])] } else { vec![] };
-            assert_eq!(calls, expect_calls, "trial {trial}: release runs iff held and count positive");
+            let expect_calls = if must_call {
+                vec![(1, vec![voice_raw, this])]
+            } else {
+                vec![]
+            };
+            assert_eq!(
+                calls, expect_calls,
+                "trial {trial}: release runs iff held and count positive"
+            );
             assert_eq!(ret, fx.link(), "trial {trial}: answer is the link address");
             let mut fake = Fake::new();
             let out = lift.release_and_park(&mut fake);
             assert_eq!(out, with_link, "trial {trial}: lifted presence");
-            assert_eq!(u32::from(out) * fx.link(), ret, "trial {trial}: address rebuilds");
-            let expect_fake = if must_call { vec![WCall::Release(voice_raw)] } else { vec![] };
+            assert_eq!(
+                u32::from(out) * fx.link(),
+                ret,
+                "trial {trial}: address rebuilds"
+            );
+            let expect_fake = if must_call {
+                vec![WCall::Release(voice_raw)]
+            } else {
+                vec![]
+            };
             assert_eq!(fake.calls, expect_fake, "trial {trial}: lifted calls");
-            assert_images(trial, "release", &fx, &lift, &initial_obj, initial_rec.as_deref());
+            assert_images(
+                trial,
+                "release",
+                &fx,
+                &lift,
+                &initial_obj,
+                initial_rec.as_deref(),
+            );
             let mut w = pre.clone();
             let mut wf = Fake::new();
             let wout = wrong::release_nonzero(&mut w, &mut wf);
@@ -426,8 +515,14 @@ mod x86 {
             }
             let fx = plant(&mut rng, v0, trial % 4 == 0, c0);
             let initial_obj = unsafe { image(fx.this(), 0x3C) }.to_vec();
-            let initial_rec = fx.rec.as_ref().map(|r| unsafe { image(addr(&r[0]), 0x4C) }.to_vec());
-            rt::set_script(&[(1, StubKind::Thiscall3, vec![0]), (2, StubKind::Thiscall2, vec![bind_ans])]);
+            let initial_rec = fx
+                .rec
+                .as_ref()
+                .map(|r| unsafe { image(addr(&r[0]), 0x4C) }.to_vec());
+            rt::set_script(&[
+                (1, StubKind::Thiscall3, vec![0]),
+                (2, StubKind::Thiscall2, vec![bind_ans]),
+            ]);
             let this = fx.this();
             let mut lift = decode(&fx);
             let pre = lift.clone();
@@ -458,7 +553,14 @@ mod x86 {
                 vec![WCall::InstallPair(voice_raw, count), WCall::Bind(owner)]
             };
             assert_eq!(fake.calls, expect_fake, "trial {trial}: lifted calls");
-            assert_images(trial, "bind", &fx, &lift, &initial_obj, initial_rec.as_deref());
+            assert_images(
+                trial,
+                "bind",
+                &fx,
+                &lift,
+                &initial_obj,
+                initial_rec.as_deref(),
+            );
             if with_voice {
                 let mut w = pre.clone();
                 let mut wf = Fake::new();
@@ -491,11 +593,23 @@ mod x86 {
                 }
             };
             let arg = rng.u32();
-            let fx = plant(&mut rng, if with_voice { rng.u32() | 1 } else { 0 }, trial % 5 == 0, rng.u32());
-            let voice_raw = u32::from_le_bytes(unsafe { image(fx.this(), 0x3C) }[0x30..0x34].try_into().unwrap());
+            let planted_voice = if with_voice { rng.u32() | 1 } else { 0 };
+            let planted_count = rng.u32();
+            let fx = plant(&mut rng, planted_voice, trial % 5 == 0, planted_count);
+            let voice_raw = u32::from_le_bytes(
+                unsafe { image(fx.this(), 0x3C) }[0x30..0x34]
+                    .try_into()
+                    .unwrap(),
+            );
             let initial_obj = unsafe { image(fx.this(), 0x3C) }.to_vec();
-            let initial_rec = fx.rec.as_ref().map(|r| unsafe { image(addr(&r[0]), 0x4C) }.to_vec());
-            rt::set_script(&[(1, StubKind::Thiscall2, vec![h]), (2, StubKind::Thiscall2, vec![0])]);
+            let initial_rec = fx
+                .rec
+                .as_ref()
+                .map(|r| unsafe { image(addr(&r[0]), 0x4C) }.to_vec());
+            rt::set_script(&[
+                (1, StubKind::Thiscall2, vec![h]),
+                (2, StubKind::Thiscall2, vec![0]),
+            ]);
             let this = fx.this();
             let mut lift = decode(&fx);
             let pre = lift.clone();
@@ -509,7 +623,10 @@ mod x86 {
             } else {
                 vec![(1, vec![voice_raw, arg]), (2, vec![this, h])]
             };
-            assert_eq!(calls, expect_calls, "trial {trial}: resolve then maybe attach");
+            assert_eq!(
+                calls, expect_calls,
+                "trial {trial}: resolve then maybe attach"
+            );
             assert_eq!(ret, u32::from(ok), "trial {trial}: 1 iff attached");
             let mut fake = Fake::new();
             fake.resolve_ans = h;
@@ -523,7 +640,14 @@ mod x86 {
                 vec![WCall::Resolve(voice_raw, arg), WCall::Attach(h)]
             };
             assert_eq!(fake.calls, expect_fake, "trial {trial}: lifted calls");
-            assert_images(trial, "resolve", &fx, &lift, &initial_obj, initial_rec.as_deref());
+            assert_images(
+                trial,
+                "resolve",
+                &fx,
+                &lift,
+                &initial_obj,
+                initial_rec.as_deref(),
+            );
             if with_voice {
                 let mut w = pre.clone();
                 let mut wf = Fake::new();

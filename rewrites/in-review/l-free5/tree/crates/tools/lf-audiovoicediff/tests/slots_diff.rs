@@ -47,10 +47,11 @@ mod x86 {
             }
             let mem = slots.bytes();
             let b = mem[index.wrapping_add(0x540) as usize];
-            let k = (b as u32).wrapping_add(index.wrapping_mul(2)).wrapping_add(0x6a);
+            let k = (b as u32)
+                .wrapping_add(index.wrapping_mul(2))
+                .wrapping_add(0x6a);
             mem[k.wrapping_mul(3).wrapping_mul(4) as usize] == 3
         }
-
     }
 
     #[test]
@@ -125,7 +126,11 @@ mod x86 {
             );
             let mut seen = Vec::new();
             lift.slot_update(a, b, c, d, &mut |at: u32, cc: u32| seen.push((at, cc)));
-            assert_eq!(seen, vec![(rec.wrapping_add(0x18), c)], "trial {trial}: lifted notify offset");
+            assert_eq!(
+                seen,
+                vec![(rec.wrapping_add(0x18), c)],
+                "trial {trial}: lifted notify offset"
+            );
             assert_eq!(
                 this.wrapping_add(seen[0].0),
                 notify_addr,
@@ -160,7 +165,7 @@ mod x86 {
             // Trial 0 forces every owner to the id; even trials reuse one
             // planted owner so a match is guaranteed.
             let id = if trial == 0 {
-                let id = 0x1D1D_1D1D;
+                let id: u32 = 0x1D1D_1D1D;
                 for k in 0..3usize {
                     let rec = initial[0x368 + k] as u32 * 96;
                     let base = [0x0cu32, 0x12c, 0x24c][k];
@@ -216,12 +221,21 @@ mod x86 {
         let mut caught = 0;
         for trial in 0..60u32 {
             // Build (a, b) from an in-store record: idx -> a=idx/3,
-            // r=idx%3, t=r so b=r-1 (wrapping).
-            let idx = if trial == 0 { 0 } else { rng.below(300) };
-            let a = idx / 3;
-            let r = idx % 3;
-            let b = r.wrapping_sub(1);
-            let at = idx * 96 + 8;
+            // r=idx%3, t=r so b=r-1 (wrapping). Every fifth trial pins a
+            // negative dividend (t=-1, -2, i32::MIN) with small a.
+            let (a, b, at) = if trial % 5 == 4 {
+                let b = [0xFFFF_FFFEu32, 0xFFFF_FFFD, 0x8000_0000][(trial / 5) as usize % 3];
+                let a = 1 + trial % 7;
+                let r = (b as i32).wrapping_add(1) % 3;
+                let idx = r.wrapping_add((a as i32).wrapping_mul(3));
+                assert!(idx >= 0, "constructed idx stays non-negative");
+                (a, b, idx as u32 * 96 + 8)
+            } else {
+                let idx = if trial == 0 { 0 } else { rng.below(300) };
+                let a = idx / 3;
+                let r = idx % 3;
+                (a, r.wrapping_sub(1), idx * 96 + 8)
+            };
             let mut initial = vec![0u8; STORE];
             rng.bytes(&mut initial);
             if trial == 0 {
