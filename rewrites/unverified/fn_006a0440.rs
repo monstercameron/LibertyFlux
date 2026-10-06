@@ -260,32 +260,34 @@ fn body<const MUT: bool>(dev: u32, _unused: u32) -> u32 {
         }
         (row as *mut u32).write_unaligned(ty);
         // Tail: first flag, gated device call, table call with out-byte.
+        // Row layout from the addressed bytes: type at +0, flags at +4/+5,
+        // record qwords at +0x8/+0x10.
         if FLAG_TYPES.contains(&ty) {
-            ((row.wrapping_add(0x49)) as *mut u8).write(1);
+            ((row.wrapping_add(0x05)) as *mut u8).write(1);
         } else {
-            ((row.wrapping_add(0x49)) as *mut u8).write(0);
+            ((row.wrapping_add(0x05)) as *mut u8).write(0);
         }
         let gate = global::<u32>(GATE).read();
         let f48: u8;
         if gate == 0 {
-            ((row.wrapping_add(0x48)) as *mut u8).write(0);
+            ((row.wrapping_add(0x04)) as *mut u8).write(0);
             f48 = 0;
         } else {
             let r2 = callee_thiscall!(3, u32, dev.wrapping_add(VID_OFF));
             if r2 == 0 {
-                ((row.wrapping_add(0x48)) as *mut u8).write(0);
+                ((row.wrapping_add(0x04)) as *mut u8).write(0);
                 f48 = 0;
             } else {
-                ((row.wrapping_add(0x48)) as *mut u8).write(1);
+                ((row.wrapping_add(0x04)) as *mut u8).write(1);
                 f48 = 1;
-                let f49 = ((row.wrapping_add(0x49)) as *const u8).read();
+                let f49 = ((row.wrapping_add(0x05)) as *const u8).read();
                 if f49 == 0 {
                     let mut out = [0u8; 8];
                     let r3 = callee_stdcall!(
                         4, u32, idx as u32, 1u32, core::ptr::addr_of_mut!(out) as u32
                     );
                     if r3 == 0 && out[1] == 2 {
-                        ((row.wrapping_add(0x49)) as *mut u8).write(1);
+                        ((row.wrapping_add(0x05)) as *mut u8).write(1);
                     }
                 }
             }
@@ -307,9 +309,9 @@ fn body<const MUT: bool>(dev: u32, _unused: u32) -> u32 {
         let mut idxw = idx;
         if take {
             let q1 = ((dev.wrapping_add(4)) as *const u64).read_unaligned();
-            ((row.wrapping_add(0x0c)) as *mut u64).write_unaligned(q1);
+            ((row.wrapping_add(0x08)) as *mut u64).write_unaligned(q1);
             let q2 = ((dev.wrapping_add(0x0c)) as *const u64).read_unaligned();
-            ((row.wrapping_add(0x14)) as *mut u64).write_unaligned(q2);
+            ((row.wrapping_add(0x10)) as *mut u64).write_unaligned(q2);
             idxw = idx.wrapping_add(1);
             global::<i32>(DEV_INDEX).write(idxw);
         }

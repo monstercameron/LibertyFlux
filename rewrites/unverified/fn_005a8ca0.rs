@@ -6,12 +6,13 @@
 /// The row table holds 24-byte entries; entry `TABLE_INDEX * 3` points at the
 /// row bytes, and the signed 16-bit switch word at row + `v * 22` + 0x12
 /// selects the action: 0 runs the notify/apply pair (notify takes (1,
-/// NOTIFY_TAG) — the original pushes a third dead word the callee never
+/// relocated NOTIFY_TAG, which the image relocates like a pointer) — the original pushes a third dead word the callee never
 /// reads, which this rewrite omits; apply takes no stack arguments and gets
 /// notify's answer in ECX), 1 records the five/ones pattern into the control
 /// globals (the last word is 1 exactly when the switch-value global is
 /// non-zero), anything else skips straight to the slot loop. Every path ends
-/// with the same 165-round slot reset as `reset_slots_165` and returns the
+/// with a 165-round slot reset like `reset_slots_165` (but passing (0, 1):
+/// the pushes run in the opposite order here) and returns the
 /// final reset answer. All comparisons on the switch word are exact equality
 /// against 0 and 1; the final loop bound is an unsigned less-than.
 lf_checker_rt::export!(cdecl, rw_005A8CA0() -> u32 {
@@ -53,7 +54,12 @@ lf_checker_rt::export!(cdecl, rw_005A8CA0() -> u32 {
             as *const i16)
             .read_unaligned() as i32;
         if w == 0 {
-            let answer = lf_checker_rt::callee_stdcall!(NOTIFY, u32, 1u32, NOTIFY_TAG);
+            let answer = lf_checker_rt::callee_stdcall!(
+                NOTIFY,
+                u32,
+                1u32,
+                lf_checker_rt::relocated(NOTIFY_TAG)
+            );
             lf_checker_rt::callee_thiscall!(APPLY, u32, answer);
         } else if w == 1 {
             let sv = lf_checker_rt::global::<u32>(SWITCH_VALUE).read();
@@ -71,7 +77,7 @@ lf_checker_rt::export!(cdecl, rw_005A8CA0() -> u32 {
         let mut last = 0u32;
         for i in 0..SLOT_COUNT {
             lf_checker_rt::global::<u32>(SLOT_INDEX).write(i);
-            last = lf_checker_rt::callee_cdecl!(RESET, u32, 1u32, 0u32);
+            last = lf_checker_rt::callee_cdecl!(RESET, u32, 0u32, 1u32);
         }
         last
     }

@@ -26,8 +26,8 @@
 /// Inner index 0..=a10 (signed; skipped entirely when `a10` is negative)
 /// runs one of three branches selected by the flags: branch A (HI set) makes
 /// four 9/8-word callee-3/4/8 calls of float triples read through the
-/// tables (its second call reads through `[A+table]`, a sum of two table
-/// bases); branch B (both clear) makes one 9-word and one 8-word callee-3/5
+/// tables (offsets are multiples of the inner index); branch B (both
+/// clear) makes one 9-word and one 8-word callee-3/5
 /// call over the same tables; branch C (LO only) copies 9-dword records
 /// from the tables into the record buffer behind the object at `REC_OBJ`,
 /// advancing the counter at `REC_COUNT`, and calls callee 6 (no stack args)
@@ -177,23 +177,23 @@ lf_checker_rt::export!(cdecl, rw_00ad9130(a0: u32, a1: u32, a2: u32, a3: u32, a4
                 loop {
                     if rd8(g(MODE_HI)) != 0 {
                         // Branch A. The spilled tables stand in for the dead
-                        // a0/a1 slots (see the outer-top spills). A2's pushed
-                        // word (read through the entry edi, which a cdecl
-                        // rewrite cannot observe) is skipped in the contract.
+                        // a0/a1 slots (see the outer-top spills); the saved
+                        // byte offset stands in the dead a3 slot.
                         let p1 = rd32(c.wrapping_add(inner.wrapping_mul(4)));
                         let off = inner.wrapping_mul(16);
                         eax = lf_checker_rt::callee_cdecl!(C_TRIP9, u32,
                             rd32(s.wrapping_add(off)), rd32(s.wrapping_add(off).wrapping_add(4)), rd32(s.wrapping_add(off).wrapping_add(8)),
                             rd32(at.wrapping_add(off)), rd32(at.wrapping_add(off).wrapping_add(4)), rd32(at.wrapping_add(off).wrapping_add(8)),
                             p1, 0u32, 0u32);
-                        // A2 reads through [A + table]; read order kept.
-                        let q8 = rd32(at.wrapping_add(p).wrapping_add(8));
-                        let q4 = rd32(at.wrapping_add(p).wrapping_add(4));
-                        let q0a = rd32(at.wrapping_add(p));
-                        let r8 = rd32(at.wrapping_add(b).wrapping_add(8));
-                        let r4 = rd32(at.wrapping_add(b).wrapping_add(4));
-                        let r0 = rd32(at.wrapping_add(b));
-                        eax = lf_checker_rt::callee_cdecl!(C_TRIP8A, u32, r0, r4, r8, q0a, q4, q8, 0u32, 0u32);
+                        // A2 walks the P/B tables from the saved offset.
+                        let p2 = rd32(slot2.wrapping_add(inner.wrapping_mul(4)));
+                        let q8 = rd32(off.wrapping_add(p).wrapping_add(8));
+                        let q4 = rd32(off.wrapping_add(p).wrapping_add(4));
+                        let q0a = rd32(off.wrapping_add(p));
+                        let r8 = rd32(off.wrapping_add(b).wrapping_add(8));
+                        let r4 = rd32(off.wrapping_add(b).wrapping_add(4));
+                        let r0 = rd32(off.wrapping_add(b));
+                        eax = lf_checker_rt::callee_cdecl!(C_TRIP8A, u32, r0, r4, r8, q0a, q4, q8, p2, 0u32);
                         if (inner as i32) >= d10 {
                             // Last inner pass skips A3/A4 (signed compare).
                         } else {
@@ -203,7 +203,7 @@ lf_checker_rt::export!(cdecl, rw_00ad9130(a0: u32, a1: u32, a2: u32, a3: u32, a4
                                 rd32(b.wrapping_add(off3)), rd32(b.wrapping_add(off3).wrapping_add(4)), rd32(b.wrapping_add(off3).wrapping_add(8)),
                                 rd32(p.wrapping_add(off3)), rd32(p.wrapping_add(off3).wrapping_add(4)), rd32(p.wrapping_add(off3).wrapping_add(8)),
                                 p3, 0u32, 0u32);
-                            let p4 = rd32(at.wrapping_add(inner.wrapping_mul(4)));
+                            let p4 = rd32(c.wrapping_add(inner.wrapping_mul(4)));
                             eax = lf_checker_rt::callee_cdecl!(C_TRIP8A4, u32,
                                 rd32(s.wrapping_add(off)), rd32(s.wrapping_add(off).wrapping_add(4)), rd32(s.wrapping_add(off).wrapping_add(8)),
                                 rd32(at.wrapping_add(off)), rd32(at.wrapping_add(off).wrapping_add(4)), rd32(at.wrapping_add(off).wrapping_add(8)),

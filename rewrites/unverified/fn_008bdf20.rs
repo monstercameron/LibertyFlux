@@ -16,12 +16,13 @@
 ///
 /// Immediate path: when the active word is exactly -1 (a signed equality
 /// test) return the worker object at once. Otherwise two gate helpers
-/// (each taking the slot index in ECX and answering in AL) choose between
+/// (each taking no arguments and answering in AL; no call site sets up ECX
+/// for them) choose between
 /// two pairs of source integers; the chosen pair is converted to floats and
 /// passed with a shifted flag byte to the setup helper through two frame
-/// slots. A float constant is then selected by two flag bytes (the second
-/// constant wins unless the first byte differs from `0x6A` and the third
-/// byte is nonzero), two table lookups fetch float pairs, and a draw helper
+/// slots. A float constant is then selected by two flag bytes (the first
+/// constant survives only when the first byte differs from `0x6A` and the
+/// third byte is zero), two table lookups fetch float pairs, and a draw helper
 /// is invoked with twelve arguments (the two fetched floats, the constant,
 /// four table addresses, two flag bytes, a state word and two fixed words)
 /// before tail-jumping to the shared finish routine (no stack arguments).
@@ -69,12 +70,12 @@ lf_checker_rt::export!(cdecl, rw_008bdf20() -> u32 {
                 return worker;
             }
             let flag_shifted: u32 = (*lf_checker_rt::global::<u8>(FLAG_BYTE) as u32) << 24;
-            let g1: u32 = lf_checker_rt::callee_thiscall!(4, u32, slot);
+            let g1: u32 = lf_checker_rt::callee_cdecl!(4, u32,);
             let mut src_a: u32 = *lf_checker_rt::global::<u32>(SRC_A0);
             if (g1 as u8) != 0 {
                 src_a = *lf_checker_rt::global::<u32>(SRC_A1);
             }
-            let g2: u32 = lf_checker_rt::callee_thiscall!(5, u32, slot);
+            let g2: u32 = lf_checker_rt::callee_cdecl!(5, u32,);
             let mut src_b: u32 = *lf_checker_rt::global::<u32>(SRC_B0);
             if (g2 as u8) != 0 {
                 src_b = *lf_checker_rt::global::<u32>(SRC_B1);
@@ -86,12 +87,15 @@ lf_checker_rt::export!(cdecl, rw_008bdf20() -> u32 {
             lf_checker_rt::callee_cdecl!(
                 6,
                 u32,
-                &mut setup0 as *mut u32 as u32,
-                setup1.as_mut_ptr() as u32
+                setup1.as_mut_ptr() as u32,
+                &mut setup0 as *mut u32 as u32
             );
             let mut pick: u32 = *lf_checker_rt::global::<u32>(CONST_A);
+            // The first constant survives only when the first byte differs
+            // from the tag and the third byte is zero; every other
+            // combination overwrites it with the second constant.
             if !(*lf_checker_rt::global::<u8>(SEL0) != SEL_TAG
-                && *lf_checker_rt::global::<u8>(SEL3) != 0)
+                && *lf_checker_rt::global::<u8>(SEL3) == 0)
             {
                 pick = *lf_checker_rt::global::<u32>(CONST_B);
             }
