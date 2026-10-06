@@ -8,10 +8,10 @@
 /// forced to 2. When the mode differs from the committed mode at
 /// `COMMITTED`, the child is notified through slot `+0x120` of its virtual
 /// table with 0, the new child is picked by mode (0 takes the word at
-/// `CHILD_A`, 1 or 2 the word at `CHILD_B, any other mode keeps the
-/// notification's answer), stored as the current child, the mode is
-/// committed, a global helper runs (scripted), and the new child is
-/// notified again with 1. Finally a tail helper and the mode setter run
+/// `CHILD_A`, 1 or 2 the word at `CHILD_B`, any other mode leaves the
+/// current child unchanged and the notification's answer is discarded).
+/// The mode is then committed, a global helper runs (scripted), and the
+/// current child is notified again with 1. Finally a tail helper and the mode setter run
 /// (both scripted, the latter with 0). The helpers after the second
 /// notification run on every path, including when the mode already
 /// matched. Nothing observable is returned.
@@ -66,16 +66,13 @@ lf_checker_rt::export!(thiscall, rw_00db4e50(this: u32) -> u32 {
                 );
                 hook(obj, arg)
             };
-            let first = notify(rd(this + CHILD), 0);
+            let _: u32 = notify(rd(this + CHILD), 0);
             let mode = rd(this + MODE);
-            let picked = if mode == 0 {
-                rd(this + CHILD_A)
+            if mode == 0 {
+                wr(this + CHILD, rd(this + CHILD_A));
             } else if mode == 1 || mode == 2 {
-                rd(this + CHILD_B)
-            } else {
-                first
-            };
-            wr(this + CHILD, picked);
+                wr(this + CHILD, rd(this + CHILD_B));
+            }
             wr(this + COMMITTED, mode);
             let _: u32 = lf_checker_rt::callee_thiscall!(
                 GLOBAL_HELPER,
