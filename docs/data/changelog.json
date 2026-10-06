@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Rewrites: 12 withdrawn because their old proofs do not hold on the current checker",
+    "commit": null,
+    "summary": "The verified count goes down by twelve. The first two regression lanes re-ran 700 proofs made on checker versions 1 and 2, unchanged, on version 8: 688 hold and are now recorded on the current checker; 12 do not.",
+    "changes": [
+      "Eleven are vacuous by the rule the checker has had since version 5. In six the original never completed a single trial, so every trial faulted on both sides and nothing about the function's behaviour was compared; in five a callee never fired on any completed trial. The checker that accepted them had no such rule.",
+      "One compared only the first 256 of the 320 calls its function makes in a trial: the call log was cut at its limit and the earlier checker passed a cut log. The first 256 calls match; the rest were never compared. The regression lane ran it against the proving lane's own library too, with the same result.",
+      "None of the twelve rewrites is known to be wrong. What is missing is a proof, and a function without one is not counted. They go to a new queue of deferred work with guidance: write a contract in which the original completes its trials and every callee fires, and prove again with a deliberately wrong version, which none of these ever had.",
+      "The other 688 proofs hold at the trial count of their record and their index rows now say checker version 8. None of the 700 had a wrong version on file, so the regression confirms that they pass, not that they could tell right from wrong; that is a separate debt.",
+      "12 of 700 is 1.7%, close to the 2% seen in this morning's sample. 12,084 older proofs remain to be re-run."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 7 files from lanes (208 unverified rewrites, 494 in review)",
     "commit": "95f5edcd83c70aec39e5ea258f3e9e7c47722592",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
