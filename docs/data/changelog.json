@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Rewrites: one withdrawn for handing a callee a buffer of zeros",
+    "commit": null,
+    "summary": "The verified count goes down by one. A rewrite of a spatial query function passes an empty buffer to a callee that reads its input from it; the original fills that buffer first. The proof skipped the pointer and compared nothing in its place.",
+    "changes": [
+      "traverse_cells is removed from rewrites/verified. The rewrite declares a zeroed local and passes it, twice, to a probe that reads the query from it; the original stores three values there before the call. The rewrite's own comment says the frame contents are unobserved, and the coordinator read the rewrite before withdrawing it.",
+      "An audit lane found it by adding snapshots of the pointed-to words to 60 sampled contracts that skip a pointer argument. 2,992 verified functions have at least one such argument, and in a sample 87% of them are pointers into the function's own frame that it writes through. Of the 60 measured, one rewrite is wrong, one is suspect, and 49 differ harmlessly (the original leaves an output buffer uninitialised, the rewrite zeroes it, the callee fills it). The lane's estimate for the whole tree is about 44 wrong rewrites, with an interval from 8 to 236.",
+      "A lane is briefed to read every one of those sites from the original's code: whether the original stores into the buffer before the call, and whether the rewrite stores the same. That tells an input from an output directly, where a snapshot run mostly reports the harmless kind."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 34 files from lanes (255 unverified rewrites, 535 in review)",
     "commit": "e4be900ff4a871a2d9963719907fa464deb349fb",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
