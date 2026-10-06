@@ -7,8 +7,9 @@
 /// (`0x1208970`) when `sel == 1` or table B (`0x12142D0`), with the high
 /// word of `idx` kept as the tag. Note the signed bound admits a low word
 /// of `0x8000..0xFFFF`, which addresses before the table; the rewrite keeps
-/// that behaviour. Returns the entry index on success; rejected calls return
-/// the caller's EAX unchanged, so the proof pins entry EAX to `0`.
+/// that behaviour. Returns the entry index on success and the bound `0x818`
+/// on a bound rejection; the other two rejections return the caller's EAX
+/// unchanged, so the proof pins entry EAX to `0`.
 lf_checker_rt::export!(cdecl, rw_00963080(sel: u32, idx: u32, ptr: u32) -> u32 {
     unsafe {
         const TABLE_A: u32 = 0x1208970;
@@ -23,7 +24,7 @@ lf_checker_rt::export!(cdecl, rw_00963080(sel: u32, idx: u32, ptr: u32) -> u32 {
         }
         let low = (idx & 0xffff) as u16 as i16;
         if low >= COUNT {
-            return 0;
+            return COUNT as u32;
         }
         let base = if sel == 1 { TABLE_A } else { TABLE_B };
         let e = lf_checker_rt::relocated(base)

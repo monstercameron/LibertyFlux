@@ -1,18 +1,25 @@
-// original: 0x00963220 name_copy_40
-/// Copy a name string into this record's middle slot (offset 0x40).
+// original: 0x00963220 name_field_set_40
+/// Copy a name string into the fixed field at `+0x40`.
 ///
-/// Same shape as `rw_009630c0` with a 0x1F-byte limit and terminator at
-/// +0x5F.
-export!(thiscall, rw_00963220(this_ptr: u32, src: u32) -> u32 {
+/// Thiscall: object in ECX, source pointer as the stack argument. A null
+/// source or an empty string leaves the object untouched; otherwise the
+/// bounded copy helper (cdecl/3: dst, src, `0x1F`) fills the field and the
+/// terminator byte at `+0x5F` is forced to zero. Returns the source on the
+/// early paths and the helper's answer otherwise.
+lf_checker_rt::export!(thiscall, rw_00963220(obj: u32, src: u32) -> u32 {
     unsafe {
+        const DST_OFF: u32 = 0x40;
+        const CAP: u32 = 0x1f;
+        const TERM_OFF: u32 = 0x5f;
         if src == 0 {
-            return 0;
-        }
-        if *(src as *const u8) == 0 {
             return src;
         }
-        let ans = callee_cdecl!(1, u32, this_ptr.wrapping_add(0x40), src, 0x1Fu32);
-        *((this_ptr as *mut u8).add(0x5F)) = 0;
-        ans
+        if (src as *const u8).read() == 0 {
+            return src;
+        }
+        let dst = obj.wrapping_add(DST_OFF);
+        let r: u32 = lf_checker_rt::callee_cdecl!(1, u32, dst, src, CAP);
+        (obj.wrapping_add(TERM_OFF) as *mut u8).write(0);
+        r
     }
 });

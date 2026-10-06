@@ -6,9 +6,10 @@
 /// or the lookup helper (cdecl/1) answer shares no bit with `mask`. Any
 /// answer other than `0x100` accepts; `0x100` additionally needs mode `1`
 /// at `0x1037720` and `lo >= hi` (unsigned). The result is the low byte;
-/// upper bits pass through the helper answer (or the caller's EAX on the
-/// first two exits, so the proof pins entry EAX below 256) and are
-/// reproduced exactly.
+/// upper bits pass through the helper answer, except on the two range
+/// exits, which carry `lo`'s upper bits (EAX is reloaded first), and the
+/// first two exits, which pass the caller's EAX (so the proof pins entry
+/// EAX below 256); all are reproduced exactly.
 lf_checker_rt::export!(cdecl, rw_00963820(key: u32, mask: u32, flags: u32, lo: u32, hi: u32) -> u32 {
     unsafe {
         const ENABLED: u32 = 0x10376e8;
@@ -30,9 +31,11 @@ lf_checker_rt::export!(cdecl, rw_00963820(key: u32, mask: u32, flags: u32, lo: u
         if (lf_checker_rt::global::<u32>(MODE) as *const u32).read_unaligned() != 1 {
             return r & 0xffff_ff00;
         }
+        // The original reloads EAX with `lo` before the unsigned compare,
+        // so both range exits carry `lo`'s upper bits, not the answer's.
         if lo < hi {
-            return r & 0xffff_ff00;
+            return lo & 0xffff_ff00;
         }
-        (r & 0xffff_ff00) | 1
+        (lo & 0xffff_ff00) | 1
     }
 });

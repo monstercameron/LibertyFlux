@@ -133,7 +133,7 @@ lf_checker_rt::export!(cdecl, rw_005B5650() -> u32 {
                 break 'done;
             }
             let submode = rd32(lf_checker_rt::relocated(SUB_MODE));
-            if submode != 2 && sub != 3 {
+            if submode != 2 && submode != 3 {
                 break 'done;
             }
 
@@ -166,7 +166,9 @@ lf_checker_rt::export!(cdecl, rw_005B5650() -> u32 {
             }
             let colour = ((col & 0xFF) << 24) | WHITE_RGB;
 
-            let tls_block = rd32(lf_checker_rt::tls_slot(0));
+            // TLS slot 0 IS the block pointer (the original loads it from
+            // FS:[0x2c] slot 0 and reads +0x8cc straight off it; no deref).
+            let tls_block = lf_checker_rt::tls_slot(0);
             let alt = if submode != 2 { 1u32 } else { 0u32 };
             if rd32(tls_block.wrapping_add(TLS_BLOCK_WORD)) != 0 {
                 let h = lf_checker_rt::callee_cdecl!(C_HANDLE, u32, 0x30, 0);
@@ -177,7 +179,11 @@ lf_checker_rt::export!(cdecl, rw_005B5650() -> u32 {
                 let slot = rd32(lf_checker_rt::relocated(TABLE2).wrapping_add(alt * 4));
                 let mut out_param = [0u32; 4];
                 let po = (&mut out_param as *mut u32) as u32;
-                let r = lf_checker_rt::callee_thiscall!(C_APPLY, u32, h, colour, slot, po);
+                // NOTE: the original pushes these three words in FORWARD order (colour,
+// slot, out-pointer), so the out-pointer sits at [esp+4]: the C-order
+                // signature is (out-pointer, slot, colour), verified against the
+                // worker's call log on trial 1.
+                let r = lf_checker_rt::callee_thiscall!(C_APPLY, u32, h, po, slot, colour);
                 lf_checker_rt::callee_cdecl!(C_FINISH, u32, r);
                 break 'done;
             }
