@@ -28,8 +28,11 @@
 ///   skip key's record.
 /// * id 5 (`0x622d90`, thiscall/1): session find by id pair; a miss yields
 ///   handle -1.
-/// * id 6 (`0x61d3b0`, thiscall/9): channel initialiser; its answer is the
-///   function's return value.
+/// * id 6 (`0x61d3b0`, thiscall/9): channel initialiser; its answer is
+///   left in eax (the walk, when it runs, overwrites eax with scan and
+///   probe residue, so the final value is meaningful only on no-walk
+///   paths; the sole caller ignores it and the contract compares no
+///   return channel).
 /// * id 11/12/13 (thiscall/3, thiscall/1-noclean, thiscall/5) plus id 10:
 ///   the table walk over `this+0x2e24` (`this+0x2ea4` entries, compared
 ///   SIGNED with `jle`/`jl`): for each entry that is not the skip key,
@@ -39,11 +42,13 @@
 ///   data. Entries equal to the skip key are skipped.
 /// * id 7: the CRT security-cookie check (preserves registers).
 ///
-/// The frame word at `+0x5cc` is read uninitialised (compared against 0 to
-/// pick a null-or-frame argument, and passed on as an integer); the
-/// contract defines the uninitialised fill as 0 and the rewrite uses the
-/// same constant. The cookie computation itself is frame scratch feeding
-/// only the stubbed check and is not modelled.
+/// Several `lea` displacements are push-shifted (computed while earlier
+/// arguments sit on the stack): the word tested and passed to the channel
+/// call is the zero written to `+0x5c8`, its object is the endpoint at
+/// `+0x5d0`, its record argument is the record at `+0x18`, the event
+/// object is at `+0xa68`, and the probe object is the endpoint too. The
+/// cookie computation itself is frame scratch feeding only the stubbed
+/// check and is not modelled.
 ///
 /// Original: 0x006228E0 (thiscall, ecx = this, three stack words).
 lf_checker_rt::export!(thiscall, rw_006228E0(this: u32, arg1: u32, arg2: u32, arg3: u32) -> u32 {
@@ -68,8 +73,8 @@ lf_checker_rt::export!(thiscall, rw_006228E0(this: u32, arg1: u32, arg2: u32, ar
         const CB_ARG_OFF: u32 = 0x04;
         const CB_TGT_OFF: u32 = 0x08;
         const ADDR_OBJ_OFF: u32 = 0x24;
-        const CHAN_COUNT_OFF: u32 = 0x540;
-        const CHAN_SRC_OFF: u32 = 0x544;
+        const CHAN_A0_OFF: u32 = 0x540;
+        const CHAN_A1_OFF: u32 = 0x544;
         const TABLE_OFF: u32 = 0x2e24;
         const TABLE_COUNT_OFF: u32 = 0x2ea4;
         const EVENT_RUN_OBJ_OFF: u32 = 0x32c4;
@@ -85,25 +90,16 @@ lf_checker_rt::export!(thiscall, rw_006228E0(this: u32, arg1: u32, arg2: u32, ar
         const F_REC2: u32 = 0x20;
         const F_REC3W: u32 = 0x24;
         const F_ENTRY0: u32 = 0x28;
-        const F_CHAN_ARG5: u32 = 0x2c;
+        const F_SAVED_ENTRY: u32 = 0x2c;
+        const F_SCRATCH: u32 = 0x30;
         const F_CB_BUF: u32 = 0x3c8;
-        const F_EVT_BUF: u32 = 0x3d0;
-        const F_CHAN_ARG3: u32 = 0x3d4;
         const F_ZERO_SLOT: u32 = 0x5c8;
-        const F_UNINIT_WORD: u32 = 0x5cc;
         const F_ENDPOINT: u32 = 0x5d0;
-        const F_PROBE_OBJ: u32 = 0x5dc;
-        const F_CHANNEL: u32 = 0x5f0;
         const F_ZERO_BASE: u32 = 0x871;
         const F_ZERO_ITERS: i32 = 31;
-        const F_EVENT: u32 = 0xa6c;
-        const F_EVENT_ARG: u32 = 0xa68;
-        const F_PROBE_ARG0: u32 = 0xa70;
-        const F_EVT_TAIL: u32 = 0xaec;
+        const F_EVENT: u32 = 0xa68;
+        const F_EVT_TAIL: u32 = 0xae8;
         const F_EVT_MARK: u32 = 0xcec;
-        /// Value of the uninitialised frame reads under the contract's
-        /// `stack_fill` of 0.
-        const UNINIT_STACK: u32 = 0;
 
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
@@ -149,31 +145,36 @@ lf_checker_rt::export!(thiscall, rw_006228E0(this: u32, arg1: u32, arg2: u32, ar
                 u32,
                 this.wrapping_add(EVENT_RUN_OBJ_OFF),
                 this,
-                fb.wrapping_add(F_EVENT_ARG)
+                fb.wrapping_add(F_EVENT)
             );
             let mark = rd32(fb.wrapping_add(F_EVT_MARK));
             let _: u32 = lf_checker_rt::callee_cdecl!(
                 CB_SCRIPT_DATA,
                 u32,
-                fb.wrapping_add(F_EVT_BUF),
+                fb.wrapping_add(F_CB_BUF),
                 fb.wrapping_add(F_EVT_TAIL),
                 mark
             );
-            wr32(fb.wrapping_add(F_ENDPOINT).wrapping_add(4), mark);
-            esi = rd32(fb.wrapping_add(F_REC1W));
+            // Both displacements are push-shifted (the helper's three
+            // arguments are still on the stack): the mark lands on the zero
+            // slot, and esi reloads the saved first-lookup answer.
+            wr32(fb.wrapping_add(F_ZERO_SLOT), mark);
+            esi = rd32(fb.wrapping_add(F_SAVED_KEY));
         } else {
             let cb_arg = rd32(this.wrapping_add(CB_ARG_OFF));
             // Both original call sites make the same call; site 2 (taken
             // when cb_arg is 0) additionally shifts the stack pointer, a
             // path the stage-A contract steers away from and proves
             // separately with the stack-pointer check off.
+            // Argument order is the callee's (idx0 = last pushed): the
+            // original pushes the frame buffer, then arg1, then this.
             let _: u32 = lf_checker_rt::callee_thiscall!(
                 CB_NOTIFY,
                 u32,
                 cb_arg,
-                fb.wrapping_add(F_CB_BUF),
+                this,
                 arg1,
-                this
+                fb.wrapping_add(F_CB_BUF)
             );
             esi = first;
         }
@@ -216,24 +217,26 @@ lf_checker_rt::export!(thiscall, rw_006228E0(this: u32, arg1: u32, arg2: u32, ar
         } else {
             MISS_HANDLE
         };
-        // Frame word +0x5cc is never written: under the contract fill it is 0.
-        // (F_UNINIT_WORD marks the slot; the value is the defined fill.)
-        let _slot = fb.wrapping_add(F_UNINIT_WORD);
-        let a2v: u32 = UNINIT_STACK;
-        let a3ptr = if a2v == 0 { 0 } else { fb.wrapping_add(F_CHAN_ARG3) };
+        // The lea/load displacements are push-shifted: the word tested and
+        // passed here is the zero written to +0x5c8 above, the object is the
+        // endpoint at +0x5d0, and the record argument is the record at +0x18.
+        let a2v: u32 = rd32(fb.wrapping_add(F_ZERO_SLOT));
+        let a3ptr = if a2v == 0 { 0 } else { fb.wrapping_add(F_CB_BUF) };
+        // idx0 is the last pushed word: +0x540, +0x544, arg1, record,
+        // handle, frame-or-null, tested word, arg2, arg3.
         let ans: u32 = lf_checker_rt::callee_thiscall!(
             CB_CHANNEL,
             u32,
-            fb.wrapping_add(F_CHANNEL),
-            arg3,
-            arg2,
-            a2v,
-            a3ptr,
-            ed,
-            fb.wrapping_add(F_CHAN_ARG5),
+            fb.wrapping_add(F_ENDPOINT),
+            rd32(this.wrapping_add(CHAN_A0_OFF)),
+            rd32(this.wrapping_add(CHAN_A1_OFF)),
             arg1,
-            rd32(this.wrapping_add(CHAN_SRC_OFF)),
-            rd32(this.wrapping_add(CHAN_COUNT_OFF))
+            fb.wrapping_add(F_REC0),
+            ed,
+            a3ptr,
+            a2v,
+            arg2,
+            arg3
         );
 
         wr32(fb.wrapping_add(F_LOOP_I), 0);
@@ -265,12 +268,12 @@ lf_checker_rt::export!(thiscall, rw_006228E0(this: u32, arg1: u32, arg2: u32, ar
                             k += 1;
                         }
                         if found {
-                            wr32(fb.wrapping_add(F_CHAN_ARG5), rd32(ent));
+                            wr32(fb.wrapping_add(F_SAVED_ENTRY), rd32(ent));
                             let al: u32 = lf_checker_rt::callee_thiscall!(
                                 CB_PROBE,
                                 u32,
-                                fb.wrapping_add(F_PROBE_OBJ),
-                                fb.wrapping_add(F_PROBE_ARG0),
+                                fb.wrapping_add(F_ENDPOINT),
+                                fb.wrapping_add(F_EVENT),
                                 hit,
                                 fb.wrapping_add(F_ENTRY0)
                             );
@@ -278,7 +281,7 @@ lf_checker_rt::export!(thiscall, rw_006228E0(this: u32, arg1: u32, arg2: u32, ar
                                 let r: u32 = lf_checker_rt::callee_thiscall!(
                                     CB_SIZEOF,
                                     u32,
-                                    fb.wrapping_add(F_ENTRY0).wrapping_add(0xc),
+                                    fb.wrapping_add(F_SCRATCH),
                                     0
                                 );
                                 if r != 0 {
@@ -289,7 +292,7 @@ lf_checker_rt::export!(thiscall, rw_006228E0(this: u32, arg1: u32, arg2: u32, ar
                                         let z: u32 = lf_checker_rt::callee_cdecl!(
                                             CB_SCRIPT_DATA,
                                             u32,
-                                            fb.wrapping_add(0x30).wrapping_add(r),
+                                            fb.wrapping_add(F_SCRATCH).wrapping_add(r),
                                             fb.wrapping_add(F_EVENT),
                                             base
                                         );
@@ -298,8 +301,8 @@ lf_checker_rt::export!(thiscall, rw_006228E0(this: u32, arg1: u32, arg2: u32, ar
                                                 CB_FORWARD,
                                                 u32,
                                                 this.wrapping_add(FORWARD_OBJ_OFF),
-                                                rd32(fb.wrapping_add(F_CHAN_ARG5)),
-                                                fb.wrapping_add(F_ENTRY0).wrapping_add(8),
+                                                rd32(fb.wrapping_add(F_SAVED_ENTRY)),
+                                                fb.wrapping_add(F_SCRATCH),
                                                 adj,
                                                 0,
                                                 0

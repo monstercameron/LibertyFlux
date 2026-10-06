@@ -8,7 +8,8 @@
 /// first through the open callee (thiscall with 0x1D, answer registered),
 /// the second in place (its header is stamped with two constants and the
 /// comparator address while its sequence word is mixed with the global
-/// sequence counter, which increments), the third through the start callee.
+/// sequence counter, which increments), the third through the start callee
+/// (answer registered).
 /// Every outcome, null or not, goes to the register callee (cdecl, one
 /// word). A tail callee with no arguments runs next (its ECX is the
 /// previous stub's scratch on both sides, so the contract does not compare
@@ -66,8 +67,7 @@ lf_checker_rt::export!(thiscall, rw_008f7f00(obj: u32) -> u32 {
         let _: u32 = lf_checker_rt::callee_cdecl!(C_REG, u32, r2);
         let e3: u32 = lf_checker_rt::callee_cdecl!(C_FIND3, u32, 8, 0);
         let r3 = if e3 != 0 {
-            let _: u32 = lf_checker_rt::callee_thiscall!(C_START, u32, e3);
-            e3
+            lf_checker_rt::callee_thiscall!(C_START, u32, e3)
         } else {
             0
         };

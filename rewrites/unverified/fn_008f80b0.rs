@@ -7,12 +7,13 @@
 /// runs with 0, and the query callee runs with the fixed object; between
 /// them the global flag byte is set to 1 and cleared again. Two global gate
 /// bytes are read: when both are zero the function returns the query
-/// answer. Otherwise the global float is split across overlapping scratch
-/// slots: the first float callee runs with (0, 0) and then with the
-/// float's high half-word and the second gate byte ORed with the float's
-/// low half-word (the float store overlaps both words), and the second
-/// float callee runs with an uninitialized scratch word, which is 0 under
-/// the checker's zero stack fill; its answer is returned.
+/// answer with its low byte replaced by the second gate byte (the original
+/// loads the byte into AL after the call). Otherwise the global float is
+/// staged to scratch and the first
+/// float callee runs with (0, 0) and then with the two gate bytes read
+/// back as words (zero-extended under the checker's zero stack fill),
+/// and the second float callee runs with the float bits; its answer is
+/// returned.
 ///
 /// Thiscall: thread-through ECX, no stack words. The contract fills
 /// unwritten scratch with zero, matching the original's reads of it.
@@ -39,12 +40,11 @@ lf_checker_rt::export!(thiscall, rw_008f80b0(this: u32) -> u32 {
         let clo = (gates & 0xff) as u8;
         let ahi = ((gates >> 16) & 0xff) as u8;
         if ahi == 0 && clo == 0 {
-            return r4;
+            return (r4 & 0xffff_ff00) | ahi as u32;
         }
         let f = (lf_checker_rt::global::<u32>(G_FLOAT)).read_unaligned();
         let _: u32 = lf_checker_rt::callee_cdecl!(C_F2, u32, 0, 0);
-        let _: u32 =
-            lf_checker_rt::callee_cdecl!(C_F2, u32, (f >> 16) & 0xffff, (f & 0xffff0000) | clo as u32);
-        lf_checker_rt::callee_cdecl!(C_F1, u32, 0)
+        let _: u32 = lf_checker_rt::callee_cdecl!(C_F2, u32, ahi as u32, clo as u32);
+        lf_checker_rt::callee_cdecl!(C_F1, u32, f)
     }
 });
