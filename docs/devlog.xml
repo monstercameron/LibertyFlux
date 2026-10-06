@@ -9,6 +9,41 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Running the skipped pointers that could not be read</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#skipped-pointers-the-unread-sites"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#skipped-pointers-the-unread-sites</id>
+    <published>2026-10-06T00:00:00Z</published>
+    <updated>2026-10-06T00:00:00Z</updated>
+    <summary>Asked: 377 verified functions had a call whose pointer argument the proof skips and whose buffer nobody could read. A reading lane had studied every skipped pointer in the original code and left these undecided. We ran them with the buffer compared instead: a snapshot of the words behind each skipped pointer at each call, 300 trials on the stock checker, then narrowing and per-site reruns for everything that failed.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Asked: 377 verified functions had a call whose pointer argument the proof
+skips and whose buffer nobody could read. A reading lane had studied every
+skipped pointer in the original code and left these undecided. We ran them
+with the buffer compared instead: a snapshot of the words behind each
+skipped pointer at each call, 300 trials on the stock checker, then
+narrowing and per-site reruns for everything that failed.&lt;/p&gt;
+&lt;p&gt;Found: 238 functions settled without repair. In 69 the rewrite hands over
+the same words. In 120 the buffer is uninitialised at the call, so there is
+nothing stored to compare. In 49 the words differ but the callee writes
+before it reads or never touches the buffer, so the earlier proof stands.
+One function was wrong and is repaired and re-proved: a wrapper that
+dropped its entry register and passed zero where the original passes a
+pointer the nested converter reads through. 22 more functions show the same
+shape, stored words differing where the callee reads first, and are
+specified for repair. The rest are deferred with reasons: sites that cannot
+be snapshotted, callees in the encrypted region, diffs that stay hidden,
+and a cluster that diverges only in termination with or without snapshots,
+which lives in the base proof rather than the buffer.&lt;/p&gt;
+&lt;p&gt;Decided: running settles what reading could not, and two rerun tricks do
+most of it. Rerunning with a zero stack fill turns every uninitialised word
+into a match, so any remaining diff is stored. The patterned fill is
+exactly invertible, so pattern reruns classify words by arithmetic. Both
+were validated against controls. The repair backlog is ordered by callee
+verdict: read-first sites first.&lt;/p&gt;
+&lt;p&gt;Reproduce: the lane folder holds the list, all run verdicts, the
+consolidation script, and the per-function results; the one repair ships
+with its contract, verdict and caught mutant.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Production batch: three fire-task dispatches verified, plus a driver output trap</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b643"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b643</id>
@@ -1144,26 +1179,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Run the lane's census and generator scripts over the verified rewrites to rebuild the descriptor table and the differential tests, then run the lift crate's tests on the host and the differential suite on the 32-bit target. Generation asserts each member's shape, so drift in the rewrite set fails loudly rather than silently.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The rewrite index grew twice mid-lane as other lanes committed, so every count moved and all generators were rerun from scripts rather than patched by hand. Twenty-four files first assumed to be constructors turned out, by shape and by passing proof, to be misnamed members of the tag-fetch slot. A fabricated test double for one slot's collaborator silently read the wrong fields until a dedicated regression test pinned the layout.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A wrong rewrite passed because the global-write log drops word addresses</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b532"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b532</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>Verified The checker's comparison of written globals ignores which word inside a declared range each value was written to, so a rewrite that stores the right values at the wrong addresses still passes. A rewrite with one four-word block at the wrong slot offset passed 1188 of 1200 trials.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The checker's comparison of written globals ignores which word inside a declared range each value was written to, so a rewrite that stores the right values at the wrong addresses still passes. A rewrite with one four-word block at the wrong slot offset passed 1188 of 1200 trials.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite two neighbouring functions (a large effect-slot allocator and a small vector routine) and prove each identical to the original with the checker.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Both functions verified: 1200 trials each, zero failures, non-vacuous, deliberately wrong versions caught for both.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; While debugging the large function, its contract declared the whole slot table as one watched range. The worker records every changed word in a range as the range base plus the value, so the verdict compared only the sequence of values, not their addresses. A rewrite that copied one block 96 bytes too low produced the same value sequence on trials where nothing else was written between the two addresses, and passed.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Declaring the table as one single-word range per word restored exact addresses and the same rewrite failed immediately with the true offsets visible. The final contract keeps that shape (679 one-word ranges); no checker code was changed for any verdict.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Record the word address, not the range base, in the globals-write log. Until that lands, contracts covering a table with a single wide range should split it into small ranges so misplaced stores cannot hide. Past verdicts over wide ranges were weaker than they looked wherever a rewrite could shift a block without changing the value order.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Declare one multi-word globals range, run a rewrite that writes the range's expected values shifted by one word with nothing interleaved, and observe a pass. Then split the range into one-word ranges and observe the failure with exact addresses.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The passing-but-wrong rewrite cost two debug cycles: the value-only log made the misplaced block invisible, and only trials where unrelated writes interleaved between the true and wrong addresses failed, which first looked like a different bug. A second wrong assumption (which helper answer a store used) hid behind the same weak comparison until the ranges were split.&lt;/p&gt;</content>
   </entry>
 </feed>
