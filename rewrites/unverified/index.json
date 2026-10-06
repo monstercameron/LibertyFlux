@@ -1120,6 +1120,14 @@
   "reason": null
  },
  {
+  "address": "0x00BF46D0",
+  "name": "vehfx_heli_rotor_emitter_setup",
+  "file": "fn_00bf46d0.rs",
+  "lane": "a-Q55",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00BF97C0",
   "name": "task_build_flagged",
   "file": "fn_00bf97c0.rs",
@@ -1241,11 +1249,11 @@
  },
  {
   "address": "0x00CAACF0",
-  "name": "peds_task_handler_a",
+  "name": "ped_task_dispatch",
   "file": "fn_00caacf0.rs",
   "lane": "r-b649",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00CADFE0",
@@ -1593,11 +1601,11 @@
  },
  {
   "address": "0x00DDE050",
-  "name": null,
+  "name": "MO_TEXT_FIELD",
   "file": "fn_00dde050.rs",
-  "lane": "r-s155",
-  "outcome": "not yet run",
-  "reason": null
+  "lane": "r-s525",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00DDE130",
