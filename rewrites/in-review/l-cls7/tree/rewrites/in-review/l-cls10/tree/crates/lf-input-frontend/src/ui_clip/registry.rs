@@ -52,7 +52,9 @@ pub const ROWS: &[Row] = &[
         class: "UIBasicClip",
         method: "vf148",
         state: State::Proven,
-        narrows: &[],
+        narrows: &[
+            "float-stack return travels as f32; its signalling-NaN quieting is reproduced as bit operations",
+        ],
     },
     // The basic clip: two-level word traffic through the submit part.
     Row {

@@ -195,6 +195,19 @@ pub fn triple_bytes(x: f32) -> [u8; 3] {
     [b0, b1, b2]
 }
 
+/// Quiets a signalling NaN the way the float-stack return does:
+/// the quiet bit set, sign and payload kept. All other values pass
+/// through untouched.
+#[must_use]
+pub fn quiet_snan(x: f32) -> f32 {
+    let bits = x.to_bits();
+    if bits & 0x7F80_0000 == 0x7F80_0000 && bits & 0x007F_FFFF != 0 {
+        f32::from_bits(bits | 0x0040_0000)
+    } else {
+        x
+    }
+}
+
 /// The bytes of a NUL-terminated string excluding the terminator.
 ///
 /// # Panics
@@ -287,10 +300,12 @@ impl BasicClip {
         self.sink
     }
 
-    /// The stored float, bits untouched.
+    /// The stored float, as the float-stack return delivers it:
+    /// signalling NaNs arrive quieted (the return path sets the quiet
+    /// bit), everything else bit for bit.
     #[must_use]
     pub fn stored(&self) -> f32 {
-        self.stored
+        quiet_snan(self.stored)
     }
 
     /// Copies the submit part's word two levels out into `out`.

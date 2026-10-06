@@ -29,5 +29,5 @@ pub mod registry;
 pub use clip::{
     BasicClip, ClipWorld, ElementTag, EntryTag, EntryTableTag, MEASURE_BIAS, MEASURE_SCALE,
     MatchOut, PartTag, SinkTag, SubmitTag, TRIPLE_C0, TRIPLE_C1, TRIPLE_C2, TransformRecord,
-    TripleKind, triple_bytes, truncate_raw, up_to_nul,
+    TripleKind, quiet_snan, triple_bytes, truncate_raw, up_to_nul,
 };

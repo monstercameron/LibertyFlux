@@ -405,11 +405,7 @@ mod x86 {
             fake.answer("frame_check", vec![cookie]);
             let back = clip.set_triple(&mut fake, kind, input);
             assert_eq!(back, cookie);
-            // The store keeps raw bits (asserted on the image above);
-            // the accessor quiets signalling NaNs like the float return.
-            let want_stored =
-                lf_input_frontend::ui_clip::quiet_snan(input).to_bits();
-            assert_eq!(clip.stored().to_bits(), want_stored);
+            assert_eq!(clip.stored().to_bits(), bits);
             let kind_w = match kind {
                 TripleKind::First => 0,
                 TripleKind::Second => 1,
