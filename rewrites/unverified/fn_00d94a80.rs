@@ -24,11 +24,12 @@ use lf_checker_rt::{callee_cdecl, callee_stdcall, callee_thiscall, callee_fastca
 /// head forever; the contract pins it clear.)
 ///
 /// The probe calls take the query words (`p0` floats, third plus the
-/// ray constant) and the advance/simple first pointers the same words with
-/// the constant subtracted; the second ray pointer is a zeroed out-buffer.
-/// Frame addresses are skipped and the three input words snapshotted per
-/// call (see `narrowed`). The stale frame word copied to `p3+8` reads the
-/// defined stack fill (0 in the contract).
+/// ray constant); the advance/simple first pointers take the same words
+/// with the constant subtracted, and their second pointers the plus form
+/// with the first two words mask-packed. The second ray pointer is a
+/// zeroed out-buffer. Frame addresses are skipped and the three input
+/// words snapshotted per call (see `narrowed`). The stale frame word
+/// copied to `p3+8` reads the defined stack fill (0 in the contract).
 ///
 /// Original: 0x00d94a80 (thiscall, six stack words, full-eax signed result).
 lf_checker_rt::export!(thiscall, rw_00d94a80(this: u32, p0: u32, p1: u32, p2: u32, p3: u32, p4: u32, p5: u32) -> u32 {
@@ -98,15 +99,21 @@ lf_checker_rt::export!(thiscall, rw_00d94a80(this: u32, p0: u32, p1: u32, p2: u3
         let w10 = rd32(p0) | 0xffff0fff;
         let _w14 = (rd32(p0 + 4) | 0x0fffffff) & 0xefffffff;
         let mut buf_ray = [0u32; 8];
+        let mut buf_apk = [0u32; 8];
         let mut buf_sub = [0u32; 8];
         let buf_b = [0u32; 8];
         // Ray query words from the query point: the ray calls take the
         // plus-constant form, the advance/simple first pointers the
-        // minus-constant form; the callee reads them (snapshots cover the
-        // three words, the second ray pointer stays a zeroed out-buffer).
+        // minus-constant form, and the advance/simple second pointers the
+        // plus-constant form with the first two words mask-packed; the
+        // callees read them (snapshots cover the three words, the second
+        // ray pointer stays a zeroed out-buffer).
         buf_ray[0] = rd32(p0);
         buf_ray[1] = rd32(p0 + 4);
         buf_ray[2] = fadd(f32::from_bits(rd32(p0 + 8)), rk()).to_bits();
+        buf_apk[0] = buf_ray[0] | 0xFFFF0FFF;
+        buf_apk[1] = (buf_ray[1] | 0x0FFFFFFF) & 0xEFFFFFFF;
+        buf_apk[2] = buf_ray[2];
         buf_sub[0] = rd32(p0);
         buf_sub[1] = rd32(p0 + 4);
         buf_sub[2] = fsub(f32::from_bits(rd32(p0 + 8)), rk()).to_bits();
@@ -118,9 +125,9 @@ lf_checker_rt::export!(thiscall, rw_00d94a80(this: u32, p0: u32, p1: u32, p2: u3
                 0xfff
             };
             if p3 != 0 {
-                let _: u32 = lf_checker_rt::callee_thiscall!(ID_ADV, u32, this, buf_sub.as_ptr() as u32, TEN, buf_ray.as_ptr() as u32, 0, p3, pick);
+                let _: u32 = lf_checker_rt::callee_thiscall!(ID_ADV, u32, this, buf_sub.as_ptr() as u32, TEN, buf_apk.as_ptr() as u32, 0, p3, pick);
             } else {
-                let _: u32 = lf_checker_rt::callee_thiscall!(ID_SIMPLE, u32, this, buf_sub.as_ptr() as u32, TEN, buf_ray.as_ptr() as u32, 0, pick);
+                let _: u32 = lf_checker_rt::callee_thiscall!(ID_SIMPLE, u32, this, buf_sub.as_ptr() as u32, TEN, buf_apk.as_ptr() as u32, 0, pick);
             }
             if (w10 & 0xfff) == 0xfff {
                 return 0xfffffff9;
@@ -161,9 +168,9 @@ lf_checker_rt::export!(thiscall, rw_00d94a80(this: u32, p0: u32, p1: u32, p2: u3
                     0xfff
                 };
                 if p3 != 0 {
-                    let _: u32 = lf_checker_rt::callee_thiscall!(ID_ADV, u32, this, buf_sub.as_ptr() as u32, TEN, buf_ray.as_ptr() as u32, 1, p3, pick);
+                    let _: u32 = lf_checker_rt::callee_thiscall!(ID_ADV, u32, this, buf_sub.as_ptr() as u32, TEN, buf_apk.as_ptr() as u32, 1, p3, pick);
                 } else {
-                    let _: u32 = lf_checker_rt::callee_thiscall!(ID_SIMPLE, u32, this, buf_sub.as_ptr() as u32, TEN, buf_ray.as_ptr() as u32, 1, pick);
+                    let _: u32 = lf_checker_rt::callee_thiscall!(ID_SIMPLE, u32, this, buf_sub.as_ptr() as u32, TEN, buf_apk.as_ptr() as u32, 1, pick);
                 }
                 let w10b = w10 | 0xffff0fff;
                 if (w10b & 0xfff) == 0xfff {

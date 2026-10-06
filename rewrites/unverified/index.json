@@ -432,14 +432,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00664BE0",
-  "name": "sn_task_alloc_copy_strings",
-  "file": "fn_00664be0.rs",
-  "lane": "r-b627",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x006F5C50",
   "name": "input_batch_flush",
   "file": "fn_006f5c50.rs",
@@ -477,14 +469,6 @@
   "file": "fn_00907a80.rs",
   "lane": "r-b622",
   "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00908630",
-  "name": null,
-  "file": "fn_00908630.rs",
-  "lane": "a-Q34",
-  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -814,14 +798,6 @@
   "lane": "r-s407",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00B575D0",
-  "name": null,
-  "file": "fn_00b575d0.rs",
-  "lane": "a-Q34",
-  "outcome": "not yet run",
-  "reason": null
  },
  {
   "address": "0x00B77C30",
@@ -1710,158 +1686,6 @@
   "lane": "a-S09",
   "outcome": "not yet run",
   "reason": null
- },
- {
-  "address": "0x00DB6E90",
-  "name": "UIFontString::vf2",
-  "file": "fn_00db6e90.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB6EB0",
-  "name": "UIFontString::vf85",
-  "file": "fn_00db6eb0.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB6F70",
-  "name": "UIFontString::vf115",
-  "file": "fn_00db6f70.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB7050",
-  "name": "UIFontString::vf133",
-  "file": "fn_00db7050.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB7080",
-  "name": "UIFontString::vf86",
-  "file": "fn_00db7080.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB7320",
-  "name": "UIFontString::vf130",
-  "file": "fn_00db7320.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB7330",
-  "name": "UIFontString::vf123",
-  "file": "fn_00db7330.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB7350",
-  "name": "UIRowLayout::vf134",
-  "file": "fn_00db7350.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB7360",
-  "name": "UIFontString::vf121",
-  "file": "fn_00db7360.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB7380",
-  "name": "UIFontString::vf127",
-  "file": "fn_00db7380.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB7390",
-  "name": "UIFontString::vf124",
-  "file": "fn_00db7390.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB73B0",
-  "name": "UIFontString::vf128",
-  "file": "fn_00db73b0.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB73C0",
-  "name": "UIFontString::vf129",
-  "file": "fn_00db73c0.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB73D0",
-  "name": "UIFontString::vf119",
-  "file": "fn_00db73d0.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB7410",
-  "name": "UIFontString::vf118",
-  "file": "fn_00db7410.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB7470",
-  "name": "UIFontString::vf117",
-  "file": "fn_00db7470.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB74B0",
-  "name": "UIFontString::vf125",
-  "file": "fn_00db74b0.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB74C0",
-  "name": "UIFontString::vf120",
-  "file": "fn_00db74c0.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00DB7710",
-  "name": "UIFontString_ctor_like",
-  "file": "fn_00db7710.rs",
-  "lane": "r-s515",
-  "outcome": "not_reached",
-  "reason": ""
  },
  {
   "address": "0x00DD34B0",
