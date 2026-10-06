@@ -73,7 +73,8 @@ lf_checker_rt::export!(cdecl, rw_008bf380() -> u32 {
         *lf_checker_rt::global::<u8>(FLAG2) = 0;
         *lf_checker_rt::global::<u8>(FLAG3) = 0;
         lf_checker_rt::callee_cdecl!(13, u32, 0u32);
-        let r: u32 = lf_checker_rt::callee_cdecl!(14, u32, 0u32, 0xFFFFFFFFu32);
+        // Stack order is (0, -1), so the first argument is -1.
+        let r: u32 = lf_checker_rt::callee_cdecl!(14, u32, 0xFFFFFFFFu32, 0u32);
         if *lf_checker_rt::global::<u8>(DEFERRED_BYTE) != 0 {
             let r2: u32 = lf_checker_rt::callee_cdecl!(15, u32,);
             *lf_checker_rt::global::<u8>(DEFERRED_BYTE) = 0;
