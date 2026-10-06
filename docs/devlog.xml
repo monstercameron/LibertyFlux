@@ -9,6 +9,30 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>One table builder verified, and the compiler hides spills inside push sequences</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b598"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b598</id>
+    <published>2026-10-06T00:00:00Z</published>
+    <updated>2026-10-06T00:00:00Z</updated>
+    <summary>A 1,672-byte input table builder with twelve call sites verified over one thousand trials with zero failures, and the work found a spill pattern other lanes should look for: this compiler stores table pointers into dead argument slots in the middle of pushing another call's arguments, where the writes land above the stack pointer and are easy to miss. Two misread stack offsets each built a self-consistent false theory of wild reads that cost real time; both broke the moment a varying input failed to move the supposedly dependent value.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A 1,672-byte input table builder with twelve call sites verified over one thousand trials with zero failures, and the work found a spill pattern other lanes should look for: this compiler stores table pointers into dead argument slots in the middle of pushing another call's arguments, where the writes land above the stack pointer and are easy to miss. Two misread stack offsets each built a self-consistent false theory of wild reads that cost real time; both broke the moment a varying input failed to move the supposedly dependent value.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite two neighbouring input interface functions in Rust and prove each rewrite behaves identically to the original with the checker, at least one thousand trials each, with one deliberately wrong version per function.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The smaller function verified 1000/1000 with zero failures, bit-exact floats, thirteen branch shapes, all eight callees firing, and its wrong version caught. Most trials complete; a minority fault identically on both sides when a record counter nears its cap.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; While pushing one call's arguments the original stores three table pointers into the dead slots of its own earlier integer arguments, plus a byte offset and a counter into two more. The inner loop then reads tables where a naive read sees dead arguments and uninitialised stack. The stack comparison stays off for this function and every stored value is observed through call arguments or globals instead.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Rust integer division by zero raises a different fault code than the original's divide instruction (a language exception versus a divide error), so zero divisors are excluded from the contract and recorded as a narrowing. Quotient overflow is unreachable because the dividends are small differences.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The larger function triaged clean: its thread-local read is the standard scriptable pattern, its four indirect calls all plant through fabricated objects, and its trailing call returns into a shared epilogue. No blocker found; it needs a longer session and a retry kit was left.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;The smaller function is recorded as verified with its narrowings stated. The larger is untouched for a fresh lane with the retry kit. Recommended for other lanes: compute every stack-relative target by machine arithmetic along each straight-line path before modelling it, and distrust any hand-tracked offset the moment a varying input fails to move the value that should depend on it. Also check push sequences for writes above the stack pointer, not just below it.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Disassemble the function and emulate the stack pointer forward through each branch-free stretch, printing every stack-relative operand's target relative to the incoming frame. The three spill writes land on argument slots while a call's own arguments sit below. The contract then plants heap objects for the record buffer, cycles the two flag bytes through all three branches, cycles the record counter across its cap and both signedness edges, and keeps divisors non-zero. Pinning the entry register to heap versus null changes nothing, which confirms no entry register is read.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Two transcription slips (one hex offset read as decimal, one disp byte misread) each produced a complete, confident, wrong story: wild reads through sums of pointers, branches that could never complete, a filler transport that was never needed. Each story survived several consistency checks because the checks reused the same wrong arithmetic. What finally broke them was cheap and empirical in both cases: pin a heap word and the original ignores it, sweep one input and the output never moves. About half the lane went to those two detours; the fix in each case was a few lines once seen.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Retry lesson: re-derive every offset from the addressed bytes, even from a trusted kit</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#retry-aq20-table-offsets"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#retry-aq20-table-offsets</id>
@@ -1172,26 +1196,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Run the routine's proof contract with the stack fill set to zero and confirm it passes, then set the fill to the bit pattern for 1.0 and confirm that exactly the computing-path trials fail in the sink-call snapshot. Both runs use the stock checker worker and the committed contract for the lane's fifth routine.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;An early relocation script double-added the page base and reported every absolute operand in the batch as unrelocated, which briefly made the whole batch look unverifiable; the corrected check shows all of them have relocation entries. Separately, a pushed constant that carries a relocation entry must be relocated in the rewrite too, or the call log differs; that cost one failed probe before the pattern was clear.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming 150 car-task functions from vtable slots</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-105"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-105</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>A batch of 150 consecutive unnamed functions turned out to be mostly car-related ped task code, and 138 of them could be named, 96 with high confidence, by joining vtable slot labels against real method names from other lanes.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of 150 consecutive unnamed functions turned out to be mostly car-related ped task code, and 138 of them could be named, 96 with high confidence, by joining vtable slot labels against real method names from other lanes.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose descriptive names for 150 consecutive unnamed functions, working out what the group is about first and naming each function in project style, with high, medium or low confidence.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Most of the batch is virtual methods of car task classes: one row of abort checks, one row of per-tick processors, then rows of clone, sub-task creation and sub-task control methods, plus task factory switches, destructor chains and a few save, audio and generator helpers.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Joining every naming list's slot labels against production-lane method names on address gives an unambiguous slot map with nine or more agreeing witnesses per slot, which named over ninety functions at once.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two save callbacks registered under one name were told apart by reading their copy direction: one copies the save buffer into memory, the other copies memory into the save buffer.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Slot labels shared across classes keep the inventory class in the name, since that stays correct whether the code is an override or an inherited base implementation. Tiny flag setters and predicates with no known class were left unnamed rather than guessed. The next naming lane should run the slot join first: it resolves every vtable function in the batch in seconds.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Collect address to slot-label pairs from all naming lists and address to real-name pairs from production-lane and verified names, join on address, and count witnesses per slot. Then gather per-function evidence (callees with names, referenced strings, imports) into one table, read the short functions fully, and skim the long ones.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;One class-hierarchy table claims every complex task class inherits three of the functions, but the relocation evidence only ties them to the listed classes, so the table looks partly reconstructed and was not trusted for attribution. Several inventory sizes overlap neighbouring functions and five size-zero entries are real code, so every byte range was re-checked before reading.&lt;/p&gt;</content>
   </entry>
 </feed>
