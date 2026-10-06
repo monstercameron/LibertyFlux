@@ -11,6 +11,10 @@
 lf_checker_rt::export!(thiscall, rw_00bf6b30(this: u32, chan: u32, src: u32, t: f32) -> u32 {
     unsafe {
         #[inline(always)]
+        unsafe fn rd32(a: u32) -> u32 {
+            unsafe { (a as *const u32).read_unaligned() }
+        }
+        #[inline(always)]
         unsafe fn rdf(a: u32) -> f32 {
             unsafe { f32::from_bits(rd32(a)) }
         }
@@ -31,7 +35,7 @@ lf_checker_rt::export!(thiscall, rw_00bf6b30(this: u32, chan: u32, src: u32, t: 
         let base = rdf(this + VAL_OFF);
         let far = rdf(src + VAL_OFF);
         let v = fadd(fmul(fsub(far, base), t), base);
-        lf_checker_rt::callee_thiscall!(1, u32, chan, v.to_bits(),
-            lf_checker_rt::relocated(TAG))
+        lf_checker_rt::callee_thiscall!(1, u32, chan, lf_checker_rt::relocated(TAG),
+            v.to_bits())
     }
 });

@@ -4,7 +4,8 @@
 /// Calls the five-argument registrar as thiscall on `this` with (0x31,
 /// shared flag word, `a1`, `a0`, 0), then two applier calls with `a3` and
 /// `a4`. Stores the low byte of `a2` to this `+0x1c` and the ready flag 1
-/// to this `+2`. Returns the second applier's answer.
+/// to this `+2`. Returns the second applier's answer with its low byte
+/// replaced by `a2`'s low byte (the original reloads AL after the call).
 ///
 /// Original: 0x00BF7610 (thiscall, five stack words).
 lf_checker_rt::export!(thiscall, rw_00bf7610(this: u32, a0: u32, a1: u32, a2: u32, a3: u32, a4: u32) -> u32 {
@@ -26,6 +27,6 @@ lf_checker_rt::export!(thiscall, rw_00bf7610(this: u32, a0: u32, a1: u32, a2: u3
         let r = lf_checker_rt::callee_thiscall!(3, u32, this, a4);
         wr8(this + 0x1c, a2 as u8);
         wr8(this + 2, READY);
-        r
+        (r & 0xffffff00) | (a2 & 0xff)
     }
 });

@@ -2,13 +2,13 @@
 /// Initialise a tag-0x37 record: three setup calls, then store the payload.
 ///
 /// Calls the tag setter with 0x37, then the five-argument registrar with
-/// (0x37, shared flag word, `a1`, `a0`, 1), then the encoder with `a1`; all
+/// (0x37, shared flag word, `a1`, `a0`, 1), then the encoder with `a2`; all
 /// are thiscall on `this`. Stores `a3/a4/a5` to this `+0x28/0x2c/0x30`,
 /// writes 0x0a to this `+0x14` and the ready flag 1 to this `+2`. Returns
-/// the encoder call's answer. `a2` is not read. No value is compared.
+/// the encoder call's answer. No value is compared.
 ///
 /// Original: 0x00BF7490 (thiscall, six stack words).
-lf_checker_rt::export!(thiscall, rw_00bf7490(this: u32, a0: u32, a1: u32, _a2: u32, a3: f32, a4: f32, a5: f32) -> u32 {
+lf_checker_rt::export!(thiscall, rw_00bf7490(this: u32, a0: u32, a1: u32, a2: u32, a3: f32, a4: f32, a5: f32) -> u32 {
     unsafe {
         #[inline(always)]
         unsafe fn wr32(a: u32, v: u32) {
@@ -29,7 +29,7 @@ lf_checker_rt::export!(thiscall, rw_00bf7490(this: u32, a0: u32, a1: u32, _a2: u
         let flag: u32 = lf_checker_rt::global::<u32>(FLAG_GLOB).read();
         lf_checker_rt::callee_thiscall!(1, u32, this, TAG);
         lf_checker_rt::callee_thiscall!(2, u32, this, TAG, flag, a1, a0, 1);
-        let r = lf_checker_rt::callee_thiscall!(3, u32, this, a1);
+        let r = lf_checker_rt::callee_thiscall!(3, u32, this, a2);
         wrf(this + 0x28, a3);
         wrf(this + 0x2c, a4);
         wrf(this + 0x30, a5);

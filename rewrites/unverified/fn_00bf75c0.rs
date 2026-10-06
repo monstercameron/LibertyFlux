@@ -6,7 +6,7 @@
 /// thiscall on `this`, and all answers are ignored. Then toggles bit 0 of
 /// this `+0x24` when it differs from bit 0 of the low byte of `a2` (all
 /// unsigned byte logic), writes the ready flag 1 to this `+2`, derives
-/// this `+0x14` as bit 0 plus 6, and returns bit 0 of the folded byte.
+/// this `+0x14` as bit 0 plus 6, and returns that same sum (6 or 7).
 ///
 /// Original: 0x00BF75C0 (thiscall, four stack words).
 lf_checker_rt::export!(thiscall, rw_00bf75c0(this: u32, a0: u32, a1: u32, a2: u32, a3: u32) -> u32 {
@@ -33,7 +33,8 @@ lf_checker_rt::export!(thiscall, rw_00bf75c0(this: u32, a0: u32, a1: u32, a2: u3
         wr8(this + 2, READY);
         wr8(this + FLAG_BYTE, cur ^ bit);
         let new = rd8(this + FLAG_BYTE);
-        wr8(this + 0x14, (new & 1).wrapping_add(KIND_BASE));
-        (new & 1) as u32
+        let kind = (new & 1).wrapping_add(KIND_BASE);
+        wr8(this + 0x14, kind);
+        kind as u32
     }
 });
