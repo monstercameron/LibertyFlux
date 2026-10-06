@@ -18,6 +18,8 @@ pub use rt::callee_addr;
 pub use rt::clear_callees;
 pub use rt::relocated;
 pub use rt::set_callee;
+pub use rt::set_f1;
+pub use rt::set_f2;
 pub use rt::set_gg;
 
 #[cfg(target_arch = "x86")]

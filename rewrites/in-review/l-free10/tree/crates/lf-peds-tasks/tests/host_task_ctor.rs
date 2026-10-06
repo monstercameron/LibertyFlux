@@ -33,6 +33,30 @@ impl TaskInit for Fake {
     fn chain_43_second(&mut self, arg: u32) {
         self.log.push(("chain_43_second", vec![arg]));
     }
+    fn copy_block(&mut self, arg: u32) {
+        self.log.push(("copy_block", vec![arg]));
+    }
+    fn quant_vec(&mut self, arg: u32) {
+        self.log.push(("quant_vec", vec![arg]));
+    }
+    fn quant_byte(&mut self, arg: u32) {
+        self.log.push(("quant_byte", vec![arg]));
+    }
+    fn pair_first(&mut self, arg: u32) {
+        self.log.push(("pair_first", vec![arg]));
+    }
+    fn pair_second(&mut self, arg: u32) {
+        self.log.push(("pair_second", vec![arg]));
+    }
+    fn block_aux(&mut self, arg: u32) {
+        self.log.push(("block_aux", vec![arg]));
+    }
+    fn sub_3e(&mut self, a0: u32, a1: u32, a_last: u32) {
+        self.log.push(("sub_3e", vec![a0, a1, a_last]));
+    }
+    fn block_3a(&mut self, arg: u32) {
+        self.log.push(("block_3a", vec![arg]));
+    }
 }
 
 #[test]

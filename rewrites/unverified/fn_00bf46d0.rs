@@ -151,6 +151,7 @@ unsafe fn run_bf46d0(this: u32, edi: u32, mutant: bool) {
         const CAL_MAT2: u32 = 13;
         const CAL_PREP: u32 = 14;
         const CAL_GUARD: u32 = 15;
+        const CAL_VECB: u32 = 16;
         const STR_D: u32 = 0x00EBBE84;
         const G_OBJ: u32 = 0x01394D60;
         const G_VTAB: u32 = 0x01295CD8;
@@ -183,11 +184,13 @@ unsafe fn run_bf46d0(this: u32, edi: u32, mutant: bool) {
             }
             let em2 = lf_checker_rt::callee_thiscall!(CAL_OPEN2, u32, edi, id);
             let arg20 = *((edi.wrapping_add(0x20)) as *const u32);
-            let mut m = [0u32; 15];
-            lf_checker_rt::callee_thiscall!(CAL_MAT, u32, m.as_ptr() as u32, arg20);
+            // Both frame fills land in separate scratch buffers so the
+            // second fill cannot clobber the words the frame reads back.
+            let mut d1 = [0u32; 15];
+            lf_checker_rt::callee_thiscall!(CAL_MAT, u32, d1.as_ptr() as u32, arg20);
             // Twelve-word interleave copy: rows of three, every fourth
             // source word skipped.
-            let w = |i: usize| core::ptr::read_volatile(m.as_ptr().add(i));
+            let w = |i: usize| core::ptr::read_volatile(d1.as_ptr().add(i));
             let mut d = [0u32; 12];
             let src = [0usize, 1, 2, 4, 5, 6, 8, 9, 10, 12, 13, 14];
             let mut k = 0;
@@ -196,46 +199,43 @@ unsafe fn run_bf46d0(this: u32, edi: u32, mutant: bool) {
                 k += 1;
             }
             let d3 = core::ptr::read_volatile(d.as_ptr().add(3));
-            lf_checker_rt::callee_thiscall!(CAL_MAT2, u32, d.as_ptr().add(11) as u32, d3);
-            let w2 = w(2);
-            lf_checker_rt::callee_thiscall!(CAL_MAT, u32, m.as_ptr() as u32, w2);
-            lf_checker_rt::callee_thiscall!(CAL_PREP, u32, em2, edi);
-            lf_checker_rt::callee_thiscall!(
-                CAL_OPEN, u32, lf_checker_rt::relocated(G_OBJ), em2, 0, 0
+            lf_checker_rt::callee_thiscall!(CAL_MAT2, u32, d1.as_ptr() as u32, d3);
+            let mut d2 = [0u32; 15];
+            lf_checker_rt::callee_thiscall!(CAL_MAT, u32, d2.as_ptr() as u32, em2);
+            let w1 = w(1);
+            lf_checker_rt::callee_thiscall!(CAL_PREP, u32, d2.as_ptr() as u32, w1);
+            // The frame-entry slot keeps the receiver, so the second open
+            // call takes its key from the receiver's key slot.
+            let key = *((this.wrapping_add(8)) as *const u32);
+            let emitter = lf_checker_rt::callee_thiscall!(
+                CAL_OPEN, u32, lf_checker_rt::relocated(G_OBJ), key, 0, 0
             );
-            // Wild scaled table read: the slot holds the table pointer,
-            // scaled by row stride with wraparound.
-            let edx = tptr.wrapping_mul(0xE0);
-            let base = *((em2.wrapping_add(8)) as *const u32);
-            let f0 = core::ptr::read_volatile(
-                (base.wrapping_add(edx).wrapping_add(0x20)) as *const f32
-            );
-            let f1 = core::ptr::read_volatile(
-                (base.wrapping_add(edx).wrapping_add(0x24)) as *const f32
-            );
-            let f2 = core::ptr::read_volatile(
-                (base.wrapping_add(edx).wrapping_add(0x28)) as *const f32
-            );
-            let _ = (f0, f1, f2);
-            lf_checker_rt::callee_thiscall!(CAL_SET, u32, em2, arg20);
-            let mut sbuf = [0u32; 3];
-            core::ptr::write_volatile(sbuf.as_mut_ptr(), tptr);
-            core::ptr::write_volatile(sbuf.as_mut_ptr().add(1), 0);
-            core::ptr::write_volatile(sbuf.as_mut_ptr().add(2), f0.to_bits());
-            lf_checker_rt::callee_thiscall!(CAL_VEC, u32, em2, sbuf.as_ptr() as u32);
-            lf_checker_rt::callee_thiscall!(
-                CAL_REG, u32, lf_checker_rt::relocated(G_OBJ), em2, edi, 0
-            );
-            lf_checker_rt::callee_thiscall!(CAL_CREATE, u32, em2);
-            let a2c = *((edi.wrapping_add(0x2C)) as *const u32);
-            let ans = lf_checker_rt::callee_thiscall!(CAL_GUARD, u32, em2, a2c, arg20);
-            if ans == *(lf_checker_rt::global::<u32>(G_G1)) {
+            if emitter == 0 {
                 return;
             }
-            if ans != *(lf_checker_rt::global::<u32>(G_G2)) {
-                return;
+            lf_checker_rt::callee_thiscall!(CAL_SET, u32, emitter, arg20);
+            // Uninitialized frame slot: the callee address is skipped and
+            // its contents are not compared.
+            let sbuf = [0u32; 3];
+            lf_checker_rt::callee_thiscall!(CAL_VECB, u32, emitter, sbuf.as_ptr() as u32);
+            lf_checker_rt::callee_thiscall!(
+                CAL_REG, u32, lf_checker_rt::relocated(G_OBJ), emitter, edi, 0
+            );
+            lf_checker_rt::callee_thiscall!(CAL_CREATE, u32, emitter);
+            lf_checker_rt::callee_cdecl!(
+                CAL_GUARD, u32, emitter, arg20.wrapping_add(0x30), 0x4080_0000, 0xBF80_0000
+            );
+            // Guarded flag store: written when the slot index matches
+            // either guard word, skipped otherwise.
+            let g1 = *(lf_checker_rt::global::<u32>(G_G1));
+            let g2 = *(lf_checker_rt::global::<u32>(G_G2));
+            if idx as u32 == g1 || idx as u32 == g2 {
+                core::ptr::write_volatile(
+                    (emitter.wrapping_add(0x1EC)) as *mut u32,
+                    0x3FB3_3333
+                );
             }
-            lf_checker_rt::callee_thiscall!(CAL_FINISH, u32, em2);
+            lf_checker_rt::callee_thiscall!(CAL_FINISH, u32, emitter);
         }
     }
 }
