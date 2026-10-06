@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Lift: the audio slot routines, 15 methods in portable Rust",
+    "commit": null,
+    "summary": "15 verified audio routines outside any class are lifted as 15 methods on 8 types: the banked voice nodes reached through a row table, an 800-slot voice list, and several small pools. Their proof runs in the pipeline.",
+    "changes": [
+      "crates/lf-audio gains an audio_slot module with 25 new host tests and no unsafe code. The lane excluded 35 routines of the group by a hash of their bodies: each is one binding or initialising routine with no behaviour of its own, repeated. Three large routines are deferred.",
+      "A new test crate, lf-audioslotdiff, runs each method against its tracked verified rewrite on the 32-bit target: 15 differential cases, 620 comparisons, each with a deliberately wrong lift caught. The coordinator ran the host and 32-bit tests before committing.",
+      "One pair of routines sits next to the operating system, the guard that locks the voice list; it is lifted behind a lock trait.",
+      "The pipeline's 32-bit job now runs sixteen differential crates. Verified routines with a lifted counterpart proven in the pipeline: 327."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 17 files from lanes (239 unverified rewrites, 376 in review)",
     "commit": "d9a9ab921470f836669ab73565fc43a53e6879d3",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

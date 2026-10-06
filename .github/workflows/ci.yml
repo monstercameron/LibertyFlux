@@ -175,7 +175,7 @@ jobs:
           workspaces: ". -> .artifacts/build/cargo"
           key: i686-lift
       - name: Differential tests against the real checker runtime
-        run: cargo test --target i686-pc-windows-msvc -p lf-lift-diff -p lf-animchan-diff -p lf-voicediff -p lf-evthandler-diff -p lf-tokendiff -p lf-sounddiff -p lf-taskdiff -p lf-uiclip-diff -p lf-cutdiff -p lf-pooldiff -p lf-fontstr-diff -p lf-slotdiff -p lf-pedtaskdiff -p lf-audiovoicediff -p lf-pedstaskdiff
+        run: cargo test --target i686-pc-windows-msvc -p lf-lift-diff -p lf-animchan-diff -p lf-voicediff -p lf-evthandler-diff -p lf-tokendiff -p lf-sounddiff -p lf-taskdiff -p lf-uiclip-diff -p lf-cutdiff -p lf-pooldiff -p lf-fontstr-diff -p lf-slotdiff -p lf-pedtaskdiff -p lf-audiovoicediff -p lf-pedstaskdiff -p lf-audioslotdiff
       # The checker's proofs are made on an ARM development machine under its x86 emulator. This probe has no
       # game code: it runs float-stack and vector instruction sequences and asserts the processor's documented
       # results. Half of its tests fail under that emulator; here, on a real x86 processor, all must pass. The
