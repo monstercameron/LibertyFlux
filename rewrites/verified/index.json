@@ -64530,6 +64530,15 @@
   "lane": "r-s513"
  },
  {
+  "address": "0x009BB6E0",
+  "name": "guarded_input_dispatch_a",
+  "kind": "function",
+  "file": "functions/fn_009bb6e0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q53"
+ },
+ {
   "address": "0x009BB760",
   "name": "guarded_input_dispatch_b",
   "kind": "function",
@@ -88603,6 +88612,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s419"
+ },
+ {
+  "address": "0x00B81B90",
+  "name": "GtaThread::vf4",
+  "kind": "function",
+  "file": "functions/fn_00b81b90.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q53"
  },
  {
   "address": "0x00B82760",
@@ -121237,6 +121255,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAB9B0",
+  "name": "goto_task_init",
+  "kind": "function",
+  "file": "functions/fn_00cab9b0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-b649"
  },
  {
   "address": "0x00CABB80",

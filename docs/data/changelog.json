@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Checker: version 8 compares where a global variable is written",
+    "title": "Rewrites: 3 more functions pass the checker (16892 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "3 rewrites added under rewrites/verified: 0 script native handlers and 3 other functions.",
+      "The tree now holds 16892 rewrites, 16873 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 720 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "25 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Checker: version 8 compares where a global variable is written",
+    "commit": "7f954418604c8c20f102677c41e26e01add594bd",
     "summary": "A defect in the checker's comparison of global writes is fixed: a rewrite that stores the right value in the wrong word of a declared range no longer passes. No existing verdict changed in any regression.",
     "changes": [
       "A production lane found the defect by running its deliberately wrong versions, as the brief requires: one that stored a result one table slot too low passed 1,000 trials. The worker recorded each changed word of a declared global range with the range's start address, so the position inside the range was never compared.",
