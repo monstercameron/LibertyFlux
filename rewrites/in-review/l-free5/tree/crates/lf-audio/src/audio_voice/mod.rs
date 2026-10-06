@@ -13,6 +13,8 @@
 //!   bytes, flag checks, slot update with notify, clear-by-id, flag advance.
 //! - [`banked`]: the banked voice table behind the scale/table globals:
 //!   flag set, slot store, flag-bit select.
+//! - [`activation`]: voice activation (live/active flags, the voice
+//!   bitset, the notify sweep) and the bound-slot check.
 //!
 //! Each type owns its data as ordinary Rust (no addresses, no numbered
 //! slots, no global state, no pointer-width dependence) and each verified
@@ -34,12 +36,16 @@
 
 #![forbid(unsafe_code)]
 
+pub mod activation;
 pub mod banked;
 pub mod params;
 pub mod registry;
 pub mod slots;
 pub mod tracker;
 
+pub use activation::{
+    ActivationWorld, BitSet, BoundSlot, LockHandle, SlotHandle, VoiceActivation, VoiceLocks,
+};
 pub use banked::{BankRecord, BankedVoices, VoiceSel};
 pub use params::{ParamBlock, ParamBlocks, SubInit, VoiceHead};
 pub use slots::{Notify, VoiceSlots};

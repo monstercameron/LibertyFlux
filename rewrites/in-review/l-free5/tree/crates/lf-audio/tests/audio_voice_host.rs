@@ -2,6 +2,10 @@
 //! reader would ask about, every panic domain, and the registry counts.
 //! Runs on the 64-bit host (no rewrites here).
 
+use lf_audio::audio_voice::activation::{
+    ActivationWorld, BITSET_WORDS, BitSet, BoundSlot, LockHandle, SLOT_COUNT, SlotHandle,
+    VoiceActivation, VoiceLocks,
+};
 use lf_audio::audio_voice::banked::{BankRecord, BankedVoices, VoiceSel};
 use lf_audio::audio_voice::params::{BLOCK_COUNT, ParamBlock, ParamBlocks, RESET_TAG, VoiceHead};
 use lf_audio::audio_voice::registry::{MISSING, PROVEN, ROWS, State};
@@ -299,11 +303,193 @@ fn banked_set_bit1_truth_table() {
     }
 }
 
+struct AFake {
+    calls: Vec<String>,
+    probes: Vec<bool>,
+}
+
+impl AFake {
+    fn new(probes: Vec<bool>) -> Self {
+        Self {
+            calls: Vec::new(),
+            probes,
+        }
+    }
+}
+
+impl ActivationWorld for AFake {
+    fn reset(&mut self) {
+        self.calls.push("reset".to_string());
+    }
+    fn lock(&mut self, handle: Option<LockHandle>) {
+        self.calls
+            .push(format!("lock {}", Handle32::raw_or_zero(handle)));
+    }
+    fn unlock(&mut self, handle: Option<LockHandle>) {
+        self.calls
+            .push(format!("unlock {}", Handle32::raw_or_zero(handle)));
+    }
+    fn free_bits(&mut self, bits: BitSet) {
+        self.calls.push(format!(
+            "free {}",
+            bits.iter().map(|w| w.count_ones()).sum::<u32>()
+        ));
+    }
+    fn probe(&mut self, slot: SlotHandle) -> bool {
+        self.calls.push(format!("probe {}", slot.get()));
+        self.probes.remove(0)
+    }
+    fn notify(&mut self, slot: SlotHandle, arg: u32) {
+        self.calls.push(format!("notify {} {arg}", slot.get()));
+    }
+}
+
+fn locks(counter: u32, gate: bool, filter: bool) -> VoiceLocks {
+    VoiceLocks {
+        handle: Handle32::new(0x70),
+        counter,
+        gate,
+        filter,
+    }
+}
+
+fn activation(live: bool, active: bool, bits: Option<BitSet>) -> VoiceActivation {
+    VoiceActivation {
+        live,
+        active,
+        bits,
+        slots: [Handle32::new(0x8000); SLOT_COUNT],
+    }
+}
+
+#[test]
+fn activation_update_quiet_paths_make_no_calls() {
+    for (live, active, gate) in [
+        (false, false, false),
+        (false, true, true),
+        (true, false, false),
+    ] {
+        let mut act = activation(live, active, Some([0; BITSET_WORDS]));
+        let mut shared = locks(7, gate, true);
+        let mut w = AFake::new(vec![]);
+        act.update(0x99, &mut shared, &mut w);
+        assert!(
+            w.calls.is_empty(),
+            "live={live} active={active} gate={gate}"
+        );
+        assert_eq!(shared.counter, 7);
+        assert_eq!((act.live, act.active), (live, active));
+    }
+}
+
+#[test]
+fn activation_update_deactivate_wraps_counter() {
+    let mut act = activation(true, true, Some([0; BITSET_WORDS]));
+    let mut shared = locks(0, false, false);
+    let mut w = AFake::new(vec![]);
+    act.update(1, &mut shared, &mut w);
+    assert_eq!(w.calls, vec!["reset", "lock 112", "unlock 112"]);
+    assert_eq!(shared.counter, u32::MAX);
+    assert!(!act.active);
+}
+
+#[test]
+fn activation_update_activate_then_sweeps() {
+    let mut bits = [0u32; BITSET_WORDS];
+    bits[0] = 0b110; // slots 1 and 2.
+    let mut act = activation(true, false, Some(bits));
+    let mut shared = locks(9, true, false);
+    let mut w = AFake::new(vec![]);
+    act.update(0xA, &mut shared, &mut w);
+    assert_eq!(shared.counter, 10);
+    assert!(act.active);
+    assert_eq!(
+        w.calls,
+        vec![
+            "lock 112",
+            "unlock 112",
+            "notify 32768 10",
+            "notify 32768 10"
+        ]
+    );
+}
+
+#[test]
+fn activation_update_probe_gates_notify() {
+    let mut bits = [0u32; BITSET_WORDS];
+    bits[0] = 0b110;
+    let mut act = activation(true, true, Some(bits));
+    let mut shared = locks(3, true, true);
+    let mut w = AFake::new(vec![false, true]);
+    act.update(5, &mut shared, &mut w);
+    assert_eq!(
+        w.calls,
+        vec!["probe 32768", "probe 32768", "notify 32768 5"]
+    );
+}
+
+#[test]
+#[should_panic(expected = "null voice bitset")]
+fn activation_update_null_bitset_panics() {
+    let mut act = activation(true, true, None);
+    let mut shared = locks(0, true, false);
+    let mut w = AFake::new(vec![]);
+    act.update(0, &mut shared, &mut w);
+}
+
+#[test]
+#[should_panic(expected = "null voice object in live slot 1")]
+fn activation_update_null_slot_panics() {
+    let mut bits = [0u32; BITSET_WORDS];
+    bits[0] = 0b10; // slot 1 set.
+    let mut act = activation(true, true, Some(bits));
+    act.slots[0] = None;
+    let mut shared = locks(0, true, false);
+    let mut w = AFake::new(vec![]);
+    act.update(0, &mut shared, &mut w);
+}
+
+#[test]
+fn activation_teardown_paths() {
+    // Quiet.
+    let mut act = activation(false, true, Some([1; BITSET_WORDS]));
+    let mut shared = locks(4, false, false);
+    let mut w = AFake::new(vec![]);
+    act.teardown(&mut shared, &mut w);
+    assert!(w.calls.is_empty());
+    assert_eq!(shared.counter, 4);
+    // Inactive: free only.
+    let mut act = activation(true, false, Some([0xFF; BITSET_WORDS]));
+    let mut w = AFake::new(vec![]);
+    act.teardown(&mut shared, &mut w);
+    assert_eq!(w.calls, vec![format!("free {}", 25 * 8)]);
+    assert!(!act.live && !act.active && act.bits.is_none());
+    // Active: reset, lock pair, free.
+    let mut act = activation(true, true, Some([1; BITSET_WORDS]));
+    let mut w = AFake::new(vec![]);
+    act.teardown(&mut shared, &mut w);
+    assert_eq!(w.calls, vec!["reset", "lock 112", "unlock 112", "free 25"]);
+    assert_eq!(shared.counter, 3);
+    // Null bitset frees as zero words.
+    let mut act = activation(true, false, None);
+    let mut w = AFake::new(vec![]);
+    act.teardown(&mut shared, &mut w);
+    assert_eq!(w.calls, vec!["free 0"]);
+}
+
+#[test]
+fn bound_check_edges() {
+    assert!(!BoundSlot { flag: 0, id: 5 }.is_active(6));
+    assert!(!BoundSlot { flag: 1, id: 0 }.is_active(6));
+    assert!(!BoundSlot { flag: 1, id: 6 }.is_active(6));
+    assert!(BoundSlot { flag: 0xFF, id: 5 }.is_active(6));
+}
+
 #[test]
 fn registry_counts_are_pinned() {
     assert_eq!(ROWS.len(), 78);
-    assert_eq!(PROVEN, 14);
-    assert_eq!(MISSING, 64);
+    assert_eq!(PROVEN, 17);
+    assert_eq!(MISSING, 61);
     assert_eq!(
         ROWS.iter().filter(|r| r.state == State::Proven).count(),
         PROVEN

@@ -27,11 +27,11 @@ pub struct Row {
 }
 
 /// How many routines are proven.
-pub const PROVEN: usize = 14;
+pub const PROVEN: usize = 17;
 /// How many group routines are still missing.
-pub const MISSING: usize = 64;
+pub const MISSING: usize = 61;
 
-/// Every row: the 14 proven routines, then the 64 missing ones.
+/// Every row: the 17 proven routines, then the 61 missing ones.
 pub const ROWS: &[Row] = &[
     // Proven: parameter blocks and the header (params.rs).
     Row {
@@ -120,6 +120,25 @@ pub const ROWS: &[Row] = &[
         name: "audio_voice_toggle_bit1",
         state: State::Proven,
         note: "BankedVoices::set_bit1; table_hi|adjust narrows to changed-bool, rebuilt per case; 0xff panics",
+    },
+    // Proven: activation and the bound check (activation.rs).
+    Row {
+        addr: "0x008a9ef0",
+        name: "audio_voice_update",
+        state: State::Proven,
+        note: "VoiceActivation::update; lock/unlock/reset/free/probe/notify are ActivationWorld; probe word narrows to low-byte bool; null bitset or slot object panics (original faults); the handle double-read is one read over owned state",
+    },
+    Row {
+        addr: "0x008aa440",
+        name: "audio_voice_teardown",
+        state: State::Proven,
+        note: "VoiceActivation::teardown; null bitset frees as zero words; counter wraps; handle double-read as above",
+    },
+    Row {
+        addr: "0x00974f00",
+        name: "audio_voice_active_check",
+        state: State::Proven,
+        note: "BoundSlot::is_active; the current-id global becomes an argument; 1/0 narrows to bool",
     },
     // Missing: the banked-record routines with callees (same table, other rows).
     Row {
@@ -224,19 +243,6 @@ pub const ROWS: &[Row] = &[
         name: "audio_voice_spatialize_b",
         state: State::Missing,
         note: "TLS spatialize (bias pair); same routine as spatialize_a",
-    },
-    // Missing: the activation/bitset pair.
-    Row {
-        addr: "0x008a9ef0",
-        name: "audio_voice_update",
-        state: State::Missing,
-        note: "activation refresh + notify sweep; needs lock + notify traits",
-    },
-    Row {
-        addr: "0x008aa440",
-        name: "audio_voice_teardown",
-        state: State::Missing,
-        note: "counter/bitset teardown; needs lock + free traits",
     },
     // Missing: the slot table build/alloc/register trio.
     Row {
@@ -490,12 +496,6 @@ pub const ROWS: &[Row] = &[
         name: "audio_voice_dispatch",
         state: State::Missing,
         note: "dispatch by resolver verdict; 8 callees",
-    },
-    Row {
-        addr: "0x00974f00",
-        name: "audio_voice_active_check",
-        state: State::Missing,
-        note: "call-free bound check over 1 global; easy next lift",
     },
     Row {
         addr: "0x009a37a0",

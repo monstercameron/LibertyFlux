@@ -2,8 +2,9 @@
 //!
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!`, the `callee_*` macros, `callee_addr`, `global`,
-//! `relocated`). The proof set reads three globals (the banked table's
-//! scale and table words, the install routine's pool word); each is one
+//! `relocated`). The proof set reads eight globals (the banked table's
+//! scale and table words, the install routine's pool word, the four
+//! activation words and the bound check's id word); each is one
 //! atomic slot with a stable address. Numbered callees dispatch through
 //! a script the test installs: each id maps to a stub of the matching
 //! convention and arity, which records its arguments and answers from a
@@ -28,18 +29,33 @@ static SCALE_SLOT: AtomicU32 = AtomicU32::new(0);
 static TABLE_SLOT: AtomicU32 = AtomicU32::new(0);
 /// The install routine's pool word.
 static POOL_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The activation lock-handle word.
+static HANDLE_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The activation shared-counter word.
+static COUNTER_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The activation gate flag (low byte).
+static GATE_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The activation filter flag (low byte).
+static FILTER_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The bound check's current-id word.
+static ACTIVE_SLOT: AtomicU32 = AtomicU32::new(0);
 
 /// Plants `v` into the global slot for a file VA.
 ///
 /// # Panics
 ///
-/// When the VA is not one of the three globals the proof set reads: a
+/// When the VA is not one of the eight globals the proof set reads: a
 /// case bug, never a guess.
 pub fn set_global(file_va: u32, v: u32) {
     match file_va {
         0x0115_D968 => SCALE_SLOT.store(v, Ordering::SeqCst),
         0x0115_D988 => TABLE_SLOT.store(v, Ordering::SeqCst),
         0x012F_B214 => POOL_SLOT.store(v, Ordering::SeqCst),
+        0x0115_F858 => HANDLE_SLOT.store(v, Ordering::SeqCst),
+        0x0115_F854 => COUNTER_SLOT.store(v, Ordering::SeqCst),
+        0x0115_F850 => GATE_SLOT.store(v, Ordering::SeqCst),
+        0x0115_DBE4 => FILTER_SLOT.store(v, Ordering::SeqCst),
+        0x0116_5E20 => ACTIVE_SLOT.store(v, Ordering::SeqCst),
         _ => panic!("unexpected global VA {file_va:#x}"),
     }
 }
@@ -48,12 +64,17 @@ pub fn set_global(file_va: u32, v: u32) {
 ///
 /// # Panics
 ///
-/// When the VA is not one of the three globals the proof set reads.
+/// When the VA is not one of the eight globals the proof set reads.
 fn slot_for(file_va: u32) -> *mut u32 {
     match file_va {
         0x0115_D968 => SCALE_SLOT.as_ptr(),
         0x0115_D988 => TABLE_SLOT.as_ptr(),
         0x012F_B214 => POOL_SLOT.as_ptr(),
+        0x0115_F858 => HANDLE_SLOT.as_ptr(),
+        0x0115_F854 => COUNTER_SLOT.as_ptr(),
+        0x0115_F850 => GATE_SLOT.as_ptr(),
+        0x0115_DBE4 => FILTER_SLOT.as_ptr(),
+        0x0116_5E20 => ACTIVE_SLOT.as_ptr(),
         _ => panic!("unexpected global VA {file_va:#x}"),
     }
 }
@@ -76,6 +97,11 @@ pub fn get_global(file_va: u32) -> u32 {
         0x0115_D968 => SCALE_SLOT.load(Ordering::SeqCst),
         0x0115_D988 => TABLE_SLOT.load(Ordering::SeqCst),
         0x012F_B214 => POOL_SLOT.load(Ordering::SeqCst),
+        0x0115_F858 => HANDLE_SLOT.load(Ordering::SeqCst),
+        0x0115_F854 => COUNTER_SLOT.load(Ordering::SeqCst),
+        0x0115_F850 => GATE_SLOT.load(Ordering::SeqCst),
+        0x0115_DBE4 => FILTER_SLOT.load(Ordering::SeqCst),
+        0x0116_5E20 => ACTIVE_SLOT.load(Ordering::SeqCst),
         _ => panic!("unexpected global VA {file_va:#x}"),
     }
 }
@@ -105,6 +131,8 @@ pub enum StubKind {
     Thiscall3,
     /// `extern "cdecl" fn(u32, u32) -> u32`.
     Cdecl2,
+    /// `extern "cdecl" fn(u32) -> u32`.
+    Cdecl1,
 }
 
 /// The installed script and the recorded calls.
@@ -191,6 +219,85 @@ pub fn clear_hooks() {
     hooks().clear();
 }
 
+/// A recorded virtual-hook call: hook name and argument words.
+pub type VirtualCall = (String, Vec<u32>);
+
+static VIRT_ANSWERS: std::sync::LazyLock<std::sync::Mutex<HashMap<String, VecDeque<u32>>>> =
+    std::sync::LazyLock::new(|| std::sync::Mutex::new(HashMap::new()));
+static VIRT_CALLS: std::sync::LazyLock<std::sync::Mutex<Vec<VirtualCall>>> =
+    std::sync::LazyLock::new(|| std::sync::Mutex::new(Vec::new()));
+
+/// Installs virtual-hook answers by hook name (popped in call order;
+/// exhausted queues answer 0). Clears the virtual call log.
+pub fn set_virtual(spec: &[(&str, Vec<u32>)]) {
+    let mut a = VIRT_ANSWERS.lock().unwrap_or_else(|e| e.into_inner());
+    a.clear();
+    for (name, answers) in spec {
+        a.insert((*name).to_string(), answers.iter().copied().collect());
+    }
+    VIRT_CALLS.lock().unwrap_or_else(|e| e.into_inner()).clear();
+}
+
+/// Takes the recorded virtual calls, clearing the log.
+pub fn take_virtual() -> Vec<VirtualCall> {
+    std::mem::take(&mut VIRT_CALLS.lock().unwrap_or_else(|e| e.into_inner()))
+}
+
+/// Records a virtual-hook call and pops its answer. Only the x86 hook
+/// stubs call it.
+#[cfg(target_arch = "x86")]
+fn record_virtual(name: &str, args: Vec<u32>) -> u32 {
+    VIRT_CALLS
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .push((name.to_string(), args));
+    VIRT_ANSWERS
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .get_mut(name)
+        .and_then(VecDeque::pop_front)
+        .unwrap_or(0)
+}
+
+// The hook stubs name the 32-bit thiscall convention: x86-only.
+#[cfg(target_arch = "x86")]
+extern "thiscall" fn probe_stub(obj: u32) -> u32 {
+    record_virtual("probe", vec![obj])
+}
+
+#[cfg(target_arch = "x86")]
+extern "thiscall" fn notify_stub(obj: u32, arg: u32) -> u32 {
+    record_virtual("notify", vec![obj, arg])
+}
+
+/// Address of the probe hook stub, for planting in test vtables.
+#[cfg(target_arch = "x86")]
+#[must_use]
+pub fn probe_stub_addr() -> u32 {
+    probe_stub as *const () as usize as u32
+}
+
+/// Address of the notify hook stub, for planting in test vtables.
+#[cfg(target_arch = "x86")]
+#[must_use]
+pub fn notify_stub_addr() -> u32 {
+    notify_stub as *const () as usize as u32
+}
+
+/// Non-x86 placeholders: the rewrites never run here.
+#[cfg(not(target_arch = "x86"))]
+#[must_use]
+pub fn probe_stub_addr() -> u32 {
+    panic!("hook stubs need the 32-bit target")
+}
+
+/// Non-x86 placeholders: the rewrites never run here.
+#[cfg(not(target_arch = "x86"))]
+#[must_use]
+pub fn notify_stub_addr() -> u32 {
+    panic!("hook stubs need the 32-bit target")
+}
+
 // The stubs name 32-bit calling conventions, which other targets
 // reject outright: everything from here to `callee_addr` is x86-only.
 #[cfg(target_arch = "x86")]
@@ -218,6 +325,11 @@ extern "cdecl" fn stub_cdecl2(a: u32, b: u32) -> u32 {
     record_numbered(CURRENT_ID.with(|c| c.get()), vec![a, b])
 }
 
+#[cfg(target_arch = "x86")]
+extern "cdecl" fn stub_cdecl1(a: u32) -> u32 {
+    record_numbered(CURRENT_ID.with(|c| c.get()), vec![a])
+}
+
 /// Raw stub address for callee `id`, by the installed script.
 ///
 /// # Panics
@@ -240,6 +352,7 @@ pub fn callee_addr(id: u32) -> u32 {
         StubKind::Thiscall2 => stub_thiscall2 as *const () as usize as u32,
         StubKind::Thiscall3 => stub_thiscall3 as *const () as usize as u32,
         StubKind::Cdecl2 => stub_cdecl2 as *const () as usize as u32,
+        StubKind::Cdecl1 => stub_cdecl1 as *const () as usize as u32,
     }
 }
 
