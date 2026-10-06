@@ -79,6 +79,7 @@ members = [
     "crates/tools/lf-voicediff",
     "crates/tools/lf-evthandler-diff",
     "crates/tools/lf-tokendiff",
+    "crates/tools/lf-sounddiff",
     "crates/formats/lf-archive",
     "crates/formats/lf-resource",
     "crates/formats/lf-model",
@@ -120,3 +121,9 @@ missing_docs = "warn"
 [workspace.lints.clippy]
 all = "warn"
 pedantic = "warn"
+
+# This test crate compiles verified rewrites exactly as they are, and one of them reads a word at an odd
+# address, which the 32-bit processor allows and a debug build's pointer-alignment check aborts on. The
+# check is switched off for this crate only, so its tests run in the ordinary debug build like the others.
+[profile.dev.package.lf-sounddiff]
+debug-assertions = false

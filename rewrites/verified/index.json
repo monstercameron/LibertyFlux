@@ -33120,6 +33120,15 @@
   "lane": "r-s116"
  },
  {
+  "address": "0x005B5510",
+  "name": "menu_present_apply",
+  "kind": "function",
+  "file": "functions/fn_005b5510.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b592"
+ },
+ {
   "address": "0x005B5B20",
   "name": "guarded_handle_release",
   "kind": "function",
@@ -34162,6 +34171,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b587"
+ },
+ {
+  "address": "0x005EDDC0",
+  "name": "text_format_measure_and_dispatch",
+  "kind": "function",
+  "file": "functions/fn_005eddc0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b591"
  },
  {
   "address": "0x005FBC60",
@@ -37285,6 +37303,87 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b568"
+ },
+ {
+  "address": "0x006932E0",
+  "name": "track_heap_sort_pass",
+  "kind": "function",
+  "file": "functions/fn_006932e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
+  "address": "0x00693330",
+  "name": "track_array_insert",
+  "kind": "function",
+  "file": "functions/fn_00693330.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
+  "address": "0x006933A0",
+  "name": "track_heap_build",
+  "kind": "function",
+  "file": "functions/fn_006933a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
+  "address": "0x00693480",
+  "name": "track_heap_sift_down",
+  "kind": "function",
+  "file": "functions/fn_00693480.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
+  "address": "0x00693510",
+  "name": "track_heap_sift_up",
+  "kind": "function",
+  "file": "functions/fn_00693510.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
+  "address": "0x006935D0",
+  "name": "rage::crCreatureComponent::vf2",
+  "kind": "function",
+  "file": "functions/fn_006935d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
+  "address": "0x00693700",
+  "name": "voice_table_lookup",
+  "kind": "function",
+  "file": "functions/fn_00693700.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
+  "address": "0x00693870",
+  "name": "comp_ctor_forward5",
+  "kind": "function",
+  "file": "functions/fn_00693870.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
+  "address": "0x00693C00",
+  "name": "track_slot_by_id",
+  "kind": "function",
+  "file": "functions/fn_00693c00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
  },
  {
   "address": "0x00694E40",
@@ -44370,6 +44469,33 @@
   "lane": "r-s490"
  },
  {
+  "address": "0x0089CF80",
+  "name": "audio_rebase_keys",
+  "kind": "function",
+  "file": "functions/fn_0089cf80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s490"
+ },
+ {
+  "address": "0x0089D030",
+  "name": "audio_rebase_driver",
+  "kind": "function",
+  "file": "functions/fn_0089d030.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s490"
+ },
+ {
+  "address": "0x0089D130",
+  "name": "audio_rebase_keys2",
+  "kind": "function",
+  "file": "functions/fn_0089d130.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s490"
+ },
+ {
   "address": "0x0089D1E0",
   "name": "audio_descriptor_merge_pass",
   "kind": "function",
@@ -44518,6 +44644,15 @@
   "name": "audio_slot_op_forward",
   "kind": "function",
   "file": "functions/fn_0089dd40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s490"
+ },
+ {
+  "address": "0x0089DDA0",
+  "name": "audio_slot_release_forward",
+  "kind": "function",
+  "file": "functions/fn_0089dda0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s490"
@@ -57400,6 +57535,96 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s488"
+ },
+ {
+  "address": "0x009A66B0",
+  "name": "MOBILE_PRERING",
+  "kind": "function",
+  "file": "functions/fn_009a66b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s493"
+ },
+ {
+  "address": "0x009A66E0",
+  "name": "SFX_",
+  "kind": "function",
+  "file": "functions/fn_009a66e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s493"
+ },
+ {
+  "address": "0x009A6800",
+  "name": "audio_forward_level_default",
+  "kind": "function",
+  "file": "functions/fn_009a6800.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s493"
+ },
+ {
+  "address": "0x009A6820",
+  "name": "audio_set_flag_2d",
+  "kind": "function",
+  "file": "functions/fn_009a6820.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s493"
+ },
+ {
+  "address": "0x009A6830",
+  "name": "audio_apply_slot_a",
+  "kind": "function",
+  "file": "functions/fn_009a6830.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s493"
+ },
+ {
+  "address": "0x009A6860",
+  "name": "audio_update_flag_23",
+  "kind": "function",
+  "file": "functions/fn_009a6860.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s493"
+ },
+ {
+  "address": "0x009A6890",
+  "name": "audio_apply_slot_b",
+  "kind": "function",
+  "file": "functions/fn_009a6890.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s493"
+ },
+ {
+  "address": "0x009A68C0",
+  "name": "audio_update_flag_2c",
+  "kind": "function",
+  "file": "functions/fn_009a68c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s493"
+ },
+ {
+  "address": "0x009A68F0",
+  "name": "audio_reset_state",
+  "kind": "function",
+  "file": "functions/fn_009a68f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s493"
+ },
+ {
+  "address": "0x009A6CF0",
+  "name": "audio_forward_default",
+  "kind": "function",
+  "file": "functions/fn_009a6cf0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s493"
  },
  {
   "address": "0x009A8150",
