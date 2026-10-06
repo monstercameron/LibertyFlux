@@ -1,0 +1,11 @@
+// One module per verified rewrite: files share top-level helper names,
+// so they cannot live in one scope. Files using the bare `export!` macro
+// import it from the crate root; the rest qualify it.
+pub mod fn_009017E0 { #![allow(unused_imports)] use crate::{export, callee_cdecl, callee_thiscall}; use super::{callee_addr, global, relocated, tls_slot}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_009017e0.rs")); }
+pub mod fn_00904250 { #![allow(unused_imports)] use crate::{export, callee_cdecl, callee_thiscall}; use super::{callee_addr, global, relocated, tls_slot}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_00904250.rs")); }
+pub mod fn_009042D0 { #![allow(unused_imports)] use crate::{export, callee_cdecl, callee_thiscall}; use super::{callee_addr, global, relocated, tls_slot}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_009042d0.rs")); }
+pub mod fn_00904990 { #![allow(unused_imports)] use crate::{export, callee_cdecl, callee_thiscall}; use super::{callee_addr, global, relocated, tls_slot}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_00904990.rs")); }
+pub mod fn_009049C0 { #![allow(unused_imports)] use crate::{export, callee_cdecl, callee_thiscall}; use super::{callee_addr, global, relocated, tls_slot}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_009049c0.rs")); }
+pub mod fn_009049F0 { #![allow(unused_imports)] use crate::{export, callee_cdecl, callee_thiscall}; use super::{callee_addr, global, relocated, tls_slot}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_009049f0.rs")); }
+pub mod fn_009061E0 { #![allow(unused_imports)] use crate::{export, callee_cdecl, callee_thiscall}; use super::{callee_addr, global, relocated, tls_slot}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_009061e0.rs")); }
+pub mod fn_00928170 { #![allow(unused_imports)] use crate::{export, callee_cdecl, callee_thiscall}; use super::{callee_addr, global, relocated, tls_slot}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../rewrites/verified/functions/fn_00928170.rs")); }

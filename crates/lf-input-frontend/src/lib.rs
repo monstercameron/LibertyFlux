@@ -15,5 +15,6 @@
 //! - Never original game code here: structures, symbols and new Rust only.
 
 pub mod font_string;
+pub mod input_slot;
 pub mod layout;
 pub mod ui_clip;

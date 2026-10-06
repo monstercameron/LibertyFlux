@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Lift: the input slot store, 8 routines in portable Rust",
+    "commit": null,
+    "summary": "Eight verified routines of the input code's slot store are lifted in two parts, the handle table and the registry with its key table, with their proof in the pipeline.",
+    "changes": [
+      "crates/lf-input-frontend gains an input_slot module with 12 host tests and no unsafe code: finding a free slot, notifying by kind, the flag byte and mode word, announcing and destroying a slot, allocating one in the registry and finding one by key.",
+      "A new test crate, lf-inputslot-diff, runs each routine against its tracked verified rewrite on the 32-bit target: 8 differential tests, 810 comparisons, and 8 deliberately wrong lifts caught. The coordinator ran the host and 32-bit tests before committing; the integration script needed no hand fixes.",
+      "Six verified routines of the group were not reached and are listed in the registry: each needs a design for something it talks to (a source, a sink, a block, a virtual table or an emitter).",
+      "The pipeline's 32-bit job now runs eighteen differential crates. Verified routines with a lifted counterpart proven in the pipeline: 353."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 49 files from lanes (209 unverified rewrites, 469 in review)",
     "commit": "e718bd1455d8d88ed63d86c1228dcd26d2139044",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
