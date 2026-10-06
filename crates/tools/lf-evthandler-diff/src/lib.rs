@@ -1,12 +1,12 @@
 //! `lf-evthandler-diff`: differential tests of the lifted event handler.
 //!
 //! The verified rewrite files are included unchanged; on the 32-bit target
-//! they see this crate as `lf_checker_rt` (the r-s362 files) or
-//! `lf_rs75_rt` (the r-s75 file) via `extern crate self as`, with the same
-//! macro and function names the checker builds them against. The proof set
-//! reads no globals and needs no callee stubs: its three virtual calls go
-//! through fake virtual tables the cases plant, pointing at recording
-//! stubs.
+//! they see this crate as `lf_checker_rt` or `lf_rs75_rt` (one per
+//! verifying lane) via `extern crate self as`, with the same macro and
+//! function names the checker builds them against. The call-free cases
+//! plant fake virtual tables pointing at recording stubs; the
+//! factory-pair and refresh cases register callee stubs for slots 1 and
+//! 2 and script the shared manager word.
 //!
 //! The differential cases run on the 32-bit target only: the rewrites
 //! take real addresses. On other hosts the crate builds but runs no

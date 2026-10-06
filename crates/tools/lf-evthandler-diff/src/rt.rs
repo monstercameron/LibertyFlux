@@ -4,11 +4,11 @@
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!`, the `callee_*` macros, `callee_addr`, `relocated`,
 //! `global`). The call-free proof set uses `export!` only (its virtual
-//! calls go through fake tables the cases plant); the factory-pair slots
-//! read the shared manager global and call callee slots 1 and 2, which
-//! each factory test binary registers before running (one binary per
-//! slot, so the registry cells are never shared between tests).
-//! Test-support code: the lifted crate itself stays
+//! calls go through fake tables the cases plant); the factory-pair and
+//! refresh slots read the shared manager global and call callee slots 1
+//! and 2, which each factory test binary registers before running (one
+//! binary per slot, so the registry cells are never shared between
+//! tests). Test-support code: the lifted crate itself stays
 //! `#![forbid(unsafe_code)]`.
 
 // Test-only runtime: raw pointers through scripted addresses are inherent
@@ -46,12 +46,28 @@ pub fn global<T>(file_va: u32) -> *mut T {
 
 /// File VA to relocated address, mirroring `lf-checker-rt`.
 ///
+/// The build slot reads the shared manager word through this rather
+/// than through [`global`]; both spellings land on the same cell.
+///
 /// # Panics
 ///
-/// Always: the proof set relocates nothing, so any call is a case bug.
+/// When the address is not the shared manager word: the proof set
+/// relocates nothing else, so any other call is a case bug. On a
+/// 64-bit host any call panics: rewrites run on the 32-bit target only.
 #[must_use]
-pub fn relocated(_file_va: u32) -> u32 {
-    panic!("unexpected relocated() call: the proof set relocates nothing");
+pub fn relocated(file_va: u32) -> u32 {
+    assert!(
+        file_va == MANAGER_VA,
+        "unexpected relocated VA {file_va:#x}: the proof set relocates the manager word only"
+    );
+    #[cfg(target_arch = "x86")]
+    {
+        core::ptr::addr_of!(MANAGER).addr() as u32
+    }
+    #[cfg(not(target_arch = "x86"))]
+    {
+        panic!("relocated() on a 64-bit host: rewrites run on the 32-bit target only");
+    }
 }
 
 /// Registered stub addresses for callee slots 1 and 2 (0 until the

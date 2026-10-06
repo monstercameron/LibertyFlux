@@ -10,9 +10,9 @@ use lf_core::Handle32;
 use lf_peds_tasks::event_handler::registry::{self, State};
 use lf_peds_tasks::event_handler::{
     ConvertRequest, EventChild, EventDispatch, EventHandler, EventPayload, EventRef, EventSource,
-    FIXED_REQUEST_A, FIXED_REQUEST_B, FactoryAnswer, FactoryHandle, FactoryState, GatedAnswer,
-    KIND_CLEAR, KIND_GATED_CONVERT, KIND_RESET_B, KIND_TYPE_CLEAR_B, Owner, Task, TaskFactory,
-    TaskManager,
+    EventSubject, FIXED_REQUEST_A, FIXED_REQUEST_B, FactoryAnswer, FactoryHandle, FactoryState,
+    FlaggedAnswer, GatedAnswer, GuardedAnswer, KIND_CLEAR, KIND_GATED_CONVERT, KIND_RESET_B,
+    KIND_TYPE_CLEAR_B, OWNER_REFRESH_FLAG, Owner, Task, TaskFactory, TaskManager,
 };
 
 fn owner(v: u32) -> Option<Handle32<Owner>> {
@@ -32,18 +32,19 @@ fn manager(v: u32) -> Option<Handle32<TaskManager>> {
 }
 
 #[test]
-fn registry_counts_ten_proven() {
+fn registry_counts_fifteen_proven() {
     let (proven, lifted, missing) = registry::counts();
-    assert_eq!(proven, 10);
+    assert_eq!(proven, 15);
     assert_eq!(lifted, 0);
-    assert_eq!(missing, 41);
-    assert_eq!(registry::ROWS.len(), 51);
+    assert_eq!(missing, 39);
+    assert_eq!(registry::ROWS.len(), 54);
     for row in registry::ROWS {
         assert_eq!(row.class, "EventHandler");
         if row.state == State::Proven {
             assert!(
                 [
-                    "vf14", "vf29", "vf31", "vf34", "vf36", "vf37", "vf54", "vf55", "vf67", "vf68"
+                    "vf14", "vf21", "vf23", "vf28", "vf29", "vf31", "vf34", "vf36", "vf37", "vf54",
+                    "vf55", "vf67", "vf68", "vf71", "vf73",
                 ]
                 .contains(&row.method),
                 "unexpected proven row {}",
@@ -442,6 +443,248 @@ fn tagged_stages_identity_plus_tag() {
     let mut h = EventHandler::new(owner(1), task(7));
     let mut f = factory(0, 0x2222);
     assert_eq!(h.answer_tagged(0x777, 0xAB, event, &mut f, &state), None);
+    assert_eq!(h.pending(), None);
+    assert!(f.converts.is_empty());
+}
+
+#[test]
+fn refresh_flag_is_bit_two() {
+    assert_eq!(OWNER_REFRESH_FLAG, 4);
+}
+
+fn subject(v: u32) -> Option<Handle32<EventSubject>> {
+    Handle32::new(v)
+}
+
+// The refresh slots.
+
+#[test]
+fn mark_seen_sets_the_flag_and_converts() {
+    let mut h = EventHandler::new(owner(1), task(7));
+    let state = FactoryState::new(manager(9));
+    let mut f = factory(0x1111, 0x2222);
+    let mut seen = false;
+    assert_eq!(
+        h.refresh_marking_seen(subject(0x44), 0x55, &mut seen, &mut f, &state),
+        task(0x2222)
+    );
+    assert!(seen);
+    assert_eq!(h.pending(), task(0x2222));
+    assert_eq!(f.lookups, vec![9]);
+    assert_eq!(
+        f.converts,
+        vec![(
+            0x1111,
+            ConvertRequest::SubjectKind {
+                subject: subject(0x44),
+                kind: 0x55,
+            }
+        )]
+    );
+}
+
+#[test]
+fn mark_seen_marks_even_when_nothing_answers() {
+    // The flag is set before the lookup, so it is set on every path.
+    let mut h = EventHandler::new(owner(1), task(7));
+    let state = FactoryState::new(manager(9));
+    let mut f = factory(0, 0x2222);
+    let mut seen = false;
+    assert_eq!(
+        h.refresh_marking_seen(subject(0x44), 0x55, &mut seen, &mut f, &state),
+        None
+    );
+    assert!(seen);
+    assert_eq!(h.pending(), None);
+    assert!(f.converts.is_empty());
+}
+
+#[test]
+fn mark_seen_carries_a_null_subject() {
+    // The slot never tests the subject word: null converts too.
+    let mut h = EventHandler::new(owner(1), task(7));
+    let state = FactoryState::new(manager(9));
+    let mut f = factory(0x1111, 0x2222);
+    let mut seen = false;
+    assert_eq!(
+        h.refresh_marking_seen(None, 0x55, &mut seen, &mut f, &state),
+        task(0x2222)
+    );
+    assert_eq!(
+        f.converts,
+        vec![(
+            0x1111,
+            ConvertRequest::SubjectKind {
+                subject: None,
+                kind: 0x55,
+            }
+        )]
+    );
+}
+
+#[test]
+fn subject_refresh_passes_through_or_converts() {
+    let event: Handle32<EventRef> = Handle32::new(0xE000).unwrap();
+    // Null subject: answers the event, task untouched, no calls.
+    let mut h = EventHandler::new(owner(1), task(7));
+    let state = FactoryState::new(manager(9));
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.refresh_for_subject(event, None, &mut f, &state),
+        FactoryAnswer::Passthrough(event)
+    );
+    assert_eq!(h.pending(), task(7));
+    assert!(f.lookups.is_empty());
+    // Live subject: converts it.
+    let subj: Handle32<EventSubject> = Handle32::new(0x44).unwrap();
+    let mut h = EventHandler::new(owner(1), task(7));
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.refresh_for_subject(event, Some(subj), &mut f, &state),
+        FactoryAnswer::Converted(task(0x2222))
+    );
+    assert_eq!(h.pending(), task(0x2222));
+    assert_eq!(f.lookups, vec![9]);
+    assert_eq!(f.converts, vec![(0x1111, ConvertRequest::Subject(subj))]);
+    // Live subject with no handler: clears.
+    let mut h = EventHandler::new(owner(1), task(7));
+    let mut f = factory(0, 0x2222);
+    assert_eq!(
+        h.refresh_for_subject(event, Some(subj), &mut f, &state),
+        FactoryAnswer::Converted(None)
+    );
+    assert_eq!(h.pending(), None);
+}
+
+#[test]
+fn guarded_refresh_takes_three_paths() {
+    let own: Handle32<Owner> = Handle32::new(0x111).unwrap();
+    let event: Handle32<EventRef> = Handle32::new(0xE000).unwrap();
+    let subj: Handle32<EventSubject> = Handle32::new(0x44).unwrap();
+    let state = FactoryState::new(manager(9));
+    // Flag set: keeps the task, answers the owner, never calls out,
+    // even with a live subject.
+    for flags in [4u8, 5, 6, 7, 0xFC, 0xFF] {
+        let mut h = EventHandler::new(Some(own), task(7));
+        let mut f = factory(0x1111, 0x2222);
+        assert_eq!(
+            h.refresh_unless_owner_flagged(own, flags, event, Some(subj), &mut f, &state),
+            GuardedAnswer::KeepOwner(own),
+            "flags {flags:#x}"
+        );
+        assert_eq!(h.pending(), task(7));
+        assert!(f.lookups.is_empty());
+    }
+    // Flag clear, null subject: keeps the task, answers the event.
+    for flags in [0u8, 1, 2, 3, 0xFB] {
+        let mut h = EventHandler::new(Some(own), task(7));
+        let mut f = factory(0x1111, 0x2222);
+        assert_eq!(
+            h.refresh_unless_owner_flagged(own, flags, event, None, &mut f, &state),
+            GuardedAnswer::KeepEvent(event),
+            "flags {flags:#x}"
+        );
+        assert_eq!(h.pending(), task(7));
+        assert!(f.lookups.is_empty());
+    }
+    // Flag clear, live subject: converts.
+    let mut h = EventHandler::new(Some(own), task(7));
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.refresh_unless_owner_flagged(own, 0, event, Some(subj), &mut f, &state),
+        GuardedAnswer::Converted(task(0x2222))
+    );
+    assert_eq!(h.pending(), task(0x2222));
+    assert_eq!(f.converts, vec![(0x1111, ConvertRequest::Subject(subj))]);
+}
+
+#[test]
+fn flagged_refresh_needs_a_live_flagged_owner() {
+    let state = FactoryState::new(manager(9));
+    // Null owner: keeps the task, answers NoOwner, never calls out.
+    let mut h = EventHandler::new(None, task(7));
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.refresh_flagged_owner(0xFF, subject(1), 2, 3.0, &mut f, &state),
+        FlaggedAnswer::NoOwner
+    );
+    assert_eq!(h.pending(), task(7));
+    assert!(f.lookups.is_empty());
+    // Live owner, flag clear: keeps the task, answers the owner.
+    let own: Handle32<Owner> = Handle32::new(0x111).unwrap();
+    for flags in [0u8, 1, 2, 3, 0xFB] {
+        let mut h = EventHandler::new(Some(own), task(7));
+        let mut f = factory(0x1111, 0x2222);
+        assert_eq!(
+            h.refresh_flagged_owner(flags, subject(1), 2, 3.0, &mut f, &state),
+            FlaggedAnswer::KeepOwner(own),
+            "flags {flags:#x}"
+        );
+        assert_eq!(h.pending(), task(7));
+        assert!(f.lookups.is_empty());
+    }
+    // Live owner, flag set: converts subject, kind and float bits.
+    let mut h = EventHandler::new(Some(own), task(7));
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.refresh_flagged_owner(4, subject(1), 2, 3.0, &mut f, &state),
+        FlaggedAnswer::Converted(task(0x2222))
+    );
+    assert_eq!(h.pending(), task(0x2222));
+    assert_eq!(
+        f.converts,
+        vec![(
+            0x1111,
+            ConvertRequest::SubjectKindFloat {
+                subject: subject(1),
+                kind: 2,
+                weight_bits: 3.0f32.to_bits(),
+            }
+        )]
+    );
+    // A null subject still converts on the flagged path.
+    let mut h = EventHandler::new(Some(own), task(7));
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.refresh_flagged_owner(4, None, 2, 3.0, &mut f, &state),
+        FlaggedAnswer::Converted(task(0x2222))
+    );
+    assert_eq!(f.converts.len(), 1);
+}
+
+#[test]
+fn flagged_refresh_carries_float_bits_exactly() {
+    // The float word is carried bitwise: a NaN payload survives the trip.
+    let own: Handle32<Owner> = Handle32::new(0x111).unwrap();
+    let state = FactoryState::new(manager(9));
+    let nan = f32::from_bits(0x7FC0_0001);
+    let mut h = EventHandler::new(Some(own), task(7));
+    let mut f = factory(0x1111, 0x2222);
+    let _ = h.refresh_flagged_owner(4, subject(1), 2, nan, &mut f, &state);
+    assert_eq!(
+        f.converts[0].1,
+        ConvertRequest::SubjectKindFloat {
+            subject: subject(1),
+            kind: 2,
+            weight_bits: 0x7FC0_0001,
+        }
+    );
+}
+
+#[test]
+fn build_response_builds_or_clears() {
+    // Live allocation: builds into the task slot.
+    let mut h = EventHandler::new(owner(1), task(7));
+    let state = FactoryState::new(manager(9));
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(h.build_response(&mut f, &state), task(0x2222));
+    assert_eq!(h.pending(), task(0x2222));
+    assert_eq!(f.lookups, vec![9]);
+    assert_eq!(f.converts, vec![(0x1111, ConvertRequest::Build)]);
+    // Null allocation: clears without building.
+    let mut h = EventHandler::new(owner(1), task(7));
+    let mut f = factory(0, 0x2222);
+    assert_eq!(h.build_response(&mut f, &state), None);
     assert_eq!(h.pending(), None);
     assert!(f.converts.is_empty());
 }

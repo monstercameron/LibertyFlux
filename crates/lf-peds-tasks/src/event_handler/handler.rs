@@ -52,6 +52,13 @@ pub struct EventRef;
 #[derive(Debug)]
 pub struct EventChild;
 
+/// The subject word an event carries into the refresh slots.
+///
+/// Opaque: the factory interprets it, the handler only tests it for
+/// null and carries it through.
+#[derive(Debug)]
+pub struct EventSubject;
+
 /// Event kind that clears the pending task wherever it is tested: the
 /// type-clear slot, the payload-gated reset slot and the forward-or-clear
 /// slot all treat this kind as "drop the task".
@@ -71,6 +78,12 @@ pub const FIXED_REQUEST_B: u32 = 0x200;
 
 /// The kind the type-gated slot converts through the factory.
 pub const KIND_GATED_CONVERT: u32 = 0x25C;
+
+/// Owner flag bit that gates the owner-reading refresh slots.
+///
+/// The guarded slot keeps its task when the owner's flag byte carries
+/// this bit; the flagged slot refreshes its task only then.
+pub const OWNER_REFRESH_FLAG: u8 = 4;
 
 /// What the handler calls back on itself: its own dispatch slot.
 ///
@@ -302,6 +315,154 @@ impl EventHandler {
         self.pending = answer;
         answer
     }
+
+    /// Mark-seen refresh slot: marks the event seen, converts subject and kind.
+    ///
+    /// Restates the verified slot that sets the event's seen flag,
+    /// looks up a conversion handler from the shared manager and
+    /// converts the event's subject and kind words into the task slot
+    /// (clearing the slot when no handler answers). Answers the
+    /// conversion either way. The subject word is carried through even
+    /// when null: the slot never tests it.
+    pub fn refresh_marking_seen(
+        &mut self,
+        subject: Option<Handle32<EventSubject>>,
+        kind: u32,
+        seen: &mut bool,
+        factory: &mut impl TaskFactory,
+        state: &FactoryState,
+    ) -> Option<Handle32<Task>> {
+        *seen = true;
+        let Some(handle) = factory.lookup(state.manager()) else {
+            self.pending = None;
+            return None;
+        };
+        let answer = factory.convert(handle, ConvertRequest::SubjectKind { subject, kind });
+        self.pending = answer;
+        answer
+    }
+
+    /// Subject refresh slot: passes the event through or converts its subject.
+    ///
+    /// Restates the verified slot that answers the event itself when
+    /// its subject word is null (leaving the task slot alone) and
+    /// otherwise converts the subject through the factory into the
+    /// task slot (clearing the slot when no handler answers).
+    pub fn refresh_for_subject(
+        &mut self,
+        event: Handle32<EventRef>,
+        subject: Option<Handle32<EventSubject>>,
+        factory: &mut impl TaskFactory,
+        state: &FactoryState,
+    ) -> FactoryAnswer {
+        let Some(subject) = subject else {
+            return FactoryAnswer::Passthrough(event);
+        };
+        let Some(handle) = factory.lookup(state.manager()) else {
+            self.pending = None;
+            return FactoryAnswer::Converted(None);
+        };
+        let answer = factory.convert(handle, ConvertRequest::Subject(subject));
+        self.pending = answer;
+        FactoryAnswer::Converted(answer)
+    }
+
+    /// Owner-gated refresh slot: keeps the task or converts the subject.
+    ///
+    /// Restates the verified slot that answers the owner word when the
+    /// owner's flag byte carries [`OWNER_REFRESH_FLAG`], answers the
+    /// event when its subject word is null, and otherwise converts the
+    /// subject through the factory into the task slot (clearing the
+    /// slot when no handler answers). The task slot is untouched on
+    /// the first two paths. The owner word travels as a parameter
+    /// rather than from this handler because the slot reads it but
+    /// faults unless it is live, which the non-optional handle states
+    /// in the type.
+    pub fn refresh_unless_owner_flagged(
+        &mut self,
+        owner: Handle32<Owner>,
+        owner_flags: u8,
+        event: Handle32<EventRef>,
+        subject: Option<Handle32<EventSubject>>,
+        factory: &mut impl TaskFactory,
+        state: &FactoryState,
+    ) -> GuardedAnswer {
+        if owner_flags & OWNER_REFRESH_FLAG != 0 {
+            return GuardedAnswer::KeepOwner(owner);
+        }
+        let Some(subject) = subject else {
+            return GuardedAnswer::KeepEvent(event);
+        };
+        let Some(handle) = factory.lookup(state.manager()) else {
+            self.pending = None;
+            return GuardedAnswer::Converted(None);
+        };
+        let answer = factory.convert(handle, ConvertRequest::Subject(subject));
+        self.pending = answer;
+        GuardedAnswer::Converted(answer)
+    }
+
+    /// Flagged-owner refresh slot: refreshes only for a flagged owner.
+    ///
+    /// Restates the verified slot that keeps its task and answers zero
+    /// when the owner word is null, keeps its task and answers the
+    /// owner when the owner's flag byte lacks [`OWNER_REFRESH_FLAG`],
+    /// and otherwise converts the event's subject, kind and float
+    /// words through the factory into the task slot (clearing the slot
+    /// when no handler answers). Answers the conversion on the third
+    /// path.
+    pub fn refresh_flagged_owner(
+        &mut self,
+        owner_flags: u8,
+        subject: Option<Handle32<EventSubject>>,
+        kind: u32,
+        weight: f32,
+        factory: &mut impl TaskFactory,
+        state: &FactoryState,
+    ) -> FlaggedAnswer {
+        let Some(owner) = self.owner else {
+            return FlaggedAnswer::NoOwner;
+        };
+        if owner_flags & OWNER_REFRESH_FLAG == 0 {
+            return FlaggedAnswer::KeepOwner(owner);
+        };
+        let Some(handle) = factory.lookup(state.manager()) else {
+            self.pending = None;
+            return FlaggedAnswer::Converted(None);
+        };
+        let answer = factory.convert(
+            handle,
+            ConvertRequest::SubjectKindFloat {
+                subject,
+                kind,
+                weight_bits: weight.to_bits(),
+            },
+        );
+        self.pending = answer;
+        FlaggedAnswer::Converted(answer)
+    }
+
+    /// Response-build slot: builds a fresh response through the factory.
+    ///
+    /// Restates the verified slot that ignores its arguments, asks the
+    /// shared manager for a fresh object and builds it into the task
+    /// slot (storing zero when the allocation answers null). Answers
+    /// the stored word either way. The allocator/builder pair shares
+    /// the [`TaskFactory`] trait: the lookup allocates, the conversion
+    /// builds.
+    pub fn build_response(
+        &mut self,
+        factory: &mut impl TaskFactory,
+        state: &FactoryState,
+    ) -> Option<Handle32<Task>> {
+        let Some(handle) = factory.lookup(state.manager()) else {
+            self.pending = None;
+            return None;
+        };
+        let answer = factory.convert(handle, ConvertRequest::Build);
+        self.pending = answer;
+        answer
+    }
 }
 
 /// How the child slot answered.
@@ -312,6 +473,35 @@ pub enum FactoryAnswer {
     Passthrough(Handle32<EventRef>),
     /// The child was converted: the answer is the conversion, also
     /// stored in the task slot.
+    Converted(Option<Handle32<Task>>),
+}
+
+/// How the owner-gated refresh slot answered.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GuardedAnswer {
+    /// The owner's flag byte carried the keep bit: the task slot is
+    /// untouched and the answer is the owner.
+    KeepOwner(Handle32<Owner>),
+    /// The subject word was null: the task slot is untouched and the
+    /// answer is the event.
+    KeepEvent(Handle32<EventRef>),
+    /// The subject was converted: the answer is the conversion, also
+    /// stored in the task slot.
+    Converted(Option<Handle32<Task>>),
+}
+
+/// How the flagged-owner refresh slot answered.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FlaggedAnswer {
+    /// The owner word was null: the task slot is untouched. The
+    /// original answers zero, which carries no meaning and is not
+    /// modelled.
+    NoOwner,
+    /// The owner's flag byte lacked the refresh bit: the task slot is
+    /// untouched and the answer is the owner.
+    KeepOwner(Handle32<Owner>),
+    /// The event converted: the answer is the conversion, also stored
+    /// in the task slot.
     Converted(Option<Handle32<Task>>),
 }
 
@@ -382,6 +572,29 @@ pub enum ConvertRequest {
         /// The staged word: identity bits plus tag byte.
         staged: u32,
     },
+    /// Convert an event's subject and kind words (the mark-seen slot).
+    /// The subject is carried through even when null.
+    SubjectKind {
+        /// The event's subject word.
+        subject: Option<Handle32<EventSubject>>,
+        /// The event's kind word.
+        kind: u32,
+    },
+    /// Convert an event's subject word (the subject refresh slots).
+    Subject(Handle32<EventSubject>),
+    /// Convert subject, kind and the float word, bitwise (the flagged slot).
+    SubjectKindFloat {
+        /// The event's subject word (carried through even when null).
+        subject: Option<Handle32<EventSubject>>,
+        /// The event's kind word.
+        kind: u32,
+        /// The event's float word as bits; no arithmetic touches it.
+        weight_bits: u32,
+    },
+    /// Build a fresh response object (the build slot). The target call
+    /// carries a fixed all-ones word after the handle, pinned by the
+    /// proof rather than modelled here.
+    Build,
 }
 
 /// What the handler asks of the task factory: the factory-side

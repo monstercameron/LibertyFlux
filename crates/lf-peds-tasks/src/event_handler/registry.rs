@@ -156,6 +156,54 @@ pub const ROWS: &[Row] = &[
         state: State::Proven,
         narrows: &[],
     },
+    // Proven: the refresh slots. Each reads the shared manager word,
+    // asks it for a handler, and converts event words through it; the
+    // manager travels as FactoryState, the two calls as the TaskFactory
+    // trait, and the proof scripts both stubs and compares slot and
+    // arguments in order.
+    Row {
+        class: "EventHandler",
+        method: "vf21",
+        state: State::Proven,
+        narrows: &["the seen byte travels as a flag the proof maps onto the event blob"],
+    },
+    Row {
+        class: "EventHandler",
+        method: "vf23",
+        state: State::Proven,
+        narrows: &[
+            "the conversion's trailing zero word is pinned by the proof, not modelled in the request",
+        ],
+    },
+    Row {
+        class: "EventHandler",
+        method: "vf28",
+        state: State::Proven,
+        narrows: &[
+            "the owner word must be live (the slot faults on null): the lift takes it as a non-optional handle",
+            "the flag byte travels as a value the proof maps onto an owner blob",
+        ],
+    },
+    Row {
+        class: "EventHandler",
+        method: "vf71",
+        state: State::Proven,
+        narrows: &[
+            "the build's fixed all-ones word is pinned by the proof, not modelled in the request",
+            "the allocator/builder pair shares the factory trait: the lookup allocates, the conversion builds",
+        ],
+    },
+    Row {
+        class: "EventHandler",
+        method: "vf73",
+        state: State::Proven,
+        narrows: &[
+            "the float word travels as f32 and is compared bitwise",
+            "the conversion's trailing zero word is pinned by the proof, not modelled in the request",
+            "the flag byte travels as a value the proof maps onto an owner blob",
+            "the null-owner zero answer is not modelled (pinned by the proof)",
+        ],
+    },
     // Everything else reaches callees and lifts once its collaborator
     // traits exist. Counts are callee slots per rewrite (Verified: read
     // off the tracked rewrite files).
@@ -167,27 +215,27 @@ pub const ROWS: &[Row] = &[
     },
     Row {
         class: "EventHandler",
+        method: "vf13",
+        state: State::Missing,
+        narrows: &["19 callee slots, virtual calls and shared globals"],
+    },
+    Row {
+        class: "EventHandler",
         method: "vf15",
         state: State::Missing,
         narrows: &["12 callee slots, a virtual call and a shared global"],
     },
     Row {
         class: "EventHandler",
+        method: "vf18",
+        state: State::Missing,
+        narrows: &["19 callee slots, virtual calls and shared globals"],
+    },
+    Row {
+        class: "EventHandler",
         method: "vf19",
         state: State::Missing,
         narrows: &["20 callee slots, a virtual call and shared globals"],
-    },
-    Row {
-        class: "EventHandler",
-        method: "vf21",
-        state: State::Missing,
-        narrows: &["source/worker callee pair and a shared global"],
-    },
-    Row {
-        class: "EventHandler",
-        method: "vf23",
-        state: State::Missing,
-        narrows: &["source/worker callee pair and a shared global"],
     },
     Row {
         class: "EventHandler",
@@ -206,12 +254,6 @@ pub const ROWS: &[Row] = &[
         method: "vf27",
         state: State::Missing,
         narrows: &["6 callee slots and a shared global"],
-    },
-    Row {
-        class: "EventHandler",
-        method: "vf28",
-        state: State::Missing,
-        narrows: &["source/worker callee pair and a shared global"],
     },
     Row {
         class: "EventHandler",
@@ -293,6 +335,12 @@ pub const ROWS: &[Row] = &[
     },
     Row {
         class: "EventHandler",
+        method: "vf53",
+        state: State::Missing,
+        narrows: &["9 callee slots, three chained virtual calls and shared globals"],
+    },
+    Row {
+        class: "EventHandler",
         method: "vf56",
         state: State::Missing,
         narrows: &["5 callee slots and a shared global"],
@@ -361,21 +409,9 @@ pub const ROWS: &[Row] = &[
     },
     Row {
         class: "EventHandler",
-        method: "vf71",
-        state: State::Missing,
-        narrows: &["allocator/builder callee pair and a shared global"],
-    },
-    Row {
-        class: "EventHandler",
         method: "vf72",
         state: State::Missing,
         narrows: &["5 callee slots and shared globals"],
-    },
-    Row {
-        class: "EventHandler",
-        method: "vf73",
-        state: State::Missing,
-        narrows: &["source/worker callee pair and a shared global"],
     },
     Row {
         class: "EventHandler",

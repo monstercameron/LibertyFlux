@@ -25,7 +25,7 @@ pub mod registry;
 
 pub use handler::{
     ConvertRequest, EventChild, EventDispatch, EventHandler, EventPayload, EventRef, EventSource,
-    FIXED_REQUEST_A, FIXED_REQUEST_B, FactoryAnswer, FactoryHandle, FactoryState, GatedAnswer,
-    KIND_CLEAR, KIND_GATED_CONVERT, KIND_RESET_B, KIND_TYPE_CLEAR_B, Owner, Task, TaskFactory,
-    TaskManager,
+    EventSubject, FIXED_REQUEST_A, FIXED_REQUEST_B, FactoryAnswer, FactoryHandle, FactoryState,
+    FlaggedAnswer, GatedAnswer, GuardedAnswer, KIND_CLEAR, KIND_GATED_CONVERT, KIND_RESET_B,
+    KIND_TYPE_CLEAR_B, OWNER_REFRESH_FLAG, Owner, Task, TaskFactory, TaskManager,
 };

@@ -59,6 +59,15 @@ pub const E_VTABLE: usize = 0;
 pub const E_KIND: usize = 4;
 /// Event blob word holding the payload (byte offset 0x18).
 pub const E_PAYLOAD: usize = 6;
+/// Event blob word holding the subject (byte offset 0x0C).
+pub const E_SUBJECT: usize = 3;
+/// Byte offset of the seen flag in the event blob.
+pub const E_SEEN_BYTE: usize = 0x14;
+/// Event blob word holding the flagged slot's float word (byte offset
+/// 0x18: the same word the clear slots read as a payload).
+pub const E_FLOAT: usize = 6;
+/// Byte offset of the flag byte in the owner blob.
+pub const OWNER_FLAGS_BYTE: usize = 0x26C;
 
 /// Zeroed 16-byte handler blob (word-addressed, so aligned).
 pub fn handler_blob() -> Box<[u32; 4]> {
@@ -68,6 +77,27 @@ pub fn handler_blob() -> Box<[u32; 4]> {
 /// Zeroed 32-byte event blob (word-addressed, so aligned).
 pub fn event_blob() -> Box<[u32; 8]> {
     Box::new([0u32; 8])
+}
+
+/// Zeroed owner blob big enough for the flag byte (word-addressed, so
+/// aligned). The flag byte sits past 600 bytes of filler the refresh
+/// slots never touch; cases fill it at random and compare it whole.
+pub fn owner_blob() -> Box<[u32; 160]> {
+    Box::new([0u32; 160])
+}
+
+/// Reads one byte of a word blob.
+pub fn blob_byte(blob: &[u32], byte: usize) -> u8 {
+    let words: &[u8] =
+        unsafe { core::slice::from_raw_parts(blob.as_ptr().cast::<u8>(), blob.len() * 4) };
+    words[byte]
+}
+
+/// Writes one byte of a word blob.
+pub fn set_blob_byte(blob: &mut [u32], byte: usize, value: u8) {
+    let words: &mut [u8] =
+        unsafe { core::slice::from_raw_parts_mut(blob.as_mut_ptr().cast::<u8>(), blob.len() * 4) };
+    words[byte] = value;
 }
 
 /// Zeroed fake virtual table with one stub planted at a word slot.

@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Lift: five more event handler methods",
+    "commit": null,
+    "summary": "Five more verified methods of the pedestrian event handler class are lifted, the first ones that make calls of their own, and their proofs join the ones the pipeline runs.",
+    "changes": [
+      "crates/lf-peds-tasks/src/event_handler gains five methods that look an event up and convert it into a task through the task factory, with four new shapes of request. What they call is reached through the module's traits, and the proof compares every call in order as well as results and written bytes.",
+      "crates/tools/lf-evthandler-diff goes from 10 to 15 differential tests, each with a deliberately wrong lift that must be caught; the coordinator ran all of them on the 32-bit target, and the 28 host tests, and they pass.",
+      "The registry is completed to 54 rows, one per verified method: 15 proven, 36 still to lift, each with what it waits on."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 5 files from lanes (247 unverified rewrites, 194 in review)",
     "commit": "0487922a863f1a311776e90096f247af8f484bec",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
