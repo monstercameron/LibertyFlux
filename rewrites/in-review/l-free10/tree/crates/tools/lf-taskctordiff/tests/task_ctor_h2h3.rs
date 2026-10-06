@@ -340,7 +340,8 @@ mod x86 {
             self.wr8(0x20, cl);
             self.wr8(0x02, 7);
         }
-        // Wrong mask: the keep-branch clears bit 2 too.
+        // Wrong mask: the keep-branch clears bit 4 too (bit 4 survives
+        // the later pack; a bit 0/1 change would be masked away).
         #[allow(clippy::too_many_arguments)]
         fn w45(
             &mut self,
@@ -366,7 +367,7 @@ mod x86 {
             }
             self.wr32(0x20, a9);
             if a7.wrapping_sub(1) > 2 {
-                self.wr8(0x28, self.rd(0x28) & 0xf0);
+                self.wr8(0x28, self.rd(0x28) & 0xe3);
             } else {
                 let old = self.rd(0x28);
                 let t = (a7 << 2) ^ old;

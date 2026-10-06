@@ -15,12 +15,12 @@
 /// calls. Path B resolves the same table, probes a fourth hash to pick one
 /// of two id pairs (each with a negative-fallback word), opens another
 /// emitter, runs three matrix fills with a twelve-word interleave copy
-/// between the first two, then repeats the submit/colorless tail with a
-/// wild scaled table read and a final guarded finish call.
+/// between the first two, reopens the emitter keyed off the receiver, then
+/// repeats the submit tail with a guarded flag store and a finish call.
 ///
 /// The matrix words written by the fill stub are read back volatile; every
-/// buffer handed to a stub is stored volatile. Wild scaled reads fault or
-/// return whatever the mapping holds on both sides identically.
+/// buffer handed to a stub is stored volatile. Frame-pointer callee
+/// addresses are skipped by the contract; only values are compared.
 lf_checker_rt::export!(thiscall, aq55_fn2(this: u32, edi: u32) -> () {
     unsafe { run_bf46d0(this, edi, false) }
 });
@@ -44,7 +44,7 @@ unsafe fn run_bf46d0(this: u32, edi: u32, mutant: bool) {
     const CAL_MAT: u32 = 12; // matrix fill (thiscall/1, frame pointer)
     const CAL_MAT2: u32 = 13; // second matrix fill (thiscall/1)
     const CAL_PREP: u32 = 14; // emitter prepare (thiscall/1)
-    const CAL_GUARD: u32 = 15; // guarded finish (thiscall/2)
+    const CAL_GUARD: u32 = 15; // attach-constants call (cdecl/4)
 
     const STR_A: u32 = 0x00EBBE54;
     const STR_B: u32 = 0x00EBBE6C;

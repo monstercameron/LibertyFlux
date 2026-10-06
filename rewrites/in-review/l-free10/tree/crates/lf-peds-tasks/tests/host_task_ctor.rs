@@ -60,11 +60,11 @@ impl TaskInit for Fake {
 }
 
 #[test]
-fn registry_counts_seven_proven() {
+fn registry_counts_eighteen_proven() {
     let (proven, lifted, missing) = registry::counts();
-    assert_eq!(proven, 7);
+    assert_eq!(proven, 18);
     assert_eq!(lifted, 0);
-    assert_eq!(missing, 25);
+    assert_eq!(missing, 14);
     assert_eq!(registry::ROWS.len(), 32);
     for row in registry::ROWS {
         if row.state == State::Proven {
@@ -251,4 +251,185 @@ fn kinds_do_not_touch_each_others_bytes() {
         };
         assert_eq!(*b, expect, "byte {i:#x}");
     }
+}
+
+#[test]
+fn kind_3d_runs_main_only_with_flag_zero() {
+    let mut p = TaskParams::blank();
+    let mut init = Fake::default();
+    p.init_3d(&mut init, 0x77, 1, 2);
+    assert_eq!(p.tag(), 6);
+    assert_eq!(init.log, [("main", vec![0x3d, 0x77, 2, 1, 0])]);
+    let mut expect = [0u8; PARAM_LEN];
+    expect[0x02] = 6;
+    assert_eq!(p.bytes(), &expect);
+}
+
+#[test]
+fn kind_42_runs_block_aux_then_tag() {
+    let mut p = TaskParams::blank();
+    let mut init = Fake::default();
+    p.init_42(&mut init, 0, 0, 0, 0xabc);
+    assert_eq!(p.tag(), 7);
+    assert_eq!(init.log[1], ("block_aux", vec![0xabc]));
+}
+
+#[test]
+fn kind_46_stores_word_at_1c() {
+    let mut p = TaskParams::blank();
+    let mut init = Fake::default();
+    p.init_46(&mut init, 0, 0, 0, 0x55, 0x0102_0304);
+    assert_eq!(p.tag(), 7);
+    assert_eq!(&p.bytes()[0x1c..0x20], &0x0102_0304u32.to_le_bytes());
+    assert_eq!(init.log[1], ("copy_block", vec![0x55]));
+}
+
+#[test]
+fn kind_35_packs_five_args_over_old_flag_byte() {
+    // a6=1, a5=0, a4=1, a3=2 over a zero byte: 1,2,5,41,82.
+    let mut p = TaskParams::blank();
+    let mut init = Fake::default();
+    p.init_35(&mut init, 0, 0, 0, 0, 2, 1, 0, 1);
+    assert_eq!(p.tag(), 1);
+    assert_eq!(p.bytes()[0x1c], 82);
+    // Old flag byte contributes bits 7 and 0 only.
+    let mut raw = [0u8; PARAM_LEN];
+    raw[0x1c] = 0xff;
+    let mut p = TaskParams::from_bytes(raw);
+    p.init_35(&mut init, 0, 0, 0, 0, 1, 0, 0, 0);
+    assert_eq!(p.bytes()[0x1c], 0x81);
+}
+
+#[test]
+fn kind_33_folds_into_1c_after_two_tail_calls() {
+    let mut p = TaskParams::blank();
+    let mut init = Fake::default();
+    p.init_33(&mut init, 0, 0, 0, 0x11, 0x22, 3);
+    assert_eq!(p.tag(), 1);
+    assert_eq!(p.bytes()[0x1c], 0x04);
+    assert_eq!(init.log[1], ("copy_block", vec![0x11]));
+    assert_eq!(init.log[2], ("quant_vec", vec![0x22]));
+}
+
+#[test]
+fn kind_41_packs_over_old_byte_and_stores_word() {
+    let mut raw = [0u8; PARAM_LEN];
+    raw[0x24] = 0xff;
+    let mut p = TaskParams::from_bytes(raw);
+    let mut init = Fake::default();
+    p.init_41(&mut init, 0, 0, 0, 0, 0, 1, 0x99, 1, 0, 3);
+    assert_eq!(p.tag(), 7);
+    assert_eq!(p.bytes()[0x24], 0xfd);
+    assert_eq!(&p.bytes()[0x20..0x24], &0x99u32.to_le_bytes());
+    assert_eq!(init.log[2], ("quant_byte", vec![0]));
+}
+
+#[test]
+fn kind_44_truncates_float_toward_zero() {
+    let mut init = Fake::default();
+    // 1.5 truncates to 1, doubled, plus the flag bit.
+    let mut p = TaskParams::blank();
+    p.init_44(&mut init, 0, 0, 0, 0, 0, 0x3fc0_0000, 1);
+    assert_eq!(p.bytes()[0x20], 3);
+    // NaN answers the most negative int: low byte zero.
+    let mut p = TaskParams::blank();
+    p.init_44(&mut init, 0, 0, 0, 0, 0, 0x7fc0_0000, 0);
+    assert_eq!(p.bytes()[0x20], 0);
+    // -1.5 truncates to -1: low byte doubled wraps.
+    let mut p = TaskParams::blank();
+    p.init_44(&mut init, 0, 0, 0, 0, 0, 0xbfc0_0000, 0);
+    assert_eq!(p.bytes()[0x20], 0xfe);
+    // 256.0 truncates to 256: low byte zero, flag bit survives.
+    let mut p = TaskParams::blank();
+    p.init_44(&mut init, 0, 0, 0, 0, 0, 0x4380_0000, 1);
+    assert_eq!(p.bytes()[0x20], 1);
+    assert_eq!(p.tag(), 7);
+}
+
+#[test]
+fn kind_45_takes_the_block_arm_on_nonzero() {
+    let mut raw = [0u8; PARAM_LEN];
+    raw[0x28] = 0xff;
+    let mut p = TaskParams::from_bytes(raw);
+    let mut init = Fake::default();
+    // a7=9 keeps bits 0..1 and 4..7, then packs zeros below.
+    p.init_45(&mut init, 0, 0, 5, 0x21, 0, 0, 0, 0, 9, 0xaaaa, 0xbbbb);
+    assert_eq!(init.log[1], ("block_aux", vec![0x21]));
+    assert_eq!(p.bytes()[0x28], 0xf0);
+    assert_eq!(&p.bytes()[0x20..0x24], &0xbbbbu32.to_le_bytes());
+    assert_eq!(&p.bytes()[0x24..0x28], &0xaaaau32.to_le_bytes());
+}
+
+#[test]
+fn kind_45_takes_the_pair_arm_on_zero_and_folds_small_selectors() {
+    let mut p = TaskParams::blank();
+    let mut init = Fake::default();
+    // a7=2 folds bits 2..3 to 0b10, then packs zeros below.
+    p.init_45(&mut init, 0, 0, 0, 0, 0x31, 0x32, 0, 0, 2, 0, 0);
+    assert_eq!(init.log[1], ("pair_first", vec![0x31]));
+    assert_eq!(init.log[2], ("pair_second", vec![0x32]));
+    assert_eq!(p.bytes()[0x28], 8);
+    assert_eq!(p.tag(), 7);
+}
+
+#[test]
+fn kind_3a_stamps_kind_and_packs_flags() {
+    let mut p = TaskParams::blank();
+    let mut init = Fake::default();
+    // a6=1, a5=1 over a zero byte, a4=0: 3, 6, 6.
+    p.init_3a(&mut init, 1, 2, 0x41, 3, 0, 1, 1);
+    assert_eq!(p.kind(), 0x3a);
+    assert_eq!(p.mode(), 2);
+    assert_eq!(p.tag(), 4);
+    assert_eq!(p.bytes()[0x2c], 6);
+    assert_eq!(init.log[0], ("sub_3e", vec![1, 2, 3]));
+    assert_eq!(init.log[1], ("block_3a", vec![0x41]));
+}
+
+#[test]
+fn kind_3b_sets_bit_1_on_equal_consts_only() {
+    let mut init = Fake::default();
+    let mut p = TaskParams::blank();
+    p.init_3b(
+        &mut init,
+        0,
+        0,
+        5,
+        0,
+        0x1234,
+        7,
+        8,
+        9,
+        0x3f80_0000,
+        0x3f80_0000,
+    );
+    assert_eq!(p.kind(), 0x3b);
+    assert_eq!(p.mode(), 7);
+    assert_eq!(p.bytes()[0x03] & 2, 2);
+    // Equal-magnitude zeros compare equal too.
+    let mut p = TaskParams::blank();
+    p.init_3b(&mut init, 0, 0, 0, 0, 0, 0, 0, 0, 0x0000_0000, 0x8000_0000);
+    assert_eq!(p.bytes()[0x03] & 2, 2);
+    // NaN never sets the bit, even against itself.
+    let mut p = TaskParams::blank();
+    p.init_3b(&mut init, 0, 0, 0, 0, 0, 0, 0, 0, 0x7fc0_0000, 0x7fc0_0000);
+    assert_eq!(p.bytes()[0x03] & 2, 0);
+    // Unequal constants leave the flag byte alone.
+    let mut p = TaskParams::blank();
+    p.init_3b(&mut init, 0, 0, 0, 0, 0, 0, 0, 0, 0x3f80_0000, 0x4000_0000);
+    assert_eq!(p.bytes()[0x03] & 2, 0);
+}
+
+#[test]
+fn kind_3c_copies_three_words_and_stamps_kind() {
+    let mut p = TaskParams::blank();
+    let mut init = Fake::default();
+    p.init_3c(&mut init, 9, 8, 7, &[1, 2, 3]);
+    assert_eq!(p.kind(), 0x3c);
+    assert_eq!(p.mode(), 0);
+    assert_eq!(p.tag(), 5);
+    assert_eq!(&p.bytes()[0x1c..0x20], &1u32.to_le_bytes());
+    assert_eq!(&p.bytes()[0x20..0x24], &2u32.to_le_bytes());
+    assert_eq!(&p.bytes()[0x24..0x28], &3u32.to_le_bytes());
+    assert_eq!(init.log[0], ("sub_3e", vec![9, 8, 7]));
 }
