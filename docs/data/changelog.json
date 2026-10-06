@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Devlog: hourly review, 02:05 on 6 October",
+    "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "16,394 functions verified, 29.9% of the code by size; 48,000 bytes in the hour. The owner limited the run to 15 lanes for heat; queue lanes, the most productive kind at 3,216 bytes per lane-hour, get a larger share of them.",
+      "Brief b19 removes a contradiction about time that made 11 of 87 lanes stop early with 29 functions untried. A withdrawal no longer blocks the import of verified rewrites, which it did for 23 minutes. One rewrite withdrawn for passing a callee a buffer of zeros; a lane is reading all 4,633 such sites."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 107 files from lanes (252 unverified rewrites, 468 in review)",
     "commit": "edd5863b8bc5f839cbcfa446a176ef9011c426fa",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
