@@ -33102,6 +33102,15 @@
   "lane": "r-s116"
  },
  {
+  "address": "0x005B4770",
+  "name": "display_aspect_select",
+  "kind": "function",
+  "file": "functions/fn_005b4770.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b592"
+ },
+ {
   "address": "0x005B4ED0",
   "name": "mode_select_and_apply",
   "kind": "function",
@@ -34218,6 +34227,15 @@
   "lane": "r-b591"
  },
  {
+  "address": "0x005EE6A0",
+  "name": "text_run_resolve_and_sink",
+  "kind": "function",
+  "file": "functions/fn_005ee6a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b591"
+ },
+ {
   "address": "0x005FBC60",
   "name": "rage::pgStreamableRef<rage::fragType>::~fragType>",
   "kind": "function",
@@ -34420,6 +34438,33 @@
   "name": "init_files_mem_e",
   "kind": "function",
   "file": "functions/fn_00617780.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b597"
+ },
+ {
+  "address": "0x006178F0",
+  "name": "init_files_mem_f",
+  "kind": "function",
+  "file": "functions/fn_006178f0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b597"
+ },
+ {
+  "address": "0x00617A70",
+  "name": "init_files_mem_g",
+  "kind": "function",
+  "file": "functions/fn_00617a70.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b597"
+ },
+ {
+  "address": "0x00617C90",
+  "name": "files_mem_dtor",
+  "kind": "function",
+  "file": "functions/fn_00617c90.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b597"
@@ -35989,6 +36034,141 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b151"
+ },
+ {
+  "address": "0x0065B040",
+  "name": "shader_pass_copy",
+  "kind": "function",
+  "file": "functions/fn_0065b040.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B280",
+  "name": "tls_alloc_d0_block",
+  "kind": "function",
+  "file": "functions/fn_0065b280.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B2D0",
+  "name": "tls_alloc_28_block",
+  "kind": "function",
+  "file": "functions/fn_0065b2d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B380",
+  "name": "shader_zero_9_groups",
+  "kind": "function",
+  "file": "functions/fn_0065b380.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B4B0",
+  "name": "rage::AtmosphericScattering::vf3",
+  "kind": "function",
+  "file": "functions/fn_0065b4b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B510",
+  "name": "rage::AtmosphericScattering::vf5",
+  "kind": "function",
+  "file": "functions/fn_0065b510.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B550",
+  "name": "rage::AtmosphericScattering::vf0",
+  "kind": "function",
+  "file": "functions/fn_0065b550.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B5C0",
+  "name": "rage::IntervalShadows::vf5",
+  "kind": "function",
+  "file": "functions/fn_0065b5c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B5F0",
+  "name": "rage::IntervalShadows::vf3",
+  "kind": "function",
+  "file": "functions/fn_0065b5f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B660",
+  "name": "rage::IntervalShadows::vf0",
+  "kind": "function",
+  "file": "functions/fn_0065b660.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B720",
+  "name": "rage::FogControl::vf5",
+  "kind": "function",
+  "file": "functions/fn_0065b720.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B760",
+  "name": "rage::FogControl::vf3",
+  "kind": "function",
+  "file": "functions/fn_0065b760.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B7D0",
+  "name": "rage::FogControl::vf0",
+  "kind": "function",
+  "file": "functions/fn_0065b7d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B970",
+  "name": "rage::WaterFogControl::vf5",
+  "kind": "function",
+  "file": "functions/fn_0065b970.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
+ },
+ {
+  "address": "0x0065B9B0",
+  "name": "rage::WaterFogControl::vf3",
+  "kind": "function",
+  "file": "functions/fn_0065b9b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s500"
  },
  {
   "address": "0x0065BD50",
@@ -37881,6 +38061,42 @@
   "lane": "r-b572"
  },
  {
+  "address": "0x00697200",
+  "name": "pool_lookup_build_a",
+  "kind": "function",
+  "file": "functions/fn_00697200.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s497"
+ },
+ {
+  "address": "0x006973D0",
+  "name": "pool_lookup_build_b",
+  "kind": "function",
+  "file": "functions/fn_006973d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s497"
+ },
+ {
+  "address": "0x006975D0",
+  "name": "pool_lookup_build_c",
+  "kind": "function",
+  "file": "functions/fn_006975d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s497"
+ },
+ {
+  "address": "0x00697750",
+  "name": "weight_probe_setup",
+  "kind": "function",
+  "file": "functions/fn_00697750.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s497"
+ },
+ {
   "address": "0x00697920",
   "name": "pool_guarded_build",
   "kind": "function",
@@ -37908,6 +38124,15 @@
   "lane": "r-s497"
  },
  {
+  "address": "0x00697CA0",
+  "name": "weight_probe",
+  "kind": "function",
+  "file": "functions/fn_00697ca0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s497"
+ },
+ {
   "address": "0x00697D00",
   "name": "frame_setup_identity",
   "kind": "function",
@@ -37926,6 +38151,15 @@
   "lane": "r-s497"
  },
  {
+  "address": "0x00697FB0",
+  "name": "mover_alloc_construct",
+  "kind": "function",
+  "file": "functions/fn_00697fb0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s497"
+ },
+ {
   "address": "0x00697FE0",
   "name": "mover_maybe_init",
   "kind": "function",
@@ -37939,6 +38173,15 @@
   "name": "rage::crCreatureComponentMover::vf11",
   "kind": "function",
   "file": "functions/fn_00697ff0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s497"
+ },
+ {
+  "address": "0x006980B0",
+  "name": "mover_rebind_from_source",
+  "kind": "function",
+  "file": "functions/fn_006980b0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s497"
@@ -41965,6 +42208,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s175"
+ },
+ {
+  "address": "0x0087B770",
+  "name": "rage::crmtNodeFrame::vf4",
+  "kind": "function",
+  "file": "functions/fn_0087b770.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q21"
  },
  {
   "address": "0x0087B790",
@@ -50625,6 +50877,15 @@
   "lane": "r-s47"
  },
  {
+  "address": "0x008E9440",
+  "name": "scan_slots_best_scored_pair",
+  "kind": "function",
+  "file": "functions/fn_008e9440.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b599"
+ },
+ {
   "address": "0x008EA6E0",
   "name": "record_marker_scan",
   "kind": "function",
@@ -54081,6 +54342,15 @@
   "lane": "r-s132"
  },
  {
+  "address": "0x00948320",
+  "name": "tls_guarded_init_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00948320.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b601"
+ },
+ {
   "address": "0x00948360",
   "name": "forward_sample_packet",
   "kind": "function",
@@ -54295,6 +54565,15 @@
   "trials": 1200,
   "checker": "version 3",
   "lane": "r-b96"
+ },
+ {
+  "address": "0x0094BB80",
+  "name": "slot_row_remap",
+  "kind": "function",
+  "file": "functions/fn_0094bb80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b601"
  },
  {
   "address": "0x0094BCA0",
@@ -55123,6 +55402,60 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s135"
+ },
+ {
+  "address": "0x009543D0",
+  "name": "table_byte_clear",
+  "kind": "function",
+  "file": "functions/fn_009543d0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
+  "address": "0x009544F0",
+  "name": "bound_state_check",
+  "kind": "function",
+  "file": "functions/fn_009544f0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
+  "address": "0x00954510",
+  "name": "bound_delta_store",
+  "kind": "function",
+  "file": "functions/fn_00954510.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
+  "address": "0x00954600",
+  "name": "id_range_or_removed",
+  "kind": "function",
+  "file": "functions/fn_00954600.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
+  "address": "0x00954640",
+  "name": "state_zero_or_one",
+  "kind": "function",
+  "file": "functions/fn_00954640.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
+  "address": "0x009546E0",
+  "name": "id_table_flag",
+  "kind": "function",
+  "file": "functions/fn_009546e0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
  },
  {
   "address": "0x00955440",
@@ -78876,6 +79209,24 @@
   "lane": "r-s498"
  },
  {
+  "address": "0x00B283A0",
+  "name": "slot_record_lookup_limit",
+  "kind": "function",
+  "file": "functions/fn_00b283a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s498"
+ },
+ {
+  "address": "0x00B285A0",
+  "name": "slots_rows_reset",
+  "kind": "function",
+  "file": "functions/fn_00b285a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s498"
+ },
+ {
   "address": "0x00B28C40",
   "name": "slot_any_active",
   "kind": "function",
@@ -78930,6 +79281,24 @@
   "lane": "r-s498"
  },
  {
+  "address": "0x00B29B60",
+  "name": "slot_find_tail_nearest",
+  "kind": "function",
+  "file": "functions/fn_00b29b60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s498"
+ },
+ {
+  "address": "0x00B29C30",
+  "name": "slot_id_set",
+  "kind": "function",
+  "file": "functions/fn_00b29c30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s498"
+ },
+ {
   "address": "0x00B29CC0",
   "name": "advance_slot_cursor",
   "kind": "function",
@@ -78957,6 +79326,15 @@
   "lane": "r-b119"
  },
  {
+  "address": "0x00B2A4E0",
+  "name": "slot_find_tail_next",
+  "kind": "function",
+  "file": "functions/fn_00b2a4e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s498"
+ },
+ {
   "address": "0x00B2A790",
   "name": "follow-mode switch",
   "kind": "function",
@@ -78964,6 +79342,15 @@
   "trials": 3000,
   "checker": "version 3",
   "lane": "r-b119"
+ },
+ {
+  "address": "0x00B2AC50",
+  "name": "obj_mode_setup",
+  "kind": "function",
+  "file": "functions/fn_00b2ac50.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s498"
  },
  {
   "address": "0x00B2ACB0",
@@ -112374,6 +112761,15 @@
   "lane": "r-s185"
  },
  {
+  "address": "0x00C661A0",
+  "name": "CCutsceneObject::vf18",
+  "kind": "function",
+  "file": "functions/fn_00c661a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q21"
+ },
+ {
   "address": "0x00C661C0",
   "name": "CCutsceneObject::vf51",
   "kind": "function",
@@ -113155,6 +113551,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s76"
+ },
+ {
+  "address": "0x00C6E420",
+  "name": "nm_message_build",
+  "kind": "function",
+  "file": "functions/fn_00c6e420.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q20"
  },
  {
   "address": "0x00C6E970",
