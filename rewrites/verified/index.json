@@ -32859,6 +32859,15 @@
   "lane": "r-s161"
  },
  {
+  "address": "0x0059DBF0",
+  "name": "mainloop_timing_worker_init",
+  "kind": "function",
+  "file": "functions/fn_0059dbf0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b640"
+ },
+ {
   "address": "0x0059DFA0",
   "name": "reinit_subsystems",
   "kind": "function",
@@ -85732,6 +85741,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b73"
+ },
+ {
+  "address": "0x00B5D630",
+  "name": "BULLET_IMPACT_WATER",
+  "kind": "function",
+  "file": "functions/fn_00b5d630.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q44"
  },
  {
   "address": "0x00B5DC70",
