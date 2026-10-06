@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Lift: the replay timeline scrubber, 17 routines in portable Rust",
+    "title": "Devlog: A stack leak hiding in an event-handler update",
     "commit": null,
+    "summary": "Findings from the r-b653 lane.",
+    "changes": [
+      "New devlog entry: A stack leak hiding in an event-handler update.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Lift: the replay timeline scrubber, 17 routines in portable Rust",
+    "commit": "a9498429739cba695a4a30c5bdb6b91f3adf7c05",
     "summary": "17 of the 18 verified routines of the replay bar are lifted: fifteen methods of the bar, the function that blends the clock, and the control that notifies. Their proof runs in the pipeline.",
     "changes": [
       "crates/lf-files-memory gains a replay_bar module with 27 host tests and no unsafe code. One word of the object has two meanings depending on who holds it, so the lift uses two types for it.",
