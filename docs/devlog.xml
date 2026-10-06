@@ -9,6 +9,32 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Production lane: 28 text-field functions verified, two held by a global-fill gap</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s525"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s525</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>A production batch of 30 small input-ui functions finished with 28 verified on the stock checker and two deferred: scripted values for game globals demonstrably failed to reach those two functions' reads, while the checker's own control contracts pass, so the rewrites are kept for a later re-run.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of 30 small input-ui functions finished with 28 verified on the stock checker and two deferred: scripted values for game globals demonstrably failed to reach those two functions' reads, while the checker's own control contracts pass, so the rewrites are kept for a later re-run.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite a batch of 30 neighbouring text-field functions in Rust and prove each rewrite identical to the original with the project checker, one contract per function, each with a deliberately wrong version that must fail.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; 28 of 30 functions pass 1,200 trials each with a caught wrong version, covering child selection, key classifiers, cursor and mode handling, virtual-call forwarding, float scaling and validation, and a five-record text builder.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Eleven functions return through byte-only writes that preserve the upper 24 bits of the last value in the register. Small test inputs hide this; only values above one byte catch it.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One builder function leaks its call windows on purpose and its finalizer pops thirteen words. A probe with the wrong pop size faults exactly as predicted; with the right size it completes balanced.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A computed tail jump through a virtual table verifies with a normal stub. A no-cleanup stub models the wrong callee shape and fails the stack-pointer check.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two functions could not be steered: the values scripted for the game globals they read never took effect (pinned and random fills alike), while the checker's own global-read controls pass on the same worker. Their rewrites and contracts are kept for a re-run.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A suspected calling-convention bug in one function turned out to be the lane's own arithmetic slip. A probe showing clean completion forced a recount before anything was reported.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Ship the 28 verified rewrites. Re-run the two deferred functions once scripted global values reach reads; their contracts need no changes. Any lane whose wrong version passes on a function that reads game globals should check whether its fills actually land before trusting the proof.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Each function has a contract and a verdict file in the lane scratch folder; the generators, table-extraction scripts and the probes (including the global-fill controls) sit beside them. The two deferred functions reproduce as a passing correct run with a passing wrong version, and a vacuous verdict with unfired callees, respectively.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The global-fill gap cost the most time: every link in the chain (driver request bytes, worker source order, setup parsing, relocations) reads correctly, the controls pass, yet the two functions behave as pristine. The root cause is still unknown. Separately, one mutant passed sixty trials because the callee script cycled the identical sequence as the stack input; offsetting one of them caught it at once.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming 150 shader, targeting and task functions</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-126"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-126</id>
@@ -1152,25 +1178,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;li&gt;The lift is now also a check. Wherever many verified rewrites share one routine, lifting them compares them with one another and with a version written from the original, at almost no cost.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;To reproduce: take the verified rewrites of one template function, run each against one reference version on inputs that include negative answers from the length helper, and group them by result.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A rebuild routine that returns with a scratch register holding float bits</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s474"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s474</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>Verified One combiner-request rebuild routine in the motion timing tree returns to its caller with a callee-saved register holding the bit pattern of a single-precision float instead of the value it entered with.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One combiner-request rebuild routine in the motion timing tree returns to its caller with a callee-saved register holding the bit pattern of a single-precision float instead of the value it entered with.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite a batch of forty small timing-tree routines in Rust and prove each rewrite behaves identically to the original with the project checker, which compares return values, written memory, stack adjustment, outgoing calls and faults.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The rebuild routine passes a float to one of its callees twice: once in a vector register, where the callee actually reads it, and once by storing it over the stack slot that holds the routine's own saved register. The callee consumes that slot as its stack word, so when the routine later restores the register it loads the float bits instead. The function still works, because nothing reads the restored value afterwards, but the register violation is real: any caller keeping that register live across the call would be corrupted.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The checker does not compare callee-saved registers, so the quirk is invisible to the proof. The rewrite preserves the register normally and matches on everything the checker observes: one thousand trials with no failures, plus a deliberately wrong version that was caught.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;The rewrite was accepted as verified. If the checker ever gains a callee-saved-register comparison, this routine will need an exemption or a wider contract, because no safe Rust rewrite can reproduce the trashed register. Lanes meeting a similar spill-over-save-slot shape should check the epilogue register values before assuming the routine preserves them.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Read the rebuild routine's bytes through the mapped executable image and follow the stack pointer: three registers are saved on entry, the float is stored to the top stack slot, the indirect call that follows pops exactly that slot, and the matching restore at the end therefore loads the float. The checker's stack-pointer check passes throughout, which confirms the call cleans exactly one word.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The cleanup shape of the float-receiving call was settled only on the third attempt. A pop-nothing model made the later argument reads land on the wrong words, and a pop-one-word model broke the stack balance; exact bookkeeping of pushed bytes against the return instruction's pop count showed the callee must leave the stack exactly as it found it apart from its return address. Two argument positions in the same routine were also misread on the first attempt by counting live pushes wrong; the checker's call log showed the swap immediately.&lt;/p&gt;</content>
   </entry>
 </feed>
