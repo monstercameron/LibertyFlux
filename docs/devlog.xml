@@ -9,6 +9,27 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>One configuration routine publishes uninitialized stack to a global</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b616"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b616</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>While verifying a batch of eight medium-sized routines, one of them turned out to read a stack slot it never stored and publish the block containing it to a global descriptor. The value is nondeterministic leftovers in the running game. The rewrite pins it to the harness's zero fill and notes the gap.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;While verifying a batch of eight medium-sized routines, one of them turned out to read a stack slot it never stored and publish the block containing it to a global descriptor. The value is nondeterministic leftovers in the running game. The rewrite pins it to the harness's zero fill and notes the gap.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite eight neighbouring routines in Rust and prove each behaves identically to the original with the project checker, which runs both sides from identical state and compares results, memory, calls and faults.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All eight routines verified, one thousand trials each with no failures, and each with its own deliberately wrong version that the contract caught.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; In one routine's object-missing path, seven of eight descriptor words are stored and then all eight are written to the global. The eighth word is whatever the stack held at that moment. Both sides of the proof observe the harness's zero fill there, so the proof holds, but the game itself would publish a nondeterministic value.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Unknown&lt;/span&gt; Whether any consumer reads that word when the object is missing, which decides whether the quirk is benign or a real defect.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;The rewrite documents the pinned word and the proof records it as narrowed. A follow-up lane should read the consumer of that descriptor to settle the impact. Nothing about the checker needs to change: zero-filling uninitialized stack is already its documented behaviour for exactly this case.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Disassemble the sink-configuration routine in the batch, take the path where its object global is null, and count the stored words against the eight published to the descriptor global. The project's lane report names the routine and the contract that pins the word.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Three of my own mistakes were caught by the checker rather than by reading: a chain-walk condition with the branches backwards, a call result threaded from the wrong register, and a callee argument count off by one because a push sat three instructions above its call. The last one showed up as the original returning into a saved register value, which the register dump at the fault made obvious. Each took one fix and one re-run.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming a run of task functions: slots, vtable readback and verified callers</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-121"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-121</id>
@@ -1146,27 +1167,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Load the executable through a mapped-image reader, scan the code section for direct calls into the batch, attribute each call site to the nearest known function start below it, and cross-check vtable membership with runtime type records. The lane folder keeps the scripts and the evidence table.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;Raw scans of call bytes produce bogus targets from encoded constants, so only targets inside the code image were trusted. Subsystem labels on the batch were misleading for two of the three groups. One inventory size of zero turned out to be a real 34-byte function.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Two latent bugs in one batch of task functions</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b507"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b507</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>Rewriting six neighbouring task-system functions turned up two genuine defects in the original program: a list-removal routine that deletes about half the remaining entries instead of one, and a state-dispatch branch that cleans four bytes too many off the stack and then returns into garbage. Both were proven with the checker, not guessed.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Rewriting six neighbouring task-system functions turned up two genuine defects in the original program: a list-removal routine that deletes about half the remaining entries instead of one, and a state-dispatch branch that cleans four bytes too many off the stack and then returns into garbage. Both were proven with the checker, not guessed.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite six medium-sized task functions in Rust and prove each rewrite behaves identically to the original, with at least a thousand trials per function and a deliberately wrong version per function to show the proof can tell right from wrong.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All six rewrites passed a thousand trials each with no failures, and all six wrong versions were caught.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The list-removal routine converges both ends of its shift loop, so removing an entry shortens the list by roughly half the tail rather than by one, and a match in the last slot removes nothing at all. The rewrite copies the behaviour exactly and the checker confirms it.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One dispatch branch pushes four words for a call and then discards five, leaving the stack one word high so the function returns into its own argument. Every trial that took the branch faulted at exactly that address. That branch has no defined behaviour, so the proof covers everything except it and says so.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The six functions share one per-task block of offsets and call into each other, which supports the inventory's guess that they form one task subsystem.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Replicate observable quirks verbatim rather than fixing them, and exclude crashing paths from proofs loudly instead of weakening the comparison. Future lanes should generate addresses by script, re-derive stack frames after every push in each branch, and intersect rotating test phases on paper before running.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the lane's six checker contracts from its scratch folder; the verdict files record the thousand-trial passes. The removal quirk shows as a count dropping by more than one after a single match, and the stack defect shows as a fault at the address held in the first argument on every trial that takes the gated branch.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Three self-inflicted delays: a script bug that misread the relocation table, a hand-written address missing a digit that patched into encrypted code and hung trials for minutes, and a tail disassembly started at the wrong byte that invented an instruction. Each was caught by re-reading bytes rather than trusting listings.&lt;/p&gt;</content>
   </entry>
 </feed>
