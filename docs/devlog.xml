@@ -9,6 +9,28 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>What the checker still could not do, and a candidate that can</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#checker-version-7-candidate"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#checker-version-7-candidate</id>
+    <published>2026-10-05T00:00:00Z</published>
+    <updated>2026-10-05T00:00:00Z</updated>
+    <summary>A candidate seventh checker version now proves four shapes of function the stock checker had to defer: guards ending in a conditional jump to another routine, helpers taking a float on the float stack, call loops past the log cap, and vector registers of which only the low float matters. All four are proven by new self-test contracts, and the full existing suite gives identical verdicts.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A candidate seventh checker version now proves four shapes of function the stock checker had to defer: guards ending in a conditional jump to another routine, helpers taking a float on the float stack, call loops past the log cap, and vector registers of which only the low float matters. All four are proven by new self-test contracts, and the full existing suite gives identical verdicts.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Give the checker the abilities whose absence is deferring functions: patching conditional tail jumps, observing float-stack call arguments, comparing call logs past the 1,024-call cap, narrowing a vector-register comparison to four bytes, and four reported defects. Each ability had to be an opt-in contract option that leaves every existing verdict unchanged.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All four abilities are built, each with a passing rewrite, a caught wrong version, and a negative contract showing the option does the work. Ten new proof contracts run green, and 66 worker unit tests pass.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two reported defects were real and are fixed: an unknown return kind silently fell back to a 32-bit integer, and an unknown word-spec key silently resolved to random bits. Both now refuse the contract with a message, and none of the tracked contracts trip either refusal.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two deferred-function groups need no new ability. The computed tail jumps that pop the caller's word balance with the existing convention mechanism, and the vector-upper-byte case no longer reproduces on the current worker.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The remaining two defect reports could not be confirmed: no silent sequence-skew mechanism exists in the current worker, and out-of-range heap reads are a contract bug rather than a checker defect. Nothing was changed for either.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;The candidate is ready for coordinator review and install as a worker, driver, proofs and contracts change; the runtime crate rewrites build against is untouched. The recorded verdicts predate the current driver and should be re-recorded at install time. None of the deferred functions is one option away from passing: most lack any rewrite or contract, one needs re-contracting at its true location, and one is blocked by a separate one-bit float divergence.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Build the candidate worker and proofs from the lane's tree copy, run the ten proof contracts and confirm the battery script reports green, then run the tracked contracts with stock and candidate workers and confirm the pairwise comparison reports no differences.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The digest's first accumulator slots collided with trampoline scratch space that looked free in the assignment list; the verdict detail shows only three calls, which hid the real failing call twice; and three lane verdicts turned out to run the wrong bytes through dropped address digits. Each is recorded in the lane report with the fix.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming one hundred fifty NaturalMotion task functions</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-122"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-122</id>
@@ -1139,41 +1161,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Decode any listed start through the executable's mapped image: there is no prologue, and the bytes just before it complete the previous thunk's shape. A generator that asserts each member's shape (one direct call, three shared-slot calls, one cached-handler call, the id pushed three times) and emits the rewrites and contracts reproduces the sixteen verifications.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The first probe failed on a call-time snapshot: the original showed two zeroed words where the rewrite showed a zero and garbage. The snapshot is taken before the scripted callee writes land, and two separate locals in the rewrite are not guaranteed adjacent, so the second word was uninitialised stack. Passing one explicit two-word array fixed it. Any out-parameter wider than one word needs an explicit array or struct in the rewrite.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Eight ped-task builders verified, and one stores uninitialised stack</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b516"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b516</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>A production batch of eight pedestrian-task builder functions was rewritten in Rust and all eight were verified against the original, with one genuine quirk found: a slot-registration function writes an unstaged frame word into its global table.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of eight pedestrian-task builder functions was rewritten in Rust and all eight were verified against the original, with one genuine quirk found: a slot-registration function writes an unstaged frame word into its global table.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite a batch of eight medium-sized functions from the pedestrian-tasks subsystem and prove each rewrite behaves identically to the original with the differential checker, including a deliberately wrong version per function.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All eight rewrites passed twelve hundred trials each with zero failures, bit-exact floats throughout, and every wrong version was caught.&lt;/p&gt;
-&lt;table role="table"&gt;
-&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Behaviour&lt;/th&gt;&lt;th role="columnheader"&gt;Count&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody role="rowgroup"&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Task builders sharing one validate-allocate-construct-assign shape&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;7&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Slot-registration function with trigonometry helpers&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;1&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Distinct call-sequence shapes observed passing&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;58&lt;/td&gt;&lt;/tr&gt;
-&lt;tr role="row"&gt;&lt;td role="cell"&gt;Trials ending in matching faults on both sides&lt;/td&gt;&lt;td role="cell" data-label="Count"&gt;750&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The slot-registration function stores one word into its global table from a frame slot that nothing ever writes. Under a zero stack fill the original writes zero there, and the comparison confirms it. This looks like an uninitialised read in the original rather than a deliberate zero.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A drive-task builder keeps its height argument when it is above minus one hundred or when it is not-a-number, because the below-jump is taken on unordered comparisons. An early rewrite that treated not-a-number as below failed exactly those trials.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The task-assign helper takes its arguments in the order handle, task, slot. The push order reads slot first, which misled the first rewrite until the call comparison failed.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Three builders normalise angles by looping add or subtract three-sixty; infinite inputs would loop forever in the original, so they were excluded from the inputs and the exclusion is recorded per function.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;The uninitialised store is reproduced as a literal zero with the reasoning recorded in the rewrite, since the original provably writes zero under a defined fill.&lt;/li&gt;
-&lt;li&gt;Pool-lookup answers were kept always live, so the fault path for a null lookup answer stays unexercised; a later fault-parity probe could close that gap for the whole family.&lt;/li&gt;
-&lt;li&gt;Neighbouring task builders can clone these contracts: the validate-allocate-construct-assign shape, the frame-pointer snapshot pattern, and the exact float-truncation emulation repeat across the subsystem.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Each function has a contract generator that asserts every call-site address and per-callee site count, a contract, a rewrite, and a verdict file in the lane scratch folder. Rebuilding the rewrite crate and running the stock checker driver over the eight contracts replays all ninety-six hundred trials plus the eight wrong versions.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Two hand-computed frame offsets were wrong by a few bytes each (hexadecimal addition done from memory), and both were caught by failing probes before anything shipped. Frame arithmetic for these contracts is now done with a script, and the generators assert the resulting site map. The first rewrite of the drive-task builder also missed the unordered-comparison behaviour above, which the not-a-number trials caught immediately.&lt;/p&gt;</content>
   </entry>
 </feed>
