@@ -11,8 +11,8 @@
 /// after its call and the four words at slot `+0x18`/`+0x1C`/`+0x20`/`+0x24`
 /// (equivalently `+0x20`..`+0x2C` for the first three slots) are zeroed.
 /// The word at `+0xF8` is zeroed, then the counter at `+0x100` is resolved:
-/// TLS slot 0 holds a pointer whose word at `+4` (the context) must be
-/// non-null and the counter non-zero, the lookup helper (callee 2, called
+/// the word at `+4` of TLS slot 0 (the context) must be non-null and
+/// the counter non-zero, the lookup helper (callee 2, called
 /// with `this` set to the word the context points at and the counter address
 /// as its argument) must not answer -1 (compared as an exact 32-bit value),
 /// and the adjust helper (callee 3, called with the context and the counter
@@ -93,7 +93,7 @@ lf_checker_rt::export!(thiscall, rw_00655AA0(this: u32, arg0: u32) -> u32 {
         wr32(edi + 0xF0, 0);
         wr32(edi + 0xF4, 0);
         wr32(edi + 0xF8, 0);
-        let ctx = rd32(rd32(lf_checker_rt::tls_slot(0)) + 4);
+        let ctx = rd32(lf_checker_rt::tls_slot(0) + 4);
         let counter = edi + 0x100;
         if ctx != 0 && rd32(counter) != 0 {
             let found = lf_checker_rt::callee_thiscall!(LOOKUP, u32, rd32(ctx), counter);
@@ -102,7 +102,7 @@ lf_checker_rt::export!(thiscall, rw_00655AA0(this: u32, arg0: u32) -> u32 {
                 let sum = rd32(counter).wrapping_add(delta);
                 wr32(counter, sum);
                 if sum != 0 {
-                    let ctx2 = rd32(rd32(lf_checker_rt::tls_slot(0)) + 4);
+                    let ctx2 = rd32(lf_checker_rt::tls_slot(0) + 4);
                     lf_checker_rt::callee_thiscall!(REGISTER, u32, sum, ctx2);
                 }
             } else {

@@ -170,7 +170,6 @@ pub fn virtual_answer(name: &str) -> u32 {
 }
 
 extern "thiscall" fn stub_thiscall1(a: u32) -> u32 {
-    eprintln!("  stub release a={a:#x}");
     record_numbered(CURRENT_ID.with(|c| c.get()), vec![a])
 }
 
@@ -179,7 +178,6 @@ extern "thiscall" fn stub_thiscall2(a: u32, b: u32) -> u32 {
 }
 
 extern "thiscall" fn stub_thiscall2_out(a: u32, b: u32) -> u32 {
-    eprintln!("  stub matcher a={a:#x} b={b:#x}");
     let id = CURRENT_ID.with(|c| c.get());
     let pair = script()
         .out_pairs
@@ -194,9 +192,7 @@ extern "thiscall" fn stub_thiscall2_out(a: u32, b: u32) -> u32 {
 }
 
 extern "thiscall" fn stub_thiscall3(a: u32, b: u32, c: u32) -> u32 {
-    let ans = record_numbered(CURRENT_ID.with(|c| c.get()), vec![a, b, c]);
-    eprintln!("  stub svc a={a:#x} b={b:#x} c={c:#x} -> {ans:#x}");
-    ans
+    record_numbered(CURRENT_ID.with(|c| c.get()), vec![a, b, c])
 }
 
 extern "cdecl" fn stub_cdecl0() -> u32 {
