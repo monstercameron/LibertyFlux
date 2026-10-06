@@ -3,8 +3,8 @@
 /// Formats a slot record into a frame buffer and loads it.
 ///
 /// Formats 64 bytes through the formatter callee into a frame buffer from
-/// (`a1`, `a2`), passes the buffer 8 bytes in together with `a0` to the
-/// loader callee, runs the stack-cookie check and returns the loader's
+/// (`a1`, `a2`), passes (`a0`, buffer) to the loader callee, runs the
+/// stack-cookie check and returns the loader's
 /// answer. (The cookie value itself mixes the cookie with the stack pointer
 /// and cannot self-check identically across frames; the check call is kept
 /// so the call sequence matches, with its register argument uncompared.)
@@ -22,7 +22,7 @@ lf_checker_rt::export!(cdecl, rw_00b28d20(a0: u32, a1: u32, a2: u32) -> u32 {
             FORMAT, u32, bp, BUF_LEN, a1, a2, 0,
             lf_checker_rt::relocated(FMT)
         );
-        let r = lf_checker_rt::callee_cdecl!(LOAD, u32, bp.wrapping_add(8), a0);
+        let r = lf_checker_rt::callee_cdecl!(LOAD, u32, a0, bp);
         lf_checker_rt::callee_thiscall!(COOKIE, u32, 0);
         r
     }

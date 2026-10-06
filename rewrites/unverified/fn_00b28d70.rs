@@ -2,13 +2,13 @@
 
 /// Allocates and trims one row's record data, then smooths it.
 ///
-/// Calls the opener with (`a0`, name, 0, 1), sizes the allocation through
+/// Calls the opener with (`a1`, name, 0, 1), sizes the allocation through
 /// two measure calls, allocates through the allocator callee and stores the
-/// pointer in row `a1`; stores the sized count from the sizer callee; calls
+/// pointer in row `a0`; stores the sized count from the sizer callee; calls
 /// the commit callee; then trims the count (compared signed) down past any
 /// trailing zero word at a 32-byte boundary, stopping below zero; finally
-/// calls the smoother with `a1` and returns its answer with the low byte set
-/// to 1. Cdecl, two stack words.
+/// calls the smoother with `a0` and returns its answer with the low byte set
+/// to 1. Cdecl, two stack words: row index, key.
 lf_checker_rt::export!(cdecl, rw_00b28d70(a0: u32, a1: u32) -> u32 {
     unsafe {
         const ROW_TABLE: u32 = 0x01657A10;
@@ -34,9 +34,9 @@ lf_checker_rt::export!(cdecl, rw_00b28d70(a0: u32, a1: u32) -> u32 {
         }
         let s = lf_checker_rt::callee_thiscall!(
             OPEN, u32, lf_checker_rt::relocated(CTX),
-            a0, lf_checker_rt::relocated(NAME), 0, 1
+            a1, lf_checker_rt::relocated(NAME), 0, 1
         );
-        let row = lf_checker_rt::relocated(ROW_TABLE) + a1.wrapping_mul(ROW_STRIDE);
+        let row = lf_checker_rt::relocated(ROW_TABLE) + a0.wrapping_mul(ROW_STRIDE);
         let x = lf_checker_rt::callee_thiscall!(MEASURE1, u32, s);
         let p = lf_checker_rt::callee_cdecl!(ALLOC, u32, x);
         wr32(row + ROW_PTR, p);
@@ -59,7 +59,7 @@ lf_checker_rt::export!(cdecl, rw_00b28d70(a0: u32, a1: u32) -> u32 {
                 }
             }
         }
-        let ans = lf_checker_rt::callee_cdecl!(SMOOTH, u32, a1);
+        let ans = lf_checker_rt::callee_cdecl!(SMOOTH, u32, a0);
         (ans & 0xFFFF_FF00) | 1
     }
 });

@@ -2,15 +2,14 @@
 
 /// Scale input ranges into global tables, then build per-index output records.
 ///
-/// `a0` points at a float/int array, `a1` and the slot holding `a2` at index
-/// arrays; `a2`/`a3` are also read as plain integers for the quotient block.
-/// `a4`..`a7` are float parameters (bit patterns in `u32` args), `a8` carries
-/// the fill-base transport (see below; the original never reads it), `a9` is
-/// unread, `a10` is the inner-loop bound and third divisor, `a11` the outer
-/// bound and second divisor. All integer division and all bound comparisons
-/// are SIGNED (idiv, jl/js/jge/jle); only the flag bytes and the odd/even
-/// test are unsigned. Returns whatever the last executed callee answered on
-/// the taken path (see below), 0 never being written explicitly.
+/// `a0`..`a3` are integer inputs used only by the prologue quotient block
+/// (`a0`/`a1` also stored to globals); `a4`..`a7` are float parameters (bit
+/// patterns in `u32` args); `a8`/`a9` are unread; `a10` is the inner-loop
+/// bound and third divisor, `a11` the outer bound and second divisor. All
+/// integer division and all bound comparisons are SIGNED (idiv,
+/// jl/js/jge/jle); only the flag bytes and the odd/even test are unsigned.
+/// Returns whatever the last executed callee answered on the taken path
+/// (see below), 0 never being written explicitly.
 ///
 /// Prologue: four signed quotients `(a1-a0)/a10`, `(a3-a2)/a11`,
 /// `(a0-a1)/a10`, `(a2-a3)/a11` and eight scaled floats (`(a5-a4)/a10`-style
@@ -26,21 +25,20 @@
 /// when both flags are clear, and is skipped when only `MODE_LO` is set.
 /// Inner index 0..=a10 (signed; skipped entirely when `a10` is negative)
 /// runs one of three branches selected by the flags: branch A (HI set) makes
-/// four 9/8-word callee-3/4 calls of float triples read through the tables
-/// and `a0` (its second call reads through `[a0+table]`, which is unmapped,
-/// so branch A always raises an access violation on both sides); branch B
-/// (both clear) makes one 9-word and one 8-word callee-3/5 call (its second
-/// triple base is the word of uninitialised stack at the prologue scratch
-/// slot, which the contract fills with the heap base that `a8` transports);
-/// branch C (LO only) copies 9-dword records from the tables and `a0`/`a1`
-/// into the record buffer behind the object at `REC_OBJ`, advancing the
-/// counter at `REC_COUNT`, and calls callee 6 (no stack args) whenever the
-/// counter estimate reaches `REC_CAP` (0xfffc, signed). The tail calls
-/// callee 7 (no stack args) except on branch-C trials.
+/// four 9/8-word callee-3/4/8 calls of float triples read through the
+/// tables (its second call reads through `[A+table]`, a sum of two table
+/// bases); branch B (both clear) makes one 9-word and one 8-word callee-3/5
+/// call over the same tables; branch C (LO only) copies 9-dword records
+/// from the tables into the record buffer behind the object at `REC_OBJ`,
+/// advancing the counter at `REC_COUNT`, and calls callee 6 (no stack args)
+/// whenever the counter estimate reaches `REC_CAP` (0xfffc, signed). The
+/// tail calls callee 7 (no stack args) except on branch-C trials.
 ///
-/// The original reuses two incoming argument slots as scratch (the `a2` slot
-/// holds the selected table pointer, the `a3` slot a byte offset or the
-/// record counter); the rewrite keeps those in locals, so the stack check
+/// While pushing the second callee-1 call the original spills three table
+/// pointers over the dead `a0`/`a1` slots and the prologue scratch word
+/// (slots then read as the A, C and S tables); the `a2` slot holds the
+/// selected table pointer and the `a3` slot a byte offset or the record
+/// counter. The rewrite keeps all of those in locals, so the stack check
 /// stays off. Callee answers are never compared, only returned.
 ///
 /// Original: 0x00ad9130 (cdecl, twelve stack words; `a8`/`a9` unread).
@@ -81,6 +79,7 @@ lf_checker_rt::export!(cdecl, rw_00ad9130(a0: u32, a1: u32, a2: u32, a3: u32, a4
         const C_TRIP8B: u32 = 5;
         const C_FLUSH: u32 = 6;
         const C_TAIL: u32 = 7;
+        const C_TRIP8A4: u32 = 8;
 
         #[inline(always)]
         unsafe fn rd32(a: u32) -> u32 {
@@ -123,8 +122,7 @@ lf_checker_rt::export!(cdecl, rw_00ad9130(a0: u32, a1: u32, a2: u32, a3: u32, a4
             lf_checker_rt::relocated(a)
         }
 
-        let _ = a9;
-        let fill_base = a8;
+        let _ = (a8, a9);
         let d10 = a10 as i32;
         let d11 = a11 as i32;
         // Divisors are never zero by contract (the original's divide-error
@@ -178,25 +176,23 @@ lf_checker_rt::export!(cdecl, rw_00ad9130(a0: u32, a1: u32, a2: u32, a3: u32, a4
                 let mut inner: u32 = 0;
                 loop {
                     if rd8(g(MODE_HI)) != 0 {
-                        // Branch A. A2's second triple reads through
-                        // [a0 + table], which is unmapped, so this branch
-                        // always faults identically on both sides; A2's
-                        // pushed word (read through the entry edi, which a
-                        // cdecl rewrite cannot observe) is skipped in the
-                        // contract. A3/A4 are implemented but unreachable.
-                        let p1 = rd32(a1.wrapping_add(inner.wrapping_mul(4)));
+                        // Branch A. The spilled tables stand in for the dead
+                        // a0/a1 slots (see the outer-top spills). A2's pushed
+                        // word (read through the entry edi, which a cdecl
+                        // rewrite cannot observe) is skipped in the contract.
+                        let p1 = rd32(c.wrapping_add(inner.wrapping_mul(4)));
                         let off = inner.wrapping_mul(16);
                         eax = lf_checker_rt::callee_cdecl!(C_TRIP9, u32,
                             rd32(s.wrapping_add(off)), rd32(s.wrapping_add(off).wrapping_add(4)), rd32(s.wrapping_add(off).wrapping_add(8)),
-                            rd32(a0.wrapping_add(off)), rd32(a0.wrapping_add(off).wrapping_add(4)), rd32(a0.wrapping_add(off).wrapping_add(8)),
+                            rd32(at.wrapping_add(off)), rd32(at.wrapping_add(off).wrapping_add(4)), rd32(at.wrapping_add(off).wrapping_add(8)),
                             p1, 0u32, 0u32);
-                        // A2 triple order is the original's first-fault order.
-                        let q8 = rd32(a0.wrapping_add(p).wrapping_add(8));
-                        let q4 = rd32(a0.wrapping_add(p).wrapping_add(4));
-                        let q0a = rd32(a0.wrapping_add(p));
-                        let r8 = rd32(a0.wrapping_add(b).wrapping_add(8));
-                        let r4 = rd32(a0.wrapping_add(b).wrapping_add(4));
-                        let r0 = rd32(a0.wrapping_add(b));
+                        // A2 reads through [A + table]; read order kept.
+                        let q8 = rd32(at.wrapping_add(p).wrapping_add(8));
+                        let q4 = rd32(at.wrapping_add(p).wrapping_add(4));
+                        let q0a = rd32(at.wrapping_add(p));
+                        let r8 = rd32(at.wrapping_add(b).wrapping_add(8));
+                        let r4 = rd32(at.wrapping_add(b).wrapping_add(4));
+                        let r0 = rd32(at.wrapping_add(b));
                         eax = lf_checker_rt::callee_cdecl!(C_TRIP8A, u32, r0, r4, r8, q0a, q4, q8, 0u32, 0u32);
                         if (inner as i32) >= d10 {
                             // Last inner pass skips A3/A4 (signed compare).
@@ -207,10 +203,10 @@ lf_checker_rt::export!(cdecl, rw_00ad9130(a0: u32, a1: u32, a2: u32, a3: u32, a4
                                 rd32(b.wrapping_add(off3)), rd32(b.wrapping_add(off3).wrapping_add(4)), rd32(b.wrapping_add(off3).wrapping_add(8)),
                                 rd32(p.wrapping_add(off3)), rd32(p.wrapping_add(off3).wrapping_add(4)), rd32(p.wrapping_add(off3).wrapping_add(8)),
                                 p3, 0u32, 0u32);
-                            let p4 = rd32(a0.wrapping_add(inner.wrapping_mul(4)));
-                            eax = lf_checker_rt::callee_cdecl!(C_TRIP8A, u32,
+                            let p4 = rd32(at.wrapping_add(inner.wrapping_mul(4)));
+                            eax = lf_checker_rt::callee_cdecl!(C_TRIP8A4, u32,
                                 rd32(s.wrapping_add(off)), rd32(s.wrapping_add(off).wrapping_add(4)), rd32(s.wrapping_add(off).wrapping_add(8)),
-                                rd32(a0.wrapping_add(off)), rd32(a0.wrapping_add(off).wrapping_add(4)), rd32(a0.wrapping_add(off).wrapping_add(8)),
+                                rd32(at.wrapping_add(off)), rd32(at.wrapping_add(off).wrapping_add(4)), rd32(at.wrapping_add(off).wrapping_add(8)),
                                 p4, 0u32);
                         }
                     } else if rd8(g(MODE_LO)) != 0 {
@@ -261,10 +257,10 @@ lf_checker_rt::export!(cdecl, rw_00ad9130(a0: u32, a1: u32, a2: u32, a3: u32, a4
                         wr32(cur.wrapping_add(4), rd32(s.wrapping_add(o16).wrapping_add(4)));
                         wr32(cur.wrapping_add(8), rd32(s.wrapping_add(o16).wrapping_add(8)));
                         cnt = cnt.wrapping_add(1);
-                        wr32(cur.wrapping_add(0x0c), rd32(a0.wrapping_add(o16)));
-                        wr32(cur.wrapping_add(0x10), rd32(a0.wrapping_add(o16).wrapping_add(4)));
-                        wr32(cur.wrapping_add(0x14), rd32(a0.wrapping_add(o16).wrapping_add(8)));
-                        wr32(cur.wrapping_add(0x18), rd32(a1.wrapping_add(inner.wrapping_mul(4))));
+                        wr32(cur.wrapping_add(0x0c), rd32(at.wrapping_add(o16)));
+                        wr32(cur.wrapping_add(0x10), rd32(at.wrapping_add(o16).wrapping_add(4)));
+                        wr32(cur.wrapping_add(0x14), rd32(at.wrapping_add(o16).wrapping_add(8)));
+                        wr32(cur.wrapping_add(0x18), rd32(c.wrapping_add(inner.wrapping_mul(4))));
                         wr32(cur.wrapping_add(0x1c), 0);
                         wr32(cur.wrapping_add(0x20), 0);
                         if outer == a11.wrapping_sub(1) && inner == (a10.wrapping_sub(1)) {
@@ -273,10 +269,10 @@ lf_checker_rt::export!(cdecl, rw_00ad9130(a0: u32, a1: u32, a2: u32, a3: u32, a4
                             wr32(nxt.wrapping_add(4), rd32(s.wrapping_add(o16).wrapping_add(4)));
                             wr32(nxt.wrapping_add(8), rd32(s.wrapping_add(o16).wrapping_add(8)));
                             cnt = cnt.wrapping_add(1);
-                            wr32(nxt.wrapping_add(0x0c), rd32(a0.wrapping_add(o16)));
-                            wr32(nxt.wrapping_add(0x10), rd32(a0.wrapping_add(o16).wrapping_add(4)));
-                            wr32(nxt.wrapping_add(0x14), rd32(a0.wrapping_add(o16).wrapping_add(8)));
-                            wr32(nxt.wrapping_add(0x18), rd32(a1.wrapping_add(inner.wrapping_mul(4))));
+                            wr32(nxt.wrapping_add(0x0c), rd32(at.wrapping_add(o16)));
+                            wr32(nxt.wrapping_add(0x10), rd32(at.wrapping_add(o16).wrapping_add(4)));
+                            wr32(nxt.wrapping_add(0x14), rd32(at.wrapping_add(o16).wrapping_add(8)));
+                            wr32(nxt.wrapping_add(0x18), rd32(c.wrapping_add(inner.wrapping_mul(4))));
                             wr32(nxt.wrapping_add(0x1c), 0);
                             wr32(nxt.wrapping_add(0x20), 0);
                         }
@@ -286,20 +282,18 @@ lf_checker_rt::export!(cdecl, rw_00ad9130(a0: u32, a1: u32, a2: u32, a3: u32, a4
                             eax = lf_checker_rt::callee_cdecl!(C_FLUSH, u32,);
                         }
                     } else {
-                        // Branch B. The second triple base is the
-                        // uninitialised prologue scratch word, transported
-                        // here as `a8` (the contract fills both with the
-                        // heap base).
+                        // Branch B. All bases are the spilled tables (C, A,
+                        // S stand in the dead a1/a0/scratch slots).
                         let pb1 = rd32(slot2.wrapping_add(inner.wrapping_mul(4)));
                         let o16 = inner.wrapping_mul(16);
                         eax = lf_checker_rt::callee_cdecl!(C_TRIP9, u32,
                             rd32(b.wrapping_add(o16)), rd32(b.wrapping_add(o16).wrapping_add(4)), rd32(b.wrapping_add(o16).wrapping_add(8)),
                             rd32(p.wrapping_add(o16)), rd32(p.wrapping_add(o16).wrapping_add(4)), rd32(p.wrapping_add(o16).wrapping_add(8)),
                             pb1, 0u32, 0u32);
-                        let pb2 = rd32(a1.wrapping_add(inner.wrapping_mul(4)));
+                        let pb2 = rd32(c.wrapping_add(inner.wrapping_mul(4)));
                         eax = lf_checker_rt::callee_cdecl!(C_TRIP8B, u32,
-                            rd32(fill_base.wrapping_add(o16)), rd32(fill_base.wrapping_add(o16).wrapping_add(4)), rd32(fill_base.wrapping_add(o16).wrapping_add(8)),
-                            rd32(a0.wrapping_add(o16)), rd32(a0.wrapping_add(o16).wrapping_add(4)), rd32(a0.wrapping_add(o16).wrapping_add(8)),
+                            rd32(s.wrapping_add(o16)), rd32(s.wrapping_add(o16).wrapping_add(4)), rd32(s.wrapping_add(o16).wrapping_add(8)),
+                            rd32(at.wrapping_add(o16)), rd32(at.wrapping_add(o16).wrapping_add(4)), rd32(at.wrapping_add(o16).wrapping_add(8)),
                             pb2, 0u32);
                     }
                     inner = inner.wrapping_add(1);

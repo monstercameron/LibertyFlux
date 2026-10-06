@@ -12,9 +12,10 @@
 /// substitute bit, it is replaced by the object at `+0xB30`. A direction is
 /// read from the subject's inner block (`+0x10`, `+0x14`, negated when the
 /// flag byte at `+0xE73` is set) and normalised, or set to (1, y) when its
-/// length is exactly zero. Two heading helpers run (callee 1, twice, and a
-/// nine-argument scorer, callee 2); the scorer's answer minus a quirk word
-/// derived from `a7` is wrapped into [-pi, pi] and then discarded, because
+/// length is exactly zero. Two heading helpers run (callee 1, on the target
+/// offset and on the direction), then a nine-argument scorer (callee 2,
+/// taking both headings among its arguments); the scorer's answer minus the
+/// second heading is wrapped into [-pi, pi] and then discarded, because
 /// callee 3 overwrites its slot through an out-pointer. Callee 3 fills three
 /// frame slots whose values steer the rest of the function. A third heading
 /// call is made and its answer dropped. From here on the function compares a
@@ -24,21 +25,20 @@
 /// (storing the frame slot, 0, and a ramp of the projection) or joins the
 /// main path with a default radius. The main path then, when both status
 /// words read 1 and the mode byte at `+0xE6E` is 10 or 11, calls the same
-/// virtual slot on both objects, feeds a length into a seven-argument scorer
-/// (callee 4), clamps a function of `*a5` into `+0x12C8`, stores the frame
-/// slot to `*a3`, and either picks a countdown from a helper (callee 5, in
-/// the executable's encrypted first megabyte, so always intercepted) or runs
-/// a timestamp check against the global tick with an unsigned 700-tick
-/// window. A trailing flag scales `*a3` and `*a5` by -1.
+/// virtual slot on both objects, feeds the radius and a length into a
+/// seven-argument scorer (callee 4), clamps a function of `*a5` into
+/// `+0x12C8`, stores the frame slot to `*a3`, and either picks a countdown
+/// from a helper (callee 5, in the executable's encrypted first megabyte, so
+/// always intercepted) or runs a timestamp check against the global tick
+/// with an unsigned 700-tick window. A trailing flag scales `*a3` and `*a4`
+/// by -1.
 ///
-/// Quirks reproduced exactly: the scorer difference subtracts the float whose
-/// bits are `(a7 & 0xFFFF) << 16`, a misaligned stack word the original's
-/// codegen reads across two pushed arguments (only the low half of `a7`
-/// matters); the wrapped angle is dead (callee 3 overwrites it); the first
-/// heading answer is dead (overwritten before any read). All float
-/// comparisons are the original's ordered single-precision compares, so NaN
-/// takes the same side in every branch, and every multi-operand float
-/// expression keeps the original's operand order.
+/// Dead values reproduced faithfully: the wrapped angle is overwritten by
+/// callee 3 before any read, and the scorer's answer slot is reused for the
+/// projection. All float comparisons are the original's ordered
+/// single-precision compares, so NaN takes the same side in every branch,
+/// and every multi-operand float expression keeps the original's operand
+/// order.
 ///
 /// Original: 0x00D86370 (cdecl, eight stack words, no return value).
 lf_checker_rt::export!(cdecl, rw_00D86370(a0: u32, a1: u32, a2: u32, a3: u32, a4: u32, a5: u32, a6: u32, a7: u32) -> u32 {
@@ -184,19 +184,19 @@ lf_checker_rt::export!(cdecl, rw_00D86370(a0: u32, a1: u32, a2: u32, a3: u32, a4
         };
 
         // Block C: two heading calls.
-        let _h1 = atan2p(
+        let h1 = atan2p(
             sub(rdf(a2), rdf(ecx.wrapping_add(REF_X))),
             sub(rdf(a2.wrapping_add(4)), rdf(ecx.wrapping_add(REF_Y))),
         );
         let h2 = atan2p(nx, ny);
 
-        // Block D: scorer call, quirk difference, angle wrap (dead: the next
-        // call overwrites the slot, but the wrap bound is still honoured).
+        // Block D: scorer call, difference from the second heading, angle
+        // wrap (dead: the next call overwrites the slot, but the wrap bound
+        // is still honoured).
         let r: f32 = lf_checker_rt::callee_cdecl!(
-            2, f32, esi, 0, ny.to_bits(), h2.to_bits(), ONE.to_bits(), 2, 1, 1, a7
+            2, f32, esi, 0, h1.to_bits(), h2.to_bits(), ONE.to_bits(), 2, 1, 1, a7
         );
-        let m = f32::from_bits((a7 & 0xFFFF) << 16);
-        let mut d = sub(r, m);
+        let mut d = sub(r, h2);
         if d < NEG_PI {
             loop {
                 d = add(d, TWO_PI);
@@ -235,7 +235,8 @@ lf_checker_rt::export!(cdecl, rw_00D86370(a0: u32, a1: u32, a2: u32, a3: u32, a4
         let dy = sub(rdf(a2.wrapping_add(4)), rdf(ecx2.wrapping_add(REF_Y)));
         let dot = add(mul(dx, nx), mul(dy, ny));
         let dist = add(mul(dx, dx), mul(dy, dy)).sqrt();
-        if dot <= ONE {
+        // comiss+jbe: the near path takes unordered (NaN) too.
+        if !(dot > ONE) {
             // Block H: near path.
             if !(FIFTEEN <= dist) {
                 let eax = rd32(edi.wrapping_add(INNER));
@@ -271,11 +272,11 @@ lf_checker_rt::export!(cdecl, rw_00D86370(a0: u32, a1: u32, a2: u32, a3: u32, a4
             );
             let mut x5 = dist;
             let m1x: f32;
-            if FIFTEEN <= dist {
+            if !(FIFTEEN > dist) {
                 m1x = FIFTEEN;
             } else {
                 let x1 = sub(sub(dot, ONE), TENTH);
-                let x4 = if x1 <= FOUR { x1 } else { FOUR };
+                let x4 = if !(x1 > FOUR) { x1 } else { FOUR };
                 x5 = mul(dist, THREE);
                 let t = add(x4, lp);
                 m1x = if t > x5 { t } else { x5 };
@@ -441,7 +442,7 @@ unsafe fn fn_00d86370_main(
         )
         .sqrt();
         lf_checker_rt::callee_cdecl!(
-            4, u32, s18, l3.to_bits(), a5, a4, esi,
+            4, u32, e8.to_bits(), l3.to_bits(), a5, a4, esi,
             core::ptr::addr_of_mut!(s1c) as u32, s18
         );
         if rd32(esi.wrapping_add(STATUS)) == 1 {
@@ -510,7 +511,7 @@ unsafe fn fn_00d86370_main(
         // Tail: trailing flag scales two outputs by -1.
         if (rd8(esi.wrapping_add(FLIP_BYTE)) & 1) != 0 {
             wrf(a3, mul(rdf(a3), NEG_ONE));
-            wrf(a5, mul(rdf(a5), NEG_ONE));
+            wrf(a4, mul(rdf(a4), NEG_ONE));
         }
         0
     }

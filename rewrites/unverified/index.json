@@ -472,27 +472,11 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00697130",
-  "name": "pending",
-  "file": "fn_00697130.rs",
-  "lane": "r-s497",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00697780",
-  "name": "pending",
-  "file": "fn_00697780.rs",
-  "lane": "r-s497",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00697840",
-  "name": "pending",
-  "file": "fn_00697840.rs",
-  "lane": "r-s497",
-  "outcome": "not_reached",
+  "address": "0x006A0440",
+  "name": "joystick_classifier",
+  "file": "fn_006a0440.rs",
+  "lane": "a-Q20",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -504,12 +488,28 @@
   "reason": "other"
  },
  {
+  "address": "0x006F8720",
+  "name": "ros_cloud_file_changed",
+  "file": "fn_006f8720.rs",
+  "lane": "a-Q22",
+  "outcome": "not yet run",
+  "reason": ""
+ },
+ {
   "address": "0x008834A0",
   "name": "stream_req_drain_spin",
   "file": "fn_008834a0.rs",
   "lane": "r-s438",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x008BF380",
+  "name": "ui_state_reset",
+  "file": "fn_008bf380.rs",
+  "lane": "r-b605",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x008CA880",
@@ -566,46 +566,6 @@
   "lane": "r-b211",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00955910",
-  "name": "emit_pool_entry_0",
-  "file": "fn_00955910.rs",
-  "lane": "r-s499",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x009559D0",
-  "name": "emit_pool_entry_1",
-  "file": "fn_009559d0.rs",
-  "lane": "r-s499",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00955A90",
-  "name": "emit_pool_entry_2",
-  "file": "fn_00955a90.rs",
-  "lane": "r-s499",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00955B50",
-  "name": "emit_pool_entry_3",
-  "file": "fn_00955b50.rs",
-  "lane": "r-s499",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00955C10",
-  "name": "emit_pool_entry_4",
-  "file": "fn_00955c10.rs",
-  "lane": "r-s499",
-  "outcome": "not_reached",
-  "reason": ""
  },
  {
   "address": "0x00957100",
@@ -1822,6 +1782,46 @@
   "lane": "r-b493",
   "outcome": "not_reached",
   "reason": null
+ },
+ {
+  "address": "0x00D6A620",
+  "name": "FRONTEND_MENU_MONTAGE_PRESS_MT",
+  "file": "fn_00d6a620.rs",
+  "lane": "r-s503",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00D6A6A0",
+  "name": "replay_montage_next",
+  "file": "fn_00d6a6a0.rs",
+  "lane": "r-s503",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00D6A6C0",
+  "name": "replay_montage_prev",
+  "file": "fn_00d6a6c0.rs",
+  "lane": "r-s503",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00D6A950",
+  "name": "replay_mode_to_action",
+  "file": "fn_00d6a950.rs",
+  "lane": "r-s503",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00D6AD70",
+  "name": "replay_reset_state_flags",
+  "file": "fn_00d6ad70.rs",
+  "lane": "r-s503",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00D82CD0",

@@ -16,9 +16,9 @@
 /// and returns null when it answers null. Otherwise appends through the
 /// appender (thiscall on `this + 0x14`: the word surviving the binder call,
 /// skipped as harness scratch), stores the bound pass in the appended slot,
-/// runs the pass hook (slot `+0x14` of the answer), and pairs the answer
-/// with the hook result (callee: the two scratch addresses, skipped and
-/// snapshotted). The stack-cookie check runs on every path (preserving
+/// runs the pass hook (slot `+0x14` of the answer), and pairs them
+/// (callee: the hook-result scratch address first, the answer scratch
+/// address second; both skipped as addresses and snapshotted). The stack-cookie check runs on every path (preserving
 /// callee) and the answer is returned (thiscall, one argument).
 lf_checker_rt::export!(thiscall, rw_0065af60(this: u32, arg: u32) -> u32 {
     unsafe {
@@ -77,7 +77,7 @@ lf_checker_rt::export!(thiscall, rw_0065af60(this: u32, arg: u32) -> u32 {
             let a = ans;
             let b = hookans;
             let _: u32 = lf_checker_rt::callee_stdcall!(
-                CALLEE_PAIR, u32, &a as *const u32 as u32, &b as *const u32 as u32);
+                CALLEE_PAIR, u32, &b as *const u32 as u32, &a as *const u32 as u32);
             ans
         };
         let _: u32 = lf_checker_rt::callee_cdecl!(CALLEE_COOKIE, u32,);
