@@ -320,49 +320,17 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x005EEC50",
-  "name": "input_ui_factory_10",
-  "file": "fn_005eec50.rs",
+  "address": "0x005EF2A0",
+  "name": "tls_batch_release",
+  "file": "fn_005ef2a0.rs",
   "lane": "r-s514",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x005EECB0",
-  "name": "input_ui_factory_0c",
-  "file": "fn_005eecb0.rs",
-  "lane": "r-s514",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005EED10",
-  "name": "input_ui_create_5arg",
-  "file": "fn_005eed10.rs",
-  "lane": "r-s514",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005EEDA0",
-  "name": "input_ui_create_6arg",
-  "file": "fn_005eeda0.rs",
-  "lane": "r-s514",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005EEE30",
-  "name": "input_ui_create_inline",
-  "file": "fn_005eee30.rs",
-  "lane": "r-s514",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x005EEEF0",
-  "name": "input_ui_create_tex",
-  "file": "fn_005eeef0.rs",
+  "address": "0x005EF300",
+  "name": "ui_elem_teardown",
+  "file": "fn_005ef300.rs",
   "lane": "r-s514",
   "outcome": "not_reached",
   "reason": ""
@@ -512,6 +480,14 @@
   "reason": ""
  },
  {
+  "address": "0x00969E10",
+  "name": "mainloop_timing_loop8 (proposed)",
+  "file": "fn_00969e10.rs",
+  "lane": "r-b625",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x009AA110",
   "name": "conv_first_or_null",
   "file": "fn_009aa110.rs",
@@ -520,9 +496,25 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x009BBA40",
-  "name": "init_input_dispatch_pair",
-  "file": "fn_009bba40.rs",
+  "address": "0x009BBAF0",
+  "name": "reset_input_dispatch",
+  "file": "fn_009bbaf0.rs",
+  "lane": "r-s513",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BBB60",
+  "name": "find_free_input_slot",
+  "file": "fn_009bbb60.rs",
+  "lane": "r-s513",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BBB80",
+  "name": "write_input_slot",
+  "file": "fn_009bbb80.rs",
   "lane": "r-s513",
   "outcome": "not_reached",
   "reason": ""
