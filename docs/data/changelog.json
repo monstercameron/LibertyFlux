@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Devlog: seven rewrites with the wrong signedness",
+    "title": "Devlog: Naming batch: base-class vtables name the overrides for free",
     "commit": null,
+    "summary": "Findings from the nm-115 lane.",
+    "changes": [
+      "New devlog entry: Naming batch: base-class vtables name the overrides for free.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Devlog: seven rewrites with the wrong signedness",
+    "commit": "e5b4fb94d4a9e187d65c276b3fdc7191fcf89683",
     "summary": "One entry for the day's trust findings: the mistake, how common blind proofs are, the two directions it was found from, and what it says about the verified count.",
     "changes": [
       "New devlog entry. Seven verified rewrites outside the leaderboard family compared a call's answer unsigned where the original compares signed; all are withdrawn. Five were found by lanes working through an audit built from the rewrites' text, two by a sweep from the original's code that reaches calls the audit's scan could not recognise.",
