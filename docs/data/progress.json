@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-05",
-  "updated_at": "2026-10-05 19:59",
+  "updated_at": "2026-10-05 20:05",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -14,10 +14,10 @@
     "identified": 37413,
     "named": 30178,
     "rewritten": 15687,
-    "verified": 15649
+    "verified": 15650
   },
   "structures": 340,
-  "symbols": 15762,
+  "symbols": 15763,
   "measured": [
     {
       "label": "Code section",
@@ -111,7 +111,7 @@
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 15649,
+      "value": 15650,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     },
@@ -119,13 +119,13 @@
       "label": "Game code verified, measured in bytes",
       "value": 28.6,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2108479 of 7372579 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2109507 of 7372579 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
-      "value": 17.5,
+      "value": 17.6,
       "unit": "percent",
-      "source": "268 of 1357 such functions; they hold 38% of the game's code"
+      "source": "269 of 1357 such functions; they hold 38% of the game's code"
     }
   ],
   "activity": {
@@ -3895,7 +3895,7 @@
       "count": 107,
       "named": 9,
       "rewritten": 9,
-      "verified": 8
+      "verified": 9
     },
     {
       "stage": "named",
@@ -4459,8 +4459,8 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7372579,
-    "verified": 2108479,
+    "verified": 2109507,
     "large_functions": 2837555,
-    "large_functions_verified": 497840
+    "large_functions_verified": 498868
   }
 }
