@@ -1,0 +1,16 @@
+[package]
+name = "lf-replaydiff"
+version = "0.1.0"
+# Edition 2021, like the production lanes' rewrite crates: the included verified files use identifiers
+# (for example `gen`) that edition 2024 reserves.
+edition = "2021"
+rust-version.workspace = true
+license.workspace = true
+description = "Differential tests: the lifted replay bar against its verified 32-bit rewrites"
+publish = false
+
+[dependencies]
+lf-files-memory = { path = "../../lf-files-memory" }
+
+[lints]
+workspace = true
