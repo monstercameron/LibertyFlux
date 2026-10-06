@@ -125,7 +125,7 @@ fn millis_truncates_and_guards() {
     };
     assert_eq!(at(1.5).millis_rounded(), 1500);
     assert_eq!(at(1.9999).millis_rounded(), 1999);
-    assert_eq!(at(-1.5).millis_rounded(), (-1500i64) as u32);
+    assert_eq!(at(-1.5).millis_rounded(), 0u32.wrapping_sub(1500));
     assert_eq!(at(0.0).millis_rounded(), 0);
     assert_eq!(at(f32::NAN).millis_rounded(), 0);
     assert_eq!(at(f32::INFINITY).millis_rounded(), 0);
@@ -204,8 +204,14 @@ fn scaled_position_picks_denominator() {
         (55.0f32 * 8.0).to_bits()
     );
     // A zero total divides by zero like the original.
-    let zero = ReplayBar { total: 0, ..bar.clone() };
-    assert!(zero.scaled_position(4, &mut || false, &bases()).is_infinite());
+    let zero = ReplayBar {
+        total: 0,
+        ..bar.clone()
+    };
+    assert!(
+        zero.scaled_position(4, &mut || false, &bases())
+            .is_infinite()
+    );
     assert!(zero.scaled_position(0, &mut || false, &bases()).is_nan());
 }
 
@@ -315,7 +321,13 @@ fn select_entry_empty_and_reselect() {
     let mut state = StampPublish { flags: 0, stamp: 0 };
     let mut watched = false;
     assert_eq!(
-        bar.select_entry(0, &mut || watched = true, &mut || 0, &mut |_| {}, &mut state),
+        bar.select_entry(
+            0,
+            &mut || watched = true,
+            &mut || 0,
+            &mut |_| {},
+            &mut state
+        ),
         None
     );
     assert!(!watched);
@@ -334,7 +346,13 @@ fn select_entry_empty_and_reselect() {
     assert!(!watched);
     assert_eq!(codes, [6, 0x0e]);
     assert_eq!(got, Some(50));
-    assert_eq!(state, StampPublish { flags: 1, stamp: 50 });
+    assert_eq!(
+        state,
+        StampPublish {
+            flags: 1,
+            stamp: 50
+        }
+    );
     assert_eq!(bar.sel_mark, 0xffff_ffff);
 }
 
@@ -459,9 +477,13 @@ fn blend_factors_scales_low_ratios() {
         den_narrow: 2,
         den_wide: 9,
     };
-    let (first, second, blend) =
-        blend_factors(&mut clock, &mut scale, &narrow, &mut || wides.next().unwrap());
-    assert_eq!((first.to_bits(), second.to_bits()), (6.0f32.to_bits(), 3.0f32.to_bits()));
+    let (first, second, blend) = blend_factors(&mut clock, &mut scale, &narrow, &mut || {
+        wides.next().unwrap()
+    });
+    assert_eq!(
+        (first.to_bits(), second.to_bits()),
+        (6.0f32.to_bits(), 3.0f32.to_bits())
+    );
     // (6/3)*4 = 8, times the ratio 1/2.
     assert_eq!(blend.to_bits(), 4.0f32.to_bits());
     assert_eq!(scale.to_bits(), 4.0f32.to_bits());
@@ -484,8 +506,7 @@ fn blend_factors_divides_scale_on_high_ratios() {
         den_narrow: 9,
         den_wide: 1,
     };
-    let (_, _, blend) =
-        blend_factors(&mut clock, &mut scale, &wide, &mut || wides.next().unwrap());
+    let (_, _, blend) = blend_factors(&mut clock, &mut scale, &wide, &mut || wides.next().unwrap());
     assert_eq!(blend.to_bits(), 24.0f32.to_bits());
     assert_eq!(scale.to_bits(), 4.0f32.to_bits());
 }
@@ -505,8 +526,7 @@ fn blend_factors_nan_ratio_divides_scale() {
         den_narrow: 0,
         den_wide: 0,
     };
-    let (_, _, blend) =
-        blend_factors(&mut clock, &mut scale, &zero, &mut || false);
+    let (_, _, blend) = blend_factors(&mut clock, &mut scale, &zero, &mut || false);
     assert_eq!(blend.to_bits(), 5.0f32.to_bits());
     assert!(scale.is_nan());
 }

@@ -237,7 +237,7 @@ impl ReplayBar {
     #[must_use]
     pub fn millis_rounded(&self) -> u32 {
         let v = self.seconds * 1000.0;
-        if v.is_nan() || v >= 9223372036854775808.0 || v <= -9223372036854775808.0 {
+        if v.is_nan() || v >= 9_223_372_036_854_775_808.0 || v <= -9_223_372_036_854_775_808.0 {
             0
         } else {
             (v as i64) as u32
@@ -289,12 +289,7 @@ impl ReplayBar {
     /// the wide word when true, the narrow word otherwise. The 32-bit form
     /// widens the answer to `f64`, which is exact (the proof compares the
     /// widened bits).
-    pub fn scaled_position(
-        &self,
-        a: u32,
-        select: &mut impl BaseSelect,
-        bases: &TimeBases,
-    ) -> f32 {
+    pub fn scaled_position(&self, a: u32, select: &mut impl BaseSelect, bases: &TimeBases) -> f32 {
         let q = (a as f32) / (self.total as f32);
         let den = if select.wide() {
             bases.den_wide
@@ -313,11 +308,7 @@ impl ReplayBar {
     /// above `thresh` the entry is scored again and the second score is
     /// answered with the entry's tag. When nothing scores above it the
     /// total is answered with the default tag. Answers `(score, tag)`.
-    pub fn scan_forward(
-        &self,
-        thresh: u32,
-        score: &mut impl ScoreStamp,
-    ) -> (u32, u32) {
+    pub fn scan_forward(&self, thresh: u32, score: &mut impl ScoreStamp) -> (u32, u32) {
         for slot in &self.slots {
             let v = score.score(slot.stamp);
             if v > thresh {
@@ -335,11 +326,7 @@ impl ReplayBar {
     /// answered with the entry's tag and stamp. When nothing scores below
     /// it 0 is answered with the default tag and a zero stamp. Answers
     /// `(score, tag, stamp)`.
-    pub fn scan_backward(
-        &self,
-        thresh: u32,
-        score: &mut impl ScoreStamp,
-    ) -> (u32, u32, u32) {
+    pub fn scan_backward(&self, thresh: u32, score: &mut impl ScoreStamp) -> (u32, u32, u32) {
         for slot in self.slots.iter().rev() {
             let v = score.score(slot.stamp);
             if v < thresh {
@@ -381,12 +368,7 @@ impl ReplayBar {
     /// answered; when 1 the upper bound becomes `max(value, sample)` and
     /// the new bound is answered; otherwise nothing is stored and `which`
     /// is answered back.
-    pub fn clamp_bound(
-        &mut self,
-        value: u32,
-        which: u32,
-        sample: &mut impl Sample,
-    ) -> u32 {
+    pub fn clamp_bound(&mut self, value: u32, which: u32, sample: &mut impl Sample) -> u32 {
         let t = sample.sample();
         if which == 0 {
             let d = if value >= t { t } else { value };
@@ -503,7 +485,7 @@ impl ReplayBar {
 /// upper branch and lands on `MIN` through the guard).
 fn round_half_away_truncate(v: f32) -> i32 {
     let r = if 0.0 > v { v - 0.5 } else { v + 0.5 };
-    if r.is_nan() || r >= 2147483648.0 || r < -2147483648.0 {
+    if r.is_nan() || r >= 2_147_483_648.0 || r < -2_147_483_648.0 {
         i32::MIN
     } else {
         r as i32

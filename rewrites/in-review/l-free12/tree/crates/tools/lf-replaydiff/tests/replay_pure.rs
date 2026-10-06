@@ -19,7 +19,7 @@ mod x86 {
     #[path = "../support/mod.rs"]
     mod support;
     use support::{
-        BAR_LEN, Rng, addr, diff_words, float_corpus, get_word, int_corpus, lock, plant_bar, snap,
+        addr, diff_words, float_corpus, get_word, int_corpus, lock, plant_bar, snap, Rng, BAR_LEN,
     };
 
     /// Deliberately wrong lifts, each caught below.
@@ -202,7 +202,10 @@ mod x86 {
             std::hint::black_box(&planted);
         }
         assert!(cases > 500, "too few comparisons ({cases})");
-        assert!(caught > 0, "wrong missing window never caught ({cases} cases)");
+        assert!(
+            caught > 0,
+            "wrong missing window never caught ({cases} cases)"
+        );
     }
 
     #[test]
@@ -212,7 +215,11 @@ mod x86 {
         let mut cases = 0;
         let mut caught = 0;
         for trial in 0..48 {
-            let n = if trial < 8 { trial } else { rng.below(9) as usize };
+            let n = if trial < 8 {
+                trial
+            } else {
+                rng.below(9) as usize
+            };
             let mut bar = ReplayBar::empty();
             for _ in 0..n {
                 bar.slots.push(ReplaySlot {
@@ -243,7 +250,11 @@ mod x86 {
                 let got = unsafe { fn_00D6EFF0::rw_00d6eff0(base) };
                 assert!(diff_words(&before, base).is_empty(), "pure reader writes");
                 let lift = bar.find_slot();
-                assert_eq!(got, lift.map_or(0xffff_ffff, |i| i as u32), "bound={bound:#x}");
+                assert_eq!(
+                    got,
+                    lift.map_or(0xffff_ffff, |i| i as u32),
+                    "bound={bound:#x}"
+                );
                 if wrong::find_slot_first(&bar) != lift {
                     caught += 1;
                 }
@@ -368,7 +379,10 @@ mod x86 {
             std::hint::black_box(&planted);
         }
         assert!(cases > 500, "too few comparisons ({cases})");
-        assert!(caught > 0, "wrong swapped rects never caught ({cases} cases)");
+        assert!(
+            caught > 0,
+            "wrong swapped rects never caught ({cases} cases)"
+        );
     }
 
     #[test]
@@ -411,6 +425,9 @@ mod x86 {
             }
         }
         assert!(cases > 200, "too few comparisons ({cases})");
-        assert!(caught > 0, "wrong swapped store never caught ({cases} cases)");
+        assert!(
+            caught > 0,
+            "wrong swapped store never caught ({cases} cases)"
+        );
     }
 }

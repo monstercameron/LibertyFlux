@@ -125,9 +125,25 @@ impl AltitudeGate {
         let conv = if !(limit >= alt) {
             z
         } else {
-            query.ground_z(x, y, CONV_MODE)
+            Self::quiet_snan(query.ground_z(x, y, CONV_MODE))
         };
         [x, y, conv]
+    }
+
+    /// Quiets a signalling-NaN answer, as the x87 return path does.
+    ///
+    /// The 32-bit query callee returns its float through the x87 unit,
+    /// which sets the quiet bit of a signalling NaN; the lift has no
+    /// x87, so it sets the bit explicitly to stay bit for bit.
+    fn quiet_snan(bits: u32) -> u32 {
+        const EXP: u32 = 0x7F80_0000;
+        const MANT: u32 = 0x007F_FFFF;
+        const QUIET: u32 = 0x0040_0000;
+        if bits & EXP == EXP && bits & MANT != 0 && bits & QUIET == 0 {
+            bits | QUIET
+        } else {
+            bits
+        }
     }
 
     /// Registers a restart point: the two restart tails.

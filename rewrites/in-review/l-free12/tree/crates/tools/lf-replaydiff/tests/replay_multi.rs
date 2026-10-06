@@ -19,6 +19,7 @@ mod x86 {
     use std::rc::Rc;
     use std::sync::Mutex;
 
+    use lf_files_memory::replay_bar::blend_factors;
     use lf_files_memory::replay_bar::ClockHandle;
     use lf_files_memory::replay_bar::InnerHandle;
     use lf_files_memory::replay_bar::NotifierHandle;
@@ -28,16 +29,15 @@ mod x86 {
     use lf_files_memory::replay_bar::ReplaySlot;
     use lf_files_memory::replay_bar::StampPublish;
     use lf_files_memory::replay_bar::TimeBases;
-    use lf_files_memory::replay_bar::blend_factors;
     use lf_replaydiff::rewrites::*;
     use lf_replaydiff::rt;
 
     #[path = "../support/mod.rs"]
     mod support;
     use support::{
-        BAR_LEN, DEN_NARROW_VA, DEN_WIDE_VA, HUB_VA, NUM_NARROW_VA, NUM_WIDE_VA, PUB_FLAGS_VA,
-        PUB_STAMP_VA, STATE_VA, Rng, addr, diff_words, float_corpus, get_word, int_corpus, lock,
-        plant_bar, snap,
+        addr, diff_words, float_corpus, get_word, int_corpus, lock, plant_bar, snap, Rng, BAR_LEN,
+        DEN_NARROW_VA, DEN_WIDE_VA, HUB_VA, NUM_NARROW_VA, NUM_WIDE_VA, PUB_FLAGS_VA, PUB_STAMP_VA,
+        STATE_VA,
     };
 
     /// Unified call-order log: every stub pushes its tag.
@@ -163,12 +163,7 @@ mod x86 {
         }
 
         /// Subtracts the ticks from 16 instead of 17.
-        pub fn time_factor_16(
-            bar: &ReplayBar,
-            ticks: u32,
-            num1: u32,
-            num2: u32,
-        ) -> f32 {
+        pub fn time_factor_16(bar: &ReplayBar, ticks: u32, num1: u32, num2: u32) -> f32 {
             let mut x = 16.0 - (ticks.cast_signed() as f32);
             x += (num1.cast_signed() as f32) * bar.weight;
             x /= num2.cast_signed() as f32;
@@ -176,12 +171,7 @@ mod x86 {
         }
 
         /// Divides the scale on the low-ratio path instead of the blend.
-        pub fn blend_flipped(
-            f1: f32,
-            f2: f32,
-            scale: &mut f32,
-            ratio: f32,
-        ) -> (f32, f32, f32) {
+        pub fn blend_flipped(f1: f32, f2: f32, scale: &mut f32, ratio: f32) -> (f32, f32, f32) {
             let mut x = f1 / f2;
             let sc = *scale;
             x *= sc;
@@ -197,7 +187,10 @@ mod x86 {
 
         /// Suppresses state 18 as well.
         pub fn suppressed_wide(state: u32) -> bool {
-            matches!(state, 2 | 7 | 8 | 0x0b | 0x0c | 0x0d | 0x0e | 0x0f | 0x10 | 0x11 | 18)
+            matches!(
+                state,
+                2 | 7 | 8 | 0x0b | 0x0c | 0x0d | 0x0e | 0x0f | 0x10 | 0x11 | 18
+            )
         }
     }
 
@@ -233,7 +226,11 @@ mod x86 {
         let mut cases = 0;
         let mut caught = 0;
         for trial in 0..48 {
-            let n = if trial < 6 { trial % 3 } else { 1 + (rng.below(5) as usize) };
+            let n = if trial < 6 {
+                trial % 3
+            } else {
+                1 + (rng.below(5) as usize)
+            };
             let mut bar = random_bar(&mut rng, n);
             // Indexes: first, last, and the current selection.
             let mut idxs = vec![0u32];
@@ -245,9 +242,19 @@ mod x86 {
                 }
             }
             for &idx in &idxs {
-                let stamp = if n == 0 { 0 } else { bar.slots[idx as usize].stamp };
+                let stamp = if n == 0 {
+                    0
+                } else {
+                    bar.slots[idx as usize].stamp
+                };
                 // Samples around the stamp hit every publish combination.
-                let samples = [stamp.wrapping_sub(1), stamp, stamp.wrapping_add(1), 0, u32::MAX];
+                let samples = [
+                    stamp.wrapping_sub(1),
+                    stamp,
+                    stamp.wrapping_add(1),
+                    0,
+                    u32::MAX,
+                ];
                 for &v1 in &samples {
                     for &v2 in &samples {
                         let flags0 = rng.u32();
@@ -339,7 +346,12 @@ mod x86 {
                             };
                             let mut wcodes = Vec::new();
                             let wl = wrong::select_nonstrict(
-                                &mut wbar, idx, v1, v2, &mut wstate, &mut wcodes,
+                                &mut wbar,
+                                idx,
+                                v1,
+                                v2,
+                                &mut wstate,
+                                &mut wcodes,
                             );
                             if wl != want || wcodes != lift_codes || wstate != state {
                                 caught += 1;
@@ -352,7 +364,10 @@ mod x86 {
             }
         }
         assert!(cases > 500, "too few comparisons ({cases})");
-        assert!(caught > 0, "wrong non-strict publish never caught ({cases} cases)");
+        assert!(
+            caught > 0,
+            "wrong non-strict publish never caught ({cases} cases)"
+        );
     }
 
     #[test]
@@ -563,15 +578,11 @@ mod x86 {
                                         assert_eq!(rw_order, ['a', 'b', 's', 's']);
                                         assert_eq!(
                                             rw_args,
-                                            [
-                                                ('a', clock.obj_addr()),
-                                                ('b', clock.obj_addr())
-                                            ]
+                                            [('a', clock.obj_addr()), ('b', clock.obj_addr())]
                                         );
                                         let w1 = m1 & 0xff != 0;
                                         let w2 = m2 & 0xff != 0;
-                                        let wides =
-                                            Rc::new(RefCell::new(VecDeque::from([w1, w2])));
+                                        let wides = Rc::new(RefCell::new(VecDeque::from([w1, w2])));
                                         let lift_order = Rc::new(RefCell::new(Vec::new()));
                                         let mut lift_scale = sc;
                                         let lift = blend_factors(
@@ -594,7 +605,11 @@ mod x86 {
                                              m1={m1:#x} m2={m2:#x} sc={sc:?} narrow_wide={narrow_wide}"
                                         );
                                         assert_eq!(get_word(o_first, 0), lift.0.to_bits(), "{ctx}");
-                                        assert_eq!(get_word(o_second, 0), lift.1.to_bits(), "{ctx}");
+                                        assert_eq!(
+                                            get_word(o_second, 0),
+                                            lift.1.to_bits(),
+                                            "{ctx}"
+                                        );
                                         assert_eq!(get_word(o_blend, 0), lift.2.to_bits(), "{ctx}");
                                         assert_eq!(
                                             get_word(o_scale, 0),
@@ -602,10 +617,12 @@ mod x86 {
                                             "{ctx}"
                                         );
                                         // The wrong lift flips the branch.
-                                        let num = if w1 { bases.num_wide } else { bases.num_narrow };
-                                        let den = if w2 { bases.den_wide } else { bases.den_narrow };
-                                        let ratio = (num.cast_signed() as f32)
-                                            / (den.cast_signed() as f32);
+                                        let num =
+                                            if w1 { bases.num_wide } else { bases.num_narrow };
+                                        let den =
+                                            if w2 { bases.den_wide } else { bases.den_narrow };
+                                        let ratio =
+                                            (num.cast_signed() as f32) / (den.cast_signed() as f32);
                                         let f1 = v1.cast_signed() as f32;
                                         let f2 = v2.cast_signed() as f32;
                                         let mut wscale = sc;
@@ -630,7 +647,10 @@ mod x86 {
             }
         }
         assert!(cases > 500, "too few comparisons ({cases})");
-        assert!(caught > 0, "wrong flipped branch never caught ({cases} cases)");
+        assert!(
+            caught > 0,
+            "wrong flipped branch never caught ({cases} cases)"
+        );
     }
 
     /// Lift-side clock fake for the blend: answers both readings in order.
@@ -661,13 +681,34 @@ mod x86 {
         let mut cases = 0;
         let mut caught = 0;
         let states = [
-            0u32, 1, 2, 3, 7, 8, 9, 10, 11, 12, 16, 17, 18, 19, 100, u32::MAX, rng.u32(),
+            0u32,
+            1,
+            2,
+            3,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            16,
+            17,
+            18,
+            19,
+            100,
+            u32::MAX,
+            rng.u32(),
         ];
         let bounds = int_corpus(&mut rng, 6);
         for &state in &states {
             for &bound in &bounds {
                 // Probes below, at, and above the bound.
-                for &t in &[bound.wrapping_sub(1), bound, bound.wrapping_add(1), rng.u32()] {
+                for &t in &[
+                    bound.wrapping_sub(1),
+                    bound,
+                    bound.wrapping_add(1),
+                    rng.u32(),
+                ] {
                     // Notifier answers: null first, or two live fetches.
                     for null_first in [false, true] {
                         let inner_box = Box::new(rng.u32());
@@ -692,16 +733,19 @@ mod x86 {
                         let flag0 = note[0x398];
                         let note_box = note.into_boxed_slice();
                         let note_addr = addr(&note_box[0]);
-                        let (p, q) = if null_first { (0, note_addr) } else { (note_addr, note_addr) };
+                        let (p, q) = if null_first {
+                            (0, note_addr)
+                        } else {
+                            (note_addr, note_addr)
+                        };
                         reset_stubs();
                         SCRIPT.lock().unwrap().extend([t, p, q]);
                         let ctl_before = Vec::from(&ctl_box[..]);
                         let got = unsafe { fn_00D6F510::rw_00d6f510(ctl, bound) };
                         let rw_order = ORDER.lock().unwrap().clone();
                         let rw_args = ARGS.lock().unwrap().clone();
-                        let flag_rw = unsafe {
-                            (note_addr.wrapping_add(0x398) as *const u8).read()
-                        };
+                        let flag_rw =
+                            unsafe { (note_addr.wrapping_add(0x398) as *const u8).read() };
                         // The lift side replays the same script.
                         let ctl_lift = NotifyCtl {
                             inner: InnerHandle::new(inner).unwrap(),
@@ -728,9 +772,8 @@ mod x86 {
                         let lift_order = lift_order.borrow().clone();
                         let flag_lift = *flag_lift.borrow();
                         // The control image never changes.
-                        let ctl_after = unsafe {
-                            std::slice::from_raw_parts(ctl as *const u8, 8).to_vec()
-                        };
+                        let ctl_after =
+                            unsafe { std::slice::from_raw_parts(ctl as *const u8, 8).to_vec() };
                         assert_eq!(ctl_after, ctl_before, "the control is untouched");
                         match want {
                             RefreshOutcome::BelowBound(v) => {
@@ -765,7 +808,10 @@ mod x86 {
                         // The wrong lift suppresses state 18 as well.
                         if t >= bound
                             && wrong::suppressed_wide(state)
-                                != matches!(state, 2 | 7 | 8 | 0x0b | 0x0c | 0x0d | 0x0e | 0x0f | 0x10 | 0x11)
+                                != matches!(
+                                    state,
+                                    2 | 7 | 8 | 0x0b | 0x0c | 0x0d | 0x0e | 0x0f | 0x10 | 0x11
+                                )
                         {
                             caught += 1;
                         }
@@ -776,7 +822,10 @@ mod x86 {
             }
         }
         assert!(cases > 500, "too few comparisons ({cases})");
-        assert!(caught > 0, "wrong suppressed set never caught ({cases} cases)");
+        assert!(
+            caught > 0,
+            "wrong suppressed set never caught ({cases} cases)"
+        );
     }
 
     /// Lift-side hub fake: scripted lookups plus the flag cell.

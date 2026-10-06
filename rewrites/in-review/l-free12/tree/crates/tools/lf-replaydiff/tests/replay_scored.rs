@@ -25,8 +25,8 @@ mod x86 {
     #[path = "../support/mod.rs"]
     mod support;
     use support::{
-        BAR_LEN, DEN_NARROW_VA, DEN_WIDE_VA, Rng, addr, diff_words, float_corpus, get_word,
-        int_corpus, lock, plant_bar, snap,
+        addr, diff_words, float_corpus, get_word, int_corpus, lock, plant_bar, snap, Rng, BAR_LEN,
+        DEN_NARROW_VA, DEN_WIDE_VA,
     };
 
     /// Scripted answers and call log for the no-arg cdecl sampler.
@@ -218,7 +218,11 @@ mod x86 {
         let mut cases = 0;
         let mut caught = 0;
         for trial in 0..64 {
-            let n = if trial < 8 { trial % 4 } else { rng.below(7) as usize };
+            let n = if trial < 8 {
+                trial % 4
+            } else {
+                rng.below(7) as usize
+            };
             let bar = random_bar(&mut rng, n);
             // Thresholds: edges, around the middle, max (no hit possible).
             let mut threshs = vec![0u32, 1, u32::MAX - 1, u32::MAX, rng.u32()];
@@ -232,7 +236,11 @@ mod x86 {
                 } else if trial % 2 == 0 {
                     vec![None, Some(0), Some(n / 2), Some(n - 1)]
                 } else {
-                    vec![if n == 0 { None } else { Some(rng.below(n as u32) as usize) }]
+                    vec![if n == 0 {
+                        None
+                    } else {
+                        Some(rng.below(n as u32) as usize)
+                    }]
                 };
                 for spot in spots {
                     // Scores at the threshold never trigger; the hit score
@@ -282,10 +290,10 @@ mod x86 {
                     );
                     // The wrong lift triggers on equality: every
                     // at-threshold score is a witness.
-                    let mut wscript: VecDeque<u32> = scores.iter().copied().collect(); wscript.extend([thresh, thresh, thresh, thresh]);
-                    let wl = wrong::scan_forward_ge(&bar, thresh, &mut |_| {
-                        wscript.pop_front().unwrap()
-                    });
+                    let mut wscript: VecDeque<u32> = scores.iter().copied().collect();
+                    wscript.extend([thresh, thresh, thresh, thresh]);
+                    let wl =
+                        wrong::scan_forward_ge(&bar, thresh, &mut |_| wscript.pop_front().unwrap());
                     if wl != lift {
                         caught += 1;
                     }
@@ -295,7 +303,10 @@ mod x86 {
             }
         }
         assert!(cases > 200, "too few comparisons ({cases})");
-        assert!(caught > 0, "wrong threshold sense never caught ({cases} cases)");
+        assert!(
+            caught > 0,
+            "wrong threshold sense never caught ({cases} cases)"
+        );
     }
 
     #[test]
@@ -306,7 +317,11 @@ mod x86 {
         let mut cases = 0;
         let mut caught = 0;
         for trial in 0..64 {
-            let n = if trial < 8 { trial % 4 } else { rng.below(7) as usize };
+            let n = if trial < 8 {
+                trial % 4
+            } else {
+                rng.below(7) as usize
+            };
             let bar = random_bar(&mut rng, n);
             let mut threshs = vec![0u32, 1, 2, u32::MAX, rng.u32()];
             if trial == 0 {
@@ -318,7 +333,11 @@ mod x86 {
                 } else if trial % 2 == 0 {
                     vec![None, Some(n - 1), Some(n / 2), Some(0)]
                 } else {
-                    vec![if n == 0 { None } else { Some(rng.below(n as u32) as usize) }]
+                    vec![if n == 0 {
+                        None
+                    } else {
+                        Some(rng.below(n as u32) as usize)
+                    }]
                 };
                 for spot in spots {
                     // From the end: at-threshold scores never trigger.
@@ -366,7 +385,8 @@ mod x86 {
                         lift_log,
                         "call order"
                     );
-                    let mut wscript: VecDeque<u32> = scores.iter().copied().collect(); wscript.extend([thresh, thresh, thresh, thresh]);
+                    let mut wscript: VecDeque<u32> = scores.iter().copied().collect();
+                    wscript.extend([thresh, thresh, thresh, thresh]);
                     let wl = wrong::scan_backward_le(&bar, thresh, &mut |_| {
                         wscript.pop_front().unwrap()
                     });
@@ -379,7 +399,10 @@ mod x86 {
             }
         }
         assert!(cases > 200, "too few comparisons ({cases})");
-        assert!(caught > 0, "wrong threshold sense never caught ({cases} cases)");
+        assert!(
+            caught > 0,
+            "wrong threshold sense never caught ({cases} cases)"
+        );
     }
 
     #[test]
@@ -446,7 +469,10 @@ mod x86 {
             std::hint::black_box((&planted, &ratio_box, &first_box, &second_box));
         }
         assert!(cases > 10, "too few comparisons ({cases})");
-        assert!(caught > 0, "wrong marker order never caught ({cases} cases)");
+        assert!(
+            caught > 0,
+            "wrong marker order never caught ({cases} cases)"
+        );
     }
 
     #[test]
@@ -489,7 +515,10 @@ mod x86 {
                 let mut script: VecDeque<u32> = [v].into_iter().collect();
                 let lift = bar.slot_ratio(&mut || script.pop_front().unwrap());
                 assert_eq!(get_word(o_ratio, 0), lift.0.to_bits(), "ratio word");
-                assert_eq!((get_word(o_first, 0), get_word(o_second, 0)), (lift.1, lift.2));
+                assert_eq!(
+                    (get_word(o_first, 0), get_word(o_second, 0)),
+                    (lift.1, lift.2)
+                );
                 assert_eq!((lift.1, lift.2), (bar.bound_lo, bar.bound_hi));
                 if wrong::slot_ratio_neg(&bar, v).to_bits() != lift.0.to_bits() {
                     caught += 1;
@@ -499,7 +528,10 @@ mod x86 {
             }
         }
         assert!(cases > 200, "too few comparisons ({cases})");
-        assert!(caught > 0, "wrong negated span never caught ({cases} cases)");
+        assert!(
+            caught > 0,
+            "wrong negated span never caught ({cases} cases)"
+        );
     }
 
     #[test]
@@ -529,9 +561,7 @@ mod x86 {
                     assert_eq!(SAMPLE_LOG.lock().unwrap().len(), 1, "always sampled");
                     let mut lift = bar.clone();
                     let mut script: VecDeque<u32> = [t].into_iter().collect();
-                    let want = lift.clamp_bound(value, which, &mut || {
-                        script.pop_front().unwrap()
-                    });
+                    let want = lift.clamp_bound(value, which, &mut || script.pop_front().unwrap());
                     assert_eq!(got, want, "value={value:#x} t={t:#x} which={which}");
                     assert_eq!(get_word(base, 0xb8), lift.bound_lo, "lower word");
                     assert_eq!(get_word(base, 0xcc), lift.bound_hi, "upper word");
@@ -545,7 +575,9 @@ mod x86 {
                     }
                     let mut wbar = bar.clone();
                     let wl = wrong::clamp_bound_swapped(&mut wbar, value, which, t);
-                    if wl != want || wbar.bound_lo != lift.bound_lo || wbar.bound_hi != lift.bound_hi
+                    if wl != want
+                        || wbar.bound_lo != lift.bound_lo
+                        || wbar.bound_hi != lift.bound_hi
                     {
                         caught += 1;
                     }
@@ -555,6 +587,9 @@ mod x86 {
             }
         }
         assert!(cases > 200, "too few comparisons ({cases})");
-        assert!(caught > 0, "wrong swapped clamp never caught ({cases} cases)");
+        assert!(
+            caught > 0,
+            "wrong swapped clamp never caught ({cases} cases)"
+        );
     }
 }

@@ -41,9 +41,7 @@ mod bar;
 mod clock;
 mod notify;
 
-pub use bar::{
-    Publish, ReplayBar, ReplaySlot, Sample, ScoreStamp, SelectionWatch, StampPublish,
-};
+pub use bar::{Publish, ReplayBar, ReplaySlot, Sample, ScoreStamp, SelectionWatch, StampPublish};
 pub use clock::{BaseSelect, ClockHandle, ClockRead, ClockTag, TimeBases, blend_factors};
 pub use notify::{
     InnerHandle, InnerTag, NotifierHandle, NotifierTag, NotifyCtl, NotifyHub, RefreshInner,

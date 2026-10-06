@@ -22,14 +22,9 @@
 /// submitted (thiscall with the block address); the flag word at `+0x26C`
 /// becomes `(flags & ~1) | 0x2000`, which is also the exit value.
 ///
-/// Two notes for readers. The fallback's helper call is cdecl, so past it
-/// the frame references sit one word lower than in every other path; the
-/// mirror below addresses each path's slots explicitly. Its first multiply
-/// reads an untouched frame word (the checker's zero stack fill); the value
-/// is observed through the submit snapshot, so the mirror feeds the same
-/// zero. All integer comparisons are equalities or null/zero tests. The
-/// float operation order is the original's. Original: thiscall, one stack
-/// word, returns `eax`.
+/// All integer comparisons are equalities or null/zero tests. The float
+/// operation order is the original's. Original: thiscall, one stack word,
+/// returns `eax`.
 lf_checker_rt::export!(thiscall, rw_00d40340(this: u32, obj: u32) -> u32 {
     unsafe {
         const THIS_FLAG_OFF: u32 = 0x92;
@@ -68,7 +63,6 @@ lf_checker_rt::export!(thiscall, rw_00d40340(this: u32, obj: u32) -> u32 {
         // Frame word indexes (byte offset / 4).
         const F08: usize = 2;
         const F10: usize = 4;
-        const F28: usize = 10;
         const F2C: usize = 11;
         const F30: usize = 12;
         const F34: usize = 13;
@@ -148,8 +142,6 @@ lf_checker_rt::export!(thiscall, rw_00d40340(this: u32, obj: u32) -> u32 {
         fr[F30] = 0;
         fr[F34] = 0;
         fr[F38] = INIT_B2;
-        // Which frame word the submit call observes first (see note above).
-        let submit_idx: usize;
         if rd8(this.wrapping_add(THIS_FLAG_OFF)) & FLAG_STEER != 0 {
             let subobj = rd32(obj.wrapping_add(OBJ_SUB_LINK));
             fr[F10] = sub(
@@ -222,7 +214,6 @@ lf_checker_rt::export!(thiscall, rw_00d40340(this: u32, obj: u32) -> u32 {
             fr[F30] = mul(s, bits(&fr, F30)).to_bits();
             fr[F34] = mul(s, bits(&fr, F34)).to_bits();
             fr[F38] = mul(s, bits(&fr, F38)).to_bits();
-            submit_idx = F30;
         } else {
             let p40 = fr.as_mut_ptr().wrapping_add(F40) as u32;
             let _ret = solve(obj, p40);
@@ -238,32 +229,29 @@ lf_checker_rt::export!(thiscall, rw_00d40340(this: u32, obj: u32) -> u32 {
             }
             let e = rd32(obj.wrapping_add(OBJ_E_LINK));
             if e != 0 && e.wrapping_add(E_SKIP_ADD) != 0 {
+                // The helper call is cdecl and balanced: past it the frame
+                // references are the same as in every other path.
                 let v: f32 = lf_checker_rt::callee_cdecl!(C_SCALE, f32, SCALE_ARG,);
-                fr[F28] = v.to_bits();
-                fr[F2C] = mul(v, bits(&fr, F2C)).to_bits();
-                fr[F30] = mul(v, bits(&fr, F30)).to_bits();
-                fr[F34] = mul(v, bits(&fr, F34)).to_bits();
-                let s = fetch_scale(obj);
-                fr[F28] = s.to_bits();
-                fr[F2C] = mul(s, bits(&fr, F2C)).to_bits();
-                fr[F30] = mul(s, bits(&fr, F30)).to_bits();
-                fr[F34] = mul(s, bits(&fr, F34)).to_bits();
-                submit_idx = F2C;
-            } else {
-                let s = fetch_scale(obj);
-                fr[F2C] = s.to_bits();
-                fr[F30] = mul(s, bits(&fr, F30)).to_bits();
-                fr[F34] = mul(s, bits(&fr, F34)).to_bits();
-                fr[F38] = mul(s, bits(&fr, F38)).to_bits();
-                submit_idx = F30;
+                fr[F2C] = v.to_bits();
+                let f30 = bits(&fr, F30);
+                let f34 = bits(&fr, F34);
+                let f38 = bits(&fr, F38);
+                fr[F30] = mul(v, f30).to_bits();
+                fr[F34] = mul(v, f34).to_bits();
+                fr[F38] = mul(v, f38).to_bits();
             }
+            let s = fetch_scale(obj);
+            fr[F2C] = s.to_bits();
+            fr[F30] = mul(s, bits(&fr, F30)).to_bits();
+            fr[F34] = mul(s, bits(&fr, F34)).to_bits();
+            fr[F38] = mul(s, bits(&fr, F38)).to_bits();
         }
         let sub3 = rd32(obj.wrapping_add(OBJ_T3_LINK));
         let kslot = rd32(rd32(sub3).wrapping_add(SLOT_KIND));
         let kind: extern "thiscall" fn(u32) -> u32 =
             core::mem::transmute(kslot as usize);
         if kind(sub3) != SKIP_KIND {
-            let ps = fr.as_mut_ptr().wrapping_add(submit_idx) as u32;
+            let ps = fr.as_mut_ptr().wrapping_add(F30) as u32;
             let _: u32 = lf_checker_rt::callee_thiscall!(C_SUBMIT, u32, obj, ps,);
         }
         let flags = (rd32(obj.wrapping_add(OBJ_FLAGS)) & !1) | 0x2000;

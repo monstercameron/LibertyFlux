@@ -75,13 +75,13 @@ mod x86 {
     /// Returns (comparisons, caught).
     fn run_instance(inst: &Instance, seed: u32) -> (u32, u32) {
         let mut rng = Rng(seed);
-        rt::set_callee(1, skip_stub as usize as u32);
+        rt::set_callee(1, skip_stub as *const () as u32);
         let proto = PointSkip;
         let mut cases = 0;
         let mut caught = 0;
         // Edge words: zero, small, sign boundaries, all ones.
         let edges = [0u32, 1, 2, 0x7FFF_FFFF, 0x8000_0000, 0xFFFF_FFFE, 0xFFFF_FFFF];
-        let mut run = |a0: u32, a1: u32, a2: u32, key: u32, cases: &mut u32, caught: &mut u32| {
+        let run = |a0: u32, a1: u32, a2: u32, key: u32, cases: &mut u32, caught: &mut u32| {
             SKIP_LOG.lock().unwrap().clear();
             let got = unsafe { (inst.skip)(a0, a1, a2, key) };
             assert_eq!(got, 0);

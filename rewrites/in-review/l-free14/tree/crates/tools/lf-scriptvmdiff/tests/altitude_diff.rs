@@ -127,6 +127,23 @@ mod x86 {
         f32::from_bits(thresh) >= f32::from_bits(z)
     }
 
+    /// Quiets a signalling-NaN answer the way the x87 return path does.
+    fn quiet(bits: u32) -> u32 {
+        if bits & 0x7F80_0000 == 0x7F80_0000 && bits & 0x007F_FFFF != 0 && bits & 0x0040_0000 == 0
+        {
+            bits | 0x0040_0000
+        } else {
+            bits
+        }
+    }
+
+    /// Signalling-NaN answers, scripted in rotation to pin the quieting.
+    const SNAN_ANSWERS: [u32; 3] = [
+        0x7F80_0001, // positive, smallest payload
+        0xFF80_7FFF, // negative, large payload
+        0x7F80_1234, // positive, mid payload
+    ];
+
     /// The inverted gate: converts above instead of below. Must be caught
     /// wherever the scripted answer differs from `z`.
     fn wrong_conv(thresh: u32, z: u32, answer: u32) -> u32 {
@@ -143,14 +160,20 @@ mod x86 {
     /// Runs one restart-tail instance (5 args, tail `register`).
     fn run_restart(skip: RestartFn, seed: u32) -> (u32, u32) {
         let mut rng = Rng(seed);
-        rt::set_callee(1, conv_stub as usize as u32);
-        rt::set_callee(2, reg_stub as usize as u32);
+        rt::set_callee(1, conv_stub as *const () as u32);
+        rt::set_callee(2, reg_stub as *const () as u32);
         let (mut cases, mut caught) = (0, 0);
         for thresh in thresholds(&mut rng) {
             let gate = AltitudeGate::new(thresh);
             for z in altitudes(&mut rng, thresh) {
                 let (x, y, w, extra) = (rng.u32(), rng.u32(), rng.u32(), rng.u32());
-                let answer = rng.u32();
+                // Every ninth case scripts a signalling NaN so the
+                // x87 quieting is pinned, not merely hoped for.
+                let answer = if cases % 9 == 8 {
+                    SNAN_ANSWERS[(cases / 9) as usize % SNAN_ANSWERS.len()]
+                } else {
+                    rng.u32()
+                };
                 plant_thresh(thresh);
                 CONV_LOG.lock().unwrap().clear();
                 TAIL_LOG.lock().unwrap().clear();
@@ -164,7 +187,7 @@ mod x86 {
                     if conv { vec![(x, y, CONV_MODE)] } else { vec![] },
                     "thresh={thresh:#x} z={z:#x}"
                 );
-                let want_point = [x, y, if conv { answer } else { z }];
+                let want_point = [x, y, if conv { quiet(answer) } else { z }];
                 assert_eq!(
                     *TAIL_LOG.lock().unwrap(),
                     [TailCall {
@@ -207,14 +230,20 @@ mod x86 {
     /// Runs the full-area tail instance (5 args, tail `clear` + zeros).
     fn run_clear6(seed: u32) -> (u32, u32) {
         let mut rng = Rng(seed);
-        rt::set_callee(1, conv_stub as usize as u32);
-        rt::set_callee(2, clear6_stub as usize as u32);
+        rt::set_callee(1, conv_stub as *const () as u32);
+        rt::set_callee(2, clear6_stub as *const () as u32);
         let (mut cases, mut caught) = (0, 0);
         for thresh in thresholds(&mut rng) {
             let gate = AltitudeGate::new(thresh);
             for z in altitudes(&mut rng, thresh) {
                 let (x, y, w, extra) = (rng.u32(), rng.u32(), rng.u32(), rng.u32());
-                let answer = rng.u32();
+                // Every ninth case scripts a signalling NaN so the
+                // x87 quieting is pinned, not merely hoped for.
+                let answer = if cases % 9 == 8 {
+                    SNAN_ANSWERS[(cases / 9) as usize % SNAN_ANSWERS.len()]
+                } else {
+                    rng.u32()
+                };
                 plant_thresh(thresh);
                 CONV_LOG.lock().unwrap().clear();
                 TAIL_LOG.lock().unwrap().clear();
@@ -228,7 +257,7 @@ mod x86 {
                     if conv { vec![(x, y, CONV_MODE)] } else { vec![] },
                     "thresh={thresh:#x} z={z:#x}"
                 );
-                let want_point = [x, y, if conv { answer } else { z }];
+                let want_point = [x, y, if conv { quiet(answer) } else { z }];
                 assert_eq!(
                     *TAIL_LOG.lock().unwrap(),
                     [TailCall {
@@ -270,14 +299,20 @@ mod x86 {
     /// Runs the flag-tail instance (4 args, tail `emit` with 0, 1, 0).
     fn run_cars(seed: u32) -> (u32, u32) {
         let mut rng = Rng(seed);
-        rt::set_callee(1, conv_stub as usize as u32);
-        rt::set_callee(2, tail4_stub as usize as u32);
+        rt::set_callee(1, conv_stub as *const () as u32);
+        rt::set_callee(2, tail4_stub as *const () as u32);
         let (mut cases, mut caught) = (0, 0);
         for thresh in thresholds(&mut rng) {
             let gate = AltitudeGate::new(thresh);
             for z in altitudes(&mut rng, thresh) {
                 let (x, y, w) = (rng.u32(), rng.u32(), rng.u32());
-                let answer = rng.u32();
+                // Every ninth case scripts a signalling NaN so the
+                // x87 quieting is pinned, not merely hoped for.
+                let answer = if cases % 9 == 8 {
+                    SNAN_ANSWERS[(cases / 9) as usize % SNAN_ANSWERS.len()]
+                } else {
+                    rng.u32()
+                };
                 plant_thresh(thresh);
                 CONV_LOG.lock().unwrap().clear();
                 TAIL_LOG.lock().unwrap().clear();
@@ -291,7 +326,7 @@ mod x86 {
                     if conv { vec![(x, y, CONV_MODE)] } else { vec![] },
                     "thresh={thresh:#x} z={z:#x}"
                 );
-                let want_point = [x, y, if conv { answer } else { z }];
+                let want_point = [x, y, if conv { quiet(answer) } else { z }];
                 assert_eq!(
                     *TAIL_LOG.lock().unwrap(),
                     [TailCall {
@@ -332,14 +367,20 @@ mod x86 {
     /// Runs one single-register instance (4 args, tail `register`).
     fn run_reg2(skip: QuadFn, seed: u32) -> (u32, u32) {
         let mut rng = Rng(seed);
-        rt::set_callee(1, conv_stub as usize as u32);
-        rt::set_callee(2, reg2_stub as usize as u32);
+        rt::set_callee(1, conv_stub as *const () as u32);
+        rt::set_callee(2, reg2_stub as *const () as u32);
         let (mut cases, mut caught) = (0, 0);
         for thresh in thresholds(&mut rng) {
             let gate = AltitudeGate::new(thresh);
             for z in altitudes(&mut rng, thresh) {
                 let (x, y, w) = (rng.u32(), rng.u32(), rng.u32());
-                let answer = rng.u32();
+                // Every ninth case scripts a signalling NaN so the
+                // x87 quieting is pinned, not merely hoped for.
+                let answer = if cases % 9 == 8 {
+                    SNAN_ANSWERS[(cases / 9) as usize % SNAN_ANSWERS.len()]
+                } else {
+                    rng.u32()
+                };
                 plant_thresh(thresh);
                 CONV_LOG.lock().unwrap().clear();
                 TAIL_LOG.lock().unwrap().clear();
@@ -353,7 +394,7 @@ mod x86 {
                     if conv { vec![(x, y, CONV_MODE)] } else { vec![] },
                     "thresh={thresh:#x} z={z:#x}"
                 );
-                let want_point = [x, y, if conv { answer } else { z }];
+                let want_point = [x, y, if conv { quiet(answer) } else { z }];
                 assert_eq!(
                     *TAIL_LOG.lock().unwrap(),
                     [TailCall {
@@ -395,15 +436,21 @@ mod x86 {
     /// The two stubs share one log, so the call order is compared too.
     fn run_objects(seed: u32) -> (u32, u32) {
         let mut rng = Rng(seed);
-        rt::set_callee(1, conv_stub as usize as u32);
-        rt::set_callee(2, reg2_stub as usize as u32);
-        rt::set_callee(3, tail4_stub as usize as u32);
+        rt::set_callee(1, conv_stub as *const () as u32);
+        rt::set_callee(2, reg2_stub as *const () as u32);
+        rt::set_callee(3, tail4_stub as *const () as u32);
         let (mut cases, mut caught) = (0, 0);
         for thresh in thresholds(&mut rng) {
             let gate = AltitudeGate::new(thresh);
             for z in altitudes(&mut rng, thresh) {
                 let (x, y, w) = (rng.u32(), rng.u32(), rng.u32());
-                let answer = rng.u32();
+                // Every ninth case scripts a signalling NaN so the
+                // x87 quieting is pinned, not merely hoped for.
+                let answer = if cases % 9 == 8 {
+                    SNAN_ANSWERS[(cases / 9) as usize % SNAN_ANSWERS.len()]
+                } else {
+                    rng.u32()
+                };
                 plant_thresh(thresh);
                 CONV_LOG.lock().unwrap().clear();
                 TAIL_LOG.lock().unwrap().clear();
@@ -417,7 +464,7 @@ mod x86 {
                     if conv { vec![(x, y, CONV_MODE)] } else { vec![] },
                     "thresh={thresh:#x} z={z:#x}"
                 );
-                let want_point = [x, y, if conv { answer } else { z }];
+                let want_point = [x, y, if conv { quiet(answer) } else { z }];
                 assert_eq!(
                     *TAIL_LOG.lock().unwrap(),
                     [

@@ -53,7 +53,7 @@ fn slot_for(file_va: u32) -> *mut u32 {
 /// As [`slot_for`].
 #[must_use]
 pub fn global<T>(file_va: u32) -> *mut T {
-    slot_for(file_va) as *mut T
+    slot_for(file_va).cast::<T>()
 }
 
 /// Plants the word the global at a file VA holds.
