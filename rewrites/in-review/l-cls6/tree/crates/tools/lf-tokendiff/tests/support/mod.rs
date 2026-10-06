@@ -4,6 +4,9 @@
 //! virtual log; the fakes implement the lifted traits from the same
 //! scripts, so each test compares the two call logs.
 
+// Shared across test binaries: each binary uses a subset.
+#![allow(dead_code)]
+
 use lf_core::Handle32;
 use lf_files_memory::tokenizer::{
     ForwardSlot, StreamEntry, StreamWorld, TokenFetch, TokenWorld,

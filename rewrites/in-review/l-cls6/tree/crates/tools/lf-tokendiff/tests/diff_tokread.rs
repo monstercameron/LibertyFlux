@@ -432,7 +432,7 @@ mod x86 {
             // Snapshot the lift state before the rewrite mutates the images.
             let pre = fx.lift();
             let got = unsafe {
-                fn_0066F7A0::rw_0066f7a0(fx.this(), buf.addr(), case.size, u32::from(case.delim), u32::from(case.skip))
+                fn_0066F7A0::rw_0066F7A0(fx.this(), buf.addr(), case.size, u32::from(case.delim), u32::from(case.skip))
             };
             let numbered = rt::take_numbered();
             let mut tok = pre.clone();
@@ -678,7 +678,7 @@ mod x86 {
         let mut caught = 0;
         let mut cases = 0;
         // (rewrite id, count): the five vector readers.
-        for &(which, n) in [(11u32, 2usize), (10, 3), (9, 4), (8, 3), (7, 4)] {
+        for (which, n) in [(11u32, 2usize), (10, 3), (9, 4), (8, 3), (7, 4)] {
             for trial in 0..40 {
                 let flag = if trial < U32_EDGE.len() {
                     U32_EDGE[trial]
@@ -712,9 +712,9 @@ mod x86 {
                 let mut fake = TokenFake::new();
                 fake.floats.extend(words.iter().copied());
                 let lift: Vec<u32> = match n {
-                    2 => tok.read_floats::<TokenFake, 2>(&mut fake, flag).iter().map(f32::to_bits).collect(),
-                    3 => tok.read_floats::<TokenFake, 3>(&mut fake, flag).iter().map(f32::to_bits).collect(),
-                    _ => tok.read_floats::<TokenFake, 4>(&mut fake, flag).iter().map(f32::to_bits).collect(),
+                    2 => tok.read_floats::<TokenFake, 2>(&mut fake, flag).map(f32::to_bits).to_vec(),
+                    3 => tok.read_floats::<TokenFake, 3>(&mut fake, flag).map(f32::to_bits).to_vec(),
+                    _ => tok.read_floats::<TokenFake, 4>(&mut fake, flag).map(f32::to_bits).to_vec(),
                 };
                 for (i, word) in lift.iter().enumerate() {
                     assert_eq!(out.r32(i * 4), *word, "vf{which} lane {i}");
@@ -738,9 +738,9 @@ mod x86 {
                 let mut fake2 = TokenFake::new();
                 fake2.floats.extend(words.iter().copied());
                 let rotated: Vec<u32> = match n {
-                    2 => wrong::floats_rotated::<TokenFake, 2>(&mut tok2, &mut fake2, flag).iter().map(f32::to_bits).collect(),
-                    3 => wrong::floats_rotated::<TokenFake, 3>(&mut tok2, &mut fake2, flag).iter().map(f32::to_bits).collect(),
-                    _ => wrong::floats_rotated::<TokenFake, 4>(&mut tok2, &mut fake2, flag).iter().map(f32::to_bits).collect(),
+                    2 => wrong::floats_rotated::<TokenFake, 2>(&mut tok2, &mut fake2, flag).map(f32::to_bits).to_vec(),
+                    3 => wrong::floats_rotated::<TokenFake, 3>(&mut tok2, &mut fake2, flag).map(f32::to_bits).to_vec(),
+                    _ => wrong::floats_rotated::<TokenFake, 4>(&mut tok2, &mut fake2, flag).map(f32::to_bits).to_vec(),
                 };
                 if rotated != lift {
                     caught += 1;

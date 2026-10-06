@@ -328,7 +328,11 @@ mod x86 {
             let mut fake = StreamFake::new();
             fake.resolve.push_back(entry.map(|i| fx.entry(i)));
             let lift = dev.is_active(&mut fake, delta);
-            assert_eq!(got, u32::from(lift), "entry {entry:?} flags {flags:#x}");
+            assert_eq!(
+                got,
+                if lift { 1 } else { 0xFFFF_FFFF },
+                "entry {entry:?} flags {flags:#x}"
+            );
             assert!(
                 got == 1 || got == 0xFFFF_FFFF,
                 "unexpected word {got:#x}"
@@ -421,7 +425,9 @@ mod x86 {
             run(&mut fx, &mut rng, Some(1), shifted, &mut caught);
         }
         for _ in 0..32 {
-            run(&mut fx, &mut rng, Some(rng.below(2) as usize), rng.u32(), &mut caught);
+            let idx = rng.below(2) as usize;
+            let shifted = rng.u32();
+            run(&mut fx, &mut rng, Some(idx), shifted, &mut caught);
         }
         assert!(caught > 0, "wrong quarter size never caught ({cases} cases)");
     }
@@ -631,7 +637,9 @@ mod x86 {
             run(&mut fx, &mut rng, Some(5), data, &mut caught);
         }
         for _ in 0..32 {
-            run(&mut fx, &mut rng, Some(rng.below(6) as usize), rng.u32(), &mut caught);
+            let idx = rng.below(6) as usize;
+            let data = rng.u32();
+            run(&mut fx, &mut rng, Some(idx), data, &mut caught);
         }
         assert!(caught > 0, "wrong data span never caught ({cases} cases)");
     }
@@ -645,6 +653,11 @@ mod x86 {
         let mut fx = Fixture::build(&mut rng, 1, 4);
         let obj0 = fx.plant_channel_obj();
         let obj1 = fx.plant_channel_obj();
+        // Every tested channel needs an object: the rewrite reads the
+        // vtable through it unchecked (the original faults on null too,
+        // so the null case is covered by host tests, not here).
+        let obj2 = fx.plant_channel_obj();
+        let obj3 = fx.plant_channel_obj();
         // Kinds of elements 0..4 select planted channels; element 3 has
         // no object (null row).
         let elem_kinds = [11u8, 200, 0, 77];
@@ -666,10 +679,11 @@ mod x86 {
             object: cookie(obj1),
             sink_arg: 0x5555_5555,
         };
+        tables.channels[0].object = cookie(obj3);
         tables.channels[77] = StreamChannel {
             cursor_lo: 0,
             cursor_hi: 0,
-            object: None,
+            object: cookie(obj2),
             sink_arg: 0xDEAD_BEEF,
         };
         fx.fill_tables(&tables);
@@ -722,11 +736,17 @@ mod x86 {
                 run(&mut fx, &mut rng, a0, close, 0, 0, &mut caught);
                 run(&mut fx, &mut rng, a0, close, 1, 0, &mut caught);
                 run(&mut fx, &mut rng, a0, close, 0xFFFF_FFFF, 0xFFFF_FFFF, &mut caught);
-                run(&mut fx, &mut rng, a0, close, rng.u32(), rng.u32(), &mut caught);
+                let r1 = rng.u32();
+                let r2 = rng.u32();
+                run(&mut fx, &mut rng, a0, close, r1, r2, &mut caught);
             }
         }
         for _ in 0..16 {
-            run(&mut fx, &mut rng, rng.below(4), rng.u32() & 1 != 0, rng.u32(), rng.u32(), &mut caught);
+            let a0 = rng.below(4);
+            let close = rng.u32() & 1 != 0;
+            let r1 = rng.u32();
+            let r2 = rng.u32();
+            run(&mut fx, &mut rng, a0, close, r1, r2, &mut caught);
         }
         assert!(caught > 0, "wrong post span never caught ({cases} cases)");
     }
