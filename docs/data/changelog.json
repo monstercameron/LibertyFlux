@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Lift: the user-interface clip class, 14 methods in portable Rust with their proof in the pipeline",
+    "commit": null,
+    "summary": "A seventh class family is lifted from its verified 32-bit rewrites into portable Rust with no unsafe code. The proof that each lifted method does what its verified rewrite does runs in the pipeline's 32-bit job.",
+    "changes": [
+      "crates/lf-input-frontend gains a module for the clip class that plays a short sequence on a screen element: its state, its sequence stepping, its text handling and its display-mode switch, 14 methods. Calls out of the class go through a trait, so the module builds for any target; 20 host tests run on every platform.",
+      "A new test crate, lf-uiclip-diff, compiles the 14 tracked verified rewrites as they are and runs each lifted method against its rewrite on the same generated inputs: the return value, every byte written and every outgoing call in order are compared, floats bit for bit. 14 cases pass on the 32-bit target, and for each method a deliberately wrong lift is caught. The crate builds on a 64-bit host, where its cases are compiled out.",
+      "Not lifted, and listed in the module's registry with what each needs: twelve methods that only forward to another object and the destructor (no behaviour of their own), one method that needs the layout of an object it points to, and the four methods of the replay progress bar, which need more of the surrounding state.",
+      "Two things the lane found while proving it: a float returned through the floating-point stack has a signalling not-a-number quieted on the way, which one rewrite's comment did not say and the lift reproduces as bits; and the class's entry table is reached through one pointer, not two.",
+      "The pipeline's 32-bit job now runs eight differential crates. Lifted methods with a proof in the pipeline: 155."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 109 files from lanes (238 unverified rewrites, 415 in review)",
     "commit": "ad68ef3453b592493d993edc4b5ba33e0616b1c0",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
