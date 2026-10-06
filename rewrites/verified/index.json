@@ -34632,6 +34632,24 @@
   "lane": "r-s514"
  },
  {
+  "address": "0x005EF2A0",
+  "name": "tls_batch_release",
+  "kind": "function",
+  "file": "functions/fn_005ef2a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
+  "address": "0x005EF300",
+  "name": "ui_elem_teardown",
+  "kind": "function",
+  "file": "functions/fn_005ef300.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
   "address": "0x005FBC60",
   "name": "rage::pgStreamableRef<rage::fragType>::~fragType>",
   "kind": "function",
@@ -37123,6 +37141,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s195"
+ },
+ {
+  "address": "0x00661360",
+  "name": "rage::snLeaveGamersFromRlineTask::vf2",
+  "kind": "function",
+  "file": "functions/fn_00661360.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b627"
  },
  {
   "address": "0x00661390",
@@ -53622,6 +53649,15 @@
   "lane": "r-b614"
  },
  {
+  "address": "0x009069A0",
+  "name": "BLIP_ARMOUR",
+  "kind": "function",
+  "file": "functions/fn_009069a0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b624"
+ },
+ {
   "address": "0x00906EF0",
   "name": "blip_polyline_render",
   "kind": "function",
@@ -58129,6 +58165,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b292"
+ },
+ {
+  "address": "0x00969E10",
+  "name": "sample_slot_scorer",
+  "kind": "function",
+  "file": "functions/fn_00969e10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b625"
  },
  {
   "address": "0x0096A470",
@@ -63099,6 +63144,15 @@
   "lane": "r-s513"
  },
  {
+  "address": "0x009BBAF0",
+  "name": "reset_input_dispatch",
+  "kind": "function",
+  "file": "functions/fn_009bbaf0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
+ },
+ {
   "address": "0x009BBB20",
   "name": "input_flag_is_set",
   "kind": "function",
@@ -63112,6 +63166,24 @@
   "name": "clear_input_slot_flags",
   "kind": "function",
   "file": "functions/fn_009bbb40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
+ },
+ {
+  "address": "0x009BBB60",
+  "name": "find_free_input_slot",
+  "kind": "function",
+  "file": "functions/fn_009bbb60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
+ },
+ {
+  "address": "0x009BBB80",
+  "name": "write_input_slot",
+  "kind": "function",
+  "file": "functions/fn_009bbb80.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s513"
@@ -123394,6 +123466,15 @@
   "name": "ped_create_gun_task",
   "kind": "function",
   "file": "functions/fn_00d09170.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b619"
+ },
+ {
+  "address": "0x00D0BBD0",
+  "name": "DRAW_GUN",
+  "kind": "function",
+  "file": "functions/fn_00d0bbd0.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b619"
