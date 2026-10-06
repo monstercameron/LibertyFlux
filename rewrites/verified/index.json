@@ -130815,6 +130815,69 @@
   "lane": "r-s518"
  },
  {
+  "address": "0x00DCF1B0",
+  "name": "csv_next_char",
+  "kind": "function",
+  "file": "functions/fn_00dcf1b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
+ },
+ {
+  "address": "0x00DCF250",
+  "name": "csv_read_token",
+  "kind": "function",
+  "file": "functions/fn_00dcf250.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
+ },
+ {
+  "address": "0x00DCF3A0",
+  "name": "csv_read_quoted_token",
+  "kind": "function",
+  "file": "functions/fn_00dcf3a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
+ },
+ {
+  "address": "0x00DCF490",
+  "name": "csv_reset",
+  "kind": "function",
+  "file": "functions/fn_00dcf490.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
+ },
+ {
+  "address": "0x00DCF4E0",
+  "name": "csv_skip_to_nul",
+  "kind": "function",
+  "file": "functions/fn_00dcf4e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
+ },
+ {
+  "address": "0x00DCF5B0",
+  "name": "csv_skip_records",
+  "kind": "function",
+  "file": "functions/fn_00dcf5b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
+ },
+ {
+  "address": "0x00DCF8E0",
+  "name": "rb_tree_contains",
+  "kind": "function",
+  "file": "functions/fn_00dcf8e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
+ },
+ {
   "address": "0x00DCF950",
   "name": "rb_tree_erase",
   "kind": "function",
@@ -130831,6 +130894,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b187"
+ },
+ {
+  "address": "0x00DCFEB0",
+  "name": "ui_table_ctor",
+  "kind": "function",
+  "file": "functions/fn_00dcfeb0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
  },
  {
   "address": "0x00DCFFC0",
