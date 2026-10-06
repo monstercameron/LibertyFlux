@@ -352,9 +352,9 @@
   "reason": "other"
  },
  {
-  "address": "0x006443A0",
-  "name": "rage::ptxDomainVortex::vf5",
-  "file": "fn_006443a0.rs",
+  "address": "0x00644A00",
+  "name": "rage::ptxDomainSphere::vf5",
+  "file": "fn_00644a00.rs",
   "lane": "r-b638",
   "outcome": "not_reached",
   "reason": ""
@@ -406,6 +406,70 @@
   "lane": "r-s438",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x008BE0E0",
+  "name": "input_mode_set",
+  "file": "fn_008be0e0.rs",
+  "lane": "r-s520",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x008BE280",
+  "name": "state_block_copy_e80_from_128c",
+  "file": "fn_008be280.rs",
+  "lane": "r-s520",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x008BE310",
+  "name": "state_block_copy_e80_from_12c4",
+  "file": "fn_008be310.rs",
+  "lane": "r-s520",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x008BEB30",
+  "name": "input_mode_flag_update",
+  "file": "fn_008beb30.rs",
+  "lane": "r-s520",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x008BF300",
+  "name": "input_state_changed_check",
+  "file": "fn_008bf300.rs",
+  "lane": "r-s520",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x008BF490",
+  "name": "ui_element_init_core",
+  "file": "fn_008bf490.rs",
+  "lane": "r-s520",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x008BF5F0",
+  "name": "state_block_copy_128c_from_e80",
+  "file": "fn_008bf5f0.rs",
+  "lane": "r-s520",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x008BF680",
+  "name": "state_block_copy_12c4_from_128c",
+  "file": "fn_008bf680.rs",
+  "lane": "r-s520",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x008CA880",
@@ -494,30 +558,6 @@
   "lane": "r-b312",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00A00A80",
-  "name": null,
-  "file": "fn_00a00a80.rs",
-  "lane": "a-Q43",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00A00AD0",
-  "name": null,
-  "file": "fn_00a00ad0.rs",
-  "lane": "a-Q43",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00A00FD0",
-  "name": null,
-  "file": "fn_00a00fd0.rs",
-  "lane": "a-Q43",
-  "outcome": "not yet run",
-  "reason": null
  },
  {
   "address": "0x00A01050",
@@ -904,14 +944,6 @@
   "reason": null
  },
  {
-  "address": "0x00B9ACE0",
-  "name": null,
-  "file": "fn_00b9ace0.rs",
-  "lane": "a-Q43",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00B9E210",
   "name": null,
   "file": "fn_00b9e210.rs",
@@ -1008,14 +1040,6 @@
   "reason": null
  },
  {
-  "address": "0x00BA22C0",
-  "name": null,
-  "file": "fn_00ba22c0.rs",
-  "lane": "a-Q43",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00BA2930",
   "name": null,
   "file": "fn_00ba2930.rs",
@@ -1052,14 +1076,6 @@
   "name": null,
   "file": "fn_00bba8e0.rs",
   "lane": "r-n88",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BBAD70",
-  "name": null,
-  "file": "fn_00bbad70.rs",
-  "lane": "a-Q43",
   "outcome": "not yet run",
   "reason": null
  },
@@ -1144,14 +1160,6 @@
   "reason": null
  },
  {
-  "address": "0x00BD7F90",
-  "name": null,
-  "file": "fn_00bd7f90.rs",
-  "lane": "a-Q43",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00BD8130",
   "name": null,
   "file": "fn_00bd8130.rs",
@@ -1172,14 +1180,6 @@
   "name": null,
   "file": "fn_00bd88c0.rs",
   "lane": "r-n88",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BD9090",
-  "name": null,
-  "file": "fn_00bd9090.rs",
-  "lane": "a-Q43",
   "outcome": "not yet run",
   "reason": null
  },
@@ -1780,22 +1780,6 @@
   "name": null,
   "file": "fn_00dde260.rs",
   "lane": "r-s155",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00DFD3B7",
-  "name": null,
-  "file": "fn_00dfd3b7.rs",
-  "lane": "a-Q43",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00DFD3D5",
-  "name": null,
-  "file": "fn_00dfd3d5.rs",
-  "lane": "a-Q43",
   "outcome": "not yet run",
   "reason": null
  },
