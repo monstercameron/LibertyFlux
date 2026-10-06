@@ -34488,6 +34488,60 @@
   "lane": "r-b591"
  },
  {
+  "address": "0x005EEC50",
+  "name": "input_ui_factory_10",
+  "kind": "function",
+  "file": "functions/fn_005eec50.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
+  "address": "0x005EECB0",
+  "name": "input_ui_factory_0c",
+  "kind": "function",
+  "file": "functions/fn_005eecb0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
+  "address": "0x005EED10",
+  "name": "input_ui_create_5arg",
+  "kind": "function",
+  "file": "functions/fn_005eed10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
+  "address": "0x005EEDA0",
+  "name": "input_ui_create_6arg",
+  "kind": "function",
+  "file": "functions/fn_005eeda0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
+  "address": "0x005EEE30",
+  "name": "input_ui_create_inline",
+  "kind": "function",
+  "file": "functions/fn_005eee30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
+  "address": "0x005EEEF0",
+  "name": "input_ui_create_tex",
+  "kind": "function",
+  "file": "functions/fn_005eeef0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
   "address": "0x005EEF70",
   "name": "T_CB_Generic_1Arg<void(*)(float), float>::vf1",
   "kind": "function",
@@ -63040,6 +63094,15 @@
   "name": "clear_input_state_words",
   "kind": "function",
   "file": "functions/fn_009bba00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
+ },
+ {
+  "address": "0x009BBA40",
+  "name": "init_input_dispatch_pair",
+  "kind": "function",
+  "file": "functions/fn_009bba40.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s513"

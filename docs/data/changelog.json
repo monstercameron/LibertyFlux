@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Devlog: What the checker still could not do, and a candidate that can",
+    "title": "Rewrites: 7 more functions pass the checker (16579 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "7 rewrites added under rewrites/verified: 0 script native handlers and 7 other functions.",
+      "The tree now holds 16579 rewrites, 16560 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Devlog: What the checker still could not do, and a candidate that can",
+    "commit": "c132b3582924f7da0ccdefb6b20f7ed116568a73",
     "summary": "Findings from the k-v7 lane.",
     "changes": [
       "New devlog entry: What the checker still could not do, and a candidate that can.",
