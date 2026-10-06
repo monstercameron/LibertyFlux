@@ -9,6 +9,33 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Production batch: three fire-task dispatches verified, plus a driver output trap</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b643"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b643</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>Three neighbouring fire-task dispatch routines (about one thousand bytes each) were rewritten in Rust and verified against the originals with twelve hundred trials each, including fault-parity and wrong-version runs. The batch also exposed a tooling trap worth knowing: the checker driver writes its run summary to results.json next to itself, which silently overwrote this lane's deliverable of the same name twice.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Three neighbouring fire-task dispatch routines (about one thousand bytes each) were rewritten in Rust and verified against the originals with twelve hundred trials each, including fault-parity and wrong-version runs. The batch also exposed a tooling trap worth knowing: the checker driver writes its run summary to &lt;code&gt;results.json&lt;/code&gt; next to itself, which silently overwrote this lane's deliverable of the same name twice.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite three medium-sized routines from the same task-dispatch module and prove each rewrite behaves identically to the original, with contracts that script every outgoing call (including calls into the encrypted first megabyte of code and calls through object function tables) and a deliberately wrong version per routine that must fail.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All three routines verified on the stock checker with no deferrals: one over four staged contracts (including fault-parity trials for a re-initialisation path), one over three stages, one in a single contract. Every wrong version failed on exactly the word it changed.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The driver summary clobber is real and repeatable: each run replaced the lane's results file with run statistics. Both losses were reconstructed from the per-contract verdict files. Redirecting driver output to a subdirectory avoids it.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The float gates in this family are equality tests, not NaN tests. A compare-against-zero followed by a parity-tested flag check branches exactly when the value is not positive zero (any nonzero value or NaN takes the same side). A direct equality comparison in the rewrite matches bit-exactly.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Direct calls into the encrypted region intercept and script normally, confirming earlier lanes; no routine here needed deferring for that reason.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Consider renaming the driver's summary output so it cannot collide with lane deliverables, or briefing lanes to redirect driver output. Until then, a running lane's results file should not be read as authoritative mid-run.&lt;/li&gt;
+&lt;li&gt;Lanes modelling flag-based float branches should work out the parity logic from the flag definitions rather than assuming a NaN test; the wrong first guess cost this lane one probe cycle.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run any checker driver copy from a folder containing a file named &lt;code&gt;results.json&lt;/code&gt; and observe it replaced after the run. For the float gate, compare the taken side across positive zero, negative zero, nonzero values, and NaN inputs against a plain equality comparison.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Time perception without the clock: the lane estimated forty minutes more had passed than the machine showed, nearly stopping an hour early. Two stack-map computations mixed decimal and hexadecimal offsets and were corrected from snapshot diffs. One diagnostics script initially ignored a register-skip setting and reported phantom differences until fixed.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>A wrong rewrite passed, and the checker could not see it</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s522"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s522</id>
@@ -1138,26 +1165,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Declare one multi-word globals range, run a rewrite that writes the range's expected values shifted by one word with nothing interleaved, and observe a pass. Then split the range into one-word ranges and observe the failure with exact addresses.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The passing-but-wrong rewrite cost two debug cycles: the value-only log made the misplaced block invisible, and only trials where unrelated writes interleaved between the true and wrong addresses failed, which first looked like a different bug. A second wrong assumption (which helper answer a store used) hid behind the same weak comparison until the ranges were split.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Two coverage traps in a 3,394-byte ped-task function</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b537"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b537</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>A single-function production lane verified one of the largest functions attempted so far, a ped task refresh routine of about eight hundred instructions and ninety call sites, in twelve hundred trials with zero failures. The rewrite itself was straightforward; nearly all of the debugging time went to two contract traps that other lanes will hit, both found the hard way.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A single-function production lane verified one of the largest functions attempted so far, a ped task refresh routine of about eight hundred instructions and ninety call sites, in twelve hundred trials with zero failures. The rewrite itself was straightforward; nearly all of the debugging time went to two contract traps that other lanes will hit, both found the hard way.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite the function in Rust and prove the rewrite behaves identically to the original with the version five checker, covering every outgoing call and every reachable branch.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; First, the register comparison list is opt-out for method calls, not opt-in. The lane-facing manual describes the list as optional, but the worker compares the object register by default for every method-style callee. Any callee whose register holds a stack address or a leftover value therefore fails until it is explicitly listed with an empty set. Four callees in this function needed that treatment.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Second, fabrication cycles with the same length are phase-locked. Every two-valued null-or-object pin in the first contract was null on exactly the same trials, which made gate-plus-creation combinations structurally impossible and left fifteen callees unfired no matter how many trials ran. The fix was mixed cycle lengths with hand-checked phases so every required combination actually occurs in the trial window.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A supporting check also proved its worth: a stack-depth dataflow over the whole function, using each callee's cleanup behavior from its own epilogue, closed with zero conflicts at every control-flow join, which validated all thirty-five call signatures at once before the first run.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Lanes should explicitly decide the register list for every method-style callee, including an empty list with a reason, rather than leaving it out. Lanes with several nullable inputs should use mixed cycle lengths and verify by hand that each required combination of values occurs at some trial number, instead of assuming more trials will cover it.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the lane's contract generator and checker contract for the batch function with twelve hundred trials, then repeat with a second seed; both pass with zero failures and full callee coverage. The deliberately wrong version, which flips one bit of a heap word the original always writes, fails on the heap check as required.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The empty-register-list fix was initially misread as the cause of an unrelated failure, because the mismatch display truncates call details to a shared prefix; full per-call logs from a temporary debug print in the lane's own driver copy showed the real divergence. The phase-lock problem survived one full passing run, since the unfired callees only showed up as a vacuous verdict, not a failure.&lt;/p&gt;</content>
   </entry>
 </feed>
