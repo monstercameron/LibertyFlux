@@ -1,35 +1,47 @@
-// original: 0x00962540 bucket_reclaim
-/// Reclaim a bucket from the 12-entry allocatorbuddy table.
+// original: 0x00962540 stream_slot_acquire
+/// Acquire a stream slot by scanning the slot-state table.
 ///
-/// Hashes the seed byte at 0x120F298 modulo the bucket count at 0x11F6FFB,
-/// walks forward while the state table at 0x11F6FF0 says the bucket is
-/// busy, then for buckets below 12 clears the winning bucket's state and
-/// its target byte through the pointer table at 0x11F6F7C. Returns the
-/// pointer on the reclaim path, the last quotient otherwise.
-export!(cdecl, rw_00962540() -> u32 {
+/// Takes no arguments. Computes `(seed + 1) % slots` from the seed byte at
+/// `0x120F298` and the slot count at `0x11F6FFB` (both unsigned; the count
+/// is never zero in the proof, as in the game), then scans forward modulo
+/// the count while the state byte at `0x11F6FF0` is neither 1 nor 2. Note
+/// the count byte aliases state index 11, so a scan can only stop there
+/// when the count itself is 1 or 2 (and then the index cannot reach 11). An
+/// index of `0xB` or more (unsigned) tail-calls the fatal-error helper;
+/// otherwise the pointer at `0x11F6F7C[index]` has its first byte cleared,
+/// the state byte is cleared, and the pointer is returned. The fatal path is
+/// taken on half the proof trials; its call registers are uncompared.
+lf_checker_rt::export!(cdecl, rw_00962540() -> u32 {
     unsafe {
-        let seed = *global::<u8>(0x120F298) as u32;
-        let count = *global::<u8>(0x11F6FFB) as u32;
-        let state = relocated(0x11F6FF0) as *const u8;
-        let mut quot = (seed + 1) / count;
-        let mut idx = (seed + 1) % count;
-        loop {
-            let s = *state.add(idx as usize);
-            if s == 2 || s == 1 {
-                break;
-            }
-            quot = (idx + 1) / count;
-            idx = (idx + 1) % count;
-            if *state.add(idx as usize) == 2 {
-                break;
+        const SEED: u32 = 0x120f298;
+        const COUNT: u32 = 0x11f6ffb;
+        const STATE: u32 = 0x11f6ff0;
+        const SLOTS: u32 = 0x11f6f7c;
+        const FATAL_FROM: u32 = 0x0b;
+        let a = (lf_checker_rt::global::<u8>(SEED) as *const u8).read() as u32 + 1;
+        let c = (lf_checker_rt::global::<u8>(COUNT) as *const u8).read() as u32;
+        let mut idx = a % c;
+        let state = |i: u32| {
+            (lf_checker_rt::relocated(STATE).wrapping_add(i) as *const u8).read()
+        };
+        if state(idx) != 2 {
+            loop {
+                if state(idx) == 1 {
+                    break;
+                }
+                idx = (idx + 1) % c;
+                if state(idx) == 2 {
+                    break;
+                }
             }
         }
-        if idx >= 0xB {
-            return quot;
+        if idx >= FATAL_FROM {
+            return lf_checker_rt::callee_cdecl!(1, u32,);
         }
-        let target = *((relocated(0x11F6F7C) as *const u32).add(idx as usize));
-        *((relocated(0x11F6FF0) as *mut u8).add(idx as usize)) = 0;
-        *(target as *mut u8) = 0;
-        target
+        let e = (lf_checker_rt::relocated(SLOTS).wrapping_add(idx * 4) as *const u32)
+            .read_unaligned();
+        (lf_checker_rt::relocated(STATE).wrapping_add(idx) as *mut u8).write(0);
+        (e as *mut u8).write(0);
+        e
     }
 });

@@ -1,38 +1,53 @@
-// original: 0x00962690 slot_array_clear
-/// Clear the 1500-entry slot array at 0x11F7110 and the mark bytes.
+// original: 0x00962690 object_table_teardown
+/// Tear down the 0x5DC-entry object table at `0x11F7110`.
 ///
-/// For each 8-byte slot, clears a trailer block selected like
-/// `rw_00962180` (a clear flag byte clears the slot pointer's own trailer,
-/// a set flag clears the trailer of the block its head word points at),
-/// then clears the slot itself. Also clears the 1500 mark bytes at
-/// 0x11F6958. Returns the last slot index (0x5DB).
-export!(cdecl, rw_00962690() -> u32 {
+/// Each 8-byte entry holds a pointer and a flag byte. Entries whose flag is
+/// set resolve one indirection further: when the doubly-resolved target is
+/// non-null its words at `+0xA4`/`+0xA8`/`+0xAC` reset to (`-1`, `0`, `0`);
+/// entries with a clear flag reset the singly-resolved target the same way
+/// whenever the pointer is non-null. Every entry is then cleared, as is its
+/// byte in the flag array at `0x11F6958`. The defensive branch for an index
+/// at or above `0x5DC` (unsigned) is unreachable: the signed 16-bit counter
+/// never reaches the bound, so the rewrite traps there. Returns `0x5DC - 1`.
+lf_checker_rt::export!(cdecl, rw_00962690() -> u32 {
     unsafe {
-        const TABLE: u32 = 0x11F7110;
-        const MARKS: u32 = 0x11F6958;
-        const COUNT: u32 = 0x5DC;
-        for idx in 0..COUNT {
-            let row = (relocated(TABLE) as *mut u8).add((idx * 8) as usize);
-            let flag = *(row.add(4));
-            let ptr = *(row as *const u32);
-            if flag == 0 {
+        const TAB: u32 = 0x11f7110;
+        const FLAGS: u32 = 0x11f6958;
+        const COUNT: u32 = 0x5dc;
+        let mut dx = 0u32;
+        let mut eax = 0u32;
+        loop {
+            eax = (dx & 0xffff) as u16 as i16 as i32 as u32;
+            if eax >= COUNT {
+                core::hint::unreachable_unchecked()
+            }
+            let base = lf_checker_rt::relocated(TAB).wrapping_add(eax.wrapping_mul(8));
+            let bl = (base.wrapping_add(4) as *const u8).read();
+            let ptr = (base as *const u32).read_unaligned();
+            let mut target = 0u32;
+            if bl != 0 {
                 if ptr != 0 {
-                    *((ptr as *mut u32).add(0xAC / 4)) = 0;
-                    *((ptr as *mut u32).add(0xA8 / 4)) = 0;
-                    *((ptr as *mut u32).add(0xA4 / 4)) = 0xFFFFFFFF;
+                    let q = (ptr as *const u32).read_unaligned();
+                    if q != 0 {
+                        target = q;
+                    }
                 }
             } else if ptr != 0 {
-                let head = *(ptr as *const u32);
-                if head != 0 {
-                    *((head as *mut u32).add(0xAC / 4)) = 0;
-                    *((head as *mut u32).add(0xA8 / 4)) = 0;
-                    *((head as *mut u32).add(0xA4 / 4)) = 0xFFFFFFFF;
-                }
+                target = ptr;
             }
-            *(row as *mut u32) = 0;
-            *(row.add(4)) = 0;
-            *((relocated(MARKS) as *mut u8).add(idx as usize)) = 0;
+            if target != 0 {
+                (target.wrapping_add(0xac) as *mut u32).write_unaligned(0);
+                (target.wrapping_add(0xa8) as *mut u32).write_unaligned(0);
+                (target.wrapping_add(0xa4) as *mut u32).write_unaligned(0xffff_ffff);
+            }
+            (base as *mut u32).write_unaligned(0);
+            (base.wrapping_add(4) as *mut u8).write(0);
+            (lf_checker_rt::relocated(FLAGS).wrapping_add(eax) as *mut u8).write(0);
+            dx += 1;
+            if !(((dx & 0xffff) as u16 as i16) < (COUNT as u16 as i16)) {
+                break;
+            }
         }
-        COUNT - 1
+        eax
     }
 });

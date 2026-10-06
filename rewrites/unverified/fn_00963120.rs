@@ -1,31 +1,35 @@
-// original: 0x00963120 record_table_find
-/// Find a record in the 0x400-entry table at 0x120F2B8.
+// original: 0x00963120 pool_entry_find_mark
+/// Find a pool-table entry by key and address sum, then mark it.
 ///
-/// Scans the 0x14-byte records for the first one whose flag word (+0) is
-/// nonzero, whose key word (+8) equals `key` (the first argument) and whose
-/// sum word (+12) equals `a.wrapping_add(b)` (the other two added). Marks
-/// the found record's tag byte (+0x10) with 1.
-/// Returns five times the record index, or 5 * 0x3FF when no record matches.
-export!(cdecl, rw_00963120(key: u32, a: u32, b: u32) -> u32 {
+/// Arguments are `(key, base, add)`. Scans the `0x400` 20-byte entries at
+/// `0x120F2B8` for the first whose pointer is non-null, whose word at `+8`
+/// equals `key` and whose word at `+0xC` equals `base + add` (wrapping);
+/// the hit gets its flag byte at `+0x10` set to 1. Returns the hit index
+/// times 5, or `0x13FB` (`0x3FF * 5`) when nothing matches.
+lf_checker_rt::export!(cdecl, rw_00963120(key: u32, base: u32, add: u32) -> u32 {
     unsafe {
-        const BASE: u32 = 0x120F2B8;
-        const COUNT: u32 = 0x400;
-        const NOT_FOUND: u32 = 0x3FF * 5;
-        let want_sum = a.wrapping_add(b);
-        let mut idx = 0u32;
+        const TAB: u32 = 0x120f2b8;
+        const ENTRIES: u32 = 0x400;
+        const STRIDE: u32 = 20;
+        let target = base.wrapping_add(add);
+        let mut dx = 0u32;
+        let mut eax = 0u32;
         loop {
-            let row = (relocated(BASE) as *const u8).add((idx * 0x14) as usize);
-            let flag = *(row as *const u32);
-            let f1 = *(row.add(8) as *const u32);
-            let f2 = *(row.add(12) as *const u32);
-            if flag != 0 && f1 == key && f2 == want_sum {
-                *(row.add(0x10) as *mut u8) = 1;
-                return idx * 5;
+            let idx = (dx & 0xffff) as u16 as i16 as i32 as u32;
+            eax = idx.wrapping_mul(5);
+            let e = lf_checker_rt::relocated(TAB).wrapping_add(eax.wrapping_mul(4));
+            if (e as *const u32).read_unaligned() != 0
+                && (e.wrapping_add(8) as *const u32).read_unaligned() == key
+                && (e.wrapping_add(0x0c) as *const u32).read_unaligned() == target
+            {
+                (e.wrapping_add(0x10) as *mut u8).write(1);
+                return eax;
             }
-            idx += 1;
-            if idx >= COUNT {
-                return NOT_FOUND;
+            dx += 1;
+            if !(((dx & 0xffff) as u16 as i16) < (ENTRIES as u16 as i16)) {
+                break;
             }
         }
+        eax
     }
 });

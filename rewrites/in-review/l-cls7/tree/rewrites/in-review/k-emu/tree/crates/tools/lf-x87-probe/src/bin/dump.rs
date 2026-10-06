@@ -201,6 +201,23 @@ fn run_x86() -> Vec<Rec> {
         );
     }
 
+    // Group 6 exact square roots (via the group 2 probe at full precision).
+    for (tag, a) in [
+        ("sqrt_4", 0x4010_0000_0000_0000u64),
+        ("sqrt_0", 0x0000_0000_0000_0000u64),
+        ("sqrt_inf", 0x7FF0_0000_0000_0000u64),
+    ] {
+        let o = x87::g2_fsqrt(PC_64, a);
+        push(
+            &mut r,
+            6,
+            format!("g6.{tag}"),
+            hex64(a),
+            hex_f80(o.mant, o.exp),
+            format!("sw={}", hex16(o.status)),
+        );
+    }
+
     // Group 3, x87 integer stores.
     let rcs: &[(&str, u16)] = &[
         ("near", RC_NEAR),

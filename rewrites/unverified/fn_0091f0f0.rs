@@ -242,7 +242,7 @@ lf_checker_rt::export!(cdecl, rw_0091F0F0() -> u32 {
 
         lf_checker_rt::global::<u32>(STATE_WORD).write(0xFFFF_FFFFu32);
         lf_checker_rt::global::<u8>(READY_BYTE).write(0);
-        lf_checker_rt::callee_cdecl!(C_RESET, u32);
+        lf_checker_rt::callee_cdecl!(C_RESET, u32,);
         let handle = lf_checker_rt::callee_cdecl!(
             C_HANDLE, u32, lf_checker_rt::relocated(STR_TABLE)
         );
@@ -281,9 +281,9 @@ lf_checker_rt::export!(cdecl, rw_0091F0F0() -> u32 {
 
         lf_checker_rt::callee_cdecl!(C_FINALIZE, u32, 0xFFFF_FFFFu32);
         lf_checker_rt::global::<u32>(STATE_PULSE).write(0);
-        lf_checker_rt::callee_cdecl!(C_PULSE, u32);
+        lf_checker_rt::callee_cdecl!(C_PULSE, u32,);
         lf_checker_rt::global::<u32>(STATE_PULSE).write(1);
-        lf_checker_rt::callee_cdecl!(C_PULSE, u32);
+        lf_checker_rt::callee_cdecl!(C_PULSE, u32,);
         lf_checker_rt::global::<u32>(STATE_PULSE).write(0xFFFF_FFFFu32);
         let final_handle = lf_checker_rt::callee_cdecl!(
             C_HANDLE, u32, lf_checker_rt::relocated(STR_FINAL)
@@ -296,6 +296,6 @@ lf_checker_rt::export!(cdecl, rw_0091F0F0() -> u32 {
         lf_checker_rt::global::<u64>(ZERO_QW1).write(0);
         // Tail call: the stub returns straight to the trampoline, so this
         // must stay the last operation of the function.
-        lf_checker_rt::callee_cdecl!(C_TAIL, u32)
+        lf_checker_rt::callee_cdecl!(C_TAIL, u32,)
     }
 });
