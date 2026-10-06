@@ -21,9 +21,10 @@
 /// object when the image flag byte is set, else against nothing. When the
 /// triple's middle word is non-null and the member slot is at or above the
 /// triple's first word (UNSIGNED comparison), read the middle word's object:
-/// call its virtual slot `+0x28`; when that answers the join magic call the
-/// member slot `+0x1c` with (`a0`, 0), else call slot `+0x28` once more and
-/// call `+0x1c` only when it answers the rejoin magic.
+/// call its virtual slot `+0x28`; when that answers the join magic (an image
+/// address, compared relocated) call the member slot `+0x1c` with (`a0`, 0),
+/// else call slot `+0x28` once more and call `+0x1c` only when it answers the
+/// rejoin magic.
 ///
 /// Tail: when the state flag is 1 and the context's slot at `+0x898` holds
 /// an object linked back to the flag, call the function at its virtual slot
@@ -114,16 +115,20 @@ lf_checker_rt::export!(thiscall, rw_00660C30(this: u32, a0: u32, a1: u32) -> u32
                     if obj == 0 || el < first {
                         continue;
                     }
+                    // The original compares against relocated image addresses
+                    // (both immediates carry relocation entries), not file values.
+                    let want_join = lf_checker_rt::relocated(MAGIC_JOIN);
+                    let want_rejoin = lf_checker_rt::relocated(MAGIC_REJOIN);
                     let vt = rd32(obj);
                     let get: extern "thiscall" fn(u32) -> u32 =
                         core::mem::transmute(rd32(vt.wrapping_add(GET_MAGIC_SLOT)) as usize);
-                    let go = if get(obj) == MAGIC_JOIN {
+                    let go = if get(obj) == want_join {
                         true
                     } else {
                         let vt2 = rd32(obj);
                         let get2: extern "thiscall" fn(u32) -> u32 =
                             core::mem::transmute(rd32(vt2.wrapping_add(GET_MAGIC_SLOT)) as usize);
-                        get2(obj) == MAGIC_REJOIN
+                        get2(obj) == want_rejoin
                     };
                     if go {
                         let vt3 = rd32(obj);

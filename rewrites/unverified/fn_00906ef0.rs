@@ -390,6 +390,7 @@ lf_checker_rt::export!(
                 let y0c = add(sub(sy, slot), f2);
                 vbuf[20] = (if cl != 0 { w60 } else { v20 }).to_bits();
                 vbuf[17] = y0c.to_bits();
+                vbuf[13] = y0c.to_bits();
                 // Vertex loop A: six vertices through the transform.
                 let estruct = [
                     0u32,
@@ -472,7 +473,7 @@ lf_checker_rt::export!(
                             M_DRAW,
                             u32,
                             wslot(0x14c + es, &out8, &vout),
-                            wslot(0x138 + es, &out8, &vout),
+                            wslot(0x150 + es, &out8, &vout),
                             0,
                             0,
                             0,
@@ -560,7 +561,7 @@ lf_checker_rt::export!(
                             M_DRAW,
                             u32,
                             wslot(0x14c + es, &out8, &vout),
-                            wslot(0x138 + es, &out8, &vout),
+                            wslot(0x150 + es, &out8, &vout),
                             0,
                             0,
                             0,
