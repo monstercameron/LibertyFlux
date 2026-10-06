@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-06",
-  "updated_at": "2026-10-06 05:29",
+  "updated_at": "2026-10-06 05:35",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -129,14 +129,14 @@
     },
     {
       "label": "Methods lifted to portable Rust with their proof run by the pipeline",
-      "value": 208,
+      "value": 226,
       "unit": "methods",
-      "source": "rows marked proven in the registries of 9 lifted modules (crates/*/src/*/registry.rs); each is tested against its verified rewrite on every push"
+      "source": "rows marked proven in the registries of 10 lifted modules (crates/*/src/*/registry.rs); each is tested against its verified rewrite on every push"
     }
   ],
   "activity": {
-    "lanes_running": 12,
-    "lanes_finished": 1518,
+    "lanes_running": 11,
+    "lanes_finished": 1519,
     "lanes_incomplete": 150,
     "devlog_entries": 523
   },
@@ -4470,7 +4470,7 @@
     "large_functions_verified": 656013
   },
   "lifted": {
-    "methods": 208,
-    "modules": 9
+    "methods": 226,
+    "modules": 10
   }
 }
