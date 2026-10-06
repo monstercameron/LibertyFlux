@@ -34506,10 +34506,28 @@
   "lane": "r-s514"
  },
  {
+  "address": "0x005EEFD0",
+  "name": "cb_5arg_ctor",
+  "kind": "function",
+  "file": "functions/fn_005eefd0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
   "address": "0x005EF070",
   "name": "T_CB_Generic_6Args<void(*)(HtmlRenderState&, float, float, float, float, unsigned int), HtmlRenderState, float, float, float, float, int>::vf1",
   "kind": "function",
   "file": "functions/fn_005ef070.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
+  "address": "0x005EF0C0",
+  "name": "cb_6arg_ctor",
+  "kind": "function",
+  "file": "functions/fn_005ef0c0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s514"
@@ -34528,6 +34546,33 @@
   "name": "T_CB_Generic_4Args<void(*)(rage::grcTexture*, CRect&, CRect&, rage::Color32&), rage::grcTexture*, CRect, CRect, rage::Color32>::vf1",
   "kind": "function",
   "file": "functions/fn_005ef180.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
+  "address": "0x005EF1A0",
+  "name": "cb_tex_ctor",
+  "kind": "function",
+  "file": "functions/fn_005ef1a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
+  "address": "0x005EF250",
+  "name": "tls_node_link",
+  "kind": "function",
+  "file": "functions/fn_005ef250.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
+  "address": "0x005EF280",
+  "name": "tls_node_unlink",
+  "kind": "function",
+  "file": "functions/fn_005ef280.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s514"
@@ -51687,6 +51732,15 @@
   "lane": "r-s512"
  },
  {
+  "address": "0x008E5C80",
+  "name": "menu_music_state_machine",
+  "kind": "function",
+  "file": "functions/fn_008e5c80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q35"
+ },
+ {
   "address": "0x008E6200",
   "name": "room_tone_bank_update",
   "kind": "function",
@@ -56241,6 +56295,15 @@
   "lane": "a-17"
  },
  {
+  "address": "0x0094D340",
+  "name": "NativeImpl_IS_CAR_STOPPED",
+  "kind": "function",
+  "file": "functions/fn_0094d340.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
   "address": "0x0094D730",
   "name": "wipe_and_link_records",
   "kind": "function",
@@ -56689,6 +56752,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s133"
+ },
+ {
+  "address": "0x00951F80",
+  "name": "sweep_slot_table",
+  "kind": "function",
+  "file": "functions/fn_00951f80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
  },
  {
   "address": "0x00952080",
@@ -57283,6 +57355,15 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-s499"
+ },
+ {
+  "address": "0x00954770",
+  "name": "dispatch_table_builder",
+  "kind": "function",
+  "file": "functions/fn_00954770.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q29"
  },
  {
   "address": "0x00955440",
@@ -62874,10 +62955,28 @@
   "lane": "r-s513"
  },
  {
+  "address": "0x009BB760",
+  "name": "guarded_input_dispatch_b",
+  "kind": "function",
+  "file": "functions/fn_009bb760.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
+ },
+ {
   "address": "0x009BB770",
   "name": "T_CB_Generic_3Args<void(*)(int, rage::Vector4&, rage::Matrix34&), int, rage::Vector4, rage::Matrix34>::vf1",
   "kind": "function",
   "file": "functions/fn_009bb770.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
+ },
+ {
+  "address": "0x009BB9A0",
+  "name": "init_input_slot_entry",
+  "kind": "function",
+  "file": "functions/fn_009bb9a0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s513"
@@ -72547,6 +72646,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6DA70",
+  "name": "peds_task_solve_direction",
+  "kind": "function",
+  "file": "functions/fn_00a6da70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b623"
  },
  {
   "address": "0x00A6E140",
