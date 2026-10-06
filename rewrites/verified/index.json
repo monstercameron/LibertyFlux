@@ -123714,6 +123714,15 @@
   "lane": "a-S04"
  },
  {
+  "address": "0x00D191E0",
+  "name": "ped_task_tree_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00d191e0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b631"
+ },
+ {
   "address": "0x00D19A30",
   "name": "ped_task_aim_update (proposed)",
   "kind": "function",
@@ -127278,6 +127287,15 @@
   "lane": "r-s138"
  },
  {
+  "address": "0x00D75FD0",
+  "name": "draw_rect_blend_state_pair",
+  "kind": "function",
+  "file": "functions/fn_00d75fd0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
   "address": "0x00D76020",
   "name": "DrawMagentaRect",
   "kind": "function",
@@ -127285,6 +127303,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b175"
+ },
+ {
+  "address": "0x00D76120",
+  "name": "blend_float_pairs_down",
+  "kind": "function",
+  "file": "functions/fn_00d76120.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
  },
  {
   "address": "0x00D76190",
@@ -130086,6 +130113,33 @@
   "lane": "r-s517"
  },
  {
+  "address": "0x00DB4D20",
+  "name": "uimouse_verify_child",
+  "kind": "function",
+  "file": "functions/fn_00db4d20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB4D70",
+  "name": "UIMouseCursor::vf81",
+  "kind": "function",
+  "file": "functions/fn_00db4d70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB4DB0",
+  "name": "UIMouseCursor::vf87",
+  "kind": "function",
+  "file": "functions/fn_00db4db0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
   "address": "0x00DB4DE0",
   "name": "uimouse_clear_pair",
   "kind": "function",
@@ -130104,10 +130158,109 @@
   "lane": "r-s517"
  },
  {
+  "address": "0x00DB4E50",
+  "name": "UIMouseCursor::vf82",
+  "kind": "function",
+  "file": "functions/fn_00db4e50.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB5040",
+  "name": "cursor_tree_advance",
+  "kind": "function",
+  "file": "functions/fn_00db5040.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB50C0",
+  "name": "cursor_tree_insert_checked",
+  "kind": "function",
+  "file": "functions/fn_00db50c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB5100",
+  "name": "cursor_tree_contains",
+  "kind": "function",
+  "file": "functions/fn_00db5100.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB5370",
+  "name": "cursor_tree_count_matches",
+  "kind": "function",
+  "file": "functions/fn_00db5370.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB5680",
+  "name": "cursor_tree_lookup",
+  "kind": "function",
+  "file": "functions/fn_00db5680.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB56F0",
+  "name": "cursor_tree_lookup_interned",
+  "kind": "function",
+  "file": "functions/fn_00db56f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB5770",
+  "name": "cursor_tree_insert",
+  "kind": "function",
+  "file": "functions/fn_00db5770.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
   "address": "0x00DB59A0",
   "name": "cursor_tree_lower_bound",
   "kind": "function",
   "file": "functions/fn_00db59a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB5A10",
+  "name": "cursor_tree_count_ref",
+  "kind": "function",
+  "file": "functions/fn_00db5a10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB5A20",
+  "name": "cursor_tree_rotate_a",
+  "kind": "function",
+  "file": "functions/fn_00db5a20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB5AC0",
+  "name": "cursor_tree_rotate_b",
+  "kind": "function",
+  "file": "functions/fn_00db5ac0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s517"

@@ -2,15 +2,15 @@
 
 /// Forward packed half-words plus a not-equal flag to the next stage.
 ///
-/// Compares the float at `obj + 0xf08` against 0.0 with `ucomiss` and a
-/// flag-parity trick that yields 1 exactly when they differ (NaN counts
-/// as different, signed zeros as equal), then calls the next stage with
-/// the sign-extended word at `+0x2e`, the zero-extended word at `+0x2c`,
-/// a flag word and `arg1`. The flag word's low byte is the bit and its
-/// second byte is the `lahf` image of the `ucomiss` flags (SF/AF are
-/// zeroed by `ucomiss`, bit 1 is the fixed 1); bits 16-31 are the
-/// caller's incoming `eax` (the contract fixes it to 0). Returns the
-/// callee's answer. Cdecl, two stack words.
+/// Compares the float at `obj + 0xf08` against 0.0 with an unordered-aware
+/// comparison and a flag-parity trick that yields 1 exactly when they
+/// differ (NaN counts as different, signed zeros as equal), then calls
+/// the next stage with the sign-extended word at `+0x2e`, the zero-extended
+/// word at `+0x2c`, a flag word and `arg1`. The flag word's low byte is the
+/// bit and its second byte is the status-flag image of the comparison
+/// (zero, parity and carry per ordered class, bit 1 fixed); bits 16-31 are
+/// the caller's incoming register value (the contract fixes it to 0).
+/// Returns the callee's answer. Cdecl, two stack words.
 use lf_checker_rt::{callee_cdecl, export};
 
 const NEXT: u32 = 1;
@@ -21,7 +21,7 @@ export!(cdecl, rw_00d7b210(obj: u32, arg1: u32) -> u32 {
         const LO_OFF: u32 = 0x2c;
         const HI_OFF: u32 = 0x2e;
         let x = f32::from_bits(((obj + FLOAT_OFF) as *const u32).read_unaligned());
-        // ucomiss flag image: (ZF, PF, CF) per ordered class.
+        // Status-flag image: (zero, parity, carry) per ordered class.
         let (zf, pf, cf) = if x.is_nan() {
             (true, true, true)
         } else if x > 0.0 {

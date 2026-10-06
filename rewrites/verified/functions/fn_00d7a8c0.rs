@@ -4,7 +4,7 @@
 ///
 /// `params` holds floats: half-extent at `+8`, centre x/y at `+0x30`/`+0x34`
 /// and a top at `+0x38`. When 2.0 is strictly above `top - half` (ordered
-/// `comiss`, so NaN takes the early path), each of the x and y lanes
+/// ordered comparison, so NaN takes the early path), each of the x and y lanes
 /// updates `minbox` with `min(old, centre - half)` and `maxbox` with
 /// `max(old, centre + half)` -- min/max with the original's NaN choice
 /// (NaN in the stored value wins, NaN in the candidate loses) -- then sets

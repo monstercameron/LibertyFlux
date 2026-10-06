@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Lift: the user-interface clip class, 14 methods in portable Rust with their proof in the pipeline",
+    "title": "Rewrites: 17 more functions pass the checker (16662 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "17 rewrites added under rewrites/verified: 0 script native handlers and 17 other functions.",
+      "3 rewrites were re-run under a later version of the checker and replaced by the version that passed it.",
+      "The tree now holds 16662 rewrites, 16643 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 2 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Lift: the user-interface clip class, 14 methods in portable Rust with their proof in the pipeline",
+    "commit": "5370fb340e70e9b51eac3c7af79e84b6a9016760",
     "summary": "A seventh class family is lifted from its verified 32-bit rewrites into portable Rust with no unsafe code. The proof that each lifted method does what its verified rewrite does runs in the pipeline's 32-bit job.",
     "changes": [
       "crates/lf-input-frontend gains a module for the clip class that plays a short sequence on a screen element: its state, its sequence stepping, its text handling and its display-mode switch, 14 methods. Calls out of the class go through a trait, so the module builds for any target; 20 host tests run on every platform.",

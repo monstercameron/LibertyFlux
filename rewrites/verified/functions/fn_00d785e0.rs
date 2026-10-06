@@ -6,7 +6,7 @@
 /// are floats, `out` a byte pointer. Stores 1 to `*out` only when the mode
 /// is 2, `v0` is strictly above 2.0 and `|v1|` is strictly above
 /// 0.43633232 (magnitude via the 0x7fffffff mask); the float compares are
-/// `comiss` + `ja` semantics, so NaN fails. Returns `out` when the store
+/// ordered float comparison semantics, so NaN fails. Returns `out` when the store
 /// happened, else `obj` (the original leaves `eax` holding whichever was
 /// loaded last). Cdecl, four stack words.
 use lf_checker_rt::export;
