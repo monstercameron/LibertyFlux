@@ -24,6 +24,7 @@ mod handler;
 pub mod registry;
 
 pub use handler::{
-    KIND_CLEAR, KIND_RESET_B, KIND_TYPE_CLEAR_B, EventDispatch, EventHandler, EventPayload,
-    EventSource, Owner, Task,
+    FIXED_REQUEST_A, FIXED_REQUEST_B, KIND_CLEAR, KIND_RESET_B, KIND_TYPE_CLEAR_B, ConvertRequest,
+    EventDispatch, EventHandler, EventPayload, EventSource, FactoryHandle, FactoryState, Owner,
+    Task, TaskFactory, TaskManager,
 };

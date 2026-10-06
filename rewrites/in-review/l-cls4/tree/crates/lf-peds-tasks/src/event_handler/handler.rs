@@ -48,6 +48,12 @@ pub const KIND_TYPE_CLEAR_B: u32 = 0x201;
 /// Second reset kind of the payload-gated slot only.
 pub const KIND_RESET_B: u32 = 0x3A7;
 
+/// Fixed request code the first fixed-request slot converts.
+pub const FIXED_REQUEST_A: u32 = 0x100;
+
+/// Fixed request code the second fixed-request slot converts.
+pub const FIXED_REQUEST_B: u32 = 0x200;
+
 /// What the handler calls back on itself: its own dispatch slot.
 ///
 /// The forward-or-clear slot answers an event it does not clear by
@@ -175,4 +181,90 @@ impl EventHandler {
         self.pending = task;
         task
     }
+
+    /// Fixed-request slot: converts one constant request through the factory.
+    ///
+    /// Restates the two verified slots that ignore their arguments, look
+    /// up a conversion handler from the shared manager and convert their
+    /// fixed code ([`FIXED_REQUEST_A`] for the first, [`FIXED_REQUEST_B`]
+    /// for the second), storing the answer in the task slot. When no
+    /// handler answers, the task slot is cleared and no conversion runs.
+    pub fn answer_fixed_request(
+        &mut self,
+        code: u32,
+        factory: &mut impl TaskFactory,
+        state: &FactoryState,
+    ) -> Option<Handle32<Task>> {
+        let Some(handle) = factory.lookup(state.manager()) else {
+            self.pending = None;
+            return None;
+        };
+        let answer = factory.convert(handle, ConvertRequest::Code(code));
+        self.pending = answer;
+        answer
+    }
+}
+
+/// The shared task factory behind the manager word (opaque identity).
+///
+/// Opaque: the lifted handler carries it into the factory lookup, never
+/// interprets it.
+#[derive(Debug)]
+pub struct TaskManager;
+
+/// A conversion handler answered by the factory lookup (opaque identity).
+#[derive(Debug)]
+pub struct FactoryHandle;
+
+/// Shared factory state: the manager word the factory-pair slots read.
+///
+/// The original keeps this word in a global; the lift carries it as an
+/// explicit argument, so tests build only what is involved.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct FactoryState {
+    /// The manager word: the factory lookup's argument.
+    manager: Option<Handle32<TaskManager>>,
+}
+
+impl FactoryState {
+    /// Builds the state from the manager word.
+    #[must_use]
+    pub const fn new(manager: Option<Handle32<TaskManager>>) -> Self {
+        Self { manager }
+    }
+
+    /// The manager word.
+    #[must_use]
+    pub const fn manager(self) -> Option<Handle32<TaskManager>> {
+        self.manager
+    }
+}
+
+/// One conversion request through the factory.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ConvertRequest {
+    /// Convert a fixed request code.
+    Code(u32),
+}
+
+/// What the handler asks of the task factory: the factory-side
+/// collaborator.
+///
+/// The factory-pair slots share one shape: a lookup call against the
+/// shared manager, then, when a handler answers, one conversion call.
+/// Production code implements this on the lifted factory; tests pass a
+/// fake that records calls and scripts answers.
+pub trait TaskFactory {
+    /// Looks up a conversion handler from the shared manager.
+    fn lookup(
+        &mut self,
+        manager: Option<Handle32<TaskManager>>,
+    ) -> Option<Handle32<FactoryHandle>>;
+
+    /// Converts one request through an answering handler.
+    fn convert(
+        &mut self,
+        handle: Handle32<FactoryHandle>,
+        request: ConvertRequest,
+    ) -> Option<Handle32<Task>>;
 }

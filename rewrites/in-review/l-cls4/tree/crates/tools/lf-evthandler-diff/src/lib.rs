@@ -22,6 +22,9 @@ pub mod rt;
 pub use rt::callee_addr;
 pub use rt::global;
 pub use rt::relocated;
+pub use rt::set_callee1;
+pub use rt::set_callee2;
+pub use rt::set_manager;
 
 #[cfg(target_arch = "x86")]
 pub mod rewrites;
