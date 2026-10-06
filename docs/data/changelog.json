@@ -1,8 +1,17 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Devlog: two in a hundred old proofs do not reproduce on the current checker",
+    "title": "Devlog: a count corrected in the entry on old proofs",
     "commit": null,
+    "summary": "One figure in the entry published a few minutes earlier left out part of the audit.",
+    "changes": [
+      "The entry said 598 proofs never changed a global variable in any trial. That was the number that had been sorted into read-only functions and unreached write paths. The full number is 714: 581 read-only, 17 with a write path no trial reached, and 116 from the first two audit lanes that are not sorted yet."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Devlog: two in a hundred old proofs do not reproduce on the current checker",
+    "commit": "2addb2e5b43187f7631d70aa85cc6d2f494ef805",
     "summary": "A devlog entry puts the night's five audits of the verified tree in one table and records the finding that came out of the last one: most proofs are old, and about 2% of a sample of old proofs do not reproduce on the current checker.",
     "changes": [
       "The entry lists each audit with its scope, result and how it was settled: skipped pointer arguments (22 rewrites repaired, 3 withdrawn, about 40 false alarms), unknown input keys (73 of 73 hold), global write positions (no misplaced write in 1,578), a batch an audit could not reproduce (all 28 reproduce), and 1,177 old proofs re-run unchanged, of which 24 did not reproduce.",
