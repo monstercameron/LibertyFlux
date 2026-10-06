@@ -6,21 +6,22 @@
 /// `/ 16` truncate toward zero (the original's `and 0x8000000f`/`jns` and
 /// `cdq` idioms), matching Rust's `%` and `/` on `i32`.
 ///
-/// Original: fastcall (ecx ignored, edx plus 9 stack words (first 4 unread)); callee 1 is direct (`new`-like), callee 2
+/// Original: fastcall (ecx ignored, edx plus 5 stack words (first 0 unread)); callee 1 is direct (`new`-like), callee 2
 /// is the direct constructor call (the in-batch six-argument holder constructor), callee 3 is the object's virtual
 /// slot 2 reached through its vtable; caller cleans up.
-lf_checker_rt::export!(fastcall, rw_005eeda0(_ecx: u32, p0: u32, _s0: u32, _s1: u32, _s2: u32, _s3: u32, a4: u32, a5: u32, a6: u32, a7: u32, a8: u32) -> u32 {
+lf_checker_rt::export!(fastcall, rw_005eeda0(_ecx: u32, p0: u32, a0: u32, a1: u32, a2: u32, a3: u32, a4: u32) -> u32 {
     unsafe {
-        const NEW_SIZE: u32 = 0xE4;
+        const NEW_SIZE: u32 = 0xe4;
         const SLOT_OFF: u32 = 0x08;
         const LINK: u32 = 0x04;
         const FIELD_MASK: u32 = 0x1FFC000;
         const CB: u32 = 0x005EE090;
         let raw = lf_checker_rt::callee_cdecl!(1, u32, NEW_SIZE, 0);
+        let rcb = lf_checker_rt::relocated(CB);
         let obj = if raw == 0 {
             0
         } else {
-            lf_checker_rt::callee_thiscall!(2, u32, raw, CB, p0, a4, a5, a6, a7, a8)
+            lf_checker_rt::callee_thiscall!(2, u32, raw, rcb, p0, a0, a1, a2, a3, a4)
         };
         let obj = core::hint::black_box(obj);
         let vt = ((obj) as *const u32).read_unaligned();

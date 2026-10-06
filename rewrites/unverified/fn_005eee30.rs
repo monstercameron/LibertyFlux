@@ -11,7 +11,7 @@
 /// slot 2 reached through its vtable; caller cleans up.
 lf_checker_rt::export!(fastcall, rw_005eee30(_ecx: u32, p0: u32, a0: u32, a1: u32, a2: u32) -> u32 {
     unsafe {
-        const NEW_SIZE: u32 = 0x1C;
+        const NEW_SIZE: u32 = 0x1c;
         const SLOT_OFF: u32 = 0x08;
         const LINK: u32 = 0x04;
         const FIELD_MASK: u32 = 0x1FFC000;

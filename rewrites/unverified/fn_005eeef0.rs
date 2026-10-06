@@ -6,10 +6,10 @@
 /// `/ 16` truncate toward zero (the original's `and 0x8000000f`/`jns` and
 /// `cdq` idioms), matching Rust's `%` and `/` on `i32`.
 ///
-/// Original: fastcall (ecx ignored, edx plus 5 stack words (first 2 unread)); callee 1 is direct (`new`-like), callee 2
+/// Original: fastcall (ecx ignored, edx plus 3 stack words (first 0 unread)); callee 1 is direct (`new`-like), callee 2
 /// is the direct constructor call (the in-batch texture-blit holder constructor), callee 3 is the object's virtual
 /// slot 2 reached through its vtable; caller cleans up.
-lf_checker_rt::export!(fastcall, rw_005eeef0(_ecx: u32, p0: u32, _s0: u32, _s1: u32, a2: u32, a3: u32, a4: u32) -> u32 {
+lf_checker_rt::export!(fastcall, rw_005eeef0(_ecx: u32, p0: u32, a0: u32, a1: u32, a2: u32) -> u32 {
     unsafe {
         const NEW_SIZE: u32 = 0x34;
         const SLOT_OFF: u32 = 0x08;
@@ -17,10 +17,11 @@ lf_checker_rt::export!(fastcall, rw_005eeef0(_ecx: u32, p0: u32, _s0: u32, _s1: 
         const FIELD_MASK: u32 = 0x1FFC000;
         const CB: u32 = 0x005EE660;
         let raw = lf_checker_rt::callee_cdecl!(1, u32, NEW_SIZE, 0);
+        let rcb = lf_checker_rt::relocated(CB);
         let obj = if raw == 0 {
             0
         } else {
-            lf_checker_rt::callee_thiscall!(2, u32, raw, CB, p0, a2, a3, a4)
+            lf_checker_rt::callee_thiscall!(2, u32, raw, rcb, p0, a0, a1, a2)
         };
         let obj = core::hint::black_box(obj);
         let vt = ((obj) as *const u32).read_unaligned();

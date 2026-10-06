@@ -50,7 +50,7 @@ lf_checker_rt::export!(thiscall, rw_009bba40(this: u32) -> u32 {
             0,
             0
         );
-        f[8] = TAG;
+        f[8] = lf_checker_rt::relocated(TAG);
         let s2 = f.as_mut_ptr().wrapping_add(1) as u32;
         let _: u32 = lf_checker_rt::callee_thiscall!(
             4,
@@ -64,7 +64,7 @@ lf_checker_rt::export!(thiscall, rw_009bba40(this: u32) -> u32 {
         let ans: u32 = lf_checker_rt::callee_cdecl!(
             5, u32, f[2], f[3], f[7], f[8], f[1], f[2], f[3], f[4]
         );
-        f[1] = TAG;
+        f[1] = lf_checker_rt::relocated(TAG);
         ans
     }
 });
