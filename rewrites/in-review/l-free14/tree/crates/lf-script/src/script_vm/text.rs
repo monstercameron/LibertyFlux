@@ -166,8 +166,8 @@ impl TextKeys {
         key: u32,
         mut flag: Option<&mut bool>,
     ) -> Option<TextEntry> {
-        if let Some(f) = flag.as_deref_mut() {
-            *f = false;
+        if let Some(f) = &mut flag {
+            **f = false;
         }
         if !probe.format_enabled() {
             let out = resolve.resolve(obj, &TextKey::Raw(key));
@@ -182,10 +182,8 @@ impl TextKeys {
         buf[len..len + 4].copy_from_slice(&self.suffix.to_le_bytes());
         let found = resolve.resolve(obj, &TextKey::Formatted(buf));
         let hit = matches!(found, Some(entry) if entry.nonempty);
-        if hit {
-            if let Some(f) = flag.as_deref_mut() {
-                *f = true;
-            }
+        if hit && let Some(f) = &mut flag {
+            **f = true;
         }
         let out = if hit {
             found
@@ -347,26 +345,8 @@ impl<F: FnMut(u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u
     }
 }
 
-impl<
-    F: FnMut(
-        u32,
-        u32,
-        u32,
-        u32,
-        u32,
-        u32,
-        u32,
-        u32,
-        u32,
-        u32,
-        u32,
-        u32,
-        u32,
-        u32,
-        u32,
-        u32,
-    ),
-> DrawKeys for F
+impl<F: FnMut(u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32, u32)>
+    DrawKeys for F
 {
     fn draw(
         &mut self,
@@ -470,10 +450,8 @@ impl TextDispatch {
         let r1 = lookup.lookup(key0, LOOKUP_FLAG);
         let r2 = lookup.lookup(key1, LOOKUP_FLAG);
         let mut setup_done = true;
-        if !probe.probe_nonzero() {
-            if self.g2[0] != 0 && self.g2[0] != self.g2[1] {
-                setup_done = false;
-            }
+        if !probe.probe_nonzero() && self.g2[0] != 0 && self.g2[0] != self.g2[1] {
+            setup_done = false;
         }
         if setup_done {
             setup.setup(r1, 0, a2, 0, 0, r2, 0, 0, 0, 0, a3, 0, SETUP_ONE, SETUP_NEG);

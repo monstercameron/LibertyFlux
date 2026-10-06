@@ -33,13 +33,6 @@ mod x86 {
     /// State block size: the format flag is the last byte.
     const STATE_LEN: usize = FLAG_OFF + 1;
 
-    /// One planted entry: its address and whether it reads non-empty.
-    #[derive(Clone, Copy)]
-    struct Planted {
-        addr: u32,
-        nonempty: bool,
-    }
-
     static STATE_LOG: Mutex<Vec<u32>> = Mutex::new(Vec::new());
     static STATE_BLOCK: Mutex<u32> = Mutex::new(0);
 
@@ -285,5 +278,301 @@ mod x86 {
         let (cases, caught) = run_text(0xF001);
         assert!(cases > 30, "too few comparisons ({cases})");
         assert!(caught > 0, "inverted fallback never caught ({cases} cases)");
+    }
+
+    // --- The dual-key dispatch ---
+
+    static KEY_LOOKUP_LOG: Mutex<Vec<(u32, u32)>> = Mutex::new(Vec::new());
+    static KEY_LOOKUP_SCRIPT: Mutex<VecDeque<u32>> = Mutex::new(VecDeque::new());
+
+    extern "cdecl" fn key_lookup_stub(key: u32, flag: u32) -> u32 {
+        KEY_LOOKUP_LOG.lock().unwrap().push((key, flag));
+        KEY_LOOKUP_SCRIPT.lock().unwrap().pop_front().unwrap()
+    }
+
+    static SETUP_PROBE_BLOCK: Mutex<u32> = Mutex::new(0);
+
+    extern "cdecl" fn setup_probe_stub() -> u32 {
+        SETUP_PROBE_BLOCK.lock().unwrap().clone()
+    }
+
+    static SETUP_LOG: Mutex<Vec<[u32; 14]>> = Mutex::new(Vec::new());
+
+    extern "stdcall" fn setup_stub(
+        a0: u32,
+        a1: u32,
+        a2: u32,
+        a3: u32,
+        a4: u32,
+        a5: u32,
+        a6: u32,
+        a7: u32,
+        a8: u32,
+        a9: u32,
+        a10: u32,
+        a11: u32,
+        a12: u32,
+        a13: u32,
+    ) -> u32 {
+        SETUP_LOG.lock().unwrap().push([
+            a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13,
+        ]);
+        0
+    }
+
+    static SEL_BLOCK: Mutex<u32> = Mutex::new(0);
+    static SEL_LOG: Mutex<Vec<u32>> = Mutex::new(Vec::new());
+
+    extern "cdecl" fn sel_stub(arg: u32) -> u32 {
+        SEL_LOG.lock().unwrap().push(arg);
+        SEL_BLOCK.lock().unwrap().clone()
+    }
+
+    static DRAW_LOG: Mutex<Vec<[u32; 16]>> = Mutex::new(Vec::new());
+
+    extern "cdecl" fn draw_keys_stub(
+        a0: u32,
+        a1: u32,
+        a2: u32,
+        a3: u32,
+        a4: u32,
+        a5: u32,
+        a6: u32,
+        a7: u32,
+        a8: u32,
+        a9: u32,
+        a10: u32,
+        a11: u32,
+        a12: u32,
+        a13: u32,
+        a14: u32,
+        a15: u32,
+    ) -> u32 {
+        DRAW_LOG.lock().unwrap().push([
+            a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15,
+        ]);
+        0
+    }
+
+    static NOTIFY_A_LOG: Mutex<Vec<(u32, u32)>> = Mutex::new(Vec::new());
+
+    extern "thiscall" fn notify_a_stub(this: u32, key: u32) -> u32 {
+        NOTIFY_A_LOG.lock().unwrap().push((this, key));
+        0xDEAD_BEEF
+    }
+
+    static NOTIFY_B_LOG: Mutex<Vec<(u32, u32)>> = Mutex::new(Vec::new());
+    static NOTIFY_B_SCRIPT: Mutex<VecDeque<u32>> = Mutex::new(VecDeque::new());
+
+    extern "thiscall" fn notify_b_stub(this: u32, key: u32) -> u32 {
+        NOTIFY_B_LOG.lock().unwrap().push((this, key));
+        NOTIFY_B_SCRIPT.lock().unwrap().pop_front().unwrap()
+    }
+
+    /// Runs the dual-key dispatch over gate combinations.
+    /// Returns (comparisons, caught).
+    fn run_dispatch(seed: u32) -> (u32, u32) {
+        use support::{
+            DISPATCH_OBJ_VA, DONE_VA, G1_VA, G2A_VA, G2B_VA, PROBE_OFF, SEL_OFF,
+        };
+        use lf_script::script_vm::{
+            DispatchObj, LOOKUP_FLAG, SELECTOR_ARG, SETUP_NEG, SETUP_ONE, TextDispatch,
+        };
+
+        let mut rng = Rng(seed);
+        rt::set_callee(1, key_lookup_stub as *const () as u32);
+        rt::set_callee(2, setup_probe_stub as *const () as u32);
+        rt::set_callee(3, setup_stub as *const () as u32);
+        rt::set_callee(4, sel_stub as *const () as u32);
+        rt::set_callee(5, draw_keys_stub as *const () as u32);
+        rt::set_callee(6, notify_a_stub as *const () as u32);
+        rt::set_callee(7, notify_b_stub as *const () as u32);
+        let obj_box = Box::new(0xD15C10u32);
+        let obj_addr = addr(obj_box.as_ref());
+        rt::set_relocated(DISPATCH_OBJ_VA, obj_addr);
+        let obj = DispatchObj::new(obj_addr).expect("nonzero object");
+        let (mut cases, mut caught) = (0, 0);
+        // Probe bytes: clear, set, all-set; gate pairs: unset, half-set,
+        // agreeing, disagreeing; done bytes: clear, set, all-set.
+        let mut combos = Vec::new();
+        for &probe_byte in &[0u8, 1, 0xFF] {
+            for &(g2a, g2b) in &[(0u32, 0u32), (0, 5), (5, 5), (5, 6)] {
+                for &done_byte in &[0u8, 1, 0xFF] {
+                    combos.push((probe_byte, g2a, g2b, done_byte));
+                }
+            }
+        }
+        for (probe_byte, g2a, g2b, done_byte) in combos {
+            let (key0, key1, a2, a3) = (rng.u32(), rng.u32(), rng.u32(), rng.u32());
+            let (r1, r2) = (rng.u32(), rng.u32());
+            let g1 = rng.u32();
+            let sel_byte = rng.u32() as u8;
+            let out_word = rng.u32();
+            let probe_nonzero = probe_byte != 0;
+            let done = done_byte != 0;
+            let setup_done = probe_nonzero || !(g2a != 0 && g2a != g2b);
+            let draws = setup_done && done;
+            let mut probe_block = vec![0u8; PROBE_OFF + 1];
+            probe_block[PROBE_OFF] = probe_byte;
+            *SETUP_PROBE_BLOCK.lock().unwrap() = addr(&probe_block[0]);
+            let mut sel_block = vec![0u8; SEL_OFF + 1];
+            sel_block[SEL_OFF] = sel_byte;
+            *SEL_BLOCK.lock().unwrap() = addr(&sel_block[0]);
+            unsafe { rt::global::<u32>(G1_VA).write(g1) };
+            unsafe { rt::global::<u32>(G2A_VA).write(g2a) };
+            unsafe { rt::global::<u32>(G2B_VA).write(g2b) };
+            unsafe { rt::global::<u8>(DONE_VA).write(done_byte) };
+            KEY_LOOKUP_LOG.lock().unwrap().clear();
+            KEY_LOOKUP_SCRIPT.lock().unwrap().clear();
+            KEY_LOOKUP_SCRIPT.lock().unwrap().push_back(r1);
+            KEY_LOOKUP_SCRIPT.lock().unwrap().push_back(r2);
+            SETUP_LOG.lock().unwrap().clear();
+            SEL_LOG.lock().unwrap().clear();
+            DRAW_LOG.lock().unwrap().clear();
+            NOTIFY_A_LOG.lock().unwrap().clear();
+            NOTIFY_B_LOG.lock().unwrap().clear();
+            NOTIFY_B_SCRIPT.lock().unwrap().clear();
+            NOTIFY_B_SCRIPT.lock().unwrap().push_back(out_word);
+            let got = unsafe { fn_00B928D0::rw_00b928d0(key0, key1, a2, a3) };
+            assert_eq!(got, out_word, "the second notify answer returns");
+            assert_eq!(
+                *KEY_LOOKUP_LOG.lock().unwrap(),
+                [(key0, LOOKUP_FLAG), (key1, LOOKUP_FLAG)]
+            );
+            let want_setup = if setup_done {
+                vec![[r1, 0, a2, 0, 0, r2, 0, 0, 0, 0, a3, 0, SETUP_ONE, SETUP_NEG]]
+            } else {
+                vec![]
+            };
+            assert_eq!(*SETUP_LOG.lock().unwrap(), want_setup);
+            assert_eq!(
+                SEL_LOG.lock().unwrap().len(),
+                usize::from(draws),
+                "the selector reads only when the draw fires"
+            );
+            if draws {
+                assert_eq!(*SEL_LOG.lock().unwrap(), [SELECTOR_ARG]);
+            }
+            let neg = SETUP_NEG;
+            let want_draw = if draws {
+                vec![[
+                    r1, g1, r2, g1, neg, neg, neg, neg, neg, neg, neg, neg, 0,
+                    u32::from(sel_byte),
+                    key0, key1,
+                ]]
+            } else {
+                vec![]
+            };
+            assert_eq!(*DRAW_LOG.lock().unwrap(), want_draw);
+            assert_eq!(unsafe { rt::global::<u8>(DONE_VA).read() }, 1);
+            assert_eq!(*NOTIFY_A_LOG.lock().unwrap(), [(obj_addr, key0)]);
+            assert_eq!(*NOTIFY_B_LOG.lock().unwrap(), [(obj_addr, key1)]);
+            // The lift, scripted identically, must make the same calls.
+            let mut state = TextDispatch::new(g1, [g2a, g2b], done);
+            let mut lift_lookups = Vec::new();
+            let mut lift_lookup_answers = VecDeque::from([r1, r2]);
+            let mut lift_probes = 0;
+            let mut lift_setups = Vec::new();
+            let mut lift_sels = Vec::new();
+            let mut lift_draws = Vec::new();
+            let mut lift_a = Vec::new();
+            let mut lift_b = Vec::new();
+            let lift_out = state.dispatch(
+                obj,
+                &mut |key: u32, flag: u32| {
+                    lift_lookups.push((key, flag));
+                    lift_lookup_answers.pop_front().unwrap()
+                },
+                &mut || {
+                    lift_probes += 1;
+                    probe_nonzero
+                },
+                &mut |p0: u32,
+                      p1: u32,
+                      p2: u32,
+                      p3: u32,
+                      p4: u32,
+                      p5: u32,
+                      p6: u32,
+                      p7: u32,
+                      p8: u32,
+                      p9: u32,
+                      p10: u32,
+                      p11: u32,
+                      p12: u32,
+                      p13: u32| {
+                    lift_setups.push([
+                        p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13,
+                    ]);
+                },
+                &mut |arg: u32| {
+                    lift_sels.push(arg);
+                    sel_byte
+                },
+                &mut |p0: u32,
+                      p1: u32,
+                      p2: u32,
+                      p3: u32,
+                      p4: u32,
+                      p5: u32,
+                      p6: u32,
+                      p7: u32,
+                      p8: u32,
+                      p9: u32,
+                      p10: u32,
+                      p11: u32,
+                      p12: u32,
+                      p13: u32,
+                      p14: u32,
+                      p15: u32| {
+                    lift_draws.push([
+                        p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14,
+                        p15,
+                    ]);
+                },
+                &mut |o: DispatchObj, key: u32| lift_a.push((o.get(), key)),
+                &mut |o: DispatchObj, key: u32| {
+                    lift_b.push((o.get(), key));
+                    out_word
+                },
+                key0,
+                key1,
+                a2,
+                a3,
+            );
+            assert_eq!(lift_lookups, *KEY_LOOKUP_LOG.lock().unwrap());
+            assert_eq!(lift_probes, 1);
+            assert_eq!(lift_setups, *SETUP_LOG.lock().unwrap());
+            assert_eq!(lift_sels, *SEL_LOG.lock().unwrap());
+            assert_eq!(lift_draws, *DRAW_LOG.lock().unwrap());
+            assert_eq!(lift_a, *NOTIFY_A_LOG.lock().unwrap());
+            assert_eq!(lift_b, *NOTIFY_B_LOG.lock().unwrap());
+            assert_eq!(lift_out, got);
+            assert!(state.done(), "the done flag rises on every path");
+            // Wrong lift: the probe gate inverted (the pair check runs
+            // when the probe byte is nonzero). Differs wherever the two
+            // gates disagree.
+            let wrong_setup = if probe_nonzero {
+                !(g2a != 0 && g2a != g2b)
+            } else {
+                true
+            };
+            if wrong_setup != setup_done {
+                caught += 1;
+            }
+            cases += 1;
+            std::hint::black_box(&probe_block);
+            std::hint::black_box(&sel_block);
+        }
+        std::hint::black_box(&obj_box);
+        (cases, caught)
+    }
+
+    #[test]
+    fn dispatch_matches() {
+        let _guard = lock();
+        let (cases, caught) = run_dispatch(0xF002);
+        assert!(cases > 30, "too few comparisons ({cases})");
+        assert!(caught > 0, "inverted probe gate never caught ({cases} cases)");
     }
 }

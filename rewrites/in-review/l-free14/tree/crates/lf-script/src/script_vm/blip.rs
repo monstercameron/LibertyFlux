@@ -123,7 +123,7 @@ impl BlipTable {
         z: u32,
     ) {
         let id = lookup.lookup(handle);
-        if (id as i32) < 0 {
+        if id.cast_signed() < 0 {
             return;
         }
         let row = &self.rows[id as usize];
