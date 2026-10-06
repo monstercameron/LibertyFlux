@@ -9,6 +9,31 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Two contract traps that let wrong rewrites pass, both caught by mutants</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s512"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s512</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>Verified A production batch of eighteen small memory-subsystem functions verified eighteen out of eighteen, and two of the eighteen only proved anything because each function got its own deliberately wrong version: in both cases the first wrong version passed every trial, showing the contract could not see the behaviour it claimed to check.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A production batch of eighteen small memory-subsystem functions verified eighteen out of eighteen, and two of the eighteen only proved anything because each function got its own deliberately wrong version: in both cases the first wrong version passed every trial, showing the contract could not see the behaviour it claimed to check.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite eighteen neighbouring game functions in Rust and prove each rewrite identical to the original with the differential checker, which runs both sides from identical starting state over one thousand trials and compares return values, memory, stack, calls and faults. Every function also gets a wrong version that must fail.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The first trap was a rotated pin pattern. One function reads a single grid cell chosen by two scripted indices, so the contract pinned thirty grid words to a shared six-value list rotated per cell. A wrong version using a different row stride passed all sixty probe trials. The shared list alternated zero and nonzero, so any two cells an even distance apart always agreed, and the stride difference was always even. Replacing the rotation with independent zero and nonzero streams per cell from a seeded random generator caught the wrong version within fifteen trials, and a second probe mutant confirmed the grid addresses were observed.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The second trap was pristine-zero globals. One initialisation function writes zeros across two global ranges whose file bytes are already zero, so every write was invisible: a wrong version omitting one write passed all sixty trials. Random global fill plus a wrong version writing one instead of zero caught it within three trials.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A third, smaller finding: one function flagged as calling into the encrypted first megabyte of code turned out to be checkable after all, because the call is a direct call the checker patches and scripts like any other. Nothing about the encrypted region was read or needed.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Never pin a range of cells to rotations of one shared value list when a wrong address must be caught; give each cell an independent stream.&lt;/li&gt;
+&lt;li&gt;Always check what the pristine bytes hold before proving a function that writes constants; when they already hold the constant, fill randomly and make the wrong version write a different value.&lt;/li&gt;
+&lt;li&gt;Keep the per-function wrong version: both traps were invisible in the passing run and obvious the moment the wrong version passed.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Build any contract where the observable result depends only on whether a read word is zero, pin the candidate words to rotations of a zero-alternating list, and run a wrong version that reads a cell an even distance away: it passes. Replace the pins with seeded independent streams and rerun: it fails. For the globals trap, declare a range whose pristine bytes are zero, prove a zero-writing function, and run a wrong version that skips one write: it passes until the fill is randomised.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The grid mutant passing sixty trials first looked like a correct proof of a wrong formula, which was briefly alarming. Reading the pin values trial by trial showed the parity alignment within minutes. The globals trap was found the same way: the passing wrong version was the signal, and checking the pristine bytes confirmed it. One further misread on a different function (a one-way copy mistaken for a swap, plus a wrong argument slot) failed loudly on the first run rather than passing quietly, which is the better failure mode.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>One configuration routine publishes uninitialized stack to a global</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b616"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b616</id>
@@ -1145,27 +1170,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Run the stock version 5 worker against the three shipped contracts for twelve hundred trials each; all pass with every callee firing. Run the ten-trial probe contract for the fourth function: the original completes without faulting and takes the branch for a nonzero byte, while a rewrite that refuses to mirror the raw read diverges exactly there. Inspecting the worker source shows the guard reservation ignores failure, which is the mechanism.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;Two rewrite bugs came from resolving stack-relative operands at the wrong stack-pointer value (before versus after call cleanup); both were caught by failing trials within minutes. A misread instruction address on the fourth function sent the first probe at the wrong patch site; the generator now asserts every site holds a call opcode before writing the contract. Build locks from lingering short-lived processes cleared on their own; no lane processes were left running.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming batch 108: a caller scan beats reading, and two shared helpers are misnamed</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-108"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-108</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One hundred fifty consecutive unnamed functions were triaged by gathering strings, imports, callees, vtables and callers into one table first: 138 named, 12 deliberately left empty. The caller scan was the strongest signal by far.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred fifty consecutive unnamed functions were triaged by gathering strings, imports, callees, vtables and callers into one table first: 138 named, 12 deliberately left empty. The caller scan was the strongest signal by far.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Name 150 consecutive unnamed game functions, working out what each group is about before naming individuals, with a confidence per name.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch holds three groups: a dozen ped-task virtuals, about fifty particle-effect and replay-record functions, and about ninety streaming, replay-interface and clip-editor functions.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A full scan of direct calls attributed to known function starts gave almost every function one meaningful caller family, which named the record writers and the clip-editor helpers outright.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Resolving lane-named task methods back to vtable slots confirmed the slot map: clone, task id, abort handling, ped processing and subtask creation each sit at fixed slots across dozens of classes.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Two heavily used shared helpers look like memory allocation and release from every call pattern, not the script-message and stub names they carry in the database. Both sit in the encrypted region so this needs a check after decryption.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Names follow the neighbouring families: task virtuals by slot, replay writers by caller plus record id, effect updaters by parameter strings. Functions whose distinguishing record kind left no trace were left empty rather than guessed. Next lanes should run the caller scan first and distrust names attached to encrypted-region addresses.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Load the executable through a mapped-image reader, scan the code section for direct calls into the batch, attribute each call site to the nearest known function start below it, and cross-check vtable membership with runtime type records. The lane folder keeps the scripts and the evidence table.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Raw scans of call bytes produce bogus targets from encoded constants, so only targets inside the code image were trusted. Subsystem labels on the batch were misleading for two of the three groups. One inventory size of zero turned out to be a real 34-byte function.&lt;/p&gt;</content>
   </entry>
 </feed>
