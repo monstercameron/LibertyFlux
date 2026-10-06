@@ -38,7 +38,7 @@
 /// the multiplies/adds in the original's operand order. Finally the view
 /// query (cdecl, four arguments: two code pointers passed as immediate
 /// values, the zeroed-area pointer, zero) runs; its answer is stored to
-/// `QUERY_OUT` and returned.
+/// `QUERY_OUT` and returned. All address immediates carry relocations, so they denote relocated addresses.
 ///
 /// Swap path: `SEL_A` (0 or 1) scales by `REGION` (0x9c40) to pick a side of
 /// two double-buffered region pairs, each side copied onto the other with a
@@ -204,9 +204,9 @@ lf_checker_rt::export!(cdecl, rw_00adb770() -> u32 {
         let x1 = add(x1, f32::from_bits(g32(K4)));
         set_g32(VIEW + 0x28, g32(VIEW_INT1));
         let x0 = mul(x0, f32::from_bits(g32(K2)));
-        set_g32(VIEW + 0x2c, ecx.wrapping_add(REG_A0));
+        set_g32(VIEW + 0x2c, ecx.wrapping_add(lf_checker_rt::relocated(REG_A0)));
         let x1 = mul(x1, f32::from_bits(g32(K5)));
-        set_g32(VIEW + 0x30, ecx.wrapping_add(REG_B0));
+        set_g32(VIEW + 0x30, ecx.wrapping_add(lf_checker_rt::relocated(REG_B0)));
         set_g32(VIEW + 0x1c, x0.to_bits());
         set_g32(VIEW + 0x20, g32(VIEW10_WORD));
         set_g32(VIEW, buf[0]);
@@ -220,9 +220,16 @@ lf_checker_rt::export!(cdecl, rw_00adb770() -> u32 {
         wr32(row.wrapping_add(8), buf[2]);
         wr32(row.wrapping_add(12), buf[3]);
         big[0] = 0x40;
-        big[1] = VIEW;
+        big[1] = lf_checker_rt::relocated(VIEW);
         let r6: u32 =
-            lf_checker_rt::callee_cdecl!(CAL_QUERY, u32, QUERY_CB0, QUERY_CB1, big_ptr, 0);
+            lf_checker_rt::callee_cdecl!(
+                CAL_QUERY,
+                u32,
+                lf_checker_rt::relocated(QUERY_CB0),
+                lf_checker_rt::relocated(QUERY_CB1),
+                big_ptr,
+                0
+            );
         set_g32(QUERY_OUT, r6);
         let _: u32 = lf_checker_rt::callee_cdecl!(CAL_COOKIE, u32,);
         return r6;

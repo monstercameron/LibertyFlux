@@ -12,14 +12,14 @@
 /// `G_LAYOUT_CACHE` after the first use. Two classification bytes select an
 /// alternate mapping path that skips the layout cache.
 ///
-/// The keyboard-type query at entry is dead: the original compares the answer
-/// against 7 and stores the flag, but the only reload lands in a register
-/// the next instructions overwrite, so the answer affects nothing. The call
-/// itself still happens. The per-scancode switch tests the case-table index,
-/// a fixed nonzero byte for the four special scancodes, so their zero sides
-/// never run. Counts returned by the translator are compared SIGNED (a
-/// negative count means a dead key); the wrong version compares them
-/// unsigned. Returns the input pointer left at the terminator.
+/// The keyboard-type query feeds four scancodes: the answer compared against
+/// 7 selects, for 0x1A/0x1B, between two virtual keys (0xDD/0xDB and
+/// 0xDC/0xDD), and for 0x2B/0x90, between appending a word and the zero
+/// side (a fixed key for 0x2B, a stale-key test for 0x90). The flag lives in
+/// CL, which the dispatch never touches (it writes EAX), and each loop
+/// iteration reloads it. Counts returned by the translator are compared
+/// SIGNED (a negative count means a dead key); the wrong version compares
+/// them unsigned. Returns the input pointer left at the terminator.
 ///
 /// Thiscall: object in ECX, two stack words, callee cleans up.
 const OBJ_KEYSTATE: u32 = 0x88;
@@ -56,12 +56,30 @@ enum T1Act {
     Vk(u32),
     Append(u16),
     AppendDi,
+    TestStale,
     Skip,
 }
 
 #[inline(always)]
-fn t1(b: u8) -> T1Act {
+fn t1(b: u8, kbtype7: bool) -> T1Act {
     match b {
+        // Keyboard-type-selected scancodes (CL holds the flag).
+        0x1A => T1Act::Vk(if kbtype7 { 0xDD } else { 0xDB }),
+        0x1B => T1Act::Vk(if kbtype7 { 0xDC } else { 0xDD }),
+        0x2B => {
+            if kbtype7 {
+                T1Act::AppendDi
+            } else {
+                T1Act::Vk(0xDC)
+            }
+        }
+        0x90 => {
+            if kbtype7 {
+                T1Act::Append(0x5E)
+            } else {
+                T1Act::TestStale
+            }
+        }
         0x02 => T1Act::Vk(0x31),
         0x03 => T1Act::Vk(0x32),
         0x04 => T1Act::Vk(0x33),
@@ -84,8 +102,6 @@ fn t1(b: u8) -> T1Act {
         0x17 => T1Act::Vk(0x49),
         0x18 => T1Act::Vk(0x4F),
         0x19 => T1Act::Vk(0x50),
-        0x1A => T1Act::Vk(0xDD),
-        0x1B => T1Act::Vk(0xDC),
         0x1E => T1Act::Vk(0x41),
         0x1F => T1Act::Vk(0x53),
         0x20 => T1Act::Vk(0x44),
@@ -126,8 +142,6 @@ fn t1(b: u8) -> T1Act {
         0x56 => T1Act::Vk(0xE2),
         0x7D => T1Act::Vk(0xE2),
         0xB5 => T1Act::Vk(0x6F),
-        0x2B => T1Act::AppendDi,
-        0x90 => T1Act::Append(0x5e),
         0x91 => T1Act::Append(0x40),
         0x92 => T1Act::Append(0x3a),
         0x93 => T1Act::Append(0x5f),
@@ -157,7 +171,7 @@ fn is_numpad(vk: u32) -> bool {
 lf_checker_rt::export!(thiscall, rw_008f5740(obj: u32, strp: u32, out: u32) -> u32 {
     unsafe {
         use lf_checker_rt as rt;
-        rt::callee_stdcall!(C_KBTYPE, u32, 0u32);
+        let kbtype7 = rt::callee_stdcall!(C_KBTYPE, u32, 0u32) == 7;
         let g_cls0 = rt::global::<u8>(G_CLS0);
         let g_cls3 = rt::global::<u8>(G_CLS3);
         let g_cache = rt::global::<u32>(G_LAYOUT_CACHE);
@@ -176,11 +190,12 @@ lf_checker_rt::export!(thiscall, rw_008f5740(obj: u32, strp: u32, out: u32) -> u
         let mut ebp: u32 = mapvk_slot.read();
         let mut edi: u32 = 0x5c;
         loop {
-            let run_body = match t1(rd8(p)) {
+            let run_body = match t1(rd8(p), kbtype7) {
                 T1Act::Skip => {
                     ebx = 0;
                     false
                 }
+                T1Act::TestStale => ebx != 0,
                 T1Act::Append(w) => {
                     wr16(esi, w);
                     esi += 2;
