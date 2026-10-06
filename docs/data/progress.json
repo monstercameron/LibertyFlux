@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-06",
-  "updated_at": "2026-10-06 05:02",
+  "updated_at": "2026-10-06 05:12",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -13,11 +13,11 @@
   "stages": {
     "identified": 37413,
     "named": 31763,
-    "rewritten": 16709,
-    "verified": 16666
+    "rewritten": 16710,
+    "verified": 16667
   },
   "structures": 340,
-  "symbols": 16781,
+  "symbols": 16782,
   "measured": [
     {
       "label": "Code section",
@@ -105,13 +105,13 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 16709,
+      "value": 16710,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 16666,
+      "value": 16667,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     },
@@ -119,7 +119,7 @@
       "label": "Game code verified, measured in bytes",
       "value": 32.7,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2394779 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2395596 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
@@ -129,13 +129,13 @@
     },
     {
       "label": "Methods lifted to portable Rust with their proof run by the pipeline",
-      "value": 160,
+      "value": 208,
       "unit": "methods",
-      "source": "rows marked proven in the registries of 7 lifted modules (crates/*/src/*/registry.rs); each is tested against its verified rewrite on every push"
+      "source": "rows marked proven in the registries of 9 lifted modules (crates/*/src/*/registry.rs); each is tested against its verified rewrite on every push"
     }
   ],
   "activity": {
-    "lanes_running": 13,
+    "lanes_running": 14,
     "lanes_finished": 1512,
     "lanes_incomplete": 150,
     "devlog_entries": 522
@@ -1182,8 +1182,8 @@
       "to": "0x00687337",
       "count": 106,
       "named": 106,
-      "rewritten": 25,
-      "verified": 25
+      "rewritten": 26,
+      "verified": 26
     },
     {
       "stage": "named",
@@ -4465,12 +4465,12 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2394779,
+    "verified": 2395596,
     "large_functions": 2801402,
     "large_functions_verified": 650936
   },
   "lifted": {
-    "methods": 160,
-    "modules": 7
+    "methods": 208,
+    "modules": 9
   }
 }
