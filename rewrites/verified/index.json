@@ -40104,6 +40104,15 @@
   "lane": "r-b381"
  },
  {
+  "address": "0x006F7FD0",
+  "name": "cloud_request_dispatch",
+  "kind": "function",
+  "file": "functions/fn_006f7fd0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "a-Q22"
+ },
+ {
   "address": "0x006F8720",
   "name": "ros_cloud_file_changed",
   "kind": "function",
@@ -42498,6 +42507,15 @@
   "lane": "r-s501"
  },
  {
+  "address": "0x0087BF90",
+  "name": "rage::crmtNodeProxy::vf4",
+  "kind": "function",
+  "file": "functions/fn_0087bf90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
   "address": "0x0087BFE0",
   "name": "crmt_node_base_init",
   "kind": "function",
@@ -42561,6 +42579,33 @@
   "lane": "r-s501"
  },
  {
+  "address": "0x0087C1B0",
+  "name": "crmt_blend_node_attach",
+  "kind": "function",
+  "file": "functions/fn_0087c1b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
+  "address": "0x0087C220",
+  "name": "rage::crmtNodeBlend::vf4",
+  "kind": "function",
+  "file": "functions/fn_0087c220.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
+  "address": "0x0087C260",
+  "name": "rage::crmtNodeBlend::vf2",
+  "kind": "function",
+  "file": "functions/fn_0087c260.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
   "address": "0x0087C340",
   "name": "rage::crmtNodeBlend::vf5",
   "kind": "function",
@@ -42592,6 +42637,15 @@
   "name": "crmt_buffer_assign",
   "kind": "function",
   "file": "functions/fn_0087c4f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
+  "address": "0x0087C940",
+  "name": "crmt_cert_name_resolve",
+  "kind": "function",
+  "file": "functions/fn_0087c940.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s501"
@@ -51885,6 +51939,15 @@
   "lane": "r-s504"
  },
  {
+  "address": "0x008F66D0",
+  "name": "NativeImpl_GET_BUFFERED_ASCII",
+  "kind": "function",
+  "file": "functions/fn_008f66d0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s504"
+ },
+ {
   "address": "0x008F6700",
   "name": "Input_IsKeyDown",
   "kind": "function",
@@ -51925,6 +51988,51 @@
   "name": "Input_SetKeyPressed",
   "kind": "function",
   "file": "functions/fn_008f67b0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s504"
+ },
+ {
+  "address": "0x008F6990",
+  "name": "GetCurrentInputObject",
+  "kind": "function",
+  "file": "functions/fn_008f6990.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s504"
+ },
+ {
+  "address": "0x008F6A30",
+  "name": "Input_CountActiveSlots",
+  "kind": "function",
+  "file": "functions/fn_008f6a30.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s504"
+ },
+ {
+  "address": "0x008F6B20",
+  "name": "Input_IsHotkeyActive",
+  "kind": "function",
+  "file": "functions/fn_008f6b20.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s504"
+ },
+ {
+  "address": "0x008F6B80",
+  "name": "Input_ReleaseAll",
+  "kind": "function",
+  "file": "functions/fn_008f6b80.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s504"
+ },
+ {
+  "address": "0x008F6EF0",
+  "name": "Input_ResetSlots",
+  "kind": "function",
+  "file": "functions/fn_008f6ef0.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-s504"
@@ -74511,6 +74619,15 @@
   "lane": "r-s123"
  },
  {
+  "address": "0x00A96D10",
+  "name": "filemem_repack_slot_chain",
+  "kind": "function",
+  "file": "functions/fn_00a96d10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
+ },
+ {
   "address": "0x00A96DB0",
   "name": "fade_sample_append",
   "kind": "function",
@@ -74545,6 +74662,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s123"
+ },
+ {
+  "address": "0x00A97960",
+  "name": "filemem_find_named_entry",
+  "kind": "function",
+  "file": "functions/fn_00a97960.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
  },
  {
   "address": "0x00A979E0",
@@ -75859,6 +75985,24 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b239"
+ },
+ {
+  "address": "0x00ABD8A0",
+  "name": "vec_light_kernel_gated",
+  "kind": "function",
+  "file": "functions/fn_00abd8a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b610"
+ },
+ {
+  "address": "0x00ABDBA0",
+  "name": "vec_light_kernel",
+  "kind": "function",
+  "file": "functions/fn_00abdba0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b610"
  },
  {
   "address": "0x00ABF0B0",
@@ -111600,6 +111744,15 @@
   "lane": "r-b141"
  },
  {
+  "address": "0x00C18030",
+  "name": "float_one_store_through_double_indirect",
+  "kind": "function",
+  "file": "functions/fn_00c18030.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
+ },
+ {
   "address": "0x00C18050",
   "name": "cam_vec_filter",
   "kind": "function",
@@ -111609,6 +111762,105 @@
   "lane": "r-b141"
  },
  {
+  "address": "0x00C182D0",
+  "name": "init_wrapper_set_bit0_clear_bit1",
+  "kind": "function",
+  "file": "functions/fn_00c182d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
+ },
+ {
+  "address": "0x00C18380",
+  "name": "init_copy_with_two_helpers",
+  "kind": "function",
+  "file": "functions/fn_00c18380.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
+ },
+ {
+  "address": "0x00C183D0",
+  "name": "init_wrapper_set_bit1_clear_bit0",
+  "kind": "function",
+  "file": "functions/fn_00c183d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
+ },
+ {
+  "address": "0x00C183F0",
+  "name": "store_three_floats_set_flag",
+  "kind": "function",
+  "file": "functions/fn_00c183f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
+ },
+ {
+  "address": "0x00C188B0",
+  "name": "proximity_check_xy_absz",
+  "kind": "function",
+  "file": "functions/fn_00c188b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
+ },
+ {
+  "address": "0x00C18920",
+  "name": "dist3dsq_under_threshold",
+  "kind": "function",
+  "file": "functions/fn_00c18920.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
+ },
+ {
+  "address": "0x00C18970",
+  "name": "replay_struct_init",
+  "kind": "function",
+  "file": "functions/fn_00c18970.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
+ },
+ {
+  "address": "0x00C18A50",
+  "name": "replay_cmd6_store_string",
+  "kind": "function",
+  "file": "functions/fn_00c18a50.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
+ },
+ {
+  "address": "0x00C18AE0",
+  "name": "replay_cmd3_store_string",
+  "kind": "function",
+  "file": "functions/fn_00c18ae0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
+ },
+ {
+  "address": "0x00C18C20",
+  "name": "replay_cmd4_clear",
+  "kind": "function",
+  "file": "functions/fn_00c18c20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
+ },
+ {
+  "address": "0x00C18C60",
+  "name": "replay_cmd1_copy4",
+  "kind": "function",
+  "file": "functions/fn_00c18c60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
+ },
+ {
   "address": "0x00C18CC0",
   "name": "shared_mem_proc_init",
   "kind": "function",
@@ -111616,6 +111868,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b141"
+ },
+ {
+  "address": "0x00C18E60",
+  "name": "replay_cmd5_bounded",
+  "kind": "function",
+  "file": "functions/fn_00c18e60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
  },
  {
   "address": "0x00C22930",
@@ -124101,6 +124362,15 @@
   "lane": "r-s503"
  },
  {
+  "address": "0x00D69D10",
+  "name": "CReplayRolloverMessage::vf2",
+  "kind": "function",
+  "file": "functions/fn_00d69d10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
   "address": "0x00D69DF0",
   "name": "replay_rollover_set_kind",
   "kind": "function",
@@ -125059,6 +125329,15 @@
   "name": "aim_assist_steer",
   "kind": "function",
   "file": "functions/fn_00d86370.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b600"
+ },
+ {
+  "address": "0x00D86B20",
+  "name": "input_mode_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00d86b20.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b600"
@@ -127492,6 +127771,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b187"
+ },
+ {
+  "address": "0x00DD1930",
+  "name": "FRONTEND_MENU_MONTAGE_DROP_MT",
+  "kind": "function",
+  "file": "functions/fn_00dd1930.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b608"
  },
  {
   "address": "0x00DD1D80",
