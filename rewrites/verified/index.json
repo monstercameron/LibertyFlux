@@ -50769,6 +50769,15 @@
   "lane": "r-s136"
  },
  {
+  "address": "0x008D3580",
+  "name": "aabb_gate_or_reseed",
+  "kind": "function",
+  "file": "functions/fn_008d3580.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q55"
+ },
+ {
   "address": "0x008D3830",
   "name": "IssueManagerConfigCalls",
   "kind": "function",
@@ -123043,6 +123052,15 @@
   "name": "ped_task_acquire_move_target",
   "kind": "function",
   "file": "functions/fn_00cbc310.rs",
+  "trials": 1024,
+  "checker": "version 7",
+  "lane": "r-b648"
+ },
+ {
+  "address": "0x00CBC730",
+  "name": "ped_task_update_route_state",
+  "kind": "function",
+  "file": "functions/fn_00cbc730.rs",
   "trials": 1024,
   "checker": "version 7",
   "lane": "r-b648"

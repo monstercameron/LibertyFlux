@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Devlog: Naming 150 shader, targeting and task functions",
+    "title": "Rewrites: 2 more functions pass the checker (16940 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "2 rewrites added under rewrites/verified: 0 script native handlers and 2 other functions.",
+      "The tree now holds 16940 rewrites, 16921 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 1 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Devlog: Naming 150 shader, targeting and task functions",
+    "commit": "972dd066822c815d4d3cc7eac4354cc19004b35d",
     "summary": "Findings from the nm-126 lane.",
     "changes": [
       "New devlog entry: Naming 150 shader, targeting and task functions.",
