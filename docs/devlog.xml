@@ -9,6 +9,27 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A stack leak hiding in an event-handler update</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b653"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b653</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>One of this lane's two verified functions leaks four bytes of stack every time it takes its numeric-entry path, because it calls a caller-cleanup helper without the cleanup. Verified The leak shifts the function's own frame, so its epilogue restores the wrong registers and returns with the stack pointer low; in the game that path presumably never fires with a nonzero entry, since the cookie check would then fail.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One of this lane's two verified functions leaks four bytes of stack every time it takes its numeric-entry path, because it calls a caller-cleanup helper without the cleanup. &lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The leak shifts the function's own frame, so its epilogue restores the wrong registers and returns with the stack pointer low; in the game that path presumably never fires with a nonzero entry, since the cookie check would then fail.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite two medium-to-large input-event functions in Rust and prove each rewrite identical to the original with the checker, spending most of the effort on the proof contract.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Both functions verified at one thousand trials each with all mutants caught. The smaller one refreshes a timer and then programs event-handler objects down one of three paths; the larger one appends about thirty input events and tags each object. Its register-indirect calls go through the import slot for the thread-id function, whose on-disk value is a placeholder the loader patches at startup, so the contract plants the stub there.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The smaller function's numeric path parses a string, scales it, and passes it on, but never cleans the parser's argument off the stack. Each numeric entry in its four-entry loop costs four more bytes. The proof leaves the stack-pointer check off and says so; the leaked slots hold only values already observed as call arguments.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The larger function is three bytes longer than the inventory says: the listed size ends mid-instruction, before the final store and return.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Both rewrites were accepted with the leak documented in the proof record rather than reproduced. A useful follow-up for the lint tool: warn when a contract's global address looks like a full address instead of an image offset, which cost this lane its first probe. The checker's manual also describes per-call answer steps as pairs where the driver accepts only single values; the pair form is what the worker receives after resolving.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run this lane's two contracts from its scratch folder with the stock checker driver and worker; each passes one thousand trials with its deliberately wrong version failing. The leak is visible by auditing every push and cleanup in the smaller function: all balance except the single parser call on the numeric path.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The first rewrite of the smaller function fell through from the parked branch into the second object's code, adding two extra calls per trial; aligning the two call logs showed the exact divergence and the original's jump over that code. Small aligned value cycles also locked the string path out entirely until they were replaced with incommensurate periods. One store global was missing from the larger contract's declared ranges and the undeclared-write check caught it on the first probe.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Lifting the replay bar: one prefix, four shapes, and a backend that commutes</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free12"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free12</id>
@@ -1193,26 +1214,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;li&gt;One rebuild failed on a locked output file because a worker from the previous run was still exiting; waiting for prior processes to clear before rebuilding fixed it.&lt;/li&gt;
 &lt;li&gt;The deferred function hides two quirks future lanes should know: two of its three multi-argument call shapes pass identical arguments and differ only in one register, and that register carries uninitialized frame fill (zero) in two shapes. Both were verified by hand-tracking the stack pointer and are in the lane report.&lt;/li&gt;
 &lt;/ul&gt;</content>
-  </entry>
-  <entry>
-    <title>Pin cycles in lockstep hide branch combinations</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b556"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b556</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>Verified A contract whose pinned inputs all cycle with the same period tests far fewer branch combinations than its author thinks: equal-length cycles march in lockstep, so some flag pairs never co-occur. Giving each pin a different cycle length took one function from four to ten call shapes with no other change.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A contract whose pinned inputs all cycle with the same period tests far fewer branch combinations than its author thinks: equal-length cycles march in lockstep, so some flag pairs never co-occur. Giving each pin a different cycle length took one function from four to ten call shapes with no other change.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite and verify a single large audio function with eleven scripted callees and about ten flag-driven branches.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The first passing run covered only four call shapes. Three flag pins with two values each always agreed with the main enable flag, so whole combinations (a shaper call after the worker call, a path without the final helper) never ran, and both self-initialising parameter blocks only ever took their already-initialised path.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A related gap: scripted callee outputs are consumed only on trials where that callee fires, so some script rows are dead and live rows can miss values the real callee produces. One row meant to drive a negative-index path never coincided with its callee firing.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; After giving pins cycle lengths of two, three, four, five and six, and placing script rows on live phases, the same rewrite passed with ten call shapes, every callee firing hundreds of times, and every parameter-block path taken.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Pin cycles in a contract should use differing lengths so flag combinations mix across trials, and script rows for conditionally fired callees should be audited for which trial phases actually consume them. Both checks are cheap and static.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Take any contract with two or more equal-length pin cycles on branch flags, run it, and count distinct call shapes in the verdict coverage. Then change one cycle length and re-run: new shapes appear.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The first deliberately wrong version of the rewrite passed all trials: the omitted store wrote back the value just read on some paths and was overwritten by a scripted callee output on the rest. It was replaced with a wrong version that omits a store nothing masks, which fails on the heap comparison as required.&lt;/p&gt;</content>
   </entry>
 </feed>
