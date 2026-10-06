@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Lift: the object pools, the first group of functions that belong to no class",
+    "title": "Devlog: hourly review, 05:05 on 6 October",
     "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "16,666 functions verified, 31.3% of the code by size. The first lift of functions outside any class worked: 32 pool routines as 14 methods, proven in the pipeline. 208 verified routines are now lifted, 1.1% of the verified code, and lifting gets four lanes in fifteen from here.",
+      "Checker version 7 is installed after three lanes and the coordinator failed to make it change a verdict. All 73 proofs that ran on random bits hold under the contract their authors meant. A failed pipeline run was traced to a full import that updated half of the rewrite tree; it now updates both."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Lift: the object pools, the first group of functions that belong to no class",
+    "commit": "915fd7766e695ed69242e8ea255151e08e5cbae4",
     "summary": "32 verified pool routines are lifted to portable Rust as 14 methods on 8 owning types, with their proof in the pipeline. It is the first lift that did not start from a class, and it shows the method carries over to the 70% of verified code that has none.",
     "changes": [
       "crates/lf-world gains a pools module: the slot store with its free list and flag bytes, the pool vector, two lookup tables and three scans. Runs of near-identical neighbouring routines became one generic method each, proven once per instance (seven cursor steps, thirteen vector initialisers). No unsafe code; 52 host tests.",
