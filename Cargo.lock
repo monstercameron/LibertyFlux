@@ -386,6 +386,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-pedstaskdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+ "lf-peds-tasks",
+]
+
+[[package]]
 name = "lf-pedtaskdiff"
 version = "0.1.0"
 dependencies = [

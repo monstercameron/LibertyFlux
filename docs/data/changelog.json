@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Tooling: the tracked scan and results schema accept checker version 8",
+    "title": "Lift: four more pedestrian task routines, chosen by shape from a list of names",
     "commit": null,
+    "summary": "Four verified routines are lifted as four methods on three types: a weighted pick, a reaction code, and the building and consuming of a task state. Their proof runs in the pipeline.",
+    "changes": [
+      "crates/lf-peds-tasks gains a peds_task module with 33 host tests and no unsafe code. This lane's list was 22 functions chosen by name; it held about ten data shapes and no two routines that were instances of one, so the lane triaged by shape first, as its brief now says to, and lifted the shapes it could prove end to end.",
+      "A new test crate, lf-pedstaskdiff, runs the four methods against their tracked verified rewrites on the 32-bit target: 4 differential cases, about 915 comparisons, each with a deliberately wrong lift caught. The coordinator ran the host and 32-bit tests before committing.",
+      "This was the first lift lane the supervisor started by itself, with the group chosen by a script.",
+      "The pipeline's 32-bit job now runs fifteen differential crates. Verified routines with a lifted counterpart proven in the pipeline: 312."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Tooling: the tracked scan and results schema accept checker version 8",
+    "commit": "7a832b4a5c5334057fa8f2a7c2bbdcba963b4e89",
     "summary": "The scripts that rank checker versions and validate lane results know version 8, so proofs made with the position-exact comparison of globals are counted as the strongest.",
     "changes": [
       "scripts/coordinator/scan.py ranks version 8 above version 7, counts it among the modern versions and reads a lane's version 8 marker; the results schema accepts the outcome verified_v8; the scan's test covers it. 17 tests pass.",
