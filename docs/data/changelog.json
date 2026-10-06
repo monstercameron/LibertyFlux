@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Lift: four more pedestrian task routines, chosen by shape from a list of names",
+    "title": "Devlog: Lifting the input-ui holders: ten free functions, four shapes",
     "commit": null,
+    "summary": "Findings from the l-free6 lane.",
+    "changes": [
+      "New devlog entry: Lifting the input-ui holders: ten free functions, four shapes.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Lift: four more pedestrian task routines, chosen by shape from a list of names",
+    "commit": "0ee06ea4e71aaf81b7b14bc01c69676fd90c1ab5",
     "summary": "Four verified routines are lifted as four methods on three types: a weighted pick, a reaction code, and the building and consuming of a task state. Their proof runs in the pipeline.",
     "changes": [
       "crates/lf-peds-tasks gains a peds_task module with 33 host tests and no unsafe code. This lane's list was 22 functions chosen by name; it held about ten data shapes and no two routines that were instances of one, so the lane triaged by shape first, as its brief now says to, and lifted the shapes it could prove end to end.",
