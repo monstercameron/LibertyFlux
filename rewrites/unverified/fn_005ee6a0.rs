@@ -34,7 +34,9 @@
 /// pop their stack words, callee 10 is EDX plus stack with caller cleanup).
 lf_checker_rt::export!(thiscall, rw_005ee6a0(this: u32, arg0: u32) -> u32 {
     unsafe {
-        const STYLE_ALT: u32 = 0xfc9c85;
+        // Default style pointer: carries a relocation entry, so the running
+        // original sees the relocated value.
+        const STYLE_ALT: u32 = 0x00fc9c85;
         const STYLE_OFF: u32 = 0xe0;
         const STYLE_GATE: u32 = 0xe4;
         const TLS_FLAG: u32 = 0x8cc;
@@ -85,11 +87,11 @@ lf_checker_rt::export!(thiscall, rw_005ee6a0(this: u32, arg0: u32) -> u32 {
         }
 
         let sel: u32 = if rd16(arg0.wrapping_add(STYLE_GATE)) == 0 {
-            STYLE_ALT
+            lf_checker_rt::relocated(STYLE_ALT)
         } else {
             rd32(arg0.wrapping_add(STYLE_OFF))
         };
-        let r1: u32 = lf_checker_rt::callee_stdcall!(1, u32, sel, 0x3a);
+        let r1: u32 = lf_checker_rt::callee_cdecl!(16, u32, sel, 0x3a);
         let mut ebx = if r1 != 0 { r1.wrapping_add(1) } else { sel };
 
         let mut flagslot = 0u32;

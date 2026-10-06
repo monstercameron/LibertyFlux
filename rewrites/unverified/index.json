@@ -320,46 +320,6 @@
   "reason": ""
  },
  {
-  "address": "0x00617160",
-  "name": "init_files_mem_a (proposed)",
-  "file": "fn_00617160.rs",
-  "lane": "r-b597",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x006172A0",
-  "name": "init_files_mem_b (proposed)",
-  "file": "fn_006172a0.rs",
-  "lane": "r-b597",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x006173B0",
-  "name": "init_files_mem_c (proposed)",
-  "file": "fn_006173b0.rs",
-  "lane": "r-b597",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00617540",
-  "name": "init_files_mem_d (proposed)",
-  "file": "fn_00617540.rs",
-  "lane": "r-b597",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00617780",
-  "name": "init_files_mem_e (proposed)",
-  "file": "fn_00617780.rs",
-  "lane": "r-b597",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x006178F0",
   "name": "init_files_mem_f (proposed)",
   "file": "fn_006178f0.rs",
@@ -371,6 +331,14 @@
   "address": "0x00617A70",
   "name": "init_files_mem_g (proposed)",
   "file": "fn_00617a70.rs",
+  "lane": "r-b597",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00617C90",
+  "name": "files_mem_dtor (proposed)",
+  "file": "fn_00617c90.rs",
   "lane": "r-b597",
   "outcome": "not_reached",
   "reason": ""
@@ -568,6 +536,30 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00697750",
+  "name": "pending",
+  "file": "fn_00697750.rs",
+  "lane": "r-s497",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00697CA0",
+  "name": "pending",
+  "file": "fn_00697ca0.rs",
+  "lane": "r-s497",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00697FB0",
+  "name": "pending",
+  "file": "fn_00697fb0.rs",
+  "lane": "r-s497",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x006980B0",
   "name": "pending",
   "file": "fn_006980b0.rs",
@@ -648,92 +640,28 @@
   "reason": "other"
  },
  {
+  "address": "0x00948320",
+  "name": "unanalyzed",
+  "file": "fn_00948320.rs",
+  "lane": "r-b601",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009495D0",
+  "name": "NativeImpl_SET_OBJECT_COORDINATES",
+  "file": "fn_009495d0.rs",
+  "lane": "a-Q17",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00957100",
   "name": "task_seq_player",
   "file": "fn_00957100.rs",
   "lane": "r-b433",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00962540",
-  "name": "triage_pending",
-  "file": "fn_00962540.rs",
-  "lane": "r-s495",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009625E0",
-  "name": "triage_pending",
-  "file": "fn_009625e0.rs",
-  "lane": "r-s495",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00962690",
-  "name": "triage_pending",
-  "file": "fn_00962690.rs",
-  "lane": "r-s495",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00962750",
-  "name": "triage_pending",
-  "file": "fn_00962750.rs",
-  "lane": "r-s495",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00963120",
-  "name": "triage_pending",
-  "file": "fn_00963120.rs",
-  "lane": "r-s495",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00963190",
-  "name": "triage_pending",
-  "file": "fn_00963190.rs",
-  "lane": "r-s495",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009638C0",
-  "name": "triage_pending",
-  "file": "fn_009638c0.rs",
-  "lane": "r-s495",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00963930",
-  "name": "triage_pending",
-  "file": "fn_00963930.rs",
-  "lane": "r-s495",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00963AA0",
-  "name": "triage_pending",
-  "file": "fn_00963aa0.rs",
-  "lane": "r-s495",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00963D90",
-  "name": "triage_pending",
-  "file": "fn_00963d90.rs",
-  "lane": "r-s495",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x009687E0",
@@ -998,6 +926,14 @@
   "lane": "r-s436",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00AD9130",
+  "name": "unknown",
+  "file": "fn_00ad9130.rs",
+  "lane": "r-b598",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00ADDCF0",
@@ -1518,6 +1454,14 @@
   "lane": "r-b300",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x00C6E420",
+  "name": "nm_message_build",
+  "file": "fn_00c6e420.rs",
+  "lane": "a-Q20",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00C7E200",

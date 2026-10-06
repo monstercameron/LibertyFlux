@@ -3,7 +3,7 @@
 /// Deleting destructor with an inline refcounted-member release.
 ///
 /// Stamps the class vtable pointer at `+0x00`, then releases the member at
-/// `MEMBER` (`+68`): a null member is skipped, otherwise its unsigned
+/// `MEMBER` (`+0x44`): a null member is skipped, otherwise its unsigned
 /// 16-bit count at `+0x0a` is decremented and, when it reaches zero on an
 /// owned member (kind byte at `+8` is 2 or 4), the member's slot-0 release
 /// runs with argument 1. Then the base destructor runs (patched callee) and,

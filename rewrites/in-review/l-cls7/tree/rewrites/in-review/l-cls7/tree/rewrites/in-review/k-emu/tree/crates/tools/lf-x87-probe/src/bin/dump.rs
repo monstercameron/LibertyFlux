@@ -6,7 +6,7 @@
 
 use lf_x87_probe::emulation_details;
 #[cfg(target_arch = "x86")]
-use lf_x87_probe::{hex16, hex32, hex64, hex_f80};
+use lf_x87_probe::{hex_f80, hex16, hex32, hex64};
 
 #[cfg(target_arch = "x86")]
 use lf_x87_probe::{MXCSR_DEFAULT, MXCSR_FTZ, MXCSR_RC_SHIFT, PC_24, PC_53, PC_64};
@@ -25,7 +25,14 @@ struct Rec {
 }
 
 #[cfg(target_arch = "x86")]
-fn push(recs: &mut Vec<Rec>, group: u8, name: String, input: String, output: String, extra: String) {
+fn push(
+    recs: &mut Vec<Rec>,
+    group: u8,
+    name: String,
+    input: String,
+    output: String,
+    extra: String,
+) {
     recs.push(Rec {
         group,
         name,
@@ -36,6 +43,9 @@ fn push(recs: &mut Vec<Rec>, group: u8, name: String, input: String, output: Str
 }
 
 #[cfg(target_arch = "x86")]
+// Long flat probe table by design; short float-bit names (f2_5/fn2_5, qnan_a/qnan_da)
+// are the clearest labels for neighbouring constants.
+#[allow(clippy::too_many_lines, clippy::similar_names)]
 fn run_x86() -> Vec<Rec> {
     let mut r: Vec<Rec> = Vec::new();
 
@@ -145,8 +155,8 @@ fn run_x86() -> Vec<Rec> {
     let p2m54: u64 = 0x3C90_0000_0000_0000; // 2^-54
     let m2m25: u64 = 0xBE60_0000_0000_0000; // -2^-25
     let p1p2m12: u64 = 0x3FF0_0100_0000_0000; // 1+2^-12
-    let p1p2m26: u64 = 0x3FF0_0000_4000_0000; // 1+2^-26
-    let p1p2m27: u64 = 0x3FF0_0000_2000_0000; // 1+2^-27
+    let p1p2m26: u64 = 0x3FF0_0000_0400_0000; // 1+2^-26
+    let p1p2m27: u64 = 0x3FF0_0000_0200_0000; // 1+2^-27
     let three: u64 = 0x4008_0000_0000_0000;
     let two: u64 = 0x4000_0000_0000_0000;
     for (pc_tag, pc) in pcs {
@@ -230,7 +240,12 @@ fn run_x86() -> Vec<Rec> {
     let fn2_5: u64 = 0xC004_0000_0000_0000;
     let fn2_7: u64 = 0xC005_9999_9999_999A;
     for (rc_tag, rc) in rcs {
-        for (tag, v) in [("p2_5", f2_5), ("n2_5", fn2_5), ("p2_7", f2_7), ("n2_7", fn2_7)] {
+        for (tag, v) in [
+            ("p2_5", f2_5),
+            ("n2_5", fn2_5),
+            ("p2_7", f2_7),
+            ("n2_7", fn2_7),
+        ] {
             let o = x87cmp::g3_fistp_i32(*rc, v);
             push(
                 &mut r,
@@ -716,26 +731,25 @@ fn run_x86() -> Vec<Rec> {
             format!("mxcsr={}", hex32(o.mxcsr)),
         );
     }
-    for (tag, a, b) in [("nan_both", qnan_da, qnan_db)] {
-        let o = sse::g7_addsd(a, b);
-        push(
-            &mut r,
-            7,
-            format!("g7.addsd.{tag}"),
-            format!("a={} b={}", hex64(a), hex64(b)),
-            hex64(o.bits),
-            format!("mxcsr={}", hex32(o.mxcsr)),
-        );
-        let o = sse::g7_mulsd(a, b);
-        push(
-            &mut r,
-            7,
-            format!("g7.mulsd.{tag}"),
-            format!("a={} b={}", hex64(a), hex64(b)),
-            hex64(o.bits),
-            format!("mxcsr={}", hex32(o.mxcsr)),
-        );
-    }
+    let (tag, a, b) = ("nan_both", qnan_da, qnan_db);
+    let o = sse::g7_addsd(a, b);
+    push(
+        &mut r,
+        7,
+        format!("g7.addsd.{tag}"),
+        format!("a={} b={}", hex64(a), hex64(b)),
+        hex64(o.bits),
+        format!("mxcsr={}", hex32(o.mxcsr)),
+    );
+    let o = sse::g7_mulsd(a, b);
+    push(
+        &mut r,
+        7,
+        format!("g7.mulsd.{tag}"),
+        format!("a={} b={}", hex64(a), hex64(b)),
+        hex64(o.bits),
+        format!("mxcsr={}", hex32(o.mxcsr)),
+    );
     let o = sse::g7_sqrtsd(qnan_da);
     push(
         &mut r,
@@ -799,7 +813,10 @@ fn run_x86() -> Vec<Rec> {
             format!("mxcsr={}", hex32(o.mxcsr)),
         );
     }
-    for (tag, mx) in [("ftz_off", MXCSR_DEFAULT), ("ftz_on", MXCSR_DEFAULT | MXCSR_FTZ)] {
+    for (tag, mx) in [
+        ("ftz_off", MXCSR_DEFAULT),
+        ("ftz_on", MXCSR_DEFAULT | MXCSR_FTZ),
+    ] {
         let o = sse::g7_addss_mxcsr(mx, den32, den32);
         push(
             &mut r,
