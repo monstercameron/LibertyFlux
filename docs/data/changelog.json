@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Tools: a floating-point probe to tell the emulator from a processor",
+    "title": "Devlog: A signed bound check and a silent contract hole in one batch",
     "commit": null,
+    "summary": "Findings from the r-s495 lane.",
+    "changes": [
+      "New devlog entry: A signed bound check and a silent contract hole in one batch.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Tools: a floating-point probe to tell the emulator from a processor",
+    "commit": "23f12358a03947e81c9fc262a465e487644c1233",
     "summary": "Every proof in the project is made on an ARM development machine under its x86 emulator. A new probe with no game code in it measures where that emulator's floating point differs from a real x86 processor, and the pipeline now runs the same probe on real hardware.",
     "changes": [
       "New crate crates/tools/lf-x87-probe: 269 short float-stack and vector instruction sequences, written by hand in inline assembly for this purpose, each run on chosen inputs, with 36 tests that assert the result the processor's documentation specifies. It builds and does nothing on other targets.",
