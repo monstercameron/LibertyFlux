@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Devlog: A constructor that returns to address zero, and a NaN trap in float compares",
+    "title": "Rewrites: 2 more functions pass the checker (16709 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "2 rewrites added under rewrites/verified: 0 script native handlers and 2 other functions.",
+      "The tree now holds 16709 rewrites, 16690 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Devlog: A constructor that returns to address zero, and a NaN trap in float compares",
+    "commit": "999e6a06d61e09732710404c00cd46f09298c586",
     "summary": "Findings from the r-s518 lane.",
     "changes": [
       "New devlog entry: A constructor that returns to address zero, and a NaN trap in float compares.",
