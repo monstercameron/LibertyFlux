@@ -38340,6 +38340,15 @@
   "lane": "r-b295"
  },
  {
+  "address": "0x006893E0",
+  "name": "weighted_vec4_blend",
+  "kind": "function",
+  "file": "functions/fn_006893e0.rs",
+  "trials": 10250,
+  "checker": "version 6",
+  "lane": "a-Q46"
+ },
+ {
   "address": "0x0068B030",
   "name": "blend_pose_track",
   "kind": "function",
@@ -77760,6 +77769,15 @@
   "lane": "r-b144"
  },
  {
+  "address": "0x00A99420",
+  "name": "init_segment_tables_and_register",
+  "kind": "function",
+  "file": "functions/fn_00a99420.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q49"
+ },
+ {
   "address": "0x00A99550",
   "name": "filemem_blend_rgba",
   "kind": "function",
@@ -113575,6 +113593,15 @@
   "name": "fire_task_dispatch",
   "kind": "function",
   "file": "functions/fn_00bf7a90.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b643"
+ },
+ {
+  "address": "0x00BF7EB0",
+  "name": "fire_ped_task_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00bf7eb0.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b643"
