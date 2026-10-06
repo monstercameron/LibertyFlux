@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-06",
-  "updated_at": "2026-10-06 02:03",
+  "updated_at": "2026-10-06 02:08",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -13,11 +13,11 @@
   "stages": {
     "identified": 37413,
     "named": 31266,
-    "rewritten": 16434,
-    "verified": 16394
+    "rewritten": 16448,
+    "verified": 16408
   },
   "structures": 340,
-  "symbols": 16506,
+  "symbols": 16520,
   "measured": [
     {
       "label": "Code section",
@@ -105,27 +105,27 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 16434,
+      "value": 16448,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 16394,
+      "value": 16408,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     },
     {
       "label": "Game code verified, measured in bytes",
-      "value": 31.3,
+      "value": 31.4,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2292038 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2300303 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
-      "value": 20.9,
+      "value": 21.2,
       "unit": "percent",
-      "source": "321 of 1347 such functions; they hold 38% of the game's code"
+      "source": "325 of 1347 such functions; they hold 38% of the game's code"
     },
     {
       "label": "Methods lifted to portable Rust with their proof run by the pipeline",
@@ -136,8 +136,8 @@
   ],
   "activity": {
     "lanes_running": 20,
-    "lanes_finished": 1457,
-    "lanes_incomplete": 150,
+    "lanes_finished": 1458,
+    "lanes_incomplete": 149,
     "devlog_entries": 514
   },
   "map": [
@@ -2185,13 +2185,13 @@
       "verified": 70
     },
     {
-      "stage": "named",
+      "stage": "verified",
       "from": "0x008F18C8",
       "to": "0x008F71E9",
       "count": 31,
       "named": 30,
-      "rewritten": 15,
-      "verified": 15
+      "rewritten": 18,
+      "verified": 18
     },
     {
       "stage": "named",
@@ -2280,8 +2280,8 @@
       "to": "0x0092ED39",
       "count": 48,
       "named": 42,
-      "rewritten": 2,
-      "verified": 2
+      "rewritten": 3,
+      "verified": 3
     },
     {
       "stage": "named",
@@ -2325,8 +2325,8 @@
       "to": "0x0094AAE1",
       "count": 81,
       "named": 81,
-      "rewritten": 58,
-      "verified": 58
+      "rewritten": 59,
+      "verified": 59
     },
     {
       "stage": "verified",
@@ -2334,8 +2334,8 @@
       "to": "0x00950402",
       "count": 108,
       "named": 102,
-      "rewritten": 61,
-      "verified": 61
+      "rewritten": 62,
+      "verified": 62
     },
     {
       "stage": "verified",
@@ -2343,8 +2343,8 @@
       "to": "0x00955D24",
       "count": 116,
       "named": 112,
-      "rewritten": 86,
-      "verified": 86
+      "rewritten": 87,
+      "verified": 87
     },
     {
       "stage": "named",
@@ -2514,8 +2514,8 @@
       "to": "0x009BFAA2",
       "count": 117,
       "named": 113,
-      "rewritten": 48,
-      "verified": 48
+      "rewritten": 54,
+      "verified": 54
     },
     {
       "stage": "named",
@@ -4066,13 +4066,13 @@
       "verified": 12
     },
     {
-      "stage": "named",
+      "stage": "verified",
       "from": "0x00D7DD35",
       "to": "0x00D83655",
       "count": 19,
       "named": 15,
-      "rewritten": 9,
-      "verified": 9
+      "rewritten": 10,
+      "verified": 10
     },
     {
       "stage": "verified",
@@ -4465,9 +4465,9 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2292038,
+    "verified": 2300303,
     "large_functions": 2801402,
-    "large_functions_verified": 586256
+    "large_functions_verified": 592956
   },
   "lifted": {
     "methods": 141,
