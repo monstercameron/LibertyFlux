@@ -79281,6 +79281,15 @@
   "lane": "r-b239"
  },
  {
+  "address": "0x00ABCCD0",
+  "name": "input_probe_update",
+  "kind": "function",
+  "file": "functions/fn_00abccd0.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "a-Q51"
+ },
+ {
   "address": "0x00ABD340",
   "name": "ui_slot_pair_setup",
   "kind": "function",
@@ -126871,6 +126880,15 @@
   "trials": 1100,
   "checker": "version 4",
   "lane": "r-s312"
+ },
+ {
+  "address": "0x00D428A0",
+  "name": "task_op_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00d428a0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-b645"
  },
  {
   "address": "0x00D433C0",
