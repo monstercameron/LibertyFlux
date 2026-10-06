@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Rewrites: five withdrawn for handing a callee zeros where the original hands it values",
+    "title": "Devlog: Three small traps from one input batch: dead stack reads, erased signedness, writes past the frame",
     "commit": null,
+    "summary": "Findings from the r-s513 lane.",
+    "changes": [
+      "New devlog entry: Three small traps from one input batch: dead stack reads, erased signedness, writes past the frame.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Rewrites: five withdrawn for handing a callee zeros where the original hands it values",
+    "commit": "7849f9c292b4715c7dcb8d65ac087c0f7f2abc38",
     "summary": "The verified count goes down by five. Each of these rewrites passes an untouched, zeroed local to a callee that reads its input from it; the original stores values there before the call. Their proofs skipped the pointer and compared nothing in its place.",
     "changes": [
       "Five functions are removed from rewrites/verified: a user-interface float dispatch, an aim-row check, a task helper, an audio zone walk and a benchmark screen method. In each the rewrite declares a local, leaves it zero and passes its address; the original stores a computed float, a point of three floats, or a constant there first, and the callee's first use of that word is a read.",
