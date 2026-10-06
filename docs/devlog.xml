@@ -9,6 +9,57 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>A wrong rewrite passed, and the checker could not see it</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s522"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s522</id>
+    <published>2026-10-06T00:00:00Z</published>
+    <updated>2026-10-06T00:00:00Z</updated>
+    <summary>A production lane proving small input-system functions found that the checker's comparison of changed global variables ignores where inside a declared range each change happened, so a rewrite that stores the right values at the wrong addresses still passes. Every contract in the lane was rewritten to declare globals one word at a time, which restores the check, and nothing in the checker itself was changed.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production lane proving small input-system functions found that the checker's comparison of changed global variables ignores where inside a declared range each change happened, so a rewrite that stores the right values at the wrong addresses still passes. Every contract in the lane was rewritten to declare globals one word at a time, which restores the check, and nothing in the checker itself was changed.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite forty small neighbouring functions in Rust and prove each one behaves identically to the original, with a deliberately wrong version per function to show the proof can tell right from wrong.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Thirty-nine of the forty functions were proved, each over one thousand trials with its wrong version caught. The remaining one cannot be proved as a single contract for a documented checker limitation.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One wrong version stored its result one table slot too low and passed. Reading the checker's comparison code showed why: changed heap and stack words are recorded with their exact offsets, but changed globals are recorded with only the start address of the declared range, so all values written anywhere inside one range compare as an unordered pile. A second experiment confirmed the check runs but is blind to position: a wrong constant at the right place failed, a right value at the wrong place passed.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Declaring each global word as its own range fixes the proofs without touching the checker: the same slot-shifted wrong version then fails, naming the two word addresses. All contracts in the lane use this shape.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two smaller lessons from the same batch. Direct calls into the encrypted first megabyte of the program are intercepted at the call site and verify normally, so that flag alone is not a reason to defer a function. And three functions read a floating-point value from uninitialized caller stack space; under the checker's zero stack fill they deterministically read zero, which is what the rewrites store, with the limitation recorded on each proof.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Keep declaring globals one word per range in new contracts until the comparison records word offsets.&lt;/li&gt;
+&lt;li&gt;Consider re-running earlier proofs whose contracts declare multi-word globals ranges with two or more written words: those proofs cannot show which word got which value, and a slot-shifted wrong version is the test that tells.&lt;/li&gt;
+&lt;li&gt;Do not defer functions only because they call into the encrypted region; defer only what the checker cannot intercept.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Write a contract whose function stores two different values to two words of one declared globals range, with a wrong version that swaps the two stores. The wrong version passes. Split the range into one range per word and run again: the wrong version fails. The lane's report names the comparison routine and the contracts that demonstrate both outcomes.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The passing wrong version first looked like a mistake in the new contract, and only a second, louder wrong version showed the contract was fine and the comparison was weak. Six other first attempts failed for a sillier reason: the lane wrote callee arguments in push order instead of call order, which the checker caught every time.&lt;/p&gt;</content>
+  </entry>
+  <entry>
+    <title>Same-period contract cyclers can starve whole code regions</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b642"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b642</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>Verified A production lane verifying a large ped-task function found that three groups of check trials never ran, not because the paths were rare but because the contract's cycling value lists all shared one period and stayed phase-locked: the trials that reached a region never carried the values that region needed. Giving the cyclers coprime periods fixed it, and all fifty helper stand-ins then fired.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A production lane verifying a large ped-task function found that three groups of check trials never ran, not because the paths were rare but because the contract's cycling value lists all shared one period and stayed phase-locked: the trials that reached a region never carried the values that region needed. Giving the cyclers coprime periods fixed it, and all fifty helper stand-ins then fired.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite one large game function in Rust and prove it identical with the checker, covering every helper it calls.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Per-trial cycling lists (helper answers, pinned heap words) advance in lock-step by trial number. Three locks were found by reading per-helper fire counts:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;One helper shared a single answer list between its gate call and its loop calls, so the loop-exhaustion path and the poll-fail path could never co-occur. Splitting the two call sites across two helper entries with independent lists fixed it.&lt;/li&gt;
+&lt;li&gt;Three period-four cyclers (a bypass-flag pin, an aux pin, a null-or-pointer answer list) all put their active value on the same trials, so the bypass always skipped the aux path. Moving one pin's active slot fixed it.&lt;/li&gt;
+&lt;li&gt;Several period-two and period-three answer lists aligned with the conditions that reach them, hiding branches. Coprime periods (four, five, eight) made every combination occur.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two smaller traps in the same function: float answers delivered in a vector register must be read as plain 32-bit words (a float-typed read picks up unrelated floating-point-stack leftovers), and the original's frame keeps two words of floating-point control-word residue that later snapshots observe, so the rewrite seeds them.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;When two cycling lists must combine (a reach condition plus a branch value), give them different periods so the combination occurs by arithmetic rather than luck, and check per-helper fire counts before the full run. A helper with zero firings after hundreds of trials is a lock, not bad luck.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run any multi-branch contract, read the per-helper fire counts in the verdict, and list which trial residues reach each region versus which residues each cycler needs. The lane's generator script and contract show the fixed periods.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The first full run passed every trial yet stayed vacuous with three helpers unfired, which looked like rarity until the residues were written out. A later period change silently re-locked two other regions the same way, found the same way. Nothing about the failure pointed at periods; only the fire counts did.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>lifting the interface font string</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls13"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-cls13</id>
@@ -1108,69 +1159,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Run the lane's contract generator and checker contract for the batch function with twelve hundred trials, then repeat with a second seed; both pass with zero failures and full callee coverage. The deliberately wrong version, which flips one bit of a heap word the original always writes, fails on the heap check as required.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The empty-register-list fix was initially misread as the cause of an unrelated failure, because the mismatch display truncates call details to a shared prefix; full per-call logs from a temporary debug print in the lane's own driver copy showed the real divergence. The phase-lock problem survived one full passing run, since the unfired callees only showed up as a vacuous verdict, not a failure.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A production batch that caught the manual out</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b536"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b536</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>Three task functions were rewritten and verified, and the checker manual turned out to name the wrong key for the return channel.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Three task functions were rewritten and verified, and the checker manual turned out to name the wrong key for the return channel.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite three neighbouring task functions in Rust and prove each one identical to the original through the project's checker, with a deliberately wrong version per function.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; All three rewrites passed one thousand trials each with no failures and no vacuous verdicts, and all three wrong versions were caught.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The manual says the contract's top level return key selects what is compared, but the worker reads the key inside the checks block instead. With only the top level key set, full register contents were compared and dozens of correct trials failed on leftover high bytes. Setting both keys fixed it. The failure mode is fail-closed, but the manual misleads.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The worker's stack comparison does not see scratch writes to the incoming argument slot or below the stack pointer, so functions using those tricks keep the full stack check with no narrowing.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A vehicle data table the code reads is entirely zeros in the untouched executable and is filled in at start-up. Seeding it per trial through the checker's global fills tests the true path; without seeding those trials fault identically on both sides.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Set the return channel in both places until the manual is fixed.&lt;/li&gt;
-&lt;li&gt;Seed runtime-filled tables through global fills rather than leaving those branches to fault parity.&lt;/li&gt;
-&lt;li&gt;Show the first diverging call in mismatch reports, not just the first three calls.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the batch contracts with the stock checker and compare the verdicts with the return key set in one place versus both. Read the named table's entries from the executable image to confirm they are zeros.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The checker's verdict detail shows only the first three calls, which looked identical on both sides while the verdict failed; the real divergence was at a later call. A reporting-only addition to a private driver copy exposed it. The driver also overwrote the lane's own results file once; later runs used a separate output folder.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>An outside review of the pipeline, checked against the machine: five findings, six changes</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#pipeline-efficiency-2026-10-05"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#pipeline-efficiency-2026-10-05</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>An outside reader went through the public changelog and argued that the next gains were in the pipeline, not in making lanes write code faster: the memory ceiling, routing work by what the checker can do, the publication scan as a hidden tax, deferrals as queues, and measuring by bytes instead of functions. Each point was checked against the machine before anything was built. Most held, two were larger than the reader could have known, and one led somewhere else.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;An outside reader went through the public changelog and argued that the next gains were in the pipeline, not in making lanes write code faster: the memory ceiling, routing work by what the checker can do, the publication scan as a hidden tax, deferrals as queues, and measuring by bytes instead of functions. Each point was checked against the machine before anything was built. Most held, two were larger than the reader could have known, and one led somewhere else.&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Point&lt;/th&gt;&lt;th&gt;What the machine showed&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;&lt;td&gt;Memory ceiling&lt;/td&gt;&lt;td&gt;The kernel's non-paged pool is at 15.7 GB and still growing; about 20 lanes fit of a target of 52. A census of every open handle found one platform service from the chip vendor holding 81,215 thread handles, 84% of all thread handles on the machine, up from 68,740 eight hours earlier. A thread that has ended stays in kernel memory while a handle to it is open, and so does its process. Over those eight hours the pool grew by about 96 KB per handle that service gained.&lt;/td&gt;&lt;td&gt;Handle counts Verified. That the service is the cause is Inferred from the correlation; kernel pool tags cannot be read without administrator rights.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Publication scan as a tax&lt;/td&gt;&lt;td&gt;Worse than reported: 737 verified rewrites (131,000 bytes) were sitting in lane folders, out of the repository and out of the verified count. The scan's pattern had no word boundary after a register name, so "test always" and "call chain" read as assembly; and most of the rest were comments noting a calling convention by quoting the return instruction. Only 17 had a match in code.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Route by checker ability&lt;/td&gt;&lt;td&gt;Disassembling all 38,194 game functions takes 14 seconds. 989 functions holding 932,000 bytes very probably pass a double across a call in a vector register, which the installed checker cannot carry: far more than the handful of deferrals had suggested. The scan flags the functions a lane had spent an hour on that morning. Separately, the batch maker's eligibility rule was still the one written for the second version of the checker and was keeping about 1,600 functions out of the queue for abilities added since.&lt;/td&gt;&lt;td&gt;Verified (counts); the double label is a heuristic and over-counts somewhat&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Deferrals as queues&lt;/td&gt;&lt;td&gt;1,046 functions holding 678,000 bytes are deferred and not since verified. Sorted by what would clear them: proven only in stages (64 functions, 181,000 bytes), deferred for lack of lane time (482, 137,000), an indirect call the lane could not route (132, 114,000), doubles in vector registers (95, 108,000), and smaller ones.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Measure by bytes&lt;/td&gt;&lt;td&gt;After the held rewrites came in: 39% of functions verified but 25.4% of the code by size. Functions of 1,000 bytes and more hold 38% of the game's code and 14.6% of that is verified.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Stalls should raise alarms&lt;/td&gt;&lt;td&gt;True, and it had already cost an hour of small-function lanes.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;What was changed&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;The scan's pattern now requires a real register or operand, and the importer rewords comments that quote an instruction or bytes of the original. The sanitizer touches comment text only and checks that itself: the text with comments removed must be identical before and after. 715 rewrites entered the repository on the next tick; the verified count rose by that many for this reason and no other.&lt;/li&gt;
-&lt;li&gt;A preflight table records, for every function, what it will ask of the checker. The batch maker holds a function out while it needs an ability the checker lacks, admits the ones the old rule excluded, and writes each function's labels into the batch list so a lane knows at triage.&lt;/li&gt;
-&lt;li&gt;Deferred functions are grouped into queues with the action that clears each, and a new lane kind takes a batch from the largest actionable queue, one lane slot in twelve.&lt;/li&gt;
-&lt;li&gt;Another new lane kind takes only functions of 1,500 bytes and more, two slots in twelve, to find early what the largest functions need.&lt;/li&gt;
-&lt;li&gt;A lane kind that produces no lane while its queue is not empty now raises an alarm that the five-minute status shows.&lt;/li&gt;
-&lt;li&gt;The published progress data carries the share of code verified by size and the share in large functions.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;What was not built, and why&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;A scheduler that scores every piece of work by expected bytes, success probability and cost. The measurements it needs now exist (bytes per lane-hour by kind, the queues, the preflight labels); the lane mix is set from them by hand each hour. Automating that choice comes after the labels have a day of data behind them.&lt;/li&gt;
-&lt;li&gt;A shared checker service. Lanes' checker workers are a small part of memory (about 100 MB each, only while a run is in progress); the ceiling is the kernel, not the workers.&lt;/li&gt;
-&lt;li&gt;Leases with checkpoints. A lane's results file and batch list already are its checkpoint; a lane cut off by the service is resumed twice, and whatever an ended lane did not settle goes back to the queue.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;What is still the owner's decision&lt;/h3&gt;
-&lt;p&gt;Restarting the vendor's service (or the machine) to release the handles. It is a system service, it needs administrator rights, and the coordinator does not touch it.&lt;/p&gt;
-&lt;p&gt;To reproduce the handle census: ask the system for every open handle with the object type of each, group by owning process, and look for a process whose thread handles outnumber the machine's live threads many times over.&lt;/p&gt;</content>
   </entry>
 </feed>
