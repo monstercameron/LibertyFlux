@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Rewrites: two more withdrawn for an unsigned comparison",
+    "commit": null,
+    "summary": "The verified count goes down by two more. Same mistake as the three withdrawn earlier today: a callee's answer compared unsigned where the original compares signed.",
+    "changes": [
+      "UIMontageContainer::vf114 and CMovementEventHandler::vf1 are removed from rewrites/verified. The first tests a freshness value returned by a callee against one hundred, the second a random roll against a limit; the originals use the signed comparison and the rewrites, holding the value as an unsigned word, the unsigned one.",
+      "The lane measuring the candidates outside the audit's sample found both. For the first it also showed the difference on the checker: with a contract that scripts negative answers the unsigned rewrite fails and a signed one passes. The coordinator read both comparisons in the original independently before withdrawing.",
+      "Five rewrites have now been withdrawn for this mistake outside the leaderboard family, out of about 75 blind proofs checked against the original. All five hold the callee's answer in an unsigned word and compare it with an ordering operator. The strengthening lanes repair each and it returns with a contract that can see the difference."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 55 files from lanes (246 unverified rewrites, 193 in review)",
     "commit": "579f32ce623df1bf3156b70e8d470eaa5e5711df",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
