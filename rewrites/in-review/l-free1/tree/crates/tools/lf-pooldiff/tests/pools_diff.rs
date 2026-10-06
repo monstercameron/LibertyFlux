@@ -357,10 +357,13 @@ mod x86 {
         }
         // One pinned case where head and word differ on purpose.
         {
-            let entries = vec![
-                0x11, 0x11, 0x11, 0x11, 0x22, 0x22, 0x22, 0x22, // head, then word
-                0x33, 0x33, 0x33, 0x33, 0x44, 0x44, 0x44, 0x44,
-            ];
+            // Slot 0 head word, then its data word; slot 1 the same.
+            // Each group is one word of a repeated marker byte.
+            let head0 = [0x11u8; 4]; // slot 0 head
+            let word0 = [0x22u8; 4]; // slot 0 data
+            let head1 = [0x33u8; 4]; // slot 1 head
+            let word1 = [0x44u8; 4]; // slot 1 data
+            let entries = [head0, word0, head1, word1].concat();
             let pool = SlotPool::from_parts(entries.clone(), vec![0x00, 0x00], 8);
             let entries_box = entries.into_boxed_slice();
             let flags_box = vec![0x00u8, 0x00].into_boxed_slice();

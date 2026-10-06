@@ -15,7 +15,7 @@
 /// read the defined stack fill (`0`); the registration buffer handed to the
 /// final call holds `{0x59E400, 0, 0, 0x430260}`. The indirect call goes
 /// through TLS slot 0 (`[slot+8]`, then the table at
-/// `[ECX]` slot `+8`, thiscall with `(0, 0x10, 0x40)`); its answer and the
+/// `[ECX]` slot `+8`, thiscall with `(0x40, 0x10, 0)`); its answer and the
 /// float (`XMM0`) answer of the tune helper are published to globals. The
 /// clear loop zeroes 57 words (`0x4F..0x88`, signed bound, with two dead
 /// skip conditions for `0x89` and `0x7FFFFFFF` that can never hit).
@@ -113,9 +113,9 @@ lf_checker_rt::export!(cdecl, rw_0059E1C0() -> u32 {
         let slot: u32 = rd32(vt.wrapping_add(8));
         let ind: extern "thiscall" fn(u32, u32, u32, u32) -> u32 =
             unsafe { core::mem::transmute(slot as usize) };
-        let ans9: u32 = ind(thisv, 0, 0x10, 0x40);
+        let ans9: u32 = ind(thisv, 0x40, 0x10, 0);
         wg32(G_ANS9, ans9);
-        let _: u32 = lf_checker_rt::callee_cdecl!(10, u32, 0x5ADE70);
+        let _: u32 = lf_checker_rt::callee_cdecl!(10, u32, lf_checker_rt::relocated(0x5ADE70));
         let _: u32 = lf_checker_rt::callee_cdecl!(11, u32,);
         let ecx12: u32 = (thisv & 0xFFFFFF00) | 1;
         let ans12: u32 = lf_checker_rt::callee_thiscall!(12, u32, ecx12);
@@ -138,19 +138,21 @@ lf_checker_rt::export!(cdecl, rw_0059E1C0() -> u32 {
             }
             eax = eax.wrapping_add(1);
         }
-        let ans15: u32 = lf_checker_rt::callee_cdecl!(15, u32, 0x4016A0, 0, 0,
-            0x430260, 0x59E400, 0, 0, 0x430260);
+        let ans15: u32 = lf_checker_rt::callee_cdecl!(15, u32, lf_checker_rt::relocated(0x4016A0), 0, 0,
+            lf_checker_rt::relocated(0x430260), lf_checker_rt::relocated(0x59E400), 0, 0, lf_checker_rt::relocated(0x430260));
         if rd8(lf_checker_rt::relocated(G_CB)) == 0 {
             return ans15;
         }
         let ans16: u32 =
-            lf_checker_rt::callee_stdcall!(16, u32, 0x110E6DC, 0x19F31D4, 0);
+            lf_checker_rt::callee_stdcall!(16, u32, lf_checker_rt::relocated(0x110E6DC), lf_checker_rt::relocated(0x19F31D4), 0);
         if ans16 != 0 {
             return ans16;
         }
-        let buf: [u32; 4] = [0x59E400, 0, 0, 0x430260];
-        let ans17: u32 = lf_checker_rt::callee_thiscall!(17, u32, 0x19F31D4,
-            0x110E6CC, ans16, buf.as_ptr() as u32);
+        let buf: [u32; 4] = [lf_checker_rt::relocated(0x59E400), 0, 0,
+            lf_checker_rt::relocated(0x430260)];
+        let ans17: u32 = lf_checker_rt::callee_thiscall!(17, u32,
+            lf_checker_rt::relocated(0x19F31D4), buf.as_ptr() as u32, ans16,
+            lf_checker_rt::relocated(0x110E6CC));
         ans17
     }
 });
