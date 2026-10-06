@@ -33993,6 +33993,15 @@
   "lane": "a-08"
  },
  {
+  "address": "0x005E4500",
+  "name": "thread_object_allocator_init",
+  "kind": "function",
+  "file": "functions/fn_005e4500.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q34"
+ },
+ {
   "address": "0x005E48A0",
   "name": "slot_effect_dispatch",
   "kind": "function",
@@ -34000,6 +34009,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-08"
+ },
+ {
+  "address": "0x005E5A90",
+  "name": "cached_factory_init",
+  "kind": "function",
+  "file": "functions/fn_005e5a90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q34"
  },
  {
   "address": "0x005E5F80",
@@ -34468,6 +34486,51 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b591"
+ },
+ {
+  "address": "0x005EEF70",
+  "name": "T_CB_Generic_1Arg<void(*)(float), float>::vf1",
+  "kind": "function",
+  "file": "functions/fn_005eef70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
+  "address": "0x005EEF90",
+  "name": "T_CB_Generic_5Args<void(*)(float, float, CRect&, HtmlRenderState&, bool), float, float, CRect, HtmlRenderState, bool>::vf1",
+  "kind": "function",
+  "file": "functions/fn_005eef90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
+  "address": "0x005EF070",
+  "name": "T_CB_Generic_6Args<void(*)(HtmlRenderState&, float, float, float, float, unsigned int), HtmlRenderState, float, float, float, float, int>::vf1",
+  "kind": "function",
+  "file": "functions/fn_005ef070.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
+  "address": "0x005EF150",
+  "name": "T_CB_Generic_4Args<void(*)(rage::Color32&, float, float, float), rage::Color32, float, float, float>::vf1",
+  "kind": "function",
+  "file": "functions/fn_005ef150.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
+ },
+ {
+  "address": "0x005EF180",
+  "name": "T_CB_Generic_4Args<void(*)(rage::grcTexture*, CRect&, CRect&, rage::Color32&), rage::grcTexture*, CRect, CRect, rage::Color32>::vf1",
+  "kind": "function",
+  "file": "functions/fn_005ef180.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s514"
  },
  {
   "address": "0x005FBC60",
@@ -56160,10 +56223,37 @@
   "lane": "r-b585"
  },
  {
+  "address": "0x0094E680",
+  "name": "fill_gated_records",
+  "kind": "function",
+  "file": "functions/fn_0094e680.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
   "address": "0x0094E7B0",
   "name": "link_child_objects",
   "kind": "function",
   "file": "functions/fn_0094e7b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
+  "address": "0x0094EA00",
+  "name": "Text_AppendLiteralString",
+  "kind": "function",
+  "file": "functions/fn_0094ea00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
+  "address": "0x0094EAA0",
+  "name": "Text_AppendHashKeySubstring",
+  "kind": "function",
+  "file": "functions/fn_0094eaa0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s511"
@@ -56191,6 +56281,15 @@
   "name": "conditional_forward_pair",
   "kind": "function",
   "file": "functions/fn_0094ec40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
+  "address": "0x0094ED20",
+  "name": "accumulate_validated_pairs",
+  "kind": "function",
+  "file": "functions/fn_0094ed20.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s511"
@@ -62584,6 +62683,33 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s422"
+ },
+ {
+  "address": "0x009BB440",
+  "name": "new_input_node_a",
+  "kind": "function",
+  "file": "functions/fn_009bb440.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
+ },
+ {
+  "address": "0x009BB470",
+  "name": "new_input_node_b",
+  "kind": "function",
+  "file": "functions/fn_009bb470.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
+ },
+ {
+  "address": "0x009BB4A0",
+  "name": "new_input_node_c",
+  "kind": "function",
+  "file": "functions/fn_009bb4a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
  },
  {
   "address": "0x009BE040",
@@ -122848,6 +122974,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b335"
+ },
+ {
+  "address": "0x00D09170",
+  "name": "ped_create_gun_task",
+  "kind": "function",
+  "file": "functions/fn_00d09170.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b619"
  },
  {
   "address": "0x00D108F0",
