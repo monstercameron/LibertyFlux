@@ -32967,6 +32967,33 @@
   "lane": "r-b573"
  },
  {
+  "address": "0x005A89B0",
+  "name": "reset_slots_165",
+  "kind": "function",
+  "file": "functions/fn_005a89b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
+ },
+ {
+  "address": "0x005A8CA0",
+  "name": "controls_select_and_reset_slots",
+  "kind": "function",
+  "file": "functions/fn_005a8ca0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
+ },
+ {
+  "address": "0x005A9070",
+  "name": "control_forward_guard",
+  "kind": "function",
+  "file": "functions/fn_005a9070.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
+ },
+ {
   "address": "0x005AE390",
   "name": "hud_text_attrs_update",
   "kind": "function",
@@ -32974,6 +33001,15 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b569"
+ },
+ {
+  "address": "0x005AE5E0",
+  "name": "sync_config_cache",
+  "kind": "function",
+  "file": "functions/fn_005ae5e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
  },
  {
   "address": "0x005AE630",
@@ -33066,6 +33102,15 @@
   "lane": "r-b580"
  },
  {
+  "address": "0x005B2EE0",
+  "name": "teardown_control_state",
+  "kind": "function",
+  "file": "functions/fn_005b2ee0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
+ },
+ {
   "address": "0x005B2F80",
   "name": "conditional_restart",
   "kind": "function",
@@ -33129,6 +33174,15 @@
   "lane": "r-s116"
  },
  {
+  "address": "0x005B5010",
+  "name": "refresh_marked_rows",
+  "kind": "function",
+  "file": "functions/fn_005b5010.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
+ },
+ {
   "address": "0x005B5510",
   "name": "menu_present_apply",
   "kind": "function",
@@ -33145,6 +33199,15 @@
   "trials": 1500,
   "checker": "version 6",
   "lane": "r-b592"
+ },
+ {
+  "address": "0x005B5AA0",
+  "name": "publish_tagged_rows",
+  "kind": "function",
+  "file": "functions/fn_005b5aa0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
  },
  {
   "address": "0x005B5B20",
@@ -33165,6 +33228,15 @@
   "lane": "r-s116"
  },
  {
+  "address": "0x005B5C70",
+  "name": "invalidate_rows_by_id",
+  "kind": "function",
+  "file": "functions/fn_005b5c70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
+ },
+ {
   "address": "0x005B5CC0",
   "name": "record_table_find_tagged",
   "kind": "function",
@@ -33172,6 +33244,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s116"
+ },
+ {
+  "address": "0x005B5D30",
+  "name": "set_rows_by_tag",
+  "kind": "function",
+  "file": "functions/fn_005b5d30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
  },
  {
   "address": "0x005B5D80",
@@ -33201,6 +33282,15 @@
   "lane": "r-s116"
  },
  {
+  "address": "0x005B5E80",
+  "name": "free_if_flagged",
+  "kind": "function",
+  "file": "functions/fn_005b5e80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
+ },
+ {
   "address": "0x005B5EA0",
   "name": "vector_broadcast_fill",
   "kind": "function",
@@ -33210,6 +33300,15 @@
   "lane": "r-s116"
  },
  {
+  "address": "0x005B5EF0",
+  "name": "alloc_table",
+  "kind": "function",
+  "file": "functions/fn_005b5ef0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
+ },
+ {
   "address": "0x005B5F50",
   "name": "span_compact_finalize",
   "kind": "function",
@@ -33217,6 +33316,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s116"
+ },
+ {
+  "address": "0x005B5FB0",
+  "name": "vec_init_24",
+  "kind": "function",
+  "file": "functions/fn_005b5fb0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
  },
  {
   "address": "0x005B6030",
@@ -33264,6 +33372,51 @@
   "lane": "r-s116"
  },
  {
+  "address": "0x005B6340",
+  "name": "dup_wide_string",
+  "kind": "function",
+  "file": "functions/fn_005b6340.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
+ },
+ {
+  "address": "0x005B67A0",
+  "name": "release_slots_down",
+  "kind": "function",
+  "file": "functions/fn_005b67a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
+ },
+ {
+  "address": "0x005B6800",
+  "name": "release_slots_up",
+  "kind": "function",
+  "file": "functions/fn_005b6800.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
+ },
+ {
+  "address": "0x005B6850",
+  "name": "find_with_temp_key",
+  "kind": "function",
+  "file": "functions/fn_005b6850.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
+ },
+ {
+  "address": "0x005B6880",
+  "name": "search_keyed_rows",
+  "kind": "function",
+  "file": "functions/fn_005b6880.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s505"
+ },
+ {
   "address": "0x005C8390",
   "name": "ped_task_group_reset (proposed)",
   "kind": "function",
@@ -33277,6 +33430,15 @@
   "name": "CViewportPrimaryOrtho::vf1",
   "kind": "function",
   "file": "functions/fn_005d4720.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b616"
+ },
+ {
+  "address": "0x005D48A0",
+  "name": "CViewportPrimaryOrtho::vf12",
+  "kind": "function",
+  "file": "functions/fn_005d48a0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b616"
@@ -33307,6 +33469,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s145"
+ },
+ {
+  "address": "0x005D5550",
+  "name": "viewport_stage_submit",
+  "kind": "function",
+  "file": "functions/fn_005d5550.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b616"
  },
  {
   "address": "0x005D5730",
@@ -33406,6 +33577,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s145"
+ },
+ {
+  "address": "0x005D5F00",
+  "name": "html_text_node_init",
+  "kind": "function",
+  "file": "functions/fn_005d5f00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b616"
  },
  {
   "address": "0x005D6110",
@@ -48753,6 +48933,24 @@
   "lane": "r-b570"
  },
  {
+  "address": "0x008BBCD0",
+  "name": "input_ui_menu_options_a",
+  "kind": "function",
+  "file": "functions/fn_008bbcd0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b609"
+ },
+ {
+  "address": "0x008BC550",
+  "name": "MO_VEH",
+  "kind": "function",
+  "file": "functions/fn_008bc550.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b609"
+ },
+ {
   "address": "0x008BD300",
   "name": "ui_brightness_update",
   "kind": "function",
@@ -51372,6 +51570,24 @@
   "lane": "a-16"
  },
  {
+  "address": "0x008E6E20",
+  "name": "NativeImpl_LOAD_ALL_PATH_NODES",
+  "kind": "function",
+  "file": "functions/fn_008e6e20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s512"
+ },
+ {
+  "address": "0x008E6EC0",
+  "name": "path_node_loaded_check",
+  "kind": "function",
+  "file": "functions/fn_008e6ec0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s512"
+ },
+ {
   "address": "0x008E71F0",
   "name": "PlayerSet_FindLargestCluster",
   "kind": "function",
@@ -51381,6 +51597,15 @@
   "lane": "r-b118"
  },
  {
+  "address": "0x008E7970",
+  "name": "table_stamp_u16_slots",
+  "kind": "function",
+  "file": "functions/fn_008e7970.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s512"
+ },
+ {
   "address": "0x008E79C0",
   "name": "project_point_onto_segment",
   "kind": "function",
@@ -51388,6 +51613,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-16"
+ },
+ {
+  "address": "0x008E7AC0",
+  "name": "count_matching_rows_callback",
+  "kind": "function",
+  "file": "functions/fn_008e7ac0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s512"
+ },
+ {
+  "address": "0x008E7B30",
+  "name": "count_flagged_rows",
+  "kind": "function",
+  "file": "functions/fn_008e7b30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s512"
  },
  {
   "address": "0x008E7B90",
@@ -51406,6 +51649,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b118"
+ },
+ {
+  "address": "0x008E87D0",
+  "name": "emit_min_scan",
+  "kind": "function",
+  "file": "functions/fn_008e87d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q30"
  },
  {
   "address": "0x008E8C00",
@@ -51433,6 +51685,15 @@
   "trials": 2000,
   "checker": "version 6",
   "lane": "a-Q13"
+ },
+ {
+  "address": "0x008EA8A0",
+  "name": "count_flagged_rows_global",
+  "kind": "function",
+  "file": "functions/fn_008ea8a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s512"
  },
  {
   "address": "0x008EA8F0",
@@ -51687,6 +51948,15 @@
   "lane": "r-b583"
  },
  {
+  "address": "0x008EE520",
+  "name": "notify_64_slots",
+  "kind": "function",
+  "file": "functions/fn_008ee520.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s512"
+ },
+ {
   "address": "0x008EE550",
   "name": "tls_logged_table_append (proposed)",
   "kind": "function",
@@ -51766,6 +52036,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-17"
+ },
+ {
+  "address": "0x008EF310",
+  "name": "table_clear_flag_bits",
+  "kind": "function",
+  "file": "functions/fn_008ef310.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s512"
  },
  {
   "address": "0x008EF360",
@@ -52713,6 +52992,15 @@
   "lane": "a-F05"
  },
  {
+  "address": "0x00901520",
+  "name": "project_and_clamp_point",
+  "kind": "function",
+  "file": "functions/fn_00901520.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b618"
+ },
+ {
   "address": "0x00901830",
   "name": "BLIP_DEST",
   "kind": "function",
@@ -52720,6 +53008,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b256"
+ },
+ {
+  "address": "0x00901C10",
+  "name": "input_ui_build_elements",
+  "kind": "function",
+  "file": "functions/fn_00901c10.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b614"
  },
  {
   "address": "0x00902270",
@@ -55089,6 +55386,15 @@
   "lane": "r-s132"
  },
  {
+  "address": "0x00948650",
+  "name": "store_first_free_triple",
+  "kind": "function",
+  "file": "functions/fn_00948650.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
   "address": "0x00948740",
   "name": "pool_contains_value",
   "kind": "function",
@@ -55197,6 +55503,15 @@
   "lane": "a-16"
  },
  {
+  "address": "0x009495B0",
+  "name": "clear_192_slot_words",
+  "kind": "function",
+  "file": "functions/fn_009495b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
   "address": "0x009495D0",
   "name": "NativeImpl_SET_OBJECT_COORDINATES",
   "kind": "function",
@@ -55213,6 +55528,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-16"
+ },
+ {
+  "address": "0x00949900",
+  "name": "reemit_valid_pairs",
+  "kind": "function",
+  "file": "functions/fn_00949900.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
  },
  {
   "address": "0x00949930",
@@ -55287,6 +55611,24 @@
   "lane": "r-b96"
  },
  {
+  "address": "0x0094B870",
+  "name": "forward_created_object",
+  "kind": "function",
+  "file": "functions/fn_0094b870.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
+  "address": "0x0094B880",
+  "name": "lazy_singleton_get",
+  "kind": "function",
+  "file": "functions/fn_0094b880.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
   "address": "0x0094B8C0",
   "name": "obj_slot_ptr",
   "kind": "function",
@@ -55332,6 +55674,15 @@
   "lane": "r-b601"
  },
  {
+  "address": "0x0094C370",
+  "name": "reset_16_subobjects",
+  "kind": "function",
+  "file": "functions/fn_0094c370.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
   "address": "0x0094C420",
   "name": "pair_array_init6",
   "kind": "function",
@@ -55339,6 +55690,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-16"
+ },
+ {
+  "address": "0x0094C450",
+  "name": "clear_50_slot_triples",
+  "kind": "function",
+  "file": "functions/fn_0094c450.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
  },
  {
   "address": "0x0094CAB0",
@@ -55368,6 +55728,15 @@
   "lane": "a-17"
  },
  {
+  "address": "0x0094CBB0",
+  "name": "clear_head_words_then_slots",
+  "kind": "function",
+  "file": "functions/fn_0094cbb0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
   "address": "0x0094CC00",
   "name": "fn_0094cc00",
   "kind": "function",
@@ -55375,6 +55744,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "a-F05"
+ },
+ {
+  "address": "0x0094CC50",
+  "name": "lookup_key_then_validate",
+  "kind": "function",
+  "file": "functions/fn_0094cc50.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
+  "address": "0x0094CCC0",
+  "name": "probe_slot_by_tag",
+  "kind": "function",
+  "file": "functions/fn_0094ccc0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
  },
  {
   "address": "0x0094CD20",
@@ -55422,6 +55809,15 @@
   "lane": "a-17"
  },
  {
+  "address": "0x0094DF10",
+  "name": "release_dead_handles",
+  "kind": "function",
+  "file": "functions/fn_0094df10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
   "address": "0x0094E040",
   "name": "find_and_invalidate_slot",
   "kind": "function",
@@ -55438,6 +55834,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "a-S05"
+ },
+ {
+  "address": "0x0094E2B0",
+  "name": "index_lookup_forward",
+  "kind": "function",
+  "file": "functions/fn_0094e2b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
  },
  {
   "address": "0x0094E400",
@@ -55467,6 +55872,24 @@
   "lane": "a-17"
  },
  {
+  "address": "0x0094EC40",
+  "name": "conditional_forward_pair",
+  "kind": "function",
+  "file": "functions/fn_0094ec40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
+  "address": "0x0094EE30",
+  "name": "describe_if_present",
+  "kind": "function",
+  "file": "functions/fn_0094ee30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
   "address": "0x0094EEA0",
   "name": "reset_state_a",
   "kind": "function",
@@ -55492,6 +55915,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-17"
+ },
+ {
+  "address": "0x0094EEF0",
+  "name": "reset_four_subsystems",
+  "kind": "function",
+  "file": "functions/fn_0094eef0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
  },
  {
   "address": "0x0094EF50",
@@ -69786,6 +70218,15 @@
   "lane": "a-S05"
  },
  {
+  "address": "0x00A32AE0",
+  "name": "dispatch_probed_items",
+  "kind": "function",
+  "file": "functions/fn_00a32ae0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b615"
+ },
+ {
   "address": "0x00A32F00",
   "name": "model_table_filtered_setup",
   "kind": "function",
@@ -69802,6 +70243,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b204"
+ },
+ {
+  "address": "0x00A333C0",
+  "name": "dispatch_indexed_items",
+  "kind": "function",
+  "file": "functions/fn_00a333c0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b615"
  },
  {
   "address": "0x00A34FE0",
@@ -77499,6 +77949,15 @@
   "lane": "r-b251"
  },
  {
+  "address": "0x00ADC280",
+  "name": "input_ui_float_table_build",
+  "kind": "function",
+  "file": "functions/fn_00adc280.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b613"
+ },
+ {
   "address": "0x00ADCCA0",
   "name": "CRenderPhaseInitA",
   "kind": "function",
@@ -77857,6 +78316,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b201"
+ },
+ {
+  "address": "0x00AE02A0",
+  "name": "input_ui_object_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00ae02a0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b613"
  },
  {
   "address": "0x00AE0690",
@@ -110079,6 +110547,15 @@
   "lane": "r-s125"
  },
  {
+  "address": "0x00BF3D30",
+  "name": "dispatch_and_propagate_rows",
+  "kind": "function",
+  "file": "functions/fn_00bf3d30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q30"
+ },
+ {
   "address": "0x00BF3F20",
   "name": "bind_slot",
   "kind": "function",
@@ -119437,6 +119914,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s468"
+ },
+ {
+  "address": "0x00CC6020",
+  "name": "euphoria_behaviour_update",
+  "kind": "function",
+  "file": "functions/fn_00cc6020.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q27"
  },
  {
   "address": "0x00CC6BA0",
