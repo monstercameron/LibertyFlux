@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Rewrites: two more verified rewrites withdrawn, wrong comparisons",
+    "commit": null,
+    "summary": "The verified count goes down by two. Both rewrites compare a callee's answer unsigned where the original compares it signed, and neither proof could tell.",
+    "changes": [
+      "A wide-string search (find_wide_substring) and a small train classification predicate are removed from rewrites/verified. In the first the loop's exit test compares its counter with a length returned by a callee; in the second the callee's answer is tested against three. The originals use the signed forms; the rewrites hold the values as unsigned words and so compare unsigned, which differs whenever the callee answers with the high bit set.",
+      "The lane working through the measured blind proofs found both; the coordinator confirmed each by reading the original independently before withdrawing it.",
+      "That makes three wrong rewrites found among the blind proofs checked against the original so far, about sixty, plus the 144 of the leaderboard family found earlier by the lift. Each returns only through a strengthening lane whose contract makes the callee answer with boundary and negative values and whose wrong version is exactly this mistake; that lane is already repairing these two."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 17 files from lanes (288 unverified rewrites, 102 in review)",
     "commit": "88a64311a5e57abdd61d7b4c33a338e4d0441e4c",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
