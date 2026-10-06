@@ -9,6 +9,35 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming one hundred fifty NaturalMotion task functions</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-122"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-122</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>Verified A batch of one hundred fifty consecutive unnamed functions turned out to be the whole NaturalMotion ped-task system, and every one is now named: one hundred twenty at high confidence and thirty at medium, with none left blank.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A batch of one hundred fifty consecutive unnamed functions turned out to be the whole NaturalMotion ped-task system, and every one is now named: one hundred twenty at high confidence and thirty at medium, with none left blank.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose a descriptive name for each of one hundred fifty consecutive unnamed game functions, working out what the group is about first and then naming each function from strings, imports, callers, class tables and behavior. No rewriting and no checker in this lane, only names with confidence levels.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The group is the Euphoria task family: the NaturalMotion base task, its thirteen leaf behaviors such as balance, brace, flinch and shot, the blend-from-NM task, the complex NM task, and their shared helpers.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The base task's per-frame method orchestrates the three behavior slots: the first run stops all behaviors and runs the start slot, later runs run the sustain slot and then the finish slot. This pins down what each slot means.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Tasks request transitions by stamping a marker word holding the next task's id plus a stage byte, and a complex owner task was found testing that marker before creating its next sub-task.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The complex NM task's id getter returns a task id that was not in the id table, so it is a newly recorded id.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Six constant-fill functions are default parameter rows for six behaviors, matched to their consumers by table base and row stride. Two widely called helpers turned out to be a plain memory comparison and the compiler's stack probe, not NM logic.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Name the three behavior slots start, sustain and finish consistently across all leaves.&lt;/li&gt;
+&lt;li&gt;Name shared folded bodies once, noting every class whose table points at them.&lt;/li&gt;
+&lt;li&gt;Add the newly found complex NM task id to the task id table.&lt;/li&gt;
+&lt;li&gt;Correct the verified brace start-slot comment that calls it a per-frame update; it runs on first and retriggered processing.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Disassemble the batch through the mapped executable image, validating the mapping by decoding one known id getter end to end. Collect callees, imports, referenced strings and constants per function, then scan the code section for direct callers of every batch member to name helpers by who calls them. Cross-check each table attribution against the per-class slot maps and read the verified rewrite notes of neighboring functions before theorizing about slot roles.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The caller counts from the decompiler-based inventory were wrong in at least three places: six initializers showed zero callers but each is called by an init loop, and a weapon helper showed one caller but has three. The function inventory also overruns one task update into its neighbor. Direct call scanning over the code section gave the true picture each time.&lt;/p&gt;
+&lt;p&gt;The two sustain slots resisted a clean distinction for a while because both build and send messages; what finally separated them was reading the base per-frame method and seeing it call one on the first run and the other afterwards.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Two contract traps that let wrong rewrites pass, both caught by mutants</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s512"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s512</id>
@@ -1146,30 +1175,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Each function has a contract generator that asserts every call-site address and per-callee site count, a contract, a rewrite, and a verdict file in the lane scratch folder. Rebuilding the rewrite crate and running the stock checker driver over the eight contracts replays all ninety-six hundred trials plus the eight wrong versions.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;Two hand-computed frame offsets were wrong by a few bytes each (hexadecimal addition done from memory), and both were caught by failing probes before anything shipped. Frame arithmetic for these contracts is now done with a script, and the generators assert the resulting site map. The first rewrite of the drive-task builder also missed the unordered-comparison behaviour above, which the not-a-number trials caught immediately.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>production batch: three task functions verified, one deferred on an unservable read</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b514"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b514</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>A production batch of four neighbouring task-system functions yielded three verifications and one deferral, plus a checker robustness finding: the guard that should make unrelocated reads fault loudly is silently absent on this machine, so one function reads ambient memory instead.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of four neighbouring task-system functions yielded three verifications and one deferral, plus a checker robustness finding: the guard that should make unrelocated reads fault loudly is silently absent on this machine, so one function reads ambient memory instead.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite four medium and large task-system functions in Rust and prove each rewrite behaves identically to the original with the version 5 checker, at least one thousand trials per function, with a deliberately wrong version per function and an honest account of what each proof does not cover.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three functions passed twelve hundred trials each with zero failures, every declared callee firing and every wrong version caught: a task-set refresh with four member loops, a task dispatcher with an indirect handler predicate and a table-walking loop, and an aim update with two scripted phases, two arctangent calls and a flag forest folded into a bitfield.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The fourth function reads one byte of writable game data through an address with no relocation entry, on two major paths. A minimal probe reaching the first read showed the original does not fault: the memory guard that should catch such reads cannot be established on this machine, so the original silently reads whatever the operating system mapped there. The value is unservable (writable data the shadow mechanism could not provide anyway) and meaningless to reproduce, so the function was deferred with the read documented.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two smaller checker behaviours cost attempts and are worth one line each in the manual: callees using the register convention compare that register by default unless explicitly skipped, and constants baked into instructions may be relocated by the test harness, in which case the rewrite must relocate them too.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Three functions ship as verified with their narrowings disclosed (uncompared vector-register inputs to the arctangent calls, one unmodelled stride word at the out-word cap, a stack check off where the original rewrites its own argument slot, allocator callees modelled as no-ops, cookie checks left native).&lt;/li&gt;
-&lt;li&gt;The fourth is deferred as needing an unavailable checker ability, with the probe kept so the next lane continues instead of starting again.&lt;/li&gt;
-&lt;li&gt;Recommended: the worker should record whether its memory guard is actually up, or refuse to run functions with unrelocated accesses when it is down. A rewrite that copies the raw read would currently match byte for byte against ambient garbage and look verified.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the stock version 5 worker against the three shipped contracts for twelve hundred trials each; all pass with every callee firing. Run the ten-trial probe contract for the fourth function: the original completes without faulting and takes the branch for a nonzero byte, while a rewrite that refuses to mirror the raw read diverges exactly there. Inspecting the worker source shows the guard reservation ignores failure, which is the mechanism.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Two rewrite bugs came from resolving stack-relative operands at the wrong stack-pointer value (before versus after call cleanup); both were caught by failing trials within minutes. A misread instruction address on the fourth function sent the first probe at the wrong patch site; the generator now asserts every site holds a call opcode before writing the contract. Build locks from lingering short-lived processes cleared on their own; no lane processes were left running.&lt;/p&gt;</content>
   </entry>
 </feed>
