@@ -1,5 +1,5 @@
 // original: 0x0068EC90 anim_fetch_tracks_gated (proposed)
-
+use lf_checker_rt::{callee_cdecl, callee_stdcall, callee_thiscall, callee_fastcall, export, global, relocated};
 /// Copy stored per-bone records into an animation's tracks, letting a callback
 /// object accept or reject each track first.
 ///
@@ -19,7 +19,9 @@
 /// offered to the gate, and on accept its record's words are copied to it
 /// (kind 0: `+0x20..+0x2c`; kind 1: `+0x40..+0x4f`). Otherwise every track of a
 /// known kind is offered to the gate and, on accept, its record is found
-/// through the owner's record-id lookup (callee), accepted only if the record
+/// through the owner's record-id lookup (callee; each site keeps its own
+/// out-word across loop iterations, so a later call re-presents the
+/// callee's previous answer), accepted only if the record
 /// carries the kind's mask bits (0x380 for translation, 0x0e for rotation)
 /// before the same copy runs. The gate's weight write is never read back. The
 /// kind is re-read after the gate and after the record check. After either
@@ -182,6 +184,12 @@ lf_checker_rt::export!(thiscall, rw_0068ec90(this: u32, owner: u32, gate: u32, _
                 }
             }
         } else {
+            // One out-word per record-id lookup site, kept across
+            // iterations: the original's kind-1 and kind-0 sites use
+            // different frame slots, each still holding the callee's
+            // previous answer on a later call.
+            let mut slot_k0: u32 = 0;
+            let mut slot_k1: u32 = 0;
             let n = rd16(set + SET_COUNT);
             if n > 0 {
                 let tracks = rd32(set + SET_TRACKS);
@@ -196,18 +204,23 @@ lf_checker_rt::export!(thiscall, rw_0068ec90(this: u32, owner: u32, gate: u32, _
                     }
                     // Record-id lookup on the owner: answers a bool and writes
                     // the record index (16 bits used) through its out pointer.
-                    let mut slot = 0u32;
+                    // Each site re-presents its own previous answer (see above).
+                    let outp: u32 = if kind == KIND_TRANSLATION {
+                        core::ptr::addr_of_mut!(slot_k0) as u32
+                    } else {
+                        core::ptr::addr_of_mut!(slot_k1) as u32
+                    };
                     let found = lf_checker_rt::callee_thiscall!(
                         2,
                         u32,
                         owner,
                         rd16(track + TRACK_ID),
-                        core::ptr::addr_of_mut!(slot) as u32
+                        outp
                     ) as u8;
                     if found == 0 {
                         continue;
                     }
-                    let idx = slot & 0xffff;
+                    let idx = rd32(outp) & 0xffff;
                     let rec = rd32(owner) + idx * RECORD_STRIDE + 4;
                     let accepted = if kind == KIND_TRANSLATION {
                         rd32(rec) & MASK_TRANSLATION != 0

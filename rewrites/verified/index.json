@@ -37467,6 +37467,15 @@
   "lane": "r-b627"
  },
  {
+  "address": "0x006650B0",
+  "name": "sn_task_init_params",
+  "kind": "function",
+  "file": "functions/fn_006650b0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b627"
+ },
+ {
   "address": "0x0066DB10",
   "name": "rage::sysTimeManager::vf1",
   "kind": "function",
@@ -38165,8 +38174,8 @@
   "kind": "function",
   "file": "functions/fn_0068ec90.rs",
   "trials": 1200,
-  "checker": "version 4",
-  "lane": "r-b280"
+  "checker": "version 6",
+  "lane": "a-S11"
  },
  {
   "address": "0x0068EF60",
@@ -48011,8 +48020,8 @@
   "kind": "function",
   "file": "functions/fn_008a9a90.rs",
   "trials": 1200,
-  "checker": "version 5",
-  "lane": "r-b369"
+  "checker": "version 6",
+  "lane": "a-S11"
  },
  {
   "address": "0x008A9D40",
@@ -80692,6 +80701,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s148"
+ },
+ {
+  "address": "0x00B00B60",
+  "name": "CViewport3DScene::vf12",
+  "kind": "function",
+  "file": "functions/fn_00b00b60.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b621"
  },
  {
   "address": "0x00B015E0",
@@ -116325,6 +116343,15 @@
   "lane": "r-s166"
  },
  {
+  "address": "0x00C67BE0",
+  "name": "drain_scored_stream_candidates",
+  "kind": "function",
+  "file": "functions/fn_00c67be0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b629"
+ },
+ {
   "address": "0x00C681B0",
   "name": "table_search_seeded",
   "kind": "function",
@@ -127395,6 +127422,15 @@
   "lane": "r-b242"
  },
  {
+  "address": "0x00D782E0",
+  "name": "CRenderPhaseWarpShadow::vf3",
+  "kind": "function",
+  "file": "functions/fn_00d782e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
   "address": "0x00D78390",
   "name": "T_CB_Generic_4Args<void(*)(int, int, bool, bool), int, int, bool, bool>::vf1",
   "kind": "function",
@@ -127476,6 +127512,15 @@
   "lane": "r-s516"
  },
  {
+  "address": "0x00D78A30",
+  "name": "clamp_accumulate_normalize_pair",
+  "kind": "function",
+  "file": "functions/fn_00d78a30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
   "address": "0x00D78AE0",
   "name": "angle_blend_two_samples (proposed)",
   "kind": "function",
@@ -127528,6 +127573,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b202"
+ },
+ {
+  "address": "0x00D7AA70",
+  "name": "probe_vector_falloff",
+  "kind": "function",
+  "file": "functions/fn_00d7aa70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
  },
  {
   "address": "0x00D7B100",

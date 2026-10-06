@@ -1,5 +1,5 @@
 // original: 0x008A9A90 aud_build_and_play_slot (proposed)
-
+use lf_checker_rt::{callee_cdecl, callee_stdcall, callee_thiscall, callee_fastcall, export, global, relocated};
 /// Build a play request from a parameter block, resolve it to a sound
 /// through the audio manager, and link the sound into a fresh slot.
 ///
@@ -7,7 +7,9 @@
 /// word at `+4` is the slot kind; `a4` is the parameter block; `a0`/`a1`
 /// are opaque words passed to the resolver; `a3` is an optional
 /// out-pointer receiving the sound. Two lock tokens guard the work
-/// (callee id 1 takes them with `this+0x3210`, id 2 releases them). A
+/// (callee id 1 takes them with `this+0x3210`, id 2 releases them);
+/// each token is four words, and token 1's last two words alias the
+/// middle struct's first two (`-1`) words once it is built. A
 /// zero global flag at file address 0x115DCE6, a zero byte at
 /// `this+0x3231`, an empty free list (`this+0x320C` holding 0xFFFF), or a
 /// null answer from the resolver all release token 1 and return 0; the
@@ -90,27 +92,29 @@ lf_checker_rt::export!(thiscall, rw_008A9A90(this: u32, a0: u32, a1: u32, a2: u3
             }
         }
 
-        let mut tok1: u32 = 0;
-        lock(&mut tok1 as *mut u32 as u32, this.wrapping_add(LOCK_ARG));
+        // Four-word tokens: token 1's last two words alias the middle
+        // struct's first two words (see below); token 2 stays zeroed.
+        let mut tok1 = [0u32; 4];
+        lock(tok1.as_mut_ptr() as u32, this.wrapping_add(LOCK_ARG));
         if rd8(lf_checker_rt::relocated(G_FLAG)) == 0 {
-            unlock(&mut tok1 as *mut u32 as u32);
+            unlock(tok1.as_mut_ptr() as u32);
             return 0;
         }
         if rd8(this + READY) == 0 {
-            unlock(&mut tok1 as *mut u32 as u32);
+            unlock(tok1.as_mut_ptr() as u32);
             return 0;
         }
-        let mut tok2: u32 = 0;
-        lock(&mut tok2 as *mut u32 as u32, this.wrapping_add(LOCK_ARG));
+        let mut tok2 = [0u32; 4];
+        lock(tok2.as_mut_ptr() as u32, this.wrapping_add(LOCK_ARG));
         let head = rd32(this + FREE_HEAD);
         if head != NONE16 {
             let next = rd16(this.wrapping_add(head.wrapping_mul(4)));
             (this.wrapping_add(FREE_HEAD) as *mut u32).write_unaligned(next as u32);
         }
-        unlock(&mut tok2 as *mut u32 as u32);
+        unlock(tok2.as_mut_ptr() as u32);
         let kind = rd16(a2 + 4);
         if head == NONE16 {
-            unlock(&mut tok1 as *mut u32 as u32);
+            unlock(tok1.as_mut_ptr() as u32);
             return 0;
         }
         // Header struct.
@@ -178,6 +182,9 @@ lf_checker_rt::export!(thiscall, rw_008A9A90(this: u32, a0: u32, a1: u32, a2: u3
             a ^= b46;
             mid[21] = a;
         }
+        // Token 1's last two words are the middle struct's first two.
+        tok1[2] = 0xFFFF_FFFF;
+        tok1[3] = 0xFFFF_FFFF;
         // Tail struct.
         let mut tail = [0u8; 28];
         tail[0..4].copy_from_slice(&a2.to_le_bytes());
@@ -201,7 +208,7 @@ lf_checker_rt::export!(thiscall, rw_008A9A90(this: u32, a0: u32, a1: u32, a2: u3
         );
         if snd == 0 {
             let _: u32 = lf_checker_rt::callee_thiscall!(6, u32, this, head);
-            unlock(&mut tok1 as *mut u32 as u32);
+            unlock(tok1.as_mut_ptr() as u32);
             return 0;
         }
         let mgr = lf_checker_rt::relocated(AUD_MGR);
@@ -239,7 +246,7 @@ lf_checker_rt::export!(thiscall, rw_008A9A90(this: u32, a0: u32, a1: u32, a2: u3
         if a3 != 0 {
             (a3 as *mut u32).write_unaligned(snd);
         }
-        unlock(&mut tok1 as *mut u32 as u32);
+        unlock(tok1.as_mut_ptr() as u32);
         snd
     }
 });
