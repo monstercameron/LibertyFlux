@@ -289,8 +289,9 @@ mod x86 {
                     assert_only_changed(&before, &fx.obj.buf, &[(SLOTS, 60), (LIMIT, 4)]);
                     assert!(rt::take_numbered().is_empty());
                     // The wrong run stays in-model while its extra
-                    // iteration reads and writes at most index 15.
-                    if limit <= 15 - dst_base && src_base + limit <= 15 {
+                    // iteration avoids the trailing word entirely (a
+                    // write there would re-read a wild bound).
+                    if dst_base + limit <= 14 && src_base + limit <= 15 {
                         let (wlast, wslots, wlimit) = wrong::rotate_long(&fx_lift(&before, &fx));
                         if wlast != want || wslots != v.slots || wlimit != v.limit {
                             caught += 1;
@@ -309,12 +310,14 @@ mod x86 {
                 let mut fx = Fixture::build(&mut rng);
                 fx.obj.w32(COUNT, count);
                 fx.obj.w8(LIMIT, limit);
-                // The word that lands on the trailing word: low byte 0.
-                let dst_base = ((count + 1) % 3) * 5;
-                let bl_hit = 15 - dst_base;
-                let src_hit = count * 5 + bl_hit;
-                let pinned = fx.obj.r32(SLOTS + (src_hit as usize) * 4) & 0xFFFF_FF00;
-                fx.obj.w32(SLOTS + (src_hit as usize) * 4, pinned);
+                // The word that flows onto the trailing word through
+                // the overlapping copy chain starts at the source
+                // row's first word: pin its low byte to zero so the
+                // re-read bound ends the loop instead of running on
+                // into wild memory.
+                let src_first = (count * 5) as usize;
+                let pinned = fx.obj.r32(SLOTS + src_first * 4) & 0xFFFF_FF00;
+                fx.obj.w32(SLOTS + src_first * 4, pinned);
                 let before = fx.obj.buf.clone();
                 let mut v = fx.lift();
                 rt::set_script(&[]);

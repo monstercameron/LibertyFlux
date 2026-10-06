@@ -820,6 +820,9 @@ impl EventHandler {
         factory: &mut impl TaskFactory,
         state: &FactoryState,
     ) -> Option<Handle32<Task>> {
+        // The vector offset is relative to this event; the proof maps
+        // it onto the event's address.
+        let _ = event;
         let value = scalar.eval_word(input.scalar_input);
         let Some(handle) = factory.lookup(state.manager()) else {
             self.pending = None;

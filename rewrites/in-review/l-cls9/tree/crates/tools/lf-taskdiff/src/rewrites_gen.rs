@@ -1,0 +1,12 @@
+// One module per verified rewrite: files share top-level helper names,
+// so they cannot live in one scope. Each qualifies the export macro
+// through its checker's runtime name (see lib.rs); files using the bare
+// form import the macros from the crate root instead.
+pub mod fn_00D4DEE0 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00d4dee0.rs")); }
+pub mod fn_00D4E000 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00d4e000.rs")); }
+pub mod fn_00CCA040 { #![allow(unused_imports)] use crate::{callee_thiscall, export}; use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00cca040.rs")); }
+pub mod fn_00CCA8B0 { #![allow(unused_imports)] use crate::{export}; use super::{callee_addr, global, relocated}; const TASK_POOL: u32 = 0x167E2A0; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00cca8b0.rs")); }
+pub mod fn_00CCB8D0 { #![allow(unused_imports)] use crate::{callee_thiscall, export}; use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00ccb8d0.rs")); }
+pub mod fn_00D4DE90 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00d4de90.rs")); }
+pub mod fn_00D4DF30 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00d4df30.rs")); }
+pub mod fn_00D4E1C0 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00d4e1c0.rs")); }

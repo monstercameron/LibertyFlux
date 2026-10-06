@@ -192,6 +192,7 @@ mod x86 {
             let mut fx = Fixture::build(&mut rng);
             let index = i % 3;
             fx.obj.w32(INDEX, index);
+            let _ = &mut fx;
             let before = fx.obj.buf.clone();
             let v = fx.lift();
             rt::set_script(&[]);

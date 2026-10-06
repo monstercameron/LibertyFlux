@@ -24,7 +24,7 @@ pub mod registry;
 
 pub use duck::{
     DuckEvent, DuckPed, DuckPedSide, DuckPool, DuckQuery, DuckSink, DuckSpec, DuckTask,
-    DuckTaskSide,
+    DuckTaskSide, FINISH_FLAG, QUERY_CODE, QUERY_STATE, SUSTAIN_FLAG,
 };
 pub use fist::{DAMP_RATE_BITS, FistHeld, FistLink, FistPool, FistTarget, ShakeFist};
 pub use hit::{HitBase, HitHandler, HitPool, HitResponse, HitStart};

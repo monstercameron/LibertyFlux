@@ -555,5 +555,275 @@ fn duck_other_events_set_the_flag() {
     }
 }
 
-#[
-...[truncated 8556 chars]
+struct DuckPedScript {
+    sample_answer: f32,
+    samples: Vec<u32>,
+    announces: Vec<(u32, u32)>,
+}
+
+impl DuckPedSide for DuckPedScript {
+    fn sample(&mut self, ped: Handle32<DuckPed>) -> f32 {
+        self.samples.push(ped.get());
+        self.sample_answer
+    }
+
+    fn announce(&mut self, ped: Handle32<DuckPed>, flag: u32) {
+        self.announces.push((ped.get(), flag));
+    }
+}
+
+struct DuckPartsScript {
+    elapsed_answer: u32,
+    finish_answer: u32,
+    sustains: Vec<u32>,
+    elapsed_calls: u32,
+    finish_calls: Vec<u32>,
+}
+
+impl DuckTaskSide for DuckPartsScript {
+    fn sustain(&mut self, ped: Handle32<DuckPed>) {
+        self.sustains.push(ped.get());
+    }
+
+    fn elapsed(&mut self) -> u32 {
+        self.elapsed_calls += 1;
+        self.elapsed_answer
+    }
+
+    fn finish_check(&mut self, ped: Handle32<DuckPed>) -> u32 {
+        self.finish_calls.push(ped.get());
+        self.finish_answer
+    }
+}
+
+fn updater(sample: f32, elapsed: u32, finish: u32) -> (DuckPedScript, DuckPartsScript) {
+    (
+        DuckPedScript {
+            sample_answer: sample,
+            samples: Vec::new(),
+            announces: Vec::new(),
+        },
+        DuckPartsScript {
+            elapsed_answer: elapsed,
+            finish_answer: finish,
+            sustains: Vec::new(),
+            elapsed_calls: 0,
+            finish_calls: Vec::new(),
+        },
+    )
+}
+
+fn ped(v: u32) -> Handle32<DuckPed> {
+    Handle32::new(v).unwrap()
+}
+
+#[test]
+fn update_timeout_sets_done_at_the_span() {
+    // One tick short: no timeout, sustain path answers 0.
+    let mut task = duck();
+    let (mut peds, mut parts) = updater(9.0, 0, 1);
+    assert_eq!(task.update(ped(0x60), 1099, 1.0, &mut peds, &mut parts), 0);
+    assert!(!task.done());
+    // At the span: done is set and the update finishes.
+    for tick in [1100, 1101, u32::MAX] {
+        let mut task = duck();
+        let (mut peds, mut parts) = updater(9.0, 0, 1);
+        assert_eq!(task.update(ped(0x60), tick, 1.0, &mut peds, &mut parts), 1);
+        assert!(task.done(), "tick {tick}");
+    }
+    // The subtraction is unsigned: a wrapped tick counts from the start.
+    let mut task = DuckTask::new(0, u32::MAX, 10, 5, false, false, 0xAB);
+    let (mut peds, mut parts) = updater(9.0, 0, 1);
+    assert_eq!(
+        task.update(ped(0x60), 5, 1.0, &mut peds, &mut parts),
+        0
+    );
+    assert!(!task.done());
+    let mut task = DuckTask::new(0, u32::MAX, 10, 5, false, false, 0xAB);
+    let (mut peds, mut parts) = updater(9.0, 0, 1);
+    assert_eq!(
+        task.update(ped(0x60), 9, 1.0, &mut peds, &mut parts),
+        1
+    );
+    assert!(task.done());
+    // A zero span disables the timeout arm entirely.
+    let mut task = DuckTask::new(0, 1000, 0, 5, false, false, 0xAB);
+    let (mut peds, mut parts) = updater(9.0, 0, 1);
+    assert_eq!(
+        task.update(ped(0x60), u32::MAX, 1.0, &mut peds, &mut parts),
+        0
+    );
+    assert!(!task.done());
+}
+
+#[test]
+fn update_done_skips_the_sample() {
+    let mut task = DuckTask::new(0, 1000, 100, 5, true, false, 0xAB);
+    let (mut peds, mut parts) = updater(9.0, 0, 1);
+    assert_eq!(
+        task.update(ped(0x60), 1000, 1.0, &mut peds, &mut parts),
+        1
+    );
+    assert!(peds.samples.is_empty());
+    assert_eq!(peds.announces, vec![(0x60, FINISH_FLAG)]);
+}
+
+#[test]
+fn update_sample_below_limit_finishes() {
+    assert_eq!(SUSTAIN_FLAG, 1);
+    assert_eq!(FINISH_FLAG, 0);
+    // Just below: finishing path.
+    let mut task = duck();
+    let (mut peds, mut parts) = updater(0.99, 0, 1);
+    assert_eq!(
+        task.update(ped(0x60), 1000, 1.0, &mut peds, &mut parts),
+        1
+    );
+    assert_eq!(peds.announces, vec![(0x60, FINISH_FLAG)]);
+    // At the limit: sustain path.
+    let mut task = duck();
+    let (mut peds, mut parts) = updater(1.0, 0, 1);
+    assert_eq!(
+        task.update(ped(0x60), 1000, 1.0, &mut peds, &mut parts),
+        0
+    );
+    assert_eq!(peds.announces, vec![(0x60, SUSTAIN_FLAG)]);
+    // A NaN sample never exceeds the limit: sustain path.
+    let mut task = duck();
+    let (mut peds, mut parts) = updater(f32::NAN, 0, 1);
+    assert_eq!(
+        task.update(ped(0x60), 1000, 1.0, &mut peds, &mut parts),
+        0
+    );
+    // A NaN limit never exceeds the sample either.
+    let mut task = duck();
+    let (mut peds, mut parts) = updater(0.0, 0, 1);
+    assert_eq!(
+        task.update(ped(0x60), 1000, f32::NAN, &mut peds, &mut parts),
+        0
+    );
+}
+
+#[test]
+fn update_flagged_sustain_skips_helpers() {
+    let mut task = DuckTask::new(0, 1000, 0, 5, false, true, 0xAB);
+    let (mut peds, mut parts) = updater(9.0, 7, 1);
+    assert_eq!(
+        task.update(ped(0x60), 1000, 1.0, &mut peds, &mut parts),
+        0
+    );
+    assert_eq!(peds.announces, vec![(0x60, SUSTAIN_FLAG)]);
+    assert!(parts.sustains.is_empty());
+    assert_eq!(parts.elapsed_calls, 0);
+    assert_eq!(task.level(), 5);
+}
+
+#[test]
+fn update_sustain_needs_a_wrapped_timeout() {
+    // start + span wraps below the tick while tick - start stays short.
+    let mut task = DuckTask::new(0, 0xFFFF_FF00, 0x200, 5, false, false, 0xAB);
+    let (mut peds, mut parts) = updater(9.0, 0, 1);
+    assert_eq!(
+        task.update(ped(0x60), 0xFFFF_FF50, 1.0, &mut peds, &mut parts),
+        0
+    );
+    assert!(!task.done());
+    assert_eq!(parts.sustains, vec![0x60]);
+    // Without the wrap the same shape never sustains.
+    let mut task = DuckTask::new(0, 1000, 100, 5, false, false, 0xAB);
+    let (mut peds, mut parts) = updater(9.0, 0, 1);
+    assert_eq!(
+        task.update(ped(0x60), 1099, 1.0, &mut peds, &mut parts),
+        0
+    );
+    assert!(parts.sustains.is_empty());
+}
+
+#[test]
+fn update_nonpositive_level_skips_the_drain() {
+    for level in [0, -1, i16::MIN] {
+        let mut task = DuckTask::new(0, 1000, 0, level, false, false, 0xAB);
+        let (mut peds, mut parts) = updater(9.0, 7, 1);
+        assert_eq!(
+            task.update(ped(0x60), 1000, 1.0, &mut peds, &mut parts),
+            0,
+            "level {level}"
+        );
+        assert_eq!(parts.elapsed_calls, 0);
+        assert_eq!(task.level(), level);
+    }
+}
+
+#[test]
+fn update_sustain_announces_and_drains() {
+    let mut task = duck();
+    let (mut peds, mut parts) = updater(9.0, 30, 1);
+    assert_eq!(
+        task.update(ped(0x60), 1000, 1.0, &mut peds, &mut parts),
+        0
+    );
+    assert_eq!(peds.announces, vec![(0x60, SUSTAIN_FLAG)]);
+    assert_eq!(parts.elapsed_calls, 1);
+    assert_eq!(task.span(), 100);
+    assert_eq!(task.level(), 70);
+}
+
+#[test]
+fn update_level_floor_and_truncation() {
+    // (span, subtrahend, resulting level).
+    for (span, sub, want) in [
+        (0x12345, 0, 0x2345),
+        (100, 101, 0),
+        (100, 100, 0),
+        (0x8000, 0, -0x8000),
+        (0x8000_0000, 0, 0),
+        (0xFFFF_FFFF, 0, 0),
+    ] {
+        let mut task = DuckTask::new(0, 1000, span, 5, false, false, 0xAB);
+        let (mut peds, mut parts) = updater(9.0, sub, 1);
+        assert_eq!(
+            task.update(ped(0x60), 1000, 1.0, &mut peds, &mut parts),
+            0,
+            "span {span:#x} sub {sub:#x}"
+        );
+        assert_eq!(task.level(), want, "span {span:#x} sub {sub:#x}");
+    }
+}
+
+#[test]
+fn update_finishing_runs_the_check_unless_gated() {
+    // A passing low byte sets marks bit 1 and keeps the rest.
+    let mut task = DuckTask::new(0x100, 1000, 0, 5, true, false, 0xAB);
+    let (mut peds, mut parts) = updater(9.0, 0, 1);
+    assert_eq!(
+        task.update(ped(0x60), 1000, 1.0, &mut peds, &mut parts),
+        1
+    );
+    assert_eq!(parts.finish_calls, vec![0x60]);
+    assert_eq!(task.marks(), 0x102);
+    assert_eq!(peds.announces, vec![(0x60, FINISH_FLAG)]);
+    // A zero low byte leaves the marks alone.
+    let mut task = DuckTask::new(0x100, 1000, 0, 5, true, false, 0xAB);
+    let (mut peds, mut parts) = updater(9.0, 0, 0x100);
+    assert_eq!(
+        task.update(ped(0x60), 1000, 1.0, &mut peds, &mut parts),
+        1
+    );
+    assert_eq!(task.marks(), 0x100);
+    // The flag and marks bit 0 each skip the check.
+    let mut task = DuckTask::new(0, 1000, 0, 5, true, true, 0xAB);
+    let (mut peds, mut parts) = updater(9.0, 0, 1);
+    assert_eq!(
+        task.update(ped(0x60), 1000, 1.0, &mut peds, &mut parts),
+        1
+    );
+    assert!(parts.finish_calls.is_empty());
+    let mut task = DuckTask::new(1, 1000, 0, 5, true, false, 0xAB);
+    let (mut peds, mut parts) = updater(9.0, 0, 1);
+    assert_eq!(
+        task.update(ped(0x60), 1000, 1.0, &mut peds, &mut parts),
+        1
+    );
+    assert!(parts.finish_calls.is_empty());
+    assert_eq!(task.marks(), 1);
+}

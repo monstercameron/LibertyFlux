@@ -91,10 +91,12 @@ lf_checker_rt::export!(cdecl, rw_0094E400() -> u32 {
             );
             p += RECORD_LEN;
         }
-        // Frame leftovers the guard-2 rows re-read: bytes 6..10 and word 4 of
-        // the last record. The last record starts at MAIN_END - RECORD_LEN.
+        // Frame leftovers the guard-2 rows re-read: the words at offsets 12
+        // and 16 of the last main-table record, which sits at esp+0x18 while
+        // the rows read esp+0x24 and esp+0x28. The last record starts at
+        // MAIN_END - RECORD_LEN.
         let last = MAIN_END - RECORD_LEN;
-        let leftover24 = gr32(last + 6);
+        let leftover24 = gr32(last + 12);
         let leftover28 = gr32(last + 16);
 
         // Guard table 2: rows sink (0, -1) pairs; a non-zero guard would take
