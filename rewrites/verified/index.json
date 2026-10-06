@@ -35775,6 +35775,15 @@
   "lane": "r-b594"
  },
  {
+  "address": "0x00634270",
+  "name": "motion_sample_resolve",
+  "kind": "function",
+  "file": "functions/fn_00634270.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b594"
+ },
+ {
   "address": "0x006347E0",
   "name": "bracket_section_parse",
   "kind": "function",
@@ -48690,6 +48699,15 @@
   "lane": "r-b570"
  },
  {
+  "address": "0x008BD300",
+  "name": "ui_brightness_update",
+  "kind": "function",
+  "file": "functions/fn_008bd300.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b605"
+ },
+ {
   "address": "0x008BDF20",
   "name": "ui_meter_update",
   "kind": "function",
@@ -51318,6 +51336,15 @@
   "lane": "a-16"
  },
  {
+  "address": "0x008E7B90",
+  "name": "NodeGraph_PathSearch",
+  "kind": "function",
+  "file": "functions/fn_008e7b90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q26"
+ },
+ {
   "address": "0x008E8590",
   "name": "TableScan_FindBestEntry",
   "kind": "function",
@@ -52164,10 +52191,28 @@
   "lane": "r-s504"
  },
  {
+  "address": "0x008F6BC0",
+  "name": "Input_SwitchDevice",
+  "kind": "function",
+  "file": "functions/fn_008f6bc0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s504"
+ },
+ {
   "address": "0x008F6EF0",
   "name": "Input_ResetSlots",
   "kind": "function",
   "file": "functions/fn_008f6ef0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s504"
+ },
+ {
+  "address": "0x008F7240",
+  "name": "Input_PollDevices",
+  "kind": "function",
+  "file": "functions/fn_008f7240.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-s504"

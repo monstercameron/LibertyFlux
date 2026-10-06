@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Devlog: Naming ped movement, blend and frag functions",
+    "title": "Rewrites: 5 more functions pass the checker (16347 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "5 rewrites added under rewrites/verified: 0 script native handlers and 5 other functions.",
+      "The tree now holds 16347 rewrites, 16328 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 4 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Devlog: Naming ped movement, blend and frag functions",
+    "commit": "48ced1dac7612c2a7a259db62f80e84f4d4c43f1",
     "summary": "Findings from the nm-120 lane.",
     "changes": [
       "New devlog entry: Naming ped movement, blend and frag functions.",
