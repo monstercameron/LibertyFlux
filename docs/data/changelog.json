@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Lift: the streaming slot table, 31 routines in portable Rust",
+    "title": "Rust in progress: 16 files from lanes (224 unverified rewrites, 244 in review)",
     "commit": null,
+    "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
+    "changes": [
+      "rewrites/unverified holds 224 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
+      "rewrites/in-review holds 244 Rust files from 13 other lanes (checker changes, assembly, lifted code, tools), waiting for review before they move to their real place.",
+      "40 files were held back by the publication scan."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Lift: the streaming slot table, 31 routines in portable Rust",
+    "commit": "d9623fc430612eb5b09961f40c59dfc7fb66b6ef",
     "summary": "The second group of functions outside any class is lifted: the table the streaming system keeps of what is loaded. 31 verified routines became 26 methods, with their proof in the pipeline.",
     "changes": [
       "crates/lf-streaming gains a slots module in four parts: the entry table, the fixed tables, the resets with the control block, and the record search with its liveness test. No unsafe code; 43 host tests.",

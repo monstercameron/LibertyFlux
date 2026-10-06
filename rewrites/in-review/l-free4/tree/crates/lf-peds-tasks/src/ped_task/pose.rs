@@ -194,6 +194,103 @@ fn sphere_contains(fa: [f32; 3], fc: f32, pt: [f32; 3]) -> bool {
     cc > dd
 }
 
+/// The cone path's normalised dot-product gates and height gates.
+#[allow(
+    clippy::neg_cmp_op_on_partial_ord,
+    reason = "negated comparisons reproduce the original's unordered-fails shape exactly"
+)]
+fn cone_gates<S: ConeSolvers>(
+    solvers: &mut S,
+    tuning: &AngleTuning,
+    fa: [f32; 3],
+    fb: [f32; 3],
+    px: f32,
+    py: f32,
+    pt: [f32; 3],
+) -> bool {
+    let (cx, cy) = (fa[0], fa[1]);
+    let dx1 = sub(fb[0], cx);
+    let dy1 = sub(fb[1], cy);
+    let ex = sub(cx, px);
+    let ey = sub(cy, py);
+    let len1sq = add(mul(dy1, dy1), mul(dx1, dx1));
+    let len2sq = add(mul(ey, ey), mul(ex, ex));
+    let len1 = len1sq.sqrt();
+    let len2 = len2sq.sqrt();
+    let qx = sub(pt[0], cx);
+    let qy = sub(pt[1], cy);
+    let s1 = if len1sq == 0.0 {
+        0.0
+    } else {
+        div(tuning.one, len1sq.sqrt())
+    };
+    let nx1 = mul(dx1, s1);
+    let ny1 = mul(dy1, s1);
+    let mut d1 = [0u32; 3];
+    let mut d2 = [0u32; 3];
+    let src1 = [nx1.to_bits(), ny1.to_bits(), fa[0].to_bits()];
+    solvers.normalise(NormSlot::First, &mut d1, &src1, NORM_COUNT);
+    let src2 = [qx.to_bits(), qy.to_bits(), nx1.to_bits()];
+    solvers.normalise(NormSlot::Second, &mut d2, &src2, NORM_COUNT);
+    let fd1 = [
+        f32::from_bits(d1[0]),
+        f32::from_bits(d1[1]),
+        f32::from_bits(d1[2]),
+    ];
+    let fd2 = [
+        f32::from_bits(d2[0]),
+        f32::from_bits(d2[1]),
+        f32::from_bits(d2[2]),
+    ];
+    let dot1 = add(
+        add(mul(fd2[0], fd1[0]), mul(fd2[1], fd1[1])),
+        mul(fd2[2], fd1[2]),
+    );
+    if !(dot1 >= 0.0) {
+        return false;
+    }
+    if !(len1 >= dot1) {
+        return false;
+    }
+    let len3sq = add(mul(ey, ey), mul(ex, ex));
+    let s3 = if len3sq == 0.0 {
+        0.0
+    } else {
+        div(tuning.one, len3sq.sqrt())
+    };
+    let mx = mul(ex, s3);
+    let my = mul(ey, s3);
+    let src3 = [mx.to_bits(), my.to_bits(), qx.to_bits()];
+    solvers.normalise(NormSlot::Third, &mut d2, &src3, NORM_COUNT);
+    let src4 = [qx.to_bits(), qy.to_bits(), nx1.to_bits()];
+    solvers.normalise(NormSlot::Fourth, &mut d1, &src4, NORM_COUNT);
+    let fd1 = [
+        f32::from_bits(d1[0]),
+        f32::from_bits(d1[1]),
+        f32::from_bits(d1[2]),
+    ];
+    let fd2 = [
+        f32::from_bits(d2[0]),
+        f32::from_bits(d2[1]),
+        f32::from_bits(d2[2]),
+    ];
+    let dot2 = add(
+        add(mul(fd1[0], fd2[0]), mul(fd1[1], fd2[1])),
+        mul(fd1[2], fd2[2]),
+    );
+    let absdot = f32::from_bits(dot2.to_bits() & tuning.abs_mask);
+    if !(len2 >= absdot) {
+        return false;
+    }
+    if !(pt[2] >= fa[2]) {
+        return false;
+    }
+    if !(fb[2] >= pt[2]) {
+        return false;
+    }
+    true
+}
+
 /// One column transform `dst[i] = col_i . v`, in the original's exact
 /// operation order. The `w` slot is zero: the original copied an
 /// uninitialised scratch word there and the verified rewrite pins it to
@@ -358,10 +455,6 @@ impl PoseVolume {
     /// tag's distance, and the point must pass two normalised dot-product
     /// gates and lie between the fills' heights. Any failed gate, or any
     /// NaN in a comparison, answers false.
-    #[allow(
-        clippy::neg_cmp_op_on_partial_ord,
-        reason = "negated comparisons reproduce the original's unordered-fails shape exactly"
-    )]
     pub fn contains<P: PoseFill, S: ConeSolvers>(
         &self,
         filler: &mut P,
@@ -395,86 +488,6 @@ impl PoseVolume {
             f32::from_bits(mul(sinv, radius).to_bits() ^ tuning.neg_mask),
             fa[1],
         );
-        let (cx, cy) = (fa[0], fa[1]);
-        let dx1 = sub(fb[0], cx);
-        let dy1 = sub(fb[1], cy);
-        let ex = sub(cx, px);
-        let ey = sub(cy, py);
-        let len1sq = add(mul(dy1, dy1), mul(dx1, dx1));
-        let len2sq = add(mul(ey, ey), mul(ex, ex));
-        let len1 = len1sq.sqrt();
-        let len2 = len2sq.sqrt();
-        let qx = sub(pt[0], cx);
-        let qy = sub(pt[1], cy);
-        let s1 = if len1sq == 0.0 {
-            0.0
-        } else {
-            div(tuning.one, len1sq.sqrt())
-        };
-        let nx1 = mul(dx1, s1);
-        let ny1 = mul(dy1, s1);
-        let mut d1 = [0u32; 3];
-        let mut d2 = [0u32; 3];
-        let src1 = [nx1.to_bits(), ny1.to_bits(), sample.a[0].to_bits()];
-        solvers.normalise(NormSlot::First, &mut d1, &src1, NORM_COUNT);
-        let src2 = [qx.to_bits(), qy.to_bits(), nx1.to_bits()];
-        solvers.normalise(NormSlot::Second, &mut d2, &src2, NORM_COUNT);
-        let fd1 = [
-            f32::from_bits(d1[0]),
-            f32::from_bits(d1[1]),
-            f32::from_bits(d1[2]),
-        ];
-        let fd2 = [
-            f32::from_bits(d2[0]),
-            f32::from_bits(d2[1]),
-            f32::from_bits(d2[2]),
-        ];
-        let dot1 = add(
-            add(mul(fd2[0], fd1[0]), mul(fd2[1], fd1[1])),
-            mul(fd2[2], fd1[2]),
-        );
-        if !(dot1 >= 0.0) {
-            return false;
-        }
-        if !(len1 >= dot1) {
-            return false;
-        }
-        let len3sq = add(mul(ey, ey), mul(ex, ex));
-        let s3 = if len3sq == 0.0 {
-            0.0
-        } else {
-            div(tuning.one, len3sq.sqrt())
-        };
-        let mx = mul(ex, s3);
-        let my = mul(ey, s3);
-        let src3 = [mx.to_bits(), my.to_bits(), qx.to_bits()];
-        solvers.normalise(NormSlot::Third, &mut d2, &src3, NORM_COUNT);
-        let src4 = [qx.to_bits(), qy.to_bits(), nx1.to_bits()];
-        solvers.normalise(NormSlot::Fourth, &mut d1, &src4, NORM_COUNT);
-        let fd1 = [
-            f32::from_bits(d1[0]),
-            f32::from_bits(d1[1]),
-            f32::from_bits(d1[2]),
-        ];
-        let fd2 = [
-            f32::from_bits(d2[0]),
-            f32::from_bits(d2[1]),
-            f32::from_bits(d2[2]),
-        ];
-        let dot2 = add(
-            add(mul(fd1[0], fd2[0]), mul(fd1[1], fd2[1])),
-            mul(fd1[2], fd2[2]),
-        );
-        let absdot = f32::from_bits(dot2.to_bits() & tuning.abs_mask);
-        if !(len2 >= absdot) {
-            return false;
-        }
-        if !(pt[2] >= fa[2]) {
-            return false;
-        }
-        if !(fb[2] >= pt[2]) {
-            return false;
-        }
-        true
+        cone_gates(solvers, tuning, fa, fb, px, py, pt)
     }
 }
