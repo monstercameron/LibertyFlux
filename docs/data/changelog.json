@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Lift: the audio effect classes",
+    "title": "Devlog: AL stubs leave the log pointer in EAX (lane a-Q12)",
     "commit": null,
+    "summary": "Findings from the a-Q12 lane.",
+    "changes": [
+      "New devlog entry: AL stubs leave the log pointer in EAX (lane a-Q12).",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Lift: the audio effect classes",
+    "commit": "9b4e6c74e0ca6e91d3e9b2acad4c399e81609abe",
     "summary": "Thirteen verified methods of three audio effect classes (the base effect, the compressor and the reverb) are lifted to portable Rust in crates/lf-audio, with their proof in the pipeline.",
     "changes": [
       "New module crates/lf-audio/src/sound with the effect base class, the compressor and the reverb: how an effect chain is walked and rotated, and what each effect does to its parameters and buffers. No unsafe code. 27 host tests.",
