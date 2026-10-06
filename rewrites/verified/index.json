@@ -55575,6 +55575,15 @@
   "lane": "r-s154"
  },
  {
+  "address": "0x009272E0",
+  "name": "queue_frame_shadow_cmds",
+  "kind": "function",
+  "file": "functions/fn_009272e0.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
   "address": "0x009273B0",
   "name": "ui_draw_textured_rect",
   "kind": "function",
@@ -55701,6 +55710,15 @@
   "lane": "r-b620"
  },
  {
+  "address": "0x00928E80",
+  "name": "CRenderPhaseCascadeShadows::vf3",
+  "kind": "function",
+  "file": "functions/fn_00928e80.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
   "address": "0x0092B370",
   "name": "cam_state_refresh",
   "kind": "function",
@@ -55737,6 +55755,15 @@
   "lane": "r-b620"
  },
  {
+  "address": "0x0092C960",
+  "name": "release_dead_ref_slots",
+  "kind": "function",
+  "file": "functions/fn_0092c960.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
   "address": "0x0092CA40",
   "name": "matrix44_multiply_inplace",
   "kind": "function",
@@ -55759,6 +55786,15 @@
   "name": "CSetCurrentViewportToNULL::vf1",
   "kind": "function",
   "file": "functions/fn_0092d000.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-s523"
+ },
+ {
+  "address": "0x0092D010",
+  "name": "select_probe_handler_tail",
+  "kind": "function",
+  "file": "functions/fn_0092d010.rs",
   "trials": 1200,
   "checker": "version 7",
   "lane": "r-s523"
@@ -117036,6 +117072,15 @@
   "lane": "r-b646"
  },
  {
+  "address": "0x00C4D890",
+  "name": "task_params_emit",
+  "kind": "function",
+  "file": "functions/fn_00c4d890.rs",
+  "trials": 1200,
+  "checker": "version 7",
+  "lane": "r-b646"
+ },
+ {
   "address": "0x00C56690",
   "name": "task_check_threshold_store",
   "kind": "function",
@@ -119950,6 +119995,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b460"
+ },
+ {
+  "address": "0x00C9C990",
+  "name": "ped_task_aim_update",
+  "kind": "function",
+  "file": "functions/fn_00c9c990.rs",
+  "trials": 1000,
+  "checker": "version 7",
+  "lane": "r-b644"
  },
  {
   "address": "0x00C9D650",

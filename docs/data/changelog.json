@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Lift: seven large pedestrian task routines, and what a name group of large functions turned out to be",
+    "title": "Rewrites: 6 more functions pass the checker (16880 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "6 rewrites added under rewrites/verified: 0 script native handlers and 6 other functions.",
+      "The tree now holds 16880 rewrites, 16861 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "1 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Lift: seven large pedestrian task routines, and what a name group of large functions turned out to be",
+    "commit": "1bca9433ec27539a520cda5531bdad632f6abd3d",
     "summary": "Seven verified routines, 2,500 bytes, are lifted as five methods on three types with their proof in the pipeline. The list they came from, 109 functions chosen by name, held about forty different data shapes, not one structure.",
     "changes": [
       "crates/lf-peds-tasks gains a ped_task module: the pose volume with its transform, blend and cone test, a builder that is one generic method in two arities, and a chain cloner that is one generic method proven on two instances. 22 new host tests.",
