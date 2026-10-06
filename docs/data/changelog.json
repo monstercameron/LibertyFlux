@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Rewrites: two more withdrawn for an unsigned comparison",
+    "title": "Rewrites: two withdrawn after a sweep from the original's side",
     "commit": null,
+    "summary": "The verified count goes down by two more, for the same unsigned comparison, in rewrites the audit of blind proofs could not have listed.",
+    "changes": [
+      "CTaskComplexClimbLadder::vf18 and CTaskSimpleGetUp::vf5 are removed from rewrites/verified. Each compares the answer of a virtual call with a limit using an unsigned greater-than, where the original follows the call with a compare and the signed jump.",
+      "They were found by a new static sweep, written by the coordinator, that starts from the original's code: for every verified function it looks for a compare on a call's returned value followed by a signed conditional jump, and counts the places where the rewrite compares a value as signed. 570 verified functions have such a site; seven had fewer signed comparisons than signed sites; reading those seven found these two wrong, three right and two that need a closer reading.",
+      "The audit had started from the rewrites' text and recognised calls made through the checker's call macros. These two make their calls through a function pointer read from the object's table, so they were never in its population of 241. Seven rewrites have now been withdrawn for this mistake outside the leaderboard family. A lane is briefed to map every signed site of all 570 functions to the rewrite's comparison exactly, since the sweep's count is a coarse filter: tested on the five rewrites withdrawn earlier, it catches four."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Rewrites: two more withdrawn for an unsigned comparison",
+    "commit": "fda248d243dfda5361f6719584921de3f8ef02cf",
     "summary": "The verified count goes down by two more. Same mistake as the three withdrawn earlier today: a callee's answer compared unsigned where the original compares signed.",
     "changes": [
       "UIMontageContainer::vf114 and CMovementEventHandler::vf1 are removed from rewrites/verified. The first tests a freshness value returned by a callee against one hundred, the second a random roll against a limit; the originals use the signed comparison and the rewrites, holding the value as an unsigned word, the unsigned one.",
