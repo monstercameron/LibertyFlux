@@ -1,6 +1,20 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Rewrites: the skipped-pointer question settled by a run, two more withdrawn and four back",
+    "commit": null,
+    "summary": "A repair lane ran every one of the 15 rewrites judged wrong for what they hand a callee behind a skipped pointer. Nine were wrong, six were not. Two more are withdrawn here; six are repaired and re-proved, four of them among the five withdrawn two hours ago.",
+    "changes": [
+      "Each function was settled by a measurement, not by reading: the rewrite was rebuilt to fill the buffer as the original does, the stored words were added to the comparison, and the old behaviour was run as the wrong version. Where the old behaviour fails and the callee reads the words, the rewrite was wrong.",
+      "Nine were wrong. Six of them are repaired and pass 1,000 trials or more with the words compared, and a version that leaves them zero fails: an aim-row check, a task helper, an audio zone walk, a benchmark screen method, a range update and a voice setup. Four of those six were withdrawn at 02:35 and return to the verified tree with the new proof; the other two had stayed in the tree and their proof is replaced. Three are confirmed wrong but too large to repair in the lane's time, each with a written specification for the repair: one was already withdrawn, and two are withdrawn here (an input device tick, and a task helper whose earlier partial repair still passed zeros in a second buffer).",
+      "Six were not wrong and their proofs stand. In three the callee overwrites the buffer before it reads it, so what the rewrite hands over cannot be observed. In three the rewrite stores the same words after all: a zero store overwrites the meaningful one on every path, a word is zero on every path, and in one the rewrite fills the buffer through a helper that the reading lane's script did not follow.",
+      "So of the 16 functions the reading lane called wrong, 10 were wrong and 6 were not; all five that the coordinator withdrew after its own check were wrong; of its ten second opinions on the others, five were right, two half right and three wrong. Reading alone, by a lane or by the coordinator, was not reliable enough to withdraw on, and a run was.",
+      "The importer now refuses to bring a withdrawn function back from the lane whose proof was of record when it was withdrawn: until this change, a strengthening lane's own proof, once withdrawn, would have been imported again.",
+      "One tracked rewrite among these never compiled as filed (a register was unbound); its repaired version does."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rewrites: 2 functions re-checked under checker version 2",
     "commit": "bbf8832c570f4466da227977e0c224926c9e7401",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
