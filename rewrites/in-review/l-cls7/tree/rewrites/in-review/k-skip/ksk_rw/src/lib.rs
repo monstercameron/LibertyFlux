@@ -5070,307 +5070,6 @@ use lf_checker_rt::{callee_cdecl, callee_stdcall, callee_thiscall, callee_fastca
 
 
 #[allow(dead_code)]
-mod k_00ddd790 {
-// original: 0x00ddd790 uitextfield_build_children (proposed)
-
-/// Build the field's six child items and wire them into the layout.
-///
-/// `this` is the field object; thirteen stack words configure the build.
-/// Two entry bytes/words are stored first (low byte of word 10 at `+0x20f`,
-/// word 7 as float bits at `+0x21c`). Then six items are created at
-/// `+0x1e4`, `+0x1e0`, `+0x1e8`, `+0x1f4`, `+0x1f0` and `+0x1ec`, each by
-/// allocating (0x25c or 0x610 bytes), chaining two parent slot-`0x48`
-/// answers through the probe helper with a per-block key, and constructing.
-/// Blocks 1, 2, 4 and 5 attach with (0, 0, word, -1) where the word is an
-/// incoming argument (words 0, 1 and 4); block 4 instead zeroes word 7 and
-/// attaches with its address. Blocks 3 and 6 run the probe/setup/tail
-/// sequence (probe code 7, slot `0x1cc` with (18.0f/19.0f bits, probe
-/// answer, 0, 2), then slots `0x208`/`0x1fc`/`0x118`/`0x1e0`/`0x200`).
-/// Placement blocks carry the layout callee's 24-byte answer plus scalar
-/// pairs into slot `0x114` (blocks 1, 3, 6), or scope an older sibling
-/// through slot `0x4c` first and place into `0x10c` (block 2, scoping
-/// block 1 with no scalar) or `0x104` (blocks 4 and 5, scoping blocks 3
-/// and 4 with one scalar). Blocks 4 and 5 finish with a zero marker at
-/// item `+0x1d8` and flag calls; blocks 3 and 6 run one extra placement
-/// when the low byte of word 9 is nonzero. The tail stores the length of
-/// the word-5 string (low byte) at `+0x208`, words 10-12 and several
-/// constants across `+0x200`-`+0x218`, scopes the parent and ends with
-/// parent slot `0x13c` (flag 1), whose answer is returned.
-///
-/// Cleanup notes (all forced by frame balance, verified by simulation to
-/// net zero): the allocator pops its size word; parent slot `0x48` pops
-/// nothing at either chained call; the probe helper is cdecl/3 with the
-/// key deepest; slot `0x4c` pops only its own scalars (none on the two
-/// block-2 sites and the tail site, one elsewhere), so sibling items use
-/// two fabricated vtables differing only in that slot; slots `0x104` and
-/// `0x10c` pop their scalars plus the carried 24-byte block (8 words) and
-/// slot `0x114` pops its scalar plus the block (7 words).
-///
-/// Edge cases: a null allocator answer skips its block (never exercised:
-/// the contract's allocator always succeeds); word 9 selects the two
-/// conditional placements; word 8 is read by nobody.
-///
-/// Original: 0x00ddd790 (thiscall, thirteen stack words).
-lf_checker_rt::export!(
-    thiscall,
-    rw_00ddd790(
-        this: u32, a0: u32, a1: u32, a2: u32, a3: u32, a4: u32, a5: u32,
-        a6: u32, a7: u32, a8: u32, a9: u32, a10: u32, a11: u32, a12: u32
-    ) -> u32 {
-    unsafe {
-        const SMALL: u32 = 0x25c;
-        const BIG: u32 = 0x610;
-        const KEY1: u32 = 0x00efcf74;
-        const KEY2: u32 = 0x00efcf80;
-        const KEY3: u32 = 0x00efcf90;
-        const KEY4: u32 = 0x00efcfa0;
-        const KEY5: u32 = 0x00efcfb0;
-        const KEY6: u32 = 0x00efcfbc;
-        const OFF_B1: u32 = 0x1e4;
-        const OFF_B2: u32 = 0x1e0;
-        const OFF_B3: u32 = 0x1e8;
-        const OFF_B4: u32 = 0x1f4;
-        const OFF_B5: u32 = 0x1f0;
-        const OFF_B6: u32 = 0x1ec;
-        const ITEM_MARK: u32 = 0x1d8;
-        const SLOT_SCOPE: u32 = 0x48;
-        const SLOT_SCOPE2: u32 = 0x4c;
-        const SLOT_PLACE: u32 = 0x104;
-        const SLOT_PLACE_B: u32 = 0x10c;
-        const SLOT_PLACE_A: u32 = 0x114;
-        const SLOT_118: u32 = 0x118;
-        const SLOT_120: u32 = 0x120;
-        const SLOT_170: u32 = 0x170;
-        const SLOT_13C: u32 = 0x13c;
-        const SLOT_94: u32 = 0x94;
-        const SLOT_SETUP: u32 = 0x1cc;
-        const SLOT_TEXT: u32 = 0x1e0;
-        const SLOT_FC: u32 = 0x1fc;
-        const SLOT_200: u32 = 0x200;
-        const SLOT_COLOUR: u32 = 0x208;
-        const F_18: u32 = 0x41700000;
-        const F_19: u32 = 0x41900000;
-        const F_3: u32 = 0x40400000;
-        const F_NEG3: u32 = 0xc0400000;
-        const F_2: u32 = 0x40000000;
-        const CALLEE_NEW: u32 = 1;
-        const CALLEE_SCOPE: u32 = 2;
-        const CALLEE_PROBE: u32 = 3;
-        const CALLEE_CTOR_A: u32 = 4;
-        const CALLEE_CTOR_B: u32 = 5;
-        const CALLEE_ATTACH_V: u32 = 6;
-        const CALLEE_ATTACH_P: u32 = 7;
-        const CALLEE_LAYOUT: u32 = 8;
-        const CALLEE_RELEASE: u32 = 14;
-        const CALLEE_PROBE2: u32 = 15;
-        const CALLEE_SCOPE2_0: u32 = 12;
-        const CALLEE_SCOPE2_1: u32 = 13;
-        const CALLEE_T170: u32 = 24;
-        const CALLEE_T13C: u32 = 25;
-
-        #[inline(always)]
-        unsafe fn rd32(a: u32) -> u32 {
-            unsafe { (a as *const u32).read_unaligned() }
-        }
-        #[inline(always)]
-        unsafe fn rd8(a: u32) -> u8 {
-            unsafe { (a as *const u8).read() }
-        }
-        unsafe fn vslot(obj: u32, slot: u32) -> u32 {
-            unsafe { rd32(rd32(obj) + slot) }
-        }
-        unsafe fn call0(obj: u32, slot: u32) -> u32 {
-            unsafe {
-                let f: extern "thiscall" fn(u32) -> u32 =
-                    core::mem::transmute(vslot(obj, slot) as usize);
-                f(obj)
-            }
-        }
-        unsafe fn call1(obj: u32, slot: u32, a: u32) -> u32 {
-            unsafe {
-                let f: extern "thiscall" fn(u32, u32) -> u32 =
-                    core::mem::transmute(vslot(obj, slot) as usize);
-                f(obj, a)
-            }
-        }
-        unsafe fn call2(obj: u32, slot: u32, a: u32, b: u32) -> u32 {
-            unsafe {
-                let f: extern "thiscall" fn(u32, u32, u32) -> u32 =
-                    core::mem::transmute(vslot(obj, slot) as usize);
-                f(obj, a, b)
-            }
-        }
-        /// Allocate, scope twice, probe and construct one item; store it.
-        ///
-        /// Stack discipline mirrors the original exactly: the allocator is
-        /// invoked through the cdecl macro (so this side emits the same
-        /// compensating pop as the original's `(an instruction of the original)`) while the stub
-        /// pops the size word; the first scope answer stays on the stack
-        /// and doubles as the probe's third word, so the probe is invoked
-        /// with two words only.
-        unsafe fn make(this: u32, off: u32, size: u32, key: u32, ctor: u32) -> u32 {
-            unsafe {
-                let fresh: u32 = lf_checker_rt::callee_cdecl!(CALLEE_NEW, u32, size);
-                let r1 = call0(this, SLOT_SCOPE);
-                // The second scope call carries the first answer on the stack;
-                // the slot itself pops nothing (see the doc comment), so the
-                // word is still there for the probe below.
-                let scope1: extern "thiscall" fn(u32, u32) -> u32 =
-                    core::mem::transmute(vslot(this, SLOT_SCOPE) as usize);
-                let r2 = scope1(this, r1);
-                let f: u32 = lf_checker_rt::callee_cdecl!(
-                    CALLEE_PROBE, u32,
-                    lf_checker_rt::relocated(key),
-                    r2
-                );
-                let obj: u32 = lf_checker_rt::callee_thiscall!(ctor, u32, fresh, f);
-                ((this + off) as *mut u32).write_unaligned(obj);
-                obj
-            }
-        }
-        /// One placement into slot `0x114`: layout block plus one scalar.
-        unsafe fn place_a(obj: u32, c: u32, f0: u32, f1: u32, lo: *mut u32) {
-            unsafe {
-                let l: u32 =
-                    lf_checker_rt::callee_thiscall!(CALLEE_LAYOUT, u32, lo as u32, f0, f1);
-                let put: extern "thiscall" fn(u32, u32, u32, u32, u32, u32, u32, u32) -> u32 =
-                    core::mem::transmute(vslot(obj, SLOT_PLACE_A) as usize);
-                put(obj, c, rd32(l), rd32(l + 4), rd32(l + 8), rd32(l + 12), rd32(l + 16), rd32(l + 20));
-                lf_checker_rt::callee_thiscall!(CALLEE_RELEASE, u32, lo as u32);
-            }
-        }
-        /// One placement with a scoping call first (slots `0x104`/`0x10c`).
-        unsafe fn place_scoped(
-            obj: u32, scope_obj: u32, slot: u32, scope_id: u32, scope_arg: Option<u32>,
-            place_arg: u32, f0: u32, f1: u32, lo: *mut u32,
-        ) {
-            unsafe {
-                let _ = scope_id;
-                let l: u32 =
-                    lf_checker_rt::callee_thiscall!(CALLEE_LAYOUT, u32, lo as u32, f0, f1);
-                let scoped = match scope_arg {
-                    Some(s) => call1(scope_obj, SLOT_SCOPE2, s),
-                    None => call0(scope_obj, SLOT_SCOPE2),
-                };
-                let put: extern "thiscall" fn(u32, u32, u32, u32, u32, u32, u32, u32, u32) -> u32 =
-                    core::mem::transmute(vslot(obj, slot) as usize);
-                put(
-                    obj, place_arg, scoped,
-                    rd32(l), rd32(l + 4), rd32(l + 8),
-                    rd32(l + 12), rd32(l + 16), rd32(l + 20),
-                );
-                lf_checker_rt::callee_thiscall!(CALLEE_RELEASE, u32, lo as u32);
-            }
-        }
-        /// The probe/setup/tail sequence shared by the two big blocks.
-        unsafe fn setup_tail(
-            obj: u32, fconst: u32, colour_arg: u32, fc_arg: u32, e118_arg: u32,
-            text_arg: u32, po: *mut u32,
-        ) {
-            unsafe {
-                let p: u32 = lf_checker_rt::callee_cdecl!(CALLEE_PROBE2, u32, po as u32, 7u32);
-                let setup: extern "thiscall" fn(u32, u32, u32, u32, u32) -> u32 =
-                    core::mem::transmute(vslot(obj, SLOT_SETUP) as usize);
-                setup(obj, fconst, p, 0, 2);
-                call1(obj, SLOT_COLOUR, colour_arg);
-                call1(obj, SLOT_FC, fc_arg);
-                call1(obj, SLOT_118, e118_arg);
-                call2(obj, SLOT_TEXT, text_arg, 0);
-                call1(obj, SLOT_200, 1);
-            }
-        }
-
-        ((this + 0x20f) as *mut u8).write(a10 as u8);
-        ((this + 0x21c) as *mut u32).write_unaligned(a7);
-        let mut probe_out = [0u32; 2];
-        let mut layout_out = [0u32; 2];
-        let po = probe_out.as_mut_ptr();
-        let lo = layout_out.as_mut_ptr();
-
-        // Block 1.
-        let b1 = make(this, OFF_B1, SMALL, KEY1, CALLEE_CTOR_A);
-        lf_checker_rt::callee_thiscall!(CALLEE_ATTACH_V, u32, b1, 0u32, 0u32, a0, 0xFFFF_FFFF);
-        place_a(b1, 6, 0, 0, lo);
-        place_a(b1, 0x18, 0, 0, lo);
-
-        // Block 2 (scopes block 1). Items are reloaded from the parent
-        // after every later allocation, exactly like the original: holding
-        // them in locals across the shared-push sequence below is not sound
-        // (the second scope push doubles as the probe's third word, which
-        // Rust cannot see, so its stack model drifts inside make()).
-        let b2 = make(this, OFF_B2, SMALL, KEY2, CALLEE_CTOR_A);
-        lf_checker_rt::callee_thiscall!(CALLEE_ATTACH_V, u32, b2, 0u32, 0u32, a1, 0xFFFF_FFFF);
-        let b1r = rd32(this + OFF_B1);
-        place_scoped(b2, b1r, SLOT_PLACE_B, CALLEE_SCOPE2_0, None, 6, F_3, F_3, lo);
-        place_scoped(b2, b1r, SLOT_PLACE_B, CALLEE_SCOPE2_0, None, 0x18, F_NEG3, F_NEG3, lo);
-
-        // Block 3.
-        let b3 = make(this, OFF_B3, BIG, KEY3, CALLEE_CTOR_B);
-        setup_tail(b3, F_18, a2, 1, 0, a5, po);
-        if (a9 as u8) != 0 {
-            place_a(b3, 2, 0, 0, lo);
-        }
-
-        // Block 4 (attaches with the zeroed word 7 by address).
-        let b4 = make(this, OFF_B4, SMALL, KEY4, CALLEE_CTOR_A);
-        let a7p = &a7 as *const u32 as u32;
-        (a7p as *mut u32).write(0);
-        lf_checker_rt::callee_thiscall!(CALLEE_ATTACH_P, u32, b4, 0u32, 0u32, a7p, 0xFFFF_FFFF);
-        let b3r = rd32(this + OFF_B3);
-        place_scoped(b4, b3r, SLOT_PLACE, CALLEE_SCOPE2_1, Some(4), 4, 0, 0, lo);
-        place_scoped(b4, b3r, SLOT_PLACE, CALLEE_SCOPE2_1, Some(0x10), 0x10, 0, 0, lo);
-        place_scoped(b4, b3r, SLOT_PLACE, CALLEE_SCOPE2_1, Some(2), 2, 0, 0, lo);
-        ((b4 + ITEM_MARK) as *mut u32).write_unaligned(0);
-        call1(b4, SLOT_94, 0);
-        call1(b4, SLOT_118, 1);
-
-        // Block 5.
-        let b5 = make(this, OFF_B5, SMALL, KEY5, CALLEE_CTOR_A);
-        lf_checker_rt::callee_thiscall!(CALLEE_ATTACH_V, u32, b5, 0u32, 0u32, a4, 0xFFFF_FFFF);
-        let b3r2 = rd32(this + OFF_B3);
-        let b4r = rd32(this + OFF_B4);
-        place_scoped(b5, b3r2, SLOT_PLACE, CALLEE_SCOPE2_1, Some(4), 4, 0, 0, lo);
-        place_scoped(b5, b3r2, SLOT_PLACE, CALLEE_SCOPE2_1, Some(0x10), 0x10, 0, 0, lo);
-        place_scoped(b5, b4r, SLOT_PLACE, CALLEE_SCOPE2_1, Some(8), 2, 0, 0, lo);
-        ((b5 + ITEM_MARK) as *mut u32).write_unaligned(0);
-        call1(b5, SLOT_94, F_2);
-        call1(b5, SLOT_118, 0);
-        call1(b5, SLOT_120, 0);
-
-        // Block 6.
-        let b6 = make(this, OFF_B6, BIG, KEY6, CALLEE_CTOR_B);
-        setup_tail(b6, F_19, a3, 0, 1, a6, po);
-        if (a9 as u8) != 0 {
-            place_a(b6, 2, 0, 0, lo);
-        }
-
-        // Tail.
-        let mut len = 0u32;
-        while rd8(a5.wrapping_add(len)) != 0 {
-            len = len.wrapping_add(1);
-        }
-        ((this + 0x208) as *mut u8).write(len as u8);
-        ((this + 0x20b) as *mut u8).write(a10 as u8);
-        ((this + 0x218) as *mut u32).write_unaligned(a11);
-        ((this + 0x200) as *mut u32).write_unaligned(0);
-        ((this + 0x209) as *mut u8).write(0);
-        ((this + 0x20c) as *mut u16).write_unaligned(1);
-        ((this + 0x20e) as *mut u8).write(0);
-        ((this + 0x210) as *mut u32).write_unaligned(1);
-        ((this + 0x214) as *mut u32).write_unaligned(a12);
-        let s = call0(this, SLOT_SCOPE2);
-        call1(this, SLOT_170, s);
-        call1(this, SLOT_13C, 1)
-    }
-    }
-);
-
-use lf_checker_rt::{callee_cdecl, callee_stdcall, callee_thiscall, callee_fastcall, export, global, relocated, callee_addr, tls_slot, xmm_word, x87_raw, x87_f64, x87_f32};
-
-}
-
-
-#[allow(dead_code)]
 mod k_0051a6f0 {
 // original: 0x0051a6f0 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Race14NoHolds, player_schema::LeaderboardInfo, 10>::vf6
 /// Index lookup by id for one ranked leaderboard (`vf6 Race14`).
@@ -6515,5 +6214,291 @@ export!(cdecl, mut_00b2acb0(o0: u32, o1: u32, o2: u32) -> u32 {
 });
 
 use lf_checker_rt::{callee_stdcall, callee_fastcall, relocated, callee_addr, tls_slot, xmm_word, x87_raw, x87_f64, x87_f32};
+
+}
+
+
+#[allow(dead_code)]
+mod k_00cf8b00 {
+// original: 0x00cf8b00 ladder_task_dispatch (proposed)
+
+/// Dispatch a climb-ladder task event by id (thiscall: task, ped).
+///
+/// `this` is the climb-ladder task, `task` the event id, `ped` the ped.
+/// Each arm ends by returning its last callee's answer (or 0, or by
+/// faulting on a null handle where the original does):
+///
+/// - 0x120: look up the ped's 0x84 entry (thiscall pair); run the align
+///   callee (cdecl: frame slot, state word, pitch float, `this+0x20`,
+///   `this+0x30`); fetch the shared handle (null returns 0); run the
+///   start callee (thiscall with the handle: subtask word, `this+0x20`,
+///   `this+0x30`, frame slot, pitch float, flag byte twice, 6 when the
+///   state word is 4 else 4).
+/// - 0xcb: fetch the shared handle (null returns 0); run the speed callee
+///   (thiscall: 0x3e8 when `this+8` is set else 1, 0, 0, 8.0).
+/// - 0x191: return the ladder anim-request callee over (state, flag byte).
+/// - 0x386: smooth the pitch (raw `[this+0x70]`, or the x87 filter callee
+///   over pitch + pi when the state is not 1 and the flag byte is 0);
+///   fetch two handles (first null returns 0); without the second, run
+///   the finish callee with a 0 result, else run the blend callee
+///   (thiscall: smoothed pitch, 2.0, 0.02) and finish with its answer.
+/// - default (anything else, e.g. 0x516): run the fallback callee with
+///   (`this`, `ped`), return 0.
+/// - 0x387/0x3ae: score the approach (see below), setting the flag byte;
+///   0x387 then fetches two handles and finishes like 0x386 but through
+///   the wide-blend callee (thiscall: 2.0, `this+0x40`, 0.2, 2.0, 0, 0);
+///   0x3ae fetches one handle (null faults on `[0+0xdc]` like the
+///   original), runs the full-blend callee (thiscall: 2.0, frame slot,
+///   0.2, 3.0, -1, 1, 0, 0, 0, 1), sets bit 0x40 at result+0xdc, fetches
+///   again (null returns 0) and finishes with the blend result.
+/// - 0x3a6: smooth the pitch as in 0x386; when the state is 4, blend the
+///   0x50-row by 0.1 into the 0x40-row (frame slots and `this+0x60..68`)
+///   and store the unread frame slot (0 with the contract's zero stack
+///   fill) at `this+0x6c`; fetch the handle (null faults on `[0+0xdc]`
+///   like the original), run the commit callee (thiscall: frame slot,
+///   smoothed pitch, 1000.0), stamp 2pi/0.1/1000 at result+0xdc/+0xe4/
+///   +0xe8 and return the result.
+///
+/// Approach score: dx/dy from `this+0x20/0x24` minus target+0x30/0x34;
+/// q = dy*dy + dx*dx; s = 1/sqrt(q) when q is positive or NaN (the
+/// original's lahf/jp test), else 0; x1 = t14*(dy*s) + (dx*s)*t10 +
+/// t18*(s*0), all in the original's operand order; the flag byte is 1
+/// when -0.4 exceeds x1 (ordered) and the state is 4, else 0. The set
+/// path also notifies (thiscall with (`[ped+0xa80]`, 1)) and retunes the
+/// pitch (thiscall with (`ped`, pitch + pi)).
+lf_checker_rt::export!(thiscall, rw_00cf8b00(this: u32, task: u32, ped: u32) -> u32 {
+    unsafe {
+        const ANIM_SET: u32 = 0x167e2a0;
+        const SUBTASK: u32 = 8;
+        const TASK_STATE: u32 = 0x14;
+        const PITCH: u32 = 0x70;
+        const FLAG75: u32 = 0x75;
+        const FLAG74: u32 = 0x74;
+        const STATE_WORD: u32 = 0x90;
+        const PED_ANIM: u32 = 0xa80;
+        const PED_SLOT: u32 = 0x78;
+        const PED_TARGET: u32 = 0x20;
+        const PI_BITS: u32 = 0x4049_0fdb;
+        const DOT_LIMIT_BITS: u32 = 0xbecc_cccd;
+        const BLEND_K_BITS: u32 = 0x3ca3_d70a;
+        const WIDE_K_BITS: u32 = 0x3e4c_cccd;
+        const FULL_K_BITS: u32 = 0x4040_0000;
+        const STEP_K_BITS: u32 = 0x3dcc_cccd;
+        const TWO: f32 = 2.0;
+        const ONE: f32 = 1.0;
+        const LOOKUP: u32 = 1;
+        const ACQUIRE: u32 = 2;
+        const ALIGN: u32 = 3;
+        const FETCH: u32 = 4;
+        const START: u32 = 5;
+        const ANIMREQ: u32 = 6;
+        const FILTER: u32 = 7;
+        const BLEND: u32 = 8;
+        const FINISH: u32 = 9;
+        const FALLBACK: u32 = 10;
+        const NOTIFY: u32 = 11;
+        const RETUNE: u32 = 12;
+        const WBLEND: u32 = 13;
+        const FBLEND: u32 = 14;
+        const COMMIT: u32 = 15;
+        const SPEED: u32 = 16;
+
+        #[inline(always)]
+        unsafe fn rd32(a: u32) -> u32 {
+            unsafe { (a as *const u32).read_unaligned() }
+        }
+        #[inline(always)]
+        unsafe fn rdf(a: u32) -> f32 {
+            unsafe { f32::from_bits(rd32(a)) }
+        }
+        #[inline(always)]
+        fn sub(a: f32, b: f32) -> f32 {
+            core::hint::black_box(a) - core::hint::black_box(b)
+        }
+        #[inline(always)]
+        fn add(a: f32, b: f32) -> f32 {
+            core::hint::black_box(a) + core::hint::black_box(b)
+        }
+        #[inline(always)]
+        fn mul(a: f32, b: f32) -> f32 {
+            core::hint::black_box(a) * core::hint::black_box(b)
+        }
+        #[inline(always)]
+        fn div(a: f32, b: f32) -> f32 {
+            core::hint::black_box(a) / core::hint::black_box(b)
+        }
+        #[inline(always)]
+        unsafe fn fetch_shared() -> u32 {
+            unsafe {
+                let set = (lf_checker_rt::relocated(ANIM_SET) as *const u32).read_unaligned();
+                lf_checker_rt::callee_thiscall!(FETCH, u32, set)
+            }
+        }
+        #[inline(always)]
+        unsafe fn smooth_pitch(this: u32) -> f32 {
+            unsafe {
+                let state = rd32(this + TASK_STATE);
+                let flag = ((this + FLAG75) as *const u8).read();
+                if state == 1 || flag != 0 {
+                    rdf(this + PITCH)
+                } else {
+                    let arg = add(rdf(this + PITCH), f32::from_bits(PI_BITS));
+                    lf_checker_rt::callee_cdecl!(FILTER, f32, arg.to_bits())
+                }
+            }
+        }
+
+        match task {
+            0x120 => {
+                let slot = rd32(ped + PED_SLOT);
+                let entry = lf_checker_rt::callee_thiscall!(LOOKUP, u32, slot, 0x84);
+                if entry != 0 {
+                    lf_checker_rt::callee_thiscall!(ACQUIRE, u32, slot, entry);
+                }
+                let mut f1 = [0u32; 1];
+                lf_checker_rt::callee_cdecl!(
+                    ALIGN, u32, f1.as_mut_ptr() as u32, rd32(this + TASK_STATE),
+                    rd32(this + PITCH), this + 0x20, this + 0x30
+                );
+                let h = fetch_shared();
+                if h == 0 {
+                    return 0;
+                }
+                let k = if rd32(this + TASK_STATE) == 4 { 6 } else { 4 };
+                let flag = ((this + FLAG74) as *const u8).read() as u32;
+                let mut f2 = [0u32; 1];
+                lf_checker_rt::callee_thiscall!(
+                    START, u32, h, rd32(this + STATE_WORD), this + 0x20,
+                    this + 0x30, f2.as_mut_ptr() as u32, rd32(this + PITCH), flag, k
+                )
+            }
+            0xcb => {
+                let h = fetch_shared();
+                if h == 0 {
+                    return 0;
+                }
+                let speed = if rd32(this + SUBTASK) == 0 { 1 } else { 0x3e8 };
+                lf_checker_rt::callee_thiscall!(SPEED, u32, h, speed, 0, 0, 0x4100_0000)
+            }
+            0x191 => {
+                let flag = ((this + FLAG75) as *const u8).read() as u32;
+                lf_checker_rt::callee_cdecl!(ANIMREQ, u32, rd32(this + TASK_STATE), flag)
+            }
+            0x386 => {
+                let x = smooth_pitch(this);
+                let h1 = fetch_shared();
+                if h1 == 0 {
+                    return 0;
+                }
+                let h2 = fetch_shared();
+                let r = if h2 == 0 {
+                    0
+                } else {
+                    lf_checker_rt::callee_thiscall!(
+                        BLEND, u32, h2, x.to_bits(), TWO.to_bits(), BLEND_K_BITS
+                    )
+                };
+                lf_checker_rt::callee_thiscall!(FINISH, u32, h1, r, 0, 0, 0)
+            }
+            0x387 | 0x3ae => {
+                let tgt = rd32(ped + PED_TARGET);
+                let dx = sub(rdf(this + 0x20), rdf(tgt + 0x30));
+                let dy = sub(rdf(this + 0x24), rdf(tgt + 0x34));
+                let q = add(mul(dy, dy), mul(dx, dx));
+                let s = if q > 0.0 || q.is_nan() {
+                    div(ONE, q.sqrt())
+                } else {
+                    0.0
+                };
+                let dy_s = mul(dy, s);
+                let dx_s = mul(dx, s);
+                let t3 = mul(dx_s, rdf(tgt + 0x10));
+                let t1 = mul(rdf(tgt + 0x14), dy_s);
+                let z = mul(s, 0.0);
+                let t0 = mul(rdf(tgt + 0x18), z);
+                let x1 = add(add(t1, t3), t0);
+                let state = rd32(this + TASK_STATE);
+                if f32::from_bits(DOT_LIMIT_BITS) > x1 && state == 4 {
+                    ((this + FLAG75) as *mut u8).write(1);
+                    let anim = rd32(ped + PED_ANIM);
+                    lf_checker_rt::callee_thiscall!(NOTIFY, u32, anim, 1);
+                    let tuned = add(rdf(this + PITCH), f32::from_bits(PI_BITS));
+                    lf_checker_rt::callee_thiscall!(RETUNE, u32, ped, tuned.to_bits());
+                } else {
+                    ((this + FLAG75) as *mut u8).write(0);
+                }
+                if task == 0x387 {
+                    let h1 = fetch_shared();
+                    if h1 == 0 {
+                        return 0;
+                    }
+                    let h2 = fetch_shared();
+                    let r = if h2 == 0 {
+                        0
+                    } else {
+                        lf_checker_rt::callee_thiscall!(
+                            WBLEND, u32, h2, TWO.to_bits(), this + 0x40,
+                            WIDE_K_BITS, TWO.to_bits(), 0, 0
+                        )
+                    };
+                    lf_checker_rt::callee_thiscall!(FINISH, u32, h1, r, 0, 0, 0)
+                } else {
+                    let h = fetch_shared();
+                    let mut fs = [0u32; 1];
+                    let r = if h == 0 {
+                        0
+                    } else {
+                        lf_checker_rt::callee_thiscall!(
+                            FBLEND, u32, h, TWO.to_bits(), fs.as_mut_ptr() as u32,
+                            WIDE_K_BITS, FULL_K_BITS, 0xffff_ffff, 1, 0, 0, 0, 1
+                        )
+                    };
+                    let at = ((r + 0xdc) as *mut u32).read();
+                    ((r + 0xdc) as *mut u32).write(at | 0x40);
+                    let h2 = fetch_shared();
+                    if h2 == 0 {
+                        return 0;
+                    }
+                    lf_checker_rt::callee_thiscall!(FINISH, u32, h2, r, 0, 0, 0)
+                }
+            }
+            0x3a6 => {
+                let x = smooth_pitch(this);
+                let v4 = rdf(this + 0x40);
+                let v5 = rdf(this + 0x44);
+                let v6 = rdf(this + 0x48);
+                if rd32(this + TASK_STATE) == 4 {
+                    let k = f32::from_bits(STEP_K_BITS);
+                    let w3 = add(mul(rdf(this + 0x50), k), v4);
+                    let w2 = add(mul(rdf(this + 0x54), k), v5);
+                    let w1 = add(mul(rdf(this + 0x58), k), v6);
+                    ((this + 0x6c) as *mut u32).write_unaligned(0);
+                    ((this + 0x60) as *mut u32).write_unaligned(w3.to_bits());
+                    ((this + 0x64) as *mut u32).write_unaligned(w2.to_bits());
+                    ((this + 0x68) as *mut u32).write_unaligned(w1.to_bits());
+                }
+                let h = fetch_shared();
+                let mut fs = [0u32; 1];
+                let r = if h == 0 {
+                    0
+                } else {
+                    lf_checker_rt::callee_thiscall!(
+                        COMMIT, u32, h, fs.as_mut_ptr() as u32, x.to_bits(), 0x447a_0000
+                    )
+                };
+                ((r + 0xdc) as *mut u32).write(0x40c9_0fdb);
+                ((r + 0xe4) as *mut u32).write(0x3dcc_cccd);
+                ((r + 0xe8) as *mut u32).write(0x3e8);
+                r
+            }
+            _ => {
+                lf_checker_rt::callee_thiscall!(FALLBACK, u32, this, ped);
+                0
+            }
+        }
+    }
+});
+
+use lf_checker_rt::{callee_cdecl, callee_stdcall, callee_thiscall, callee_fastcall, export, global, relocated, callee_addr, tls_slot, xmm_word, x87_raw, x87_f64, x87_f32};
 
 }

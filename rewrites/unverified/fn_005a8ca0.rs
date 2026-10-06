@@ -4,7 +4,8 @@
 ///
 /// The classifier callee maps the mode global to a small row offset `v`.
 /// The row table holds 24-byte entries; entry `TABLE_INDEX * 3` points at the
-/// row bytes, and the signed 16-bit switch word at row + `v * 22` + 0x12
+/// row bytes (entry `TABLE_INDEX`, entries 24 bytes apart, emitted as
+/// (`TABLE_INDEX` * 3) * 8), and the signed 16-bit switch word at row + `v * 22` + 0x12
 /// selects the action: 0 runs the notify/apply pair (notify takes (1,
 /// relocated NOTIFY_TAG, which the image relocates like a pointer) — the original pushes a third dead word the callee never
 /// reads, which this rewrite omits; apply takes no stack arguments and gets
@@ -47,7 +48,7 @@ lf_checker_rt::export!(cdecl, rw_005A8CA0() -> u32 {
         let v = lf_checker_rt::callee_cdecl!(CLASSIFY, u32, mode);
         let idx = lf_checker_rt::global::<u32>(TABLE_INDEX).read();
         let row = ((lf_checker_rt::relocated(ROW_TABLE)
-            .wrapping_add(idx.wrapping_mul(TABLE_FANOUT).wrapping_mul(TABLE_ENTRY)))
+            .wrapping_add(idx.wrapping_mul(TABLE_FANOUT).wrapping_mul(8)))
             as *const u32)
             .read();
         let w = ((row.wrapping_add(v.wrapping_mul(ROW_STRIDE)).wrapping_add(SWITCH_OFF))

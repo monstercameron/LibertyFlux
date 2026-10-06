@@ -32,10 +32,9 @@
 ///
 /// All float comparisons are the original's ordered single-precision
 /// compares (NaN takes the same side in every branch), every multi-operand
-/// float expression keeps the original's operand order, and one blend adds
-/// the bits of a heap address as a float, which is deterministic because the
-/// heap base is fixed. The dispatch tables live in the executable's code, so
-/// they are matched on the mode value directly rather than read.
+/// float expression keeps the original's operand order. The dispatch tables
+/// live in the executable's code, so they are matched on the mode value
+/// directly rather than read.
 ///
 /// Original: 0x00D86B20 (cdecl, six stack words, no return value).
 lf_checker_rt::export!(cdecl, rw_00D86B20(a0: u32, a1: u32, a2: u32, a3: u32, a4: u32, a5: u32) -> u32 {
@@ -287,7 +286,7 @@ lf_checker_rt::export!(cdecl, rw_00D86B20(a0: u32, a1: u32, a2: u32, a3: u32, a4
                         a5, f.to_bits()
                     );
                     if ms == 0x07 {
-                        fn_00d86b20_c6tail(edi, a1, a2, a3, a4, a5, p1);
+                        fn_00d86b20_c6tail(edi, a2, a3);
                     }
                 }
             }
@@ -390,18 +389,12 @@ unsafe fn fn_00d86b20_cfb(edi: u32, a5: u32) {
     }
 }
 
-/// Length-and-blend tail of case 6. `p1` is the first adjusted pointer whose
-/// bits join the blend as a float.
-#[allow(clippy::too_many_arguments)]
-unsafe fn fn_00d86b20_c6tail(
-    edi: u32,
-    a1: u32,
-    a2: u32,
-    a3: u32,
-    a4: u32,
-    a5: u32,
-    p1: u32,
-) -> u32 {
+/// Length-and-blend tail of case 6. The two frame slots it reuses alias: the
+/// length lands where the body kept nothing, and the first virtual length
+/// overwrites the body's adjusted pointer before the blend reads it, so the
+/// blend adds the first virtual length (not the pointer) to the scaled
+/// difference of the plain length and the count byte.
+unsafe fn fn_00d86b20_c6tail(edi: u32, a2: u32, a3: u32) -> u32 {
     unsafe {
         const TEN: f32 = f32::from_bits(0x41200000);
         const ONE: f32 = f32::from_bits(0x3F800000);
@@ -449,9 +442,8 @@ unsafe fn fn_00d86b20_c6tail(
                 f(obj, slot as u32)
             }
         }
-        let _ = (a1, a4, a5);
-        let r: u32 = lf_checker_rt::callee_thiscall!(2, u32, edi.wrapping_add(0xE48));
-        let ecx = rd32(r.wrapping_add(0x20));
+        let r_a: u32 = lf_checker_rt::callee_thiscall!(2, u32, edi.wrapping_add(0xE48));
+        let ecx = rd32(r_a.wrapping_add(0x20));
         let eax = rd32(edi.wrapping_add(0x20));
         let dx = sub(rdf(eax.wrapping_add(0x30)), rdf(ecx.wrapping_add(0x30)));
         let dy = sub(rdf(eax.wrapping_add(0x34)), rdf(ecx.wrapping_add(0x34)));
@@ -462,30 +454,33 @@ unsafe fn fn_00d86b20_c6tail(
         if !(f10 > len) {
             return 0;
         }
+        let r_b: u32 = lf_checker_rt::callee_thiscall!(2, u32, edi.wrapping_add(0xE48));
         let mut slot1: u32 = 0;
-        let v1 = vcall(r, core::ptr::addr_of_mut!(slot1));
+        let v1 = vcall(r_b, core::ptr::addr_of_mut!(slot1));
         let l1 = add(mul(rdf(v1), rdf(v1)), mul(rdf(v1.wrapping_add(4)), rdf(v1.wrapping_add(4))))
             .sqrt();
         let mut slot2: u32 = 0;
         let v2 = vcall(edi, core::ptr::addr_of_mut!(slot2));
         let l2 = add(mul(rdf(v2), rdf(v2)), mul(rdf(v2.wrapping_add(4)), rdf(v2.wrapping_add(4))))
             .sqrt();
-        let mut t1 = sub(l1, f);
+        // The slot holding the body's pointer now holds l1, and the slot read
+        // here still holds len: t1 = (len - f) * k + l1 - l2.
+        let mut t1 = sub(len, f);
         t1 = if t1 < 0.0 { mul(t1, FIVE) } else { mul(t1, TWO) };
-        t1 = add(t1, f32::from_bits(p1));
+        t1 = add(t1, l1);
         t1 = sub(t1, l2);
         if t1 < 0.0 {
             t1 = mul(t1, NEG_TENTH);
             wr32(a2, 0);
             let o = if t1 > ONE { ONE } else { t1 };
             wrf(a3, o);
+            wr32(edi.wrapping_add(0xEE0), 0);
         } else {
             t1 = mul(t1, TWENTIETH);
             let o = if t1 > ONE { ONE } else { t1 };
             wrf(a2, o);
             wr32(a3, 0);
         }
-        wr32(edi.wrapping_add(0xEE0), 0);
         0
     }
 }
