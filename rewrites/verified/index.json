@@ -51597,6 +51597,15 @@
   "lane": "r-b124"
  },
  {
+  "address": "0x008E5BC0",
+  "name": "refcount_release_or_recompute",
+  "kind": "function",
+  "file": "functions/fn_008e5bc0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s512"
+ },
+ {
   "address": "0x008E6200",
   "name": "room_tone_bank_update",
   "kind": "function",
@@ -51831,6 +51840,15 @@
   "lane": "a-Q26"
  },
  {
+  "address": "0x008E8370",
+  "name": "resolve_four_slots",
+  "kind": "function",
+  "file": "functions/fn_008e8370.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s512"
+ },
+ {
   "address": "0x008E8590",
   "name": "TableScan_FindBestEntry",
   "kind": "function",
@@ -52038,6 +52056,15 @@
   "lane": "a-16"
  },
  {
+  "address": "0x008ECFA0",
+  "name": "init_tables_and_globals",
+  "kind": "function",
+  "file": "functions/fn_008ecfa0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s512"
+ },
+ {
   "address": "0x008ED030",
   "name": "table_range_scan (proposed)",
   "kind": "function",
@@ -52054,6 +52081,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-16"
+ },
+ {
+  "address": "0x008ED2D0",
+  "name": "formatted_init_wrapper",
+  "kind": "function",
+  "file": "functions/fn_008ed2d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s512"
  },
  {
   "address": "0x008ED4F0",
@@ -59452,6 +59488,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b375"
+ },
+ {
+  "address": "0x00997910",
+  "name": "ROTOR_VOLUME",
+  "kind": "function",
+  "file": "functions/fn_00997910.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "a-Q32"
  },
  {
   "address": "0x00997E00",
@@ -79792,6 +79837,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "a-S04"
+ },
+ {
+  "address": "0x00AFD7A0",
+  "name": "retry_sample_pair",
+  "kind": "function",
+  "file": "functions/fn_00afd7a0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b621"
  },
  {
   "address": "0x00AFDC40",
@@ -131578,6 +131632,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b122"
+ },
+ {
+  "address": "0x00E55860",
+  "name": "UIRawClipViewer::vf97",
+  "kind": "function",
+  "file": "functions/fn_00e55860.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q31"
  },
  {
   "address": "0x00E55FE0",
