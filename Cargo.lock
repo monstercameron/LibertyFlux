@@ -171,6 +171,14 @@ name = "lf-audio-config"
 version = "0.1.0"
 
 [[package]]
+name = "lf-audiovoicediff"
+version = "0.1.0"
+dependencies = [
+ "lf-audio",
+ "lf-core",
+]
+
+[[package]]
 name = "lf-checker-proofs"
 version = "2.0.0"
 dependencies = [

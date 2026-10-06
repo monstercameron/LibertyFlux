@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Lift: the banked-voice layer of the audio code, 17 routines in portable Rust",
+    "commit": null,
+    "summary": "17 verified audio routines outside any class are lifted in five parts (parameters, the banked table, the tracker, the slots, activation), with their proof in the pipeline.",
+    "changes": [
+      "crates/lf-audio gains an audio_voice module. The lane worked out that the 78 functions on its list are one layer, the voices that play from a bank, in 13 data shapes; names misled (one name covered six shapes), and whether two routines are one was decided by a hash of their bodies. 30 new host tests; no unsafe code.",
+      "A new test crate, lf-audiovoicediff, runs each lifted routine against its tracked verified rewrite on the 32-bit target: 17 differential cases, about 940 comparisons, and 17 deliberately wrong lifts caught. The coordinator ran the host and 32-bit tests before committing.",
+      "Not reached: 61 routines, listed in the registry with reasons, among them a mixing routine that uses thread-local state, a family of render routines and several large update routines. Three kinds of call will go behind platform traits when their routines are lifted: slot allocation, window registration and the mute check.",
+      "The pipeline's 32-bit job now runs fourteen differential crates. Verified routines with a lifted counterpart proven in the pipeline: 308."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 13 files from lanes (220 unverified rewrites, 276 in review)",
     "commit": "6107e09f8dbd2e41b75f1c78b76818f75e4839c9",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
