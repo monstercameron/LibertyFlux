@@ -166,7 +166,7 @@ lf_checker_rt::export!(thiscall, rw_00d09170(this: u32, ped: u32, task_id: u32) 
     }
     let mut flags = rmw_or(obj, TASK_FLAGS, FLAG_NEW);
     if task_id != TASK_GUN_EXTENDED {
-        return block_a(ped, task_id, obj, this);
+        return block_a(ped, task_id, obj);
     }
     flags |= FLAG_EXTENDED;
     wr_u32(obj, TASK_FLAGS, flags);
@@ -203,7 +203,7 @@ lf_checker_rt::export!(thiscall, rw_00d09170(this: u32, ped: u32, task_id: u32) 
     tail_a_checks(ped, obj);
     rmw_or(obj, TASK_FLAGS, FLAG_SEAL);
     wr_u32(obj, TASK_F0, f_const);
-    block_a(ped, task_id, obj, this)
+    block_a(ped, task_id, obj)
 });
 
 /// Second masked check of the short path (conditional F3/F4 stores).
@@ -219,20 +219,22 @@ fn tail_a_checks(ped: u32, obj: u32) {
 }
 
 /// Shared block of the short path: slot setup, the filler call, the word
-/// stores, then the seal epilogue.
-fn block_a(ped: u32, task_id: u32, obj: u32, this: u32) -> u32 {
-    let cl = (rd_u8(this, THIS_BITS) >> 1) & 1;
+/// stores, then the seal epilogue. Here the filler fills E+0x14/E+0x18
+/// (both lea's use `[esp+0x30]`) and the words are read back from the
+/// same two slots. (The E+0x1C low byte the caller also sets is never
+/// passed anywhere nor read back on this path, so it is not reproduced.)
+fn block_a(ped: u32, task_id: u32, obj: u32) -> u32 {
     let mut e14 = 0xFFFF_FFFFu32;
     let mut e18 = 0xFFFF_FFFFu32;
-    // Upper bytes are zero: this slot is never written before on the short
-    // path, and uninitialised stack reads zero under the defined fill.
-    let e1c = u32::from(cl);
-    d11eb0_call(ped, task_id, obj, &mut e14, &mut e18, e1c);
+    d11eb0_call(ped, task_id, obj, &mut e14, &mut e18);
     epilogue_seal(obj)
 }
 
 /// The three 1-argument predicate calls, the 5-argument filler call with
-/// two out-pointers, and the conditional word stores.
+/// two out-pointers, and the conditional word stores. The short path
+/// passes its E+0x14/E+0x18 pair, variant B its E+0x1C/E+0x18 pair (its
+/// second lea uses `[esp+0x38]`); both read the words back from the same
+/// pair they passed.
 ///
 /// NOTE: the caller's extra pushed words (a copy of edx, copies of eax and
 /// of one frame word) are dead stack garbage: the callees pop only their
@@ -242,19 +244,18 @@ fn d11eb0_call(
     ped: u32,
     task_id: u32,
     obj: u32,
-    e14: &mut u32,
-    e18: &mut u32,
-    e1c: u32,
+    out0: &mut u32,
+    out1: &mut u32,
 ) {
     let _d3 = callee_stdcall!(3u32, u32, ped);
     let _d4 = callee_stdcall!(4u32, u32, ped);
     let d5 = callee_stdcall!(5u32, u32, ped);
     let a = d5 & 0xFF;
-    let d6 = callee_cdecl!(6u32, u32, ped, e14 as *mut u32 as u32,
-        e18 as *mut u32 as u32, task_id, a);
+    let d6 = callee_cdecl!(6u32, u32, ped, out0 as *mut u32 as u32,
+        out1 as *mut u32 as u32, task_id, a);
     if d6 & 0xFF != 0 {
-        let lo = (e1c & 0xFFFF) as u16;
-        let hi = (*e18 & 0xFFFF) as u16;
+        let lo = (*out0 & 0xFFFF) as u16;
+        let hi = (*out1 & 0xFFFF) as u16;
         wr_u16(obj, TASK_WORDS, lo);
         wr_u16(obj, TASK_WORDS + 2, hi);
         wr_u16(obj, TASK_WORDS + 4, lo);
@@ -357,9 +358,11 @@ fn path_b(this: u32, ped: u32, task_id: u32) -> u32 {
     e1c = 0;
     e14 = 0;
     e18 = 0;
+    // Push order (frameptr, frameptr, frameptr, ped) with esp-relative
+    // lea's: arg 1 fills e14, arg 2 fills e1c, arg 3 fills e18.
     let _ = callee_cdecl!(13u32, u32, ped,
+        &mut e14 as *mut u32 as u32,
         &mut e1c as *mut u32 as u32,
-        &mut e20 as *mut u32 as u32,
         &mut e18 as *mut u32 as u32);
     let xmm: u32;
     if task_id == TASK_GUN_EXTENDED {
@@ -391,11 +394,12 @@ fn path_b(this: u32, ped: u32, task_id: u32) -> u32 {
     }
     rmw_or(built, TASK_FLAGS, FLAG_B);
     obj = built;
-    let cl = (rd_u8(this, THIS_BITS) >> 1) & 1;
-    let mut be14 = u32::from(cl);
+    // Variant B passes its E+0x1C/E+0x18 pair to the filler. (The flag
+    // bit the caller also derives here lands in E+0x14, which is never
+    // passed anywhere nor read back on this path, so it is not computed.)
+    let mut be1c = 0xFFFF_FFFFu32;
     let mut be18 = 0xFFFF_FFFFu32;
-    let be1c = 0xFFFF_FFFFu32;
-    d11eb0_call(ped, task_id, built, &mut be14, &mut be18, be1c);
+    d11eb0_call(ped, task_id, built, &mut be1c, &mut be18);
     wr_u8(built, TASK_KIND, 4);
     let g: u32 = unsafe { global::<u32>(G_CMP_THRESHOLD).read() };
     if (g as i32) < 2 {

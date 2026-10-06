@@ -221,7 +221,7 @@ lf_checker_rt::export!(thiscall, rw_008f4d00(obj: u32) -> u32 {
         }
         // Layout query gate.
         if (mrd8(obj + OBJ_CLS0) ^ mrd8(obj + OBJ_CLS2)) > 0x7F
-            && rt::callee_thiscall!(C_LAYOUTQ, u32, 0x118D110, 0x2A, 1, 0xE835C4) as u8 != 0
+            && rt::callee_thiscall!(C_LAYOUTQ, u32, rt::relocated(0x118D110), 0x2A, 1, rt::relocated(0xE835C4)) as u8 != 0
         {
             wr8(obj + OBJ_UNIT + 2, 1);
             wr8(obj + OBJ_MARKED, 1);
@@ -269,7 +269,7 @@ lf_checker_rt::export!(thiscall, rw_008f4d00(obj: u32) -> u32 {
                 let idx = rd32(obj + OBJ_INDEX) as i32;
                 if idx >= 0 {
                     let row = G_STATUS_TAB.wrapping_add((idx as u32).wrapping_mul(0xBC));
-                    if rt::callee_thiscall!(C_STATEQ, u32, row) != 0 {
+                    if rt::callee_thiscall!(C_STATEQ, u32, rt::relocated(row)) != 0 {
                         flagged = true;
                     } else {
                         for off in [4u32, 8, 0xC, 0x10] {

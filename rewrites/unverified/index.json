@@ -296,14 +296,6 @@
   "reason": null
  },
  {
-  "address": "0x005D5C30",
-  "name": "proposed-input-ui-5D5C30",
-  "file": "fn_005d5c30.rs",
-  "lane": "r-b616",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x005E8170",
   "name": null,
   "file": "fn_005e8170.rs",
@@ -326,6 +318,46 @@
   "lane": "r-b591",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x005EEF70",
+  "name": "T_CB_Generic_1Arg<void(*)(float), float>::vf1",
+  "file": "fn_005eef70.rs",
+  "lane": "r-s514",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x005EEF90",
+  "name": "T_CB_Generic_5Args<void(*)(float, float, CRect&, HtmlRenderState&, bool), float, float, CRect, HtmlRenderState, bool>::vf1",
+  "file": "fn_005eef90.rs",
+  "lane": "r-s514",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x005EF070",
+  "name": "T_CB_Generic_6Args<void(*)(HtmlRenderState&, float, float, float, float, unsigned int), HtmlRenderState, float, float, float, float, int>::vf1",
+  "file": "fn_005ef070.rs",
+  "lane": "r-s514",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x005EF150",
+  "name": "T_CB_Generic_4Args<void(*)(rage::Color32&, float, float, float), rage::Color32, float, float, float>::vf1",
+  "file": "fn_005ef150.rs",
+  "lane": "r-s514",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x005EF180",
+  "name": "T_CB_Generic_4Args<void(*)(rage::grcTexture*, CRect&, CRect&, rage::Color32&), rage::grcTexture*, CRect, CRect, rage::Color32>::vf1",
+  "file": "fn_005ef180.rs",
+  "lane": "r-s514",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x0061B150",
@@ -416,20 +448,20 @@
   "reason": "other"
  },
  {
-  "address": "0x008C2F10",
-  "name": "audio_mix_update",
-  "file": "fn_008c2f10.rs",
-  "lane": "r-b612",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x008CA880",
   "name": "stream_load_maybe_chain",
   "file": "fn_008ca880.rs",
   "lane": "r-s428",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x008E5BC0",
+  "name": "refcount_release_or_recompute",
+  "file": "fn_008e5bc0.rs",
+  "lane": "r-s512",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x008E5C80",
@@ -440,33 +472,9 @@
   "reason": null
  },
  {
-  "address": "0x008E65F0",
-  "name": "introsort_range",
-  "file": "fn_008e65f0.rs",
-  "lane": "r-s512",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x008E6860",
-  "name": "sift_callbacks",
-  "file": "fn_008e6860.rs",
-  "lane": "r-s512",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x008E68D0",
-  "name": "sort_pass_swap_and_recurse",
-  "file": "fn_008e68d0.rs",
-  "lane": "r-s512",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x008E6BD0",
-  "name": "introsort_entry_depth_limit",
-  "file": "fn_008e6bd0.rs",
+  "address": "0x008ECFA0",
+  "name": "init_tables_and_globals",
+  "file": "fn_008ecfa0.rs",
   "lane": "r-s512",
   "outcome": "not_reached",
   "reason": ""
@@ -520,14 +528,6 @@
   "reason": "frame_pointer_args"
  },
  {
-  "address": "0x00928AC0",
-  "name": "CRenderPhaseCascadeShadows::vf7",
-  "file": "fn_00928ac0.rs",
-  "lane": "r-b620",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x0092AE00",
   "name": "cam_pose_update",
   "file": "fn_0092ae00.rs",
@@ -536,33 +536,33 @@
   "reason": "other"
  },
  {
-  "address": "0x009483F0",
-  "name": "fn_009483F0",
-  "file": "fn_009483f0.rs",
+  "address": "0x0094E680",
+  "name": "fn_0094E680",
+  "file": "fn_0094e680.rs",
   "lane": "r-s511",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x0094BCD0",
-  "name": "GroupHandleFromIndex",
-  "file": "fn_0094bcd0.rs",
+  "address": "0x0094EA00",
+  "name": "Text_AppendLiteralString",
+  "file": "fn_0094ea00.rs",
   "lane": "r-s511",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x0094E7B0",
-  "name": "fn_0094E7B0",
-  "file": "fn_0094e7b0.rs",
+  "address": "0x0094EAA0",
+  "name": "Text_AppendHashKeySubstring",
+  "file": "fn_0094eaa0.rs",
   "lane": "r-s511",
   "outcome": "not_reached",
   "reason": ""
  },
  {
-  "address": "0x00951250",
-  "name": "fn_00951250",
-  "file": "fn_00951250.rs",
+  "address": "0x0094ED20",
+  "name": "fn_0094ED20",
+  "file": "fn_0094ed20.rs",
   "lane": "r-s511",
   "outcome": "not_reached",
   "reason": ""
@@ -598,6 +598,30 @@
   "lane": "r-s420",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x009BB440",
+  "name": "alloc_input_node_a3",
+  "file": "fn_009bb440.rs",
+  "lane": "r-s513",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BB470",
+  "name": "alloc_input_node_9c",
+  "file": "fn_009bb470.rs",
+  "lane": "r-s513",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x009BB4A0",
+  "name": "alloc_input_node_a0",
+  "file": "fn_009bb4a0.rs",
+  "lane": "r-s513",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x009CBBC0",
@@ -870,166 +894,6 @@
   "lane": "r-s407",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00B53CB0",
-  "name": "crmt_manager_init (proposed)",
-  "file": "fn_00b53cb0.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B53DB0",
-  "name": "crmt_buffer_teardown (proposed)",
-  "file": "fn_00b53db0.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B54030",
-  "name": "rage::crFrameBuffer::vf0",
-  "file": "fn_00b54030.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B54180",
-  "name": "crmt_forward_after_scan (proposed)",
-  "file": "fn_00b54180.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B54720",
-  "name": "crmt_slot_refcount_bump (proposed)",
-  "file": "fn_00b54720.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B54750",
-  "name": "rage::crmtFrameBufferFixed<220>::vf1",
-  "file": "fn_00b54750.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B547E0",
-  "name": "crmt_slot_dispatch (proposed)",
-  "file": "fn_00b547e0.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B54820",
-  "name": "crmt_list_push_10 (proposed)",
-  "file": "fn_00b54820.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B54850",
-  "name": "crmt_list_push_8c (proposed)",
-  "file": "fn_00b54850.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B54880",
-  "name": "crmt_list_link_10 (proposed)",
-  "file": "fn_00b54880.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B548A0",
-  "name": "crmt_list_link_8c (proposed)",
-  "file": "fn_00b548a0.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B548D0",
-  "name": "crmt_entry_create (proposed)",
-  "file": "fn_00b548d0.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B54940",
-  "name": "crmt_find_or_create (proposed)",
-  "file": "fn_00b54940.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B54C60",
-  "name": "crmt_channel_open_a (proposed)",
-  "file": "fn_00b54c60.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B54CB0",
-  "name": "crmt_channel_open_b (proposed)",
-  "file": "fn_00b54cb0.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B54D00",
-  "name": "crmt_channel_open_c (proposed)",
-  "file": "fn_00b54d00.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B54D70",
-  "name": "crmt_channel_open_d (proposed)",
-  "file": "fn_00b54d70.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B54F60",
-  "name": "crmtManagerPriority::vf6",
-  "file": "fn_00b54f60.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B54FA0",
-  "name": "crmtManagerChannel::vf7",
-  "file": "fn_00b54fa0.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B55090",
-  "name": "crmtManagerPriority::vf7",
-  "file": "fn_00b55090.rs",
-  "lane": "r-s510",
-  "outcome": "not_reached",
-  "reason": ""
  },
  {
   "address": "0x00B77C30",
