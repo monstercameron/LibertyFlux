@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Rewrites: five withdrawn for handing a callee zeros where the original hands it values",
+    "commit": null,
+    "summary": "The verified count goes down by five. Each of these rewrites passes an untouched, zeroed local to a callee that reads its input from it; the original stores values there before the call. Their proofs skipped the pointer and compared nothing in its place.",
+    "changes": [
+      "Five functions are removed from rewrites/verified: a user-interface float dispatch, an aim-row check, a task helper, an audio zone walk and a benchmark screen method. In each the rewrite declares a local, leaves it zero and passes its address; the original stores a computed float, a point of three floats, or a constant there first, and the callee's first use of that word is a read.",
+      "A lane read every skipped pointer argument in the verified tree from the original's code: 4,633 sites in 2,992 functions. It found 1,368 inputs that the rewrite fills the same way, 1,080 pure outputs, 174 inputs the rewrite does not fill, and 2,011 sites its reader could not map. Of the 174, it judged 36 sites in 16 functions wrong by what the callee does with the buffer, 30 sites in 13 functions undecidable because the callee lies in the part of the code that is encrypted on disk, and 108 harmless.",
+      "The coordinator checked the 16 before acting, with a separate script for the callee side and by reading the original around each call. Two of the 16 the lane had already repaired and re-proved (the one withdrawn earlier today is back, with the buffers built as the original builds them and their words compared from now on; a version that leaves them zero fails). Five more are confirmed on both sides and are the ones withdrawn here. For the other nine the two readings do not agree or the store was not seen independently, and one of them the lane's reader appears to have mapped to the wrong local. Those nine stay in the tree, in question, until a repair lane settles each by running it: the rewrite is rebuilt to fill the buffer, the words are compared, and a version that leaves them zero has to fail.",
+      "The same repair lane takes the five withdrawn here and the thirteen with an unreadable callee, which can be repaired safely without knowing whether the callee reads."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 43 files from lanes (228 unverified rewrites, 478 in review)",
     "commit": "c4f6cd2815c834d31122663f1a876008bb4f7f85",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
