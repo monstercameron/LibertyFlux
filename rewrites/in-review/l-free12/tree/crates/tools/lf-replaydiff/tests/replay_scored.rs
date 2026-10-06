@@ -152,8 +152,13 @@ mod x86 {
         let mut caught = 0;
         let modes = [0u32, 1, 0xff, 0x100, 0x101, 0xff00, rng.u32(), rng.u32()];
         let args = int_corpus(&mut rng, 8);
+        // Width and origin cycle the corpus: NaN payloads observe the
+        // multiply/add order, so random bits alone are too weak a guard.
+        let floats = float_corpus(&mut Rng(0x001D), 0);
         for trial in 0..24 {
             let mut bar = random_bar(&mut rng, 0);
+            bar.width = floats[trial % floats.len()];
+            bar.origin = floats[(trial * 5 + 1) % floats.len()];
             if trial == 0 {
                 bar.total = 8;
                 bar.width = 100.0;

@@ -297,7 +297,16 @@ mod x86 {
                             assert_eq!(stamp_rw, stamp0);
                         } else {
                             assert_eq!(got, want.unwrap(), "idx={idx}");
-                            assert_eq!(diff_words(&before, base), vec![0xa0usize, 0xf8, 0xfc]);
+                            // Only words whose value changes show up in the
+                            // diff (re-selecting the index is a silent store).
+                            let mut expected = Vec::new();
+                            if bar.selected != idx {
+                                expected.extend([0xa0usize, 0xf8]);
+                            }
+                            if bar.sel_mark != 0xffff_ffff {
+                                expected.push(0xfc);
+                            }
+                            assert_eq!(diff_words(&before, base), expected);
                             assert_eq!(get_word(base, 0xa0), idx);
                             assert_eq!(get_word(base, 0xf8), idx);
                             assert_eq!(get_word(base, 0xfc), 0xffff_ffff);
@@ -355,7 +364,9 @@ mod x86 {
         let mut caught = 0;
         let modes = [0u32, 1, 0x100, 0x1ff, rng.u32(), rng.u32()];
         let ticks = int_corpus(&mut rng, 6);
-        let weights = float_corpus(&mut rng, 6);
+        // The weight cycles the full edge corpus (NaN payloads observe
+        // the multiply/add order), not just a few random floats.
+        let weights = float_corpus(&mut Rng(0x0E16), 0);
         for trial in 0..32 {
             let mut bar = random_bar(&mut rng, 0);
             bar.weight = weights[trial % weights.len()];
@@ -766,51 +777,6 @@ mod x86 {
         }
         assert!(cases > 500, "too few comparisons ({cases})");
         assert!(caught > 0, "wrong suppressed set never caught ({cases} cases)");
-    }
-
-    #[test]
-    fn nan_probe() {
-        let _guard = lock();
-        use core::arch::x86::{_mm_cvtss_f32, _mm_div_ss, _mm_mul_ss, _mm_set_ss};
-        unsafe {
-        let nan01 = f32::from_bits(0x7fc0_0001);
-        let q_plain = 0.0f32 / 0.0f32;
-        let q_intr = _mm_cvtss_f32(_mm_div_ss(_mm_set_ss(0.0), _mm_set_ss(0.0)));
-        println!("q_plain={:#x} q_intr={:#x}", q_plain.to_bits(), q_intr.to_bits());
-        let m_plain = q_plain * nan01;
-        let m_intr = _mm_cvtss_f32(_mm_mul_ss(_mm_set_ss(q_plain), _mm_set_ss(nan01)));
-        let m_swap = _mm_cvtss_f32(_mm_mul_ss(_mm_set_ss(nan01), _mm_set_ss(q_plain)));
-        println!(
-            "plain={:#x} intr={:#x} swap={:#x}",
-            m_plain.to_bits(),
-            m_intr.to_bits(),
-            m_swap.to_bits()
-        );
-        let m2_plain = m_plain * 0.5;
-        let m2_intr = _mm_cvtss_f32(_mm_mul_ss(_mm_set_ss(m_intr), _mm_set_ss(0.5)));
-        println!("m2_plain={:#x} m2_intr={:#x}", m2_plain.to_bits(), m2_intr.to_bits());
-        }
-        // The exact failing lift call, with runtime (opaque) inputs.
-        {
-            use std::hint::black_box;
-            let f1 = black_box(0.0f32);
-            let f2 = black_box(0.0f32);
-            let sc_in = black_box(f32::from_bits(0x7fc0_0001));
-            let ratio = black_box(1.0f32) / black_box(2.0f32);
-            let mut x = f1 / f2;
-            let sc = sc_in;
-            x *= sc;
-            let blend = x;
-            println!("seq x1={:#x} ratio={:#x}", x.to_bits(), ratio.to_bits());
-            let out = if black_box(1.0) > ratio {
-                x *= ratio;
-                (f1, f2, x)
-            } else {
-                (f1, f2, blend)
-            };
-            println!("seq out={:#x}", out.2.to_bits());
-        }
-        panic!("probe output above");
     }
 
     /// Lift-side hub fake: scripted lookups plus the flag cell.

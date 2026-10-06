@@ -125,9 +125,14 @@ mod x86 {
         let mut cases = 0;
         let mut caught = 0;
         let positions = float_corpus(&mut rng, 24);
+        // The range edges cycle the corpus too: NaN payloads observe the
+        // multiply order, so random bits alone are too weak a guard.
+        let edges = float_corpus(&mut Rng(0xE06E), 0);
         for trial in 0..24 {
             let n = rng.below(4) as usize;
             let mut bar = random_bar(&mut rng, n);
+            bar.hi = edges[trial % edges.len()];
+            bar.lo = edges[(trial * 7 + 3) % edges.len()];
             if trial == 0 {
                 // A sane range pins the common path.
                 bar.lo = 2.0;
@@ -166,8 +171,11 @@ mod x86 {
         let mut caught = 0;
         let positions = float_corpus(&mut rng, 16);
         let flags = [0u32, 1, 0xff, 0x100, 0x101, 0x1_0000, rng.u32(), rng.u32()];
+        let edges = float_corpus(&mut Rng(0xED6E), 0);
         for trial in 0..16 {
             let mut bar = random_bar(&mut rng, 0);
+            bar.hi = edges[trial % edges.len()];
+            bar.lo = edges[(trial * 5 + 2) % edges.len()];
             if trial == 0 {
                 bar.lo = 0.0;
                 bar.hi = 100.0;

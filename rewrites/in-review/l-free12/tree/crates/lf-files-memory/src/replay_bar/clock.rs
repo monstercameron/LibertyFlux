@@ -95,10 +95,13 @@ pub fn blend_factors(
     let mut x = f1 / f2;
     let ratio = (num.cast_signed() as f32) / (den.cast_signed() as f32);
     let sc = *scale;
-    x *= sc;
+    // Both multiplies keep the running value in the destination lane:
+    // NaN payloads observe the order (the backend otherwise folds the
+    // spilled running value in as the source), so each side is pinned.
+    x = core::hint::black_box(x) * core::hint::black_box(sc);
     let blend = x;
     if 1.0 > ratio {
-        x *= ratio;
+        x = core::hint::black_box(x) * core::hint::black_box(ratio);
         (f1, f2, x)
     } else {
         *scale = sc / ratio;
