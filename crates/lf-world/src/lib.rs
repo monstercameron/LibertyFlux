@@ -16,3 +16,4 @@
 
 pub mod cutscene_object;
 pub mod layout;
+pub mod pools;
