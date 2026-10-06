@@ -9,6 +9,30 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Three stack bugs in the original, found by proving rewrites</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b649"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b649</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>A production batch of six task-system functions yielded four verified rewrites and two partial proofs, and the two partial proofs are the interesting part: in three of the six functions the original code itself cleans up the stack wrongly after some calls, so those paths return into garbage and crash. The proofs had to be split into completing paths, which pass, and faulting paths, which are demonstrated crashing.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production batch of six task-system functions yielded four verified rewrites and two partial proofs, and the two partial proofs are the interesting part: in three of the six functions the original code itself cleans up the stack wrongly after some calls, so those paths return into garbage and crash. The proofs had to be split into completing paths, which pass, and faulting paths, which are demonstrated crashing.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite six neighbouring task-system functions in Rust and prove each rewrite identical to the original on the checker, with at least a thousand trials and a deliberately wrong version per function.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Four functions proved fully: two task initialisers, one virtual route-following step with lazy global caches and a double-precision helper call, and one accept-or-reject check with two virtual calls.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; In three functions the original mis-cleans the stack on some paths: one never cleans a three-word call (its flag and out-word are then read back from never-written slots, so they are always stale), one pops four bytes too many per report call and per marker trio, and one pops twelve too many around its script block. Each faulting path was run and observed crashing; no completing rewrite can match a crashing original, so these are recorded as passing stages plus fault demonstrations.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three functions read a never-written aligned-frame scratch slot into an output word. Under the checker's zero stack fill that word is zero, which is what the rewrites store; each proof documents it.&lt;/li&gt;
+&lt;li&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The faulting paths look like dead or defensive code, or paths the game's own state never reaches: each smells like a caller/callee declaration mismatch, and each crashes in the real game too, since no callee behaviour can balance the arithmetic.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;The two affected functions are recorded as partly proven: the completing-paths stage passes on the stock checker with mutants caught, and a retry kit (full rewrite, stage contract and verdict, fault analysis, fault-demonstration contract) waits in the lane folder. The next lane should read the fault analysis first and decide between accepting the stage and attempting fault parity, which is expected to be fragile. A reusable lesson: when the original faults on some trials, check the caller's own stack arithmetic before suspecting the contract — the bytes of one cleanup instruction settled two of these cases.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run the lane's stage contracts for the two affected functions (all completing paths pass), then run the retry folder's full contracts, which steer trials into the faulting paths and show the original faulting where the rewrite completes. The lane log and report name every file.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Two self-inflicted faults cost the most time. First, a wrong nibble in a contract's function field sent a run at the wrong bytes; the contract linter catches this in a second and should run before every first attempt. Second, pin phases that looked independent combined to make a callee path unsatisfiable, producing a vacuous verdict; aligning one pin to odd trials fixed it. A transient build lock from a stale handle was fixed by removing the built file after confirming no process held it.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Production lane: 28 text-field functions verified, two held by a global-fill gap</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s525"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s525</id>
@@ -1148,35 +1172,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Run the lane's census and generator scripts over the verified rewrites to rebuild the descriptor tables and differential cases, then run the seven differential suites on the 32-bit target and the four crates' own tests on the 64-bit host. Every case also runs a deliberately wrong lift that must be caught. Together with the leaderboard family, 5,587 verified rewrites are now covered by lifted code.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Three defects were found by the proof rather than by reading: engine calls declared with float answers read a different return register than integer stubs provide, so those cases needed float-answering stubs; a residue spelling in store returns needed pinning per member instead of assuming two spellings; and parallel test suites shared one relocated base until each suite took it inside its own session. Each fix was confirmed by the full suite going green.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Verified, and wrong: 144 rewrites that the checker passed and the lift caught</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#verified-but-wrong-signed-length-2026-10-05"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#verified-but-wrong-signed-length-2026-10-05</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>The first lift at scale turned one template family, the leaderboard class, into a handful of generic functions written from the original, and proved them by running every verified rewrite of the family against them. That cross-check found something the checker had not: 144 verified rewrites of one function differ from the original. They have been withdrawn from the verified count. This entry records what happened, because it says something about what "verified" has meant so far.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;The first lift at scale turned one template family, the leaderboard class, into a handful of generic functions written from the original, and proved them by running every verified rewrite of the family against them. That cross-check found something the checker had not: 144 verified rewrites of one function differ from the original. They have been withdrawn from the verified count. This entry records what happened, because it says something about what "verified" has meant so far.&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Fact&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;&lt;td&gt;Function&lt;/td&gt;&lt;td&gt;The family's row collector: one routine, instantiated once per leaderboard, 413 instantiations verified at the time.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;The difference&lt;/td&gt;&lt;td&gt;Inside its loop the function asks a helper for a row's length and compares it with eight. The original compares it as a signed number: a negative length counts as small and the row is copied. 144 rewrites compare it unsigned: a negative length counts as huge and the row is not copied. The other 269 compare it signed.&lt;/td&gt;&lt;td&gt;Verified twice: the lift's harness runs each of the 144 with such lengths and shows the difference, and in 60 of 60 originals read independently the compare is followed by the signed jump&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Why the checker passed them&lt;/td&gt;&lt;td&gt;The length comes from a callee, and a callee is replaced by a stand-in whose answers the contract scripts. No contract ever scripted a negative answer. Every trial ran, every comparison matched, and the one input class that separates the two versions was never tried.&lt;/td&gt;&lt;td&gt;Verified (read from contracts of both groups)&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Why the wrong-version test did not help&lt;/td&gt;&lt;td&gt;Each function had its own deliberately wrong version, and each was caught. But the lanes chose wrong versions such as a query id off by one. A wrong version shows that the contract can see that one change; it says nothing about a change nobody thought to make.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;How two groups arose&lt;/td&gt;&lt;td&gt;Eighteen lanes verified members of this family, eight at a time, each working the routine out again. Some read the jump correctly and some did not. A single generator lane later did 117 members from one template, all signed.&lt;/td&gt;&lt;td&gt;Verified (lanes named in the index)&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;What this says about the count&lt;/h3&gt;
-&lt;p&gt;The checker proves that two pieces of code agree on the inputs it was given. For values the function receives directly, the inputs are generated with edge cases. For values that come back from callees, the inputs are whatever the lane scripted, and lanes script small values that steer the function down its paths. So any comparison made on a callee's answer has been tested only as far as the lane thought to test it. This family made the gap visible because the same routine was rewritten many times by different lanes and then compared. For a function rewritten once, nothing would have shown it. How many verified functions share this blind spot is not known; it is now a question with an audit attached, not an assumption.&lt;/p&gt;
-&lt;h3&gt;Decisions&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;The 144 are removed from the verified tree, and the published count went down by 144 for this reason. They return only through a re-run lane whose contracts make the length helper answer with negative and edge values, and whose wrong version is exactly this mistake.&lt;/li&gt;
-&lt;li&gt;The 269 rewrites that compare correctly keep their place, with a note that their proofs are blind on the same point and are to be strengthened the same way.&lt;/li&gt;
-&lt;li&gt;The production brief (version b17) now requires, for every comparison made on a callee's answer, scripted answers that separate signed from unsigned and an exact bound from one off by one, and a wrong version that makes exactly that mistake.&lt;/li&gt;
-&lt;li&gt;An audit is to measure the blind spot across the verified tree: flip the signedness of comparisons on callee results in a sample of verified rewrites and count how many of those wrong versions pass their existing contracts.&lt;/li&gt;
-&lt;li&gt;The lift is now also a check. Wherever many verified rewrites share one routine, lifting them compares them with one another and with a version written from the original, at almost no cost.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;To reproduce: take the verified rewrites of one template function, run each against one reference version on inputs that include negative answers from the length helper, and group them by result.&lt;/p&gt;</content>
   </entry>
 </feed>
