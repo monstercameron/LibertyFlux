@@ -43182,6 +43182,33 @@
   "lane": "r-b19"
  },
  {
+  "address": "0x008923A0",
+  "name": "audsound_store_word_7c",
+  "kind": "function",
+  "file": "functions/fn_008923a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
+  "address": "0x008923C0",
+  "name": "rage::audSound::vf6",
+  "kind": "function",
+  "file": "functions/fn_008923c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
+  "address": "0x00892480",
+  "name": "audsound_reset_playback_fields",
+  "kind": "function",
+  "file": "functions/fn_00892480.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
   "address": "0x00892770",
   "name": "audSound_peak_level",
   "kind": "function",
@@ -43198,6 +43225,51 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b19"
+ },
+ {
+  "address": "0x008929A0",
+  "name": "audsound_init_embedded_tables",
+  "kind": "function",
+  "file": "functions/fn_008929a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
+  "address": "0x00892A70",
+  "name": "audsound_slot_bsearch",
+  "kind": "function",
+  "file": "functions/fn_00892a70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
+  "address": "0x00892AD0",
+  "name": "audsound_relocate_pool_pointers",
+  "kind": "function",
+  "file": "functions/fn_00892ad0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
+  "address": "0x00892B70",
+  "name": "audsound_fixup_parity_entries",
+  "kind": "function",
+  "file": "functions/fn_00892b70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
+ },
+ {
+  "address": "0x00892BA0",
+  "name": "audsound_build_voice_entries",
+  "kind": "function",
+  "file": "functions/fn_00892ba0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s487"
  },
  {
   "address": "0x00892DF0",
@@ -51778,12 +51850,12 @@
  },
  {
   "address": "0x00938850",
-  "name": "stream_ready_gate_b",
+  "name": "stream_ready_gate_b (proposed)",
   "kind": "function",
   "file": "functions/fn_00938850.rs",
   "trials": 1000,
-  "checker": "version 5",
-  "lane": "r-s430"
+  "checker": "version 6",
+  "lane": "a-S05"
  },
  {
   "address": "0x00938910",
@@ -79750,12 +79822,12 @@
  },
  {
   "address": "0x00B5FA50",
-  "name": "audio_voice_update",
+  "name": "// original: 0x00B5FA50 audio_voice_update",
   "kind": "function",
   "file": "functions/fn_00b5fa50.rs",
   "trials": 1000,
-  "checker": "version 4",
-  "lane": "a-V03"
+  "checker": "version 6",
+  "lane": "a-S05"
  },
  {
   "address": "0x00B5FE20",
