@@ -35757,6 +35757,15 @@
   "lane": "r-s481"
  },
  {
+  "address": "0x00633E30",
+  "name": "section_table_load",
+  "kind": "function",
+  "file": "functions/fn_00633e30.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b594"
+ },
+ {
   "address": "0x006340D0",
   "name": "tls_pool_register",
   "kind": "function",
@@ -39627,6 +39636,15 @@
   "lane": "r-b104"
  },
  {
+  "address": "0x0069DE90",
+  "name": "clamp_store_pair",
+  "kind": "function",
+  "file": "functions/fn_0069de90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s507"
+ },
+ {
   "address": "0x0069DED0",
   "name": "table_entry_refresh",
   "kind": "function",
@@ -39645,6 +39663,15 @@
   "lane": "r-b104"
  },
  {
+  "address": "0x0069E8A0",
+  "name": "dispatch_table_by_flag",
+  "kind": "function",
+  "file": "functions/fn_0069e8a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s507"
+ },
+ {
   "address": "0x0069EC90",
   "name": "item_list_dispatcher",
   "kind": "function",
@@ -39652,6 +39679,87 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b128"
+ },
+ {
+  "address": "0x0069F140",
+  "name": "blend_ratio_from_pair",
+  "kind": "function",
+  "file": "functions/fn_0069f140.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s507"
+ },
+ {
+  "address": "0x0069F1A0",
+  "name": "fill_byte_dword_pairs",
+  "kind": "function",
+  "file": "functions/fn_0069f1a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s507"
+ },
+ {
+  "address": "0x0069F1E0",
+  "name": "unit_float_from_packed_byte_c",
+  "kind": "function",
+  "file": "functions/fn_0069f1e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s507"
+ },
+ {
+  "address": "0x0069F240",
+  "name": "unit_float_from_packed_byte_d",
+  "kind": "function",
+  "file": "functions/fn_0069f240.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s507"
+ },
+ {
+  "address": "0x0069F2A0",
+  "name": "unit_float_from_packed_byte_e",
+  "kind": "function",
+  "file": "functions/fn_0069f2a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s507"
+ },
+ {
+  "address": "0x0069F300",
+  "name": "unit_float_from_packed_byte_f",
+  "kind": "function",
+  "file": "functions/fn_0069f300.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s507"
+ },
+ {
+  "address": "0x0069F3A0",
+  "name": "write_slot_if_key_matches",
+  "kind": "function",
+  "file": "functions/fn_0069f3a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s507"
+ },
+ {
+  "address": "0x0069F3E0",
+  "name": "stamp_kind_byte_to_targets",
+  "kind": "function",
+  "file": "functions/fn_0069f3e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s507"
+ },
+ {
+  "address": "0x006A0100",
+  "name": "stride2_copy",
+  "kind": "function",
+  "file": "functions/fn_006a0100.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s507"
  },
  {
   "address": "0x006A0440",
@@ -57600,6 +57708,15 @@
   "lane": "r-b20"
  },
  {
+  "address": "0x0097C7A0",
+  "name": "POCKETS_MONEY",
+  "kind": "function",
+  "file": "functions/fn_0097c7a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q24"
+ },
+ {
   "address": "0x0097D290",
   "name": "MOBILE_TWO_WAY_GARBLED",
   "kind": "function",
@@ -74475,6 +74592,15 @@
   "lane": "r-s123"
  },
  {
+  "address": "0x00A95CA0",
+  "name": "filemem_init_archive_manager",
+  "kind": "function",
+  "file": "functions/fn_00a95ca0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
+ },
+ {
   "address": "0x00A95D50",
   "name": "streaming_slot_array_reset",
   "kind": "function",
@@ -74860,6 +74986,15 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "a-Q09"
+ },
+ {
+  "address": "0x00A9C090",
+  "name": "filemem_collect_ready",
+  "kind": "function",
+  "file": "functions/fn_00a9c090.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
  },
  {
   "address": "0x00A9C170",
@@ -75769,6 +75904,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s153"
+ },
+ {
+  "address": "0x00AB9BC0",
+  "name": "blend_entry_pair",
+  "kind": "function",
+  "file": "functions/fn_00ab9bc0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b610"
  },
  {
   "address": "0x00AB9FC0",
