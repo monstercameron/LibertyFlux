@@ -9,6 +9,28 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming batch: base-class vtables name the overrides for free</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-115"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-115</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>One hundred forty-three of one hundred fifty consecutive functions got descriptive names, and five of the remaining seven turned out not to be functions at all.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred forty-three of one hundred fifty consecutive functions got descriptive names, and five of the remaining seven turned out not to be functions at all.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose a descriptive name for each of one hundred fifty consecutive unnamed functions, working out what the group is about first, with a confidence per name and no guessing.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch covers cutscene-object methods, streaming slot machinery, animation tables and pools, a small D3D9 loader, vehicle and boat definition tables, ped-type helpers, and ped and MLO model-info methods.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A base class and its subclasses share most vtable slots, so an override inherits its base slot's name. This named eight model-info overrides with high confidence, each confirmed by a call or tail-call to the shared base implementation.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Five queue entries are not functions: four are short tail fragments reached by jumps from the preceding function, and one is jump-table data. Each was checked independently: no callers, no vtable references, padding plus a fresh function after, and the owning neighbour identified.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Several neighbour names in the same region look wrong: task-flavoured names on routines that operate on model-info objects, script-native guesses inside the encrypted first megabyte, and narrow names on broad init and frame-update functions.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Naming lanes should check gapfill entries for the fragment pattern before naming them, distrust inventory sizes and subsystem tags, and use base-class vtable slots to name overrides. The queue should replace the five non-function entries with the real functions that follow them.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Build one evidence table for the whole batch first: disassemble each function through the mapped image, resolve call targets and callers against the merged name sources, and join vtable slots from the RTTI dump. Read the short functions fully and dump the unclear ones individually.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;A helper script named after a standard library module silently broke its own disassembler import and had to be renamed. Inventory sizes were wrong on seven entries, so evidence past the true end of a function had to be excluded by hand. One call-site dump repeatedly returned empty output for no clear reason and was abandoned.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Seven verified rewrites compared a call's answer the wrong way, and how the last two were found</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#seven-wrong-signedness-2026-10-05"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#seven-wrong-signedness-2026-10-05</id>
@@ -1160,27 +1182,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
     <updated>2026-10-03T00:00:00Z</updated>
     <summary>Verified Direct calls whose target lies in the encrypted first megabyte of code verify like any other intercepted call: the checker patches the call site, the stub answers, and the encrypted bytes never execute. One function with four such calls passed all 1100 trials.</summary>
     <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Direct calls whose target lies in the encrypted first megabyte of code verify like any other intercepted call: the checker patches the call site, the stub answers, and the encrypted bytes never execute. One function with four such calls passed all 1100 trials.&lt;/p&gt;&lt;h3&gt;What was asked&lt;/h3&gt;&lt;p&gt;Rewrite five neighbouring task-system functions and prove each identical to the original. Two were flagged as likely needing encrypted code.&lt;/p&gt;&lt;h3&gt;What was found&lt;/h3&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Four of five verified (1000-1100 trials each, every wrong version caught). The fifth is staged: its entry paths pass and the loop body has a complete plan.&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The genuine encrypted-code cases are narrow: the function itself lives in the encrypted region, an indirect call whose pointer cannot be built, or a code read. A plain direct call to an encrypted address is none of these, though its signature must be read from the caller side (what is pushed, who cleans up, how the result is used).&lt;/p&gt;&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; One function holds a direct call to an odd address inside writable data, gated by a flag and with its result ignored. What it means is unknown.&lt;/p&gt;&lt;h3&gt;What was decided or recommended&lt;/h3&gt;&lt;p&gt;Patch direct calls into the encrypted region instead of deferring them, and defer only what the original must actually execute there. The lane brief should say this.&lt;/p&gt;&lt;h3&gt;How to reproduce it&lt;/h3&gt;&lt;p&gt;Declare the encrypted-target call as a normal patched callee with caller-derived signature (argument count from pushes, cleanup from stack balance, return channel from use) and run the stock checker; the original completes trials instead of faulting.&lt;/p&gt;&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;&lt;p&gt;Two false alarms about missing relocations were my own disp-offset slips (three-byte opcodes take their address at a different offset than four-byte ones). A countdown loop ran eleven times, not ten, because it exits on sign. Pin cycles with equal periods silently hid whole branch classes until an exact path enumerator exposed them.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a batch of game functions: weapons, pads, cameras</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-97"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-97</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One hundred and fifty consecutive unnamed functions turned out to be five separate groups: gamepad rumble and state handling, weapon data parsing, vehicle and zone helpers, viewport and render-target code, and game camera logic. Just over two thirds could be named with confidence.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred and fifty consecutive unnamed functions turned out to be five separate groups: gamepad rumble and state handling, weapon data parsing, vehicle and zone helpers, viewport and render-target code, and game camera logic. Just over two thirds could be named with confidence.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each function in the batch, with a confidence level and one sentence of evidence, working from strings, called functions, neighbouring names, and class layout information.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Seven near-identical string-matching routines each scan a table of recognised words. Reading those tables gave exact domains: damage types, explosion types, fire types, fuse types, weapon flag words, stat types, and weapon slots.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The larger parsing routines reference plain field names for accuracy, rates, ranges, melee groups, and explosion thresholds, and open the weapon data file. The batch holds the whole weapon information loader.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two inventory subsystem labels were wrong: the supposed streaming code at the start of the batch is gamepad input handling, and the supposed network code at the end is game camera logic plus pickup handling.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The camera code includes the game camera's deleting destructor, its idle reset and restart steps, a per-frame update, and many small create, find, and flag helpers. The viewport code includes refresh and release steps plus child-list maintenance.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;One hundred and five functions were named and forty-five left unnamed where the evidence only showed a bare getter, a leaf arithmetic routine, or calls into still-unknown helpers. The next naming lane covering nearby code should distrust subsystem labels and re-derive the group from strings first.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Disassemble each function through the mapped image, collect direct call targets, referenced strings, and nearby merged names into one table, then read the short functions and decode any string tables the matchers scan. Vtable membership is confirmed by finding data words that point at the function.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The first read path mixed up file offsets with mapped-image offsets, shifting every disassembly by a constant. The shifted bytes still decoded into plausible-looking code with self-consistent call targets, which hid the mistake until vtable targets failed to decode as real methods. The fix was to read through the library's address-to-data call, and a good tripwire is that genuine vtable targets always decode as clean method prologues.&lt;/p&gt;</content>
   </entry>
 </feed>
