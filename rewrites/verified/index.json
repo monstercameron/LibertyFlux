@@ -42264,6 +42264,15 @@
   "lane": "r-s175"
  },
  {
+  "address": "0x0087B990",
+  "name": "rage::crmtNodeCapture::vf4",
+  "kind": "function",
+  "file": "functions/fn_0087b990.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q21"
+ },
+ {
   "address": "0x0087BA00",
   "name": "mirror_node_construct",
   "kind": "function",
@@ -42334,6 +42343,42 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s175"
+ },
+ {
+  "address": "0x0087BFE0",
+  "name": "crmt_node_base_init",
+  "kind": "function",
+  "file": "functions/fn_0087bfe0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
+  "address": "0x0087C0A0",
+  "name": "rage::crmtNodeAddSubtract::vf2",
+  "kind": "function",
+  "file": "functions/fn_0087c0a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
+  "address": "0x0087C190",
+  "name": "crmt_node_set_vtable",
+  "kind": "function",
+  "file": "functions/fn_0087c190.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
+ },
+ {
+  "address": "0x0087C3A0",
+  "name": "rage::crmtNodeBlend::vf14",
+  "kind": "function",
+  "file": "functions/fn_0087c3a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s501"
  },
  {
   "address": "0x00881540",
@@ -48006,6 +48051,15 @@
   "lane": "r-s140"
  },
  {
+  "address": "0x008B5750",
+  "name": "FRONTEND_MENU_HIGHLIGHT",
+  "kind": "function",
+  "file": "functions/fn_008b5750.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b603"
+ },
+ {
   "address": "0x008B5870",
   "name": "device_table_setup",
   "kind": "function",
@@ -52335,6 +52389,15 @@
   "lane": "r-b255"
  },
  {
+  "address": "0x0091AAB0",
+  "name": "kbd_scancode_to_char",
+  "kind": "function",
+  "file": "functions/fn_0091aab0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b595"
+ },
+ {
   "address": "0x0091B360",
   "name": "char_map_copy",
   "kind": "function",
@@ -54468,6 +54531,15 @@
   "lane": "a-16"
  },
  {
+  "address": "0x009495D0",
+  "name": "NativeImpl_SET_OBJECT_COORDINATES",
+  "kind": "function",
+  "file": "functions/fn_009495d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q17"
+ },
+ {
   "address": "0x00949890",
   "name": "pool_clear_match_flags",
   "kind": "function",
@@ -55404,10 +55476,37 @@
   "lane": "r-s135"
  },
  {
+  "address": "0x00953B90",
+  "name": "probe_status_twice",
+  "kind": "function",
+  "file": "functions/fn_00953b90.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
+  "address": "0x00954130",
+  "name": "alloc_store_global",
+  "kind": "function",
+  "file": "functions/fn_00954130.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
   "address": "0x009543D0",
   "name": "table_byte_clear",
   "kind": "function",
   "file": "functions/fn_009543d0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
+  "address": "0x009544C0",
+  "name": "disk_space_check_300m",
+  "kind": "function",
+  "file": "functions/fn_009544c0.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-s499"
@@ -55426,6 +55525,24 @@
   "name": "bound_delta_store",
   "kind": "function",
   "file": "functions/fn_00954510.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
+  "address": "0x00954540",
+  "name": "pool_fit_check",
+  "kind": "function",
+  "file": "functions/fn_00954540.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
+  "address": "0x009545B0",
+  "name": "tagged_table_find",
+  "kind": "function",
+  "file": "functions/fn_009545b0.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-s499"
@@ -55453,6 +55570,15 @@
   "name": "id_table_flag",
   "kind": "function",
   "file": "functions/fn_009546e0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
+ },
+ {
+  "address": "0x00954700",
+  "name": "record_class_check",
+  "kind": "function",
+  "file": "functions/fn_00954700.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-s499"
@@ -57814,6 +57940,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b375"
+ },
+ {
+  "address": "0x00997E00",
+  "name": "audio_compute_listener_gains",
+  "kind": "function",
+  "file": "functions/fn_00997e00.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "a-Q22"
  },
  {
   "address": "0x0099CC60",
@@ -73971,6 +74106,15 @@
   "lane": "r-b153"
  },
  {
+  "address": "0x00A98AA0",
+  "name": "filemem_count_ready_entries",
+  "kind": "function",
+  "file": "functions/fn_00a98aa0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
+ },
+ {
   "address": "0x00A98C40",
   "name": "attach_and_dispatch_state",
   "kind": "function",
@@ -73998,6 +74142,15 @@
   "lane": "r-b144"
  },
  {
+  "address": "0x00A99550",
+  "name": "filemem_blend_rgba",
+  "kind": "function",
+  "file": "functions/fn_00a99550.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
+ },
+ {
   "address": "0x00A996E0",
   "name": "gated_plane_proximity_test",
   "kind": "function",
@@ -74014,6 +74167,15 @@
   "trials": 1100,
   "checker": "version 3",
   "lane": "r-b160"
+ },
+ {
+  "address": "0x00A99D20",
+  "name": "filemem_limits_exceeded",
+  "kind": "function",
+  "file": "functions/fn_00a99d20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
  },
  {
   "address": "0x00A9B170",
@@ -79245,6 +79407,24 @@
   "lane": "r-s498"
  },
  {
+  "address": "0x00B28F70",
+  "name": "rows_notify_ready",
+  "kind": "function",
+  "file": "functions/fn_00b28f70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s498"
+ },
+ {
+  "address": "0x00B28FB0",
+  "name": "rows_notify_match",
+  "kind": "function",
+  "file": "functions/fn_00b28fb0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s498"
+ },
+ {
   "address": "0x00B29010",
   "name": "object_record_update",
   "kind": "function",
@@ -79294,6 +79474,15 @@
   "name": "slot_id_set",
   "kind": "function",
   "file": "functions/fn_00b29c30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s498"
+ },
+ {
+  "address": "0x00B29C80",
+  "name": "rows_notify_tail_reset",
+  "kind": "function",
+  "file": "functions/fn_00b29c80.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s498"
