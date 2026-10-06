@@ -38120,8 +38120,8 @@
   "kind": "function",
   "file": "functions/fn_0068e2e0.rs",
   "trials": 1200,
-  "checker": "version 4",
-  "lane": "r-b291"
+  "checker": "version 6",
+  "lane": "a-S11"
  },
  {
   "address": "0x0068E530",
@@ -118161,6 +118161,15 @@
   "lane": "a-R01"
  },
  {
+  "address": "0x00C94C70",
+  "name": "task_pose_update",
+  "kind": "function",
+  "file": "functions/fn_00c94c70.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b628"
+ },
+ {
   "address": "0x00C95C50",
   "name": "sphere_contact_point",
   "kind": "function",
@@ -127044,6 +127053,15 @@
   "lane": "r-b587"
  },
  {
+  "address": "0x00D70AD0",
+  "name": "replay_bar_layout",
+  "kind": "function",
+  "file": "functions/fn_00d70ad0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q38"
+ },
+ {
   "address": "0x00D70EB0",
   "name": "replay_input_poll",
   "kind": "function",
@@ -127296,6 +127314,15 @@
   "lane": "r-b242"
  },
  {
+  "address": "0x00D77550",
+  "name": "CRenderPhaseWaterReflection::vf3",
+  "kind": "function",
+  "file": "functions/fn_00d77550.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
   "address": "0x00D775C0",
   "name": "T_CB_Generic_4Args<void(*)(float, int, int, int), float, int, int, int>::vf1",
   "kind": "function",
@@ -127512,6 +127539,24 @@
   "lane": "r-b202"
  },
  {
+  "address": "0x00D7B210",
+  "name": "forward_packed_fields_ne_flag",
+  "kind": "function",
+  "file": "functions/fn_00d7b210.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
+  "address": "0x00D7B250",
+  "name": "convert_byte_dual_filter_scale",
+  "kind": "function",
+  "file": "functions/fn_00d7b250.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
   "address": "0x00D7B2F0",
   "name": "find_best_cell_match",
   "kind": "function",
@@ -127582,6 +127627,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b238"
+ },
+ {
+  "address": "0x00D7D9A0",
+  "name": "copy_links_range_fallback",
+  "kind": "function",
+  "file": "functions/fn_00d7d9a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
  },
  {
   "address": "0x00D7DA20",
