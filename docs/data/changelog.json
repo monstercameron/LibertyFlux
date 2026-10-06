@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Devlog: Lifting the replay bar: one prefix, four shapes, and a backend that commutes",
+    "title": "Rewrites: 5 more functions pass the checker (17002 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "5 rewrites added under rewrites/verified: 0 script native handlers and 5 other functions.",
+      "The tree now holds 17002 rewrites, 16986 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 1 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Devlog: Lifting the replay bar: one prefix, four shapes, and a backend that commutes",
+    "commit": "40525979dd12ddd1f63c6fff30744f4a487d658f",
     "summary": "Findings from the l-free12 lane.",
     "changes": [
       "New devlog entry: Lifting the replay bar: one prefix, four shapes, and a backend that commutes.",
