@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Rewrites: the exact reading of signed sites finds two more",
+    "commit": null,
+    "summary": "The verified count goes down by two. A lane read every one of the 627 places where a verified function's original compares a call's answer and branches signed, against the rewrite's comparison: 622 are right, four are wrong, one is an artefact of a function boundary.",
+    "changes": [
+      "net_collect_passing_entries and input_level_check are removed from rewrites/verified. The first compares a callback's answer with an unsigned greater-than against thirty-two, the second a probe's answer with an unsigned less-than against two hundred and fifty-six; the originals use the signed forms. The coordinator read both in the original before withdrawing them.",
+      "The other two of the four are the rewrites withdrawn an hour earlier after the coarse sweep. The lane's verdicts agree with every earlier hand adjudication by four other lanes, and it checked all 413 members of the leaderboard row-collector family by script: all signed.",
+      "This closes the question for this mistake as far as it can be read from the code: among the 570 verified functions where a call's answer is compared and branched on signed, nine rewrites were wrong in all, and all nine are withdrawn. Each returns with a contract that makes the difference visible. What the reading does not cover is values that reach a comparison through memory or through more than one call."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 4 files from lanes (248 unverified rewrites, 194 in review)",
     "commit": "f0881d04e8ef94b030c5903db7da1cae93fd1080",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
