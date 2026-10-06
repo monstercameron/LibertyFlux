@@ -39681,6 +39681,15 @@
   "lane": "r-s507"
  },
  {
+  "address": "0x0069EAE0",
+  "name": "reload_active_row",
+  "kind": "function",
+  "file": "functions/fn_0069eae0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s507"
+ },
+ {
   "address": "0x0069EC90",
   "name": "item_list_dispatcher",
   "kind": "function",
@@ -39688,6 +39697,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b128"
+ },
+ {
+  "address": "0x0069EFC0",
+  "name": "init_dual_and_table",
+  "kind": "function",
+  "file": "functions/fn_0069efc0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s507"
  },
  {
   "address": "0x0069F140",
@@ -39757,6 +39775,15 @@
   "name": "stamp_kind_byte_to_targets",
   "kind": "function",
   "file": "functions/fn_0069f3e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s507"
+ },
+ {
+  "address": "0x006A0050",
+  "name": "parse_table_from_file",
+  "kind": "function",
+  "file": "functions/fn_006a0050.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s507"
@@ -76221,6 +76248,15 @@
   "lane": "r-b239"
  },
  {
+  "address": "0x00ABD340",
+  "name": "ui_slot_pair_setup",
+  "kind": "function",
+  "file": "functions/fn_00abd340.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b610"
+ },
+ {
   "address": "0x00ABD8A0",
   "name": "vec_light_kernel_gated",
   "kind": "function",
@@ -112005,6 +112041,15 @@
   "lane": "r-s506"
  },
  {
+  "address": "0x00C182F0",
+  "name": "clamped_helper_diff_stored_byte",
+  "kind": "function",
+  "file": "functions/fn_00c182f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
+ },
+ {
   "address": "0x00C18380",
   "name": "init_copy_with_two_helpers",
   "kind": "function",
@@ -112027,6 +112072,33 @@
   "name": "store_three_floats_set_flag",
   "kind": "function",
   "file": "functions/fn_00c183f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
+ },
+ {
+  "address": "0x00C18750",
+  "name": "clamped_scale_complement_st0",
+  "kind": "function",
+  "file": "functions/fn_00c18750.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
+ },
+ {
+  "address": "0x00C187B0",
+  "name": "CCamReplay::vf7",
+  "kind": "function",
+  "file": "functions/fn_00c187b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
+ },
+ {
+  "address": "0x00C187E0",
+  "name": "camera_refresh_via_global_channel",
+  "kind": "function",
+  "file": "functions/fn_00c187e0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s506"
@@ -112102,6 +112174,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b141"
+ },
+ {
+  "address": "0x00C18DD0",
+  "name": "strlen_alloc_widen",
+  "kind": "function",
+  "file": "functions/fn_00c18dd0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s506"
  },
  {
   "address": "0x00C18E60",
