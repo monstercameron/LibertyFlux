@@ -54864,6 +54864,15 @@
   "lane": "a-16"
  },
  {
+  "address": "0x0094BD60",
+  "name": "DELETING_PED_SEQUENCE",
+  "kind": "function",
+  "file": "functions/fn_0094bd60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b601"
+ },
+ {
   "address": "0x0094C420",
   "name": "pair_array_init6",
   "kind": "function",
@@ -55825,6 +55834,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b135"
+ },
+ {
+  "address": "0x00955750",
+  "name": "handle_open_buffered",
+  "kind": "function",
+  "file": "functions/fn_00955750.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s499"
  },
  {
   "address": "0x00955860",
@@ -74466,6 +74484,15 @@
   "lane": "r-s502"
  },
  {
+  "address": "0x00A996A0",
+  "name": "filemem_device_matches",
+  "kind": "function",
+  "file": "functions/fn_00a996a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
+ },
+ {
   "address": "0x00A996E0",
   "name": "gated_plane_proximity_test",
   "kind": "function",
@@ -74473,6 +74500,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b144"
+ },
+ {
+  "address": "0x00A99AE0",
+  "name": "mat_name_in_list_a",
+  "kind": "function",
+  "file": "functions/fn_00a99ae0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
+ },
+ {
+  "address": "0x00A99B40",
+  "name": "mat_name_in_list_b",
+  "kind": "function",
+  "file": "functions/fn_00a99b40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
  },
  {
   "address": "0x00A99BA0",
@@ -119268,6 +119313,15 @@
   "lane": "a-S06"
  },
  {
+  "address": "0x00CD5A30",
+  "name": "euphoria_blend_setup",
+  "kind": "function",
+  "file": "functions/fn_00cd5a30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q18"
+ },
+ {
   "address": "0x00CD5FE0",
   "name": "euphoria_effector_apply",
   "kind": "function",
@@ -123705,6 +123759,15 @@
   "lane": "r-s503"
  },
  {
+  "address": "0x00D6A580",
+  "name": "replay_button_bar_dtor",
+  "kind": "function",
+  "file": "functions/fn_00d6a580.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
   "address": "0x00D6A5E0",
   "name": "CReplayButton::vf0",
   "kind": "function",
@@ -123768,10 +123831,28 @@
   "lane": "r-s503"
  },
  {
+  "address": "0x00D6A9C0",
+  "name": "replay_notify_if_present",
+  "kind": "function",
+  "file": "functions/fn_00d6a9c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
   "address": "0x00D6AA00",
   "name": "FRONTEND_MENU_MONTAGE_PRESS_MT",
   "kind": "function",
   "file": "functions/fn_00d6aa00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s503"
+ },
+ {
+  "address": "0x00D6AC00",
+  "name": "CReplayButtonBar::vf2",
+  "kind": "function",
+  "file": "functions/fn_00d6ac00.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s503"

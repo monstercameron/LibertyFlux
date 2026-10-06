@@ -7,16 +7,14 @@
 /// `TXD_NAME`); a slot of -1 returns -1 at once. Otherwise allocates a
 /// 4-byte block (id 3, zeroed unless null) into `this + BLK_OFF` (0x14),
 /// runs three notification callees (ids 4-6) on the slot, and takes a
-/// context from id 7. It then hashes two keys (id 8, cdecl/2): the first
-/// key is the caller's entry ESI, the second a misaligned word
-/// overlapping the return address and `arg1` — both unknowable to this
-/// rewrite, passed as 0 and skipped in the contract; the answers are
-/// scripted and everything downstream is compared. Each hash is
-/// resolved through id 9 (thiscall, this = context) into `this + H1_OFF`
-/// (8) and `this + H2_OFF` (0xC); a non-null handle gets its reference
-/// word at `REF_OFF` (0xA) incremented (wrapping). Returns the id 10
-/// answer. Original is thiscall/2, returns EAX.
-lf_checker_rt::export!(thiscall, rw_00953BC0(this: u32, _arg1: u32, _arg2: u32) -> u32 {
+/// context from id 7. It then hashes two keys (id 8, cdecl/2): `arg1`
+/// and `arg2` (re-read from the incoming stack slots, each paired with
+/// 0); the answers are scripted. Each hash is resolved through id 9
+/// (thiscall, this = context) into `this + H1_OFF` (8) and
+/// `this + H2_OFF` (0xC); a non-null handle gets its reference word at
+/// `REF_OFF` (0xA) incremented (wrapping). Returns the id 10 answer.
+/// Original is thiscall/2, returns EAX.
+lf_checker_rt::export!(thiscall, rw_00953BC0(this: u32, arg1: u32, arg2: u32) -> u32 {
     const TXD_NAME: u32 = 0x00E8AC38;
     const SLOT_OFF: u32 = 0x18;
     const BLK_OFF: u32 = 0x14;
@@ -50,10 +48,10 @@ lf_checker_rt::export!(thiscall, rw_00953BC0(this: u32, _arg1: u32, _arg2: u32) 
         lf_checker_rt::callee_cdecl!(5, u32,);
         lf_checker_rt::callee_cdecl!(6, u32, slot2);
         let ctx = lf_checker_rt::callee_cdecl!(7, u32, slot2);
-        let h1 = lf_checker_rt::callee_cdecl!(8, u32, 0, 0);
+        let h1 = lf_checker_rt::callee_cdecl!(8, u32, arg1, 0);
         let o1 = lf_checker_rt::callee_thiscall!(9, u32, ctx, h1);
         wr32(this.wrapping_add(H1_OFF), o1);
-        let h2 = lf_checker_rt::callee_cdecl!(8, u32, 0, 0);
+        let h2 = lf_checker_rt::callee_cdecl!(8, u32, arg2, 0);
         let o2 = lf_checker_rt::callee_thiscall!(9, u32, ctx, h2);
         wr32(this.wrapping_add(H2_OFF), o2);
         let c1 = rd32(this.wrapping_add(H1_OFF));
