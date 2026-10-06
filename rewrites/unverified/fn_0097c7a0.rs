@@ -71,12 +71,16 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
             }
         }
         #[inline(always)]
-        fn g32(va: u32) -> u32 {
+        unsafe fn g32(va: u32) -> u32 {
             *global::<u32>(va)
         }
         #[inline(always)]
-        fn gf(va: u32) -> f32 {
+        unsafe fn gf(va: u32) -> f32 {
             *global::<f32>(va)
+        }
+        #[inline(always)]
+        fn rdb(fr: &[u32; 59], o: usize) -> u8 {
+            (fr[o >> 2] >> ((o & 3) * 8)) as u8
         }
         const F_G1: u32 = 0x00E78588;
         const F_G2: u32 = 0x00E7858C;
@@ -123,7 +127,7 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
         callee_thiscall!(2, u32, edi, eax, fp(&mut fr, 0x10));
         // Level smoothing over this+0x144.
         edx = *((edi + 0x120) as *const u32);
-        ecx = *((edx + 0x24) as *const u32).wrapping_shr(0x1b);
+        ecx = (*((edx + 0x24) as *const u32)).wrapping_shr(0x1b);
         let use_data: bool;
         if (ecx as u8) & 1 != 0 {
             use_data = false;
@@ -270,7 +274,7 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                 eax = callee_cdecl!(7, u32, x0.to_bits());
                 x0 = f32::from_bits(eax);
                 x0 = fmul(x0, gf(F_G1));
-                wrb(&mut fr, 0x96, rdb_fr(&fr, 0x96) | 4);
+                fr[0x25] |= 0x0004_0000; // byte F+0x96 |= 4
                 x0 = fmul(x0, gf(F_G2));
                 eax = cvt(x0) as u32;
                 x0 = *((edi + 0xbc) as *const f32);
@@ -380,11 +384,11 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                 fr[0x04] = eax;
                 callee_thiscall!(4, u32, fp(&mut fr, 0x14));
                 fr[0x1c] = *((edi + 8) as *const u32);
-                wrb(&mut fr, 0x96, rdb_fr(&fr, 0x96) | 4);
+                fr[0x25] |= 0x0004_0000; // byte F+0x96 |= 4
                 ecx = *((edi + 0x78) as *const u32);
                 ecx = *((relocated(T_12E8) + ecx.wrapping_mul(4)) as *const u32);
                 fr[0x1b] = ecx;
-                ecx = rdb_fr(&fr, 0x2b) as u32;
+                ecx = rdb(&fr, 0x2b) as u32;
                 x0 = ecx as f32;
                 x0 = fmul(x0, gf(F_870C));
                 eax = callee_cdecl!(11, u32, x0.to_bits());
@@ -462,7 +466,7 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                                 relocated(0x0115DEF0),
                                 0
                             );
-                            x1 = *((eax) as *const f32);
+                            x1 = *(eax as *const f32);
                             x0 = rdf(&fr, 0x10);
                             x2 = *((eax + 4) as *const f32);
                             x3 = *((eax + 8) as *const f32);
@@ -649,7 +653,7 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                 eax = *((edi + 8) as *const u32);
                 x0 = *((edi + 0xbc) as *const f32);
                 x0 = fadd(x0, rdf(&fr, 0x09));
-                wrb(&mut fr, 0x96, rdb_fr(&fr, 0x96) | 4);
+                fr[0x25] |= 0x0004_0000; // byte F+0x96 |= 4
                 fr[0x1c] = eax;
                 eax = *((edi + 0x78) as *const u32);
                 eax = *((relocated(T_12E8) + eax.wrapping_mul(4)) as *const u32);
@@ -671,8 +675,8 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
             }
             // Float-threshold-gated final request.
             if esi == 0 || esi == 1 {
-                callee_thiscall!(23, u32, edi);
-                x0 = f32::from_bits(callee_ret_bits!());
+                eax = callee_thiscall!(23, u32, edi);
+                x0 = f32::from_bits(eax);
                 wrf(&mut fr, 0x04, x0);
                 x0 = rdf(&fr, 0x04);
                 if x0 > gf(F_8670) {
@@ -692,7 +696,7 @@ export!(thiscall, rw_0097c7a0(this: u32, event: u32, flag: u32) -> u32 {
                         eax = fr[0x2f];
                         x0 = rdf(&fr, 0x04);
                         ecx = *((eax + 8) as *const u32);
-                        wrb(&mut fr, 0x96, rdb_fr(&fr, 0x96) | 4);
+                        fr[0x25] |= 0x0004_0000; // byte F+0x96 |= 4
                         fr[0x1c] = ecx;
                         ecx = *((relocated(T_12E8)
                             + esi.wrapping_mul(4))

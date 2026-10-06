@@ -184,12 +184,14 @@ lf_checker_rt::export!(
             *((sbase) as *mut u8) = 0x2f;
             *((sbase.wrapping_add(1)) as *mut u8) = 0x5c;
             let len1 = strlen(sstr, &mut eax);
+            // Note the order: the F+0xf pointer is pushed last, so it is
+            // argument 0 and the F+0xe pointer is argument 1.
             let _i: u32 = lf_checker_rt::callee_thiscall!(
                 9,
                 u32,
                 sstr,
-                sbase,
-                sbase.wrapping_add(1)
+                sbase.wrapping_add(1),
+                sbase
             );
             let _ = len1;
             let j: u32 = lf_checker_rt::callee_thiscall!(10, u32, sstr);
@@ -232,7 +234,9 @@ lf_checker_rt::export!(
             } else {
                 lf_checker_rt::relocated(T_ALT1)
             };
-            let _e9 = fmt(sstr.wrapping_add(4), alt, o_arg);
+            // The format call's buffer is the same scratch string: the 82ec
+            // word is still outstanding, so the lea lands back at its base.
+            let _e9 = fmt(sstr, alt, o_arg);
             let p: u32 = lf_checker_rt::callee_thiscall!(16, u32, edi, sstr);
             if (p as u8) == 0 {
                 return p & 0xffffff00;

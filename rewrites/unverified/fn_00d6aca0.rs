@@ -25,28 +25,33 @@ lf_checker_rt::export!(thiscall, rw_00d6aca0(this_ptr: u32) -> u32 {
         }
         let mode = (lf_checker_rt::relocated(MODE_GLOBAL) as *const u32)
             .read_unaligned();
-        let (notify, token): (u32, u32);
+        // The notify call (callee 2) runs before the selector step on every
+        // arm, so the arm is selected first and the calls follow in order.
+        let (notify, token, advance): (u32, u32, bool);
         if mode == 11 {
             notify = 16;
             token = 0x00EEAA78;
+            advance = false;
         } else if mode == 16 {
             notify = 17;
             token = 0x00EEAAA0;
+            advance = false;
         } else if mode == 17 {
             return 0;
         } else {
             notify = 11;
             token = 0x00EEAAC0;
-            if mode != 1 {
-                lf_checker_rt::callee_thiscall!(3, u32, this_ptr, 2);
-                let mid =
-                    ((this_ptr + LINK0_OFF) as *const u32).read_unaligned();
-                let slot =
-                    ((mid + LINK1_OFF) as *const u32).read_unaligned();
-                ((slot + FLAG_OFF) as *mut u8).write(0);
-            }
+            advance = mode != 1;
         }
         lf_checker_rt::callee_cdecl!(2, u32, notify);
+        if advance {
+            lf_checker_rt::callee_thiscall!(3, u32, this_ptr, 2);
+            let mid =
+                ((this_ptr + LINK0_OFF) as *const u32).read_unaligned();
+            let slot =
+                ((mid + LINK1_OFF) as *const u32).read_unaligned();
+            ((slot + FLAG_OFF) as *mut u8).write(0);
+        }
         lf_checker_rt::callee_thiscall!(4, u32,
             lf_checker_rt::relocated(LOG_OBJ), lf_checker_rt::relocated(token));
         lf_checker_rt::callee_thiscall!(5, u32, this_ptr);
