@@ -44163,6 +44163,15 @@
   "lane": "r-b565"
  },
  {
+  "address": "0x0089BDA0",
+  "name": "audio_dual_slot_max",
+  "kind": "function",
+  "file": "functions/fn_0089bda0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s490"
+ },
+ {
   "address": "0x0089BE50",
   "name": "aud_blend_compute",
   "kind": "function",
@@ -44422,6 +44431,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-10"
+ },
+ {
+  "address": "0x0089D610",
+  "name": "rage::audOnStopSound::dtor_body",
+  "kind": "function",
+  "file": "functions/fn_0089d610.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s490"
  },
  {
   "address": "0x0089D6A0",
@@ -111114,6 +111132,15 @@
   "lane": "r-s185"
  },
  {
+  "address": "0x00C66130",
+  "name": "CCutsceneObject::is_field_2a0_nonzero",
+  "kind": "function",
+  "file": "functions/fn_00c66130.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
+ },
+ {
   "address": "0x00C66140",
   "name": "cutscene_tag_status_is_6",
   "kind": "function",
@@ -124891,6 +124918,15 @@
   "trials": 1100,
   "checker": "version 4",
   "lane": "r-b188"
+ },
+ {
+  "address": "0x00DDA930",
+  "name": "UIBasicClip::vf130",
+  "kind": "function",
+  "file": "functions/fn_00dda930.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
  },
  {
   "address": "0x00DDADE0",

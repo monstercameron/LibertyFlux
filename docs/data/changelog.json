@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-05",
-    "title": "Lift: six more event handler methods",
+    "title": "Rewrites: 4 more functions pass the checker (15949 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "4 rewrites added under rewrites/verified: 0 script native handlers and 4 other functions.",
+      "The tree now holds 15949 rewrites, 15930 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 3 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged."
+    ]
+  },
+  {
+    "date": "2026-10-05",
+    "title": "Lift: six more event handler methods",
+    "commit": "390d47ef2ab72b4d0ac712de5a2b5553c926599f",
     "summary": "Six more verified methods of the pedestrian event handler class are lifted and proven, which brings the class to 21 of its 54 verified methods.",
     "changes": [
       "crates/lf-peds-tasks/src/event_handler gains six methods, with four small traits for what they call and five request variants. The lane's reading of them corrects two assumptions: one method answers the registry's release, reached by a tail call, and not the conversion's result; and two sibling methods differ in whether they evaluate before or after the lookup.",
