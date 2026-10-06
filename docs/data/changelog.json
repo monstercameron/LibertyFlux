@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Rewrites: the skipped-pointer question settled by a run, two more withdrawn and four back",
+    "title": "Rewrites: 3 more functions pass the checker (16663 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "3 rewrites added under rewrites/verified: 0 script native handlers and 3 other functions.",
+      "The tree now holds 16663 rewrites, 16644 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 711 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "24 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Rewrites: the skipped-pointer question settled by a run, two more withdrawn and four back",
+    "commit": "634fdb9d75ff2ccbe46a5d3e60b56609715e7771",
     "summary": "A repair lane ran every one of the 15 rewrites judged wrong for what they hand a callee behind a skipped pointer. Nine were wrong, six were not. Two more are withdrawn here; six are repaired and re-proved, four of them among the five withdrawn two hours ago.",
     "changes": [
       "Each function was settled by a measurement, not by reading: the rewrite was rebuilt to fill the buffer as the original does, the stored words were added to the comparison, and the old behaviour was run as the wrong version. Where the old behaviour fails and the callee reads the words, the rewrite was wrong.",

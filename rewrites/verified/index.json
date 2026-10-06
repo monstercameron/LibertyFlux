@@ -35802,6 +35802,24 @@
   "lane": "r-s186"
  },
  {
+  "address": "0x00628900",
+  "name": "lazy_init_tls_object_a",
+  "kind": "function",
+  "file": "functions/fn_00628900.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b632"
+ },
+ {
+  "address": "0x00628A60",
+  "name": "lazy_init_tls_object_b",
+  "kind": "function",
+  "file": "functions/fn_00628a60.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b632"
+ },
+ {
   "address": "0x006298D0",
   "name": "streaming_set_uniform_6arg",
   "kind": "function",
@@ -116458,6 +116476,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "a-S07"
+ },
+ {
+  "address": "0x00C68990",
+  "name": "sample_tick_and_decay_counters",
+  "kind": "function",
+  "file": "functions/fn_00c68990.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b629"
  },
  {
   "address": "0x00C68C50",
