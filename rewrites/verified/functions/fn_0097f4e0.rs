@@ -169,9 +169,11 @@ lf_checker_rt::export!(
             );
             // Second float (also on an argument slot in the original).
             let slot_y = f3.to_bits();
-            if !(f3 > thresh()) {
-                return 0;
-            }
+            // a-S06: no early return here. The original's below-or-equal path falls into the
+            // scaled check below (both paths join); returning here skipped the second block.
+            let mut buf = [0u32; 16];
+            let buf_ptr = buf.as_mut_ptr() as u32;
+            if f3 > thresh() {
             let word = if class != 0xC {
                 rd32(entry.wrapping_add(WORD_OFF))
             } else {
@@ -200,8 +202,6 @@ lf_checker_rt::export!(
                 w
             };
             // First post block.
-            let mut buf = [0u32; 16];
-            let buf_ptr = buf.as_mut_ptr() as u32;
             let _: u32 = lf_checker_rt::callee_thiscall!(9, u32, buf_ptr);
             let f4: f32 = lf_checker_rt::callee_cdecl!(10, f32, slot_y);
             buf[0] = f4.to_bits();
@@ -228,6 +228,7 @@ lf_checker_rt::export!(
                     rd32(this.wrapping_add(OFF_PED)),
                     handle
                 );
+            }
             }
             // Third float reuses the second slot.
             let slot_y2 =

@@ -155,7 +155,7 @@ lf_checker_rt::export!(thiscall, rw_00caa220(this: u32, ev: u32, _a1: u32, _a2: 
         if f == 0.0 {
             let mut factors = [0u32; 3];
             let g: u32 = lf_checker_rt::callee_cdecl!(RNG_ZERO, u32,);
-            factors[2] = if (g as i32) < GATE_LIMIT as i32 { NEG_ONE } else { ONE };
+            factors[2] = if (g as i32) < GATE_LIMIT as i32 { ONE } else { NEG_ONE };  // a-S06: polarity fixed (original keeps +1.0 on less)
             let obj: u32 = lf_checker_rt::callee_thiscall!(ALLOC_ZERO, u32, global);
             if obj == 0 {
                 wr32(this + RESPONSE, 0);
