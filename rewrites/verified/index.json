@@ -53469,6 +53469,15 @@
   "lane": "r-b258"
  },
  {
+  "address": "0x00903D50",
+  "name": "input_ui_cell_build",
+  "kind": "function",
+  "file": "functions/fn_00903d50.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b624"
+ },
+ {
   "address": "0x00904A40",
   "name": "ui_binding_lookup",
   "kind": "function",
@@ -56236,6 +56245,15 @@
   "name": "lookup_key_then_validate",
   "kind": "function",
   "file": "functions/fn_0094cc50.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
+  "address": "0x0094CC70",
+  "name": "gated_slot0_probe",
+  "kind": "function",
+  "file": "functions/fn_0094cc70.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s511"
