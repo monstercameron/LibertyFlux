@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Lift: 18 task parameter initialisers in portable Rust",
+    "commit": null,
+    "summary": "18 verified routines that fill in a pedestrian task's parameter block, one per kind of task, are lifted as methods on one type, with their proof in the pipeline.",
+    "changes": [
+      "crates/lf-peds-tasks gains a task_ctor module with 24 host tests and no unsafe code. The lane's list was 32 functions chosen by name and held five structures; it lifted the largest, the parameter-block initialisers, and listed the other 14 routines in four shapes in the registry.",
+      "A new test crate, lf-taskctordiff, runs each method against its tracked verified rewrite on the 32-bit target: 18 differential tests, 1,728 cases, and 18 deliberately wrong lifts caught. The coordinator ran the host and 32-bit tests before committing; the integration script needed no hand fixes.",
+      "The pipeline's 32-bit job now runs seventeen differential crates. Verified routines with a lifted counterpart proven in the pipeline: 345."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 13 files from lanes (210 unverified rewrites, 432 in review)",
     "commit": "1990e368e67de1079d1bf80c1e289c578eecbc0c",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
