@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Devlog: Naming one hundred fifty NaturalMotion task functions",
+    "title": "Rewrites: 5 more functions pass the checker (16572 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "5 rewrites added under rewrites/verified: 0 script native handlers and 5 other functions.",
+      "1 rewrites were re-run under a later version of the checker and replaced by the version that passed it.",
+      "The tree now holds 16572 rewrites, 16553 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 1 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Devlog: Naming one hundred fifty NaturalMotion task functions",
+    "commit": "0615754266a3a497cad22edf4450f1a9217049df",
     "summary": "Findings from the nm-122 lane.",
     "changes": [
       "New devlog entry: Naming one hundred fifty NaturalMotion task functions.",

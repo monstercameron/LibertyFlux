@@ -37035,6 +37035,15 @@
   "lane": "r-s195"
  },
  {
+  "address": "0x00660C30",
+  "name": "rage::snJoinGamersToRlineTask::vf7",
+  "kind": "function",
+  "file": "functions/fn_00660c30.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b627"
+ },
+ {
   "address": "0x00660DE0",
   "name": "fn_00660de0",
   "kind": "function",
@@ -40264,6 +40273,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s507"
+ },
+ {
+  "address": "0x006A0130",
+  "name": "video_device_enumerator",
+  "kind": "function",
+  "file": "functions/fn_006a0130.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q35"
  },
  {
   "address": "0x006A0440",
@@ -53557,6 +53575,24 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b614"
+ },
+ {
+  "address": "0x00906EF0",
+  "name": "blip_polyline_render",
+  "kind": "function",
+  "file": "functions/fn_00906ef0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b622"
+ },
+ {
+  "address": "0x00907A80",
+  "name": "blip_list_update",
+  "kind": "function",
+  "file": "functions/fn_00907a80.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b622"
  },
  {
   "address": "0x00907DF0",
@@ -124574,8 +124610,8 @@
   "kind": "function",
   "file": "functions/fn_00d3c120.rs",
   "trials": 1200,
-  "checker": "version 5",
-  "lane": "r-b453"
+  "checker": "version 6",
+  "lane": "a-S09"
  },
  {
   "address": "0x00D3C4E0",
@@ -128104,6 +128140,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b264"
+ },
+ {
+  "address": "0x00D94A80",
+  "name": "traverse_cells",
+  "kind": "function",
+  "file": "functions/fn_00d94a80.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "a-S09"
  },
  {
   "address": "0x00D95390",

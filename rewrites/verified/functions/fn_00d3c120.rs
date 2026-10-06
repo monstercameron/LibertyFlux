@@ -1,5 +1,5 @@
 // original: 0x00d3c120 dummytask_helper_a (proposed)
-
+use lf_checker_rt::{callee_cdecl, callee_stdcall, callee_thiscall, callee_fastcall, export, global, relocated};
 /// Wander-task movement update: steers the task at `task` toward its target
 /// using the mover state in `arg_a` and the target descriptor in `arg_b`.
 /// The third stack argument is not read.
@@ -21,6 +21,10 @@
 ///
 /// Float order throughout is the original's; the two float comparisons that
 /// treat unordered as taken/not-taken are written to match exactly.
+///
+/// The report calls take the target's `+0x30` word (`sb`) and the finish
+/// call the same word (`slot2`); the callees read them, so their one words
+/// are snapshotted. `sa` stays a zeroed word (see `narrowed`).
 ///
 /// Original: 0x00d3c120 (thiscall, three stack words).
 lf_checker_rt::export!(thiscall, rw_00d3c120(task: u32, arg_a: u32, arg_b: u32, _arg_c: u32) -> u32 {
@@ -119,6 +123,7 @@ lf_checker_rt::export!(thiscall, rw_00d3c120(task: u32, arg_a: u32, arg_b: u32, 
 
         let obj = rd32(arg_b + B_OBJ);
         let seed = rd32(lf_checker_rt::global::<u32>(G_SEED) as u32);
+        let mut slot2 = rd32(obj + 0x30);
         lf_checker_rt::callee_thiscall!(C_BASE, u32, task);
         let mover = arg_a;
         // Scratch word reused by the final call: the seed, still intact
@@ -175,7 +180,7 @@ lf_checker_rt::export!(thiscall, rw_00d3c120(task: u32, arg_a: u32, arg_b: u32, 
                         fmul(dz, dz),
                     );
                     let v = fadd(len2.sqrt(), rdc(K_ALT));
-                    let (mut sa, mut sb) = (0u32, 0u32);
+                    let (mut sa, mut sb) = (0u32, tx.to_bits());
                     lf_checker_rt::callee_cdecl!(
                         C_REPORT3,
                         u32,
@@ -201,7 +206,7 @@ lf_checker_rt::export!(thiscall, rw_00d3c120(task: u32, arg_a: u32, arg_b: u32, 
                     let _dirx = fmul(dx, s);
                     let _diry = fmul(s, dy);
                     let _dirz = fmul(s, 0.0);
-                    let (mut sa, mut sb) = (0u32, 0u32);
+                    let (mut sa, mut sb) = (0u32, tx.to_bits());
                     lf_checker_rt::callee_cdecl!(
                         C_REPORT2,
                         u32,
@@ -228,7 +233,6 @@ lf_checker_rt::export!(thiscall, rw_00d3c120(task: u32, arg_a: u32, arg_b: u32, 
             wr32(mover + A_STATE, 0);
             wr32(mover + A_WORD, rd32(lf_checker_rt::global::<u32>(G_WORD) as u32));
         }
-        let mut slot2 = 0u32;
         lf_checker_rt::callee_thiscall!(
             C_FINISH,
             u32,
