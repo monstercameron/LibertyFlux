@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Lift: the user-interface font string class, 18 methods in portable Rust with their proof in the pipeline",
+    "commit": null,
+    "summary": "Every verified method of the class that measures and draws a line of text in a font is lifted: one owning type and a trait for what it calls, no unsafe code, no operating-system calls.",
+    "changes": [
+      "crates/lf-input-frontend gains a font_string module with 18 methods: accessors, a snapshot, setters, reset, refresh, emitting the text and measuring it. 21 host tests run on every platform.",
+      "A new test crate, lf-fontstr-diff, runs each lifted method against its tracked verified rewrite on the 32-bit target: 13 differential cases, about 1,900 comparisons, and 18 deliberately wrong lifts caught. The coordinator ran the host tests and the 32-bit tests before committing and checked that the test crate builds on a 64-bit host.",
+      "Not lifted: two seven-byte methods that are not verified yet, and the deleting destructor, which is Drop in Rust.",
+      "This lift was brought into the workspace by a script (the manifest, the include paths, the workspace member, the pipeline line and the test runs), after six done by hand in one night with the same steps and the same slips each time.",
+      "The pipeline's 32-bit job now runs eleven differential crates. Verified routines with a lifted counterpart proven in the pipeline: 226."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 53 files from lanes (240 unverified rewrites, 190 in review)",
     "commit": "f50e365d65f08ace09c15e2f86396d6bc1203788",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

@@ -14,5 +14,6 @@
 //!   `lf-platform`; `cfg(target_os)` appears nowhere here.
 //! - Never original game code here: structures, symbols and new Rust only.
 
+pub mod font_string;
 pub mod layout;
 pub mod ui_clip;
