@@ -9,6 +9,29 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Naming the combat tasks: slot map, two new virtuals, and an RTTI trick</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-124"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-124</id>
+    <published>2026-10-04T00:00:00Z</published>
+    <updated>2026-10-04T00:00:00Z</updated>
+    <summary>A batch of 150 consecutive combat-task functions yielded 138 names, and the fastest evidence was not reading code at all: crossing the class-lane vtable tables against descriptive names earlier lanes had already given resolves most virtual slots by majority vote.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of 150 consecutive combat-task functions yielded 138 names, and the fastest evidence was not reading code at all: crossing the class-lane vtable tables against descriptive names earlier lanes had already given resolves most virtual slots by majority vote.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Propose descriptive names for 150 consecutive unnamed game functions, mostly virtual methods of the combat AI task classes plus free helpers, with a confidence per name.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Crossing per-class vtable slot tables against the merged lane names gives a slot-meaning map for complex tasks: slot 1 is clone, slot 3 returns the task type id, slot 5 is make-abortable, slot 6 is a float urgency, slots 15 to 17 find or set subtasks, and slots 18, 19 and 20 create the next subtask, create the first subtask, and control the subtask each tick, with dozens to hundreds of agreeing precedents each.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Slots above 20 are family-specific, not global: slot 23 means one thing in the vehicle-driving task family and another in the combat-subtask family, so a slot name must never be copied across families unchecked.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Two combat-subtask virtuals had no prior names. Slot 25 is a subtask factory dispatching on the task id argument: one override maps the exact id another class reports for itself to that class's constructor. Slot 23 queries the global combat decision maker for a response id, with one class overriding it by a constant.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The combat task's slot 7 allocates an object whose runtime type record names it a flee dummy task, confirming the newest lane's create-dummy-task wording; its slot 6 returns the same urgency constant as an already-named urgency method on another class.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; The free helpers around the methods form small clusters with readable roles: movement and weapon subtask factories, decision-maker range and factor queries, cover-slot search with a physics probe, group member selection, and one order-issuing routine built around a cover-me speech line.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Named 138 of 150 functions and left 12 empty rather than guess: pure-math helpers with no calls, sweeps over unknown callee helpers, and bit-test predicates whose flag meanings are unknown. The next naming lane should identify the two unknown slot-array helpers and the class behind one heavily wrapped virtual call first, since several unnamed functions depend on them.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Build a script that loads the batch list, disassembles each function once from the mapped executable image, and records direct calls with their already-known names, string references, and cross-references from a single sweep of the code section. Resolve the virtual slots by joining the class-lane vtable data against the merged name lists before reading any single function. For factory-style methods, read the runtime type record behind any vtable the constructed object stamps: it names the created class directly.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;Three different wordings existed for the task-id getter across lane generations, and the oldest wording had the most votes; the newest lane's wording was followed instead, since naming conventions drift and recency wins ties. Several borrowed names for callees turned out to be placeholders or guesses from other lanes, so every reused name was treated as a hint until the code itself confirmed it.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>A constructor that returns to address zero, and a NaN trap in float compares</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-s518"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-s518</id>
@@ -1135,26 +1158,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Each verified function ships its contract and verdict files; rerunning the checker driver on any contract reproduces the thousand-trial proof and the wrong-version failure.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;A single stack-arithmetic slip placed a block of zero stores eighteen hex digits from its true location, which simultaneously misidentified the scan contents, the tail index, and the fill model. The probe failures contradicted the model on all three points at once, and re-deriving the frame map from the instruction order fixed all three together.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming batch 110: replay cameras, planes, coronas, nav and portals</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-110"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-110</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>Verified A batch of 150 consecutive functions split cleanly into eight groups in address order: replay-camera helpers, a shared-memory media channel, particle sample baking, planes and ambient planes, corona light sprites, the nav and path system, camera interpolation, and portal instances. 137 were named, 60 with high confidence.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A batch of 150 consecutive functions split cleanly into eight groups in address order: replay-camera helpers, a shared-memory media channel, particle sample baking, planes and ambient planes, corona light sprites, the nav and path system, camera interpolation, and portal instances. 137 were named, 60 with high confidence.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of 150 unnamed game functions, with a confidence grade and one sentence of evidence each, working group-first rather than instruction by instruction.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch held complete small subsystems: a plane class with constructor, destructor and damage, control and flight updaters; an ambient-plane manager that streams models and spawns and removes planes; a corona system from texture request through a 768-entry table to render; a nav system with config parsing, cell lookup, work queues and teardown; and portal constructors, destructors and bounds getters.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Four inventory size fields were wrong: two functions listed as hundreds of bytes are tiny jump stubs, one overruns into its neighbour, and one range loop runs past its listed end. Sizes here cannot be trusted past the next function address.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Several existing symbol names are wrong and were not reused: a supposed script-array function is a plain memory copy by call shape, audio-system names in the nav region sit on code referencing nav data, and a pool constructor carries an animation name while building the portal pool.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Names follow the families other lanes already established for camera interpolation, particles and replay code. The next naming lane should diff twin functions against each other instead of reading both, and should treat any callee below the encryption boundary as unverified: several turn out to be allocator and lock stubs identifiable only by call pattern.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Build one evidence table for the whole batch first (calls resolved against merged symbols, imports, string references, mnemonic profiles), then disassemble every short function fully and brief the large ones with entry plus call context. Confirm group membership by disassembling known callers rather than trusting callee names.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The encrypted first megabyte makes every low-address callee name suspect, which was only obvious after decoding several and getting garbage. A probe script failed three times on data-section reads that return no bytes; string and constant reads from read-only data worked. Thirteen functions were left unnamed: tiny setters, jump stubs, mode wrappers with unknown modes, and single-field getters whose meaning nothing revealed.&lt;/p&gt;</content>
   </entry>
 </feed>
