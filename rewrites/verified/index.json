@@ -39645,6 +39645,15 @@
   "lane": "r-b128"
  },
  {
+  "address": "0x006A0440",
+  "name": "joystick_classifier",
+  "kind": "function",
+  "file": "functions/fn_006a0440.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q20"
+ },
+ {
   "address": "0x006A7490",
   "name": "input_event_parse_a",
   "kind": "function",
@@ -74403,6 +74412,15 @@
   "lane": "r-s123"
  },
  {
+  "address": "0x00A979E0",
+  "name": "filemem_touch_entry",
+  "kind": "function",
+  "file": "functions/fn_00a979e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
+ },
+ {
   "address": "0x00A97A30",
   "name": "cook_indexed_mesh",
   "kind": "function",
@@ -74479,6 +74497,15 @@
   "name": "filemem_blend_rgba",
   "kind": "function",
   "file": "functions/fn_00a99550.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s502"
+ },
+ {
+  "address": "0x00A99630",
+  "name": "filemem_entry_is_special",
+  "kind": "function",
+  "file": "functions/fn_00a99630.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s502"
@@ -76786,6 +76813,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b168"
+ },
+ {
+  "address": "0x00AD9130",
+  "name": "input_ui_build_tables",
+  "kind": "function",
+  "file": "functions/fn_00ad9130.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b598"
  },
  {
   "address": "0x00AD9E20",

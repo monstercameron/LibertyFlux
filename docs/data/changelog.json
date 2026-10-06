@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Devlog: Retry lesson: re-derive every offset from the addressed bytes, even from a trusted kit",
+    "title": "Rewrites: 4 more functions pass the checker (16240 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "4 rewrites added under rewrites/verified: 0 script native handlers and 4 other functions.",
+      "The tree now holds 16240 rewrites, 16221 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Devlog: Retry lesson: re-derive every offset from the addressed bytes, even from a trusted kit",
+    "commit": "eda2de75cdd049c21c1a6adc3c202e86df59ae3f",
     "summary": "Findings from the a-Q20 lane.",
     "changes": [
       "New devlog entry: Retry lesson: re-derive every offset from the addressed bytes, even from a trusted kit.",
