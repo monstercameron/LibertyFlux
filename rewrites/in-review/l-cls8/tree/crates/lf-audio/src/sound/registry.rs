@@ -1,6 +1,6 @@
 //! What is lifted, what is proven, and what each proof leaves out.
 //!
-//! One row per verified 32-bit method of the two lifted effect classes.
+//! One row per verified 32-bit method of the three lifted effect classes.
 //! `Proven` means the method is restated on its effect type and the
 //! differential test crate ran it against its verified rewrite on the
 //! same generated inputs, comparing results, every effect, and every
@@ -109,6 +109,41 @@ pub const ROWS: &[Row] = &[
     },
     Row {
         channel: "Compressor",
+        method: "vf2",
+        state: State::Proven,
+        narrows: &["the row address narrows to a word offset"],
+    },
+    // Reverb effect: four lifted, one missing.
+    Row {
+        channel: "Reverb",
+        method: "vf0",
+        state: State::Missing,
+        narrows: &["allocator plumbing: Drop covers it"],
+    },
+    Row {
+        channel: "Reverb",
+        method: "vf5",
+        state: State::Proven,
+        narrows: &[
+            "the step must select a row, else panic; the preset words and the floor arrive decoded",
+        ],
+    },
+    Row {
+        channel: "Reverb",
+        method: "vf4",
+        state: State::Proven,
+        narrows: &[
+            "the row address narrows to a reference; the step must select a row, else panic",
+        ],
+    },
+    Row {
+        channel: "Reverb",
+        method: "vf1",
+        state: State::Proven,
+        narrows: &["the preset words arrive decoded"],
+    },
+    Row {
+        channel: "Reverb",
         method: "vf2",
         state: State::Proven,
         narrows: &["the row address narrows to a word offset"],

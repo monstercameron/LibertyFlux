@@ -111,21 +111,22 @@ lf_checker_rt::export!(cdecl, rw_0094E400() -> u32 {
             }
             let zero = 0u32;
             let minus_one = 0xFFFF_FFFFu32;
-            lf_checker_rt::callee_cdecl!(ID_SINK_FRAME4, u32, &zero as *const u32 as u32, 4u32);
+            // DEBUG ONLY: per-site ids to isolate a snapshot mismatch.
+            lf_checker_rt::callee_cdecl!(10, u32, &zero as *const u32 as u32, 4u32);
             lf_checker_rt::callee_cdecl!(
-                ID_SINK_FRAME4,
+                11,
                 u32,
                 &minus_one as *const u32 as u32,
                 4u32
             );
             lf_checker_rt::callee_cdecl!(
-                ID_SINK_FRAME4,
+                12,
                 u32,
                 &leftover24 as *const u32 as u32,
                 4u32
             );
             lf_checker_rt::callee_cdecl!(
-                ID_SINK_FRAME4,
+                13,
                 u32,
                 &leftover28 as *const u32 as u32,
                 4u32
@@ -143,9 +144,10 @@ lf_checker_rt::export!(cdecl, rw_0094E400() -> u32 {
             let zero = 0u32;
             // -1 here is the leftover of guard table 2's last row.
             let minus_one = 0xFFFF_FFFFu32;
-            lf_checker_rt::callee_cdecl!(ID_SINK_FRAME4, u32, &zero as *const u32 as u32, 4u32);
+            // DEBUG ONLY: per-site ids to isolate a snapshot mismatch.
+            lf_checker_rt::callee_cdecl!(14, u32, &zero as *const u32 as u32, 4u32);
             lf_checker_rt::callee_cdecl!(
-                ID_SINK_FRAME4,
+                15,
                 u32,
                 &minus_one as *const u32 as u32,
                 4u32

@@ -23,7 +23,7 @@ mod x86 {
     mod support;
     use support::{
         D_DONE_BYTE, D_FLAGGED_BYTE, D_LEVEL, D_MARKS, D_START, D_SPAN, D_TAG_BYTE, D_VTABLE, Rng,
-        U32_EDGE, addr, blob_byte, duck_blob, fake_table, ped_blob, set_blob_byte,
+        addr, blob_byte, duck_blob, fake_table, ped_blob, set_blob_byte,
     };
 
     // Announce stub (slot 1) and its recording.
@@ -267,7 +267,7 @@ mod x86 {
         set_callee(1, announce_addr());
         set_callee(2, sustain_addr());
         set_callee(3, elapsed_addr());
-        let mut rng = Rng(0xD0CU);
+        let mut rng = Rng(0xD0C4);
         let mut caught = 0;
         let mut cases = 0;
         // Timeouts: zero, small, large and wrapping spans and starts.
@@ -319,5 +319,196 @@ mod x86 {
         for _ in 0..400 {
             picked.push(inputs[(rng.next() % inputs.len() as u64) as usize]);
         }
-        for (
-...[truncated 9059 chars]
+        for (span, start, tick, level, mark, done, flagged) in picked {
+            let sample_bits = floats[(rng.next() % floats.len() as u64) as usize];
+            let limit_bits = floats[(rng.next() % floats.len() as u64) as usize];
+            let sub_choices = [0u32, 1, span, span.wrapping_add(1), u32::MAX, rng.u32()];
+            let sub = sub_choices[(rng.next() % sub_choices.len() as u64) as usize];
+            let finish_choices = [0u32, 1, 0x100, 0x1FF, u32::MAX, rng.u32()];
+            let finish_ans =
+                finish_choices[(rng.next() % finish_choices.len() as u64) as usize];
+
+            let sample_table = fake_table(0x100 / 4, SAMPLE_SLOT, sample_addr());
+            let finish_table = fake_table(0x20 / 4, FINISH_SLOT, finish_addr());
+            let mut ped = ped_blob();
+            for w in ped.iter_mut() {
+                *w = rng.u32();
+            }
+            ped[0] = addr(&sample_table[0]);
+            let ped_before = *ped;
+            let ped_addr = addr(&ped[0]);
+            let mut blob = *duck_blob();
+            for w in blob.iter_mut() {
+                *w = rng.u32();
+            }
+            blob[D_VTABLE] = addr(&finish_table[0]);
+            blob[D_MARKS] = mark;
+            blob[D_START] = start;
+            blob[D_SPAN] = span;
+            blob[D_LEVEL] = (blob[D_LEVEL] & 0xFFFF_0000) | u32::from(level as u16);
+            set_blob_byte(&mut blob, D_DONE_BYTE, done);
+            set_blob_byte(&mut blob, D_FLAGGED_BYTE, flagged);
+            set_blob_byte(&mut blob, D_TAG_BYTE, rng.u32() as u8);
+            let tag_byte = blob_byte(&blob, D_TAG_BYTE);
+            let boxed = Box::new(blob);
+            let before = *boxed;
+            set_tick(tick);
+            set_one(limit_bits);
+            ELAPSED_ANS.store(sub, Ordering::SeqCst);
+            FINISH_ANS.store(finish_ans, Ordering::SeqCst);
+            SAMPLE_ANS.store(sample_bits, Ordering::SeqCst);
+            ANN_COUNT.store(0, Ordering::SeqCst);
+            SUS_COUNT.store(0, Ordering::SeqCst);
+            ELAPSED_COUNT.store(0, Ordering::SeqCst);
+            SAMPLE_COUNT.store(0, Ordering::SeqCst);
+            FINISH_COUNT.store(0, Ordering::SeqCst);
+            let got = unsafe { fn_00D4E1C0::rw_00d4e1c0(addr(&boxed[0]), ped_addr) };
+
+            // Expectations derived from the case inputs alone.
+            let sample = f32::from_bits(sample_bits);
+            let limit = f32::from_bits(limit_bits);
+            let timeout = span != 0 && tick.wrapping_sub(start) >= span;
+            let done_after = done != 0 || timeout;
+            let sustain_path = !done_after && !(limit > sample);
+            let tag = || {
+                // Short label for assertion messages.
+                (span, start, tick, level, mark, done, flagged, sample_bits, limit_bits)
+            };
+            assert_eq!(
+                SAMPLE_COUNT.load(Ordering::SeqCst),
+                u32::from(!done_after),
+                "sample count {:?}", tag()
+            );
+            if !done_after {
+                assert_eq!(SAMPLE_PED.load(Ordering::SeqCst), ped_addr);
+            }
+            assert_eq!(ANN_COUNT.load(Ordering::SeqCst), 1, "announce count {:?}", tag());
+            assert_eq!(ANN_PED.load(Ordering::SeqCst), ped_addr);
+            assert_eq!(
+                ANN_FLAG.load(Ordering::SeqCst),
+                u32::from(sustain_path),
+                "announce flag {:?}", tag()
+            );
+            assert_eq!(ANN_MASK.load(Ordering::SeqCst), 0xFFFF_FFFF);
+            let want_sustain = sustain_path
+                && flagged == 0
+                && span != 0
+                && tick > start.wrapping_add(span);
+            assert_eq!(
+                SUS_COUNT.load(Ordering::SeqCst),
+                u32::from(want_sustain),
+                "sustain count {:?}", tag()
+            );
+            if want_sustain {
+                assert_eq!(SUS_TASK.load(Ordering::SeqCst), addr(&boxed[0]));
+                assert_eq!(SUS_PED.load(Ordering::SeqCst), ped_addr);
+                assert_eq!(SUS_Z0.load(Ordering::SeqCst), 0);
+                assert_eq!(SUS_Z1.load(Ordering::SeqCst), 0);
+            }
+            let want_elapsed = sustain_path && flagged == 0 && level > 0;
+            assert_eq!(
+                ELAPSED_COUNT.load(Ordering::SeqCst),
+                u32::from(want_elapsed),
+                "elapsed count {:?}", tag()
+            );
+            let want_finish = !sustain_path && flagged == 0 && mark & 1 == 0;
+            assert_eq!(
+                FINISH_COUNT.load(Ordering::SeqCst),
+                u32::from(want_finish),
+                "finish count {:?}", tag()
+            );
+            if want_finish {
+                assert_eq!(FINISH_TASK.load(Ordering::SeqCst), addr(&boxed[0]));
+                assert_eq!(FINISH_PED.load(Ordering::SeqCst), ped_addr);
+                assert_eq!(FINISH_ONE.load(Ordering::SeqCst), 1);
+                assert_eq!(FINISH_ZERO.load(Ordering::SeqCst), 0);
+            }
+            assert_eq!(got, u32::from(!sustain_path), "return {:?}", tag());
+            // The expected image: done byte, level half and marks word.
+            let mut expect = before;
+            if timeout {
+                set_blob_byte(&mut expect, D_DONE_BYTE, 1);
+            }
+            if want_elapsed {
+                let left = span.wrapping_sub(sub);
+                let clamped = if (left as i32) < 0 { 0 } else { left };
+                expect[D_LEVEL] =
+                    (expect[D_LEVEL] & 0xFFFF_0000) | (clamped & 0xFFFF);
+            }
+            if want_finish && finish_ans & 0xFF != 0 {
+                expect[D_MARKS] = mark | 2;
+            }
+            assert_eq!(*boxed, expect, "blob {:?}", tag());
+            assert_eq!(*ped, ped_before, "ped {:?}", tag());
+
+            // The lift on the same inputs, with the same scripted answers.
+            let ped_handle = Handle32::new(ped_addr).unwrap();
+            let mut lift = DuckTask::new(mark, start, span, level, done != 0, flagged != 0, tag_byte);
+            let mut peds = PedFake {
+                sample_answer: sample,
+                samples: Vec::new(),
+                announces: Vec::new(),
+            };
+            let mut parts = PartsFake {
+                elapsed_answer: sub,
+                finish_answer: finish_ans,
+                sustains: Vec::new(),
+                elapsed_calls: 0,
+                finish_calls: Vec::new(),
+            };
+            let lift_ret = lift.update(ped_handle, tick, limit, &mut peds, &mut parts);
+            assert_eq!(lift_ret, got, "lift return {:?}", tag());
+            assert_eq!(peds.samples.len() as u32, u32::from(!done_after));
+            if !done_after {
+                assert_eq!(peds.samples[0], ped_addr);
+            }
+            assert_eq!(peds.announces, vec![(ped_addr, u32::from(sustain_path))]);
+            assert_eq!(parts.sustains.len() as u32, u32::from(want_sustain));
+            assert_eq!(parts.elapsed_calls, u32::from(want_elapsed));
+            assert_eq!(parts.finish_calls.len() as u32, u32::from(want_finish));
+            assert_eq!(lift.marks(), boxed[D_MARKS], "lift marks {:?}", tag());
+            assert_eq!(
+                lift.done(),
+                blob_byte(&boxed[..], D_DONE_BYTE) != 0,
+                "lift done {:?}", tag()
+            );
+            assert_eq!(
+                lift.flagged(),
+                blob_byte(&boxed[..], D_FLAGGED_BYTE) != 0,
+                "lift flagged {:?}", tag()
+            );
+            assert_eq!(
+                lift.level(),
+                (boxed[D_LEVEL] & 0xFFFF) as u16 as i16,
+                "lift level {:?}", tag()
+            );
+            assert_eq!(lift.span(), span);
+            assert_eq!(lift.start(), start);
+
+            // The inverted sample test must disagree wherever the sample runs.
+            let mut wrong = DuckTask::new(mark, start, span, level, done != 0, flagged != 0, tag_byte);
+            let mut wpeds = PedFake {
+                sample_answer: sample,
+                samples: Vec::new(),
+                announces: Vec::new(),
+            };
+            let mut wparts = PartsFake {
+                elapsed_answer: sub,
+                finish_answer: finish_ans,
+                sustains: Vec::new(),
+                elapsed_calls: 0,
+                finish_calls: Vec::new(),
+            };
+            let w_ret = wrong_update(&mut wrong, ped_handle, tick, limit, &mut wpeds, &mut wparts);
+            let stub_flag = ANN_FLAG.load(Ordering::SeqCst);
+            if w_ret != got
+                || wpeds.announces.len() != 1
+                || wpeds.announces[0].1 != stub_flag
+            {
+                caught += 1;
+            }
+            cases += 1;
+        }
+        assert!(caught > 0, "wrong duck update never caught ({cases} cases)");
+    }
+}

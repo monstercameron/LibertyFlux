@@ -7,7 +7,8 @@
 use lf_audio::sound::compressor::{CompressorEffect, CompressorWorld};
 use lf_audio::sound::effect::{Effect, EffectWorld};
 use lf_audio::sound::registry;
-use lf_audio::sound::{ListenerTag, SubTag, VoiceTag};
+use lf_audio::sound::reverb::{ReverbEffect, ReverbWorld};
+use lf_audio::sound::{ListenerTag, NextTag, ReverbSubTag, SubTag, VoiceTag};
 use lf_core::Handle32;
 
 #[derive(Default)]
@@ -65,6 +66,37 @@ impl CompressorWorld for Fake {
     }
 }
 
+impl ReverbWorld for Fake {
+    fn base_advance(&mut self) {
+        self.log.push("base".to_string());
+    }
+    fn advance_next(&mut self, next: Option<Handle32<NextTag>>) -> u32 {
+        self.log.push(format!("next {next:?}"));
+        self.pop()
+    }
+    fn base_init(&mut self, a: u32, b: u32) -> u32 {
+        self.log.push(format!("init {a:#x} {b:#x}"));
+        self.pop()
+    }
+    fn refresh_hook(&mut self) {
+        self.log.push("hook".to_string());
+    }
+    fn refresh_direct(&mut self) -> u32 {
+        self.log.push("direct".to_string());
+        self.pop()
+    }
+    fn pre_poll(&mut self) {
+        self.log.push("pre".to_string());
+    }
+    fn sub_poll(&mut self, sub: Option<Handle32<ReverbSubTag>>, slot_words: u32) {
+        self.log.push(format!("sub {sub:?} {slot_words:#x}"));
+    }
+    fn post_poll(&mut self) -> u32 {
+        self.log.push("post".to_string());
+        self.pop()
+    }
+}
+
 fn cookie<T>(v: u32) -> Option<Handle32<T>> {
     Handle32::new(v)
 }
@@ -72,8 +104,8 @@ fn cookie<T>(v: u32) -> Option<Handle32<T>> {
 #[test]
 fn registry_counts_are_pinned() {
     let (proven, lifted, missing) = registry::counts();
-    assert_eq!((proven, lifted, missing), (9, 0, 2));
-    assert_eq!(registry::ROWS.len(), 11);
+    assert_eq!((proven, lifted, missing), (13, 0, 3));
+    assert_eq!(registry::ROWS.len(), 16);
 }
 
 #[test]
@@ -325,4 +357,167 @@ fn compressor_poll_orders_calls() {
     assert_eq!(w.log[0], "pre");
     assert_eq!(w.log[1], format!("sub {:?} {:#x}", cookie::<SubTag>(0x7000), 2 * 9 + 30));
     assert_eq!(w.log[2], "post");
+}
+
+fn fresh_reverb() -> ReverbEffect {
+    ReverbEffect {
+        info: cookie(0x1000),
+        next: None,
+        poll_index: 0,
+        step: 0,
+        chans: [[0; 5]; 3],
+        staging: [0; 4],
+        hold: 1,
+        sub: None,
+    }
+}
+
+#[test]
+fn reverb_advance_stores_past_floor() {
+    let mut v = fresh_reverb();
+    // Stored values below the floor refresh; the one above keeps.
+    v.chans[0] = [
+        0.5f32.to_bits(),
+        2.0f32.to_bits(),
+        f32::NEG_INFINITY.to_bits(),
+        0.0f32.to_bits(),
+        0xAAAA,
+    ];
+    let mut w = Fake::default();
+    let preset = [10, 20, 30, 40];
+    let got = v.advance(&mut w, &preset, 1.0);
+    assert_eq!(v.chans[0][0..3], [10, 2.0f32.to_bits(), 30]);
+    assert_eq!(v.chans[0][3], 40);
+    assert_eq!(v.chans[0][4], 0xAAAA);
+    // The shuffle runs before the refresh, so the new row holds the
+    // entry values, not the refreshed ones.
+    assert_eq!(
+        v.chans[1],
+        [
+            0.5f32.to_bits(),
+            2.0f32.to_bits(),
+            f32::NEG_INFINITY.to_bits(),
+            0.0f32.to_bits(),
+            0xAAAA
+        ]
+    );
+    assert_eq!(v.step, 1);
+    assert_eq!(got, 40);
+    assert_eq!(w.log, vec!["base".to_string()]);
+}
+
+#[test]
+fn reverb_advance_tie_does_not_store() {
+    // Strict comparison: equal to the floor is not past it.
+    let mut v = fresh_reverb();
+    v.chans[1] = [1.0f32.to_bits(); 5];
+    v.step = 1;
+    let mut w = Fake::default();
+    let got = v.advance(&mut w, &[9, 9, 9, 9], 1.0);
+    assert_eq!(v.chans[1][0..4], [1.0f32.to_bits(); 4]);
+    // Nothing stored: the answer is the step counter.
+    assert_eq!(got, 1);
+}
+
+#[test]
+fn reverb_advance_hold_clear_forces_store() {
+    let mut v = fresh_reverb();
+    v.chans[2] = [100.0f32.to_bits(); 5];
+    v.step = 2;
+    v.hold = 0;
+    let mut w = Fake::default();
+    let got = v.advance(&mut w, &[1, 2, 3, 4], 0.0);
+    assert_eq!(v.chans[2][0..4], [1, 2, 3, 4]);
+    assert_eq!(got, 4);
+    assert_eq!(v.step, 0);
+}
+
+#[test]
+fn reverb_advance_nan_floor_stores_nothing() {
+    // NaN comparisons are false: with the hold flag set, nothing stores.
+    let mut v = fresh_reverb();
+    v.chans[0] = [0x3F80_0000; 5];
+    let mut w = Fake::default();
+    let got = v.advance(&mut w, &[1, 2, 3, 4], f32::NAN);
+    assert_eq!(v.chans[0][0..4], [0x3F80_0000; 4]);
+    assert_eq!(got, 0);
+}
+
+#[test]
+fn reverb_advance_hands_to_next() {
+    let mut v = fresh_reverb();
+    v.next = cookie(0x8000);
+    let mut w = Fake::default();
+    w.answer(0x77);
+    assert_eq!(v.advance(&mut w, &[0; 4], 0.0), 0x77);
+    assert_eq!(w.log.len(), 2);
+    assert_eq!(w.log[0], "base");
+}
+
+#[test]
+#[should_panic(expected = "index out of bounds")]
+fn reverb_advance_panics_past_last_row() {
+    let mut v = fresh_reverb();
+    v.step = 3;
+    let mut w = Fake::default();
+    let _ = v.advance(&mut w, &[0; 4], 0.0);
+}
+
+#[test]
+fn reverb_channel_selects_row() {
+    let mut v = fresh_reverb();
+    v.chans = [[1; 5], [2; 5], [3; 5]];
+    v.step = 2;
+    assert_eq!(v.channel(), &[3; 5]);
+}
+
+#[test]
+fn reverb_init_gate_and_fanout() {
+    // Zero low byte: the answer returns unchanged, nothing else happens.
+    let mut v = fresh_reverb();
+    let mut w = Fake::default();
+    w.answer(0x1234_5600);
+    assert_eq!(v.init(&mut w, &[1, 2, 3, 4], 5, 6), 0x1234_5600);
+    assert_eq!(v.hold, 1);
+    assert_eq!(w.log.len(), 1);
+    // Nonzero low byte: fan-out, hooks, forced low byte.
+    let mut w = Fake::default();
+    w.answer(0xFF);
+    w.answer(0x1111);
+    w.answer(0x2222);
+    w.answer(0xABCD_00EF);
+    v.chans = [[0xEE; 5]; 3];
+    assert_eq!(v.init(&mut w, &[1, 2, 3, 4], 5, 6), 0xABCD_0001);
+    assert_eq!(v.hold, 0);
+    for r in 0..3 {
+        assert_eq!(v.chans[r][0..4], [1, 2, 3, 4]);
+        assert_eq!(v.chans[r][4], 0xEE);
+    }
+    assert_eq!(v.staging, [1, 2, 3, 4]);
+    assert_eq!(
+        w.log,
+        vec![
+            "init 0x5 0x6".to_string(),
+            "hook".to_string(),
+            "direct".to_string(),
+            "hook".to_string(),
+            "direct".to_string(),
+            "hook".to_string(),
+            "direct".to_string(),
+        ]
+    );
+}
+
+#[test]
+fn reverb_poll_orders_calls() {
+    let mut v = fresh_reverb();
+    v.poll_index = 1;
+    v.sub = cookie(0x9000);
+    let mut w = Fake::default();
+    w.answer(0x51);
+    assert_eq!(v.poll(&mut w), 0x51);
+    assert_eq!(
+        w.log[1],
+        format!("sub {:?} {:#x}", cookie::<ReverbSubTag>(0x9000), 1 * 5 + 29)
+    );
 }

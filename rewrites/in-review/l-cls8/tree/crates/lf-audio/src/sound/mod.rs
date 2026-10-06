@@ -10,13 +10,15 @@
 //!   three rows of five, a row-rotation step, attach and poll entries.
 //! - [`CompressorEffect`](compressor::CompressorEffect): three
 //!   nine-word parameter rows, rotated past a listener.
+//! - [`ReverbEffect`](reverb::ReverbEffect): three five-word channel
+//!   rows, refreshed from a preset wherever past a floor.
 //!
 //! Each type owns its words as ordinary Rust data (no addresses, no
 //! virtual tables, no allocator calls) and each verified 32-bit method
 //! with behaviour in it is restated as a method. Collaborator objects
 //! (info blocks, voices, listeners, sub-objects) are carried as opaque
 //! [`Handle32`] cookies and reached through one trait per class
-//! (`EffectWorld`, `CompressorWorld`): every callee slot and every
+//! (`EffectWorld`, `CompressorWorld`, `ReverbWorld`): every callee slot and every
 //! virtual call of the verified rewrites is one trait method, so
 //! dispatch is static and tests script answers through a fake.
 //!
@@ -47,9 +49,11 @@
 pub mod compressor;
 pub mod effect;
 pub mod registry;
+pub mod reverb;
 
 pub use compressor::{CompressorEffect, CompressorWorld};
 pub use effect::{Effect, EffectWorld};
+pub use reverb::{ReverbEffect, ReverbWorld};
 
 /// Tag for the opaque cookie of an effect info or preset block.
 pub struct InfoTag;
@@ -59,3 +63,7 @@ pub struct VoiceTag;
 pub struct ListenerTag;
 /// Tag for the opaque cookie of a compressor sub-object.
 pub struct SubTag;
+/// Tag for the opaque cookie of a reverb next-stage object.
+pub struct NextTag;
+/// Tag for the opaque cookie of a reverb sub-object.
+pub struct ReverbSubTag;

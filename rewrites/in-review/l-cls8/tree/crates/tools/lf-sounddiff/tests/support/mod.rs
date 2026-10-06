@@ -6,7 +6,10 @@
 // Each target uses a different subset of the helpers.
 #![allow(dead_code)]
 
-use lf_audio::sound::{CompressorWorld, EffectWorld, ListenerTag, SubTag, VoiceTag};
+use lf_audio::sound::{
+    CompressorWorld, EffectWorld, ListenerTag, NextTag, ReverbSubTag, ReverbWorld, SubTag,
+    VoiceTag,
+};
 use lf_core::Handle32;
 use lf_sounddiff::rt;
 use std::collections::{HashMap, VecDeque};
@@ -145,6 +148,16 @@ extern "thiscall" fn notify_stub(obj: u32) -> u32 {
     rt::virtual_answer("notify")
 }
 
+extern "thiscall" fn hook_stub(obj: u32) -> u32 {
+    rt::record_virtual("hook", vec![obj]);
+    rt::virtual_answer("hook")
+}
+
+extern "thiscall" fn next_stub(obj: u32) -> u32 {
+    rt::record_virtual("next", vec![obj]);
+    rt::virtual_answer("next")
+}
+
 /// Addresses of the virtual-slot stubs.
 pub struct Stubs {
     /// The voice release slot (+0x00 on the voice table).
@@ -153,6 +166,10 @@ pub struct Stubs {
     pub voice_poll: u32,
     /// The listener notify slot (+0x14 on the listener table).
     pub notify: u32,
+    /// The reverb refresh-hook slot (+0x14 on the effect table).
+    pub hook: u32,
+    /// The next-stage advance slot (+0x14 on the next table).
+    pub next: u32,
 }
 
 impl Stubs {
@@ -162,6 +179,8 @@ impl Stubs {
             release: release_stub as *const () as usize as u32,
             voice_poll: voice_poll_stub as *const () as usize as u32,
             notify: notify_stub as *const () as usize as u32,
+            hook: hook_stub as *const () as usize as u32,
+            next: next_stub as *const () as usize as u32,
         }
     }
 }
@@ -229,6 +248,33 @@ impl EffectWorld for Fake {
     }
     fn poll_voice(&mut self, voice: Option<Handle32<VoiceTag>>) {
         self.call_unit("fx.poll", vec![words(voice)]);
+    }
+}
+
+impl ReverbWorld for Fake {
+    fn base_advance(&mut self) {
+        self.call_unit("rv.base", vec![]);
+    }
+    fn advance_next(&mut self, next: Option<Handle32<NextTag>>) -> u32 {
+        self.call("rv.next", vec![words(next)])
+    }
+    fn base_init(&mut self, a: u32, b: u32) -> u32 {
+        self.call("rv.init", vec![a, b])
+    }
+    fn refresh_hook(&mut self) {
+        self.call_unit("rv.hook", vec![]);
+    }
+    fn refresh_direct(&mut self) -> u32 {
+        self.call("rv.direct", vec![])
+    }
+    fn pre_poll(&mut self) {
+        self.call_unit("rv.pre", vec![]);
+    }
+    fn sub_poll(&mut self, sub: Option<Handle32<ReverbSubTag>>, slot_words: u32) {
+        self.call_unit("rv.sub", vec![words(sub), slot_words]);
+    }
+    fn post_poll(&mut self) -> u32 {
+        self.call("rv.post", vec![])
     }
 }
 

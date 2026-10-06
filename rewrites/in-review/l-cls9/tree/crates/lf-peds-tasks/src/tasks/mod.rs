@@ -18,6 +18,8 @@
 
 mod duck;
 mod fist;
+mod flee;
+mod goto;
 mod hit;
 
 pub mod registry;
@@ -27,7 +29,11 @@ pub use duck::{
     DuckTaskSide, FINISH_FLAG, QUERY_CODE, QUERY_STATE, SUSTAIN_FLAG,
 };
 pub use fist::{DAMP_RATE_BITS, FistHeld, FistLink, FistPool, FistTarget, ShakeFist};
+pub use flee::{FleeEntity, FleePed, FleePoll, FleeSpawn, FleeTask};
+pub use goto::{GotoEntity, GotoPool, GotoTask};
 pub use hit::{HitBase, HitHandler, HitPool, HitResponse, HitStart};
+
+use lf_core::Handle32;
 
 /// The shared task-pool manager word the clone slots read (opaque identity).
 ///
@@ -42,3 +48,44 @@ pub struct TaskMgr;
 /// builds it into a task. Opaque for the same reason as [`TaskMgr`].
 #[derive(Debug)]
 pub struct UninitTask;
+
+/// A subtask owned or built by a complex task (opaque identity).
+///
+/// The flee and goto tasks poll the subtask in their subtask slot and
+/// build fresh ones from their spawners; the lifted tasks compare and
+/// carry these, never interpret them. It becomes a real handle when the
+/// subtask classes lift.
+#[derive(Debug)]
+pub struct SubTask;
+
+/// The shocking-event family's liveness gate.
+///
+/// A set flag with a set mode fires at once, mixed flag/mode never
+/// fires, and a clear flag with a clear mode fires only when the squared
+/// length of the position exceeds the threshold. The float order is the
+/// original's, pinned against reordering so results match bit for bit.
+pub(crate) fn live_gate<T: ?Sized>(
+    flag: bool,
+    mode: Option<Handle32<T>>,
+    pos: &[f32; 3],
+    threshold: f32,
+) -> bool {
+    if flag {
+        mode.is_some()
+    } else if mode.is_some() {
+        false
+    } else {
+        let sq = add(add(mul(pos[0], pos[0]), mul(pos[1], pos[1])), mul(pos[2], pos[2]));
+        sq > threshold
+    }
+}
+
+/// Pinned-order float multiply for the liveness gate.
+fn mul(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) * core::hint::black_box(b)
+}
+
+/// Pinned-order float add for the liveness gate.
+fn add(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) + core::hint::black_box(b)
+}

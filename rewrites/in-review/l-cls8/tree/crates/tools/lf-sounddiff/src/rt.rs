@@ -185,6 +185,10 @@ pub static mut VTABLE_CELL: u32 = 0;
 /// running case under the script lock.
 pub static mut MANAGER_CELL: u32 = 0;
 
+/// The refresh-floor cell the reverb tick reads. Written by the running
+/// case under the script lock.
+pub static mut FLOOR_CELL: f32 = 0.0;
+
 /// File VA to relocated address. Only the vtable and manager words the
 /// proof set reads are mapped.
 ///
@@ -200,15 +204,18 @@ pub fn relocated(file_va: u32) -> u32 {
     }
 }
 
-/// Pointer to the shared global at a file VA. The proof set reads no
-/// globals through this entry; it exists so the included files link.
+/// Pointer to the shared global at a file VA. Only the reverb
+/// refresh floor the proof set reads is mapped.
 ///
 /// # Panics
 ///
-/// Always: no proof case should reach it.
+/// For any other VA: a case bug, never a guess.
 #[must_use]
-pub fn global<T>(_file_va: u32) -> *mut T {
-    panic!("unexpected global read: the proof set maps none")
+pub fn global<T>(file_va: u32) -> *mut T {
+    match file_va {
+        0x00FE_8D7C => core::ptr::addr_of_mut!(FLOOR_CELL) as *mut T,
+        _ => panic!("unexpected global VA {file_va:#x}"),
+    }
 }
 
 /// Declare a rewrite export with the original's calling convention.
