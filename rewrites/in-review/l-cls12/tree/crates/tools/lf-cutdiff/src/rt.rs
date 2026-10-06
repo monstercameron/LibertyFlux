@@ -41,6 +41,8 @@ pub enum StubKind {
     Thiscall5,
     /// `extern "cdecl" fn(u32, u32, u32) -> u32`.
     Cdecl3,
+    /// `extern "cdecl" fn(u32) -> u32`.
+    Cdecl1,
     /// The placement-matrix callee: thiscall shape, writes sixteen queued
     /// words through its second argument.
     MatrixWrite,
@@ -59,6 +61,7 @@ struct Script {
     corners: Vec<[u32; 3]>,
     virtual_answers: HashMap<String, VecDeque<u32>>,
     virtual_calls: Vec<VirtualCall>,
+    relocs: HashMap<u32, u32>,
 }
 
 impl Script {
@@ -71,6 +74,7 @@ impl Script {
             corners: Vec::new(),
             virtual_answers: HashMap::new(),
             virtual_calls: Vec::new(),
+            relocs: HashMap::new(),
         }
     }
 }
@@ -135,6 +139,12 @@ pub fn take_virtual() -> Vec<VirtualCall> {
     std::mem::take(&mut script().virtual_calls)
 }
 
+/// Installs the relocated-address map: file VA to test address. Only
+/// mapped VAs answer; anything else panics.
+pub fn set_relocated(pairs: &[(u32, u32)]) {
+    script().relocs = pairs.iter().copied().collect();
+}
+
 /// Records a numbered call and pops its answer.
 fn record_numbered(id: u32, args: Vec<u32>) -> u32 {
     let mut s = script();
@@ -186,6 +196,10 @@ extern "thiscall" fn stub_thiscall5(a: u32, b: u32, c: u32, d: u32, e: u32) -> u
 
 extern "cdecl" fn stub_cdecl3(a: u32, b: u32, c: u32) -> u32 {
     record_numbered(CURRENT_ID.with(|c| c.get()), vec![a, b, c])
+}
+
+extern "cdecl" fn stub_cdecl1(a: u32) -> u32 {
+    record_numbered(CURRENT_ID.with(|c| c.get()), vec![a])
 }
 
 extern "thiscall" fn stub_matrix(obj: u32, buf: u32) -> u32 {
@@ -248,6 +262,7 @@ pub fn callee_addr(id: u32) -> u32 {
         StubKind::Thiscall3 => stub_thiscall3 as *const () as usize as u32,
         StubKind::Thiscall5 => stub_thiscall5 as *const () as usize as u32,
         StubKind::Cdecl3 => stub_cdecl3 as *const () as usize as u32,
+        StubKind::Cdecl1 => stub_cdecl1 as *const () as usize as u32,
         StubKind::MatrixWrite => stub_matrix as *const () as usize as u32,
         StubKind::CornerWrite => stub_corner as *const () as usize as u32,
     }
@@ -281,15 +296,18 @@ pub fn global<T>(file_va: u32) -> *mut T {
     }
 }
 
-/// File VA to relocated address. The proof set reads nothing through
-/// this entry; it exists so the included files link.
+/// File VA to relocated address, by the installed map (see
+/// [`set_relocated`]).
 ///
 /// # Panics
 ///
-/// Always: no proof case should reach it.
+/// For an unmapped VA: a case bug, never a guess.
 #[must_use]
-pub fn relocated(_file_va: u32) -> u32 {
-    panic!("unexpected relocated read: the proof set maps none")
+pub fn relocated(file_va: u32) -> u32 {
+    *script()
+        .relocs
+        .get(&file_va)
+        .unwrap_or_else(|| panic!("unexpected relocated VA {file_va:#x}"))
 }
 
 /// Declare a rewrite export with the original's calling convention.

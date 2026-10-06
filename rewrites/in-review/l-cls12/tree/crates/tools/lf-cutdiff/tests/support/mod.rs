@@ -9,8 +9,8 @@
 use lf_core::Handle32;
 use lf_cutdiff::rt;
 use lf_world::cutscene_object::{
-    BoundsScale, CutsceneObject, CutsceneWorld, DrawTag, HelperTag, Matrix34, MemberTag,
-    PlacementTag, PoseRecord,
+    BlockTag, BoundsScale, CtxTag, CutsceneObject, CutsceneWorld, DrawTag, HelperTag, Matrix34,
+    MemberTag, PlacementTag, PoseRecord,
 };
 use std::collections::{HashMap, VecDeque};
 
@@ -104,6 +104,10 @@ impl Image {
         self.buf[off]
     }
 
+    pub fn r16(&self, off: usize) -> u16 {
+        u16::from_le_bytes(self.buf[off..off + 2].try_into().unwrap())
+    }
+
     pub fn w32(&mut self, off: usize, v: u32) {
         self.buf[off..off + 4].copy_from_slice(&v.to_le_bytes());
     }
@@ -161,6 +165,11 @@ extern "thiscall" fn helper_stub(helper: u32, a: u32, b: u32) -> u32 {
     rt::virtual_answer("helper")
 }
 
+extern "thiscall" fn destroy_stub(member: u32, flag: u32) -> u32 {
+    rt::record_virtual("destroy", vec![member, flag]);
+    rt::virtual_answer("destroy")
+}
+
 /// Addresses of the virtual-slot stubs.
 pub struct Stubs {
     /// The pose-record slot (+0x54 on the object table).
@@ -171,6 +180,8 @@ pub struct Stubs {
     pub successor: u32,
     /// The helper command slot (+0x08 on the helper table).
     pub helper: u32,
+    /// The member deleting entry (+0x00 on the member table).
+    pub destroy: u32,
 }
 
 impl Stubs {
@@ -181,6 +192,7 @@ impl Stubs {
             followup: followup_stub as *const () as usize as u32,
             successor: successor_stub as *const () as usize as u32,
             helper: helper_stub as *const () as usize as u32,
+            destroy: destroy_stub as *const () as usize as u32,
         }
     }
 }
@@ -327,6 +339,46 @@ impl CutsceneWorld for Fake {
 
     fn mark_emitted(&mut self, target: Handle32<DrawTag>) {
         self.call_unit("draw.mark", vec![Handle32::raw_or_zero(Some(target))]);
+    }
+
+    fn destroy_member(&mut self, member: Handle32<MemberTag>) {
+        self.call_unit("destroy", vec![Handle32::raw_or_zero(Some(member))]);
+    }
+
+    fn teardown_block(&mut self, block: Handle32<BlockTag>) {
+        self.call_unit("block.teardown", vec![Handle32::raw_or_zero(Some(block))]);
+    }
+
+    fn free_block(&mut self, block: Handle32<BlockTag>) {
+        self.call_unit("block.free", vec![Handle32::raw_or_zero(Some(block))]);
+    }
+
+    fn ask_registry(&mut self) -> u32 {
+        self.call("reg.ask", vec![])
+    }
+
+    fn registry_word(&mut self, index: i16) -> i32 {
+        self.call("reg.word", vec![index as u32]) as i32
+    }
+
+    fn ask_gate(&mut self, word: u32) -> u32 {
+        self.call("reg.gate", vec![word])
+    }
+
+    fn registry_run(&mut self) {
+        self.call_unit("reg.run", vec![]);
+    }
+
+    fn context_run(&mut self, ctx: Option<Handle32<CtxTag>>, mode: u32) {
+        self.call_unit("reg.ctx", vec![words(ctx), mode]);
+    }
+
+    fn registry_tell(&mut self, word: u32) {
+        self.call_unit("reg.tell", vec![word]);
+    }
+
+    fn base_destroy(&mut self) -> u32 {
+        self.call("base", vec![])
     }
 }
 
@@ -478,6 +530,15 @@ pub fn lift_from(
     corner_b: usize,
     member: usize,
     mode: usize,
+    flags_24: usize,
+    table_index: usize,
+    ctx: usize,
+    gate: usize,
+    member_b: usize,
+    block0: usize,
+    block1: usize,
+    block2: usize,
+    done: usize,
 ) -> CutsceneObject {
     let attached = if obj.r32(attach) == 0 {
         None
@@ -506,5 +567,16 @@ pub fn lift_from(
         ],
         member_a: cookie(obj.r32(member)),
         mode: obj.r32(mode),
+        flags_24: obj.r32(flags_24),
+        table_index: obj.r16(table_index) as i16,
+        ctx: cookie(obj.r32(ctx)),
+        gate_d4: obj.r32(gate),
+        member_b: cookie(obj.r32(member_b)),
+        blocks: [
+            cookie(obj.r32(block0)),
+            cookie(obj.r32(block1)),
+            cookie(obj.r32(block2)),
+        ],
+        done_2ac: obj.r8(done),
     }
 }

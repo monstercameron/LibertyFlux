@@ -3,19 +3,19 @@
 /// Write one 24-byte input slot and notify the slot consumer.
 ///
 /// The six stack words are the slot index, a value word, a pointer to two
-/// words, an unread word, a float word and a second pointer to two words.
+/// words, a second pointer to two words, a float word and an unread word.
 /// Slot `idx` lives at the slot table plus `idx * 24`: the value word goes at
 /// +0, the two pointed-to words at +4, the other two at +12, and the float
 /// bits (copied, never interpreted) at +20. The consumer callee is then
 /// called with (2, slot+4 pointer, slot+12 pointer, 0). Returns the callee's
-/// answer (cdecl, six stack words; the fourth is not read).
+/// answer (cdecl, six stack words; the sixth is not read).
 lf_checker_rt::export!(cdecl, rw_008BEA00(
     idx: u32,
     value: u32,
     p1: u32,
-    _gap: u32,
-    float_bits: u32,
     p2: u32,
+    float_bits: u32,
+    _gap: u32,
 ) -> u32 {
     unsafe {
         /// First byte of the slot table.

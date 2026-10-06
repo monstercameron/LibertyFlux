@@ -40,9 +40,11 @@ pub const ROWS: &[Row] = &[
     },
     Row {
         method: "dtor",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "teardown through member slots, allocator callees and a global registry table: needs the registry-table model, not built yet",
+            "the destruction-phase table stamp is 32-bit plumbing: the proof checks it on the rewrite side only",
+            "the registry table arrives as one word per index: the table itself is not modelled",
+            "the fixed context address is pinned on the rewrite side, not modelled",
         ],
     },
     Row {

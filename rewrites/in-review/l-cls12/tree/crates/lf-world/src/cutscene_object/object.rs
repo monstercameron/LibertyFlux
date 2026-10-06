@@ -17,6 +17,10 @@ pub struct HelperTag;
 pub struct MemberTag;
 /// Tag for the opaque cookie of an emitted draw-command target.
 pub struct DrawTag;
+/// Tag for the opaque cookie of a teardown block.
+pub struct BlockTag;
+/// Tag for the opaque cookie of the teardown context object.
+pub struct CtxTag;
 
 /// A 3x4 placement record: the three coefficient columns plus the origin.
 ///
@@ -138,6 +142,30 @@ pub trait CutsceneWorld {
     fn draw_emit(&mut self, a0: u32, a1: u32, a2: u32) -> Option<Handle32<DrawTag>>;
     /// Marks the mode-1 emit target (the flag-bit set on its byte).
     fn mark_emitted(&mut self, target: Handle32<DrawTag>);
+    /// Destroys a linked member through its deleting entry; the answer
+    /// is dropped.
+    fn destroy_member(&mut self, member: Handle32<MemberTag>);
+    /// Tears a block down; the answer is dropped.
+    fn teardown_block(&mut self, block: Handle32<BlockTag>);
+    /// Frees a torn-down block; the answer is dropped.
+    fn free_block(&mut self, block: Handle32<BlockTag>);
+    /// Asks whether the registry step runs; only the low byte of the
+    /// answer is tested.
+    fn ask_registry(&mut self) -> u32;
+    /// The registry entry word for a table index (the table itself is
+    /// not modelled: one word per index).
+    fn registry_word(&mut self, index: i16) -> i32;
+    /// Asks whether the registry word passes the gate; only the low
+    /// byte of the answer is tested.
+    fn ask_gate(&mut self, word: u32) -> u32;
+    /// Runs the registry step on its fixed context with a zero word.
+    fn registry_run(&mut self);
+    /// Runs the teardown context entry with mode 3.
+    fn context_run(&mut self, ctx: Option<Handle32<CtxTag>>, mode: u32);
+    /// Hands the registry word on.
+    fn registry_tell(&mut self, word: u32);
+    /// The base teardown entry; answers its answer.
+    fn base_destroy(&mut self) -> u32;
 }
 
 /// A cutscene object, owning its words, flags, corners and links.
@@ -169,6 +197,20 @@ pub struct CutsceneObject {
     pub member_a: Option<Handle32<MemberTag>>,
     /// The mode word selecting the draw path.
     pub mode: u32,
+    /// The flag word whose bit the mode-1 teardown sets.
+    pub flags_24: u32,
+    /// The registry table index.
+    pub table_index: i16,
+    /// The teardown context object, if one is set.
+    pub ctx: Option<Handle32<CtxTag>>,
+    /// The registry-step gate word.
+    pub gate_d4: u32,
+    /// The second linked member object, if one is linked.
+    pub member_b: Option<Handle32<MemberTag>>,
+    /// The three teardown blocks, in teardown order.
+    pub blocks: [Option<Handle32<BlockTag>>; 3],
+    /// The done byte, cleared by the teardown.
+    pub done_2ac: u8,
 }
 
 /// Adds exactly like the original's ordered float sequence.
@@ -317,6 +359,43 @@ impl CutsceneObject {
                 let _ = world.draw_emit(a0, a1, a2);
             }
         }
+    }
+
+    /// Tears the object down and hands off to the base entry, answering
+    /// its answer. In mode 0 the linked members are destroyed and their
+    /// slots cleared, the set blocks are torn down, freed and cleared,
+    /// and the registry step runs when asked, the entry word is not -1,
+    /// the gate is set and the gate agrees. In mode 1 the flag bit is
+    /// set instead. The done byte is cleared either way. (The
+    /// destruction-phase table stamp is 32-bit plumbing: not modelled.)
+    pub fn tear_down<W: CutsceneWorld>(&mut self, world: &mut W) -> u32 {
+        if self.mode == 0 {
+            if let Some(ha) = self.member_a.take() {
+                world.destroy_member(ha);
+            }
+            for slot in self.blocks.iter_mut() {
+                if let Some(blk) = slot.take() {
+                    world.teardown_block(blk);
+                    world.free_block(blk);
+                }
+            }
+            if let Some(hb) = self.member_b.take() {
+                world.destroy_member(hb);
+            }
+            if world.ask_registry() & 0xff != 0 {
+                let word = world.registry_word(self.table_index);
+                if word != -1 && self.gate_d4 != 0 && world.ask_gate(word as u32) & 0xff != 0 {
+                    world.registry_run();
+                    world.context_run(self.ctx, 3);
+                    world.registry_tell(word as u32);
+                }
+            }
+        }
+        if self.mode == 1 {
+            self.flags_24 |= 0x0400_0000;
+        }
+        self.done_2ac = 0;
+        world.base_destroy()
     }
 
     /// Pushes one corner through the attached record: each output row is
