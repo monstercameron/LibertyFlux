@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Lift: audio voice classes, with their proof in the pipeline",
+    "commit": null,
+    "summary": "The second lift of whole classes: 28 verified methods of four audio voice classes are now portable Rust in crates/lf-audio, with the tests that prove them against the verified rewrites running in the pipeline.",
+    "changes": [
+      "New module crates/lf-audio/src/voice: the software mixer voice, the two ADPCM voices and the sound-device voice, each a type owning its header words and its ring of sample lanes, with each verified method that has behaviour in it restated as a method (stop, resume, start or seek, the stopping test, the ring refresh, the playback position, teardown). No unsafe code. 18 host tests.",
+      "Everything a voice calls that is not lifted yet (its child voice, the device, the codec, the mixer, its own unlifted entries) is one method on a trait per class, so the lifted code states exactly what it needs from the rest of the engine. The names of those methods and of several fields describe roles read from the rewrites; the module says which readings are verified and which are inferred.",
+      "New test crate crates/tools/lf-voicediff: each lifted method against its verified 32-bit rewrite on the same generated inputs, comparing results, every written byte and every call in order, with a deliberately wrong lift of each that must be caught. 28 tests; the coordinator ran them on the 32-bit target and they pass. The pipeline's 32-bit job now runs them on every push.",
+      "Changed on the way in: the test crate's runtime declares stand-ins with 32-bit calling conventions and did not compile on other hosts; it is now built only on the 32-bit target, as the tests already were.",
+      "Not lifted: nine verified methods that are a pool, an allocator or a single forwarded call, the calls that belong behind the platform crate (device release, resume, seek and cursors), and three unverified methods."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 110 files from lanes (276 unverified rewrites, 102 in review)",
     "commit": "46c5e99a6d5c71a575f78e882328318210dc66d9",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

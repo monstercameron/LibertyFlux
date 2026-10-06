@@ -490,6 +490,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-voicediff"
+version = "0.1.0"
+dependencies = [
+ "lf-audio",
+ "lf-core",
+]
+
+[[package]]
 name = "lf-world"
 version = "0.1.0"
 dependencies = [

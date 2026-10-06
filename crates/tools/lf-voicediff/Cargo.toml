@@ -1,0 +1,15 @@
+[package]
+name = "lf-voicediff"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Differential tests: lifted audio voices against their verified 32-bit rewrites"
+publish = false
+
+[dependencies]
+lf-audio = { path = "../../lf-audio" }
+lf-core = { path = "../../lf-core" }
+
+[lints]
+workspace = true
