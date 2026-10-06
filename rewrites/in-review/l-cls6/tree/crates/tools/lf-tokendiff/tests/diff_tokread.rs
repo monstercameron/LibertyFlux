@@ -687,11 +687,12 @@ mod x86 {
                 };
                 let mut words = Vec::with_capacity(n);
                 for i in 0..n {
-                    words.push(if trial < F32_EDGE.len() {
+                    let w = if trial < F32_EDGE.len() {
                         F32_EDGE[(trial + i) % F32_EDGE.len()]
                     } else {
                         rng.u32()
-                    });
+                    };
+                    words.push(support::quiet_snan(w));
                 }
                 // Distinct values so rotation is observable.
                 words[0] ^= 0x1111_1111u32.wrapping_add(trial as u32);

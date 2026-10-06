@@ -174,6 +174,20 @@ pub const F32_EDGE: &[u32] = &[
     0x42C8_0000,
 ];
 
+/// Quiets a signalling NaN the way the x87 float return does: the
+/// float reader's answers reach the method through that return, so a
+/// scripted signalling NaN would arrive quietened on the rewrite side
+/// but unquietened on the lift side. Scripts pass through here so both
+/// sides receive the same bits.
+#[must_use]
+pub fn quiet_snan(bits: u32) -> u32 {
+    if bits & 0x7F80_0000 == 0x7F80_0000 && bits & 0x007F_FFFF != 0 {
+        bits | 0x0040_0000
+    } else {
+        bits
+    }
+}
+
 /// Edge double bits.
 pub const F64_EDGE: &[u64] = &[
     0x0000_0000_0000_0000,
