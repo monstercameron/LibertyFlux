@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Devlog: One table builder verified, and the compiler hides spills inside push sequences",
+    "title": "Rewrites: 48 more functions pass the checker (16288 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "48 rewrites added under rewrites/verified: 0 script native handlers and 48 other functions.",
+      "The tree now holds 16288 rewrites, 16269 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Devlog: One table builder verified, and the compiler hides spills inside push sequences",
+    "commit": "7cf8efabab9cc204c7dc59626e38bb297658a28e",
     "summary": "Findings from the r-b598 lane.",
     "changes": [
       "New devlog entry: One table builder verified, and the compiler hides spills inside push sequences.",
