@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Rewrites: 12 withdrawn because their old proofs do not hold on the current checker",
+    "title": "Rewrites: 2 more functions pass the checker (16994 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "2 rewrites added under rewrites/verified: 0 script native handlers and 2 other functions.",
+      "The tree now holds 16994 rewrites, 16991 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 724 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "25 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Rewrites: 12 withdrawn because their old proofs do not hold on the current checker",
+    "commit": "b586398ac0cdfc92b36552ac6ee57489fc963c05",
     "summary": "The verified count goes down by twelve. The first two regression lanes re-ran 700 proofs made on checker versions 1 and 2, unchanged, on version 8: 688 hold and are now recorded on the current checker; 12 do not.",
     "changes": [
       "Eleven are vacuous by the rule the checker has had since version 5. In six the original never completed a single trial, so every trial faulted on both sides and nothing about the function's behaviour was compared; in five a callee never fired on any completed trial. The checker that accepted them had no such rule.",
