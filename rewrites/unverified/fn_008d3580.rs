@@ -20,8 +20,16 @@
 /// on the controlled object's table), while a fully-inside result runs the
 /// exit block directly. The exit block compares the position's squared
 /// length against a global limit; above the limit, a float-returning table
-/// call minus a global offset becomes the argument of a second table call
+/// call minus a subtrahend becomes the argument of a second table call
 /// whose answer is returned, otherwise the position link is returned.
+///
+/// The subtrahend is a stack slot, not the global: the float call pops its
+/// argument, so its frame sits one word higher than the slot the global
+/// was stored to, and the subtraction reads the neighbouring slot instead.
+/// That slot holds the first sample word when the fill ran, or
+/// uninitialized scratch (defined as 0 by the contract) when the gate
+/// failed; after the one-argument table path, whose extra push shifts the
+/// frame by a word, it holds the stored global after all.
 ///
 /// Every ordered comparison mirrors one hardware float-compare-plus-branch
 /// exactly, using only greater-than shapes for above-exits so unordered
@@ -105,7 +113,8 @@ unsafe fn run_8d3580(this: u32, mutant: bool) -> u32 {
         let gate = lf_checker_rt::callee_thiscall!(CAL_GATE, u32, this);
         if (gate & 0xFF) == 0 {
             *(lf_checker_rt::global::<u8>(G_FLAG)) = 0;
-            return exit_block(this);
+            // No fill ran: the subtrahend slot holds scratch, defined 0.
+            return exit_block(this, 0.0);
         }
         let mut sa = [0u32; 3];
         let mut sb = [0u32; 3];
@@ -165,7 +174,8 @@ unsafe fn run_8d3580(this: u32, mutant: bool) -> u32 {
         } else if !(pz > (bz - r1)) {
             // Final side uses the below-or-equal exit: unordered takes it.
             *(lf_checker_rt::global::<u8>(G_FLAG)) = 0;
-            return exit_block(this);
+            // Fill ran: the subtrahend slot holds the first sample word.
+            return exit_block(this, ax);
         } else {
             inside = false;
         }
@@ -201,37 +211,47 @@ unsafe fn run_8d3580(this: u32, mutant: bool) -> u32 {
         } else if (az + r2) > pz {
             dispatch = true;
         } else if !(pz >= (bz - r2)) {
-            return exit_block(this);
+            return exit_block(this, ax);
         } else {
             dispatch = true;
         }
+        let mut path_b = false;
         if dispatch {
             if (load(ctl, OFF_FLAGB) & FLAG_BIT) == 0 {
                 vcall1(ctl, SLOT_CTL_A, 0);
+                path_b = true;
             } else {
                 let d = load(ctl, OFF_LINK);
                 let e = load(d, OFF_SUB);
                 if e != 0 && *((e.wrapping_add(OFF_SUBB)) as *const u8) != 0 {
                     vcall1(ctl, SLOT_CTL_A, 0);
+                    path_b = true;
                 } else {
                     vcall5(d, SLOT_LINK, 0, 0, 1, 0, 0x33);
                 }
             }
         }
-        exit_block(this)
+        // The one-argument path pushes one word more than the callee pops,
+        // shifting the exit frame so the subtrahend slot is the stored
+        // global; otherwise it is still the first sample word.
+        let sub = if path_b {
+            *(lf_checker_rt::global::<f32>(G_SUB))
+        } else {
+            ax
+        };
+        exit_block(this, sub)
     }
 }
 
 /// Squared-length exit shared by every path: returns the position link
 /// when the squared length is at or below the limit (unordered counts as
-/// below), otherwise feeds a float table answer minus a global offset into
-/// a second table call and returns its answer.
-unsafe fn exit_block(this: u32) -> u32 {
+/// below), otherwise feeds a float table answer minus the caller-provided
+/// subtrahend into a second table call and returns its answer.
+unsafe fn exit_block(this: u32, sub: f32) -> u32 {
     const OFF_CTL: u32 = 0x598;
     const OFF_POS: u32 = 0x20;
     const SLOT_CTL_A: u32 = 0xF4;
     const SLOT_CTL_F: u32 = 0xFC;
-    const G_SUB: u32 = 0x011735BC;
     const G_LIM: u32 = 0x00E80DC0;
     unsafe {
         let ctl = *((this.wrapping_add(OFF_CTL)) as *const u32);
@@ -254,7 +274,6 @@ unsafe fn exit_block(this: u32) -> u32 {
         let f: extern "thiscall" fn(u32, u32) -> f32 =
             core::mem::transmute(target_f as usize);
         let ans = f(ctl, 0);
-        let sub = *(lf_checker_rt::global::<f32>(G_SUB));
         let diff = core::hint::black_box(ans) - core::hint::black_box(sub);
         let target_a = *((table.wrapping_add(SLOT_CTL_A)) as *const u32);
         let g: extern "thiscall" fn(u32, u32) -> u32 =

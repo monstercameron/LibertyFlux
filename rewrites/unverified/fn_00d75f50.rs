@@ -5,8 +5,8 @@
 /// levels onto the float pair at the incoming pointer, and when this
 /// object's flag word is set, resets the object through the second helper
 /// and forwards the four words (pair plus sums) with the slot word to the
-/// sink helper, first marking the slot -1. Returns the sink's answer, or
-/// the setup answer when the flag word is clear.
+/// sink helper, first marking the slot -1. Returns the sink's answer,
+/// or the pair pointer when the flag word is clear.
 export!(thiscall, rw_00d75f50(this_: *const u8, pair: *const f32, first: f32, second: f32) -> u32 {
     unsafe {
         use core::hint::black_box;
@@ -17,7 +17,8 @@ export!(thiscall, rw_00d75f50(this_: *const u8, pair: *const f32, first: f32, se
         let sum0 = black_box(black_box(f0) + black_box(first));
         let sum1 = black_box(black_box(f1) + black_box(second));
         if *(this_ as *const u32) == 0 {
-            return setup_answer;
+            let _ = setup_answer;
+            return pair as u32;
         }
         callee_thiscall!(2, u32, this_ as u32);
         let words = [f0.to_bits(), f1.to_bits(), sum0.to_bits(), sum1.to_bits()];
