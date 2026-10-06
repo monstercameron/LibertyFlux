@@ -38,9 +38,9 @@ export!(cdecl, rw_008d7fa0(arg0: u32, level: f32, arg2: u32) -> u32 {
             u32,
             arg0,
             level.to_bits(),
-            area.as_ptr().add(6) as u32,
             arg2,
             helper_answer,
+            area.as_ptr().add(6) as u32,
             &mut out as *mut u32 as u32
         );
         if (out as i32) > 0 {

@@ -384,6 +384,11 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
         let mut xmm2v = 0.0f32;
         let mut xmm4v = 0.0f32;
         let mut esi = this.wrapping_add(0x13A4);
+        // Setup-call scratch: the word before the pointer holds the second
+        // curve's last entry; the pointed-to words keep the setup callee's
+        // answers across iterations (the per-iteration zero fill stops short
+        // of them), so this buffer lives outside the loop.
+        let mut s76 = [arr[9].to_bits(), 0u32, 0, 0];
         for k in 0..4u32 {
             let e = (div_tbl[(edi_idx >> 2) as usize].wrapping_add(loop_base)) as i32;
             let q0 = e.wrapping_div(360);
@@ -422,7 +427,6 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
                 s2[15] = 0x46BAB800;
                 s2[16] = 0xFFFFFFFF;
                 s2[17] = 0xFF;
-                let mut s76 = [0u32; 4];
                 s76[0] = arr[9].to_bits();
                 let s76ptr = (&mut s76[1] as *mut u32) as u32;
                 let ans5: u32 = lf_checker_rt::callee_cdecl!(
@@ -486,9 +490,8 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
                 s2b[15] = 0x46BAB800;
                 s2b[16] = 0xFFFFFFFF;
                 s2b[17] = 0xFF;
-                let mut s76b = [0u32; 4];
-                s76b[0] = arr[9].to_bits();
-                let s76bptr = (&mut s76b[1] as *mut u32) as u32;
+                s76[0] = arr[9].to_bits();
+                let s76bptr = (&mut s76[1] as *mut u32) as u32;
                 let ans5b: u32 = lf_checker_rt::callee_cdecl!(
                     C_SETUP, u32, s76bptr, 0x20, glob(TMPL_B), counter
                 );
