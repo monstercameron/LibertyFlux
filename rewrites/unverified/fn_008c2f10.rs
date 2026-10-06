@@ -57,11 +57,9 @@
 /// them (upper halves zero) and narrows the double answer like the
 /// original's convert instruction.
 ///
-/// Two quirks of the original are reproduced: one frame word is read before
-/// anything writes it (the checker fills it with zero), and one stale
-/// frame slot is reused as a mix argument when the big middle block is
-/// skipped (also zero under the checker). Both are documented in the
-/// proof record.
+/// One quirk of the original is reproduced: on the recompute path one bus
+/// starts from a frame word nothing wrote (the checker fills it with
+/// zero). It is documented in the proof record.
 lf_checker_rt::export!(cdecl, rw_008c2f10() -> u32 {
     unsafe {
         const F_TICK: u32 = 0x00FE88E8;
@@ -401,8 +399,9 @@ lf_checker_rt::export!(cdecl, rw_008c2f10() -> u32 {
         };
         let m1 = if sel > tb { sel } else { tb };
         let div = rdf(F_DIV);
-        let q0 = if 0.0 < m1 {
-            if m1 < div {
+        // Below-jumps below: taken on unordered too, hence the negated form.
+        let q0 = if !(0.0 >= m1) {
+            if !(m1 >= div) {
                 div_f(m1, div)
             } else {
                 tick
@@ -474,8 +473,12 @@ lf_checker_rt::export!(cdecl, rw_008c2f10() -> u32 {
             } else {
                 true
             };
+            // The chain path adds the smooth answer; the direct path pushes
+            // plain zero without the add.
             let mut g0 = 0.0f32;
+            let mut do_add = false;
             if use_chain {
+                do_add = true;
                 let c15 = lf_checker_rt::callee_cdecl!(C_CHAIN1, u32,) as u8;
                 if c15 == 0 {
                     let c11 = lf_checker_rt::callee_cdecl!(C_POLL2, u32,) as u8;
@@ -487,7 +490,8 @@ lf_checker_rt::export!(cdecl, rw_008c2f10() -> u32 {
                     }
                 }
             }
-            lf_checker_rt::callee_thiscall!(C_SET, u32, obj_4c, add(g0, v18).to_bits());
+            let arg4c = if do_add { add(g0, v18) } else { 0.0 };
+            lf_checker_rt::callee_thiscall!(C_SET, u32, obj_4c, arg4c.to_bits());
         }
         // Pair call with poll-dependent arguments, then scaled int factors.
         let a11 = lf_checker_rt::callee_cdecl!(C_POLL2, u32,) as u8;
@@ -518,13 +522,10 @@ lf_checker_rt::export!(cdecl, rw_008c2f10() -> u32 {
             );
         }
         // Big middle block, present only when both mixer objects exist.
-        // The stale mix slot below keeps zero when this block is skipped:
-        // the original then reads a frame word nothing wrote (the checker
-        // fills it with zero).
-        let mut stale_mix = 0.0f32;
         let obj40 = rd32(G_OBJ40);
         let obj44 = rd32(G_OBJ44);
         if obj40 != 0 && obj44 != 0 {
+            v18 = 0.0;
             let r20 = lf_checker_rt::callee_cdecl!(C_SCAN, u32, 0);
             if r20 != 0 {
                 let te: f32 =
@@ -539,6 +540,8 @@ lf_checker_rt::export!(cdecl, rw_008c2f10() -> u32 {
             } else {
                 f1cv = rdf(F_IDX_A);
             }
+            // The entry fetch below reuses the mix-value slot for zero.
+            t0 = 0.0;
             // Entry fetch for an index below the count (unsigned compare).
             // The incoming register value the original passes here is pinned
             // to zero by the proof (see the proof record).
@@ -652,7 +655,7 @@ lf_checker_rt::export!(cdecl, rw_008c2f10() -> u32 {
             x1mix = add(x1mix, v18);
             let trunc2 = f32_to_i64_low(mul(rdf(F_TRUNC_A), rdf(F_TRUNC_B)));
             let x0b = sub(x1mix, rdf(F_ALT));
-            let x2b = if x0b < 0.0 {
+            let x2b = if !(x0b >= 0.0) {
                 0.0
             } else {
                 x1mix = mul(x1mix, rdf(F_POW_K));
@@ -665,7 +668,7 @@ lf_checker_rt::export!(cdecl, rw_008c2f10() -> u32 {
             let mut x1c = v1c;
             let trunc3 = f32_to_i64_low(mul(rdf(F_TRUNC_A), rdf(F_TRUNC_B)));
             let x0c = sub(x1c, rdf(F_ALT));
-            let x2c = if x0c < 0.0 {
+            let x2c = if !(x0c >= 0.0) {
                 0.0
             } else {
                 x1c = mul(x1c, rdf(F_POW_K));
@@ -674,7 +677,6 @@ lf_checker_rt::export!(cdecl, rw_008c2f10() -> u32 {
             let s29b: f32 = lf_checker_rt::callee_thiscall!(
                 C_MIX2, f32, lf_checker_rt::relocated(OBJ_MIX_B), x2c.to_bits(), trunc3
             );
-            stale_mix = s29b;
             let a30 = lf_checker_rt::callee_thiscall!(
                 C_MIX_CHECK, u32, lf_checker_rt::relocated(OBJ_MIXCHK)
             );
@@ -726,7 +728,7 @@ lf_checker_rt::export!(cdecl, rw_008c2f10() -> u32 {
             );
             let x1d = if (a24b as u8) != 0 { rdf(F_IDX_B) } else { 0.0 };
             let x0d = sub(x1d, rdf(F_ALT));
-            let x2d = if x0d < 0.0 {
+            let x2d = if !(x0d >= 0.0) {
                 0.0
             } else {
                 f64::from_bits(pow_call(mul(x1d, rdf(F_POW_K)))) as f32
@@ -751,21 +753,21 @@ lf_checker_rt::export!(cdecl, rw_008c2f10() -> u32 {
             C_MIX2, f32, lf_checker_rt::relocated(OBJ_MIX_D), x0e.to_bits(), rd32(G_MIX_ARG)
         );
         let s2c: f32 = lf_checker_rt::callee_cdecl!(C_SMOOTH, f32, s29d.to_bits());
-        // The original stores the next sum into its frame and never reads it
-        // (the following mix call takes the stale slot instead), so only the
-        // stale slot matters here.
-        let _dead_sum = add(s2c, v1c2);
+        // The narrowed power answer feeds the next mix call, while the sum
+        // below feeds the first object push; the second smooth answer lands
+        // in the same slot and feeds the second object push.
+        let sum_50 = add(s2c, v1c2);
         let s29e: f32 = lf_checker_rt::callee_thiscall!(
-            C_MIX2, f32, lf_checker_rt::relocated(OBJ_MIX_E), stale_mix.to_bits(), rd32(G_MIX_ARG)
+            C_MIX2, f32, lf_checker_rt::relocated(OBJ_MIX_E), x0e.to_bits(), rd32(G_MIX_ARG)
         );
         let s2d: f32 = lf_checker_rt::callee_cdecl!(C_SMOOTH, f32, s29e.to_bits());
         let obj50 = rd32(G_OBJ50);
         if obj50 != 0 {
-            lf_checker_rt::callee_thiscall!(C_SET, u32, obj50, s2d.to_bits());
+            lf_checker_rt::callee_thiscall!(C_SET, u32, obj50, sum_50.to_bits());
         }
         let obj54 = rd32(G_OBJ54);
         if obj54 != 0 {
-            lf_checker_rt::callee_thiscall!(C_SET, u32, obj54, stale_mix.to_bits());
+            lf_checker_rt::callee_thiscall!(C_SET, u32, obj54, s2d.to_bits());
         }
         // Probe call with two frame out-pointers: a float and a flag byte.
         // The stub writes both; the float feeds one smooth call and the
@@ -777,7 +779,9 @@ lf_checker_rt::export!(cdecl, rw_008c2f10() -> u32 {
             (&mut out_b as *mut u32) as u32, (&mut out_a as *mut u32) as u32
         ) as u8;
         let out_a_f = f32::from_bits(out_a);
-        let _s2e: f32 = lf_checker_rt::callee_cdecl!(C_SMOOTH, f32, sub(tick, out_a_f).to_bits());
+        // The smooth answer overwrites the gated bus: the four pushes below
+        // all take it, not the gate value.
+        f1cv = lf_checker_rt::callee_cdecl!(C_SMOOTH, f32, sub(tick, out_a_f).to_bits());
         let obj64 = rd32(G_OBJ64);
         if obj64 != 0 {
             lf_checker_rt::callee_thiscall!(C_SET, u32, obj64, f1cv.to_bits());

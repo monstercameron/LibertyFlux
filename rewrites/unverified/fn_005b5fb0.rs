@@ -8,7 +8,7 @@
 /// Begin and end become the buffer (equal: the vector starts empty) and cap
 /// becomes buffer + `count * 24`, all with wrapping arithmetic, so a null
 /// buffer still yields a non-null cap without any store through it. Counts
-/// above 0xaaaaaaaa (*unsigned*) abort the process; the proof never feeds
+/// above 0x0aaaaaaa (*unsigned*) abort the process; the proof never feeds
 /// those (see the narrowed list). The second stack argument is unread.
 /// Returns the vector. Thiscall: vector in ECX.
 lf_checker_rt::export!(thiscall, rw_005B5FB0(this: u32, count: u32, _unused: u32) -> u32 {
