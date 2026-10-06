@@ -19,7 +19,7 @@
 
 use lf_core::Handle32;
 
-use crate::tasks::{SubTask, TaskMgr, UninitTask};
+use crate::tasks::{SubTask, TaskMgr, UninitTask, live_gate};
 
 /// The entity a goto task walks towards (its mode slot).
 ///
@@ -27,6 +27,12 @@ use crate::tasks::{SubTask, TaskMgr, UninitTask};
 /// becomes a real handle when its owner class lifts.
 #[derive(Debug)]
 pub struct GotoEntity;
+
+/// The ped a goto task runs against (opaque identity).
+///
+/// Opaque for the same reason as [`GotoEntity`].
+#[derive(Debug)]
+pub struct GotoPed;
 
 /// What the goto asks of the task pool: the allocator and the copy
 /// constructor behind the clone slot.
@@ -43,6 +49,36 @@ pub trait GotoPool {
         block: Handle32<UninitTask>,
         member: u32,
     ) -> Option<Handle32<GotoTask>>;
+}
+
+/// How the subtask's state check answered.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SubVerdict {
+    /// The check passed (or its gate bit was set): the update dispatches.
+    Passed,
+    /// The check refused: the update falls back and keeps the subtask.
+    Refused,
+}
+
+/// What the goto periodic update asks of its helpers: the liveness probe,
+/// the fallback builder, the subtask's state check and the dispatch helper.
+pub trait GotoPoll {
+    /// Probes the task for its ped (a set low byte keeps the subtask).
+    fn probe(&mut self, ped: Option<Handle32<GotoPed>>) -> u32;
+
+    /// Falls back for the ped after a kept subtask.
+    fn fallback(&mut self, ped: Option<Handle32<GotoPed>>);
+
+    /// Runs the subtask's state check: its gate bit, its check slot
+    /// unless gated, marking it on a pass.
+    fn check_subtask(
+        &mut self,
+        sub: Handle32<SubTask>,
+        ped: Option<Handle32<GotoPed>>,
+    ) -> SubVerdict;
+
+    /// Dispatches the task for its ped after a passed check.
+    fn dispatch(&mut self, ped: Option<Handle32<GotoPed>>);
 }
 
 /// A shocking-event goto task: its subtask, kind, position, gate pair,
@@ -188,5 +224,48 @@ impl GotoTask {
     ) -> Option<Handle32<GotoTask>> {
         let block = pool.alloc(manager)?;
         pool.construct(block, self.kind)
+    }
+
+    /// Periodic update slot: times the wait, then keeps or dispatches.
+    ///
+    /// Restates the verified slot. While armed, a set restamp byte
+    /// stamps the tick and clears itself, and a lapsed wait skips the
+    /// liveness gate. A live probe that fires falls back and keeps the
+    /// subtask. Otherwise the subtask's state check runs: a refusal
+    /// falls back and keeps the subtask, a pass dispatches and answers
+    /// null. Panics without a subtask where the original faults reading
+    /// its marks (every path but the probe-keeps path).
+    pub fn poll(
+        &mut self,
+        ped: Option<Handle32<GotoPed>>,
+        tick: u32,
+        threshold: f32,
+        poll: &mut impl GotoPoll,
+    ) -> Option<Handle32<SubTask>> {
+        let mut skip_gate = false;
+        if self.armed {
+            if self.restamp {
+                self.stamp = tick;
+                self.restamp = false;
+            }
+            if self.stamp.wrapping_add(self.wait_copy) <= tick {
+                skip_gate = true;
+            }
+        }
+        if !skip_gate && live_gate(self.flag, self.mode, &self.pos, threshold) {
+            if poll.probe(ped) & 0xFF != 0 {
+                poll.fallback(ped);
+                return self.subtask;
+            }
+        }
+        let Some(sub) = self.subtask else {
+            panic!("goto poll without a subtask: the original faults reading its marks");
+        };
+        if poll.check_subtask(sub, ped) == SubVerdict::Refused {
+            poll.fallback(ped);
+            return self.subtask;
+        }
+        poll.dispatch(ped);
+        None
     }
 }

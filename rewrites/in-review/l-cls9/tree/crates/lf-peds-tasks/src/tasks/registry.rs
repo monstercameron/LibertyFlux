@@ -181,7 +181,7 @@ pub const ROWS: &[Row] = &[
             "the length threshold travels as a value the proof maps onto the threshold global; the manager word travels as a value mapped onto this method's own manager global",
         ],
     },
-    // ShockingEventGoto: the clone slot is proven.
+    // ShockingEventGoto: the clone slot and the periodic update are proven.
     Row {
         class: "ShockingEventGoto",
         method: "ctor",
@@ -210,9 +210,13 @@ pub const ROWS: &[Row] = &[
     Row {
         class: "ShockingEventGoto",
         method: "vf20",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "periodic update with a timer pre-gate through 4 callee slots: not lifted in this lane (the checker fixed the tick global at 0)",
+            "the probe, fallback and dispatch calls travel as the GotoPoll trait: the proof scripts the three stubs and compares slot and arguments in order",
+            "the probe and dispatch calls' task address and the fallback call's table, blend and zero words are pinned by the proof, not modelled",
+            "the subtask's check sequence (gate bit, slot call, mark set) travels as one trait call: the proof plants a stub in a fake subtask table and compares the call, the scripted verdict and the subtask blob",
+            "the tick and the length threshold travel as values the proof maps onto the tick and threshold globals",
+            "a null subtask panics where the original faults (every path but the probe-keeps path); the proof scripts live subtasks except there",
         ],
     },
     Row {

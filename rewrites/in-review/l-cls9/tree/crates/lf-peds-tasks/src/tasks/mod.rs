@@ -30,7 +30,7 @@ pub use duck::{
 };
 pub use fist::{DAMP_RATE_BITS, FistHeld, FistLink, FistPool, FistTarget, ShakeFist};
 pub use flee::{FleeEntity, FleePed, FleePoll, FleeSpawn, FleeTask};
-pub use goto::{GotoEntity, GotoPool, GotoTask};
+pub use goto::{GotoEntity, GotoPed, GotoPoll, GotoPool, GotoTask, SubVerdict};
 pub use hit::{HitBase, HitHandler, HitPool, HitResponse, HitStart};
 
 use lf_core::Handle32;

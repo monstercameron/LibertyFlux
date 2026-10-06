@@ -29,6 +29,8 @@ const THRESH_VA: u32 = 0x00FE876C;
 const MANAGER2_VA: u32 = 0x0171FAF4;
 /// File VA of the hit-response class table (stamped by its constructor).
 const HIT_VTABLE_VA: u32 = 0x00ED9FD4;
+/// File VA of the goto fallback table (passed to the fallback helper).
+const FALLBACK_TABLE_VA: u32 = 0x00EEF598;
 
 /// The shared manager word the clone and start slots read.
 static MANAGER: AtomicU32 = AtomicU32::new(0);
@@ -94,19 +96,41 @@ pub fn global<T>(file_va: u32) -> *mut T {
 ///
 /// The hit-response constructor stamps its class table through this;
 /// the identity mapping pins the stamp to the table's file VA, which
-/// the case asserts on the blob.
+/// the case asserts on the blob. The flee and goto rewrites read their
+/// globals through this rather than through [`global`]; those VAs land
+/// on the same cells.
 ///
 /// # Panics
 ///
-/// When the address is not the hit-response table: the proof set
-/// relocates nothing else, so any other call is a case bug.
+/// When the address is none of the above: the proof set relocates
+/// nothing else, so any other call is a case bug. On a 64-bit host any
+/// cell call panics: rewrites run on the 32-bit target only.
 #[must_use]
 pub fn relocated(file_va: u32) -> u32 {
-    assert!(
-        file_va == HIT_VTABLE_VA,
-        "unexpected relocated VA {file_va:#x}: the proof set relocates the hit-response table only"
-    );
-    file_va
+    if file_va == HIT_VTABLE_VA || file_va == FALLBACK_TABLE_VA {
+        return file_va;
+    }
+    #[cfg(target_arch = "x86")]
+    {
+        if file_va == MANAGER_VA {
+            core::ptr::addr_of!(MANAGER).addr() as u32
+        } else if file_va == TICK_VA {
+            core::ptr::addr_of!(TICK).addr() as u32
+        } else if file_va == ONE_VA {
+            core::ptr::addr_of!(ONE).addr() as u32
+        } else if file_va == THRESH_VA {
+            core::ptr::addr_of!(THRESH).addr() as u32
+        } else if file_va == MANAGER2_VA {
+            core::ptr::addr_of!(MANAGER2).addr() as u32
+        } else {
+            panic!("unexpected relocated VA {file_va:#x}: the proof set relocates its five globals and two tables only")
+        }
+    }
+    #[cfg(not(target_arch = "x86"))]
+    {
+        let _ = file_va;
+        panic!("relocated() on a 64-bit host: rewrites run on the 32-bit target only");
+    }
 }
 
 /// Registered stub addresses for callee slots 1 to 8 (0 until the test
