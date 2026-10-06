@@ -42,10 +42,10 @@ mod clock;
 mod notify;
 
 pub use bar::{
-    ReplayBar, ReplaySlot, StampPublish,Publish, Sample, ScoreStamp,
-    SelectionWatch,
+    Publish, ReplayBar, ReplaySlot, Sample, ScoreStamp, SelectionWatch, StampPublish,
 };
-pub use clock::{BaseSelect, ClockRead, ClockTag, TimeBases, blend_factors};
+pub use clock::{BaseSelect, ClockHandle, ClockRead, ClockTag, TimeBases, blend_factors};
 pub use notify::{
-    InnerTag, NotifyCtl, NotifyHub, NotifierTag, RefreshInner, RefreshOutcome,
+    InnerHandle, InnerTag, NotifierHandle, NotifierTag, NotifyCtl, NotifyHub, RefreshInner,
+    RefreshOutcome,
 };

@@ -11,9 +11,15 @@ use lf_core::boundary::Handle32;
 #[derive(Debug)]
 pub struct InnerTag;
 
+/// An opaque inner object: the control's refresh target.
+pub type InnerHandle = Handle32<InnerTag>;
+
 /// Identity of the shared notifier behind the hub.
 #[derive(Debug)]
 pub struct NotifierTag;
+
+/// An opaque shared notifier: the hub's answer.
+pub type NotifierHandle = Handle32<NotifierTag>;
 
 /// Refreshes the control's inner object: the second callee.
 ///
@@ -40,9 +46,9 @@ impl<F: FnMut()> RefreshInner for F {
 /// fetches and the cleared flag in order.
 pub trait NotifyHub {
     /// Fetches the notifier, or `None` for a null answer.
-    fn lookup(&mut self) -> Option<Handle32<NotifierTag>>;
+    fn lookup(&mut self) -> Option<NotifierHandle>;
     /// Clears the notifier's suppress flag (bit 0 of its flag byte).
-    fn clear_suppress(&mut self, id: Handle32<NotifierTag>);
+    fn clear_suppress(&mut self, id: NotifierHandle);
 }
 
 /// What the refresh decided.
@@ -55,14 +61,14 @@ pub enum RefreshOutcome {
     /// The first notifier fetch answered null.
     NoNotifier,
     /// Refreshed through the notifier.
-    Refreshed(Handle32<NotifierTag>),
+    Refreshed(NotifierHandle),
 }
 
 /// The notifier control: an inner object behind the `+0x04` word.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct NotifyCtl {
     /// The inner object the refresh runs on.
-    pub inner: Handle32<InnerTag>,
+    pub inner: InnerHandle,
 }
 
 impl NotifyCtl {

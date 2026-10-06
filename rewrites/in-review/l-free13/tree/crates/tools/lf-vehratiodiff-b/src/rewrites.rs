@@ -1,11 +1,9 @@
 //! The verified rewrites under test, compiled from their tracked files.
 //!
 //! Each file is included unchanged and sees this crate as `lf_checker_rt`
-//! (32-bit target only). The include paths run from this lane's scratch
-//! tree up to the repository root, then `rewrites/verified/functions/`;
-//! on integration they shorten to the usual three levels. Fourteen of
-//! the thirty-one family files are included: the proof set (see the
-//! lifted registry for the rest).
+//! (32-bit target only). The include paths are relative to this crate's
+//! manifest: three levels up to the repository root, then
+//! `rewrites/verified/functions/`.
 
 // Byte-identical verified files; their style is not linted here.
 #![allow(
@@ -20,8 +18,6 @@
     clippy::pedantic
 )]
 
-pub use crate::callee_addr;
 pub use crate::global;
-pub use crate::relocated;
 
 include!("rewrites_gen.rs");

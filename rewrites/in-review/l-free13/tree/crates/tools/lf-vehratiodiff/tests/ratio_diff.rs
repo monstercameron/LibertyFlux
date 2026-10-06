@@ -12,9 +12,9 @@
 
 #[cfg(target_arch = "x86")]
 mod x86 {
-    use @LIB@::rewrites::*;
-    use @LIB@::rt;
     use lf_vehicles::veh_ratio::RatioCell;
+    use lf_vehratiodiff::rewrites::*;
+    use lf_vehratiodiff::rt;
 
     #[path = "../support/mod.rs"]
     mod support;

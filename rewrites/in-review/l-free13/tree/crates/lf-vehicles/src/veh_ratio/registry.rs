@@ -34,8 +34,7 @@ pub struct Row {
 }
 
 /// The dead integer return narrows to `()`.
-pub const NARROW_RET: &str =
-    "the dead integer return (0 where the rewrite has one) narrows to ()";
+pub const NARROW_RET: &str = "the dead integer return (0 where the rewrite has one) narrows to ()";
 /// The three globals narrow to owned fields; the triple's identity is the index.
 pub const NARROW_ADDR: &str =
     "the three globals travel as owned f32 fields; the triple's identity is the bank index";

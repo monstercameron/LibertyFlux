@@ -61,7 +61,6 @@ impl RatioCell {
     /// infinity, zero over zero a quiet NaN, and infinities and NaNs
     /// propagate as the hardware defines; the division never faults.
     pub fn refresh(&mut self) {
-        self.value =
-            core::hint::black_box(self.numer) / core::hint::black_box(self.denom);
+        self.value = core::hint::black_box(self.numer) / core::hint::black_box(self.denom);
     }
 }
