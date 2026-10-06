@@ -34191,6 +34191,15 @@
   "lane": "r-b591"
  },
  {
+  "address": "0x005EE1A0",
+  "name": "text_box_scale_and_dispatch",
+  "kind": "function",
+  "file": "functions/fn_005ee1a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b591"
+ },
+ {
   "address": "0x005FBC60",
   "name": "rage::pgStreamableRef<rage::fragType>::~fragType>",
   "kind": "function",
@@ -37368,6 +37377,15 @@
   "lane": "r-s494"
  },
  {
+  "address": "0x00693590",
+  "name": "rage::crCreatureComponent::vf0",
+  "kind": "function",
+  "file": "functions/fn_00693590.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
   "address": "0x006935D0",
   "name": "rage::crCreatureComponent::vf2",
   "kind": "function",
@@ -37395,10 +37413,55 @@
   "lane": "r-s494"
  },
  {
+  "address": "0x006938B0",
+  "name": "comp_array_dispose",
+  "kind": "function",
+  "file": "functions/fn_006938b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
+  "address": "0x00693B60",
+  "name": "comp_foreach_f32hook",
+  "kind": "function",
+  "file": "functions/fn_00693b60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
+  "address": "0x00693BA0",
+  "name": "comp_foreach_hook2",
+  "kind": "function",
+  "file": "functions/fn_00693ba0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
+  "address": "0x00693BD0",
+  "name": "comp_foreach_hook0",
+  "kind": "function",
+  "file": "functions/fn_00693bd0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
   "address": "0x00693C00",
   "name": "track_slot_by_id",
   "kind": "function",
   "file": "functions/fn_00693c00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
+  "address": "0x00693CA0",
+  "name": "comp_remove_by_id",
+  "kind": "function",
+  "file": "functions/fn_00693ca0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s494"
@@ -53784,6 +53847,15 @@
   "lane": "a-F01"
  },
  {
+  "address": "0x00949D70",
+  "name": "process_table_rows",
+  "kind": "function",
+  "file": "functions/fn_00949d70.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b590"
+ },
+ {
   "address": "0x0094B130",
   "name": "global_matrix_pass",
   "kind": "function",
@@ -54702,6 +54774,24 @@
   "lane": "r-b113"
  },
  {
+  "address": "0x00962180",
+  "name": "slot_release",
+  "kind": "function",
+  "file": "functions/fn_00962180.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s495"
+ },
+ {
+  "address": "0x00962250",
+  "name": "id_table_reset_all",
+  "kind": "function",
+  "file": "functions/fn_00962250.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s495"
+ },
+ {
   "address": "0x009623F0",
   "name": "walk_tagged_nodes",
   "kind": "function",
@@ -54709,6 +54799,24 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b113"
+ },
+ {
+  "address": "0x00962650",
+  "name": "pool_entry_table_init",
+  "kind": "function",
+  "file": "functions/fn_00962650.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s495"
+ },
+ {
+  "address": "0x00962720",
+  "name": "chunk_table_init",
+  "kind": "function",
+  "file": "functions/fn_00962720.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s495"
  },
  {
   "address": "0x009628E0",
@@ -54727,6 +54835,78 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-b113"
+ },
+ {
+  "address": "0x00962F80",
+  "name": "tick_delta_scale_store_40_3c_44",
+  "kind": "function",
+  "file": "functions/fn_00962f80.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s495"
+ },
+ {
+  "address": "0x00963000",
+  "name": "tick_delta_scale_store_34_30_38",
+  "kind": "function",
+  "file": "functions/fn_00963000.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s495"
+ },
+ {
+  "address": "0x00963080",
+  "name": "handle_register",
+  "kind": "function",
+  "file": "functions/fn_00963080.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s495"
+ },
+ {
+  "address": "0x009630C0",
+  "name": "name_field_set_20",
+  "kind": "function",
+  "file": "functions/fn_009630c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s495"
+ },
+ {
+  "address": "0x009630F0",
+  "name": "name_field_set_60",
+  "kind": "function",
+  "file": "functions/fn_009630f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s495"
+ },
+ {
+  "address": "0x00963220",
+  "name": "name_field_set_40",
+  "kind": "function",
+  "file": "functions/fn_00963220.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s495"
+ },
+ {
+  "address": "0x00963250",
+  "name": "tick_delta_scale_store_3c_40_44",
+  "kind": "function",
+  "file": "functions/fn_00963250.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s495"
+ },
+ {
+  "address": "0x009632D0",
+  "name": "tick_delta_scale_store_30_34_38",
+  "kind": "function",
+  "file": "functions/fn_009632d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s495"
  },
  {
   "address": "0x00963350",
@@ -54754,6 +54934,33 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b222"
+ },
+ {
+  "address": "0x00963760",
+  "name": "mode_select_store",
+  "kind": "function",
+  "file": "functions/fn_00963760.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s495"
+ },
+ {
+  "address": "0x00963820",
+  "name": "access_check_plain",
+  "kind": "function",
+  "file": "functions/fn_00963820.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s495"
+ },
+ {
+  "address": "0x00963870",
+  "name": "access_check_offset",
+  "kind": "function",
+  "file": "functions/fn_00963870.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s495"
  },
  {
   "address": "0x00963AE0",
@@ -125482,6 +125689,15 @@
   "name": "save_settings_match",
   "kind": "function",
   "file": "functions/fn_00df8450.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b586"
+ },
+ {
+  "address": "0x00DF8720",
+  "name": "gallery_record_sync",
+  "kind": "function",
+  "file": "functions/fn_00df8720.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b586"
