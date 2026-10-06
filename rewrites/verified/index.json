@@ -35820,6 +35820,15 @@
   "lane": "r-b632"
  },
  {
+  "address": "0x00629010",
+  "name": "tls_guarded_float_update",
+  "kind": "function",
+  "file": "functions/fn_00629010.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b632"
+ },
+ {
   "address": "0x006298D0",
   "name": "streaming_set_uniform_6arg",
   "kind": "function",
@@ -37480,6 +37489,24 @@
   "name": "sn_task_gather_member_pairs",
   "kind": "function",
   "file": "functions/fn_006641e0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b627"
+ },
+ {
+  "address": "0x00664430",
+  "name": "sn_validate_join_request",
+  "kind": "function",
+  "file": "functions/fn_00664430.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b627"
+ },
+ {
+  "address": "0x00664640",
+  "name": "sn_task_member_update",
+  "kind": "function",
+  "file": "functions/fn_00664640.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b627"
@@ -130768,6 +130795,24 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b333"
+ },
+ {
+  "address": "0x00DCF030",
+  "name": "csv_field_ctor",
+  "kind": "function",
+  "file": "functions/fn_00dcf030.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
+ },
+ {
+  "address": "0x00DCF180",
+  "name": "csv_at_end",
+  "kind": "function",
+  "file": "functions/fn_00dcf180.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s518"
  },
  {
   "address": "0x00DCF950",
