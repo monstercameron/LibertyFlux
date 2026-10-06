@@ -63,6 +63,22 @@ pub fn global<T>(file_va: u32) -> *mut T {
     slot_for(file_va) as *mut T
 }
 
+/// Reads back the global slot for a file VA (cases assert globals the
+/// rewrite must not touch are unchanged).
+///
+/// # Panics
+///
+/// When the VA is not one of the three globals the proof set reads.
+#[must_use]
+pub fn get_global(file_va: u32) -> u32 {
+    match file_va {
+        0x0115_D968 => SCALE_SLOT.load(Ordering::SeqCst),
+        0x0115_D988 => TABLE_SLOT.load(Ordering::SeqCst),
+        0x012F_B214 => POOL_SLOT.load(Ordering::SeqCst),
+        _ => panic!("unexpected global VA {file_va:#x}"),
+    }
+}
+
 /// File VA to relocated address. The proof set reads no relocated
 /// addresses; this exists so the included files link.
 ///
@@ -131,14 +147,46 @@ pub fn take_calls() -> Vec<NumberedCall> {
     std::mem::take(&mut script().numbered)
 }
 
-/// Records a numbered call and pops its answer.
+/// Records a numbered call and pops its answer, then runs the call's
+/// effect hook if one is installed.
 fn record_numbered(id: u32, args: Vec<u32>) -> u32 {
-    let mut s = script();
-    s.numbered.push((id, args));
-    s.answers
-        .get_mut(&id)
-        .and_then(VecDeque::pop_front)
-        .unwrap_or(0)
+    let ans = {
+        let mut s = script();
+        s.numbered.push((id, args.clone()));
+        s.answers
+            .get_mut(&id)
+            .and_then(VecDeque::pop_front)
+            .unwrap_or(0)
+    };
+    if let Some(hook) = hooks().get(&id).copied() {
+        hook(args);
+    }
+    ans
+}
+
+static HOOKS: std::sync::LazyLock<std::sync::Mutex<HashMap<u32, fn(Vec<u32>)>>> =
+    std::sync::LazyLock::new(|| std::sync::Mutex::new(HashMap::new()));
+
+fn hooks() -> std::sync::MutexGuard<'static, HashMap<u32, fn(Vec<u32>)>> {
+    HOOKS.lock().unwrap_or_else(|e| e.into_inner())
+}
+
+/// Installs callee effect hooks, replacing any previous set: after a
+/// stubbed call is recorded, its hook runs with the argument words, so
+/// a case can script memory effects (install-like writes) that the
+/// rewrite then reads back. The lifted side's fake applies the same
+/// effect to the lifted state.
+pub fn set_hooks(spec: &[(u32, fn(Vec<u32>))]) {
+    let mut h = hooks();
+    h.clear();
+    for (id, f) in spec {
+        h.insert(*id, *f);
+    }
+}
+
+/// Clears all effect hooks.
+pub fn clear_hooks() {
+    hooks().clear();
 }
 
 thread_local! {
