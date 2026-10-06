@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Rust in progress: 21 files from lanes (208 unverified rewrites, 510 in review)",
+    "title": "Devlog: hourly review, 08:55 on 6 October",
     "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "The lanes stopped at 08:48. At the stop: 16,886 functions verified after twelve withdrawals, 32.1% of the code by size, and 483 verified routines lifted to portable Rust.",
+      "The regression's first 700 old proofs: 688 hold on the current checker and 12 do not (11 vacuous by today's rule, one with its call log cut short); those twelve are withdrawn and queued for a real contract. 12,084 older proofs remain to be re-run."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Rust in progress: 21 files from lanes (208 unverified rewrites, 510 in review)",
+    "commit": "ce3f5747749f0368ea3a315a9aac88aa462cd499",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 208 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
