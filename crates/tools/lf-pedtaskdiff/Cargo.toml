@@ -1,0 +1,15 @@
+[package]
+name = "lf-pedtaskdiff"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Differential tests: lifted ped_task group against verified 32-bit rewrites"
+publish = false
+
+[dependencies]
+lf-core = { path = "../../lf-core" }
+lf-peds-tasks = { path = "../../lf-peds-tasks" }
+
+[lints]
+workspace = true

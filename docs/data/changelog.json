@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Lift: seven large pedestrian task routines, and what a name group of large functions turned out to be",
+    "commit": null,
+    "summary": "Seven verified routines, 2,500 bytes, are lifted as five methods on three types with their proof in the pipeline. The list they came from, 109 functions chosen by name, held about forty different data shapes, not one structure.",
+    "changes": [
+      "crates/lf-peds-tasks gains a ped_task module: the pose volume with its transform, blend and cone test, a builder that is one generic method in two arities, and a chain cloner that is one generic method proven on two instances. 22 new host tests.",
+      "A new test crate, lf-pedtaskdiff, runs the five methods against the seven tracked verified rewrites on the 32-bit target: 5 differential cases, about 1,020 comparisons, and 9 deliberately wrong lifts caught. The coordinator ran the host and 32-bit tests before committing.",
+      "What the lane learned about choosing groups: functions that share the first two words of their name are not one structure when the functions are large. This list had about forty shapes; the lane lifted the three it could prove end to end and listed 102 routines as not reached, five of which call nothing and are the cheapest next. Small-function groups chosen the same way (the pools, the streaming slots) did form a few structures and gave about thirty routines a lane.",
+      "One operating-system call was noticed in the group (a window query), for the platform crate when its routine is lifted.",
+      "The pipeline's 32-bit job now runs thirteen differential crates. Verified routines with a lifted counterpart proven in the pipeline: 291, holding 33,000 bytes."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 17 files from lanes (220 unverified rewrites, 255 in review)",
     "commit": "a17933234c494644fc4300da52ce87e7067c713c",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
