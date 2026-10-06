@@ -123,6 +123,7 @@ pub const ROWS: &[Row] = &[
         narrows: &[
             "the fetch buffer address is not compared; its length and bytes are",
             "scripted tokens carry no interior NUL",
+            "scripted tokens end inside the fetch buffer: a full buffer over-reads the frame",
         ],
     },
     Row {
@@ -132,6 +133,7 @@ pub const ROWS: &[Row] = &[
         narrows: &[
             "the fetch buffer address is not compared; its length and bytes are",
             "scripted tokens carry no interior NUL",
+            "scripted tokens end inside the fetch buffer: a full buffer over-reads the frame",
             "required=false is unproven: the original loads through an address the checker cannot serve",
         ],
     },
@@ -139,31 +141,46 @@ pub const ROWS: &[Row] = &[
         class: "Tokenizer",
         method: "vf11",
         state: State::Proven,
-        narrows: &["the last-bits answer narrows to the values"],
+        narrows: &[
+            "the last-bits answer narrows to the values",
+            "signalling-NaN answers are quietened by the x87 return: scripts exclude them",
+        ],
     },
     Row {
         class: "Tokenizer",
         method: "vf10",
         state: State::Proven,
-        narrows: &["the last-bits answer narrows to the values"],
+        narrows: &[
+            "the last-bits answer narrows to the values",
+            "signalling-NaN answers are quietened by the x87 return: scripts exclude them",
+        ],
     },
     Row {
         class: "Tokenizer",
         method: "vf9",
         state: State::Proven,
-        narrows: &["the last-bits answer narrows to the values"],
+        narrows: &[
+            "the last-bits answer narrows to the values",
+            "signalling-NaN answers are quietened by the x87 return: scripts exclude them",
+        ],
     },
     Row {
         class: "Tokenizer",
         method: "vf8",
         state: State::Proven,
-        narrows: &["the out-pointer answer narrows to the values"],
+        narrows: &[
+            "the out-pointer answer narrows to the values",
+            "signalling-NaN answers are quietened by the x87 return: scripts exclude them",
+        ],
     },
     Row {
         class: "Tokenizer",
         method: "vf7",
         state: State::Proven,
-        narrows: &["the out-pointer answer narrows to the values"],
+        narrows: &[
+            "the out-pointer answer narrows to the values",
+            "signalling-NaN answers are quietened by the x87 return: scripts exclude them",
+        ],
     },
     Row {
         class: "Tokenizer",
@@ -181,7 +198,10 @@ pub const ROWS: &[Row] = &[
         class: "Tokenizer",
         method: "vf14",
         state: State::Proven,
-        narrows: &["the fetch buffer address is not compared"],
+        narrows: &[
+            "the fetch buffer address is not compared",
+            "signalling-NaN answers are quietened by the x87 return: scripts exclude them",
+        ],
     },
     Row {
         class: "Tokenizer",
@@ -220,6 +240,7 @@ pub const ROWS: &[Row] = &[
         narrows: &[
             "the fetch buffer address is not compared",
             "scripted tokens carry no interior NUL",
+            "scripted tokens end inside the fetch buffer: a full buffer over-reads the frame",
         ],
     },
     Row {
@@ -229,6 +250,8 @@ pub const ROWS: &[Row] = &[
         narrows: &[
             "the fetch buffer address is not compared",
             "scripted tokens carry no interior NUL",
+            "scripted tokens end inside the fetch buffer: a full buffer over-reads the frame",
+            "signalling-NaN answers are quietened by the x87 return: scripts exclude them",
         ],
     },
     Row {
@@ -238,6 +261,7 @@ pub const ROWS: &[Row] = &[
         narrows: &[
             "the fetch buffer address is not compared",
             "scripted tokens carry no interior NUL",
+            "scripted tokens end inside the fetch buffer: a full buffer over-reads the frame",
         ],
     },
     Row {
@@ -247,6 +271,7 @@ pub const ROWS: &[Row] = &[
         narrows: &[
             "the fetch buffer address is not compared",
             "scripted tokens carry no interior NUL",
+            "scripted tokens end inside the fetch buffer: a full buffer over-reads the frame",
         ],
     },
     Row {
@@ -256,6 +281,7 @@ pub const ROWS: &[Row] = &[
         narrows: &[
             "the fetch buffer address is not compared",
             "scripted tokens carry no interior NUL",
+            "scripted tokens end inside the fetch buffer: a full buffer over-reads the frame",
         ],
     },
     Row {
@@ -265,6 +291,7 @@ pub const ROWS: &[Row] = &[
         narrows: &[
             "the fetch buffer address is not compared",
             "scripted tokens carry no interior NUL",
+            "scripted tokens end inside the fetch buffer: a full buffer over-reads the frame",
         ],
     },
     Row {
@@ -274,6 +301,7 @@ pub const ROWS: &[Row] = &[
         narrows: &[
             "the fetch buffer address is not compared",
             "scripted tokens carry no interior NUL",
+            "scripted tokens end inside the fetch buffer: a full buffer over-reads the frame",
         ],
     },
     // Tokenizer writes.

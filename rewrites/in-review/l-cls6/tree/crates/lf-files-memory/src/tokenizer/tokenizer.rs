@@ -102,7 +102,8 @@ pub trait TokenWorld {
     fn parse_int(&mut self, text: &[u8]) -> u32;
     /// Parses a token as a double; answers the parser's answer.
     fn parse_float(&mut self, text: &[u8]) -> f64;
-    /// Reads one float with a flag.
+    /// Reads one float with a flag, as the x87 return delivers it
+    /// (a signalling NaN would arrive quietened; scripts exclude them).
     fn read_float(&mut self, flag: u32) -> f32;
     /// The flagged integer slot; answers its answer.
     fn read_flagged_int(&mut self, flag: u32) -> u32;
