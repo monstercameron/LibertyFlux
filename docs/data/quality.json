@@ -3,11 +3,11 @@
  "sources": {
   "verified": {
    "path": "rewrites/verified/index.json",
-   "as_of": "2026-10-06 04:19 UTC"
+   "as_of": "2026-10-06 04:24 UTC"
   },
   "unverified": {
    "path": "rewrites/unverified/index.json",
-   "as_of": "2026-10-06 04:19 UTC"
+   "as_of": "2026-10-06 04:25 UTC"
   },
   "issues": {
    "path": "rewrites/review/issues.json",
@@ -15,9 +15,9 @@
   }
  },
  "tree": {
-  "verified": 16227,
+  "verified": 16236,
   "by_kind": {
-   "function": 13607,
+   "function": 13616,
    "native": 2620
   },
   "by_checker": {
@@ -26,13 +26,13 @@
    "version 3": 2025,
    "version 4": 4625,
    "version 5": 3452,
-   "version 6": 1499
+   "version 6": 1508
   },
-  "modern_checker": 16208,
+  "modern_checker": 16217,
   "lanes": 940,
   "trials": {
-   "with_count": 16225,
-   "at_least_1000": 16162,
+   "with_count": 16234,
+   "at_least_1000": 16171,
    "least": 0
   },
   "proofs": {
@@ -41,15 +41,15 @@
    "narrowed": 0,
    "mutant_caught": 0
   },
-  "unverified": 232,
+  "unverified": 269,
   "unverified_by_outcome": {
-   "not yet run": 99,
+   "not yet run": 130,
    "deferred": 84,
-   "not_reached": 48,
+   "not_reached": 54,
    "failed_v3": 1
   },
   "unverified_by_reason": {
-   "none recorded": 148,
+   "none recorded": 185,
    "other": 47,
    "checker_gap": 18,
    "needs_encrypted_code": 11,
