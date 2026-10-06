@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Lift: five more pedestrian task methods, completing five task classes",
+    "title": "Devlog: A constructor that returns to address zero, and a NaN trap in float compares",
     "commit": null,
+    "summary": "Findings from the r-s518 lane.",
+    "changes": [
+      "New devlog entry: A constructor that returns to address zero, and a NaN trap in float compares.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Lift: five more pedestrian task methods, completing five task classes",
+    "commit": "76f852ae3eb19e2868c61cdbfdfc0bfee6ff0b74",
     "summary": "The lifted pedestrian task module grows from 12 proven methods to 17, and every method with behaviour in five task classes is now portable Rust with its proof in the pipeline.",
     "changes": [
       "crates/lf-peds-tasks gains the flee task's copy, its reaction update and its event handling, and the goto task's constructor and target picker: 627 lines, no unsafe code, no operating-system calls (the clock travels as a word, the random seed and the managers as values). Host tests go from 47 to 73.",
