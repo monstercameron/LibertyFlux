@@ -46,12 +46,12 @@ lf_checker_rt::export!(cdecl, rw_005B2EE0() -> u32 {
         if shared != 0 {
             lf_checker_rt::callee_thiscall!(SHUTDOWN, u32, shared);
             let slot = lf_checker_rt::tls_slot(0);
-            let mgr = ((slot as *const u32).read() + 8) as *const u32;
-            let vtable = (*mgr) as *const u32;
-            let entry = (*vtable) as *const u32;
+            let mgr = (slot.wrapping_add(8) as *const u32).read();
+            let vtable = (mgr as *const u32).read();
+            let entry = (vtable.wrapping_add(0xC) as *const u32).read();
             let free: extern "thiscall" fn(u32, u32) -> u32 =
-                core::mem::transmute(*((entry as u32).wrapping_add(0xC) as *const u32) as usize);
-            last = free(*mgr, shared);
+                core::mem::transmute(entry as usize);
+            last = free(mgr, shared);
             lf_checker_rt::global::<u32>(SHARED).write(0);
         }
         last

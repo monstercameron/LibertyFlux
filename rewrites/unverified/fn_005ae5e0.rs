@@ -4,9 +4,10 @@
 ///
 /// Compares the cache word against the live config word; when they match,
 /// nothing is queried. Otherwise the sensor callee is asked (kind 0x1d) for a
-/// float through a stack slot, the float is truncated toward zero exactly
-/// like `cvttss2si` (NaN, infinities and out-of-range magnitudes all yield
-/// `i32::MIN`, never saturation), and the notify callee receives the
+/// float through a stack slot (the callee preserves EAX: the original keeps
+/// using it as the slot pointer after the call), the float is truncated
+/// toward zero exactly like `cvttss2si` (NaN, infinities and out-of-range
+/// magnitudes all yield `i32::MIN`, never saturation), and the notify callee receives the
 /// truncated value with (0, 0xff) and the notify object in ECX. Either way
 /// the cache ends holding the live value, except that a live value of -1
 /// caches as 0xfffffffe. Returns the cached value.

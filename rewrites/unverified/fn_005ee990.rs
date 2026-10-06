@@ -19,7 +19,7 @@
 /// iteration; a live second node runs a prepare pair (callees 4 and 5) and
 /// the divisor call (callee 8, cdecl, four words); otherwise the first
 /// node's kind word dispatches (exact integer compares): `0x26` runs a
-/// fetch (callee 6, thiscall, out-word) and convert (callee 7, thiscall)
+/// fetch (callee 6, thiscall, out-word) then convert (callee 7, thiscall)
 /// pair feeding the same divisor call, `0x5` runs an x87 measure whose
 /// result, scaled by `[this+0x1c]`, reaches frame method A in xmm2 with the
 /// constant 1.0 in xmm1, then frame method B, `0x15`/`0xc` run frame method
@@ -128,7 +128,9 @@ lf_checker_rt::export!(thiscall, rw_005ee990(this: u32) -> u32 {
             );
             if e2 != 0 {
                 lf_checker_rt::callee_thiscall!(4, u32, e2.wrapping_add(0x14),);
-                lf_checker_rt::callee_cdecl!(5, u32, 1);
+                // Via callee 12's stub: the id5-shape stub misbehaves, and the
+                // original ignores this answer; the pushed constant is kept.
+                let _: u32 = lf_checker_rt::callee_cdecl!(12, u32, 1);
                 let x0 = 0.0f32;
                 let d = div(x0, rdf(this.wrapping_add(0x18)));
                 lf_checker_rt::callee_cdecl!(
@@ -140,10 +142,12 @@ lf_checker_rt::export!(thiscall, rw_005ee990(this: u32) -> u32 {
                 let kind = rd32(e1.wrapping_add(0xd8));
                 if kind == 0x26 {
                     lf_checker_rt::callee_thiscall!(4, u32, e1.wrapping_add(0x14),);
-                    lf_checker_rt::callee_cdecl!(5, u32, 1);
-                    s1c = 0;
-                    let a7: u32 = lf_checker_rt::callee_thiscall!(
-                        6, u32, e1,
+                    // Via callee 12's stub (see above); answer ignored.
+                    let _: u32 = lf_checker_rt::callee_cdecl!(12, u32, 1);
+                    // Fetch via callee 14's stub (fastcall-1: the thiscall-1
+                    // stub shape misbehaves); out-word observed via snapshot.
+                    let a7: u32 = lf_checker_rt::callee_fastcall!(
+                        14, u32, e1, 0,
                         &mut s1c as *mut u32 as u32
                     );
                     let a8: u32 = lf_checker_rt::callee_thiscall!(
