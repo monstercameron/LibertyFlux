@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Lift: the audio slot routines, 15 methods in portable Rust",
+    "title": "Rewrites: 1 more functions pass the checker (16937 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "1 rewrites added under rewrites/verified: 0 script native handlers and 1 other functions.",
+      "The tree now holds 16937 rewrites, 16918 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Lift: the audio slot routines, 15 methods in portable Rust",
+    "commit": "76f342b1fa0b4ae96fba696026bc1bd9beab3b90",
     "summary": "15 verified audio routines outside any class are lifted as 15 methods on 8 types: the banked voice nodes reached through a row table, an 800-slot voice list, and several small pools. Their proof runs in the pipeline.",
     "changes": [
       "crates/lf-audio gains an audio_slot module with 25 new host tests and no unsafe code. The lane excluded 35 routines of the group by a hash of their bodies: each is one binding or initialising routine with no behaviour of its own, repeated. Three large routines are deferred.",
