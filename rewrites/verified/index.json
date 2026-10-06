@@ -116685,6 +116685,15 @@
   "lane": "r-b629"
  },
  {
+  "address": "0x00C68AE0",
+  "name": "match_key_then_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00c68ae0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b629"
+ },
+ {
   "address": "0x00C68C50",
   "name": "subarray_probe_negated",
   "kind": "function",
@@ -116692,6 +116701,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s166"
+ },
+ {
+  "address": "0x00C68CD0",
+  "name": "sentinel_chain_or_table_scan",
+  "kind": "function",
+  "file": "functions/fn_00c68cd0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b629"
  },
  {
   "address": "0x00C68FC0",
