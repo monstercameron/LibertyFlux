@@ -1,7 +1,10 @@
 //! Shared differential-test support: generator, edge values, object blobs.
 //!
-//! Included by the diff test target (`#[path]`). 32-bit only: addresses
-//! are real.
+//! Included by each diff test target (`#[path]`), so every binary gets
+//! its own copy. 32-bit only: addresses are real.
+
+// Helpers are shared across binaries; each binary uses its own subset.
+#![allow(dead_code)]
 
 /// Small deterministic generator (splitmix64).
 pub struct Rng(pub u64);

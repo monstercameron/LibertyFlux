@@ -37,6 +37,21 @@ pub struct Task;
 #[derive(Debug)]
 pub struct EventPayload;
 
+/// An event's identity (its address on the 32-bit side).
+///
+/// Opaque: the child slot answers the event itself when there is
+/// nothing to convert, and the tagged slot folds the identity's bits
+/// into its staged request word.
+#[derive(Debug)]
+pub struct EventRef;
+
+/// The child word an event carries into the child slot.
+///
+/// Opaque: the factory interprets it, the handler only tests it for
+/// null and carries it through.
+#[derive(Debug)]
+pub struct EventChild;
+
 /// Event kind that clears the pending task wherever it is tested: the
 /// type-clear slot, the payload-gated reset slot and the forward-or-clear
 /// slot all treat this kind as "drop the task".
@@ -53,6 +68,9 @@ pub const FIXED_REQUEST_A: u32 = 0x100;
 
 /// Fixed request code the second fixed-request slot converts.
 pub const FIXED_REQUEST_B: u32 = 0x200;
+
+/// The kind the type-gated slot converts through the factory.
+pub const KIND_GATED_CONVERT: u32 = 0x25C;
 
 /// What the handler calls back on itself: its own dispatch slot.
 ///
@@ -203,6 +221,112 @@ impl EventHandler {
         self.pending = answer;
         answer
     }
+
+    /// Type-gated slot: clears, ignores or converts by kind.
+    ///
+    /// Restates the verified slot that reads the event's kind word:
+    /// [`KIND_CLEAR`] clears the task slot, any kind other than
+    /// [`KIND_GATED_CONVERT`] leaves it alone, and the convert kind
+    /// converts through the factory into the task slot (clearing it
+    /// when no handler answers). Answers the kind word on the first
+    /// two paths and the conversion on the third.
+    pub fn answer_gated_type(
+        &mut self,
+        kind: u32,
+        factory: &mut impl TaskFactory,
+        state: &FactoryState,
+    ) -> GatedAnswer {
+        if kind == KIND_CLEAR {
+            self.pending = None;
+            return GatedAnswer::Cleared;
+        }
+        if kind != KIND_GATED_CONVERT {
+            return GatedAnswer::Ignored;
+        }
+        let Some(handle) = factory.lookup(state.manager()) else {
+            self.pending = None;
+            return GatedAnswer::Converted(None);
+        };
+        let answer = factory.convert(handle, ConvertRequest::Plain);
+        self.pending = answer;
+        GatedAnswer::Converted(answer)
+    }
+
+    /// Child slot: passes the event through or converts its child.
+    ///
+    /// Restates the verified slot that answers the event itself when
+    /// its child word is null and otherwise converts the child through
+    /// the factory into the task slot (clearing the slot when no
+    /// handler answers). The task slot is untouched on the
+    /// pass-through path.
+    pub fn answer_child(
+        &mut self,
+        event: Handle32<EventRef>,
+        child: Option<Handle32<EventChild>>,
+        factory: &mut impl TaskFactory,
+        state: &FactoryState,
+    ) -> FactoryAnswer {
+        let Some(child) = child else {
+            return FactoryAnswer::Passthrough(event);
+        };
+        let Some(handle) = factory.lookup(state.manager()) else {
+            self.pending = None;
+            return FactoryAnswer::Converted(None);
+        };
+        let answer = factory.convert(handle, ConvertRequest::Child(child));
+        self.pending = answer;
+        FactoryAnswer::Converted(answer)
+    }
+
+    /// Tagged slot: converts an id with a tag-staged word.
+    ///
+    /// Restates the verified slot that reads the event's id word and
+    /// tag byte, stages a request word from the event identity with
+    /// its low byte replaced by the tag, and converts the pair through
+    /// the factory into the task slot (clearing the slot when no
+    /// handler answers). Answers the conversion either way.
+    pub fn answer_tagged(
+        &mut self,
+        id: u32,
+        tag: u8,
+        event: Handle32<EventRef>,
+        factory: &mut impl TaskFactory,
+        state: &FactoryState,
+    ) -> Option<Handle32<Task>> {
+        let Some(handle) = factory.lookup(state.manager()) else {
+            self.pending = None;
+            return None;
+        };
+        let staged = (event.get() & 0xFFFF_FF00) | u32::from(tag);
+        let answer = factory.convert(handle, ConvertRequest::Tagged { id, staged });
+        self.pending = answer;
+        answer
+    }
+}
+
+/// How the child slot answered.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FactoryAnswer {
+    /// The child word was null: the answer is the event itself and the
+    /// task slot is untouched.
+    Passthrough(Handle32<EventRef>),
+    /// The child was converted: the answer is the conversion, also
+    /// stored in the task slot.
+    Converted(Option<Handle32<Task>>),
+}
+
+/// How the type-gated slot answered.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GatedAnswer {
+    /// The kind was [`KIND_CLEAR`](crate::event_handler::KIND_CLEAR):
+    /// the task slot was cleared and the answer is the kind word.
+    Cleared,
+    /// Any other non-converted kind: the task slot is untouched and
+    /// the answer is the kind word.
+    Ignored,
+    /// The convert kind: the answer is the conversion, also stored in
+    /// the task slot.
+    Converted(Option<Handle32<Task>>),
 }
 
 /// The shared task factory behind the manager word (opaque identity).
@@ -245,6 +369,19 @@ impl FactoryState {
 pub enum ConvertRequest {
     /// Convert a fixed request code.
     Code(u32),
+    /// Convert with no request word (the gated slot's conversion).
+    Plain,
+    /// Convert an event's child word.
+    Child(Handle32<EventChild>),
+    /// Convert an id with a staged word (the tagged slot's conversion).
+    /// The staged word is the event identity with its low byte replaced
+    /// by the tag; the target call carries a zero pad word after it.
+    Tagged {
+        /// The event id word.
+        id: u32,
+        /// The staged word: identity bits plus tag byte.
+        staged: u32,
+    },
 }
 
 /// What the handler asks of the task factory: the factory-side

@@ -66,48 +66,50 @@ pub const ROWS: &[Row] = &[
             "third destructor variant through 2 callee slots and a class-table global: Drop covers it",
         ],
     },
-    // The four smallest factory-pair slots plus the tagged one: each reads
-    // the shared manager global, asks it for a handler, and converts one
-    // request through it. They share one shape and lift together once the
-    // factory trait and its state struct exist.
+    // The factory-pair slots: each reads the shared manager word, asks
+    // it for a handler, and converts one request through it. The manager
+    // travels as FactoryState, the two calls as the TaskFactory trait;
+    // the proof scripts both stubs and compares slot and arguments in
+    // order.
     Row {
         class: "EventHandler",
         method: "vf14",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "tagged slot through the factory pair (manager global, converter with a staged word): needs the factory trait, not modelled yet",
+            "the staged word folds the event address's bits: the lift computes it from the event cookie, which is the address on the 32-bit side",
+            "the conversion's trailing zero pad word is pinned by the proof, not modelled in the request",
         ],
     },
     Row {
         class: "EventHandler",
         method: "vf54",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "child-pointer slot through the factory pair: needs the factory trait, not modelled yet",
+            "the pass-through answer (the event itself) and the conversion share one answer enum, mapped to words by the proof",
         ],
     },
     Row {
         class: "EventHandler",
         method: "vf55",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "type-gated slot through the factory pair: needs the factory trait, not modelled yet",
+            "the kind-word answers and the conversion share one answer enum, mapped to words by the proof",
         ],
     },
     Row {
         class: "EventHandler",
         method: "vf67",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "fixed-request slot (one constant) through the factory pair: needs the factory trait, not modelled yet",
+            "shares its lift with vf68 (one method, one fixed code each): the proof pins each slot's own code",
         ],
     },
     Row {
         class: "EventHandler",
         method: "vf68",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "fixed-request slot (one constant) through the factory pair: needs the factory trait, not modelled yet",
+            "shares its lift with vf67 (one method, one fixed code each): the proof pins each slot's own code",
         ],
     },
     // Proven: the five call-free slots with behaviour in them.
