@@ -18,6 +18,26 @@ const BASE_SIZE: u32 = 0x18;
 /// Bytes per key segment past its coefficients.
 const SEGMENT_TAIL: u32 = 0x0C;
 
+/// Adds in the original's operand order: a not-a-number payload can tell
+/// the operands apart, so the order is pinned exactly like the verified
+/// rewrites pin it.
+#[inline(always)]
+fn fadd(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) + core::hint::black_box(b)
+}
+
+/// Multiplies in the original's operand order (see [`fadd`]).
+#[inline(always)]
+fn fmul(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) * core::hint::black_box(b)
+}
+
+/// Subtracts in the original's operand order (see [`fadd`]).
+#[inline(always)]
+fn fsub(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) - core::hint::black_box(b)
+}
+
 /// One curve key: the key position, the segment order, and the `order +
 /// 1` coefficients of its polynomial in Horner order (highest power
 /// first).
@@ -138,21 +158,21 @@ impl CurveFloat {
             return c0;
         }
         if order == 1 {
-            return c0 * t + coeffs[1];
+            return fadd(fmul(c0, t), coeffs[1]);
         }
         if order == 2 {
-            let s1 = c0 * t + coeffs[1];
-            return s1 * t + coeffs[2];
+            let s1 = fadd(fmul(c0, t), coeffs[1]);
+            return fadd(fmul(s1, t), coeffs[2]);
         }
         if order == 3 {
-            let s1 = c0 * t + coeffs[1];
-            let s2 = s1 * t + coeffs[2];
-            return s2 * t + coeffs[3];
+            let s1 = fadd(fmul(c0, t), coeffs[1]);
+            let s2 = fadd(fmul(s1, t), coeffs[2]);
+            return fadd(fmul(s2, t), coeffs[3]);
         }
         let mut s = c0;
         for k in 1..=order {
-            s = s * t;
-            s += coeffs[k as usize];
+            s = fmul(s, t);
+            s = fadd(s, coeffs[k as usize]);
         }
         s
     }
@@ -197,38 +217,38 @@ impl CurveFloat {
         }
         if let Some(fi) = found {
             let seg = &self.keys[fi];
-            let tl = t - ebp as f32;
+            let tl = fsub(t, ebp as f32);
             let r = Self::eval_segment(&seg.coeff, u32::from(seg.order), tl);
-            return self.scale * r + self.bias;
+            return fadd(fmul(self.scale, r), self.bias);
         }
         let last = &self.keys[(count - 1) as usize];
         let lk = f32::from(last.key);
         if !(lk > t) {
             t = lk;
         }
-        let tl = t - ebp as f32;
+        let tl = fsub(t, ebp as f32);
         let c = &last.coeff;
         let r = match u32::from(last.order) {
             0 => c[0],
-            1 => tl * c[0] + c[1],
+            1 => fadd(fmul(tl, c[0]), c[1]),
             2 => {
-                let s1 = tl * c[0] + c[1];
-                s1 * tl + c[2]
+                let s1 = fadd(fmul(tl, c[0]), c[1]);
+                fadd(fmul(s1, tl), c[2])
             }
             3 => {
-                let s1 = tl * c[0] + c[1];
-                let s2 = s1 * tl + c[2];
-                s2 * tl + c[3]
+                let s1 = fadd(fmul(tl, c[0]), c[1]);
+                let s2 = fadd(fmul(s1, tl), c[2]);
+                fadd(fmul(s2, tl), c[3])
             }
             typ => {
                 let mut s = c[0];
                 for k in 1..=typ {
-                    s = s * tl;
-                    s += c[k as usize];
+                    s = fmul(s, tl);
+                    s = fadd(s, c[k as usize]);
                 }
                 s
             }
         };
-        self.scale * r + self.bias
+        fadd(fmul(self.scale, r), self.bias)
     }
 }

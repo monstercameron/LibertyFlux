@@ -13,6 +13,32 @@ use super::frame::ONE;
 /// Matches the 32-bit header: the key count is a 16-bit word.
 const MAX_KEYS: usize = 0xFFFF;
 
+/// Adds in the original's operand order: a not-a-number payload can tell
+/// the operands apart, so the order is pinned exactly like the verified
+/// rewrites pin it.
+#[inline(always)]
+fn fadd(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) + core::hint::black_box(b)
+}
+
+/// Multiplies in the original's operand order (see [`fadd`]).
+#[inline(always)]
+fn fmul(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) * core::hint::black_box(b)
+}
+
+/// Subtracts in the original's operand order (see [`fadd`]).
+#[inline(always)]
+fn fsub(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) - core::hint::black_box(b)
+}
+
+/// Divides in the original's operand order (see [`fadd`]).
+#[inline(always)]
+fn fdiv(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) / core::hint::black_box(b)
+}
+
 /// One quaternion per frame, blended between keys.
 #[derive(Debug, Clone, PartialEq, Default)]
 pub struct RawQuat {
@@ -52,23 +78,26 @@ impl RawQuat {
     /// When `idx + 1` is past the last key.
     #[must_use]
     pub fn lerp_normalized(&self, idx: u32, t: f32) -> Quat {
-        let s = ONE - t;
+        let s = fsub(ONE, t);
         let lo = self.keys[idx as usize];
         let hi = self.keys[(idx as usize).wrapping_add(1)];
-        let x = lo.x * s + hi.x * t;
-        let y = lo.y * s + hi.y * t;
-        let z = lo.z * s + hi.z * t;
-        let w = lo.w * s + hi.w * t;
-        let n2 = (x * x + y * y) + z * z + w * w;
+        let x = fadd(fmul(lo.x, s), fmul(hi.x, t));
+        let y = fadd(fmul(lo.y, s), fmul(hi.y, t));
+        let z = fadd(fmul(lo.z, s), fmul(hi.z, t));
+        let w = fadd(fmul(lo.w, s), fmul(hi.w, t));
+        let n2 = fadd(
+            fadd(fadd(fmul(x, x), fmul(y, y)), fmul(z, z)),
+            fmul(w, w),
+        );
         if n2 == 0.0 {
             return Quat { x, y, z, w };
         }
-        let inv = ONE / n2.sqrt();
+        let inv = fdiv(ONE, n2.sqrt());
         Quat {
-            x: x * inv,
-            y: y * inv,
-            z: z * inv,
-            w: w * inv,
+            x: fmul(x, inv),
+            y: fmul(y, inv),
+            z: fmul(z, inv),
+            w: fmul(w, inv),
         }
     }
 }

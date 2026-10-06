@@ -684,9 +684,9 @@ mod x86 {
             let edx0 = ans2.wrapping_mul(2) >> 2;
             let edx1 = (edx0 >> 11) + u32::from(edx0 & 0x7ff != 0);
             let pred_len = (edx1.wrapping_mul(3) as usize) + 3;
-            let mut pred = Image::random(pred_len.max(8), &mut rng);
+            let pred = Image::random(pred_len.max(8), &mut rng);
             fx.obj.w32(LEA_BASE, pred.addr());
-            let mut pred_bytes = pred.buf.to_vec();
+            let pred_bytes = pred.buf.to_vec();
             let synth = a0 != 0 && flags & 0x10 != 0;
             let before = fx.obj.buf.clone();
             let mut v = fx.lift(
