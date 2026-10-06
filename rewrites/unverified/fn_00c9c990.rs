@@ -24,9 +24,10 @@
 /// reciprocal square root, skipped when the squared length is exactly zero),
 /// and derive two more angles through the double helper and the single-float
 /// arc helper. Feed three triples to the pose solver, run the finalize helper,
-/// then clamp each driven angle into its [low, high] window from the category
-/// row (or flag overrides), setting status bits 0x10/0x04 and clearing 0x08/0x01.
-/// Returns the finalize helper's status word.
+/// then clamp the angles into their [low, high] windows from the category
+/// row (or flag overrides): [a9] against the first window, [a8] against the
+/// second (crossed relative to the approach step), setting status bits
+/// 0x10/0x04 and clearing 0x08/0x01. Returns the finalize helper's status word.
 ///
 /// Float comparisons follow `comiss` exactly: every ordered comparison is
 /// written so NaN takes the fall-through path the original's jump takes
@@ -520,27 +521,30 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
         lf_checker_rt::callee_thiscall!(11, u32, cbuf.as_mut_ptr() as u32, cb3.as_mut_ptr() as u32);
         lf_checker_rt::callee_thiscall!(12, u32, r8, r8, cbuf.as_mut_ptr() as u32, a4);
 
-        // Block 13: clamp each driven angle into its window.
-        let a8c = rdf(a8);
-        if a8c > b48 {
-            wrf(a8, b48);
+        // Block 13: clamp the angles into their windows. Note the crossing:
+        // the first clamp drives [a9] against the b48/b60 window, the second
+        // drives [a8] against b28/b38 (the approach step paired them the
+        // other way round).
+        let a9c = rdf(a9);
+        if a9c > b48 {
+            wrf(a9, b48);
             let st = rd32(this.wrapping_add(THIS_STATUS));
             (this.wrapping_add(THIS_STATUS) as *mut u32)
                 .write_unaligned((st & !8) | 0x10);
-        } else if b60 > a8c {
-            wrf(a8, b60);
+        } else if b60 > a9c {
+            wrf(a9, b60);
             let st = rd32(this.wrapping_add(THIS_STATUS));
             (this.wrapping_add(THIS_STATUS) as *mut u32)
                 .write_unaligned((st & !8) | 0x10);
         }
-        let a9c = rdf(a9);
-        if a9c > b28 {
-            wrf(a9, b28);
+        let a8c = rdf(a8);
+        if a8c > b28 {
+            wrf(a8, b28);
             let st = rd32(this.wrapping_add(THIS_STATUS));
             (this.wrapping_add(THIS_STATUS) as *mut u32)
                 .write_unaligned((st & !1) | 4);
-        } else if b38 > a9c {
-            wrf(a9, b38);
+        } else if b38 > a8c {
+            wrf(a8, b38);
             let st = rd32(this.wrapping_add(THIS_STATUS));
             (this.wrapping_add(THIS_STATUS) as *mut u32)
                 .write_unaligned((st & !1) | 4);

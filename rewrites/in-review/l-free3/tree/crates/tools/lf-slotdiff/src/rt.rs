@@ -2,10 +2,11 @@
 //!
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!`, the `callee_*` macros, `callee_addr`, `global`,
-//! `relocated`). The proof set relocates four file VAs: the data-slot
+//! `relocated`). The proof set relocates five file VAs: the data-slot
 //! region base, the kind-flag region base (11 bytes into the same
-//! region), the slot-index kind table base, and one cell holding the
-//! entry-array base; three thiscall callee slots (the location
+//! region), the slot-index kind table base, one cell holding the
+//! entry-array base, and the slot in-use row base; three thiscall
+//! callee slots (the location
 //! routine's address callee, the adoption hook and marker) are replanted
 //! per test. Each global is one atomic
 //! slot; the atomics give the slots stable addresses, and the
@@ -28,12 +29,14 @@ static KIND_FLAG_SLOT: AtomicU32 = AtomicU32::new(0);
 static KIND_TABLE_SLOT: AtomicU32 = AtomicU32::new(0);
 /// The cell holding the entry-array base (file VA `0x012fb3a8`).
 static TABLE_BASE_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The slot in-use row base (file VA `0x0116d398`).
+static USE_ROW_SLOT: AtomicU32 = AtomicU32::new(0);
 
 /// The relocated slot for a file VA.
 ///
 /// # Panics
 ///
-/// When the address is not one of the four VAs the proof set relocates:
+/// When the address is not one of the five VAs the proof set relocates:
 /// a case bug, never a guess.
 fn reloc_slot(file_va: u32) -> &'static AtomicU32 {
     match file_va {
@@ -41,6 +44,7 @@ fn reloc_slot(file_va: u32) -> &'static AtomicU32 {
         0x012f_b457 => &KIND_FLAG_SLOT,
         0x0130_53a8 => &KIND_TABLE_SLOT,
         0x012f_b3a8 => &TABLE_BASE_SLOT,
+        0x0116_d398 => &USE_ROW_SLOT,
         _ => panic!("unexpected relocated VA {file_va:#x}"),
     }
 }
@@ -54,7 +58,7 @@ pub fn set_relocated(file_va: u32, addr: u32) {
 ///
 /// # Panics
 ///
-/// When the address is not one of the four VAs the proof set relocates.
+/// When the address is not one of the five VAs the proof set relocates.
 #[must_use]
 pub fn relocated(file_va: u32) -> u32 {
     reloc_slot(file_va).load(Ordering::Relaxed)

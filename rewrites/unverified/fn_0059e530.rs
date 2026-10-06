@@ -58,6 +58,16 @@ lf_checker_rt::export!(thiscall, rw_0059E530(ecx_in: u32) -> u32 {
         unsafe fn rd32(a: u32) -> u32 {
             unsafe { (a as *const u32).read_unaligned() }
         }
+        /// Volatile twin of rd32: same value, same fault, but the compiler
+        /// may not delete or reorder the read. Used only for the sample
+        /// loop, whose sum the original discards (see _dead below): with a
+        /// plain read LLVM proved the sum dead, deleted the reads and then
+        /// the whole 4G-iteration loop, so the rewrite returned while the
+        /// original faulted on overrun rows.
+        #[inline(always)]
+        unsafe fn rd32v(a: u32) -> u32 {
+            unsafe { (a as *const u32).read_volatile() }
+        }
         #[inline(always)]
         unsafe fn wr32(a: u32, v: u32) {
             unsafe { (a as *mut u32).write_unaligned(v) }
@@ -104,8 +114,11 @@ lf_checker_rt::export!(thiscall, rw_0059E530(ecx_in: u32) -> u32 {
         let w14: u32 = sysinfo[5];
         let mut out1 = [0u32; 2];
         let mut out2 = [0u32; 3];
+        // id2 takes (w14, out2, scratch): arg0 reloads sysinfo[5] from the
+        // frame, arg2 pushes whatever id1 left in ecx, which is id1's
+        // per-side step index, 0 for the single call of each trial.
         let _: u32 = lf_checker_rt::callee_thiscall!(2, u32, out1.as_mut_ptr() as u32,
-            ecx_in, out2.as_mut_ptr() as u32, w14);
+            w14, out2.as_mut_ptr() as u32, 0);
         let o0: u32 = out1[0];
         let o4: u32 = out1[1];
         let mut slot20: u32 = 0;
@@ -120,7 +133,7 @@ lf_checker_rt::export!(thiscall, rw_0059E530(ecx_in: u32) -> u32 {
                 loop {
                     let bit = 1u32.wrapping_shl(cc);
                     if (w10 & bit) != 0 {
-                        edsum = edsum.wrapping_add(rd32(esi_p));
+                        edsum = edsum.wrapping_add(rd32v(esi_p));
                     }
                     cc = cc.wrapping_add(1);
                     esi_p = esi_p.wrapping_add(0x18);
@@ -271,6 +284,9 @@ lf_checker_rt::export!(thiscall, rw_0059E530(ecx_in: u32) -> u32 {
                 unsafe { core::mem::transmute(sl8 as usize) };
             let _: u32 = f8(ec8, eax3);
         }
+        // The original keeps the clamped sample in its frame, loads it once
+        // into edx after the id8 call, and never uses it (edx dies in the
+        // next call): the value is unobservable, only the loop's fault is.
         let _dead: u32 = slot20;
         let _: u32 = lf_checker_rt::callee_cdecl!(9, u32, 0);
         let vmode: u32 = g32(G_MODE);

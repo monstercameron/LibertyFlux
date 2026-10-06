@@ -18,6 +18,7 @@ mod fixed;
 mod flags;
 mod registry;
 mod resets;
+mod search;
 mod table;
 
 pub use adopt::AdoptHook;
@@ -55,4 +56,9 @@ pub use resets::LANES;
 pub use resets::LaneTable;
 pub use resets::ResetSlot;
 pub use resets::SLOT_LEN;
+pub use search::RecordSet;
+pub use search::SLOT_HEADER_LEN;
+pub use search::SlotHeader;
+pub use search::SlotLiveness;
+pub use search::WordTable;
 pub use table::SlotTable;

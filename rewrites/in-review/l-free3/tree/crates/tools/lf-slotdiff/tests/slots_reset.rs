@@ -19,15 +19,15 @@ mod x86 {
     use lf_streaming::slots::ControlBlock;
     use lf_streaming::slots::FlagBank;
     use lf_streaming::slots::IdArray;
-    use lf_streaming::slots::LANES;
-    use lf_streaming::slots::LANE_TABLE_LEN;
     use lf_streaming::slots::LaneTable;
     use lf_streaming::slots::ResetSlot;
+    use lf_streaming::slots::LANES;
+    use lf_streaming::slots::LANE_TABLE_LEN;
     use lf_streaming::slots::SLOT_LEN;
 
     #[path = "../support/mod.rs"]
     mod support;
-    use support::{Rng, addr, get_u32, lock, put_u32};
+    use support::{addr, get_u32, lock, put_u32, Rng};
 
     /// Length word offset of the id array.
     const ID_LEN_OFF: usize = 0x80;
@@ -43,9 +43,9 @@ mod x86 {
         use lf_streaming::slots::ControlBlock;
         use lf_streaming::slots::FlagBank;
         use lf_streaming::slots::IdArray;
-        use lf_streaming::slots::LANES;
         use lf_streaming::slots::LaneTable;
         use lf_streaming::slots::ResetSlot;
+        use lf_streaming::slots::LANES;
 
         /// Keeps the top four flag bits instead of three.
         pub fn reset_keep_f0(slot: &mut ResetSlot) {
@@ -195,7 +195,10 @@ mod x86 {
                 if len > n as i32 {
                     continue;
                 }
-                let array = IdArray { ids: ids.clone(), len };
+                let array = IdArray {
+                    ids: ids.clone(),
+                    len,
+                };
                 let id_room = if n == 0 { 4 } else { n * 4 };
                 let mut full = vec![0u8; ID_LEN_OFF + 4 + id_room].into_boxed_slice();
                 rng.bytes(&mut full);
@@ -266,7 +269,11 @@ mod x86 {
                 rng.bytes(&mut entry);
                 entries.push(entry);
             }
-            let block = ControlBlock { flags_a: flags_a.clone(), flags_b: flags_b.clone(), entries: entries.clone() };
+            let block = ControlBlock {
+                flags_a: flags_a.clone(),
+                flags_b: flags_b.clone(),
+                entries: entries.clone(),
+            };
             let mut obj = vec![0u8; CTRL_ENTRY + n * CTRL_STRIDE].into_boxed_slice();
             rng.bytes(&mut obj);
             for (i, flag) in flags_a.iter().enumerate() {
@@ -294,8 +301,9 @@ mod x86 {
                         });
                         assert_eq!(got, u32::from(want));
                         // The call log matches entry address and key.
-                        let entry_addr =
-                            this.wrapping_add(idx.wrapping_mul(CTRL_STRIDE as u32)).wrapping_add(CTRL_ENTRY as u32);
+                        let entry_addr = this
+                            .wrapping_add(idx.wrapping_mul(CTRL_STRIDE as u32))
+                            .wrapping_add(CTRL_ENTRY as u32);
                         if want || !log.is_empty() {
                             assert_eq!(log, vec![(entry_addr, key)]);
                             assert_eq!(lift_calls, vec![(entries[idx as usize], key)]);
@@ -308,10 +316,11 @@ mod x86 {
                         let mut bad_calls = 0;
                         let bad = wrong::match_no_flag(&block, key, idx, diff, &mut bad_calls);
                         let mut other_calls = 0;
-                        let other = block.match_slot(key, idx, wrong::other_bank(bank), &mut |_, _| {
-                            other_calls += 1;
-                            diff
-                        });
+                        let other =
+                            block.match_slot(key, idx, wrong::other_bank(bank), &mut |_, _| {
+                                other_calls += 1;
+                                diff
+                            });
                         if bad != want || bad_calls as usize != log.len() || other != want {
                             caught += 1;
                         }

@@ -33,7 +33,7 @@ mod pose;
 pub mod registry;
 
 pub use create::{
-    BuildManagers, ChainCloner, ChainClone, ChainEntry, ChainNode, ChainOwner, CloneProduct,
+    ArgLookup, BuildManagers, ChainCloner, ChainClone, ChainEntry, ChainNode, ChainOwner, CloneProduct,
     FoundEntry, Kind11Task, PedMgr, PedTaskOutcome, TaskBuildCtx, FLAG_DONE, FLAG_EXTRA, KIND_11,
     NONE, PRIORITY,
 };
