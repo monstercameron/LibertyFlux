@@ -34,9 +34,3 @@ lf_checker_rt::export!(thiscall, rw_00ca7340(this: u32, _a0: u32, _a1: u32, _a2:
         r
     }
 });
-
-include!("../../mut_00ca7340.rs");
-include!("../../rw_00ca8280.rs");
-include!("../../rw_00ca8330.rs");
-include!("../../mut_00ca8280.rs");
-include!("../../mut_00ca8330.rs");
