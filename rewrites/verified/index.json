@@ -38223,6 +38223,15 @@
   "lane": "r-b636"
  },
  {
+  "address": "0x006854B0",
+  "name": "track_set_update",
+  "kind": "function",
+  "file": "functions/fn_006854b0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b636"
+ },
+ {
   "address": "0x00685CE0",
   "name": "dof_array_deduplicate",
   "kind": "function",
@@ -49608,6 +49617,15 @@
   "lane": "a-S06"
  },
  {
+  "address": "0x008BEA00",
+  "name": "ui_slot_write",
+  "kind": "function",
+  "file": "functions/fn_008bea00.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s520"
+ },
+ {
   "address": "0x008BEB10",
   "name": "menu_call_forward_4",
   "kind": "function",
@@ -49630,6 +49648,24 @@
   "name": "menu_call_forward_2",
   "kind": "function",
   "file": "functions/fn_008beb90.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s520"
+ },
+ {
+  "address": "0x008BEBC0",
+  "name": "menu_find_by_key_word",
+  "kind": "function",
+  "file": "functions/fn_008bebc0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s520"
+ },
+ {
+  "address": "0x008BEC30",
+  "name": "menu_find_by_key_byte",
+  "kind": "function",
+  "file": "functions/fn_008bec30.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-s520"
@@ -49720,6 +49756,15 @@
   "name": "ui_device_teardown",
   "kind": "function",
   "file": "functions/fn_008bf710.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-s520"
+ },
+ {
+  "address": "0x008BF750",
+  "name": "FRONTEND_MENU_SELECT",
+  "kind": "function",
+  "file": "functions/fn_008bf750.rs",
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-s520"
@@ -54180,6 +54225,15 @@
   "lane": "a-08"
  },
  {
+  "address": "0x00908E90",
+  "name": "BLIP_PICK",
+  "kind": "function",
+  "file": "functions/fn_00908e90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q43"
+ },
+ {
   "address": "0x00908F50",
   "name": "blip_trackable_check",
   "kind": "function",
@@ -57942,6 +57996,15 @@
   "lane": "r-b433"
  },
  {
+  "address": "0x00958560",
+  "name": "task_list_consume",
+  "kind": "function",
+  "file": "functions/fn_00958560.rs",
+  "trials": 8600,
+  "checker": "version 6",
+  "lane": "r-b637"
+ },
+ {
   "address": "0x00962060",
   "name": "teardown_ref_owner",
   "kind": "function",
@@ -58471,6 +58534,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b283"
+ },
+ {
+  "address": "0x009687E0",
+  "name": "sample_grid9_blend_rows",
+  "kind": "function",
+  "file": "functions/fn_009687e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b635"
  },
  {
   "address": "0x00969040",
@@ -59299,6 +59371,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s103"
+ },
+ {
+  "address": "0x0097B2C0",
+  "name": "audio_voice_read_transform",
+  "kind": "function",
+  "file": "functions/fn_0097b2c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q43"
  },
  {
   "address": "0x0097B390",
