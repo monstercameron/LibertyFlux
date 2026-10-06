@@ -233,6 +233,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "lf-evthandler-diff"
+version = "0.1.0"
+dependencies = [
+ "lf-core",
+ "lf-peds-tasks",
+]
+
+[[package]]
 name = "lf-files-memory"
 version = "0.1.0"
 dependencies = [

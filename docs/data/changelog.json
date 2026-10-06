@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Lift: the event handler class, first ten methods",
+    "commit": null,
+    "summary": "Ten verified methods of the pedestrian event handler class are lifted to portable Rust in crates/lf-peds-tasks, with their proof in the pipeline. It is the first lifted code that is decision logic.",
+    "changes": [
+      "New module crates/lf-peds-tasks/src/event_handler: a handler type owning its two words (the owner it answers for and its pending task) with ten methods restated on it: which event kinds drop the pending task, which are forwarded to the dispatch slot, which are converted through the task factory, and how the handler adopts a task from an event. What it calls that is not lifted yet is behind three traits. No unsafe code. 19 host tests.",
+      "New test crate crates/tools/lf-evthandler-diff: each lifted method against its verified 32-bit rewrite on the same generated inputs, with a deliberately wrong lift of each that must be caught. 10 tests; the coordinator ran them on the 32-bit target and they pass. The pipeline's 32-bit job runs them on every push.",
+      "The class has 55 named methods, 54 of them verified since a class-completion lane finished the last six today. The other 41 verified methods make between 2 and 32 calls each and wait on traits for what they call; the module's registry lists every one with its reason. A follow-up lane is briefed for them."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 43 files from lanes (270 unverified rewrites, 124 in review)",
     "commit": "2a51cea1fe9cd9b6d1feefb40ec10e90021949aa",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
