@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-05",
+    "title": "Lift: the text tokenizer and the streaming device",
+    "commit": null,
+    "summary": "37 verified methods of two classes are lifted to portable Rust in crates/lf-files-memory: the tokenizer the game reads its text data files with, and the streaming device beside it. Their proof runs in the pipeline.",
+    "changes": [
+      "New module crates/lf-files-memory/src/tokenizer. The tokenizer is parsing logic: characters come from a pushback stack, then the stream buffer, then a refill; leading whitespace is skipped and trailing whitespace trimmed; a newline counts a line, a semicolon starts a comment, and a token stops at its delimiter or when its buffer is full. Thirty of its methods and seven of the streaming device's are restated; three are left out by design (a pure forward, the deleting destructor, the constructor). No unsafe code. 19 host tests.",
+      "New test crate crates/tools/lf-tokendiff: each lifted method against its verified 32-bit rewrite, with a deliberately wrong lift of each that must be caught. 20 tests; the coordinator ran them on the 32-bit target and they pass. The pipeline's 32-bit job runs them on every push.",
+      "One change on the way in. The token loop compared the number of stored bytes with its limit as a wrapped 32-bit number, so with an endless source and an absurd size it would never stop: an earlier build of the lane's host test did exactly that and reached 88.5 GB of memory before the coordinator stopped it. The comparison is now made as a length. Behaviour is unchanged wherever the proofs reach, and all tests were re-run after the change.",
+      "That brings the lifted methods with their proof in the pipeline to 110, in four class families."
+    ]
+  },
+  {
+    "date": "2026-10-05",
     "title": "Rust in progress: 3 files from lanes (250 unverified rewrites, 194 in review)",
     "commit": "4650db34064709eba18cc35d72dcc6f0cdab7911",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

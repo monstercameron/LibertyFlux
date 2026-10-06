@@ -1,0 +1,15 @@
+[package]
+name = "lf-tokendiff"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Differential tests: the lifted text tokenizer and streaming device against their verified 32-bit rewrites"
+publish = false
+
+[dependencies]
+lf-files-memory = { path = "../../lf-files-memory" }
+lf-core = { path = "../../lf-core" }
+
+[lints]
+workspace = true
