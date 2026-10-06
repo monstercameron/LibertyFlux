@@ -1,5 +1,5 @@
 // original: 0x0068dfc0 anim_apply_pose_gated (proposed)
-
+use lf_checker_rt::{callee_cdecl, callee_stdcall, callee_thiscall, callee_fastcall, export, global, relocated};
 /// Apply a pose to an animation's tracks, each track gated by a virtual
 /// call: a fast path over packed (track, bone) pairs from a shared lookup,
 /// or a slow path over every track with a per-track bone lookup, then a
@@ -35,7 +35,9 @@
 /// and 1 are skipped; the rest call the gate (same three stack words) and
 /// continue only when it answers true. Kind 1 then does a bone-id lookup
 /// (callee 3, thiscall,
-/// key plus a 16-bit out word) and continues only when the record's flag
+/// key plus a 16-bit out word; each site keeps its own word across loop
+/// iterations, so a later call re-presents the callee's previous answer)
+/// and continues only when the record's flag
 /// byte has bits 0x0e, running the quaternion callee; kind 0 does the same
 /// lookup and continues only when the record's flag dword has bits 0x380,
 /// copying the four source words. Handled tracks have flag bit 0x10
@@ -191,6 +193,11 @@ lf_checker_rt::export!(thiscall, rw_0068dfc0(this: u32, owner: u32, gate: u32, _
                 }
             }
         } else {
+            // One out-word per bone-lookup site, kept across iterations:
+            // the original's two frame slots (kind-1 site, kind-0 site)
+            // still hold the callee's previous answer on a later call.
+            let mut id_k0: u32 = 0;
+            let mut id_k1: u32 = 0;
             let total = rd16(set + SET_COUNT) as i32;
             if total > 0 {
                 let array = rd32(set + SET_TRACKS);
@@ -204,18 +211,23 @@ lf_checker_rt::export!(thiscall, rw_0068dfc0(this: u32, owner: u32, gate: u32, _
                         continue;
                     }
                     // Out slot is a full word; only the low 16 bits are read back.
-                    let mut id: u32 = 0;
+                    // Each site re-presents its own previous answer (see above).
+                    let slot: u32 = if kind == 1 {
+                        &mut id_k1 as *mut u32 as u32
+                    } else {
+                        &mut id_k0 as *mut u32 as u32
+                    };
                     let ok: u32 = lf_checker_rt::callee_thiscall!(
                         BONE_LOOKUP,
                         u32,
                         owner,
                         rd16(track + TRACK_KEY),
-                        &mut id as *mut u32 as u32
+                        slot
                     );
                     if (ok & 0xff) == 0 {
                         continue;
                     }
-                    let id = id & 0xffff;
+                    let id = rd32(slot) & 0xffff;
                     let rec = rd32(owner + OWNER_RECORDS).wrapping_add(id * RECORD_STRIDE);
                     if kind == 1 {
                         if rd8(rec + RECORD_FLAGS) & KIND1_FLAG_BITS == 0 {

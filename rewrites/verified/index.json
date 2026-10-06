@@ -37449,6 +37449,15 @@
   "lane": "r-s158"
  },
  {
+  "address": "0x006649B0",
+  "name": "rage::snChangeAttributesTask::vf7",
+  "kind": "function",
+  "file": "functions/fn_006649b0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b627"
+ },
+ {
   "address": "0x00664BE0",
   "name": "sn_task_alloc_copy_strings",
   "kind": "function",
@@ -38102,8 +38111,8 @@
   "kind": "function",
   "file": "functions/fn_0068dfc0.rs",
   "trials": 1200,
-  "checker": "version 4",
-  "lane": "r-b291"
+  "checker": "version 6",
+  "lane": "a-S11"
  },
  {
   "address": "0x0068E2E0",
@@ -127161,6 +127170,15 @@
   "lane": "r-b175"
  },
  {
+  "address": "0x00D762F0",
+  "name": "gate_chain_status_check",
+  "kind": "function",
+  "file": "functions/fn_00d762f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
   "address": "0x00D76760",
   "name": "render_phase_ctor_00d76760",
   "kind": "function",
@@ -127287,6 +127305,15 @@
   "lane": "r-s516"
  },
  {
+  "address": "0x00D775E0",
+  "name": "publish_resolved_table",
+  "kind": "function",
+  "file": "functions/fn_00d775e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
   "address": "0x00D77600",
   "name": "CRenderPhaseMirrorReflection::vf4",
   "kind": "function",
@@ -127368,6 +127395,15 @@
   "lane": "r-b213"
  },
  {
+  "address": "0x00D785A0",
+  "name": "classify_signed_field",
+  "kind": "function",
+  "file": "functions/fn_00d785a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
   "address": "0x00D785C0",
   "name": "subobject_mode_equals_two",
   "kind": "function",
@@ -127390,6 +127426,15 @@
   "name": "clear_field_0ee0",
   "kind": "function",
   "file": "functions/fn_00d78990.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
+  "address": "0x00D789A0",
+  "name": "match_resolved_or_tagged_pair",
+  "kind": "function",
+  "file": "functions/fn_00d789a0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s516"
@@ -129805,6 +129850,51 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b233"
+ },
+ {
+  "address": "0x00DB4B90",
+  "name": "UIMouseCursor::vf0",
+  "kind": "function",
+  "file": "functions/fn_00db4b90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB4DE0",
+  "name": "uimouse_clear_pair",
+  "kind": "function",
+  "file": "functions/fn_00db4de0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB4E00",
+  "name": "uimouse_set_mode",
+  "kind": "function",
+  "file": "functions/fn_00db4e00.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB59A0",
+  "name": "cursor_tree_lower_bound",
+  "kind": "function",
+  "file": "functions/fn_00db59a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
+ },
+ {
+  "address": "0x00DB5B50",
+  "name": "cursor_tree_successor",
+  "kind": "function",
+  "file": "functions/fn_00db5b50.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s517"
  },
  {
   "address": "0x00DB6E90",
