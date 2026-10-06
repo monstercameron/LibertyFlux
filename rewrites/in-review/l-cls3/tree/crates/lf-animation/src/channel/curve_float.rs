@@ -21,19 +21,16 @@ const SEGMENT_TAIL: u32 = 0x0C;
 /// Adds in the original's operand order: a not-a-number payload can tell
 /// the operands apart, so the order is pinned exactly like the verified
 /// rewrites pin it.
-#[inline(always)]
 fn fadd(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) + core::hint::black_box(b)
 }
 
 /// Multiplies in the original's operand order (see [`fadd`]).
-#[inline(always)]
 fn fmul(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) * core::hint::black_box(b)
 }
 
 /// Subtracts in the original's operand order (see [`fadd`]).
-#[inline(always)]
 fn fsub(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) - core::hint::black_box(b)
 }
@@ -61,7 +58,7 @@ impl CurveKey {
     #[must_use]
     pub fn new(key: u16, order: u8, coeff: Vec<f32>) -> Self {
         assert!(
-            (order as usize) + 1 <= coeff.len(),
+            (order as usize) < coeff.len(),
             "segment needs order + 1 coefficients"
         );
         Self { key, order, coeff }
@@ -136,7 +133,7 @@ impl CurveFloat {
         let mut size = BASE_SIZE;
         for k in &self.keys {
             size = size
-                .wrapping_add((k.order as u32).wrapping_mul(4))
+                .wrapping_add(u32::from(k.order).wrapping_mul(4))
                 .wrapping_add(SEGMENT_TAIL);
         }
         size
@@ -208,7 +205,7 @@ impl CurveFloat {
         let mut found: Option<usize> = None;
         if count > 1 {
             for (eax, k) in self.keys[..(count - 1) as usize].iter().enumerate() {
-                if (k.key as i32) >= isi {
+                if i32::from(k.key) >= isi {
                     found = Some(eax);
                     break;
                 }

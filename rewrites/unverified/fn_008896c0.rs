@@ -37,8 +37,10 @@ lf_checker_rt::export!(thiscall, rw_008896C0(this: u32, delete: u32) -> u32 {
             let base = (pool as *const u32).read_unaligned();
             let diff = this.wrapping_sub(base);
             // Signed divide of `diff` by the slot stride: high word of the
-            // magic product, shifted, rounded toward zero.
-            let high = ((SLOT_MAGIC as u64 * diff as u64) >> 32) as u32 as i32;
+            // SIGNED magic product (the original's imul is signed, so a
+            // negative diff must sign-extend before multiplying), shifted,
+            // rounded toward zero.
+            let high = (((SLOT_MAGIC as i32 as i64) * (diff as i32 as i64)) >> 32) as i32;
             let quot = high >> SLOT_SHIFT;
             let index = quot + ((quot >> 31) & 1);
             let lock = pool + POOL_LOCK;

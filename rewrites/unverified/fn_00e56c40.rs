@@ -35,7 +35,6 @@ lf_checker_rt::export!(thiscall, rw_e56c40(this: u32) -> u32 {
         /// Callee ids, matching the contract.
         const POLL: u32 = 1;
         const STATUS: u32 = 2;
-        const READY: u32 = 3;
         const SELECT_A: u32 = 4;
         const RELEASE: u32 = 5;
         const SELECT_B: u32 = 6;

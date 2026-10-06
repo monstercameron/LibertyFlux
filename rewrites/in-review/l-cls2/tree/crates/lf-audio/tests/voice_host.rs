@@ -508,8 +508,8 @@ fn ring_zero_divisor_panics() {
 #[test]
 #[should_panic]
 fn ring_cursor_past_lanes_panics() {
-    let v = soft_voice();
-    let mut v = v;
+    let mut v = soft_voice();
+    v.flags = shared::FLAG_SYNTH;
     v.cursor = 7;
     v.lane_rest_quiet();
 }
@@ -536,15 +536,15 @@ fn milli_floor_known_values() {
     assert_eq!(shared::milli_floor_doubled(1_000_000, 1000), 2_000_000);
     // Out of 64-bit range stores zero.
     assert_eq!(shared::milli_floor_doubled(u32::MAX, u32::MAX), 0);
-    // Cross-check against f64 arithmetic on small values (exact there).
+    // Cross-check against f64 arithmetic where the f32 product is
+    // exact (both words below 2^12): only the final scaling rounds,
+    // so the floors agree up to one step.
     let mut x: u64 = 0x1234_5678;
     for _ in 0..500 {
         x = x.wrapping_mul(0x5851_F42D_4C95_7F2D).wrapping_add(0x1405_7B7E_F767_814F);
-        let rate = (x >> 32) as u32 % 2_000_000;
-        let count = (x as u32) % 2_000_000;
+        let rate = (x >> 32) as u32 % 4096;
+        let count = (x as u32) % 4096;
         let exact = ((f64::from(rate) * f64::from(count) * 0.001).floor() as u64 * 2) as u32;
-        // f32 rounding can shift borderline products by one floor step;
-        // allow that single step of slack.
         let got = shared::milli_floor_doubled(rate, count);
         assert!(
             got == exact || got == exact.wrapping_sub(2) || got == exact.wrapping_add(2),

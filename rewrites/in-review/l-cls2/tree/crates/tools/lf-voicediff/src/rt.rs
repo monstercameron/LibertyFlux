@@ -66,14 +66,15 @@ static SCRIPT: std::sync::LazyLock<Mutex<Script>> =
     std::sync::LazyLock::new(|| Mutex::new(Script::new()));
 
 /// Locks the script for one rewrite run. Hold the guard from installing
-/// the script until the recorded calls are collected.
+/// the script until the recorded calls are collected. Poison is ignored:
+/// a failed case must not wedge the remaining tests.
 pub fn script_lock() -> MutexGuard<'static, ()> {
     static LOCK: Mutex<()> = Mutex::new(());
-    LOCK.lock().unwrap()
+    LOCK.lock().unwrap_or_else(|e| e.into_inner())
 }
 
 fn script() -> std::sync::MutexGuard<'static, Script> {
-    SCRIPT.lock().unwrap()
+    SCRIPT.lock().unwrap_or_else(|e| e.into_inner())
 }
 
 /// Installs the callee script: for each id, its stub shape and its
@@ -163,6 +164,7 @@ thread_local! {
 ///
 /// When no script entry covers `id`: a case bug, never a guess.
 #[must_use]
+// Function addresses travel as words: the rewrites call through them.
 pub fn callee_addr(id: u32) -> u32 {
     let kind = *script()
         .kinds
@@ -173,11 +175,11 @@ pub fn callee_addr(id: u32) -> u32 {
     // with the script lock held, so no other call can intervene.
     CURRENT_ID.with(|c| c.set(id));
     match kind {
-        StubKind::Thiscall1 => stub_thiscall1 as usize as u32,
-        StubKind::Thiscall2 => stub_thiscall2 as usize as u32,
-        StubKind::Cdecl1 => stub_cdecl1 as usize as u32,
-        StubKind::Cdecl2 => stub_cdecl2 as usize as u32,
-        StubKind::Stdcall1 => stub_stdcall1 as usize as u32,
+        StubKind::Thiscall1 => stub_thiscall1 as *const () as usize as u32,
+        StubKind::Thiscall2 => stub_thiscall2 as *const () as usize as u32,
+        StubKind::Cdecl1 => stub_cdecl1 as *const () as usize as u32,
+        StubKind::Cdecl2 => stub_cdecl2 as *const () as usize as u32,
+        StubKind::Stdcall1 => stub_stdcall1 as *const () as usize as u32,
     }
 }
 
@@ -194,7 +196,7 @@ pub static mut MIXER_CELL: u32 = 0;
 #[must_use]
 pub fn relocated(file_va: u32) -> u32 {
     match file_va {
-        0x0115_A448 => unsafe { core::ptr::addr_of!(MIXER_CELL) as u32 },
+        0x0115_A448 => core::ptr::addr_of!(MIXER_CELL) as u32,
         _ => panic!("unexpected relocated VA {file_va:#x}"),
     }
 }
@@ -240,6 +242,10 @@ macro_rules! export {
 #[macro_export]
 macro_rules! callee_cdecl {
     ($id:expr, $ret:ty, $($arg:expr),* $(,)?) => {{
+        // The block is redundant where the call site already sits in
+        // unsafe code (all proof files do); the allow keeps the
+        // expansion warning-free either way.
+        #[allow(unused_unsafe)]
         let f: extern "cdecl" fn($( $crate::__ty!($arg) ),*) -> $ret =
             unsafe { core::mem::transmute($crate::callee_addr($id) as usize) };
         f($( $arg ),*)
@@ -250,6 +256,7 @@ macro_rules! callee_cdecl {
 #[macro_export]
 macro_rules! callee_stdcall {
     ($id:expr, $ret:ty, $($arg:expr),* $(,)?) => {{
+        #[allow(unused_unsafe)]
         let f: extern "stdcall" fn($( $crate::__ty!($arg) ),*) -> $ret =
             unsafe { core::mem::transmute($crate::callee_addr($id) as usize) };
         f($( $arg ),*)
@@ -260,6 +267,7 @@ macro_rules! callee_stdcall {
 #[macro_export]
 macro_rules! callee_thiscall {
     ($id:expr, $ret:ty, $this_arg:expr $(, $arg:expr)* $(,)?) => {{
+        #[allow(unused_unsafe)]
         let f: extern "thiscall" fn(u32 $(, $crate::__ty!($arg) )*) -> $ret =
             unsafe { core::mem::transmute($crate::callee_addr($id) as usize) };
         f($this_arg $(, $arg )*)
@@ -270,6 +278,7 @@ macro_rules! callee_thiscall {
 #[macro_export]
 macro_rules! callee_fastcall {
     ($id:expr, $ret:ty, $ecx_arg:expr, $edx_arg:expr $(, $arg:expr)* $(,)?) => {{
+        #[allow(unused_unsafe)]
         let f: extern "fastcall" fn(u32, u32 $(, $crate::__ty!($arg) )*) -> $ret =
             unsafe { core::mem::transmute($crate::callee_addr($id) as usize) };
         f($ecx_arg, $edx_arg $(, $arg )*)

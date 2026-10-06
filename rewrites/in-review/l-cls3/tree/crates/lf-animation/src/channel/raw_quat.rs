@@ -16,25 +16,21 @@ const MAX_KEYS: usize = 0xFFFF;
 /// Adds in the original's operand order: a not-a-number payload can tell
 /// the operands apart, so the order is pinned exactly like the verified
 /// rewrites pin it.
-#[inline(always)]
 fn fadd(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) + core::hint::black_box(b)
 }
 
 /// Multiplies in the original's operand order (see [`fadd`]).
-#[inline(always)]
 fn fmul(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) * core::hint::black_box(b)
 }
 
 /// Subtracts in the original's operand order (see [`fadd`]).
-#[inline(always)]
 fn fsub(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) - core::hint::black_box(b)
 }
 
 /// Divides in the original's operand order (see [`fadd`]).
-#[inline(always)]
 fn fdiv(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) / core::hint::black_box(b)
 }
@@ -77,14 +73,16 @@ impl RawQuat {
     ///
     /// When `idx + 1` is past the last key.
     #[must_use]
+    // x, y, z, w and t are the components' own names here.
+    #[allow(clippy::many_single_char_names)]
     pub fn lerp_normalized(&self, idx: u32, t: f32) -> Quat {
-        let s = fsub(ONE, t);
+        let lo_w = fsub(ONE, t);
         let lo = self.keys[idx as usize];
         let hi = self.keys[(idx as usize).wrapping_add(1)];
-        let x = fadd(fmul(lo.x, s), fmul(hi.x, t));
-        let y = fadd(fmul(lo.y, s), fmul(hi.y, t));
-        let z = fadd(fmul(lo.z, s), fmul(hi.z, t));
-        let w = fadd(fmul(lo.w, s), fmul(hi.w, t));
+        let x = fadd(fmul(lo.x, lo_w), fmul(hi.x, t));
+        let y = fadd(fmul(lo.y, lo_w), fmul(hi.y, t));
+        let z = fadd(fmul(lo.z, lo_w), fmul(hi.z, t));
+        let w = fadd(fmul(lo.w, lo_w), fmul(hi.w, t));
         let n2 = fadd(
             fadd(fadd(fmul(x, x), fmul(y, y)), fmul(z, z)),
             fmul(w, w),

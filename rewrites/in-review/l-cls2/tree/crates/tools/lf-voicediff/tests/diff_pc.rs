@@ -194,7 +194,11 @@ mod x86 {
             for &q in &queries {
                 let mut fx = Fixture::build(&mut rng);
                 fx.obj.w8(FLAGS, flags);
-                fx.params.buf[0x18] = if (flags as u32 + q) % 3 == 0 { 0x40 } else { 0 };
+                fx.params.buf[0x18] = if (flags as u32).wrapping_add(q) % 3 == 0 {
+                    0x40
+                } else {
+                    0
+                };
                 let child = fx.obj.r32(CHILD);
                 let v = fx.lift(1, 0, 0, vec![], vec![]);
                 let before = fx.obj.buf.clone();
@@ -205,11 +209,18 @@ mod x86 {
                 let want = v.is_stopping(&mut fake);
                 assert_eq!(got, u8::from(want), "flags {flags:#x} query {q:#x}");
                 assert_only_changed(&before, &fx.obj.buf, &[]);
-                check_calls(
-                    rt::take_numbered(),
-                    std::mem::take(&mut fake.log),
-                    vec![(1, vec![child], "pc.query", vec![child])],
-                );
+                // The flag arms return before the child query.
+                let early = (flags & 1 != 0 && flags & 0x40 != 0) || flags & 8 != 0;
+                if early {
+                    assert!(rt::take_numbered().is_empty());
+                    assert!(fake.log.is_empty());
+                } else {
+                    check_calls(
+                        rt::take_numbered(),
+                        std::mem::take(&mut fake.log),
+                        vec![(1, vec![child], "pc.query", vec![child])],
+                    );
+                }
                 let mut wf = Fake::new();
                 wf.answer("pc.query", vec![q]);
                 if wrong::stopping_first(&v, &mut wf) != want {
