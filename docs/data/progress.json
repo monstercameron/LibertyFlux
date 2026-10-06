@@ -117,15 +117,15 @@
     },
     {
       "label": "Game code verified, measured in bytes",
-      "value": 28.6,
+      "value": 28.5,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2109507 of 7372579 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2086728 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
-      "value": 17.6,
+      "value": 17.2,
       "unit": "percent",
-      "source": "269 of 1357 such functions; they hold 38% of the game's code"
+      "source": "265 of 1347 such functions; they hold 38% of the game's code"
     }
   ],
   "activity": {
@@ -4458,9 +4458,9 @@
   ],
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
-    "game": 7372579,
-    "verified": 2109507,
-    "large_functions": 2837555,
-    "large_functions_verified": 498868
+    "game": 7323792,
+    "verified": 2086728,
+    "large_functions": 2801402,
+    "large_functions_verified": 480539
   }
 }
