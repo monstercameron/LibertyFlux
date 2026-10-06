@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Devlog: hourly review, 04:05 on 6 October",
+    "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "16,593 functions verified, 30.9% of the code by size; 36,200 bytes in the hour with 16 lanes, a quarter more per lane than the hour before. 160 methods lifted, and the first lift of functions that belong to no class is queued: 70% of verified code is in none.",
+      "The skipped-pointer audit is closed by a run: 17 of 27 functions differed, 14 are repaired, 3 withdrawn. 73 proofs ran on random bits where their contract named a shape; a lane is settling each. The checker candidate's worker is sound and its driver is being made a drop-in."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 369 files from lanes (222 unverified rewrites, 159 in review)",
     "commit": "721e19000ddcabf3f40ed0f1a9e5bc4702eaeabc",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
