@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Lift: 113 vehicle ratio functions turned out to be one routine",
+    "title": "Devlog: Naming dummy tasks: a 12-slot vtable of their own",
     "commit": null,
+    "summary": "Findings from the nm-127 lane.",
+    "changes": [
+      "New devlog entry: Naming dummy tasks: a 12-slot vtable of their own.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Lift: 113 vehicle ratio functions turned out to be one routine",
+    "commit": "74358199eb85c1393b09a6389037690edcc984ef",
     "summary": "A list of 113 verified functions chosen by name is a single routine repeated: a quotient of two values kept in three global words. It is lifted once and proved against all 113 verified rewrites.",
     "changes": [
       "crates/lf-vehicles gains a veh_ratio module with one type and one method that refreshes a ratio cell, and 12 host tests. No unsafe code and no operating-system calls.",
