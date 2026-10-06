@@ -32981,8 +32981,8 @@
   "kind": "function",
   "file": "functions/fn_005ae630.rs",
   "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b152"
+  "checker": "version 6",
+  "lane": "a-S06"
  },
  {
   "address": "0x005AE7F0",
@@ -37395,6 +37395,15 @@
   "lane": "r-s494"
  },
  {
+  "address": "0x006935E0",
+  "name": "voice_hook_tailcall",
+  "kind": "function",
+  "file": "functions/fn_006935e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
   "address": "0x00693700",
   "name": "voice_table_lookup",
   "kind": "function",
@@ -37462,6 +37471,33 @@
   "name": "comp_remove_by_id",
   "kind": "function",
   "file": "functions/fn_00693ca0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
+  "address": "0x00693E10",
+  "name": "comp_array_grow_slot",
+  "kind": "function",
+  "file": "functions/fn_00693e10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
+  "address": "0x00693F50",
+  "name": "rage::crCreatureComponentBlendShapes::vf0",
+  "kind": "function",
+  "file": "functions/fn_00693f50.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s494"
+ },
+ {
+  "address": "0x00694140",
+  "name": "comp_teardown_vtables",
+  "kind": "function",
+  "file": "functions/fn_00694140.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s494"
@@ -39933,6 +39969,15 @@
   "lane": "r-s112"
  },
  {
+  "address": "0x00872340",
+  "name": "rage::crExpressionProcessor::ExpressionFilter::vf3",
+  "kind": "function",
+  "file": "functions/fn_00872340.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s496"
+ },
+ {
   "address": "0x008723C0",
   "name": "rage::crExpressionProcessor::ExpressionFilter::vf4",
   "kind": "function",
@@ -40039,6 +40084,33 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-s112"
+ },
+ {
+  "address": "0x008728E0",
+  "name": "child_broadcast",
+  "kind": "function",
+  "file": "functions/fn_008728e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s496"
+ },
+ {
+  "address": "0x00872AF0",
+  "name": "active_registration_release",
+  "kind": "function",
+  "file": "functions/fn_00872af0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s496"
+ },
+ {
+  "address": "0x00872B20",
+  "name": "node_index_lookup",
+  "kind": "function",
+  "file": "functions/fn_00872b20.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s496"
  },
  {
   "address": "0x00872DB0",
@@ -42701,8 +42773,8 @@
   "kind": "function",
   "file": "functions/fn_0088d960.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-b32"
+  "checker": "version 6",
+  "lane": "a-S06"
  },
  {
   "address": "0x0088E090",
@@ -43682,8 +43754,8 @@
   "kind": "function",
   "file": "functions/fn_00892df0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-b19"
+  "checker": "version 6",
+  "lane": "a-S06"
  },
  {
   "address": "0x00893220",
@@ -43714,12 +43786,12 @@
  },
  {
   "address": "0x00893B40",
-  "name": "dispatch_state_slot",
+  "name": "dispatch_state_slot (proposed)",
   "kind": "function",
   "file": "functions/fn_00893b40.rs",
   "trials": 1200,
-  "checker": "version 4",
-  "lane": "r-b285"
+  "checker": "version 6",
+  "lane": "a-S06"
  },
  {
   "address": "0x00894010",
@@ -47561,8 +47633,8 @@
   "kind": "function",
   "file": "functions/fn_008b8ee0.rs",
   "trials": 1100,
-  "checker": "version 3",
-  "lane": "r-b149"
+  "checker": "version 6",
+  "lane": "a-S06"
  },
  {
   "address": "0x008B90E0",
@@ -47651,8 +47723,8 @@
   "kind": "function",
   "file": "functions/fn_008be7d0.rs",
   "trials": 1200,
-  "checker": "version 5",
-  "lane": "r-b379"
+  "checker": "version 6",
+  "lane": "a-S06"
  },
  {
   "address": "0x008BF180",
@@ -111537,10 +111609,28 @@
   "lane": "r-s263"
  },
  {
+  "address": "0x00C64380",
+  "name": "CCutsceneObject::~CCutsceneObject",
+  "kind": "function",
+  "file": "functions/fn_00c64380.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
+ },
+ {
   "address": "0x00C644B0",
   "name": "CCutsceneObject::~CCutsceneObject__deleting",
   "kind": "function",
   "file": "functions/fn_00c644b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
+ },
+ {
+  "address": "0x00C64520",
+  "name": "CCutsceneObject::create_draw_commands",
+  "kind": "function",
+  "file": "functions/fn_00c64520.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b587"
@@ -122265,6 +122355,15 @@
   "lane": "r-s131"
  },
  {
+  "address": "0x00D70950",
+  "name": "CReplayProgressBar::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d70950.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
+ },
+ {
   "address": "0x00D70EB0",
   "name": "replay_input_poll",
   "kind": "function",
@@ -125442,6 +125541,15 @@
   "lane": "r-s146"
  },
  {
+  "address": "0x00DDA4E0",
+  "name": "UIBasicClip::vf124",
+  "kind": "function",
+  "file": "functions/fn_00dda4e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
+ },
+ {
   "address": "0x00DDA580",
   "name": "uimontageclip_prepare_slot_secondary",
   "kind": "function",
@@ -125464,6 +125572,15 @@
   "name": "UIBasicClip::vf127",
   "kind": "function",
   "file": "functions/fn_00dda8a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b587"
+ },
+ {
+  "address": "0x00DDA8B0",
+  "name": "UIBasicClip::vf129",
+  "kind": "function",
+  "file": "functions/fn_00dda8b0.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b587"
