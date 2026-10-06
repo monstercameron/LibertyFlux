@@ -8,12 +8,29 @@
 /// (`this`+0x70), the packed bounds and the opaque `tag`. The original
 /// reads one uninitialized stack slot for the two zero words; the checker
 /// contract defines that slot as zero. Returns whatever the search returns.
+///
+/// The upper bounds use one explicit `addss` each: a plain `+` let LLVM
+/// commute the operands, and with a NaN on both sides the commuted order
+/// keeps the wrong payload (the original keeps the first operand's NaN).
+use core::arch::x86::{_mm_add_ss, _mm_cvtss_f32, _mm_set_ss};
+
+/// One scalar-SSE add, matching the original's `addss` operand order.
+#[inline(always)]
+fn sse_add(a: f32, b: f32) -> f32 {
+    unsafe {
+        _mm_cvtss_f32(_mm_add_ss(
+            _mm_set_ss(core::hint::black_box(a)),
+            _mm_set_ss(core::hint::black_box(b)),
+        ))
+    }
+}
+
 export!(thiscall, rw_00d90a10(this: u32, v: *const f32, f: f32, tag: u32) -> u32 {
     let d = unsafe { [*v, *v.add(1), *v.add(2), *v.add(3)] };
     // Uninitialized stack slot in the original; defined as zero by contract.
     let pad = 0.0f32;
     let lo = [d[0] - f, d[1] - f, d[2] - f];
-    let hi = [fadd(d[0], f), fadd(d[1], f), fadd(d[2], f)];
+    let hi = [sse_add(d[0], f), sse_add(d[1], f), sse_add(d[2], f)];
     unsafe {
         *global::<f32>(0x179fafc) = pad;
         *global::<f32>(0x179faf0) = lo[0];
