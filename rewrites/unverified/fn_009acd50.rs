@@ -25,8 +25,8 @@
 /// out of range or NaN gives 0x80000000) this seeds the main loop base.
 ///
 /// Loop B runs four channels. Each divides a table value plus the base by 360
-/// (signed 32-bit division, exact; the remainder's sign word feeds the word
-/// helper later), reads a per-channel factor, optionally blends it with a
+/// (signed 32-bit division, exact; the remainder feeds the word helper later),
+/// reads a per-channel factor, optionally blends it with a
 /// helper answer gated by two flag bytes, then runs two halves. Each half may
 /// allocate its object slot through the setup/build helpers (whose struct
 /// arguments live on the original's stack and are snapshotted, not
@@ -332,8 +332,10 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
         let q = add(add(mul(vx, vx), mul(vy, vy)), mul(vz, vz));
         let s: f32 = lf_checker_rt::callee_cdecl!(C_NORM, f32, q.to_bits());
         eaxv = s.to_bits();
-        let x1 = mul(vx, s);
-        let y1 = mul(vy, s);
+        // Note the cross-over: the [eax+4] component is scaled into y1 and
+        // the [eax] component into x1 (the stores cross the slots).
+        let x1 = mul(vy, s);
+        let y1 = mul(vx, s);
         let z1 = mul(vz, s);
         let z0 = mul(z1, 0.0);
         let x0 = mul(x1, 0.0);
@@ -367,15 +369,17 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
         let mut counter = 1u32;
         let mut edi_idx = 0u32;
         let mut xmm3v = ONE;
+        // High byte of the x87 control word left by fnstcw (0 until the
+        // first half runs one); it overlaps the blend byte-argument word.
+        let mut cw_hi: u32 = 0;
         let mut xmm2v = 0.0f32;
         let mut xmm4v = 0.0f32;
         let mut esi = this.wrapping_add(0x13A4);
         for k in 0..4u32 {
             let e = (div_tbl[(edi_idx >> 2) as usize].wrapping_add(loop_base)) as i32;
             let q0 = e.wrapping_div(360);
-            let _r0 = e.wrapping_rem(360);
+            let rem_flag = e.wrapping_rem(360) as u32;
             eaxv = q0 as u32;
-            let sign_flag = if e < 0 { 0xFFFFFFFFu32 } else { 0 };
             eaxv = rd32(esi.wrapping_add(fd_off));
             let f1 = f32::from_bits(eaxv);
             let mut slot312 = f1;
@@ -383,10 +387,13 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
             let gate = rd8(glob(G_GATE1)) != 0 && rd8(glob(G_GATE2)) != 0;
             if gate {
                 let mut w1 = 0u32;
-                let arg1buf = [0u8; 4];
+                // The byte argument sits two bytes before the trip counter and
+                // one byte into the control-word slot: low byte is the zero
+                // init, then the control high byte, then the trip counter.
+                let arg1word: u32 = (cw_hi << 8) | ((4 - k) << 16);
                 let ans4: u32 = lf_checker_rt::callee_thiscall!(
                     C_BLEND, u32, glob(BLEND_THIS),
-                    arg1buf.as_ptr() as u32,
+                    (&arg1word as *const u32) as u32,
                     (&mut w1 as *mut u32) as u32
                 );
                 eaxv = ans4;
@@ -448,6 +455,7 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
                 eaxv = rd32(esi);
                 let edx2 = lookup(eaxv, stride, table);
                 let conv1 = fistp_chop(ans9);
+                cw_hi = 0x03;
                 let ans10: u32 = lf_checker_rt::callee_thiscall!(
                     C_SETI, u32, edx2, conv1 as u32
                 );
@@ -455,7 +463,7 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
                 eaxv = rd32(esi);
                 let edx3 = lookup(eaxv, stride, table);
                 let ans11: u32 = lf_checker_rt::callee_thiscall!(
-                    C_SETW, u32, edx3, sign_flag
+                    C_SETW, u32, edx3, rem_flag
                 );
                 eaxv = ans11;
                 slot308 = add(rdf(esi.wrapping_add(0x80)), slot308);
@@ -516,6 +524,7 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
                 eaxv = rd32(edi_ptr);
                 let edx2 = lookup(eaxv, stride, table);
                 let conv = fistp_chop(ans9b);
+                cw_hi = 0x03;
                 let ans10: u32 = lf_checker_rt::callee_thiscall!(
                     C_SETI, u32, edx2, conv as u32
                 );
@@ -523,7 +532,7 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
                 eaxv = rd32(edi_ptr);
                 let edx3 = lookup(eaxv, stride, table);
                 let ans11: u32 = lf_checker_rt::callee_thiscall!(
-                    C_SETW, u32, edx3, sign_flag
+                    C_SETW, u32, edx3, rem_flag
                 );
                 eaxv = ans11;
                 xmm2v = add(slot312, slot264);
