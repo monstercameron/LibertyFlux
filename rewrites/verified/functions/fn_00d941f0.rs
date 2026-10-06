@@ -1,5 +1,5 @@
 // original: 0x00d941f0 probe_traverse (proposed)
-
+use lf_checker_rt::{callee_cdecl, callee_stdcall, callee_thiscall, callee_fastcall, export, global, relocated};
 /// Walk a probe list, testing each entry against the query until one hits.
 ///
 /// `a` points to the probe list head, `b` to an entry to skip. The probe
@@ -25,6 +25,10 @@
 /// The self-call site is stubbed, so multi-depth recursion is unobserved
 /// (see `narrowed`); the init callee's constant vector argument is likewise
 /// unobserved and its answer flows through the integer channel.
+///
+/// The norm callee (id 6) takes the miss vector (fill-defined zeros minus
+/// the query point) in `ecx`; its three words are snapshotted per call.
+/// The step/probe frame pointers are pure outputs and stay zeroed.
 ///
 /// Original: 0x00d941f0 (thiscall, two stack words, al 0/1 result).
 lf_checker_rt::export!(thiscall, rw_00d941f0(this: u32, a: u32, b: u32) -> u32 {
@@ -98,6 +102,7 @@ lf_checker_rt::export!(thiscall, rw_00d941f0(this: u32, a: u32, b: u32) -> u32 {
         let mut edx = a;
         let mut frame = [0u32; 2];
         let dummy = [0u32; 8];
+        let mut norm = [0u32; 8];
         loop {
             let base = rd32(table1 + 0x64)
                 .wrapping_add((((rd32(edx + 4) & 0x1ffff).wrapping_add(e08)) & 0xffffffff).wrapping_mul(8));
@@ -142,8 +147,11 @@ lf_checker_rt::export!(thiscall, rw_00d941f0(this: u32, a: u32, b: u32) -> u32 {
                             let mx = fsub(0.0, gx);
                             let my = fsub(0.0, gy);
                             let mz = fsub(0.0, gz);
+                            norm[0] = mx.to_bits();
+                            norm[1] = my.to_bits();
+                            norm[2] = mz.to_bits();
                             e08 = mz.to_bits();
-                            let _: u32 = lf_checker_rt::callee_thiscall!(ID_NORM, u32, dummy.as_ptr() as u32);
+                            let _: u32 = lf_checker_rt::callee_thiscall!(ID_NORM, u32, norm.as_ptr() as u32);
                             let dot = fadd(fadd(fmul(my, my), fmul(mx, mx)), fmul(mz, mz));
                             if dot == 0.0 {
                                 let s: u32 = lf_checker_rt::callee_thiscall!(ID_SELF, u32, this, entry2, a);

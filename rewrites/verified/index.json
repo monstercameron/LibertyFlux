@@ -37413,6 +37413,15 @@
   "lane": "r-s158"
  },
  {
+  "address": "0x006641E0",
+  "name": "sn_task_gather_member_pairs",
+  "kind": "function",
+  "file": "functions/fn_006641e0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b627"
+ },
+ {
   "address": "0x00664890",
   "name": "rage::snMigrateSessionTask::vf11",
   "kind": "function",
@@ -72835,6 +72844,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s300"
+ },
+ {
+  "address": "0x00A6E240",
+  "name": "peds_task_update_aim_state",
+  "kind": "function",
+  "file": "functions/fn_00a6e240.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b623"
  },
  {
   "address": "0x00A6EBB0",
@@ -127143,6 +127161,78 @@
   "lane": "r-b175"
  },
  {
+  "address": "0x00D76760",
+  "name": "render_phase_ctor_00d76760",
+  "kind": "function",
+  "file": "functions/fn_00d76760.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
+  "address": "0x00D76790",
+  "name": "render_phase_ctor_alloc_init",
+  "kind": "function",
+  "file": "functions/fn_00d76790.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
+  "address": "0x00D76810",
+  "name": "render_phase_ctor_00d76810",
+  "kind": "function",
+  "file": "functions/fn_00d76810.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
+  "address": "0x00D76840",
+  "name": "render_phase_ctor_00d76840",
+  "kind": "function",
+  "file": "functions/fn_00d76840.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
+  "address": "0x00D76880",
+  "name": "render_phase_ctor_00d76880",
+  "kind": "function",
+  "file": "functions/fn_00d76880.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
+  "address": "0x00D768C0",
+  "name": "render_phase_dtor_release_handle",
+  "kind": "function",
+  "file": "functions/fn_00d768c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
+  "address": "0x00D76910",
+  "name": "CRenderPhaseMirrorReflection::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d76910.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
+  "address": "0x00D76930",
+  "name": "CRenderPhase::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d76930.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
   "address": "0x00D76950",
   "name": "CRenderPhaseMirrorReflection::vf8",
   "kind": "function",
@@ -127188,6 +127278,15 @@
   "lane": "r-b242"
  },
  {
+  "address": "0x00D775C0",
+  "name": "T_CB_Generic_4Args<void(*)(float, int, int, int), float, int, int, int>::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d775c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
   "address": "0x00D77600",
   "name": "CRenderPhaseMirrorReflection::vf4",
   "kind": "function",
@@ -127206,6 +127305,33 @@
   "lane": "a-F05"
  },
  {
+  "address": "0x00D77930",
+  "name": "construct_state_block",
+  "kind": "function",
+  "file": "functions/fn_00d77930.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
+  "address": "0x00D77990",
+  "name": "render_phase_ctor_link_args",
+  "kind": "function",
+  "file": "functions/fn_00d77990.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
+  "address": "0x00D779E0",
+  "name": "CRenderPhaseWarpShadow::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d779e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
   "address": "0x00D781E0",
   "name": "CRenderPhaseWarpShadow::vf7",
   "kind": "function",
@@ -127213,6 +127339,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b242"
+ },
+ {
+  "address": "0x00D78390",
+  "name": "T_CB_Generic_4Args<void(*)(int, int, bool, bool), int, int, bool, bool>::vf1",
+  "kind": "function",
+  "file": "functions/fn_00d78390.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
  },
  {
   "address": "0x00D783C0",
@@ -127231,6 +127366,42 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b213"
+ },
+ {
+  "address": "0x00D785C0",
+  "name": "subobject_mode_equals_two",
+  "kind": "function",
+  "file": "functions/fn_00d785c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
+  "address": "0x00D785E0",
+  "name": "set_flag_when_mode_and_thresholds_pass",
+  "kind": "function",
+  "file": "functions/fn_00d785e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
+  "address": "0x00D78990",
+  "name": "clear_field_0ee0",
+  "kind": "function",
+  "file": "functions/fn_00d78990.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
+  "address": "0x00D78A10",
+  "name": "clear_status_bits",
+  "kind": "function",
+  "file": "functions/fn_00d78a10.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
  },
  {
   "address": "0x00D78AE0",
@@ -127267,6 +127438,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b593"
+ },
+ {
+  "address": "0x00D7A8C0",
+  "name": "expand_box_pair_guarded",
+  "kind": "function",
+  "file": "functions/fn_00d7a8c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
  },
  {
   "address": "0x00D7A960",
@@ -127314,6 +127494,24 @@
   "lane": "r-b206"
  },
  {
+  "address": "0x00D7BB40",
+  "name": "angle_wrap_lerp",
+  "kind": "function",
+  "file": "functions/fn_00d7bb40.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
+  "address": "0x00D7BBF0",
+  "name": "index_to_scale_factor",
+  "kind": "function",
+  "file": "functions/fn_00d7bbf0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
   "address": "0x00D7BC50",
   "name": "ui_joint_solver",
   "kind": "function",
@@ -127321,6 +127519,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b206"
+ },
+ {
+  "address": "0x00D7C200",
+  "name": "select_active_link_or_self",
+  "kind": "function",
+  "file": "functions/fn_00d7c200.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
  },
  {
   "address": "0x00D7CF30",
@@ -127341,6 +127548,15 @@
   "lane": "r-b238"
  },
  {
+  "address": "0x00D7E040",
+  "name": "projection_sign_test",
+  "kind": "function",
+  "file": "functions/fn_00d7e040.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
+ },
+ {
   "address": "0x00D7E0D0",
   "name": "pairwise_pool_check",
   "kind": "function",
@@ -127357,6 +127573,15 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "a-Q33"
+ },
+ {
+  "address": "0x00D7EEF0",
+  "name": "clamped_scaled_value",
+  "kind": "function",
+  "file": "functions/fn_00d7eef0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s516"
  },
  {
   "address": "0x00D7EF80",
@@ -128246,8 +128471,8 @@
   "kind": "function",
   "file": "functions/fn_00d941f0.rs",
   "trials": 1200,
-  "checker": "version 4",
-  "lane": "r-b264"
+  "checker": "version 6",
+  "lane": "a-S11"
  },
  {
   "address": "0x00D94A80",
