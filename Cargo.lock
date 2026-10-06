@@ -470,6 +470,13 @@ name = "lf-shaderpack"
 version = "0.1.0"
 
 [[package]]
+name = "lf-slotdiff"
+version = "0.1.0"
+dependencies = [
+ "lf-streaming",
+]
+
+[[package]]
 name = "lf-sounddiff"
 version = "0.1.0"
 dependencies = [

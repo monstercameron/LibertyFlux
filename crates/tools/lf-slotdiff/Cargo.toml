@@ -1,0 +1,16 @@
+[package]
+name = "lf-slotdiff"
+version = "0.1.0"
+# Edition 2021, like the production lanes' rewrite crates: the included verified files use identifiers
+# (for example `gen`) that edition 2024 reserves.
+edition = "2021"
+rust-version.workspace = true
+license.workspace = true
+description = "Differential tests: the lifted streaming slots against their verified 32-bit rewrites"
+publish = false
+
+[dependencies]
+lf-streaming = { path = "../../lf-streaming" }
+
+[lints]
+workspace = true
