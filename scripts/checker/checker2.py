@@ -545,7 +545,11 @@ logged, proving the mutant is a real difference) and k7_digestneg
 (documented negative, truncated without the digest), k7_cmp32
 (selftest:xmm32_call with the 4-byte narrowing; mutant disturbs the low
 word) with k7_cmp32neg (documented negative, unnarrowed) and k7_ctailneg
-(documented negative, unpatched). `checker2.py --selftest` runs the
+(documented negative, unpatched). v8 adds three k8 contracts pinning the
+globals position fix (each changed word recorded with its own address):
+k8_shift (the right value one slot too low passes without the fix),
+k8_swap (two values swapped) and k8_single (a one-word range behaves as
+before). `checker2.py --selftest` runs the
 driver's own host-side checks (no worker needed).
 
 What it can and cannot verify
@@ -1656,7 +1660,7 @@ def validate_v5(contract):
 # reading only the low float of a vector register).
 SELFTESTS = ("x87_store", "xmm_call", "abs_read", "f64_call", "xmm_wide",
              "ctail_guard", "st0_call", "st0_call64", "digest_loop",
-             "xmm32_call")
+             "xmm32_call", "glob_store_hi", "glob_store_2", "glob_store_1")
 
 
 def features_of(contract, setup):

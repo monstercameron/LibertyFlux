@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Checker: version 8 compares where a global variable is written",
+    "commit": null,
+    "summary": "A defect in the checker's comparison of global writes is fixed: a rewrite that stores the right value in the wrong word of a declared range no longer passes. No existing verdict changed in any regression.",
+    "changes": [
+      "A production lane found the defect by running its deliberately wrong versions, as the brief requires: one that stored a result one table slot too low passed 1,000 trials. The worker recorded each changed word of a declared global range with the range's start address, so the position inside the range was never compared.",
+      "The fix is one line in the worker: each changed word is recorded with its own address. It is not an option; it applies to every contract. Three proof contracts pin it: the right value one slot too low now fails, two values swapped fail, and a one-word range behaves as before.",
+      "The lane that made the fix ran 150 production contracts (100 with wide ranges, from 100 different lanes, and 50 with no globals) and 58 of the checker's own on both workers: identical verdicts, and the only changed decision is the new wrong version that is supposed to fail. It also confirmed from the code that heap words, stack words, snapshots and call arguments already keep exact positions, and reported that thread-local words are not compared at all.",
+      "The coordinator read the whole change, confirmed the runtime crate is byte for byte unchanged, and ran the checker's own contracts two ways before the swap, new driver with new worker and old driver with new worker: 38 of 38 verdicts and 34 of 34 wrong versions match in both.",
+      "Before the fix, two audit lanes re-ran 400 of the 1,578 verified proofs that declare a wide global range, with every range split into single words: 281 hold, 116 pass but never wrote a global in any trial, 3 did not reproduce for other reasons, and none had a misplaced write. The other 1,177 are re-run unchanged on the fixed checker next."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 44 files from lanes (236 unverified rewrites, 333 in review)",
     "commit": "9bd924df281a87c2ec1a1a822fef31572a3fc39c",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

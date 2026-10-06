@@ -1426,3 +1426,57 @@ export!(cdecl, mut_k7_cmp32(a: u32, b: u32) -> u32 {
     a
 });
 
+// v8 scratch range base as a file VA (worker K8_RVA 0x167f620): 8 bytes
+// of writable image data. The k8 contracts declare it as one range.
+const K8_BASE: u32 = 0x1A7f620;
+
+// k8_shift (selftest:glob_store_hi, v8): the original stores its word at
+// the SECOND word of the declared 8-byte range and returns it. The
+// rewrite stores the same word at the same address.
+export!(cdecl, rw_k8_shift(a: u32) -> u32 {
+    unsafe { *global::<u32>(K8_BASE + 4) = a; }
+    a
+});
+
+// Mutant: the right value one slot too low (the r-s522 shape: stored at
+// the first word instead of the second). A checker that records every
+// changed word of a range with the range's base cannot see this.
+export!(cdecl, mut_k8_shift(a: u32) -> u32 {
+    unsafe { *global::<u32>(K8_BASE) = a; } // BUG: one slot too low
+    a
+});
+
+// k8_swap (selftest:glob_store_2, v8): the original stores its two words
+// at the two words of the declared 8-byte range in order and returns
+// the first. The rewrite stores the same values at the same words.
+export!(cdecl, rw_k8_swap(a: u32, b: u32) -> u32 {
+    unsafe {
+        *global::<u32>(K8_BASE) = a;
+        *global::<u32>(K8_BASE + 4) = b;
+    }
+    a
+});
+
+// Mutant: the two values swapped between the words.
+export!(cdecl, mut_k8_swap(a: u32, b: u32) -> u32 {
+    unsafe {
+        *global::<u32>(K8_BASE) = b; // BUG: swapped
+        *global::<u32>(K8_BASE + 4) = a; // BUG: swapped
+    }
+    a
+});
+
+// k8_single (selftest:glob_store_1, v8): the original stores its word at
+// the single word of a 4-byte range and returns it. A range of one word
+// behaves as before the v8 fix.
+export!(cdecl, rw_k8_single(a: u32) -> u32 {
+    unsafe { *global::<u32>(K8_BASE) = a; }
+    a
+});
+
+// Mutant: a disturbed value at the (only) word.
+export!(cdecl, mut_k8_single(a: u32) -> u32 {
+    unsafe { *global::<u32>(K8_BASE) = a.wrapping_add(1); } // BUG: +1
+    a
+});
+

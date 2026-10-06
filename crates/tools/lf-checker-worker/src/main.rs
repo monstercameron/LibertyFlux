@@ -34,6 +34,13 @@
 //! with the `st0_from_stack` transport), a running digest over past-cap
 //! calls (`log_digest`), and 4-byte vector-register narrowing
 //! (`logxmm32_regs`).
+//!
+//! v8 candidate fix (not opt-in: it repairs the comparison for every
+//! contract): each changed word of a declared global range is recorded
+//! with its own address, so the globals check compares WHERE a value was
+//! written, plus three self-test originals (`glob_store_hi`,
+//! `glob_store_2`, `glob_store_1`) storing into a fixed scratch range
+//! for the checker's own regression.
 
 // The worker maps and executes original machine code, plants stubs in it,
 // and catches faults in-process: raw pointers and FFI are its whole job.
@@ -386,6 +393,11 @@ const _: () = assert!(EXT_SNAP_OFF + EXT_LOG_LEN <= EXT_XMM_OFF);
 const _: () = assert!(EXT_XMM_OFF + EXT_LOG_LEN <= SCRATCH_FILL_OFF);
 // v5 self-test originals: one page between the stub area and the log.
 const SELFTEST_OFF: usize = 0x11000;
+// v8: scratch range for the glob_store_* self-test originals: 8 bytes of
+// writable image data, clear of the k2 scratch tables (RVAs near
+// 0x127f628 and 0x1282d80). Restored to pristine around every side like
+// any declared range, so trials never leak into each other.
+const K8_RVA: usize = 0x167f620;
 // v5 ctx layout past the XMM entry values: ctx[CTX_X87_N] is the number of
 // x87 entry values the trampoline loads on this side (0 on the rewrite
 // side), and ctx[CTX_X87_VALS + 3*i ..] holds ST(i) as [lo, hi, sexp]
@@ -1094,10 +1106,16 @@ fn trampoline_bytes() -> (Vec<u8>, usize) {
 // - xmm32_call (cdecl, a, b; v7): xmm0 = [a, b, 0, 0] (the callee reads
 //   only the low float; the upper words are scripted dirt), call callee
 //   1 through the stub table, return a.
+// - glob_store_hi (cdecl, a; v8): store a at the second word of the K8
+//   scratch range, return a. glob_store_2 (cdecl, a, b; v8) stores both
+//   words, glob_store_1 (cdecl, a; v8) the first. The scratch address is
+//   baked at emit time from the mapped image base, like the stub-table
+//   slot. The k8 proof contracts declare the range; their mutants store
+//   the right values at the wrong words.
 fn build_selftests() {
     let s = st();
     let base = s.s + SELFTEST_OFF;
-    let (code, table) = selftest_code(base, s.ctable + 4);
+    let (code, table) = selftest_code(base, s.ctable + 4, (s.img + K8_RVA) as u32);
     unsafe {
         std::ptr::copy_nonoverlapping(code.as_ptr(), base as *mut u8, code.len());
         let proc = GetCurrentProcess();
@@ -1107,8 +1125,9 @@ fn build_selftests() {
 }
 
 // The self-test page for a page at `base`, with callee 1's stub-table slot
-// at `ctab1`: the code and each routine's address.
-fn selftest_code(base: usize, ctab1: u32) -> (Vec<u8>, HashMap<String, u32>) {
+// at `ctab1` and the v8 global-scratch base at `k8base`: the code and each
+// routine's address.
+fn selftest_code(base: usize, ctab1: u32, k8base: u32) -> (Vec<u8>, HashMap<String, u32>) {
     let mut code: Vec<u8> = Vec::new();
     let mut table: HashMap<String, u32> = HashMap::new();
     let mut add = |name: &str, bytes: &[u8]| {
@@ -1238,6 +1257,37 @@ fn selftest_code(base: usize, ctab1: u32) -> (Vec<u8>, HashMap<String, u32>) {
         0xC3, // ret
     ]);
     add("xmm32_call", &xc32);
+    // v8: the k8 scratch stores. moffs32 (A3) keeps them short; the
+    // address is baked from the mapped image base at emit time.
+    let mut g2: Vec<u8> = vec![
+        0x8B, 0x44, 0x24, 0x04, // mov eax,[esp+4]
+        0xA3, // mov [k8base],eax
+    ];
+    g2.extend_from_slice(&k8base.to_le_bytes());
+    g2.extend_from_slice(&[
+        0x8B, 0x44, 0x24, 0x08, // mov eax,[esp+8]
+        0xA3, // mov [k8base+4],eax
+    ]);
+    g2.extend_from_slice(&k8base.wrapping_add(4).to_le_bytes());
+    g2.extend_from_slice(&[
+        0x8B, 0x44, 0x24, 0x04, // mov eax,[esp+4]
+        0xC3, // ret
+    ]);
+    add("glob_store_2", &g2);
+    let mut gh: Vec<u8> = vec![
+        0x8B, 0x44, 0x24, 0x04, // mov eax,[esp+4]
+        0xA3, // mov [k8base+4],eax
+    ];
+    gh.extend_from_slice(&k8base.wrapping_add(4).to_le_bytes());
+    gh.push(0xC3); // ret
+    add("glob_store_hi", &gh);
+    let mut g1: Vec<u8> = vec![
+        0x8B, 0x44, 0x24, 0x04, // mov eax,[esp+4]
+        0xA3, // mov [k8base],eax
+    ];
+    g1.extend_from_slice(&k8base.to_le_bytes());
+    g1.push(0xC3); // ret
+    add("glob_store_1", &g1);
     assert!(code.len() <= 0x1000, "self-test page overflow");
     (code, table)
 }
@@ -2684,11 +2734,14 @@ fn run_side(
     o.stack_hash = sh;
     o.stack_chash = sc;
     // declared globals diff + full-data undeclared discovery
+    // v8: each changed word carries its own address (before, every word
+    // of a range was recorded with the range's base, so which word of
+    // the range was written went uncompared).
     for (gi, &(lo, len)) in st().globals.clone().iter().enumerate() {
         for k in 0..(len / 4) {
             let got = unsafe { *((lo + k * 4) as *const u32) };
             if got != gbefore[gi].1[k] {
-                o.globals_writes.push(((lo - st().img) as u32, got));
+                o.globals_writes.push(((lo + k * 4 - st().img) as u32, got));
             }
         }
     }
@@ -5072,7 +5125,7 @@ mod tests {
 
     #[test]
     fn selftest_page_layout() {
-        let (code, table) = selftest_code(0x3101_1000, 0x3105_6004);
+        let (code, table) = selftest_code(0x3101_1000, 0x3105_6004, 0x3200_0620);
         assert!(code.len() <= 0x1000);
         let at = |n: &str| (table[n] - 0x3101_1000) as usize;
         assert_eq!(at("x87_store"), 0);
@@ -5160,6 +5213,30 @@ mod tests {
             let mut u = ok_obs();
             u.undeclared_n = 1;
             assert!(!compare(&a, &u, &j("{}")).0);
+        });
+    }
+
+    #[test]
+    fn globals_compare_sees_the_word_address() {
+        with_state(|_| {
+            // The same values at the same words pass; the same values at
+            // different words of one range fail. (This pins the comparison
+            // half, which already compared addresses; the v8 fix is the
+            // collection half recording each word's own address. Passes on
+            // stock too; the k8 proof contracts pin the collection half.)
+            let mut a = ok_obs();
+            a.globals_writes = vec![(0x620, 7), (0x624, 9)];
+            let mut b = ok_obs();
+            b.globals_writes = vec![(0x620, 7), (0x624, 9)];
+            assert!(compare(&a, &b, &j("{}")).0);
+            let mut swapped = ok_obs();
+            swapped.globals_writes = vec![(0x620, 9), (0x624, 7)];
+            assert!(!compare(&a, &swapped, &j("{}")).0);
+            let mut moved = ok_obs();
+            moved.globals_writes = vec![(0x620, 7)];
+            let mut orig = ok_obs();
+            orig.globals_writes = vec![(0x624, 7)];
+            assert!(!compare(&moved, &orig, &j("{}")).0);
         });
     }
 
@@ -5500,13 +5577,16 @@ mod tests {
 
     #[test]
     fn v7_selftest_originals_are_emitted() {
-        let (code, table) = selftest_code(0x3101_1000, 0x3105_6004);
+        let (code, table) = selftest_code(0x3101_1000, 0x3105_6004, 0x3200_0620);
         for name in [
             "ctail_guard",
             "st0_call",
             "st0_call64",
             "digest_loop",
             "xmm32_call",
+            "glob_store_hi",
+            "glob_store_2",
+            "glob_store_1",
         ] {
             assert!(table.contains_key(name), "{name}");
         }
@@ -5516,6 +5596,12 @@ mod tests {
         // The digest loop keeps its counter in pushed/popped ebx.
         let d = &code[at("digest_loop")..];
         assert_eq!(&d[..4], &[0x53, 0x31, 0xDB, 0x53]);
+        // The v8 scratch stores write through the baked base (moffs32).
+        let g = &code[at("glob_store_2")..];
+        assert_eq!(&g[..5], &[0x8B, 0x44, 0x24, 0x04, 0xA3]);
+        assert_eq!(&g[5..9], &0x3200_0620u32.to_le_bytes());
+        let h = &code[at("glob_store_hi")..];
+        assert_eq!(&h[5..9], &0x3200_0624u32.to_le_bytes());
     }
 
     fn x87_obs(top: u8, tags: u8, st0: x87::F80) -> Obs {
