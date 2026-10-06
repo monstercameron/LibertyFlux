@@ -552,7 +552,7 @@ lf_checker_rt::export!(cdecl, rw_008c2f10() -> u32 {
                 esi1 = lf_checker_rt::callee_cdecl!(C_FETCH, u32, edi0);
             }
             if edi0 == rd8(B_CMP_C) as u32 || edi0 == rd8(B_CMP_D) as u32 {
-                v18 = rdf(F_F20);
+                f1cv = rdf(F_F20);
             }
             f18v = rdf(F_F18);
             if esi1 != 0 {

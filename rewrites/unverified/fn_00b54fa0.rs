@@ -11,9 +11,10 @@
 /// (callee 5, cdecl): slot (`p`, `p`+4) and (`p`+0x480, `p`+0x484) for
 /// `p` from base+(`idx`+1)*4 while below base+32*4. The bound `idx`+1
 /// (wrapping) against 32 is compared unsigned; at or above, nothing
-/// slides. Two scratch words the original stamps on its frame are never
-/// read and are not reproduced. Returns the last mover answer, or the
-/// stop answer when nothing slid.
+/// slides. Each fill is followed by stamping the tag address over the
+/// buffer's fourth word, so the second double copied is (tag, word2).
+/// Returns the last mover answer; when nothing slid the result is
+/// \idx\+1 and the stop answer is ignored.
 ///
 /// The buffer address differs per side and is skipped in favour of a
 /// snapshot of its four words.
@@ -27,6 +28,7 @@ lf_checker_rt::export!(thiscall, rw_00b54fa0(this: u32, idx: u32) -> u32 {
         const ROW_BASE: u32 = 0x308;
         const ROW_STRIDE: u32 = 0x480;
         const KIND: u32 = 0x4016a0;
+        const TAG: u32 = 0x62e7a0;
         const PREP: u32 = 1;
         const START: u32 = 2;
         const FILL1: u32 = 3;
@@ -40,24 +42,27 @@ lf_checker_rt::export!(thiscall, rw_00b54fa0(this: u32, idx: u32) -> u32 {
         let mut buf = [0u32; 4];
         let bp = (&mut buf as *mut u32) as u32;
         let kind = lf_checker_rt::relocated(KIND);
+        let tag = lf_checker_rt::relocated(TAG);
         let _: u32 = lf_checker_rt::callee_thiscall!(FILL1, u32, bp, 0, kind, 0, 0);
         let slot = (this + SLOT_BASE).wrapping_add(idx.wrapping_mul(4));
         let slot = (slot as *const u32).read_unaligned();
+        ((bp + 12) as *mut u32).write_unaligned(tag);
         let d0 = (bp as *const u64).read_unaligned();
         (slot as *mut u64).write_unaligned(d0);
         let d1 = ((bp + 8) as *const u64).read_unaligned();
         ((slot + 8) as *mut u64).write_unaligned(d1);
         let _: u32 = lf_checker_rt::callee_thiscall!(FILL2, u32, bp, 0, kind, 0, 0);
+        ((bp + 12) as *mut u32).write_unaligned(tag);
         let d2 = (bp as *const u64).read_unaligned();
         ((slot + 16) as *mut u64).write_unaligned(d2);
         let d3 = ((bp + 8) as *const u64).read_unaligned();
         ((slot + 24) as *mut u64).write_unaligned(d3);
-        let out: u32 = lf_checker_rt::callee_thiscall!(STOP, u32, ch);
+        let _: u32 = lf_checker_rt::callee_thiscall!(STOP, u32, ch);
         let next = idx.wrapping_add(1);
         if next >= COUNT {
-            return out;
+            return next;
         }
-        let mut out = out;
+        let mut out = 0;
         let mut p = (this + ROW_BASE).wrapping_add(next.wrapping_mul(4));
         let mut left = COUNT - next;
         while left != 0 {

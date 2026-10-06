@@ -1,47 +1,6 @@
 // original: 0x00d09170 ped_create_gun_task
-//! Build a gun-task object for a ped and configure its flag words.
-//!
-//! Signature: `thiscall(this, ped, task_id) -> task` (two stack words,
-//! callee cleans 8). `this` is a small object the function reads flag bytes
-//! from (`+0x30` must be a pointer or null, `+0x34`/`+0x35` are flag bytes,
-//! `+0x50` receives one answer byte); `ped` is the large ped object (offsets
-//! up to `+0xD78`); `task_id` selects extra configuration when it is 12.
-//! Returns the new task, allocated from the task pool and constructed by the
-//! gun-task constructor.
-//!
-//! Behaviour. The entry stores zero the ped's words at `+0xD70..+0xD78`,
-//! then splits on two ped bytes: `+0x218 == 0` with `+0x219 != 0` takes the
-//! short path (allocate, construct with constant arguments, set flag bit
-//! `0x40005A40`, and when `task_id == 12` set more flag bits and two float
-//! slots from read-only constants chosen by `([this+0x35] & 2)` and the
-//! `& 0x18` masked word behind `[ped+0xD68]`). Every other combination takes
-//! the long path: poll three predicate helpers, run two frame-pointer
-//! helpers that fill caller slots, run a 7-out-pointer helper, optionally
-//! call the ped's virtual slot `0x128/4` with the ped as `this`, run a
-//! 3-out-pointer helper, and then either construct variant B (arguments from
-//! the helper outputs, flag words from a SIGNED global threshold compare)
-//! or variant C (constant arguments, fixed float slots).
-//!
-//! Floating point: the function only MOVES single-precision bit patterns
-//! between read-only constants, its frame and the task object; it performs
-//! no float arithmetic, so bit-exactness needs no operand pinning.
-//!
-//! Signedness: every compared value uses an exact-equality or bit test
-//! EXCEPT the global at `G_CMP_THRESHOLD`, which is compared SIGNED
-//! (`jge`): values `0x80000000..0xFFFFFFFF` count as below 2.
-//!
-//! Faults: the function faults (null `+0x74` flag write) exactly when the
-//! pool allocator or the constructor answers null; both sides do the same
-//! read-modify-write, so the fault address matches.
-//!
-//! Calling conventions (verified against each callee's prologue/epilogue,
-//! not assumed from the call sites): the pool allocator is
-//! `thiscall(pool)` with no stack arguments; the constructor is
-//! `thiscall(newmem, 8 args)`; the three predicate helpers take only the
-//! ped (`stdcall`, 1 arg) even where the caller pushes extra words, which
-//! are dead stack garbage the callee never reads and are therefore NOT
-//! reproduced here; the 5-argument filler is `cdecl`; the remaining
-//! helpers are `thiscall`/`stdcall`/`cdecl` as called below.
+// Rewrite of ped_create_gun_task. The full specification is the doc
+// comment on the export below.
 
 use lf_checker_rt::{callee_cdecl, callee_stdcall, callee_thiscall, global};
 
@@ -142,6 +101,49 @@ fn rmw_or(base: u32, off: u32, mask: u32) -> u32 {
     v
 }
 
+/// Build a gun-task object for a ped and configure its flag words.
+///
+/// Signature: `thiscall(this, ped, task_id) -> task` (two stack words,
+/// callee cleans 8). `this` is a small object the function reads flag bytes
+/// from (`+0x30` must be a pointer or null, `+0x34`/`+0x35` are flag bytes,
+/// `+0x50` receives one answer byte); `ped` is the large ped object (offsets
+/// up to `+0xD78`); `task_id` selects extra configuration when it is 12.
+/// Returns the new task, allocated from the task pool and constructed by the
+/// gun-task constructor.
+///
+/// Behaviour. The entry stores zero the ped's words at `+0xD70..+0xD78`,
+/// then splits on two ped bytes: `+0x218 == 0` with `+0x219 != 0` takes the
+/// short path (allocate, construct with constant arguments, set flag bit
+/// `0x40005A40`, and when `task_id == 12` set more flag bits and two float
+/// slots from read-only constants chosen by `([this+0x35] & 2)` and the
+/// `& 0x18` masked word behind `[ped+0xD68]`). Every other combination takes
+/// the long path: poll three predicate helpers, run two frame-pointer
+/// helpers that fill caller slots, run a 7-out-pointer helper, optionally
+/// call the ped's virtual slot `0x128/4` with the ped as `this`, run a
+/// 3-out-pointer helper, and then either construct variant B (arguments from
+/// the helper outputs, flag words from a SIGNED global threshold compare)
+/// or variant C (constant arguments, fixed float slots).
+///
+/// Floating point: the function only MOVES single-precision bit patterns
+/// between read-only constants, its frame and the task object; it performs
+/// no float arithmetic, so bit-exactness needs no operand pinning.
+///
+/// Signedness: every compared value uses an exact-equality or bit test
+/// EXCEPT the global at `G_CMP_THRESHOLD`, which is compared SIGNED
+/// (`jge`): values `0x80000000..0xFFFFFFFF` count as below 2.
+///
+/// Faults: the function faults (null `+0x74` flag write) exactly when the
+/// pool allocator or the constructor answers null; both sides do the same
+/// read-modify-write, so the fault address matches.
+///
+/// Calling conventions (verified against each callee's prologue/epilogue,
+/// not assumed from the call sites): the pool allocator is
+/// `thiscall(pool)` with no stack arguments; the constructor is
+/// `thiscall(newmem, 8 args)`; the three predicate helpers take only the
+/// ped (`stdcall`, 1 arg) even where the caller pushes extra words, which
+/// are dead stack garbage the callee never reads and are therefore NOT
+/// reproduced here; the 5-argument filler is `cdecl`; the remaining
+/// helpers are `thiscall`/`stdcall`/`cdecl` as called below.
 lf_checker_rt::export!(thiscall, rw_00d09170(this: u32, ped: u32, task_id: u32) -> u32 {
     let mut obj = this;
     // Entry stores.
@@ -303,8 +305,10 @@ fn path_b(this: u32, ped: u32, task_id: u32) -> u32 {
                 &mut e20 as *mut u32 as u32, 0);
             let hp = obj.wrapping_add(0x30);
             let v = e18;
+            // Push order is (frameptr, esi, value), so arg 0 is the
+            // VALUE, arg 1 the heap address and arg 2 the frame pointer.
             let d11 = callee_cdecl!(11u32, u32,
-                &mut e20 as *mut u32 as u32, hp, v);
+                v, hp, &mut e20 as *mut u32 as u32);
             al_cur = (d11 & 0xFF) as u8;
             // The callee sequence reloads the saved entry object here.
             obj = this;

@@ -81,7 +81,7 @@ lf_checker_rt::export!(thiscall, rw_00928ac0(this: u32) -> u32 {
         const OPAQUE_BLACK: u32 = 0xFF000000;
 
         const ALLOC_FIRST: u32 = 1;
-        const VT_FIRST: u32 = 2;
+        // (vtable slot call is callee id 2, reached through the planted vtable)
         const WRAP_FIRST: u32 = 3;
         const CONSUME: u32 = 4;
         const SCENE_SETUP: u32 = 5;
@@ -90,6 +90,7 @@ lf_checker_rt::export!(thiscall, rw_00928ac0(this: u32) -> u32 {
         const POST_BUILD: u32 = 8;
         const KEYED_LOOKUP: u32 = 9;
         const KEYED_LOOKUP2: u32 = 10;
+        const KEYED_LOOKUP2_POST: u32 = 33;
         const KEYED_BUILD: u32 = 11;
         const XF_INIT: u32 = 12;
         const XF_APPLY: u32 = 13;
@@ -123,9 +124,9 @@ lf_checker_rt::export!(thiscall, rw_00928ac0(this: u32) -> u32 {
             slot14: [u32; 3],  // +0x14 param-fill pointer target, then lookup slot
             s20: [u32; 8],     // +0x20 keyed-build pointer (+0x28 holds params)
             flag: u8,          // +0x40 param flag byte
-            _pad1: [u8; 0x33],
-            s74: [u32; 16],    // +0x74 matrix-load object
-            _pad2: [u8; 0x1C],
+            _pad1: [u8; 0x2F],
+            s70: [u32; 16],    // +0x70 matrix-load object (lea has one push pending)
+            _pad2: [u8; 0x20],
             s_d0: [u32; 16],   // +0xD0 pair-build second pointer, +0xE0 keyed-build pointer
             s110: [[u32; 16]; 4], // +0x110 projection inputs, one row per pass
             _pad3: [u8; 0xD0],
@@ -135,7 +136,7 @@ lf_checker_rt::export!(thiscall, rw_00928ac0(this: u32) -> u32 {
         const _: () = assert!(core::mem::offset_of!(Frame, slot14) == 0x14);
         const _: () = assert!(core::mem::offset_of!(Frame, s20) == 0x20);
         const _: () = assert!(core::mem::offset_of!(Frame, flag) == 0x40);
-        const _: () = assert!(core::mem::offset_of!(Frame, s74) == 0x74);
+        const _: () = assert!(core::mem::offset_of!(Frame, s70) == 0x70);
         const _: () = assert!(core::mem::offset_of!(Frame, s_d0) == 0xD0);
         const _: () = assert!(core::mem::offset_of!(Frame, s110) == 0x110);
         const _: () = assert!(core::mem::offset_of!(Frame, s2e0) == 0x2E0);
@@ -218,7 +219,7 @@ lf_checker_rt::export!(thiscall, rw_00928ac0(this: u32) -> u32 {
         let row = rd32(lf_checker_rt::relocated(TABLE_IDX_A));
         let matrix = lf_checker_rt::relocated(MATRIX_BASE)
             .wrapping_add(row.wrapping_mul(MATRIX_STRIDE));
-        let _: u32 = lf_checker_rt::callee_thiscall!(MATRIX_LOAD, u32, at(0x74), matrix);
+        let _: u32 = lf_checker_rt::callee_thiscall!(MATRIX_LOAD, u32, at(0x70), matrix);
         let _: u32 = lf_checker_rt::callee_cdecl!(PAIR_BUILD, u32, at(0x30), at(0xD0));
         let _: u32 = lf_checker_rt::callee_cdecl!(POST_BUILD, u32,);
 
@@ -349,7 +350,7 @@ lf_checker_rt::export!(thiscall, rw_00928ac0(this: u32) -> u32 {
 
         frame.counter = 0;
         let _: u32 = lf_checker_rt::callee_cdecl!(
-            KEYED_LOOKUP2, u32,
+            KEYED_LOOKUP2_POST, u32,
             lf_checker_rt::relocated(CODE_B),
             at(0x10)
         );
