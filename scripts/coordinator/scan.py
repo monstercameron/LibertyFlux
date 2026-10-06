@@ -23,9 +23,9 @@ LANE_IMPORT = re.compile(r"^\s*use lf_(?:r[nsb]|a)\d+_\w+::[^;]*;\s*\n", re.M)
 
 # Outcomes that count as a pass, and the rank of each checker version: a
 # rewrite is replaced only by one checked under a later version.
-PASSED = {"verified", "verified_v2", "verified_v3", "verified_v4", "verified_v5", "verified_v6", "verified_v7"}
-RANK = {"version 1": 1, "version 2": 2, "version 3": 3, "version 4": 4, "version 5": 5, "version 6": 6, "version 7": 7}
-MODERN = ("version 2", "version 3", "version 4", "version 5", "version 6", "version 7")
+PASSED = {"verified", "verified_v2", "verified_v3", "verified_v4", "verified_v5", "verified_v6", "verified_v7", "verified_v8"}
+RANK = {"version 1": 1, "version 2": 2, "version 3": 3, "version 4": 4, "version 5": 5, "version 6": 6, "version 7": 7, "version 8": 8}
+MODERN = ("version 2", "version 3", "version 4", "version 5", "version 6", "version 7", "version 8")
 
 
 def scan_text(text):
@@ -42,6 +42,8 @@ def checker_of_lane(lists, lane):
     """The checker version a lane's passes count as, from its marker files.
     Re-run lanes are always version 2 at least."""
     lists = Path(lists)
+    if (lists / f"{lane}.v8").exists():
+        return "version 8"
     if (lists / f"{lane}.v7").exists():
         return "version 7"
     if (lists / f"{lane}.v6").exists():
