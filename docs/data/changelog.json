@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Devlog: Production batch: three ui rewrites verified, one float case the checker cannot settle",
+    "title": "Rewrites: 18 more functions pass the checker (16374 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "18 rewrites added under rewrites/verified: 0 script native handlers and 18 other functions.",
+      "The tree now holds 16374 rewrites, 16355 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Devlog: Production batch: three ui rewrites verified, one float case the checker cannot settle",
+    "commit": "ab90fc8798bc7e1cb7c26d787067026240df43db",
     "summary": "Findings from the r-b605 lane.",
     "changes": [
       "New devlog entry: Production batch: three ui rewrites verified, one float case the checker cannot settle.",

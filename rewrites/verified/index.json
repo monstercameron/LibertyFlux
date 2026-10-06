@@ -33426,6 +33426,15 @@
   "lane": "r-s145"
  },
  {
+  "address": "0x005D6690",
+  "name": "table_column_redistribute",
+  "kind": "function",
+  "file": "functions/fn_005d6690.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b616"
+ },
+ {
   "address": "0x005D6E60",
   "name": "session_open_probe_dispatched",
   "kind": "function",
@@ -54862,6 +54871,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s132"
+ },
+ {
+  "address": "0x00946030",
+  "name": "stream_slot_processor",
+  "kind": "function",
+  "file": "functions/fn_00946030.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b601"
  },
  {
   "address": "0x00946490",
@@ -110259,6 +110277,24 @@
   "lane": "r-b155"
  },
  {
+  "address": "0x00BF6B30",
+  "name": "lerp_forward_18",
+  "kind": "function",
+  "file": "functions/fn_00bf6b30.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s508"
+ },
+ {
+  "address": "0x00BF6B60",
+  "name": "lerp_forward_18_1c",
+  "kind": "function",
+  "file": "functions/fn_00bf6b60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s508"
+ },
+ {
   "address": "0x00BF6BC0",
   "name": "anim_pose_compose_emit",
   "kind": "function",
@@ -110268,6 +110304,114 @@
   "lane": "a-Q16"
  },
  {
+  "address": "0x00BF72F0",
+  "name": "fetch_copy_triple_a",
+  "kind": "function",
+  "file": "functions/fn_00bf72f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s508"
+ },
+ {
+  "address": "0x00BF7320",
+  "name": "fetch_copy_triple_b",
+  "kind": "function",
+  "file": "functions/fn_00bf7320.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s508"
+ },
+ {
+  "address": "0x00BF7350",
+  "name": "fetch_decode_store_a",
+  "kind": "function",
+  "file": "functions/fn_00bf7350.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s508"
+ },
+ {
+  "address": "0x00BF73A0",
+  "name": "fetch_decode_store_b",
+  "kind": "function",
+  "file": "functions/fn_00bf73a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s508"
+ },
+ {
+  "address": "0x00BF73F0",
+  "name": "scale_signed_bytes",
+  "kind": "function",
+  "file": "functions/fn_00bf73f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s508"
+ },
+ {
+  "address": "0x00BF7440",
+  "name": "encode_store_triple",
+  "kind": "function",
+  "file": "functions/fn_00bf7440.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s508"
+ },
+ {
+  "address": "0x00BF7490",
+  "name": "emit_init_37",
+  "kind": "function",
+  "file": "functions/fn_00bf7490.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s508"
+ },
+ {
+  "address": "0x00BF74F0",
+  "name": "emit_init_38",
+  "kind": "function",
+  "file": "functions/fn_00bf74f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s508"
+ },
+ {
+  "address": "0x00BF7520",
+  "name": "emit_init_2d",
+  "kind": "function",
+  "file": "functions/fn_00bf7520.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s508"
+ },
+ {
+  "address": "0x00BF7560",
+  "name": "emit_init_2c",
+  "kind": "function",
+  "file": "functions/fn_00bf7560.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s508"
+ },
+ {
+  "address": "0x00BF75C0",
+  "name": "emit_init_30",
+  "kind": "function",
+  "file": "functions/fn_00bf75c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s508"
+ },
+ {
+  "address": "0x00BF7610",
+  "name": "emit_init_31",
+  "kind": "function",
+  "file": "functions/fn_00bf7610.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s508"
+ },
+ {
   "address": "0x00BF7650",
   "name": "veh_overheat_apply_state",
   "kind": "function",
@@ -110275,6 +110419,24 @@
   "trials": 1200,
   "checker": "version 3",
   "lane": "r-b155"
+ },
+ {
+  "address": "0x00BF77A0",
+  "name": "emit_init_39",
+  "kind": "function",
+  "file": "functions/fn_00bf77a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s508"
+ },
+ {
+  "address": "0x00BF77E0",
+  "name": "emit_init_32_wrap",
+  "kind": "function",
+  "file": "functions/fn_00bf77e0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s508"
  },
  {
   "address": "0x00BF7810",
