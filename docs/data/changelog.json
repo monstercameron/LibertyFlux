@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Devlog: One configuration routine publishes uninitialized stack to a global",
+    "commit": null,
+    "summary": "Findings from the r-b616 lane.",
+    "changes": [
+      "New devlog entry: One configuration routine publishes uninitialized stack to a global.",
+      "Written by a Muse lane and checked before publishing for addresses, local paths, byte dumps and code."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rust in progress: 33 files from lanes (259 unverified rewrites, 534 in review)",
     "commit": "c9d19b4be5fec09c30e8304a0b429224169a8b8b",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
