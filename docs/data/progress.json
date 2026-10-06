@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-06",
-  "updated_at": "2026-10-06 07:57",
+  "updated_at": "2026-10-06 08:11",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -13,11 +13,11 @@
   "stages": {
     "identified": 37413,
     "named": 32074,
-    "rewritten": 16900,
-    "verified": 16856
+    "rewritten": 16917,
+    "verified": 16872
   },
   "structures": 340,
-  "symbols": 16971,
+  "symbols": 16987,
   "measured": [
     {
       "label": "Code section",
@@ -105,13 +105,13 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 16900,
+      "value": 16917,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 16856,
+      "value": 16872,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     },
@@ -119,24 +119,24 @@
       "label": "Game code verified, measured in bytes",
       "value": 33.6,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2458617 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2463029 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
-      "value": 24.6,
+      "value": 24.7,
       "unit": "percent",
-      "source": "366 of 1347 such functions; they hold 38% of the game's code"
+      "source": "367 of 1347 such functions; they hold 38% of the game's code"
     },
     {
       "label": "Methods lifted to portable Rust with their proof run by the pipeline",
-      "value": 312,
+      "value": 338,
       "unit": "methods",
-      "source": "rows marked proven in the registries of 14 lifted modules (crates/*/src/*/registry.rs); each is tested against its verified rewrite on every push"
+      "source": "rows marked proven in the registries of 16 lifted modules (crates/*/src/*/registry.rs); each is tested against its verified rewrite on every push"
     }
   ],
   "activity": {
     "lanes_running": 14,
-    "lanes_finished": 1559,
+    "lanes_finished": 1566,
     "lanes_incomplete": 149,
     "devlog_entries": 532
   },
@@ -903,8 +903,8 @@
       "to": "0x005DA826",
       "count": 109,
       "named": 105,
-      "rewritten": 29,
-      "verified": 29
+      "rewritten": 43,
+      "verified": 43
     },
     {
       "stage": "named",
@@ -3432,8 +3432,8 @@
       "to": "0x00BF7E04",
       "count": 76,
       "named": 76,
-      "rewritten": 69,
-      "verified": 69
+      "rewritten": 70,
+      "verified": 70
     },
     {
       "stage": "verified",
@@ -3594,8 +3594,8 @@
       "to": "0x00C5C261",
       "count": 30,
       "named": 30,
-      "rewritten": 13,
-      "verified": 13
+      "rewritten": 14,
+      "verified": 14
     },
     {
       "stage": "named",
@@ -3963,7 +3963,7 @@
       "to": "0x00D408C2",
       "count": 96,
       "named": 34,
-      "rewritten": 24,
+      "rewritten": 25,
       "verified": 23
     },
     {
@@ -4465,12 +4465,12 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2458617,
+    "verified": 2463029,
     "large_functions": 2801402,
-    "large_functions_verified": 690488
+    "large_functions_verified": 692852
   },
   "lifted": {
-    "methods": 312,
-    "modules": 14
+    "methods": 338,
+    "modules": 16
   }
 }
