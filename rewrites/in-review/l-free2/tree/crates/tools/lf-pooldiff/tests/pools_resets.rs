@@ -13,7 +13,7 @@
 mod x86 {
     use lf_pooldiff::rewrites::*;
     use lf_world::pools::{
-        HANDLE_SIZE, PAIR_SIZE, PairSlot, ROW_SIZE, SLOT_SIZE, HandleState, RowPairs, SlotPair,
+        HANDLE_SIZE, HandleState, PAIR_SIZE, PairSlot, ROW_SIZE, RowPairs, SLOT_SIZE, SlotPair,
         SmallSlot,
     };
 
@@ -83,7 +83,10 @@ mod x86 {
             rng.bytes(&mut img);
             let boxed = Box::new(img);
             let this = addr(&boxed[0]);
-            assert!(this.checked_add(HANDLE_SIZE as u32).is_some(), "region wraps");
+            assert!(
+                this.checked_add(HANDLE_SIZE as u32).is_some(),
+                "region wraps"
+            );
             let before = unsafe { snapshot(this, HANDLE_SIZE) };
             let got = unsafe { fn_00A0B770::rw_00a0b770(this) };
             let after = unsafe { snapshot(this, HANDLE_SIZE) };
@@ -176,7 +179,11 @@ mod x86 {
         assert!(caught > 0, "wrong wipe never caught ({cases} cases)");
     }
 
-    fn run_pair(slot: PairSlot, seed: u32, set: extern "thiscall" fn(u32, u32) -> u32) -> (u32, u32) {
+    fn run_pair(
+        slot: PairSlot,
+        seed: u32,
+        set: extern "thiscall" fn(u32, u32) -> u32,
+    ) -> (u32, u32) {
         let mut rng = Rng(seed);
         let mut cases = 0;
         let mut caught = 0;

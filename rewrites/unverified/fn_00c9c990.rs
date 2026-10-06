@@ -48,7 +48,7 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
         const THIS_STATUS: u32 = 0xC8;
         const ROW_STRIDE: u32 = 0xE0;
         const RATE_GLOBAL: u32 = 0x011735BC;
-        const DEG2RADish: u32 = 0x00FE8728;
+        const DEG2RAD: u32 = 0x00FE8728;
         const SNAP_SMALL: u32 = 0x00FE86B4;
         const CLAMP_HI: u32 = 0x00E9B4EC;
         const CLAMP_LO: u32 = 0x00E9B510;
@@ -171,6 +171,7 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
         q1 = fsqrt(q1);
         let d2 = angle2(e0, f64::from(q1));
         let t18 = d2 as f32;
+        (this.wrapping_add(THIS_STATUS) as *mut u32).write_unaligned(0);
         let mut x0 = t08;
         let hi = grdf(CLAMP_HI);
         if !(hi > x0) {
@@ -192,7 +193,7 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
 
         // Block 4: step each driven angle toward its target.
         let rate = grdf(RATE_GLOBAL);
-        let deg = grdf(DEG2RADish);
+        let deg = grdf(DEG2RAD);
         let a8v = rdf(a8);
         let thr3 = fmul(fmul(f32::from_bits(a6), deg), rate);
         if thr3 > fabs(fsub(a8v, t08)) {
@@ -221,7 +222,7 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
         // The evaluation helper fills 11 words; the function reads all but
         // words 3 and 7.
         let mut w = [0u32; 11];
-        lf_checker_rt::callee_thiscall!(6, u32, w.as_mut_ptr() as u32, rdf(a8).to_bits(), lf_checker_rt::relocated(DATA_A));
+        lf_checker_rt::callee_thiscall!(6, u32, w.as_mut_ptr() as u32, lf_checker_rt::relocated(DATA_A), rdf(a8).to_bits());
         let w0 = f32::from_bits(w[0]);
         let w1 = f32::from_bits(w[1]);
         let w2 = f32::from_bits(w[2]);
@@ -304,7 +305,7 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
         let m78 = c1;
 
         // Block 7: second evaluation into the same buffer, second combination.
-        lf_checker_rt::callee_thiscall!(6, u32, w.as_mut_ptr() as u32, rdf(a9).to_bits(), lf_checker_rt::relocated(DATA_B));
+        lf_checker_rt::callee_thiscall!(6, u32, w.as_mut_ptr() as u32, lf_checker_rt::relocated(DATA_B), rdf(a9).to_bits());
         let v0 = f32::from_bits(w[0]);
         let v1 = f32::from_bits(w[1]);
         let v2 = f32::from_bits(w[2]);
@@ -407,7 +408,7 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
         let mut b48 = rdf(row.wrapping_add(0xC8));
         let bc = rdf(row.wrapping_add(0xB4));
         let dc = rdf(row.wrapping_add(0xC4));
-        if (a5 as u8) as i8 बहुत < 0 {
+        if ((a5 as u8) as i8) < 0 {
             b60 = grdf(0x00ED6F00);
             b48 = grdf(0x00ED6EEC);
         }
@@ -452,7 +453,6 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
         e8 = g6;
         g6 = m88b;
         q0 = fmul(g6, n4);
-        e18 = n6;
         n4 = e18;
         g6 = fmul(g6, n4);
         s5 = fsub(s5, q0);
@@ -474,7 +474,7 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
         e8 = q0;
         q0 = fmul(s5, n4);
         i1 = fmul(i1, n7);
-        let mut g3 = fmul(rcp3, g6);
+        let g3 = fmul(rcp3, g6);
         i1 = fsub(i1, q0);
         q0 = e8;
         let m70 = g3;
@@ -486,9 +486,8 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
         };
 
         // Block 11: single-float arc plus the second double angle.
-        let asin_call: extern "cdecl" fn(u32) -> u32 =
-            core::mem::transmute(lf_checker_rt::callee_addr(9) as usize);
-        let s_val = f32::from_bits(asin_call(fneg(m70).to_bits()));
+        let s_val =
+            f32::from_bits(lf_checker_rt::callee_cdecl!(9, u32, fneg(m70).to_bits()));
         let n2 = d0v;
         let n3 = e18;
         let m70b = s_val;
@@ -504,9 +503,9 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
         let mut cb3 = [atanb.to_bits(), m70b.to_bits(), e8.to_bits()];
         lf_checker_rt::callee_cdecl!(
             10, u32,
-            cb1.as_mut_ptr() as u32,
+            cb3.as_mut_ptr() as u32,
             cb2.as_mut_ptr() as u32,
-            cb3.as_mut_ptr() as u32
+            cb1.as_mut_ptr() as u32
         );
         let mut cbuf = [
             m78b.to_bits(),
@@ -561,3 +560,5 @@ lf_checker_rt::export!(thiscall, rw_00c9c990(this: u32, a1: u32, _a2: u32, a3: u
             .wrapping_mul(ROW_STRIDE)
             .wrapping_add(rd32(rd32(edx.wrapping_add(4))));
         lf_checker_rt::callee_thiscall!(13, u32, edx, row2)
+    }
+});

@@ -267,7 +267,8 @@ mod x86 {
                         let want_end = if count == 0 {
                             block
                         } else {
-                            body.wrapping_add(8).wrapping_add(count.wrapping_mul(stride))
+                            body.wrapping_add(8)
+                                .wrapping_add(count.wrapping_mul(stride))
                         };
                         assert_eq!(got, want_end, "count={count} end");
                         assert_eq!(v.end_offset_extra(), want_end.wrapping_sub(block) as usize);
@@ -285,10 +286,7 @@ mod x86 {
                             assert_eq!(&v.buf()[off..off + 4], &stamp_addr.to_le_bytes());
                             assert_eq!(&v.buf()[off + 8..off + 12], &[0, 0, 0, 0]);
                             assert_eq!(&v.buf()[off + 0x60..off + 0x64], &[0, 0, 0, 0]);
-                            assert_eq!(
-                                &v.buf()[off + 0x64..off + 0x68],
-                                &[0xFF, 0xFF, 0xFF, 0xFF]
-                            );
+                            assert_eq!(&v.buf()[off + 0x64..off + 0x68], &[0xFF, 0xFF, 0xFF, 0xFF]);
                         }
                         // Wrong lift: the extra words swapped (ones at
                         // +0x60, zero at +0x64). Always differs here.
@@ -653,7 +651,10 @@ mod x86 {
             let block_addr = addr(&block_box[0]);
             let obj_box = Box::leak(Box::new([0u8; 28]));
             let obj_addr = addr(&obj_box[0]);
-            O_SCRIPT.lock().unwrap().push_back(if ok { block_addr } else { 0 });
+            O_SCRIPT
+                .lock()
+                .unwrap()
+                .push_back(if ok { block_addr } else { 0 });
             O_INIT_SCRIPT.lock().unwrap().push_back(obj_addr);
             let got = unsafe { (inst.create)() };
             let published = unsafe { rt::global::<u32>(inst.slot_va).read() };
@@ -665,11 +666,7 @@ mod x86 {
                 vtable,
                 &mut |s: u32| {
                     lift_sizes.push(s);
-                    if ok {
-                        ObjHandle::new(block_addr)
-                    } else {
-                        None
-                    }
+                    if ok { ObjHandle::new(block_addr) } else { None }
                 },
                 &mut |block: ObjHandle, a: u32, vtab: ObjVtable, c: u32| {
                     lift_log.push((block.get(), a, vtab.get(), c));
@@ -684,7 +681,10 @@ mod x86 {
                     assert_eq!(got, obj_addr);
                     assert_eq!(published, obj_addr);
                     assert_eq!(h.get(), obj_addr);
-                    assert_eq!(&O_INIT_LOG.lock().unwrap()[..], &[(block_addr, inst.a, vtab_addr, inst.c)]);
+                    assert_eq!(
+                        &O_INIT_LOG.lock().unwrap()[..],
+                        &[(block_addr, inst.a, vtab_addr, inst.c)]
+                    );
                     assert_eq!(lift_log, [(block_addr, inst.a, vtab_addr, inst.c)]);
                 }
                 None => {

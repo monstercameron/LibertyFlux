@@ -34,9 +34,12 @@ impl HandlePool {
             handle >= 0,
             "handle {handle} is negative: the original reads before the table"
         );
+        // The assert above excluded every negative handle.
+        #[allow(clippy::cast_sign_loss)]
+        let at = handle as usize;
         *self
             .pages
-            .get(handle as usize)
+            .get(at)
             .unwrap_or_else(|| panic!("handle {handle} past {} pages", self.pages.len()))
     }
 

@@ -12,16 +12,23 @@
 //! dependence, no `unsafe`.
 
 mod adopt;
+mod control;
 mod entry;
 mod fixed;
 mod flags;
 mod registry;
+mod resets;
 mod table;
 
 pub use adopt::AdoptHook;
 pub use adopt::AdoptOutcome;
 pub use adopt::AdoptSlot;
 pub use adopt::MarkSlot;
+pub use control::ControlBlock;
+pub use control::FlagBank;
+pub use control::RecordRelease;
+pub use control::SlotCompare;
+pub use control::SlotWatcher;
 pub use entry::DataAddress;
 pub use entry::DataSlots;
 pub use entry::KindBytes;
@@ -42,4 +49,10 @@ pub use flags::SlotFlags;
 pub use registry::ROWS;
 pub use registry::Row;
 pub use registry::State;
+pub use resets::IdArray;
+pub use resets::LANE_TABLE_LEN;
+pub use resets::LANES;
+pub use resets::LaneTable;
+pub use resets::ResetSlot;
+pub use resets::SLOT_LEN;
 pub use table::SlotTable;

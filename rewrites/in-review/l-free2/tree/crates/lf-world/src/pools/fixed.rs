@@ -64,6 +64,10 @@ impl Entry {
     }
 
     /// Writes the entry back into 20 bytes.
+    ///
+    /// # Panics
+    ///
+    /// When fewer than 20 bytes are given.
     pub fn to_bytes(&self, b: &mut [u8]) {
         b[0..4].copy_from_slice(&self.ptr.to_le_bytes());
         b[4..6].copy_from_slice(&self.tag.to_le_bytes());
@@ -105,6 +109,10 @@ impl EntryTable {
     }
 
     /// Writes every entry back into the image.
+    ///
+    /// # Panics
+    ///
+    /// When the image is not exactly the table size.
     pub fn to_bytes(&self, img: &mut [u8]) {
         assert!(
             img.len() == ENTRY_COUNT * ENTRY_LEN,
@@ -181,6 +189,10 @@ impl RevocEntry {
     }
 
     /// Writes the entry back into 44 bytes.
+    ///
+    /// # Panics
+    ///
+    /// When fewer than 44 bytes are given.
     pub fn to_bytes(&self, b: &mut [u8]) {
         b[0..2].copy_from_slice(&self.tag.to_le_bytes());
         b[2..44].copy_from_slice(&self.body);
@@ -255,6 +267,10 @@ impl RevocTable {
     }
 
     /// Writes every entry back into the image.
+    ///
+    /// # Panics
+    ///
+    /// When the image is not exactly the table size.
     pub fn to_bytes(&self, img: &mut [u8]) {
         assert!(
             img.len() == REVOC_COUNT * REVOC_LEN,
@@ -305,6 +321,8 @@ impl RevocTable {
     /// clears the bit, zeroes the tag, and decrements the live count
     /// (wrapping) per revocation.
     pub fn revoke(&mut self, key: u32) -> usize {
+        // The low 16 bits are the tag by definition.
+        #[allow(clippy::cast_possible_truncation)]
         let tag = key as u16;
         let mut live = self.head_a;
         for entry in &mut self.entries {

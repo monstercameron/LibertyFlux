@@ -17,8 +17,8 @@ mod x86 {
     use lf_pooldiff::rewrites::*;
     use lf_pooldiff::rt;
     use lf_world::pools::{
-        ENTRY_COUNT, ENTRY_LEN, FIND_MISS, FIND_SCALE, REVOC_BIT, REVOC_COUNT, REVOC_LEN,
-        EntryTable, RevocTable,
+        ENTRY_COUNT, ENTRY_LEN, EntryTable, FIND_MISS, FIND_SCALE, REVOC_BIT, REVOC_COUNT,
+        REVOC_LEN, RevocTable,
     };
 
     #[path = "../support/mod.rs"]
@@ -247,7 +247,13 @@ mod x86 {
     }
 
     /// Plants the revocation image and headers; returns (base, first, end).
-    fn plant_revoc(img: Vec<u8>, head_a: u32, head_b: u32, head_c: [u8; 4], head_d: u32) -> (u32, u32, u32) {
+    fn plant_revoc(
+        img: Vec<u8>,
+        head_a: u32,
+        head_b: u32,
+        head_c: [u8; 4],
+        head_d: u32,
+    ) -> (u32, u32, u32) {
         let len = REVOC_COUNT * REVOC_LEN;
         assert_eq!(img.len(), len);
         let boxed = img.into_boxed_slice();
@@ -295,11 +301,19 @@ mod x86 {
             assert_eq!(unsafe { read_global(R_A_VA) }, 0, "head_a zeroed");
             assert_eq!(unsafe { read_global(R_B_VA) }, 0, "head_b zeroed");
             assert_eq!(unsafe { read_global(R_D_VA) }, pre_d, "head_d untouched");
-            assert_eq!(*SLOTS_LOG.lock().unwrap(), [slots_addr], "slot reset called once");
+            assert_eq!(
+                *SLOTS_LOG.lock().unwrap(),
+                [slots_addr],
+                "slot reset called once"
+            );
             let mut lift_calls = 0;
             let mut lift = RevocTable::from_parts(pre_a, pre_b, pre_c, pre_d, &before);
-            let lend = lift.reset(&mut | | lift_calls += 1);
-            assert_eq!(base.wrapping_add(9).wrapping_add(lend as u32), end, "lift end");
+            let lend = lift.reset(&mut || lift_calls += 1);
+            assert_eq!(
+                base.wrapping_add(9).wrapping_add(lend as u32),
+                end,
+                "lift end"
+            );
             assert_eq!(lift.head_a, 0);
             assert_eq!(lift.head_b, 0);
             assert_eq!(lift.head_c, pre_c, "head_c untouched");
@@ -345,7 +359,11 @@ mod x86 {
             assert_eq!(unsafe { read_global(R_D_VA) }, 0, "head_d zeroed");
             let mut lift = RevocTable::from_parts(pre_a, pre_b, pre_c, pre_d, &before);
             let lend = lift.clear();
-            assert_eq!(base.wrapping_add(9).wrapping_add(lend as u32), end, "lift end");
+            assert_eq!(
+                base.wrapping_add(9).wrapping_add(lend as u32),
+                end,
+                "lift end"
+            );
             assert_eq!(lift.head_a, 0);
             assert_eq!(lift.head_b, 0);
             assert_eq!(lift.head_c, [0; 4]);
@@ -409,9 +427,17 @@ mod x86 {
             assert_eq!(got, end, "round {round} final cursor");
             let mut lift = RevocTable::from_parts(live, pre_b, pre_c, pre_d, &before);
             let lend = lift.revoke(key);
-            assert_eq!(base.wrapping_add(9).wrapping_add(lend as u32), end, "round {round} lift end");
+            assert_eq!(
+                base.wrapping_add(9).wrapping_add(lend as u32),
+                end,
+                "round {round} lift end"
+            );
             // Two rows revoked (r0, r0+4): count wraps down by two.
-            assert_eq!(lift.head_a, live.wrapping_sub(2), "round {round} live count");
+            assert_eq!(
+                lift.head_a,
+                live.wrapping_sub(2),
+                "round {round} live count"
+            );
             assert_eq!(unsafe { read_global(R_A_VA) }, live.wrapping_sub(2));
             let mut expect = vec![0u8; len];
             lift.to_bytes(&mut expect);

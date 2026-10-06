@@ -53,18 +53,19 @@ impl RowTable {
             .get(row as usize)
             .unwrap_or_else(|| panic!("row {row} past {} rows", self.rows.len()))
             .cells;
-        *cells.get(cell as usize).unwrap_or_else(|| {
-            panic!(
-                "cell {cell} past {} cells of row {row}",
-                cells.len()
-            )
-        })
+        *cells
+            .get(cell as usize)
+            .unwrap_or_else(|| panic!("cell {cell} past {} cells of row {row}", cells.len()))
     }
 
     /// A cursor over the table, starting at (`row`, `cell`).
     #[must_use]
     pub fn cursor(&self, row: i32, cell: u32) -> RowCursor<'_> {
-        RowCursor { table: self, row, cell }
+        RowCursor {
+            table: self,
+            row,
+            cell,
+        }
     }
 
     /// Row count for the cursor's end checks.
@@ -117,10 +118,11 @@ impl RowCursor<'_> {
         loop {
             let cell = self.cell.wrapping_add(1);
             self.cell = cell;
-            let limit = self.table.rows[row as usize].cells.len();
+            let at = usize::try_from(row).expect("row checked non-negative");
+            let limit = self.table.rows[at].cells.len();
             let limit16 =
                 u16::try_from(limit).expect("cell counts past u16::MAX are out of domain");
-            if (cell as i32) < i32::from(limit16) {
+            if cell.cast_signed() < i32::from(limit16) {
                 break;
             }
             row = row.wrapping_add(1);
@@ -133,15 +135,18 @@ impl RowCursor<'_> {
                 row >= 0,
                 "cursor wrapped past row {row}: the original reads before the table"
             );
-            let first = self.table.rows[row as usize].cells.len();
+            let at = usize::try_from(row).expect("row checked non-negative");
+            let first = self.table.rows[at].cells.len();
             let first16 =
                 u16::try_from(first).expect("cell counts past u16::MAX are out of domain");
-            if 0u16 >= first16 {
+            // The original compares 0 >= count unsigned, which is emptiness.
+            if first16 == 0 {
                 continue;
             }
             break;
         }
-        let cells = &self.table.rows[self.row as usize].cells;
+        let at = usize::try_from(self.row).expect("row checked non-negative");
+        let cells = &self.table.rows[at].cells;
         let at = usize::try_from(self.cell)
             .ok()
             .and_then(|at| cells.get(at).map(|_| at))

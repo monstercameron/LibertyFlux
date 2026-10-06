@@ -51,8 +51,7 @@ mod x86 {
                 arr_addr
             };
             put_u32(&mut blocks, r * STRIDE, arr_addr);
-            blocks[r * STRIDE + 4..r * STRIDE + 6]
-                .copy_from_slice(&(n as u16).to_le_bytes());
+            blocks[r * STRIDE + 4..r * STRIDE + 6].copy_from_slice(&(n as u16).to_le_bytes());
             rows.push(Row { cells });
             if n != 0 {
                 std::mem::forget(arr_box);
@@ -144,8 +143,7 @@ mod x86 {
             let (this, table) = plant_rows(&counts, &mut rng);
             for (r, &n) in counts.iter().enumerate() {
                 for c in 0..n {
-                    let got =
-                        unsafe { fn_00A8EAF0::rw_00A8EAF0(this, r as u32, c as u32) };
+                    let got = unsafe { fn_00A8EAF0::rw_00A8EAF0(this, r as u32, c as u32) };
                     assert_eq!(got, table.cell(r as u32, c as u32), "cell ({r}, {c})");
                     // Wrong lift: the next cell over (wraps within the row).
                     let w = table.cell(r as u32, ((c + 1) % n) as u32);

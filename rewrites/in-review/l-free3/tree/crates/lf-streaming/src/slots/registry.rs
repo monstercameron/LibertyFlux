@@ -1,8 +1,10 @@
 //! What is lifted, what is proven, and what each proof leaves out.
 //!
 //! One row per verified 32-bit routine of the streaming slot-table
-//! structures: the eleven entry-table routines verified by lane r-s445
-//! and the eleven fixed-table routines verified by lane r-s437. `Proven`
+//! structures: the eleven entry-table routines verified by lane r-s445,
+//! the eleven fixed-table routines verified by lane r-s437, the three
+//! small resettable objects of lane r-s436, and the three control-block
+//! routines of lane r-s441. `Proven`
 //! means the routine is restated on its slots type and the differential
 //! test crate ran it against its verified rewrite on the same generated
 //! inputs, comparing results and every effect, with a deliberately wrong
@@ -227,5 +229,68 @@ pub const ROWS: &[Row] = &[
         method: "none",
         state: State::Missing,
         narrows: &["two forwarded calls whose answer is the result: no behaviour to lift"],
+    },
+    // The small resettable objects (lane r-s436).
+    Row {
+        func: "stream_slot_reset",
+        method: "ResetSlot::reset",
+        state: State::Proven,
+        narrows: &[
+            "the returned slot pointer narrows away (the proof checks the rewrite answers the planted slot)",
+        ],
+    },
+    Row {
+        func: "stream_table_reset",
+        method: "LaneTable::reset",
+        state: State::Proven,
+        narrows: &[
+            "the returned table pointer narrows away (the proof checks the rewrite answers the planted table)",
+        ],
+    },
+    Row {
+        func: "stream_find_index",
+        method: "IdArray::find_from",
+        state: State::Proven,
+        narrows: &[
+            "the key pointer narrows to the wanted value",
+            "the -1 answer narrows to None",
+            "negative scan indexes and indexes past the owned ids panic; the original reads on with wrapped addresses",
+        ],
+    },
+    // The streaming control block (lane r-s441).
+    Row {
+        func: "stream_slot_match_f0",
+        method: "ControlBlock::match_slot",
+        state: State::Proven,
+        narrows: &[
+            "instance (bank A) of the generic match; the proof pins the bank",
+            "the 1/0 answer narrows to bool",
+            "the comparison callee becomes the SlotCompare trait (same answers, same call order)",
+            "indexes past the owned slots panic; the original reads past its block",
+            "the two banks alias past fourteen slots in the original; the proof plants at most ten",
+        ],
+    },
+    Row {
+        func: "stream_slot_match_fe",
+        method: "ControlBlock::match_slot",
+        state: State::Proven,
+        narrows: &[
+            "instance (bank B) of the generic match; the proof pins the bank",
+            "the 1/0 answer narrows to bool",
+            "the comparison callee becomes the SlotCompare trait (same answers, same call order)",
+            "indexes past the owned slots panic; the original reads past its block",
+            "the two banks alias past fourteen slots in the original; the proof plants at most ten",
+        ],
+    },
+    Row {
+        func: "stream_slot_reset",
+        method: "ControlBlock::reset_slot",
+        state: State::Proven,
+        narrows: &[
+            "the 0 answer narrows to unit",
+            "the watcher and release callees become traits (same arguments, same call order)",
+            "the two record addresses narrow to block-relative offsets (the proof rebuilds them per case)",
+            "indexes past the owned slots panic; the original reads and writes past its block",
+        ],
     },
 ];

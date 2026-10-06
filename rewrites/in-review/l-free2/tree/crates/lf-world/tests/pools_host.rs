@@ -4,8 +4,9 @@
 
 use lf_world::pools::{
     BumpPool, CtxHandle, ElemStamp, EntryTable, HandlePool, HandleState, KeyedFlags, ObjHandle,
-    ObjVtable, Page, PairPool, PairSlot, PoolVec, PublishedObj, RevocTable, Row, RowPairs, RowTable,
-    SlotPair, SlotPool, SmallSlot, TagPool, TagPools, WideVec, WordBlocks, WordTable, registry,
+    ObjVtable, Page, PairPool, PairSlot, PoolVec, PublishedObj, RevocTable, Row, RowPairs,
+    RowTable, SlotPair, SlotPool, SmallSlot, TagPool, TagPools, WideVec, WordBlocks, WordTable,
+    registry,
 };
 
 fn pool(flags: &[u8], stride: u32) -> SlotPool {
@@ -634,7 +635,7 @@ fn entry_image() -> Vec<u8> {
     // Varied bytes: modelled words random-looking, gaps nonzero.
     let mut img = vec![0u8; 0x400 * 20];
     for (i, b) in img.iter_mut().enumerate() {
-        *b = (i.wrapping_mul(37).wrapping_add(11) & 0xFF) as u8;
+        *b = u8::try_from(i.wrapping_mul(37).wrapping_add(11) & 0xFF).unwrap();
     }
     img
 }
@@ -646,7 +647,10 @@ fn entry_init_sets_modelled_leaves_gaps() {
     let end = t.init();
     assert_eq!(end, 0x400 * 20 + 8);
     for (i, e) in t.entries.iter().enumerate() {
-        assert_eq!((e.ptr, e.tag, e.key, e.sum, e.flag, e.flag_hi), (0, 0xFFFF, 0, 0, 0, 0));
+        assert_eq!(
+            (e.ptr, e.tag, e.key, e.sum, e.flag, e.flag_hi),
+            (0, 0xFFFF, 0, 0, 0, 0)
+        );
         let off = i * 20;
         assert_eq!(e.gap, u16::from_le_bytes([img[off + 6], img[off + 7]]));
         assert_eq!(e.tail, [img[off + 18], img[off + 19]]);
@@ -695,7 +699,7 @@ fn find_mark_miss_and_wrap_sum() {
 fn revoc_image() -> Vec<u8> {
     let mut img = vec![0u8; 1100 * 44];
     for (i, b) in img.iter_mut().enumerate() {
-        *b = (i.wrapping_mul(53).wrapping_add(7) & 0xFF) as u8;
+        *b = u8::try_from(i.wrapping_mul(53).wrapping_add(7) & 0xFF).unwrap();
     }
     img
 }
@@ -707,7 +711,10 @@ fn revoc_reset_zeroes_heads_and_bit() {
     let mut calls = 0;
     let end = t.reset(&mut || calls += 1);
     assert_eq!(end, 1100 * 44);
-    assert_eq!((t.head_a, t.head_b, t.head_c, t.head_d, calls), (0, 0, [1, 2, 3, 4], 7, 1));
+    assert_eq!(
+        (t.head_a, t.head_b, t.head_c, t.head_d, calls),
+        (0, 0, [1, 2, 3, 4], 7, 1)
+    );
     for e in t.entries {
         assert_eq!(e.flag() & 0x10, 0);
     }
@@ -801,8 +808,14 @@ fn slot_pair_low_and_high() {
 fn handle_pool() -> HandlePool {
     HandlePool {
         pages: vec![
-            Page { datum: 0x1111, flags: 1 << 15 },
-            Page { datum: 0x2222, flags: 1 << 10 },
+            Page {
+                datum: 0x1111,
+                flags: 1 << 15,
+            },
+            Page {
+                datum: 0x2222,
+                flags: 1 << 10,
+            },
         ],
     }
 }
@@ -819,27 +832,29 @@ fn handle_reads() {
 }
 
 #[test]
-#[should_panic]
+#[should_panic(expected = "is negative")]
 fn handle_negative_panics() {
-    handle_pool().datum_field(-1);
+    let _ = handle_pool().datum_field(-1);
 }
 
 #[test]
-#[should_panic]
+#[should_panic(expected = "past 2 pages")]
 fn handle_past_end_panics() {
-    handle_pool().flag_bit(2, 0);
+    let _ = handle_pool().flag_bit(2, 0);
 }
 
 #[test]
-#[should_panic]
+#[should_panic(expected = "outside the flag word")]
 fn handle_bit32_panics() {
-    handle_pool().flag_bit(0, 32);
+    let _ = handle_pool().flag_bit(0, 32);
 }
 
 fn row_table() -> RowTable {
     RowTable {
         rows: vec![
-            Row { cells: vec![10, 11] },
+            Row {
+                cells: vec![10, 11],
+            },
             Row { cells: vec![] },
             Row { cells: vec![30] },
         ],
@@ -857,15 +872,15 @@ fn row_count_and_cell() {
 }
 
 #[test]
-#[should_panic]
+#[should_panic(expected = "past 3 rows")]
 fn row_count_past_end_panics() {
-    row_table().count_guarded(true, 3);
+    let _ = row_table().count_guarded(true, 3);
 }
 
 #[test]
-#[should_panic]
+#[should_panic(expected = "past 2 cells")]
 fn row_cell_past_end_panics() {
-    row_table().cell(0, 2);
+    let _ = row_table().cell(0, 2);
 }
 
 #[test]
@@ -891,7 +906,7 @@ fn cursor_empty_table_ends_quietly() {
 }
 
 #[test]
-#[should_panic]
+#[should_panic(expected = "negative row")]
 fn cursor_negative_row_panics() {
     let t = row_table();
     let mut c = t.cursor(-1, 0);
@@ -907,8 +922,9 @@ fn wide_alloc_size_edges() {
     assert_eq!(WideVec::alloc_size(u32::MAX, 0x60), u32::MAX);
     // Exact maximum without saturation.
     let q = (u64::from(u32::MAX) - 16) / 0x60;
-    assert_eq!(WideVec::alloc_size(q as u32, 0x60), q as u32 * 0x60 + 16);
-    assert_eq!(WideVec::alloc_size(q as u32 + 1, 0x60), u32::MAX);
+    let q32 = u32::try_from(q).unwrap();
+    assert_eq!(WideVec::alloc_size(q32, 0x60), q32 * 0x60 + 16);
+    assert_eq!(WideVec::alloc_size(q32 + 1, 0x60), u32::MAX);
 }
 
 #[test]
@@ -929,7 +945,7 @@ fn wide_init_shapes() {
 }
 
 #[test]
-#[should_panic]
+#[should_panic(expected = "below 12")]
 fn wide_init_small_stride_panics() {
     let stamp = ElemStamp::new(1).unwrap();
     let _ = WideVec::init(1, 8, stamp, &mut |s| Some(vec![0u8; s as usize]));
@@ -959,7 +975,7 @@ fn wide_constructed_order_and_empty() {
         &mut |slot: &mut [u8]| {
             seen.push(slot.len());
             slot.fill(0xBB);
-            seen.len() as u32 * 10
+            u32::try_from(seen.len()).unwrap() * 10
         },
     )
     .unwrap();
@@ -967,7 +983,13 @@ fn wide_constructed_order_and_empty() {
     assert_eq!(seen, [8, 8, 8]);
     assert_eq!(&v.buf()[16..40], &[0xBB; 24]);
     assert_eq!(v.buf()[4], 0xAA, "pad survives construction");
-    let (_, last) = WideVec::init_constructed(0, 8, &mut |s: u32| Some(vec![0u8; s as usize]), &mut |_: &mut [u8]| 99).unwrap();
+    let (_, last) = WideVec::init_constructed(
+        0,
+        8,
+        &mut |s: u32| Some(vec![0u8; s as usize]),
+        &mut |_: &mut [u8]| 99,
+    )
+    .unwrap();
     assert_eq!(last, 0);
 }
 

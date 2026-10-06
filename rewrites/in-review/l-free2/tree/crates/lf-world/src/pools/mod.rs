@@ -47,11 +47,20 @@ mod widevec;
 
 pub mod registry;
 
-pub use allocs::{BUMP_SHIFT, BumpPool, OBJ_SIZE, ObjAlloc, ObjHandle, ObjInit, ObjTag, ObjVtabTag, ObjVtable, PublishedObj};
-pub use fixed::{ENTRY_COUNT, ENTRY_LEN, FIND_MISS, FIND_SCALE, INIT_END_BIAS, INIT_TAG, Entry, EntryTable, REVOC_BIT, REVOC_COUNT, REVOC_LEN, RevocEntry, RevocTable, SlotReset};
+pub use allocs::{
+    BUMP_SHIFT, BumpPool, OBJ_SIZE, ObjAlloc, ObjHandle, ObjInit, ObjTag, ObjVtabTag, ObjVtable,
+    PublishedObj,
+};
+pub use fixed::{
+    ENTRY_COUNT, ENTRY_LEN, Entry, EntryTable, FIND_MISS, FIND_SCALE, INIT_END_BIAS, INIT_TAG,
+    REVOC_BIT, REVOC_COUNT, REVOC_LEN, RevocEntry, RevocTable, SlotReset,
+};
 pub use handles::{HandlePool, Page};
 pub use poolvec::{ElemBuild, ElemStamp, PoolVec, VecAlloc, VecElemTag};
-pub use resets::{HANDLE_BIT, HANDLE_SIZE, PAIR_SIZE, PairSlot, ROW_PAIRS, ROW_SIZE, ROW_STRIDE, RowPairs, SLOT_BIT, SLOT_SIZE, FLAG_OFF, HandleState, SmallSlot, SlotPair};
+pub use resets::{
+    FLAG_OFF, HANDLE_BIT, HANDLE_SIZE, HandleState, PAIR_SIZE, PairSlot, ROW_PAIRS, ROW_SIZE,
+    ROW_STRIDE, RowPairs, SLOT_BIT, SLOT_SIZE, SlotPair, SmallSlot,
+};
 pub use rows::{Row, RowCursor, RowTable};
 pub use scans::{ElemInit, KeyedFlags, PairPool, WordBlocks};
 pub use slot::{CtxAlloc, CtxHandle, CtxInit, CtxTag, Evict, Notify, Refresh, SlotPool, Survives};
