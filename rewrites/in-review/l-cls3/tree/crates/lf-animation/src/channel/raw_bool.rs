@@ -50,6 +50,45 @@ impl RawBool {
     pub fn storage_size(&self) -> u32 {
         (self.bytes.len() as u32).wrapping_add(HEADER_SIZE)
     }
+
+    /// Packs `samples` into bytes, eight frames per byte: a non-zero
+    /// sample sets its bit, a zero sample clears it, bit `k` of each byte
+    /// holding the `k`-th sample. The sample index clamps to the last
+    /// sample, so a short final byte repeats it.
+    ///
+    /// # Panics
+    ///
+    /// When `samples` holds more than 2,147,483,647 entries (the
+    /// original's index clamp is signed and reads out of bounds past
+    /// that) or packs past 65,535 bytes (the count word is 16 bits).
+    #[must_use]
+    pub fn build_from_samples(samples: &[u8]) -> Self {
+        assert!(
+            samples.len() <= i32::MAX as usize,
+            "sample count exceeds 31 bits"
+        );
+        let n = samples.len();
+        let size = (n >> 3) + usize::from((n & 7) != 0);
+        assert!(size <= MAX_BYTES, "byte count exceeds 16 bits");
+        let mut bytes = vec![0u8; size];
+        if n == 0 {
+            return Self { bytes };
+        }
+        let last = n - 1;
+        let mut edi = 0usize;
+        for b in bytes.iter_mut() {
+            let mut cur = 0u8;
+            for bit in 0..8u32 {
+                if samples[edi] != 0 {
+                    cur |= 1 << bit;
+                }
+                let nx = edi + 1;
+                edi = if nx < last { nx } else { last };
+            }
+            *b = cur;
+        }
+        Self { bytes }
+    }
 }
 
 impl AnimChannel for RawBool {

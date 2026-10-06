@@ -30,3 +30,4 @@ pub mod fn_0069C7D0 { #![allow(unused_imports)] use super::{callee_addr, global,
 pub mod fn_0069BBD0 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_0069bbd0.rs")); }
 pub mod fn_0069BD70 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_0069bd70.rs")); }
 pub mod fn_00696510 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00696510.rs")); }
+pub mod fn_0069B170 { #![allow(unused_imports)] use super::{callee_addr, global, relocated}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_0069b170.rs")); }

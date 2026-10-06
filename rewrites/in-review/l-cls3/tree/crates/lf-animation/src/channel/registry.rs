@@ -212,6 +212,18 @@ pub const ROWS: &[Row] = &[
     },
     Row {
         channel: "RawBool",
+        method: "try_build_from_samples",
+        state: State::Proven,
+        narrows: &[
+            "the installed buffer travels as bytes: its address is not compared",
+            "the pair words stay zeroed on the rewrite side and are not modelled",
+            "inputs longer than 2,147,483,647 samples panic: the original reads out of bounds there",
+            "inputs packing past 65,535 bytes panic: the count word is 16 bits",
+            "the old buffer's release goes through a stub: Drop covers it",
+        ],
+    },
+    Row {
+        channel: "RawBool",
         method: "vf20",
         state: State::Missing,
         narrows: &["serializer through stream-helper callees"],

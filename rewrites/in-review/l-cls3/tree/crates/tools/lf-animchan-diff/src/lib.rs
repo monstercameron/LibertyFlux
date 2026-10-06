@@ -22,6 +22,7 @@ pub mod rt;
 pub use rt::callee_addr;
 pub use rt::global;
 pub use rt::relocated;
+pub use rt::tls_slot;
 pub use rt::xmm_word;
 
 #[cfg(target_arch = "x86")]

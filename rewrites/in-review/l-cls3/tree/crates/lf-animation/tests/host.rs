@@ -368,7 +368,7 @@ fn quantize_float_scales_biases_and_blends() {
 #[test]
 fn registry_counts_match_proof_scope() {
     let (proven, lifted, missing) = registry::counts();
-    assert_eq!(proven, 29, "proven methods");
+    assert_eq!(proven, 30, "proven methods");
     assert_eq!(lifted, 0, "everything lifted is proven");
     assert!(missing > 0, "missing methods are listed, not hidden");
     for row in registry::ROWS {
@@ -562,4 +562,44 @@ fn raw_quat_lerp_zero_skips_normalize() {
 fn raw_quat_lerp_past_last_key_panics() {
     let c = RawQuat::new(vec![q(1.0, 0.0, 0.0, 0.0)]);
     let _ = c.lerp_normalized(0, 0.0);
+}
+
+// Raw-bool packing.
+
+#[test]
+fn raw_bool_build_packs_lsb_first() {
+    assert!(RawBool::build_from_samples(&[]).bytes().is_empty());
+    assert_eq!(RawBool::build_from_samples(&[1]).bytes(), &[0xFF]);
+    assert_eq!(RawBool::build_from_samples(&[0]).bytes(), &[0x00]);
+    assert_eq!(
+        RawBool::build_from_samples(&[1, 0, 0, 0, 0, 0, 0, 0]).bytes(),
+        &[0x01]
+    );
+    assert_eq!(
+        RawBool::build_from_samples(&[0, 0, 0, 0, 0, 0, 0, 2]).bytes(),
+        &[0x80]
+    );
+    // Any non-zero byte sets its bit.
+    assert_eq!(
+        RawBool::build_from_samples(&[0xFF, 0x80, 1, 0, 7, 0, 0, 0]).bytes(),
+        &[0x17]
+    );
+}
+
+#[test]
+fn raw_bool_build_repeats_last_sample_in_short_tail() {
+    // Nine samples: the second byte reads sample 8 eight times over.
+    assert_eq!(
+        RawBool::build_from_samples(&[0, 0, 0, 0, 0, 0, 0, 0, 1]).bytes(),
+        &[0x00, 0xFF]
+    );
+    assert_eq!(
+        RawBool::build_from_samples(&[1, 1, 1, 1, 1, 1, 1, 1, 0]).bytes(),
+        &[0xFF, 0x00]
+    );
+    // Sixteen samples fill two bytes with no repeat.
+    assert_eq!(
+        RawBool::build_from_samples(&[1; 16]).bytes(),
+        &[0xFF, 0xFF]
+    );
 }

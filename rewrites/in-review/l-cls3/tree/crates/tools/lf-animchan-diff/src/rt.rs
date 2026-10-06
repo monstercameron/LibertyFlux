@@ -112,6 +112,51 @@ pub fn callee_addr(id: u32) -> u32 {
     }
 }
 
+/// Base address of the planted slot-0 chain (0 until [`plant_tls0`]).
+static TLS0_BASE: AtomicU32 = AtomicU32::new(0);
+
+/// Plants the thread-allocator chain for slot 0 (slot, heap object,
+/// vtable answering `free_stub` at its release slot), leaking three
+/// small boxes for the test binary's lifetime, and returns the slot base.
+///
+/// # Panics
+///
+/// When a chain is already planted: one binary plants once.
+pub fn plant_tls0(free_stub: u32) -> u32 {
+    assert_eq!(
+        TLS0_BASE.load(Ordering::SeqCst),
+        0,
+        "slot-0 chain planted twice"
+    );
+    let vtable: &'static mut [u32; 4] =
+        Box::leak(Box::new([0xAAAA_AAAA, 0xBBBB_BBBB, 0xCCCC_CCCC, free_stub]));
+    let heap_obj: &'static mut [u32; 1] =
+        Box::leak(Box::new([vtable.as_ptr() as usize as u32]));
+    let slot: &'static mut [u32; 3] = Box::leak(Box::new([
+        0x1111_1111,
+        0x2222_2222,
+        heap_obj.as_ptr() as usize as u32,
+    ]));
+    let base = slot.as_ptr() as usize as u32;
+    TLS0_BASE.store(base, Ordering::SeqCst);
+    base
+}
+
+/// Base address of thread slot `slot`, mirroring
+/// `lf-checker-rt::tls_slot`.
+///
+/// # Panics
+///
+/// When the slot is not 0 (the proof set reaches the allocator through
+/// slot 0 only) or no chain is planted: a case bug, never a guess.
+#[must_use]
+pub fn tls_slot(slot: usize) -> u32 {
+    assert!(slot == 0, "unexpected TLS slot {slot}");
+    let base = TLS0_BASE.load(Ordering::SeqCst);
+    assert!(base != 0, "slot-0 chain not planted");
+    base
+}
+
 /// Declare a rewrite export with the original's calling convention.
 /// Mirrors `lf-checker-rt::export`.
 #[macro_export]
