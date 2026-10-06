@@ -43,6 +43,7 @@ pub const ROWS: &[Row] = &[
         narrows: &[
             "the base and main collaborators travel as the TaskInit trait: the proof plants stubs and compares slot and arguments in order",
             "the shared word the header forwards travels as the argument g, mapped onto its relocated word by the proof",
+            "arguments the rewrite uses as bytes arrive as u8: the proof feeds the rewrite full words with random high bytes and the lift their low bytes",
             "the rewrite's constant 0 answer is asserted by the proof, not modelled",
         ],
     },
@@ -64,6 +65,7 @@ pub const ROWS: &[Row] = &[
             "the base and main collaborators travel as the TaskInit trait: the proof plants stubs and compares slot and arguments in order",
             "the shared word the header forwards travels as the argument g, mapped onto its relocated word by the proof",
             "the two reads of the folded flag byte collapse to one: no write to that byte sits between them",
+            "arguments the rewrite uses as bytes arrive as u8: the proof feeds the rewrite full words with random high bytes and the lift their low bytes",
             "the rewrite's constant 0 answer is asserted by the proof, not modelled",
         ],
     },
@@ -75,6 +77,7 @@ pub const ROWS: &[Row] = &[
             "the base and main collaborators travel as the TaskInit trait: the proof plants stubs and compares slot and arguments in order",
             "the shared word the header forwards travels as the argument g, mapped onto its relocated word by the proof",
             "the two reads of the flag byte collapse to one: no write to that byte sits between them",
+            "arguments the rewrite uses as bytes arrive as u8: the proof feeds the rewrite full words with random high bytes and the lift their low bytes",
             "the rewrite's constant 0 answer is asserted by the proof, not modelled",
         ],
     },
@@ -86,6 +89,7 @@ pub const ROWS: &[Row] = &[
             "the base, main and word-quantiser collaborators travel as the TaskInit trait: the proof plants stubs and compares slot and arguments in order",
             "the shared word the header forwards travels as the argument g, mapped onto its relocated word by the proof",
             "the two reads of the toggled byte collapse to one: no write to that byte sits between them",
+            "arguments the rewrite uses as bytes arrive as u8: the proof feeds the rewrite full words with random high bytes and the lift their low bytes",
             "the rewrite's constant 0 answer is asserted by the proof, not modelled",
         ],
     },
@@ -96,6 +100,7 @@ pub const ROWS: &[Row] = &[
         narrows: &[
             "the base, main and block collaborators travel as the TaskInit trait: the proof plants stubs and compares slot and arguments in order",
             "the shared word the header forwards travels as the argument g, mapped onto its relocated word by the proof",
+            "arguments the rewrite uses as bytes arrive as u8: the proof feeds the rewrite full words with random high bytes and the lift their low bytes",
             "the rewrite's constant 0 answer is asserted by the proof, not modelled",
         ],
     },
@@ -133,7 +138,9 @@ pub const ROWS: &[Row] = &[
         shape: "ParamBlock",
         method: "task_ctor_35_flags_packed",
         state: State::Missing,
-        narrows: &["main, block copy, five-argument flag packing over the old flag byte: next sub-group"],
+        narrows: &[
+            "main, block copy, five-argument flag packing over the old flag byte: next sub-group",
+        ],
     },
     Row {
         shape: "ParamBlock",
@@ -151,7 +158,9 @@ pub const ROWS: &[Row] = &[
         shape: "ParamBlock",
         method: "task_ctor_44_trunc_flag",
         state: State::Missing,
-        narrows: &["main, two tail calls, float-to-int truncation folded with a flag bit: next sub-group"],
+        narrows: &[
+            "main, two tail calls, float-to-int truncation folded with a flag bit: next sub-group",
+        ],
     },
     Row {
         shape: "ParamBlock",
@@ -163,19 +172,25 @@ pub const ROWS: &[Row] = &[
         shape: "ParamBlock",
         method: "task_ctor_3a_sub_flags",
         state: State::Missing,
-        narrows: &["chains the kind-0x3e initialiser, stamps its kind byte, packs flags: third sub-group"],
+        narrows: &[
+            "chains the kind-0x3e initialiser, stamps its kind byte, packs flags: third sub-group",
+        ],
     },
     Row {
         shape: "ParamBlock",
         method: "task_ctor_3b_compare_consts",
         state: State::Missing,
-        narrows: &["chains the kind-0x3e initialiser, stamps its kind byte, sets a flag bit on float-constant equality: third sub-group"],
+        narrows: &[
+            "chains the kind-0x3e initialiser, stamps its kind byte, sets a flag bit on float-constant equality: third sub-group",
+        ],
     },
     Row {
         shape: "ParamBlock",
         method: "task_ctor_3c_copy3",
         state: State::Missing,
-        narrows: &["chains the kind-0x3e initialiser, stamps its kind byte, copies three words: third sub-group"],
+        narrows: &[
+            "chains the kind-0x3e initialiser, stamps its kind byte, copies three words: third sub-group",
+        ],
     },
     // The small vtable'd task objects: vtable stamp plus flag or bound
     // handle; the register/retain call needs its trait design.
@@ -183,19 +198,25 @@ pub const ROWS: &[Row] = &[
         shape: "TaskObjSmall",
         method: "task_ctor_flag_u8",
         state: State::Missing,
-        narrows: &["base constructor, flag byte, vtable stamp, two state words: needs the small-task owning type"],
+        narrows: &[
+            "base constructor, flag byte, vtable stamp, two state words: needs the small-task owning type",
+        ],
     },
     Row {
         shape: "TaskObjSmall",
         method: "task_ctor_arg_bind",
         state: State::Missing,
-        narrows: &["six-argument member initialiser, vtable stamp, bound-argument register call: needs the small-task owning type"],
+        narrows: &[
+            "six-argument member initialiser, vtable stamp, bound-argument register call: needs the small-task owning type",
+        ],
     },
     Row {
         shape: "TaskObjSmall",
         method: "task_ctor_vec_copy",
         state: State::Missing,
-        narrows: &["base constructor, handle store, vtable stamp, three-word copy, two register calls: needs the small-task owning type"],
+        narrows: &[
+            "base constructor, handle store, vtable stamp, three-word copy, two register calls: needs the small-task owning type",
+        ],
     },
     // The guarded follow-up builders: state dispatch through switch
     // tables, RNG-weighted durations and multi-gate branches.
@@ -203,26 +224,34 @@ pub const ROWS: &[Row] = &[
         shape: "TaskBuilder",
         method: "task_ctor_random_duration",
         state: State::Missing,
-        narrows: &["random-duration task through creator and qualifier calls with float tuning: needs the builder-trait design"],
+        narrows: &[
+            "random-duration task through creator and qualifier calls with float tuning: needs the builder-trait design",
+        ],
     },
     Row {
         shape: "TaskBuilder",
         method: "task_ctor_state_dispatch",
         state: State::Missing,
-        narrows: &["state-number dispatch through a jump table with host and subtype reads: needs the builder-trait design"],
+        narrows: &[
+            "state-number dispatch through a jump table with host and subtype reads: needs the builder-trait design",
+        ],
     },
     Row {
         shape: "TaskBuilder",
         method: "task_ctor_guarded_branch",
         state: State::Missing,
-        narrows: &["two dispatch switches behind gate words, 892 bytes: needs the builder-trait design"],
+        narrows: &[
+            "two dispatch switches behind gate words, 892 bytes: needs the builder-trait design",
+        ],
     },
     // The RNG-derived task: game-RNG state and float scale globals.
     Row {
         shape: "RngTask",
         method: "task_ctor_rng_floats",
         state: State::Missing,
-        narrows: &["flag fold, vtable stamp, two multiply-add RNG draws scaled into float fields: needs the RNG-state design"],
+        narrows: &[
+            "flag fold, vtable stamp, two multiply-add RNG draws scaled into float fields: needs the RNG-state design",
+        ],
     },
     // The point-carrying task objects: one or two vtable stamps, copied
     // points, scalar stores, retain calls, a global time stamp.
@@ -242,31 +271,41 @@ pub const ROWS: &[Row] = &[
         shape: "TaskObjPoint",
         method: "task_ctor_xyz_float",
         state: State::Missing,
-        narrows: &["two vtable stamps, one copied point, one word: needs the point-task owning types"],
+        narrows: &[
+            "two vtable stamps, one copied point, one word: needs the point-task owning types",
+        ],
     },
     Row {
         shape: "TaskObjPoint",
         method: "task_ctor_xyz_pair",
         state: State::Missing,
-        narrows: &["two vtable stamps, one point copied twice, mixed-width zeroing with a two-byte gap: needs the point-task owning types"],
+        narrows: &[
+            "two vtable stamps, one point copied twice, mixed-width zeroing with a two-byte gap: needs the point-task owning types",
+        ],
     },
     Row {
         shape: "TaskObjPoint",
         method: "task_ctor_mid",
         state: State::Missing,
-        narrows: &["one vtable stamp, one point, scalars, retain call, time stamp, span constant: needs the point-task owning types"],
+        narrows: &[
+            "one vtable stamp, one point, scalars, retain call, time stamp, span constant: needs the point-task owning types",
+        ],
     },
     Row {
         shape: "TaskObjPoint",
         method: "task_ctor_full_a",
         state: State::Missing,
-        narrows: &["same body as task_ctor_full_b with another vtable (one generic method, two instances): needs the point-task owning types"],
+        narrows: &[
+            "same body as task_ctor_full_b with another vtable (one generic method, two instances): needs the point-task owning types",
+        ],
     },
     Row {
         shape: "TaskObjPoint",
         method: "task_ctor_full_b",
         state: State::Missing,
-        narrows: &["same body as task_ctor_full_a with another vtable (one generic method, two instances): needs the point-task owning types"],
+        narrows: &[
+            "same body as task_ctor_full_a with another vtable (one generic method, two instances): needs the point-task owning types",
+        ],
     },
 ];
 

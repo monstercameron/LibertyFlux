@@ -22,6 +22,4 @@
 pub mod params;
 pub mod registry;
 
-pub use params::{
-    TaskInit, TaskParams, PARAM_LEN,
-};
+pub use params::{PARAM_LEN, TaskInit, TaskParams};

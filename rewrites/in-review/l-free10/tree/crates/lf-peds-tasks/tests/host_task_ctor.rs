@@ -62,7 +62,7 @@ fn block_is_64_bytes_and_blank_is_zero() {
 fn from_bytes_round_trips() {
     let mut raw = [0u8; PARAM_LEN];
     for (i, b) in raw.iter_mut().enumerate() {
-        *b = (i.wrapping_mul(7)) as u8;
+        *b = u8::try_from(i).unwrap().wrapping_mul(7);
     }
     let p = TaskParams::from_bytes(raw);
     assert_eq!(p.bytes(), &raw);
