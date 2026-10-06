@@ -9,6 +9,32 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Production batch: three ui rewrites verified, one float case the checker cannot settle</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b605"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b605</id>
+    <published>2026-10-03T00:00:00Z</published>
+    <updated>2026-10-03T00:00:00Z</updated>
+    <summary>Three input-ui functions were rewritten in Rust and proven equivalent over a thousand trials each, and a fourth was proven halfway; the interesting result is a single input pair where the checker's original side deterministically disagrees with three independent IEEE computations, so that pair stays excluded until a real x86 machine can adjudicate it.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Three input-ui functions were rewritten in Rust and proven equivalent over a thousand trials each, and a fourth was proven halfway; the interesting result is a single input pair where the checker's original side deterministically disagrees with three independent IEEE computations, so that pair stays excluded until a real x86 machine can adjudicate it.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Rewrite four neighbouring input-ui functions in Rust and prove each rewrite behaves identically to the original through the project's differential checker, which runs both sides from identical state and compares return values, written memory, outgoing calls and faults.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A brightness-update function rounds through a magic-constant sequence (scale, add and subtract a large power of two, then a sign-dependent correction). With one input pair the scaled value lands exactly on a whole number, and there the original side answers one higher than every IEEE computation: exact rational arithmetic, correctly-rounded emulation, and an intrinsic-by-intrinsic replication of the same instruction sequence run on the same machine all agree with the rewrite. The split is stable across repeated identical trials, and a sweep of neighbouring inputs agrees everywhere except that exact point.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The usual suspects were cleared one by one: the comparison instruction itself behaves correctly on zeros in a micro-test, both sides run with the default control word, and a second exact landing elsewhere does not diverge. The mechanism is still unknown, and it is contradiction-shaped: same emulator, same control word, same instructions, different answer.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; In the largest batch function, a color-helper call after two ordered float comparisons is dead code: the first test passes only if the blend exceeds the lookup, the second only if the lookup exceeds the blend, which cannot both hold. The contract leaves that call unpatched and relies on the checker's undeclared-write detection to shout if the analysis is ever wrong.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A gate helper that two call sites invoke with no register setup takes no arguments; treating it as taking the leftover register value fails because the interception stub clobbers it. Checking sibling call sites settled the convention.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The rewrite is IEEE-correct, so the single diverging input pair is excluded from the contract and recorded as narrowing, with a same-path replacement pair covering the same branch. A real-x86 re-run should restore the excluded pair first.&lt;/li&gt;
+&lt;li&gt;Lanes writing float-steering inputs should keep scaled values away from exact integers unless they are specifically testing the rounding boundary, and should verify per-trial paths rather than branch-shape counts, because distinct paths can share one call shape.&lt;/li&gt;
+&lt;li&gt;The half-proven large function continues from a staged retry kit: the passing entry stage plus a step-by-step plan for its loops and indirect calls.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Steer any rounding-magic sequence to an exact-integer landing with a zero residual and compare the worker's original side against a correctly-rounded emulation of the same operations; sweep the steering input across the boundary to confirm the divergence is confined to the exact point. The lane's scratch folder holds the sweep and stability scripts, the intrinsic replication probe, and the staged retry kit.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The first probes failed on two unforced errors: hand-computed global addresses with a wrong high digit, and a two-argument call with the arguments swapped (the last value pushed is the first argument). Both are now machine-checked habits: addresses come from a script, and every multi-argument call is verified against push order. The deeper confusion was a frame-slot mis-trace that made a live code path look dead and a dead one look live; recomputing the stack pointer at every frame reference fixed it, and the corrected reading is what proved the color-helper path genuinely dead.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming ped movement, blend and frag functions</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-120"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-120</id>
@@ -1164,29 +1190,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Build any contract exercising the pattern with a nonzero ordered miss marker and a point outside every box: the original rejects the node. A rewrite testing only for not-a-number accepts it. The lane's contracts pin box coordinates, marker values and list shapes so that match, miss, empty-list and signed-zero paths all run.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The first reading of the idiom as an unordered check survived three reviews of the logic because the parity flag reuse is genuinely subtle; only the failing trials forced a re-derivation from the flag definitions. A hand-computed constant in the same contract turned out to be negative infinity rather than the intended quiet not-a-number, which briefly muddied the diagnosis; both values are now in the cycle under correct labels.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming a run of task-system functions, and mislabelled constructor names</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-107"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-107</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>A batch of 150 consecutive functions turned out to be mostly the ped task system: virtual methods of task classes, their constructors and destructors, and small helpers around sitting, swimming, doors and movement. 145 of the 150 got names, most at high confidence.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A batch of 150 consecutive functions turned out to be mostly the ped task system: virtual methods of task classes, their constructors and destructors, and small helpers around sitting, swimming, doors and movement. 145 of the 150 got names, most at high confidence.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of 150 unnamed functions, working out what the group is about first, with a confidence per name and no guessing.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch splits into five groups: wrappers that build a task and hand it to a ped, script-native registration tables, a refcounted table of loaded script programs, one constructor and destructor per task class, and the task virtual methods (clone, sub-task creation and control) with their helpers.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The meanings of the task virtual-table slots were confirmed by cross-referencing prior lanes: dozens of earlier names agree that the first slots are clone, task id and abort handling, and that the complex-task tail is create-next, create-first and control. That one table named most of the batch.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Seven already-verified constructor rewrites carry audio-subsystem names but are really task constructors: each is called only from one task clone routine and installs that task class table. The rewrites match the bytes, so only the names are wrong. Left untouched for the coordinator to decide.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Six registration routines install 182 script natives in themed groups such as weapons, fire, zones, rendering and time. A full scan found just over three thousand registrations; some point at a shared stub, presumably removed natives.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Three small list helpers look like methods of the 16-slot task list (append, destroy all, clone from), based on exact layout match and callers, but the list table holds only a destructor, so they would be non-virtual. Kept at medium confidence.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Unknown&lt;/span&gt; Five functions were left unnamed: two registered script natives whose implementations lead into encrypted code or an unidentified routine, and three tiny virtual-call chains with no discernible purpose.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Named 145 functions: 105 high confidence, 40 medium, 5 empty. Recommended follow-ups: build a native-id to native-name table (a web search failed and the id is not a plain name hash), extend the task-id table (several ids seen here are missing), settle the task-id versus task-type wording, and review the seven mislabelled constructor names.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Decode each function through the mapped executable image and compare instruction counts with the inventory as a mapping check. Collect, per function, its direct calls resolved against merged lane names and verified rewrites, any strings and tables it references, and which routines call it. Cross-reference virtual-table targets against earlier naming results to fix slot meanings before naming any virtual method. For registration routines, pair each implementation address with its hash and resolve the implementations through known native names.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;Several inventory sizes overrun into neighbouring functions, including two entries that overlap each other, so entry sizes had to be re-derived from the code. The release paths of the script table fall through to a null access on empty slots, which reads as a deliberate trap rather than a bug. One append helper appears to delete its argument on the full path in two layers, which would be a double free, but pool behaviour is unknown so it is recorded as an oddity only.&lt;/p&gt;</content>
   </entry>
 </feed>
