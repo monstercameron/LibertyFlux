@@ -5,14 +5,12 @@
 
 // Byte-identical verified files; their style is not linted here.
 #![allow(
-    dead_code,
     unsafe_code,
     missing_docs,
     non_snake_case,
     unused_doc_comments,
     unused_imports,
     unused_mut,
-    unused_unsafe,
     unused_variables,
     clippy::all,
     clippy::pedantic

@@ -50,7 +50,7 @@ mod x86 {
     }
 
     fn plant_stubs() {
-        set_callee(STATE_CALLEE, state_stub as usize as u32);
+        set_callee(STATE_CALLEE, support::fn_addr!(state_stub));
     }
 
     fn reset_scripts(ans: u32) {

@@ -1,16 +1,21 @@
-// original: 0x00DDE200 set_cursor_color_flag
-/// Set or clear the cursor-colour override on the render state at +0x1E4.
-/// A nonzero low byte forces the colour's top byte to 0xFF (opaque);
-/// zero clears the override byte. Returns the render state pointer.
-lf_checker_rt::export!(thiscall, rw_dde200(this: u32, flag: u32) -> u32 {
+// original: 0x00DDE200 UITextField flag set or clear
+/// UITextField helper (input-ui subsystem). `this` is the field object.
+/// Set or clear the high byte of the flag word of the secondary object
+/// (`this + 0x1E4`, flag word at `+0x1E0`): when the low byte of `on` is
+/// nonzero, force the top byte to 0xFF; otherwise clear the top byte.
+/// Only the low byte of `on` is read. Returns nothing.
+lf_checker_rt::export!(thiscall, rw_00DDE200(this: u32, on: u32) -> u32 {
     unsafe {
-        let state = *((this + 0x1E4) as *const u32);
-        if flag & 0xFF != 0 {
-            let colour = (state + 0x1E0) as *mut u32;
-            *colour |= 0xFF000000;
+        const OBJ: u32 = 0x1E4;
+        const FLAGS: u32 = 0x1E0;
+        const TOP_BYTE: u32 = 0x1E3;
+        let obj = ((this + OBJ) as *const u32).read_unaligned();
+        if (on as u8) != 0 {
+            let p = (obj + FLAGS) as *mut u32;
+            p.write_unaligned(p.read_unaligned() | 0xFF00_0000);
         } else {
-            *((state + 0x1E3) as *mut u8) = 0;
+            ((obj + TOP_BYTE) as *mut u8).write(0);
         }
-        state
+        0
     }
 });

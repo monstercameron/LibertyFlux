@@ -5,6 +5,10 @@
 use lf_input_frontend::input_ui::bounds::{
     BoundsSink, Measure, accumulate_bounds, fold_max, fold_min,
 };
+use lf_input_frontend::input_ui::gates::{
+    EntryKind, EntryNotify, EntryRefine, GateConsts, GateProbe, Membership, ScanConsts, ScanEntry,
+    ScanGate, ScanQuery, ScanRegistry, float_gate,
+};
 use lf_input_frontend::input_ui::holders::{
     Construct, ConstructedBody, CounterState, FreshBlock, HolderAlloc, HolderKind, HolderSink,
     PollSlot, UiHolder,
@@ -482,8 +486,8 @@ fn accumulate_two_items_folds_both() {
 
 #[test]
 fn registry_counts_are_pinned() {
-    assert_eq!(registry::ROWS.len(), 13);
-    assert_eq!(registry::proven_count(), 8);
+    assert_eq!(registry::ROWS.len(), 15);
+    assert_eq!(registry::proven_count(), 10);
     assert_eq!(registry::missing_count(), 5);
 }
 
@@ -494,4 +498,391 @@ fn registry_names_the_holder_shape() {
     assert!(names.contains(&"input_ui_create_inline"));
     assert!(names.contains(&"input_ui_state_copy"));
     assert!(names.contains(&"input_ui_bounds_accumulate"));
+    assert!(names.contains(&"input_ui_float_gate"));
+    assert!(names.contains(&"input_ui_entry_scanner"));
+}
+
+// ---------------- the float predicate ----------------
+
+struct FakeMember {
+    answer: bool,
+    calls: u32,
+}
+
+impl Membership for FakeMember {
+    fn query(&mut self, _point: [f32; 3]) -> bool {
+        self.calls += 1;
+        self.answer
+    }
+}
+
+struct FakeProbe {
+    answer: u32,
+    calls: u32,
+}
+
+impl GateProbe for FakeProbe {
+    fn probe(&mut self) -> u32 {
+        self.calls += 1;
+        self.answer
+    }
+}
+
+fn gate_consts() -> GateConsts {
+    GateConsts {
+        cap: 200.0,
+        window: 100.0,
+        floor: 56.0,
+        base: 185.0,
+        inset: 10.0,
+        frac: 0.75,
+    }
+}
+
+#[test]
+fn gate_present_without_under_rejects() {
+    let mut member = FakeMember {
+        answer: true,
+        calls: 0,
+    };
+    let mut probe = FakeProbe {
+        answer: 0,
+        calls: 0,
+    };
+    assert!(!float_gate(
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0],
+        1.0,
+        1.0,
+        false,
+        &gate_consts(),
+        &mut member,
+        &mut probe
+    ));
+    assert_eq!((member.calls, probe.calls), (1, 0));
+}
+
+#[test]
+fn gate_far_path_accepts_inside_all_windows() {
+    // dist2 = 180^2 = 32400: inside (200*1)^2, outside both
+    // ((185-10)*1)^2 and ((185*0.75)*1)^2 from below.
+    let mut member = FakeMember {
+        answer: true,
+        calls: 0,
+    };
+    let mut probe = FakeProbe {
+        answer: 0,
+        calls: 0,
+    };
+    assert!(float_gate(
+        [0.0, 0.0, 0.0],
+        [180.0, 0.0],
+        1.0,
+        0.0,
+        true,
+        &gate_consts(),
+        &mut member,
+        &mut probe
+    ));
+}
+
+#[test]
+fn gate_far_path_rejects_outside_inner_window() {
+    // dist2 = 100^2 = 10000 < ((185-10)*1)^2 = 30625.
+    let mut member = FakeMember {
+        answer: true,
+        calls: 0,
+    };
+    let mut probe = FakeProbe {
+        answer: 0,
+        calls: 0,
+    };
+    assert!(!float_gate(
+        [0.0, 0.0, 0.0],
+        [100.0, 0.0],
+        1.0,
+        0.0,
+        true,
+        &gate_consts(),
+        &mut member,
+        &mut probe
+    ));
+}
+
+#[test]
+fn gate_near_path_accepts_inside_window_and_floor() {
+    // t = ((100 -> 200) / 200) * 100 * 100 = 10000, t^2 = 1e8;
+    // dist2 = 60^2 = 3600 <= 1e8 and 56^2 = 3136 <= 3600.
+    let mut member = FakeMember {
+        answer: false,
+        calls: 0,
+    };
+    let mut probe = FakeProbe {
+        answer: 0xAB00,
+        calls: 0,
+    };
+    assert!(float_gate(
+        [0.0, 0.0, 0.0],
+        [60.0, 0.0],
+        100.0,
+        100.0,
+        true,
+        &gate_consts(),
+        &mut member,
+        &mut probe
+    ));
+    assert_eq!(probe.calls, 1);
+}
+
+#[test]
+fn gate_near_path_with_nan_distance_accepts() {
+    // Every ordered `>` is false for NaN: dist2 > t fails, then
+    // s2 > dist2 fails, so the negated floor check accepts.
+    let mut member = FakeMember {
+        answer: false,
+        calls: 0,
+    };
+    let mut probe = FakeProbe {
+        answer: 0,
+        calls: 0,
+    };
+    assert!(float_gate(
+        [f32::NAN, 0.0, 0.0],
+        [0.0, 0.0],
+        100.0,
+        100.0,
+        true,
+        &gate_consts(),
+        &mut member,
+        &mut probe
+    ));
+}
+
+#[test]
+fn gate_absent_without_under_rejects() {
+    let mut member = FakeMember {
+        answer: false,
+        calls: 0,
+    };
+    let mut probe = FakeProbe {
+        answer: 1,
+        calls: 0,
+    };
+    assert!(!float_gate(
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0],
+        1.0,
+        1.0,
+        false,
+        &gate_consts(),
+        &mut member,
+        &mut probe
+    ));
+    assert_eq!(probe.calls, 1);
+}
+
+// ---------------- the entry scanner ----------------
+
+/// (kind name, flag) in call order, shared by the five scan fakes.
+type SharedLog = std::rc::Rc<std::cell::RefCell<Vec<(&'static str, u8)>>>;
+
+struct ScanQueryFake {
+    triples: VecDeque<[f32; 3]>,
+    log: SharedLog,
+}
+
+impl ScanQuery for ScanQueryFake {
+    fn query(&mut self) -> [f32; 3] {
+        self.log.borrow_mut().push(("query", 0));
+        self.triples.pop_front().unwrap()
+    }
+}
+
+struct ScanGateFake {
+    gates: VecDeque<u32>,
+    log: SharedLog,
+}
+
+impl ScanGate for ScanGateFake {
+    fn gate(&mut self) -> u32 {
+        self.log.borrow_mut().push(("gate", 0));
+        self.gates.pop_front().unwrap()
+    }
+}
+
+struct ScanKindFake {
+    kinds: VecDeque<u32>,
+    log: SharedLog,
+}
+
+impl EntryKind for ScanKindFake {
+    fn kind(&mut self, entry: &ScanEntry) -> u32 {
+        self.log.borrow_mut().push(("kind", entry.flag));
+        self.kinds.pop_front().unwrap()
+    }
+}
+
+struct ScanRefineFake {
+    refines: VecDeque<f32>,
+    log: SharedLog,
+}
+
+impl EntryRefine for ScanRefineFake {
+    fn refine(&mut self, entry: &ScanEntry) -> f32 {
+        self.log.borrow_mut().push(("refine", entry.flag));
+        self.refines.pop_front().unwrap()
+    }
+}
+
+struct ScanNotifyFake {
+    mains: VecDeque<u32>,
+    alts: VecDeque<u32>,
+    fars: VecDeque<u32>,
+    log: SharedLog,
+}
+
+impl EntryNotify for ScanNotifyFake {
+    fn notify_main(&mut self, entry: &ScanEntry) -> u32 {
+        self.log.borrow_mut().push(("main", entry.flag));
+        self.mains.pop_front().unwrap()
+    }
+
+    fn notify_alt(&mut self, entry: &ScanEntry) -> u32 {
+        self.log.borrow_mut().push(("alt", entry.flag));
+        self.alts.pop_front().unwrap()
+    }
+
+    fn notify_far(&mut self, entry: &ScanEntry) -> u32 {
+        self.log.borrow_mut().push(("far", entry.flag));
+        self.fars.pop_front().unwrap()
+    }
+}
+
+struct ScanFakes {
+    query: ScanQueryFake,
+    gate: ScanGateFake,
+    kind: ScanKindFake,
+    refine: ScanRefineFake,
+    notify: ScanNotifyFake,
+    log: SharedLog,
+}
+
+fn scan_consts() -> ScanConsts {
+    ScanConsts {
+        detailed: 1.0,
+        plain: 1.0,
+        floor: 1.0,
+        near: 1.0,
+        far: 1.0,
+    }
+}
+
+fn scan_entry(flag: u8) -> ScanEntry {
+    ScanEntry {
+        flag,
+        anchor: [0.0, 0.0, 0.0],
+        mode: 0,
+        has_object: false,
+    }
+}
+
+fn scan_fakes() -> ScanFakes {
+    let log: SharedLog = std::rc::Rc::new(std::cell::RefCell::new(Vec::new()));
+    ScanFakes {
+        query: ScanQueryFake {
+            triples: VecDeque::from(vec![[0.0; 3]; 4]),
+            log: log.clone(),
+        },
+        gate: ScanGateFake {
+            gates: VecDeque::from(vec![0; 4]),
+            log: log.clone(),
+        },
+        kind: ScanKindFake {
+            kinds: VecDeque::from(vec![0; 4]),
+            log: log.clone(),
+        },
+        refine: ScanRefineFake {
+            refines: VecDeque::from(vec![0.0; 4]),
+            log: log.clone(),
+        },
+        notify: ScanNotifyFake {
+            mains: VecDeque::from(vec![0; 8]),
+            alts: VecDeque::from(vec![0; 8]),
+            fars: VecDeque::from(vec![0; 8]),
+            log: log.clone(),
+        },
+        log,
+    }
+}
+
+fn run_scan(registry: &ScanRegistry, fakes: &mut ScanFakes) {
+    let consts = scan_consts();
+    registry.scan(
+        1.0,
+        &consts,
+        &mut fakes.query,
+        &mut fakes.gate,
+        &mut fakes.kind,
+        &mut fakes.refine,
+        &mut fakes.notify,
+    );
+}
+
+#[test]
+fn scan_empty_registry_calls_nothing() {
+    let registry = ScanRegistry {
+        entries: Vec::new(),
+    };
+    let mut fakes = scan_fakes();
+    run_scan(&registry, &mut fakes);
+    assert!(fakes.log.borrow().is_empty());
+}
+
+#[test]
+fn scan_skips_dead_flags() {
+    let registry = ScanRegistry {
+        entries: vec![scan_entry(0x80), scan_entry(0xFF)],
+    };
+    let mut fakes = scan_fakes();
+    run_scan(&registry, &mut fakes);
+    assert!(fakes.log.borrow().is_empty());
+}
+
+#[test]
+fn scan_visits_top_down() {
+    let mut low = scan_entry(0x01);
+    low.mode = 11;
+    let mut high = scan_entry(0x02);
+    high.mode = 22;
+    let registry = ScanRegistry {
+        entries: vec![low, high],
+    };
+    let mut fakes = scan_fakes();
+    run_scan(&registry, &mut fakes);
+    let kinds: Vec<u8> = fakes
+        .log
+        .borrow()
+        .iter()
+        .filter(|(k, _)| *k == "kind")
+        .map(|(_, f)| *f)
+        .collect();
+    assert_eq!(kinds, vec![0x02, 0x01]);
+}
+
+#[test]
+fn scan_refine_runs_only_with_gate_and_object() {
+    let mut entry = scan_entry(0x00);
+    entry.has_object = true;
+    let registry = ScanRegistry {
+        entries: vec![entry],
+    };
+    // Gate set + object: refine runs.
+    let mut fakes = scan_fakes();
+    fakes.gate.gates = VecDeque::from(vec![0xFF]);
+    run_scan(&registry, &mut fakes);
+    assert!(fakes.log.borrow().iter().any(|(k, _)| *k == "refine"));
+    // Gate clear + object: refine skipped.
+    let mut fakes = scan_fakes();
+    run_scan(&registry, &mut fakes);
+    assert!(!fakes.log.borrow().iter().any(|(k, _)| *k == "refine"));
 }

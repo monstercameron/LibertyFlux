@@ -14,6 +14,7 @@
 //!   `lf-platform`; `cfg(target_os)` appears nowhere here.
 //! - Never original game code here: structures, symbols and new Rust only.
 
+pub mod audio_entity;
 pub mod audio_voice;
 pub mod layout;
 pub mod sound;

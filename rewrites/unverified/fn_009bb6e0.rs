@@ -44,13 +44,13 @@ lf_checker_rt::export!(thiscall, rw_009bb6e0(this: u32) -> u32 {
         while k < 4 {
             let arr = ((edi.wrapping_add(8)) as *const u32).read_unaligned();
             let cx68 = ((edi.wrapping_add(0x68)) as *const u32).read_unaligned();
-            let a_arr = ((arr.wrapping_add(esi).wrapping_add(k.wrapping_mul(4))) as *const u32).read_unaligned();
+            let a_arr = ((arr.wrapping_add(esi.wrapping_mul(4)).wrapping_add(k.wrapping_mul(4))) as *const u32).read_unaligned();
             let a_slot = ((edi.wrapping_add(0x6c).wrapping_add(k.wrapping_mul(4))) as *const u32).read_unaligned();
             let _ans: u32 = lf_checker_rt::callee_thiscall!(1, u32, cx68, cx68.wrapping_add(0x30), a_slot, a_arr);
             k += 1;
         }
         let arr = ((edi.wrapping_add(8)) as *const u32).read_unaligned();
-        let last = ((arr.wrapping_add(esi).wrapping_add(12)) as *const u32).read_unaligned();
+        let last = ((arr.wrapping_add(esi.wrapping_mul(4)).wrapping_add(12)) as *const u32).read_unaligned();
         let sel = if last == 0 {
             ((edi.wrapping_add(0x7c)) as *const u32).read_unaligned()
         } else {

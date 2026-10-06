@@ -121,11 +121,7 @@ mod tests {
                 current: 7,
                 alternates: [0, 0, 0],
             };
-            assert_eq!(
-                rec.is_audible(&pb),
-                mode == 1 || mode == 4,
-                "mode {mode}"
-            );
+            assert_eq!(rec.is_audible(&pb), mode == 1 || mode == 4, "mode {mode}");
         }
     }
 

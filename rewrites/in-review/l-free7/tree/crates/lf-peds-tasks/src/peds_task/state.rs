@@ -176,22 +176,22 @@ impl<F: FnMut() -> u32> Check for F {
     }
 }
 
-#[inline(always)]
+#[inline]
 fn add(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) + core::hint::black_box(b)
 }
 
-#[inline(always)]
+#[inline]
 fn mul(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) * core::hint::black_box(b)
 }
 
-#[inline(always)]
+#[inline]
 fn sub(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) - core::hint::black_box(b)
 }
 
-#[inline(always)]
+#[inline]
 fn neg(a: f32) -> f32 {
     f32::from_bits(a.to_bits() ^ 0x8000_0000)
 }
@@ -201,6 +201,9 @@ impl TaskStateBlock {
     ///
     /// Answers whether the flag reads back clear after the enumeration
     /// (false only when the enumerator re-entered the state).
+    // The single-letter names are the rewrite's documented midpoint and
+    // difference pairs; renaming them would hide the correspondence.
+    #[allow(clippy::many_single_char_names)]
     pub fn build<E: Enumerate>(
         state: &mut TaskStateBlock,
         floats: &TaskFloats,
@@ -251,6 +254,9 @@ impl TaskStateBlock {
     /// Consumes the target vector, maybe raising the flag. Always answers 1.
     ///
     /// The vtable, worker and check collaborators run only past both gates.
+    // The negated comparisons mirror the original's jump-on-above gates:
+    // an unordered (NaN) comparison on either side keeps it running.
+    #[allow(clippy::neg_cmp_op_on_partial_ord)]
     pub fn consume<V: VTask, W: Worker, C: Check>(
         &mut self,
         target: &TaskTarget,
@@ -284,15 +290,15 @@ impl TaskStateBlock {
                 if ok == 0 && HALF > rwork {
                     raise = true;
                 }
-                if !raise {
-                    if rout > 0.0 {
-                        if NEG_HALF > rwork {
-                            raise = true;
-                        }
-                    }
-                    if !raise && 0.0 > rout && rwork > HALF {
-                        raise = true;
-                    }
+                // The middle arm needs quiet-so-far, a positive out-dot
+                // and a work-dot below minus one half; the last arm needs
+                // quiet-so-far, a negative out-dot and a work-dot above one
+                // half. All conditions are pure, so the nesting collapses.
+                if !raise && rout > 0.0 && NEG_HALF > rwork {
+                    raise = true;
+                }
+                if !raise && 0.0 > rout && rwork > HALF {
+                    raise = true;
                 }
                 if raise {
                     self.flag = true;

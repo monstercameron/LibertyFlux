@@ -57,6 +57,12 @@ pub trait GateProbe {
 /// Float expressions mirror the 32-bit form exactly, including the
 /// negated comparisons (`!(a > b)` is true for NaN where `a <= b` is
 /// false), so unordered inputs take the same path on both sides.
+// Eight arguments because each maps to one original input; the negated
+// float comparisons and low-byte masks below are the original's exact
+// tests, kept character for character.
+#[allow(clippy::too_many_arguments)]
+#[allow(clippy::neg_cmp_op_on_partial_ord)]
+#[allow(clippy::verbose_bit_mask)]
 pub fn float_gate<M: Membership + ?Sized, P: GateProbe + ?Sized>(
     point: [f32; 3],
     anchor: [f32; 2],
@@ -87,20 +93,16 @@ pub fn float_gate<M: Membership + ?Sized, P: GateProbe + ?Sized>(
             if !(t > k) {
                 t = k;
             }
-            t = t / k;
-            t = t * consts.window;
-            t = t * f2;
-            t = t * t;
+            t /= k;
+            t *= consts.window;
+            t *= f2;
+            t *= t;
             if dist2 > t {
                 return false;
             }
             let s = consts.floor;
             let s2 = s * s;
-            if !(s2 > dist2) {
-                return true;
-            } else {
-                return false;
-            }
+            return !(s2 > dist2);
         }
         if under == 0 {
             return false;
@@ -244,6 +246,11 @@ impl ScanRegistry {
     }
 
     /// Tests one entry against the distance gate.
+    // Eight arguments and the original's exact low-byte and negated
+    // float tests; see `float_gate`.
+    #[allow(clippy::too_many_arguments)]
+    #[allow(clippy::neg_cmp_op_on_partial_ord)]
+    #[allow(clippy::verbose_bit_mask)]
     fn test_entry<
         Q: ScanQuery + ?Sized,
         G: ScanGate + ?Sized,
@@ -283,9 +290,9 @@ impl ScanRegistry {
         let mut t1 = consts.near * arg;
         let x2v = x2 * t0;
         let mut s0 = consts.far * arg;
-        t1 = t1 * x2v;
-        s0 = s0 * x2v;
-        s0 = s0 * s0;
+        t1 *= x2v;
+        s0 *= x2v;
+        s0 *= s0;
         if slot > s0 {
             // Near step.
             if (notify.notify_main(entry) & 0xFF) == 0 {
@@ -293,11 +300,9 @@ impl ScanRegistry {
             }
         } else {
             // Far step.
-            t1 = t1 * t1;
-            if t1 > slot {
-                if (notify.notify_main(entry) & 0xFF) != 0 {
-                    notify.notify_far(entry);
-                }
+            t1 *= t1;
+            if t1 > slot && (notify.notify_main(entry) & 0xFF) != 0 {
+                notify.notify_far(entry);
             }
         }
     }

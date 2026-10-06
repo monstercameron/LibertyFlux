@@ -60,9 +60,9 @@ mod x86 {
     }
 
     fn plant_stubs() {
-        set_callee(RAND_CALLEE, rand_stub as usize as u32);
-        set_callee(COOKIE_CALLEE, cookie_stub as usize as u32);
-        set_callee(FILL_CALLEE, fill_stub as usize as u32);
+        set_callee(RAND_CALLEE, support::fn_addr!(rand_stub));
+        set_callee(COOKIE_CALLEE, support::fn_addr!(cookie_stub));
+        set_callee(FILL_CALLEE, support::fn_addr!(fill_stub));
     }
 
     fn reset_scripts(rand: u32, fill: u32) {
@@ -170,7 +170,7 @@ mod x86 {
         let mut rand_calls = 0u32;
         let mut fill_log: Vec<usize> = Vec::new();
         let ret_lift = picker.pick(
-            &mut |:| {
+            &mut || {
                 rand_calls += 1;
                 c.rand
             },

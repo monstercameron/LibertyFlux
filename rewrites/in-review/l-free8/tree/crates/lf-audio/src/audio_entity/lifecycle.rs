@@ -88,31 +88,36 @@ impl LatchSlot {
 mod tests {
     use super::*;
 
-    struct Order(Vec<&'static str>);
+    use core::cell::RefCell;
 
-    impl BaseInit for Order {
+    struct Order<'a>(&'a RefCell<Vec<&'static str>>);
+
+    impl BaseInit for Order<'_> {
         fn init_base(&mut self) {
-            self.0.push("base");
+            self.0.borrow_mut().push("base");
         }
     }
 
-    impl MemberInit<u32> for Order {
+    impl MemberInit<u32> for Order<'_> {
         fn init_member(&mut self) -> u32 {
-            let tag = if self.0.iter().any(|s| *s == "a") {
+            let mut log = self.0.borrow_mut();
+            let tag = if log.iter().any(|s| *s == "a") {
                 "b"
             } else {
                 "a"
             };
-            self.0.push(tag);
+            log.push(tag);
             u32::from(tag == "b")
         }
     }
 
     #[test]
     fn construct_runs_base_then_members_in_order() {
-        let mut order = Order(Vec::new());
-        let entity = AudioEntity::new(&mut order, &mut order);
-        assert_eq!(order.0, ["base", "a", "b"]);
+        let log = RefCell::new(Vec::new());
+        let mut base = Order(&log);
+        let mut members = Order(&log);
+        let entity = AudioEntity::new(&mut base, &mut members);
+        assert_eq!(log.borrow().as_slice(), ["base", "a", "b"]);
         assert_eq!(entity.state, 0);
         assert_eq!((entity.member_a, entity.member_b), (0, 1));
     }

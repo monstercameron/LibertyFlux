@@ -76,17 +76,17 @@ pub struct FacingQuery {
     pub counter: u32,
 }
 
-#[inline(always)]
+#[inline]
 fn add(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) + core::hint::black_box(b)
 }
 
-#[inline(always)]
+#[inline]
 fn mul(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) * core::hint::black_box(b)
 }
 
-#[inline(always)]
+#[inline]
 fn sub(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) - core::hint::black_box(b)
 }

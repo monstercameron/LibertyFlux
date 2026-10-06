@@ -239,10 +239,8 @@ mod x86 {
                             tab[0] = idx;
                             for (k, w) in tab.iter().enumerate() {
                                 unsafe {
-                                    rt::global::<u32>(
-                                        support::FG_TAB_VA + (k as u32) * 4,
-                                    )
-                                    .write_unaligned(*w);
+                                    rt::global::<u32>(support::FG_TAB_VA + (k as u32) * 4)
+                                        .write_unaligned(*w);
                                 }
                             }
                             unsafe {
@@ -309,9 +307,13 @@ mod x86 {
                             assert_eq!(member_log.len(), 1);
                             let (this, x2, x1, z0, c5, c0) = member_log[0];
                             assert_eq!(this, tab[idx as usize].wrapping_add(0x10));
-                            assert_eq!((x2, x1, z0), (point[0].to_bits(), point[1].to_bits(), point[2].to_bits()));
+                            assert_eq!(
+                                (x2, x1, z0),
+                                (point[0].to_bits(), point[1].to_bits(), point[2].to_bits())
+                            );
                             assert_eq!((c5, c0), (0x40A0_0000, 0));
-                            assert_eq!(member.log, std::vec![point]);
+                            assert_eq!(member.log.len(), 1);
+                            assert_eq!(member.log[0].map(f32::to_bits), point.map(f32::to_bits));
                             if member_answer == 0 {
                                 assert_eq!(probe_log, std::vec![probe_addr]);
                                 assert_eq!(probe.calls, 1);
@@ -723,7 +725,11 @@ mod x86 {
                     entries.push(ScanEntry {
                         flag,
                         anchor: [pick(&mut rng), pick(&mut rng), pick(&mut rng)],
-                        mode: if (i + round) % 3 == 0 { 2 } else { rng.u32() % 5 },
+                        mode: if (i + round) % 3 == 0 {
+                            2
+                        } else {
+                            rng.u32() % 5
+                        },
                         has_object: (i + round) % 2 == 0,
                     });
                 }
@@ -801,7 +807,11 @@ mod x86 {
                     } else {
                         base + (i as u32) * stride
                     };
-                    let p = if stride == 0 { &planted[0] } else { &planted[i] };
+                    let p = if stride == 0 {
+                        &planted[0]
+                    } else {
+                        &planted[i]
+                    };
                     unsafe {
                         ((esi + ENTRY_VT_OFF) as *mut u32).write_unaligned(addr(&p._evt[0]));
                         ((esi + ENTRY_POS_OFF) as *mut u32).write_unaligned(addr(&p._pos[0]));
@@ -894,13 +904,17 @@ mod x86 {
                     log: Vec::new(),
                 };
                 registry.scan(
-                    arg, &consts, &mut query, &mut gate, &mut kind, &mut refine, &mut notify,
+                    arg,
+                    &consts,
+                    &mut query,
+                    &mut gate,
+                    &mut kind,
+                    &mut refine,
+                    &mut notify,
                 );
                 // Compare. Visited slots run top-down over live flags.
-                let visited: Vec<usize> = (0..count)
-                    .rev()
-                    .filter(|&i| flags[i] & 0x80 == 0)
-                    .collect();
+                let visited: Vec<usize> =
+                    (0..count).rev().filter(|&i| flags[i] & 0x80 == 0).collect();
                 let slot_addr = |slot: usize| {
                     if stride == 0 {
                         base
@@ -912,7 +926,10 @@ mod x86 {
                 assert_eq!(gate.calls as usize, live);
                 assert_eq!(
                     kind.log.iter().map(entry_key).collect::<Vec<_>>(),
-                    visited.iter().map(|&s| entry_key(&entries[s])).collect::<Vec<_>>()
+                    visited
+                        .iter()
+                        .map(|&s| entry_key(&entries[s]))
+                        .collect::<Vec<_>>()
                 );
                 // The rewrite's kind addresses must name the same slots.
                 let rw_kinds: Vec<u32> = rw_log

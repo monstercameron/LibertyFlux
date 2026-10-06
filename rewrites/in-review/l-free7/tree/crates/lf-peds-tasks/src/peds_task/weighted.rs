@@ -60,14 +60,24 @@ pub struct WeightedPicker {
     pub count: i32,
 }
 
-#[inline(always)]
+#[inline]
 fn add(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) + core::hint::black_box(b)
 }
 
-#[inline(always)]
+#[inline]
 fn mul(a: f32, b: f32) -> f32 {
     core::hint::black_box(a) * core::hint::black_box(b)
+}
+
+/// Clamped entry total: the count capped at the table size.
+///
+/// Both callers run past the positive-count gate, so the reinterpreted
+/// count keeps its value.
+#[allow(clippy::cast_sign_loss, clippy::cast_possible_truncation)]
+fn clamped_total(count: i32) -> u32 {
+    debug_assert!(count > 0);
+    (count as u32).min(MAX_ENTRIES as u32)
 }
 
 impl WeightedPicker {
@@ -80,7 +90,7 @@ impl WeightedPicker {
         let mut prefix = [0.0f32; MAX_ENTRIES];
         let mut total = 0.0f32;
         if self.count > 0 {
-            let n = (self.count as u32).min(MAX_ENTRIES as u32);
+            let n = clamped_total(self.count);
             // Whole groups of four first (only when the count reaches four),
             // then the tail one by one; the two orders differ, both pinned.
             let nvec = if self.count >= 4 { n & !3 } else { 0 };
@@ -101,12 +111,12 @@ impl WeightedPicker {
         // The original converts with a signed int-to-float instruction,
         // which rounds: the precision loss is the behaviour.
         #[allow(clippy::cast_precision_loss)]
-        let as_float = drawn as i32 as f32;
+        let as_float = drawn.cast_signed() as f32;
         let threshold = mul(mul(as_float, SCALE), total);
         if self.count <= 0 {
             return EMPTY;
         }
-        let n = (self.count as u32).min(MAX_ENTRIES as u32);
+        let n = clamped_total(self.count);
         let mut idx = 0u32;
         while idx < n {
             if prefix[idx as usize] > threshold {

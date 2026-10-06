@@ -2,12 +2,13 @@
 //!
 //! Mirrors the surface the checker builds verified rewrites against
 //! (`export!`, the `callee_*` macros, `callee_addr`, `global`,
-//! `relocated`). The proof set reads and writes one global (the callback
-//! counter word) and relocates nine addresses (five table/helper words
-//! and four callback words, plus the two bounds seeds). Each global is
-//! one atomic slot; the atomics give the slots stable addresses, and the
-//! differential tests hold one lock across each whole test, so the
-//! rewrite's plain reads and writes through them never race.
+//! `relocated`). The proof set reads five globals (the playback mode,
+//! current id and three alternate ids) and three relocated addresses
+//! (the latch configuration word and the constructor's two table
+//! words). Each global is one atomic slot; the atomics give the slots
+//! stable addresses, and the differential tests hold one lock across
+//! each whole test, so the rewrite's plain reads and writes through
+//! them never race.
 //! Test-support code: the lifted crate itself stays `#![forbid(unsafe_code)]`.
 
 // Test-only runtime: raw addresses through scripted globals are inherent
@@ -17,33 +18,12 @@
 use core::sync::atomic::AtomicU32;
 use core::sync::atomic::Ordering;
 
-/// The callback counter word.
-static COUNTER_SLOT: AtomicU32 = AtomicU32::new(0);
-/// The float predicate's 4-word self-indexed table.
-static FG_TAB: [AtomicU32; 4] = [
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-];
-/// The float predicate's under-threshold words.
-static FG_UNDER_A: AtomicU32 = AtomicU32::new(0);
-static FG_UNDER_B: AtomicU32 = AtomicU32::new(0);
-/// The float predicate's six threshold constants.
-static FG_CONSTS: [AtomicU32; 6] = [
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-];
-/// The entry scanner's registry pointer.
-static SC_REG: AtomicU32 = AtomicU32::new(0);
-/// The entry scanner's five threshold constants.
-static SC_CONSTS: [AtomicU32; 5] = [
-    AtomicU32::new(0),
-    AtomicU32::new(0),
+/// The playback mode word.
+static MODE_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The current entity id word.
+static CUR_SLOT: AtomicU32 = AtomicU32::new(0);
+/// The three alternate id words.
+static ALT_SLOTS: [AtomicU32; 3] = [
     AtomicU32::new(0),
     AtomicU32::new(0),
     AtomicU32::new(0),
@@ -53,29 +33,15 @@ static SC_CONSTS: [AtomicU32; 5] = [
 ///
 /// # Panics
 ///
-/// When the address is not one of the globals the proof set reads:
+/// When the address is not one of the five globals the proof set reads:
 /// a case bug, never a guess.
 fn slot_for(file_va: u32) -> *mut u32 {
     match file_va {
-        0x0103_27A0 => COUNTER_SLOT.as_ptr(),
-        0x0118_D818 => FG_TAB[0].as_ptr(),
-        0x0118_D81C => FG_TAB[1].as_ptr(),
-        0x0118_D820 => FG_TAB[2].as_ptr(),
-        0x0118_D824 => FG_TAB[3].as_ptr(),
-        0x012E_21F0 => FG_UNDER_A.as_ptr(),
-        0x0103_FFE8 => FG_UNDER_B.as_ptr(),
-        0x0103_FF88 => FG_CONSTS[0].as_ptr(),
-        0x0103_FF90 => FG_CONSTS[1].as_ptr(),
-        0x0103_FF64 => FG_CONSTS[2].as_ptr(),
-        0x0103_FF5C => FG_CONSTS[3].as_ptr(),
-        0x00FE_8B08 => FG_CONSTS[4].as_ptr(),
-        0x00FE_888C => FG_CONSTS[5].as_ptr(),
-        0x012E_22A4 => SC_REG.as_ptr(),
-        0x00FE_88E8 => SC_CONSTS[0].as_ptr(),
-        0x00FE_8A24 => SC_CONSTS[1].as_ptr(),
-        0x0103_F6BC => SC_CONSTS[2].as_ptr(),
-        0x0103_FFC0 => SC_CONSTS[3].as_ptr(),
-        0x0103_FFBC => SC_CONSTS[4].as_ptr(),
+        0x0179_BF98 => MODE_SLOT.as_ptr(),
+        0x0179_BFA0 => CUR_SLOT.as_ptr(),
+        0x0179_BFA4 => ALT_SLOTS[0].as_ptr(),
+        0x0179_BFA8 => ALT_SLOTS[1].as_ptr(),
+        0x0179_BFAC => ALT_SLOTS[2].as_ptr(),
         _ => panic!("unexpected global VA {file_va:#x}"),
     }
 }
@@ -88,48 +54,33 @@ fn slot_for(file_va: u32) -> *mut u32 {
 /// As [`slot_for`].
 #[must_use]
 pub fn global<T>(file_va: u32) -> *mut T {
-    slot_for(file_va).cast::<T>()
+    slot_for(file_va) as *mut T
 }
 
-/// The relocated addresses, planted per test: two factory tables, three
-/// constructor helpers, the inline table and helper, the two bounds
-/// seed cells, and the gate probe object.
-static RELOC_SLOTS: [AtomicU32; 10] = [
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
-    AtomicU32::new(0),
+/// The relocated addresses, planted per test: the latch configuration
+/// word, then the constructor's two table words.
+static RELOC_SLOTS: [AtomicU32; 3] = [
     AtomicU32::new(0),
     AtomicU32::new(0),
     AtomicU32::new(0),
 ];
 
-/// The relocated-address slot for a file VA.
+/// The slot for a file VA.
 ///
 /// # Panics
 ///
-/// When the address is not one the proof set relocates: a case bug,
-/// never a guess.
+/// When the address is not one of the three VAs the proof set
+/// relocates: a case bug, never a guess.
 fn reloc_slot(file_va: u32) -> &'static AtomicU32 {
     match file_va {
-        0x00EA_5B5C => &RELOC_SLOTS[0],
-        0x00E7_E080 => &RELOC_SLOTS[1],
-        0x005E_DCB0 => &RELOC_SLOTS[2],
-        0x005E_E090 => &RELOC_SLOTS[3],
-        0x005E_E660 => &RELOC_SLOTS[4],
-        0x00FE_1534 => &RELOC_SLOTS[5],
-        0x005E_E2F0 => &RELOC_SLOTS[6],
-        0x00FE_8E1C => &RELOC_SLOTS[7],
-        0x00FE_8D18 => &RELOC_SLOTS[8],
-        0x0128_E310 => &RELOC_SLOTS[9],
+        0x0117_35B4 => &RELOC_SLOTS[0],
+        0x00E9_1480 => &RELOC_SLOTS[1],
+        0x00E9_08AC => &RELOC_SLOTS[2],
         _ => panic!("unexpected relocated VA {file_va:#x}"),
     }
 }
 
-/// Plants the relocated address of a file VA.
+/// Plants the relocated address of a VA.
 pub fn set_relocated(file_va: u32, addr: u32) {
     reloc_slot(file_va).store(addr, Ordering::Relaxed);
 }
@@ -144,10 +95,14 @@ pub fn relocated(file_va: u32) -> u32 {
     reloc_slot(file_va).load(Ordering::Relaxed)
 }
 
-/// Registered stub addresses for callee ids 0..8 (0 when none: a call
+/// Registered stub addresses for callee ids 0..3 (0 when none: a call
 /// there panics, which is a case bug). Each test plants the stubs its
 /// rewrites call before running.
-static CALLEES: [AtomicU32; 8] = [const { AtomicU32::new(0) }; 8];
+static CALLEES: [AtomicU32; 3] = [
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+    AtomicU32::new(0),
+];
 
 /// Plants the stub address callee `id` calls land on.
 pub fn set_callee(id: u32, addr: u32) {
@@ -197,7 +152,6 @@ macro_rules! export {
 
 /// Call intercepted callee `id` with the cdecl convention.
 #[macro_export]
-#[allow(unused_unsafe)]
 macro_rules! callee_cdecl {
     ($id:expr, $ret:ty, $($arg:expr),* $(,)?) => {{
         let f: extern "cdecl" fn($( $crate::__ty!($arg) ),*) -> $ret =
@@ -206,36 +160,13 @@ macro_rules! callee_cdecl {
     }};
 }
 
-/// Call intercepted callee `id` with the stdcall convention.
-#[macro_export]
-#[allow(unused_unsafe)]
-macro_rules! callee_stdcall {
-    ($id:expr, $ret:ty, $($arg:expr),* $(,)?) => {{
-        let f: extern "stdcall" fn($( $crate::__ty!($arg) ),*) -> $ret =
-            unsafe { core::mem::transmute($crate::callee_addr($id) as usize) };
-        f($( $arg ),*)
-    }};
-}
-
 /// Call intercepted callee `id` with the thiscall convention.
 #[macro_export]
-#[allow(unused_unsafe)]
 macro_rules! callee_thiscall {
     ($id:expr, $ret:ty, $this_arg:expr $(, $arg:expr)* $(,)?) => {{
         let f: extern "thiscall" fn(u32 $(, $crate::__ty!($arg) )*) -> $ret =
             unsafe { core::mem::transmute($crate::callee_addr($id) as usize) };
         f($this_arg $(, $arg )*)
-    }};
-}
-
-/// Call intercepted callee `id` with the fastcall convention.
-#[macro_export]
-#[allow(unused_unsafe)]
-macro_rules! callee_fastcall {
-    ($id:expr, $ret:ty, $ecx_arg:expr, $edx_arg:expr $(, $arg:expr)* $(,)?) => {{
-        let f: extern "fastcall" fn(u32, u32 $(, $crate::__ty!($arg) )*) -> $ret =
-            unsafe { core::mem::transmute($crate::callee_addr($id) as usize) };
-        f($ecx_arg, $edx_arg $(, $arg )*)
     }};
 }
 

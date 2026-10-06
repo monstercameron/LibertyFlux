@@ -11,9 +11,12 @@
 /// Behaviour: a time base is formed from two selector globals (each is the
 /// second word unless it holds -1, an equality test, compared unsigned), the
 /// first scaled by 1/60 and added to the second. Ten smoothing-helper answers
-/// feed two five-entry curves (loop A); each entry is a clamped sum (clamped
-/// to at most 1.0 with the original's NaN rule: NaN clamps) times a product of
-/// three answers. A direction vector is read from a table chosen through the
+/// feed two five-entry curves (loop A); each entry is a sum clamped down to at
+/// most 1.0 (a NaN sum is kept, the jump is taken on unordered) times a
+/// product of three answers. The second curve's store runs after the loop
+/// counter increments, so entry k lands one slot past the nominal start and
+/// the last entry sits just past the array end. A direction vector is read
+/// from a table chosen through the
 /// thread-local block (slot index from a global, row from a word at +0x70 of
 /// that block); its length normalises it, and the normalised middle component
 /// selects: at or below -1 (or NaN) the angle is pi, at or above 1 it is 0,
@@ -45,9 +48,9 @@
 /// the -1 selectors and flag bytes and tag byte use equality (signedness
 /// immaterial); the idiv dividend/divisor are signed; loop counters count up
 /// to fixed trip counts; every comiss uses the NaN-exact form of its jump.
-/// The one value read past the initialised frame (second-half addend) is zero
-/// under the checker's zero stack fill and is passed downstream to a compared
-/// call argument.
+///
+/// The snapshot word just before each setup/build struct argument is the
+/// second curve's last entry, fully determined, not uninitialised memory.
 ///
 /// Original: 0x009ACD50 (thiscall, one stack word, callee cleanup).
 lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
@@ -275,7 +278,8 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
         let s50 = mul(p1, a2);
         let lane_this = this.wrapping_add(0x14B4);
 
-        // Loop A: the two five-entry curves sharing one slot (arr[4]).
+        // Loop A: the two five-entry curves. The first sits at arr[0..5];
+        // the second lands one slot past its nominal start, arr[5..9].
         let mut arr = [0.0f32; 9];
         for esi in 0..5u32 {
             let ga = if esi == 4 {
@@ -293,7 +297,7 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
             );
             eaxv = t2.to_bits();
             let mut s = add(t1, t2);
-            if jbe_f32(s, ONE) {
+            if s > ONE {
                 s = ONE;
             }
             arr[esi as usize] = mul(s, s1c);
@@ -311,10 +315,11 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
             );
             eaxv = t4.to_bits();
             let mut s2 = add(t3, t4);
-            if jbe_f32(s2, ONE) {
+            if s2 > ONE {
                 s2 = ONE;
             }
-            arr[esi as usize + 4] = mul(s2, s50);
+            // Stored after the counter increments: entry k lands at k+1.
+            arr[esi as usize + 5] = mul(s2, s50);
         }
 
         // Direction vector, normalise, angle to degrees, truncate.
@@ -402,6 +407,7 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
                 s2[16] = 0xFFFFFFFF;
                 s2[17] = 0xFF;
                 let mut s76 = [0u32; 4];
+                s76[0] = arr[8].to_bits();
                 let s76ptr = (&mut s76[1] as *mut u32) as u32;
                 let ans5: u32 = lf_checker_rt::callee_cdecl!(
                     C_SETUP, u32, s76ptr, 0x40, glob(TMPL_A), counter
@@ -419,7 +425,7 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
             }
             if run_first {
                 let mut t = mul(add(arr[(edi_idx >> 2) as usize], arr[4]), slot312);
-                if jbe_f32(t, xmm3v) {
+                if t > xmm3v {
                     t = xmm3v;
                 }
                 let this2a = slot292.wrapping_sub(0x90);
@@ -464,6 +470,7 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
                 s2b[16] = 0xFFFFFFFF;
                 s2b[17] = 0xFF;
                 let mut s76b = [0u32; 4];
+                s76b[0] = arr[8].to_bits();
                 let s76bptr = (&mut s76b[1] as *mut u32) as u32;
                 let ans5b: u32 = lf_checker_rt::callee_cdecl!(
                     C_SETUP, u32, s76bptr, 0x20, glob(TMPL_B), counter
@@ -482,10 +489,12 @@ lf_checker_rt::export!(thiscall, rw_009ACD50(this: u32, arg0: u32) -> u32 {
                 }
             }
             if run_second {
-                // The +0.0 addend is a word past the initialised frame; it is
-                // zero under the checker's zero stack fill.
-                let mut u = mul(add(arr[5 + (edi_idx >> 2) as usize], 0.0), slot312);
-                if jbe_f32(u, ONE) {
+                // The fixed addend is the second curve's last entry.
+                let mut u = mul(
+                    add(arr[5 + (edi_idx >> 2) as usize], arr[8]),
+                    slot312,
+                );
+                if u > ONE {
                     u = ONE;
                 }
                 let ans7b: f32 = lf_checker_rt::callee_thiscall!(
