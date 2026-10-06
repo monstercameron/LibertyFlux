@@ -246,8 +246,11 @@ pub const ROWS: &[Row] = &[
     Row {
         class: "EventHandler",
         method: "vf25",
-        state: State::Missing,
-        narrows: &["5 callee slots, a virtual call and a shared global"],
+        state: State::Proven,
+        narrows: &[
+            "the kind probes and readiness check travel as EventSource methods: the proof plants a stub in a fake event table and scripts the check",
+            "the two-stage lookup travels as the StagedLookup trait: the proof scripts both stages and compares slots and arguments in order",
+        ],
     },
     Row {
         class: "EventHandler",
@@ -270,8 +273,12 @@ pub const ROWS: &[Row] = &[
     Row {
         class: "EventHandler",
         method: "vf35",
-        state: State::Missing,
-        narrows: &["2 callee slots, two virtual calls and a shared global"],
+        state: State::Proven,
+        narrows: &[
+            "the constant-zero answer is not modelled (pinned by the proof)",
+            "the event block travels as its byte offset: the proof maps it onto the event address for the build and dispatch calls",
+            "the two float globals travel as RouteInput floats and are compared bitwise",
+        ],
     },
     Row {
         class: "EventHandler",
@@ -282,8 +289,11 @@ pub const ROWS: &[Row] = &[
     Row {
         class: "EventHandler",
         method: "vf41",
-        state: State::Missing,
-        narrows: &["3 callee slots, a virtual call and a shared global"],
+        state: State::Proven,
+        narrows: &[
+            "the owner word must be live (the slot faults on null): the lift takes it as a non-optional handle",
+            "the ready probe and follow-up check travel as the SettleStatus trait: only their low bytes are tested",
+        ],
     },
     Row {
         class: "EventHandler",
@@ -366,9 +376,12 @@ pub const ROWS: &[Row] = &[
     Row {
         class: "EventHandler",
         method: "vf61",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "guarded slot: an event probe, a registry check and the factory pair (4 callee slots, a virtual call, a shared global)",
+            "the owner word must be live (the slot faults on null): the lift takes it as a non-optional handle",
+            "the probe status word travels as a value the proof maps onto a probe blob",
+            "the registry check and release travel as the ProbeRegistry trait: the proof scripts both and compares slots and arguments in order",
+            "the conversion's trailing zero pad word is pinned by the proof, not modelled in the request",
         ],
     },
     Row {
@@ -380,14 +393,23 @@ pub const ROWS: &[Row] = &[
     Row {
         class: "EventHandler",
         method: "vf63",
-        state: State::Missing,
-        narrows: &["3 callee slots and a shared global"],
+        state: State::Proven,
+        narrows: &[
+            "the scalar call runs before the lookup on every path, as in the original",
+            "the vector base travels as its byte offset: the proof maps it onto the event address",
+            "the scalar and float words travel as f32 and are compared bitwise",
+            "the conversion's trailing zero pad word is pinned by the proof, not modelled in the request",
+        ],
     },
     Row {
         class: "EventHandler",
         method: "vf64",
-        state: State::Missing,
-        narrows: &["4 callee slots and a shared global"],
+        state: State::Proven,
+        narrows: &[
+            "the scalar call travels as ScalarEval::eval_block: the proof scripts its answer bitwise and compares all seven arguments",
+            "the event-relative pointers in both calls are derived from the event handle by the proof",
+            "the sibling converter choice travels as the request's second flag: the proof asserts which stub fired",
+        ],
     },
     Row {
         class: "EventHandler",

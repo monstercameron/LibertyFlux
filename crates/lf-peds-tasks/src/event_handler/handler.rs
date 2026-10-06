@@ -59,6 +59,27 @@ pub struct EventChild;
 #[derive(Debug)]
 pub struct EventSubject;
 
+/// The probe answer an event carries out of its probe slot.
+///
+/// Opaque: the guarded slot tests it for null, reads its status word
+/// (which travels separately) and carries it through the conversion
+/// and the registry release.
+#[derive(Debug)]
+pub struct EventProbe;
+
+/// One of the link words an event carries into the routed-probe slot.
+///
+/// Opaque: the slot tests the secondary link for null and carries
+/// both through the staged lookup and the conversion.
+#[derive(Debug)]
+pub struct EventLink;
+
+/// The intermediate answer of the routed-probe slot's first stage.
+///
+/// Opaque: carried into the second stage, never interpreted.
+#[derive(Debug)]
+pub struct StageHandle;
+
 /// Event kind that clears the pending task wherever it is tested: the
 /// type-clear slot, the payload-gated reset slot and the forward-or-clear
 /// slot all treat this kind as "drop the task".
@@ -79,32 +100,157 @@ pub const FIXED_REQUEST_B: u32 = 0x200;
 /// The kind the type-gated slot converts through the factory.
 pub const KIND_GATED_CONVERT: u32 = 0x25C;
 
+/// The kind the route slot builds through the factory.
+pub const KIND_ROUTE_BUILD: u32 = 0x398;
+
+/// Byte offset of the event block the route slot builds and dispatches.
+pub const ROUTE_BLOCK: u32 = 0x20;
+
+/// Selector bit picking the dual-path slot's converter: set takes the
+/// first sibling, clear the second.
+pub const BLOCK_SELECT_BIT: u8 = 2;
+
+/// The kind the routed-probe slot converts through the factory.
+pub const KIND_ROUTED_CONVERT: u32 = 0xE9;
+
+/// The kind the routed-probe slot's first probe stops on (with a null
+/// secondary link).
+pub const PROBE_EARLY_KIND: u32 = 0x1B;
+
+/// The kind the routed-probe slot's second probe stops on (when the
+/// readiness check's low byte is set).
+pub const PROBE_LATE_KIND: u32 = 0x30;
+
+/// The kind the guarded-probe slot converts through the factory.
+pub const KIND_GUARDED_CONVERT: u32 = 0x76C;
+
+/// Mask selecting the marker bits in a probe's status word.
+pub const MARKER_MASK: u32 = 0x3C0;
+
+/// The marker bits a probe's status word must carry to convert.
+pub const MARKER_WANT: u32 = 0xC0;
+
+/// Flag word picking the scalar-vector slot's first vector base.
+pub const VEC_FIRST_FLAG: u32 = 1;
+
+/// Byte offset of the scalar-vector slot's first vector base.
+pub const VEC_FIRST_BASE: u32 = 0x10;
+
+/// Byte offset of the scalar-vector slot's second vector base.
+pub const VEC_SECOND_BASE: u32 = 0x20;
+
+/// The request code the settle slot converts through the factory.
+pub const SETTLE_BUILD_KIND: u32 = 5;
+
 /// Owner flag bit that gates the owner-reading refresh slots.
 ///
 /// The guarded slot keeps its task when the owner's flag byte carries
 /// this bit; the flagged slot refreshes its task only then.
 pub const OWNER_REFRESH_FLAG: u8 = 4;
 
-/// What the handler calls back on itself: its own dispatch slot.
+/// What the handler calls back on itself: its own dispatch slots.
 ///
 /// The forward-or-clear slot answers an event it does not clear by
-/// calling this with the event's kind and payload words.
+/// calling the event dispatch with the event's kind and payload words;
+/// the route slot answers an unbuilt kind by calling the block dispatch
+/// with the kind and the event's block.
 pub trait EventDispatch {
     /// Handles one forwarded event.
     fn dispatch_event(&mut self, kind: u32, payload: Option<Handle32<EventPayload>>);
+
+    /// Handles one routed event block: the kind and the event block at
+    /// the given byte offset from the event.
+    fn dispatch_block(&mut self, kind: u32, event: Handle32<EventRef>, block_offset: u32);
 }
 
 /// What the handler calls on an event: the event-side collaborator.
 ///
 /// The settle slot polls the event's owner until it settles; the adopt
-/// slot asks the event to clone its task. Production code implements
-/// this on the lifted event; tests implement it on fakes.
+/// slot asks the event to clone its task; the routed-probe slot reads
+/// the event's kind probe and readiness; the guarded-probe slot reads
+/// its probe. Production code implements this on the lifted event;
+/// tests implement it on fakes.
 pub trait EventSource {
     /// Answers the event's owner word (the settle slot's poll).
     fn poll_owner(&mut self) -> Option<Handle32<Owner>>;
 
     /// Clones the event's task (the adopt slot's conversion).
     fn clone_task(&mut self) -> Option<Handle32<Task>>;
+
+    /// Answers the event's kind probe (the routed-probe slot's gate).
+    fn probe_kind(&mut self) -> u32;
+
+    /// Answers the event's readiness word (only the low byte is tested).
+    fn readiness(&mut self) -> u32;
+
+    /// Answers the event's probe (the guarded-probe slot's conversion).
+    fn probe(&mut self) -> Option<Handle32<EventProbe>>;
+}
+
+/// What the handler asks of the float-scalar calls: the scalar-side
+/// collaborator.
+///
+/// The scalar slots evaluate one float from event words before
+/// converting; the value travels bit-exact into the conversion.
+/// Production code implements this on the lifted scalar routines;
+/// tests pass a fake that records calls and scripts answers.
+pub trait ScalarEval {
+    /// Evaluates a scalar from one event word.
+    fn eval_word(&mut self, input: u32) -> f32;
+
+    /// Evaluates a scalar from the event's vector block.
+    fn eval_block(&mut self, event: Handle32<EventRef>, words: BlockWords) -> f32;
+}
+
+/// What the handler asks of the routed-probe slot's two-stage lookup.
+///
+/// The first stage reduces the link pair to an intermediate answer;
+/// the second stage turns it into a word whose low byte gates the
+/// conversion. Tests pass a fake that records calls and scripts
+/// answers.
+pub trait StagedLookup {
+    /// Runs the first stage on the link pair.
+    fn stage(
+        &mut self,
+        primary: Option<Handle32<EventLink>>,
+        secondary: Option<Handle32<EventLink>>,
+    ) -> Option<Handle32<StageHandle>>;
+
+    /// Runs the second stage on the intermediate answer and the pair.
+    fn finish(
+        &mut self,
+        staged: Option<Handle32<StageHandle>>,
+        primary: Option<Handle32<EventLink>>,
+        secondary: Option<Handle32<EventLink>>,
+    ) -> u32;
+}
+
+/// What the handler asks of the probe registry: the registry-side
+/// collaborator.
+///
+/// The guarded-probe slot checks each kind against the registry and
+/// releases every converted probe; the release's answer is the slot's
+/// answer. Tests pass a fake that records calls and scripts answers.
+pub trait ProbeRegistry {
+    /// Checks a kind against the registry: nonzero ends the slot.
+    fn check(&mut self, owner: Handle32<Owner>, kind: u32) -> u32;
+
+    /// Releases a converted probe; the answer is the slot's answer.
+    fn release(&mut self, owner: Handle32<Owner>, probe: Handle32<EventProbe>) -> u32;
+}
+
+/// What the handler asks about settling: the owner-side collaborator.
+///
+/// The settle slot asks the owner's ready slot and, when ready,
+/// confirms with a follow-up check; only the low byte of each answer
+/// is tested. Tests pass a fake that records calls and scripts
+/// answers.
+pub trait SettleStatus {
+    /// Asks the owner's ready slot (only the low byte is tested).
+    fn owner_ready(&mut self, owner: Handle32<Owner>) -> u32;
+
+    /// Runs the follow-up check (only the low byte is tested).
+    fn confirm_settled(&mut self) -> u32;
 }
 
 /// A pedestrian's event handler: its owner and its pending task.
@@ -463,6 +609,273 @@ impl EventHandler {
         self.pending = answer;
         answer
     }
+
+    /// Route slot: polls the owner, then clears, builds or dispatches.
+    ///
+    /// Restates the verified slot that polls the event's owner twice
+    /// and stops with no store when the first answer is null or the
+    /// second equals this handler's owner; otherwise the kind decides:
+    /// [`KIND_CLEAR`] and [`KIND_RESET_B`] clear the task slot,
+    /// [`KIND_ROUTE_BUILD`] builds through the factory from the event's
+    /// block and two float words into the task slot (clearing it when
+    /// no handler answers), and any other kind dispatches to the
+    /// handler's own block slot. The original answers a constant zero,
+    /// which carries no meaning.
+    pub fn route_by_owner_and_kind(
+        &mut self,
+        input: RouteInput,
+        source: &mut impl EventSource,
+        dispatch: &mut impl EventDispatch,
+        factory: &mut impl TaskFactory,
+        state: &FactoryState,
+    ) {
+        if source.poll_owner().is_none() {
+            return;
+        }
+        if source.poll_owner() == self.owner {
+            return;
+        }
+        if input.kind == KIND_CLEAR || input.kind == KIND_RESET_B {
+            self.pending = None;
+            return;
+        }
+        if input.kind != KIND_ROUTE_BUILD {
+            dispatch.dispatch_block(input.kind, input.event, ROUTE_BLOCK);
+            return;
+        }
+        let Some(handle) = factory.lookup(state.manager()) else {
+            self.pending = None;
+            return;
+        };
+        let answer = factory.convert(
+            handle,
+            ConvertRequest::BlockFloats {
+                block_offset: ROUTE_BLOCK,
+                first_bits: input.first.to_bits(),
+                second_bits: input.second.to_bits(),
+            },
+        );
+        self.pending = answer;
+    }
+
+    /// Dual-path float slot: evaluates a scalar, converts through one
+    /// of two sibling converters.
+    ///
+    /// Restates the verified slot that looks up a conversion handler
+    /// from the shared manager (clearing the task slot and stopping
+    /// when none answers), evaluates a scalar from the event's words
+    /// through the scalar call, and converts the scalar with the
+    /// event's vector block through one of two sibling converters
+    /// picked by bit 1 of the selector byte, storing the answer in the
+    /// task slot. Answers the conversion either way.
+    pub fn answer_scalar_block(
+        &mut self,
+        selector: u8,
+        event: Handle32<EventRef>,
+        words: BlockWords,
+        scalar: &mut impl ScalarEval,
+        factory: &mut impl TaskFactory,
+        state: &FactoryState,
+    ) -> Option<Handle32<Task>> {
+        let Some(handle) = factory.lookup(state.manager()) else {
+            self.pending = None;
+            return None;
+        };
+        let value = scalar.eval_block(event, words);
+        let second = selector & BLOCK_SELECT_BIT == 0;
+        let answer = factory.convert(
+            handle,
+            ConvertRequest::ScalarBlock {
+                scalar_bits: value.to_bits(),
+                words,
+                second,
+            },
+        );
+        self.pending = answer;
+        answer
+    }
+
+    /// Routed-probe slot: two kind probes gate a lookup and conversion.
+    ///
+    /// Restates the verified slot that probes the event's kind and
+    /// stops with the probe's answer on kind [`PROBE_EARLY_KIND`] with
+    /// a null secondary link, or on kind [`PROBE_LATE_KIND`] when the
+    /// readiness check's low byte is set; otherwise the kind word
+    /// decides: [`KIND_CLEAR`] stores null, [`KIND_ROUTED_CONVERT`]
+    /// runs a two-stage lookup (a zero low byte on the second stage
+    /// stores null and answers it) and converts the link pair through
+    /// the factory into the task slot (clearing it when no handler
+    /// answers), and any other kind leaves the task slot alone and
+    /// answers the kind minus the convert kind.
+    pub fn answer_routed_probe(
+        &mut self,
+        links: EventLinks,
+        kind: u32,
+        event: &mut impl EventSource,
+        staged: &mut impl StagedLookup,
+        factory: &mut impl TaskFactory,
+        state: &FactoryState,
+    ) -> RoutedAnswer {
+        if event.probe_kind() == PROBE_EARLY_KIND && links.secondary.is_none() {
+            return RoutedAnswer::EarlyProbe(PROBE_EARLY_KIND);
+        }
+        if event.readiness() & 0xFF != 0 && event.probe_kind() == PROBE_LATE_KIND {
+            return RoutedAnswer::EarlyProbe(PROBE_LATE_KIND);
+        }
+        if kind == KIND_CLEAR {
+            self.pending = None;
+            return RoutedAnswer::StoredNull;
+        }
+        if kind != KIND_ROUTED_CONVERT {
+            return RoutedAnswer::Unrouted(kind.wrapping_sub(KIND_ROUTED_CONVERT));
+        }
+        let mid = staged.stage(links.primary, links.secondary);
+        let fin = staged.finish(mid, links.primary, links.secondary);
+        if fin & 0xFF == 0 {
+            self.pending = None;
+            return RoutedAnswer::LookupFailed(fin);
+        }
+        let Some(handle) = factory.lookup(state.manager()) else {
+            self.pending = None;
+            return RoutedAnswer::Converted(None);
+        };
+        let answer = factory.convert(
+            handle,
+            ConvertRequest::Pair {
+                primary: links.primary,
+                secondary: links.secondary,
+            },
+        );
+        self.pending = answer;
+        RoutedAnswer::Converted(answer)
+    }
+
+    /// Guarded-probe slot: checks a registry, gates on kind and marker
+    /// bits, converts the probe.
+    ///
+    /// Restates the verified slot that probes the event, checks the
+    /// kind against the registry (a nonzero answer ends the call and
+    /// is returned), and requires kind [`KIND_GUARDED_CONVERT`], a live
+    /// probe and marker bits [`MARKER_WANT`] in the probe's status word
+    /// before converting the probe through the factory into the task
+    /// slot (clearing it when no handler answers). A registry release
+    /// runs on every converted probe, and its answer is the slot's
+    /// answer. The owner word travels as a parameter rather than from
+    /// this handler because the slot reads it but faults unless it is
+    /// live, which the non-optional handle states in the type.
+    pub fn answer_guarded_probe(
+        &mut self,
+        owner: Handle32<Owner>,
+        probe: ProbeInput,
+        event: &mut impl EventSource,
+        registry: &mut impl ProbeRegistry,
+        factory: &mut impl TaskFactory,
+        state: &FactoryState,
+    ) -> GuardedProbeAnswer {
+        let found = event.probe();
+        let checked = registry.check(owner, probe.kind);
+        if checked != 0 {
+            return GuardedProbeAnswer::Registry(checked);
+        }
+        if probe.kind != KIND_GUARDED_CONVERT {
+            return GuardedProbeAnswer::Rejected(0);
+        }
+        let Some(found) = found else {
+            return GuardedProbeAnswer::Rejected(0);
+        };
+        let bits = probe.status & MARKER_MASK;
+        if bits != MARKER_WANT {
+            return GuardedProbeAnswer::Rejected(bits);
+        }
+        let Some(handle) = factory.lookup(state.manager()) else {
+            self.pending = None;
+            let released = registry.release(owner, found);
+            return GuardedProbeAnswer::Converted {
+                task: None,
+                released,
+            };
+        };
+        let answer = factory.convert(handle, ConvertRequest::Probe(found));
+        self.pending = answer;
+        let released = registry.release(owner, found);
+        GuardedProbeAnswer::Converted {
+            task: answer,
+            released,
+        }
+    }
+
+    /// Scalar-vector slot: evaluates a scalar, converts it with a vector.
+    ///
+    /// Restates the verified slot that picks one of two event-relative
+    /// vector bases by the flag word, evaluates a scalar from the input
+    /// word, looks up a conversion handler from the shared manager
+    /// (clearing the task slot and stopping when none answers) and
+    /// converts the scalar with the vector base and the float word into
+    /// the task slot. Answers the conversion either way.
+    pub fn answer_scalar_vec(
+        &mut self,
+        input: VecInput,
+        event: Handle32<EventRef>,
+        scalar: &mut impl ScalarEval,
+        factory: &mut impl TaskFactory,
+        state: &FactoryState,
+    ) -> Option<Handle32<Task>> {
+        // The vector offset is relative to this event; the proof maps
+        // it onto the event's address.
+        let _ = event;
+        let value = scalar.eval_word(input.scalar_input);
+        let Some(handle) = factory.lookup(state.manager()) else {
+            self.pending = None;
+            return None;
+        };
+        let base = if input.flag == VEC_FIRST_FLAG {
+            VEC_FIRST_BASE
+        } else {
+            VEC_SECOND_BASE
+        };
+        let answer = factory.convert(
+            handle,
+            ConvertRequest::ScalarVec {
+                scalar_bits: value.to_bits(),
+                vec_offset: base,
+                weight_bits: input.weight.to_bits(),
+            },
+        );
+        self.pending = answer;
+        answer
+    }
+
+    /// Settle refresh slot: keeps the task unless the owner is settled.
+    ///
+    /// Restates the verified slot that asks the owner's ready slot and,
+    /// when ready and the follow-up check's low byte is set, keeps its
+    /// task and answers the check; otherwise it converts the settle
+    /// request through the factory into the task slot (clearing it when
+    /// no handler answers). The owner word travels as a parameter
+    /// rather than from this handler because the slot probes it but
+    /// faults unless it is live, which the non-optional handle states
+    /// in the type.
+    pub fn refresh_unless_settled(
+        &mut self,
+        owner: Handle32<Owner>,
+        settle: &mut impl SettleStatus,
+        factory: &mut impl TaskFactory,
+        state: &FactoryState,
+    ) -> SettledAnswer {
+        if settle.owner_ready(owner) & 0xFF != 0 {
+            let check = settle.confirm_settled();
+            if check & 0xFF != 0 {
+                return SettledAnswer::Settled(check);
+            }
+        }
+        let Some(handle) = factory.lookup(state.manager()) else {
+            self.pending = None;
+            return SettledAnswer::Refreshed(None);
+        };
+        let answer = factory.convert(handle, ConvertRequest::Code(SETTLE_BUILD_KIND));
+        self.pending = answer;
+        SettledAnswer::Refreshed(answer)
+    }
 }
 
 /// How the child slot answered.
@@ -595,6 +1008,52 @@ pub enum ConvertRequest {
     /// carries a fixed all-ones word after the handle, pinned by the
     /// proof rather than modelled here.
     Build,
+    /// Build from an event block and two float words, bitwise (the
+    /// route slot). The block travels as its byte offset from the
+    /// event; the target call carries the block address first.
+    BlockFloats {
+        /// Byte offset of the event block from the event.
+        block_offset: u32,
+        /// The first float word as bits; no arithmetic touches it.
+        first_bits: u32,
+        /// The second float word as bits; no arithmetic touches it.
+        second_bits: u32,
+    },
+    /// Convert a scalar with the event's vector block (the dual-path
+    /// slot). The block words travel as values; the target call
+    /// carries the event-relative addresses the proof maps.
+    ScalarBlock {
+        /// The evaluated scalar as bits; no arithmetic touches it.
+        scalar_bits: u32,
+        /// The block words the scalar call read.
+        words: BlockWords,
+        /// Which sibling converter runs: set for the second, clear for
+        /// the first.
+        second: bool,
+    },
+    /// Convert a link pair (the routed-probe slot's conversion).
+    Pair {
+        /// The primary link word (carried through even when null).
+        primary: Option<Handle32<EventLink>>,
+        /// The secondary link word (carried through even when null).
+        secondary: Option<Handle32<EventLink>>,
+    },
+    /// Convert an event's probe (the guarded-probe slot's conversion).
+    /// The target call carries a trailing zero word after it, pinned
+    /// by the proof rather than modelled here.
+    Probe(Handle32<EventProbe>),
+    /// Convert a scalar with a vector base (the scalar-vector slot).
+    /// The base travels as its byte offset from the event; the target
+    /// call carries the event-relative address the proof maps, then a
+    /// trailing zero word pinned by the proof.
+    ScalarVec {
+        /// The evaluated scalar as bits; no arithmetic touches it.
+        scalar_bits: u32,
+        /// Byte offset of the vector base from the event.
+        vec_offset: u32,
+        /// The float word as bits; no arithmetic touches it.
+        weight_bits: u32,
+    },
 }
 
 /// What the handler asks of the task factory: the factory-side
@@ -615,4 +1074,112 @@ pub trait TaskFactory {
         handle: Handle32<FactoryHandle>,
         request: ConvertRequest,
     ) -> Option<Handle32<Task>>;
+}
+
+/// The event as the route slot sees it: its kind, its identity and the
+/// two float words the build call carries.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct RouteInput {
+    /// The event's kind word.
+    pub kind: u32,
+    /// The event's identity (its address on the 32-bit side).
+    pub event: Handle32<EventRef>,
+    /// The build call's first float word.
+    pub first: f32,
+    /// The build call's second float word.
+    pub second: f32,
+}
+
+/// The event words the dual-path slot threads through its scalar and
+/// conversion calls, named by byte offset from the event.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct BlockWords {
+    /// The word at event +0x34: the scalar call's input.
+    pub w34: u32,
+    /// The word at event +0x30.
+    pub w30: u32,
+    /// The word at event +0x3C.
+    pub w3c: u32,
+    /// The word at event +0x40.
+    pub w40: u32,
+}
+
+/// The link pair the routed-probe slot reads from the event.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct EventLinks {
+    /// The primary link word.
+    pub primary: Option<Handle32<EventLink>>,
+    /// The secondary link word (its nullness gates the early probe).
+    pub secondary: Option<Handle32<EventLink>>,
+}
+
+/// The event as the guarded-probe slot sees it: its kind and its
+/// probe's status word.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct ProbeInput {
+    /// The event's kind word.
+    pub kind: u32,
+    /// The probe's status word (only the marker bits are tested).
+    pub status: u32,
+}
+
+/// The event as the scalar-vector slot sees it: its flag word, its
+/// scalar input and its float word.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct VecInput {
+    /// The flag word picking the vector base.
+    pub flag: u32,
+    /// The scalar call's input word.
+    pub scalar_input: u32,
+    /// The float word the conversion carries.
+    pub weight: f32,
+}
+
+/// How the routed-probe slot answered.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum RoutedAnswer {
+    /// A kind probe ended the call: the task slot is untouched and the
+    /// answer is the probe's kind.
+    EarlyProbe(u32),
+    /// The kind clears: null was stored and zero answered.
+    StoredNull,
+    /// Any other non-converted kind: the task slot is untouched and
+    /// the answer is the kind minus the convert kind.
+    Unrouted(u32),
+    /// The lookup's second stage failed its low-byte test: null was
+    /// stored and the stage's answer returned.
+    LookupFailed(u32),
+    /// The link pair converted: the answer is the conversion, also
+    /// stored in the task slot.
+    Converted(Option<Handle32<Task>>),
+}
+
+/// How the guarded-probe slot answered.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GuardedProbeAnswer {
+    /// The registry check answered nonzero: nothing is stored and the
+    /// answer is the check's.
+    Registry(u32),
+    /// A gate failed (kind, probe or marker bits): nothing is stored
+    /// and the answer is the gate's word.
+    Rejected(u32),
+    /// The probe converted: the task slot holds the conversion and
+    /// the answer is the registry release's.
+    Converted {
+        /// The conversion, also stored in the task slot.
+        task: Option<Handle32<Task>>,
+        /// The registry release's answer: the slot's answer.
+        released: u32,
+    },
+}
+
+/// How the settle slot answered.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SettledAnswer {
+    /// The owner is settled: the task slot is untouched and the answer
+    /// is the follow-up check's.
+    Settled(u32),
+    /// The settle request converted: the answer is the conversion,
+    /// also stored in the task slot.
+    Refreshed(Option<Handle32<Task>>),
 }

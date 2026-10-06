@@ -9,10 +9,15 @@
 use lf_core::Handle32;
 use lf_peds_tasks::event_handler::registry::{self, State};
 use lf_peds_tasks::event_handler::{
-    ConvertRequest, EventChild, EventDispatch, EventHandler, EventPayload, EventRef, EventSource,
-    EventSubject, FIXED_REQUEST_A, FIXED_REQUEST_B, FactoryAnswer, FactoryHandle, FactoryState,
-    FlaggedAnswer, GatedAnswer, GuardedAnswer, KIND_CLEAR, KIND_GATED_CONVERT, KIND_RESET_B,
-    KIND_TYPE_CLEAR_B, OWNER_REFRESH_FLAG, Owner, Task, TaskFactory, TaskManager,
+    BlockWords, ConvertRequest, EventChild, EventDispatch, EventHandler, EventLink, EventLinks,
+    EventPayload, EventProbe, EventRef, EventSource, EventSubject, FIXED_REQUEST_A,
+    FIXED_REQUEST_B, FactoryAnswer, FactoryHandle, FactoryState, FlaggedAnswer, GatedAnswer,
+    GuardedAnswer, GuardedProbeAnswer, KIND_CLEAR, KIND_GATED_CONVERT, KIND_GUARDED_CONVERT,
+    KIND_RESET_B, KIND_ROUTE_BUILD, KIND_ROUTED_CONVERT, KIND_TYPE_CLEAR_B, MARKER_MASK,
+    MARKER_WANT, OWNER_REFRESH_FLAG, Owner, PROBE_EARLY_KIND, PROBE_LATE_KIND, ProbeInput,
+    ProbeRegistry, ROUTE_BLOCK, RouteInput, RoutedAnswer, SETTLE_BUILD_KIND, ScalarEval,
+    SettleStatus, SettledAnswer, StageHandle, StagedLookup, Task, TaskFactory, TaskManager,
+    VecInput,
 };
 
 fn owner(v: u32) -> Option<Handle32<Owner>> {
@@ -32,19 +37,20 @@ fn manager(v: u32) -> Option<Handle32<TaskManager>> {
 }
 
 #[test]
-fn registry_counts_fifteen_proven() {
+fn registry_counts_twenty_one_proven() {
     let (proven, lifted, missing) = registry::counts();
-    assert_eq!(proven, 15);
+    assert_eq!(proven, 21);
     assert_eq!(lifted, 0);
-    assert_eq!(missing, 39);
+    assert_eq!(missing, 33);
     assert_eq!(registry::ROWS.len(), 54);
     for row in registry::ROWS {
         assert_eq!(row.class, "EventHandler");
         if row.state == State::Proven {
             assert!(
                 [
-                    "vf14", "vf21", "vf23", "vf28", "vf29", "vf31", "vf34", "vf36", "vf37", "vf54",
-                    "vf55", "vf67", "vf68", "vf71", "vf73",
+                    "vf14", "vf21", "vf23", "vf25", "vf28", "vf29", "vf31", "vf34", "vf35", "vf36",
+                    "vf37", "vf41", "vf54", "vf55", "vf61", "vf63", "vf64", "vf67", "vf68", "vf71",
+                    "vf73",
                 ]
                 .contains(&row.method),
                 "unexpected proven row {}",
@@ -133,6 +139,10 @@ impl EventDispatch for Recorder {
     fn dispatch_event(&mut self, kind: u32, payload: Option<Handle32<EventPayload>>) {
         self.calls.push((kind, payload));
     }
+
+    fn dispatch_block(&mut self, _kind: u32, _event: Handle32<EventRef>, _block_offset: u32) {
+        panic!("forward tests never dispatch blocks");
+    }
 }
 
 #[test]
@@ -177,6 +187,18 @@ impl EventSource for Scripted {
     fn clone_task(&mut self) -> Option<Handle32<Task>> {
         self.clone_calls += 1;
         self.clone_answer
+    }
+
+    fn probe_kind(&mut self) -> u32 {
+        panic!("settle and adopt tests never probe kinds");
+    }
+
+    fn readiness(&mut self) -> u32 {
+        panic!("settle and adopt tests never check readiness");
+    }
+
+    fn probe(&mut self) -> Option<Handle32<EventProbe>> {
+        panic!("settle and adopt tests never probe");
     }
 }
 
@@ -704,4 +726,818 @@ fn adopt_stores_and_answers_the_clone() {
         assert_eq!(ev.clone_calls, 1);
         assert_eq!(ev.poll_calls, 0);
     }
+}
+
+// The new slots' constants.
+
+#[test]
+fn new_slots_have_their_values() {
+    assert_eq!(KIND_ROUTE_BUILD, 0x398);
+    assert_eq!(ROUTE_BLOCK, 0x20);
+    assert_eq!(KIND_ROUTED_CONVERT, 0xE9);
+    assert_eq!(PROBE_EARLY_KIND, 0x1B);
+    assert_eq!(PROBE_LATE_KIND, 0x30);
+    assert_eq!(KIND_GUARDED_CONVERT, 0x76C);
+    assert_eq!(MARKER_MASK, 0x3C0);
+    assert_eq!(MARKER_WANT, 0xC0);
+    assert_eq!(SETTLE_BUILD_KIND, 5);
+}
+
+// The route slot.
+
+/// Block-dispatch recorder for the route slot's host tests.
+struct BlockRecorder {
+    calls: Vec<(u32, u32, u32)>,
+}
+
+impl EventDispatch for BlockRecorder {
+    fn dispatch_event(&mut self, _kind: u32, _payload: Option<Handle32<EventPayload>>) {
+        panic!("route host tests never dispatch events");
+    }
+
+    fn dispatch_block(&mut self, kind: u32, event: Handle32<EventRef>, block_offset: u32) {
+        self.calls.push((kind, event.get(), block_offset));
+    }
+}
+
+fn route_input(kind: u32) -> RouteInput {
+    RouteInput {
+        kind,
+        event: Handle32::new(0xE000).unwrap(),
+        first: 1.5,
+        second: -2.25,
+    }
+}
+
+#[test]
+fn route_stops_on_either_poll_shape() {
+    let state = FactoryState::new(manager(9));
+    // First poll null: one call, no store, no dispatch.
+    for polls in [vec![None], vec![owner(0x44), owner(0x1111)]] {
+        let mut h = EventHandler::new(owner(0x1111), task(7));
+        let mut ev = Scripted {
+            polls,
+            clone_answer: None,
+            poll_calls: 0,
+            clone_calls: 0,
+        };
+        let mut d = BlockRecorder { calls: Vec::new() };
+        let mut f = factory(0x1111, 0x2222);
+        h.route_by_owner_and_kind(
+            route_input(KIND_ROUTE_BUILD),
+            &mut ev,
+            &mut d,
+            &mut f,
+            &state,
+        );
+        assert_eq!(h.pending(), task(7));
+        assert!(d.calls.is_empty());
+        assert!(f.lookups.is_empty());
+    }
+    // Pass-through polls reach the kind dispatch.
+    let mut h = EventHandler::new(owner(0x1111), task(7));
+    let mut ev = Scripted {
+        polls: vec![owner(0x44), owner(0x55)],
+        clone_answer: None,
+        poll_calls: 0,
+        clone_calls: 0,
+    };
+    let mut d = BlockRecorder { calls: Vec::new() };
+    let mut f = factory(0x1111, 0x2222);
+    h.route_by_owner_and_kind(route_input(0x1234), &mut ev, &mut d, &mut f, &state);
+    assert_eq!(ev.poll_calls, 2);
+    assert_eq!(d.calls, vec![(0x1234, 0xE000, ROUTE_BLOCK)]);
+}
+
+#[test]
+fn route_clears_builds_or_dispatches_by_kind() {
+    let state = FactoryState::new(manager(9));
+    for kind in [KIND_CLEAR, KIND_RESET_B] {
+        let mut h = EventHandler::new(owner(1), task(7));
+        let mut ev = Scripted {
+            polls: vec![owner(0x44), owner(0x55)],
+            clone_answer: None,
+            poll_calls: 0,
+            clone_calls: 0,
+        };
+        let mut d = BlockRecorder { calls: Vec::new() };
+        let mut f = factory(0x1111, 0x2222);
+        h.route_by_owner_and_kind(route_input(kind), &mut ev, &mut d, &mut f, &state);
+        assert_eq!(h.pending(), None, "kind {kind:#x}");
+        assert!(d.calls.is_empty());
+        assert!(f.lookups.is_empty());
+    }
+    // Neighbours of the clearing and build kinds dispatch instead.
+    for kind in [0xC7, 0xC9, 0x397, 0x399, 0x3A6, 0x3A8] {
+        let mut h = EventHandler::new(owner(1), task(7));
+        let mut ev = Scripted {
+            polls: vec![owner(0x44), owner(0x55)],
+            clone_answer: None,
+            poll_calls: 0,
+            clone_calls: 0,
+        };
+        let mut d = BlockRecorder { calls: Vec::new() };
+        let mut f = factory(0x1111, 0x2222);
+        h.route_by_owner_and_kind(route_input(kind), &mut ev, &mut d, &mut f, &state);
+        assert_eq!(h.pending(), task(7), "kind {kind:#x}");
+        assert_eq!(d.calls, vec![(kind, 0xE000, ROUTE_BLOCK)], "kind {kind:#x}");
+    }
+    // The build kind converts the block and floats bitwise.
+    let mut h = EventHandler::new(owner(1), task(7));
+    let mut ev = Scripted {
+        polls: vec![owner(0x44), owner(0x55)],
+        clone_answer: None,
+        poll_calls: 0,
+        clone_calls: 0,
+    };
+    let mut d = BlockRecorder { calls: Vec::new() };
+    let mut f = factory(0x1111, 0x2222);
+    h.route_by_owner_and_kind(
+        route_input(KIND_ROUTE_BUILD),
+        &mut ev,
+        &mut d,
+        &mut f,
+        &state,
+    );
+    assert_eq!(h.pending(), task(0x2222));
+    assert!(d.calls.is_empty());
+    assert_eq!(
+        f.converts,
+        vec![(
+            0x1111,
+            ConvertRequest::BlockFloats {
+                block_offset: ROUTE_BLOCK,
+                first_bits: 1.5f32.to_bits(),
+                second_bits: (-2.25f32).to_bits(),
+            }
+        )]
+    );
+}
+
+// The dual-path float slot.
+
+/// Scripted scalars for the float slots' host tests.
+struct ScriptedScalar {
+    word_answer: f32,
+    block_answer: f32,
+    words: Vec<u32>,
+    blocks: Vec<(u32, BlockWords)>,
+}
+
+impl ScalarEval for ScriptedScalar {
+    fn eval_word(&mut self, input: u32) -> f32 {
+        self.words.push(input);
+        self.word_answer
+    }
+
+    fn eval_block(&mut self, event: Handle32<EventRef>, words: BlockWords) -> f32 {
+        self.blocks.push((event.get(), words));
+        self.block_answer
+    }
+}
+
+fn scalar(word: f32, block: f32) -> ScriptedScalar {
+    ScriptedScalar {
+        word_answer: word,
+        block_answer: block,
+        words: Vec::new(),
+        blocks: Vec::new(),
+    }
+}
+
+fn block_words() -> BlockWords {
+    BlockWords {
+        w34: 0x34,
+        w30: 0x30,
+        w3c: 0x3C,
+        w40: 0x40,
+    }
+}
+
+#[test]
+fn scalar_block_picks_its_converter_by_bit() {
+    let state = FactoryState::new(manager(9));
+    let event = Handle32::new(0xE000).unwrap();
+    // Bit set takes the first sibling, clear the second; the other
+    // seven bits change nothing.
+    for selector in 0..=0xFFu8 {
+        let mut h = EventHandler::new(owner(1), task(7));
+        let mut s = scalar(0.0, 2.5);
+        let mut f = factory(0x1111, 0x2222);
+        assert_eq!(
+            h.answer_scalar_block(selector, event, block_words(), &mut s, &mut f, &state),
+            task(0x2222),
+            "selector {selector:#x}"
+        );
+        let want_second = selector & 2 == 0;
+        assert_eq!(
+            f.converts,
+            vec![(
+                0x1111,
+                ConvertRequest::ScalarBlock {
+                    scalar_bits: 2.5f32.to_bits(),
+                    words: block_words(),
+                    second: want_second,
+                }
+            )],
+            "selector {selector:#x}"
+        );
+        assert_eq!(s.blocks, vec![(0xE000, block_words())]);
+    }
+}
+
+#[test]
+fn scalar_block_skips_the_eval_when_no_handler_answers() {
+    let state = FactoryState::new(manager(9));
+    let event = Handle32::new(0xE000).unwrap();
+    let mut h = EventHandler::new(owner(1), task(7));
+    let mut s = scalar(0.0, 2.5);
+    let mut f = factory(0, 0x2222);
+    assert_eq!(
+        h.answer_scalar_block(0, event, block_words(), &mut s, &mut f, &state),
+        None
+    );
+    assert_eq!(h.pending(), None);
+    assert!(s.blocks.is_empty());
+    assert!(f.converts.is_empty());
+}
+
+// The routed-probe slot.
+
+/// Scripted probes and readiness for the routed slot's host tests.
+struct Probed {
+    kinds: Vec<u32>,
+    kind_calls: usize,
+    ready_answer: u32,
+    ready_calls: usize,
+}
+
+impl EventSource for Probed {
+    fn poll_owner(&mut self) -> Option<Handle32<Owner>> {
+        panic!("routed host tests never poll");
+    }
+
+    fn clone_task(&mut self) -> Option<Handle32<Task>> {
+        panic!("routed host tests never clone");
+    }
+
+    fn probe_kind(&mut self) -> u32 {
+        let i = self.kind_calls.min(self.kinds.len().saturating_sub(1));
+        self.kind_calls += 1;
+        self.kinds[i]
+    }
+
+    fn readiness(&mut self) -> u32 {
+        self.ready_calls += 1;
+        self.ready_answer
+    }
+
+    fn probe(&mut self) -> Option<Handle32<EventProbe>> {
+        panic!("routed host tests never probe");
+    }
+}
+
+/// Scripted two-stage lookup for the routed slot's host tests.
+struct ScriptedLookup {
+    stage_answer: u32,
+    finish_answer: u32,
+    stages: u32,
+    finishes: u32,
+}
+
+impl StagedLookup for ScriptedLookup {
+    fn stage(
+        &mut self,
+        _primary: Option<Handle32<EventLink>>,
+        _secondary: Option<Handle32<EventLink>>,
+    ) -> Option<Handle32<StageHandle>> {
+        self.stages += 1;
+        Handle32::new(self.stage_answer)
+    }
+
+    fn finish(
+        &mut self,
+        _staged: Option<Handle32<StageHandle>>,
+        _primary: Option<Handle32<EventLink>>,
+        _secondary: Option<Handle32<EventLink>>,
+    ) -> u32 {
+        self.finishes += 1;
+        self.finish_answer
+    }
+}
+
+fn links(primary: u32, secondary: u32) -> EventLinks {
+    EventLinks {
+        primary: Handle32::new(primary),
+        secondary: Handle32::new(secondary),
+    }
+}
+
+#[test]
+fn routed_probe_gates_each_path() {
+    let state = FactoryState::new(manager(9));
+    // Early probe with a null secondary link stops at once.
+    let mut h = EventHandler::new(owner(1), task(7));
+    let mut e = Probed {
+        kinds: vec![PROBE_EARLY_KIND],
+        kind_calls: 0,
+        ready_answer: 0xFF,
+        ready_calls: 0,
+    };
+    let mut l = ScriptedLookup {
+        stage_answer: 1,
+        finish_answer: 1,
+        stages: 0,
+        finishes: 0,
+    };
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.answer_routed_probe(links(5, 0), 0xE9, &mut e, &mut l, &mut f, &state),
+        RoutedAnswer::EarlyProbe(PROBE_EARLY_KIND)
+    );
+    assert_eq!(e.kind_calls, 1);
+    assert_eq!(e.ready_calls, 0);
+    assert_eq!(h.pending(), task(7));
+    // A live secondary link sails past the early probe.
+    let mut h = EventHandler::new(owner(1), task(7));
+    let mut e = Probed {
+        kinds: vec![PROBE_EARLY_KIND, PROBE_LATE_KIND],
+        kind_calls: 0,
+        ready_answer: 1,
+        ready_calls: 0,
+    };
+    let mut l = ScriptedLookup {
+        stage_answer: 1,
+        finish_answer: 1,
+        stages: 0,
+        finishes: 0,
+    };
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.answer_routed_probe(links(5, 6), 0xE9, &mut e, &mut l, &mut f, &state),
+        RoutedAnswer::EarlyProbe(PROBE_LATE_KIND)
+    );
+    assert_eq!(e.kind_calls, 2);
+    // A clear low byte on the readiness check skips the second probe.
+    let mut h = EventHandler::new(owner(1), task(7));
+    let mut e = Probed {
+        kinds: vec![0x99, PROBE_LATE_KIND],
+        kind_calls: 0,
+        ready_answer: 0x100,
+        ready_calls: 0,
+    };
+    let mut l = ScriptedLookup {
+        stage_answer: 1,
+        finish_answer: 1,
+        stages: 0,
+        finishes: 0,
+    };
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.answer_routed_probe(links(5, 6), KIND_CLEAR, &mut e, &mut l, &mut f, &state),
+        RoutedAnswer::StoredNull
+    );
+    assert_eq!(e.kind_calls, 1);
+    assert_eq!(h.pending(), None);
+}
+
+#[test]
+fn routed_probe_answers_unrouted_kinds_by_wrapping_sub() {
+    let state = FactoryState::new(manager(9));
+    // Below the convert kind the answer wraps around.
+    let mut h = EventHandler::new(owner(1), task(7));
+    let mut e = Probed {
+        kinds: vec![0x99],
+        kind_calls: 0,
+        ready_answer: 0,
+        ready_calls: 0,
+    };
+    let mut l = ScriptedLookup {
+        stage_answer: 1,
+        finish_answer: 1,
+        stages: 0,
+        finishes: 0,
+    };
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.answer_routed_probe(links(0, 0), 0, &mut e, &mut l, &mut f, &state),
+        RoutedAnswer::Unrouted(0u32.wrapping_sub(KIND_ROUTED_CONVERT))
+    );
+    assert_eq!(h.pending(), task(7));
+    assert_eq!(l.stages, 0);
+}
+
+#[test]
+fn routed_probe_runs_the_lookup_before_the_factory() {
+    let state = FactoryState::new(manager(9));
+    // A failed second stage stores null without touching the factory.
+    let mut h = EventHandler::new(owner(1), task(7));
+    let mut e = Probed {
+        kinds: vec![0x99],
+        kind_calls: 0,
+        ready_answer: 0,
+        ready_calls: 0,
+    };
+    let mut l = ScriptedLookup {
+        stage_answer: 0xBEEF,
+        finish_answer: 0x500,
+        stages: 0,
+        finishes: 0,
+    };
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.answer_routed_probe(
+            links(5, 6),
+            KIND_ROUTED_CONVERT,
+            &mut e,
+            &mut l,
+            &mut f,
+            &state
+        ),
+        RoutedAnswer::LookupFailed(0x500)
+    );
+    assert_eq!(h.pending(), None);
+    assert!(f.lookups.is_empty());
+    // A passing stage converts the pair.
+    let mut h = EventHandler::new(owner(1), task(7));
+    let mut e = Probed {
+        kinds: vec![0x99],
+        kind_calls: 0,
+        ready_answer: 0,
+        ready_calls: 0,
+    };
+    let mut l = ScriptedLookup {
+        stage_answer: 0,
+        finish_answer: 0x501,
+        stages: 0,
+        finishes: 0,
+    };
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.answer_routed_probe(
+            links(5, 6),
+            KIND_ROUTED_CONVERT,
+            &mut e,
+            &mut l,
+            &mut f,
+            &state
+        ),
+        RoutedAnswer::Converted(task(0x2222))
+    );
+    assert_eq!(h.pending(), task(0x2222));
+    assert_eq!(
+        f.converts,
+        vec![(
+            0x1111,
+            ConvertRequest::Pair {
+                primary: Handle32::new(5),
+                secondary: Handle32::new(6),
+            }
+        )]
+    );
+}
+
+// The guarded-probe slot.
+
+/// Scripted probe event for the guarded slot's host tests.
+struct ProbeEvent {
+    answer: u32,
+    calls: u32,
+}
+
+impl EventSource for ProbeEvent {
+    fn poll_owner(&mut self) -> Option<Handle32<Owner>> {
+        panic!("guarded host tests never poll");
+    }
+
+    fn clone_task(&mut self) -> Option<Handle32<Task>> {
+        panic!("guarded host tests never clone");
+    }
+
+    fn probe_kind(&mut self) -> u32 {
+        panic!("guarded host tests never probe kinds");
+    }
+
+    fn readiness(&mut self) -> u32 {
+        panic!("guarded host tests never check readiness");
+    }
+
+    fn probe(&mut self) -> Option<Handle32<EventProbe>> {
+        self.calls += 1;
+        Handle32::new(self.answer)
+    }
+}
+
+/// Scripted registry for the guarded slot's host tests.
+struct ScriptedRegistry {
+    check_answer: u32,
+    release_answer: u32,
+    checks: u32,
+    releases: u32,
+}
+
+impl ProbeRegistry for ScriptedRegistry {
+    fn check(&mut self, _owner: Handle32<Owner>, _kind: u32) -> u32 {
+        self.checks += 1;
+        self.check_answer
+    }
+
+    fn release(&mut self, _owner: Handle32<Owner>, _probe: Handle32<EventProbe>) -> u32 {
+        self.releases += 1;
+        self.release_answer
+    }
+}
+
+fn guarded_probe(kind: u32, status: u32) -> ProbeInput {
+    ProbeInput { kind, status }
+}
+
+#[test]
+fn guarded_probe_answers_the_release_not_the_conversion() {
+    let state = FactoryState::new(manager(9));
+    let owner_h = Handle32::new(0xB00).unwrap();
+    // The conversion lands in the task slot; the answer is the release's.
+    let mut h = EventHandler::new(owner(0xB00), task(7));
+    let mut e = ProbeEvent {
+        answer: 0xF00,
+        calls: 0,
+    };
+    let mut r = ScriptedRegistry {
+        check_answer: 0,
+        release_answer: 0xDEC,
+        checks: 0,
+        releases: 0,
+    };
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.answer_guarded_probe(
+            owner_h,
+            guarded_probe(KIND_GUARDED_CONVERT, MARKER_WANT),
+            &mut e,
+            &mut r,
+            &mut f,
+            &state
+        ),
+        GuardedProbeAnswer::Converted {
+            task: task(0x2222),
+            released: 0xDEC,
+        }
+    );
+    assert_eq!(h.pending(), task(0x2222));
+    assert_eq!(r.releases, 1);
+    // The release runs even when no handler answers.
+    let mut h = EventHandler::new(owner(0xB00), task(7));
+    let mut e = ProbeEvent {
+        answer: 0xF00,
+        calls: 0,
+    };
+    let mut r = ScriptedRegistry {
+        check_answer: 0,
+        release_answer: 0xDEC,
+        checks: 0,
+        releases: 0,
+    };
+    let mut f = factory(0, 0x2222);
+    assert_eq!(
+        h.answer_guarded_probe(
+            owner_h,
+            guarded_probe(KIND_GUARDED_CONVERT, MARKER_WANT | 0xFFFF_FC00),
+            &mut e,
+            &mut r,
+            &mut f,
+            &state
+        ),
+        GuardedProbeAnswer::Converted {
+            task: None,
+            released: 0xDEC,
+        }
+    );
+    assert_eq!(h.pending(), None);
+    assert_eq!(r.releases, 1);
+    assert!(f.converts.is_empty());
+}
+
+#[test]
+fn guarded_probe_rejects_each_gate() {
+    let state = FactoryState::new(manager(9));
+    let owner_h = Handle32::new(0xB00).unwrap();
+    // A nonzero registry answer ends the call before any gate.
+    let mut h = EventHandler::new(owner(0xB00), task(7));
+    let mut e = ProbeEvent {
+        answer: 0xF00,
+        calls: 0,
+    };
+    let mut r = ScriptedRegistry {
+        check_answer: 0x77,
+        release_answer: 0,
+        checks: 0,
+        releases: 0,
+    };
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.answer_guarded_probe(
+            owner_h,
+            guarded_probe(KIND_GUARDED_CONVERT, MARKER_WANT),
+            &mut e,
+            &mut r,
+            &mut f,
+            &state
+        ),
+        GuardedProbeAnswer::Registry(0x77)
+    );
+    assert_eq!(h.pending(), task(7));
+    assert_eq!(r.releases, 0);
+    assert!(f.lookups.is_empty());
+    // Wrong kind and null probe both reject with zero.
+    for (kind, probe) in [(0x76B, 0xF00), (KIND_GUARDED_CONVERT, 0)] {
+        let mut h = EventHandler::new(owner(0xB00), task(7));
+        let mut e = ProbeEvent {
+            answer: probe,
+            calls: 0,
+        };
+        let mut r = ScriptedRegistry {
+            check_answer: 0,
+            release_answer: 0,
+            checks: 0,
+            releases: 0,
+        };
+        let mut f = factory(0x1111, 0x2222);
+        assert_eq!(
+            h.answer_guarded_probe(
+                owner_h,
+                guarded_probe(kind, MARKER_WANT),
+                &mut e,
+                &mut r,
+                &mut f,
+                &state
+            ),
+            GuardedProbeAnswer::Rejected(0),
+            "kind {kind:#x} probe {probe:#x}"
+        );
+        assert_eq!(h.pending(), task(7));
+        assert_eq!(r.releases, 0);
+    }
+    // Failed marker bits reject with the masked word.
+    let mut h = EventHandler::new(owner(0xB00), task(7));
+    let mut e = ProbeEvent {
+        answer: 0xF00,
+        calls: 0,
+    };
+    let mut r = ScriptedRegistry {
+        check_answer: 0,
+        release_answer: 0,
+        checks: 0,
+        releases: 0,
+    };
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.answer_guarded_probe(
+            owner_h,
+            guarded_probe(KIND_GUARDED_CONVERT, 0xFFFF_FD80),
+            &mut e,
+            &mut r,
+            &mut f,
+            &state
+        ),
+        GuardedProbeAnswer::Rejected(0xFFFF_FD80 & MARKER_MASK)
+    );
+    assert_eq!(h.pending(), task(7));
+    assert_eq!(r.releases, 0);
+}
+
+// The scalar-vector slot.
+
+#[test]
+fn scalar_vec_picks_its_base_by_flag() {
+    let state = FactoryState::new(manager(9));
+    let event = Handle32::new(0xE000).unwrap();
+    // Only flag 1 takes the first base; neighbours take the second.
+    for (flag, want) in [(1u32, 0x10u32), (0, 0x20), (2, 0x20), (u32::MAX, 0x20)] {
+        let mut h = EventHandler::new(owner(1), task(7));
+        let mut s = scalar(3.75, 0.0);
+        let mut f = factory(0x1111, 0x2222);
+        let input = VecInput {
+            flag,
+            scalar_input: 0xAB,
+            weight: -0.5,
+        };
+        assert_eq!(
+            h.answer_scalar_vec(input, event, &mut s, &mut f, &state),
+            task(0x2222),
+            "flag {flag:#x}"
+        );
+        assert_eq!(s.words, vec![0xAB]);
+        assert_eq!(
+            f.converts,
+            vec![(
+                0x1111,
+                ConvertRequest::ScalarVec {
+                    scalar_bits: 3.75f32.to_bits(),
+                    vec_offset: want,
+                    weight_bits: (-0.5f32).to_bits(),
+                }
+            )],
+            "flag {flag:#x}"
+        );
+    }
+}
+
+#[test]
+fn scalar_vec_evaluates_before_the_lookup() {
+    // Unlike its dual-path sibling, the scalar call runs even when no
+    // handler answers.
+    let state = FactoryState::new(manager(9));
+    let event = Handle32::new(0xE000).unwrap();
+    let mut h = EventHandler::new(owner(1), task(7));
+    let mut s = scalar(3.75, 0.0);
+    let mut f = factory(0, 0x2222);
+    let input = VecInput {
+        flag: 1,
+        scalar_input: 0xAB,
+        weight: 1.0,
+    };
+    assert_eq!(
+        h.answer_scalar_vec(input, event, &mut s, &mut f, &state),
+        None
+    );
+    assert_eq!(h.pending(), None);
+    assert_eq!(s.words, vec![0xAB]);
+    assert!(f.converts.is_empty());
+}
+
+// The settle slot.
+
+/// Scripted settle status for the settle slot's host tests.
+struct ScriptedSettle {
+    ready_answer: u32,
+    check_answer: u32,
+    readies: u32,
+    checks: u32,
+}
+
+impl SettleStatus for ScriptedSettle {
+    fn owner_ready(&mut self, _owner: Handle32<Owner>) -> u32 {
+        self.readies += 1;
+        self.ready_answer
+    }
+
+    fn confirm_settled(&mut self) -> u32 {
+        self.checks += 1;
+        self.check_answer
+    }
+}
+
+#[test]
+fn settled_tests_only_low_bytes() {
+    let state = FactoryState::new(manager(9));
+    let owner_h = Handle32::new(0xB00).unwrap();
+    // A set low byte on both answers settles with the check's word.
+    let mut h = EventHandler::new(owner(0xB00), task(7));
+    let mut s = ScriptedSettle {
+        ready_answer: 0xDEAD_0001,
+        check_answer: 0xBEEF_00FF,
+        readies: 0,
+        checks: 0,
+    };
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.refresh_unless_settled(owner_h, &mut s, &mut f, &state),
+        SettledAnswer::Settled(0xBEEF_00FF)
+    );
+    assert_eq!(h.pending(), task(7));
+    assert!(f.lookups.is_empty());
+    // A clear low byte on the ready word skips the check entirely.
+    let mut h = EventHandler::new(owner(0xB00), task(7));
+    let mut s = ScriptedSettle {
+        ready_answer: 0xFFFF_FF00,
+        check_answer: 0xFF,
+        readies: 0,
+        checks: 0,
+    };
+    let mut f = factory(0x1111, 0x2222);
+    assert_eq!(
+        h.refresh_unless_settled(owner_h, &mut s, &mut f, &state),
+        SettledAnswer::Refreshed(task(0x2222))
+    );
+    assert_eq!(s.checks, 0);
+    assert_eq!(h.pending(), task(0x2222));
+    assert_eq!(
+        f.converts,
+        vec![(0x1111, ConvertRequest::Code(SETTLE_BUILD_KIND))]
+    );
+    // A clear low byte on the check converts instead of settling.
+    let mut h = EventHandler::new(owner(0xB00), task(7));
+    let mut s = ScriptedSettle {
+        ready_answer: 1,
+        check_answer: 0x1234_5600,
+        readies: 0,
+        checks: 0,
+    };
+    let mut f = factory(0, 0x2222);
+    assert_eq!(
+        h.refresh_unless_settled(owner_h, &mut s, &mut f, &state),
+        SettledAnswer::Refreshed(None)
+    );
+    assert_eq!(s.checks, 1);
+    assert_eq!(h.pending(), None);
 }
