@@ -38232,6 +38232,15 @@
   "lane": "r-b636"
  },
  {
+  "address": "0x00684BA0",
+  "name": "track_list_merge",
+  "kind": "function",
+  "file": "functions/fn_00684ba0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b636"
+ },
+ {
   "address": "0x006854B0",
   "name": "track_set_update",
   "kind": "function",
@@ -53280,6 +53289,24 @@
   "lane": "r-b171"
  },
  {
+  "address": "0x008F4CB0",
+  "name": "input_unit_arg_store",
+  "kind": "function",
+  "file": "functions/fn_008f4cb0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F4CC0",
+  "name": "input_device_fields_set",
+  "kind": "function",
+  "file": "functions/fn_008f4cc0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
   "address": "0x008F4D00",
   "name": "input_device_poll",
   "kind": "function",
@@ -53287,6 +53314,15 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b611"
+ },
+ {
+  "address": "0x008F52C0",
+  "name": "input_unit_flags_copy",
+  "kind": "function",
+  "file": "functions/fn_008f52c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
  },
  {
   "address": "0x008F5300",
@@ -53467,6 +53503,42 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-s504"
+ },
+ {
+  "address": "0x008F7BE0",
+  "name": "input_gated_flag_byte",
+  "kind": "function",
+  "file": "functions/fn_008f7be0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F7C60",
+  "name": "input_stack_pop_slot",
+  "kind": "function",
+  "file": "functions/fn_008f7c60.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F7D70",
+  "name": "input_stack_push_slot",
+  "kind": "function",
+  "file": "functions/fn_008f7d70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
+ },
+ {
+  "address": "0x008F8590",
+  "name": "input_pack_binding",
+  "kind": "function",
+  "file": "functions/fn_008f8590.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s521"
  },
  {
   "address": "0x008F88A0",
@@ -121543,6 +121615,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b500"
+ },
+ {
+  "address": "0x00CB9540",
+  "name": "CTaskSimpleMoveGoToPointOnRoute::vf20",
+  "kind": "function",
+  "file": "functions/fn_00cb9540.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b633"
  },
  {
   "address": "0x00CB9D30",
