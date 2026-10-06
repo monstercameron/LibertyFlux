@@ -207,10 +207,9 @@ lf_checker_rt::export!(thiscall, rw_008f5740(obj: u32, strp: u32, out: u32) -> u
                         if cached == 0 {
                             let mut namebuf = [0u8; 16];
                             rt::callee_stdcall!(C_KBLNAME, u32, namebuf.as_mut_ptr() as u32);
-                            let klid: [u8; 16] = [
-                                0x30, 0, 0x30, 0, 0x30, 0, 0x30, 0, 0x34, 0, 0x30, 0, 0x39, 0, 0x30,
-                                0,
-                            ];
+                            // Four dword stores: "0",0,"0",0,... as bytes; the
+                            // callee is scripted, the bytes are snapshotted.
+                            let klid: [u32; 4] = [0x00300030, 0x00300030, 0x00340030, 0x00390030];
                             cached = rt::callee_stdcall!(C_KLLOAD, u32, klid.as_ptr() as u32, 2u32);
                             g_cache.write(cached);
                         }

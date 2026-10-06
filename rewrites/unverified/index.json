@@ -344,6 +344,38 @@
   "reason": null
  },
  {
+  "address": "0x005B5C70",
+  "name": null,
+  "file": "fn_005b5c70.rs",
+  "lane": "r-s505",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x005B5D30",
+  "name": null,
+  "file": "fn_005b5d30.rs",
+  "lane": "r-s505",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x005B5E80",
+  "name": null,
+  "file": "fn_005b5e80.rs",
+  "lane": "r-s505",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x005B5EF0",
+  "name": null,
+  "file": "fn_005b5ef0.rs",
+  "lane": "r-s505",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x005CDD40",
   "name": null,
   "file": "fn_005cdd40.rs",
@@ -464,12 +496,12 @@
   "reason": "other"
  },
  {
-  "address": "0x008BD300",
-  "name": "ui_meter_update",
-  "file": "fn_008bd300.rs",
-  "lane": "r-b605",
+  "address": "0x008C2F10",
+  "name": "audio_mix_update",
+  "file": "fn_008c2f10.rs",
+  "lane": "r-b612",
   "outcome": "not_reached",
-  "reason": ""
+  "reason": null
  },
  {
   "address": "0x008CA880",
@@ -483,14 +515,6 @@
   "address": "0x008E5C80",
   "name": "menu_music_state_machine",
   "file": "fn_008e5c80.rs",
-  "lane": "a-Q12",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008E7B90",
-  "name": "NodeGraph_PathSearch",
-  "file": "fn_008e7b90.rs",
   "lane": "a-Q12",
   "outcome": "not_reached",
   "reason": null
@@ -806,14 +830,6 @@
   "lane": "r-s436",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00ABD340",
-  "name": "input_ui_ctor_tail",
-  "file": "fn_00abd340.rs",
-  "lane": "r-b610",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00ADB770",
@@ -1270,6 +1286,134 @@
   "lane": "r-s341",
   "outcome": "not_reached",
   "reason": null
+ },
+ {
+  "address": "0x00BF6B30",
+  "name": "lerp_forward_18",
+  "file": "fn_00bf6b30.rs",
+  "lane": "r-s508",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00BF6B60",
+  "name": "lerp_forward_18_1c",
+  "file": "fn_00bf6b60.rs",
+  "lane": "r-s508",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00BF72F0",
+  "name": "fetch_copy_triple_a",
+  "file": "fn_00bf72f0.rs",
+  "lane": "r-s508",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00BF7320",
+  "name": "fetch_copy_triple_b",
+  "file": "fn_00bf7320.rs",
+  "lane": "r-s508",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00BF7350",
+  "name": "fetch_decode_store_a",
+  "file": "fn_00bf7350.rs",
+  "lane": "r-s508",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00BF73A0",
+  "name": "fetch_decode_store_b",
+  "file": "fn_00bf73a0.rs",
+  "lane": "r-s508",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00BF73F0",
+  "name": "scale_signed_bytes",
+  "file": "fn_00bf73f0.rs",
+  "lane": "r-s508",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00BF7440",
+  "name": "encode_store_triple",
+  "file": "fn_00bf7440.rs",
+  "lane": "r-s508",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00BF7490",
+  "name": "emit_init_37",
+  "file": "fn_00bf7490.rs",
+  "lane": "r-s508",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00BF74F0",
+  "name": "emit_init_38",
+  "file": "fn_00bf74f0.rs",
+  "lane": "r-s508",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00BF7520",
+  "name": "emit_init_2d",
+  "file": "fn_00bf7520.rs",
+  "lane": "r-s508",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00BF7560",
+  "name": "emit_init_2c",
+  "file": "fn_00bf7560.rs",
+  "lane": "r-s508",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00BF75C0",
+  "name": "emit_init_30",
+  "file": "fn_00bf75c0.rs",
+  "lane": "r-s508",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00BF7610",
+  "name": "emit_init_31",
+  "file": "fn_00bf7610.rs",
+  "lane": "r-s508",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00BF77A0",
+  "name": "emit_init_39",
+  "file": "fn_00bf77a0.rs",
+  "lane": "r-s508",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00BF77E0",
+  "name": "emit_init_32_wrap",
+  "file": "fn_00bf77e0.rs",
+  "lane": "r-s508",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00BF97C0",
