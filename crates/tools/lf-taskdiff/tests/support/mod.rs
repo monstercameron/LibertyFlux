@@ -153,6 +153,85 @@ pub fn goto_blob() -> Box<[u32; 34]> {
     Box::new([0u32; 34])
 }
 
+/// Big ped blob word holding the probe object (byte offset 0x224).
+pub const P_PROBEW: usize = 137;
+
+/// Entity blob word holding the kind word (byte offset 0x28).
+pub const E_KINDW: usize = 10;
+
+/// Built-reaction blob word holding the marks (byte offset 0x60).
+pub const B_MARKSW: usize = 24;
+
+/// Zeroed 560-byte ped blob, wide enough for the probe word.
+pub fn big_ped_blob() -> Box<[u32; 140]> {
+    Box::new([0u32; 140])
+}
+
+/// Zeroed 48-byte entity blob, wide enough for the kind word.
+pub fn entity_blob() -> Box<[u32; 12]> {
+    Box::new([0u32; 12])
+}
+
+/// Zeroed 104-byte built-reaction blob, wide enough for the marks.
+pub fn built_blob() -> Box<[u32; 26]> {
+    Box::new([0u32; 26])
+}
+
+/// Zeroed 8-byte subtask blob (table pointer first).
+pub fn sub_blob() -> Box<[u32; 2]> {
+    Box::new([0u32; 2])
+}
+
+/// Byte offset of the ped type half-word in the event ped blob.
+pub const P_TYPE_OFF: usize = 0x2E;
+/// Byte offset of the ped flag byte in the event ped blob.
+pub const P_FLAGS_BYTE: usize = 0x26C;
+/// Byte offset of the ped auxiliary flag byte in the event ped blob.
+pub const P_AUX_BYTE: usize = 0xF4;
+/// Event ped blob word holding the fallback target (byte offset 0xb30).
+pub const P_TARGETW: usize = 716;
+/// Byte offset of the seed object past the ped.
+pub const P_SEED_OFF: u32 = 0x570;
+/// Built task-B blob word holding the marks (byte offset 0x6c).
+pub const B_MARKSW_B: usize = 27;
+/// Byte offset of the status byte in a table entry blob.
+pub const E_STATUS_BYTE: usize = 0xEE;
+/// Table entries below the live window (the most negative type id).
+pub const TABLE_NEG: usize = 32768;
+/// Table entries in the planted ped-type table.
+pub const TABLE_LEN: usize = 98304;
+
+/// Zeroed event ped blob, wide enough for the target word.
+pub fn event_ped_blob() -> Box<[u32; 720]> {
+    Box::new([0u32; 720])
+}
+
+/// Zeroed 104-byte built task-B blob, wide enough for its marks.
+pub fn built_b_blob() -> Box<[u32; 28]> {
+    Box::new([0u32; 28])
+}
+
+/// Zeroed table entry blob, wide enough for the status byte.
+pub fn entry_blob() -> Box<[u32; 60]> {
+    Box::new([0u32; 60])
+}
+
+/// Reads one half-word of a word blob (little-endian).
+pub fn blob_u16(blob: &[u32], byte: usize) -> u16 {
+    let words: &[u8] =
+        unsafe { core::slice::from_raw_parts(blob.as_ptr().cast::<u8>(), blob.len() * 4) };
+    u16::from_le_bytes([words[byte], words[byte + 1]])
+}
+
+/// Writes one half-word of a word blob (little-endian).
+pub fn set_blob_u16(blob: &mut [u32], byte: usize, value: u16) {
+    let words: &mut [u8] =
+        unsafe { core::slice::from_raw_parts_mut(blob.as_mut_ptr().cast::<u8>(), blob.len() * 4) };
+    let bytes = value.to_le_bytes();
+    words[byte] = bytes[0];
+    words[byte + 1] = bytes[1];
+}
+
 /// Reads one byte of a word blob.
 pub fn blob_byte(blob: &[u32], byte: usize) -> u8 {
     let words: &[u8] =

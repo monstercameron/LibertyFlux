@@ -18,12 +18,18 @@ extern crate self as lf_checker_rt;
 pub mod rt;
 
 pub use rt::callee_addr;
+pub use rt::clock;
 pub use rt::global;
 pub use rt::relocated;
 pub use rt::set_callee;
+pub use rt::set_clock;
+pub use rt::set_flee_rate;
 pub use rt::set_manager;
 pub use rt::set_manager2;
 pub use rt::set_one;
+pub use rt::set_rate;
+pub use rt::set_seed_arg;
+pub use rt::set_table_base;
 pub use rt::set_threshold;
 pub use rt::set_tick;
 

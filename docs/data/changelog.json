@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-06",
+    "title": "Lift: five more pedestrian task methods, completing five task classes",
+    "commit": null,
+    "summary": "The lifted pedestrian task module grows from 12 proven methods to 17, and every method with behaviour in five task classes is now portable Rust with its proof in the pipeline.",
+    "changes": [
+      "crates/lf-peds-tasks gains the flee task's copy, its reaction update and its event handling, and the goto task's constructor and target picker: 627 lines, no unsafe code, no operating-system calls (the clock travels as a word, the random seed and the managers as values). Host tests go from 47 to 73.",
+      "The test crate lf-taskdiff gains five differential tests, 17 in all, each running the lifted method against its tracked verified rewrite on the 32-bit target with a wrong lift that must be caught. All 17 pass here on 32-bit, and the crate still builds on a 64-bit host.",
+      "What is left in these five classes has no behaviour to lift: five destructors, which are Drop in Rust, and one constructor that only stores its arguments.",
+      "The coordinator briefed this lane as a new family without noticing that twelve of its methods were already lifted; the lane found the existing module and extended it instead of writing a second one. The list the coordinator used to pick the family marks a class as lifted only when the registry spells its name the same way, which these did not.",
+      "Lifted methods with a proof in the pipeline: 160."
+    ]
+  },
+  {
+    "date": "2026-10-06",
     "title": "Rewrites: 6 more functions pass the checker (16707 in total)",
     "commit": "24b898f9bb46194fac2b770c1b0e48577f8cdebb",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",

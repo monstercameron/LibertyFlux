@@ -139,9 +139,12 @@ pub const ROWS: &[Row] = &[
     Row {
         class: "ShockingEventFlee",
         method: "vf1",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "clone through 2 callee slots plus a direct state-byte store into the opaquely built clone, faulting on a null allocation: no clean lift shape in this lane",
+            "the allocator and the copy constructor travel as the FleePool trait: the proof scripts both stubs and compares slot and arguments in order",
+            "the copy constructor receives the member's address: the lift passes the member word and the proof pins the address",
+            "the state byte the original stores into the clone after constructing travels as a construct argument: the proof compares it with the source blob's state byte and the clone blob's stored byte",
+            "a null allocation panics where the original faults storing through the null clone",
         ],
     },
     Row {
@@ -157,17 +160,28 @@ pub const ROWS: &[Row] = &[
     Row {
         class: "ShockingEventFlee",
         method: "vf19",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "flee-task builder through 12 callee slots over 6 globals (task table, seed word, clock pair, manager, rate word): not lifted in this lane",
+            "the ped words travel as the ReactPed snapshot: the proof plants the ped blob and the type table behind it",
+            "the table stride, probe offset and slot arithmetic are pinned by the proof's planted table with decoy entries",
+            "the two random slots share one trait method (the seed range and the spawn set are disjoint, so at most one fires per run): the proof pins the slot by the taken path",
+            "the four allocator slots share one trait method (at most one fires per run): the proof pins the slot by the taken path",
+            "the seed, spawn and task-B constant words and tables are pinned by the proof, not modelled",
+            "the task-B and fallback position words are snapped by the proof through the passed pointers and compared bitwise",
+            "the seed argument, clock base, rate and manager travel as values the proof maps onto their globals; the clock is read and written through a mutable word",
+            "a null ped, a null table entry, and a null block or build on the flag-bit paths panic where the original faults on each",
         ],
     },
     Row {
         class: "ShockingEventFlee",
         method: "vf18",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "reaction update through 5 callee slots behind entity kind gates: not lifted in this lane",
+            "the subtask type slot, entity kind word, probe, allocator, builder and dispatch travel as the FleeReact trait: the proof plants a stub in a fake subtask table and scripts the direct callees, comparing slot and arguments in order",
+            "the probe's object word the original reads off the ped is pinned by the proof, not modelled",
+            "the built reaction's marks arrive from the builder and the lift sets and clears their bits: the proof plants the built blob and compares the marks word",
+            "the build's trailing zero word and the dispatch call's task address are pinned by the proof, not modelled",
+            "a null subtask, a null ped on the probe path, a null block and a null build panic where the original faults on each",
         ],
     },
     Row {
@@ -185,9 +199,11 @@ pub const ROWS: &[Row] = &[
     Row {
         class: "ShockingEventGoto",
         method: "ctor",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "base constructor, table stamp, cleared trailing words and a radius query through 2 callee slots: not lifted in this lane",
+            "the class table stamp is pinned by the proof, not modelled",
+            "the base constructor and the radius query travel as the GotoBase trait: the proof scripts both stubs and compares the calls",
+            "the base-owned words arrive as arguments: the lift sets only what the constructor writes",
         ],
     },
     Row {
@@ -222,9 +238,15 @@ pub const ROWS: &[Row] = &[
     Row {
         class: "ShockingEventGoto",
         method: "vf19",
-        state: State::Missing,
+        state: State::Proven,
         narrows: &[
-            "goto-target picker with float hashing and three child builders through 11 callee slots: not lifted in this lane",
+            "the seed, hash, random, goal, allocator, child-builder and combine calls travel as the GotoPick trait: the proof scripts the eleven stubs and compares slot and arguments in order",
+            "the two kind hashes share one trait method: the proof pins the call order onto the two slots",
+            "the three allocations share one trait method: the proof pins the call order onto the three slots",
+            "the seed call's constant words and table, the second child's constant words, the combine call's trailing zeros and the ped-relative seed address are pinned by the proof, not modelled",
+            "the goal call's scratch pointer is pinned as written (its content is unread by the function)",
+            "the first child's speed-and-rate words are snapped by the proof through the passed pointer and compared bitwise",
+            "the stamp and the rate travel as values the proof maps onto the tick and rate globals",
         ],
     },
     // Duck: three proven methods; the deleting destructor is Drop.

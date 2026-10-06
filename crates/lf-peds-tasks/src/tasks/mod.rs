@@ -29,8 +29,13 @@ pub use duck::{
     DuckTaskSide, FINISH_FLAG, QUERY_CODE, QUERY_STATE, SUSTAIN_FLAG,
 };
 pub use fist::{DAMP_RATE_BITS, FistHeld, FistLink, FistPool, FistTarget, ShakeFist};
-pub use flee::{FleeEntity, FleePed, FleePoll, FleeSpawn, FleeTask};
-pub use goto::{GotoEntity, GotoPed, GotoPoll, GotoPool, GotoTask, SubVerdict};
+pub use flee::{
+    EventChild, FleeAnswer, FleeEntity, FleeEvent, FleePed, FleePoll, FleePool, FleeProbe,
+    FleeReact, FleeSpawn, FleeTarget, FleeTask, ReactPed, Reaction, ReactionTask,
+};
+pub use goto::{
+    GotoBase, GotoChild, GotoEntity, GotoPed, GotoPick, GotoPoll, GotoPool, GotoTask, SubVerdict,
+};
 pub use hit::{HitBase, HitHandler, HitPool, HitResponse, HitStart};
 
 use lf_core::Handle32;

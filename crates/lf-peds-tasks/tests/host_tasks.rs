@@ -27,11 +27,11 @@ fn link(v: u32) -> Option<Handle32<FistLink>> {
 }
 
 #[test]
-fn registry_counts_twelve_proven() {
+fn registry_counts_seventeen_proven() {
     let (proven, lifted, missing) = registry::counts();
-    assert_eq!(proven, 12);
+    assert_eq!(proven, 17);
     assert_eq!(lifted, 0);
-    assert_eq!(missing, 18);
+    assert_eq!(missing, 13);
     assert_eq!(registry::ROWS.len(), 30);
     for row in registry::ROWS {
         if row.state == State::Proven {
@@ -45,9 +45,14 @@ fn registry_counts_twelve_proven() {
                     ("Duck", "vf17"),
                     ("ShakeFist", "vf1"),
                     ("ShakeFist", "vf5"),
+                    ("ShockingEventFlee", "vf1"),
                     ("ShockingEventFlee", "vf7"),
+                    ("ShockingEventFlee", "vf18"),
+                    ("ShockingEventFlee", "vf19"),
                     ("ShockingEventFlee", "vf20"),
+                    ("ShockingEventGoto", "ctor"),
                     ("ShockingEventGoto", "vf1"),
+                    ("ShockingEventGoto", "vf19"),
                     ("ShockingEventGoto", "vf20"),
                 ]
                 .contains(&(row.class, row.method)),
@@ -1344,4 +1349,926 @@ fn goto_poll_panics_past_the_probe_without_a_subtask() {
     );
     let mut poll = goto_poller(0, SubVerdict::Passed);
     let _ = task.poll(goto_ped(0x60), 0, 0.0, &mut poll);
+}
+
+// The second wave: the goto constructor, the flee clone, the flee
+// reaction update and the goto target picker.
+
+use lf_peds_tasks::tasks::{
+    EventChild, FleeAnswer, FleeEvent, FleePool, FleeProbe, FleeReact, FleeTarget, GotoBase,
+    GotoChild, GotoPick, ReactPed, Reaction, ReactionTask,
+};
+
+struct GotoBaseScript {
+    speed_answer: f32,
+    inits: Vec<u32>,
+    queries: Vec<u32>,
+}
+
+impl GotoBase for GotoBaseScript {
+    fn construct_base(&mut self, init: u32) {
+        self.inits.push(init);
+    }
+
+    fn query_speed(&mut self, kind: u32) -> f32 {
+        self.queries.push(kind);
+        self.speed_answer
+    }
+}
+
+#[test]
+fn goto_ctor_clears_and_queries() {
+    let mut base = GotoBaseScript {
+        speed_answer: 7.5,
+        inits: Vec::new(),
+        queries: Vec::new(),
+    };
+    let task = GotoTask::from_init(
+        subtask(0xBEEF),
+        0x1B,
+        [1.0, 2.0, 3.0],
+        true,
+        goto_entity(0xE0),
+        0xA5,
+        &mut base,
+    );
+    assert_eq!(base.inits, vec![0xA5]);
+    assert_eq!(base.queries, vec![0x1B]);
+    assert_eq!(task.subtask(), subtask(0xBEEF));
+    assert_eq!(task.kind(), 0x1B);
+    assert_eq!(task.wait(), 0);
+    assert_eq!(task.stamp(), 0);
+    assert_eq!(task.wait_copy(), 0);
+    assert!(!task.armed());
+    assert!(!task.restamp());
+    assert_eq!(task.speed(), 7.5);
+}
+
+#[test]
+fn goto_ctor_keeps_a_negative_zero_speed() {
+    let mut base = GotoBaseScript {
+        speed_answer: -0.0,
+        inits: Vec::new(),
+        queries: Vec::new(),
+    };
+    let task = GotoTask::from_init(None, 0, [0.0; 3], false, None, 0, &mut base);
+    assert_eq!(task.speed().to_bits(), (-0.0f32).to_bits());
+}
+
+struct FleePoolScript {
+    alloc_answer: u32,
+    construct_answer: u32,
+    allocs: Vec<u32>,
+    constructs: Vec<(u32, u32, u8)>,
+}
+
+impl FleePool for FleePoolScript {
+    fn alloc(&mut self, manager: Option<Handle32<TaskMgr>>) -> Option<Handle32<UninitTask>> {
+        self.allocs.push(Handle32::raw_or_zero(manager));
+        Handle32::new(self.alloc_answer)
+    }
+
+    fn construct(
+        &mut self,
+        block: Handle32<UninitTask>,
+        member: u32,
+        state: u8,
+    ) -> Option<Handle32<FleeTask>> {
+        self.constructs.push((block.get(), member, state));
+        Handle32::new(self.construct_answer)
+    }
+}
+
+#[test]
+fn flee_clone_carries_kind_and_state() {
+    let task = flee();
+    let mut pool = FleePoolScript {
+        alloc_answer: 0x1000,
+        construct_answer: 0x2000,
+        allocs: Vec::new(),
+        constructs: Vec::new(),
+    };
+    let clone = task.clone_task(manager(0x77), &mut pool);
+    assert_eq!(Handle32::raw_or_zero(clone), 0x2000);
+    assert_eq!(pool.allocs, vec![0x77]);
+    assert_eq!(pool.constructs, vec![(0x1000, 0x1B, 0x5A)]);
+}
+
+#[test]
+#[should_panic(expected = "without a block")]
+fn flee_clone_panics_without_a_block() {
+    let task = flee();
+    let mut pool = FleePoolScript {
+        alloc_answer: 0,
+        construct_answer: 0x2000,
+        allocs: Vec::new(),
+        constructs: Vec::new(),
+    };
+    let _ = task.clone_task(manager(0x77), &mut pool);
+}
+
+fn reaction(task: u32, marks: u32) -> Option<Reaction> {
+    Some(Reaction::new(
+        Handle32::<ReactionTask>::new(task).expect("host reaction is live"),
+        marks,
+    ))
+}
+
+struct FleeReactScript {
+    type_answer: u32,
+    kind_answer: u32,
+    probe_answer: u32,
+    alloc_answer: u32,
+    build_answer: Option<Reaction>,
+    dispatches: Vec<u32>,
+}
+
+impl FleeReact for FleeReactScript {
+    fn subtask_type(&mut self, _sub: Handle32<SubTask>) -> u32 {
+        self.type_answer
+    }
+
+    fn entity_kind(&mut self, _entity: Handle32<FleeEntity>) -> u32 {
+        self.kind_answer
+    }
+
+    fn probe(&mut self, _ped: Option<Handle32<FleePed>>, _entity: Handle32<FleeEntity>) -> u32 {
+        self.probe_answer
+    }
+
+    fn alloc(&mut self, _manager: Option<Handle32<TaskMgr>>) -> Option<Handle32<UninitTask>> {
+        Handle32::new(self.alloc_answer)
+    }
+
+    fn build(
+        &mut self,
+        _block: Handle32<UninitTask>,
+        _entity: Handle32<FleeEntity>,
+    ) -> Option<Reaction> {
+        self.build_answer
+    }
+
+    fn dispatch(&mut self, ped: Option<Handle32<FleePed>>) {
+        self.dispatches.push(Handle32::raw_or_zero(ped));
+    }
+}
+
+fn reactor() -> FleeReactScript {
+    FleeReactScript {
+        type_answer: 0x16E,
+        kind_answer: 0xC0,
+        probe_answer: 0,
+        alloc_answer: 0x1000,
+        build_answer: reaction(0x3000, 0),
+        dispatches: Vec::new(),
+    }
+}
+
+fn flee_react_task(kind: u32) -> FleeTask {
+    FleeTask::new(subtask(0xBEEF), 0, kind, [0.0; 3], false, entity(0xE0), 0)
+}
+
+#[test]
+fn flee_react_dispatches_on_each_refused_gate() {
+    // Wrong subtask type.
+    let task = flee_react_task(0);
+    let mut react = reactor();
+    react.type_answer = 0x16D;
+    assert_eq!(task.react(flee_ped(0x60), manager(1), &mut react), None);
+    assert_eq!(react.dispatches, vec![0x60]);
+    // Missing entity.
+    let task = FleeTask::new(subtask(0xBEEF), 0, 0, [0.0; 3], false, None, 0);
+    let mut react = reactor();
+    assert_eq!(task.react(flee_ped(0x60), manager(1), &mut react), None);
+    assert_eq!(react.dispatches, vec![0x60]);
+    // Wrong kind bits (neighbouring mask values).
+    for kind_word in [0u32, 0x80, 0x3C0, 0x1C0, 0x200] {
+        let task = flee_react_task(0);
+        let mut react = reactor();
+        react.kind_answer = kind_word;
+        assert_eq!(task.react(flee_ped(0x60), manager(1), &mut react), None);
+        assert_eq!(react.dispatches, vec![0x60]);
+    }
+    // A set probe low byte refuses even when the high bytes are clear.
+    for probe in [1u32, 0xFF, 0x100 | 0x42, 0xDEAD_BEEF] {
+        let task = flee_react_task(0);
+        let mut react = reactor();
+        react.probe_answer = probe;
+        assert_eq!(task.react(flee_ped(0x60), manager(1), &mut react), None);
+        assert_eq!(react.dispatches, vec![0x60]);
+    }
+    // A clear low byte passes even with high bytes set.
+    let task = flee_react_task(0x1B);
+    let mut react = reactor();
+    react.probe_answer = 0xFF00;
+    let built = task.react(flee_ped(0x60), manager(1), &mut react);
+    assert!(built.is_some());
+    assert!(react.dispatches.is_empty());
+}
+
+#[test]
+fn flee_react_marks_narrow_at_the_flag_limit() {
+    // Just below the limit the wide-range bit clears.
+    let task = flee_react_task(0x1A);
+    let mut react = reactor();
+    react.build_answer = reaction(0x3000, 0xFFFF_FFFF);
+    let built = task
+        .react(flee_ped(0x60), manager(1), &mut react)
+        .expect("builds");
+    assert_eq!(built.task().get(), 0x3000);
+    assert_eq!(built.marks(), 0xFFFF_FFFF & 0xFFFB_FFFF);
+    // At the limit it survives.
+    let task = flee_react_task(0x1B);
+    let mut react = reactor();
+    react.build_answer = reaction(0x3000, 0xFFFF_FFFF);
+    let built = task
+        .react(flee_ped(0x60), manager(1), &mut react)
+        .expect("builds");
+    assert_eq!(built.marks(), 0xFFFF_FFFF);
+    // The mark bit sets from clear.
+    let task = flee_react_task(0x1C);
+    let mut react = reactor();
+    react.build_answer = reaction(0x3000, 0);
+    let built = task
+        .react(flee_ped(0x60), manager(1), &mut react)
+        .expect("builds");
+    assert_eq!(built.marks(), 8);
+}
+
+#[test]
+fn flee_react_dispatches_without_a_ped_past_the_early_gates() {
+    let task = flee_react_task(0);
+    let mut react = reactor();
+    react.type_answer = 0;
+    assert_eq!(task.react(None, manager(1), &mut react), None);
+    assert_eq!(react.dispatches, vec![0]);
+}
+
+#[test]
+#[should_panic(expected = "without a subtask")]
+fn flee_react_panics_without_a_subtask() {
+    let task = FleeTask::new(None, 0, 0, [0.0; 3], false, entity(0xE0), 0);
+    let mut react = reactor();
+    let _ = task.react(flee_ped(0x60), manager(1), &mut react);
+}
+
+#[test]
+#[should_panic(expected = "without a ped")]
+fn flee_react_panics_without_a_ped_on_the_probe_path() {
+    let task = flee_react_task(0x1B);
+    let mut react = reactor();
+    let _ = task.react(None, manager(1), &mut react);
+}
+
+#[test]
+#[should_panic(expected = "without a block")]
+fn flee_react_panics_without_a_block() {
+    let task = flee_react_task(0x1B);
+    let mut react = reactor();
+    react.alloc_answer = 0;
+    let _ = task.react(flee_ped(0x60), manager(1), &mut react);
+}
+
+#[test]
+#[should_panic(expected = "without a build")]
+fn flee_react_panics_without_a_build() {
+    let task = flee_react_task(0x1B);
+    let mut react = reactor();
+    react.build_answer = None;
+    let _ = task.react(flee_ped(0x60), manager(1), &mut react);
+}
+
+struct GotoPickScript {
+    hash_answers: [u32; 2],
+    hash_next: usize,
+    rand_answer: u32,
+    alloc_answers: [u32; 3],
+    alloc_next: usize,
+    child1_answer: u32,
+    child2_answer: u32,
+    combine_answer: u32,
+    hashes: Vec<u32>,
+    firsts: Vec<(u32, u32, u32)>,
+    seconds: Vec<u32>,
+    combines: Vec<(u32, u32, u32)>,
+}
+
+impl GotoPick for GotoPickScript {
+    fn seed(&mut self, _ped: Option<Handle32<GotoPed>>) {}
+
+    fn hash_kind(&mut self, kind: u32) -> u32 {
+        self.hashes.push(kind);
+        let ans = self.hash_answers[self.hash_next];
+        self.hash_next += 1;
+        ans
+    }
+
+    fn rand_word(&mut self) -> u32 {
+        self.rand_answer
+    }
+
+    fn find_goal(&mut self, _kind: u32) {}
+
+    fn alloc(&mut self, _manager: Option<Handle32<TaskMgr>>) -> Option<Handle32<UninitTask>> {
+        let ans = self.alloc_answers[self.alloc_next];
+        self.alloc_next += 1;
+        Handle32::new(ans)
+    }
+
+    fn build_first(
+        &mut self,
+        block: Handle32<UninitTask>,
+        speed: f32,
+        rate: f32,
+    ) -> Option<Handle32<GotoChild>> {
+        self.firsts
+            .push((block.get(), speed.to_bits(), rate.to_bits()));
+        Handle32::new(self.child1_answer)
+    }
+
+    fn build_second(&mut self, block: Handle32<UninitTask>) -> Option<Handle32<GotoChild>> {
+        self.seconds.push(block.get());
+        Handle32::new(self.child2_answer)
+    }
+
+    fn combine(
+        &mut self,
+        block: Handle32<UninitTask>,
+        first: Option<Handle32<GotoChild>>,
+        second: Option<Handle32<GotoChild>>,
+    ) -> Option<Handle32<GotoChild>> {
+        self.combines.push((
+            block.get(),
+            Handle32::raw_or_zero(first),
+            Handle32::raw_or_zero(second),
+        ));
+        Handle32::new(self.combine_answer)
+    }
+}
+
+fn picker() -> GotoPickScript {
+    GotoPickScript {
+        hash_answers: [0x1234_5678, 0x9ABC_DEF0],
+        hash_next: 0,
+        rand_answer: 0x7FFF,
+        alloc_answers: [0x1000, 0x2000, 0x3000],
+        alloc_next: 0,
+        child1_answer: 0x4000,
+        child2_answer: 0x5000,
+        combine_answer: 0x6000,
+        hashes: Vec::new(),
+        firsts: Vec::new(),
+        seconds: Vec::new(),
+        combines: Vec::new(),
+    }
+}
+
+#[test]
+fn goto_pick_rolls_stamps_arms_and_combines() {
+    let mut task = goto_task();
+    let mut pick = picker();
+    let ret = task.pick_target(goto_ped(0x60), 0x7777, 0.5, manager(0x11), &mut pick);
+    assert_eq!(Handle32::raw_or_zero(ret), 0x6000);
+    assert_eq!(pick.hashes, vec![0x1B, 0x1B]);
+    assert_eq!(
+        pick.firsts,
+        vec![(0x1000, 2.5f32.to_bits(), 0.5f32.to_bits())]
+    );
+    assert_eq!(pick.seconds, vec![0x2000]);
+    assert_eq!(pick.combines, vec![(0x3000, 0x4000, 0x5000)]);
+    assert_eq!(task.wait(), task.wait_copy());
+    assert_eq!(task.stamp(), 0x7777);
+    assert!(task.armed());
+    assert!(!task.restamp());
+    // The same inputs roll the same wait.
+    let mut again = goto_task();
+    let mut pick2 = picker();
+    pick2.hash_answers = pick.hash_answers;
+    let _ = again.pick_target(goto_ped(0x60), 0x7777, 0.5, manager(0x11), &mut pick2);
+    assert_eq!(again.wait(), task.wait());
+}
+
+#[test]
+fn goto_pick_scales_the_wait_with_the_roll() {
+    // A zero low half rolls the range start: wait equals first * 1000.
+    let mut task = goto_task();
+    let mut pick = picker();
+    pick.hash_answers = [0x5555_5555, 0x5555_5555];
+    pick.rand_answer = 0;
+    let _ = task.pick_target(goto_ped(0x60), 0, 0.0, manager(0), &mut pick);
+    let base = task.wait();
+    // Equal hashes roll the same wait whatever the random word is.
+    for rand in [0u32, 1, 0xFFFF, 0xFFFF_FFFF] {
+        let mut task = goto_task();
+        let mut pick = picker();
+        pick.hash_answers = [0x5555_5555, 0x5555_5555];
+        pick.rand_answer = rand;
+        let _ = task.pick_target(goto_ped(0x60), 0, 0.0, manager(0), &mut pick);
+        assert_eq!(task.wait(), base, "random word {rand:#x}");
+    }
+}
+
+#[test]
+fn goto_pick_null_blocks_yield_null_children() {
+    let mut task = goto_task();
+    let mut pick = picker();
+    pick.alloc_answers = [0, 0, 0x3000];
+    let ret = task.pick_target(goto_ped(0x60), 0, 0.0, manager(0), &mut pick);
+    assert_eq!(Handle32::raw_or_zero(ret), 0x6000);
+    assert!(pick.firsts.is_empty());
+    assert!(pick.seconds.is_empty());
+    assert_eq!(pick.combines, vec![(0x3000, 0, 0)]);
+    // The wait is still rolled and the timer still arms.
+    assert_eq!(task.wait(), task.wait_copy());
+    assert!(task.armed());
+}
+
+#[test]
+fn goto_pick_null_third_block_answers_null_after_building() {
+    let mut task = goto_task();
+    let mut pick = picker();
+    pick.alloc_answers = [0x1000, 0x2000, 0];
+    let ret = task.pick_target(goto_ped(0x60), 0x9999, 0.0, manager(0), &mut pick);
+    assert_eq!(ret, None);
+    assert_eq!(pick.firsts.len(), 1);
+    assert_eq!(pick.seconds.len(), 1);
+    assert!(pick.combines.is_empty());
+    assert_eq!(task.stamp(), 0x9999);
+    assert!(task.armed());
+}
+
+// The flee event handler.
+
+fn probe(v: u32) -> Option<Handle32<FleeProbe>> {
+    Handle32::new(v)
+}
+
+fn flee_target(v: u32) -> Option<Handle32<FleeTarget>> {
+    Handle32::new(v)
+}
+
+fn react_ped() -> ReactPed {
+    ReactPed::new(
+        flee_ped(0x60).expect("host ped is live"),
+        Some(0),
+        probe(0x70),
+        0,
+        4,
+        flee_target(0x80),
+    )
+}
+
+fn event_task(kind: u32, state: u8) -> FleeTask {
+    FleeTask::new(
+        subtask(0xBEEF),
+        0,
+        kind,
+        [0.0; 3],
+        true,
+        entity(0xE0),
+        state,
+    )
+}
+
+struct FleeEventScript {
+    rand_answer: u32,
+    kind_answer: u32,
+    check_answer: u32,
+    alloc_answer: u32,
+    spawn_answer: u32,
+    build_a_answer: Option<Reaction>,
+    build_b_answer: Option<Reaction>,
+    build_c_answer: u32,
+    rands: u32,
+    seeds: Vec<(u32, u32)>,
+    builds_b: Vec<(u32, [u32; 3], u32)>,
+}
+
+impl FleeEvent for FleeEventScript {
+    fn rand_word(&mut self) -> u32 {
+        self.rands += 1;
+        self.rand_answer
+    }
+
+    fn seed(&mut self, ped: Handle32<FleePed>, seed_arg: u32) {
+        self.seeds.push((ped.get(), seed_arg));
+    }
+
+    fn entity_kind(&mut self, _entity: Handle32<FleeEntity>) -> u32 {
+        self.kind_answer
+    }
+
+    fn check(&mut self, _probe: Option<Handle32<FleeProbe>>, _entity: Handle32<FleeEntity>) -> u32 {
+        self.check_answer
+    }
+
+    fn alloc(&mut self, _manager: Option<Handle32<TaskMgr>>) -> Option<Handle32<UninitTask>> {
+        Handle32::new(self.alloc_answer)
+    }
+
+    fn spawn(
+        &mut self,
+        _block: Handle32<UninitTask>,
+        _entity: Handle32<FleeEntity>,
+    ) -> Option<Handle32<EventChild>> {
+        Handle32::new(self.spawn_answer)
+    }
+
+    fn build_a(
+        &mut self,
+        _block: Handle32<UninitTask>,
+        _entity: Handle32<FleeEntity>,
+    ) -> Option<Reaction> {
+        self.build_a_answer
+    }
+
+    fn build_b(
+        &mut self,
+        block: Handle32<UninitTask>,
+        pos: [f32; 3],
+        rate: u32,
+    ) -> Option<Reaction> {
+        self.builds_b.push((
+            block.get(),
+            [pos[0].to_bits(), pos[1].to_bits(), pos[2].to_bits()],
+            rate,
+        ));
+        self.build_b_answer
+    }
+
+    fn build_c(
+        &mut self,
+        _block: Handle32<UninitTask>,
+        _target: Handle32<FleeTarget>,
+        _pos: [f32; 3],
+    ) -> Option<Handle32<EventChild>> {
+        Handle32::new(self.build_c_answer)
+    }
+}
+
+fn eventer() -> FleeEventScript {
+    FleeEventScript {
+        rand_answer: 0,
+        kind_answer: 0xC0,
+        check_answer: 0,
+        alloc_answer: 0x1000,
+        spawn_answer: 0x4000,
+        build_a_answer: reaction(0x5000, 0),
+        build_b_answer: reaction(0x6000, 0),
+        build_c_answer: 0x7000,
+        rands: 0,
+        seeds: Vec::new(),
+        builds_b: Vec::new(),
+    }
+}
+
+#[test]
+fn flee_event_dead_gate_answers_null_without_calls() {
+    let task = FleeTask::new(None, 0, 0x1B, [0.0; 3], false, None, 0);
+    let mut event = eventer();
+    let mut clock = 100;
+    let ret = task.handle_event(
+        Some(react_ped()),
+        0xA11CE,
+        &mut clock,
+        200,
+        0,
+        manager(1),
+        &mut event,
+    );
+    assert_eq!(ret, None);
+    assert_eq!(event.rands, 0);
+    assert!(event.seeds.is_empty());
+    assert_eq!(clock, 100);
+}
+
+#[test]
+fn flee_event_seeds_by_freshness_and_kind() {
+    // Past the bound the seed is unconditional and draws nothing.
+    let task = event_task(0x1B, 0);
+    let mut event = eventer();
+    let mut clock = 300;
+    let _ = task.handle_event(
+        Some(react_ped()),
+        0xA11CE,
+        &mut clock,
+        200,
+        0,
+        manager(1),
+        &mut event,
+    );
+    assert_eq!(event.seeds, vec![(0x60, 0xA11CE)]);
+    // Inside the range the seed needs a won roll; a zero word wins.
+    let task = event_task(0x15, 0);
+    let mut event = eventer();
+    event.rand_answer = 0;
+    let mut clock = 300;
+    let _ = task.handle_event(
+        Some(react_ped()),
+        0xA11CE,
+        &mut clock,
+        200,
+        0,
+        manager(1),
+        &mut event,
+    );
+    assert_eq!(event.rands, 1);
+    assert_eq!(event.seeds.len(), 1);
+    // A huge word loses the roll.
+    let task = event_task(0x15, 0);
+    let mut event = eventer();
+    event.rand_answer = 0x4000_0000;
+    let mut clock = 300;
+    let _ = task.handle_event(
+        Some(react_ped()),
+        0xA11CE,
+        &mut clock,
+        200,
+        0,
+        manager(1),
+        &mut event,
+    );
+    assert_eq!(event.rands, 1);
+    assert!(event.seeds.is_empty());
+    // A stale entry never seeds, whatever the kind.
+    let task = event_task(0x1B, 0);
+    let mut event = eventer();
+    let ped = ReactPed::new(
+        flee_ped(0x60).expect("host ped is live"),
+        Some(3),
+        probe(0x70),
+        0,
+        4,
+        flee_target(0x80),
+    );
+    let mut clock = 300;
+    let _ = task.handle_event(
+        Some(ped),
+        0xA11CE,
+        &mut clock,
+        200,
+        0,
+        manager(1),
+        &mut event,
+    );
+    assert_eq!(event.rands, 0);
+    assert!(event.seeds.is_empty());
+    // Below the range there is no draw at all.
+    let task = event_task(0x14, 0);
+    let mut event = eventer();
+    let mut clock = 300;
+    let _ = task.handle_event(
+        Some(react_ped()),
+        0xA11CE,
+        &mut clock,
+        200,
+        0,
+        manager(1),
+        &mut event,
+    );
+    assert_eq!(event.rands, 0);
+    assert!(event.seeds.is_empty());
+}
+
+#[test]
+fn flee_event_spawn_refreshes_the_clock() {
+    let task = event_task(0x1C, 0);
+    let mut event = eventer();
+    event.rand_answer = 0;
+    let mut clock = 100;
+    let ret = task.handle_event(
+        Some(react_ped()),
+        0,
+        &mut clock,
+        200,
+        0,
+        manager(1),
+        &mut event,
+    );
+    assert!(matches!(ret, Some(FleeAnswer::Spawned(h)) if h.get() == 0x4000));
+    assert_eq!(clock, 200 + 0x4E20);
+}
+
+#[test]
+fn flee_event_lost_spawn_roll_builds_task_a() {
+    let task = event_task(0x1C, 0);
+    let mut event = eventer();
+    event.rand_answer = 0x4000_0000;
+    event.build_a_answer = reaction(0x5000, 0xFFFF_FFFF);
+    let mut clock = 100;
+    let ret = task.handle_event(
+        Some(react_ped()),
+        0,
+        &mut clock,
+        200,
+        0,
+        manager(1),
+        &mut event,
+    );
+    match ret {
+        Some(FleeAnswer::Built(r)) => {
+            assert_eq!(r.task().get(), 0x5000);
+            assert_eq!(r.marks(), 0xFFFF_FFEF);
+        }
+        other => panic!("expected task A, got {other:?}"),
+    }
+    assert_eq!(clock, 100);
+}
+
+#[test]
+fn flee_event_task_a_clears_wide_for_low_kinds() {
+    // Kind below the limit with the spawn flags off: the wide bit clears.
+    let task = event_task(0x1A, 1);
+    let mut event = eventer();
+    event.build_a_answer = reaction(0x5000, 0xFFFF_FFFF);
+    let ped = ReactPed::new(
+        flee_ped(0x60).expect("host ped is live"),
+        Some(0),
+        probe(0x70),
+        0xFF,
+        0,
+        flee_target(0x80),
+    );
+    let mut clock = 100;
+    let ret = task.handle_event(Some(ped), 0, &mut clock, 200, 0, manager(1), &mut event);
+    match ret {
+        Some(FleeAnswer::Built(r)) => assert_eq!(r.marks(), 0xFFFF_FFFF & 0xFFFB_FFFF),
+        other => panic!("expected task A, got {other:?}"),
+    }
+}
+
+#[test]
+fn flee_event_null_spawn_block_answers_null_after_refresh() {
+    let task = event_task(0x1B, 0);
+    let mut event = eventer();
+    event.rand_answer = 0;
+    event.alloc_answer = 0;
+    let mut clock = 100;
+    let ret = task.handle_event(
+        Some(react_ped()),
+        0,
+        &mut clock,
+        200,
+        0,
+        manager(1),
+        &mut event,
+    );
+    assert_eq!(ret, None);
+    assert_eq!(clock, 200 + 0x4E20);
+}
+
+#[test]
+fn flee_event_fallback_routes_or_builds() {
+    // A bad kind word falls back; a set flag bit routes the target.
+    let task = event_task(0, 0);
+    let mut event = eventer();
+    event.kind_answer = 0;
+    let ped = ReactPed::new(
+        flee_ped(0x60).expect("host ped is live"),
+        Some(9),
+        probe(0x70),
+        4,
+        0,
+        flee_target(0x80),
+    );
+    let mut clock = 100;
+    let ret = task.handle_event(Some(ped), 0, &mut clock, 200, 0, manager(1), &mut event);
+    assert!(matches!(ret, Some(FleeAnswer::Routed(h)) if h.get() == 0x7000));
+    // A null target answers null without allocating.
+    let ped = ReactPed::new(
+        flee_ped(0x60).expect("host ped is live"),
+        Some(9),
+        probe(0x70),
+        4,
+        0,
+        None,
+    );
+    let mut event = eventer();
+    event.kind_answer = 0;
+    event.alloc_answer = 0;
+    let mut clock = 100;
+    let ret = task.handle_event(Some(ped), 0, &mut clock, 200, 0, manager(1), &mut event);
+    assert_eq!(ret, None);
+    // A clear flag bit builds task B from the position and the rate.
+    let task = FleeTask::new(
+        subtask(0xBEEF),
+        0,
+        0,
+        [1.0, 2.0, 3.0],
+        true,
+        entity(0xE0),
+        0,
+    );
+    let mut event = eventer();
+    event.kind_answer = 0;
+    event.build_b_answer = reaction(0x6000, 0);
+    let mut clock = 100;
+    let ret = task.handle_event(
+        Some(react_ped()),
+        0,
+        &mut clock,
+        200,
+        0xBEEF,
+        manager(1),
+        &mut event,
+    );
+    match ret {
+        Some(FleeAnswer::Built(r)) => {
+            assert_eq!(r.task().get(), 0x6000);
+            assert_eq!(r.marks(), 8);
+        }
+        other => panic!("expected task B, got {other:?}"),
+    }
+    assert_eq!(
+        event.builds_b,
+        vec![(
+            0x1000,
+            [1.0f32.to_bits(), 2.0f32.to_bits(), 3.0f32.to_bits()],
+            0xBEEF
+        )]
+    );
+}
+
+#[test]
+#[should_panic(expected = "without a ped")]
+fn flee_event_panics_without_a_ped() {
+    let task = event_task(0x1B, 0);
+    let mut event = eventer();
+    let mut clock = 100;
+    let _ = task.handle_event(None, 0, &mut clock, 200, 0, manager(1), &mut event);
+}
+
+#[test]
+#[should_panic(expected = "without a table entry")]
+fn flee_event_panics_without_a_table_entry() {
+    let task = event_task(0x1B, 0);
+    let mut event = eventer();
+    let ped = ReactPed::new(
+        flee_ped(0x60).expect("host ped is live"),
+        None,
+        probe(0x70),
+        0,
+        4,
+        flee_target(0x80),
+    );
+    let mut clock = 100;
+    let _ = task.handle_event(Some(ped), 0, &mut clock, 200, 0, manager(1), &mut event);
+}
+
+#[test]
+#[should_panic(expected = "without a block")]
+fn flee_event_panics_without_a_task_a_block() {
+    // Stage two with the spawn kind out of range: task A with no block.
+    let task = event_task(0x1E, 0);
+    let mut event = eventer();
+    event.alloc_answer = 0;
+    let mut clock = 100;
+    let _ = task.handle_event(
+        Some(react_ped()),
+        0,
+        &mut clock,
+        200,
+        0,
+        manager(1),
+        &mut event,
+    );
+}
+
+#[test]
+#[should_panic(expected = "without a block")]
+fn flee_event_panics_without_a_task_b_block() {
+    // Fallback with a clear flag bit: task B with no block.
+    let task = event_task(0, 0);
+    let mut event = eventer();
+    event.kind_answer = 0;
+    event.alloc_answer = 0;
+    let mut clock = 100;
+    let _ = task.handle_event(
+        Some(react_ped()),
+        0,
+        &mut clock,
+        200,
+        0,
+        manager(1),
+        &mut event,
+    );
+}
+
+#[test]
+#[should_panic(expected = "without a build")]
+fn flee_event_panics_without_a_task_b_build() {
+    let task = event_task(0, 0);
+    let mut event = eventer();
+    event.kind_answer = 0;
+    event.build_b_answer = None;
+    let mut clock = 100;
+    let _ = task.handle_event(
+        Some(react_ped()),
+        0,
+        &mut clock,
+        200,
+        0,
+        manager(1),
+        &mut event,
+    );
 }
