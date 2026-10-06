@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Checker: version 7, four new abilities and no changed verdict",
+    "title": "Rewrites: 2 more functions pass the checker (16772 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "2 rewrites added under rewrites/verified: 0 script native handlers and 2 other functions.",
+      "The tree now holds 16772 rewrites, 16753 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "In 714 of them a comment quoted an instruction or bytes of the original; the comment was reworded on import and the code is unchanged.",
+      "24 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Checker: version 7, four new abilities and no changed verdict",
+    "commit": "810f2c8311c220bcb9901a1add72675282fdcee9",
     "summary": "The checker can now prove four kinds of function it could not, each through an option that is off unless a contract asks for it. It was installed only after three lanes and the coordinator had failed to make it change any existing verdict.",
     "changes": [
       "New abilities, each recorded in the verdict when used: a patch for a function that ends in a conditional jump to another function; logging of an argument passed on the floating-point stack, with a way for the rewrite to supply it; a digest of the calls past the call log's limit, so a loop of more than 1,024 calls in a trial can be compared; and a four-byte comparison of a vector register for a callee that reads one float from it. Ten proof contracts with wrong versions cover them, including three that must fail by design.",
