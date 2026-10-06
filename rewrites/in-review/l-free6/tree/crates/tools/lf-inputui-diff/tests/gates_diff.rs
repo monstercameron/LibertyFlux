@@ -189,8 +189,8 @@ mod x86 {
     #[test]
     fn float_gate_matches() {
         let _guard = lock();
-        rt::set_callee(1, member_stub as usize as u32);
-        rt::set_callee(2, probe_stub as usize as u32);
+        rt::set_callee(1, member_stub as *const () as usize as u32);
+        rt::set_callee(2, probe_stub as *const () as usize as u32);
         let mut rng = Rng(0x9A7E);
         let mut cases = 0;
         let mut caught = 0;
@@ -678,9 +678,9 @@ mod x86 {
     #[test]
     fn entry_scanner_matches() {
         let _guard = lock();
-        rt::set_callee(1, query_stub as usize as u32);
-        rt::set_callee(2, scan_gate_stub as usize as u32);
-        rt::set_callee(7, kind_stub as usize as u32);
+        rt::set_callee(1, query_stub as *const () as usize as u32);
+        rt::set_callee(2, scan_gate_stub as *const () as usize as u32);
+        rt::set_callee(7, kind_stub as *const () as usize as u32);
         let mut rng = Rng(0x5CA4);
         let mut cases = 0;
         let mut caught_order = 0;
@@ -770,9 +770,9 @@ mod x86 {
                 let mut planted: Vec<Planted> = Vec::new();
                 for entry in entries.iter() {
                     let mut evt = Box::new([0u32; 96]);
-                    evt[0x144 / 4] = main_stub as usize as u32;
-                    evt[0x148 / 4] = alt_stub as usize as u32;
-                    evt[0x14C / 4] = far_stub as usize as u32;
+                    evt[0x144 / 4] = main_stub as *const () as usize as u32;
+                    evt[0x148 / 4] = alt_stub as *const () as usize as u32;
+                    evt[0x14C / 4] = far_stub as *const () as usize as u32;
                     let mut pos = Box::new([0u8; 64]);
                     for (k, w) in entry.anchor.iter().enumerate() {
                         pos[POS_ANCHOR_OFF + k * 4..POS_ANCHOR_OFF + k * 4 + 4]
@@ -780,7 +780,7 @@ mod x86 {
                     }
                     let (obj, ovt, obj_addr) = if entry.has_object {
                         let mut ovt = Box::new([0u32; 80]);
-                        ovt[0x104 / 4] = refine_stub as usize as u32;
+                        ovt[0x104 / 4] = refine_stub as *const () as usize as u32;
                         let ovt_addr = addr(&ovt[0]);
                         let mut obj = Box::new([0u32; 2]);
                         obj[0] = ovt_addr;

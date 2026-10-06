@@ -106,8 +106,16 @@ mod x86 {
         let mut ped = Box::new([0u8; 0xb84]);
         let mut pedmat = Box::new([0u8; 0x3c]);
         let mut holder = Box::new([0u8; 0x56c]);
-        let (task_a, inner_a, objmat_a) = (addr(task.as_ref()), addr(inner.as_ref()), addr(objmat.as_ref()));
-        let (ped_a, pedmat_a, holder_a) = (addr(ped.as_ref()), addr(pedmat.as_ref()), addr(holder.as_ref()));
+        let (task_a, inner_a, objmat_a) = (
+            addr(task.as_ref()),
+            addr(inner.as_ref()),
+            addr(objmat.as_ref()),
+        );
+        let (ped_a, pedmat_a, holder_a) = (
+            addr(ped.as_ref()),
+            addr(pedmat.as_ref()),
+            addr(holder.as_ref()),
+        );
         put_u32(task.as_mut(), TASK_INNER, inner_a);
         if c.use_matrix {
             put_u32(inner.as_mut(), INNER_MATRIX, objmat_a);
@@ -244,14 +252,26 @@ mod x86 {
             },
             counter,
             threshold,
-            lower: if tuning_img { IMG_LOWER } else { rng.float_bits() },
-            far: if tuning_img { IMG_FAR } else { rng.float_bits() },
+            lower: if tuning_img {
+                IMG_LOWER
+            } else {
+                rng.float_bits()
+            },
+            far: if tuning_img {
+                IMG_FAR
+            } else {
+                rng.float_bits()
+            },
             mid: if tuning_img {
                 IMG_MID
             } else {
                 (u64::from(rng.u32()) << 32) | u64::from(rng.u32())
             },
-            near: if tuning_img { IMG_NEAR } else { rng.float_bits() },
+            near: if tuning_img {
+                IMG_NEAR
+            } else {
+                rng.float_bits()
+            },
         }
     }
 

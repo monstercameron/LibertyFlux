@@ -6,7 +6,7 @@
 
 use lf_core::boundary::Handle32;
 use lf_peds_tasks::peds_task::{
-    Check, CODE_FAR_HI, CODE_FAR_LO, CODE_MID_HI, CODE_MID_LO, CODE_NEAR_HI, CODE_NEAR_LO, EMPTY,
+    CODE_FAR_HI, CODE_FAR_LO, CODE_MID_HI, CODE_MID_LO, CODE_NEAR_HI, CODE_NEAR_LO, Check, EMPTY,
     Enumerate, FacingQuery, MAX_ENTRIES, ObjTag, PickerFill, PickerRand, ReactTuning, TaskFloats,
     TaskStamp, TaskStateBlock, TaskTarget, TaskVec, VTask, WeightedPicker, Worker, registry,
 };
@@ -48,8 +48,14 @@ impl PickerFill for ScriptFill {
 #[test]
 fn pick_zero_count_answers_empty_after_drawing() {
     let mut p = picker([1.0; MAX_ENTRIES], [7; MAX_ENTRIES], 0);
-    let mut rand = ScriptRand { calls: 0, answer: 0xDEAD_BEEF };
-    let mut fill = ScriptFill { calls: vec![], answer: 0 };
+    let mut rand = ScriptRand {
+        calls: 0,
+        answer: 0xDEAD_BEEF,
+    };
+    let mut fill = ScriptFill {
+        calls: vec![],
+        answer: 0,
+    };
     assert_eq!(p.pick(&mut rand, &mut fill), EMPTY);
     assert_eq!(rand.calls, 1);
     assert!(fill.calls.is_empty());
@@ -58,8 +64,14 @@ fn pick_zero_count_answers_empty_after_drawing() {
 #[test]
 fn pick_negative_count_answers_empty() {
     let mut p = picker([1.0; MAX_ENTRIES], [EMPTY; MAX_ENTRIES], -16);
-    let mut rand = ScriptRand { calls: 0, answer: 1 };
-    let mut fill = ScriptFill { calls: vec![], answer: 1 };
+    let mut rand = ScriptRand {
+        calls: 0,
+        answer: 1,
+    };
+    let mut fill = ScriptFill {
+        calls: vec![],
+        answer: 1,
+    };
     assert_eq!(p.pick(&mut rand, &mut fill), EMPTY);
     assert!(fill.calls.is_empty());
 }
@@ -67,8 +79,14 @@ fn pick_negative_count_answers_empty() {
 #[test]
 fn pick_single_entry_always_zero() {
     let mut p = picker([0.25; MAX_ENTRIES], [EMPTY; MAX_ENTRIES], 1);
-    let mut rand = ScriptRand { calls: 0, answer: 0xFFFF_FFFF };
-    let mut fill = ScriptFill { calls: vec![], answer: 42 };
+    let mut rand = ScriptRand {
+        calls: 0,
+        answer: 0xFFFF_FFFF,
+    };
+    let mut fill = ScriptFill {
+        calls: vec![],
+        answer: 42,
+    };
     assert_eq!(p.pick(&mut rand, &mut fill), 42);
     assert_eq!(fill.calls, [0]);
     assert_eq!(p.slots[0], 42);
@@ -79,8 +97,14 @@ fn pick_tied_threshold_takes_last() {
     // All-zero weights and a zero draw: every prefix ties the zero
     // threshold, and the strict test passes none of them.
     let mut p = picker([0.0; MAX_ENTRIES], [EMPTY; MAX_ENTRIES], 16);
-    let mut rand = ScriptRand { calls: 0, answer: 0 };
-    let mut fill = ScriptFill { calls: vec![], answer: 9 };
+    let mut rand = ScriptRand {
+        calls: 0,
+        answer: 0,
+    };
+    let mut fill = ScriptFill {
+        calls: vec![],
+        answer: 9,
+    };
     assert_eq!(p.pick(&mut rand, &mut fill), 9);
     assert_eq!(fill.calls, [15]);
 }
@@ -88,8 +112,14 @@ fn pick_tied_threshold_takes_last() {
 #[test]
 fn pick_nan_weights_take_last() {
     let mut p = picker([f32::NAN; MAX_ENTRIES], [3; MAX_ENTRIES], 16);
-    let mut rand = ScriptRand { calls: 0, answer: 1234 };
-    let mut fill = ScriptFill { calls: vec![], answer: 0 };
+    let mut rand = ScriptRand {
+        calls: 0,
+        answer: 1234,
+    };
+    let mut fill = ScriptFill {
+        calls: vec![],
+        answer: 0,
+    };
     assert_eq!(p.pick(&mut rand, &mut fill), 3);
     assert!(fill.calls.is_empty());
 }
@@ -97,8 +127,14 @@ fn pick_nan_weights_take_last() {
 #[test]
 fn pick_negative_threshold_takes_first_positive_prefix() {
     let mut p = picker([1.0; MAX_ENTRIES], [EMPTY; MAX_ENTRIES], 16);
-    let mut rand = ScriptRand { calls: 0, answer: 0x8000_0000 };
-    let mut fill = ScriptFill { calls: vec![], answer: 11 };
+    let mut rand = ScriptRand {
+        calls: 0,
+        answer: 0x8000_0000,
+    };
+    let mut fill = ScriptFill {
+        calls: vec![],
+        answer: 11,
+    };
     assert_eq!(p.pick(&mut rand, &mut fill), 11);
     assert_eq!(fill.calls, [0]);
 }
@@ -106,8 +142,14 @@ fn pick_negative_threshold_takes_first_positive_prefix() {
 #[test]
 fn pick_count_clamps_to_sixteen() {
     let mut p = picker([0.0; MAX_ENTRIES], [EMPTY; MAX_ENTRIES], i32::MAX);
-    let mut rand = ScriptRand { calls: 0, answer: 0 };
-    let mut fill = ScriptFill { calls: vec![], answer: 8 };
+    let mut rand = ScriptRand {
+        calls: 0,
+        answer: 0,
+    };
+    let mut fill = ScriptFill {
+        calls: vec![],
+        answer: 8,
+    };
     assert_eq!(p.pick(&mut rand, &mut fill), 8);
     assert_eq!(fill.calls, [15]);
 }
@@ -117,8 +159,14 @@ fn pick_tail_accumulates_past_group_of_four() {
     let mut w = [0.0f32; MAX_ENTRIES];
     w[4] = 2.0;
     let mut p = picker(w, [EMPTY; MAX_ENTRIES], 5);
-    let mut rand = ScriptRand { calls: 0, answer: 0 };
-    let mut fill = ScriptFill { calls: vec![], answer: 6 };
+    let mut rand = ScriptRand {
+        calls: 0,
+        answer: 0,
+    };
+    let mut fill = ScriptFill {
+        calls: vec![],
+        answer: 6,
+    };
     assert_eq!(p.pick(&mut rand, &mut fill), 6);
     assert_eq!(fill.calls, [4]);
 }
@@ -126,8 +174,14 @@ fn pick_tail_accumulates_past_group_of_four() {
 #[test]
 fn pick_filled_slot_runs_no_fill() {
     let mut p = picker([1.0; MAX_ENTRIES], [77; MAX_ENTRIES], 16);
-    let mut rand = ScriptRand { calls: 0, answer: 0 };
-    let mut fill = ScriptFill { calls: vec![], answer: 0 };
+    let mut rand = ScriptRand {
+        calls: 0,
+        answer: 0,
+    };
+    let mut fill = ScriptFill {
+        calls: vec![],
+        answer: 0,
+    };
     assert_eq!(p.pick(&mut rand, &mut fill), 77);
     assert!(fill.calls.is_empty());
 }
@@ -168,7 +222,10 @@ impl lf_peds_tasks::peds_task::PedState for ScriptState {
 }
 
 fn code_of(q: &FacingQuery, ans: u32, t: &ReactTuning) -> (u8, u32) {
-    let mut s = ScriptState { calls: 0, answer: ans };
+    let mut s = ScriptState {
+        calls: 0,
+        answer: ans,
+    };
     let c = q.code(&mut s, t);
     (c, s.calls)
 }
@@ -213,15 +270,30 @@ fn react_probe_low_byte_only() {
 #[test]
 fn react_counter_gate_needs_flag_and_strict_above() {
     let dot_near = query([0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [-0.5, 0.0, 0.0]);
-    let t = ReactTuning { threshold: 10, ..img_tuning() };
+    let t = ReactTuning {
+        threshold: 10,
+        ..img_tuning()
+    };
     // Flag set, counter above: far.
-    let q = FacingQuery { flag: true, counter: 11, ..dot_near };
+    let q = FacingQuery {
+        flag: true,
+        counter: 11,
+        ..dot_near
+    };
     assert_eq!(code_of(&q, 0, &t).0, CODE_FAR_LO);
     // Counter equal to the threshold: proceeds to near.
-    let q = FacingQuery { flag: true, counter: 10, ..dot_near };
+    let q = FacingQuery {
+        flag: true,
+        counter: 10,
+        ..dot_near
+    };
     assert_eq!(code_of(&q, 0, &t).0, CODE_NEAR_LO);
     // Flag clear: proceeds even above the threshold.
-    let q = FacingQuery { flag: false, counter: 11, ..dot_near };
+    let q = FacingQuery {
+        flag: false,
+        counter: 11,
+        ..dot_near
+    };
     assert_eq!(code_of(&q, 0, &t).0, CODE_NEAR_LO);
 }
 
@@ -295,34 +367,73 @@ impl Enumerate for ScriptEnum {
     }
 }
 
+// Eight floats in object order; the names match the lift's fields.
+#[allow(clippy::too_many_arguments, clippy::many_single_char_names)]
 fn floats(a: f32, c: f32, f: f32, r4: f32, b: f32, e: f32, d: f32, r7: f32) -> TaskFloats {
-    TaskFloats { a, c, f, raw4: r4, b, e, d, raw7: r7 }
+    TaskFloats {
+        a,
+        c,
+        f,
+        raw4: r4,
+        b,
+        e,
+        d,
+        raw7: r7,
+    }
+}
+
+/// Midpoints as bit patterns: exact float equality is the behaviour here.
+fn mid_bits(mids: &[[f32; 3]]) -> Vec<[u32; 3]> {
+    mids.iter().map(|m| m.map(f32::to_bits)).collect()
 }
 
 #[test]
 fn build_zero_block_is_all_zero_and_true() {
     let mut st = blank_state();
     let mut stamp = TaskStamp::default();
-    let mut en = ScriptEnum { mids: vec![], reenter: false };
-    let ok = TaskStateBlock::build(&mut st, &floats(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0), &mut stamp, &mut en);
+    let mut en = ScriptEnum {
+        mids: vec![],
+        reenter: false,
+    };
+    let ok = TaskStateBlock::build(
+        &mut st,
+        &floats(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
+        &mut stamp,
+        &mut en,
+    );
     assert!(ok);
     assert!(!st.flag);
-    assert_eq!(st.gate, [0.0, 0.0, 0.0]);
-    assert_eq!(st.work, [0.0, 0.0, 0.0]);
-    assert_eq!(st.raw, [0.0; 8]);
+    assert_eq!(st.gate.map(f32::to_bits), [0, 0, 0]);
+    assert_eq!(st.work.map(f32::to_bits), [0, 0, 0]);
+    assert_eq!(st.raw.map(f32::to_bits), [0; 8]);
     assert_eq!(st.gate_bias.to_bits(), 0x8000_0000); // negated +0.0
     assert_eq!(st.out_bias.to_bits(), 0x8000_0000);
-    assert_eq!(st.range_hi, 0.0);
-    assert_eq!(en.mids, [[0.0, 0.0, 0.0]]);
-    assert_eq!(stamp, TaskStamp { dword: 0x5555_AAAA, id: 2000, flag: 1 });
+    assert_eq!(st.range_hi.to_bits(), 0);
+    assert_eq!(mid_bits(&en.mids), [[0, 0, 0]]);
+    assert_eq!(
+        stamp,
+        TaskStamp {
+            dword: 0x5555_AAAA,
+            id: 2000,
+            flag: 1
+        }
+    );
 }
 
 #[test]
 fn build_reenter_answers_false() {
     let mut st = blank_state();
     let mut stamp = TaskStamp::default();
-    let mut en = ScriptEnum { mids: vec![], reenter: true };
-    let ok = TaskStateBlock::build(&mut st, &floats(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0), &mut stamp, &mut en);
+    let mut en = ScriptEnum {
+        mids: vec![],
+        reenter: true,
+    };
+    let ok = TaskStateBlock::build(
+        &mut st,
+        &floats(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0),
+        &mut stamp,
+        &mut en,
+    );
     assert!(!ok);
     assert!(st.flag);
 }
@@ -331,36 +442,64 @@ fn build_reenter_answers_false() {
 fn build_gate_vector_is_unit_length() {
     let mut st = blank_state();
     let mut stamp = TaskStamp::default();
-    let mut en = ScriptEnum { mids: vec![], reenter: false };
-    TaskStateBlock::build(&mut st, &floats(1.0, 2.0, 3.0, 40.0, 5.0, 6.0, 7.0, 80.0), &mut stamp, &mut en);
-    assert_eq!(en.mids, [[3.0, 4.0, 5.0]]);
-    assert_eq!(st.raw, [1.0, 2.0, 3.0, 40.0, 5.0, 6.0, 7.0, 80.0]);
-    assert_eq!(st.gate_ref(), 3.0);
+    let mut en = ScriptEnum {
+        mids: vec![],
+        reenter: false,
+    };
+    TaskStateBlock::build(
+        &mut st,
+        &floats(1.0, 2.0, 3.0, 40.0, 5.0, 6.0, 7.0, 80.0),
+        &mut stamp,
+        &mut en,
+    );
+    assert_eq!(
+        mid_bits(&en.mids),
+        [[3f32.to_bits(), 4f32.to_bits(), 5f32.to_bits()]]
+    );
+    assert_eq!(
+        st.raw.map(f32::to_bits),
+        [1.0f32, 2.0, 3.0, 40.0, 5.0, 6.0, 7.0, 80.0].map(f32::to_bits)
+    );
+    assert_eq!(st.gate_ref().to_bits(), 3f32.to_bits());
     let len2 = st.gate[0] * st.gate[0] + st.gate[1] * st.gate[1] + st.gate[2] * st.gate[2];
     assert!((len2 - 1.0).abs() < 1e-6, "unit gate, got {len2}");
-    assert_eq!(st.range_hi, 32f32.sqrt());
+    assert_eq!(st.range_hi.to_bits(), 32f32.sqrt().to_bits());
     // Cross-like terms against zero: [s, -s, 0] for uniform s.
-    assert_eq!(st.work[0], st.gate[1]);
-    assert_eq!(st.work[1], -st.gate[0]);
-    assert_eq!(st.work[2], 0.0);
+    assert_eq!(st.work[0].to_bits(), st.gate[1].to_bits());
+    assert_eq!(st.work[1].to_bits(), (-st.gate[0]).to_bits());
+    assert_eq!(st.work[2].to_bits(), 0);
 }
 
 #[test]
 fn build_equal_pairs_zero_the_gate() {
     let mut st = blank_state();
     let mut stamp = TaskStamp::default();
-    let mut en = ScriptEnum { mids: vec![], reenter: false };
-    TaskStateBlock::build(&mut st, &floats(1.0, 2.0, 3.0, 0.0, 1.0, 2.0, 3.0, 0.0), &mut stamp, &mut en);
-    assert_eq!(st.gate, [0.0, 0.0, 0.0]);
-    assert_eq!(st.range_hi, 0.0);
-    assert_eq!(en.mids, [[1.0, 2.0, 3.0]]);
+    let mut en = ScriptEnum {
+        mids: vec![],
+        reenter: false,
+    };
+    TaskStateBlock::build(
+        &mut st,
+        &floats(1.0, 2.0, 3.0, 0.0, 1.0, 2.0, 3.0, 0.0),
+        &mut stamp,
+        &mut en,
+    );
+    assert_eq!(st.gate.map(f32::to_bits), [0, 0, 0]);
+    assert_eq!(st.range_hi.to_bits(), 0);
+    assert_eq!(
+        mid_bits(&en.mids),
+        [[1f32.to_bits(), 2f32.to_bits(), 3f32.to_bits()]]
+    );
 }
 
 #[test]
 fn build_nan_takes_the_division_path() {
     let mut st = blank_state();
     let mut stamp = TaskStamp::default();
-    let mut en = ScriptEnum { mids: vec![], reenter: false };
+    let mut en = ScriptEnum {
+        mids: vec![],
+        reenter: false,
+    };
     TaskStateBlock::build(
         &mut st,
         &floats(f32::NAN, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0),
@@ -428,9 +567,15 @@ fn open_state() -> TaskStateBlock {
 #[test]
 fn consume_closed_gate_makes_no_calls() {
     let mut st = open_state();
-    let mut vt = ScriptVTask { calls: 0, answer: [0.0; 3] };
+    let mut vt = ScriptVTask {
+        calls: 0,
+        answer: [0.0; 3],
+    };
     let mut w = ScriptWorker { seen: vec![] };
-    let mut c = ScriptCheck { calls: 0, answer: 0 };
+    let mut c = ScriptCheck {
+        calls: 0,
+        answer: 0,
+    };
     let r = st.consume(&target([0.0, 0.0, 9.0]), &mut vt, &mut w, &mut c);
     assert_eq!(r, 1);
     assert_eq!((vt.calls, w.seen.len(), c.calls), (0, 0, 0));
@@ -440,9 +585,15 @@ fn consume_closed_gate_makes_no_calls() {
 #[test]
 fn consume_gap_exactly_four_stays_shut() {
     let mut st = open_state();
-    let mut vt = ScriptVTask { calls: 0, answer: [0.0; 3] };
+    let mut vt = ScriptVTask {
+        calls: 0,
+        answer: [0.0; 3],
+    };
     let mut w = ScriptWorker { seen: vec![] };
-    let mut c = ScriptCheck { calls: 0, answer: 0 };
+    let mut c = ScriptCheck {
+        calls: 0,
+        answer: 0,
+    };
     let r = st.consume(&target([0.0, 0.0, 4.0]), &mut vt, &mut w, &mut c);
     assert_eq!(r, 1);
     assert_eq!((vt.calls, w.seen.len(), c.calls), (0, 0, 0));
@@ -451,10 +602,19 @@ fn consume_gap_exactly_four_stays_shut() {
 #[test]
 fn consume_gate_dot_edges_run() {
     for dot in [0.0, 10.0] {
-        let mut st = TaskStateBlock { gate: [1.0, 0.0, 0.0], ..open_state() };
-        let mut vt = ScriptVTask { calls: 0, answer: [0.0; 3] };
+        let mut st = TaskStateBlock {
+            gate: [1.0, 0.0, 0.0],
+            ..open_state()
+        };
+        let mut vt = ScriptVTask {
+            calls: 0,
+            answer: [0.0; 3],
+        };
         let mut w = ScriptWorker { seen: vec![] };
-        let mut c = ScriptCheck { calls: 0, answer: 1 };
+        let mut c = ScriptCheck {
+            calls: 0,
+            answer: 1,
+        };
         st.consume(&target([dot, 0.0, 0.0]), &mut vt, &mut w, &mut c);
         assert_eq!((vt.calls, w.seen.len(), c.calls), (1, 1, 1), "dot {dot}");
     }
@@ -462,10 +622,19 @@ fn consume_gate_dot_edges_run() {
 
 #[test]
 fn consume_nan_gate_keeps_running() {
-    let mut st = TaskStateBlock { gate: [f32::NAN, 0.0, 0.0], ..open_state() };
-    let mut vt = ScriptVTask { calls: 0, answer: [0.0; 3] };
+    let mut st = TaskStateBlock {
+        gate: [f32::NAN, 0.0, 0.0],
+        ..open_state()
+    };
+    let mut vt = ScriptVTask {
+        calls: 0,
+        answer: [0.0; 3],
+    };
     let mut w = ScriptWorker { seen: vec![] };
-    let mut c = ScriptCheck { calls: 0, answer: 0x100 };
+    let mut c = ScriptCheck {
+        calls: 0,
+        answer: 0x100,
+    };
     st.consume(&target([1.0, 0.0, 0.0]), &mut vt, &mut w, &mut c);
     assert_eq!((vt.calls, w.seen.len(), c.calls), (1, 1, 1));
     // Low byte clear, work-dot 0 below one half: arm A raises.
@@ -476,23 +645,49 @@ fn consume_nan_gate_keeps_running() {
 fn consume_tail_arms_raise() {
     // Arm A: clear check, work-dot below one half.
     let mut st = open_state();
-    let mut vt = ScriptVTask { calls: 0, answer: [0.0; 3] };
+    let mut vt = ScriptVTask {
+        calls: 0,
+        answer: [0.0; 3],
+    };
     let mut w = ScriptWorker { seen: vec![] };
-    let mut c = ScriptCheck { calls: 0, answer: 0 };
+    let mut c = ScriptCheck {
+        calls: 0,
+        answer: 0,
+    };
     st.consume(&target([0.0, 0.0, 0.0]), &mut vt, &mut w, &mut c);
     assert!(st.flag);
     // Arm B: positive out-dot, work-dot below minus one half.
-    let mut st = TaskStateBlock { out_bias: 1.0, work: [1.0, 0.0, 0.0], ..open_state() };
-    let mut vt = ScriptVTask { calls: 0, answer: [-1.0, 0.0, 0.0] };
+    let mut st = TaskStateBlock {
+        out_bias: 1.0,
+        work: [1.0, 0.0, 0.0],
+        ..open_state()
+    };
+    let mut vt = ScriptVTask {
+        calls: 0,
+        answer: [-1.0, 0.0, 0.0],
+    };
     let mut w = ScriptWorker { seen: vec![] };
-    let mut c = ScriptCheck { calls: 0, answer: 1 };
+    let mut c = ScriptCheck {
+        calls: 0,
+        answer: 1,
+    };
     st.consume(&target([0.0, 0.0, 0.0]), &mut vt, &mut w, &mut c);
     assert!(st.flag);
     // Arm C: negative out-dot, work-dot above one half.
-    let mut st = TaskStateBlock { out_bias: -1.0, work: [1.0, 0.0, 0.0], ..open_state() };
-    let mut vt = ScriptVTask { calls: 0, answer: [1.0, 0.0, 0.0] };
+    let mut st = TaskStateBlock {
+        out_bias: -1.0,
+        work: [1.0, 0.0, 0.0],
+        ..open_state()
+    };
+    let mut vt = ScriptVTask {
+        calls: 0,
+        answer: [1.0, 0.0, 0.0],
+    };
     let mut w = ScriptWorker { seen: vec![] };
-    let mut c = ScriptCheck { calls: 0, answer: 1 };
+    let mut c = ScriptCheck {
+        calls: 0,
+        answer: 1,
+    };
     st.consume(&target([0.0, 0.0, 0.0]), &mut vt, &mut w, &mut c);
     assert!(st.flag);
 }
@@ -500,17 +695,35 @@ fn consume_tail_arms_raise() {
 #[test]
 fn consume_arm_a_edge_is_strict() {
     // Work-dot exactly one half with a clear check: no arm fires.
-    let mut st = TaskStateBlock { work: [1.0, 0.0, 0.0], ..open_state() };
-    let mut vt = ScriptVTask { calls: 0, answer: [0.5, 0.0, 0.0] };
+    let mut st = TaskStateBlock {
+        work: [1.0, 0.0, 0.0],
+        ..open_state()
+    };
+    let mut vt = ScriptVTask {
+        calls: 0,
+        answer: [0.5, 0.0, 0.0],
+    };
     let mut w = ScriptWorker { seen: vec![] };
-    let mut c = ScriptCheck { calls: 0, answer: 0 };
+    let mut c = ScriptCheck {
+        calls: 0,
+        answer: 0,
+    };
     st.consume(&target([0.0, 0.0, 0.0]), &mut vt, &mut w, &mut c);
     assert!(!st.flag);
     // Just below one half: arm A fires.
-    let mut st = TaskStateBlock { work: [1.0, 0.0, 0.0], ..open_state() };
-    let mut vt = ScriptVTask { calls: 0, answer: [0.499_999_97, 0.0, 0.0] };
+    let mut st = TaskStateBlock {
+        work: [1.0, 0.0, 0.0],
+        ..open_state()
+    };
+    let mut vt = ScriptVTask {
+        calls: 0,
+        answer: [0.499_999_97, 0.0, 0.0],
+    };
     let mut w = ScriptWorker { seen: vec![] };
-    let mut c = ScriptCheck { calls: 0, answer: 0 };
+    let mut c = ScriptCheck {
+        calls: 0,
+        answer: 0,
+    };
     st.consume(&target([0.0, 0.0, 0.0]), &mut vt, &mut w, &mut c);
     assert!(st.flag);
 }
@@ -518,13 +731,19 @@ fn consume_arm_a_edge_is_strict() {
 #[test]
 fn consume_zero_out_dot_with_set_check_stays_quiet() {
     let mut st = open_state();
-    let mut vt = ScriptVTask { calls: 0, answer: [0.0; 3] };
+    let mut vt = ScriptVTask {
+        calls: 0,
+        answer: [0.0; 3],
+    };
     let mut w = ScriptWorker { seen: vec![] };
-    let mut c = ScriptCheck { calls: 0, answer: 7 };
+    let mut c = ScriptCheck {
+        calls: 0,
+        answer: 7,
+    };
     let r = st.consume(&target([0.0, 0.0, 0.0]), &mut vt, &mut w, &mut c);
     assert_eq!(r, 1);
     assert_eq!((vt.calls, w.seen.len(), c.calls), (1, 1, 1));
-    assert_eq!(w.seen, [0.0]);
+    assert_eq!(w.seen.iter().map(|v| v.to_bits()).collect::<Vec<_>>(), [0]);
     assert!(!st.flag);
 }
 

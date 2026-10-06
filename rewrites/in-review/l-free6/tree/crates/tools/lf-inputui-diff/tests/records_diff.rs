@@ -162,8 +162,8 @@ mod x86 {
     #[test]
     fn state_copy_matches() {
         let _guard = lock();
-        rt::set_callee(1, sub_head_stub as usize as u32);
-        rt::set_callee(2, sub_tail_stub as usize as u32);
+        rt::set_callee(1, sub_head_stub as *const () as usize as u32);
+        rt::set_callee(2, sub_tail_stub as *const () as usize as u32);
         let mut rng = Rng(0xC0E4);
         let mut cases = 0;
         let mut caught = 0;
@@ -185,7 +185,7 @@ mod x86 {
                     continue; // thin the full cross product
                 }
                 let src_box: Box<[u8]> = src_fill.clone().into_boxed_slice();
-                let mut dst_box: Box<[u8]> = dst_fill.clone().into_boxed_slice();
+                let dst_box: Box<[u8]> = dst_fill.clone().into_boxed_slice();
                 let src_addr = addr(&src_box[0]);
                 let dst_addr = addr(&dst_box[0]);
                 {
@@ -384,8 +384,8 @@ mod x86 {
     #[test]
     fn bounds_accumulate_matches() {
         let _guard = lock();
-        rt::set_callee(1, measure_stub as usize as u32);
-        rt::set_callee(2, bounds_sink_stub as usize as u32);
+        rt::set_callee(1, measure_stub as *const () as usize as u32);
+        rt::set_callee(2, bounds_sink_stub as *const () as usize as u32);
         let mut rng = Rng(0xB00D5);
         let mut cases = 0;
         let mut caught = 0;

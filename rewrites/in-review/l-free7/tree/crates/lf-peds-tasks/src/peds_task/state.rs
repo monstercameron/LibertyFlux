@@ -271,7 +271,10 @@ impl TaskStateBlock {
             // Gate 2: the gate dot lands in [0, range_hi]; an unordered
             // comparison on either side keeps it running.
             let gate = add(
-                add(add(mul(self.gate[1], v1), mul(self.gate[0], v0)), mul(self.gate[2], v2)),
+                add(
+                    add(mul(self.gate[1], v1), mul(self.gate[0], v0)),
+                    mul(self.gate[2], v2),
+                ),
                 self.gate_bias,
             );
             if !(0.0 > gate) && !(gate > self.range_hi) {
@@ -283,7 +286,10 @@ impl TaskStateBlock {
                     self.out_bias,
                 );
                 let o = vtask.run(target.obj);
-                let rwork = add(add(mul(self.work[1], o[1]), mul(self.work[0], o[0])), mul(self.work[2], o[2]));
+                let rwork = add(
+                    add(mul(self.work[1], o[1]), mul(self.work[0], o[0])),
+                    mul(self.work[2], o[2]),
+                );
                 worker.run(target.obj, v2);
                 let ok = check.check() & 0xff;
                 let mut raise = false;

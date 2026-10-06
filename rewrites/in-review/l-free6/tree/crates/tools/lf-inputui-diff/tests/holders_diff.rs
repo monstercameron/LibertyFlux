@@ -338,8 +338,8 @@ mod x86 {
         let mut rng = Rng(seed);
         let mut cases = 0;
         let mut caught = 0;
-        rt::set_callee(1, alloc_stub as usize as u32);
-        rt::set_callee(2, sink_stub as usize as u32);
+        rt::set_callee(1, alloc_stub as *const () as usize as u32);
+        rt::set_callee(2, sink_stub as *const () as usize as u32);
         // The planted table: one word; its address is what relocated()
         // answers and what the rewrite must write at +0.
         let table_cell = Box::new(0x71A8_1000u32);
@@ -472,15 +472,19 @@ mod x86 {
         let mut rng = Rng(seed);
         let mut cases = 0;
         let mut caught = 0;
-        rt::set_callee(1, alloc_stub as usize as u32);
+        rt::set_callee(1, alloc_stub as *const () as usize as u32);
         let ctor_stub: u32 = match which {
-            5 => ctor5_stub as usize as u32,
-            6 => ctor6_stub as usize as u32,
-            _ => ctor_tex_stub as usize as u32,
+            5 => ctor5_stub as *const () as usize as u32,
+            6 => ctor6_stub as *const () as usize as u32,
+            _ => ctor_tex_stub as *const () as usize as u32,
         };
         rt::set_callee(2, ctor_stub);
         // Planted vtable: slot +8 (index 2) is the poll stub.
-        let vt = Box::new([0xDEAD_0000u32, 0xDEAD_0004, poll_stub as usize as u32]);
+        let vt = Box::new([
+            0xDEAD_0000u32,
+            0xDEAD_0004,
+            poll_stub as *const () as usize as u32,
+        ]);
         let vt_addr = addr(&vt[0]);
         let helper_cell = Box::new(0x71C0_0000u32);
         let helper_addr = addr(&*helper_cell);
@@ -598,8 +602,12 @@ mod x86 {
         let mut rng = Rng(seed);
         let mut cases = 0;
         let mut caught = 0;
-        rt::set_callee(1, alloc_stub as usize as u32);
-        let vt = Box::new([0xDEAD_1000u32, 0xDEAD_1004, poll_stub as usize as u32]);
+        rt::set_callee(1, alloc_stub as *const () as usize as u32);
+        let vt = Box::new([
+            0xDEAD_1000u32,
+            0xDEAD_1004,
+            poll_stub as *const () as usize as u32,
+        ]);
         let vt_addr = addr(&vt[0]);
         let helper_cell = Box::new(0x71C0_1000u32);
         let helper_addr = addr(&*helper_cell);

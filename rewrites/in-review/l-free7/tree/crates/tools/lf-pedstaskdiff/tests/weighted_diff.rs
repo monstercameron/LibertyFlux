@@ -83,7 +83,11 @@ mod x86 {
 
     /// The pick with the threshold test widened to `>=`: the first prefix
     /// at or above the threshold wins.
-    fn wrong_pick(picker: &mut WeightedPicker, drawn: u32, fill_ans: u32) -> (u32, [u32; 16], Vec<usize>) {
+    fn wrong_pick(
+        picker: &mut WeightedPicker,
+        drawn: u32,
+        fill_ans: u32,
+    ) -> (u32, [u32; 16], Vec<usize>) {
         use lf_peds_tasks::peds_task::SCALE;
         let mut log = Vec::new();
         let mut prefix = [0.0f32; MAX_ENTRIES];
@@ -187,7 +191,13 @@ mod x86 {
         // addresses from the lifted index and compare them.
         for (li, rw) in fill_log.iter().zip(fill_log_rw.iter()) {
             let idx = *li as u32;
-            assert_eq!(*rw, (base.wrapping_add(idx * 32), base.wrapping_add(0x200 + idx * 4)));
+            assert_eq!(
+                *rw,
+                (
+                    base.wrapping_add(idx * 32),
+                    base.wrapping_add(0x200 + idx * 4)
+                )
+            );
         }
 
         // Wrong lift: must diverge from the rewrite on some case.
@@ -201,7 +211,10 @@ mod x86 {
             .iter()
             .map(|li| {
                 let idx = *li as u32;
-                (base.wrapping_add(idx * 32), base.wrapping_add(0x200 + idx * 4))
+                (
+                    base.wrapping_add(idx * 32),
+                    base.wrapping_add(0x200 + idx * 4),
+                )
             })
             .collect();
         if ret_w != ret_rw || slots_w != slots_rw || fill_w_addrs != fill_log_rw {

@@ -424,6 +424,14 @@
   "reason": "other"
  },
  {
+  "address": "0x008D3580",
+  "name": "aabb_gate_or_reseed",
+  "file": "fn_008d3580.rs",
+  "lane": "a-Q55",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x009094A0",
   "name": "ui_slot_sweep",
   "file": "fn_009094a0.rs",
@@ -469,14 +477,6 @@
   "file": "fn_009acd50.rs",
   "lane": "r-b647",
   "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x009BB6E0",
-  "name": "guarded_input_dispatch_a",
-  "file": "fn_009bb6e0.rs",
-  "lane": "a-Q53",
-  "outcome": "not yet run",
   "reason": ""
  },
  {
@@ -736,6 +736,22 @@
   "reason": "other"
  },
  {
+  "address": "0x00B25950",
+  "name": "setup_ccd_query",
+  "file": "fn_00b25950.rs",
+  "lane": "a-Q52",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B35C70",
+  "name": "frame_struct_call",
+  "file": "fn_00b35c70.rs",
+  "lane": "a-Q52",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00B37240",
   "name": "pending-triage",
   "file": "fn_00b37240.rs",
@@ -758,6 +774,14 @@
   "lane": "r-s407",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00B574C0",
+  "name": "init_blend_with_frame_params",
+  "file": "fn_00b574c0.rs",
+  "lane": "a-Q52",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00B77C30",
@@ -846,14 +870,6 @@
   "lane": "r-s292",
   "outcome": "deferred",
   "reason": "needs_encrypted_code"
- },
- {
-  "address": "0x00B81B90",
-  "name": "GtaThread::vf4",
-  "file": "fn_00b81b90.rs",
-  "lane": "a-Q53",
-  "outcome": "not yet run",
-  "reason": ""
  },
  {
   "address": "0x00B870D0",
@@ -1320,9 +1336,9 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00CAB9B0",
-  "name": "peds_task_b",
-  "file": "fn_00cab9b0.rs",
+  "address": "0x00CABF70",
+  "name": "peds_task_c",
+  "file": "fn_00cabf70.rs",
   "lane": "r-b649",
   "outcome": "not_reached",
   "reason": ""
@@ -1699,17 +1715,17 @@
   "address": "0x00DDD490",
   "name": null,
   "file": "fn_00ddd490.rs",
-  "lane": "r-s155",
-  "outcome": "not yet run",
-  "reason": null
+  "lane": "r-s525",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00DDD4B0",
-  "name": null,
+  "name": "UITextField::vf2",
   "file": "fn_00ddd4b0.rs",
-  "lane": "r-s155",
-  "outcome": "not yet run",
-  "reason": null
+  "lane": "r-s525",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00DDE050",
@@ -1721,11 +1737,11 @@
  },
  {
   "address": "0x00DDE0E0",
-  "name": null,
+  "name": "UITextField::vf0",
   "file": "fn_00dde0e0.rs",
-  "lane": "r-s155",
-  "outcome": "not yet run",
-  "reason": null
+  "lane": "r-s525",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00DDE0F0",
@@ -1771,9 +1787,9 @@
   "address": "0x00DDE230",
   "name": null,
   "file": "fn_00dde230.rs",
-  "lane": "r-s155",
-  "outcome": "not yet run",
-  "reason": null
+  "lane": "r-s525",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00DDE260",
@@ -1832,9 +1848,49 @@
   "reason": ""
  },
  {
+  "address": "0x00DDE640",
+  "name": null,
+  "file": "fn_00dde640.rs",
+  "lane": "r-s525",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00DDE9A0",
   "name": null,
   "file": "fn_00dde9a0.rs",
+  "lane": "r-s525",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00DDEA20",
+  "name": null,
+  "file": "fn_00ddea20.rs",
+  "lane": "r-s525",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00DDEB40",
+  "name": null,
+  "file": "fn_00ddeb40.rs",
+  "lane": "r-s525",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00DDF640",
+  "name": null,
+  "file": "fn_00ddf640.rs",
+  "lane": "r-s525",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00DDF680",
+  "name": null,
+  "file": "fn_00ddf680.rs",
   "lane": "r-s525",
   "outcome": "not_reached",
   "reason": ""

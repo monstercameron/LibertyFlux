@@ -35,9 +35,12 @@ mod weighted;
 
 pub mod registry;
 
-pub use react::{FacingQuery, PedState, ReactTuning, CODE_FAR_HI, CODE_FAR_LO, CODE_MID_HI, CODE_MID_LO, CODE_NEAR_HI, CODE_NEAR_LO};
+pub use react::{
+    CODE_FAR_HI, CODE_FAR_LO, CODE_MID_HI, CODE_MID_LO, CODE_NEAR_HI, CODE_NEAR_LO, FacingQuery,
+    PedState, ReactTuning,
+};
 pub use state::{
     Check, Enumerate, GATE_LIMIT, HALF, NEG_HALF, OBJ_ID_VALUE, ObjTag, TaskFloats, TaskStamp,
     TaskStateBlock, TaskTarget, TaskVec, VTask, Worker,
 };
-pub use weighted::{PickerFill, PickerRand, WeightedPicker, EMPTY, MAX_ENTRIES, SCALE};
+pub use weighted::{EMPTY, MAX_ENTRIES, PickerFill, PickerRand, SCALE, WeightedPicker};

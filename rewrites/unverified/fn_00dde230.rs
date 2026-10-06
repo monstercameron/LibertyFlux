@@ -1,17 +1,16 @@
-// original: 0x00DDE230 is_text_empty
-/// Report whether the field's current text is the empty string (1) or not
-/// (0), by measuring the text the field resolves through its getter.
-lf_checker_rt::export!(thiscall, rw_dde230(this: u32) -> u32 {
+// original: 0x00DDE230 UITextField is text empty
+/// UITextField helper (input-ui subsystem). `this` is the field object.
+/// Return 1 when the field's text is empty, else 0: fetch the text pointer
+/// from the text getter and scan for the NUL terminator. `this` is only
+/// passed through to the getter. Original: thiscall, no stack words.
+lf_checker_rt::export!(thiscall, rw_00DDE230(this: u32) -> u32 {
     unsafe {
-        let text = lf_checker_rt::callee_thiscall!(1, u32, this);
-        let mut p = text as *const u8;
-        while *p != 0 {
-            p = p.add(1);
+        const TEXT_GETTER: u32 = 1;
+        let s = lf_checker_rt::callee_thiscall!(TEXT_GETTER, u32, this);
+        let mut p = s;
+        while ((p) as *const u8).read() != 0 {
+            p = p.wrapping_add(1);
         }
-        if (p as u32).wrapping_sub(text) == 0 {
-            1
-        } else {
-            0
-        }
+        ((p == s) as u32)
     }
 });

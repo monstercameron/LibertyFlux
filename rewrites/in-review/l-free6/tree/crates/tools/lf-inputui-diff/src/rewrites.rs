@@ -13,6 +13,7 @@
     non_snake_case,
     unused_doc_comments,
     unused_imports,
+    dead_code,
     unused_mut,
     unused_parens,
     unused_unsafe,

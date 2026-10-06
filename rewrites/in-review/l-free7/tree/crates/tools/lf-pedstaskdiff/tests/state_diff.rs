@@ -28,8 +28,8 @@ mod x86 {
     mod support;
     use support::{
         CONSUMER_VA, Rng, ST_A, ST_A_PAD, ST_B, ST_EXTRA, ST_FLAG, ST_GATE_BIAS, ST_OUT_BIAS,
-        ST_RANGE_HI, ST_RAW, ST_SRC_DWORD, addr, cell_u32, cell_u8, lock, put_u32, set_cell_u32,
-        set_cell_u8,
+        ST_RANGE_HI, ST_RAW, ST_SRC_DWORD, addr, cell_u8, cell_u32, lock, put_u32, set_cell_u8,
+        set_cell_u32,
     };
 
     const ENUM_CALLEE: u32 = 1;
@@ -52,7 +52,10 @@ mod x86 {
     extern "cdecl" fn enum_stub(block: u32, consumer: u32, z: u32, four: u32, five: u32) -> u32 {
         // The block lives on the rewrite's stack: read it before returning.
         let words = unsafe { (block as *const [u32; 5]).read_unaligned() };
-        ENUM_LOG.lock().unwrap().push((words, consumer, z, four, five));
+        ENUM_LOG
+            .lock()
+            .unwrap()
+            .push((words, consumer, z, four, five));
         if *ENUM_REENTER.lock().unwrap() {
             unsafe {
                 lf_pedstaskdiff::global::<u8>(ST_FLAG).write(1);
@@ -177,7 +180,16 @@ mod x86 {
             range_hi: f(rng),
             gate: [f(rng), f(rng), f(rng)],
             work: [f(rng), f(rng), f(rng)],
-            raw: [f(rng), f(rng), f(rng), f(rng), f(rng), f(rng), f(rng), f(rng)],
+            raw: [
+                f(rng),
+                f(rng),
+                f(rng),
+                f(rng),
+                f(rng),
+                f(rng),
+                f(rng),
+                f(rng),
+            ],
             copy_source: rng.edge_word(),
         };
         set_cell_u8(ST_FLAG, u8::from(st.flag));
@@ -299,7 +311,11 @@ mod x86 {
         );
         assert_eq!(u32::from(ret_lift), ret_rw, "answer agrees");
         assert_snap_eq(&lift_snap(&state), &snap_rw, "state");
-        assert_eq!((stamp.dword, stamp.id, stamp.flag), stamp_rw, "stamp agrees");
+        assert_eq!(
+            (stamp.dword, stamp.id, stamp.flag),
+            stamp_rw,
+            "stamp agrees"
+        );
         // The enumeration block, read through the stub pointer on the
         // rewrite side, carries the lifted midpoints plus constants.
         let (words, consumer, z, four, five) = enum_rw[0];
@@ -338,21 +354,57 @@ mod x86 {
         one(&[0x3F80_0000; 8], true);
         // Small integers.
         one(
-            &[0x3F80_0000, 0x4000_0000, 0x4040_0000, 0x4080_0000, 0x40A0_0000, 0x40C0_0000, 0x40E0_0000, 0x4100_0000],
+            &[
+                0x3F80_0000,
+                0x4000_0000,
+                0x4040_0000,
+                0x4080_0000,
+                0x40A0_0000,
+                0x40C0_0000,
+                0x40E0_0000,
+                0x4100_0000,
+            ],
             false,
         );
         // Equal pairs: zero differences, zero multiplier.
         one(
-            &[0x3F80_0000, 0x4000_0000, 0x4040_0000, 0, 0x3F80_0000, 0x4000_0000, 0x4040_0000, 0],
+            &[
+                0x3F80_0000,
+                0x4000_0000,
+                0x4040_0000,
+                0,
+                0x3F80_0000,
+                0x4000_0000,
+                0x4040_0000,
+                0,
+            ],
             false,
         );
         // NaN, infinities, subnormals, signed zeros.
         one(
-            &[0x7FC0_0000, 0x7F80_0000, 0xFF80_0000, 0x0000_0001, 0x8000_0000, 0x8000_0001, 0x7F7F_FFFF, 0xFF7F_FFFF],
+            &[
+                0x7FC0_0000,
+                0x7F80_0000,
+                0xFF80_0000,
+                0x0000_0001,
+                0x8000_0000,
+                0x8000_0001,
+                0x7F7F_FFFF,
+                0xFF7F_FFFF,
+            ],
             false,
         );
         one(
-            &[0x7FC0_0000, 0x7F80_0000, 0xFF80_0000, 0x0000_0001, 0x8000_0000, 0x8000_0001, 0x7F7F_FFFF, 0xFF7F_FFFF],
+            &[
+                0x7FC0_0000,
+                0x7F80_0000,
+                0xFF80_0000,
+                0x0000_0001,
+                0x8000_0000,
+                0x8000_0001,
+                0x7F7F_FFFF,
+                0xFF7F_FFFF,
+            ],
             true,
         );
         let mut rng = Rng(0xCB80_2071);
@@ -382,13 +434,12 @@ mod x86 {
         let mut calls = 0u32;
         // Wrong: `>=` instead of `>`.
         if GATE_LIMIT >= gap {
-            let gate = ((state.gate[1] * v1 + state.gate[0] * v0) + state.gate[2] * v2)
-                + state.gate_bias;
+            let gate =
+                ((state.gate[1] * v1 + state.gate[0] * v0) + state.gate[2] * v2) + state.gate_bias;
             if !(0.0 > gate) && !(gate > state.range_hi) {
                 let rout = ((state.work[1] * v1 + state.work[0] * v0) + state.work[2] * v2)
                     + state.out_bias;
-                let rwork =
-                    (state.work[1] * o[1] + state.work[0] * o[0]) + state.work[2] * o[2];
+                let rwork = (state.work[1] * o[1] + state.work[0] * o[0]) + state.work[2] * o[2];
                 calls = 3;
                 let ok = check_ans & 0xff;
                 let mut raise = false;
@@ -419,11 +470,7 @@ mod x86 {
         check: u32,
     }
 
-    fn run_consume_case(
-        seed_state: &TaskStateBlock,
-        c: &ConsumeCase,
-        wrong_caught: &mut u32,
-    ) {
+    fn run_consume_case(seed_state: &TaskStateBlock, c: &ConsumeCase, wrong_caught: &mut u32) {
         // Plant the seeded state over the cells.
         set_cell_u8(ST_FLAG, u8::from(seed_state.flag));
         set_cell_u32(ST_OUT_BIAS, seed_state.out_bias.to_bits());
@@ -443,7 +490,11 @@ mod x86 {
         let mut obj = Box::new([0u8; 0x24]);
         let mut vtable = Box::new([0u8; 0xf0]);
         let mut record = Box::new([0u8; 0x3c]);
-        let (obj_a, vt_a, rec_a) = (addr(obj.as_ref()), addr(vtable.as_ref()), addr(record.as_ref()));
+        let (obj_a, vt_a, rec_a) = (
+            addr(obj.as_ref()),
+            addr(vtable.as_ref()),
+            addr(record.as_ref()),
+        );
         put_u32(obj.as_mut(), 0x00, vt_a);
         put_u32(obj.as_mut(), 0x20, rec_a);
         put_u32(vtable.as_mut(), 0xec, support::fn_addr!(vtask_stub));
@@ -493,7 +544,11 @@ mod x86 {
             &mut |obj: Handle32<ObjTag>| {
                 vtask_n += 1;
                 assert_eq!(obj.get(), obj_a, "lift vtask object");
-                [f32::from_bits(c.vtask[0]), f32::from_bits(c.vtask[1]), f32::from_bits(c.vtask[2])]
+                [
+                    f32::from_bits(c.vtask[0]),
+                    f32::from_bits(c.vtask[1]),
+                    f32::from_bits(c.vtask[2]),
+                ]
             },
             &mut |obj: Handle32<ObjTag>, v2: f32| {
                 worker_seen.push((obj.get(), v2.to_bits()));
