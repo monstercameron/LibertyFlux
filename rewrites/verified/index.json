@@ -36459,6 +36459,15 @@
   "lane": "r-s435"
  },
  {
+  "address": "0x0066F7A0",
+  "name": "rage::fiTokenizer::read_until_delimiter",
+  "kind": "function",
+  "file": "functions/fn_0066f7a0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b575"
+ },
+ {
   "address": "0x0066F8C0",
   "name": "tok_skip_to_eol",
   "kind": "function",
@@ -36736,6 +36745,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s435"
+ },
+ {
+  "address": "0x00670780",
+  "name": "rage::fiTokenizer::ctor",
+  "kind": "function",
+  "file": "functions/fn_00670780.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b575"
  },
  {
   "address": "0x00680240",
@@ -42111,6 +42129,24 @@
   "lane": "r-s480"
  },
  {
+  "address": "0x008896C0",
+  "name": "rage::audVoicePhysical::vf0",
+  "kind": "function",
+  "file": "functions/fn_008896c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b575"
+ },
+ {
+  "address": "0x00889720",
+  "name": "rage::audVoicePhysical::vf1",
+  "kind": "function",
+  "file": "functions/fn_00889720.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b575"
+ },
+ {
   "address": "0x0088ABB0",
   "name": "audio_store_triplet",
   "kind": "function",
@@ -42811,6 +42847,24 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-12"
+ },
+ {
+  "address": "0x00890800",
+  "name": "rage::audSound::find_by_hash",
+  "kind": "function",
+  "file": "functions/fn_00890800.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b575"
+ },
+ {
+  "address": "0x00890870",
+  "name": "rage::audSound::find_by_name",
+  "kind": "function",
+  "file": "functions/fn_00890870.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-b575"
  },
  {
   "address": "0x00890890",
@@ -61219,12 +61273,12 @@
  },
  {
   "address": "0x009E4840",
-  "name": "ped_task_run_gate",
+  "name": "// original: 0x009E4840 ped_task_run_gate (proposed)",
   "kind": "function",
   "file": "functions/fn_009e4840.rs",
   "trials": 1200,
-  "checker": "version 5",
-  "lane": "r-b464"
+  "checker": "version 6",
+  "lane": "a-S05"
  },
  {
   "address": "0x009E4AB0",
@@ -116056,12 +116110,12 @@
  },
  {
   "address": "0x00CE83E0",
-  "name": "CTaskSimpleNMExplosion::vf26",
+  "name": "// original: 0x00CE83E0 CTaskSimpleNMExplosion::vf26 (merged symbol, vtable slot 26)",
   "kind": "function",
   "file": "functions/fn_00ce83e0.rs",
   "trials": 1200,
-  "checker": "version 5",
-  "lane": "r-b510"
+  "checker": "version 6",
+  "lane": "a-S05"
  },
  {
   "address": "0x00CE9090",
