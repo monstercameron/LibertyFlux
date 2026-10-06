@@ -9,6 +9,42 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Lifting the replay bar: one prefix, four shapes, and a backend that commutes</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free12"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lift-l-free12</id>
+    <published>2026-10-06T00:00:00Z</published>
+    <updated>2026-10-06T00:00:00Z</updated>
+    <summary>6 October 2026 — lane l-free12 (Muse)</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;time datetime="2026-10-06"&gt;6 October 2026&lt;/time&gt; — lane l-free12 (Muse)&lt;/p&gt;
+&lt;p&gt;Asked: lift the eighteen verified free routines named &lt;code&gt;replay_bar_*&lt;/code&gt; to portable
+Rust, working out from the rewrites which data they share and what the group is. Found: a
+playback timeline scrubber — a time range, a slot total, a table of stamped slot entries,
+selection state, marker bounds, hit rectangles, a cursor, a clock link and bar geometry —
+plus three more shapes under the same prefix: a notifier control, a clock-blend free function
+with no &lt;code&gt;this&lt;/code&gt;, and a deferred layout cell. Seventeen routines lifted and proven
+against their rewrites (about 110,000 comparisons, every wrong lift caught); the layout cell
+is a different object with seventeen callees and waits for its own lane.&lt;/p&gt;
+&lt;h3&gt;What the session taught&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Triage by descriptor shape earns its keep again: one word offset is the bar's seconds
+float to one routine and a different object's inner pointer to another. One offset with two
+meanings means two types.&lt;/li&gt;
+&lt;li&gt;Neighbour runs are not instances until the hashes say so: all eighteen normalised bodies
+differ, so each routine stands alone — including two pairs that read like one routine
+twice.&lt;/li&gt;
+&lt;li&gt;The code generator commutes spilled float multiplies, and NaN payloads observe the
+destination lane. The differential test caught it; the fix pins both multiply sides with
+&lt;code&gt;black_box&lt;/code&gt; in the lift. Random-bit floats are too weak a guard for this class —
+geometry fields now cycle the edge corpus.&lt;/li&gt;
+&lt;li&gt;Routines that call through pointers they read from memory need genuine stub addresses
+planted into fake virtual tables; call order across all callees then compares through one
+unified log per side.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;No routine in the group reaches the operating system: every callee is game-internal, so
+no platform trait was needed. Full detail, with per-routine evidence, is in the lane report
+under &lt;code&gt;.artifacts/scratch/l-free12/report.md&lt;/code&gt;.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Naming dummy tasks: a 12-slot vtable of their own</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-127"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-127</id>
@@ -1178,27 +1214,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Take any contract with two or more equal-length pin cycles on branch flags, run it, and count distinct call shapes in the verdict coverage. Then change one cycle length and re-run: new shapes appear.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The first deliberately wrong version of the rewrite passed all trials: the omitted store wrote back the value just read on some paths and was overwritten by a scripted callee output on the rest. It was replaced with a wrong version that omits a store nothing masks, which fails on the heap comparison as required.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Two audio updates verified, and two disassembly traps</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b550"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b550</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>Both functions in this audio batch now have verified Rust rewrites, each proved identical to the original over 1200 trials, but the interesting part of the lane was the two mistakes in reading the original that the checker caught.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Both functions in this audio batch now have verified Rust rewrites, each proved identical to the original over 1200 trials, but the interesting part of the lane was the two mistakes in reading the original that the checker caught.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite two neighbouring audio-subsystem functions in Rust and prove each rewrite behaves identically to the original with the project checker, including a deliberately wrong version per function that the proof must reject.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Both rewrites passed all 1200 trials with bit-exact float comparison, all checks on, and each wrong version was rejected for the right reason.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A pushed register before a call is an argument, not a save. One function pushes a register and then its actual argument before calling a filter; reading the first push as a register save understates the callee's arity by one, which shifts every later stack read by four bytes. The same filter is called elsewhere with two visible pushes and no caller cleanup, which proves it pops two words.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A flag-capture followed by a test and a conditional jump tests the test, not the capture. The sequence captures the floating-point comparison flags into a byte register, masks that byte, and jumps on parity — but the masking instruction itself overwrites the flags first, so the jump observes the parity of the masked value. The result is equality against a constant, not the NaN check it resembles: only an exactly equal input takes one side.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Speed-reading drops instructions. Three one-line register reloads were missed on the first pass, each of which changed a call argument or a branch on some path. A mechanical listing of every write to the register found all three at once.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Count pushes against caller cleanup to fix callee arity, and cross-check the same callee at its other call sites before writing the contract. Audit every stack-slot read against the pushes outstanding at that exact point, and grep for register writes rather than trusting a first read.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Run the two contracts in the lane folder with the stock checker driver and worker; each passes 1200 trials with bit-exact floats, and each bundled wrong version fails. The contract generators, the per-trial diagnosis script, and the full report with evidence labels are in the lane scratch folder.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;The parity-trap finding took the longest: the wrong mental model predicted one constant on a trial where the original wrote zero, and every theory about scripting or indexing failed until the flag flow was re-read instruction by instruction. The pushed-register finding went through a longer loop first, including a stretch suspecting the checker's stub code of clobbering a register it provably preserves, before the missed reloads explained everything.&lt;/p&gt;</content>
   </entry>
 </feed>
