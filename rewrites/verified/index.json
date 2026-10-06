@@ -37305,6 +37305,15 @@
   "lane": "r-s158"
  },
  {
+  "address": "0x00664BE0",
+  "name": "sn_task_alloc_copy_strings",
+  "kind": "function",
+  "file": "functions/fn_00664be0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b627"
+ },
+ {
   "address": "0x0066DB10",
   "name": "rage::sysTimeManager::vf1",
   "kind": "function",
@@ -47664,6 +47673,15 @@
   "lane": "a-11"
  },
  {
+  "address": "0x008A8700",
+  "name": "audio_voice_pool_init",
+  "kind": "function",
+  "file": "functions/fn_008a8700.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q34"
+ },
+ {
   "address": "0x008A8BB0",
   "name": "audio_params_store_3f",
   "kind": "function",
@@ -53478,6 +53496,15 @@
   "lane": "r-b614"
  },
  {
+  "address": "0x00907DF0",
+  "name": "input_ui_slot_sweep",
+  "kind": "function",
+  "file": "functions/fn_00907df0.rs",
+  "trials": 1200,
+  "checker": "version 6",
+  "lane": "r-b624"
+ },
+ {
   "address": "0x00908370",
   "name": "radar_scratch_clear",
   "kind": "function",
@@ -53521,6 +53548,15 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "a-08"
+ },
+ {
+  "address": "0x00908630",
+  "name": "blip_record_attach",
+  "kind": "function",
+  "file": "functions/fn_00908630.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q34"
  },
  {
   "address": "0x009086A0",
@@ -56340,6 +56376,15 @@
   "lane": "r-s511"
  },
  {
+  "address": "0x0094EC70",
+  "name": "release_flagged_entries",
+  "kind": "function",
+  "file": "functions/fn_0094ec70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
   "address": "0x0094ED20",
   "name": "accumulate_validated_pairs",
   "kind": "function",
@@ -56790,6 +56835,15 @@
   "lane": "r-s135"
  },
  {
+  "address": "0x00952AF0",
+  "name": "vtable_probe_value",
+  "kind": "function",
+  "file": "functions/fn_00952af0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
+ },
+ {
   "address": "0x00952B30",
   "name": "find_block_by_tail_key",
   "kind": "function",
@@ -57013,6 +57067,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s135"
+ },
+ {
+  "address": "0x00953860",
+  "name": "tagged_spread_over_strings",
+  "kind": "function",
+  "file": "functions/fn_00953860.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s511"
  },
  {
   "address": "0x009538F0",
@@ -62797,6 +62860,24 @@
   "name": "init_input_vec_zero",
   "kind": "function",
   "file": "functions/fn_009bb5f0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
+ },
+ {
+  "address": "0x009BB620",
+  "name": "register_input_slot",
+  "kind": "function",
+  "file": "functions/fn_009bb620.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s513"
+ },
+ {
+  "address": "0x009BB770",
+  "name": "T_CB_Generic_3Args<void(*)(int, rage::Vector4&, rage::Matrix34&), int, rage::Vector4, rage::Matrix34>::vf1",
+  "kind": "function",
+  "file": "functions/fn_009bb770.rs",
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-s513"
@@ -84652,6 +84733,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "a-Q06"
+ },
+ {
+  "address": "0x00B575D0",
+  "name": "setup_thread_local_queues",
+  "kind": "function",
+  "file": "functions/fn_00b575d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "a-Q34"
  },
  {
   "address": "0x00B576F0",
@@ -129213,6 +129303,51 @@
   "lane": "r-b233"
  },
  {
+  "address": "0x00DB6E90",
+  "name": "UIFontString::vf2",
+  "kind": "function",
+  "file": "functions/fn_00db6e90.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB6EB0",
+  "name": "UIFontString::vf85",
+  "kind": "function",
+  "file": "functions/fn_00db6eb0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB6F70",
+  "name": "UIFontString::vf115",
+  "kind": "function",
+  "file": "functions/fn_00db6f70.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB7050",
+  "name": "UIFontString::vf133",
+  "kind": "function",
+  "file": "functions/fn_00db7050.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB7080",
+  "name": "UIFontString::vf86",
+  "kind": "function",
+  "file": "functions/fn_00db7080.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
   "address": "0x00DB7170",
   "name": "UIFontString::vf87",
   "kind": "function",
@@ -129222,6 +129357,123 @@
   "lane": "r-b183"
  },
  {
+  "address": "0x00DB7320",
+  "name": "UIFontString::vf130",
+  "kind": "function",
+  "file": "functions/fn_00db7320.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB7330",
+  "name": "UIFontString::vf123",
+  "kind": "function",
+  "file": "functions/fn_00db7330.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB7350",
+  "name": "UIRowLayout::vf134",
+  "kind": "function",
+  "file": "functions/fn_00db7350.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB7360",
+  "name": "UIFontString::vf121",
+  "kind": "function",
+  "file": "functions/fn_00db7360.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB7380",
+  "name": "UIFontString::vf127",
+  "kind": "function",
+  "file": "functions/fn_00db7380.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB7390",
+  "name": "UIFontString::vf124",
+  "kind": "function",
+  "file": "functions/fn_00db7390.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB73B0",
+  "name": "UIFontString::vf128",
+  "kind": "function",
+  "file": "functions/fn_00db73b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB73C0",
+  "name": "UIFontString::vf129",
+  "kind": "function",
+  "file": "functions/fn_00db73c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB73D0",
+  "name": "UIFontString::vf119",
+  "kind": "function",
+  "file": "functions/fn_00db73d0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB7410",
+  "name": "UIFontString::vf118",
+  "kind": "function",
+  "file": "functions/fn_00db7410.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB7470",
+  "name": "UIFontString::vf117",
+  "kind": "function",
+  "file": "functions/fn_00db7470.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB74B0",
+  "name": "UIFontString::vf125",
+  "kind": "function",
+  "file": "functions/fn_00db74b0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
+  "address": "0x00DB74C0",
+  "name": "UIFontString::vf120",
+  "kind": "function",
+  "file": "functions/fn_00db74c0.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
+ },
+ {
   "address": "0x00DB7500",
   "name": "UIFontString::vf83",
   "kind": "function",
@@ -129229,6 +129481,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b183"
+ },
+ {
+  "address": "0x00DB7710",
+  "name": "UIFontString_ctor_like",
+  "kind": "function",
+  "file": "functions/fn_00db7710.rs",
+  "trials": 1000,
+  "checker": "version 6",
+  "lane": "r-s515"
  },
  {
   "address": "0x00DB78D0",
