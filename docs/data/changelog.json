@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-06",
-    "title": "Devlog: Naming combat, cover and effects functions: slot 24 selects the subtask id",
+    "title": "Rewrites: 9 more functions pass the checker (16874 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "9 rewrites added under rewrites/verified: 0 script native handlers and 9 other functions.",
+      "The tree now holds 16874 rewrites, 16855 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates.",
+      "1 rewrites are held back by the publication scan (the match is in code, not in a comment) and stay in scratch."
+    ]
+  },
+  {
+    "date": "2026-10-06",
+    "title": "Devlog: Naming combat, cover and effects functions: slot 24 selects the subtask id",
+    "commit": "a3eaef7cc4e2b86978b2a2e2fa711e2a3bf451ea",
     "summary": "Findings from the nm-125 lane.",
     "changes": [
       "New devlog entry: Naming combat, cover and effects functions: slot 24 selects the subtask id.",
