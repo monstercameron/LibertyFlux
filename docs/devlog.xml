@@ -5,9 +5,29 @@
   <id>https://monstercameron.github.io/LibertyFlux/devlog.html</id>
   <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html"/>
   <link rel="self" type="application/atom+xml" href="https://monstercameron.github.io/LibertyFlux/devlog.xml"/>
-  <updated>2026-10-06T00:00:00Z</updated>
+  <updated>2026-10-07T00:00:00Z</updated>
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
+  <entry>
+    <title>Showing native Codex lanes in the dashboard</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#native-codex-lanes-dashboard"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#native-codex-lanes-dashboard</id>
+    <published>2026-10-07T00:00:00Z</published>
+    <updated>2026-10-07T00:00:00Z</updated>
+    <summary>Verified The dashboard now displays native Codex work lanes, their model and effort, and their prompts, logs and results. The first continuation exposed a difference between native subagents and the process-based launcher.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The dashboard now displays native Codex work lanes, their model and effort, and their prompts, logs and results. The first continuation exposed a difference between native subagents and the process-based launcher.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;Continue work with Luna at maximum effort and keep the local dashboard useful for following each lane.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The original dashboard discovered only Muse processes. Native Codex subagents were active and writing results, but the running filter showed no lanes. Their individual Windows process IDs and memory use are unavailable, so reporting zero memory would be misleading.&lt;/p&gt;
+&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A coordinator-owned local registry supplies explicit task state. Registry data older than three minutes is shown as unknown rather than running. The lane list, model and effort, an opened log panel and an expanded initial prompt were inspected in the rendered browser. Registry tests cover stale, malformed and finished state.&lt;/p&gt;
+&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
+&lt;p&gt;Keep the process discovery for existing launchers and add native lane state alongside it. Label unavailable task memory, distinguish the paused Muse supervisor from coordinator-managed lanes, and include native lanes in history and status updates. Regression lanes show proofs checked; reproducing a historic positive result without a current negative control does not claim new verification.&lt;/p&gt;
+&lt;h3&gt;How to reproduce it&lt;/h3&gt;
+&lt;p&gt;Run the dashboard and status scripts with fresh explicit native lane registry entries. Open each lane card, inspect its log and prompt, then make the registry stale and confirm that running state disappears. Run the dashboard and registry tests in the coordinator test directory.&lt;/p&gt;
+&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
+&lt;p&gt;The dashboard was initially opened before its rendered lane display was checked. Its empty running filter concealed active native work. The continuation rules now require visual inspection before reporting that the dashboard works.&lt;/p&gt;</content>
+  </entry>
   <entry>
     <title>A stack leak hiding in an event-handler update</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b653"/>
@@ -1183,37 +1203,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;h3&gt;Follow-up on the 144 withdrawn rewrites&lt;/h3&gt;
 &lt;p&gt;The entry "Verified, and wrong" recorded 144 rewrites of the leaderboard row collector that compared a length unsigned. A re-run lane has re-proven all 144 with the signed comparison. Its contracts script sixteen answers for the length helper, ten of them negative or edge values, and bias the other scripted answers so that those lengths reach the comparison; the unsigned mistake, run as a wrong version, fails on every one of the 144. They are back in the verified count. The same lane found the blind spot next door in the other direction: a neighbouring function of the family compares a count unsigned, its contracts script counts from 0 to 16 only, and a rewrite that compared signed would pass. That family and the 253 row-collector rewrites that were right but had the same blind proof are queued for the same treatment. Correction to the earlier entry: it gave the number of signed members as 269; by the verified index it is 253 with the family's standard name, plus a dozen named differently.&lt;/p&gt;
 &lt;p&gt;To reproduce the census: group the game's functions by the class part of their names and compare each group with the verified index.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Float operand order needs a branch, not a black box</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#production-b554"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#production-b554</id>
-    <published>2026-10-03T00:00:00Z</published>
-    <updated>2026-10-03T00:00:00Z</updated>
-    <summary>A production lane verifying audio functions found that the standard ways of pinning floating-point operand order do not work: the compiler swapped operands past both black-box barriers and opaque call boundaries, and only an explicit both-NaN branch pins the order by construction. Two functions were verified with the branch design; a third is deferred with a complete plan.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;A production lane verifying audio functions found that the standard ways of pinning floating-point operand order do not work: the compiler swapped operands past both black-box barriers and opaque call boundaries, and only an explicit both-NaN branch pins the order by construction. Two functions were verified with the branch design; a third is deferred with a complete plan.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Rewrite three neighbouring audio functions in Rust and prove each rewrite bit-identical to the original with the checker, including bit-exact floating-point results with matching NaN signs. Two were verified over 1200 trials each with mutants caught; the third was fully triaged and deferred for time with an executable plan.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The compiler swaps the operands of scalar float add and multiply even when the values pass through black-box barriers and even across no-inline call boundaries. Both swaps were seen in disassembly of built rewrites. Order decides the sign of a NaN result, so a swapped build fails trials that pair two differently-signed NaNs in one operation.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Order matters only when both operands are NaN: a single NaN forwards that NaN either way, and invalid cases yield the same default NaN either way. Both shipped rewrites therefore test the bit patterns first, forward the destination operand explicitly on both-NaN, and run a plain operation otherwise. Subtraction and comparisons need no branch.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A build that had silently swapped an addition still passed small probes, purely because no trial paired two NaNs there. The lesson is that float contracts must include both-NaN pairs with opposing signs in the same operation, or a luck-dependent proof looks full.&lt;/li&gt;
-&lt;li&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The contract lint check caught two wrong patch offsets before anything ran, exactly the failure mode it exists to stop.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Both rewrites in this batch use the NaN-branch design; one was retrofitted from the opaque-call form and re-verified, because the opaque-call form is rebuild-fragile.&lt;/li&gt;
-&lt;li&gt;Recommended: amend the brief's float rule so black box stays (it stops constant folding) but the order pin is the NaN branch, and require opposing-sign NaN pairs in float input pools.&lt;/li&gt;
-&lt;li&gt;Previously verified float rewrites that rely on the black box alone are correct as built, but a toolchain change could silently swap them; re-running their contracts after such a change would catch it.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Build any rewrite whose float helpers are plain operations wrapped only in black boxes, disassemble the helper, and check which parameter ends up as the instruction destination; then run trials pairing plus-NaN with minus-NaN in one addition. The lane's report records the exact trial shape (a sum of three products over infinite and NaN inputs) and a pool layout that keeps the call path hot while carrying NaN coverage.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;For several builds the lane believed a memory source operand propagates NaN signs differently from a register source. That theory was wrong: re-examination found a swapped addition missed in an interleaved listing. It cost about twenty minutes and is recorded so nobody chases it again.&lt;/li&gt;
-&lt;li&gt;One rebuild failed on a locked output file because a worker from the previous run was still exiting; waiting for prior processes to clear before rebuilding fixed it.&lt;/li&gt;
-&lt;li&gt;The deferred function hides two quirks future lanes should know: two of its three multi-argument call shapes pass identical arguments and differ only in one register, and that register carries uninitialized frame fill (zero) in two shapes. Both were verified by hand-tracking the stack pointer and are in the lane report.&lt;/li&gt;
-&lt;/ul&gt;</content>
   </entry>
 </feed>

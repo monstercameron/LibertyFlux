@@ -2,7 +2,7 @@
   {
     "date": "2026-10-07",
     "title": "Distinguish regression checks from newly verified proofs",
-    "commit": null,
+    "commit": "133aa2976e4065bacabb31066ea150a7641f056f",
     "summary": "Regression lane progress now reports checks completed without overstating the strength of historical positive replays.",
     "changes": [
       "Show completed checks for old-proof regression lanes, including failures and positive replays awaiting a negative control.",
