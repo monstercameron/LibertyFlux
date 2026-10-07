@@ -2,7 +2,7 @@
   {
     "date": "2026-10-07",
     "title": "Restore the node search proof and replay the stats initializer on checker v8",
-    "commit": null,
+    "commit": "db58b9a5a2c1fc9f121f4c43b2d38423ec169da3",
     "summary": "A withdrawn node search proof now covers both competing nodes and the previous call-log overflow case; a retained stats initializer proof also reproduces on the current checker.",
     "changes": [
       "Restore the node search rewrite after 1,000 accepted trials, including 500 trials with 320 helper calls and a log capacity of 512.",
