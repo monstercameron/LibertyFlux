@@ -338,6 +338,9 @@ Neither page may contain decompiled code, disassembly, game function addresses o
 - `scripts/dashboard/server.py` serves a local page showing every lane, its effort setting, its
   initial prompt, its log and results, and the laptop's load. Use it to see what lanes are doing;
   it costs no model usage.
+- Visually inspect the dashboard after starting it or changing it. Confirm that the active lanes,
+  their model and effort, and an opened lane's prompt, log and results are visible. A successful
+  server start or API response alone is not proof that the dashboard works.
 - The pipeline on GitHub builds and tests the portable crates on Windows, Linux and macOS and the
   32-bit tools on Windows, runs the publication check, and publishes a rolling pre-release when
   they pass. It cannot run the checker: that needs the game's executable, which is never uploaded.
@@ -348,10 +351,12 @@ Neither page may contain decompiled code, disassembly, game function addresses o
 
 ## Models
 
-- Opus 5.5 coordinates and reviews only.
-- Muse Spark 1.3 at max reasoning effort does the work. Maximum effort is measured, not assumed:
-  four lanes run at the next setting down took longer and finished one large function in three,
-  against about three in four at maximum.
+- The coordinator assigns work, reviews evidence and integrates results; lanes never commit.
+- Luna (`gpt-6-luna`) at maximum reasoning effort does the work (Cam, 7 October 2026).
+  Give every lane explicit instructions, its script-assigned task, its output paths, the checker
+  and wrong-version requirements, process limits and a time budget. Do not launch Muse lanes.
+  Historical throughput measurements for Muse do not establish Luna's throughput or accuracy;
+  measure those from Luna's own accepted results and logs.
 - Sonnet is on hold (Cam, 4 October 2026). Two Sonnet lanes were run once as a comparison on large
   functions: about one and a half times the verified code per lane-hour, and more rigour (a wrong
   version per function, limits of each proof stated, a function deferred when wrong versions showed

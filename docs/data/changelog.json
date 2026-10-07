@@ -1,5 +1,16 @@
 [
   {
+    "date": "2026-10-07",
+    "title": "Use Luna lanes with explicit instructions and visual dashboard checks",
+    "commit": null,
+    "summary": "The lane model and dashboard acceptance rules now match the owner's continuation instructions.",
+    "changes": [
+      "Use Luna at maximum reasoning effort for work lanes, with explicit tasks, proof requirements, output paths, process limits and budgets.",
+      "Measure Luna's results independently of historical Muse throughput.",
+      "Visually inspect active lanes and an opened prompt, log and result panel before reporting that the dashboard works."
+    ]
+  },
+  {
     "date": "2026-10-06",
     "title": "Rust in progress: 7 files from lanes (208 unverified rewrites, 445 in review)",
     "commit": "5ff41f95e330f6f8bccdc2684daa3085a0682348",
