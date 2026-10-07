@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-07",
+    "title": "Distinguish regression checks from newly verified proofs",
+    "commit": null,
+    "summary": "Regression lane progress now reports checks completed without overstating the strength of historical positive replays.",
+    "changes": [
+      "Show completed checks for old-proof regression lanes, including failures and positive replays awaiting a negative control.",
+      "Add a test ensuring that a positive replay without a caught wrong version does not appear as new verification.",
+      "Record the native-lane dashboard diagnosis, visual checks and proof-reporting limits in the devlog."
+    ]
+  },
+  {
+    "date": "2026-10-07",
     "title": "Show native Codex lanes in the dashboard and status updates",
     "commit": "9955c3e1f43f868c8f1eed4aca7999f0fe4dda1b",
     "summary": "Native Codex subagents now appear alongside process-backed lanes with their model, effort, prompt, logs and results.",

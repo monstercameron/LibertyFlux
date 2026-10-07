@@ -4,6 +4,7 @@ import importlib.util
 import json
 import tempfile
 import unittest
+from unittest.mock import patch
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -17,6 +18,13 @@ SCRATCH_ROOT.mkdir(parents=True, exist_ok=True)
 
 
 class TestCodexRegistry(unittest.TestCase):
+    def test_regression_progress_does_not_claim_positive_replays_as_verified(self):
+        rows = [{"outcome": "deferred", "settled": "holds", "mutant_caught": None},
+                {"outcome": "deferred", "settled": "fails"},
+                {"outcome": "not_reached"}]
+        with patch.object(server, "result_rows", return_value=rows):
+            self.assertEqual(server.yield_of("a-G03"), {"done": 2, "of": 3, "unit": "checked"})
+
     def write_registry(self, root, updated_at, lanes):
         path = root / "codex_lanes.json"
         path.write_text(json.dumps({"updated_at": updated_at, "lanes": lanes}), encoding="utf-8")

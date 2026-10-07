@@ -253,6 +253,9 @@ def yield_of(lane):
     rows = [r for r in rows if isinstance(r, dict)]
     if not rows or "outcome" not in rows[0]:
         return None
+    if lane.startswith("a-G"):
+        return {"done": sum(1 for r in rows if r.get("outcome") != "not_reached"),
+                "of": len(rows), "unit": "checked"}
     return {"done": sum(1 for r in rows if str(r.get("outcome")).startswith("verified")), "of": len(rows), "unit": "verified"}
 
 
