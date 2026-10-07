@@ -62145,6 +62145,15 @@
   "lane": "r-s488"
  },
  {
+  "address": "0x009A2B60",
+  "name": "BUMP",
+  "kind": "function",
+  "file": "functions/fn_009a2b60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-Q63"
+ },
+ {
   "address": "0x009A2C40",
   "name": "GIGGLE",
   "kind": "function",
@@ -75447,6 +75456,15 @@
   "lane": "r-s79"
  },
  {
+  "address": "0x00A7CA00",
+  "name": "sweep_touch_and_link",
+  "kind": "function",
+  "file": "functions/fn_00a7ca00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-Q63"
+ },
+ {
   "address": "0x00A7CAC0",
   "name": "splice_node",
   "kind": "function",
@@ -87570,6 +87588,24 @@
   "lane": "a-09"
  },
  {
+  "address": "0x00B645D0",
+  "name": "refresh_linked_records",
+  "kind": "function",
+  "file": "functions/fn_00b645d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-Q63"
+ },
+ {
+  "address": "0x00B64610",
+  "name": "NativeImpl_FORCE_CHAR_TO_DROP_WEAPON_2",
+  "kind": "function",
+  "file": "functions/fn_00b64610.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-Q63"
+ },
+ {
   "address": "0x00B646C0",
   "name": "resolve_with_override",
   "kind": "function",
@@ -87579,6 +87615,15 @@
   "lane": "a-G01"
  },
  {
+  "address": "0x00B64BE0",
+  "name": "PedWeapon_GetTotalAmmo",
+  "kind": "function",
+  "file": "functions/fn_00b64be0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-Q63"
+ },
+ {
   "address": "0x00B64C30",
   "name": "topmost_matching_record",
   "kind": "function",
@@ -87586,6 +87631,42 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G01"
+ },
+ {
+  "address": "0x00B64C80",
+  "name": "info_has_status_bits",
+  "kind": "function",
+  "file": "functions/fn_00b64c80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-Q63"
+ },
+ {
+  "address": "0x00B64CC0",
+  "name": "info_class_in_234",
+  "kind": "function",
+  "file": "functions/fn_00b64cc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-Q63"
+ },
+ {
+  "address": "0x00B64D00",
+  "name": "info_has_status_bit5",
+  "kind": "function",
+  "file": "functions/fn_00b64d00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-Q63"
+ },
+ {
+  "address": "0x00B64D30",
+  "name": "info_class_is_1",
+  "kind": "function",
+  "file": "functions/fn_00b64d30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-Q63"
  },
  {
   "address": "0x00B64D60",
@@ -87989,8 +88070,8 @@
   "kind": "function",
   "file": "functions/fn_00b6d9d0.rs",
   "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s77"
+  "checker": "version 8",
+  "lane": "a-G04"
  },
  {
   "address": "0x00B6DA00",
