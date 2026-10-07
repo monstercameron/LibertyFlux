@@ -171,7 +171,7 @@ tr.current td { background: var(--raised); }
       <button class="tab" data-filter="running" aria-pressed="true">Running</button>
       <button class="tab" data-filter="ended" aria-pressed="false">Ended</button>
       <button class="tab" data-filter="died" aria-pressed="false">Died</button>
-      <input id="search" type="search" placeholder="Filter by lane, kind or effort" aria-label="Filter lanes">
+      <input id="search" type="search" placeholder="Filter by lane, kind, model or effort" aria-label="Filter lanes">
     </div>
     <ul class="legend" aria-label="What the dot on a running lane means">
       <li><span class="heat" style="background:#ff8a3d"></span>wrote to its log in the last 2 minutes</li>
@@ -253,15 +253,21 @@ tr.current td { background: var(--raised); }
     var kinds = {};
     running.forEach(function (l) { kinds[l.kind] = (kinds[l.kind] || 0) + 1; });
     var breakdown = Object.keys(kinds).sort().map(function (k) { return kinds[k] + " " + k; }).join(", ") || "none";
-    var agentMemory = running.reduce(function (sum, l) { return sum + (l.agent_memory_mb || 0); }, 0);
+    var codexMemoryUnknown = (state.lanes || []).some(function (l) { return l.source === "codex" && l.state !== "finished" && l.state !== "died" && l.state !== "stopped"; });
+    var museMemory = running.reduce(function (sum, l) { return sum + (l.source === "codex" ? 0 : (l.agent_memory_mb || 0)); }, 0);
+    var memoryText = codexMemoryUnknown ? (museMemory ? "Muse processes: " + (museMemory / 1024).toFixed(1) + " GB; native Codex subagent memory unavailable (no per-task OS PID)" : "Unavailable for native Codex subagents (no per-task OS PID)") : (museMemory / 1024).toFixed(1) + " GB";
+    var registry = state.codex_registry || {};
+    var registryText = registry.state === "fresh" ? "fresh" : (registry.state === "stale" ? "stale; lane state shown as unknown" : "unknown");
+    if (registry.age_seconds != null && registry.state !== "unknown") registryText += " (" + Math.round(registry.age_seconds) + " s old)";
     var waiting = (sup.min_free_gb != null && m.free_gb < sup.min_free_gb) || (sup.min_headroom_gb != null && m.commit_headroom_gb < sup.min_headroom_gb);
     var facts = [
       ["Lanes running", running.length + (sup.target ? " of a target of " + sup.target : ""), false],
       ["By kind", breakdown, false],
-      ["Memory held by the agents themselves", (agentMemory / 1024).toFixed(1) + " GB", false],
-      ["Supervisor starts lanes above", (sup.min_free_gb != null ? sup.min_free_gb + " GB free and " + sup.min_headroom_gb + " GB headroom" : "unknown"), false],
+      ["Memory held by the agents themselves", memoryText, false],
+      ["Codex lane registry", registryText, registry.state === "stale"],
+      ["Supervisor starts Muse lanes above", (sup.min_free_gb != null ? sup.min_free_gb + " GB free and " + sup.min_headroom_gb + " GB headroom" : "unknown"), false],
       ["Room for another lane right now", waiting ? "no, waiting for memory" : "yes", waiting],
-      ["New lanes", state.supervisor && state.supervisor.stop_file ? "stopped by the STOP file" : "allowed", !!(state.supervisor && state.supervisor.stop_file)]
+      ["New lanes", state.supervisor && state.supervisor.stop_file ? "Muse supervisor paused; Codex lanes managed by coordinator" : "Muse launches allowed; Codex lanes managed by coordinator", !!(state.supervisor && state.supervisor.stop_file)]
     ];
     $("machine").innerHTML = facts.map(function (r) { return "<div><dt>" + r[0] + '</dt><dd class="' + (r[2] ? "warn" : "") + '">' + esc(r[1]) + "</dd></div>"; }).join("");
     $("suplog").textContent = ((state.supervisor || {}).log || []).join("\n") || "No supervisor log yet.";
@@ -270,9 +276,9 @@ tr.current td { background: var(--raised); }
   function matches(l) {
     if (filter === "running" && l.state !== "running") return false;
     if (filter === "ended" && l.state !== "finished") return false;
-    if (filter === "died" && l.state !== "died" && l.state !== "stopped") return false;
+    if (filter === "died" && l.state !== "died" && l.state !== "stopped" && l.state !== "unknown") return false;
     if (!query) return true;
-    return (l.lane + " " + l.kind + " " + (l.effort || "") + " " + (l.brief || "") + " " + (l.experiment || "")).toLowerCase().indexOf(query) >= 0;
+    return (l.lane + " " + l.kind + " " + (l.model || "") + " " + (l.effort || "") + " " + (l.brief || "") + " " + (l.experiment || "")).toLowerCase().indexOf(query) >= 0;
   }
 
   function renderLanes() {
@@ -281,12 +287,13 @@ tr.current td { background: var(--raised); }
     (state.lanes || []).forEach(function (l) { if (l.state === "running") counts.running++; else if (l.state === "finished") counts.ended++; else counts.died++; });
     document.querySelectorAll(".tab[data-filter]").forEach(function (t) {
       var key = t.dataset.filter;
-      t.textContent = { running: "Running", ended: "Ended in the last 3 hours", died: "Died or stopped" }[key] + " " + counts[key];
+      t.textContent = { running: "Running", ended: "Ended in the last 3 hours", died: "Died, stopped, or unknown" }[key] + " " + counts[key];
     });
     if (!lanes.length) { $("lanes").innerHTML = '<li class="empty">No lanes match.</li>'; return; }
     $("lanes").innerHTML = lanes.map(function (l) {
       var quiet = minutesSince(l.last_activity), age = l.state === "running" ? minutesSince(l.started) : null;
       var meta = [l.kind];
+      if (l.model) meta.push("model " + l.model);
       if (l.effort) meta.push("effort " + l.effort);
       if (l.brief) meta.push("brief " + l.brief);
       if (age != null) meta.push("running " + span(age));
@@ -306,7 +313,9 @@ tr.current td { background: var(--raised); }
 
   function renderDetail(d) {
     var l = (state.lanes || []).filter(function (x) { return x.lane === d.lane; })[0] || { lane: d.lane };
-    var facts = [["State", l.state === "died" ? "died (exit code " + l.exit_code + ")" : (l.state || "unknown")], ["Kind", l.kind], ["Reasoning effort", l.effort || "not recorded"],
+    var facts = [["State", l.state === "died" ? "died (exit code " + l.exit_code + ")" : (l.state || "unknown")], ["Kind", l.kind], ["Model", l.model || "not recorded"], ["Reasoning effort", l.effort || "not recorded"],
+      ["Execution", l.source === "codex" ? "Native Codex subagent (no per-task OS PID)" : "Muse process"],
+      ["Agent memory", l.source === "codex" ? "Unavailable (no per-task OS PID)" : (l.agent_memory_mb == null ? "not recorded" : l.agent_memory_mb + " MB")],
       ["Brief version", l.brief || "not recorded"], ["Started", l.started ? l.started.replace("T", " ") : "not recorded"],
       ["Last activity", l.last_activity ? l.last_activity.replace("T", " ") : "none"], ["Batch", l.batch ? l.batch + " functions" : "not a batch lane"],
       ["Result so far", l.yield ? l.yield.done + " of " + l.yield.of + " " + l.yield.unit : "nothing written yet"]];
@@ -316,14 +325,15 @@ tr.current td { background: var(--raised); }
     html += '<h3>Latest log lines</h3><div class="box" id="logbox"><pre>' + esc((d.log || []).join("\n") || "No log yet.") + "</pre></div>";
     if (d.summary) html += '<h3>Lane summary</h3><div class="box"><pre>' + esc(d.summary) + "</pre></div>";
     if (d.results && d.results.length) {
-      html += "<h3>Results (" + d.results.length + ')</h3><div class="scroll"><table><thead><tr><th>Function</th><th>Size</th><th>Outcome</th><th>Tries</th><th>Wrong version caught</th><th>Note</th></tr></thead><tbody>' +
+      var resultLabel = "Results (" + d.results.length + (d.results_total > d.results.length ? " of " + d.results_total + "; first " + d.results.length + " shown" : "") + ")";
+      html += "<h3>" + esc(resultLabel) + '</h3><div class="scroll"><table><thead><tr><th>Function</th><th>Size</th><th>Outcome</th><th>Tries</th><th>Wrong version caught</th><th>Note</th></tr></thead><tbody>' +
         d.results.map(function (r) {
           return '<tr><td class="mono">' + esc(r.name || r.address) + '</td><td class="mono">' + esc(r.size == null ? "" : r.size) + "</td><td>" + esc(r.outcome || r.confidence || "") + (r.reason ? " (" + esc(r.reason) + ")" : "") +
             '</td><td class="mono">' + esc(r.attempts == null ? "" : r.attempts) + "</td><td>" + (r.mutant_caught == null ? "not recorded" : (r.mutant_caught ? "yes" : "no")) + "</td><td>" + esc(r.detail) + "</td></tr>";
         }).join("") + "</tbody></table></div>";
     }
     html += "<details" + (detailOpen ? " open" : "") + ' id="prompt"><summary>Initial prompt (' + fmt.format(d.prompt_chars) + ' characters)</summary><div class="box" style="max-height:520px;margin-top:8px"><pre>' +
-      esc(d.prompt || "No brief file for this lane.") + "</pre></div></details>";
+      esc(d.prompt || "No initial prompt recorded for this lane.") + "</pre></div></details>";
     var box = $("detail"), keep = box.querySelector("#logbox"), atBottom = !keep || keep.scrollTop + keep.clientHeight >= keep.scrollHeight - 8;
     box.innerHTML = html; box.hidden = false; document.body.classList.add("viewing");
     var logbox = $("logbox"); if (atBottom) logbox.scrollTop = logbox.scrollHeight;

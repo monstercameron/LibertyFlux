@@ -20,9 +20,13 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+HERE = Path(__file__).resolve().parent
+ROOT = next((path for path in (HERE, *HERE.parents) if (path / "docs" / "data" / "progress.json").is_file()), HERE.parents[1])
 LOGS = ROOT / ".artifacts" / "logs"
 SCRATCH = ROOT / ".artifacts" / "scratch"
+CODEX_REGISTRY = SCRATCH / "coordinator" / "codex_lanes.json"
+CODEX_REGISTRY_MAX_AGE_SECONDS = 180
+REGISTRY_STATES = {"running", "finished", "died", "stopped", "unknown"}
 DELIVERABLES = ("summary.txt", "report.md", "devlog-entry.html")
 
 
@@ -51,6 +55,52 @@ def running_lanes():
     return lanes, memory
 
 
+def read_codex_registry(path=CODEX_REGISTRY, now=None):
+    """Read explicit coordinator state; stale or invalid data never reports a lane as running."""
+    now = datetime.datetime.now().timestamp() if now is None else now
+    try:
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+    except (OSError, ValueError):
+        return {}, {"state": "unknown", "fresh": False, "age_seconds": None}
+    if not isinstance(data, dict) or not isinstance(data.get("lanes"), list):
+        return {}, {"state": "unknown", "fresh": False, "age_seconds": None}
+    updated_at = data.get("updated_at")
+    try:
+        updated = datetime.datetime.fromisoformat(updated_at.replace("Z", "+00:00"))
+        age = now - updated.timestamp()
+    except (AttributeError, TypeError, ValueError, OverflowError):
+        return {}, {"state": "unknown", "fresh": False, "age_seconds": None}
+    fresh = 0 <= age <= CODEX_REGISTRY_MAX_AGE_SECONDS
+    lanes = {}
+    for item in data["lanes"]:
+        if not isinstance(item, dict):
+            continue
+        lane = item.get("lane")
+        if not isinstance(lane, str) or not re.fullmatch(r"[A-Za-z0-9][\w-]{0,40}", lane):
+            continue
+        state = item.get("state")
+        if not isinstance(state, str) or state not in REGISTRY_STATES or not fresh:
+            state = "unknown"
+        lanes[lane] = {"state": state,
+                       "model": item.get("model") if isinstance(item.get("model"), str) else None,
+                       "effort": item.get("effort") if isinstance(item.get("effort"), str) else None}
+    return lanes, {"state": "fresh" if fresh else ("stale" if age > CODEX_REGISTRY_MAX_AGE_SECONDS else "unknown"),
+                   "fresh": fresh, "age_seconds": round(age, 1)}
+
+
+def classify_lane(lane, registry_lanes, muse_live, exited, deliverables_complete, production_complete):
+    """Prefer the coordinator's explicit lane state over log or deliverable heuristics."""
+    if lane in registry_lanes:
+        return registry_lanes[lane]["state"]
+    if lane in muse_live:
+        return "running"
+    if exited and (deliverables_complete or production_complete):
+        return "finished"
+    if exited:
+        return "exited-incomplete"
+    return "not-running"
+
+
 def last_line(path):
     try:
         lines = [l for l in path.read_text(encoding="utf-8", errors="replace").splitlines() if l.strip()]
@@ -77,34 +127,39 @@ def main():
           f"functions game={progress['functions']['game']} stages={progress['stages']} "
           f"structures={progress['structures']} symbols={progress['symbols']}")
 
-    live, muse_memory = running_lanes()
+    muse_live, muse_memory = running_lanes()
+    registry_lanes, registry_status = read_codex_registry(now=datetime.datetime.now().timestamp())
     rows = []
+    seen = set()
     for log in sorted(LOGS.glob("*.log")):
         lane = log.stem
         if lane.startswith("ghidra"):
             continue
+        seen.add(lane)
         done = [name for name in DELIVERABLES if (SCRATCH / lane / name).exists()]
         text = last_line(log)
         exited = "lane exited with code" in text
-        if lane in live:
-            state = "running"
-        elif exited and (len(done) == len(DELIVERABLES) or production_done(lane)):
-            state = "finished"
-        elif exited:
-            state = "exited-incomplete"
-        else:
-            state = "not-running"
-        rows.append((state, lane, age_minutes(log), len(done), text[:150]))
+        state = classify_lane(lane, registry_lanes, muse_live, exited, len(done) == len(DELIVERABLES), production_done(lane))
+        rows.append((state, lane, age_minutes(log), len(done), text[:150], registry_lanes.get(lane)))
+    for lane, entry in registry_lanes.items():
+        if lane in seen:
+            continue
+        done = sum(1 for name in DELIVERABLES if (SCRATCH / lane / name).exists())
+        rows.append((entry["state"], lane, None, done, "no log file", entry))
 
     counts = {}
     for state, *_ in rows:
         counts[state] = counts.get(state, 0) + 1
     print("lanes: " + ", ".join(f"{n} {s}" for s, n in sorted(counts.items())) if rows else "lanes: none")
     brief = "--brief" in sys.argv
-    for state, lane, age, done, text in rows:
+    for state, lane, age, done, text, entry in rows:
         if brief and state == "finished":
             continue
-        print(f"  {state:17} {lane:22} log {age:4.0f} min ago, {done}/3 deliverables | {text}")
+        age_text = f"log {age:4.0f} min ago" if age is not None else "log age unknown"
+        model_text = ""
+        if entry:
+            model_text = f" | {entry.get('model') or 'model unknown'} / {entry.get('effort') or 'effort unknown'}"
+        print(f"  {state:17} {lane:22} {age_text}, {done}/3 deliverables | {text[:150]}{model_text}")
     pending = sorted(
         d.name for d in SCRATCH.iterdir()
         if (d / "devlog-entry.html").exists() and (d / "summary.txt").exists() and not (d / "integrated.txt").exists()
@@ -126,7 +181,11 @@ def main():
     memory = powershell(
         "$o = Get-CimInstance Win32_OperatingSystem; "
         "'{0:N1} GB free of {1:N1} GB' -f ($o.FreePhysicalMemory/1MB), ($o.TotalVisibleMemorySize/1MB)")
-    print(f"memory: {memory}; muse processes use {muse_memory / 1e9:.1f} GB across {len(live)} lanes")
+    codex_memory = "; native Codex subagent memory unavailable per lane (no per-task OS PID)" if registry_lanes else ""
+    print(f"memory: {memory}; Muse processes use {muse_memory / 1e9:.1f} GB across {len(muse_live)} lanes{codex_memory}")
+    if CODEX_REGISTRY.exists():
+        age_text = f", {registry_status['age_seconds']:.0f}s old" if registry_status["age_seconds"] is not None else ""
+        print(f"Codex registry: {registry_status['state']}{age_text}; stale or invalid entries are never counted as running")
 
     git = subprocess.run(["git", "-C", str(ROOT), "status", "--short"], capture_output=True, text=True).stdout
     ahead = subprocess.run(["git", "-C", str(ROOT), "rev-list", "--count", "origin/main..HEAD"],
@@ -155,7 +214,7 @@ def write_progress(progress, counts):
     progress["activity"] = {
         "lanes_running": counts.get("running", 0),
         "lanes_finished": counts.get("finished", 0),
-        "lanes_incomplete": counts.get("exited-incomplete", 0) + counts.get("not-running", 0),
+        "lanes_incomplete": counts.get("exited-incomplete", 0) + counts.get("not-running", 0) + counts.get("died", 0) + counts.get("stopped", 0) + counts.get("unknown", 0),
         "devlog_entries": devlog_entries,
     }
     path = ROOT / "docs" / "data" / "progress.json"

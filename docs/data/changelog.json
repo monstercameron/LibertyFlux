@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-07",
-    "title": "Use Luna lanes with explicit instructions and visual dashboard checks",
+    "title": "Show native Codex lanes in the dashboard and status updates",
     "commit": null,
+    "summary": "Native Codex subagents now appear alongside process-backed lanes with their model, effort, prompt, logs and results.",
+    "changes": [
+      "Read explicit coordinator lane state from a local registry; stale or malformed registry data never claims a lane is running.",
+      "Include active Codex lanes in status counts and dashboard history, while marking per-task process memory as unavailable.",
+      "Show model and effort in lane cards and details, preserve initial prompts, and state when the result table shows only the first rows.",
+      "Clarify that the paused Muse supervisor does not stop coordinator-managed Codex lanes.",
+      "Add regression tests for fresh, stale, finished and malformed registry state and unknown agent memory; visually check the rendered lane list and log panels."
+    ]
+  },
+  {
+    "date": "2026-10-07",
+    "title": "Use Luna lanes with explicit instructions and visual dashboard checks",
+    "commit": "a4df7bcd2438677b1d063c6d357cc94bb8891f18",
     "summary": "The lane model and dashboard acceptance rules now match the owner's continuation instructions.",
     "changes": [
       "Use Luna at maximum reasoning effort for work lanes, with explicit tasks, proof requirements, output paths, process limits and budgets.",

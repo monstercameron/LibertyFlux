@@ -28,7 +28,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parents[1]
+ROOT = next((path for path in (HERE, *HERE.parents) if (path / "docs" / "data" / "progress.json").is_file()), HERE.parents[1])
 ART = ROOT / ".artifacts"
 LOGS = ART / "logs"
 SCRATCH = ART / "scratch"
@@ -37,6 +37,9 @@ BRIEFS = COORD / "briefs"
 LISTS = COORD / "lists"
 LANE_NAME = re.compile(r"^[A-Za-z0-9][\w-]{0,40}$")
 RECENT_SECONDS = 3 * 3600
+CODEX_REGISTRY = COORD / "codex_lanes.json"
+CODEX_REGISTRY_MAX_AGE_SECONDS = 180
+REGISTRY_STATES = {"running", "finished", "died", "stopped", "unknown"}
 HISTORY_FILE = ART / "cache" / "dashboard" / "history.jsonl"
 HISTORY_EVERY_SECONDS = 60
 HISTORY_KEEP = 7 * 24 * 60          # a week of one-minute samples
@@ -136,7 +139,7 @@ def process_loop():
 _rows = {}
 
 
-def cached_row(lane, live, experiments):
+def cached_row(lane, live, experiments, registry_entry=None):
     """A lane's row changes only when its log, results or process state change; reading 170 lanes' files on
     every poll took almost two seconds."""
     def mtime(path):
@@ -146,11 +149,12 @@ def cached_row(lane, live, experiments):
             return 0
     process = live.get(lane) or {}
     key = (mtime(LOGS / f"{lane}.log"), mtime(SCRATCH / lane / "results.json"), mtime(SCRATCH / lane / "names.json"),
-           mtime(SCRATCH / lane / "summary.txt"), process.get("pid"), process.get("mem_mb"))
+           mtime(SCRATCH / lane / "summary.txt"), process.get("pid"), process.get("mem_mb"),
+           tuple(sorted((registry_entry or {}).items())))
     hit = _rows.get(lane)
     if hit and hit[0] == key:
         return hit[1]
-    row = lane_row(lane, live, experiments)
+    row = lane_row(lane, live, experiments, registry_entry)
     _rows[lane] = (key, row)
     return row
 
@@ -160,6 +164,49 @@ def read_json(path, default=None):
         return json.loads(path.read_text(encoding="utf-8-sig"))
     except (OSError, ValueError):
         return default
+
+
+def read_codex_registry(path=CODEX_REGISTRY, now=None):
+    """Read coordinator-owned Codex lane state; a stale or invalid registry never marks a lane running."""
+    now = time.time() if now is None else now
+    try:
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+    except (OSError, ValueError):
+        return {}, {"state": "unknown", "fresh": False, "updated_at": None, "age_seconds": None,
+                    "error": "missing or invalid registry"}
+    if not isinstance(data, dict) or not isinstance(data.get("lanes"), list):
+        return {}, {"state": "unknown", "fresh": False, "updated_at": None, "age_seconds": None,
+                    "error": "invalid registry structure"}
+    updated_at = data.get("updated_at")
+    try:
+        updated = datetime.fromisoformat(updated_at.replace("Z", "+00:00"))
+        age = now - updated.timestamp()
+    except (AttributeError, TypeError, ValueError, OverflowError):
+        return {}, {"state": "unknown", "fresh": False, "updated_at": None, "age_seconds": None,
+                    "error": "invalid registry timestamp"}
+    fresh = 0 <= age <= CODEX_REGISTRY_MAX_AGE_SECONDS
+    entries = {}
+    for item in data["lanes"]:
+        if not isinstance(item, dict):
+            continue
+        lane = item.get("lane")
+        if not isinstance(lane, str) or not LANE_NAME.fullmatch(lane):
+            continue
+        state = item.get("state")
+        if not isinstance(state, str) or state not in REGISTRY_STATES or not fresh:
+            state = "unknown"
+        entries[lane] = {
+            "state": state,
+            "model": item.get("model") if isinstance(item.get("model"), str) else None,
+            "effort": item.get("effort") if isinstance(item.get("effort"), str) else None,
+            "started": item.get("started") if isinstance(item.get("started"), str) else None,
+            "prompt": item.get("prompt") if isinstance(item.get("prompt"), str) else None,
+            "source": "codex",
+        }
+    registry = {"state": "fresh" if fresh else ("stale" if age > CODEX_REGISTRY_MAX_AGE_SECONDS else "unknown"),
+                "fresh": fresh, "updated_at": updated_at if isinstance(updated_at, str) else None,
+                "age_seconds": round(age, 1), "error": None if fresh else "registry is stale or from the future"}
+    return entries, registry
 
 
 def tail(path, lines=1, limit=64 * 1024):
@@ -219,7 +266,7 @@ def brief_tag(lane):
     return match.group(1) if match else None
 
 
-def lane_row(lane, live, experiments):
+def lane_row(lane, live, experiments, registry_entry=None):
     log = LOGS / f"{lane}.log"
     try:
         stat = log.stat()
@@ -233,7 +280,9 @@ def lane_row(lane, live, experiments):
         if match:
             exited = int(match.group(1))
     has_results = (SCRATCH / lane / "summary.txt").exists()
-    if process:
+    if registry_entry is not None:
+        state = registry_entry["state"]
+    elif process:
         state = "running"
     elif exited == 0 or has_results:
         state = "finished"
@@ -248,8 +297,11 @@ def lane_row(lane, live, experiments):
     batch = read_json(LISTS / f"{lane}.json")
     experiment = experiments.get(lane)
     return {"lane": lane, "kind": kind_of(lane), "state": state, "exit_code": exited,
-            "effort": (process or {}).get("effort") or (experiment or {}).get("effort"),
-            "started": (process or {}).get("started"), "agent_memory_mb": (process or {}).get("mem_mb"),
+            "model": (registry_entry or {}).get("model") or (process or {}).get("model"),
+            "effort": (registry_entry or {}).get("effort") or (process or {}).get("effort") or (experiment or {}).get("effort"),
+            "source": (registry_entry or {}).get("source") or "muse",
+            "started": (registry_entry or {}).get("started") or (process or {}).get("started"),
+            "agent_memory_mb": None if registry_entry is not None else (process or {}).get("mem_mb"),
             "last_activity": datetime.fromtimestamp(stat.st_mtime).isoformat(timespec="seconds") if stat else None,
             "progress": progress[:300], "yield": yield_of(lane), "brief": brief_tag(lane),
             "experiment": (experiment or {}).get("factor"), "batch": len(batch) if isinstance(batch, list) else None}
@@ -264,9 +316,10 @@ def state():
         live = dict(_processes["lanes"])
         process_age = time.time() - _processes["at"] if _processes["at"] else None
         process_error = _processes["error"]
+    registry_lanes, registry_status = read_codex_registry(now=time.time())
     experiments = {row["lane"]: row for row in (read_json(COORD / "experiments.json", []) or []) if not row.get("never_ran")}
     now = time.time()
-    names = set(live)
+    names = set(live) | set(registry_lanes)
     try:
         for entry in os.scandir(LOGS):
             if entry.name.endswith(".log") and now - entry.stat().st_mtime < RECENT_SECONDS:
@@ -275,8 +328,8 @@ def state():
                     names.add(name)
     except OSError:
         pass
-    lanes = [cached_row(name, live, experiments) for name in sorted(names)]
-    order = {"running": 0, "died": 1, "stopped": 2, "finished": 3}
+    lanes = [cached_row(name, live, experiments, registry_lanes.get(name)) for name in sorted(names)]
+    order = {"running": 0, "died": 1, "stopped": 2, "unknown": 3, "finished": 4}
     lanes.sort(key=lambda row: (order[row["state"]], row["last_activity"] or ""), reverse=False)
     progress = read_json(ROOT / "docs" / "data" / "progress.json", {}) or {}
     history = read_json(COORD / "review_history.json", []) or []
@@ -287,7 +340,7 @@ def state():
             "process_list_age_s": round(process_age, 1) if process_age is not None else None, "process_list_error": process_error,
             "functions": progress.get("functions"), "stages": progress.get("stages"), "phase": progress.get("phase"),
             "progress_updated": progress.get("updated_at") or progress.get("updated"),
-            "review": history[-1] if history else None,
+            "review": history[-1] if history else None, "codex_registry": registry_status,
             "supervisor": {"settings": read_json(COORD / "supervisor.json"), "log": tail(LOGS / "supervisor.log", 6),
                            "stop_file": (COORD / "STOP").exists()},
             "lanes": lanes}
@@ -296,11 +349,16 @@ def state():
 def lane_detail(lane):
     if not LANE_NAME.match(lane):
         return None
-    brief = BRIEFS / f"{lane}.txt"
-    try:
-        prompt = brief.read_text(encoding="utf-8", errors="replace")
-    except OSError:
-        prompt = None
+    registry_lanes, _ = read_codex_registry()
+    registry_entry = registry_lanes.get(lane) or {}
+    prompt = registry_entry.get("prompt")
+    for candidate in (SCRATCH / lane / "prompt.txt", COORD / "prompts" / f"{lane}.txt", BRIEFS / f"{lane}.txt"):
+        if prompt:
+            break
+        try:
+            prompt = candidate.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
     summary = SCRATCH / lane / "summary.txt"
     try:
         summary_text = summary.read_text(encoding="utf-8", errors="replace")
@@ -313,8 +371,10 @@ def lane_detail(lane):
                  "reason": r.get("reason"), "attempts": r.get("attempts"), "minutes": r.get("minutes"),
                  "mutant_caught": r.get("mutant_caught"), "confidence": r.get("confidence"),
                  "detail": str(r.get("detail") or r.get("evidence") or "")[:400]} for r in rows if isinstance(r, dict)][:400]
-    return {"lane": lane, "prompt": prompt, "prompt_chars": len(prompt) if prompt else 0, "log": tail(LOGS / f"{lane}.log", 80),
-            "summary": summary_text, "results": slim, "batch": read_json(LISTS / f"{lane}.json")}
+    return {"lane": lane, "model": registry_entry.get("model"), "effort": registry_entry.get("effort"),
+            "prompt": prompt, "prompt_chars": len(prompt) if prompt else 0, "log": tail(LOGS / f"{lane}.log", 80),
+            "summary": summary_text, "results": slim, "results_total": len(rows) if isinstance(rows, list) else 0,
+            "batch": read_json(LISTS / f"{lane}.json")}
 
 
 # ---------------------------------------------------------------------------------------------------------
@@ -327,8 +387,9 @@ _history = []  # rows as written to HISTORY_FILE, oldest first
 def history_sample(now, lanes, progress, mem):
     """One history row. `lanes` is the live-lane map, `progress` the site's progress data, `mem` memory() or None."""
     stages = (progress or {}).get("stages") or {}
+    memory_unknown = any(p.get("source") == "codex" for p in lanes.values())
     row = {"t": int(now), "lanes": len(lanes), "verified": stages.get("verified"), "rewritten": stages.get("rewritten"),
-           "agent_gb": round(sum((p.get("mem_mb") or 0) for p in lanes.values()) / 1024, 2),
+           "agent_gb": None if memory_unknown else round(sum((p.get("mem_mb") or 0) for p in lanes.values()) / 1024, 2),
            "mem_pct": None, "commit_pct": None}
     if mem and mem.get("total_gb") and mem.get("commit_limit_gb"):
         row["mem_pct"] = round(100 * (1 - mem["free_gb"] / mem["total_gb"]), 1)
@@ -407,6 +468,16 @@ def compose_history(rows, reviews, since, until, max_points=HISTORY_MAX_POINTS):
             "memory": series("mem_pct"), "commit": series("commit_pct"), "agent_gb": series("agent_gb")}
 
 
+def history_lanes(muse_lanes, codex_lanes, registry_fresh):
+    """Merge explicit fresh Codex activity with Muse processes without assigning Codex memory."""
+    lanes = dict(muse_lanes)
+    if registry_fresh:
+        for lane, entry in codex_lanes.items():
+            if entry.get("state") == "running":
+                lanes.setdefault(lane, entry)
+    return lanes
+
+
 def history_loop():
     """Sample once a minute for as long as the server runs."""
     with _lock:
@@ -417,6 +488,8 @@ def history_loop():
             time.sleep(1)  # the first sample waits for the first process list
         with _lock:
             lanes = dict(_processes["lanes"])
+        registry_lanes, registry_status = read_codex_registry(now=time.time())
+        lanes = history_lanes(lanes, registry_lanes, registry_status["fresh"])
         row = history_sample(time.time(), lanes, read_json(ROOT / "docs" / "data" / "progress.json", {}), memory())
         try:
             with _lock:
