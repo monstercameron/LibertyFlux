@@ -2,7 +2,7 @@
   {
     "date": "2026-10-07",
     "title": "Show native Codex lanes in the dashboard and status updates",
-    "commit": null,
+    "commit": "9955c3e1f43f868c8f1eed4aca7999f0fe4dda1b",
     "summary": "Native Codex subagents now appear alongside process-backed lanes with their model, effort, prompt, logs and results.",
     "changes": [
       "Read explicit coordinator lane state from a local registry; stale or malformed registry data never claims a lane is running.",
