@@ -2,7 +2,7 @@
   {
     "date": "2026-10-07",
     "title": "Withdraw an event-handler proof that fails current call comparison",
-    "commit": null,
+    "commit": "9cd88673ddb8d37b05de1ef93069c9899a09794b",
     "summary": "The verified count decreases by one after replaying a recorded proof on the current stock checker.",
     "changes": [
       "The recorded proving library and a fresh rebuild both fail the call receiver comparison in 970 of 1,000 trials; all original trials complete.",
