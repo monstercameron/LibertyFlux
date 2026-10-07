@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-07",
+    "title": "Withdraw an event-handler proof that fails current call comparison",
+    "commit": null,
+    "summary": "The verified count decreases by one after replaying a recorded proof on the current stock checker.",
+    "changes": [
+      "The recorded proving library and a fresh rebuild both fail the call receiver comparison in 970 of 1,000 trials; all original trials complete.",
+      "Withdraw the old verification while retaining its source and evidence privately for repair. This result does not establish the cause of the mismatch."
+    ]
+  },
+  {
+    "date": "2026-10-07",
     "title": "Restore nine bounded proofs with current negative controls",
     "commit": "ec9cd0722c696e9b16ebf35199924d6bf9569c87",
     "summary": "Historical proofs now complete on stock checker v8 with valid objects, exercised helper calls and explicit limits on the tested inputs.",
