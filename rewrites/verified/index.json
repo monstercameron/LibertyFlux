@@ -41490,6 +41490,15 @@
     "lane": "a-01"
   },
   {
+    "address": "0x0086EA80",
+    "name": "START_NEW_SCRIPT",
+    "kind": "native",
+    "file": "natives/fn_0086ea80.rs",
+    "trials": 1000,
+    "checker": "version 8",
+    "lane": "a-Q137"
+  },
+  {
     "address": "0x0086F0C0",
     "name": "PRINTSTRING",
     "kind": "native",
@@ -41506,6 +41515,15 @@
     "trials": 1000,
     "checker": "version 2",
     "lane": "r-n106"
+  },
+  {
+    "address": "0x0086F130",
+    "name": null,
+    "kind": "function",
+    "file": "functions/fn_0086f130.rs",
+    "trials": 1000,
+    "checker": "version 8",
+    "lane": "a-Q145"
   },
   {
     "address": "0x0086F170",

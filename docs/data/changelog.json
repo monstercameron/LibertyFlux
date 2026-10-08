@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-08",
-    "title": "Store the hourly reliability findings",
+    "title": "Verify native callback forwarding",
     "commit": null,
+    "summary": "Accept two independently reviewed native callback wrappers with explicit harness limits.",
+    "changes": [
+      "Each wrapper completed one thousand original trials on the pinned stock checker and rejected a same-contract semantic mutant.",
+      "Scripted callbacks, untested null-state branches, writable-data snapshot limits and the read-only lookup ordering caveat remain documented.",
+      "Derived progress increases by two verified game functions."
+    ]
+  },
+  {
+    "date": "2026-10-08",
+    "title": "Store the hourly reliability findings",
+    "commit": "efa7d22ad6f1cd1d362cae18b8c21454290b0d64",
     "summary": "Save the measured hourly review in the searchable project devlog.",
     "changes": [
       "The hourly review now appears in the devlog with measured throughput, portable progress and the workstation snapshot.",
