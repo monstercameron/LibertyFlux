@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-08",
-    "title": "Reject invalid checker contracts before launch",
+    "title": "Record the hourly reliability and portability review",
     "commit": null,
+    "summary": "The review measures accepted progress and keeps portability and launch reliability ahead of unchecked throughput.",
+    "changes": [
+      "Measured eight additional verified functions and 785 verified bytes; proven portable counterpart totals remained unchanged.",
+      "Recorded streaming lifecycle validation, held proof limitations and the failed lockfile proposal regression.",
+      "Centralized dispatch, revised the recovery brief, gated new builds and checked workstation health."
+    ]
+  },
+  {
+    "date": "2026-10-08",
+    "title": "Reject invalid checker contracts before launch",
+    "commit": "605c2e0408cde8b9649d27910ca9d60e4887b46f",
     "summary": "Mapped address and script checks reject malformed production inputs before a checker slot is acquired.",
     "changes": [
       "Validate executable function RVAs, explicit expected VAs and direct or tail call-site opcodes against the mapped image.",
