@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-08",
+    "title": "Verify resource removal and virtual release",
+    "commit": null,
+    "summary": "Accept a complete resource wrapper with explicitly bounded fixture coverage.",
+    "changes": [
+      "One thousand stock trials completed with every configured comparison passing and a same-contract heap mutation rejected.",
+      "Scripted helper boundaries and untested empty, absent-resource and later-match inputs remain documented with the rewrite.",
+      "The derived verified game-function count increases by one."
+    ]
+  },
+  {
+    "date": "2026-10-08",
     "title": "Track streamed file requests through completion",
     "commit": "736b6f7816989ba759cb11eddf70ad81a483d733",
     "summary": "Connect portable streaming reads to the platform file lifecycle without losing pending requests or unrelated completions.",
