@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-07",
-    "title": "Keep Luna build and checker slots flowing after failed launches",
+    "title": "Restore four small call-wrapper proofs",
     "commit": null,
+    "summary": "Four Rust wrappers now have current checker evidence and matching behavioral negative controls.",
+    "changes": [
+      "Each accepted rewrite passed 1,000 trials with every original run completed and every declared helper exercised; each wrong implementation failed under the identical contract.",
+      "The accepted wrappers cover one-word and two-word local contexts, spatial parameter forwarding, and both readiness outcomes of float accumulation.",
+      "Frame addresses are excluded while initialized pointee words are compared; helper bodies are scripted and the remaining return and fixture limits are documented in each source.",
+      "Two additional stream candidates remain partial after review found pinned inputs hiding incorrect helper-output consumption; they are excluded from the verified tree."
+    ]
+  },
+  {
+    "date": "2026-10-07",
+    "title": "Keep Luna build and checker slots flowing after failed launches",
+    "commit": "c48cc092703c3a37c9ddcd5e3445b58189bbbb44",
     "summary": "Luna lanes acquire bounded local execution slots automatically so completed jobs and failed starts do not stall the pipeline.",
     "changes": [
       "Added a shared three-slot command wrapper with Windows cross-process locking and physical-memory and commit-headroom guards.",
