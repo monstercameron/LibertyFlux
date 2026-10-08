@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-08",
+    "title": "Record hourly proof throughput and dispatch corrections",
+    "commit": null,
+    "summary": "Four accepted fixture proofs added 461 effective bytes; portable counterparts were unchanged.",
+    "changes": [
+      "Record the machine-derived hourly totals and workstation health check.",
+      "Require machine-derived dispatch pins and absolute owned output paths in the new lane brief.",
+      "Stop repeated memory-blocked retries and route useful integration and portability preparation."
+    ]
+  },
+  {
+    "date": "2026-10-08",
     "title": "Accept guarded predicate rewrite within its declared fixture",
     "commit": "f0326e82029eaf784894808f316ceae413661898",
     "summary": "The complete predicate body passed 1000 stock trials across all configured comparisons; its same-contract mutant failed three of four completed cases.",
