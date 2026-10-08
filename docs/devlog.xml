@@ -9,6 +9,15 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Preserve float callback payload words in a portable seam</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#float-callback-word-forwarding"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#float-callback-word-forwarding</id>
+    <published>2026-10-08T00:00:00Z</published>
+    <updated>2026-10-08T00:00:00Z</updated>
+    <summary>Verified: the new pointer-free forwarding module carries binary32 words through FixedLayout and exact equality, preserving NaN payloads and signed zero. A caller supplies the collaborator; ordered integer arguments and the return word are retained.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;/header&gt;&lt;p&gt;Verified: the new pointer-free forwarding module carries binary32 words through FixedLayout and exact equality, preserving NaN payloads and signed zero. A caller supplies the collaborator; ordered integer arguments and the return word are retained.&lt;/p&gt;&lt;p&gt;An i686 differential fixture compared the proposed module to the unchanged verified Rust wrapper across twelve edge words and a four-call sequence. An AArch64 compilation check passed. Both ran under the global three-job memory guard. This establishes a forwarding seam, not the native callback implementation or binding, and adds no verified-function or portable-function credit.&lt;/p&gt;&lt;p&gt;The first import check rejected CRLF patch context against LF source; normalizing only patch line endings repaired the import. The imported module matches the tested source after newline normalization. Reproduce with the lf-lift crate on the installed targets; scoped differential logs and input hashes remain in the coordinator evidence archive. Source: &lt;a href="https://github.com/monstercameron/LibertyFlux/tree/main/crates/lf-lift/src/float_callback.rs"&gt;forwarding module&lt;/a&gt;.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Hourly review: repair shared lane-state writers and replace repeated blocked reviews</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-review-1008-0944"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-review-1008-0944</id>
@@ -1083,17 +1092,5 @@ truncated return fails. Do not switch to &lt;code&gt;ret: al&lt;/code&gt; to dod
 bytes — that weakens the comparison.&lt;/p&gt;
 &lt;p&gt;Reproduce: any contract with an &lt;code&gt;al&lt;/code&gt; callee whose answer reaches EAX;
 the original's EAX reads as a &lt;code&gt;0x3101xxxx&lt;/code&gt; word (the log region).&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Stale-flags branch and script phase-lock on a staged large function</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#a-q14-stale-flags-branch"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#a-q14-stale-flags-branch</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>5 October 2026 — lane a-Q14 (Verified: checker runs on the stock worker).</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;time datetime="2026-10-05"&gt;5 October 2026&lt;/time&gt; — lane a-Q14 (Verified: checker runs on the stock worker).&lt;/p&gt;
-&lt;p&gt;Asked: finish the deferred second counted loop of a large staged function from the prior lane's retry kit.&lt;/p&gt;
-&lt;p&gt;Found, first: the kit's three inferences about the loop were all wrong, and the disassembly was unambiguous. The path-selecting conditional jump sits several loads after a test of a table answer's low byte, with a row word loaded into the tested register in between; since none of the loads touch flags, the branch tests the table answer, not the word it appears to test (compiler scheduling across a long load chain). The short-call site's second argument is the loop counter, not a surviving flags push, and nothing feeds back into the counter. The full-function proof (1000/1000 plus NaN torture, mutant caught) confirms this reading. Lesson: re-derive retry-kit inferences from the instruction stream before building on them.&lt;/p&gt;
-&lt;p&gt;Found, second: per-trial script cycles can phase-lock so a callee never fires. A length-14 flags cycle with the stack-cycle position offset put every loop-2 trial on even trials, locking a length-2 gate script to one answer; fixing that locked a length-6 word script against the flags cycle instead. Lengths 14/5/7/3 with a quick simulation of which (path, count) combos occur in 1000 trials fixed it. Lesson: simulate cycle interactions before the first probe when a loop's trip condition depends on a cycled input.&lt;/p&gt;</content>
   </entry>
 </feed>

@@ -2,7 +2,7 @@
   {
     "date": "2026-10-08",
     "title": "Preserve float callback payload words in a portable seam",
-    "commit": null,
+    "commit": "46174339e2a9a147261f45efd3acb76587ea0a22",
     "summary": "A typed forwarding boundary preserves exact binary32 representations and caller-supplied callback behavior.",
     "changes": [
       "Add pointer-free FloatBits with fixed-layout serialization, ordered callback arguments and an injected collaborator.",
