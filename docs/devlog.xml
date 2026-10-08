@@ -9,6 +9,19 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Resume review: three accepted proofs; dashboard freshness failure remains visible</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-review-resume-1008-0844"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-review-resume-1008-0844</id>
+    <published>2026-10-08T00:00:00Z</published>
+    <updated>2026-10-08T00:00:00Z</updated>
+    <summary>Verified: since the previous review, 2.84 hours earlier, three complete target-body proofs were accepted within declared fixtures. Verified functions increased by three to 16,935, with 423 additional effective bytes, reaching 2,494,546. Portable counterparts remain 483 routines and 45,417 bytes. The interrupted interval has no reconstructed hourly entries. Counts come from the verified index joined to inventory effective sizes and differential-test imports.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Verified: since the previous review, 2.84 hours earlier, three complete target-body proofs were accepted within declared fixtures. Verified functions increased by three to 16,935, with 423 additional effective bytes, reaching 2,494,546. Portable counterparts remain 483 routines and 45,417 bytes. The interrupted interval has no reconstructed hourly entries. Counts come from the verified index joined to inventory effective sizes and differential-test imports.&lt;/p&gt;
+&lt;p&gt;Verified: the latest accepted proof passed all declared comparisons over 1,000 completed originals. Its same-contract pointed-store mutant failed three times across 26 completed originals. The source projection removes only the mutant export; it is unbuilt, while acceptance binds the preserved tested source and byte-identical owned binary. Native collaborator effects and broader engine states remain outside the fixture proof. The rejected ownership continuation produced zero trials and remains excluded.&lt;/p&gt;
+&lt;p&gt;Verified: interrupted native tasks were resumed and produced interface repair packets. These unbuilt preparations earned no new portable credit. The dashboard showed current worker log lines but an expired registry, so active states were unknown rather than counted. The monitor was instructed to refresh actual native states immediately and replace finished reviews with distinct implementation tasks. Historical supervisor counts are not native activity measurements.&lt;/p&gt;
+&lt;p&gt;Verified workstation check: physical memory free was 2.5 GB, commit headroom 8.2 GB, and non-paged kernel memory 21.3 GB. No large abandoned project process was found. The three-job cap and fresh memory checks remain required for every build or checker run; the Muse supervisor remains paused.&lt;/p&gt;
+&lt;p&gt;Decision: serialize reservations through one dispatcher until the shared claim-ledger race is repaired and tested. Move from repeated proposal reviews to narrowly scoped harness implementations and guarded tests. Refresh the dashboard registry before reporting pipeline health; reservations alone never count as launches.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Hourly review: proof progress resumed; repeated blocked dispatches stop</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-review-1008-0554"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-review-1008-0554</id>
@@ -1090,27 +1103,5 @@ the original's EAX reads as a &lt;code&gt;0x3101xxxx&lt;/code&gt; word (the log 
 &lt;p&gt;Disassemble each function with capstone over bytes fetched by relative virtual address, read referenced strings the same way, scan the read-only data section for vtable pointers into the batch, and scan the code section for direct call sites to establish callers.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;The first evidence script indexed the memory-mapped image by file offset instead of by relative virtual address, which silently produced plausible-looking but entirely misattributed strings for every data-section reference. All string evidence had to be re-read with the correct accessor, and the experience is worth a check in any lane tooling that mixes the two.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Naming batch: base-class vtables name the overrides for free</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#naming-115"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#naming-115</id>
-    <published>2026-10-04T00:00:00Z</published>
-    <updated>2026-10-04T00:00:00Z</updated>
-    <summary>One hundred forty-three of one hundred fifty consecutive functions got descriptive names, and five of the remaining seven turned out not to be functions at all.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;One hundred forty-three of one hundred fifty consecutive functions got descriptive names, and five of the remaining seven turned out not to be functions at all.&lt;/p&gt;
-&lt;h3&gt;What was asked&lt;/h3&gt;
-&lt;p&gt;Propose a descriptive name for each of one hundred fifty consecutive unnamed functions, working out what the group is about first, with a confidence per name and no guessing.&lt;/p&gt;
-&lt;h3&gt;What was found&lt;/h3&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; The batch covers cutscene-object methods, streaming slot machinery, animation tables and pools, a small D3D9 loader, vehicle and boat definition tables, ped-type helpers, and ped and MLO model-info methods.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; A base class and its subclasses share most vtable slots, so an override inherits its base slot's name. This named eight model-info overrides with high confidence, each confirmed by a call or tail-call to the shared base implementation.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Five queue entries are not functions: four are short tail fragments reached by jumps from the preceding function, and one is jump-table data. Each was checked independently: no callers, no vtable references, padding plus a fresh function after, and the owning neighbour identified.&lt;/p&gt;
-&lt;p&gt;&lt;span class="evidence"&gt;Inferred&lt;/span&gt; Several neighbour names in the same region look wrong: task-flavoured names on routines that operate on model-info objects, script-native guesses inside the encrypted first megabyte, and narrow names on broad init and frame-update functions.&lt;/p&gt;
-&lt;h3&gt;What was decided or recommended&lt;/h3&gt;
-&lt;p&gt;Naming lanes should check gapfill entries for the fragment pattern before naming them, distrust inventory sizes and subsystem tags, and use base-class vtable slots to name overrides. The queue should replace the five non-function entries with the real functions that follow them.&lt;/p&gt;
-&lt;h3&gt;How to reproduce it&lt;/h3&gt;
-&lt;p&gt;Build one evidence table for the whole batch first: disassemble each function through the mapped image, resolve call targets and callers against the merged name sources, and join vtable slots from the RTTI dump. Read the short functions fully and dump the unclear ones individually.&lt;/p&gt;
-&lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
-&lt;p&gt;A helper script named after a standard library module silently broke its own disassembler import and had to be renamed. Inventory sizes were wrong on seven entries, so evidence past the true end of a function had to be excluded by hand. One call-site dump repeatedly returned empty output for no clear reason and was abandoned.&lt;/p&gt;</content>
   </entry>
 </feed>
