@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-08",
+    "title": "Accept a gated update within its declared fixture",
+    "commit": null,
+    "summary": "Accept one complete target body against the stock checker with explicit collaborator and fixture limits.",
+    "changes": [
+      "All configured comparisons passed across 1000 completed originals; the same-contract pointed-store mutant failed three times over 26 completed originals.",
+      "Preserved the tested source and byte-identical owned DLL lineage; the unbuilt source projection removes only the mutant export.",
+      "Excluded the ownership-rejected continuation with zero trials; portable totals are unchanged."
+    ]
+  },
+  {
+    "date": "2026-10-08",
     "title": "Accept two audio ring-update bodies within declared fixtures",
     "commit": "9899a0329b3cb18f60376ff21cbd4c050acfda95",
     "summary": "Both complete bodies passed 1000 stock trials across all nine configured comparisons and rejected their same-contract mutants in three of three completed cases.",
