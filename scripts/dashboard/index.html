@@ -151,7 +151,7 @@ tr.current td { background: var(--raised); }
     <h2 id="h-machine">Laptop and supervisor</h2>
     <div class="gauges" id="gauges"></div>
     <dl class="facts" id="machine"></dl>
-    <h2 style="margin-top:14px">Supervisor log</h2>
+    <h2 style="margin-top:14px">Paused Muse supervisor log (historical)</h2>
     <div class="box"><pre id="suplog"></pre></div>
   </section>
   <section class="overview" aria-labelledby="h-history">
@@ -266,7 +266,7 @@ tr.current td { background: var(--raised); }
       ["Memory held by the agents themselves", memoryText, false],
       ["Codex lane registry", registryText, registry.state === "stale"],
       ["Supervisor starts Muse lanes above", (sup.min_free_gb != null ? sup.min_free_gb + " GB free and " + sup.min_headroom_gb + " GB headroom" : "unknown"), false],
-      ["Room for another lane right now", waiting ? "no, waiting for memory" : "yes", waiting],
+      ["Muse memory threshold met", waiting ? "no, waiting for memory" : "yes; Muse launcher is separately paused", waiting],
       ["New lanes", state.supervisor && state.supervisor.stop_file ? "Muse supervisor paused; Codex lanes managed by coordinator" : "Muse launches allowed; Codex lanes managed by coordinator", !!(state.supervisor && state.supervisor.stop_file)]
     ];
     $("machine").innerHTML = facts.map(function (r) { return "<div><dt>" + r[0] + '</dt><dd class="' + (r[2] ? "warn" : "") + '">' + esc(r[1]) + "</dd></div>"; }).join("");

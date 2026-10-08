@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-07",
+    "title": "Keep Luna build and checker slots flowing after failed launches",
+    "commit": null,
+    "summary": "Luna lanes acquire bounded local execution slots automatically so completed jobs and failed starts do not stall the pipeline.",
+    "changes": [
+      "Added a shared three-slot command wrapper with Windows cross-process locking and physical-memory and commit-headroom guards.",
+      "Completed jobs and pre-child launch failures release reusable owner records; interrupted running jobs retain their claims for an explicit process audit.",
+      "Seven isolated checks passed, including six concurrent contenders peaking at three active claims and child commands, persistent slot reuse, startup failure, exit propagation, interruption, lock serialization and memory guards.",
+      "Dashboard labels identify the paused historical Muse supervisor separately from native Codex lanes."
+    ]
+  },
+  {
+    "date": "2026-10-07",
     "title": "Restore three bounded proofs and upgrade three negative controls",
     "commit": "f758e401866b0219a2f815b380d8bccf57f7a674",
     "summary": "Current stock-checker evidence restores readiness, audio flag and pool-entry rewrites within documented fixtures.",
