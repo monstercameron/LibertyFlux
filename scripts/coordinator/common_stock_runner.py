@@ -726,7 +726,16 @@ def build_candidate_source(manifest_path: Path) -> dict:
     return snapshot
 
 
-def make_build_plan(lane: str, python_exe: Path, cargo_manifest: Path) -> dict:
+def cargo_workspace_lock_path(manifest_path: Path) -> Path:
+    manifest_path = Path(manifest_path).resolve()
+    document, error = _read_cargo_manifest(manifest_path)
+    if error is not None:
+        raise ValueError(error)
+    workspace_manifest, _ = _workspace_manifest(manifest_path, document)
+    return workspace_manifest.parent / "Cargo.lock"
+
+
+def resolve_build_inputs(lane: str, python_exe: Path, cargo_manifest: Path):
     if not re.fullmatch(r"[A-Za-z0-9_-]+", lane):
         raise ValueError("lane must be a simple scratch-folder name")
     python_exe = Path(python_exe)
@@ -744,11 +753,81 @@ def make_build_plan(lane: str, python_exe: Path, cargo_manifest: Path) -> dict:
         raise ValueError("explicit build manifest must be named Cargo.toml")
     if not manifest_path.is_file():
         raise FileNotFoundError(f"Cargo manifest must exist before local_slot: {manifest_path}")
-    package_name, library_name = cargo_library_name(manifest_path)
-    sources = build_candidate_source(manifest_path)
+    lock_path = require_owned_path(cargo_workspace_lock_path(manifest_path), lane_root, "Cargo lockfile")
     cargo = shutil.which("cargo")
     if not cargo or not Path(cargo).is_file():
         raise FileNotFoundError("cargo executable was not found before local_slot")
+    return python_exe, manifest_path, Path(cargo).resolve(), lane_root
+
+
+def cargo_lock_snapshot(lock_path: Path) -> dict:
+    lock_path = Path(lock_path).resolve()
+    present = lock_path.is_file()
+    return {"present": present, "sha256": sha256_file(lock_path) if present else None}
+
+
+def build_lock_metadata_argv(lane: str, python_exe: Path, cargo_executable: Path,
+                             manifest_path: Path) -> list[str]:
+    return [
+        str(Path(python_exe).resolve()), str(SLOT.resolve()),
+        "--lane", lane, "--cwd", str(ROOT.resolve()), "--",
+        str(Path(cargo_executable).resolve()), "metadata", "--format-version", "1",
+        "--offline", "--manifest-path", str(Path(manifest_path).resolve()),
+    ]
+
+
+def prepare_cargo_lock_metadata(lane: str, python_exe: Path, cargo_executable: Path,
+                                manifest_path: Path, invoke=None) -> tuple[dict, str]:
+    """Materialize Cargo's lockfile before candidate identity is captured."""
+    lane_root = (ROOT / ".artifacts" / "scratch" / lane).resolve()
+    manifest_path = require_owned_path(Path(manifest_path), lane_root, "Cargo manifest")
+    lock_path = require_owned_path(cargo_workspace_lock_path(manifest_path), lane_root, "Cargo lockfile")
+    before = cargo_lock_snapshot(lock_path)
+    argv = build_lock_metadata_argv(lane, python_exe, cargo_executable, manifest_path)
+    if invoke is None:
+        proc = subprocess.run(argv, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                              text=True, encoding="utf-8", errors="replace", check=False)
+    else:
+        proc = invoke(argv)
+    transcript = proc.stdout or ""
+    if isinstance(transcript, bytes):
+        transcript = transcript.decode("utf-8", errors="replace")
+    after = cargo_lock_snapshot(lock_path)
+    slot = slot_transcript_evidence(transcript, None, int(proc.returncode))
+    if slot["child_pid_from_transcript"] is None:
+        status = "local_slot_failed_before_metadata"
+    elif not slot["release_verified_from_this_transcript"]:
+        status = "local_slot_incomplete_after_metadata"
+    elif proc.returncode != 0:
+        status = "metadata_failed"
+    elif not after["present"]:
+        status = "lock_missing_after_metadata"
+    elif not before["present"]:
+        status = "created"
+    elif before["sha256"] != after["sha256"]:
+        status = "normalized"
+    else:
+        status = "unchanged"
+    return ({
+        "schema": "common-stock-lock-preparation-v1",
+        "status": status,
+        "manifest": evidence_path(manifest_path),
+        "lockfile": evidence_path(lock_path),
+        "lock_before": before,
+        "lock_after": after,
+        "local_slot_argv": argv,
+        "local_slot_exit_code": int(proc.returncode),
+        "local_slot": slot,
+        "transcript_sha256": hashlib.sha256(transcript.encode("utf-8")).hexdigest(),
+    }, transcript)
+
+
+def make_build_plan(lane: str, python_exe: Path, cargo_manifest: Path,
+                    candidate_sources: dict | None = None) -> dict:
+    python_exe, manifest_path, cargo, lane_root = resolve_build_inputs(lane, python_exe, cargo_manifest)
+    package_name, library_name = cargo_library_name(manifest_path)
+    sources = (build_candidate_source(manifest_path) if candidate_sources is None
+               else candidate_sources)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     build_id = f"{stamp}-{(sources['sha256'] or sources['root']['sha256'])[:10]}-{uuid.uuid4().hex[:8]}"
     build_dir = lane_root / "build-runs" / build_id
@@ -762,7 +841,7 @@ def make_build_plan(lane: str, python_exe: Path, cargo_manifest: Path) -> dict:
         "build_id": build_id,
         "created_utc": now(),
         "python": {"path": str(python_exe), "sha256": sha256_file(python_exe)},
-        "cargo_executable": str(Path(cargo).resolve()),
+        "cargo_executable": str(cargo),
         "cargo_manifest": relative(manifest_path),
         "cargo_manifest_sha256": sha256_file(manifest_path),
         "package_name": package_name,
@@ -794,9 +873,8 @@ def build_local_slot_argv(plan: dict) -> list[str]:
     ]
 
 
-def run_build(lane: str, python_exe: Path, cargo_manifest: Path) -> int:
-    # Resolve and validate the explicit owned Cargo.toml before starting local_slot.
-    plan = make_build_plan(lane, python_exe, cargo_manifest)
+def _begin_build_evidence(plan: dict, lock_preparation: dict | None = None):
+    lane = plan["lane"]
     build_dir = require_owned_path(ROOT / plan["build_dir"], ROOT / ".artifacts/scratch" / lane,
                                   "build evidence directory")
     build_dir.mkdir(parents=True, exist_ok=False)
@@ -816,6 +894,52 @@ def run_build(lane: str, python_exe: Path, cargo_manifest: Path) -> int:
         "generation_dll": None, "dll_sha256": None,
         "copy_hash_verified": False,
     }
+    if lock_preparation is not None:
+        result["lock_preparation"] = lock_preparation
+    return build_dir, transcript_path, result_path, result
+
+
+def run_build(lane: str, python_exe: Path, cargo_manifest: Path) -> int:
+    # Validate workspace support and hashability before any metadata child can run.
+    python_exe, manifest_path, cargo, lane_root = resolve_build_inputs(lane, python_exe, cargo_manifest)
+    cargo_library_name(manifest_path)
+    preflight_source = build_candidate_source(manifest_path)
+    if preflight_source.get("status") != "complete":
+        # Preserve the original fail-closed receipt and no-child behavior.
+        plan = make_build_plan(lane, python_exe, manifest_path,
+                               candidate_sources=preflight_source)
+        _, transcript_path, result_path, result = _begin_build_evidence(plan)
+        result["status"] = "path_dependency_hash_unknown"
+        result["path_dependency_hash_errors"] = preflight_source["local_path_dependencies"].get("errors", [])
+        write_json(result_path, result)
+        return 3
+
+    # Cargo may create or normalize Cargo.lock; do that before the final identity snapshot.
+    preparation_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ") + "-" + uuid.uuid4().hex[:8]
+    preparation_dir = lane_root / "build-lock-preparations" / preparation_id
+    preparation_dir.mkdir(parents=True, exist_ok=False)
+    lock_preparation, preparation_transcript = prepare_cargo_lock_metadata(
+        lane, python_exe, cargo, manifest_path)
+    preparation_transcript_path = preparation_dir / "local_slot.log"
+    preparation_transcript_path.write_text(preparation_transcript, encoding="utf-8")
+    lock_preparation.update({
+        "lane": lane,
+        "preparation_id": preparation_id,
+        "local_slot_transcript": relative(preparation_transcript_path),
+        "local_slot_transcript_sha256": sha256_file(preparation_transcript_path),
+    })
+    preparation_result_path = preparation_dir / "lock_preparation.json"
+    write_json(preparation_result_path, lock_preparation)
+    if lock_preparation["status"] not in {"created", "normalized", "unchanged"}:
+        return lock_preparation["local_slot_exit_code"] or EXIT_EVIDENCE
+
+    # This is the candidate identity used by the build and its unchanged post-build checks.
+    plan = make_build_plan(lane, python_exe, manifest_path)
+    lock_preparation_ref = {
+        "path": relative(preparation_result_path),
+        "sha256": sha256_file(preparation_result_path),
+    }
+    _, transcript_path, result_path, result = _begin_build_evidence(plan, lock_preparation_ref)
     if plan["candidate_source"].get("status") != "complete":
         result["status"] = "path_dependency_hash_unknown"
         result["path_dependency_hash_errors"] = plan["candidate_source"]["local_path_dependencies"].get("errors", [])

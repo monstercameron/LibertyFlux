@@ -325,5 +325,71 @@ class StockRunnerFixtures(unittest.TestCase):
                 sys.modules["queue"] = previous_queue
 
 
+class CargoLockPreparationFixtures(unittest.TestCase):
+    CASES = json.loads((Path(__file__).parent / "fixtures" / "cargo_lock_cases.json").read_text(encoding="utf-8"))
+
+    def assert_lock_case(self, case_name: str):
+        case = self.CASES[case_name]
+        with fixture_workspace() as workspace:
+            source_root = workspace["candidate_root"]
+            manifest = source_root / "Cargo.toml"
+            manifest.write_text(
+                "[package]\nname='fixture'\nversion='0.1.0'\nedition='2021'\n"
+                "[lib]\ncrate-type=['cdylib']\n"
+                "[dependencies]\nruntime={path='runtime'}\n"
+                "[workspace]\n",
+                encoding="utf-8",
+            )
+            dependency_root = source_root / "runtime"
+            (dependency_root / "src").mkdir(parents=True)
+            (dependency_root / "Cargo.toml").write_text(
+                "[package]\nname='runtime'\nversion='0.1.0'\nedition='2021'\n",
+                encoding="utf-8",
+            )
+            dependency_source = dependency_root / "src/lib.rs"
+            dependency_source.write_text("pub fn stable() -> u32 { 7 }\n", encoding="utf-8")
+            lockfile = source_root / "Cargo.lock"
+            if lockfile.exists():
+                lockfile.unlink()
+            if case["initial"] is not None:
+                lockfile.write_bytes(case["initial"].encode("utf-8"))
+            before = runner.build_candidate_source(manifest)
+            cargo = workspace["root"] / "fixture-cargo.exe"
+            seen = {}
+
+            def fake_local_slot(argv):
+                seen["argv"] = argv
+                self.assertEqual(argv[argv.index("--") + 1:argv.index("--") + 3],
+                                 [str(cargo.resolve()), "metadata"])
+                if case["resolved"] is not None:
+                    lockfile.write_bytes(case["resolved"].encode("utf-8"))
+                return types.SimpleNamespace(returncode=0, stdout=("2026-10-08 q-test: acquired slot 1; wrapper PID 500\n" + "2026-10-08 q-test: child PID 700\n" + "2026-10-08 q-test: released slot; exit 0\n"))
+
+            record, transcript = runner.prepare_cargo_lock_metadata(
+                "q-test", workspace["python"], cargo, manifest, invoke=fake_local_slot)
+            after = runner.build_candidate_source(manifest)
+
+            self.assertEqual(record["status"], {
+                "absent": "created", "normalized": "normalized", "already_existing": "unchanged"
+            }[case_name])
+            self.assertEqual(record["lock_before"]["present"], case["initial"] is not None)
+            self.assertTrue(record["lock_after"]["present"])
+            expected = case["resolved"] if case["resolved"] is not None else case["initial"]
+            self.assertEqual(record["lock_after"]["sha256"], runner.hashlib.sha256(expected.encode()).hexdigest())
+            self.assertEqual(before["local_path_dependencies"], after["local_path_dependencies"])
+            self.assertIn("child PID 700", transcript)
+            self.assertEqual(seen["argv"][seen["argv"].index("--cwd") + 1], str(runner.ROOT.resolve()))
+            self.assertIn("--offline", seen["argv"])
+
+    def test_absent_lock_is_created_before_identity(self):
+        self.assert_lock_case("absent")
+
+    def test_existing_lock_is_normalized_before_identity(self):
+        self.assert_lock_case("normalized")
+
+    def test_already_existing_lock_stays_stable(self):
+        self.assert_lock_case("already_existing")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

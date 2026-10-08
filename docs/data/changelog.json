@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-08",
+    "title": "Prepare Cargo locks before candidate builds",
+    "commit": null,
+    "summary": "Fresh candidate builds resolve their lockfile before capturing immutable inputs, preventing avoidable rebuilds.",
+    "changes": [
+      "Reject unsupported manifests and dependencies before any metadata child; prepare valid Cargo lockfiles offline through the shared resource slot.",
+      "Recapture finalized inputs before building and preserve existing dependency, source and DLL identity checks.",
+      "All39 merged regression fixtures passed; a real initially lock-free i686 crate completed metadata and its first build with a preserved artifact."
+    ]
+  },
+  {
+    "date": "2026-10-08",
     "title": "Record the hourly reliability and portability review",
     "commit": "b1bbcd42cf1edf4427035b7aba14264e5633f120",
     "summary": "The review measures accepted progress and keeps portability and launch reliability ahead of unchecked throughput.",

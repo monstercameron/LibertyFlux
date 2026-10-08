@@ -147,6 +147,8 @@ class CommonStockBuildFixtures(unittest.TestCase):
 
             def drift_transitive_dependency(argv, **kwargs):
                 args = argv[argv.index("--") + 1:]
+                if args[1] == "metadata":
+                    return runner.subprocess.CompletedProcess(argv, 0, stdout=success_transcript())
                 target_dir = Path(args[args.index("--target-dir") + 1])
                 output = target_dir / runner.BUILD_TARGET / "release/fixture_lib.dll"
                 output.parent.mkdir(parents=True)
@@ -275,11 +277,15 @@ class CommonStockBuildFixtures(unittest.TestCase):
         with workspace() as work:
             captured = {}
 
+            calls = []
             def fake_local_slot(argv, **kwargs):
-                captured["argv"] = list(argv)
-                captured["kwargs"] = kwargs
                 split = argv.index("--")
                 cargo_args = argv[split + 1:]
+                calls.append(cargo_args[1])
+                if cargo_args[1] == "metadata":
+                    return runner.subprocess.CompletedProcess(argv, 0, stdout=success_transcript())
+                captured["argv"] = list(argv)
+                captured["kwargs"] = kwargs
                 target_dir = Path(cargo_args[cargo_args.index("--target-dir") + 1])
                 (target_dir / runner.BUILD_TARGET / "release").mkdir(parents=True)
                 (target_dir / runner.BUILD_TARGET / "release/fixture_lib.dll").write_bytes(b"fixture DLL image")
@@ -291,6 +297,7 @@ class CommonStockBuildFixtures(unittest.TestCase):
                     "q-build", Path(".fixture-python/python.exe"),
                     Path(".artifacts/scratch/q-build/candidate/Cargo.toml")), 0)
 
+            self.assertEqual(calls, ["metadata", "build"])
             argv = captured["argv"]
             args = argv[argv.index("--") + 1:]
             self.assertEqual(argv[:2], [str(work["python"].resolve()), str(work["slot"].resolve())])
@@ -318,12 +325,18 @@ class CommonStockBuildFixtures(unittest.TestCase):
 
     def test_cargo_failure_propagates_without_preserving_output(self):
         with workspace() as work:
+            calls = []
             def failed_local_slot(argv, **kwargs):
+                subcommand = argv[argv.index("--") + 2]
+                calls.append(subcommand)
+                if subcommand == "metadata":
+                    return runner.subprocess.CompletedProcess(argv, 0, stdout=success_transcript())
                 return runner.subprocess.CompletedProcess(argv, 7, stdout=success_transcript(7))
 
             with patch.object(runner.shutil, "which", return_value=str(work["cargo"])), \
                     patch.object(runner.subprocess, "run", side_effect=failed_local_slot):
                 self.assertEqual(runner.run_build("q-build", work["python"], work["manifest"]), 7)
+            self.assertEqual(calls, ["metadata", "build"])
             self.assertFalse((work["lane_root"] / "generations").exists())
             result_path = next((work["lane_root"] / "build-runs").glob("*/build_result.json"))
             result = json.loads(result_path.read_text(encoding="utf-8"))
@@ -334,22 +347,113 @@ class CommonStockBuildFixtures(unittest.TestCase):
     def test_slot_failure_without_child_is_not_labeled_cargo_failure(self):
         with workspace() as work:
             transcript = "2026-10-08 q-build: waiting for local resource slot\n"
+            calls = []
             def slot_failed(argv, **kwargs):
+                subcommand = argv[argv.index("--") + 2]
+                calls.append(subcommand)
+                if subcommand == "metadata":
+                    return runner.subprocess.CompletedProcess(argv, 0, stdout=success_transcript())
                 return runner.subprocess.CompletedProcess(argv, 9, stdout=transcript)
 
             with patch.object(runner.shutil, "which", return_value=str(work["cargo"])), \
                     patch.object(runner.subprocess, "run", side_effect=slot_failed):
                 self.assertEqual(runner.run_build("q-build", work["python"], work["manifest"]), 9)
+            self.assertEqual(calls, ["metadata", "build"])
             result_path = next((work["lane_root"] / "build-runs").glob("*/build_result.json"))
             result = json.loads(result_path.read_text(encoding="utf-8"))
             self.assertEqual(result["status"], "local_slot_failed_before_cargo")
             self.assertFalse(result["cargo_started"])
             self.assertIsNone(result["cargo_exit_code"])
 
+    def test_metadata_lock_normalization_precedes_final_build_identity(self):
+        with workspace() as work:
+            ws = work["lane_root"] / "workspace"
+            member = ws / "member"
+            (member / "src").mkdir(parents=True)
+            manifest = member / "Cargo.toml"
+            manifest.write_text(
+                '[package]\nname="fixture-member"\nversion="0.1.0"\nedition="2021"\n'
+                '[lib]\nname="fixture_lib"\ncrate-type=["cdylib"]\n', encoding="utf-8")
+            (member / "src/lib.rs").write_text("pub fn member() -> u32 { 1 }\n", encoding="utf-8")
+            workspace_manifest = ws / "Cargo.toml"
+            workspace_manifest.write_text('[workspace]\nmembers=["member"]\n', encoding="utf-8")
+            lockfile = ws / "Cargo.lock"
+            initial_lock = b'version = 4\n# pre-metadata\n'
+            normalized_lock = b'version = 4\n# normalized by metadata\n'
+            lockfile.write_bytes(initial_lock)
+            calls = []
+
+            def metadata_then_build(argv, **kwargs):
+                args = argv[argv.index("--") + 1:]
+                calls.append(args[1])
+                if args[1] == "metadata":
+                    lockfile.write_bytes(normalized_lock)
+                    return runner.subprocess.CompletedProcess(argv, 0, stdout=success_transcript())
+                target_dir = Path(args[args.index("--target-dir") + 1])
+                output = target_dir / runner.BUILD_TARGET / "release/fixture_lib.dll"
+                output.parent.mkdir(parents=True)
+                output.write_bytes(b"fixture DLL after lock normalization")
+                return runner.subprocess.CompletedProcess(argv, 0, stdout=success_transcript())
+
+            with patch.object(runner.shutil, "which", return_value=str(work["cargo"])), \
+                    patch.object(runner.subprocess, "run", side_effect=metadata_then_build):
+                self.assertEqual(runner.run_build("q-build", work["python"], manifest), 0)
+
+            self.assertEqual(calls, ["metadata", "build"])
+            result_path = next((work["lane_root"] / "build-runs").glob("*/build_result.json"))
+            result = json.loads(result_path.read_text(encoding="utf-8"))
+            plan = json.loads((work["root"] / result["build_plan"]).read_text(encoding="utf-8"))
+            expected_lock_hash = runner.hashlib.sha256(normalized_lock).hexdigest()
+            self.assertEqual(plan["candidate_source"]["workspace_locks"], [{
+                "path": runner.evidence_path(lockfile), "present": True,
+                "sha256": expected_lock_hash,
+            }])
+            preparation_path = work["root"] / result["lock_preparation"]["path"]
+            preparation = json.loads(preparation_path.read_text(encoding="utf-8"))
+            self.assertEqual(preparation["lock_before"]["sha256"], runner.hashlib.sha256(initial_lock).hexdigest())
+            self.assertEqual(preparation["lock_after"]["sha256"], expected_lock_hash)
+            self.assertEqual(result["status"], "built_and_preserved")
+
+    def test_metadata_failure_stops_before_build(self):
+        with workspace() as work:
+            calls = []
+            def metadata_fails(argv, **kwargs):
+                subcommand = argv[argv.index("--") + 2]
+                calls.append(subcommand)
+                return runner.subprocess.CompletedProcess(argv, 7, stdout=success_transcript(7))
+
+            with patch.object(runner.shutil, "which", return_value=str(work["cargo"])), \
+                    patch.object(runner.subprocess, "run", side_effect=metadata_fails):
+                self.assertEqual(runner.run_build("q-build", work["python"], work["manifest"]), 7)
+            self.assertEqual(calls, ["metadata"])
+            self.assertFalse((work["lane_root"] / "build-runs").exists())
+            record_path = next((work["lane_root"] / "build-lock-preparations").glob("*/lock_preparation.json"))
+            record = json.loads(record_path.read_text(encoding="utf-8"))
+            self.assertEqual(record["status"], "metadata_failed")
+
+    def test_metadata_success_without_lock_stops_before_build(self):
+        with workspace() as work:
+            (work["crate"] / "Cargo.lock").unlink()
+            calls = []
+            def metadata_does_not_create_lock(argv, **kwargs):
+                calls.append(argv[argv.index("--") + 2])
+                return runner.subprocess.CompletedProcess(argv, 0, stdout=success_transcript())
+
+            with patch.object(runner.shutil, "which", return_value=str(work["cargo"])), \
+                    patch.object(runner.subprocess, "run", side_effect=metadata_does_not_create_lock):
+                self.assertEqual(runner.run_build("q-build", work["python"], work["manifest"]), runner.EXIT_EVIDENCE)
+            self.assertEqual(calls, ["metadata"])
+            self.assertFalse((work["lane_root"] / "build-runs").exists())
+            record_path = next((work["lane_root"] / "build-lock-preparations").glob("*/lock_preparation.json"))
+            record = json.loads(record_path.read_text(encoding="utf-8"))
+            self.assertEqual(record["status"], "lock_missing_after_metadata")
+
     def test_source_drift_during_build_is_rejected_before_copy(self):
         with workspace() as work:
             def drift_during_build(argv, **kwargs):
                 args = argv[argv.index("--") + 1:]
+                if args[1] == "metadata":
+                    return runner.subprocess.CompletedProcess(argv, 0, stdout=success_transcript())
                 target_dir = Path(args[args.index("--target-dir") + 1])
                 output = target_dir / runner.BUILD_TARGET / "release/fixture_lib.dll"
                 output.parent.mkdir(parents=True)
