@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-08",
-    "title": "Record the proof reliability review",
+    "title": "Store the hourly reliability findings",
     "commit": null,
+    "summary": "Save the measured hourly review in the searchable project devlog.",
+    "changes": [
+      "The hourly review now appears in the devlog with measured throughput, portable progress and the workstation snapshot.",
+      "It records the held fixture and stack-observation findings and the revised production brief."
+    ]
+  },
+  {
+    "date": "2026-10-08",
+    "title": "Record the proof reliability review",
+    "commit": "31e3e5bad6e35fed819642ef01115d95b91839d2",
     "summary": "Measure accepted throughput and address recurring launch and observability mistakes.",
     "changes": [
       "The hourly review records five accepted functions and seven hundred sixty-three verified bytes over the measured interval, with no portable-counterpart count increase.",
