@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-08",
+    "title": "Record the Luna wrapper proof review",
+    "commit": null,
+    "summary": "Record measured progress, provenance requirements and an inconsistent historical byte baseline.",
+    "changes": [
+      "Recorded ten integrated complete wrappers while retaining bounded stages as partial.",
+      "Corrected the historical byte comparison using the same size table for both indexes.",
+      "Recorded fresh workstation health and required per-run binary provenance."
+    ]
+  },
+  {
+    "date": "2026-10-08",
     "title": "Show partial proof results in the lane dashboard",
     "commit": "3f5a2d6e7bada795b5185cfd6b3d313a2f10adc7",
     "summary": "Stage and branch evidence now renders with its scope instead of appearing empty.",
