@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-08",
-    "title": "Use a shared guarded stock checker runner",
+    "title": "Isolate checker imports from coordinator modules",
     "commit": null,
+    "summary": "Prevent a local module name from breaking worker startup before any trials.",
+    "changes": [
+      "Load and verify the standard Python queue module before importing the unchanged stock checker.",
+      "Preserve failed startup attempts and reject missing or incomplete proof evidence.",
+      "Validated all 13 fixtures from the integrated runner location, including actual worker startup with process creation mocked."
+    ]
+  },
+  {
+    "date": "2026-10-08",
+    "title": "Use a shared guarded stock checker runner",
+    "commit": "3391b26f8406c56ca19c4796ffeae30b58b667e9",
     "summary": "Prevent repeated launch and evidence-bookkeeping failures with one reviewed Python runner.",
     "changes": [
       "Preflight the stock driver, input hashes, environment and contract routing before acquiring a guarded execution slot.",

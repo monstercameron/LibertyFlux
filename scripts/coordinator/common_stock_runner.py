@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import ctypes
 import hashlib
+import importlib
 import importlib.util
 import json
 import os
@@ -11,6 +12,7 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+import sysconfig
 import threading
 import time
 from datetime import datetime, timezone
@@ -395,12 +397,32 @@ def process_parent_map() -> dict[int, int]:
 
 def import_stock_driver(env: dict[str, str], manifest: dict):
     path = ROOT / manifest["stock_inputs"]["driver"]["path"]
-    spec = importlib.util.spec_from_file_location("libertyflux_common_stock_checker2", path)
-    if spec is None or spec.loader is None:
-        raise RuntimeError("cannot load canonical checker2.py")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
+    # This file lives beside coordinator/queue.py. When Python executes a
+    # script from that directory, the directory leads sys.path and shadows
+    # the stdlib queue imported by checker2.Worker.start(). Import the driver
+    # with that directory excluded, and replace a cached local queue module.
+    coordinator_dir = SLOT.parent.resolve()
+    saved_path = list(sys.path)
+    try:
+        sys.path[:] = [entry for entry in sys.path
+                       if Path(entry or os.curdir).resolve() != coordinator_dir]
+        stdlib_queue = (Path(sysconfig.get_path("stdlib")) / "queue.py").resolve()
+        queued = sys.modules.get("queue")
+        queued_path = Path(getattr(queued, "__file__", "")).resolve() if queued else None
+        if queued is not None and queued_path != stdlib_queue:
+            del sys.modules["queue"]
+        queue_module = importlib.import_module("queue")
+        actual_queue = Path(getattr(queue_module, "__file__", "")).resolve()
+        if actual_queue != stdlib_queue:
+            raise RuntimeError(f"checker queue import is not the Python stdlib module: {actual_queue}")
+        spec = importlib.util.spec_from_file_location("libertyflux_common_stock_checker2", path)
+        if spec is None or spec.loader is None:
+            raise RuntimeError("cannot load canonical checker2.py")
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[spec.name] = module
+        spec.loader.exec_module(module)
+    finally:
+        sys.path[:] = saved_path
     if Path(module.__file__).resolve() != path.resolve():
         raise RuntimeError("checker module did not come from the pinned canonical path")
     expected = {
