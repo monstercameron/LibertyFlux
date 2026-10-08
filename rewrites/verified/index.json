@@ -46053,6 +46053,15 @@
     "lane": "a-G01"
   },
   {
+    "address": "0x00894800",
+    "checker": "version 8",
+    "file": "functions/fn_00894800.rs",
+    "kind": "function",
+    "lane": "a-Q136",
+    "name": "create_and_start_entry",
+    "trials": 1000
+  },
+  {
     "address": "0x00894880",
     "name": "resolve_and_create_flagged",
     "kind": "function",
@@ -67525,6 +67534,15 @@
     "trials": 1000,
     "checker": "version 5",
     "lane": "r-s464"
+  },
+  {
+    "address": "0x009DD860",
+    "name": "model_slot_sweep",
+    "kind": "function",
+    "file": "functions/fn_009dd860.rs",
+    "trials": 1000,
+    "checker": "version 8",
+    "lane": "a-Q139"
   },
   {
     "address": "0x009DDEE0",
@@ -131614,6 +131632,15 @@
     "trials": 1000,
     "checker": "version 7",
     "lane": "a-Q52"
+  },
+  {
+    "address": "0x00DA3F20",
+    "name": "fn_00da3f20",
+    "kind": "function",
+    "file": "functions/fn_00da3f20.rs",
+    "trials": 1000,
+    "checker": "version 8",
+    "lane": "a-Q140-production"
   },
   {
     "address": "0x00DA3FA0",
