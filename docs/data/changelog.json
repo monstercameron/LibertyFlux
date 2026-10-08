@@ -2,7 +2,7 @@
   {
     "date": "2026-10-08",
     "title": "Track streamed file requests through completion",
-    "commit": null,
+    "commit": "736b6f7816989ba759cb11eddf70ad81a483d733",
     "summary": "Connect portable streaming reads to the platform file lifecycle without losing pending requests or unrelated completions.",
     "changes": [
       "A read owner associates caller-supplied file ranges with slot tags and routes completed requests exactly once.",
