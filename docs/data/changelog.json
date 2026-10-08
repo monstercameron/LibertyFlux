@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-07",
-    "title": "Restore four small call-wrapper proofs",
+    "title": "Record the Luna pipeline recovery review",
     "commit": null,
+    "summary": "The review records the stalled interval, tested dispatch repair, proof-scope corrections and current workstation health.",
+    "changes": [
+      "Recorded the stalled coordinator interval and the automatic local-slot recovery validated by seven Windows tests.",
+      "Recorded four accepted wrappers, two rejected full-proof claims and the distinction between bounded stage evidence and complete functions.",
+      "Recorded actual native task counts, the five-minute continuation, and current physical memory, commit headroom and kernel-pool observations."
+    ]
+  },
+  {
+    "date": "2026-10-07",
+    "title": "Restore four small call-wrapper proofs",
+    "commit": "7d3720d2b52e7dcd9b31fa19c02160c8132ede8c",
     "summary": "Four Rust wrappers now have current checker evidence and matching behavioral negative controls.",
     "changes": [
       "Each accepted rewrite passed 1,000 trials with every original run completed and every declared helper exercised; each wrong implementation failed under the identical contract.",
