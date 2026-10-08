@@ -13,11 +13,11 @@
   "stages": {
     "identified": 37413,
     "named": 32220,
-    "rewritten": 16961,
-    "verified": 16931
+    "rewritten": 16962,
+    "verified": 16932
   },
   "structures": 340,
-  "symbols": 17031,
+  "symbols": 17032,
   "measured": [
     {
       "label": "Code section",
@@ -105,13 +105,13 @@
     },
     {
       "label": "Rewrites of game functions that passed the checker in a lane",
-      "value": 16961,
+      "value": 16962,
       "unit": "functions",
       "source": "production lanes' results files plus rewrites/verified/index.json, game code only; counted as verified only once passed under checker version 2 or later"
     },
     {
       "label": "Rewrites verified under checker version 2 or later",
-      "value": 16931,
+      "value": 16932,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository, game code only"
     },
@@ -2577,8 +2577,8 @@
       "to": "0x009E6A8D",
       "count": 91,
       "named": 82,
-      "rewritten": 49,
-      "verified": 49
+      "rewritten": 50,
+      "verified": 50
     },
     {
       "stage": "verified",
