@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-08",
-    "title": "Keep held proofs out of automatic imports",
+    "title": "Use a shared guarded stock checker runner",
     "commit": null,
+    "summary": "Prevent repeated launch and evidence-bookkeeping failures with one reviewed Python runner.",
+    "changes": [
+      "Preflight the stock driver, input hashes, environment and contract routing before acquiring a guarded execution slot.",
+      "Require completed original trials and semantic negative evidence; preserve raw failures and process ancestry through the invocation transcript.",
+      "Validated 11 focused fixtures and a stock self-test with zero failures and no surviving observed processes."
+    ]
+  },
+  {
+    "date": "2026-10-08",
+    "title": "Keep held proofs out of automatic imports",
+    "commit": "6e606bdde5498f58e1e88af9277b956fc3cad672",
     "summary": "Honor explicit review holds before importing successful-looking lane rows.",
     "changes": [
       "Skip passed rows whose proof review explicitly holds promotion and report the recorded reason.",
