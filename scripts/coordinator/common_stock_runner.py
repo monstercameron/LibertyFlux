@@ -10,11 +10,14 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
 import sysconfig
 import threading
 import time
+import tomllib
+import uuid
 from datetime import datetime, timezone
 
 
@@ -47,6 +50,7 @@ ENV_KEYS = (
 EXIT_EVIDENCE = 4
 EXIT_NEGATIVE = 5
 EXPECTED_STOCK_DRIVER_SHA256 = "024a01985ff5f85751087d8a0e8709fa22de18d04d1e398a02a8293f225968fa"
+BUILD_TARGET = "i686-pc-windows-msvc"
 
 
 def now() -> str:
@@ -70,6 +74,14 @@ def relative(path: Path) -> str:
     return Path(path).resolve().relative_to(ROOT.resolve()).as_posix()
 
 
+def evidence_path(path: Path) -> str:
+    path = Path(path).resolve()
+    try:
+        return relative(path)
+    except ValueError:
+        return str(path)
+
+
 def write_json(path: Path, value: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(path.suffix + ".tmp")
@@ -81,11 +93,11 @@ def source_tree(source_root: Path) -> dict:
     source_root = source_root.resolve()
     rows = []
     for path in sorted(p for p in source_root.rglob("*") if p.is_file() and p.suffix in {".rs", ".toml", ".lock"}):
-        rows.append({"path": relative(path), "sha256": sha256_file(path)})
+        rows.append({"path": evidence_path(path), "sha256": sha256_file(path)})
     if not any(Path(row["path"]).suffix == ".rs" for row in rows):
         raise ValueError("candidate source tree must contain at least one Rust source file")
     digest = hashlib.sha256("\n".join(f"{row['path']} {row['sha256']}" for row in rows).encode()).hexdigest()
-    return {"root": relative(source_root), "sha256": digest, "files": rows}
+    return {"root": evidence_path(source_root), "sha256": digest, "files": rows}
 
 
 def environment_fingerprint(env: dict[str, str]) -> str:
@@ -275,7 +287,7 @@ def slot_ancestry_evidence(launch_pid: int, owner_pid: int | None, child_pid: in
     }
 
 
-def slot_transcript_evidence(text: str, launched_wrapper_pid: int, wrapper_exit: int) -> dict:
+def slot_transcript_evidence(text: str, launched_wrapper_pid: int | None, wrapper_exit: int) -> dict:
     acquired = re.findall(r"acquired slot (\d+); wrapper PID (\d+)", text)
     children = re.findall(r"child PID (\d+)", text)
     released = re.findall(r"released slot; exit (-?\d+)", text)
@@ -288,12 +300,358 @@ def slot_transcript_evidence(text: str, launched_wrapper_pid: int, wrapper_exit:
     return {
         "slot": acquired[-1][0] if acquired else None,
         "owner_pid_from_transcript": owner,
-        "outer_launch_pid": int(launched_wrapper_pid),
+        "outer_launch_pid": int(launched_wrapper_pid) if launched_wrapper_pid is not None else None,
         "child_pid_from_transcript": child,
         "release_exit_from_transcript": release_exit,
         "release_matches_wrapper_exit": release_ok,
         "release_verified_from_this_transcript": bool(owner is not None and release_ok),
     }
+
+
+def cargo_library_name(manifest_path: Path) -> tuple[str, str]:
+    try:
+        document = tomllib.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, tomllib.TOMLDecodeError) as exc:
+        raise ValueError(f"cannot read Cargo manifest: {exc}") from exc
+    package = document.get("package") or {}
+    library = document.get("lib") or {}
+    package_name = package.get("name")
+    crate_types = library.get("crate-type") or []
+    library_name = library.get("name") or (package_name.replace("-", "_") if isinstance(package_name, str) else "")
+    if not isinstance(package_name, str) or not re.fullmatch(r"[A-Za-z0-9_-]+", package_name):
+        raise ValueError("Cargo package name must be present and safe")
+    if not isinstance(library_name, str) or not re.fullmatch(r"[A-Za-z0-9_]+", library_name):
+        raise ValueError("Cargo library name must be present and safe")
+    if not isinstance(crate_types, list) or "cdylib" not in crate_types:
+        raise ValueError("Cargo manifest must declare a cdylib library target")
+    return package_name, library_name
+
+
+_CARGO_DEPENDENCY_TABLES = ("dependencies", "dev-dependencies", "build-dependencies")
+
+
+def _read_cargo_manifest(path: Path) -> tuple[dict | None, str | None]:
+    try:
+        return tomllib.loads(path.read_text(encoding="utf-8")), None
+    except (OSError, tomllib.TOMLDecodeError) as exc:
+        return None, f"cannot read {evidence_path(path)}: {exc}"
+
+
+def _workspace_manifest(manifest_path: Path, document: dict) -> tuple[Path, dict]:
+    if isinstance(document.get("workspace"), dict):
+        return manifest_path, document
+    for parent in manifest_path.parent.parents:
+        candidate = parent / "Cargo.toml"
+        if not candidate.is_file():
+            continue
+        ancestor, error = _read_cargo_manifest(candidate)
+        if error is None and isinstance(ancestor.get("workspace"), dict):
+            return candidate, ancestor
+    return manifest_path, document
+
+
+def _dependency_sections(document: dict) -> tuple[list[dict], list[str]]:
+    sections = []
+    errors = []
+    for key in _CARGO_DEPENDENCY_TABLES:
+        value = document.get(key)
+        if value is None:
+            continue
+        if not isinstance(value, dict):
+            errors.append(f"{key} is not a TOML table")
+        else:
+            sections.append(value)
+    targets = document.get("target")
+    if targets is not None:
+        if not isinstance(targets, dict):
+            errors.append("target dependencies are not a TOML table")
+        else:
+            for condition, target in targets.items():
+                if not isinstance(target, dict):
+                    errors.append(f"target {condition!r} dependencies are not a TOML table")
+                    continue
+                for key in _CARGO_DEPENDENCY_TABLES:
+                    value = target.get(key)
+                    if value is None:
+                        continue
+                    if not isinstance(value, dict):
+                        errors.append(f"target {condition!r} {key} is not a TOML table")
+                    else:
+                        sections.append(value)
+    return sections, errors
+
+
+def _unsupported_cargo_overrides(document: dict, manifest_path: Path) -> list[str]:
+    errors = []
+    patches = document.get("patch")
+    if patches is not None:
+        if not isinstance(patches, dict):
+            errors.append(f"{evidence_path(manifest_path)}: Cargo [patch.*] is not a TOML table")
+        elif any(bool(entries) for entries in patches.values()):
+            errors.append(f"{evidence_path(manifest_path)}: Cargo [patch.*] overrides are not modeled")
+    replacements = document.get("replace")
+    if replacements is not None and replacements:
+        errors.append(f"{evidence_path(manifest_path)}: Cargo [replace] overrides are not modeled")
+    return errors
+
+
+def build_candidate_source(manifest_path: Path) -> dict:
+    """Hash the candidate and every discoverable transitive local path dependency."""
+    manifest_path = manifest_path.resolve()
+    root_source = source_tree(manifest_path.parent)
+    pending = [manifest_path]
+    visited: set[Path] = set()
+    dependency_manifests: set[Path] = set()
+    workspace_manifests: set[Path] = set()
+    workspace_locks: list[dict] = []
+    errors: set[str] = set()
+    while pending:
+        current = pending.pop().resolve()
+        if current in visited:
+            continue
+        visited.add(current)
+        document, error = _read_cargo_manifest(current)
+        if error is not None:
+            errors.add(error)
+            continue
+        workspace_manifest, workspace_document = _workspace_manifest(current, document)
+        if workspace_manifest != current:
+            workspace_manifests.add(workspace_manifest)
+        errors.update(_unsupported_cargo_overrides(document, current))
+        errors.update(_unsupported_cargo_overrides(workspace_document, workspace_manifest))
+        sections, section_errors = _dependency_sections(document)
+        errors.update(f"{evidence_path(current)}: {message}" for message in section_errors)
+        for section in sections:
+            for alias, raw in section.items():
+                specs = raw if isinstance(raw, list) else [raw]
+                for spec in specs:
+                    if not isinstance(spec, dict):
+                        continue
+                    if spec.get("workspace") is True:
+                        workspace_table = workspace_document.get("workspace") or {}
+                        workspace_dependencies = (workspace_table.get("dependencies") or {}
+                                                  if isinstance(workspace_table, dict) else {})
+                        shared = workspace_dependencies.get(alias) if isinstance(workspace_dependencies, dict) else None
+                        if shared is None:
+                            errors.add(f"{evidence_path(current)}: unresolved workspace dependency {alias!r}")
+                            continue
+                        specs_to_check = shared if isinstance(shared, list) else [shared]
+                    else:
+                        specs_to_check = [spec]
+                    for path_spec in specs_to_check:
+                        if not isinstance(path_spec, dict):
+                            continue
+                        dep_path = path_spec.get("path")
+                        if dep_path is None:
+                            continue
+                        if not isinstance(dep_path, str) or not dep_path:
+                            errors.add(f"{evidence_path(current)}: dependency {alias!r} has an invalid path")
+                            continue
+                        path_base = workspace_manifest.parent if spec.get("workspace") is True else current.parent
+                        dep_manifest = (path_base / dep_path / "Cargo.toml").resolve()
+                        if not dep_manifest.is_file():
+                            errors.add(f"{evidence_path(current)}: local path dependency {alias!r} has no Cargo.toml at {evidence_path(dep_manifest)}")
+                            continue
+                        if dep_manifest != manifest_path:
+                            dependency_manifests.add(dep_manifest)
+                        if dep_manifest not in visited:
+                            pending.append(dep_manifest)
+
+    dependency_sources = []
+    for path in sorted(dependency_manifests, key=lambda item: str(item).casefold()):
+        try:
+            dependency_sources.append(source_tree(path.parent))
+        except Exception as exc:
+            errors.add(f"cannot hash local path dependency {evidence_path(path)}: {exc}")
+    workspace_inputs = []
+    for path in sorted(workspace_manifests, key=lambda item: str(item).casefold()):
+        try:
+            workspace_inputs.append({"path": evidence_path(path), "sha256": sha256_file(path)})
+            lock_path = path.parent / "Cargo.lock"
+            workspace_locks.append({
+                "path": evidence_path(lock_path),
+                "present": lock_path.is_file(),
+                "sha256": sha256_file(lock_path) if lock_path.is_file() else None,
+            })
+        except OSError as exc:
+            errors.add(f"cannot hash Cargo workspace manifest {evidence_path(path)}: {exc}")
+    complete = not errors
+    dependency_record = {
+        "status": "complete" if complete else "unknown",
+        "manifests": [evidence_path(path) for path in sorted(dependency_manifests, key=lambda item: str(item).casefold())],
+        "sources": dependency_sources,
+        "errors": sorted(errors),
+    }
+    snapshot = {"root": root_source, "local_path_dependencies": dependency_record,
+                "workspace_manifests": workspace_inputs,
+                "workspace_locks": workspace_locks,
+                "status": "complete" if complete else "unknown"}
+    snapshot["sha256"] = sha256_json(snapshot) if complete else None
+    return snapshot
+
+
+def make_build_plan(lane: str, python_exe: Path, cargo_manifest: Path) -> dict:
+    if not re.fullmatch(r"[A-Za-z0-9_-]+", lane):
+        raise ValueError("lane must be a simple scratch-folder name")
+    python_exe = Path(python_exe)
+    cargo_manifest = Path(cargo_manifest)
+    if not python_exe.is_absolute():
+        python_exe = ROOT / python_exe
+    if not cargo_manifest.is_absolute():
+        cargo_manifest = ROOT / cargo_manifest
+    python_exe = python_exe.resolve()
+    if not python_exe.is_file():
+        raise FileNotFoundError("an explicit existing Python executable is required")
+    lane_root = (ROOT / ".artifacts" / "scratch" / lane).resolve()
+    manifest_path = require_owned_path(cargo_manifest, lane_root, "Cargo manifest")
+    if manifest_path.name != "Cargo.toml":
+        raise ValueError("explicit build manifest must be named Cargo.toml")
+    if not manifest_path.is_file():
+        raise FileNotFoundError(f"Cargo manifest must exist before local_slot: {manifest_path}")
+    package_name, library_name = cargo_library_name(manifest_path)
+    sources = build_candidate_source(manifest_path)
+    cargo = shutil.which("cargo")
+    if not cargo or not Path(cargo).is_file():
+        raise FileNotFoundError("cargo executable was not found before local_slot")
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
+    build_id = f"{stamp}-{(sources['sha256'] or sources['root']['sha256'])[:10]}-{uuid.uuid4().hex[:8]}"
+    build_dir = lane_root / "build-runs" / build_id
+    target_dir = ROOT / ".artifacts" / "build" / "lanes" / lane / build_id
+    generation_dir = lane_root / "generations" / build_id
+    expected_dll = target_dir / BUILD_TARGET / "release" / f"{library_name}.dll"
+    generation_dll = generation_dir / f"{library_name}.dll"
+    return {
+        "schema": "common-stock-build-plan-v1",
+        "lane": lane,
+        "build_id": build_id,
+        "created_utc": now(),
+        "python": {"path": str(python_exe), "sha256": sha256_file(python_exe)},
+        "cargo_executable": str(Path(cargo).resolve()),
+        "cargo_manifest": relative(manifest_path),
+        "cargo_manifest_sha256": sha256_file(manifest_path),
+        "package_name": package_name,
+        "library_name": library_name,
+        "candidate_source": sources,
+        "target": BUILD_TARGET,
+        "target_dir": relative(target_dir),
+        "expected_dll": relative(expected_dll),
+        "generation_dir": relative(generation_dir),
+        "generation_dll": relative(generation_dll),
+        "build_dir": relative(build_dir),
+    }
+
+
+def build_cargo_argv(plan: dict) -> list[str]:
+    return [
+        plan["cargo_executable"], "build",
+        "--manifest-path", str((ROOT / plan["cargo_manifest"]).resolve()),
+        "--target-dir", str((ROOT / plan["target_dir"]).resolve()),
+        "--jobs", "1", "--target", BUILD_TARGET, "--release",
+    ]
+
+
+def build_local_slot_argv(plan: dict) -> list[str]:
+    return [
+        str(Path(plan["python"]["path"]).resolve()), str(SLOT.resolve()),
+        "--lane", plan["lane"], "--cwd", str(ROOT.resolve()), "--",
+        *build_cargo_argv(plan),
+    ]
+
+
+def run_build(lane: str, python_exe: Path, cargo_manifest: Path) -> int:
+    # Resolve and validate the explicit owned Cargo.toml before starting local_slot.
+    plan = make_build_plan(lane, python_exe, cargo_manifest)
+    build_dir = require_owned_path(ROOT / plan["build_dir"], ROOT / ".artifacts/scratch" / lane,
+                                  "build evidence directory")
+    build_dir.mkdir(parents=True, exist_ok=False)
+    plan["cargo_argv"] = build_cargo_argv(plan)
+    plan["local_slot_argv"] = build_local_slot_argv(plan)
+    plan_path = build_dir / "build_plan.json"
+    write_json(plan_path, plan)
+    transcript_path = build_dir / "local_slot.log"
+    result_path = build_dir / "build_result.json"
+    result = {
+        "schema": "common-stock-build-result-v1", "lane": lane,
+        "build_id": plan["build_id"],
+        "completed_utc": now(), "local_slot_exit_code": None,
+        "local_slot": None, "build_plan": relative(plan_path),
+        "local_slot_transcript": None, "local_slot_transcript_sha256": None,
+        "cargo_started": False, "cargo_exit_code": None,
+        "generation_dll": None, "dll_sha256": None,
+        "copy_hash_verified": False,
+    }
+    if plan["candidate_source"].get("status") != "complete":
+        result["status"] = "path_dependency_hash_unknown"
+        result["path_dependency_hash_errors"] = plan["candidate_source"]["local_path_dependencies"].get("errors", [])
+        write_json(result_path, result)
+        return 3
+    proc = subprocess.run(plan["local_slot_argv"], cwd=ROOT, stdout=subprocess.PIPE,
+                          stderr=subprocess.STDOUT, text=True, encoding="utf-8",
+                          errors="replace", check=False)
+    transcript = proc.stdout or ""
+    transcript_path.write_text(transcript, encoding="utf-8")
+    slot = slot_transcript_evidence(transcript, None, proc.returncode)
+    cargo_started = slot["child_pid_from_transcript"] is not None
+    cargo_exit_known = cargo_started and slot["release_verified_from_this_transcript"]
+    result.update({
+        "local_slot_exit_code": proc.returncode,
+        "local_slot": slot,
+        "local_slot_transcript": relative(transcript_path),
+        "local_slot_transcript_sha256": sha256_file(transcript_path),
+        "cargo_started": cargo_started,
+        "cargo_exit_code": proc.returncode if cargo_exit_known else None,
+    })
+    if not cargo_started:
+        result["status"] = "local_slot_failed_before_cargo"
+        result["failure_detail"] = "no child PID was recorded by this local_slot transcript"
+        write_json(result_path, result)
+        return proc.returncode if proc.returncode else 3
+    if not slot["release_verified_from_this_transcript"]:
+        result["status"] = "local_slot_incomplete_after_cargo_start"
+        write_json(result_path, result)
+        return proc.returncode if proc.returncode else 3
+    if proc.returncode != 0:
+        result["status"] = "cargo_failed"
+        write_json(result_path, result)
+        return proc.returncode
+    manifest_path = ROOT / plan["cargo_manifest"]
+    if not manifest_path.is_file() or sha256_file(manifest_path) != plan["cargo_manifest_sha256"]:
+        result["status"] = "cargo_manifest_changed"
+        write_json(result_path, result)
+        return 3
+    try:
+        source_after = build_candidate_source(manifest_path)
+    except Exception:
+        source_after = None
+    if source_after != plan["candidate_source"]:
+        result["status"] = "candidate_source_changed"
+        write_json(result_path, result)
+        return 3
+    built_dll = ROOT / plan["expected_dll"]
+    if not built_dll.is_file():
+        result["status"] = "expected_dll_missing"
+        write_json(result_path, result)
+        return 3
+    source_hash = sha256_file(built_dll)
+    generation_dir = require_owned_path(ROOT / plan["generation_dir"],
+                                        ROOT / ".artifacts/scratch" / lane,
+                                        "DLL generation directory")
+    generation_dir.mkdir(parents=True, exist_ok=False)
+    generation_dll = require_owned_path(ROOT / plan["generation_dll"], generation_dir,
+                                        "preserved candidate DLL")
+    shutil.copy2(built_dll, generation_dll)
+    copied_hash = sha256_file(generation_dll)
+    result.update({
+        "status": "built_and_preserved" if copied_hash == source_hash else "copy_hash_mismatch",
+        "built_dll": relative(built_dll), "built_dll_sha256": source_hash,
+        "generation_dll": relative(generation_dll), "dll_sha256": copied_hash,
+        "copy_hash_verified": copied_hash == source_hash,
+    })
+    write_json(result_path, result)
+    if copied_hash != source_hash:
+        return 3
+    write_json(generation_dir / "build_receipt.json", result)
+    return 0
 
 
 def assess_verdicts(contract: dict, positive: dict | None, negative: dict | None) -> dict:
@@ -587,6 +945,10 @@ def launch(manifest: dict, env: dict[str, str], python_exe: Path, run_dir: Path)
 def cli(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="mode", required=True)
+    build_parser = sub.add_parser("build", help="build one owned cdylib under local_slot and preserve it")
+    build_parser.add_argument("--lane", required=True)
+    build_parser.add_argument("--python", required=True, help="explicit interpreter for local_slot")
+    build_parser.add_argument("--manifest-path", required=True, help="owned Cargo.toml to build")
     for mode in ("run", "selftest"):
         p = sub.add_parser(mode)
         p.add_argument("--lane", required=True)
@@ -604,6 +966,14 @@ def cli(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.mode == "_execute":
         return execute_manifest(Path(args.manifest), args.manifest_sha256)
+    if args.mode == "build":
+        python_exe = Path(args.python)
+        cargo_manifest = Path(args.manifest_path)
+        if not python_exe.is_absolute():
+            python_exe = ROOT / python_exe
+        if not cargo_manifest.is_absolute():
+            cargo_manifest = ROOT / cargo_manifest
+        return run_build(args.lane, python_exe.resolve(), cargo_manifest.resolve())
     python_exe = Path(args.python).resolve()
     run_dir = Path(args.run_dir)
     if not run_dir.is_absolute():

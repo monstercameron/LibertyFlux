@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-08",
-    "title": "Verify native callback forwarding",
+    "title": "Preserve candidate builds with exact local inputs",
     "commit": null,
+    "summary": "Use a shared guarded build command to preserve the candidate DLL and its source inputs.",
+    "changes": [
+      "The build command resolves candidate manifests and local path dependencies before acquiring the shared resource slot, then preserves a hash-checked DLL generation.",
+      "Every build uses a unique target directory; unsupported dependency overrides fail closed and workspace lockfile identity is pinned.",
+      "Failure records distinguish a missing Cargo launch from a compiler failure or changed source. Twenty-seven focused tests and a real isolated build pass."
+    ]
+  },
+  {
+    "date": "2026-10-08",
+    "title": "Verify native callback forwarding",
+    "commit": "b48360a98fffb102dc6262b70ae5781ad2f26219",
     "summary": "Accept two independently reviewed native callback wrappers with explicit harness limits.",
     "changes": [
       "Each wrapper completed one thousand original trials on the pinned stock checker and rejected a same-contract semantic mutant.",
