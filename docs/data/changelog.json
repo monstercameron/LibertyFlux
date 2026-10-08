@@ -1,6 +1,16 @@
 [
   {
     "date": "2026-10-08",
+    "title": "Restore the seven-word helper wrapper proof",
+    "commit": null,
+    "summary": "Observe all initialized record words at the downstream helper boundary.",
+    "changes": [
+      "Added the complete helper wrapper after a fresh independently reviewed 1,000-trial stock proof and a same-contract corrupted-record mutant that failed.",
+      "Documented skipped local pointer addresses, scripted helper bodies and the caller-vector pointee that remains outside the wrapper proof."
+    ]
+  },
+  {
+    "date": "2026-10-08",
     "title": "Restore the three-vector forwarding wrapper proof",
     "commit": "294033f97708bf0014093764af81ab622003b871",
     "summary": "Compare all nine initialized vector words and preserve the native buffer extent.",
