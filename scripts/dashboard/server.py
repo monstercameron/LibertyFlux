@@ -24,7 +24,7 @@ import threading
 import time
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from urllib.parse import parse_qs, urlsplit
 
 HERE = Path(__file__).resolve().parent
@@ -143,13 +143,19 @@ def cached_row(lane, live, experiments, registry_entry=None):
     """A lane's row changes only when its log, results or process state change; reading 170 lanes' files on
     every poll took almost two seconds."""
     def mtime(path):
+        if path is None:
+            return 0
         try:
             return path.stat().st_mtime
-        except OSError:
+        except (OSError, TypeError):
             return 0
+    def file_key(path):
+        return (str(path) if path is not None else None, mtime(path))
     process = live.get(lane) or {}
-    key = (mtime(LOGS / f"{lane}.log"), mtime(SCRATCH / lane / "results.json"), mtime(SCRATCH / lane / "names.json"),
-           mtime(SCRATCH / lane / "summary.txt"), process.get("pid"), process.get("mem_mb"),
+    key = (file_key(lane_file_path(lane, "log", registry_entry)),
+           file_key(lane_file_path(lane, "results", registry_entry)), file_key(lane_default_path(lane, "names.json")),
+           file_key(lane_file_path(lane, "summary", registry_entry)),
+           file_key(lane_file_path(lane, "prompt", registry_entry)), process.get("pid"), process.get("mem_mb"),
            tuple(sorted((registry_entry or {}).items())))
     hit = _rows.get(lane)
     if hit and hit[0] == key:
@@ -162,8 +168,13 @@ def cached_row(lane, live, experiments, registry_entry=None):
 def read_json(path, default=None):
     try:
         return json.loads(path.read_text(encoding="utf-8-sig"))
-    except (OSError, ValueError):
+    except (OSError, ValueError, TypeError):
         return default
+
+
+def registry_path_value(item, key):
+    value = item.get(key)
+    return value if isinstance(value, str) and len(value) <= 4096 else None
 
 
 def read_codex_registry(path=CODEX_REGISTRY, now=None):
@@ -201,6 +212,10 @@ def read_codex_registry(path=CODEX_REGISTRY, now=None):
             "effort": item.get("effort") if isinstance(item.get("effort"), str) else None,
             "started": item.get("started") if isinstance(item.get("started"), str) else None,
             "prompt": item.get("prompt") if isinstance(item.get("prompt"), str) else None,
+            "prompt_path": registry_path_value(item, "prompt_path"),
+            "results_path": registry_path_value(item, "results_path"),
+            "log_path": registry_path_value(item, "log_path"),
+            "summary_path": registry_path_value(item, "summary_path"),
             "source": "codex",
         }
     registry = {"state": "fresh" if fresh else ("stale" if age > CODEX_REGISTRY_MAX_AGE_SECONDS else "unknown"),
@@ -209,14 +224,144 @@ def read_codex_registry(path=CODEX_REGISTRY, now=None):
     return entries, registry
 
 
+def _inside(path, root):
+    try:
+        return bool(path.relative_to(root).parts)
+    except (ValueError, OSError):
+        return False
+
+
+def _lane_roots(lane):
+    """Resolve the configured scratch/log roots and reject redirected lane directories."""
+    if not isinstance(lane, str) or not LANE_NAME.fullmatch(lane):
+        return None, None, None
+    try:
+        artifact_root = ART.resolve(strict=False)
+        scratch_root = SCRATCH.resolve(strict=False)
+        logs_root = LOGS.resolve(strict=False)
+        lane_root = (SCRATCH / lane).resolve(strict=False)
+    except (OSError, RuntimeError):
+        return None, None, None
+    if scratch_root.parent != artifact_root or scratch_root.name.casefold() != "scratch":
+        return None, None, None
+    if logs_root.parent != artifact_root or logs_root.name.casefold() != "logs":
+        return None, None, None
+    if lane_root.parent != scratch_root or lane_root.name.casefold() != lane.casefold():
+        return None, None, None
+    return lane_root, scratch_root, logs_root
+
+
+def lane_default_path(lane, filename):
+    """Return a legacy lane file only if its resolved target remains inside that lane's scratch folder."""
+    lane_root, _, _ = _lane_roots(lane)
+    if lane_root is None or not isinstance(filename, str) or Path(filename).name != filename:
+        return None
+    try:
+        path = (SCRATCH / lane / filename).resolve(strict=False)
+    except (OSError, RuntimeError):
+        return None
+    return path if _inside(path, lane_root) else None
+
+
+def lane_file_path(lane, kind, registry_entry=None):
+    """Use a registry path only when it is an existing lane-owned file; otherwise keep the legacy path."""
+    fields = {"prompt": ("prompt_path", "prompt.txt", ".txt"),
+              "results": ("results_path", "results.json", ".json"),
+              "summary": ("summary_path", "summary.txt", ".txt"),
+              "log": ("log_path", f"{lane}.log", ".log")}
+    spec = fields.get(kind)
+    if spec is None:
+        return None
+    field, default_name, suffix = spec
+    lane_root, _, logs_root = _lane_roots(lane)
+    if lane_root is None:
+        return None
+    is_log = kind == "log"
+    allowed_root = logs_root if is_log else lane_root
+    raw = (registry_entry or {}).get(field)
+    if isinstance(raw, str) and raw and len(raw) <= 4096 and raw.strip() == raw:
+        # Registry paths are repo-relative POSIX paths. Reject traversal and Windows/UNC paths
+        # before resolving symlinks, then validate the resolved target against its owner root.
+        parts = raw.split("/")
+        windows_path = PureWindowsPath(raw)
+        if (not raw.startswith("/") and "\\" not in raw and "\x00" not in raw
+                and not windows_path.is_absolute() and not windows_path.drive
+                and all(part not in {"", ".", ".."} for part in parts)):
+            try:
+                candidate = ROOT.joinpath(*PurePosixPath(raw).parts).resolve(strict=True)
+            except (OSError, RuntimeError):
+                candidate = None
+            if candidate is not None and candidate.is_file() and candidate.suffix.casefold() == suffix:
+                if is_log:
+                    owned_name = candidate.name == f"{lane}.log" or candidate.name.startswith((f"{lane}-", f"{lane}_"))
+                    owned = candidate.parent == allowed_root and owned_name
+                else:
+                    owned = _inside(candidate, allowed_root)
+                if owned:
+                    return candidate
+
+    if is_log:
+        try:
+            default_path = (LOGS / default_name).resolve(strict=False)
+        except (OSError, RuntimeError):
+            return None
+        owned = default_path.parent == logs_root and default_path.name == f"{lane}.log"
+    else:
+        default_path = lane_default_path(lane, default_name)
+        if default_path is None:
+            return None
+        owned = _inside(default_path, lane_root)
+    return default_path if owned else None
+
+
+def registered_lane_path(lane, kind, registry_entry=None):
+    """Return a registry-routed file only after the same lane ownership checks as lane_file_path."""
+    fields = {"prompt": ("prompt_path", ".txt"), "results": ("results_path", ".json"),
+              "summary": ("summary_path", ".txt")}
+    spec = fields.get(kind)
+    if spec is None or not isinstance(registry_entry, dict):
+        return None
+    field, suffix = spec
+    raw = registry_path_value(registry_entry, field)
+    if not raw:
+        return None
+    parts = raw.split("/")
+    windows_path = PureWindowsPath(raw)
+    if (raw.startswith("/") or "\\" in raw or "\x00" in raw
+            or windows_path.is_absolute() or windows_path.drive
+            or any(part in {"", ".", ".."} for part in parts)):
+        return None
+    # Keep even metadata resolution inside the named lane's lexical root. lane_file_path then
+    # resolves symlinks and rejects any target that escaped that root.
+    expected_prefix = f".artifacts/scratch/{lane}/"
+    if not raw.startswith(expected_prefix):
+        return None
+    try:
+        candidate = ROOT.joinpath(*PurePosixPath(raw).parts).resolve(strict=True)
+    except (OSError, RuntimeError):
+        return None
+    if not candidate.is_file() or candidate.suffix.casefold() != suffix:
+        return None
+    routed = lane_file_path(lane, kind, registry_entry)
+    return candidate if routed == candidate else None
+
+
+def has_current_task_context(lane, registry_entry=None):
+    """Current prompt/results routing means a lane-root fallback summary is historical."""
+    return any(registered_lane_path(lane, kind, registry_entry) is not None
+               for kind in ("prompt", "results"))
+
+
 def tail(path, lines=1, limit=64 * 1024):
+    if path is None:
+        return []
     try:
         with open(path, "rb") as handle:
             handle.seek(0, os.SEEK_END)
             size = handle.tell()
             handle.seek(max(0, size - limit))
             text = handle.read().decode("utf-8", errors="replace")
-    except OSError:
+    except (OSError, TypeError):
         return []
     rows = [row.rstrip() for row in text.splitlines() if row.strip()]
     return rows[-lines:]
@@ -236,8 +381,8 @@ def kind_of(lane):
     return "special"
 
 
-def result_document(lane):
-    data = read_json(SCRATCH / lane / "results.json")
+def result_document(lane, registry_entry=None):
+    data = read_json(lane_file_path(lane, "results", registry_entry))
     return data if isinstance(data, dict) else {}
 
 
@@ -265,8 +410,8 @@ def display_note(value, limit=360):
     return display_value(value, limit)
 
 
-def result_rows(lane):
-    rows = read_json(SCRATCH / lane / "results.json")
+def result_rows(lane, registry_entry=None):
+    rows = read_json(lane_file_path(lane, "results", registry_entry))
     if isinstance(rows, dict):
         rows = rows.get("functions") or rows.get("results") or rows.get("names")
     return rows if isinstance(rows, list) else None
@@ -340,8 +485,295 @@ def _is_full_verified_outcome(outcome):
     return value.startswith("verified") and not any(word in value for word in ("partial", "bounded", "branch", "stage"))
 
 
-def yield_of(lane):
-    data = result_document(lane)
+def _count(value):
+    return value if isinstance(value, int) and not isinstance(value, bool) and value >= 0 else None
+
+
+def _first_count(record, *keys):
+    if not isinstance(record, dict):
+        return None
+    for key in keys:
+        value = _count(record.get(key))
+        if value is not None:
+            return value
+    return None
+
+
+def _first_bool(record, *keys):
+    if not isinstance(record, dict):
+        return None
+    for key in keys:
+        value = record.get(key)
+        if isinstance(value, bool):
+            return value
+    return None
+
+
+def _proof_metrics(positive, negative=None):
+    """Extract structured trial evidence. A mutant only counts as caught after a clean positive run."""
+    positive = positive if isinstance(positive, dict) else {}
+    negative = negative if isinstance(negative, dict) else positive
+    positive_trials = _first_count(positive, "positive_trials", "correct_trials", "trials")
+    positive_fails = _first_count(positive, "positive_fails", "correct_fails", "fails")
+    original_trials = _first_count(positive, "orig_ok_trials")
+    positive_passed = _first_bool(positive, "positive_passed", "correct_pass", "passed")
+    positive_ok = (positive_passed is True and positive_trials is not None and positive_trials > 0
+                   and positive_fails == 0 and original_trials == positive_trials
+                   and positive.get("vacuous") is False)
+
+    mutant_trials = _first_count(negative, "mutant_trials", "mut_trials", "trials")
+    mutant_fails = _first_count(negative, "mutant_fails", "mut_fails", "failed_trials")
+    mutant_flag = _first_bool(negative, "mutant_caught")
+    has_mutant_evidence = (mutant_flag is not None or mutant_trials is not None or mutant_fails is not None)
+    if not has_mutant_evidence:
+        mutant_caught = None
+    elif mutant_flag is False:
+        mutant_caught = False
+    else:
+        mutant_caught = bool(positive_ok and mutant_trials is not None and mutant_trials > 0
+                             and mutant_fails is not None and mutant_fails > 0)
+    return {"positive_trials": positive_trials, "positive_fails": positive_fails,
+            "original_trials": original_trials, "positive_passed": positive_passed,
+            "positive_ok": positive_ok, "mutant_trials": mutant_trials,
+            "mutant_fails": mutant_fails, "mutant_caught": mutant_caught}
+
+
+def _evidence_row(label, outcome, metrics=None, detail=""):
+    metrics = metrics or {}
+    return {"name": display_value(label, 120), "outcome": display_value(outcome, 120),
+            "positive_trials": metrics.get("positive_trials"), "positive_fails": metrics.get("positive_fails"),
+            "original_trials": metrics.get("original_trials"), "mutant_trials": metrics.get("mutant_trials"),
+            "mutant_fails": metrics.get("mutant_fails"), "mutant_caught": metrics.get("mutant_caught"),
+            "full_function_verified": False, "detail": display_value(detail, 260)}
+
+
+def _accepted_decision(value):
+    if not isinstance(value, str):
+        return False
+    first = value.casefold().strip().split(";", 1)[0].strip()
+    return first == "accept" or first.startswith("accept_") or first.startswith("accept ")
+
+
+def structured_result_evidence(data):
+    """Normalize recent lane schemas without treating stage or claim evidence as full-function proof."""
+    if not isinstance(data, dict):
+        return None
+
+    # Q135 stores stage runs and control replays as named objects alongside its attempts.
+    stage_number = _count(data.get("new_stage"))
+    if stage_number is not None and isinstance(data.get("attempts"), list) and isinstance(data.get("same_candidate_controls"), dict):
+        rows = []
+        stage_prefix = f"s{stage_number}-"
+        stage_runs = {}
+        for key, record in data.items():
+            normalized = str(key).casefold().replace("_", "-")
+            if normalized.startswith(stage_prefix) and isinstance(record, dict) and "status" in record:
+                stage_runs[normalized] = record
+        full_stage_passed = 0
+        passed_stage_runs = 0
+        for key, record in stage_runs.items():
+            metrics = _proof_metrics(record)
+            raw = display_value(record.get("status"), 80) or "status not recorded"
+            status_ok = isinstance(record.get("status"), str) and record.get("status").casefold() in {
+                "passed", "accepted", "verified"}
+            if metrics["positive_passed"] is False or (metrics["positive_fails"] is not None and metrics["positive_fails"] > 0):
+                outcome = "positive proof failed or incomplete"
+            elif metrics["positive_ok"] is True and metrics["mutant_caught"] is False:
+                outcome = "positive passed; mutant not caught"
+            elif not status_ok:
+                outcome = "stage run failed or incomplete"
+            elif metrics["positive_ok"] is not True:
+                outcome = "positive proof failed or incomplete"
+            elif metrics["mutant_caught"] is True:
+                outcome = "stage proof passed" if "full" in key and "probe" not in key else "probe passed"
+                passed_stage_runs += 1
+                if "full" in key and "probe" not in key:
+                    full_stage_passed += 1
+            else:
+                outcome = "positive passed; mutant not caught"
+            rows.append(_evidence_row(f"Stage {stage_number} · {key[len(stage_prefix):]}", outcome, metrics,
+                                      "Stage-scoped evidence; complete-function verification is not established."))
+
+        controls = data.get("same_candidate_controls") or {}
+        control_records = controls.get("records") if isinstance(controls.get("records"), list) else []
+        replay_passed = 0
+        for index, record in enumerate(control_records, 1):
+            if not isinstance(record, dict):
+                continue
+            metrics = _proof_metrics(record)
+            passed = (record.get("status") == "passed" and metrics["positive_ok"] is True
+                      and metrics["mutant_caught"] is True)
+            replay_passed += int(passed)
+            outcome = "control replay passed" if passed else ("positive passed; mutant not caught"
+                       if metrics["positive_ok"] is True and metrics["mutant_caught"] is not True
+                       else "control replay failed or incomplete")
+            rows.append(_evidence_row(f"Prior-stage replay {index}", outcome, metrics,
+                                      "Replay evidence for the current candidate; not a new stage or function credit."))
+        replay_total = len(control_records) if control_records else _count(controls.get("total")) or 0
+
+        # These are live current replays; they have no trial result yet and receive no proof credit.
+        live_controls = []
+        for key, record in data.items():
+            normalized = str(key).casefold().replace("_", "-")
+            if normalized.startswith("control-s") and isinstance(record, dict) and record.get("status") == "running":
+                live_controls.append(normalized)
+        for key in sorted(live_controls):
+            rows.append(_evidence_row(f"Current replay {key.removeprefix('control-')}", "running", {},
+                                      "No replay trial result is recorded yet."))
+
+        display = (f"Stage {stage_number}: {full_stage_passed} partial stage proof(s) passed; "
+                   f"{replay_passed}/{replay_total} prior-stage control replays passed; "
+                   "whole-function verification: 0.")
+        return {"rows": rows, "label": "Stage runs and control replays", "item_label": "Run / replay",
+                "kind": "evidence", "display": display, "done": full_stage_passed,
+                "of": 1, "unit": "partial stages", "partial_stages": full_stage_passed,
+                "verified_functions": 0, "status": display_value(data.get("status"), 100),
+                "scope": "Stage results and control replays do not establish whole-function verification."}
+
+    # Q134 records proof progress per attempt, including a run identifier and completed-contract count.
+    attempts = data.get("attempts")
+    if isinstance(attempts, list) and any(isinstance(item, dict) and "proof_completed_contracts" in item for item in attempts):
+        rows = []
+        latest_completed = 0
+        for index, attempt in enumerate(attempts, 1):
+            if not isinstance(attempt, dict):
+                continue
+            completed = _count(attempt.get("proof_completed_contracts")) or 0
+            latest_completed = completed
+            run = attempt.get("proof_run_id")
+            if not isinstance(run, str) or not re.fullmatch(r"[A-Za-z0-9_.-]{1,48}", run):
+                run = f"attempt {index}"
+            status = attempt.get("status") if isinstance(attempt.get("status"), str) else "status not recorded"
+            rows.append(_evidence_row(f"Proof run {run}", status, {},
+                                      f"{completed} completed contract record(s); this summary has no structured trial or mutant totals."))
+        return {"rows": rows, "label": "Proof run progress", "item_label": "Proof run",
+                "kind": "evidence", "display": f"{latest_completed} completed proof contract(s) in the latest run; "
+                          "partial run in progress; whole-function verification is not established.",
+                "done": latest_completed, "of": latest_completed, "unit": "completed proof contracts",
+                "partial_stages": 0, "verified_functions": 0,
+                "status": display_value(data.get("status"), 100),
+                "scope": "Completed-contract counts are shown separately from full-function verification."}
+
+    # Q133 stores one narrow contract result per function with explicit positive and negative records.
+    functions = data.get("functions")
+    if isinstance(functions, list) and any(isinstance(item, dict) and isinstance(item.get("stock_positive"), dict)
+                                           for item in functions):
+        rows = []
+        accepted = 0
+        for index, function in enumerate(functions, 1):
+            if not isinstance(function, dict):
+                continue
+            positive = function.get("stock_positive")
+            negative = function.get("same_contract_negative")
+            metrics = _proof_metrics(positive, negative)
+            accepted_here = (_accepted_decision(function.get("decision")) and metrics["positive_ok"] is True
+                             and metrics["mutant_caught"] is True)
+            accepted += int(accepted_here)
+            outcome = "narrow contract accepted" if accepted_here else (
+                "positive passed; mutant not caught" if metrics["positive_ok"] is True else "contract proof failed or incomplete")
+            rows.append(_evidence_row(f"Function contract {index}", outcome, metrics,
+                                      "Narrow contract only; full-function verification is not established."))
+        return {"rows": rows, "label": "Narrow contract evidence", "item_label": "Contract proof",
+                "kind": "evidence", "display": f"{accepted} narrow contract proof(s) accepted; whole-function verification: 0.",
+                "done": accepted, "of": len(rows), "unit": "accepted narrow contracts",
+                "partial_stages": 0, "accepted_contracts": accepted, "verified_functions": 0,
+                "status": display_value(data.get("status"), 100),
+                "scope": "Accepted narrow contracts remain separate from full-function verification."}
+
+    # Q138 records claim decisions and prose notes, but no structured trial result on each claim.
+    claims = data.get("claims")
+    if isinstance(claims, list) and any(isinstance(item, dict) and "decision" in item for item in claims):
+        rows = []
+        accepted = 0
+        for index, claim in enumerate(claims, 1):
+            if not isinstance(claim, dict):
+                continue
+            decision = claim.get("decision") if isinstance(claim.get("decision"), str) else "decision not recorded"
+            accepted += int(_accepted_decision(decision))
+            rows.append(_evidence_row(f"Claim record {index}", decision, {},
+                                      "Claim decision only; this record has no structured trial or mutant totals."))
+        return {"rows": rows, "label": "Claim decisions", "item_label": "Claim",
+                "kind": "evidence", "display": f"{accepted} accepted claim decision(s) recorded; "
+                          "whole-function verification is not established by these summary records.",
+                "done": accepted, "of": len(rows), "unit": "accepted claim decisions",
+                "partial_stages": 0, "accepted_claims": accepted, "verified_functions": 0,
+                "status": display_value(data.get("status"), 100),
+                "scope": "Claim decisions and their prose notes are not converted into trial or mutant counts."}
+
+    # Generic result status is work activity after the specific structured proof adapters above.
+    # It never creates proof, mutant, partial-stage, or full-function credit.
+    if isinstance(data.get("status"), str) and data["status"].strip():
+        tests = data.get("tests") if isinstance(data.get("tests"), list) else []
+        changes = data.get("changes") if isinstance(data.get("changes"), list) else []
+        rows = []
+        passed = failed = 0
+        for index, item in enumerate(tests, 1):
+            if isinstance(item, dict):
+                name = item.get("name") or item.get("test") or item.get("item") or f"Test {index}"
+                outcome = item.get("status") or item.get("outcome") or item.get("result") or "result not recorded"
+                detail = item.get("details") or item.get("detail") or item.get("summary") or item.get("description") or ""
+            else:
+                name, outcome, detail = f"Test {index}", "result not recorded", item
+            normalized = outcome.casefold().strip() if isinstance(outcome, str) else ""
+            passed += int(normalized in {"pass", "passed", "success", "succeeded"})
+            failed += int(normalized in {"fail", "failed", "error", "errored"})
+            rows.append({"category": "Test", "name": display_value(name, 120),
+                         "outcome": display_value(outcome, 120), "detail": display_value(detail, 260)})
+        for index, item in enumerate(changes, 1):
+            if isinstance(item, dict):
+                name = item.get("name") or item.get("title") or item.get("item") or f"Change {index}"
+                detail = item.get("description") or item.get("details") or item.get("detail") or item.get("summary") or ""
+            else:
+                name, detail = f"Change {index}", item
+            rows.append({"category": "Change", "name": display_value(name, 120),
+                         "outcome": "recorded", "detail": display_value(detail, 260)})
+        test_summary = f"{len(tests)} test result(s) recorded"
+        if passed or failed:
+            counts = []
+            if passed:
+                counts.append(f"{passed} passed")
+            if failed:
+                counts.append(f"{failed} failed")
+            test_summary += " (" + ", ".join(counts) + ")"
+        change_summary = f"{len(changes)} change(s) recorded"
+        nested_target = data.get("target") if isinstance(data.get("target"), dict) else {}
+        target_value = data.get("target_va")
+        if not isinstance(target_value, str) or not target_value.strip():
+            target_value = nested_target.get("address")
+        target_display = display_value(target_value, 160) if isinstance(target_value, str) else ""
+        task_type = data.get("task_type") if isinstance(data.get("task_type"), str) else ""
+        display_parts = [f"Work status: {display_value(data.get('status'), 100)}"]
+        if task_type.strip():
+            display_parts.append(f"task type: {display_value(task_type, 120)}")
+        if isinstance(data.get("scope"), str) and data["scope"].strip():
+            display_parts.append(f"scope: {display_value(data['scope'], 240)}")
+        if target_display.strip():
+            display_parts.append(f"target: {target_display}")
+        if tests or changes:
+            display_parts.extend((change_summary, test_summary))
+        else:
+            display_parts.append("no changes or test results recorded")
+        display = "; ".join(display_parts) + "."
+        scope_value = (display_value(data.get("scope"), 400) if isinstance(data.get("scope"), str)
+                       else "Recorded task activity only; no proof or function credit is inferred.")
+        return {"rows": rows, "label": "Tool-result activity", "item_label": "Activity",
+                "kind": "activity", "display": display, "done": len(changes), "of": len(changes),
+                "unit": "changes recorded", "status": display_value(data.get("status"), 100),
+                "task": display_value(data.get("task"), 2000) if isinstance(data.get("task"), str) else "",
+                "task_type": display_value(task_type, 120), "target_va": target_display,
+                "tests_count": len(tests), "tests_passed": passed, "tests_failed": failed,
+                "changes_count": len(changes), "scope": scope_value}
+    return None
+
+
+def yield_of(lane, registry_entry=None):
+    data = result_document(lane, registry_entry)
+    evidence = structured_result_evidence(data)
+    if evidence is not None:
+        return {key: evidence[key] for key in ("done", "of", "unit", "display", "status", "scope",
+                                                  "verified_functions", "partial_stages", "accepted_contracts", "accepted_claims",
+                                                  "kind", "task", "task_type", "target_va", "tests_count", "tests_passed", "tests_failed", "changes_count")
+                if key in evidence}
     stages = data.get("stages")
     if isinstance(stages, dict) and stages:
         records = [stage for stage in stages.values() if isinstance(stage, dict)]
@@ -361,7 +793,7 @@ def yield_of(lane):
                 "display": "; ".join(pieces), "status": display_value(data.get("status")), "scope": evidence_scope(data),
                 "verified_functions": 0}
 
-    rows = result_rows(lane)
+    rows = result_rows(lane, registry_entry)
     if rows is not None:
         rows = [row for row in rows if isinstance(row, dict)]
         if rows and any("outcome" in row for row in rows):
@@ -406,13 +838,16 @@ def yield_of(lane):
     return None
 
 
-def result_detail_rows(lane):
-    data = result_document(lane)
-    rows = result_rows(lane)
+def result_detail_rows(lane, registry_entry=None):
+    data = result_document(lane, registry_entry)
+    evidence = structured_result_evidence(data)
+    if evidence is not None:
+        return evidence["rows"], evidence["label"], evidence["item_label"], evidence["kind"]
+    rows = result_rows(lane, registry_entry)
     if rows is not None:
         if any(isinstance(row, dict) and row.get("status") and not row.get("outcome") for row in rows):
-            return rows, "Function evidence", "Function"
-        return rows, "Results", "Function"
+            return rows, "Function evidence", "Function", "legacy"
+        return rows, "Results", "Function", "legacy"
 
     stages = data.get("stages")
     if isinstance(stages, dict):
@@ -431,22 +866,29 @@ def result_detail_rows(lane):
                                                        "mutant: " + display_value(mutant) if mutant else "") if value)
             rows.append({"name": name, "status": stage.get("status"), "attempts": stage.get("trials"),
                          "mutant_caught": caught, "detail": detail})
-        return rows, "Stage checks", "Stage"
+        return rows, "Stage checks", "Stage", "legacy"
 
     contracts = accepted_contracts(data)
     if contracts:
         rows = [{"name": name, "outcome": "accepted (branch-scoped)",
                  "detail": "Accepted contract on this candidate; full-function verification is not established."}
                 for name in contracts]
-        return rows, "Accepted branch-scoped contracts", "Contract"
-    return None, None, None
+        return rows, "Accepted branch-scoped contracts", "Contract", "legacy"
+    return None, None, None, "legacy"
 
 
 def initial_prompt(lane, registry_entry=None):
-    """Prefer saved task text and registry assignment; never label a generic brief as the initial prompt."""
-    candidates = ((SCRATCH / lane / "prompt.txt", "lane prompt.txt"),
-                  (COORD / "prompts" / f"{lane}.txt", "coordinator prompt file"))
+    """Prefer saved prompts; fall back to explicit prompt/task text in the lane result document."""
+    prompt_path = lane_file_path(lane, "prompt", registry_entry)
+    try:
+        default_prompt_path = (SCRATCH / lane / "prompt.txt").resolve(strict=False)
+    except (OSError, RuntimeError):
+        default_prompt_path = None
+    prompt_source = "registry prompt_path" if prompt_path is not None and prompt_path != default_prompt_path else "lane prompt.txt"
+    candidates = ((prompt_path, prompt_source), (COORD / "prompts" / f"{lane}.txt", "coordinator prompt file"))
     for path, source in candidates:
+        if path is None:
+            continue
         try:
             prompt = path.read_text(encoding="utf-8", errors="replace")
         except OSError:
@@ -456,6 +898,18 @@ def initial_prompt(lane, registry_entry=None):
     prompt = (registry_entry or {}).get("prompt")
     if isinstance(prompt, str) and prompt.strip() and prompt.strip().casefold() not in {"no prompt recorded", "no initial prompt recorded", "not recorded", "unknown", "none", "n/a"}:
         return prompt, "registry assignment"
+    data = result_document(lane, registry_entry)
+    for key, source in (("full_prompt", "results.json full_prompt"), ("initial_prompt", "results.json initial_prompt"),
+                        ("prompt", "results.json prompt"), ("prompt_text", "results.json prompt_text"),
+                        ("task", "results.json task text")):
+        prompt = data.get(key)
+        if isinstance(prompt, str) and prompt.strip() and prompt.strip().casefold() not in {
+                "no prompt recorded", "no initial prompt recorded", "not recorded", "unknown", "none", "n/a"}:
+            limit = 2000
+            suffix = "\n\n[truncated at 2,000 characters]"
+            if len(prompt) > limit:
+                prompt = prompt[:limit - len(suffix)] + suffix
+            return prompt, source
     return None, None
 
 def brief_tag(lane):
@@ -469,10 +923,10 @@ def brief_tag(lane):
 
 
 def lane_row(lane, live, experiments, registry_entry=None):
-    log = LOGS / f"{lane}.log"
+    log = lane_file_path(lane, "log", registry_entry)
     try:
-        stat = log.stat()
-    except OSError:
+        stat = log.stat() if log is not None else None
+    except (OSError, AttributeError):
         stat = None
     last = tail(log, 1)
     process = live.get(lane)
@@ -481,7 +935,8 @@ def lane_row(lane, live, experiments, registry_entry=None):
         match = re.search(r"lane exited with code (-?\d+)", last[0])
         if match:
             exited = int(match.group(1))
-    has_results = (SCRATCH / lane / "summary.txt").exists()
+    summary_path = lane_file_path(lane, "summary", registry_entry)
+    has_results = summary_path.exists() if summary_path is not None else False
     if registry_entry is not None:
         state = registry_entry["state"]
     elif process:
@@ -505,7 +960,7 @@ def lane_row(lane, live, experiments, registry_entry=None):
             "started": (registry_entry or {}).get("started") or (process or {}).get("started"),
             "agent_memory_mb": None if registry_entry is not None else (process or {}).get("mem_mb"),
             "last_activity": datetime.fromtimestamp(stat.st_mtime).isoformat(timespec="seconds") if stat else None,
-            "progress": progress[:300], "yield": yield_of(lane), "brief": brief_tag(lane),
+            "progress": progress[:300], "yield": yield_of(lane, registry_entry), "brief": brief_tag(lane),
             "experiment": (experiment or {}).get("factor"), "batch": len(batch) if isinstance(batch, list) else None}
 
 
@@ -554,17 +1009,40 @@ def lane_detail(lane):
     registry_lanes, _ = read_codex_registry()
     registry_entry = registry_lanes.get(lane) or {}
     prompt, prompt_source = initial_prompt(lane, registry_entry)
-    summary = SCRATCH / lane / "summary.txt"
+    summary_path = lane_file_path(lane, "summary", registry_entry)
     try:
-        summary_text = summary.read_text(encoding="utf-8", errors="replace")
+        summary_text = summary_path.read_text(encoding="utf-8", errors="replace") if summary_path is not None else None
     except OSError:
         summary_text = None
-    rows, results_label, result_item_label = result_detail_rows(lane)
+    summary_is_current = registered_lane_path(lane, "summary", registry_entry) is not None
+    summary_label = ("Current-task summary" if summary_is_current else
+                     "Historical summary" if has_current_task_context(lane, registry_entry) and summary_text is not None
+                     else "Lane summary")
+    rows, results_label, result_item_label, result_kind = result_detail_rows(lane, registry_entry)
     slim = None
     if rows:
         slim = []
         for row in rows[:400]:
             if not isinstance(row, dict):
+                continue
+            if result_kind == "evidence":
+                slim.append({"address": None, "name": display_value(row.get("name"), 120) or None,
+                             "size": None, "outcome": display_value(row.get("outcome"), 120) or None,
+                             "reason": None, "attempts": None, "mutant_caught": row.get("mutant_caught")
+                             if isinstance(row.get("mutant_caught"), bool) else None,
+                             "confidence": None, "detail": display_value(row.get("detail"), 260),
+                             "positive_trials": _count(row.get("positive_trials")),
+                             "positive_fails": _count(row.get("positive_fails")),
+                             "original_trials": _count(row.get("original_trials")),
+                             "mutant_trials": _count(row.get("mutant_trials")),
+                             "mutant_fails": _count(row.get("mutant_fails")),
+                             "full_function_verified": row.get("full_function_verified") is True})
+                continue
+            if result_kind == "activity":
+                slim.append({"category": display_value(row.get("category"), 40),
+                             "name": display_value(row.get("name"), 120),
+                             "outcome": display_value(row.get("outcome"), 120),
+                             "detail": display_value(row.get("detail"), 260)})
                 continue
             attempts = row.get("attempts")
             attempt_count = len(attempts) if isinstance(attempts, list) else attempts
@@ -587,11 +1065,11 @@ def lane_detail(lane):
                          "mutant_caught": row.get("mutant_caught") if isinstance(row.get("mutant_caught"), bool) else None,
                          "confidence": display_value(row.get("confidence")) or None,
                          "detail": display_note(note)[:400]})
-    result = yield_of(lane)
+    result = yield_of(lane, registry_entry)
     return {"lane": lane, "model": registry_entry.get("model"), "effort": registry_entry.get("effort"),
             "prompt": prompt, "prompt_source": prompt_source, "prompt_chars": len(prompt) if prompt else 0,
-            "log": tail(LOGS / f"{lane}.log", 80), "summary": summary_text, "results": slim,
-            "results_label": results_label, "result_item_label": result_item_label,
+            "summary_label": summary_label, "log": tail(lane_file_path(lane, "log", registry_entry), 80), "summary": summary_text, "results": slim,
+            "results_label": results_label, "result_item_label": result_item_label, "result_kind": result_kind,
             "results_total": len(rows) if isinstance(rows, list) else 0, "yield": result,
             "batch": read_json(LISTS / f"{lane}.json")}
 

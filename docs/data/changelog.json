@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-08",
-    "title": "Preserve candidate builds with exact local inputs",
+    "title": "Show current native lane tasks and logs",
     "commit": null,
+    "summary": "The dashboard follows each native lane current task paths and distinguishes archived summaries from current activity.",
+    "changes": [
+      "Read lane-owned registry paths for current prompts, results and logs with bounded output and path validation.",
+      "Display explicit task status without inferring proof credit from activity or test counts.",
+      "Verified focused adapter and routing fixtures and visually inspected a running Luna lane with its live logs."
+    ]
+  },
+  {
+    "date": "2026-10-08",
+    "title": "Preserve candidate builds with exact local inputs",
+    "commit": "58b0ce2efafe2d38a995b35696dee8f6ce3a241b",
     "summary": "Use a shared guarded build command to preserve the candidate DLL and its source inputs.",
     "changes": [
       "The build command resolves candidate manifests and local path dependencies before acquiring the shared resource slot, then preserves a hash-checked DLL generation.",
