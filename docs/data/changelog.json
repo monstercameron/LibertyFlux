@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-08",
+    "title": "Show partial proof results in the lane dashboard",
+    "commit": null,
+    "summary": "Stage and branch evidence now renders with its scope instead of appearing empty.",
+    "changes": [
+      "Display stage-check results, branch-scoped contract counts and numeric attempt totals without counting partial evidence as verified functions.",
+      "Keep failed-positive negative controls uncredited and label saved prompt sources instead of substituting generic briefs.",
+      "Validated six focused schema fixtures and visually checked the restarted dashboard."
+    ]
+  },
+  {
+    "date": "2026-10-08",
     "title": "Restore three stream vector wrapper proofs",
     "commit": "f40ab731352b330831f4b8f49730021d92570cc4",
     "summary": "Independent review accepted vector forwarding and request records with explicit proof limits.",

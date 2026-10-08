@@ -298,7 +298,7 @@ tr.current td { background: var(--raised); }
       if (l.brief) meta.push("brief " + l.brief);
       if (age != null) meta.push("running " + span(age));
       else if (quiet != null) meta.push("last activity " + span(quiet) + " ago");
-      var y = l.yield ? l.yield.done + " of " + l.yield.of + " " + l.yield.unit : (l.batch ? "batch of " + l.batch : "");
+      var y = l.yield ? (l.yield.display || (l.yield.done + " of " + l.yield.of + " " + l.yield.unit)) : (l.batch ? "batch of " + l.batch : "");
       var heat = l.state === "running" && quiet != null ? heatColor(quiet) : null;
       if (l.agent_memory_mb) meta.push(l.agent_memory_mb + " MB");
       return '<li><button class="lane' + (l.lane === selected ? " selected" : "") + '" data-lane="' + esc(l.lane) + '" data-state="' + esc(l.state) + '"' +
@@ -318,21 +318,24 @@ tr.current td { background: var(--raised); }
       ["Agent memory", l.source === "codex" ? "Unavailable (no per-task OS PID)" : (l.agent_memory_mb == null ? "not recorded" : l.agent_memory_mb + " MB")],
       ["Brief version", l.brief || "not recorded"], ["Started", l.started ? l.started.replace("T", " ") : "not recorded"],
       ["Last activity", l.last_activity ? l.last_activity.replace("T", " ") : "none"], ["Batch", l.batch ? l.batch + " functions" : "not a batch lane"],
-      ["Result so far", l.yield ? l.yield.done + " of " + l.yield.of + " " + l.yield.unit : "nothing written yet"]];
+      ["Result so far", l.yield ? (l.yield.display || (l.yield.done + " of " + l.yield.of + " " + l.yield.unit)) : "nothing written yet"]];
+    if (l.yield && l.yield.status) facts.push(["Evidence status", l.yield.status]);
+    if (l.yield && l.yield.scope) facts.push(["Evidence scope", l.yield.scope]);
     if (l.experiment) facts.push(["Experiment", l.experiment]);
     var html = '<button class="close" id="close">Back to all lanes</button><h2>' + esc(d.lane) + '</h2><dl class="facts" style="margin-top:12px">' +
       facts.map(function (r) { return "<div><dt>" + r[0] + "</dt><dd>" + esc(r[1]) + "</dd></div>"; }).join("") + "</dl>";
     html += '<h3>Latest log lines</h3><div class="box" id="logbox"><pre>' + esc((d.log || []).join("\n") || "No log yet.") + "</pre></div>";
     if (d.summary) html += '<h3>Lane summary</h3><div class="box"><pre>' + esc(d.summary) + "</pre></div>";
     if (d.results && d.results.length) {
-      var resultLabel = "Results (" + d.results.length + (d.results_total > d.results.length ? " of " + d.results_total + "; first " + d.results.length + " shown" : "") + ")";
-      html += "<h3>" + esc(resultLabel) + '</h3><div class="scroll"><table><thead><tr><th>Function</th><th>Size</th><th>Outcome</th><th>Tries</th><th>Wrong version caught</th><th>Note</th></tr></thead><tbody>' +
+      var resultLabel = (d.results_label || "Results") + " (" + d.results.length + (d.results_total > d.results.length ? " of " + d.results_total + "; first " + d.results.length + " shown" : "") + ")";
+      html += "<h3>" + esc(resultLabel) + '</h3><div class="scroll"><table><thead><tr><th>' + esc(d.result_item_label || "Function") + '</th><th>Size</th><th>Outcome</th><th>Tries</th><th>Wrong version caught</th><th>Note</th></tr></thead><tbody>' +
         d.results.map(function (r) {
           return '<tr><td class="mono">' + esc(r.name || r.address) + '</td><td class="mono">' + esc(r.size == null ? "" : r.size) + "</td><td>" + esc(r.outcome || r.confidence || "") + (r.reason ? " (" + esc(r.reason) + ")" : "") +
             '</td><td class="mono">' + esc(r.attempts == null ? "" : r.attempts) + "</td><td>" + (r.mutant_caught == null ? "not recorded" : (r.mutant_caught ? "yes" : "no")) + "</td><td>" + esc(r.detail) + "</td></tr>";
         }).join("") + "</tbody></table></div>";
     }
-    html += "<details" + (detailOpen ? " open" : "") + ' id="prompt"><summary>Initial prompt (' + fmt.format(d.prompt_chars) + ' characters)</summary><div class="box" style="max-height:520px;margin-top:8px"><pre>' +
+    var promptLabel = d.prompt ? "Initial prompt (" + (d.prompt_source ? d.prompt_source + ", " : "") + fmt.format(d.prompt_chars) + " characters)" : "Initial prompt (not recorded)";
+    html += "<details" + (detailOpen ? " open" : "") + ' id="prompt"><summary>' + esc(promptLabel) + '</summary><div class="box" style="max-height:520px;margin-top:8px"><pre>' +
       esc(d.prompt || "No initial prompt recorded for this lane.") + "</pre></div></details>";
     var box = $("detail"), keep = box.querySelector("#logbox"), atBottom = !keep || keep.scrollTop + keep.clientHeight >= keep.scrollHeight - 8;
     box.innerHTML = html; box.hidden = false; document.body.classList.add("viewing");

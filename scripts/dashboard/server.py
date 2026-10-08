@@ -236,6 +236,35 @@ def kind_of(lane):
     return "special"
 
 
+def result_document(lane):
+    data = read_json(SCRATCH / lane / "results.json")
+    return data if isinstance(data, dict) else {}
+
+
+def display_value(value, limit=400):
+    """Convert nested result values to readable JSON before they reach JavaScript."""
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        text = value
+    elif isinstance(value, (dict, list, tuple)):
+        text = json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"), default=str)
+    else:
+        text = str(value)
+    return text[:limit]
+
+
+def display_note(value, limit=360):
+    """Keep list-valued limitations readable and bounded in the detail table."""
+    if isinstance(value, list):
+        parts = [display_value(item, 150) for item in value[:2] if item]
+        text = "; ".join(parts)
+        if len(value) > 2:
+            text += f"; +{len(value) - 2} more"
+        return text[:limit]
+    return display_value(value, limit)
+
+
 def result_rows(lane):
     rows = read_json(SCRATCH / lane / "results.json")
     if isinstance(rows, dict):
@@ -243,21 +272,191 @@ def result_rows(lane):
     return rows if isinstance(rows, list) else None
 
 
+def _contract_names(value):
+    if not isinstance(value, list):
+        return []
+    names = []
+    for item in value:
+        name = item if isinstance(item, str) else (item.get("contract_name") or item.get("name") or item.get("contract_file")) if isinstance(item, dict) else None
+        if name:
+            name = display_value(name)
+            if name not in names:
+                names.append(name)
+    return names
+
+
+def accepted_contracts(data):
+    """Return one explicit candidate acceptance list; never add inherited and current lists together."""
+    for owner in (data.get("candidate"), data.get("final_scope_audit"), data):
+        if isinstance(owner, dict):
+            names = _contract_names(owner.get("accepted_contracts") or owner.get("branch_scoped_accepted_contracts"))
+            if names:
+                return names
+    return []
+
+
+def accepted_contract_label(count):
+    noun = "contract" if count == 1 else "contracts"
+    return f"{count} branch-scoped {noun} accepted"
+
+
+def full_function_verified(data):
+    """Read only explicit whole-function fields; stage and branch contracts stay partial."""
+    for owner in (data, data.get("candidate"), data.get("function")):
+        if not isinstance(owner, dict):
+            continue
+        value = owner.get("full_function_verification")
+        if isinstance(value, bool):
+            return value
+        status = owner.get("full_function_status")
+        if isinstance(status, str):
+            normalized = status.casefold()
+            if normalized in {"verified", "verified_full", "full_function_verified"}:
+                return True
+            if any(word in normalized for word in ("partial", "bounded", "unverified", "not_verified")):
+                return False
+    proof_scope = data.get("proof_scope")
+    if isinstance(proof_scope, dict) and proof_scope.get("partial_only") is True:
+        return False
+    return None
+
+
+def evidence_scope(data):
+    function = data.get("function") if isinstance(data.get("function"), dict) else {}
+    candidate = data.get("candidate") if isinstance(data.get("candidate"), dict) else {}
+    text = data.get("scope") or function.get("scope") or candidate.get("verification_status") or data.get("verification_status")
+    if not text:
+        proof_scope = data.get("proof_scope")
+        if isinstance(proof_scope, dict):
+            text = proof_scope.get("candidate_contract_scope")
+    text = display_value(text, 360)
+    if full_function_verified(data) is False and "full-function verification" not in text.casefold():
+        text = (text + "; " if text else "") + "full-function verification is not established"
+    return text
+
+
+def _is_full_verified_outcome(outcome):
+    value = str(outcome or "").casefold()
+    return value.startswith("verified") and not any(word in value for word in ("partial", "bounded", "branch", "stage"))
+
+
 def yield_of(lane):
+    data = result_document(lane)
+    stages = data.get("stages")
+    if isinstance(stages, dict) and stages:
+        records = [stage for stage in stages.values() if isinstance(stage, dict)]
+        full = sum(stage.get("status") == "passed_full" for stage in records)
+        probes = sum(stage.get("status") == "passed_probe" for stage in records)
+        failed = sum("fail" in str(stage.get("status") or "").casefold() for stage in records)
+        other = len(records) - full - probes - failed
+        pieces = [f"{full} full-stage check{'s' if full != 1 else ''} passed",
+                  f"{probes} probe check{'s' if probes != 1 else ''} passed"]
+        if failed:
+            pieces.append(f"{failed} stage check{'s' if failed != 1 else ''} failed")
+        if other:
+            pieces.append(f"{other} with unclassified status")
+        if full_function_verified(data) is False:
+            pieces.append("function remains partial")
+        return {"done": full + probes, "of": len(records), "unit": "stage checks passed",
+                "display": "; ".join(pieces), "status": display_value(data.get("status")), "scope": evidence_scope(data),
+                "verified_functions": 0}
+
     rows = result_rows(lane)
+    if rows is not None:
+        rows = [row for row in rows if isinstance(row, dict)]
+        if rows and any("outcome" in row for row in rows):
+            if lane.startswith("a-G"):
+                checked = sum(row.get("outcome") != "not_reached" for row in rows)
+                return {"done": checked, "of": len(rows), "unit": "checked", "display": f"{checked} of {len(rows)} checked"}
+            full_scope = full_function_verified(data)
+            verified = sum(_is_full_verified_outcome(row.get("outcome")) for row in rows) if full_scope is not False else 0
+            bounded = sum(any(word in str(row.get("outcome") or "").casefold() for word in ("partial", "bounded", "branch", "stage")) for row in rows)
+            display = f"{verified} of {len(rows)} verified"
+            if full_scope is False:
+                display += "; full-function verification not established"
+            if bounded:
+                display += f"; {bounded} bounded partial"
+            return {"done": verified, "of": len(rows), "unit": "verified", "display": display,
+                    "verified_functions": verified, "partial_functions": bounded}
+
+        partial = sum(any(word in str(row.get("status") or "").casefold() for word in ("partial", "partly_proven")) for row in rows)
+        contracts = accepted_contracts(data)
+        if partial or full_function_verified(data) is False:
+            display = f"{partial} of {len(rows)} functions have bounded partial evidence"
+            if contracts:
+                display += "; " + accepted_contract_label(len(contracts))
+            display += "; full-function verification not established"
+            return {"done": partial, "of": len(rows), "unit": "partly proven functions", "display": display,
+                    "status": display_value(data.get("status")), "scope": evidence_scope(data),
+                    "verified_functions": 0, "partial_functions": partial,
+                    "accepted_contracts": len(contracts)}
+
+    contracts = accepted_contracts(data)
+    if contracts:
+        display = accepted_contract_label(len(contracts)) + "; full-function verification not established"
+        return {"done": len(contracts), "of": len(contracts), "unit": "branch-scoped contracts accepted",
+                "display": display, "status": display_value(data.get("status")), "scope": evidence_scope(data),
+                "verified_functions": 0, "accepted_contracts": len(contracts)}
+
     if rows is None:
         names = read_json(SCRATCH / lane / "names.json")
         if isinstance(names, list):
-            return {"done": sum(1 for r in names if isinstance(r, dict) and r.get("name")), "of": len(names), "unit": "named"}
-        return None
-    rows = [r for r in rows if isinstance(r, dict)]
-    if not rows or "outcome" not in rows[0]:
-        return None
-    if lane.startswith("a-G"):
-        return {"done": sum(1 for r in rows if r.get("outcome") != "not_reached"),
-                "of": len(rows), "unit": "checked"}
-    return {"done": sum(1 for r in rows if str(r.get("outcome")).startswith("verified")), "of": len(rows), "unit": "verified"}
+            named = sum(1 for row in names if isinstance(row, dict) and row.get("name"))
+            return {"done": named, "of": len(names), "unit": "named", "display": f"{named} of {len(names)} named"}
+    return None
 
+
+def result_detail_rows(lane):
+    data = result_document(lane)
+    rows = result_rows(lane)
+    if rows is not None:
+        if any(isinstance(row, dict) and row.get("status") and not row.get("outcome") for row in rows):
+            return rows, "Function evidence", "Function"
+        return rows, "Results", "Function"
+
+    stages = data.get("stages")
+    if isinstance(stages, dict):
+        rows = []
+        for name, stage in stages.items():
+            if not isinstance(stage, dict):
+                continue
+            mutant = stage.get("mutant")
+            mutant_fails = stage.get("mutant_fails")
+            explicit_mutant_failure = ((isinstance(mutant_fails, int) and not isinstance(mutant_fails, bool) and mutant_fails > 0)
+                                       or (isinstance(mutant, str) and mutant.casefold().strip().startswith("fail"))
+                                       or (isinstance(mutant, dict) and mutant.get("passed") is False
+                                           and isinstance(mutant.get("fails"), int) and mutant.get("fails") > 0))
+            caught = stage.get("status") in {"passed_probe", "passed_full"} and explicit_mutant_failure
+            detail = "; ".join(value for value in ("correct: " + display_value(stage.get("correct")) if stage.get("correct") else "",
+                                                       "mutant: " + display_value(mutant) if mutant else "") if value)
+            rows.append({"name": name, "status": stage.get("status"), "attempts": stage.get("trials"),
+                         "mutant_caught": caught, "detail": detail})
+        return rows, "Stage checks", "Stage"
+
+    contracts = accepted_contracts(data)
+    if contracts:
+        rows = [{"name": name, "outcome": "accepted (branch-scoped)",
+                 "detail": "Accepted contract on this candidate; full-function verification is not established."}
+                for name in contracts]
+        return rows, "Accepted branch-scoped contracts", "Contract"
+    return None, None, None
+
+
+def initial_prompt(lane, registry_entry=None):
+    """Prefer saved task text and registry assignment; never label a generic brief as the initial prompt."""
+    candidates = ((SCRATCH / lane / "prompt.txt", "lane prompt.txt"),
+                  (COORD / "prompts" / f"{lane}.txt", "coordinator prompt file"))
+    for path, source in candidates:
+        try:
+            prompt = path.read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        if prompt.strip() and prompt.strip().casefold() not in {"no prompt recorded", "no initial prompt recorded", "not recorded", "unknown", "none", "n/a"}:
+            return prompt, source
+    prompt = (registry_entry or {}).get("prompt")
+    if isinstance(prompt, str) and prompt.strip() and prompt.strip().casefold() not in {"no prompt recorded", "no initial prompt recorded", "not recorded", "unknown", "none", "n/a"}:
+        return prompt, "registry assignment"
+    return None, None
 
 def brief_tag(lane):
     path = BRIEFS / f"{lane}.txt"
@@ -354,29 +553,46 @@ def lane_detail(lane):
         return None
     registry_lanes, _ = read_codex_registry()
     registry_entry = registry_lanes.get(lane) or {}
-    prompt = registry_entry.get("prompt")
-    for candidate in (SCRATCH / lane / "prompt.txt", COORD / "prompts" / f"{lane}.txt", BRIEFS / f"{lane}.txt"):
-        if prompt:
-            break
-        try:
-            prompt = candidate.read_text(encoding="utf-8", errors="replace")
-        except OSError:
-            continue
+    prompt, prompt_source = initial_prompt(lane, registry_entry)
     summary = SCRATCH / lane / "summary.txt"
     try:
         summary_text = summary.read_text(encoding="utf-8", errors="replace")
     except OSError:
         summary_text = None
-    rows = result_rows(lane)
+    rows, results_label, result_item_label = result_detail_rows(lane)
     slim = None
     if rows:
-        slim = [{"address": r.get("address"), "name": r.get("name"), "size": r.get("size"), "outcome": r.get("outcome"),
-                 "reason": r.get("reason"), "attempts": r.get("attempts"), "minutes": r.get("minutes"),
-                 "mutant_caught": r.get("mutant_caught"), "confidence": r.get("confidence"),
-                 "detail": str(r.get("detail") or r.get("evidence") or "")[:400]} for r in rows if isinstance(r, dict)][:400]
+        slim = []
+        for row in rows[:400]:
+            if not isinstance(row, dict):
+                continue
+            attempts = row.get("attempts")
+            attempt_count = len(attempts) if isinstance(attempts, list) else attempts
+            note = row.get("detail") or row.get("evidence") or row.get("scope") or row.get("limitations") or ""
+            if isinstance(attempts, list):
+                accepted = set()
+                for attempt in attempts:
+                    if isinstance(attempt, dict) and attempt.get("accepted") is True:
+                        name = attempt.get("contract_name") or attempt.get("contract_file")
+                        if name:
+                            accepted.add(str(name))
+                if accepted:
+                    note = (display_note(note, 300) + "; " if note else "") + f"{len(accepted)} accepted branch-scoped contracts"
+            slim.append({"address": display_value(row.get("address")) or None,
+                         "name": display_value(row.get("name") or row.get("item")) or None,
+                         "size": display_value(row.get("size")) or None,
+                         "outcome": display_value(row.get("outcome") or row.get("status") or row.get("confidence")) or None,
+                         "reason": display_value(row.get("reason")) or None,
+                         "attempts": attempt_count if isinstance(attempt_count, (int, float)) else display_value(attempt_count) or None,
+                         "mutant_caught": row.get("mutant_caught") if isinstance(row.get("mutant_caught"), bool) else None,
+                         "confidence": display_value(row.get("confidence")) or None,
+                         "detail": display_note(note)[:400]})
+    result = yield_of(lane)
     return {"lane": lane, "model": registry_entry.get("model"), "effort": registry_entry.get("effort"),
-            "prompt": prompt, "prompt_chars": len(prompt) if prompt else 0, "log": tail(LOGS / f"{lane}.log", 80),
-            "summary": summary_text, "results": slim, "results_total": len(rows) if isinstance(rows, list) else 0,
+            "prompt": prompt, "prompt_source": prompt_source, "prompt_chars": len(prompt) if prompt else 0,
+            "log": tail(LOGS / f"{lane}.log", 80), "summary": summary_text, "results": slim,
+            "results_label": results_label, "result_item_label": result_item_label,
+            "results_total": len(rows) if isinstance(rows, list) else 0, "yield": result,
             "batch": read_json(LISTS / f"{lane}.json")}
 
 
