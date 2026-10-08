@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-08",
+    "title": "Verify the scoped cross-force dispatch proof",
+    "commit": null,
+    "summary": "A complete dispatch rewrite passes the stock checker with an explicit return-channel exclusion.",
+    "changes": [
+      "The positive completed 1000 originals without failures; the same-contract semantic mutant completed five originals and failed the call snapshot.",
+      "Reviewed exact stock inputs, source and DLL identities, mapped operands and floating-point order.",
+      "Documented eight active comparisons, disabled return equality, fabricated table and helper fixtures, and snapshotted vector arguments."
+    ]
+  },
+  {
+    "date": "2026-10-08",
     "title": "Verify three scoped dispatch and allocation rewrites",
     "commit": "82035c2b58c185846d1de5346b3ccbc333ac1539",
     "summary": "Three independently reviewed stock proofs add complete function bodies with explicit fixture and helper limits.",
