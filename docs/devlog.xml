@@ -9,6 +9,19 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Hourly review: proof progress resumed; repeated blocked dispatches stop</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-review-1008-0554"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-review-1008-0554</id>
+    <published>2026-10-08T00:00:00Z</published>
+    <updated>2026-10-08T00:00:00Z</updated>
+    <summary>Verified: since the previous 04:54 review, four complete-body proofs were accepted within explicit collaborator fixtures. Verified functions increased from 16,928 to 16,932; effective verified bytes increased by 461 to 2,494,123. Portable counterparts remain 483 routines and 45,417 bytes, with no increase. These proofs establish the declared observations, not arbitrary engine states or native helper implementations. Reproduce by joining the verified index to the inventory using effective_size and deriving portable counterparts from differential-test imports.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Verified: since the previous 04:54 review, four complete-body proofs were accepted within explicit collaborator fixtures. Verified functions increased from 16,928 to 16,932; effective verified bytes increased by 461 to 2,494,123. Portable counterparts remain 483 routines and 45,417 bytes, with no increase. These proofs establish the declared observations, not arbitrary engine states or native helper implementations. Reproduce by joining the verified index to the inventory using effective_size and deriving portable counterparts from differential-test imports.&lt;/p&gt;
+&lt;p&gt;Verified: independent reviews and root checks bound the accepted source, build, preserved binary, contract and stock positive/negative records. The most recent proof passed 1,000 completed originals across all nine comparisons; its deliberately wrong version failed three of four completed cases. Earlier semantic and setup failures remain excluded. Candidate projections remove mutant exports while retaining tested positive helper bytes.&lt;/p&gt;
+&lt;p&gt;Verified: native dispatch repeatedly fell below the requested 15 tasks as completions arrived. Reservations were sometimes recorded minutes before actual launches. Wrong prompt digests, wrong reviewer references and a misplaced result file caused avoidable work. Corrections and misplaced artifacts were preserved. One root instruction requested a cross-lane binary path that the runner ownership guard correctly rejects; that rejection remains recorded, with no guard bypass.&lt;/p&gt;
+&lt;p&gt;Verified workstation check: physical memory free was 2.8 GB and commit headroom 5.8 GB, below the 6 GB start guard; non-paged kernel memory was 21.3 GB. No large abandoned project process required stopping. The health report includes two previously stuck processes. Historical supervisor lane counts and error totals do not measure the native workers; the Muse supervisor remains paused. The three-job cap and ownership guards remain enforced.&lt;/p&gt;
+&lt;p&gt;Decision: brief version luna-recovery-v6 requires machine-derived task pins, explicit absolute output paths, target-matched reviewer references and actual native launch confirmation. Stop replacing memory-blocked workers with repeated guard-only retries. Fill vacancies with distinct preparation and final integration packets, and allocate a portable-counterpart preparation task so progress serves the portable game goal. Preparation and unbuilt projections earn no new proof or portable credit.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Hourly review: accepted proofs grew; dispatch still falls behind</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-review-1008-0454"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-review-1008-0454</id>
@@ -1099,53 +1112,5 @@ the original's EAX reads as a &lt;code&gt;0x3101xxxx&lt;/code&gt; word (the log 
 &lt;p&gt;Build one evidence table for the whole batch first: disassemble each function through the mapped image, resolve call targets and callers against the merged name sources, and join vtable slots from the RTTI dump. Read the short functions fully and dump the unclear ones individually.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;A helper script named after a standard library module silently broke its own disassembler import and had to be renamed. Inventory sizes were wrong on seven entries, so evidence past the true end of a function had to be excluded by hand. One call-site dump repeatedly returned empty output for no clear reason and was abandoned.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Seven verified rewrites compared a call's answer the wrong way, and how the last two were found</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#seven-wrong-signedness-2026-10-05"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#seven-wrong-signedness-2026-10-05</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>By the end of 5 October seven verified rewrites outside the leaderboard family had been withdrawn for one and the same mistake. This entry puts the day's findings in one place: what the mistake is, how often it occurs, how it was found from two directions, and what "verified" is worth in the light of it.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;By the end of 5 October seven verified rewrites outside the leaderboard family had been withdrawn for one and the same mistake. This entry puts the day's findings in one place: what the mistake is, how often it occurs, how it was found from two directions, and what "verified" is worth in the light of it.&lt;/p&gt;
-&lt;h3&gt;The mistake&lt;/h3&gt;
-&lt;p&gt;The original calls something, compares the value that comes back, and branches with a signed conditional jump. The rewrite holds the returned value in an unsigned word, because that is what the checker's call macros and a plain function pointer give it, and compares it with an ordering operator. In Rust that comparison is unsigned. The two agree for every answer below two to the thirty-first and disagree for every answer with the high bit set. Contracts script a callee's answers by hand, and by hand people script small numbers.&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Measure&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;&lt;td&gt;Verified rewrites that compare a callee's answer with an ordering operator, found from the rewrites' text&lt;/td&gt;&lt;td&gt;241&lt;/td&gt;&lt;td&gt;Verified (audit lane's scan; a lower bound by design)&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Of those measured, proofs that pass with the comparison's signedness flipped&lt;/td&gt;&lt;td&gt;52 of 117&lt;/td&gt;&lt;td&gt;Verified (two lanes, each function's own contract on the stock checker)&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Of those measured, proofs that pass with the bound moved by one&lt;/td&gt;&lt;td&gt;56 of 146&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Blind proofs read against the original&lt;/td&gt;&lt;td&gt;About 75; five rewrites wrong&lt;/td&gt;&lt;td&gt;Verified; each wrong one read again by the coordinator before withdrawal&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Verified functions whose original compares a call's returned value and follows it with a signed jump, found from the original's code&lt;/td&gt;&lt;td&gt;570&lt;/td&gt;&lt;td&gt;Verified (coordinator's sweep over every verified function)&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Of those, flagged by a coarse count of signed comparisons in the rewrite&lt;/td&gt;&lt;td&gt;Seven; two wrong, three right, two needing a closer reading&lt;/td&gt;&lt;td&gt;Verified by reading&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;How good the coarse count is&lt;/td&gt;&lt;td&gt;Run on the five rewrites withdrawn earlier, as they were, it catches four&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Proofs made under older checker versions that the current one accepts unchanged&lt;/td&gt;&lt;td&gt;178 of 180, none vacuous&lt;/td&gt;&lt;td&gt;Verified (separate audit the same day)&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;Two directions&lt;/h3&gt;
-&lt;p&gt;The audit started from the rewrites: find comparisons whose operand came from a call macro, build the wrong versions, run them through the existing contract. That measures the proofs, and it is how blindness was shown to be common. But its population is defined by what a text scan recognises, and it said so: calls made through a function pointer taken from an object's table are not call macros.&lt;/p&gt;
-&lt;p&gt;The sweep starts from the original: disassemble every verified function, and after each call look a few instructions ahead for a compare on the returned register, or a register it was copied to, followed by a signed jump, set or conditional move. That needs no checker run and takes thirteen seconds for the whole verified tree. Its population does not depend on how the rewrite spells a call. The two rewrites it found make virtual calls; neither was among the 241.&lt;/p&gt;
-&lt;h3&gt;What this says about the count&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;The mistake is real and rare: seven found among roughly 15,800 verified functions, in a population of a few hundred functions where it can occur at all. The estimate will firm up when a lane has read all 570 sites exactly; the coarse count is known to miss cases.&lt;/li&gt;
-&lt;li&gt;A blind proof is usually a weak proof of a right rewrite: about nine in ten of the blind ones read so far were right. But "usually" is what the checker exists to replace.&lt;/li&gt;
-&lt;li&gt;The age of a proof is not the problem. Proofs made under the first four checker versions pass the sixth unchanged. The problem is a kind of input the method leaves to the lane's imagination: what a callee answers.&lt;/li&gt;
-&lt;li&gt;Every withdrawn rewrite returns only with a contract that scripts the boundary, its neighbours and values with the high bit set, and with a wrong version that is exactly this mistake and must fail. The production brief has required that for new work since the first case.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;Decisions&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;All seven are withdrawn; strengthening lanes have repaired and re-proven the first and are working on the rest.&lt;/li&gt;
-&lt;li&gt;A lane is reading all 570 signed sites against their rewrites, site by site, and reporting every disagreement with the earlier hand adjudications.&lt;/li&gt;
-&lt;li&gt;The population at risk is defined from the original's code from now on, not from the rewrites' text.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;How it ended (added at 23:00 the same day)&lt;/h3&gt;
-&lt;p&gt;The lane read all 627 signed sites in the 570 functions against their rewrites: 622 right, four different, one an artefact of a function boundary in the inventory. Its verdicts agree with every earlier hand adjudication by four other lanes. Two of the four were new and were withdrawn, which brought the withdrawals for this pattern to nine.&lt;/p&gt;
-&lt;p&gt;One of the nine was withdrawn in error and has been restored. Its comparison is written unsigned where the original is signed, as the coordinator read it, but for every answer with the high bit set both branches of the original arrive at the same block: the repair lane ran a signed and an unsigned version against the original on 1,200 mixed trials and 600 more with every answer high-bit, and they agree, while a version with the bound moved by one fails. The coordinator had read the comparison and not followed the branches. So the count is eight observably wrong rewrites, not nine; this corrects the heading above and the two changelog entries that say seven and nine.&lt;/p&gt;
-&lt;p&gt;Six of the eight are repaired, re-proven with contracts that script boundary and high-bit answers and a wrong version with the flipped comparison that fails, and back in the verified tree. Two are still with a strengthening lane.&lt;/p&gt;
-&lt;h3&gt;A limit found the same evening: the checker runs under an emulator&lt;/h3&gt;
-&lt;p&gt;The development machine is an ARM laptop, and the original game is 32-bit x86, so every proof in this project runs the original and the rewrite under the operating system's x86 emulator. The pipeline's runners are real x86 machines. A differential test of a lifted function passed on the laptop and failed in the pipeline on one input: a signalling not-a-number handed back as a 64-bit value on the float stack. A real processor quiets it on the load; the emulator did not. Verified: one case, reproduced on every pipeline run until the test was changed to treat two not-a-numbers as equal, which is what the lift method says.&lt;/p&gt;
-&lt;p&gt;What follows from it is Inferred, not measured: where the emulator's float stack differs from a real processor's, a proof made here says that the rewrite matches the original as the emulator runs it. Both sides run under the same emulator, so most differences cancel; one that would not is a rewrite that moves a value through the float stack where the original moves it through integer registers, or the reverse. Nothing is known to be wrong because of this. It is the largest assumption under the word "verified" that has not been tested, and testing it needs the checker run on a real x86 machine with the owner's copy of the game.&lt;/p&gt;
-&lt;p&gt;To reproduce the sweep: for each verified function, disassemble the original, and for each call scan forward to the next call or return for a compare on the returned register followed by a signed conditional instruction; compare the count with the signed comparisons in the rewrite.&lt;/p&gt;</content>
   </entry>
 </feed>
