@@ -121185,6 +121185,15 @@
   "lane": "r-s337"
  },
  {
+  "address": "0x00CA27F0",
+  "name": "PED_FACE",
+  "kind": "function",
+  "file": "functions/fn_00ca27f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-Q133"
+ },
+ {
   "address": "0x00CA28F0",
   "name": "triple_null_check",
   "kind": "function",
@@ -124351,6 +124360,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s406"
+ },
+ {
+  "address": "0x00CCB540",
+  "name": "ped_task_flag_update",
+  "kind": "function",
+  "file": "functions/fn_00ccb540.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-Q133"
  },
  {
   "address": "0x00CCB8D0",
