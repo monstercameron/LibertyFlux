@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-08",
-    "title": "Verify complete object-dispatch wrapper within its declared fixture",
+    "title": "Devlog: hourly review of accepted proofs and dispatch delays",
     "commit": null,
+    "summary": "Record four accepted fixture proofs, unchanged portable coverage, and ongoing resource and refill delays.",
+    "changes": [
+      "Recorded machine-derived gains of four functions and 191 effective bytes, with portable coverage unchanged.",
+      "Corrected a raw-size measurement mismatch while preserving the initial output and snapshot.",
+      "Recorded the unrecovered log overwrite, identity-reservation work, and health findings."
+    ]
+  },
+  {
+    "date": "2026-10-08",
+    "title": "Verify complete object-dispatch wrapper within its declared fixture",
+    "commit": "f10776d8413db3034ede33758cf4aaf679be71fa",
     "summary": "Accept the reviewed complete body after corrected return handling passes stock checks and its same-contract mutant fails.",
     "changes": [
       "Recorded the complete body proof under valid object and scripted collaborator inputs, with all fixture exclusions stated.",
