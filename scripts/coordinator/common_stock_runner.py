@@ -133,6 +133,231 @@ def contract_dll_path(contract: dict) -> Path:
     return (path if path.is_absolute() else ROOT / path).resolve()
 
 
+
+IMAGE_SCN_MEM_EXECUTE = 0x20000000
+
+
+def _pe_slice(data: bytes, offset: int, size: int, label: str) -> bytes:
+    if offset < 0 or size < 0 or offset + size > len(data):
+        raise ValueError(f"original PE is truncated while reading {label}")
+    return data[offset:offset + size]
+
+
+def _pe_u16(data: bytes, offset: int, label: str) -> int:
+    return int.from_bytes(_pe_slice(data, offset, 2, label), "little")
+
+
+def _pe_u32(data: bytes, offset: int, label: str) -> int:
+    return int.from_bytes(_pe_slice(data, offset, 4, label), "little")
+
+
+def _read_pe_image(path: Path) -> tuple[bytes, dict]:
+    try:
+        data = Path(path).read_bytes()
+    except OSError as exc:
+        raise ValueError(f"cannot read original PE {path}: {exc}") from exc
+    if _pe_slice(data, 0, 2, "DOS signature") != b"MZ":
+        raise ValueError("original executable has no MZ signature")
+    pe_offset = _pe_u32(data, 0x3C, "PE header offset")
+    if _pe_slice(data, pe_offset, 4, "PE signature") != b"PE\0\0":
+        raise ValueError("original executable has no PE signature")
+    section_count = _pe_u16(data, pe_offset + 6, "section count")
+    optional_size = _pe_u16(data, pe_offset + 20, "optional-header size")
+    optional = pe_offset + 24
+    magic = _pe_u16(data, optional, "optional-header magic")
+    if magic == 0x10B:
+        image_base = _pe_u32(data, optional + 28, "PE32 ImageBase")
+    elif magic == 0x20B:
+        image_base = int.from_bytes(_pe_slice(data, optional + 24, 8, "PE32+ ImageBase"), "little")
+    else:
+        raise ValueError(f"unsupported PE optional-header magic 0x{magic:x}")
+    if optional_size < 64:
+        raise ValueError("original PE optional header is too short")
+    image_size = _pe_u32(data, optional + 56, "SizeOfImage")
+    headers_size = _pe_u32(data, optional + 60, "SizeOfHeaders")
+    section_table = optional + optional_size
+    sections = []
+    for index in range(section_count):
+        header = section_table + index * 40
+        raw = _pe_slice(data, header, 40, f"section header {index}")
+        name = raw[:8].split(b"\0", 1)[0].decode("ascii", errors="replace")
+        virtual_size = int.from_bytes(raw[8:12], "little")
+        virtual_address = int.from_bytes(raw[12:16], "little")
+        raw_size = int.from_bytes(raw[16:20], "little")
+        raw_offset = int.from_bytes(raw[20:24], "little")
+        characteristics = int.from_bytes(raw[36:40], "little")
+        mapped_size = max(virtual_size, raw_size)
+        if mapped_size:
+            sections.append({
+                "name": name, "rva_start": virtual_address,
+                "rva_end": virtual_address + mapped_size,
+                "raw_size": raw_size, "raw_offset": raw_offset,
+                "characteristics": characteristics,
+                "executable": bool(characteristics & IMAGE_SCN_MEM_EXECUTE),
+            })
+    return data, {
+        "path": evidence_path(Path(path)), "image_base": image_base,
+        "image_size": image_size, "headers_size": headers_size,
+        "sections": sections,
+    }
+
+
+def _contract_hex(value: object, field: str, *, allow_integer: bool = False) -> int:
+    if isinstance(value, bool):
+        raise ValueError(f"{field} must be a hexadecimal address")
+    if allow_integer and isinstance(value, int):
+        number = value
+    elif isinstance(value, str):
+        try:
+            number = int(value, 16)
+        except ValueError as exc:
+            raise ValueError(f"{field} must be a hexadecimal address") from exc
+    else:
+        raise ValueError(f"{field} must be a hexadecimal address")
+    if number < 0:
+        raise ValueError(f"{field} must be nonnegative")
+    return number
+
+
+def _mapped_executable_bytes(data: bytes, pe: dict, rva: int, size: int,
+                             label: str) -> tuple[bytes, dict]:
+    if rva + size > pe["image_size"]:
+        raise ValueError(f"{label} RVA 0x{rva:x} is outside SizeOfImage")
+    matches = [section for section in pe["sections"]
+               if section["rva_start"] <= rva and rva + size <= section["rva_end"]]
+    if len(matches) != 1:
+        raise ValueError(f"{label} RVA 0x{rva:x} does not map to exactly one PE section")
+    section = matches[0]
+    if not section["executable"]:
+        raise ValueError(f"{label} RVA 0x{rva:x} is in non-executable section {section['name']}")
+    delta = rva - section["rva_start"]
+    if delta + size > section["raw_size"]:
+        raise ValueError(f"{label} RVA 0x{rva:x} is not backed by file bytes in {section['name']}")
+    file_offset = section["raw_offset"] + delta
+    code = _pe_slice(data, file_offset, size, f"{label} bytes")
+    return code, {"name": section["name"], "rva_start": f"0x{section['rva_start']:x}",
+                  "file_offset": f"0x{file_offset:x}",
+                  "characteristics": f"0x{section['characteristics']:08x}"}
+
+
+def _patch_rows(contract: dict, data: bytes, pe: dict) -> list[dict]:
+    rows = []
+    for key, opcode, width in (("patches", b"\xE8", 5), ("tailpatches", b"\xE9", 5)):
+        entries = contract.get(key, [])
+        if not isinstance(entries, list):
+            raise ValueError(f"{key} must be a list")
+        for index, entry in enumerate(entries):
+            if not isinstance(entry, dict):
+                raise ValueError(f"{key}[{index}] must be an object")
+            if "site_selftest" in entry:
+                rows.append({"kind": key, "index": index,
+                             "site_selftest": entry["site_selftest"],
+                             "validation": "stock self-test site; no game RVA"})
+                continue
+            if "site" not in entry:
+                raise ValueError(f"{key}[{index}] needs site or site_selftest")
+            rva = _contract_hex(entry["site"], f"{key}[{index}].site", allow_integer=True)
+            code, section = _mapped_executable_bytes(data, pe, rva, width, f"{key}[{index}]")
+            if code[:1] != opcode:
+                raise ValueError(
+                    f"{key}[{index}] RVA 0x{rva:x} has opcode 0x{code[0]:02X}; "
+                    f"expected 0x{opcode[0]:02X}")
+            rows.append({"kind": key, "index": index, "site_rva": f"0x{rva:x}",
+                         "opcode": f"0x{code[0]:02x}", "patch_width": width,
+                         "section": section["name"],
+                         "bytes_sha256": hashlib.sha256(code).hexdigest()})
+    entries = contract.get("ctailpatches", [])
+    if not isinstance(entries, list):
+        raise ValueError("ctailpatches must be a list")
+    for index, entry in enumerate(entries):
+        if not isinstance(entry, dict):
+            raise ValueError(f"ctailpatches[{index}] must be an object")
+        if "site_selftest" in entry:
+            rows.append({"kind": "ctailpatches", "index": index,
+                         "site_selftest": entry["site_selftest"],
+                         "validation": "stock self-test site; no game RVA"})
+            continue
+        if "site" not in entry:
+            raise ValueError(f"ctailpatches[{index}] needs site or site_selftest")
+        rva = _contract_hex(entry["site"], f"ctailpatches[{index}].site", allow_integer=True)
+        code, section = _mapped_executable_bytes(data, pe, rva, 6, f"ctailpatches[{index}]")
+        if code[0] != 0x0F or not 0x80 <= code[1] <= 0x8F:
+            raise ValueError(f"ctailpatches[{index}] RVA 0x{rva:x} is not a near Jcc (0F 80..8F)")
+        rows.append({"kind": "ctailpatches", "index": index, "site_rva": f"0x{rva:x}",
+                     "opcode": f"0x{code[0]:02x} 0x{code[1]:02x}", "patch_width": 6,
+                     "section": section["name"],
+                     "bytes_sha256": hashlib.sha256(code).hexdigest()})
+    return rows
+
+
+def validate_contract_code(contract: dict, original_exe: Path) -> dict:
+    callees = contract.get("callees", [])
+    if not isinstance(callees, list):
+        raise ValueError("callees must be a list")
+    for index, callee in enumerate(callees):
+        if not isinstance(callee, dict):
+            raise ValueError(f"callees[{index}] must be an object")
+        script = callee.get("script")
+        if script == "edges":
+            pass
+        elif not isinstance(script, list) or not script:
+            raise ValueError(f"callee {callee.get('id', index)} needs a nonempty script list or 'edges'")
+        else:
+            for script_index, entry in enumerate(script):
+                if not isinstance(entry, (int, dict)):
+                    raise ValueError(
+                        f"callee {callee.get('id', index)} script[{script_index}] must be an int or object")
+
+        # resolve_scripts only skips a missing/None wscript. Any present value
+        # is cycled by trial and each selected row is iterated as word specs.
+        wscript = callee.get("wscript")
+        if wscript is not None:
+            if not isinstance(wscript, list) or not wscript:
+                raise ValueError(
+                    f"callee {callee.get('id', index)} wscript must be a nonempty list when supplied")
+            for row_index, row in enumerate(wscript):
+                if not isinstance(row, list):
+                    raise ValueError(
+                        f"callee {callee.get('id', index)} wscript[{row_index}] must be a list")
+                for word_index, word in enumerate(row):
+                    if not isinstance(word, (int, dict)):
+                        raise ValueError(
+                            f"callee {callee.get('id', index)} wscript[{row_index}][{word_index}] "
+                            "must be an int or object")
+
+    data, pe = _read_pe_image(original_exe)
+    function = contract.get("function")
+    result = {"original_exe": pe["path"], "image_base": f"0x{pe['image_base']:x}",
+              "image_size": f"0x{pe['image_size']:x}"}
+    if isinstance(function, str) and function.startswith("selftest:"):
+        if "expected_function_va" in contract:
+            raise ValueError("expected_function_va cannot be checked for a selftest function")
+        result.update({"function_kind": "checker_selftest", "function": function})
+    else:
+        if not isinstance(function, str):
+            raise ValueError("contract.function must be a hexadecimal RVA string")
+        function_rva = _contract_hex(function, "contract.function")
+        code, section = _mapped_executable_bytes(data, pe, function_rva, 1, "contract.function")
+        function_va = pe["image_base"] + function_rva
+        if function_va >= 1 << (64 if pe["image_base"] > 0xFFFFFFFF else 32):
+            raise ValueError("contract.function VA overflows the PE address width")
+        expected_va = contract.get("expected_function_va")
+        expected_va_hex = None
+        if expected_va is not None:
+            expected_va_value = _contract_hex(expected_va, "expected_function_va", allow_integer=True)
+            expected_va_hex = f"0x{expected_va_value:x}"
+            if expected_va_value - pe["image_base"] != function_rva:
+                raise ValueError(
+                    f"expected_function_va {expected_va_hex} minus ImageBase {result['image_base']} "
+                    f"does not equal contract.function RVA 0x{function_rva:x}")
+        result.update({"function_kind": "mapped_pe_rva", "function_rva": f"0x{function_rva:x}",
+                       "function_va": f"0x{function_va:x}", "expected_function_va": expected_va_hex,
+                       "section": section["name"], "file_offset": section["file_offset"],
+                       "entry_byte_sha256": hashlib.sha256(code).hexdigest()})
+    result["patch_sites"] = _patch_rows(contract, data, pe)
+    return result
+
+
 def make_manifest(mode: str, lane: str, python_exe: Path, run_dir: Path,
                   contract_dir: Path | None = None, contract_name: str | None = None,
                   candidate_source_root: Path | None = None, candidate_dll: Path | None = None,
@@ -181,6 +406,7 @@ def make_manifest(mode: str, lane: str, python_exe: Path, run_dir: Path,
             raise FileNotFoundError("candidate DLL is missing")
         if contract_dll_path(contract_obj) != candidate_dll:
             raise ValueError("contract dll field does not resolve to the pinned candidate DLL")
+        function_validation = validate_contract_code(contract_obj, STOCK_PATHS["original_exe"])
         source = source_tree(candidate_source_root)
         candidate = {"path": relative(candidate_dll), "sha256": sha256_file(candidate_dll)}
         contract_record = {
@@ -190,6 +416,7 @@ def make_manifest(mode: str, lane: str, python_exe: Path, run_dir: Path,
             "contract_name": contract_obj.get("name"),
             "mut_export": contract_obj.get("mut_export"),
             "dll": relative(candidate_dll),
+            "function_validation": function_validation,
         }
         if not contract_obj.get("mut_export"):
             raise ValueError("contract must include a same-contract mut_export")
@@ -251,8 +478,17 @@ def verify_manifest(manifest: dict, env: dict[str, str]) -> list[str]:
             errors.append("candidate source tree changed")
     if manifest.get("contract"):
         row = manifest["contract"]
-        if sha256_file(ROOT / row["path"]) != row["sha256"]:
+        contract_path = ROOT / row["path"]
+        if sha256_file(contract_path) != row["sha256"]:
             errors.append("contract changed")
+        else:
+            try:
+                contract_obj = json.loads(contract_path.read_text(encoding="utf-8-sig"))
+                current_validation = validate_contract_code(contract_obj, STOCK_PATHS["original_exe"])
+                if current_validation != row.get("function_validation"):
+                    errors.append("contract mapped function or patch sites changed")
+            except (OSError, ValueError, json.JSONDecodeError) as exc:
+                errors.append(f"contract PE preflight failed: {exc}")
     return errors
 
 
@@ -818,6 +1054,9 @@ def preflight_driver_routing(manifest: dict, env: dict[str, str]) -> None:
             if contract_obj.get("name") != contract["name"]:
                 raise RuntimeError("checker contract name changed after manifest creation")
             module.validate_contract(contract_obj)
+            current_validation = validate_contract_code(contract_obj, STOCK_PATHS["original_exe"])
+            if current_validation != contract.get("function_validation"):
+                raise RuntimeError("contract PE preflight evidence changed after manifest creation")
     finally:
         os.environ.clear()
         os.environ.update(saved)
@@ -859,6 +1098,9 @@ def execute_manifest(manifest_path: Path, expected_manifest_hash: str) -> int:
 
 
 def launch(manifest: dict, env: dict[str, str], python_exe: Path, run_dir: Path) -> int:
+    errors = verify_manifest(manifest, env)
+    if errors:
+        raise RuntimeError("preflight recheck before local_slot failed: " + "; ".join(errors))
     manifest_path = run_dir / "preflight.json"
     write_json(manifest_path, manifest)
     manifest_hash = sha256_file(manifest_path)

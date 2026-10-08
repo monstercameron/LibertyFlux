@@ -31,6 +31,37 @@ sys.modules[spec.name] = runner
 spec.loader.exec_module(runner)
 
 
+def minimal_pe() -> bytes:
+    data = bytearray(0x600)
+    data[:2] = b"MZ"
+    pe_offset = 0x80
+    data[0x3C:0x40] = pe_offset.to_bytes(4, "little")
+    data[pe_offset:pe_offset + 4] = b"PE\0\0"
+    coff = pe_offset + 4
+    data[coff:coff + 2] = (0x14C).to_bytes(2, "little")
+    data[coff + 2:coff + 4] = (2).to_bytes(2, "little")
+    data[coff + 16:coff + 18] = (224).to_bytes(2, "little")
+    data[coff + 18:coff + 20] = (0x0102).to_bytes(2, "little")
+    opt = pe_offset + 24
+    data[opt:opt + 2] = (0x10B).to_bytes(2, "little")
+    data[opt + 28:opt + 32] = (0x400000).to_bytes(4, "little")
+    data[opt + 56:opt + 60] = (0x3000).to_bytes(4, "little")
+    data[opt + 60:opt + 64] = (0x200).to_bytes(4, "little")
+    section = opt + 224
+    def write_section(offset: int, name: bytes, va: int, raw: int, rawptr: int, flags: int):
+        data[offset:offset + 8] = name.ljust(8, b"\0")
+        data[offset + 8:offset + 12] = (0x1000).to_bytes(4, "little")
+        data[offset + 12:offset + 16] = va.to_bytes(4, "little")
+        data[offset + 16:offset + 20] = raw.to_bytes(4, "little")
+        data[offset + 20:offset + 24] = rawptr.to_bytes(4, "little")
+        data[offset + 36:offset + 40] = flags.to_bytes(4, "little")
+    write_section(section, b".text", 0x1000, 0x200, 0x200, 0x60000020)
+    write_section(section + 40, b".data", 0x2000, 0x200, 0x400, 0xC0000040)
+    code = (b"\x55\x8b\xec" + b"\xe8\0\0\0\0" + b"\xe9\0\0\0\0"
+            + b"\x0f\x84\0\0\0\0")
+    data[0x200:0x200 + len(code)] = code
+    return bytes(data)
+
 @contextmanager
 def fixture_workspace():
     """Build hashable stock-input fixtures without game/build/venv files."""
@@ -52,6 +83,8 @@ def fixture_workspace():
             path.parent.mkdir(parents=True, exist_ok=True)
             if role == "driver":
                 path.write_bytes((ROOT / "scripts/checker/checker2.py").read_bytes())
+            elif role == "original_exe":
+                path.write_bytes(minimal_pe())
             else:
                 path.write_bytes(("fixture input " + role).encode("ascii"))
             stock_paths[role] = path
@@ -73,7 +106,7 @@ def fixture_workspace():
         candidate_dll.write_bytes(b"fixture candidate image; never loaded")
         contract_path = contract_dir / "fixture.json"
         contract_path.write_text(json.dumps({
-            "name": "fixture", "function": "fixture", "export": "fixture",
+            "name": "fixture", "function": "0x1000", "export": "fixture",
             "dll": str(candidate_dll), "mut_export": "fixture_mut",
         }), encoding="utf-8")
         with patch.object(runner, "ROOT", root), \

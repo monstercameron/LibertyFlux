@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-08",
-    "title": "Verify candidate eligibility dispatch",
+    "title": "Reject invalid checker contracts before launch",
     "commit": null,
+    "summary": "Mapped address and script checks reject malformed production inputs before a checker slot is acquired.",
+    "changes": [
+      "Validate executable function RVAs, explicit expected VAs and direct or tail call-site opcodes against the mapped image.",
+      "Reject missing or malformed callee scripts and supplied malformed writable scripts before launching a worker.",
+      "All 33 runner and build regression tests passed under the resource guard; stock checker and comparisons remain unchanged."
+    ]
+  },
+  {
+    "date": "2026-10-08",
+    "title": "Verify candidate eligibility dispatch",
+    "commit": "695ce5be498f4daa5669c370ef9f6a0d192060b7",
     "summary": "A complete eligibility wrapper passes stock comparison with the return channel explicitly limited to its boolean byte.",
     "changes": [
       "The positive completed1000 originals nonvacuously; the same-contract inverted-gate mutant completednine originals and failedthree on the return byte.",
