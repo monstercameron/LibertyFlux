@@ -9,6 +9,24 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Hourly review: restoring the Luna pipeline and checking old proofs</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-reviews-1007-luna-pipeline"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-reviews-1007-luna-pipeline</id>
+    <published>2026-10-07T00:00:00Z</published>
+    <updated>2026-10-07T00:00:00Z</updated>
+    <summary>Verified Fifteen native Luna tasks were observed running at maximum effort, comprising fourteen code and proof lanes and one dashboard monitor. Three local build or checker slots limit memory pressure; remaining lanes prepare actual source and contracts.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;span class="evidence verified"&gt;Verified&lt;/span&gt; Fifteen native Luna tasks were observed running at maximum effort, comprising fourteen code and proof lanes and one dashboard monitor. Three local build or checker slots limit memory pressure; remaining lanes prepare actual source and contracts.&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;p&gt;The dashboard registry had become stale while the coordinator reviewed results. Completed tasks also left execution slots unassigned. Fresh native task observations now update the registry every minute, and a completed lane was immediately replaced by a new task. The running filter and an opened live log panel were visually inspected.&lt;/p&gt;
+&lt;p&gt;At the 13:15 review, the public inventory recorded 16,899 verified game functions, or 45.2 percent by function count and 32.5 percent by code size. The prior review was almost thirty hours earlier, so its throughput calculation is not a valid one-hour model comparison. A subsequent replay withdrew one event-handler proof: both its recorded library and a rebuild failed the current call comparison in 970 of 1,000 trials while every original trial completed. The cause remains unproven.&lt;/p&gt;
+&lt;h3&gt;What was decided&lt;/h3&gt;
+&lt;p&gt;Keep replacing finished native tasks within the requested fifteen-task limit, rotate the three execution slots, and retain stage-only work as partial until one candidate covers the full function. Historic positive replays lacking current caught negative controls remain deferred. Failed originals, unobserved callees and rejected positive candidates never establish verification.&lt;/p&gt;
+&lt;h3&gt;Workstation health&lt;/h3&gt;
+&lt;p&gt;At 13:22, the machine had 3.4 GB of physical memory free and 15.2 GB of commit headroom. The project watchdog stopped nothing; no large, old busy or abandoned project process was found. The nonpaged kernel pool occupied 19.8 GB. The legacy process report counts Muse agents only and must not be interpreted as the native task count.&lt;/p&gt;
+&lt;h3&gt;What remains unknown&lt;/h3&gt;
+&lt;p&gt;Luna versus Muse performance has not been measured on matched tasks. Reviewed proofs, covered branches, repair effort and time per accepted result are the useful comparison; static preparation and raw checker passes do not establish parity.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Showing native Codex lanes in the dashboard</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#native-codex-lanes-dashboard"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#native-codex-lanes-dashboard</id>
@@ -1161,47 +1179,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;/ul&gt;
 &lt;h3&gt;What it says more generally&lt;/h3&gt;
 &lt;p&gt;A lane's own statement that it left nothing running is a claim, not a fact; the check has to be made from outside, soon after the lane ends. And a controller that does housekeeping in its own loop inherits every way the housekeeping can stall.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>The largest families are the emptiest: what went into the workspace from the first two lifts, and what did not</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#largest-families-are-the-emptiest-2026-10-05"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#largest-families-are-the-emptiest-2026-10-05</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>Two lanes have now lifted families of verified functions into generic, portable Rust: the leaderboard class (3,195 verified rewrites) and four more families (2,392). The coordinator reviewed both trees today and moved two crates into the workspace. Three families were left out, and the reason changes how lift targets are chosen.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Two lanes have now lifted families of verified functions into generic, portable Rust: the leaderboard class (3,195 verified rewrites) and four more families (2,392). The coordinator reviewed both trees today and moved two crates into the workspace. Three families were left out, and the reason changes how lift targets are chosen.&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Family&lt;/th&gt;&lt;th&gt;Verified functions behind it&lt;/th&gt;&lt;th&gt;What the lifted code holds&lt;/th&gt;&lt;th&gt;Decision&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;&lt;td&gt;Leaderboard class: six table lookups, a probe, a row collector&lt;/td&gt;&lt;td&gt;3,195&lt;/td&gt;&lt;td&gt;Eight generic functions with loops, comparisons and a result map each, and one descriptor per leaderboard. Behaviour.&lt;/td&gt;&lt;td&gt;In the workspace as &lt;code&gt;crates/lf-leaderboard&lt;/code&gt;. Verified: 13 host tests pass; the pipeline built and tested it on Windows, Linux and macOS.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Script native handlers&lt;/td&gt;&lt;td&gt;2,162&lt;/td&gt;&lt;td&gt;Four short forwarding functions and a table: per native its name, its hash where known, how many script words it forwards, which of them are booleans, and how the answer is returned. Data, and useful data: it is the script machine's interface to the engine.&lt;/td&gt;&lt;td&gt;In the workspace as &lt;code&gt;crates/lf-script-natives&lt;/code&gt;, described as a dispatch table and not as lifted behaviour. Verified: 6 host tests pass.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Timer callback registrations&lt;/td&gt;&lt;td&gt;81&lt;/td&gt;&lt;td rowspan="3"&gt;One function that makes one call through a trait, and a table of a name and an index per member. Most names are fragments of addresses, because nobody has named the things being registered. Nothing else.&lt;/td&gt;&lt;td rowspan="3"&gt;Not brought in and not counted as lifted. Each original passes one address to a registrar; the address is the whole content, and the lifted form replaces it with an index that means nothing yet. These are tables waiting for names.&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Asset slot registrations&lt;/td&gt;&lt;td&gt;80&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Stored ratio refreshes&lt;/td&gt;&lt;td&gt;69&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;Why it happened&lt;/h3&gt;
-&lt;p&gt;The coordinator's brief for the second lift said to take the largest groups of same-shaped functions, in order of size. A group is large when the compiler stamped out one tiny routine hundreds of times, and the routines stamped out most often are start-up registrations and forwarders. So choosing by member count selects for the functions with the least in them. The lane did what it was asked, well, and its report said plainly where each crate's owner was unknown. The count it produced, "5,587 verified functions covered by lifted code", was true by its own definition and overstated what a port gains by at least those 230.&lt;/p&gt;
-&lt;h3&gt;What a better target looks like&lt;/h3&gt;
-&lt;p&gt;A class whose every method is verified: it has behaviour, it has a boundary the game itself drew, and nothing is missing in the middle. A census by class name (the part of a function's name before the last scope separator) gives, today:&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Measure&lt;/th&gt;&lt;th&gt;Value&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;&lt;td&gt;Game functions with a class-qualified name&lt;/td&gt;&lt;td&gt;About 9,800 of 37,413&lt;/td&gt;&lt;td&gt;Verified (census script over the inventory, the naming lanes and the verified index)&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Classes with four or more named methods, all verified&lt;/td&gt;&lt;td&gt;21 classes, 127 functions, 16,600 bytes, outside the leaderboard family: three audio voice classes, several animation channel decoders, a streaming device, a few task classes&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Classes with 70% or more of their bytes verified but not all&lt;/td&gt;&lt;td&gt;467 classes, missing 1,327 functions and 60,000 bytes between them&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;What "all verified" leaves out&lt;/td&gt;&lt;td&gt;Methods nobody has named yet are invisible to the census. A class counted as complete may have virtual functions that are still anonymous.&lt;/td&gt;&lt;td&gt;Known limit&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;Decisions&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Lift targets are classes verified in full, not the largest shape groups. The animation channel decoders are first: 14 related classes, 100 named methods, 55 verified.&lt;/li&gt;
-&lt;li&gt;Production lanes take functions in address order, so a class is finished only by accident. A new kind of lane takes the missing methods of named classes, with the verified methods of the same classes named as the place to start. The first one has 42 methods of the animation channel classes.&lt;/li&gt;
-&lt;li&gt;A lifted function counts as lifted only if behaviour is in it. A family whose members differ only in an address is recorded as a table, and reported separately.&lt;/li&gt;
-&lt;li&gt;Both crates say in their own documentation that the lane's differential run against the verified rewrites has not been repeated by the pipeline. The test crates are large generated files and are still to come.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;Follow-up on the 144 withdrawn rewrites&lt;/h3&gt;
-&lt;p&gt;The entry "Verified, and wrong" recorded 144 rewrites of the leaderboard row collector that compared a length unsigned. A re-run lane has re-proven all 144 with the signed comparison. Its contracts script sixteen answers for the length helper, ten of them negative or edge values, and bias the other scripted answers so that those lengths reach the comparison; the unsigned mistake, run as a wrong version, fails on every one of the 144. They are back in the verified count. The same lane found the blind spot next door in the other direction: a neighbouring function of the family compares a count unsigned, its contracts script counts from 0 to 16 only, and a rewrite that compared signed would pass. That family and the 253 row-collector rewrites that were right but had the same blind proof are queued for the same treatment. Correction to the earlier entry: it gave the number of signed members as 269; by the verified index it is 253 with the family's standard name, plus a dozen named differently.&lt;/p&gt;
-&lt;p&gt;To reproduce the census: group the game's functions by the class part of their names and compare each group with the verified index.&lt;/p&gt;</content>
   </entry>
 </feed>
