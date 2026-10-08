@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-08",
+    "title": "Preserve float callback payload words in a portable seam",
+    "commit": null,
+    "summary": "A typed forwarding boundary preserves exact binary32 representations and caller-supplied callback behavior.",
+    "changes": [
+      "Add pointer-free FloatBits with fixed-layout serialization, ordered callback arguments and an injected collaborator.",
+      "The proposed actual-crate seam passed an i686 differential fixture over twelve edge words and a four-call sequence plus an AArch64 compilation check.",
+      "Native callback binding and effects remain unknown; no verified-function or portable-function totals increase.",
+      "Normalize patch line endings after the first import check failed; retain the tested source and scoped evidence."
+    ]
+  },
+  {
+    "date": "2026-10-08",
     "title": "Accept three complete caller bodies within declared fixtures",
     "commit": "51d21e3023f209c872d9c9db311e29ae404601b2",
     "summary": "Exact preserved sources and stock verdicts establish three caller-body proofs within explicit collaborator fixtures; portable totals remain unchanged.",

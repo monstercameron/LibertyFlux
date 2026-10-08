@@ -168,6 +168,7 @@
 
 #![forbid(unsafe_code)]
 
+pub mod float_callback;
 pub mod forward;
 pub mod pure;
 pub mod registry;
