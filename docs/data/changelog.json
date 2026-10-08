@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-07",
+    "title": "Restore the frontend menu selector proof",
+    "commit": null,
+    "summary": "The menu rewrite now covers all 25 selector cases under a reviewed current checker contract.",
+    "changes": [
+      "The accepted candidate passed 1,000 stock checker trials with every original run completed, every declared helper exercised and 37 call-sequence shapes.",
+      "An independent audit checked all 25 selector arms and all 76 direct call sites; every selector reached dispatch with both observed return outcomes, and the identical-contract wrong implementation failed at its targeted selector.",
+      "The proof compares the low return byte, stubs helper bodies and disables stack-byte and full-data comparisons; finite fixture and coverage limits are stated in the rewrite.",
+      "Restored the canonical source and exact contract and verdict artifacts before importing the reviewed positive implementation; the negative-only export is excluded from the tracked rewrite."
+    ]
+  },
+  {
+    "date": "2026-10-07",
     "title": "Record the Luna pipeline recovery review",
     "commit": "27db64fe0726ecede1dd68a90849876402b57152",
     "summary": "The review records the stalled interval, tested dispatch repair, proof-scope corrections and current workstation health.",

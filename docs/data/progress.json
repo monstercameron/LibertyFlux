@@ -13,11 +13,11 @@
   "stages": {
     "identified": 37413,
     "named": 32220,
-    "rewritten": 16935,
-    "verified": 16905
+    "rewritten": 16936,
+    "verified": 16906
   },
   "structures": 340,
-  "symbols": 17006,
+  "symbols": 17007,
   "measured": [
     {
       "label": "Code section",
@@ -105,13 +105,13 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 16935,
+      "value": 16936,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 16905,
+      "value": 16906,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     },
@@ -119,13 +119,13 @@
       "label": "Game code verified, measured in bytes",
       "value": 33.9,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2482679 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2485504 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
-      "value": 25.2,
+      "value": 25.3,
       "unit": "percent",
-      "source": "374 of 1347 such functions; they hold 38% of the game's code"
+      "source": "375 of 1347 such functions; they hold 38% of the game's code"
     },
     {
       "label": "Methods lifted to portable Rust with their proof run by the pipeline",
@@ -2091,8 +2091,8 @@
       "to": "0x008B9D77",
       "count": 55,
       "named": 52,
-      "rewritten": 28,
-      "verified": 28
+      "rewritten": 29,
+      "verified": 29
     },
     {
       "stage": "verified",
@@ -4465,9 +4465,9 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2482679,
+    "verified": 2485504,
     "large_functions": 2801402,
-    "large_functions_verified": 706727
+    "large_functions_verified": 709552
   },
   "lifted": {
     "methods": 468,
