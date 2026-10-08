@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-08",
-    "title": "Restore the seven-word helper wrapper proof",
+    "title": "Strengthen six existing wrapper proof records",
     "commit": null,
+    "summary": "Record reviewed current-checker evidence after ABI and fixture corrections.",
+    "changes": [
+      "Upgraded six existing proof records after independent review of complete originals and caught same-contract controls.",
+      "Documented native receiver-register preservation and an invalid-target fixture correction while retaining historical failures and scope limits.",
+      "Changed no rewrite implementation or function count."
+    ]
+  },
+  {
+    "date": "2026-10-08",
+    "title": "Restore the seven-word helper wrapper proof",
+    "commit": "b8e8112647fcac69380c5b503cdcfb1eb91f42dd",
     "summary": "Observe all initialized record words at the downstream helper boundary.",
     "changes": [
       "Added the complete helper wrapper after a fresh independently reviewed 1,000-trial stock proof and a same-contract corrupted-record mutant that failed.",
