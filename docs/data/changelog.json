@@ -2,7 +2,7 @@
   {
     "date": "2026-10-08",
     "title": "Prepare Cargo locks before candidate builds",
-    "commit": null,
+    "commit": "0ca6acbdb5b5e761eac1868518547d5c4cfa9d19",
     "summary": "Fresh candidate builds resolve their lockfile before capturing immutable inputs, preventing avoidable rebuilds.",
     "changes": [
       "Reject unsupported manifests and dependencies before any metadata child; prepare valid Cargo lockfiles offline through the shared resource slot.",
