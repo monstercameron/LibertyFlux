@@ -5,9 +5,18 @@
   <id>https://monstercameron.github.io/LibertyFlux/devlog.html</id>
   <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html"/>
   <link rel="self" type="application/atom+xml" href="https://monstercameron.github.io/LibertyFlux/devlog.xml"/>
-  <updated>2026-10-07T00:00:00Z</updated>
+  <updated>2026-10-08T00:00:00Z</updated>
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
+  <entry>
+    <title>Hourly review: complete wrappers and honest partial stages</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-reviews-1008-luna-pipeline"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-reviews-1008-luna-pipeline</id>
+    <published>2026-10-08T00:00:00Z</published>
+    <updated>2026-10-08T00:00:00Z</updated>
+    <summary>Verified: the inventory records 16,911 verified and 16,941 rewritten game functions. Ten complete wrappers were accepted during the 56 minutes since the previous review, about eleven functions per hour. These are Luna results, not a matched comparison with another model. Source, stock-checker evidence and caught semantic controls were independently reviewed before integration.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;h3&gt;00:28 review&lt;/h3&gt;&lt;p&gt;Verified: the inventory records 16,911 verified and 16,941 rewritten game functions. Ten complete wrappers were accepted during the 56 minutes since the previous review, about eleven functions per hour. These are Luna results, not a matched comparison with another model. Source, stock-checker evidence and caught semantic controls were independently reviewed before integration.&lt;/p&gt;&lt;p&gt;The previous review-history byte total was inconsistent with the current size calculation. Recomputing the old and current verified indexes using the same present size table gives 3,947 added bytes and no removed rows. The current measured total is 2,491,923 bytes; the apparent negative byte throughput is a baseline discrepancy, not withdrawn code. Do not compare historical byte aggregates without recomputing both indexes with the same method.&lt;/p&gt;&lt;p&gt;Direction: the portable-game goal remains unproven. Only 483 routines have measured portable counterparts, totaling 45,417 bytes. Complete wrapper acceptance and scripted helper calls do not demonstrate whole-game execution. The largest uncovered risk is integration of real helper behavior and portable runtime state. Bounded audio, geometry and task-update stages remain partial regardless of their trial totals.&lt;/p&gt;&lt;p&gt;Trust: independent review exposed missing vector snapshots, stale source and library hashes, and a null-factory early return. These claims were held; repaired sources now require fresh exact-generation proofs. An invalid fixture pointer explained a historical joint fault, and a native register-preservation annotation explained two earlier ABI mismatches. Fault-only trials and mutants following failed positives remain excluded.&lt;/p&gt;&lt;p&gt;Process: every active proof lane must record resolved checker driver, worker, proof library, candidate library and source hashes plus relevant environment values before each run. Preserve each library generation before rebuilding. Unknown historical provenance stays unknown. Stop treating a worker path or a current hash as proof of an earlier runtime binary. Stop repeating the already validated execution-slot tests without a new defect.&lt;/p&gt;&lt;p&gt;Health: at 00:28 the workstation had 4.5 GB physical memory free and 12.1 GB commit headroom. No large, old busy or abandoned project process was found. The nonpaged kernel pool occupied 20.4 GB after 5.3 days uptime; owner applications were left untouched. Three guarded build/checker slots remain the limit. Fifteen native tasks were observed after replacing completed workers, including the dashboard monitor. The legacy supervisor report does not count native tasks, and its paused state remains intentional.&lt;/p&gt;&lt;p&gt;Dashboard: the running task count, Luna maximum reasoning setting and an opened replacement lane log were visually inspected. Partial-result presentation now distinguishes branch-scoped accepted contracts and failed positives from complete verification.&lt;/p&gt;&lt;p&gt;Reproduction: run the coordinator review metrics and health check; compare committed verified indexes with the same effective-size table; derive public counts through the progress generator. The native task tree and freshly written lane registry establish task activity. Per-task operating-system memory remains unavailable.&lt;/p&gt;</content>
+  </entry>
   <entry>
     <title>Hourly review: restoring the Luna pipeline and checking old proofs</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#hourly-reviews-1007-luna-pipeline"/>
@@ -1151,34 +1160,5 @@ scratch area: &lt;code&gt;manifest.json&lt;/code&gt; (sample + staged contracts)
 &lt;p&gt;Run the lane's contracts with the stock checker driver and worker; each verdict records 1,000 passing trials and each wrong-version verdict records a failure on the x87, heap, call or return comparison as appropriate.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;Two first attempts misread the original: a decoder slot was assumed to carry the object pointer when address arithmetic showed it carries the bit cursor, and a thread-block accessor was dereferenced once too often. A build briefly failed because a finished run still held the rewrite library file; a retry seconds later succeeded. All were fixed and re-proven in the same session.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>A stuck tick stopped the lanes: how one slow step took down three agents</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#a-stuck-tick-stopped-the-lanes-2026-10-05"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#a-stuck-tick-stopped-the-lanes-2026-10-05</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>At 18:40 on 5 October every lane the project was running stopped at once. Nothing had crashed. A chain of three ordinary things did it, and each link had looked safe on its own.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;At 18:40 on 5 October every lane the project was running stopped at once. Nothing had crashed. A chain of three ordinary things did it, and each link had looked safe on its own.&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Link&lt;/th&gt;&lt;th&gt;What happened&lt;/th&gt;&lt;th&gt;Status&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;&lt;td&gt;A finished lane left work running&lt;/td&gt;&lt;td&gt;A production lane ended at 17:54 and reported that nothing of its own was still running. Seventeen copies of one of its helper scripts were, and stayed busy for 52 to 117 minutes, about four processor cores between them. The watchdog stops such leftovers only when they are two and a half hours old.&lt;/td&gt;&lt;td&gt;Verified (process list, command lines, ages)&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;The five-minute tick slowed to a crawl&lt;/td&gt;&lt;td&gt;The tick's rewrite importer reads every lane's results, about 1,500 folders, and normally takes a minute. From 18:30 it ran for more than ten, reading about 120 files a second with the disk idle and no paging. After the leftovers were stopped the same step took 57 seconds.&lt;/td&gt;&lt;td&gt;Timing verified; the leftovers as the cause is inferred from that before and after, not proven&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;The supervisor waits for the tick&lt;/td&gt;&lt;td&gt;The supervisor starts lanes and runs the tick itself, and runs as one background task with a two-hour limit. It is written to finish by itself after 112 minutes. It was inside the tick when the 112 minutes passed, was still there when the two hours passed, and was stopped at the limit.&lt;/td&gt;&lt;td&gt;Verified (supervisor log, task record)&lt;/td&gt;&lt;/tr&gt;
-&lt;tr&gt;&lt;td&gt;Lanes are the supervisor's children&lt;/td&gt;&lt;td&gt;Stopping the task stopped everything it had started: three lanes that were 30 to 45 minutes into their work, among them the audit of blind proofs and the first class-completion lane.&lt;/td&gt;&lt;td&gt;Verified&lt;/td&gt;&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;h3&gt;What was lost and what was not&lt;/h3&gt;
-&lt;p&gt;No results were lost: lanes keep their state in their own folders and write results as they go. About two lane-hours of model work were interrupted, and for seven minutes nothing was running. A fourth lane had finished four minutes earlier and is unaffected: it verified 26 of 27 tiny forwarding functions in 25 minutes, all of them deferred as untestable by the project's earliest lanes, because the checker of that day could not follow a jump out of a function.&lt;/p&gt;
-&lt;h3&gt;Changes&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;Every step of the tick has a time limit. A step that overruns is stopped with its whole process tree, the tick says so, and the remaining steps run. The limits add up to under fourteen minutes.&lt;/li&gt;
-&lt;li&gt;The supervisor runs no tick in the last eight minutes of its window, and the window is 100 minutes, so the worst case ends before the task's limit.&lt;/li&gt;
-&lt;li&gt;The lane launcher recognises a lane that was cut off from outside (its log shows a launch, work, and no exit) and resumes it from its folder instead of starting it again. The three lanes were resumed this way.&lt;/li&gt;
-&lt;li&gt;The watchdog stops a lane's leftover processes five minutes after that lane's launcher has logged its exit, instead of after two and a half hours.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3&gt;What it says more generally&lt;/h3&gt;
-&lt;p&gt;A lane's own statement that it left nothing running is a claim, not a fact; the check has to be made from outside, soon after the lane ends. And a controller that does housekeeping in its own loop inherits every way the housekeeping can stall.&lt;/p&gt;</content>
   </entry>
 </feed>
