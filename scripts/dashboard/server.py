@@ -16,6 +16,7 @@ It binds to 127.0.0.1 only: briefs and logs contain machine paths and addresses 
 
 import ctypes
 import json
+import math
 import os
 import re
 import subprocess
@@ -166,6 +167,8 @@ def cached_row(lane, live, experiments, registry_entry=None):
 
 
 def read_json(path, default=None):
+    if path is None:
+        return default
     try:
         return json.loads(path.read_text(encoding="utf-8-sig"))
     except (OSError, ValueError, TypeError):
@@ -554,6 +557,77 @@ def _accepted_decision(value):
     return first == "accept" or first.startswith("accept_") or first.startswith("accept ")
 
 
+
+def _task_activity_rows(data, max_items=12):
+    """Expose bounded task notes without turning them into proof or progress credit."""
+    rows = []
+    for field, category, base_name in (
+        ("preliminary_findings", "Finding", "Finding"),
+        ("recommendation", "Recommendation", "Recommendation"),
+    ):
+        value = data.get(field)
+        if value is None or value == "" or value == [] or value == {}:
+            continue
+        items = value if isinstance(value, list) else [value]
+        for index, item in enumerate(items[:max_items], 1):
+            if isinstance(item, dict):
+                name = next((item.get(key) for key in ("id", "name", "title", "finding")
+                             if isinstance(item.get(key), str) and item.get(key).strip()), None)
+                outcome = next((item.get(key) for key in ("severity", "confidence", "status", "type")
+                                if isinstance(item.get(key), str) and item.get(key).strip()), "recorded")
+                detail_parts = []
+                for key in ("summary", "evidence", "effect", "detail", "scope", "limitations",
+                            "text", "description", "decision", "action", "recommendation"):
+                    part = item.get(key)
+                    if part is not None and part != "" and part != [] and part != {}:
+                        detail_parts.append(f"{key}: {display_note(part, 220)}")
+                detail = "; ".join(detail_parts) if detail_parts else display_note(item, 260)
+                name = display_value(name or f"{base_name} {index}", 120)
+                outcome = display_value(outcome, 120)
+            else:
+                name = f"{base_name} {index}" if isinstance(value, list) else base_name
+                outcome = "recorded"
+                detail = display_note(item, 260)
+            rows.append({"category": category, "name": name, "outcome": outcome,
+                         "detail": display_value(detail, 260)})
+        if len(items) > max_items:
+            rows.append({"category": category, "name": "Additional items", "outcome": "omitted",
+                         "detail": "Further items are omitted from this dashboard view; full content remains in results.json."})
+    return rows
+
+
+def ended_recently(lane_state, activity_epoch, now=None):
+    """Use only finite, known past activity times for the recent-finished view."""
+    if lane_state != "finished" or isinstance(activity_epoch, bool) or not isinstance(activity_epoch, (int, float)):
+        return False
+    now = time.time() if now is None else now
+    try:
+        activity_epoch = float(activity_epoch)
+        now = float(now)
+    except (TypeError, ValueError, OverflowError):
+        return False
+    if not math.isfinite(activity_epoch) or not math.isfinite(now):
+        return False
+    age = now - activity_epoch
+    return 0 <= age <= RECENT_SECONDS
+
+
+def annotate_ended_recent(lanes, now=None):
+    """Mark recent finished lanes without filtering the running or unknown lane rows."""
+    now = time.time() if now is None else now
+    for lane in lanes:
+        if isinstance(lane, dict):
+            lane["ended_recent"] = ended_recently(
+                lane.get("state"), lane.get("last_activity_epoch"), now)
+    return lanes
+
+
+def _has_row_outcomes(data):
+    """Identify the legacy row-proof schema without assigning any new credit."""
+    rows = data.get("functions") or data.get("results") or data.get("names")
+    return isinstance(rows, list) and any(isinstance(row, dict) and "outcome" in row for row in rows)
+
+
 def structured_result_evidence(data):
     """Normalize recent lane schemas without treating stage or claim evidence as full-function proof."""
     if not isinstance(data, dict):
@@ -702,7 +776,11 @@ def structured_result_evidence(data):
 
     # Generic result status is work activity after the specific structured proof adapters above.
     # It never creates proof, mutant, partial-stage, or full-function credit.
-    if isinstance(data.get("status"), str) and data["status"].strip():
+    task_rows = _task_activity_rows(data)
+    status = data.get("status")
+    mixed_row_proof = (bool(task_rows) and not (isinstance(status, str) and status.strip())
+                       and _has_row_outcomes(data))
+    if not mixed_row_proof and ((isinstance(status, str) and status.strip()) or task_rows):
         tests = data.get("tests") if isinstance(data.get("tests"), list) else []
         changes = data.get("changes") if isinstance(data.get("changes"), list) else []
         rows = []
@@ -727,6 +805,7 @@ def structured_result_evidence(data):
                 name, detail = f"Change {index}", item
             rows.append({"category": "Change", "name": display_value(name, 120),
                          "outcome": "recorded", "detail": display_value(detail, 260)})
+        rows.extend(task_rows)
         test_summary = f"{len(tests)} test result(s) recorded"
         if passed or failed:
             counts = []
@@ -742,7 +821,8 @@ def structured_result_evidence(data):
             target_value = nested_target.get("address")
         target_display = display_value(target_value, 160) if isinstance(target_value, str) else ""
         task_type = data.get("task_type") if isinstance(data.get("task_type"), str) else ""
-        display_parts = [f"Work status: {display_value(data.get('status'), 100)}"]
+        display_parts = ([f"Work status: {display_value(status, 100)}"]
+                         if isinstance(status, str) and status.strip() else ["Task activity recorded"])
         if task_type.strip():
             display_parts.append(f"task type: {display_value(task_type, 120)}")
         if isinstance(data.get("scope"), str) and data["scope"].strip():
@@ -751,14 +831,14 @@ def structured_result_evidence(data):
             display_parts.append(f"target: {target_display}")
         if tests or changes:
             display_parts.extend((change_summary, test_summary))
-        else:
+        elif not task_rows:
             display_parts.append("no changes or test results recorded")
         display = "; ".join(display_parts) + "."
         scope_value = (display_value(data.get("scope"), 400) if isinstance(data.get("scope"), str)
                        else "Recorded task activity only; no proof or function credit is inferred.")
         return {"rows": rows, "label": "Tool-result activity", "item_label": "Activity",
                 "kind": "activity", "display": display, "done": len(changes), "of": len(changes),
-                "unit": "changes recorded", "status": display_value(data.get("status"), 100),
+                "unit": "changes recorded", "status": display_value(status, 100),
                 "task": display_value(data.get("task"), 2000) if isinstance(data.get("task"), str) else "",
                 "task_type": display_value(task_type, 120), "target_va": target_display,
                 "tests_count": len(tests), "tests_passed": passed, "tests_failed": failed,
@@ -845,6 +925,14 @@ def result_detail_rows(lane, registry_entry=None):
         return evidence["rows"], evidence["label"], evidence["item_label"], evidence["kind"]
     rows = result_rows(lane, registry_entry)
     if rows is not None:
+        task_rows = _task_activity_rows(data)
+        if task_rows and not (isinstance(data.get("status"), str) and data.get("status").strip()) \
+                and _has_row_outcomes(data):
+            # Show notes beside proof rows; yield_of still counts only the original result rows.
+            rows = list(rows) + [{"name": f"{row['category']}: {row['name']}",
+                                  "outcome": row["outcome"], "detail": row["detail"]}
+                                 for row in task_rows]
+            return rows, "Function results and task activity", "Result / note", "legacy"
         if any(isinstance(row, dict) and row.get("status") and not row.get("outcome") for row in rows):
             return rows, "Function evidence", "Function", "legacy"
         return rows, "Results", "Function", "legacy"
@@ -960,6 +1048,7 @@ def lane_row(lane, live, experiments, registry_entry=None):
             "started": (registry_entry or {}).get("started") or (process or {}).get("started"),
             "agent_memory_mb": None if registry_entry is not None else (process or {}).get("mem_mb"),
             "last_activity": datetime.fromtimestamp(stat.st_mtime).isoformat(timespec="seconds") if stat else None,
+            "last_activity_epoch": stat.st_mtime if stat else None,
             "progress": progress[:300], "yield": yield_of(lane, registry_entry), "brief": brief_tag(lane),
             "experiment": (experiment or {}).get("factor"), "batch": len(batch) if isinstance(batch, list) else None}
 
@@ -986,6 +1075,7 @@ def state():
     except OSError:
         pass
     lanes = [cached_row(name, live, experiments, registry_lanes.get(name)) for name in sorted(names)]
+    annotate_ended_recent(lanes, now)
     order = {"running": 0, "died": 1, "stopped": 2, "unknown": 3, "finished": 4}
     lanes.sort(key=lambda row: (order[row["state"]], row["last_activity"] or ""), reverse=False)
     progress = read_json(ROOT / "docs" / "data" / "progress.json", {}) or {}

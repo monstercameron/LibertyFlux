@@ -275,7 +275,7 @@ tr.current td { background: var(--raised); }
 
   function matches(l) {
     if (filter === "running" && l.state !== "running") return false;
-    if (filter === "ended" && l.state !== "finished") return false;
+    if (filter === "ended" && l.ended_recent !== true) return false;
     if (filter === "died" && l.state !== "died" && l.state !== "stopped" && l.state !== "unknown") return false;
     if (!query) return true;
     return (l.lane + " " + l.kind + " " + (l.model || "") + " " + (l.effort || "") + " " + (l.brief || "") + " " + (l.experiment || "")).toLowerCase().indexOf(query) >= 0;
@@ -284,7 +284,11 @@ tr.current td { background: var(--raised); }
   function renderLanes() {
     var lanes = (state.lanes || []).filter(matches);
     var counts = { running: 0, ended: 0, died: 0 };
-    (state.lanes || []).forEach(function (l) { if (l.state === "running") counts.running++; else if (l.state === "finished") counts.ended++; else counts.died++; });
+    (state.lanes || []).forEach(function (l) {
+      if (l.state === "running") counts.running++;
+      else if (l.ended_recent === true) counts.ended++;
+      else if (l.state === "died" || l.state === "stopped" || l.state === "unknown") counts.died++;
+    });
     document.querySelectorAll(".tab[data-filter]").forEach(function (t) {
       var key = t.dataset.filter;
       t.textContent = { running: "Running", ended: "Ended in the last 3 hours", died: "Died, stopped, or unknown" }[key] + " " + counts[key];

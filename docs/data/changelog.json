@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-08",
+    "title": "Show bounded review activity in the dashboard",
+    "commit": null,
+    "summary": "Display review notes without changing proof counts and restrict the recent-finished view to its stated window.",
+    "changes": [
+      "Show bounded escaped findings and recommendations beside task and mixed proof records without granting verification credit.",
+      "Use finite past log activity to restrict the finished view to three hours; keep other lane filters intact.",
+      "Return the default for missing result paths, and isolate the existing regression-count fixture from live lane data.",
+      "Validated 39 dashboard, registry, status and lane-result tests through the shared resource gate and visually inspected the running page."
+    ]
+  },
+  {
+    "date": "2026-10-08",
     "title": "Prepare Cargo locks before candidate builds",
     "commit": "0ca6acbdb5b5e761eac1868518547d5c4cfa9d19",
     "summary": "Fresh candidate builds resolve their lockfile before capturing immutable inputs, preventing avoidable rebuilds.",
