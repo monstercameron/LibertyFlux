@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-08",
+    "title": "Keep held proofs out of automatic imports",
+    "commit": null,
+    "summary": "Honor explicit review holds before importing successful-looking lane rows.",
+    "changes": [
+      "Skip passed rows whose proof review explicitly holds promotion and report the recorded reason.",
+      "Preserve existing index bytes for held proofs; retain ordinary imports without a hold.",
+      "Validated all 15 importer tests through the guarded local execution slot."
+    ]
+  },
+  {
+    "date": "2026-10-08",
     "title": "Restore two pedestrian interface wrapper proofs",
     "commit": "e6ade02bd1f2540e8eb9338fa2733477bbad10a0",
     "summary": "Review exact record forwarding and task-interface call order with explicit contract limits.",

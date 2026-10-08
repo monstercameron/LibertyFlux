@@ -76,6 +76,35 @@ class TestImport(SyncTree):
         self.assertEqual(index[key(A)]["checker"], "version 4")
         self.assertTrue((self.dest / "functions" / f"fn_{A:08x}.rs").exists())
 
+    def test_held_pass_is_reported_and_index_unchanged(self):
+        existing = {"address": key(B), "name": "existing", "kind": "function",
+                    "file": f"functions/fn_{B:08x}.rs", "trials": 1000,
+                    "checker": "version 2", "lane": "a-existing"}
+        existing_file = self.dest / existing["file"]
+        existing_file.parent.mkdir(parents=True)
+        existing_file.write_text(rewrite_text(B))
+        index_path = self.dest / "index.json"
+        index_path.write_bytes((json.dumps([existing], indent=1) + "\n").encode("utf-8"))
+        original_index = index_path.read_bytes()
+        self.lane("a-held", [{"address": key(A), "outcome": "verified_v8", "trials": 1000,
+                               "proof_review": {"classification": "partial", "promotion": "held",
+                                                "reason": "unobserved vector word",
+                                                "independent_followup": {"review": "a-Q147/review.json"}}}],
+                  files=[A])
+        out = self.run_sync()
+        self.assertEqual(index_path.read_bytes(), original_index)
+        self.assertEqual(self.index(self.dest), {key(B): existing})
+        self.assertIn("held from sync import by proof_review.promotion=held: 1 passed row(s)", out)
+        self.assertIn(f"a-held {key(A)}: unobserved vector word", out)
+        self.assertIn("[review: a-Q147/review.json]", out)
+        self.assertTrue((self.scratch / "a-held" / "out" / "rewrites" / f"fn_{A:08x}.rs").exists())
+
+    def test_unannotated_pass_still_imports(self):
+        self.lane("a-plain", [{"address": key(A), "outcome": "verified_v8", "trials": 1000}], files=[A])
+        out = self.run_sync()
+        self.assertIn(key(A), self.index(self.dest))
+        self.assertNotIn("proof_review.promotion=held", out)
+
     def test_running_lane_skipped(self):
         self.lane("r-s1", [{"address": key(A), "outcome": "verified"}], "v4", files=[A], finished=False)
         self.run_sync()

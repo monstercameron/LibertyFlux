@@ -113,7 +113,7 @@ def main():
     unverified = {e["address"]: e for e in json.loads(unverified_path.read_text(encoding="utf-8"))} if demoting and unverified_path.exists() else {}
     unverified_before = json.dumps(unverified, sort_keys=True)
     against = {}
-    added, upgraded, skipped = [], [], []
+    added, upgraded, skipped, held = [], [], [], []
     sources = sorted(SCRATCH.glob("r-*/results.json")) + sorted(SCRATCH.glob("a-*/results.json"))
     for results in sources:
         lane = results.parent.name
@@ -140,7 +140,18 @@ def main():
             source = results.parent / "out" / "rewrites" / f"fn_{address:08x}.rs"
             if demoting and judged_against(row):
                 note_against(against, key, version, lane, row)
-            if row.get("outcome") not in scan.PASSED or not source.exists():
+            if row.get("outcome") not in scan.PASSED:
+                continue
+            proof_review = row.get("proof_review")
+            if isinstance(proof_review, dict) and proof_review.get("promotion") == "held":
+                reason = str(proof_review.get("reason") or "proof review hold")
+                review = proof_review.get("review")
+                followup = proof_review.get("independent_followup")
+                if not review and isinstance(followup, dict):
+                    review = followup.get("review")
+                held.append((lane, key, reason, str(review or "")))
+                continue
+            if not source.exists():
                 continue
             known = index.get(key)
             if known and scan.RANK[version] <= scan.RANK.get(known["checker"], 1):
@@ -171,6 +182,13 @@ def main():
     v3 = sum(1 for e in index.values() if e["checker"] == "version 3")
     print(f"added {len(added)}; re-checked under a later checker {len(upgraded)}; total in rewrites/verified {len(index)} "
           f"({v2} under version 2 or later, {v3} under version 3); left out by the scan {len(skipped)}")
+    if held:
+        print(f"held from sync import by proof_review.promotion=held: {len(held)} passed row(s)")
+        for lane, key, reason, review in held:
+            detail = f"  {lane} {key}: {reason}"
+            if review:
+                detail += f" [review: {review}]"
+            print(detail)
     if demoting:
         print(f"demoted to rewrites/unverified by a later checker's failure or deferral {len(demoted)}"
               + (f" ({', '.join(demoted[:8])})" if demoted else "")
