@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-08",
-    "title": "Restore the audio span wrapper proof",
+    "title": "Track streamed file requests through completion",
     "commit": null,
+    "summary": "Connect portable streaming reads to the platform file lifecycle without losing pending requests or unrelated completions.",
+    "changes": [
+      "A read owner associates caller-supplied file ranges with slot tags and routes completed requests exactly once.",
+      "Cancellation and file closure reconcile abandoned queued requests while preserving running and finished completions.",
+      "The affected root workspace crates pass eighty-six tests, including nine read lifecycle tests. Range derivation and load-slot mutation remain outside this change."
+    ]
+  },
+  {
+    "date": "2026-10-08",
+    "title": "Restore the audio span wrapper proof",
+    "commit": "06047357c05c2e9e71d066d3a237d701c2ece877",
     "summary": "Accept the byte-channel audio wrapper after a stock checker run and independent source projection review.",
     "changes": [
       "The wrapper completed one thousand original trials with every configured comparison passing and a same-contract semantic mutant rejected.",

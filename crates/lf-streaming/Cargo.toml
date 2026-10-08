@@ -13,3 +13,5 @@ workspace = true
 [dependencies]
 # Layout assertions and shared types for layout.rs (see lf-core).
 lf-core = { path = "../lf-core" }
+# Asynchronous file request and completion lifecycle.
+lf-platform = { path = "../lf-platform" }
