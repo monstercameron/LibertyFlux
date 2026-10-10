@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-10",
-    "title": "Dashboard: show lanes run by Claude subagents",
+    "title": "Use Haiku lanes for the harder functions when Luna is struggling",
     "commit": null,
+    "summary": "The owner's instruction of 10 October is now in the agent rules: Claude Haiku 5.5 subagents take the higher difficulties where Luna is not getting through.",
+    "changes": [
+      "A function that a Luna lane has deferred, failed or made no progress on, and the larger functions, go to a Haiku lane.",
+      "The same rules hold for a Haiku lane as for any other: the stock checker decides, every function gets its own deliberately wrong version, and whatever narrows a proof is listed in its result.",
+      "Haiku's throughput and accuracy are to be measured from its own accepted results. One lane on small functions has run so far, which says nothing yet about large ones."
+    ]
+  },
+  {
+    "date": "2026-10-10",
+    "title": "Dashboard: show lanes run by Claude subagents",
+    "commit": "67f23cace4d7f9e1b292870e516b3e1faa1abbee",
     "summary": "A lane run by a Claude subagent now appears in the local dashboard as what it is. One such lane is being tried on a production batch.",
     "changes": [
       "A lane listed in the coordinator's lane registry with the source `claude` is shown as a Claude subagent, with its model, in the list of running lanes and on its own page. Until now every registry lane was labelled a Codex subagent.",

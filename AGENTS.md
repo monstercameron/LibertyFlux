@@ -357,6 +357,13 @@ Neither page may contain decompiled code, disassembly, game function addresses o
   and wrong-version requirements, process limits and a time budget. Do not launch Muse lanes.
   Historical throughput measurements for Muse do not establish Luna's throughput or accuracy;
   measure those from Luna's own accepted results and logs.
+- Claude Haiku 5.5 subagents take the higher difficulties when Luna is struggling (Cam, 10 October
+  2026): a function Luna has deferred, failed or made no progress on, and the larger functions, go
+  to a Haiku lane. The same rules apply to it as to any lane: the stock checker decides, every
+  function gets its own wrong version, and what a proof does not cover is listed. Measure Haiku's
+  throughput and accuracy from its own accepted results; one lane on small functions does not
+  establish them for large ones. A Haiku lane is started by the Claude coordinator as a subagent
+  and is listed in the lane registry with the source `claude`, so the dashboard shows it.
 - Sonnet is on hold (Cam, 4 October 2026). Two Sonnet lanes were run once as a comparison on large
   functions: about one and a half times the verified code per lane-hour, and more rigour (a wrong
   version per function, limits of each proof stated, a function deferred when wrong versions showed
