@@ -408,14 +408,6 @@
   "reason": "other"
  },
  {
-  "address": "0x008E8C00",
-  "name": "search_best_scored_node",
-  "file": "fn_008e8c00.rs",
-  "lane": "a-16",
-  "outcome": "failed_v2",
-  "reason": null
- },
- {
   "address": "0x009094A0",
   "name": "ui_slot_sweep",
   "file": "fn_009094a0.rs",
@@ -446,6 +438,22 @@
   "lane": "r-b433",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x0096D490",
+  "name": null,
+  "file": "fn_0096d490.rs",
+  "lane": "a-Q81",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00971F00",
+  "name": "aud_occlusion_group_update",
+  "file": "fn_00971f00.rs",
+  "lane": "a-Q77",
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x009AA110",
@@ -1158,6 +1166,14 @@
   "lane": "r-b300",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x00C69970",
+  "name": "stream_resync_two_banks",
+  "file": "fn_00c69970.rs",
+  "lane": "a-Q109",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00C7E200",
