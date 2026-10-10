@@ -9,6 +9,15 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Record a one-word thiscall boundary in differential tests</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#thiscall-one-word-recorder"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#thiscall-one-word-recorder</id>
+    <published>2026-10-08T00:00:00Z</published>
+    <updated>2026-10-08T00:00:00Z</updated>
+    <summary>Verified: the differential runtime now supplies a typed recorder for an object receiver and one stack argument. The existing two-argument cdecl recorder remains available. An i686 regression compares recorded receiver and argument order, return values, and the stack pointer before pushing the argument and after the call returns.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Verified: the differential runtime now supplies a typed recorder for an object receiver and one stack argument. The existing two-argument cdecl recorder remains available. An i686 regression compares recorded receiver and argument order, return values, and the stack pointer before pushing the argument and after the call returns.&lt;/p&gt;&lt;p&gt;Root review found the first assembly probe did not declare all caller-clobbered registers. The corrected test declares the C ABI clobber set and passed its focused test. The prior nine-test library run predates this test-only correction; no redundant full-suite replay was required. Exact copied runtime and package inputs, reduced path-only lockfile scope and all failed runner attempts remain recorded.&lt;/p&gt;&lt;p&gt;This is a differential-test adapter, not a stock-checker change or native object-class binding. It adds no function credit. Reproduce with the lf-lift-diff library tests on i686; the permanent regression is in its runtime module.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>Preserve float callback payload words in a portable seam</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#float-callback-word-forwarding"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#float-callback-word-forwarding</id>
@@ -1065,32 +1074,5 @@ otherwise identical logs is the signature.&lt;/p&gt;</content>
 &lt;p&gt;What was found: the family shares one shape. Every complex task carries a subtask word and a marks word (bit 0 gates a state check, bit 1 records a pass); clones allocate through a shared manager global and build from member words; and the shocking-event pair shares a liveness gate (set flag plus set mode fires at once, mixed pairs never fire, otherwise the squared position length must exceed a threshold global, computed in a fixed float order). Per-class data and every slot meaning are tabulated in the lane report with the rewrite behind each row.&lt;/p&gt;
 &lt;p&gt;What was decided: 12 methods across 5 classes are lifted and proven, each against its verified rewrite on the same generated inputs — return value, full object blobs, every call in order with its arguments, floats bit for bit — with a deliberately wrong lift caught alongside. Destructors go to Drop. The rest is recorded missing with reasons: the six heavy cover-seeking methods, two large task builders, thin constructor shells, and one clone whose trailing store into an opaquely built object has no clean lift shape. No method touches the operating system, so nothing needs the platform traits yet.&lt;/p&gt;
 &lt;p&gt;Two traps for the next lane. A test file named &lt;code&gt;*update*&lt;/code&gt; produces a binary Windows treats as an installer, so the test fails to launch with an elevation error; the proof was renamed to &lt;code&gt;tick&lt;/code&gt;. And a crashed 32-bit test binary stayed locked against the linker with no owning process visible, so the suite finished in a second build folder under the lane directory. Both are environment quirks, not proof failures.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>AL stubs leave the log pointer in EAX (lane a-Q12)</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#a-q12-al-stub-eax"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#a-q12-al-stub-eax</id>
-    <published>2026-10-05T00:00:00Z</published>
-    <updated>2026-10-05T00:00:00Z</updated>
-    <summary>5 October 2026</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;&lt;time datetime="2026-10-05"&gt;5 October 2026&lt;/time&gt;&lt;/p&gt;
-&lt;p&gt;Asked: why did a rewrite returning an AL callee's answer as &lt;code&gt;al as u32&lt;/code&gt;
-mismatch the original's EAX, when the call sequences matched? (Verified: worker
-source plus a failing then passing proof.)&lt;/p&gt;
-&lt;p&gt;Found: the worker's &lt;code&gt;al&lt;/code&gt; stub answers with scratch in the upper bytes:
-it masks EAX down to the low byte and ORs in the script byte, but EAX no longer
-holds the entry value at that point — the logging prologue has overwritten it with
-the call-log entry pointer. So the observed EAX is
-&lt;code&gt;(log_base + call_index * entry_size) &amp;amp; ~0xFF | answer_byte&lt;/code&gt;.
-The log index resets to zero for each side, so both sides produce the identical
-word for identical call sequences. A rewrite must capture the full u32 answer from
-the callee macro and thread it to the return; truncating to the low byte fails.&lt;/p&gt;
-&lt;p&gt;Decided: in functions whose return value is threaded through an AL callee, keep
-&lt;code&gt;ret: eax&lt;/code&gt; and return the macro's full word. The comparison is meaningful:
-it checks EAX threading (which call's answer survives), and a wrong threading or a
-truncated return fails. Do not switch to &lt;code&gt;ret: al&lt;/code&gt; to dodge the scratch
-bytes — that weakens the comparison.&lt;/p&gt;
-&lt;p&gt;Reproduce: any contract with an &lt;code&gt;al&lt;/code&gt; callee whose answer reaches EAX;
-the original's EAX reads as a &lt;code&gt;0x3101xxxx&lt;/code&gt; word (the log region).&lt;/p&gt;</content>
   </entry>
 </feed>
