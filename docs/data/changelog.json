@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-10",
-    "title": "Devlog: the first Haiku lane measured against the earlier model's record",
+    "title": "Devlog: Haiku lanes on three large functions left partly proven",
     "commit": null,
+    "summary": "Three Haiku lanes each took one large function that earlier lanes had left partly proven. One closed its proof; two moved further and stopped early. Nothing is added to the verified count.",
+    "changes": [
+      "The lane that finished has one rewrite passing six contracts at 1,000 trials each, and the coordinator's re-run reproduces all six. The rewrite is held out of the repository: it mirrors the original's stack push by push, which is not the behaviour written as Rust.",
+      "Each lane found an error in the earlier stage work: a deferral that wrongly said a capture from the running game was needed, a contract that never ran one of two paths because of how an answer sequence is consumed, and a stage that passed without comparing the return register.",
+      "Two lanes stopped with most of their time unused while a next step was open. The launch note for these lanes is to gain a rule against that and a rule on the form of a large rewrite before more are started.",
+      "Work is paused at the owner's request after this batch."
+    ]
+  },
+  {
+    "date": "2026-10-10",
+    "title": "Devlog: the first Haiku lane measured against the earlier model's record",
+    "commit": "bcef0955cae7aca531a36c08c9ac2732451cc4f1",
     "summary": "One lane run by Claude Haiku 5.5 verified 19 of 20 small functions in 30 minutes on the unchanged production brief, and all 19 proofs held when the coordinator re-ran them.",
     "changes": [
       "New devlog entry with the comparison: share of the batch verified, time, functions and bytes per lane-hour, wrong versions, how many proofs state what they do not cover, and the coordinator's own re-run. On small functions the lane is level with the lanes the process was tuned on; nothing is measured yet for large ones.",
