@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-10",
+    "title": "Verify a task status bit reader",
+    "commit": null,
+    "summary": "Add a complete leaf rewrite checked against the original under its low-byte return contract.",
+    "changes": [
+      "The original completed all 1,000 positive comparisons; a same-contract wrong-bit mutant failed three return comparisons.",
+      "The rewrite reads one receiver byte without calls or writes. The return comparison checks AL; upper return-register bits and invalid receiver faults are outside the declared contract.",
+      "The accepted source matches the tested source exactly, and isolated assembler import mapping and a publication scan passed.",
+      "Record the pinned stock checker generation while preserving the raw legacy protocol label in the evidence."
+    ]
+  },
+  {
+    "date": "2026-10-10",
     "title": "Devlog: Haiku lanes on three large functions left partly proven",
     "commit": "e24efc81fc9ce0eb5fa640db6e59ef518c0e0f3f",
     "summary": "Three Haiku lanes each took one large function that earlier lanes had left partly proven. One closed its proof; two moved further and stopped early. Nothing is added to the verified count.",
