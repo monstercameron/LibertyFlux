@@ -1,6 +1,18 @@
 [
   {
     "date": "2026-10-10",
+    "title": "Devlog: the first Haiku lane measured against the earlier model's record",
+    "commit": null,
+    "summary": "One lane run by Claude Haiku 5.5 verified 19 of 20 small functions in 30 minutes on the unchanged production brief, and all 19 proofs held when the coordinator re-ran them.",
+    "changes": [
+      "New devlog entry with the comparison: share of the batch verified, time, functions and bytes per lane-hour, wrong versions, how many proofs state what they do not cover, and the coordinator's own re-run. On small functions the lane is level with the lanes the process was tuned on; nothing is measured yet for large ones.",
+      "The entry records a limit of the checker the lane found by itself: a store into a function's own last argument slot is not seen. One imported proof is narrower for it and says so.",
+      "The day's hourly review entry is started, with the 11:10 row: what changed in the process for a second lane model and a shared machine, and what is not being run against (two coordinators on one working tree, and a pipeline that has failed since 8 October).",
+      "The database also carries one entry written on 8 October by the other coordinator's session about a test recorder for one calling convention; it was in the working copy and had not been committed."
+    ]
+  },
+  {
+    "date": "2026-10-10",
     "title": "Rewrites: 19 more functions pass the checker (17063 in total)",
     "commit": "b0912b7fada39190bd857c5cf766d9e2b2a3f727",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
