@@ -219,7 +219,8 @@ def read_codex_registry(path=CODEX_REGISTRY, now=None):
             "results_path": registry_path_value(item, "results_path"),
             "log_path": registry_path_value(item, "log_path"),
             "summary_path": registry_path_value(item, "summary_path"),
-            "source": "codex",
+            # A registry lane is a Codex subagent unless its entry says it is a Claude subagent (10 October 2026).
+            "source": "claude" if item.get("source") == "claude" else "codex",
         }
     registry = {"state": "fresh" if fresh else ("stale" if age > CODEX_REGISTRY_MAX_AGE_SECONDS else "unknown"),
                 "fresh": fresh, "updated_at": updated_at if isinstance(updated_at, str) else None,
@@ -1174,7 +1175,7 @@ _history = []  # rows as written to HISTORY_FILE, oldest first
 def history_sample(now, lanes, progress, mem):
     """One history row. `lanes` is the live-lane map, `progress` the site's progress data, `mem` memory() or None."""
     stages = (progress or {}).get("stages") or {}
-    memory_unknown = any(p.get("source") == "codex" for p in lanes.values())
+    memory_unknown = any(p.get("source") in ("codex", "claude") for p in lanes.values())
     row = {"t": int(now), "lanes": len(lanes), "verified": stages.get("verified"), "rewritten": stages.get("rewritten"),
            "agent_gb": None if memory_unknown else round(sum((p.get("mem_mb") or 0) for p in lanes.values()) / 1024, 2),
            "mem_pct": None, "commit_pct": None}
