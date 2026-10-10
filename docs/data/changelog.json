@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-10",
-    "title": "Use Haiku lanes for the harder functions when Luna is struggling",
+    "title": "Rewrites: 19 more functions pass the checker (17063 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "19 rewrites added under rewrites/verified: 0 script native handlers and 19 other functions.",
+      "The tree now holds 17063 rewrites, 17060 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-10",
+    "title": "Use Haiku lanes for the harder functions when Luna is struggling",
+    "commit": "57da8910009f9206afda89ecfcd9d0d87f36bb00",
     "summary": "The owner's instruction of 10 October is now in the agent rules: Claude Haiku 5.5 subagents take the higher difficulties where Luna is not getting through.",
     "changes": [
       "A function that a Luna lane has deferred, failed or made no progress on, and the larger functions, go to a Haiku lane.",
