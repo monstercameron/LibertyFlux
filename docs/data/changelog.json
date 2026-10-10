@@ -2,7 +2,7 @@
   {
     "date": "2026-10-10",
     "title": "Devlog: Haiku lanes on three large functions left partly proven",
-    "commit": null,
+    "commit": "e24efc81fc9ce0eb5fa640db6e59ef518c0e0f3f",
     "summary": "Three Haiku lanes each took one large function that earlier lanes had left partly proven. One closed its proof; two moved further and stopped early. Nothing is added to the verified count.",
     "changes": [
       "The lane that finished has one rewrite passing six contracts at 1,000 trials each, and the coordinator's re-run reproduces all six. The rewrite is held out of the repository: it mirrors the original's stack push by push, which is not the behaviour written as Rust.",
