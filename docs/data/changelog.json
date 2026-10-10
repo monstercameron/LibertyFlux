@@ -2,7 +2,7 @@
   {
     "date": "2026-10-10",
     "title": "Verify a task status bit reader",
-    "commit": null,
+    "commit": "e2b442c68f0f329a38560a44326f4c49cbd59b30",
     "summary": "Add a complete leaf rewrite checked against the original under its low-byte return contract.",
     "changes": [
       "The original completed all 1,000 positive comparisons; a same-contract wrong-bit mutant failed three return comparisons.",
