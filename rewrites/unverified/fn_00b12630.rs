@@ -24,5 +24,6 @@ lf_checker_rt::export!(thiscall, rw_00b12630(this: u32) -> () {
                 .read_unaligned();
             (this.wrapping_add(destination_offset) as *mut u32).write_unaligned(value);
         }
+        (this.wrapping_add(0xF0) as *mut u32).write_unaligned(0);
     }
 });
