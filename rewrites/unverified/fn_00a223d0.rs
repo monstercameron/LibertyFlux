@@ -9,9 +9,9 @@
 /// result's low word. The four record pointers are copied in the order of the
 /// output blocks beginning at `+0x103c010`, `+0x103bffc`, `+0x103c020` and
 /// `+0x103c030`. Two additional float arguments are copied to `+0x103c040`
-/// and `+0x103c044`. The final float is clamped to the minimum `0.15` only
-/// when the ordered comparison finds it below that threshold; unordered NaN
-/// values retain their input bits. The function returns the converted low word.
+/// and `+0x103c044`. The final float is capped at `0.15`: values below the
+/// threshold retain their input bits; other values select the threshold, as
+/// do unordered NaN comparisons. The function returns the converted low word.
 lf_checker_rt::export!(cdecl, rw_00A223D0(
     first_record: u32,
     second_record: u32,
@@ -76,9 +76,9 @@ lf_checker_rt::export!(cdecl, rw_00A223D0(
         let clamped_rate = if core::hint::black_box(MINIMUM_RATE)
             > core::hint::black_box(clamp_rate)
         {
-            MINIMUM_RATE_BITS
-        } else {
             clamp_rate.to_bits()
+        } else {
+            MINIMUM_RATE_BITS
         };
         write_global(CLAMP_RATE_OUTPUT, clamped_rate);
         converted
