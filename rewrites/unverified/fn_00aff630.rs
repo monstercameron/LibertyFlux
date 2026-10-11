@@ -5,15 +5,15 @@
 /// from farther to nearer, while priority class 3 follows other classes.
 /// Recent timestamps suppress an action, and the security-cookie check
 /// preserves the caller-visible register state.
-use lf_checker_rt::{callee_cdecl, callee_fastcall, callee_thiscall, export, global};
+use lf_checker_rt::{callee_cdecl, callee_fastcall, callee_thiscall, export, global, relocated};
 
 const MODE_GLOBAL: u32 = 0x0117_3604;
 const POOL_GLOBAL: u32 = 0x012E_22A4;
 const CLOCK_GLOBAL: u32 = 0x0117_35B4;
 const DISTANCE_LIMIT: u32 = 0x00FE_8B38;
 const SECURITY_COOKIE: u32 = 0x0105_7FB4;
-const ROW_STRIDE: usize = 0x1310;
 const ROW_CAPACITY: usize = 100;
+const FIXED_RANGE_OBJECT: u32 = 0x0190_8EF0;
 
 #[inline(always)]
 fn vcall_row_check(stub: u32, row: u32) -> u32 {
@@ -65,11 +65,11 @@ unsafe fn pool_cull_and_sort(mutant: bool) {
                 continue;
             }
 
-            let first_reject = callee_cdecl!(1, u32,);
+            let first_reject = callee_thiscall!(1, u32, row);
             if first_reject as u8 != 0 {
                 continue;
             }
-            let second_reject = callee_cdecl!(2, u32,);
+            let second_reject = callee_thiscall!(2, u32, row);
             if second_reject as u8 != 0 {
                 continue;
             }
@@ -137,9 +137,25 @@ unsafe fn pool_cull_and_sort(mutant: bool) {
                     break;
                 }
                 let row = candidate_rows[i];
-                if action_distance < candidate_distances[i] && (callee_cdecl!(6, u32, 0) as u8) == 0 {
+                if action_distance < candidate_distances[i]
+                    && (callee_thiscall!(6, u32, row, 0) as u8) == 0
+                {
                     let has_component = (row.wrapping_add(0x6C) as *const u32).read_unaligned() != 0;
-                    let range_rejected = if has_component { (callee_cdecl!(7, u32,) as u8) != 0 } else { false };
+                    let matrix = (row.wrapping_add(0x20) as *const u32).read_unaligned();
+                    let range_rejected = if has_component {
+                        let mut range_scratch = 0u32;
+                        (callee_thiscall!(
+                            7,
+                            u32,
+                            relocated(FIXED_RANGE_OBJECT),
+                            matrix.wrapping_add(0x30),
+                            20.0f32,
+                            &mut range_scratch
+                        ) as u8)
+                            != 0
+                    } else {
+                        false
+                    };
                     let type_flags = (row.wrapping_add(0x28) as *const u32).read_unaligned();
                     let recent = if (type_flags & 0x7C00) == 0x0C00 {
                         current_time.wrapping_sub((row.wrapping_add(0x12B8) as *const u32).read_unaligned()) < 10_000
@@ -158,5 +174,5 @@ unsafe fn pool_cull_and_sort(mutant: bool) {
     }
 
     let cookie = global::<u32>(SECURITY_COOKIE).read();
-    let _ = callee_fastcall!(9, u32, cookie);
+    let _ = callee_fastcall!(9, u32, cookie, 0);
 }
