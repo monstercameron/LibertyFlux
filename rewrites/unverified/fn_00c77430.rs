@@ -2,7 +2,7 @@
 /// Dispatch a record through the streaming index and its interface method.
 ///
 /// `index` selects a row from the global table, `record_root` points to a
-/// three-level pointer chain, `dispatch_arg` is forwarded on the ordinary
+/// pointer chain, `dispatch_arg` is forwarded on the ordinary
 /// record path, and `status_byte` is cleared before dispatch. The row's first
 /// word is set to the nested record pointer. When the leaf kind is `0x0c`,
 /// the function calls the method for each non-null child, passing
@@ -17,7 +17,8 @@
 /// row offsets and leaf fields below are named from their observed use.
 /// Game pointers in this executable are 32-bit words, while the Rust pointer
 /// parameters use `usize` so the host type itself is pointer-width aware.
-///#[unsafe(no_mangle)]
+///
+#[unsafe(no_mangle)]
 pub extern "cdecl" fn rw_00c77430(index: u32, record_root: usize, dispatch_arg: usize, status_byte: usize) -> u32 {
     unsafe {
         const STREAMING_TABLE_FILE_VA: u32 = 0x016E_C774;
@@ -26,8 +27,8 @@ pub extern "cdecl" fn rw_00c77430(index: u32, record_root: usize, dispatch_arg: 
         const TABLE_ROW_STRIDE: usize = 0x0C;
         const ROW_RECORD: usize = 0x00;
         const ROW_METHODS: usize = 0x30;
-        const ROOT_OBJECT: usize = 0x00;
-        const OBJECT_NESTED_RECORD: usize = 0x08;
+        const ROOT_OBJECT: usize = 0x08;
+        const OBJECT_LEAF: usize = 0x08;
         const LEAF_KIND: usize = 0x04;
         const LEAF_CHILD_COUNT: usize = 0x92;
         const MULTI_CHILD_KIND: u8 = 0x0C;
@@ -77,9 +78,8 @@ pub extern "cdecl" fn rw_00c77430(index: u32, record_root: usize, dispatch_arg: 
         unsafe { write_u8(status_byte, 0); }
 
         let top_object = unsafe { read_u32(record_root.wrapping_add(ROOT_OBJECT)) as usize };
-        let nested_record = unsafe { read_u32(top_object.wrapping_add(OBJECT_NESTED_RECORD)) as usize };
-        unsafe { write_u32(row.wrapping_add(ROW_RECORD), nested_record as u32); }
-        let leaf = unsafe { read_u32(nested_record.wrapping_add(OBJECT_NESTED_RECORD)) as usize };
+        unsafe { write_u32(row.wrapping_add(ROW_RECORD), top_object as u32); }
+        let leaf = unsafe { read_u32(top_object.wrapping_add(OBJECT_LEAF)) as usize };
         let kind = unsafe { read_u8(leaf.wrapping_add(LEAF_KIND)) };
         let methods = unsafe { read_u32(row.wrapping_add(ROW_METHODS)) as usize };
         let mut eax = leaf as u32;

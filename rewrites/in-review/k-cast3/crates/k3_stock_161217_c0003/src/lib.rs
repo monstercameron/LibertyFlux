@@ -1,4 +1,0 @@
-#[allow(unused_imports, dead_code, unused_mut, unused_variables)]
-use lf_checker_rt::*;
-include!("rw/fn_005b3c90.rs");
-include!("rw/fn_006842e0.rs");

@@ -1,10 +1,10 @@
 // original: 0x00A9EB20 loader_register_resource
 /// Finds the first unused 0x30-byte resource slot in a 256-entry table. It
-/// marks that slot occupied, records the resource identifier and four words
-/// from the supplied payload, then stores the supplied weight in the slot's
-/// weight field. The result is six times the slot index plus the fixed table
-/// bias. If every slot is occupied, it returns the address immediately after
-/// the table without modifying it.
+/// marks that slot occupied, records the resource identifier and four payload
+/// words, and clears a companion field in that slot. It stores the supplied
+/// weight in a separate table at the slot index plus a fixed bias. The result
+/// is six times the slot index plus that bias. If every slot is occupied, it
+/// returns the address immediately after the occupancy table without writes.
 lf_checker_rt::export!(thiscall, rw_00A9EB20(this: u32, resource_id: u32, payload: u32, weight_bits: u32) -> u32 {
     unsafe {
         const SLOT_BASE: u32 = 0x40c0;
@@ -47,7 +47,10 @@ lf_checker_rt::export!(thiscall, rw_00A9EB20(this: u32, resource_id: u32, payloa
         write_u32(slot.wrapping_add(0x14), read_u32(payload.wrapping_add(0x04)));
         write_u32(slot.wrapping_add(0x18), read_u32(payload.wrapping_add(0x08)));
         write_u32(slot.wrapping_add(0x1c), read_u32(payload.wrapping_add(0x0c)));
-        write_u32(slot.wrapping_add(0x20), weight_bits);
+        write_u32(slot.wrapping_add(0x24), 0);
+        let weight_index = index.wrapping_add(SLOT_WEIGHT_BIAS);
+        let weight_slot = table.wrapping_add(weight_index.wrapping_mul(SLOT_STRIDE));
+        write_u32(weight_slot, weight_bits);
 
         index.wrapping_add(SLOT_WEIGHT_BIAS).wrapping_mul(6)
     }

@@ -12,8 +12,9 @@
 /// descriptor table. A descriptor's kind at `+0x90` selects the factory
 /// routine. `extra_value` is forwarded unchanged to the selected factory.
 /// The low byte of `transition_requested` gates the transition sequence;
-/// the low byte of `options` selects its mode. The callee removes all five
-/// stack words.
+/// the low byte of `options` selects its mode. The follow-up helper receives
+/// the task's stored value and that value plus `0x80`. The callee removes all
+/// five stack words.
 ///
 /// A successful factory result has bit 0 set in its flags at `+0x260`. The
 /// function may then run a transition check and dispatch the factory's
@@ -144,7 +145,7 @@ lf_checker_rt::export!(thiscall, rw_005c3770(
                 7,
                 u32,
                 created,
-                created.wrapping_add(0x80),
+                value.wrapping_add(0x80),
                 value,
                 0,
                 0,

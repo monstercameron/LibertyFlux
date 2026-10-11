@@ -24,8 +24,6 @@ lf_checker_rt::export!(cdecl, rw_005A2A80() -> u32 {
         const OWNER_OBJECT: u32 = 0x0118D808;
         const SERVICE_OBJECT_GLOBAL: u32 = 0x0118D804;
         const REGISTRY_GLOBAL: u32 = 0x011764C0;
-        const TASK_ARRAY_GLOBAL: u32 = 0x0118D7F0;
-        const TASK_LENGTH_GLOBAL: u32 = 0x0118D7F4;
         const RESOURCE_GLOBAL: u32 = 0x018B6E84;
         const CLEANUP_GATE: u32 = 0x01160C3A;
         const REFRESH_GATE: u32 = 0x01160C39;
@@ -182,13 +180,18 @@ lf_checker_rt::export!(cdecl, rw_005A2A80() -> u32 {
         let _: u32 = lf_checker_rt::callee_thiscall!(
             1,
             u32,
-            OWNER_CONTEXT,
+            lf_checker_rt::relocated(OWNER_CONTEXT),
             0,
             0,
             &frame_context as *const u32 as u32,
             0
         );
-        let _: u32 = lf_checker_rt::callee_thiscall!(2, u32, SERVICE_CONTEXT, 0);
+        let _: u32 = lf_checker_rt::callee_thiscall!(
+            2,
+            u32,
+            lf_checker_rt::relocated(SERVICE_CONTEXT),
+            0
+        );
         let _: u32 = lf_checker_rt::callee_cdecl!(3, u32,);
         let _: u32 = lf_checker_rt::callee_cdecl!(4, u32, 0);
         let _: u32 = lf_checker_rt::callee_cdecl!(5, u32,);
@@ -305,7 +308,11 @@ lf_checker_rt::export!(cdecl, rw_005A2A80() -> u32 {
                 write8(target.wrapping_add(0x20), 0);
             }
         }
-        let _: u32 = lf_checker_rt::callee_thiscall!(26, u32, 0x011F6310);
+        let _: u32 = lf_checker_rt::callee_thiscall!(
+            26,
+            u32,
+            lf_checker_rt::relocated(0x011F6310)
+        );
 
         let resource_after_scan = global32(RESOURCE_GLOBAL);
         if resource_after_scan != 0 {
@@ -322,7 +329,11 @@ lf_checker_rt::export!(cdecl, rw_005A2A80() -> u32 {
             let flags = read32(payload.wrapping_add(0x4C8));
             write32(payload.wrapping_add(0x4C8), flags & !0x400);
         }
-        let _: u32 = lf_checker_rt::callee_thiscall!(31, u32, 0x0128E94C);
+        let _: u32 = lf_checker_rt::callee_thiscall!(
+            31,
+            u32,
+            lf_checker_rt::relocated(0x0128E94C)
+        );
         let _: u32 = lf_checker_rt::callee_cdecl!(32, u32, 0);
         let _: u32 = lf_checker_rt::callee_cdecl!(33, u32, 1);
         let _: u32 = lf_checker_rt::callee_cdecl!(34, u32,);
@@ -333,11 +344,16 @@ lf_checker_rt::export!(cdecl, rw_005A2A80() -> u32 {
         }
         set_global8(STATE_BYTE, state);
         if global8(NOTIFY_A) != 0 || global8(NOTIFY_B) != 0 {
-            let _: u32 = lf_checker_rt::callee_thiscall!(35, u32, SERVICE_CONTEXT, 0);
+            let _: u32 = lf_checker_rt::callee_thiscall!(
+                35,
+                u32,
+                lf_checker_rt::relocated(SERVICE_CONTEXT),
+                0
+            );
             let notification: u32 = lf_checker_rt::callee_thiscall!(
                 36,
                 u32,
-                SERVICE_OBJECT,
+                lf_checker_rt::relocated(SERVICE_OBJECT),
                 0x3FAA283B
             );
             if notification != 0 {
@@ -353,15 +369,20 @@ lf_checker_rt::export!(cdecl, rw_005A2A80() -> u32 {
             let ready: u32 = lf_checker_rt::callee_thiscall!(
                 38,
                 u32,
-                SERVICE_OBJECT,
+                lf_checker_rt::relocated(SERVICE_OBJECT),
                 0x3FAA283B
             );
             if (ready & 0xFF) != 0 {
-                let _: u32 = lf_checker_rt::callee_thiscall!(39, u32, SERVICE_CONTEXT, 0);
+                let _: u32 = lf_checker_rt::callee_thiscall!(
+                    39,
+                    u32,
+                    lf_checker_rt::relocated(SERVICE_CONTEXT),
+                    0
+                );
                 let notification: u32 = lf_checker_rt::callee_thiscall!(
                     40,
                     u32,
-                    SERVICE_OBJECT,
+                    lf_checker_rt::relocated(SERVICE_OBJECT),
                     0x3FAA283B
                 );
                 if notification != 0 {

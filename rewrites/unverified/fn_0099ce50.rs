@@ -4,9 +4,10 @@
 /// The entity's timing fields select a scaled double-precision response when
 /// the owning audio state is active. An envelope helper supplies the current
 /// level, a mixer helper receives the combined level, and a voice-update
-/// helper may write the active voice pointer into the object. The function
-/// then selects the voice's runtime mixer row, treating a missing voice or an
-/// empty tag as row zero, and returns the final row helper's result.
+/// helper may write the active voice pointer into the object. A missing voice
+/// exits with that helper's status. Otherwise the function selects the runtime
+/// mixer row, treating an empty tag as row zero, and returns the row helper's
+/// result.
 lf_au87_rt::export!(thiscall, rw_0099ce50(object: u32, entity: u32) -> u32 {
     const INNER_STATE_OFFSET: u32 = 0x9e0;
     const VOICE_SLOT_OFFSET: u32 = 0x864;

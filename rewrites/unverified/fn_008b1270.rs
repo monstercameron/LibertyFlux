@@ -9,6 +9,8 @@
 /// their input order and applies their returned values to the selected row.
 /// The contract exercises every supported mode and both stage settings.
 
+use core::arch::x86::{_mm_add_ss, _mm_cvtss_f32, _mm_div_ss, _mm_mul_ss, _mm_set_ss, _mm_sub_ss};
+
 const SAMPLE_RATE_MANAGER_VA: u32 = 0x0115a448;
 const SAMPLE_RATE_OFFSET: u32 = 0x80;
 const MODE_OFFSET: u32 = 0xbc;
@@ -32,24 +34,32 @@ const TAN_X87_ID: u32 = 2;
 const TAN_SSE_ID: u32 = 3;
 const SIGN_BIT: u32 = 0x80000000;
 
-#[inline(always)]
-fn fadd(lhs: f32, rhs: f32) -> f32 {
-    core::hint::black_box(lhs) + core::hint::black_box(rhs)
+#[target_feature(enable = "sse")]
+unsafe fn fadd(lhs: f32, rhs: f32) -> f32 {
+    let left = _mm_set_ss(core::hint::black_box(lhs));
+    let right = _mm_set_ss(core::hint::black_box(rhs));
+    _mm_cvtss_f32(_mm_add_ss(left, right))
 }
 
-#[inline(always)]
-fn fsub(lhs: f32, rhs: f32) -> f32 {
-    core::hint::black_box(lhs) - core::hint::black_box(rhs)
+#[target_feature(enable = "sse")]
+unsafe fn fsub(lhs: f32, rhs: f32) -> f32 {
+    let left = _mm_set_ss(core::hint::black_box(lhs));
+    let right = _mm_set_ss(core::hint::black_box(rhs));
+    _mm_cvtss_f32(_mm_sub_ss(left, right))
 }
 
-#[inline(always)]
-fn fmul(lhs: f32, rhs: f32) -> f32 {
-    core::hint::black_box(lhs) * core::hint::black_box(rhs)
+#[target_feature(enable = "sse")]
+unsafe fn fmul(lhs: f32, rhs: f32) -> f32 {
+    let left = _mm_set_ss(core::hint::black_box(lhs));
+    let right = _mm_set_ss(core::hint::black_box(rhs));
+    _mm_cvtss_f32(_mm_mul_ss(left, right))
 }
 
-#[inline(always)]
-fn fdiv(lhs: f32, rhs: f32) -> f32 {
-    core::hint::black_box(lhs) / core::hint::black_box(rhs)
+#[target_feature(enable = "sse")]
+unsafe fn fdiv(lhs: f32, rhs: f32) -> f32 {
+    let left = _mm_set_ss(core::hint::black_box(lhs));
+    let right = _mm_set_ss(core::hint::black_box(rhs));
+    _mm_cvtss_f32(_mm_div_ss(left, right))
 }
 
 #[inline(always)]
@@ -160,7 +170,7 @@ unsafe fn update_coefficients(this: u32, mutant: bool) -> u32 {
                 let half_delta = fmul(one_minus_cosine, half);
                 let b0 = fmul(inverse, half_delta);
                 let b1 = fmul(inverse, one_minus_cosine);
-                let a1 = fmul(fmul(cosine, minus_two), inverse);
+                let a1 = fneg(fmul(fmul(cosine, two), inverse));
                 let a2 = fmul(fsub(one, alpha), inverse);
                 write_row(this, index, b0, b1, b0, a1, a2, mutant, mode);
             }
@@ -201,7 +211,7 @@ unsafe fn update_coefficients(this: u32, mutant: bool) -> u32 {
                 let inverse = fdiv(one, fadd(tangent, one));
                 let b0 = inverse;
                 let cosine = call_f32_xmm0(COS_ID, omega);
-                let a1 = fneg(fmul(fmul(cosine, two), inverse));
+                let a1 = fmul(fmul(cosine, minus_two), inverse);
                 let a2 = fmul(fsub(one, tangent), inverse);
                 write_row(this, index, b0, a1, b0, a1, a2, mutant, mode);
             }

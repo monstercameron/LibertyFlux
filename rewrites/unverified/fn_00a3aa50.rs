@@ -99,8 +99,7 @@ lf_checker_rt::export!(thiscall, rw_00a3aa50(this: u32) -> () {
             for index in 0..BUFFER_FLOAT_COUNT {
                 write_u32(buffer.wrapping_add(index * 4), value);
             }
+            let _ = lf_checker_rt::callee_thiscall!(NOTIFY_CALLBACK, u32, object, descriptor);
         }
-
-        let _ = lf_checker_rt::callee_thiscall!(NOTIFY_CALLBACK, u32, object, descriptor);
     }
 });
