@@ -17,9 +17,8 @@ use std::sync::Mutex;
 use lf_eventdiff::rewrites::{fn_0097eb70, fn_0097ee90, fn_0097eea0, fn_0097eef0, fn_0097ef80, fn_0097fc80, fn_0097fce0};
 use lf_eventdiff::rt;
 use lf_peds_tasks::ped_task::{
-    AudioTask, Deadline, PROGRESS_LIMIT,
-    AudioObjects, AudioSlot, AudioTask, CLEANUP_ENABLED, CLEANUP_MODE_SENTINEL, ReleaseGlobals,
-    SKIP_MODE,
+    AudioObjects, AudioSlot, AudioTask, CLEANUP_ENABLED, CLEANUP_MODE_SENTINEL, Deadline,
+    PROGRESS_LIMIT, ReleaseGlobals, SKIP_MODE,
 };
 
 /// File address of the task record, which holds the three slots.
@@ -218,11 +217,7 @@ fn release_tally(lift: ReleaseLift, rewrite: fn(u32)) -> Tally {
     for case in 0..CASES {
         let init = gen_window(&mut rng);
         let globals = gen_globals(&mut rng);
-        let slots = AudioTask {
-            primary: word(&init, RECORD_VA + PRIMARY_OFFSET),
-            radio: word(&init, RECORD_VA + RADIO_OFFSET),
-            secondary: word(&init, RECORD_VA + SECONDARY_OFFSET),
-        };
+        let slots = decode_task(&init);
 
         let mut recorder = Recorder {
             bytes: init.clone(),
@@ -384,6 +379,316 @@ fn release_wrong_versions_are_caught() {
         &release_tally(
             |slots, globals, calls| slots.release_slot(AudioSlot::Secondary, globals, calls),
             |this| fn_0097ef80::rw_0097EF80(this),
+        ),
+    );
+}
+
+// ---------------------------------------------------------------------------
+// The other routines of the audio task record: the unexpired-window test, the
+// two deadline stamps and the progress advance.
+// ---------------------------------------------------------------------------
+
+/// Reads the record's owned fields out of the window bytes.
+fn decode_task(bytes: &[u8]) -> AudioTask {
+    AudioTask {
+        primary: word(bytes, RECORD_VA + PRIMARY_OFFSET),
+        radio: word(bytes, RECORD_VA + RADIO_OFFSET),
+        secondary: word(bytes, RECORD_VA + SECONDARY_OFFSET),
+        first_progress: f32::from_bits(word(bytes, RECORD_VA + FIRST_PROGRESS_OFFSET)),
+        second_progress: f32::from_bits(word(bytes, RECORD_VA + SECOND_PROGRESS_OFFSET)),
+        first_deadline: word(bytes, RECORD_VA + FIRST_DEADLINE_OFFSET),
+        second_deadline: word(bytes, RECORD_VA + SECOND_DEADLINE_OFFSET),
+        window_deadline: word(bytes, RECORD_VA + WINDOW_DEADLINE_OFFSET),
+    }
+}
+
+/// Writes the record's owned fields back into the window bytes.
+fn encode_task(bytes: &mut [u8], task: &AudioTask) {
+    put_word(bytes, RECORD_VA + PRIMARY_OFFSET, task.primary);
+    put_word(bytes, RECORD_VA + RADIO_OFFSET, task.radio);
+    put_word(bytes, RECORD_VA + SECONDARY_OFFSET, task.secondary);
+    put_word(bytes, RECORD_VA + FIRST_PROGRESS_OFFSET, task.first_progress.to_bits());
+    put_word(bytes, RECORD_VA + SECOND_PROGRESS_OFFSET, task.second_progress.to_bits());
+    put_word(bytes, RECORD_VA + FIRST_DEADLINE_OFFSET, task.first_deadline);
+    put_word(bytes, RECORD_VA + SECOND_DEADLINE_OFFSET, task.second_deadline);
+    put_word(bytes, RECORD_VA + WINDOW_DEADLINE_OFFSET, task.window_deadline);
+}
+
+/// Single-precision progress inputs and values: the exact steps and limits,
+/// values past the limit, a negative value, a quiet NaN and random bits.
+const PROGRESS_POOL: [f32; 8] = [0.0, 0.5, 1.0, 2.5, -0.25, 0.1, 0.9, f32::NAN];
+
+fn gen_progress(rng: &mut Rng) -> f32 {
+    if rng.below(5) == 0 {
+        f32::from_bits(rng.next())
+    } else {
+        PROGRESS_POOL[rng.below(PROGRESS_POOL.len() as u32) as usize]
+    }
+}
+
+/// Clock-relative deadline words: the stamp, the window edges and wrap-around.
+fn gen_deadline(rng: &mut Rng, now: u32) -> u32 {
+    match rng.below(9) {
+        0 => now,
+        1 => now.wrapping_sub(1000),
+        2 => now.wrapping_sub(999),
+        3 => now.wrapping_sub(1001),
+        4 => now.wrapping_add(1),
+        5 => 0,
+        _ => rng.next(),
+    }
+}
+
+/// The record bytes of one progress or window case: random bytes, the
+/// slots, the progress pair and the deadline words set from the case's `arg`
+/// (the clock for the deadline routines).
+fn gen_task_window(rng: &mut Rng, arg: u32) -> Vec<u8> {
+    let mut bytes = gen_window(rng);
+    let task = AudioTask {
+        primary: word(&bytes, RECORD_VA + PRIMARY_OFFSET),
+        radio: word(&bytes, RECORD_VA + RADIO_OFFSET),
+        secondary: word(&bytes, RECORD_VA + SECONDARY_OFFSET),
+        first_progress: gen_progress(rng),
+        second_progress: gen_progress(rng),
+        first_deadline: gen_deadline(rng, arg),
+        second_deadline: gen_deadline(rng, arg),
+        window_deadline: gen_deadline(rng, arg),
+    };
+    encode_task(&mut bytes, &task);
+    bytes
+}
+
+/// A lift of one routine: it changes the task and returns the answer (zero
+/// for routines without one).
+type TaskLift = fn(&mut AudioTask, u32) -> u32;
+/// The rewrite of one routine, given the record and the case's argument.
+type TaskRewrite = fn(u32, u32) -> u32;
+
+/// Runs one routine over generated cases. `gen_arg` draws the case's
+/// argument; `ret_checked` says whether the answer is compared.
+fn task_tally(lift: TaskLift, rewrite: TaskRewrite, gen_arg: fn(&mut Rng) -> u32, ret_checked: bool) -> Tally {
+    let mut rng = Rng(0x0A0B_0C0D);
+    let mut tally = Tally::default();
+    for case in 0..CASES {
+        let arg = gen_arg(&mut rng);
+        let init = gen_task_window(&mut rng, arg);
+
+        let mut task = decode_task(&init);
+        let ret = lift(&mut task, arg);
+        let mut expected = init.clone();
+        encode_task(&mut expected, &task);
+        let lifted = Outcome {
+            bytes: expected,
+            log: Vec::new(),
+        };
+
+        rt::write_window(&init);
+        LOG.lock().unwrap().clear();
+        let rewrite_ret = rewrite(rt::relocated(RECORD_VA), arg);
+        let rewritten = Outcome {
+            bytes: rt::read_window(),
+            log: Vec::new(),
+        };
+
+        tally.cases += 1;
+        let same_ret = !ret_checked || ret == rewrite_ret;
+        if lifted != rewritten || !same_ret {
+            tally.mismatches += 1;
+            if tally.first.is_none() {
+                tally.first = Some(format!(
+                    "case {case}: arg {arg:#x}; ret lift {ret:#x} rewrite {rewrite_ret:#x}"
+                ));
+            }
+        }
+    }
+    tally
+}
+
+fn gen_clock(rng: &mut Rng) -> u32 {
+    match rng.below(5) {
+        0 => 0,
+        1 => u32::MAX,
+        2 => 0x8000_0000,
+        _ => rng.next(),
+    }
+}
+
+fn gen_progress_bits(rng: &mut Rng) -> u32 {
+    gen_progress(rng).to_bits()
+}
+
+/// The rewrites that read the clock take it from the game-clock global, so
+/// each case plants its clock before the rewrite runs.
+fn with_clock(now: u32) {
+    rt::set_aux_word(CURRENT_TIME_VA, now);
+}
+
+#[test]
+fn window_matches_rewrite() {
+    let _guard = begin();
+    let tally = task_tally(
+        |task, now| u32::from(task.has_unexpired_window(now)),
+        |this, now| {
+            with_clock(now);
+            u32::from(fn_0097eb70::rw_0097EB70(this))
+        },
+        gen_clock,
+        true,
+    );
+    assert_clean("has_unexpired_window", &tally);
+}
+
+#[test]
+fn window_wrong_versions_are_caught() {
+    let _guard = begin();
+    // The window is closed on the first word only.
+    assert_caught(
+        "window, first word only",
+        &task_tally(
+            |task, now| u32::from(now < task.second_deadline.wrapping_add(1000)),
+            |this, now| {
+                with_clock(now);
+                u32::from(fn_0097eb70::rw_0097EB70(this))
+            },
+            gen_clock,
+            true,
+        ),
+    );
+    // The window is one tick too wide.
+    assert_caught(
+        "window, inclusive edge",
+        &task_tally(
+            |task, now| {
+                u32::from(
+                    now <= task.second_deadline.wrapping_add(1000)
+                        || now <= task.window_deadline.wrapping_add(1000),
+                )
+            },
+            |this, now| {
+                with_clock(now);
+                u32::from(fn_0097eb70::rw_0097EB70(this))
+            },
+            gen_clock,
+            true,
+        ),
+    );
+}
+
+#[test]
+fn first_stamp_matches_rewrite() {
+    let _guard = begin();
+    let tally = task_tally(
+        |task, now| {
+            task.stamp_deadline(Deadline::First, now);
+            0
+        },
+        |this, now| {
+            with_clock(now);
+            fn_0097ee90::rw_0097EE90(this);
+            0
+        },
+        gen_clock,
+        false,
+    );
+    assert_clean("stamp first deadline", &tally);
+}
+
+#[test]
+fn second_stamp_matches_rewrite() {
+    let _guard = begin();
+    let tally = task_tally(
+        |task, now| {
+            task.stamp_deadline(Deadline::Second, now);
+            0
+        },
+        |this, now| {
+            with_clock(now);
+            fn_0097fce0::rw_0097FCE0(this);
+            0
+        },
+        gen_clock,
+        false,
+    );
+    assert_clean("stamp second deadline", &tally);
+}
+
+#[test]
+fn stamp_wrong_version_is_caught() {
+    let _guard = begin();
+    // The second stamp writes the first word.
+    assert_caught(
+        "second stamp, first word",
+        &task_tally(
+            |task, now| {
+                task.stamp_deadline(Deadline::First, now);
+                0
+            },
+            |this, now| {
+                with_clock(now);
+                fn_0097fce0::rw_0097FCE0(this);
+                0
+            },
+            gen_clock,
+            false,
+        ),
+    );
+}
+
+#[test]
+fn progress_matches_rewrite() {
+    let _guard = begin();
+    let tally = task_tally(
+        |task, bits| {
+            task.add_float_progress(f32::from_bits(bits));
+            0
+        },
+        |this, bits| {
+            fn_0097fc80::rw_0097FC80(this, bits);
+            0
+        },
+        gen_progress_bits,
+        false,
+    );
+    assert_clean("add float progress", &tally);
+}
+
+#[test]
+fn progress_wrong_versions_are_caught() {
+    let _guard = begin();
+    // The first value may move down.
+    assert_caught(
+        "progress, first value moves down",
+        &task_tally(
+            |task, bits| {
+                let scaled = (f32::from_bits(bits) * 0.1).min(PROGRESS_LIMIT);
+                task.first_progress = scaled;
+                let advanced = task.second_progress + 0.4;
+                task.second_progress = advanced.min(PROGRESS_LIMIT);
+                0
+            },
+            |this, bits| {
+                fn_0097fc80::rw_0097FC80(this, bits);
+                0
+            },
+            gen_progress_bits,
+            false,
+        ),
+    );
+    // The second value is not capped.
+    assert_caught(
+        "progress, second value uncapped",
+        &task_tally(
+            |task, bits| {
+                task.add_float_progress(f32::from_bits(bits));
+                task.second_progress += 0.4;
+                0
+            },
+            |this, bits| {
+                fn_0097fc80::rw_0097FC80(this, bits);
+                0
+            },
+            gen_progress_bits,
+            false,
         ),
     );
 }

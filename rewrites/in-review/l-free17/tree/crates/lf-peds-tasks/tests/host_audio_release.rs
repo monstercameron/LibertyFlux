@@ -2,8 +2,8 @@
 //! handles; the resource and helper calls are recorded.
 
 use lf_peds_tasks::ped_task::{
-    AudioObjects, AudioSlot, AudioTask, CLEANUP_ENABLED, CLEANUP_MODE_SENTINEL, ReleaseGlobals,
-    SKIP_MODE,
+    AudioObjects, AudioSlot, AudioTask, CLEANUP_ENABLED, CLEANUP_MODE_SENTINEL, Deadline,
+    PROGRESS_LIMIT, ReleaseGlobals, SKIP_MODE,
 };
 
 #[derive(Default)]
@@ -85,8 +85,60 @@ fn each_slot_reads_its_own_word() {
         primary: 1,
         radio: 2,
         secondary: 3,
+        ..AudioTask::default()
     };
     assert_eq!(slots.get(AudioSlot::Primary), 1);
     assert_eq!(slots.get(AudioSlot::Radio), 2);
     assert_eq!(slots.get(AudioSlot::Secondary), 3);
+}
+
+#[test]
+fn window_is_open_for_a_thousand_ticks_after_either_stamp() {
+    let now = 10_000;
+    let task = AudioTask {
+        second_deadline: now - 999,
+        window_deadline: now - 2000,
+        ..AudioTask::default()
+    };
+    assert!(task.has_unexpired_window(now));
+    let closed = AudioTask {
+        second_deadline: now - 1000,
+        window_deadline: now - 1000,
+        ..AudioTask::default()
+    };
+    assert!(!closed.has_unexpired_window(now));
+}
+
+#[test]
+fn window_compares_across_the_wrap() {
+    // A stamp just before the top of the range is still inside the window
+    // when the clock has wrapped past zero.
+    let task = AudioTask {
+        second_deadline: u32::MAX - 5,
+        ..AudioTask::default()
+    };
+    assert!(task.has_unexpired_window(10));
+}
+
+#[test]
+fn stamps_write_only_their_own_word() {
+    let mut task = AudioTask::default();
+    task.stamp_deadline(Deadline::First, 77);
+    assert_eq!((task.first_deadline, task.second_deadline), (77, 0));
+    task.stamp_deadline(Deadline::Second, 88);
+    assert_eq!((task.first_deadline, task.second_deadline), (77, 88));
+}
+
+#[test]
+fn progress_first_value_never_moves_down_and_second_is_capped() {
+    let mut task = AudioTask {
+        first_progress: 0.8,
+        second_progress: 0.9,
+        ..AudioTask::default()
+    };
+    task.add_float_progress(0.0);
+    assert_eq!(task.first_progress, 0.8);
+    assert!((task.second_progress - PROGRESS_LIMIT).abs() < f32::EPSILON);
+    task.add_float_progress(50.0);
+    assert_eq!(task.first_progress, PROGRESS_LIMIT);
 }

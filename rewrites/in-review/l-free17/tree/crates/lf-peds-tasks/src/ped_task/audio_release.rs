@@ -55,6 +55,14 @@ pub struct AudioTask {
     pub second_deadline: u32,
     /// The window test's second word. Only the window test reads it.
     pub window_deadline: u32,
+    /// The subtask pointer: the object the subtask slot holds.
+    pub subtask: u32,
+    /// The subtask value word.
+    pub subtask_value: u32,
+    /// The subtask state word.
+    pub subtask_state: u32,
+    /// The subtask status word.
+    pub subtask_status: u32,
 }
 
 /// Which deadline word a stamp writes.
@@ -172,5 +180,74 @@ impl AudioTask {
         } else {
             advanced
         };
+    }
+}
+
+/// Mask of the candidate's kind bits, read from its flags word.
+pub const CANDIDATE_KIND_MASK: u32 = 0x3C0;
+
+/// The kind bits a special candidate carries.
+pub const CANDIDATE_KIND_SPECIAL: u32 = 0x80;
+
+/// The candidate state that makes a special candidate's value apply.
+pub const CANDIDATE_STATE_READY: u32 = 1;
+
+/// The reads and helper calls of a subtask replacement. A candidate is an
+/// opaque handle; its two words are read only when it is nonnull.
+pub trait SubtaskCallees {
+    /// The describe helper, called with the subtask object being replaced.
+    /// The 32-bit helper also receives the address of the record's subtask
+    /// slot; the implementation supplies it.
+    fn describe(&mut self, previous: u32);
+    /// The construct helper, called with the new candidate. The 32-bit
+    /// helper also receives the address of the record's subtask slot; the
+    /// implementation supplies it. It is called even for a null candidate.
+    fn construct(&mut self, candidate: u32);
+    /// The candidate's flags word.
+    fn candidate_flags(&self, candidate: u32) -> u32;
+    /// The candidate's state word.
+    fn candidate_state(&self, candidate: u32) -> u32;
+    /// The object the default-object global points at; its word is the
+    /// value a null initial value stores.
+    fn default_object(&self) -> u32;
+    /// The special value global, which a ready special candidate stores.
+    fn special_value(&self) -> u32;
+}
+
+impl AudioTask {
+    /// Replaces the subtask. A nonnull previous subtask is described and then
+    /// cleared. A null initial value stores the default object, clears the
+    /// state and status, and stops. Otherwise the value is the initial
+    /// value, unless a ready special candidate replaces it with the special
+    /// value. The state is cleared, the candidate is stored in the slot and
+    /// constructed, and the status is stored last.
+    pub fn replace_subtask<C: SubtaskCallees>(&mut self, initial: u32, candidate: u32, final_status: u32, callees: &mut C) {
+        let previous = self.subtask;
+        if previous != 0 {
+            callees.describe(previous);
+            self.subtask = 0;
+        }
+
+        if initial == 0 {
+            self.subtask_value = callees.default_object();
+            self.subtask_state = 0;
+            self.subtask_status = 0;
+            return;
+        }
+
+        self.subtask_value = initial;
+        if candidate != 0 {
+            let flags = callees.candidate_flags(candidate);
+            if flags & CANDIDATE_KIND_MASK == CANDIDATE_KIND_SPECIAL
+                && callees.candidate_state(candidate) == CANDIDATE_STATE_READY
+            {
+                self.subtask_value = callees.special_value();
+            }
+        }
+
+        self.subtask_state = 0;
+        self.subtask = candidate;
+        callees.construct(candidate);
+        self.subtask_status = final_status;
     }
 }

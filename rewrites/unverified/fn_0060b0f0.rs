@@ -16,7 +16,8 @@ lf_checker_rt::export!(thiscall, rw_0060B0F0(this: u32, parameter: u32) -> u32 {
         let bitmap = (bitmap_words as *const u32).read_unaligned();
         let mut clear_bits = 0u32;
         for bit_index in 0..count {
-            if bitmap & (1u32 << bit_index) == 0 {
+            let word = ((bitmap + (bit_index >> 5) * 4) as *const u32).read_unaligned();
+            if word & (1u32 << (bit_index & 31)) == 0 {
                 clear_bits += 1;
                 if clear_bits == 2 {
                     break;

@@ -632,17 +632,17 @@
   "reason": null
  },
  {
-  "address": "0x005F9E40",
-  "name": "rage::fragInst::vf29",
-  "file": "fn_005f9e40.rs",
+  "address": "0x005FB4E0",
+  "name": "rage::fragInst::vf62",
+  "file": "fn_005fb4e0.rs",
   "lane": "r-s659",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x005FB4E0",
-  "name": "rage::fragInst::vf62",
-  "file": "fn_005fb4e0.rs",
+  "address": "0x005FB500",
+  "name": "fragInstNMGta::vf13",
+  "file": "fn_005fb500.rs",
   "lane": "r-s659",
   "outcome": "not_reached",
   "reason": null
@@ -2209,10 +2209,10 @@
  },
  {
   "address": "0x00BC30C0",
-  "name": null,
+  "name": "CTaskComplexMoveSeekEntity<CEntitySeekPosCalculatorRadiusAngleOffset>::vf19",
   "file": "fn_00bc30c0.rs",
-  "lane": "r-b678",
-  "outcome": "not yet run",
+  "lane": "r-b505",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -2280,6 +2280,14 @@
   "reason": null
  },
  {
+  "address": "0x00BC9A20",
+  "name": "physics_helper_00BC9A20",
+  "file": "fn_00bc9a20.rs",
+  "lane": "r-s661",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00BD42A0",
   "name": null,
   "file": "fn_00bd42a0.rs",
@@ -2293,14 +2301,6 @@
   "file": "fn_00bd4410.rs",
   "lane": "r-n88",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BD6010",
-  "name": "physics_function_00bd6010",
-  "file": "fn_00bd6010.rs",
-  "lane": "r-s662",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -2480,6 +2480,14 @@
   "reason": null
  },
  {
+  "address": "0x00BE5760",
+  "name": null,
+  "file": "fn_00be5760.rs",
+  "lane": "r-s648",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00BE5810",
   "name": null,
   "file": "fn_00be5810.rs",
@@ -2560,6 +2568,14 @@
   "reason": null
  },
  {
+  "address": "0x00C02980",
+  "name": "initialize_converted_vector_record_65",
+  "file": "fn_00c02980.rs",
+  "lane": "r-s655",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00C029E0",
   "name": "initialize_enabled_physics_record_64",
   "file": "fn_00c029e0.rs",
@@ -2621,6 +2637,14 @@
   "file": "fn_00c69970.rs",
   "lane": "a-Q109",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C722F0",
+  "name": "append_animation_tracks",
+  "file": "fn_00c722f0.rs",
+  "lane": "r-s653",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -2686,14 +2710,6 @@
   "lane": "r-s442",
   "outcome": "deferred",
   "reason": "frame_pointer_args"
- },
- {
-  "address": "0x00C88A00",
-  "name": null,
-  "file": "fn_00c88a00.rs",
-  "lane": "a-U46",
-  "outcome": "not yet run",
-  "reason": null
  },
  {
   "address": "0x00C91890",
@@ -3686,22 +3702,6 @@
   "lane": "r-s607",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00D3E9C0",
-  "name": "CTaskSimpleJumpLand::~CTaskSimpleJumpLand__deleting",
-  "file": "fn_00d3e9c0.rs",
-  "lane": "r-s652",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D3E9F0",
-  "name": "CTaskSimpleJumpLaunch::~CTaskSimpleJumpLaunch__deleting",
-  "file": "fn_00d3e9f0.rs",
-  "lane": "r-s652",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00D3EA20",

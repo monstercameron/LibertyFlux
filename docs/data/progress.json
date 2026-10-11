@@ -13,11 +13,11 @@
   "stages": {
     "identified": 37413,
     "named": 36055,
-    "rewritten": 18006,
-    "verified": 17847
+    "rewritten": 18012,
+    "verified": 17848
   },
   "structures": 340,
-  "symbols": 17947,
+  "symbols": 17948,
   "measured": [
     {
       "label": "Code section",
@@ -117,15 +117,15 @@
     },
     {
       "label": "Game code verified, measured in bytes",
-      "value": 35.8,
+      "value": 35.9,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2620678 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2627281 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
-      "value": 27.3,
+      "value": 27.5,
       "unit": "percent",
-      "source": "391 of 1347 such functions; they hold 38% of the game's code"
+      "source": "392 of 1347 such functions; they hold 38% of the game's code"
     },
     {
       "label": "Methods lifted to portable Rust with their proof run by the pipeline",
@@ -135,13 +135,13 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 18006,
+      "value": 18012,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 17847,
+      "value": 17848,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
@@ -2598,7 +2598,7 @@
       "to": "0x009EC3AF",
       "count": 75,
       "named": 75,
-      "rewritten": 59,
+      "rewritten": 60,
       "verified": 56
     },
     {
@@ -3363,7 +3363,7 @@
       "to": "0x00BC5BD6",
       "count": 162,
       "named": 162,
-      "rewritten": 103,
+      "rewritten": 104,
       "verified": 103
     },
     {
@@ -3390,7 +3390,7 @@
       "to": "0x00BD673B",
       "count": 289,
       "named": 289,
-      "rewritten": 137,
+      "rewritten": 138,
       "verified": 135
     },
     {
@@ -3678,8 +3678,8 @@
       "to": "0x00C88B6E",
       "count": 78,
       "named": 77,
-      "rewritten": 20,
-      "verified": 20
+      "rewritten": 21,
+      "verified": 21
     },
     {
       "stage": "verified",
@@ -3975,7 +3975,7 @@
       "to": "0x00D408C2",
       "count": 96,
       "named": 93,
-      "rewritten": 43,
+      "rewritten": 45,
       "verified": 26
     },
     {
@@ -4477,9 +4477,9 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2620678,
+    "verified": 2627281,
     "large_functions": 2801402,
-    "large_functions_verified": 764856
+    "large_functions_verified": 771459
   },
   "lifted": {
     "methods": 474,

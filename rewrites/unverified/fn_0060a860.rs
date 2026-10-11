@@ -1,7 +1,7 @@
 // original: 0x0060A860 physics_sum_unmasked_track_channels
 
 /// Sum one channel from each selected track in the parameter object's list.
-/// Tracks whose index bit is set in the bitmap are skipped. Otherwise the +4
+/// Tracks whose index bit is set in the limits container's bitmap are skipped. Otherwise the +4
 /// value is added when the corresponding limit is positive or unordered, and
 /// the track's +8 value is added when its limit is nonpositive and its +0x94
 /// flag is nonzero. The scalar sum is returned in XMM0; each addition keeps
@@ -13,7 +13,7 @@ lf_checker_rt::export!(thiscall, rw_0060A860(this: u32, parameter: u32, limits_c
         core::hint::black_box(left) + core::hint::black_box(right)
     }
     unsafe {
-        const BITMAP_TABLE: u32 = 0x10c;
+        const BITMAP_HOLDER: u32 = 0x0c;
         const PARAMETER_TRACKS: u32 = 0xd4;
         const TRACK_COUNT: u32 = 0x1f3;
         const TRACK_INDEX: u32 = 0x0c;
@@ -21,7 +21,8 @@ lf_checker_rt::export!(thiscall, rw_0060A860(this: u32, parameter: u32, limits_c
         const POSITIVE_CHANNEL: u32 = 4;
         const ALTERNATE_CHANNEL: u32 = 8;
 
-        let bitmap_words = ((this + BITMAP_TABLE) as *const u32).read_unaligned();
+        let bitmap_holder = ((limits_container + BITMAP_HOLDER) as *const u32).read_unaligned();
+        let bitmap_words = (bitmap_holder as *const u32).read_unaligned();
         let count = ((parameter + TRACK_COUNT) as *const u8).read() as u32;
         let track_array = ((parameter + PARAMETER_TRACKS) as *const u32).read_unaligned();
         let limit_array = ((limits_container + 4) as *const u32).read_unaligned();

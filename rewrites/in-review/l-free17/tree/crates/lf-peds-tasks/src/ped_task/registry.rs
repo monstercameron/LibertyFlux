@@ -372,6 +372,41 @@ pub const ROWS: &[Row] = &[
         narrows: &[
             "the secondary-slot instance of release_slot, with the same globals and helpers as the primary instance",
         ],
+    },    Row {
+        class: "AudioTask",
+        method: "has_unexpired_window",
+        state: State::Proven,
+        narrows: &[
+            "the game clock is read by the caller and passed as now; the proof plants it in the auxiliary window the rewrite reads",
+            "the two words the window test reads are the second deadline word and the window word; the rewrite's own comments name them the other way round, the words the stamp routines write are named first and second by their routines, and the lift follows the offsets",
+            "the answer is a bool; the proof compares the low byte the rewrite returns",
+        ],
+    },
+    Row {
+        class: "AudioTask",
+        method: "set_first_deadline_to_current_time",
+        state: State::Proven,
+        narrows: &[
+            "the instance of stamp_deadline for the first deadline word; the clock is read by the caller and passed as now",
+        ],
+    },
+    Row {
+        class: "AudioTask",
+        method: "set_second_deadline_to_current_time",
+        state: State::Proven,
+        narrows: &[
+            "the instance of stamp_deadline for the second deadline word; the clock is read by the caller and passed as now",
+        ],
+    },
+    Row {
+        class: "AudioTask",
+        method: "add_float_progress",
+        state: State::Proven,
+        narrows: &[
+            "the input arrives as its bit pattern in the rewrite and as a float here; the proof passes the same bits, so a signalling or quiet NaN input reaches the same comparisons",
+            "the float operations run in the rewrite's order (scale, cap, compare with the first value, add the step, cap); the proof compares every written word bit for bit",
+            "the routine has no return value; none is compared",
+        ],
     },];
 
 /// Counts of (proven, lifted-but-unproven, missing) rows.
