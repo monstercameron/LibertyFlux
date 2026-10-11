@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rust in progress: 14 files from lanes (480 unverified rewrites, 56 in review)",
+    "title": "Lift: 23 pedestrian-task routines (event table, task slots, audio task record, owner replacement)",
     "commit": null,
+    "summary": "Twenty-three more verified routines of the pedestrian-task code now have a portable Rust counterpart, each proven against its verified original, in four groups that share a data shape.",
+    "changes": [
+      "Lifted into lf-peds-tasks as four owning types: the 32-record task event table (9 methods), the task manager's slot arrays with the bomb requests and the update sequence (5 methods), the audio task record (8 methods; three are instances of one release routine and two of one stamp routine, each written once as a generic method and proven once per instance), and the owner replacement (1 method). The four modules are 669 lines with no unsafe and no addresses; callees that are not lifted yet sit behind a trait, and record addresses passed as arguments become indices.",
+      "A new differential test crate, lf-eventdiff, runs each verified rewrite and its lifted counterpart on the same memory, 3,000 generated cases per routine, and compares the memory images, the order and arguments of every call, and the return value, floats bit for bit: 43 tests pass on the 32-bit target, and 39 deliberately wrong versions are caught. It is added to the workspace and to the pipeline's 32-bit lift job.",
+      "The crate's registry of pedestrian-task methods grows from 13 rows to 39: 36 proven and 3 recorded as not lifted, with the reason (a forwarder with no behaviour of its own, and two routines that belong to another object). The host test that lists them was updated to match and now requires narrowings only of proven rows. The crate's 266 host tests pass.",
+      "The lane found again that a group sharing a name prefix, 149 functions here, is at least seven unrelated data shapes plus forwarders; 122 are not reached. Not lifted, with reasons: eight dispatch forwarders, routines that walk pointers (each hop would need a trait), and two whose target address is computed from an index, which cannot be proven without a memory trait at the address level. It also reported three things to check in verified rewrites: a comment that places a returned constant just past a table when it lies further on, two field names that are the reverse of the routines that write them, and an indexed write whose out-of-range index lands at a small absolute address. None affects a proof; the lift follows the offsets and constants.",
+      "Written by a lift lane; integrated, tested and committed by the coordinator."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rust in progress: 14 files from lanes (480 unverified rewrites, 56 in review)",
+    "commit": "b3b0975b641ec3a9d33778dcc9e25f256de12d84",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 480 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",

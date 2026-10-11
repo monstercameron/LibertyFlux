@@ -30,24 +30,42 @@
 //! - [`seek`]: the seek-target record a seek task reads: the mover's
 //!   position, a goal, and the step toward the goal in the plane.
 //!
+//! - [`event_table`]: the 32-record task event table the scans and
+//!   replacements read and write: deadline refresh and selection, state
+//!   and object lookups, flag writes, and the release and owner-object
+//!   routines. Its helpers travel as one trait.
+//!
 //! What each lifted method covers, and what it narrows away from the
 //! original, is recorded per routine in [`registry`].
 
 #![forbid(unsafe_code)]
 
+mod audio_release;
 mod create;
+mod event_table;
 mod gate;
 mod id_lookup;
 mod mover;
 mod pose;
 mod seek;
+mod task_owner;
+mod task_slots;
 
 pub mod registry;
 
+pub use audio_release::{
+    AudioObjects, AudioSlot, AudioTask, CANDIDATE_KIND_MASK, CANDIDATE_KIND_SPECIAL,
+    CANDIDATE_STATE_READY, CLEANUP_ENABLED, CLEANUP_MODE_SENTINEL, Deadline, PROGRESS_LIMIT,
+    PROGRESS_SCALE, PROGRESS_STEP, ReleaseGlobals, SKIP_MODE, SubtaskCallees, WINDOW_TICKS,
+};
 pub use create::{
     ArgLookup, BuildManagers, ChainClone, ChainCloner, ChainEntry, ChainNode, ChainOwner,
     CloneProduct, FLAG_DONE, FLAG_EXTRA, FoundEntry, KIND_11, Kind11Task, NONE, PRIORITY, PedMgr,
     PedTaskOutcome, TaskBuildCtx,
+};
+pub use event_table::{
+    DELAY_GAP, EventCallees, EventObjects, EventRecord, EventTable, NEARBY_DISTANCE_SQUARED,
+    QUEUED_KIND, RECORD_COUNT, REDUCED_THRESHOLD, STANDARD_THRESHOLD,
 };
 pub use gate::{GateCandidate, GateStatus, GateWords, admits};
 pub use id_lookup::{DEFAULT_ID, NO_ID, TaskIdTable, TaskKey};
@@ -57,3 +75,8 @@ pub use pose::{
     LinkMatrix, Matrix, NORM_COUNT, NormSlot, PoseFill, PoseSample, PoseVolume, Transformed,
 };
 pub use seek::{SEEK_MODE, STEP_SCALE, SeekGoal, SeekMover, SeekRecord, TUNING};
+pub use task_owner::{OwnerCallees, TaskOwner};
+pub use task_slots::{
+    FIRST_BOMB_KIND, FIRST_BOMB_SLOT, ManagerCallees, PRIMARY_COUNT, SECOND_BOMB_KIND,
+    SECOND_BOMB_SLOT, SECONDARY_COUNT, TaskSlots,
+};
