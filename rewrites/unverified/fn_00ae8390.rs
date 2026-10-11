@@ -63,7 +63,7 @@ lf_checker_rt::export!(cdecl, rw_00ae8390(objects: u32, count: u32) -> () {
 
             let old_counter = unsafe { read_u16(timer_counter) };
             if old_counter == u16::MAX {
-                let _ = lf_checker_rt::callee_cdecl!(RESET_CALLEE, u32);
+                let _ = lf_checker_rt::callee_cdecl!(RESET_CALLEE, u32,);
                 unsafe { write_u16(timer_counter, 1) };
             } else {
                 unsafe { write_u16(timer_counter, old_counter.wrapping_add(1)) };
