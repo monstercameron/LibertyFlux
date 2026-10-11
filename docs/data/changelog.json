@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-10",
-    "title": "Rust in progress: 16 files from lanes (224 unverified rewrites, 0 in review)",
+    "title": "Rewrites: 1 withdrawn because its old proof is vacuous on the current checker",
     "commit": null,
+    "summary": "The verified count goes down by one. A regression lane re-ran 312 proofs made on checker version 3, unchanged, on version 8: 291 hold and are now recorded on the current checker, one is vacuous, and 20 could not be run.",
+    "changes": [
+      "The withdrawn function's contract declares a callee that never fired on any completed trial, so the part of the function that calls it was never compared. The checker that accepted it had no rule against that. The rewrite is not known to be wrong; a proof is what is missing, and the function goes to the queue of old proofs that do not hold.",
+      "The 291 that hold were each run for 300 trials and their index rows now say checker version 8.",
+      "Twenty could not be run and stay counted for now, as an open item: fourteen contracts from seven lanes give a stack argument as a recorder stub, which the current driver refuses for a stack word; three tracked rewrites do not compile; three contract files are missing. None of these is a finding about the function itself, so none is withdrawn on it; each group is to be run down before the count is trusted for them.",
+      "38 proofs of this batch were not reached and stay on the list for the next regression lane."
+    ]
+  },
+  {
+    "date": "2026-10-10",
+    "title": "Rust in progress: 16 files from lanes (224 unverified rewrites, 0 in review)",
+    "commit": "ed4defa7d34c0e79866391944793497a762888ba",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 224 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",

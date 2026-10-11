@@ -33106,9 +33106,9 @@
   "name": "service_net_stats_indicator",
   "kind": "function",
   "file": "functions/fn_005b2ad0.rs",
-  "trials": 1200,
-  "checker": "version 3",
-  "lane": "r-b126"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x005B2C40",
@@ -38623,27 +38623,27 @@
   "name": "blend_pose_track",
   "kind": "function",
   "file": "functions/fn_0068b030.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b143"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0068B3C0",
   "name": "blend_pose_track_gated",
   "kind": "function",
   "file": "functions/fn_0068b3c0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b143"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0068B750",
   "name": "blend_pose_track_indexed",
   "kind": "function",
   "file": "functions/fn_0068b750.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b143"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0068DD30",
@@ -46120,9 +46120,9 @@
   "name": "init_with_global_flags",
   "kind": "function",
   "file": "functions/fn_008949d0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008949E0",
@@ -47128,9 +47128,9 @@
   "name": "audio_descriptor_merge_pass",
   "kind": "function",
   "file": "functions/fn_0089d1e0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089D490",
@@ -47299,36 +47299,36 @@
   "name": "aud_voice_prime_bind_notify",
   "kind": "function",
   "file": "functions/fn_0089de40.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089DEE0",
   "name": "aud_voice_prime_bind2_option",
   "kind": "function",
   "file": "functions/fn_0089dee0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089DFA0",
   "name": "aud_voice_test",
   "kind": "function",
   "file": "functions/fn_0089dfa0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089E010",
   "name": "rage::audWrapperSound::vf7",
   "kind": "function",
   "file": "functions/fn_0089e010.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089E090",
@@ -47362,9 +47362,9 @@
   "name": "aud_voice_work_or_clear",
   "kind": "function",
   "file": "functions/fn_0089e0d0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089E140",
@@ -47380,27 +47380,27 @@
   "name": "rage::audSequentialSound::audSequentialSound_2",
   "kind": "function",
   "file": "functions/fn_0089e1a0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089E270",
   "name": "rage::audSequentialSound::~audSequentialSound__deleting",
   "kind": "function",
   "file": "functions/fn_0089e270.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089E310",
   "name": "aud_seq_rebuild_voices",
   "kind": "function",
   "file": "functions/fn_0089e310.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089E500",
@@ -47443,63 +47443,63 @@
   "name": "aud_seq_advance_fire",
   "kind": "function",
   "file": "functions/fn_0089e890.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089EB20",
   "name": "aud_cdecl_thunk_89E2A0",
   "kind": "function",
   "file": "functions/fn_0089eb20.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089EB40",
   "name": "aud_fwd_89E410",
   "kind": "function",
   "file": "functions/fn_0089eb40.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089EB60",
   "name": "aud_fwd_89E500",
   "kind": "function",
   "file": "functions/fn_0089eb60.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089EB70",
   "name": "aud_fwd_89E6E0",
   "kind": "function",
   "file": "functions/fn_0089eb70.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089EB80",
   "name": "rage::audStreamingSound::audStreamingSound",
   "kind": "function",
   "file": "functions/fn_0089eb80.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089ED20",
   "name": "rage::audStreamingSound::~audStreamingSound__deleting",
   "kind": "function",
   "file": "functions/fn_0089ed20.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089EE30",
@@ -47515,9 +47515,9 @@
   "name": "rage::audStreamingSound::vf8",
   "kind": "function",
   "file": "functions/fn_0089f040.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089F0B0",
@@ -47542,27 +47542,27 @@
   "name": "aud_stream_slot_ptr",
   "kind": "function",
   "file": "functions/fn_0089f4f0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089F540",
   "name": "aud_resolve_if_active",
   "kind": "function",
   "file": "functions/fn_0089f540.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089F560",
   "name": "rage::audStreamingSound::vf7",
   "kind": "function",
   "file": "functions/fn_0089f560.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089F5E0",
@@ -47578,9 +47578,9 @@
   "name": "aud_poll_hooks",
   "kind": "function",
   "file": "functions/fn_0089f710.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s97"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0089FF60",
@@ -48433,18 +48433,18 @@
   "name": "aud_math_op_sample_and_threshold",
   "kind": "function",
   "file": "functions/fn_008a5960.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s95"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008A5A10",
   "name": "aud_math_op_forward_flagged",
   "kind": "function",
   "file": "functions/fn_008a5a10.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s95"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008A5A80",
@@ -48541,36 +48541,36 @@
   "name": "rage::audMathOperationSound::audMathOperationSound_2",
   "kind": "function",
   "file": "functions/fn_008a5ff0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s95"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008A6080",
   "name": "rage::audMathOperationSound::~audMathOperationSound__deleting",
   "kind": "function",
   "file": "functions/fn_008a6080.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s95"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008A60B0",
   "name": "aud_math_op_notify_and_forward",
   "kind": "function",
   "file": "functions/fn_008a60b0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s95"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008A6120",
   "name": "rage::audMathOperationSound::vf7",
   "kind": "function",
   "file": "functions/fn_008a6120.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s95"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008A61F0",
@@ -48604,18 +48604,18 @@
   "name": "aud_entity_predispatch",
   "kind": "function",
   "file": "functions/fn_008a6aa0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s95"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008A6B40",
   "name": "aud_reactor_init_triple",
   "kind": "function",
   "file": "functions/fn_008a6b40.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s95"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008A6B70",
@@ -48667,9 +48667,9 @@
   "name": "aud_polar_to_cartesian",
   "kind": "function",
   "file": "functions/fn_008a80d0.rs",
-  "trials": null,
-  "checker": "version 2",
-  "lane": "r-s95"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008A8120",
@@ -48775,18 +48775,18 @@
   "name": "rage::audEffect::audEffect_2",
   "kind": "function",
   "file": "functions/fn_008a9300.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s95"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008A9320",
   "name": "rage::audEffect::~audEffect__deleting",
   "kind": "function",
   "file": "functions/fn_008a9320.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s95"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008A9350",
@@ -49054,9 +49054,9 @@
   "name": "audio_global_notify",
   "kind": "function",
   "file": "functions/fn_008aae10.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008AAE20",
@@ -49207,9 +49207,9 @@
   "name": "audio_notify_event",
   "kind": "function",
   "file": "functions/fn_008abd10.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F06"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008ABD30",
@@ -49243,9 +49243,9 @@
   "name": "rage::audBiquadFilterEffect::vf4",
   "kind": "function",
   "file": "functions/fn_008abf90.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s92"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008ABFB0",
@@ -49261,36 +49261,36 @@
   "name": "audio_row_notify",
   "kind": "function",
   "file": "functions/fn_008ac0d0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s92"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008AC200",
   "name": "rage::audReverbEffect::vf0",
   "kind": "function",
   "file": "functions/fn_008ac200.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s92"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008AC240",
   "name": "rage::audReverbEffect::vf5",
   "kind": "function",
   "file": "functions/fn_008ac240.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s92"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008AC340",
   "name": "rage::audReverbEffect::vf4",
   "kind": "function",
   "file": "functions/fn_008ac340.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008AC350",
@@ -49306,63 +49306,63 @@
   "name": "rage::audReverbEffect::vf2",
   "kind": "function",
   "file": "functions/fn_008ac450.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008AC5C0",
   "name": "rage::audCompressorEffect::~audCompressorEffect__deleting",
   "kind": "function",
   "file": "functions/fn_008ac5c0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008AC600",
   "name": "rage::audCompressorEffect::vf5",
   "kind": "function",
   "file": "functions/fn_008ac600.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008AC680",
   "name": "rage::audCompressorEffect::vf4",
   "kind": "function",
   "file": "functions/fn_008ac680.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008AC690",
   "name": "rage::audCompressorEffect::vf1",
   "kind": "function",
   "file": "functions/fn_008ac690.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008AC6B0",
   "name": "rage::audCompressorEffect::vf2",
   "kind": "function",
   "file": "functions/fn_008ac6b0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008AC720",
   "name": "rage::audConvolutionEffect::~audConvolutionEffect__deleting",
   "kind": "function",
   "file": "functions/fn_008ac720.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008AC760",
@@ -49378,9 +49378,9 @@
   "name": "rage::audDelayEffect::~audDelayEffect__deleting",
   "kind": "function",
   "file": "functions/fn_008ac800.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008AC840",
@@ -49414,18 +49414,18 @@
   "name": "rage::audDelayEffect::vf2",
   "kind": "function",
   "file": "functions/fn_008ac970.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008AC9E0",
   "name": "rage::audWaveshaperEffect::~audWaveshaperEffect__deleting",
   "kind": "function",
   "file": "functions/fn_008ac9e0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008ACA20",
@@ -49459,9 +49459,9 @@
   "name": "rage::audWaveshaperEffect::vf2",
   "kind": "function",
   "file": "functions/fn_008acb90.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008ACBC0",
@@ -49477,45 +49477,45 @@
   "name": "rage::audOcclusionGroupInterface::vf0",
   "kind": "function",
   "file": "functions/fn_008acc20.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008ACC90",
   "name": "audOcclusionPool_mark_item",
   "kind": "function",
   "file": "functions/fn_008acc90.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008ACCD0",
   "name": "audEffectChain_store_arg",
   "kind": "function",
   "file": "functions/fn_008accd0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008ACCF0",
   "name": "audOcclusionPool_build_and_enable",
   "kind": "function",
   "file": "functions/fn_008accf0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008ACD10",
   "name": "audOcclusionPool_create",
   "kind": "function",
   "file": "functions/fn_008acd10.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008ACD90",
@@ -49531,9 +49531,9 @@
   "name": "audOcclusionPool_destroy",
   "kind": "function",
   "file": "functions/fn_008ace10.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s93"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008ACE80",
@@ -51313,9 +51313,9 @@
   "name": "budget_poll_or_reseed",
   "kind": "function",
   "file": "functions/fn_008d2ec0.rs",
-  "trials": 1200,
-  "checker": "version 3",
-  "lane": "r-b109"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008D30B0",
@@ -51340,9 +51340,9 @@
   "name": "state_block_init",
   "kind": "function",
   "file": "functions/fn_008d32d0.rs",
-  "trials": 1200,
-  "checker": "version 3",
-  "lane": "r-b109"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008D34D0",
@@ -51394,18 +51394,18 @@
   "name": "quad_stage_submit",
   "kind": "function",
   "file": "functions/fn_008d3860.rs",
-  "trials": 1200,
-  "checker": "version 3",
-  "lane": "r-b109"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008D3A40",
   "name": "quad_stage_submit_xl",
   "kind": "function",
   "file": "functions/fn_008d3a40.rs",
-  "trials": 1200,
-  "checker": "version 3",
-  "lane": "r-b109"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008D3C20",
@@ -51457,9 +51457,9 @@
   "name": "emit_quad_uv_arrays",
   "kind": "function",
   "file": "functions/fn_008d4040.rs",
-  "trials": 1200,
-  "checker": "version 3",
-  "lane": "r-b92"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008D41D0",
@@ -51646,18 +51646,18 @@
   "name": "emit_fan_pair_block",
   "kind": "function",
   "file": "functions/fn_008d5560.rs",
-  "trials": 1200,
-  "checker": "version 3",
-  "lane": "r-b120"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008D56C0",
   "name": "emit_centered_pair_block",
   "kind": "function",
   "file": "functions/fn_008d56c0.rs",
-  "trials": 1200,
-  "checker": "version 3",
-  "lane": "r-b120"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008D57F0",
@@ -51754,9 +51754,9 @@
   "name": "select_by_tag_walk",
   "kind": "function",
   "file": "functions/fn_008d66d0.rs",
-  "trials": 1200,
-  "checker": "version 3",
-  "lane": "r-b120"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008D69E0",
@@ -52996,9 +52996,9 @@
   "name": "gps_slot_advance",
   "kind": "function",
   "file": "functions/fn_008e59a0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b124"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008E5BC0",
@@ -53266,9 +53266,9 @@
   "name": "TableScan_FindBestEntry",
   "kind": "function",
   "file": "functions/fn_008e8590.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b118"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008E87D0",
@@ -53653,9 +53653,9 @@
   "name": "query_slot_records_box",
   "kind": "function",
   "file": "functions/fn_008eee00.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b100"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008EEF90",
@@ -53689,9 +53689,9 @@
   "name": "remove_entry_and_requery",
   "kind": "function",
   "file": "functions/fn_008ef0f0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b100"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008EF280",
@@ -53725,9 +53725,9 @@
   "name": "init_input_state_element",
   "kind": "function",
   "file": "functions/fn_008ef720.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b100"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008EF8C0",
@@ -53797,9 +53797,9 @@
   "name": "resolve_control_binding",
   "kind": "function",
   "file": "functions/fn_008efaa0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b100"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x008EFCB0",
@@ -54877,27 +54877,27 @@
   "name": "fn_00900c80",
   "kind": "function",
   "file": "functions/fn_00900c80.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F05"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00900CC0",
   "name": "fn_00900cc0",
   "kind": "function",
   "file": "functions/fn_00900cc0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F05"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00900D10",
   "name": "fn_00900d10",
   "kind": "function",
   "file": "functions/fn_00900d10.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F05"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00900D30",
@@ -55219,9 +55219,9 @@
   "name": "fn_009053a0",
   "kind": "function",
   "file": "functions/fn_009053a0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F05"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00905490",
@@ -57793,9 +57793,9 @@
   "name": "radio_rebuild_station_tables",
   "kind": "function",
   "file": "functions/fn_00945dd0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b127"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00945FB0",
@@ -57829,9 +57829,9 @@
   "name": "radio_advance_station",
   "kind": "function",
   "file": "functions/fn_00946490.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b127"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00946680",
@@ -57955,9 +57955,9 @@
   "name": "scale_pair_apply_gated",
   "kind": "function",
   "file": "functions/fn_00947820.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b103"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00947B80",
@@ -57982,9 +57982,9 @@
   "name": "obj_init_xor_id",
   "kind": "function",
   "file": "functions/fn_00947d00.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00947D50",
@@ -58072,36 +58072,27 @@
   "name": "select_filtered_extremum",
   "kind": "function",
   "file": "functions/fn_009488e0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b103"
- },
- {
-  "address": "0x00948BE0",
-  "name": "obj_activate_timed",
-  "kind": "function",
-  "file": "functions/fn_00948be0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00948C30",
   "name": "NativeImpl_REMOVE_CHAR_ELEGANTLY",
   "kind": "function",
   "file": "functions/fn_00948c30.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b103"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00948F90",
   "name": "conditional_object_reset",
   "kind": "function",
   "file": "functions/fn_00948f90.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b102"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00949100",
@@ -58450,9 +58441,9 @@
   "name": "NativeImpl_IS_CHAR_STOPPED",
   "kind": "function",
   "file": "functions/fn_0094cd50.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b90"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0094CF90",
@@ -58468,9 +58459,9 @@
   "name": "angle_range_gate",
   "kind": "function",
   "file": "functions/fn_0094cff0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b90"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x0094D2C0",
@@ -58864,9 +58855,9 @@
   "name": "subsystem_init_sequence",
   "kind": "function",
   "file": "functions/fn_009510f0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b147"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00951200",
@@ -58900,18 +58891,18 @@
   "name": "object_create_and_register",
   "kind": "function",
   "file": "functions/fn_00951640.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b147"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00951780",
   "name": "object_refresh_and_bind",
   "kind": "function",
   "file": "functions/fn_00951780.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b147"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00951B60",
@@ -59044,9 +59035,9 @@
   "name": "fn_00952700",
   "kind": "function",
   "file": "functions/fn_00952700.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F05"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00952720",
@@ -59071,9 +59062,9 @@
   "name": "fn_009528d0",
   "kind": "function",
   "file": "functions/fn_009528d0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F05"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x009529E0",
@@ -59143,9 +59134,9 @@
   "name": "fn_00952c00",
   "kind": "function",
   "file": "functions/fn_00952c00.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F05"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00952C20",
@@ -59656,9 +59647,9 @@
   "name": "teardown_ref_owner",
   "kind": "function",
   "file": "functions/fn_00962060.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b113"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00962180",
@@ -59764,9 +59755,9 @@
   "name": "prepare_and_load_file",
   "kind": "function",
   "file": "functions/fn_00962cf0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b113"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00962F80",
@@ -59872,9 +59863,9 @@
   "name": "select_measure_and_scale",
   "kind": "function",
   "file": "functions/fn_00963530.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b113"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00963640",
@@ -63625,9 +63616,9 @@
   "name": "NativeImpl_DOES_CAM_EXIST",
   "kind": "function",
   "file": "functions/fn_009b6a10.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x009B6A40",
@@ -64192,9 +64183,9 @@
   "name": "HintFlag_SetIfLowByteZero",
   "kind": "function",
   "file": "functions/fn_009b8930.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x009B8940",
@@ -67918,9 +67909,9 @@
   "name": "list_drain_notify",
   "kind": "function",
   "file": "functions/fn_009de1f0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x009DE240",
@@ -67990,9 +67981,9 @@
   "name": "tracker_node_attach",
   "kind": "function",
   "file": "functions/fn_009df690.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x009DF700",
@@ -75100,9 +75091,9 @@
   "name": "NativeImpl_SET_COMBAT_DECISION_MAKER",
   "kind": "function",
   "file": "functions/fn_00a64c20.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b167"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00A64D30",
@@ -75955,9 +75946,9 @@
   "name": "stamp_value_merge_flags",
   "kind": "function",
   "file": "functions/fn_00a7cea0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00A7CF20",
@@ -78862,18 +78853,18 @@
   "name": "transform_four_indexed_vec3",
   "kind": "function",
   "file": "functions/fn_00a99030.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b144"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00A99260",
   "name": "transform_three_indexed_vec3",
   "kind": "function",
   "file": "functions/fn_00a99260.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b144"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00A99420",
@@ -78916,9 +78907,9 @@
   "name": "gated_plane_proximity_test",
   "kind": "function",
   "file": "functions/fn_00a996e0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b144"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00A99AE0",
@@ -78970,9 +78961,9 @@
   "name": "entry_flag_count_probe",
   "kind": "function",
   "file": "functions/fn_00a9b2e0.rs",
-  "trials": 1200,
-  "checker": "version 3",
-  "lane": "r-b110"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00A9B3F0",
@@ -80932,27 +80923,27 @@
   "name": "mgr_forward_214",
   "kind": "function",
   "file": "functions/fn_00ad2b00.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00AD2B20",
   "name": "mgr_forward_218",
   "kind": "function",
   "file": "functions/fn_00ad2b20.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00AD2B40",
   "name": "mgr_forward_210",
   "kind": "function",
   "file": "functions/fn_00ad2b40.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00AD2B60",
@@ -80968,18 +80959,18 @@
   "name": "mgr_forward_224",
   "kind": "function",
   "file": "functions/fn_00ad2ee0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00AD2F00",
   "name": "mgr_forward_228",
   "kind": "function",
   "file": "functions/fn_00ad2f00.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00AD3040",
@@ -81004,9 +80995,9 @@
   "name": "mgr_forward_float_1f8",
   "kind": "function",
   "file": "functions/fn_00ad3510.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00AD3560",
@@ -84388,9 +84379,9 @@
   "name": "s08_b24140",
   "kind": "function",
   "file": "functions/fn_00b24140.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F03"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00B24580",
@@ -84721,9 +84712,9 @@
   "name": "follow-mode switch",
   "kind": "function",
   "file": "functions/fn_00b2a790.rs",
-  "trials": 3000,
-  "checker": "version 3",
-  "lane": "r-b119"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00B2AC50",
@@ -84748,9 +84739,9 @@
   "name": "task-record probe chain lookup",
   "kind": "function",
   "file": "functions/fn_00b2b0c0.rs",
-  "trials": 1200,
-  "checker": "version 3",
-  "lane": "r-b119"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00B2B210",
@@ -84784,9 +84775,9 @@
   "name": "range-cursor refresh",
   "kind": "function",
   "file": "functions/fn_00b2b430.rs",
-  "trials": 1500,
-  "checker": "version 3",
-  "lane": "r-b119"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00B2B550",
@@ -114493,9 +114484,9 @@
   "name": "update_entity_placement",
   "kind": "function",
   "file": "functions/fn_00bf34b0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b139"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BF35B0",
@@ -114511,18 +114502,18 @@
   "name": "blend_object_rows",
   "kind": "function",
   "file": "functions/fn_00bf3600.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b139"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BF3750",
   "name": "sync_entity_transform",
   "kind": "function",
   "file": "functions/fn_00bf3750.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b139"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BF38B0",
@@ -114556,9 +114547,9 @@
   "name": "derive_entity_shadow",
   "kind": "function",
   "file": "functions/fn_00bf39c0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b139"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BF3C10",
@@ -114655,9 +114646,9 @@
   "name": "attach_entity_record",
   "kind": "function",
   "file": "functions/fn_00bf42d0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b139"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BF43F0",
@@ -114700,9 +114691,9 @@
   "name": "tune_entity_response",
   "kind": "function",
   "file": "functions/fn_00bf4540.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b139"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BF46D0",
@@ -114736,18 +114727,18 @@
   "name": "vehfx_fueltank_emitter_setup",
   "kind": "function",
   "file": "functions/fn_00bf4cf0.rs",
-  "trials": 1200,
-  "checker": "version 3",
-  "lane": "r-b105"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BF4F70",
   "name": "vehfx_glass_emitter_setup",
   "kind": "function",
   "file": "functions/fn_00bf4f70.rs",
-  "trials": 1200,
-  "checker": "version 3",
-  "lane": "r-b105"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BF5190",
@@ -115411,45 +115402,45 @@
   "name": "rs20f0",
   "kind": "function",
   "file": "functions/fn_00bfa7a0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F03"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BFA7D0",
   "name": "rs20f1",
   "kind": "function",
   "file": "functions/fn_00bfa7d0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F03"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BFA830",
   "name": "rs20f2",
   "kind": "function",
   "file": "functions/fn_00bfa830.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F03"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BFA860",
   "name": "rs20f3",
   "kind": "function",
   "file": "functions/fn_00bfa860.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F03"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BFA890",
   "name": "rs20f4",
   "kind": "function",
   "file": "functions/fn_00bfa890.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F03"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BFA8C0",
@@ -115465,9 +115456,9 @@
   "name": "rs20f6",
   "kind": "function",
   "file": "functions/fn_00bfbfe0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F03"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BFC010",
@@ -115483,9 +115474,9 @@
   "name": "rs20f8",
   "kind": "function",
   "file": "functions/fn_00bfc040.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F03"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BFC060",
@@ -115501,27 +115492,27 @@
   "name": "rs20f10",
   "kind": "function",
   "file": "functions/fn_00bfc0b0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F03"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BFC0D0",
   "name": "rs20f11",
   "kind": "function",
   "file": "functions/fn_00bfc0d0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F03"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BFC1C0",
   "name": "rs20f12",
   "kind": "function",
   "file": "functions/fn_00bfc1c0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F03"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00BFC360",
@@ -115573,9 +115564,9 @@
   "name": "rs20f19",
   "kind": "function",
   "file": "functions/fn_00bfc510.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F03"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00C03050",
@@ -116824,18 +116815,18 @@
   "name": "cam_replay_update",
   "kind": "function",
   "file": "functions/fn_00c17760.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b141"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00C17F10",
   "name": "CCamReplay::vf6",
   "kind": "function",
   "file": "functions/fn_00c17f10.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b141"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00C18030",
@@ -116851,9 +116842,9 @@
   "name": "cam_vec_filter",
   "kind": "function",
   "file": "functions/fn_00c18050.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b141"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00C182D0",
@@ -116995,9 +116986,9 @@
   "name": "shared_mem_proc_init",
   "kind": "function",
   "file": "functions/fn_00c18cc0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b141"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00C18DD0",
@@ -124330,9 +124321,9 @@
   "name": "id_register_check",
   "kind": "function",
   "file": "functions/fn_00cc70c0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F06"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CC7110",
@@ -124366,9 +124357,9 @@
   "name": "subobject_init_a",
   "kind": "function",
   "file": "functions/fn_00cc7480.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F06"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CC74B0",
@@ -124636,90 +124627,90 @@
   "name": "CTaskComplexDie::~CTaskComplexDie__deleting",
   "kind": "function",
   "file": "functions/fn_00cca540.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCA570",
   "name": "CTaskComplexHitResponse::~CTaskComplexHitResponse__deleting",
   "kind": "function",
   "file": "functions/fn_00cca570.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCA5A0",
   "name": "CTaskComplexInjuredOnGround::~CTaskComplexInjuredOnGround__deleting",
   "kind": "function",
   "file": "functions/fn_00cca5a0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCA5D0",
   "name": "CTaskComplexMoveAboutInjured::~CTaskComplexMoveAboutInjured__deleting",
   "kind": "function",
   "file": "functions/fn_00cca5d0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCA600",
   "name": "CTaskComplexOnFire::~CTaskComplexOnFire__deleting",
   "kind": "function",
   "file": "functions/fn_00cca600.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCA630",
   "name": "CTaskComplexRevive::~CTaskComplexRevive__deleting",
   "kind": "function",
   "file": "functions/fn_00cca630.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCA660",
   "name": "CTaskSimpleDead::~CTaskSimpleDead__deleting",
   "kind": "function",
   "file": "functions/fn_00cca660.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCA690",
   "name": "CTaskSimpleDie::~CTaskSimpleDie__deleting",
   "kind": "function",
   "file": "functions/fn_00cca690.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCA6C0",
   "name": "CTaskSimpleAnim::~CTaskSimpleAnim__deleting",
   "kind": "function",
   "file": "functions/fn_00cca6c0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCA6F0",
   "name": "CTaskSimpleInjuredOnGroundTransition::~CTaskSimpleInjuredOnGroundTransition__deleting",
   "kind": "function",
   "file": "functions/fn_00cca6f0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCA720",
@@ -124744,72 +124735,72 @@
   "name": "CTaskComplexHitResponse::vf1",
   "kind": "function",
   "file": "functions/fn_00cca8b0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCA8E0",
   "name": "CTaskComplexInjuredOnGround::vf1",
   "kind": "function",
   "file": "functions/fn_00cca8e0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCA910",
   "name": "CTaskComplexMoveAboutInjured::vf1",
   "kind": "function",
   "file": "functions/fn_00cca910.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCA940",
   "name": "CTaskComplexOnFire::vf1",
   "kind": "function",
   "file": "functions/fn_00cca940.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCA970",
   "name": "CTaskComplexRevive::vf1",
   "kind": "function",
   "file": "functions/fn_00cca970.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCA9A0",
   "name": "CTaskSimpleDead::vf1",
   "kind": "function",
   "file": "functions/fn_00cca9a0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCA9F0",
   "name": "CTaskSimpleDie::vf1",
   "kind": "function",
   "file": "functions/fn_00cca9f0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCAA50",
   "name": "CTaskSimpleHitFromBack::vf1",
   "kind": "function",
   "file": "functions/fn_00ccaa50.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CCB420",
@@ -125635,9 +125626,9 @@
   "name": "CPlayStatBase::vf2",
   "kind": "function",
   "file": "functions/fn_00cf2210.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b89"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00CF41B0",
@@ -127849,9 +127840,9 @@
   "name": "shared_epoch_refresh",
   "kind": "function",
   "file": "functions/fn_00d38e70.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F06"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00D38EC0",
@@ -130099,9 +130090,9 @@
   "name": "CReplayProgressBar::CReplayProgressBar_2",
   "kind": "function",
   "file": "functions/fn_00d6bcf0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b125"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00D6BE10",
@@ -130720,9 +130711,9 @@
   "name": "fn_00d778e0",
   "kind": "function",
   "file": "functions/fn_00d778e0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F05"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00D77930",
@@ -135175,9 +135166,9 @@
   "name": "UIFileViewer::vf100",
   "kind": "function",
   "file": "functions/fn_00df7350.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b106"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00DF76A0",
@@ -136579,9 +136570,9 @@
   "name": "emit_indexed_quad",
   "kind": "function",
   "file": "functions/fn_00e43870.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b142"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E439F0",
@@ -136597,9 +136588,9 @@
   "name": "emit_indexed_quad_guarded",
   "kind": "function",
   "file": "functions/fn_00e43d50.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b142"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E43F10",
@@ -136894,9 +136885,9 @@
   "name": "UIGalleryFileViewer::vf97",
   "kind": "function",
   "file": "functions/fn_00e4f780.rs",
-  "trials": 1200,
-  "checker": "version 3",
-  "lane": "r-b123"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E4FF20",
@@ -136966,9 +136957,9 @@
   "name": "UIRawClipViewer::vf94",
   "kind": "function",
   "file": "functions/fn_00e56170.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "r-b122"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E569F0",
@@ -138730,180 +138721,180 @@
   "name": "M_Y_GIRI_LO_03_GANG_01",
   "kind": "function",
   "file": "functions/fn_00e5dd50.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DD70",
   "name": "M_Y_GBIK_HI_01_FULL_01",
   "kind": "function",
   "file": "functions/fn_00e5dd70.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DD90",
   "name": "M_Y_GBIK_HI_01_GANG_01",
   "kind": "function",
   "file": "functions/fn_00e5dd90.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DDB0",
   "name": "M_Y_GBIK_LO_01_FULL_01",
   "kind": "function",
   "file": "functions/fn_00e5ddb0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DDD0",
   "name": "M_Y_GBIK_LO_01_GANG_01",
   "kind": "function",
   "file": "functions/fn_00e5ddd0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DDF0",
   "name": "M_Y_GBIK_LO_02_GANG_01",
   "kind": "function",
   "file": "functions/fn_00e5ddf0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DE10",
   "name": "M_Y_GIRI_LO_01_GANG_01",
   "kind": "function",
   "file": "functions/fn_00e5de10.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DE30",
   "name": "M_Y_GTRI_LO_01_FULL_01",
   "kind": "function",
   "file": "functions/fn_00e5de30.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DE50",
   "name": "M_Y_GTRI_LO_01_GANG_01",
   "kind": "function",
   "file": "functions/fn_00e5de50.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DE70",
   "name": "M_Y_GTRI_LO_02_FULL_01",
   "kind": "function",
   "file": "functions/fn_00e5de70.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DE90",
   "name": "M_Y_GTRI_LO_02_GANG_01",
   "kind": "function",
   "file": "functions/fn_00e5de90.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DEB0",
   "name": "M_Y_GAFR_HI_01_FULL_01",
   "kind": "function",
   "file": "functions/fn_00e5deb0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DED0",
   "name": "M_Y_GAFR_HI_02_FULL_01",
   "kind": "function",
   "file": "functions/fn_00e5ded0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DEF0",
   "name": "M_Y_GAFR_LO_01_FULL_01",
   "kind": "function",
   "file": "functions/fn_00e5def0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DF10",
   "name": "M_Y_GAFR_LO_01_GANG_01",
   "kind": "function",
   "file": "functions/fn_00e5df10.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DF30",
   "name": "M_ZOMBIE",
   "kind": "function",
   "file": "functions/fn_00e5df30.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DF50",
   "name": "F_Y_MPASIAN_01",
   "kind": "function",
   "file": "functions/fn_00e5df50.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DF70",
   "name": "F_Y_MPASIAN_02",
   "kind": "function",
   "file": "functions/fn_00e5df70.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DF90",
   "name": "F_Y_MPLATIN_01",
   "kind": "function",
   "file": "functions/fn_00e5df90.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DFB0",
   "name": "F_Y_MPLATIN_02",
   "kind": "function",
   "file": "functions/fn_00e5dfb0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F02"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5DFD0",
@@ -139333,117 +139324,117 @@
   "name": "net_list_prepend_110e988",
   "kind": "function",
   "file": "functions/fn_00e5e7a0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5E7C0",
   "name": "net_list_prepend_110e978",
   "kind": "function",
   "file": "functions/fn_00e5e7c0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5E7E0",
   "name": "net_list_prepend_110ea80",
   "kind": "function",
   "file": "functions/fn_00e5e7e0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5E800",
   "name": "net_list_prepend_110ea60",
   "kind": "function",
   "file": "functions/fn_00e5e800.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5E820",
   "name": "net_list_prepend_110ea70",
   "kind": "function",
   "file": "functions/fn_00e5e820.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5E840",
   "name": "net_list_prepend_110ea50",
   "kind": "function",
   "file": "functions/fn_00e5e840.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5E860",
   "name": "net_list_prepend_110eaa0",
   "kind": "function",
   "file": "functions/fn_00e5e860.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5E880",
   "name": "net_list_prepend_110ea90",
   "kind": "function",
   "file": "functions/fn_00e5e880.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5E8A0",
   "name": "net_list_prepend_110eaf8",
   "kind": "function",
   "file": "functions/fn_00e5e8a0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5E8C0",
   "name": "net_list_prepend_110eb00",
   "kind": "function",
   "file": "functions/fn_00e5e8c0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5E8E0",
   "name": "net_list_prepend_110eae0",
   "kind": "function",
   "file": "functions/fn_00e5e8e0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5E900",
   "name": "net_array_init4_19efc80",
   "kind": "function",
   "file": "functions/fn_00e5e900.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5E920",
   "name": "net_array_init32_19efd80",
   "kind": "function",
   "file": "functions/fn_00e5e920.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5E940",
@@ -139639,63 +139630,63 @@
   "name": "net_list_prepend_110eb20",
   "kind": "function",
   "file": "functions/fn_00e5ebe0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5EC00",
   "name": "net_list_prepend_110ebb8",
   "kind": "function",
   "file": "functions/fn_00e5ec00.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5EC20",
   "name": "net_list_prepend_110eb30",
   "kind": "function",
   "file": "functions/fn_00e5ec20.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5EC40",
   "name": "net_list_prepend_110eb58",
   "kind": "function",
   "file": "functions/fn_00e5ec40.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5EC60",
   "name": "net_list_prepend_110eb68",
   "kind": "function",
   "file": "functions/fn_00e5ec60.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5EC80",
   "name": "net_list_prepend_110eb78",
   "kind": "function",
   "file": "functions/fn_00e5ec80.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5ECA0",
   "name": "net_list_prepend_110eb98",
   "kind": "function",
   "file": "functions/fn_00e5eca0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E5ECC0",
@@ -141025,18 +141016,18 @@
   "name": "link_static_node_1102ec",
   "kind": "function",
   "file": "functions/fn_00e600a0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F06"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E600C0",
   "name": "link_static_node_1102d4",
   "kind": "function",
   "file": "functions/fn_00e600c0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F06"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E600E0",
@@ -141052,18 +141043,18 @@
   "name": "link_static_node_110304",
   "kind": "function",
   "file": "functions/fn_00e60100.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F06"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E60120",
   "name": "link_static_node_11031c",
   "kind": "function",
   "file": "functions/fn_00e60120.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F06"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E60140",
@@ -144481,18 +144472,18 @@
   "name": "QUB3D_MUSIC_POSITIONED_FOR_ARCADE",
   "kind": "function",
   "file": "functions/fn_00e649e0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E64A00",
   "name": "RANDOM_SEED",
   "kind": "function",
   "file": "functions/fn_00e64a00.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E64A20",
@@ -144526,18 +144517,18 @@
   "name": "SHELL_CASINGS_PLASTIC_BOUNCE",
   "kind": "function",
   "file": "functions/fn_00e64a80.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E64AA0",
   "name": "SHOTGUN_ECHO",
   "kind": "function",
   "file": "functions/fn_00e64aa0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E64AC0",
@@ -144553,9 +144544,9 @@
   "name": "SLO_MO_BULLET_BY_IN_1_MT",
   "kind": "function",
   "file": "functions/fn_00e64cf0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E64D60",
@@ -144985,99 +144976,99 @@
   "name": "audio_slot_bind_5340",
   "kind": "function",
   "file": "functions/fn_00e65340.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65360",
   "name": "audio_slot_bind_5360",
   "kind": "function",
   "file": "functions/fn_00e65360.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65380",
   "name": "audio_slot_bind_5380",
   "kind": "function",
   "file": "functions/fn_00e65380.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E653A0",
   "name": "audio_slot_bind_53a0",
   "kind": "function",
   "file": "functions/fn_00e653a0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E653C0",
   "name": "audio_slot_bind_53c0",
   "kind": "function",
   "file": "functions/fn_00e653c0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E653E0",
   "name": "audio_slot_bind_53e0",
   "kind": "function",
   "file": "functions/fn_00e653e0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65400",
   "name": "audio_slot_bind_5400",
   "kind": "function",
   "file": "functions/fn_00e65400.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65420",
   "name": "audio_slot_bind_5420",
   "kind": "function",
   "file": "functions/fn_00e65420.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65440",
   "name": "audio_slot_bind_5440",
   "kind": "function",
   "file": "functions/fn_00e65440.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65460",
   "name": "audio_slot_bind_5460",
   "kind": "function",
   "file": "functions/fn_00e65460.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65480",
   "name": "audio_slot_bind_5480",
   "kind": "function",
   "file": "functions/fn_00e65480.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E654A0",
@@ -145093,117 +145084,117 @@
   "name": "audio_slot_bind_54c0",
   "kind": "function",
   "file": "functions/fn_00e654c0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E654E0",
   "name": "audio_slot_bind_54e0",
   "kind": "function",
   "file": "functions/fn_00e654e0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65500",
   "name": "audio_slot_bind_x6_5500",
   "kind": "function",
   "file": "functions/fn_00e65500.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65530",
   "name": "DAMAGE_RATTLE_AND_SQUEEK",
   "kind": "function",
   "file": "functions/fn_00e65530.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E655E0",
   "name": "audio_slot_bind_55e0",
   "kind": "function",
   "file": "functions/fn_00e655e0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65600",
   "name": "VEHICLE_WHEEL_LOOPS_FAST_CONCRETE",
   "kind": "function",
   "file": "functions/fn_00e65600.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65620",
   "name": "audio_slot_bind_5620",
   "kind": "function",
   "file": "functions/fn_00e65620.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65640",
   "name": "audio_slot_bind_5640",
   "kind": "function",
   "file": "functions/fn_00e65640.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65660",
   "name": "audio_slot_bind_5660",
   "kind": "function",
   "file": "functions/fn_00e65660.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65680",
   "name": "audio_slot_bind_5680",
   "kind": "function",
   "file": "functions/fn_00e65680.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E656A0",
   "name": "audio_slot_bind_56a0",
   "kind": "function",
   "file": "functions/fn_00e656a0.rs",
-  "trials": 1000,
-  "checker": "version 2",
-  "lane": "r-s99"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E656C0",
   "name": "IS_FUCKED",
   "kind": "function",
   "file": "functions/fn_00e656c0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E656E0",
   "name": "VEHICLES_WHEEL_LOOPS_MAIN_TARMAC_SKID",
   "kind": "function",
   "file": "functions/fn_00e656e0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65700",
@@ -145300,36 +145291,36 @@
   "name": "VEHICLES_WHEEL_LOOPS_TARMAC_SCRAPE",
   "kind": "function",
   "file": "functions/fn_00e65840.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65860",
   "name": "VEHICLES_WHEEL_LOOPS_SIDE_TARMAC_SKID",
   "kind": "function",
   "file": "functions/fn_00e65860.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65880",
   "name": "TEMPERATURE",
   "kind": "function",
   "file": "functions/fn_00e65880.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E658A0",
   "name": "VARIATION",
   "kind": "function",
   "file": "functions/fn_00e658a0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E658C0",
@@ -145345,9 +145336,9 @@
   "name": "VEHICLES_EXTRAS_DOOR_LIMIT",
   "kind": "function",
   "file": "functions/fn_00e658e0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65900",
@@ -145399,378 +145390,378 @@
   "name": "BRIAN_CLEAN",
   "kind": "function",
   "file": "functions/fn_00e659a0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E659C0",
   "name": "BRIAN_DRUG",
   "kind": "function",
   "file": "functions/fn_00e659c0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E659E0",
   "name": "BRIAN",
   "kind": "function",
   "file": "functions/fn_00e659e0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65A00",
   "name": "COUGH",
   "kind": "function",
   "file": "functions/fn_00e65a00.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65A20",
   "name": "DROWNING",
   "kind": "function",
   "file": "functions/fn_00e65a20.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65A40",
   "name": "FUCK_FALL",
   "kind": "function",
   "file": "functions/fn_00e65a40.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65A60",
   "name": "HIGH_FALL",
   "kind": "function",
   "file": "functions/fn_00e65a60.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65A80",
   "name": "INHALE",
   "kind": "function",
   "file": "functions/fn_00e65a80.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65AA0",
   "name": "JOHNNY_ANGRY",
   "kind": "function",
   "file": "functions/fn_00e65aa0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65AC0",
   "name": "JOHNNY_NORMAL",
   "kind": "function",
   "file": "functions/fn_00e65ac0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65AE0",
   "name": "JOHNNY",
   "kind": "function",
   "file": "functions/fn_00e65ae0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65B00",
   "name": "LUIS_ANGRY",
   "kind": "function",
   "file": "functions/fn_00e65b00.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65B20",
   "name": "LUIS_NORMAL",
   "kind": "function",
   "file": "functions/fn_00e65b20.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65B40",
   "name": "LUIS",
   "kind": "function",
   "file": "functions/fn_00e65b40.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65B60",
   "name": "NIKO_ANGRY",
   "kind": "function",
   "file": "functions/fn_00e65b60.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65B80",
   "name": "NIKO_NORMAL",
   "kind": "function",
   "file": "functions/fn_00e65b80.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65BA0",
   "name": "NIKO",
   "kind": "function",
   "file": "functions/fn_00e65ba0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65BC0",
   "name": "NO_VOICE",
   "kind": "function",
   "file": "functions/fn_00e65bc0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F06"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65BE0",
   "name": "ON_FIRE",
   "kind": "function",
   "file": "functions/fn_00e65be0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F06"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65C00",
   "name": "PAIN_FEMALE_EXTRAS",
   "kind": "function",
   "file": "functions/fn_00e65c00.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F06"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65C20",
   "name": "PAIN_MALE_EXTRAS",
   "kind": "function",
   "file": "functions/fn_00e65c20.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F06"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65C40",
   "name": "NIKO_EXTRAS",
   "kind": "function",
   "file": "functions/fn_00e65c40.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F06"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65D80",
   "name": "SPEECH_AMBIENT_POSITIONED",
   "kind": "function",
   "file": "functions/fn_00e65d80.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65DA0",
   "name": "ARRESTED",
   "kind": "function",
   "file": "functions/fn_00e65da0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65DC0",
   "name": "BEEN_SHOT",
   "kind": "function",
   "file": "functions/fn_00e65dc0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65DE0",
   "name": "BUMP",
   "kind": "function",
   "file": "functions/fn_00e65de0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65E00",
   "name": "CHASED",
   "kind": "function",
   "file": "functions/fn_00e65e00.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65E20",
   "name": "COP_HELI_MEGAPHONE",
   "kind": "function",
   "file": "functions/fn_00e65e20.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65E40",
   "name": "COP_HELI_MEGAPHONE_WARNING",
   "kind": "function",
   "file": "functions/fn_00e65e40.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65E60",
   "name": "DIRECTIONS_NO",
   "kind": "function",
   "file": "functions/fn_00e65e60.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65E80",
   "name": "DODGE",
   "kind": "function",
   "file": "functions/fn_00e65e80.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65EA0",
   "name": "GANG_BUMP",
   "kind": "function",
   "file": "functions/fn_00e65ea0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65EC0",
   "name": "GANG_DODGE_WARNING",
   "kind": "function",
   "file": "functions/fn_00e65ec0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65EE0",
   "name": "GENERIC_HI",
   "kind": "function",
   "file": "functions/fn_00e65ee0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65F00",
   "name": "INTIMIDATE_RESP",
   "kind": "function",
   "file": "functions/fn_00e65f00.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65F20",
   "name": "JACKED_CAR",
   "kind": "function",
   "file": "functions/fn_00e65f20.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65F40",
   "name": "JACKED_GENERIC",
   "kind": "function",
   "file": "functions/fn_00e65f40.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65F60",
   "name": "JACKED_IN_CAR",
   "kind": "function",
   "file": "functions/fn_00e65f60.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65F80",
   "name": "JACKED_SOFT",
   "kind": "function",
   "file": "functions/fn_00e65f80.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65FA0",
   "name": "JEERING_RESP",
   "kind": "function",
   "file": "functions/fn_00e65fa0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65FC0",
   "name": "KILLED_ALL",
   "kind": "function",
   "file": "functions/fn_00e65fc0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E65FE0",
   "name": "KNOCK_OVER_PED",
   "kind": "function",
   "file": "functions/fn_00e65fe0.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E66280",
@@ -152842,9 +152833,9 @@
   "name": "call_store_global_00",
   "kind": "function",
   "file": "functions/fn_00e6de30.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F04"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E6DE50",
@@ -153661,9 +153652,9 @@
   "name": "release_and_null_16b9db8",
   "kind": "function",
   "file": "functions/fn_00e72930.rs",
-  "trials": 1000,
-  "checker": "version 3",
-  "lane": "a-F01"
+  "trials": 300,
+  "checker": "version 8",
+  "lane": "a-G05"
  },
  {
   "address": "0x00E729B0",
