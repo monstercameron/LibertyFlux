@@ -140220,6 +140220,15 @@
   "lane": "a-G10"
  },
  {
+  "address": "0x00D26830",
+  "name": "ped_task_request_fire",
+  "kind": "function",
+  "file": "functions/fn_00d26830.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U98"
+ },
+ {
   "address": "0x00D268C0",
   "name": "ped_stat_scale_clamp",
   "kind": "function",
@@ -140328,6 +140337,24 @@
   "lane": "r-s352"
  },
  {
+  "address": "0x00D27F90",
+  "name": "CPedTargetting::~CPedTargetting__deleting",
+  "kind": "function",
+  "file": "functions/fn_00d27f90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U98"
+ },
+ {
+  "address": "0x00D27FC0",
+  "name": "CTargetting::~CTargetting__deleting",
+  "kind": "function",
+  "file": "functions/fn_00d27fc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U98"
+ },
+ {
   "address": "0x00D27FF0",
   "name": "task_manager_find_free_task_slot",
   "kind": "function",
@@ -140344,6 +140371,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s627"
+ },
+ {
+  "address": "0x00D280D0",
+  "name": "target_slot_copy_if_live",
+  "kind": "function",
+  "file": "functions/fn_00d280d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U98"
  },
  {
   "address": "0x00D282B0",
@@ -140400,6 +140436,42 @@
   "lane": "r-s352"
  },
  {
+  "address": "0x00D28C60",
+  "name": "target_slot_configure",
+  "kind": "function",
+  "file": "functions/fn_00d28c60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U98"
+ },
+ {
+  "address": "0x00D28CD0",
+  "name": "target_slot_float_get",
+  "kind": "function",
+  "file": "functions/fn_00d28cd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U98"
+ },
+ {
+  "address": "0x00D28D20",
+  "name": "CPedTargetting::get_target_weight",
+  "kind": "function",
+  "file": "functions/fn_00d28d20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U98"
+ },
+ {
+  "address": "0x00D28DA0",
+  "name": "target_slot_sign_flag",
+  "kind": "function",
+  "file": "functions/fn_00d28da0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U98"
+ },
+ {
   "address": "0x00D28DE0",
   "name": "target_slot_field_get",
   "kind": "function",
@@ -140425,6 +140497,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s352"
+ },
+ {
+  "address": "0x00D28FB0",
+  "name": "CPedTargetting::invoke_target_callback",
+  "kind": "function",
+  "file": "functions/fn_00d28fb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U98"
  },
  {
   "address": "0x00D28FD0",
@@ -140472,6 +140553,15 @@
   "lane": "a-G34"
  },
  {
+  "address": "0x00D29200",
+  "name": "targeting_bind_aux",
+  "kind": "function",
+  "file": "functions/fn_00d29200.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U98"
+ },
+ {
   "address": "0x00D29230",
   "name": "CPedTargetting::vf6",
   "kind": "function",
@@ -140488,6 +140578,33 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G34"
+ },
+ {
+  "address": "0x00D293A0",
+  "name": "CPedTargetting::acquire_target",
+  "kind": "function",
+  "file": "functions/fn_00d293a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U98"
+ },
+ {
+  "address": "0x00D29430",
+  "name": "CTargetting::acquire_target_slot",
+  "kind": "function",
+  "file": "functions/fn_00d29430.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U98"
+ },
+ {
+  "address": "0x00D294B0",
+  "name": "target_slot_first_live",
+  "kind": "function",
+  "file": "functions/fn_00d294b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U98"
  },
  {
   "address": "0x00D294E0",
@@ -140508,6 +140625,15 @@
   "lane": "r-s352"
  },
  {
+  "address": "0x00D29590",
+  "name": "targeting_slot_reset",
+  "kind": "function",
+  "file": "functions/fn_00d29590.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U98"
+ },
+ {
   "address": "0x00D295B0",
   "name": "task_manager_clear_task_state",
   "kind": "function",
@@ -140524,6 +140650,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s627"
+ },
+ {
+  "address": "0x00D296E0",
+  "name": "target_slot_refresh_all",
+  "kind": "function",
+  "file": "functions/fn_00d296e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U98"
  },
  {
   "address": "0x00D29770",
