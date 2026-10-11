@@ -128133,6 +128133,150 @@
   "lane": "r-s653"
  },
  {
+  "address": "0x00C78060",
+  "name": "pg_dictionary_phbound_destroy",
+  "kind": "function",
+  "file": "functions/fn_00c78060.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s663"
+ },
+ {
+  "address": "0x00C780E0",
+  "name": "rage::pgDictionary<rage::phBound>::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c780e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s663"
+ },
+ {
+  "address": "0x00C78100",
+  "name": "phbound_register_entry",
+  "kind": "function",
+  "file": "functions/fn_00c78100.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s663"
+ },
+ {
+  "address": "0x00C78190",
+  "name": "phbound_register_all_entries",
+  "kind": "function",
+  "file": "functions/fn_00c78190.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s663"
+ },
+ {
+  "address": "0x00C781F0",
+  "name": "phbound_register_static_hooks",
+  "kind": "function",
+  "file": "functions/fn_00c781f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s663"
+ },
+ {
+  "address": "0x00C782D0",
+  "name": "rage::pgDictionary<rage::phBound>::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c782d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s663"
+ },
+ {
+  "address": "0x00C78300",
+  "name": "phbound_allocate_and_attach",
+  "kind": "function",
+  "file": "functions/fn_00c78300.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s663"
+ },
+ {
+  "address": "0x00C78330",
+  "name": "phbound_tls_scope_update",
+  "kind": "function",
+  "file": "functions/fn_00c78330.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s663"
+ },
+ {
+  "address": "0x00C783B0",
+  "name": "phbound_copy_entry",
+  "kind": "function",
+  "file": "functions/fn_00c783b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s663"
+ },
+ {
+  "address": "0x00C78400",
+  "name": "phbound_lookup_and_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00c78400.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s663"
+ },
+ {
+  "address": "0x00C78430",
+  "name": "phbound_registry_find_by_pointer",
+  "kind": "function",
+  "file": "functions/fn_00c78430.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s663"
+ },
+ {
+  "address": "0x00C78500",
+  "name": "phbound_registry_init",
+  "kind": "function",
+  "file": "functions/fn_00c78500.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s663"
+ },
+ {
+  "address": "0x00C78650",
+  "name": "phbound_register_defaults",
+  "kind": "function",
+  "file": "functions/fn_00c78650.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s663"
+ },
+ {
+  "address": "0x00C78720",
+  "name": "phbound_install_default_resource",
+  "kind": "function",
+  "file": "functions/fn_00c78720.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s663"
+ },
+ {
+  "address": "0x00C78800",
+  "name": "phbound_lazy_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00c78800.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s663"
+ },
+ {
+  "address": "0x00C78820",
+  "name": "rage::pgDictionary<rage::phBound>::vf2",
+  "kind": "function",
+  "file": "functions/fn_00c78820.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s663"
+ },
+ {
   "address": "0x00C7A530",
   "name": "task_scenario_ctor_value",
   "kind": "function",
