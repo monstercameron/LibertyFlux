@@ -1,322 +1,226 @@
 // original: 0x00BE75A0 CTaskSimpleSitDown::vf17
-/// Copies the position when the task state permits it, optionally issues a
-/// movement update, and reports completion in the low return byte. The final
-/// interpolation path passes two widened floats to a scripted double helper
-/// and forwards its single-precision result to the entity update callback.
-use core::hint::black_box;
-use lf_checker_rt::{callee_cdecl, callee_thiscall, export};
+/// Updates the task's pose from its anchor and submits the interpolated point
+/// to the attached entity. The transition flag selects a completion request;
+/// the ordinary path advances the pose and passes the anchor's double lanes
+/// to the vector helper. The return byte reports only the completion request.
 
-const TASK_FLAGS: usize = 0x0C;
-const TASK_POSITION_X: usize = 0x20;
-const TASK_POSITION_Y: usize = 0x24;
-const TASK_POSITION_Z: usize = 0x28;
-const TASK_SOURCE_X: usize = 0x30;
-const TASK_SOURCE_Y: usize = 0x34;
-const TASK_SOURCE_Z: usize = 0x38;
-const TASK_STATUS: usize = 0x3C;
-const TASK_TARGET_X: usize = 0x40;
-const TASK_TARGET_Y: usize = 0x44;
-const TASK_TARGET_Z: usize = 0x48;
-const TASK_VELOCITY_X: usize = 0x50;
-const TASK_VELOCITY_Y: usize = 0x54;
-const TASK_VELOCITY_Z: usize = 0x58;
-const TASK_STATE: usize = 0x60;
-const TASK_AUXILIARY: usize = 0x64;
-const TASK_DURATION: usize = 0x70;
-const TASK_UPDATE_GATE: usize = 0x74;
-const TASK_INTERPOLATION_GATE: usize = 0x75;
+use core::arch::x86::{
+    __m128d, _mm_castsi128_pd, _mm_castsi128_ps, _mm_cvtps_pd, _mm_cvtss_sd,
+    _mm_set_epi32,
+};
 
-const ENTITY_FALLBACK: usize = 0x1C;
-const ENTITY_POSITION: usize = 0x20;
-const ENTITY_VTABLE: usize = 0;
-const VTABLE_UPDATE_SLOT: usize = 8;
-const POSITION_HELPER_X: usize = 0x10;
-const POSITION_HELPER_Y: usize = 0x14;
-const POSITION_COPY_START: usize = 0x30;
+const FLAGS: u32 = 0x0c;
+const ANCHOR: u32 = 0x20;
+const COMPLETION_REQUEST: u32 = 0x64;
+const OBJECT: u32 = 0x60;
+const COMPLETION_STATE: u32 = 0x74;
+const READY_STATE: u32 = 0x75;
+const ENTRY_FLOAT: u32 = 0x70;
+const SCALE: u32 = 0x4c;
+const CURRENT_POINT: u32 = 0x30;
+const START_POINT: u32 = 0x20;
+const POINT_DELTA: u32 = 0x40;
+const METHOD_SLOT: u32 = 8;
+const ANCHOR_VECTOR: u32 = 0x10;
+const SIGN_MASK_FILE_VA: u32 = 0x00fe_8fa0;
+const UPDATE_EVENT: u32 = 0x3505;
+const POSITION_EVENT: u32 = 0x1505;
 
-const CALLEE_EARLY_MOVE: u32 = 1;
-const CALLEE_DIRECT_MOVE: u32 = 2;
-const CALLEE_CREATE_STATE: u32 = 3;
-const CALLEE_DOUBLE_HELPER: u32 = 5;
-const CALLEE_FINAL_MOVE: u32 = 6;
-
-const MOVE_MODE: u32 = 0x3505;
-const FINAL_MOVE_MODE: u32 = 0x1505;
-const SIGN_BIT_F32: u32 = 0x8000_0000;
-const LOW_F32_FRAC_MASK: u32 = 0x007F_FFFF;
-const LOW_F64_FRAC_MASK: u64 = 0x000F_FFFF_FFFF_FFFF;
-const F32_QUIET_BIT: u32 = 0x0040_0000;
-const F64_QUIET_BIT: u64 = 0x0008_0000_0000_0000;
-const F32_INFINITY: u32 = 0x7F80_0000;
-const F64_INFINITY: u64 = 0x7FF0_0000_0000_0000;
+const CALLEE_UPDATE: u32 = 1;
+const CALLEE_CREATE_OBJECT: u32 = 2;
+const CALLEE_VECTOR: u32 = 4;
+const CALLEE_FINALIZE: u32 = 5;
 
 #[inline(always)]
-unsafe fn read_word(base: *mut u8, offset: usize) -> u32 {
-    // SAFETY: the contract supplies mapped objects with the declared fields.
-    unsafe { base.add(offset).cast::<u32>().read_unaligned() }
+fn load_u32(base: u32, offset: u32) -> u32 {
+    unsafe { (base.wrapping_add(offset) as *const u32).read_unaligned() }
 }
 
 #[inline(always)]
-unsafe fn read_byte(base: *mut u8, offset: usize) -> u8 {
-    // SAFETY: the contract supplies mapped objects with the declared fields.
-    unsafe { base.add(offset).read() }
+fn store_u32(base: u32, offset: u32, value: u32) {
+    unsafe { (base.wrapping_add(offset) as *mut u32).write_unaligned(value) }
 }
 
 #[inline(always)]
-unsafe fn read_pointer(base: *mut u8, offset: usize) -> *mut u8 {
-    unsafe { read_word(base, offset) as usize as *mut u8 }
+fn load_u8(base: u32, offset: u32) -> u8 {
+    unsafe { (base.wrapping_add(offset) as *const u8).read() }
 }
 
 #[inline(always)]
-unsafe fn write_word(base: *mut u8, offset: usize, value: u32) {
-    // SAFETY: the contract supplies mapped writable objects with these fields.
-    unsafe { base.add(offset).cast::<u32>().write_unaligned(value) }
+fn load_f32(base: u32, offset: u32) -> f32 {
+    f32::from_bits(load_u32(base, offset))
 }
 
 #[inline(always)]
-unsafe fn read_float(base: *mut u8, offset: usize) -> f32 {
-    f32::from_bits(unsafe { read_word(base, offset) })
+fn add_ss(destination: f32, source: f32) -> f32 {
+    core::hint::black_box(core::hint::black_box(destination) + core::hint::black_box(source))
 }
 
-#[inline(never)]
-fn subtract_f32(left: f32, right: f32) -> f32 {
-    let left = black_box(left);
-    let right = black_box(right);
-    black_box(left - right)
+#[inline(always)]
+fn sub_ss(destination: f32, source: f32) -> f32 {
+    core::hint::black_box(core::hint::black_box(destination) - core::hint::black_box(source))
 }
 
-#[inline(never)]
-fn multiply_f32(left: f32, right: f32) -> f32 {
-    let left = black_box(left);
-    let right = black_box(right);
-    black_box(left * right)
+#[inline(always)]
+fn mul_ss(destination: f32, source: f32) -> f32 {
+    core::hint::black_box(core::hint::black_box(destination) * core::hint::black_box(source))
 }
 
-#[inline(never)]
-fn add_f32(left: f32, right: f32) -> f32 {
-    let left = black_box(left);
-    let right = black_box(right);
-    black_box(left + right)
+#[inline(always)]
+fn read_sign_mask_word(index: usize) -> u32 {
+    unsafe { lf_checker_rt::global::<u32>(SIGN_MASK_FILE_VA).add(index).read_unaligned() }
 }
 
-/// Converts a binary32 value to the exact binary64 result of scalar widening.
-fn widen_f32_bits(bits: u32) -> u64 {
-    let sign = u64::from(bits >> 31) << 63;
-    let exponent = (bits >> 23) & 0xFF;
-    let fraction = bits & LOW_F32_FRAC_MASK;
-    if exponent == 0xFF {
-        if fraction == 0 {
-            return sign | F64_INFINITY;
-        }
-        return sign
-            | F64_INFINITY
-            | (u64::from(fraction) << 29)
-            | F64_QUIET_BIT;
-    }
-    if exponent == 0 {
-        if fraction == 0 {
-            return sign;
-        }
-        let leading = 31 - fraction.leading_zeros();
-        let shift = 23 - leading;
-        let normalized = fraction << shift;
-        let unbiased = leading as i32 - 149;
-        let biased = (unbiased + 1023) as u64;
-        return sign | (biased << 52) | (u64::from(normalized & LOW_F32_FRAC_MASK) << 29);
-    }
-    let widened_exponent = u64::from(exponent + 896);
-    sign | (widened_exponent << 52) | (u64::from(fraction) << 29)
+#[inline(always)]
+fn call_vector_helper(first: __m128d, second: __m128d) -> u64 {
+    #[allow(improper_ctypes_definitions)]
+    type VectorHelper = extern "C" fn(__m128d, __m128d) -> u64;
+    let helper: VectorHelper = unsafe {
+        core::mem::transmute(lf_checker_rt::callee_addr(CALLEE_VECTOR) as usize)
+    };
+    helper(first, second)
 }
 
-fn round_shift_right(value: u64, shift: u32) -> u64 {
-    if shift == 0 {
-        return value;
-    }
-    if shift >= 64 {
-        return 0;
-    }
-    let quotient = value >> shift;
-    let remainder = value & ((1u64 << shift) - 1);
-    let halfway = 1u64 << (shift - 1);
-    if remainder > halfway || (remainder == halfway && quotient & 1 != 0) {
-        quotient + 1
-    } else {
-        quotient
-    }
+#[inline(always)]
+fn call_position_method(object: u32, point: &[u32; 3]) {
+    let vtable = load_u32(object, 0);
+    let method_address = load_u32(vtable, METHOD_SLOT);
+    let method: extern "thiscall" fn(u32, u32, u32, u32) -> u32 = unsafe {
+        core::mem::transmute(method_address as usize)
+    };
+    let _ = method(object, point.as_ptr() as usize as u32, 0, 1);
 }
 
-/// Narrows a binary64 result as a round-to-nearest-even scalar conversion.
-fn narrow_f64_bits(bits: u64) -> u32 {
-    let sign = (bits >> 32) as u32 & SIGN_BIT_F32;
-    let exponent = ((bits >> 52) & 0x7FF) as u32;
-    let fraction = bits & LOW_F64_FRAC_MASK;
-    if exponent == 0x7FF {
-        if fraction == 0 {
-            return sign | F32_INFINITY;
-        }
-        let payload = ((fraction >> 29) as u32) | F32_QUIET_BIT;
-        return sign | F32_INFINITY | payload;
-    }
-    if exponent == 0 {
-        return sign;
-    }
-
-    let mut f32_exponent = exponent as i32 - 896;
-    let significand = (1u64 << 52) | fraction;
-    if f32_exponent >= 255 {
-        return sign | F32_INFINITY;
-    }
-    if f32_exponent > 0 {
-        let mut rounded = round_shift_right(significand, 29);
-        if rounded >= (1 << 24) {
-            rounded >>= 1;
-            f32_exponent += 1;
-        }
-        if f32_exponent >= 255 {
-            return sign | F32_INFINITY;
-        }
-        return sign | ((f32_exponent as u32) << 23) | (rounded as u32 & LOW_F32_FRAC_MASK);
-    }
-
-    let shift = (30 - f32_exponent) as u32;
-    let rounded = round_shift_right(significand, shift);
-    sign | rounded as u32
-}
-
-fn low_high_words(value: u64) -> (u32, u32) {
-    (value as u32, (value >> 32) as u32)
-}
-
-unsafe fn run(this: *mut u8, entity: *mut u8, mutate_double: bool) -> u32 {
-    let state_flags = unsafe { read_word(this, TASK_FLAGS) };
-    if state_flags & 4 == 0 {
-        let source = unsafe { read_pointer(entity, ENTITY_POSITION) };
-        for offset in [TASK_SOURCE_X, TASK_SOURCE_Y, TASK_SOURCE_Z, TASK_STATUS] {
-            let value = unsafe { read_word(source, POSITION_COPY_START + offset - TASK_SOURCE_X) };
-            unsafe { write_word(this, offset, value) };
+fn rewrite(task: u32, object: u32, mutate_vector_high: bool) -> u32 {
+    if load_u32(task, FLAGS) & 4 == 0 {
+        let anchor = load_u32(object, ANCHOR);
+        for field in [0x30, 0x34, 0x38, 0x3c] {
+            store_u32(task, field, load_u32(anchor, field));
         }
     }
 
-    if unsafe { read_byte(this, TASK_UPDATE_GATE) } != 0 {
-        let auxiliary = unsafe { read_pointer(this, TASK_AUXILIARY) };
-        if !auxiliary.is_null() {
-            let duration = unsafe { read_word(this, TASK_DURATION) };
-            let vector = unsafe { this.add(TASK_TARGET_X) } as u32;
-            let _: u32 = callee_thiscall!(
-                CALLEE_EARLY_MOVE,
+    if load_u8(task, COMPLETION_STATE) != 0 {
+        let request = load_u32(task, COMPLETION_REQUEST);
+        if request != 0 {
+            let _ = lf_checker_rt::callee_thiscall!(
+                CALLEE_UPDATE,
                 u32,
-                entity as u32,
-                auxiliary as u32,
+                object,
+                request,
                 0,
-                MOVE_MODE,
-                vector,
-                duration,
-                0
+                UPDATE_EVENT,
+                task.wrapping_add(POINT_DELTA),
+                load_u32(task, ENTRY_FLOAT),
+                0,
             );
         }
         return 1;
     }
 
-    if unsafe { read_pointer(this, TASK_STATE) }.is_null() {
-        let _: u32 = callee_thiscall!(CALLEE_CREATE_STATE, u32, this as u32, entity as u32);
+    let mut entity = load_u32(task, OBJECT);
+    if entity == 0 {
+        let _ = lf_checker_rt::callee_stdcall!(CALLEE_CREATE_OBJECT, u32, object);
+        entity = load_u32(task, OBJECT);
     }
-    let state = unsafe { read_pointer(this, TASK_STATE) };
-    if state.is_null() {
+    if entity == 0 {
         return 0;
     }
 
-    let auxiliary = unsafe { read_pointer(this, TASK_AUXILIARY) };
-    if !auxiliary.is_null() {
-        let scale = subtract_f32(1.0, unsafe { read_float(state, 0x4C) });
-        let x_step = multiply_f32(unsafe { read_float(this, TASK_VELOCITY_X) }, scale);
-        let y_step = multiply_f32(unsafe { read_float(this, TASK_VELOCITY_Y) }, scale);
-        let z_step = multiply_f32(unsafe { read_float(this, TASK_VELOCITY_Z) }, scale);
-        let mut target = [
-            add_f32(x_step, unsafe { read_float(this, TASK_TARGET_X) }),
-            add_f32(y_step, unsafe { read_float(this, TASK_TARGET_Y) }),
-            add_f32(z_step, unsafe { read_float(this, TASK_TARGET_Z) }),
+    let request = load_u32(task, COMPLETION_REQUEST);
+    if request != 0 {
+        let scale = sub_ss(1.0, load_f32(entity, SCALE));
+        let scaled_x = mul_ss(load_f32(task, 0x50), scale);
+        let scaled_y = mul_ss(load_f32(task, 0x54), scale);
+        let scaled_z = mul_ss(load_f32(task, 0x58), scale);
+        let point = [
+            add_ss(scaled_x, load_f32(task, 0x40)).to_bits(),
+            add_ss(load_f32(task, 0x44), scaled_y).to_bits(),
+            add_ss(load_f32(task, 0x48), scaled_z).to_bits(),
         ];
-        let _: u32 = callee_thiscall!(
-            CALLEE_DIRECT_MOVE,
+        let _ = lf_checker_rt::callee_thiscall!(
+            CALLEE_UPDATE,
             u32,
-            entity as u32,
-            auxiliary as u32,
+            object,
+            request,
             0,
-            MOVE_MODE,
-            target.as_mut_ptr() as u32,
-            unsafe { read_word(this, TASK_DURATION) },
-            0
+            UPDATE_EVENT,
+            point.as_ptr() as usize as u32,
+            load_u32(task, ENTRY_FLOAT),
+            0,
         );
         return 0;
     }
 
-    if unsafe { read_byte(this, TASK_INTERPOLATION_GATE) } == 0 {
+    if load_u8(task, READY_STATE) == 0 {
         return 0;
     }
 
-    let fraction = unsafe { read_float(state, 0x4C) };
-    let mut interpolated = [0.0f32; 3];
-    for (index, (target_offset, source_offset)) in [
-        (TASK_POSITION_X, TASK_SOURCE_X),
-        (TASK_POSITION_Y, TASK_SOURCE_Y),
-        (TASK_POSITION_Z, TASK_SOURCE_Z),
-    ]
-    .into_iter()
-    .enumerate()
-    {
-        let destination = add_f32(
-            unsafe { read_float(this, target_offset) },
-            unsafe { read_float(this, [TASK_TARGET_X, TASK_TARGET_Y, TASK_TARGET_Z][index]) },
-        );
-        let distance = subtract_f32(destination, unsafe { read_float(this, source_offset) });
-        let movement = multiply_f32(distance, fraction);
-        interpolated[index] = add_f32(unsafe { read_float(this, source_offset) }, movement);
+    let scale = load_f32(entity, SCALE);
+    let mut point = [0u32; 3];
+    for index in 0..3 {
+        let offset = (index as u32) * 4;
+        let destination = load_f32(task, CURRENT_POINT + offset);
+        let start = load_f32(task, START_POINT + offset);
+        let delta = load_f32(task, POINT_DELTA + offset);
+        let target = add_ss(start, delta);
+        let difference = sub_ss(target, destination);
+        let step = mul_ss(difference, scale);
+        point[index] = add_ss(destination, step).to_bits();
     }
 
-    let vtable = unsafe { read_pointer(entity, ENTITY_VTABLE) };
-    let callback = unsafe { read_word(vtable, VTABLE_UPDATE_SLOT) };
-    let callback: extern "thiscall" fn(u32, u32, u32, u32) -> u32 = unsafe {
-        core::mem::transmute(callback as usize)
-    };
-    let _: u32 = callback(entity as u32, interpolated.as_mut_ptr() as u32, 0, 1);
+    call_position_method(object, &point);
 
-    let position = unsafe { read_pointer(entity, ENTITY_POSITION) };
-    let result_bits = if position.is_null() {
-        unsafe { read_word(entity, ENTITY_FALLBACK) }
+    let anchor = load_u32(object, ANCHOR);
+    let final_position = anchor.wrapping_add(CURRENT_POINT);
+    let final_float = if anchor == 0 {
+        load_f32(object, 0x1c)
     } else {
-        let x_single = unsafe { read_word(position, POSITION_HELPER_X) } ^ SIGN_BIT_F32;
-        let y_single = unsafe { read_word(position, POSITION_HELPER_Y) };
-        let mut x_double = widen_f32_bits(x_single);
-        let y_double = widen_f32_bits(y_single);
-        if mutate_double {
-            x_double ^= 1u64 << 63;
-        }
-        let (x_low, x_high) = low_high_words(x_double);
-        let (y_low, y_high) = low_high_words(y_double);
-        let answer: u64 = callee_cdecl!(
-            CALLEE_DOUBLE_HELPER,
-            u64,
-            x_low,
-            x_high,
-            y_low,
-            y_high
-        );
-        narrow_f64_bits(answer)
+        let mask_words = [
+            read_sign_mask_word(0),
+            read_sign_mask_word(1),
+            read_sign_mask_word(2),
+            read_sign_mask_word(3),
+        ];
+        let raw_xmm0 = unsafe {
+            _mm_set_epi32(
+                (0 ^ mask_words[3]) as i32,
+                (0 ^ mask_words[2]) as i32,
+                (0 ^ mask_words[1]) as i32,
+                (load_u32(anchor, ANCHOR_VECTOR) ^ mask_words[0]) as i32,
+            )
+        };
+        let raw_xmm0_ps = unsafe { _mm_castsi128_ps(raw_xmm0) };
+        let raw_xmm0_pd = unsafe { _mm_castsi128_pd(raw_xmm0) };
+        let vector0 = unsafe { _mm_cvtss_sd(raw_xmm0_pd, raw_xmm0_ps) };
+
+        let second_float = load_u32(anchor, ANCHOR_VECTOR + 4);
+        let upper_float = if mutate_vector_high { 0x3f80_0000 } else { 0 };
+        let raw_xmm1 = unsafe {
+            _mm_set_epi32(0, 0, upper_float as i32, second_float as i32)
+        };
+        let raw_xmm1_ps = unsafe { _mm_castsi128_ps(raw_xmm1) };
+        let vector1 = unsafe { _mm_cvtps_pd(raw_xmm1_ps) };
+
+        let answer = call_vector_helper(vector0, vector1);
+        f64::from_bits(answer) as f32
     };
 
-    let update_data = (position as u32).wrapping_add(POSITION_COPY_START as u32);
-    let _: u32 = callee_thiscall!(
-        CALLEE_FINAL_MOVE,
+    let _ = lf_checker_rt::callee_thiscall!(
+        CALLEE_FINALIZE,
         u32,
-        entity as u32,
-        FINAL_MOVE_MODE,
-        update_data,
-        result_bits,
-        0
+        object,
+        POSITION_EVENT,
+        final_position,
+        final_float.to_bits(),
+        0,
     );
     0
 }
 
-export!(thiscall, rw_fn_00be75a0(this: *mut u8, entity: *mut u8) -> u32 {
-    unsafe { run(this, entity, false) }
+lf_checker_rt::export!(thiscall, rw_fn_00be75a0(task: u32, object: u32) -> u32 {
+    rewrite(task, object, false)
+});
+
+lf_checker_rt::export!(thiscall, mut_fn_00be75a0(task: u32, object: u32) -> u32 {
+    rewrite(task, object, true)
 });

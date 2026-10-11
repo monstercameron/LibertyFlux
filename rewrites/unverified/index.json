@@ -1320,14 +1320,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x009B5A00",
-  "name": "pending_009b5a00",
-  "file": "fn_009b5a00.rs",
-  "lane": "r-s668",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x009BB040",
   "name": "CCamScriptInstruction_SetTelescopeCamAngleLimits::vf2",
   "file": "fn_009bb040.rs",
@@ -1592,20 +1584,20 @@
   "reason": null
  },
  {
+  "address": "0x00A25570",
+  "name": "task_aim_solve",
+  "file": "fn_00a25570.rs",
+  "lane": "a-U55",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00A2D7F0",
   "name": "SaveHouse_RegisterInternal",
   "file": "fn_00a2d7f0.rs",
   "lane": "r-s631",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00A34830",
-  "name": "fn_00a34830",
-  "file": "fn_00a34830.rs",
-  "lane": "r-s660",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00A34860",
@@ -2281,10 +2273,18 @@
  },
  {
   "address": "0x00BC30C0",
-  "name": "CTaskComplexMoveSeekEntity<CEntitySeekPosCalculatorRadiusAngleOffset>::vf19",
+  "name": null,
   "file": "fn_00bc30c0.rs",
-  "lane": "r-b505",
-  "outcome": "not_reached",
+  "lane": "r-b678",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00BC3220",
+  "name": null,
+  "file": "fn_00bc3220.rs",
+  "lane": "r-b678",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -2459,7 +2459,7 @@
   "address": "0x00BE75A0",
   "name": null,
   "file": "fn_00be75a0.rs",
-  "lane": "a-U51",
+  "lane": "a-U43",
   "outcome": "not yet run",
   "reason": null
  },
@@ -2896,14 +2896,6 @@
   "reason": "out_of_time"
  },
  {
-  "address": "0x00CC80A0",
-  "name": "fragInstGta::vf3",
-  "file": "fn_00cc80a0.rs",
-  "lane": "r-s664",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00CCC7A0",
   "name": "CTaskComplexOnFire::vf18",
   "file": "fn_00ccc7a0.rs",
@@ -2950,6 +2942,22 @@
   "lane": "r-s581",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x00CDA380",
+  "name": null,
+  "file": "fn_00cda380.rs",
+  "lane": "r-s671",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CDA410",
+  "name": null,
+  "file": "fn_00cda410.rs",
+  "lane": "r-s671",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00CDF150",
@@ -3472,6 +3480,22 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00DE1350",
+  "name": "UIScrollingMenu::~UIScrollingMenu__deleting",
+  "file": "fn_00de1350.rs",
+  "lane": "r-s669",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DE14B0",
+  "name": "scrolling_menu_apply_child_state",
+  "file": "fn_00de14b0.rs",
+  "lane": "r-s669",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00DE43A0",
   "name": "UIRowLayout::vf139",
   "file": "fn_00de43a0.rs",
@@ -3483,14 +3507,6 @@
   "address": "0x00DE4800",
   "name": "UIGTAScrollingRow::~UIGTAScrollingRow__deleting",
   "file": "fn_00de4800.rs",
-  "lane": "r-s666",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DE4FE0",
-  "name": "UIGTAScrollingRow::vf0",
-  "file": "fn_00de4fe0.rs",
   "lane": "r-s666",
   "outcome": "not_reached",
   "reason": null

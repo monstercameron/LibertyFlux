@@ -6,7 +6,7 @@
 /// two frame-local pairs to the destination helper: the origin pair is the
 /// f32 words at `+0x0C` and `+0x10`; the far-corner pair adds those values,
 /// in that operand order, to the words at `+0x14` and `+0x18`. It also passes
-/// the word at `+0x1C` and the first far-corner value. The two pointer values
+/// the words at `+0x1C` and `+0x20`. The two pointer values
 /// are stack-local addresses, so the contract skips those addresses and
 /// compares both pointed-to pairs at the call. The helper's return is the
 /// handler's EAX result.
@@ -40,7 +40,7 @@ lf_checker_rt::export!(thiscall, rw_009bb110(this: u32) -> u32 {
             origin.as_ptr() as u32,
             far_corner.as_ptr() as u32,
             extra,
-            far_x.to_bits(),
+            (this.wrapping_add(0x20) as *const u32).read_unaligned(),
         )
     }
 });
