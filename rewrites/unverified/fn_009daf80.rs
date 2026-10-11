@@ -3,7 +3,7 @@
 /// Read the category word from a fixed global, then ask a helper whether the
 /// index belongs to that category. A nonzero low byte selects the category
 /// handler and returns its EAX; otherwise, query the index state and invoke the
-/// fallback only when that full EAX value is zero. Calls are cdecl.
+/// fallback only when that full EAX value is nonzero. Calls are cdecl.
 lf_checker_rt::export!(cdecl, rw_009daf80(index: u32) -> u32 {
     const CATEGORY_GLOBAL: u32 = 0x0104_b814;
     let category = unsafe { lf_checker_rt::global::<u32>(CATEGORY_GLOBAL).read_unaligned() };
@@ -14,7 +14,7 @@ lf_checker_rt::export!(cdecl, rw_009daf80(index: u32) -> u32 {
     }
 
     let active = lf_checker_rt::callee_cdecl!(3, u32, index);
-    if active == 0 {
+    if active != 0 {
         lf_checker_rt::callee_cdecl!(4, u32, index)
     } else {
         active
