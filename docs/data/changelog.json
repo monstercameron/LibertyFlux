@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Rewrites: five index rows restored that concurrent imports had lost",
+    "commit": null,
+    "summary": "The verified count goes up by five without any new proof: five rewrites imported earlier today had their files committed and no row in the index, so they were not being counted and the pipeline's consistency check failed.",
+    "changes": [
+      "The importer reads the index when it starts and writes it when it ends. With three finishers and the coordinator running it at the same time during the afternoon, the last writer won and the rows the others had added were lost: four small functions imported at 17:47 and the 4,490-byte function closed at 15:22. Each had passed the coordinator's own re-run before its import; nothing about the proofs changed.",
+      "The rows are restored by importing the two lanes again. The importer and the withdrawal script now take one lock before they read the index and hold it until they exit, so two of them cannot interleave.",
+      "The fault was on the safe side (verified work not counted, never unverified work counted), and it is how the pipeline's check found it: the check compares the files in the tree with the rows in the index."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 34 files from lanes (640 unverified rewrites, 44 in review)",
     "commit": "327f6489762ccdbd8d6c47008e101286e8ef516d",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",

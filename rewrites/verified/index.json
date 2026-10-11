@@ -132480,6 +132480,24 @@
   "lane": "r-s653"
  },
  {
+  "address": "0x00C77430",
+  "name": "streaming_dispatch_entry",
+  "kind": "function",
+  "file": "functions/fn_00c77430.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s694"
+ },
+ {
+  "address": "0x00C77530",
+  "name": "streaming_entry_address",
+  "kind": "function",
+  "file": "functions/fn_00c77530.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s694"
+ },
+ {
   "address": "0x00C78060",
   "name": "pg_dictionary_phbound_destroy",
   "kind": "function",
@@ -132622,6 +132640,24 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s663"
+ },
+ {
+  "address": "0x00C78F90",
+  "name": "streaming_shutdown_tail_entry",
+  "kind": "function",
+  "file": "functions/fn_00c78f90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s694"
+ },
+ {
+  "address": "0x00C79390",
+  "name": "streaming_counters_reset",
+  "kind": "function",
+  "file": "functions/fn_00c79390.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s694"
  },
  {
   "address": "0x00C7A530",
@@ -150073,6 +150109,15 @@
   "trials": 300,
   "checker": "version 7",
   "lane": "a-S14"
+ },
+ {
+  "address": "0x00DC1C90",
+  "name": "peds_task_path_build",
+  "kind": "function",
+  "file": "functions/fn_00dc1c90.rs",
+  "trials": 33000,
+  "checker": "version 8",
+  "lane": "a-H30"
  },
  {
   "address": "0x00DC2F10",
