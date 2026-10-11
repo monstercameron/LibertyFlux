@@ -40266,6 +40266,15 @@
   "lane": "r-b627"
  },
  {
+  "address": "0x00667620",
+  "name": "streaming_assign_indices_and_notify",
+  "kind": "function",
+  "file": "functions/fn_00667620.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s704"
+ },
+ {
   "address": "0x00668190",
   "name": "rage::ptxEventEmitter::vf1",
   "kind": "function",
@@ -40273,6 +40282,51 @@
   "trials": 1200,
   "checker": "version 8",
   "lane": "r-s584"
+ },
+ {
+  "address": "0x00669280",
+  "name": "rage::ptxEventEffect::vf13",
+  "kind": "function",
+  "file": "functions/fn_00669280.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s704"
+ },
+ {
+  "address": "0x006692A0",
+  "name": "rage::ptxEventEffect::vf14",
+  "kind": "function",
+  "file": "functions/fn_006692a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s704"
+ },
+ {
+  "address": "0x006692C0",
+  "name": "rage::ptxEventEffect::vf4",
+  "kind": "function",
+  "file": "functions/fn_006692c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s704"
+ },
+ {
+  "address": "0x006692F0",
+  "name": "rage::ptxEventEffect::vf12",
+  "kind": "function",
+  "file": "functions/fn_006692f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s704"
+ },
+ {
+  "address": "0x0066ABD0",
+  "name": "streaming_find_record_for_pointer",
+  "kind": "function",
+  "file": "functions/fn_0066abd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s704"
  },
  {
   "address": "0x0066DB10",
