@@ -33,7 +33,11 @@ const SIN_ID: u32 = 1;
 const TAN_X87_ID: u32 = 2;
 const TAN_SSE_ID: u32 = 3;
 const SIGN_BIT: u32 = 0x80000000;
+const POSITIVE_INFINITY_BITS: u32 = 0x7f800000;
+const NEGATIVE_INFINITY_BITS: u32 = 0xff800000;
+const NEGATIVE_QUIET_NAN_BITS: u32 = 0xffc00000;
 
+#[inline]
 #[target_feature(enable = "sse")]
 unsafe fn fadd(lhs: f32, rhs: f32) -> f32 {
     let left = _mm_set_ss(core::hint::black_box(lhs));
@@ -41,6 +45,7 @@ unsafe fn fadd(lhs: f32, rhs: f32) -> f32 {
     _mm_cvtss_f32(_mm_add_ss(left, right))
 }
 
+#[inline]
 #[target_feature(enable = "sse")]
 unsafe fn fsub(lhs: f32, rhs: f32) -> f32 {
     let left = _mm_set_ss(core::hint::black_box(lhs));
@@ -48,6 +53,7 @@ unsafe fn fsub(lhs: f32, rhs: f32) -> f32 {
     _mm_cvtss_f32(_mm_sub_ss(left, right))
 }
 
+#[inline]
 #[target_feature(enable = "sse")]
 unsafe fn fmul(lhs: f32, rhs: f32) -> f32 {
     let left = _mm_set_ss(core::hint::black_box(lhs));
@@ -55,6 +61,7 @@ unsafe fn fmul(lhs: f32, rhs: f32) -> f32 {
     _mm_cvtss_f32(_mm_mul_ss(left, right))
 }
 
+#[inline]
 #[target_feature(enable = "sse")]
 unsafe fn fdiv(lhs: f32, rhs: f32) -> f32 {
     let left = _mm_set_ss(core::hint::black_box(lhs));
@@ -126,6 +133,7 @@ unsafe fn write_row(
     }
 }
 
+#[target_feature(enable = "sse")]
 unsafe fn update_coefficients(this: u32, mutant: bool) -> u32 {
     unsafe {
         if read8(this + BYPASS_OFFSET) != 0 {
@@ -201,7 +209,15 @@ unsafe fn update_coefficients(this: u32, mutant: bool) -> u32 {
                 let b2 = fneg(b0);
                 let cosine = call_f32_xmm0(COS_ID, omega);
                 let b0_times_inverse_tangent = fmul(b0, inverse_tangent);
-                let a1 = fneg(fmul(fmul(cosine, two), b0_times_inverse_tangent));
+                let cosine_times_two = fmul(cosine, two);
+                let scaled_cosine = fmul(cosine_times_two, b0_times_inverse_tangent);
+                let a1 = if cosine_times_two.to_bits() & !SIGN_BIT == 0
+                    && b0_times_inverse_tangent.to_bits() == NEGATIVE_INFINITY_BITS
+                {
+                    f32::from_bits(NEGATIVE_QUIET_NAN_BITS)
+                } else {
+                    fneg(scaled_cosine)
+                };
                 let a2 = fmul(fsub(inverse_tangent, one), b0);
                 write_row(this, index, b0, b1, b2, a1, a2, mutant, mode);
             }
@@ -211,7 +227,15 @@ unsafe fn update_coefficients(this: u32, mutant: bool) -> u32 {
                 let inverse = fdiv(one, fadd(tangent, one));
                 let b0 = inverse;
                 let cosine = call_f32_xmm0(COS_ID, omega);
-                let a1 = fmul(fmul(cosine, minus_two), inverse);
+                let cosine_times_two = fmul(cosine, two);
+                let scaled_cosine = fmul(cosine_times_two, inverse);
+                let a1 = if cosine_times_two.to_bits() & !SIGN_BIT == 0
+                    && inverse.to_bits() == POSITIVE_INFINITY_BITS
+                {
+                    f32::from_bits(NEGATIVE_QUIET_NAN_BITS)
+                } else {
+                    fneg(scaled_cosine)
+                };
                 let a2 = fmul(fsub(one, tangent), inverse);
                 write_row(this, index, b0, a1, b0, a1, a2, mutant, mode);
             }

@@ -21,6 +21,15 @@ pub extern "cdecl" fn rw_c5d420(
     lower_bits: u32,
     upper_bits: u32,
 ) -> u32 {
+    // Keep the runtime's patched mirror symbols in this DLL even though this
+    // leaf has no intercepted calls or register-entry reads.
+    let _runtime_exports = core::hint::black_box((
+        core::ptr::addr_of!(lf_checker_rt::CHECKER_XBASE),
+        core::ptr::addr_of!(lf_checker_rt::CHECKER_CTABLE),
+        core::ptr::addr_of!(lf_checker_rt::CHECKER_XMM),
+        core::ptr::addr_of!(lf_checker_rt::CHECKER_TLS),
+    ));
+
     const ONE: f32 = f32::from_bits(0x3f80_0000);
     const INV_TURN: f32 = f32::from_bits(0x3e22_f983);
     const NEG_INV_TURN: f32 = f32::from_bits(0xbe22_f983);

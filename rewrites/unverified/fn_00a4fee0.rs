@@ -1,49 +1,50 @@
-// original: 0x00a4fee0 vehicle_init_slots (proposed)
+// original: 0x00A4FEE0 vehicle_init_slots
 
-/// Initialise all 256 slots, clear the table state, report done.
-///
-/// Each slot address (`this + 0x100` stepping 0xe0) goes to the slot-init
-/// callee in ecx with eight zero words, a scratch word and 0x64 on the
-/// stack; the callee never cleans up (the frame pointer restores the stack
-/// at the end), so the stub is declared noclean and the scratch word is
-/// skipped. Afterwards the counter at +0x12104 is zeroed, +0xe100 takes
-/// 0xf423f, 0x1000 words at +0xe104 are cleared, and the done callee runs.
-/// 257 calls per trial, hence the raised call-log cap. Thiscall, one stack
-/// word (unread), two callees, 1 in eax.
-lf_checker_rt::export!(thiscall, rw_00a4fee0(this: u32, _a0: u32) -> u32 {
-    unsafe {
-        const INIT: u32 = 1;
-        const DONE: u32 = 2;
-        const SLOTS_BASE: u32 = 0x100;
-        const SLOT_STRIDE: u32 = 0xe0;
-        const NSLOTS: u32 = 0x100;
-        const RATE: u32 = 0x64;
-        const MAGIC: u32 = 0xf423f;
-        unsafe fn wr32(a: u32, v: u32) {
-            unsafe { (a as *mut u32).write_unaligned(v) }
-        }
-        let mut slot = this.wrapping_add(SLOTS_BASE);
-        let mut left = NSLOTS;
-        loop {
-            let mut scratch = [0u32; 2];
-            let frame = (&mut scratch as *mut u32) as u32;
-            lf_checker_rt::callee_thiscall!(INIT, u32, slot, 0, frame, 0, 0, 0, 0, 0, RATE, 0);
-            slot = slot.wrapping_add(SLOT_STRIDE);
-            left = left.wrapping_sub(1);
-            if left == 0 {
-                break;
-            }
-        }
-        wr32(this.wrapping_add(0x12104), 0);
-        wr32(this.wrapping_add(0xe100), MAGIC);
-        let mut p = this.wrapping_add(0xe104);
-        let mut n: u32 = 0x1000;
-        while n != 0 {
-            wr32(p, 0);
-            p = p.wrapping_add(4);
-            n = n.wrapping_sub(1);
-        }
-        lf_checker_rt::callee_cdecl!(DONE, u32,);
-        1
+/// Initializes all 256 vehicle slots in order by calling the slot helper with
+/// the slot at offset 0x100 plus 0xE0 bytes per index. The helper receives nine
+/// stack words, including a pointer to an otherwise unused local scratch area.
+/// After the calls, the owner receives a zero count, a fixed sentinel, and a
+/// cleared 4,096-word list. The final zero-argument helper is called before the
+/// function returns true in AL. The owner layout and cleanup are 32-bit.
+lf_checker_rt::export!(thiscall, rw_vehicle_init_slots(this: u32, _unused: u32) -> u8 {
+    const SLOT_BASE: u32 = 0x0100;
+    const SLOT_STRIDE: u32 = 0x00E0;
+    const SLOT_COUNT: u32 = 256;
+    const COUNT_FIELD: u32 = 0x12104;
+    const SENTINEL_FIELD: u32 = 0x0E100;
+    const LIST_BASE: u32 = 0x0E104;
+    const LIST_WORDS: u32 = 4096;
+    const SENTINEL: u32 = 0x000F423F;
+
+    #[inline(always)]
+    unsafe fn write_u32(address: u32, value: u32) {
+        unsafe { (address as *mut u32).write_unaligned(value) }
     }
+
+    let mut scratch = [0u32; 8];
+    let scratch_pointer = scratch.as_mut_ptr() as u32;
+    let mut index = 0u32;
+    while index < SLOT_COUNT {
+        let slot = this
+            .wrapping_add(SLOT_BASE)
+            .wrapping_add(index.wrapping_mul(SLOT_STRIDE));
+        let _ = lf_checker_rt::callee_thiscall!(
+            1, u32, slot, 0, scratch_pointer, 0, 0, 0, 0, 0, 0x64, 0
+        );
+        index += 1;
+    }
+
+    unsafe { write_u32(this.wrapping_add(COUNT_FIELD), 0) };
+    unsafe { write_u32(this.wrapping_add(SENTINEL_FIELD), SENTINEL) };
+    let mut word_index = 0u32;
+    while word_index < LIST_WORDS {
+        let address = this
+            .wrapping_add(LIST_BASE)
+            .wrapping_add(word_index.wrapping_mul(4));
+        unsafe { write_u32(address, 0) };
+        word_index += 1;
+    }
+
+    let _ = lf_checker_rt::callee_cdecl!(2, u32,);
+    1
 });
