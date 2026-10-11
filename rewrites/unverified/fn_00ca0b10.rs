@@ -140,7 +140,7 @@ pub unsafe fn rw_00ca0b10(
     ];
     let angle_output_pointer = angle_output.as_ptr() as usize as u32;
     let _ = lf_checker_rt::callee_thiscall!(11, u32, final_destination, angle_output_pointer);
-    let _ = lf_checker_rt::callee_thiscall!(12, u32, final_destination, 0u32);
+    let _ = lf_checker_rt::callee_thiscall!(12, u32, final_destination, first_vector);
 
     let mut word = 0;
     while word < RESULT_WORD_COUNT {
