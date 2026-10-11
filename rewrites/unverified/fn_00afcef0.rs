@@ -444,7 +444,9 @@ export!(cdecl, rw_00afcef0(
             (a11 as *mut u32).write(positive_first);
             (a12 as *mut u32).write(positive_second);
             (a13 as *mut f32).write(distance_metric);
-            return 1 + 0;            }
+            // The return value keeps the work pair's upper bits: the original sets only the low byte.
+            return ((work_pair & 0xFFFF_FF00) | 1).wrapping_add(0);
+            }
             // All trips done without a geometric candidate: the common exit.
             callee_thiscall!(4, u32, 0);
             return 0;
