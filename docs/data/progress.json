@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-11",
-  "updated_at": "2026-10-11 02:21",
+  "updated_at": "2026-10-11 02:25",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,12 +12,12 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 36031,
-    "rewritten": 17414,
-    "verified": 17316
+    "named": 36033,
+    "rewritten": 17423,
+    "verified": 17319
   },
   "structures": 340,
-  "symbols": 17416,
+  "symbols": 17419,
   "measured": [
     {
       "label": "Code section",
@@ -99,9 +99,9 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 36031,
+      "value": 36033,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (27027); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (27029); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites of game functions that passed the checker in a lane",
@@ -117,9 +117,9 @@
     },
     {
       "label": "Game code verified, measured in bytes",
-      "value": 34.7,
+      "value": 34.8,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2544031 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2545087 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
@@ -135,20 +135,20 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 17414,
+      "value": 17423,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 17316,
+      "value": 17319,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
   ],
   "activity": {
-    "lanes_running": 56,
-    "lanes_finished": 2066,
+    "lanes_running": 54,
+    "lanes_finished": 2069,
     "lanes_incomplete": 460,
     "devlog_entries": 553
   },
@@ -672,7 +672,7 @@
       "to": "0x0054419B",
       "count": 206,
       "named": 206,
-      "rewritten": 110,
+      "rewritten": 113,
       "verified": 105
     },
     {
@@ -2625,8 +2625,8 @@
       "to": "0x009FCF14",
       "count": 103,
       "named": 102,
-      "rewritten": 73,
-      "verified": 72
+      "rewritten": 74,
+      "verified": 73
     },
     {
       "stage": "verified",
@@ -3247,7 +3247,7 @@
       "count": 175,
       "named": 171,
       "rewritten": 26,
-      "verified": 21
+      "verified": 22
     },
     {
       "stage": "named",
@@ -3256,7 +3256,7 @@
       "count": 125,
       "named": 121,
       "rewritten": 27,
-      "verified": 20
+      "verified": 21
     },
     {
       "stage": "verified",
@@ -3363,7 +3363,7 @@
       "to": "0x00BC5BD6",
       "count": 162,
       "named": 162,
-      "rewritten": 95,
+      "rewritten": 96,
       "verified": 94
     },
     {
@@ -3425,8 +3425,8 @@
       "from": "0x00BE72A1",
       "to": "0x00BECBC1",
       "count": 124,
-      "named": 120,
-      "rewritten": 96,
+      "named": 121,
+      "rewritten": 97,
       "verified": 93
     },
     {
@@ -3768,7 +3768,7 @@
       "to": "0x00CC06BE",
       "count": 61,
       "named": 54,
-      "rewritten": 21,
+      "rewritten": 22,
       "verified": 20
     },
     {
@@ -4001,8 +4001,8 @@
       "from": "0x00D4BB06",
       "to": "0x00D51427",
       "count": 111,
-      "named": 90,
-      "rewritten": 46,
+      "named": 91,
+      "rewritten": 47,
       "verified": 43
     },
     {
@@ -4209,7 +4209,7 @@
       "to": "0x00DD162B",
       "count": 124,
       "named": 117,
-      "rewritten": 31,
+      "rewritten": 32,
       "verified": 28
     },
     {
@@ -4477,7 +4477,7 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2544031,
+    "verified": 2545087,
     "large_functions": 2801402,
     "large_functions_verified": 733249
   },
