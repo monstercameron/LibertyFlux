@@ -689,11 +689,19 @@
  },
  {
   "address": "0x005E16F0",
-  "name": "compute_blend_weights",
+  "name": null,
   "file": "fn_005e16f0.rs",
   "lane": "r-b695",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x005E2300",
+  "name": null,
+  "file": "fn_005e2300.rs",
+  "lane": "r-b695",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x005E8170",
@@ -709,14 +717,6 @@
   "file": "fn_005e81d0.rs",
   "lane": "r-n88",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x005E8D60",
-  "name": "CTaskComplexWanderCop::vf22",
-  "file": "fn_005e8d60.rs",
-  "lane": "r-s719",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -5043,6 +5043,14 @@
   "address": "0x00DCA730",
   "name": "CTaskComplexCarReactToVehicleCollisionGetOut::vf20",
   "file": "fn_00dca730.rs",
+  "lane": "r-s722",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DCA7E0",
+  "name": "CTaskComplexCarReactToVehicleCollision::vf19",
+  "file": "fn_00dca7e0.rs",
   "lane": "r-s722",
   "outcome": "not_reached",
   "reason": null
