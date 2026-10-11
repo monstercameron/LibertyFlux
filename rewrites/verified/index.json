@@ -46935,6 +46935,15 @@
   "lane": "r-s438"
  },
  {
+  "address": "0x008835C0",
+  "name": "streaming_claim_next_slot_bit",
+  "kind": "function",
+  "file": "functions/fn_008835c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s691"
+ },
+ {
   "address": "0x00883650",
   "name": "stream_alloc_single",
   "kind": "function",
@@ -47194,6 +47203,24 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-s438"
+ },
+ {
+  "address": "0x00885110",
+  "name": "streaming_reader_query_and_subtract",
+  "kind": "function",
+  "file": "functions/fn_00885110.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s691"
+ },
+ {
+  "address": "0x00885220",
+  "name": "streaming_forward_if_non_null",
+  "kind": "function",
+  "file": "functions/fn_00885220.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s691"
  },
  {
   "address": "0x00887270",
