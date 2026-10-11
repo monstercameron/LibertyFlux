@@ -95544,6 +95544,150 @@
   "lane": "a-G15"
  },
  {
+  "address": "0x00B4BA30",
+  "name": "CEventStuckInAir::vf20",
+  "kind": "function",
+  "file": "functions/fn_00b4ba30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s730"
+ },
+ {
+  "address": "0x00B4BA80",
+  "name": "CEventVehicleCollision::vf20",
+  "kind": "function",
+  "file": "functions/fn_00b4ba80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s730"
+ },
+ {
+  "address": "0x00B4BAA0",
+  "name": "event_type_pair_in_table",
+  "kind": "function",
+  "file": "functions/fn_00b4baa0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s730"
+ },
+ {
+  "address": "0x00B4BAD0",
+  "name": "object_field_10_not_200",
+  "kind": "function",
+  "file": "functions/fn_00b4bad0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s730"
+ },
+ {
+  "address": "0x00B4BAE0",
+  "name": "group_initialize",
+  "kind": "function",
+  "file": "functions/fn_00b4bae0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s730"
+ },
+ {
+  "address": "0x00B4BB30",
+  "name": "group_init_member_slots",
+  "kind": "function",
+  "file": "functions/fn_00b4bb30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s730"
+ },
+ {
+  "address": "0x00B4BC20",
+  "name": "group_free_entry",
+  "kind": "function",
+  "file": "functions/fn_00b4bc20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s730"
+ },
+ {
+  "address": "0x00B4BF20",
+  "name": "group_count_members",
+  "kind": "function",
+  "file": "functions/fn_00b4bf20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s730"
+ },
+ {
+  "address": "0x00B4BF90",
+  "name": "NativeImpl_GET_GROUP_SIZE_2",
+  "kind": "function",
+  "file": "functions/fn_00b4bf90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s730"
+ },
+ {
+  "address": "0x00B4C1A0",
+  "name": "group_find_member_index",
+  "kind": "function",
+  "file": "functions/fn_00b4c1a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s730"
+ },
+ {
+  "address": "0x00B4C200",
+  "name": "group_member_dense_index",
+  "kind": "function",
+  "file": "functions/fn_00b4c200.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s730"
+ },
+ {
+  "address": "0x00B4C290",
+  "name": "group_entry_from_ped",
+  "kind": "function",
+  "file": "functions/fn_00b4c290.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s730"
+ },
+ {
+  "address": "0x00B4C2B0",
+  "name": "nested_signed_byte_at_4e6",
+  "kind": "function",
+  "file": "functions/fn_00b4c2b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s730"
+ },
+ {
+  "address": "0x00B4C330",
+  "name": "group_has_leader",
+  "kind": "function",
+  "file": "functions/fn_00b4c330.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s730"
+ },
+ {
+  "address": "0x00B4C420",
+  "name": "group_contains_member",
+  "kind": "function",
+  "file": "functions/fn_00b4c420.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s730"
+ },
+ {
+  "address": "0x00B4C460",
+  "name": "NativeImpl_IS_GROUP_LEADER",
+  "kind": "function",
+  "file": "functions/fn_00b4c460.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s730"
+ },
+ {
   "address": "0x00B4E150",
   "name": "CDummyPed::vf0",
   "kind": "function",
