@@ -150579,6 +150579,15 @@
   "lane": "a-G06"
  },
  {
+  "address": "0x00DFD4CF",
+  "name": "strnicmp_l",
+  "kind": "function",
+  "file": "functions/fn_00dfd4cf.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U97"
+ },
+ {
   "address": "0x00DFD880",
   "name": "memswap_bytes",
   "kind": "function",
@@ -150622,6 +150631,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G06"
+ },
+ {
+  "address": "0x00DFDD67",
+  "name": "heap_alloc",
+  "kind": "function",
+  "file": "functions/fn_00dfdd67.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U97"
  },
  {
   "address": "0x00DFDEB3",
@@ -150721,6 +150739,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G06"
+ },
+ {
+  "address": "0x00DFF29E",
+  "name": "wcsicmp_l",
+  "kind": "function",
+  "file": "functions/fn_00dff29e.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U97"
  },
  {
   "address": "0x00DFF377",
