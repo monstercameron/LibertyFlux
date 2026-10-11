@@ -1440,6 +1440,14 @@
   "reason": null
  },
  {
+  "address": "0x00990930",
+  "name": "audVehicleAudioEntity::stop_heli_damage_loop",
+  "file": "fn_00990930.rs",
+  "lane": "r-s735",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x009AA110",
   "name": "conv_first_or_null",
   "file": "fn_009aa110.rs",
@@ -1480,22 +1488,6 @@
   "reason": null
  },
  {
-  "address": "0x009B1B30",
-  "name": "audPoliceScanner::acquire_noise_loop",
-  "file": "fn_009b1b30.rs",
-  "lane": "r-s734",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B2090",
-  "name": "audPoliceScanner::start_slot_sound",
-  "file": "fn_009b2090.rs",
-  "lane": "r-s734",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x009B3200",
   "name": "audPoliceScanner::report_player_spotted",
   "file": "fn_009b3200.rs",
@@ -1515,14 +1507,6 @@
   "address": "0x009B3CB0",
   "name": "audPoliceScanner::tally_crime_detailed",
   "file": "fn_009b3cb0.rs",
-  "lane": "r-s734",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B43D0",
-  "name": "audPoliceScanner::shutdown",
-  "file": "fn_009b43d0.rs",
   "lane": "r-s734",
   "outcome": "not_reached",
   "reason": null
@@ -1649,10 +1633,10 @@
  },
  {
   "address": "0x009DB660",
-  "name": "CSwayableAttr::~CSwayableAttr__deleting",
+  "name": null,
   "file": "fn_009db660.rs",
   "lane": "r-s740",
-  "outcome": "not_reached",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -1945,9 +1929,9 @@
  },
  {
   "address": "0x00A8AD20",
-  "name": "pool_retry_probe",
+  "name": "pool_refill_loop",
   "file": "fn_00a8ad20.rs",
-  "lane": "r-s737",
+  "lane": "r-s463",
   "outcome": "not_reached",
   "reason": null
  },
@@ -1961,9 +1945,9 @@
  },
  {
   "address": "0x00A8AE90",
-  "name": "pool_load_named",
+  "name": "pool_cookie_scan_dispatch",
   "file": "fn_00a8ae90.rs",
-  "lane": "r-s463",
+  "lane": "r-s737",
   "outcome": "not_reached",
   "reason": null
  },
@@ -2540,16 +2524,16 @@
   "name": "CEventVehicleCollision::vf20",
   "file": "fn_00b4ba80.rs",
   "lane": "r-s730",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00B4BAA0",
   "name": "event_type_pair_in_table",
   "file": "fn_00b4baa0.rs",
   "lane": "r-s730",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00B4BAD0",
@@ -2564,13 +2548,21 @@
   "name": "group_initialize",
   "file": "fn_00b4bae0.rs",
   "lane": "r-s730",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00B4BB30",
   "name": "group_init_member_slots",
   "file": "fn_00b4bb30.rs",
+  "lane": "r-s730",
+  "outcome": "deferred",
+  "reason": "partly_proven"
+ },
+ {
+  "address": "0x00B4BC20",
+  "name": "group_free_entry",
+  "file": "fn_00b4bc20.rs",
   "lane": "r-s730",
   "outcome": "not_reached",
   "reason": null
@@ -2588,13 +2580,21 @@
   "name": "group_count_members",
   "file": "fn_00b4bf20.rs",
   "lane": "r-s730",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00B4BF90",
   "name": "NativeImpl_GET_GROUP_SIZE_2",
   "file": "fn_00b4bf90.rs",
+  "lane": "r-s730",
+  "outcome": "deferred",
+  "reason": "partly_proven"
+ },
+ {
+  "address": "0x00B4C120",
+  "name": "group_remove_all_members",
+  "file": "fn_00b4c120.rs",
   "lane": "r-s730",
   "outcome": "not_reached",
   "reason": null
@@ -2612,56 +2612,56 @@
   "name": "group_find_member_index",
   "file": "fn_00b4c1a0.rs",
   "lane": "r-s730",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00B4C200",
   "name": "group_member_dense_index",
   "file": "fn_00b4c200.rs",
   "lane": "r-s730",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00B4C290",
   "name": "group_entry_from_ped",
   "file": "fn_00b4c290.rs",
   "lane": "r-s730",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00B4C2B0",
   "name": "nested_signed_byte_at_4e6",
   "file": "fn_00b4c2b0.rs",
   "lane": "r-s730",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00B4C330",
   "name": "group_has_leader",
   "file": "fn_00b4c330.rs",
   "lane": "r-s730",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00B4C420",
   "name": "group_contains_member",
   "file": "fn_00b4c420.rs",
   "lane": "r-s730",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00B4C460",
   "name": "NativeImpl_IS_GROUP_LEADER",
   "file": "fn_00b4c460.rs",
   "lane": "r-s730",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00B505D0",
@@ -3267,6 +3267,14 @@
   "address": "0x00C2F510",
   "name": "NativeImpl_SET_CAR_DOOR_LATCHED_2",
   "file": "fn_00c2f510.rs",
+  "lane": "r-s733",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C2F970",
+  "name": "vehicle_dynamics_get_handling_ratio",
+  "file": "fn_00c2f970.rs",
   "lane": "r-s733",
   "outcome": "not_reached",
   "reason": null
@@ -4614,30 +4622,6 @@
   "lane": "r-s461",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00E6CED0",
-  "name": "vehicle_tuning_ratio_init_39",
-  "file": "fn_00e6ced0.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E6CEF0",
-  "name": "vehicle_tuning_ratio_init_40",
-  "file": "fn_00e6cef0.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E6CF10",
-  "name": "vehicle_tuning_ratio_init_41",
-  "file": "fn_00e6cf10.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00E6CF30",

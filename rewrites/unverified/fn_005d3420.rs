@@ -2,12 +2,14 @@
 
 /// Forward one argument to the child task's virtual slot 8.
 ///
-/// The child pointer is stored at `this + 8`. A null child returns zero. For
-/// a live child, the function loads the 32-bit vtable pointer, dispatches slot
-/// 8 at byte offset `0x20` with the child as `this`, and returns that method's
-/// EAX result. The original tail-jumps to the selected thiscall method; this
-/// rewrite makes the equivalent intercepted call. The one stack argument is
-/// removed by the target method.
+/// The child pointer is stored at `this + 8`. For a live child, the function
+/// loads the 32-bit vtable pointer, dispatches slot 8 at byte offset `0x20`
+/// with the child as `this`, and returns that method's EAX result. The original
+/// tail-jumps to the selected thiscall method; this rewrite makes the
+/// equivalent intercepted call. If the child is null, the original leaves EAX
+/// unchanged. This proof fixes incoming EAX to zero, so returning zero matches
+/// that branch; nonzero EAX carry-through is not covered. The one stack
+/// argument is removed by the target method.
 lf_checker_rt::export!(thiscall, rw_005d3420(this: u32, argument: u32) -> u32 {
     unsafe {
         const CHILD_POINTER: u32 = 0x08;
