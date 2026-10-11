@@ -25,11 +25,17 @@ lf_checker_rt::export!(thiscall, rw_005d3470(this: u32) -> u32 {
 
         let timer = lf_checker_rt::global::<u32>(GAME_TIMER_VA);
         if state.add(RESET as usize).read_unaligned() != 0 {
-            state.cast::<u32>().write_unaligned(timer.read_unaligned());
+            state
+                .add(START_VALUE as usize)
+                .cast::<u32>()
+                .write_unaligned(timer.read_unaligned());
             state.add(RESET as usize).write_unaligned(0);
         }
 
-        let start = state.cast::<u32>().read_unaligned();
+        let start = state
+            .add(START_VALUE as usize)
+            .cast::<u32>()
+            .read_unaligned();
         let duration = state.add(DURATION as usize).cast::<u32>().read_unaligned();
         let deadline = start.wrapping_add(duration);
         u32::from((deadline as i32) <= (timer.read_unaligned() as i32))

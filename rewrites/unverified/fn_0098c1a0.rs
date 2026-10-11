@@ -19,11 +19,12 @@ lf_checker_rt::export!(thiscall, rw_audvehicleaudioentity_ensure_heli_config(thi
         let lookup: unsafe extern "thiscall" fn(u32, u32) -> u32 =
             core::mem::transmute(lf_checker_rt::callee_addr(2));
 
+        let registry = lf_checker_rt::global::<u8>(REGISTRY) as u32;
         let name = model_name(this);
-        let result = lookup(REGISTRY, name);
+        let result = lookup(registry, name);
         if result != 0 {
             return result;
         }
-        lookup(REGISTRY, FALLBACK_RESOURCE)
+        lookup(registry, FALLBACK_RESOURCE)
     }
 });
