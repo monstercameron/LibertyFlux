@@ -34029,6 +34029,24 @@
   "lane": "r-s505"
  },
  {
+  "address": "0x005C43E0",
+  "name": "ped_task_enabled_positive_count_predicate",
+  "kind": "function",
+  "file": "functions/fn_005c43e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s630"
+ },
+ {
+  "address": "0x005C4420",
+  "name": "ped_task_resource_tag_predicate",
+  "kind": "function",
+  "file": "functions/fn_005c4420.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s630"
+ },
+ {
   "address": "0x005C8390",
   "name": "ped_task_group_reset (proposed)",
   "kind": "function",
