@@ -12,9 +12,9 @@ pub unsafe extern "C" fn rw_00bd6a80(
     const NORMALIZE_NAME: u32 = 3;
     const HASH_NAME: u32 = 4;
     const FIND_DICTIONARY: u32 = 5;
-    const INDIRECT_FALLBACK: u32 = 6;
     const PRIMARY_MANAGER: u32 = 0x011d_95f0;
     const TXD_MANAGER_GLOBAL: u32 = 0x017f_5630;
+    const FALLBACK_RESOURCE_NAME: u32 = 0x00eb_7d38;
 
     unsafe {
         let selected_name = if primary_name != 0 {
@@ -36,8 +36,13 @@ pub unsafe extern "C" fn rw_00bd6a80(
             let manager = lf_checker_rt::global::<u32>(TXD_MANAGER_GLOBAL).read_unaligned();
             let vtable = (manager as *const u32).read_unaligned();
             let slot_3 = (vtable as *const u32).add(3).read_unaligned();
-            let callback: unsafe extern "C" fn() -> u32 = core::mem::transmute(slot_3);
-            callback()
+            let callback: unsafe extern "thiscall" fn(*mut u32, u32, u32) -> u32 =
+                core::mem::transmute(slot_3);
+            callback(
+                manager as *mut u32,
+                lf_checker_rt::relocated(FALLBACK_RESOURCE_NAME),
+                0,
+            )
         }
     }
 }
