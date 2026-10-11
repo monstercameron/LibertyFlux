@@ -76572,6 +76572,15 @@
   "lane": "r-s331"
  },
  {
+  "address": "0x00A1D7F0",
+  "name": "task_group_release_enabled_records",
+  "kind": "function",
+  "file": "functions/fn_00a1d7f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
   "address": "0x00A1D8C0",
   "name": "cam_target_set_pair",
   "kind": "function",
@@ -76626,6 +76635,15 @@
   "lane": "a-G23"
  },
  {
+  "address": "0x00A1DBD0",
+  "name": "task_group_sum_enabled_record_values",
+  "kind": "function",
+  "file": "functions/fn_00a1dbd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
   "address": "0x00A1DCB0",
   "name": "task_blend_m33_and_maybe_scale",
   "kind": "function",
@@ -76660,6 +76678,15 @@
   "trials": 1200,
   "checker": "version 8",
   "lane": "a-G23"
+ },
+ {
+  "address": "0x00A1E210",
+  "name": "task_group_find_first_active_result",
+  "kind": "function",
+  "file": "functions/fn_00a1e210.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
  },
  {
   "address": "0x00A1E310",
@@ -76887,6 +76914,60 @@
   "lane": "r-s331"
  },
  {
+  "address": "0x00A21B40",
+  "name": "spatial_records_distance_exceeds_radius_sum",
+  "kind": "function",
+  "file": "functions/fn_00a21b40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
+  "address": "0x00A21BA0",
+  "name": "task_groups_call_initialization_helper",
+  "kind": "function",
+  "file": "functions/fn_00a21ba0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
+  "address": "0x00A21EF0",
+  "name": "task_record_set_id_and_flags",
+  "kind": "function",
+  "file": "functions/fn_00a21ef0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
+  "address": "0x00A21F10",
+  "name": "task_group_visit_enabled_records_with_context",
+  "kind": "function",
+  "file": "functions/fn_00a21f10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
+  "address": "0x00A22360",
+  "name": "aim_record_copy_payload_and_set_enabled",
+  "kind": "function",
+  "file": "functions/fn_00a22360.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
+  "address": "0x00A223A0",
+  "name": "task_record_replace_reference",
+  "kind": "function",
+  "file": "functions/fn_00a223a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
   "address": "0x00A23280",
   "name": "ped_task_configure_and_probe_targets",
   "kind": "function",
@@ -76903,6 +76984,42 @@
   "trials": 1200,
   "checker": "version 8",
   "lane": "a-G23"
+ },
+ {
+  "address": "0x00A23900",
+  "name": "task_group_merge_flag_words",
+  "kind": "function",
+  "file": "functions/fn_00a23900.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
+  "address": "0x00A239F0",
+  "name": "task_group_visit_enabled_records_with_context",
+  "kind": "function",
+  "file": "functions/fn_00a239f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
+  "address": "0x00A23AD0",
+  "name": "camera_record_advance_scalar_toward_target",
+  "kind": "function",
+  "file": "functions/fn_00a23ad0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
+  "address": "0x00A23B50",
+  "name": "camera_aim_object_initialize",
+  "kind": "function",
+  "file": "functions/fn_00a23b50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
  },
  {
   "address": "0x00A23BE0",
@@ -76941,6 +77058,33 @@
   "lane": "a-G23"
  },
  {
+  "address": "0x00A25230",
+  "name": "camera_record_clamp_scalar_to_interval",
+  "kind": "function",
+  "file": "functions/fn_00a25230.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
+  "address": "0x00A25270",
+  "name": "camera_record_store_two_float_words",
+  "kind": "function",
+  "file": "functions/fn_00a25270.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
+  "address": "0x00A252A0",
+  "name": "camera_query_and_select_compact_state",
+  "kind": "function",
+  "file": "functions/fn_00a252a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
   "address": "0x00A25390",
   "name": "task_state_value_blend",
   "kind": "function",
@@ -76948,6 +77092,42 @@
   "trials": 1200,
   "checker": "version 8",
   "lane": "a-G23"
+ },
+ {
+  "address": "0x00A25940",
+  "name": "camera_mode_angle_value",
+  "kind": "function",
+  "file": "functions/fn_00a25940.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
+  "address": "0x00A25960",
+  "name": "camera_distance_interpolate_short_range",
+  "kind": "function",
+  "file": "functions/fn_00a25960.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
+  "address": "0x00A25990",
+  "name": "camera_distance_interpolate_mid_range",
+  "kind": "function",
+  "file": "functions/fn_00a25990.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
+  "address": "0x00A259F0",
+  "name": "camera_distance_interpolate_default_range",
+  "kind": "function",
+  "file": "functions/fn_00a259f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
  },
  {
   "address": "0x00A25A30",
@@ -76986,6 +77166,15 @@
   "lane": "a-S04"
  },
  {
+  "address": "0x00A28C80",
+  "name": "camera_profile_adjust_scalar_from_tables",
+  "kind": "function",
+  "file": "functions/fn_00a28c80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
   "address": "0x00A28CD0",
   "name": "task_timer_blend",
   "kind": "function",
@@ -77022,6 +77211,15 @@
   "lane": "r-b324"
  },
  {
+  "address": "0x00A297A0",
+  "name": "task_record_replace_reference_and_flags",
+  "kind": "function",
+  "file": "functions/fn_00a297a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
   "address": "0x00A29BB0",
   "name": "task_reset_release",
   "kind": "function",
@@ -77029,6 +77227,33 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b324"
+ },
+ {
+  "address": "0x00A29D10",
+  "name": "camera_record_scalar_not_above_zero",
+  "kind": "function",
+  "file": "functions/fn_00a29d10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
+  "address": "0x00A29D30",
+  "name": "camera_record_has_both_enable_flags",
+  "kind": "function",
+  "file": "functions/fn_00a29d30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
+ },
+ {
+  "address": "0x00A29E20",
+  "name": "task_record_either_predicate_is_true",
+  "kind": "function",
+  "file": "functions/fn_00a29e20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s651"
  },
  {
   "address": "0x00A29E40",
