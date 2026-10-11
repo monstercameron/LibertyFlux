@@ -1,4 +1,5 @@
-//! The audio task's three object slots and the release that frees each.
+//! The audio task record: its three object slots and the release that frees
+//! each, its deadline words and the unexpired-window test, and its progress pair.
 //!
 //! The task record holds three pointers to audio objects: a primary slot,
 //! a radio slot and a secondary slot. Releasing a slot reads its object; a
@@ -131,5 +132,45 @@ impl AudioTask {
             objects.cleanup(resource);
         }
         objects.release(object);
+    }
+
+    /// Stamps the chosen deadline word with the current game time.
+    pub fn stamp_deadline(&mut self, deadline: Deadline, now: u32) {
+        match deadline {
+            Deadline::First => self.first_deadline = now,
+            Deadline::Second => self.second_deadline = now,
+        }
+    }
+
+    /// Whether the current time is still inside the window that either of the
+    /// second and window deadline words opens: each opens [`WINDOW_TICKS`]
+    /// ticks after its stamp, and the comparison is unsigned with wrapping
+    /// addition.
+    #[must_use]
+    pub fn has_unexpired_window(&self, now: u32) -> bool {
+        now < self.second_deadline.wrapping_add(WINDOW_TICKS)
+            || now < self.window_deadline.wrapping_add(WINDOW_TICKS)
+    }
+
+    /// Advances the progress pair from one input. The input is scaled and
+    /// capped at the limit; the first progress value only moves up to it and
+    /// never down. The second progress value advances by the step and is
+    /// capped at the limit. The float operations run in this order.
+    pub fn add_float_progress(&mut self, input: f32) {
+        let mut scaled = input * PROGRESS_SCALE;
+        if scaled > PROGRESS_LIMIT {
+            scaled = PROGRESS_LIMIT;
+        }
+        if !(scaled > self.first_progress) {
+            scaled = self.first_progress;
+        }
+        self.first_progress = scaled;
+
+        let advanced = self.second_progress + PROGRESS_STEP;
+        self.second_progress = if advanced > PROGRESS_LIMIT {
+            PROGRESS_LIMIT
+        } else {
+            advanced
+        };
     }
 }

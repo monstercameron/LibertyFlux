@@ -16,7 +16,7 @@ lf_checker_rt::export!(thiscall, rw_005f2820(this: u32) -> u32 {
     const SECOND_ENABLED: u32 = 0x94e;
 
     unsafe { (this as *mut u32).write_unaligned(lf_checker_rt::relocated(PHASE_VTABLE)) };
-    let _ = lf_checker_rt::callee_cdecl!(1, u32, 0u32, u32::MAX);
+    let _ = lf_checker_rt::callee_cdecl!(1, u32, u32::MAX, 0u32);
 
     let render_state = unsafe {
         lf_checker_rt::global::<u32>(SHARED_RENDER_STATE).read_unaligned()

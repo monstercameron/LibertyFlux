@@ -14,9 +14,10 @@
 
 use std::sync::Mutex;
 
-use lf_eventdiff::rewrites::{fn_0097eea0, fn_0097eef0, fn_0097ef80};
+use lf_eventdiff::rewrites::{fn_0097eb70, fn_0097ee90, fn_0097eea0, fn_0097eef0, fn_0097ef80, fn_0097fc80, fn_0097fce0};
 use lf_eventdiff::rt;
 use lf_peds_tasks::ped_task::{
+    AudioTask, Deadline, PROGRESS_LIMIT,
     AudioObjects, AudioSlot, AudioTask, CLEANUP_ENABLED, CLEANUP_MODE_SENTINEL, ReleaseGlobals,
     SKIP_MODE,
 };
@@ -37,6 +38,14 @@ const OBJECT_COUNT: u32 = 3;
 const CLEANUP_SWITCH_VA: u32 = 0x011F_7060;
 const CURRENT_MODE_VA: u32 = 0x0120_88B4;
 const SKIP_MODE_VA: u32 = 0x0103_7720;
+/// File address of the game clock word the window and stamp routines read.
+const CURRENT_TIME_VA: u32 = 0x0117_35B4;
+/// Record offsets of the progress pair, the deadline words and the window word.
+const FIRST_PROGRESS_OFFSET: u32 = 0x40;
+const SECOND_PROGRESS_OFFSET: u32 = 0x144;
+const FIRST_DEADLINE_OFFSET: u32 = 0x13C;
+const SECOND_DEADLINE_OFFSET: u32 = 0x150;
+const WINDOW_DEADLINE_OFFSET: u32 = 0x14C;
 /// Generated cases per release.
 const CASES: u32 = 3000;
 

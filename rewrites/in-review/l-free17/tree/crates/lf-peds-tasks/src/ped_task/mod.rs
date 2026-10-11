@@ -58,7 +58,8 @@ pub use create::{
     PedTaskOutcome, TaskBuildCtx,
 };
 pub use audio_release::{
-    AudioObjects, AudioSlot, AudioTask, CLEANUP_ENABLED, CLEANUP_MODE_SENTINEL, ReleaseGlobals, SKIP_MODE,
+    AudioObjects, AudioSlot, AudioTask, CLEANUP_ENABLED, CLEANUP_MODE_SENTINEL, Deadline,
+    PROGRESS_LIMIT, PROGRESS_SCALE, PROGRESS_STEP, ReleaseGlobals, SKIP_MODE, WINDOW_TICKS,
 };
 pub use event_table::{
     EventCallees, EventObjects, EventRecord, EventTable, DELAY_GAP, NEARBY_DISTANCE_SQUARED,
