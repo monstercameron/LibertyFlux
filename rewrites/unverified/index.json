@@ -472,75 +472,19 @@
   "reason": null
  },
  {
-  "address": "0x005D2BD0",
-  "name": null,
-  "file": "fn_005d2bd0.rs",
-  "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x005D2C30",
-  "name": null,
-  "file": "fn_005d2c30.rs",
-  "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x005D2CA0",
-  "name": null,
-  "file": "fn_005d2ca0.rs",
-  "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x005D2D10",
-  "name": null,
-  "file": "fn_005d2d10.rs",
-  "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x005D2E90",
-  "name": null,
+  "name": "blip_slot_alloc",
   "file": "fn_005d2e90.rs",
   "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x005D30A0",
-  "name": null,
-  "file": "fn_005d30a0.rs",
-  "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x005D3370",
-  "name": null,
-  "file": "fn_005d3370.rs",
-  "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x005D33E0",
-  "name": null,
-  "file": "fn_005d33e0.rs",
-  "lane": "r-s731",
-  "outcome": "not yet run",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "runtime_table"
  },
  {
   "address": "0x005D3420",
-  "name": null,
+  "name": "CTaskComplexCarDriveMissionFleeScene::vf8",
   "file": "fn_005d3420.rs",
   "lane": "r-s731",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -1280,6 +1224,14 @@
   "reason": "Unimplemented behavior: the Rust body discards its row-selection predicate and omits the mode-dependent status-byte update; a distinct row-B probe fails 30/60 active trials although all originals complete, with an extra measurement call and heap store on a path the original skips."
  },
  {
+  "address": "0x00898FD0",
+  "name": "audio_voice_update",
+  "file": "fn_00898fd0.rs",
+  "lane": "a-S23",
+  "outcome": "deferred",
+  "reason": null
+ },
+ {
   "address": "0x008B1270",
   "name": "biquad coefficient update",
   "file": "fn_008b1270.rs",
@@ -1443,6 +1395,14 @@
   "address": "0x0098C430",
   "name": "audio_thread_slot_ptr",
   "file": "fn_0098c430.rs",
+  "lane": "r-s735",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0098CBA0",
+  "name": "audVehicleAudioEntity::model_config_name",
+  "file": "fn_0098cba0.rs",
   "lane": "r-s735",
   "outcome": "not_reached",
   "reason": null
@@ -1953,9 +1913,9 @@
  },
  {
   "address": "0x00A8ABE0",
-  "name": "world_pool_operation_a8abe0",
+  "name": "pool_construct_full",
   "file": "fn_00a8abe0.rs",
-  "lane": "r-s737",
+  "lane": "r-s463",
   "outcome": "not_reached",
   "reason": null
  },
@@ -3192,14 +3152,6 @@
   "reason": "out_of_time"
  },
  {
-  "address": "0x00BE80C0",
-  "name": null,
-  "file": "fn_00be80c0.rs",
-  "lane": "a-S24",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00BE8300",
   "name": "clear_matching_task_records",
   "file": "fn_00be8300.rs",
@@ -3270,14 +3222,6 @@
   "lane": "r-b548",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00C2F650",
-  "name": "detach_owned_timing_node",
-  "file": "fn_00c2f650.rs",
-  "lane": "r-s733",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00C3F0D0",
@@ -4296,22 +4240,6 @@
   "reason": null
  },
  {
-  "address": "0x00D24A70",
-  "name": "CCustomShaderEffectVehicleFX::CCustomShaderEffectVehicleFX",
-  "file": "fn_00d24a70.rs",
-  "lane": "r-s727",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
-  "address": "0x00D24AF0",
-  "name": "CCustomShaderEffectVehicleFX::vf7",
-  "file": "fn_00d24af0.rs",
-  "lane": "r-s727",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
   "address": "0x00D254D0",
   "name": "CCustomShaderEffectVehicleFX::vf6",
   "file": "fn_00d254d0.rs",
@@ -4416,14 +4344,6 @@
   "reason": "runtime_table"
  },
  {
-  "address": "0x00D31030",
-  "name": "CTaskComplexClearVehicleSeat::CTaskComplexClearVehicleSeat",
-  "file": "fn_00d31030.rs",
-  "lane": "r-s727",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
   "address": "0x00D31070",
   "name": "CTaskComplexClimbIntoVehicle::CTaskComplexClimbIntoVehicle",
   "file": "fn_00d31070.rs",
@@ -4472,30 +4392,6 @@
   "reason": "partly_proven"
  },
  {
-  "address": "0x00D312E0",
-  "name": "CTaskComplexCloseVehicleDoor::~CTaskComplexCloseVehicleDoor",
-  "file": "fn_00d312e0.rs",
-  "lane": "r-s727",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
-  "address": "0x00D31310",
-  "name": "CTaskComplexNewExitVehicle::~CTaskComplexNewExitVehicle",
-  "file": "fn_00d31310.rs",
-  "lane": "r-s727",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
-  "address": "0x00D31350",
-  "name": "CTaskComplexNewGetInVehicle::~CTaskComplexNewGetInVehicle",
-  "file": "fn_00d31350.rs",
-  "lane": "r-s727",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
   "address": "0x00D31A60",
   "name": "CTaskComplexNewExitVehicle::clone",
   "file": "fn_00d31a60.rs",
@@ -4524,14 +4420,6 @@
   "name": null,
   "file": "fn_00d82cd0.rs",
   "lane": "r-b212",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00D8FB00",
-  "name": null,
-  "file": "fn_00d8fb00.rs",
-  "lane": "a-S24",
   "outcome": "not yet run",
   "reason": null
  },

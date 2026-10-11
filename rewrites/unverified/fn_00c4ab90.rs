@@ -1,4 +1,4 @@
-// original: 0x00C4AB90 camera_cinematic_get_target_state
+// original: 0x00C4AB90 CCamCinematicHeliChase::vf3
 
 /// Return the result of the target object's virtual method at table offset
 /// 0x0c, or zero when the receiver's target pointer is null.
