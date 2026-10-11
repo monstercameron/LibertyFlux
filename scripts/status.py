@@ -39,15 +39,20 @@ def powershell(command):
 
 
 def running_lanes():
-    """Lane names with a live Muse process, and the memory those processes use."""
+    """Lane names with a live agent process of their own, and the memory those processes use.
+
+    A Muse lane is found by the brief its process was given. A Luna lane started with the Codex command line is
+    found by the file its last message goes to, which is in the lane's scratch folder (since 10 October 2026).
+    """
     out = powershell(
-        "Get-CimInstance Win32_Process | Where-Object { $_.Name -like 'muse-bin*' } | "
+        "Get-CimInstance Win32_Process | Where-Object { $_.Name -like 'muse-bin*' -or "
+        "($_.Name -eq 'codex.exe' -and $_.CommandLine -like '*codex-last-message.txt*') } | "
         "ForEach-Object { '{0}|{1}' -f $_.WorkingSetSize, $_.CommandLine }"
     )
     lanes, memory = set(), 0
     for line in out.splitlines():
         size, _, command = line.partition("|")
-        match = re.search(r"briefs\\([\w-]+)\.txt", command)
+        match = re.search(r"briefs\\([\w-]+)\.txt", command) or re.search(r"scratch\\([\w-]+)\\codex-last-message\.txt", command)
         if match:
             lanes.add(match.group(1))
         if size.isdigit():

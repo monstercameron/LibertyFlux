@@ -1,6 +1,17 @@
 [
   {
     "date": "2026-10-10",
+    "title": "Dashboard and status: count Luna lanes started with the Codex command line",
+    "commit": null,
+    "summary": "Work resumed in the evening with two kinds of lane started by one coordinator: Luna lanes run as Codex command-line processes, and Claude Haiku subagents. The local dashboard and the status script now see both.",
+    "changes": [
+      "A Luna lane started with the Codex command line is a process of its own. The dashboard and the status script find it by the file its last message goes to, in the lane's scratch folder, and show its model, its effort setting and the memory its process holds. Until now only Muse processes and registry rows were counted, so these lanes would have been reported as not running.",
+      "The dashboard labels such a lane as a Codex process, and the line for memory held by agents no longer says Muse.",
+      "Checked by eye with ten lanes running, seven Luna and three Haiku: all ten are listed under Running with their model and effort, and a Luna lane's page opens with its log and results."
+    ]
+  },
+  {
+    "date": "2026-10-10",
     "title": "Verify a task status bit reader",
     "commit": "e2b442c68f0f329a38560a44326f4c49cbd59b30",
     "summary": "Add a complete leaf rewrite checked against the original under its low-byte return contract.",

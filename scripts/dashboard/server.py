@@ -107,7 +107,10 @@ def usage_loop():
 
 def refresh_processes():
     """Which lanes have a live agent process, with its start time and reasoning effort (from its command line)."""
-    command = ("Get-CimInstance Win32_Process -Filter \"Name like 'muse%'\" | ForEach-Object { "
+    # A Muse lane is found by the brief its process was given; a Luna lane started with the Codex command line by
+    # the file its last message goes to, which is in the lane's scratch folder (since 10 October 2026).
+    command = ("Get-CimInstance Win32_Process | Where-Object { $_.Name -like 'muse*' -or "
+               "($_.Name -eq 'codex.exe' -and $_.CommandLine -like '*codex-last-message.txt*') } | ForEach-Object { "
                "[pscustomobject]@{ pid = $_.ProcessId; started = $_.CreationDate.ToString('s'); cmd = $_.CommandLine; "
                "mem = [int]($_.WorkingSetSize / 1MB) } } | ConvertTo-Json -Compress")
     try:
@@ -117,13 +120,15 @@ def refresh_processes():
         lanes = {}
         for row in rows:
             cmd = row.get("cmd") or ""
-            brief = re.search(r"briefs[\\/]([\w-]+)\.txt", cmd)
+            codex = re.search(r"scratch[\\/]([\w-]+)[\\/]codex-last-message\.txt", cmd)
+            brief = re.search(r"briefs[\\/]([\w-]+)\.txt", cmd) or codex
             if not brief:
                 continue
-            effort = re.search(r"--reasoning-effort\s+(\S+)", cmd)
+            effort = re.search(r"(?:--reasoning-effort\s+|model_reasoning_effort=)\"?(\w+)", cmd)
             model = re.search(r"--model\s+(\S+)", cmd)
             lanes[brief.group(1)] = {"pid": row.get("pid"), "started": row.get("started"), "mem_mb": row.get("mem"),
-                                     "effort": effort.group(1) if effort else None, "model": model.group(1) if model else None}
+                                     "effort": effort.group(1) if effort else None, "model": model.group(1) if model else None,
+                                     "source": "codex-exec" if codex else "muse"}
         with _lock:
             _processes.update(at=time.time(), lanes=lanes, error=None)
     except Exception as error:  # the page says so instead of showing stale data as live
@@ -1045,7 +1050,7 @@ def lane_row(lane, live, experiments, registry_entry=None):
     return {"lane": lane, "kind": kind_of(lane), "state": state, "exit_code": exited,
             "model": (registry_entry or {}).get("model") or (process or {}).get("model"),
             "effort": (registry_entry or {}).get("effort") or (process or {}).get("effort") or (experiment or {}).get("effort"),
-            "source": (registry_entry or {}).get("source") or "muse",
+            "source": (registry_entry or {}).get("source") or (process or {}).get("source") or "muse",
             "started": (registry_entry or {}).get("started") or (process or {}).get("started"),
             "agent_memory_mb": None if registry_entry is not None else (process or {}).get("mem_mb"),
             "last_activity": datetime.fromtimestamp(stat.st_mtime).isoformat(timespec="seconds") if stat else None,
