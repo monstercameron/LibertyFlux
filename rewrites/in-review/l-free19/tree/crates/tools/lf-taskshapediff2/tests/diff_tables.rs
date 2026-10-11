@@ -813,6 +813,7 @@ fn remap_lift_matches_rewrite_on_generated_cases() {
     let _guard = TEST_LOCK.lock().unwrap_or_else(|poison| poison.into_inner());
     plant_stubs();
     let kinds = check_routine(Routine::Remap, SEED_REMAP);
+    eprintln!("remap coverage [no-answer, answer, multi-call, table-3 notify]: {kinds:?}");
     // Coverage: zero and nonzero answers, multi-call walks and the fifth
     // table-callee path must all come up often.
     assert!(kinds[0] > 0 && kinds[1] > 0, "answers: {kinds:?}");
@@ -854,6 +855,7 @@ fn wrong_remap_versions_are_caught() {
     ];
     for (name, knobs) in cases {
         let differing = caught_by(Routine::Remap, SEED_REMAP, knobs);
+        eprintln!("remap wrong version {name}: {differing} of {CASES} cases differ");
         assert!(differing > 0, "wrong remap not caught: {name}");
     }
 }
@@ -874,6 +876,7 @@ fn wrong_apply_versions_are_caught() {
     ];
     for (name, knobs) in cases {
         let differing = caught_by(Routine::Apply, SEED_APPLY, knobs);
+        eprintln!("transform wrong version {name}: {differing} of {CASES} cases differ");
         assert!(differing > 0, "wrong transform not caught: {name}");
     }
     let spare = caught_by(
@@ -884,5 +887,6 @@ fn wrong_apply_versions_are_caught() {
             ..Knobs::default()
         },
     );
+    eprintln!("transform wrong version spare word kept: {spare} of {CASES} cases differ");
     assert!(spare > 0, "wrong transform not caught: spare word kept");
 }
