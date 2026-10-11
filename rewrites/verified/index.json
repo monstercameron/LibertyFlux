@@ -93069,6 +93069,123 @@
   "lane": "r-b669"
  },
  {
+  "address": "0x00B80430",
+  "name": "ped_task_manager_drive_task_update",
+  "kind": "function",
+  "file": "functions/fn_00b80430.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s628"
+ },
+ {
+  "address": "0x00B804A0",
+  "name": "CTaskComplexCarDrive::vf21",
+  "kind": "function",
+  "file": "functions/fn_00b804a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s628"
+ },
+ {
+  "address": "0x00B80640",
+  "name": "CTaskComplexDriveToPoint::vf21",
+  "kind": "function",
+  "file": "functions/fn_00b80640.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s628"
+ },
+ {
+  "address": "0x00B80890",
+  "name": "CEventNewTask::CEventNewTask",
+  "kind": "function",
+  "file": "functions/fn_00b80890.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s628"
+ },
+ {
+  "address": "0x00B809B0",
+  "name": "CEventFlushTasks::~CEventFlushTasks__deleting",
+  "kind": "function",
+  "file": "functions/fn_00b809b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s628"
+ },
+ {
+  "address": "0x00B809E0",
+  "name": "CEventNewTask::~CEventNewTask__deleting",
+  "kind": "function",
+  "file": "functions/fn_00b809e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s628"
+ },
+ {
+  "address": "0x00B80AF0",
+  "name": "ped_task_manager_request_bomb_task",
+  "kind": "function",
+  "file": "functions/fn_00b80af0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s628"
+ },
+ {
+  "address": "0x00B80B20",
+  "name": "ped_task_manager_request_first_bomb_task",
+  "kind": "function",
+  "file": "functions/fn_00b80b20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s628"
+ },
+ {
+  "address": "0x00B80B40",
+  "name": "CEventFlushTasks::~CEventFlushTasks",
+  "kind": "function",
+  "file": "functions/fn_00b80b40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s628"
+ },
+ {
+  "address": "0x00B80B80",
+  "name": "CEventNewTask::~CEventNewTask",
+  "kind": "function",
+  "file": "functions/fn_00b80b80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s628"
+ },
+ {
+  "address": "0x00B80D50",
+  "name": "ped_task_manager_first_occupied_slot",
+  "kind": "function",
+  "file": "functions/fn_00b80d50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s628"
+ },
+ {
+  "address": "0x00B80DD0",
+  "name": "ped_task_manager_contains_pointer",
+  "kind": "function",
+  "file": "functions/fn_00b80dd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s628"
+ },
+ {
+  "address": "0x00B81340",
+  "name": "ped_task_manager_update_sequence",
+  "kind": "function",
+  "file": "functions/fn_00b81340.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s628"
+ },
+ {
   "address": "0x00B81730",
   "name": "thread_slot_set_vt",
   "kind": "function",
