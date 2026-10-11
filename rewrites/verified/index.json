@@ -90891,6 +90891,141 @@
   "lane": "r-s450"
  },
  {
+  "address": "0x00B6D080",
+  "name": "ped_task_ctor_timer_and_vector",
+  "kind": "function",
+  "file": "functions/fn_00b6d080.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s643"
+ },
+ {
+  "address": "0x00B6D100",
+  "name": "ped_task_ctor_reference_and_value",
+  "kind": "function",
+  "file": "functions/fn_00b6d100.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s643"
+ },
+ {
+  "address": "0x00B6D150",
+  "name": "ped_task_ctor_reference_value_and_flag",
+  "kind": "function",
+  "file": "functions/fn_00b6d150.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s643"
+ },
+ {
+  "address": "0x00B6D210",
+  "name": "ped_task_ctor_reference_and_flags",
+  "kind": "function",
+  "file": "functions/fn_00b6d210.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s643"
+ },
+ {
+  "address": "0x00B6D270",
+  "name": "ped_task_ctor_virtual_vector_magnitude",
+  "kind": "function",
+  "file": "functions/fn_00b6d270.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s643"
+ },
+ {
+  "address": "0x00B6D310",
+  "name": "ped_task_ctor_reference_values_and_flag_alt",
+  "kind": "function",
+  "file": "functions/fn_00b6d310.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s643"
+ },
+ {
+  "address": "0x00B6D370",
+  "name": "ped_task_ctor_reference_and_value_alt",
+  "kind": "function",
+  "file": "functions/fn_00b6d370.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s643"
+ },
+ {
+  "address": "0x00B6D3B0",
+  "name": "ped_task_ctor_reference_and_flags_alt",
+  "kind": "function",
+  "file": "functions/fn_00b6d3b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s643"
+ },
+ {
+  "address": "0x00B6D3F0",
+  "name": "NativeImpl_REMOVE_CHAR_FROM_CAR_MAINTAIN_POSITION_2",
+  "kind": "function",
+  "file": "functions/fn_00b6d3f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s643"
+ },
+ {
+  "address": "0x00B6D440",
+  "name": "ped_task_ctor_reference_and_value_variant",
+  "kind": "function",
+  "file": "functions/fn_00b6d440.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s643"
+ },
+ {
+  "address": "0x00B6D480",
+  "name": "ped_task_ctor_two_reference_fields",
+  "kind": "function",
+  "file": "functions/fn_00b6d480.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s643"
+ },
+ {
+  "address": "0x00B6D4E0",
+  "name": "ped_task_ctor_reference_value_and_flag_alt",
+  "kind": "function",
+  "file": "functions/fn_00b6d4e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s643"
+ },
+ {
+  "address": "0x00B6D530",
+  "name": "ped_task_ctor_copy_vector_and_options",
+  "kind": "function",
+  "file": "functions/fn_00b6d530.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s643"
+ },
+ {
+  "address": "0x00B6D590",
+  "name": "ped_task_ctor_owned_reference",
+  "kind": "function",
+  "file": "functions/fn_00b6d590.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s643"
+ },
+ {
+  "address": "0x00B6D5C0",
+  "name": "ped_task_ctor_nested_initializer",
+  "kind": "function",
+  "file": "functions/fn_00b6d5c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s643"
+ },
+ {
   "address": "0x00B6D610",
   "name": "task_ctor_flag_u8",
   "kind": "function",
