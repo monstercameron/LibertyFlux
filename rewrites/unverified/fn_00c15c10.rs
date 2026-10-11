@@ -1,13 +1,4 @@
 // original: 0x00C15C10 table_update_driver
-//! Implements the no-active-object update path. It copies the caller's vector
-//! block, derives the output coordinates against a baseline block, obtains the
-//! scripted scalar results, clamps the secondary control value, and publishes
-//! the resulting vector and scalar fields on `this`.
-//!
-//! The accompanying proof fixes the manager and override globals to null, the
-//! selected index to -1, flag bytes to zero, and all vector inputs to zero.
-//! Other manager, interpolation, status, and matrix-update paths are outside
-//! that proof.
 
 use lf_checker_rt::{global, export};
 
@@ -93,6 +84,13 @@ fn global_u32(address: u32) -> u32 {
 }
 
 /// Performs the covered no-active-object path of the update routine.
+///
+/// Copies the caller's vector block, derives output coordinates against the
+/// baseline block, obtains the scripted scalar results, clamps the secondary
+/// control value, and publishes the vector and scalar fields on `this`.
+/// The proof fixes the manager and override globals to null, the selected
+/// index to -1, flag bytes to zero, and all vector inputs to zero. Other
+/// manager, interpolation, status, and matrix-update paths remain uncovered.
 #[inline(never)]
 pub unsafe fn run_driver(
     this: *mut u8,
@@ -156,13 +154,11 @@ pub unsafe fn run_driver(
         let status_a = lf_checker_rt::callee_thiscall!(CALLEE_OBJECT_QUERY, u32, object);
         let status_b = lf_checker_rt::callee_thiscall!(CALLEE_OBJECT_QUERY, u32, object);
         let status_c = lf_checker_rt::callee_thiscall!(CALLEE_OBJECT_QUERY, u32, object);
-        let _status_bits = unsafe {
-            let a = status_a as *const u8;
-            let b = status_b as *const u8;
-            let c = status_c as *const u8;
-            (a.add(4).read() ^ a.add(6).read(), b.add(4).read() ^ b.add(6).read(), c.add(4).read() ^ c.add(6).read())
-        };
-        let _inactive_marker = unsafe { (object as *const u8).add(OBJECT_INACTIVE_MARKER).read() };
+        let a = status_a as *const u8;
+        let b = status_b as *const u8;
+        let c = status_c as *const u8;
+        let _status_bits = (a.add(4).read() ^ a.add(6).read(), b.add(4).read() ^ b.add(6).read(), c.add(4).read() ^ c.add(6).read());
+        let _inactive_marker = (object as *const u8).add(OBJECT_INACTIVE_MARKER).read();
 
         let mask = global_u32(G_VECTOR_MASK);
         let angle_input_x = f32::from_bits(baseline_x.to_bits() ^ mask) as f64;
@@ -229,8 +225,8 @@ pub unsafe fn run_driver(
         let _ = lf_checker_rt::callee_thiscall!(
             CALLEE_VECTOR_SETTER,
             u32,
-            (this.add(THIS_VECTOR_HELPER) as u32),
-            (helper_vector.as_ptr() as u32),
+            this.add(THIS_VECTOR_HELPER) as u32,
+            helper_vector.as_ptr() as u32,
         );
 
         write_f32(this, THIS_VECTOR_X, local_x);
