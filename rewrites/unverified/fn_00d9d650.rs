@@ -4,7 +4,8 @@
 /// exactly +180 degrees returns +pi and exactly -180 returns -pi. Every other
 /// input, including signed zero, infinities and NaNs, is multiplied by the
 /// radians-per-degree constant in that operand order. The result is returned
-/// on the x87 floating-point stack.
+/// on the x87 floating-point stack. The original also stores the converted
+/// value into its incoming float argument slot before loading that result.
 
 lf_checker_rt::export!(cdecl, rw_00D9D650(degrees: f32) -> f32 {
     const POSITIVE_HALF_TURN: f32 = f32::from_bits(0x4334_0000);
