@@ -127026,6 +127026,132 @@
   "lane": "r-b646"
  },
  {
+  "address": "0x00C4E170",
+  "name": "CTaskComplexAimAndThrowProjectile::~CTaskComplexAimAndThrowProjectile__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c4e170.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s707"
+ },
+ {
+  "address": "0x00C4E1A0",
+  "name": "CTaskComplexThrowProjectile::~CTaskComplexThrowProjectile__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c4e1a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s707"
+ },
+ {
+  "address": "0x00C4E1D0",
+  "name": "CTaskSimplePlayerAimProjectile::~CTaskSimplePlayerAimProjectile__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c4e1d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s707"
+ },
+ {
+  "address": "0x00C4E200",
+  "name": "CTaskSimpleThrowProjectile::~CTaskSimpleThrowProjectile__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c4e200.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s707"
+ },
+ {
+  "address": "0x00C4E830",
+  "name": "mark_task_resource_flag",
+  "kind": "function",
+  "file": "functions/fn_00c4e830.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s707"
+ },
+ {
+  "address": "0x00C4EBB0",
+  "name": "lookup_task_resource_status",
+  "kind": "function",
+  "file": "functions/fn_00c4ebb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s707"
+ },
+ {
+  "address": "0x00C4EC10",
+  "name": "map_task_stream_status",
+  "kind": "function",
+  "file": "functions/fn_00c4ec10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s707"
+ },
+ {
+  "address": "0x00C4EDC0",
+  "name": "task_content_stream_gate",
+  "kind": "function",
+  "file": "functions/fn_00c4edc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s707"
+ },
+ {
+  "address": "0x00C4EF60",
+  "name": "task_pairwise_byte_xor_threshold",
+  "kind": "function",
+  "file": "functions/fn_00c4ef60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s707"
+ },
+ {
+  "address": "0x00C50630",
+  "name": "task_layout_record_address",
+  "kind": "function",
+  "file": "functions/fn_00c50630.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s707"
+ },
+ {
+  "address": "0x00C50DF0",
+  "name": "task_bank_flag_bit_26",
+  "kind": "function",
+  "file": "functions/fn_00c50df0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s707"
+ },
+ {
+  "address": "0x00C50E10",
+  "name": "task_bank_flag_bit_14",
+  "kind": "function",
+  "file": "functions/fn_00c50e10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s707"
+ },
+ {
+  "address": "0x00C50E30",
+  "name": "task_bank_flag_bit_15",
+  "kind": "function",
+  "file": "functions/fn_00c50e30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s707"
+ },
+ {
+  "address": "0x00C50E50",
+  "name": "task_bank_flag_bit_25",
+  "kind": "function",
+  "file": "functions/fn_00c50e50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s707"
+ },
+ {
   "address": "0x00C55890",
   "name": "CEventSeenCop::~CEventSeenCop__deleting",
   "kind": "function",
