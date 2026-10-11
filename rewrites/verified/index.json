@@ -129123,6 +129123,204 @@
   "lane": "a-S05"
  },
  {
+  "address": "0x00C41E50",
+  "name": "CIntermezzoEvent::spawn_primary_cam",
+  "kind": "function",
+  "file": "functions/fn_00c41e50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C41E80",
+  "name": "CIntermezzoEvent::release_cam",
+  "kind": "function",
+  "file": "functions/fn_00c41e80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C41EA0",
+  "name": "CCamIntermezzo::notify_linked_cam",
+  "kind": "function",
+  "file": "functions/fn_00c41ea0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C41F80",
+  "name": "CIntermezzoEventGarage::vf5",
+  "kind": "function",
+  "file": "functions/fn_00c41f80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C42050",
+  "name": "CIntermezzoEventPlaceBomb::vf5",
+  "kind": "function",
+  "file": "functions/fn_00c42050.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C42280",
+  "name": "CIntermezzoEventPlayerJackedVehicle::vf5",
+  "kind": "function",
+  "file": "functions/fn_00c42280.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C425D0",
+  "name": "CIntermezzoEventIntro::vf3",
+  "kind": "function",
+  "file": "functions/fn_00c425d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C42960",
+  "name": "CIntermezzoEventFalling::vf4",
+  "kind": "function",
+  "file": "functions/fn_00c42960.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C42C50",
+  "name": "CIntermezzoEvent::get_nested_active_cam",
+  "kind": "function",
+  "file": "functions/fn_00c42c50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C43090",
+  "name": "CIntermezzoEventVaultWall::init_state",
+  "kind": "function",
+  "file": "functions/fn_00c43090.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C43EA0",
+  "name": "CIntermezzoEventFallingThruAir::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c43ea0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C43EC0",
+  "name": "CIntermezzoEventGarage::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c43ec0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C43EE0",
+  "name": "CIntermezzoEventIntro::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c43ee0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C44480",
+  "name": "CIntermezzoEventPlayerJackedVehicle::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c44480.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C44F50",
+  "name": "CCamIntermezzo::append_event",
+  "kind": "function",
+  "file": "functions/fn_00c44f50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C44F70",
+  "name": "CCamIntermezzo::vf1",
+  "kind": "function",
+  "file": "functions/fn_00c44f70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C45270",
+  "name": "CIntermezzoEventIntro::vf2",
+  "kind": "function",
+  "file": "functions/fn_00c45270.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C45290",
+  "name": "CIntermezzoEventStuntJump::vf2",
+  "kind": "function",
+  "file": "functions/fn_00c45290.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C452A0",
+  "name": "CCamIntermezzo::stop_active_event",
+  "kind": "function",
+  "file": "functions/fn_00c452a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C45380",
+  "name": "CCamFinal::CCamFinal",
+  "kind": "function",
+  "file": "functions/fn_00c45380.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C453A0",
+  "name": "CCamFinal::~CCamFinal",
+  "kind": "function",
+  "file": "functions/fn_00c453a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
+  "address": "0x00C453C0",
+  "name": "CCamFinal::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c453c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s724"
+ },
+ {
   "address": "0x00C45B50",
   "name": "ccam_copy_block128",
   "kind": "function",
