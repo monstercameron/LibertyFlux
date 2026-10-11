@@ -142,14 +142,16 @@ pub unsafe fn rw_00ca0b10(
     let _ = lf_checker_rt::callee_thiscall!(11, u32, final_destination, angle_output_pointer);
     let _ = lf_checker_rt::callee_thiscall!(12, u32, final_destination, first_vector);
 
+    let mut last_word = 0;
     let mut word = 0;
     while word < RESULT_WORD_COUNT {
         let offset = RESULT_WORDS_OFFSET + (word as u32) * 4;
         let value = unsafe { read_u32(first_provider + offset) };
         unsafe { write_u32(final_destination + offset, value) };
+        last_word = value;
         word += 1;
     }
 
     let _ = (first_vector, second_vector, angle_a_bits, angle_b_bits, ZERO_F64_BITS);
-    0
+    last_word
 }
