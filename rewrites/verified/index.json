@@ -142713,6 +142713,258 @@
   "lane": "a-G23"
  },
  {
+  "address": "0x00D9E8B0",
+  "name": "find_stream_object",
+  "kind": "function",
+  "file": "functions/fn_00d9e8b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9E900",
+  "name": "find_sample_object",
+  "kind": "function",
+  "file": "functions/fn_00d9e900.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9EC20",
+  "name": "stream_entry_word",
+  "kind": "function",
+  "file": "functions/fn_00d9ec20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9EC30",
+  "name": "stream_entry_tail_float",
+  "kind": "function",
+  "file": "functions/fn_00d9ec30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9EC40",
+  "name": "stream_entry_flag",
+  "kind": "function",
+  "file": "functions/fn_00d9ec40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9EC50",
+  "name": "stream_entry_value_float",
+  "kind": "function",
+  "file": "functions/fn_00d9ec50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9EEC0",
+  "name": "stream_find_record",
+  "kind": "function",
+  "file": "functions/fn_00d9eec0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9EF40",
+  "name": "copy_stream_header",
+  "kind": "function",
+  "file": "functions/fn_00d9ef40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9EF70",
+  "name": "copy_stream_record",
+  "kind": "function",
+  "file": "functions/fn_00d9ef70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9F020",
+  "name": "stream_sample_flag",
+  "kind": "function",
+  "file": "functions/fn_00d9f020.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9F040",
+  "name": "stream_sample_float",
+  "kind": "function",
+  "file": "functions/fn_00d9f040.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9F060",
+  "name": "stream_sample_word",
+  "kind": "function",
+  "file": "functions/fn_00d9f060.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9F100",
+  "name": "append_stream_record",
+  "kind": "function",
+  "file": "functions/fn_00d9f100.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9F170",
+  "name": "stream_recent_tag_filter",
+  "kind": "function",
+  "file": "functions/fn_00d9f170.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9F8C0",
+  "name": "stream_value_in_wrapped_range",
+  "kind": "function",
+  "file": "functions/fn_00d9f8c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9F910",
+  "name": "stream_has_record_key",
+  "kind": "function",
+  "file": "functions/fn_00d9f910.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9F940",
+  "name": "stream_key_missing",
+  "kind": "function",
+  "file": "functions/fn_00d9f940.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9F9B0",
+  "name": "stream_value_in_range",
+  "kind": "function",
+  "file": "functions/fn_00d9f9b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9F9D0",
+  "name": "stream_sample_in_range",
+  "kind": "function",
+  "file": "functions/fn_00d9f9d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9FC20",
+  "name": "stream_object_active",
+  "kind": "function",
+  "file": "functions/fn_00d9fc20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00D9FC40",
+  "name": "stream_object_ready",
+  "kind": "function",
+  "file": "functions/fn_00d9fc40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00DA1E00",
+  "name": "stream_state_gate",
+  "kind": "function",
+  "file": "functions/fn_00da1e00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00DA22A0",
+  "name": "set_stream_entry",
+  "kind": "function",
+  "file": "functions/fn_00da22a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00DA22F0",
+  "name": "set_stream_sample",
+  "kind": "function",
+  "file": "functions/fn_00da22f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00DA2330",
+  "name": "write_stream_detail",
+  "kind": "function",
+  "file": "functions/fn_00da2330.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00DA23B0",
+  "name": "set_stream_record_fields",
+  "kind": "function",
+  "file": "functions/fn_00da23b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00DA23F0",
+  "name": "set_stream_record_metadata",
+  "kind": "function",
+  "file": "functions/fn_00da23f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
+  "address": "0x00DA2630",
+  "name": "stream_mode_policy",
+  "kind": "function",
+  "file": "functions/fn_00da2630.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s675"
+ },
+ {
   "address": "0x00DA3BD0",
   "name": "copy_via_callee_scratch",
   "kind": "function",
