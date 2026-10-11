@@ -3,8 +3,8 @@
 /// Add a three-component `f32` vector to the receiver's linear accumulator
 /// at offsets `0x1050`, `0x1054`, and `0x1058`, in that order. `delta`
 /// points to three consecutive `f32` values. Each result uses the existing
-/// accumulator as the left operand and the supplied component as the right
-/// operand, preserving bit-level floating-point behavior.
+/// supplied component as the left operand and the existing accumulator as
+/// the right operand, matching the original SSE instruction order exactly.
 ///
 /// The original is a thiscall method with one stack pointer argument.
 lf_checker_rt::export!(thiscall, rw_00a3e3a0(this: u32, delta: u32) -> () {
@@ -29,7 +29,7 @@ lf_checker_rt::export!(thiscall, rw_00a3e3a0(this: u32, delta: u32) -> () {
             let field = this.wrapping_add(LINEAR_ACCUMULATOR + component * COMPONENT_STRIDE);
             let current = read_f32(field);
             let delta_value = read_f32(delta.wrapping_add(component * COMPONENT_STRIDE));
-            write_f32(field, add(current, delta_value));
+            write_f32(field, add(delta_value, current));
         }
     }
 });
