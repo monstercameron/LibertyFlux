@@ -133353,6 +133353,15 @@
   "lane": "a-S16"
  },
  {
+  "address": "0x00D94800",
+  "name": "mainloop_timing_test_record_state",
+  "kind": "function",
+  "file": "functions/fn_00d94800.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s593"
+ },
+ {
   "address": "0x00D94A80",
   "name": "traverse_cells",
   "kind": "function",
@@ -133369,6 +133378,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b264"
+ },
+ {
+  "address": "0x00D95700",
+  "name": "mainloop_timing_advance_serial_b",
+  "kind": "function",
+  "file": "functions/fn_00d95700.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s593"
  },
  {
   "address": "0x00D95820",
