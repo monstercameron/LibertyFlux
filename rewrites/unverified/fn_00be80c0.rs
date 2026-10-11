@@ -5,6 +5,8 @@
 // withdrawn form used Rust's `as i32`, which saturates and maps NaN to 0, so a product at or above 2^31 stored
 // 0x7fffffff where the processor stores 0x80000000. `cvtt_s32` returns the processor's value for NaN and for
 // every product outside the signed 32-bit range, and otherwise truncates exactly as the instruction does.
+// The unit fraction 2^-15 is a float the original reads from the image at 0xFE8680 on each sample trial; the
+// rewrite reads it there too (the first copy held it as a constant, which a widened contract showed differs).
 
 /// Truncating float-to-integer conversion: the processor's cvttss2si r32 bit for bit. NaN and every value
 /// outside the signed 32-bit range give the integer indefinite 0x80000000 (i32::MIN); inside the range `as`
@@ -47,7 +49,7 @@ lf_checker_rt::export!(thiscall, rw_00BE80C0(obj: u32, target: u32) -> u32 {
         const MOVER: u32 = 0x78;
         const WEIGHT_DIRECT: u32 = 0x447a_0000;
         const WEIGHT_SAMPLE: u32 = 0x4100_0000;
-        const UNIT_FRAC: f32 = f32::from_bits(0x3800_0000);
+        const UNIT_FRAC_ADDR: u32 = 0x00FE_8680;
         const FETCH_KIND: u32 = 0xd600;
         const FETCH_FLAG: u32 = 3;
         const CALLBACK: u32 = 0x00BE4D80;
@@ -75,7 +77,8 @@ lf_checker_rt::export!(thiscall, rw_00BE80C0(obj: u32, target: u32) -> u32 {
                 let set: u32 = lf_checker_rt::callee_cdecl!(OPEN, u32, first);
                 let n: u32 = lf_checker_rt::callee_cdecl!(COUNT, u32, set);
                 let bits: u32 = lf_checker_rt::callee_cdecl!(RANDOM, u32,);
-                let frac = fmul((bits & 0xffff) as f32, UNIT_FRAC);
+                let unit_frac = f32::from_bits((lf_checker_rt::relocated(UNIT_FRAC_ADDR) as *const u32).read_unaligned());
+                let frac = fmul((bits & 0xffff) as f32, unit_frac);
                 let idx = cvtt_s32(fmul((n as i32) as f32, frac)) as i32 as u32;
                 let row: u32 = lf_checker_rt::callee_cdecl!(FETCH, u32, set, idx);
                 let mover = ((target + MOVER) as *const u32).read_unaligned();

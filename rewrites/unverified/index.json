@@ -1368,6 +1368,14 @@
   "reason": null
  },
  {
+  "address": "0x0098C180",
+  "name": "NativeImpl_RETUNE_RADIO_UP_4",
+  "file": "fn_0098c180.rs",
+  "lane": "r-s735",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x0098CD20",
   "name": "audVehicleAudioEntity::horn_flag_check",
   "file": "fn_0098cd20.rs",
@@ -1419,6 +1427,30 @@
   "address": "0x009B0A40",
   "name": "audPoliceScanner::clear_slots_for_id",
   "file": "fn_009b0a40.rs",
+  "lane": "r-s734",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B0A80",
+  "name": "audPoliceScanner::pick_report_voices",
+  "file": "fn_009b0a80.rs",
+  "lane": "r-s734",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B0DD0",
+  "name": "audPoliceScanner::clear_report_slot",
+  "file": "fn_009b0dd0.rs",
+  "lane": "r-s734",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x009B3200",
+  "name": "audPoliceScanner::report_player_spotted",
+  "file": "fn_009b3200.rs",
   "lane": "r-s734",
   "outcome": "not_reached",
   "reason": null
@@ -3894,14 +3926,6 @@
   "lane": "r-b668",
   "outcome": "deferred",
   "reason": "partly_proven"
- },
- {
-  "address": "0x00CCFAB0",
-  "name": null,
-  "file": "fn_00ccfab0.rs",
-  "lane": "a-U113",
-  "outcome": "not yet run",
-  "reason": null
  },
  {
   "address": "0x00CD4B00",
