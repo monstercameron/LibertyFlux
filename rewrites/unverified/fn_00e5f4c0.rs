@@ -1,6 +1,6 @@
 // original: 0x00e5f4c0 link_network_timer_node_b
 
-/// link network timer node b.
+/// link network timer node b. The entry is cdecl with no stack arguments and returns the previous list head in EAX.
 lf_checker_rt::export!(cdecl, rw_00e5f4c0() -> u32 {
     const LIST_HEAD: u32 = 0x017acd24;
     const NODE_NEXT: u32 = 0x0110f04c;

@@ -1,6 +1,6 @@
 // original: 0x00e621e0 initialize_network_pool_state_records
 
-/// Initialize eight network pool records spaced by 0x148 bytes. Clear the leading words, clear bit 0 in the flag byte, install the callback pointer, initialize each embedded critical section, reset the tail fields, then register the cleanup callback and return its result.
+/// Initialize eight network pool records spaced by 0x148 bytes. Clear the leading words, clear bit 0 in the flag byte, install the callback pointer, initialize each embedded critical section, reset the tail fields, then register the cleanup callback and return its result. The cdecl entry has no arguments. Each imported critical-section call is stdcall with one pointer; a cdecl cleanup registrar runs after the records are initialized.
 lf_checker_rt::export!(cdecl, rw_00e621e0() -> u32 {
     const FIRST_RECORD: u32 = 0x01b4991c;
     const RECORD_STRIDE: u32 = 0x148;

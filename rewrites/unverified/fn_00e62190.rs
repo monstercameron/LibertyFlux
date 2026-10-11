@@ -1,6 +1,6 @@
 // original: 0x00e62190 reset_network_pool_records
 
-/// For five records spaced by 0x108 bytes, call the zero-fill helper on the preceding 0x100-byte region, then set the record's first word to all ones and its second word to zero. Return the final helper answer.
+/// For five records spaced by 0x108 bytes, call the zero-fill helper on the preceding 0x100-byte region, then set the record's first word to all ones and its second word to zero. Return the final helper answer. The cdecl entry has no arguments. Each zero-fill call is cdecl with destination, fill value, and byte count; the final helper answer remains in EAX.
 lf_checker_rt::export!(cdecl, rw_00e62190() -> u32 {
     const FIRST_RECORD: u32 = 0x01b4a458;
     const ZERO_WINDOW_BYTES: u32 = 0x100;
