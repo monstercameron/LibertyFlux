@@ -1,4 +1,8 @@
 // original: 0x0088dac0 aud_voice_graph_update
+/// Per-frame update of a software audio voice: smooth the two channel gains
+/// and six band levels toward their targets (optionally through the virtual
+/// slew check), rebuild the mix matrix rows for this voice kind, hand each
+/// row to the mixer, and commit the voice state.
 #[inline(always)]
 unsafe fn r8(base: *mut u8, off: u32) -> u8 {
     *base.add(off as usize)
@@ -61,10 +65,6 @@ fn snap_toward(new: f32, cur: f32, step: f32, abs_mask: u32) -> f32 {
     }
 }
 
-/// Per-frame update of a software audio voice: smooth the two channel gains
-/// and six band levels toward their targets (optionally through the virtual
-/// slew check), rebuild the mix matrix rows for this voice kind, hand each
-/// row to the mixer, and commit the voice state.
 export!(thiscall, rw_0088dac0(this: *mut u8) -> u32 {
     unsafe {
         const UNITY: u32 = 0xFE88E8;

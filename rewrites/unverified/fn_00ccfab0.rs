@@ -5,7 +5,10 @@
 /// whose table pointer is at byte offset `OWNER_CANDIDATES`; `out_candidate`
 /// points to a dword that receives the selected candidate when the task has
 /// at least one matching entry. The task flag at `TASK_FLAGS` has bit 7
-/// cleared on completion and on the no-match path.
+/// cleared when the initial owner is null, no candidate matches, the
+/// inactive-candidate threshold is not met, or finalization occurs. It is
+/// unchanged when the late distance check or nearest-candidate activity check
+/// returns early.
 ///
 /// Candidate pointers occupy sixteen dwords starting at `CANDIDATE_SLOTS` in
 /// the table. Null entries are ignored. A candidate with a nonzero filter byte
@@ -16,16 +19,19 @@
 /// inactive. The nearest candidate is selected by ordered single precision
 /// squared distance, in y, x, z accumulation order, against the task's
 /// reference position and the relocated global range limit. Unordered float
-/// comparisons follow COMISS/JBE behavior: they do not replace the best or
-/// farthest candidate. When enough candidates are inactive, the late check
-/// measures from the explicit owner argument's position object and tests the
-/// activity of that owner and the nearest candidate before finalizing the
-/// farthest context. A null initial owner lookup returns zero. If no
-/// candidate matches, the task flag is cleared and the task pointer is
-/// returned without writing the output slot. Otherwise the nearest pointer
-/// (possibly null when no distance is below the range limit) is written and
-/// the output pointer is returned. The routine uses thiscall with two stack
-/// arguments.
+/// comparisons follow the original ordered-compare behavior: they do not
+/// replace the best or farthest candidate. When enough candidates are
+/// inactive, the routine measures from the explicit owner argument's
+/// position. If the nearest distance is no greater, it returns the candidate
+/// without changing the task flag. Otherwise an active owner finalizes the
+/// farthest context; an inactive owner causes the nearest candidate's
+/// activity to be checked, and an active nearest candidate returns without
+/// changing the task flag. The remaining path clears bit 7 and finalizes the
+/// farthest context. A null initial owner lookup returns zero. If no candidate
+/// matches, the task flag is cleared and the task pointer is returned without
+/// writing the output slot. Otherwise the nearest pointer (possibly null when
+/// no distance is below the range limit) is written and the output pointer is
+/// returned. The routine uses thiscall with two stack arguments.
 lf_checker_rt::export!(thiscall, rw_00ccfab0(task: u32, owner: u32, out_candidate: u32) -> u32 {
     const TASK_FLAGS: u32 = 0xF0;
     const OWNER_CANDIDATES: u32 = 0x224;
@@ -217,6 +223,8 @@ lf_checker_rt::export!(thiscall, rw_00ccfab0(task: u32, owner: u32, out_candidat
             return out_candidate;
         }
         if is_active(owner) != 0 {
+            clear_ready(task);
+            finish_task(farthest_context);
             write_u32(out_candidate, nearest_candidate);
             return out_candidate;
         }

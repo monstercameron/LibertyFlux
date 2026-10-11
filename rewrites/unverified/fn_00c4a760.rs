@@ -8,7 +8,7 @@
 /// timing helper. A nonzero status dword at 0x164 is cleared. The routine
 /// clears bytes 0x181 and 0x183, writes whether the record pointer is non-null
 /// to byte 0x182, and copies four words from the record to offsets 0x190,
-/// 0x194, 0x198, and 0x19c. The first copied word is returned in EAX; the two
+/// 0x194, 0x198, and 0x19c. The fourth copied word remains in EAX as the routine returns; the two
 /// float words are copied bit-for-bit without arithmetic.
 lf_checker_rt::export!(thiscall, rw_c4a760(this: u32, record: u32) -> u32 {
     const STATUS_FIELD: u32 = 0x164;
@@ -37,18 +37,18 @@ lf_checker_rt::export!(thiscall, rw_c4a760(this: u32, record: u32) -> u32 {
             .write_unaligned(u8::from(record != 0));
     }
 
-    let mut first_word = 0;
+    let mut return_word = 0;
     for (index, output_offset) in OUTPUT_WORDS.into_iter().enumerate() {
         let value = unsafe {
             (record.wrapping_add((index as u32).wrapping_mul(4)) as *const u32)
                 .read_unaligned()
         };
-        if index == 0 {
-            first_word = value;
+        if index == 3 {
+            return_word = value;
         }
         unsafe {
             (this.wrapping_add(output_offset) as *mut u32).write_unaligned(value);
         }
     }
-    first_word
+    return_word
 });
