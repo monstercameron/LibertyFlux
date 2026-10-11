@@ -1,7 +1,7 @@
 // original: 0x009d1030 set_object_word_2bc
 
 /// Optionally begin a profiler scope, store the supplied word at object offset 0x2BC, then either tail-call the profiler end callback or return the supplied word. The profiled path overwrites the incoming argument slot with the callback token.
-lf_checker_rt::export!(thiscall, rw_009d1030(this: u32, value: u32) -> eax {
+lf_checker_rt::export!(thiscall, rw_009d1030(this: u32, value: u32) -> u32 {
     const PROFILE_BEGIN_ID: u32 = 2;
     const PROFILE_END_ID: u32 = 3;
     const PROFILE_TOKEN_VA: u32 = 0x0129588C;

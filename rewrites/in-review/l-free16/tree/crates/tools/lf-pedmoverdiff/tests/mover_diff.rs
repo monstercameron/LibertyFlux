@@ -300,8 +300,8 @@ struct Addrs {
 impl Bufs {
     fn new() -> Self {
         let mut vtable = vec![0u8; VTABLE_LEN];
-        wr32(&mut vtable, SLOT_SET_HEIGHT, stub_set_height as usize as u32);
-        wr32(&mut vtable, SLOT_HEIGHT, stub_height as usize as u32);
+        wr32(&mut vtable, SLOT_SET_HEIGHT, stub_set_height as *const () as usize as u32);
+        wr32(&mut vtable, SLOT_HEIGHT, stub_height as *const () as usize as u32);
         Bufs {
             task: vec![0u8; TASK_LEN],
             state: vec![0u8; STATE_LEN],
@@ -493,14 +493,20 @@ struct Report {
     trials: u32,
     mismatches: u32,
     first: Option<String>,
+    /// Trials the run's own predicate marked as covering a branch.
+    covered: u32,
+    /// How many times the rewrite made each kind of call.
+    kinds: [u32; 10],
 }
 
 /// Runs `trials` generated cases through the rewrite and the lifted side.
+/// `covered` marks the cases that take the branch under study.
 fn diff_run(
     seed: u32,
     trials: u32,
     rewrite: impl Fn(&Addrs) -> u32,
     lifted: impl Fn(&mut Recorder, &mut Bufs, &Addrs),
+    covered: impl Fn(&Case) -> bool,
 ) -> Report {
     let mut rng = Rng(seed);
     let mut bufs = Bufs::new();
@@ -508,16 +514,24 @@ fn diff_run(
         trials,
         mismatches: 0,
         first: None,
+        covered: 0,
+        kinds: [0; 10],
     };
     for trial in 0..trials {
         let case = gen_case(&mut rng);
         set_script(case.script);
+        if covered(&case) {
+            report.covered += 1;
+        }
 
         bufs.load(&case);
         let addrs = bufs.addrs(&case);
         RECORD.lock().unwrap().clear();
         let ret = rewrite(&addrs);
         let rewritten_events = std::mem::take(&mut *RECORD.lock().unwrap());
+        for (kind, _) in &rewritten_events {
+            report.kinds[usize::from(*kind)] += 1;
+        }
         let rewritten = Outcome::of(&bufs, rewritten_events, ret);
 
         bufs.load(&case);
@@ -633,31 +647,53 @@ fn commit_rewrite(a: &Addrs) -> u32 {
 
 const TRIALS: u32 = 4000;
 
-fn plant_drive_callees() {
-    set_callee(1, stub_setup as usize as u32);
-    set_callee(2, stub_ready as usize as u32);
-    set_callee(4, stub_blend as usize as u32);
-    set_callee(5, stub_encode as usize as u32);
+/// Call kinds indexed as in the recorder's kind constants.
+const KIND_NAMES: [(u8, &str); 9] = [
+    (SETUP, "setup"),
+    (READY, "ready"),
+    (BLEND, "blend"),
+    (ENCODE, "encode"),
+    (FLAG_NOTIFY, "flag"),
+    (STATE_NOTIFY, "state"),
+    (DECODE, "decode"),
+    (SET_HEIGHT, "set_height"),
+    (HEIGHT, "height"),
+];
+
+/// Asserts that the rewrite made each listed kind of call in the run, so
+/// the branches that issue those calls were exercised.
+fn assert_kinds_seen(report: &Report, kinds: &[u8]) {
+    for kind in kinds {
+        let name = KIND_NAMES.iter().find(|(k, _)| k == kind).map_or("?", |(_, n)| *n);
+        assert!(report.kinds[usize::from(*kind)] > 0, "no {name} call in {TRIALS} trials");
+    }
 }
 
-fn plant_commit_callees() {
-    set_callee(1, stub_flag as usize as u32);
-    set_callee(2, stub_state as usize as u32);
-    set_callee(4, stub_decode as usize as u32);
+/// Whether the lerp takes its heading wrap: the absolute heading gap
+/// exceeds a half turn (a NaN gap does not).
+fn lerp_takes_wrap(case: &Case) -> bool {
+    (rdf(&case.task, HEADING) - rdf(&case.src, HEADING)).abs() > core::f32::consts::PI
+}
+
+fn no_branch(_: &Case) -> bool {
+    false
 }
 
 #[test]
 fn lerp_position_heading_matches_rewrite() {
     let _guard = lock();
-    let report = diff_run(0x0A11_CE01, TRIALS, lerp_rewrite, lerp_lifted);
+    let report = diff_run(0x0A11_CE01, TRIALS, lerp_rewrite, lerp_lifted, lerp_takes_wrap);
     assert_eq!(report.mismatches, 0, "{:?}", report.first);
     assert_eq!(report.trials, TRIALS);
+    assert!(report.covered > 0, "no case took the heading wrap");
+    assert!(report.covered < TRIALS, "every case took the heading wrap");
+    assert_kinds_seen(&report, &[SET_HEIGHT]);
 }
 
 #[test]
 fn lerp_position_heading_wrong_version_is_caught() {
     let _guard = lock();
-    let report = diff_run(0x0A11_CE01, TRIALS, lerp_rewrite, lerp_wrong);
+    let report = diff_run(0x0A11_CE01, TRIALS, lerp_rewrite, lerp_wrong, no_branch);
     assert!(report.mismatches > 0, "the wrong version passed every case");
 }
 
@@ -665,16 +701,17 @@ fn lerp_position_heading_wrong_version_is_caught() {
 fn drive_blend_matches_rewrite() {
     let _guard = lock();
     plant_drive_callees();
-    let report = diff_run(0x0D41_7E02, TRIALS, drive_rewrite, drive_lifted);
+    let report = diff_run(0x0D41_7E02, TRIALS, drive_rewrite, drive_lifted, no_branch);
     assert_eq!(report.mismatches, 0, "{:?}", report.first);
     assert_eq!(report.trials, TRIALS);
+    assert_kinds_seen(&report, &[SETUP, READY, BLEND, ENCODE, SET_HEIGHT]);
 }
 
 #[test]
 fn drive_blend_wrong_version_is_caught() {
     let _guard = lock();
     plant_drive_callees();
-    let report = diff_run(0x0D41_7E02, TRIALS, drive_rewrite, drive_wrong);
+    let report = diff_run(0x0D41_7E02, TRIALS, drive_rewrite, drive_wrong, no_branch);
     assert!(report.mismatches > 0, "the wrong version passed every case");
 }
 
@@ -682,15 +719,29 @@ fn drive_blend_wrong_version_is_caught() {
 fn commit_blend_matches_rewrite() {
     let _guard = lock();
     plant_commit_callees();
-    let report = diff_run(0x0C01_4417, TRIALS, commit_rewrite, commit_lifted);
+    let report = diff_run(0x0C01_4417, TRIALS, commit_rewrite, commit_lifted, no_branch);
     assert_eq!(report.mismatches, 0, "{:?}", report.first);
     assert_eq!(report.trials, TRIALS);
+    assert_kinds_seen(&report, &[FLAG_NOTIFY, STATE_NOTIFY, DECODE, HEIGHT]);
 }
 
 #[test]
 fn commit_blend_wrong_version_is_caught() {
     let _guard = lock();
     plant_commit_callees();
-    let report = diff_run(0x0C01_4417, TRIALS, commit_rewrite, commit_wrong);
+    let report = diff_run(0x0C01_4417, TRIALS, commit_rewrite, commit_wrong, no_branch);
     assert!(report.mismatches > 0, "the wrong version passed every case");
+}
+
+fn plant_drive_callees() {
+    set_callee(1, stub_setup as *const () as usize as u32);
+    set_callee(2, stub_ready as *const () as usize as u32);
+    set_callee(4, stub_blend as *const () as usize as u32);
+    set_callee(5, stub_encode as *const () as usize as u32);
+}
+
+fn plant_commit_callees() {
+    set_callee(1, stub_flag as *const () as usize as u32);
+    set_callee(2, stub_state as *const () as usize as u32);
+    set_callee(4, stub_decode as *const () as usize as u32);
 }

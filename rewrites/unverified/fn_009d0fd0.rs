@@ -1,7 +1,7 @@
 // original: 0x009d0fd0 copy_timing_triplets
 
 /// Optionally bracket the copy with profiler callbacks, copy three adjacent 64-bit blocks from object offsets 0x2D4, 0x2DC, and 0x2E4 to the caller's destination, return that destination, and pop the one stack argument.
-lf_checker_rt::export!(thiscall, rw_009d0fd0(this: u32, destination: u32) -> eax {
+lf_checker_rt::export!(thiscall, rw_009d0fd0(this: u32, destination: u32) -> u32 {
     const PROFILE_BEGIN_ID: u32 = 2;
     const PROFILE_END_ID: u32 = 3;
     const PROFILE_TOKEN_VA: u32 = 0x0129588C;

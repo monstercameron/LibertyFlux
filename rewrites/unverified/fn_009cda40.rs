@@ -1,7 +1,7 @@
 // original: 0x009cda40 NativeImpl_SET_SCRIPT_MIC_POSITION
 
 /// Pack three float arguments into a local vector and pass its address to the script microphone manager's position operation. Forward the callee's return register.
-lf_checker_rt::export!(cdecl, rw_009cda40(x: f32, y: f32, z: f32) -> eax {
+lf_checker_rt::export!(cdecl, rw_009cda40(x: f32, y: f32, z: f32) -> u32 {
     const MANAGER_VA: u32 = 0x01165880;
     const CALLEE_ID: u32 = 1;
     let mut position = [x.to_bits(), y.to_bits(), z.to_bits()];

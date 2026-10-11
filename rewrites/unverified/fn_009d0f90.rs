@@ -1,7 +1,7 @@
 // original: 0x009d0f90 get_object_word_2bc
 
 /// Optionally bracket the read with profiler callbacks, then return the word at object offset 0x2BC.
-lf_checker_rt::export!(thiscall, rw_009d0f90(this: u32) -> eax {
+lf_checker_rt::export!(thiscall, rw_009d0f90(this: u32) -> u32 {
     const PROFILE_BEGIN_ID: u32 = 2;
     const PROFILE_END_ID: u32 = 3;
     const PROFILE_TOKEN_VA: u32 = 0x0129588C;

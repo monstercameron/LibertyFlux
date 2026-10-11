@@ -6,8 +6,9 @@
 /// validation helper receives the request's words at 0x1c and 0x20 plus the
 /// receiver. If its low byte is nonzero, a route helper receives the request
 /// pointer through the receiver's embedded route state at 0xd0. The result
-/// is the route helper's low byte. The first stack argument is unused.
-lf_checker_rt::export!(thiscall, rw_00623d10(this: u32, _unused: u32, request: u32) -> u32 {
+/// is the route helper's low byte. The first stack argument is the payload;
+/// the second is the route request.
+lf_checker_rt::export!(thiscall, rw_00623d10(this: u32, payload: u32, route_request: u32) -> u32 {
     unsafe {
         const STATUS: u32 = 0x50;
         const SAVED_KEY_LO: u32 = 0xbf0;
@@ -29,15 +30,15 @@ lf_checker_rt::export!(thiscall, rw_00623d10(this: u32, _unused: u32, request: u
         let accepted = lf_checker_rt::callee_thiscall!(
             1,
             u32,
-            request,
-            (request.wrapping_add(REQUEST_KEY_LO) as *const u32).read_unaligned(),
-            (request.wrapping_add(REQUEST_KEY_HI) as *const u32).read_unaligned(),
+            route_request,
+            (payload.wrapping_add(REQUEST_KEY_LO) as *const u32).read_unaligned(),
+            (payload.wrapping_add(REQUEST_KEY_HI) as *const u32).read_unaligned(),
             this,
         );
         if accepted & 0xff == 0 {
             return 0;
         }
-        let routed = lf_checker_rt::callee_thiscall!(2, u32, this.wrapping_add(ROUTE_STATE), request);
+        let routed = lf_checker_rt::callee_thiscall!(2, u32, this.wrapping_add(ROUTE_STATE), route_request);
         u32::from(routed & 0xff != 0)
     }
 });

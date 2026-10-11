@@ -1,7 +1,7 @@
 // original: 0x009cb3d0 select_timing_table_entry
 
 /// Select one of two seven-entry word tables using a mode byte, then return the entry at the supplied index. The function performs no bounds check; the proof keeps the index within both tables.
-lf_checker_rt::export!(cdecl, rw_009cb3d0(index: u32) -> eax {
+lf_checker_rt::export!(cdecl, rw_009cb3d0(index: u32) -> u32 {
     const MODE_VA: u32 = 0x011609F6;
     const PRIMARY_TABLE_VA: u32 = 0x0103ACB4;
     const ALTERNATE_TABLE_VA: u32 = 0x0103ACD0;

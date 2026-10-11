@@ -4,7 +4,7 @@
 /// process up to `count` existing entries. Negative and zero counts return the
 /// allocated buffer without walking it. A zero buffer, missing service item,
 /// or empty entry is skipped safely; a lookup result of `u32::MAX` clears the
-/// entry, while other results are accumulated and a zero total triggers the
+/// entry, while other results are accumulated and a nonzero total triggers the
 /// paired release callback with its service pointer and updated count. The
 /// indirect allocator and three callbacks are intercepted by the contract.
 /// The function is thiscall with one signed count argument and returns the
@@ -61,12 +61,12 @@ lf_checker_rt::export!(thiscall, rw_00683e30(this: u32, count: u32) -> u32 {
                             );
                             let total = prior_count.wrapping_add(delta);
                             crate::write_word(entry, total);
-                            if total == 0 {
+                            if total != 0 {
                                 let _ = lf_checker_rt::callee_thiscall!(
                                     4,
                                     u32,
                                     total.wrapping_add(8),
-                                    buffer.wrapping_add(BUFFER_ELEMENT_SIZE),
+                                    release_service,
                                     total,
                                 );
                             }

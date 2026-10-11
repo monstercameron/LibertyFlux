@@ -1,7 +1,7 @@
 // original: 0x009cb460 store_timing_window_words
 
 /// Copy four incoming words into distinct timing state slots, copy the current shared sample into a fifth slot, and return that sample.
-lf_checker_rt::export!(cdecl, rw_009cb460(first: u32, second: u32, third: u32, fourth: u32) -> eax {
+lf_checker_rt::export!(cdecl, rw_009cb460(first: u32, second: u32, third: u32, fourth: u32) -> u32 {
     const SLOT_FIRST_VA: u32 = 0x01295834;
     const SLOT_SECOND_VA: u32 = 0x01295848;
     const SLOT_THIRD_VA: u32 = 0x0129584C;
