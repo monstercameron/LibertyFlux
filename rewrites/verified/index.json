@@ -46197,6 +46197,15 @@
   "lane": "r-b69"
  },
  {
+  "address": "0x008970B0",
+  "name": "aud_environment_sound_get_table_value",
+  "kind": "function",
+  "file": "functions/fn_008970b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s575"
+ },
+ {
   "address": "0x008970F0",
   "name": "rage::audEnvironmentSound::vf7",
   "kind": "function",
@@ -46204,6 +46213,78 @@
   "trials": 1000,
   "checker": "version 2",
   "lane": "r-b24"
+ },
+ {
+  "address": "0x00897280",
+  "name": "aud_environment_sound_initialize_globals",
+  "kind": "function",
+  "file": "functions/fn_00897280.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s575"
+ },
+ {
+  "address": "0x008972A0",
+  "name": "aud_environment_sound_set_pair",
+  "kind": "function",
+  "file": "functions/fn_008972a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s575"
+ },
+ {
+  "address": "0x008972C0",
+  "name": "aud_environment_sound_has_table_flag",
+  "kind": "function",
+  "file": "functions/fn_008972c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s575"
+ },
+ {
+  "address": "0x00897300",
+  "name": "aud_environment_sound_unregister_table_entry",
+  "kind": "function",
+  "file": "functions/fn_00897300.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s575"
+ },
+ {
+  "address": "0x00897330",
+  "name": "aud_environment_sound_unregister_table_entry_cdecl",
+  "kind": "function",
+  "file": "functions/fn_00897330.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s575"
+ },
+ {
+  "address": "0x00897360",
+  "name": "aud_environment_sound_refresh_cached_indices",
+  "kind": "function",
+  "file": "functions/fn_00897360.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s575"
+ },
+ {
+  "address": "0x00897530",
+  "name": "aud_environment_sound_release_member",
+  "kind": "function",
+  "file": "functions/fn_00897530.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s575"
+ },
+ {
+  "address": "0x008976C0",
+  "name": "aud_environment_sound_get_parameter_by_index",
+  "kind": "function",
+  "file": "functions/fn_008976c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s575"
  },
  {
   "address": "0x008976E0",
