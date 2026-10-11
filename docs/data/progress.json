@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-11",
-  "updated_at": "2026-10-11 15:26",
+  "updated_at": "2026-10-11 15:29",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,7 +12,7 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 36090,
+    "named": 36094,
     "rewritten": 18402,
     "verified": 18291
   },
@@ -99,9 +99,9 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 36090,
+      "value": 36094,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (27086); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (27090); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites of game functions that passed the checker in a lane",
@@ -147,9 +147,9 @@
     }
   ],
   "activity": {
-    "lanes_running": 51,
-    "lanes_finished": 2219,
-    "lanes_incomplete": 609,
+    "lanes_running": 62,
+    "lanes_finished": 2220,
+    "lanes_incomplete": 621,
     "devlog_entries": 554
   },
   "map": [
@@ -2282,7 +2282,7 @@
       "from": "0x00923AF7",
       "to": "0x00929417",
       "count": 85,
-      "named": 79,
+      "named": 83,
       "rewritten": 54,
       "verified": 52
     },
