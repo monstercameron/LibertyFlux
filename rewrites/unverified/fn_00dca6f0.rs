@@ -24,13 +24,13 @@ lf_checker_rt::export!(thiscall, rw_00dca6f0(this: u32, context: u32) -> u32 {
         let subtask = read_u32(this.wrapping_add(CURRENT_SUBTASK));
         let subtask_type = lf_checker_rt::callee_thiscall!(GET_SUBTASK_TYPE, u32, subtask);
         if subtask_type != TASK_TYPE {
-            return subtask_type;
+            return subtask;
         }
 
         let helper_flag = read_u32(this.wrapping_add(HELPER_ARGUMENT));
         let helper_result = lf_checker_rt::callee_cdecl!(CAN_CONTINUE, u32, context, helper_flag);
         if helper_result as u8 != 0 {
-            return helper_result;
+            return subtask;
         }
 
         lf_checker_rt::callee_thiscall!(CONTROL_SUBTASK, u32, this, context)

@@ -6,8 +6,8 @@
 /// object pointer, a pointer to the local coordinate triplet, the weight's
 /// f32 bits, and fixed trailing words. The three outgoing handlers are cdecl;
 /// the input helper is thiscall and writes the four selected words through its
-/// pointer argument. The function returns one in AL for handled kinds and the
-/// unhandled kind value otherwise. The 32-bit object layout is inherent.
+/// pointer argument. The function returns one in AL for every kind. The
+/// 32-bit object layout is inherent.
 lf_checker_rt::export!(cdecl, rw_vehicle_dispatch_kind(this: u32, input: u32) -> u8 {
     const KIND_FIELD: u32 = 0x28;
     const KIND_SHIFT: u32 = 6;
@@ -52,6 +52,6 @@ lf_checker_rt::export!(cdecl, rw_vehicle_dispatch_kind(this: u32, input: u32) ->
             let _ = lf_checker_rt::callee_cdecl!(4, u32, this, coordinates_pointer, weight, 0);
             1
         }
-        _ => object_kind as u8,
+        _ => 1,
     }
 });

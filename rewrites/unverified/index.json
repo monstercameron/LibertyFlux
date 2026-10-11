@@ -720,14 +720,6 @@
   "reason": null
  },
  {
-  "address": "0x005E8D20",
-  "name": "CTaskComplexWanderCop::vf20",
-  "file": "fn_005e8d20.rs",
-  "lane": "r-s719",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x005EE990",
   "name": "CHtmlTextFormat::~CHtmlTextFormat_2",
   "file": "fn_005ee990.rs",
@@ -1852,24 +1844,8 @@
   "name": "vehicle_add_linear_displacement",
   "file": "fn_00a3e3a0.rs",
   "lane": "r-s709",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A3E3F0",
-  "name": "vehicle_accumulate_cross_product",
-  "file": "fn_00a3e3f0.rs",
-  "lane": "r-s709",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A3E480",
-  "name": "vehicle_add_angular_delta",
-  "file": "fn_00a3e480.rs",
-  "lane": "r-s709",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "out_of_time"
  },
  {
   "address": "0x00A3ECB0",
@@ -2872,14 +2848,6 @@
   "reason": null
  },
  {
-  "address": "0x00B6CF30",
-  "name": "CHeli::vf85",
-  "file": "fn_00b6cf30.rs",
-  "lane": "r-s716",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00B6D1B0",
   "name": "ped_task_ctor_reference_values_and_flags",
   "file": "fn_00b6d1b0.rs",
@@ -3480,54 +3448,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00C41E80",
-  "name": null,
-  "file": "fn_00c41e80.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C43090",
-  "name": null,
-  "file": "fn_00c43090.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C43EA0",
-  "name": null,
-  "file": "fn_00c43ea0.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C43EC0",
-  "name": null,
-  "file": "fn_00c43ec0.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C44480",
-  "name": null,
-  "file": "fn_00c44480.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00C44F70",
-  "name": null,
-  "file": "fn_00c44f70.rs",
-  "lane": "r-s724",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00C496D0",
   "name": null,
   "file": "fn_00c496d0.rs",
@@ -3582,14 +3502,6 @@
   "lane": "a-Q109",
   "outcome": "not yet run",
   "reason": null
- },
- {
-  "address": "0x00C6F570",
-  "name": "function_00C6F570",
-  "file": "fn_00c6f570.rs",
-  "lane": "r-s720",
-  "outcome": "deferred",
-  "reason": "partly_proven"
  },
  {
   "address": "0x00C6F5D0",
@@ -3976,6 +3888,14 @@
   "reason": "other"
  },
  {
+  "address": "0x00CC14A0",
+  "name": "update_anim_blend_state",
+  "file": "fn_00cc14a0.rs",
+  "lane": "r-b697",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00CC2C30",
   "name": "process_route_tasks",
   "file": "fn_00cc2c30.rs",
@@ -4326,6 +4246,14 @@
   "lane": "r-s625",
   "outcome": "deferred",
   "reason": "out_of_time"
+ },
+ {
+  "address": "0x00CF72B0",
+  "name": null,
+  "file": "fn_00cf72b0.rs",
+  "lane": "r-b691",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00CF8050",

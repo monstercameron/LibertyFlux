@@ -96,7 +96,7 @@ lf_checker_rt::export!(thiscall, rw_00A1CEA0(this: u32) -> u32 {
                             } else {
                                 read_f32(record + component * 4 - 8)
                             };
-                            write_f32(output, add_ss(accumulated, contribution));
+                            write_f32(output, add_ss(contribution, accumulated));
                             component += 1;
                         }
                     }
