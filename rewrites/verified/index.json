@@ -81774,6 +81774,42 @@
   "lane": "r-b446"
  },
  {
+  "address": "0x00A76490",
+  "name": "vehicle_flag_is_active",
+  "kind": "function",
+  "file": "functions/fn_00a76490.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s715"
+ },
+ {
+  "address": "0x00A764B0",
+  "name": "guarded_vehicle_value_lookup",
+  "kind": "function",
+  "file": "functions/fn_00a764b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s715"
+ },
+ {
+  "address": "0x00A764F0",
+  "name": "vehicle_record_value_at_index",
+  "kind": "function",
+  "file": "functions/fn_00a764f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s715"
+ },
+ {
+  "address": "0x00A76520",
+  "name": "vehicle_global_id_index",
+  "kind": "function",
+  "file": "functions/fn_00a76520.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s715"
+ },
+ {
   "address": "0x00A7C2F0",
   "name": "bu_task_poll_and_reset",
   "kind": "function",
