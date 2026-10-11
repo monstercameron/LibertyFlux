@@ -1,4 +1,4 @@
-//! Differential cases of the task block initialiser against its verified
+﻿//! Differential cases of the task block initialiser against its verified
 //! 32-bit rewrite.
 //!
 //! The lifted initialiser and the rewrite run on the same generated blocks,
@@ -309,8 +309,10 @@ enum Wrong {
     TailFirst,
     /// The draw keeps only fifteen bits.
     DrawFifteenBits,
-    /// The truncation saturates instead of giving the indefinite value.
-    SaturatingTruncation,
+    /// The truncation gives the processor's indefinite value (the most negative
+    /// integer) for a not-a-number and outside the range, where the verified
+    /// rewrite gives zero or saturates.
+    IndefiniteTruncation,
     /// The ready flag is left clear.
     ReadyClear,
 }
@@ -337,8 +339,9 @@ fn run_wrong(kind: Wrong, case: &Case) -> (TaskBlock, Vec<Call>) {
     let tick_copy = recorder.tick();
     let mask = if matches!(kind, Wrong::DrawFifteenBits) { 0x7FFF } else { 0xFFFF };
     let scaled = ((draw & mask) as f32 * case.scale.inverse_range) * case.scale.factor;
-    let take = if matches!(kind, Wrong::SaturatingTruncation) {
-        scaled as i32
+    let in_range = scaled >= -2_147_483_648.0 && scaled < 2_147_483_648.0;
+    let take = if matches!(kind, Wrong::IndefiniteTruncation) && !in_range {
+        i32::MIN
     } else {
         truncate_to_i32(scaled)
     };
@@ -379,7 +382,7 @@ fn wrong_mismatches(kind: Wrong) -> u32 {
 
 #[test]
 fn block_init_matches_its_rewrite() {
-    let _guard = LOCK.lock().unwrap();
+    let _guard = LOCK.lock().unwrap_or_else(|poison| poison.into_inner());
     plant_stubs();
     let mut rng = Xorshift::new(SEED);
     let mut draws_inside_range = 0;
@@ -396,14 +399,14 @@ fn block_init_matches_its_rewrite() {
 
 #[test]
 fn block_init_wrong_versions_are_caught() {
-    let _guard = LOCK.lock().unwrap();
+    let _guard = LOCK.lock().unwrap_or_else(|poison| poison.into_inner());
     plant_stubs();
     for kind in [
         Wrong::CountdownBase,
         Wrong::SelectorZero,
         Wrong::TailFirst,
         Wrong::DrawFifteenBits,
-        Wrong::SaturatingTruncation,
+        Wrong::IndefiniteTruncation,
         Wrong::ReadyClear,
     ] {
         assert!(wrong_mismatches(kind) > 0, "wrong version {kind:?} is caught");

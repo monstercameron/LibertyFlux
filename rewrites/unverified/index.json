@@ -920,30 +920,6 @@
   "reason": "out_of_time"
  },
  {
-  "address": "0x00635E60",
-  "name": "rage::pgDictionary<rage::ptxRule>::vf0",
-  "file": "fn_00635e60.rs",
-  "lane": "r-s679",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00635E90",
-  "name": "rage::pgDictionary<rage::ptxEmitRule>::vf0",
-  "file": "fn_00635e90.rs",
-  "lane": "r-s679",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00635EC0",
-  "name": "rage::pgDictionary<rage::ptxEffectRule>::vf0",
-  "file": "fn_00635ec0.rs",
-  "lane": "r-s679",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00635EF0",
   "name": "rage::pgDictionary<rage::rmcDrawable>::vf0",
   "file": "fn_00635ef0.rs",
@@ -1249,19 +1225,11 @@
  },
  {
   "address": "0x008C5730",
-  "name": "pending_008c5730",
+  "name": "file_memory_state_initialize",
   "file": "fn_008c5730.rs",
   "lane": "r-s678",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x008C5C70",
-  "name": "pending_008c5c70",
-  "file": "fn_008c5c70.rs",
-  "lane": "r-s678",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x008DBF60",
@@ -2080,9 +2048,9 @@
   "reason": null
  },
  {
-  "address": "0x00B25B20",
-  "name": "CEntity_SetFrozen",
-  "file": "fn_00b25b20.rs",
+  "address": "0x00B25FB0",
+  "name": "entity_replace_physics_reference",
+  "file": "fn_00b25fb0.rs",
   "lane": "r-s665",
   "outcome": "not_reached",
   "reason": null
@@ -2360,6 +2328,14 @@
   "reason": null
  },
  {
+  "address": "0x00B8AC90",
+  "name": "NativeImpl_GET_CUTSCENE_PED_POSITION_2",
+  "file": "fn_00b8ac90.rs",
+  "lane": "r-s674",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00B8AD90",
   "name": "NativeImpl_IS_POS_IN_CUTSCENE_BLOCKING_BOUNDS",
   "file": "fn_00b8ad90.rs",
@@ -2374,6 +2350,22 @@
   "lane": "r-n86",
   "outcome": "not yet run",
   "reason": null
+ },
+ {
+  "address": "0x00B8F8B0",
+  "name": "NativeImpl_GET_FRONTEND_DESIGN_VALUE",
+  "file": "fn_00b8f8b0.rs",
+  "lane": "r-s674",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00B8FAE0",
+  "name": "NativeImpl_GET_MENU_POSITION",
+  "file": "fn_00b8fae0.rs",
+  "lane": "r-s674",
+  "outcome": "not_reached",
+  "reason": ""
  },
  {
   "address": "0x00B94F20",
@@ -3835,6 +3827,14 @@
   "address": "0x00D9F100",
   "name": "streaming_00d9f100",
   "file": "fn_00d9f100.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D9F940",
+  "name": "streaming_00d9f940",
+  "file": "fn_00d9f940.rs",
   "lane": "r-s675",
   "outcome": "not_reached",
   "reason": null

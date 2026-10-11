@@ -1,8 +1,9 @@
-//! Host tests of the task predicates and the task state block: the edge
+﻿//! Host tests of the task predicates and the task state block: the edge
 //! cases a reader would ask about, on the 64-bit host. The 32-bit
 //! differential cases live in the `lf-taskshapediff` test crate.
 
 use lf_peds_tasks::ped_task::registry::State;
+use lf_peds_tasks::ped_task::{BlockCallees, ScaleFactors, TaskBlock};
 use lf_peds_tasks::ped_task::shape_registry;
 use lf_peds_tasks::ped_task::{
     BLOCK_WORDS, INVALID_HANDLE, PredicateTask, ResourceTag, STATE_RECORD_COUNT,
@@ -151,11 +152,167 @@ fn reset_clears_everything_it_was_given() {
 #[test]
 fn registry_section_counts_match_the_lifted_routines() {
     let (proven, lifted, missing) = shape_registry::counts();
-    assert_eq!(proven, 3);
+    assert_eq!(proven, 4);
     assert_eq!(lifted, 0);
     assert_eq!(missing, 0);
     for row in shape_registry::ROWS {
         assert_eq!(row.state, State::Proven);
         assert!(!row.narrows.is_empty(), "{} {} states its narrowings", row.class, row.method);
     }
+}
+
+/// A collaborator that records the block initialiser's calls and answers a
+/// fixed draw and tick.
+#[derive(Default)]
+struct Calls {
+    draw: u32,
+    tick: u32,
+    log: Vec<String>,
+}
+
+impl BlockCallees for Calls {
+    fn construct_first(&mut self, block: u32) {
+        self.log.push(format!("construct_first {block:#x}"));
+    }
+    fn construct_middle(&mut self, sub: u32) {
+        self.log.push(format!("construct_middle {sub:#x}"));
+    }
+    fn construct_tail(&mut self, sub: u32) {
+        self.log.push(format!("construct_tail {sub:#x}"));
+    }
+    fn setup_first(&mut self, block: u32) {
+        self.log.push(format!("setup_first {block:#x}"));
+    }
+    fn draw(&mut self) -> u32 {
+        self.log.push("draw".to_owned());
+        self.draw
+    }
+    fn setup_second(&mut self, block: u32, arg: u32) {
+        self.log.push(format!("setup_second {block:#x} {arg}"));
+    }
+    fn setup_third(&mut self, block: u32, arg: u32) {
+        self.log.push(format!("setup_third {block:#x} {arg}"));
+    }
+    fn tick(&self) -> u32 {
+        self.tick
+    }
+}
+
+/// The image's factors: the reciprocal of 2^15 and the negative of 500.
+const IMAGE_SCALE: ScaleFactors = ScaleFactors {
+    inverse_range: 1.0 / 32768.0,
+    factor: -500.0,
+};
+
+#[test]
+fn block_init_runs_its_calls_in_order_with_the_sub_object_handles() {
+    let mut calls = Calls {
+        draw: 0,
+        tick: 77,
+        log: Vec::new(),
+    };
+    let _ = TaskBlock::initialise(0x1000, &mut calls, IMAGE_SCALE);
+    assert_eq!(
+        calls.log,
+        vec![
+            "construct_first 0x1000",
+            "construct_middle 0x1080",
+            "construct_tail 0x1110",
+            "setup_first 0x1000",
+            "draw",
+            "setup_second 0x1000 0",
+            "setup_third 0x1000 0",
+        ]
+    );
+}
+
+#[test]
+fn block_init_sets_the_owned_words() {
+    let mut calls = Calls {
+        draw: 0,
+        tick: 77,
+        log: Vec::new(),
+    };
+    let block = TaskBlock::initialise(0x1000, &mut calls, IMAGE_SCALE);
+    assert_eq!(block.params, [0; 6]);
+    assert_eq!(block.unit_scale, 1.0);
+    assert_eq!(block.unit_scale_tail, 0);
+    assert_eq!(block.tick_copy, 77);
+    assert_eq!(block.ready, 1);
+    assert_eq!(block.result, 0);
+    assert_eq!(block.ctrl_a, 0);
+    assert_eq!(block.selector, u32::MAX, "no selection");
+    assert_eq!(block.ctrl_b, 0);
+    assert_eq!(block.flag_b, 0);
+    assert_eq!(block.tail, 0);
+}
+
+#[test]
+fn block_init_countdown_spans_five_hundred_to_fifteen_hundred() {
+    let countdown = |draw: u32| {
+        let mut calls = Calls {
+            draw,
+            tick: 0,
+            log: Vec::new(),
+        };
+        TaskBlock::initialise(0x1000, &mut calls, IMAGE_SCALE).countdown
+    };
+    // No draw: the countdown is the base.
+    assert_eq!(countdown(0), 500);
+    // The largest sixteen-bit draw takes the countdown to its top.
+    assert_eq!(countdown(0xFFFF), 1499);
+    // Bits above the sixteen used are ignored.
+    assert_eq!(countdown(0x0001_0000), 500);
+    assert_eq!(countdown(0xFFFF_0000), 500);
+}
+
+#[test]
+fn block_init_truncates_the_scaled_draw_toward_zero() {
+    // Half the range: 32768 times 2^-15 times -500 is -500, exactly.
+    let mut calls = Calls {
+        draw: 0x8000,
+        tick: 0,
+        log: Vec::new(),
+    };
+    assert_eq!(TaskBlock::initialise(0x1000, &mut calls, IMAGE_SCALE).countdown, 1000);
+    // A product of minus 0.5 truncates to zero, not minus one.
+    let half = ScaleFactors {
+        inverse_range: 1.0,
+        factor: -0.5,
+    };
+    let mut calls = Calls {
+        draw: 1,
+        tick: 0,
+        log: Vec::new(),
+    };
+    assert_eq!(TaskBlock::initialise(0x1000, &mut calls, half).countdown, 500);
+}
+
+#[test]
+fn block_init_not_a_number_and_overflow_follow_the_verified_rewrite() {
+    // The verified rewrite converts with the Rust conversion: a not-a-number
+    // gives zero, and an overflow saturates.
+    let nan = ScaleFactors {
+        inverse_range: f32::NAN,
+        factor: 1.0,
+    };
+    let mut calls = Calls {
+        draw: 1,
+        tick: 0,
+        log: Vec::new(),
+    };
+    assert_eq!(TaskBlock::initialise(0x1000, &mut calls, nan).countdown, 500);
+    let overflow = ScaleFactors {
+        inverse_range: 1.0,
+        factor: f32::INFINITY,
+    };
+    let mut calls = Calls {
+        draw: 1,
+        tick: 0,
+        log: Vec::new(),
+    };
+    assert_eq!(
+        TaskBlock::initialise(0x1000, &mut calls, overflow).countdown,
+        500u32.wrapping_sub(i32::MAX as u32)
+    );
 }
