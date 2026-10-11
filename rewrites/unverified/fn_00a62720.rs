@@ -16,7 +16,7 @@ lf_checker_rt::export!(thiscall, rw_00a62720(this: u32, amount_bits: u32) -> u32
         let converted = if !requested.is_finite() || requested >= 2_147_483_648.0 || requested < -2_147_483_648.0 {
             i32::MIN
         } else {
-            requested.trunc() as i32
+            requested as i32
         };
         let requested_byte = (converted as u8) as i8;
         let current = (this.wrapping_add(COUNTER) as *const u8).read() as i8;
