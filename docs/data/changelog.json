@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Lift: nine more pedestrian-task routines in eight data shapes",
+    "title": "Rust in progress: 71 files from lanes (514 unverified rewrites, 0 in review)",
     "commit": null,
+    "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
+    "changes": [
+      "rewrites/unverified holds 514 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
+      "rewrites/in-review holds 0 Rust files from 0 other lanes (checker changes, assembly, lifted code, tools), waiting for review before they move to their real place.",
+      "39 files were held back by the publication scan."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Lift: nine more pedestrian-task routines in eight data shapes",
+    "commit": "33c3113192e27c735da61f4975f1c888d0fb7d93",
     "summary": "Nine more verified routines of the pedestrian-task code now have a portable Rust counterpart, each proven against its verified original. The functions this lane was given turned out to share a name prefix and almost nothing else.",
     "changes": [
       "Lifted into lf-peds-tasks, one owning type per shape: two one-object predicates, a task state reset, a task block constructor with seven callees, a turn tracker, a scan of a table of typed records, an aim record update, an owner flag update, and an entry initialiser. The new modules are 1,128 lines with no unsafe and no addresses; each routine's callees sit behind a trait of its own, and the proof compares the calls in order.",
