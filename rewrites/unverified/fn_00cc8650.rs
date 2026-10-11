@@ -6,7 +6,8 @@
 /// `+0x38` when its word at `+0x34` matches the search key, or `+0x34` otherwise.
 /// The nested-record matcher receives that value and `1`; a nonzero AL clears
 /// bit zero of the object's byte at `+0xa5`. When the nested kind bits equal
-/// `0xc0`, the final helper receives all four original arguments. The original
+/// `0xc0`, the final helper receives the array, key, loop-updated start index,
+/// and end bound. The original
 /// uses the incoming `start` slot as its loop counter, so stack comparison is
 /// disabled; the index is observed through heap accesses and writes.
 lf_checker_rt::export!(thiscall, rw_00cc8650(
@@ -40,6 +41,7 @@ lf_checker_rt::export!(thiscall, rw_00cc8650(
     };
     let record_flags = unsafe { (nested.wrapping_add(RECORD_FLAGS) as *const u8).read() };
 
+    let mut updated_start = start;
     if (2..5).contains(&kind) && record_count != 0 && record_flags & ACTIVE_BIT != 0 {
         let mut object_index = start as i32;
         let end_index = end as i32;
@@ -66,6 +68,7 @@ lf_checker_rt::export!(thiscall, rw_00cc8650(
             }
             object_index = object_index.wrapping_add(1);
         }
+        updated_start = object_index as u32;
     }
 
     if kind_word & 0x3c0 == 0xc0 {
@@ -75,7 +78,7 @@ lf_checker_rt::export!(thiscall, rw_00cc8650(
             nested,
             objects,
             key,
-            start,
+            updated_start,
             end
         );
     }

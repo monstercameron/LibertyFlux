@@ -1296,14 +1296,6 @@
   "reason": "other"
  },
  {
-  "address": "0x00920B00",
-  "name": "streaming_fn_00920b00",
-  "file": "fn_00920b00.rs",
-  "lane": "r-s676",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x0092AE00",
   "name": "cam_pose_update",
   "file": "fn_0092ae00.rs",
@@ -2299,6 +2291,14 @@
   "address": "0x00B88720",
   "name": "NativeImpl_HINT_CAM_2",
   "file": "fn_00b88720.rs",
+  "lane": "r-s674",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00B888F0",
+  "name": "NativeImpl_CAM_IS_SPHERE_VISIBLE",
+  "file": "fn_00b888f0.rs",
   "lane": "r-s674",
   "outcome": "not_reached",
   "reason": ""
@@ -3744,9 +3744,17 @@
   "reason": null
  },
  {
-  "address": "0x00D9EEC0",
-  "name": "streaming_00d9eec0",
-  "file": "fn_00d9eec0.rs",
+  "address": "0x00D9E8B0",
+  "name": "streaming_00d9e8b0",
+  "file": "fn_00d9e8b0.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D9E900",
+  "name": "streaming_00d9e900",
+  "file": "fn_00d9e900.rs",
   "lane": "r-s675",
   "outcome": "not_reached",
   "reason": null
@@ -3846,14 +3854,6 @@
   "lane": "r-s525",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00DE2FE0",
-  "name": "UIScrollingMenu::vf72",
-  "file": "fn_00de2fe0.rs",
-  "lane": "r-s669",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00DE43A0",

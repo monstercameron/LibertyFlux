@@ -101,7 +101,7 @@ pub unsafe fn rw_00ca0b10(
     let _ = lf_checker_rt::callee_thiscall!(7, u32, first_frame_pointer, first_provider);
 
     let angle_a_bits = call_double_helper();
-    let _ = lf_checker_rt::callee_cdecl!(9, f32, SIGNED_ZERO_F32_BITS);
+    let _ = lf_checker_rt::callee_cdecl!(9, u32, SIGNED_ZERO_F32_BITS);
     let angle_b_bits = call_double_helper();
 
     let fourth = unsafe { bone_method(task, second_selector_arg) };

@@ -13,7 +13,7 @@ lf_checker_rt::export!(thiscall, rw_b259b0(this: u32) -> () {
     const RECORD_FLAGS: u32 = 0x0A;
     const RECORD_INDEX: u32 = 0x08;
     const RECORD_VTABLE_SLOT: u32 = 0x04;
-    const SERVICE_GLOBAL_RVA: u32 = 0x0EB9_C7C;
+    const SERVICE_GLOBAL_ADDRESS: u32 = 0x12B9_C7C;
 
     const ENTITY_QUERY: u32 = 1;
     const RECORD_CATEGORY: u32 = 2;
@@ -61,7 +61,7 @@ lf_checker_rt::export!(thiscall, rw_b259b0(this: u32) -> () {
                 if (category as i32) < 13 {
                     let index = read_u16(record.wrapping_add(RECORD_INDEX));
                     if index != u16::MAX {
-                        let service = lf_checker_rt::global::<u32>(SERVICE_GLOBAL_RVA).read_unaligned();
+                        let service = lf_checker_rt::global::<u32>(SERVICE_GLOBAL_ADDRESS).read_unaligned();
                         let _ = lf_checker_rt::callee_thiscall!(INDEXED_SERVICE, u32, service, index as u32, 0);
                     }
                 }
