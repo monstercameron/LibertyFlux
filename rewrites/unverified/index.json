@@ -360,6 +360,14 @@
   "reason": "other"
  },
  {
+  "address": "0x00627550",
+  "name": "fn_00627550",
+  "file": "fn_00627550.rs",
+  "lane": "r-s580",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x006607F0",
   "name": "rage::snAddRemoteGamerTask::vf3",
   "file": "fn_006607f0.rs",
@@ -502,14 +510,6 @@
   "lane": "r-s579",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00694860",
-  "name": "fn_00694860",
-  "file": "fn_00694860.rs",
-  "lane": "r-s579",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x006F5C50",
@@ -1448,12 +1448,12 @@
   "reason": "float_register_args"
  },
  {
-  "address": "0x00CD8AF0",
-  "name": "CTaskComplexFollowPedFootsteps::vf19",
-  "file": "fn_00cd8af0.rs",
+  "address": "0x00CD8CB0",
+  "name": "CTaskComplexFollowLeaderAnyMeans::vf18",
+  "file": "fn_00cd8cb0.rs",
   "lane": "r-s581",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "checker_gap"
  },
  {
   "address": "0x00CF8050",
