@@ -139284,6 +139284,114 @@
   "lane": "r-b404"
  },
  {
+  "address": "0x00DCBB70",
+  "name": "CTaskComplexMoveAvoidOtherPedWhileWandering::~CTaskComplexMoveAvoidOtherPedWhileWandering",
+  "kind": "function",
+  "file": "functions/fn_00dcbb70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
+  "address": "0x00DCBBA0",
+  "name": "CTaskComplexMove_StepAwayFromCollisionObjects::~CTaskComplexMove_StepAwayFromCollisionObjects",
+  "kind": "function",
+  "file": "functions/fn_00dcbba0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
+  "address": "0x00DCC170",
+  "name": "CTaskComplexMoveAvoidOtherPedWhileWandering::vf1",
+  "kind": "function",
+  "file": "functions/fn_00dcc170.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
+  "address": "0x00DCC890",
+  "name": "CTaskComplexMove_StepAwayFromCollisionObjects::vf20",
+  "kind": "function",
+  "file": "functions/fn_00dcc890.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
+  "address": "0x00DCCDE0",
+  "name": "move_task_release_animation_reference",
+  "kind": "function",
+  "file": "functions/fn_00dccde0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
+  "address": "0x00DCCE20",
+  "name": "CTaskComplexMoveAvoidOtherPedWhileWandering::vf9",
+  "kind": "function",
+  "file": "functions/fn_00dcce20.rs",
+  "trials": 1100,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
+  "address": "0x00DCCFB0",
+  "name": "STAT_UNKNOWN",
+  "kind": "function",
+  "file": "functions/fn_00dccfb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
+  "address": "0x00DCD020",
+  "name": "reload_task_initialize",
+  "kind": "function",
+  "file": "functions/fn_00dcd020.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
+  "address": "0x00DCD0C0",
+  "name": "reload_task_destroy_resource",
+  "kind": "function",
+  "file": "functions/fn_00dcd0c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
+  "address": "0x00DCD100",
+  "name": "CTaskSimpleReloadGun::vf0",
+  "kind": "function",
+  "file": "functions/fn_00dcd100.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
+  "address": "0x00DCD130",
+  "name": "CTaskSimpleReloadGun::vf1",
+  "kind": "function",
+  "file": "functions/fn_00dcd130.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
+  "address": "0x00DCD170",
+  "name": "reload_task_set_phase_three_and_clear_link",
+  "kind": "function",
+  "file": "functions/fn_00dcd170.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
   "address": "0x00DCD1A0",
   "name": "task_pick_anim_and_maybe_scale",
   "kind": "function",
@@ -139291,6 +139399,24 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b333"
+ },
+ {
+  "address": "0x00DCD5F0",
+  "name": "reload_task_advance_stage",
+  "kind": "function",
+  "file": "functions/fn_00dcd5f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
+  "address": "0x00DCD6A0",
+  "name": "reload_task_clear_state",
+  "kind": "function",
+  "file": "functions/fn_00dcd6a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
  },
  {
   "address": "0x00DCD6C0",
@@ -139302,6 +139428,33 @@
   "lane": "r-b333"
  },
  {
+  "address": "0x00DCD860",
+  "name": "aim_task_destroy_attached_resources",
+  "kind": "function",
+  "file": "functions/fn_00dcd860.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
+  "address": "0x00DCD900",
+  "name": "CTaskSimpleAimGun::vf0",
+  "kind": "function",
+  "file": "functions/fn_00dcd900.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
+  "address": "0x00DCDD00",
+  "name": "aim_task_set_phase_seven_and_clear_timer",
+  "kind": "function",
+  "file": "functions/fn_00dcdd00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
   "address": "0x00DCDD50",
   "name": "task_ensure_reload_anim",
   "kind": "function",
@@ -139309,6 +139462,24 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b333"
+ },
+ {
+  "address": "0x00DCE240",
+  "name": "CTaskSimpleAimGun::vf5",
+  "kind": "function",
+  "file": "functions/fn_00dce240.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
+ },
+ {
+  "address": "0x00DCE520",
+  "name": "task_function_00dce520",
+  "kind": "function",
+  "file": "functions/fn_00dce520.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s632"
  },
  {
   "address": "0x00DCF030",
