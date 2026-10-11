@@ -80100,6 +80100,51 @@
   "lane": "a-18"
  },
  {
+  "address": "0x00ABC290",
+  "name": "input_ui_find_highest_record",
+  "kind": "function",
+  "file": "functions/fn_00abc290.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s576"
+ },
+ {
+  "address": "0x00ABC2E0",
+  "name": "input_ui_find_lowest_vector_record",
+  "kind": "function",
+  "file": "functions/fn_00abc2e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s576"
+ },
+ {
+  "address": "0x00ABC3A0",
+  "name": "input_ui_forward_five_values",
+  "kind": "function",
+  "file": "functions/fn_00abc3a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s576"
+ },
+ {
+  "address": "0x00ABC3E0",
+  "name": "input_ui_insert_before_end",
+  "kind": "function",
+  "file": "functions/fn_00abc3e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s576"
+ },
+ {
+  "address": "0x00ABC460",
+  "name": "input_ui_build_extended_record",
+  "kind": "function",
+  "file": "functions/fn_00abc460.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s576"
+ },
+ {
   "address": "0x00ABC510",
   "name": "shape_blend_vec3_pair",
   "kind": "function",
@@ -80107,6 +80152,24 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b239"
+ },
+ {
+  "address": "0x00ABC830",
+  "name": "input_ui_build_record",
+  "kind": "function",
+  "file": "functions/fn_00abc830.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s576"
+ },
+ {
+  "address": "0x00ABC8A0",
+  "name": "input_ui_copy_30_word_record",
+  "kind": "function",
+  "file": "functions/fn_00abc8a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s576"
  },
  {
   "address": "0x00ABCA40",
@@ -80154,6 +80217,15 @@
   "lane": "r-b610"
  },
  {
+  "address": "0x00ABDB50",
+  "name": "input_ui_curve_weight",
+  "kind": "function",
+  "file": "functions/fn_00abdb50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s576"
+ },
+ {
   "address": "0x00ABDBA0",
   "name": "vec_light_kernel",
   "kind": "function",
@@ -80161,6 +80233,15 @@
   "trials": 1000,
   "checker": "version 6",
   "lane": "r-b610"
+ },
+ {
+  "address": "0x00ABE080",
+  "name": "input_ui_dispatch_if_enabled",
+  "kind": "function",
+  "file": "functions/fn_00abe080.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s576"
  },
  {
   "address": "0x00ABF0B0",
