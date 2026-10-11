@@ -1,7 +1,7 @@
 // original: 0x00AE8740 reset_timer_allocations
 
 /// Refreshes a timer manager, delegates the active timer work, then clears
-/// its four per-frame fields at `+0x24`, `+0x28`, `+0x2c` and `+0x30`. It
+/// its four per-frame fields at `+0x24`, `+0x28`, `+0x2c` and `+0x30`. The
 /// context also supplies the category value at `+0x938`. A global byte
 /// selects the extended path, which makes three extra subsystem calls before
 /// the shared manager callback. The routine sets and then clears two global
@@ -33,6 +33,11 @@ lf_checker_rt::export!(cdecl, rw_00ae8740(manager: u32) -> () {
         #[inline(always)]
         unsafe fn read_u32(address: u32) -> u32 {
             unsafe { (address as *const u32).read_unaligned() }
+        }
+
+        #[inline(always)]
+        unsafe fn read_u8(address: u32) -> u8 {
+            unsafe { (address as *const u8).read_unaligned() }
         }
 
         #[inline(always)]

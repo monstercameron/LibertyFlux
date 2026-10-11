@@ -15,7 +15,6 @@ lf_checker_rt::export!(thiscall, rw_005e1310(this: u32) -> u32 {
     const HANDLER_SLOT_OFFSET: u32 = 0xd0;
     const ITEM_COUNT: u32 = 5;
     const UNIT_WEIGHT_BITS: u32 = 0x3f80_0000;
-    const HANDLER_ID: u32 = 1;
     const AFTER_HANDLER_ID: u32 = 2;
     const APPLY_WEIGHT_ID: u32 = 3;
     const RELEASE_SLOT_ID: u32 = 4;
@@ -31,6 +30,7 @@ lf_checker_rt::export!(thiscall, rw_005e1310(this: u32) -> u32 {
 
     unsafe {
         let items = read_u32(this.wrapping_add(ITEMS_OFFSET));
+        let mut last_release_result = 0;
         for index in 0..ITEM_COUNT {
             let slot = items.wrapping_add(index.wrapping_mul(4));
             let item = read_u32(slot);
@@ -52,9 +52,10 @@ lf_checker_rt::export!(thiscall, rw_005e1310(this: u32) -> u32 {
                 item,
                 UNIT_WEIGHT_BITS
             );
-            let _ = lf_checker_rt::callee_thiscall!(RELEASE_SLOT_ID, u32, item, slot);
+            last_release_result =
+                lf_checker_rt::callee_thiscall!(RELEASE_SLOT_ID, u32, item, slot);
             write_u32(slot, 0);
         }
+        return last_release_result;
     }
-    0
 });

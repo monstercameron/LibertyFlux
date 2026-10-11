@@ -57,6 +57,11 @@ macro_rules! export {
         #[unsafe(no_mangle)]
         pub extern "thiscall" fn $name($($arg : $ty),*) -> $ret $body
     };
+    (cdecl, $name:ident ($($arg:ident : $ty:ty),* $(,)?) -> $ret:ty $body:block) => {
+        /// Rewrite export, called by the differential test by name (cdecl).
+        #[unsafe(no_mangle)]
+        pub extern "cdecl" fn $name($($arg : $ty),*) -> $ret $body
+    };
 }
 
 /// Call intercepted callee `id` with the thiscall convention.

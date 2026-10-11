@@ -27,6 +27,9 @@
 //!   the drive step that feeds the blend, and the commit back into the
 //!   pose. Its unlifted callees and virtual methods travel as one trait.
 //!
+//! - [`seek`]: the seek-target record a seek task reads: the mover's
+//!   position, a goal, and the step toward the goal in the plane.
+//!
 //! What each lifted method covers, and what it narrows away from the
 //! original, is recorded per routine in [`registry`].
 
@@ -35,12 +38,14 @@
 mod create;
 mod mover;
 mod pose;
+mod seek;
 
 pub mod registry;
 
 pub use mover::{
     BlendState, COMMIT_FLAG_ARG, MoverCallees, MoverPose, NOT_READY, SNAP_FLAG,
 };
+pub use seek::{SEEK_MODE, SeekGoal, SeekMover, SeekRecord, STEP_SCALE, TUNING};
 pub use create::{
     ArgLookup, BuildManagers, ChainClone, ChainCloner, ChainEntry, ChainNode, ChainOwner,
     CloneProduct, FLAG_DONE, FLAG_EXTRA, FoundEntry, KIND_11, Kind11Task, NONE, PRIORITY, PedMgr,

@@ -132,6 +132,18 @@ pub const ROWS: &[Row] = &[
             "the callees are assumed not to write the pose or the state block",
         ],
     },
+    // SeekRecord: the seek record builder. No callees.
+    Row {
+        class: "SeekRecord",
+        method: "seek_target_setup",
+        state: State::Proven,
+        narrows: &[
+            "the mover's position block is reached through the owner's sub-object pointer; the caller resolves that chain and passes the block's values, and a null sub-object (which faults in the rewrite) is not modelled",
+            "the goal is the target's position block, of which only the x and y words are read: the proof plants the rest of the block and checks it is not written",
+            "the word the original copies from an uninitialised frame slot is pinned to zero by the rewrite's contract; the lift writes zero",
+            "the mode word the routine stores beside the record (two) is returned as SEEK_MODE for the caller to store",
+        ],
+    },
     Row {
         class: "MoverPose",
         method: "commit_blend",

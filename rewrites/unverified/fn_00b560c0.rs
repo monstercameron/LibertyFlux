@@ -1,9 +1,9 @@
 // original: 0x00B560C0 crmtManagerPriority_build_scaled_output
 
 /// Builds a four-word output at `out`. It first copies three static basis
-/// floats, then calls the transform helper with `source`, the product of the
-/// `f32` at `source + 0x0C` and `input_scale`, the source pointer again, a
-/// four-word temporary, and the constants zero and one. The helper's four
+/// floats, then calls the transform helper with `source` in ECX and four
+/// stack arguments: the product of the `f32` at `source + 0x0C` and
+/// `input_scale`, a four-word temporary, zero, and one. The helper's four
 /// output words replace all four output words. Float multiplication keeps the
 /// original operand order. A final CRT cookie check is made before returning
 /// `out`. The three static values are read through the relocated image base.
@@ -34,7 +34,7 @@ lf_checker_rt::export!(cdecl, rw_00b560c0(out: u32, input_scale: f32, source: u3
         let source_word = source;
         let mut helper_values = [0x00e9_5580u32, 0x0000_0510u32, 0, 0];
         let _ = lf_checker_rt::callee_thiscall!(
-            HELPER, u32, source_word, scaled.to_bits(), source_word,
+            HELPER, u32, source_word, scaled.to_bits(),
             helper_values.as_mut_ptr() as u32, 0, 1
         );
         for index in 0..4u32 {

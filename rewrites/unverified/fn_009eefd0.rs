@@ -29,10 +29,6 @@ const TASK_FLAG: u32 = 0xA5;
 const TASK_FLAG_CLEAR: u8 = 0xFE;
 const TASK_LOW_INDEX: u32 = 0xA8;
 const TASK_HIGH_INDEX: u32 = 0xAA;
-const TASK_WEIGHT: u32 = 0x48;
-const TASK_VECTOR_X: u32 = 0x50;
-const TASK_VECTOR_Y: u32 = 0x54;
-const TASK_VECTOR_Z: u32 = 0x58;
 const CONTEXT_OWNER: u32 = 0x34;
 const CONTEXT_SELECTED: u32 = 0x38;
 const CONTEXT_LIMITS: u32 = 0x3C;
@@ -203,7 +199,7 @@ lf_checker_rt::export!(thiscall, rw_009eefd0(this: u32, task_array: u32, task_ke
 
                         let child = read_at_u32(selected, FIRST_TASK_SLOT);
                         let data_object = read_at_u32(child, 0x0C);
-                        let data_kind = read_at_u8(data_object.wrapping_add(DATA_KIND));
+                        let data_kind = read_u8(data_object.wrapping_add(DATA_KIND));
                         let state_value = if data_kind == 10 || data_kind == 4 || data_kind == 5 {
                             let task_index = if key_matches {
                                 read_at_u16(task, TASK_HIGH_INDEX) as u32
@@ -214,7 +210,7 @@ lf_checker_rt::export!(thiscall, rw_009eefd0(this: u32, task_array: u32, task_ke
                             let item_count = read_at_u32(data_object, DATA_COUNT) as i32;
                             let item = if task_index_signed >= 0 && task_index_signed < item_count {
                                 let items = read_at_u32(data_object, DATA_ITEMS);
-                                read_at_u8(items.wrapping_add(task_index.wrapping_mul(DATA_ITEM_STRIDE)).wrapping_add(0x0C)) as u32
+                                read_u8(items.wrapping_add(task_index.wrapping_mul(DATA_ITEM_STRIDE)).wrapping_add(0x0C)) as u32
                             } else {
                                 0
                             };
