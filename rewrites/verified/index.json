@@ -144837,6 +144837,60 @@
   "lane": "r-s675"
  },
  {
+  "address": "0x00DA34D0",
+  "name": "ped_attractor_cleanup_records",
+  "kind": "function",
+  "file": "functions/fn_00da34d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s696"
+ },
+ {
+  "address": "0x00DA3630",
+  "name": "ped_attractor_apply_item_if_valid",
+  "kind": "function",
+  "file": "functions/fn_00da3630.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s696"
+ },
+ {
+  "address": "0x00DA37E0",
+  "name": "ped_attractor_accept_via_virtual_method",
+  "kind": "function",
+  "file": "functions/fn_00da37e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s696"
+ },
+ {
+  "address": "0x00DA3830",
+  "name": "CPedShelterAttractor::vf5",
+  "kind": "function",
+  "file": "functions/fn_00da3830.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s696"
+ },
+ {
+  "address": "0x00DA38F0",
+  "name": "CPedShelterAttractor::vf4",
+  "kind": "function",
+  "file": "functions/fn_00da38f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s696"
+ },
+ {
+  "address": "0x00DA3920",
+  "name": "CPedAttractor::vf3",
+  "kind": "function",
+  "file": "functions/fn_00da3920.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s696"
+ },
+ {
   "address": "0x00DA3BD0",
   "name": "copy_via_callee_scratch",
   "kind": "function",
