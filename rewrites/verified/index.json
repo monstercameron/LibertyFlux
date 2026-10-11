@@ -83142,6 +83142,15 @@
   "lane": "r-b273"
  },
  {
+  "address": "0x00AE8390",
+  "name": "object_timer_service",
+  "kind": "function",
+  "file": "functions/fn_00ae8390.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s591"
+ },
+ {
   "address": "0x00AE8510",
   "name": "sweep_timing_entries",
   "kind": "function",
@@ -83149,6 +83158,24 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b273"
+ },
+ {
+  "address": "0x00AE8680",
+  "name": "process_timer_callbacks",
+  "kind": "function",
+  "file": "functions/fn_00ae8680.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s591"
+ },
+ {
+  "address": "0x00AE8740",
+  "name": "reset_timer_allocations",
+  "kind": "function",
+  "file": "functions/fn_00ae8740.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s591"
  },
  {
   "address": "0x00AE8800",
@@ -83167,6 +83194,42 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b273"
+ },
+ {
+  "address": "0x00AE9060",
+  "name": "release_mainloop_timer",
+  "kind": "function",
+  "file": "functions/fn_00ae9060.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s591"
+ },
+ {
+  "address": "0x00AE9100",
+  "name": "fill_small_timer_slots",
+  "kind": "function",
+  "file": "functions/fn_00ae9100.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s591"
+ },
+ {
+  "address": "0x00AE9120",
+  "name": "fill_large_timer_slots",
+  "kind": "function",
+  "file": "functions/fn_00ae9120.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s591"
+ },
+ {
+  "address": "0x00AE9140",
+  "name": "refresh_coarse_timer",
+  "kind": "function",
+  "file": "functions/fn_00ae9140.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s591"
  },
  {
   "address": "0x00AE9260",
@@ -83203,6 +83266,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b276"
+ },
+ {
+  "address": "0x00AEBD10",
+  "name": "apply_timer_filter_mask",
+  "kind": "function",
+  "file": "functions/fn_00aebd10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s591"
  },
  {
   "address": "0x00AEBDF0",

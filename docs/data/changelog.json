@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Lane rules: the limit of three checker workers is a lane's own",
+    "title": "Rewrites: 8 more functions pass the checker (17283 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "8 rewrites added under rewrites/verified: 0 script native handlers and 8 other functions.",
+      "The tree now holds 17283 rewrites, 17280 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Lane rules: the limit of three checker workers is a lane's own",
+    "commit": "e4e1452e940814015b7a8b87d5d73f8469e95836",
     "summary": "With sixty lanes running, lanes read the limit of three checker workers as a count of every worker on the machine and stopped running the checker. The rule now says whose workers it counts.",
     "changes": [
       "In two hours at least 44 functions were deferred with a finished rewrite and a finished contract and not one trial run: each lane saw twenty or thirty workers belonging to other lanes, judged the limit exceeded, and neither started its own nor waited. Their reason was recorded only as \"other\", which is how the hourly review found it.",
