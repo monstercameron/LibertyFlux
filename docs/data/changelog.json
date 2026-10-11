@@ -2,7 +2,7 @@
   {
     "date": "2026-10-11",
     "title": "Rewrites: 2 withdrawn because their float-to-integer conversion differs from the original out of range",
-    "commit": null,
+    "commit": "673ef3253a007e3403596abf2023d1f952cb4df9",
     "summary": "The verified count goes down by two. An audit of how verified rewrites convert floats to integers found two whose conversion gives a different result from the original's instruction when the value does not fit, and showed it on the stock checker.",
     "changes": [
       "Both rewrites convert with Rust's cast, which gives the nearest end of the range when a value does not fit. The original's instruction gives a fixed result instead. One function converts six values with a 32-bit truncating conversion and keeps 16 bits: for a positive value too large for 32 bits the original stores zero and the rewrite stored the largest 16-bit value. The other converts through a 64-bit integer store and keeps the low half: they differ for positive infinity and for values too large for 64 bits.",
