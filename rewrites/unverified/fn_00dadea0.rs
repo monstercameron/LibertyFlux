@@ -217,7 +217,7 @@ lf_checker_rt::export!(thiscall, rw_00DADEA0(this: u32, context: u32) -> u32 {
                 first_reference,
                 second_reference,
                 this.wrapping_add(0x20),
-                1
+                0x3F00_0000
             ) & 0xFF
                 == 0
         } else {
