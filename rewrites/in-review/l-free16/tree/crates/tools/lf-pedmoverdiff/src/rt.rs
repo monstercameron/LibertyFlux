@@ -83,6 +83,7 @@ macro_rules! callee_cdecl {
         f($( $arg ),*)
     }};
 }
+
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __ty {

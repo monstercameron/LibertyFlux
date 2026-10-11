@@ -13,7 +13,9 @@
 /// the candidate is classified by the flag tests and the ID9, ID10 and ID12 filters.
 /// Accepted candidates write the selected pair to the first pair word and the work
 /// pair to the second; the positive result writes the work pair and the selected pair
-/// the other way round. Returns 1 when a candidate was found, else zero.
+/// the other way round. The returned word has its low byte set to one for an accepted or
+/// positive candidate; its upper bits are those of the pointer (accept) or of the work pair
+/// (positive). Every other exit returns the word its tail leaves in EAX, low byte cleared.
 export!(cdecl, rw_00afcef0(
     a0: u32, a1: u32, a2: u32, a3: u32, a4: u32, a5: u32, a6: u32, a7: u32,
     a8: u32, a9: u32, a10: u32, a11: u32, a12: u32, a13: u32, a14: u32,

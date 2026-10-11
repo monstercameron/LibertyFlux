@@ -11,6 +11,7 @@
     unused_doc_comments,
     unused_imports,
     unused_mut,
+    unused_unsafe,
     unused_variables,
     clippy::all,
     clippy::pedantic
