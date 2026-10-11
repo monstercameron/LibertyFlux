@@ -126153,6 +126153,177 @@
   "lane": "r-b646"
  },
  {
+  "address": "0x00C55890",
+  "name": "CEventSeenCop::~CEventSeenCop__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c55890.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C558C0",
+  "name": "CPedScanner::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c558c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C558E0",
+  "name": "CVehicleScanner::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c558e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C561D0",
+  "name": "initialize_event_numeric_fields",
+  "kind": "function",
+  "file": "functions/fn_00c561d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C562B0",
+  "name": "release_event_reference_slots",
+  "kind": "function",
+  "file": "functions/fn_00c562b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C562F0",
+  "name": "CEventLeaderEnteredCarAsDriver::~CEventLeaderEnteredCarAsDriver",
+  "kind": "function",
+  "file": "functions/fn_00c562f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C56330",
+  "name": "CEventLeaderEnteredCover::~CEventLeaderEnteredCover",
+  "kind": "function",
+  "file": "functions/fn_00c56330.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C56360",
+  "name": "CEventLeaderExitedCarAsDriver::~CEventLeaderExitedCarAsDriver",
+  "kind": "function",
+  "file": "functions/fn_00c56360.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C56390",
+  "name": "CEventLeaderHolsteredWeapon::~CEventLeaderHolsteredWeapon",
+  "kind": "function",
+  "file": "functions/fn_00c56390.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C563C0",
+  "name": "CEventLeaderLeftCover::~CEventLeaderLeftCover",
+  "kind": "function",
+  "file": "functions/fn_00c563c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C563F0",
+  "name": "CEventLeaderUnholsteredWeapon::~CEventLeaderUnholsteredWeapon",
+  "kind": "function",
+  "file": "functions/fn_00c563f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C56420",
+  "name": "CEventPedCollisionWithPlayer::~CEventPedCollisionWithPlayer",
+  "kind": "function",
+  "file": "functions/fn_00c56420.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C56480",
+  "name": "CEventPlayerCollisionWithPed::~CEventPlayerCollisionWithPed",
+  "kind": "function",
+  "file": "functions/fn_00c56480.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C564E0",
+  "name": "CEventAcquaintancePedHateBadlyLit::~CEventAcquaintancePedHateBadlyLit",
+  "kind": "function",
+  "file": "functions/fn_00c564e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C56560",
+  "name": "CEventAcquaintancePedLike::~CEventAcquaintancePedLike",
+  "kind": "function",
+  "file": "functions/fn_00c56560.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C56590",
+  "name": "CEventAcquaintancePedRespect::~CEventAcquaintancePedRespect",
+  "kind": "function",
+  "file": "functions/fn_00c56590.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C565C0",
+  "name": "CEventHealthLow::~CEventHealthLow",
+  "kind": "function",
+  "file": "functions/fn_00c565c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C565F0",
+  "name": "CEventHealthReallyLow::~CEventHealthReallyLow",
+  "kind": "function",
+  "file": "functions/fn_00c565f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
+  "address": "0x00C56620",
+  "name": "CEventScriptedAttractor::~CEventScriptedAttractor",
+  "kind": "function",
+  "file": "functions/fn_00c56620.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s670"
+ },
+ {
   "address": "0x00C56690",
   "name": "task_check_threshold_store",
   "kind": "function",
