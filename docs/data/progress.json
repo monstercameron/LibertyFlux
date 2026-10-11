@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-11",
-  "updated_at": "2026-10-11 16:08",
+  "updated_at": "2026-10-11 16:10",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,7 +12,7 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 36897,
+    "named": 36931,
     "rewritten": 18409,
     "verified": 18359
   },
@@ -99,9 +99,9 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 36897,
+      "value": 36931,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (27893); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (27927); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites of game functions that passed the checker in a lane",
@@ -147,10 +147,10 @@
     }
   ],
   "activity": {
-    "lanes_running": 112,
-    "lanes_finished": 2243,
-    "lanes_incomplete": 691,
-    "devlog_entries": 573
+    "lanes_running": 113,
+    "lanes_finished": 2245,
+    "lanes_incomplete": 694,
+    "devlog_entries": 574
   },
   "map": [
     {
@@ -968,7 +968,7 @@
       "from": "0x005F65CF",
       "to": "0x005FBEEF",
       "count": 34,
-      "named": 33,
+      "named": 34,
       "rewritten": 20,
       "verified": 20
     },
@@ -1247,7 +1247,7 @@
       "from": "0x006A30E0",
       "to": "0x006A8A00",
       "count": 77,
-      "named": 47,
+      "named": 54,
       "rewritten": 3,
       "verified": 3
     },
@@ -1256,7 +1256,7 @@
       "from": "0x006A8A01",
       "to": "0x006AE322",
       "count": 10,
-      "named": 6,
+      "named": 8,
       "rewritten": 0,
       "verified": 0
     },
@@ -3767,7 +3767,7 @@
       "from": "0x00CBAD9D",
       "to": "0x00CC06BE",
       "count": 61,
-      "named": 60,
+      "named": 61,
       "rewritten": 28,
       "verified": 28
     },
@@ -3776,7 +3776,7 @@
       "from": "0x00CC06BF",
       "to": "0x00CC5FDF",
       "count": 26,
-      "named": 24,
+      "named": 26,
       "rewritten": 11,
       "verified": 11
     },
@@ -3785,7 +3785,7 @@
       "from": "0x00CC5FE0",
       "to": "0x00CCB901",
       "count": 129,
-      "named": 117,
+      "named": 124,
       "rewritten": 64,
       "verified": 64
     },
@@ -4226,7 +4226,7 @@
       "from": "0x00DD6F4E",
       "to": "0x00DDC86F",
       "count": 79,
-      "named": 77,
+      "named": 79,
       "rewritten": 45,
       "verified": 45
     },
