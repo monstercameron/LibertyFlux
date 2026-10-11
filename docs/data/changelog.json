@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 85 proofs re-run on the current checker and recorded on it",
+    "title": "Devlog: hourly review, 05:05 on 11 October",
     "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "17,902 verified at 05:05: 24,334 bytes in the hour with thirty Luna lanes; a sixth large function closed (3,440 bytes) and 23 routines lifted.",
+      "A wrong version that passed was traced to a table placed at the wrong address in 47 contracts; the watchdog no longer stops the coordinator's own re-runs."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 85 proofs re-run on the current checker and recorded on it",
+    "commit": "4bc7badffe14ba6842abdc27d15927efa3eb2113",
     "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
     "changes": [
       "85 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
