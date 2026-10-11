@@ -80973,6 +80973,15 @@
   "lane": "r-s611"
  },
  {
+  "address": "0x00A82CF0",
+  "name": "CSimpleCarDriveTaskInfo::vf18",
+  "kind": "function",
+  "file": "functions/fn_00a82cf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
   "address": "0x00A82D00",
   "name": "task_info_get_progress_entry_and_value",
   "kind": "function",
@@ -87001,6 +87010,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-U35"
+ },
+ {
+  "address": "0x00AF64F0",
+  "name": "read_object_value_or_minus_one",
+  "kind": "function",
+  "file": "functions/fn_00af64f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
  },
  {
   "address": "0x00AF7000",
@@ -132201,6 +132219,15 @@
   "lane": "a-U32"
  },
  {
+  "address": "0x00CE9A20",
+  "name": "CTaskSimpleNMOnFire::vf26",
+  "kind": "function",
+  "file": "functions/fn_00ce9a20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
   "address": "0x00CE9D60",
   "name": "CTaskSimpleNMRollUpAndRelax::vf26",
   "kind": "function",
@@ -132217,6 +132244,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-U32"
+ },
+ {
+  "address": "0x00CEA0B0",
+  "name": "GENERIC_CURSE",
+  "kind": "function",
+  "file": "functions/fn_00cea0b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
  },
  {
   "address": "0x00CF1B50",
@@ -134710,6 +134746,240 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s607"
+ },
+ {
+  "address": "0x00D397A0",
+  "name": "ped_task_clear_member_then_base_destructor",
+  "kind": "function",
+  "file": "functions/fn_00d397a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D397D0",
+  "name": "CDummyTask::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d397d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D39800",
+  "name": "CDummyTask_Dead::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d39800.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D39830",
+  "name": "CDummyTask_FallDownAndGetUp::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d39830.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D39860",
+  "name": "CDummyTask_Flee::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d39860.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D39890",
+  "name": "CDummyTask_Injured::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d39890.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D398C0",
+  "name": "CDummyTask_PlayAnim::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d398c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D398F0",
+  "name": "CDummyTask_ShockingEventWatch::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d398f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D39920",
+  "name": "CDummyTask_Stationary::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d39920.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D39950",
+  "name": "CDummyTask_Wander::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d39950.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D39980",
+  "name": "CDummyTask_Flee::vf4",
+  "kind": "function",
+  "file": "functions/fn_00d39980.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D39B60",
+  "name": "ped_task_lookup_and_store_registry_task",
+  "kind": "function",
+  "file": "functions/fn_00d39b60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D39BA0",
+  "name": "CDummyTask_Dead::vf2",
+  "kind": "function",
+  "file": "functions/fn_00d39ba0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D39D00",
+  "name": "ped_task_output_clear_status_word",
+  "kind": "function",
+  "file": "functions/fn_00d39d00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D39D20",
+  "name": "CDummyTask_Dead::vf8",
+  "kind": "function",
+  "file": "functions/fn_00d39d20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D3A530",
+  "name": "CDummyTask_Dead::vf9",
+  "kind": "function",
+  "file": "functions/fn_00d3a530.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D3A720",
+  "name": "CDummyTask_FallDownAndGetUp::vf11",
+  "kind": "function",
+  "file": "functions/fn_00d3a720.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D3A750",
+  "name": "CDummyTask_Dead::vf11",
+  "kind": "function",
+  "file": "functions/fn_00d3a750.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D3A770",
+  "name": "CDummyTask_Stationary::vf11",
+  "kind": "function",
+  "file": "functions/fn_00d3a770.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D3A7F0",
+  "name": "CDummyTask_Wander::vf11",
+  "kind": "function",
+  "file": "functions/fn_00d3a7f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D3B260",
+  "name": "ped_task_replace_reference_and_cache_presence",
+  "kind": "function",
+  "file": "functions/fn_00d3b260.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D3B2A0",
+  "name": "ped_task_replace_observed_pointer",
+  "kind": "function",
+  "file": "functions/fn_00d3b2a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D3B2C0",
+  "name": "ped_task_replace_animation_clip",
+  "kind": "function",
+  "file": "functions/fn_00d3b2c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D3B320",
+  "name": "ped_task_replace_linked_reference",
+  "kind": "function",
+  "file": "functions/fn_00d3b320.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D3B3E0",
+  "name": "ped_task_clear_motion_reference",
+  "kind": "function",
+  "file": "functions/fn_00d3b3e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
+ },
+ {
+  "address": "0x00D3B410",
+  "name": "ped_task_release_motion_with_fixed_duration",
+  "kind": "function",
+  "file": "functions/fn_00d3b410.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U42"
  },
  {
   "address": "0x00D3BAF0",
