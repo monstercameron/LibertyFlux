@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 4 more withdrawn after their differences on widened inputs were reduced to a cause",
+    "title": "Rewrites: 1 more functions pass the checker (19023 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "1 rewrites added under rewrites/verified: 0 script native handlers and 1 other functions.",
+      "The tree now holds 19023 rewrites, 19020 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 4 more withdrawn after their differences on widened inputs were reduced to a cause",
+    "commit": "aea9f759fae342a5ecc10d6b18e45b91eb3a7006",
     "summary": "The verified count goes down by four. An investigation lane took four of the eight rewrites that differ from the original on widened inputs for a reason other than a conversion, and showed each difference on the stock checker on trials the original completes.",
     "changes": [
       "A camera curve evaluator builds a mask with a float comparison whose predicate is wrong when the operands are equal: the original's instruction is \"not less than or equal\" and the rewrite wrote \"not less than\". With a whole-number index it fails every one of 1,000 trials, and passes with the one comparison changed. This is the second verified rewrite with that fault today.",
