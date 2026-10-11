@@ -1,4 +1,4 @@
-﻿//! Differential cases of the aim-record update against its verified 32-bit
+//! Differential cases of the aim-record update against its verified 32-bit
 //! rewrite.
 //!
 //! The lifted update and the rewrite run on the same generated owner, task,
@@ -88,7 +88,13 @@ fn words_at(address: u32, count: usize) -> Vec<u32> {
 
 /// The first collaborator's stub: logs the record and the target it is
 /// given, and the constant fifth argument, then answers the planted flag.
-extern "cdecl" fn stub_advance(driver: u32, owner: u32, record: u32, target: u32, zero: u32) -> u32 {
+extern "cdecl" fn stub_advance(
+    driver: u32,
+    owner: u32,
+    record: u32,
+    target: u32,
+    zero: u32,
+) -> u32 {
     let mut entry = vec![TAG_ADVANCE, driver, owner];
     entry.extend(words_at(record, 4));
     entry.extend(words_at(target, 3));
@@ -393,26 +399,36 @@ fn run_wrong(kind: Wrong, case: &Case) -> (u32, RecordWords, Vec3, Vec<Call>) {
         log: Vec::new(),
     };
     let owner_handle = address_of(&case.owner);
-    let dx = aim[0] - owner.position[0];
-    let dy = aim[1] - owner.position[1];
-    let len2 = (dy * dy) + (dx * dx);
+    let dx = sub(aim[0], owner.position[0]);
+    let dy = sub(aim[1], owner.position[1]);
+    let len2 = add(mul(dy, dy), mul(dx, dx));
+    let root = core::hint::black_box(len2).sqrt();
     let inv = if matches!(kind, Wrong::NoGuard) {
-        1.0 / len2.sqrt()
+        core::hint::black_box(1.0_f32) / core::hint::black_box(root)
     } else if len2 <= 0.0 {
         0.0
     } else {
-        1.0 / len2.sqrt()
+        core::hint::black_box(1.0_f32) / core::hint::black_box(root)
     };
-    let z = if matches!(kind, Wrong::ZeroZ) { 0.0 } else { inv * 0.0 };
-    let mut record: RecordWords = [(inv * dx).to_bits(), (dy * inv).to_bits(), z.to_bits(), 0];
+    let z = if matches!(kind, Wrong::ZeroZ) {
+        0.0
+    } else {
+        mul(inv, 0.0)
+    };
+    let mut record: RecordWords = [
+        mul(inv, dx).to_bits(),
+        mul(dy, inv).to_bits(),
+        z.to_bits(),
+        0,
+    ];
     let Some(driver) = owner.driver else {
         return (0, record, target, recorder.log);
     };
     if matches!(kind, Wrong::AddBeforeAdvance) {
         let acc = task.accumulated;
-        target.x += acc.x;
-        target.y += acc.y;
-        target.z += acc.z;
+        target.x = add(target.x, acc.x);
+        target.y = add(target.y, acc.y);
+        target.z = add(target.z, acc.z);
     }
     let proceed = recorder.advance(driver, owner_handle, record, target);
     if !matches!(kind, Wrong::IgnoreContinue) && proceed & 0xFF == 0 {
@@ -421,13 +437,13 @@ fn run_wrong(kind: Wrong, case: &Case) -> (u32, RecordWords, Vec3, Vec<Call>) {
     if !matches!(kind, Wrong::AddBeforeAdvance) {
         let acc = task.accumulated;
         if matches!(kind, Wrong::AccumulatedSwapped) {
-            target.x += acc.y;
-            target.y += acc.x;
+            target.x = add(target.x, acc.y);
+            target.y = add(target.y, acc.x);
         } else {
-            target.x += acc.x;
-            target.y += acc.y;
+            target.x = add(target.x, acc.x);
+            target.y = add(target.y, acc.y);
         }
-        target.z += acc.z;
+        target.z = add(target.z, acc.z);
     }
     if matches!(kind, Wrong::NoDriverCall) {
         return ((record[3] & 0xFFFF_FF00) | 1, record, target, recorder.log);
@@ -476,8 +492,10 @@ fn aim_update_matches_its_rewrite() {
             answered_nonzero += 1;
         }
         let (dx, dy) = (
-            f32::from_bits(word_at(&case.aim_before, 0)) - f32::from_bits(word_at(&case.position, POSITION_X)),
-            f32::from_bits(word_at(&case.aim_before, 4)) - f32::from_bits(word_at(&case.position, POSITION_Y)),
+            f32::from_bits(word_at(&case.aim_before, 0))
+                - f32::from_bits(word_at(&case.position, POSITION_X)),
+            f32::from_bits(word_at(&case.aim_before, 4))
+                - f32::from_bits(word_at(&case.position, POSITION_Y)),
         );
         if dx == 0.0 && dy == 0.0 {
             zero_length += 1;
@@ -500,6 +518,24 @@ fn aim_update_wrong_versions_are_caught() {
         Wrong::AccumulatedSwapped,
         Wrong::IgnoreContinue,
     ] {
-        assert!(wrong_mismatches(kind) > 0, "wrong version {kind:?} is caught");
+        assert!(
+            wrong_mismatches(kind) > 0,
+            "wrong version {kind:?} is caught"
+        );
     }
+}
+
+/// Single-precision product with the operands pinned in the original's order.
+fn mul(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) * core::hint::black_box(b)
+}
+
+/// Single-precision sum with the operands pinned in the original's order.
+fn add(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) + core::hint::black_box(b)
+}
+
+/// Single-precision difference with the operands pinned in the original's order.
+fn sub(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) - core::hint::black_box(b)
 }

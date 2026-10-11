@@ -1304,6 +1304,14 @@
   "reason": "other"
  },
  {
+  "address": "0x008E5560",
+  "name": "frontend_audio_event_is_idle",
+  "file": "fn_008e5560.rs",
+  "lane": "r-s672",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x009094A0",
   "name": "ui_slot_sweep",
   "file": "fn_009094a0.rs",
@@ -1470,22 +1478,6 @@
   "lane": "r-s420",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x009B64D0",
-  "name": "pending_009b64d0",
-  "file": "fn_009b64d0.rs",
-  "lane": "r-s668",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B6510",
-  "name": "pending_009b6510",
-  "file": "fn_009b6510.rs",
-  "lane": "r-s668",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x009B6550",
@@ -2304,6 +2296,14 @@
   "reason": "out_of_time"
  },
  {
+  "address": "0x00B82B80",
+  "name": "script_vm_helper_00b82b80",
+  "file": "fn_00b82b80.rs",
+  "lane": "r-s674",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x00B870D0",
   "name": null,
   "file": "fn_00b870d0.rs",
@@ -2501,14 +2501,6 @@
   "file": "fn_00ba2930.rs",
   "lane": "r-n88",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00BA3A30",
-  "name": "DecisionMaker_AddEventResponse",
-  "file": "fn_00ba3a30.rs",
-  "lane": "r-s673",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -3625,7 +3617,7 @@
  },
  {
   "address": "0x00D11EB0",
-  "name": "peds_task_00D11EB0",
+  "name": "ped_task_select_status_and_dispatch",
   "file": "fn_00d11eb0.rs",
   "lane": "r-b683",
   "outcome": "not_reached",
@@ -3840,33 +3832,9 @@
   "reason": null
  },
  {
-  "address": "0x00D9F170",
-  "name": "streaming_00d9f170",
-  "file": "fn_00d9f170.rs",
-  "lane": "r-s675",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00DA2370",
   "name": "copy_stream_payload",
   "file": "fn_00da2370.rs",
-  "lane": "r-s675",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DA23B0",
-  "name": "set_stream_record_fields",
-  "file": "fn_00da23b0.rs",
-  "lane": "r-s675",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00DA23F0",
-  "name": "set_stream_record_metadata",
-  "file": "fn_00da23f0.rs",
   "lane": "r-s675",
   "outcome": "not_reached",
   "reason": null

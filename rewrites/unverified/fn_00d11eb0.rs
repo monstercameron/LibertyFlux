@@ -2,15 +2,16 @@
 
 /// Select and publish a task code from a task object and its kind.
 ///
-/// The cdecl entry takes nine stack words. The first is a task object with a
+/// The cdecl entry takes nine stack words. Argument 0 is a task object with a
 /// function table at offset 0; slot `0x128` is queried with the object in ECX.
-/// The object also has a task subobject at `0x2b0`. Arguments 2 and 5 are
-/// writable dword pointers: argument 5 receives the helper's resolved code,
-/// and argument 2 receives the kind/variant mapping. Argument 3 is a task-kind
-/// selector, argument 6 is forwarded to the resolver, argument 7 is its state
-/// word, and argument 8 supplies a low-byte mode flag. The source reuses
-/// incoming argument slots as scratch, so the proof observes their effects
-/// through calls and outputs rather than comparing those stack writes.
+/// The object also has a task subobject at `0x2b0`. Arguments 1 and 2 are
+/// writable dword pointers: argument 1 receives the resolver's code, and
+/// argument 2 receives the kind/variant mapping. Argument 3 is a task-kind
+/// selector, argument 5 is a resolver mode word, argument 6 is forwarded to
+/// the resolver, argument 7 is its state word, and argument 8 supplies a
+/// low-byte mode flag. The source reuses incoming argument slots 3, 5, and 7
+/// as scratch, so the proof observes their effects through calls and outputs
+/// rather than comparing those stack writes.
 ///
 /// The resolver result is translated for kinds 8, 9, 10, and 21 when the
 /// resolved-code pointer's low byte is nonzero (`0x22` to `0x23`, `0x26` to
@@ -24,11 +25,11 @@
 /// original; invalid pointers fault rather than being validated.
 lf_checker_rt::export!(cdecl, rw_ped_task_select_status_and_dispatch(
     task_object: u32,
-    _arg1: u32,
+    resolved_code_out: u32,
     mapped_type_out: u32,
     task_kind: u32,
     subtype: u32,
-    resolved_code_out: u32,
+    return_mode: u32,
     option_index: u32,
     state_flags: u32,
     mode_flags: u32
@@ -67,7 +68,7 @@ lf_checker_rt::export!(cdecl, rw_ped_task_select_status_and_dispatch(
 
         let must_clear_state_byte =
             !(query_succeeded && mode_flags as u8 == 0)
-                && (resolved_code_out as u8 == 0)
+            && (return_mode as u8 == 0)
                 && (is_group_a
                     || is_group_b
                     || (is_special_kind != is_group_b));
@@ -82,13 +83,13 @@ lf_checker_rt::export!(cdecl, rw_ped_task_select_status_and_dispatch(
             u32,
             task_object,
             option_index,
-            resolved_code_out,
+            return_mode,
             effective_state_flags
         );
         write_u32(resolved_code_out, resolved_code);
         let helper_code = resolved_code;
         if (task_kind == 0x08 || task_kind == 0x09 || task_kind == 0x0A || is_special_kind)
-            && resolved_code_out as u8 != 0
+            && return_mode as u8 != 0
         {
             let translated = if helper_code == CODE_A {
                 CODE_A_REPLACEMENT

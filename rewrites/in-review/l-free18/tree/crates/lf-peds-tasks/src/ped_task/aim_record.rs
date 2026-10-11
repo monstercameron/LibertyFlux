@@ -64,9 +64,26 @@ const RETURN_FLAG: u32 = 1;
 /// length. The product order is the original's.
 #[must_use]
 pub fn normalised_direction(dx: f32, dy: f32) -> (f32, f32, f32) {
-    let len2 = (dy * dy) + (dx * dx);
-    let inv = if len2 <= 0.0 { 0.0 } else { ONE / len2.sqrt() };
-    (inv * dx, dy * inv, inv * 0.0)
+    let len2 = add(mul(dy, dy), mul(dx, dx));
+    let inv = if len2 <= 0.0 {
+        0.0
+    } else {
+        core::hint::black_box(ONE) / core::hint::black_box(core::hint::black_box(len2).sqrt())
+    };
+    (mul(inv, dx), mul(dy, inv), mul(inv, 0.0))
+}
+
+/// Single-precision product with the operands pinned in the original's
+/// order, so a not-a-number keeps the sign and payload the original gives it.
+#[inline(always)]
+fn mul(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) * core::hint::black_box(b)
+}
+
+/// Single-precision sum with the operands pinned in the original's order.
+#[inline(always)]
+fn add(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) + core::hint::black_box(b)
 }
 
 impl AimTask {
@@ -88,7 +105,8 @@ impl AimTask {
         record: &mut RecordWords,
         calls: &mut impl AimCallees,
     ) -> u32 {
-        let (x, y, z) = normalised_direction(point[0] - owner.position[0], point[1] - owner.position[1]);
+        let (x, y, z) =
+            normalised_direction(point[0] - owner.position[0], point[1] - owner.position[1]);
         *record = [x.to_bits(), y.to_bits(), z.to_bits(), 0];
         let Some(driver) = owner.driver else {
             return 0;
@@ -97,9 +115,9 @@ impl AimTask {
         if proceed & CONTINUE_MASK == 0 {
             return 0;
         }
-        target.x += self.accumulated.x;
-        target.y += self.accumulated.y;
-        target.z += self.accumulated.z;
+        target.x = add(target.x, self.accumulated.x);
+        target.y = add(target.y, self.accumulated.y);
+        target.z = add(target.z, self.accumulated.z);
         let answer = calls.driver_call(driver, *record);
         *record = answer;
         (answer[3] & 0xFFFF_FF00) | RETURN_FLAG

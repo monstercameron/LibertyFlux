@@ -19,7 +19,7 @@ fn main() {
         if r == 0 { rows.push(format!("VirtualQuery err {}", unsafe { GetLastError() })); break; }
         let st = match m.state { 0x1000 => "COMMIT", 0x2000 => "RESERVE", 0x10000 => "FREE", _ => "?" };
         let ty = match m.typ { 0 => "none", 0x20000 => "PRIVATE", 0x40000 => "MAPPED", 0x1000000 => "IMAGE", _ => "?" };
-        if m.base <= 0x40_0000 && 0x40_0000 < m.base + m.region_size || m.base < 0x1_0000 || m.base >= 0x40_0000 && m.base < 0x41_0000 || m.typ == 0x1000000 {
+        if m.typ == 0x40000 || m.typ == 0x1000000 || m.base < 0x1_0000 {
             rows.push(format!("base={:#010x} alloc={:#010x} size={:#010x} state={} type={} prot={:#x}", m.base, m.alloc_base, m.region_size, st, ty, m.protect));
         }
         n += 1;

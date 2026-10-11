@@ -360,7 +360,7 @@ fn run_wrong(kind: Wrong, case: &Case) -> (TurnTask, Vec3, Vec<Call>) {
         } else {
             RATE_STEP
         };
-        let mut raised = rate + step;
+        let mut raised = add(rate, step);
         if !matches!(kind, Wrong::NoCap) && !(1.0 > raised) {
             raised = 1.0;
         }
@@ -406,9 +406,9 @@ fn run_wrong(kind: Wrong, case: &Case) -> (TurnTask, Vec3, Vec<Call>) {
     } else {
         DIR_SCALE
     };
-    target.x -= (dx * scale) * used;
-    target.y -= (dy * scale) * used;
-    target.z -= (dz * scale) * used;
+    target.x = sub(target.x, mul(mul(dx, scale), used));
+    target.y = sub(target.y, mul(mul(dy, scale), used));
+    target.z = sub(target.z, mul(mul(dz, scale), used));
     let out = TurnTask {
         rate,
         flag: task.flag,
@@ -477,4 +477,19 @@ fn turn_advance_wrong_versions_are_caught() {
             "wrong version {kind:?} is caught"
         );
     }
+}
+
+/// Single-precision product with the operands pinned in the original's order.
+fn mul(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) * core::hint::black_box(b)
+}
+
+/// Single-precision sum with the operands pinned in the original's order.
+fn add(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) + core::hint::black_box(b)
+}
+
+/// Single-precision difference with the operands pinned in the original's order.
+fn sub(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) - core::hint::black_box(b)
 }

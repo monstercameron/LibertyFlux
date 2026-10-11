@@ -1,4 +1,4 @@
-﻿//! What is lifted from the two task shapes of this section, and what each
+//! What is lifted from the two task shapes of this section, and what each
 //! proof leaves out.
 //!
 //! One row per verified 32-bit routine lifted here. `Proven` means the
@@ -103,6 +103,38 @@ pub const ROWS: &[Row] = &[
             "the scratch buffers the callee writes into are not modelled: the stub writes the fetched values into the buffer the rewrite passes, and the lift takes the values the collaborator answers",
             "the entry constants are the four image constants the rewrite stores; the proof compares them bit for bit in every kept entry",
             "output bytes past the written entries are compared unchanged; the original's writes that stay inside the output are the entries only",
+        ],
+    },
+    // AimTask: the aim record update. It normalises the direction to the aim
+    // point, gives it to the owner's driver, and takes the driver's answer as
+    // the new record.
+    Row {
+        class: "AimTask",
+        method: "update",
+        state: State::Proven,
+        narrows: &[
+            "the two collaborators travel as AimCallees; the proof's stubs log the record and target words they would see at the time of the call, the owner's handle, the driver handle and the frame word, in order",
+            "the fifth argument of the first collaborator and the frame word of the second are constants the implementation supplies (zero); the proof's stubs check them",
+            "the owner's position block and driver are read by the caller through the owner's pointers; the lift takes AimOwner, and the proof decodes it from the planted owner",
+            "the original's fourth record word is copied from an uninitialised stack word; the rewrite and the lift use zero, which is the value the contract's stack fill gives",
+            "the first collaborator's writes into the record and the target are not modelled: the proof's stub writes nothing, and the lift does not expect it to",
+            "the second collaborator's answer is a pointer to sixteen bytes; the proof's stub answers a planted block and the test reads the four words the lift takes",
+            "the owner, the task and the aim point are checked unchanged by the proof; no other byte is written",
+        ],
+    },
+    // FlagOwner: the owner's subject-flag update. A random draw sets or clears
+    // one bit of the subject; the owner then applies its task, found through
+    // the component, or falls back.
+    Row {
+        class: "FlagOwner",
+        method: "update",
+        state: State::Proven,
+        narrows: &[
+            "the six collaborators travel as FlagCallees; the proof's stubs log the calls in order with the component and owner handles, the enable word, the scratch tokens (non-null pointers) and the fixed zero arguments, and the lift's collaborator logs the same entries",
+            "the three scratch words the original passes by pointer are an opaque token supplied by the implementation; the proof checks only that the stub's pointers are non-null, not their values",
+            "the original's final read through the task pointer has no effect on the result; the lift does not perform it, and a null task would fault in the original, which the proof's stubs never answer",
+            "the collaborators' own writes are not modelled: the proof's stubs write nothing, and the lift does not expect them to",
+            "the subject is an owned flag word read through the owner's pointer by the caller; the subject's other bytes and the owner's other bytes are checked unchanged by the proof",
         ],
     },
 ];

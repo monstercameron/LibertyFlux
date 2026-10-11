@@ -5,8 +5,9 @@
 use lf_peds_tasks::ped_task::registry::State;
 use lf_peds_tasks::ped_task::shape_registry;
 use lf_peds_tasks::ped_task::{
-    Anchor, BlockCallees, ENTRY_CONSTANTS, FetchCallee, RecordTable, ScaleFactors, ScratchSlot,
-    TableRecord, TaskBlock, TurnParams, TurnTask, TurnTrig, Vec3,
+    AimCallees, AimOwner, AimTask, Anchor, BlockCallees, ENTRY_CONSTANTS, FetchCallee, FlagCallees,
+    FlagOwner, RecordTable, ScaleFactors, ScratchSlot, SubjectFlag, TableRecord, TaskBlock,
+    TurnParams, TurnTask, TurnTrig, Vec3,
 };
 use lf_peds_tasks::ped_task::{
     BLOCK_WORDS, INVALID_HANDLE, PredicateTask, ResourceTag, STATE_RECORD_COUNT,
@@ -155,7 +156,7 @@ fn reset_clears_everything_it_was_given() {
 #[test]
 fn registry_section_counts_match_the_lifted_routines() {
     let (proven, lifted, missing) = shape_registry::counts();
-    assert_eq!(proven, 6);
+    assert_eq!(proven, 8);
     assert_eq!(lifted, 0);
     assert_eq!(missing, 0);
     for row in shape_registry::ROWS {
@@ -600,4 +601,324 @@ fn scan_with_an_empty_table_fetches_nothing() {
     };
     assert!(table.collect_near(1.0, 10, &mut scan).is_empty());
     assert!(scan.calls.is_empty());
+}
+
+/// A collaborator for the aim update that answers fixed values and logs.
+struct Driver {
+    go: u32,
+    answer: [u32; 4],
+    calls: Vec<&'static str>,
+}
+
+impl AimCallees for Driver {
+    fn advance(&mut self, _driver: u32, _owner: u32, _record: [u32; 4], _target: Vec3) -> u32 {
+        self.calls.push("advance");
+        self.go
+    }
+    fn driver_call(&mut self, _driver: u32, _record: [u32; 4]) -> [u32; 4] {
+        self.calls.push("driver");
+        self.answer
+    }
+}
+
+#[test]
+fn aim_direction_is_normalised_to_unit_length() {
+    let (x, y, z) = lf_peds_tasks::ped_task::normalised_direction(3.0, 4.0);
+    assert!((x - 0.6).abs() < 1e-6);
+    assert!((y - 0.8).abs() < 1e-6);
+    assert_eq!(z, 0.0);
+    // A zero-length aim gives a zero direction, not a division by zero.
+    let (x, y, _) = lf_peds_tasks::ped_task::normalised_direction(0.0, 0.0);
+    assert_eq!((x, y), (0.0, 0.0));
+}
+
+#[test]
+fn aim_without_a_driver_answers_zero_and_keeps_the_direction() {
+    let owner = AimOwner {
+        position: [0.0, 0.0],
+        driver: None,
+    };
+    let task = AimTask {
+        accumulated: Vec3 {
+            x: 1.0,
+            y: 2.0,
+            z: 3.0,
+        },
+    };
+    let mut target = Vec3 {
+        x: 0.0,
+        y: 0.0,
+        z: 0.0,
+    };
+    let mut record = [9_u32; 4];
+    let mut driver = Driver {
+        go: 1,
+        answer: [0; 4],
+        calls: Vec::new(),
+    };
+    let answer = task.update(
+        0x1000,
+        &owner,
+        &mut target,
+        [0.0, 5.0],
+        &mut record,
+        &mut driver,
+    );
+    assert_eq!(answer, 0);
+    assert!(driver.calls.is_empty());
+    assert_eq!(
+        target,
+        Vec3 {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0
+        },
+        "the target is not moved"
+    );
+    assert_eq!(record[3], 0, "the trailing word is zero");
+    assert_eq!(f32::from_bits(record[1]), 1.0, "the unit direction along y");
+}
+
+#[test]
+fn aim_stops_when_the_first_collaborator_answers_a_zero_low_byte() {
+    let owner = AimOwner {
+        position: [0.0, 0.0],
+        driver: Some(0x2000),
+    };
+    let task = AimTask {
+        accumulated: Vec3 {
+            x: 1.0,
+            y: 2.0,
+            z: 3.0,
+        },
+    };
+    let mut target = Vec3 {
+        x: 0.0,
+        y: 0.0,
+        z: 0.0,
+    };
+    let mut record = [0_u32; 4];
+    let mut driver = Driver {
+        go: 0x0000_0100,
+        answer: [7, 7, 7, 0x1234_5600],
+        calls: Vec::new(),
+    };
+    let answer = task.update(
+        0x1000,
+        &owner,
+        &mut target,
+        [1.0, 0.0],
+        &mut record,
+        &mut driver,
+    );
+    assert_eq!(answer, 0);
+    assert_eq!(driver.calls, vec!["advance"]);
+    assert_eq!(
+        target,
+        Vec3 {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0
+        }
+    );
+}
+
+#[test]
+fn aim_on_continue_adds_the_offset_and_returns_the_answer_with_its_low_byte_set() {
+    let owner = AimOwner {
+        position: [0.0, 0.0],
+        driver: Some(0x2000),
+    };
+    let task = AimTask {
+        accumulated: Vec3 {
+            x: 1.0,
+            y: 2.0,
+            z: 3.0,
+        },
+    };
+    let mut target = Vec3 {
+        x: 10.0,
+        y: 20.0,
+        z: 30.0,
+    };
+    let mut record = [0_u32; 4];
+    let mut driver = Driver {
+        go: 0x0000_0001,
+        answer: [1, 2, 3, 0x1234_5600],
+        calls: Vec::new(),
+    };
+    let answer = task.update(
+        0x1000,
+        &owner,
+        &mut target,
+        [1.0, 0.0],
+        &mut record,
+        &mut driver,
+    );
+    assert_eq!(driver.calls, vec!["advance", "driver"]);
+    assert_eq!(
+        target,
+        Vec3 {
+            x: 11.0,
+            y: 22.0,
+            z: 33.0
+        }
+    );
+    assert_eq!(
+        answer, 0x1234_5601,
+        "the last word keeps its bits above the low byte and gains a one"
+    );
+    assert_eq!(record, [1, 2, 3, 0x1234_5600]);
+}
+
+/// A flag collaborator that logs its calls and answers fixed values.
+#[derive(Default)]
+struct Flags {
+    draw: u32,
+    accept: u32,
+    calls: Vec<&'static str>,
+}
+
+impl FlagCallees for Flags {
+    fn draw(&mut self) -> u32 {
+        self.calls.push("draw");
+        self.draw
+    }
+    fn accepts(&mut self, _component: u32, _subject: u32) -> u32 {
+        self.calls.push("accepts");
+        self.accept
+    }
+    fn find_task(&mut self, _component: u32, _owner: u32, _enable: u32) -> u32 {
+        self.calls.push("find");
+        0x3000
+    }
+    fn fill_scratch(&mut self, _owner: u32) -> u32 {
+        self.calls.push("fill");
+        0
+    }
+    fn apply_task(&mut self, _task: u32) -> u32 {
+        self.calls.push("apply");
+        0
+    }
+    fn fallback(&mut self, _owner: u32) -> u32 {
+        self.calls.push("fallback");
+        0
+    }
+}
+
+fn flag_owner(task_flags: u8, subject: Option<SubjectFlag>, mode: u8) -> FlagOwner {
+    FlagOwner {
+        handle: 0x1000,
+        task_flags,
+        subject,
+        mode,
+    }
+}
+
+#[test]
+fn flag_update_skips_the_subject_when_the_skip_bit_is_set() {
+    let mut owner = flag_owner(
+        0x08,
+        Some(SubjectFlag {
+            handle: 0x2000,
+            flag: 0,
+        }),
+        0,
+    );
+    let mut flags = Flags {
+        draw: 0,
+        accept: 1,
+        calls: Vec::new(),
+    };
+    owner.update(&mut flags);
+    assert!(
+        !flags.calls.contains(&"draw"),
+        "no draw when the skip bit is set"
+    );
+    assert_eq!(
+        owner.subject.unwrap().flag,
+        0,
+        "the subject flag is unchanged"
+    );
+}
+
+#[test]
+fn flag_update_without_a_subject_draws_nothing() {
+    let mut owner = flag_owner(0x00, None, 0);
+    let mut flags = Flags {
+        draw: 0,
+        accept: 0,
+        calls: Vec::new(),
+    };
+    owner.update(&mut flags);
+    assert_eq!(flags.calls, vec!["accepts", "fallback"]);
+}
+
+#[test]
+fn flag_update_sets_the_bit_below_the_threshold_and_clears_it_above() {
+    let set_case = |draw: u32| {
+        let mut owner = flag_owner(
+            0x00,
+            Some(SubjectFlag {
+                handle: 0x2000,
+                flag: 0,
+            }),
+            0,
+        );
+        let mut flags = Flags {
+            draw,
+            accept: 0,
+            calls: Vec::new(),
+        };
+        owner.update(&mut flags);
+        owner.subject.unwrap().flag
+    };
+    assert_eq!(
+        set_case(0x3FFE),
+        0x0200_0000,
+        "a draw below the threshold sets the bit"
+    );
+    assert_eq!(set_case(0x3FFF), 0, "a draw at the threshold clears it");
+    let mut owner = flag_owner(
+        0x00,
+        Some(SubjectFlag {
+            handle: 0x2000,
+            flag: 0x0200_0000,
+        }),
+        0,
+    );
+    let mut flags = Flags {
+        draw: 0x4000,
+        accept: 0,
+        calls: Vec::new(),
+    };
+    owner.update(&mut flags);
+    assert_eq!(
+        owner.subject.unwrap().flag,
+        0,
+        "a set bit is cleared by a draw at or above the threshold"
+    );
+}
+
+#[test]
+fn flag_update_applies_the_task_when_accepted_and_falls_back_otherwise() {
+    let mut owner = flag_owner(0x00, None, 0);
+    let mut accepted = Flags {
+        draw: 0,
+        accept: 0x0000_0101,
+        calls: Vec::new(),
+    };
+    owner.update(&mut accepted);
+    assert_eq!(accepted.calls, vec!["accepts", "find", "fill", "apply"]);
+    let mut refused = Flags {
+        draw: 0,
+        accept: 0x0000_0100,
+        calls: Vec::new(),
+    };
+    owner.update(&mut refused);
+    assert_eq!(
+        refused.calls,
+        vec!["accepts", "fallback"],
+        "only the low byte decides"
+    );
 }

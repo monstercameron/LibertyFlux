@@ -43,6 +43,7 @@
 mod audio_release;
 mod create;
 mod event_table;
+mod flag_update;
 mod gate;
 mod id_lookup;
 mod mover;
@@ -94,6 +95,9 @@ pub use create::{
 pub use event_table::{
     DELAY_GAP, EventCallees, EventObjects, EventRecord, EventTable, NEARBY_DISTANCE_SQUARED,
     QUEUED_KIND, RECORD_COUNT, REDUCED_THRESHOLD, STANDARD_THRESHOLD,
+};
+pub use flag_update::{
+    COMPONENT_OFFSET, DRAW_THRESHOLD, FlagCallees, FlagOwner, RANDOM_FLAG, SKIP_SUBJECT_FLAG, SubjectFlag,
 };
 pub use gate::{GateCandidate, GateStatus, GateWords, admits};
 pub use id_lookup::{DEFAULT_ID, NO_ID, TaskIdTable, TaskKey};

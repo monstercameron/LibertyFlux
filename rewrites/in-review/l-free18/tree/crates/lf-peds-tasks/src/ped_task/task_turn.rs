@@ -68,6 +68,26 @@ pub trait TurnTrig {
     fn cosine(&mut self, angle: f32) -> f32;
 }
 
+/// Single-precision product with the operands pinned in the original's
+/// order, so a not-a-number keeps the sign and payload the original gives it.
+#[inline(always)]
+fn mul(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) * core::hint::black_box(b)
+}
+
+/// Single-precision sum with the operands pinned in the original's order.
+#[inline(always)]
+fn add(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) + core::hint::black_box(b)
+}
+
+/// Single-precision difference with the operands pinned in the original's
+/// order.
+#[inline(always)]
+fn sub(a: f32, b: f32) -> f32 {
+    core::hint::black_box(a) - core::hint::black_box(b)
+}
+
 /// Negation by flipping the sign bit, as the original does it.
 #[must_use]
 fn negate(value: f32) -> f32 {
@@ -94,7 +114,7 @@ impl TurnTask {
             self.rate = RATE_ONE;
         }
         if gate > RATE_GATE {
-            let mut raised = self.rate + RATE_STEP;
+            let mut raised = add(self.rate, RATE_STEP);
             if !(RATE_ONE > raised) {
                 raised = RATE_ONE;
             }
@@ -109,11 +129,11 @@ impl TurnTask {
             }
         };
         let rate = self.rate;
-        let dx = (dx * DIR_SCALE) * rate;
-        let dy = (dy * DIR_SCALE) * rate;
-        let dz = (dz * DIR_SCALE) * rate;
-        target.x -= dx;
-        target.y -= dy;
-        target.z -= dz;
+        let dx = mul(mul(dx, DIR_SCALE), rate);
+        let dy = mul(mul(dy, DIR_SCALE), rate);
+        let dz = mul(mul(dz, DIR_SCALE), rate);
+        target.x = sub(target.x, dx);
+        target.y = sub(target.y, dy);
+        target.z = sub(target.z, dz);
     }
 }

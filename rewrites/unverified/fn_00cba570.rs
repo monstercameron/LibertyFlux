@@ -289,6 +289,9 @@ unsafe fn update_slide_task(this: u32, state: u32, wrong_scratch: bool) -> u8 {
                 f32,
                 next_current.to_bits()
             );
+            // The original stores this helper result into the same stack
+            // slot that held the direction; later callbacks read that slot.
+            let callback_value = mapped_value;
             let _: u32 = lf_checker_rt::callee_thiscall!(
                 CALLEE_VTABLE_FLOAT,
                 u32,
@@ -299,9 +302,9 @@ unsafe fn update_slide_task(this: u32, state: u32, wrong_scratch: bool) -> u8 {
                 CALLEE_FLOAT_UPDATE,
                 u32,
                 state,
-                direction.to_bits()
+                callback_value.to_bits()
             );
-            direction
+            callback_value
         };
 
         let _: u32 = lf_checker_rt::callee_thiscall!(
