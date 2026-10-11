@@ -704,6 +704,14 @@
   "reason": null
  },
  {
+  "address": "0x005E1610",
+  "name": "CRenderPhasePhoneModel::vf8",
+  "file": "fn_005e1610.rs",
+  "lane": "r-b695",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x005E8170",
   "name": null,
   "file": "fn_005e8170.rs",
@@ -1112,30 +1120,6 @@
   "reason": null
  },
  {
-  "address": "0x00668050",
-  "name": "rage::ptxEvent::vf0",
-  "file": "fn_00668050.rs",
-  "lane": "r-s584",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x006681B0",
-  "name": "rage::ptxEventEmitter::vf3",
-  "file": "fn_006681b0.rs",
-  "lane": "r-s584",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00668210",
-  "name": "rage::ptxEventEmitter::vf0",
-  "file": "fn_00668210.rs",
-  "lane": "r-s584",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
   "address": "0x00668240",
   "name": "ptx_event_emitter_release_owned_resources",
   "file": "fn_00668240.rs",
@@ -1168,25 +1152,9 @@
   "reason": "out_of_time"
  },
  {
-  "address": "0x00668A20",
-  "name": "ptx_event_emitter_update_registrations",
-  "file": "fn_00668a20.rs",
-  "lane": "r-s584",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
   "address": "0x00668AE0",
   "name": "ptx_event_emitter_release_components",
   "file": "fn_00668ae0.rs",
-  "lane": "r-s584",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00668B40",
-  "name": "rage::ptxEventEmitter::vf11",
-  "file": "fn_00668b40.rs",
   "lane": "r-s584",
   "outcome": "deferred",
   "reason": "out_of_time"
@@ -1251,14 +1219,6 @@
   "address": "0x00668FA0",
   "name": "rage::ptxEventEmitter::vf12",
   "file": "fn_00668fa0.rs",
-  "lane": "r-s584",
-  "outcome": "deferred",
-  "reason": "out_of_time"
- },
- {
-  "address": "0x00668FE0",
-  "name": "ptx_event_scheduler_destroy",
-  "file": "fn_00668fe0.rs",
   "lane": "r-s584",
   "outcome": "deferred",
   "reason": "out_of_time"
@@ -4376,14 +4336,6 @@
   "reason": null
  },
  {
-  "address": "0x00D1D2F0",
-  "name": "ped_task_group_dispatch",
-  "file": "fn_00d1d2f0.rs",
-  "lane": "r-s728",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00D21770",
   "name": "entity_fx_position_fraction",
   "file": "fn_00d21770.rs",
@@ -4700,14 +4652,6 @@
   "name": "CTaskComplexNewGetInVehicle::~CTaskComplexNewGetInVehicle",
   "file": "fn_00d31350.rs",
   "lane": "r-s727",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D31480",
-  "name": "CTaskComplexNewGetInVehicle::~CTaskComplexNewGetInVehicle__deleting",
-  "file": "fn_00d31480.rs",
-  "lane": "r-s728",
   "outcome": "not_reached",
   "reason": null
  },
