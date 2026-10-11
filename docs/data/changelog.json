@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rust in progress: 7 files from lanes (417 unverified rewrites, 43 in review)",
+    "title": "Pipeline: the coordinator's queue module is no longer shadowed after a checker import",
     "commit": null,
+    "summary": "The first of two repairs to the pipeline, which had failed on every push since 8 October. Three coordinator script tests failed because they received Python's standard queue module in place of the coordinator's own.",
+    "changes": [
+      "The function that imports the pinned checker driver restored the module search path afterwards but left the standard library's `queue` in the interpreter's module cache. Every later `import queue` in the same process then got the standard module, so the production-brief tests, which need the coordinator's queue.py, failed whenever the stock-runner tests had run first. They passed when run alone, which is why it was not seen locally.",
+      "The function now remembers what the cache held for `queue` before the driver import and puts it back afterwards. The checker driver binds the standard module in its own globals when it is imported, so it does not need the cache entry. The driver, its pinned hash and queue.py are unchanged.",
+      "A regression test covers it: with the old code the new test fails and the three original errors return.",
+      "Found and repaired by a repair lane, which reproduced the failure on Windows with the pipeline's own command; the coordinator reviewed the change, ran the suite and installed it."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rust in progress: 7 files from lanes (417 unverified rewrites, 43 in review)",
+    "commit": "81beeccc5d123b3120528744ab8e28998462fd49",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 417 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",

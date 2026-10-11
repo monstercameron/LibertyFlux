@@ -1121,6 +1121,8 @@ def import_stock_driver(env: dict[str, str], manifest: dict):
     # with that directory excluded, and replace a cached local queue module.
     coordinator_dir = SLOT.parent.resolve()
     saved_path = list(sys.path)
+    had_queue = "queue" in sys.modules
+    saved_queue = sys.modules.get("queue")
     try:
         sys.path[:] = [entry for entry in sys.path
                        if Path(entry or os.curdir).resolve() != coordinator_dir]
@@ -1141,6 +1143,13 @@ def import_stock_driver(env: dict[str, str], manifest: dict):
         spec.loader.exec_module(module)
     finally:
         sys.path[:] = saved_path
+        # checker2 binds the stdlib queue in its own globals at import time, so the checker does not need the
+        # process-wide cache entry. Leaving the stdlib module cached here made every later `import queue` in
+        # this process (the coordinator's queue.py, for example in make_briefs_prod) receive the stdlib module.
+        if had_queue:
+            sys.modules["queue"] = saved_queue
+        else:
+            sys.modules.pop("queue", None)
     if Path(module.__file__).resolve() != path.resolve():
         raise RuntimeError("checker module did not come from the pinned canonical path")
     expected = {

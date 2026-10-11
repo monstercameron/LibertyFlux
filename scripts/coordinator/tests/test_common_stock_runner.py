@@ -286,6 +286,28 @@ class StockRunnerFixtures(unittest.TestCase):
         self.assertEqual(driver_hash, runner.EXPECTED_STOCK_DRIVER_SHA256)
         self.assertEqual(Path(module.HERE).resolve(), (ROOT / "scripts/checker").resolve())
 
+    def test_import_leaves_the_process_queue_cache_as_it_was(self):
+        # Regression: a stdlib queue left cached by the driver import made the coordinator's queue.py unimportable
+        # for the rest of the process (test_drivers failed with "no attribute 'next_lane_numbers'").
+        env = runner.effective_environment({}, ROOT / ".artifacts/scratch/q-test/queue-cache-out")
+        manifest = {"stock_inputs": {"driver": {"path": "scripts/checker/checker2.py"}}}
+        coordinator = (ROOT / "scripts/coordinator").resolve()
+        previous_queue = sys.modules.get("queue")
+        cached = types.ModuleType("queue")
+        cached.__file__ = str(coordinator / "queue.py")
+        sys.modules["queue"] = cached
+        try:
+            with patch.dict(os.environ, env, clear=True):
+                module = runner.import_stock_driver(env, manifest)
+            self.assertIs(sys.modules["queue"], cached)
+            expected_queue = (Path(sysconfig.get_path("stdlib")) / "queue.py").resolve()
+            self.assertEqual(Path(module.queue.__file__).resolve(), expected_queue)
+        finally:
+            if previous_queue is None:
+                sys.modules.pop("queue", None)
+            else:
+                sys.modules["queue"] = previous_queue
+
     def test_worker_start_uses_stdlib_queue_when_coordinator_dir_leads_path(self):
         env = runner.effective_environment({}, ROOT / ".artifacts/scratch/q-test/queue-out")
         manifest = {"stock_inputs": {"driver": {"path": "scripts/checker/checker2.py"}}}
