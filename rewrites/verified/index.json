@@ -31779,6 +31779,33 @@
   "lane": "r-s414"
  },
  {
+  "address": "0x00593C30",
+  "name": "leaderboard_read_value_at_index",
+  "kind": "function",
+  "file": "functions/fn_00593c30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s605"
+ },
+ {
+  "address": "0x00593C70",
+  "name": "leaderboard_entry_width_at_index",
+  "kind": "function",
+  "file": "functions/fn_00593c70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s605"
+ },
+ {
+  "address": "0x00593DA0",
+  "name": "leaderboard_copy_resource_address_for_match",
+  "kind": "function",
+  "file": "functions/fn_00593da0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s605"
+ },
+ {
   "address": "0x00593E40",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_256, player_schema::LeaderboardInfo, 10>::vf13",
   "kind": "function",
