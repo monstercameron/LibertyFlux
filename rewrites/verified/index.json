@@ -52578,6 +52578,15 @@
   "lane": "r-b46"
  },
  {
+  "address": "0x008B1AC0",
+  "name": "biquad parameter apply",
+  "kind": "function",
+  "file": "functions/fn_008b1ac0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U69"
+ },
+ {
   "address": "0x008B1C10",
   "name": "audio_filter_init",
   "kind": "function",
@@ -135034,6 +135043,15 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "a-S06"
+ },
+ {
+  "address": "0x00CD4E60",
+  "name": "peds_task_steer_blend",
+  "kind": "function",
+  "file": "functions/fn_00cd4e60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U69"
  },
  {
   "address": "0x00CD5480",
