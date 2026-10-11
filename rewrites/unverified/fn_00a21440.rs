@@ -54,11 +54,6 @@ unsafe fn read_u32(address: u32) -> u32 {
 }
 
 #[inline(always)]
-unsafe fn write_u8(address: u32, value: u8) {
-    unsafe { (address as *mut u8).write_unaligned(value) }
-}
-
-#[inline(always)]
 unsafe fn write_u32(address: u32, value: u32) {
     unsafe { (address as *mut u32).write_unaligned(value) }
 }

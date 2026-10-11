@@ -1152,14 +1152,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x008E49F0",
-  "name": "frontend_audio_notification",
-  "file": "fn_008e49f0.rs",
-  "lane": "r-s672",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x009094A0",
   "name": "ui_slot_sweep",
   "file": "fn_009094a0.rs",
@@ -1320,41 +1312,9 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x009B5B80",
-  "name": "pending_009b5b80",
-  "file": "fn_009b5b80.rs",
-  "lane": "r-s668",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x009BB1E0",
   "name": "CCamScriptInstruction_SetViewportPriority::vf2",
   "file": "fn_009bb1e0.rs",
-  "lane": "r-s667",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009BB200",
-  "name": "CCamScriptInstruction_SetViewportShape::vf2",
-  "file": "fn_009bb200.rs",
-  "lane": "r-s667",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009BB250",
-  "name": "CCamScriptInstruction_SetWidescreenBorders::vf2",
-  "file": "fn_009bb250.rs",
-  "lane": "r-s667",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009BB270",
-  "name": "CCamScriptInstruction_SetWidescreenBordersInstant::vf2",
-  "file": "fn_009bb270.rs",
   "lane": "r-s667",
   "outcome": "not_reached",
   "reason": null
@@ -2056,6 +2016,14 @@
   "reason": null
  },
  {
+  "address": "0x00B23660",
+  "name": "physics_dispatch_offset_slot_8c",
+  "file": "fn_00b23660.rs",
+  "lane": "r-s665",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00B23710",
   "name": "physics_dispatch_slot_90",
   "file": "fn_00b23710.rs",
@@ -2496,14 +2464,6 @@
   "reason": null
  },
  {
-  "address": "0x00BD6A80",
-  "name": "physics_function_00bd6a80",
-  "file": "fn_00bd6a80.rs",
-  "lane": "r-s662",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00BD8130",
   "name": null,
   "file": "fn_00bd8130.rs",
@@ -2638,14 +2598,6 @@
   "lane": "r-b300",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00C55890",
-  "name": "CEventSeenCop::~CEventSeenCop__deleting",
-  "file": "fn_00c55890.rs",
-  "lane": "r-s670",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00C558C0",
@@ -3192,17 +3144,9 @@
   "reason": "out_of_time"
  },
  {
-  "address": "0x00CC82B0",
-  "name": "fn_00CC82B0",
-  "file": "fn_00cc82b0.rs",
-  "lane": "r-s664",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00CC82F0",
-  "name": "fragInstGta::vf9",
-  "file": "fn_00cc82f0.rs",
+  "address": "0x00CC8720",
+  "name": "fragInstGta::vf64",
+  "file": "fn_00cc8720.rs",
   "lane": "r-s664",
   "outcome": "not_reached",
   "reason": null
@@ -3824,28 +3768,108 @@
   "reason": null
  },
  {
+  "address": "0x00D9EC20",
+  "name": "streaming_00d9ec20",
+  "file": "fn_00d9ec20.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D9EC30",
+  "name": "streaming_00d9ec30",
+  "file": "fn_00d9ec30.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D9EC40",
+  "name": "streaming_00d9ec40",
+  "file": "fn_00d9ec40.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D9EC50",
+  "name": "streaming_00d9ec50",
+  "file": "fn_00d9ec50.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D9F020",
+  "name": "streaming_00d9f020",
+  "file": "fn_00d9f020.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D9F040",
+  "name": "streaming_00d9f040",
+  "file": "fn_00d9f040.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D9F060",
+  "name": "streaming_00d9f060",
+  "file": "fn_00d9f060.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D9F9B0",
+  "name": "streaming_00d9f9b0",
+  "file": "fn_00d9f9b0.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00D9F9D0",
+  "name": "streaming_00d9f9d0",
+  "file": "fn_00d9f9d0.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DA1E00",
+  "name": "streaming_00da1e00",
+  "file": "fn_00da1e00.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DA22A0",
+  "name": "streaming_00da22a0",
+  "file": "fn_00da22a0.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00DA22F0",
+  "name": "streaming_00da22f0",
+  "file": "fn_00da22f0.rs",
+  "lane": "r-s675",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00DA7B80",
   "name": "CTaskComplexFleeAnyMeans::vf19",
   "file": "fn_00da7b80.rs",
   "lane": "r-s637",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00DAD640",
-  "name": null,
-  "file": "fn_00dad640.rs",
-  "lane": "r-b680",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00DADC00",
-  "name": null,
-  "file": "fn_00dadc00.rs",
-  "lane": "r-b680",
-  "outcome": "not yet run",
-  "reason": null
  },
  {
   "address": "0x00DC0980",
@@ -3904,28 +3928,12 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00DE14B0",
-  "name": "scrolling_menu_apply_child_state",
-  "file": "fn_00de14b0.rs",
-  "lane": "r-s669",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00DE43A0",
   "name": "UIRowLayout::vf139",
   "file": "fn_00de43a0.rs",
   "lane": "r-s590",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00DE67D0",
-  "name": "UIGTAScrollingRow::vf86",
-  "file": "fn_00de67d0.rs",
-  "lane": "r-s666",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00DE6A50",

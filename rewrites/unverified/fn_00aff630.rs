@@ -84,13 +84,14 @@ unsafe fn pool_cull_and_sort(mutant: bool) {
         }
 
         let mut keep_count = 10i32;
-        if callee_cdecl!(4, u32,) as u8 != 0 {
+        if callee_thiscall!(4, u32, pool) as u8 != 0 {
             keep_count = 8;
         }
         if keep_count < eligible_count {
             let mut actions_left = eligible_count.wrapping_sub(keep_count);
-            let mut player = [0.0f32; 3];
-            callee_cdecl!(5, u32, player.as_mut_ptr() as u32);
+            let mut player_storage = core::mem::MaybeUninit::<[f32; 3]>::uninit();
+            callee_cdecl!(5, u32, player_storage.as_mut_ptr() as u32);
+            let player = player_storage.assume_init();
 
             for i in 0..candidate_count {
                 let row = candidate_rows[i];
