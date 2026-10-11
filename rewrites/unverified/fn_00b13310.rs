@@ -4,7 +4,8 @@
 /// record's remaining words and derive its compact flag byte.
 ///
 /// `this` is the destination record and `source` points to the source
-/// structure. The helper receives `this` in ECX and `source + 0x20` as its
+/// structure. Its field at `+0x20` is a pointer to the packed float data.
+/// The helper receives that stored pointer as its
 /// single stack argument. The remaining source fields at `+0x24`, `+0x28`,
 /// `+0x210`, `+0x214` and `+0x22a` are copied to destination offsets
 /// `+0x18`, `+0x1c`, `+0x20`, `+0x24` and `+0x28`. Bits `0x40`, `0x80`,
@@ -16,11 +17,12 @@ lf_checker_rt::export!(thiscall, rw_00B13310(this: u32, source: u32) -> u32 {
         const SOURCE_FLOATS: u32 = 0x20;
         const SOURCE_FLAGS: u32 = 0x118;
         const DEST_FLAGS: u32 = 0x29;
+        let float_data = (source.wrapping_add(SOURCE_FLOATS) as *const u32).read_unaligned();
         let converted = lf_checker_rt::callee_thiscall!(
             1,
             u32,
             this,
-            source.wrapping_add(SOURCE_FLOATS),
+            float_data,
         );
         let read = |offset: u32| (source.wrapping_add(offset) as *const u32).read_unaligned();
         let write = |offset: u32, value: u32| {

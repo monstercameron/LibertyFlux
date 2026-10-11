@@ -1896,6 +1896,22 @@
   "reason": null
  },
  {
+  "address": "0x00A8F850",
+  "name": "vehicle_model_has_driver_flag",
+  "file": "fn_00a8f850.rs",
+  "lane": "r-s737",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A8F870",
+  "name": "vehicle_model_flag_bit9",
+  "file": "fn_00a8f870.rs",
+  "lane": "r-s737",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00A95A60",
   "name": null,
   "file": "fn_00a95a60.rs",
@@ -3072,6 +3088,14 @@
   "reason": "out_of_time"
  },
  {
+  "address": "0x00C24860",
+  "name": null,
+  "file": "fn_00c24860.rs",
+  "lane": "a-S26",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00C2E810",
   "name": "audio_emitter_update",
   "file": "fn_00c2e810.rs",
@@ -3083,6 +3107,14 @@
   "address": "0x00C319B0",
   "name": "CPlane::vf110",
   "file": "fn_00c319b0.rs",
+  "lane": "r-s733",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C377A0",
+  "name": "CHeli::vf77",
+  "file": "fn_00c377a0.rs",
   "lane": "r-s733",
   "outcome": "not_reached",
   "reason": null
@@ -4454,22 +4486,6 @@
   "lane": "r-s461",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00E6D670",
-  "name": "vehicle_tuning_ratio_init_53",
-  "file": "fn_00e6d670.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E6D690",
-  "name": "vehicle_tuning_ratio_init_54",
-  "file": "fn_00e6d690.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00E6D6B0",
