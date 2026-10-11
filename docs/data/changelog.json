@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: five index rows restored that concurrent imports had lost",
+    "title": "Rewrites: 109 proofs re-run on the current checker and recorded on it",
     "commit": null,
+    "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
+    "changes": [
+      "109 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
+      "Proofs that did not hold or could not be run are not touched by this commit; the coordinator reads them one by one."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: five index rows restored that concurrent imports had lost",
+    "commit": "e39f0ff879780d61d692a33a4f3dbc2f246290f3",
     "summary": "The verified count goes up by five without any new proof: five rewrites imported earlier today had their files committed and no row in the index, so they were not being counted and the pipeline's consistency check failed.",
     "changes": [
       "The importer reads the index when it starts and writes it when it ends. With three finishers and the coordinator running it at the same time during the afternoon, the last writer won and the rows the others had added were lost: four small functions imported at 17:47 and the 4,490-byte function closed at 15:22. Each had passed the coordinator's own re-run before its import; nothing about the proofs changed.",
