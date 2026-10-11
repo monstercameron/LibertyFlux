@@ -133236,6 +133236,87 @@
   "lane": "r-s254"
  },
  {
+  "address": "0x00DB0B80",
+  "name": "mainloop_timing_initialize_triple",
+  "kind": "function",
+  "file": "functions/fn_00db0b80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s582"
+ },
+ {
+  "address": "0x00DB0BA0",
+  "name": "mainloop_timing_initialize_two_triples",
+  "kind": "function",
+  "file": "functions/fn_00db0ba0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s582"
+ },
+ {
+  "address": "0x00DB0C00",
+  "name": "mainloop_timing_clear_two_triples",
+  "kind": "function",
+  "file": "functions/fn_00db0c00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s582"
+ },
+ {
+  "address": "0x00DB0CA0",
+  "name": "mainloop_timing_cached_value_query",
+  "kind": "function",
+  "file": "functions/fn_00db0ca0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s582"
+ },
+ {
+  "address": "0x00DB10A0",
+  "name": "format_search_criteria_buffer",
+  "kind": "function",
+  "file": "functions/fn_00db10a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s582"
+ },
+ {
+  "address": "0x00DB1430",
+  "name": "UILayoutFrame::vf45",
+  "kind": "function",
+  "file": "functions/fn_00db1430.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s582"
+ },
+ {
+  "address": "0x00DB1480",
+  "name": "mainloop_timing_query_slot_by_index",
+  "kind": "function",
+  "file": "functions/fn_00db1480.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s582"
+ },
+ {
+  "address": "0x00DB1490",
+  "name": "UILayoutFrame::vf62",
+  "kind": "function",
+  "file": "functions/fn_00db1490.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s582"
+ },
+ {
+  "address": "0x00DB1520",
+  "name": "mainloop_timing_crc32_static_key",
+  "kind": "function",
+  "file": "functions/fn_00db1520.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s582"
+ },
+ {
   "address": "0x00DB1650",
   "name": "forward_to_global_ui_object",
   "kind": "function",
