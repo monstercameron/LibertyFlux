@@ -14,6 +14,7 @@ const RADIUS_WIDE: u32 = 0x0103_FF90;
 const RADIUS_NARROW: u32 = 0x0103_FF8C;
 const RADIUS_MODE: u32 = 0x00E9_D14C;
 const RADIUS_MODE_LIMIT: u32 = 0x0128_E328;
+const MINIMUM_DISTANCE_SQ: u32 = 0x00FE_8C20;
 const MODEL_BLOCK_A: u32 = 0x012F_A308;
 const MODEL_BLOCK_B: u32 = 0x012F_A47C;
 const SECONDARY_CONTEXT: u32 = 0x0128_E310;
@@ -147,7 +148,7 @@ unsafe fn body_afed00(
         - core::hint::black_box(load_f32(player_position.wrapping_add(4)));
     let xy_sq = core::hint::black_box(delta_y_again * delta_y_again)
         + core::hint::black_box(delta_x_again * delta_x_again);
-    let minimum_distance_sq = load_f32(0x00FE_8C20);
+    let minimum_distance_sq = global::<f32>(MINIMUM_DISTANCE_SQ).read();
     if xy_sq <= minimum_distance_sq {
         return 0;
     }

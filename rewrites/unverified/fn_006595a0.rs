@@ -1,11 +1,11 @@
 // original: 0x006595A0 stream_clear_child_flags
 
-/// Clear one byte selected by each child record in every entry of a stream
-/// collection, then return the collection's 16-bit entry count. `this + 8`
+/// Write each child's zero-based index as one byte at the offset selected by
+/// that child record, then return the collection's 16-bit entry count. `this + 8`
 /// holds that count and `this + 4` points to the entry-pointer array. Each
 /// entry has a child-pointer array at `+0x28` and a 16-bit child count at
 /// `+0x2c`; every child record supplies a byte offset at `+0x28`, and the
-/// corresponding byte in its parent entry is cleared. The counts are
+/// corresponding byte in its parent entry receives the child index modulo 256. The counts are
 /// unsigned 16-bit values, so the machine's signed loop branches do not
 /// change their range.
 lf_checker_rt::export!(thiscall, rw_006595A0(this: u32) -> u32 {
@@ -39,7 +39,10 @@ lf_checker_rt::export!(thiscall, rw_006595A0(this: u32) -> u32 {
             while child_index < child_count {
                 let child_pointer = read_u32(child_array.wrapping_add(child_index.wrapping_mul(4)));
                 let byte_offset = read_u32(child_pointer.wrapping_add(CHILD_BYTE_OFFSET));
-                core::ptr::write(entry_pointer.wrapping_add(byte_offset) as *mut u8, 0);
+                core::ptr::write(
+                    entry_pointer.wrapping_add(byte_offset) as *mut u8,
+                    child_index as u8,
+                );
                 child_index += 1;
             }
             entry_index += 1;
