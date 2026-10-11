@@ -90180,6 +90180,69 @@
   "lane": "r-s443"
  },
  {
+  "address": "0x00B233A0",
+  "name": "CHeli::vf43",
+  "kind": "function",
+  "file": "functions/fn_00b233a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s665"
+ },
+ {
+  "address": "0x00B23440",
+  "name": "vehicle_apply_offset_and_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00b23440.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s665"
+ },
+ {
+  "address": "0x00B234D0",
+  "name": "vehicle_apply_scaled_offset_and_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00b234d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s665"
+ },
+ {
+  "address": "0x00B23560",
+  "name": "physics_dispatch_offset_slot_80",
+  "kind": "function",
+  "file": "functions/fn_00b23560.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s665"
+ },
+ {
+  "address": "0x00B23610",
+  "name": "physics_dispatch_slot_84",
+  "kind": "function",
+  "file": "functions/fn_00b23610.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s665"
+ },
+ {
+  "address": "0x00B23660",
+  "name": "physics_dispatch_offset_slot_8c",
+  "kind": "function",
+  "file": "functions/fn_00b23660.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s665"
+ },
+ {
+  "address": "0x00B23710",
+  "name": "physics_dispatch_slot_90",
+  "kind": "function",
+  "file": "functions/fn_00b23710.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s665"
+ },
+ {
   "address": "0x00B23760",
   "name": "fn_00b23760",
   "kind": "function",
@@ -90261,6 +90324,15 @@
   "lane": "a-Q145"
  },
  {
+  "address": "0x00B25190",
+  "name": "CPhysical::vf59",
+  "kind": "function",
+  "file": "functions/fn_00b25190.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s665"
+ },
+ {
   "address": "0x00B251E0",
   "name": "read_velocity",
   "kind": "function",
@@ -90288,6 +90360,15 @@
   "lane": "a-G01"
  },
  {
+  "address": "0x00B25790",
+  "name": "CPhysical::vf64",
+  "kind": "function",
+  "file": "functions/fn_00b25790.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s665"
+ },
+ {
   "address": "0x00B25950",
   "name": "setup_ccd_query",
   "kind": "function",
@@ -90295,6 +90376,15 @@
   "trials": 1000,
   "checker": "version 7",
   "lane": "a-Q52"
+ },
+ {
+  "address": "0x00B259B0",
+  "name": "CHeli::vf44",
+  "kind": "function",
+  "file": "functions/fn_00b259b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s665"
  },
  {
   "address": "0x00B25A30",
@@ -90313,6 +90403,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G01"
+ },
+ {
+  "address": "0x00B25B20",
+  "name": "CEntity_SetFrozen",
+  "kind": "function",
+  "file": "functions/fn_00b25b20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s665"
  },
  {
   "address": "0x00B25C90",
