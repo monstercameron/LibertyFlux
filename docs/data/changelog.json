@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 10 more functions pass the checker (18461 in total)",
+    "title": "Rules for lanes: what the large-function lanes of 10 and 11 October taught",
     "commit": null,
+    "summary": "Eleven lessons from the night's work on large functions are added to the working rules that every lane reads, each with the case that taught it.",
+    "changes": [
+      "A wrong version that passes is a fault in the contract and is run down before anything else; a function is not verified while a branch the original completes is unwritten; an open item is either missing code or untested inputs, and only the first keeps a function open; a published rewrite carries no wrong version.",
+      "Proof hygiene: a trial that faults on both sides proves nothing; cycle lengths in pins and answers share no factor; a scripted write counts words, return sequences advance per call and written words are per trial; inherited stages are re-run on the lane's own build with the library's hash checked.",
+      "Machine facts: a claim of an unrelocated operand is checked with the relocation checker, and the option for unrelocated absolute reads cannot set up on this machine; no recursive search of the whole scratch tree; no stopping while time remains and a step is open."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 10 more functions pass the checker (18461 in total)",
+    "commit": "c3b8e213f188ce4f628acc516ffee10b48ce7ca3",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "10 rewrites added under rewrites/verified: 0 script native handlers and 10 other functions.",

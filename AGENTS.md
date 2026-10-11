@@ -117,6 +117,37 @@ Learned from the first 800 lanes (4 October 2026). Each line is here because its
 - A list meant for a program is a data file. Never rebuild a work list from a report written for
   people: a survey's printout stopped at 40 names per lane and hid 34 contracts from a re-run.
 
+Learned from the lanes on large functions (10 and 11 October 2026). The devlog entry "Eight large
+functions closed in one night" has the cases.
+
+- A wrong version that passes is a fault in your contract, never a limitation to list. Find out why
+  before anything else: a fixture at the wrong place, a value multiplied by a zero fill, a word no
+  check compares. One lane's 47 contracts placed a table of floats at the image address instead of
+  its offset from the image base; the table read as zero on both sides and hid everything it scaled.
+- A function is not verified while its rewrite lacks a branch the original completes. Classify every
+  deliberate fault left in a rewrite: a path the original itself faults on or can never take stays,
+  with the evidence, and is listed; a path the original completes is written and proven.
+- Before leaving a function partly proven, ask of each open item whether it is code that is not
+  there or inputs that were not run. Only the first keeps a function open; the second is a narrowing.
+- The rewrite you publish carries no wrong version: one export, no wrong-version switch or
+  parameter, and it is the file the clean build compiled. Wrong versions live in a second build.
+- A trial that faults identically on both sides proves nothing. The original must complete its
+  trials; one contract passed for a night with half its trials calling a null address on both sides.
+- Give cycles in pins and scripted answers lengths with no common factor. Equal lengths pair two
+  paths on every trial and one of them is never tested alone.
+- In a contract, a scripted write's count is in 32-bit words, not bytes. A callee's return value can
+  follow a sequence that advances per call within a trial; the words it writes are one row per
+  trial. A callee called once per trial needs the per-trial form of answer.
+- Re-run inherited stages on your own build first, and check that the library's hash changed: a
+  copied source file keeps its old timestamp and the build is then skipped.
+- A claim that an operand is not relocated is checked with the relocation checker before it is
+  believed; every such claim so far was wrong. The contract option for unrelocated absolute reads
+  cannot set up on this machine at all: do not use it and do not run its self-test.
+- Never search the whole scratch tree recursively: it holds 2,500 lane folders, and one abandoned
+  search ran for eighty minutes. Work from the folders you are pointed at.
+- Do not stop while time remains and a step is open. Most first sessions on a large function ended
+  with more than half their time unused.
+
 What happens to your Rust. On every five-minute tick the coordinator's scripts commit all Rust that
 lanes have written, so nothing waits in a scratch folder:
 
