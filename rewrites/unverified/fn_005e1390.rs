@@ -21,9 +21,9 @@ lf_checker_rt::export!(thiscall, rw_005e1390(this: u32, initialize_flag: u32) ->
         let render_object = unsafe { read_u32(tls_record.wrapping_add(TLS_RENDER_OBJECT_OFFSET)) };
         let vtable = unsafe { read_u32(render_object) };
         let callback = unsafe { read_u32(vtable.wrapping_add(VTABLE_CALLBACK_OFFSET)) };
-        let notify: extern "thiscall" fn(u32) -> u32 =
+        let notify: extern "thiscall" fn(u32, u32) -> u32 =
             unsafe { core::mem::transmute(callback as usize) };
-        let _ = notify(render_object);
+        let _ = notify(render_object, this);
     }
     this
 });

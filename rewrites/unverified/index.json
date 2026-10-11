@@ -808,6 +808,14 @@
   "reason": null
  },
  {
+  "address": "0x006F7F10",
+  "name": "mainloop_timing_fn_006f7f10",
+  "file": "fn_006f7f10.rs",
+  "lane": "r-s585",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x008834A0",
   "name": "stream_req_drain_spin",
   "file": "fn_008834a0.rs",
@@ -931,6 +939,14 @@
   "address": "0x00936770",
   "name": "fn_00936770",
   "file": "fn_00936770.rs",
+  "lane": "r-s597",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00936A20",
+  "name": "fn_00936a20",
+  "file": "fn_00936a20.rs",
   "lane": "r-s597",
   "outcome": "not_reached",
   "reason": null
@@ -1185,27 +1201,11 @@
  },
  {
   "address": "0x009EEFD0",
-  "name": null,
+  "name": "ped_task_iteration",
   "file": "fn_009eefd0.rs",
   "lane": "r-b666",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x009FBBB0",
-  "name": "CPlayStatInt::CPlayStatInt_3",
-  "file": "fn_009fbbb0.rs",
-  "lane": "r-s601",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009FBC20",
-  "name": "CPlayStatInt::CPlayStatInt_4",
-  "file": "fn_009fbc20.rs",
-  "lane": "r-s601",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "out_of_time"
  },
  {
   "address": "0x009FBC90",
@@ -2304,14 +2304,6 @@
   "reason": null
  },
  {
-  "address": "0x00BDED40",
-  "name": "CTaskComplexReact::CTaskComplexReact",
-  "file": "fn_00bded40.rs",
-  "lane": "r-s603",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00BDF050",
   "name": "CTaskComplexUseEffect::CTaskComplexUseEffect",
   "file": "fn_00bdf050.rs",
@@ -2632,6 +2624,14 @@
   "reason": null
  },
  {
+  "address": "0x00CBFF50",
+  "name": null,
+  "file": "fn_00cbff50.rs",
+  "lane": "r-s610",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00CBFFD0",
   "name": null,
   "file": "fn_00cbffd0.rs",
@@ -2732,6 +2732,14 @@
   "name": null,
   "file": "fn_00cc4d20.rs",
   "lane": "r-s610",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00CCC580",
+  "name": null,
+  "file": "fn_00ccc580.rs",
+  "lane": "r-b668",
   "outcome": "not yet run",
   "reason": null
  },
@@ -2869,14 +2877,6 @@
   "file": "fn_00d00d40.rs",
   "lane": "r-s286",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00D16E20",
-  "name": "CTaskSimplePlaySwatSignalAnim::vf17",
-  "file": "fn_00d16e20.rs",
-  "lane": "r-s604",
-  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -3246,6 +3246,14 @@
   "lane": "r-s525",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x00DE43A0",
+  "name": "UIRowLayout::vf139",
+  "file": "fn_00de43a0.rs",
+  "lane": "r-s590",
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00E43020",

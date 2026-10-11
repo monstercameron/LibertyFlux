@@ -9,7 +9,7 @@
 lf_checker_rt::export!(thiscall, rw_00b56440(manager: u32) -> u32 {
     const HEAD: u32 = 0x1a30;
     const NODE_STATE: u32 = 0x48;
-    const RESULT_LINK: u32 = 0x44;
+    const RESULT_LINK: u32 = 0x40;
     const NEXT: u32 = 0x8c;
     #[inline(always)]
     unsafe fn read_u32(address: u32) -> u32 { unsafe { (address as *const u32).read_unaligned() } }
