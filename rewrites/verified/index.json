@@ -36567,6 +36567,186 @@
   "lane": "r-b541"
  },
  {
+  "address": "0x006098D0",
+  "name": "physics_copy_record",
+  "kind": "function",
+  "file": "functions/fn_006098d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x00609930",
+  "name": "physics_seed_joint_cache",
+  "kind": "function",
+  "file": "functions/fn_00609930.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x00609970",
+  "name": "physics_reset_joint_cache",
+  "kind": "function",
+  "file": "functions/fn_00609970.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x00609BC0",
+  "name": "rage::phJoint1Dof::phJoint1Dof",
+  "kind": "function",
+  "file": "functions/fn_00609bc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x00609C60",
+  "name": "rage::phJoint3Dof::vf3",
+  "kind": "function",
+  "file": "functions/fn_00609c60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x00609EE0",
+  "name": "rage::phPrismaticJoint::phPrismaticJoint",
+  "kind": "function",
+  "file": "functions/fn_00609ee0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x00609F40",
+  "name": "rage::phPrismaticJoint::vf3",
+  "kind": "function",
+  "file": "functions/fn_00609f40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x0060A040",
+  "name": "physics_restore_joint_cache",
+  "kind": "function",
+  "file": "functions/fn_0060a040.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x0060A0C0",
+  "name": "physics_is_supported_joint_mode",
+  "kind": "function",
+  "file": "functions/fn_0060a0c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x0060A860",
+  "name": "physics_sum_unmasked_track_channels",
+  "kind": "function",
+  "file": "functions/fn_0060a860.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x0060B0F0",
+  "name": "physics_has_two_clear_bits",
+  "kind": "function",
+  "file": "functions/fn_0060b0f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x006118B0",
+  "name": "physics_hash_bucket_insert",
+  "kind": "function",
+  "file": "functions/fn_006118b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x00612230",
+  "name": "physics_refresh_item_membership",
+  "kind": "function",
+  "file": "functions/fn_00612230.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x00612380",
+  "name": "physics_insert_before_first",
+  "kind": "function",
+  "file": "functions/fn_00612380.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x006123F0",
+  "name": "physics_insert_after_last",
+  "kind": "function",
+  "file": "functions/fn_006123f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x00612460",
+  "name": "physics_unlink_node",
+  "kind": "function",
+  "file": "functions/fn_00612460.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x006124E0",
+  "name": "physics_insert_node_batch_at_head",
+  "kind": "function",
+  "file": "functions/fn_006124e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x00612660",
+  "name": "physics_restore_archetype_cache",
+  "kind": "function",
+  "file": "functions/fn_00612660.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x00612A50",
+  "name": "physics_sum_track_weights",
+  "kind": "function",
+  "file": "functions/fn_00612a50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
+  "address": "0x00612AB0",
+  "name": "physics_scale_track_weights",
+  "kind": "function",
+  "file": "functions/fn_00612ab0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s656"
+ },
+ {
   "address": "0x00617160",
   "name": "init_files_mem_a",
   "kind": "function",
