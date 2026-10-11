@@ -45,7 +45,6 @@ pub unsafe extern "C" fn rw_00bd6280(
             position.as_ptr() as usize as u32,
             offset.as_ptr() as usize as u32,
             bone_index,
-            u32::MAX,
             effect_parameter,
         );
         if effect_id != 0 {

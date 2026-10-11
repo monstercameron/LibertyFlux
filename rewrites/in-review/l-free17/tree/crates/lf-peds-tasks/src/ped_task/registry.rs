@@ -229,7 +229,7 @@ pub const ROWS: &[Row] = &[
         method: "set_event_flag",
         state: State::Proven,
         narrows: &[
-            "the routine returns the image address one past the scanned table, a fixed value of the original's loop; the lift does not return it and the proof does not compare it",
+            "the routine returns a fixed image address that its comment calls just past the table; the constant lies 0x18 past the table's end, so the comment and the constant disagree and the constant is what is modelled; the lift does not return it and the proof does not compare it",
             "only the low byte of the flag is stored, as the rewrite does",
         ],
     },
