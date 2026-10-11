@@ -137394,6 +137394,15 @@
   "lane": "r-b451"
  },
  {
+  "address": "0x00D177A0",
+  "name": "OFFICER_DOWN",
+  "kind": "function",
+  "file": "functions/fn_00d177a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b685"
+ },
+ {
   "address": "0x00D17960",
   "name": "clear_task_group_records",
   "kind": "function",
@@ -137401,6 +137410,15 @@
   "trials": 1100,
   "checker": "version 8",
   "lane": "r-s604"
+ },
+ {
+  "address": "0x00D17B10",
+  "name": "ped_task_list_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00d17b10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b685"
  },
  {
   "address": "0x00D17CC0",
