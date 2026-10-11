@@ -54846,6 +54846,249 @@
   "lane": "a-U37"
  },
  {
+  "address": "0x008DB1F0",
+  "name": "task_ctor_load_registry_record",
+  "kind": "function",
+  "file": "functions/fn_008db1f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DB3B0",
+  "name": "task_ctor_copy_five_pairs",
+  "kind": "function",
+  "file": "functions/fn_008db3b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DB450",
+  "name": "task_ctor_copy_status_from_subject",
+  "kind": "function",
+  "file": "functions/fn_008db450.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DB4A0",
+  "name": "task_ctor_copy_two_pairs",
+  "kind": "function",
+  "file": "functions/fn_008db4a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DB500",
+  "name": "task_ctor_copy_float_records",
+  "kind": "function",
+  "file": "functions/fn_008db500.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DB600",
+  "name": "task_ctor_copy_eight_words",
+  "kind": "function",
+  "file": "functions/fn_008db600.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DB680",
+  "name": "task_ctor_copy_float_quad",
+  "kind": "function",
+  "file": "functions/fn_008db680.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DB760",
+  "name": "task_ctor_route_from_registry_flags",
+  "kind": "function",
+  "file": "functions/fn_008db760.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DB820",
+  "name": "task_ctor_copy_four_pairs",
+  "kind": "function",
+  "file": "functions/fn_008db820.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DB8A0",
+  "name": "task_ctor_copy_four_float_records_a",
+  "kind": "function",
+  "file": "functions/fn_008db8a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DB970",
+  "name": "task_ctor_copy_four_float_records_b",
+  "kind": "function",
+  "file": "functions/fn_008db970.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DBA40",
+  "name": "task_ctor_copy_eight_pairs",
+  "kind": "function",
+  "file": "functions/fn_008dba40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DBB00",
+  "name": "task_ctor_copy_bounded_pair_arrays",
+  "kind": "function",
+  "file": "functions/fn_008dbb00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DBBA0",
+  "name": "task_ctor_set_word_a",
+  "kind": "function",
+  "file": "functions/fn_008dbba0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DBBD0",
+  "name": "task_ctor_register_job",
+  "kind": "function",
+  "file": "functions/fn_008dbbd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DBC20",
+  "name": "task_ctor_set_word_b",
+  "kind": "function",
+  "file": "functions/fn_008dbc20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DBC50",
+  "name": "task_ctor_set_float_bits",
+  "kind": "function",
+  "file": "functions/fn_008dbc50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DBC90",
+  "name": "task_ctor_set_byte",
+  "kind": "function",
+  "file": "functions/fn_008dbc90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DBCC0",
+  "name": "task_ctor_set_word_c",
+  "kind": "function",
+  "file": "functions/fn_008dbcc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DBCF0",
+  "name": "task_ctor_copy_pair_float_flag",
+  "kind": "function",
+  "file": "functions/fn_008dbcf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DBD60",
+  "name": "task_ctor_copy_pair_and_words",
+  "kind": "function",
+  "file": "functions/fn_008dbd60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DBDE0",
+  "name": "task_ctor_copy_two_pairs_and_word",
+  "kind": "function",
+  "file": "functions/fn_008dbde0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DBE40",
+  "name": "task_ctor_empty_a",
+  "kind": "function",
+  "file": "functions/fn_008dbe40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DBE70",
+  "name": "task_ctor_set_four_words",
+  "kind": "function",
+  "file": "functions/fn_008dbe70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DBEC0",
+  "name": "task_ctor_attach_to_scheduler",
+  "kind": "function",
+  "file": "functions/fn_008dbec0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DBF20",
+  "name": "task_ctor_set_two_words",
+  "kind": "function",
+  "file": "functions/fn_008dbf20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
+  "address": "0x008DBFF0",
+  "name": "task_ctor_empty_b",
+  "kind": "function",
+  "file": "functions/fn_008dbff0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s649"
+ },
+ {
   "address": "0x008DC7E0",
   "name": "draw_command_alloc",
   "kind": "function",
