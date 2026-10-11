@@ -1,8 +1,20 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 4 more functions pass the checker (18366 in total)",
+    "title": "Devlog: the checker's option for unrelocated absolute reads has never set up on this machine",
     "commit": null,
+    "summary": "A checker investigation lane settled why contracts that ask for the absolute-read option are refused: a block mapped by the system holds the address range before the worker runs, on every start, and has done since the option was added.",
+    "changes": [
+      "The option's own self-test contract fails at set-up in 10 of 10 fresh runs on the stock driver and worker. The range it needs is covered by one system mapping that is present before the worker's first line of code; it cannot be reserved piece by piece and cannot be released.",
+      "Linking the worker to load at a random base changes the layout and not the outcome (0 of 40 set-ups). Reserving earlier and retrying were ruled out. A partial cover was not tried: the worker refuses it by design, because a read on a piece it does not hold would silently read the worker's own memory.",
+      "It is not new: the first lane log recording it is from 4 October, the day the option went live, and 41 lane logs record a deferral for it since. No lane is sent at contracts that need the option; twenty queued functions stay deferred with this as the reason, and each claim that the option is needed is checked with the relocation checker first.",
+      "A statement repeated in lane notes, that the range is taken in every 32-bit process, is corrected: it holds only for programs linked at a fixed base. Whether the option works on a machine with an x86 processor is unknown."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 4 more functions pass the checker (18366 in total)",
+    "commit": "0619ab7e021f9fac855045bf537de7ac5fe88033",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "4 rewrites added under rewrites/verified: 0 script native handlers and 4 other functions.",
