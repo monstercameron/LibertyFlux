@@ -673,7 +673,7 @@
  },
  {
   "address": "0x005E0AA0",
-  "name": "CTaskComplexUseWaterCannon::vf18",
+  "name": "CTaskComplexUseWaterCannon::create_next_sub_task",
   "file": "fn_005e0aa0.rs",
   "lane": "r-s726",
   "outcome": "not_reached",
@@ -681,7 +681,7 @@
  },
  {
   "address": "0x005E0D10",
-  "name": "fn_005E0D10",
+  "name": "CTaskComplexCopHelicopter::CTaskComplexCopHelicopter",
   "file": "fn_005e0d10.rs",
   "lane": "r-s726",
   "outcome": "not_reached",
@@ -689,7 +689,7 @@
  },
  {
   "address": "0x005E0D80",
-  "name": "CTaskComplexCopHelicopter::vf0",
+  "name": "CTaskComplexCopHelicopter::~CTaskComplexCopHelicopter__deleting",
   "file": "fn_005e0d80.rs",
   "lane": "r-s726",
   "outcome": "not_reached",
@@ -700,8 +700,8 @@
   "name": "CRenderPhasePhoneModel::vf8",
   "file": "fn_005e1610.rs",
   "lane": "r-b695",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x005E8170",
@@ -1972,22 +1972,6 @@
   "name": "CSimpleNMHighFallTaskInfo::vf9",
   "file": "fn_00a7f6a0.rs",
   "lane": "r-s596",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A84270",
-  "name": "CSimpleNMExplosionTaskInfo::append_explosion_position",
-  "file": "fn_00a84270.rs",
-  "lane": "r-s723",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A844F0",
-  "name": "CSitDownIdleThenStandTaskInfo::append_seat_state",
-  "file": "fn_00a844f0.rs",
-  "lane": "r-s723",
   "outcome": "not_reached",
   "reason": null
  },
@@ -4424,132 +4408,12 @@
   "reason": null
  },
  {
-  "address": "0x00D26830",
-  "name": "ped_task_request_fire",
-  "file": "fn_00d26830.rs",
-  "lane": "r-s352",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
   "address": "0x00D26A90",
   "name": "ped_task_fn_D26A90",
   "file": "fn_00d26a90.rs",
   "lane": "r-b349",
   "outcome": "not_reached",
   "reason": null
- },
- {
-  "address": "0x00D27F90",
-  "name": "CPedTargetting::vf0",
-  "file": "fn_00d27f90.rs",
-  "lane": "r-s352",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D27FC0",
-  "name": "CTargetting::vf0",
-  "file": "fn_00d27fc0.rs",
-  "lane": "r-s352",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D280D0",
-  "name": "target_slot_copy_if_live",
-  "file": "fn_00d280d0.rs",
-  "lane": "r-s352",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D28C60",
-  "name": "target_slot_configure",
-  "file": "fn_00d28c60.rs",
-  "lane": "r-s352",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D28CD0",
-  "name": "target_slot_float_get",
-  "file": "fn_00d28cd0.rs",
-  "lane": "r-s352",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D28D20",
-  "name": "CPedTargetting::vf12",
-  "file": "fn_00d28d20.rs",
-  "lane": "r-s352",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D28DA0",
-  "name": "target_slot_sign_flag",
-  "file": "fn_00d28da0.rs",
-  "lane": "r-s352",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D28FB0",
-  "name": "CPedTargetting::vf9",
-  "file": "fn_00d28fb0.rs",
-  "lane": "r-s352",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D29200",
-  "name": "targeting_bind_aux",
-  "file": "fn_00d29200.rs",
-  "lane": "r-s352",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D293A0",
-  "name": "CPedTargetting::vf1",
-  "file": "fn_00d293a0.rs",
-  "lane": "r-s352",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D29430",
-  "name": "CTargetting::vf1",
-  "file": "fn_00d29430.rs",
-  "lane": "r-s352",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D294B0",
-  "name": "target_slot_first_live",
-  "file": "fn_00d294b0.rs",
-  "lane": "r-s352",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D29590",
-  "name": "targeting_slot_reset",
-  "file": "fn_00d29590.rs",
-  "lane": "r-s352",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D296E0",
-  "name": "target_slot_refresh_all",
-  "file": "fn_00d296e0.rs",
-  "lane": "r-s352",
-  "outcome": "deferred",
-  "reason": "other"
  },
  {
   "address": "0x00D297F0",
@@ -4680,41 +4544,9 @@
   "reason": null
  },
  {
-  "address": "0x00D314B0",
-  "name": "CTaskComplexOpenVehicleDoor::~CTaskComplexOpenVehicleDoor__deleting",
-  "file": "fn_00d314b0.rs",
-  "lane": "r-s728",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D314E0",
-  "name": "CTaskComplexVehicleSubtask::~CTaskComplexVehicleSubtask__deleting",
-  "file": "fn_00d314e0.rs",
-  "lane": "r-s728",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00D316B0",
   "name": "get_vehicle_seat_sub_task",
   "file": "fn_00d316b0.rs",
-  "lane": "r-s728",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D319A0",
-  "name": "CTaskComplexClearVehicleSeat::clone",
-  "file": "fn_00d319a0.rs",
-  "lane": "r-s728",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D319E0",
-  "name": "CTaskComplexClimbIntoVehicle::clone",
-  "file": "fn_00d319e0.rs",
   "lane": "r-s728",
   "outcome": "not_reached",
   "reason": null
@@ -4764,14 +4596,6 @@
   "name": null,
   "file": "fn_00d44890.rs",
   "lane": "r-b673",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D57100",
-  "name": "CCamCinematicCamMan::destructor",
-  "file": "fn_00d57100.rs",
-  "lane": "r-s725",
   "outcome": "not_reached",
   "reason": null
  },

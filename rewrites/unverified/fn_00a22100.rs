@@ -17,9 +17,10 @@ lf_checker_rt::export!(cdecl, rw_00A22100() -> () {
             0x012D_D4EC, 0x012D_D4FC, 0x012D_D51C,
             0x012D_D58C, 0x012D_D59C, 0x012D_D5BC,
         ];
-        const VECTOR_COPIES: [(u32, u32); 3] = [
+        const VECTOR_COPIES: [(u32, u32); 4] = [
             (0x00E9_B520, 0x012D_D3E0),
             (0x00E9_B530, 0x012D_D480),
+            (0x00E9_B540, 0x012D_D520),
             (0x00E9_B550, 0x012D_D5C0),
         ];
         const RATE_WORD_A: u32 = 0x38D1_B717;
