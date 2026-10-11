@@ -3224,6 +3224,14 @@
   "reason": "other"
  },
  {
+  "address": "0x00C2F510",
+  "name": "NativeImpl_SET_CAR_DOOR_LATCHED_2",
+  "file": "fn_00c2f510.rs",
+  "lane": "r-s733",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00C3F0D0",
   "name": "timing_channels_update",
   "file": "fn_00c3f0d0.rs",
@@ -4344,22 +4352,6 @@
   "reason": "runtime_table"
  },
  {
-  "address": "0x00D31070",
-  "name": "CTaskComplexClimbIntoVehicle::CTaskComplexClimbIntoVehicle",
-  "file": "fn_00d31070.rs",
-  "lane": "r-s727",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
-  "address": "0x00D310B0",
-  "name": "CTaskComplexCloseVehicleDoor::CTaskComplexCloseVehicleDoor",
-  "file": "fn_00d310b0.rs",
-  "lane": "r-s727",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
   "address": "0x00D31100",
   "name": "CTaskComplexNewExitVehicle::CTaskComplexNewExitVehicle",
   "file": "fn_00d31100.rs",
@@ -4371,14 +4363,6 @@
   "address": "0x00D311C0",
   "name": "CTaskComplexNewGetInVehicle::CTaskComplexNewGetInVehicle",
   "file": "fn_00d311c0.rs",
-  "lane": "r-s727",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
-  "address": "0x00D31230",
-  "name": "CTaskComplexOpenVehicleDoor::CTaskComplexOpenVehicleDoor",
-  "file": "fn_00d31230.rs",
   "lane": "r-s727",
   "outcome": "deferred",
   "reason": "partly_proven"
@@ -4590,22 +4574,6 @@
   "lane": "r-s461",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00E6CE80",
-  "name": "vehicle_tuning_ratio_init_37",
-  "file": "fn_00e6ce80.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00E6CEA0",
-  "name": "convert_vehicle_tuning_float_to_int",
-  "file": "fn_00e6cea0.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00E6CEB0",
