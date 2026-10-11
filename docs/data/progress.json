@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-11",
-  "updated_at": "2026-10-11 06:00",
+  "updated_at": "2026-10-11 06:03",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -13,7 +13,7 @@
   "stages": {
     "identified": 37413,
     "named": 36083,
-    "rewritten": 18290,
+    "rewritten": 18314,
     "verified": 18172
   },
   "structures": 340,
@@ -135,7 +135,7 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 18290,
+      "value": 18314,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
@@ -148,8 +148,8 @@
   ],
   "activity": {
     "lanes_running": 33,
-    "lanes_finished": 2175,
-    "lanes_incomplete": 531,
+    "lanes_finished": 2177,
+    "lanes_incomplete": 532,
     "devlog_entries": 553
   },
   "map": [
@@ -2130,7 +2130,7 @@
       "to": "0x008CA8DC",
       "count": 109,
       "named": 104,
-      "rewritten": 55,
+      "rewritten": 56,
       "verified": 55
     },
     {
@@ -2517,7 +2517,7 @@
       "to": "0x009BA181",
       "count": 261,
       "named": 260,
-      "rewritten": 181,
+      "rewritten": 182,
       "verified": 174
     },
     {
@@ -3111,7 +3111,7 @@
       "to": "0x00B29C29",
       "count": 87,
       "named": 85,
-      "rewritten": 32,
+      "rewritten": 33,
       "verified": 30
     },
     {
@@ -3282,7 +3282,7 @@
       "to": "0x00B939A8",
       "count": 219,
       "named": 219,
-      "rewritten": 10,
+      "rewritten": 11,
       "verified": 10
     },
     {
@@ -3813,7 +3813,7 @@
       "to": "0x00CDC465",
       "count": 141,
       "named": 141,
-      "rewritten": 38,
+      "rewritten": 54,
       "verified": 38
     },
     {
@@ -4137,7 +4137,7 @@
       "to": "0x00DA4D1F",
       "count": 95,
       "named": 78,
-      "rewritten": 21,
+      "rewritten": 24,
       "verified": 18
     },
     {
@@ -4236,7 +4236,7 @@
       "to": "0x00DE2190",
       "count": 90,
       "named": 83,
-      "rewritten": 43,
+      "rewritten": 44,
       "verified": 32
     },
     {
