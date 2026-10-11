@@ -40221,6 +40221,15 @@
   "lane": "a-G07"
  },
  {
+  "address": "0x006615D0",
+  "name": "rage::snDropGamersTask::set_gamer_list",
+  "kind": "function",
+  "file": "functions/fn_006615d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
+ },
+ {
   "address": "0x006616B0",
   "name": "rage::snDropGamersTask::vf2",
   "kind": "function",
@@ -40311,6 +40320,15 @@
   "lane": "a-G07"
  },
  {
+  "address": "0x00661BC0",
+  "name": "rage::snEstablishSessionTask::~snEstablishSessionTask",
+  "kind": "function",
+  "file": "functions/fn_00661bc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
+ },
+ {
   "address": "0x00661C10",
   "name": "rage::snEstablishSessionTask::vf7",
   "kind": "function",
@@ -40363,6 +40381,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b290"
+ },
+ {
+  "address": "0x006627B0",
+  "name": "rage::snJoinSessionTask::~snJoinSessionTask",
+  "kind": "function",
+  "file": "functions/fn_006627b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
  },
  {
   "address": "0x00662820",
@@ -40536,6 +40563,15 @@
   "lane": "r-s587"
  },
  {
+  "address": "0x00664B90",
+  "name": "rage::snSendInvitesTask::~snSendInvitesTask",
+  "kind": "function",
+  "file": "functions/fn_00664b90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
+ },
+ {
   "address": "0x00664BE0",
   "name": "sn_task_alloc_copy_strings",
   "kind": "function",
@@ -40570,6 +40606,15 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b627"
+ },
+ {
+  "address": "0x00666470",
+  "name": "rage::rmPtfxKeyframe::~rmPtfxKeyframe__deleting",
+  "kind": "function",
+  "file": "functions/fn_00666470.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
  },
  {
   "address": "0x00667620",
@@ -41346,6 +41391,15 @@
   "lane": "a-G01"
  },
  {
+  "address": "0x006847C0",
+  "name": "create_frame_record_for_kind",
+  "kind": "function",
+  "file": "functions/fn_006847c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
+ },
+ {
   "address": "0x00684880",
   "name": "cr_frame_dof_init_by_kind",
   "kind": "function",
@@ -41380,6 +41434,15 @@
   "trials": 1200,
   "checker": "version 6",
   "lane": "r-b636"
+ },
+ {
+  "address": "0x00684B20",
+  "name": "crFrame::release_frames",
+  "kind": "function",
+  "file": "functions/fn_00684b20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
  },
  {
   "address": "0x00684BA0",
@@ -41488,6 +41551,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b295"
+ },
+ {
+  "address": "0x00685E30",
+  "name": "rage::crFrame::~crFrame__deleting",
+  "kind": "function",
+  "file": "functions/fn_00685e30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
  },
  {
   "address": "0x00685FE0",
@@ -84123,6 +84195,42 @@
   "lane": "r-s596"
  },
  {
+  "address": "0x00A7F540",
+  "name": "CComplexCombatRetreatInfo::create_task",
+  "kind": "function",
+  "file": "functions/fn_00a7f540.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
+ },
+ {
+  "address": "0x00A7F560",
+  "name": "CComplexGunTaskInfo::create_default_task",
+  "kind": "function",
+  "file": "functions/fn_00a7f560.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
+ },
+ {
+  "address": "0x00A7F580",
+  "name": "CComplexNewExitVehicleTaskInfo::create_default_task",
+  "kind": "function",
+  "file": "functions/fn_00a7f580.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
+ },
+ {
+  "address": "0x00A7F5A0",
+  "name": "CComplexNewGetInVehicleTaskInfo::create_default_task",
+  "kind": "function",
+  "file": "functions/fn_00a7f5a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
+ },
+ {
   "address": "0x00A801A0",
   "name": "CAnimTaskInfo::vf9",
   "kind": "function",
@@ -89935,6 +90043,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b284"
+ },
+ {
+  "address": "0x00AE93C0",
+  "name": "set_timing_category_mask",
+  "kind": "function",
+  "file": "functions/fn_00ae93c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
  },
  {
   "address": "0x00AE9400",
@@ -146536,6 +146653,69 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b281"
+ },
+ {
+  "address": "0x00D92BE0",
+  "name": "mainloop_timing_set_record_active_flags",
+  "kind": "function",
+  "file": "functions/fn_00d92be0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
+ },
+ {
+  "address": "0x00D92DF0",
+  "name": "mainloop_timing_request_two_byte_item",
+  "kind": "function",
+  "file": "functions/fn_00d92df0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
+ },
+ {
+  "address": "0x00D92E20",
+  "name": "mainloop_timing_normalize_eight_byte_records",
+  "kind": "function",
+  "file": "functions/fn_00d92e20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
+ },
+ {
+  "address": "0x00D92E90",
+  "name": "mainloop_timing_clear_record_coordinates",
+  "kind": "function",
+  "file": "functions/fn_00d92e90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
+ },
+ {
+  "address": "0x00D92F00",
+  "name": "mainloop_timing_cleanup_twenty_two_byte_items",
+  "kind": "function",
+  "file": "functions/fn_00d92f00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
+ },
+ {
+  "address": "0x00D92F60",
+  "name": "mainloop_timing_cleanup_twelve_byte_items",
+  "kind": "function",
+  "file": "functions/fn_00d92f60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
+ },
+ {
+  "address": "0x00D92FD0",
+  "name": "mainloop_timing_request_seventeen_byte_item",
+  "kind": "function",
+  "file": "functions/fn_00d92fd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U101"
  },
  {
   "address": "0x00D933B0",
