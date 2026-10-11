@@ -22,22 +22,22 @@ lf_checker_rt::export!(thiscall, rw_c496d0(this: u32, alternate: u32, source: u3
 
         #[inline(always)]
         unsafe fn read_u32(address: u32) -> u32 {
-            (address as *const u32).read_unaligned()
+            unsafe { (address as *const u32).read_unaligned() }
         }
 
         #[inline(always)]
         unsafe fn write_u32(address: u32, value: u32) {
-            (address as *mut u32).write_unaligned(value);
+            unsafe { (address as *mut u32).write_unaligned(value) };
         }
 
         #[inline(always)]
         unsafe fn read_f32(address: u32) -> f32 {
-            f32::from_bits(read_u32(address))
+            unsafe { f32::from_bits(read_u32(address)) }
         }
 
         #[inline(always)]
         unsafe fn write_f32(address: u32, value: f32) {
-            write_u32(address, value.to_bits());
+            unsafe { write_u32(address, value.to_bits()) };
         }
 
         #[inline(always)]

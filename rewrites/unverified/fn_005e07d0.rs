@@ -1,6 +1,6 @@
 // original: 0x005E07D0 CTaskComplexDriveFireTruck::~CTaskComplexDriveFireTruck__deleting
 
-/// Detach both timing-node references before running the `CTaskComplex`
+/// Stamp the task's vtable, detach both timing-node references before running the `CTaskComplex`
 /// destructor. The flags argument is popped by the thiscall routine; bit 0
 /// controls a second release from the global timing pool. That path uses a
 /// signed quotient of the object's address delta and the pool stride to set
@@ -14,6 +14,7 @@ lf_checker_rt::export!(thiscall, rw_005e07d0(this: u32, flags: u32) -> u32 {
         const TIMING_NODE_A: u32 = 0x14;
         const TIMING_NODE_B: u32 = 0x1c;
         const TIMING_MAP: u8 = 0x80;
+        const VTABLE: u32 = 0x00fe_0e84;
         const TIMING_POOL_GLOBAL: u32 = 0x0167_E2A0;
         const DETACH_TIMING_NODE: u32 = 1;
         const DESTROY_COMPLEX_BASE: u32 = 2;
@@ -37,6 +38,8 @@ lf_checker_rt::export!(thiscall, rw_005e07d0(this: u32, flags: u32) -> u32 {
         unsafe fn write_u8(address: u32, value: u8) {
             unsafe { (address as *mut u8).write(value) }
         }
+
+        write_u32(this, lf_checker_rt::relocated(VTABLE));
 
         let timing_node_a_slot = this.wrapping_add(TIMING_NODE_A);
         let timing_node_a = read_u32(timing_node_a_slot);
