@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Devlog: lane entries open with their finding, not with the lane's name",
+    "title": "Rewrites: 4 functions re-checked under checker version 2",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "4 rewrites were re-run under a later version of the checker and replaced by the version that passed it.",
+      "The tree now holds 18927 rewrites, 18924 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Devlog: lane entries open with their finding, not with the lane's name",
+    "commit": "ee0dda104c0bfd6bf9c7e1344f7db57bb977e202",
     "summary": "Eight integrated lane entries began with a line naming the lane, which is what the devlog page showed as each entry's excerpt.",
     "changes": [
       "The line that says which lane wrote an entry is moved from the first paragraph to the last in eight entries, so the page's list shows what was found. Checked on the locally served devlog page: the day's entries are listed and open, with no errors in the page's console."
