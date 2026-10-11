@@ -7,12 +7,11 @@
 /// scripts both callees and compares call order, registers and arguments.
 
 lf_checker_rt::export!(cdecl, rw_construct_and_register_global_00e6da10() -> u32 {
-    unsafe {
-        const OBJECT_VA: u32 = 0x017AA6C0;
+    const OBJECT_VA: u32 = 0x017AA6C0;
         const CALLBACK_VA: u32 = 0x00E72EE0;
         let object = lf_checker_rt::relocated(OBJECT_VA);
         let _initialized = lf_checker_rt::callee_thiscall!(1, u32, object);
         let callback = lf_checker_rt::relocated(CALLBACK_VA);
         lf_checker_rt::callee_cdecl!(2, u32, callback)
-    }
+
 });

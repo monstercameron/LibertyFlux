@@ -7,7 +7,7 @@
 lf_checker_rt::export!(thiscall, rw_009693f0(this: u32, index: u32) -> f32 {
     #[inline(always)]
     unsafe fn read_float(address: u32) -> f32 {
-        f32::from_bits((address as *const u32).read_unaligned())
+        f32::from_bits(unsafe { (address as *const u32).read_unaligned() })
     }
     #[inline(always)]
     fn add(left: f32, right: f32) -> f32 {
