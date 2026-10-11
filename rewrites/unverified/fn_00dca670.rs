@@ -32,7 +32,7 @@ lf_checker_rt::export!(thiscall, rw_00dca670(this: u32) -> u32 {
         lf_checker_rt::callee_thiscall!(
             CONSTRUCT_FOLLOW_UP,
             u32,
-            manager,
+            destination,
             read_u32(this.wrapping_add(ENTITY_A)),
             read_u32(this.wrapping_add(ENTITY_B)),
             read_u32(this.wrapping_add(STORED_DISTANCE)),

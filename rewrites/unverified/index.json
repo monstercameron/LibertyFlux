@@ -552,36 +552,12 @@
   "reason": "out_of_time"
  },
  {
-  "address": "0x005DAED0",
-  "name": "read_active_or_default_word_48",
-  "file": "fn_005daed0.rs",
-  "lane": "r-s706",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
   "address": "0x005DAF00",
   "name": "read_active_or_default_word_4c",
   "file": "fn_005daf00.rs",
   "lane": "r-s706",
   "outcome": "deferred",
   "reason": "partly_proven"
- },
- {
-  "address": "0x005DAF80",
-  "name": "fn_005daf80",
-  "file": "fn_005daf80.rs",
-  "lane": "r-s706",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
-  "address": "0x005DB000",
-  "name": "fn_005db000",
-  "file": "fn_005db000.rs",
-  "lane": "r-s706",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x005DC730",
@@ -1947,7 +1923,7 @@
   "address": "0x00A4FEE0",
   "name": "vehicle_init_slots",
   "file": "fn_00a4fee0.rs",
-  "lane": "r-s717",
+  "lane": "r-s452",
   "outcome": "not_reached",
   "reason": null
  },
@@ -1984,25 +1960,9 @@
   "reason": null
  },
  {
-  "address": "0x00A55C20",
-  "name": "composite_bound_reset_all",
-  "file": "fn_00a55c20.rs",
-  "lane": "r-s717",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00A55CF0",
   "name": "composite_bound_stamp_word_all",
   "file": "fn_00a55cf0.rs",
-  "lane": "r-s717",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A560B0",
-  "name": "composite_bound_stamp_item_dword",
-  "file": "fn_00a560b0.rs",
   "lane": "r-s717",
   "outcome": "not_reached",
   "reason": null
@@ -3000,14 +2960,6 @@
   "reason": null
  },
  {
-  "address": "0x00B6CCE0",
-  "name": "vehicle_behavior_00b6cce0",
-  "file": "fn_00b6cce0.rs",
-  "lane": "r-s716",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00B6CD00",
   "name": "heli_rebind_slot_node",
   "file": "fn_00b6cd00.rs",
@@ -3118,14 +3070,6 @@
   "lane": "r-s292",
   "outcome": "deferred",
   "reason": "needs_encrypted_code"
- },
- {
-  "address": "0x00B79EC0",
-  "name": "CTaskComplexPlayerDrive::~CTaskComplexPlayerDrive",
-  "file": "fn_00b79ec0.rs",
-  "lane": "r-s714",
-  "outcome": "deferred",
-  "reason": "other"
  },
  {
   "address": "0x00B805F0",
@@ -3720,14 +3664,6 @@
   "reason": null
  },
  {
-  "address": "0x00C4EF60",
-  "name": "task_pairwise_byte_xor_threshold",
-  "file": "fn_00c4ef60.rs",
-  "lane": "r-s707",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
   "address": "0x00C59990",
   "name": null,
   "file": "fn_00c59990.rs",
@@ -3956,8 +3892,8 @@
   "name": "task_update_response_weight",
   "file": "fn_00ca3150.rs",
   "lane": "r-b688",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "out_of_time"
  },
  {
   "address": "0x00CA4C60",
@@ -5155,14 +5091,6 @@
   "address": "0x00D99B00",
   "name": "CBoat::vf101",
   "file": "fn_00d99b00.rs",
-  "lane": "r-s721",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D9C9D0",
-  "name": "copy_vehicle_transform_record",
-  "file": "fn_00d9c9d0.rs",
   "lane": "r-s721",
   "outcome": "not_reached",
   "reason": null
