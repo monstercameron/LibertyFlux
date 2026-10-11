@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Lift: three more pedestrian-task routines (sub-object slot tables, aim blend)",
+    "title": "Devlog: the lane count this machine can run, measured, with two more lane entries",
     "commit": null,
+    "summary": "The measurements of 10 and 11 October at thirty, sixty and over a hundred lanes are written up as an entry of their own, with what was decided and what now holds whatever the count.",
+    "changes": [
+      "The entry gives newly verified code by the hour and per lane-hour at each lane count, what the machine did at the top end (181 to 244 threads waiting for 18 processors, checker runs timing out, imports taking fifteen minutes), and why naming lanes behave differently from verification lanes. The count for verification is the owner's decision; it is held at thirty until he answers.",
+      "Two lane entries are integrated: a lane's account of a fault that had been blamed on an unrelocated read and was three undeclared callees, with a pass that had depended on a mis-sized stack; and the third lift lane's account of the pedestrian-task group."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Lift: three more pedestrian-task routines (sub-object slot tables, aim blend)",
+    "commit": "d8007aabeedf025d7ec2fa98a8c6f4588282f0d2",
     "summary": "Three more verified routines of the pedestrian-task code have a portable Rust counterpart, each proven against its verified original. It is the third lift from this group today, and the lane's triage says what the rest of the group is.",
     "changes": [
       "Lifted into lf-peds-tasks: two routines over the four slot tables of a task record's sub-objects (a vector remap, and a matrix apply that notifies each sub-object), as one owning type of 300 lines; and an aim blend, 157 lines. No unsafe and no addresses; callees sit behind traits and the proof compares the calls in order.",
