@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rust in progress: 16 files from lanes (603 unverified rewrites, 170 in review)",
+    "title": "Changelog: one duplicate entry removed and one entry's text corrected",
     "commit": null,
+    "summary": "Two commits collided when four rewrites were withdrawn, and the changelog came out wrong in two places.",
+    "changes": [
+      "The withdrawal's entry had been written twice, once by a commit attempt that failed on a repository lock and once by the retry; one copy is removed.",
+      "The importer, running at the same moment, committed the removal of the four files under its own generic subject and text about re-checking. Its entry now says what that commit actually did and points to the withdrawal's entry."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rust in progress: 16 files from lanes (603 unverified rewrites, 170 in review)",
+    "commit": "ebf5e661ded2ea697b610fe8bc7c4747b227b21c",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 603 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
@@ -27,11 +37,9 @@
     "date": "2026-10-11",
     "title": "Rewrites: 4 functions re-checked under checker version 2",
     "commit": "9d9e97442d539f3f9771a6db5f31684cc8ae85c8",
-    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "summary": "This commit removed the four rewrites withdrawn in the entry above; the importer ran at the same moment and committed the removal under its own subject.",
     "changes": [
-      "4 rewrites were re-run under a later version of the checker and replaced by the version that passed it.",
-      "The tree now holds 18927 rewrites, 18924 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
-      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+      "Four verified rewrites were removed from the tracked tree and the index because they differ from the original outside the range their proofs drew. Nothing was re-checked or replaced in this commit, whatever its subject says: the withdrawal and its reasons are in the entry \"Rewrites: 4 withdrawn because they differ from the original outside the range their proofs drew\"."
     ]
   },
   {
@@ -41,19 +49,6 @@
     "summary": "Eight integrated lane entries began with a line naming the lane, which is what the devlog page showed as each entry's excerpt.",
     "changes": [
       "The line that says which lane wrote an entry is moved from the first paragraph to the last in eight entries, so the page's list shows what was found. Checked on the locally served devlog page: the day's entries are listed and open, with no errors in the page's console."
-    ]
-  },
-  {
-    "date": "2026-10-11",
-    "title": "Rewrites: 4 withdrawn because they differ from the original outside the range their proofs drew",
-    "commit": "dd56174e443c9ca1645b5cc891c34f33e1585260",
-    "summary": "The verified count goes down by four. The audit that widens a proof's inputs found four verified rewrites that differ from the original on inputs the original handles. An investigation lane reproduced each on the stock checker and reduced it to the input that causes it. Only one of the four is a float-to-integer conversion of the kind the audit was looking for.",
-    "changes": [
-      "A clamp. The original limits a sum with a signed comparison; the rewrite compared it as unsigned. A sum with its top bit set is kept by the original and clamped by the rewrite. A copy with the comparison made signed passes the widened contract and the contract of record at 1,000 trials each.",
-      "A conversion from a double. The original stores a scaled value as a 64-bit integer with the x87 instruction and uses the low half; the rewrite's cast gives the largest integer for a value too big to fit, where the instruction gives a fixed value whose low half is zero. A guarded copy passes both contracts.",
-      "Two whose cause is not yet located. In one, the final sign of one value in a float bank differs on the first trial, with both sides completing it. In the other, a callee's float answer of large magnitude changes an argument the rewrite passes to a later call; the checker's report shows only the first calls of a trial, which hides the one that differs. Both differ on trials the original completes, so both are withdrawn; a lane is to locate each cause.",
-      "The proofs of record passed for the same reason as the conversions withdrawn earlier today: the values their contracts draw are small and ordinary. A proof with ordinary ranges says nothing about a comparison's signedness at the top bit or a conversion at the edge of its range.",
-      "Two classes for briefs and for a search of the verified rewrites: a comparison or clamp on a 32-bit integer must have the signedness of the original's conditional instruction, read from the original and not inferred; and a float converted through a 64-bit integer needs the instruction's result at and beyond the 64-bit limit, which 66 of 119 verified files that use such a cast do not show a guard for."
     ]
   },
   {
