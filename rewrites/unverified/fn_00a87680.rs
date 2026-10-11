@@ -33,15 +33,6 @@ const C_ALLOC_COOKIE: u32 = 13;
 const C_ALLOC_TRAILING: u32 = 14;
 const C_MAKE_TRAILING: u32 = 15;
 
-const V_THIS_24: u32 = 16;
-const V_FIRST_8: u32 = 17;
-const V_IDLE_8: u32 = 18;
-const V_POINTER_8: u32 = 19;
-const V_DESCRIPTOR_8: u32 = 20;
-const V_COOKIE_8: u32 = 21;
-const V_TRAILING_8: u32 = 22;
-const V_THIS_20: u32 = 23;
-
 const GLOBAL_SAVED_THIS: u32 = 0x012F_B1B8;
 const GLOBAL_COOKIE: u32 = 0x0103_27A0;
 const IMAGE_PACKET_TEMP_TAG: u32 = 0x00E7_E048;

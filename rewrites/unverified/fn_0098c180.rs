@@ -4,7 +4,6 @@
 /// 2 calls the intercepted thiscall helper and tests its low byte; other
 /// states return false. Only AL is changed after the helper, so its upper
 /// return bytes are preserved, as are the upper bytes of other input states.
-#[allow(non_snake_case)]
 lf_checker_rt::export!(thiscall, rw_nativeimpl_retune_radio_up_4(this: u32) -> u32 {
     const RADIO_STATE: u32 = 0xB0C;
     const HELPER_RVA: u32 = 1;
