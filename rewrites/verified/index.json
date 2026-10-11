@@ -55917,6 +55917,87 @@
   "lane": "r-s479"
  },
  {
+  "address": "0x008E4970",
+  "name": "frontend_audio_event_update",
+  "kind": "function",
+  "file": "functions/fn_008e4970.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s672"
+ },
+ {
+  "address": "0x008E49F0",
+  "name": "frontend_audio_notification",
+  "kind": "function",
+  "file": "functions/fn_008e49f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s672"
+ },
+ {
+  "address": "0x008E4A40",
+  "name": "STARTING_TUNE",
+  "kind": "function",
+  "file": "functions/fn_008e4a40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s672"
+ },
+ {
+  "address": "0x008E5340",
+  "name": "audio_event_slot_allocate",
+  "kind": "function",
+  "file": "functions/fn_008e5340.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s672"
+ },
+ {
+  "address": "0x008E5390",
+  "name": "audio_event_slot_assign_a",
+  "kind": "function",
+  "file": "functions/fn_008e5390.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s672"
+ },
+ {
+  "address": "0x008E53B0",
+  "name": "audio_event_slot_assign_b",
+  "kind": "function",
+  "file": "functions/fn_008e53b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s672"
+ },
+ {
+  "address": "0x008E53D0",
+  "name": "audio_event_slot_insert_or_update",
+  "kind": "function",
+  "file": "functions/fn_008e53d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s672"
+ },
+ {
+  "address": "0x008E5440",
+  "name": "audio_event_slot_assign_c",
+  "kind": "function",
+  "file": "functions/fn_008e5440.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s672"
+ },
+ {
+  "address": "0x008E5460",
+  "name": "audio_event_slot_assign_d",
+  "kind": "function",
+  "file": "functions/fn_008e5460.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s672"
+ },
+ {
   "address": "0x008E5970",
   "name": "probe_then_demote_state",
   "kind": "function",
