@@ -25,7 +25,7 @@ lf_checker_rt::export!(cdecl, rw_phbound_register_defaults() -> () {
             0x14a_u32,
             type_name,
             3_u32,
-            0x4248_0000_u32,
+            0x4348_0000_u32,
         );
 
         let defaults = lf_checker_rt::relocated(0x009d_3840);

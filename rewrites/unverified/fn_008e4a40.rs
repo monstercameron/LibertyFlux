@@ -39,7 +39,7 @@ lf_checker_rt::export!(thiscall, rw_008e4a40(this: u32) -> u32 {
 
         let record_value = (record.as_mut_ptr() as *mut u32).add(RECORD_VALUE / 4);
         record_value.write_unaligned(STARTING_TUNE_BITS);
-        let _ = lf_checker_rt::callee_thiscall!(3, u32, this, TUNE_RESOURCE, handle_slot as usize as u32, record_ptr, u32::MAX, 0, 0);
+        let _ = lf_checker_rt::callee_thiscall!(3, u32, this, lf_checker_rt::relocated(TUNE_RESOURCE), handle_slot as usize as u32, record_ptr, u32::MAX, 0, 0);
 
         if handle_slot.read_unaligned() != 0 {
             let _ = lf_checker_rt::callee_cdecl!(4, u32, lf_checker_rt::relocated(FOLLOWUP_RESOURCE), 1, u32::MAX);

@@ -1,6 +1,6 @@
 // original: 0x00DE6A50 scrolling_menu_adjust_selection
 /// Compare the child interface's unsigned count with the supplied index. It
-/// always calls virtual slot +0x218 once; when count and index differ, it
+/// always calls virtual slot +0x218 with that index; when count and index differ, it
 /// requests the count's item through slot +0x1E0 and calls that returned
 /// item's slots +0x1B0 and +0x18 with argument zero. It then requests the
 /// supplied index, calls the item's slots +0x1AC and +0x18 with argument one,
@@ -33,7 +33,7 @@ lf_checker_rt::export!(thiscall, rw_de6a50(this: u32, item_index: u32) -> u32 {
 
         let child = ((this + CHILD) as *const u32).read_unaligned();
         let item_count = virtual0(child, COUNT_SLOT);
-        let _ = virtual0(child, ADJUST_SLOT);
+        let _ = virtual1(child, ADJUST_SLOT, item_index);
 
         if item_count != item_index {
             let item = virtual1(child, ITEM_SLOT, item_count);
