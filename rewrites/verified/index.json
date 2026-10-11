@@ -140787,6 +140787,15 @@
   "lane": "a-G34"
  },
  {
+  "address": "0x00D1D2F0",
+  "name": "ped_task_group_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00d1d2f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
   "address": "0x00D1D3D0",
   "name": "CTaskComplexSeekCover::CTaskComplexSeekCover",
   "kind": "function",
@@ -141010,6 +141019,114 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "a-G10"
+ },
+ {
+  "address": "0x00D21140",
+  "name": "classify_time_slot",
+  "kind": "function",
+  "file": "functions/fn_00d21140.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D21190",
+  "name": "classify_time_slot_default",
+  "kind": "function",
+  "file": "functions/fn_00d21190.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D211A0",
+  "name": "select_tick_slot_classifier",
+  "kind": "function",
+  "file": "functions/fn_00d211a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D212A0",
+  "name": "classify_vehicle_tick_slot_probe",
+  "kind": "function",
+  "file": "functions/fn_00d212a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D21570",
+  "name": "bake_fx_raycast_sample",
+  "kind": "function",
+  "file": "functions/fn_00d21570.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D21630",
+  "name": "find_entity_fx_ambient_entry",
+  "kind": "function",
+  "file": "functions/fn_00d21630.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D21670",
+  "name": "find_entity_fx_animation_entry",
+  "kind": "function",
+  "file": "functions/fn_00d21670.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D216B0",
+  "name": "find_fragment_fx_break_entry",
+  "kind": "function",
+  "file": "functions/fn_00d216b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D216F0",
+  "name": "find_entity_fx_collision_entry",
+  "kind": "function",
+  "file": "functions/fn_00d216f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D21730",
+  "name": "find_fragment_fx_destroy_entry",
+  "kind": "function",
+  "file": "functions/fn_00d21730.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D21770",
+  "name": "entity_fx_position_fraction",
+  "kind": "function",
+  "file": "functions/fn_00d21770.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D21820",
+  "name": "find_entity_fx_shot_entry",
+  "kind": "function",
+  "file": "functions/fn_00d21820.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
  },
  {
   "address": "0x00D26830",
@@ -141928,6 +142045,123 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s627"
+ },
+ {
+  "address": "0x00D313C0",
+  "name": "CTaskComplexClearVehicleSeat::~CTaskComplexClearVehicleSeat__deleting",
+  "kind": "function",
+  "file": "functions/fn_00d313c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D313F0",
+  "name": "CTaskComplexClimbIntoVehicle::~CTaskComplexClimbIntoVehicle__deleting",
+  "kind": "function",
+  "file": "functions/fn_00d313f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D31420",
+  "name": "CTaskComplexCloseVehicleDoor::~CTaskComplexCloseVehicleDoor__deleting",
+  "kind": "function",
+  "file": "functions/fn_00d31420.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D31450",
+  "name": "CTaskComplexNewExitVehicle::~CTaskComplexNewExitVehicle__deleting",
+  "kind": "function",
+  "file": "functions/fn_00d31450.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D31480",
+  "name": "CTaskComplexNewGetInVehicle::~CTaskComplexNewGetInVehicle__deleting",
+  "kind": "function",
+  "file": "functions/fn_00d31480.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D314B0",
+  "name": "CTaskComplexOpenVehicleDoor::~CTaskComplexOpenVehicleDoor__deleting",
+  "kind": "function",
+  "file": "functions/fn_00d314b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D314E0",
+  "name": "CTaskComplexVehicleSubtask::~CTaskComplexVehicleSubtask__deleting",
+  "kind": "function",
+  "file": "functions/fn_00d314e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D316B0",
+  "name": "get_vehicle_seat_sub_task",
+  "kind": "function",
+  "file": "functions/fn_00d316b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D319A0",
+  "name": "CTaskComplexClearVehicleSeat::clone",
+  "kind": "function",
+  "file": "functions/fn_00d319a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D319E0",
+  "name": "CTaskComplexClimbIntoVehicle::clone",
+  "kind": "function",
+  "file": "functions/fn_00d319e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D31A20",
+  "name": "CTaskComplexCloseVehicleDoor::clone",
+  "kind": "function",
+  "file": "functions/fn_00d31a20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D31AE0",
+  "name": "CTaskComplexNewGetInVehicle::clone",
+  "kind": "function",
+  "file": "functions/fn_00d31ae0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
+ },
+ {
+  "address": "0x00D31B40",
+  "name": "CTaskComplexOpenVehicleDoor::clone",
+  "kind": "function",
+  "file": "functions/fn_00d31b40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s728"
  },
  {
   "address": "0x00D38B10",
