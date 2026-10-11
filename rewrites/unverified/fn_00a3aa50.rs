@@ -46,6 +46,9 @@ lf_checker_rt::export!(thiscall, rw_00a3aa50(this: u32) -> () {
     }
 
     unsafe {
+        let owner_root = read_u32(this.wrapping_add(OWNER_LINK));
+        let owner_state = read_u32(owner_root.wrapping_add(OWNER_SUBLINK));
+        let owner = read_u32(owner_state.wrapping_add(OWNER_POINTER));
         let ranking_value = lf_checker_rt::callee_thiscall!(PICK_HELPER, u32, this);
         let table = lf_checker_rt::global::<u32>(SLOT_TABLE_VA) as u32;
         let mut best_value = ranking_value;
@@ -72,9 +75,6 @@ lf_checker_rt::export!(thiscall, rw_00a3aa50(this: u32) -> () {
             let _ = lf_checker_rt::callee_cdecl!(RELEASE_HELPER, u32, row);
         }
 
-        let owner_root = read_u32(this.wrapping_add(OWNER_LINK));
-        let owner_state = read_u32(owner_root.wrapping_add(OWNER_SUBLINK));
-        let owner = read_u32(owner_state.wrapping_add(OWNER_POINTER));
         let object = read_u32(row.wrapping_add(SLOT_OBJECT));
         write_u32(row, this);
         write_u32(row.wrapping_add(SLOT_VALUE), ranking_value);

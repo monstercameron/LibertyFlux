@@ -1112,36 +1112,12 @@
   "reason": null
  },
  {
-  "address": "0x006595A0",
-  "name": null,
-  "file": "fn_006595a0.rs",
-  "lane": "r-s688",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x006595F0",
-  "name": null,
-  "file": "fn_006595f0.rs",
-  "lane": "r-s688",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x006607F0",
   "name": "rage::snAddRemoteGamerTask::vf3",
   "file": "fn_006607f0.rs",
   "lane": "r-b294",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00660FC0",
-  "name": "snGamerList_scan (proposed)",
-  "file": "fn_00660fc0.rs",
-  "lane": "r-b294",
-  "outcome": "deferred",
-  "reason": "other"
  },
  {
   "address": "0x00663370",
@@ -1467,6 +1443,14 @@
   "address": "0x006A26D0",
   "name": null,
   "file": "fn_006a26d0.rs",
+  "lane": "r-s687",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x006A2760",
+  "name": null,
+  "file": "fn_006a2760.rs",
   "lane": "r-s687",
   "outcome": "not yet run",
   "reason": null
@@ -4444,8 +4428,8 @@
   "name": "ped_task_choose_nearest_candidate",
   "file": "fn_00ccfab0.rs",
   "lane": "r-b684",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "out_of_time"
  },
  {
   "address": "0x00CD4E60",
