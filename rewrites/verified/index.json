@@ -89172,6 +89172,87 @@
   "lane": "a-G07"
  },
  {
+  "address": "0x00B55E90",
+  "name": "crmtManagerPriority_find_by_compare",
+  "kind": "function",
+  "file": "functions/fn_00b55e90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s595"
+ },
+ {
+  "address": "0x00B55F20",
+  "name": "crmtManagerPriority_find_highest_for_key",
+  "kind": "function",
+  "file": "functions/fn_00b55f20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s595"
+ },
+ {
+  "address": "0x00B55F80",
+  "name": "crmtManagerPriority_select_two_by_weight",
+  "kind": "function",
+  "file": "functions/fn_00b55f80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s595"
+ },
+ {
+  "address": "0x00B56010",
+  "name": "crmtManagerPriority_select_two_by_flags_and_weight",
+  "kind": "function",
+  "file": "functions/fn_00b56010.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s595"
+ },
+ {
+  "address": "0x00B560C0",
+  "name": "crmtManagerPriority_build_scaled_output",
+  "kind": "function",
+  "file": "functions/fn_00b560c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s595"
+ },
+ {
+  "address": "0x00B56170",
+  "name": "crmtManagerPriority_build_scaled_output_from_tag",
+  "kind": "function",
+  "file": "functions/fn_00b56170.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s595"
+ },
+ {
+  "address": "0x00B56230",
+  "name": "crmtManagerPriority_build_scaled_output_extended_basis",
+  "kind": "function",
+  "file": "functions/fn_00b56230.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s595"
+ },
+ {
+  "address": "0x00B562C0",
+  "name": "crmtManagerPriority_build_scaled_output_from_tag_extended_basis",
+  "kind": "function",
+  "file": "functions/fn_00b562c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s595"
+ },
+ {
+  "address": "0x00B56440",
+  "name": "crmtManagerPriority_find_active_node_with_link",
+  "kind": "function",
+  "file": "functions/fn_00b56440.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s595"
+ },
+ {
   "address": "0x00B56E30",
   "name": "forward_scaled_level",
   "kind": "function",
