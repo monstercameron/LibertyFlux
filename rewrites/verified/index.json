@@ -125793,6 +125793,96 @@
   "lane": "r-b411"
  },
  {
+  "address": "0x00CD7740",
+  "name": "CTaskComplexFollowLeaderAnyMeans::~CTaskComplexFollowLeaderAnyMeans__deleting",
+  "kind": "function",
+  "file": "functions/fn_00cd7740.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD7770",
+  "name": "CTaskComplexFollowLeaderInFormation::~CTaskComplexFollowLeaderInFormation__deleting",
+  "kind": "function",
+  "file": "functions/fn_00cd7770.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD77A0",
+  "name": "CTaskComplexFollowPedFootsteps::~CTaskComplexFollowPedFootsteps__deleting",
+  "kind": "function",
+  "file": "functions/fn_00cd77a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD77D0",
+  "name": "CTaskComplexSeekEntityAiming::~CTaskComplexSeekEntityAiming__deleting",
+  "kind": "function",
+  "file": "functions/fn_00cd77d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD7800",
+  "name": "task_notify_first_eligible_child",
+  "kind": "function",
+  "file": "functions/fn_00cd7800.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD7860",
+  "name": "CTaskComplexSeekEntityAnyMeans<CEntitySeekPosCalculatorXYOffset>::vf1",
+  "kind": "function",
+  "file": "functions/fn_00cd7860.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD78C0",
+  "name": "CTaskComplexFollowLeaderAnyMeans::vf1",
+  "kind": "function",
+  "file": "functions/fn_00cd78c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD78F0",
+  "name": "CTaskComplexFollowLeaderInFormation::vf1",
+  "kind": "function",
+  "file": "functions/fn_00cd78f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD7920",
+  "name": "CTaskComplexFollowPedFootsteps::vf1",
+  "kind": "function",
+  "file": "functions/fn_00cd7920.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD7950",
+  "name": "CTaskComplexSeekEntityAiming::vf1",
+  "kind": "function",
+  "file": "functions/fn_00cd7950.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
   "address": "0x00CD7990",
   "name": "CEntitySeekPosCalculatorRadiusAngleOffset::vf1",
   "kind": "function",
@@ -125800,6 +125890,33 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b411"
+ },
+ {
+  "address": "0x00CD7AE0",
+  "name": "CEntitySeekPosCalculatorXYOffset::vf1",
+  "kind": "function",
+  "file": "functions/fn_00cd7ae0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD7B50",
+  "name": "task_seek_vector_dispatch",
+  "kind": "function",
+  "file": "functions/fn_00cd7b50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD7B70",
+  "name": "CTaskComplexSeekEntityAnyMeans<CEntitySeekPosCalculatorXYOffset>::vf20",
+  "kind": "function",
+  "file": "functions/fn_00cd7b70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
  },
  {
   "address": "0x00CD7C40",
@@ -125836,6 +125953,42 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-b441"
+ },
+ {
+  "address": "0x00CD8960",
+  "name": "CTaskComplexSeekEntityAnyMeans<CEntitySeekPosCalculatorXYOffset>::vf19",
+  "kind": "function",
+  "file": "functions/fn_00cd8960.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD89E0",
+  "name": "CTaskComplexFollowLeaderAnyMeans::vf19",
+  "kind": "function",
+  "file": "functions/fn_00cd89e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD8A00",
+  "name": "CTaskComplexFollowLeaderInFormation::vf19",
+  "kind": "function",
+  "file": "functions/fn_00cd8a00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD8AF0",
+  "name": "CTaskComplexFollowPedFootsteps::vf19",
+  "kind": "function",
+  "file": "functions/fn_00cd8af0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
  },
  {
   "address": "0x00CD8B70",
@@ -125899,6 +126052,60 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-b441"
+ },
+ {
+  "address": "0x00CD9A50",
+  "name": "CPedIntelligenceFactory::vf0",
+  "kind": "function",
+  "file": "functions/fn_00cd9a50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD9C60",
+  "name": "CTaskComplexNM::CTaskComplexNM",
+  "kind": "function",
+  "file": "functions/fn_00cd9c60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD9CB0",
+  "name": "CTaskSimpleBlendFromNM::CTaskSimpleBlendFromNM",
+  "kind": "function",
+  "file": "functions/fn_00cd9cb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD9D20",
+  "name": "CTaskSimpleBlendFromNM::CTaskSimpleBlendFromNM",
+  "kind": "function",
+  "file": "functions/fn_00cd9d20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD9D70",
+  "name": "CTaskSimpleBlendFromNM::CTaskSimpleBlendFromNM",
+  "kind": "function",
+  "file": "functions/fn_00cd9d70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
+ },
+ {
+  "address": "0x00CD9DA0",
+  "name": "CTaskSimpleNM::CTaskSimpleNM",
+  "kind": "function",
+  "file": "functions/fn_00cd9da0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s581"
  },
  {
   "address": "0x00CDCBF0",

@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Pipeline: the coordinator's queue module is no longer shadowed after a checker import",
+    "title": "Rewrites: 23 more functions pass the checker (17163 in total)",
     "commit": null,
+    "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
+    "changes": [
+      "23 rewrites added under rewrites/verified: 0 script native handlers and 23 other functions.",
+      "The tree now holds 17163 rewrites, 17160 of them passed under checker version 2; index.json records the address, name, trial count and checker version of each.",
+      "They are in the checker's harness form (calls through numbered slots, globals by original address) and are not yet linked into the workspace crates."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Pipeline: the coordinator's queue module is no longer shadowed after a checker import",
+    "commit": "78b14eb4d2fb5ded246509767859b262389e60d4",
     "summary": "The first of two repairs to the pipeline, which had failed on every push since 8 October. Three coordinator script tests failed because they received Python's standard queue module in place of the coordinator's own.",
     "changes": [
       "The function that imports the pinned checker driver restored the module search path afterwards but left the standard library's `queue` in the interpreter's module cache. Every later `import queue` in the same process then got the standard module, so the production-brief tests, which need the coordinator's queue.py, failed whenever the stock-runner tests had run first. They passed when run alone, which is why it was not seen locally.",
