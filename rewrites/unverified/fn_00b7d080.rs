@@ -6,8 +6,9 @@
 /// stack argument. The method asks the current child task for its type through
 /// virtual slot `+0x0c`. The type dispatch is an unsigned window beginning at
 /// `0x2c5`; only `0x2c5`, `0x2ca`, `0x2cd`, `0x2de`, `0x340`, and `0x396` have
-/// special entries. Other types in the window return zero. Types outside it
-/// request event `0x516` from the task builder.
+/// special entries. Other types in the window and every type outside it return
+/// zero; event `0x396` is the explicit table entry that requests event `0x516`
+/// from the task builder.
 ///
 /// The special cases either call virtual slots `+0x4c` or `+0x58`, request a
 /// child from the builder, or replace the child pointer at `this + 0x40`.
@@ -50,7 +51,7 @@ lf_checker_rt::export!(thiscall, rw_00b7d080(this: u32, ped: u32) -> u32 {
         };
 
         if type_offset > LAST_TYPE_OFFSET {
-            return build_child(DEFAULT_EVENT);
+            return 0;
         }
 
         match task_type {

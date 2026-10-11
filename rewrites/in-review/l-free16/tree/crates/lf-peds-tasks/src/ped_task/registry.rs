@@ -145,6 +145,19 @@ pub const ROWS: &[Row] = &[
             "a null final record (both lookups answer zero) faults in the original on the id word; the proof never plants that case, and the lift does not model the fault",
         ],
     },
+    // The task request gate. Its status probe travels as GateStatus; the
+    // globals and the task's vtable word are read by the caller.
+    Row {
+        class: "TaskGate",
+        method: "gate_task_request",
+        state: State::Proven,
+        narrows: &[
+            "the task's vtable flag word and the two global words are read by the caller and passed as GateWords; the proof plants them through the relocated table and the vtable image",
+            "the candidate's state and sub-flag words are read by the caller and passed as GateCandidate; the proof compares the values read",
+            "the status probe is the task's callee, travelling as GateStatus::status; the proof compares the task argument and the answer",
+            "the gate writes nothing; the proof checks that the rewrite writes none of its images",
+        ],
+    },
     // SeekRecord: the seek record builder. No callees.
     Row {
         class: "SeekRecord",
