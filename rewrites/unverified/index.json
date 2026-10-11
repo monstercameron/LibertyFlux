@@ -1152,6 +1152,14 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x008E4A40",
+  "name": "STARTING_TUNE",
+  "file": "fn_008e4a40.rs",
+  "lane": "r-s672",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
   "address": "0x009094A0",
   "name": "ui_slot_sweep",
   "file": "fn_009094a0.rs",
@@ -1316,30 +1324,6 @@
   "name": "pending_009b5be0",
   "file": "fn_009b5be0.rs",
   "lane": "r-s668",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009BB1E0",
-  "name": "CCamScriptInstruction_SetViewportPriority::vf2",
-  "file": "fn_009bb1e0.rs",
-  "lane": "r-s667",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009BB2C0",
-  "name": "CCamScriptInstruction_UnAttachCam::vf2",
-  "file": "fn_009bb2c0.rs",
-  "lane": "r-s667",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009BB300",
-  "name": "CCamScriptInstruction_UnAttachCamFromViewport::vf2",
-  "file": "fn_009bb300.rs",
-  "lane": "r-s667",
   "outcome": "not_reached",
   "reason": null
  },
@@ -2016,9 +2000,9 @@
   "reason": null
  },
  {
-  "address": "0x00B23710",
-  "name": "physics_dispatch_slot_90",
-  "file": "fn_00b23710.rs",
+  "address": "0x00B25190",
+  "name": "CPhysical::vf59",
+  "file": "fn_00b25190.rs",
   "lane": "r-s665",
   "outcome": "not_reached",
   "reason": null
@@ -2592,30 +2576,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00C558C0",
-  "name": "CPedScanner::vf0",
-  "file": "fn_00c558c0.rs",
-  "lane": "r-s670",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C558E0",
-  "name": "CVehicleScanner::vf0",
-  "file": "fn_00c558e0.rs",
-  "lane": "r-s670",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00C561D0",
-  "name": "initialize_event_numeric_fields",
-  "file": "fn_00c561d0.rs",
-  "lane": "r-s670",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00C562B0",
   "name": "release_event_reference_slots",
   "file": "fn_00c562b0.rs",
@@ -2768,6 +2728,14 @@
   "reason": null
  },
  {
+  "address": "0x00C781F0",
+  "name": "phbound_register_static_hooks",
+  "file": "fn_00c781f0.rs",
+  "lane": "r-s663",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00C78430",
   "name": "phbound_registry_find_by_pointer",
   "file": "fn_00c78430.rs",
@@ -2782,6 +2750,14 @@
   "lane": "r-s663",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00C78650",
+  "name": "phbound_register_defaults",
+  "file": "fn_00c78650.rs",
+  "lane": "r-s663",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00C7E200",
@@ -3139,6 +3115,14 @@
   "address": "0x00CC94A0",
   "name": "fn_00CC94A0",
   "file": "fn_00cc94a0.rs",
+  "lane": "r-s664",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00CC9550",
+  "name": "fn_00CC9550",
+  "file": "fn_00cc9550.rs",
   "lane": "r-s664",
   "outcome": "not_reached",
   "reason": null
@@ -3928,9 +3912,9 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x00DE1840",
-  "name": "UIScrollingMenu::vf121",
-  "file": "fn_00de1840.rs",
+  "address": "0x00DE1850",
+  "name": "UIScrollingMenu::vf0",
+  "file": "fn_00de1850.rs",
   "lane": "r-s669",
   "outcome": "not_reached",
   "reason": null

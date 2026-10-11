@@ -23,7 +23,6 @@ lf_checker_rt::export!(thiscall, rw_00DADD80(this: u32, first: u32, second: u32)
     const NORMALIZATION_BIAS_VA: u32 = 0x00FE_88E8;
     const PERPENDICULAR_SIGN_VA: u32 = 0x00FE_8FA0;
     const LOCAL_SCRATCH: u32 = 0;
-    const FLOAT_SIGN: u32 = 0x8000_0000;
 
     #[inline(always)]
     unsafe fn read_word(address: u32) -> u32 {
@@ -61,14 +60,10 @@ lf_checker_rt::export!(thiscall, rw_00DADD80(this: u32, first: u32, second: u32)
     }
 
     #[inline(always)]
-    fn normalize_scale(x: f32, y: f32, bias: f32, x_first: bool) -> f32 {
+    fn normalize_scale(x: f32, y: f32, bias: f32) -> f32 {
         let x_squared = multiply(x, x);
         let y_squared = multiply(y, y);
-        let squared_length = if x_first {
-            add(x_squared, y_squared)
-        } else {
-            add(y_squared, x_squared)
-        };
+        let squared_length = add(x_squared, y_squared);
         if squared_length == 0.0 {
             0.0
         } else {
@@ -97,7 +92,7 @@ lf_checker_rt::export!(thiscall, rw_00DADD80(this: u32, first: u32, second: u32)
         let delta_x = subtract(reference_x, base_x);
         let delta_y = subtract(reference_y, base_y);
         let bias = lf_checker_rt::global::<f32>(NORMALIZATION_BIAS_VA).read_unaligned();
-        let first_scale = normalize_scale(delta_y, delta_x, bias, true);
+        let first_scale = normalize_scale(delta_y, delta_x, bias);
         let first_x = multiply(first_scale, delta_x);
         let first_y = multiply(delta_y, first_scale);
         let first_z = multiply(first_scale, 0.0);
@@ -106,8 +101,7 @@ lf_checker_rt::export!(thiscall, rw_00DADD80(this: u32, first: u32, second: u32)
                 ^ lf_checker_rt::global::<u32>(PERPENDICULAR_SIGN_VA).read_unaligned(),
         );
         let perpendicular_y = multiply(first_scale, delta_x);
-        let perpendicular_z = multiply(first_scale, 0.0);
-        let second_scale = normalize_scale(perpendicular_x, perpendicular_y, bias, true);
+        let second_scale = normalize_scale(perpendicular_x, perpendicular_y, bias);
         let second_x = multiply(perpendicular_x, second_scale);
         let second_y = multiply(perpendicular_y, second_scale);
         let second_z = multiply(second_scale, 0.0);
