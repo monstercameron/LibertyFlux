@@ -264,22 +264,6 @@
   "reason": "partly_proven"
  },
  {
-  "address": "0x0053F990",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Standard_CoopBombBase_BG_TIME, player_schema::LeaderboardInfo, 10>::vf8",
-  "file": "fn_0053f990.rs",
-  "lane": "r-s647",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0053FDF0",
-  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Standard_CoopDrugFactory_BG_TIME, player_schema::LeaderboardInfo, 10>::vf8",
-  "file": "fn_0053fdf0.rs",
-  "lane": "r-s647",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00590E90",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_Episodic_Race_245, player_schema::LeaderboardInfo, 10>::vf14",
   "file": "fn_00590e90.rs",
@@ -544,6 +528,22 @@
   "reason": null
  },
  {
+  "address": "0x005DCCB0",
+  "name": null,
+  "file": "fn_005dccb0.rs",
+  "lane": "r-s650",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x005DCCD0",
+  "name": null,
+  "file": "fn_005dccd0.rs",
+  "lane": "r-s650",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x005E8170",
   "name": null,
   "file": "fn_005e8170.rs",
@@ -616,6 +616,38 @@
   "reason": null
  },
  {
+  "address": "0x005F27F0",
+  "name": null,
+  "file": "fn_005f27f0.rs",
+  "lane": "r-s657",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x005F2820",
+  "name": null,
+  "file": "fn_005f2820.rs",
+  "lane": "r-s657",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x005F9E40",
+  "name": "rage::fragInst::vf29",
+  "file": "fn_005f9e40.rs",
+  "lane": "r-s659",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x005FB4E0",
+  "name": "rage::fragInst::vf62",
+  "file": "fn_005fb4e0.rs",
+  "lane": "r-s659",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x006098D0",
   "name": null,
   "file": "fn_006098d0.rs",
@@ -632,9 +664,33 @@
   "reason": null
  },
  {
+  "address": "0x00609970",
+  "name": null,
+  "file": "fn_00609970.rs",
+  "lane": "r-s656",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00609BC0",
+  "name": null,
+  "file": "fn_00609bc0.rs",
+  "lane": "r-s656",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00609C60",
   "name": null,
   "file": "fn_00609c60.rs",
+  "lane": "r-s656",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00609EE0",
+  "name": null,
+  "file": "fn_00609ee0.rs",
   "lane": "r-s656",
   "outcome": "not yet run",
   "reason": null
@@ -659,6 +715,30 @@
   "address": "0x0060A0C0",
   "name": null,
   "file": "fn_0060a0c0.rs",
+  "lane": "r-s656",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x0060A860",
+  "name": null,
+  "file": "fn_0060a860.rs",
+  "lane": "r-s656",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x0060B0F0",
+  "name": null,
+  "file": "fn_0060b0f0.rs",
+  "lane": "r-s656",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x006118B0",
+  "name": null,
+  "file": "fn_006118b0.rs",
   "lane": "r-s656",
   "outcome": "not yet run",
   "reason": null
@@ -750,14 +830,6 @@
   "lane": "r-s600",
   "outcome": "deferred",
   "reason": "out_of_time"
- },
- {
-  "address": "0x00650430",
-  "name": null,
-  "file": "fn_00650430.rs",
-  "lane": "a-H24",
-  "outcome": "not yet run",
-  "reason": null
  },
  {
   "address": "0x006607F0",
@@ -1040,14 +1112,6 @@
   "reason": "other"
  },
  {
-  "address": "0x008602C0",
-  "name": "pending triage",
-  "file": "fn_008602c0.rs",
-  "lane": "r-s654",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00862310",
   "name": "pending triage",
   "file": "fn_00862310.rs",
@@ -1086,6 +1150,14 @@
   "lane": "r-s438",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x008DBF60",
+  "name": "task_ctor_update_thread_range",
+  "file": "fn_008dbf60.rs",
+  "lane": "r-s649",
+  "outcome": "deferred",
+  "reason": "checker_gap"
  },
  {
   "address": "0x009094A0",
@@ -1384,41 +1456,17 @@
   "reason": null
  },
  {
-  "address": "0x00A21BA0",
-  "name": "fn_00a21ba0",
-  "file": "fn_00a21ba0.rs",
+  "address": "0x00A23AD0",
+  "name": "fn_00a23ad0",
+  "file": "fn_00a23ad0.rs",
   "lane": "r-s651",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00A223A0",
-  "name": "fn_00a223a0",
-  "file": "fn_00a223a0.rs",
-  "lane": "r-s651",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A239F0",
-  "name": "fn_00a239f0",
-  "file": "fn_00a239f0.rs",
-  "lane": "r-s651",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A25230",
-  "name": "fn_00a25230",
-  "file": "fn_00a25230.rs",
-  "lane": "r-s651",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A29D10",
-  "name": "fn_00a29d10",
-  "file": "fn_00a29d10.rs",
+  "address": "0x00A252A0",
+  "name": "fn_00a252a0",
+  "file": "fn_00a252a0.rs",
   "lane": "r-s651",
   "outcome": "not_reached",
   "reason": null
@@ -1558,6 +1606,14 @@
   "lane": "r-s631",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x00A34080",
+  "name": "fn_00a34080",
+  "file": "fn_00a34080.rs",
+  "lane": "r-s660",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00A4F590",
@@ -1840,9 +1896,25 @@
   "reason": "out_of_time"
  },
  {
-  "address": "0x00B10780",
-  "name": "heli_create_effect_resource",
-  "file": "fn_00b10780.rs",
+  "address": "0x00B10870",
+  "name": "heli_clear_resource_indices",
+  "file": "fn_00b10870.rs",
+  "lane": "r-s658",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B10F60",
+  "name": "CHeli::vf21",
+  "file": "fn_00b10f60.rs",
+  "lane": "r-s658",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B11250",
+  "name": "CHeli::vf22",
+  "file": "fn_00b11250.rs",
   "lane": "r-s658",
   "outcome": "not_reached",
   "reason": null
@@ -1859,6 +1931,14 @@
   "address": "0x00B11830",
   "name": "CHeli::vf24",
   "file": "fn_00b11830.rs",
+  "lane": "r-s658",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B11B90",
+  "name": "advance_entity_value_by_range_table",
+  "file": "fn_00b11b90.rs",
   "lane": "r-s658",
   "outcome": "not_reached",
   "reason": null
@@ -1883,6 +1963,14 @@
   "address": "0x00B122E0",
   "name": "decrement_indexed_resource_reference",
   "file": "fn_00b122e0.rs",
+  "lane": "r-s658",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B12370",
+  "name": "dynamic_entity_update_fraction_byte",
+  "file": "fn_00b12370.rs",
   "lane": "r-s658",
   "outcome": "not_reached",
   "reason": null
@@ -2392,11 +2480,11 @@
   "reason": null
  },
  {
-  "address": "0x00BC9860",
-  "name": "physics_helper_00BC9860",
-  "file": "fn_00bc9860.rs",
-  "lane": "r-s661",
-  "outcome": "not_reached",
+  "address": "0x00BC83C0",
+  "name": null,
+  "file": "fn_00bc83c0.rs",
+  "lane": "r-b679",
+  "outcome": "not yet run",
   "reason": null
  },
  {
@@ -2416,11 +2504,43 @@
   "reason": null
  },
  {
-  "address": "0x00BD6880",
-  "name": null,
-  "file": "fn_00bd6880.rs",
+  "address": "0x00BD6010",
+  "name": "physics_function_00bd6010",
+  "file": "fn_00bd6010.rs",
   "lane": "r-s662",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BD60E0",
+  "name": "physics_function_00bd60e0",
+  "file": "fn_00bd60e0.rs",
+  "lane": "r-s662",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BD61B0",
+  "name": "physics_function_00bd61b0",
+  "file": "fn_00bd61b0.rs",
+  "lane": "r-s662",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BD6280",
+  "name": "physics_function_00bd6280",
+  "file": "fn_00bd6280.rs",
+  "lane": "r-s662",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00BD6350",
+  "name": "physics_function_00bd6350",
+  "file": "fn_00bd6350.rs",
+  "lane": "r-s662",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -2552,9 +2672,33 @@
   "reason": null
  },
  {
+  "address": "0x00BE56F0",
+  "name": null,
+  "file": "fn_00be56f0.rs",
+  "lane": "r-s648",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00BE5720",
   "name": null,
   "file": "fn_00be5720.rs",
+  "lane": "r-s648",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00BE5810",
+  "name": null,
+  "file": "fn_00be5810.rs",
+  "lane": "r-s648",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00BE5830",
+  "name": null,
+  "file": "fn_00be5830.rs",
   "lane": "r-s648",
   "outcome": "not yet run",
   "reason": null
@@ -2600,25 +2744,49 @@
   "reason": null
  },
  {
-  "address": "0x00BFDB70",
-  "name": "initialize_scaled_vector_record_57",
-  "file": "fn_00bfdb70.rs",
+  "address": "0x00C02810",
+  "name": "initialize_selector_physics_record_61",
+  "file": "fn_00c02810.rs",
   "lane": "r-s655",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00C02A20",
-  "name": "initialize_vector_scalar_record_5b",
-  "file": "fn_00c02a20.rs",
+  "address": "0x00C028E0",
+  "name": "initialize_float_physics_record_5a",
+  "file": "fn_00c028e0.rs",
   "lane": "r-s655",
   "outcome": "not_reached",
   "reason": null
  },
  {
-  "address": "0x00C02BE0",
-  "name": "initialize_vector_scalar_record_5c",
-  "file": "fn_00c02be0.rs",
+  "address": "0x00C02930",
+  "name": "initialize_toggled_physics_record_5d",
+  "file": "fn_00c02930.rs",
+  "lane": "r-s655",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C029E0",
+  "name": "initialize_enabled_physics_record_64",
+  "file": "fn_00c029e0.rs",
+  "lane": "r-s655",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C02C20",
+  "name": "initialize_multi_field_physics_record_63",
+  "file": "fn_00c02c20.rs",
+  "lane": "r-s655",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C02D00",
+  "name": "call_vector_transform_helper",
+  "file": "fn_00c02d00.rs",
   "lane": "r-s655",
   "outcome": "not_reached",
   "reason": null
@@ -2664,9 +2832,9 @@
   "reason": null
  },
  {
-  "address": "0x00C72180",
-  "name": "fn_00c72180",
-  "file": "fn_00c72180.rs",
+  "address": "0x00C76990",
+  "name": "CPedModelInfo::vf4",
+  "file": "fn_00c76990.rs",
   "lane": "r-s653",
   "outcome": "not_reached",
   "reason": null
@@ -3734,38 +3902,6 @@
   "lane": "r-s607",
   "outcome": "deferred",
   "reason": "other"
- },
- {
-  "address": "0x00D3E7E0",
-  "name": "task_simple_jump_land_constructor",
-  "file": "fn_00d3e7e0.rs",
-  "lane": "r-s652",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D3E810",
-  "name": "task_simple_jump_launch_constructor",
-  "file": "fn_00d3e810.rs",
-  "lane": "r-s652",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D3E960",
-  "name": "CTaskComplexJump::~CTaskComplexJump__deleting",
-  "file": "fn_00d3e960.rs",
-  "lane": "r-s652",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D3E990",
-  "name": "CTaskSimpleJumpInAir::~CTaskSimpleJumpInAir__deleting",
-  "file": "fn_00d3e990.rs",
-  "lane": "r-s652",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00D3E9C0",

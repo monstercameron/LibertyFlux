@@ -1,6 +1,6 @@
-// original: 0x00bfdb70 initialize_scaled_vector_record_57
-/// Initialise a vector record with base helper code 0x57. The base helper uses the first two stack words and the shared global word; a vector helper copies the third stack pointer's three words to receiver offsets 0x10, 0x14 and 0x18. A conversion helper receives the fourth stack pointer and writes a scripted word at offset 0x1c. Store the fifth stack argument's f32 bits at offset 0x20, set kind 0x12 at offset 0x02, and return the conversion helper's EAX.
-lf_checker_rt::export!(thiscall, rw_00bfdb70(this: u32, first_word: u32, second_word: u32, vector_input: u32, conversion_input: u32, value_bits: u32) -> u32 {
+// original: 0x00c02810 initialize_selector_physics_record_61
+/// Run the two base initializers with code 0x61 and the shared global word, then call the record helper with the third stack word. Store the fourth stack word's raw f32 bits at offset 0x28. Build receiver byte 0x25 from the selector low bit, an adjusted low nibble, the prior byte's high two bits and the seventh stack word's low bit. The adjustment is +0xf2 for selector zero, +0xed for selector one, and unchanged otherwise; store the final nibble plus 0x0e or 0x13 at offset 0x14 according to bit 0x20 of the packed byte, then set kind 0x13 at offset 0x02 and return the final byte.
+lf_checker_rt::export!(thiscall, rw_00c02810(this: u32, first_word: u32, second_word: u32, tertiary_word: u32, field_float_bits: u32, selector: u32, offset_nibble: u32, trailing_bit: u32) -> u32 {
         unsafe {
                     #[inline(always)]
         unsafe fn read_u8(base: u32, offset: u32) -> u8 {
@@ -56,15 +56,27 @@ lf_checker_rt::export!(thiscall, rw_00bfdb70(this: u32, first_word: u32, second_
             unsafe { core::arch::x86::_mm_cvtt_ss2si(core::arch::x86::_mm_set_ss(value)) }
         }
             const GLOBAL_WORD_VA: u32 = 0x011735a4;
-            const HELPER_CODE: u32 = 0x57;
-            const OBJECT_KIND: u8 = 0x12;
-            const SCALAR_OFFSET: u32 = 0x20;
+            const HELPER_CODE: u32 = 0x61;
+            const OBJECT_KIND: u8 = 0x13;
             let shared_word = unsafe { (lf_checker_rt::global::<u32>(GLOBAL_WORD_VA)).read_unaligned() };
-            let _: u32 = lf_checker_rt::callee_thiscall!(1, u32, this, HELPER_CODE, shared_word, second_word, first_word, 0);
-            let _: u32 = lf_checker_rt::callee_thiscall!(2, u32, this, vector_input);
-            let conversion_result = lf_checker_rt::callee_thiscall!(3, u32, this, conversion_input);
-            write_u32(this, SCALAR_OFFSET, if false { value_bits.wrapping_add(1) } else { value_bits });
+            let _: u32 = lf_checker_rt::callee_thiscall!(1, u32, this, HELPER_CODE);
+            let _: u32 = lf_checker_rt::callee_thiscall!(2, u32, this, HELPER_CODE, shared_word, second_word, first_word, 1);
+            let _: u32 = lf_checker_rt::callee_thiscall!(3, u32, this, tertiary_word);
+            let selector_byte = selector as u8;
+            let mut adjusted = offset_nibble as u8;
+            if selector_byte == 0 {
+                adjusted = adjusted.wrapping_add(0xf2);
+            } else if selector_byte == 1 {
+                adjusted = adjusted.wrapping_add(0xed);
+            }
+            let mut packed = ((selector_byte & 1) << 4) | (adjusted & 0x0f);
+            packed = packed.wrapping_add(packed) | (read_u8(this, 0x25) & 0xc0) | ((trailing_bit as u8) & 1);
+            write_u32(this, 0x28, field_float_bits);
+            write_u8(this, 0x25, packed);
+            let low_nibble = (packed >> 1) & 0x0f;
+            let final_byte = if packed & 0x20 == 0 { low_nibble.wrapping_add(0x0e) } else { low_nibble.wrapping_add(0x13) };
+            write_u8(this, 0x14, if false { final_byte.wrapping_add(1) } else { final_byte });
             write_u8(this, 2, OBJECT_KIND);
-            conversion_result
+            final_byte as u32
         }
     });

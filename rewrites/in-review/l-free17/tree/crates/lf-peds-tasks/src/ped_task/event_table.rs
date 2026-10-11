@@ -10,9 +10,9 @@
 //! passes the record's index in the table, and the test crate rebuilds the
 //! address from it.
 //!
-//! The field names follow the routines that use each word. The state word
+//! The field names follow the routines that use each word. The event word
 //! is an active flag in the scans and the lookup key in
-//! [`EventTable::find_by_state`]. The kind word is the kind of a queued
+//! [`EventTable::find_by_event`]. The kind word is the kind of a queued
 //! deadline record in the deadline scans, and the event key in
 //! [`EventTable::set_event_flag`]. The object word is a task id in the id
 //! scans, and the owner object a record holds in
@@ -42,8 +42,9 @@ pub const NEARBY_DISTANCE_SQUARED: f32 = 0.25;
 /// One record of the table. Offsets are those of the 32-bit layout.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
 pub struct EventRecord {
-    /// Word at offset 0x10. Nonzero when the record is active.
-    pub state: u32,
+    /// Word at offset 0x10: the record's event object handle. Nonzero when the
+    /// record is active.
+    pub event: u32,
     /// Word at offset 0x18: the queued kind, or the event key.
     pub kind: u32,
     /// Word at offset 0x1c: a task id in the id scans, or the owner object
@@ -56,10 +57,10 @@ pub struct EventRecord {
 }
 
 impl EventRecord {
-    /// Whether the record is active (its state word is nonzero).
+    /// Whether the record is active (its event word is nonzero).
     #[must_use]
     pub fn is_active(&self) -> bool {
-        self.state != 0
+        self.event != 0
     }
 }
 
@@ -160,14 +161,14 @@ impl EventTable {
         }
     }
 
-    /// The index of the first record whose state word equals `key`. A zero
+    /// The index of the first record whose event word equals `key`. A zero
     /// key matches nothing.
     #[must_use]
-    pub fn find_by_state(&self, key: u32) -> Option<usize> {
-        if key == 0 {
+    pub fn find_by_event(&self, event: u32) -> Option<usize> {
+        if event == 0 {
             return None;
         }
-        self.records.iter().position(|record| record.state == key)
+        self.records.iter().position(|record| record.event == event)
     }
 
     /// Whether record `index` exists and its object word equals `object`.
@@ -252,7 +253,7 @@ impl EventTable {
         C: EventCallees,
     {
         for (index, record) in self.records.iter().enumerate() {
-            let event = record.object;
+            let event = record.event;
             if event == 0 {
                 continue;
             }

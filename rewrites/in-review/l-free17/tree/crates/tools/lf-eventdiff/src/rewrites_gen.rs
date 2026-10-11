@@ -10,3 +10,11 @@ pub mod fn_009c0e40 { #![allow(unused_imports)] use super::{callee_addr}; includ
 pub mod fn_009c0e70 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_009c0e70.rs")); }
 pub mod fn_009c1270 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_009c1270.rs")); }
 pub mod fn_009c0d80 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_009c0d80.rs")); }
+pub mod fn_00b80af0 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00b80af0.rs")); }
+pub mod fn_00b80b20 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00b80b20.rs")); }
+pub mod fn_00b80d50 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00b80d50.rs")); }
+pub mod fn_00b80dd0 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00b80dd0.rs")); }
+pub mod fn_00b81340 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_00b81340.rs")); }
+pub mod fn_0097eea0 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_0097eea0.rs")); }
+pub mod fn_0097eef0 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_0097eef0.rs")); }
+pub mod fn_0097ef80 { #![allow(unused_imports)] use super::{callee_addr}; include!(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../../../../../rewrites/verified/functions/fn_0097ef80.rs")); }

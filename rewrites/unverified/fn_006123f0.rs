@@ -11,13 +11,14 @@ lf_checker_rt::export!(thiscall, rw_006123F0(list: u32, node: u32) -> () {
         const COUNT: u32 = 8;
         const PREVIOUS: u32 = 0xf4;
         const NEXT: u32 = 0xf8;
-        let last = ((list + LAST) as *const u32).read_unaligned();
-        if last == 0 {
+        let first = ((list) as *const u32).read_unaligned();
+        if first == 0 {
             ((list) as *mut u32).write_unaligned(node);
             ((list + LAST) as *mut u32).write_unaligned(node);
             ((node + NEXT) as *mut u32).write_unaligned(0);
             ((node + PREVIOUS) as *mut u32).write_unaligned(0);
         } else {
+            let last = ((list + LAST) as *const u32).read_unaligned();
             let next = ((last + NEXT) as *const u32).read_unaligned();
             ((node + NEXT) as *mut u32).write_unaligned(next);
             if next != 0 {

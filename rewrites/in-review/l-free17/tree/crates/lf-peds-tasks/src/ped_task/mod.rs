@@ -40,6 +40,7 @@
 
 #![forbid(unsafe_code)]
 
+mod audio_release;
 mod create;
 mod event_table;
 mod gate;
@@ -47,6 +48,7 @@ mod id_lookup;
 mod mover;
 mod pose;
 mod seek;
+mod task_slots;
 
 pub mod registry;
 
@@ -54,6 +56,9 @@ pub use create::{
     ArgLookup, BuildManagers, ChainClone, ChainCloner, ChainEntry, ChainNode, ChainOwner,
     CloneProduct, FLAG_DONE, FLAG_EXTRA, FoundEntry, KIND_11, Kind11Task, NONE, PRIORITY, PedMgr,
     PedTaskOutcome, TaskBuildCtx,
+};
+pub use audio_release::{
+    AudioObjects, AudioSlot, AudioTask, CLEANUP_ENABLED, CLEANUP_MODE_SENTINEL, ReleaseGlobals, SKIP_MODE,
 };
 pub use event_table::{
     EventCallees, EventObjects, EventRecord, EventTable, DELAY_GAP, NEARBY_DISTANCE_SQUARED,
@@ -65,5 +70,9 @@ pub use mover::{BlendState, COMMIT_FLAG_ARG, MoverCallees, MoverPose, NOT_READY,
 pub use pose::{
     AngleTuning, Blended, ConeSolvers, FLAG_ACTIVE, FLAG_COPY, FLAG_SPHERE, FLAG_TRANSFORM, Link,
     LinkMatrix, Matrix, NORM_COUNT, NormSlot, PoseFill, PoseSample, PoseVolume, Transformed,
+};
+pub use task_slots::{
+    FIRST_BOMB_KIND, FIRST_BOMB_SLOT, ManagerCallees, PRIMARY_COUNT, SECOND_BOMB_KIND, SECOND_BOMB_SLOT,
+    SECONDARY_COUNT, TaskSlots,
 };
 pub use seek::{SEEK_MODE, STEP_SCALE, SeekGoal, SeekMover, SeekRecord, TUNING};

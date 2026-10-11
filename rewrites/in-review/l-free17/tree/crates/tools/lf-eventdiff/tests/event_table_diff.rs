@@ -155,7 +155,7 @@ fn decode(bytes: &[u8]) -> EventTable {
     for (index, record) in table.records.iter_mut().enumerate() {
         let va = record_va(index);
         *record = EventRecord {
-            state: word(bytes, va + 0x10),
+            event: word(bytes, va + 0x10),
             kind: word(bytes, va + 0x18),
             object: word(bytes, va + 0x1C),
             deadline: word(bytes, va + 0x24),
@@ -170,7 +170,7 @@ fn decode(bytes: &[u8]) -> EventTable {
 fn encode(bytes: &mut [u8], table: &EventTable) {
     for (index, record) in table.records.iter().enumerate() {
         let va = record_va(index);
-        put_word(bytes, va + 0x10, record.state);
+        put_word(bytes, va + 0x10, record.event);
         put_word(bytes, va + 0x18, record.kind);
         put_word(bytes, va + 0x1C, record.object);
         put_word(bytes, va + 0x24, record.deadline);
@@ -201,7 +201,7 @@ impl Rng {
 /// kinds collide often, and the deadline pool includes the exact edges of
 /// the delay gap, the unsigned order and the wrap-around.
 fn gen_record(rng: &mut Rng, now: u32) -> EventRecord {
-    let state = match rng.below(8) {
+    let event = match rng.below(8) {
         0 | 1 => 0,
         2 => 1,
         3 => 2,
@@ -239,7 +239,7 @@ fn gen_record(rng: &mut Rng, now: u32) -> EventRecord {
         _ => rng.next(),
     };
     EventRecord {
-        state,
+        event,
         kind,
         object,
         deadline,
@@ -295,6 +295,8 @@ struct Outcome {
 #[derive(Default)]
 struct Tally {
     cases: u32,
+    /// Cases in which the rewrite made at least one helper call.
+    with_calls: u32,
     mismatches: u32,
     first: Option<String>,
 }
@@ -302,6 +304,9 @@ struct Tally {
 impl Tally {
     fn judge(&mut self, case: u32, lift: &Outcome, rewrite: &Outcome, ret_checked: bool) {
         self.cases += 1;
+        if !rewrite.log.is_empty() {
+            self.with_calls += 1;
+        }
         let same_bytes = lift.bytes == rewrite.bytes;
         let same_log = lift.log == rewrite.log;
         let same_ret = !ret_checked || lift.ret == rewrite.ret;
@@ -497,7 +502,7 @@ fn select_tally(lift: SelectLift) -> Tally {
 
 type LookupLift = fn(&EventTable, u32) -> Option<usize>;
 
-/// Lookup keys: the state pool, zero, and values no record holds.
+/// Lookup keys: the event pool, zero, and values no record holds.
 fn gen_key(rng: &mut Rng) -> u32 {
     match rng.below(7) {
         0 => 0,
@@ -729,6 +734,10 @@ fn begin() -> std::sync::MutexGuard<'static, ()> {
 }
 
 fn assert_clean(name: &str, tally: &Tally) {
+    eprintln!(
+        "{name}: {} cases, {} with helper calls, {} mismatches",
+        tally.cases, tally.with_calls, tally.mismatches
+    );
     assert_eq!(tally.cases, CASES, "{name}: case count");
     assert_eq!(
         tally.mismatches, 0,
@@ -892,8 +901,8 @@ fn select_wrong_versions_are_caught() {
 #[test]
 fn lookup_matches_rewrite() {
     let _guard = begin();
-    let tally = lookup_tally(|table, key| table.find_by_state(key));
-    assert_clean("find_by_state", &tally);
+    let tally = lookup_tally(|table, key| table.find_by_event(key));
+    assert_clean("find_by_event", &tally);
 }
 
 #[test]
@@ -906,13 +915,13 @@ fn lookup_wrong_versions_are_caught() {
             if key == 0 {
                 return None;
             }
-            table.records.iter().rposition(|record| record.state == key)
+            table.records.iter().rposition(|record| record.event == key)
         }),
     );
-    // No zero-key check: an inactive record (state zero) matches key zero.
+    // No zero-key check: an inactive record (event zero) matches key zero.
     assert_caught(
         "lookup, zero key scans",
-        &lookup_tally(|table, key| table.records.iter().position(|record| record.state == key)),
+        &lookup_tally(|table, key| table.records.iter().position(|record| record.event == key)),
     );
 }
 
@@ -1181,7 +1190,7 @@ fn gen_nearby_window(rng: &mut Rng) -> (Vec<u8>, u32) {
     let mut table = EventTable::default();
     for record in &mut table.records {
         *record = gen_record(rng, 0);
-        record.object = match rng.below(3) {
+        record.event = match rng.below(3) {
             0 => 0,
             _ => rt::relocated(EVENT_BASE_VA + rng.below(EVENT_COUNT) * EVENT_STRIDE),
         };
@@ -1250,7 +1259,7 @@ fn nearby_wrong_versions_are_caught() {
         "nearby, inclusive distance",
         &nearby_tally(|table, target_id, target, objects, calls| {
             for (index, record) in table.records.iter().enumerate() {
-                let event = record.object;
+                let event = record.event;
                 if event == 0 {
                     continue;
                 }
@@ -1278,7 +1287,7 @@ fn nearby_wrong_versions_are_caught() {
         "nearby, no z term",
         &nearby_tally(|table, target_id, target, objects, calls| {
             for (index, record) in table.records.iter().enumerate() {
-                let event = record.object;
+                let event = record.event;
                 if event == 0 {
                     continue;
                 }
@@ -1306,7 +1315,7 @@ fn nearby_wrong_versions_are_caught() {
         "nearby, stored vector for low types",
         &nearby_tally(|table, target_id, target, objects, calls| {
             for (index, record) in table.records.iter().enumerate() {
-                let event = record.object;
+                let event = record.event;
                 if event == 0 {
                     continue;
                 }

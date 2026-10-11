@@ -3,8 +3,8 @@
 //! `lf-eventdiff` test crate.
 
 use lf_peds_tasks::ped_task::{
-    DELAY_GAP, EventCallees, EventRecord, EventTable, QUEUED_KIND, RECORD_COUNT, REDUCED_THRESHOLD,
-    STANDARD_THRESHOLD,
+    DELAY_GAP, EventCallees, EventObjects, EventRecord, EventTable, QUEUED_KIND, RECORD_COUNT,
+    REDUCED_THRESHOLD, STANDARD_THRESHOLD,
 };
 
 /// A helper stand-in that answers from fixed values and logs each call.
@@ -30,6 +30,10 @@ impl EventCallees for Fake {
         self.calls.push(format!("release {record}"));
     }
 
+    fn proximity_notify(&mut self, record: usize) {
+        self.calls.push(format!("proximity {record}"));
+    }
+
     fn release_object(&mut self, object: u32, record: usize) {
         self.calls.push(format!("release object {object} at {record}"));
     }
@@ -39,9 +43,9 @@ impl EventCallees for Fake {
     }
 }
 
-fn queued(state: u32, object: u32, deadline: u32) -> EventRecord {
+fn queued(event: u32, object: u32, deadline: u32) -> EventRecord {
     EventRecord {
-        state,
+        event,
         kind: QUEUED_KIND,
         object,
         deadline,
@@ -161,9 +165,9 @@ fn selection_threshold_follows_the_mode_low_byte() {
 #[test]
 fn lookup_treats_zero_as_no_key_and_finds_the_first_match() {
     let table = table_with(&[(2, queued(9, 0, 0)), (6, queued(9, 0, 0))]);
-    assert_eq!(table.find_by_state(0), None);
-    assert_eq!(table.find_by_state(9), Some(2));
-    assert_eq!(table.find_by_state(8), None);
+    assert_eq!(table.find_by_event(0), None);
+    assert_eq!(table.find_by_event(9), Some(2));
+    assert_eq!(table.find_by_event(8), None);
 }
 
 #[test]
@@ -178,14 +182,14 @@ fn object_match_rejects_indices_past_the_table() {
 fn flag_stores_only_the_low_byte_and_skips_inactive_records() {
     let mut table = table_with(&[
         (0, EventRecord {
-            state: 1,
+            event: 1,
             kind: 5,
             object: 0,
             deadline: 0,
             flag: 0,
         }),
         (1, EventRecord {
-            state: 0,
+            event: 0,
             kind: 5,
             object: 0,
             deadline: 0,
@@ -204,7 +208,7 @@ fn release_passes_record_indices_in_table_order() {
     let table = table_with(&[
         (1, queued(1, 0, 0)),
         (3, EventRecord {
-            state: 1,
+            event: 1,
             kind: 0,
             object: 0,
             deadline: 0,
@@ -262,4 +266,81 @@ fn replace_with_the_same_object_does_nothing() {
     table.replace_object(2, 5, &mut fake);
     assert!(fake.calls.is_empty());
     assert_eq!(table.records[2].object, 5);
+}
+
+/// Fixed answers for the nearby check: each event object is a handle with
+/// a type byte, a vector id and a position.
+#[derive(Default)]
+struct Objects {
+    /// (handle, type byte, vector id, position) per event.
+    events: Vec<(u32, u8, u32, [f32; 3])>,
+}
+
+impl EventObjects for Objects {
+    fn type_byte(&self, event: u32) -> u8 {
+        self.events.iter().find(|e| e.0 == event).map_or(0, |e| e.1)
+    }
+
+    fn vector_id(&self, event: u32) -> u32 {
+        self.events.iter().find(|e| e.0 == event).map_or(0, |e| e.2)
+    }
+
+    fn position(&self, event: u32) -> [f32; 3] {
+        self.events
+            .iter()
+            .find(|e| e.0 == event)
+            .map_or([0.0; 3], |e| e.3)
+    }
+}
+
+fn nearby_table(event: u32) -> EventTable {
+    let mut table = EventTable::default();
+    table.records[0].event = event;
+    table
+}
+
+#[test]
+fn nearby_is_strict_at_the_threshold() {
+    // A distance of exactly half a unit squares to the threshold: not nearby.
+    let objects = Objects {
+        events: vec![(1, 0x02, 9, [0.5, 0.0, 0.0])],
+    };
+    let mut fake = Fake::default();
+    nearby_table(1).check_nearby_event(9, [0.0, 0.0, 0.0], &objects, &mut fake);
+    assert!(fake.calls.is_empty());
+
+    let objects = Objects {
+        events: vec![(1, 0x02, 9, [0.49, 0.0, 0.0])],
+    };
+    nearby_table(1).check_nearby_event(9, [0.0, 0.0, 0.0], &objects, &mut fake);
+    assert_eq!(fake.calls, ["proximity 0"]);
+}
+
+#[test]
+fn nearby_treats_low_types_as_vector_zero() {
+    let objects = Objects {
+        events: vec![(1, 0x01, 77, [0.0; 3])],
+    };
+    let mut fake = Fake::default();
+    // A type below two is attached to vector zero, whatever its stored word.
+    nearby_table(1).check_nearby_event(0, [0.0; 3], &objects, &mut fake);
+    assert_eq!(fake.calls, ["proximity 0"]);
+
+    let mut fake = Fake::default();
+    nearby_table(1).check_nearby_event(77, [0.0; 3], &objects, &mut fake);
+    assert!(fake.calls.is_empty());
+}
+
+#[test]
+fn nearby_skips_a_nan_distance_and_a_null_event() {
+    let objects = Objects {
+        events: vec![(1, 0x02, 9, [f32::NAN, 0.0, 0.0])],
+    };
+    let mut fake = Fake::default();
+    nearby_table(1).check_nearby_event(9, [0.0; 3], &objects, &mut fake);
+    assert!(fake.calls.is_empty());
+
+    let objects = Objects::default();
+    nearby_table(0).check_nearby_event(9, [0.0; 3], &objects, &mut fake);
+    assert!(fake.calls.is_empty());
 }

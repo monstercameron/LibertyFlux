@@ -22,20 +22,21 @@ use lf_peds_tasks::ped_task::{
 };
 
 #[test]
-fn registry_counts_thirteen_proven() {
+fn registry_counts_thirty_proven() {
     let (proven, lifted, missing) = registry::counts();
-    assert_eq!(proven, 13);
+    assert_eq!(proven, 30);
     assert_eq!(lifted, 0);
-    assert_eq!(missing, 0);
-    assert_eq!(registry::ROWS.len(), 13);
+    assert_eq!(missing, 4);
+    assert_eq!(registry::ROWS.len(), 34);
     for row in registry::ROWS {
-        assert_eq!(row.state, State::Proven);
-        assert!(
-            !row.narrows.is_empty(),
-            "proven row {} {} states its narrowings",
-            row.class,
-            row.method
-        );
+        if row.state == State::Proven {
+            assert!(
+                !row.narrows.is_empty(),
+                "proven row {} {} states its narrowings",
+                row.class,
+                row.method
+            );
+        }
     }
     let names: Vec<(&str, &str)> = registry::ROWS.iter().map(|r| (r.class, r.method)).collect();
     assert_eq!(
@@ -54,6 +55,27 @@ fn registry_counts_thirteen_proven() {
             ("(free function)", "admits"),
             ("SeekRecord", "seek_target_setup"),
             ("MoverPose", "commit_blend"),
+            ("EventTable", "refresh_matching_deadlines"),
+            ("EventTable", "release_lowest_deadline_record"),
+            ("EventTable", "find_by_event"),
+            ("EventTable", "holds_object"),
+            ("EventTable", "set_event_flag"),
+            ("EventTable", "release_active"),
+            ("EventTable", "release_nonqueued"),
+            ("EventTable", "replace_object"),
+            ("EventTable", "check_nearby_event"),
+            ("EventTable", "ped_task_event_registration (forwarder)"),
+            ("(receiver, not the table)", "ped_task_select_event_entry"),
+            ("(receiver, not the table)", "ped_task_replace_owner_object"),
+            ("TaskSlots", "first_occupied"),
+            ("TaskSlots", "contains"),
+            ("TaskSlots", "request_bomb_task"),
+            ("TaskSlots", "request_first_bomb_task"),
+            ("TaskSlots", "update_sequence"),
+            ("TaskSlots", "drive_task_update (not lifted)"),
+            ("AudioTask", "release_audio_task"),
+            ("AudioTask", "release_radio_task"),
+            ("AudioTask", "release_secondary_audio_task"),
         ]
     );
 }

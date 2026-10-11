@@ -1,6 +1,6 @@
 // original: 0x00862370 physics_copy_surface_state
 
-/// Copies the source surface and motion records into the object's output
+/// Copies a header word plus the source surface and motion records into output
 /// slots, preserving every copied dword's bit pattern. It clears flag bit 2
 /// at `+0x27c`, writes the fixed unit and negative scale values, and returns
 /// the source word from `+0x1a8`.
@@ -10,9 +10,11 @@ lf_checker_rt::export!(thiscall, rw_00862370(this: u32) -> u32 {
     unsafe {
         const SOURCE_SURFACE: u32 = 0x0100;
         const SOURCE_MOTION: u32 = 0x0120;
+        const SOURCE_HEADER: u32 = 0x0134;
         const SOURCE_STATE: u32 = 0x01a8;
         const DEST_SURFACE: u32 = 0x01f0;
         const DEST_MOTION: u32 = 0x0200;
+        const DEST_HEADER: u32 = 0x0210;
         const DEST_STATE: u32 = 0x0214;
         const DEST_SCALE: u32 = 0x0218;
         const DEST_UNIT: u32 = 0x021c;
@@ -38,8 +40,10 @@ lf_checker_rt::export!(thiscall, rw_00862370(this: u32) -> u32 {
         let motion_1 = read_word(this, SOURCE_MOTION + 4);
         let motion_2 = read_word(this, SOURCE_MOTION + 8);
         let motion_3 = read_word(this, SOURCE_MOTION + 12);
+        let source_header = read_word(this, SOURCE_HEADER);
         let source_state = read_word(this, SOURCE_STATE);
 
+        write_word(this, DEST_HEADER, source_header);
         write_word(this, DEST_MOTION, motion_0);
         write_word(this, DEST_MOTION + 4, motion_1);
         write_word(this, DEST_MOTION + 8, motion_2);

@@ -180,7 +180,199 @@ pub const ROWS: &[Row] = &[
             "the flag byte keeps its other bits, as the rewrite does; only bit 0 is written by the family",
         ],
     },
-];
+    // EventTable: the 32-record task event table. The records are owned
+    // by the table; the helpers travel as EventCallees and EventObjects.
+    // Record arguments of the helpers are indices, and the proof rebuilds
+    // the address the 32-bit rewrite passes.
+    Row {
+        class: "EventTable",
+        method: "refresh_matching_deadlines",
+        state: State::Proven,
+        narrows: &[
+            "the game clock word is read by the caller and passed as current_time; the proof plants it in the auxiliary window the rewrite reads",
+            "the delay helper travels as EventCallees::delay_ticks; the proof compares each call in order with its task argument",
+            "the callees are assumed not to write the table, which the lift cannot observe through its exclusive borrow",
+            "the routine has no return value; none is compared",
+        ],
+    },
+    Row {
+        class: "EventTable",
+        method: "release_lowest_deadline_record",
+        state: State::Proven,
+        narrows: &[
+            "the selection-mode helper travels as EventCallees::selection_mode and is called on every run, after the scan, as in the original; only its low byte is read",
+            "the released record is passed as its index; the proof rebuilds the record address the rewrite passes",
+            "the callees are assumed not to write the table",
+            "the routine has no return value; none is compared",
+        ],
+    },
+    Row {
+        class: "EventTable",
+        method: "find_by_event",
+        state: State::Proven,
+        narrows: &[
+            "the answer is the record index; the proof rebuilds the record address from it and compares it with the rewrite's answer, zero for none",
+            "a zero key matches nothing, as the rewrite's early return does",
+        ],
+    },
+    Row {
+        class: "EventTable",
+        method: "holds_object",
+        state: State::Proven,
+        narrows: &[
+            "the answer is a bool; the proof compares the low byte the rewrite returns, since its upper return bits are not meaningful",
+            "an index past the table never matches, as the rewrite's bound check does",
+        ],
+    },
+    Row {
+        class: "EventTable",
+        method: "set_event_flag",
+        state: State::Proven,
+        narrows: &[
+            "the routine returns the image address one past the scanned table, a fixed value of the original's loop; the lift does not return it and the proof does not compare it",
+            "only the low byte of the flag is stored, as the rewrite does",
+        ],
+    },
+    Row {
+        class: "EventTable",
+        method: "release_active",
+        state: State::Proven,
+        narrows: &["an instance of release_where: releases each active record"],
+    },
+    Row {
+        class: "EventTable",
+        method: "release_nonqueued",
+        state: State::Proven,
+        narrows: &["an instance of release_where: releases each active record whose kind is not the queued kind"],
+    },
+    Row {
+        class: "EventTable",
+        method: "replace_object",
+        state: State::Proven,
+        narrows: &[
+            "the release and retain helpers (thiscall) travel as EventCallees::release_object and retain_object, and receive the record index where the original passes the address of the object word; the proof rebuilds that address",
+            "the callees are assumed not to write the table; the store happens between the release and the retain, as in the original",
+            "an index past the table is ignored, as the rewrite's bound check does",
+            "the routine has no return value; none is compared",
+        ],
+    },
+    Row {
+        class: "EventTable",
+        method: "check_nearby_event",
+        state: State::Proven,
+        narrows: &[
+            "the target vector's three words are read once by the caller and passed as target; the rewrite reads them per event, and nothing writes them in between",
+            "the event object's type byte, vector id and position are reads through EventObjects, which the implementation supplies (the position is inline or behind the event's pointer); the proof's implementation reads the same layout, and the proof compares the calls that follow from those reads",
+            "the proximity helper's option (one), descriptor and trailing zero are supplied by the implementation of proximity_notify; the proof compares them in the call log",
+            "the squared distance is single precision with the differences squared and summed in y, x, z order; the comparison is strict, so a NaN distance is not nearby",
+            "the callees and the event objects are assumed not to write the table or the events",
+            "the routine has no return value; none is compared",
+        ],
+    },
+    Row {
+        class: "EventTable",
+        method: "ped_task_event_registration (forwarder)",
+        state: State::Missing,
+        narrows: &[
+            "a single helper call with constant arguments and no branch or loop: nothing to lift, so the routine is left out",
+        ],
+    },
+    Row {
+        class: "(receiver, not the table)",
+        method: "ped_task_select_event_entry",
+        state: State::Missing,
+        narrows: &[
+            "reads a child object through the receiver and calls its virtual query and a resolver; a receiver shape, not the table, not lifted in this lane",
+        ],
+    },
+    Row {
+        class: "(receiver, not the table)",
+        method: "ped_task_replace_owner_object",
+        state: State::Missing,
+        narrows: &[
+            "stores an owner pointer at a fixed offset of the receiver and calls the old object's release and the deallocator; a receiver shape, not the table, not lifted in this lane",
+        ],
+    },    // TaskSlots: the task manager's two pointer arrays. The task interface
+    // and the manager's preparatory methods travel as ManagerCallees.
+    Row {
+        class: "TaskSlots",
+        method: "first_occupied",
+        state: State::Proven,
+        narrows: &[
+            "the answer is the index of the first nonnull primary pointer, or the primary count when all are null; the rewrite reads the same five words and writes nothing",
+        ],
+    },
+    Row {
+        class: "TaskSlots",
+        method: "contains",
+        state: State::Proven,
+        narrows: &[
+            "the answer is a bool; the proof compares the low byte the rewrite returns",
+            "the needle is compared with the six secondary words only, as the rewrite does",
+        ],
+    },
+    Row {
+        class: "TaskSlots",
+        method: "request_bomb_task",
+        state: State::Proven,
+        narrows: &[
+            "the task interface's two other stack words are zero in the rewrite; the lift passes only the kind, and the proof's recorder checks the zero words in the call log",
+            "the interface's answer is not exposed by the rewrite, so none is compared",
+        ],
+    },
+    Row {
+        class: "TaskSlots",
+        method: "request_first_bomb_task",
+        state: State::Proven,
+        narrows: &[
+            "as request_bomb_task: the interface's two other stack words are zero, checked in the call log; its answer is not compared",
+        ],
+    },
+    Row {
+        class: "TaskSlots",
+        method: "update_sequence",
+        state: State::Proven,
+        narrows: &[
+            "the three methods travel as ManagerCallees; the proof compares their order and the manager handle each receives",
+            "the answer is the final method's answer, returned unchanged",
+        ],
+    },
+    Row {
+        class: "TaskSlots",
+        method: "drive_task_update (not lifted)",
+        state: State::Missing,
+        narrows: &[
+            "reads and writes an embedded task record at a fixed offset of the manager and an update source of the game state, and reads the game clock; a different sub-object from the slot arrays, not lifted in this lane",
+        ],
+    },    // AudioTask: the three audio object slots of the task record and the
+    // release that frees each. One generic method; each slot's routine is
+    // an instance, proven against its own rewrite.
+    Row {
+        class: "AudioTask",
+        method: "release_audio_task",
+        state: State::Proven,
+        narrows: &[
+            "the primary-slot instance of release_slot; the three game globals are read by the caller and passed as ReleaseGlobals, and the proof plants them as relocated words",
+            "the resource word and the cleanup and release helpers travel as AudioObjects; the proof compares every call in order with its arguments",
+            "the slot is not cleared by the release, as in the original",
+        ],
+    },
+    Row {
+        class: "AudioTask",
+        method: "release_radio_task",
+        state: State::Proven,
+        narrows: &[
+            "the radio-slot instance of release_slot, with the same globals and helpers as the primary instance",
+        ],
+    },
+    Row {
+        class: "AudioTask",
+        method: "release_secondary_audio_task",
+        state: State::Proven,
+        narrows: &[
+            "the secondary-slot instance of release_slot, with the same globals and helpers as the primary instance",
+        ],
+    },];
 
 /// Counts of (proven, lifted-but-unproven, missing) rows.
 #[must_use]
