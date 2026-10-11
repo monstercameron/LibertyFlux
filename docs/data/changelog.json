@@ -1,8 +1,21 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rust in progress: 3 files from lanes (427 unverified rewrites, 49 in review)",
+    "title": "Pipeline: the event-handler lift tests no longer include a withdrawn rewrite",
     "commit": null,
+    "summary": "The second of two repairs to the pipeline. One differential test crate did not compile, so the whole job of 32-bit lift tests failed. This entry records the repair; its two file changes are in the commit before it.",
+    "changes": [
+      "The crate that tests the lifted event-handler routines against their verified originals included the rewrite of one function that was withdrawn from the verified tree on 7 October, when its proof was found to fail the comparison of a call's receiver. The file was gone and the crate could not be built.",
+      "A lifted routine whose verified original was withdrawn has no proof of record to be tested against. That one routine is taken out of the crate, with a note to restore it when the function is verified again, and the one test file that exercised only that routine is removed. The crate keeps its other twenty routines and stays in the workspace and in the pipeline's list.",
+      "After the repair the crate builds for the 32-bit target and its tests pass: 20 passed, none failed. A scan of every crate found no other include of a file missing from the verified tree.",
+      "The two file changes went into the history one commit earlier than this entry, inside an import commit titled \"Rewrites: 16 more functions pass the checker\": the supervisor's commit ran while the coordinator's change was staged and took it along. Nothing was lost, but that commit's title does not describe them. Commits now go one at a time and each names its own paths, so this cannot happen again.",
+      "Found and repaired by a repair lane; the coordinator reviewed the change, ran the crate's tests and installed it."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rust in progress: 3 files from lanes (427 unverified rewrites, 49 in review)",
+    "commit": "ca606225824234df7c6262c6cd5f59cb2b0c392c",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 427 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
