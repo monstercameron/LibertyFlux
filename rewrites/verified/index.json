@@ -79011,6 +79011,15 @@
   "lane": "a-G23"
  },
  {
+  "address": "0x00A1CEA0",
+  "name": "ped_task_recalculate_blend_totals",
+  "kind": "function",
+  "file": "functions/fn_00a1cea0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-b696"
+ },
+ {
   "address": "0x00A1D120",
   "name": "cam_lookup_publish_pair",
   "kind": "function",
@@ -79470,6 +79479,24 @@
   "lane": "r-s651"
  },
  {
+  "address": "0x00A21FF0",
+  "name": "ped_task_update_enabled_records",
+  "kind": "function",
+  "file": "functions/fn_00a21ff0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-b696"
+ },
+ {
+  "address": "0x00A22100",
+  "name": "ped_task_initialize_phase_globals",
+  "kind": "function",
+  "file": "functions/fn_00a22100.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-b696"
+ },
+ {
   "address": "0x00A22360",
   "name": "aim_record_copy_payload_and_set_enabled",
   "kind": "function",
@@ -79486,6 +79513,24 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s651"
+ },
+ {
+  "address": "0x00A223D0",
+  "name": "cam_follow_ped_blur_cap_store",
+  "kind": "function",
+  "file": "functions/fn_00a223d0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-b696"
+ },
+ {
+  "address": "0x00A22520",
+  "name": "cam_follow_ped_spread_and_update_records",
+  "kind": "function",
+  "file": "functions/fn_00a22520.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-b696"
  },
  {
   "address": "0x00A23280",
