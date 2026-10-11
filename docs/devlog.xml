@@ -9,6 +9,40 @@
   <author><name>LibertyFlux</name></author>
   <generator>scripts/site/devlog_feed.py</generator>
   <entry>
+    <title>Widening a proof's inputs: seven verified rewrites differed from the original, and only four were the fault being looked for</title>
+    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#widened-proofs-2026-10-11"/>
+    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#widened-proofs-2026-10-11</id>
+    <published>2026-10-11T00:00:00Z</published>
+    <updated>2026-10-11T00:00:00Z</updated>
+    <summary>An audit that began with one question, how verified rewrites convert floats to integers, ended the day as a general test: take a verified rewrite and its contract of record, widen the contract so that every float the function can read takes extreme values on a share of trials, and run it again on the stock checker. Seven rewrites that had passed their proofs differ from the original under that test, on trials the original completes. All seven were withdrawn; five are already proven again with the cause corrected or are with a lane for it.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;An audit that began with one question, how verified rewrites convert floats to integers, ended the day as a general test: take a verified rewrite and its contract of record, widen the contract so that every float the function can read takes extreme values on a share of trials, and run it again on the stock checker. Seven rewrites that had passed their proofs differ from the original under that test, on trials the original completes. All seven were withdrawn; five are already proven again with the cause corrected or are with a lane for it.&lt;/p&gt;
+&lt;h3&gt;What was asked&lt;/h3&gt;
+&lt;p&gt;A proof here is thousands of random trials inside the ranges its contract declares. What does a proof with ordinary ranges fail to see?&lt;/p&gt;
+&lt;h3&gt;What was found&lt;/h3&gt;
+&lt;table role="table"&gt;
+&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;What differed&lt;/th&gt;&lt;th role="columnheader"&gt;Functions&lt;/th&gt;&lt;th role="columnheader"&gt;Status&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody role="rowgroup"&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;A float converted to a 32-bit integer with Rust's cast, where the original's truncating instruction gives a fixed result for not-a-number and for values that do not fit.&lt;/td&gt;&lt;td role="cell" data-label="Functions"&gt;Two.&lt;/td&gt;&lt;td role="cell" data-label="Status"&gt;Verified on the stock checker. Both corrected and proven again with widened contracts, the old form failing as the wrong version.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;A float converted through a 64-bit integer store whose low half is used: the two sides differ for positive infinity and beyond the 64-bit limit.&lt;/td&gt;&lt;td role="cell" data-label="Functions"&gt;Two, one from a single and one from a double.&lt;/td&gt;&lt;td role="cell" data-label="Status"&gt;Verified. One corrected and proven again; the other has a corrected copy that passes and is with a strengthening lane.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;A clamp the original does with a signed comparison and the rewrite did unsigned: they differ when the value has its top bit set.&lt;/td&gt;&lt;td role="cell" data-label="Functions"&gt;One.&lt;/td&gt;&lt;td role="cell" data-label="Status"&gt;Verified: the original's conditional instruction was read and a one-line change passes both contracts. With a strengthening lane.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;The final sign of one value in a bank of floats.&lt;/td&gt;&lt;td role="cell" data-label="Functions"&gt;One.&lt;/td&gt;&lt;td role="cell" data-label="Status"&gt;The difference is verified on a trial both sides complete; the cause is not located. With an investigation lane.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;An argument to a later call, when an earlier callee answers a float of large magnitude.&lt;/td&gt;&lt;td role="cell" data-label="Functions"&gt;One.&lt;/td&gt;&lt;td role="cell" data-label="Status"&gt;The difference is verified; the cause is not located. The checker's report shows only the first few calls of a trial, which hides the call that differs.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;Scale, as far as it is known. Of 15,700 verified rewrites, 291 contain a float-to-integer cast. In 193 of those every cast is guarded exactly as the instruction behaves, which is safe by construction: the audit computed both forms over the special values and a million random bit patterns, and no unguarded form agrees with the instruction on positive overflow, whatever is done with the result. Of the 95 that needed the test, 56 have been tested; in 28 the test passed without an extreme value reaching the conversion, which settles nothing; 39 are being tested now. A further 66 files convert through a 64-bit integer with no guard at the limit and are candidates. Nothing comparable has been counted yet for signed and unsigned comparisons.&lt;/p&gt;
+&lt;h3&gt;Why the proofs of record passed&lt;/h3&gt;
+&lt;p&gt;None of them was wrong about what it tested. Their contracts drew small, ordinary values, so a conversion never met a value that did not fit and a sum never had its top bit set. The first lane to look at this took a passing run for a blind spot in the checker; it was the inputs.&lt;/p&gt;
+&lt;h3&gt;What was decided&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;A rewrite known to differ from the original on an input the original handles is withdrawn, whether or not the game is known to produce that input. In every case here that is unknown.&lt;/li&gt;
+&lt;li&gt;Briefs carry two rules. A float is never converted with a bare cast unless the code bounds it first as the original does; otherwise the conversion is written to match the instruction, and the function's contract must reach the special values with the bare cast as a wrong version that fails. A comparison or clamp on an integer takes its signedness from the original's conditional instruction, read from the original.&lt;/li&gt;
+&lt;li&gt;The widened test becomes a standing tool, not a one-off: after the conversions, the same run over rewrites that compare integers near their limits.&lt;/li&gt;
+&lt;li&gt;A pass counts for this test only when the extreme values are shown to have reached the code in question, by counting them in an instrumented copy.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce&lt;/h3&gt;
+&lt;p&gt;The audit lanes' folders hold the detector for casts, the classifier, the tool that widens a contract and runs it, the widened contracts, the corrected rewrites and the conversion functions with bit-level references and tests.&lt;/p&gt;</content>
+  </entry>
+  <entry>
     <title>How many lanes this machine can run: measured at thirty, sixty and over a hundred</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#lane-count-measured-2026-10-11"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#lane-count-measured-2026-10-11</id>
@@ -1125,40 +1159,5 @@ under &lt;code&gt;.artifacts/scratch/l-free12/report.md&lt;/code&gt;.&lt;/p&gt;<
 &lt;p&gt;Read code through the mapped executable image, never the raw file at a mapped address. Decode one known constant stub first to confirm the mapping, gather per-function evidence of calls, strings and constants into one table, cross virtual slots against prior lane names, and scan read-only data for pointers to anything apparently unreferenced before leaving it unnamed.&lt;/p&gt;
 &lt;h3&gt;What was confusing or went wrong&lt;/h3&gt;
 &lt;p&gt;A redirected output file came out in an encoding that read back garbled, so later reads used the structured evidence file instead. Two commands ran slowly under load but delivered complete results. The two competing spellings of the type-id getter took a three-way check that settled nothing, and time ran out on the collision-dispatch family and the effects table mapping, which were documented rather than guessed.&lt;/p&gt;</content>
-  </entry>
-  <entry>
-    <title>Running the skipped pointers that could not be read</title>
-    <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#skipped-pointers-the-unread-sites"/>
-    <id>https://monstercameron.github.io/LibertyFlux/devlog.html#skipped-pointers-the-unread-sites</id>
-    <published>2026-10-06T00:00:00Z</published>
-    <updated>2026-10-06T00:00:00Z</updated>
-    <summary>Asked: 377 verified functions had a call whose pointer argument the proof skips and whose buffer nobody could read. A reading lane had studied every skipped pointer in the original code and left these undecided. We ran them with the buffer compared instead: a snapshot of the words behind each skipped pointer at each call, 300 trials on the stock checker, then narrowing and per-site reruns for everything that failed.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Asked: 377 verified functions had a call whose pointer argument the proof
-skips and whose buffer nobody could read. A reading lane had studied every
-skipped pointer in the original code and left these undecided. We ran them
-with the buffer compared instead: a snapshot of the words behind each
-skipped pointer at each call, 300 trials on the stock checker, then
-narrowing and per-site reruns for everything that failed.&lt;/p&gt;
-&lt;p&gt;Found: 238 functions settled without repair. In 69 the rewrite hands over
-the same words. In 120 the buffer is uninitialised at the call, so there is
-nothing stored to compare. In 49 the words differ but the callee writes
-before it reads or never touches the buffer, so the earlier proof stands.
-One function was wrong and is repaired and re-proved: a wrapper that
-dropped its entry register and passed zero where the original passes a
-pointer the nested converter reads through. 22 more functions show the same
-shape, stored words differing where the callee reads first, and are
-specified for repair. The rest are deferred with reasons: sites that cannot
-be snapshotted, callees in the encrypted region, diffs that stay hidden,
-and a cluster that diverges only in termination with or without snapshots,
-which lives in the base proof rather than the buffer.&lt;/p&gt;
-&lt;p&gt;Decided: running settles what reading could not, and two rerun tricks do
-most of it. Rerunning with a zero stack fill turns every uninitialised word
-into a match, so any remaining diff is stored. The patterned fill is
-exactly invertible, so pattern reruns classify words by arithmetic. Both
-were validated against controls. The repair backlog is ordered by callee
-verdict: read-first sites first.&lt;/p&gt;
-&lt;p&gt;Reproduce: the lane folder holds the list, all run verdicts, the
-consolidation script, and the per-function results; the one repair ships
-with its contract, verdict and caught mutant.&lt;/p&gt;</content>
   </entry>
 </feed>
