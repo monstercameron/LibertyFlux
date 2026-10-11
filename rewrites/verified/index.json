@@ -43326,6 +43326,78 @@
   "lane": "a-Q20"
  },
  {
+  "address": "0x006A2660",
+  "name": "update_stream_object",
+  "kind": "function",
+  "file": "functions/fn_006a2660.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s687"
+ },
+ {
+  "address": "0x006A26D0",
+  "name": "initialize_stream_record",
+  "kind": "function",
+  "file": "functions/fn_006a26d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s687"
+ },
+ {
+  "address": "0x006A2760",
+  "name": "initialize_configured_stream_record",
+  "kind": "function",
+  "file": "functions/fn_006a2760.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s687"
+ },
+ {
+  "address": "0x006A27F0",
+  "name": "reserve_stream_table_slot",
+  "kind": "function",
+  "file": "functions/fn_006a27f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s687"
+ },
+ {
+  "address": "0x006A28B0",
+  "name": "allocate_zeroed_stream_table",
+  "kind": "function",
+  "file": "functions/fn_006a28b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s687"
+ },
+ {
+  "address": "0x006A3150",
+  "name": "reset_grc_setup_slots",
+  "kind": "function",
+  "file": "functions/fn_006a3150.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s687"
+ },
+ {
+  "address": "0x006A33D0",
+  "name": "clear_pending_stream_flag",
+  "kind": "function",
+  "file": "functions/fn_006a33d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s687"
+ },
+ {
+  "address": "0x006A33F0",
+  "name": "reset_stream_state_words",
+  "kind": "function",
+  "file": "functions/fn_006a33f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s687"
+ },
+ {
   "address": "0x006A7490",
   "name": "input_event_parse_a",
   "kind": "function",
