@@ -1,8 +1,19 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 4 withdrawn because they differ from the original outside the range their proofs drew",
+    "title": "Rust in progress: 16 files from lanes (603 unverified rewrites, 170 in review)",
     "commit": null,
+    "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
+    "changes": [
+      "rewrites/unverified holds 603 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
+      "rewrites/in-review holds 170 Rust files from 1 other lanes (checker changes, assembly, lifted code, tools), waiting for review before they move to their real place.",
+      "46 files were held back by the publication scan."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 4 withdrawn because they differ from the original outside the range their proofs drew",
+    "commit": "dd56174e443c9ca1645b5cc891c34f33e1585260",
     "summary": "The verified count goes down by four. The audit that widens a proof's inputs found four verified rewrites that differ from the original on inputs the original handles. An investigation lane reproduced each on the stock checker and reduced it to the input that causes it. Only one of the four is a float-to-integer conversion of the kind the audit was looking for.",
     "changes": [
       "A clamp. The original limits a sum with a signed comparison; the rewrite compared it as unsigned. A sum with its top bit set is kept by the original and clamped by the rewrite. A copy with the comparison made signed passes the widened contract and the contract of record at 1,000 trials each.",
@@ -35,7 +46,7 @@
   {
     "date": "2026-10-11",
     "title": "Rewrites: 4 withdrawn because they differ from the original outside the range their proofs drew",
-    "commit": null,
+    "commit": "dd56174e443c9ca1645b5cc891c34f33e1585260",
     "summary": "The verified count goes down by four. The audit that widens a proof's inputs found four verified rewrites that differ from the original on inputs the original handles. An investigation lane reproduced each on the stock checker and reduced it to the input that causes it. Only one of the four is a float-to-integer conversion of the kind the audit was looking for.",
     "changes": [
       "A clamp. The original limits a sum with a signed comparison; the rewrite compared it as unsigned. A sum with its top bit set is kept by the original and clamped by the rewrite. A copy with the comparison made signed passes the widened contract and the contract of record at 1,000 trials each.",

@@ -8,7 +8,8 @@ lf_checker_rt::export!(cdecl, rw_00B4BAA0(row_index: u32, needle: u32) -> u32 {
     const ROW_STRIDE: u32 = 0x10;
     const WORD_COUNT: u32 = 4;
     let table = lf_checker_rt::global::<u32>(TABLE_VA);
-    let row = table.wrapping_add(row_index.wrapping_mul(ROW_STRIDE / 4));
+    let row_offset_words = row_index.wrapping_mul(ROW_STRIDE / 4) as usize;
+    let row = table.wrapping_add(row_offset_words);
     for slot in 0..WORD_COUNT {
         // SAFETY: the contract fills the selected table row for each trial.
         if unsafe { row.add(slot as usize).read_unaligned() } == needle {
