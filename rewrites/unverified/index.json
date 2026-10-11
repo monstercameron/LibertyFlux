@@ -964,24 +964,24 @@
   "name": "streaming_resource_cleanup_variant_a",
   "file": "fn_00635f20.rs",
   "lane": "r-s679",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00635FA0",
   "name": "streaming_resource_cleanup_variant_b",
   "file": "fn_00635fa0.rs",
   "lane": "r-s679",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x00636020",
   "name": "streaming_resource_cleanup_variant_c",
   "file": "fn_00636020.rs",
   "lane": "r-s679",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "other"
  },
  {
   "address": "0x006607F0",
@@ -2340,8 +2340,8 @@
   "name": "NativeImpl_CAM_IS_SPHERE_VISIBLE",
   "file": "fn_00b888f0.rs",
   "lane": "r-s674",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00B8AB20",
@@ -2364,16 +2364,16 @@
   "name": "NativeImpl_GET_CUTSCENE_PED_POSITION_2",
   "file": "fn_00b8ac90.rs",
   "lane": "r-s674",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00B8AD90",
   "name": "NativeImpl_IS_POS_IN_CUTSCENE_BLOCKING_BOUNDS",
   "file": "fn_00b8ad90.rs",
   "lane": "r-s674",
-  "outcome": "not_reached",
-  "reason": ""
+  "outcome": "deferred",
+  "reason": "out_of_time"
  },
  {
   "address": "0x00B8CA40",
@@ -2969,11 +2969,11 @@
  },
  {
   "address": "0x00CBA570",
-  "name": null,
+  "name": "CTaskSimpleSlideToCoord::vf17",
   "file": "fn_00cba570.rs",
   "lane": "a-U63",
-  "outcome": "not yet run",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "The non-vacuous stock-worker probe timed out on 3 of 60 correct trials (57 completed); all 3 mutant trials also timed out, so neither a 1,000-trial accept nor a caught mutant was established. The worker banner reported checker4 although this task requires v8, leaving the loaded worker version unclear. Unlike the earlier lane, this attempt used the ST0 double transport and modeled the callback stack-slot overwrite, then removed unused callees to make the contract non-vacuous."
  },
  {
   "address": "0x00CBCA00",
@@ -3640,14 +3640,6 @@
   "reason": null
  },
  {
-  "address": "0x00D11EB0",
-  "name": "ped_task_select_status_and_dispatch",
-  "file": "fn_00d11eb0.rs",
-  "lane": "r-b683",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00D26830",
   "name": "ped_task_request_fire",
   "file": "fn_00d26830.rs",
@@ -3849,19 +3841,19 @@
  },
  {
   "address": "0x00D9E950",
-  "name": "streaming_00d9e950",
+  "name": "stream_global_record_value",
   "file": "fn_00d9e950.rs",
   "lane": "r-s675",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "out_of_time"
  },
  {
   "address": "0x00DA2370",
   "name": "copy_stream_payload",
   "file": "fn_00da2370.rs",
   "lane": "r-s675",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "out_of_time"
  },
  {
   "address": "0x00DA7B80",
