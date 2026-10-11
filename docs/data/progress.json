@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-11",
-  "updated_at": "2026-10-11 15:56",
+  "updated_at": "2026-10-11 15:59",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -12,7 +12,7 @@
   },
   "stages": {
     "identified": 37413,
-    "named": 36575,
+    "named": 36603,
     "rewritten": 18405,
     "verified": 18359
   },
@@ -99,9 +99,9 @@
     },
     {
       "label": "Functions with a meaningful name",
-      "value": 36575,
+      "value": 36603,
       "unit": "functions",
-      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (27571); slot labels and placeholders are not counted"
+      "source": "m-names lane's merge (9004) plus descriptive names given by production and naming lanes (27599); slot labels and placeholders are not counted"
     },
     {
       "label": "Rewrites of game functions that passed the checker in a lane",
@@ -147,9 +147,9 @@
     }
   ],
   "activity": {
-    "lanes_running": 119,
-    "lanes_finished": 2229,
-    "lanes_incomplete": 685,
+    "lanes_running": 115,
+    "lanes_finished": 2236,
+    "lanes_incomplete": 688,
     "devlog_entries": 573
   },
   "map": [
@@ -1121,7 +1121,7 @@
       "from": "0x0065510A",
       "to": "0x0065AA2A",
       "count": 66,
-      "named": 63,
+      "named": 65,
       "rewritten": 12,
       "verified": 12
     },
@@ -1130,7 +1130,7 @@
       "from": "0x0065AA2B",
       "to": "0x0066034C",
       "count": 143,
-      "named": 139,
+      "named": 143,
       "rewritten": 49,
       "verified": 49
     },
@@ -1148,7 +1148,7 @@
       "from": "0x00665C6E",
       "to": "0x0066B58F",
       "count": 122,
-      "named": 110,
+      "named": 113,
       "rewritten": 1,
       "verified": 1
     },
@@ -3173,7 +3173,7 @@
       "from": "0x00B4B2F4",
       "to": "0x00B50C15",
       "count": 151,
-      "named": 146,
+      "named": 151,
       "rewritten": 42,
       "verified": 42
     },
@@ -3191,7 +3191,7 @@
       "from": "0x00B56537",
       "to": "0x00B5BE58",
       "count": 154,
-      "named": 148,
+      "named": 151,
       "rewritten": 18,
       "verified": 18
     },
@@ -3524,7 +3524,7 @@
       "from": "0x00C24712",
       "to": "0x00C2A033",
       "count": 95,
-      "named": 87,
+      "named": 92,
       "rewritten": 22,
       "verified": 22
     },
@@ -3533,7 +3533,7 @@
       "from": "0x00C2A034",
       "to": "0x00C2F954",
       "count": 91,
-      "named": 61,
+      "named": 62,
       "rewritten": 30,
       "verified": 30
     },

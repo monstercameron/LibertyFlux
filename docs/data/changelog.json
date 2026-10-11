@@ -2,7 +2,7 @@
   {
     "date": "2026-10-11",
     "title": "Devlog: the float-to-integer audit settled for its first three functions, and what lanes are now told",
-    "commit": null,
+    "commit": "fa5e2fbea8b07c465270ec79fc76c80de1cf83c6",
     "summary": "The devlog entry on the day's checker questions is brought up to date: the audit it had recorded as open found two verified rewrites wrong out of range, and both were withdrawn.",
     "changes": [
       "The entry now has the result for each of the three functions the audit could not settle at first: two differ from the original when the converted value does not fit, shown on the stock checker with widened contracts, and one is safe because the code bounds its operands.",

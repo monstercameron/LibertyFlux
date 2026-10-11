@@ -41,13 +41,13 @@
 &lt;p&gt;An export of the call graph and cross-references made on 3 October was on disk all along (30,900 functions, 79,000 call pairs, 151,000 references) and no brief pointed lanes at it. It is older than the inventory and misses about 6,500 functions, so the new database is built from the image and checked against it.&lt;/p&gt;</content>
   </entry>
   <entry>
-    <title>Three questions about the checker: two settled, one audit still open</title>
+    <title>Three questions about the checker settled in a day, and an audit that withdrew two verified rewrites</title>
     <link rel="alternate" type="text/html" href="https://monstercameron.github.io/LibertyFlux/devlog.html#checker-questions-2026-10-11"/>
     <id>https://monstercameron.github.io/LibertyFlux/devlog.html#checker-questions-2026-10-11</id>
     <published>2026-10-11T00:00:00Z</published>
     <updated>2026-10-11T00:00:00Z</updated>
-    <summary>Three things that lanes reported about the checker on 11 October were each given to an investigation lane before anyone acted on them. Two came back settled inside twenty minutes of work. The third, an audit of how verified rewrites convert floats to integers, found a class of possible fault and could not yet say whether it is real.</summary>
-    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Three things that lanes reported about the checker on 11 October were each given to an investigation lane before anyone acted on them. Two came back settled inside twenty minutes of work. The third, an audit of how verified rewrites convert floats to integers, found a class of possible fault and could not yet say whether it is real.&lt;/p&gt;
+    <summary>Three things that lanes reported about the checker on 11 October were each given to an investigation lane before anyone acted on them. Two came back settled inside twenty minutes of work. The third, an audit of how verified rewrites convert floats to integers, found a real fault: two verified rewrites were withdrawn the same afternoon, and 288 more functions are being tested.</summary>
+    <content type="html" xml:base="https://monstercameron.github.io/LibertyFlux/devlog.html">&lt;p&gt;Three things that lanes reported about the checker on 11 October were each given to an investigation lane before anyone acted on them. Two came back settled inside twenty minutes of work. The third, an audit of how verified rewrites convert floats to integers, found a real fault: two verified rewrites were withdrawn the same afternoon, and 288 more functions are being tested.&lt;/p&gt;
 &lt;h3&gt;A scripted callee's writes are the same on every call within a trial&lt;/h3&gt;
 &lt;p&gt;What was asked: two lanes on two large functions (a file parser that reads a token per line, and a search loop that calls one callee per candidate) stopped on the belief that a scripted callee cannot write different words through its pointer argument on each call within a trial. Is that so?&lt;/p&gt;
 &lt;table role="table"&gt;
@@ -62,7 +62,7 @@
 &lt;p&gt;The same lane found that the manual's line on scripted writes gives the count in the wrong unit: the count is in 32-bit words and the destination offset in bytes. An earlier lane lost an hour to exactly that.&lt;/p&gt;
 &lt;h3&gt;The option for unrelocated absolute reads&lt;/h3&gt;
 &lt;p&gt;Settled the same morning and recorded in its own entry: the option cannot set up on this machine. A follow-up worth recording here: the lane whose route seemed to need it ran the relocation checker on its function and found all 52 absolute operands relocated. The fault on that route has another cause, as every earlier claim of this kind had.&lt;/p&gt;
-&lt;h3&gt;Float-to-integer conversions written with Rust's cast: open&lt;/h3&gt;
+&lt;h3&gt;Float-to-integer conversions written with Rust's cast&lt;/h3&gt;
 &lt;p&gt;What was asked: a lift lane noticed that two verified rewrites convert a float to an integer differently when the value is not a number or does not fit. The original's instruction gives a fixed result there; Rust's cast gives zero or the nearest end of the range. How many verified rewrites use the cast where the original's instruction behaves differently, and do their proofs cover those inputs?&lt;/p&gt;
 &lt;table role="table"&gt;
 &lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Fact&lt;/th&gt;&lt;th role="columnheader"&gt;Value&lt;/th&gt;&lt;th role="columnheader"&gt;Status&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
@@ -73,7 +73,25 @@
 &lt;tr role="row"&gt;&lt;td role="cell"&gt;Estimate if the seven are real&lt;/td&gt;&lt;td role="cell" data-label="Value"&gt;About 51 verified rewrites (25 to 93); about 7 if they are not.&lt;/td&gt;&lt;td role="cell" data-label="Status"&gt;Inferred from the sample.&lt;/td&gt;&lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;What was decided: nothing is withdrawn on an estimate. A second lane is settling the three functions one by one: the original's conversion identified exactly by following the data, both sides computed on the special values, and any difference shown on the stock checker with a contract widened to reach them. Its result decides whether the other 284 files need the same test, and gives the paragraph for production briefs.&lt;/p&gt;</content>
+&lt;p&gt;What was decided at first: nothing is withdrawn on an estimate. A second lane settled the three functions one by one: the original's conversion identified exactly by following the data, both sides computed on the special values, and any difference shown on the stock checker with a contract widened to reach them.&lt;/p&gt;
+&lt;h3&gt;Settled the same afternoon&lt;/h3&gt;
+&lt;table role="table"&gt;
+&lt;thead role="rowgroup"&gt;&lt;tr role="row"&gt;&lt;th role="columnheader"&gt;Function&lt;/th&gt;&lt;th role="columnheader"&gt;What the original does&lt;/th&gt;&lt;th role="columnheader"&gt;Result on the stock checker&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+&lt;tbody role="rowgroup"&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;An audio query routine: six values converted and stored as 16-bit words&lt;/td&gt;&lt;td role="cell" data-label="What the original does"&gt;A 32-bit truncating conversion, of which 16 bits are kept. For a positive value too large for 32 bits the original stores zero; the rewrite's cast stored the largest 16-bit value.&lt;/td&gt;&lt;td role="cell" data-label="Result on the stock checker"&gt;Verified. The contract of record passes because its floats are small. With only two inputs steered out of range, the tracked rewrite fails 439 of 1,000 trials; a corrected conversion passes 1,000 of 1,000 with the old form failing as the wrong version. Withdrawn.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;A small task routine: one value converted through a 64-bit integer store&lt;/td&gt;&lt;td role="cell" data-label="What the original does"&gt;An x87 store of a 64-bit integer under truncation, of which the low half is used. The two sides differ only for positive infinity and values too large for 64 bits.&lt;/td&gt;&lt;td role="cell" data-label="Result on the stock checker"&gt;Verified. With a global the game fills at run time steered that high, the tracked rewrite fails 67 of 1,000; the corrected form passes. Withdrawn. Whether the game can produce such a value there is unknown.&lt;/td&gt;&lt;/tr&gt;
+&lt;tr role="row"&gt;&lt;td role="cell"&gt;A fill routine with five conversions&lt;/td&gt;&lt;td role="cell" data-label="What the original does"&gt;Five 32-bit truncating conversions whose operands the code itself bounds: a counter that never exceeds 64.&lt;/td&gt;&lt;td role="cell" data-label="Result on the stock checker"&gt;Verified safe. An instrumented run logged 24,984 operands, all in range. Not withdrawn.&lt;/td&gt;&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The first lane's puzzle is explained: the proof that passed with inputs that "should overflow" never drew such inputs; its float cycles were small. That is the general lesson. A contract's ordinary float ranges do not reach the values on which a cast and an instruction differ, so a proof with ordinary ranges says nothing about them.&lt;/p&gt;
+&lt;h3&gt;What was decided&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;The two rewrites are withdrawn; the verified count went down by two, with the reason in the changelog. A strengthening lane is proving the corrected copies with the contract of record and the widened contract together.&lt;/li&gt;
+&lt;li&gt;Production, queue and large-function briefs now carry the rule: a float is never converted with a bare cast unless the code bounds it first; otherwise the conversion is written to match the instruction, and the function's contract must reach not-a-number, the infinities and values past each end of the range, with a wrong version that uses the bare cast.&lt;/li&gt;
+&lt;li&gt;A scripted version of the widened test is being built and run over the other 288 functions that have such a cast. A pass counts only if the special values are shown to have reached the cast. The verified count may go down again.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;How to reproduce&lt;/h3&gt;
+&lt;p&gt;The two audit lanes' folders hold the detector for such casts, the list of 326, the classified sample, the widened contracts, the corrected rewrites, and the two conversion functions with their bit-level references and tests.&lt;/p&gt;</content>
   </entry>
   <entry>
     <title>Six operating faults of one night, five of them in the coordinator's own tooling</title>
