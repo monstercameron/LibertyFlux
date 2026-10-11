@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Lift: six pedestrian-task routines (mover pose, seek record, task id lookup, request gate)",
+    "title": "Rewrites: 192 proofs re-run on the current checker and recorded on it",
     "commit": null,
+    "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
+    "changes": [
+      "192 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
+      "Proofs that did not hold or could not be run are not touched by this commit; the coordinator reads them one by one."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Lift: six pedestrian-task routines (mover pose, seek record, task id lookup, request gate)",
+    "commit": "7915ed217008659e5d48739a9c4ef1aa173b60f0",
     "summary": "The first portable lift since 6 October: six verified routines of the pedestrian-task code now have a portable Rust counterpart, each proven against its verified original.",
     "changes": [
       "Lifted into lf-peds-tasks: three methods of the mover pose (interpolate position and heading, drive a blend, commit a blend), the set-up of a seek record, the task id lookup with its default, and the gate that decides whether a task request is admitted. The lifted code has no unsafe and no addresses; callees that are not lifted yet sit behind a trait.",
