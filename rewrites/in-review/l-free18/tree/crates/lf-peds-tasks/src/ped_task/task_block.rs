@@ -133,14 +133,13 @@ impl TaskBlock {
     }
 }
 
-/// Truncation toward zero to a 32-bit integer, as the processor's
-/// convert-with-truncation instruction does it: a NaN or a value outside the
-/// signed 32-bit range gives the indefinite value, the most negative integer.
+/// Truncation toward zero to a 32-bit integer, as the verified rewrite
+/// performs it: the Rust conversion, which gives zero for a not-a-number and
+/// saturates outside the signed 32-bit range. The processor's own
+/// convert-with-truncation instruction gives the most negative integer for
+/// both instead; the difference is recorded in the lane report and is not
+/// reachable with the image's factors and a sixteen-bit draw.
 #[must_use]
 pub fn truncate_to_i32(value: f32) -> i32 {
-    if value >= -2_147_483_648.0 && value < 2_147_483_648.0 {
-        value as i32
-    } else {
-        i32::MIN
-    }
+    value as i32
 }
