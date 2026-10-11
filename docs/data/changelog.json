@@ -1,6 +1,15 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Devlog: what widening a proof's inputs found in the verified rewrites",
+    "commit": null,
+    "summary": "The day's audit is written up as one entry: seven verified rewrites differed from the original on inputs outside the range their proofs drew, by five different causes.",
+    "changes": [
+      "The entry lists each cause with its status (two kinds of float-to-integer conversion, a clamp compared with the wrong signedness, and two differences whose cause is not yet located), the scale as far as it is known, why the proofs of record passed, and what was decided: withdraw on a shown difference, two rules for briefs, and the widened test as a standing tool in which a pass counts only when the extreme values are shown to have reached the code."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Changelog: one duplicate entry removed and one entry's text corrected",
     "commit": "e222daab5f956776cc5684417161c26cd9544db5",
     "summary": "Two commits collided when four rewrites were withdrawn, and the changelog came out wrong in two places.",
