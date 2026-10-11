@@ -9,10 +9,10 @@ lf_checker_rt::export!(thiscall, rw_00d314b0(this: u32, flags: u32) -> u32 {
     const SHOULD_DELETE: u32 = 1;
 
     let flags = flags & 0xff;
-    lf_checker_rt::callee_thiscall!(1, (), this);
+    let _ = lf_checker_rt::callee_thiscall!(1, u32, this);
     if flags & SHOULD_DELETE != 0 {
         let allocator = unsafe { (TASK_POOL_GLOBAL as *const u32).read_unaligned() };
-        lf_checker_rt::callee_thiscall!(2, (), allocator, this);
+        let _ = lf_checker_rt::callee_thiscall!(2, u32, allocator, this);
     }
     this
 });

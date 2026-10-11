@@ -8,8 +8,8 @@
 /// second); the function writes `[HALF, difference, HALF, average]` at the
 /// following row. Otherwise it writes the ordered expression
 /// `[(average-difference*HALF)*HALF, difference, difference*HALF, average]`
-/// at `NORMAL_ROW_FIELDS`; the first value is kept only when negative and is
-/// zero otherwise.
+/// at `NORMAL_ROW_FIELDS`; the first value is clamped to zero only when it is
+/// negative, preserving signed zero and unordered NaN results.
 /// Float operations preserve the original operand order and round at each
 /// single-precision step. This is a thiscall method with two stack floats;
 /// it returns no meaningful value and the callee removes both arguments.
@@ -83,7 +83,7 @@ pub extern "thiscall" fn rw_compute_blend_weights(
 
     let half_difference = mul_f32(difference, HALF);
     let adjusted = mul_f32(sub_f32(average, half_difference), HALF);
-    let low_blend = if adjusted < 0.0 { adjusted } else { 0.0 };
+    let low_blend = if adjusted < 0.0 { 0.0 } else { adjusted };
     let thread_data = lf_checker_rt::tls_slot(0) as *const u8;
     let thread_flags = unsafe {
         core::ptr::read_unaligned(thread_data.add(TLS_FLAGS).cast::<u32>())
