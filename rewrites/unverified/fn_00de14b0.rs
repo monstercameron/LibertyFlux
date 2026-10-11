@@ -1,6 +1,6 @@
 // original: 0x00DE14B0 scrolling_menu_apply_child_state
 
-/// Fetch the child list from the delegate, and unless the control byte is nonzero, visit the unsigned 16-bit child count in order. Each child receives a no-argument query followed by an update with argument zero. Store the control byte at `+0x215`. EAX keeps the upper 24 bits from the getter or last update result and replaces its low byte with the control byte. `thiscall`, one stack word.
+/// Fetch the child list from the delegate, and unless the control byte is nonzero, visit the unsigned 16-bit child count in order. Each child receives a no-argument query followed by an update with argument zero. Store the control byte at `+0x215`. EAX keeps the upper 24 bits from the getter when no child is visited, or from the one-past-end child-array pointer after a nonempty traversal; its low byte is replaced with the control byte. `thiscall`, one stack word.
 lf_checker_rt::export!(thiscall, rw_00de14b0(this_ptr: u32, control_word: u32) -> u32 {
     const DELEGATE_OFFSET: u32 = 0x1E0;
     const FLAG_OFFSET: u32 = 0x215;
@@ -20,10 +20,14 @@ lf_checker_rt::export!(thiscall, rw_00de14b0(this_ptr: u32, control_word: u32) -
         let list = result;
         let children = unsafe { read_u32(list) };
         let count = unsafe { read_u16(list.wrapping_add(4)) } as u32;
-        for index in 0..count {
-            let child = unsafe { read_u32(children.wrapping_add(index.wrapping_mul(4))) };
-            let _query_result = lf_checker_rt::callee_thiscall!(CHILD_QUERY, u32, child);
-            result = lf_checker_rt::callee_thiscall!(CHILD_UPDATE, u32, child, 0);
+        if count != 0 {
+            let one_past_end = children.wrapping_add(count.wrapping_mul(4));
+            for index in 0..count {
+                let child = unsafe { read_u32(children.wrapping_add(index.wrapping_mul(4))) };
+                let _query_result = lf_checker_rt::callee_thiscall!(CHILD_QUERY, u32, child);
+                let _update_result = lf_checker_rt::callee_thiscall!(CHILD_UPDATE, u32, child, 0);
+            }
+            result = one_past_end;
         }
     }
     unsafe { ((this_ptr.wrapping_add(FLAG_OFFSET)) as *mut u8).write(control) };

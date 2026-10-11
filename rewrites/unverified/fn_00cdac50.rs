@@ -4,10 +4,6 @@
 lf_checker_rt::export!(thiscall, rw_00cdac50(this: u32) -> u32 {
     unsafe {
         #[inline(always)]
-        unsafe fn read_word(address: u32) -> u32 {
-            unsafe { (address as *const u32).read_unaligned() }
-        }
-        #[inline(always)]
         unsafe fn write_word(address: u32, value: u32) {
             unsafe { (address as *mut u32).write_unaligned(value) }
         }
