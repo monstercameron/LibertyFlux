@@ -13,6 +13,7 @@ use lf_peds_tasks::ped_task::{
     BLOCK_WORDS, INVALID_HANDLE, PredicateTask, ResourceTag, STATE_RECORD_COUNT,
     STATE_RECORD_WORDS, StateRecord, TaskStateBlock,
 };
+use lf_peds_tasks::ped_task::{EntryArgs, EntryCallees, TaskEntry, truncate_indefinite};
 
 /// A task that passes the enable and count test and nothing else.
 fn enabled_task(count: i32) -> PredicateTask {
@@ -156,7 +157,7 @@ fn reset_clears_everything_it_was_given() {
 #[test]
 fn registry_section_counts_match_the_lifted_routines() {
     let (proven, lifted, missing) = shape_registry::counts();
-    assert_eq!(proven, 8);
+    assert_eq!(proven, 9);
     assert_eq!(lifted, 0);
     assert_eq!(missing, 0);
     for row in shape_registry::ROWS {
@@ -921,4 +922,126 @@ fn flag_update_applies_the_task_when_accepted_and_falls_back_otherwise() {
         vec!["accepts", "fallback"],
         "only the low byte decides"
     );
+}
+
+/// An entry collaborator that logs its calls and answers fixed values.
+#[derive(Default)]
+struct Entry {
+    token: u32,
+    fetched: u32,
+    mapped: u32,
+    calls: Vec<String>,
+}
+
+impl EntryCallees for Entry {
+    fn setup(&mut self, entry: u32) {
+        self.calls.push(format!("setup {entry:#x}"));
+    }
+    fn resolve(&mut self, registry: u32, key: u32) -> u32 {
+        self.calls.push(format!("resolve {registry:#x} {key:#x}"));
+        self.token
+    }
+    fn fetch(&mut self, token: u32) -> u32 {
+        self.calls.push(format!("fetch {token:#x}"));
+        self.fetched
+    }
+    fn map(&mut self, index: u32) -> u32 {
+        self.calls.push(format!("map {index:#x}"));
+        self.mapped
+    }
+}
+
+fn plain_args(source_key: Option<u32>, convert: u32) -> EntryArgs {
+    EntryArgs {
+        kind: 0x1_05,
+        kind_flag: 0x2_07,
+        source: if source_key.is_some() { 0x4000 } else { 0 },
+        source_key,
+        convert,
+    }
+}
+
+fn blank_entry() -> TaskEntry {
+    TaskEntry {
+        kind: 0,
+        kind_flag: 0,
+        source: 0,
+        cleared_99c: 1,
+        handle: 0,
+        mapped: 0,
+        cleared_aa0: 1,
+        sentinels: [0; 4],
+        enabled: 0,
+        cleared_bb8: 1,
+    }
+}
+
+#[test]
+fn entry_init_writes_the_kind_slots_defaults_and_sentinels() {
+    let mut entry = blank_entry();
+    let mut calls = Entry::default();
+    entry.initialise(0x1000, plain_args(None, 0), 0x500, 1.0, &mut calls);
+    assert_eq!(entry.kind, 0x05, "the first slot keeps its low byte");
+    assert_eq!(entry.kind_flag, 0x07, "the second slot keeps its low byte");
+    assert_eq!(entry.source, 0, "no source");
+    assert_eq!(
+        (entry.cleared_99c, entry.cleared_aa0, entry.cleared_bb8),
+        (0, 0, 0)
+    );
+    assert_eq!(entry.enabled, 1);
+    assert_eq!(entry.sentinels, [u32::MAX; 4]);
+    assert_eq!(
+        calls.calls,
+        vec!["setup 0x1000"],
+        "no resolve without a source"
+    );
+    assert_eq!(entry.handle, 0, "the handle keeps its earlier value");
+}
+
+#[test]
+fn entry_init_resolves_and_maps_when_asked() {
+    let mut entry = blank_entry();
+    entry.handle = 0x0100_0000;
+    let mut calls = Entry {
+        token: 0x77,
+        fetched: 0x8000_0000,
+        mapped: 0x42,
+        calls: Vec::new(),
+    };
+    entry.initialise(0x1000, plain_args(Some(0x99), 1), 0x500, 1.0, &mut calls);
+    assert_eq!(
+        calls.calls,
+        vec![
+            "setup 0x1000",
+            "resolve 0x500 0x99",
+            "fetch 0x77",
+            "map 0x80000000"
+        ]
+    );
+    assert_eq!(entry.handle, 0x8000_0000);
+    assert_eq!(entry.mapped, 0x42);
+}
+
+#[test]
+fn entry_init_keeps_the_handle_when_the_token_is_zero() {
+    let mut entry = blank_entry();
+    entry.handle = 0x1234;
+    let mut calls = Entry {
+        token: 0,
+        fetched: 0x9999,
+        mapped: 0,
+        calls: Vec::new(),
+    };
+    entry.initialise(0x1000, plain_args(Some(0x99), 0), 0x500, 1.0, &mut calls);
+    assert_eq!(entry.handle, 0x1234, "no token, no fetch, no change");
+    assert_eq!(calls.calls, vec!["setup 0x1000", "resolve 0x500 0x99"]);
+}
+
+#[test]
+fn entry_conversion_truncates_and_takes_the_indefinite_value_outside_the_range() {
+    assert_eq!(truncate_indefinite(-999.9), -999);
+    assert_eq!(truncate_indefinite(2.9), 2);
+    assert_eq!(truncate_indefinite(f32::NAN), i32::MIN);
+    assert_eq!(truncate_indefinite(3.0e9), i32::MIN);
+    assert_eq!(truncate_indefinite(-2_147_483_648.0), i32::MIN);
 }

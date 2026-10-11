@@ -43,6 +43,7 @@
 mod audio_release;
 mod create;
 mod event_table;
+mod entry_init;
 mod flag_update;
 mod gate;
 mod id_lookup;
@@ -95,6 +96,9 @@ pub use create::{
 pub use event_table::{
     DELAY_GAP, EventCallees, EventObjects, EventRecord, EventTable, NEARBY_DISTANCE_SQUARED,
     QUEUED_KIND, RECORD_COUNT, REDUCED_THRESHOLD, STANDARD_THRESHOLD,
+};
+pub use entry_init::{
+    EntryArgs, EntryCallees, TaskEntry, truncate_indefinite,
 };
 pub use flag_update::{
     COMPONENT_OFFSET, DRAW_THRESHOLD, FlagCallees, FlagOwner, RANDOM_FLAG, SKIP_SUBJECT_FLAG, SubjectFlag,

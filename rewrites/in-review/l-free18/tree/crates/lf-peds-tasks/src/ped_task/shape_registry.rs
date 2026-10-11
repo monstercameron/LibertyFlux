@@ -137,6 +137,22 @@ pub const ROWS: &[Row] = &[
             "the subject is an owned flag word read through the owner's pointer by the caller; the subject's other bytes and the owner's other bytes are checked unchanged by the proof",
         ],
     },
+    // TaskEntry: the entry initialiser. It sets the kind slots and defaults,
+    // resolves the source through a registry into a handle, and maps the
+    // handle into the index slot when asked to.
+    Row {
+        class: "TaskEntry",
+        method: "initialise",
+        state: State::Proven,
+        narrows: &[
+            "the four collaborators travel as EntryCallees; the proof's stubs log the setup call, the resolver with the registry handle and the key, the fetch with the token and a non-null scratch descriptor, and the mapping call with its constant zero, in order",
+            "the scratch descriptor the fetch receives is the implementation's frame: the proof checks that it is non-null, not its contents, and the original never reads it back",
+            "the registry is a planted global whose address the lift takes as a handle; the scale factor is a planted image word the lift takes as a value",
+            "the handle and the mapped index keep their earlier values where the original does not write them; the proof starts both from generated values",
+            "the conversion truncates toward zero and gives the most negative integer for a not-a-number or an out-of-range value, as the verified rewrite does; the block constructor's verified rewrite converts the other way (see the lane report's first finding)",
+            "every entry byte the lift does not own is checked unchanged by the proof",
+        ],
+    },
 ];
 /// Counts of (proven, lifted-but-unproven, missing) rows in this section.
 #[must_use]
