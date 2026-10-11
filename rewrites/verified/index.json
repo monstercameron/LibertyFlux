@@ -11880,6 +11880,15 @@
   "lane": "a-S01"
  },
  {
+  "address": "0x00539AA0",
+  "name": "leaderboard_info::vf2_ranked_coop_bomb_base_time",
+  "kind": "function",
+  "file": "functions/fn_00539aa0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
+ },
+ {
   "address": "0x00539BB0",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CoopBombBase_BG_TIME, player_schema::LeaderboardInfo, 10>::vf14",
   "kind": "function",
@@ -11934,6 +11943,15 @@
   "lane": "r-b327"
  },
  {
+  "address": "0x0053A7B0",
+  "name": "leaderboard_info::vf2_ranked_coop_drug_factory_time",
+  "kind": "function",
+  "file": "functions/fn_0053a7b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
+ },
+ {
   "address": "0x0053A8C0",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CoopDrugFactory_BG_TIME, player_schema::LeaderboardInfo, 10>::vf14",
   "kind": "function",
@@ -11959,6 +11977,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-b327"
+ },
+ {
+  "address": "0x0053B4D0",
+  "name": "leaderboard_info::vf2_ranked_coop_swat_assault_time",
+  "kind": "function",
+  "file": "functions/fn_0053b4d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
  },
  {
   "address": "0x0053B500",
@@ -12672,6 +12699,15 @@
   "lane": "r-s646"
  },
  {
+  "address": "0x0053E4E0",
+  "name": "leaderboard_info::vf2_ranked_gamer_money",
+  "kind": "function",
+  "file": "functions/fn_0053e4e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
+ },
+ {
   "address": "0x0053E510",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_GamerMoney, player_schema::LeaderboardInfo, 10>::vf12",
   "kind": "function",
@@ -12915,6 +12951,33 @@
   "lane": "r-s624"
  },
  {
+  "address": "0x0053F660",
+  "name": "leaderboard_info::vf2_standard_coop_bomb_base_time",
+  "kind": "function",
+  "file": "functions/fn_0053f660.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
+ },
+ {
+  "address": "0x0053F690",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Standard_CoopBombBase_BG_TIME, player_schema::LeaderboardInfo, 10>::vf12",
+  "kind": "function",
+  "file": "functions/fn_0053f690.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
+ },
+ {
+  "address": "0x0053F700",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Standard_CoopBombBase_BG_TIME, player_schema::LeaderboardInfo, 10>::vf13",
+  "kind": "function",
+  "file": "functions/fn_0053f700.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
+ },
+ {
   "address": "0x0053F770",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Standard_CoopBombBase_BG_TIME, player_schema::LeaderboardInfo, 10>::vf14",
   "kind": "function",
@@ -12924,6 +12987,60 @@
   "lane": "r-b539"
  },
  {
+  "address": "0x0053F8F0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Standard_CoopBombBase_BG_TIME, player_schema::LeaderboardInfo, 10>::vf6",
+  "kind": "function",
+  "file": "functions/fn_0053f8f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
+ },
+ {
+  "address": "0x0053F950",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Standard_CoopBombBase_BG_TIME, player_schema::LeaderboardInfo, 10>::vf7",
+  "kind": "function",
+  "file": "functions/fn_0053f950.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
+ },
+ {
+  "address": "0x0053F990",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Standard_CoopBombBase_BG_TIME, player_schema::LeaderboardInfo, 10>::vf8",
+  "kind": "function",
+  "file": "functions/fn_0053f990.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
+ },
+ {
+  "address": "0x0053FAC0",
+  "name": "leaderboard_info::vf2_standard_coop_drug_factory_time",
+  "kind": "function",
+  "file": "functions/fn_0053fac0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
+ },
+ {
+  "address": "0x0053FAF0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Standard_CoopDrugFactory_BG_TIME, player_schema::LeaderboardInfo, 10>::vf12",
+  "kind": "function",
+  "file": "functions/fn_0053faf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
+ },
+ {
+  "address": "0x0053FB60",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Standard_CoopDrugFactory_BG_TIME, player_schema::LeaderboardInfo, 10>::vf13",
+  "kind": "function",
+  "file": "functions/fn_0053fb60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
+ },
+ {
   "address": "0x0053FBD0",
   "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Standard_CoopDrugFactory_BG_TIME, player_schema::LeaderboardInfo, 10>::vf14",
   "kind": "function",
@@ -12931,6 +13048,51 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-b539"
+ },
+ {
+  "address": "0x0053FD50",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Standard_CoopDrugFactory_BG_TIME, player_schema::LeaderboardInfo, 10>::vf6",
+  "kind": "function",
+  "file": "functions/fn_0053fd50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
+ },
+ {
+  "address": "0x0053FDB0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Standard_CoopDrugFactory_BG_TIME, player_schema::LeaderboardInfo, 10>::vf7",
+  "kind": "function",
+  "file": "functions/fn_0053fdb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
+ },
+ {
+  "address": "0x0053FDF0",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Standard_CoopDrugFactory_BG_TIME, player_schema::LeaderboardInfo, 10>::vf8",
+  "kind": "function",
+  "file": "functions/fn_0053fdf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
+ },
+ {
+  "address": "0x0053FE60",
+  "name": "rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Standard_CoopDrugFactory_BG_TIME, player_schema::LeaderboardInfo, 10>::vf9",
+  "kind": "function",
+  "file": "functions/fn_0053fe60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
+ },
+ {
+  "address": "0x0053FF20",
+  "name": "leaderboard_info::vf2_standard_coop_swat_assault_time",
+  "kind": "function",
+  "file": "functions/fn_0053ff20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s647"
  },
  {
   "address": "0x0053FF50",
