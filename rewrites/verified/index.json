@@ -127080,6 +127080,24 @@
   "lane": "r-s615"
  },
  {
+  "address": "0x00CA4D60",
+  "name": "CEventHandler::CEventHandler",
+  "kind": "function",
+  "file": "functions/fn_00ca4d60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s645"
+ },
+ {
+  "address": "0x00CA4DD0",
+  "name": "CEventHandler::initialize_default_events",
+  "kind": "function",
+  "file": "functions/fn_00ca4dd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s645"
+ },
+ {
   "address": "0x00CA4E10",
   "name": "CEventHandler::~CEventHandler",
   "kind": "function",
@@ -127701,6 +127719,15 @@
   "lane": "r-s362"
  },
  {
+  "address": "0x00CAB200",
+  "name": "event_pair_matches_policy",
+  "kind": "function",
+  "file": "functions/fn_00cab200.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s645"
+ },
+ {
   "address": "0x00CAB2D0",
   "name": "task_promote_spare",
   "kind": "function",
@@ -127744,6 +127771,33 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s362"
+ },
+ {
+  "address": "0x00CAB4F0",
+  "name": "CTaskComplexGoToPointAiming::CTaskComplexGoToPointAiming",
+  "kind": "function",
+  "file": "functions/fn_00cab4f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s645"
+ },
+ {
+  "address": "0x00CAB5D0",
+  "name": "CTaskComplexGoToPointAndStandStillTimed::CTaskComplexGoToPointAndStandStillTimed",
+  "kind": "function",
+  "file": "functions/fn_00cab5d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s645"
+ },
+ {
+  "address": "0x00CAB640",
+  "name": "CTaskComplexGoToPointAndStandStillTimed::CTaskComplexGoToPointAndStandStillTimed_2",
+  "kind": "function",
+  "file": "functions/fn_00cab640.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s645"
  },
  {
   "address": "0x00CAB6B0",
@@ -127818,6 +127872,51 @@
   "lane": "r-s362"
  },
  {
+  "address": "0x00CABC00",
+  "name": "CTaskComplexMoveFollowPointRoute::CTaskComplexMoveFollowPointRoute",
+  "kind": "function",
+  "file": "functions/fn_00cabc00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s645"
+ },
+ {
+  "address": "0x00CABCA0",
+  "name": "CTaskComplexMoveFollowPointRoute::CTaskComplexMoveFollowPointRoute_2",
+  "kind": "function",
+  "file": "functions/fn_00cabca0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s645"
+ },
+ {
+  "address": "0x00CABD40",
+  "name": "CTaskComplexMoveGetToPointContinuous::CTaskComplexMoveGetToPointContinuous",
+  "kind": "function",
+  "file": "functions/fn_00cabd40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s645"
+ },
+ {
+  "address": "0x00CABDA0",
+  "name": "CTaskComplexMoveGoToPointAndStandStill::CTaskComplexMoveGoToPointAndStandStill",
+  "kind": "function",
+  "file": "functions/fn_00cabda0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s645"
+ },
+ {
+  "address": "0x00CABE90",
+  "name": "CTaskComplexMoveGoToPointAndStandStill::CTaskComplexMoveGoToPointAndStandStill_2",
+  "kind": "function",
+  "file": "functions/fn_00cabe90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s645"
+ },
+ {
   "address": "0x00CABF70",
   "name": "follow_task_init",
   "kind": "function",
@@ -127834,6 +127933,42 @@
   "trials": 1200,
   "checker": "version 8",
   "lane": "a-G23"
+ },
+ {
+  "address": "0x00CAC210",
+  "name": "CTaskComplexMoveGoToPointStandStillAchieveHeading::CTaskComplexMoveGoToPointStandStillAchieveHeading",
+  "kind": "function",
+  "file": "functions/fn_00cac210.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s645"
+ },
+ {
+  "address": "0x00CAC270",
+  "name": "CTaskComplexMoveToShelterAndWait::CTaskComplexMoveToShelterAndWait",
+  "kind": "function",
+  "file": "functions/fn_00cac270.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s645"
+ },
+ {
+  "address": "0x00CAC2F0",
+  "name": "CTaskComplexMoveToShelterAndWait::CTaskComplexMoveToShelterAndWait_2",
+  "kind": "function",
+  "file": "functions/fn_00cac2f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s645"
+ },
+ {
+  "address": "0x00CAC380",
+  "name": "CTaskComplexMoveWaitForTraffic::CTaskComplexMoveWaitForTraffic",
+  "kind": "function",
+  "file": "functions/fn_00cac380.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s645"
  },
  {
   "address": "0x00CACCF0",
