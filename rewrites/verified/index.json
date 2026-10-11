@@ -139806,6 +139806,123 @@
   "lane": "a-S07"
  },
  {
+  "address": "0x00DC8330",
+  "name": "task_ctor_vector_with_reference",
+  "kind": "function",
+  "file": "functions/fn_00dc8330.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s635"
+ },
+ {
+  "address": "0x00DC83A0",
+  "name": "task_ctor_pair_positions_ref",
+  "kind": "function",
+  "file": "functions/fn_00dc83a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s635"
+ },
+ {
+  "address": "0x00DC8400",
+  "name": "task_ctor_encoded_mode_and_weight",
+  "kind": "function",
+  "file": "functions/fn_00dc8400.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s635"
+ },
+ {
+  "address": "0x00DC84B0",
+  "name": "task_ctor_fixed_weight_position",
+  "kind": "function",
+  "file": "functions/fn_00dc84b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s635"
+ },
+ {
+  "address": "0x00DC8550",
+  "name": "task_ctor_two_positions_and_scalar",
+  "kind": "function",
+  "file": "functions/fn_00dc8550.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s635"
+ },
+ {
+  "address": "0x00DC85A0",
+  "name": "task_ctor_empty_flags",
+  "kind": "function",
+  "file": "functions/fn_00dc85a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s635"
+ },
+ {
+  "address": "0x00DC85C0",
+  "name": "task_destroy_entity_reference",
+  "kind": "function",
+  "file": "functions/fn_00dc85c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s635"
+ },
+ {
+  "address": "0x00DC85F0",
+  "name": "task_destroy_entity_reference_with_secondary_base",
+  "kind": "function",
+  "file": "functions/fn_00dc85f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s635"
+ },
+ {
+  "address": "0x00DC8620",
+  "name": "task_destroy_entity_and_target",
+  "kind": "function",
+  "file": "functions/fn_00dc8620.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s635"
+ },
+ {
+  "address": "0x00DC8680",
+  "name": "task_destroy_optional_child",
+  "kind": "function",
+  "file": "functions/fn_00dc8680.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s635"
+ },
+ {
+  "address": "0x00DC86C0",
+  "name": "CTaskComplexEvasiveStep::vf0",
+  "kind": "function",
+  "file": "functions/fn_00dc86c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s635"
+ },
+ {
+  "address": "0x00DC8750",
+  "name": "CTaskComplexWalkRoundFire::vf0",
+  "kind": "function",
+  "file": "functions/fn_00dc8750.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s635"
+ },
+ {
+  "address": "0x00DC8780",
+  "name": "CTaskSimpleHitHead::vf0",
+  "kind": "function",
+  "file": "functions/fn_00dc8780.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s635"
+ },
+ {
   "address": "0x00DC87B0",
   "name": "blend_task_vector",
   "kind": "function",
@@ -139840,6 +139957,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-b404"
+ },
+ {
+  "address": "0x00DCA3A0",
+  "name": "CTaskComplexWalkRoundEntity::vf9",
+  "kind": "function",
+  "file": "functions/fn_00dca3a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s635"
  },
  {
   "address": "0x00DCBB70",
