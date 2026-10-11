@@ -23,7 +23,7 @@ lf_checker_rt::export!(cdecl, rw_00A223D0(
     clamp_rate: f32
 ) -> u32 {
     unsafe {
-        const RECORD_OUTPUTS: [(u32, u32); 4] = [
+        let record_outputs: [(u32, u32); 4] = [
             (second_record, 0x0103_C010),
             (first_record, 0x0103_BFFC),
             (third_record, 0x0103_C020),
@@ -60,7 +60,7 @@ lf_checker_rt::export!(cdecl, rw_00A223D0(
             }
         }
 
-        for (source, destination) in RECORD_OUTPUTS {
+        for (source, destination) in record_outputs {
             let mut word_index = 0u32;
             while word_index < 4 {
                 let value = read_word(source.wrapping_add(word_index * 4));

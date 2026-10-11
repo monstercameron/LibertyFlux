@@ -4,17 +4,18 @@
 /// distance threshold.
 ///
 /// This cdecl predicate takes two entity pointers. Null on either side returns
-/// false. Otherwise it reads each position vector at entity offset `+0x20`,
-/// computes the second position minus the first in X, Y, Z order, squares the
+/// false. Otherwise it follows each entity's transform pointer at `+0x20`,
+/// reads translation coordinates at transform offsets `+0x30`, `+0x34`, and
+/// `+0x38`, and computes the second position minus the first in Y, X, Z order,
 /// components, and sums Y then X then Z. The squared distance is compared
 /// strictly against the global threshold of 900.0; unordered float comparisons
 /// return false. The boolean result is returned in AL.
 lf_checker_rt::export!(cdecl, rw_00dcb9b0(first_entity: u32, second_entity: u32) -> u8 {
     unsafe {
         const POSITION_POINTER: u32 = 0x20;
-        const POSITION_X: u32 = 0x00;
-        const POSITION_Y: u32 = 0x04;
-        const POSITION_Z: u32 = 0x08;
+        const POSITION_X: u32 = 0x30;
+        const POSITION_Y: u32 = 0x34;
+        const POSITION_Z: u32 = 0x38;
         const SQUARED_DISTANCE_THRESHOLD_FILE_VA: u32 = 0x00E9CAE0;
 
         #[inline(always)]

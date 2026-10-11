@@ -52,6 +52,7 @@ mod mover;
 mod pose;
 mod record_scan;
 mod seek;
+pub mod subobject_tables;
 mod task_block;
 mod task_owner;
 mod task_predicates;
@@ -111,6 +112,9 @@ pub use pose::{
     LinkMatrix, Matrix, NORM_COUNT, NormSlot, PoseFill, PoseSample, PoseVolume, Transformed,
 };
 pub use seek::{SEEK_MODE, STEP_SCALE, SeekGoal, SeekMover, SeekRecord, TUNING};
+pub use subobject_tables::{
+    AffineBlock, CountReads, SubobjectHooks, TaskSubobjects, WalkEnd,
+};
 pub use task_owner::{OwnerCallees, TaskOwner};
 pub use task_slots::{
     FIRST_BOMB_KIND, FIRST_BOMB_SLOT, ManagerCallees, PRIMARY_COUNT, SECOND_BOMB_KIND,
