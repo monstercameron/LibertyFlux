@@ -53,8 +53,10 @@ lf_au87_rt::export!(thiscall, rw_0099ce50(object: u32, entity: u32) -> u32 {
     }
 
     let inner = read_u32(object.wrapping_add(INNER_STATE_OFFSET));
-    let mut response = 0.0f32;
-    if read_u32(inner.wrapping_add(0xce)) != 0 {
+    let active = read_u32(inner.wrapping_add(0xce)) != 0;
+    let mut final_level = 0.0f32;
+    if active {
+        let mut response = 0.0f32;
         let elapsed = add_in_order(
             read_f32(entity.wrapping_add(0x58)),
             read_f32(entity.wrapping_add(0x28)),
@@ -80,17 +82,17 @@ lf_au87_rt::export!(thiscall, rw_0099ce50(object: u32, entity: u32) -> u32 {
             );
             response = f64::from_bits(power_bits) as f32;
         }
-    }
 
-    let envelope = lf_au87_rt::callee_thiscall!(
-        2,
-        f32,
-        lf_au87_rt::relocated(0x01283ee0),
-        read_u32(entity.wrapping_add(0x64)),
-    );
-    let envelope_gain = mul_in_order(envelope, read_f32(entity.wrapping_add(0x60)));
-    let final_level = mul_in_order(envelope_gain, response);
-    let _mixer_result = lf_au87_rt::callee_thiscall!(
+        let envelope = lf_au87_rt::callee_thiscall!(
+            2,
+            f32,
+            lf_au87_rt::relocated(0x01283ee0),
+            read_u32(entity.wrapping_add(0x64)),
+        );
+        let envelope_gain = mul_in_order(envelope, read_f32(entity.wrapping_add(0x60)));
+        final_level = mul_in_order(envelope_gain, response);
+    }
+    let mixer_result = lf_au87_rt::callee_thiscall!(
         3,
         f32,
         object.wrapping_add(0x4dc),
@@ -108,7 +110,7 @@ lf_au87_rt::export!(thiscall, rw_0099ce50(object: u32, entity: u32) -> u32 {
         object,
         object.wrapping_add(VOICE_SLOT_OFFSET),
         read_u32(inner.wrapping_add(0xce)),
-        entity,
+        mixer_result.to_bits(),
         volume.to_bits(),
         read_u32(object.wrapping_add(VOICE_ARGUMENT_OFFSET)),
         read_u32(lf_au87_rt::relocated(0x0128347c)),

@@ -182,7 +182,7 @@ unsafe fn update_coefficients(this: u32, mutant: bool) -> u32 {
                 write_row(this, index, b0, b1, b0, a1, a2, mutant, mode);
             }
             4 | 5 => {
-                let tangent_input = fmul(omega, global_f32(PI_VA));
+                let tangent_input = fmul(fmul(inverse_rate, cutoff), global_f32(PI_VA));
                 let tangent = call_f32_xmm0(TAN_SSE_ID, tangent_input);
                 let inverse_tangent = fdiv(one, tangent);
                 let inverse = fdiv(one, fadd(inverse_tangent, one));
@@ -190,13 +190,13 @@ unsafe fn update_coefficients(this: u32, mutant: bool) -> u32 {
                 let b1 = 0.0;
                 let b2 = fneg(b0);
                 let cosine = call_f32_xmm0(COS_ID, omega);
-                let squared_inverse = fmul(b0, inverse);
-                let a1 = fneg(fmul(fmul(cosine, two), squared_inverse));
-                let a2 = fmul(fsub(inverse, one), b0);
+                let b0_times_inverse_tangent = fmul(b0, inverse_tangent);
+                let a1 = fneg(fmul(fmul(cosine, two), b0_times_inverse_tangent));
+                let a2 = fmul(fsub(inverse_tangent, one), b0);
                 write_row(this, index, b0, b1, b2, a1, a2, mutant, mode);
             }
             6 | 7 => {
-                let tangent_input = fmul(omega, global_f32(PI_VA));
+                let tangent_input = fmul(fmul(inverse_rate, cutoff), global_f32(PI_VA));
                 let tangent = call_f32_xmm0(TAN_SSE_ID, tangent_input);
                 let inverse = fdiv(one, fadd(tangent, one));
                 let b0 = inverse;

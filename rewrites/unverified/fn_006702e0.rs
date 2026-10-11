@@ -14,7 +14,7 @@ lf_checker_rt::export!(thiscall, rw_006702e0(this: u32, value0: u32) -> u32 {
     unsafe {
         const STATE: u32 = 0x14;
         const STREAM: u32 = 0x0C;
-        const FORMAT_RVA: u32 = 0xB9EAA8;
+        const FORMAT_FILE_VA: u32 = 0xF9EAA8;
         const FORMAT_CALLEE: u32 = 1;
         const WRITE_CALLEE: u32 = 2;
         #[inline(always)]
@@ -22,7 +22,7 @@ lf_checker_rt::export!(thiscall, rw_006702e0(this: u32, value0: u32) -> u32 {
             unsafe { (address as *const u32).read_unaligned() }
         }
         ((this + STATE) as *mut u32).write_unaligned(0);
-        let format = lf_checker_rt::relocated(FORMAT_RVA);
+        let format = lf_checker_rt::relocated(FORMAT_FILE_VA);
         let mut buf = [0u32; 16];
         let length = lf_checker_rt::callee_cdecl!(FORMAT_CALLEE, u32, buf.as_mut_ptr() as u32, format, value0);
         let stream = rd32(this + STREAM);

@@ -217,9 +217,15 @@ lf_checker_rt::export!(thiscall, rw_00ccfab0(task: u32, owner: u32, out_candidat
             write_u32(out_candidate, nearest_candidate);
             return out_candidate;
         }
-        if is_active(owner) == 0 && is_active(nearest_candidate) == 0 {
-            finish_task(farthest_context);
+        if is_active(owner) != 0 {
+            write_u32(out_candidate, nearest_candidate);
+            return out_candidate;
         }
+        if is_active(nearest_candidate) != 0 {
+            write_u32(out_candidate, nearest_candidate);
+            return out_candidate;
+        }
+        finish_task(farthest_context);
         clear_ready(task);
         write_u32(out_candidate, nearest_candidate);
         out_candidate

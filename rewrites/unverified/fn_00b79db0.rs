@@ -12,7 +12,7 @@ lf_checker_rt::export!(thiscall, rw_00b79db0(this: u32) -> u32 {
 
         #[inline(always)]
         unsafe fn read_word(address: u32) -> u32 {
-            (address as *const u32).read_unaligned()
+            unsafe { (address as *const u32).read_unaligned() }
         }
 
         let vtable = lf_checker_rt::relocated(VTABLE_FILE_VA);

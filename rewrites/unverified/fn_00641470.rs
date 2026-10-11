@@ -44,7 +44,7 @@ lf_checker_rt::export!(thiscall, rw_00641470(model: u32, source_list: u32) -> u3
 
         (source_list.wrapping_add(QUEUE_HEAD) as *mut u32).write(0);
         (source_list.wrapping_add(QUEUE_COUNT) as *mut u32).write(0);
-        let thread_index = (model.wrapping_add(0x75) as *const u8).read() as u32;
+        let thread_index = (destination_list.wrapping_add(0x75) as *const u8).read() as u32;
         let index_bytes = thread_index.wrapping_mul(4);
         (source_list.wrapping_add(0x14).wrapping_add(index_bytes) as *mut u32).write(0);
         (source_list.wrapping_add(4).wrapping_add(index_bytes) as *mut u32).write(0);

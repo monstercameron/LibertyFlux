@@ -3,7 +3,7 @@
 /// Prepare the plane's streaming request state. The incoming ECX object is
 /// passed to the setup collaborator, then the request collaborator receives
 /// the object's resource slot at `+0x20` advanced by `0x30`, the object, two
-/// zero options, and a pointer to a zeroed local flag. A nonzero status word
+/// zero options, and a trailing zero word. A nonzero status word
 /// at `+0x1ec8` is cleared. The method returns one in AL and takes no stack
 /// arguments.
 lf_checker_rt::export!(thiscall, rw_00c1d200(this: u32) -> u32 {

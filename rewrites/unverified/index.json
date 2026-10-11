@@ -544,14 +544,6 @@
   "reason": null
  },
  {
-  "address": "0x005BB760",
-  "name": "NativeImpl_SET_PLAYER_SETTINGS_GENRE_2",
-  "file": "fn_005bb760.rs",
-  "lane": "r-s699",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x005BB950",
   "name": "streaming_fn_005BB950",
   "file": "fn_005bb950.rs",
@@ -992,14 +984,6 @@
   "reason": null
  },
  {
-  "address": "0x005FCD30",
-  "name": "pending_005fcd30",
-  "file": "fn_005fcd30.rs",
-  "lane": "r-s697",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x005FD170",
   "name": "pending_005fd170",
   "file": "fn_005fd170.rs",
@@ -1118,6 +1102,14 @@
   "lane": "r-s679",
   "outcome": "deferred",
   "reason": "other"
+ },
+ {
+  "address": "0x006382B0",
+  "name": "rage::ptxEffectRuleStd::vf32",
+  "file": "fn_006382b0.rs",
+  "lane": "r-s695",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00641470",
@@ -1720,6 +1712,14 @@
   "reason": "out_of_time"
  },
  {
+  "address": "0x00939460",
+  "name": null,
+  "file": "fn_00939460.rs",
+  "lane": "r-s703",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00957100",
   "name": "task_seq_player",
   "file": "fn_00957100.rs",
@@ -1750,14 +1750,6 @@
   "lane": "r-s668",
   "outcome": "deferred",
   "reason": "partly_proven"
- },
- {
-  "address": "0x009C2560",
-  "name": "stream_state_storage_reset",
-  "file": "fn_009c2560.rs",
-  "lane": "r-s700",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x009C2600",
@@ -2288,6 +2280,14 @@
   "reason": null
  },
  {
+  "address": "0x00A9F0D0",
+  "name": "streaming_fn_00a9f0d0",
+  "file": "fn_00a9f0d0.rs",
+  "lane": "r-s701",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00AB5350",
   "name": "stream_process_slot",
   "file": "fn_00ab5350.rs",
@@ -2516,6 +2516,14 @@
   "name": null,
   "file": "fn_00aff630.rs",
   "lane": "a-U56",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B086E0",
+  "name": null,
+  "file": "fn_00b086e0.rs",
+  "lane": "a-U74",
   "outcome": "not yet run",
   "reason": null
  },
@@ -3608,6 +3616,198 @@
   "reason": "checker_gap"
  },
  {
+  "address": "0x00C50630",
+  "name": "task_layout_record_address",
+  "file": "fn_00c50630.rs",
+  "lane": "r-s707",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C50DF0",
+  "name": "task_bank_flag_bit_26",
+  "file": "fn_00c50df0.rs",
+  "lane": "r-s707",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C50E10",
+  "name": "task_bank_flag_bit_14",
+  "file": "fn_00c50e10.rs",
+  "lane": "r-s707",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C50E30",
+  "name": "task_bank_flag_bit_15",
+  "file": "fn_00c50e30.rs",
+  "lane": "r-s707",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C50E50",
+  "name": "task_bank_flag_bit_25",
+  "file": "fn_00c50e50.rs",
+  "lane": "r-s707",
+  "outcome": "not_reached",
+  "reason": ""
+ },
+ {
+  "address": "0x00C55560",
+  "name": "CPedScanner::destroy_member_then_base",
+  "file": "fn_00c55560.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C55580",
+  "name": "CVehicleScanner::destroy_member_then_base",
+  "file": "fn_00c55580.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C555A0",
+  "name": "CEntityScanner::vf0",
+  "file": "fn_00c555a0.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C555C0",
+  "name": "CEventAcquaintancePedHateBadlyLit::~CEventAcquaintancePedHateBadlyLit__deleting",
+  "file": "fn_00c555c0.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C555F0",
+  "name": "CEventAcquaintancePedLike::~CEventAcquaintancePedLike__deleting",
+  "file": "fn_00c555f0.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C55620",
+  "name": "CEventAcquaintancePedRespect::~CEventAcquaintancePedRespect__deleting",
+  "file": "fn_00c55620.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C55650",
+  "name": "CEventHealthLow::~CEventHealthLow__deleting",
+  "file": "fn_00c55650.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C55680",
+  "name": "CEventHealthReallyLow::~CEventHealthReallyLow__deleting",
+  "file": "fn_00c55680.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C556B0",
+  "name": "CEventLeaderEnteredCarAsDriver::~CEventLeaderEnteredCarAsDriver__deleting",
+  "file": "fn_00c556b0.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C556F0",
+  "name": "CEventLeaderEnteredCover::~CEventLeaderEnteredCover__deleting",
+  "file": "fn_00c556f0.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C55720",
+  "name": "CEventLeaderExitedCarAsDriver::~CEventLeaderExitedCarAsDriver__deleting",
+  "file": "fn_00c55720.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C55750",
+  "name": "CEventLeaderHolsteredWeapon::~CEventLeaderHolsteredWeapon__deleting",
+  "file": "fn_00c55750.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C55780",
+  "name": "CEventLeaderLeftCover::~CEventLeaderLeftCover__deleting",
+  "file": "fn_00c55780.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C557B0",
+  "name": "CEventLeaderUnholsteredWeapon::~CEventLeaderUnholsteredWeapon__deleting",
+  "file": "fn_00c557b0.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C557E0",
+  "name": "CEventPedCollisionWithPlayer::~CEventPedCollisionWithPlayer__deleting",
+  "file": "fn_00c557e0.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C55810",
+  "name": "CEventPlayerCollisionWithPed::~CEventPlayerCollisionWithPed__deleting",
+  "file": "fn_00c55810.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C55840",
+  "name": "CEventScanner::~CEventScanner__deleting",
+  "file": "fn_00c55840.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C55860",
+  "name": "CEventScriptedAttractor::~CEventScriptedAttractor__deleting",
+  "file": "fn_00c55860.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C56660",
+  "name": "CEventSeenCop::~CEventSeenCop",
+  "file": "fn_00c56660.rs",
+  "lane": "r-s710",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00C59990",
   "name": null,
   "file": "fn_00c59990.rs",
@@ -3629,6 +3829,14 @@
   "file": "fn_00c69970.rs",
   "lane": "a-Q109",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C77430",
+  "name": "streaming_function_00C77430",
+  "file": "fn_00c77430.rs",
+  "lane": "r-s694",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -3742,6 +3950,14 @@
   "lane": "r-b450",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x00CA2D40",
+  "name": null,
+  "file": "fn_00ca2d40.rs",
+  "lane": "r-b688",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00CA4C60",
@@ -4723,6 +4939,14 @@
   "address": "0x00DA34D0",
   "name": null,
   "file": "fn_00da34d0.rs",
+  "lane": "r-s696",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00DA3550",
+  "name": null,
+  "file": "fn_00da3550.rs",
   "lane": "r-s696",
   "outcome": "not yet run",
   "reason": null
