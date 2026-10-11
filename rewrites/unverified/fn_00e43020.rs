@@ -12,7 +12,6 @@ const FRAME_X_ANCHOR: usize = 0x28;
 const FRAME_STEP_INDEX: usize = 0x2c;
 const FRAME_ANGLE: usize = 0x30;
 const FRAME_UNINIT_Y: usize = 0x34;
-const FRAME_HELPER_A: usize = 0x38;
 const FRAME_UNINIT_TAIL: usize = 0x4c;
 const FRAME_VERTEX_X: usize = 0x100;
 const FRAME_VERTEX_Y: usize = 0x104;
@@ -202,8 +201,8 @@ pub(crate) fn aligned_frame_draw_c_impl(
     put_word(&mut frame, FRAME_OUT1, STACK_OUT_SEED);
 
     let out_words = unsafe { frame.as_mut_ptr().add(FRAME_OUT0 / 4) as u32 };
-    callee_cdecl!(CONFIG_WORDS, u32, 7u32, 0u32, out_words, 0u32);
     callee_cdecl!(INITIALIZE_DRAW_STATE, u32,);
+    callee_cdecl!(CONFIG_WORDS, u32, 7u32, 0u32, out_words, 0u32);
     callee_cdecl!(PREPARE_DRAW, u32,);
     callee_cdecl!(SET_DRAW_MODE, u32, 7u32, 1u32);
     callee_cdecl!(SET_DRAW_MODE, u32, 2u32, 0u32);
@@ -214,7 +213,7 @@ pub(crate) fn aligned_frame_draw_c_impl(
     let floor2 = global_f32(ARG2_FLOOR_VA);
     let floor3 = global_f32(ARG3_FLOOR_VA);
     let clamped2 = clamp_to_floor(arg2, floor2);
-    let clamped3 = clamp_to_floor(arg3, floor3);
+    let _unused_clamped3_delta = sub_f32(clamp_to_floor(arg3, floor3), out1);
     let shifted2 = sub_f32(clamped2, out0);
     let shifted3 = add_f32(out1, arg1);
     let anchor_x = add_f32(out0, arg0);
@@ -235,7 +234,8 @@ pub(crate) fn aligned_frame_draw_c_impl(
     let y_scaled_comp = sub_f32(sub_f32(scaled3, out1), out1_scaled);
 
     put_float(&mut frame, 0xf8, x_base);
-    put_float(&mut frame, 0xfc, float(&frame, FRAME_UNINIT_TAIL));
+    let uninitialized_tail = float(&frame, FRAME_UNINIT_TAIL);
+    put_float(&mut frame, 0xfc, uninitialized_tail);
     put_float(&mut frame, 0x100, x_base);
     put_float(&mut frame, 0x104, y_base);
     put_float(&mut frame, 0x108, clamped2);
@@ -308,7 +308,7 @@ pub(crate) fn aligned_frame_draw_c_impl(
 
     // The fixed-size second strip is emitted only when both original bounds
     // comparisons are ordered and strictly greater; NaNs follow the skip path.
-    if !(final_limit_x <= final_x || final_limit_y <= final_y) {
+    if final_limit_x > final_x && final_limit_y > final_y {
         // This path is deliberately left explicit in the checker result if the
         // chosen contract inputs never enter it; the main two passes remain
         // fully compared through their submitted call arguments.
