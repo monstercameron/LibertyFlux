@@ -22,9 +22,14 @@ lf_checker_rt::export!(thiscall, rw_00b711b0(task: u32, task_kind: u32, argument
         if target == 0 { return 0; }
         if lf_checker_rt::callee_thiscall!(3, u32, target) != task_kind { return 0; }
         let target_kind = lf_checker_rt::callee_thiscall!(3, u32, target);
-        if target_kind != 0x384 {
+        let should_enable = if target_kind == 0x384 {
+            lf_checker_rt::callee_thiscall!(3, u32, target) == 0x3AE
+        } else {
             if target_kind != 0x3AE { return 0; }
             if lf_checker_rt::callee_thiscall!(3, u32, target) != 0x3AE { return 0; }
+            lf_checker_rt::callee_thiscall!(3, u32, target) == 0x3AE
+        };
+        if should_enable {
             let flags = core::ptr::read((target + TARGET_FLAGS) as *const u32);
             core::ptr::write((target + TARGET_FLAGS) as *mut u32, flags | ENABLED_FLAG);
             let weight = core::ptr::read(lf_checker_rt::global::<f32>(TARGET_WEIGHT));

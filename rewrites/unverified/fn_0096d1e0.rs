@@ -5,8 +5,7 @@
 /// three-word zeroed local record is passed by pointer and returned helper EAX
 /// is preserved. The helper's pointer address is stack-local; its contents are
 /// the observable call-time value.
-lf_checker_rt::export!(thiscall, rw_0096d1e0(
-    _this: u32,
+lf_checker_rt::export!(cdecl, rw_0096d1e0(
     sample_kind: u32,
     sample_time: f32,
     lower_bound: u32,
