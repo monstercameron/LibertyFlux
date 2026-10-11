@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-10",
+    "title": "Devlog: hourly review, 23:05 on 10 October",
+    "commit": "743028b56770dece2a00bdfe3cdf8bfdb042832e",
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "16,992 verified after the first hour of Luna and Haiku lanes together: 35 more, one withdrawn. Haiku closed two large functions; Luna's 40 claims and Haiku's 2 all held when re-run before import.",
+      "Added a supervisor for Luna lanes and fixed the coordinator's re-run, which twice ran contracts against the wrong library; a broken re-run can no longer hold a claim. Haiku lanes that stop early on a large function are sent back in."
+    ]
+  },
+  {
+    "date": "2026-10-10",
     "title": "Hourly review: the owner's checklist, a scorecard and its own timer",
-    "commit": null,
+    "commit": "b52447404b88b6266607378cecb43b34ce5d17e4",
     "summary": "The hourly review now follows a checklist the owner supplied, runs from its own timer at five past each hour, and starts from a scorecard a script prints.",
     "changes": [
       "The agent rules carry the checklist: sixteen areas in three priorities, the scorecard every review must produce, the responses expected to each kind of problem, and the five answers each review ends with.",
