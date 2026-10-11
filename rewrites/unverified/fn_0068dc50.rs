@@ -32,13 +32,8 @@ lf_checker_rt::export!(thiscall, rw_0068DC50(wrapper: u32, weight_array: u32, _r
                 let weight = f32::from_bits(weight_bits);
                 let scaled_weight = core::hint::black_box(weight)
                     * core::hint::black_box(multiplier);
-                let vtable = *((record) as *const u32);
-                let method_address = *((vtable.wrapping_add(VTABLE_SLOT)) as *const u32);
-                let method = core::mem::transmute::<
-                    usize,
-                    extern "thiscall" fn(u32, u32) -> u32,
-                >(method_address as usize);
-                let _ = method(record, scaled_weight.to_bits());
+                let _ = *((*((record) as *const u32)).wrapping_add(VTABLE_SLOT) as *const u32);
+                let _ = lf_checker_rt::callee_thiscall!(1, u32, record, scaled_weight.to_bits());
             }
             record_index += 1;
         }
