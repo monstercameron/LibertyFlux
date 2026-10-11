@@ -1,11 +1,11 @@
 // original: 0x00a09e20 mission_cleanup_release_flagged
 /// Release flagged mission-cleanup records for the seven supported entry
 /// kinds. The manager stores 0x2c-byte entries at +4; a nonzero kind is
-/// processed only when the word at +0x0c is exactly one. Kinds 1, 2, and 3
+/// processed only when the word at +0x0c is exactly one. Kinds 1, 2, and 4
 /// resolve their handle through the corresponding entity, pedestrian, or
-/// object pool and dispatch only for a live object. Kind 4 resolves the
+/// object pool and dispatch only for a live object. Kind 7 resolves the
 /// handle with mode eight and dispatches only for a nonnegative result. Kinds
-/// 5 through 7 have no kind-specific dispatch. Every selected record is
+/// 3, 5, and 6 have no kind-specific dispatch. Every selected record is
 /// reset with (handle, kind, 0, 1), even when lookup returns null. The manager
 /// is armed by a no-argument thiscall helper; a false result leaves it alone.
 /// The method uses thiscall with no stack arguments and returns no value.
@@ -76,14 +76,15 @@ lf_checker_rt::export!(thiscall, rw_00a09e20(this: u32) -> () {
                         let _ = lf_checker_rt::callee_cdecl!(DISPATCH_PED, u32, object);
                     }
                 }
-                3 => {
+                3 => {}
+                4 => {
                     let pool = read_global_pointer(OBJECT_POOL_GLOBAL);
                     let object = lf_checker_rt::callee_thiscall!(POOL_GET, u32, pool, handle);
                     if object != 0 {
                         let _ = lf_checker_rt::callee_cdecl!(DISPATCH_OBJECT, u32, object);
                     }
                 }
-                4 => {
+                7 => {
                     let special_index =
                         lf_checker_rt::callee_cdecl!(FIND_SPECIAL_INDEX, i32, handle, 8);
                     if special_index >= 0 {
