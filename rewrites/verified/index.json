@@ -149769,6 +149769,24 @@
   "lane": "r-s635"
  },
  {
+  "address": "0x00DCA4E0",
+  "name": "CTaskComplexCarReactToVehicleCollisionGetOut::CTaskComplexCarReactToVehicleCollisionGetOut",
+  "kind": "function",
+  "file": "functions/fn_00dca4e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s722"
+ },
+ {
+  "address": "0x00DCA570",
+  "name": "CTaskComplexCarReactToVehicleCollision destructor",
+  "kind": "function",
+  "file": "functions/fn_00dca570.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s722"
+ },
+ {
   "address": "0x00DCBB70",
   "name": "CTaskComplexMoveAvoidOtherPedWhileWandering::~CTaskComplexMoveAvoidOtherPedWhileWandering",
   "kind": "function",
