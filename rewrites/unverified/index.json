@@ -1440,14 +1440,6 @@
   "reason": "checker_gap"
  },
  {
-  "address": "0x009B6410",
-  "name": "pending_009b6410",
-  "file": "fn_009b6410.rs",
-  "lane": "r-s668",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x009B64D0",
   "name": "pending_009b64d0",
   "file": "fn_009b64d0.rs",
@@ -2100,8 +2092,8 @@
   "name": "entity_replace_physics_reference",
   "file": "fn_00b25fb0.rs",
   "lane": "r-s665",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00B37240",
@@ -2283,30 +2275,6 @@
   "address": "0x00B888F0",
   "name": "NativeImpl_CAM_IS_SPHERE_VISIBLE",
   "file": "fn_00b888f0.rs",
-  "lane": "r-s674",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B88E40",
-  "name": "NativeImpl_POINT_FIXED_CAM_AT_POS",
-  "file": "fn_00b88e40.rs",
-  "lane": "r-s674",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B88E90",
-  "name": "NativeImpl_SET_FIXED_CAM_POS",
-  "file": "fn_00b88e90.rs",
-  "lane": "r-s674",
-  "outcome": "not_reached",
-  "reason": ""
- },
- {
-  "address": "0x00B88F10",
-  "name": "NativeImpl_POINT_FIXED_CAM",
-  "file": "fn_00b88f10.rs",
   "lane": "r-s674",
   "outcome": "not_reached",
   "reason": ""
@@ -3851,14 +3819,6 @@
   "address": "0x00D9F170",
   "name": "streaming_00d9f170",
   "file": "fn_00d9f170.rs",
-  "lane": "r-s675",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00D9F940",
-  "name": "streaming_00d9f940",
-  "file": "fn_00d9f940.rs",
   "lane": "r-s675",
   "outcome": "not_reached",
   "reason": null
