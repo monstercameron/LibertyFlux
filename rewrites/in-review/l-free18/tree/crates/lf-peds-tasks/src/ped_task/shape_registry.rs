@@ -1,4 +1,4 @@
-//! What is lifted from the two task shapes of this section, and what each
+﻿//! What is lifted from the two task shapes of this section, and what each
 //! proof leaves out.
 //!
 //! One row per verified 32-bit routine lifted here. `Proven` means the
@@ -69,7 +69,7 @@ pub const ROWS: &[Row] = &[
         narrows: &[
             "the three sub-objects and the callees' own writes are not modelled: the sub-object handles are the block handle plus the sub-object offsets, and the proof checks that the rewrite leaves every byte the lift does not own unchanged",
             "the callees and the tick word travel as BlockCallees; the proof's collaborator records the same calls, in the same order, with the same arguments as the rewrite's stubs",
-            "the two scale factors are the image words the rewrite reads; the proof plants generated bit patterns for them, including not-a-number and out-of-range products, and the lift matches the verified rewrite's conversion on all of them; the processor's own conversion differs there (see the lane report), but the image's factors keep the product between minus 500 and zero",
+            "the two scale factors are the image words the rewrite reads; the proof plants generated bit patterns for them, including not-a-number and out-of-range products, and the lift matches the verified rewrite's conversion on all of them; the processor's own conversion differs there, and the image's factors keep the product between minus 500 and zero",
             "the routine returns the block handle in the original; the lift returns the owned words and the caller keeps the handle, so the return value is compared with the handle only in the proof",
             "owned words are the fields of TaskBlock; the bytes at 0x156 to 0x157, 0x15c to 0x16f and 0x17d to 0x17f are not owned and are checked unchanged",
         ],

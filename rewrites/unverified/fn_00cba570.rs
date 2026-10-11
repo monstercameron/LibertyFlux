@@ -250,10 +250,11 @@ unsafe fn update_slide_task(this: u32, state: u32, wrong_scratch: bool) -> u8 {
                 (pi_bits >> 32) as u32
             );
             let rounded_angle = angle_result as f32;
-            let adjusted_angle = if rounded_angle == negative_pi {
+            let wrapped_delta = float_sub(rounded_angle, boundary);
+            let adjusted_angle = if wrapped_delta == negative_pi {
                 pi
             } else {
-                rounded_angle
+                wrapped_delta
             };
             let sign_mask = read_word(lf_checker_rt::relocated(VA_SIGN_MASK));
             let negative_angle = f32::from_bits(adjusted_angle.to_bits() ^ sign_mask);

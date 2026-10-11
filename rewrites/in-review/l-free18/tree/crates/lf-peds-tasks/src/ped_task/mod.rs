@@ -48,6 +48,7 @@ mod id_lookup;
 mod mover;
 mod pose;
 mod seek;
+mod record_scan;
 mod task_block;
 mod task_owner;
 mod task_predicates;
@@ -58,6 +59,9 @@ mod task_turn;
 pub mod registry;
 pub mod shape_registry;
 
+pub use record_scan::{
+    ENTRY_CONSTANTS, Anchor, FetchCallee, RecordTable, ScanEntry, ScratchSlot, TABLE_SLOTS, TAG_SLOT_FIRST, TAG_SLOT_SECOND, TAG_SLOT_THIRD, TableRecord, slot_for_tag,
+};
 pub use task_block::{
     BLOCK_BYTES, BlockCallees, COUNTDOWN_BASE, PARAM_WORDS, SELECTOR_NONE, SUB_HEAD_OFFSET, SUB_TAIL_OFFSET, ScaleFactors, TaskBlock, truncate_to_i32,
 };

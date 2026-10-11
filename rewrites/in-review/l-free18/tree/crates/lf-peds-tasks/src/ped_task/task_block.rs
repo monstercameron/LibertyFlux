@@ -1,4 +1,4 @@
-//! The ped task block initialiser: the constructor that sets up a task's
+﻿//! The ped task block initialiser: the constructor that sets up a task's
 //! parameter area, its countdown and its control words, and runs the
 //! block's construction and setup calls in order.
 //!
@@ -137,8 +137,8 @@ impl TaskBlock {
 /// performs it: the Rust conversion, which gives zero for a not-a-number and
 /// saturates outside the signed 32-bit range. The processor's own
 /// convert-with-truncation instruction gives the most negative integer for
-/// both instead; the difference is recorded in the lane report and is not
-/// reachable with the image's factors and a sixteen-bit draw.
+/// both instead; the difference is not reachable with the image's factors and a
+/// sixteen-bit draw.
 #[must_use]
 pub fn truncate_to_i32(value: f32) -> i32 {
     value as i32
