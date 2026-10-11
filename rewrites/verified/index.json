@@ -43605,6 +43605,15 @@
   "lane": "r-b247"
  },
  {
+  "address": "0x006F5C50",
+  "name": "input_batch_flush",
+  "kind": "function",
+  "file": "functions/fn_006f5c50.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "a-U70"
+ },
+ {
   "address": "0x006F60B0",
   "name": "input_stream_consume",
   "kind": "function",
@@ -58534,6 +58543,15 @@
   "trials": 300,
   "checker": "version 7",
   "lane": "a-S14"
+ },
+ {
+  "address": "0x00905D50",
+  "name": "input_slots_rebuild",
+  "kind": "function",
+  "file": "functions/fn_00905d50.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "a-U70"
  },
  {
   "address": "0x009061C0",
