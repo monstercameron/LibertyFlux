@@ -40,6 +40,7 @@
 
 #![forbid(unsafe_code)]
 
+pub mod aim_blend;
 mod aim_record;
 mod audio_release;
 mod create;
@@ -52,6 +53,7 @@ mod mover;
 mod pose;
 mod record_scan;
 mod seek;
+pub mod subobject_tables;
 mod task_block;
 mod task_owner;
 mod task_predicates;
@@ -84,6 +86,7 @@ pub use task_turn::{
     DIR_SCALE, FLAG_RESET, RATE_GATE, RATE_ONE, RATE_STEP, TurnParams, TurnTask, TurnTrig, Vec3,
 };
 
+pub use aim_blend::{AimBlend, AimBlendCallees, BlendResult};
 pub use audio_release::{
     AudioObjects, AudioSlot, AudioTask, CANDIDATE_KIND_MASK, CANDIDATE_KIND_SPECIAL,
     CANDIDATE_STATE_READY, CLEANUP_ENABLED, CLEANUP_MODE_SENTINEL, Deadline, PROGRESS_LIMIT,
@@ -111,6 +114,7 @@ pub use pose::{
     LinkMatrix, Matrix, NORM_COUNT, NormSlot, PoseFill, PoseSample, PoseVolume, Transformed,
 };
 pub use seek::{SEEK_MODE, STEP_SCALE, SeekGoal, SeekMover, SeekRecord, TUNING};
+pub use subobject_tables::{AffineBlock, CountReads, SubobjectHooks, TaskSubobjects, WalkEnd};
 pub use task_owner::{OwnerCallees, TaskOwner};
 pub use task_slots::{
     FIRST_BOMB_KIND, FIRST_BOMB_SLOT, ManagerCallees, PRIMARY_COUNT, SECOND_BOMB_KIND,

@@ -1,6 +1,19 @@
 [
   {
     "date": "2026-10-11",
+    "title": "Lift: three more pedestrian-task routines (sub-object slot tables, aim blend)",
+    "commit": null,
+    "summary": "Three more verified routines of the pedestrian-task code have a portable Rust counterpart, each proven against its verified original. It is the third lift from this group today, and the lane's triage says what the rest of the group is.",
+    "changes": [
+      "Lifted into lf-peds-tasks: two routines over the four slot tables of a task record's sub-objects (a vector remap, and a matrix apply that notifies each sub-object), as one owning type of 300 lines; and an aim blend, 157 lines. No unsafe and no addresses; callees sit behind traits and the proof compares the calls in order.",
+      "A new differential test crate, lf-taskshapediff2, runs each verified rewrite and its lifted counterpart on the same memory, 3,000 generated cases per routine, comparing the answer, every byte of the record and every call: 8 tests pass on the 32-bit target and 25 deliberately wrong versions are caught. It is added to the workspace and to the pipeline's 32-bit lift job. The crate's 320 host tests pass.",
+      "The lane reported one thing to decide about a verified rewrite it lifted from: the routine stores a word the original never writes in that routine, a leftover from the stack, which reads as zero under the checker's stack fill. The lift stores zero and records it as a narrowing; whether anything in the game reads that word is open.",
+      "Of the 90 functions the lane was given, 87 are not lifted. Its triage groups them into about 19 shapes, most of them a single routine with one or two callees; one shape is blocked because its table is larger than the memory window the differential runtime offers. Its advice for the next lift brief is recorded: group by what the routines read and write and not by name, write a test program only for a shape with two routines or one large one, and give the runtime a window for globals first.",
+      "Written by a lift lane; integrated, tested and committed by the coordinator."
+    ]
+  },
+  {
+    "date": "2026-10-11",
     "title": "Rust in progress: 37 files from lanes (580 unverified rewrites, 252 in review)",
     "commit": "97bcdc486409cc0b50e008b34181ce3191af0622",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
