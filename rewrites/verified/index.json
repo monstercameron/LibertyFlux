@@ -94536,6 +94536,15 @@
   "lane": "r-s242"
  },
  {
+  "address": "0x00B41AB0",
+  "name": "task_spatial_list_intersects",
+  "kind": "function",
+  "file": "functions/fn_00b41ab0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U112"
+ },
+ {
   "address": "0x00B41BE0",
   "name": "box_query_global_array",
   "kind": "function",
@@ -150642,6 +150651,15 @@
   "lane": "r-s632"
  },
  {
+  "address": "0x00DCD930",
+  "name": "CTaskSimpleReloadGun::UpdatePedState",
+  "kind": "function",
+  "file": "functions/fn_00dcd930.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "a-U112"
+ },
+ {
   "address": "0x00DCDD00",
   "name": "aim_task_set_phase_seven_and_clear_timer",
   "kind": "function",
@@ -150658,6 +150676,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-b333"
+ },
+ {
+  "address": "0x00DCDED0",
+  "name": "CTaskSimpleReloadGun::SetupReloadAnimation",
+  "kind": "function",
+  "file": "functions/fn_00dcded0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "a-U112"
  },
  {
   "address": "0x00DCE240",
