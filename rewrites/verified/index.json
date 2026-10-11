@@ -35037,6 +35037,60 @@
   "lane": "r-b576"
  },
  {
+  "address": "0x005DAE00",
+  "name": "test_active_or_default_flag_mask",
+  "kind": "function",
+  "file": "functions/fn_005dae00.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s706"
+ },
+ {
+  "address": "0x005DAE60",
+  "name": "read_active_or_default_word_5c",
+  "kind": "function",
+  "file": "functions/fn_005dae60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s706"
+ },
+ {
+  "address": "0x005DAED0",
+  "name": "read_active_or_default_word_48",
+  "kind": "function",
+  "file": "functions/fn_005daed0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s706"
+ },
+ {
+  "address": "0x005DAF60",
+  "name": "read_active_field_24_or_minus_one",
+  "kind": "function",
+  "file": "functions/fn_005daf60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s706"
+ },
+ {
+  "address": "0x005DAF80",
+  "name": "write_active_field_5c",
+  "kind": "function",
+  "file": "functions/fn_005daf80.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s706"
+ },
+ {
+  "address": "0x005DB000",
+  "name": "is_class_record_active_by_index",
+  "kind": "function",
+  "file": "functions/fn_005db000.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s706"
+ },
+ {
   "address": "0x005DCD10",
   "name": "CTaskSimpleHandsUp::vf1",
   "kind": "function",
@@ -80829,6 +80883,15 @@
   "lane": "r-s452"
  },
  {
+  "address": "0x00A4F9E0",
+  "name": "FireManagerCountRange",
+  "kind": "function",
+  "file": "functions/fn_00a4f9e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s717"
+ },
+ {
   "address": "0x00A4FB80",
   "name": "vehicle_slot_pos_call",
   "kind": "function",
@@ -80838,6 +80901,15 @@
   "lane": "r-s452"
  },
  {
+  "address": "0x00A4FEE0",
+  "name": "vehicle_init_slots",
+  "kind": "function",
+  "file": "functions/fn_00a4fee0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s717"
+ },
+ {
   "address": "0x00A4FF80",
   "name": "vehicle_count_free_slots",
   "kind": "function",
@@ -80845,6 +80917,15 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s452"
+ },
+ {
+  "address": "0x00A504A0",
+  "name": "vehicle_dispatch_kind3_b",
+  "kind": "function",
+  "file": "functions/fn_00a504a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s717"
  },
  {
   "address": "0x00A50610",
@@ -80872,6 +80953,33 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s452"
+ },
+ {
+  "address": "0x00A525E0",
+  "name": "advance_flagged_query_histories",
+  "kind": "function",
+  "file": "functions/fn_00a525e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s717"
+ },
+ {
+  "address": "0x00A52FE0",
+  "name": "sum_flagged_query_values",
+  "kind": "function",
+  "file": "functions/fn_00a52fe0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s717"
+ },
+ {
+  "address": "0x00A530C0",
+  "name": "any_flagged_query_value_positive",
+  "kind": "function",
+  "file": "functions/fn_00a530c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s717"
  },
  {
   "address": "0x00A531C0",
@@ -80919,6 +81027,15 @@
   "lane": "r-s452"
  },
  {
+  "address": "0x00A55C20",
+  "name": "composite_bound_reset_all",
+  "kind": "function",
+  "file": "functions/fn_00a55c20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s717"
+ },
+ {
   "address": "0x00A55CD0",
   "name": "vehicle_set_fields",
   "kind": "function",
@@ -80926,6 +81043,51 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s452"
+ },
+ {
+  "address": "0x00A55CF0",
+  "name": "composite_bound_stamp_word_all",
+  "kind": "function",
+  "file": "functions/fn_00a55cf0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s717"
+ },
+ {
+  "address": "0x00A55FF0",
+  "name": "id_list_store",
+  "kind": "function",
+  "file": "functions/fn_00a55ff0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s717"
+ },
+ {
+  "address": "0x00A56030",
+  "name": "id_list_store_second",
+  "kind": "function",
+  "file": "functions/fn_00a56030.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s717"
+ },
+ {
+  "address": "0x00A56070",
+  "name": "id_list_store_third",
+  "kind": "function",
+  "file": "functions/fn_00a56070.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s717"
+ },
+ {
+  "address": "0x00A560B0",
+  "name": "composite_bound_stamp_item_dword",
+  "kind": "function",
+  "file": "functions/fn_00a560b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s717"
  },
  {
   "address": "0x00A625B0",
