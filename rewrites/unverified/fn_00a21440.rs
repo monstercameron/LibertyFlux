@@ -81,6 +81,16 @@ unsafe fn read_global_f64(file_address: u32) -> f64 {
 }
 
 #[inline(always)]
+unsafe fn write_global_u8(file_address: u32, value: u8) {
+    unsafe { lf_checker_rt::global::<u8>(file_address).write_unaligned(value) }
+}
+
+#[inline(always)]
+unsafe fn write_global_u32(file_address: u32, value: u32) {
+    unsafe { lf_checker_rt::global::<u32>(file_address).write_unaligned(value) }
+}
+
+#[inline(always)]
 fn add_f32(left: f32, right: f32) -> f32 {
     core::hint::black_box(left) + core::hint::black_box(right)
 }
@@ -214,7 +224,7 @@ lf_checker_rt::export!(thiscall, rw_00A21440(this: u32) -> u32 {
         let interval = read_global_u32(TIMER_INTERVAL);
         let active_delta = f32::from_bits(read_u32(this + TASK_DELTA_OFFSET));
         if elapsed >= interval || !(active_delta > 0.0) {
-            write_u8(GLOBAL_BLEND_STATE, 0);
+            write_global_u8(GLOBAL_BLEND_STATE, 0);
             write_u32(this + TASK_DELTA_OFFSET, 0);
             write_u32(this + TASK_TIME_OFFSET, manager_center.to_bits());
             return 0;
@@ -224,7 +234,7 @@ lf_checker_rt::export!(thiscall, rw_00A21440(this: u32) -> u32 {
         let interval_as_f32 = unsigned_integer_as_f32(interval);
         let time_ratio = div_f32(elapsed_as_f32, interval_as_f32);
         let sampled_blend = lf_checker_rt::callee_cdecl!(4, f32, time_ratio.to_bits());
-        write_u32(GLOBAL_BLEND_SAMPLE, sampled_blend.to_bits());
+        write_global_u32(GLOBAL_BLEND_SAMPLE, sampled_blend.to_bits());
 
         let final_result = run_blend_kernel(
             5,
@@ -245,8 +255,8 @@ lf_checker_rt::export!(thiscall, rw_00A21440(this: u32) -> u32 {
             read_global_f32(THIRD_KERNEL_C),
         );
         let progress = div_f32(final_result, progress_span);
-        write_u8(GLOBAL_BLEND_STATE, 1);
-        write_u32(GLOBAL_BLEND_PROGRESS, progress.to_bits());
+        write_global_u8(GLOBAL_BLEND_STATE, 1);
+        write_global_u32(GLOBAL_BLEND_PROGRESS, progress.to_bits());
         write_u32(this + TASK_TIME_OFFSET, manager_center.to_bits());
         0
     }

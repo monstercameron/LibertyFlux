@@ -32,7 +32,7 @@ lf_checker_rt::export!(thiscall, rw_008e49f0(this: u32, value: u32) -> u32 {
             0,
             0
         );
-        if lf_checker_rt::callee_cdecl!(3, u8) != 0 {
+        if lf_checker_rt::callee_cdecl!(3, u8,) != 0 {
             let manager = (lf_checker_rt::global::<u32>(MANAGER_GLOBAL)).read_unaligned();
             let callback = (lf_checker_rt::global::<u32>(CALLBACK_GLOBAL)).read_unaligned();
             let _ = lf_checker_rt::callee_thiscall!(4, u32, manager, callback);

@@ -6,6 +6,7 @@
 pub unsafe extern "C" fn rw_00bd6a80(
     primary_name: u32,
     fallback_name: u32,
+    lookup_name: u32,
 ) -> u32 {
     const TRY_PRIMARY: u32 = 1;
     const TRY_FALLBACK: u32 = 2;
@@ -28,7 +29,7 @@ pub unsafe extern "C" fn rw_00bd6a80(
             lf_checker_rt::callee_cdecl!(TRY_FALLBACK, u32, fallback_name)
         };
         let normalized_name = lf_checker_rt::callee_cdecl!(NORMALIZE_NAME, u32, selected_name);
-        let hash = lf_checker_rt::callee_cdecl!(HASH_NAME, u32, fallback_name);
+        let hash = lf_checker_rt::callee_cdecl!(HASH_NAME, u32, lookup_name);
         let found = lf_checker_rt::callee_thiscall!(FIND_DICTIONARY, u32, normalized_name, hash);
         if found != 0 {
             found
