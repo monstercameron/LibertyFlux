@@ -4,12 +4,14 @@
 /// optionally finalizes the returned task object.
 ///
 /// `this` is a factory object whose vtable entry at `+0x18` is used by the
-/// failed-transition path. `input` points to a small request record and its
-/// byte at `+1` rejects the request when nonzero. `task_index` is signed for
-/// the initial negative check; nonnegative values index the global task
+/// failed-transition path. `input` points to a request record and its byte
+/// at `+1` rejects the request when nonzero. After that check, the original
+/// clears the low halfword of the incoming `input` stack slot and forwards
+/// that changed pointer value to its helpers. `task_index` is signed for the
+/// initial negative check; nonnegative values index the global task
 /// descriptor table. A descriptor's kind at `+0x90` selects the factory
 /// routine. `options` contributes its low byte to the optional transition
-/// call. The final two stack words are accepted by the ABI but unused.
+/// call. The other stack words are accepted by the ABI and unused.
 ///
 /// A successful factory result has bit 0 set in its flags at `+0x260`. The
 /// function may then run a transition check and dispatch the factory's
@@ -78,8 +80,7 @@ lf_checker_rt::export!(thiscall, rw_005c3770(
 
         // The original clears the low half of its second incoming word before
         // forwarding that word. Keep that value explicit in the rewrite.
-        let forwarded_request_kind = _request_kind & 0xFFFF_0000;
-        let mut input_slot_value = input;
+        let mut input_slot_value = input & 0xFFFF_0000;
         let input_slot = (&mut input_slot_value as *mut u32) as u32;
         let task_kind = read_u32(task_descriptor.wrapping_add(TASK_KIND));
 
@@ -93,9 +94,9 @@ lf_checker_rt::export!(thiscall, rw_005c3770(
         }
 
         let mut created = if task_kind == KIND_SPECIAL {
-            lf_checker_rt::callee_thiscall!(4, u32, this, task_index, forwarded_request_kind, resolved_task)
+            lf_checker_rt::callee_thiscall!(4, u32, this, task_index, input_slot_value, resolved_task)
         } else {
-            lf_checker_rt::callee_thiscall!(3, u32, this, task_index, forwarded_request_kind, resolved_task)
+            lf_checker_rt::callee_thiscall!(3, u32, this, task_index, input_slot_value, resolved_task)
         };
         if created == 0 {
             return 0;

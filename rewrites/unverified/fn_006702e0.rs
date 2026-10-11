@@ -24,7 +24,7 @@ lf_checker_rt::export!(thiscall, rw_006702e0(this: u32, value0: u32) -> u32 {
         ((this + STATE) as *mut u32).write_unaligned(0);
         let format = lf_checker_rt::relocated(FORMAT_RVA);
         let mut buf = [0u32; 16];
-        let length = lf_checker_rt::callee_cdecl!(FORMAT_CALLEE, u32, buf.as_mut_ptr() as u32, format, value0: u32);
+        let length = lf_checker_rt::callee_cdecl!(FORMAT_CALLEE, u32, buf.as_mut_ptr() as u32, format, value0);
         let stream = rd32(this + STREAM);
         let written = lf_checker_rt::callee_thiscall!(WRITE_CALLEE, u32, stream, buf.as_mut_ptr() as u32, length);
         (written == length) as u32

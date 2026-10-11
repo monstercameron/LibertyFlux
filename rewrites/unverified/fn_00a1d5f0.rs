@@ -57,14 +57,14 @@ lf_checker_rt::export!(stdcall, rw_00A1D5F0(task: u32, position: u32) -> u32 {
             unsafe { wr32(lf_checker_rt::relocated(file_va), value) }
         }
 
-        let _ = lf_checker_rt::callee_cdecl!(1, u32);
+        let _ = lf_checker_rt::callee_cdecl!(1, u32,);
 
         if rd32(task.wrapping_add(0x7b8)) != 6 {
             let predicate_this = rd32(task.wrapping_add(0x224));
             let predicate = lf_checker_rt::callee_thiscall!(2, u32, predicate_this);
             if (predicate & 0xff) == 0 {
                 let result = u32::from(read_global(STATE_VA) != 0);
-                let _ = lf_checker_rt::callee_cdecl!(4, u32);
+                let _ = lf_checker_rt::callee_cdecl!(4, u32,);
                 return result;
             }
         }
@@ -134,7 +134,7 @@ lf_checker_rt::export!(stdcall, rw_00A1D5F0(task: u32, position: u32) -> u32 {
             let task_distance = f32::from_bits(rd32(task_owner.wrapping_add(0x38)));
             let limit = f32::from_bits(read_global(DISTANCE_LIMIT_VA));
             if task_distance > limit {
-                let _ = lf_checker_rt::callee_cdecl!(3, u32);
+                let _ = lf_checker_rt::callee_cdecl!(3, u32,);
                 return 0;
             }
         }
@@ -173,7 +173,7 @@ lf_checker_rt::export!(stdcall, rw_00A1D5F0(task: u32, position: u32) -> u32 {
             }
         }
 
-        let _ = lf_checker_rt::callee_cdecl!(4, u32);
+        let _ = lf_checker_rt::callee_cdecl!(4, u32,);
         u32::from(result_record != 0)
     }
 });

@@ -32,11 +32,12 @@ export!(cdecl, rw_00ae5c10(object: u32) -> u32 {
         }
 
         let first = read_u32(object, 0x4c);
-        if first != 0 && linked_object_qualifies(first) {
-            let second = read_u32(first, 0x4c);
-            if second != 0 && linked_object_qualifies(second) {
-                return 1;
-            }
+        if first == 0 || !linked_object_qualifies(first) {
+            return 0;
+        }
+        let second = read_u32(first, 0x4c);
+        if second != 0 && linked_object_qualifies(second) {
+            return 1;
         }
 
         if read_u32(object, 0x24) & 0x8000 == 0 {

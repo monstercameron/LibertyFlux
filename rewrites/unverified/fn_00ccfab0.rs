@@ -17,7 +17,10 @@
 /// squared distance, in y, x, z accumulation order, against the task's
 /// reference position and the relocated global range limit. Unordered float
 /// comparisons follow COMISS/JBE behavior: they do not replace the best or
-/// farthest candidate. A null initial owner lookup returns zero. If no
+/// farthest candidate. When enough candidates are inactive, the late check
+/// measures from the explicit owner argument's position object and tests the
+/// activity of that owner and the nearest candidate before finalizing the
+/// farthest context. A null initial owner lookup returns zero. If no
 /// candidate matches, the task flag is cleared and the task pointer is
 /// returned without writing the output slot. Otherwise the nearest pointer
 /// (possibly null when no distance is below the range limit) is written and
@@ -141,7 +144,6 @@ lf_checker_rt::export!(thiscall, rw_00ccfab0(task: u32, owner: u32, out_candidat
         let mut farthest_distance = 0.0f32;
         let mut nearest_candidate = 0u32;
         let mut farthest_context = 0u32;
-        let mut last_context = 0u32;
 
         for slot in 0..SLOT_COUNT {
             let candidate = read_u32(table + CANDIDATE_SLOTS + slot * 4);
@@ -168,7 +170,6 @@ lf_checker_rt::export!(thiscall, rw_00ccfab0(task: u32, owner: u32, out_candidat
                 continue;
             }
 
-            last_context = context;
             matched_count = matched_count.wrapping_add(1);
             if state_ok(context) == 0 {
                 inactive_count = inactive_count.wrapping_add(1);
@@ -203,12 +204,12 @@ lf_checker_rt::export!(thiscall, rw_00ccfab0(task: u32, owner: u32, out_candidat
             return out_candidate;
         }
 
-        let last_position = read_u32(last_context + ENTITY_POSITION);
+        let owner_position = read_u32(owner + ENTITY_POSITION);
         let late_distance = ordered_distance_sq(
             origin_x,
             origin_y,
             origin_z,
-            last_position,
+            owner_position,
             true,
         );
         if !(nearest_distance > late_distance) {
@@ -216,7 +217,7 @@ lf_checker_rt::export!(thiscall, rw_00ccfab0(task: u32, owner: u32, out_candidat
             write_u32(out_candidate, nearest_candidate);
             return out_candidate;
         }
-        if state_ok(last_context) == 0 && state_ok(nearest_candidate) == 0 {
+        if is_active(owner) == 0 && is_active(nearest_candidate) == 0 {
             finish_task(farthest_context);
         }
         clear_ready(task);

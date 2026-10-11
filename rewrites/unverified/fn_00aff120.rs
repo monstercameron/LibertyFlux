@@ -31,6 +31,18 @@ export!(cdecl, mut_afff120() -> u32 {
     unsafe { body_afff120(true) }
 });
 
+// Mutant for the initial gate contract: clear the status word on an early
+// return where the original leaves it untouched.
+export!(cdecl, mut_afff120_gate() -> u32 {
+    unsafe {
+        if global::<u32>(GATE_STATE).read() == 1 {
+            global::<u32>(STATUS_WORD).write(0);
+            return 0;
+        }
+        body_afff120(false)
+    }
+});
+
 unsafe fn body_afff120(mutant: bool) -> u32 {
     if global::<u32>(GATE_STATE).read() == 1 {
         return 0;
@@ -52,8 +64,8 @@ unsafe fn body_afff120(mutant: bool) -> u32 {
     let _ = callee_cdecl!(4, u32,);
 
     // These offsets mirror the local values handed to the manager. The
-    // pointer arguments themselves are skipped in the call key and their
-    // first words are snapshotted by the contract.
+    // contract snapshots the five word outputs; the single-byte marker is
+    // read here on the exercised zero-marker path.
     let mut context = [0u8; 0x40];
     let context_base = context.as_mut_ptr();
     let out_marker = context_base.add(3) as u32;
@@ -62,7 +74,7 @@ unsafe fn body_afff120(mutant: bool) -> u32 {
     let out_value = context_base.add(0x08) as u32;
     let out_low = context_base.add(0x0C) as u32;
     let out_radius = context_base.add(0x10) as u32;
-    let _ = callee_cdecl!(5, u32, out_marker, out_upper, out_mode, out_value, out_low, out_radius);
+    let _ = callee_cdecl!(5, u32, out_radius, out_low, out_value, out_mode, out_upper, out_marker);
 
     if global::<i32>(TABLE_INDEX).read() >= 0 {
         return 0;

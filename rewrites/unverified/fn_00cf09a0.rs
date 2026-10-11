@@ -7,7 +7,8 @@
 /// the nested float at offset `0x28`. NaN values follow the original ordered
 /// comparison rules: they do not satisfy either greater-than test, while a
 /// NaN current speed is different from zero. The result is returned in AL.
-lf_checker_rt::export!(thiscall, rw_00cf09a0(this: *mut u8) -> u8 {
+#[unsafe(no_mangle)]
+pub extern "thiscall" fn rw_00cf09a0(this: *mut u8) -> u8 {
     const FLAG_BITS: usize = 0x1310;
     const SPEED_VALUE: usize = 0x1078;
     const SPEED_LIMIT: usize = 0x1404;
@@ -57,4 +58,4 @@ lf_checker_rt::export!(thiscall, rw_00cf09a0(this: *mut u8) -> u8 {
     }
 
     u8::from(active)
-});
+}
