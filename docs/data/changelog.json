@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-10",
-    "title": "Devlog: hourly review, 23:05 on 10 October",
+    "title": "Rewrites: 350 proofs re-run on the current checker and recorded on it",
     "commit": null,
+    "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
+    "changes": [
+      "350 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
+      "Proofs that did not hold or could not be run are not touched by this commit; the coordinator reads them one by one."
+    ]
+  },
+  {
+    "date": "2026-10-10",
+    "title": "Devlog: hourly review, 23:05 on 10 October",
+    "commit": "743028b56770dece2a00bdfe3cdf8bfdb042832e",
     "summary": "One row added to the day's hourly reviews.",
     "changes": [
       "16,992 verified after the first hour of Luna and Haiku lanes together: 35 more, one withdrawn. Haiku closed two large functions; Luna's 40 claims and Haiku's 2 all held when re-run before import.",
