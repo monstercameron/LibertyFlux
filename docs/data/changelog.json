@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 7 more functions pass the checker (18737 in total)",
+    "title": "Devlog: hourly review, 18:05 on 11 October",
     "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "18,597 verified and 37,253 of 37,413 named at 18:05. More than a hundred lanes verified a third of what thirty do: the processor, not memory, is the limit.",
+      "The conversion audit has withdrawn three rewrites and all three are proven again; it also found rewrites that differ from the original on widened inputs for other reasons."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 7 more functions pass the checker (18737 in total)",
+    "commit": "c141acae7a1a56c45bd3f0e4f1123170d88daab0",
     "summary": "Rust rewrites of original game functions, each proven against the original by the checker.",
     "changes": [
       "7 rewrites added under rewrites/verified: 0 script native handlers and 7 other functions.",
