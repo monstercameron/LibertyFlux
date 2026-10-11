@@ -40473,6 +40473,15 @@
   "lane": "r-s704"
  },
  {
+  "address": "0x00668050",
+  "name": "rage::ptxEvent::vf0",
+  "kind": "function",
+  "file": "functions/fn_00668050.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U100"
+ },
+ {
   "address": "0x00668190",
   "name": "rage::ptxEventEmitter::vf1",
   "kind": "function",
@@ -40480,6 +40489,51 @@
   "trials": 1200,
   "checker": "version 8",
   "lane": "r-s584"
+ },
+ {
+  "address": "0x006681B0",
+  "name": "rage::ptxEventEmitter::vf3",
+  "kind": "function",
+  "file": "functions/fn_006681b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U100"
+ },
+ {
+  "address": "0x00668210",
+  "name": "rage::ptxEventEmitter::vf0",
+  "kind": "function",
+  "file": "functions/fn_00668210.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U100"
+ },
+ {
+  "address": "0x00668A20",
+  "name": "ptx_event_emitter_update_registrations",
+  "kind": "function",
+  "file": "functions/fn_00668a20.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U100"
+ },
+ {
+  "address": "0x00668B40",
+  "name": "rage::ptxEventEmitter::vf11",
+  "kind": "function",
+  "file": "functions/fn_00668b40.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U100"
+ },
+ {
+  "address": "0x00668FE0",
+  "name": "ptx_event_scheduler_destroy",
+  "kind": "function",
+  "file": "functions/fn_00668fe0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "a-U100"
  },
  {
   "address": "0x00669280",
