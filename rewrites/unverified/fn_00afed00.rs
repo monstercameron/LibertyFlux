@@ -129,6 +129,23 @@ unsafe fn body_afed00(
     let scaled_radius = core::hint::black_box(ratio) * core::hint::black_box(scale);
     let threshold = core::hint::black_box(scaled_radius) * core::hint::black_box(radius);
     if 0.0f32 > threshold {
+        let mut world_position = [
+            load_f32(matrix.wrapping_add(0x30)),
+            load_f32(matrix.wrapping_add(0x34)),
+            load_f32(matrix.wrapping_add(0x38)),
+            load_f32(matrix.wrapping_add(0x3C)),
+        ];
+        let position_ptr = world_position.as_mut_ptr() as u32;
+        let location_ok = callee_cdecl!(4, u32, position_ptr);
+        if location_ok == 0 {
+            let _ = callee_cdecl!(5, u32, object);
+            return 1;
+        }
+        let model_rejected = callee_cdecl!(6, u32, object);
+        if model_rejected == 0 {
+            let _ = callee_cdecl!(5, u32, object);
+            return 1;
+        }
         return 0;
     }
 
