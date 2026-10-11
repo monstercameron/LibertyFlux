@@ -8,17 +8,19 @@
 /// The helper receives that stored pointer as its
 /// single stack argument. The remaining source fields at `+0x24`, `+0x28`,
 /// `+0x210`, `+0x214` and `+0x22a` are copied to destination offsets
-/// `+0x18`, `+0x1c`, `+0x20`, `+0x24` and `+0x28`. Bits `0x40`, `0x80`,
+/// `+0x18`, `+0x1c`, `+0x20`, `+0x24` and `+0x28`. The return value is the
+/// source word at `+0x214` with its low byte replaced by the byte at `+0x22a`.
+/// Bits `0x40`, `0x80`,
 /// `0x100`, `0x200` and `0x1000` of the source flags map to destination
-/// flag bits `0x04`, `0x08`, `0x10`, `0x20` and `0x40`. The helper's return
-/// value is forwarded. This is a thiscall with one stack argument.
+/// flag bits `0x04`, `0x08`, `0x10`, `0x20` and `0x40`. This is a thiscall
+/// with one stack argument.
 lf_checker_rt::export!(thiscall, rw_00B13310(this: u32, source: u32) -> u32 {
     unsafe {
-        const SOURCE_FLOATS: u32 = 0x20;
+        const SOURCE_DATA_POINTER: u32 = 0x20;
         const SOURCE_FLAGS: u32 = 0x118;
         const DEST_FLAGS: u32 = 0x29;
-        let float_data = (source.wrapping_add(SOURCE_FLOATS) as *const u32).read_unaligned();
-        let converted = lf_checker_rt::callee_thiscall!(
+        let float_data = (source.wrapping_add(SOURCE_DATA_POINTER) as *const u32).read_unaligned();
+        let _converter_result = lf_checker_rt::callee_thiscall!(
             1,
             u32,
             this,
@@ -32,7 +34,8 @@ lf_checker_rt::export!(thiscall, rw_00B13310(this: u32, source: u32) -> u32 {
         write(0x1c, read(0x28));
         write(0x20, read(0x210));
         write(0x24, read(0x214));
-        (this.wrapping_add(0x28) as *mut u8).write((source.wrapping_add(0x22a) as *const u8).read());
+        let return_byte = (source.wrapping_add(0x22a) as *const u8).read();
+        (this.wrapping_add(0x28) as *mut u8).write(return_byte);
 
         let source_flags = read(SOURCE_FLAGS);
         let mut packed_flags = 0u8;
@@ -42,6 +45,6 @@ lf_checker_rt::export!(thiscall, rw_00B13310(this: u32, source: u32) -> u32 {
         if source_flags & 0x200 != 0 { packed_flags |= 0x20; }
         if source_flags & 0x1000 != 0 { packed_flags |= 0x40; }
         (this.wrapping_add(DEST_FLAGS) as *mut u8).write(packed_flags);
-        converted
+        (read(0x214) & 0xFFFF_FF00) | u32::from(return_byte)
     }
 });
