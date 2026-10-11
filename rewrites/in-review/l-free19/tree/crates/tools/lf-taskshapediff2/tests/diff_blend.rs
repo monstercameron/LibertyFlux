@@ -39,6 +39,11 @@ use lf_peds_tasks::ped_task::aim_blend::{
 use lf_taskshapediff2::rewrites::fn_00a1ef80;
 use lf_taskshapediff2::{Xorshift, rt};
 
+/// File address of the scale global the transform reads.
+const SCALE_GLOBAL: u32 = 0x0117_35CC;
+/// Bytes of the planted auxiliary window that holds the scale global.
+const AUX_LEN: u32 = 0x40;
+
 /// Bytes planted for the record: the flag byte is the largest offset read.
 const RECORD_BYTES: usize = 0x400;
 /// Bytes planted for the two direction blocks, three floats each.
@@ -273,7 +278,12 @@ fn run_rewrite(case: &Case) -> (Outcome, Addresses) {
         directions: address_of(&directions),
     };
     install(case.gate_answers, addresses.directions);
+    // The scale global lives in the planted auxiliary window for this run.
+    let aux = vec![0u8; AUX_LEN as usize];
+    rt::set_aux(address_of(&aux));
+    rt::set_aux_word(SCALE_GLOBAL, case.scale);
     let answer = fn_00a1ef80::rw_00a1ef80(addresses.record, addresses.target, case.fallback);
+    drop(aux);
     let calls = take_calls();
     let direction_bits = if calls.iter().any(|call| call.id == HOOK_ID) {
         Some(direction_of(&directions, 1))
@@ -584,8 +594,8 @@ fn div(a: f32, b: f32) -> f32 {
 }
 
 /// Checks the lift against the rewrite on every generated case, and returns
-/// how many cases reached each path: gated, blended, zero-length, and a
-/// blend with a not-a-number factor.
+/// how many cases reached each path: gated, blended, and blended with a zero
+/// first direction.
 fn check_cases(seed: u32) -> [u32; 3] {
     let mut rng = Xorshift::new(seed);
     let mut paths = [0u32; 3];
@@ -598,14 +608,13 @@ fn check_cases(seed: u32) -> [u32; 3] {
             None => paths[0] += 1,
             Some(_) => paths[1] += 1,
         }
-        if let Some(bits) = rewrite.direction_bits {
+        if rewrite.direction_bits.is_some() {
             let first_zero = word_at(&case.directions, 0) & 0x7FFF_FFFF == 0
                 && word_at(&case.directions, 4) & 0x7FFF_FFFF == 0
                 && word_at(&case.directions, 8) & 0x7FFF_FFFF == 0;
             if first_zero {
                 paths[2] += 1;
             }
-            let _ = bits;
         }
         if rewrite.record[FLAG_OFFSET] & 0x02 == 0 {
             panic!("case {number}: flag bit not set on a path that returns");
