@@ -126621,6 +126621,69 @@
   "lane": "r-s506"
  },
  {
+  "address": "0x00C1D200",
+  "name": "CPlane::vf29",
+  "kind": "function",
+  "file": "functions/fn_00c1d200.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s708"
+ },
+ {
+  "address": "0x00C1DA60",
+  "name": "CPlane::vf85",
+  "kind": "function",
+  "file": "functions/fn_00c1da60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s708"
+ },
+ {
+  "address": "0x00C1DAA0",
+  "name": "streaming_copy_current_entry",
+  "kind": "function",
+  "file": "functions/fn_00c1daa0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s708"
+ },
+ {
+  "address": "0x00C1FA70",
+  "name": "streaming_test_hash_bits",
+  "kind": "function",
+  "file": "functions/fn_00c1fa70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s708"
+ },
+ {
+  "address": "0x00C1FAA0",
+  "name": "streaming_lookup_named_entry",
+  "kind": "function",
+  "file": "functions/fn_00c1faa0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s708"
+ },
+ {
+  "address": "0x00C1FB30",
+  "name": "streaming_clear_entry_flags",
+  "kind": "function",
+  "file": "functions/fn_00c1fb30.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s708"
+ },
+ {
+  "address": "0x00C1FBB0",
+  "name": "streaming_release_entry_if_present",
+  "kind": "function",
+  "file": "functions/fn_00c1fbb0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s708"
+ },
+ {
   "address": "0x00C22930",
   "name": "stream_entry_remove",
   "kind": "function",
