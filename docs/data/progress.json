@@ -1,6 +1,6 @@
 {
   "updated": "2026-10-11",
-  "updated_at": "2026-10-11 19:53",
+  "updated_at": "2026-10-11 19:54",
   "phase": {
     "index": 3,
     "name": "Rewrite"
@@ -13,11 +13,11 @@
   "stages": {
     "identified": 37413,
     "named": 37258,
-    "rewritten": 19181,
-    "verified": 18925
+    "rewritten": 19182,
+    "verified": 18941
   },
   "structures": 340,
-  "symbols": 19028,
+  "symbols": 19044,
   "measured": [
     {
       "label": "Code section",
@@ -117,9 +117,9 @@
     },
     {
       "label": "Game code verified, measured in bytes",
-      "value": 37.7,
+      "value": 37.8,
       "unit": "percent",
-      "source": "sizes from the function inventory: 2764629 of 7323792 bytes of game code are in verified functions"
+      "source": "sizes from the function inventory: 2765548 of 7323792 bytes of game code are in verified functions"
     },
     {
       "label": "Code in functions of 1,000 bytes and more that is verified",
@@ -135,21 +135,21 @@
     },
     {
       "label": "Rewrites that pass checker version 1",
-      "value": 19181,
+      "value": 19182,
       "unit": "functions",
       "source": "production lanes' results files; to be re-run under checker version 2 before they count as verified"
     },
     {
       "label": "Rewrites verified under checker version 2",
-      "value": 18925,
+      "value": 18941,
       "unit": "functions",
       "source": "rewrites/verified/index.json in the repository"
     }
   ],
   "activity": {
     "lanes_running": 36,
-    "lanes_finished": 2432,
-    "lanes_incomplete": 792,
+    "lanes_finished": 2436,
+    "lanes_incomplete": 789,
     "devlog_entries": 578
   },
   "map": [
@@ -3075,7 +3075,7 @@
       "to": "0x00B137A3",
       "count": 90,
       "named": 90,
-      "rewritten": 7,
+      "rewritten": 8,
       "verified": 3
     },
     {
@@ -3175,7 +3175,7 @@
       "count": 151,
       "named": 151,
       "rewritten": 58,
-      "verified": 42
+      "verified": 58
     },
     {
       "stage": "verified",
@@ -4477,7 +4477,7 @@
   "mapRange": "0x00401000 to 0x00E72EFA",
   "bytes": {
     "game": 7323792,
-    "verified": 2764629,
+    "verified": 2765548,
     "large_functions": 2801402,
     "large_functions_verified": 801644
   },
