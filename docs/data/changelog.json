@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rust in progress: 6 files from lanes (616 unverified rewrites, 19 in review)",
+    "title": "Devlog: hourly review, 19:05 on 11 October",
     "commit": null,
+    "summary": "One row added to the day's hourly reviews.",
+    "changes": [
+      "18,888 of 37,413 functions verified at 19:05: half the game. 18,824 bytes in the hour at thirty lanes, net of six withdrawals.",
+      "Widening proofs' inputs has withdrawn nine verified rewrites today, five of them proven again; the pipeline failed on lost index rows, now restored and locked against."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rust in progress: 6 files from lanes (616 unverified rewrites, 19 in review)",
+    "commit": "3f47d92135ae2a7456e1f20f062f920fecd6b87f",
     "summary": "Rust that lanes have written but that is not a verified rewrite, committed as it is produced.",
     "changes": [
       "rewrites/unverified holds 616 rewrites that have not passed the checker (deferred, failed, or not yet run); index.json gives the lane, the outcome and the reason for each. They are not counted as rewritten or verified.",
