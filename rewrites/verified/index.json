@@ -145782,6 +145782,150 @@
   "lane": "r-s525"
  },
  {
+  "address": "0x00DE1350",
+  "name": "UIScrollingMenu::~UIScrollingMenu__deleting",
+  "kind": "function",
+  "file": "functions/fn_00de1350.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s669"
+ },
+ {
+  "address": "0x00DE14B0",
+  "name": "scrolling_menu_apply_child_state",
+  "kind": "function",
+  "file": "functions/fn_00de14b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s669"
+ },
+ {
+  "address": "0x00DE1840",
+  "name": "UIScrollingMenu::vf121",
+  "kind": "function",
+  "file": "functions/fn_00de1840.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s669"
+ },
+ {
+  "address": "0x00DE1850",
+  "name": "UIScrollingMenu::vf0",
+  "kind": "function",
+  "file": "functions/fn_00de1850.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s669"
+ },
+ {
+  "address": "0x00DE18D0",
+  "name": "scrolling_menu_get_clamped_child_count",
+  "kind": "function",
+  "file": "functions/fn_00de18d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s669"
+ },
+ {
+  "address": "0x00DE1910",
+  "name": "UIScrollingMenu::vf117",
+  "kind": "function",
+  "file": "functions/fn_00de1910.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s669"
+ },
+ {
+  "address": "0x00DE1930",
+  "name": "scrolling_menu_any_alert_active",
+  "kind": "function",
+  "file": "functions/fn_00de1930.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s669"
+ },
+ {
+  "address": "0x00DE1A90",
+  "name": "scrolling_menu_any_child_alert_active",
+  "kind": "function",
+  "file": "functions/fn_00de1a90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s669"
+ },
+ {
+  "address": "0x00DE1AB0",
+  "name": "scrolling_menu_value_is_positive",
+  "kind": "function",
+  "file": "functions/fn_00de1ab0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s669"
+ },
+ {
+  "address": "0x00DE1AC0",
+  "name": "scrolling_menu_value_is_negative",
+  "kind": "function",
+  "file": "functions/fn_00de1ac0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s669"
+ },
+ {
+  "address": "0x00DE1AD0",
+  "name": "UIScrollingMenu::vf94",
+  "kind": "function",
+  "file": "functions/fn_00de1ad0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s669"
+ },
+ {
+  "address": "0x00DE1B10",
+  "name": "scrolling_menu_dispatch_if_no_alert",
+  "kind": "function",
+  "file": "functions/fn_00de1b10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s669"
+ },
+ {
+  "address": "0x00DE21B0",
+  "name": "UIScrollingMenu::vf107",
+  "kind": "function",
+  "file": "functions/fn_00de21b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s669"
+ },
+ {
+  "address": "0x00DE21C0",
+  "name": "UIScrollingMenu::vf110",
+  "kind": "function",
+  "file": "functions/fn_00de21c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s669"
+ },
+ {
+  "address": "0x00DE2FD0",
+  "name": "scrolling_menu_forward_row_value",
+  "kind": "function",
+  "file": "functions/fn_00de2fd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s669"
+ },
+ {
+  "address": "0x00DE2FE0",
+  "name": "UIScrollingMenu::vf72",
+  "kind": "function",
+  "file": "functions/fn_00de2fe0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s669"
+ },
+ {
   "address": "0x00DE3E90",
   "name": "UIBasicClip::vf123",
   "kind": "function",
