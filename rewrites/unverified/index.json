@@ -1424,6 +1424,22 @@
   "reason": null
  },
  {
+  "address": "0x0098EF90",
+  "name": "audio_voice_set_scaled255_29",
+  "file": "fn_0098ef90.rs",
+  "lane": "r-s735",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x0098EFF0",
+  "name": "audio_voice_set_float_200",
+  "file": "fn_0098eff0.rs",
+  "lane": "r-s735",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x009AA110",
   "name": "conv_first_or_null",
   "file": "fn_009aa110.rs",
@@ -1629,6 +1645,14 @@
   "file": "fn_009dafd0.rs",
   "lane": "r-s690",
   "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x009DB660",
+  "name": "CSwayableAttr::~CSwayableAttr__deleting",
+  "file": "fn_009db660.rs",
+  "lane": "r-s740",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -1921,8 +1945,16 @@
  },
  {
   "address": "0x00A8AD20",
-  "name": "world_pool_operation_a8ad20",
+  "name": "pool_retry_probe",
   "file": "fn_00a8ad20.rs",
+  "lane": "r-s737",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00A8ADC0",
+  "name": "streaming_make_space_for",
+  "file": "fn_00a8adc0.rs",
   "lane": "r-s737",
   "outcome": "not_reached",
   "reason": null
@@ -2563,6 +2595,14 @@
   "address": "0x00B4BF90",
   "name": "NativeImpl_GET_GROUP_SIZE_2",
   "file": "fn_00b4bf90.rs",
+  "lane": "r-s730",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00B4C160",
+  "name": "group_index_from_entry",
+  "file": "fn_00b4c160.rs",
   "lane": "r-s730",
   "outcome": "not_reached",
   "reason": null
@@ -4574,14 +4614,6 @@
   "lane": "r-s461",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x00E6CEB0",
-  "name": "vehicle_tuning_ratio_init_38",
-  "file": "fn_00e6ceb0.rs",
-  "lane": "r-s736",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x00E6CED0",
