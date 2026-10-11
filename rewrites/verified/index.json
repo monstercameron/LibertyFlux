@@ -77319,6 +77319,186 @@
   "lane": "a-S10"
  },
  {
+  "address": "0x00A6CC70",
+  "name": "prepend_task_to_global_list",
+  "kind": "function",
+  "file": "functions/fn_00a6cc70.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6CC90",
+  "name": "clear_global_task_list",
+  "kind": "function",
+  "file": "functions/fn_00a6cc90.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6CCC0",
+  "name": "clear_fixed_stride_task_fields",
+  "kind": "function",
+  "file": "functions/fn_00a6ccc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6CD50",
+  "name": "CTaskComplexPlayerInCover::CTaskComplexPlayerInCover",
+  "kind": "function",
+  "file": "functions/fn_00a6cd50.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6CEA0",
+  "name": "CTaskComplexPlayerPlaceCarBomb::CTaskComplexPlayerPlaceCarBomb",
+  "kind": "function",
+  "file": "functions/fn_00a6cea0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6CEE0",
+  "name": "construct_task_with_base_flag",
+  "kind": "function",
+  "file": "functions/fn_00a6cee0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6CFA0",
+  "name": "construct_task_with_identifier",
+  "kind": "function",
+  "file": "functions/fn_00a6cfa0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6CFD0",
+  "name": "CTaskComplexPlayerGun::~CTaskComplexPlayerGun",
+  "kind": "function",
+  "file": "functions/fn_00a6cfd0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6D020",
+  "name": "CTaskComplexPlayerInCover::~CTaskComplexPlayerInCover",
+  "kind": "function",
+  "file": "functions/fn_00a6d020.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6D050",
+  "name": "CTaskComplexPlayerOnFoot::~CTaskComplexPlayerOnFoot",
+  "kind": "function",
+  "file": "functions/fn_00a6d050.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6D0F0",
+  "name": "CTaskComplexPlayerPlaceCarBomb::~CTaskComplexPlayerPlaceCarBomb",
+  "kind": "function",
+  "file": "functions/fn_00a6d0f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6D190",
+  "name": "set_player_task_vtable_pair",
+  "kind": "function",
+  "file": "functions/fn_00a6d190.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6D1B0",
+  "name": "clean_up_swim_task",
+  "kind": "function",
+  "file": "functions/fn_00a6d1b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6D1F0",
+  "name": "CEventAcquaintancePedDislike::~CEventAcquaintancePedDislike__deleting",
+  "kind": "function",
+  "file": "functions/fn_00a6d1f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6D220",
+  "name": "CTaskComplexPlayerGun::~CTaskComplexPlayerGun__deleting",
+  "kind": "function",
+  "file": "functions/fn_00a6d220.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6D250",
+  "name": "CTaskComplexPlayerIdles::~CTaskComplexPlayerIdles__deleting",
+  "kind": "function",
+  "file": "functions/fn_00a6d250.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6D280",
+  "name": "CTaskComplexPlayerInCover::~CTaskComplexPlayerInCover__deleting",
+  "kind": "function",
+  "file": "functions/fn_00a6d280.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6D2B0",
+  "name": "CTaskComplexPlayerOnFoot::~CTaskComplexPlayerOnFoot__deleting",
+  "kind": "function",
+  "file": "functions/fn_00a6d2b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6D2E0",
+  "name": "CTaskComplexPlayerPlaceCarBomb::~CTaskComplexPlayerPlaceCarBomb__deleting",
+  "kind": "function",
+  "file": "functions/fn_00a6d2e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A6D370",
+  "name": "CTaskSimpleMoveSwim::~CTaskSimpleMoveSwim__deleting",
+  "kind": "function",
+  "file": "functions/fn_00a6d370.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
   "address": "0x00A6D3A0",
   "name": "CTaskSimplePauseSystemTimer::vf0",
   "kind": "function",
@@ -77805,6 +77985,24 @@
   "lane": "a-G13"
  },
  {
+  "address": "0x00A73240",
+  "name": "clear_task_queue_entry",
+  "kind": "function",
+  "file": "functions/fn_00a73240.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A73250",
+  "name": "clear_task_queue",
+  "kind": "function",
+  "file": "functions/fn_00a73250.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
   "address": "0x00A73ED0",
   "name": "CTaskSimpleMovePlayer::vf17",
   "kind": "function",
@@ -77823,6 +78021,24 @@
   "lane": "a-U32"
  },
  {
+  "address": "0x00A74160",
+  "name": "clear_task_timer_state",
+  "kind": "function",
+  "file": "functions/fn_00a74160.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A741B0",
+  "name": "update_task_timer_state",
+  "kind": "function",
+  "file": "functions/fn_00a741b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
   "address": "0x00A74B70",
   "name": "ped_task_update_float_state",
   "kind": "function",
@@ -77830,6 +78046,15 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b420"
+ },
+ {
+  "address": "0x00A753D0",
+  "name": "clear_owned_task_fields",
+  "kind": "function",
+  "file": "functions/fn_00a753d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
  },
  {
   "address": "0x00A75400",
@@ -77848,6 +78073,24 @@
   "trials": 1200,
   "checker": "version 5",
   "lane": "r-b420"
+ },
+ {
+  "address": "0x00A757E0",
+  "name": "update_task_pool_marker",
+  "kind": "function",
+  "file": "functions/fn_00a757e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
+ },
+ {
+  "address": "0x00A75820",
+  "name": "build_task_from_map_data",
+  "kind": "function",
+  "file": "functions/fn_00a75820.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s639"
  },
  {
   "address": "0x00A758B0",
