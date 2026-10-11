@@ -127224,6 +127224,168 @@
   "lane": "r-s707"
  },
  {
+  "address": "0x00C55560",
+  "name": "CPedScanner::destroy_member_then_base",
+  "kind": "function",
+  "file": "functions/fn_00c55560.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C55580",
+  "name": "CVehicleScanner::destroy_member_then_base",
+  "kind": "function",
+  "file": "functions/fn_00c55580.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C555A0",
+  "name": "CEntityScanner::vf0",
+  "kind": "function",
+  "file": "functions/fn_00c555a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C555C0",
+  "name": "CEventAcquaintancePedHateBadlyLit::~CEventAcquaintancePedHateBadlyLit__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c555c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C555F0",
+  "name": "CEventAcquaintancePedLike::~CEventAcquaintancePedLike__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c555f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C55620",
+  "name": "CEventAcquaintancePedRespect::~CEventAcquaintancePedRespect__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c55620.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C55650",
+  "name": "CEventHealthLow::~CEventHealthLow__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c55650.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C55680",
+  "name": "CEventHealthReallyLow::~CEventHealthReallyLow__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c55680.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C556B0",
+  "name": "CEventLeaderEnteredCarAsDriver::~CEventLeaderEnteredCarAsDriver__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c556b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C556F0",
+  "name": "CEventLeaderEnteredCover::~CEventLeaderEnteredCover__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c556f0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C55720",
+  "name": "CEventLeaderExitedCarAsDriver::~CEventLeaderExitedCarAsDriver__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c55720.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C55750",
+  "name": "CEventLeaderHolsteredWeapon::~CEventLeaderHolsteredWeapon__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c55750.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C55780",
+  "name": "CEventLeaderLeftCover::~CEventLeaderLeftCover__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c55780.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C557B0",
+  "name": "CEventLeaderUnholsteredWeapon::~CEventLeaderUnholsteredWeapon__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c557b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C557E0",
+  "name": "CEventPedCollisionWithPlayer::~CEventPedCollisionWithPlayer__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c557e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C55810",
+  "name": "CEventPlayerCollisionWithPed::~CEventPlayerCollisionWithPed__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c55810.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C55840",
+  "name": "CEventScanner::~CEventScanner__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c55840.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
+  "address": "0x00C55860",
+  "name": "CEventScriptedAttractor::~CEventScriptedAttractor__deleting",
+  "kind": "function",
+  "file": "functions/fn_00c55860.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
+ },
+ {
   "address": "0x00C55890",
   "name": "CEventSeenCop::~CEventSeenCop__deleting",
   "kind": "function",
@@ -127393,6 +127555,15 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s670"
+ },
+ {
+  "address": "0x00C56660",
+  "name": "CEventSeenCop::~CEventSeenCop",
+  "kind": "function",
+  "file": "functions/fn_00c56660.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s710"
  },
  {
   "address": "0x00C56690",
