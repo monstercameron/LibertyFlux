@@ -132,6 +132,19 @@ pub const ROWS: &[Row] = &[
             "the callees are assumed not to write the pose or the state block",
         ],
     },
+    // TaskKey: the id lookup. Its two lookups and the record's id word
+    // travel as TaskIdTable methods.
+    Row {
+        class: "TaskKey",
+        method: "id_or_default",
+        state: State::Proven,
+        narrows: &[
+            "the key is read from the owner's key word by the caller; the proof plants it in the owner image and compares the owner image afterwards",
+            "the two lookups travel as TaskIdTable::primary and fallback: the proof compares each call in order with its key argument and answer; the fallback is asked only when the primary answers zero",
+            "the id word of the final record is a plain read through TaskIdTable::record_id; the proof plants the records and compares the id returned",
+            "a null final record (both lookups answer zero) faults in the original on the id word; the proof never plants that case, and the lift does not model the fault",
+        ],
+    },
     // SeekRecord: the seek record builder. No callees.
     Row {
         class: "SeekRecord",

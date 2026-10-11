@@ -1,6 +1,7 @@
 // original: 0x00539F30 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CoopDrugFactory, player_schema::LeaderboardInfo, 10>::vf12
 /// Use the selector-specific lookup helper to obtain an indexed key table and a candidate-key array. Return the first candidate position whose unsigned key equals the key selected by `lookup_index`; return `u32::MAX` when the helper declines, the selected key is the sentinel, the candidate count is zero, or no candidate matches. The receiver is not read.
-lf_checker_rt::export!(thiscall, rw_00539f30(_receiver: u32, lookup_index: u32) -> u32 {
+#[unsafe(no_mangle)]
+pub extern "thiscall" fn rw_00539f30(_receiver: u32, lookup_index: u32) -> u32 {
     const NO_MATCH: u32 = u32::MAX;
     const SELECTOR: u32 = 0x2;
     #[repr(C)]
@@ -29,4 +30,4 @@ lf_checker_rt::export!(thiscall, rw_00539f30(_receiver: u32, lookup_index: u32) 
         }
     }
     NO_MATCH
-});
+}

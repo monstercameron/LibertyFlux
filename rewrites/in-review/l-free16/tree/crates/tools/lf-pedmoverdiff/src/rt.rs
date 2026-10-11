@@ -74,6 +74,15 @@ macro_rules! callee_thiscall {
     }};
 }
 
+/// Call intercepted callee `id` with the cdecl convention.
+#[macro_export]
+macro_rules! callee_cdecl {
+    ($id:expr, $ret:ty, $($arg:expr),* $(,)?) => {{
+        let f: extern "cdecl" fn($( $crate::__ty!($arg) ),*) -> $ret =
+            unsafe { core::mem::transmute($crate::callee_addr($id) as usize) };
+        f($( $arg ),*)
+    }};
+}
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __ty {

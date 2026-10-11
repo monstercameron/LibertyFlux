@@ -5,10 +5,12 @@
 /// state must be one of 1 through 6. For state 3 in network mode, the
 /// transition continues only when the signed lookup value and the player's
 /// marker agree on whether they equal 0x1e. A nonzero timer is clamped to
-/// 0x61a7 only when it is signed-greater than 0x61a8. Otherwise, an empty
-/// pickup may notify the player and network helpers. The final stored word is
-/// read from a global setting. All helper results and their call order are
-/// part of the behavior.
+/// 0x61a7 only when it is signed-greater than 0x61a8, passed to the event
+/// helper, and then cleared. With a zero timer, an empty pickup obtains a model
+/// index from a helper. The event helper receives the player's indexed model
+/// value and either the clamped timer or that model index. The final stored
+/// word comes from a global setting. Helper results and call order are part of
+/// the behavior.
 ///
 /// Calling convention: thiscall with one 32-bit player pointer on the stack.
 lf_checker_rt::export!(thiscall, rw_00B0BD80(this: u32, player: u32) -> u32 {
@@ -68,24 +70,37 @@ lf_checker_rt::export!(thiscall, rw_00B0BD80(this: u32, player: u32) -> u32 {
             }
 
             let timer = unsafe { read_u32(this + TIMER_OFFSET) };
-            if timer != 0 {
-                let timer_arg = if (timer as i32) > TIMER_LIMIT { TIMER_CLAMP } else { timer };
-                let _ = lf_checker_rt::callee_thiscall!(4, u32, this, timer_arg);
+            let mut event_argument = 0u32;
+            let should_dispatch_event = if timer != 0 {
+                event_argument = if (timer as i32) > TIMER_LIMIT { TIMER_CLAMP } else { timer };
+                let _ = lf_checker_rt::callee_thiscall!(4, u32, this, event_argument);
+                true
+            } else if unsafe { read_u32(this) } == 0 {
+                let model_result = lf_checker_rt::callee_cdecl!(3, u32, lookup_value);
+                event_argument = unsafe { read_u16(model_result + RESULT_MODEL_OFFSET) };
+                true
             } else {
-                if unsafe { read_u32(this) } == 0 {
-                    let model_result = lf_checker_rt::callee_cdecl!(3, u32, lookup_value);
-                    let model_index = unsafe { read_u16(model_result + RESULT_MODEL_OFFSET) };
-                    let player_method = player.wrapping_add(PLAYER_METHOD_OFFSET);
-                    let model_entry = player
-                        .wrapping_add(PLAYER_ARRAY_OFFSET)
-                        .wrapping_add(model_index.wrapping_mul(SLOT_INDEX_SCALE));
-                    let model_value = unsafe { read_u32(model_entry) };
-                    let _ = lf_checker_rt::callee_thiscall!(5, u32, player_method, model_value);
-                    let network_object = lf_checker_rt::relocated(NETWORK_OBJECT_VA);
-                    let _ = lf_checker_rt::callee_thiscall!(6, u32, network_object, 0u32);
-                }
-                let _ = lf_checker_rt::callee_thiscall!(4, u32, this, 0u32);
+                false
+            };
+
+            if should_dispatch_event {
+                let player_method = player.wrapping_add(PLAYER_METHOD_OFFSET);
+                let model_entry = player
+                    .wrapping_add(PLAYER_ARRAY_OFFSET)
+                    .wrapping_add(state.wrapping_mul(SLOT_INDEX_SCALE));
+                let model_value = unsafe { read_u32(model_entry) };
+                let _ = lf_checker_rt::callee_thiscall!(
+                    5,
+                    u32,
+                    player_method,
+                    model_value,
+                    event_argument
+                );
+                let network_object = lf_checker_rt::relocated(NETWORK_OBJECT_VA);
+                let _ = lf_checker_rt::callee_thiscall!(6, u32, network_object, 0u32);
             }
+
+            let _ = lf_checker_rt::callee_thiscall!(4, u32, this, 0u32);
 
             let copy_value = unsafe { read_global(COPY_VALUE_VA) };
             unsafe { write_u32(this, copy_value) };

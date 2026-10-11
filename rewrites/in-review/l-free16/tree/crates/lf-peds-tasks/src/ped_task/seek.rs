@@ -19,8 +19,10 @@ pub const SEEK_MODE: u32 = 2;
 pub const STEP_SCALE: f32 = 8.0;
 /// The tuning quadruple the record carries twice, once before the step
 /// and once after it. The four values are the routine's constants as the
-/// original stores them.
-pub const TUNING: [f32; 4] = [8.0, 64.0, 10_000.0, 10_000.0];
+/// original stores them: the last two are the bits `0x461C_3C00`, which
+/// read as 9999.5 (the rewrite's comment says 10000; its bits are the
+/// verified value).
+pub const TUNING: [f32; 4] = [8.0, 64.0, f32::from_bits(0x461C_3C00), f32::from_bits(0x461C_3C00)];
 
 // The float operations are pinned in the original's operand order: each
 // operand passes through `black_box`, so the optimiser cannot commute the

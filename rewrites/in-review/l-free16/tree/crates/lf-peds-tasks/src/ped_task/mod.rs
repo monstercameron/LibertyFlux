@@ -36,6 +36,7 @@
 #![forbid(unsafe_code)]
 
 mod create;
+mod id_lookup;
 mod mover;
 mod pose;
 mod seek;
@@ -46,6 +47,7 @@ pub use mover::{
     BlendState, COMMIT_FLAG_ARG, MoverCallees, MoverPose, NOT_READY, SNAP_FLAG,
 };
 pub use seek::{SEEK_MODE, SeekGoal, SeekMover, SeekRecord, STEP_SCALE, TUNING};
+pub use id_lookup::{DEFAULT_ID, NO_ID, TaskIdTable, TaskKey};
 pub use create::{
     ArgLookup, BuildManagers, ChainClone, ChainCloner, ChainEntry, ChainNode, ChainOwner,
     CloneProduct, FLAG_DONE, FLAG_EXTRA, FoundEntry, KIND_11, Kind11Task, NONE, PRIORITY, PedMgr,

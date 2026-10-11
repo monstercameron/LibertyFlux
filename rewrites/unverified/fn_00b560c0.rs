@@ -32,13 +32,13 @@ lf_checker_rt::export!(cdecl, rw_00b560c0(out: u32, input_scale: f32, source: u3
         }
         let scaled = mul(unsafe { read_f32(source.wrapping_add(SOURCE_SCALE)) }, input_scale);
         let source_word = source;
-        let mut helper_values = [0x00e9_5580u32, 0x0000_0510u32, 0, 0];
+        let mut helper_values = [0x00e9_5580u32, 0x0000_0510u32, 0, 0, 0, 0, 0, 0];
         let _ = lf_checker_rt::callee_thiscall!(
             HELPER, u32, source_word, scaled.to_bits(),
             helper_values.as_mut_ptr() as u32, 0, 1
         );
         for index in 0..4u32 {
-            unsafe { write_u32(out.wrapping_add(index * 4), helper_values[index as usize]) };
+            unsafe { write_u32(out.wrapping_add(index * 4), helper_values[index as usize + 4]) };
         }
         let _ = lf_checker_rt::callee_thiscall!(COOKIE_CHECK, u32, 0);
         out

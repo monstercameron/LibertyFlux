@@ -1,6 +1,7 @@
 // original: 0x00539B40 rage::rlConcreteLeaderboardInfo<player_schema::Leaderboard_Ranked_CoopBombBase_BG_TIME, player_schema::LeaderboardInfo, 10>::vf13
 /// Ask the selector-specific lookup helper for a candidate count and key array, then return the position of `expected_key`. The count is signed: zero and negative counts return `u32::MAX`; a positive count scans that many entries. The receiver is not read.
-lf_checker_rt::export!(thiscall, rw_00539b40(_receiver: u32, expected_key: u32) -> u32 {
+#[unsafe(no_mangle)]
+pub extern "thiscall" fn rw_00539b40(_receiver: u32, expected_key: u32) -> u32 {
     const NO_MATCH: u32 = u32::MAX;
     const SELECTOR: u32 = 0x31;
     #[repr(C)]
@@ -25,4 +26,4 @@ lf_checker_rt::export!(thiscall, rw_00539b40(_receiver: u32, expected_key: u32) 
         }
     }
     NO_MATCH
-});
+}

@@ -65,6 +65,7 @@ lf_checker_rt::export!(thiscall, rw_009359e0(this: u32) -> u32 {
             }
         }
 
+        let _ = lf_checker_rt::callee_thiscall!(7, u32, 0);
         1
     }
 });

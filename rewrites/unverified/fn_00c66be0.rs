@@ -6,8 +6,6 @@
 /// result when available, otherwise it asks the object's fallback hook.
 #[inline(never)]
 unsafe fn rewrite_body(this: u32) -> u32 {
-    const VTABLE_GATE_A: u32 = 0x24;
-    const VTABLE_GATE_B: u32 = 0x28;
     const NESTED_OBJECT: u32 = 0x290;
     const LINK_OBJECT: u32 = 0x34;
     const LOOP_VALUES: u32 = 0x2b8;
@@ -90,7 +88,6 @@ unsafe fn rewrite_body(this: u32) -> u32 {
         core::hint::black_box(value as f32)
     }
 
-    let vtable = unsafe { read_u32(this) };
     let gate_a = unsafe {
         lf_checker_rt::callee_thiscall!(
             GATE_A,
@@ -114,30 +111,30 @@ unsafe fn rewrite_body(this: u32) -> u32 {
         let link = unsafe { read_u32(this.wrapping_add(LINK_OBJECT)) };
         let nested = unsafe { read_u32(link.wrapping_add(4)) };
         let _ = unsafe { lf_checker_rt::callee_thiscall!(LINK_HOOK, u32, nested, this) };
-    }
 
-    for slot in 0..10u32 {
-        let value = unsafe { read_u32(this.wrapping_add(LOOP_VALUES + slot * 4)) };
-        if value != u32::MAX {
-            let _ = unsafe { lf_checker_rt::callee_thiscall!(LIST_VISIT, u32, this, value) };
+        for slot in 0..10u32 {
+            let value = unsafe { read_u32(this.wrapping_add(LOOP_VALUES + slot * 4)) };
+            if value != u32::MAX {
+                let _ = unsafe { lf_checker_rt::callee_thiscall!(LIST_VISIT, u32, this, value) };
+            }
         }
-    }
 
-    let key = unsafe { read_u16(this.wrapping_add(KEY)) as i16 as i32 };
-    let table_base = lf_checker_rt::global::<u32>(PTR_TABLE_FILE_VA) as u32;
-    let table_slot = table_base.wrapping_add((key.wrapping_mul(4)) as u32);
-    let selected = unsafe { read_u32(table_slot) };
-    let selected_info = unsafe { read_u32(selected.wrapping_add(POINTER_FIELD)) };
-    if unsafe { read_u32(selected_info.wrapping_add(READY_FIELD)) } != 0 {
-        let _ = unsafe {
-            lf_checker_rt::callee_thiscall!(TABLE_ACTION, u32, this, 10u32, selected)
-        };
-        let _ = unsafe {
-            lf_checker_rt::callee_thiscall!(TABLE_ACTION, u32, this, 12u32, selected)
-        };
-        let _ = unsafe {
-            lf_checker_rt::callee_thiscall!(TABLE_ACTION, u32, this, 14u32, selected)
-        };
+        let key = unsafe { read_u16(this.wrapping_add(KEY)) as i16 as i32 };
+        let table_base = lf_checker_rt::global::<u32>(PTR_TABLE_FILE_VA) as u32;
+        let table_slot = table_base.wrapping_add((key.wrapping_mul(4)) as u32);
+        let selected = unsafe { read_u32(table_slot) };
+        let selected_info = unsafe { read_u32(selected.wrapping_add(POINTER_FIELD)) };
+        if unsafe { read_u32(selected_info.wrapping_add(READY_FIELD)) } != 0 {
+            let _ = unsafe {
+                lf_checker_rt::callee_thiscall!(TABLE_ACTION, u32, this, 10u32, selected)
+            };
+            let _ = unsafe {
+                lf_checker_rt::callee_thiscall!(TABLE_ACTION, u32, this, 12u32, selected)
+            };
+            let _ = unsafe {
+                lf_checker_rt::callee_thiscall!(TABLE_ACTION, u32, this, 14u32, selected)
+            };
+        }
     }
 
     let handle = unsafe { lf_checker_rt::callee_thiscall!(HANDLE_HOOK, u32, this) };
@@ -295,12 +292,10 @@ unsafe fn rewrite_body(this: u32) -> u32 {
     }
 
     let result = unsafe { lf_checker_rt::callee_thiscall!(MATRIX_FINISH, u32, matrix) };
-    if result != 0 {
-        result
-    } else {
-        let _ = vtable;
-        unsafe { lf_checker_rt::callee_thiscall!(FALLBACK_RESULT, u32, this) }
+    if result == 0 {
+        let _ = unsafe { lf_checker_rt::callee_thiscall!(FALLBACK_RESULT, u32, this) };
     }
+    result
 }
 
 lf_checker_rt::export!(thiscall, rw_00C66BE0(this: u32) -> u32 {
