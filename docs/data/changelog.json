@@ -1,8 +1,18 @@
 [
   {
     "date": "2026-10-11",
-    "title": "Rewrites: 1 more withdrawn by the conversion audit, and the two withdrawn earlier are back with corrected conversions",
+    "title": "Rewrites: 51 proofs re-run on the current checker and recorded on it",
     "commit": null,
+    "summary": "Proofs of record made on an earlier checker version were run again, unchanged, on the current one.",
+    "changes": [
+      "51 proofs hold on the current checker; their rows in index.json now name it. No rewrite changed.",
+      "Proofs that did not hold or could not be run are not touched by this commit; the coordinator reads them one by one."
+    ]
+  },
+  {
+    "date": "2026-10-11",
+    "title": "Rewrites: 1 more withdrawn by the conversion audit, and the two withdrawn earlier are back with corrected conversions",
+    "commit": "08d45a556e217b414960e6f0360e6d3c1e60ee44",
     "summary": "The verified count goes down by one. The scripted audit of float-to-integer conversions has tested 48 of the 95 functions that needed it and found one more rewrite whose conversion differs from the original out of range.",
     "changes": [
       "The withdrawn rewrite resolves a control binding. On a copy of its contract widened so that the converted value takes not-a-number, the infinities and values past each end of the range, the stock checker fails the tracked rewrite in 4 of 1,000 trials; the same rewrite with the conversion written to match the instruction passes 1,000 of 1,000. It stays withdrawn until a lane proves the corrected copy.",
