@@ -117729,6 +117729,15 @@
   "lane": "r-s400"
  },
  {
+  "address": "0x00BE7970",
+  "name": "CTaskSimpleWaitForBus::vf17",
+  "kind": "function",
+  "file": "functions/fn_00be7970.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s642"
+ },
+ {
   "address": "0x00BE7A20",
   "name": "CTaskSimpleWaitUntilAreaCodesMatch::vf17",
   "kind": "function",
@@ -117835,6 +117844,15 @@
   "trials": 1200,
   "checker": "version 4",
   "lane": "r-s302"
+ },
+ {
+  "address": "0x00BE7DC0",
+  "name": "reset_task_storage_slots",
+  "kind": "function",
+  "file": "functions/fn_00be7dc0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s642"
  },
  {
   "address": "0x00BE7FC0",
@@ -118573,6 +118591,96 @@
   "trials": 1000,
   "checker": "version 5",
   "lane": "r-s413"
+ },
+ {
+  "address": "0x00BED420",
+  "name": "clear_task_secondary_state",
+  "kind": "function",
+  "file": "functions/fn_00bed420.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s642"
+ },
+ {
+  "address": "0x00BED470",
+  "name": "initialize_task_visual_descriptor",
+  "kind": "function",
+  "file": "functions/fn_00bed470.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s642"
+ },
+ {
+  "address": "0x00BED4A0",
+  "name": "assign_task_selection_result",
+  "kind": "function",
+  "file": "functions/fn_00bed4a0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s642"
+ },
+ {
+  "address": "0x00BEDF10",
+  "name": "build_task_resource_snapshot",
+  "kind": "function",
+  "file": "functions/fn_00bedf10.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s642"
+ },
+ {
+  "address": "0x00BEDF60",
+  "name": "toggle_task_option_bit",
+  "kind": "function",
+  "file": "functions/fn_00bedf60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s642"
+ },
+ {
+  "address": "0x00BEE080",
+  "name": "convert_task_rgb_channels",
+  "kind": "function",
+  "file": "functions/fn_00bee080.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s642"
+ },
+ {
+  "address": "0x00BEE0C0",
+  "name": "convert_task_rgba_channels",
+  "kind": "function",
+  "file": "functions/fn_00bee0c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s642"
+ },
+ {
+  "address": "0x00BEE110",
+  "name": "update_task_visual_targets",
+  "kind": "function",
+  "file": "functions/fn_00bee110.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s642"
+ },
+ {
+  "address": "0x00BEE1C0",
+  "name": "interpolate_task_visual_targets",
+  "kind": "function",
+  "file": "functions/fn_00bee1c0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s642"
+ },
+ {
+  "address": "0x00BEE2B0",
+  "name": "copy_task_visual_targets_back",
+  "kind": "function",
+  "file": "functions/fn_00bee2b0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s642"
  },
  {
   "address": "0x00BEE3F0",
