@@ -2,8 +2,8 @@
 
 /// Initialize sixteen consecutive five-word slot records. Each record holds
 /// the word pattern `[u32::MAX, 0, 0, u32::MAX, 0]` at a 20-byte stride. The
-/// receiver points to the first record in ECX; the method returns no defined
-/// value. All writes are confined to the 320-byte record array.
+/// receiver points to the first record in ECX; a final sentinel word at
+/// offset `0x140` is also cleared. The method returns no defined value.
 lf_checker_rt::export!(thiscall, rw_00c1fae0(this: u32) -> () {
     unsafe {
         const SLOT_COUNT: usize = 16;
@@ -19,5 +19,6 @@ lf_checker_rt::export!(thiscall, rw_00c1fae0(this: u32) -> () {
                 (slot_base.wrapping_add(field_offset) as *mut u32).write_unaligned(field_value);
             }
         }
+        (this.wrapping_add(0x140) as *mut u32).write_unaligned(0);
     }
 });
