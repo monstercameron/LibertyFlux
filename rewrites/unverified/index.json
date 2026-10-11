@@ -544,6 +544,14 @@
   "reason": null
  },
  {
+  "address": "0x005D3430",
+  "name": null,
+  "file": "fn_005d3430.rs",
+  "lane": "r-s731",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x005DA100",
   "name": "fn_005da100",
   "file": "fn_005da100.rs",
@@ -1280,20 +1288,20 @@
   "reason": "Unimplemented behavior: the Rust body discards its row-selection predicate and omits the mode-dependent status-byte update; a distinct row-B probe fails 30/60 active trials although all originals complete, with an extra measurement call and heap store on a path the original skips."
  },
  {
-  "address": "0x00898FD0",
-  "name": "audio_voice_update",
-  "file": "fn_00898fd0.rs",
-  "lane": "a-S23",
-  "outcome": "deferred",
-  "reason": null
- },
- {
   "address": "0x008B1270",
   "name": "biquad coefficient update",
   "file": "fn_008b1270.rs",
   "lane": "a-U69",
   "outcome": "failed_v8",
   "reason": "The stock v8 full run failed 17/1000 heap comparisons on NaN sign bits in the final coefficient; 1000 originals completed and a 60-trial probe passed."
+ },
+ {
+  "address": "0x008B9880",
+  "name": null,
+  "file": "fn_008b9880.rs",
+  "lane": "a-S25",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x008DBF60",
@@ -1456,30 +1464,6 @@
   "reason": null
  },
  {
-  "address": "0x0098CBA0",
-  "name": "audVehicleAudioEntity::model_config_name",
-  "file": "fn_0098cba0.rs",
-  "lane": "r-s735",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0098CBC0",
-  "name": "audVehicleAudioEntity::get_slot_by_handle",
-  "file": "fn_0098cbc0.rs",
-  "lane": "r-s735",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x0098D690",
-  "name": "id_table_contains",
-  "file": "fn_0098d690.rs",
-  "lane": "r-s735",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x0098EF90",
   "name": "audio_voice_set_scaled255_29",
   "file": "fn_0098ef90.rs",
@@ -1510,14 +1494,6 @@
   "lane": "r-s420",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x009B0960",
-  "name": "TimeShift_UpdateB",
-  "file": "fn_009b0960.rs",
-  "lane": "r-s734",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x009B0DD0",
@@ -1988,14 +1964,6 @@
   "name": "pool_refill_loop",
   "file": "fn_00a8ad20.rs",
   "lane": "r-s463",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x00A8ADC0",
-  "name": "streaming_make_space_for",
-  "file": "fn_00a8adc0.rs",
-  "lane": "r-s737",
   "outcome": "not_reached",
   "reason": null
  },
@@ -2574,22 +2542,6 @@
   "lane": "r-s383",
   "outcome": "not yet run",
   "reason": null
- },
- {
-  "address": "0x00B4BAE0",
-  "name": "group_initialize",
-  "file": "fn_00b4bae0.rs",
-  "lane": "r-s730",
-  "outcome": "deferred",
-  "reason": "partly_proven"
- },
- {
-  "address": "0x00B4BB30",
-  "name": "group_init_member_slots",
-  "file": "fn_00b4bb30.rs",
-  "lane": "r-s730",
-  "outcome": "deferred",
-  "reason": "partly_proven"
  },
  {
   "address": "0x00B4BC20",

@@ -37,7 +37,7 @@ lf_checker_rt::export!(cdecl, rw_009dc060(_unused_context: u32, resource: u32) -
     let tls_index = unsafe { read_word(lf_checker_rt::relocated(TLS_INDEX_FILE_VA)) } as usize;
     let tls_context = lf_checker_rt::tls_slot(tls_index);
     let previous_next = unsafe { read_word(tls_context.wrapping_add(TLS_NEXT_OFFSET)) };
-    let mut context_words = [0xAAAAAAAA; 4];
+    let mut context_words = [0xAAAAAAAAu32; 4];
     let context = context_words.as_mut_ptr() as u32;
 
     unsafe {

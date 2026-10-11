@@ -74,15 +74,17 @@ lf_checker_rt::export!(thiscall, rw_00d097f0(owner: u32, ped: u32) -> u32 {
             lf_checker_rt::callee_thiscall!(4, u32, intelligence, local_event_ptr, 0, 1)
         };
 
+        let arrested_string = lf_checker_rt::global::<u8>(ARRESTED_STRING) as u32;
+        let arrest_ped_string = lf_checker_rt::global::<u8>(ARREST_PED_STRING) as u32;
         let speech_hash = unsafe {
-            lf_checker_rt::callee_cdecl!(5, u32, ARRESTED_STRING, 0)
+            lf_checker_rt::callee_cdecl!(5, u32, arrested_string, 0)
         };
         let _ = unsafe {
             lf_checker_rt::callee_thiscall!(
                 6,
                 u32,
                 ped.wrapping_add(PED_SPEECH),
-                ARREST_PED_STRING,
+                arrest_ped_string,
                 1,
                 1,
                 0,
@@ -146,7 +148,7 @@ lf_checker_rt::export!(thiscall, rw_00d097f0(owner: u32, ped: u32) -> u32 {
                     9,
                     u32,
                     give_task_pool_object,
-                    local_event_ptr,
+                    follow_up_task,
                     combat_task,
                     0,
                     0,
