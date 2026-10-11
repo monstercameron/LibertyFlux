@@ -90072,6 +90072,24 @@
   "lane": "r-b518"
  },
  {
+  "address": "0x00B40EC0",
+  "name": "task_geometry_record_init",
+  "kind": "function",
+  "file": "functions/fn_00b40ec0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b674"
+ },
+ {
+  "address": "0x00B41190",
+  "name": "task_geometry_record_build",
+  "kind": "function",
+  "file": "functions/fn_00b41190.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b674"
+ },
+ {
   "address": "0x00B415C0",
   "name": "compute_quant_bounds_from_floats",
   "kind": "function",
@@ -90079,6 +90097,15 @@
   "trials": 1000,
   "checker": "version 3",
   "lane": "r-s242"
+ },
+ {
+  "address": "0x00B416D0",
+  "name": "task_global_tables_init",
+  "kind": "function",
+  "file": "functions/fn_00b416d0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b674"
  },
  {
   "address": "0x00B41A80",
