@@ -215,14 +215,14 @@ export!(thiscall, rw_0088dac0(this: *mut u8) -> u32 {
             }
         };
 
-        if r32(this, 0x144) != 0 {
+        if r32(this, 0x134) != 0 {
             // Hand the raw rows to the mixer when the voice is routed.
             if r8(hdr, 0x18) & 1 != 0 {
                 for i in 0..nrows {
                     let _: u32 = callee_thiscall!(
                         4,
                         u32,
-                        r32(this, 0x144),
+                        r32(this, 0x134),
                         i as u32,
                         copies.as_mut_ptr().add(i * 6 + 2) as u32
                     );
@@ -242,7 +242,7 @@ export!(thiscall, rw_0088dac0(this: *mut u8) -> u32 {
                 let _: u32 = callee_thiscall!(
                     5,
                     u32,
-                    r32(this, 0x140),
+                    r32(this, 0x130),
                     i as u32,
                     rows.as_mut_ptr().add(i as usize * 6 + 2) as u32
                 );
@@ -252,7 +252,7 @@ export!(thiscall, rw_0088dac0(this: *mut u8) -> u32 {
                 let _: u32 = callee_thiscall!(
                     5,
                     u32,
-                    r32(this, 0x140),
+                    r32(this, 0x130),
                     i as u32,
                     rows.as_mut_ptr().add(i as usize * 6 + 2) as u32
                 );
@@ -262,7 +262,7 @@ export!(thiscall, rw_0088dac0(this: *mut u8) -> u32 {
         // Commit the voice state.
         let lo = r16(hdr, 0x10) as u32;
         let hi = r16(hdr, 0x12) as u32;
-        let r: u32 = callee_thiscall!(6, u32, r32(this, 0x140), lo, hi);
+        let r: u32 = callee_thiscall!(6, u32, r32(this, 0x130), lo, hi);
         r
     }
 });
