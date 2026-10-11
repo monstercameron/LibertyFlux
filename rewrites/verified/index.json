@@ -141318,6 +141318,51 @@
   "lane": "r-s728"
  },
  {
+  "address": "0x00D24970",
+  "name": "expand_bound_ranges",
+  "kind": "function",
+  "file": "functions/fn_00d24970.rs",
+  "trials": 2200,
+  "checker": "version 8",
+  "lane": "r-s727"
+ },
+ {
+  "address": "0x00D24A70",
+  "name": "CCustomShaderEffectVehicleFX::CCustomShaderEffectVehicleFX",
+  "kind": "function",
+  "file": "functions/fn_00d24a70.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s727"
+ },
+ {
+  "address": "0x00D24AD0",
+  "name": "CCustomShaderEffectVehicleFX::vf0",
+  "kind": "function",
+  "file": "functions/fn_00d24ad0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s727"
+ },
+ {
+  "address": "0x00D24AF0",
+  "name": "CCustomShaderEffectVehicleFX::vf7",
+  "kind": "function",
+  "file": "functions/fn_00d24af0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s727"
+ },
+ {
+  "address": "0x00D24B60",
+  "name": "copy_vehicle_paint_state",
+  "kind": "function",
+  "file": "functions/fn_00d24b60.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s727"
+ },
+ {
   "address": "0x00D26830",
   "name": "ped_task_request_fire",
   "kind": "function",
@@ -142234,6 +142279,69 @@
   "trials": 1000,
   "checker": "version 8",
   "lane": "r-s627"
+ },
+ {
+  "address": "0x00D31030",
+  "name": "CTaskComplexClearVehicleSeat::CTaskComplexClearVehicleSeat",
+  "kind": "function",
+  "file": "functions/fn_00d31030.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s727"
+ },
+ {
+  "address": "0x00D31070",
+  "name": "CTaskComplexClimbIntoVehicle::CTaskComplexClimbIntoVehicle",
+  "kind": "function",
+  "file": "functions/fn_00d31070.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s727"
+ },
+ {
+  "address": "0x00D310B0",
+  "name": "CTaskComplexCloseVehicleDoor::CTaskComplexCloseVehicleDoor",
+  "kind": "function",
+  "file": "functions/fn_00d310b0.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s727"
+ },
+ {
+  "address": "0x00D31230",
+  "name": "CTaskComplexOpenVehicleDoor::CTaskComplexOpenVehicleDoor",
+  "kind": "function",
+  "file": "functions/fn_00d31230.rs",
+  "trials": 1200,
+  "checker": "version 8",
+  "lane": "r-s727"
+ },
+ {
+  "address": "0x00D312E0",
+  "name": "CTaskComplexCloseVehicleDoor::~CTaskComplexCloseVehicleDoor",
+  "kind": "function",
+  "file": "functions/fn_00d312e0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s727"
+ },
+ {
+  "address": "0x00D31310",
+  "name": "CTaskComplexNewExitVehicle::~CTaskComplexNewExitVehicle",
+  "kind": "function",
+  "file": "functions/fn_00d31310.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s727"
+ },
+ {
+  "address": "0x00D31350",
+  "name": "CTaskComplexNewGetInVehicle::~CTaskComplexNewGetInVehicle",
+  "kind": "function",
+  "file": "functions/fn_00d31350.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-s727"
  },
  {
   "address": "0x00D313C0",
