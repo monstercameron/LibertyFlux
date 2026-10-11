@@ -46,11 +46,11 @@ lf_checker_rt::export!(thiscall, rw_009b0960(this: u32) -> u32 {
                 let row = ((control + CONTROL_ROW) as *const u8).read() as u32;
                 let scale = lf_checker_rt::global::<u32>(VOICE_TABLE_SCALE).read_unaligned();
                 let table = lf_checker_rt::global::<u32>(VOICE_TABLE_BASE).read_unaligned();
-                let entry = table
+                let base_voice = (table
                     .wrapping_add(row.wrapping_mul(VOICE_ROW_STRIDE))
-                    .wrapping_add(VOICE_ROW_BASE)
-                    .wrapping_add(scale.wrapping_mul(key as u32));
-                (entry as *const u32).read_unaligned()
+                    .wrapping_add(VOICE_ROW_BASE) as *const u32)
+                    .read_unaligned();
+                base_voice.wrapping_add(scale.wrapping_mul(key as u32))
             };
 
             result = lf_checker_rt::callee_thiscall!(2, u32, voice, SILENT_GAIN_BITS);

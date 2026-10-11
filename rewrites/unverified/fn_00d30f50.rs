@@ -4,7 +4,7 @@
 /// stride, while the task index is signed for the index-minus-one guard. The stdcall function
 /// takes one route pointer, returns a Boolean in AL, and uses scripted stand-ins for the direct
 /// lookup and object virtual methods.
-lf_checker_rt::export!(stdcall, rw_00d30f50(this: u32, route: u32) -> u8 {
+lf_checker_rt::export!(thiscall, rw_00d30f50(this: u32, route: u32) -> u8 {
     const TASK_POOL_TABLE_VA: u32 = 0x0167f780;
     const TASK_POOL_STRIDE: u32 = 0x6c;
     const CURRENT_TASK_SLOT: u32 = 0x18;

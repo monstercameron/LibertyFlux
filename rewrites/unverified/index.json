@@ -608,14 +608,6 @@
   "reason": null
  },
  {
-  "address": "0x005E1160",
-  "name": "CPedDataCop::~CPedDataCop__deleting",
-  "file": "fn_005e1160.rs",
-  "lane": "r-s726",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x005E1610",
   "name": "CRenderPhasePhoneModel::vf8",
   "file": "fn_005e1610.rs",
@@ -1213,7 +1205,7 @@
   "file": "fn_00895a00.rs",
   "lane": "a-U105",
   "outcome": "deferred",
-  "reason": "Unimplemented behavior: the Rust body discards its computed row-selection predicate and omits the mode-dependent persistent status-byte update; the proof only pins row/index 0 and varies status 2 versus the early-return status 3."
+  "reason": "Unimplemented behavior: the Rust body discards its row-selection predicate and omits the mode-dependent status-byte update; a distinct row-B probe fails 30/60 active trials although all originals complete, with an extra measurement call and heap store on a path the original skips."
  },
  {
   "address": "0x008B1270",
@@ -1376,75 +1368,35 @@
   "reason": null
  },
  {
-  "address": "0x0098C170",
-  "name": null,
-  "file": "fn_0098c170.rs",
-  "lane": "r-s735",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x0098C1D0",
-  "name": null,
-  "file": "fn_0098c1d0.rs",
-  "lane": "r-s735",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x0098C410",
-  "name": null,
-  "file": "fn_0098c410.rs",
-  "lane": "r-s735",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x0098D6D0",
-  "name": null,
-  "file": "fn_0098d6d0.rs",
-  "lane": "r-s735",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x0098EE70",
-  "name": null,
-  "file": "fn_0098ee70.rs",
-  "lane": "r-s735",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x0098EE80",
-  "name": null,
+  "name": "audVehicleAudioEntity::set_gps_voice",
   "file": "fn_0098ee80.rs",
   "lane": "r-s735",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x0098EEA0",
-  "name": null,
+  "name": "NativeImpl_HELI_AUDIO_SHOULD_SKIP_STARTUP",
   "file": "fn_0098eea0.rs",
   "lane": "r-s735",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x0098EEC0",
-  "name": null,
+  "name": "audVehicleAudioEntity::set_loud_radio",
   "file": "fn_0098eec0.rs",
   "lane": "r-s735",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
   "address": "0x009918C0",
-  "name": null,
+  "name": "audVehicleAudioEntity::notify_headlamp_switch",
   "file": "fn_009918c0.rs",
   "lane": "r-s735",
-  "outcome": "not yet run",
+  "outcome": "not_reached",
   "reason": null
  },
  {
@@ -1454,22 +1406,6 @@
   "lane": "r-s420",
   "outcome": "deferred",
   "reason": "checker_gap"
- },
- {
-  "address": "0x009B0910",
-  "name": "audPoliceScanner::~audPoliceScanner__deleting",
-  "file": "fn_009b0910.rs",
-  "lane": "r-s734",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
-  "address": "0x009B0930",
-  "name": "audPoliceScanner::alloc_report_slot",
-  "file": "fn_009b0930.rs",
-  "lane": "r-s734",
-  "outcome": "not_reached",
-  "reason": null
  },
  {
   "address": "0x009B0960",
@@ -2496,6 +2432,22 @@
   "reason": null
  },
  {
+  "address": "0x00B41AB0",
+  "name": null,
+  "file": "fn_00b41ab0.rs",
+  "lane": "a-U112",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00B4BA80",
+  "name": "CEventVehicleCollision::vf20",
+  "file": "fn_00b4ba80.rs",
+  "lane": "r-s730",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
   "address": "0x00B4BAA0",
   "name": "event_type_pair_in_table",
   "file": "fn_00b4baa0.rs",
@@ -3288,6 +3240,46 @@
   "reason": null
  },
  {
+  "address": "0x00C4AB90",
+  "name": null,
+  "file": "fn_00c4ab90.rs",
+  "lane": "r-s729",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C4AFF0",
+  "name": null,
+  "file": "fn_00c4aff0.rs",
+  "lane": "r-s729",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C4BCC0",
+  "name": null,
+  "file": "fn_00c4bcc0.rs",
+  "lane": "r-s729",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C4BDB0",
+  "name": null,
+  "file": "fn_00c4bdb0.rs",
+  "lane": "r-s729",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00C4BDE0",
+  "name": null,
+  "file": "fn_00c4bde0.rs",
+  "lane": "r-s729",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00C59990",
   "name": null,
   "file": "fn_00c59990.rs",
@@ -3454,6 +3446,14 @@
   "lane": "r-s442",
   "outcome": "deferred",
   "reason": "frame_pointer_args"
+ },
+ {
+  "address": "0x00C87B00",
+  "name": "",
+  "file": "fn_00c87b00.rs",
+  "lane": "a-U110",
+  "outcome": "not yet run",
+  "reason": null
  },
  {
   "address": "0x00C91890",
@@ -3896,14 +3896,6 @@
   "reason": "partly_proven"
  },
  {
-  "address": "0x00CCFAB0",
-  "name": "ped_task_choose_nearest_candidate",
-  "file": "fn_00ccfab0.rs",
-  "lane": "a-U113",
-  "outcome": "not yet run",
-  "reason": null
- },
- {
   "address": "0x00CD4B00",
   "name": "peds_task_steer_blend2",
   "file": "fn_00cd4b00.rs",
@@ -4176,6 +4168,14 @@
   "reason": null
  },
  {
+  "address": "0x00D09050",
+  "name": null,
+  "file": "fn_00d09050.rs",
+  "lane": "r-b699",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00D24A70",
   "name": "CCustomShaderEffectVehicleFX::CCustomShaderEffectVehicleFX",
   "file": "fn_00d24a70.rs",
@@ -4204,8 +4204,8 @@
   "name": "get_burnt_vehicle_texture",
   "file": "fn_00d25cc0.rs",
   "lane": "r-s727",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00D25D00",
@@ -4220,8 +4220,8 @@
   "name": "link_vehicle_anim",
   "file": "fn_00d26250.rs",
   "lane": "r-s727",
-  "outcome": "not_reached",
-  "reason": null
+  "outcome": "deferred",
+  "reason": "partly_proven"
  },
  {
   "address": "0x00D26A90",
@@ -4496,6 +4496,14 @@
   "reason": "out_of_time"
  },
  {
+  "address": "0x00DCD930",
+  "name": null,
+  "file": "fn_00dcd930.rs",
+  "lane": "a-U112",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x00DD34B0",
   "name": "UIMontageContainer::vf100",
   "file": "fn_00dd34b0.rs",
@@ -4574,6 +4582,294 @@
   "lane": "r-s461",
   "outcome": "deferred",
   "reason": "checker_gap"
+ },
+ {
+  "address": "0x00E6CDC0",
+  "name": "vehicle_tuning_ratio_init_31",
+  "file": "fn_00e6cdc0.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CDE0",
+  "name": "vehicle_tuning_ratio_init_32",
+  "file": "fn_00e6cde0.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CE00",
+  "name": "vehicle_tuning_ratio_init_33",
+  "file": "fn_00e6ce00.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CE20",
+  "name": "vehicle_tuning_ratio_init_34",
+  "file": "fn_00e6ce20.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CE40",
+  "name": "vehicle_tuning_ratio_init_35",
+  "file": "fn_00e6ce40.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CE60",
+  "name": "vehicle_tuning_ratio_init_36",
+  "file": "fn_00e6ce60.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CE80",
+  "name": "vehicle_tuning_ratio_init_37",
+  "file": "fn_00e6ce80.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CEA0",
+  "name": "convert_vehicle_tuning_float_to_int",
+  "file": "fn_00e6cea0.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CEB0",
+  "name": "vehicle_tuning_ratio_init_38",
+  "file": "fn_00e6ceb0.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CED0",
+  "name": "vehicle_tuning_ratio_init_39",
+  "file": "fn_00e6ced0.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CEF0",
+  "name": "vehicle_tuning_ratio_init_40",
+  "file": "fn_00e6cef0.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CF10",
+  "name": "vehicle_tuning_ratio_init_41",
+  "file": "fn_00e6cf10.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CF30",
+  "name": "vehicle_tuning_ratio_init_42",
+  "file": "fn_00e6cf30.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CF50",
+  "name": "vehicle_tuning_ratio_init_43",
+  "file": "fn_00e6cf50.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CF70",
+  "name": "vehicle_tuning_ratio_init_44",
+  "file": "fn_00e6cf70.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CF90",
+  "name": "vehicle_tuning_ratio_init_45",
+  "file": "fn_00e6cf90.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CFB0",
+  "name": "initialize_vehicle_index_table_sentinels",
+  "file": "fn_00e6cfb0.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6CFD0",
+  "name": "vehicle_tuning_ratio_init_46",
+  "file": "fn_00e6cfd0.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D000",
+  "name": "vehicle_tuning_ratio_init_47",
+  "file": "fn_00e6d000.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D020",
+  "name": "clear_vehicle_task_state_block_00",
+  "file": "fn_00e6d020.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D040",
+  "name": "clear_vehicle_spatial_state",
+  "file": "fn_00e6d040.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D060",
+  "name": "clear_vehicle_task_state_block_01",
+  "file": "fn_00e6d060.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D080",
+  "name": "vehicle_tuning_ratio_init_48",
+  "file": "fn_00e6d080.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D0A0",
+  "name": "vehicle_tuning_ratio_init_49",
+  "file": "fn_00e6d0a0.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D0C0",
+  "name": "vehicle_tuning_ratio_init_50",
+  "file": "fn_00e6d0c0.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D0E0",
+  "name": "boat_shared_record_table_initialize",
+  "file": "fn_00e6d0e0.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D5E0",
+  "name": "vehicle_tuning_ratio_init_51",
+  "file": "fn_00e6d5e0.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D600",
+  "name": "initialize_unarmed_weapon_hash",
+  "file": "fn_00e6d600.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D620",
+  "name": "random_point_workspace_allocate_and_register_cleanup",
+  "file": "fn_00e6d620.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D640",
+  "name": "streaming_vector_register_storage_cleanup",
+  "file": "fn_00e6d640.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D650",
+  "name": "vehicle_tuning_ratio_init_52",
+  "file": "fn_00e6d650.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D670",
+  "name": "vehicle_tuning_ratio_init_53",
+  "file": "fn_00e6d670.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D690",
+  "name": "vehicle_tuning_ratio_init_54",
+  "file": "fn_00e6d690.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D6B0",
+  "name": "vehicle_tuning_ratio_init_55",
+  "file": "fn_00e6d6b0.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D6D0",
+  "name": "vehicle_tuning_ratio_init_56",
+  "file": "fn_00e6d6d0.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00E6D6F0",
+  "name": "vehicle_tuning_ratio_init_57",
+  "file": "fn_00e6d6f0.rs",
+  "lane": "r-s736",
+  "outcome": "not_reached",
+  "reason": null
  },
  {
   "address": "0x00E6D790",

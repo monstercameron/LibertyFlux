@@ -1,4 +1,4 @@
-// original: 0X00B4C290 group_entry_from_ped
+// original: 0x00b4c290 group_entry_from_ped
 
 /// Map a ped's byte-sized group index at offset 0xD32 to its global group
 /// record. Index 0xFF is the null sentinel; other indices select 0x5C-byte

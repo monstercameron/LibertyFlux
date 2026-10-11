@@ -1,4 +1,4 @@
-// original: 0X00B4C330 group_has_leader
+// original: 0x00b4c330 group_has_leader
 
 /// Return one when the leader pointer at offset 0x3C is non-null or the
 /// signed leader marker at offset 0x40 is nonnegative. The object arrives

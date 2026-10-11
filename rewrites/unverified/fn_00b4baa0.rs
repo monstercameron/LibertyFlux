@@ -1,4 +1,4 @@
-// original: 0X00B4BAA0 event_type_pair_in_table
+// original: 0x00b4baa0 event_type_pair_in_table
 
 /// Search the four 32-bit values in one 16-byte precedence-table row.
 /// The first stack argument selects a row; the second supplies the value.

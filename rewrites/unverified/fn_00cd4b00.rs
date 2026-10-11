@@ -8,7 +8,11 @@
 /// ladder. The result is clamped, reflected in the task flag, stored through
 /// the child helpers, and returned from the child's virtual completion call.
 /// Float operations retain the source order, and the double helper's two
-/// inputs and answer are carried as their full bit patterns.
+/// inputs and answer are carried as their full bit patterns. When the main
+/// path reaches the gate, its cleanup shifts the later frame reads so the
+/// output scale factor is the first converted component; a zero gate answer
+/// instead clears that factor. The final fill helper receives the task object
+/// in ECX on the main path and zero when that path is skipped.
 lf_checker_rt::export!(thiscall, rw_00CD4B00(this: u32, a0: u32) -> u32 {
     unsafe {
         const CHILD_OFF: u32 = 0x0a80;
@@ -92,24 +96,22 @@ lf_checker_rt::export!(thiscall, rw_00CD4B00(this: u32, a0: u32) -> u32 {
 
         let mut ratio = 0.0f32;
         let mut main_path_ran = false;
-        let mut mix_result_bits = 0u32;
         let object_nibble = rd8(a0 + TYPE_OFF) & 0x0f;
         if initial_flags & 4 != 0 && object_nibble < 2 {
-            let x_squared = mul(component_x, component_x);
-            let y_squared = mul(component_y, component_y);
-            let magnitude = add(x_squared, y_squared).sqrt();
+            let second_squared = mul(component_y, component_y);
+            let first_squared = mul(component_x, component_x);
+            let magnitude = add(second_squared, first_squared).sqrt();
             let mut measured = div(magnitude, global_f32(G_DIVISOR));
             if measured > global_f32(F_ONE) {
                 measured = global_f32(F_ONE);
             }
+            ratio = measured;
             if measured > 0.0 {
-                ratio = measured;
                 main_path_ran = true;
 
                 let pool = lf_checker_rt::relocated(POOL);
-                let pool_bits: u32 =
-                    lf_checker_rt::callee_thiscall!(5, u32, pool, a0, 1);
-                let pool_value = f32::from_bits(pool_bits);
+                let pool_value: f32 =
+                    lf_checker_rt::callee_thiscall!(5, f32, pool, a0, 1);
 
                 let double_x = core::hint::black_box(negate(component_x)) as f64;
                 let double_y = core::hint::black_box(component_y) as f64;
@@ -127,11 +129,9 @@ lf_checker_rt::export!(thiscall, rw_00CD4B00(this: u32, a0: u32) -> u32 {
                     core::hint::black_box(f64::from_bits(double_answer)) as f32;
                 let combined = add(pool_value, narrowed_answer);
 
-                let mixed_bits: u32 =
-                    lf_checker_rt::callee_thiscall!(7, u32, 0, combined.to_bits());
-                let mixed_value = f32::from_bits(mixed_bits);
-                mix_result_bits = mixed_value.to_bits();
-                wr32(a0 + 0x0aa4, mix_result_bits);
+                let mixed_value: f32 =
+                    lf_checker_rt::callee_thiscall!(7, f32, 0, combined.to_bits());
+                wr32(a0 + 0x0aa4, mixed_value.to_bits());
 
                 let cosine_bits: u32 =
                     lf_checker_rt::callee_cdecl!(8, u32, mixed_value.to_bits());
@@ -146,9 +146,10 @@ lf_checker_rt::export!(thiscall, rw_00CD4B00(this: u32, a0: u32) -> u32 {
                     0,
                     sine_bits
                 );
-                if gate & 0xff == 0 {
-                    ratio = 0.0;
-                }
+                // The call's cleanup advances the live stack base. The
+                // following load therefore reads the saved first component,
+                // not the normalized value stored earlier.
+                ratio = if gate & 0xff == 0 { 0.0 } else { component_x };
             }
         }
 
@@ -160,9 +161,8 @@ lf_checker_rt::export!(thiscall, rw_00CD4B00(this: u32, a0: u32) -> u32 {
             if rd8(detail + DETAIL_STATUS_OFF) != 0 {
                 result_value = scaled_bound(global_f32(G_MIDDLE), ratio);
             } else {
-                let detail_level_bits: u32 =
-                    lf_checker_rt::callee_thiscall!(11, u32, a0, 0, 1);
-                let detail_level = f32::from_bits(detail_level_bits);
+                let detail_level: f32 =
+                    lf_checker_rt::callee_thiscall!(11, f32, a0, 0, 1);
                 let detail_answer: u32 = lf_checker_rt::callee_cdecl!(12, u32,);
 
                 let mut use_special_ladder = true;
@@ -219,7 +219,7 @@ lf_checker_rt::export!(thiscall, rw_00CD4B00(this: u32, a0: u32) -> u32 {
         let _: u32 = lf_checker_rt::callee_thiscall!(14, u32, child, result_value.to_bits(), 0);
         let mut fill_words = [rd32(child + 0x10), rd32(child + 0x0c)];
         let fill_ptr = fill_words.as_mut_ptr() as u32;
-        let fill_ecx = if main_path_ran { mix_result_bits } else { 0 };
+        let fill_ecx = if main_path_ran { this } else { 0 };
         let _: u32 = lf_checker_rt::callee_thiscall!(
             15,
             u32,

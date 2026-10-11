@@ -1,7 +1,7 @@
-// original: 0X00B4BF20 group_count_members
+// original: 0x00b4bf20 group_count_members
 
 /// Count member records whose pointer is nonzero or whose signed marker is
-/// negative. The record array starts at byte 0x04, uses eight-byte entries,
+/// nonnegative. The record array starts at byte 0x04, uses eight-byte entries,
 /// and contains 8 entries. The object arrives in ECX and the count is
 /// returned in EAX.
 lf_checker_rt::export!(thiscall, rw_00B4BF20(object: u32) -> u32 {
@@ -16,7 +16,7 @@ lf_checker_rt::export!(thiscall, rw_00B4BF20(object: u32) -> u32 {
         let member = unsafe { (slot as *const u32).read_unaligned() };
         // SAFETY: each record's marker follows its pointer by one word.
         let marker = unsafe { (slot.wrapping_add(4) as *const i32).read_unaligned() };
-        if member != 0 || marker < 0 { occupied += 1; }
+        if member != 0 || marker >= 0 { occupied += 1; }
     }
     occupied
 });

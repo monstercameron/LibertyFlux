@@ -1,8 +1,10 @@
 // original: 0x00D31A60 CTaskComplexNewExitVehicle::clone
 /// Allocates a destination task through the shared task-pool slot, calls its
 /// constructor with source words at offsets 0x18, 0x14, 0x44, 0x48, then copies source
-/// fields to destination fields at these byte offsets: 0x2c->0x2c, 0x50->0x50, 0x54->0x54, 0x58->0x58, 0x44->0x5c.
+/// fields to destination fields at these byte offsets: 0x2c->0x2c, 0x50->0x50, 0x54->0x54, 0x58->0x58.
 /// The source receiver is in ECX and the function returns the allocated pointer.
+/// The original's final destination word comes from a stack-frame slot;
+/// this unverified candidate substitutes a nearby source field and does not pass v8.
 lf_checker_rt::export!(thiscall, rw_00d31a60(this: u32) -> u32 {
     const TASK_POOL_GLOBAL_FILE_VA: u32 = 0x0167e2a0;
     let pool_manager = unsafe { lf_checker_rt::global::<u32>(TASK_POOL_GLOBAL_FILE_VA).read_unaligned() };

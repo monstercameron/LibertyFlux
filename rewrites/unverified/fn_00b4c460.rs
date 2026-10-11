@@ -1,4 +1,4 @@
-// original: 0X00B4C460 NativeImpl_IS_GROUP_LEADER
+// original: 0x00b4c460 NativeImpl_IS_GROUP_LEADER
 
 /// Return one when a non-null candidate equals the group's leader pointer
 /// at byte offset 0x3C. The group arrives in ECX, the candidate is one stack

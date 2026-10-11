@@ -1,4 +1,4 @@
-// original: 0X00B4C420 group_contains_member
+// original: 0x00b4c420 group_contains_member
 
 /// Return one when the non-null candidate occurs in any of the group's
 /// seven member pointer fields. Entries start at offset 0x04 with stride

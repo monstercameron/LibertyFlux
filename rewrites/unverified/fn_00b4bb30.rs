@@ -1,4 +1,4 @@
-// original: 0X00B4BB30 group_init_member_slots
+// original: 0x00b4bb30 group_init_member_slots
 
 /// Initialize the group's eight member records. Each record stores a null
 /// member pointer and a signed negative empty marker; the trailing distance

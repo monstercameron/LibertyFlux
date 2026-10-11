@@ -102,7 +102,7 @@ export!(thiscall, rw_00895a00(this: *mut u8, _arg: u32) -> u32 {
         let (b1_lo, b1_hi) = double_words(speed_double);
         let second_result = callee_cdecl!(4, u64, 0x100, 0xff, 3, 0, b0_lo, b0_hi, b1_lo, b1_hi);
 
-        let interpolation = core::hint::black_box(rf32(row_a as *const u8, 0xc8))
+        let interpolation = core::hint::black_box(rf32(row_b as *const u8, 0xc8))
             * core::hint::black_box(gf32(0x00fe_86b4));
         let interpolation_bits = interpolation.to_bits();
         let _ = callee_thiscall!(

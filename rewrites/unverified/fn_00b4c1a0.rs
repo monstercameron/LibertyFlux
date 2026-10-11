@@ -1,4 +1,4 @@
-// original: 0X00B4C1A0 group_find_member_index
+// original: 0x00b4c1a0 group_find_member_index
 
 /// Find a member pointer in the seven eight-byte records beginning at
 /// object offset 0x04. Return its zero-based slot, or u32::MAX if absent.

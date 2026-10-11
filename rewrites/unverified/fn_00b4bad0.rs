@@ -1,4 +1,4 @@
-// original: 0x00B4BAD0 object_field_10_not_200
+// original: 0x00b4bad0 object_field_10_not_200
 
 /// Return one when the object's 32-bit field at byte offset 0x10 is not 200.
 /// The object arrives in ECX; the result is zero-extended from the low byte.

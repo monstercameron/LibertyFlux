@@ -1,4 +1,4 @@
-// original: 0X00B4C2B0 nested_signed_byte_at_4e6
+// original: 0x00b4c2b0 nested_signed_byte_at_4e6
 
 /// Read the signed byte at nested-record offset 0x4E6. The outer record's
 /// pointer field is at byte offset 0x228; the outer pointer arrives as a
