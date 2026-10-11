@@ -552,6 +552,14 @@
   "reason": null
  },
  {
+  "address": "0x005DDDB0",
+  "name": null,
+  "file": "fn_005dddb0.rs",
+  "lane": "r-s650",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
   "address": "0x005E8170",
   "name": null,
   "file": "fn_005e8170.rs",
@@ -664,9 +672,41 @@
   "reason": null
  },
  {
-  "address": "0x005FB700",
-  "name": "rage::fragInst::vf52",
-  "file": "fn_005fb700.rs",
+  "address": "0x005FB780",
+  "name": "rage::fragInst::vf44",
+  "file": "fn_005fb780.rs",
+  "lane": "r-s659",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x005FB800",
+  "name": "frag_instance_resolved_type",
+  "file": "fn_005fb800.rs",
+  "lane": "r-s659",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x005FB820",
+  "name": "rage::fragInst::vf55",
+  "file": "fn_005fb820.rs",
+  "lane": "r-s659",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x005FB8B0",
+  "name": "rage::fragInst::vf56",
+  "file": "fn_005fb8b0.rs",
+  "lane": "r-s659",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x005FB8F0",
+  "name": "rage::fragInst::vf57",
+  "file": "fn_005fb8f0.rs",
   "lane": "r-s659",
   "outcome": "not_reached",
   "reason": null
@@ -763,6 +803,14 @@
   "address": "0x006118B0",
   "name": null,
   "file": "fn_006118b0.rs",
+  "lane": "r-s656",
+  "outcome": "not yet run",
+  "reason": null
+ },
+ {
+  "address": "0x00612230",
+  "name": null,
+  "file": "fn_00612230.rs",
   "lane": "r-s656",
   "outcome": "not yet run",
   "reason": null
@@ -1686,14 +1734,6 @@
   "lane": "r-s596",
   "outcome": "not_reached",
   "reason": null
- },
- {
-  "address": "0x00A82CF0",
-  "name": "CSimpleCarDriveTaskInfo::vf18",
-  "file": "fn_00a82cf0.rs",
-  "lane": "r-s611",
-  "outcome": "deferred",
-  "reason": "other"
  },
  {
   "address": "0x00A8ABE0",
@@ -2632,14 +2672,6 @@
   "reason": null
  },
  {
-  "address": "0x00C76A50",
-  "name": "resolve_model_class_resource",
-  "file": "fn_00c76a50.rs",
-  "lane": "r-s653",
-  "outcome": "not_reached",
-  "reason": null
- },
- {
   "address": "0x00C78060",
   "name": "pg_dictionary_phbound_destroy",
   "file": "fn_00c78060.rs",
@@ -2651,6 +2683,22 @@
   "address": "0x00C782D0",
   "name": "rage::pgDictionary<rage::phBound>::vf1",
   "file": "fn_00c782d0.rs",
+  "lane": "r-s663",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C78300",
+  "name": "phbound_allocate_and_attach",
+  "file": "fn_00c78300.rs",
+  "lane": "r-s663",
+  "outcome": "not_reached",
+  "reason": null
+ },
+ {
+  "address": "0x00C78400",
+  "name": "phbound_lookup_and_dispatch",
+  "file": "fn_00c78400.rs",
   "lane": "r-s663",
   "outcome": "not_reached",
   "reason": null
@@ -3152,22 +3200,6 @@
   "reason": "out_of_time"
  },
  {
-  "address": "0x00CE9A20",
-  "name": "CTaskSimpleNMOnFire::vf26",
-  "file": "fn_00ce9a20.rs",
-  "lane": "a-U32",
-  "outcome": "failed_v8",
-  "reason": null
- },
- {
-  "address": "0x00CEA0B0",
-  "name": "GENERIC_CURSE",
-  "file": "fn_00cea0b0.rs",
-  "lane": "a-U32",
-  "outcome": "failed_v8",
-  "reason": null
- },
- {
   "address": "0x00CF8050",
   "name": "CTaskComplexClimbLadder::vf20",
   "file": "fn_00cf8050.rs",
@@ -3517,222 +3549,6 @@
   "file": "fn_00d2cb70.rs",
   "lane": "r-b667",
   "outcome": "not yet run",
-  "reason": null
- },
- {
-  "address": "0x00D397A0",
-  "name": "ped_task_clear_member_then_base_destructor",
-  "file": "fn_00d397a0.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D397D0",
-  "name": "CDummyTask::vf0",
-  "file": "fn_00d397d0.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D39800",
-  "name": "CDummyTask_Dead::vf0",
-  "file": "fn_00d39800.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D39830",
-  "name": "CDummyTask_FallDownAndGetUp::vf0",
-  "file": "fn_00d39830.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D39860",
-  "name": "CDummyTask_Flee::vf0",
-  "file": "fn_00d39860.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D39890",
-  "name": "CDummyTask_Injured::vf0",
-  "file": "fn_00d39890.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D398C0",
-  "name": "CDummyTask_PlayAnim::vf0",
-  "file": "fn_00d398c0.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D398F0",
-  "name": "CDummyTask_ShockingEventWatch::vf0",
-  "file": "fn_00d398f0.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D39920",
-  "name": "CDummyTask_Stationary::vf0",
-  "file": "fn_00d39920.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D39950",
-  "name": "CDummyTask_Wander::vf0",
-  "file": "fn_00d39950.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D39980",
-  "name": "CDummyTask_Flee::vf4",
-  "file": "fn_00d39980.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D39B60",
-  "name": "ped_task_lookup_and_store_registry_task",
-  "file": "fn_00d39b60.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D39BA0",
-  "name": "CDummyTask_Dead::vf2",
-  "file": "fn_00d39ba0.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D39D00",
-  "name": "ped_task_output_clear_status_word",
-  "file": "fn_00d39d00.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D39D20",
-  "name": "CDummyTask_Dead::vf8",
-  "file": "fn_00d39d20.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D3A530",
-  "name": "CDummyTask_Dead::vf9",
-  "file": "fn_00d3a530.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D3A720",
-  "name": "CDummyTask_FallDownAndGetUp::vf11",
-  "file": "fn_00d3a720.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D3A750",
-  "name": "CDummyTask_Dead::vf11",
-  "file": "fn_00d3a750.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D3A770",
-  "name": "CDummyTask_Stationary::vf11",
-  "file": "fn_00d3a770.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D3A7F0",
-  "name": "CDummyTask_Wander::vf11",
-  "file": "fn_00d3a7f0.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D3B260",
-  "name": "ped_task_replace_reference_and_cache_presence",
-  "file": "fn_00d3b260.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D3B2A0",
-  "name": "ped_task_replace_observed_pointer",
-  "file": "fn_00d3b2a0.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D3B2C0",
-  "name": "ped_task_replace_animation_clip",
-  "file": "fn_00d3b2c0.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D3B320",
-  "name": "ped_task_replace_linked_reference",
-  "file": "fn_00d3b320.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D3B3E0",
-  "name": "ped_task_clear_motion_reference",
-  "file": "fn_00d3b3e0.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D3B410",
-  "name": "ped_task_release_motion_with_fixed_duration",
-  "file": "fn_00d3b410.rs",
-  "lane": "r-s607",
-  "outcome": "deferred",
-  "reason": "other"
- },
- {
-  "address": "0x00D3EA20",
-  "name": "task_simple_sideways_dive_update",
-  "file": "fn_00d3ea20.rs",
-  "lane": "r-s652",
-  "outcome": "not_reached",
   "reason": null
  },
  {

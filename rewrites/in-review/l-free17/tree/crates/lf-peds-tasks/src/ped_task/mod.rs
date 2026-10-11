@@ -48,6 +48,7 @@ mod id_lookup;
 mod mover;
 mod pose;
 mod seek;
+mod task_owner;
 mod task_slots;
 
 pub mod registry;
@@ -73,6 +74,7 @@ pub use pose::{
     AngleTuning, Blended, ConeSolvers, FLAG_ACTIVE, FLAG_COPY, FLAG_SPHERE, FLAG_TRANSFORM, Link,
     LinkMatrix, Matrix, NORM_COUNT, NormSlot, PoseFill, PoseSample, PoseVolume, Transformed,
 };
+pub use task_owner::{OwnerCallees, TaskOwner};
 pub use task_slots::{
     FIRST_BOMB_KIND, FIRST_BOMB_SLOT, ManagerCallees, PRIMARY_COUNT, SECOND_BOMB_KIND, SECOND_BOMB_SLOT,
     SECONDARY_COUNT, TaskSlots,

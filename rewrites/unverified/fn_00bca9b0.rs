@@ -24,6 +24,14 @@ const VECTOR_Z_OFFSET: u32 = 8;
 lf_checker_rt::export!(
     cdecl,
     rw_00BCA9B0(object_handle: u32, result_out: u32) -> u32 {
+        #[target_feature(enable = "sse")]
+        unsafe fn sqrt_low_sse(value: f32) -> f32 {
+            unsafe {
+                let lane = core::arch::x86::_mm_set_ss(value);
+                core::arch::x86::_mm_cvtss_f32(core::arch::x86::_mm_sqrt_ps(lane))
+            }
+        }
+
         let physics_manager = unsafe {
             core::ptr::read_unaligned(lf_checker_rt::global::<u32>(PHYSICS_MANAGER_SLOT))
         };
@@ -56,7 +64,7 @@ lf_checker_rt::export!(
         let z_squared = core::hint::black_box(z) * core::hint::black_box(z);
         let xy_squared = core::hint::black_box(x_squared) + core::hint::black_box(y_squared);
         let squared_magnitude = core::hint::black_box(xy_squared) + core::hint::black_box(z_squared);
-        let magnitude_bits = squared_magnitude.sqrt().to_bits();
+        let magnitude_bits = unsafe { sqrt_low_sse(squared_magnitude) }.to_bits();
 
         unsafe {
             core::ptr::write_unaligned(result_out as *mut u32, magnitude_bits);

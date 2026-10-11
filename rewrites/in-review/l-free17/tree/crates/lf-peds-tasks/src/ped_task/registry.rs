@@ -285,12 +285,16 @@ pub const ROWS: &[Row] = &[
             "reads a child object through the receiver and calls its virtual query and a resolver; a receiver shape, not the table, not lifted in this lane",
         ],
     },
+    // TaskOwner: the owner pointer of a task, replaced with a release and a
+    // deallocation of the previous object.
     Row {
-        class: "(receiver, not the table)",
-        method: "ped_task_replace_owner_object",
-        state: State::Missing,
+        class: "TaskOwner",
+        method: "replace_owner_object",
+        state: State::Proven,
         narrows: &[
-            "stores an owner pointer at a fixed offset of the receiver and calls the old object's release and the deallocator; a receiver shape, not the table, not lifted in this lane",
+            "the owner pointer is read and written at a fixed offset of the receiver; the proof plants the receiver in the window and compares the stored word",
+            "the release (thiscall, on the previous object) and the deallocator (cdecl) travel as OwnerCallees; the proof compares both calls in order with their arguments",
+            "the routine has no return value; none is compared",
         ],
     },    // TaskSlots: the task manager's two pointer arrays. The task interface
     // and the manager's preparatory methods travel as ManagerCallees.

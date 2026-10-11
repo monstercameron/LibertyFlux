@@ -24,9 +24,9 @@ use lf_peds_tasks::ped_task::{
 #[test]
 fn registry_counts_thirty_proven() {
     let (proven, lifted, missing) = registry::counts();
-    assert_eq!(proven, 35);
+    assert_eq!(proven, 36);
     assert_eq!(lifted, 0);
-    assert_eq!(missing, 4);
+    assert_eq!(missing, 3);
     assert_eq!(registry::ROWS.len(), 39);
     for row in registry::ROWS {
         if row.state == State::Proven {
@@ -66,7 +66,7 @@ fn registry_counts_thirty_proven() {
             ("EventTable", "check_nearby_event"),
             ("EventTable", "ped_task_event_registration (forwarder)"),
             ("(receiver, not the table)", "ped_task_select_event_entry"),
-            ("(receiver, not the table)", "ped_task_replace_owner_object"),
+            ("TaskOwner", "replace_owner_object"),
             ("TaskSlots", "first_occupied"),
             ("TaskSlots", "contains"),
             ("TaskSlots", "request_bomb_task"),
