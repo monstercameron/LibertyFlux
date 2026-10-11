@@ -72360,6 +72360,24 @@
   "lane": "r-s262"
  },
  {
+  "address": "0x009EA990",
+  "name": "orthonormalize_basis_matrix",
+  "kind": "function",
+  "file": "functions/fn_009ea990.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b676"
+ },
+ {
+  "address": "0x009EACE0",
+  "name": "Ped_HasSpottedPedImpl",
+  "kind": "function",
+  "file": "functions/fn_009eace0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b676"
+ },
+ {
   "address": "0x009EAEE0",
   "name": "CPlayerPed::vf19",
   "kind": "function",
@@ -72376,6 +72394,15 @@
   "trials": 1000,
   "checker": "version 4",
   "lane": "r-s262"
+ },
+ {
+  "address": "0x009EAFF0",
+  "name": "process_ped_task_state_flags",
+  "kind": "function",
+  "file": "functions/fn_009eaff0.rs",
+  "trials": 1000,
+  "checker": "version 8",
+  "lane": "r-b676"
  },
  {
   "address": "0x009EB0F0",
